@@ -398,7 +398,7 @@ export interface TranslationStrings {
 }
 /**
  * The package's locale: its strings and language. Not Fondue's `LocaleConfig`, whose `dateLocale` is a
- * date-fns `Locale`: the editor formats no dates (DR-012). `enUS` is the fallback.
+ * date-fns `Locale`: the editor formats no dates. `enUS` is the fallback.
  */
 export interface RichTextLocale {
     readonly translationStrings: TranslationStrings;

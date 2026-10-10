@@ -131,7 +131,7 @@ export const runMigrations = (
             if (!isRoot(content)) {
                 return block('format.envelope-invalid');
             }
-            // A step only adds capabilities, since content of a dropped one may survive as an island (AC-033).
+            // A step only adds capabilities, since content of a dropped one may survive as an island.
             const kept = merge(
                 current.requiredCapabilities,
                 findMisshapenCapabilities(requiredCapabilities) === undefined ? requiredCapabilities : [],

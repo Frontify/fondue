@@ -107,7 +107,7 @@ const decodePercent = (text: string) =>
         }
     });
 
-/** Steps 2 to 4 of the URL check. */
+/** Parses the URL, then rejects an unsafe scheme or embedded credentials. */
 const parse = (input: string): URL | HrefFailure => {
     let url: URL;
     try {
@@ -144,7 +144,7 @@ const checkPolicy = (url: URL, { allowedSchemes, allowedHosts }: HrefPolicy): Hr
     return undefined;
 };
 
-/** The one URL check (SPEC-rich-text-references, URL check); it fails closed, and a policy only narrows it. */
+/** The one URL check; it fails closed, and a policy only narrows it. */
 export const checkHref = (input: string, policy?: HrefPolicy): HrefResult => {
     const trimmed = input.replaceAll(EDGE_CONTROLS, '');
     if (CONTROL.test(trimmed) || !isWellFormed(trimmed)) {

@@ -135,7 +135,7 @@ const nodeShape = (
             required.push('attrs');
         }
     }
-    // The root shape (AC-049): a `doc` holds at least one child.
+    // The root shape: a `doc` holds at least one child.
     if (name === 'doc') {
         required.push('content');
     }
@@ -278,7 +278,7 @@ const modelSchema = (model: ContentModel): JsonObject => {
 
 /**
  * A JSON Schema 2020-12 document for a model's stored envelope and vocabulary, or for one feature's nodes and
- * marks from its declaration alone (SPEC-rich-text-format/AC-002, AC-052). Content expressions, `checkHref`,
+ * marks from its declaration alone. Content expressions, `checkHref`,
  * `Intl.getCanonicalLocales` and the cross-node rules of decode are not expressible, so decode stays the check.
  */
 export const toJsonSchema = (source: ContentModel | Feature): JsonObject =>

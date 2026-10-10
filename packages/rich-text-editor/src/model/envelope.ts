@@ -46,7 +46,7 @@ export const findMisshapenCapabilities = (capabilities: unknown): string | undef
     return undefined;
 };
 
-/** The path of the first part of a known-version envelope that lacks the Envelope or root shape (AC-049). */
+/** The path of the first part of a known-version envelope that lacks the Envelope or root shape. */
 const findMisshapen = (envelope: Readonly<Record<string, unknown>>): string | undefined => {
     if (!hasExactly(envelope, ENVELOPE_KEYS)) {
         return '';

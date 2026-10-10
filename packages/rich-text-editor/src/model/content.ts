@@ -257,7 +257,7 @@ const checkMarks = (
     return [...marks].sort((a, b) => rank(a) - rank(b) || order(a) - order(b)).map(({ mark }) => mark);
 };
 
-/** The cells of a `table` form a rectangular grid with consistent column widths (AC-051), as `TableMap` needs. */
+/** The cells of a `table` form a rectangular grid with consistent column widths, as `TableMap` needs. */
 const isGrid = (rows: readonly TreeNode[]): boolean => {
     const span = (cell: TreeNode, name: 'colspan' | 'rowspan') => {
         const value = cell.attrs?.[name];
@@ -468,7 +468,7 @@ const checkRoot = (context: Context, root: Attrs): TreeNode | undefined => {
 
 /**
  * Step 5: one walk in document order over the nodes outside islands; a node whose declared `nodeId` the walk
- * already kept becomes an island placed as in step 4, and the walk skips the rest of that island (AC-018).
+ * already kept becomes an island placed as in step 4, and the walk skips the rest of that island.
  * `undefined` when the node itself must become an island.
  */
 const dedupe = (context: Context, tree: TreeNode, path: string, kept: Set<string>): TreeNode | undefined => {
@@ -534,6 +534,6 @@ export const checkContent = (
     const context: Context = { vocabulary: vocabularyOf(model), diagnostics: [], sources: new WeakMap(), review };
     const checked = checkRoot(context, root as Attrs);
     const tree = checked === undefined ? undefined : dedupe(context, checked, '/content', new Set());
-    // AC-012 (`format.capability-undeclared`) checks the content outside islands here, after the duplicate walk.
+    // `format.capability-undeclared` checks the content outside islands here, after the duplicate walk.
     return { tree, diagnostics: context.diagnostics };
 };
