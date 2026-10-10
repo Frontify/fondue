@@ -425,6 +425,6 @@ const ComboboxBaseInput = (
         </RadixPopover.Root>
     );
 };
-ComboboxBaseInput.displayName = 'Select.Combobox';
+ComboboxBaseInput.displayName = 'ComboboxBase';
 
 export const ComboboxBase = forwardRef<HTMLDivElement, ComboboxBaseProps>(ComboboxBaseInput);
