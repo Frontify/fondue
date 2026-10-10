@@ -39,6 +39,8 @@ const domSelection = (page: Page) =>
         text: window.getSelection()?.toString(),
         inSurface: document.activeElement?.getAttribute('role') === 'textbox',
     }));
+// More rows are menu items, and checkbox items for toggles.
+const menuRows = (page: Page) => page.locator('[role="menuitem"], [role="menuitemcheckbox"]');
 const documentHtml = (page: Page) => page.evaluate(() => window.toolbarEditor?.html());
 
 /** WCAG relative luminance of a computed `rgb()` colour. */
@@ -267,7 +269,7 @@ test.describe('at 320 CSS pixels', () => {
         }));
 
         await itemOf(page, 'More').click();
-        const rows = await page.getByRole('menuitem').allInnerTexts();
+        const rows = await menuRows(page).allInnerTexts();
         const reachable = [...visible.filter((name) => name !== 'More'), ...rows.map((row) => row.split('\n')[0])];
 
         expect(visible).toContain('More');
@@ -288,7 +290,7 @@ test.describe('at 320 CSS pixels', () => {
         await mount(<ToolbarProbe wide />);
         await ready(page);
         await itemOf(page, 'More').click();
-        const rows = await page.getByRole('menuitem').evaluateAll((items) =>
+        const rows = await menuRows(page).evaluateAll((items) =>
             items.map((item) => {
                 const label = [...item.childNodes]
                     .filter((node) => !(node instanceof HTMLElement && node.tagName === 'KBD'))
@@ -298,12 +300,12 @@ test.describe('at 320 CSS pixels', () => {
                 return { label, starts: (item.textContent ?? '').trim().startsWith(label) && label !== '' };
             }),
         );
-        const names = await page.getByRole('menuitem').evaluateAll((items) => items.length);
+        const names = await menuRows(page).evaluateAll((items) => items.length);
 
         expect(rows.every(({ starts }) => starts)).toBe(true);
         expect(names).toBeGreaterThan(0);
         for (const { label } of rows) {
-            await expect(page.getByRole('menuitem', { name: label })).toHaveCount(1);
+            await expect(menuRows(page).filter({ hasText: label })).toHaveCount(1);
         }
     });
 });
@@ -642,7 +644,7 @@ for (const [platform, uaPlatform, shown, aria] of [
         await expect(page.getByRole('tooltip').locator('kbd')).toHaveText(shown[0]);
         await expect(itemOf(page, 'Bold')).toHaveAttribute('aria-keyshortcuts', aria[0]);
         await itemOf(page, 'More').click();
-        const row = page.getByRole('menuitem', { name: 'List' });
+        const row = page.getByRole('menuitemcheckbox', { name: 'List' });
 
         await expect(row.locator('kbd')).toHaveText(shown[1]);
         await expect(row).toHaveAttribute('aria-keyshortcuts', aria[1]);
@@ -654,7 +656,7 @@ const namesAndIcons = async (page: Page, inMore: boolean) => {
     let items = toolbarOf(page).getByRole('button');
     if (inMore) {
         await itemOf(page, 'More').click();
-        items = page.getByRole('menuitem');
+        items = menuRows(page);
     }
     return items.evaluateAll((elements) =>
         elements
@@ -702,4 +704,162 @@ test('SPEC-rich-text-react/AC-094 uses the presentation controls label and icon 
 
     expect(inToolbar).toEqual({ name: 'Strong', icon: italic?.icon });
     expect(inMore).toEqual(inToolbar);
+});
+
+for (const lands of ['body', 'toolbar'] as const) {
+    test(`SPEC-rich-text-react/AC-036 returns focus to the surface when a click leaves focus on the ${lands}, as Firefox and Safari on macOS do`, async ({
+        mount,
+        page,
+    }) => {
+        await mount(<ToolbarProbe />);
+        await ready(page);
+        await surfaceOf(page).focus();
+        await select(page, 'two');
+        // A press that does not focus the button: focus goes to the body, or to the toolbar root after the press.
+        await itemOf(page, 'Bold').evaluate((button, where) => {
+            button.addEventListener('mousedown', (event) => {
+                event.preventDefault();
+                (document.activeElement as HTMLElement | null)?.blur();
+                if (where === 'toolbar') {
+                    // A mousedown on the root first, so Radix takes the focus as a click and keeps it on the root.
+                    const toolbar = button.closest('[role="toolbar"]') as HTMLElement;
+                    toolbar.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                    toolbar.focus();
+                }
+            });
+        }, lands);
+
+        await itemOf(page, 'Bold').click();
+
+        await expect.poll(() => domSelection(page)).toEqual({ text: 'two', inSurface: true });
+        await expect(surfaceOf(page).locator('strong')).toHaveText('two');
+    });
+}
+
+test('SPEC-rich-text-react/AC-035 returns to the surface on Escape in node chrome away from the selection', async ({
+    mount,
+    page,
+}) => {
+    const paragraph = { type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: 'para' }] };
+    await mount(<ToolbarProbe blocks={[paragraph as never, codeBlock('code')]} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'para');
+    await surfaceOf(page).getByRole('button', { name: 'plain' }).focus();
+
+    await page.keyboard.press('Escape');
+
+    await expectFocus(page, 'Notes');
+    expect(await domSelection(page)).toEqual({ text: 'para', inSurface: true });
+});
+
+test('SPEC-rich-text-react/AC-037 SPEC-rich-text-react/AC-038 shows checked toggles and keeps an unavailable row focusable with its reason in More', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe width={60} blocks={[codeBlock('code')]} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'code');
+    await itemOf(page, 'More').click();
+    await page.keyboard.press('ArrowDown');
+
+    const bold = page.getByRole('menuitemcheckbox', { name: 'Bold' });
+    await expect(bold).toBeFocused();
+    await expect(bold).toHaveAttribute('aria-disabled', 'true');
+    await expect(bold).toHaveAttribute('aria-checked', 'false');
+    await expect(bold).toHaveAccessibleDescription('Not available at the current selection');
+    await page.keyboard.press('Enter');
+    await expect(bold).toBeVisible();
+});
+
+test('SPEC-rich-text-react/AC-037 checks the toggle row of the block at the caret in More', async ({ mount, page }) => {
+    const heading = { type: 'toggled_heading', attrs: { level: 6 }, content: [{ type: 'text', text: 'title' }] };
+    await mount(<ToolbarProbe wide width={60} blocks={[heading as never]} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'title');
+    await itemOf(page, 'More').click();
+
+    await expect(page.getByRole('menuitemcheckbox', { name: 'Heading 6' })).toHaveAttribute('aria-checked', 'true');
+    await expect(page.getByRole('menuitemcheckbox', { name: 'Heading 5' })).toHaveAttribute('aria-checked', 'false');
+});
+
+test('SPEC-rich-text-accessibility/AC-026 does not open More when the pointer leaves it before release', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe width={140} />);
+    await ready(page);
+    const box = await boxOf(itemOf(page, 'More'));
+
+    await page.mouse.move(box.x + 4, box.y + 4);
+    await page.mouse.down();
+    await page.mouse.move(box.x + 200, box.y + 200);
+    await page.mouse.up();
+
+    await expect(page.getByRole('menu')).toHaveCount(0);
+});
+
+test('SPEC-rich-text-accessibility/AC-024 scrolls node chrome that Alt+F10 focuses clear of the sticky toolbar', async ({
+    mount,
+    page,
+}) => {
+    const line = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
+    const lines = (from: number) => Array.from({ length: 30 }, (_, index) => line(`Line ${from + index}`));
+    await mount(<ToolbarProbe blocks={[...lines(1), codeBlock('code'), ...lines(31)] as never[]} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'code');
+    const chrome = surfaceOf(page).getByRole('button', { name: 'plain' });
+    // The chrome sits under the stuck toolbar, inside the viewport.
+    await chrome.evaluate((button) => {
+        const toolbar = document.querySelector('[role="toolbar"]') as HTMLElement;
+        window.scrollBy(0, button.getBoundingClientRect().top - toolbar.offsetHeight / 2);
+    });
+
+    await page.keyboard.press('Alt+F10');
+
+    await expectFocus(page, 'plain');
+    const [button, toolbar] = await Promise.all([boxOf(chrome), boxOf(toolbarOf(page))]);
+    expect(button.y).toBeGreaterThanOrEqual(toolbar.y + toolbar.height);
+});
+
+test.describe('from 1000 to 320 CSS pixels', () => {
+    test.use({ viewport: { width: 1000, height: 640 } });
+
+    test('SPEC-rich-text-react/AC-040 moves focus to More when a refit moves the focused item into it', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<ToolbarProbe wide />);
+        await ready(page);
+        await surfaceOf(page).focus();
+        await page.keyboard.press('Alt+F10');
+        await expectFocus(page, 'Bold');
+        await page.keyboard.press('End');
+        await expectFocus(page, 'Heading 6');
+
+        await page.setViewportSize({ width: 320, height: 640 });
+
+        await expectFocus(page, 'More');
+    });
+});
+
+test('SPEC-rich-text-accessibility/AC-022 SPEC-rich-text-accessibility/AC-023 outlines a focused node chrome button by 2 px at 3:1', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe blocks={[codeBlock('code')]} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'code');
+
+    await page.keyboard.press('Alt+F10');
+    await expectFocus(page, 'plain');
+    const outline = await outlineOf(surfaceOf(page).getByRole('button', { name: 'plain' }));
+
+    expect(outline.style).toBe('solid');
+    expect(outline.width).toBeGreaterThanOrEqual(2);
+    expect(contrast(outline.color, outline.background)).toBeGreaterThanOrEqual(3);
 });

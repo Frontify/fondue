@@ -120,6 +120,16 @@ const withoutClipboard = () => {
 };
 
 describe('the recovery shell', () => {
+    it('SPEC-rich-text-accessibility/AC-038 SPEC-rich-text-react/AC-022 moves focus to the recovery message, which is read with no live region', () => {
+        const { unmount } = breakAfterTyping();
+        const message = screen.getByText(/^The editor stopped working\./);
+
+        expect(message).toHaveFocus();
+        expect(message).toHaveAttribute('tabindex', '-1');
+        expect(document.querySelectorAll('[aria-live], [role="alert"], [role="status"]')).toHaveLength(0);
+        unmount();
+    });
+
     it('SPEC-rich-text-react/AC-022 shows the last published snapshot through the reader after a render error, with no save', () => {
         const { before, spy, unmount } = breakAfterTyping();
 
