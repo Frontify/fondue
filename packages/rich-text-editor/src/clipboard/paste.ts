@@ -25,7 +25,7 @@ export interface Payload {
 export interface PasteSettings {
     readonly model: ContentModel;
     readonly limits: ResourceLimits;
-    /** The limit a document with the pasted content exceeds, from the commit check and the depth and cell check. */
+    /** The depth or cell limit a document with the pasted content exceeds; the commit checks the runtime's limits. */
     readonly exceeded: (doc: Node) => string | undefined;
     readonly policy: PastePolicy;
     /** The destination's slice context (SPEC-rich-text-clipboard/AC-022, AC-023). */
@@ -302,7 +302,7 @@ export const pastePayload = (
         for (const step of target.steps) {
             next.step(step);
         }
-        // A conversion past a limit leaves the pasted text as it is (SPEC-rich-text-clipboard/AC-020).
+        // A conversion past the depth or cell limit leaves the pasted text as it is (SPEC-rich-text-clipboard/AC-020).
         if (settings.exceeded(next.doc) !== undefined) {
             return null;
         }
