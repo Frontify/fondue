@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// @vitest-environment node
+
 import { describe, expect, it } from 'vitest';
 
 import { defaultIdSource, type IdSource, type RuntimeEnvironment } from '#/model';
