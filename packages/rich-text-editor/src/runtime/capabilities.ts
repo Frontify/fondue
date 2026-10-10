@@ -6,7 +6,7 @@ import { liftListItem, sinkListItem, wrapRangeInList } from 'prosemirror-schema-
 import { type EditorState, Selection, type Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
+import { type CapabilityImplementation, type CapabilityImplementations, COMMAND_META } from '#/definition';
 import {
     BASE_KEYS_PLUGIN,
     CONTAINER_KEYS_PLUGIN,
@@ -381,15 +381,23 @@ const wrapInList = (state: EditorState, list: NodeType, item: NodeType, payload:
 
 /**
  * Turns the list at the selection's depth into `list`, keeping items, nesting and children: an ordered list takes the
- * payload's `start`, new task items are unchecked, and items that leave a task list drop `checked` (List keys).
+ * payload's `start`, new task items are unchecked unless a rule's `checked` names the item at the caret, and items that
+ * leave a task list drop `checked` (List keys).
  */
 const convertList = (state: EditorState, list: NodeType, item: NodeType, payload: unknown) => {
     const around = listAround(state.selection.$from);
     if (around === undefined) {
         return undefined;
     }
+    const caret = state.selection.$from.index(around.depth);
     const content = Fragment.from(
-        around.list.children.map((child) => item.create(declaredIn(item, payload), child.content, child.marks)),
+        around.list.children.map((child, index) => {
+            let attrs = {};
+            if (index === caret) {
+                attrs = declaredIn(item, payload);
+            }
+            return item.create(attrs, child.content, child.marks);
+        }),
     );
     if (!list.validContent(content)) {
         return undefined;
@@ -449,7 +457,10 @@ const outdentItem: CapabilityImplementation = (args, schema) => {
 };
 
 /** The nearest node of `type` around the selection, with its position. */
-const nearest = (state: EditorState, type: NodeType): { readonly node: Node; readonly pos: number } | undefined => {
+export const nearest = (
+    state: EditorState,
+    type: NodeType,
+): { readonly node: Node; readonly pos: number } | undefined => {
     const { $from } = state.selection;
     for (let depth = $from.depth; depth > 0; depth -= 1) {
         const node = $from.node(depth);
@@ -468,7 +479,9 @@ const toggleTask: CapabilityImplementation = (args, schema) => {
             if (found === undefined) {
                 return false;
             }
-            dispatch?.(state.tr.setNodeAttribute(found.pos, 'checked', found.node.attrs.checked !== true));
+            // Each keyboard toggle is one `task.setChecked` (SPEC-rich-text-editing/AC-030), which this command runs.
+            const transaction = state.tr.setNodeAttribute(found.pos, 'checked', found.node.attrs.checked !== true);
+            dispatch?.(transaction.setMeta(COMMAND_META, 'task.setChecked'));
             return true;
         },
         active: () => false,

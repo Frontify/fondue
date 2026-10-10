@@ -45,6 +45,11 @@
     font-size: var(--rte-list-marker-size);
 }
 
+/* SPEC-rich-text-output/AC-004: a task item shows its checkbox and no list marker, whatever marker its list inherits. */
+:where(.fondue-rte-content ul[data-task-list] > li) {
+    list-style: none;
+}
+
 :where(.fondue-rte-content pre) {
     white-space: pre-wrap;
 }

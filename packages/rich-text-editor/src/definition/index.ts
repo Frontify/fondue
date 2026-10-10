@@ -136,7 +136,17 @@ const withCommandId = (id: string, { run, active }: EngineCommand, payload: Payl
             if (dispatch === undefined) {
                 return run(state, undefined, given);
             }
-            return run(state, (transaction) => dispatch(transaction.setMeta(COMMAND_META, id)), given);
+            return run(
+                state,
+                (transaction) => {
+                    // A command that runs another, as `task.toggle` runs `task.setChecked`, keeps that one's ID.
+                    if (transaction.getMeta(COMMAND_META) === undefined) {
+                        transaction.setMeta(COMMAND_META, id);
+                    }
+                    dispatch(transaction);
+                },
+                given,
+            );
         },
         active,
     };

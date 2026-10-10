@@ -20,6 +20,22 @@ const CONTROLS = 'input, textarea, select, button';
 // Drop-target events over chrome stay stopped, so ProseMirror never accepts a drop it would then not receive.
 const DRAG_SOURCE_EVENTS: ReadonlySet<string> = new Set(['dragstart', 'drag', 'dragend']);
 
+const viewIndexes = new WeakMap<EditorView, number>();
+let viewCount = 0;
+/**
+ * The `id` that the chrome view's decoration gives the first block of the node `nodeId`, which names a node that
+ * holds blocks, as a task item's text does without its child tasks; unique per view, since a page may show a document twice.
+ */
+export const firstBlockId = (view: EditorView, nodeId: string): string => {
+    let index = viewIndexes.get(view);
+    if (index === undefined) {
+        viewCount += 1;
+        index = viewCount;
+        viewIndexes.set(view, index);
+    }
+    return `rte-node-label-${index}-${encodeURIComponent(nodeId)}`;
+};
+
 /** Whether `target` sits in an interactive control of the chrome, which keeps its own events. */
 const inControl = (chrome: HTMLElement, target: Node) => {
     let element: Element | null = target.parentElement;
@@ -103,6 +119,9 @@ export const createNodeViews = (
             contentId = `rte-node-content-${contents}`;
             contentDOM.id = contentId;
             dom.append(contentDOM);
+            if (!node.isTextblock && typeof node.attrs.nodeId === 'string') {
+                contentId = firstBlockId(view, node.attrs.nodeId);
+            }
         }
         let current = node;
         let state = stateOf(node, false, contentId);

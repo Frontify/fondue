@@ -5,7 +5,7 @@ import { type FormEvent, useContext, useId, useState } from 'react';
 
 import { SessionContext } from '#/bridge/hooks';
 import { useEditorOverlay } from '#/bridge/overlays';
-import { listAround } from '#/runtime/lists';
+import { nearest } from '#/runtime/capabilities';
 import { type EditorRuntime } from '#/runtime/runtime';
 
 /** The numbering dialog's strings, in the UI locale. */
@@ -19,17 +19,18 @@ export interface NumberingStrings {
 
 const MAX_START = 1_000_000;
 
-/** The `start` of the ordered list at the selection, which the field starts from. */
+/** The `start` of the nearest ordered list around the selection, which `list.ordered.start.set` changes. */
 const currentStart = (runtime: EditorRuntime | undefined): string => {
     const view = runtime?.view;
-    if (view === undefined) {
+    const type = view?.state.schema.nodes.ordered_list;
+    if (view === undefined || type === undefined) {
         return '';
     }
-    const around = listAround(view.state.selection.$from);
-    if (around === undefined) {
+    const found = nearest(view.state, type);
+    if (found === undefined) {
         return '';
     }
-    return String(around.list.attrs.start);
+    return String(found.node.attrs.start);
 };
 
 /**

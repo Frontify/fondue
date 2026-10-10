@@ -7,6 +7,8 @@ import { type ListLevels } from '#/model';
 import { LIST_LEVEL_KINDS, listLevelStyle } from '#/model/output';
 import { ownValue } from '#/model/values';
 
+import { firstBlockId } from './node-views';
+
 // ProseMirror's own default margin, kept beyond the space the chrome covers.
 const MARGIN = 5;
 
@@ -41,14 +43,24 @@ const writeChromeMargin = (view: EditorView | undefined, height: number) => {
     view.dom.style.setProperty(CHROME_SCROLL_MARGIN, `${height + MARGIN}px`);
 };
 
-/** A node decoration with its list level style on each list whose `marker` is null, as the reader writes it. */
-const listMarkers = (doc: ProseMirrorNode, levels: ListLevels | undefined): Decoration[] => {
+/**
+ * A node decoration with its list level style on each list whose `marker` is null, as the reader writes it, and one
+ * with the `firstBlockId` on the first block of each node with a `nodeId` whose node view holds blocks.
+ */
+const contentDecorations = (view: EditorView, doc: ProseMirrorNode, levels: ListLevels | undefined): Decoration[] => {
     const found: Decoration[] = [];
+    const nodeViews = view.props.nodeViews ?? {};
     const lists = { ordered: 0, bullet: 0 };
     const visit = (parent: ProseMirrorNode, start: number) => {
         let pos = start;
         for (let index = 0; index < parent.childCount; index += 1) {
             const child = parent.child(index);
+            const first = child.firstChild;
+            const { nodeId } = child.attrs;
+            const viewed = Object.hasOwn(nodeViews, child.type.name);
+            if (viewed && !child.isTextblock && first !== null && first.isBlock && typeof nodeId === 'string') {
+                found.push(Decoration.node(pos + 1, pos + 1 + first.nodeSize, { id: firstBlockId(view, nodeId) }));
+            }
             const kind = ownValue(LIST_LEVEL_KINDS, child.type.name);
             if (kind !== undefined) {
                 lists[kind] += 1;
@@ -83,12 +95,15 @@ export const createChromeView = (): ChromeView => {
         margin.bottom = threshold.bottom + MARGIN;
     };
     let levels: ListLevels | undefined;
-    // A selection change keeps the document, so it draws no list marker again.
+    // A selection change keeps the document, so it draws no content decoration again.
     let markers = new WeakMap<ProseMirrorNode, DecorationSet>();
     const listsOf = (doc: ProseMirrorNode) => {
+        if (view === undefined) {
+            return DecorationSet.empty;
+        }
         let lists = markers.get(doc);
         if (lists === undefined) {
-            lists = DecorationSet.create(doc, listMarkers(doc, levels));
+            lists = DecorationSet.create(doc, contentDecorations(view, doc, levels));
             markers.set(doc, lists);
         }
         return lists;
@@ -104,6 +119,7 @@ export const createChromeView = (): ChromeView => {
     return {
         take: (next) => {
             view = next;
+            markers = new WeakMap();
             next.setProps({ decorations, scrollMargin: margin, scrollThreshold: threshold });
             writeChromeMargin(next, threshold.top);
         },

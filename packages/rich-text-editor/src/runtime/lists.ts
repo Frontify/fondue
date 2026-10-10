@@ -56,14 +56,22 @@ export const repeated = (
 /**
  * Splits the item at the caret. ProseMirror's split copies `checked` into the new item, so a new task item is unchecked
  * in the split's own transaction, and the `node-ids` normalizer gives it a new `nodeId` (SPEC-rich-text-editing, List keys).
+ * A split at the very start of an item's text leaves the new, empty item before it, as the normalizer reads it (DR-071).
  */
 export const splitItem =
     (item: NodeType): Command =>
-    (state, dispatch) =>
-        splitListItem(item)(state, (transaction) => {
-            const at = transaction.selection.$from.before(-1);
+    (state, dispatch) => {
+        const { $from } = state.selection;
+        const before = $from.parentOffset === 0 && $from.parent.content.size > 0 && $from.index(-1) === 0;
+        return splitListItem(item)(state, (transaction) => {
+            const $at = transaction.selection.$from;
+            let at = $at.before(-1);
+            if (before) {
+                at = $at.posAtIndex($at.index(-2) - 1, -2);
+            }
             if (transaction.doc.nodeAt(at)?.attrs.checked === true) {
                 transaction.setNodeAttribute(at, 'checked', false);
             }
             dispatch?.(transaction);
         });
+    };
