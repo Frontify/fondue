@@ -65,6 +65,17 @@ const removeNotes = (body: HTMLElement) => {
     }
 };
 
+/** Replaces each SVG and MathML element with its text, since the engine's tag rules match their elements by name alone. */
+const replaceForeign = (body: HTMLElement) => {
+    for (const foreign of Array.from(body.querySelectorAll('svg, math'))) {
+        for (const hidden of Array.from(foreign.querySelectorAll('script, style, title'))) {
+            hidden.remove();
+        }
+        // The whitespace at its edges lays out markup, and would stay as a leading space between blocks.
+        foreign.replaceWith((foreign.textContent ?? '').trim());
+    }
+};
+
 /** Replaces each image with its `alt` text, so nothing fetches it, and counts them (SPEC-rich-text-clipboard/AC-017). */
 const replaceImages = (body: HTMLElement) => {
     const images = Array.from(body.querySelectorAll('img'));
@@ -121,9 +132,12 @@ const withSpaces = (schema: Schema, fragment: Fragment): Fragment => {
     return Fragment.from(nodes);
 };
 
+const paragraphOf = (node: Node) => node.type.schema.nodes.paragraph as Node['type'];
+
 /**
  * Attributes as `decodeDocument` accepts them: a string longer than `maxAttributeLength` takes its default, and a
- * mark with no default for it goes, so the saved document still decodes as `editable` (SPEC-rich-text-clipboard/AC-041).
+ * mark or node with no default for it goes, keeping its text, so the saved document still decodes as `editable`
+ * (SPEC-rich-text-clipboard/AC-041).
  */
 const withValidAttributes = (fragment: Fragment, limits: ResourceLimits): Fragment => {
     const valid = (type: Node['type'] | Mark['type'], attrs: Node['attrs']) => {
@@ -153,13 +167,18 @@ const withValidAttributes = (fragment: Fragment, limits: ResourceLimits): Fragme
             nodes.push(node.mark(marks));
             continue;
         }
-        nodes.push(
-            node.type.create(
-                valid(node.type, node.attrs) ?? node.attrs,
-                withValidAttributes(node.content, limits),
-                marks,
-            ),
-        );
+        const content = withValidAttributes(node.content, limits);
+        const attrs = valid(node.type, node.attrs);
+        if (attrs !== undefined) {
+            nodes.push(node.type.create(attrs, content, marks));
+            continue;
+        }
+        // A required value decode would reject cannot take a default, so the node goes and its text stays, as with paste: false.
+        if (node.isTextblock) {
+            nodes.push(paragraphOf(node).create(null, content, marks));
+        } else if (!node.isLeaf) {
+            nodes.push(...content.content);
+        }
     }
     return Fragment.from(nodes);
 };
@@ -216,6 +235,7 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     }
     replaceForms(dom, inert);
     removeNotes(body);
+    replaceForeign(body);
     const droppedImages = replaceImages(body);
     restoreSpaces(body);
     // The engine ignores `object` with its children; a skip rule keeps its fallback text (SPEC-rich-text-clipboard/AC-010).
