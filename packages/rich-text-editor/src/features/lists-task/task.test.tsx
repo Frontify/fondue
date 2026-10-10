@@ -10,7 +10,7 @@ import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { RichTextReader } from '#/reader';
 import { pressKey, setSelection, typeText } from '#/testing';
 
-import { done, item, list, listModel, outline } from '../../../fixtures/editor/lists';
+import { done, item, list, listModel, outline, outlineOf } from '../../../fixtures/editor/lists';
 import { mountText, storedIn } from '../../../fixtures/editor/text';
 
 const model = listModel();
@@ -146,7 +146,11 @@ describe('lists.task', () => {
         pressKey(handle, 'Enter');
         typeText(handle, '[x] ');
 
-        expect(checksOf(handle).flatMap((check) => Object.values(check))).toEqual([false, false, true]);
+        const converted = checksOf(handle);
+        handle.execute('history.undo');
+
+        expect(converted).toEqual([{ A: false }, { B: false }, { '': true }]);
+        expect(outlineOf(handle)).toEqual([{ ul: [['A'], ['B'], ['[x] ']] }]);
     });
 
     it('SPEC-rich-text-editing/AC-030 runs Mod-Enter in a task item as one task.setChecked', () => {

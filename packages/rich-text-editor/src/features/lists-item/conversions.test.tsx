@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { fixtureMention } from '#/features/__fixtures__/features';
 import { type ContentNodeJSON } from '#/model';
 import { type CommandResult } from '#/runtime/types';
-import { setSelection } from '#/testing';
+import { pressKey, setSelection, typeText } from '#/testing';
 
 import { done, item, list, LIST_KINDS, type ListKind, listModel, outlineOf } from '../../../fixtures/editor/lists';
 import { mountText, para, text } from '../../../fixtures/editor/text';
@@ -160,3 +160,35 @@ const startOf = (kind: ListKind, start: number) => {
     }
     return {};
 };
+
+describe('list rules inside a list of another type', () => {
+    it.each([
+        ['- ', 'ordered', { ul: [['A'], ['']] }, { ol: [['A'], ['- ']] }],
+        ['1. ', 'bullet', { ol: [['A'], ['']] }, { ul: [['A'], ['1. ']] }],
+        [
+            '[ ] ',
+            'ordered',
+            {
+                tasks: [
+                    ['[ ]', 'A'],
+                    ['[ ]', ''],
+                ],
+            },
+            { ol: [['A'], ['[ ] ']] },
+        ],
+    ] as const)(
+        'SPEC-rich-text-editing/AC-075 turns the list into the rule\'s type for "%s" typed in a new %s item, removes the marker, and one undo restores it',
+        (marker, kind, converted, undone) => {
+            const { handle } = mountText({ model, blocks: [list(kind, [item(kind, 'A')])] });
+            setSelection(handle, { text: 'A', from: 1, to: 1 });
+
+            pressKey(handle, 'Enter');
+            typeText(handle, marker);
+            const after = outlineOf(handle);
+            handle.execute('history.undo');
+
+            expect(after).toEqual([converted]);
+            expect(outlineOf(handle)).toEqual([undone]);
+        },
+    );
+});
