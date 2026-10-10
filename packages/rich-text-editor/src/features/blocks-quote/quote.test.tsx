@@ -19,7 +19,7 @@ const acmeBox = featureFromManifest({
         acme_box: { group: 'block', content: 'block+', attrs: {}, html: ['aside', 0], parse: [{ tag: 'aside' }] },
     },
     formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
-    commands: { 'acme.box.toggle': { capability: 'wrapIn', node: 'acme_box', toggle: true } },
+    commands: { 'acme.box.toggle': { capability: 'wrapIn', node: 'acme_box' } },
 });
 const model = textModel([...textFeatures(), acmeBox(), vocabularyLists(), vocabularyTables(), fixtureFigure()]);
 

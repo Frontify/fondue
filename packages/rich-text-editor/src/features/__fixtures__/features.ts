@@ -116,11 +116,12 @@ export const fixtureTable = defineFeature({
     },
 });
 
-/** Stands in for `mentions`: an inline atom with a `nodeId`. */
+/** Stands in for `mentions`: an inline atom with a `nodeId`, and a command that inserts one. */
 export const fixtureMention = defineFeature({
     id: 'fixture.mention',
     version: 1,
     requires: requiresCore,
+    commands: { 'fixture.mention.insert': insertNode('mention') },
     nodes: {
         mention: {
             group: 'inline',

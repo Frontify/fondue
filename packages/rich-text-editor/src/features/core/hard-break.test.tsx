@@ -3,6 +3,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { fixtureChrome } from '#/features/__fixtures__/chrome/feature';
+import { fixtureMention } from '#/features/__fixtures__/features';
+import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
 import { mountText, para, text, textFeatures, textModel } from '../../../fixtures/editor/text';
@@ -72,5 +74,29 @@ describe('hard-break.insert', () => {
 
         expect(mounted.changes).toEqual([]);
         expect(firstOf(mounted)).toEqual(para(text('ab')));
+    });
+
+    it('SPEC-rich-text-editing/AC-005 keeps another inline atom from becoming a newline in a code block', () => {
+        const withMention = textModel([...textFeatures(), fixtureChrome(), fixtureMention()]);
+        const mounted = mountText({
+            model: withMention,
+            blocks: [
+                {
+                    type: 'chrome_block',
+                    attrs: { nodeId: 'code-1', language: 'plain', checked: false },
+                    content: [text('cd')],
+                },
+            ],
+        });
+        setSelection(mounted.handle, { text: 'cd', from: 1, to: 1 });
+
+        const result = runtimeOf(mounted.handle)?.handle.execute('fixture.mention.insert');
+
+        expect(result).toEqual({ status: 'rejected', code: 'not-applicable' });
+        expect(firstOf(mounted)).toEqual({
+            type: 'chrome_block',
+            attrs: { nodeId: 'code-1', language: 'plain', checked: false },
+            content: [text('cd')],
+        });
     });
 });
