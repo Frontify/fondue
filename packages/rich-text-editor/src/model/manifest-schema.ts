@@ -25,7 +25,7 @@ const when = (member: string, value: string, required: readonly string[]) => ({
     then: { required },
 });
 
-/** JSON Schema 2020-12 of `FeatureManifest`: the published manifest schema (SPEC-rich-text/AC-064). */
+/** JSON Schema 2020-12 of `FeatureManifest`: the published manifest schema. */
 export const featureManifestSchema: JsonObject = {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     $id: 'https://fondue.frontify.com/schemas/rich-text-editor/feature-manifest.json',

@@ -18,7 +18,7 @@ import { createFeature } from './feature';
 import { featureManifestSchema, findSchemaViolation } from './manifest-schema';
 import { findUnsafeJson, snapshot } from './values';
 
-/** The tags a manifest `html` spec and its parse rules may name (SPEC-rich-text, Feature contract). */
+/** The tags a manifest `html` spec and its parse rules may name. */
 const MANIFEST_TAGS = new Set(
     (
         'p h1 h2 h3 h4 h5 h6 blockquote pre code ul ol li dl dt dd table thead tbody tfoot tr th td caption figure ' +

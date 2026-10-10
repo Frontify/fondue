@@ -120,7 +120,7 @@ const joinText = (encoding: Encoding, children: readonly TreeNode[]): unknown[] 
 };
 
 /**
- * `requiredCapabilities` (AC-033): `core` and each capability the content uses, sorted by ID, at the installed
+ * `requiredCapabilities`: `core` and each capability the content uses, sorted by ID, at the installed
  * version. While islands or unknown attributes survive, every stored capability stays too, at the higher of its
  * stored and installed version, since their content cannot be attributed to one capability.
  */
