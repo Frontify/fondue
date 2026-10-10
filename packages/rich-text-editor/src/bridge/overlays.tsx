@@ -13,6 +13,7 @@ import {
     useSyncExternalStore,
 } from 'react';
 
+import { type RuntimeEnvironment } from '#/model';
 import { type EditorRuntime } from '#/runtime/runtime';
 
 import { createSelectionAnchor, type SelectionAnchor } from './anchor';
@@ -25,8 +26,8 @@ export interface Overlays {
     /** `portalContainer`, else the editor's own overlay root inside its interaction scope. */
     readonly container: HTMLElement | null;
     readonly scope: InteractionScope;
-    /** The session environment's microtask, which runs once Radix has removed a closed overlay's content. */
-    readonly microtask: (callback: () => void) => void;
+    /** The session environment's scheduler: a microtask runs once Radix has removed a closed overlay's content. */
+    readonly scheduler: RuntimeEnvironment['scheduler'];
 }
 
 export const OverlayContext = createContext<Overlays | null>(null);
@@ -138,11 +139,14 @@ const refocus = (runtime: EditorRuntime, before: Element | null) => {
  * step 8), and returns focus that a close leaves on `body` (SPEC-rich-text-react/AC-083).
  */
 export const useEditorOverlay = (open: boolean, setOpen: (open: boolean) => void): EditorOverlay => {
-    const { container, scope, microtask } = useOverlays();
+    const { container, scope, scheduler } = useOverlays();
     const runtime = useContext(SessionContext);
     const runtimeRef = useRef(runtime);
+    // A caller's inline `setOpen` is new on each render, which must not end and restart the open overlay's effect.
+    const setOpenRef = useRef(setOpen);
     useClientLayoutEffect(() => {
         runtimeRef.current = runtime;
+        setOpenRef.current = setOpen;
     });
     const elementRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useCallback((element: HTMLDivElement | null) => {
@@ -150,34 +154,50 @@ export const useEditorOverlay = (open: boolean, setOpen: (open: boolean) => void
         elementRef.current = element;
         element?.addEventListener('keydown', leaveOnTab);
     }, []);
-    const [anchor] = useState(() =>
-        createSelectionAnchor(
-            () => runtimeRef.current?.view,
-            () => elementRef.current,
-        ),
-    );
+    const [anchor] = useState(() => createSelectionAnchor(() => runtimeRef.current?.view));
     const onOpenChange = useCallback(
         (next: boolean) => {
             const { kind, target } = scope.last();
             if (!next && kind !== 'key' && scope.contains(target) && !holds(elementRef.current, target)) {
                 return;
             }
-            setOpen(next);
+            setOpenRef.current(next);
         },
-        [scope, setOpen],
+        [scope],
     );
     useEffect(() => {
         if (!open || runtime === undefined) {
             return undefined;
         }
         const before = scope.active();
-        const unsubscribe = runtime.handle.subscribe('replaced', () => setOpen(false));
+        const unsubscribe = runtime.handle.subscribe('replaced', () => setOpenRef.current(false));
         // Runs when the overlay closes and when it unmounts open, as the chrome of a deleted node does.
         return () => {
             unsubscribe();
-            microtask(() => refocus(runtime, before));
+            scheduler.microtask(() => refocus(runtime, before));
         };
-    }, [open, runtime, setOpen, scope, microtask]);
+    }, [open, runtime, scope, scheduler]);
+    // Hides the content, keeping its state, while its anchor is clipped; Floating UI's `hide` middleware would, but
+    // Fondue's `Flyout` and `Dropdown` do not expose `hideWhenDetached`.
+    useEffect(() => {
+        if (!open) {
+            return undefined;
+        }
+        let frame = 0;
+        const track = () => {
+            const element = elementRef.current;
+            let visibility = '';
+            if (anchor.clipped()) {
+                visibility = 'hidden';
+            }
+            if (element !== null && element.style.visibility !== visibility) {
+                element.style.visibility = visibility;
+            }
+            frame = scheduler.frame(track);
+        };
+        frame = scheduler.frame(track);
+        return () => scheduler.cancelFrame(frame);
+    }, [open, anchor, scheduler]);
     return { container, contentRef, onOpenChange, anchor };
 };
 
