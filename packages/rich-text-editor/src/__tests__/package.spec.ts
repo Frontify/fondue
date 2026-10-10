@@ -25,7 +25,7 @@ const LAYOUT_ENTRIES = new Set([
     './styles',
 ]);
 
-const EXPORTED_NOW = ['./model', './reader'];
+const EXPORTED_NOW = ['./codecs', './model', './reader'];
 
 const PROSEMIRROR_FLOORS: Record<string, string> = {
     'prosemirror-commands': '1.7.2',
@@ -175,12 +175,13 @@ describe('package manifest and built output', () => {
         }
     });
 
-    // ProseMirror, Slate and Plate stay out of every headless entry. The reader also stays off a live DOM root.
+    // ProseMirror, Slate and Plate stay out of every headless entry. The reader and codecs also stay off a live DOM root.
     const ENGINE_PACKAGES = /^(?:prosemirror-[\w-]+|slate|slate-[\w-]+|platejs|@platejs\/.+|@udecode\/.+)$/;
     const DOM_PACKAGES = /^(?:prosemirror-[\w-]+|react-dom\/client)$/;
     const HEADLESS_FORBIDDEN: Record<string, readonly RegExp[]> = {
         './model': [ENGINE_PACKAGES],
         './reader': [ENGINE_PACKAGES, DOM_PACKAGES],
+        './codecs': [ENGINE_PACKAGES, DOM_PACKAGES],
     };
 
     const bareName = (id: string): string =>
