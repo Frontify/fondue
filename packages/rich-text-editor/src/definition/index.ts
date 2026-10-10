@@ -21,6 +21,7 @@ import { NORMALIZE_META, NORMALIZERS } from './normalizers';
 import { buildSchema } from './schema';
 
 export {
+    type BlockRule,
     type CompiledInputRule,
     type LineStartRule,
     type MarkDelimiterRule,

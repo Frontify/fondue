@@ -7,6 +7,7 @@ import {
     bold,
     code,
     core,
+    featuresById,
     heading,
     inputRules,
     italic,
@@ -100,6 +101,7 @@ const model = compileContentModel(
         superscript(),
         heading(),
         quote(),
+        ...featuresById(['lists.item', 'lists.bullet', 'lists.ordered', 'lists.task']),
         inputRules({ typography }),
         callouts,
     ],
@@ -131,6 +133,7 @@ const TOOLBAR = [
         'mark.subscript.toggle',
         'mark.superscript.toggle',
     ],
+    ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
     ['quote.toggle'],
 ];
 

@@ -163,7 +163,10 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     }
     noteNode(state, node, 'html');
     const before = state.carried;
-    const inner = renderChildren(state, node, path, plan.pre);
+    let inner = renderChildren(state, node, path, plan.pre);
+    if (node.type === 'task_item' && plan.featureId === 'lists.task') {
+        inner = taskItemInner(state, node, path, plan.pre);
+    }
     const attrs = attrsOf(node.attrs);
     let template: HtmlTemplate;
     if (plan.html === undefined) {
@@ -182,6 +185,28 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     }
     state.carried = 0;
     return build(template, inner);
+};
+
+/**
+ * A task item's disabled checkbox labelled by its first block, then its other blocks, as the `lists.task` reader
+ * override renders them, which no `HtmlSpec` can express (SPEC-rich-text-output/AC-004).
+ */
+const taskItemInner = (state: HtmlState, node: TreeNode, path: string, pre: boolean): string => {
+    // A task item's children are blocks, which carry no mark to group them by.
+    const blocks = itemsOf(node, path, keepMark(state, 'html')).map((item) => renderNode(state, item, pre));
+    const [first = '', ...rest] = blocks;
+    let nodeId = '';
+    if (typeof node.attrs?.nodeId === 'string') {
+        nodeId = node.attrs.nodeId;
+    }
+    const label = escapeHtml(`rte-task-${encodeURIComponent(nodeId)}`);
+    // React writes `checked` last on an input, so the reader's markup does too.
+    let checked = '';
+    if (node.attrs?.checked === true) {
+        checked = ' checked=""';
+    }
+    const checkbox = `<input type="checkbox" disabled="" aria-labelledby="${label}"${checked}/>`;
+    return `${checkbox}<div id="${label}">${first}</div>${rest.join('')}`;
 };
 
 const renderRun = (state: HtmlState, items: readonly Item[], depth: number, pre: boolean): string =>

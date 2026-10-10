@@ -1,6 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { block, history, insertNode, insertText, setBlock, textRule, toggleMark, wrapIn } from './capabilities';
+export {
+    block,
+    blockRule,
+    history,
+    indentItem,
+    insertNode,
+    insertText,
+    openControl,
+    outdentItem,
+    setAttributes,
+    setBlock,
+    textRule,
+    toggleList,
+    toggleMark,
+    toggleTask,
+    wrapIn,
+} from './capabilities';
 export { compileContentModel } from './compile';
 export {
     type AttributeDeclaration,

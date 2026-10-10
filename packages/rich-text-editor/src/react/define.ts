@@ -8,6 +8,7 @@ import { type ContentModel, DefinitionError, type ResourceLimits } from '#/model
 import { compiledModel } from '#/model/compile';
 import { limitsOf } from '#/model/decode';
 import { pointer } from '#/model/errors';
+import { ownValue } from '#/model/values';
 import { CAPABILITIES } from '#/runtime/capabilities';
 import { authoringOf } from '#/runtime/policy';
 
@@ -17,6 +18,7 @@ import {
     type EditorDefinitionOptions,
     type ReactPresentation,
 } from './types';
+import { SHIPPED_VIEWS } from './views';
 
 // Kept off the definition, so no engine value is reachable from what a host holds (DR-034).
 const engines = new WeakMap<object, CompiledDefinition>();
@@ -40,7 +42,11 @@ const collectViews = (model: ContentModel) => {
     const { features, nodes } = compiledModel(model);
     const views = new Map<string, ComponentType<object>>();
     for (const feature of features) {
-        for (const { node, component } of declaredViews(feature.declaration)) {
+        let declared = declaredViews(feature.declaration);
+        if (declared.length === 0) {
+            declared = ownValue(SHIPPED_VIEWS, feature.id) ?? [];
+        }
+        for (const { node, component } of declared) {
             if (!nodes.some(({ name }) => name === node)) {
                 throw new DefinitionError('definition.orphan-behavior', {
                     feature: feature.id,

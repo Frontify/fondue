@@ -323,7 +323,7 @@ type Prepared =
     | Candidate
     | { readonly code: RejectedCode; readonly diagnostic?: Diagnostic; readonly fault?: Diagnostic };
 /** Who runs a command: a host call, a queued intent, or an async result. */
-type Route = 'host' | 'queue' | 'async';
+type Route = 'host' | 'queue' | 'async' | 'node';
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
 type Attempt = Prepared | { readonly unchanged: true };
 
@@ -1118,8 +1118,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 commit(state.tr.setSelection(NodeSelection.create(state.doc, pos)));
             }
         },
+        // The author's selection stays, so typing after a press on chrome, such as a task checkbox, keeps the node.
         execute: (id, payload) =>
-            runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(nodeId), 'host'),
+            runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(nodeId), 'node'),
         query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(nodeId)),
     });
 

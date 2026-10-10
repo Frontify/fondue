@@ -45,6 +45,12 @@ export interface PluginDescriptor {
 export const HISTORY_PLUGIN: PluginDescriptor = { id: 'history', phase: 'history' };
 /** Enter in the empty last paragraph of a container leaves it (SPEC-rich-text-editing, Key precedence row 8). */
 export const CONTAINER_KEYS_PLUGIN: PluginDescriptor = { id: 'container-keys', phase: 'structure-keys' };
+/** Enter and Backspace in a list or task item, before the container keys (SPEC-rich-text-editing, Key precedence row 7). */
+export const LIST_KEYS_PLUGIN: PluginDescriptor = {
+    id: 'list-keys',
+    phase: 'structure-keys',
+    before: [CONTAINER_KEYS_PLUGIN.id],
+};
 /** ProseMirror's base keymap: Enter, Backspace, Delete and select-all (SPEC-rich-text-editing, Key precedence row 10). */
 export const BASE_KEYS_PLUGIN: PluginDescriptor = { id: 'base-keys', phase: 'base-keys' };
 /** One plugin key, one instance: a plugin several capabilities contribute sits at its first contributor's position. */
@@ -53,6 +59,8 @@ export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonl
     // `core` always declares `text.insert`, so its capability carries the base keys into every model.
     insertText: [BASE_KEYS_PLUGIN],
     wrapIn: [CONTAINER_KEYS_PLUGIN],
+    // Every list feature indents its items, so this capability carries the list keys into each model with lists.
+    indentItem: [LIST_KEYS_PLUGIN],
 };
 /** The package's input rule engine, one plugin for every feature's rules (SPEC-rich-text-editing, Input rules). */
 export const INPUT_RULES_PLUGIN: PluginDescriptor = { id: 'input-rules', phase: 'input-rules' };
@@ -142,6 +150,44 @@ export const textRule = (rule: {
     readonly match: RegExp;
     readonly replace: string;
 }): InputRule => ({ id: rule.id, kind: 'text-rule', match: rule.match, replace: rule.replace });
+
+/**
+ * A code feature's rule that runs `command` when the text from the block start to the caret matches `match`, with the
+ * payload its named groups fill, converted by the command's payload declaration, then removes that text.
+ */
+export const blockRule = (rule: {
+    readonly id: string;
+    readonly match: RegExp;
+    readonly command: string;
+}): InputRule => ({ id: rule.id, kind: 'block-rule', match: rule.match, command: rule.command });
+
+/**
+ * Wraps the selected blocks in `list` with `item`s, turns the list at the selection's depth into `list`, or turns its
+ * selected items into paragraphs when it already is one (SPEC-rich-text-editing, List keys).
+ */
+export const toggleList = <const P extends PayloadDeclaration | undefined = undefined>(
+    list: string,
+    item: string,
+    payload?: P,
+): CommandDefinition<PayloadOf<P>> => command('toggleList', { list, item }, payload);
+
+/** Nests the selected `item`s under their previous sibling, keeping their children. */
+export const indentItem = (item: string): CommandDefinition => command('indentItem', { item });
+
+/** Moves the selected `item`s one level out, or out of the list as paragraphs at the top level. */
+export const outdentItem = (item: string): CommandDefinition => command('outdentItem', { item });
+
+/** Flips `checked` on the `item` at the selection. */
+export const toggleTask = (item: string): CommandDefinition => command('toggleTask', { item });
+
+/** Sets the payload's fields as attributes of the `node` that its `nodeId` names, else of the nearest one around the selection. */
+export const setAttributes = <const P extends PayloadDeclaration>(
+    node: string,
+    payload: P,
+): CommandDefinition<PayloadOf<P>> => command('setAttributes', { node }, payload);
+
+/** Opens a package-built control, such as the numbering dialog of `list.ordered.start.edit`. */
+export const openControl = (control: 'numbering'): CommandDefinition => command('openControl', { control });
 
 /** The first cycle that `next` reaches from `starts`, as a path that ends where it starts. */
 export const findCycle = (starts: readonly string[], next: (id: string) => readonly string[]): string[] | undefined => {
