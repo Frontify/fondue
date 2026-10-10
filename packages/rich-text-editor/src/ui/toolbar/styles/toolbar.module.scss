@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../../styles/focus-outline';
+
 // SPEC-rich-text-react/AC-103: the toolbar sticks to the top of its scrolling container.
 .root {
     position: sticky;
@@ -56,11 +58,7 @@
         cursor: default;
     }
 
-    // SPEC-rich-text-accessibility/AC-022, AC-023, AC-082: a 2 px outline around the whole item.
-    &:focus-visible {
-        outline: 2px solid var(--color-focus-default);
-        outline-offset: 2px;
-    }
+    @include focus-outline.focus-outline;
 
     // SPEC-rich-text-react/AC-041: a coarse pointer gets 44 by 44 CSS pixel targets.
     @media (pointer: coarse) {

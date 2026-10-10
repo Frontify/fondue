@@ -21,15 +21,15 @@ export interface ChromeView {
 const CHROME_SCROLL_MARGIN = '--rte-chrome-scroll-margin';
 
 /** Writes the chrome scroll margin while a toolbar covers the top, and leaves the surface's attributes alone otherwise. */
-const writeChromeMargin = (view: EditorView | undefined, threshold: number, top: number) => {
+const writeChromeMargin = (view: EditorView | undefined, height: number) => {
     if (view === undefined) {
         return;
     }
-    if (threshold === 0) {
+    if (height === 0) {
         view.dom.style.removeProperty(CHROME_SCROLL_MARGIN);
         return;
     }
-    view.dom.style.setProperty(CHROME_SCROLL_MARGIN, `${top}px`);
+    view.dom.style.setProperty(CHROME_SCROLL_MARGIN, `${height + MARGIN}px`);
 };
 
 export const createChromeView = (): ChromeView => {
@@ -51,7 +51,7 @@ export const createChromeView = (): ChromeView => {
         take: (next) => {
             view = next;
             next.setProps({ decorations, scrollMargin: margin, scrollThreshold: threshold });
-            writeChromeMargin(next, threshold.top, margin.top);
+            writeChromeMargin(next, threshold.top);
         },
         showSelection: (next) => {
             if (shown === next) {
@@ -64,7 +64,7 @@ export const createChromeView = (): ChromeView => {
         setTopInset: (height) => {
             threshold.top = height;
             margin.top = height + MARGIN;
-            writeChromeMargin(view, threshold.top, margin.top);
+            writeChromeMargin(view, height);
         },
         setBottomInset: (height) => {
             threshold.bottom = height;

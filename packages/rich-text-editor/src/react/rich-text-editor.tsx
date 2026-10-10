@@ -22,7 +22,6 @@ import {
 
 import '#/styles/content.css';
 import { AnnouncerContext, createAnnouncer } from '#/bridge/announcer';
-import { nodeChromeAt } from '#/bridge/chrome-view';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
@@ -48,9 +47,9 @@ import {
     type RuntimeHandle,
 } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
-import { pressesBinding } from '#/ui/shortcuts';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
+import { moveChromeFocus } from './chrome-focus';
 import { engineOf, viewsOf } from './define';
 import { BlockedShell, RecoveryShell } from './shells';
 import { toolbarItems } from './toolbar-items';
@@ -323,11 +322,13 @@ const SessionComponent = (
     useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
 
     const mode = modeOf(props);
-    const { disabled } = props;
-    // A change of `disabled` alone keeps the mode, and setting it again makes the runtime read the surface's `aria-disabled`.
     useClientLayoutEffect(() => {
         handleRef.current?.setMode(mode);
-    }, [mode, disabled]);
+    }, [mode]);
+    const disabled = props.disabled === true;
+    useClientLayoutEffect(() => {
+        coordinator.runtime?.setDisabled(disabled);
+    }, [coordinator, disabled]);
 
     // A changed `services` member aborts the operations it started, with no rebuild (SPEC-rich-text-runtime/AC-073, DR-074).
     const { services } = props;
@@ -377,53 +378,13 @@ const SessionComponent = (
         return () => viewport.removeEventListener('resize', measure);
     }, [coordinator]);
 
-    /**
-     * Alt+F10 moves to the most specific toolbar present, node chrome before the fixed toolbar, and on to the next one,
-     * wrapping around; Escape in one returns to the surface with its selection (SPEC-rich-text-react/AC-034, AC-035, AC-069).
-     */
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        const runtime = coordinator.runtime;
-        // A tooltip or menu that closed on this Escape keeps focus where it is.
-        if (event.defaultPrevented || event.nativeEvent.isComposing || runtime === undefined) {
-            return;
+        // A disabled editor's toolbar takes no focus.
+        let toolbar = toolbarRef.current;
+        if (props.disabled === true) {
+            toolbar = null;
         }
-        const { view } = runtime;
-        if (view === undefined) {
-            return;
-        }
-        const stops: HTMLElement[] = [];
-        const nodeChrome = nodeChromeAt(view);
-        if (nodeChrome !== null) {
-            stops.push(nodeChrome);
-        }
-        if (toolbarRef.current !== null && props.disabled !== true) {
-            stops.push(toolbarRef.current);
-        }
-        const target = event.target as Node;
-        const inside = stops.findIndex((stop) => stop.contains(target));
-        if (pressesBinding(event.nativeEvent, toolbarShortcutOf(props))) {
-            const next = stops[(inside + 1) % stops.length];
-            if (next === undefined) {
-                return;
-            }
-            event.preventDefault();
-            // Node chrome opens on its first enabled control; Radix Toolbar sends focus to the last focused item.
-            const first = next.querySelector<HTMLElement>('button:not([disabled])');
-            if (next === nodeChrome && first !== null) {
-                // WebKit's focus scroll ignores `scroll-margin`, which `scrollIntoView` keeps clear of the sticky toolbar.
-                first.focus({ preventScroll: true });
-                first.scrollIntoView({ block: 'nearest' });
-                return;
-            }
-            next.focus();
-            return;
-        }
-        // Node chrome away from the selection is not a stop, yet Escape leaves it too (SPEC-rich-text-react, Overlay focus).
-        const inNodeChrome = target instanceof Element && target.closest('[data-rte-node-chrome]') !== null;
-        if (event.key === 'Escape' && (inside >= 0 || inNodeChrome)) {
-            event.preventDefault();
-            runtime.handle.focus();
-        }
+        moveChromeFocus(event, { runtime: coordinator.runtime, toolbar, shortcut: toolbarShortcutOf(props) });
     };
 
     const shell = shellPropsOf(props);

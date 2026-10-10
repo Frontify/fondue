@@ -147,6 +147,8 @@ export interface EditorRuntime {
     changeServices(members: readonly string[]): void;
     /** The bridge caught a throw from a node view's constructor, `update` or `destroy` (SPEC-rich-text-runtime/AC-014). */
     faultView(): void;
+    /** The host's `disabled`, which runs in mode `readonly` and takes the surface out of the Tab order (SPEC-rich-text-react/AC-029). */
+    setDisabled(disabled: boolean): void;
     nodeActions(nodeId: string): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
@@ -344,6 +346,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let mode = options.mode;
     // The mode the surface shows, which follows `mode` once input has settled (SPEC-rich-text-runtime/AC-034).
     let shownMode = mode;
+    let disabled = false;
     let commitSequence = 0;
     let sequence = 0;
     let saves: SaveCoordinator | undefined;
@@ -1548,8 +1551,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 const attributes: Record<string, string> = {};
                                 if (shownMode === 'readonly') {
                                     // A surface that is not contenteditable takes no focus by itself (SPEC-rich-text-react/AC-028),
-                                    // unless the host marked it disabled, which leaves the Tab order (SPEC-rich-text-react/AC-029).
-                                    if (element.getAttribute('aria-disabled') !== 'true') {
+                                    // unless it is disabled, which leaves the Tab order (SPEC-rich-text-react/AC-029).
+                                    if (!disabled) {
                                         attributes.tabindex = '0';
                                     }
                                     attributes['aria-readonly'] = 'true';
@@ -1618,6 +1621,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (members.includes('persistence')) {
                 saves?.serviceChanged();
             }
+        },
+        setDisabled: (next) => {
+            disabled = next;
+            view?.setProps({});
         },
         faultView: () => {
             if (viewCall) {
