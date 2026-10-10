@@ -12,6 +12,7 @@ import { Dropdown } from '../Dropdown';
 import { DropdownWithContextMenu } from './DropdownWithContextMenu';
 import { DropdownWithCustomContainer } from './DropdownWithCustomContainer';
 import { DropdownWithScrollingAnchor } from './DropdownWithScrollingAnchor';
+import { DropdownWithScrollingAnchorInHost } from './DropdownWithScrollingAnchorInHost';
 import { DropdownWithVirtualAnchor } from './DropdownWithVirtualAnchor';
 
 const DROPDOWN_TRIGGER_TEST_ID = 'fondue-dropdown-trigger';
@@ -905,4 +906,70 @@ test('should not request animation frames while closed with forceMount at a virt
     });
     // A frame loop requests one frame per frame; Floating UI's resize observer may request a single one.
     expect(frameRequests).toBeLessThanOrEqual(1);
+});
+
+test('should follow a stable virtual anchor when its scroll container scrolls inside an iframe', async ({
+    mount,
+    page,
+}) => {
+    await mount(
+        <DropdownWithScrollingAnchorInHost
+            host="iframe"
+            scrollContainerTestId="scroll-container"
+            anchorTestId="anchor"
+        />,
+    );
+
+    const scope = page.frameLocator('iframe');
+    const content = scope.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    const anchor = scope.getByTestId('anchor');
+    const gapBelowAnchor = async () => {
+        const contentBox = await content.boundingBox();
+        const anchorBox = await anchor.boundingBox();
+        if (!contentBox || !anchorBox) {
+            return null;
+        }
+        return { x: contentBox.x - anchorBox.x, y: contentBox.y - anchorBox.y - anchorBox.height };
+    };
+    await expect(content).toBeVisible();
+    await expect.poll(gapBelowAnchor).toEqual({ x: 0, y: 8 });
+
+    await scope.getByTestId('scroll-container').evaluate((element) => {
+        element.scrollTop = 50;
+    });
+    await expect.poll(() => anchor.boundingBox().then((box) => box?.y)).toBeLessThan(100);
+    await expect.poll(gapBelowAnchor).toEqual({ x: 0, y: 8 });
+});
+
+test('should follow a stable virtual anchor when its scroll container scrolls inside a shadow root', async ({
+    mount,
+    page,
+}) => {
+    await mount(
+        <DropdownWithScrollingAnchorInHost
+            host="shadowRoot"
+            scrollContainerTestId="scroll-container"
+            anchorTestId="anchor"
+        />,
+    );
+
+    const scope = page;
+    const content = scope.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    const anchor = scope.getByTestId('anchor');
+    const gapBelowAnchor = async () => {
+        const contentBox = await content.boundingBox();
+        const anchorBox = await anchor.boundingBox();
+        if (!contentBox || !anchorBox) {
+            return null;
+        }
+        return { x: contentBox.x - anchorBox.x, y: contentBox.y - anchorBox.y - anchorBox.height };
+    };
+    await expect(content).toBeVisible();
+    await expect.poll(gapBelowAnchor).toEqual({ x: 0, y: 8 });
+
+    await scope.getByTestId('scroll-container').evaluate((element) => {
+        element.scrollTop = 50;
+    });
+    await expect.poll(() => anchor.boundingBox().then((box) => box?.y)).toBeLessThan(100);
+    await expect.poll(gapBelowAnchor).toEqual({ x: 0, y: 8 });
 });

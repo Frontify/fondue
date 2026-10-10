@@ -8,12 +8,14 @@ type DropdownWithScrollingAnchorProps = {
     scrollContainerTestId: string;
     anchorTestId: string;
     open?: boolean;
+    container?: HTMLElement | null;
 };
 
 export const DropdownWithScrollingAnchor = ({
     scrollContainerTestId,
     anchorTestId,
     open = true,
+    container,
 }: DropdownWithScrollingAnchorProps) => {
     const anchorRef = useRef<HTMLDivElement>(null);
     const virtualAnchor = useMemo(
@@ -29,7 +31,7 @@ export const DropdownWithScrollingAnchor = ({
                 </div>
             </div>
             <Dropdown.Root open={open} virtualAnchor={virtualAnchor}>
-                <Dropdown.Content>
+                <Dropdown.Content container={container}>
                     <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                 </Dropdown.Content>
             </Dropdown.Root>
