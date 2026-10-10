@@ -714,6 +714,23 @@ describe('the authoring policy and limits', () => {
         toJSON.mockRestore();
     });
 
+    it('SPEC-rich-text-runtime/AC-004 refuses typing and accepts a delete in a document within maxDocumentBytes that the count of every installed capability puts over it (DR-083)', () => {
+        const input = stored(para(words('abc')));
+        const { document } = start(input, { model: policyModel }).handle.getSnapshot();
+        const size = new TextEncoder().encode(JSON.stringify(document)).byteLength;
+        const { handle, view } = start(input, { model: policyModel, limits: { maxDocumentBytes: size + 1 } });
+        setSelection(handle, { text: 'abc', from: 3, to: 3 });
+        const loaded = view.state.doc;
+
+        typeText(handle, 'y');
+        const typed = view.state.doc;
+        view.dispatch(view.state.tr.delete(3, 4));
+
+        expect(document.requiredCapabilities).toEqual([{ id: 'core', version: 1 }]);
+        expect(typed).toBe(loaded);
+        expect(textOf(view.state.doc)).toBe('ab');
+    });
+
     it('SPEC-rich-text-runtime/AC-006 reads every step kind, empty step maps and an unknown step class included', () => {
         // Positions: `ab` 1-3 and a break 3-4; bold `cd` 6-8; `e` 10-11 and a bold break 11-12.
         const input = stored(

@@ -301,6 +301,39 @@ describe('paste order', () => {
         mounted.unmount();
     });
 
+    it('SPEC-rich-text-clipboard/AC-001 rejects an internal copy drop whose dragged slice passes maxPasteBytes, with the document unchanged and one maxPasteBytes diagnostic', () => {
+        const mounted = mount({
+            blocks: [paragraph(text('abc')), paragraph(text('def'))],
+            limits: { maxPasteBytes: 100 },
+        });
+        setSelection(mounted.handle, { text: 'e' });
+        const before = mounted.view.state.doc;
+        const dataTransfer = new DataTransfer();
+        const start = new DragEvent('dragstart', { bubbles: true, cancelable: true });
+        // happy-dom's DragEvent ignores the `dataTransfer` init.
+        Object.defineProperty(start, 'dataTransfer', { value: dataTransfer });
+        act(() => {
+            mounted.view.dom.dispatchEvent(start);
+        });
+        vi.spyOn(mounted.view, 'posAtCoords').mockReturnValue({ pos: 1, inside: 0 });
+        const drop = new DragEvent('drop', { bubbles: true, cancelable: true });
+        // happy-dom's DragEvent ignores these inits too; both modifiers make the drop a copy on any platform.
+        Object.defineProperties(drop, {
+            dataTransfer: { value: dataTransfer },
+            altKey: { value: true },
+            ctrlKey: { value: true },
+        });
+
+        act(() => {
+            mounted.view.dom.dispatchEvent(drop);
+        });
+
+        expect(dataTransfer.getData(SLICE_TYPE).length).toBeGreaterThan(100);
+        expect(mounted.view.state.doc).toBe(before);
+        expect(mounted.diagnostics.map(({ details }) => details)).toEqual([{ reason: 'maxPasteBytes' }]);
+        mounted.unmount();
+    });
+
     const boldLink = text(
         'https://frontify.com',
         { type: 'link', attrs: { href: 'https://frontify.com', openInNewWindow: false, styleId: 'brand' } },
@@ -832,6 +865,45 @@ describe('the paste pipeline', () => {
         pasteInto(mounted, { 'text/plain': '**x**' });
 
         expect(mounted.content()).toEqual([paragraph(text('a**x**b'))]);
+        mounted.unmount();
+    });
+
+    /** The bytes of the document after pasting `data` at the caret after `a`, as the commit check counts them. */
+    const bytesAfter = (data: Readonly<Record<string, string>>) => {
+        const literal = mount();
+        setSelection(literal.handle, { text: 'a', from: 1, to: 1 });
+        pasteInto(literal, data);
+        const installed = model.capabilities.map(({ id }) => id).sort();
+        const { document } = literal.handle.getSnapshot();
+        const written = { ...document, requiredCapabilities: installed.map((id) => ({ id, version: 1 })) };
+        literal.unmount();
+        return new TextEncoder().encode(JSON.stringify(written)).byteLength;
+    };
+
+    it('SPEC-rich-text-clipboard/AC-020 SPEC-rich-text-clipboard/AC-045 keeps pasted Markdown as typed when only the nodeIds of its conversion pass maxDocumentBytes', () => {
+        // Headings carry a `nodeId`; the list items of this vocabulary do not.
+        const markdown = '# a\n# b\n# c';
+        const mounted = mount({ limits: { maxDocumentBytes: bytesAfter({ 'text/plain': markdown }) - 1 } });
+        setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
+
+        pasteInto(mounted, { 'text/plain': markdown });
+
+        expect(mounted.content()).toEqual([paragraph(text('a# a')), paragraph(text('# b')), paragraph(text('# cb'))]);
+        mounted.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-020 reports maxDocumentBytes for a slice that passes it only once its nodeIds are filled', () => {
+        const data = { [SLICE_TYPE]: slicePayload([heading('h-1', text('T'))]) };
+        const mounted = mount({ limits: { maxDocumentBytes: bytesAfter(data) - 1 } });
+        setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
+        const before = mounted.view.state.doc;
+
+        pasteInto(mounted, data);
+
+        expect(mounted.view.state.doc).toBe(before);
+        expect(mounted.diagnostics.map(({ code, details }) => [code, details])).toEqual([
+            ['clipboard.paste-rejected', { reason: 'maxDocumentBytes' }],
+        ]);
         mounted.unmount();
     });
 
