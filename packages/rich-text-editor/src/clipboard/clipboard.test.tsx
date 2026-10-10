@@ -1452,6 +1452,35 @@ describe('pasted HTML', () => {
         mounted.unmount();
     });
 
+    // happy-dom's parser drops what follows a `script` inside `svg`, so `svg.html` runs through `fromHTML` in jsdom only.
+    it.each(['math-mark.html', 'math.html', 'svg-foreign-object.html', 'svg-link.html'])(
+        'SPEC-rich-text-clipboard/AC-010 pastes the SVG or MathML of %s as its text only',
+        (name) => {
+            const mounted = mountHtml();
+
+            pasteInto(mounted, { 'text/html': readFileSync(join(fixtures, 'security', 'html', name), 'utf8') });
+
+            const content = mounted.content() as readonly { readonly type: string }[];
+            expect(content.map(({ type }) => type)).toEqual(['paragraph', 'paragraph', 'paragraph']);
+            expect(JSON.stringify(content)).not.toMatch(/"marks"|evil|javascript/);
+            mounted.unmount();
+        },
+    );
+
+    it('SPEC-rich-text-clipboard/AC-041 pastes an element whose required attribute passes maxAttributeLength as a paragraph of its text', () => {
+        const slug = featureFromManifest(
+            JSON.parse(readFileSync(join(fixtures, 'manifest', 'acme-slug.json'), 'utf8')),
+        );
+        const editorModel = compileContentModel([...htmlFeatures(), slug()], { id: 'fixture.vocabulary', version: 1 });
+        const mounted = mount({ editorModel, blocks: [block()] });
+
+        pasteInto(mounted, { 'text/html': `<div class="acme-slug" data-slug="${'s'.repeat(10_000)}">kept</div>` });
+
+        expect(mounted.content()).toEqual([block(text('kept'))]);
+        expect(decodeDocument(mounted.handle.getSnapshot().document, editorModel).status).toBe('editable');
+        mounted.unmount();
+    });
+
     const pullQuote = featureFromManifest(
         JSON.parse(readFileSync(join(fixtures, 'manifest', 'acme-pull-quote.json'), 'utf8')),
     );

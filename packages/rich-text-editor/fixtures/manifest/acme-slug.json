@@ -1,0 +1,15 @@
+{
+    "id": "acme.slug",
+    "version": 1,
+    "requires": [{ "id": "core", "version": 1 }],
+    "nodes": {
+        "acme_slug": {
+            "group": "block",
+            "content": "inline*",
+            "attrs": { "slug": { "type": "string", "required": true } },
+            "html": ["div", { "class": "acme-slug", "data-slug": { "attr": "slug" } }, 0],
+            "parse": [{ "tag": "div.acme-slug", "attrs": { "slug": { "from": "data-slug" } } }]
+        }
+    },
+    "formats": { "html": "lossless", "text": "lossy", "markdown": "unsupported" }
+}

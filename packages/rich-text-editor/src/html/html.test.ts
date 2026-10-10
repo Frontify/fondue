@@ -5,7 +5,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 
-import { htmlModel } from '#/features/__fixtures__/html';
+import { htmlFeatures, htmlModel } from '#/features/__fixtures__/html';
+import { compileContentModel, featureFromManifest } from '#/model';
 import { defineEditor } from '#/react/define';
 
 import { fromHTML } from './index';
@@ -122,6 +123,20 @@ describe('fromHTML', () => {
 });
 
 describe('external HTML', () => {
+    it('SPEC-rich-text-clipboard/AC-041 turns an element whose required attribute passes maxAttributeLength into a paragraph of its text', () => {
+        const slug = featureFromManifest(JSON.parse(read('manifest', 'acme-slug.json')));
+        const slugModel = compileContentModel([...htmlFeatures(), slug()], { id: 'fixture.html', version: 1 });
+
+        const result = fromHTML(`<div class="acme-slug" data-slug="${'s'.repeat(10_000)}">kept</div>`, slugModel, {
+            window: window as unknown as Window,
+        });
+
+        expect(result.status).toBe('editable');
+        expect(result.status === 'editable' && result.document.content.content).toEqual([
+            paragraph({ type: 'text', text: 'kept' }),
+        ]);
+    });
+
     const expected: Readonly<Record<string, string>> = {
         'clobbering-body.html': 't',
         'clobbering-form.html': 'form kept|after',
@@ -130,9 +145,12 @@ describe('external HTML', () => {
         'id-class-style.html': 'Styled text',
         'iframe.html': 'a|b',
         'javascript-urls.html': 'js mixed encoded data',
+        'math-mark.html': 'Before|m|After',
         'math.html': 'Before|pimath link|After',
         'object.html': 'fallback',
         'script-style.html': 'Kept',
+        'svg-foreign-object.html': 'Before|fo|After',
+        'svg-link.html': 'Before|x|After',
         'svg.html': 'Before|svg text svg link|After',
     };
     const MODELLED = new Set([
@@ -186,6 +204,11 @@ describe('external HTML', () => {
             expect(new Set(attributeNames(content))).toEqual(
                 new Set(attributeNames(content).filter((key) => MODELLED.has(key))),
             );
+            // SVG and MathML keep their text only, since the engine's tag rules match their elements by name.
+            if (/^(svg|math)/.test(name)) {
+                expect(content.map(({ type }) => type)).toEqual(['paragraph', 'paragraph', 'paragraph']);
+                expect(json).not.toContain('"marks"');
+            }
         },
     );
 });
