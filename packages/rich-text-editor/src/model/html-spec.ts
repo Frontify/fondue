@@ -123,6 +123,15 @@ export const resolveHtmlSpec = (
     return { layers, content };
 };
 
+/** `template` with `dir="auto"` on its outer element when it writes no `dir`, so a block takes its direction from its own text. */
+export const withAutoDirection = (template: HtmlTemplate): HtmlTemplate => {
+    const [outer, ...inner] = template.layers;
+    if (outer === undefined || Object.hasOwn(outer.attrs, 'dir')) {
+        return template;
+    }
+    return { ...template, layers: [{ ...outer, attrs: { ...outer.attrs, dir: 'auto' } }, ...inner] };
+};
+
 /** A run of spaces alternates U+0020 and U+00A0 from a space, so a long line still wraps; `carried` spaces from the text before count as the run's start. */
 export const renderSpaces = (text: string, carried = 0): string =>
     text.replaceAll(/ +/g, (run, at: number) => {

@@ -14,14 +14,14 @@ exports[`codec golden files > writes invalid-attribute.json as its golden HTML, 
 
 exports[`codec golden files > writes the valid fixture blocks.json as its golden HTML, plain text and Markdown > html 1`] = `
 "<div dir="rtl">
-<h1>Plan</h1>
-<ol start="0">
-<li>
-<p>
+<h1 dir="auto">Plan</h1>
+<ol start="0" dir="auto">
+<li dir="auto">
+<p dir="auto">
 </p>
-<ul>
-<li>
-<p>
+<ul dir="auto">
+<li dir="auto">
+<p dir="auto">
 <span data-rte-mention="42">
 </span>
 </p>
@@ -29,37 +29,37 @@ exports[`codec golden files > writes the valid fixture blocks.json as its golden
 </ul>
 </li>
 </ol>
-<div data-rte-column-break="">
+<div data-rte-column-break="" dir="auto">
 </div>
-<pre>
+<pre dir="auto">
 <code>const a = 1;
 	b();</code>
 </pre>
-<hr/>
-<table>
-<tr>
-<th colspan="2" rowspan="1" scope="col">
-<p>
+<hr dir="auto"/>
+<table dir="auto">
+<tr dir="auto">
+<th colspan="2" rowspan="1" scope="col" dir="auto">
+<p dir="auto">
 </p>
 </th>
 </tr>
-<tr>
-<td colspan="1" rowspan="1">
-<p>
+<tr dir="auto">
+<td colspan="1" rowspan="1" dir="auto">
+<p dir="auto">
 </p>
 </td>
-<td colspan="1" rowspan="1">
-<blockquote>
-<p>
+<td colspan="1" rowspan="1" dir="auto">
+<blockquote dir="auto">
+<p dir="auto">
 </p>
 </blockquote>
 </td>
 </tr>
 </table>
-<figure>
-<img alt=""/>
+<figure dir="auto">
+<img alt="" dir="auto"/>
 </figure>
-<div data-rte-provider="youtube">
+<div data-rte-provider="youtube" dir="auto">
 </div>
 </div>"
 `;
@@ -208,7 +208,7 @@ https://www.youtube.com/watch?v=x",
 
 exports[`codec golden files > writes the valid fixture marks.json as its golden HTML, plain text and Markdown > html 1`] = `
 "<div lang="de-CH">
-<p>Grüezi <a href="https://frontify.com">
+<p dir="auto">Grüezi <a href="https://frontify.com">
 <span data-rte-color="brand.red">
 <strong>Welt</strong>
 </span>
@@ -296,13 +296,13 @@ H2O 😀",
 
 exports[`codec golden files > writes unknown-attribute.json as its golden HTML, plain text and Markdown > html 1`] = `
 "<div>
-<p>Warm words</p>
+<p dir="auto">Warm words</p>
 </div>"
 `;
 
 exports[`codec golden files > writes unknown-attribute.json as its golden HTML, plain text and Markdown > html 2`] = `
 "<div>
-<p>a</p>
+<p dir="auto">a</p>
 </div>"
 `;
 
@@ -316,13 +316,13 @@ exports[`codec golden files > writes unknown-attribute.json as its golden HTML, 
 
 exports[`codec golden files > writes unknown-mark.json as its golden HTML, plain text and Markdown > html 1`] = `
 "<div>
-<p>Plain <strong>sparkly</strong> end</p>
+<p dir="auto">Plain <strong>sparkly</strong> end</p>
 </div>"
 `;
 
 exports[`codec golden files > writes unknown-mark.json as its golden HTML, plain text and Markdown > html 2`] = `
 "<div>
-<p>a</p>
+<p dir="auto">a</p>
 </div>"
 `;
 
@@ -348,20 +348,20 @@ exports[`codec golden files > writes unknown-node.json as its golden HTML, plain
 
 exports[`codec golden files > writes unknown-nodes.json as its golden HTML, plain text and Markdown > html 1`] = `
 "<div>
-<p>Before</p>
+<p dir="auto">Before</p>
 <div role="group" aria-label="Unsupported content: callout" data-rte-island="">Heads up &lt;b&gt;&amp;&lt;/b&gt;</div>
-<ul>
-<li>
-<p>Item</p>
+<ul dir="auto">
+<li dir="auto">
+<p dir="auto">Item</p>
 <div role="group" aria-label="Unsupported content: poll" data-rte-island="">Deep</div>
 </li>
 </ul>
 <div role="group" aria-label="Unsupported content" data-rte-island="">
 </div>
-<p>Mood <span role="group" aria-label="Unsupported content: sticker" data-rte-island="">smile</span> and after</p>
+<p dir="auto">Mood <span role="group" aria-label="Unsupported content: sticker" data-rte-island="">smile</span> and after</p>
 <div role="group" aria-label="Unsupported content: embed3d" data-rte-island="">
 </div>
-<p>After</p>
+<p dir="auto">After</p>
 <div role="note" data-rte-message="islands" lang="en-US">Some content is not supported here.</div>
 </div>"
 `;
@@ -395,7 +395,7 @@ After"
 
 exports[`codec golden files > writes unsafe-url.json as its golden HTML, plain text and Markdown > html 1`] = `
 "<div>
-<p>a</p>
+<p dir="auto">a</p>
 </div>"
 `;
 

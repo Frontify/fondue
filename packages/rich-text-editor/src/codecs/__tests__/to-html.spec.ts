@@ -8,7 +8,16 @@ import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 
-import { doc, envelope, mark, node, paragraph, text } from '#/features/__tests__/fixtures/documents';
+import {
+    bulletList,
+    doc,
+    envelope,
+    listItem,
+    mark,
+    node,
+    paragraph,
+    text,
+} from '#/features/__tests__/fixtures/documents';
 import { core } from '#/features/core/feature';
 import { compileContentModel, defineFeature, type JsonValue, type RichTextDocument } from '#/model';
 
@@ -117,5 +126,73 @@ describe('toHTML hostile fixtures', () => {
         const { html } = createCodecs(semanticModel()).toHTML(fixture as RichTextDocument);
 
         expect(DOMPurify.sanitize(html, { ADD_ATTR: ['target'] })).toBe(serialized(html));
+    });
+});
+
+describe('toHTML direction', () => {
+    const directionModel = semanticModel();
+    const directionCodecs = createCodecs(directionModel);
+    const document = (...blocks: readonly JsonValue[]) =>
+        envelope(doc(...blocks), [
+            'core',
+            'fixture.align',
+            'fixture.blocks',
+            'fixture.link',
+            'fixture.lists',
+            'fixture.marks',
+        ]) as unknown as RichTextDocument;
+
+    it('writes dir auto on a paragraph, a heading and a list item that store no dir, and on the list', () => {
+        const { html } = directionCodecs.toHTML(
+            document(
+                paragraph(text('Plain')),
+                node(
+                    'heading',
+                    { nodeId: 'h-1', level: 1, lang: null, styleId: null, align: null, indent: 0 },
+                    text('Title'),
+                ),
+                bulletList(listItem(paragraph(text('Item')))),
+            ),
+        );
+
+        expect(html).toBe(
+            '<div><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul></div>',
+        );
+    });
+
+    it('writes no dir on a link or bold', () => {
+        const { html } = directionCodecs.toHTML(
+            document(
+                paragraph(
+                    text(
+                        'Go',
+                        mark('link', { href: 'https://frontify.com', openInNewWindow: false, styleId: null }),
+                        mark('bold'),
+                    ),
+                ),
+            ),
+        );
+
+        expect(html).toBe('<div><p dir="auto"><a href="https://frontify.com"><strong>Go</strong></a></p></div>');
+    });
+
+    it('writes dir auto when an html override returns a spec for a block', () => {
+        const quoted = defineFeature({
+            id: 'test.quote',
+            version: 1,
+            requires,
+            nodes: {
+                quote: { group: 'block', content: 'inline*', attrs: {}, html: ['blockquote', 0], parse: [] },
+            },
+            formats: { html: 'lossless', text: 'lossless', markdown: 'lossless' },
+            codecs: { html: { nodes: { quote: () => ['q', { cite: 'https://frontify.com' }, 0] } } },
+        });
+        const model = compileContentModel([core(), quoted()], { id: 'test.quote', version: 1 });
+        const { html } = createCodecs(model).toHTML({
+            ...(envelope(doc(node('quote', undefined, text('Said'))), ['core', 'test.quote']) as object),
+            model: model.ref,
+        } as unknown as RichTextDocument);
+
+        expect(html).toBe('<div><q cite="https://frontify.com" dir="auto">Said</q></div>');
     });
 });
