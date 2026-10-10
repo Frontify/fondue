@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createRef, Profiler, type ReactNode, useContext } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { AnnouncerContext, COALESCE_MS } from '#/bridge/announcer';
+import { AnnouncerContext } from '#/bridge/announcer';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
@@ -126,6 +126,7 @@ describe('the fixed toolbar', () => {
             'More',
         ]);
         expect(renders).toBe(0);
+        expect(JSON.stringify(handle.getSnapshot().document.content)).toContain(`three${'x'.repeat(100)}`);
     });
 
     it('SPEC-rich-text-react/AC-037 reports mixed for half bold text and pressed for the block toggle the caret sits in', () => {
@@ -161,6 +162,66 @@ describe('the fixed toolbar', () => {
         expect(button('Bold')).toHaveAccessibleDescription(
             expect.stringContaining('Not available at the current selection'),
         );
+    });
+
+    it('SPEC-rich-text-react/AC-038 gives the reason read-only for a read-only editor', async () => {
+        const { handle } = mount({ readOnly: true });
+        act(() => setSelection(handle(), { text: 'two' }));
+
+        act(() => button('Bold').focus());
+        const tooltip = await screen.findByRole('tooltip');
+
+        expect(button('Bold')).toHaveAttribute('aria-disabled', 'true');
+        expect(tooltip).toHaveTextContent('The content is read-only');
+        expect(tooltip).not.toHaveTextContent('Not allowed in this editor');
+    });
+
+    it('SPEC-rich-text-react/AC-038 gives the reason not allowed for a command the policy refuses after mount', async () => {
+        const model = compileContentModel([core(), bold(), boldRules()], { id: 'test.toolbar', version: 1 });
+        const definition = defineEditor({ id: 'test.toolbar', model });
+        const { handle } = mount({
+            definition,
+            presentation: defineReactPresentation({ toolbar: [['mark.bold.toggle']] }),
+        });
+        const { authoring } = definition;
+        handle().updatePolicy({
+            ...authoring,
+            features: {
+                ...authoring.features,
+                'marks.bold': { create: false, edit: true, remove: true, paste: true },
+            },
+        });
+        act(() => setSelection(handle(), { text: 'two' }));
+
+        act(() => button('Bold').focus());
+        const tooltip = await screen.findByRole('tooltip');
+
+        expect(button('Bold')).toHaveAttribute('aria-disabled', 'true');
+        expect(tooltip).toHaveTextContent('Not allowed in this editor');
+        expect(tooltip).not.toHaveTextContent('The content is read-only');
+    });
+
+    it('SPEC-rich-text-react/AC-036 leaves focus where the author moved it while the item ran', async () => {
+        const { handle } = mount({ children: <button type="button">Host</button> });
+        act(() => setSelection(handle(), { text: 'two' }));
+        act(() => button('Bold').focus());
+
+        fireEvent.click(button('Bold'));
+        act(() => button('Host').focus());
+        await act(() => Promise.resolve());
+
+        expect(button('Host')).toHaveFocus();
+        expect(button('Bold')).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    it('SPEC-rich-text-react/AC-036 returns focus to the surface when nothing else took it', async () => {
+        const { handle } = mount();
+        act(() => setSelection(handle(), { text: 'two' }));
+        act(() => button('Bold').focus());
+
+        await act(() => fireEvent.click(button('Bold')));
+
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveFocus();
     });
 
     it('SPEC-rich-text-react/AC-099 SPEC-rich-text-react/AC-038 leaves out a command the policy refuses and keeps one the selection disables', () => {
@@ -242,6 +303,8 @@ describe('the fixed toolbar', () => {
         const content = () => JSON.stringify(handle().getSnapshot().document.content);
         act(() => setSelection(handle(), { text: 'two' }));
         const before = content();
+        // The untyped handle, since the definition's commands are not known to this test.
+        const executed = (handle() as EditorHandle).execute('mark.bold.toggle');
 
         await act(() => fireEvent.click(button('Bold')));
         act(() => pressKey(handle(), 'Mod-b'));
@@ -249,6 +312,7 @@ describe('the fixed toolbar', () => {
         act(() => setSelection(handle(), { text: 'three', from: 5 }));
         act(() => typeText(handle(), ' **x**'));
 
+        expect(executed).toEqual({ status: 'rejected', code: 'not-allowed' });
         expect(afterRoutes).toBe(before);
         expect(content()).not.toContain('"bold"');
     });
@@ -314,9 +378,71 @@ describe('the announcer', () => {
             act(() => environment.advance(100));
         }
         const early = region().textContent;
-        act(() => environment.advance(COALESCE_MS));
+        act(() => environment.advance(500));
 
         expect(early).toBe('');
         expect(region().textContent).toBe('Results: 1');
+    });
+
+    /** The messages the region received, in order, whatever it shows now. */
+    const spoken = () => {
+        const seen: string[] = [];
+        new MutationObserver((records) => {
+            for (const record of records) {
+                for (const node of record.addedNodes) {
+                    seen.push(node.textContent ?? '');
+                }
+            }
+        }).observe(region(), { childList: true });
+        return seen;
+    };
+
+    it('SPEC-rich-text-accessibility/AC-040 coalesces two messages 499 ms apart and announces both 501 ms apart', async () => {
+        const { environment } = mount({
+            children: (
+                <>
+                    <Announce message="First" coalesce="find" />
+                    <Announce message="Second" coalesce="find" />
+                </>
+            ),
+        });
+        const seen = spoken();
+
+        fireEvent.click(button('First'));
+        act(() => environment.advance(499));
+        fireEvent.click(button('Second'));
+        act(() => environment.advance(499));
+        const coalesced = region().textContent;
+        act(() => environment.advance(1));
+        await Promise.resolve();
+        const afterClose = [...seen];
+        fireEvent.click(button('First'));
+        act(() => environment.advance(501));
+        fireEvent.click(button('Second'));
+        act(() => environment.advance(501));
+        await Promise.resolve();
+
+        expect(coalesced).toBe('');
+        expect(afterClose).toEqual(['Second']);
+        expect(seen).toEqual(['Second', 'First', 'Second']);
+    });
+
+    it('SPEC-rich-text-accessibility/AC-040 coalesces per key, so a message with another key is not swallowed', async () => {
+        const { environment } = mount({
+            children: (
+                <>
+                    <Announce message="Find 3" coalesce="find" />
+                    <Announce message="Saved" coalesce="save" />
+                </>
+            ),
+        });
+        const seen = spoken();
+
+        fireEvent.click(button('Find 3'));
+        fireEvent.click(button('Saved'));
+        act(() => environment.advance(500));
+        await Promise.resolve();
+
+        expect(seen.filter((text) => text !== '').sort()).toEqual(['Find 3', 'Saved']);
     });
 });

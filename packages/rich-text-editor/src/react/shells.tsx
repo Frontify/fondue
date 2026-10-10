@@ -153,8 +153,15 @@ export const RecoveryShell = ({
     const { model, limits, presentation, locale, testId } = shell;
     const { t } = readerContext(locale, presentation);
     const messageRef = useRef<HTMLParagraphElement>(null);
-    // The shell replaces the root and its polite region, so focus carries the crash to a screen reader (SPEC-rich-text-accessibility/AC-038).
-    useEffect(() => messageRef.current?.focus(), []);
+    // The shell replaces the root and its polite region, so focus carries the crash to a screen reader (SPEC-rich-text-accessibility/AC-038),
+    // unless the author was elsewhere: only the removed surface leaves focus on the body.
+    useEffect(() => {
+        const message = messageRef.current;
+        const { activeElement, body } = window.document;
+        if (message !== null && (activeElement === null || activeElement === body)) {
+            message.focus();
+        }
+    }, []);
     return (
         <div data-test-id={testId} data-rte-shell="recovery">
             <p ref={messageRef} tabIndex={-1}>

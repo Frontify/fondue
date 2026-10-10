@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { ThemeProvider } from '@frontify/fondue-components';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { AnnouncerContext } from '../../src/bridge/announcer';
 import { bold, core } from '../../src/features';
 import { fixtureCodeBlockView } from '../../src/features/__fixtures__/code-block/view';
 import { fixtureItalic, fixtureLink, fixtureToolbar } from '../../src/features/__fixtures__/features';
@@ -85,6 +86,16 @@ declare global {
     }
 }
 
+/** A button that announces a message through the editor's live region, which the tests press. */
+const Announce = ({ message, coalesce }: { readonly message: string; readonly coalesce: string | undefined }) => {
+    const announcer = useContext(AnnouncerContext);
+    return (
+        <button type="button" data-announce="" onClick={() => announcer?.announce(message, coalesce)}>
+            Announce
+        </button>
+    );
+};
+
 /** Mounts the toolbar editor between two host buttons, in a form, with the stand-in commands in the toolbar. */
 export const ToolbarProbe = ({
     texts = ['one two three'],
@@ -100,6 +111,7 @@ export const ToolbarProbe = ({
     compose = false,
     wide = false,
     controls,
+    announce,
 }: {
     readonly texts?: readonly string[];
     readonly blocks?: readonly ContentNodeJSON[];
@@ -118,6 +130,8 @@ export const ToolbarProbe = ({
     /** Adds the six heading levels to the toolbar. */
     readonly wide?: boolean;
     readonly controls?: ReactPresentation['controls'];
+    /** Adds a button that announces this message, which the live region of the composed editor reads. */
+    readonly announce?: string;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const presentation = useMemo(() => {
@@ -186,11 +200,12 @@ export const ToolbarProbe = ({
         ref,
     } as const;
     let editor = <RichTextEditor {...props} />;
-    if (compose) {
+    if (compose || announce !== undefined) {
         editor = (
             <RichTextEditor.Root {...props}>
                 <RichTextEditor.Toolbar />
                 <RichTextEditor.Surface />
+                {announce !== undefined && <Announce message={announce} coalesce={undefined} />}
             </RichTextEditor.Root>
         );
     }

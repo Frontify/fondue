@@ -4,4 +4,10 @@
 
 .button {
     @include focus-outline.focus-outline;
+
+    // SPEC-rich-text-react/AC-041: a coarse pointer gets targets of at least 44 by 44 CSS pixels; the label sets the width beyond that.
+    @media (pointer: coarse) {
+        min-inline-size: 44px;
+        min-block-size: 44px;
+    }
 }
