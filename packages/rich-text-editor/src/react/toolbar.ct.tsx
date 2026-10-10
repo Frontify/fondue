@@ -863,3 +863,27 @@ test('SPEC-rich-text-accessibility/AC-022 SPEC-rich-text-accessibility/AC-023 ou
     expect(outline.width).toBeGreaterThanOrEqual(2);
     expect(contrast(outline.color, outline.background)).toBeGreaterThanOrEqual(3);
 });
+
+test('SPEC-rich-text-react/AC-037 shows no check on a More row of a command that is no toggle, even while it is active', async ({
+    mount,
+    page,
+}) => {
+    const link = {
+        type: 'link',
+        attrs: { href: 'https://example.com/fixture', openInNewWindow: false, styleId: null },
+    };
+    const paragraph = {
+        type: 'paragraph',
+        attrs: { lang: null },
+        content: [{ type: 'text', text: 'linked', marks: [link] }],
+    };
+    await mount(<ToolbarProbe width={60} blocks={[paragraph as never]} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'linked');
+    await itemOf(page, 'More').click();
+
+    const row = page.getByRole('menuitem', { name: 'Link' });
+    await expect(row).toBeVisible();
+    await expect(row.locator('[data-test-id^="fondue-icons-check"]')).toHaveCount(0);
+});
