@@ -2,7 +2,7 @@
 
 import { IconCross } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
-import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useMemo, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
@@ -12,6 +12,10 @@ import { Button } from '../Button/Button';
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import styles from './styles/flyout.module.scss';
+
+export type FlyoutVirtualAnchor = {
+    getBoundingClientRect: () => DOMRect;
+};
 
 export type FlyoutRootProps = {
     /**
@@ -28,11 +32,23 @@ export type FlyoutRootProps = {
      * Event handler called when the `open` state changes
      */
     onOpenChange?: (open: boolean) => void;
+    /**
+     * Anchor the flyout to this rectangle instead of `Flyout.Trigger`, for example a text selection or a pointer position.
+     * Pass a new object whenever the rectangle changes.
+     */
+    virtualAnchor?: FlyoutVirtualAnchor;
     children?: ReactNode;
 };
 
-export const FlyoutRoot = ({ children, ...props }: FlyoutRootProps) => {
-    return <RadixPopover.Root {...props}>{children}</RadixPopover.Root>;
+export const FlyoutRoot = ({ children, virtualAnchor, ...props }: FlyoutRootProps) => {
+    const virtualRef = useMemo(() => ({ current: virtualAnchor ?? null }), [virtualAnchor]);
+
+    return (
+        <RadixPopover.Root {...props}>
+            {virtualAnchor && <RadixPopover.Anchor virtualRef={virtualRef} />}
+            {children}
+        </RadixPopover.Root>
+    );
 };
 FlyoutRoot.displayName = 'Flyout.Root';
 
@@ -122,6 +138,11 @@ export type FlyoutContentProps = {
      * Event handler called when the escape key is pressed.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    /**
+     * The element the flyout is portalled into
+     * @default document.body
+     */
+    container?: HTMLElement | null;
     children?: ReactNode;
     'data-test-id'?: string;
 };
@@ -148,6 +169,7 @@ export const FlyoutContent = (
         side,
         triggerOffset = 'compact',
         viewportCollisionPadding = 'compact',
+        container,
         'data-test-id': dataTestId = 'fondue-flyout-content',
         children,
         ...props
@@ -172,7 +194,7 @@ export const FlyoutContent = (
     };
 
     return (
-        <RadixPopover.Portal>
+        <RadixPopover.Portal container={container}>
             <ThemeProvider>
                 <div data-test-id="fondue-flyout-overlay" className={styles.overlay} />
                 <RadixPopover.Content

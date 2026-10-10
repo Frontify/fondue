@@ -9,6 +9,9 @@ import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 
 import { Flyout } from '../Flyout';
 
+import { FlyoutWithCustomContainer } from './FlyoutWithCustomContainer';
+import { FlyoutWithVirtualAnchor } from './FlyoutWithVirtualAnchor';
+
 const FLYOUT_TRIGGER_TEST_ID = 'fondue-flyout-trigger';
 const FLYOUT_CONTENT_TEST_ID = 'fondue-flyout-content';
 const FLYOUT_TRIGGER_TEXT = 'Flyout Trigger';
@@ -548,4 +551,41 @@ test('should prevent flyout close when onEscapeKeyDown calls preventDefault', as
     expect(onEscapeKeyDown.callCount).toBe(1);
     // Flyout should still be visible because we prevented the default behavior
     await expect(contentElement).toBeVisible();
+});
+
+test('should portal into document.body by default', async ({ mount, page }) => {
+    await mount(
+        <Flyout.Root open>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+
+    await expect(page.getByTestId(FLYOUT_CONTENT_TEST_ID)).toBeVisible();
+    await expect(page.locator('#root').getByTestId(FLYOUT_CONTENT_TEST_ID)).toHaveCount(0);
+});
+
+test('should render inside the given container', async ({ mount, page }) => {
+    await mount(
+        <FlyoutWithCustomContainer containerTestId="custom-container" contentTestId={FLYOUT_CONTENT_TEST_ID} />,
+    );
+
+    const flyoutContent = page.getByTestId('custom-container').getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent).toBeVisible();
+    await expect(flyoutContent).toContainText(FLYOUT_BODY_TEXT);
+});
+
+test('should position at the virtual anchor and follow it', async ({ mount, page }) => {
+    const component = await mount(<FlyoutWithVirtualAnchor left={100} top={100} width={40} height={20} />);
+
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent).toBeVisible();
+    await expect.poll(() => flyoutContent.boundingBox()).toMatchObject({ x: 100, y: 128 });
+
+    await component.update(<FlyoutWithVirtualAnchor left={300} top={200} width={40} height={20} />);
+    await expect.poll(() => flyoutContent.boundingBox()).toMatchObject({ x: 300, y: 228 });
 });

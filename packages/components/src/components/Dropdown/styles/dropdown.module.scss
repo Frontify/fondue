@@ -6,6 +6,12 @@
 @use '../../../utilities/shadow.module.scss';
 @use '../../../utilities/focusStyle.module.scss';
 
+.virtualTrigger {
+    position: fixed;
+    visibility: hidden;
+    pointer-events: none;
+}
+
 .content,
 .subContent {
     display: block;

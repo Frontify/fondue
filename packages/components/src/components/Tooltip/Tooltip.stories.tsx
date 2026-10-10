@@ -144,3 +144,20 @@ export const WithButton: Story = {
         </Tooltip.Root>
     ),
 };
+
+export const WithCustomContainer: Story = {
+    render: ({ ...args }) => {
+        const [container, setContainer] = useState<HTMLDivElement | null>(null);
+        return (
+            <>
+                <Tooltip.Root {...args}>
+                    <Tooltip.Trigger>
+                        <p>Hover over me!</p>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content container={container}>I am rendered inside the custom container</Tooltip.Content>
+                </Tooltip.Root>
+                <div ref={setContainer} data-test-id="tooltip-custom-container" />
+            </>
+        );
+    },
+};
