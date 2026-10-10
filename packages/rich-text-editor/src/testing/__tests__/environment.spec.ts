@@ -96,6 +96,21 @@ describe('createTestEnvironment', () => {
         expect(ran).toEqual(['m1', 'm2', 'm3', 'f1', 'f2', 'i1', 'f3']);
     });
 
+    it('lets a promise continuation started by one microtask run before the next microtask', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const ran: string[] = [];
+        let continuation: Promise<unknown> = Promise.resolve();
+        environment.scheduler.microtask(() => {
+            ran.push('m1');
+            continuation = Promise.resolve().then(() => ran.push('continuation'));
+        });
+        environment.scheduler.microtask(() => ran.push('m2'));
+
+        await environment.flushMicrotasks();
+        expect(ran).toEqual(['m1', 'continuation', 'm2']);
+        await continuation;
+    });
+
     it('counts IDs per kind and repeats random values per seed', () => {
         const first = createTestEnvironment({ seed: 7 });
         const second = createTestEnvironment({ seed: 7 });
