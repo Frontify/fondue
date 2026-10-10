@@ -371,7 +371,7 @@ const checkChildren = (
     return content;
 };
 
-/** Decode order step 4 for a node below the root: checks 1 to 7, the first failing one making it fail. */
+/** A node below the root: its shape and type, then its attributes, marks and children; the first failure makes it fail. */
 const checkNode = (context: Context, value: unknown, path: string, parent: CompiledNode): Checked => {
     if (context.review.has(path)) {
         return FAILED;

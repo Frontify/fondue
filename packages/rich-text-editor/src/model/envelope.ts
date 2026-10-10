@@ -22,7 +22,7 @@ const isRef = (value: unknown): value is { readonly id: string; readonly version
     typeof value.id === 'string' &&
     Number.isInteger(value.version);
 
-/** The Root row of the Decode order shape table: a `doc` with at least one child and no key but `attrs` (an object). */
+/** A `doc` with at least one child and no key but `attrs` (an object). */
 export const isRoot = (root: unknown): boolean =>
     isRecord(root) &&
     root.type === 'doc' &&
@@ -46,7 +46,7 @@ export const findMisshapenCapabilities = (capabilities: unknown): string | undef
     return undefined;
 };
 
-/** The path of the first part of a known-version envelope that lacks the Envelope or root shape. */
+/** The path of the first part of a known-version envelope that lacks the envelope shape or the root shape. */
 const findMisshapen = (envelope: Readonly<Record<string, unknown>>): string | undefined => {
     if (!hasExactly(envelope, ENVELOPE_KEYS)) {
         return '';
@@ -58,7 +58,7 @@ const findMisshapen = (envelope: Readonly<Record<string, unknown>>): string | un
     return findMisshapenCapabilities(envelope.requiredCapabilities) ?? root;
 };
 
-/** Decode order step 2: the format and its version, then the Envelope and root shape, then the model ID. */
+/** Checks the format and its version, then the envelope and root shape, then the model ID. */
 export const checkEnvelope = (value: unknown, model: ContentModel): EnvelopeResult => {
     const invalid = (path: string): EnvelopeResult => ({
         ok: false,
