@@ -25,7 +25,7 @@ const LAYOUT_ENTRIES = new Set([
     './styles',
 ]);
 
-const EXPORTED_NOW = ['./model', './testing'];
+const EXPORTED_NOW = ['./model'];
 
 const PROSEMIRROR_FLOORS: Record<string, string> = {
     'prosemirror-commands': '1.7.2',
