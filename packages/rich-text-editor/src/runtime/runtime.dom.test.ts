@@ -4062,8 +4062,9 @@ describe('platform key bindings', () => {
         version: 1,
     });
     const firstType = ({ view }: ReturnType<typeof start>) => view.state.doc.child(0).type.name;
-    // prosemirror-keymap fixed `Mod` from the platform the test DOM reported when it loaded, before any mock.
-    const modIsMeta = /Mac|iP(hone|[oa]d)/.test(navigator.platform);
+    // `Mod` is Meta on the platform the keymap takes for Apple's, else Ctrl.
+    const modAltQ = (apple: boolean) =>
+        new KeyboardEvent('keydown', { key: 'q', altKey: true, metaKey: apple, ctrlKey: !apple, bubbles: true });
     afterEach(() => vi.restoreAllMocks());
 
     it('SPEC-rich-text/AC-064 compiles the mac: and other: keys of the spec manifest and runs each on its platform only', () => {
@@ -4077,15 +4078,7 @@ describe('platform key bindings', () => {
         // The `other:` binding does nothing on an Apple platform, where the `mac:` one turns the block back.
         pressKey(session.handle, 'Ctrl-Shift-q');
         expect(firstType(session)).toBe('acme_pull_quote');
-        session.view.dom.dispatchEvent(
-            new KeyboardEvent('keydown', {
-                key: 'q',
-                altKey: true,
-                metaKey: modIsMeta,
-                ctrlKey: !modIsMeta,
-                bubbles: true,
-            }),
-        );
+        session.view.dom.dispatchEvent(modAltQ(true));
         expect(firstType(session)).toBe('paragraph');
     });
 
@@ -4099,22 +4092,14 @@ describe('platform key bindings', () => {
             keys: { 'mac:Mod-Alt-q': 'acme.pull-quote.set', 'Mod-Alt-q': 'acme.pull-quote.unset' },
         });
         const mixed = compileContentModel([core(), both()], { id: 'test.bold', version: 1 });
-        const modAltQ = () =>
-            new KeyboardEvent('keydown', {
-                key: 'q',
-                altKey: true,
-                metaKey: modIsMeta,
-                ctrlKey: !modIsMeta,
-                bubbles: true,
-            });
         const platform = vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
         const session = start(stored(para(words('ab'))), { model: mixed });
         setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
 
-        session.view.dom.dispatchEvent(modAltQ());
+        session.view.dom.dispatchEvent(modAltQ(true));
         expect(firstType(session)).toBe('acme_pull_quote');
         platform.mockReturnValue('Win32');
-        session.view.dom.dispatchEvent(modAltQ());
+        session.view.dom.dispatchEvent(modAltQ(false));
         expect(firstType(session)).toBe('paragraph');
     });
 
@@ -4128,15 +4113,24 @@ describe('platform key bindings', () => {
             expect(bindingHere(['mac:Mod-Alt-q', 'other:Ctrl-Shift-q'], isApplePlatform())).toBe('mac:Mod-Alt-q');
             pressKey(session.handle, 'Ctrl-Shift-q');
             expect(firstType(session)).toBe('paragraph');
-            session.view.dom.dispatchEvent(
-                new KeyboardEvent('keydown', {
-                    key: 'q',
-                    altKey: true,
-                    metaKey: modIsMeta,
-                    ctrlKey: !modIsMeta,
-                    bubbles: true,
-                }),
-            );
+            session.view.dom.dispatchEvent(modAltQ(true));
+            expect(firstType(session)).toBe('acme_pull_quote');
+        } finally {
+            Reflect.deleteProperty(navigator, 'userAgentData');
+        }
+    });
+
+    it('SPEC-rich-text-react/AC-039 runs a mac:Mod binding on the Meta key when only userAgentData names macOS', () => {
+        vi.spyOn(navigator, 'platform', 'get').mockReturnValue('');
+        Object.defineProperty(navigator, 'userAgentData', { configurable: true, get: () => ({ platform: 'macOS' }) });
+        try {
+            const bound = featureFromManifest({ ...pullQuoteManifest, keys: { 'mac:Mod-b': 'acme.pull-quote.set' } });
+            const session = start(stored(para(words('ab'))), {
+                model: compileContentModel([core(), bound()], { id: 'test.bold', version: 1 }),
+            });
+            setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+
+            session.view.dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'b', metaKey: true, bubbles: true }));
             expect(firstType(session)).toBe('acme_pull_quote');
         } finally {
             Reflect.deleteProperty(navigator, 'userAgentData');

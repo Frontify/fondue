@@ -82,6 +82,16 @@ describe('package locales', () => {
         ).toEqual([['count'], ['count'], ['errors'], ['review']]);
     });
 
+    it('SPEC-rich-text-react/AC-059 names every enUS placeholder as a count or as one that holds no count', () => {
+        const notCounts = ['feature'];
+        const unnamed = Object.values(enUS.translationStrings)
+            .flatMap(placeholders)
+            .map((placeholder) => placeholder.slice(2, -1))
+            .filter((name) => !COUNT_PLACEHOLDERS.includes(name) && !notCounts.includes(name));
+
+        expect(unnamed).toEqual([]);
+    });
+
     it.each(files)(
         'SPEC-rich-text-react/AC-059 puts every count of %s after a colon as a standalone value',
         async (file) => {

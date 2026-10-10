@@ -12,3 +12,8 @@ export const describe = (element: HTMLElement) => {
     element.setAttribute('role', 'mark');
     return { role: 'suggestion', 'aria-braillelabel': 'b' };
 };
+
+export const computed = { ['role']: 'callout' };
+
+const role = 'comment';
+export const shorthand = { role };

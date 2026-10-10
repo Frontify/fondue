@@ -104,6 +104,8 @@ describe('check-css', () => {
             'forced-colors.css:18 color sets the literal colour #fff',
             'forced-colors.css:18 background sets the literal colour red',
             'forced-colors.css:25 color sets the literal colour GrayText',
+            'forced-colors.css:31 color sets the literal colour GrayText',
+            'forced-colors.css:37 color sets the literal colour GrayText',
         ]);
     });
 

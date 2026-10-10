@@ -21,6 +21,8 @@ describe('check-aria', () => {
             'aria-description.tsx:12 role mark is not a WAI-ARIA 1.2 role',
             'aria-description.tsx:13 role suggestion is not a WAI-ARIA 1.2 role',
             'aria-description.tsx:13 aria-braillelabel is not a WAI-ARIA 1.2 state or property',
+            'aria-description.tsx:16 role callout is not a WAI-ARIA 1.2 role',
+            'aria-description.tsx:19 role comment is not a WAI-ARIA 1.2 role',
         ]);
     });
 

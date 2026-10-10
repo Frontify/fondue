@@ -640,4 +640,31 @@ describe('toolbar theming and localization', () => {
         expect(screen.getByRole('button', { name: 'Citation' })).toBeInTheDocument();
         unmount();
     });
+
+    it('SPEC-rich-text-react/AC-039 leaves out a plain binding that a mac: binding of the same key replaces on Apple platforms', () => {
+        const platform = vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+        const manifest = {
+            ...pullQuoteManifest,
+            commands: {
+                ...pullQuoteManifest.commands,
+                'acme.pull-quote.unset': { capability: 'setBlock', node: 'paragraph' },
+            },
+            keys: { 'Mod-Alt-q': 'acme.pull-quote.set', 'mac:Mod-Alt-q': 'acme.pull-quote.unset' },
+        };
+        const definition = defineEditor({
+            id: 'test.toolbar',
+            model: compileContentModel([core(), featureFromManifest(manifest)()], { id: 'test.toolbar', version: 1 }),
+        });
+        const shortcutOf = () => {
+            const { unmount } = mount({ definition }, [['acme.pull-quote.set']]);
+            const shown = screen.getByRole('button', { name: 'Pull quote' }).getAttribute('aria-keyshortcuts');
+            unmount();
+            return shown;
+        };
+
+        const apple = shortcutOf();
+        platform.mockReturnValue('Win32');
+
+        expect([apple, shortcutOf()]).toEqual([null, 'Control+Alt+Q']);
+    });
 });

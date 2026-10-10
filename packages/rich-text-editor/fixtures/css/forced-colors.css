@@ -26,3 +26,21 @@
         color: GrayText;
     }
 }
+
+@media (forced-colors: active), (prefers-contrast: more) {
+    :where(.fondue-rte-content p) {
+        color: GrayText;
+    }
+}
+
+@media (forced-colors: active) or (prefers-contrast: more) {
+    :where(.fondue-rte-content p) {
+        color: GrayText;
+    }
+}
+
+@media (forced-colors: active) and ((min-width: 1px) or (max-width: 2px)) {
+    :where(.fondue-rte-content p) {
+        color: GrayText;
+    }
+}
