@@ -68,6 +68,7 @@ describe('featureFromManifest', () => {
         expect(model.manifest.commands).toEqual([
             'paragraph.set',
             'text.insert',
+            'hard-break.insert',
             'history.undo',
             'history.redo',
             'block.move.up',
@@ -87,6 +88,7 @@ describe('featureFromManifest', () => {
             { key: 'Mod-z', command: 'history.undo', payload: null },
             { key: 'Mod-Shift-z', command: 'history.redo', payload: null },
             { key: 'other:Ctrl-y', command: 'history.redo', payload: null },
+            { key: 'Shift-Enter', command: 'hard-break.insert', payload: null },
             { key: 'Mod-Alt-ArrowUp', command: 'block.move.up', payload: null },
             { key: 'Mod-Alt-ArrowDown', command: 'block.move.down', payload: null },
             { key: 'mac:Mod-Alt-q', command: 'acme.pull-quote.set', payload: null },
@@ -351,6 +353,7 @@ describe('featureFromManifest', () => {
         expect(compile(card('/x', '/y')).manifest.commands).toEqual([
             'paragraph.set',
             'text.insert',
+            'hard-break.insert',
             'history.undo',
             'history.redo',
             'block.move.up',

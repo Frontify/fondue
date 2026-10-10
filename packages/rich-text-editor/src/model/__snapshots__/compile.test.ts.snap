@@ -5,6 +5,7 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
   "commands": [
     "paragraph.set",
     "text.insert",
+    "hard-break.insert",
     "history.undo",
     "history.redo",
     "block.move.up",
@@ -44,6 +45,11 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
       "payload": null,
     },
     {
+      "command": "hard-break.insert",
+      "key": "Shift-Enter",
+      "payload": null,
+    },
+    {
       "command": "block.move.up",
       "key": "Mod-Alt-ArrowUp",
       "payload": null,
@@ -78,6 +84,7 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
   "commands": [
     "paragraph.set",
     "text.insert",
+    "hard-break.insert",
     "history.undo",
     "history.redo",
     "block.move.up",
@@ -150,6 +157,11 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
     {
       "command": "history.redo",
       "key": "other:Ctrl-y",
+      "payload": null,
+    },
+    {
+      "command": "hard-break.insert",
+      "key": "Shift-Enter",
       "payload": null,
     },
     {

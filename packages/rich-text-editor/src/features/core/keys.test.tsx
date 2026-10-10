@@ -81,6 +81,12 @@ const ROWS: readonly Row[] = [
         ],
         start: 'undone',
     },
+    {
+        command: 'hard-break.insert',
+        apple: [{ key: 'Enter', shift: true }],
+        other: [{ key: 'Enter', shift: true }],
+        start: 'word',
+    },
     mark('mark.bold.toggle', 'b'),
     mark('mark.italic.toggle', 'i'),
     mark('mark.underline.toggle', 'u'),
@@ -171,7 +177,10 @@ describe('core keys', () => {
             it(`SPEC-rich-text-editing/AC-005 runs ${row.command} with the ${platform} keys of the Shortcuts table, and not with the other platform's`, () => {
                 onPlatform(apple);
                 const own = apple ? row.apple : row.other;
-                const foreign = apple ? row.other : row.apple;
+                // A key both platforms share runs on both.
+                const foreign = (apple ? row.other : row.apple).filter(
+                    (keys) => !own.some((mine) => JSON.stringify(mine) === JSON.stringify(keys)),
+                );
                 const expected = row.command.startsWith('history') ? 'history' : row.command;
                 const results = own.map((keys) => {
                     const mounted = started(row.start);
