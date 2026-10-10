@@ -135,7 +135,11 @@ export const TextFieldRoot = (
                 </div>
             ) : null}
             <div className={styles.inputWrapper}>
-                {placeholder && <div className={styles.placeholder}>{placeholder}</div>}
+                {placeholder && (
+                    <div className={styles.placeholder} aria-hidden="true">
+                        {placeholder}
+                    </div>
+                )}
                 <input
                     onMouseDown={(mouseEvent) => {
                         wasClicked.current = true;

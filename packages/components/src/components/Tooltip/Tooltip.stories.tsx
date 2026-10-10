@@ -46,6 +46,14 @@ export const Default: Story = {
         },
     },
     args: {},
+    render: (args) => (
+        <Tooltip.Root {...args}>
+            <Tooltip.Trigger>
+                <p>Hover over me!</p>
+            </Tooltip.Trigger>
+            <Tooltip.Content>I am a tooltip!</Tooltip.Content>
+        </Tooltip.Root>
+    ),
 };
 
 export const NoDelay: Story = {
@@ -135,4 +143,21 @@ export const WithButton: Story = {
             <Tooltip.Content>I am a tooltip!</Tooltip.Content>
         </Tooltip.Root>
     ),
+};
+
+export const WithCustomContainer: Story = {
+    render: ({ ...args }) => {
+        const [container, setContainer] = useState<HTMLDivElement | null>(null);
+        return (
+            <>
+                <Tooltip.Root {...args}>
+                    <Tooltip.Trigger>
+                        <p>Hover over me!</p>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content container={container}>I am rendered inside the custom container</Tooltip.Content>
+                </Tooltip.Root>
+                <div ref={setContainer} data-test-id="tooltip-custom-container" />
+            </>
+        );
+    },
 };

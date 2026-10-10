@@ -9,6 +9,9 @@ import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
 
 import { Dropdown } from '../Dropdown';
 
+import { DropdownWithCustomContainer } from './DropdownWithCustomContainer';
+import { DropdownWithVirtualAnchor } from './DropdownWithVirtualAnchor';
+
 const DROPDOWN_TRIGGER_TEST_ID = 'fondue-dropdown-trigger';
 const DROPDOWN_CONTENT_TEST_ID = 'fondue-dropdown-content';
 const DROPDOWN_GROUP_TEST_ID = 'fondue-dropdown-group';
@@ -753,4 +756,59 @@ test('should keep the shortcut adjacent to a right slot', async ({ mount, page }
 
     await expect(page.getByTestId('dropdown-right-slot')).toBeVisible();
     await expect(page.getByTestId(DROPDOWN_SHORTCUT_TEST_ID)).toHaveCSS('margin-inline-start', '0px');
+});
+
+test('should portal into document.body by default', async ({ mount, page }) => {
+    await mount(
+        <Dropdown.Root open>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+    await expect(page.locator('#root').getByTestId(DROPDOWN_CONTENT_TEST_ID)).toHaveCount(0);
+});
+
+test('should render content and submenu inside the given container', async ({ mount, page }) => {
+    await mount(
+        <DropdownWithCustomContainer
+            containerTestId="custom-container"
+            contentTestId={DROPDOWN_CONTENT_TEST_ID}
+            subTriggerTestId={DROPDOWN_SUB_TRIGGER_TEST_ID}
+            subContentTestId={DROPDOWN_SUB_CONTENT_TEST_ID}
+        />,
+    );
+
+    const container = page.getByTestId('custom-container');
+    await expect(container.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+    await page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID).hover();
+    await expect(container.getByTestId(DROPDOWN_SUB_CONTENT_TEST_ID)).toBeVisible();
+});
+
+test('should position at the virtual anchor and follow it', async ({ mount, page }) => {
+    const component = await mount(<DropdownWithVirtualAnchor left={100} top={100} width={0} height={0} />);
+
+    const dropdownContent = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    await expect(dropdownContent).toBeVisible();
+    await expect.poll(() => dropdownContent.boundingBox()).toMatchObject({ x: 100, y: 108 });
+
+    await component.update(<DropdownWithVirtualAnchor left={300} top={200} width={0} height={0} />);
+    await expect.poll(() => dropdownContent.boundingBox()).toMatchObject({ x: 300, y: 208 });
+});
+
+test('should position at the virtual anchor inside a transformed ancestor', async ({ mount, page }) => {
+    await mount(
+        <div style={{ transform: 'translate(50px, 30px)' }}>
+            <DropdownWithVirtualAnchor left={100} top={100} width={40} height={20} />
+        </div>,
+    );
+
+    const dropdownContent = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    await expect(dropdownContent).toBeVisible();
+    await expect.poll(() => dropdownContent.boundingBox()).toMatchObject({ x: 100, y: 128 });
 });

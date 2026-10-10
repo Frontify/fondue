@@ -2,7 +2,16 @@
 
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
-import { Children, forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
+import {
+    Children,
+    forwardRef,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+    type ForwardedRef,
+    type ReactNode,
+} from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 
@@ -10,6 +19,10 @@ import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import { useProcessedChildren } from './hooks/useProcessedChildren';
 import styles from './styles/dropdown.module.scss';
+
+export type DropdownVirtualAnchor = {
+    getBoundingClientRect: () => DOMRect;
+};
 
 export type DropdownRootProps = {
     children?: ReactNode;
@@ -26,8 +39,53 @@ export type DropdownRootProps = {
      * Callback that is called when the open state of the dropdown changes.
      */
     onOpenChange?: (open: boolean) => void;
+    /**
+     * Anchor the dropdown to this rectangle instead of `Dropdown.Trigger`, for example a pointer position.
+     * Use it without `Dropdown.Trigger` and with a controlled `open` state. Pass a new object whenever the rectangle changes.
+     */
+    virtualAnchor?: DropdownVirtualAnchor;
 
     'data-test-id'?: string;
+};
+
+// Radix DropdownMenu anchors only to its trigger, so an invisible trigger is placed over the rectangle.
+const DropdownVirtualTrigger = ({ virtualAnchor }: { virtualAnchor: DropdownVirtualAnchor }) => {
+    const triggerRef = useRef<HTMLSpanElement>(null);
+    const [anchorState, setAnchorState] = useState({ virtualAnchor, key: 0 });
+
+    // A new trigger element makes Radix take the new anchor even when the rectangle has no size to observe.
+    if (anchorState.virtualAnchor !== virtualAnchor) {
+        setAnchorState({ virtualAnchor, key: anchorState.key + 1 });
+    }
+
+    useLayoutEffect(() => {
+        const trigger = triggerRef.current;
+        if (!trigger) {
+            return;
+        }
+
+        const rect = virtualAnchor.getBoundingClientRect();
+        trigger.style.left = '0px';
+        trigger.style.top = '0px';
+        // A transformed ancestor moves the origin of fixed positioning, so measure it first.
+        const origin = trigger.getBoundingClientRect();
+        trigger.style.left = `${rect.left - origin.left}px`;
+        trigger.style.top = `${rect.top - origin.top}px`;
+        trigger.style.width = `${rect.width}px`;
+        trigger.style.height = `${rect.height}px`;
+    }, [virtualAnchor]);
+
+    return (
+        <RadixDropdown.Trigger asChild>
+            <span
+                key={anchorState.key}
+                ref={triggerRef}
+                aria-hidden="true"
+                className={styles.virtualTrigger}
+                data-test-id="fondue-dropdown-virtual-trigger"
+            />
+        </RadixDropdown.Trigger>
+    );
 };
 
 export const DropdownRoot = ({
@@ -35,10 +93,12 @@ export const DropdownRoot = ({
     open,
     modal = false,
     onOpenChange,
+    virtualAnchor,
     'data-test-id': dataTestId = 'fondue-dropdown',
 }: DropdownRootProps) => {
     return (
         <RadixDropdown.Root open={open} modal={modal} onOpenChange={onOpenChange} data-test-id={dataTestId}>
+            {virtualAnchor && <DropdownVirtualTrigger virtualAnchor={virtualAnchor} />}
             {children}
         </RadixDropdown.Root>
     );
@@ -119,6 +179,11 @@ export type DropdownContentProps = {
      * applied.
      */
     onCloseAutoFocus?: (event: Event) => void;
+    /**
+     * The element the dropdown is portalled into
+     * @default document.body
+     */
+    container?: HTMLElement | null;
 };
 
 const SPACING_MAP: Record<DropdownSpacing, number> = {
@@ -143,6 +208,7 @@ export const DropdownContent = (
         forceMount = false,
         onEscapeKeyDown,
         onCloseAutoFocus,
+        container,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -151,7 +217,7 @@ export const DropdownContent = (
     const { dir } = useFondueTheme();
     const actualRef = ref || localRef;
     return (
-        <RadixDropdown.Portal forceMount={forceMount || undefined}>
+        <RadixDropdown.Portal forceMount={forceMount || undefined} container={container}>
             <ThemeProvider>
                 <RadixDropdown.Content
                     // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
@@ -284,17 +350,22 @@ DropdownSubTrigger.displayName = 'Dropdown.SubTrigger';
 
 export type DropdownSubContentProps = {
     children: ReactNode;
+    /**
+     * The element the submenu is portalled into
+     * @default document.body
+     */
+    container?: HTMLElement | null;
     'data-test-id'?: string;
 };
 
 export const DropdownSubContent = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
+    { children, container, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { dir } = useFondueTheme();
 
     return (
-        <RadixDropdown.Portal>
+        <RadixDropdown.Portal container={container}>
             <ThemeProvider>
                 <RadixDropdown.SubContent
                     // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
