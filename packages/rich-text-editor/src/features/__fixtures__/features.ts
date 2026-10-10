@@ -132,6 +132,28 @@ export const fixtureMention = defineFeature({
     },
 });
 
+/** Stands in for `mentions` with the Vocabulary attributes, showing its label through CSS so a pointer can drag it. */
+export const fixtureLabelledMention = defineFeature({
+    id: 'fixture.labelled-mention',
+    version: 1,
+    requires: requiresCore,
+    nodes: {
+        mention: {
+            group: 'inline',
+            atom: true,
+            marks: [],
+            attrs: {
+                nodeId,
+                resourceType: { type: 'id', required: true },
+                resourceId: { type: 'string', required: true },
+                labelSnapshot: { type: 'string', required: true },
+            },
+            html: ['span', { 'data-mention': { attr: 'labelSnapshot' } }],
+            parse: [],
+        },
+    },
+});
+
 /** Stands in for `blocks.heading`: `heading.set` turns the selected textblocks into headings of the payload's level. */
 export const fixtureHeadingSet = defineFeature({
     id: 'fixture.heading-set',

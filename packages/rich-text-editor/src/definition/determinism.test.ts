@@ -28,6 +28,8 @@ describe('compilation determinism', () => {
 
         expect(first).toHaveLength(Object.keys(fixtureProfiles()).length);
         expect(first).toEqual(second);
-        expect(JSON.stringify(first)).toContain('"plugins":["history$1","keymap:core$1","keymap:fixture.history$"');
+        expect(JSON.stringify(first)).toContain(
+            '"plugins":["clipboard$1","history$1","keymap:core$1","keymap:fixture.history$"',
+        );
     }, 60_000);
 });
