@@ -1,0 +1,99 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { type RefObject, useRef, useState } from 'react';
+
+import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
+
+/** The inline-end edge of each item, measured from the toolbar's inline-start edge while every item shows. */
+const inlineEnds = (root: HTMLElement, rtl: boolean): number[] => {
+    const box = root.getBoundingClientRect();
+    return [...root.querySelectorAll('[data-rte-toolbar-item]')].map((item) => {
+        const rect = item.getBoundingClientRect();
+        if (rtl) {
+            return box.right - rect.left;
+        }
+        return rect.right - box.left;
+    });
+};
+
+interface Fitting {
+    readonly itemsKey: string;
+    readonly shown: number;
+}
+
+/** How many of `count` items fit before More, measured whenever the item set changes and fitted again on each resize. */
+export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number, itemsKey: string): number => {
+    const [fitting, setFitting] = useState<Fitting>({ itemsKey, shown: count });
+    const endsRef = useRef<readonly number[]>([]);
+    const moreSizeRef = useRef(0);
+    // A refit that moves the focused item into More sends focus to More, not to the body.
+    const focusMoreRef = useRef(false);
+    // A new item set shows every item once, so the layout effect measures them all.
+    let { shown } = fitting;
+    if (fitting.itemsKey !== itemsKey) {
+        shown = count;
+        setFitting({ itemsKey, shown });
+    }
+    useClientLayoutEffect(() => {
+        const element = root.current;
+        if (element === null) {
+            return undefined;
+        }
+        const style = getComputedStyle(element);
+        const ends = inlineEnds(element, style.direction === 'rtl');
+        if (ends.length === count) {
+            endsRef.current = ends;
+        }
+        const fit = () => {
+            const measured = endsRef.current;
+            const gap = Number.parseFloat(style.columnGap) || 0;
+            // More is as wide as an item, and only shows once something overflows.
+            const sample = element.querySelector('[data-rte-toolbar-more], [data-rte-toolbar-item]');
+            if (sample !== null) {
+                moreSizeRef.current = gap + sample.getBoundingClientRect().width;
+            }
+            const limit = element.getBoundingClientRect().width - Number.parseFloat(style.paddingInlineEnd);
+            let next = 0;
+            while (next < measured.length) {
+                let needed = measured[next] ?? 0;
+                if (next < measured.length - 1) {
+                    needed += moreSizeRef.current;
+                }
+                // Subpixel layout rounds an exact fit either way.
+                if (needed > limit + 0.5) {
+                    break;
+                }
+                next += 1;
+            }
+            const focused = [...element.querySelectorAll('[data-rte-toolbar-item]')].indexOf(
+                element.ownerDocument.activeElement as Element,
+            );
+            if (focused >= next) {
+                focusMoreRef.current = true;
+            }
+            // Only the rendered items tell what fits, so the layout effect measures them before paint.
+            // oxlint-disable-next-line @eslint-react/set-state-in-effect -- the state is the measured layout.
+            setFitting((previous) => {
+                if (previous.itemsKey === itemsKey && previous.shown === next) {
+                    return previous;
+                }
+                return { itemsKey, shown: next };
+            });
+        };
+        fit();
+        const observer = new ResizeObserver(fit);
+        observer.observe(element);
+        return () => observer.disconnect();
+    }, [root, count, itemsKey]);
+    useClientLayoutEffect(() => {
+        if (!focusMoreRef.current) {
+            return;
+        }
+        focusMoreRef.current = false;
+        const more = root.current?.querySelector<HTMLElement>('[data-rte-toolbar-more]');
+        if (more !== null && more !== undefined) {
+            more.focus();
+        }
+    }, [root, shown]);
+    return shown;
+};
