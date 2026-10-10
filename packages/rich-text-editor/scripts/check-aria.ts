@@ -78,7 +78,12 @@ export const scanAria = (path: string, source: string): string[] => {
             }
         } else if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
             checkNames(node, node.text);
-        } else if (tsx && ts.isPropertyAssignment(node) && node.name.getText(file) === 'role') {
+        } else if (
+            tsx &&
+            ts.isPropertyAssignment(node) &&
+            (ts.isIdentifier(node.name) || ts.isStringLiteral(node.name)) &&
+            node.name.text === 'role'
+        ) {
             checkRoles(node.initializer);
         } else if (
             ts.isCallExpression(node) &&
