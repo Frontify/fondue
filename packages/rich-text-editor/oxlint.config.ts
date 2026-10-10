@@ -100,8 +100,8 @@ const FEATURE_FILE_TAILS = [
     '/*/fixtures/**',
     '/conformance',
     '/conformance/**',
-    '/__fixtures__',
-    '/__fixtures__/**',
+    '/__tests__',
+    '/__tests__/**',
 ] as const;
 
 const WIRING_FEATURE_TAILS = [
@@ -111,8 +111,8 @@ const WIRING_FEATURE_TAILS = [
     '/*/fixtures/**',
     '/conformance',
     '/conformance/**',
-    '/__fixtures__',
-    '/__fixtures__/**',
+    '/__tests__',
+    '/__tests__/**',
 ] as const;
 
 const READER_FEATURE_TAILS = [
@@ -128,8 +128,8 @@ const READER_FEATURE_TAILS = [
     '/*/fixtures/**',
     '/conformance',
     '/conformance/**',
-    '/__fixtures__',
-    '/__fixtures__/**',
+    '/__tests__',
+    '/__tests__/**',
 ] as const;
 
 type ImportRestriction = {
@@ -286,7 +286,7 @@ export default defineConfig({
                 },
                 { regex: EXTERNAL_SPECIFIER, message: FEATURE_FILE_MESSAGE },
             ],
-            ['src/features/conformance/**', 'src/features/__fixtures__/**'],
+            ['src/features/conformance/**'],
         ),
         layerOverride(
             ['src/features/index.ts', 'src/features/registry.ts', 'src/features/profiles/**/*.{ts,tsx}'],
