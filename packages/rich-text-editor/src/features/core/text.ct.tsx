@@ -55,6 +55,8 @@ test('SPEC-rich-text-editing/AC-001 moves, selects and deletes across marks, lin
         [0, 21, [`${word}+Backspace`]],
         [0, 17, ['Backspace', 'Backspace', 'Delete', 'Delete']],
         [1, 2, ['Shift+ArrowDown', 'Shift+End']],
+        [1, 2, ['Shift+ControlOrMeta+ArrowUp']],
+        [1, 2, ['Shift+ControlOrMeta+ArrowDown']],
     ];
     /** The DOM selection in the editor named `name` as block and offset, then the text of each block. */
     const stateOf = (name: string) =>
@@ -181,6 +183,99 @@ test('SPEC-rich-text-editing/AC-003 inserts German and Polish AltGr characters w
     expect(changes.filter((change) => !change.startsWith('input'))).toEqual([]);
 });
 
+/** Dispatches a keydown at the focused surface, with the legacy `keyCode` and AltGraph state that no event init takes. */
+const dispatchKey = (
+    page: Page,
+    init: { key: string; code: string; keyCode: number; ctrl?: boolean; meta?: boolean; alt?: boolean; graph: boolean },
+) =>
+    page.evaluate((pressed) => {
+        const surface = document.activeElement as HTMLElement;
+        const event = new KeyboardEvent('keydown', {
+            key: pressed.key,
+            code: pressed.code,
+            ctrlKey: pressed.ctrl === true,
+            metaKey: pressed.meta === true,
+            altKey: pressed.alt === true,
+            bubbles: true,
+            cancelable: true,
+        });
+        Object.defineProperty(event, 'keyCode', { get: () => pressed.keyCode });
+        Object.defineProperty(event, 'getModifierState', {
+            value: (name: string) => name === 'AltGraph' && pressed.graph,
+        });
+        surface.dispatchEvent(event);
+        return event.defaultPrevented;
+    }, init);
+
+test('SPEC-rich-text-editing/AC-003 runs the Meta and Alt shortcut of a key that reports AltGraph, as Firefox on macOS does', async ({
+    mount,
+    page,
+}) => {
+    test.skip(!(await isApple(page)), 'Meta and Alt is the shortcut of Apple platforms.');
+    await mount(<TextProbe texts={['ab']} />);
+    await ready(page);
+    await focusSurface(page);
+    await select(page, 'ab', 1, 1);
+
+    // Option+1 types `¡` on a Mac layout, which only AltGraph without ⌘ would hand to the browser.
+    const prevented = await dispatchKey(page, {
+        key: '¡',
+        code: 'Digit1',
+        keyCode: 49,
+        meta: true,
+        alt: true,
+        graph: true,
+    });
+
+    expect(prevented).toBe(true);
+    expect(await changesOf(page)).toEqual(['command heading.set']);
+    await expect(surfaceOf(page).locator('h1')).toHaveText('ab');
+});
+
+test('SPEC-rich-text-editing/AC-003 runs a Ctrl and Alt binding of a digit key that types its own digit', async ({
+    mount,
+    page,
+}) => {
+    await mount(<TextProbe texts={['ab']} />);
+    await ready(page);
+    await focusSurface(page);
+    await select(page, 'ab');
+
+    const prevented = await dispatchKey(page, {
+        key: '7',
+        code: 'Digit7',
+        keyCode: 55,
+        ctrl: true,
+        alt: true,
+        graph: false,
+    });
+
+    expect(prevented).toBe(true);
+    expect(await changesOf(page)).toEqual(['command fixture.alt-graph.run']);
+    await expect(surfaceOf(page).locator('strong')).toHaveText('ab');
+});
+
+test('SPEC-rich-text-editing/AC-003 leaves the German backslash of AltGr to the browser, with no command running', async ({
+    mount,
+    page,
+}) => {
+    await mount(<TextProbe texts={['ab']} />);
+    await ready(page);
+    await focusSurface(page);
+    await select(page, 'ab', 1, 1);
+
+    const prevented = [
+        await dispatchKey(page, { key: '\\', code: 'Backslash', keyCode: 220, graph: true }),
+        await dispatchKey(page, { key: '\\', code: 'Backslash', keyCode: 220, ctrl: true, alt: true, graph: false }),
+    ];
+    await page.keyboard.insertText('\\');
+
+    expect(prevented).toEqual([false, false]);
+    expect(await textOf(page)).toBe('a\\b');
+    const changes = await changesOf(page);
+    expect(changes.filter((change) => !change.startsWith('input'))).toEqual([]);
+});
+
 test('SPEC-rich-text-editing/AC-074 runs no key handler, keymap or toolbar shortcut for a keydown of a composition', async ({
     mount,
     page,
@@ -202,6 +297,8 @@ test('SPEC-rich-text-editing/AC-074 runs no key handler, keymap or toolbar short
         readonly shift?: boolean;
     }[] = [
         { key: 'Enter' },
+        { key: 'Enter', shift: true },
+        { key: 'Enter', ...mod },
         { key: 'Backspace' },
         { key: 'Tab' },
         { key: 'Escape' },
@@ -216,35 +313,41 @@ test('SPEC-rich-text-editing/AC-074 runs no key handler, keymap or toolbar short
         { key: 'ArrowUp', alt: true, ...mod },
         { key: 'ArrowDown', alt: true, ...mod },
     ];
-    const pressComposing = () =>
-        page.evaluate((pressed) => {
-            const surface = document.activeElement as HTMLElement;
-            for (const { key, meta = false, ctrl = false, alt = false, shift = false } of pressed) {
-                const init = { key, metaKey: meta, ctrlKey: ctrl, altKey: alt, shiftKey: shift };
-                const event = new KeyboardEvent('keydown', {
-                    ...init,
-                    isComposing: true,
-                    bubbles: true,
-                    cancelable: true,
-                });
-                // An IME's keydown carries `keyCode` 229, which Chromium takes from no event init.
-                Object.defineProperty(event, 'keyCode', { get: () => 229 });
-                surface.dispatchEvent(event);
-            }
-            return document.activeElement === surface;
-        }, keys);
+    // A composition keydown reports itself by `isComposing` alone or by `keyCode` 229 alone, which each must be enough.
+    const pressComposing = (signal: 'isComposing' | 'keyCode') =>
+        page.evaluate(
+            ([pressed, by]) => {
+                const surface = document.activeElement as HTMLElement;
+                for (const { key, meta = false, ctrl = false, alt = false, shift = false } of pressed) {
+                    const init = { key, metaKey: meta, ctrlKey: ctrl, altKey: alt, shiftKey: shift };
+                    const event = new KeyboardEvent('keydown', {
+                        ...init,
+                        isComposing: by === 'isComposing',
+                        bubbles: true,
+                        cancelable: true,
+                    });
+                    if (by === 'keyCode') {
+                        // An IME's keydown carries `keyCode` 229, which Chromium takes from no event init.
+                        Object.defineProperty(event, 'keyCode', { get: () => 229 });
+                    }
+                    surface.dispatchEvent(event);
+                }
+                return document.activeElement === surface;
+            },
+            [keys, signal] as const,
+        );
     const cdp = await page.context().newCDPSession(page);
 
     // Chromium sends a 229 keydown before `compositionstart`, while ProseMirror still sees no composition.
-    const focusedBefore = await pressComposing();
+    const focusedBefore = [await pressComposing('isComposing'), await pressComposing('keyCode')];
     await cdp.send('Input.imeSetComposition', { text: 'é', selectionStart: 1, selectionEnd: 1 });
-    const focusedDuring = await pressComposing();
+    const focusedDuring = [await pressComposing('isComposing'), await pressComposing('keyCode')];
     await cdp.send('Input.insertText', { text: 'é' });
     await expect
         .poll(() => page.evaluate(() => (window.textRte as TextRte).handle.getSnapshot().compositionActive))
         .toBe(false);
 
-    expect([focusedBefore, focusedDuring]).toEqual([true, true]);
+    expect([...focusedBefore, ...focusedDuring]).toEqual([true, true, true, true]);
     expect(await textOf(page)).toBe('oneé');
     const changes = await changesOf(page);
     expect(changes.filter((change) => !change.startsWith('input'))).toEqual([]);

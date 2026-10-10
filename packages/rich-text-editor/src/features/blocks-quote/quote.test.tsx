@@ -25,19 +25,19 @@ const model = textModel([...textFeatures(), acmeBox(), vocabularyLists(), vocabu
 
 type Mounted = ReturnType<typeof mountText>;
 
-/** Puts the caret in the document's last empty paragraph, which no text names. */
+/** Puts the caret in the document's last empty paragraph, or empty heading, which no text names. */
 const caretInEmptyParagraph = ({ view }: Mounted) => {
     let at = 0;
     view.state.doc.descendants((node, pos) => {
-        if (node.type.name === 'paragraph' && node.content.size === 0) {
+        if ((node.type.name === 'paragraph' || node.type.name === 'heading') && node.content.size === 0) {
             at = pos + 1;
         }
     });
     view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, at)));
 };
 /** Presses Enter at the surface and returns whether the editor prevented it. */
-const pressEnter = ({ view }: Mounted) => {
-    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+const pressEnter = ({ view }: Mounted, modifiers: KeyboardEventInit = {}) => {
+    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, ...modifiers });
     view.dom.dispatchEvent(event);
     return event.defaultPrevented;
 };
@@ -75,6 +75,91 @@ describe('blocks.quote', () => {
 
         expect(pressEnter(mounted)).toBe(true);
         expect(blocksOf(mounted)).toEqual([para(text('Before')), { type: 'paragraph', attrs: { lang: null } }]);
+    });
+
+    it('SPEC-rich-text-editing/AC-026 keeps Enter in an empty paragraph that is not last in a quote to the base keys, which lift it out', () => {
+        const mounted = mountText({
+            model,
+            blocks: [{ type: 'blockquote', content: [para(), para(text('x'))] }],
+        });
+        caretInEmptyParagraph(mounted);
+
+        expect(pressEnter(mounted)).toBe(true);
+        expect(blocksOf(mounted)).toEqual([
+            { type: 'paragraph', attrs: { lang: null } },
+            { type: 'blockquote', content: [para(text('x'))] },
+        ]);
+    });
+
+    it('SPEC-rich-text-editing/AC-026 does not turn an empty last heading of a quote into a paragraph on Enter', () => {
+        const heading = { type: 'heading', attrs: { nodeId: 'heading-1', level: 2, lang: null } };
+        const quote = { type: 'blockquote', content: [para(text('Quoted')), { ...heading, content: [] }] };
+        const mounted = mountText({ model, blocks: [quote, para(text('After'))] });
+        caretInEmptyParagraph(mounted);
+
+        pressEnter(mounted);
+
+        expect(blocksOf(mounted)).toEqual([
+            { type: 'blockquote', content: [para(text('Quoted'))] },
+            heading,
+            para(text('After')),
+        ]);
+    });
+
+    it('SPEC-rich-text-editing/AC-026 does not leave a quote on Enter with Ctrl, Alt or Meta held', () => {
+        const blocks = [{ type: 'blockquote', content: [para(text('Quoted')), para()] }, para(text('After'))];
+        const results = [{ ctrlKey: true }, { altKey: true }, { metaKey: true }].map((held) => {
+            const mounted = mountText({ model, blocks });
+            caretInEmptyParagraph(mounted);
+            const prevented = pressEnter(mounted, held);
+            const after = blocksOf(mounted) ?? [];
+            const [quote] = after;
+            let kept = 0;
+            if (quote?.content !== undefined) {
+                kept = quote.content.length;
+            }
+            mounted.unmount();
+            return [prevented, after.length, kept];
+        });
+
+        expect(results).toEqual([
+            [false, 2, 2],
+            [false, 2, 2],
+            [false, 2, 2],
+        ]);
+    });
+
+    it('SPEC-rich-text-editing/AC-026 does not reach a block group whose content also takes a node outside the block group', () => {
+        const mixed = featureFromManifest({
+            id: 'acme.mixed',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            nodes: {
+                acme_mixed: {
+                    group: 'block',
+                    content: '(paragraph | acme_part)+',
+                    attrs: {},
+                    html: ['aside', 0],
+                    parse: [{ tag: 'aside' }],
+                },
+                acme_part: { content: 'inline*', attrs: {}, html: ['div', 0], parse: [] },
+            },
+            formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
+        });
+        const mounted = mountText({
+            model: textModel([...textFeatures(), mixed()]),
+            blocks: [{ type: 'acme_mixed', content: [para(text('Kept')), para()] }, para(text('After'))],
+        });
+        caretInEmptyParagraph(mounted);
+        const { view } = mounted;
+        const row = view.state.plugins.find((plugin) =>
+            (plugin as unknown as { key: string }).key.startsWith('container-keys$'),
+        );
+        if (row === undefined) {
+            throw new Error('The model has no container keys.');
+        }
+
+        expect(row.props.handleKeyDown?.call(row, view, new KeyboardEvent('keydown', { key: 'Enter' }))).toBe(false);
     });
 
     it('SPEC-rich-text-editing/AC-026 does not reach a list item, a table cell or a figure, which are no containers', () => {
@@ -137,5 +222,36 @@ describe('blocks.quote', () => {
         expect([up, down]).toEqual(['applied', 'applied']);
         expect(moved).toEqual([quote, para(text('one')), para(text('two'))]);
         expect(blocksOf(mounted)).toEqual([para(text('one')), quote, para(text('two'))]);
+    });
+
+    it('SPEC-rich-text-editing/AC-069 moves two selected paragraphs as a pair, and one undo restores their order', () => {
+        const blocks = ['one', 'two', 'three', 'four'].map((value) => para(text(value)));
+        const mounted = mountText({ model, blocks });
+        const { view } = mounted;
+        // From the first character of 'two' to the first of 'three'.
+        const spanning = () => {
+            const one = view.state.doc.child(0).nodeSize;
+            const two = view.state.doc.child(1).nodeSize;
+            view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, one + 2, one + two + 2)));
+        };
+        const order = () => view.state.doc.children.map((child) => child.textContent);
+
+        spanning();
+        const up = mounted.handle.execute('block.move.up').status;
+        const movedUp = order();
+        const undoneUp = mounted.handle.execute('history.undo').status;
+        const restoredUp = order();
+        spanning();
+        const down = mounted.handle.execute('block.move.down').status;
+        const movedDown = order();
+        const undoneDown = mounted.handle.execute('history.undo').status;
+
+        expect([up, down, undoneUp, undoneDown]).toEqual(['applied', 'applied', 'applied', 'applied']);
+        expect([movedUp, restoredUp, movedDown, order()]).toEqual([
+            ['two', 'three', 'one', 'four'],
+            ['one', 'two', 'three', 'four'],
+            ['one', 'four', 'two', 'three'],
+            ['one', 'two', 'three', 'four'],
+        ]);
     });
 });

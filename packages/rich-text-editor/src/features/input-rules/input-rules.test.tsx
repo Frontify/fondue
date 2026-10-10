@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { fixtureCodeBlock } from '#/features/__fixtures__/code-block/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection, typeText } from '#/testing';
 
@@ -82,6 +83,56 @@ describe('input rules', () => {
         });
     }
 
+    it('SPEC-rich-text-editing/AC-013 and AC-037 leave a paragraph as it is for the level 1 shortcut and "# " with levels 2 and 3 creatable', () => {
+        const mounted = mountText({ blocks: [para(text('Title'))], policy: { creatableHeadingLevels: [2, 3] } });
+        setSelection(mounted.handle, { text: 'Title', from: 0, to: 0 });
+        const event = new KeyboardEvent('keydown', {
+            key: '1',
+            ctrlKey: true,
+            shiftKey: true,
+            bubbles: true,
+            cancelable: true,
+        });
+        mounted.view.dom.dispatchEvent(event);
+        const afterShortcut = shapeOf(mounted);
+        typeText(mounted.handle, '# ');
+        const afterRule = shapeOf(mounted);
+        // The same rule and shortcut make a level 2 heading, so the refusal is the level's alone.
+        const allowed = mountText({ blocks: [para(text('Title'))], policy: { creatableHeadingLevels: [2, 3] } });
+        setSelection(allowed.handle, { text: 'Title', from: 0, to: 0 });
+        typeText(allowed.handle, '## ');
+
+        expect([afterShortcut, afterRule, shapeOf(allowed)]).toEqual([
+            'paragraph Title',
+            'paragraph # Title',
+            'heading Title',
+        ]);
+    });
+
+    it('SPEC-rich-text-editing/AC-039 fires no heading, quote or numeric rule at the start of a code block or after a numeric token in code-marked text', () => {
+        const model = textModel([...textFeatures(ALL_TYPOGRAPHY), fixtureCodeBlock()]);
+        const codeBlock = (value: string) => ({
+            type: 'chrome_code',
+            attrs: { nodeId: 'code-1', language: 'plain' },
+            content: [text(value)],
+        });
+        const inBlock = ['## ', '> ', '1/2 '].map((typed) => {
+            const mounted = mountText({ model, blocks: [codeBlock('x')] });
+            setSelection(mounted.handle, { text: 'x', from: 0, to: 0 });
+            typeText(mounted.handle, typed);
+            const shape = shapeOf(mounted);
+            mounted.unmount();
+            return shape;
+        });
+        // The caret sits inside a code run, so the typed space is code-marked and a whole token comes before it.
+        const inCode = mountText({ model, blocks: [para(text('1/2x', 'code'))] });
+        setSelection(inCode.handle, { text: '1/2x', from: 3, to: 3 });
+        typeText(inCode.handle, ' ');
+
+        expect(inBlock).toEqual(['chrome_code ## x', 'chrome_code > x', 'chrome_code 1/2 x']);
+        expect(shapeOf(inCode)).toBe('paragraph 1/2 x[code]');
+    });
+
     it('SPEC-rich-text-editing/AC-042 turns every rule off and on through the inputRules prop with the same view and plugins', () => {
         const mounted = mountText({ model: textModel(textFeatures(ALL_TYPOGRAPHY)) });
         const { view } = mounted;
@@ -140,6 +191,19 @@ describe('input rules', () => {
             'paragraph 3² ',
             'paragraph 3×4 ',
         ]);
+    });
+
+    it('SPEC-rich-text-editing/AC-045 runs only the typography rules listed, so dashes alone leave symbols, ellipsis, fractions and quotes as typed', () => {
+        const model = textModel(textFeatures(['typography.dashes']));
+
+        expect(typedIn('(c) ... 1/2 "x"', { model })).toBe('paragraph (c) ... 1/2 "x"');
+    });
+
+    it('SPEC-rich-text-editing/AC-077 keeps 11/2, 13/4 and a1/2 as typed, because a fraction needs a space or the block start before it', () => {
+        const model = textModel(textFeatures(['typography.numeric']));
+        const typed = ['11/2 ', '13/4 ', 'a1/2 '].map((token) => typedIn(token, { model }));
+
+        expect(typed).toEqual(['paragraph 11/2 ', 'paragraph 13/4 ', 'paragraph a1/2 ']);
     });
 
     it('SPEC-rich-text-editing/AC-102 keeps the hyphens of a CSS custom property name while typography.dashes is on', () => {

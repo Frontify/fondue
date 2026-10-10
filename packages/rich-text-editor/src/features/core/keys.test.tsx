@@ -205,6 +205,23 @@ describe('core keys', () => {
         }
     }
 
+    for (const apple of [true, false]) {
+        it(`SPEC-rich-text-editing/AC-005 moves a block up with the ${apple ? 'Apple' : 'other'} up key and down with its down key`, () => {
+            onPlatform(apple);
+            const modifiers = { meta: apple, ctrl: !apple, alt: true };
+            const orderOf = ({ view }: Mounted) => view.state.doc.children.map((block) => block.textContent);
+            const up = started('second');
+            press(up, { key: 'ArrowUp', ...modifiers });
+            const down = started('first');
+            press(down, { key: 'ArrowDown', ...modifiers });
+
+            expect([orderOf(up), orderOf(down)]).toEqual([
+                ['two', 'one'],
+                ['two', 'one'],
+            ]);
+        });
+    }
+
     it('SPEC-rich-text-editing/AC-004 binds no printable key without Ctrl, ⌘ or Alt in the compiled keymap of every profile', () => {
         const profiles = { ...fixtureProfiles(), text: textFeatures(ALL_TYPOGRAPHY) };
         const bare = Object.entries(profiles).flatMap(([name, features]) =>

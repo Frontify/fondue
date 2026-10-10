@@ -425,7 +425,11 @@ test('SPEC-rich-text-react/AC-046 keeps the link popover and the mention list us
 
     await page.evaluate(() => window.overlayProbe?.select({ text: 'Hi @', from: 4 }));
     await open(page, 'suggestions');
+    // The list takes keys once it shows its first option as active, and Enter takes the option the arrow key moved to.
+    await expect(suggestionsOf(page)).toBeVisible();
+    await expect(suggestionsOf(page).getByRole('option').first()).toHaveAttribute('aria-selected', 'true');
     await page.keyboard.press('ArrowDown');
+    await expect(suggestionsOf(page).getByRole('option').nth(1)).toHaveAttribute('aria-selected', 'true');
     await page.keyboard.press('Enter');
     await expect(suggestionsOf(page)).toBeHidden();
     await open(page, 'suggestions');
@@ -1006,7 +1010,10 @@ test.describe('on a touch device', () => {
         await surfaceOf(page).tap();
         await openKeyboard(page);
         await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
-        const margin = await page.evaluate(() => window.overlayProbe?.bottomMargin());
+        const bottomMargin = () => page.evaluate(() => window.overlayProbe?.bottomMargin());
+        // The docked toolbar's resize observer adds its height to the margin after the toolbar has moved.
+        await expect.poll(bottomMargin).toBeGreaterThan(355);
+        const margin = await bottomMargin();
         // A visual viewport scroll measures the keyboard again, which must keep the docked toolbar's part.
         await page.evaluate(() => window.visualViewport?.dispatchEvent(new Event('scroll')));
         expect(await page.evaluate(() => window.overlayProbe?.bottomMargin())).toBe(margin);

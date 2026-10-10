@@ -61,6 +61,34 @@ describe('blocks.heading', () => {
         ]);
     });
 
+    it('SPEC-rich-text-editing/AC-014 names a stored h3 in the text style picker and checks only its row, and a paragraph as Normal text', () => {
+        const checkedRows = () =>
+            screen
+                .getAllByRole('menuitemradio')
+                .filter((row) => row.getAttribute('aria-checked') === 'true')
+                .map((row) => row.textContent);
+        const open = (name: string, view: ReturnType<typeof mountText>) => {
+            act(() => {
+                fireEvent.pointerDown(view.getByRole('button', { name }), {
+                    button: 0,
+                    ctrlKey: false,
+                    pointerType: 'mouse',
+                });
+            });
+        };
+        const stored = mountText({ blocks: [headingOf(3, text('Title'))], toolbar: [['text-style']] });
+        setSelection(stored.handle, { text: 'Title', from: 1, to: 1 });
+        open('Heading 3', stored);
+        const heading = checkedRows();
+        stored.unmount();
+        const plain = mountText({ blocks: [para(text('Body'))], toolbar: [['text-style']] });
+        setSelection(plain.handle, { text: 'Body', from: 1, to: 1 });
+        open('Normal text', plain);
+
+        expect(heading).toEqual(['Heading 3']);
+        expect(checkedRows()).toEqual(['Normal text']);
+    });
+
     it('SPEC-rich-text-editing/AC-015 opens every heading fixture with zero document changes', () => {
         const model = textModel();
         const levels = [1, 2, 3, 4, 5, 6].map((level) => storedIn(model, [headingOf(level, text(`Level ${level}`))]));

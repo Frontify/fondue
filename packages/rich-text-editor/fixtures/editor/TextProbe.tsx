@@ -22,14 +22,14 @@ import { compileContentModel, type ContentNodeJSON, defineFeature, toggleMark } 
 import { runtimeOf } from '../../src/runtime/runtime';
 import { setSelection } from '../../src/testing';
 
-/** Binds Ctrl and Alt with the keys that type `{`, `[`, `]`, `}`, `²` and `³` on German and `ą` and `ł` on Polish layouts with AltGr. */
+/** Binds Ctrl and Alt with the keys that type `{`, `[`, `]`, `}`, `²` and `³` on German and `ą` and `ł` on Polish layouts with AltGr, and `\\` on German ones. */
 const altGraphKeys = defineFeature({
     id: 'fixture.alt-graph-keys',
     version: 1,
     requires: [{ id: 'marks.bold', version: 1 }],
     commands: { 'fixture.alt-graph.run': toggleMark('bold') },
     keys: Object.fromEntries(
-        ['7', '8', '9', '0', '2', '3', 'a', 'l'].map((key) => [`Ctrl-Alt-${key}`, 'fixture.alt-graph.run']),
+        ['7', '8', '9', '0', '2', '3', 'a', 'l', '\\'].map((key) => [`Ctrl-Alt-${key}`, 'fixture.alt-graph.run']),
     ),
 });
 
