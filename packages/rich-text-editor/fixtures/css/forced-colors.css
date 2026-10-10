@@ -7,3 +7,9 @@
 :where(.fondue-rte-content p) {
     color: GrayText;
 }
+
+@media not (forced-colors: active) {
+    :where(.fondue-rte-content p) {
+        color: GrayText;
+    }
+}

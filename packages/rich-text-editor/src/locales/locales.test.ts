@@ -4,7 +4,8 @@ import { readdirSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { COUNT_PLACEHOLDERS } from './countPlaceholders';
+import { LOADERS } from '#/react/locale';
+
 import { enUS } from './en-US';
 
 const files = readdirSync(new URL('.', import.meta.url))
@@ -12,6 +13,8 @@ const files = readdirSync(new URL('.', import.meta.url))
     .map((name) => name.replace('.ts', ''))
     .sort();
 const placeholders = (value: string) => value.match(/\$\{\w+\}/g) ?? [];
+// The placeholders that hold a count, which every locale puts after a colon so no string needs a plural (SPEC-rich-text-react/AC-059).
+const COUNT_PLACEHOLDERS = ['count', 'errors', 'warnings', 'review'];
 const localeOf = async (file: string) => {
     const module = (await import(`./${file}.ts`)) as Record<string, typeof enUS | undefined>;
     const locale = module[file.replace('-', '')];
@@ -49,8 +52,11 @@ describe('package locales', () => {
         },
     );
 
+    it('SPEC-rich-text-react/AC-101 loads every shipped locale but enUS through its own import()', () => {
+        expect(Object.keys(LOADERS).sort()).toEqual(files.filter((file) => file !== 'en-US'));
+    });
+
     it('SPEC-rich-text-react/AC-059 accepts a count after a colon only, at the end or before a period', () => {
-        expect(COUNT_PLACEHOLDERS).toEqual(['count', 'errors', 'warnings', 'review']);
         expect(
             [
                 'Results: ${count}',

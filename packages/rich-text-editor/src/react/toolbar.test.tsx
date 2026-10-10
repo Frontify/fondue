@@ -6,6 +6,7 @@ import { createRef, Profiler, type ReactNode, useContext } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { AnnouncerContext } from '#/bridge/announcer';
+import { fixtureCodeBlockView } from '#/features/__fixtures__/code-block/view';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { deDE } from '#/locales/de-DE';
@@ -564,6 +565,38 @@ describe('toolbar theming and localization', () => {
 
         expect(screen.getByTestId('fondue-rich-text-editor')).toHaveAttribute('lang', 'de-DE');
         expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'en-US');
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-061 SPEC-rich-text/AC-074 gives the root, node chrome and manifest labels the theme lang when the locale has none', async () => {
+        const [entry] = pullQuoteManifest.toolbar;
+        const manifest = {
+            ...pullQuoteManifest,
+            keys: {},
+            toolbar: [{ ...entry, label: { 'en-US': 'Pull quote', fr: 'Citation' } }],
+        };
+        const definition = defineEditor({
+            id: 'test.toolbar',
+            model: compileContentModel([core(), featureFromManifest(manifest)(), fixtureCodeBlockView()], {
+                id: 'test.toolbar',
+                version: 1,
+            }),
+        });
+        const { environment, unmount } = mount(
+            {
+                definition,
+                locale: { translationStrings: enUS.translationStrings },
+                defaultValue: loaded(codeBlock('let a')),
+            },
+            [['acme.pull-quote.set']],
+            { lang: 'fr-FR' },
+        );
+        await act(() => environment.flushMicrotasks());
+        const slot = screen.getByRole('textbox', { name: 'Notes' }).querySelector('[data-rte-chrome]');
+
+        expect(screen.getByTestId('fondue-rich-text-editor')).toHaveAttribute('lang', 'fr-FR');
+        expect(slot).toHaveAttribute('lang', 'fr-FR');
+        expect(screen.getByRole('button', { name: 'Citation' })).toBeInTheDocument();
         unmount();
     });
 });

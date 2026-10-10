@@ -48,6 +48,7 @@ import { decodeToTree, limitsOf } from '#/model/decode';
 import { createTestEnvironment, pressKey, setSelection, type TestEnvironment, typeText } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';
 import { STORAGE, stubStorage } from '#/testing/storage';
+import { bindingHere, isApplePlatform } from '#/ui/shortcuts';
 
 import pullQuoteManifest from '../../fixtures/manifest/acme-pull-quote.json';
 import newerNotes from '../../fixtures/migration/v3-current.json';
@@ -4115,5 +4116,30 @@ describe('platform key bindings', () => {
         platform.mockReturnValue('Win32');
         session.view.dom.dispatchEvent(modAltQ());
         expect(firstType(session)).toBe('paragraph');
+    });
+
+    it('SPEC-rich-text-react/AC-039 picks the mac: binding for the keydown and the tooltip alike when only userAgentData names macOS', () => {
+        vi.spyOn(navigator, 'platform', 'get').mockReturnValue('');
+        Object.defineProperty(navigator, 'userAgentData', { configurable: true, get: () => ({ platform: 'macOS' }) });
+        try {
+            const session = start(stored(para(words('ab'))), { model });
+            setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+
+            expect(bindingHere(['mac:Mod-Alt-q', 'other:Ctrl-Shift-q'], isApplePlatform())).toBe('mac:Mod-Alt-q');
+            pressKey(session.handle, 'Ctrl-Shift-q');
+            expect(firstType(session)).toBe('paragraph');
+            session.view.dom.dispatchEvent(
+                new KeyboardEvent('keydown', {
+                    key: 'q',
+                    altKey: true,
+                    metaKey: modIsMeta,
+                    ctrlKey: !modIsMeta,
+                    bubbles: true,
+                }),
+            );
+            expect(firstType(session)).toBe('acme_pull_quote');
+        } finally {
+            Reflect.deleteProperty(navigator, 'userAgentData');
+        }
     });
 });

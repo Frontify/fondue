@@ -97,9 +97,10 @@ describe('check-css', () => {
         ]);
     });
 
-    it('SPEC-rich-text-react/AC-052 SPEC-rich-text-react/AC-054 passes a system colour in a forced colours rule and fails on it elsewhere', () => {
+    it('SPEC-rich-text-react/AC-052 SPEC-rich-text-react/AC-054 passes a system colour in a forced colours rule and fails on it elsewhere, under `not` included', () => {
         expect(scanCss('forced-colors.css', fixture('forced-colors.css'))).toEqual([
             'forced-colors.css:7 color sets the literal colour GrayText',
+            'forced-colors.css:12 color sets the literal colour GrayText',
         ]);
     });
 
@@ -139,6 +140,7 @@ const ENGINE_STYLESHEETS = [
     'prosemirror-gapcursor/style/gapcursor.css',
     'prosemirror-tables/style/tables.css',
 ];
+// SPEC-rich-text-react/AC-104 bans left and right; the content stylesheet also maps the engine's top and bottom to block insets.
 const PHYSICAL_OFFSETS: Readonly<Record<string, string>> = {
     left: 'inset-inline-start',
     right: 'inset-inline-end',

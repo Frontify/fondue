@@ -352,7 +352,7 @@ export const nodeViewCases = (features: readonly Feature[], documents: readonly 
         }
         const context = readerContext(enUS, {});
         const hosts = stores.map((store) =>
-            render(createElement(PortalHost, { store, context, onFlush: () => undefined })),
+            render(createElement(PortalHost, { store, context, lang: 'en-US', onFlush: () => undefined })),
         );
         try {
             await check(built, () => act(() => environment.flushMicrotasks()));
