@@ -13,7 +13,7 @@
  *
  *   tokens.where({ category: 'colors' });
  *
- *   guides.get('getting-started')?.content;       // raw markdown
+ *   guides.get('getting-started/Setup')?.content; // raw markdown; guides.list() for all ids
  */
 
 import {
@@ -32,7 +32,7 @@ export const components = buildComponentsApi(rawComponents);
 /** Token query API, with `tokens.utilities` sub-domain. */
 export const tokens = buildTokensApi(rawTokens, tokenUtilities);
 
-/** Prose guides bundled with the SDK (getting started, contributing, upgrading). */
+/** Prose guides bundled with the SDK (ids are path-style, e.g. `getting-started/Setup`, `usage/Styling`). */
 export const guides = buildGuidesApi(rawGuides);
 
 // ─── Public types ───────────────────────────────────────────────────────────

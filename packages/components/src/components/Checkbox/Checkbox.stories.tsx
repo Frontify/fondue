@@ -59,6 +59,12 @@ export const Default: Story = {
             canonical: true,
         },
     },
+    render: (args) => (
+        <Flex gap={2} align="center">
+            <Checkbox {...args} id="accept-terms" defaultValue={false} />
+            <Label htmlFor="accept-terms">Accept terms and conditions</Label>
+        </Flex>
+    ),
 };
 
 export const Indeterminate: Story = {
