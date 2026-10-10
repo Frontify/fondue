@@ -3,6 +3,7 @@
 import { keydownHandler } from 'prosemirror-keymap';
 import { type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
+import { type EditorView } from 'prosemirror-view';
 
 import {
     type CapabilityName,
@@ -204,17 +205,36 @@ export const compileDefinition = (
                 },
             });
         }
-        const bindings: Record<string, Command> = {};
+        // A binding that starts with `mac:` or `other:` runs only on that platform (SPEC-rich-text-editing, Shortcuts).
+        const apple: Record<string, Command> = {};
+        const other: Record<string, Command> = {};
         for (const entry of keymap) {
             const command = commands.get(entry.command);
             if (entry.plugin === id && command !== undefined) {
-                bindings[entry.key] = (state, dispatch) => command.run(state, dispatch, entry.payload);
+                const run: Command = (state, dispatch) => command.run(state, dispatch, entry.payload);
+                const [prefix = '', platform] = /^(mac|other):/.exec(entry.key) ?? [];
+                const key = entry.key.slice(prefix.length);
+                if (platform !== 'other') {
+                    apple[key] = run;
+                }
+                if (platform !== 'mac') {
+                    other[key] = run;
+                }
             }
         }
-        if (Object.keys(bindings).length === 0) {
+        if (Object.keys(other).length === 0 && Object.keys(apple).length === 0) {
             return new Plugin({ key: new PluginKey(id) });
         }
-        return new Plugin({ key: new PluginKey(id), props: { handleKeyDown: keydownHandler(bindings) } });
+        const handlers = { apple: keydownHandler(apple), other: keydownHandler(other) };
+        const handleKeyDown = (view: EditorView, event: KeyboardEvent) => {
+            // prosemirror-keymap reads `Mod` from the same `navigator.platform`.
+            const owner = view.dom.ownerDocument.defaultView;
+            if (owner !== null && /Mac|iP(hone|[oa]d)/.test(owner.navigator.platform)) {
+                return handlers.apple(view, event);
+            }
+            return handlers.other(view, event);
+        };
+        return new Plugin({ key: new PluginKey(id), props: { handleKeyDown } });
     };
     // Every plugin's appended transactions count against the append limit (SPEC-rich-text-runtime/AC-012).
     return { model, schema, plugins: plugins.map(({ id }) => countAppends(pluginOf(id), originOf(id))), commands };

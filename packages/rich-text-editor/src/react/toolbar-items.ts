@@ -9,7 +9,26 @@ import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
 import { type ReactPresentation } from './types';
 
-type ButtonEntry = Exclude<ToolbarEntry, { readonly kind: 'menu' }>;
+/** A data manifest's entry carries its translations in `label` in place of a package `labelKey`. */
+type ButtonEntry = Exclude<ToolbarEntry, { readonly kind: 'menu' }> & {
+    readonly label?: Readonly<Record<string, string>>;
+};
+
+/**
+ * The manifest label for `lang` by RFC 4647 lookup, without subtags from the end until a tag matches, else `en-US`,
+ * which every manifest label holds (SPEC-rich-text/AC-074).
+ */
+const manifestLabel = (label: Readonly<Record<string, string>>, lang: string): string => {
+    // Language tags match case-insensitively (RFC 4647, section 2).
+    const byTag = new Map(Object.entries(label).map(([tag, text]) => [tag.toLowerCase(), text]));
+    for (let tag = lang.toLowerCase(); tag !== ''; tag = tag.slice(0, Math.max(tag.lastIndexOf('-'), 0))) {
+        const found = byTag.get(tag);
+        if (found !== undefined) {
+            return found;
+        }
+    }
+    return label['en-US'] ?? '';
+};
 
 const payloadKey = (payload: JsonValue | null | undefined) => {
     if (payload === undefined) {
@@ -37,6 +56,8 @@ export const toolbarItems = (
     authoring: AuthoringPolicy,
     presentation: ReactPresentation | undefined,
     t: CodecContext['t'],
+    /** The UI locale's language tag, which picks a data manifest's label. */
+    lang: string,
 ): readonly ToolbarItem[] => {
     if (presentation === undefined) {
         return [];
@@ -76,11 +97,18 @@ export const toolbarItems = (
             ) {
                 continue;
             }
-            let label = entry.labelKey;
+            let label: string;
+            if (entry.label === undefined) {
+                label = t(entry.labelKey as `RichTextEditor_${string}`);
+            } else {
+                label = manifestLabel(entry.label, lang);
+            }
             let { icon } = entry;
             const control = presentation.controls?.[command];
             if (control !== undefined) {
-                label = control.labelKey ?? label;
+                if (control.labelKey !== undefined) {
+                    label = t(control.labelKey as `RichTextEditor_${string}`);
+                }
                 icon = control.icon ?? icon;
             }
             const bindings = keymap
@@ -91,7 +119,7 @@ export const toolbarItems = (
                 command,
                 payload,
                 toggle: entry.kind === 'toggle',
-                label: t(label as `RichTextEditor_${string}`),
+                label,
                 icon,
                 bindings,
                 groupStart,

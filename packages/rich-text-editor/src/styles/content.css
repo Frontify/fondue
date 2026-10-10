@@ -8,7 +8,8 @@
     --rte-content-link-color: var(--color-primary-default);
     --rte-content-paragraph-spacing: var(--spacing-x-small);
     --rte-content-surface-background: var(--color-surface-default);
-    --rte-content-surface-border: var(--border-width-default) solid var(--color-line-mid);
+    /* SPEC-rich-text-accessibility/AC-012: the field's border holds 3:1 on the surface, which `--color-line-mid` misses in the light theme. */
+    --rte-content-surface-border: var(--border-width-default) solid var(--color-line-strong);
     --rte-content-surface-padding: var(--spacing-x-small) var(--spacing-small);
     --rte-content-placeholder-color: var(--color-secondary-default);
     --rte-content-placeholder-opacity: 1;
@@ -79,8 +80,8 @@
     position: absolute;
     inset-inline-start: -32px;
     inset-inline-end: -2px;
-    top: -2px;
-    bottom: -2px;
+    inset-block-start: -2px;
+    inset-block-end: -2px;
     border: 2px solid var(--rte-content-selected-node-color);
     pointer-events: none;
 }

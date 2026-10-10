@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useFondueTheme } from '@frontify/fondue-components';
 import {
     Component,
     type ComponentType,
@@ -54,6 +55,7 @@ import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolba
 
 import { moveChromeFocus } from './chrome-focus';
 import { engineOf, viewsOf } from './define';
+import { useEditorLocale } from './locale';
 import { BlockedShell, RecoveryShell } from './shells';
 import { toolbarItems } from './toolbar-items';
 import {
@@ -124,29 +126,34 @@ interface Mounted {
     /** `undefined` for a blocked document, which gets no session. */
     readonly decoded: { readonly tree: TreeNode; readonly capabilities: readonly CapabilityRef[] } | undefined;
     readonly blocked: Extract<DecodeResult, { readonly status: 'blocked' }> | undefined;
-    readonly lang: string;
+    /** The document's own language and direction, which win over the theme's (SPEC-rich-text-react/AC-061). */
+    readonly lang: string | undefined;
+    readonly dir: 'ltr' | 'rtl' | undefined;
 }
 
 const mountOf = (props: Defined): Mounted => {
     const { definition, profile, defaultValue } = props;
     const engine = engineOf(definition);
     const { result, tree } = decodeToTree(defaultValue.document, engine.model, { limits: definition.limits });
-    let lang = enUS.lang;
-    if (props.locale !== undefined && props.locale.lang !== undefined) {
-        lang = props.locale.lang;
-    }
+    const unset = { lang: undefined, dir: undefined };
     if (result.status === 'blocked') {
-        return { definition, profile, decoded: undefined, blocked: result, lang };
+        return { definition, profile, decoded: undefined, blocked: result, ...unset };
     }
     if (tree === undefined) {
-        return { definition, profile, decoded: undefined, blocked: undefined, lang };
+        return { definition, profile, decoded: undefined, blocked: undefined, ...unset };
     }
     // The surface spellchecks in the document's language when it declares one (SPEC-rich-text-editing/AC-068).
+    let lang: string | undefined;
+    let dir: Mounted['dir'];
     if (tree.attrs !== undefined && typeof tree.attrs.lang === 'string') {
         lang = tree.attrs.lang;
     }
+    // `auto`, the default, sets no direction.
+    if (tree.attrs !== undefined && (tree.attrs.dir === 'ltr' || tree.attrs.dir === 'rtl')) {
+        dir = tree.attrs.dir;
+    }
     const decoded = { tree, capabilities: result.document.requiredCapabilities };
-    return { definition, profile, decoded, blocked: undefined, lang };
+    return { definition, profile, decoded, blocked: undefined, lang, dir };
 };
 
 /** What the parts share for the toolbars and focus moves between the surface and the chrome (SPEC-rich-text-react, Overlay focus). */
@@ -466,8 +473,9 @@ const SessionComponent = (
                 mounted.definition.authoring,
                 props.presentation,
                 chromeContext.t,
+                locale.lang ?? enUS.lang,
             ),
-        [mounted.definition, props.presentation, chromeContext],
+        [mounted.definition, props.presentation, chromeContext, locale.lang],
     );
     const chrome = useMemo(() => {
         const { t } = chromeContext;
@@ -649,11 +657,12 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
 
 const Root = forwardRef((props: Props & { readonly children: ReactNode }, ref: ForwardedRef<EditorHandle<object>>) => {
     const { definition } = props;
+    const locale = useEditorLocale(props.locale);
     // A host mistake, which no recovery shell can show without a model.
     if (definition === undefined) {
         throw new Error('RichTextEditor needs a `definition` until the profiles land with pair 37, TASK-rte-profiles.');
     }
-    return <Recovery props={{ ...props, definition }} editorRef={ref} />;
+    return <Recovery props={{ ...props, definition, locale }} editorRef={ref} />;
 });
 Root.displayName = 'RichTextEditor.Root';
 
@@ -678,6 +687,16 @@ const Surface = () => {
     const { props, mounted, coordinator, chrome } = useRoot('Surface');
     const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
     const contentClassName = presentation?.contentClassName;
+    const theme = useFondueTheme();
+    // The document's language and direction, else the theme's, while the chrome keeps the theme's (SPEC-rich-text-react/AC-060, AC-061).
+    let lang = mounted.lang ?? theme.lang;
+    if (lang === undefined && props.locale !== undefined) {
+        lang = props.locale.lang;
+    }
+    if (lang === undefined) {
+        lang = enUS.lang;
+    }
+    const dir = mounted.dir ?? theme.dir;
     // React writes the first classes only: ProseMirror adds its own to this element with `classList`, which a rewritten attribute would drop.
     const [className] = useState(() => contentClasses(contentClassName));
     const surfaceRef = useRef<HTMLElement | null>(null);
@@ -719,7 +738,8 @@ const Surface = () => {
             aria-placeholder={shownPlaceholder}
             data-placeholder={placeholder}
             id={chrome.surfaceId}
-            lang={mounted.lang}
+            lang={lang}
+            dir={dir}
             spellCheck={spellCheck}
             data-test-id={`${testId}-surface`}
             data-rte-surface=""
