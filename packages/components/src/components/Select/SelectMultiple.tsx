@@ -48,4 +48,4 @@ const SelectMultipleInput = (
 };
 
 export const SelectMultiple = forwardRef<HTMLDivElement, SelectMultipleProps>(SelectMultipleInput);
-SelectMultiple.displayName = 'Select.Multi';
+SelectMultiple.displayName = 'Select.Multiple';

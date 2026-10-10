@@ -204,4 +204,4 @@ export const SelectMenu = ({
         </RadixPopover.Portal>
     );
 };
-SelectMenu.displayName = 'Select.Menu';
+SelectMenu.displayName = 'SelectMenu';
