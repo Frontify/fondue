@@ -97,6 +97,11 @@
     outline-offset: 2px;
 }
 
+/* SPEC-rich-text-accessibility/AC-024: node chrome that takes focus scrolls clear of the sticky toolbar. */
+:where(.fondue-rte-content[data-rte-surface] [data-rte-chrome] *) {
+    scroll-margin-block-start: var(--rte-chrome-scroll-margin, 0);
+}
+
 /* SPEC-rich-text-accessibility/AC-067: the selection stays visible while focus is in the editor chrome. */
 :where(.fondue-rte-content[data-rte-surface] [data-rte-selection]) {
     background-color: var(--rte-content-selection-color);

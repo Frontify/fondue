@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Dropdown, Tooltip, useFondueTheme } from '@frontify/fondue-components';
-import { IconDotsHorizontal, icons } from '@frontify/fondue-icons';
+import { IconCheckMark, IconDotsHorizontal, icons } from '@frontify/fondue-icons';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
-import { type ComponentType, type MutableRefObject, type RefObject, useContext, useRef, useState } from 'react';
+import { type ComponentType, type MutableRefObject, type RefObject, useContext, useId, useRef, useState } from 'react';
 
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { SessionContext, useCommandQuery } from '#/bridge/hooks';
@@ -113,8 +113,11 @@ const Item = ({
                             return;
                         }
                         await runItem(runtime, item);
-                        // Focus returns to the surface unless the author moved it meanwhile (SPEC-rich-text-react/AC-036).
-                        if (button.ownerDocument.activeElement === button) {
+                        // Focus returns to the surface unless the author moved it meanwhile; Firefox and Safari on macOS leave
+                        // a click's focus on the toolbar or the body (SPEC-rich-text-react/AC-036).
+                        const { activeElement, body } = button.ownerDocument;
+                        const toolbar = button.closest('[role="toolbar"]');
+                        if (activeElement === body || (toolbar !== null && toolbar.contains(activeElement))) {
                             runtime.handle.focus();
                         }
                     }}
@@ -135,20 +138,57 @@ const Item = ({
 
 const MoreRow = ({
     item,
+    strings,
     onRun,
 }: {
     readonly item: ToolbarItem;
+    readonly strings: ToolbarStrings;
     readonly onRun: (item: ToolbarItem) => Promise<void>;
 }) => {
     const state = useCommandQuery(item.command, item.payload);
     const { shortcut, keyshortcuts } = useShortcut(item);
+    const reasonId = useId();
+    // Fondue's `Dropdown.Item` types no menu item role or state, which Radix still takes through the spread.
+    const semantics: Record<string, unknown> = { role: 'menuitemcheckbox', 'aria-checked': state.active };
+    if (!item.toggle) {
+        semantics.role = 'menuitem';
+        semantics['aria-checked'] = undefined;
+    }
+    // An unavailable row stays focusable with its reason, as a toolbar item does (SPEC-rich-text-react/AC-038).
+    let reason: string | undefined;
+    if (!state.enabled) {
+        reason = strings.reason(state.disabledReason ?? '');
+        semantics['aria-disabled'] = true;
+        semantics['aria-describedby'] = reasonId;
+    }
     return (
-        <Dropdown.Item disabled={!state.enabled} aria-keyshortcuts={keyshortcuts} onSelect={() => onRun(item)}>
+        <Dropdown.Item
+            {...semantics}
+            aria-keyshortcuts={keyshortcuts}
+            onSelect={async (event) => {
+                if (reason !== undefined) {
+                    event.preventDefault();
+                    return;
+                }
+                await onRun(item);
+            }}
+        >
             <Dropdown.Slot name="left">
                 <Icon name={item.icon} />
             </Dropdown.Slot>
             {item.label}
+            {/* SPEC-rich-text-accessibility/AC-006: a check mark, not only a colour, shows a checked toggle. */}
+            {state.active !== false && (
+                <Dropdown.Slot name="right">
+                    <IconCheckMark size={16} aria-hidden />
+                </Dropdown.Slot>
+            )}
             {shortcut !== undefined && <Dropdown.Shortcut>{shortcut}</Dropdown.Shortcut>}
+            {reason !== undefined && (
+                <span id={reasonId} aria-hidden className={styles.reason}>
+                    {reason}
+                </span>
+            )}
         </Dropdown.Item>
     );
 };
@@ -166,6 +206,10 @@ const More = ({
     const runtime = useContext(SessionContext);
     // A row that ran its command sends focus to the surface rather than back to More (SPEC-rich-text-react, Overlay focus).
     const ranRef = useRef(false);
+    // Radix opens a menu on pointer down; More opens on the click, so a press dragged away opens nothing (SPEC-rich-text-accessibility/AC-026).
+    const [open, setOpen] = useState(false);
+    const pointerRef = useRef(false);
+    const openAtPressRef = useRef(false);
     const onRun = async (item: ToolbarItem) => {
         if (runtime === undefined) {
             return;
@@ -175,7 +219,14 @@ const More = ({
         runtime.handle.focus();
     };
     return (
-        <Dropdown.Root>
+        <Dropdown.Root
+            open={open}
+            onOpenChange={(next) => {
+                if (!next || !pointerRef.current) {
+                    setOpen(next);
+                }
+            }}
+        >
             <Tooltip.Root>
                 <Tooltip.Trigger asChild>
                     <Dropdown.Trigger asChild>
@@ -185,6 +236,18 @@ const More = ({
                             aria-label={strings.more}
                             disabled={disabled}
                             data-rte-toolbar-more=""
+                            onPointerDown={() => {
+                                pointerRef.current = true;
+                                openAtPressRef.current = open;
+                            }}
+                            onKeyDown={() => {
+                                pointerRef.current = false;
+                            }}
+                            onClick={() => {
+                                if (pointerRef.current && !openAtPressRef.current) {
+                                    setOpen(true);
+                                }
+                            }}
                         >
                             <IconDotsHorizontal size={20} aria-hidden />
                         </RadixToolbar.Button>
@@ -203,7 +266,7 @@ const More = ({
                 }}
             >
                 {items.map((item) => (
-                    <MoreRow key={item.key} item={item} onRun={onRun} />
+                    <MoreRow key={item.key} item={item} strings={strings} onRun={onRun} />
                 ))}
             </Dropdown.Content>
         </Dropdown.Root>
@@ -232,6 +295,8 @@ const useFitting = (root: RefObject<HTMLDivElement | null>, count: number, items
     const [fitting, setFitting] = useState<Fitting>({ itemsKey, shown: count });
     const endsRef = useRef<readonly number[]>([]);
     const moreSizeRef = useRef(0);
+    // A refit that moves the focused item into More sends focus to More, not to the body.
+    const focusMoreRef = useRef(false);
     // A new item set shows every item once, so the layout effect measures them all.
     let { shown } = fitting;
     if (fitting.itemsKey !== itemsKey) {
@@ -269,6 +334,12 @@ const useFitting = (root: RefObject<HTMLDivElement | null>, count: number, items
                 }
                 next += 1;
             }
+            const focused = [...element.querySelectorAll('[data-rte-toolbar-item]')].indexOf(
+                element.ownerDocument.activeElement as Element,
+            );
+            if (focused >= next) {
+                focusMoreRef.current = true;
+            }
             // Only the rendered items tell what fits, so the layout effect measures them before paint.
             // oxlint-disable-next-line @eslint-react/set-state-in-effect -- the state is the measured layout.
             setFitting((previous) => {
@@ -283,6 +354,16 @@ const useFitting = (root: RefObject<HTMLDivElement | null>, count: number, items
         observer.observe(element);
         return () => observer.disconnect();
     }, [root, count, itemsKey]);
+    useClientLayoutEffect(() => {
+        if (!focusMoreRef.current) {
+            return;
+        }
+        focusMoreRef.current = false;
+        const more = root.current?.querySelector<HTMLElement>('[data-rte-toolbar-more]');
+        if (more !== null && more !== undefined) {
+            more.focus();
+        }
+    }, [root, shown]);
     return shown;
 };
 

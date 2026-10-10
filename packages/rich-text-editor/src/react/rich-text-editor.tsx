@@ -410,13 +410,17 @@ const SessionComponent = (
             // Node chrome opens on its first enabled control; Radix Toolbar sends focus to the last focused item.
             const first = next.querySelector<HTMLElement>('button:not([disabled])');
             if (next === nodeChrome && first !== null) {
-                first.focus();
+                // WebKit's focus scroll ignores `scroll-margin`, which `scrollIntoView` keeps clear of the sticky toolbar.
+                first.focus({ preventScroll: true });
+                first.scrollIntoView({ block: 'nearest' });
                 return;
             }
             next.focus();
             return;
         }
-        if (event.key === 'Escape' && inside >= 0) {
+        // Node chrome away from the selection is not a stop, yet Escape leaves it too (SPEC-rich-text-react, Overlay focus).
+        const inNodeChrome = target instanceof Element && target.closest('[data-rte-node-chrome]') !== null;
+        if (event.key === 'Escape' && (inside >= 0 || inNodeChrome)) {
             event.preventDefault();
             runtime.handle.focus();
         }
