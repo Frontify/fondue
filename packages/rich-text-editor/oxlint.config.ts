@@ -6,19 +6,10 @@ import { defineConfig } from 'oxlint';
 
 export default defineConfig({
     extends: [reactConfig],
-    plugins: ['typescript', 'eslint', 'promise', 'unicorn', 'import', 'jsx-a11y', 'react'],
     options: {
         typeAware: true,
     },
-    ignorePatterns: [
-        'dist/',
-        'playwright/.cache/',
-        'playwright-report/',
-        'test-results/',
-        'storybook-static/',
-        'coverage/',
-        'fixtures/',
-    ],
+    ignorePatterns: ['dist/', 'coverage/'],
     overrides: [
         {
             files: ['**/*.{js,jsx,ts,tsx,mts,cts,cjs}'],
@@ -34,8 +25,6 @@ export default defineConfig({
                         trailingEmptyLines: { minimum: 2 },
                     },
                 ],
-                // The shared config lowers this to `warn` for TypeScript files; the public types hold no `any`.
-                'typescript/no-explicit-any': 'error',
             },
         },
     ],
