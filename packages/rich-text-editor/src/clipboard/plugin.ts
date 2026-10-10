@@ -273,14 +273,15 @@ const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
         // A drag inside moves its content with the same `nodeId`s, or with the copy modifier inserts a copy (AC-030).
         let slice = dragged;
         const point = dropPoint(tr.doc, at.pos, slice) ?? at.pos;
+        // A move pastes nothing new, so the paste policy filters only a copy.
         if (copies(view, event)) {
-            slice = new Slice(withoutIds(slice.content), slice.openStart, slice.openEnd);
+            const copied = new Slice(withoutIds(slice.content), slice.openStart, slice.openEnd);
+            slice = withoutRefused(copied, tr.doc.type.schema, model, connected.runtime.policy.features);
         } else {
             tr.deleteSelection();
         }
         const position = tr.mapping.map(point);
-        const kept = withoutRefused(slice, tr.doc.type.schema, model, connected.runtime.policy.features);
-        const range = insertSlice(tr, position, position, kept);
+        const range = insertSlice(tr, position, position, slice);
         tr.setSelection(Selection.near(tr.doc.resolve(range.to), -1));
         pasted = { droppedMedia: 0 };
     }

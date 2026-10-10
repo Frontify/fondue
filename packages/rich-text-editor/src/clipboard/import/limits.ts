@@ -4,17 +4,22 @@ import { type Node } from 'prosemirror-model';
 
 import { type ResourceLimits } from '#/model';
 
-/** The limit a document with pasted content exceeds, counted as decode counts nodes, depth and cells (SPEC-rich-text-clipboard/AC-020). */
+/** The limit a document with pasted content exceeds, counted as decode counts nodes, depth, cells and text (SPEC-rich-text-clipboard/AC-020). */
 export const exceededLimit = (
     doc: Node,
     limits: ResourceLimits,
-): 'maxDocumentNodes' | 'maxDepth' | 'maxTableCells' | undefined => {
+): 'maxDocumentNodes' | 'maxDepth' | 'maxTableCells' | 'maxTextLength' | undefined => {
     let nodes = 0;
     let deepest = 0;
+    let longest = 0;
     let exceedsCells = false;
     const visit = (node: Node, depth: number) => {
         nodes += 1;
         deepest = Math.max(deepest, depth);
+        // The engine joins adjacent text with the same marks, as the encoder does before decode measures it.
+        if (node.isText) {
+            longest = Math.max(longest, node.textContent.length);
+        }
         if (node.type.name === 'table') {
             let cells = 0;
             for (const row of node.children) {
@@ -35,6 +40,9 @@ export const exceededLimit = (
     }
     if (exceedsCells) {
         return 'maxTableCells';
+    }
+    if (longest > limits.maxTextLength) {
+        return 'maxTextLength';
     }
     return undefined;
 };

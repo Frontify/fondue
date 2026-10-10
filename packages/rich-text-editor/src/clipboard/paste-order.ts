@@ -7,7 +7,9 @@ import { type Step, Transform } from 'prosemirror-transform';
 import { createParser, readMarkdown } from '#/codecs/from-markdown';
 import { carriesNodeId } from '#/definition';
 import { checkHref, type ContentModel, defaultIdSource, type ResourceLimits } from '#/model';
+import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
+import { isRecord } from '#/model/values';
 
 import { exceededLimit } from './import/limits';
 import { labelText, type PastePolicy, refusedNames, resliced, withoutRefused } from './import/policy';
@@ -67,6 +69,57 @@ export const withoutIds = (fragment: Fragment): Fragment =>
             return node.type.create(attrs, withoutIds(node.content), node.marks);
         }),
     );
+
+/** The `nodeId`s and resource references inside the island originals of `fragment`, which a paste cannot renew. */
+const islandIdentities = (fragment: Fragment) => {
+    const ids: string[] = [];
+    let references = false;
+    const read = (value: unknown) => {
+        if (Array.isArray(value)) {
+            for (const item of value) {
+                read(item);
+            }
+            return;
+        }
+        if (!isRecord(value)) {
+            return;
+        }
+        if (isRecord(value.attrs)) {
+            if (typeof value.attrs.nodeId === 'string') {
+                ids.push(value.attrs.nodeId);
+            }
+            references ||= Object.hasOwn(value.attrs, 'resourceId') || Object.hasOwn(value.attrs, 'assetId');
+        }
+        read(value.content);
+        read(value.marks);
+    };
+    fragment.descendants((node) => {
+        if (node.type.name === ISLAND_BLOCK || node.type.name === ISLAND_INLINE) {
+            read(node.attrs.original);
+        }
+        for (const mark of node.marks) {
+            if (mark.type.name === ISLAND_MARK) {
+                read(mark.attrs.original);
+            }
+        }
+    });
+    return { ids, references };
+};
+
+/** Whether an island of `slice` holds a `nodeId` the paste would repeat, or a reference from another context (DR-082). */
+const repeatsIdentity = (slice: Slice, doc: Node, foreign: boolean) => {
+    const { ids, references } = islandIdentities(slice.content);
+    if (references && foreign) {
+        return true;
+    }
+    const taken = new Set(islandIdentities(doc.content).ids);
+    doc.descendants((node) => {
+        if (typeof node.attrs.nodeId === 'string') {
+            taken.add(node.attrs.nodeId);
+        }
+    });
+    return ids.some((id, index) => taken.has(id) || ids.indexOf(id) !== index);
+};
 
 /** A slice from another context: each mention becomes its label text and each figure goes (SPEC-rich-text-clipboard/AC-022). */
 const outOfContext = (schema: Schema, slice: Slice) => {
@@ -187,6 +240,10 @@ export const pastePayload = (
     let internal: ReturnType<typeof readSlice>;
     if (!settings.plain && payload.slice !== '') {
         internal = readSlice(payload.slice, model, schema, settings.limits);
+    }
+    // An island's original stays unchanged, so one whose IDs or references cannot stay makes the slice fall back.
+    if (internal !== undefined && repeatsIdentity(internal.slice, tr.doc, internal.context !== settings.context)) {
+        internal = undefined;
     }
     // Step 3: a URL links the selected text, or a caret paste with no usable slice inserts it linked as a second step.
     const href = hrefOf(text);
