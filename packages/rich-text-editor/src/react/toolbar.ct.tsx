@@ -368,6 +368,18 @@ test.describe('with a coarse pointer', () => {
         await expect(page.getByRole('menuitem', { name: 'Show toolbar on selection only' })).toBeVisible();
     });
 
+    test('SPEC-rich-text-react/AC-029 opens no More on a tap in a disabled editor', async ({ mount, page }) => {
+        await mount(<ToolbarProbe disabled />);
+        await ready(page);
+
+        await itemOf(page, 'More').tap({ force: true });
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await expect(page.getByRole('menu')).toHaveCount(0);
+    });
+
     test('SPEC-rich-text-accessibility/AC-026 does not open More when a touch slides off it before release', async ({
         mount,
         page,
