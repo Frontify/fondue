@@ -26,6 +26,19 @@ export const deCH = {
         RichTextEditor_recoveryMessage:
             'Der Editor funktioniert nicht mehr. Ihre letzten Änderungen werden unten angezeigt.',
         RichTextEditor_retry: 'Erneut versuchen',
+        RichTextEditor_saveConflict:
+            'Jemand anderes hat diesen Inhalt geändert. Ihre Änderungen bleiben erhalten, sind aber nicht gespeichert.',
+        RichTextEditor_saveFailed: 'Speichern fehlgeschlagen. Ihre Änderungen sind nicht gespeichert.',
+        RichTextEditor_saveForbidden:
+            'Nicht gespeichert: Sie dürfen diesen Inhalt nicht bearbeiten. Fordern Sie Zugriff an oder melden Sie sich erneut an.',
+        RichTextEditor_saveIncompatible: 'Nicht gespeichert: Dieser Editor ist veraltet. Laden Sie die Seite neu.',
+        RichTextEditor_saveInvalid:
+            'Nicht gespeichert: Der Inhalt wurde nicht angenommen. Kopieren Sie ihn, um Ihre Änderungen zu behalten.',
+        RichTextEditor_saveOffline: 'Offline. Änderungen werden gespeichert, sobald Sie wieder online sind.',
+        RichTextEditor_saveRetrying: 'Speichern fehlgeschlagen. Neuer Versuch…',
+        RichTextEditor_saveSaved: 'Alle Änderungen gespeichert',
+        RichTextEditor_saveSaving: 'Wird gespeichert…',
+        RichTextEditor_saveUnsaved: 'Nicht gespeicherte Änderungen',
         RichTextEditor_toolbar: 'Textformatierung',
         RichTextEditor_toolbarAlways: 'Symbolleiste immer anzeigen',
         RichTextEditor_toolbarOnSelection: 'Symbolleiste nur bei Auswahl anzeigen',

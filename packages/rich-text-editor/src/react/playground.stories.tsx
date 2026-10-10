@@ -11,10 +11,13 @@ import {
     defineNodeView,
     defineReactPresentation,
     type EditorHandle,
+    type PersistenceService,
     type RichTextEditorProps,
     RichTextEditor,
+    type SaveResponse,
     type SelectionHandle,
     useEditorSelection,
+    useRichTextFormField,
     useRichTextNodeView,
 } from '#/index';
 import { compileContentModel, createEmptyDocument, defineFeature, type JsonValue, setBlock } from '#/model';
@@ -103,6 +106,8 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly bubbleToolbar: boolean;
     /** Renders the editor's overlays into a host element below the editor, as `portalContainer`. */
     readonly hostPortalContainer: boolean;
+    /** How the in-memory server answers each save, so `RichTextEditor.Status` shows each message. */
+    readonly serverAnswer: 'saved' | 'conflict' | 'forbidden' | 'invalid' | 'incompatible-writer';
 };
 
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
@@ -136,6 +141,7 @@ const Playground = ({
     brokenAtMount,
     bubbleToolbar,
     hostPortalContainer,
+    serverAnswer,
     ...props
 }: PlaygroundProps) => {
     const [hostContainer, setHostContainer] = useState<HTMLElement | null>(null);
@@ -150,8 +156,30 @@ const Playground = ({
     const targetRef = useRef<SelectionHandle | null>(null);
     const [document, setDocument] = useState<JsonValue>(props.defaultValue.document.content as unknown as JsonValue);
     const [broken, setBroken] = useState(brokenAtMount);
+    const field = useRichTextFormField(handleRef);
     // An in-memory server in place of the host's, so the save states show (TASK-rte-persistence).
-    const [services] = useState(() => ({ persistence: createFakePersistenceService() }));
+    const answerRef = useRef(serverAnswer);
+    useEffect(() => {
+        answerRef.current = serverAnswer;
+    }, [serverAnswer]);
+    const [services] = useState(() => {
+        const server = createFakePersistenceService();
+        const persistence: PersistenceService = {
+            save: (request, context) => {
+                const answer = answerRef.current;
+                if (answer === 'saved') {
+                    return server.save(request, context);
+                }
+                let response: SaveResponse = { status: 'conflict', currentRevision: 'story-remote' };
+                if (answer !== 'conflict') {
+                    response = { status: 'rejected', code: answer, diagnostics: [] };
+                }
+                return Promise.resolve(response);
+            },
+            read: server.read,
+        };
+        return { persistence };
+    });
     const [saveStatus, setSaveStatus] = useState('not mounted');
     const log = (text: string) => {
         counterRef.current += 1;
@@ -327,6 +355,23 @@ const Playground = ({
                 </button>
                 <button
                     type="button"
+                    onClick={async () => {
+                        const result = await handleRef.current?.requestCommit({ reason: 'manual' });
+                        if (result === undefined) {
+                            log('requestCommit no editor');
+                            return;
+                        }
+                        let code = '';
+                        if (result.status !== 'acknowledged') {
+                            code = result.code;
+                        }
+                        log(`requestCommit ${result.status} ${code}`);
+                    }}
+                >
+                    Save now
+                </button>
+                <button
+                    type="button"
                     onClick={() => {
                         const handle = handleRef.current;
                         const panel = hostPanelRef.current;
@@ -385,10 +430,52 @@ const Playground = ({
                 <RichTextEditor.Toolbar />
                 {bubbleToolbar && <RichTextEditor.BubbleToolbar />}
                 <RichTextEditor.Surface />
+                <RichTextEditor.Status />
                 <SelectionReadout />
                 <p>Save status: {saveStatus}</p>
                 <Breaker armed={broken} />
             </RichTextEditor.Root>
+            <section aria-label="Form field" style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                    type="button"
+                    onClick={() => {
+                        const result = field.validate();
+                        if (result.valid) {
+                            log('validate valid');
+                            return;
+                        }
+                        log(`validate ${result.reason}`);
+                    }}
+                >
+                    Validate
+                </button>
+                <button
+                    type="button"
+                    onClick={async () => {
+                        const result = await field.reset();
+                        if (result.status === 'rejected') {
+                            log(`reset rejected ${result.code}`);
+                            return;
+                        }
+                        log(`reset ${result.status}`);
+                    }}
+                >
+                    Reset
+                </button>
+                <button
+                    type="button"
+                    onClick={async () => {
+                        try {
+                            const settled = await field.getSettledValue({ timeoutMs: 1000 });
+                            log(`getSettledValue ${JSON.stringify(settled.content).length} characters of JSON`);
+                        } catch {
+                            log('getSettledValue timeout');
+                        }
+                    }}
+                >
+                    Read the settled value
+                </button>
+            </section>
             <section ref={hostPanelRef} aria-label="Host panel">
                 <button type="button">A host control</button>
                 <div ref={setHostContainer} />
@@ -428,6 +515,7 @@ const meta: Meta<typeof Playground> = {
         brokenAtMount: false,
         bubbleToolbar: false,
         hostPortalContainer: false,
+        serverAnswer: 'saved',
         defaultToolbarMode: 'fixed',
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },
@@ -450,6 +538,10 @@ const meta: Meta<typeof Playground> = {
         profile: { control: 'select', options: ['inline', 'comment', 'document', 'brand-document'] },
         status: { control: 'select', options: ['neutral', 'success', 'error', 'loading'] },
         defaultToolbarMode: { control: 'select', options: ['fixed', 'bubble'] },
+        serverAnswer: {
+            control: 'select',
+            options: ['saved', 'conflict', 'forbidden', 'invalid', 'incompatible-writer'],
+        },
     },
 };
 export default meta;

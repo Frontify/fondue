@@ -150,6 +150,8 @@ export interface EditorRuntime {
     nodeActions(nodeId: string): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
+    /** Calls `settled` once input settles after the composition that runs now (SPEC-rich-text-runtime/AC-070). */
+    afterInput(settled: () => void): Unsubscribe;
     /** Emits the `operationMetric` of an operation that started at `started` on the environment clock (SPEC-rich-text-quality/AC-029). */
     measure(kind: OperationMetric['kind'], started: number, failureCode: string | null): void;
 }
@@ -376,6 +378,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // Targets the coordinator captures during a commit, such as from a running command, captured once it ends.
     const deferredCaptures: string[] = [];
     const queue: Intent[] = [];
+    // What waits for input to settle outside the queue, such as a form's settled value (SPEC-rich-text-persistence/AC-061).
+    const afterInput = new Set<() => void>();
 
     // Records typing before any other handler sees the event, so the view itself gets no event handler (SPEC-rich-text-runtime/AC-001).
     const typingRecorder = new Plugin({
@@ -811,6 +815,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         });
         coordinator.settle();
         saves?.settled();
+        for (const settled of [...afterInput]) {
+            afterInput.delete(settled);
+            settled();
+        }
     };
 
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view (SPEC-rich-text-runtime/AC-001). */
@@ -1642,6 +1650,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         nodeActions,
         saveStatusChanged: emitSaveStatus,
+        afterInput: (settled) => {
+            afterInput.add(settled);
+            return () => {
+                afterInput.delete(settled);
+            };
+        },
         measure: (kind, started, failureCode) => measure(kind, started, failureCode),
     };
     if (options.nodeViews !== undefined) {
