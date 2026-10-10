@@ -340,7 +340,6 @@ const SessionComponent = (
             inputRules: () => latestRef.current.inputRules,
         });
         connectClipboard(runtime, {
-            limits: definition.limits,
             sliceContext: () => {
                 const { presentation } = latestRef.current;
                 if (presentation === undefined) {

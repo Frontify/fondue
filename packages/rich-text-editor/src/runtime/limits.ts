@@ -25,8 +25,11 @@ const storedNodes = (value: unknown): number => {
     return value.content.reduce((total: number, child: unknown) => total + storedNodes(child), 1);
 };
 
+/** The limit of a commit's check that a document exceeds. */
+export type ExceededLimit = 'maxDocumentNodes' | 'maxDocumentBytes' | 'maxTextLength';
+
 /**
- * The `maxDocumentBytes` and `maxDocumentNodes` checks of a commit (SPEC-rich-text-runtime/AC-004): the UTF-8 size
+ * The `maxDocumentBytes`, `maxDocumentNodes` and `maxTextLength` checks of a commit (SPEC-rich-text-runtime/AC-004): the UTF-8 size
  * of the JSON the encoder writes, through its own `writeNode`, cached per immutable node, so a commit measures only the nodes along its changed
  * path, never through `Node.toJSON` or a whole-document serialization.
  */
@@ -93,13 +96,18 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
         return size;
     };
 
-    /** Whether the document has more nodes or bytes, or a longer text, than the limits allow. */
-    return (doc: Node, limits: ResourceLimits): boolean => {
+    /** The limit the document exceeds, if any. */
+    return (doc: Node, limits: ResourceLimits): ExceededLimit | undefined => {
         const size = sizeOf(doc);
-        return (
-            size.nodes > limits.maxDocumentNodes ||
-            envelopeBytes + size.bytes > limits.maxDocumentBytes ||
-            size.longest > limits.maxTextLength
-        );
+        if (size.nodes > limits.maxDocumentNodes) {
+            return 'maxDocumentNodes';
+        }
+        if (envelopeBytes + size.bytes > limits.maxDocumentBytes) {
+            return 'maxDocumentBytes';
+        }
+        if (size.longest > limits.maxTextLength) {
+            return 'maxTextLength';
+        }
+        return undefined;
     };
 };

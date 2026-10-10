@@ -47,7 +47,7 @@ import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
 import { firedRule, withoutRules, withRuleSetting } from './input-rules';
 import { keyGuard } from './keys';
-import { createLimitCheck } from './limits';
+import { createLimitCheck, type ExceededLimit } from './limits';
 import { operationMetric } from './metrics';
 import { authoringOf, createPolicyCheck, refusesLevel, setsHeading } from './policy';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
@@ -133,6 +133,10 @@ export interface EditorRuntime {
     readonly state: EditorState;
     /** The authoring policy that the next commit is checked against. */
     readonly policy: AuthoringPolicy;
+    /** The session's resource limits. */
+    readonly limits: ResourceLimits;
+    /** The limit of the commit check that `doc` exceeds, which a paste reports (SPEC-rich-text-clipboard/AC-020). */
+    exceededLimit(doc: Node): ExceededLimit | undefined;
     /** Shows the document in `element`, which becomes the editable surface. */
     attach(element: HTMLElement): void;
     /** Destroys the view synchronously; the session and its state stay. */
@@ -655,7 +659,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             doc !== state.doc &&
             !(fromView && isProvisional(root)) &&
             root.getMeta(NORMALIZE_META) !== 'now' &&
-            (breaksPolicy(policy, state.doc, doc, mapping, isHistoryTransaction(root)) || exceedsLimits(doc, limits))
+            (breaksPolicy(policy, state.doc, doc, mapping, isHistoryTransaction(root)) ||
+                exceedsLimits(doc, limits) !== undefined)
         ) {
             if (firedRule(applied.transactions)) {
                 return prepare(withoutRules(root), ids, fromView);
@@ -805,7 +810,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             mapping.appendMapping(repaired.mapping);
             appended = repaired.appended;
         }
-        if (!breaksPolicy(policy, published.doc, state.doc, mapping) && !exceedsLimits(state.doc, limits)) {
+        if (
+            !breaksPolicy(policy, published.doc, state.doc, mapping) &&
+            exceedsLimits(state.doc, limits) === undefined
+        ) {
             announce('input', null, { kind: 'commit', started, appended });
             return true;
         }
@@ -1619,6 +1627,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         get policy() {
             return policy;
         },
+        limits,
+        exceededLimit: (doc) => exceedsLimits(doc, limits),
         attach: (element) => {
             if (phase === 'disposed') {
                 return;

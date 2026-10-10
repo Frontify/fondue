@@ -11,7 +11,6 @@ import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { isRecord } from '#/model/values';
 
-import { exceededLimit } from './import/limits';
 import { labelText, type PastePolicy, refusedNames, resliced, withoutRefused } from './import/policy';
 import { readSlice } from './slice';
 
@@ -26,6 +25,8 @@ export interface Payload {
 export interface PasteSettings {
     readonly model: ContentModel;
     readonly limits: ResourceLimits;
+    /** The limit a document with the pasted content exceeds, from the commit check and the depth and cell check. */
+    readonly exceeded: (doc: Node) => string | undefined;
     readonly policy: PastePolicy;
     /** The destination's slice context (SPEC-rich-text-clipboard/AC-022, AC-023). */
     readonly context: string;
@@ -53,6 +54,22 @@ export const insertSlice = (tr: Transform, from: number, to: number, slice: Slic
     }
     const mapping = tr.mapping.slice(start);
     return { from: mapping.map(from, -1), to: mapping.map(to, 1) };
+};
+
+/** `slice` without the content the paste policy refuses and with every `nodeId` cleared, ready to insert. */
+export const prepareSlice = (slice: Slice, schema: Schema, model: ContentModel, policy: PastePolicy): Slice => {
+    const kept = withoutRefused(slice, schema, model, policy);
+    return new Slice(withoutIds(kept.content), kept.openStart, kept.openEnd);
+};
+
+/** Inserts `slice` with `insertSlice` and puts the selection after it. */
+export const insertAndSelect = (tr: Transaction, from: number, to: number, slice: Slice) => {
+    const steps = tr.steps.length;
+    const range = insertSlice(tr, from, to, slice);
+    if (tr.steps.length > steps) {
+        tr.setSelection(Selection.near(tr.doc.resolve(range.to), -1));
+    }
+    return range;
 };
 
 /** The content with every `nodeId` cleared: the runtime gives each pasted node a new one (SPEC-rich-text-clipboard/AC-021), and copied HTML holds none (AC-027). */
@@ -107,7 +124,7 @@ const islandIdentities = (fragment: Fragment) => {
 };
 
 /** Whether an island of `slice` holds a `nodeId` the paste would repeat, or a reference from another context (DR-082). */
-const repeatsIdentity = (slice: Slice, doc: Node, foreign: boolean) => {
+export const repeatsIdentity = (slice: Slice, doc: Node, foreign: boolean) => {
     const { ids, references } = islandIdentities(slice.content);
     if (references && foreign) {
         return true;
@@ -217,18 +234,8 @@ export const pastePayload = (
     const { model, policy } = settings;
     const text = payload.text.replaceAll('\r\n', '\n');
     const $from = tr.doc.resolve(from);
-    const prepared = (slice: Slice) => {
-        const kept = withoutRefused(slice, schema, model, policy);
-        return new Slice(withoutIds(kept.content), kept.openStart, kept.openEnd);
-    };
-    const insert = (slice: Slice) => {
-        const steps = tr.steps.length;
-        const range = insertSlice(tr, from, to, slice);
-        if (tr.steps.length > steps) {
-            tr.setSelection(Selection.near(tr.doc.resolve(range.to), -1));
-        }
-        return range;
-    };
+    const prepared = (slice: Slice) => prepareSlice(slice, schema, model, policy);
+    const insert = (slice: Slice) => insertAndSelect(tr, from, to, slice);
     // Step 2: a code block takes the text exactly.
     if ($from.parent.type.spec.code === true) {
         if (text === '') {
@@ -296,7 +303,7 @@ export const pastePayload = (
             next.step(step);
         }
         // A conversion past a limit leaves the pasted text as it is (SPEC-rich-text-clipboard/AC-020).
-        if (exceededLimit(next.doc, settings.limits) !== undefined) {
+        if (settings.exceeded(next.doc) !== undefined) {
             return null;
         }
         return next.setSelection(Selection.near(next.doc.resolve(range.to), -1));
