@@ -13,6 +13,8 @@
     --rte-content-placeholder-color: var(--color-secondary-default);
     --rte-content-placeholder-opacity: 1;
     --rte-content-selected-node-color: var(--color-focus-default);
+    --rte-content-focus-color: var(--color-focus-default);
+    --rte-content-selection-color: var(--color-container-secondary-default);
     color: var(--rte-content-text-color);
     /* The inherited rules of the installed prosemirror-view/style/prosemirror.css, on every content root so the reader wraps text as the editor does (SPEC-rich-text-react/AC-066, AC-092). */
     word-wrap: break-word;
@@ -87,6 +89,24 @@
     display: inline !important;
     border: none !important;
     margin: 0 !important;
+}
+
+/* SPEC-rich-text-accessibility/AC-023, AC-082: a 2 px outline around the whole focused surface. */
+:where(.fondue-rte-content[data-rte-surface]:focus-visible) {
+    outline: 2px solid var(--rte-content-focus-color);
+    outline-offset: 2px;
+}
+
+/* SPEC-rich-text-accessibility/AC-067: the selection stays visible while focus is in the editor chrome. */
+:where(.fondue-rte-content[data-rte-surface] [data-rte-selection]) {
+    background-color: var(--rte-content-selection-color);
+}
+
+/* Forced colours replace the fill, so an outline in the text colour marks the selection. */
+@media (forced-colors: active) {
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-selection]) {
+        outline: 1px solid;
+    }
 }
 
 /* SPEC-rich-text-react/AC-030: the placeholder shows only on an empty document and is never document text. */

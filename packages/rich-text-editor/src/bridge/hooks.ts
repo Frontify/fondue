@@ -3,7 +3,13 @@
 import { createContext, useCallback, useContext, useRef, useSyncExternalStore } from 'react';
 
 import { type EditorRuntime } from '#/runtime/runtime';
-import { type SelectionSummary } from '#/runtime/types';
+import {
+    type CommandArgs,
+    type CommandKey,
+    type CommandState,
+    type SelectionSummary,
+    type ShippedCommands,
+} from '#/runtime/types';
 
 import { useClientLayoutEffect } from './client-layout-effect';
 import { useRenderMark } from './dev-checks';
@@ -67,3 +73,24 @@ export const useEditorSelection = <T>(
     select: (selection: SelectionSummary) => T,
     isEqual: (a: T, b: T) => boolean = Object.is,
 ): T => useSessionValue((runtime) => select(selectionOf(runtime)), isEqual);
+
+// What a command reads before the session is ready, as `query` answers during `mounting`.
+const NOT_READY: CommandState = { enabled: false, active: false, disabledReason: 'not-ready' };
+
+const sameCommandState = (a: CommandState, b: CommandState) =>
+    a.enabled === b.enabled && a.active === b.active && a.disabledReason === b.disabledReason;
+
+/** A command's state for `args`, which rerenders the caller only when the state changes (SPEC-rich-text-react/AC-024). */
+export const useCommandQuery = (id: string, ...args: readonly unknown[]): CommandState =>
+    useSessionValue((runtime) => {
+        if (runtime === undefined) {
+            return NOT_READY;
+        }
+        return runtime.handle.query(id, ...args);
+    }, sameCommandState);
+
+/** The typed `useCommandState` of the public entry. */
+export const useCommandState = <C extends object = ShippedCommands, K extends CommandKey<C> = CommandKey<C>>(
+    id: K,
+    ...args: CommandArgs<C, K>
+): CommandState => useCommandQuery(id, ...args);

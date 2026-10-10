@@ -1,7 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { defineNodeView, type NodeViewState, useRichTextNodeView } from '#/bridge/define';
-export { useEditorSelection } from '#/bridge/hooks';
+export {
+    defineNodeView,
+    NodeChromeButton,
+    NodeChromeToolbar,
+    type NodeViewState,
+    useRichTextNodeView,
+} from '#/bridge/define';
+export { useCommandState, useEditorSelection } from '#/bridge/hooks';
 export { type RuntimeEnvironment } from '#/model';
 export {
     type LoadedDocument,

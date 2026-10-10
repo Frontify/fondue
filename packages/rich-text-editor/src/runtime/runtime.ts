@@ -1547,8 +1547,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                             attributes: (current) => {
                                 const attributes: Record<string, string> = {};
                                 if (shownMode === 'readonly') {
-                                    // A surface that is not contenteditable takes no focus by itself (SPEC-rich-text-react/AC-028).
-                                    attributes.tabindex = '0';
+                                    // A surface that is not contenteditable takes no focus by itself (SPEC-rich-text-react/AC-028),
+                                    // unless the host marked it disabled, which leaves the Tab order (SPEC-rich-text-react/AC-029).
+                                    if (element.getAttribute('aria-disabled') !== 'true') {
+                                        attributes.tabindex = '0';
+                                    }
                                     attributes['aria-readonly'] = 'true';
                                 }
                                 if (isEmpty(current)) {

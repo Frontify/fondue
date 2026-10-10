@@ -1,0 +1,85 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// SPEC-rich-text-react/AC-103: the toolbar sticks to the top of its scrolling container.
+.root {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+    display: flex;
+    gap: var(--spacing-xx-small);
+    // The padding holds the focus outline of the first and last item inside the clipped box.
+    padding: var(--spacing-x-small);
+    // SPEC-rich-text-react/AC-040: items that do not fit move into More, so the toolbar never scrolls sideways.
+    overflow: hidden;
+    min-inline-size: 0;
+    background-color: var(--color-surface-default);
+}
+
+.item {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: 32px;
+    block-size: 32px;
+    padding: 0 0 2px;
+    border: none;
+    border-radius: var(--border-radius-small);
+    background-color: transparent;
+    color: var(--color-primary-default);
+    cursor: pointer;
+
+    &[data-group-start] {
+        margin-inline-start: var(--spacing-small);
+    }
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    // SPEC-rich-text-accessibility/AC-006: a pressed item shows a bar under its icon as well as a fill, dashed when mixed.
+    &[aria-pressed='true'],
+    &[aria-pressed='mixed'] {
+        padding-block-end: 0;
+        border-block-end: 2px solid currentcolor;
+        background-color: var(--color-container-secondary-default);
+    }
+
+    &[aria-pressed='mixed'] {
+        border-block-end-style: dashed;
+    }
+
+    &[aria-disabled='true'],
+    &:disabled {
+        color: var(--color-secondary-default);
+        cursor: default;
+    }
+
+    // SPEC-rich-text-accessibility/AC-022, AC-023, AC-082: a 2 px outline around the whole item.
+    &:focus-visible {
+        outline: 2px solid var(--color-focus-default);
+        outline-offset: 2px;
+    }
+
+    // SPEC-rich-text-react/AC-041: a coarse pointer gets 44 by 44 CSS pixel targets.
+    @media (pointer: coarse) {
+        inline-size: 44px;
+        block-size: 44px;
+    }
+}
+
+.tooltip {
+    display: inline-flex;
+    gap: var(--spacing-x-small);
+}
+
+.reason {
+    display: block;
+}
+
+@media print {
+    .root {
+        display: none;
+    }
+}

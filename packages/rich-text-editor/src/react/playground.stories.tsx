@@ -80,14 +80,15 @@ const definition = defineEditor({ id: 'story.playground', model });
 /** Props the editor accepts and types but does not act on yet, with the pair that wires each (DR-063). */
 const NOT_WIRED: readonly (readonly [string, string])[] = [
     ['profile', 'pairs 37 and 38, TASK-rte-profiles; until then the definition prop is required'],
-    ['presentation', 'pair 19, TASK-rte-chrome, except resolveReference and contentClassName'],
+    [
+        'presentation',
+        'styles, colorTokens, listLevels, columns, strikeCheckedTasks, sliceContext and resolveAssetUrl with their features',
+    ],
     ['services', 'the persistence and recovery members only; references and uploads with their features'],
     ['portalContainer', 'pair 19, TASK-rte-chrome'],
     ['inputRules', 'pair 23, TASK-rte-input-keys'],
     ['defaultToolbarMode', 'pair 19, TASK-rte-chrome'],
     ['onToolbarModeChange', 'pair 19, TASK-rte-chrome'],
-    ['onFocus', 'pair 19, TASK-rte-chrome'],
-    ['onBlur', 'pair 19, TASK-rte-chrome'],
     ['onSubmit', 'pair 37, TASK-rte-profiles'],
 ];
 
@@ -97,6 +98,10 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly allowNewBold: boolean;
     /** The presentation's `contentClassName`, which the surface carries beside `fondue-rte-content`. */
     readonly contentClassName: string;
+    /** The presentation's `toolbarShortcut`, which moves focus between the surface and the toolbars. */
+    readonly toolbarShortcut: string;
+    /** Throws in render at mount, so the story opens on the recovery shell. */
+    readonly brokenAtMount: boolean;
 };
 
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
@@ -123,14 +128,17 @@ const resultText = (result: CommandResult | undefined) => {
     return result.status;
 };
 
-const Playground = ({ allowNewBold, contentClassName, ...props }: PlaygroundProps) => {
-    const presentation = useMemo(() => defineReactPresentation({ contentClassName }), [contentClassName]);
+const Playground = ({ allowNewBold, contentClassName, toolbarShortcut, brokenAtMount, ...props }: PlaygroundProps) => {
+    const presentation = useMemo(
+        () => defineReactPresentation({ contentClassName, toolbar: [['mark.bold.toggle']], toolbarShortcut }),
+        [contentClassName, toolbarShortcut],
+    );
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
     const targetRef = useRef<SelectionHandle | null>(null);
     const [document, setDocument] = useState<JsonValue>(props.defaultValue.document.content as unknown as JsonValue);
-    const [broken, setBroken] = useState(false);
+    const [broken, setBroken] = useState(brokenAtMount);
     // An in-memory server in place of the host's, so the save states show (TASK-rte-persistence).
     const [services] = useState(() => ({ persistence: createFakePersistenceService() }));
     const [saveStatus, setSaveStatus] = useState('not mounted');
@@ -337,7 +345,10 @@ const Playground = ({ allowNewBold, contentClassName, ...props }: PlaygroundProp
                     setDocument(change.readDocument().content as unknown as JsonValue);
                 }}
                 onDiagnostic={(diagnostic) => log(`diagnostic ${diagnostic.code}`)}
+                onFocus={() => log('focus')}
+                onBlur={() => log('blur')}
             >
+                <RichTextEditor.Toolbar />
                 <RichTextEditor.Surface />
                 <SelectionReadout />
                 <p>Save status: {saveStatus}</p>
@@ -374,6 +385,8 @@ const meta: Meta<typeof Playground> = {
         'aria-label': 'Notes',
         allowNewBold: true,
         contentClassName: 'playground-content',
+        toolbarShortcut: 'Alt-F10',
+        brokenAtMount: false,
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },
         placeholder: 'Write something, press Mod+B or type **text** for bold, and Mod+Z to undo',
@@ -438,6 +451,9 @@ export const NodeView: Story = {
         },
     },
 };
+
+/** A render error at mount, which shows the recovery shell with Retry and Copy content. */
+export const Recovery: Story = { args: { brokenAtMount: true } };
 
 /** A document in an unknown format version, which shows the blocked shell with its reason and Copy original. */
 export const Blocked: Story = {

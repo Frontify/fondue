@@ -80,6 +80,7 @@
         "test:storybook:ci": "concurrently -k -s first -n server,tests \"http-server storybook-static --port 6013 --silent\" \"wait-on tcp:127.0.0.1:6013 && pnpm test:storybook\""
     },
     "dependencies": {
+        "@radix-ui/react-toolbar": "^1.1.19",
         "axe-core": "^4.13.0",
         "markdown-it": "^15.0.2",
         "prosemirror-commands": "^1.7.2",
@@ -131,6 +132,7 @@
         "prosemirror-tables": "^1.8.5",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
+        "sass": "^1.102.0",
         "storybook": "^10.6.0",
         "tsx": "^4.23.11",
         "typescript": "^5.9.3",

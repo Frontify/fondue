@@ -154,7 +154,8 @@ export const RecoveryShell = ({
     const { t } = readerContext(locale, presentation);
     return (
         <div data-test-id={testId} data-rte-shell="recovery">
-            <p role="alert">{t('RichTextEditor_recoveryMessage')}</p>
+            {/* Visible text only: the shell replaces the root and its polite region (SPEC-rich-text-accessibility/AC-038). */}
+            <p>{t('RichTextEditor_recoveryMessage')}</p>
             <RichTextReader
                 document={document}
                 model={model}

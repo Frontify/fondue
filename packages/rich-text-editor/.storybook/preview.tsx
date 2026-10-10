@@ -6,7 +6,7 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import * as fondueLocales from '@frontify/fondue-components/locales';
 import { type Decorator, type Preview } from '@storybook/react-vite';
 
-import { axeViolations, featureTagFaults, globalsFaults } from './checks';
+import { axeViolations, featureTagFaults, globalsFaults, liveRegionFaults } from './checks';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 type ThemeName = 'light' | 'dark';
@@ -120,6 +120,7 @@ const preview: Preview = {
         const faults = [
             ...globalsFaults(canvasElement, globals),
             ...featureTagFaults(tags),
+            ...liveRegionFaults(canvasElement),
             ...(await axeViolations(canvasElement)),
         ];
         if (faults.length > 0) {

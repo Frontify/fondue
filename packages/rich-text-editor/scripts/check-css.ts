@@ -159,6 +159,13 @@ const insideRoot = (selector: string): boolean => {
     );
 };
 
+// The scoped name Vite gives a CSS Module class: `_`, the local name, a hash and the source line.
+const MODULE_CLASS = /^\._[a-zA-Z][\w-]*_[a-z\d]{5}_\d+(?![\w-])/;
+
+/** Whether `selector` is a chrome rule from a CSS Module: its subject compound starts with a scoped module class (SPEC-rich-text-react/AC-050). */
+const fromModule = (selector: string): boolean =>
+    MODULE_CLASS.test(selector) && !selector.includes('.fondue-rte-content');
+
 /**
  * Reports each content selector outside `:where(.fondue-rte-content` (SPEC-rich-text-react/AC-050, AC-067), each literal
  * colour outside a `var()` fallback (SPEC-rich-text-react/AC-052) and each keyframe outside the allowlist
@@ -169,7 +176,7 @@ export const scanCss = (path: string, source: string, allowlist: readonly string
     const violations: string[] = [];
     for (const { selectors, declarations, line } of rules) {
         for (const selector of selectors) {
-            if (!insideRoot(selector)) {
+            if (!insideRoot(selector) && !fromModule(selector)) {
                 violations.push(`${path}:${line} selector ${selector} is not inside ${CONTENT_SCOPE})`);
             }
         }
