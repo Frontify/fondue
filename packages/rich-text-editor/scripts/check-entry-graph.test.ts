@@ -53,6 +53,7 @@ describe('check-entry-graph', () => {
             './features': 'src/features/index.ts',
             './reader': 'src/reader/index.ts',
             './codecs': 'src/codecs/index.ts',
+            './html': 'src/html/index.ts',
         });
     }, 60_000);
 
@@ -87,10 +88,22 @@ describe('check-entry-graph', () => {
         expect(violations).toContain('./codecs reaches slate: src/codecs/index.ts -> pnpm-kit -> pnpm-dep -> slate');
     });
 
+    it('SPEC-rich-text/AC-076 fails when ./html reaches a view through a dependency, React or an editor layer, and allows prosemirror-model', () => {
+        const html = violations.filter((violation) => violation.startsWith('./html'));
+
+        expect(html).toContain(
+            `./html reaches ${root}/src/runtime/session.ts: src/html/index.ts -> src/runtime/session.ts`,
+        );
+        expect(html).toContain('./html reaches react: src/html/index.ts -> react');
+        expect(html).toContain('./html reaches prosemirror-view: src/html/index.ts -> editor-kit -> prosemirror-view');
+        expect(html.join('\n')).not.toContain('reaches prosemirror-model');
+    });
+
     it('SPEC-rich-text/AC-012 passes on the package entries', async () => {
         const entries = entrySources(packageRoot);
 
         expect(Object.keys(entries)).toContain('./model');
+        expect(Object.keys(entries)).toContain('./html');
         expect(await checkEntryGraph(packageRoot, entries)).toEqual([]);
     }, 60_000);
 

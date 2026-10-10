@@ -1,9 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
 import { ClipboardProbe } from '../../fixtures/editor/ClipboardProbe';
+import { HtmlPasteProbe } from '../../fixtures/editor/HtmlPasteProbe';
 
 type Clip = NonNullable<Window['clip']>;
 type Flavors = { readonly html: string; readonly text: string; readonly slice: string };
@@ -11,6 +15,8 @@ type Point = { readonly x: number; readonly y: number };
 
 declare global {
     interface Window {
+        /** Set by a pasted event handler or script, which must never run. */
+        pwned?: number;
         /** The flavors of the last clipboard or drag event that reached the window. */
         flavors?: Flavors | undefined;
         /** The data and source of a drag that `dragNode` sends. */
@@ -533,3 +539,125 @@ test('SPEC-rich-text-clipboard/AC-003 pastes text/plain only with Ctrl+Shift+V i
         },
     ]);
 });
+
+const fixturesOf = (folder: string) => join(import.meta.dirname, '..', '..', 'fixtures', folder);
+const withoutNodeIds = (value: unknown): unknown =>
+    JSON.parse(JSON.stringify(value, (key, item: unknown) => (key === 'nodeId' ? undefined : item)));
+
+/** Mounts the editor of the HTML stand-ins and records every request the page sends to another origin. */
+const mountHtml = async (page: Page, mount: (component: React.JSX.Element) => Promise<unknown>) => {
+    const requests: string[] = [];
+    page.on('request', (request) => {
+        if (request.url().startsWith('https://evil.test/')) {
+            requests.push(request.url());
+        }
+    });
+    await page.route('https://evil.test/**', (route) => route.abort());
+    await mount(<HtmlPasteProbe />);
+    await page.waitForFunction(() => window.htmlPaste !== undefined);
+    // The view takes a paste only once the session is ready and editable.
+    await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
+    return requests;
+};
+/** Selects the whole document, pastes `html` as the only flavor and waits for the published document to change. */
+const pasteHtml = async (page: Page, html: string) => {
+    const before = await page.evaluate(() => {
+        const probe = window.htmlPaste as NonNullable<Window['htmlPaste']>;
+        probe.selectAll();
+        return JSON.stringify(probe.content());
+    });
+    await pasteAtSurface(page, { 'text/html': html });
+    await page.waitForFunction(
+        (published) => JSON.stringify((window.htmlPaste as NonNullable<Window['htmlPaste']>).content()) !== published,
+        before,
+    );
+};
+const htmlContentOf = (page: Page) =>
+    page.evaluate(() => (window.htmlPaste as NonNullable<Window['htmlPaste']>).content());
+// A fetch or handler that a live parse would start lands within a few frames, so the absence checks wait that long.
+const quiet = (page: Page) => page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 300)));
+
+test('SPEC-rich-text-clipboard/AC-008 parses pasted HTML in an inert document, with no request and no script run', async ({
+    mount,
+    page,
+}) => {
+    const requests = await mountHtml(page, mount);
+
+    await pasteHtml(
+        page,
+        [
+            '<p style="background: url(https://evil.test/css.png)">x</p>',
+            '<img src="https://evil.test/img.png" onerror="window.pwned = 1">',
+            '<img srcset="https://evil.test/srcset.png 2x" alt="">',
+            '<iframe src="https://evil.test/frame" onload="window.pwned = 2"></iframe>',
+            '<link rel="stylesheet" href="https://evil.test/style.css">',
+            '<script>window.pwned = 3</script>',
+        ].join(''),
+    );
+    await quiet(page);
+
+    expect(requests).toEqual([]);
+    expect(await page.evaluate(() => window.pwned)).toBeUndefined();
+    expect(await htmlContentOf(page)).toEqual([
+        { type: 'paragraph', attrs: { lang: null, align: null }, content: [{ type: 'text', text: 'x' }] },
+    ]);
+});
+
+test('SPEC-rich-text-clipboard/AC-017 drops pasted images without a request, keeping their alt text and announcing the count', async ({
+    mount,
+    page,
+}) => {
+    const requests = await mountHtml(page, mount);
+
+    await pasteHtml(
+        page,
+        '<p>Logo: <img src="https://evil.test/logo.png" alt="Frontify logo"><img src="data:image/png;base64,iVBORw0KGgo=" alt=""></p>',
+    );
+    await quiet(page);
+
+    expect(await htmlContentOf(page)).toEqual([
+        {
+            type: 'paragraph',
+            attrs: { lang: null, align: null },
+            content: [{ type: 'text', text: 'Logo: Frontify logo' }],
+        },
+    ]);
+    expect(requests).toEqual([]);
+    await expect(page.locator('[aria-live="polite"]')).toHaveText('Media not pasted: 2');
+});
+
+test('SPEC-rich-text-clipboard/AC-044 keeps the text of a form whose controls shadow DOM properties and of a page whose image shadows the body', async ({
+    mount,
+    page,
+}) => {
+    await mountHtml(page, mount);
+    const read = (name: string) => readFileSync(join(fixturesOf('security/html'), name), 'utf8');
+
+    await pasteHtml(page, read('clobbering-form.html'));
+    const form = JSON.stringify(await htmlContentOf(page));
+    await pasteHtml(page, read('clobbering-body.html'));
+    const body = JSON.stringify(await htmlContentOf(page));
+
+    expect(form).toContain('"text":"form kept"');
+    expect(form).toContain('"text":"after"');
+    expect(body).toContain('"text":"t"');
+});
+
+for (const name of readdirSync(fixturesOf('clipboard')).filter((file) => file.endsWith('.html'))) {
+    test(`SPEC-rich-text-output/AC-043 SPEC-rich-text-clipboard/AC-014 pastes the ${name} fixture as its .paste.json`, async ({
+        mount,
+        page,
+    }, testInfo) => {
+        await mountHtml(page, mount);
+        const golden = join(fixturesOf('clipboard'), name.replace(/\.html$/, '.paste.json'));
+
+        await pasteHtml(page, readFileSync(join(fixturesOf('clipboard'), name), 'utf8'));
+        const content = withoutNodeIds(await htmlContentOf(page));
+
+        // The `fromHTML` test compares with this file, written on the first run or with --update-snapshots.
+        if (!existsSync(golden) || testInfo.config.updateSnapshots === 'all') {
+            writeFileSync(golden, `${JSON.stringify(content, null, 4)}\n`);
+        }
+        expect(content).toEqual(JSON.parse(readFileSync(golden, 'utf8')));
+    });
+}

@@ -72,6 +72,12 @@ exports[`reader golden files > SPEC-rich-text-output/AC-028 SPEC-rich-text-outpu
 </div>"
 `;
 
+exports[`reader golden files > SPEC-rich-text-output/AC-028 SPEC-rich-text-output/AC-049 renders the valid fixture spaces.json as its golden HTML 1`] = `
+"<div class="fondue-rte-content">
+<p>two  spaces and five     spaces</p>
+</div>"
+`;
+
 exports[`reader golden files > SPEC-rich-text-output/AC-028 renders invalid-attribute.json as its golden HTML 1`] = `
 "<div class="fondue-rte-content">
 <div role="group" aria-label="Unsupported content: heading" data-rte-island="">
