@@ -28,10 +28,10 @@ const limitsOf = (given: Partial<ResourceLimits> | undefined): ResourceLimits =>
     return limits as unknown as ResourceLimits;
 };
 
-/** Step 3 after the capability warnings: registered migrations run here in memory (AC-010); none is registered yet. */
+/** Step 3 after the capability warnings: registered migrations run here in memory; none is registered yet. */
 const runMigrations = (document: RichTextDocument): RichTextDocument => document;
 
-/** AC-011: a capability the model does not install, or records at a lower version, warns. */
+/** A capability the model does not install, or records at a lower version, warns. */
 const capabilityWarnings = (document: RichTextDocument, model: ContentModel): Diagnostic[] => {
     const installed = new Map(model.capabilities.map(({ id, version }) => [id, version]));
     const warnings: Diagnostic[] = [];

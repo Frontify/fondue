@@ -17,7 +17,7 @@ export const CAPABILITY_NAMES: readonly string[] = (
     'stepAttribute firstOf'
 ).split(' ');
 
-/** Plugin phases in run order (SPEC-rich-text/AC-026). */
+/** Plugin phases in run order. */
 export const PLUGIN_PHASES = [
     'guard',
     'suggestions',
@@ -43,9 +43,9 @@ export interface PluginDescriptor {
 export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonly PluginDescriptor[]>>> = {
     history: [{ id: 'history', phase: 'history' }],
 };
-/** The package's input rule engine, one plugin for every feature's rules (SPEC-rich-text-editing, Input rules). */
+/** The package's input rule engine, one plugin for every feature's rules. */
 export const INPUT_RULES_PLUGIN: PluginDescriptor = { id: 'input-rules', phase: 'input-rules' };
-/** Each feature's own key bindings; features that bind one key run in plugin order (SPEC-rich-text/AC-060). */
+/** Each feature's own key bindings; features that bind one key run in plugin order. */
 export const keymapPlugin = (featureId: string): PluginDescriptor => ({
     id: `keymap:${featureId}`,
     phase: 'general-keys',
@@ -137,7 +137,7 @@ const sameDescriptor = (a: PluginDescriptor, b: PluginDescriptor) => JSON.string
 
 /**
  * Orders contributed plugins by phase, then by `before` and `after`, then by contribution order, which follows
- * the host's feature list (DR-054). A constraint on a known plugin that no contribution installs does not apply.
+ * the host's feature list. A constraint on a known plugin that no contribution installs does not apply.
  */
 export const orderPlugins = (
     contributions: readonly PluginContribution[],

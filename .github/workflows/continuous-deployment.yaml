@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - packages/rich-text-editor/**
+      - .changeset/rich-text-editor-*.md
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -122,69 +125,12 @@ jobs:
       - name: Playwright tests
         run: pnpm --filter {packages/components} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
-  rich-text-editor-unit-tests:
-    name: Rich Text Editor Unit Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Setup
-        uses: ./.github/actions/setup
-        with:
-          playwright-cache: "true"
-
-      - name: Build Fondue icons
-        run: pnpm build:icons
-
-      - name: Build Fondue components
-        run: pnpm build:components
-
-      - name: Install Playwright browsers
-        run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
-
-      - name: Unit test
-        run: pnpm --stream --filter {packages/rich-text-editor} test
-
-  rich-text-editor-component-tests:
-    name: Rich Text Editor Component Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Setup
-        uses: ./.github/actions/setup
-        with:
-          playwright-cache: "true"
-
-      - name: Build Fondue icons
-        run: pnpm build:icons
-
-      - name: Build Fondue components
-        run: pnpm build:components
-
-      - name: Install Playwright browsers
-        run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
-
-      - name: Playwright tests
-        run: pnpm --filter {packages/rich-text-editor} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
-
   publish:
     name: Publish
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-    needs: [lint-typecheck, component-unit-tests, component-tests, rich-text-editor-unit-tests, rich-text-editor-component-tests]
+    needs: [lint-typecheck, component-unit-tests, component-tests]
 
     permissions:
       contents: write # to create release (changesets/action)

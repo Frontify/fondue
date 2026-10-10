@@ -22,7 +22,7 @@ const isRef = (value: unknown): value is { readonly id: string; readonly version
     typeof value.id === 'string' &&
     Number.isInteger(value.version);
 
-/** The path of the first part of a known-version envelope that lacks the Envelope or root shape (AC-049). */
+/** The path of the first part of a known-version envelope that lacks the Envelope or root shape. */
 const findMisshapen = (envelope: Readonly<Record<string, unknown>>): string | undefined => {
     if (!hasExactly(envelope, ENVELOPE_KEYS)) {
         return '';
