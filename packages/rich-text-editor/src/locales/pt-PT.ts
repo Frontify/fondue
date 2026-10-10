@@ -37,6 +37,18 @@ export const ptPT = {
             'O editor deixou de funcionar. As suas alterações mais recentes são mostradas abaixo.',
         RichTextEditor_redo: 'Refazer',
         RichTextEditor_retry: 'Tentar novamente',
+        RichTextEditor_saveConflict:
+            'Outra pessoa alterou este conteúdo. As suas alterações são mantidas, mas não foram guardadas.',
+        RichTextEditor_saveFailed: 'Não foi possível guardar. As suas alterações não estão guardadas.',
+        RichTextEditor_saveForbidden:
+            'Não guardado: não pode editar este conteúdo. Peça acesso ou inicie sessão novamente.',
+        RichTextEditor_saveIncompatible: 'Não guardado: este editor está desatualizado. Recarregue a página.',
+        RichTextEditor_saveInvalid: 'Não guardado: o conteúdo não foi aceite. Copie-o para manter as suas alterações.',
+        RichTextEditor_saveOffline: 'Sem ligação. As alterações serão guardadas quando voltar a estar online.',
+        RichTextEditor_saveRetrying: 'Não foi possível guardar. A tentar novamente…',
+        RichTextEditor_saveSaved: 'Todas as alterações guardadas',
+        RichTextEditor_saveSaving: 'A guardar…',
+        RichTextEditor_saveUnsaved: 'Alterações não guardadas',
         RichTextEditor_strike: 'Rasurado',
         RichTextEditor_subscript: 'Inferior à linha',
         RichTextEditor_superscript: 'Superior à linha',

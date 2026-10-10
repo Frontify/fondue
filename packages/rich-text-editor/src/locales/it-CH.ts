@@ -38,6 +38,19 @@ export const itCH = {
             'L’editor ha smesso di funzionare. Le ultime modifiche sono mostrate qui sotto.',
         RichTextEditor_redo: 'Ripeti',
         RichTextEditor_retry: 'Riprova',
+        RichTextEditor_saveConflict:
+            'Qualcun altro ha modificato questo contenuto. Le tue modifiche sono conservate ma non salvate.',
+        RichTextEditor_saveFailed: 'Salvataggio non riuscito. Le tue modifiche non sono salvate.',
+        RichTextEditor_saveForbidden:
+            'Non salvato: non puoi modificare questo contenuto. Richiedi l’accesso o accedi di nuovo.',
+        RichTextEditor_saveIncompatible: 'Non salvato: questo editor non è aggiornato. Ricarica la pagina.',
+        RichTextEditor_saveInvalid:
+            'Non salvato: il contenuto non è stato accettato. Copialo per conservare le tue modifiche.',
+        RichTextEditor_saveOffline: 'Offline. Le modifiche verranno salvate quando tornerai online.',
+        RichTextEditor_saveRetrying: 'Salvataggio non riuscito. Nuovo tentativo…',
+        RichTextEditor_saveSaved: 'Tutte le modifiche salvate',
+        RichTextEditor_saveSaving: 'Salvataggio…',
+        RichTextEditor_saveUnsaved: 'Modifiche non salvate',
         RichTextEditor_strike: 'Barrato',
         RichTextEditor_subscript: 'Pedice',
         RichTextEditor_superscript: 'Apice',

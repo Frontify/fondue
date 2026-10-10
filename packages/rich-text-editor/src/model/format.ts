@@ -92,6 +92,7 @@ export type DiagnosticCode =
     | 'codecs.lossy-output'
     | 'codecs.override-failed'
     | 'reader.override-failed'
+    | 'react.default-value-changed'
     | 'react.definition-changed'
     | 'react.duplicate-accessible-name'
     | 'react.execute-in-render';
