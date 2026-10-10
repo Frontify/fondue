@@ -7,17 +7,17 @@ import { createTestEnvironment } from '#/testing';
 const draw = (random: () => number, count: number): number[] => Array.from({ length: count }, () => random());
 
 describe('createTestEnvironment', () => {
-    it('SPEC-rich-text-quality/AC-044 starts the clock above 0', () => {
+    it('starts the clock above 0', () => {
         expect(createTestEnvironment({ seed: 1 }).clock.now()).toBeGreaterThan(0);
     });
 
-    it('SPEC-rich-text-quality/AC-044 rejects seeds outside [0, 4294967295]', () => {
+    it('rejects seeds outside [0, 4294967295]', () => {
         expect(() => createTestEnvironment({ seed: 0.5 })).toThrow(RangeError);
         expect(() => createTestEnvironment({ seed: -1 })).toThrow(RangeError);
         expect(() => createTestEnvironment({ seed: 2 ** 32 })).toThrow(RangeError);
     });
 
-    it('SPEC-rich-text-quality/AC-044 does not move the clock backwards when advance is re-entered from a timer', () => {
+    it('does not move the clock backwards when advance is re-entered from a timer', () => {
         const environment = createTestEnvironment({ seed: 1 });
         const start = environment.clock.now();
         environment.clock.setTimeout(() => environment.advance(500), 10);
@@ -25,7 +25,7 @@ describe('createTestEnvironment', () => {
         expect(environment.clock.now() - start).toBeGreaterThanOrEqual(510);
     });
 
-    it('SPEC-rich-text-quality/AC-044 runs each kind of callback only inside its flush call', async () => {
+    it('runs each kind of callback only inside its flush call', async () => {
         const environment = createTestEnvironment({ seed: 1 });
         const ran: string[] = [];
         environment.clock.setTimeout(() => ran.push('timer'), 10);
@@ -46,7 +46,7 @@ describe('createTestEnvironment', () => {
         expect(ran).toEqual(['frame', 'idle', 'microtask', 'timer']);
     });
 
-    it('SPEC-rich-text-quality/AC-044 runs interleaved timers in due-time order, then in scheduling order', () => {
+    it('runs interleaved timers in due-time order, then in scheduling order', () => {
         const environment = createTestEnvironment({ seed: 1 });
         const start = environment.clock.now();
         const ran: string[] = [];
@@ -66,7 +66,7 @@ describe('createTestEnvironment', () => {
         expect(environment.clock.now() - start).toBe(40);
     });
 
-    it('SPEC-rich-text-quality/AC-044 runs microtasks, frames and idle callbacks in scheduling order', async () => {
+    it('runs microtasks, frames and idle callbacks in scheduling order', async () => {
         const environment = createTestEnvironment({ seed: 1 });
         const ran: string[] = [];
         environment.scheduler.microtask(() => {
@@ -94,7 +94,7 @@ describe('createTestEnvironment', () => {
         expect(ran).toEqual(['m1', 'm2', 'm3', 'f1', 'f2', 'i1', 'f3']);
     });
 
-    it('SPEC-rich-text-quality/AC-044 counts IDs per kind and repeats random values per seed', () => {
+    it('counts IDs per kind and repeats random values per seed', () => {
         const first = createTestEnvironment({ seed: 7 });
         const second = createTestEnvironment({ seed: 7 });
         const other = createTestEnvironment({ seed: 8 });
