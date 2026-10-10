@@ -35,6 +35,7 @@ import { DefinitionError, type DefinitionErrorCode, pointer } from './errors';
 import { featureInternals } from './feature';
 import { canonicalJson, sha256 } from './hash';
 import { checkHref } from './href';
+import { markdownDelimiterPattern, markdownFencePattern } from './markdown';
 import {
     findInvalidPayload,
     findUnsafeJson,
@@ -341,6 +342,48 @@ const checkParse = (
     }
 };
 
+const markdownDelimiter = new RegExp(markdownDelimiterPattern);
+const markdownFence = new RegExp(markdownFencePattern);
+const isMarkdownDelimiter = (value: unknown) => typeof value === 'string' && markdownDelimiter.test(value);
+const isMarkdownFence = (value: unknown) => typeof value === 'string' && markdownFence.test(value);
+
+const checkNodeMarkdown = (featureId: string, name: string, markdown: unknown) => {
+    if (markdown === undefined) {
+        return;
+    }
+    const at = pointer('nodes', name, 'markdown');
+    if (!isRecord(markdown)) {
+        throw failure('definition.invalid-declaration', featureId, at);
+    }
+    const hasPrefix = Object.hasOwn(markdown, 'prefix');
+    const hasFence = Object.hasOwn(markdown, 'fence');
+    if (hasPrefix === hasFence) {
+        throw failure('definition.invalid-declaration', featureId, at);
+    }
+    if (hasPrefix && !isMarkdownDelimiter(markdown.prefix)) {
+        throw failure('definition.invalid-declaration', featureId, `${at}/prefix`);
+    }
+    if (hasFence && !isMarkdownFence(markdown.fence)) {
+        throw failure('definition.invalid-declaration', featureId, `${at}/fence`);
+    }
+};
+
+const checkMarkMarkdown = (featureId: string, name: string, markdown: unknown) => {
+    if (markdown === undefined) {
+        return;
+    }
+    const at = pointer('marks', name, 'markdown');
+    if (!isRecord(markdown)) {
+        throw failure('definition.invalid-declaration', featureId, at);
+    }
+    if (!isMarkdownDelimiter(markdown.open)) {
+        throw failure('definition.invalid-declaration', featureId, `${at}/open`);
+    }
+    if (!isMarkdownDelimiter(markdown.close)) {
+        throw failure('definition.invalid-declaration', featureId, `${at}/close`);
+    }
+};
+
 const guardHolds = (feature: CompiledFeature, when: OptionGuard | undefined, path: string) => {
     if (when === undefined) {
         return true;
@@ -426,6 +469,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
     for (const { name, featureId, declaration } of nodes.values()) {
         checkAttributes(featureId, declaration.attrs, ['nodes', name, 'attrs']);
         checkMarks(featureId, declaration.marks, ['nodes', name, 'marks']);
+        checkNodeMarkdown(featureId, name, declaration.markdown);
         if (declaration.content === undefined) {
             continue;
         }
@@ -447,6 +491,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
     for (const { name, featureId, declaration } of marks.values()) {
         checkAttributes(featureId, declaration.attrs, ['marks', name, 'attrs']);
         checkMarks(featureId, declaration.excludes, ['marks', name, 'excludes']);
+        checkMarkMarkdown(featureId, name, declaration.markdown);
     }
 
     for (const feature of list) {

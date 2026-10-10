@@ -29,9 +29,11 @@ const FRAMEWORK_PATTERNS = [
     'next/**',
     'react-router',
     'react-router-*',
+    'react-router-*/**',
     'react-router/**',
     '@remix-run/**',
     'react-server-dom-*',
+    'react-server-dom-*/**',
 ];
 
 const REACT_PATTERNS = ['react', 'react/**', 'react-dom', 'react-dom/**'];
@@ -80,12 +82,22 @@ const relativePatterns = (folders: readonly string[]): string[] =>
 
 const FEATURE_ROOTS = ['#/features', '../features', '../../features'] as const;
 
-const FEATURE_TAILS = ['', '/index', '/registry', '/profiles/**', '/*/feature', '/*/migration'] as const;
+const FEATURE_ALLOW_TAILS = [
+    '/conformance',
+    '/conformance/**',
+    '/*/fixtures',
+    '/*/fixtures/**',
+    '/__fixtures__',
+    '/__fixtures__/**',
+] as const;
 
 const featurePathPatterns = (tails: readonly string[]): string[] =>
     FEATURE_ROOTS.flatMap((root) => tails.map((tail) => `${root}${tail}`));
 
-const restrictedFeaturePatterns = featurePathPatterns(FEATURE_TAILS);
+const restrictedFeaturePatterns = [
+    ...featurePathPatterns(['', '/**']),
+    ...featurePathPatterns(FEATURE_ALLOW_TAILS).map((pattern) => `!${pattern}`),
+];
 
 const FEATURE_FILE_TAILS = [
     '',
@@ -308,6 +320,7 @@ export default defineConfig({
                     ...aliasPatterns(testingFolders),
                     ...relativePatterns(testingFolders),
                     ...restrictedFeaturePatterns,
+                    ...ENGINE_PATTERNS,
                 ],
                 message: TESTING_MESSAGE,
             },

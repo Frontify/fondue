@@ -250,9 +250,69 @@ describe('featureFromManifest', () => {
             },
             `${html}${'/1'.repeat(62)}`,
         ],
+        [
+            'markdown that sets both a prefix and a fence',
+            (manifest) => (nodeOf(manifest).markdown = { prefix: '> ', fence: '```' }),
+            '/nodes/acme_pull_quote/markdown',
+        ],
+        [
+            'markdown that sets neither a prefix nor a fence',
+            (manifest) => (nodeOf(manifest).markdown = {}),
+            '/nodes/acme_pull_quote/markdown',
+        ],
+        [
+            'a markdown prefix longer than four characters',
+            (manifest) => (nodeOf(manifest).markdown = { prefix: '#####' }),
+            '/nodes/acme_pull_quote/markdown/prefix',
+        ],
+        [
+            'a markdown prefix containing <',
+            (manifest) => (nodeOf(manifest).markdown = { prefix: '<' }),
+            '/nodes/acme_pull_quote/markdown/prefix',
+        ],
+        [
+            'a markdown fence that starts with three tildes',
+            (manifest) => (nodeOf(manifest).markdown = { fence: '~~~#' }),
+            '/nodes/acme_pull_quote/markdown/fence',
+        ],
+        [
+            'a markdown opening delimiter containing <',
+            (manifest) =>
+                (manifest.marks = {
+                    acme_note: {
+                        attrs: {},
+                        html: ['em', 0],
+                        parse: [{ tag: 'em' }],
+                        markdown: { open: '<', close: '~~' },
+                    },
+                }),
+            '/marks/acme_note/markdown/open',
+        ],
     ];
     it.each(hostile)('rejects %s with its JSON Pointer', (_kind, change, path) => {
         expect(failureOf(() => featureFromManifest(withChange(change)))).toEqual(invalidAt(path));
+    });
+
+    it('accepts a block prefix, a code fence and mark delimiters', () => {
+        const prefixed = withChange((manifest) => {
+            nodeOf(manifest).markdown = { prefix: '> ' };
+        });
+        const fenced = withChange((manifest) => {
+            nodeOf(manifest).markdown = { fence: '```' };
+        });
+        const marked = withChange((manifest) => {
+            manifest.marks = {
+                acme_note: {
+                    attrs: {},
+                    html: ['em', 0],
+                    parse: [{ tag: 'em' }],
+                    markdown: { open: '~~', close: '~~' },
+                },
+            };
+        });
+        expect(compile(prefixed).manifest.nodes).toContain('acme_pull_quote');
+        expect(compile(fenced).manifest.nodes).toContain('acme_pull_quote');
+        expect(compile(marked).manifest.marks).toContain('acme_note');
     });
 
     it('rejects a function, a regular expression or a prototype key in option values', () => {
