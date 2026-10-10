@@ -8,7 +8,13 @@ import { bulletList } from '../../src/features/lists-bullet/feature';
 import { listItem } from '../../src/features/lists-item/feature';
 import { orderedList } from '../../src/features/lists-ordered/feature';
 import { taskList } from '../../src/features/lists-task/feature';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '../../src/index';
+import {
+    defineEditor,
+    defineReactPresentation,
+    type EditorHandle,
+    type ListLevels,
+    RichTextEditor,
+} from '../../src/index';
 import { compileContentModel, type RichTextDocument } from '../../src/model';
 import { RichTextReader } from '../../src/reader';
 import { setSelection } from '../../src/testing';
@@ -60,13 +66,21 @@ export const ListProbe = ({
     blocks,
     dir = 'ltr',
     reader = false,
+    listLevels,
 }: {
     /** Stored blocks, such as `fixtures/editor/list-blocks.ts` builds. */
     readonly blocks: readonly object[];
     /** The theme direction. */
     readonly dir?: 'ltr' | 'rtl';
     readonly reader?: boolean;
+    readonly listLevels?: ListLevels;
 }) => {
+    const [shownPresentation] = useState(() => {
+        if (listLevels === undefined) {
+            return presentation;
+        }
+        return { ...presentation, listLevels };
+    });
     const ref = useRef<EditorHandle>(null);
     const changes = useRef<ListChange[]>([]);
     const [shown, setShown] = useState(() => documentOf(blocks));
@@ -85,7 +99,7 @@ export const ListProbe = ({
             <RichTextEditor
                 aria-label="Notes"
                 definition={definition}
-                presentation={presentation}
+                presentation={shownPresentation}
                 defaultValue={{ documentId: 'document-1', revision: null, document: documentOf(blocks) }}
                 ref={ref}
                 onDocumentChange={({ origin, commandId, readDocument }) => {
@@ -99,7 +113,7 @@ export const ListProbe = ({
             </button>
             {reader && (
                 <section aria-label="Reader">
-                    <RichTextReader document={shown} model={model} />
+                    <RichTextReader document={shown} model={model} presentation={shownPresentation} />
                 </section>
             )}
         </ThemeProvider>

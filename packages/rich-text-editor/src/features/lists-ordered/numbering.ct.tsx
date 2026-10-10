@@ -85,3 +85,31 @@ test('SPEC-rich-text-editing/AC-090 SPEC-rich-text-react/AC-043 refuses 1,000,00
     await expect(page.getByRole('region', { name: 'Reader' }).locator('ol')).toHaveAttribute('start', '1');
     expect(await startsOf(page)).toEqual([]);
 });
+
+test('SPEC-rich-text-editing/AC-090 opens the numbering dialog from a host execute of list.ordered.start.edit, whose confirmation sets the start as one undo step', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ListProbe blocks={blocks} reader />);
+    await ready(page);
+    await page.evaluate(() => {
+        const rte = window.listRte as ListRte;
+        rte.setSelection(rte.handle, { text: 'two', from: 1, to: 1 });
+        rte.handle.execute('list.ordered.start.edit');
+    });
+
+    const field = page
+        .getByRole('dialog', { name: 'Start numbering at' })
+        .getByRole('spinbutton', { name: 'First number' });
+    await expect(field).toBeFocused();
+    await expect(field).toHaveValue('1');
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.type('5');
+    await page.keyboard.press('Enter');
+
+    await expect(page.locator('[role="dialog"]')).toHaveCount(0);
+    await expect(page.getByRole('region', { name: 'Reader' }).locator('ol')).toHaveAttribute('start', '5');
+    expect(await startsOf(page)).toEqual([['list.ordered.start.set', 5]]);
+    await page.evaluate(() => (window.listRte as ListRte).handle.execute('history.undo'));
+    await expect(page.getByRole('region', { name: 'Reader' }).locator('ol')).toHaveAttribute('start', '1');
+});

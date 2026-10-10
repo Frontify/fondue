@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { expect, test } from '@playwright/experimental-ct-react';
-import { type Page } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 
-import { bullets, listItem, paragraph } from '../../../fixtures/editor/list-blocks';
+import { bullets, listItem, numbered, paragraph } from '../../../fixtures/editor/list-blocks';
 import { ListProbe } from '../../../fixtures/editor/ListProbe';
 
 type ListRte = NonNullable<Window['listRte']>;
@@ -118,4 +118,79 @@ test('SPEC-rich-text-react/AC-104 mirrors a nested bulleted list under rtl', asy
 
     expect(ltr).toBeGreaterThan(40);
     expect(Math.abs(rtl - ltr)).toBeLessThanOrEqual(2);
+});
+
+/** Four levels of each kind: `o1` to `o4` in ordered lists, `b1` to `b4` in bulleted lists. */
+const fourLevels = [
+    numbered(1, listItem('o1', numbered(1, listItem('o2', numbered(1, listItem('o3', numbered(1, listItem('o4')))))))),
+    bullets(listItem('b1', bullets(listItem('b2', bullets(listItem('b3', bullets(listItem('b4')))))))),
+];
+/** Each item's list marker type, and its marker colour and size beside the item's own. */
+const markersOf = (root: Locator) =>
+    root.evaluate((element) =>
+        [...element.querySelectorAll('li')].map((item) => {
+            const marker = getComputedStyle(item, '::marker');
+            const own = getComputedStyle(item);
+            return {
+                text: item.querySelector('p')?.textContent,
+                type: getComputedStyle(item.parentElement as Element).listStyleType,
+                color: marker.color === own.color ? 'text' : marker.color,
+                size: marker.fontSize === own.fontSize ? 'text' : marker.fontSize,
+            };
+        }),
+    );
+const readerOf = (page: Page) => page.getByRole('region', { name: 'Reader' });
+
+test('SPEC-rich-text-editing/AC-071 marks a four-level list by depth with the default list levels in the editor and the reader', async ({
+    mount,
+    page,
+}, testInfo) => {
+    await mount(<ListProbe blocks={fourLevels} reader />);
+    await ready(page);
+    await testInfo.attach('default list levels', {
+        body: await surfaceOf(page).screenshot(),
+        contentType: 'image/png',
+    });
+
+    const expected = [
+        ['o1', 'decimal'],
+        ['o2', 'lower-alpha'],
+        ['o3', 'lower-roman'],
+        ['o4', 'decimal'],
+        ['b1', 'disc'],
+        ['b2', 'circle'],
+        ['b3', 'square'],
+        ['b4', 'disc'],
+    ].map(([text, type]) => ({ text, type, color: 'text', size: 'text' }));
+    expect(await markersOf(surfaceOf(page))).toEqual(expected);
+    expect(await markersOf(readerOf(page))).toEqual(expected);
+});
+
+test('SPEC-rich-text-editing/AC-071 marks a four-level list by depth with a custom listLevels, entry n modulo its length, in the editor and the reader', async ({
+    mount,
+    page,
+}, testInfo) => {
+    const listLevels = {
+        ordered: [{ counterType: 'upper-roman', color: 'rgb(200, 0, 0)' }, { counterType: 'lower-greek' }],
+        bullet: [{ shape: 'square', color: 'rgb(0, 0, 200)', size: '24px' }, { shape: 'circle' }],
+    };
+    await mount(<ListProbe blocks={fourLevels} listLevels={listLevels} reader />);
+    await ready(page);
+    await testInfo.attach('custom list levels', { body: await surfaceOf(page).screenshot(), contentType: 'image/png' });
+
+    const red = { color: 'rgb(200, 0, 0)', size: 'text' };
+    const blue = { color: 'rgb(0, 0, 200)', size: '24px' };
+    const plain = { color: 'text', size: 'text' };
+    const expected = [
+        { text: 'o1', type: 'upper-roman', ...red },
+        { text: 'o2', type: 'lower-greek', ...plain },
+        { text: 'o3', type: 'upper-roman', ...red },
+        { text: 'o4', type: 'lower-greek', ...plain },
+        { text: 'b1', type: 'square', ...blue },
+        { text: 'b2', type: 'circle', ...plain },
+        { text: 'b3', type: 'square', ...blue },
+        { text: 'b4', type: 'circle', ...plain },
+    ];
+    expect(await markersOf(surfaceOf(page))).toEqual(expected);
+    expect(await markersOf(readerOf(page))).toEqual(expected);
 });

@@ -35,7 +35,7 @@ describe('lists.ordered', () => {
         const markdown = codecs.toMarkdown(document).markdown;
         const read = codecs.fromMarkdown(markdown);
 
-        expect(codecs.toHTML(document).html).toContain('<ol start="5">');
+        expect(codecs.toHTML(document).html).toContain('<ol start="5" style="list-style-type:decimal">');
         expect(codecs.toPlainText(document).text).toBe('5. one\n6. two\n7. three');
         expect(markdown).toBe('5. one\n6. two\n7. three');
         expect(read).toMatchObject({

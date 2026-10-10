@@ -1,0 +1,91 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`list levels > SPEC-rich-text-editing/AC-071 marks a four-level list by depth in the reader with the default and a custom listLevels, entry n modulo its length > custom 1`] = `
+"<div class="fondue-rte-content">
+<ol start="1" style="list-style-type:upper-roman;--rte-list-marker-color:rgb(200, 0, 0)">
+<li>
+<p>ordered1</p>
+<ol start="1" style="list-style-type:lower-greek">
+<li>
+<p>ordered2</p>
+<ol start="1" style="list-style-type:upper-roman;--rte-list-marker-color:rgb(200, 0, 0)">
+<li>
+<p>ordered3</p>
+<ol start="1" style="list-style-type:lower-greek">
+<li>
+<p>ordered4</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<ul style="list-style-type:square;--rte-list-marker-color:rgb(0, 0, 200);--rte-list-marker-size:24px">
+<li>
+<p>bullet1</p>
+<ul style="list-style-type:circle">
+<li>
+<p>bullet2</p>
+<ul style="list-style-type:square;--rte-list-marker-color:rgb(0, 0, 200);--rte-list-marker-size:24px">
+<li>
+<p>bullet3</p>
+<ul style="list-style-type:circle">
+<li>
+<p>bullet4</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>"
+`;
+
+exports[`list levels > SPEC-rich-text-editing/AC-071 marks a four-level list by depth in the reader with the default and a custom listLevels, entry n modulo its length > default 1`] = `
+"<div class="fondue-rte-content">
+<ol start="1" style="list-style-type:decimal">
+<li>
+<p>ordered1</p>
+<ol start="1" style="list-style-type:lower-alpha">
+<li>
+<p>ordered2</p>
+<ol start="1" style="list-style-type:lower-roman">
+<li>
+<p>ordered3</p>
+<ol start="1" style="list-style-type:decimal">
+<li>
+<p>ordered4</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<ul style="list-style-type:disc">
+<li>
+<p>bullet1</p>
+<ul style="list-style-type:circle">
+<li>
+<p>bullet2</p>
+<ul style="list-style-type:square">
+<li>
+<p>bullet3</p>
+<ul style="list-style-type:disc">
+<li>
+<p>bullet4</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>"
+`;

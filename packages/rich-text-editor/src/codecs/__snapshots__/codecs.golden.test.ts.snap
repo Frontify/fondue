@@ -350,7 +350,7 @@ exports[`codec golden files > SPEC-rich-text-output/AC-028 writes unknown-nodes.
 "<div class="fondue-rte-content">
 <p>Before</p>
 <div role="group" aria-label="Unsupported content: callout" data-rte-island="">Heads up &lt;b&gt;&amp;&lt;/b&gt;</div>
-<ul>
+<ul style="list-style-type:disc">
 <li>
 <p>Item</p>
 <div role="group" aria-label="Unsupported content: poll" data-rte-island="">Deep</div>
