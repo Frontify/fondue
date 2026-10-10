@@ -25,6 +25,15 @@ interface TextRange {
     readonly marked: boolean;
 }
 
+/**
+ * Marks that adding a mark removes from its range, when the model installs them: the vocabulary's subscript and
+ * superscript exclude each other, which no feature can declare while each installs alone (SPEC-rich-text-editing).
+ */
+const OPPOSITES: Readonly<Record<string, readonly string[]>> = {
+    subscript: ['superscript'],
+    superscript: ['subscript'],
+};
+
 /** The selected parts of text nodes whose parent allows `type`: a mark toggle acts on text only. */
 const markableText = (state: EditorState, type: MarkType): TextRange[] => {
     const texts: TextRange[] = [];
@@ -69,8 +78,13 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     }
     // At a caret ProseMirror toggles the stored mark.
     const engineToggle = toggleEngineMark(type, attrs);
-    // A mark that excludes this one, as `superscript` excludes `subscript`, gives way to it, so the exclusion holds both ways.
-    const yielding = Object.values(schema.marks).filter((other) => other !== type && other.excludes(type));
+    const yielding: MarkType[] = [];
+    for (const name of OPPOSITES[type.name] ?? []) {
+        const other = schema.marks[name];
+        if (other !== undefined) {
+            yielding.push(other);
+        }
+    }
     return {
         run: (state, dispatch) => {
             if (state.selection.empty) {
@@ -201,6 +215,27 @@ const setBlock: CapabilityImplementation = (args, schema) => {
             }
             return 'mixed';
         },
+    };
+};
+
+const insertNode: CapabilityImplementation = (args, schema) => {
+    // Compilation checked that the model declares the node.
+    const type = schema.nodes[args.node as string] as NodeType;
+    return {
+        run: (state, dispatch) => {
+            const { $from } = state.selection;
+            // A code block keeps a line break as text, as ProseMirror's `newlineInCode` does (Enter by profile).
+            if ($from.parent.type.spec.code === true && type.isInline) {
+                dispatch?.(state.tr.insertText('\n').scrollIntoView());
+                return true;
+            }
+            if (!$from.parent.canReplaceWith($from.index(), $from.index(), type)) {
+                return false;
+            }
+            dispatch?.(state.tr.replaceSelectionWith(type.create()).scrollIntoView());
+            return true;
+        },
+        active: () => false,
     };
 };
 
@@ -386,6 +421,7 @@ const history: CapabilityImplementation = (args) => {
 export const CAPABILITIES: CapabilityImplementations = {
     block,
     history,
+    insertNode,
     insertText,
     setBlock,
     toggleMark,

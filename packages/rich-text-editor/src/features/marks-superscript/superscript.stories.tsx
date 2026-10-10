@@ -2,17 +2,17 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, subscript, superscript } from '#/features';
+import { core, superscript } from '#/features';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name (SPEC-rich-text/AC-053).
-const model = compileContentModel([core(), subscript(), superscript()], { id: 'story.marks-superscript', version: 1 });
+const model = compileContentModel([core(), superscript()], { id: 'story.marks-superscript', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/marks.superscript',
     component: RichTextEditor,
-    tags: ['feature:core', 'feature:marks.subscript', 'feature:marks.superscript'],
+    tags: ['feature:core', 'feature:marks.superscript'],
     args: {
         'aria-label': 'Notes',
         definition: defineEditor({ id: 'story.marks-superscript', model }),

@@ -68,8 +68,14 @@ export const compileInputRules = (
                 texts.push({ id, featureId, kind: rule.kind, match, replace: rule.replace, boundary });
             }
             if (rule.kind === 'text-rule') {
-                const match = new RegExp(rule.pattern, rule.flags);
-                texts.push({ id, featureId, kind: 'text-replace', match, replace: rule.replace, boundary: false });
+                texts.push({
+                    id,
+                    featureId,
+                    kind: 'text-replace',
+                    match: rule.match,
+                    replace: rule.replace,
+                    boundary: false,
+                });
             }
             if (rule.kind === 'quotes') {
                 texts.push({ id, featureId, kind: rule.kind, marker: rule.marker });

@@ -4,11 +4,11 @@ import {
     type CapabilityName,
     type CommandDefinition,
     type FeatureDeclaration,
+    type InputRule,
     type JsonObject,
     type JsonValue,
     type PayloadDeclaration,
     type PayloadOf,
-    type TextRule,
 } from './declarations';
 import { DefinitionError } from './errors';
 
@@ -130,13 +130,7 @@ export const textRule = (rule: {
     readonly id: string;
     readonly match: RegExp;
     readonly replace: string;
-}): TextRule => ({
-    id: rule.id,
-    kind: 'text-rule',
-    pattern: rule.match.source,
-    flags: rule.match.flags,
-    replace: rule.replace,
-});
+}): InputRule => ({ id: rule.id, kind: 'text-rule', match: rule.match, replace: rule.replace });
 
 /** The first cycle that `next` reaches from `starts`, as a path that ends where it starts. */
 export const findCycle = (starts: readonly string[], next: (id: string) => readonly string[]): string[] | undefined => {

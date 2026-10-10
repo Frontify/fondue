@@ -48,7 +48,6 @@ export {
     type ReferenceResolution,
     type RichTextLocale,
     type SharedAttributeDeclaration,
-    type TextRule,
     type ToolbarEntry,
     type TranslationStrings,
     type ValueDeclaration,

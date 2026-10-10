@@ -2,7 +2,7 @@
 
 import { defineFeature, toggleMark } from '#/model';
 
-/** Subscript as `sub`; it replaces `superscript` on the range, which excludes it (SPEC-rich-text-format, Vocabulary). */
+/** Subscript as `sub`; adding it removes `superscript` from the range. */
 export const subscript = defineFeature({
     id: 'marks.subscript',
     version: 1,
