@@ -101,6 +101,9 @@ describe('check-css', () => {
         expect(scanCss('forced-colors.css', fixture('forced-colors.css'))).toEqual([
             'forced-colors.css:7 color sets the literal colour GrayText',
             'forced-colors.css:12 color sets the literal colour GrayText',
+            'forced-colors.css:18 color sets the literal colour #fff',
+            'forced-colors.css:18 background sets the literal colour red',
+            'forced-colors.css:25 color sets the literal colour GrayText',
         ]);
     });
 
@@ -334,6 +337,15 @@ const toolbarColor = (selector: string, property: string): string => {
     return /var\((--[\w-]+)\)/.exec(value)?.[1] ?? '';
 };
 const PRESSED = '.item[aria-pressed=true]';
+const sheet = (relative: string) => parseCss(compile(fileURLToPath(new URL(relative, import.meta.url))).css);
+const chrome = sheet('../src/bridge/styles/chrome-toolbar.module.scss');
+const bubble = sheet('../src/ui/bubble-toolbar/styles/bubble-toolbar.module.scss');
+/** The colour variable the node chrome rule `selector` sets `property` to. */
+const chromeColor = (selector: string, property: string): string => {
+    const rule = chrome.rules.find(({ selectors }) => selectors.includes(selector));
+    const value = rule?.declarations.find(([name]) => name === property)?.[1] ?? '';
+    return /var\((--[\w-]+)\)/.exec(value)?.[1] ?? '';
+};
 
 describe('chrome contrast', () => {
     const TOOLBAR = { variable: toolbarColor('.root', 'background-color'), over: undefined };
@@ -373,6 +385,13 @@ describe('chrome contrast', () => {
             ratio: 3,
         },
         { id: 'AC-012', part: 'the surface border', color: surfaceBorder, next: SURFACE, ratio: 3 },
+        {
+            id: 'AC-012',
+            part: 'the node chrome focus outline',
+            color: chromeColor('.button:focus-visible', 'outline'),
+            next: SURFACE,
+            ratio: 3,
+        },
         { id: 'AC-008', part: 'a toolbar item', color: toolbarColor('.item', 'color'), next: TOOLBAR, ratio: 4.5 },
         {
             id: 'AC-008',
@@ -389,6 +408,22 @@ describe('chrome contrast', () => {
             ratio: 4.5,
         },
     ];
+    it('SPEC-rich-text-accessibility/AC-012 sets no colour in the bubble stylesheet that the contrast pairs would miss', () => {
+        const colours = bubble.rules.flatMap(({ selectors, declarations }) =>
+            declarations
+                .filter(([property]) => /color|background|outline|border|shadow/.test(property))
+                .map(([property, value]) => `${selectors[0]} ${property}: ${value}`),
+        );
+
+        expect(bubble.rules.length).toBeGreaterThan(0);
+        expect(colours).toEqual([]);
+    });
+
+    it('SPEC-rich-text-accessibility/AC-012 reads a colour for every node chrome pair', () => {
+        expect(chromeColor('.button:focus-visible', 'outline')).toBe('--color-focus-default');
+        expect(chromeColor('.button[aria-pressed=true]', 'background-color')).not.toBe('');
+    });
+
     for (const theme of ['light', 'dark']) {
         for (const { id, part, color, next, ratio } of pairs) {
             it(`SPEC-rich-text-accessibility/${id} keeps ${part} at ${ratio}:1 in the ${theme} theme`, () => {

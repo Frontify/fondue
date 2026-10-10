@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { globSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
+import { compile } from 'sass';
 import { describe, expect, it } from 'vitest';
 
 import { scanLogicalCss } from './check-logical-css';
@@ -37,5 +38,17 @@ describe('check-logical-css', () => {
 
         expect(run.status).toBe(1);
         expect(run.stderr).toContain('fixtures/logical-css/physical.css:1 margin-left is physical');
+    });
+
+    it('SPEC-rich-text-react/AC-104 finds no physical property in the compiled CSS of any module stylesheet or content.css', () => {
+        const root = path('..');
+        const modules = globSync('src/**/*.module.scss', { cwd: root }).sort();
+        const faults = [
+            ...modules.flatMap((file) => scanLogicalCss(file, compile(path(`../${file}`)).css)),
+            ...scanLogicalCss('src/styles/content.css', readFileSync(path('../src/styles/content.css'), 'utf8')),
+        ];
+
+        expect(modules).toContain('src/ui/toolbar/styles/toolbar.module.scss');
+        expect(faults).toEqual([]);
     });
 });

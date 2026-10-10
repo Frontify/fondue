@@ -113,6 +113,7 @@ export const OverlayProbe = ({
     width,
     hostContainer = false,
     dir = 'ltr',
+    theme = 'light',
     hostButtons = true,
 }: {
     readonly blocks?: readonly ContentNodeJSON[];
@@ -131,6 +132,7 @@ export const OverlayProbe = ({
     /** Passes a host element as `portalContainer`. */
     readonly hostContainer?: boolean;
     readonly dir?: 'ltr' | 'rtl';
+    readonly theme?: 'light' | 'dark';
     /** Puts host buttons before and after the editor. */
     readonly hostButtons?: boolean;
 }) => {
@@ -280,7 +282,7 @@ export const OverlayProbe = ({
         body = <Embedded into={within}>{body}</Embedded>;
     }
     return (
-        <ThemeProvider theme="light" dir={dir}>
+        <ThemeProvider theme={theme} dir={dir}>
             <div style={{ blockSize: spacer }} />
             <div style={{ inlineSize: width }}>{body}</div>
             <div ref={setContainer} data-host-container="" />

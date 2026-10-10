@@ -47,4 +47,21 @@ describe('check-aria', () => {
             'fixtures/aria/aria-description.tsx:5 aria-description is not a WAI-ARIA 1.2 state or property',
         );
     });
+
+    it('SPEC-rich-text-accessibility/AC-078 catches a role set through a string-literal key', () => {
+        expect(scanAria('q.tsx', "const p = { 'role': 'comment' };")).toEqual([
+            'q.tsx:1 role comment is not a WAI-ARIA 1.2 role',
+        ]);
+        expect(scanAria('q.tsx', "const p = { 'role': 'button' };")).toEqual([]);
+    });
+
+    it('SPEC-rich-text-accessibility/AC-078 exits 0 over the real package when given no files', () => {
+        const run = spawnSync(process.execPath, ['--import', 'tsx', 'scripts/check-aria.ts'], {
+            cwd: path('..'),
+            encoding: 'utf8',
+        });
+
+        expect(run.stderr).toBe('');
+        expect(run.status).toBe(0);
+    });
 });

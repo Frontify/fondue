@@ -463,20 +463,31 @@ describe('toolbar theming and localization', () => {
         const manifest = {
             ...pullQuoteManifest,
             keys: {},
-            toolbar: [{ ...entry, label: { 'en-US': 'Pull quote', de: 'Zitat', 'zh-Hant': '引言' } }],
+            toolbar: [
+                {
+                    ...entry,
+                    label: {
+                        'en-US': 'Pull quote',
+                        de: 'Zitat',
+                        'de-CH': 'Zitat CH',
+                        'zh-Hant': '引言',
+                        'zh-hant-tw': '引言 TW',
+                    },
+                },
+            ],
         };
         const definition = defineEditor({
             id: 'test.toolbar',
             model: compileContentModel([core(), featureFromManifest(manifest)()], { id: 'test.toolbar', version: 1 }),
         });
-        const labels = ['de-CH', 'de', 'zh-Hant-TW', 'fr-FR'].map((lang) => {
+        const labels = ['de-CH', 'DE-ch', 'de-AT', 'de', 'zh-Hant-TW', 'zh-Hant-HK', 'fr-FR'].map((lang) => {
             const { unmount } = mount({ definition, locale: { ...enUS, lang } }, [['acme.pull-quote.set']]);
             const name = within(screen.getByRole('toolbar')).getAllByRole('button')[0]?.getAttribute('aria-label');
             unmount();
             return name;
         });
 
-        expect(labels).toEqual(['Zitat', 'Zitat', '引言', 'Pull quote']);
+        expect(labels).toEqual(['Zitat CH', 'Zitat CH', 'Zitat', 'Zitat', '引言 TW', '引言', 'Pull quote']);
     });
 
     it('SPEC-rich-text-accessibility/AC-032 shows the items of two editors with one presentation in the same order', () => {
@@ -549,6 +560,36 @@ describe('toolbar theming and localization', () => {
             throw new Error('no node chrome');
         }
         expect([slot.getAttribute('lang'), slot.getAttribute('dir')]).toEqual(['en-US', 'ltr']);
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-061 gives node chrome the lang of the shown strings under a theme of another lang', async () => {
+        const { environment, unmount } = mount({ locale: deDE, defaultValue: loaded(codeBlock('let a')) }, TOOLBAR, {
+            lang: 'en-US',
+            dir: 'ltr',
+        });
+        await act(() => environment.flushMicrotasks());
+
+        const slot = screen.getByRole('textbox', { name: 'Notes' }).querySelector('[data-rte-chrome]');
+        if (slot === null) {
+            throw new Error('no node chrome');
+        }
+        expect(slot).toHaveAttribute('lang', 'de-DE');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'en-US');
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-061 sets the surface dir from a document with a dir and no lang, and leaves its lang to the theme', () => {
+        const stored = loaded(para(text('שלום')));
+        const document = {
+            ...stored.document,
+            content: { ...stored.document.content, attrs: { lang: null, dir: 'rtl' } },
+        };
+        const { unmount } = mount({ defaultValue: { ...stored, document } }, TOOLBAR, { lang: 'en-US', dir: 'ltr' });
+
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('dir', 'rtl');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'en-US');
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' })).toHaveAttribute('dir', 'ltr');
         unmount();
     });
 

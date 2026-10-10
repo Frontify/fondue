@@ -13,3 +13,16 @@
         color: GrayText;
     }
 }
+
+@media (forced-colors: active) {
+    :where(.fondue-rte-content p) {
+        color: #fff;
+        background: red;
+    }
+}
+
+@media (forced-colors: none) {
+    :where(.fondue-rte-content p) {
+        color: GrayText;
+    }
+}

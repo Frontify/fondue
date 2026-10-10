@@ -509,6 +509,11 @@ describe('overlay accessibility', () => {
             ['Linus'],
             ['נועה'],
         ]);
+        // The excerpt is Hebrew inside an English interface: the list is named in English and not set right to left itself.
+        const list = screen.getByRole('listbox', { name: 'Mentions' });
+        const hebrew = options.at(-1)?.querySelector('bdi');
+        expect(hebrew?.textContent).toMatch(/^\p{Script=Hebrew}+$/u);
+        expect(list.closest('[dir="rtl"]')).toBeNull();
     });
 
     it('SPEC-rich-text-react/AC-101 SPEC-rich-text-output/AC-034 renders the editor markup on the server under a German theme', () => {

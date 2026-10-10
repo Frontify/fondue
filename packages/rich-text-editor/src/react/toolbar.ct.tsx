@@ -1287,6 +1287,8 @@ test('SPEC-rich-text-react/AC-054 keeps focus rings, text selection and pressed 
     await page.keyboard.press('Tab');
     await expectFocus(page, 'Bold');
     shots['focus ring'] = [unfocused, await shotAround(page, itemOf(page, 'Bold'))];
+    // Forced colours drops a box-shadow, so only a real outline is a ring that stays.
+    expect(await outlineOf(itemOf(page, 'Bold'))).toMatchObject({ style: 'solid', width: 2 });
 
     await surfaceOf(page).focus();
     await select(page, 'one');
@@ -1303,6 +1305,26 @@ test('SPEC-rich-text-react/AC-054 keeps focus rings, text selection and pressed 
         await testInfo.attach(`${part} in forced colours`, { body: after, contentType: 'image/png' });
         expect(after.equals(before), part).toBe(false);
     }
+});
+
+test('SPEC-rich-text-react/AC-054 draws the surface focus ring in forced colours', async ({
+    mount,
+    page,
+}, testInfo) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+    await mount(<ToolbarProbe />);
+    await ready(page);
+
+    await page.getByRole('button', { name: 'Before' }).focus();
+    const unfocused = await shotAround(page, surfaceOf(page));
+    await surfaceOf(page).focus();
+    await expect(surfaceOf(page)).toBeFocused();
+    await page.mouse.move(0, 0);
+    const focused = await shotAround(page, surfaceOf(page));
+    await testInfo.attach('focused surface in forced colours', { body: focused, contentType: 'image/png' });
+
+    expect(await outlineOf(surfaceOf(page))).toMatchObject({ style: 'solid', width: 2 });
+    expect(focused.equals(unfocused)).toBe(false);
 });
 
 test('SPEC-rich-text-react/AC-054 draws links in the LinkText system colour in forced colours', async ({
@@ -1363,6 +1385,10 @@ test('SPEC-rich-text-react/AC-053 follows a theme switch in the toolbar without 
     const shown = async () => ({
         toolbar: await toolbarOf(page).evaluate((toolbar) => getComputedStyle(toolbar).backgroundColor),
         item: await itemOf(page, 'Bold').evaluate((item) => getComputedStyle(item).color),
+        surface: await surfaceOf(page).evaluate((surface) => {
+            const style = getComputedStyle(surface);
+            return { background: style.backgroundColor, color: style.color };
+        }),
         tokens: {
             toolbar: await computedColor(page, 'var(--color-surface-default)'),
             item: await computedColor(page, 'var(--color-primary-default)'),
@@ -1379,6 +1405,12 @@ test('SPEC-rich-text-react/AC-053 follows a theme switch in the toolbar without 
     for (const { shown: colors } of [before, after]) {
         expect({ toolbar: colors.toolbar, item: colors.item }).toEqual(colors.tokens);
     }
+    // The surface draws the surface token behind the primary text token, in each theme.
+    for (const { shown: colors } of [before, after]) {
+        expect(colors.surface).toEqual({ background: colors.tokens.toolbar, color: colors.tokens.item });
+    }
+    expect(after.shown.surface.background).not.toBe(before.shown.surface.background);
+    expect(after.shown.surface.color).not.toBe(before.shown.surface.color);
     expect(after.shown.item).not.toBe(before.shown.item);
     expect(after.session).toEqual(before.session);
     expect(after.session.sameView).toBe(true);
@@ -1406,24 +1438,41 @@ test('SPEC-rich-text-react/AC-104 mirrors a nested list and a quote under rtl, t
                 // A selected list item draws its frame from `::after`, which the class shows.
                 nested.classList.add('ProseMirror-selectednode');
                 const frame = getComputedStyle(nested, '::after');
-                const insets = { left: frame.left, right: frame.right };
+                const insets = { left: Number.parseFloat(frame.left), right: Number.parseFloat(frame.right) };
                 nested.classList.remove('ProseMirror-selectednode');
-                let indentedFrom = 'left';
-                if (outer !== undefined && inner.right < outer.right) {
-                    indentedFrom = 'right';
+                if (outer === undefined) {
+                    throw new Error('no parent item');
                 }
-                return { insets, indentedFrom };
+                return {
+                    insets,
+                    // How far the nested item sits in from the parent's left and right edges.
+                    gaps: { left: inner.left - outer.left, right: outer.right - inner.right },
+                };
             });
+    const rendered = async (dir: 'ltr' | 'rtl') => {
+        const editor = await mount(<ToolbarProbe blocks={blocks} dir={dir} />);
+        await ready(page);
+        const found = await sides();
+        await editor.unmount();
+        return found;
+    };
 
+    const ltr = await rendered('ltr');
+    const rtl = await rendered('rtl');
     await mount(<ToolbarProbe blocks={blocks} dir="rtl" />);
     await ready(page);
-    const rtl = await sides();
     await testInfo.attach('nested list and quote under rtl', {
         body: await surfaceOf(page).screenshot(),
         contentType: 'image/png',
     });
 
-    expect(rtl).toEqual({ insets: { left: '-2px', right: '-32px' }, indentedFrom: 'right' });
+    // The indent and the selected frame swap sides between the two directions, by the same distance.
+    expect(ltr.gaps.left).toBeGreaterThan(0);
+    expect(ltr.gaps.right).toBeCloseTo(0, 0);
+    expect(rtl.gaps.right).toBeCloseTo(ltr.gaps.left, 0);
+    expect(rtl.gaps.left).toBeCloseTo(0, 0);
+    expect(ltr.insets.left).not.toBe(ltr.insets.right);
+    expect(rtl.insets).toEqual({ left: ltr.insets.right, right: ltr.insets.left });
     await expect(surfaceOf(page).locator('blockquote')).toHaveCSS('direction', 'rtl');
 });
 
