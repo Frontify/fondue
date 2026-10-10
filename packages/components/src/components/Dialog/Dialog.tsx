@@ -93,6 +93,11 @@ export type DialogContentProps = {
      * Event handler called when the escape key is pressed.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    /**
+     * The element the dialog is portalled into
+     * @default document.body
+     */
+    container?: HTMLElement | null;
     children?: ReactNode;
     'data-test-id'?: string;
 };
@@ -232,6 +237,7 @@ export const DialogContent = (
         showUnderlay = false,
         rounded = true,
         onEscapeKeyDown,
+        container,
         children,
     }: DialogContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -277,7 +283,7 @@ export const DialogContent = (
     };
 
     return (
-        <RadixDialog.Portal>
+        <RadixDialog.Portal container={container}>
             <ThemeProvider>
                 <DialogUnderlay showUnderlay={showUnderlay}>
                     <RadixDialog.Content

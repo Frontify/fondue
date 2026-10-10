@@ -52,7 +52,11 @@ export type CheckboxProps = {
     status?: 'default' | 'error';
     className?: string;
     /**
-     * Event handler called when the checkbox value changes
+     * Event handler called when the user toggles the checkbox.
+     * It receives the click event of the underlying `<button>`, not the new checked state — there is no
+     * `onCheckedChange` and `event.target.checked` does not exist. To track the state, control the checkbox:
+     * keep `value` in state and compute the next value in this handler,
+     * e.g. `onChange={() => setValue((previous) => previous !== true)}` (an indeterminate checkbox becomes checked).
      */
     onChange?: (event: FormEvent<HTMLButtonElement>) => void;
     /**

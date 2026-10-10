@@ -24,6 +24,12 @@ test('render with the correct placeholder', async ({ mount }) => {
     await expect(component.getByRole('textbox')).toHaveAttribute('placeholder', TEXT_INPUT_TEXT);
 });
 
+test('hide the visual placeholder from assistive technology', async ({ mount }) => {
+    const wrapper = await mount(<TextInput placeholder={TEXT_INPUT_TEXT} data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
+    await expect(component.getByText(TEXT_INPUT_TEXT)).toHaveAttribute('aria-hidden', 'true');
+});
+
 test('render the neutral status by default', async ({ mount }) => {
     const wrapper = await mount(<TextInput data-test-id={TEXT_INPUT_TEST_ID} />);
     const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
