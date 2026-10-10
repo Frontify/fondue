@@ -1,10 +1,9 @@
 {
     "compilerOptions": {
         "allowImportingTsExtensions": true,
-        "exactOptionalPropertyTypes": true,
         "isolatedModules": true,
         "jsx": "react-jsx",
-        "lib": ["ES2022", "DOM", "DOM.Iterable"],
+        "lib": ["ES2021", "DOM", "DOM.Iterable"],
         "module": "ESNext",
         "moduleResolution": "bundler",
         "noEmit": true,
@@ -18,9 +17,9 @@
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "strict": true,
-        "target": "ES2022",
+        "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": ["src", "playwright/**/*", ".storybook/**/*"],
-    "exclude": ["src/**/__lint-fixtures__/**"]
+    "include": ["src"],
+    "references": [{ "path": "./tsconfig.node.json" }]
 }
