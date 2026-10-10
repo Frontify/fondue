@@ -1,23 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    macBaseKeymap,
-    pcBaseKeymap,
-    toggleMark as toggleEngineMark,
-    wrapIn as wrapInEngine,
-} from 'prosemirror-commands';
-import { keydownHandler } from 'prosemirror-keymap';
+import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
 import { type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos } from 'prosemirror-model';
-import { type EditorState, Plugin, PluginKey, TextSelection } from 'prosemirror-state';
+import { type EditorState } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
 import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN, HISTORY_PLUGIN, INPUT_RULES_PLUGIN } from '#/model/capabilities';
-import { isApple, modOn } from '#/model/platform';
 import { isRecord } from '#/model/values';
 
 import { historyPlugin, redo, undo } from './history';
 import { inputRulesPlugin, undoInputRule } from './input-rules';
+import { baseKeysPlugin, containerKeysPlugin } from './keys';
 
 interface TextRange {
     readonly from: number;
@@ -25,13 +19,15 @@ interface TextRange {
     readonly marked: boolean;
 }
 
-/**
- * Marks that adding a mark removes from its range, when the model installs them: the vocabulary's subscript and
- * superscript exclude each other, which no feature can declare while each installs alone (SPEC-rich-text-editing).
- */
-const OPPOSITES: Readonly<Record<string, readonly string[]>> = {
-    subscript: ['superscript'],
-    superscript: ['subscript'],
+/** Whether all of `total` items match, some of them, or none. */
+const tristate = (matching: number, total: number): boolean | 'mixed' => {
+    if (matching === 0) {
+        return false;
+    }
+    if (matching === total) {
+        return true;
+    }
+    return 'mixed';
 };
 
 /** The selected parts of text nodes whose parent allows `type`: a mark toggle acts on text only. */
@@ -59,14 +55,7 @@ const markState = (state: EditorState, type: MarkType): boolean | 'mixed' => {
         return type.isInSet(marks) !== undefined;
     }
     const texts = markableText(state, type);
-    const marked = texts.filter((text) => text.marked).length;
-    if (marked === 0) {
-        return false;
-    }
-    if (marked === texts.length) {
-        return true;
-    }
-    return 'mixed';
+    return tristate(texts.filter((text) => text.marked).length, texts.length);
 };
 
 const toggleMark: CapabilityImplementation = (args, schema) => {
@@ -78,9 +67,10 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     }
     // At a caret ProseMirror toggles the stored mark.
     const engineToggle = toggleEngineMark(type, attrs);
+    // The mark this one replaces, such as superscript for subscript, when the model installs it.
     const yielding: MarkType[] = [];
-    for (const name of OPPOSITES[type.name] ?? []) {
-        const other = schema.marks[name];
+    if (typeof args.removes === 'string') {
+        const other = schema.marks[args.removes];
         if (other !== undefined) {
             yielding.push(other);
         }
@@ -206,14 +196,7 @@ const setBlock: CapabilityImplementation = (args, schema) => {
         active: (state, payload) => {
             const attrs = attrsOf(payload);
             const blocks = selectedTextblocks(state);
-            const matching = blocks.filter(({ node }) => matches(node, attrs)).length;
-            if (matching === 0) {
-                return false;
-            }
-            if (matching === blocks.length) {
-                return true;
-            }
-            return 'mixed';
+            return tristate(blocks.filter(({ node }) => matches(node, attrs)).length, blocks.length);
         },
     };
 };
@@ -225,7 +208,7 @@ const insertNode: CapabilityImplementation = (args, schema) => {
         run: (state, dispatch) => {
             const { $from } = state.selection;
             // A code block keeps a line break as text, as ProseMirror's `newlineInCode` does (Enter by profile).
-            if ($from.parent.type.spec.code === true && type.isInline) {
+            if (args.newlineInCode === true && $from.parent.type.spec.code === true) {
                 dispatch?.(state.tr.insertText('\n').scrollIntoView());
                 return true;
             }
@@ -260,17 +243,13 @@ const wrapIn: CapabilityImplementation = (args, schema) => {
     // Compilation checked that the model declares the node.
     const type = schema.nodes[args.node as string] as NodeType;
     const wrap = wrapInEngine(type);
-    const inside = (state: EditorState) => {
-        const { $from, $to } = state.selection;
-        return rangeIn($from, $to, type) !== undefined;
-    };
     return {
         run: (state, dispatch) => {
-            if (args.toggle !== true || !inside(state)) {
+            const { $from, $to } = state.selection;
+            const range = rangeIn($from, $to, type);
+            if (range === undefined) {
                 return wrap(state, dispatch);
             }
-            const { $from, $to } = state.selection;
-            const range = rangeIn($from, $to, type) as NodeRange;
             const target = liftTarget(range);
             if (target === null) {
                 return false;
@@ -288,14 +267,8 @@ const wrapIn: CapabilityImplementation = (args, schema) => {
                     }
                 }
                 return false;
-            }).length;
-            if (within === 0) {
-                return false;
-            }
-            if (within === blocks.length) {
-                return true;
-            }
-            return 'mixed';
+            });
+            return tristate(within.length, blocks.length);
         },
     };
 };
@@ -350,78 +323,6 @@ const block: CapabilityImplementation = (args) => ({
     },
     active: () => false,
 });
-
-/**
- * Whether `type` is a container: a block whose content takes only blocks, such as a quote, and not a list item,
- * table cell or figure, which are no blocks or take other content (SPEC-rich-text-editing/AC-026).
- */
-const isContainer = (type: NodeType) =>
-    type.isInGroup('block') &&
-    !type.isTextblock &&
-    Object.values(type.schema.nodes).every(
-        (child) => type.contentMatch.matchType(child) === null || child.isInGroup('block'),
-    );
-
-/** Enter in the empty last paragraph of a container removes it and puts a new paragraph after the container. */
-const containerKeysPlugin = () =>
-    new Plugin({
-        key: new PluginKey(CONTAINER_KEYS_PLUGIN.id),
-        props: {
-            handleKeyDown: (view, event) => {
-                const { state } = view;
-                const { $cursor } = state.selection as TextSelection;
-                const plain = !event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey;
-                if (event.key !== 'Enter' || !plain || $cursor === undefined || $cursor === null || $cursor.depth < 2) {
-                    return false;
-                }
-                const paragraph = $cursor.parent;
-                const container = $cursor.node(-1);
-                const last = $cursor.index(-1) === container.childCount - 1;
-                if (
-                    paragraph.type.name !== 'paragraph' ||
-                    paragraph.content.size > 0 ||
-                    !last ||
-                    !isContainer(container.type)
-                ) {
-                    return false;
-                }
-                const after = $cursor.after(-1);
-                const transaction = state.tr;
-                if (container.childCount === 1) {
-                    transaction.delete($cursor.before(-1), after);
-                } else {
-                    transaction.delete($cursor.before(), $cursor.after());
-                }
-                const at = transaction.mapping.map(after);
-                transaction.insert(at, paragraph.type.create());
-                view.dispatch(transaction.setSelection(TextSelection.create(transaction.doc, at + 1)).scrollIntoView());
-                return true;
-            },
-        },
-    });
-
-/** ProseMirror's base keymap of the platform, with `Mod` bound as the editor's own platform check reads it. */
-const baseKeysOf = (keymap: typeof pcBaseKeymap, apple: boolean) =>
-    keydownHandler(Object.fromEntries(Object.entries(keymap).map(([key, command]) => [modOn(key, apple), command])));
-const BASE_KEYS = { apple: baseKeysOf(macBaseKeymap, true), other: baseKeysOf(pcBaseKeymap, false) };
-
-/**
- * Enter, Backspace, Delete and select-all, which ProseMirror leaves to its base keymap: without them it prevents
- * Enter and a Backspace at a block start, and the browser's own select-all stops at a node view's chrome.
- */
-const baseKeysPlugin = () =>
-    new Plugin({
-        key: new PluginKey(BASE_KEYS_PLUGIN.id),
-        props: {
-            handleKeyDown: (view, event) => {
-                const owner = view.dom.ownerDocument.defaultView;
-                if (owner !== null && isApple(owner.navigator)) {
-                    return BASE_KEYS.apple(view, event);
-                }
-                return BASE_KEYS.other(view, event);
-            },
-        },
-    });
 
 const history: CapabilityImplementation = (args) => {
     let command = undo;

@@ -5,8 +5,8 @@ import { type CodecContext, type CommandRef, type JsonValue, type ToolbarEntry }
 import { compiledModel } from '#/model/compile';
 import { canonicalJson } from '#/model/hash';
 import { isPlatformBinding } from '#/model/platform';
-import { isRecord } from '#/model/values';
-import { type AuthoringPolicy, type HeadingLevel } from '#/runtime/types';
+import { refusesLevel, setsHeading } from '#/runtime/policy';
+import { type AuthoringPolicy } from '#/runtime/types';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
 import { type ReactPresentation } from './types';
@@ -67,6 +67,20 @@ const payloadKey = (payload: JsonValue | null | undefined) => {
     return canonicalJson(payload);
 };
 
+type Commands = ReturnType<typeof compiledModel>['commands'];
+
+/** Whether the policy lets the author create nothing with the feature of `command` (SPEC-rich-text-react/AC-099). */
+const refusedBy = (authoring: AuthoringPolicy, commands: Commands, command: string) => {
+    const compiled = commands.find(({ id }) => id === command);
+    return compiled !== undefined && authoring.features[compiled.featureId]?.create === false;
+};
+
+/** The compiled key bindings of a route, each where it applies (SPEC-rich-text-react/AC-039). */
+const bindingsOf = (keymap: Keymap, command: string, payload: JsonValue | undefined) =>
+    keymap
+        .filter((binding) => binding.command === command && payloadKey(binding.payload) === payloadKey(payload))
+        .flatMap((binding) => applying(binding, keymap));
+
 const routeOf = (ref: CommandRef) => {
     if (typeof ref === 'string') {
         return { command: ref, payload: undefined };
@@ -93,10 +107,6 @@ export const toolbarItems = (
         return [];
     }
     const { features, keymap, commands } = compiledModel(engine.model);
-    const refused = (command: string) => {
-        const compiled = commands.find(({ id }) => id === command);
-        return compiled !== undefined && authoring.features[compiled.featureId]?.create === false;
-    };
     const entries: ButtonEntry[] = [];
     for (const { declaration, options } of features) {
         for (const entry of declaration.toolbar ?? []) {
@@ -109,7 +119,7 @@ export const toolbarItems = (
     }
     const marks = (ref: CommandRef) =>
         commands.some(({ id, definition }) => id === routeOf(ref).command && definition.capability === 'toggleMark');
-    const runnable = (command: string) => engine.commands.has(command) && !refused(command);
+    const runnable = (command: string) => engine.commands.has(command) && !refusedBy(authoring, commands, command);
     /** The item of one entry, with the presentation's label and icon for its command. */
     const itemOf = (entry: ButtonEntry, groupStart: boolean, bubble: boolean): ToolbarItem => {
         const { command, payload } = entry;
@@ -127,17 +137,15 @@ export const toolbarItems = (
             }
             icon = control.icon ?? icon;
         }
-        const bindings = keymap
-            .filter((binding) => binding.command === command && payloadKey(binding.payload) === payloadKey(payload))
-            .flatMap((binding) => applying(binding, keymap));
+        const bindings = bindingsOf(keymap, command, payload);
         const key = `${command} ${payloadKey(payload)}`;
         return { key, command, payload, toggle: entry.kind === 'toggle', label, icon, bindings, groupStart, bubble };
     };
     // A heading level the policy cannot create only names a stored heading (SPEC-rich-text-editing/AC-014).
-    const offered = ({ command, payload }: ButtonEntry) =>
-        command !== 'heading.set' ||
-        !isRecord(payload) ||
-        authoring.creatableHeadingLevels.includes(payload.level as HeadingLevel);
+    const offered = ({ command, payload }: ButtonEntry) => {
+        const compiled = commands.find(({ id }) => id === command);
+        return compiled === undefined || !setsHeading(compiled.definition) || !refusesLevel(authoring, payload);
+    };
     const items: ToolbarItem[] = [];
     for (const group of presentation.toolbar) {
         let groupStart = items.length > 0;
@@ -200,14 +208,10 @@ export const menuItems = (
             }
             const { command, payload } = ref;
             const key = `${command} ${payloadKey(payload)}`;
-            const owner = commands.find(({ id }) => id === command);
-            const refused = owner !== undefined && authoring.features[owner.featureId]?.create === false;
-            if (refused || shown.has(key) || rows.some((row) => row.key === key)) {
+            if (refusedBy(authoring, commands, command) || shown.has(key) || rows.some((row) => row.key === key)) {
                 continue;
             }
-            const bindings = keymap
-                .filter((binding) => binding.command === command && payloadKey(binding.payload) === payloadKey(payload))
-                .flatMap((binding) => applying(binding, keymap));
+            const bindings = bindingsOf(keymap, command, payload);
             const label = t(ref.labelKey as `RichTextEditor_${string}`);
             rows.push({
                 key,
