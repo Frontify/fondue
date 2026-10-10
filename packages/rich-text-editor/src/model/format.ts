@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CapabilityRef, type Feature, type JsonObject, type ModelRef } from './declarations';
-import { type IdSource } from './environment';
 
 export interface MarkJSON {
     readonly type: string;
@@ -131,8 +130,6 @@ export const defaultLimits: ResourceLimits = Object.freeze({
 export interface DecodeOptions {
     /** Defaults to `defaultLimits`; a host passes the limits the writing definition used. */
     readonly limits?: Partial<ResourceLimits>;
-    /** For `nodeId`s that registered migrations create; the package default when omitted. */
-    readonly ids?: IdSource;
 }
 
 export const diagnostic = (
