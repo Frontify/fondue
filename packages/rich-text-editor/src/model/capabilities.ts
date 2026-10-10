@@ -47,10 +47,15 @@ export const HISTORY_PLUGIN: PluginDescriptor = { id: 'history', phase: 'history
 export const CONTAINER_KEYS_PLUGIN: PluginDescriptor = { id: 'container-keys', phase: 'structure-keys' };
 /** ProseMirror's base keymap: Enter, Backspace, Delete and select-all (SPEC-rich-text-editing, Key precedence row 10). */
 export const BASE_KEYS_PLUGIN: PluginDescriptor = { id: 'base-keys', phase: 'base-keys' };
+/** The package's own paste, drop, copy, cut and dragstart handlers (SPEC-rich-text-clipboard, Event ownership). */
+export const CLIPBOARD_PLUGIN: PluginDescriptor = { id: 'clipboard', phase: 'guard' };
+/** The drop cursor of `prosemirror-dropcursor` (SPEC-rich-text-clipboard/AC-046). */
+export const DROP_CURSOR_PLUGIN: PluginDescriptor = { id: 'drop-cursor', phase: 'structure' };
 /** One plugin key, one instance: a plugin several capabilities contribute sits at its first contributor's position. */
 export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonly PluginDescriptor[]>>> = {
     history: [HISTORY_PLUGIN],
-    insertText: [BASE_KEYS_PLUGIN],
+    // `core` inserts text with it, so every model takes paste, copy and drop handling.
+    insertText: [BASE_KEYS_PLUGIN, CLIPBOARD_PLUGIN, DROP_CURSOR_PLUGIN],
     wrapIn: [CONTAINER_KEYS_PLUGIN],
 };
 /** The package's input rule engine, one plugin for every feature's rules (SPEC-rich-text-editing, Input rules). */

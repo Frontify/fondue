@@ -91,6 +91,7 @@ export type DiagnosticCode =
     | 'codecs.markdown-unsupported'
     | 'codecs.lossy-output'
     | 'codecs.override-failed'
+    | 'clipboard.paste-rejected'
     | 'reader.override-failed'
     | 'react.default-value-changed'
     | 'react.definition-changed'

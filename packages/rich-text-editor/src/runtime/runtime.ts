@@ -131,6 +131,8 @@ export interface EditorRuntime {
     readonly interactionRoots: ReadonlySet<HTMLElement>;
     /** The session's current state, which stays readable after `dispose`, for tests. */
     readonly state: EditorState;
+    /** The authoring policy that the next commit is checked against. */
+    readonly policy: AuthoringPolicy;
     /** Shows the document in `element`, which becomes the editable surface. */
     attach(element: HTMLElement): void;
     /** Destroys the view synchronously; the session and its state stay. */
@@ -207,6 +209,11 @@ const runtimes = new WeakMap<object, EditorRuntime>();
 
 /** The runtime behind a handle this module made. */
 export const runtimeOf = (handle: object): EditorRuntime | undefined => runtimes.get(handle);
+
+const viewRuntimes = new WeakMap<EditorView, EditorRuntime>();
+
+/** The runtime whose surface `view` shows, for a plugin that one compiled definition shares between editors. */
+export const runtimeOfView = (view: EditorView): EditorRuntime | undefined => viewRuntimes.get(view);
 
 const kindOf = (selection: Selection): SelectionSummary['kind'] => {
     if (selection instanceof TextSelection) {
@@ -1626,6 +1633,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         get state() {
             return state;
         },
+        get policy() {
+            return policy;
+        },
         attach: (element) => {
             if (phase === 'disposed') {
                 return;
@@ -1680,6 +1690,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             view = attached;
             liveResources.views.add(attached);
+            viewRuntimes.set(attached, runtime);
             if (secondCopyAtMount(state)) {
                 report(DUPLICATE_ENGINE);
             }

@@ -31,6 +31,7 @@ import { createNodeViews, resyncSelection } from '#/bridge/node-views';
 import { OverlayContext, useScopedFocus } from '#/bridge/overlays';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
+import { connectClipboard } from '#/clipboard/plugin';
 import { enUS } from '#/locales/en-US';
 import { type CapabilityRef, type DecodeResult, type Diagnostic, hashDocument, type RichTextDocument } from '#/model';
 import { type TreeNode } from '#/model/content';
@@ -337,6 +338,18 @@ const SessionComponent = (
             saves,
             recovery: () => memberOf(latestRef.current.services, 'recovery'),
             inputRules: () => latestRef.current.inputRules,
+        });
+        connectClipboard(runtime, {
+            limits: definition.limits,
+            sliceContext: () => {
+                const { presentation } = latestRef.current;
+                if (presentation === undefined) {
+                    return null;
+                }
+                return presentation.sliceContext;
+            },
+            locale: () => shellPropsOf(latestRef.current).locale,
+            announce: (message) => announcer.announce(message),
         });
         // Each event calls the newest callback the host passed (SPEC-rich-text-react/AC-004).
         runtime.handle.subscribe('ready', (session: SessionToken) => {

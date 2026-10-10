@@ -26,6 +26,8 @@ export const esES = {
         RichTextEditor_moveUp: 'Mover hacia arriba',
         RichTextEditor_nodeViewError: 'Esta parte del contenido no se puede mostrar',
         RichTextEditor_normalText: 'Texto normal',
+        RichTextEditor_pasteMediaDropped: 'Contenido multimedia no pegado: ${count}',
+        RichTextEditor_pasteTooLarge: 'El contenido pegado es demasiado grande.',
         RichTextEditor_quote: 'Cita',
         RichTextEditor_readerBlockedInvalid: 'Este contenido no se puede mostrar',
         RichTextEditor_readerBlockedUnsupported: 'Este contenido no se puede mostrar aquí',
