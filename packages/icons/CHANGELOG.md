@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.29.1
+
+### Patch Changes
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: icon manifest tags now include curated synonyms (e.g. `settings`/`gear` for `IconCog`, `user` for `IconPerson`, `search` for `IconMagnifier`) and drop filler words like `in` and `to`, and the icon example describes the available sizes
+
 ## 0.29.0
 
 ### Minor Changes
