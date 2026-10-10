@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { act, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { createCodecs } from '#/codecs';
@@ -60,5 +61,21 @@ describe('lists.ordered', () => {
         ]);
         expect(outlineOf(above.handle)).toEqual(['1000001. ']);
         expect(above.handle.getSnapshot().document.content.content).toMatchObject([{ type: 'paragraph' }]);
+    });
+
+    it('SPEC-rich-text-editing/AC-090 opens the numbering dialog on the start of the nearest ordered list, through a bulleted list inside it', async () => {
+        const inner = list('bullet', [item('bullet', 'inner')]);
+        const { handle, environment } = mountText({
+            model,
+            blocks: [list('ordered', [item('ordered', 'outer', inner)], 5)],
+        });
+        setSelection(handle, { text: 'inner', from: 1, to: 1 });
+
+        await act(async () => {
+            handle.execute('list.ordered.start.edit');
+            await environment.flushMicrotasks();
+        });
+
+        expect(screen.getByRole('spinbutton', { name: 'First number' })).toHaveProperty('value', '5');
     });
 });

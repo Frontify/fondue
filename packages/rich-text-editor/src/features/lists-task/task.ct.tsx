@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
-import { taskItem, tasks } from '../../../fixtures/editor/list-blocks';
+import { bullets, listItem, taskItem, tasks } from '../../../fixtures/editor/list-blocks';
 import { ListProbe } from '../../../fixtures/editor/ListProbe';
 
 type ListRte = NonNullable<Window['listRte']>;
@@ -72,4 +72,21 @@ test.describe('on a touch screen', () => {
         expect(box?.width).toBeGreaterThanOrEqual(44);
         expect(box?.height).toBeGreaterThanOrEqual(44);
     });
+});
+
+test('SPEC-rich-text-output/AC-004 draws no list marker on task items in the reader, also in a task list nested in a bulleted list', async ({
+    mount,
+    page,
+}) => {
+    await mount(
+        <ListProbe blocks={[...blocks, bullets(listItem('Outer', tasks(taskItem('task-3', 'Inner'))))]} reader />,
+    );
+    await ready(page);
+
+    const markers = await page
+        .getByRole('region', { name: 'Reader' })
+        .locator('li[data-checked]')
+        .evaluateAll((items) => items.map((item) => getComputedStyle(item).listStyleType));
+
+    expect(markers).toEqual(['none', 'none', 'none']);
 });

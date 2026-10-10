@@ -49,6 +49,8 @@ interface Row {
     readonly shift: boolean;
     readonly blocks: readonly ContentNodeJSON[];
     readonly at: string;
+    /** The command the change reports, when the key's command runs another (SPEC-rich-text-editing/AC-030). */
+    readonly reports?: string;
 }
 const nested = list('bullet', [item('bullet', 'one', list('bullet', [item('bullet', 'two')]))]);
 const ROWS: readonly Row[] = [
@@ -77,7 +79,14 @@ const ROWS: readonly Row[] = [
         blocks: [list('task', [item('task', 'one', list('task', [item('task', 'two')]))])],
         at: 'two',
     },
-    { command: 'task.toggle', key: 'Enter', shift: false, blocks: [list('task', [item('task', 'one')])], at: 'one' },
+    {
+        command: 'task.toggle',
+        key: 'Enter',
+        shift: false,
+        blocks: [list('task', [item('task', 'one')])],
+        at: 'one',
+        reports: 'task.setChecked',
+    },
 ];
 
 describe('list shortcuts', () => {
@@ -101,7 +110,7 @@ describe('list shortcuts', () => {
                 const own = run({ key: row.key, shift: row.shift, meta: apple, ctrl: !apple });
                 const foreign = run({ key: row.key, shift: row.shift, meta: !apple, ctrl: apple });
 
-                expect(own).toEqual([row.command]);
+                expect(own).toEqual([row.reports ?? row.command]);
                 expect(foreign).toEqual([]);
             });
         }

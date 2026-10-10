@@ -8,7 +8,7 @@ import { fixtureItalic } from '#/features/__fixtures__/features';
 import { featuresById } from '#/features/registry';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { RichTextReader } from '#/reader';
-import { setSelection } from '#/testing';
+import { pressKey, setSelection, typeText } from '#/testing';
 
 import { done, item, list, listModel, outline } from '../../../fixtures/editor/lists';
 import { mountText, storedIn } from '../../../fixtures/editor/text';
@@ -108,5 +108,67 @@ describe('lists.task', () => {
             },
         ]);
         expect(blocksOf(withoutTasks).map(outline)).toEqual([{ ul: [['[ ] Draft'], ['[x] Review']] }]);
+    });
+
+    /** Each task item of the snapshot, in document order, as its first paragraph's text and `checked`. */
+    const checksOf = (handle: ReturnType<typeof mountText>['handle']) => {
+        const found: Record<string, boolean>[] = [];
+        const visit = (node: ContentNodeJSON) => {
+            if (node.type === 'task_item') {
+                const [first = { type: 'paragraph' }] = node.content ?? [];
+                let text = '';
+                for (const child of first.content ?? []) {
+                    text += child.text ?? '';
+                }
+                found.push({ [text]: node.attrs?.checked === true });
+            }
+            for (const child of node.content ?? []) {
+                visit(child);
+            }
+        };
+        visit(handle.getSnapshot().document.content);
+        return found;
+    };
+
+    it('SPEC-rich-text-editing/AC-027 keeps a checked item checked when Enter at its start puts the new, unchecked item before it', () => {
+        const { handle } = mountText({ model, blocks: [list('task', [done('Buy milk')])] });
+        setSelection(handle, { text: 'Buy milk', from: 0, to: 0 });
+
+        pressKey(handle, 'Enter');
+
+        expect(checksOf(handle)).toEqual([{ '': false }, { 'Buy milk': true }]);
+    });
+
+    it('SPEC-rich-text-editing/AC-075 checks only the item at the caret when "[x] " turns a bulleted list into a task list', () => {
+        const { handle } = mountText({ model, blocks: [list('bullet', [item('bullet', 'A'), item('bullet', 'B')])] });
+        setSelection(handle, { text: 'B', from: 1, to: 1 });
+
+        pressKey(handle, 'Enter');
+        typeText(handle, '[x] ');
+
+        expect(checksOf(handle).flatMap((check) => Object.values(check))).toEqual([false, false, true]);
+    });
+
+    it('SPEC-rich-text-editing/AC-030 runs Mod-Enter in a task item as one task.setChecked', () => {
+        const { handle, changes } = mountText({ model, blocks: [tasks] });
+        setSelection(handle, { text: 'Update the templates', from: 1, to: 1 });
+
+        pressKey(handle, 'Mod-Enter');
+
+        expect(changes.map(({ commandId }) => commandId)).toEqual(['task.setChecked']);
+        expect(checksOf(handle)).toEqual([{ 'Approve the palette': true }, { 'Update the templates': true }]);
+    });
+
+    it("SPEC-rich-text-editing/AC-031 labels a checkbox by its item's first paragraph, not by the tasks nested in it", async () => {
+        const nested = list('task', [item('task', 'Parent', list('task', [item('task', 'Child')]))]);
+        const { environment } = mountText({ model, blocks: [nested] });
+        await act(() => environment.flushMicrotasks());
+
+        expect(screen.getAllByRole('checkbox').map((box) => box.getAttribute('aria-labelledby') !== null)).toEqual([
+            true,
+            true,
+        ]);
+        expect(screen.getByRole('checkbox', { name: 'Parent' })).toBeDefined();
+        expect(screen.getByRole('checkbox', { name: 'Child' })).toBeDefined();
     });
 });
