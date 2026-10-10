@@ -96,16 +96,20 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
         return size;
     };
 
-    /** The limit the document exceeds, if any. */
-    return (doc: Node, limits: ResourceLimits): ExceededLimit | undefined => {
+    /** The limit the document exceeds, if any, and with `current` only one whose measure it grows over `current`'s (DR-083). */
+    return (doc: Node, limits: ResourceLimits, current?: Node): ExceededLimit | undefined => {
         const size = sizeOf(doc);
-        if (size.nodes > limits.maxDocumentNodes) {
+        let before: Size = { bytes: 0, nodes: 0, longest: 0 };
+        if (current !== undefined) {
+            before = sizeOf(current);
+        }
+        if (size.nodes > limits.maxDocumentNodes && size.nodes > before.nodes) {
             return 'maxDocumentNodes';
         }
-        if (envelopeBytes + size.bytes > limits.maxDocumentBytes) {
+        if (envelopeBytes + size.bytes > limits.maxDocumentBytes && size.bytes > before.bytes) {
             return 'maxDocumentBytes';
         }
-        if (size.longest > limits.maxTextLength) {
+        if (size.longest > limits.maxTextLength && size.longest > before.longest) {
             return 'maxTextLength';
         }
         return undefined;

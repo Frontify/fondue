@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { dropCursor } from 'prosemirror-dropcursor';
-import { Fragment, type Node, Slice } from 'prosemirror-model';
+import { Fragment, Slice } from 'prosemirror-model';
 import { Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 import { dropPoint } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
@@ -113,10 +113,6 @@ const payloadOf = (data: DataTransfer): Payload => ({
     slice: data.getData(SLICE_TYPE),
 });
 
-/** The limit a document exceeds: the commit check's, then the depth and cell limits it leaves to paste. */
-const exceededOf = (runtime: EditorRuntime) => (doc: Node) =>
-    runtime.exceededLimit(doc) ?? exceededStructure(doc, runtime.limits);
-
 /** Dispatches a paste or drop, or reports why it was refused with the document and selection unchanged (AC-020, AC-025). */
 const commit = (
     view: EditorView,
@@ -128,13 +124,18 @@ const commit = (
     if (pasted === undefined) {
         return;
     }
-    const exceeded = exceededOf(connected.runtime)(tr.doc);
+    const { runtime } = connected;
+    if (pasted.followUp !== undefined) {
+        tr.setMeta(clipboardKey, pasted.followUp);
+        // A follow-up past a limit leaves the paste as it is (SPEC-rich-text-clipboard/AC-020).
+        if (runtime.exceededLimit(tr) !== undefined) {
+            tr.setMeta(clipboardKey, undefined);
+        }
+    }
+    const exceeded = runtime.exceededLimit(tr) ?? exceededStructure(tr.doc, runtime.limits);
     if (exceeded !== undefined) {
         reject(connected, exceeded);
         return;
-    }
-    if (pasted.followUp !== undefined) {
-        tr.setMeta(clipboardKey, pasted.followUp);
     }
     const before = view.state.doc;
     view.dispatch(tr.setMeta('uiEvent', event));
@@ -150,7 +151,7 @@ const commit = (
 const settingsOf = (model: ContentModel, { runtime, session }: Connected, plain: boolean): PasteSettings => ({
     model,
     limits: runtime.limits,
-    exceeded: exceededOf(runtime),
+    exceeded: (doc) => exceededStructure(doc, runtime.limits),
     policy: runtime.policy.features,
     context: contextOf(session),
     plain,
@@ -260,13 +261,14 @@ const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
     const { tr } = view.state;
     let pasted: Pasted | null | undefined;
     const copy = copies(view, event);
+    // A move pastes nothing new, so only a copy or a drop from outside is checked against `maxPasteBytes` (AC-001).
+    if ((dragged === undefined || copy) && rejectsSize(connected, payloadOf(data))) {
+        return true;
+    }
     // A copy of an island whose `nodeId` is already here takes the dropped flavors instead, as a paste would (DR-082).
     if (dragged === undefined || (copy && repeatsIdentity(dragged, tr.doc, false))) {
         // A drop from outside takes the paste order at the block boundary the drop cursor shows (AC-031, AC-046).
         const payload = payloadOf(data);
-        if (rejectsSize(connected, payload)) {
-            return true;
-        }
         const position = dropPoint(tr.doc, at.pos, blockSlice(view)) ?? at.pos;
         const settings = settingsOf(model, connected, false);
         pasted = attempt(connected, () => pastePayload(tr, position, position, payload, settings));

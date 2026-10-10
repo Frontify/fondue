@@ -135,8 +135,8 @@ export interface EditorRuntime {
     readonly policy: AuthoringPolicy;
     /** The session's resource limits. */
     readonly limits: ResourceLimits;
-    /** The limit of the commit check that `doc` exceeds, which a paste reports (SPEC-rich-text-clipboard/AC-020). */
-    exceededLimit(doc: Node): ExceededLimit | undefined;
+    /** The limit of the final check that the batch of `root` exceeds, its new `nodeId`s drawn as a query draws them, which a paste reports (SPEC-rich-text-clipboard/AC-020). */
+    exceededLimit(root: Transaction): ExceededLimit | undefined;
     /** Shows the document in `element`, which becomes the editable surface. */
     attach(element: HTMLElement): void;
     /** Destroys the view synchronously; the session and its state stay. */
@@ -332,7 +332,12 @@ type BatchMetric = Pick<Candidate, 'started' | 'appended'> & { readonly kind: 'c
 /** A candidate, or why a batch cannot be installed. */
 type Prepared =
     | Candidate
-    | { readonly code: RejectedCode; readonly diagnostic?: Diagnostic; readonly fault?: Diagnostic };
+    | {
+          readonly code: RejectedCode;
+          readonly diagnostic?: Diagnostic;
+          readonly fault?: Diagnostic;
+          readonly limit?: ExceededLimit | undefined;
+      };
 /** Who runs a command: a host call, a queued intent, or an async result. */
 type Route = 'host' | 'queue' | 'async';
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
@@ -655,17 +660,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             mapping.appendMapping(transaction.mapping);
         }
         // The settle repair is judged with the composition it repairs, from the published document.
-        if (
-            doc !== state.doc &&
-            !(fromView && isProvisional(root)) &&
-            root.getMeta(NORMALIZE_META) !== 'now' &&
-            (breaksPolicy(policy, state.doc, doc, mapping, isHistoryTransaction(root)) ||
-                exceedsLimits(doc, limits) !== undefined)
-        ) {
-            if (firedRule(applied.transactions)) {
-                return prepare(withoutRules(root), ids, fromView);
+        if (doc !== state.doc && !(fromView && isProvisional(root)) && root.getMeta(NORMALIZE_META) !== 'now') {
+            const limit = exceedsLimits(doc, limits, state.doc);
+            if (breaksPolicy(policy, state.doc, doc, mapping, isHistoryTransaction(root)) || limit !== undefined) {
+                if (firedRule(applied.transactions)) {
+                    return prepare(withoutRules(root), ids, fromView);
+                }
+                return { code: 'not-allowed', limit };
             }
-            return { code: 'not-allowed' };
         }
         return { candidate: applied.state, root, mapping, started, appended: applied.transactions.length - 1 };
     };
@@ -812,7 +814,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         if (
             !breaksPolicy(policy, published.doc, state.doc, mapping) &&
-            exceedsLimits(state.doc, limits) === undefined
+            exceedsLimits(state.doc, limits, published.doc) === undefined
         ) {
             announce('input', null, { kind: 'commit', started, appended });
             return true;
@@ -1628,7 +1630,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return policy;
         },
         limits,
-        exceededLimit: (doc) => exceedsLimits(doc, limits),
+        exceededLimit: (root) => {
+            const prepared = prepare(root, queriedIds(), true);
+            if ('limit' in prepared) {
+                return prepared.limit;
+            }
+            return undefined;
+        },
         attach: (element) => {
             if (phase === 'disposed') {
                 return;
