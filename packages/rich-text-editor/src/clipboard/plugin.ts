@@ -23,12 +23,12 @@ import { exceededStructure } from './import/limits';
 import {
     type FollowUp,
     insertAndSelect,
+    islandsCannotStay,
     type Pasted,
     pastePayload,
     type PasteSettings,
     type Payload,
     prepareSlice,
-    repeatsIdentity,
     withoutIds,
 } from './paste';
 import { SLICE_TYPE, writeSlice } from './slice';
@@ -127,12 +127,16 @@ const commit = (
     const { runtime } = connected;
     if (pasted.followUp !== undefined) {
         tr.setMeta(clipboardKey, pasted.followUp);
-        // A follow-up past a limit leaves the paste as it is (SPEC-rich-text-clipboard/AC-020).
-        if (runtime.exceededLimit(tr) !== undefined) {
-            tr.setMeta(clipboardKey, undefined);
-        }
     }
-    const exceeded = runtime.exceededLimit(tr) ?? exceededStructure(tr.doc, runtime.limits);
+    let exceeded: string | undefined = runtime.exceededLimit(tr);
+    // A follow-up past a limit leaves the paste as it is (SPEC-rich-text-clipboard/AC-020).
+    if (exceeded !== undefined && pasted.followUp !== undefined) {
+        tr.setMeta(clipboardKey, undefined);
+        exceeded = runtime.exceededLimit(tr);
+    }
+    if (exceeded === undefined) {
+        exceeded = exceededStructure(tr.doc, runtime.limits);
+    }
     if (exceeded !== undefined) {
         reject(connected, exceeded);
         return;
@@ -151,7 +155,6 @@ const commit = (
 const settingsOf = (model: ContentModel, { runtime, session }: Connected, plain: boolean): PasteSettings => ({
     model,
     limits: runtime.limits,
-    exceeded: (doc) => exceededStructure(doc, runtime.limits),
     policy: runtime.policy.features,
     context: contextOf(session),
     plain,
@@ -260,15 +263,15 @@ const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
     event.preventDefault();
     const { tr } = view.state;
     let pasted: Pasted | null | undefined;
-    const copy = copies(view, event);
+    const copying = copies(view, event);
+    const payload = payloadOf(data);
     // A move pastes nothing new, so only a copy or a drop from outside is checked against `maxPasteBytes` (AC-001).
-    if ((dragged === undefined || copy) && rejectsSize(connected, payloadOf(data))) {
+    if ((dragged === undefined || copying) && rejectsSize(connected, payload)) {
         return true;
     }
     // A copy of an island whose `nodeId` is already here takes the dropped flavors instead, as a paste would (DR-082).
-    if (dragged === undefined || (copy && repeatsIdentity(dragged, tr.doc, false))) {
-        // A drop from outside takes the paste order at the block boundary the drop cursor shows (AC-031, AC-046).
-        const payload = payloadOf(data);
+    if (dragged === undefined || (copying && islandsCannotStay(dragged, tr.doc, false))) {
+        // A drop from outside, or an inside copy that falls back (DR-082), takes the paste order at the drop cursor's block boundary (AC-031, AC-046).
         const position = dropPoint(tr.doc, at.pos, blockSlice(view)) ?? at.pos;
         const settings = settingsOf(model, connected, false);
         pasted = attempt(connected, () => pastePayload(tr, position, position, payload, settings));
@@ -277,7 +280,7 @@ const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
         let slice = dragged;
         const point = dropPoint(tr.doc, at.pos, slice) ?? at.pos;
         // A move pastes nothing new, so the paste policy filters only a copy.
-        if (copy) {
+        if (copying) {
             slice = prepareSlice(slice, tr.doc.type.schema, model, connected.runtime.policy.features);
         } else {
             tr.deleteSelection();

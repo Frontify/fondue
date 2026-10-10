@@ -11,6 +11,7 @@ import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { isRecord } from '#/model/values';
 
+import { exceededStructure } from './import/limits';
 import { labelText, type PastePolicy, refusedNames, resliced, withoutRefused } from './import/policy';
 import { readSlice } from './slice';
 
@@ -26,7 +27,6 @@ export interface PasteSettings {
     readonly model: ContentModel;
     readonly limits: ResourceLimits;
     /** The depth or cell limit a document with the pasted content exceeds; the commit checks the runtime's limits. */
-    readonly exceeded: (doc: Node) => string | undefined;
     readonly policy: PastePolicy;
     /** The destination's slice context (SPEC-rich-text-clipboard/AC-022, AC-023). */
     readonly context: string;
@@ -123,8 +123,8 @@ const islandIdentities = (fragment: Fragment) => {
     return { ids, references };
 };
 
-/** Whether an island of `slice` holds a `nodeId` the paste would repeat, or a reference from another context (DR-082). */
-export const repeatsIdentity = (slice: Slice, doc: Node, foreign: boolean) => {
+/** Whether an island of `slice` holds a `nodeId` the paste would repeat, or a reference from another context, so the island cannot stay (DR-082). */
+export const islandsCannotStay = (slice: Slice, doc: Node, foreign: boolean) => {
     const { ids, references } = islandIdentities(slice.content);
     if (references && foreign) {
         return true;
@@ -249,7 +249,7 @@ export const pastePayload = (
         internal = readSlice(payload.slice, model, schema, settings.limits);
     }
     // An island's original stays unchanged, so one whose IDs or references cannot stay makes the slice fall back.
-    if (internal !== undefined && repeatsIdentity(internal.slice, tr.doc, internal.context !== settings.context)) {
+    if (internal !== undefined && islandsCannotStay(internal.slice, tr.doc, internal.context !== settings.context)) {
         internal = undefined;
     }
     // Step 3: a URL links the selected text, or a caret paste with no usable slice inserts it linked as a second step.
@@ -303,7 +303,7 @@ export const pastePayload = (
             next.step(step);
         }
         // A conversion past the depth or cell limit leaves the pasted text as it is (SPEC-rich-text-clipboard/AC-020).
-        if (settings.exceeded(next.doc) !== undefined) {
+        if (exceededStructure(next.doc, settings.limits) !== undefined) {
             return null;
         }
         return next.setSelection(Selection.near(next.doc.resolve(range.to), -1));
