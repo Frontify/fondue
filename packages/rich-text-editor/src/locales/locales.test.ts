@@ -4,6 +4,7 @@ import { readdirSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
+import { COUNT_PLACEHOLDERS } from './countPlaceholders';
 import { enUS } from './en-US';
 
 const files = readdirSync(new URL('.', import.meta.url))
@@ -11,6 +12,21 @@ const files = readdirSync(new URL('.', import.meta.url))
     .map((name) => name.replace('.ts', ''))
     .sort();
 const placeholders = (value: string) => value.match(/\$\{\w+\}/g) ?? [];
+const localeOf = async (file: string) => {
+    const module = (await import(`./${file}.ts`)) as Record<string, typeof enUS | undefined>;
+    const locale = module[file.replace('-', '')];
+    if (locale === undefined) {
+        throw new Error(`${file} exports no locale`);
+    }
+    return locale;
+};
+/** The count placeholders of `value` that stand anywhere but after a colon, an optional space or no-break space, and before the end or a period. */
+const misplacedCounts = (value: string) =>
+    COUNT_PLACEHOLDERS.filter((name) => {
+        const all = value.split(`\${${name}}`).length - 1;
+        const placed = value.match(new RegExp(`:[ \u00A0]?\\$\\{${name}\\}(?=\\.?$)`, 'g')) ?? [];
+        return all !== placed.length;
+    });
 
 describe('package locales', () => {
     it('SPEC-rich-text-react/AC-058 ships the eleven locales of Fondue', () => {
@@ -22,11 +38,7 @@ describe('package locales', () => {
     it.each(files)(
         'SPEC-rich-text-react/AC-058 defines every enUS key of %s, with the same ${vars} and its own lang',
         async (file) => {
-            const module = (await import(`./${file}.ts`)) as Record<string, typeof enUS | undefined>;
-            const locale = module[file.replace('-', '')];
-            if (locale === undefined) {
-                throw new Error(`${file} exports no locale`);
-            }
+            const locale = await localeOf(file);
 
             expect(locale.lang).toBe(file);
             expect(Object.keys(locale.translationStrings).sort()).toEqual(Object.keys(enUS.translationStrings).sort());
@@ -36,4 +48,47 @@ describe('package locales', () => {
             }
         },
     );
+
+    it('SPEC-rich-text-react/AC-059 accepts a count after a colon only, at the end or before a period', () => {
+        expect(COUNT_PLACEHOLDERS).toEqual(['count', 'errors', 'warnings', 'review']);
+        expect(
+            [
+                'Results: ${count}',
+                'Errors: ${errors}.',
+                'Avertissements\u00A0:\u00A0${warnings}',
+                'Review:${review}',
+            ].map(misplacedCounts),
+        ).toEqual([[], [], [], []]);
+        expect(
+            ['${count} results', 'Results ${count}', 'Errors: ${errors} found', 'Review: ${review}!'].map(
+                misplacedCounts,
+            ),
+        ).toEqual([['count'], ['count'], ['errors'], ['review']]);
+    });
+
+    it.each(files)(
+        'SPEC-rich-text-react/AC-059 puts every count of %s after a colon as a standalone value',
+        async (file) => {
+            const locale = await localeOf(file);
+
+            expect(
+                Object.entries(locale.translationStrings).filter(([, value]) => misplacedCounts(value).length > 0),
+            ).toEqual([]);
+        },
+    );
+
+    it('SPEC-rich-text-accessibility/AC-004 words no enUS help, instruction or error by shape, colour, size or position alone', () => {
+        // Each allowed use, with why the string holds without seeing the layout.
+        const allowed = new Set([
+            // The changes follow the message in reading order too, so a screen reader reaches them next.
+            'RichTextEditor_recoveryMessage below',
+        ]);
+        const sensory = ['click the', 'red', 'green', 'on the left', 'on the right', 'above', 'below'];
+        const found = Object.entries(enUS.translationStrings).flatMap(([key, value]) =>
+            sensory.filter((words) => new RegExp(`\\b${words}\\b`, 'i').test(value)).map((words) => `${key} ${words}`),
+        );
+
+        expect(found.filter((use) => !allowed.has(use))).toEqual([]);
+        expect([...allowed].filter((use) => !found.includes(use))).toEqual([]);
+    });
 });

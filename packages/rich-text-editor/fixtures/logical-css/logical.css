@@ -1,0 +1,10 @@
+:where(.fondue-rte-content li) {
+    margin-inline-start: 1em;
+    padding-inline-end: 2px;
+    border-start-start-radius: 4px;
+    inset-inline-start: 0;
+    text-align: start;
+    float: inline-end;
+    clear: inline-start;
+    content: 'left right';
+}

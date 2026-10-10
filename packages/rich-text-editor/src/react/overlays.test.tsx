@@ -1,7 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { ThemeProvider } from '@frontify/fondue-components';
+import { deDE as fondueDeDE } from '@frontify/fondue-components/locales';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { type ComponentType, createRef, lazy, type ReactNode, useEffect, useState } from 'react';
+import { renderToString } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { fixtureCodeBlockView } from '#/features/__fixtures__/code-block/view';
@@ -369,6 +372,71 @@ describe('editor overlays', () => {
 });
 
 describe('overlay accessibility', () => {
+    it('SPEC-rich-text-accessibility/AC-075 isolates each mention label in one bdi inside the English list', () => {
+        mount({ children: <Opened Overlay={FixtureSuggestions} /> });
+
+        const options = within(screen.getByRole('listbox', { name: 'Mentions' })).getAllByRole('option');
+        expect(options.map((option) => [...option.querySelectorAll('bdi')].map((bdi) => bdi.textContent))).toEqual([
+            ['Ada'],
+            ['Grace'],
+            ['Linus'],
+            ['נועה'],
+        ]);
+    });
+
+    it('SPEC-rich-text-react/AC-101 SPEC-rich-text-output/AC-034 renders the editor markup on the server under a German theme', () => {
+        const html = renderToString(
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor
+                    aria-label="Notes"
+                    definition={definition}
+                    presentation={presentation}
+                    defaultValue={loaded(para('one'))}
+                />
+            </ThemeProvider>,
+        );
+
+        expect(html).toContain('data-rte-surface=""');
+        expect(html).toContain('aria-label="Text formatting"');
+    });
+
+    it('SPEC-rich-text-react/AC-101 SPEC-rich-text-react/AC-003 renders at once in English, then takes the German strings of the ThemeProvider locale on the same view', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const ref = createRef<EditorHandle<object>>();
+        render(
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor
+                    aria-label="Notes"
+                    definition={definition}
+                    presentation={presentation}
+                    defaultValue={loaded(para('one'), image)}
+                    environment={environment}
+                    ref={ref}
+                />
+            </ThemeProvider>,
+        );
+        act(() => environment.flushFrames());
+        const handle = ref.current;
+        if (handle === null) {
+            throw new Error('no handle');
+        }
+        const view = runtimeOf(handle)?.view;
+
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' })).toBeInTheDocument();
+        expect(view).toBeDefined();
+        const toolbar = await screen.findByRole('toolbar', { name: 'Textformatierung' });
+        await act(() => environment.flushMicrotasks());
+        expect(within(toolbar).getByRole('button', { name: 'Fett' })).toBeInTheDocument();
+        expect(within(toolbar).getByRole('button', { name: 'Mehr' })).toBeInTheDocument();
+        expect(ref.current).toBe(handle);
+        expect(runtimeOf(handle)?.view).toBe(view);
+        // The stand-in's own labels are in no package locale, so the chrome button shows its key.
+        act(() => {
+            fireEvent.click(screen.getByRole('button', { name: 'RichTextEditor_fixtureAltText' }));
+        });
+        expect(within(screen.getByRole('dialog')).getByRole('button', { name: 'Schließen' })).toBeInTheDocument();
+    });
+
     it('SPEC-rich-text-accessibility/AC-017 leaves every overlay open for 10 minutes', () => {
         // Frames stay real, since Floating UI repositions an open overlay in each one.
         vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });

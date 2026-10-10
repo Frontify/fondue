@@ -882,3 +882,64 @@ test('SPEC-rich-text-accessibility/AC-014 keeps a toolbar tooltip open while the
     await expect(tooltip).toBeHidden();
     expect(whileOver).toBe(true);
 });
+
+test('SPEC-rich-text-react/AC-055 runs no animation while the toolbars, overlays and node chrome open', async ({
+    mount,
+    page,
+}) => {
+    // Sampled as soon as each part shows, inside the 150 ms a Fondue transition would run.
+    const running = () =>
+        page.evaluate(() =>
+            document
+                .getAnimations()
+                .filter((animation) => animation.playState === 'running')
+                .map((animation) => animation.constructor.name),
+        );
+    const seen: Record<string, string[]> = {};
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await mount(<OverlayProbe blocks={[paragraph('one two three'), image]} />);
+    await ready(page);
+
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    await expect(bubbleOf(page)).toBeVisible();
+    seen['bubble toolbar'] = await running();
+    await page.keyboard.press('Alt+F10');
+    await expect(page.getByRole('tooltip')).toBeVisible();
+    seen.tooltip = await running();
+    await page.keyboard.press('Escape');
+    await frames(page);
+    await page.keyboard.press('Escape');
+    await expect(bubbleOf(page)).toBeHidden();
+    await toolbarOf(page).getByRole('button', { name: 'Bold', exact: true }).hover();
+    seen['hovered item'] = await running();
+    await toolbarOf(page).getByRole('button', { name: 'More' }).click();
+    await expect(page.getByRole('menu')).toBeVisible();
+    seen['More menu'] = await running();
+    await page.keyboard.press('Escape');
+    for (const [kind, testId] of [
+        ['link', 'fixture-link-popover'],
+        ['suggestions', 'fixture-suggestions'],
+        ['menu', 'fixture-menu'],
+    ] as const) {
+        await surfaceOf(page).focus();
+        await select(page, 'two');
+        await open(page, kind);
+        await expect(page.getByTestId(testId)).toBeVisible();
+        seen[kind] = await running();
+        await page.keyboard.press('Escape');
+    }
+    await openAltText(page);
+    seen['node chrome and dialog'] = await running();
+
+    expect(seen).toEqual({
+        'bubble toolbar': [],
+        tooltip: [],
+        'hovered item': [],
+        'More menu': [],
+        link: [],
+        suggestions: [],
+        menu: [],
+        'node chrome and dialog': [],
+    });
+});

@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
+import { compile } from 'sass';
 import { describe, expect, it } from 'vitest';
 
 import { type CssRule, literalColors, parseCss, scanCss } from './check-css';
@@ -132,7 +133,12 @@ const ENGINE_STYLESHEETS = [
     'prosemirror-gapcursor/style/gapcursor.css',
     'prosemirror-tables/style/tables.css',
 ];
-const PHYSICAL_OFFSETS: Readonly<Record<string, string>> = { left: 'inset-inline-start', right: 'inset-inline-end' };
+const PHYSICAL_OFFSETS: Readonly<Record<string, string>> = {
+    left: 'inset-inline-start',
+    right: 'inset-inline-end',
+    top: 'inset-block-start',
+    bottom: 'inset-block-end',
+};
 
 // Quotes are optional in attribute selectors and interchangeable in strings.
 const normalize = (text: string) => text.replaceAll(/['"]/g, '').replaceAll(/\s+/g, ' ').trim();
@@ -195,7 +201,7 @@ describe('content stylesheet', () => {
         });
     }
 
-    it('SPEC-rich-text-react/AC-092 sets no literal colour, no physical left or right offset and no animation outside reduced motion no-preference', () => {
+    it('SPEC-rich-text-react/AC-092 sets no literal colour, no physical offset and no animation outside reduced motion no-preference', () => {
         const faults = content.rules.flatMap(({ selectors, declarations, atRules }) =>
             declarations.flatMap(([property, value]) => {
                 const found: string[] = literalColors(value).map((color) => `${selectors[0]} ${property}: ${color}`);
@@ -229,9 +235,9 @@ const rootDefaults = new Map(
 );
 
 const REFERENCE = /^var\((--[\w-]+)\)$/;
-/** The token value `variable` of the content root resolves to in `theme`, through the Fondue token variables. */
+/** The token value `variable`, of the content root or a Fondue token, resolves to in `theme`. */
 const resolve = (variable: string, theme: Map<string, string>): string => {
-    let value = rootDefaults.get(variable) ?? '';
+    let value = rootDefaults.get(variable) ?? `var(${variable})`;
     let reference = REFERENCE.exec(value)?.[1];
     while (reference !== undefined) {
         value = theme.get(reference) ?? base.get(reference) ?? '';
@@ -295,6 +301,102 @@ describe('content contrast', () => {
                 expect(color).toMatch(/^rgba?\(/);
                 expect(background[3]).toBe(1);
                 expect(contrast(rgbaOf(color), shownOpacity, background)).toBeGreaterThanOrEqual(4.5);
+            });
+        }
+    }
+});
+
+/** `color` drawn over the opaque `background`, as its alpha blends it. */
+const over = ([red, green, blue, alpha]: Rgba, [underRed, underGreen, underBlue]: Rgba): Rgba => {
+    const blend = (top: number, under: number) => top * alpha + under * (1 - alpha);
+    return [blend(red, underRed), blend(green, underGreen), blend(blue, underBlue), 1];
+};
+const toolbar = parseCss(
+    compile(fileURLToPath(new URL('../src/ui/toolbar/styles/toolbar.module.scss', import.meta.url))).css,
+);
+/** The colour variable the toolbar rule `selector` sets `property` to; `currentcolor` reads the rule's `color`. */
+const toolbarColor = (selector: string, property: string): string => {
+    const rule = toolbar.rules.find(({ selectors }) => selectors.includes(selector));
+    const value = rule?.declarations.find(([name]) => name === property)?.[1] ?? '';
+    if (/\bcurrentcolor\b/.test(value)) {
+        return toolbarColor('.item', 'color');
+    }
+    return /var\((--[\w-]+)\)/.exec(value)?.[1] ?? '';
+};
+const PRESSED = '.item[aria-pressed=true]';
+
+describe('chrome contrast', () => {
+    const TOOLBAR = { variable: toolbarColor('.root', 'background-color'), over: undefined };
+    const SURFACE = { variable: '--rte-content-surface-background', over: undefined };
+    const PRESSED_FILL = { variable: toolbarColor(PRESSED, 'background-color'), over: TOOLBAR.variable };
+    const HOVER_FILL = { variable: toolbarColor('.item:hover', 'background-color'), over: TOOLBAR.variable };
+    const surfaceBorder =
+        /var\((--color-[\w-]+)\)/.exec(rootDefaults.get('--rte-content-surface-border') ?? '')?.[1] ?? '';
+    // SPEC-rich-text-accessibility/AC-012 at 3:1 against the colour next to each, and AC-008 at 4.5:1 for chrome text.
+    const pairs = [
+        {
+            id: 'AC-012',
+            part: 'the toolbar focus outline',
+            color: toolbarColor('.item:focus-visible', 'outline'),
+            next: TOOLBAR,
+            ratio: 3,
+        },
+        {
+            id: 'AC-012',
+            part: 'the surface focus outline',
+            color: '--rte-content-focus-color',
+            next: SURFACE,
+            ratio: 3,
+        },
+        {
+            id: 'AC-012',
+            part: 'the pressed bar on its fill',
+            color: toolbarColor(PRESSED, 'border-block-end'),
+            next: PRESSED_FILL,
+            ratio: 3,
+        },
+        {
+            id: 'AC-012',
+            part: 'the pressed bar on the toolbar',
+            color: toolbarColor(PRESSED, 'border-block-end'),
+            next: TOOLBAR,
+            ratio: 3,
+        },
+        { id: 'AC-012', part: 'the surface border', color: surfaceBorder, next: SURFACE, ratio: 3 },
+        { id: 'AC-008', part: 'a toolbar item', color: toolbarColor('.item', 'color'), next: TOOLBAR, ratio: 4.5 },
+        {
+            id: 'AC-008',
+            part: 'a hovered toolbar item',
+            color: toolbarColor('.item', 'color'),
+            next: HOVER_FILL,
+            ratio: 4.5,
+        },
+        {
+            id: 'AC-008',
+            part: 'a pressed toolbar item',
+            color: toolbarColor('.item', 'color'),
+            next: PRESSED_FILL,
+            ratio: 4.5,
+        },
+    ];
+    for (const theme of ['light', 'dark']) {
+        for (const { id, part, color, next, ratio } of pairs) {
+            it(`SPEC-rich-text-accessibility/${id} keeps ${part} at ${ratio}:1 in the ${theme} theme`, () => {
+                const variables = variablesOf(`.${theme}`);
+                const shade = (variable: string, under: string | undefined) => {
+                    const own = rgbaOf(resolve(variable, variables));
+                    if (under === undefined) {
+                        return own;
+                    }
+                    return over(own, rgbaOf(resolve(under, variables)));
+                };
+                const background = shade(next.variable, next.over);
+
+                expect([color, next.variable].every((variable) => resolve(variable, variables).startsWith('rgb'))).toBe(
+                    true,
+                );
+                expect(background[3]).toBe(1);
+                expect(contrast(rgbaOf(resolve(color, variables)), 1, background)).toBeGreaterThanOrEqual(ratio);
             });
         }
     }

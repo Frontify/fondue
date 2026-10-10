@@ -1068,7 +1068,8 @@ test.describe('from 1000 to 320 CSS pixels', () => {
         const wideNames = await names();
 
         await page.setViewportSize({ width: 320, height: 640 });
-        await expect(itemOf(page, 'More')).toBeVisible();
+        // More shows at every width, so the narrow names are read once the refit moved the last heading into it.
+        await expect(itemOf(page, 'Heading 6')).toHaveCount(0);
         const narrowNames = await names();
         await page.setViewportSize({ width: 1000, height: 640 });
 
@@ -1163,4 +1164,201 @@ test.describe('from 320 to 1000 CSS pixels', () => {
             .toBe(true);
         expect(onMore).toBe('More');
     });
+});
+
+/** The pixels around `locator`, its focus outline included. */
+const shotAround = async (page: Page, locator: Locator) => {
+    const box = await boxOf(locator);
+    return page.screenshot({ clip: { x: box.x - 6, y: box.y - 6, width: box.width + 12, height: box.height + 12 } });
+};
+/** The bottom strip of `locator`, where a pressed item draws its bar. */
+const barOf = async (page: Page, locator: Locator) => {
+    const box = await boxOf(locator);
+    return page.screenshot({ clip: { x: box.x, y: box.y + box.height - 3, width: box.width, height: 3 } });
+};
+/** What `value` computes to as a colour beside the surface, read from an element styled with it. */
+const computedColor = (page: Page, value: string) =>
+    surfaceOf(page).evaluate((surface, given) => {
+        const probe = document.createElement('span');
+        probe.style.color = given;
+        surface.parentElement?.append(probe);
+        const color = getComputedStyle(probe).color;
+        probe.remove();
+        return color;
+    }, value);
+const linked = {
+    type: 'paragraph',
+    attrs: { lang: null },
+    content: [
+        { type: 'text', text: 'one two ' },
+        {
+            type: 'text',
+            text: 'guide',
+            marks: [{ type: 'link', attrs: { href: 'https://example.com/a', openInNewWindow: false, styleId: null } }],
+        },
+    ],
+} as never;
+/** The commit count and whether the view is the one the editor mounted with. */
+const session = (page: Page) =>
+    page.evaluate(() => {
+        const probe = window.toolbarEditor;
+        const kept = window as unknown as { firstView?: object | undefined };
+        kept.firstView ??= probe?.view();
+        return { commits: probe?.handle.getSummary().commitSequence, sameView: kept.firstView === probe?.view() };
+    });
+const frames = (page: Page) =>
+    page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
+test('SPEC-rich-text-react/AC-054 keeps focus rings, text selection and pressed toggles visible in forced colours', async ({
+    mount,
+    page,
+}, testInfo) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+    await mount(<ToolbarProbe blocks={[linked]} />);
+    await ready(page);
+    const shots: Record<string, readonly [Buffer, Buffer]> = {};
+
+    await page.getByRole('button', { name: 'Before' }).focus();
+    const unfocused = await shotAround(page, itemOf(page, 'Bold'));
+    await page.keyboard.press('Tab');
+    await expectFocus(page, 'Bold');
+    shots['focus ring'] = [unfocused, await shotAround(page, itemOf(page, 'Bold'))];
+
+    await surfaceOf(page).focus();
+    await select(page, 'one');
+    await page.mouse.move(0, 0);
+    const plain = await surfaceOf(page).screenshot();
+    const unpressed = await barOf(page, itemOf(page, 'Bold'));
+    await select(page, 'two');
+    shots['text selection'] = [plain, await surfaceOf(page).screenshot()];
+    await page.evaluate(() => window.toolbarEditor?.handle.execute('mark.bold.toggle'));
+    await expect(itemOf(page, 'Bold')).toHaveAttribute('aria-pressed', 'true');
+    shots['pressed toggle'] = [unpressed, await barOf(page, itemOf(page, 'Bold'))];
+
+    for (const [part, [before, after]] of Object.entries(shots)) {
+        await testInfo.attach(`${part} in forced colours`, { body: after, contentType: 'image/png' });
+        expect(after.equals(before), part).toBe(false);
+    }
+});
+
+test('SPEC-rich-text-react/AC-054 draws links in the LinkText system colour in forced colours', async ({
+    mount,
+    page,
+    browserName,
+}, testInfo) => {
+    test.skip(
+        browserName === 'webkit',
+        'WebKit has no forced colours mode: its emulation matches the query and keeps author colours',
+    );
+    await page.emulateMedia({ forcedColors: 'active' });
+    await mount(<ToolbarProbe blocks={[linked]} />);
+    await ready(page);
+    const link = surfaceOf(page).getByRole('link', { name: 'guide' });
+    await testInfo.attach('link in forced colours', {
+        body: await surfaceOf(page).screenshot(),
+        contentType: 'image/png',
+    });
+
+    const color = await link.evaluate((element) => getComputedStyle(element).color);
+    expect(color).toBe(await computedColor(page, 'LinkText'));
+    expect(color).not.toBe(await surfaceOf(page).evaluate((surface) => getComputedStyle(surface).color));
+});
+
+test('SPEC-rich-text-accessibility/AC-044 keeps the document through zoom, text size, theme, forced colours and reduced motion changes', async ({
+    mount,
+    page,
+}) => {
+    const editor = await mount(<ToolbarProbe />);
+    await ready(page);
+    const before = { session: await session(page), html: await documentHtml(page) };
+    const changes: Record<string, () => Promise<unknown>> = {
+        zoom: () => page.evaluate(() => (document.documentElement.style.zoom = '4')),
+        'text size': () => page.evaluate(() => (document.documentElement.style.fontSize = '32px')),
+        theme: () => editor.update(<ToolbarProbe theme="dark" />),
+        'forced colours': () => page.emulateMedia({ forcedColors: 'active' }),
+        'reduced motion': () => page.emulateMedia({ reducedMotion: 'reduce' }),
+    };
+    const seen: Record<string, unknown> = {};
+
+    for (const [change, apply] of Object.entries(changes)) {
+        await apply();
+        await frames(page);
+        seen[change] = { session: await session(page), html: await documentHtml(page) };
+    }
+
+    expect(seen).toEqual(Object.fromEntries(Object.keys(changes).map((change) => [change, before])));
+    expect(before.session.sameView).toBe(true);
+});
+
+test('SPEC-rich-text-react/AC-053 follows a theme switch in the toolbar without a transaction or a new view', async ({
+    mount,
+    page,
+}) => {
+    const editor = await mount(<ToolbarProbe />);
+    await ready(page);
+    const shown = async () => ({
+        toolbar: await toolbarOf(page).evaluate((toolbar) => getComputedStyle(toolbar).backgroundColor),
+        item: await itemOf(page, 'Bold').evaluate((item) => getComputedStyle(item).color),
+        tokens: {
+            toolbar: await computedColor(page, 'var(--color-surface-default)'),
+            item: await computedColor(page, 'var(--color-primary-default)'),
+        },
+    });
+    const before = { session: await session(page), shown: await shown() };
+
+    await editor.update(<ToolbarProbe theme="dark" />);
+    await expect
+        .poll(() => toolbarOf(page).evaluate((toolbar) => getComputedStyle(toolbar).backgroundColor))
+        .not.toBe(before.shown.toolbar);
+    const after = { session: await session(page), shown: await shown() };
+
+    for (const { shown: colors } of [before, after]) {
+        expect({ toolbar: colors.toolbar, item: colors.item }).toEqual(colors.tokens);
+    }
+    expect(after.shown.item).not.toBe(before.shown.item);
+    expect(after.session).toEqual(before.session);
+    expect(after.session.sameView).toBe(true);
+});
+
+test('SPEC-rich-text-react/AC-104 mirrors a nested list and a quote under rtl, the selected item frame included', async ({
+    mount,
+    page,
+}, testInfo) => {
+    const item = (text: string, ...nested: readonly object[]) => ({
+        type: 'list_item',
+        attrs: {},
+        content: [{ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] }, ...nested],
+    });
+    const list = (...items: readonly object[]) => ({ type: 'bullet_list', attrs: {}, content: items });
+    const quote = { type: 'toggled_block', attrs: {}, content: [{ type: 'text', text: 'ציטוט' }] };
+    const blocks = [list(item('אחת', list(item('שתיים'))), item('שלוש')), quote] as never[];
+    const sides = async () =>
+        surfaceOf(page)
+            .locator('li li')
+            .evaluate((nested) => {
+                const parent = nested.parentElement?.closest('li');
+                const outer = parent?.getBoundingClientRect();
+                const inner = nested.getBoundingClientRect();
+                // A selected list item draws its frame from `::after`, which the class shows.
+                nested.classList.add('ProseMirror-selectednode');
+                const frame = getComputedStyle(nested, '::after');
+                const insets = { left: frame.left, right: frame.right };
+                nested.classList.remove('ProseMirror-selectednode');
+                let indentedFrom = 'left';
+                if (outer !== undefined && inner.right < outer.right) {
+                    indentedFrom = 'right';
+                }
+                return { insets, indentedFrom };
+            });
+
+    await mount(<ToolbarProbe blocks={blocks} dir="rtl" />);
+    await ready(page);
+    const rtl = await sides();
+    await testInfo.attach('nested list and quote under rtl', {
+        body: await surfaceOf(page).screenshot(),
+        contentType: 'image/png',
+    });
+
+    expect(rtl).toEqual({ insets: { left: '-2px', right: '-32px' }, indentedFrom: 'right' });
+    await expect(surfaceOf(page).locator('blockquote')).toHaveCSS('direction', 'rtl');
 });

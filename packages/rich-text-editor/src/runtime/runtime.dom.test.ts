@@ -49,6 +49,7 @@ import { createTestEnvironment, pressKey, setSelection, type TestEnvironment, ty
 import { probeRuntimes } from '#/testing/probe';
 import { STORAGE, stubStorage } from '#/testing/storage';
 
+import pullQuoteManifest from '../../fixtures/manifest/acme-pull-quote.json';
 import newerNotes from '../../fixtures/migration/v3-current.json';
 
 import { type AsyncRequest } from './async';
@@ -4051,5 +4052,39 @@ describe('input rules', () => {
         const shapes = cases.map(([typed, block]) => shapeOf(typedIn(stored(block), typed).view.state.doc));
 
         expect(shapes).toEqual(cases.map(([, , text]) => `paragraph ${text}`));
+    });
+});
+
+describe('platform key bindings', () => {
+    const model = compileContentModel([core(), featureFromManifest(pullQuoteManifest)()], {
+        id: 'test.bold',
+        version: 1,
+    });
+    const firstType = ({ view }: ReturnType<typeof start>) => view.state.doc.child(0).type.name;
+    // prosemirror-keymap fixed `Mod` from the platform the test DOM reported when it loaded, before any mock.
+    const modIsMeta = /Mac|iP(hone|[oa]d)/.test(navigator.platform);
+    afterEach(() => vi.restoreAllMocks());
+
+    it('SPEC-rich-text/AC-064 compiles the mac: and other: keys of the spec manifest and runs each on its platform only', () => {
+        const platform = vi.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
+        const session = start(stored(para(words('ab'))), { model });
+        setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+
+        pressKey(session.handle, 'Ctrl-Shift-q');
+        expect(firstType(session)).toBe('acme_pull_quote');
+        platform.mockReturnValue('MacIntel');
+        // The `other:` binding does nothing on an Apple platform, where the `mac:` one turns the block back.
+        pressKey(session.handle, 'Ctrl-Shift-q');
+        expect(firstType(session)).toBe('acme_pull_quote');
+        session.view.dom.dispatchEvent(
+            new KeyboardEvent('keydown', {
+                key: 'q',
+                altKey: true,
+                metaKey: modIsMeta,
+                ctrlKey: !modIsMeta,
+                bubbles: true,
+            }),
+        );
+        expect(firstType(session)).toBe('paragraph');
     });
 });

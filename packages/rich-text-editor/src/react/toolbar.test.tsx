@@ -1,16 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { ThemeProvider } from '@frontify/fondue-components';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { createRef, Profiler, type ReactNode, useContext } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { AnnouncerContext } from '#/bridge/announcer';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
-import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
+import { enUS } from '#/locales/en-US';
+import { compileContentModel, type ContentNodeJSON, featureFromManifest, type JsonValue } from '#/model';
 import { createTestEnvironment, pressKey, setSelection, typeText } from '#/testing';
 
 import { fixtureLocale, toolbarDefinitions, TOOLBAR } from '../../fixtures/editor/ToolbarProbe';
+import pullQuoteManifest from '../../fixtures/manifest/acme-pull-quote.json';
 
 import { defineEditor, defineReactPresentation } from './define';
 import { boldRules } from './playground.stories';
@@ -36,9 +39,10 @@ const loaded = (...blocks: readonly JsonValue[]) => ({
 });
 
 type Props = Partial<RichTextEditorBaseProps<object>> & { readonly children?: ReactNode };
+type Theme = Omit<Parameters<typeof ThemeProvider>[0], 'children'>;
 
-/** Mounts the toolbar stand-ins with a test environment and runs the first frame, so the editor is `ready`. */
-const mount = (props: Props = {}, toolbar: ReactPresentation['toolbar'] = TOOLBAR) => {
+/** Mounts the toolbar stand-ins with a test environment, under `theme` when given, and runs the first frame, so the editor is `ready`. */
+const mount = (props: Props = {}, toolbar: ReactPresentation['toolbar'] = TOOLBAR, theme?: Theme) => {
     const environment = createTestEnvironment({ seed: 1 });
     const ref = createRef<EditorHandle<object>>();
     const { children, ...rest } = props;
@@ -61,6 +65,9 @@ const mount = (props: Props = {}, toolbar: ReactPresentation['toolbar'] = TOOLBA
                 {children}
             </RichTextEditor.Root>
         );
+    }
+    if (theme !== undefined) {
+        element = <ThemeProvider {...theme}>{element}</ThemeProvider>;
     }
     const view = render(element);
     act(() => environment.flushFrames());
@@ -444,5 +451,82 @@ describe('the announcer', () => {
         await Promise.resolve();
 
         expect(seen.filter((text) => text !== '').sort()).toEqual(['Find 3', 'Saved']);
+    });
+});
+
+describe('toolbar theming and localization', () => {
+    it('SPEC-rich-text/AC-074 labels a data manifest entry in the UI locale by RFC 4647 lookup, else en-US', () => {
+        const [entry] = pullQuoteManifest.toolbar;
+        // The fixture's platform-prefixed keys fail in the engine keymap today, and no label needs them.
+        const manifest = {
+            ...pullQuoteManifest,
+            keys: {},
+            toolbar: [{ ...entry, label: { 'en-US': 'Pull quote', de: 'Zitat', 'zh-Hant': '引言' } }],
+        };
+        const definition = defineEditor({
+            id: 'test.toolbar',
+            model: compileContentModel([core(), featureFromManifest(manifest)()], { id: 'test.toolbar', version: 1 }),
+        });
+        const labels = ['de-CH', 'de', 'zh-Hant-TW', 'fr-FR'].map((lang) => {
+            const { unmount } = mount({ definition, locale: { ...enUS, lang } }, [['acme.pull-quote.set']]);
+            const name = within(screen.getByRole('toolbar')).getAllByRole('button')[0]?.getAttribute('aria-label');
+            unmount();
+            return name;
+        });
+
+        expect(labels).toEqual(['Zitat', 'Zitat', '引言', 'Pull quote']);
+    });
+
+    it('SPEC-rich-text-accessibility/AC-032 shows the items of two editors with one presentation in the same order', () => {
+        const presentation = defineReactPresentation({ toolbar: TOOLBAR });
+        const names = () =>
+            screen.getAllByRole('toolbar', { name: 'Text formatting' }).map((toolbar) =>
+                within(toolbar)
+                    .getAllByRole('button')
+                    .map((item) => item.getAttribute('aria-label')),
+            );
+        const { unmount } = mount({
+            presentation,
+            children: (
+                <RichTextEditor
+                    aria-label="Second"
+                    definition={toolbarDefinitions.open}
+                    presentation={presentation}
+                    defaultValue={loaded(para(text('four five')))}
+                    locale={fixtureLocale}
+                />
+            ),
+        });
+        const [first, second] = names();
+
+        expect(first).toEqual(['Bold', 'Italic', 'Link', 'List', 'More']);
+        expect(second).toEqual(first);
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-060 takes the surface lang and dir from the theme when the document sets neither', () => {
+        const { unmount } = mount({}, TOOLBAR, { lang: 'ar', dir: 'rtl' });
+
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'ar');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('dir', 'rtl');
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-061 takes the document lang and dir on the surface while the toolbar keeps the theme direction', () => {
+        const stored = loaded(para(text('שלום')));
+        const document = {
+            ...stored.document,
+            content: { ...stored.document.content, attrs: { lang: 'he', dir: 'rtl' } },
+        };
+        const { unmount } = mount({ defaultValue: { ...stored, document } }, TOOLBAR, { lang: 'en-US', dir: 'ltr' });
+
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'he');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('dir', 'rtl');
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' })).toHaveAttribute('dir', 'ltr');
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' }).closest('[lang]')).toHaveAttribute(
+            'lang',
+            'en-US',
+        );
+        unmount();
     });
 });

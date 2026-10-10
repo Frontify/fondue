@@ -1,0 +1,13 @@
+:where(.fondue-rte-content li) {
+    margin-left: 1em;
+    padding-right: 2px;
+    border-top-left-radius: 4px;
+    left: 0;
+}
+
+._item_16wik_2 {
+    float: left;
+    text-align: right;
+    clear: both;
+    clear: left;
+}
