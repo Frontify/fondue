@@ -9,7 +9,9 @@ import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
 
 import { Dropdown } from '../Dropdown';
 
+import { DropdownWithContextMenu } from './DropdownWithContextMenu';
 import { DropdownWithCustomContainer } from './DropdownWithCustomContainer';
+import { DropdownWithScrollingAnchor } from './DropdownWithScrollingAnchor';
 import { DropdownWithVirtualAnchor } from './DropdownWithVirtualAnchor';
 
 const DROPDOWN_TRIGGER_TEST_ID = 'fondue-dropdown-trigger';
@@ -811,4 +813,48 @@ test('should position at the virtual anchor inside a transformed ancestor', asyn
     const dropdownContent = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
     await expect(dropdownContent).toBeVisible();
     await expect.poll(() => dropdownContent.boundingBox()).toMatchObject({ x: 100, y: 128 });
+});
+
+test('should return focus to the element focused before opening at a virtual anchor', async ({ mount, page }) => {
+    await mount(<DropdownWithContextMenu inputTestId="focus-origin" />);
+
+    const input = page.getByTestId('focus-origin');
+    await input.focus();
+    await input.dispatchEvent('contextmenu');
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+    await expect(input).not.toBeFocused();
+
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).not.toBeVisible();
+    await expect(input).toBeFocused();
+});
+
+test('should follow a stable virtual anchor when its scroll container scrolls', async ({ mount, page }) => {
+    await mount(<DropdownWithScrollingAnchor scrollContainerTestId="scroll-container" anchorTestId="anchor" />);
+
+    const content = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    const anchor = page.getByTestId('anchor');
+    const gapBelowAnchor = async () => {
+        const contentBox = await content.boundingBox();
+        const anchorBox = await anchor.boundingBox();
+        if (!contentBox || !anchorBox) {
+            return null;
+        }
+        return { x: contentBox.x - anchorBox.x, y: contentBox.y - anchorBox.y - anchorBox.height };
+    };
+    await expect(content).toBeVisible();
+    await expect.poll(gapBelowAnchor).toEqual({ x: 0, y: 8 });
+
+    await page.getByTestId('scroll-container').evaluate((element) => {
+        element.scrollTop = 50;
+    });
+    await expect.poll(() => anchor.boundingBox().then((box) => box?.y)).toBeLessThan(100);
+    await expect.poll(gapBelowAnchor).toEqual({ x: 0, y: 8 });
+});
+
+test('should name a virtual-anchor menu with aria-label', async ({ mount, page }) => {
+    await mount(<DropdownWithContextMenu inputTestId="focus-origin" ariaLabel="Text actions" />);
+
+    await page.getByTestId('focus-origin').dispatchEvent('contextmenu');
+    await expect(page.getByRole('menu', { name: 'Text actions' })).toBeVisible();
 });

@@ -2,7 +2,18 @@
 
 import { IconCross } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
-import { forwardRef, useMemo, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
+import {
+    createContext,
+    forwardRef,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type CSSProperties,
+    type ForwardedRef,
+    type ReactNode,
+} from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
@@ -34,21 +45,59 @@ export type FlyoutRootProps = {
     onOpenChange?: (open: boolean) => void;
     /**
      * Anchor the flyout to this rectangle instead of `Flyout.Trigger`, for example a text selection or a pointer position.
-     * Pass a new object whenever the rectangle changes.
+     * While open, the flyout measures the rectangle again on scroll and resize. Pass a new object when it changes for any other reason.
+     * On close, focus returns to the element that had focus before opening, unless focus moved elsewhere.
      */
     virtualAnchor?: FlyoutVirtualAnchor;
     children?: ReactNode;
 };
 
+type FlyoutVirtualAnchorContextType = { measureAgain: () => void } | null;
+
+const FlyoutVirtualAnchorContext = createContext<FlyoutVirtualAnchorContextType>(null);
+FlyoutVirtualAnchorContext.displayName = 'FlyoutVirtualAnchorContext';
+
 export const FlyoutRoot = ({ children, virtualAnchor, ...props }: FlyoutRootProps) => {
-    const virtualRef = useMemo(() => ({ current: virtualAnchor ?? null }), [virtualAnchor]);
+    // Radix measures the anchor again only when it receives a new object.
+    const [anchorState, setAnchorState] = useState({ virtualAnchor, measurable: virtualAnchor });
+    if (anchorState.virtualAnchor !== virtualAnchor) {
+        setAnchorState({ virtualAnchor, measurable: virtualAnchor });
+    }
+
+    const virtualRef = useMemo(() => ({ current: anchorState.measurable ?? null }), [anchorState.measurable]);
+    const virtualAnchorContext = useMemo(() => {
+        if (!virtualAnchor) {
+            return null;
+        }
+        const measureAgain = () =>
+            setAnchorState({
+                virtualAnchor,
+                measurable: { getBoundingClientRect: () => virtualAnchor.getBoundingClientRect() },
+            });
+        return { measureAgain };
+    }, [virtualAnchor]);
 
     return (
-        <RadixPopover.Root {...props}>
-            {virtualAnchor && <RadixPopover.Anchor virtualRef={virtualRef} />}
-            {children}
-        </RadixPopover.Root>
+        <FlyoutVirtualAnchorContext.Provider value={virtualAnchorContext}>
+            <RadixPopover.Root {...props}>
+                {virtualAnchor && <RadixPopover.Anchor virtualRef={virtualRef} />}
+                {children}
+            </RadixPopover.Root>
+        </FlyoutVirtualAnchorContext.Provider>
     );
+};
+
+const FlyoutVirtualAnchorTracker = ({ measureAgain }: { measureAgain: () => void }) => {
+    useEffect(() => {
+        window.addEventListener('scroll', measureAgain, { capture: true, passive: true });
+        window.addEventListener('resize', measureAgain);
+        return () => {
+            window.removeEventListener('scroll', measureAgain, { capture: true });
+            window.removeEventListener('resize', measureAgain);
+        };
+    }, [measureAgain]);
+
+    return null;
 };
 FlyoutRoot.displayName = 'Flyout.Root';
 
@@ -170,6 +219,7 @@ export const FlyoutContent = (
         triggerOffset = 'compact',
         viewportCollisionPadding = 'compact',
         container,
+        onOpenAutoFocus,
         'data-test-id': dataTestId = 'fondue-flyout-content',
         children,
         ...props
@@ -177,6 +227,25 @@ export const FlyoutContent = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { dir } = useFondueTheme();
+    const virtualAnchorContext = useContext(FlyoutVirtualAnchorContext);
+    const focusBeforeOpenRef = useRef<Element | null>(null);
+
+    const handleOpenAutoFocus = (event: Event) => {
+        if (virtualAnchorContext) {
+            focusBeforeOpenRef.current = document.activeElement;
+        }
+        onOpenAutoFocus?.(event);
+    };
+
+    const handleCloseAutoFocus = (event: Event) => {
+        const focusBeforeOpen = focusBeforeOpenRef.current;
+        focusBeforeOpenRef.current = null;
+        // A virtual anchor cannot take focus back, so restore it unless the user already moved it elsewhere.
+        if (focusBeforeOpen instanceof HTMLElement && document.activeElement === document.body) {
+            event.preventDefault();
+            focusBeforeOpen.focus();
+        }
+    };
 
     const getAdjustedSide = (side?: 'top' | 'right' | 'bottom' | 'left') => {
         if (!side || dir === 'ltr') {
@@ -216,9 +285,14 @@ export const FlyoutContent = (
                     data-shadow={shadow}
                     data-test-id={dataTestId}
                     onFocus={addShowFocusRing}
+                    onOpenAutoFocus={handleOpenAutoFocus}
+                    onCloseAutoFocus={handleCloseAutoFocus}
                     {...props}
                 >
                     {children}
+                    {virtualAnchorContext && (
+                        <FlyoutVirtualAnchorTracker measureAgain={virtualAnchorContext.measureAgain} />
+                    )}
                 </RadixPopover.Content>
             </ThemeProvider>
         </RadixPopover.Portal>
