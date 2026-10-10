@@ -18,7 +18,7 @@ type Timer = { readonly handle: number; readonly due: number; readonly callback:
 const START_TIME = 1_000_000;
 
 const assertValidSeed = (seed: number): void => {
-    if (!Number.isInteger(seed) || seed < 0 || seed > 0xffff_ffff) {
+    if (!Number.isInteger(seed) || seed < 0 || seed > 4_294_967_295) {
         throw new RangeError('seed must be an integer in the range [0, 4294967295]');
     }
 };
@@ -50,7 +50,8 @@ const createBatch = () => {
         },
         // Runs what was queued before the call; work queued while it runs waits for the next one.
         flush: (): void => {
-            for (const handle of [...callbacks.keys()]) {
+            const handles = [...callbacks.keys()];
+            for (const handle of handles) {
                 const callback = callbacks.get(handle);
                 if (callback !== undefined) {
                     callbacks.delete(handle);
@@ -82,6 +83,16 @@ export const createTestEnvironment = ({ seed }: { readonly seed: number }): Test
             }
         }
         return next;
+    };
+
+    const flushMicrotasks = async (): Promise<void> => {
+        const callback = microtasks.shift();
+        if (callback !== undefined) {
+            callback();
+            // Lets promise continuations that the callback started run before the next one.
+            await Promise.resolve();
+            await flushMicrotasks();
+        }
     };
 
     return {
@@ -125,15 +136,7 @@ export const createTestEnvironment = ({ seed }: { readonly seed: number }): Test
             }
             now = Math.max(now, until);
         },
-        flushMicrotasks: async () => {
-            let callback = microtasks.shift();
-            while (callback !== undefined) {
-                callback();
-                // Lets promise continuations that the callback started run before the next one.
-                await Promise.resolve();
-                callback = microtasks.shift();
-            }
-        },
+        flushMicrotasks,
         flushFrames: frames.flush,
         flushIdle: idle.flush,
     };
