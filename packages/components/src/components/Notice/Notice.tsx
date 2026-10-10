@@ -16,6 +16,13 @@ type NoticeSize = 'medium' | 'large';
 
 type NoticeAlignContent = 'center' | 'top';
 
+type NoticeRole = 'status' | 'alert';
+
+const ARIA_LIVE_BY_ROLE = {
+    status: 'polite',
+    alert: 'assertive',
+} as const satisfies Record<NoticeRole, 'polite' | 'assertive'>;
+
 export type NoticeProps = CommonGlobalProps & {
     /**
      * @default 'default'
@@ -34,6 +41,12 @@ export type NoticeProps = CommonGlobalProps & {
      * @default 'center'
      */
     alignContent?: NoticeAlignContent;
+    /**
+     * How assistive technologies announce the notice.
+     * Use `alert` for errors that need immediate attention, such as a failed action the user just triggered, it interrupts the screen reader and is announced even when the notice is rendered conditionally.
+     * @default 'status'
+     */
+    role?: NoticeRole;
     /**
      * Leading icon element
      */
@@ -71,6 +84,7 @@ export const Notice = ({
     emphasis = 'default',
     size = 'medium',
     alignContent = 'center',
+    role = 'status',
     icon,
     action,
     lang,
@@ -89,8 +103,8 @@ export const Notice = ({
             data-align-content={alignContent}
             data-test-id={dataTestId}
             className={[styles.root, className].filter(Boolean).join(' ')}
-            role="status"
-            aria-live="polite"
+            role={role}
+            aria-live={ARIA_LIVE_BY_ROLE[role]}
         >
             {icon ? <div className={styles.icon}>{icon}</div> : null}
             <div className={styles.content} lang={lang}>
