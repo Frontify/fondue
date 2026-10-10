@@ -62,6 +62,7 @@ export const FixtureLinkPopover = ({
         <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={overlay.anchor}>
             <Flyout.Content
                 ref={overlay.contentRef}
+                aria-label="Link"
                 container={overlay.container}
                 side="bottom"
                 data-test-id="fixture-link-popover"
@@ -118,6 +119,7 @@ export const FixtureSuggestions = ({ open, onOpenChange }: FixtureOverlayProps) 
         <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={overlay.anchor}>
             <Flyout.Content
                 ref={overlay.contentRef}
+                aria-label="Mentions"
                 container={overlay.container}
                 side="bottom"
                 onOpenAutoFocus={(event) => event.preventDefault()}

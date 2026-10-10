@@ -1055,7 +1055,7 @@ test.describe('from 1000 to 320 CSS pixels', () => {
         await expectFocus(page, 'More');
     });
 
-    test('SPEC-rich-text-react/AC-040 shows every item again, with no More, when the toolbar widens again', async ({
+    test('SPEC-rich-text-react/AC-040 shows every item again, with only More for the mode switch, when the toolbar widens again', async ({
         mount,
         page,
     }) => {
@@ -1072,8 +1072,9 @@ test.describe('from 1000 to 320 CSS pixels', () => {
         const narrowNames = await names();
         await page.setViewportSize({ width: 1000, height: 640 });
 
-        await expect(itemOf(page, 'More')).toHaveCount(0);
+        await expect(itemOf(page, 'Heading 6')).toBeVisible();
         expect(await names()).toEqual(wideNames);
+        expect(wideNames.at(-1)).toBe('More');
         expect(wideNames).toContain('Heading 6');
         expect(narrowNames).not.toContain('Heading 6');
     });
@@ -1136,7 +1137,7 @@ test('SPEC-rich-text-react/AC-040 opens More on a click with no pointer or key p
 test.describe('from 320 to 1000 CSS pixels', () => {
     test.use({ viewport: { width: 320, height: 640 } });
 
-    test('SPEC-rich-text-react/AC-040 moves focus to a toolbar item when a refit removes the focused More', async ({
+    test('SPEC-rich-text-react/AC-040 keeps focus on More through a widening refit, and moves it to a toolbar item when the refit empties the menu row that held it', async ({
         mount,
         page,
     }) => {
@@ -1147,11 +1148,19 @@ test.describe('from 320 to 1000 CSS pixels', () => {
         await expectFocus(page, 'Bold');
         await page.keyboard.press('End');
         await expectFocus(page, 'More');
+        await page.setViewportSize({ width: 1000, height: 640 });
+        await expect(itemOf(page, 'Heading 6')).toBeVisible();
+        const onMore = await focusedName(page);
+        await page.setViewportSize({ width: 320, height: 640 });
+        await expect(itemOf(page, 'Heading 6')).toHaveCount(0);
+        await page.keyboard.press('Enter');
+        await expect(menuRows(page).first()).toBeFocused();
 
         await page.setViewportSize({ width: 1000, height: 640 });
 
         await expect
             .poll(() => page.evaluate(() => document.activeElement?.hasAttribute('data-rte-toolbar-item')))
             .toBe(true);
+        expect(onMore).toBe('More');
     });
 });

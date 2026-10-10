@@ -395,12 +395,13 @@ describe('overlay accessibility', () => {
         expect(screen.getByTestId('fixture-menu')).toBeInTheDocument();
     });
 
-    it('SPEC-rich-text-accessibility/AC-021 names the bubble toolbar, the menu and the dialog, and labels every field', async () => {
+    it('SPEC-rich-text-accessibility/AC-021 names every overlay, the Flyout dialogs included, and labels every field', async () => {
         const { handle, environment } = mount({
             defaultValue: loaded(para('one two three'), image),
             children: (
                 <>
                     <Opened Overlay={FixtureLinkPopover} />
+                    <Opened Overlay={FixtureSuggestions} />
                     <Opened Overlay={FixtureMenu} />
                 </>
             ),
@@ -415,6 +416,12 @@ describe('overlay accessibility', () => {
         const names = [bubble(), screen.getByTestId('fixture-menu')].map((overlay) =>
             overlay?.getAttribute('aria-label'),
         );
+        // Radix Popover gives each Flyout's content `role="dialog"`, which needs its own name.
+        const flyouts = [
+            bubble()?.closest('[role="dialog"]'),
+            popover(),
+            screen.getByTestId('fixture-suggestions'),
+        ].map((flyout) => flyout?.getAttribute('aria-label'));
         const url = labelOf('URL');
         // The modal dialog hides the rest of the page from the accessibility tree.
         act(() => {
@@ -422,6 +429,7 @@ describe('overlay accessibility', () => {
         });
 
         expect(names).toEqual(['Selection formatting', 'Block actions']);
+        expect(flyouts).toEqual(['Selection formatting', 'Link', 'Mentions']);
         expect(screen.getByRole('dialog', { name: 'Alternative text' })).toBeInTheDocument();
         expect([url, labelOf('Description')]).toEqual(['URL', 'Description']);
     });
