@@ -76,6 +76,13 @@ const replaceForeign = (body: HTMLElement) => {
     }
 };
 
+/** The engine ignores `object` with its children; a skip rule keeps its fallback text (SPEC-rich-text-clipboard/AC-010). */
+const removeObjectChildren = (body: HTMLElement) => {
+    for (const nested of Array.from(body.querySelectorAll('object object, object embed, object param'))) {
+        nested.remove();
+    }
+};
+
 /** Replaces each image with its `alt` text, so nothing fetches it, and counts them (SPEC-rich-text-clipboard/AC-017). */
 const replaceImages = (body: HTMLElement) => {
     const images = Array.from(body.querySelectorAll('img'));
@@ -132,14 +139,29 @@ const withSpaces = (schema: Schema, fragment: Fragment): Fragment => {
     return Fragment.from(nodes);
 };
 
-const paragraphOf = (node: Node) => node.type.schema.nodes.paragraph as Node['type'];
+/** The allowed level nearest `level`, the lower on a tie, or none. */
+const nearestLevel = (level: number, levels: readonly number[]) => {
+    let nearest: number | undefined;
+    for (const allowed of [...levels].sort((left, right) => left - right)) {
+        if (nearest === undefined || Math.abs(allowed - level) < Math.abs(nearest - level)) {
+            nearest = allowed;
+        }
+    }
+    return nearest;
+};
 
 /**
  * Attributes as `decodeDocument` accepts them: a string longer than `maxAttributeLength` takes its default, and a
  * mark or node with no default for it goes, keeping its text, so the saved document still decodes as `editable`
- * (SPEC-rich-text-clipboard/AC-041).
+ * (SPEC-rich-text-clipboard/AC-041). Each heading takes the nearest creatable level, or becomes a paragraph when none
+ * is (SPEC-rich-text-clipboard/AC-015).
  */
-const withValidAttributes = (fragment: Fragment, limits: ResourceLimits): Fragment => {
+const withValidAttributes = (
+    schema: Schema,
+    fragment: Fragment,
+    limits: ResourceLimits,
+    levels: readonly number[] | undefined,
+): Fragment => {
     const valid = (type: Node['type'] | Mark['type'], attrs: Node['attrs']) => {
         const result: Record<string, unknown> = { ...attrs };
         for (const [name, value] of Object.entries(attrs)) {
@@ -154,6 +176,14 @@ const withValidAttributes = (fragment: Fragment, limits: ResourceLimits): Fragme
         }
         return result;
     };
+    const paragraph = schema.nodes.paragraph as Node['type'];
+    // Only what the paragraph declares carries over from the node it replaces.
+    const asParagraph = (node: Node, content: Fragment, marks: readonly Mark[]) => {
+        const declared = Object.fromEntries(
+            Object.keys(paragraph.spec.attrs ?? {}).map((name) => [name, node.attrs[name]]),
+        );
+        return paragraph.create(valid(paragraph, declared) ?? null, content, marks);
+    };
     const nodes: Node[] = [];
     for (const node of fragment.content) {
         const marks = node.marks.flatMap((mark) => {
@@ -167,55 +197,27 @@ const withValidAttributes = (fragment: Fragment, limits: ResourceLimits): Fragme
             nodes.push(node.mark(marks));
             continue;
         }
-        const content = withValidAttributes(node.content, limits);
+        const content = withValidAttributes(schema, node.content, limits, levels);
         const attrs = valid(node.type, node.attrs);
-        if (attrs !== undefined) {
+        if (attrs === undefined) {
+            // A required value decode would reject cannot take a default, so the node goes and its text stays, as with paste: false.
+            if (node.isTextblock) {
+                nodes.push(asParagraph(node, content, marks));
+            } else if (!node.isLeaf) {
+                nodes.push(...content.content);
+            }
+            continue;
+        }
+        if (node.type.name !== 'heading' || levels === undefined) {
             nodes.push(node.type.create(attrs, content, marks));
             continue;
         }
-        // A required value decode would reject cannot take a default, so the node goes and its text stays, as with paste: false.
-        if (node.isTextblock) {
-            nodes.push(paragraphOf(node).create(null, content, marks));
-        } else if (!node.isLeaf) {
-            nodes.push(...content.content);
-        }
-    }
-    return Fragment.from(nodes);
-};
-
-/** The allowed level nearest `level`, the lower on a tie, or none. */
-const nearestLevel = (level: number, levels: readonly number[]) => {
-    let nearest: number | undefined;
-    for (const allowed of [...levels].sort((left, right) => left - right)) {
-        if (nearest === undefined || Math.abs(allowed - level) < Math.abs(nearest - level)) {
-            nearest = allowed;
-        }
-    }
-    return nearest;
-};
-
-/** Each heading at the nearest creatable level, or a paragraph when none is (SPEC-rich-text-clipboard/AC-015). */
-const withLevels = (schema: Schema, fragment: Fragment, levels: readonly number[]): Fragment => {
-    const nodes: Node[] = [];
-    for (const node of fragment.content) {
-        if (node.isLeaf) {
-            nodes.push(node);
-            continue;
-        }
-        if (node.type.name !== 'heading') {
-            nodes.push(node.copy(withLevels(schema, node.content, levels)));
-            continue;
-        }
         const level = nearestLevel(node.attrs.level as number, levels);
-        if (level !== undefined) {
-            nodes.push(node.type.create({ ...node.attrs, level }, node.content, node.marks));
+        if (level === undefined) {
+            nodes.push(asParagraph(node, content, marks));
             continue;
         }
-        const paragraph = schema.nodes.paragraph as Node['type'];
-        const attrs = Object.fromEntries(
-            Object.keys(paragraph.spec.attrs ?? {}).map((name) => [name, node.attrs[name]]),
-        );
-        nodes.push(paragraph.create(attrs, node.content, node.marks));
+        nodes.push(node.type.create({ ...attrs, level }, content, marks));
     }
     return Fragment.from(nodes);
 };
@@ -238,15 +240,9 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     replaceForeign(body);
     const droppedImages = replaceImages(body);
     restoreSpaces(body);
-    // The engine ignores `object` with its children; a skip rule keeps its fallback text (SPEC-rich-text-clipboard/AC-010).
-    for (const nested of Array.from(body.querySelectorAll('object object, object embed, object param'))) {
-        nested.remove();
-    }
+    removeObjectChildren(body);
     const parser = new SchemaParser(schema, [{ tag: 'object', skip: true }, ...SchemaParser.fromSchema(schema).rules]);
     let content = withSpaces(schema, parser.parse(body).content);
-    content = withValidAttributes(content, settings.limits);
-    if (settings.headingLevels !== undefined) {
-        content = withLevels(schema, content, settings.headingLevels);
-    }
+    content = withValidAttributes(schema, content, settings.limits, settings.headingLevels);
     return { content, droppedImages };
 };
