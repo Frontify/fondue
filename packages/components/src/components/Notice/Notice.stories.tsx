@@ -120,6 +120,15 @@ export const VariantDanger: Story = {
     ),
 };
 
+export const RoleAlert: Story = {
+    args: { variant: 'danger', role: 'alert' },
+    render: (args) => (
+        <Notice {...args} icon={<IconExclamationMarkTriangle size="16" />}>
+            Urgent error message text
+        </Notice>
+    ),
+};
+
 export const VariantWarning: Story = {
     args: { variant: 'warning' },
     render: (args) => (

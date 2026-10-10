@@ -1,4 +1,4 @@
-# API reference
+# SDK reference
 
 The formal contract for `@frontify/fondue/sdk`. Every export, type, and
 method, with edge cases.
@@ -24,7 +24,7 @@ All other identifiers exposed from the package are TypeScript **types**
   `has(id)` accept. For components the id **is** the PascalCase name
   (`'Button'`, `'IconAdobeCreativeCloud'`); token and utility ids use the
   kebab-style ids emitted by the Fondue tokens build
-  (`'color-charts-primary-default'`); guide ids are filename slugs.
+  (`'color-charts-primary-default'`); guide ids are path-style slugs relative to the guides dir (`'getting-started/Setup'`).
   Identifiers are case-sensitive.
 - All collection returns are `readonly`, and the shared data is deeply
   **frozen** at build time — mutating a node, a `toJSON()` payload, or the
@@ -167,7 +167,7 @@ interface GuidesApi {
 
 ```ts
 interface Guide {
-    /** Slug derived from the source filename, e.g. "getting-started". */
+    /** Path-style slug derived from the source file, e.g. "getting-started/Setup". */
     readonly id: string;
     /** Title extracted from the first `# Title` line of the markdown. */
     readonly title: string;
@@ -416,15 +416,7 @@ type TokenValueType = 'color' | 'float' | 'shadow' | 'string';
 // data evolves across releases:
 type ComponentStatus = 'beta' | 'released';
 type ComponentCategory =
-    | 'data'
-    | 'feedback'
-    | 'icon'
-    | 'input'
-    | 'layout'
-    | 'navigation'
-    | 'overlay'
-    | 'typography'
-    | 'utility';
+    'data' | 'feedback' | 'icon' | 'input' | 'layout' | 'navigation' | 'overlay' | 'typography' | 'utility';
 type TokenCategory = 'colors' | 'semantic';
 ```
 
