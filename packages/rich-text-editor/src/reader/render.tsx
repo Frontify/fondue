@@ -4,7 +4,7 @@ import { type ComponentType, createElement, Fragment, type ReactElement, type Re
 
 import { type Diagnostic } from '#/model';
 import { isIsland, type TreeNode } from '#/model/content';
-import { type HtmlTemplate, resolveHtmlSpec } from '#/model/html-spec';
+import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
     attrsOf,
     failedFallback,
@@ -189,7 +189,11 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         }
     }
     state.carried = 0;
-    return build(resolveHtmlSpec(plan.spec, attrs, plan.options, plan.shared), children);
+    let template = resolveHtmlSpec(plan.spec, attrs, plan.options, plan.shared);
+    if (!plan.inline) {
+        template = withAutoDirection(template);
+    }
+    return build(template, children);
 };
 
 const renderRun = (state: RenderState, items: readonly Item[], depth: number, pre: boolean): ReactNode[] =>

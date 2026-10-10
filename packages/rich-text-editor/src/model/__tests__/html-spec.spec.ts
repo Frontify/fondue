@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type SharedAttribute } from '../compile';
 import { type HtmlSpec } from '../declarations';
-import { islandText, renderSpaces, resolveHtmlSpec } from '../html-spec';
+import { islandText, renderSpaces, resolveHtmlSpec, withAutoDirection } from '../html-spec';
 
 const heading: HtmlSpec = [
     { attr: 'level', tags: { 1: 'h1', 2: 'h2' } },
@@ -166,6 +166,31 @@ describe('resolveHtmlSpec', () => {
             ).layers[0]?.attrs,
         ).toEqual({ dir: 'rtl', style: 'text-align: right;' });
         expect(resolveHtmlSpec(['p', 0], { dir: null, align: null }, {}, shared).layers[0]?.attrs).toEqual({});
+    });
+});
+
+describe('withAutoDirection', () => {
+    it('adds dir auto to the outer layer only', () => {
+        const inner = { tag: 'code', attrs: { class: 'x' } };
+        const template = { layers: [{ tag: 'pre', attrs: { title: 'Fixed' } }, inner], content: true };
+
+        expect(withAutoDirection(template)).toEqual({
+            layers: [{ tag: 'pre', attrs: { title: 'Fixed', dir: 'auto' } }, inner],
+            content: true,
+        });
+        expect(withAutoDirection(template).layers[1]).toBe(inner);
+    });
+
+    it('returns the same template when the outer layer already has a dir', () => {
+        const template = { layers: [{ tag: 'p', attrs: { dir: 'rtl' } }], content: true };
+
+        expect(withAutoDirection(template)).toBe(template);
+    });
+
+    it('returns the same template when it has no layers', () => {
+        const template = { layers: [], content: false };
+
+        expect(withAutoDirection(template)).toBe(template);
     });
 });
 
