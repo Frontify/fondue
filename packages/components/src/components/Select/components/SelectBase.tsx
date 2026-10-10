@@ -288,6 +288,6 @@ const SelectBaseInput = (
         </RadixPopover.Root>
     );
 };
-SelectBaseInput.displayName = 'Select';
+SelectBaseInput.displayName = 'SelectBase';
 
 export const SelectBase = forwardRef<HTMLDivElement, SelectBaseProps>(SelectBaseInput);
