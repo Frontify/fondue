@@ -322,6 +322,77 @@ test.describe('OrderableList', () => {
 
             expect(orderChanges).toHaveLength(0);
         });
+
+        test('should not be draggable from the drag handle when disabled', async ({ mount, page }) => {
+            const orderChanges: string[][] = [];
+            const component = await mount(
+                <OrderableList.Root order={['1', '2', '3']} onOrderChange={(order) => orderChanges.push(order)}>
+                    <OrderableList.Item id="1" disabled>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                    <OrderableList.Item id="2">
+                        <OrderableList.ItemTitle>Item 2</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                    <OrderableList.Item id="3">
+                        <OrderableList.ItemTitle>Item 3</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const handle = component
+                .locator(`[data-test-id="${ITEM_TEST_ID}"]`)
+                .nth(0)
+                .getByRole('button', {
+                    name: /Reorder/,
+                });
+            const targetItem = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`).nth(2);
+
+            await expect(handle).toHaveAttribute('aria-disabled', 'true');
+
+            const handleBox = await handle.boundingBox();
+            const targetBox = await targetItem.boundingBox();
+
+            if (!handleBox || !targetBox) {
+                throw new Error('Could not get bounding boxes');
+            }
+
+            await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+            await page.mouse.down();
+            await page.mouse.move(targetBox.x + targetBox.width / 2, targetBox.y + targetBox.height / 2, {
+                steps: 10,
+            });
+            await page.mouse.up();
+
+            expect(orderChanges).toHaveLength(0);
+        });
+
+        test('should not leave stale accessibility attributes on the item after re-enabling', async ({ mount }) => {
+            const renderList = (disabled: boolean) => (
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1" disabled={disabled}>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>
+            );
+            const component = await mount(renderList(false));
+            const item = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`);
+            const handle = item.getByRole('button', { name: /Reorder/ });
+
+            await component.update(renderList(true));
+            await expect(item).toHaveAttribute('data-disabled', 'true');
+            await expect(handle).toHaveAttribute('aria-disabled', 'true');
+
+            await component.update(renderList(false));
+            await expect(item).not.toHaveAttribute('data-disabled');
+            await expect(handle).toHaveAttribute('aria-disabled', 'false');
+            await expect(item).not.toHaveAttribute('role');
+            await expect(item).not.toHaveAttribute('aria-disabled');
+            await expect(item).not.toHaveAttribute('tabindex');
+        });
     });
 
     test.describe('spacing', () => {
