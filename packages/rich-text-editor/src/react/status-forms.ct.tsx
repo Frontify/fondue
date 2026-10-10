@@ -111,6 +111,42 @@ test('SPEC-rich-text-persistence/AC-036 gives focus back to the editor when a re
     await expect(surfaceOf(page)).toHaveText('abc!');
 });
 
+test('SPEC-rich-text-persistence/AC-036 moves no focus on a later setMode once a replacement that went readonly has ended', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['ab']} persistence holdSaves />);
+    await ready(page);
+    await surfaceOf(page).click();
+    await page.keyboard.type('c');
+
+    // The `save` policy waits for its held write, during which the host switches the editor to readonly.
+    expect(
+        await page.evaluate(async () => {
+            const rte = window.rte as Rte;
+            const { stamp, document } = rte.handle.getSnapshot();
+            const replaced = rte.handle.replaceDocument({
+                expected: stamp,
+                next: { documentId: 'document-2', revision: null, document },
+                unsaved: { action: 'save' },
+                selection: 'start',
+                history: 'reset',
+            });
+            rte.handle.setMode('readonly');
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            rte.answerSaves();
+            const result = await replaced;
+            return result.status;
+        }),
+    ).toBe('replaced');
+    // Chromium moved focus to the body when the surface stopped being editable; WebKit kept it on the surface.
+    const focusedBefore = await focusedSurface(page);
+    await page.evaluate(() => (window.rte as Rte).handle.setMode('editable'));
+    await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
+
+    expect(await focusedSurface(page)).toBe(focusedBefore);
+});
+
 /** Puts the caret in the surface after `text` and starts composing `x` there through CDP (SPEC-rich-text-quality/AC-012). */
 const composeAfter = async (page: Page, text: string) => {
     await surfaceOf(page).click();

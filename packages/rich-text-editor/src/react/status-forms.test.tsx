@@ -29,7 +29,7 @@ import {
     featureFromManifest,
     type JsonValue,
 } from '#/model';
-import { type RuntimeHandle } from '#/runtime/runtime';
+import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import {
     createFakePersistenceService,
     createTestEnvironment,
@@ -390,6 +390,42 @@ describe('RichTextEditor.Status', () => {
         expect(heard()).toEqual([MESSAGES.retrying, MESSAGES.saved]);
     });
 
+    it('SPEC-rich-text-persistence/AC-046 announces retrying once for one outage with five retries', async () => {
+        const { calls, advance } = mountSaving({ maxRetries: 5 });
+        const heard = listen();
+
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+            lastCall(calls).fail();
+            await settle();
+            // Past the third backoff with its jitter and before the write timeout, so one replay is in flight.
+            advance(5_000);
+        }
+        expect(calls).toHaveLength(4);
+        lastCall(calls).answer();
+        await settle();
+
+        expect(heard()).toEqual([MESSAGES.retrying, MESSAGES.saved]);
+    });
+
+    it('SPEC-rich-text-persistence/AC-047 announces nothing saved when a reset discards the changes after a rejection', async () => {
+        const { service, calls } = serviceOf();
+        const { field, type, advance } = mount({
+            services: { persistence: service },
+            defaultValue: loaded('document-1', 'revision-1', para(text('ab'))),
+        });
+        type('c');
+        advance(500);
+        lastCall(calls).answer({ status: 'rejected', code: 'forbidden', diagnostics: [] });
+        await settle();
+        const heard = listen();
+
+        await act(async () => {
+            await field().reset();
+        });
+
+        expect(heard()).toEqual([]);
+    });
+
     it.each([
         ['unsaved', 'dirty', MESSAGES.unsaved, () => undefined],
         ['saving', 'saving', MESSAGES.saving, () => undefined],
@@ -546,6 +582,31 @@ describe('useRichTextFormField', () => {
         expect(handle().getSnapshot().document.content).toEqual(STORED.document.content);
         expect(canUndo(handle())).toBe(false);
         expect(service.save).not.toHaveBeenCalled();
+    });
+});
+
+describe('useRichTextFormField reset to the current content', () => {
+    it('SPEC-rich-text-persistence/AC-054 empties the history when the defaultValue record equals the content', async () => {
+        const { handle, field, type, rerender } = mount();
+        // The record as the editor encodes it, so a reset to it is an echo of the current content.
+        rerender({
+            defaultValue: { documentId: 'document-1', revision: null, document: handle().getSnapshot().document },
+        });
+        type('c');
+        // Deletes the typed `c`, the paragraph's third character, as one more undo step.
+        act(() => {
+            const view = runtimeOf(handle())?.view;
+            view?.dispatch(view.state.tr.delete(3, 4));
+        });
+        expect(canUndo(handle())).toBe(true);
+
+        let result: unknown;
+        await act(async () => {
+            result = await field().reset();
+        });
+
+        expect(result).toMatchObject({ status: 'replaced' });
+        expect(canUndo(handle())).toBe(false);
     });
 });
 
