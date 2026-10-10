@@ -50,6 +50,7 @@ export default defineConfig({
         tsConfigPaths(),
         dts({
             entryRoot: 'src',
+            include: ['src'],
             exclude: ['**/__tests__/**', '**/*.{spec,test,stories}.{ts,tsx}'],
         }),
         externalizeJsDeps(),
@@ -58,6 +59,7 @@ export default defineConfig({
         lib: {
             entry: {
                 'model/index': './src/model/index.ts',
+                'reader/index': './src/reader/index.ts',
             },
             formats: ['es'],
         },

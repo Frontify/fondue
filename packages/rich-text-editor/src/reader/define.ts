@@ -3,22 +3,18 @@
 import { type ComponentType, type ReactNode } from 'react';
 
 import {
+    type CodecContext,
     DefinitionError,
     type Feature,
-    type HrefResult,
+    type FeatureDeclaration,
     type JsonObject,
     type ReferenceResolution,
-    type RichTextLocale,
-    type TranslationStrings,
 } from '#/model';
-import { featureInternals } from '#/model/feature';
+import { pointer } from '#/model/errors';
+import { createFeature, featureInternals } from '#/model/feature';
 
 /** What a reader override reads: plain data and functions, never a React context. */
-export interface ReaderContext {
-    readonly resolveAssetUrl?: (assetId: string, options: { readonly width?: number }) => string | null;
-    readonly checkHref: (input: string) => HrefResult;
-    readonly locale: RichTextLocale;
-    readonly t: (key: keyof TranslationStrings, vars?: Readonly<Record<string, string | number>>) => string;
+export interface ReaderContext extends CodecContext {
     readonly resolveReference: (resourceType: string, resourceId: string) => ReferenceResolution;
 }
 export interface ReaderNodeProps {
@@ -28,27 +24,42 @@ export interface ReaderNodeProps {
 }
 export type ReaderRenderers = Readonly<Record<string, ComponentType<ReaderNodeProps>>>;
 
-const READER = Symbol('reader-overrides');
+const DECLARED = new WeakMap<FeatureDeclaration, ReaderRenderers>();
 
-/** The reader overrides `defineReaderFeature` attached to a feature, keyed by node or mark name. */
-export const readerOverrides = (feature: Feature): ReaderRenderers | undefined =>
-    (feature as unknown as { readonly [READER]?: ReaderRenderers })[READER];
+/** The overrides attached to a compiled feature's declaration, which the reader reads from a compiled model. */
+export const declaredOverrides = (declaration: FeatureDeclaration): ReaderRenderers | undefined =>
+    DECLARED.get(declaration);
 
 /** Attaches reader overrides to a feature; each must name a node or mark the feature declares. */
 export const defineReaderFeature = <F extends Feature>(feature: F, renderers: ReaderRenderers): F => {
     const internals = featureInternals(feature);
-    const declared = new Set<string>();
+    const declared = new Map<string, string>();
     if (internals !== undefined) {
-        for (const members of [internals.declaration.nodes, internals.declaration.marks]) {
+        const { nodes, marks } = internals.declaration;
+        for (const [kind, members] of [
+            ['nodes', nodes],
+            ['marks', marks],
+        ] as const) {
             for (const name of Object.keys(members ?? {})) {
-                declared.add(name);
+                declared.set(name, pointer(kind, name));
             }
         }
     }
-    for (const name of Object.keys(renderers)) {
-        if (!declared.has(name)) {
+    for (const [name, renderer] of Object.entries(renderers)) {
+        const path = declared.get(name);
+        if (path === undefined) {
             throw new DefinitionError('definition.missing-reader', { feature: feature.id, name });
         }
+        // The reader calls an override as a function to catch its throw, which a `memo` or `forwardRef` object cannot take.
+        if (typeof renderer !== 'function') {
+            throw new DefinitionError('definition.invalid-declaration', { feature: feature.id, path });
+        }
     }
-    return Object.freeze({ ...feature, [READER]: renderers }) as F;
+    if (internals === undefined) {
+        return feature;
+    }
+    // A fresh declaration copy keys the overrides to this feature, not to every model built from its factory.
+    const declaration = Object.freeze({ ...internals.declaration });
+    DECLARED.set(declaration, renderers);
+    return createFeature(declaration, internals.options, internals.manifest) as F;
 };

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Diagnostic, type RichTextDocument } from './format';
+import { type HrefResult } from './href';
 
 export type JsonValue = null | boolean | number | string | readonly JsonValue[] | { readonly [key: string]: JsonValue };
 export type JsonObject = { readonly [key: string]: JsonValue };
@@ -160,6 +161,17 @@ export interface FeatureFormats {
     readonly html: 'lossless' | 'lossy';
     readonly text: FormatSupport;
     readonly markdown: FormatSupport;
+}
+
+/** The host's URL for an asset at an optional width, or `null` when it has none. */
+export type ResolveAssetUrl = (assetId: string, options: { readonly width?: number }) => string | null;
+/** What a codec override may call: asset URLs from the host, the URL check and the output locale. */
+export interface CodecContext {
+    readonly resolveAssetUrl?: ResolveAssetUrl;
+    readonly checkHref: (input: string) => HrefResult;
+    /** The output locale (`enUS` by default) and its `${var}` interpolation, so overrides render localized text with no hook or context. */
+    readonly locale: RichTextLocale;
+    readonly t: (key: keyof TranslationStrings, vars?: Readonly<Record<string, string | number>>) => string;
 }
 
 export type CapabilityName =

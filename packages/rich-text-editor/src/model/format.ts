@@ -67,7 +67,11 @@ export type FormatDiagnosticCode =
     | 'format.duplicate-occurrence-id'
     | 'format.unsafe-url';
 /** The codes the package emits so far; later layers add theirs. */
-export type DiagnosticCode = FormatDiagnosticCode | 'migration.requires-review' | 'migration.unsupported';
+export type DiagnosticCode =
+    | FormatDiagnosticCode
+    | 'migration.requires-review'
+    | 'migration.unsupported'
+    | 'reader.override-failed';
 
 export interface Diagnostic {
     readonly code: DiagnosticCode;

@@ -11,12 +11,9 @@ import {
     type JsonObject,
 } from '#/model';
 import { attributesOf, compiledModel, type SharedAttribute } from '#/model/compile';
-import { ownValue } from '#/model/values';
+import { addDeclaration, isPlainCss, isSrcdocAttribute, isStyleAttribute, ownValue } from '#/model/values';
 
 type Values = Readonly<Record<string, unknown>>;
-
-/** A value that cannot end its declaration or reach a URL, comment or markup. */
-const isPlainCss = (value: string) => !/[;:()'"\\{}<]|\/\*/.test(value);
 
 const GROUPS = { block: 'block section', section: 'section', inline: 'inline' } as const;
 
@@ -57,9 +54,17 @@ const render = (
     const dom: Record<string, string> = {};
     for (const [attribute, binding] of Object.entries(attributes ?? {})) {
         const value = readValue(binding, values, options);
-        if (value !== undefined) {
-            dom[attribute] = value;
+        if (value === undefined) {
+            continue;
         }
+        if (isSrcdocAttribute(attribute)) {
+            continue;
+        }
+        if (isStyleAttribute(attribute)) {
+            dom.style = value;
+            continue;
+        }
+        dom[attribute] = value;
     }
     for (const { name: attribute, declaration } of shared) {
         const value = textOf(values[attribute]);
@@ -67,9 +72,11 @@ const render = (
             continue;
         }
         if ('attr' in declaration.html) {
-            dom[declaration.html.attr] = value;
+            if (!isSrcdocAttribute(declaration.html.attr)) {
+                dom[declaration.html.attr] = value;
+            }
         } else if (isPlainCss(value)) {
-            dom.style = `${dom.style ?? ''}${declaration.html.style}: ${value};`;
+            dom.style = addDeclaration(dom.style, declaration.html.style, value);
         }
     }
     const content = attributes === undefined ? second : third;

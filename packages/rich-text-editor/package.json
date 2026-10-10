@@ -19,6 +19,10 @@
         "./model": {
             "types": "./dist/model/index.d.ts",
             "import": "./dist/model/index.js"
+        },
+        "./reader": {
+            "types": "./dist/reader/index.d.ts",
+            "import": "./dist/reader/index.js"
         }
     },
     "publishConfig": {
@@ -26,24 +30,37 @@
     },
     "scripts": {
         "build": "vite build",
+        "build:storybook": "storybook build",
+        "install:playwright": "playwright install --with-deps",
         "format": "oxfmt",
         "format:check": "oxfmt --check",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
+        "storybook": "storybook dev -p 6012",
         "typecheck": "tsgo --noEmit",
         "test": "vitest run --coverage",
-        "test:watch": "vitest"
+        "test:watch": "vitest",
+        "test:components": "playwright test --ui",
+        "test:components:ci": "playwright test"
     },
     "dependencies": {
         "prosemirror-model": "^1.25.12",
         "prosemirror-state": "^1.4.4"
     },
     "devDependencies": {
+        "@axe-core/playwright": "^4.13.0",
         "@frontify/oxfmt-config": "^0.0.2",
         "@frontify/oxlint-config-react": "^0.0.2",
+        "@playwright/experimental-ct-react": "^1.60.0",
+        "@playwright/test": "^1.60.0",
+        "@storybook/addon-a11y": "^10.6.0",
+        "@storybook/addon-docs": "^10.6.0",
+        "@storybook/react-vite": "^10.6.0",
+        "@testing-library/react": "^16.3.2",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/node": "^24.13.3",
         "@types/react": "^18.3.31",
+        "@types/react-dom": "^18.3.7",
         "@typescript/native-preview": "7.0.0-dev.20260421.2",
         "@vitest/coverage-v8": "^5.0.0",
         "ajv": "^8.20.0",
@@ -53,12 +70,18 @@
         "oxlint": "^1.67.0",
         "oxlint-tsgolint": "^0.23.0",
         "prosemirror-tables": "^1.8.5",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "storybook": "^10.6.0",
         "tsx": "^4.23.11",
         "typescript": "^5.9.3",
         "vite": "^6.4.3",
         "vite-plugin-dts": "^4.5.4",
         "vite-tsconfig-paths": "^5.1.4",
         "vitest": "^5.0.0"
+    },
+    "peerDependencies": {
+        "react": "^18.2.0"
     },
     "engines": {
         "node": ">=18"

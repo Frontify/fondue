@@ -21,6 +21,6 @@
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": ["src"],
+    "include": ["src", "playwright/**/*", ".storybook/**/*"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

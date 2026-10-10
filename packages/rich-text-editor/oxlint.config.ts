@@ -61,6 +61,11 @@ const FEATURE_WIRING_MESSAGE =
 const READER_MESSAGE =
     '`reader` imports `model`, `locales` and `#/features/*/reader`, because the reader never loads editor code.';
 
+const CLIENT_REACT_MESSAGE =
+    'The reader renders on the server too, so it uses no client hook, context or class component.';
+
+const LOCALES_MESSAGE = '`locales` holds plain string tables and imports nothing in the package.';
+
 // An undeclared package can't be imported, so the declared ones are the whole list.
 const PROSEMIRROR_EXCEPT_MODEL = Object.keys({ ...packageJson.dependencies, ...packageJson.devDependencies }).filter(
     (name) => name.startsWith('prosemirror-') && name !== 'prosemirror-model',
@@ -133,6 +138,40 @@ type ImportRestriction = {
     message: string;
 };
 
+type ImportNameRestriction = {
+    name: string;
+    importNames: string[];
+    message: string;
+};
+
+// `default` is listed too, since `React.useState` reaches a hook with no named import.
+const CLIENT_REACT: ImportNameRestriction = {
+    name: 'react',
+    importNames: [
+        'default',
+        'useState',
+        'useReducer',
+        'useEffect',
+        'useLayoutEffect',
+        'useInsertionEffect',
+        'useMemo',
+        'useCallback',
+        'useRef',
+        'useContext',
+        'useId',
+        'useImperativeHandle',
+        'useDebugValue',
+        'useDeferredValue',
+        'useTransition',
+        'useSyncExternalStore',
+        'use',
+        'createContext',
+        'Component',
+        'PureComponent',
+    ],
+    message: CLIENT_REACT_MESSAGE,
+};
+
 const frameworkRestriction: ImportRestriction = {
     group: FRAMEWORK_PATTERNS,
     message: FRAMEWORK_MESSAGE,
@@ -146,11 +185,12 @@ const layerOverride = (
     files: string | readonly string[],
     restrictions: ImportRestriction[],
     excludeFiles: readonly string[] = [],
+    paths: readonly ImportNameRestriction[] = [],
 ): LayerOverride => ({
     files: typeof files === 'string' ? [files] : [...files],
-    excludeFiles: ['**/__tests__/**', ...excludeFiles],
+    excludeFiles: ['**/__tests__/**', '**/*.stories.tsx', ...excludeFiles],
     rules: {
-        'no-restricted-imports': ['error', { patterns: [frameworkRestriction, ...restrictions] }],
+        'no-restricted-imports': ['error', { paths: [...paths], patterns: [frameworkRestriction, ...restrictions] }],
     },
 });
 
@@ -164,6 +204,8 @@ const readerFolders = FOLDERS.filter(
     (folder) => folder !== 'model' && folder !== 'locales' && folder !== 'reader' && folder !== 'features',
 );
 
+const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
+
 const definitionPatterns = [
     ...aliasPatterns(definitionFolders),
     ...relativePatterns(definitionFolders),
@@ -175,7 +217,15 @@ export default defineConfig({
     options: {
         typeAware: true,
     },
-    ignorePatterns: ['dist/', 'coverage/'],
+    ignorePatterns: [
+        'dist/',
+        'coverage/',
+        '.storybook/',
+        'storybook-static/',
+        'playwright-report/',
+        'test-results/',
+        'playwright/.cache/',
+    ],
     overrides: [
         {
             files: ['**/*.{js,jsx,ts,tsx,mts,cts,cjs}'],
@@ -252,15 +302,26 @@ export default defineConfig({
                 },
             ],
         ),
-        layerOverride('src/reader/**/*.{ts,tsx}', [
+        layerOverride(
+            'src/reader/**/*.{ts,tsx}',
+            [
+                {
+                    group: [
+                        ...aliasPatterns(readerFolders),
+                        ...relativePatterns(readerFolders),
+                        ...featurePathPatterns(READER_FEATURE_TAILS),
+                        ...PROSEMIRROR_PATTERNS,
+                    ],
+                    message: READER_MESSAGE,
+                },
+            ],
+            [],
+            [CLIENT_REACT],
+        ),
+        layerOverride('src/locales/**/*.{ts,tsx}', [
             {
-                group: [
-                    ...aliasPatterns(readerFolders),
-                    ...relativePatterns(readerFolders),
-                    ...featurePathPatterns(READER_FEATURE_TAILS),
-                    ...PROSEMIRROR_PATTERNS,
-                ],
-                message: READER_MESSAGE,
+                group: [...aliasPatterns(localesFolders), ...relativePatterns(localesFolders), ...ENGINE_PATTERNS],
+                message: LOCALES_MESSAGE,
             },
         ]),
     ],
