@@ -29,7 +29,8 @@ const routeOf = (ref: CommandRef) => {
  * The presentation's toolbar groups as items, in order, each with its feature's one registry label and icon unless
  * the presentation's `controls` replace them (SPEC-rich-text-react/AC-094, SPEC-rich-text-accessibility/AC-033).
  * A command the definition does not install, that has no toolbar entry, or whose feature the policy lets the author
- * create nothing with has no item (SPEC-rich-text-react/AC-099, DR-049).
+ * create nothing with has no item (SPEC-rich-text-react/AC-099, DR-049). The bubble toolbar shows the groups that
+ * toggle a mark (Default toolbars).
  */
 export const toolbarItems = (
     engine: CompiledDefinition,
@@ -55,9 +56,12 @@ export const toolbarItems = (
             }
         }
     }
+    const marks = (ref: CommandRef) =>
+        commands.some(({ id, definition }) => id === routeOf(ref).command && definition.capability === 'toggleMark');
     const items: ToolbarItem[] = [];
     for (const group of presentation.toolbar) {
         let groupStart = items.length > 0;
+        const bubble = group.some(marks);
         for (const ref of group) {
             const { command, payload } = routeOf(ref);
             const key = `${command} ${payloadKey(payload)}`;
@@ -91,6 +95,7 @@ export const toolbarItems = (
                 icon,
                 bindings,
                 groupStart,
+                bubble,
             });
             groupStart = false;
         }

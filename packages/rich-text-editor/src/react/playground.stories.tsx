@@ -85,10 +85,7 @@ const NOT_WIRED: readonly (readonly [string, string])[] = [
         'styles, colorTokens, listLevels, columns, strikeCheckedTasks, sliceContext and resolveAssetUrl with their features',
     ],
     ['services', 'the persistence and recovery members only; references and uploads with their features'],
-    ['portalContainer', 'pair 19, TASK-rte-chrome'],
     ['inputRules', 'pair 23, TASK-rte-input-keys'],
-    ['defaultToolbarMode', 'pair 19, TASK-rte-chrome'],
-    ['onToolbarModeChange', 'pair 19, TASK-rte-chrome'],
     ['onSubmit', 'pair 37, TASK-rte-profiles'],
 ];
 
@@ -102,6 +99,10 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly toolbarShortcut: string;
     /** Throws in render at mount, so the story opens on the recovery shell. */
     readonly brokenAtMount: boolean;
+    /** Composes `RichTextEditor.BubbleToolbar`, which shows above a text selection beside the fixed toolbar. */
+    readonly bubbleToolbar: boolean;
+    /** Renders the editor's overlays into a host element below the editor, as `portalContainer`. */
+    readonly hostPortalContainer: boolean;
 };
 
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
@@ -128,7 +129,17 @@ const resultText = (result: CommandResult | undefined) => {
     return result.status;
 };
 
-const Playground = ({ allowNewBold, contentClassName, toolbarShortcut, brokenAtMount, ...props }: PlaygroundProps) => {
+const Playground = ({
+    allowNewBold,
+    contentClassName,
+    toolbarShortcut,
+    brokenAtMount,
+    bubbleToolbar,
+    hostPortalContainer,
+    ...props
+}: PlaygroundProps) => {
+    const [hostContainer, setHostContainer] = useState<HTMLElement | null>(null);
+    const hostPanelRef = useRef<HTMLElement>(null);
     const presentation = useMemo(
         () => defineReactPresentation({ contentClassName, toolbar: [['mark.bold.toggle']], toolbarShortcut }),
         [contentClassName, toolbarShortcut],
@@ -152,6 +163,11 @@ const Playground = ({ allowNewBold, contentClassName, toolbarShortcut, brokenAtM
         const rules = { create: allowNewBold, edit: true, remove: true, paste: true };
         handleRef.current?.updatePolicy({ ...authoring, features: { ...authoring.features, 'marks.bold': rules } });
     }, [allowNewBold]);
+    // `null` keeps the editor's own overlay root.
+    let portalContainer: HTMLElement | null = null;
+    if (hostPortalContainer) {
+        portalContainer = hostContainer;
+    }
     // The part works again once the shell shows, so Retry mounts the editor.
     useEffect(() => {
         if (broken) {
@@ -309,11 +325,28 @@ const Playground = ({ allowNewBold, contentClassName, toolbarShortcut, brokenAtM
                 <button type="button" onClick={() => setBroken(true)}>
                     Throw in render
                 </button>
+                <button
+                    type="button"
+                    onClick={() => {
+                        const handle = handleRef.current;
+                        const panel = hostPanelRef.current;
+                        if (handle === null || panel === null) {
+                            return;
+                        }
+                        handle.registerInteractionRoot(panel);
+                        log('registerInteractionRoot host panel');
+                    }}
+                >
+                    Register the host panel
+                </button>
             </section>
             <RichTextEditor.Root
+                // The toolbar mode is a default, which a new mount takes.
+                key={props.defaultToolbarMode}
                 {...props}
                 presentation={presentation}
                 services={services}
+                portalContainer={portalContainer}
                 ref={handleRef}
                 onReady={(session) => {
                     log(`ready ${session.sessionId}`);
@@ -347,13 +380,19 @@ const Playground = ({ allowNewBold, contentClassName, toolbarShortcut, brokenAtM
                 onDiagnostic={(diagnostic) => log(`diagnostic ${diagnostic.code}`)}
                 onFocus={() => log('focus')}
                 onBlur={() => log('blur')}
+                onToolbarModeChange={(mode) => log(`toolbarModeChange ${mode}`)}
             >
                 <RichTextEditor.Toolbar />
+                {bubbleToolbar && <RichTextEditor.BubbleToolbar />}
                 <RichTextEditor.Surface />
                 <SelectionReadout />
                 <p>Save status: {saveStatus}</p>
                 <Breaker armed={broken} />
             </RichTextEditor.Root>
+            <section ref={hostPanelRef} aria-label="Host panel">
+                <button type="button">A host control</button>
+                <div ref={setHostContainer} />
+            </section>
             <section aria-label="Event log">
                 <ol>
                     {events.map(({ id, text }) => (
@@ -387,6 +426,9 @@ const meta: Meta<typeof Playground> = {
         contentClassName: 'playground-content',
         toolbarShortcut: 'Alt-F10',
         brokenAtMount: false,
+        bubbleToolbar: false,
+        hostPortalContainer: false,
+        defaultToolbarMode: 'fixed',
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },
         placeholder: 'Write something, press Mod+B or type **text** for bold, and Mod+Z to undo',
@@ -407,6 +449,7 @@ const meta: Meta<typeof Playground> = {
         presentation: { control: false },
         profile: { control: 'select', options: ['inline', 'comment', 'document', 'brand-document'] },
         status: { control: 'select', options: ['neutral', 'success', 'error', 'loading'] },
+        defaultToolbarMode: { control: 'select', options: ['fixed', 'bubble'] },
     },
 };
 export default meta;

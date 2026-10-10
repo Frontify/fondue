@@ -47,18 +47,15 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
         const fit = () => {
             const measured = endsRef.current;
             const gap = Number.parseFloat(style.columnGap) || 0;
-            // More is as wide as an item, and only shows once something overflows.
-            const sample = element.querySelector('[data-rte-toolbar-more], [data-rte-toolbar-item]');
-            if (sample !== null) {
-                moreSizeRef.current = gap + sample.getBoundingClientRect().width;
+            // More always shows, since it holds the toolbar mode switch (SPEC-rich-text-react/AC-095).
+            const more = element.querySelector('[data-rte-toolbar-more]');
+            if (more !== null) {
+                moreSizeRef.current = gap + more.getBoundingClientRect().width;
             }
             const limit = element.getBoundingClientRect().width - Number.parseFloat(style.paddingInlineEnd);
             let next = 0;
             while (next < measured.length) {
-                let needed = measured[next] ?? 0;
-                if (next < measured.length - 1) {
-                    needed += moreSizeRef.current;
-                }
+                const needed = (measured[next] ?? 0) + moreSizeRef.current;
                 // Subpixel layout rounds an exact fit either way.
                 if (needed > limit + 0.5) {
                     break;

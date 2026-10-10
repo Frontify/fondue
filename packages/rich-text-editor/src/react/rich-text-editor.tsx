@@ -25,8 +25,10 @@ import { AnnouncerContext, createAnnouncer } from '#/bridge/announcer';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
+import { createInteractionScope } from '#/bridge/interaction-scope';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
 import { createNodeViews, resyncSelection } from '#/bridge/node-views';
+import { OverlayContext, useScopedFocus } from '#/bridge/overlays';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
 import { enUS } from '#/locales/en-US';
@@ -47,6 +49,7 @@ import {
     type RuntimeHandle,
 } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
+import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import { moveChromeFocus } from './chrome-focus';
@@ -58,6 +61,7 @@ import {
     type EditorHandle,
     type EditorServices,
     type RichTextEditorProps,
+    type ToolbarMode,
 } from './types';
 
 type Props = RichTextEditorProps<object>;
@@ -76,6 +80,9 @@ const VISUALLY_HIDDEN: CSSProperties = {
     clipPath: 'inset(50%)',
     whiteSpace: 'nowrap',
 };
+
+// Overlays stack above the sticky and docked toolbar, whose `z-index` is 1.
+const OVERLAY_ROOT: CSSProperties = { position: 'relative', zIndex: 2 };
 
 /** Why a toolbar item's command cannot run, by its `disabledReason` (SPEC-rich-text-react/AC-038). */
 const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
@@ -142,13 +149,23 @@ const mountOf = (props: Defined): Mounted => {
     return { definition, profile, decoded, blocked: undefined, lang };
 };
 
-/** What the parts share for the toolbar and focus moves between the surface and the chrome (SPEC-rich-text-react, Overlay focus). */
+/** What the parts share for the toolbars and focus moves between the surface and the chrome (SPEC-rich-text-react, Overlay focus). */
 interface Chrome {
     readonly items: readonly ToolbarItem[];
     readonly strings: ToolbarStrings;
+    /** The bubble toolbar's name and the More rows that switch the toolbar mode. */
+    readonly labels: { readonly bubble: string; readonly toBubble: string; readonly toFixed: string };
     /** The surface element `id`, generated when a toolbar's `aria-controls` needs one and the host set none. */
     readonly surfaceId: string | undefined;
     readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
+    readonly bubbleRef: MutableRefObject<HTMLDivElement | null>;
+    /** Opens the bubble toolbar of bubble mode at the selection and focuses it. */
+    readonly showBubbleRef: MutableRefObject<(() => void) | null>;
+    readonly mode: ToolbarMode;
+    /** Switches the toolbar and reports the new mode to the host (SPEC-rich-text-react/AC-095). */
+    readonly setMode: (mode: ToolbarMode) => void;
+    /** The height the on-screen keyboard of a touch device covers, which a focused editor docks its toolbar above (SPEC-rich-text-react/AC-096). */
+    readonly keyboard: number;
 }
 
 interface RootContextValue {
@@ -236,10 +253,44 @@ const SessionComponent = (
     const [live, setLive] = useState<EditorRuntime>();
     const latestRef = useRef(props);
     const handleRef = useRef<EditorHandle<object> | null>(null);
+    const bubbleRef = useRef<HTMLDivElement | null>(null);
+    const showBubbleRef = useRef<(() => void) | null>(null);
+    const rootRef = useRef<HTMLDivElement | null>(null);
+    // The default portal container, inside the root and so inside the interaction scope (SPEC-rich-text-react/AC-045).
+    const [overlayRoot, setOverlayRoot] = useState<HTMLDivElement | null>(null);
+    const [scope] = useState(() =>
+        createInteractionScope(() => {
+            const roots: (HTMLElement | null)[] = [rootRef.current];
+            const { portalContainer } = latestRef.current;
+            if (portalContainer !== undefined) {
+                roots.push(portalContainer);
+            }
+            const { runtime } = coordinator;
+            if (runtime !== undefined) {
+                roots.push(...runtime.interactionRoots);
+            }
+            return roots;
+        }),
+    );
+    const [toolbarMode, setToolbarMode] = useState<ToolbarMode>(() => props.defaultToolbarMode ?? 'fixed');
+    const switchToolbar = useCallback((next: ToolbarMode) => {
+        setToolbarMode(next);
+        latestRef.current.onToolbarModeChange?.(next);
+    }, []);
+    const [keyboard, setKeyboard] = useState(0);
 
     useClientLayoutEffect(() => {
         latestRef.current = props;
     });
+
+    // An editor in an iframe hears the iframe's document.
+    useClientLayoutEffect(() => {
+        const root = rootRef.current;
+        if (root === null) {
+            return undefined;
+        }
+        return scope.listen(root.ownerDocument);
+    }, [scope]);
 
     // The view attaches in a layout effect, so the first frame painted after hydration shows the content (SPEC-rich-text-output/AC-034).
     useClientLayoutEffect(() => {
@@ -371,8 +422,15 @@ const SessionComponent = (
         if (viewport === null || viewport === undefined) {
             return undefined;
         }
-        const measure = () =>
-            coordinator.chrome.setBottomInset(Math.max(0, window.innerHeight - viewport.offsetTop - viewport.height));
+        const measure = () => {
+            const inset = Math.max(0, window.innerHeight - viewport.offsetTop - viewport.height);
+            coordinator.chrome.setBottomInset(inset);
+            // Only a touch device docks its toolbar above the on-screen keyboard (SPEC-rich-text-react/AC-096).
+            if (window.matchMedia('(pointer: coarse)').matches) {
+                // oxlint-disable-next-line @eslint-react/set-state-in-effect -- the state is the measured viewport.
+                setKeyboard(inset);
+            }
+        };
         measure();
         viewport.addEventListener('resize', measure);
         return () => viewport.removeEventListener('resize', measure);
@@ -384,7 +442,17 @@ const SessionComponent = (
         if (props.disabled === true) {
             toolbar = null;
         }
-        moveChromeFocus(event, { runtime: coordinator.runtime, toolbar, shortcut: toolbarShortcutOf(props) });
+        let showBubble: (() => void) | null = null;
+        if (toolbarMode === 'bubble') {
+            showBubble = showBubbleRef.current;
+        }
+        moveChromeFocus(event, {
+            runtime: coordinator.runtime,
+            toolbar,
+            bubble: bubbleRef.current,
+            showBubble,
+            shortcut: toolbarShortcutOf(props),
+        });
     };
 
     const shell = shellPropsOf(props);
@@ -412,8 +480,33 @@ const SessionComponent = (
             more: t('RichTextEditor_more'),
             reason: (code: string) => t(REASON_KEYS[code] ?? 'RichTextEditor_unavailable'),
         };
-        return { items, strings, surfaceId, toolbarRef };
-    }, [items, chromeContext, props.id, generatedId]);
+        const labels = {
+            bubble: t('RichTextEditor_bubbleToolbar'),
+            toBubble: t('RichTextEditor_toolbarOnSelection'),
+            toFixed: t('RichTextEditor_toolbarAlways'),
+        };
+        return {
+            items,
+            strings,
+            labels,
+            surfaceId,
+            toolbarRef,
+            bubbleRef,
+            showBubbleRef,
+            mode: toolbarMode,
+            setMode: switchToolbar,
+            keyboard,
+        };
+    }, [items, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard]);
+
+    const { portalContainer, environment = browserEnvironment } = props;
+    const overlays = useMemo(() => {
+        let container: HTMLElement | null = overlayRoot;
+        if (portalContainer !== undefined && portalContainer !== null) {
+            container = portalContainer;
+        }
+        return { container, scope, microtask: environment.scheduler.microtask };
+    }, [overlayRoot, portalContainer, scope, environment]);
 
     const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
     if (mounted.blocked !== undefined) {
@@ -427,28 +520,35 @@ const SessionComponent = (
             <SessionContext.Provider value={live}>
                 <ReactWorkContext.Provider value={work}>
                     <AnnouncerContext.Provider value={announcer}>
-                        {/* Focus in the chrome keeps the selection visible until it returns (SPEC-rich-text-accessibility/AC-067). */}
-                        {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- the root only hears keys and focus that bubble from the surface and chrome. */}
-                        <div
-                            data-test-id={testId}
-                            aria-busy={live === undefined ? true : undefined}
-                            onKeyDown={onKeyDown}
-                            onFocus={(event) =>
-                                coordinator.chrome.showSelection(event.target.getAttribute('data-rte-surface') === null)
-                            }
-                            onBlur={() => coordinator.chrome.showSelection(false)}
-                        >
-                            {work !== undefined && <Phase work={work} open />}
-                            {children}
-                            <PortalHost store={portals} context={chromeContext} onFlush={onFlush} />
+                        <OverlayContext.Provider value={overlays}>
+                            {/* Focus in the chrome keeps the selection visible until it returns (SPEC-rich-text-accessibility/AC-067). */}
+                            {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- the root only hears keys and focus that bubble from the surface and chrome. */}
                             <div
-                                ref={announcer.setRegion}
-                                aria-live="polite"
-                                style={VISUALLY_HIDDEN}
-                                data-test-id={`${testId}-announcer`}
-                            />
-                            {work !== undefined && <Phase work={work} open={false} />}
-                        </div>
+                                ref={rootRef}
+                                data-test-id={testId}
+                                aria-busy={live === undefined ? true : undefined}
+                                onKeyDown={onKeyDown}
+                                onFocus={(event) =>
+                                    coordinator.chrome.showSelection(
+                                        event.target.getAttribute('data-rte-surface') === null,
+                                    )
+                                }
+                                onBlur={() => coordinator.chrome.showSelection(false)}
+                            >
+                                {work !== undefined && <Phase work={work} open />}
+                                {children}
+                                {toolbarMode === 'bubble' && <Bubble />}
+                                <PortalHost store={portals} context={chromeContext} onFlush={onFlush} />
+                                <div
+                                    ref={announcer.setRegion}
+                                    aria-live="polite"
+                                    style={VISUALLY_HIDDEN}
+                                    data-test-id={`${testId}-announcer`}
+                                />
+                                <div ref={setOverlayRoot} style={OVERLAY_ROOT} data-rte-overlays="" />
+                                {work !== undefined && <Phase work={work} open={false} />}
+                            </div>
+                        </OverlayContext.Provider>
                     </AnnouncerContext.Provider>
                 </ReactWorkContext.Provider>
             </SessionContext.Provider>
@@ -639,27 +739,39 @@ const Surface = () => {
 };
 Surface.displayName = 'RichTextEditor.Surface';
 
-/** The fixed toolbar the presentation configures; with no item it renders nothing. */
+/** The fixed toolbar the presentation configures; with no item, or in bubble mode, it renders nothing. */
 const Toolbar = () => {
     const { props, coordinator, chrome } = useRoot('Toolbar');
     const { disabled = false, 'data-test-id': testId = DEFAULT_TEST_ID } = props;
-    const { items, strings, surfaceId, toolbarRef } = chrome;
-    // The caret scrolls clear of the sticky toolbar's measured height (SPEC-rich-text-accessibility/AC-024).
-    const shown = items.length > 0;
+    const { items, strings, labels, surfaceId, toolbarRef, mode, setMode, keyboard } = chrome;
+    const focus = useScopedFocus();
+    // A focused editor on a touch device docks its toolbar above the on-screen keyboard (SPEC-rich-text-react/AC-096).
+    let docked: number | undefined;
+    if (keyboard > 0 && focus !== null && !disabled) {
+        docked = keyboard;
+    }
+    // The caret scrolls clear of the sticky or docked toolbar's measured height (SPEC-rich-text-accessibility/AC-024).
+    const shown = items.length > 0 && mode === 'fixed';
     useEffect(() => {
         const element = toolbarRef.current;
         if (element === null) {
             return undefined;
         }
-        const observer = new ResizeObserver(() =>
-            coordinator.chrome.setTopInset(element.getBoundingClientRect().height),
-        );
+        const observer = new ResizeObserver(() => {
+            const { height } = element.getBoundingClientRect();
+            if (docked === undefined) {
+                coordinator.chrome.setTopInset(height);
+                return;
+            }
+            coordinator.chrome.setTopInset(0);
+            coordinator.chrome.setBottomInset(docked + height);
+        });
         observer.observe(element);
         return () => {
             observer.disconnect();
             coordinator.chrome.setTopInset(0);
         };
-    }, [toolbarRef, coordinator, shown]);
+    }, [toolbarRef, coordinator, shown, docked]);
     if (!shown || surfaceId === undefined) {
         return null;
     }
@@ -672,10 +784,61 @@ const Toolbar = () => {
             shortcut={toolbarShortcutOf(props)}
             testId={testId}
             toolbarRef={toolbarRef}
+            modeSwitch={{ label: labels.toBubble, onSelect: () => setMode('bubble') }}
+            docked={docked}
         />
     );
 };
 Toolbar.displayName = 'RichTextEditor.Toolbar';
+
+/** The bubble toolbar, with the rest of the toolbar in its More menu in bubble mode (SPEC-rich-text-react/AC-095). */
+const Bubble = () => {
+    const { props, chrome } = useRoot('BubbleToolbar');
+    const { 'data-test-id': testId = DEFAULT_TEST_ID } = props;
+    const { items, strings, labels, bubbleRef, showBubbleRef, mode, setMode } = chrome;
+    const bubbleItems = useMemo(
+        () =>
+            items
+                .filter((item) => item.bubble)
+                .map((item, index) => ({ ...item, groupStart: index > 0 && item.groupStart })),
+        [items],
+    );
+    let more: BubbleMore | undefined;
+    let showRef: typeof showBubbleRef | undefined;
+    if (mode === 'bubble') {
+        more = {
+            items: items.filter((item) => !item.bubble),
+            modeSwitch: { label: labels.toFixed, onSelect: () => setMode('fixed') },
+        };
+        showRef = showBubbleRef;
+    }
+    if (bubbleItems.length === 0 && more === undefined) {
+        return null;
+    }
+    return (
+        <BubbleToolbar
+            items={bubbleItems}
+            more={more}
+            label={labels.bubble}
+            strings={strings}
+            shortcut={toolbarShortcutOf(props)}
+            testId={testId}
+            toolbarRef={bubbleRef}
+            showRef={showRef}
+        />
+    );
+};
+Bubble.displayName = 'RichTextEditor.Bubble';
+
+/** The bubble toolbar of a fixed toolbar mode, near a text selection; bubble mode shows its own (SPEC-rich-text-react, Components). */
+const BubbleToolbarPart = () => {
+    const { chrome } = useRoot('BubbleToolbar');
+    if (chrome.mode === 'bubble') {
+        return null;
+    }
+    return <Bubble />;
+};
+BubbleToolbarPart.displayName = 'RichTextEditor.BubbleToolbar';
 
 const Editor = forwardRef((props: Props, ref: ForwardedRef<EditorHandle<object>>) => (
     <Root {...props} ref={ref}>
@@ -686,15 +849,17 @@ const Editor = forwardRef((props: Props, ref: ForwardedRef<EditorHandle<object>>
 Editor.displayName = 'RichTextEditor';
 
 /** Generic, so a definition compiled from any model types its handle (SPEC-rich-text/AC-062). */
-export const RichTextEditor = Object.assign(Editor, { Root, Surface, Toolbar }) as unknown as (<
-    C extends object = ShippedCommands,
->(
-    props: RichTextEditorProps<C>,
-) => ReactNode) & {
+export const RichTextEditor = Object.assign(Editor, {
+    Root,
+    Surface,
+    Toolbar,
+    BubbleToolbar: BubbleToolbarPart,
+}) as unknown as (<C extends object = ShippedCommands>(props: RichTextEditorProps<C>) => ReactNode) & {
     /** Takes the editor props and renders its own layout from the parts; `RichTextEditor` is Root with the default parts. */
     readonly Root: <C extends object = ShippedCommands>(
         props: RichTextEditorProps<C> & { readonly children: ReactNode },
     ) => ReactNode;
     readonly Surface: ComponentType<object>;
     readonly Toolbar: ComponentType<object>;
+    readonly BubbleToolbar: ComponentType<object>;
 };

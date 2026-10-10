@@ -23,6 +23,7 @@ export {
     type ServiceContext,
 } from '#/persistence/types';
 export { defineEditor, defineReactPresentation } from '#/react/define';
+export { useEditorHandle } from '#/react/hooks';
 export { RichTextEditor } from '#/react/rich-text-editor';
 export {
     type AssetPickerService,

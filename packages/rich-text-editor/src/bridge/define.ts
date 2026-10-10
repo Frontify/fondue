@@ -21,6 +21,7 @@ import {
 import { useRenderMark } from './dev-checks';
 
 export { NodeChromeButton, NodeChromeToolbar } from './chrome-toolbar';
+export { type EditorOverlay, OverlayBody, useEditorOverlay } from './overlays';
 
 /** What node chrome reads besides attributes: the shape of the reader's `ReaderContext`, which `src/bridge` may not import (SPEC-rich-text/AC-010). */
 export interface NodeViewContext extends CodecContext {

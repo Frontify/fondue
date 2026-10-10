@@ -73,6 +73,15 @@ export const createChromeView = (): ChromeView => {
     };
 };
 
+/** Ends a composition while focus stays in the surface: the browser commits composed text when the surface blurs. */
+export const endComposition = (view: EditorView | undefined): void => {
+    if (view === undefined) {
+        return;
+    }
+    view.dom.blur();
+    view.focus();
+};
+
 /** The node chrome toolbar of the innermost node at the selection that has one: the selected node or the node holding the caret. */
 export const nodeChromeAt = (view: EditorView): HTMLElement | null => {
     const { selection } = view.state;

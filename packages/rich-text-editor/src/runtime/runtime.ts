@@ -88,11 +88,7 @@ const COMPOSITION_META = 'composition';
 // The target an async operation started with none gets at the selection (SPEC-rich-text-runtime/AC-046).
 const ASYNC_TARGET: CaptureTargetOptions = { purpose: 'insert', onIntersectingEdit: 'map' };
 
-const notBuiltYet = (member: string, pair: string) => (): never => {
-    throw new Error(`EditorHandle.${member} is not built yet; it lands with ${pair}.`);
-};
-
-/** What the host calls: the `EditorHandle` members a later pair builds throw an error naming that pair (DR-063). */
+/** What the host calls. */
 export interface RuntimeHandle {
     getSummary(): EditorSummary;
     getSnapshot(): Snapshot;
@@ -108,7 +104,7 @@ export interface RuntimeHandle {
     setMode(mode: Mode): void;
     updatePolicy(policy: AuthoringPolicy): void;
     focus(where?: 'current' | 'start' | 'end'): void;
-    registerInteractionRoot(): never;
+    registerInteractionRoot(element: HTMLElement): Unsubscribe;
     subscribe(event: string, listener: Listener): Unsubscribe;
     dispose(): void;
 }
@@ -127,6 +123,8 @@ export interface EditorRuntime {
     readonly handle: RuntimeHandle;
     /** The view on the attached surface, for the `src/testing` helpers. */
     readonly view: EditorView | undefined;
+    /** The host roots whose focus and pointer moves stay inside the editor (SPEC-rich-text-react/AC-048). */
+    readonly interactionRoots: ReadonlySet<HTMLElement>;
     /** The session's current state, which stays readable after `dispose`, for tests. */
     readonly state: EditorState;
     /** Shows the document in `element`, which becomes the editable surface. */
@@ -1420,6 +1418,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return installNext(request, tree, result.document.requiredCapabilities);
     };
 
+    const interactionRoots = new Set<HTMLElement>();
     const handle: RuntimeHandle = {
         getSummary: () => {
             return {
@@ -1521,7 +1520,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             busyWith(notify);
         },
         focus,
-        registerInteractionRoot: notBuiltYet('registerInteractionRoot', 'pair 19, TASK-rte-chrome'),
+        registerInteractionRoot: (element) => {
+            interactionRoots.add(element);
+            return () => {
+                interactionRoots.delete(element);
+            };
+        },
         subscribe,
         dispose,
     };
@@ -1531,6 +1535,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         get view() {
             return view;
         },
+        interactionRoots,
         get state() {
             return state;
         },
