@@ -443,7 +443,7 @@ describe('toJsonSchema of the envelope', () => {
     });
 });
 
-/** The `acme.pull-quote` manifest of the Feature contract, without its commands, keys, rules and toolbar. */
+/** The `acme.pull-quote` manifest, without its commands, keys, rules and toolbar. */
 const pullQuote = () =>
     featureFromManifest({
         id: 'acme.pull-quote',

@@ -260,7 +260,7 @@ describe('decode runs registered migrations', () => {
         expect((tree as TreeNode).content?.map(({ type }) => type)).toEqual(['paragraph', 'unsupported_block']);
     });
 
-    it('judges a step output by the limits of the decode call (Decode order step 3)', () => {
+    it('judges a step output by the limits of the decode call', () => {
         const model = stepsModel((document) =>
             migrated(document, {
                 ...document.content,
