@@ -101,7 +101,7 @@ describe('package locales', () => {
     });
 
     it('SPEC-rich-text-react/AC-059 names every enUS placeholder as a count or as one that holds no count', () => {
-        const notCounts = ['feature'];
+        const notCounts = ['feature', 'min', 'max'];
         const unnamed = Object.values(enUS.translationStrings)
             .flatMap(placeholders)
             .map((placeholder) => placeholder.slice(2, -1))

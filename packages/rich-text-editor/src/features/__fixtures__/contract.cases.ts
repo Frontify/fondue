@@ -24,7 +24,13 @@ import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 import { createTestEnvironment } from '#/testing';
 
 /** A valid payload for each shipped command that declares one, so the case runs it for real. */
-const PAYLOADS: Readonly<Record<string, unknown>> = { 'text.insert': { text: 'a' }, 'heading.set': { level: 2 } };
+const PAYLOADS: Readonly<Record<string, unknown>> = {
+    'text.insert': { text: 'a' },
+    'heading.set': { level: 2 },
+    'list.ordered.toggle': { start: 1 },
+    'list.ordered.start.set': { start: 2 },
+    'task.setChecked': { nodeId: 'task-1', checked: false },
+};
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [
     'fetch',
@@ -72,7 +78,9 @@ export const commandCases = (features: readonly Feature[]): void => {
     // The runner's global `it`, as the contract suite takes it, so a stand-in runner collects these cases too.
     const { it } = globalThis as unknown as { readonly it: typeof runnerIt };
     const model = compileContentModel(features, { id: 'feature-contract', version: 1 });
-    for (const { id } of compiledModel(model).commands) {
+    for (const { id, definition } of compiledModel(model).commands) {
+        // A control opener applies where its control can act and dispatches nothing; the editor opens the control.
+        const opens = definition.capability === 'openControl';
         it(`SPEC-rich-text-runtime/AC-038 runs ${id} synchronously with no I/O or timer, dispatching at most once`, () => {
             const engine = compileDefinition(model, CAPABILITIES);
             const command = engine.commands.get(id);
@@ -113,7 +121,7 @@ export const commandCases = (features: readonly Feature[]): void => {
                     expect(typeof result).toBe('boolean');
                     // A command that applies dispatches exactly one transaction before it returns, and one that does not, none.
                     let expected = 0;
-                    if (result === true) {
+                    if (result === true && !opens) {
                         expected = 1;
                     }
                     expect(dispatched.length).toBe(expected);
@@ -124,7 +132,7 @@ export const commandCases = (features: readonly Feature[]): void => {
             }
             expect(stubs.filter((stub) => stub.mock.calls.length > 0)).toEqual([]);
             // At least one fixture state gives the command a document change to make.
-            expect(changed).toBe(true);
+            expect(changed).toBe(!opens);
         });
     }
 };

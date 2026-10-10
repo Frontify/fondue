@@ -273,7 +273,16 @@ describe('the React bridge', () => {
 
     it('SPEC-rich-text-react/AC-019 types the node view state with no position', () => {
         expectTypeOf<keyof NodeViewState>().toEqualTypeOf<
-            'nodeId' | 'attrs' | 'selected' | 'context' | 'update' | 'remove' | 'select' | 'execute' | 'query'
+            | 'nodeId'
+            | 'attrs'
+            | 'selected'
+            | 'contentId'
+            | 'context'
+            | 'update'
+            | 'remove'
+            | 'select'
+            | 'execute'
+            | 'query'
         >();
     });
 

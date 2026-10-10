@@ -1,0 +1,107 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { ThemeProvider } from '@frontify/fondue-components';
+import { useEffect, useRef, useState } from 'react';
+
+import { bold, core, inputRules } from '../../src/features';
+import { bulletList } from '../../src/features/lists-bullet/feature';
+import { listItem } from '../../src/features/lists-item/feature';
+import { orderedList } from '../../src/features/lists-ordered/feature';
+import { taskList } from '../../src/features/lists-task/feature';
+import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '../../src/index';
+import { compileContentModel, type RichTextDocument } from '../../src/model';
+import { RichTextReader } from '../../src/reader';
+import { setSelection } from '../../src/testing';
+
+const model = compileContentModel([core(), bold(), listItem(), bulletList(), orderedList(), taskList(), inputRules()], {
+    id: 'test.list-ct',
+    version: 1,
+});
+const definition = defineEditor({ id: 'test.list-ct', model });
+const presentation = defineReactPresentation({
+    toolbar: [
+        ['mark.bold.toggle'],
+        ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
+    ],
+});
+
+/** One change as the probe records it: where it came from and the document content after it. */
+export interface ListChange {
+    readonly origin: string;
+    readonly commandId: string | null;
+    readonly content: unknown;
+}
+
+declare global {
+    interface Window {
+        /** The list probe's handle, the selection helper and each change. */
+        listRte?: {
+            readonly handle: EditorHandle;
+            readonly setSelection: typeof setSelection;
+            readonly changes: ListChange[];
+        };
+    }
+}
+
+const documentOf = (blocks: readonly object[]): RichTextDocument =>
+    ({
+        format: 'frontify.rich-text',
+        formatVersion: 1,
+        model: model.ref,
+        requiredCapabilities: model.capabilities,
+        content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: [...blocks] },
+    }) as unknown as RichTextDocument;
+
+/**
+ * Mounts the list features through `RichTextEditor` between two focusable buttons, with the list toolbar, and with
+ * `reader` the reader's output of each change below it.
+ */
+export const ListProbe = ({
+    blocks,
+    dir = 'ltr',
+    reader = false,
+}: {
+    /** Stored blocks, such as `fixtures/editor/list-blocks.ts` builds. */
+    readonly blocks: readonly object[];
+    /** The theme direction. */
+    readonly dir?: 'ltr' | 'rtl';
+    readonly reader?: boolean;
+}) => {
+    const ref = useRef<EditorHandle>(null);
+    const changes = useRef<ListChange[]>([]);
+    const [shown, setShown] = useState(() => documentOf(blocks));
+    useEffect(() => {
+        const handle = ref.current;
+        if (handle !== null) {
+            window.listRte = { handle, setSelection, changes: changes.current };
+        }
+    }, []);
+    return (
+        <ThemeProvider dir={dir}>
+            {/* An explicit tabindex, since WebKit leaves buttons out of the Tab order by default. */}
+            <button type="button" tabIndex={0}>
+                Before
+            </button>
+            <RichTextEditor
+                aria-label="Notes"
+                definition={definition}
+                presentation={presentation}
+                defaultValue={{ documentId: 'document-1', revision: null, document: documentOf(blocks) }}
+                ref={ref}
+                onDocumentChange={({ origin, commandId, readDocument }) => {
+                    const document = readDocument();
+                    changes.current.push({ origin, commandId, content: document.content });
+                    setShown(document);
+                }}
+            />
+            <button type="button" tabIndex={0}>
+                After
+            </button>
+            {reader && (
+                <section aria-label="Reader">
+                    <RichTextReader document={shown} model={model} />
+                </section>
+            )}
+        </ThemeProvider>
+    );
+};
