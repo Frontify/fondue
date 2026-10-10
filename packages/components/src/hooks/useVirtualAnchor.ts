@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
 
 /**
  * A rectangle an overlay anchors to instead of its trigger, for example a text selection or a pointer position.
@@ -43,17 +43,32 @@ export const useVirtualAnchorFocus = (enabled: boolean) => {
 };
 
 /**
- * Calls `callback` after any scroll, in any container, and after a window resize.
+ * Calls `callback` after any scroll, in any container, and after a window resize,
+ * in the window and shadow root that hold `elementRef`.
  *
+ * @param {RefObject<Element | null>} elementRef - An element in the window or shadow root to listen in.
  * @param {() => void} callback - Called after scroll or resize. Keep it stable, for example with `useCallback`.
  */
-export const useScrollOrResize = (callback: () => void) => {
+export const useScrollOrResize = (elementRef: RefObject<Element | null>, callback: () => void) => {
     useEffect(() => {
-        window.addEventListener('scroll', callback, { capture: true, passive: true });
-        window.addEventListener('resize', callback);
+        const element = elementRef.current;
+        const view = element?.ownerDocument.defaultView ?? window;
+        // A scroll inside a shadow root does not reach the window, even in the capture phase.
+        const rootNode = element?.getRootNode();
+        const scrollTargets: EventTarget[] = [view];
+        if (rootNode instanceof ShadowRoot) {
+            scrollTargets.push(rootNode);
+        }
+
+        for (const target of scrollTargets) {
+            target.addEventListener('scroll', callback, { capture: true, passive: true });
+        }
+        view.addEventListener('resize', callback);
         return () => {
-            window.removeEventListener('scroll', callback, { capture: true });
-            window.removeEventListener('resize', callback);
+            for (const target of scrollTargets) {
+                target.removeEventListener('scroll', callback, { capture: true });
+            }
+            view.removeEventListener('resize', callback);
         };
-    }, [callback]);
+    }, [elementRef, callback]);
 };
