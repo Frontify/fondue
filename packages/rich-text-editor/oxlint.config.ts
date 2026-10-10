@@ -27,9 +27,11 @@ const FRAMEWORK_PATTERNS = [
     'next/**',
     'react-router',
     'react-router-*',
+    'react-router-*/**',
     'react-router/**',
     '@remix-run/**',
     'react-server-dom-*',
+    'react-server-dom-*/**',
 ];
 
 const ENGINE_PATTERNS = ['prosemirror-*', 'react', 'react/**', 'react-dom', 'react-dom/**'];
@@ -50,9 +52,20 @@ const relativePatterns = (folders: readonly string[]): string[] =>
 
 const FEATURE_ROOTS = ['#/features', '../features', '../../features'] as const;
 
-const FEATURE_TAILS = ['', '/index', '/registry', '/profiles/**', '/*/feature', '/*/migration'] as const;
+const FEATURE_ALLOW_TAILS = [
+    '/conformance',
+    '/conformance/**',
+    '/*/fixtures',
+    '/*/fixtures/**',
+    '/__fixtures__',
+    '/__fixtures__/**',
+] as const;
 
-const restrictedFeaturePatterns = FEATURE_ROOTS.flatMap((root) => FEATURE_TAILS.map((tail) => `${root}${tail}`));
+const restrictedFeaturePatterns = FEATURE_ROOTS.flatMap((root) => [
+    root,
+    `${root}/**`,
+    ...FEATURE_ALLOW_TAILS.map((tail) => `!${root}${tail}`),
+]);
 
 type ImportRestriction = {
     group: string[];
@@ -211,6 +224,7 @@ export default defineConfig({
                     ...aliasPatterns(testingFolders),
                     ...relativePatterns(testingFolders),
                     ...restrictedFeaturePatterns,
+                    ...ENGINE_PATTERNS,
                 ],
                 message: TESTING_MESSAGE,
             },
