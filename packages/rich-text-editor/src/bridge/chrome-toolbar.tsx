@@ -3,6 +3,8 @@
 import * as Toolbar from '@radix-ui/react-toolbar';
 import { type ReactNode } from 'react';
 
+import styles from './styles/chrome-toolbar.module.scss';
+
 // Node chrome sits inside the surface, so its controls take no Tab stop of their own; Alt+F10 reaches them (SPEC-rich-text-react/AC-068).
 const OUT_OF_TAB_ORDER = -1;
 
@@ -35,6 +37,7 @@ export const NodeChromeButton = ({
 }) => (
     <Toolbar.Button
         type="button"
+        className={styles.button}
         aria-label={label}
         aria-pressed={pressed}
         disabled={disabled}

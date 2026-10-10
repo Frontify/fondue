@@ -17,6 +17,21 @@ export interface ChromeView {
     setBottomInset(height: number): void;
 }
 
+// Node chrome controls keep the caret's top margin clear of the sticky toolbar when they scroll into view.
+const CHROME_SCROLL_MARGIN = '--rte-chrome-scroll-margin';
+
+/** Writes the chrome scroll margin while a toolbar covers the top, and leaves the surface's attributes alone otherwise. */
+const writeChromeMargin = (view: EditorView | undefined, threshold: number, top: number) => {
+    if (view === undefined) {
+        return;
+    }
+    if (threshold === 0) {
+        view.dom.style.removeProperty(CHROME_SCROLL_MARGIN);
+        return;
+    }
+    view.dom.style.setProperty(CHROME_SCROLL_MARGIN, `${top}px`);
+};
+
 export const createChromeView = (): ChromeView => {
     let view: EditorView | undefined;
     let shown = false;
@@ -36,6 +51,7 @@ export const createChromeView = (): ChromeView => {
         take: (next) => {
             view = next;
             next.setProps({ decorations, scrollMargin: margin, scrollThreshold: threshold });
+            writeChromeMargin(next, threshold.top, margin.top);
         },
         showSelection: (next) => {
             if (shown === next) {
@@ -48,6 +64,7 @@ export const createChromeView = (): ChromeView => {
         setTopInset: (height) => {
             threshold.top = height;
             margin.top = height + MARGIN;
+            writeChromeMargin(view, threshold.top, margin.top);
         },
         setBottomInset: (height) => {
             threshold.bottom = height;

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@frontify/fondue-components';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { createCodecs } from '#/codecs/codecs';
 import {
@@ -152,10 +152,14 @@ export const RecoveryShell = ({
 }: ShellProps & { readonly document: RichTextDocument; readonly onRetry: () => void }) => {
     const { model, limits, presentation, locale, testId } = shell;
     const { t } = readerContext(locale, presentation);
+    const messageRef = useRef<HTMLParagraphElement>(null);
+    // The shell replaces the root and its polite region, so focus carries the crash to a screen reader (SPEC-rich-text-accessibility/AC-038).
+    useEffect(() => messageRef.current?.focus(), []);
     return (
         <div data-test-id={testId} data-rte-shell="recovery">
-            {/* Visible text only: the shell replaces the root and its polite region (SPEC-rich-text-accessibility/AC-038). */}
-            <p>{t('RichTextEditor_recoveryMessage')}</p>
+            <p ref={messageRef} tabIndex={-1}>
+                {t('RichTextEditor_recoveryMessage')}
+            </p>
             <RichTextReader
                 document={document}
                 model={model}
