@@ -2,7 +2,7 @@
 
 import { type CodecContext, type Diagnostic, type HtmlSpec } from '#/model';
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
-import { type HtmlTemplate, resolveHtmlSpec } from '#/model/html-spec';
+import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
     attrsOf,
     failedFallback,
@@ -180,6 +180,9 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         }
     }
     state.carried = 0;
+    if (!plan.inline) {
+        template = withAutoDirection(template);
+    }
     return build(template, inner);
 };
 
