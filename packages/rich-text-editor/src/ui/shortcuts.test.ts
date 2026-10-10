@@ -25,6 +25,13 @@ describe('shortcut text', () => {
         expect(shortcutText(binding('other:Mod-y'), false)).toBe('Ctrl+Y');
     });
 
+    it('SPEC-rich-text-react/AC-039 SPEC-rich-text-editing/AC-005 shows the block moves as the Shortcuts table names them', () => {
+        expect(shortcutText(binding('Mod-Alt-ArrowUp'), true)).toBe('⌥⌘↑');
+        expect(shortcutText(binding('Mod-Alt-ArrowDown'), true)).toBe('⌥⌘↓');
+        expect(shortcutText(binding('Mod-Alt-ArrowUp'), false)).toBe('Ctrl+Alt+Up');
+        expect(shortcutText(binding('Mod-Alt-ArrowDown'), false)).toBe('Ctrl+Alt+Down');
+    });
+
     it('SPEC-rich-text-react/AC-079 names modifiers for aria-keyshortcuts by platform', () => {
         expect(ariaShortcut(binding('Mod-Alt-t'), true)).toBe('Meta+Alt+T');
         expect(ariaShortcut(binding('Mod-Alt-t'), false)).toBe('Control+Alt+T');

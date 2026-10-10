@@ -55,8 +55,10 @@ describe('compileDefinition', () => {
             const ids = model.manifest.plugins as string[];
 
             expect(plugins.map(keyOf).map((key) => key.replace(/\$\d*$/, ''))).toEqual(ids);
-            // `history` binds no key of its own, and `core` binds two.
-            expect([...new Set(keymap.map(({ plugin }) => plugin))]).toEqual(ids.filter((id) => id !== 'history'));
+            // `history` and the base keys bind no feature key.
+            expect([...new Set(keymap.map(({ plugin }) => plugin))]).toEqual(
+                ids.filter((id) => id !== 'history' && id !== 'base-keys'),
+            );
         }
     });
 

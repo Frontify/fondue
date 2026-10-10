@@ -4,16 +4,23 @@ import { type Mark, type Node } from 'prosemirror-model';
 import { type Transaction } from 'prosemirror-state';
 
 import { carriesNodeId } from '#/definition';
-import { type ContentModel, DefinitionError } from '#/model';
+import { type CommandDefinition, type ContentModel, DefinitionError } from '#/model';
 import { compiledModel } from '#/model/compile';
-import { findUnsafeJson } from '#/model/values';
+import { findUnsafeJson, isRecord, OBJECT_REPLACEMENT } from '#/model/values';
 
 import { type AuthoringPolicy, type FeaturePolicy, type HeadingLevel } from './types';
 
 const EVERYTHING: FeaturePolicy = { create: true, edit: true, remove: true, paste: true };
 const HEADING_LEVELS: readonly HeadingLevel[] = [1, 2, 3, 4, 5, 6];
-// An inline node other than text, in the text of a mark run.
-const OBJECT_REPLACEMENT = '￼';
+const HEADING = 'heading';
+
+/** Whether a command sets the level of a `heading`, such as `heading.set`. */
+export const setsHeading = ({ capability, args }: CommandDefinition<unknown>): boolean =>
+    capability === 'setBlock' && args.node === HEADING;
+
+/** Whether the policy refuses the heading level that a payload or a heading's attributes name (SPEC-rich-text-editing/AC-013). */
+export const refusesLevel = (policy: AuthoringPolicy, values: unknown): boolean =>
+    isRecord(values) && !policy.creatableHeadingLevels.includes(values.level as HeadingLevel);
 
 /**
  * Every installed feature fully allowed, with the policy's own values over it. Remote values are checked like a
@@ -179,7 +186,34 @@ const counterparts = (run: Run, mapping: BatchMapping, others: readonly Run[], i
 const sameRun = (a: Run, b: Run) => a.text === b.text && a.mark.eq(b.mark);
 
 const headingsOf = ({ nodes }: Occurrences): Node[] =>
-    [...nodes.values()].flat().filter((node) => node.type.name === 'heading');
+    [...nodes.values()].flat().filter((node) => node.type.name === HEADING);
+const textblocksIn = ({ nodes }: Occurrences): number =>
+    [...nodes.values()].flat().filter((node) => node.isTextblock).length;
+
+/**
+ * Whether a batch makes a heading of a level the policy does not offer. A stored heading keeps its level, and Enter may
+ * split it: a heading with a new `nodeId` passes only as one of the blocks the batch added, next to a heading of its
+ * level, so turning other blocks into that level never does (SPEC-rich-text-editing/AC-013, AC-014).
+ */
+const makesRefusedHeading = (policy: AuthoringPolicy, previous: Occurrences, next: Occurrences): boolean => {
+    const before = headingsOf(previous);
+    let splits = Math.max(0, textblocksIn(next) - textblocksIn(previous));
+    for (const heading of headingsOf(next)) {
+        const { level, nodeId } = heading.attrs;
+        if (
+            !refusesLevel(policy, heading.attrs) ||
+            before.some((old) => old.attrs.nodeId === nodeId && old.attrs.level === level)
+        ) {
+            continue;
+        }
+        const fresh = !before.some((old) => old.attrs.nodeId === nodeId);
+        if (!fresh || splits === 0 || !before.some((old) => old.attrs.level === level)) {
+            return true;
+        }
+        splits -= 1;
+    }
+    return false;
+};
 
 /**
  * A mark's runs compared piece by piece through the batch's mapping, as `prosemirror-changeset` maps spans through
@@ -236,8 +270,11 @@ export const createPolicyCheck = (model: ContentModel) => {
         return found;
     };
 
-    /** Whether the change from `before` to `after` creates, edits or removes an occurrence the policy forbids. */
-    return (policy: AuthoringPolicy, before: Node, after: Node, mapping: BatchMapping): boolean => {
+    /**
+     * Whether the change from `before` to `after` creates, edits or removes an occurrence the policy forbids.
+     * @param history An undo or redo, which may bring back a heading of any level that a document held.
+     */
+    return (policy: AuthoringPolicy, before: Node, after: Node, mapping: BatchMapping, history = false): boolean => {
         let previous: Occurrences = { nodes: new Map(), runs: new Map() };
         let next: Occurrences = { nodes: new Map(), runs: new Map() };
         const start = before.content.findDiffStart(after.content);
@@ -254,14 +291,8 @@ export const createPolicyCheck = (model: ContentModel) => {
             add(previous.nodes, nodeOwners.get(before.type.name), before);
             add(next.nodes, nodeOwners.get(after.type.name), after);
         }
-        // A stored heading keeps a level the policy does not offer, but no batch makes one (SPEC-rich-text-editing/AC-013, AC-014).
-        const kept = headingsOf(previous);
-        for (const heading of headingsOf(next)) {
-            const { level, nodeId } = heading.attrs;
-            const same = (old: Node) => old.attrs.level === level && old.attrs.nodeId === nodeId;
-            if (!policy.creatableHeadingLevels.includes(level as HeadingLevel) && take(kept, same) === undefined) {
-                return true;
-            }
+        if (!history && makesRefusedHeading(policy, previous, next)) {
+            return true;
         }
         const features = new Set([
             ...previous.nodes.keys(),
