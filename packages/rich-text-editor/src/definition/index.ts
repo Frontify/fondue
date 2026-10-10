@@ -14,6 +14,7 @@ import {
 } from '#/model';
 import { CAPABILITY_PLUGINS, declaresNodeIds, INPUT_RULES_PLUGIN, NODE_IDS_PLUGIN } from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
+import { isApple, isPlatformBinding, keyOn } from '#/model/platform';
 
 import { type CompiledInputRule, compileInputRules } from './input-rules';
 import { NORMALIZE_META, NORMALIZERS } from './normalizers';
@@ -208,22 +209,30 @@ export const compileDefinition = (
         // A binding that starts with `mac:` or `other:` runs only on that platform (SPEC-rich-text-editing, Shortcuts).
         const apple: Record<string, Command> = {};
         const other: Record<string, Command> = {};
-        // Prefixed bindings come last, so on its platform one wins over a plain binding of the same key.
-        const ordered = [...keymap].sort(
-            (a, b) => Number(/^(mac|other):/.test(a.key)) - Number(/^(mac|other):/.test(b.key)),
-        );
-        for (const entry of ordered) {
+        const bind = (entry: (typeof keymap)[number]) => {
             const command = commands.get(entry.command);
-            if (entry.plugin === id && command !== undefined) {
-                const run: Command = (state, dispatch) => command.run(state, dispatch, entry.payload);
-                const [prefix = '', platform] = /^(mac|other):/.exec(entry.key) ?? [];
-                const key = entry.key.slice(prefix.length);
-                if (platform !== 'other') {
-                    apple[key] = run;
-                }
-                if (platform !== 'mac') {
-                    other[key] = run;
-                }
+            if (entry.plugin !== id || command === undefined) {
+                return;
+            }
+            const run: Command = (state, dispatch) => command.run(state, dispatch, entry.payload);
+            const appleKey = keyOn(entry.key, true);
+            if (appleKey !== undefined) {
+                apple[appleKey] = run;
+            }
+            const otherKey = keyOn(entry.key, false);
+            if (otherKey !== undefined) {
+                other[otherKey] = run;
+            }
+        };
+        // Plain bindings first, so on its platform a prefixed one of the same key wins.
+        for (const entry of keymap) {
+            if (!isPlatformBinding(entry.key)) {
+                bind(entry);
+            }
+        }
+        for (const entry of keymap) {
+            if (isPlatformBinding(entry.key)) {
+                bind(entry);
             }
         }
         if (Object.keys(other).length === 0 && Object.keys(apple).length === 0) {
@@ -231,9 +240,9 @@ export const compileDefinition = (
         }
         const handlers = { apple: keydownHandler(apple), other: keydownHandler(other) };
         const handleKeyDown = (view: EditorView, event: KeyboardEvent) => {
-            // prosemirror-keymap reads `Mod` from the same `navigator.platform`.
+            // The tooltips name the bindings of the same platform check.
             const owner = view.dom.ownerDocument.defaultView;
-            if (owner !== null && /Mac|iP(hone|[oa]d)/.test(owner.navigator.platform)) {
+            if (owner !== null && isApple(owner.navigator)) {
                 return handlers.apple(view, event);
             }
             return handlers.other(view, event);

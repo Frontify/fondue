@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from 'react';
 
 import { type KeyBinding } from '#/model';
+import { isApple, keyOn } from '#/model/platform';
 
 // Apple symbols in the order macOS menus show them (SPEC-rich-text-editing, Shortcuts).
 const APPLE_SYMBOLS: readonly (readonly [string, string])[] = [
@@ -14,20 +15,8 @@ const APPLE_SYMBOLS: readonly (readonly [string, string])[] = [
 const OTHER_ORDER = ['Ctrl', 'Mod', 'Alt', 'Shift'];
 const ARIA_NAMES: Readonly<Record<string, string>> = { Ctrl: 'Control', Alt: 'Alt', Shift: 'Shift' };
 
-/**
- * Whether the platform is an Apple one, where `Mod` is ⌘: from `navigator.platform`, which prosemirror-keymap reads to
- * bind `Mod`, so the shown shortcut is the one that works, else from `navigator.userAgentData`.
- */
-export const isApplePlatform = (): boolean => {
-    if (typeof navigator === 'undefined') {
-        return false;
-    }
-    if (navigator.platform !== '') {
-        return /Mac|iP(hone|[oa]d)/.test(navigator.platform);
-    }
-    const { userAgentData } = navigator as Navigator & { readonly userAgentData?: { readonly platform: string } };
-    return userAgentData !== undefined && /^(macOS|iOS)$/.test(userAgentData.platform);
-};
+/** Whether the platform is an Apple one, by the check the editor's keymaps use, so the shown shortcut is the one that runs. */
+export const isApplePlatform = (): boolean => typeof navigator !== 'undefined' && isApple(navigator);
 
 interface Parsed {
     readonly modifiers: readonly string[];
@@ -36,13 +25,9 @@ interface Parsed {
 
 /** The binding's modifiers and key on this platform, or `undefined` for a binding of the other platform. */
 const parse = (binding: KeyBinding, apple: boolean): Parsed | undefined => {
-    let rest = binding;
-    const platform = /^(mac|other):/.exec(binding);
-    if (platform !== null) {
-        if ((platform[1] === 'mac') !== apple) {
-            return undefined;
-        }
-        rest = binding.slice(platform[0].length);
+    const rest = keyOn(binding, apple);
+    if (rest === undefined) {
+        return undefined;
     }
     const parts = rest.split('-');
     let key = parts.at(-1) ?? '';

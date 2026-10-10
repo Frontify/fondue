@@ -269,6 +269,8 @@ export type ToolbarEntry =
           readonly command: string;
           readonly payload?: JsonValue;
           readonly labelKey: string;
+          /** A data manifest's translations, by language tag, which its entry carries in place of `labelKey`. */
+          readonly label?: Readonly<Record<string, string>>;
           readonly icon: string;
           readonly when?: OptionGuard;
       }
