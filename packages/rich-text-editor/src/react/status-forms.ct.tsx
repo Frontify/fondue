@@ -1,0 +1,145 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { expect, test } from '@playwright/experimental-ct-react';
+import { type Page } from '@playwright/test';
+
+import { EditorProbe } from '../../fixtures/editor/EditorProbe';
+
+type Rte = NonNullable<Window['rte']>;
+
+const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Notes' });
+const ready = (page: Page) =>
+    expect(page.locator('[data-test-id="fondue-rich-text-editor"]')).not.toHaveAttribute('aria-busy');
+
+/** Replaces the document with the paragraphs First and Last, discarding what is unsaved, with the selection at `where`. */
+const replaceWithTwo = (page: Page, where: 'start' | 'end') =>
+    page.evaluate(async (selection) => {
+        const { handle } = window.rte as Rte;
+        const { stamp, document } = handle.getSnapshot();
+        const paragraph = (text: string) => ({
+            type: 'paragraph',
+            attrs: { lang: null },
+            content: [{ type: 'text', text }],
+        });
+        const next = {
+            documentId: 'document-2',
+            revision: null,
+            document: {
+                ...document,
+                content: { ...document.content, content: [paragraph('First'), paragraph('Last')] } as never,
+            },
+        };
+        const result = await handle.replaceDocument({
+            expected: stamp,
+            next,
+            unsaved: { action: 'discard', confirmed: true },
+            selection,
+            history: 'reset',
+        });
+        return result.status;
+    }, where);
+
+const focusedSurface = (page: Page) =>
+    page.evaluate(() => document.activeElement?.getAttribute('data-rte-surface') === '');
+
+for (const [where, typed] of [
+    ['start', ['!First', 'Last']],
+    ['end', ['First', 'Last!']],
+] as const) {
+    test(`SPEC-rich-text-persistence/AC-036 keeps focus in the editor with the selection at the ${where} after a replacement`, async ({
+        mount,
+        page,
+    }) => {
+        await mount(<EditorProbe texts={['ab']} />);
+        await ready(page);
+        await surfaceOf(page).click();
+        await page.keyboard.type('c');
+
+        expect(await replaceWithTwo(page, where)).toBe('replaced');
+
+        expect(await focusedSurface(page)).toBe(true);
+        await page.keyboard.type('!');
+        await expect(surfaceOf(page).locator('p')).toHaveText(typed);
+    });
+}
+
+test('SPEC-rich-text-persistence/AC-037 leaves focus on a host button during a replacement', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['ab']} />);
+    await ready(page);
+    const before = page.getByRole('button', { name: 'Before' });
+    await before.focus();
+
+    expect(await replaceWithTwo(page, 'end')).toBe('replaced');
+
+    await expect(before).toBeFocused();
+    expect(await focusedSurface(page)).toBe(false);
+});
+
+/** Puts the caret in the surface after `text` and starts composing `x` there through CDP (SPEC-rich-text-quality/AC-012). */
+const composeAfter = async (page: Page, text: string) => {
+    await surfaceOf(page).click();
+    await page.evaluate((after) => {
+        const rte = window.rte as Rte;
+        rte.setSelection(rte.handle, { text: after, from: after.length, to: after.length });
+    }, text);
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Input.imeSetComposition', { text: 'x', selectionStart: 1, selectionEnd: 1 });
+    return cdp;
+};
+
+test('SPEC-rich-text-persistence/AC-061 resolves the settled value with the composed text once the composition ends', async ({
+    mount,
+    page,
+    browserName,
+}) => {
+    test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only (SPEC-rich-text-quality/AC-012).');
+    await mount(<EditorProbe texts={['ab']} />);
+    await ready(page);
+    const cdp = await composeAfter(page, 'ab');
+
+    const settled = page.evaluate(() =>
+        (window.rte as Rte).field
+            .getSettledValue({ timeoutMs: 5000 })
+            .then((document) => JSON.stringify(document.content)),
+    );
+    await cdp.send('Input.insertText', { text: 'xy' });
+
+    expect(await settled).toContain('"text":"abxy"');
+});
+
+test('SPEC-rich-text-persistence/AC-061 rejects the settled value with code timeout while the composition goes on', async ({
+    mount,
+    page,
+    browserName,
+}) => {
+    test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only (SPEC-rich-text-quality/AC-012).');
+    await mount(<EditorProbe texts={['ab']} />);
+    await ready(page);
+    await composeAfter(page, 'ab');
+
+    const outcome = await page.evaluate(() =>
+        (window.rte as Rte).field.getSettledValue({ timeoutMs: 200 }).then(
+            () => 'resolved',
+            (error: { readonly code?: string }) => error.code,
+        ),
+    );
+
+    expect(outcome).toBe('timeout');
+});
+
+test('SPEC-rich-text-react/AC-089 hides the save status in print', async ({ mount, page }) => {
+    await mount(<EditorProbe texts={['ab']} persistence holdSaves />);
+    await ready(page);
+    await surfaceOf(page).click();
+    await page.keyboard.type('c');
+    const status = page.getByTestId('fondue-rich-text-editor-status');
+    await expect(status).toBeVisible();
+
+    await page.emulateMedia({ media: 'print' });
+
+    await expect(status).toBeHidden();
+    await expect(surfaceOf(page)).toBeVisible();
+});

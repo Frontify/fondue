@@ -51,6 +51,20 @@ describe('package locales', () => {
         },
     );
 
+    it.each(files)(
+        'SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of %s its own message',
+        async (file) => {
+            const locale = await localeOf(file);
+            const strings = Object.entries(locale.translationStrings).filter(([key]) =>
+                key.startsWith('RichTextEditor_save'),
+            );
+
+            expect(strings).toHaveLength(10);
+            expect(new Set(strings.map(([, value]) => value)).size).toBe(strings.length);
+            expect(Object.fromEntries(strings)).toMatchSnapshot();
+        },
+    );
+
     it('SPEC-rich-text-react/AC-101 loads every shipped locale but enUS through its own import()', () => {
         expect(Object.keys(LOADERS).sort()).toEqual(files.filter((file) => file !== 'en-US'));
     });

@@ -20,7 +20,9 @@ import {
     type EditorHandle,
     type PersistenceService,
     RichTextEditor,
+    type RichTextFormField,
     type SaveRequest,
+    useRichTextFormField,
 } from '../../src/index';
 import { compileContentModel, type ContentModel, type ContentNodeJSON } from '../../src/model';
 import { boldRules } from '../../src/react/playground.stories';
@@ -108,6 +110,8 @@ declare global {
             readonly saves: readonly SaveRequest[];
             /** Answers each save that `holdSaves` holds. */
             readonly answerSaves: () => void;
+            /** The editor as a host form field. */
+            readonly field: RichTextFormField;
         };
     }
 }
@@ -162,6 +166,7 @@ export const EditorProbe = ({
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
+    const field = useRichTextFormField(ref);
     const [environment] = useState(() => {
         if (controlled) {
             return createTestEnvironment({ seed: 1 });
@@ -243,9 +248,10 @@ export const EditorProbe = ({
                         answer();
                     }
                 },
+                field,
             };
         }
-    }, [environment, saves, held]);
+    }, [environment, saves, held, field]);
     const editor = (
         <>
             <button type="button">Before</button>
