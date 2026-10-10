@@ -20,14 +20,15 @@ export const useVirtualAnchorFocus = (enabled: boolean) => {
     const focusBeforeOpenRef = useRef<Element | null>(null);
 
     const onOpenAutoFocus = () => {
+        focusBeforeOpenRef.current = null;
         if (enabled) {
             focusBeforeOpenRef.current = document.activeElement;
         }
     };
 
+    // Strict Mode runs a close without unmounting, so the saved element is kept until the next open.
     const onCloseAutoFocus = (event: Event) => {
         const focusBeforeOpen = focusBeforeOpenRef.current;
-        focusBeforeOpenRef.current = null;
         if (
             !event.defaultPrevented &&
             focusBeforeOpen instanceof HTMLElement &&

@@ -858,3 +858,51 @@ test('should name a virtual-anchor menu with aria-label', async ({ mount, page }
     await page.getByTestId('focus-origin').dispatchEvent('contextmenu');
     await expect(page.getByRole('menu', { name: 'Text actions' })).toBeVisible();
 });
+
+test('should open at a stable virtual anchor that scrolled while closed', async ({ mount, page }) => {
+    const component = await mount(
+        <DropdownWithScrollingAnchor scrollContainerTestId="scroll-container" anchorTestId="anchor" open={false} />,
+    );
+
+    const content = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    const anchor = page.getByTestId('anchor');
+    await page.getByTestId('scroll-container').evaluate((element) => {
+        element.scrollTop = 50;
+    });
+    await expect.poll(() => anchor.boundingBox().then((box) => box?.y)).toBeLessThan(100);
+
+    await component.update(
+        <DropdownWithScrollingAnchor scrollContainerTestId="scroll-container" anchorTestId="anchor" open />,
+    );
+    await expect(content).toBeVisible();
+    const gapBelowAnchor = async () => {
+        const contentBox = await content.boundingBox();
+        const anchorBox = await anchor.boundingBox();
+        if (!contentBox || !anchorBox) {
+            return null;
+        }
+        return { x: contentBox.x - anchorBox.x, y: contentBox.y - anchorBox.y - anchorBox.height };
+    };
+    await expect.poll(gapBelowAnchor).toEqual({ x: 0, y: 8 });
+});
+
+test('should not request animation frames while closed with forceMount at a virtual anchor', async ({
+    mount,
+    page,
+}) => {
+    await mount(<DropdownWithVirtualAnchor left={100} top={100} width={40} height={20} open={false} forceMount />);
+
+    const frameRequests = await page.evaluate(async () => {
+        let count = 0;
+        const requestAnimationFrame = window.requestAnimationFrame.bind(window);
+        window.requestAnimationFrame = (callback) => {
+            count += 1;
+            return requestAnimationFrame(callback);
+        };
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        window.requestAnimationFrame = requestAnimationFrame;
+        return count;
+    });
+    // A frame loop requests one frame per frame; Floating UI's resize observer may request a single one.
+    expect(frameRequests).toBeLessThanOrEqual(1);
+});

@@ -7,11 +7,13 @@ import { Dropdown } from '../Dropdown';
 type DropdownWithScrollingAnchorProps = {
     scrollContainerTestId: string;
     anchorTestId: string;
+    open?: boolean;
 };
 
 export const DropdownWithScrollingAnchor = ({
     scrollContainerTestId,
     anchorTestId,
+    open = true,
 }: DropdownWithScrollingAnchorProps) => {
     const anchorRef = useRef<HTMLDivElement>(null);
     const virtualAnchor = useMemo(
@@ -26,7 +28,7 @@ export const DropdownWithScrollingAnchor = ({
                     <div ref={anchorRef} data-test-id={anchorTestId} style={{ width: 40, height: 20 }} />
                 </div>
             </div>
-            <Dropdown.Root open virtualAnchor={virtualAnchor}>
+            <Dropdown.Root open={open} virtualAnchor={virtualAnchor}>
                 <Dropdown.Content>
                     <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                 </Dropdown.Content>
