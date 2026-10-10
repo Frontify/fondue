@@ -39,6 +39,7 @@ import {
 } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';
 
+import { announcementOf, type Memory, QUIET, type Seen } from './status';
 import { type RichTextEditorBaseProps } from './types';
 
 // A data manifest feature with one inline atom, which a blank check must count as content.
@@ -225,6 +226,108 @@ const MESSAGES = {
     invalid: 'Not saved: the content was not accepted. Copy it to keep your changes.',
     'incompatible-writer': 'Not saved: this editor is out of date. Reload the page.',
 };
+
+describe('RichTextEditor.Status presence', () => {
+    it('SPEC-rich-text-persistence/AC-048 renders no status for an unmanaged editor', () => {
+        mount();
+
+        expect(screen.queryByTestId('fondue-rich-text-editor-status')).toBeNull();
+    });
+
+    it('SPEC-rich-text-persistence/AC-046 renders the status of a managed editor from mount, before any change', () => {
+        const { service } = serviceOf();
+        mount({ services: { persistence: service } });
+
+        expect(statusText()).toBe('');
+    });
+});
+
+describe('the status announcements as a transition', () => {
+    const seen = (state: Seen['state'], generation = 0): Seen => ({
+        state,
+        generation,
+        key: `RichTextEditor_${state}`,
+    });
+    /** Runs `steps` from `first`, and returns each announced key. */
+    const run = (first: Seen, steps: readonly (readonly [Seen, boolean])[]) => {
+        let memory: Memory = QUIET;
+        let previous = first;
+        return steps.map(([next, committed]) => {
+            const [kept, key] = announcementOf(memory, previous, next, committed);
+            memory = kept;
+            previous = next;
+            return key;
+        });
+    };
+
+    it('SPEC-rich-text-persistence/AC-047 forgets a failure across a replacement that stays clean, then follows the new generation', () => {
+        expect(
+            run(seen('dirty'), [
+                [seen('error'), false],
+                [seen('clean', 1), false],
+                [seen('clean', 1), false],
+                [seen('dirty', 1), false],
+                [seen('saving', 1), false],
+                [seen('clean', 1), false],
+                [seen('dirty', 1), false],
+                [seen('saving', 1), false],
+                [seen('uncertain', 1), false],
+                [seen('saving', 1), false],
+                [seen('clean', 1), false],
+            ]),
+        ).toEqual([
+            'RichTextEditor_error',
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            'RichTextEditor_uncertain',
+            null,
+            'RichTextEditor_clean',
+        ]);
+    });
+
+    it('SPEC-rich-text-persistence/AC-046 announces one outage once across its replays, and a new one after a change', () => {
+        expect(
+            run(seen('saving'), [
+                [seen('uncertain'), false],
+                [seen('saving'), false],
+                [seen('uncertain'), false],
+                [seen('saving'), false],
+                [seen('offline'), false],
+                [seen('saving'), false],
+                [seen('dirty'), false],
+                [seen('saving'), false],
+                [seen('uncertain'), false],
+            ]),
+        ).toEqual([
+            'RichTextEditor_uncertain',
+            null,
+            null,
+            null,
+            'RichTextEditor_offline',
+            null,
+            null,
+            null,
+            'RichTextEditor_uncertain',
+        ]);
+    });
+
+    it('SPEC-rich-text-persistence/AC-047 announces clean only after a commit or a recovery', () => {
+        expect(
+            run(seen('dirty'), [
+                [seen('saving'), false],
+                [seen('clean'), false],
+                [seen('dirty'), false],
+                [seen('saving'), false],
+                [seen('clean'), true],
+            ]),
+        ).toEqual([null, null, null, null, 'RichTextEditor_clean']);
+    });
+});
 
 describe('RichTextEditor with its default parts', () => {
     it('SPEC-rich-text-react/AC-001 renders the root, toolbar, surface and status around one runtime', async () => {
