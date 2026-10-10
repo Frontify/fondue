@@ -11,7 +11,8 @@ export type SelectSingleProps = SelectSharedProps & {
      */
     value?: string | null;
     /**
-     * Callback function that is called when an item is selected
+     * Callback function that is called when an item is selected.
+     * Receives the selected item's value, or `null` when the selection is cleared (e.g. via `<Select.Slot name="clear" />`).
      */
     onSelect?: (selectedValue: string | null) => void;
     /**

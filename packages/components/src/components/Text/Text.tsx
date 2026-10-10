@@ -124,4 +124,4 @@ export const Text = forwardRef(
     props: TextProps<TTag> & { ref?: ForwardedRef<TextElementType<TTag>> },
 ) => ReactElement) & { displayName: string };
 
-Text.displayName = 'FondueText';
+Text.displayName = 'Text';
