@@ -1115,3 +1115,38 @@ test('SPEC-rich-text-react/AC-037 shows no check on a More row of a command that
     await expect(row).toBeVisible();
     await expect(row.locator('[data-test-id^="fondue-icons-check"]')).toHaveCount(0);
 });
+
+test('SPEC-rich-text-react/AC-040 opens More on a click with no pointer or key press before it, as browse mode and voice control send', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe width={60} />);
+    await ready(page);
+
+    await itemOf(page, 'More').dispatchEvent('click');
+
+    await expect(page.getByRole('menu')).toBeVisible();
+});
+
+test.describe('from 320 to 1000 CSS pixels', () => {
+    test.use({ viewport: { width: 320, height: 640 } });
+
+    test('SPEC-rich-text-react/AC-040 moves focus to a toolbar item when a refit removes the focused More', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<ToolbarProbe wide />);
+        await ready(page);
+        await surfaceOf(page).focus();
+        await page.keyboard.press('Alt+F10');
+        await expectFocus(page, 'Bold');
+        await page.keyboard.press('End');
+        await expectFocus(page, 'More');
+
+        await page.setViewportSize({ width: 1000, height: 640 });
+
+        await expect
+            .poll(() => page.evaluate(() => document.activeElement?.hasAttribute('data-rte-toolbar-item')))
+            .toBe(true);
+    });
+});
