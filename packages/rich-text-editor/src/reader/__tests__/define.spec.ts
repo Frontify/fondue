@@ -2,15 +2,24 @@
 
 // @vitest-environment node
 
+import { forwardRef, memo } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import { fixtureLink } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
-import { DefinitionError } from '#/model';
+import { DefinitionError, type Feature } from '#/model';
+import { featureInternals } from '#/model/feature';
 
-import { defineReaderFeature, readerOverrides } from '../define';
+import { declaredOverrides, defineReaderFeature } from '../define';
 
 const renderer = () => null;
+const readerOverrides = (feature: Feature) => {
+    const internals = featureInternals(feature);
+    if (internals === undefined) {
+        return undefined;
+    }
+    return declaredOverrides(internals.declaration);
+};
 
 describe('defineReaderFeature', () => {
     it('runs in the node environment', () => {
@@ -29,6 +38,24 @@ describe('defineReaderFeature', () => {
         expect(failure).toMatchObject({
             code: 'definition.missing-reader',
             details: { feature: 'fixture.link', name: 'mention' },
+        });
+    });
+
+    it.each([
+        ['memo', memo(() => null)],
+        ['forwardRef', forwardRef(() => null)],
+        ['a string', 'div'],
+    ])('rejects %s as an override, since the reader calls overrides as functions', (_, value) => {
+        let failure: unknown;
+        try {
+            defineReaderFeature(fixtureLink(), { link: value as never });
+        } catch (error) {
+            failure = error;
+        }
+        expect(failure).toBeInstanceOf(DefinitionError);
+        expect(failure).toMatchObject({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'fixture.link', path: '/marks/link' },
         });
     });
 

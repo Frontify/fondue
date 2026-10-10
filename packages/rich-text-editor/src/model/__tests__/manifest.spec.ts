@@ -2,11 +2,13 @@
 
 // @vitest-environment node
 
+import Ajv2020 from 'ajv/dist/2020';
 import { describe, expect, it } from 'vitest';
 
 import { core } from '#/features/core/feature';
 import {
     compileContentModel,
+    defineFeature,
     DefinitionError,
     featureFromManifest,
     featureManifestSchema,
@@ -397,5 +399,181 @@ describe('featureFromManifest', () => {
             code: 'definition.invalid-declaration',
             details: { feature: 'acme.pull-quote', path: '/nodes/acme_card/parse/0/attrs/href/value' },
         });
+    });
+
+    it.each([
+        ['prefix', '<b>', '/nodes/acme_pull_quote/markdown/prefix'],
+        ['prefix', '[x](', '/nodes/acme_pull_quote/markdown/prefix'],
+        ['prefix', '\\', '/nodes/acme_pull_quote/markdown/prefix'],
+        ['open', '&lt;', '/marks/acme_glow/markdown/open'],
+        ['close', ')', '/marks/acme_glow/markdown/close'],
+        ['open', 'ab', '/marks/acme_glow/markdown/open'],
+    ])('rejects the Markdown %s form %j, which could open HTML or a link', (form, value, path) => {
+        const manifest = withChange((changed) => {
+            nodeOf(changed).markdown = { prefix: '> ' };
+            changed.marks = {
+                acme_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '==', close: '==' } },
+            };
+            if (form === 'prefix') {
+                nodeOf(changed).markdown = { prefix: value };
+            } else {
+                const marks = changed.marks as Record<string, Record<string, Record<string, string>>>;
+                (marks.acme_glow as Record<string, Record<string, string>>).markdown = {
+                    open: '==',
+                    close: '==',
+                    [form]: value,
+                };
+            }
+        });
+
+        expect(failureOf(() => compile(manifest))).toEqual(invalidAt(path));
+    });
+
+    const withFence = (markdown: Readonly<Record<string, string>>) =>
+        withChange((changed) => {
+            nodeOf(changed).markdown = markdown;
+        });
+
+    it.each(['~~~ ', '``` ', '$$ ', '`', '``', '```~', '~~~$', '$`$'])(
+        'rejects the fence form %j, which would open a code fence or span that the body cannot read back from',
+        (fence) => {
+            expect(failureOf(() => compile(withFence({ fence })))).toEqual(
+                invalidAt('/nodes/acme_pull_quote/markdown/fence'),
+            );
+        },
+    );
+
+    it.each([{}, { prefix: '> ', fence: '$$' }])(
+        'rejects the node Markdown form %j, which needs exactly one of prefix or fence',
+        (markdown) => {
+            expect(failureOf(() => compile(withFence(markdown)))).toEqual(invalidAt('/nodes/acme_pull_quote/markdown'));
+        },
+    );
+
+    it.each(['```', '````', '~~~', '~~~~', '$$', '~~'])('accepts the fence form %j', (fence) => {
+        expect(() => compile(withFence({ fence }))).not.toThrow();
+    });
+
+    it('makes the published schema reject every Markdown form that featureFromManifest rejects, and accept the rest', () => {
+        const validate = new Ajv2020({ strict: false }).compile(featureManifestSchema);
+        const nodeForms = [
+            ...['~~~ ', '``` ', '$$ ', '`', '``', '```~', '~~~$', '$`$', '```', '~~~~', '$$'].map((fence) => ({
+                fence,
+            })),
+            ...['<b>', '[x](', '\\', '> ', '>'].map((prefix) => ({ prefix })),
+            {},
+            { prefix: '> ', fence: '$$' },
+        ];
+        const markForms = [
+            { open: '&lt;', close: '==' },
+            { open: '==', close: ')' },
+            { open: 'ab', close: '==' },
+            { open: '==', close: '==' },
+        ];
+        const manifests = [
+            ...nodeForms.map(withFence),
+            ...markForms.map((markdown) =>
+                withChange((changed) => {
+                    changed.marks = { acme_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown } };
+                }),
+            ),
+        ];
+
+        for (const manifest of manifests) {
+            let accepted = true;
+            try {
+                compile(manifest);
+            } catch {
+                accepted = false;
+            }
+            expect(validate(manifest), JSON.stringify(manifest.nodes ?? manifest.marks)).toBe(accepted);
+        }
+    });
+
+    it('accepts Markdown punctuation forms in a manifest', () => {
+        const manifest = withChange((changed) => {
+            nodeOf(changed).markdown = { prefix: '> ' };
+            changed.marks = {
+                acme_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '==', close: '==' } },
+            };
+        });
+
+        expect(() => compile(manifest)).not.toThrow();
+    });
+
+    it.each([
+        [
+            {
+                marks: {
+                    code_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '<b>', close: '==' } },
+                },
+            },
+            '/marks/code_glow/markdown/open',
+        ],
+        [
+            {
+                nodes: {
+                    code_box: {
+                        group: 'block',
+                        content: 'inline*',
+                        attrs: {},
+                        html: ['div', 0],
+                        parse: [],
+                        markdown: { fence: '~~~ ' },
+                    },
+                },
+            },
+            '/nodes/code_box/markdown/fence',
+        ],
+        [
+            {
+                nodes: {
+                    code_box: {
+                        group: 'block',
+                        content: 'inline*',
+                        attrs: {},
+                        html: ['div', 0],
+                        parse: [],
+                        markdown: {},
+                    },
+                },
+            },
+            '/nodes/code_box/markdown',
+        ],
+    ])('applies the same form rule to a code feature: %j fails at %s', (members, path) => {
+        const codeFeature = defineFeature({
+            id: 'acme.code',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            ...members,
+        } as never);
+
+        expect(failureOf(() => compileContentModel([core(), codeFeature()], { id: 'acme.model', version: 1 }))).toEqual(
+            {
+                code: 'definition.invalid-declaration',
+                details: { feature: 'acme.code', path },
+            },
+        );
+    });
+
+    it('compiles a code feature whose forms pass the form rule', () => {
+        const codeFeature = defineFeature({
+            id: 'acme.code',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            nodes: {
+                code_box: {
+                    group: 'block',
+                    content: 'inline*',
+                    attrs: {},
+                    html: ['div', 0],
+                    parse: [],
+                    markdown: { fence: '~~~' },
+                },
+            },
+            marks: { code_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '==', close: '==' } } },
+        });
+
+        expect(() => compileContentModel([core(), codeFeature()], { id: 'acme.model', version: 1 })).not.toThrow();
     });
 });

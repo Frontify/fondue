@@ -25,7 +25,7 @@ const LAYOUT_ENTRIES = new Set([
     './styles',
 ]);
 
-const EXPORTED_NOW = ['./model'];
+const EXPORTED_NOW = ['./model', './reader'];
 
 const PROSEMIRROR_FLOORS: Record<string, string> = {
     'prosemirror-commands': '1.7.2',
@@ -172,6 +172,53 @@ describe('package manifest and built output', () => {
             const floor = PROSEMIRROR_FLOORS[name] ?? '';
             expect(lower).toMatch(/^\d+\.\d+\.\d+$/);
             expect(floor !== '' && lower.localeCompare(floor, undefined, { numeric: true }) >= 0).toBe(true);
+        }
+    });
+
+    // ProseMirror, Slate and Plate stay out of every headless entry. The reader also stays off a live DOM root.
+    const ENGINE_PACKAGES = /^(?:prosemirror-[\w-]+|slate|slate-[\w-]+|platejs|@platejs\/.+|@udecode\/.+)$/;
+    const DOM_PACKAGES = /^(?:prosemirror-[\w-]+|react-dom\/client)$/;
+    const HEADLESS_FORBIDDEN: Record<string, readonly RegExp[]> = {
+        './model': [ENGINE_PACKAGES],
+        './reader': [ENGINE_PACKAGES, DOM_PACKAGES],
+    };
+
+    const bareName = (id: string): string =>
+        id
+            .split('/')
+            .slice(0, id.startsWith('@') ? 2 : 1)
+            .join('/');
+
+    const reachedBareImports = (entryFile: string): string[] => {
+        const seen = new Set<string>();
+        const bare: string[] = [];
+        const queue = [entryFile];
+        for (let file = queue.pop(); file !== undefined; file = queue.pop()) {
+            if (seen.has(file)) {
+                continue;
+            }
+            seen.add(file);
+            const code = readFileSync(join(outDir, file), 'utf8');
+            for (const match of code.matchAll(/(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g)) {
+                const specifier = match[1] ?? '';
+                const filePart = specifier.split('?')[0] ?? specifier;
+                if (specifier.startsWith('.')) {
+                    queue.push(slash(relative(outDir, join(outDir, dirname(file), filePart))));
+                } else if (specifier !== '') {
+                    bare.push(specifier);
+                }
+            }
+        }
+        return bare;
+    };
+
+    it('keeps engine packages and a live DOM root out of the headless entries', () => {
+        for (const [entry, rules] of Object.entries(HEADLESS_FORBIDDEN)) {
+            const bare = reachedBareImports(`${entry.slice('./'.length)}/index.js`);
+            const forbidden = bare.filter((specifier) =>
+                rules.some((rule) => rule.test(specifier) || rule.test(bareName(specifier))),
+            );
+            expect(forbidden).toEqual([]);
         }
     });
 });

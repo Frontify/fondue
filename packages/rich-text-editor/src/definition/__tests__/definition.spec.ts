@@ -137,6 +137,26 @@ describe('compileDefinition', () => {
         }
     });
 
+    it('keeps a literal STYLE of any case together with a shared style declaration', () => {
+        const banner = defineFeature({
+            id: 'a.banner',
+            version: 1,
+            nodes: { banner: { group: 'block', attrs: {}, html: ['div', { STYLE: 'margin: 0' }, 0], parse: [] } },
+            attributes: {
+                tone: {
+                    on: ['banner'],
+                    value: { type: 'string', nullable: true, default: null },
+                    html: { style: 'color' },
+                },
+            },
+        })();
+        const { schema } = compileDefinition(compileContentModel([core(), banner], options));
+        const node = schema.node('banner', { tone: 'red' });
+        const [, attributes] = node.type.spec.toDOM?.(node) as [string, Record<string, string>];
+
+        expect(attributes).toEqual({ style: 'margin: 0;color: red;' });
+    });
+
     it.each(['inline{1,64}', '(inline{1,8}){1,8}', '((inline{1,4}){1,4}){1,4}'])(
         'compiles %j and builds its schema in under 200 ms',
         (content) => {
