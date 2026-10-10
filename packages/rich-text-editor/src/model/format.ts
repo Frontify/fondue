@@ -74,7 +74,8 @@ export type DiagnosticCode =
     | 'codecs.markdown-unsupported'
     | 'codecs.lossy-output'
     | 'codecs.override-failed'
-    | 'reader.override-failed';
+    | 'reader.override-failed'
+    | 'react.definition-changed';
 
 export interface Diagnostic {
     readonly code: DiagnosticCode;

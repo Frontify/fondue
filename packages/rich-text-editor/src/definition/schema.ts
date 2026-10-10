@@ -1,94 +1,54 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type AttributeSpec, type DOMOutputSpec, type MarkSpec, type NodeSpec, Schema } from 'prosemirror-model';
+import {
+    type AttributeSpec,
+    type DOMOutputSpec,
+    type MarkSpec,
+    type NodeSpec,
+    type ParseRule as EngineParseRule,
+    Schema,
+    type TagParseRule,
+} from 'prosemirror-model';
 
 import {
+    type AttributeDeclaration,
     type AttributeDeclarations,
+    checkHref,
     type ContentModel,
     DefinitionError,
-    type HtmlAttributeValue,
     type HtmlSpec,
     type JsonObject,
+    type ParseAttributeSource,
+    type ParseRule,
 } from '#/model';
 import { attributesOf, compiledModel, type SharedAttribute } from '#/model/compile';
-import { addDeclaration, isPlainCss, isSrcdocAttribute, isStyleAttribute, ownValue } from '#/model/values';
+import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
+import { resolveHtmlSpec } from '#/model/html-spec';
+import { isValidValue, ownValue } from '#/model/values';
 
 type Values = Readonly<Record<string, unknown>>;
 
 const GROUPS = { block: 'block section', section: 'section', inline: 'inline' } as const;
 
-/** An attribute value as HTML attribute text; `undefined` for null, which writes no HTML attribute. */
-const textOf = (value: unknown): string | undefined => {
-    if (typeof value === 'string') {
-        return value;
-    }
-    if (typeof value === 'number' || typeof value === 'boolean') {
-        return String(value);
-    }
-    return value === null || value === undefined ? undefined : JSON.stringify(value);
-};
-
-const readValue = (value: HtmlAttributeValue, values: Values, options: JsonObject) => {
-    if (typeof value === 'string') {
-        return value;
-    }
-    if ('attr' in value) {
-        return textOf(values[value.attr]);
-    }
-    return textOf(options[value.option]);
-};
-
-/** The engine's DOM output for one `HtmlSpec`; a null attribute writes no HTML attribute. */
+/** The engine's DOM output for one `HtmlSpec`, from the layers the reader and codecs resolve too. */
 const render = (
     spec: HtmlSpec,
     values: Values,
     options: JsonObject,
     shared: readonly SharedAttribute[],
 ): DOMOutputSpec => {
-    const [tag, second, third] = spec;
-    const name = typeof tag === 'string' ? tag : ownValue(tag.tags, textOf(values[tag.attr]) ?? '');
-    const attributes =
-        typeof second === 'object' && !Array.isArray(second)
-            ? (second as Readonly<Record<string, HtmlAttributeValue>>)
-            : undefined;
-    const dom: Record<string, string> = {};
-    for (const [attribute, binding] of Object.entries(attributes ?? {})) {
-        const value = readValue(binding, values, options);
-        if (value === undefined) {
-            continue;
-        }
-        if (isSrcdocAttribute(attribute)) {
-            continue;
-        }
-        if (isStyleAttribute(attribute)) {
-            dom.style = value;
-            continue;
-        }
-        dom[attribute] = value;
+    const { layers, content } = resolveHtmlSpec(spec, values, options, shared);
+    let inner: readonly DOMOutputSpec[] = [];
+    if (content) {
+        inner = [0 as unknown as DOMOutputSpec];
     }
-    for (const { name: attribute, declaration } of shared) {
-        const value = textOf(values[attribute]);
-        if (value === undefined || declaration.html === undefined) {
-            continue;
-        }
-        if ('attr' in declaration.html) {
-            if (!isSrcdocAttribute(declaration.html.attr)) {
-                dom[declaration.html.attr] = value;
-            }
-        } else if (isPlainCss(value)) {
-            dom.style = addDeclaration(dom.style, declaration.html.style, value);
-        }
+    for (const { tag, attrs } of [...layers].reverse()) {
+        inner = [[tag, attrs, ...inner]];
     }
-    const content = attributes === undefined ? second : third;
-    const children: DOMOutputSpec[] = [];
-    if (content === 0) {
-        children.push(0 as unknown as DOMOutputSpec);
-    } else if (Array.isArray(content)) {
-        children.push(render(content as HtmlSpec, values, options, []));
-    }
-    return [name ?? 'span', dom, ...children];
+    return inner[0] as DOMOutputSpec;
 };
 
+/** Declared attributes, then `unknownAttributes`, which holds what the vocabulary does not declare. */
 const attributeSpecs = (declarations: AttributeDeclarations) => {
     const specs: Record<string, AttributeSpec> = {};
     for (const [name, declaration] of Object.entries(declarations)) {
@@ -99,7 +59,109 @@ const attributeSpecs = (declarations: AttributeDeclarations) => {
         }
         specs[name] = 'default' in declaration ? { default: declaration.default } : {};
     }
+    specs.unknownAttributes = { default: null };
     return specs;
+};
+
+/** An HTML attribute or CSS value as its declaration types it, or `undefined` when it holds none. */
+const valueOf = (text: string, declaration: AttributeDeclaration): unknown => {
+    if (declaration.type === 'integer' || declaration.type === 'number') {
+        if (text.trim() === '') {
+            return undefined;
+        }
+        return Number(text);
+    }
+    if (declaration.type === 'url') {
+        const href = checkHref(text);
+        if (!href.ok) {
+            return undefined;
+        }
+        return href.href;
+    }
+    return text;
+};
+
+const readSource = (element: HTMLElement, source: ParseAttributeSource, declaration: AttributeDeclaration) => {
+    if ('value' in source) {
+        return source.value;
+    }
+    if ('fromStyle' in source) {
+        const text = element.style.getPropertyValue(source.fromStyle);
+        if (text === '') {
+            return undefined;
+        }
+        return valueOf(text, declaration);
+    }
+    let target: Element | null = element;
+    if (source.child !== undefined) {
+        target = element.querySelector(source.child);
+    }
+    let text: string | null = null;
+    if (target !== null) {
+        text = target.getAttribute(source.from);
+    }
+    if (source.equals !== undefined) {
+        return text === source.equals;
+    }
+    if (declaration.type === 'boolean') {
+        return text !== null;
+    }
+    if (text === null) {
+        return undefined;
+    }
+    return valueOf(text, declaration);
+};
+
+/**
+ * The engine rule of one tag rule, which reads every typed, composed and pasted DOM change. A value that fails its
+ * declaration keeps the default; a rule that cannot fill an attribute with no default does not match.
+ */
+const tagRule = (
+    rule: Extract<ParseRule, { readonly tag: string }>,
+    declarations: AttributeDeclarations,
+    specs: Readonly<Record<string, AttributeSpec>>,
+): TagParseRule => {
+    const sources = rule.attrs ?? {};
+    const getAttrs = (element: HTMLElement) => {
+        const attrs: Record<string, unknown> = {};
+        for (const [name, declaration] of Object.entries(declarations)) {
+            const source = ownValue(sources, name);
+            let value: unknown;
+            if (source !== undefined) {
+                value = readSource(element, source, declaration);
+            }
+            if (value !== undefined && isValidValue(declaration, value)) {
+                attrs[name] = value;
+            } else if (!('default' in (specs[name] ?? {}))) {
+                return false;
+            }
+        }
+        return attrs;
+    };
+    return { tag: rule.tag, getAttrs };
+};
+
+/** Opaque islands keep stored content the model cannot hold as one non-editable atom. */
+const ISLAND_NODES: Readonly<Record<string, NodeSpec>> = {
+    [ISLAND_BLOCK]: {
+        group: GROUPS.block,
+        atom: true,
+        attrs: { original: {}, feature: { default: null }, unknownAttributes: { default: null } },
+        toDOM: () => ['div'],
+    },
+    [ISLAND_INLINE]: {
+        group: GROUPS.inline,
+        inline: true,
+        atom: true,
+        attrs: { original: {}, feature: { default: null }, unknownAttributes: { default: null } },
+        toDOM: () => ['span'],
+    },
+};
+/** Excludes nothing, not even itself, so two different unknown marks share one text. */
+const ISLAND_MARK_SPEC: MarkSpec = {
+    attrs: { original: {}, unknownAttributes: { default: null } },
+    excludes: '',
+    toDOM: () => ['span', 0],
 };
 
 /** Builds the engine schema of a content model: nodes in declared order, marks by rank; an engine error becomes a `DefinitionError`. */
@@ -110,9 +172,17 @@ export const buildSchema = (model: ContentModel): Schema => {
     for (const node of compiled.nodes) {
         const { declaration, shared } = node;
         const options = optionsOf.get(node.featureId) ?? {};
+        const attributes = attributesOf(node);
+        let specs: Record<string, AttributeSpec> = {};
+        // A text node takes no attribute.
+        if (node.name !== 'text') {
+            specs = attributeSpecs(attributes);
+        }
         const spec: NodeSpec = {
-            attrs: attributeSpecs(attributesOf(node)),
+            attrs: specs,
             toDOM: (instance) => render(declaration.html, instance.attrs, options, shared),
+            // The engine reads style rules only for marks.
+            parseDOM: declaration.parse.flatMap((rule) => ('tag' in rule ? [tagRule(rule, attributes, specs)] : [])),
         };
         if (declaration.content !== undefined) {
             spec.content = declaration.content;
@@ -133,12 +203,20 @@ export const buildSchema = (model: ContentModel): Schema => {
         }
         nodes[node.name] = spec;
     }
+    for (const [name, spec] of Object.entries(ISLAND_NODES)) {
+        nodes[name] = spec;
+    }
     const marks: Record<string, MarkSpec> = {};
     for (const { name, featureId, declaration } of compiled.marks) {
         const options = optionsOf.get(featureId) ?? {};
+        const specs = attributeSpecs(declaration.attrs);
         const spec: MarkSpec = {
-            attrs: attributeSpecs(declaration.attrs),
+            attrs: specs,
             toDOM: (instance) => render(declaration.html, instance.attrs, options, []),
+            parseDOM: declaration.parse.map(
+                (rule): EngineParseRule =>
+                    'tag' in rule ? tagRule(rule, declaration.attrs, specs) : { style: `${rule.style}=${rule.value}` },
+            ),
         };
         if (declaration.excludes !== undefined) {
             spec.excludes = declaration.excludes.length === 0 ? '' : [...declaration.excludes, name].join(' ');
@@ -148,6 +226,7 @@ export const buildSchema = (model: ContentModel): Schema => {
         }
         marks[name] = spec;
     }
+    marks[ISLAND_MARK] = ISLAND_MARK_SPEC;
     try {
         return new Schema({ nodes, marks, topNode: 'doc' });
     } catch (error) {

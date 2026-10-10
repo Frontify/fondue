@@ -211,6 +211,74 @@ const codecsFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !=
 
 const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
 
+const TESTING_MESSAGE =
+    '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, and from `features` only conformance and fixtures.';
+
+const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition` and ProseMirror.';
+
+const BRIDGE_MESSAGE = '`bridge` imports `runtime`.';
+
+const REACT_FOLDER_MESSAGE =
+    '`react` imports `model`, `definition`, `runtime`, `persistence`, `bridge`, `reader`, `locales`, `styles` and React.';
+
+const PERSISTENCE_MESSAGE = '`persistence` imports `model` and `runtime`.';
+
+const STYLES_MESSAGE = '`styles` imports nothing in the package and no engine or React.';
+
+const testingAllowed = new Set([
+    'model',
+    'runtime',
+    'persistence',
+    'definition',
+    'reader',
+    'codecs',
+    'locales',
+    'testing',
+    'features',
+]);
+
+const testingFolders = FOLDERS.filter((folder) => !testingAllowed.has(folder));
+
+const runtimeAllowed = new Set(['model', 'definition', 'runtime']);
+
+const runtimeFolders = FOLDERS.filter((folder) => !runtimeAllowed.has(folder));
+
+const bridgeFolders = FOLDERS.filter((folder) => folder !== 'runtime' && folder !== 'bridge');
+
+const reactAllowed = new Set([
+    'model',
+    'definition',
+    'runtime',
+    'persistence',
+    'bridge',
+    'reader',
+    'locales',
+    'styles',
+    'react',
+]);
+
+const reactFolders = FOLDERS.filter((folder) => !reactAllowed.has(folder));
+
+const persistenceFolders = FOLDERS.filter(
+    (folder) => folder !== 'model' && folder !== 'runtime' && folder !== 'persistence',
+);
+
+const stylesFolders = FOLDERS.filter((folder) => folder !== 'styles');
+
+const TESTING_FEATURE_TAILS = [
+    '',
+    '/index',
+    '/registry',
+    '/profiles',
+    '/profiles/**',
+    '/*/feature',
+    '/*/view',
+    '/*/reader',
+    '/*/migration',
+    '/*/styles',
+    '/*/styles/**',
+] as const;
+
 const definitionPatterns = [
     ...aliasPatterns(definitionFolders),
     ...relativePatterns(definitionFolders),
@@ -338,6 +406,57 @@ export default defineConfig({
             {
                 group: [...aliasPatterns(localesFolders), ...relativePatterns(localesFolders), ...ENGINE_PATTERNS],
                 message: LOCALES_MESSAGE,
+            },
+        ]),
+        layerOverride('src/testing/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(testingFolders),
+                    ...relativePatterns(testingFolders),
+                    ...featurePathPatterns(TESTING_FEATURE_TAILS),
+                    ...ENGINE_PATTERNS,
+                ],
+                message: TESTING_MESSAGE,
+            },
+        ]),
+        layerOverride('src/runtime/**/*.{ts,tsx}', [
+            {
+                group: [...aliasPatterns(runtimeFolders), ...relativePatterns(runtimeFolders), ...REACT_PATTERNS],
+                message: RUNTIME_MESSAGE,
+            },
+        ]),
+        layerOverride('src/bridge/**/*.{ts,tsx}', [
+            {
+                group: [...aliasPatterns(bridgeFolders), ...relativePatterns(bridgeFolders), ...ENGINE_PATTERNS],
+                message: BRIDGE_MESSAGE,
+            },
+        ]),
+        layerOverride('src/react/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(reactFolders),
+                    ...relativePatterns(reactFolders),
+                    'react-dom',
+                    'react-dom/**',
+                    ...PROSEMIRROR_PATTERNS,
+                ],
+                message: REACT_FOLDER_MESSAGE,
+            },
+        ]),
+        layerOverride('src/persistence/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(persistenceFolders),
+                    ...relativePatterns(persistenceFolders),
+                    ...ENGINE_PATTERNS,
+                ],
+                message: PERSISTENCE_MESSAGE,
+            },
+        ]),
+        layerOverride('src/styles/**/*.{ts,tsx}', [
+            {
+                group: [...aliasPatterns(stylesFolders), ...relativePatterns(stylesFolders), ...ENGINE_PATTERNS],
+                message: STYLES_MESSAGE,
             },
         ]),
     ],

@@ -16,9 +16,17 @@
     ],
     "type": "module",
     "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        },
         "./model": {
             "types": "./dist/model/index.d.ts",
             "import": "./dist/model/index.js"
+        },
+        "./features": {
+            "types": "./dist/features/index.d.ts",
+            "import": "./dist/features/index.js"
         },
         "./reader": {
             "types": "./dist/reader/index.d.ts",
@@ -27,6 +35,10 @@
         "./codecs": {
             "types": "./dist/codecs/index.d.ts",
             "import": "./dist/codecs/index.js"
+        },
+        "./testing": {
+            "types": "./dist/testing/index.d.ts",
+            "import": "./dist/testing/index.js"
         }
     },
     "publishConfig": {
@@ -49,8 +61,11 @@
     },
     "dependencies": {
         "markdown-it": "^15.0.2",
+        "prosemirror-commands": "^1.7.2",
+        "prosemirror-keymap": "^1.2.3",
         "prosemirror-model": "^1.25.12",
-        "prosemirror-state": "^1.4.4"
+        "prosemirror-state": "^1.4.4",
+        "prosemirror-view": "^1.42.6"
     },
     "devDependencies": {
         "@axe-core/playwright": "^4.13.0",
@@ -91,7 +106,8 @@
         "vitest": "^5.0.0"
     },
     "peerDependencies": {
-        "react": "^18.2.0"
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
     },
     "engines": {
         "node": ">=18"
