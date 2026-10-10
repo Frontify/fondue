@@ -147,8 +147,10 @@ export const More = ({
                             // WebKit sends no click for a touch whose `pointerdown` Radix prevented, so a touch released
                             // over More opens it here; one that slid off opens nothing (SPEC-rich-text-accessibility/AC-026).
                             onPointerUp={(event) => {
+                                // Only a press that began on More opens it, never in a disabled editor (SPEC-rich-text-react/AC-029).
+                                const pressed = pointerRef.current;
                                 pointerRef.current = false;
-                                if (event.pointerType === 'mouse' || openAtPressRef.current) {
+                                if (disabled || !pressed || event.pointerType === 'mouse' || openAtPressRef.current) {
                                     return;
                                 }
                                 const { left, right, top, bottom } = event.currentTarget.getBoundingClientRect();
