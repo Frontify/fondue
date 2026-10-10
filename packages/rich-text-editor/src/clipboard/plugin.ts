@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { dropCursor } from 'prosemirror-dropcursor';
-import { Fragment, Slice } from 'prosemirror-model';
-import { Plugin, PluginKey, Selection, type Transaction } from 'prosemirror-state';
+import { Fragment, type Node, Slice } from 'prosemirror-model';
+import { Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 import { dropPoint } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
 
@@ -10,13 +10,7 @@ import { planOf } from '#/codecs/plan';
 import { writeHtml } from '#/codecs/to-html';
 import { writeText } from '#/codecs/to-text';
 import { type PluginImplementation } from '#/definition';
-import {
-    type ContentModel,
-    defaultIdSource,
-    type ResourceLimits,
-    type RichTextLocale,
-    type TranslationStrings,
-} from '#/model';
+import { type ContentModel, defaultIdSource, type RichTextLocale, type TranslationStrings } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { diagnostic } from '#/model/format';
 import { codecContext } from '#/model/output';
@@ -25,22 +19,22 @@ import { exceedsBytes } from '#/model/read';
 import { closeGroup } from '#/runtime/history';
 import { type EditorRuntime, runtimeOfView } from '#/runtime/runtime';
 
-import { exceededLimit } from './import/limits';
-import { withoutRefused } from './import/policy';
+import { exceededStructure } from './import/limits';
 import {
     type FollowUp,
-    insertSlice,
+    insertAndSelect,
     type Pasted,
     pastePayload,
     type PasteSettings,
     type Payload,
+    prepareSlice,
+    repeatsIdentity,
     withoutIds,
-} from './paste-order';
+} from './paste';
 import { SLICE_TYPE, writeSlice } from './slice';
 
 /** What the host side of a session gives its clipboard handlers. */
 export interface ClipboardSession {
-    readonly limits: ResourceLimits;
     /** The presentation's `sliceContext`, read at each copy and paste. */
     readonly sliceContext: () => string | null;
     /** The locale of the announcements and of the island labels in copied HTML. */
@@ -86,7 +80,7 @@ const contextOf = (session: ClipboardSession) => {
 const shiftHeld = new WeakMap<EditorView, boolean>();
 /** The slice a drag that started in the view carries. */
 const drags = new WeakMap<EditorView, Slice>();
-const followKey = new PluginKey('rte.clipboard');
+const clipboardKey = new PluginKey('rte.clipboard');
 const ANDROID = /Android \d/;
 
 const announce = (
@@ -103,8 +97,8 @@ const reject = ({ runtime }: Connected, reason: string) =>
 
 /** Paste order step 1: a flavor over `maxPasteBytes` stops the paste before anything parses it (SPEC-rich-text-clipboard/AC-001). */
 const rejectsSize = (connected: Connected, payload: Payload) => {
-    const { session } = connected;
-    const max = session.limits.maxPasteBytes;
+    const { runtime, session } = connected;
+    const max = runtime.limits.maxPasteBytes;
     if (![payload.text, payload.html, payload.slice].some((flavor) => exceedsBytes(flavor, max))) {
         return false;
     }
@@ -119,6 +113,10 @@ const payloadOf = (data: DataTransfer): Payload => ({
     slice: data.getData(SLICE_TYPE),
 });
 
+/** The limit a document exceeds: the commit check's, then the depth and cell limits it leaves to paste. */
+const exceededOf = (runtime: EditorRuntime) => (doc: Node) =>
+    runtime.exceededLimit(doc) ?? exceededStructure(doc, runtime.limits);
+
 /** Dispatches a paste or drop, or reports why it was refused with the document and selection unchanged (AC-020, AC-025). */
 const commit = (
     view: EditorView,
@@ -130,13 +128,13 @@ const commit = (
     if (pasted === undefined) {
         return;
     }
-    const exceeded = exceededLimit(tr.doc, connected.session.limits);
+    const exceeded = exceededOf(connected.runtime)(tr.doc);
     if (exceeded !== undefined) {
         reject(connected, exceeded);
         return;
     }
     if (pasted.followUp !== undefined) {
-        tr.setMeta(followKey, pasted.followUp);
+        tr.setMeta(clipboardKey, pasted.followUp);
     }
     const before = view.state.doc;
     view.dispatch(tr.setMeta('uiEvent', event));
@@ -151,7 +149,8 @@ const commit = (
 
 const settingsOf = (model: ContentModel, { runtime, session }: Connected, plain: boolean): PasteSettings => ({
     model,
-    limits: session.limits,
+    limits: runtime.limits,
+    exceeded: exceededOf(runtime),
     policy: runtime.policy.features,
     context: contextOf(session),
     plain,
@@ -260,7 +259,9 @@ const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
     event.preventDefault();
     const { tr } = view.state;
     let pasted: Pasted | null | undefined;
-    if (dragged === undefined) {
+    const copy = copies(view, event);
+    // A copy of an island whose `nodeId` is already here takes the dropped flavors instead, as a paste would (DR-082).
+    if (dragged === undefined || (copy && repeatsIdentity(dragged, tr.doc, false))) {
         // A drop from outside takes the paste order at the block boundary the drop cursor shows (AC-031, AC-046).
         const payload = payloadOf(data);
         if (rejectsSize(connected, payload)) {
@@ -274,15 +275,13 @@ const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
         let slice = dragged;
         const point = dropPoint(tr.doc, at.pos, slice) ?? at.pos;
         // A move pastes nothing new, so the paste policy filters only a copy.
-        if (copies(view, event)) {
-            const copied = new Slice(withoutIds(slice.content), slice.openStart, slice.openEnd);
-            slice = withoutRefused(copied, tr.doc.type.schema, model, connected.runtime.policy.features);
+        if (copy) {
+            slice = prepareSlice(slice, tr.doc.type.schema, model, connected.runtime.policy.features);
         } else {
             tr.deleteSelection();
         }
         const position = tr.mapping.map(point);
-        const range = insertSlice(tr, position, position, slice);
-        tr.setSelection(Selection.near(tr.doc.resolve(range.to), -1));
+        insertAndSelect(tr, position, position, slice);
         pasted = { droppedMedia: 0 };
     }
     if (pasted === null) {
@@ -317,7 +316,7 @@ export const clipboardPlugin =
     (model: ContentModel): PluginImplementation =>
     () =>
         new Plugin({
-            key: followKey,
+            key: clipboardKey,
             props: {
                 handleDOMEvents: {
                     keydown: (view, event) => {
@@ -356,7 +355,7 @@ export const clipboardPlugin =
             },
             appendTransaction: (transactions, _old, state) => {
                 const [root] = transactions;
-                const followUp = root?.getMeta(followKey) as FollowUp | undefined;
+                const followUp = root?.getMeta(clipboardKey) as FollowUp | undefined;
                 if (followUp === undefined || transactions.length !== 1) {
                     return null;
                 }

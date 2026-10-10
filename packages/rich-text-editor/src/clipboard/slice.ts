@@ -175,8 +175,11 @@ export const readSlice = (
         requiredCapabilities: value.requiredCapabilities,
         content: unwrapIslands(islands, { type: 'doc', content: value.content }, '/content'),
     };
+    if (islands.malformed) {
+        return undefined;
+    }
     const { result, tree } = decodeToTree(envelope, model, { limits });
-    if (result.status !== 'editable' || tree === undefined || islands.malformed) {
+    if (result.status !== 'editable' || tree === undefined) {
         return undefined;
     }
     // Each carried island must decode as the same island, so a forged wrapper cannot plant known content (AC-006).
