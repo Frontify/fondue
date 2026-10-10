@@ -358,6 +358,70 @@ test.describe('at 320 CSS pixels', () => {
 test.describe('with a coarse pointer', () => {
     test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
 
+    test('SPEC-rich-text-react/AC-040 SPEC-rich-text-react/AC-095 opens More on a tap', async ({ mount, page }) => {
+        await mount(<ToolbarProbe />);
+        await ready(page);
+
+        await itemOf(page, 'More').tap();
+
+        await expect(page.getByRole('menu')).toBeVisible();
+        await expect(page.getByRole('menuitem', { name: 'Show toolbar on selection only' })).toBeVisible();
+    });
+
+    test('SPEC-rich-text-react/AC-029 opens no More on a tap in a disabled editor', async ({ mount, page }) => {
+        await mount(<ToolbarProbe disabled />);
+        await ready(page);
+
+        await itemOf(page, 'More').tap({ force: true });
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await expect(page.getByRole('menu')).toHaveCount(0);
+    });
+
+    test('SPEC-rich-text-accessibility/AC-026 does not open More when a touch slides off it before release', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<ToolbarProbe />);
+        await ready(page);
+        const box = await boxOf(itemOf(page, 'More'));
+        const client = await page
+            .context()
+            .newCDPSession(page)
+            .catch(() => undefined);
+        test.skip(client === undefined, 'CDP dispatches a sliding touch in Chromium only');
+        const point = (x: number, y: number) => [{ x, y }];
+        // A slide that pans the page ends in `pointercancel`, which never reaches the release handler; without panning,
+        // the release must reach More's own handler, or the test would pass for any release.
+        await itemOf(page, 'More').evaluate((more) => {
+            more.style.touchAction = 'none';
+            const released: string[] = [];
+            Object.assign(window, { moreReleases: released });
+            more.addEventListener('pointerup', (event) => released.push((event as PointerEvent).pointerType));
+        });
+
+        await client?.send('Input.dispatchTouchEvent', {
+            type: 'touchStart',
+            touchPoints: point(box.x + 4, box.y + 4),
+        });
+        await client?.send('Input.dispatchTouchEvent', {
+            type: 'touchMove',
+            touchPoints: point(box.x + 200, box.y + 200),
+        });
+        await client?.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+
+        await expect
+            .poll(() => page.evaluate(() => (window as unknown as { moreReleases: string[] }).moreReleases))
+            .toEqual(['touch']);
+        // Radix opens a menu in effects and frames after the release.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+        await expect(page.getByRole('menu')).toHaveCount(0);
+    });
+
     test('SPEC-rich-text-react/AC-041 gives every toolbar item a 44 by 44 CSS pixel target', async ({
         mount,
         page,
@@ -1068,7 +1132,8 @@ test.describe('from 1000 to 320 CSS pixels', () => {
         const wideNames = await names();
 
         await page.setViewportSize({ width: 320, height: 640 });
-        await expect(itemOf(page, 'More')).toBeVisible();
+        // More shows at every width, so the refit is read from the last heading leaving.
+        await expect(itemOf(page, 'Heading 6')).toHaveCount(0);
         const narrowNames = await names();
         await page.setViewportSize({ width: 1000, height: 640 });
 

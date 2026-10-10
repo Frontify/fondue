@@ -88,6 +88,27 @@ const bottomOf = async (locator: Locator) => {
     return box.bottom;
 };
 const documentHtml = (page: Page) => page.evaluate(() => window.overlayProbe?.html());
+/** The `alt` of the image in the runtime's snapshot document. */
+const imageAlt = (page: Page) =>
+    page.evaluate(() => {
+        const content = window.overlayProbe?.handle.getSnapshot().document.content.content;
+        const image = content?.find((block) => block.type === 'media_image');
+        if (image === undefined) {
+            return undefined;
+        }
+        return image.attrs?.alt;
+    });
+/** Counts the `focusout` events of the surface from now on; read the count with `focusOuts`. */
+const watchFocusOut = (page: Page) =>
+    page.evaluate(() => {
+        const counter = { count: 0 };
+        Object.assign(window, { focusOutCounter: counter });
+        document.querySelector('[role="textbox"]')?.addEventListener('focusout', () => {
+            counter.count += 1;
+        });
+    });
+const focusOuts = (page: Page) =>
+    page.evaluate(() => (window as unknown as { focusOutCounter: { count: number } }).focusOutCounter.count);
 const summary = (page: Page) => page.evaluate(() => window.overlayProbe?.handle.getSummary().selection);
 const paragraph = (text: string) =>
     ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] }) as never;
@@ -128,6 +149,24 @@ test('SPEC-rich-text-react/AC-042 shows the bubble toolbar for a mouse selection
     expect(await focusedName(page)).toBe('Notes');
     await page.keyboard.press('Tab');
     await expectFocus(page, 'After');
+});
+
+test('SPEC-rich-text-react/AC-096 SPEC-rich-text-accessibility/AC-027 runs Bold from a mouse click on the bubble toolbar without the surface losing focus', async ({
+    mount,
+    page,
+}) => {
+    await mount(<OverlayProbe />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    await expect(bubbleOf(page)).toBeVisible();
+    await watchFocusOut(page);
+
+    await bubbleOf(page).getByRole('button', { name: 'Bold' }).click();
+
+    await expect.poll(() => documentHtml(page)).toBe('<p>one <strong>two</strong> three</p>');
+    expect(await focusOuts(page)).toBe(0);
+    expect(await focusedName(page)).toBe('Notes');
 });
 
 test.describe('SPEC-rich-text-react/AC-043 SPEC-rich-text-accessibility/AC-016 the Overlay focus table', () => {
@@ -234,10 +273,13 @@ test.describe('SPEC-rich-text-react/AC-043 SPEC-rich-text-accessibility/AC-016 t
             await page.keyboard.press('Tab');
             expect(await dialogOf(page).evaluate((dialog) => dialog.contains(document.activeElement))).toBe(true);
         }
+        expect(await imageAlt(page)).toBe('');
+        await dialogOf(page).getByRole('textbox', { name: 'Description' }).fill('A dog');
         await page.keyboard.press('Escape');
 
         await expect(dialogOf(page)).toBeHidden();
         await expectFocus(page, 'Alternative text');
+        expect(await imageAlt(page)).toBe('');
     });
 
     test('SPEC-rich-text-react/AC-043 SPEC-rich-text-accessibility/AC-016 context menu: focuses its first item, Escape closes with focus in the surface', async ({
@@ -308,13 +350,83 @@ test('SPEC-rich-text-react/AC-046 keeps the link popover and the mention list us
     );
 });
 
+test('SPEC-rich-text-react/AC-046 leaves the host dialog open when Escape or a click outside closes an editor overlay inside it', async ({
+    mount,
+    page,
+}) => {
+    await mount(
+        <OverlayProbe within="dialog" bubble={false} blocks={[paragraph('one two three'), paragraph('Hi @'), image]} />,
+    );
+    await ready(page);
+    const host = page.getByRole('dialog', { name: 'Host dialog' });
+    const hostChanges = () => page.evaluate(() => window.overlayProbe?.hostDialogChanges);
+    // The corner of the host dialog is outside every editor overlay and inside the host.
+    const clickHostCorner = async () => {
+        const box = await boxOf(host);
+        await page.mouse.click(box.left + 6, box.top + 6);
+    };
+    const overlays = [
+        {
+            name: 'popover',
+            overlay: popoverOf(page),
+            show: async () => {
+                await surfaceOf(page).focus();
+                await select(page, 'two');
+                await open(page, 'link');
+                await expectFocus(page, 'URL');
+            },
+        },
+        {
+            name: 'list',
+            overlay: suggestionsOf(page),
+            show: async () => {
+                await surfaceOf(page).focus();
+                await page.evaluate(() => window.overlayProbe?.select({ text: 'Hi @', from: 4 }));
+                await open(page, 'suggestions');
+            },
+        },
+        {
+            name: 'menu',
+            overlay: menuOf(page),
+            show: async () => {
+                await surfaceOf(page).focus();
+                await select(page, 'two');
+                await page.keyboard.press('Shift+F10');
+                await expectFocus(page, 'Duplicate');
+            },
+        },
+        { name: 'alt-text dialog', overlay: dialogOf(page), show: () => openAltText(page) },
+    ];
+
+    for (const { name, overlay, show } of overlays) {
+        await show();
+        await expect(overlay, `${name} opens`).toBeVisible();
+        await frames(page);
+        await page.keyboard.press('Escape');
+        await expect(overlay, `${name} closes on Escape`).toBeHidden();
+        await frames(page);
+        await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
+        expect(await hostChanges(), `${name} Escape`).toEqual([]);
+        await expect(host).toBeVisible();
+
+        await show();
+        await expect(overlay, `${name} opens again`).toBeVisible();
+        await frames(page);
+        await clickHostCorner();
+        await expect(overlay, `${name} closes on a click outside`).toBeHidden();
+        await frames(page);
+        expect(await hostChanges(), `${name} click outside`).toEqual([]);
+        await expect(host).toBeVisible();
+    }
+});
+
 for (const kind of ['bubble', 'link', 'suggestions', 'menu'] as const) {
     test(`SPEC-rich-text-react/AC-063 keeps the ${kind} overlay on its anchor and inside the viewport while its container scrolls and the viewport resizes`, async ({
         mount,
         page,
     }) => {
         await page.setViewportSize({ width: 800, height: 600 });
-        await mount(<OverlayProbe bubble={kind === 'bubble'} texts={lines(30)} scrollHeight={200} spacer={380} />);
+        await mount(<OverlayProbe bubble={kind === 'bubble'} texts={lines(30)} scrollHeight={200} spacer="45vh" />);
         await ready(page);
         await surfaceOf(page).focus();
         await select(page, 'Line 2');
@@ -346,10 +458,18 @@ for (const kind of ['bubble', 'link', 'suggestions', 'menu'] as const) {
         await measure();
         await page.locator('[data-scroller]').evaluate((scroller) => scroller.scrollTo({ top: 60 }));
         await measure();
-        await page.setViewportSize({ width: 640, height: 560 });
+        const beforeResize = await textBox(page, 'Line 2');
+        await page.setViewportSize({ width: 640, height: 500 });
         await measure();
+        const afterResize = await textBox(page, 'Line 2');
+        // Text above the anchor wraps to more lines, which pushes the anchor down while the overlay is open.
+        await page.evaluate(() => window.overlayProbe?.insert('wrapping words '.repeat(30), 1));
+        await measure();
+        const afterEdit = await textBox(page, 'Line 2');
 
-        expect(placements).toEqual(Array.from({ length: 3 }, () => ({ touches: true, inside: true })));
+        expect(afterResize.top).not.toBe(beforeResize.top);
+        expect(afterEdit.top).toBeGreaterThan(afterResize.top);
+        expect(placements).toEqual(Array.from({ length: 4 }, () => ({ touches: true, inside: true })));
     });
 }
 
@@ -367,6 +487,20 @@ test('SPEC-rich-text-react/AC-064 hides the bubble toolbar and the mention list 
     const scrollTo = (top: number) =>
         page.locator('[data-scroller]').evaluate((scroller, value) => scroller.scrollTo({ top: value }), top);
 
+    // A scroll that clips only part of the selection keeps both overlays.
+    const scroller = page.locator('[data-scroller]');
+    const anchor = await textBox(page, 'Line 3');
+    const scrollerBox = await boxOf(scroller);
+    const current = await scroller.evaluate((element) => element.scrollTop);
+    await scrollTo(current + (anchor.top - scrollerBox.top) + 8);
+    const clipped = await textBox(page, 'Line 3');
+    expect(clipped.top).toBeLessThan(scrollerBox.top);
+    expect(clipped.bottom).toBeGreaterThan(scrollerBox.top);
+    await frames(page);
+    await expect(bubbleOf(page)).toBeVisible();
+    await expect(suggestionsOf(page)).toBeVisible();
+    await scrollTo(current);
+
     await scrollTo(600);
     await expect(bubbleOf(page)).toBeHidden();
     await expect(suggestionsOf(page)).toBeHidden();
@@ -375,6 +509,48 @@ test('SPEC-rich-text-react/AC-064 hides the bubble toolbar and the mention list 
     await expect(bubbleOf(page)).toBeVisible();
     await expect(suggestionsOf(page)).toBeVisible();
     await expect(page.getByRole('option', { name: 'Grace' })).toHaveAttribute('aria-selected', 'true');
+});
+
+test('SPEC-rich-text-react/AC-064 SPEC-rich-text-accessibility/AC-041 keeps focus in the link field of a popover that its container scrolled out of view and back', async ({
+    mount,
+    page,
+}) => {
+    await mount(<OverlayProbe bubble={false} texts={lines(40)} scrollHeight={200} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'Line 3');
+    await open(page, 'link');
+    await expectFocus(page, 'URL');
+    const scrollTo = (top: number) =>
+        page.locator('[data-scroller]').evaluate((scroller, value) => scroller.scrollTo({ top: value }), top);
+
+    await scrollTo(600);
+    await expect(popoverOf(page)).toBeHidden();
+    await scrollTo(0);
+
+    await expect(popoverOf(page)).toBeVisible();
+    await expectFocus(page, 'URL');
+});
+
+test('SPEC-rich-text-accessibility/AC-041 moves the held bubble toolbar by the scroll of its container', async ({
+    mount,
+    page,
+}) => {
+    await mount(<OverlayProbe texts={lines(40)} scrollHeight={200} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'Line 3');
+    await expect(bubbleOf(page)).toBeVisible();
+    await frames(page);
+    await bubbleOf(page).hover({ position: { x: 8, y: 4 } });
+    const start = await boxOf(bubbleOf(page));
+
+    await page.locator('[data-scroller]').evaluate((scroller) => scroller.scrollBy({ top: 20 }));
+    await frames(page);
+
+    await expect(bubbleOf(page)).toBeVisible();
+    const end = await boxOf(bubbleOf(page));
+    expect(end.top).toBeCloseTo(start.top - 20, 0);
 });
 
 test('SPEC-rich-text-react/AC-068 keeps the node chrome of an image, a table and a code block out of the Tab order', async ({
@@ -465,6 +641,58 @@ for (const within of ['shadow', 'iframe'] as const) {
     });
 }
 
+for (const within of ['shadow', 'iframe'] as const) {
+    test(`SPEC-rich-text-react/AC-045 SPEC-rich-text-react/AC-077 renders the tooltip, the More menu, the menu and the alternative text dialog into the editor's overlay root in the same document in ${within === 'shadow' ? 'a shadow root' : 'an iframe'}`, async ({
+        mount,
+        page,
+    }) => {
+        await mount(<OverlayProbe within={within} bubble={false} blocks={[paragraph('one two three'), image]} />);
+        let root = page.locator(':root');
+        if (within === 'iframe') {
+            root = page.frameLocator('iframe').locator(':root');
+        }
+        const surface = root.getByRole('textbox', { name: 'Notes' });
+        await expect(surface).toHaveAttribute('contenteditable', 'true');
+        await expect.poll(() => page.evaluate(() => window.overlayProbe !== undefined)).toBe(true);
+        const placement = (overlay: Locator) =>
+            overlay.first().evaluate((element) => ({
+                inOverlayRoot: element.closest('[data-rte-overlays]') !== null,
+                inEditor: element.closest('[data-test-id="fondue-rich-text-editor"]') !== null,
+                sameDocument: element.ownerDocument === document,
+            }));
+        const expected = { inOverlayRoot: true, inEditor: true, sameDocument: true };
+        const toolbar = root.getByRole('toolbar', { name: 'Text formatting' });
+
+        await surface.focus();
+        await select(page, 'two');
+        await toolbar.locator('[data-rte-toolbar-item]').first().hover();
+        const tooltip = root.getByRole('tooltip');
+        await expect(tooltip.first()).toBeAttached();
+        expect(await placement(tooltip)).toEqual(expected);
+
+        await toolbar.locator('[data-rte-toolbar-more]').click();
+        const more = root.getByRole('menu');
+        await expect(more).toBeVisible();
+        expect(await placement(more)).toEqual(expected);
+        await page.keyboard.press('Escape');
+        await expect(more).toBeHidden();
+
+        await surface.focus();
+        await select(page, 'two');
+        await page.keyboard.press('Shift+F10');
+        const menu = root.getByRole('menu', { name: 'Block actions' });
+        await expect(menu).toBeVisible();
+        expect(await placement(menu)).toEqual(expected);
+        await page.keyboard.press('Escape');
+        await expect(menu).toBeHidden();
+
+        await root.getByRole('button', { name: 'Alternative text' }).click();
+        const dialog = root.getByRole('dialog', { name: 'Alternative text' });
+        await expect(dialog).toBeVisible();
+        expect(await placement(dialog)).toEqual(expected);
+    });
+}
+
 test('SPEC-rich-text-react/AC-083 focuses the surface at the mapped target when the link target was deleted while the popover was open', async ({
     mount,
     page,
@@ -512,7 +740,7 @@ for (const width of [320, 1280] as const) {
                 mount,
                 page,
             }) => {
-                await mount(<OverlayProbe texts={lines(30)} scrollHeight={300} />);
+                await mount(<OverlayProbe texts={lines(30)} scrollHeight={300} spacer="25vh" />);
                 await ready(page);
                 await surfaceOf(page).focus();
                 await select(page, line);
@@ -523,33 +751,60 @@ for (const width of [320, 1280] as const) {
                     Number(line === 'Line 12') * 150,
                 );
                 await expect(bubbleOf(page)).toBeVisible();
-                await page.evaluate(
-                    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
-                );
+                const topsOfAnchor: number[] = [];
+                const expectClear = async () => {
+                    await frames(page);
+                    const toolbar = await boxOf(bubbleOf(page));
+                    const rects = await page.evaluate(() => {
+                        const selection = window.getSelection();
+                        if (selection === null || selection.rangeCount === 0) {
+                            return [];
+                        }
+                        return [...selection.getRangeAt(0).getClientRects()].map(({ top, bottom, left, right }) => ({
+                            top,
+                            bottom,
+                            left,
+                            right,
+                        }));
+                    });
 
-                const toolbar = await boxOf(bubbleOf(page));
-                const rects = await page.evaluate(() => {
-                    const selection = window.getSelection();
-                    if (selection === null || selection.rangeCount === 0) {
-                        return [];
+                    expect(rects.length).toBeGreaterThan(0);
+                    const [first] = rects;
+                    if (first !== undefined) {
+                        topsOfAnchor.push(first.top);
                     }
-                    return [...selection.getRangeAt(0).getClientRects()].map(({ top, bottom, left, right }) => ({
-                        top,
-                        bottom,
-                        left,
-                        right,
-                    }));
-                });
+                    for (const rect of rects) {
+                        const overlaps =
+                            rect.left < toolbar.right &&
+                            rect.right > toolbar.left &&
+                            rect.top < toolbar.bottom &&
+                            rect.bottom > toolbar.top;
+                        expect(overlaps).toBe(false);
+                        // The bubble toolbar sits above the selection.
+                        expect(toolbar.bottom).toBeLessThanOrEqual(rect.top);
+                        // And close to it, so the toolbar follows the selection when the page moves it.
+                        expect(rect.top - toolbar.bottom).toBeLessThanOrEqual(24);
+                    }
+                };
 
-                expect(rects.length).toBeGreaterThan(0);
-                for (const rect of rects) {
-                    const overlaps =
-                        rect.left < toolbar.right &&
-                        rect.right > toolbar.left &&
-                        rect.top < toolbar.bottom &&
-                        rect.bottom > toolbar.top;
-                    expect(overlaps).toBe(false);
+                await expectClear();
+                await page.setViewportSize({ width, height: 520 });
+                await expectClear();
+                if (line === 'Line 12') {
+                    // Text above the selection wraps to more lines, which pushes it down while the toolbar is open.
+                    let repeat = 5;
+                    if (width === 1280) {
+                        repeat = 40;
+                    }
+                    await page.evaluate(
+                        (count) => window.overlayProbe?.insert('wrapping words '.repeat(count), 1),
+                        repeat,
+                    );
+                    await expectClear();
+                    expect(topsOfAnchor[2]).toBeGreaterThan(topsOfAnchor[1] ?? 0);
                 }
+
+                expect(topsOfAnchor[1]).not.toBe(topsOfAnchor[0]);
             });
         }
     });
@@ -570,6 +825,41 @@ test.describe('on a touch device', () => {
             viewport.dispatchEvent(new Event('resize'));
         });
 
+    test('SPEC-rich-text-react/AC-096 docks the toolbar above the on-screen keyboard inside a host dialog, whose transform moves the origin of fixed positioning', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<OverlayProbe within="dialog" bubble={false} />);
+        await ready(page);
+        await surfaceOf(page).tap();
+
+        await openKeyboard(page);
+
+        await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
+    });
+
+    test('SPEC-rich-text-react/AC-096 follows the visual viewport when it pans above the on-screen keyboard', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<OverlayProbe bubble={false} />);
+        await ready(page);
+        await surfaceOf(page).tap();
+        await openKeyboard(page);
+        await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
+
+        await page.evaluate(() => {
+            const viewport = window.visualViewport;
+            if (viewport === null) {
+                return;
+            }
+            Object.defineProperty(viewport, 'offsetTop', { configurable: true, get: () => 100 });
+            viewport.dispatchEvent(new Event('scroll'));
+        });
+
+        await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(450, 0);
+    });
+
     test('SPEC-rich-text-react/AC-096 SPEC-rich-text-accessibility/AC-027 docks the toolbar with undo and redo above the on-screen keyboard, and a tap leaves focus in the surface', async ({
         mount,
         page,
@@ -583,9 +873,11 @@ test.describe('on a touch device', () => {
         await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
         await expect(toolbarOf(page).getByRole('button', { name: 'Undo' })).toBeVisible();
         await expect(toolbarOf(page).getByRole('button', { name: 'Redo' })).toBeVisible();
+        await watchFocusOut(page);
         await toolbarOf(page).getByRole('button', { name: 'Bold' }).tap();
 
         await expect(toolbarOf(page).getByRole('button', { name: 'Bold' })).toHaveAttribute('aria-pressed', 'true');
+        expect(await focusOuts(page)).toBe(0);
         expect(await focusedName(page)).toBe('Notes');
         expect(await documentHtml(page)).toBe('<p>one <strong>two</strong> three</p>');
     });
@@ -622,6 +914,10 @@ test.describe('on a touch device', () => {
         await surfaceOf(page).tap();
         await openKeyboard(page);
         await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
+        const margin = await page.evaluate(() => window.overlayProbe?.bottomMargin());
+        // A visual viewport scroll measures the keyboard again, which must keep the docked toolbar's part.
+        await page.evaluate(() => window.visualViewport?.dispatchEvent(new Event('scroll')));
+        expect(await page.evaluate(() => window.overlayProbe?.bottomMargin())).toBe(margin);
 
         await page.evaluate(() => {
             const paragraph = [...document.querySelectorAll('[role="textbox"] p')].find(
@@ -648,6 +944,26 @@ test.describe('on a touch device', () => {
         expect(clear).toBe(true);
     });
 
+    test('SPEC-rich-text-accessibility/AC-024 drops the docked toolbar from the bottom scroll margin when bubble mode replaces it', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<OverlayProbe bubble={false} toolbar={TOUCH_TOOLBAR} />);
+        await ready(page);
+        await surfaceOf(page).tap();
+        await openKeyboard(page);
+        await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
+        const docked = await page.evaluate(() => window.overlayProbe?.bottomMargin());
+
+        await toolbarOf(page).getByRole('button', { name: 'More' }).tap();
+        await page.getByRole('menuitem', { name: 'Show toolbar on selection only' }).tap();
+        await expect(toolbarOf(page)).toHaveCount(0);
+
+        // The keyboard's 350 px and ProseMirror's own 5 px margin stay.
+        await expect.poll(() => page.evaluate(() => window.overlayProbe?.bottomMargin())).toBe(355);
+        expect(docked).toBeGreaterThan(355);
+    });
+
     test('SPEC-rich-text-react/AC-041 gives every bubble toolbar item a 44 by 44 CSS pixel target', async ({
         mount,
         page,
@@ -672,6 +988,7 @@ test.describe('on a touch device', () => {
         await mount(<OverlayProbe bubble={false} blocks={[paragraph('one'), image]} />);
         await ready(page);
         await openAltText(page);
+        expect(await imageAlt(page)).toBe('');
         await dialogOf(page).getByRole('textbox', { name: 'Description' }).fill('A dog');
         const close = dialogOf(page).getByRole('button', { name: 'Close' });
         await expect(close).toBeVisible();
@@ -681,6 +998,7 @@ test.describe('on a touch device', () => {
         await expect(dialogOf(page)).toBeHidden();
         await expectFocus(page, 'Alternative text');
         expect(await documentHtml(page)).not.toContain('A dog');
+        expect(await imageAlt(page)).toBe('');
     });
 });
 
@@ -881,4 +1199,58 @@ test('SPEC-rich-text-accessibility/AC-014 keeps a toolbar tooltip open while the
 
     await expect(tooltip).toBeHidden();
     expect(whileOver).toBe(true);
+});
+
+for (const [where, blocks, name] of [
+    ['the toolbar', undefined, 'Bold'],
+    ['node chrome', [paragraph('one'), codeBlock], 'plain'],
+] as const) {
+    test(`SPEC-rich-text-react/AC-035 SPEC-rich-text-react/AC-046 returns to the surface on Escape from ${where} inside a host dialog, which stays open`, async ({
+        mount,
+        page,
+    }) => {
+        let probe = <OverlayProbe within="dialog" bubble={false} />;
+        if (blocks !== undefined) {
+            probe = <OverlayProbe within="dialog" bubble={false} blocks={blocks} />;
+        }
+        await mount(probe);
+        await ready(page);
+        await surfaceOf(page).focus();
+        if (blocks !== undefined) {
+            await select(page, 'code');
+        }
+        await page.keyboard.press('Alt+F10');
+        await expectFocus(page, name);
+        if (blocks === undefined) {
+            // The first Escape closes the tooltip that focus opened, once Radix has made its layer the highest.
+            await expect(page.getByRole('tooltip')).toBeVisible();
+            await frames(page);
+            await page.keyboard.press('Escape');
+            await expect(page.getByRole('tooltip')).toHaveCount(0);
+            await frames(page);
+        }
+
+        await page.keyboard.press('Escape');
+
+        await expectFocus(page, 'Notes');
+        expect(await page.evaluate(() => window.overlayProbe?.hostDialogChanges)).toEqual([]);
+    });
+}
+
+test('SPEC-rich-text-react/AC-083 returns focus to the opener after a rerender gave the open overlay a new onOpenChange', async ({
+    mount,
+    page,
+}) => {
+    await mount(<OverlayProbe bubble={false} />);
+    await ready(page);
+    const opener = page.getByRole('button', { name: 'Open link' });
+    await opener.focus();
+    await page.keyboard.press('Enter');
+    await expectFocus(page, 'URL');
+    await page.evaluate(() => window.overlayProbe?.rerender());
+
+    await page.keyboard.press('Escape');
+
+    await expect(popoverOf(page)).toBeHidden();
+    await expectFocus(page, 'Open link');
 });

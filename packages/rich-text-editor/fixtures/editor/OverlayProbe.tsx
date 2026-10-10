@@ -38,11 +38,8 @@ const model = compileContentModel(
     { id: 'test.overlays', version: 1 },
 );
 const definition = defineEditor({ id: 'test.overlays', model });
-/** Undo and redo, then the toolbar stand-ins, as the touch toolbars start (SPEC-rich-text-react, Default toolbars). */
-export const TOUCH_TOOLBAR: ReactPresentation['toolbar'] = [
-    ['fixture.history.undo', 'fixture.history.redo'],
-    ...TOOLBAR,
-];
+/** Each `onOpenChange` of the host dialog, which no test expects. */
+const hostDialogChanges: boolean[] = [];
 
 export type OverlayKind = 'link' | 'suggestions' | 'menu';
 
@@ -55,12 +52,17 @@ declare global {
             readonly open: (kind: OverlayKind) => void;
             /** Removes the node with `nodeId`, as another author's change would. */
             readonly remove: (nodeId: string) => void;
+            /** Renders the probe again, which gives each overlay a new `onOpenChange`. */
+            readonly rerender: () => void;
+            /** The bottom of the scroll margin the caret keeps clear of the keyboard and a docked toolbar. */
+            readonly bottomMargin: () => number | undefined;
             /** Inserts `text` at document position `at`, away from the selection. */
             readonly insert: (text: string, at: number) => void;
             /** The HTML of the runtime's document, without the kept selection. */
             readonly html: () => string;
             /** The modes `onToolbarModeChange` reported. */
             readonly modes: ToolbarMode[];
+            readonly hostDialogChanges: boolean[];
         };
     }
 }
@@ -110,6 +112,7 @@ export const OverlayProbe = ({
     spacer = 0,
     width,
     hostContainer = false,
+    hostButtons = true,
 }: {
     readonly blocks?: readonly ContentNodeJSON[];
     readonly texts?: readonly string[];
@@ -122,15 +125,18 @@ export const OverlayProbe = ({
     /** Puts the editor in a scrolling container of this height. */
     readonly scrollHeight?: number;
     /** The height of host content above the editor, which moves it towards the viewport's bottom edge. */
-    readonly spacer?: number;
+    readonly spacer?: number | string;
     readonly width?: number;
     /** Passes a host element as `portalContainer`. */
     readonly hostContainer?: boolean;
+    /** Puts host buttons before and after the editor. */
+    readonly hostButtons?: boolean;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const [open, setOpen] = useState<OverlayKind | null>(null);
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
     const [modes] = useState<ToolbarMode[]>([]);
+    const [, setRenders] = useState(0);
     const presentation = useMemo(
         () => defineReactPresentation({ toolbar, ...(toolbarShortcut === undefined ? {} : { toolbarShortcut }) }),
         [toolbar, toolbarShortcut],
@@ -163,6 +169,14 @@ export const OverlayProbe = ({
                 select: (target) => setSelection(handle, target),
                 open: (kind) => setOpen(kind),
                 remove: (nodeId) => runtimeOf(handle)?.nodeActions(nodeId).remove(),
+                rerender: () => setRenders((renders) => renders + 1),
+                bottomMargin: () => {
+                    const margin = runtimeOf(handle)?.view?.someProp('scrollMargin');
+                    if (typeof margin === 'object') {
+                        return margin.bottom;
+                    }
+                    return margin;
+                },
                 insert: (text, at) => {
                     const view = runtimeOf(handle)?.view;
                     view?.dispatch(view.state.tr.insertText(text, at));
@@ -180,6 +194,7 @@ export const OverlayProbe = ({
                     return copy.innerHTML;
                 },
                 modes,
+                hostDialogChanges,
             };
         }, 10);
         return () => clearInterval(timer);
@@ -223,26 +238,33 @@ export const OverlayProbe = ({
     );
     if (scrollHeight !== undefined) {
         editor = (
-            <div data-scroller="" style={{ blockSize: scrollHeight, overflowY: 'auto' }}>
+            // Scroll anchoring would keep the content in view where it is when text above it changes.
+            <div data-scroller="" style={{ blockSize: scrollHeight, overflowY: 'auto', overflowAnchor: 'none' }}>
                 {editor}
             </div>
         );
     }
-    let body = (
-        <>
-            {/* An explicit tabindex, since WebKit leaves buttons out of the Tab order by default. */}
-            <button type="button" tabIndex={0}>
-                Before
-            </button>
-            {editor}
-            <button type="button" tabIndex={0}>
-                After
-            </button>
-        </>
-    );
+    let body = editor;
+    if (hostButtons) {
+        body = (
+            <>
+                {/* An explicit tabindex, since WebKit leaves buttons out of the Tab order by default. */}
+                <button type="button" tabIndex={0}>
+                    Before
+                </button>
+                <button type="button" tabIndex={0} onClick={() => setOpen('link')}>
+                    Open link
+                </button>
+                {editor}
+                <button type="button" tabIndex={0}>
+                    After
+                </button>
+            </>
+        );
+    }
     if (within === 'dialog') {
         body = (
-            <Dialog.Root modal open>
+            <Dialog.Root modal open onOpenChange={(next) => hostDialogChanges.push(next)}>
                 <Dialog.Content>
                     <Dialog.Header>
                         <Dialog.Title>Host dialog</Dialog.Title>

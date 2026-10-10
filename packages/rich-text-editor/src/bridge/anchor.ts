@@ -7,6 +7,8 @@ export interface SelectionAnchor {
     getBoundingClientRect(): DOMRect;
     /** Holds the rectangle where it is beside the surface, so content changes next to it leave the overlay in place. */
     hold(held: boolean): void;
+    /** Whether a scrolling ancestor clips the whole rectangle; never for an anchor no overlay has read yet, as a dialog's. */
+    clipped(): boolean;
 }
 
 /** The parent of a node, from a shadow root to its host. */
@@ -76,16 +78,11 @@ const selectionRect = (view: EditorView): DOMRect => {
     return range.getBoundingClientRect();
 };
 
-/**
- * Anchors an overlay to the selection, and hides `content` while a scrolling ancestor clips the whole rectangle,
- * keeping its state (SPEC-rich-text-react/AC-063, AC-064).
- */
-export const createSelectionAnchor = (
-    view: () => EditorView | undefined,
-    content: () => HTMLElement | null,
-): SelectionAnchor => {
+/** Anchors an overlay to the selection and tells when a scrolling ancestor clips it (SPEC-rich-text-react/AC-063, AC-064). */
+export const createSelectionAnchor = (view: () => EditorView | undefined): SelectionAnchor => {
     // The held rectangle's offset from the surface, which scrolls and resizes with it (SPEC-rich-text-accessibility/AC-041).
     let held: { readonly x: number; readonly y: number; readonly width: number; readonly height: number } | undefined;
+    let read = false;
     const rectOf = (current: EditorView): DOMRect => {
         if (held === undefined) {
             return selectionRect(current);
@@ -99,16 +96,12 @@ export const createSelectionAnchor = (
             if (current === undefined) {
                 return new DOMRect();
             }
-            const rect = rectOf(current);
-            const element = content();
-            if (element !== null) {
-                let visibility = '';
-                if (clipped(current.dom, rect)) {
-                    visibility = 'hidden';
-                }
-                element.style.visibility = visibility;
-            }
-            return rect;
+            read = true;
+            return rectOf(current);
+        },
+        clipped: () => {
+            const current = view();
+            return read && current !== undefined && clipped(current.dom, rectOf(current));
         },
         hold: (next) => {
             const current = view();
