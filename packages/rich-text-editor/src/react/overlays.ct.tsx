@@ -943,3 +943,21 @@ test('SPEC-rich-text-react/AC-055 runs no animation while the toolbars, overlays
         'node chrome and dialog': [],
     });
 });
+
+test('SPEC-rich-text-react/AC-033 moves through the bubble toolbar in visual order under an rtl theme', async ({
+    mount,
+    page,
+}) => {
+    await mount(<OverlayProbe dir="rtl" />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    await expect(bubbleOf(page)).toBeVisible();
+
+    await expect(bubbleOf(page)).toHaveAttribute('dir', 'rtl');
+    await page.keyboard.press('Alt+F10');
+    await expectFocus(page, 'Bold');
+    // Italic sits to the left of Bold under rtl.
+    await page.keyboard.press('ArrowLeft');
+    await expectFocus(page, 'Italic');
+});

@@ -42,7 +42,7 @@ describe('RichTextEditor on the server', () => {
         const html = renderToString(createElement(RichTextEditor, { 'aria-label': 'Notes', definition, defaultValue }));
 
         expect(html).toBe(
-            '<div data-test-id="fondue-rich-text-editor" aria-busy="true"><div class="fondue-rte-content" role="textbox" aria-multiline="true" aria-label="Notes" lang="en-US" dir="ltr" spellcheck="true" data-test-id="fondue-rich-text-editor-surface" data-rte-surface=""></div><div aria-live="polite" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap" data-test-id="fondue-rich-text-editor-announcer"></div><div style="position:relative;z-index:2" data-rte-overlays=""></div></div>',
+            '<div lang="en-US" data-test-id="fondue-rich-text-editor" aria-busy="true"><div class="fondue-rte-content" role="textbox" aria-multiline="true" aria-label="Notes" lang="en-US" dir="ltr" spellcheck="true" data-test-id="fondue-rich-text-editor-surface" data-rte-surface=""></div><div aria-live="polite" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap" data-test-id="fondue-rich-text-editor-announcer"></div><div style="position:relative;z-index:2" data-rte-overlays=""></div></div>',
         );
         expect(probeRuntimes().views).toEqual([]);
     });

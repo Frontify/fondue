@@ -110,6 +110,7 @@ export const OverlayProbe = ({
     spacer = 0,
     width,
     hostContainer = false,
+    dir = 'ltr',
 }: {
     readonly blocks?: readonly ContentNodeJSON[];
     readonly texts?: readonly string[];
@@ -126,6 +127,7 @@ export const OverlayProbe = ({
     readonly width?: number;
     /** Passes a host element as `portalContainer`. */
     readonly hostContainer?: boolean;
+    readonly dir?: 'ltr' | 'rtl';
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const [open, setOpen] = useState<OverlayKind | null>(null);
@@ -256,7 +258,7 @@ export const OverlayProbe = ({
         body = <Embedded into={within}>{body}</Embedded>;
     }
     return (
-        <ThemeProvider theme="light">
+        <ThemeProvider theme="light" dir={dir}>
             <div style={{ blockSize: spacer }} />
             <div style={{ inlineSize: width }}>{body}</div>
             <div ref={setContainer} data-host-container="" />

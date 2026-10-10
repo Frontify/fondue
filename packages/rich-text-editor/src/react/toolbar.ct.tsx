@@ -1362,3 +1362,31 @@ test('SPEC-rich-text-react/AC-104 mirrors a nested list and a quote under rtl, t
     expect(rtl).toEqual({ insets: { left: '-2px', right: '-32px' }, indentedFrom: 'right' });
     await expect(surfaceOf(page).locator('blockquote')).toHaveCSS('direction', 'rtl');
 });
+
+for (const forcedColors of ['none', 'active'] as const) {
+    test(`SPEC-rich-text-accessibility/AC-006 SPEC-rich-text-react/AC-054 shows a pressed node chrome button with the toolbar's bar, forced colours ${forcedColors}`, async ({
+        mount,
+        page,
+    }, testInfo) => {
+        await page.emulateMedia({ forcedColors });
+        await mount(<ToolbarProbe blocks={[codeBlock('let a')]} />);
+        await ready(page);
+        const button = surfaceOf(page).locator('[data-rte-chrome] button');
+        await expect(button).toHaveAttribute('aria-pressed', 'false');
+        const unpressed = await barOf(page, button);
+
+        await button.click();
+        await expect(button).toHaveAttribute('aria-pressed', 'true');
+        await page.mouse.move(0, 0);
+        await surfaceOf(page).focus();
+        const pressed = await barOf(page, button);
+        await testInfo.attach(`pressed node chrome button, forced colours ${forcedColors}`, {
+            body: pressed,
+            contentType: 'image/png',
+        });
+
+        await expect(button).toHaveCSS('border-block-end-style', 'solid');
+        await expect(button).toHaveCSS('border-block-end-width', '2px');
+        expect(pressed.equals(unpressed)).toBe(false);
+    });
+}

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { compile } from 'sass';
 import { describe, expect, it } from 'vitest';
 
-import { type CssRule, literalColors, parseCss, scanCss } from './check-css';
+import { type CssRule, inForcedColors, literalColors, parseCss, scanCss } from './check-css';
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 const fixture = (name: string) => read(`../fixtures/css/${name}`);
@@ -94,6 +94,12 @@ describe('check-css', () => {
             'color-functions.css:1 caret-color sets the literal colour oklch(',
             'color-functions.css:1 text-decoration-color sets the literal colour color(',
             'color-functions.css:1 column-rule-color sets the literal colour Canvas',
+        ]);
+    });
+
+    it('SPEC-rich-text-react/AC-052 SPEC-rich-text-react/AC-054 passes a system colour in a forced colours rule and fails on it elsewhere', () => {
+        expect(scanCss('forced-colors.css', fixture('forced-colors.css'))).toEqual([
+            'forced-colors.css:7 color sets the literal colour GrayText',
         ]);
     });
 
@@ -204,7 +210,9 @@ describe('content stylesheet', () => {
     it('SPEC-rich-text-react/AC-092 sets no literal colour, no physical offset and no animation outside reduced motion no-preference', () => {
         const faults = content.rules.flatMap(({ selectors, declarations, atRules }) =>
             declarations.flatMap(([property, value]) => {
-                const found: string[] = literalColors(value).map((color) => `${selectors[0]} ${property}: ${color}`);
+                const found: string[] = literalColors(value, inForcedColors(atRules)).map(
+                    (color) => `${selectors[0]} ${property}: ${color}`,
+                );
                 if (PHYSICAL_OFFSETS[property] !== undefined) {
                     found.push(`${selectors[0]} ${property}`);
                 }

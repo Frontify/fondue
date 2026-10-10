@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AnnouncerContext } from '#/bridge/announcer';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
+import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
 import { compileContentModel, type ContentNodeJSON, featureFromManifest, type JsonValue } from '#/model';
 import { createTestEnvironment, pressKey, setSelection, typeText } from '#/testing';
@@ -527,6 +528,42 @@ describe('toolbar theming and localization', () => {
             'lang',
             'en-US',
         );
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-061 gives node chrome inside an rtl Hebrew document the theme lang and dir', async () => {
+        const stored = loaded(para(text('שלום')), codeBlock('let a'));
+        const document = {
+            ...stored.document,
+            content: { ...stored.document.content, attrs: { lang: 'he', dir: 'rtl' } },
+        };
+        const { environment, unmount } = mount({ defaultValue: { ...stored, document } }, TOOLBAR, {
+            lang: 'en-US',
+            dir: 'ltr',
+        });
+        await act(() => environment.flushMicrotasks());
+
+        const slot = screen.getByRole('textbox', { name: 'Notes' }).querySelector('[data-rte-chrome]');
+        if (slot === null) {
+            throw new Error('no node chrome');
+        }
+        expect([slot.getAttribute('lang'), slot.getAttribute('dir')]).toEqual(['en-US', 'ltr']);
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-033 gives the node chrome toolbar the theme direction under rtl', async () => {
+        const { environment, unmount } = mount({ defaultValue: loaded(codeBlock('let a')) }, TOOLBAR, { dir: 'rtl' });
+        await act(() => environment.flushMicrotasks());
+
+        expect(screen.getByRole('toolbar', { name: 'plain' })).toHaveAttribute('dir', 'rtl');
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-061 marks the root with the language of the shown strings, while the surface keeps the theme one', () => {
+        const { unmount } = mount({ locale: deDE }, TOOLBAR, { lang: 'en-US', dir: 'ltr' });
+
+        expect(screen.getByTestId('fondue-rich-text-editor')).toHaveAttribute('lang', 'de-DE');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'en-US');
         unmount();
     });
 });

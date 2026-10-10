@@ -4,7 +4,10 @@ import { defineNodeView, NodeChromeButton, NodeChromeToolbar, useRichTextNodeVie
 
 import { fixtureCodeBlock } from './feature';
 
-/** A language button in the node chrome toolbar, as the code block's language menu opens from (SPEC-rich-text-react, Overlay focus). */
+/**
+ * A language button in the node chrome toolbar, as the code block's language menu opens from (SPEC-rich-text-react,
+ * Overlay focus), pressed once the language is TypeScript.
+ */
 const CodeBlockChrome = () => {
     const { attrs, update } = useRichTextNodeView();
     let language = '';
@@ -13,7 +16,11 @@ const CodeBlockChrome = () => {
     }
     return (
         <NodeChromeToolbar aria-label={language}>
-            <NodeChromeButton label={language} onClick={() => update({ language: 'typescript' })} />
+            <NodeChromeButton
+                label={language}
+                pressed={language === 'typescript'}
+                onClick={() => update({ language: 'typescript' })}
+            />
         </NodeChromeToolbar>
     );
 };

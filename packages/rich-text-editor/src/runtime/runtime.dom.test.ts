@@ -4087,4 +4087,33 @@ describe('platform key bindings', () => {
         );
         expect(firstType(session)).toBe('paragraph');
     });
+
+    it('SPEC-rich-text/AC-064 runs the mac: binding over a plain binding of the same key on an Apple platform', () => {
+        const both = featureFromManifest({
+            ...pullQuoteManifest,
+            commands: {
+                ...pullQuoteManifest.commands,
+                'acme.pull-quote.unset': { capability: 'setBlock', node: 'paragraph' },
+            },
+            keys: { 'mac:Mod-Alt-q': 'acme.pull-quote.set', 'Mod-Alt-q': 'acme.pull-quote.unset' },
+        });
+        const mixed = compileContentModel([core(), both()], { id: 'test.bold', version: 1 });
+        const modAltQ = () =>
+            new KeyboardEvent('keydown', {
+                key: 'q',
+                altKey: true,
+                metaKey: modIsMeta,
+                ctrlKey: !modIsMeta,
+                bubbles: true,
+            });
+        const platform = vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+        const session = start(stored(para(words('ab'))), { model: mixed });
+        setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+
+        session.view.dom.dispatchEvent(modAltQ());
+        expect(firstType(session)).toBe('acme_pull_quote');
+        platform.mockReturnValue('Win32');
+        session.view.dom.dispatchEvent(modAltQ());
+        expect(firstType(session)).toBe('paragraph');
+    });
 });
