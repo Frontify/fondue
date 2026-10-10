@@ -243,4 +243,42 @@ describe('input rules', () => {
 
         expect(typed).toEqual(['paragraph “x”', 'paragraph «x»']);
     });
+
+    it('SPEC-rich-text-editing/AC-044 closes a quote typed after a closing inner quote, in en, pt and es', () => {
+        const model = textModel(textFeatures(['typography.quotes']));
+        const typed = ['en', 'pt', 'es'].map((lang) =>
+            typedIn(`"He said 'yes'"`, { model, blocks: [{ type: 'paragraph', attrs: { lang }, content: [] }] }),
+        );
+
+        expect(typed).toEqual(['paragraph “He said ‘yes’”', 'paragraph “He said ‘yes’”', 'paragraph “He said ‘yes’”']);
+    });
+
+    it('SPEC-rich-text-editing/AC-044 closes an open inner quote after a letter in de, fr and ja, and keeps the apostrophe in a word', () => {
+        const model = textModel(textFeatures(['typography.quotes']));
+        const typedAs = (lang: string, value: string) =>
+            typedIn(value, { model, blocks: [{ type: 'paragraph', attrs: { lang }, content: [] }] });
+
+        expect([
+            typedAs('de', `"Er sagte 'ja'"`),
+            typedAs('fr', `"Il dit 'oui'"`),
+            typedAs('ja', `"彼は 'はい'"`),
+            typedAs('de', "Geht's"),
+            typedAs('fr', `"l'eau"`),
+        ]).toEqual([
+            'paragraph „Er sagte ‚ja‘“',
+            'paragraph «Il dit «oui»»',
+            'paragraph 「彼は 『はい』」',
+            'paragraph Geht’s',
+            'paragraph «l’eau»',
+        ]);
+    });
+
+    it('SPEC-rich-text-editing/AC-102 keeps <!-- and <-- as typed while typography.dashes is on', () => {
+        const model = textModel(textFeatures(['typography.dashes']));
+
+        expect([typedIn('<!-- x', { model }), typedIn('a <-- b', { model })]).toEqual([
+            'paragraph <!-- x',
+            'paragraph a <-- b',
+        ]);
+    });
 });

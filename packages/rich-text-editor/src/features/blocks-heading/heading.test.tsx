@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { act, fireEvent, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { TextSelection } from 'prosemirror-state';
+import { describe, expect, it, vi } from 'vitest';
 
 import { vocabularyAlign, vocabularyStyles } from '#/features/__fixtures__/vocabulary';
 import { type ContentNodeJSON } from '#/model';
@@ -178,5 +179,26 @@ describe('blocks.heading', () => {
         });
 
         expect(getByRole('button', { name: 'Quote' })).toBeTruthy();
+    });
+
+    it('SPEC-rich-text-editing/AC-013 makes no heading of a refused level from paragraphs selected around a stored one', () => {
+        const platform = vi.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
+        const mounted = mountText({
+            blocks: [para(text('C')), headingOf(5, text('A')), para(text('D'))],
+            policy: { creatableHeadingLevels: [1, 2, 3, 4] },
+        });
+        const { view } = mounted;
+        const { doc } = view.state;
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(doc, 1, doc.content.size - 1)));
+        view.dom.dispatchEvent(
+            new KeyboardEvent('keydown', { key: '5', ctrlKey: true, shiftKey: true, bubbles: true, cancelable: true }),
+        );
+        platform.mockRestore();
+
+        expect(mounted.handle.getSnapshot().document.content.content?.map((block) => block.type)).toEqual([
+            'paragraph',
+            'heading',
+            'paragraph',
+        ]);
     });
 });
