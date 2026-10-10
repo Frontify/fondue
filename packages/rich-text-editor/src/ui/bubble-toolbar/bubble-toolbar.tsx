@@ -106,6 +106,8 @@ export const BubbleToolbar = ({
         <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={anchor}>
             <Flyout.Content
                 ref={overlay.contentRef}
+                // Radix gives the content `role="dialog"`, which `Flyout` passes this name to (SPEC-rich-text-accessibility/AC-021).
+                aria-label={label}
                 container={overlay.container}
                 side="top"
                 align="center"
