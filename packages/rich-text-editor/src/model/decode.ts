@@ -5,7 +5,6 @@ import { checkContent, type TreeNode, vocabularyOf } from './content';
 import { type ContentModel } from './declarations';
 import { encodeTree } from './encode';
 import { checkEnvelope } from './envelope';
-import { defaultIdSource } from './environment';
 import { pointer } from './errors';
 import {
     type DecodeOptions,
@@ -17,6 +16,7 @@ import {
     type RichTextDocument,
 } from './format';
 import { runMigrations } from './migrate';
+import { randomId } from './random-id';
 import { exceedsBytes, readInput } from './read';
 
 const limitsOf = (given: Partial<ResourceLimits> | undefined): ResourceLimits => {
@@ -64,7 +64,7 @@ export const decodeToTree = (input: unknown, model: ContentModel, options: Decod
         return blocked(envelope.reason, [envelope.diagnostic]);
     }
     const warnings = capabilityWarnings(envelope.document, model);
-    const migrated = runMigrations(envelope.document, model, options.ids ?? defaultIdSource, limits);
+    const migrated = runMigrations(envelope.document, model, options.generateId ?? randomId, limits);
     const document = migrated.document;
     if (document === null) {
         return blocked('unsupported', [...warnings, ...migrated.diagnostics]);

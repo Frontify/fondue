@@ -10,9 +10,9 @@ import {
     type ModelRef,
 } from './declarations';
 import { checkEnvelope, findMisshapenCapabilities, isRoot } from './envelope';
-import { defaultIdSource, type IdSource } from './environment';
 import { defaultLimits, type Diagnostic, diagnostic, type ResourceLimits, type RichTextDocument } from './format';
 import { canonicalJson, hashDocument, sha256 } from './hash';
+import { randomId } from './random-id';
 import { readInput } from './read';
 
 export interface MigrationManifest {
@@ -80,7 +80,7 @@ const merge = (into: Capabilities, from: Capabilities, add = true): Capabilities
 export const runMigrations = (
     document: RichTextDocument,
     model: ContentModel,
-    ids: IdSource,
+    generateId: () => string,
     limits: ResourceLimits,
 ): Migrated => {
     const compiled = compiledModel(model);
@@ -118,7 +118,7 @@ export const runMigrations = (
             return outcome(null);
         };
         try {
-            const result = step.migrate(current, { ids });
+            const result = step.migrate(current, { generateId });
             if (result.status === 'unsupported') {
                 diagnostics.push(...result.diagnostics);
                 return result.diagnostics.length > 0 ? outcome(null) : block();
@@ -182,7 +182,7 @@ const packageVersionOf = (): string => {
 };
 
 /**
- * Runs the model's registered migrations on a stored document, in memory, with new `nodeId`s from `ids`, and
+ * Runs the model's registered migrations on a stored document, in memory, with new `nodeId`s from `generateId`, and
  * reports the result with a manifest that holds only hashes, step IDs, the target model, the package version and
  * diagnostic counts. A document at the target model version or a higher one, with no installed capability at a
  * lower version, comes back unchanged as `current`.
@@ -190,12 +190,12 @@ const packageVersionOf = (): string => {
 export const migrateDocument = (
     document: RichTextDocument,
     model: ContentModel,
-    options: { readonly ids?: IdSource } = {},
+    options: { readonly generateId?: () => string } = {},
 ): MigrationResult => {
     const read = readInput(document, defaultLimits);
     const checked = read.ok ? checkEnvelope(read.value, model) : read;
     const migrated: Migrated = checked.ok
-        ? runMigrations(checked.document, model, options.ids ?? defaultIdSource, defaultLimits)
+        ? runMigrations(checked.document, model, options.generateId ?? randomId, defaultLimits)
         : {
               document: null,
               diagnostics: [checked.diagnostic],
