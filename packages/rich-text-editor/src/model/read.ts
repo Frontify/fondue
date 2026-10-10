@@ -378,9 +378,9 @@ const visit = (walk: Walk, value: unknown, place: Place): ReadFailure | undefine
 };
 
 /**
- * Decode order step 1: one pre-order walk that stops at the first value that is not JSON or exceeds a
+ * One pre-order walk that stops at the first value that is not JSON or exceeds a
  * limit, counted by position before any shape check. A string counts its UTF-8 bytes and must parse.
- * A parsed value comes back as a plain-data copy of what the walk read, so no host object reaches later steps.
+ * A parsed value comes back as a plain-data copy of what the walk read, so no host object reaches a later check.
  */
 export const readInput = (input: unknown, limits: ResourceLimits): ReadResult => {
     let value = input;
