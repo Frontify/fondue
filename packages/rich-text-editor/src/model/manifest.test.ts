@@ -65,11 +65,32 @@ describe('featureFromManifest', () => {
     it('SPEC-rich-text/AC-064 compiles the acme.pull-quote manifest like a code feature', () => {
         const model = compile(pullQuote());
         expect(model.manifest.nodes).toEqual(['doc', 'paragraph', 'text', 'hard_break', 'acme_pull_quote']);
-        expect(model.manifest.commands).toEqual(['text.insert', 'history.undo', 'history.redo', 'acme.pull-quote.set']);
-        expect(model.manifest.plugins).toEqual(['history', 'keymap:core', 'keymap:acme.pull-quote', 'input-rules']);
+        expect(model.manifest.commands).toEqual([
+            'paragraph.set',
+            'text.insert',
+            'hard-break.insert',
+            'history.undo',
+            'history.redo',
+            'block.move.up',
+            'block.move.down',
+            'acme.pull-quote.set',
+        ]);
+        expect(model.manifest.plugins).toEqual([
+            'history',
+            'keymap:core',
+            'keymap:acme.pull-quote',
+            'input-rules',
+            'base-keys',
+        ]);
         expect(model.manifest.keys).toEqual([
+            { key: 'mac:Mod-Alt-0', command: 'paragraph.set', payload: null },
+            { key: 'other:Ctrl-Shift-0', command: 'paragraph.set', payload: null },
             { key: 'Mod-z', command: 'history.undo', payload: null },
             { key: 'Mod-Shift-z', command: 'history.redo', payload: null },
+            { key: 'other:Ctrl-y', command: 'history.redo', payload: null },
+            { key: 'Shift-Enter', command: 'hard-break.insert', payload: null },
+            { key: 'Mod-Alt-ArrowUp', command: 'block.move.up', payload: null },
+            { key: 'Mod-Alt-ArrowDown', command: 'block.move.down', payload: null },
             { key: 'mac:Mod-Alt-q', command: 'acme.pull-quote.set', payload: null },
             { key: 'other:Ctrl-Shift-q', command: 'acme.pull-quote.set', payload: null },
         ]);
@@ -330,9 +351,13 @@ describe('featureFromManifest', () => {
                 manifest.toolbar = [];
             });
         expect(compile(card('/x', '/y')).manifest.commands).toEqual([
+            'paragraph.set',
             'text.insert',
+            'hard-break.insert',
             'history.undo',
             'history.redo',
+            'block.move.up',
+            'block.move.down',
             'acme.card.insert',
         ]);
         expect(failureOf(() => compile(card('/x', 'javascript:alert(1)')))).toEqual({

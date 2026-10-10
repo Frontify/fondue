@@ -54,7 +54,7 @@ export const DROP_CURSOR_PLUGIN: PluginDescriptor = { id: 'drop-cursor', phase: 
 /** One plugin key, one instance: a plugin several capabilities contribute sits at its first contributor's position. */
 export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonly PluginDescriptor[]>>> = {
     history: [HISTORY_PLUGIN],
-    // `core` inserts text with it, so every model takes paste, copy and drop handling.
+    // `core` always declares `text.insert`, so its capability carries the base keys, paste, copy and drop into every model.
     insertText: [BASE_KEYS_PLUGIN, CLIPBOARD_PLUGIN, DROP_CURSOR_PLUGIN],
     wrapIn: [CONTAINER_KEYS_PLUGIN],
 };
@@ -99,14 +99,22 @@ export const setBlock = <const P extends PayloadDeclaration | undefined = undefi
         options === undefined ? undefined : options.payload,
     );
 
-/** Inserts `node` at the selection, or adds or removes it as an optional child. */
+/**
+ * Inserts `node` at the selection, or adds or removes it as an optional child; with `newlineInCode`, a code block
+ * gets a newline in its place, as a hard break does.
+ */
 export const insertNode = <const P extends PayloadDeclaration | undefined = undefined>(
     node: string,
-    options?: { readonly attrs?: JsonObject; readonly child?: 'add' | 'remove' | 'toggle'; readonly payload?: P },
+    options?: {
+        readonly attrs?: JsonObject;
+        readonly child?: 'add' | 'remove' | 'toggle';
+        readonly newlineInCode?: boolean;
+        readonly payload?: P;
+    },
 ): CommandDefinition<PayloadOf<P>> =>
     command(
         'insertNode',
-        { node, attrs: options?.attrs, child: options?.child },
+        { node, attrs: options?.attrs, child: options?.child, newlineInCode: options?.newlineInCode },
         options === undefined ? undefined : options.payload,
     );
 
@@ -116,13 +124,15 @@ export const history = (action: 'undo' | 'redo'): CommandDefinition => command('
 export const insertText = (): CommandDefinition<{ readonly text: string }> =>
     command('insertText', {}, { fields: { text: { type: 'string' } } });
 
-/** Toggles `mark` with `attrs` on the selection, or in the stored marks at a caret. */
-export const toggleMark = (mark: string, attrs?: JsonObject): CommandDefinition =>
-    command('toggleMark', { mark, attrs });
+/**
+ * Toggles `mark` with `attrs` on the selection, or in the stored marks at a caret; adding it removes the `removes`
+ * mark from the range when the model installs that one, as subscript and superscript do to each other.
+ */
+export const toggleMark = (mark: string, attrs?: JsonObject, removes?: string): CommandDefinition =>
+    command('toggleMark', { mark, attrs, removes });
 
-/** Wraps the selected blocks in `node`; with `toggle`, lifts them out when they are already inside one. */
-export const wrapIn = (node: string, options?: { readonly toggle?: boolean }): CommandDefinition =>
-    command('wrapIn', { node, toggle: options?.toggle });
+/** Wraps the selected blocks in `node`, or lifts them out when they are already inside one. */
+export const wrapIn = (node: string): CommandDefinition => command('wrapIn', { node });
 
 /** Moves the block at the selection up or down among its siblings, as one undo step. */
 export const block = (action: 'move-up' | 'move-down'): CommandDefinition => command('block', { action });

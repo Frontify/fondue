@@ -3,9 +3,13 @@
 exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest of the core profile stand-in 1`] = `
 {
   "commands": [
+    "paragraph.set",
     "text.insert",
+    "hard-break.insert",
     "history.undo",
     "history.redo",
+    "block.move.up",
+    "block.move.down",
   ],
   "features": [
     {
@@ -16,6 +20,16 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
   ],
   "keys": [
     {
+      "command": "paragraph.set",
+      "key": "mac:Mod-Alt-0",
+      "payload": null,
+    },
+    {
+      "command": "paragraph.set",
+      "key": "other:Ctrl-Shift-0",
+      "payload": null,
+    },
+    {
       "command": "history.undo",
       "key": "Mod-z",
       "payload": null,
@@ -23,6 +37,26 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
     {
       "command": "history.redo",
       "key": "Mod-Shift-z",
+      "payload": null,
+    },
+    {
+      "command": "history.redo",
+      "key": "other:Ctrl-y",
+      "payload": null,
+    },
+    {
+      "command": "hard-break.insert",
+      "key": "Shift-Enter",
+      "payload": null,
+    },
+    {
+      "command": "block.move.up",
+      "key": "Mod-Alt-ArrowUp",
+      "payload": null,
+    },
+    {
+      "command": "block.move.down",
+      "key": "Mod-Alt-ArrowDown",
       "payload": null,
     },
   ],
@@ -40,6 +74,7 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
   "plugins": [
     "history",
     "keymap:core",
+    "base-keys",
   ],
 }
 `;
@@ -47,9 +82,13 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
 exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest of the document profile stand-in 1`] = `
 {
   "commands": [
+    "paragraph.set",
     "text.insert",
+    "hard-break.insert",
     "history.undo",
     "history.redo",
+    "block.move.up",
+    "block.move.down",
     "fixture.undo",
     "fixture.paragraph.set",
     "fixture.heading.set",
@@ -96,6 +135,16 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
   ],
   "keys": [
     {
+      "command": "paragraph.set",
+      "key": "mac:Mod-Alt-0",
+      "payload": null,
+    },
+    {
+      "command": "paragraph.set",
+      "key": "other:Ctrl-Shift-0",
+      "payload": null,
+    },
+    {
       "command": "history.undo",
       "key": "Mod-z",
       "payload": null,
@@ -103,6 +152,26 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
     {
       "command": "history.redo",
       "key": "Mod-Shift-z",
+      "payload": null,
+    },
+    {
+      "command": "history.redo",
+      "key": "other:Ctrl-y",
+      "payload": null,
+    },
+    {
+      "command": "hard-break.insert",
+      "key": "Shift-Enter",
+      "payload": null,
+    },
+    {
+      "command": "block.move.up",
+      "key": "Mod-Alt-ArrowUp",
+      "payload": null,
+    },
+    {
+      "command": "block.move.down",
+      "key": "Mod-Alt-ArrowDown",
       "payload": null,
     },
     {
@@ -147,6 +216,7 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
     "keymap:fixture.history",
     "keymap:fixture.bold",
     "keymap:fixture.heading",
+    "base-keys",
   ],
 }
 `;

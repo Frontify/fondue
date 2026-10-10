@@ -26,7 +26,6 @@ import {
     useRichTextFormField,
 } from '../../src/index';
 import { compileContentModel, type ContentModel, type ContentNodeJSON } from '../../src/model';
-import { boldRules } from '../../src/react/playground.stories';
 import { RichTextReader } from '../../src/reader';
 import { type EditorRuntime, runtimeOf } from '../../src/runtime/runtime';
 import {
@@ -36,13 +35,10 @@ import {
     type TestEnvironment,
 } from '../../src/testing';
 
-const model = compileContentModel(
-    [core(), bold(), fixtureLink(), fixtureHeadingSet(), boldRules(), fixtureChromeViews()],
-    {
-        id: 'test.ct',
-        version: 1,
-    },
-);
+const model = compileContentModel([core(), bold(), fixtureLink(), fixtureHeadingSet(), fixtureChromeViews()], {
+    id: 'test.ct',
+    version: 1,
+});
 // Adds a `pre` code block and the heading input rule to the CT model (SPEC-rich-text-react/AC-066, AC-092).
 const inputRulesModel = compileContentModel(
     [core(), bold(), fixtureItalic(), fixtureLink(), fixtureHeadingSet(), fixtureInputRules(), fixtureChromeViews()],

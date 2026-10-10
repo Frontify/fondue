@@ -5,8 +5,11 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 
 import { type CompiledFeature } from '#/model/compile';
 
-/** A command as a line-start rule runs it, with the payload of its marker. */
-type RuleCommand = (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => boolean;
+/** A command as a line-start rule runs it, with the payload of its marker, and whether its target is active there. */
+interface RuleCommand {
+    readonly run: (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => boolean;
+    readonly active: (state: EditorState, payload?: unknown) => boolean | 'mixed';
+}
 
 interface RuleOf {
     readonly id: string;
@@ -16,7 +19,7 @@ interface RuleOf {
 export interface LineStartRule extends RuleOf {
     readonly kind: 'line-start';
     readonly marker: string;
-    readonly run: RuleCommand;
+    readonly command: RuleCommand;
     readonly payload: unknown;
 }
 export interface MarkDelimiterRule extends RuleOf {
@@ -83,15 +86,16 @@ export const compileInputRules = (
             if (rule.kind !== 'line-start') {
                 continue;
             }
-            const run = commandOf(rule.command);
-            if (run === undefined) {
+            const command = commandOf(rule.command);
+            if (command === undefined) {
                 continue;
             }
             for (const marker of rule.markers) {
                 if (typeof marker === 'string') {
-                    lines.push({ id, featureId, kind: rule.kind, marker, run, payload: undefined });
+                    lines.push({ id, featureId, kind: rule.kind, marker, command, payload: undefined });
                 } else {
-                    lines.push({ id, featureId, kind: rule.kind, marker: marker.marker, run, payload: marker.payload });
+                    const { payload } = marker;
+                    lines.push({ id, featureId, kind: rule.kind, marker: marker.marker, command, payload });
                 }
             }
         }

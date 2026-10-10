@@ -24,7 +24,7 @@ import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 import { createTestEnvironment } from '#/testing';
 
 /** A valid payload for each shipped command that declares one, so the case runs it for real. */
-const PAYLOADS: Readonly<Record<string, unknown>> = { 'text.insert': { text: 'a' } };
+const PAYLOADS: Readonly<Record<string, unknown>> = { 'text.insert': { text: 'a' }, 'heading.set': { level: 2 } };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [
     'fetch',
@@ -65,7 +65,7 @@ const fixturesOf = (features: readonly Feature[]) =>
 
 /**
  * Registers one case per command of `features`, which runs it over every fixture of those features, selected
- * whole and at a caret, while the network and timers fail: the command returns a boolean, never a promise, and
+ * whole and at a caret at either end, while the network and timers fail: the command returns a boolean, never a promise, and
  * dispatches at most one transaction before it returns (SPEC-rich-text-runtime/AC-038).
  */
 export const commandCases = (features: readonly Feature[]): void => {
@@ -92,6 +92,7 @@ export const commandCases = (features: readonly Feature[]): void => {
                 return [
                     state.apply(state.tr.setSelection(whole)),
                     state.apply(state.tr.setSelection(Selection.atEnd(doc))),
+                    state.apply(state.tr.setSelection(Selection.atStart(doc))),
                 ];
             });
             // An edit, and the same edit undone, so the history commands have a step to undo and one to redo.

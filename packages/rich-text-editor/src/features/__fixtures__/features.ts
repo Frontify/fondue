@@ -116,11 +116,12 @@ export const fixtureTable = defineFeature({
     },
 });
 
-/** Stands in for `mentions`: an inline atom with a `nodeId`. */
+/** Stands in for `mentions`: an inline atom with a `nodeId`, and a command that inserts one. */
 export const fixtureMention = defineFeature({
     id: 'fixture.mention',
     version: 1,
     requires: requiresCore,
+    commands: { 'fixture.mention.insert': insertNode('mention') },
     nodes: {
         mention: {
             group: 'inline',
@@ -332,4 +333,15 @@ export const fixtureToolbar = defineFeature({
             icon: 'IconArrowRoundClockwise',
         },
     ],
+});
+
+/** Stands in for `media.image`'s figure: a block whose content is an image leaf outside the `block` group. */
+export const fixtureFigure = defineFeature({
+    id: 'fixture.figure',
+    version: 1,
+    requires: requiresCore,
+    nodes: {
+        figure: { group: 'block', content: 'figure_image', attrs: { nodeId }, html: ['figure', 0], parse: [] },
+        figure_image: { atom: true, attrs: { nodeId }, html: ['img'], parse: [] },
+    },
 });
