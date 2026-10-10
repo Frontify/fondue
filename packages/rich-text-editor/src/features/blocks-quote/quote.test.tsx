@@ -116,4 +116,26 @@ describe('blocks.quote', () => {
 
         expect(reached).toEqual([false, false, false, true]);
     });
+
+    it('SPEC-rich-text-editing/AC-037 keeps > and a space typed inside a quote as text, never lifting the quote', () => {
+        const mounted = mountText({ model, blocks: [{ type: 'blockquote', content: [para(text('Quoted'))] }] });
+        setSelection(mounted.handle, { text: 'Quoted', from: 0, to: 0 });
+        typeText(mounted.handle, '> ');
+
+        expect(blocksOf(mounted)).toEqual([{ type: 'blockquote', content: [para(text('> Quoted'))] }]);
+    });
+
+    it('SPEC-rich-text-editing/AC-069 moves a quote whose only paragraph holds the caret', () => {
+        const quote = { type: 'blockquote', content: [para(text('Quoted'))] };
+        const mounted = mountText({ model, blocks: [para(text('one')), quote, para(text('two'))] });
+        setSelection(mounted.handle, { text: 'Quoted', from: 1, to: 1 });
+
+        const up = mounted.handle.execute('block.move.up').status;
+        const moved = blocksOf(mounted);
+        const down = mounted.handle.execute('block.move.down').status;
+
+        expect([up, down]).toEqual(['applied', 'applied']);
+        expect(moved).toEqual([quote, para(text('one')), para(text('two'))]);
+        expect(blocksOf(mounted)).toEqual([para(text('one')), quote, para(text('two'))]);
+    });
 });

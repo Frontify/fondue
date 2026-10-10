@@ -150,4 +150,33 @@ describe('input rules', () => {
             'paragraph a – b',
         ]);
     });
+
+    it('SPEC-rich-text-editing/AC-102 keeps a longer dash run and an arrow while typography.dashes is on', () => {
+        const model = textModel(textFeatures(['typography.dashes']));
+
+        expect([typedIn('a --- b', { model }), typedIn('a --> b', { model })]).toEqual([
+            'paragraph a --- b',
+            'paragraph a --> b',
+        ]);
+    });
+
+    it('SPEC-rich-text-editing/AC-044 opens a quote typed right after a line break', () => {
+        const mounted = mountText({ model: textModel(textFeatures(['typography.quotes'])) });
+        typeText(mounted.handle, 'a');
+        mounted.view.dom.dispatchEvent(
+            new KeyboardEvent('keydown', { key: 'Enter', shiftKey: true, bubbles: true, cancelable: true }),
+        );
+        typeText(mounted.handle, '"x"');
+
+        expect(shapeOf(mounted)).toBe('paragraph a hard_break “x”');
+    });
+
+    it('SPEC-rich-text-editing/AC-044 quotes Portuguese with “ ” and European Portuguese with « »', () => {
+        const model = textModel(textFeatures(['typography.quotes']));
+        const typed = ['pt', 'pt-PT'].map((lang) =>
+            typedIn('"x"', { model, blocks: [{ type: 'paragraph', attrs: { lang }, content: [] }] }),
+        );
+
+        expect(typed).toEqual(['paragraph “x”', 'paragraph «x»']);
+    });
 });

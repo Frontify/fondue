@@ -62,4 +62,15 @@ describe('hard-break.insert', () => {
             },
         ]);
     });
+
+    it('SPEC-rich-text-runtime/AC-072 inserts no hard_break with Shift+Enter in a read-only editor', () => {
+        const mounted = mountText({ model, blocks: [para(text('ab'))] });
+        setSelection(mounted.handle, { text: 'ab', from: 1, to: 1 });
+        mounted.handle.setMode('readonly');
+
+        pressShiftEnter(mounted);
+
+        expect(mounted.changes).toEqual([]);
+        expect(firstOf(mounted)).toEqual(para(text('ab')));
+    });
 });

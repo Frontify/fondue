@@ -112,4 +112,43 @@ describe('blocks.heading', () => {
             content: [text('Kept '), text('bold', 'bold'), text(' text')],
         });
     });
+
+    it('SPEC-rich-text-editing/AC-013 returns not-allowed for a level outside creatableHeadingLevels in a heading of that level', () => {
+        const { handle } = mountText({
+            blocks: [headingOf(1, text('Title'))],
+            policy: { creatableHeadingLevels: [2, 3] },
+        });
+        setSelection(handle, { text: 'Title', from: 1, to: 1 });
+
+        expect(handle.execute('heading.set', { level: 1 })).toEqual({ status: 'rejected', code: 'not-allowed' });
+    });
+
+    it('SPEC-rich-text-editing/AC-014 splits a stored h1 with Enter, and undoes its deletion, with level 1 not creatable', () => {
+        const blocks = [para(text('Before')), headingOf(1, text('Title')), para(text('After'))];
+        const policy = { creatableHeadingLevels: [2] as const };
+        const levelsOf = (mounted: ReturnType<typeof mountText>) =>
+            mounted.handle.getSnapshot().document.content.content?.map((block) => block.attrs?.level);
+        const split = mountText({ blocks, policy });
+        setSelection(split.handle, { text: 'Title', from: 2, to: 2 });
+        split.view.dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+        const deleted = mountText({ blocks, policy });
+        const { doc } = deleted.view.state;
+        const heading = doc.child(1);
+        const from = doc.child(0).nodeSize;
+        deleted.view.dispatch(deleted.view.state.tr.delete(from, from + heading.nodeSize));
+        const undone = deleted.handle.execute('history.undo');
+
+        expect(levelsOf(split)).toEqual([undefined, 1, 1, undefined]);
+        expect(undone.status).toBe('applied');
+        expect(levelsOf(deleted)).toEqual([undefined, 1, undefined]);
+    });
+
+    it('SPEC-rich-text-editing/AC-014 names Quote in the text style picker for a paragraph inside a quote', () => {
+        const { getByRole } = mountText({
+            blocks: [{ type: 'blockquote', content: [para(text('Quoted'))] }],
+            toolbar: [['text-style']],
+        });
+
+        expect(getByRole('button', { name: 'Quote' })).toBeTruthy();
+    });
 });
