@@ -1,7 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type ResolvedPos } from 'prosemirror-model';
-import { type Command, type EditorState, Plugin, PluginKey, TextSelection, type Transaction } from 'prosemirror-state';
+import {
+    type Command,
+    type EditorState,
+    Plugin,
+    PluginKey,
+    Selection,
+    TextSelection,
+    type Transaction,
+} from 'prosemirror-state';
 import { ReplaceStep } from 'prosemirror-transform';
 
 import {
@@ -108,7 +116,36 @@ const holdsCode = (state: EditorState, from: number, to: number) => {
     return code;
 };
 
-/** Runs the rule's command, then removes its marker, so the block keeps the text after the caret. */
+/**
+ * Removes the marker from the block start to the caret, then runs the rule's command on the block, as one transaction.
+ * A command that rebuilds the block, as a list conversion rebuilds the whole list, would map a later removal to nothing.
+ */
+const withoutMarker = (
+    command: BlockRule['command'],
+    state: EditorState,
+    $cursor: ResolvedPos,
+    payload: unknown,
+): Transaction | null => {
+    const transaction = state.tr.delete($cursor.start(), $cursor.pos);
+    const dispatched: Transaction[] = [];
+    if (!command.run(state.apply(transaction), (built) => dispatched.push(built), payload)) {
+        return null;
+    }
+    const [built] = dispatched;
+    if (built === undefined) {
+        return null;
+    }
+    for (const step of built.steps) {
+        transaction.step(step);
+    }
+    transaction.setSelection(Selection.fromJSON(transaction.doc, built.selection.toJSON()));
+    if (built.scrolledIntoView) {
+        transaction.scrollIntoView();
+    }
+    return transaction;
+};
+
+/** Runs the rule's command without its marker, so the block keeps the text after the caret. */
 const lineStart = (rule: LineStartRule, state: EditorState, $cursor: ResolvedPos, before: string) => {
     if (before !== `${rule.marker} ` || before.length !== $cursor.parentOffset) {
         return null;
@@ -117,15 +154,7 @@ const lineStart = (rule: LineStartRule, state: EditorState, $cursor: ResolvedPos
     if (holdsCode(state, $cursor.start(), $cursor.pos) || rule.command.active(state, rule.payload) === true) {
         return null;
     }
-    const dispatched: Transaction[] = [];
-    if (!rule.command.run(state, (transaction) => dispatched.push(transaction), rule.payload)) {
-        return null;
-    }
-    const [built] = dispatched;
-    if (built === undefined) {
-        return null;
-    }
-    return built.delete(built.mapping.map($cursor.start()), built.mapping.map($cursor.pos));
+    return withoutMarker(rule.command, state, $cursor, rule.payload);
 };
 
 /** The payload that a block rule's named groups fill, each converted by its field's declaration. */
@@ -161,15 +190,7 @@ const blockStart = (rule: BlockRule, state: EditorState, $cursor: ResolvedPos, b
     ) {
         return null;
     }
-    const dispatched: Transaction[] = [];
-    if (!rule.command.run(state, (transaction) => dispatched.push(transaction), payload)) {
-        return null;
-    }
-    const [built] = dispatched;
-    if (built === undefined) {
-        return null;
-    }
-    return built.delete(built.mapping.map($cursor.start()), built.mapping.map($cursor.pos));
+    return withoutMarker(rule.command, state, $cursor, payload);
 };
 
 /**
