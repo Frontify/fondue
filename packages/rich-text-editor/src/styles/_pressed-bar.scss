@@ -1,0 +1,14 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// SPEC-rich-text-accessibility/AC-006: a pressed toggle shows a bar under its icon as well as a fill, dashed when mixed.
+@mixin pressed-bar {
+    &[aria-pressed='true'],
+    &[aria-pressed='mixed'] {
+        border-block-end: 2px solid currentcolor;
+        background-color: var(--color-container-secondary-default);
+    }
+
+    &[aria-pressed='mixed'] {
+        border-block-end-style: dashed;
+    }
+}

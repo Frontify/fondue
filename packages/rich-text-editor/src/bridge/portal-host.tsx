@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useFondueTheme } from '@frontify/fondue-components';
 import { Component, memo, type ReactNode, useMemo, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -58,6 +59,17 @@ class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
 const Chrome = memo(({ entry, context }: { readonly entry: PortalEntry; readonly context: NodeViewContext }) => {
     const { component: View, slot } = entry;
     const state = useMemo(() => ({ ...entry.state, context }), [entry.state, context]);
+    const theme = useFondueTheme();
+    const lang = context.locale.lang ?? theme.lang;
+    // The slot sits in the surface, which takes the document's lang and dir; chrome keeps its strings' and the theme's (SPEC-rich-text-react/AC-061).
+    useClientLayoutEffect(() => {
+        slot.dir = theme.dir;
+        if (lang === undefined) {
+            slot.removeAttribute('lang');
+            return;
+        }
+        slot.lang = lang;
+    }, [slot, theme.dir, lang]);
     return createPortal(
         <NodeViewStateContext.Provider value={state}>
             <ChromeBoundary message={context.t('RichTextEditor_nodeViewError')} attrs={state.attrs}>

@@ -208,7 +208,11 @@ export const compileDefinition = (
         // A binding that starts with `mac:` or `other:` runs only on that platform (SPEC-rich-text-editing, Shortcuts).
         const apple: Record<string, Command> = {};
         const other: Record<string, Command> = {};
-        for (const entry of keymap) {
+        // Prefixed bindings come last, so on its platform one wins over a plain binding of the same key.
+        const ordered = [...keymap].sort(
+            (a, b) => Number(/^(mac|other):/.test(a.key)) - Number(/^(mac|other):/.test(b.key)),
+        );
+        for (const entry of ordered) {
             const command = commands.get(entry.command);
             if (entry.plugin === id && command !== undefined) {
                 const run: Command = (state, dispatch) => command.run(state, dispatch, entry.payload);

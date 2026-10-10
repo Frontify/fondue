@@ -40,8 +40,12 @@ const NAMED_COLORS = new Set(
     palegoldenrod palegreen paleturquoise palevioletred papayawhip peachpuff peru pink plum powderblue purple
     rebeccapurple red rosybrown royalblue saddlebrown salmon sandybrown seagreen seashell sienna silver skyblue slateblue
     slategray slategrey snow springgreen steelblue tan teal thistle tomato turquoise violet wheat white whitesmoke yellow
-    yellowgreen accentcolor accentcolortext activetext buttonborder buttonface buttontext canvas canvastext field fieldtext
-    graytext highlight highlighttext linktext mark marktext selecteditem selecteditemtext visitedtext`.split(/\s+/),
+    yellowgreen`.split(/\s+/),
+);
+// CSS Color 4 system colours, which a forced colours rule may set, since that mode shows only system colours.
+const SYSTEM_COLORS = new Set(
+    `accentcolor accentcolortext activetext buttonborder buttonface buttontext canvas canvastext field fieldtext graytext
+    highlight highlighttext linktext mark marktext selecteditem selecteditemtext visitedtext`.split(/\s+/),
 );
 const LITERAL_COLOR = /#[\da-f]{3,8}\b|\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(|(?<![\w-])[a-z]+(?![\w-])/gi;
 
@@ -123,11 +127,21 @@ const ownValue = (value: string): string => {
     return result;
 };
 
-/** The literal colours a declaration value sets outside `var()` fallbacks. */
-export const literalColors = (value: string): string[] =>
+/** The literal colours a declaration value sets outside `var()` fallbacks, less system colours in a `forced` colours rule. */
+export const literalColors = (value: string, forced = false): string[] =>
     [...ownValue(value).matchAll(LITERAL_COLOR)]
         .map(([match]) => match)
-        .filter((match) => !/^[a-z]+$/i.test(match) || NAMED_COLORS.has(match.toLowerCase()));
+        .filter((match) => {
+            const name = match.toLowerCase();
+            if (SYSTEM_COLORS.has(name)) {
+                return !forced;
+            }
+            return !/^[a-z]+$/i.test(match) || NAMED_COLORS.has(name);
+        });
+
+/** Whether a rule sits inside `@media (forced-colors: active)`. */
+export const inForcedColors = (atRules: readonly string[]): boolean =>
+    atRules.some((prelude) => /forced-colors:\s*active/.test(prelude));
 
 /** Whether `selector` stays inside one content root at zero specificity: one `:where()` argument that starts with the root class, then at most a pseudo-element, and no sibling combinator. */
 const insideRoot = (selector: string): boolean => {
@@ -174,14 +188,14 @@ const fromModule = (selector: string): boolean =>
 export const scanCss = (path: string, source: string, allowlist: readonly string[] = KEYFRAMES_ALLOWLIST): string[] => {
     const { rules, keyframes, declaringAtRules } = parseCss(source);
     const violations: string[] = [];
-    for (const { selectors, declarations, line } of rules) {
+    for (const { selectors, declarations, atRules, line } of rules) {
         for (const selector of selectors) {
             if (!insideRoot(selector) && !fromModule(selector)) {
                 violations.push(`${path}:${line} selector ${selector} is not inside ${CONTENT_SCOPE})`);
             }
         }
         for (const [property, value] of declarations) {
-            for (const color of literalColors(value)) {
+            for (const color of literalColors(value, inForcedColors(atRules))) {
                 violations.push(`${path}:${line} ${property} sets the literal colour ${color}`);
             }
         }

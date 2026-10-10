@@ -124,6 +124,13 @@
     pointer-events: none;
 }
 
+/* SPEC-rich-text-react/AC-054: forced colours draw the placeholder apart from the text. */
+@media (forced-colors: active) {
+    :where(.fondue-rte-content[data-rte-surface][data-rte-empty][data-placeholder])::before {
+        color: GrayText;
+    }
+}
+
 /* SPEC-rich-text-react/AC-089: printed content keeps its text and drops node chrome. */
 @media print {
     :where(.fondue-rte-content [data-rte-chrome]) {

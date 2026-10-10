@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Flyout } from '@frontify/fondue-components';
+import { Flyout, useFondueTheme } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -63,6 +63,7 @@ export const BubbleToolbar = ({
     readonly showRef: MutableRefObject<(() => void) | null> | undefined;
 }) => {
     const apple = useApplePlatform();
+    const { dir } = useFondueTheme();
     const key = useSessionValue(selectionOf, Object.is);
     const selected = useEditorSelection(holdsText);
     const focus = useScopedFocus();
@@ -128,6 +129,8 @@ export const BubbleToolbar = ({
                 <RadixToolbar.Root
                     ref={toolbarRef}
                     className={styles.root}
+                    // Radix writes `ltr` unless told, so the arrows follow the theme's visual order (SPEC-rich-text-react/AC-033).
+                    dir={dir}
                     aria-label={label}
                     aria-keyshortcuts={ariaShortcut(shortcut, apple)}
                     tabIndex={OUT_OF_TAB_ORDER}
