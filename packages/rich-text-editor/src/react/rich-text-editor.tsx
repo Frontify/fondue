@@ -533,6 +533,8 @@ const SessionComponent = (
                             {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- the root only hears keys and focus that bubble from the surface and chrome. */}
                             <div
                                 ref={rootRef}
+                                // The chrome's strings are in the shown locale, whatever the theme's (WCAG 2.2 SC 3.1.2).
+                                lang={locale.lang}
                                 data-test-id={testId}
                                 aria-busy={live === undefined ? true : undefined}
                                 onKeyDown={onKeyDown}
