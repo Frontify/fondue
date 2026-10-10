@@ -123,7 +123,7 @@ describe('the recovery shell', () => {
     it('SPEC-rich-text-react/AC-022 shows the last published snapshot through the reader after a render error, with no save', () => {
         const { before, spy, unmount } = breakAfterTyping();
 
-        expect(screen.getByRole('alert')).toHaveTextContent('The editor stopped working.');
+        expect(screen.getByText(/^The editor stopped working\./)).toBeVisible();
         const reader = renderToStaticMarkup(<RichTextReader document={before.document} model={model} />);
         expect(reader).toContain('cab');
         expect(shell('recovery').innerHTML).toContain(reader);

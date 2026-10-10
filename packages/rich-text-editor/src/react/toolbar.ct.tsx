@@ -1,0 +1,705 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { expect, test } from '@playwright/experimental-ct-react';
+import { type Locator, type Page } from '@playwright/test';
+
+import { ToolbarProbe } from '../../fixtures/editor/ToolbarProbe';
+
+/** A code block stand-in holding `text`, whose node chrome is a toolbar. */
+const codeBlock = (text: string) =>
+    ({
+        type: 'chrome_code',
+        attrs: { nodeId: 'code-1', language: 'plain' },
+        content: [{ type: 'text', text }],
+    }) as never;
+
+const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Notes' });
+const toolbarOf = (page: Page) => page.getByRole('toolbar', { name: 'Text formatting' });
+const itemOf = (page: Page, name: string) => toolbarOf(page).getByRole('button', { name, exact: true });
+const ready = async (page: Page) => {
+    await expect(surfaceOf(page)).toHaveAttribute('contenteditable', /true|false/);
+    await expect(page.locator('[data-test-id="fondue-rich-text-editor"]')).not.toHaveAttribute('aria-busy');
+};
+const select = (page: Page, text: string) =>
+    page.evaluate((target) => window.toolbarEditor?.setSelection(window.toolbarEditor.handle, { text: target }), text);
+/** The accessible name of the focused element, as its `aria-label` or text. */
+const focusedName = (page: Page) =>
+    page.evaluate(() => {
+        const active = document.activeElement;
+        if (active === null) {
+            return null;
+        }
+        return active.getAttribute('aria-label') ?? active.textContent;
+    });
+// Radix Toolbar moves focus in a timeout after the key, so focus is read once it settles. Tests focus the surface
+// rather than click it before they select, since the click's own selection may land after theirs.
+const expectFocus = (page: Page, name: string) => expect.poll(() => focusedName(page)).toBe(name);
+const domSelection = (page: Page) =>
+    page.evaluate(() => ({
+        text: window.getSelection()?.toString(),
+        inSurface: document.activeElement?.getAttribute('role') === 'textbox',
+    }));
+const documentHtml = (page: Page) => page.evaluate(() => window.toolbarEditor?.html());
+
+/** WCAG relative luminance of a computed `rgb()` colour. */
+const luminance = (color: string) => {
+    const [r = 0, g = 0, b = 0] = (color.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+    const channel = (value: number) => {
+        const scaled = value / 255;
+        if (scaled <= 0.040_45) {
+            return scaled / 12.92;
+        }
+        return ((scaled + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+};
+const contrast = (a: string, b: string) => {
+    const lighter = Math.max(luminance(a), luminance(b));
+    const darker = Math.min(luminance(a), luminance(b));
+    return (lighter + 0.05) / (darker + 0.05);
+};
+/** The box of a rendered element, which every element these tests measure has. */
+const boxOf = async (locator: Locator) => {
+    const box = await locator.boundingBox();
+    if (box === null) {
+        throw new Error('the element is not rendered');
+    }
+    return box;
+};
+/** The focused element's outline and the colour behind it once it lost focus. */
+const outlineOf = (locator: Locator) =>
+    locator.evaluate((element) => {
+        const style = getComputedStyle(element);
+        let behind: Element | null = element.parentElement;
+        let background = 'rgba(0, 0, 0, 0)';
+        while (behind !== null && background === 'rgba(0, 0, 0, 0)') {
+            background = getComputedStyle(behind).backgroundColor;
+            behind = behind.parentElement;
+        }
+        return {
+            width: Number.parseFloat(style.outlineWidth),
+            style: style.outlineStyle,
+            color: style.outlineColor,
+            background,
+        };
+    });
+
+test('SPEC-rich-text-react/AC-032 is one tab stop with a label, aria-controls and arrow, Home and End keys', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    const surfaceId = await surfaceOf(page).getAttribute('id');
+
+    await expect(toolbarOf(page)).toHaveAttribute('aria-controls', surfaceId ?? 'none');
+    await page.getByRole('button', { name: 'Before' }).focus();
+    await page.keyboard.press('Tab');
+    await expectFocus(page, 'Bold');
+    for (const [key, name] of [
+        ['ArrowRight', 'Italic'],
+        ['ArrowRight', 'Link'],
+        ['End', 'List'],
+        ['Home', 'Bold'],
+        ['ArrowLeft', 'List'],
+    ] as const) {
+        await page.keyboard.press(key);
+        await expectFocus(page, name);
+    }
+    await page.keyboard.press('Tab');
+
+    await expectFocus(page, 'Notes');
+});
+
+test('SPEC-rich-text-react/AC-033 moves with ArrowRight and ArrowLeft in visual order under rtl', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe dir="rtl" />);
+    await ready(page);
+    const bold = await boxOf(itemOf(page, 'Bold'));
+    const italic = await boxOf(itemOf(page, 'Italic'));
+
+    await page.getByRole('button', { name: 'Before' }).focus();
+    await page.keyboard.press('Tab');
+    await expectFocus(page, 'Bold');
+    await page.keyboard.press('ArrowLeft');
+    await expectFocus(page, 'Italic');
+    await page.keyboard.press('ArrowRight');
+
+    await expectFocus(page, 'Bold');
+    expect(italic.x < bold.x).toBe(true);
+});
+
+test('SPEC-rich-text-react/AC-034 SPEC-rich-text-runtime/AC-059 moves focus with Alt+F10 to the first item, then to the last focused one, also when read-only', async ({
+    mount,
+    page,
+}) => {
+    for (const readOnly of [false, true]) {
+        const component = await mount(<ToolbarProbe readOnly={readOnly} />);
+        await ready(page);
+        await surfaceOf(page).click();
+
+        await page.keyboard.press('Alt+F10');
+        await expectFocus(page, 'Bold');
+        await page.keyboard.press('ArrowRight');
+        await expectFocus(page, 'Italic');
+        await surfaceOf(page).click();
+        await page.keyboard.press('Alt+F10');
+
+        await expectFocus(page, 'Italic');
+        await component.unmount();
+    }
+});
+
+test('SPEC-rich-text-react/AC-035 SPEC-rich-text-accessibility/AC-014 closes an open tooltip first, then returns to the surface with the selection', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+
+    await page.keyboard.press('Alt+F10');
+    await expect(page.getByRole('tooltip')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+    const kept = await focusedName(page);
+    await page.keyboard.press('Escape');
+
+    expect(kept).toBe('Bold');
+    expect(await domSelection(page)).toEqual({ text: 'two', inSurface: true });
+});
+
+test('SPEC-rich-text-react/AC-036 returns focus to the surface with the resulting selection after bold, link and list items', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    for (const name of ['Bold', 'Link', 'List']) {
+        await surfaceOf(page).focus();
+        await select(page, 'two');
+        await itemOf(page, name).click();
+        await expect.poll(() => domSelection(page)).toEqual({ text: 'two', inSurface: true });
+    }
+
+    expect(await documentHtml(page)).toBe(
+        '<blockquote>one <a href="https://example.com/fixture"><strong>two</strong></a> three</blockquote>',
+    );
+});
+
+test('SPEC-rich-text-react/AC-029 disables every item and keeps the toolbar out of the Tab order, with typing, paste and execute refused', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe disabled />);
+    await ready(page);
+    const before = await documentHtml(page);
+
+    await expect(surfaceOf(page)).toHaveAttribute('aria-disabled', 'true');
+    await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'false');
+    for (const name of ['Bold', 'Italic', 'Link', 'List']) {
+        await expect(itemOf(page, name)).toBeDisabled();
+        await expect(itemOf(page, name)).toHaveAttribute('tabindex', '-1');
+    }
+    await expect(toolbarOf(page)).toHaveAttribute('tabindex', '-1');
+    await page.getByRole('button', { name: 'Before' }).focus();
+    await page.keyboard.press('Tab');
+    const tabbed = await page.evaluate(() => document.activeElement?.closest('[role="toolbar"]') !== null);
+    // Tab skips the disabled surface as well as its toolbar.
+    await expectFocus(page, 'After');
+    await surfaceOf(page).focus();
+    await page.keyboard.type('x');
+    await page.evaluate(() => {
+        const data = new DataTransfer();
+        data.setData('text/plain', 'pasted');
+        document
+            .querySelector('[role="textbox"]')
+            ?.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+    });
+    const executed = await page.evaluate(() => window.toolbarEditor?.handle.execute('mark.bold.toggle'));
+
+    expect(tabbed).toBe(false);
+    expect(executed).toEqual({ status: 'rejected', code: 'readonly' });
+    expect(await documentHtml(page)).toBe(before);
+});
+
+test('SPEC-rich-text-react/AC-031 tabs out of the surface in both directions from a paragraph and a code block', async ({
+    mount,
+    page,
+}) => {
+    const paragraph = { type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: 'para' }] };
+    await mount(<ToolbarProbe blocks={[paragraph as never, codeBlock('code')]} />);
+    await ready(page);
+    for (const target of ['para', 'code']) {
+        for (const [key, name] of [
+            ['Tab', 'After'],
+            ['Shift+Tab', 'Bold'],
+        ] as const) {
+            await surfaceOf(page).focus();
+            await select(page, target);
+            await page.keyboard.press(key);
+            await expectFocus(page, name);
+        }
+    }
+});
+
+test.describe('at 320 CSS pixels', () => {
+    test.use({ viewport: { width: 320, height: 640 } });
+
+    test('SPEC-rich-text-react/AC-040 moves the items that do not fit into More, with no horizontal scrolling and every command reachable', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<ToolbarProbe wide />);
+        await ready(page);
+        const visible = await toolbarOf(page)
+            .getByRole('button')
+            .evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-label')));
+        const scrolls = await page.evaluate(() => ({
+            page: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+            toolbar: (() => {
+                const toolbar = document.querySelector('[role="toolbar"]');
+                return toolbar !== null && toolbar.scrollWidth > toolbar.clientWidth;
+            })(),
+        }));
+
+        await itemOf(page, 'More').click();
+        const rows = await page.getByRole('menuitem').allInnerTexts();
+        const reachable = [...visible.filter((name) => name !== 'More'), ...rows.map((row) => row.split('\n')[0])];
+
+        expect(visible).toContain('More');
+        expect(scrolls).toEqual({ page: false, toolbar: false });
+        expect(reachable).toEqual([
+            'Bold',
+            'Italic',
+            'Link',
+            'List',
+            ...[1, 2, 3, 4, 5, 6].map((level) => `Heading ${level}`),
+        ]);
+    });
+
+    test('SPEC-rich-text-accessibility/AC-028 starts the name of every More row with its visible text', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<ToolbarProbe wide />);
+        await ready(page);
+        await itemOf(page, 'More').click();
+        const rows = await page.getByRole('menuitem').evaluateAll((items) =>
+            items.map((item) => {
+                const label = [...item.childNodes]
+                    .filter((node) => !(node instanceof HTMLElement && node.tagName === 'KBD'))
+                    .map((node) => node.textContent ?? '')
+                    .join('')
+                    .trim();
+                return { label, starts: (item.textContent ?? '').trim().startsWith(label) && label !== '' };
+            }),
+        );
+        const names = await page.getByRole('menuitem').evaluateAll((items) => items.length);
+
+        expect(rows.every(({ starts }) => starts)).toBe(true);
+        expect(names).toBeGreaterThan(0);
+        for (const { label } of rows) {
+            await expect(page.getByRole('menuitem', { name: label })).toHaveCount(1);
+        }
+    });
+});
+
+test.describe('with a coarse pointer', () => {
+    test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+
+    test('SPEC-rich-text-react/AC-041 gives every toolbar item a 44 by 44 CSS pixel target', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<ToolbarProbe wide />);
+        await ready(page);
+        const sizes = await toolbarOf(page)
+            .getByRole('button')
+            .evaluateAll((buttons) =>
+                buttons.map((button) => {
+                    const { width, height } = button.getBoundingClientRect();
+                    return width >= 44 && height >= 44;
+                }),
+            );
+
+        expect(sizes.length).toBeGreaterThan(0);
+        expect(sizes.every(Boolean)).toBe(true);
+    });
+});
+
+test('SPEC-rich-text-react/AC-069 SPEC-rich-text-react/AC-079 cycles Alt+F10 through node chrome and the toolbar, then Escape keeps the selection', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe compose blocks={[codeBlock('let code = 1')]} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'code');
+
+    for (const name of ['plain', 'Bold', 'plain']) {
+        await page.keyboard.press('Alt+F10');
+        await expectFocus(page, name);
+    }
+    await page.keyboard.press('Escape');
+
+    await expectFocus(page, 'Notes');
+    expect(await domSelection(page)).toEqual({ text: 'code', inSurface: true });
+});
+
+test('SPEC-rich-text-react/AC-103 sticks to the top of its scrolling container while the document scrolls', async ({
+    mount,
+    page,
+}) => {
+    const texts = Array.from({ length: 40 }, (_, index) => `Line ${index + 1}`);
+    await mount(<ToolbarProbe texts={texts} scrollHeight={240} />);
+    await ready(page);
+    const scroller = page.locator('[data-scroller]');
+    const top = async () => {
+        const [toolbar, container] = await Promise.all([boxOf(toolbarOf(page)), boxOf(scroller)]);
+        return Math.round(toolbar.y - container.y);
+    };
+
+    const offsets = [await top()];
+    for (const scrollTop of [200, 600]) {
+        await scroller.evaluate((element, value) => element.scrollTo({ top: value }), scrollTop);
+        offsets.push(await top());
+    }
+
+    expect(offsets).toEqual([0, 0, 0]);
+});
+
+test('SPEC-rich-text-accessibility/AC-001 SPEC-rich-text-accessibility/AC-033 names every item as its tooltip label, from the one registry label', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    await surfaceOf(page).click();
+    await page.keyboard.press('Alt+F10');
+    for (const name of ['Bold', 'Italic', 'Link', 'List']) {
+        await expectFocus(page, name);
+        await expect(page.locator('[data-rte-tooltip-label]').first()).toHaveText(name);
+        await page.keyboard.press('ArrowRight');
+    }
+});
+
+test('SPEC-rich-text-accessibility/AC-006 shows a pressed toggle by shape, which a grayscale screenshot still tells apart', async ({
+    mount,
+    page,
+}, testInfo) => {
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    await page.addStyleTag({ content: 'html { filter: grayscale(1); }' });
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    const before = await itemOf(page, 'Bold').screenshot();
+    const shapeBefore = await itemOf(page, 'Bold').evaluate((item) => getComputedStyle(item).borderBlockEndWidth);
+    await page.evaluate(() => window.toolbarEditor?.handle.execute('mark.bold.toggle'));
+    await expect(itemOf(page, 'Bold')).toHaveAttribute('aria-pressed', 'true');
+    await page.mouse.move(0, 0);
+    const pressed = await itemOf(page, 'Bold').screenshot();
+    const shapePressed = await itemOf(page, 'Bold').evaluate((item) => getComputedStyle(item).borderBlockEndWidth);
+    await testInfo.attach('pressed bold in grayscale', { body: pressed, contentType: 'image/png' });
+
+    expect([shapeBefore, shapePressed]).toEqual(['0px', '2px']);
+    expect(pressed.equals(before)).toBe(false);
+});
+
+test('SPEC-rich-text-accessibility/AC-026 does not run Bold when the pointer leaves it before release', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    const box = await boxOf(itemOf(page, 'Bold'));
+
+    await page.mouse.move(box.x + 4, box.y + 4);
+    await page.mouse.down();
+    await page.mouse.move(box.x + 200, box.y + 200);
+    await page.mouse.up();
+
+    expect(await documentHtml(page)).toBe('<p>one two three</p>');
+});
+
+for (const theme of ['light', 'dark'] as const) {
+    test(`SPEC-rich-text-accessibility/AC-022 SPEC-rich-text-accessibility/AC-023 SPEC-rich-text-accessibility/AC-082 outlines the focused surface and items by 2 px at 3:1 in the ${theme} theme`, async ({
+        mount,
+        page,
+    }) => {
+        await mount(<ToolbarProbe theme={theme} />);
+        await ready(page);
+        await page.getByRole('button', { name: 'Before' }).focus();
+        const outlines: Awaited<ReturnType<typeof outlineOf>>[] = [];
+        const changed: boolean[] = [];
+
+        await page.keyboard.press('Tab');
+        for (const name of ['Bold', 'Italic', 'Link', 'List']) {
+            const unfocused = await itemOf(page, name).evaluate((item) => getComputedStyle(item).outlineStyle);
+            if (name !== 'Bold') {
+                await page.keyboard.press('ArrowRight');
+            }
+            await expectFocus(page, name);
+            outlines.push(await outlineOf(itemOf(page, name)));
+            changed.push(unfocused === 'none' || name === 'Bold');
+        }
+        await page.keyboard.press('Tab');
+        await expectFocus(page, 'Notes');
+        outlines.push(await outlineOf(surfaceOf(page)));
+
+        expect(changed.every(Boolean)).toBe(true);
+        for (const outline of outlines) {
+            expect(outline.style).toBe('solid');
+            expect(outline.width).toBeGreaterThanOrEqual(2);
+            expect(contrast(outline.color, outline.background)).toBeGreaterThanOrEqual(3);
+        }
+    });
+}
+
+test('SPEC-rich-text-accessibility/AC-082 keeps the focus outlines in forced colours', async ({ mount, page }) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    await page.getByRole('button', { name: 'Before' }).focus();
+    await page.keyboard.press('Tab');
+    const item = await outlineOf(itemOf(page, 'Bold'));
+    await page.keyboard.press('Tab');
+    const surface = await outlineOf(surfaceOf(page));
+
+    expect([item.style, surface.style]).toEqual(['solid', 'solid']);
+    expect(Math.min(item.width, surface.width)).toBeGreaterThanOrEqual(2);
+});
+
+for (const forcedColors of ['none', 'active'] as const) {
+    test(`SPEC-rich-text-accessibility/AC-067 keeps the selection visible while focus is in the toolbar, forced colours ${forcedColors}`, async ({
+        mount,
+        page,
+    }, testInfo) => {
+        await page.emulateMedia({ forcedColors });
+        await mount(<ToolbarProbe />);
+        await ready(page);
+        await surfaceOf(page).focus();
+        await select(page, 'two');
+
+        await page.keyboard.press('Alt+F10');
+        const decoration = surfaceOf(page).locator('[data-rte-selection]');
+        await expect(decoration).toHaveText('two');
+        const shown = await decoration.evaluate((element) => {
+            const style = getComputedStyle(element);
+            return style.backgroundColor !== 'rgba(0, 0, 0, 0)' || style.outlineStyle === 'solid';
+        });
+        await testInfo.attach('selection with focus in the toolbar', {
+            body: await surfaceOf(page).screenshot(),
+            contentType: 'image/png',
+        });
+        await page.keyboard.press('Escape');
+        await page.keyboard.press('Escape');
+
+        expect(shown).toBe(true);
+        await expect(decoration).toHaveCount(0);
+    });
+}
+
+test('SPEC-rich-text-react/AC-089 prints no toolbar', async ({ mount, page }) => {
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    await expect(toolbarOf(page)).toBeVisible();
+    await page.emulateMedia({ media: 'print' });
+
+    await expect(toolbarOf(page)).toBeHidden();
+    await expect(surfaceOf(page)).toBeVisible();
+});
+
+test('SPEC-rich-text-runtime/AC-032 ends a composition and runs Bold when its toolbar item is clicked', async ({
+    mount,
+    page,
+    browserName,
+}) => {
+    test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only');
+    await mount(<ToolbarProbe texts={['one ']} />);
+    await ready(page);
+    await surfaceOf(page).click();
+    await page.keyboard.press('End');
+    const client = await page.context().newCDPSession(page);
+    await client.send('Input.imeSetComposition', { text: 'two', selectionStart: 3, selectionEnd: 3 });
+
+    await itemOf(page, 'Bold').click();
+    await expect(itemOf(page, 'Bold')).toHaveAttribute('aria-pressed', 'true');
+    await page.keyboard.type('x');
+
+    await expect.poll(() => documentHtml(page)).toBe('<p>one two<strong>x</strong></p>');
+    const composing = await page.evaluate(() => window.toolbarEditor?.handle.getSnapshot().compositionActive);
+    expect(composing).toBe(false);
+});
+
+test.describe('on a phone with a sticky toolbar', () => {
+    test.use({ isMobile: true, hasTouch: true, viewport: { width: 390, height: 700 } });
+
+    test('SPEC-rich-text-accessibility/AC-024 scrolls the caret clear of the sticky toolbar, also once it grows and the viewport halves', async ({
+        mount,
+        page,
+    }) => {
+        const texts = Array.from({ length: 60 }, (_, index) => `Line ${index + 1}`);
+        await mount(<ToolbarProbe texts={texts} />);
+        await ready(page);
+        const caretClear = () =>
+            page.evaluate(() => {
+                const selection = window.getSelection();
+                const toolbar = document.querySelector('[role="toolbar"]');
+                if (selection === null || selection.rangeCount === 0 || toolbar === null) {
+                    return false;
+                }
+                const caret = selection.getRangeAt(0).getBoundingClientRect();
+                let height = window.innerHeight;
+                if (window.visualViewport !== null) {
+                    height = window.visualViewport.height;
+                }
+                return caret.top >= toolbar.getBoundingClientRect().bottom && caret.bottom <= height;
+            });
+        /** Puts the caret at the end of a line that sits under the toolbar, then types there. */
+        const typeUnderToolbar = async (line: string) => {
+            await page.evaluate((text) => {
+                const paragraph = [...document.querySelectorAll('[role="textbox"] p')].find(
+                    (element) => element.textContent === text,
+                );
+                const toolbar = document.querySelector('[role="toolbar"]');
+                if (paragraph === undefined || toolbar === null) {
+                    return;
+                }
+                const under = toolbar.getBoundingClientRect().bottom - 4;
+                window.scrollBy(0, paragraph.getBoundingClientRect().bottom - under);
+                window.toolbarEditor?.setSelection(window.toolbarEditor.handle, { text, from: text.length });
+            }, line);
+            await page.keyboard.type('x');
+        };
+
+        await surfaceOf(page).tap();
+        await typeUnderToolbar('Line 30');
+        const first = await caretClear();
+        await page.setViewportSize({ width: 390, height: 350 });
+        await toolbarOf(page).evaluate((toolbar) => {
+            (toolbar as HTMLElement).style.blockSize = '120px';
+        });
+        // The resize observer reports the new height in the next frame.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+        await typeUnderToolbar('Line 40');
+
+        expect([first, await caretClear()]).toEqual([true, true]);
+    });
+});
+
+test('SPEC-rich-text-react/AC-079 walks node chrome and the toolbar with the presentation toolbarShortcut', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe compose toolbarShortcut="Mod-Alt-t" blocks={[codeBlock('let code = 1')]} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'code');
+
+    await expect(toolbarOf(page)).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+Alt\+T$/);
+    for (const name of ['plain', 'Bold', 'plain']) {
+        await page.keyboard.press('ControlOrMeta+Alt+t');
+        await expectFocus(page, name);
+    }
+    await page.keyboard.press('Escape');
+
+    await expectFocus(page, 'Notes');
+});
+
+/** Pretends to be a platform before the editor mounts, through both sources the toolbar reads. */
+const onPlatform = (page: Page, platform: string, uaPlatform: string) =>
+    page.evaluate(
+        ([legacy, modern]) => {
+            Object.defineProperty(navigator, 'platform', { value: legacy, configurable: true });
+            Object.defineProperty(navigator, 'userAgentData', { value: { platform: modern }, configurable: true });
+        },
+        [platform, uaPlatform],
+    );
+
+for (const [platform, uaPlatform, shown, aria] of [
+    ['MacIntel', 'macOS', ['⌘B', '⇧⌘8'], ['Meta+B', 'Meta+Shift+8']],
+    ['Win32', 'Windows', ['Ctrl+B', 'Ctrl+Shift+8'], ['Control+B', 'Control+Shift+8']],
+] as const) {
+    test(`SPEC-rich-text-react/AC-039 shows the compiled shortcut in the tooltip and the More row on ${uaPlatform}`, async ({
+        mount,
+        page,
+    }) => {
+        await onPlatform(page, platform, uaPlatform);
+        await mount(<ToolbarProbe width={140} />);
+        await ready(page);
+        await surfaceOf(page).focus();
+
+        await page.keyboard.press('Alt+F10');
+        await expectFocus(page, 'Bold');
+        await expect(page.getByRole('tooltip').locator('kbd')).toHaveText(shown[0]);
+        await expect(itemOf(page, 'Bold')).toHaveAttribute('aria-keyshortcuts', aria[0]);
+        await itemOf(page, 'More').click();
+        const row = page.getByRole('menuitem', { name: 'List' });
+
+        await expect(row.locator('kbd')).toHaveText(shown[1]);
+        await expect(row).toHaveAttribute('aria-keyshortcuts', aria[1]);
+    });
+}
+
+/** Each item's name and icon, from the toolbar, or from the More menu when `inMore`. */
+const namesAndIcons = async (page: Page, inMore: boolean) => {
+    let items = toolbarOf(page).getByRole('button');
+    if (inMore) {
+        await itemOf(page, 'More').click();
+        items = page.getByRole('menuitem');
+    }
+    return items.evaluateAll((elements) =>
+        elements
+            .map((element) => {
+                // A More row's shortcut is hidden from its name.
+                const copy = element.cloneNode(true) as HTMLElement;
+                copy.querySelector('kbd')?.remove();
+                return {
+                    name: element.getAttribute('aria-label') ?? copy.textContent,
+                    icon: element.querySelector('svg')?.getAttribute('data-test-id'),
+                };
+            })
+            .filter(({ name }) => name !== 'More'),
+    );
+};
+
+test('SPEC-rich-text-accessibility/AC-033 shows each command with the same registry label and icon in the toolbar and in More', async ({
+    mount,
+    page,
+}) => {
+    const component = await mount(<ToolbarProbe />);
+    await ready(page);
+    const inToolbar = await namesAndIcons(page, false);
+    await component.unmount();
+    await mount(<ToolbarProbe width={60} />);
+    await ready(page);
+    const inMore = await namesAndIcons(page, true);
+
+    expect(inToolbar.map(({ name }) => name)).toEqual(['Bold', 'Italic', 'Link', 'List']);
+    expect(inMore).toEqual(inToolbar);
+});
+
+test('SPEC-rich-text-react/AC-094 uses the presentation controls label and icon for bold in the toolbar and in More', async ({
+    mount,
+    page,
+}) => {
+    const controls = { 'mark.bold.toggle': { labelKey: 'RichTextEditor_fixtureStrong', icon: 'IconTextFormatItalic' } };
+    const component = await mount(<ToolbarProbe controls={controls} />);
+    await ready(page);
+    const [inToolbar, italic] = await namesAndIcons(page, false);
+    await component.unmount();
+    await mount(<ToolbarProbe controls={controls} width={60} />);
+    await ready(page);
+    const [inMore] = await namesAndIcons(page, true);
+
+    expect(inToolbar).toEqual({ name: 'Strong', icon: italic?.icon });
+    expect(inMore).toEqual(inToolbar);
+});

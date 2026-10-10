@@ -20,6 +20,13 @@ describe('check-css', () => {
         ]);
     });
 
+    it('SPEC-rich-text-react/AC-050 passes chrome rules from a CSS Module and fails on a lookalike or one that reaches content', () => {
+        expect(scanCss('module.css', fixture('module.css'))).toEqual([
+            'module.css:7 selector .root_16wik_2 is not inside :where(.fondue-rte-content)',
+            'module.css:10 selector ._root_16wik_2 .fondue-rte-content p is not inside :where(.fondue-rte-content)',
+        ]);
+    });
+
     it('SPEC-rich-text-react/AC-067 fails on a content selector that is not wrapped in :where', () => {
         expect(scanCss('specific.css', fixture('specific.css'))).toEqual([
             'specific.css:1 selector .fondue-rte-content p is not inside :where(.fondue-rte-content)',

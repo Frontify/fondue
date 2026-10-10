@@ -1,0 +1,12 @@
+._root_16wik_2 {
+    display: flex;
+}
+._item_16wik_14[aria-pressed='true']:focus-visible {
+    outline: 2px solid var(--color-focus-default);
+}
+.root_16wik_2 {
+    display: flex;
+}
+._root_16wik_2 .fondue-rte-content p {
+    margin: 0;
+}

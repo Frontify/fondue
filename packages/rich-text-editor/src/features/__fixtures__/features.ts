@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineFeature, history, insertNode, setBlock } from '#/model';
+import { defineFeature, history, insertNode, setBlock, toggleMark } from '#/model';
 
 const requiresCore = [{ id: 'core', version: 1 }];
 
@@ -240,4 +240,60 @@ export const fixtureList = defineFeature({
         bullet_list: { group: 'block', content: 'list_item+', attrs: {}, html: ['ul', 0], parse: [{ tag: 'ul' }] },
         list_item: { content: 'paragraph+', attrs: {}, html: ['li', 0], parse: [{ tag: 'li' }] },
     },
+});
+
+/**
+ * Stands in for the toolbar entries of `marks.italic`, `links`, a list toggle and the heading levels until they ship:
+ * an italic toggle, a link button, a block toggle over a `toggled_block` and six heading items with payloads, with
+ * keys for italic and the block.
+ */
+export const fixtureToolbar = defineFeature({
+    id: 'fixture.toolbar',
+    version: 1,
+    requires: [
+        { id: 'fixture.italic', version: 1 },
+        { id: 'fixture.link', version: 1 },
+    ],
+    nodes: {
+        toggled_block: { group: 'block', content: 'inline*', attrs: {}, html: ['blockquote', 0], parse: [] },
+        toggled_heading: {
+            group: 'block',
+            content: 'inline*',
+            attrs: { level: { type: 'integer', min: 1, max: 6, required: true } },
+            html: [{ attr: 'level', tags: { 1: 'h1', 2: 'h2', 3: 'h3', 4: 'h4', 5: 'h5', 6: 'h6' } }, 0],
+            parse: [],
+        },
+    },
+    commands: {
+        'fixture.italic.toggle': toggleMark('italic'),
+        'fixture.link.edit': toggleMark('link', { href: 'https://example.com/fixture' }),
+        'fixture.list.toggle': setBlock('toggled_block', { toggle: true }),
+        'fixture.heading.set': setBlock('toggled_heading', {
+            toggle: true,
+            payload: { fields: { level: { type: 'integer', min: 1, max: 6 } } },
+        }),
+    },
+    keys: { 'Mod-i': 'fixture.italic.toggle', 'Mod-Shift-8': 'fixture.list.toggle' },
+    toolbar: [
+        {
+            kind: 'toggle',
+            command: 'fixture.italic.toggle',
+            labelKey: 'RichTextEditor_fixtureItalic',
+            icon: 'IconTextFormatItalic',
+        },
+        { kind: 'button', command: 'fixture.link.edit', labelKey: 'RichTextEditor_fixtureLink', icon: 'IconLink' },
+        {
+            kind: 'toggle',
+            command: 'fixture.list.toggle',
+            labelKey: 'RichTextEditor_fixtureList',
+            icon: 'IconListBullet',
+        },
+        ...[1, 2, 3, 4, 5, 6].map((level) => ({
+            kind: 'toggle' as const,
+            command: 'fixture.heading.set',
+            payload: { level },
+            labelKey: `RichTextEditor_fixtureHeading${level}` as const,
+            icon: 'IconTextFormatBold',
+        })),
+    ],
 });
