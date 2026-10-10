@@ -60,4 +60,22 @@ describe('the limit check', () => {
             [bytes, bytes - 1].map((maxDocumentBytes) => exceeds(doc, { ...defaultLimits, maxDocumentBytes })),
         ).toEqual([false, true]);
     });
+
+    it('SPEC-rich-text-runtime/AC-004 counts the longest text, joined as the engine joins it, against maxTextLength', () => {
+        const schema = compileDefinition(model).schema;
+        const paragraph = (...texts: readonly string[]) =>
+            schema.node('doc', null, [
+                schema.node(
+                    'paragraph',
+                    null,
+                    texts.map((text) => schema.text(text)),
+                ),
+            ]);
+        const exceeds = createLimitCheck(model, []);
+        const limits = { ...defaultLimits, maxTextLength: 10 };
+
+        expect(
+            [paragraph('x'.repeat(10)), paragraph('x'.repeat(4), 'x'.repeat(7))].map((doc) => exceeds(doc, limits)),
+        ).toEqual([false, true]);
+    });
 });

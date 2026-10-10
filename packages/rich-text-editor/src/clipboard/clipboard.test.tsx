@@ -457,6 +457,50 @@ describe('internal slices', () => {
         expect(target.content()).toEqual([paragraph(text('ab')), original]);
         target.unmount();
     });
+
+    const island = (original: JsonValue) => ({ type: 'unsupported_block', attrs: { feature: 'callout', original } });
+    const forged: readonly [string, JsonValue][] = [
+        ['a known paragraph with a javascript: link', paragraph(text('x', link('javascript:alert(1)')))],
+        ['a known paragraph', paragraph(text('x'))],
+        ['an island inside', island({ type: 'callout', content: [paragraph(text('x'))] })],
+    ];
+    it.each(forged)(
+        'SPEC-rich-text-clipboard/AC-006 ignores a slice whose island wrapper holds %s and takes the next flavor',
+        (_name, original) => {
+            const mounted = mount();
+            setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
+
+            pasteInto(mounted, { [SLICE_TYPE]: slicePayload([island(original)]), 'text/plain': 'plain' });
+
+            expect(mounted.content()).toEqual([paragraph(text('aplainb'))]);
+            mounted.unmount();
+        },
+    );
+
+    it('SPEC-rich-text-clipboard/AC-022 ignores a slice whose island holds a mention from another context (DR-082)', () => {
+        const mounted = mount({ sliceContext: 'b' });
+        setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
+        const original = { type: 'callout', content: [paragraph(mention('m-9'))] };
+
+        pasteInto(mounted, { [SLICE_TYPE]: slicePayload([island(original)]), 'text/plain': 'plain' });
+
+        expect(mounted.content()).toEqual([paragraph(text('aplainb'))]);
+        mounted.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-021 pastes an island holding a nodeId once and falls back the second time (DR-082)', () => {
+        const mounted = mount({ sliceContext: 'a' });
+        const original = { type: 'callout', attrs: { nodeId: 'c-1' }, content: [paragraph(text('Kept'))] };
+        const data = { [SLICE_TYPE]: slicePayload([island(original)]), 'text/plain': 'plain' };
+        setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
+
+        pasteInto(mounted, data);
+        setSelection(mounted.handle, { text: 'b', from: 0, to: 0 });
+        pasteInto(mounted, data);
+
+        expect(mounted.content()).toEqual([paragraph(text('a')), original, paragraph(text('plainb'))]);
+        mounted.unmount();
+    });
 });
 
 describe('the paste pipeline', () => {
@@ -521,6 +565,27 @@ describe('the paste pipeline', () => {
         expect(mounted.changes.map(({ origin }) => origin)).toEqual(['paste']);
         mounted.unmount();
     });
+
+    it.each([
+        ['on its own', 'x'.repeat(20)],
+        ['joined to the text around the caret', 'x'.repeat(9)],
+    ])(
+        'SPEC-rich-text-clipboard/AC-020 rejects pasted text over maxTextLength %s, with the state unchanged',
+        (_name, pasted) => {
+            const mounted = mount({ limits: { maxTextLength: 10 } });
+            setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
+            const before = mounted.view.state;
+
+            pasteInto(mounted, { 'text/plain': pasted });
+
+            expect(mounted.view.state.doc).toBe(before.doc);
+            expect(mounted.view.state.selection.eq(before.selection)).toBe(true);
+            expect(mounted.diagnostics.map(({ code, details }) => [code, details])).toEqual([
+                ['clipboard.paste-rejected', { reason: 'maxTextLength' }],
+            ]);
+            mounted.unmount();
+        },
+    );
 
     it('SPEC-rich-text-clipboard/AC-021 SPEC-rich-text-format/AC-032 gives each paste of one slice new nodeIds and keeps the resource ID', () => {
         const mounted = mount({ blocks: [heading('h-1', text('T'), mention('m-1')), paragraph()], sliceContext: 'a' });

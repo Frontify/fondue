@@ -309,6 +309,31 @@ for (const [name, copies] of [
     });
 }
 
+test('SPEC-rich-text-clipboard/AC-030 SPEC-rich-text-runtime/AC-010 moves a mention whose feature has paste: false as it is, and drops a copy of it as its label', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ClipboardProbe texts={['x@y', 'target']} unpasted />);
+    await ready(page);
+    await select(page, { nodeId: 'm-1' });
+
+    await dragNode(page, await overText(page, 1, 0.5));
+    const moved = await contentOf(page);
+    await select(page, { nodeId: 'm-1' });
+    await dragNode(page, await overText(page, 0, 0.5), true);
+
+    const mention = {
+        type: 'mention',
+        attrs: { nodeId: 'm-1', resourceType: 'user', resourceId: 'u-1', labelSnapshot: 'Ada' },
+    };
+    const block = (...content: readonly object[]) => ({ type: 'paragraph', attrs: { lang: null }, content });
+    expect(moved).toEqual([
+        block({ type: 'text', text: 'xy' }),
+        block({ type: 'text', text: 'tar' }, mention, { type: 'text', text: 'get' }),
+    ]);
+    expect(await contentOf(page)).toEqual([block({ type: 'text', text: 'xAday' }), (moved as object[])[1]]);
+});
+
 test('SPEC-rich-text-clipboard/AC-031 SPEC-rich-text-editing/AC-040 drops a host element through the paste order at the drop cursor, with no input rule', async ({
     mount,
     page,

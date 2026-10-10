@@ -19,6 +19,13 @@ import { type SelectionTarget, setSelection } from '../../src/testing';
 
 const model = compileContentModel([core(), bold(), fixtureLabelledMention()], { id: 'test.clipboard', version: 1 });
 const definition = defineEditor({ id: 'test.clipboard', model });
+const ALLOW = { create: true, edit: true, remove: true };
+// The mentions may move and be created, but no paste or drop brings one in.
+const unpastedMentions = defineEditor({
+    id: 'test.clipboard',
+    model,
+    policy: { features: { 'fixture.labelled-mention': { ...ALLOW, paste: false } } },
+});
 const presentation = defineReactPresentation({ sliceContext: 'ct' });
 
 /** A paragraph of `text`, with `@` standing for the mention `m-1` labelled Ada. */
@@ -62,11 +69,14 @@ declare global {
 export const ClipboardProbe = ({
     texts = ['ab'],
     readOnly = false,
+    unpasted = false,
     scroll = false,
     dragged = 'Dropped',
 }: {
     readonly texts?: readonly string[];
     readonly readOnly?: boolean;
+    /** Mounts the definition whose policy sets `paste: false` for the mention. */
+    readonly unpasted?: boolean;
     readonly scroll?: boolean;
     readonly dragged?: string;
 }) => {
@@ -120,10 +130,14 @@ export const ClipboardProbe = ({
         requiredCapabilities: [{ id: 'core', version: 1 }],
         content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: texts.map(paragraphOf) },
     };
+    let shown = definition;
+    if (unpasted) {
+        shown = unpastedMentions;
+    }
     let editor = (
         <RichTextEditor
             aria-label="Notes"
-            definition={definition}
+            definition={shown}
             defaultValue={{ documentId: 'document-1', revision: null, document }}
             presentation={presentation}
             readOnly={readOnly}
