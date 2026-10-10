@@ -47,15 +47,15 @@ const render = (...blocks: readonly unknown[]) =>
 describe('RichTextReader html specs', () => {
     it('gives React the props of the attributes a spec writes and drops event handlers and bad names', () => {
         expect(render(node('box', {}, text('Hi')))).toBe(
-            '<div><div class="box" style="text-align:right;--accent:1" colSpan="2" tabindex="0" data-tone="calm">Hi</div></div>',
+            '<div><div class="box" style="text-align:right;--accent:1" colSpan="2" tabindex="0" data-tone="calm" dir="auto">Hi</div></div>',
         );
     });
 
     it('reads a style attribute name in any case as a style object', () => {
-        expect(render(node('shout'))).toBe('<div><div style="text-align:right"></div></div>');
+        expect(render(node('shout'))).toBe('<div><div style="text-align:right" dir="auto"></div></div>');
     });
 
     it('drops the children of a void element and renders a node whose spec has no content hole as a leaf', () => {
-        expect(render(node('stamp'), node('ghost'))).toBe('<div><hr/><span></span></div>');
+        expect(render(node('stamp'), node('ghost'))).toBe('<div><hr dir="auto"/><span dir="auto"></span></div>');
     });
 });

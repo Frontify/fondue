@@ -98,9 +98,9 @@ describe('RichTextReader modes', () => {
     it('decodes with its limits prop, so a document over a limit shows the invalid message', () => {
         const document = wrap(paragraph(text('a')), paragraph(text('b')), paragraph(text('c')));
 
-        expect(read(document)).toContain('<p>c</p>');
+        expect(read(document)).toContain('<p dir="auto">c</p>');
         expect(read(document, { limits: { maxDocumentNodes: 3 } })).toContain('data-rte-message="invalid"');
-        expect(read(JSON.stringify(document))).toContain('<p>c</p>');
+        expect(read(JSON.stringify(document))).toContain('<p dir="auto">c</p>');
     });
 
     it.each([...fixturesIn('unknown'), ...fixturesIn('invalid')])(
@@ -137,9 +137,9 @@ describe('RichTextReader islands', () => {
     const html = read(unknown);
 
     it('keeps the surrounding content and shows exactly one notice', () => {
-        expect(html).toContain('<p>Before</p>');
-        expect(html).toContain('<p>After</p>');
-        expect(html).toContain('<li><p>Item</p>');
+        expect(html).toContain('<p dir="auto">Before</p>');
+        expect(html).toContain('<p dir="auto">After</p>');
+        expect(html).toContain('<li dir="auto"><p dir="auto">Item</p>');
         expect(html.split(NOTICE)).toHaveLength(2);
         expect(html).toContain('Some content is not supported here.');
     });
@@ -158,7 +158,7 @@ describe('RichTextReader islands', () => {
 
     it('renders an unsupported_inline inside a paragraph as a span, never a div', () => {
         expect(html).toContain(
-            '<p>Mood <span role="group" aria-label="Unsupported content: sticker" data-rte-island="">smile</span> and after</p>',
+            '<p dir="auto">Mood <span role="group" aria-label="Unsupported content: sticker" data-rte-island="">smile</span> and after</p>',
         );
     });
 
@@ -188,9 +188,9 @@ describe('RichTextReader islands', () => {
         const stored = { ...(envelope(doc(paragraph(text('One')), paragraph(text('Two'))), ['core']) as object) };
         const output = renderReader({ ...stored, model: { id: 'fixture.reviewed', version: 1 } }, flagged);
 
-        expect(output).toContain('<p>One</p>');
+        expect(output).toContain('<p dir="auto">One</p>');
         expect(output).toContain('data-rte-island="">Two</div>');
-        expect(output).not.toContain('<p>Two</p>');
+        expect(output).not.toContain('<p dir="auto">Two</p>');
         expect(output.split(NOTICE)).toHaveLength(2);
     });
 
@@ -205,7 +205,7 @@ describe('RichTextReader islands', () => {
     it('continues the space alternation through an inline island and the text after it', () => {
         const html = read(wrap(paragraph(text('a '), node('unsupported_inline_x', {}, text(' b ')), text(' c'))));
 
-        expect(html).toContain('<p>a <span role="group"');
+        expect(html).toContain('<p dir="auto">a <span role="group"');
         expect(html).toContain('data-rte-island="">\u00A0b </span>\u00A0c</p>');
     });
 
@@ -261,20 +261,20 @@ describe('RichTextReader semantic elements', () => {
     );
 
     it.each([
-        '<h1>Level 1</h1>',
-        '<h2>Level 2</h2>',
-        '<h3>Level 3</h3>',
-        '<h4>Level 4</h4>',
-        '<h5>Level 5</h5>',
-        '<h6>Level 6</h6>',
-        '<blockquote><p>Quoted</p></blockquote>',
-        '<ul><li><p>Bullet</p></li></ul>',
-        '<ol start="3"><li><p>Ordered</p></li></ol>',
-        '<pre><code>const a = 1;</code></pre>',
-        '<hr/>',
-        '<figure><img alt="A chart"/></figure>',
-        '<table><thead><tr><th colSpan="1" rowspan="1" scope="col"><p>Head</p></th></tr></thead>',
-        '<tbody><tr><td colSpan="1" rowspan="1"><p>Cell</p></td></tr></tbody></table>',
+        '<h1 dir="auto">Level 1</h1>',
+        '<h2 dir="auto">Level 2</h2>',
+        '<h3 dir="auto">Level 3</h3>',
+        '<h4 dir="auto">Level 4</h4>',
+        '<h5 dir="auto">Level 5</h5>',
+        '<h6 dir="auto">Level 6</h6>',
+        '<blockquote dir="auto"><p dir="auto">Quoted</p></blockquote>',
+        '<ul dir="auto"><li dir="auto"><p dir="auto">Bullet</p></li></ul>',
+        '<ol start="3" dir="auto"><li dir="auto"><p dir="auto">Ordered</p></li></ol>',
+        '<pre dir="auto"><code>const a = 1;</code></pre>',
+        '<hr dir="auto"/>',
+        '<figure dir="auto"><img alt="A chart" dir="auto"/></figure>',
+        '<table><thead><tr dir="auto"><th colSpan="1" rowspan="1" scope="col" dir="auto"><p dir="auto">Head</p></th></tr></thead>',
+        '<tbody><tr dir="auto"><td colSpan="1" rowspan="1" dir="auto"><p dir="auto">Cell</p></td></tr></tbody></table>',
         '<a href="https://frontify.com">Frontify</a>',
     ])('uses the semantic element %s', (element) => {
         expect(html).toContain(element);
@@ -325,7 +325,7 @@ describe('RichTextReader unknown marks and attributes', () => {
         });
 
         expect(read(attributeFixture)).toBe(read(stripped));
-        expect(read(attributeFixture)).toBe('<div><p>Warm words</p></div>');
+        expect(read(attributeFixture)).toBe('<div><p dir="auto">Warm words</p></div>');
     });
 });
 
@@ -386,27 +386,27 @@ describe('RichTextReader spaces', () => {
     const NBSP = ' ';
 
     it('keeps one space and alternates U+0020 and U+00A0 in a longer run', () => {
-        expect(spaced('a b')).toContain('<p>a b</p>');
-        expect(spaced('a  b')).toContain(`<p>a ${NBSP}b</p>`);
-        expect(spaced('a     b')).toContain(`<p>a ${NBSP} ${NBSP} b</p>`);
+        expect(spaced('a b')).toContain('<p dir="auto">a b</p>');
+        expect(spaced('a  b')).toContain(`<p dir="auto">a ${NBSP}b</p>`);
+        expect(spaced('a     b')).toContain(`<p dir="auto">a ${NBSP} ${NBSP} b</p>`);
     });
 
     it('carries the alternation across the text nodes of one block', () => {
         const html = read(wrap(paragraph(text('a ', mark('bold')), text(' b'))));
 
-        expect(html).toContain(`<p><strong>a </strong>${NBSP}b</p>`);
+        expect(html).toContain(`<p dir="auto"><strong>a </strong>${NBSP}b</p>`);
     });
 
     it('starts a new run in the next block', () => {
         const html = read(wrap(paragraph(text('a ')), paragraph(text(' b'))));
 
-        expect(html).toContain('<p>a </p><p> b</p>');
+        expect(html).toContain('<p dir="auto">a </p><p dir="auto"> b</p>');
     });
 
     it('keeps every space of a code block as U+0020', () => {
         const html = read(wrap(node('code_block', { languageId: null }, text('a  b'))));
 
-        expect(html).toContain('<pre><code>a  b</code></pre>');
+        expect(html).toContain('<pre dir="auto"><code>a  b</code></pre>');
         expect(html).not.toContain(NBSP);
     });
 });
@@ -445,7 +445,7 @@ describe('RichTextReader override failures', () => {
         expect(html).toContain(
             '<div role="group" aria-label="Unsupported content: fixture.blocks" data-rte-island="">Quoted words</div>',
         );
-        expect(html).toContain('<p>Safe</p>');
+        expect(html).toContain('<p dir="auto">Safe</p>');
     });
 
     it('renders the text of a failed override with the same space alternation', () => {
@@ -474,12 +474,12 @@ describe('RichTextReader override failures', () => {
             failing,
         );
 
-        expect(html).toContain('<p>a <span role="group"');
+        expect(html).toContain('<p dir="auto">a <span role="group"');
         expect(html).toContain('data-rte-island="">\u00A0b </span>\u00A0c</p>');
     });
 
     it('renders an inline node whose override throws as a span, with no div inside the p', () => {
-        const paragraphs = html.match(/<p>.*?<\/p>/g) ?? [];
+        const paragraphs = html.match(/<p dir="auto">.*?<\/p>/g) ?? [];
 
         expect(html).toContain(
             '<span role="group" aria-label="Unsupported content: fixture.mention" data-rte-island=""></span>',
@@ -489,7 +489,7 @@ describe('RichTextReader override failures', () => {
 
     it('keeps the text a failing mark override wraps, in a span fallback', () => {
         expect(html).toContain(
-            '<p><span role="group" aria-label="Unsupported content: fixture.link" data-rte-island="">Linked</span></p>',
+            '<p dir="auto"><span role="group" aria-label="Unsupported content: fixture.link" data-rte-island="">Linked</span></p>',
         );
     });
 
@@ -590,7 +590,7 @@ describe('RichTextReader data manifest', () => {
         const constructed = vi.spyOn(globalThis, 'Function');
         try {
             expect(renderReader(document, acme)).toBe(
-                '<div><p>Intro</p><blockquote class="acme-pull-quote" data-tone="brand">Design &lt;is&gt; how it works</blockquote></div>',
+                '<div><p dir="auto">Intro</p><blockquote class="acme-pull-quote" data-tone="brand" dir="auto">Design &lt;is&gt; how it works</blockquote></div>',
             );
             expect(evaluated).not.toHaveBeenCalled();
             expect(constructed).not.toHaveBeenCalled();
@@ -656,7 +656,7 @@ describe('RichTextReader urls', () => {
 
             expect(html).not.toContain('href=');
             expect(html).not.toContain('alert(1)');
-            expect(html).toContain('<p>Go</p>');
+            expect(html).toContain('<p dir="auto">Go</p>');
         },
     );
 
@@ -678,16 +678,16 @@ describe('RichTextReader document attributes', () => {
     };
 
     it('renders the declared defaults of doc for omitted attributes, writing no lang or dir', () => {
-        expect(read(root())).toBe('<div><p>a</p></div>');
-        expect(read(root({ lang: null, dir: 'auto' }))).toBe('<div><p>a</p></div>');
+        expect(read(root())).toBe('<div><p dir="auto">a</p></div>');
+        expect(read(root({ lang: null, dir: 'auto' }))).toBe('<div><p dir="auto">a</p></div>');
     });
 
     it('renders the default for a doc attribute that fails its declaration, not the stored value', () => {
-        expect(read(root({ lang: 'not a language', dir: 'sideways' }))).toBe('<div><p>a</p></div>');
+        expect(read(root({ lang: 'not a language', dir: 'sideways' }))).toBe('<div><p dir="auto">a</p></div>');
     });
 
     it('writes a valid doc lang and dir on the reader root', () => {
-        expect(read(root({ lang: 'ar', dir: 'rtl' }))).toBe('<div lang="ar" dir="rtl"><p>a</p></div>');
+        expect(read(root({ lang: 'ar', dir: 'rtl' }))).toBe('<div lang="ar" dir="rtl"><p dir="auto">a</p></div>');
     });
 });
 
@@ -704,7 +704,25 @@ describe('RichTextReader marks', () => {
         );
 
         expect(html).toBe(
-            '<div><p><a href="https://frontify.com"><strong>bold </strong><span data-rte-color="brand.red">colour</span></a></p></div>',
+            '<div><p dir="auto"><a href="https://frontify.com"><strong>bold </strong><span data-rte-color="brand.red">colour</span></a></p></div>',
         );
+    });
+});
+
+describe('RichTextReader direction', () => {
+    it('renders a paragraph, a heading and a list item that store no dir with dir auto, and the list with them', () => {
+        const html = read(
+            wrap(paragraph(text('Plain')), levelled(1, text('Title')), bulletList(listItem(paragraph(text('Item'))))),
+        );
+
+        expect(html).toBe(
+            '<div><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul></div>',
+        );
+    });
+
+    it('renders a link and bold with no dir', () => {
+        const html = read(wrap(paragraph(text('Go', link('https://frontify.com'), mark('bold')))));
+
+        expect(html).toBe('<div><p dir="auto"><a href="https://frontify.com"><strong>Go</strong></a></p></div>');
     });
 });
