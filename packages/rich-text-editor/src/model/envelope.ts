@@ -52,7 +52,7 @@ const findMisshapen = (envelope: Readonly<Record<string, unknown>>): string | un
     return shaped ? undefined : '/content';
 };
 
-/** Decode order step 2: the format and its version, then the Envelope and root shape, then the model ID. */
+/** Checks the format and its version, then the envelope and root shape, then the model ID. */
 export const checkEnvelope = (value: unknown, model: ContentModel): EnvelopeResult => {
     const invalid = (path: string): EnvelopeResult => ({
         ok: false,

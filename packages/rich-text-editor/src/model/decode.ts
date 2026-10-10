@@ -28,7 +28,7 @@ const limitsOf = (given: Partial<ResourceLimits> | undefined): ResourceLimits =>
     return limits as unknown as ResourceLimits;
 };
 
-/** Step 3 after the capability warnings: registered migrations run here in memory; none is registered yet. */
+/** Runs after the capability warnings: registered migrations run here in memory; none is registered yet. */
 const runMigrations = (document: RichTextDocument): RichTextDocument => document;
 
 /** A capability the model does not install, or records at a lower version, warns. */
