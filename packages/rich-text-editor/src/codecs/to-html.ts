@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CodecContext, type Diagnostic, type HtmlSpec } from '#/model';
+import { type CodecContext, type Diagnostic, type HtmlSpec, type ListLevels } from '#/model';
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec } from '#/model/html-spec';
 import {
@@ -12,12 +12,14 @@ import {
     islandLabel,
     type Item,
     itemsOf,
+    LIST_LEVEL_KINDS,
     spaced,
     type Spacing,
     VOID_TAGS,
+    withListLevel,
     writesAttribute,
 } from '#/model/output';
-import { isStyleAttribute } from '#/model/values';
+import { isStyleAttribute, ownValue } from '#/model/values';
 
 import { type CodecPlan, Losses } from './plan';
 import { keepMark, noteNode, reportFailure } from './walk';
@@ -28,6 +30,9 @@ interface HtmlState extends Spacing {
     readonly diagnostics: Diagnostic[];
     /** Uses of features whose `html` support is `lossy`. */
     readonly losses: Losses;
+    readonly listLevels: ListLevels | undefined;
+    /** How many lists of each kind hold the node being written. */
+    readonly lists: Record<keyof ListLevels, number>;
 }
 
 const ESCAPES: Readonly<Record<string, string>> = {
@@ -163,9 +168,18 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     }
     noteNode(state, node, 'html');
     const before = state.carried;
+    const kind = ownValue(LIST_LEVEL_KINDS, node.type);
+    let depth = 0;
+    if (kind !== undefined) {
+        state.lists[kind] += 1;
+        depth = state.lists[kind];
+    }
     let inner = renderChildren(state, node, path, plan.pre);
     if (node.type === 'task_item' && plan.featureId === 'lists.task') {
         inner = taskItemInner(state, node, path, plan.pre);
+    }
+    if (kind !== undefined) {
+        state.lists[kind] -= 1;
     }
     const attrs = attrsOf(node.attrs);
     let template: HtmlTemplate;
@@ -184,6 +198,9 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         }
     }
     state.carried = 0;
+    if (kind !== undefined) {
+        template = withListLevel(template, attrs, kind, depth, state.listLevels);
+    }
     return build(template, inner);
 };
 
@@ -238,8 +255,18 @@ export const writeHtml = (
     root: TreeNode,
     context: CodecContext,
     contentClassName?: string,
+    listLevels?: ListLevels,
 ): { readonly html: string; readonly diagnostics: readonly Diagnostic[] } => {
-    const state: HtmlState = { plan, context, diagnostics: [], losses: new Losses(), islands: 0, carried: 0 };
+    const state: HtmlState = {
+        plan,
+        context,
+        diagnostics: [],
+        losses: new Losses(),
+        islands: 0,
+        carried: 0,
+        listLevels,
+        lists: { ordered: 0, bullet: 0 },
+    };
     if (isEmptyDocument(plan, root)) {
         return { html: '', diagnostics: [] };
     }

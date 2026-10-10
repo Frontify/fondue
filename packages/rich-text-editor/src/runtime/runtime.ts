@@ -188,6 +188,8 @@ export interface EditorRuntimeOptions {
     readonly recovery?: () => RecoveryService | undefined;
     /** The host's `inputRules` prop, read on each input (SPEC-rich-text-editing/AC-042, AC-101). */
     readonly inputRules?: () => false | { readonly exclude: readonly string[] } | undefined;
+    /** Opens the package-built control of an `openControl` command that a host `execute` ran (SPEC-rich-text-editing/AC-090). */
+    readonly openControl?: (control: string) => void;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -352,6 +354,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         compiledModel(definition.model)
             .commands.filter((command) => setsHeading(command.definition))
             .flatMap(({ id }) => definition.commands.get(id) ?? []),
+    );
+    // The control of each `openControl` command by command ID.
+    const controls = new Map(
+        compiledModel(definition.model)
+            .commands.filter((command) => command.definition.capability === 'openControl')
+            .map(({ id, definition: { args } }) => [id, args.control as string]),
     );
     let { capabilities } = options;
     let exceedsLimits = createLimitCheck(definition.model, capabilities);
@@ -1045,6 +1053,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return rejected('busy');
         }
         const result = run(id, given, commandOptions, 'host');
+        const control = controls.get(id);
+        if (control !== undefined && result.status === 'no-op') {
+            options.openControl?.(control);
+        }
         // Without `focus: 'editor'` a command leaves focus where it is (SPEC-rich-text-runtime/AC-085, AC-086).
         if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
             focus();

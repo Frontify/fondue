@@ -8,6 +8,7 @@ import {
     type DecodeOptions,
     type Diagnostic,
     type JsonValue,
+    type ListLevels,
     type ReferenceResolution,
     type ResourceLimits,
     type RichTextLocale,
@@ -27,6 +28,8 @@ export interface ReaderPresentation {
     readonly resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
     /** A class the content root carries beside `fondue-rte-content`, for host rules (SPEC-rich-text-react/AC-066). */
     readonly contentClassName?: string;
+    /** List markers by depth (SPEC-rich-text-editing, List levels). */
+    readonly listLevels?: ListLevels;
 }
 
 export interface RichTextReaderProps {
@@ -71,7 +74,15 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
     if (tree === undefined) {
         return { element: message(context, 'invalid'), diagnostics, notified };
     }
-    const state: RenderState = { plan: planOf(model), context, diagnostics, islands: 0, carried: 0 };
+    const state: RenderState = {
+        plan: planOf(model),
+        context,
+        diagnostics,
+        islands: 0,
+        carried: 0,
+        listLevels: resolvers.listLevels,
+        lists: { ordered: 0, bullet: 0 },
+    };
     return { element: renderDocument(state, tree, resolvers.contentClassName), diagnostics, notified };
 };
 

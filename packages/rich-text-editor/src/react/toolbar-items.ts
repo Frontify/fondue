@@ -7,6 +7,7 @@ import { canonicalJson } from '#/model/hash';
 import { isPlatformBinding } from '#/model/platform';
 import { refusesLevel, setsHeading } from '#/runtime/policy';
 import { type AuthoringPolicy } from '#/runtime/types';
+import { type NumberingStrings } from '#/ui/menus/numbering';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
 import { type ReactPresentation } from './types';
@@ -188,6 +189,15 @@ export const toolbarItems = (
     return items;
 };
 
+/** The numbering dialog's strings in the UI locale (SPEC-rich-text-editing/AC-090). */
+export const numberingStrings = (t: CodecContext['t']): NumberingStrings => ({
+    title: t('RichTextEditor_startNumbering'),
+    field: t('RichTextEditor_startNumberingField'),
+    range: t('RichTextEditor_startNumberingRange', { min: 0, max: 1_000_000 }),
+    apply: t('RichTextEditor_apply'),
+    cancel: t('RichTextEditor_cancel'),
+});
+
 /**
  * The More rows of the key routes a feature labels and the toolbar does not show, such as Move up and Move down, so
  * each is reachable without its shortcut (SPEC-rich-text-editing/AC-069, SPEC-rich-text-react, Default toolbars).
@@ -246,13 +256,7 @@ export const menuItems = (
                 bindings: [],
                 groupStart: false,
                 bubble: false,
-                numbering: {
-                    title: t('RichTextEditor_startNumbering'),
-                    field: t('RichTextEditor_startNumberingField'),
-                    range: t('RichTextEditor_startNumberingRange', { min: 0, max: 1_000_000 }),
-                    apply: t('RichTextEditor_apply'),
-                    cancel: t('RichTextEditor_cancel'),
-                },
+                numbering: numberingStrings(t),
             });
         }
     }

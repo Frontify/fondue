@@ -8,6 +8,7 @@ import {
     type ContentModel,
     type Diagnostic,
     type Feature,
+    type ListLevels,
     type ModelRef,
     type ResourceLimits,
     type RichTextDocument,
@@ -177,10 +178,6 @@ export interface ColorToken {
     /** CSS colour for rendering and contrast checks. */
     readonly value: string;
     readonly usage: readonly ('font_color' | 'highlight')[];
-}
-export interface ListLevels {
-    readonly ordered: readonly { readonly counterType: string; readonly color?: string }[];
-    readonly bullet: readonly { readonly shape: string; readonly color?: string; readonly size?: string }[];
 }
 
 export type ToolbarMode = 'fixed' | 'bubble';
