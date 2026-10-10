@@ -19,11 +19,18 @@ const ENGINE_FREE: Rule = {
 // The reader and codecs read no live DOM, so they never load a React DOM root (SPEC-rich-text-output/AC-027).
 const DOM_FREE: Rule = { packages: /^(prosemirror-[\w-]+|react-dom\/client)$/, folders: [] };
 
+// HTML import runs on a server with only a DOM implementation, so it loads no view, state or React (SPEC-rich-text/AC-076).
+const SERVER_IMPORT: Rule = {
+    packages: /^(prosemirror-view|prosemirror-state|react|react-dom)$/,
+    folders: ['runtime', 'bridge', 'react', 'ui'],
+};
+
 export const RULES: Record<string, readonly Rule[]> = {
     './model': [ENGINE_FREE],
     './features': [ENGINE_FREE],
     './reader': [ENGINE_FREE, DOM_FREE],
     './codecs': [ENGINE_FREE, DOM_FREE],
+    './html': [SERVER_IMPORT],
 };
 
 const isBare = (id: string) => !/^(\.|\/|#|\0|[a-zA-Z]:)/.test(id);

@@ -1,0 +1,74 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { Fragment, type Node, Slice } from 'prosemirror-model';
+
+import { importHtml } from '#/clipboard/import/html';
+import { type PastePolicy, withoutRefused } from '#/clipboard/import/policy';
+import { buildSchema, carriesNodeId } from '#/definition/schema';
+import {
+    type ContentModel,
+    type DecodeResult,
+    decodeDocument,
+    defaultIdSource,
+    type IdSource,
+    type ResourceLimits,
+} from '#/model';
+import { type TreeNode } from '#/model/content';
+import { limitsOf } from '#/model/decode';
+import { encodeTree } from '#/model/encode';
+
+/** What `fromHTML` reads of a `CompiledEditorDefinition`, which `./html` cannot import from the editor layers. */
+interface HtmlImportDefinition {
+    readonly authoring: {
+        readonly features: PastePolicy;
+        readonly creatableHeadingLevels: readonly number[];
+    };
+    readonly limits: ResourceLimits;
+}
+
+export interface HtmlImportOptions {
+    /** A DOM implementation: the browser window, or one from jsdom or linkedom on a server. */
+    readonly window: Window;
+    /** Applies that definition's creation policy, as paste does; without it, everything the model holds is kept. */
+    readonly definition?: HtmlImportDefinition;
+    readonly limits?: Partial<ResourceLimits>;
+    /** For the `nodeId`s of imported occurrences; the package default when omitted. */
+    readonly ids?: IdSource;
+}
+
+/** `fragment` with a new `nodeId` on every node that carries one. */
+const withIds = (fragment: Fragment, ids: IdSource): Fragment => {
+    const nodes: Node[] = [];
+    for (const node of fragment.content) {
+        if (node.isText) {
+            nodes.push(node);
+            continue;
+        }
+        let { attrs } = node;
+        if (carriesNodeId(node)) {
+            attrs = { ...attrs, nodeId: ids.next('node') };
+        }
+        nodes.push(node.type.create(attrs, withIds(node.content, ids), node.marks));
+    }
+    return Fragment.from(nodes);
+};
+
+/**
+ * Converts HTML to a document through the paste pipeline, with no editor mounted, so it runs on a server with only a
+ * DOM implementation (DR-050). The result equals pasting `html` into an empty editor of `model` and `options.definition`.
+ */
+export const fromHTML = (html: string, model: ContentModel, options: HtmlImportOptions): DecodeResult => {
+    const { definition } = options;
+    const limits = limitsOf(options.limits, definition?.limits);
+    const schema = buildSchema(model);
+    const headingLevels = definition?.authoring.creatableHeadingLevels;
+    let { content } = importHtml(html, schema, options.window, { limits, headingLevels });
+    if (definition !== undefined) {
+        content = withoutRefused(new Slice(content, 0, 0), schema, model, definition.authoring.features).content;
+    }
+    const ids = options.ids ?? defaultIdSource;
+    // The parse fits its content to `doc`, and an empty one gets the paragraph `doc` requires.
+    const doc = schema.topNodeType.createAndFill(null, withIds(content, ids)) as Node;
+    const { document } = encodeTree(doc.toJSON() as TreeNode, model);
+    return decodeDocument(document, model, { limits, ids });
+};

@@ -68,8 +68,26 @@ const attributeSpecs = (declarations: AttributeDeclarations) => {
     return specs;
 };
 
+const RGB = /^rgba?\((\d+), ?(\d+), ?(\d+)(?:, ?([\d.]+))?\)$/;
+
+/** A CSS colour as the `#rrggbb` or `#rrggbbaa` of a `color` value, since DOM implementations report `rgb()`. */
+const hexOf = (text: string) => {
+    const rgb = RGB.exec(text);
+    if (rgb === null) {
+        return text.toLowerCase();
+    }
+    const channels = rgb.slice(1, 4).map(Number);
+    if (rgb[4] !== undefined) {
+        channels.push(Math.round(Number(rgb[4]) * 255));
+    }
+    return `#${channels.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+};
+
 /** An HTML attribute or CSS value as its declaration types it, or `undefined` when it holds none. */
 const valueOf = (text: string, declaration: AttributeDeclaration): unknown => {
+    if (declaration.type === 'color') {
+        return hexOf(text);
+    }
     if (declaration.type === 'integer' || declaration.type === 'number') {
         if (text.trim() === '') {
             return undefined;
@@ -125,8 +143,17 @@ const tagRule = (
     rule: Extract<ParseRule, { readonly tag: string }>,
     declarations: AttributeDeclarations,
     specs: Readonly<Record<string, AttributeSpec>>,
+    shared: readonly SharedAttribute[],
 ): TagParseRule => {
-    const sources = rule.attrs ?? {};
+    const sources: Record<string, ParseAttributeSource> = {};
+    for (const { name, declaration } of shared) {
+        if (declaration.parse !== undefined && 'style' in declaration.parse) {
+            sources[name] = { fromStyle: declaration.parse.style };
+        } else if (declaration.parse !== undefined) {
+            sources[name] = { from: declaration.parse.attr };
+        }
+    }
+    Object.assign(sources, rule.attrs);
     const getAttrs = (element: HTMLElement) => {
         const attrs: Record<string, unknown> = {};
         for (const [name, declaration] of Object.entries(declarations)) {
@@ -143,7 +170,12 @@ const tagRule = (
         }
         return attrs;
     };
-    return { tag: rule.tag, getAttrs };
+    const engine: TagParseRule = { tag: rule.tag, getAttrs };
+    // A tag with a class or attribute wins over another feature's bare tag (SPEC-rich-text-clipboard/AC-048).
+    if (/[.[]/.test(rule.tag)) {
+        engine.priority = 51;
+    }
+    return engine;
 };
 
 /** Opaque islands keep stored content the model cannot hold as one non-editable atom (DR-041). */
@@ -187,7 +219,9 @@ export const buildSchema = (model: ContentModel): Schema => {
             attrs: specs,
             toDOM: (instance) => render(declaration.html, instance.attrs, options, shared),
             // The engine reads style rules only for marks.
-            parseDOM: declaration.parse.flatMap((rule) => ('tag' in rule ? [tagRule(rule, attributes, specs)] : [])),
+            parseDOM: declaration.parse.flatMap((rule) =>
+                'tag' in rule ? [tagRule(rule, attributes, specs, shared)] : [],
+            ),
         };
         if (declaration.content !== undefined) {
             spec.content = declaration.content;
@@ -220,7 +254,9 @@ export const buildSchema = (model: ContentModel): Schema => {
             toDOM: (instance) => render(declaration.html, instance.attrs, options, []),
             parseDOM: declaration.parse.map(
                 (rule): EngineParseRule =>
-                    'tag' in rule ? tagRule(rule, declaration.attrs, specs) : { style: `${rule.style}=${rule.value}` },
+                    'tag' in rule
+                        ? tagRule(rule, declaration.attrs, specs, [])
+                        : { style: `${rule.style}=${rule.value}` },
             ),
         };
         if (declaration.excludes !== undefined) {
