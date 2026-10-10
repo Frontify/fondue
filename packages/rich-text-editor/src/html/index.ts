@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Fragment, type Node, Slice } from 'prosemirror-model';
+import { type Node, Slice } from 'prosemirror-model';
 
 import { importHtml } from '#/clipboard/import/html';
 import { type PastePolicy, withoutRefused } from '#/clipboard/import/policy';
-import { buildSchema, carriesNodeId } from '#/definition/schema';
+import { buildSchema, withNodeIds } from '#/definition/schema';
 import {
     type ContentModel,
     type DecodeResult,
@@ -36,23 +36,6 @@ export interface HtmlImportOptions {
     readonly ids?: IdSource;
 }
 
-/** `fragment` with a new `nodeId` on every node that carries one. */
-const withIds = (fragment: Fragment, ids: IdSource): Fragment => {
-    const nodes: Node[] = [];
-    for (const node of fragment.content) {
-        if (node.isText) {
-            nodes.push(node);
-            continue;
-        }
-        let { attrs } = node;
-        if (carriesNodeId(node)) {
-            attrs = { ...attrs, nodeId: ids.next('node') };
-        }
-        nodes.push(node.type.create(attrs, withIds(node.content, ids), node.marks));
-    }
-    return Fragment.from(nodes);
-};
-
 /**
  * Converts HTML to a document through the paste pipeline, with no editor mounted, so it runs on a server with only a
  * DOM implementation (DR-050). The result equals pasting `html` into an empty editor of `model` and `options.definition`.
@@ -68,7 +51,10 @@ export const fromHTML = (html: string, model: ContentModel, options: HtmlImportO
     }
     const ids = options.ids ?? defaultIdSource;
     // The parse fits its content to `doc`, and an empty one gets the paragraph `doc` requires.
-    const doc = schema.topNodeType.createAndFill(null, withIds(content, ids)) as Node;
+    const doc = schema.topNodeType.createAndFill(
+        null,
+        withNodeIds(content, () => ids.next('node')),
+    ) as Node;
     const { document } = encodeTree(doc.toJSON() as TreeNode, model);
     return decodeDocument(document, model, { limits, ids });
 };

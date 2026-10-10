@@ -3,6 +3,7 @@
 import {
     type AttributeSpec,
     type DOMOutputSpec,
+    Fragment,
     type MarkSpec,
     type Node,
     type NodeSpec,
@@ -52,6 +53,23 @@ const render = (
 
 /** Whether a node's type carries an occurrence `nodeId`, which the schema gives a null default below. */
 export const carriesNodeId = (node: Node): boolean => hasNodeId(node.type.spec.attrs ?? {});
+
+/** `fragment` with each `nodeId` that a node carries set to the next value. */
+export const withNodeIds = (fragment: Fragment, next: () => string | null): Fragment => {
+    const nodes: Node[] = [];
+    for (const node of fragment.content) {
+        if (node.isText) {
+            nodes.push(node);
+            continue;
+        }
+        let { attrs } = node;
+        if (carriesNodeId(node)) {
+            attrs = { ...attrs, nodeId: next() };
+        }
+        nodes.push(node.type.create(attrs, withNodeIds(node.content, next), node.marks));
+    }
+    return Fragment.from(nodes);
+};
 
 /** Declared attributes, then `unknownAttributes`, which holds what the vocabulary does not declare (SPEC-rich-text-format, Vocabulary). */
 const attributeSpecs = (declarations: AttributeDeclarations) => {
@@ -147,10 +165,14 @@ const tagRule = (
 ): TagParseRule => {
     const sources: Record<string, ParseAttributeSource> = {};
     for (const { name, declaration } of shared) {
-        if (declaration.parse !== undefined && 'style' in declaration.parse) {
-            sources[name] = { fromStyle: declaration.parse.style };
-        } else if (declaration.parse !== undefined) {
-            sources[name] = { from: declaration.parse.attr };
+        const { parse } = declaration;
+        if (parse === undefined) {
+            continue;
+        }
+        if ('style' in parse) {
+            sources[name] = { fromStyle: parse.style };
+        } else {
+            sources[name] = { from: parse.attr };
         }
     }
     Object.assign(sources, rule.attrs);

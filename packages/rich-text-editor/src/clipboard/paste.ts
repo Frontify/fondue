@@ -5,7 +5,7 @@ import { type EditorState, Selection, type Transaction } from 'prosemirror-state
 import { type Step, Transform } from 'prosemirror-transform';
 
 import { createParser, readMarkdown } from '#/codecs/from-markdown';
-import { carriesNodeId } from '#/definition';
+import { withNodeIds } from '#/definition';
 import { checkHref, type ContentModel, defaultIdSource, type ResourceLimits } from '#/model';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
@@ -78,19 +78,7 @@ export const insertAndSelect = (tr: Transaction, from: number, to: number, slice
 };
 
 /** The content with every `nodeId` cleared: the runtime gives each pasted node a new one (SPEC-rich-text-clipboard/AC-021), and copied HTML holds none (AC-027). */
-export const withoutIds = (fragment: Fragment): Fragment =>
-    Fragment.from(
-        fragment.content.map((node) => {
-            if (node.isText) {
-                return node;
-            }
-            let { attrs } = node;
-            if (carriesNodeId(node)) {
-                attrs = { ...attrs, nodeId: null };
-            }
-            return node.type.create(attrs, withoutIds(node.content), node.marks);
-        }),
-    );
+export const withoutIds = (fragment: Fragment): Fragment => withNodeIds(fragment, () => null);
 
 /** The `nodeId`s and resource references inside the island originals of `fragment`, which a paste cannot renew. */
 const islandIdentities = (fragment: Fragment) => {
