@@ -49,6 +49,7 @@ export default defineConfig({
     plugins: [
         tsConfigPaths(),
         dts({
+            entryRoot: 'src',
             exclude: ['**/__tests__/**', '**/*.{spec,test,stories}.{ts,tsx}'],
         }),
         externalizeJsDeps(),
@@ -57,7 +58,6 @@ export default defineConfig({
         lib: {
             entry: {
                 'model/index': './src/model/index.ts',
-                'testing/index': './src/testing/index.ts',
             },
             formats: ['es'],
         },
