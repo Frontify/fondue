@@ -44,6 +44,9 @@ export const TOUCH_TOOLBAR: ReactPresentation['toolbar'] = [
     ...TOOLBAR,
 ];
 
+/** Each `onOpenChange` of the host dialog, which no test expects. */
+const hostDialogChanges: boolean[] = [];
+
 export type OverlayKind = 'link' | 'suggestions' | 'menu';
 
 declare global {
@@ -61,6 +64,7 @@ declare global {
             readonly html: () => string;
             /** The modes `onToolbarModeChange` reported. */
             readonly modes: ToolbarMode[];
+            readonly hostDialogChanges: boolean[];
         };
     }
 }
@@ -110,6 +114,7 @@ export const OverlayProbe = ({
     spacer = 0,
     width,
     hostContainer = false,
+    hostButtons = true,
 }: {
     readonly blocks?: readonly ContentNodeJSON[];
     readonly texts?: readonly string[];
@@ -126,6 +131,8 @@ export const OverlayProbe = ({
     readonly width?: number;
     /** Passes a host element as `portalContainer`. */
     readonly hostContainer?: boolean;
+    /** Puts host buttons before and after the editor. */
+    readonly hostButtons?: boolean;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const [open, setOpen] = useState<OverlayKind | null>(null);
@@ -180,6 +187,7 @@ export const OverlayProbe = ({
                     return copy.innerHTML;
                 },
                 modes,
+                hostDialogChanges,
             };
         }, 10);
         return () => clearInterval(timer);
@@ -228,21 +236,24 @@ export const OverlayProbe = ({
             </div>
         );
     }
-    let body = (
-        <>
-            {/* An explicit tabindex, since WebKit leaves buttons out of the Tab order by default. */}
-            <button type="button" tabIndex={0}>
-                Before
-            </button>
-            {editor}
-            <button type="button" tabIndex={0}>
-                After
-            </button>
-        </>
-    );
+    let body = editor;
+    if (hostButtons) {
+        body = (
+            <>
+                {/* An explicit tabindex, since WebKit leaves buttons out of the Tab order by default. */}
+                <button type="button" tabIndex={0}>
+                    Before
+                </button>
+                {editor}
+                <button type="button" tabIndex={0}>
+                    After
+                </button>
+            </>
+        );
+    }
     if (within === 'dialog') {
         body = (
-            <Dialog.Root modal open>
+            <Dialog.Root modal open onOpenChange={(next) => hostDialogChanges.push(next)}>
                 <Dialog.Content>
                     <Dialog.Header>
                         <Dialog.Title>Host dialog</Dialog.Title>

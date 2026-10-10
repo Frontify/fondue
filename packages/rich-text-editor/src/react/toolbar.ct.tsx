@@ -1068,7 +1068,8 @@ test.describe('from 1000 to 320 CSS pixels', () => {
         const wideNames = await names();
 
         await page.setViewportSize({ width: 320, height: 640 });
-        await expect(itemOf(page, 'More')).toBeVisible();
+        // More shows at every width, so the refit is read from the last heading leaving.
+        await expect(itemOf(page, 'Heading 6')).toHaveCount(0);
         const narrowNames = await names();
         await page.setViewportSize({ width: 1000, height: 640 });
 

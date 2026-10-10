@@ -570,6 +570,41 @@ test.describe('on a touch device', () => {
             viewport.dispatchEvent(new Event('resize'));
         });
 
+    test('SPEC-rich-text-react/AC-096 docks the toolbar above the on-screen keyboard inside a host dialog, whose transform moves the origin of fixed positioning', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<OverlayProbe within="dialog" bubble={false} />);
+        await ready(page);
+        await surfaceOf(page).tap();
+
+        await openKeyboard(page);
+
+        await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
+    });
+
+    test('SPEC-rich-text-react/AC-096 follows the visual viewport when it pans above the on-screen keyboard', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<OverlayProbe bubble={false} />);
+        await ready(page);
+        await surfaceOf(page).tap();
+        await openKeyboard(page);
+        await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
+
+        await page.evaluate(() => {
+            const viewport = window.visualViewport;
+            if (viewport === null) {
+                return;
+            }
+            Object.defineProperty(viewport, 'offsetTop', { configurable: true, get: () => 100 });
+            viewport.dispatchEvent(new Event('scroll'));
+        });
+
+        await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(450, 0);
+    });
+
     test('SPEC-rich-text-react/AC-096 SPEC-rich-text-accessibility/AC-027 docks the toolbar with undo and redo above the on-screen keyboard, and a tap leaves focus in the surface', async ({
         mount,
         page,
@@ -882,3 +917,39 @@ test('SPEC-rich-text-accessibility/AC-014 keeps a toolbar tooltip open while the
     await expect(tooltip).toBeHidden();
     expect(whileOver).toBe(true);
 });
+
+for (const [where, blocks, name] of [
+    ['the toolbar', undefined, 'Bold'],
+    ['node chrome', [paragraph('one'), codeBlock], 'plain'],
+] as const) {
+    test(`SPEC-rich-text-react/AC-035 SPEC-rich-text-react/AC-046 returns to the surface on Escape from ${where} inside a host dialog, which stays open`, async ({
+        mount,
+        page,
+    }) => {
+        let probe = <OverlayProbe within="dialog" bubble={false} />;
+        if (blocks !== undefined) {
+            probe = <OverlayProbe within="dialog" bubble={false} blocks={blocks} />;
+        }
+        await mount(probe);
+        await ready(page);
+        await surfaceOf(page).focus();
+        if (blocks !== undefined) {
+            await select(page, 'code');
+        }
+        await page.keyboard.press('Alt+F10');
+        await expectFocus(page, name);
+        if (blocks === undefined) {
+            // The first Escape closes the tooltip that focus opened, once Radix has made its layer the highest.
+            await expect(page.getByRole('tooltip')).toBeVisible();
+            await frames(page);
+            await page.keyboard.press('Escape');
+            await expect(page.getByRole('tooltip')).toHaveCount(0);
+            await frames(page);
+        }
+
+        await page.keyboard.press('Escape');
+
+        await expectFocus(page, 'Notes');
+        expect(await page.evaluate(() => window.overlayProbe?.hostDialogChanges)).toEqual([]);
+    });
+}

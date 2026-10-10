@@ -4,8 +4,10 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { type ComponentType, createRef, lazy, type ReactNode, useEffect, useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { defineNodeView } from '#/bridge/define';
 import { fixtureCodeBlockView } from '#/features/__fixtures__/code-block/view';
 import { fixtureItalic, fixtureLink, fixtureToolbar } from '#/features/__fixtures__/features';
+import { fixtureMediaImage } from '#/features/__fixtures__/media/feature';
 import { fixtureMediaImageView } from '#/features/__fixtures__/media/view';
 import {
     type FixtureOverlayProps,
@@ -124,7 +126,7 @@ afterEach(() => {
 });
 
 describe('editor overlays', () => {
-    it('SPEC-rich-text-react/AC-045 renders an overlay into the overlay root inside the editor, or into portalContainer', () => {
+    it('SPEC-rich-text-react/AC-045 renders an overlay into the overlay root inside the editor, or into its own root inside portalContainer', () => {
         const { unmount } = mount({ children: <Opened Overlay={FixtureLinkPopover} /> });
         const overlayRoot = popover()?.closest('[data-rte-overlays]');
         const inEditor =
@@ -136,8 +138,8 @@ describe('editor overlays', () => {
         mount({ portalContainer: host, children: <Opened Overlay={FixtureLinkPopover} /> });
 
         expect(inEditor).toBe(true);
-        expect(host.contains(popover())).toBe(true);
-        expect(popover()?.closest('[data-rte-overlays]')).toBeNull();
+        const ownRoot = popover()?.closest('[data-rte-overlays]');
+        expect(ownRoot?.parentElement).toBe(host);
         host.remove();
     });
 
@@ -242,6 +244,59 @@ describe('editor overlays', () => {
         expect(editorB()?.innerHTML).toBe(before);
         const ids = [...document.querySelectorAll('[id]')].map(({ id }) => id);
         expect(new Set(ids).size).toBe(ids.length);
+    });
+
+    it('SPEC-rich-text-react/AC-049 keeps two editors that share a host portalContainer in their own interaction scopes', () => {
+        const host = document.createElement('div');
+        document.body.append(host);
+        const environment = createTestEnvironment({ seed: 1 });
+        const closedA = vi.fn();
+        const Later = () => {
+            const [open, setOpen] = useState(false);
+            return (
+                <>
+                    <button type="button" onClick={() => setOpen(true)}>
+                        Open B
+                    </button>
+                    <FixtureLinkPopover open={open} onOpenChange={setOpen} />
+                </>
+            );
+        };
+        const Editor = ({ label, children }: { readonly label: string; readonly children: ReactNode }) => (
+            <RichTextEditor.Root
+                aria-label={label}
+                definition={definition}
+                presentation={presentation}
+                defaultValue={loaded(para('one two three'))}
+                locale={fixtureLocale}
+                environment={environment}
+                portalContainer={host}
+            >
+                <RichTextEditor.Surface />
+                {children}
+            </RichTextEditor.Root>
+        );
+        render(
+            <>
+                <Editor label="A">
+                    <Opened Overlay={FixtureLinkPopover} onClose={closedA} />
+                </Editor>
+                <Editor label="B">
+                    <Later />
+                </Editor>
+            </>,
+        );
+        act(() => environment.flushFrames());
+        act(() => screen.getByRole('textbox', { name: 'URL' }).focus());
+
+        // A click with no press, so only the focus move into B's popover can close A's.
+        act(() => {
+            fireEvent.click(screen.getByRole('button', { name: 'Open B' }));
+        });
+
+        expect(closedA).toHaveBeenCalledTimes(1);
+        expect(host.querySelectorAll(':scope > [data-rte-overlays]')).toHaveLength(2);
+        host.remove();
     });
 
     it('SPEC-rich-text-react/AC-090 calls onFocus and onBlur for moves into the link popover and back, and out to a host button', () => {
@@ -471,7 +526,81 @@ describe('overlay accessibility', () => {
 
         // `fireEvent` returns false once a handler prevented the default.
         expect([undocked, docked]).toEqual([true, false]);
-        expect(screen.getByRole('toolbar', { name: 'Text formatting' }).style.insetBlockEnd).toBe('400px');
+        // The docked toolbar's top edge sits its height above the keyboard, which happy-dom lays out as 0.
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' }).style.insetBlockStart).toBe('400px');
         Reflect.deleteProperty(window, 'visualViewport');
+    });
+});
+
+describe('overlay focus and loading', () => {
+    it('SPEC-rich-text-react/AC-023 keeps the surface mounted and editable while a dialog that node chrome loads lazily suspends, then shows it', async () => {
+        let release: () => void = () => undefined;
+        const LazyPart = lazy(
+            () =>
+                new Promise<{ default: () => ReactNode }>((resolve) => {
+                    release = () => resolve({ default: () => <p>Loaded</p> });
+                }),
+        );
+        const Chrome = () => {
+            const [open, setOpen] = useState(false);
+            return (
+                <>
+                    <button type="button" onClick={() => setOpen(true)}>
+                        Open lazy
+                    </button>
+                    {open && <LazyPart />}
+                </>
+            );
+        };
+        const lazyModel = compileContentModel(
+            [core(), defineNodeView(fixtureMediaImage(), { node: 'media_image', component: Chrome })],
+            { id: 'test.overlays', version: 1 },
+        );
+        const environment = createTestEnvironment({ seed: 1 });
+        const ref = createRef<EditorHandle<object>>();
+        render(
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={defineEditor({ id: 'test.overlays', model: lazyModel })}
+                defaultValue={loaded(para('one'), image)}
+                locale={fixtureLocale}
+                environment={environment}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+            </RichTextEditor.Root>,
+        );
+        act(() => environment.flushFrames());
+        await act(() => environment.flushMicrotasks());
+        const viewBefore = runtimeOf(ref.current as object)?.view;
+
+        act(() => {
+            fireEvent.click(screen.getByRole('button', { name: 'Open lazy' }));
+        });
+
+        expect(runtimeOf(ref.current as object)?.view).toBe(viewBefore);
+        expect(surface().getAttribute('contenteditable')).toBe('true');
+        expect(surface()).toBeVisible();
+        await act(async () => {
+            release();
+            await Promise.resolve();
+        });
+        expect(screen.getByText('Loaded')).toBeInTheDocument();
+    });
+
+    it('SPEC-rich-text-accessibility/AC-014 keeps the bubble toolbar closed after Escape while a command only maps the selection', () => {
+        const { handle } = mount({});
+        selectWithFocus(handle(), 'two');
+        expect(bubble()).not.toBeNull();
+        act(() => {
+            fireEvent.keyDown(surface(), { key: 'Escape' });
+        });
+        expect(bubble()).toBeNull();
+
+        act(() => {
+            (handle() as unknown as EditorHandle).execute('mark.bold.toggle');
+        });
+
+        expect(bubble()).toBeNull();
     });
 });
