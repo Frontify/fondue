@@ -218,7 +218,12 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     removeNotes(body);
     const droppedImages = replaceImages(body);
     restoreSpaces(body);
-    let content = withSpaces(schema, SchemaParser.fromSchema(schema).parse(body).content);
+    // The engine ignores `object` with its children; a skip rule keeps its fallback text (SPEC-rich-text-clipboard/AC-010).
+    for (const nested of Array.from(body.querySelectorAll('object object, object embed, object param'))) {
+        nested.remove();
+    }
+    const parser = new SchemaParser(schema, [{ tag: 'object', skip: true }, ...SchemaParser.fromSchema(schema).rules]);
+    let content = withSpaces(schema, parser.parse(body).content);
     content = withValidAttributes(content, settings.limits);
     if (settings.headingLevels !== undefined) {
         content = withLevels(schema, content, settings.headingLevels);
