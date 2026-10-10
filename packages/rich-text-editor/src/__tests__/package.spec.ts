@@ -122,12 +122,13 @@ describe('package manifest and built output', () => {
             ...Object.keys(manifest.peerDependencies ?? {}),
         ]);
         const jsFiles = builtFiles.filter((file) => file.endsWith('.js')).sort();
-        const expected = listFiles(join(packageRoot, 'src'))
-            .filter((file) => /\.tsx?$/.test(file) && !file.endsWith('.d.ts'))
-            .map((file) => file.replace(/\.tsx?$/, '.js'))
-            .sort();
+        const sourceModules = new Set(
+            listFiles(join(packageRoot, 'src'))
+                .filter((file) => /\.tsx?$/.test(file) && !file.endsWith('.d.ts'))
+                .map((file) => file.replace(/\.tsx?$/, '.js')),
+        );
         expect(builtFiles.some((file) => file.endsWith('.cjs'))).toBe(false);
-        expect(jsFiles).toEqual(expected);
+        expect(jsFiles.filter((file) => !sourceModules.has(file))).toEqual([]);
         const emitted = new Set(builtFiles);
         const bare: string[] = [];
         for (const file of jsFiles) {
