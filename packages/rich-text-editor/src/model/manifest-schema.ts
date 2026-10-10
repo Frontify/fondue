@@ -3,6 +3,7 @@
 import { CAPABILITY_NAMES } from './capabilities';
 import { type JsonObject, type JsonValue } from './declarations';
 import { pointer } from './errors';
+import { markdownDelimiterPattern, markdownFencePattern } from './markdown';
 import { isRecord, MAX_DEPTH } from './values';
 
 const ref = (name: string) => ({ $ref: `#/$defs/${name}` });
@@ -19,6 +20,8 @@ const record = (values: JsonValue) => ({ type: 'object', additionalProperties: v
 const optionRef = object({ option: string }, ['option']);
 const binding = { anyOf: [object({ attr: string }, ['attr']), object({ style: string }, ['style'])] };
 const content = { anyOf: [{ const: 0 }, ref('html')] };
+const markdownDelimiter = { type: 'string', pattern: markdownDelimiterPattern };
+const markdownFence = { type: 'string', pattern: markdownFencePattern };
 /** The members an object needs when its `member` has the value `value`. */
 const when = (member: string, value: string, required: readonly string[]) => ({
     if: { properties: { [member]: { const: value } }, required: [member] },
@@ -121,7 +124,16 @@ export const featureManifestSchema: JsonObject = {
                 exactlyOne: strings,
                 html: ref('html'),
                 parse: { type: 'array', items: ref('parseRule') },
-                markdown: object({ prefix: string, fence: string }),
+                markdown: {
+                    type: 'object',
+                    properties: { prefix: markdownDelimiter, fence: markdownFence },
+                    additionalProperties: false,
+                    /** Boolean schemas reject the other member, so exactly one of the two remains. */
+                    anyOf: [
+                        { required: ['prefix'], properties: { fence: false } },
+                        { required: ['fence'], properties: { prefix: false } },
+                    ],
+                },
             },
             ['attrs', 'html', 'parse'],
         ),
@@ -131,7 +143,7 @@ export const featureManifestSchema: JsonObject = {
                 exactlyOne: strings,
                 html: ref('html'),
                 parse: { type: 'array', items: ref('parseRule') },
-                markdown: object({ open: string, close: string }, ['open', 'close']),
+                markdown: object({ open: markdownDelimiter, close: markdownDelimiter }, ['open', 'close']),
                 excludes: strings,
                 rank: { type: 'integer' },
                 inclusive: { type: 'boolean' },

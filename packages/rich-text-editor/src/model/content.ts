@@ -528,6 +528,5 @@ export const checkContent = (
     const context: Context = { vocabulary: vocabularyOf(model), diagnostics: [], sources: new WeakMap() };
     const checked = checkRoot(context, root as Attrs);
     const tree = checked === undefined ? undefined : dedupe(context, checked, '/content', new Set());
-    // `format.capability-undeclared` checks the content outside islands here, after the duplicate walk.
     return { tree, diagnostics: context.diagnostics };
 };
