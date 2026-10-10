@@ -38,12 +38,6 @@ const model = compileContentModel(
     { id: 'test.overlays', version: 1 },
 );
 const definition = defineEditor({ id: 'test.overlays', model });
-/** Undo and redo, then the toolbar stand-ins, as the touch toolbars start (SPEC-rich-text-react, Default toolbars). */
-export const TOUCH_TOOLBAR: ReactPresentation['toolbar'] = [
-    ['fixture.history.undo', 'fixture.history.redo'],
-    ...TOOLBAR,
-];
-
 /** Each `onOpenChange` of the host dialog, which no test expects. */
 const hostDialogChanges: boolean[] = [];
 
@@ -58,6 +52,10 @@ declare global {
             readonly open: (kind: OverlayKind) => void;
             /** Removes the node with `nodeId`, as another author's change would. */
             readonly remove: (nodeId: string) => void;
+            /** Renders the probe again, which gives each overlay a new `onOpenChange`. */
+            readonly rerender: () => void;
+            /** The bottom of the scroll margin the caret keeps clear of the keyboard and a docked toolbar. */
+            readonly bottomMargin: () => number | undefined;
             /** Inserts `text` at document position `at`, away from the selection. */
             readonly insert: (text: string, at: number) => void;
             /** The HTML of the runtime's document, without the kept selection. */
@@ -138,6 +136,7 @@ export const OverlayProbe = ({
     const [open, setOpen] = useState<OverlayKind | null>(null);
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
     const [modes] = useState<ToolbarMode[]>([]);
+    const [, setRenders] = useState(0);
     const presentation = useMemo(
         () => defineReactPresentation({ toolbar, ...(toolbarShortcut === undefined ? {} : { toolbarShortcut }) }),
         [toolbar, toolbarShortcut],
@@ -170,6 +169,14 @@ export const OverlayProbe = ({
                 select: (target) => setSelection(handle, target),
                 open: (kind) => setOpen(kind),
                 remove: (nodeId) => runtimeOf(handle)?.nodeActions(nodeId).remove(),
+                rerender: () => setRenders((renders) => renders + 1),
+                bottomMargin: () => {
+                    const margin = runtimeOf(handle)?.view?.someProp('scrollMargin');
+                    if (typeof margin === 'object') {
+                        return margin.bottom;
+                    }
+                    return margin;
+                },
                 insert: (text, at) => {
                     const view = runtimeOf(handle)?.view;
                     view?.dispatch(view.state.tr.insertText(text, at));
@@ -243,6 +250,9 @@ export const OverlayProbe = ({
                 {/* An explicit tabindex, since WebKit leaves buttons out of the Tab order by default. */}
                 <button type="button" tabIndex={0}>
                     Before
+                </button>
+                <button type="button" tabIndex={0} onClick={() => setOpen('link')}>
+                    Open link
                 </button>
                 {editor}
                 <button type="button" tabIndex={0}>

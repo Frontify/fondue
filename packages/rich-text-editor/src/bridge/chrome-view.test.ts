@@ -30,10 +30,23 @@ describe('the chrome view insets', () => {
     it('SPEC-rich-text-accessibility/AC-024 keeps 5 px beyond a 300 px bottom inset in the margin and the inset itself in the threshold', () => {
         const { chrome, props } = attach();
 
-        chrome.setBottomInset(300);
+        chrome.setKeyboardInset(300);
 
         expect(props.scrollMargin.bottom).toBe(305);
         expect(props.scrollThreshold.bottom).toBe(300);
+    });
+
+    it('SPEC-rich-text-accessibility/AC-024 adds a docked toolbar to the keyboard inset, keeps it through a new keyboard measure and drops it at 0', () => {
+        const { chrome, props } = attach();
+
+        chrome.setKeyboardInset(300);
+        chrome.setDockedInset(60);
+        chrome.setKeyboardInset(300);
+        const docked = [props.scrollMargin.bottom, props.scrollThreshold.bottom];
+        chrome.setDockedInset(0);
+
+        expect(docked).toEqual([365, 360]);
+        expect([props.scrollMargin.bottom, props.scrollThreshold.bottom]).toEqual([305, 300]);
     });
 
     it('SPEC-rich-text-accessibility/AC-024 does the same for a top inset and resets both when the inset is zero', () => {

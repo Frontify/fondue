@@ -657,6 +657,10 @@ test.describe('on a touch device', () => {
         await surfaceOf(page).tap();
         await openKeyboard(page);
         await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
+        const margin = await page.evaluate(() => window.overlayProbe?.bottomMargin());
+        // A visual viewport scroll measures the keyboard again, which must keep the docked toolbar's part.
+        await page.evaluate(() => window.visualViewport?.dispatchEvent(new Event('scroll')));
+        expect(await page.evaluate(() => window.overlayProbe?.bottomMargin())).toBe(margin);
 
         await page.evaluate(() => {
             const paragraph = [...document.querySelectorAll('[role="textbox"] p')].find(
@@ -681,6 +685,30 @@ test.describe('on a touch device', () => {
             return caret.bottom <= toolbar.getBoundingClientRect().top && caret.top >= 0;
         });
         expect(clear).toBe(true);
+    });
+
+    test('SPEC-rich-text-accessibility/AC-024 drops the docked toolbar from the bottom scroll margin when bubble mode replaces it', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<OverlayProbe bubble={false} toolbar={TOUCH_TOOLBAR} />);
+        await ready(page);
+        await surfaceOf(page).tap();
+        await openKeyboard(page);
+        await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
+        const docked = await page.evaluate(() => window.overlayProbe?.bottomMargin());
+
+        // By keyboard: WebKit drops the click of a tap on More, whose `pointerdown` Radix prevents.
+        await page.keyboard.press('Alt+F10');
+        await page.keyboard.press('End');
+        await expect(toolbarOf(page).getByRole('button', { name: 'More' })).toBeFocused();
+        await page.keyboard.press('Enter');
+        await page.getByRole('menuitem', { name: 'Show toolbar on selection only' }).press('Enter');
+        await expect(toolbarOf(page)).toHaveCount(0);
+
+        // The keyboard's 350 px and ProseMirror's own 5 px margin stay.
+        await expect.poll(() => page.evaluate(() => window.overlayProbe?.bottomMargin())).toBe(355);
+        expect(docked).toBeGreaterThan(355);
     });
 
     test('SPEC-rich-text-react/AC-041 gives every bubble toolbar item a 44 by 44 CSS pixel target', async ({
@@ -953,3 +981,21 @@ for (const [where, blocks, name] of [
         expect(await page.evaluate(() => window.overlayProbe?.hostDialogChanges)).toEqual([]);
     });
 }
+
+test('SPEC-rich-text-react/AC-083 returns focus to the opener after a rerender gave the open overlay a new onOpenChange', async ({
+    mount,
+    page,
+}) => {
+    await mount(<OverlayProbe bubble={false} />);
+    await ready(page);
+    const opener = page.getByRole('button', { name: 'Open link' });
+    await opener.focus();
+    await page.keyboard.press('Enter');
+    await expectFocus(page, 'URL');
+    await page.evaluate(() => window.overlayProbe?.rerender());
+
+    await page.keyboard.press('Escape');
+
+    await expect(popoverOf(page)).toBeHidden();
+    await expectFocus(page, 'Open link');
+});
