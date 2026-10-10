@@ -71,9 +71,28 @@ const meta: Meta<typeof DialogContent> = {
 export default meta;
 
 export const WithFullLayout: Story = {
-    args: {
-        children: 'I am a dialog content',
-    },
+    render: (args) => (
+        <Dialog.Root>
+            <Dialog.Trigger>
+                <Button>Open dialog</Button>
+            </Dialog.Trigger>
+            <Dialog.Content {...args}>
+                <Dialog.SideContent>
+                    <div className="tw-bg-success tw-h-full tw-w-full"></div>
+                </Dialog.SideContent>
+                <Dialog.Header>
+                    <Dialog.Title>Header</Dialog.Title>
+                </Dialog.Header>
+                <Dialog.Body>I am a dialog content</Dialog.Body>
+                <Dialog.Footer>
+                    <Dialog.Close>
+                        <Button emphasis="default">Cancel</Button>
+                    </Dialog.Close>
+                    <Button>Submit</Button>
+                </Dialog.Footer>
+            </Dialog.Content>
+        </Dialog.Root>
+    ),
 };
 
 export const WithHeader: Story = {
@@ -124,25 +143,25 @@ export const WithFooter: Story = {
             canonical: true,
         },
     },
-    args: {
-        children: 'I am a dialog content',
-    },
-    render: (args) => {
-        return (
-            <Dialog.Root>
-                <Dialog.Trigger>
-                    <Button>Open dialog</Button>
-                </Dialog.Trigger>
-                <Dialog.Content {...args}>
-                    <Dialog.Body {...args} />
-                    <Dialog.Footer>
+    render: (args) => (
+        <Dialog.Root>
+            <Dialog.Trigger>
+                <Button>Open dialog</Button>
+            </Dialog.Trigger>
+            <Dialog.Content {...args}>
+                <Dialog.Header>
+                    <Dialog.Title>Dialog title</Dialog.Title>
+                </Dialog.Header>
+                <Dialog.Body>I am a dialog content</Dialog.Body>
+                <Dialog.Footer>
+                    <Dialog.Close>
                         <Button emphasis="default">Cancel</Button>
-                        <Button>Submit</Button>
-                    </Dialog.Footer>
-                </Dialog.Content>
-            </Dialog.Root>
-        );
-    },
+                    </Dialog.Close>
+                    <Button>Submit</Button>
+                </Dialog.Footer>
+            </Dialog.Content>
+        </Dialog.Root>
+    ),
 };
 
 export const WithSideContent: Story = {
@@ -1037,6 +1056,31 @@ export const WithTabsInContent: Story = {
                     </Dialog.Footer>
                 </Dialog.Content>
             </Dialog.Root>
+        );
+    },
+};
+
+export const WithCustomContainer: Story = {
+    args: {
+        children: 'I am rendered inside the custom container',
+    },
+    render: (args) => {
+        const [container, setContainer] = useState<HTMLDivElement | null>(null);
+        return (
+            <>
+                <Dialog.Root>
+                    <Dialog.Trigger>
+                        <Button>Open dialog</Button>
+                    </Dialog.Trigger>
+                    <Dialog.Content {...args} container={container}>
+                        <Dialog.Header>
+                            <Dialog.Title>Header</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body {...args} />
+                    </Dialog.Content>
+                </Dialog.Root>
+                <div ref={setContainer} data-test-id="dialog-custom-container" />
+            </>
         );
     },
 };
