@@ -587,6 +587,25 @@ describe('the paste pipeline', () => {
         },
     );
 
+    it('SPEC-rich-text-clipboard/AC-020 SPEC-rich-text-clipboard/AC-045 keeps pasted Markdown as typed when its conversion would pass maxDocumentBytes', () => {
+        const literal = mount();
+        setSelection(literal.handle, { text: 'a', from: 1, to: 1 });
+        pasteInto(literal, { 'text/plain': '**x**', 'text/html': '<p>**x**</p>' });
+        // The commit check lists every installed capability, the most the encoder can write.
+        const installed = model.capabilities.map(({ id }) => id).sort();
+        const { document } = literal.handle.getSnapshot();
+        const written = { ...document, requiredCapabilities: installed.map((id) => ({ id, version: 1 })) };
+        const bytes = new TextEncoder().encode(JSON.stringify(written)).byteLength;
+        literal.unmount();
+        const mounted = mount({ limits: { maxDocumentBytes: bytes + 2 } });
+        setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
+
+        pasteInto(mounted, { 'text/plain': '**x**' });
+
+        expect(mounted.content()).toEqual([paragraph(text('a**x**b'))]);
+        mounted.unmount();
+    });
+
     it('SPEC-rich-text-clipboard/AC-021 SPEC-rich-text-format/AC-032 gives each paste of one slice new nodeIds and keeps the resource ID', () => {
         const mounted = mount({ blocks: [heading('h-1', text('T'), mention('m-1')), paragraph()], sliceContext: 'a' });
         selectAll(mounted);

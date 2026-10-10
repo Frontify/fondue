@@ -5,9 +5,9 @@ import '#/clipboard/import';
 import '#/definition/schema';
 import 'prosemirror-model';
 // expect-lint: eslint(no-restricted-imports)
-import '#/clipboard/paste';
+import '#/clipboard/any-module';
 // expect-lint: eslint(no-restricted-imports)
-import '../../clipboard/paste';
+import '../../clipboard/any-module';
 // expect-lint: eslint(no-restricted-imports)
 import '#/runtime/session';
 // expect-lint: eslint(no-restricted-imports)

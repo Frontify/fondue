@@ -70,6 +70,7 @@ export const ClipboardProbe = ({
     texts = ['ab'],
     readOnly = false,
     unpasted = false,
+    island = false,
     scroll = false,
     dragged = 'Dropped',
 }: {
@@ -77,6 +78,8 @@ export const ClipboardProbe = ({
     readonly readOnly?: boolean;
     /** Mounts the definition whose policy sets `paste: false` for the mention. */
     readonly unpasted?: boolean;
+    /** Ends the document with an unknown `callout` block of `nodeId` `c-1` and the text Kept, which loads as an island. */
+    readonly island?: boolean;
     readonly scroll?: boolean;
     readonly dragged?: string;
 }) => {
@@ -123,12 +126,20 @@ export const ClipboardProbe = ({
             selection: () => [runtime.state.selection.anchor, runtime.state.selection.head],
         };
     }, [changes, uploads]);
+    const blocks: ContentNodeJSON[] = texts.map(paragraphOf);
+    if (island) {
+        blocks.push({
+            type: 'callout',
+            attrs: { nodeId: 'c-1' },
+            content: [paragraphOf('Kept')],
+        } as unknown as ContentNodeJSON);
+    }
     const document = {
         format: 'frontify.rich-text' as const,
         formatVersion: 1 as const,
         model: { id: 'test.clipboard', version: 1 },
         requiredCapabilities: [{ id: 'core', version: 1 }],
-        content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: texts.map(paragraphOf) },
+        content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: blocks },
     };
     let shown = definition;
     if (unpasted) {

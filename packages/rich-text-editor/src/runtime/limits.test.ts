@@ -58,7 +58,7 @@ describe('the limit check', () => {
         expect(encoded.requiredCapabilities).toEqual(stored.requiredCapabilities);
         expect(
             [bytes, bytes - 1].map((maxDocumentBytes) => exceeds(doc, { ...defaultLimits, maxDocumentBytes })),
-        ).toEqual([false, true]);
+        ).toEqual([undefined, 'maxDocumentBytes']);
     });
 
     it('SPEC-rich-text-runtime/AC-004 counts the longest text, joined as the engine joins it, against maxTextLength', () => {
@@ -76,6 +76,6 @@ describe('the limit check', () => {
 
         expect(
             [paragraph('x'.repeat(10)), paragraph('x'.repeat(4), 'x'.repeat(7))].map((doc) => exceeds(doc, limits)),
-        ).toEqual([false, true]);
+        ).toEqual([undefined, 'maxTextLength']);
     });
 });

@@ -334,6 +334,22 @@ test('SPEC-rich-text-clipboard/AC-030 SPEC-rich-text-runtime/AC-010 moves a ment
     expect(await contentOf(page)).toEqual([block({ type: 'text', text: 'xAday' }), (moved as object[])[1]]);
 });
 
+test('SPEC-rich-text-clipboard/AC-021 drops a copy of an island holding a nodeId as its plain text, since the island cannot repeat it (DR-082)', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ClipboardProbe texts={['first', 'second']} island />);
+    await ready(page);
+    await selectBlock(page, 2);
+
+    await dragNode(page, await overText(page, 0, 0.8), true);
+
+    const content = (await contentOf(page)) as { readonly type: string }[];
+    expect(content.map(({ type }) => type)).toEqual(['paragraph', 'paragraph', 'paragraph', 'callout']);
+    expect(content[1]).toEqual(paragraph('Kept'));
+    expect(await changesOf(page)).toEqual(['drop']);
+});
+
 test('SPEC-rich-text-clipboard/AC-031 SPEC-rich-text-editing/AC-040 drops a host element through the paste order at the drop cursor, with no input rule', async ({
     mount,
     page,
