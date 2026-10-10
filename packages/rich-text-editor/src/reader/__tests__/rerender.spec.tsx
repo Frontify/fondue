@@ -37,7 +37,7 @@ describe('RichTextReader rerenders', () => {
 
         expect(decodeToTree).toHaveBeenCalledTimes(1);
         expect(view.container.innerHTML).toBe(first);
-        expect(first).toContain('<p>Same</p>');
+        expect(first).toContain('<p dir="auto">Same</p>');
     });
 
     it('builds the output again for another document object or another presentation', () => {
@@ -94,7 +94,7 @@ describe('RichTextReader rerenders', () => {
             <RichTextReader document={JSON.stringify(envelope(doc(paragraph(text('Other')))))} model={model} />,
         );
         expect(decodeToTree).toHaveBeenCalledTimes(2);
-        expect(view.container.innerHTML).toContain('<p>Other</p>');
+        expect(view.container.innerHTML).toContain('<p dir="auto">Other</p>');
     });
 
     it('reports each diagnostic to a callback once, not on every rerender', () => {
