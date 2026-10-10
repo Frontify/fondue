@@ -35,6 +35,7 @@ export const registerFormField = (handle: object, read: () => FieldProps) => {
     fieldProps.set(handle, read);
 };
 
+const NOT_MOUNTED = 'useRichTextFormField needs the ref object of a mounted RichTextEditor.';
 const VALID = { valid: true } as const;
 const EMPTY = { valid: false, reason: 'empty' } as const;
 const HARD_BREAK = 'hard_break';
@@ -72,13 +73,13 @@ export const useRichTextFormField = <C extends object = ShippedCommands>(
         const sessionOf = () => {
             // A callback ref keeps no handle to read.
             if (ref === null || typeof ref === 'function' || ref.current === null) {
-                throw new Error('useRichTextFormField needs the ref object of a mounted RichTextEditor.');
+                throw new Error(NOT_MOUNTED);
             }
             const handle = ref.current;
             const runtime = runtimeOf(handle);
             const read = fieldProps.get(handle);
             if (runtime === undefined || read === undefined) {
-                throw new Error('useRichTextFormField needs the ref object of a mounted RichTextEditor.');
+                throw new Error(NOT_MOUNTED);
             }
             return { handle, runtime, props: read() };
         };
@@ -115,9 +116,13 @@ export const useRichTextFormField = <C extends object = ShippedCommands>(
                     return Promise.resolve(handle.getSnapshot().document);
                 }
                 return new Promise((resolve, reject) => {
-                    runtime.afterInput((settled) => {
-                        if (settled) {
+                    runtime.afterInput((outcome) => {
+                        if (outcome === 'settled') {
                             resolve(handle.getSnapshot().document);
+                            return;
+                        }
+                        if (outcome === 'disposed') {
+                            reject(new Error(NOT_MOUNTED));
                             return;
                         }
                         reject(Object.assign(new Error('The input did not settle in time.'), { code: 'timeout' }));
