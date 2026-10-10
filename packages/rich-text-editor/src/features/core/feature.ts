@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { block, defineFeature, history, insertText, setBlock } from '#/model';
+import { block, defineFeature, history, insertNode, insertText, setBlock } from '#/model';
 
 const lang = { type: 'language', nullable: true, default: null } as const;
 
@@ -29,6 +29,7 @@ export const core = defineFeature({
     commands: {
         'paragraph.set': setBlock('paragraph'),
         'text.insert': insertText(),
+        'hard-break.insert': insertNode('hard_break'),
         'history.undo': history('undo'),
         'history.redo': history('redo'),
         'block.move.up': block('move-up'),
@@ -40,6 +41,7 @@ export const core = defineFeature({
         'Mod-z': 'history.undo',
         'Mod-Shift-z': 'history.redo',
         'other:Ctrl-y': 'history.redo',
+        'Shift-Enter': 'hard-break.insert',
         // Not Mod-Shift-ArrowUp, which extends the selection natively on macOS (SPEC-rich-text-editing, Shortcuts).
         'Mod-Alt-ArrowUp': { command: 'block.move.up', labelKey: 'RichTextEditor_moveUp' },
         'Mod-Alt-ArrowDown': { command: 'block.move.down', labelKey: 'RichTextEditor_moveDown' },

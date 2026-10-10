@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineFeature, type InputRule, type TextRule, textRule } from '#/model';
+import { defineFeature, type InputRule, textRule } from '#/model';
 
 const TYPOGRAPHY = [
     'typography.quotes',
@@ -16,7 +16,7 @@ const numeric = (match: string, replace: string) =>
     textRule({ id: 'typography.numeric', match: new RegExp(String.raw`(?<=^|\s)${match} $`, 'u'), replace });
 
 /** The `typography.*` rows of the Input rules table (SPEC-rich-text-editing). */
-const RULES: readonly (InputRule | TextRule)[] = [
+const RULES: readonly InputRule[] = [
     { id: 'typography.quotes', kind: 'quotes', marker: '"' },
     { id: 'typography.quotes', kind: 'quotes', marker: "'" },
     { id: 'typography.ellipsis', kind: 'text-replace', find: '...', replace: '…' },

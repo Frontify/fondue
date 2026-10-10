@@ -26,6 +26,7 @@ Shortcuts of the shipped features, in the package key syntax and as each platfor
 
 | Action | Command | Key | Apple | Other platforms |
 |---|---|---|---|---|
+| Line break | `hard-break.insert` | `Shift-Enter` | ⇧Enter | Shift+Enter |
 | Normal text | `paragraph.set` | `mac:Mod-Alt-0` | ⌥⌘0 | none |
 | Normal text | `paragraph.set` | `other:Ctrl-Shift-0` | none | Ctrl+Shift+0 |
 | Heading 1 | `heading.set` with `{ level: 1 }` | `mac:Mod-Alt-1` | ⌥⌘1 | none |

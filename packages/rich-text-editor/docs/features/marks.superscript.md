@@ -1,6 +1,6 @@
 # `marks.superscript`
 
-Superscript as `sup`. It requires `marks.subscript`, since the two exclude each other and an exclusion can name only an installed mark.
+Superscript as `sup`.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|

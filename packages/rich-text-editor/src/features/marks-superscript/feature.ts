@@ -2,23 +2,16 @@
 
 import { defineFeature, toggleMark } from '#/model';
 
-/**
- * Superscript as `sup`, which excludes `subscript`. An exclusion may name only an installed mark and two features
- * cannot require each other, so this one requires `marks.subscript` and holds the exclusion for both.
- */
+/** Superscript as `sup`; adding it removes `subscript` from the range. */
 export const superscript = defineFeature({
     id: 'marks.superscript',
     version: 1,
-    requires: [
-        { id: 'core', version: 1 },
-        { id: 'marks.subscript', version: 1 },
-    ],
+    requires: [{ id: 'core', version: 1 }],
     marks: {
         superscript: {
             attrs: {},
             html: ['sup', 0],
             parse: [{ tag: 'sup' }, { style: 'vertical-align', value: 'super' }],
-            excludes: ['subscript'],
         },
     },
     formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
