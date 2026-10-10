@@ -111,7 +111,12 @@ const parse = (source: string): { readonly expression: Expression; readonly name
  * joined by `|`, grouped by parentheses up to 16 deep. The `{n,m}` upper bounds along any nesting path multiply
  * to at most 64.
  */
-export const contentNames = (expression: string): readonly string[] | undefined => parse(expression)?.names;
+export const contentNames = (expression: string): readonly string[] | undefined => {
+    if (expression.trim() === '') {
+        return undefined;
+    }
+    return parse(expression)?.names;
+};
 
 interface Edge {
     /** A node or group name; none for an empty move. */

@@ -309,6 +309,8 @@ describe('compileContentModel declarations', () => {
         ['(inline{1,9}){1,8}', 'repeats a term up to 72 times through nesting'],
         ['(inline{1,32}){1,32}', 'repeats a term up to 1024 times through nesting'],
         [`${'('.repeat(17)}inline${')'.repeat(17)}`, 'nests parentheses 17 deep'],
+        ['', 'is empty'],
+        ['   ', 'is only whitespace'],
     ])('rejects the content expression %j, which %s', (content) => {
         const declaration = { id: 'a.x', version: 1, nodes: { callout: block(content) } };
         expect(failureOf(() => compile([core(), feature(declaration)]))).toEqual({
@@ -344,6 +346,59 @@ describe('compileContentModel declarations', () => {
             'hard_break',
             'callout',
         ]);
+    });
+
+    const callout = (markdown: unknown) =>
+        feature({
+            id: 'a.x',
+            version: 1,
+            nodes: { callout: { ...block('inline*'), markdown } },
+        } as FeatureDeclaration);
+    const markdownAt = '/nodes/callout/markdown';
+    it.each([
+        ['both a prefix and a fence', { prefix: '> ', fence: '```' }, markdownAt],
+        ['neither a prefix nor a fence', {}, markdownAt],
+        ['a prefix longer than four characters', { prefix: '#####' }, `${markdownAt}/prefix`],
+        ['a character a prefix cannot hold', { prefix: '<' }, `${markdownAt}/prefix`],
+        ['a fence that starts with three tildes', { fence: '~~~#' }, `${markdownAt}/fence`],
+    ])('rejects a markdown form with %s', (_problem, markdown, path) => {
+        expect(failureOf(() => compile([core(), callout(markdown)]))).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'a.x', path },
+        });
+    });
+
+    it.each([
+        ['prefix', { prefix: '> ' }],
+        ['fence of three backticks', { fence: '```' }],
+        ['fence of three tildes', { fence: '~~~' }],
+    ])('accepts a markdown %s', (_form, markdown) => {
+        expect(compile([core(), callout(markdown)]).manifest.nodes).toContain('callout');
+    });
+
+    const note = (markdown: unknown) =>
+        feature({
+            id: 'a.x',
+            version: 1,
+            marks: { note: { attrs: {}, html: ['em', 0], parse: [], markdown } },
+        } as FeatureDeclaration);
+    it.each([
+        ['opening delimiter is longer than four characters', { open: '#####', close: '~~' }, '/open'],
+        ['closing delimiter contains <', { open: '~~', close: '<' }, '/close'],
+    ])('rejects a mark whose %s', (_problem, markdown, suffix) => {
+        expect(failureOf(() => compile([core(), note(markdown)]))).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'a.x', path: `/marks/note/markdown${suffix}` },
+        });
+    });
+
+    it('accepts mark delimiters of tildes', () => {
+        const declaration = {
+            id: 'a.x',
+            version: 1,
+            marks: { note: { attrs: {}, html: ['em', 0] as const, parse: [], markdown: { open: '~~', close: '~~' } } },
+        };
+        expect(compile([core(), feature(declaration)]).manifest.marks).toContain('note');
     });
 
     it('rejects a node or mark list naming an undeclared mark', () => {
