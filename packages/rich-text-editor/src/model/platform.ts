@@ -36,3 +36,12 @@ export const keyOn = (binding: KeyBinding, apple: boolean): string | undefined =
     }
     return binding.slice(prefix[0].length);
 };
+
+/** `key` with `Mod` as the platform's own modifier, since prosemirror-keymap reads `Mod` from `navigator.platform` alone. */
+export const modOn = (key: string, apple: boolean): string => {
+    let modifier = 'Ctrl';
+    if (apple) {
+        modifier = 'Meta';
+    }
+    return key.replace(/(^|-)Mod-/, `$1${modifier}-`);
+};

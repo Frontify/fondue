@@ -4,6 +4,7 @@ import { type CompiledDefinition } from '#/definition';
 import { type CodecContext, type CommandRef, type JsonValue, type ToolbarEntry } from '#/model';
 import { compiledModel } from '#/model/compile';
 import { canonicalJson } from '#/model/hash';
+import { isPlatformBinding } from '#/model/platform';
 import { type AuthoringPolicy } from '#/runtime/types';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
@@ -25,6 +26,32 @@ const manifestLabel = (label: Readonly<Record<string, string>>, lang: string): s
         }
     }
     return label['en-US'] ?? '';
+};
+
+type Keymap = ReturnType<typeof compiledModel>['keymap'];
+
+/**
+ * Where a binding applies: a plain one not on the platform whose `mac:` or `other:` binding of the same key, in the same
+ * keymap, the editor runs instead (SPEC-rich-text-react/AC-039).
+ */
+const applying = (binding: Keymap[number], keymap: Keymap): readonly string[] => {
+    if (isPlatformBinding(binding.key)) {
+        return [binding.key];
+    }
+    const replaced = (platform: 'mac' | 'other') =>
+        keymap.some(({ plugin, key }) => plugin === binding.plugin && key === `${platform}:${binding.key}`);
+    const onApple = !replaced('mac');
+    const onOther = !replaced('other');
+    if (onApple && onOther) {
+        return [binding.key];
+    }
+    if (onApple) {
+        return [`mac:${binding.key}`];
+    }
+    if (onOther) {
+        return [`other:${binding.key}`];
+    }
+    return [];
 };
 
 const payloadKey = (payload: JsonValue | null | undefined) => {
@@ -110,7 +137,7 @@ export const toolbarItems = (
             }
             const bindings = keymap
                 .filter((binding) => binding.command === command && payloadKey(binding.payload) === payloadKey(payload))
-                .map((binding) => binding.key);
+                .flatMap((binding) => applying(binding, keymap));
             items.push({
                 key,
                 command,

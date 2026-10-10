@@ -14,7 +14,7 @@ import {
 } from '#/model';
 import { CAPABILITY_PLUGINS, declaresNodeIds, INPUT_RULES_PLUGIN, NODE_IDS_PLUGIN } from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
-import { isApple, isPlatformBinding, keyOn } from '#/model/platform';
+import { isApple, isPlatformBinding, keyOn, modOn } from '#/model/platform';
 
 import { type CompiledInputRule, compileInputRules } from './input-rules';
 import { NORMALIZE_META, NORMALIZERS } from './normalizers';
@@ -217,11 +217,11 @@ export const compileDefinition = (
             const run: Command = (state, dispatch) => command.run(state, dispatch, entry.payload);
             const appleKey = keyOn(entry.key, true);
             if (appleKey !== undefined) {
-                apple[appleKey] = run;
+                apple[modOn(appleKey, true)] = run;
             }
             const otherKey = keyOn(entry.key, false);
             if (otherKey !== undefined) {
-                other[otherKey] = run;
+                other[modOn(otherKey, false)] = run;
             }
         };
         // Plain bindings first, so on its platform a prefixed one of the same key wins.

@@ -139,9 +139,32 @@ export const literalColors = (value: string, forced = false): string[] =>
             return !/^[a-z]+$/i.test(match) || NAMED_COLORS.has(name);
         });
 
-/** Whether a rule sits inside `@media (forced-colors: active)`, which a `not` before it would invert. */
+/** `query` with each parenthesised group, innermost first, folded into `_`, so only its top-level words are left. */
+const topLevel = (query: string): string => {
+    let flat = query;
+    for (let previous = ''; previous !== flat; ) {
+        previous = flat;
+        flat = flat.replaceAll(/\([^()]*\)/g, '_');
+    }
+    return flat;
+};
+
+/**
+ * Whether a rule applies in forced colours only: every query of its `@media` list starts with `(forced-colors: active)`,
+ * with no `not` before it and no top-level `or` that would let another condition stand in for it.
+ */
 export const inForcedColors = (atRules: readonly string[]): boolean =>
-    atRules.some((prelude) => /^@media\s+\(\s*forced-colors:\s*active\s*\)/.test(prelude));
+    atRules.some((prelude) => {
+        const media = /^@media\s+(.*)$/s.exec(prelude);
+        if (media === null) {
+            return false;
+        }
+        return list
+            .comma(media[1] ?? '')
+            .every(
+                (query) => /^\(\s*forced-colors:\s*active\s*\)/.test(query) && !/(^|\s)or(\s|$)/i.test(topLevel(query)),
+            );
+    });
 
 /** Whether `selector` stays inside one content root at zero specificity: one `:where()` argument that starts with the root class, then at most a pseudo-element, and no sibling combinator. */
 const insideRoot = (selector: string): boolean => {
