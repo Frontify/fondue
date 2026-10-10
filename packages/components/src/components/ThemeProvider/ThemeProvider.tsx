@@ -7,7 +7,8 @@ import { createContext, type ForwardedRef, forwardRef, useContext, useMemo, type
 import { enUS } from '../../locales';
 import { type LocaleConfig } from '../../locales/types';
 
-type AvailableTheme = keyof typeof styles;
+// `base` only holds the primitive palette, not the semantic colours components rely on.
+type AvailableTheme = Exclude<keyof typeof styles, 'base'>;
 
 type ThemeProviderProps = {
     children: ReactNode;

@@ -18,6 +18,9 @@ const outDir = join(dirname(fileURLToPath(import.meta.url)), '../stories');
  * @param {string} dir
  */
 const toGroupLabel = (dir) => {
+    if (dir === 'sdk') {
+        return 'SDK';
+    }
     const spaced = dir.replaceAll('-', ' ');
     return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 };

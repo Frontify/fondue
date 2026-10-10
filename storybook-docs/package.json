@@ -4,7 +4,7 @@
     "version": "0.0.2",
     "private": true,
     "scripts": {
-        "generate:guides": "node ./scripts/generateGuideStories.mjs",
+        "generate:guides": "node ./scripts/generateGuideStories.mjs && node ./scripts/generateLlmsTxt.mjs",
         "storybook": "pnpm generate:guides && storybook dev -p 6010",
         "build:storybook": "pnpm generate:guides && storybook build",
         "lint": "eslint .",
@@ -23,7 +23,6 @@
         "@storybook/addon-a11y": "^10.6.0",
         "@storybook/addon-docs": "^10.6.0",
         "@storybook/addon-links": "^10.6.0",
-        "@storybook/mcp": "^10.6.0",
         "@storybook/react-vite": "^10.6.0",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/node": "^22.20.1",

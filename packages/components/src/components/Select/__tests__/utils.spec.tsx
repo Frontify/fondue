@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconIcon } from '@frontify/fondue-icons';
+import { type ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Select } from '#/components/Select';
@@ -117,6 +118,63 @@ describe('recursiveMap', () => {
             return child;
         });
         expect(mockCounter).toHaveBeenCalledTimes(6);
+    });
+
+    describe('with a filter text', () => {
+        const groupedMenu = [
+            <Select.Group key="africa" groupId="africa" heading="Africa">
+                <Select.Item value="Africa/Cairo">Cairo</Select.Item>
+                <Select.Item value="Africa/Lagos">Lagos</Select.Item>
+            </Select.Group>,
+            <Select.Group key="europe" groupId="europe" heading="Europe">
+                <Select.Item value="Europe/Berlin">Berlin</Select.Item>
+                <Select.Item value="Europe/Zurich">Zurich</Select.Item>
+            </Select.Group>,
+        ];
+
+        const collectItems = (filterText: string) => {
+            const items: { value: string; index: number }[] = [];
+            const { parsedChildren, subElementCount } = recursiveMap(
+                groupedMenu,
+                (child, index) => {
+                    items.push({ value: (child as ReactElement<SelectItemProps>).props.value ?? '', index });
+                    return child;
+                },
+                filterText,
+            );
+
+            return { items, parsedChildren, subElementCount };
+        };
+
+        it('filters the items inside groups', () => {
+            const { items, subElementCount } = collectItems('zur');
+
+            expect(items).toEqual([{ value: 'Europe/Zurich', index: 0 }]);
+            expect(subElementCount).toBe(1);
+        });
+
+        it('numbers the remaining items across groups without gaps', () => {
+            const { items } = collectItems('a');
+
+            expect(items).toEqual([
+                { value: 'Africa/Cairo', index: 0 },
+                { value: 'Africa/Lagos', index: 1 },
+            ]);
+        });
+
+        it('leaves out groups without matching items', () => {
+            const { parsedChildren } = collectItems('zur');
+
+            expect(parsedChildren).toHaveLength(1);
+            expect((parsedChildren[0] as ReactElement<{ heading: string }>).props.heading).toBe('Europe');
+        });
+
+        it('keeps every group while the filter text is empty', () => {
+            const { items, parsedChildren } = collectItems('');
+
+            expect(items).toHaveLength(4);
+            expect(parsedChildren).toHaveLength(2);
+        });
     });
 });
 
