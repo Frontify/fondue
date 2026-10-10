@@ -72,8 +72,10 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
     "hard_break",
   ],
   "plugins": [
+    "clipboard",
     "history",
     "keymap:core",
+    "drop-cursor",
     "base-keys",
   ],
 }
@@ -211,11 +213,13 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
     "rule",
   ],
   "plugins": [
+    "clipboard",
     "history",
     "keymap:core",
     "keymap:fixture.history",
     "keymap:fixture.bold",
     "keymap:fixture.heading",
+    "drop-cursor",
     "base-keys",
   ],
 }

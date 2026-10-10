@@ -55,10 +55,9 @@ describe('compileDefinition', () => {
             const ids = model.manifest.plugins as string[];
 
             expect(plugins.map(keyOf).map((key) => key.replace(/\$\d*$/, ''))).toEqual(ids);
-            // `history` and the base keys bind no feature key.
-            expect([...new Set(keymap.map(({ plugin }) => plugin))]).toEqual(
-                ids.filter((id) => id !== 'history' && id !== 'base-keys'),
-            );
+            // `history`, the clipboard, the drop cursor and the base keys bind no feature key.
+            const unkeyed = new Set(['clipboard', 'history', 'drop-cursor', 'base-keys']);
+            expect([...new Set(keymap.map(({ plugin }) => plugin))]).toEqual(ids.filter((id) => !unkeyed.has(id)));
         }
     });
 

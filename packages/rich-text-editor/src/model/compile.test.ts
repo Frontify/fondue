@@ -938,18 +938,20 @@ describe('compileContentModel order', () => {
     it('SPEC-rich-text/AC-026 orders plugins of one phase by the host list, in both orders', () => {
         const forward = compile([core(), fixtureBold(), fixtureHeading()]);
         const reverse = compile([core(), fixtureHeading(), fixtureBold()]);
-        // `core` contributes the history plugin and its own keys first, and the base keys last.
-        const corePlugins = ['history', 'keymap:core'];
+        // `core` contributes the clipboard, the history plugin and its own keys first, and the drop cursor and base keys last.
+        const corePlugins = ['clipboard', 'history', 'keymap:core'];
         expect(forward.manifest.plugins).toEqual([
             ...corePlugins,
             'keymap:fixture.bold',
             'keymap:fixture.heading',
+            'drop-cursor',
             'base-keys',
         ]);
         expect(reverse.manifest.plugins).toEqual([
             ...corePlugins,
             'keymap:fixture.heading',
             'keymap:fixture.bold',
+            'drop-cursor',
             'base-keys',
         ]);
         expect(forward.fingerprint).not.toBe(reverse.fingerprint);
@@ -958,11 +960,13 @@ describe('compileContentModel order', () => {
     it('SPEC-rich-text/AC-026 orders by phase before list order, and one keyed plugin sits at its first contributor', () => {
         const model = compile([core(), fixtureBold(), fixtureRedo(), fixtureHistory()]);
         expect(model.manifest.plugins).toEqual([
+            'clipboard',
             'history',
             'keymap:core',
             'keymap:fixture.bold',
             'keymap:fixture.redo',
             'keymap:fixture.history',
+            'drop-cursor',
             'base-keys',
         ]);
     });

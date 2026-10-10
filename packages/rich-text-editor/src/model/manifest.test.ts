@@ -76,10 +76,12 @@ describe('featureFromManifest', () => {
             'acme.pull-quote.set',
         ]);
         expect(model.manifest.plugins).toEqual([
+            'clipboard',
             'history',
             'keymap:core',
             'keymap:acme.pull-quote',
             'input-rules',
+            'drop-cursor',
             'base-keys',
         ]);
         expect(model.manifest.keys).toEqual([
