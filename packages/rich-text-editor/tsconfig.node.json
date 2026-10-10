@@ -1,21 +1,15 @@
 {
     "compilerOptions": {
-        "allowImportingTsExtensions": true,
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "checkJs": true,
+        "composite": true,
+        "emitDeclarationOnly": true,
         "lib": ["ESNext"],
         "module": "ESNext",
         "moduleResolution": "Bundler",
-        "noEmit": true,
-        "noUncheckedIndexedAccess": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
+        "outDir": "./dist/tsconfig-node",
         "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "strict": true,
-        "target": "ESNext",
-        "types": ["node"]
+        "target": "ESNext"
     },
-    "include": ["scripts", "lint", "vite.config.ts", "playwright.config.ts", "oxlint.config.ts", "oxfmt.config.ts"]
+    "include": ["vite.config.ts", "package.json", "oxlint.config.ts"]
 }

@@ -9,8 +9,8 @@ export const registry: Readonly<Record<string, () => Feature>> = {
 };
 
 /**
- * Resolves shipped feature IDs from remote configuration, with their default options (SPEC-rich-text/AC-030);
- * throws `DefinitionError` `definition.unknown-feature` with the ID in `details` (SPEC-rich-text/AC-035).
+ * Resolves shipped feature IDs from remote configuration, with their default options;
+ * throws `DefinitionError` `definition.unknown-feature` with the ID in `details`.
  */
 export const featuresById = (ids: readonly string[]): readonly Feature[] => {
     if (!Array.isArray(ids)) {
