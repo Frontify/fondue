@@ -14,7 +14,11 @@ import { type EditorHandle } from './types';
 export interface RichTextFormField {
     getValue(): RichTextDocument;
     validate(): { readonly valid: true } | { readonly valid: false; readonly reason: 'empty' | 'too-long' };
-    /** Replaces with the `defaultValue` record, discarding unsaved changes. */
+    /**
+     * Replaces with the `defaultValue` record, discarding unsaved changes, and empties the history. A host whose session
+     * saves through `services.persistence` keeps `defaultValue` at the last acknowledged record, so a reset discards only
+     * unsaved edits (SPEC-rich-text-persistence/AC-054, DR-080).
+     */
     reset(): Promise<ReplaceResult>;
     /** Resolves with the committed document, or rejects with code `timeout`. */
     getSettledValue(options: { readonly timeoutMs: number }): Promise<RichTextDocument>;
@@ -90,15 +94,21 @@ export const useRichTextFormField = <C extends object = ShippedCommands>(
                 }
                 return VALID;
             },
-            reset: () => {
-                const { handle, props } = sessionOf();
-                return handle.replaceDocument({
+            reset: async () => {
+                const { handle, runtime, props } = sessionOf();
+                const { generation } = handle.getSummary().session;
+                const result = await handle.replaceDocument({
                     expected: handle.getSnapshot().stamp,
                     next: props.defaultValue,
                     unsaved: { action: 'discard', confirmed: true },
                     selection: 'start',
                     history: 'reset',
                 });
+                // A record equal to the content is an echo, which replaces nothing and so keeps the history (step 1).
+                if (result.status === 'replaced' && result.session.generation === generation) {
+                    runtime.clearHistory();
+                }
+                return result;
             },
             // A form never submits half-composed text (SPEC-rich-text-persistence/AC-061).
             getSettledValue: ({ timeoutMs }) => {

@@ -98,7 +98,10 @@ export const SaveStatusText = ({
             return undefined;
         }
         let shown = runtime.handle.getSaveStatus().state;
+        let { generation } = runtime.handle.getSummary().session;
         let recovering = false;
+        // The retrying or offline state last announced, which a replay in between does not announce again (AC-046).
+        let outage: State | null = null;
         const say = (message: Key | null) => {
             if (message !== null) {
                 announce(tRef.current(message));
@@ -110,14 +113,31 @@ export const SaveStatusText = ({
             if (previous === next.state) {
                 return;
             }
+            // A replacement, such as a form reset, discards what the old generation held, so nothing of it is saved.
+            const current = runtime.handle.getSummary().session.generation;
+            if (current !== generation) {
+                generation = current;
+                recovering = false;
+                outage = null;
+                return;
+            }
             if (RECOVERING.has(previous)) {
                 recovering = true;
+            }
+            if (next.state === 'clean' || next.state === 'dirty') {
+                outage = null;
             }
             const message = keyOf(next, causes.current);
             if (ANNOUNCED.has(next.state)) {
                 // Only replacement leaves a conflict, and the record it loads has nothing to recover.
                 if (next.state === 'conflict') {
                     recovering = false;
+                }
+                if (previous === 'saving' && next.state === outage) {
+                    return;
+                }
+                if (next.state === 'uncertain' || next.state === 'offline') {
+                    outage = next.state;
                 }
                 say(message);
                 return;
