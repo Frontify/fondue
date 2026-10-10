@@ -1,5 +1,18 @@
 # @frontify/fondue-sdk
 
+## 0.2.3
+
+### Patch Changes
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: clarify setup requirements (React 18, Tailwind v3, `tw-` prefix, PostCSS), document colour pairings and page theming, and fix guide ids and utility class examples in the fondue skill
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: ship the SDK documentation (usage, concepts, reference, examples) as `sdk/*` guides so it renders in Storybook and can be read through `guides.get()`; the fondue skill now reads `sdk/Reference` from the installed version instead of bundling its own reference
+
+- Updated dependencies [[`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`557a49d`](https://github.com/Frontify/fondue/commit/557a49dc1226498e121660acc2869d47610eca48), [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`cff52fb`](https://github.com/Frontify/fondue/commit/cff52fbfb2349bffae3b498a72a01d959d98942f), [`9e83eee`](https://github.com/Frontify/fondue/commit/9e83eee7cf76830d5e6e1f28e5dd72fde8036393), [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`07d0eb8`](https://github.com/Frontify/fondue/commit/07d0eb8b048b119cbc251bd77618b667563e1c3f), [`5f55b89`](https://github.com/Frontify/fondue/commit/5f55b892dd6ce8fd9ba9c744c4e95df01cf0e816)]:
+    - @frontify/fondue-components@33.0.2
+    - @frontify/fondue-icons@0.29.1
+    - @frontify/fondue-tokens@5.1.2
+
 ## 0.2.2
 
 ### Patch Changes
