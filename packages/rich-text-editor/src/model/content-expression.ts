@@ -21,7 +21,7 @@ const repeatOf = (token: string | undefined) => {
 };
 
 /**
- * The node and group names of a content expression in the package grammar (SPEC-rich-text-format, Vocabulary),
+ * The node and group names of a content expression in the package grammar,
  * or `undefined` when it fails the grammar: terms with an optional `?`, `*`, `+` or `{n,m}`, in sequence or
  * joined by `|`, grouped by parentheses up to 16 deep. The `{n,m}` upper bounds along any nesting path multiply
  * to at most 64.
