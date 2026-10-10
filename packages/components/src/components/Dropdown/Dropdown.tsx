@@ -4,25 +4,26 @@ import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import {
     Children,
+    createContext,
     forwardRef,
+    useCallback,
+    useContext,
     useLayoutEffect,
     useMemo,
     useRef,
-    useState,
     type ForwardedRef,
     type ReactNode,
 } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
+import { useScrollOrResize, useVirtualAnchorFocus, type VirtualAnchor } from '#/hooks/useVirtualAnchor';
 
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import { useProcessedChildren } from './hooks/useProcessedChildren';
 import styles from './styles/dropdown.module.scss';
 
-export type DropdownVirtualAnchor = {
-    getBoundingClientRect: () => DOMRect;
-};
+export type DropdownVirtualAnchor = VirtualAnchor;
 
 export type DropdownRootProps = {
     children?: ReactNode;
@@ -41,24 +42,24 @@ export type DropdownRootProps = {
     onOpenChange?: (open: boolean) => void;
     /**
      * Anchor the dropdown to this rectangle instead of `Dropdown.Trigger`, for example a pointer position.
-     * Use it without `Dropdown.Trigger` and with a controlled `open` state. Pass a new object whenever the rectangle changes.
+     * Use it without `Dropdown.Trigger`, with a controlled `open` state and an `aria-label` on `Dropdown.Content`.
+     * While open, the dropdown follows the rectangle on scroll and resize. Pass a new object when it changes for any other reason.
+     * On close, focus returns to the element that had focus before opening, unless focus moved elsewhere or `onCloseAutoFocus` calls `event.preventDefault()`.
      */
     virtualAnchor?: DropdownVirtualAnchor;
 
     'data-test-id'?: string;
 };
 
+// Whether the virtual anchor is open, or `undefined` without a virtual anchor.
+const DropdownVirtualAnchorContext = createContext<boolean | undefined>(undefined);
+DropdownVirtualAnchorContext.displayName = 'DropdownVirtualAnchorContext';
+
 // Radix DropdownMenu anchors only to its trigger, so an invisible trigger is placed over the rectangle.
-const DropdownVirtualTrigger = ({ virtualAnchor }: { virtualAnchor: DropdownVirtualAnchor }) => {
+const DropdownVirtualTrigger = ({ virtualAnchor, open }: { virtualAnchor: DropdownVirtualAnchor; open: boolean }) => {
     const triggerRef = useRef<HTMLSpanElement>(null);
-    const [anchorState, setAnchorState] = useState({ virtualAnchor, key: 0 });
 
-    // A new trigger element makes Radix take the new anchor even when the rectangle has no size to observe.
-    if (anchorState.virtualAnchor !== virtualAnchor) {
-        setAnchorState({ virtualAnchor, key: anchorState.key + 1 });
-    }
-
-    useLayoutEffect(() => {
+    const placeTrigger = useCallback(() => {
         const trigger = triggerRef.current;
         if (!trigger) {
             return;
@@ -67,7 +68,7 @@ const DropdownVirtualTrigger = ({ virtualAnchor }: { virtualAnchor: DropdownVirt
         const rect = virtualAnchor.getBoundingClientRect();
         trigger.style.left = '0px';
         trigger.style.top = '0px';
-        // A transformed ancestor moves the origin of fixed positioning, so measure it first.
+        // A translated ancestor moves the origin of fixed positioning, so measure it first. Scale is not corrected.
         const origin = trigger.getBoundingClientRect();
         trigger.style.left = `${rect.left - origin.left}px`;
         trigger.style.top = `${rect.top - origin.top}px`;
@@ -75,10 +76,19 @@ const DropdownVirtualTrigger = ({ virtualAnchor }: { virtualAnchor: DropdownVirt
         trigger.style.height = `${rect.height}px`;
     }, [virtualAnchor]);
 
+    const placeTriggerWhileOpen = useCallback(() => {
+        if (triggerRef.current?.dataset.state === 'open') {
+            placeTrigger();
+        }
+    }, [placeTrigger]);
+
+    // Opening places the trigger again, because the rectangle may have moved while closed.
+    useLayoutEffect(() => placeTrigger(), [placeTrigger, open]);
+    useScrollOrResize(placeTriggerWhileOpen);
+
     return (
         <RadixDropdown.Trigger asChild>
             <span
-                key={anchorState.key}
                 ref={triggerRef}
                 aria-hidden="true"
                 className={styles.virtualTrigger}
@@ -96,11 +106,18 @@ export const DropdownRoot = ({
     virtualAnchor,
     'data-test-id': dataTestId = 'fondue-dropdown',
 }: DropdownRootProps) => {
+    let virtualAnchorOpen: boolean | undefined;
+    if (virtualAnchor) {
+        virtualAnchorOpen = open === true;
+    }
+
     return (
-        <RadixDropdown.Root open={open} modal={modal} onOpenChange={onOpenChange} data-test-id={dataTestId}>
-            {virtualAnchor && <DropdownVirtualTrigger virtualAnchor={virtualAnchor} />}
-            {children}
-        </RadixDropdown.Root>
+        <DropdownVirtualAnchorContext.Provider value={virtualAnchorOpen}>
+            <RadixDropdown.Root open={open} modal={modal} onOpenChange={onOpenChange} data-test-id={dataTestId}>
+                {virtualAnchor && <DropdownVirtualTrigger virtualAnchor={virtualAnchor} open={open === true} />}
+                {children}
+            </RadixDropdown.Root>
+        </DropdownVirtualAnchorContext.Provider>
     );
 };
 DropdownRoot.displayName = 'Dropdown.Root';
@@ -135,7 +152,7 @@ DropdownTrigger.displayName = 'Dropdown.Trigger';
 type DropdownSpacing = 'compact' | 'comfortable' | 'spacious';
 type DropdownViewportCollisionPadding = 'compact' | 'spacious';
 type DropdownItemAriaProps = Omit<CommonAriaProps, 'role' | 'aria-expanded' | 'aria-haspopup'>;
-export type DropdownContentProps = {
+export type DropdownContentProps = Pick<CommonAriaProps, 'aria-label'> & {
     children?: ReactNode;
     'data-test-id'?: string;
     /**
@@ -209,6 +226,7 @@ export const DropdownContent = (
         onEscapeKeyDown,
         onCloseAutoFocus,
         container,
+        'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -216,6 +234,8 @@ export const DropdownContent = (
     const localRef = useRef<HTMLDivElement>(null);
     const { dir } = useFondueTheme();
     const actualRef = ref || localRef;
+    const virtualAnchorOpen = useContext(DropdownVirtualAnchorContext);
+    const virtualAnchorFocus = useVirtualAnchorFocus(virtualAnchorOpen !== undefined);
     return (
         <RadixDropdown.Portal forceMount={forceMount || undefined} container={container}>
             <ThemeProvider>
@@ -227,6 +247,7 @@ export const DropdownContent = (
                     sideOffset={SPACING_MAP[triggerOffset]}
                     side={side}
                     className={styles.content}
+                    aria-label={ariaLabel}
                     data-test-id={dataTestId}
                     ref={actualRef}
                     onEscapeKeyDown={onEscapeKeyDown}
@@ -260,12 +281,17 @@ export const DropdownContent = (
                             event.preventDefault();
                         }
                     }}
+                    onOpenAutoFocus={virtualAnchorFocus.onOpenAutoFocus}
                     onCloseAutoFocus={(event) => {
                         if (preventTriggerFocusOnClose) {
                             event.preventDefault();
                         }
                         onCloseAutoFocus?.(event);
+                        // The hidden trigger cannot take focus back.
+                        virtualAnchorFocus.onCloseAutoFocus(event);
                     }}
+                    // The hidden trigger moves without Radix noticing, so Radix reads its position every frame while open.
+                    updatePositionStrategy={virtualAnchorOpen ? 'always' : undefined}
                     forceMount={forceMount || undefined}
                 >
                     {children}
