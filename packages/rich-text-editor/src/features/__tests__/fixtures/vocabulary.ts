@@ -4,8 +4,8 @@ import { core } from '#/features/core/feature';
 import { compileContentModel, defineFeature } from '#/model';
 
 /**
- * Stand-ins with the node shapes and attributes of the Vocabulary table for the features
- * that later packets ship, so decode runs against the whole vocabulary. Never in the registry or a profile.
+ * Stand-ins with the node shapes and attributes of features this package does not ship yet,
+ * so decode runs against the whole vocabulary. Never in the registry or a profile.
  */
 const requires = [{ id: 'core', version: 1 }];
 const nodeId = { type: 'string', required: true } as const;
@@ -231,7 +231,7 @@ export const vocabularyColors = defineFeature({
     },
 });
 
-/** Every stand-in on top of `core`, in an order that keeps marks in the table's declared order. */
+/** Every stand-in on top of `core`, in an order that keeps marks in their declared order. */
 export const vocabularyFeatures = () =>
     [
         core(),

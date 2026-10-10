@@ -298,7 +298,7 @@ describe('decode limits', () => {
         expect(read).toMatchObject({ ok: false, diagnostic: { details: { limit: 'maxDocumentNodes' } } });
     });
 
-    it('blocks at step 6 when joined text or the canonical encoding passes a limit', () => {
+    it('blocks when joined text or the canonical encoding passes a limit', () => {
         const half = 'x'.repeat(600_000);
         const joined = decodeDocument(envelope(doc({ type: 'paragraph', content: [text(half), text(half)] })), model);
         expect(joined).toMatchObject(exceeded('maxTextLength'));

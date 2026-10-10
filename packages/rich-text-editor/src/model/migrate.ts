@@ -73,7 +73,7 @@ const merge = (into: Capabilities, from: Capabilities, add = true): Capabilities
 };
 
 /**
- * Decode order step 3 after the capability warnings: each installed feature's steps from its recorded capability
+ * After the capability warnings: each installed feature's steps from its recorded capability
  * version, in model feature order, then the model's steps from the recorded model version. Each output passes the
  * read walk and the envelope checks again; the result records the target model and the installed capability versions.
  */

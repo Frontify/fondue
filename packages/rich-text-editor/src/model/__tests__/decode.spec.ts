@@ -69,7 +69,7 @@ afterEach(() => {
     vi.unstubAllGlobals();
 });
 
-describe('decode order', () => {
+describe('the order of decode checks', () => {
     const twoSteps: readonly (readonly [string, unknown, ReturnType<typeof outcome>])[] = [
         [
             'a parsed doc with attrs { lang: NaN }',
@@ -103,7 +103,7 @@ describe('decode order', () => {
         ],
     ];
 
-    it.each(twoSteps)('reports only the earlier step for %s', (_, input, expected) => {
+    it.each(twoSteps)('reports only the first failing check for %s', (_, input, expected) => {
         expect(outcome(decodeDocument(input, model))).toEqual(expected);
     });
 
