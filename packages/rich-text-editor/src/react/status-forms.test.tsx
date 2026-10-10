@@ -332,6 +332,20 @@ describe('the status announcements as a transition', () => {
         ]);
     });
 
+    it('SPEC-rich-text-persistence/AC-046 announces a new outage after a failure', () => {
+        expect(
+            run(seen('clean'), [
+                [seen('dirty'), false],
+                [seen('saving'), false],
+                [seen('uncertain'), false],
+                [seen('saving'), false],
+                [seen('error'), false],
+                [seen('saving'), false],
+                [seen('uncertain'), false],
+            ]).at(-1),
+        ).toBe('RichTextEditor_uncertain');
+    });
+
     it('SPEC-rich-text-persistence/AC-047 announces clean only after a commit or a recovery', () => {
         expect(
             run(seen('dirty'), [
@@ -776,6 +790,35 @@ describe('useRichTextFormField reset after a defaultValue change', () => {
 
         expect(textOf(handle())).toContain('"text":"zz"');
         expect(textOf(handle())).not.toContain('"text":"ab');
+    });
+});
+
+describe('useRichTextFormField after dispose', () => {
+    it('SPEC-rich-text-persistence/AC-061 ends a settled value wait and its timer when the editor unmounts', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { handle, field, unmount } = mount({}, environment);
+        // Starts a composition as the browser does, so ProseMirror's own handler sets `view.composing`.
+        act(() => {
+            const view = runtimeOf(handle())?.view;
+            view?.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+            view?.dispatch(view.state.tr.insertText('x').setMeta('composition', 1));
+        });
+        const started = vi.spyOn(environment.clock, 'setTimeout');
+        const cleared = vi.spyOn(environment.clock, 'clearTimeout');
+        const settled = field().getSettledValue({ timeoutMs: 10_000 });
+        const timer: unknown = started.mock.results.find(
+            (_, index) => started.mock.calls[index]?.[1] === 10_000,
+        )?.value;
+        const outcome = settled.then(
+            () => 'resolved',
+            (error: Error) => error.message,
+        );
+
+        unmount();
+
+        expect(timer).toBeDefined();
+        expect(cleared).toHaveBeenCalledWith(timer);
+        expect(await outcome).toBe('useRichTextFormField needs the ref object of a mounted RichTextEditor.');
     });
 });
 
