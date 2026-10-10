@@ -92,7 +92,8 @@ export const announcementOf = (
     if (RECOVERING.has(previous.state)) {
         recovering = true;
     }
-    if (next.state === 'clean' || next.state === 'dirty') {
+    // A settled write, a conflict or a failure ends the outage, so a later one is new.
+    if (next.state === 'clean' || next.state === 'dirty' || next.state === 'conflict' || next.state === 'error') {
         outage = null;
     }
     if (ANNOUNCED.has(next.state)) {

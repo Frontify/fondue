@@ -88,6 +88,9 @@ const COMPOSITION_META = 'composition';
 // The target an async operation started with none gets at the selection (SPEC-rich-text-runtime/AC-046).
 const ASYNC_TARGET: CaptureTargetOptions = { purpose: 'insert', onIntersectingEdit: 'map' };
 
+/** How a wait for input to settle ended. */
+export type InputOutcome = 'settled' | 'timeout' | 'disposed';
+
 /** What the host calls. */
 export interface RuntimeHandle {
     getSummary(): EditorSummary;
@@ -151,10 +154,10 @@ export interface EditorRuntime {
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
     /**
-     * Calls `settled` with `true` once input settles after the composition that runs now, or with `false` when
-     * `timeoutMs` passes first on the environment clock (SPEC-rich-text-runtime/AC-070).
+     * Calls `settled` once input settles after the composition that runs now, or when `timeoutMs` passes first on the
+     * environment clock, or when the session is disposed first (SPEC-rich-text-runtime/AC-070).
      */
-    afterInput(settled: (settled: boolean) => void, timeoutMs: number): void;
+    afterInput(settled: (outcome: InputOutcome) => void, timeoutMs: number): void;
     /** Empties the history and keeps the document and selection, as a form reset to the current record does (SPEC-rich-text-persistence/AC-054). */
     clearHistory(): void;
     /** Emits the `operationMetric` of an operation that started at `started` on the environment clock (SPEC-rich-text-quality/AC-029). */
@@ -384,7 +387,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const deferredCaptures: string[] = [];
     const queue: Intent[] = [];
     // What waits for input to settle outside the queue, such as a form's settled value (SPEC-rich-text-persistence/AC-061).
-    const afterInput = new Set<() => void>();
+    const afterInput = new Set<(outcome: InputOutcome) => void>();
 
     // Records typing before any other handler sees the event, so the view itself gets no event handler (SPEC-rich-text-runtime/AC-001).
     const typingRecorder = new Plugin({
@@ -821,7 +824,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         coordinator.settle();
         saves?.settled();
         for (const settled of [...afterInput]) {
-            settled();
+            settled('settled');
         }
     };
 
@@ -1224,6 +1227,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         phase = 'disposed';
         ended.abort();
         settling.cancel();
+        for (const settled of [...afterInput]) {
+            settled('disposed');
+        }
         coordinator.dispose();
         settleQueue('not-ready');
         deferred.length = 0;
@@ -1309,15 +1315,18 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     /**
-     * Gives focus back to a surface that had it when the replacement started and is editable again, unless focus moved
-     * on meanwhile; Chromium blurs a focused surface whose `contenteditable` turns false (SPEC-rich-text-persistence/AC-036, AC-037).
+     * Gives focus back to a surface that had it when the replacement started, editable or readonly, unless focus moved
+     * on meanwhile, in its own document or out of it to a parent page; Chromium blurs a focused surface whose
+     * `contenteditable` turns false (SPEC-rich-text-persistence/AC-036, AC-037).
      */
     const refocus = (focused: boolean) => {
-        if (!focused || shownMode !== 'editable' || view === undefined) {
+        // A disabled surface leaves the Tab order and takes no focus (SPEC-rich-text-react/AC-029).
+        if (!focused || disabled || view === undefined) {
             return;
         }
-        const { activeElement, body } = view.dom.ownerDocument;
-        if (activeElement === null || activeElement === body) {
+        const owner = view.dom.ownerDocument;
+        const { activeElement, body } = owner;
+        if (owner.hasFocus() && (activeElement === null || activeElement === body)) {
             focus();
         }
     };
@@ -1682,15 +1691,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
         },
         afterInput: (settled, timeoutMs) => {
-            const finish = (value: boolean) => {
-                // Whichever comes first, the settle or the timeout, answers; the other finds nothing.
+            // Whichever comes first, the settle, the timeout or `dispose`, answers; the others find nothing.
+            const waiter = (outcome: InputOutcome) => {
                 if (afterInput.delete(waiter)) {
                     environment.clock.clearTimeout(timer);
-                    settled(value);
+                    settled(outcome);
                 }
             };
-            const waiter = () => finish(true);
-            const timer = environment.clock.setTimeout(() => finish(false), timeoutMs);
+            const timer = environment.clock.setTimeout(() => waiter('timeout'), timeoutMs);
             afterInput.add(waiter);
         },
         measure: (kind, started, failureCode) => measure(kind, started, failureCode),
