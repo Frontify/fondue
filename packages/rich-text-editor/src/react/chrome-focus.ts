@@ -87,3 +87,28 @@ export const moveChromeFocus = (
         runtime.handle.focus();
     }
 };
+
+/**
+ * Whether an Escape leaves the fixed toolbar or this editor's node chrome for the surface ahead of any page layer, which
+ * holds while no editor overlay, a tooltip included, is open, since an open one takes the Escape first.
+ */
+export const escapesToSurface = (
+    event: globalThis.KeyboardEvent,
+    root: HTMLElement,
+    toolbar: HTMLElement | null,
+    overlays: HTMLElement | null,
+): boolean => {
+    if (event.key !== 'Escape' || event.isComposing || (overlays !== null && overlays.childElementCount > 0)) {
+        return false;
+    }
+    const [target] = event.composedPath();
+    // A node of an iframe's document is no `Node` of this window.
+    if (target === undefined || !('closest' in target)) {
+        return false;
+    }
+    const element = target as Element;
+    if (toolbar !== null && toolbar.contains(element)) {
+        return true;
+    }
+    return root.contains(element) && element.closest('[data-rte-node-chrome]') !== null;
+};

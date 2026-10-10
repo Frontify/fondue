@@ -4,6 +4,7 @@ import { Tooltip, useFondueTheme } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type MutableRefObject, useContext } from 'react';
 
+import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { SessionContext, useCommandQuery } from '#/bridge/hooks';
 import { useOverlayContainer } from '#/bridge/overlays';
 import { ariaShortcut, useApplePlatform } from '#/ui/shortcuts';
@@ -136,11 +137,25 @@ export const FixedToolbar = ({
     if (docked !== undefined) {
         className = `${styles.root} ${styles.docked}`;
     }
+    // A transformed ancestor, as a host dialog's, moves the origin of fixed positioning, so it is measured first, as
+    // Fondue's `Dropdown` places its virtual trigger.
+    useClientLayoutEffect(() => {
+        const element = toolbarRef.current;
+        const view = element?.ownerDocument.defaultView;
+        if (element === null || view === null || view === undefined || docked === undefined) {
+            return undefined;
+        }
+        element.style.insetBlockStart = '0px';
+        const { top, height } = element.getBoundingClientRect();
+        element.style.insetBlockStart = `${view.innerHeight - docked - height - top}px`;
+        return () => {
+            element.style.insetBlockStart = '';
+        };
+    }, [toolbarRef, docked]);
     return (
         <RadixToolbar.Root
             ref={toolbarRef}
             className={className}
-            style={{ insetBlockEnd: docked }}
             dir={dir}
             aria-label={strings.label}
             aria-controls={surfaceId}
