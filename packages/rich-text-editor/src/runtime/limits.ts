@@ -67,17 +67,15 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
             attrs: node.attrs,
             marks: node.marks.map(({ type, attrs }) => ({ type: type.name, attrs })),
         };
+        let longest = 0;
         if (node.text !== undefined) {
             tree.text = node.text;
+            longest = node.text.length;
         }
         const shell = writeNode(vocabulary, tree, content);
         // The children go between the brackets of the empty `content` array, one comma apart.
         let bytes = utf8Bytes(JSON.stringify(shell)) + Math.max(0, node.childCount - 1);
         let nodes = 1;
-        let longest = 0;
-        if (node.isText) {
-            longest = node.textContent.length;
-        }
         for (const child of node.children) {
             const size = sizeOf(child);
             bytes += size.bytes;
