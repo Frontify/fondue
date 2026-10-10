@@ -29,7 +29,7 @@ const limitsOf = (given: Partial<ResourceLimits> | undefined): ResourceLimits =>
     return limits as unknown as ResourceLimits;
 };
 
-/** A capability the model does not install, or records at a lower version, warns. */
+/** A capability the model does not install, or installs at a lower version than the document records, warns. */
 const capabilityWarnings = (document: RichTextDocument, model: ContentModel): Diagnostic[] => {
     const installed = new Map(model.capabilities.map(({ id, version }) => [id, version]));
     const warnings: Diagnostic[] = [];
