@@ -143,6 +143,78 @@ describe('editor overlays', () => {
         host.remove();
     });
 
+    it.each(['tooltip', 'More menu', 'menu', 'alternative text dialog'] as const)(
+        'SPEC-rich-text-react/AC-045 renders the %s into the overlay root inside the editor, or into its own root inside portalContainer',
+        async (kind) => {
+            const host = document.createElement('div');
+            document.body.append(host);
+            const results: { inside: boolean; owner: boolean; host: boolean }[] = [];
+            for (const portalContainer of [undefined, host]) {
+                let props: Props = {};
+                if (kind === 'menu') {
+                    props = { ...props, children: <Opened Overlay={FixtureMenu} /> };
+                }
+                if (kind === 'alternative text dialog') {
+                    props = { ...props, defaultValue: loaded(para('one'), image) };
+                }
+                if (portalContainer !== undefined) {
+                    props = { ...props, portalContainer };
+                }
+                const { unmount, environment } = mount(props);
+                // Node chrome renders once the portal store's microtask runs.
+                await act(() => environment.flushMicrotasks());
+                let overlay: HTMLElement | undefined;
+                if (kind === 'tooltip') {
+                    act(() => {
+                        fireEvent.focus(screen.getAllByRole('button', { name: 'Bold' })[0] as HTMLElement);
+                    });
+                    overlay = screen.getAllByRole('tooltip')[0];
+                }
+                if (kind === 'More menu') {
+                    act(() => {
+                        fireEvent.keyDown(document.querySelector('[data-rte-toolbar-more]') as HTMLElement, {
+                            key: 'Enter',
+                        });
+                    });
+                    overlay = screen.getByRole('menu');
+                }
+                if (kind === 'menu') {
+                    overlay = screen.getByTestId('fixture-menu');
+                }
+                if (kind === 'alternative text dialog') {
+                    act(() => {
+                        fireEvent.click(screen.getByRole('button', { name: 'Alternative text' }));
+                    });
+                    overlay = screen.getByRole('dialog', { name: 'Alternative text' });
+                }
+                let root: Element | null = null;
+                if (overlay !== undefined) {
+                    root = overlay.closest('[data-rte-overlays]');
+                }
+                let own = false;
+                if (portalContainer === undefined) {
+                    own =
+                        root?.closest('[data-test-id="fondue-rich-text-editor"]') ===
+                        screen.getByTestId('fondue-rich-text-editor');
+                } else {
+                    own = root?.parentElement === portalContainer;
+                }
+                results.push({
+                    inside: own,
+                    owner: overlay?.ownerDocument === document,
+                    host: root !== null,
+                });
+                unmount();
+            }
+            host.remove();
+
+            expect(results).toEqual([
+                { inside: true, owner: true, host: true },
+                { inside: true, owner: true, host: true },
+            ]);
+        },
+    );
+
     it('SPEC-rich-text-react/AC-047 keeps every overlay open while focus moves between the surface, toolbars and overlays', () => {
         const closed = vi.fn<(overlay: string) => void>();
         const { handle } = mount({
@@ -428,7 +500,7 @@ describe('overlay accessibility', () => {
         // Frames stay real, since Floating UI repositions an open overlay in each one.
         vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
         const closed = vi.fn();
-        const { handle } = mount({
+        const { handle, environment } = mount({
             children: (
                 <>
                     <Opened Overlay={FixtureLinkPopover} onClose={closed} />
@@ -439,8 +511,11 @@ describe('overlay accessibility', () => {
         });
         selectWithFocus(handle(), 'two');
 
+        // The editor's own timers run on the environment clock, which the fake timers do not move.
         act(() => {
             vi.advanceTimersByTime(10 * 60 * 1000);
+            environment.advance(600_000);
+            environment.flushFrames();
         });
 
         expect(closed).not.toHaveBeenCalled();
@@ -528,6 +603,26 @@ describe('overlay accessibility', () => {
         expect([undocked, docked]).toEqual([true, false]);
         // The docked toolbar's top edge sits its height above the keyboard, which happy-dom lays out as 0.
         expect(screen.getByRole('toolbar', { name: 'Text formatting' }).style.insetBlockStart).toBe('400px');
+        Reflect.deleteProperty(window, 'visualViewport');
+    });
+
+    it('SPEC-rich-text-react/AC-096 leaves the toolbar undocked and lets a press take focus when the pointer is not coarse, though the viewport shrinks', () => {
+        const viewport = Object.assign(new EventTarget(), { height: 800, offsetTop: 0 });
+        Object.defineProperty(window, 'visualViewport', { configurable: true, value: viewport });
+        vi.spyOn(window, 'matchMedia').mockImplementation(() => ({ matches: false }) as MediaQueryList);
+        vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(800);
+        mount({});
+        act(() => surface().focus());
+
+        act(() => {
+            viewport.height = 400;
+            viewport.dispatchEvent(new Event('resize'));
+        });
+        const pressed = fireEvent.mouseDown(screen.getByRole('button', { name: 'Bold' }));
+
+        // `fireEvent` returns true while no handler prevented the default.
+        expect(pressed).toBe(true);
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' }).style.insetBlockStart).toBe('');
         Reflect.deleteProperty(window, 'visualViewport');
     });
 });

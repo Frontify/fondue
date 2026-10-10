@@ -125,7 +125,7 @@ export const OverlayProbe = ({
     /** Puts the editor in a scrolling container of this height. */
     readonly scrollHeight?: number;
     /** The height of host content above the editor, which moves it towards the viewport's bottom edge. */
-    readonly spacer?: number;
+    readonly spacer?: number | string;
     readonly width?: number;
     /** Passes a host element as `portalContainer`. */
     readonly hostContainer?: boolean;
@@ -238,7 +238,8 @@ export const OverlayProbe = ({
     );
     if (scrollHeight !== undefined) {
         editor = (
-            <div data-scroller="" style={{ blockSize: scrollHeight, overflowY: 'auto' }}>
+            // Scroll anchoring would keep the content in view where it is when text above it changes.
+            <div data-scroller="" style={{ blockSize: scrollHeight, overflowY: 'auto', overflowAnchor: 'none' }}>
                 {editor}
             </div>
         );

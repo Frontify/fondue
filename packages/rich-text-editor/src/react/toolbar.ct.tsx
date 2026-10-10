@@ -381,6 +381,14 @@ test.describe('with a coarse pointer', () => {
             .catch(() => undefined);
         test.skip(client === undefined, 'CDP dispatches a sliding touch in Chromium only');
         const point = (x: number, y: number) => [{ x, y }];
+        // A slide that pans the page ends in `pointercancel`, which never reaches the release handler; without panning,
+        // the release must reach More's own handler, or the test would pass for any release.
+        await itemOf(page, 'More').evaluate((more) => {
+            more.style.touchAction = 'none';
+            const released: string[] = [];
+            Object.assign(window, { moreReleases: released });
+            more.addEventListener('pointerup', (event) => released.push((event as PointerEvent).pointerType));
+        });
 
         await client?.send('Input.dispatchTouchEvent', {
             type: 'touchStart',
@@ -392,6 +400,13 @@ test.describe('with a coarse pointer', () => {
         });
         await client?.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
 
+        await expect
+            .poll(() => page.evaluate(() => (window as unknown as { moreReleases: string[] }).moreReleases))
+            .toEqual(['touch']);
+        // Radix opens a menu in effects and frames after the release.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
         await expect(page.getByRole('menu')).toHaveCount(0);
     });
 

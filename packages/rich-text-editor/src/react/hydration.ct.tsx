@@ -6,6 +6,15 @@ import { type EditorHydrationResult, EditorHydrationProbe } from '../../fixtures
 // CT runs this file in Node and sends only imports used as JSX to the browser: https://playwright.dev/docs/test-components#under-the-hood
 import { renderEditorOnServer } from '../../fixtures/editor/server';
 
+/** Waits with a 15 second budget, and on a timeout names the page errors and console errors collected meanwhile. */
+const withProblems = async (problems: readonly string[], wait: () => Promise<unknown>) => {
+    try {
+        await wait();
+    } catch (error) {
+        throw new Error(`${String(error)}\nCollected problems: ${JSON.stringify(problems)}`, { cause: error });
+    }
+};
+
 // `NODE_ENV=development` keeps React's mismatch warnings, which `pnpm test:components:hydration` builds with.
 for (const text of ['', 'Rotate the signing keys']) {
     test(`SPEC-rich-text-output/AC-033 SPEC-rich-text-output/AC-034 hydrates the editor of "${text}" and shows its content from the first frame`, async ({
@@ -30,7 +39,7 @@ for (const text of ['', 'Rotate the signing keys']) {
                 }}
             />,
         );
-        await expect.poll(() => reported).toBeDefined();
+        await withProblems(problems, () => expect.poll(() => reported, { timeout: 15_000 }).toBeDefined());
 
         expect(reported?.recoverable).toEqual([]);
         expect(problems).toEqual([]);
@@ -64,12 +73,14 @@ test('SPEC-rich-text-output/AC-033 SPEC-rich-text-react/AC-087 hydrates the bloc
             }}
         />,
     );
-    await expect.poll(() => reported).toBeDefined();
+    await withProblems(problems, () => expect.poll(() => reported, { timeout: 15_000 }).toBeDefined());
 
     expect(reported?.recoverable).toEqual([]);
     expect(problems).toEqual([]);
     expect(reported?.serverHtml).toContain('data-rte-shell="blocked"');
     expect(reported?.serverHtml).not.toContain('contenteditable');
-    await expect(page.getByRole('button', { name: 'Copy original' })).toBeVisible();
+    await withProblems(problems, () =>
+        expect(page.getByRole('button', { name: 'Copy original' })).toBeVisible({ timeout: 15_000 }),
+    );
     test.info().annotations.push({ type: 'react build', description: String(reported?.mode) });
 });
