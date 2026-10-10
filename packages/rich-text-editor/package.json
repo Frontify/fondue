@@ -19,10 +19,6 @@
         "./model": {
             "types": "./dist/model/index.d.ts",
             "import": "./dist/model/index.js"
-        },
-        "./testing": {
-            "types": "./dist/testing/index.d.ts",
-            "import": "./dist/testing/index.js"
         }
     },
     "publishConfig": {
