@@ -15,7 +15,7 @@ export const superscript = defineFeature({
         },
     },
     formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
-    commands: { 'mark.superscript.toggle': toggleMark('superscript') },
+    commands: { 'mark.superscript.toggle': toggleMark('superscript', undefined, 'subscript') },
     keys: { 'Mod-.': 'mark.superscript.toggle' },
     toolbar: [
         {

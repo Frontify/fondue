@@ -17,7 +17,7 @@ export const quote = defineFeature({
         },
     },
     formats: { html: 'lossless', text: 'lossy', markdown: 'lossless' },
-    commands: { 'quote.toggle': wrapIn('blockquote', { toggle: true }) },
+    commands: { 'quote.toggle': wrapIn('blockquote') },
     inputRules: [{ id: 'quote.angle', kind: 'line-start', command: 'quote.toggle', markers: ['>'] }],
     toolbar: [
         { kind: 'toggle', command: 'quote.toggle', labelKey: 'RichTextEditor_quote', icon: 'IconSpeechBubbleQuote' },

@@ -46,10 +46,10 @@ import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
 import { firedRule, withoutRules, withRuleSetting } from './input-rules';
-import { passesToBrowser } from './keys';
+import { keyGuard } from './keys';
 import { createLimitCheck } from './limits';
 import { operationMetric } from './metrics';
-import { authoringOf, createPolicyCheck } from './policy';
+import { authoringOf, createPolicyCheck, refusesLevel, setsHeading } from './policy';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { createInputSettling } from './settle';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
@@ -63,7 +63,6 @@ import {
     type CommitOptions,
     type CommitResult,
     type EditorSummary,
-    type HeadingLevel,
     type OperationMetric,
     type RecoveryReceipt,
     type RecoveryService,
@@ -336,37 +335,6 @@ interface Intent {
     readonly resolve: (result: CommandResult) => void;
 }
 
-/**
- * Composition keys and AltGr characters reach the browser before any keymap runs (Key precedence row 1). ProseMirror
- * prevents every Escape and Enter keydown, so an Escape, or an Enter with a modifier, that no handler takes stays
- * unprevented for the browser and the host (SPEC-rich-text-editing/AC-002, row 10); a plain Enter keeps ProseMirror's
- * own handling, which mobile keyboards need.
- */
-const keyGuard = new Plugin({
-    key: new PluginKey('rte.key-guard'),
-    props: {
-        handleDOMEvents: {
-            keydown: (view, event) => {
-                if (passesToBrowser(event)) {
-                    return true;
-                }
-                // ProseMirror runs no key handler on a surface that takes no edits, and neither does this branch.
-                if (!view.editable) {
-                    return false;
-                }
-                const modified = event.shiftKey || event.altKey || event.ctrlKey || event.metaKey;
-                if (event.key !== 'Escape' && !(event.key === 'Enter' && modified)) {
-                    return false;
-                }
-                if (view.someProp('handleKeyDown', (handle) => handle(view, event))) {
-                    event.preventDefault();
-                }
-                return true;
-            },
-        },
-    },
-});
-
 /** One editing session: its state, its view while a surface is attached, the commit path and its events. */
 export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntime => {
     const { definition, environment, limits } = options;
@@ -382,9 +350,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // The commands that set a heading's level, whose payload level the policy may refuse (SPEC-rich-text-editing/AC-013).
     const headingCommands = new Set(
         compiledModel(definition.model)
-            .commands.filter(
-                ({ definition: { capability, args } }) => capability === 'setBlock' && args.node === 'heading',
-            )
+            .commands.filter((command) => setsHeading(command.definition))
             .flatMap(({ id }) => definition.commands.get(id) ?? []),
     );
     let { capabilities } = options;
@@ -985,11 +951,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return { code: base };
         }
         // A level the policy does not offer is refused before applicability, even in a heading of that level (AC-013).
-        if (
-            headingCommands.has(command) &&
-            isRecord(payload) &&
-            !policy.creatableHeadingLevels.includes(payload.level as HeadingLevel)
-        ) {
+        if (headingCommands.has(command) && refusesLevel(policy, payload)) {
             return { code: 'not-allowed' };
         }
         const dispatched: Transaction[] = [];

@@ -29,7 +29,7 @@ export const core = defineFeature({
     commands: {
         'paragraph.set': setBlock('paragraph'),
         'text.insert': insertText(),
-        'hard-break.insert': insertNode('hard_break'),
+        'hard-break.insert': insertNode('hard_break', { newlineInCode: true }),
         'history.undo': history('undo'),
         'history.redo': history('redo'),
         'block.move.up': block('move-up'),

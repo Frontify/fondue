@@ -15,7 +15,7 @@ export const subscript = defineFeature({
         },
     },
     formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
-    commands: { 'mark.subscript.toggle': toggleMark('subscript') },
+    commands: { 'mark.subscript.toggle': toggleMark('subscript', undefined, 'superscript') },
     keys: { 'Mod-,': 'mark.subscript.toggle' },
     toolbar: [
         {
