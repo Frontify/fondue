@@ -173,6 +173,21 @@ export interface CodecContext {
     readonly locale: RichTextLocale;
     readonly t: (key: keyof TranslationStrings, vars?: Readonly<Record<string, string | number>>) => string;
 }
+/** Code features only, for structure the data forms cannot express, such as tables, task lists and media. */
+export interface CodecOverrides {
+    readonly markdown?: {
+        readonly marks?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
+        readonly nodes?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
+    };
+    readonly text?: {
+        readonly marks?: Readonly<Record<string, (inner: string, attrs: JsonObject) => string>>;
+        readonly nodes?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
+    };
+    /** Node markup that needs a resolved asset URL; the result's URL-valued attributes still pass `checkHref`. */
+    readonly html?: {
+        readonly nodes?: Readonly<Record<string, (attrs: JsonObject, context: CodecContext) => HtmlSpec>>;
+    };
+}
 
 export type CapabilityName =
     | 'toggleMark'
@@ -325,6 +340,7 @@ export interface FeatureDeclaration {
     /** Attributes this feature adds to other features' nodes. */
     readonly attributes?: Readonly<Record<string, SharedAttributeDeclaration>>;
     readonly formats?: FeatureFormats;
+    readonly codecs?: CodecOverrides;
     readonly commands?: Readonly<Record<string, CommandDefinition<unknown>>>;
     readonly keys?: Readonly<Record<KeyBinding, CommandRef>>;
     readonly inputRules?: readonly InputRule[];

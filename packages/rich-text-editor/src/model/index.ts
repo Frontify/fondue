@@ -10,6 +10,7 @@ export {
     type CapabilityName,
     type CapabilityRef,
     type CodecContext,
+    type CodecOverrides,
     type CommandDefinition,
     type CommandRef,
     type CommandsOfDeclaration,
