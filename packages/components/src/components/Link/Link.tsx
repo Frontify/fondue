@@ -116,6 +116,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
             onContainer,
             onPress,
             disabled = false,
+            target,
             ...props
         },
         ref,
@@ -130,13 +131,24 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                     return;
                 }
                 onPress?.(event);
+                if (event.defaultPrevented) {
+                    return;
+                }
 
-                if (href) {
+                const shouldUseClientSideNavigation = !target || target === '_self';
+                if (
+                    href &&
+                    shouldUseClientSideNavigation &&
+                    !event.metaKey &&
+                    !event.ctrlKey &&
+                    !event.shiftKey &&
+                    event.button === 0
+                ) {
                     event.preventDefault();
                     navigate(href);
                 }
             },
-            [href, navigate, onPress, disabled],
+            [href, navigate, onPress, disabled, target],
         );
 
         const computedColor = disabled
@@ -160,6 +172,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                     .join(' ')}
                 ref={ref}
                 href={disabled ? undefined : resolvedHref}
+                target={target}
                 onClick={handleClick}
                 aria-disabled={disabled || undefined}
                 tabIndex={disabled ? -1 : undefined}
