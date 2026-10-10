@@ -45,7 +45,7 @@ import {
     snapshot,
 } from './values';
 
-/** HTML attributes whose value is a URL (SPEC-rich-text/AC-071). */
+/** HTML attributes whose value is a URL. */
 export const URL_ATTRIBUTES = new Set(
     'href src srcset action formaction poster cite data xlink:href ping background longdesc usemap manifest codebase icon profile'.split(
         ' ',

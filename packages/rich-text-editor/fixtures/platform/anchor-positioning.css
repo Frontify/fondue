@@ -1,7 +1,0 @@
-.anchor {
-    anchor-name: --toolbar;
-}
-.menu {
-    position-anchor: --toolbar;
-    top: anchor(bottom);
-}
