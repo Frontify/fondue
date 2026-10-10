@@ -20,7 +20,13 @@ import { type CompiledInputRule, compileInputRules } from './input-rules';
 import { NORMALIZE_META, NORMALIZERS } from './normalizers';
 import { buildSchema } from './schema';
 
-export { type CompiledInputRule, type LineStartRule, type MarkDelimiterRule } from './input-rules';
+export {
+    type CompiledInputRule,
+    type LineStartRule,
+    type MarkDelimiterRule,
+    type QuotesRule,
+    type TextReplaceRule,
+} from './input-rules';
 export { carriesNodeId } from './schema';
 export { NORMALIZE_META, type Normalizer, NORMALIZERS } from './normalizers';
 

@@ -254,6 +254,14 @@ export type InputRule =
           readonly boundary?: 'word';
       }
     | { readonly id: string; readonly kind: 'quotes'; readonly marker: '"' | "'" };
+/** A code feature's regular-expression rule, which `textRule` builds from a `RegExp`; no data manifest holds one. */
+export interface TextRule {
+    readonly id: string;
+    readonly kind: 'text-rule';
+    readonly pattern: string;
+    readonly flags: string;
+    readonly replace: string;
+}
 /** A command ID, or a command with the payload a route passes, such as `{ command: 'heading.set', payload: { level: 1 } }`. */
 export type CommandRef =
     | string
@@ -346,7 +354,7 @@ export interface FeatureDeclaration {
     readonly codecs?: CodecOverrides;
     readonly commands?: Readonly<Record<string, CommandDefinition<unknown>>>;
     readonly keys?: Readonly<Record<KeyBinding, CommandRef>>;
-    readonly inputRules?: readonly InputRule[];
+    readonly inputRules?: readonly (InputRule | TextRule)[];
     readonly toolbar?: readonly ToolbarEntry[];
 }
 declare const featureBrand: unique symbol;

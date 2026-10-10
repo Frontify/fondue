@@ -25,6 +25,8 @@ export interface ToolbarItem {
     readonly groupStart: boolean;
     /** Whether its group toggles a mark, which the bubble toolbar shows (SPEC-rich-text-react, Default toolbars). */
     readonly bubble: boolean;
+    /** The rows of the text style picker, which the item is; a row it does not offer only names the active block type. */
+    readonly options?: readonly (ToolbarItem & { readonly offered: boolean })[];
 }
 
 export interface ToolbarStrings {

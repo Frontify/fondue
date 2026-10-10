@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { history, insertNode, insertText, setBlock, toggleMark } from './capabilities';
+export { block, history, insertNode, insertText, setBlock, textRule, toggleMark, wrapIn } from './capabilities';
 export { compileContentModel } from './compile';
 export {
     type AttributeDeclaration,
@@ -48,6 +48,7 @@ export {
     type ReferenceResolution,
     type RichTextLocale,
     type SharedAttributeDeclaration,
+    type TextRule,
     type ToolbarEntry,
     type TranslationStrings,
     type ValueDeclaration,

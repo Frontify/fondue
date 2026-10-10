@@ -178,6 +178,9 @@ const counterparts = (run: Run, mapping: BatchMapping, others: readonly Run[], i
 
 const sameRun = (a: Run, b: Run) => a.text === b.text && a.mark.eq(b.mark);
 
+const headingsOf = ({ nodes }: Occurrences): Node[] =>
+    [...nodes.values()].flat().filter((node) => node.type.name === 'heading');
+
 /**
  * A mark's runs compared piece by piece through the batch's mapping, as `prosemirror-changeset` maps spans through
  * step maps: a run after the batch that maps back into no run of its mark type is new, and one before that maps
@@ -250,6 +253,15 @@ export const createPolicyCheck = (model: ContentModel) => {
         if (!before.hasMarkup(after.type, after.attrs, after.marks)) {
             add(previous.nodes, nodeOwners.get(before.type.name), before);
             add(next.nodes, nodeOwners.get(after.type.name), after);
+        }
+        // A stored heading keeps a level the policy does not offer, but no batch makes one (SPEC-rich-text-editing/AC-013, AC-014).
+        const kept = headingsOf(previous);
+        for (const heading of headingsOf(next)) {
+            const { level, nodeId } = heading.attrs;
+            const same = (old: Node) => old.attrs.level === level && old.attrs.nodeId === nodeId;
+            if (!policy.creatableHeadingLevels.includes(level as HeadingLevel) && take(kept, same) === undefined) {
+                return true;
+            }
         }
         const features = new Set([
             ...previous.nodes.keys(),

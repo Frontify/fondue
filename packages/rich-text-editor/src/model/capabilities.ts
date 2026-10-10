@@ -8,6 +8,7 @@ import {
     type JsonValue,
     type PayloadDeclaration,
     type PayloadOf,
+    type TextRule,
 } from './declarations';
 import { DefinitionError } from './errors';
 
@@ -42,9 +43,15 @@ export interface PluginDescriptor {
 
 /** The undo history, whose phase puts Backspace right after an input rule before the list keys. */
 export const HISTORY_PLUGIN: PluginDescriptor = { id: 'history', phase: 'history' };
+/** Enter in the empty last paragraph of a container leaves it (SPEC-rich-text-editing, Key precedence row 8). */
+export const CONTAINER_KEYS_PLUGIN: PluginDescriptor = { id: 'container-keys', phase: 'structure-keys' };
+/** ProseMirror's base keymap: Enter, Backspace, Delete and select-all (SPEC-rich-text-editing, Key precedence row 10). */
+export const BASE_KEYS_PLUGIN: PluginDescriptor = { id: 'base-keys', phase: 'base-keys' };
 /** One plugin key, one instance: a plugin several capabilities contribute sits at its first contributor's position. */
 export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonly PluginDescriptor[]>>> = {
     history: [HISTORY_PLUGIN],
+    insertText: [BASE_KEYS_PLUGIN],
+    wrapIn: [CONTAINER_KEYS_PLUGIN],
 };
 /** The package's input rule engine, one plugin for every feature's rules (SPEC-rich-text-editing, Input rules). */
 export const INPUT_RULES_PLUGIN: PluginDescriptor = { id: 'input-rules', phase: 'input-rules' };
@@ -107,6 +114,29 @@ export const insertText = (): CommandDefinition<{ readonly text: string }> =>
 /** Toggles `mark` with `attrs` on the selection, or in the stored marks at a caret. */
 export const toggleMark = (mark: string, attrs?: JsonObject): CommandDefinition =>
     command('toggleMark', { mark, attrs });
+
+/** Wraps the selected blocks in `node`; with `toggle`, lifts them out when they are already inside one. */
+export const wrapIn = (node: string, options?: { readonly toggle?: boolean }): CommandDefinition =>
+    command('wrapIn', { node, toggle: options?.toggle });
+
+/** Moves the block at the selection up or down among its siblings, as one undo step. */
+export const block = (action: 'move-up' | 'move-down'): CommandDefinition => command('block', { action });
+
+/**
+ * A code feature's rule that replaces the text before the caret matching `match`, which ends where the typed text
+ * ends, with `replace`, where `$1` and `$<name>` insert its groups as `String.prototype.replace` does.
+ */
+export const textRule = (rule: {
+    readonly id: string;
+    readonly match: RegExp;
+    readonly replace: string;
+}): TextRule => ({
+    id: rule.id,
+    kind: 'text-rule',
+    pattern: rule.match.source,
+    flags: rule.match.flags,
+    replace: rule.replace,
+});
 
 /** The first cycle that `next` reaches from `starts`, as a path that ends where it starts. */
 export const findCycle = (starts: readonly string[], next: (id: string) => readonly string[]): string[] | undefined => {

@@ -12,6 +12,8 @@ import {
     NORMALIZE_META,
     ORIGIN_META,
     type PluginImplementation,
+    type QuotesRule,
+    type TextReplaceRule,
 } from '#/definition';
 import { INPUT_RULES_PLUGIN } from '#/model/capabilities';
 
@@ -27,6 +29,25 @@ const WORD = /[\p{L}\p{M}\p{N}]/u;
 const firedKey = new PluginKey<boolean>(INPUT_RULES_PLUGIN.id);
 // The root meta that applies a typed root again with no rule, once the batch with its rule was refused.
 const RULES_OFF = 'rte.input-rules-off';
+// The root meta with the rules that one typed root may not fire.
+const RULES_SETTING = 'rte.input-rules-setting';
+// Primary then secondary quotation marks, opening and closing, by language tag, from the CLDR delimiters data.
+const QUOTES: Readonly<Record<string, readonly [string, string, string, string]>> = {
+    en: ['“', '”', '‘', '’'],
+    de: ['„', '“', '‚', '‘'],
+    'de-CH': ['«', '»', '‹', '›'],
+    es: ['«', '»', '“', '”'],
+    fr: ['«', '»', '‹', '›'],
+    'fr-CH': ['«', '»', '‹', '›'],
+    it: ['«', '»', '“', '”'],
+    'it-CH': ['«', '»', '‹', '›'],
+    ja: ['「', '」', '『', '』'],
+    nl: ['“', '”', '‘', '’'],
+    pl: ['„', '”', '«', '»'],
+    pt: ['«', '»', '“', '”'],
+};
+// Before these, as after a space or at the block start, a typed quote opens (Tiptap's Typography rules).
+const OPENS_AFTER = /[\s([{<'"]/u;
 
 /** Whether a rule fired in a batch. */
 export const firedRule = (transactions: readonly Transaction[]): boolean =>
@@ -37,6 +58,18 @@ export const firedRule = (transactions: readonly Transaction[]): boolean =>
  * typed text lands either way (SPEC-rich-text-editing/AC-037).
  */
 export const withoutRules = (root: Transaction): Transaction => root.setMeta(RULES_OFF, true);
+
+/** What the host's `inputRules` prop and the authoring policy turn off when a typed root arrives. */
+export interface RuleSetting {
+    /** Rule IDs the host's `inputRules` prop excludes (SPEC-rich-text-editing/AC-101). */
+    readonly exclude: readonly string[];
+    /** Features whose policy forbids creating, whose rules never fire (SPEC-rich-text-editing/AC-037). */
+    readonly refused: readonly string[];
+}
+
+/** Marks a typed root with the rules it may not fire, read on each input, so no plugin is rebuilt (AC-042, AC-101). */
+export const withRuleSetting = (root: Transaction, setting: RuleSetting): Transaction =>
+    root.setMeta(RULES_SETTING, setting);
 
 /** Where the text a typed root inserted ends, or `undefined` for any other root, an undo from `beforeinput` included. */
 const typedEnd = (root: Transaction): number | undefined => {
@@ -123,6 +156,76 @@ const markDelimiter = (
         .removeStoredMark(mark);
 };
 
+/**
+ * Replaces the text that `match` finds before the caret; a `boundary` rule matches before the typed character, which
+ * must be no word character and stays, so `--brand` keeps its hyphens (SPEC-rich-text-editing/AC-102).
+ */
+const textReplace = (rule: TextReplaceRule, state: EditorState, $cursor: ResolvedPos, before: string) => {
+    let text = before;
+    let kept = '';
+    if (rule.boundary) {
+        kept = Array.from(before).at(-1) ?? '';
+        if (kept === '' || WORD.test(kept)) {
+            return null;
+        }
+        text = before.slice(0, -kept.length);
+    }
+    const found = rule.match.exec(text);
+    if (found === null) {
+        return null;
+    }
+    const from = $cursor.pos - before.length + found.index;
+    if (holdsCode(state, from, $cursor.pos)) {
+        return null;
+    }
+    const replacement = text.replace(rule.match, rule.replace).slice(found.index);
+    return state.tr.insertText(replacement, from, $cursor.pos - kept.length);
+};
+
+/** The language at the caret: a passage's `language` mark, else the nearest block or the document `lang`. */
+const langAt = ($cursor: ResolvedPos): string => {
+    for (const mark of $cursor.marks()) {
+        if (typeof mark.attrs.lang === 'string') {
+            return mark.attrs.lang;
+        }
+    }
+    for (let depth = $cursor.depth; depth >= 0; depth -= 1) {
+        const { lang } = $cursor.node(depth).attrs;
+        if (typeof lang === 'string') {
+            return lang;
+        }
+    }
+    return 'en';
+};
+
+/** Turns a typed quote into the opening or closing quote of the language at the caret, and `'` after a letter into `’`. */
+const quotes = (rule: QuotesRule, state: EditorState, $cursor: ResolvedPos, before: string) => {
+    if (!before.endsWith(rule.marker)) {
+        return null;
+    }
+    const lang = langAt($cursor);
+    let marks = QUOTES[lang];
+    if (marks === undefined) {
+        marks = QUOTES[lang.split('-')[0] ?? ''];
+    }
+    if (marks === undefined) {
+        marks = QUOTES.en as readonly [string, string, string, string];
+    }
+    let [open, close] = marks;
+    if (rule.marker === "'") {
+        open = marks[2];
+        close = marks[3];
+    }
+    const previous = Array.from(before.slice(0, -1)).at(-1) ?? '';
+    let quote = close;
+    if (previous === '' || OPENS_AFTER.test(previous) || marks.includes(previous)) {
+        quote = open;
+    } else if (rule.marker === "'" && WORD.test(previous)) {
+        quote = '’';
+    }
+    return state.tr.insertText(quote, $cursor.pos - 1, $cursor.pos);
+};
+
 /** The change of the first rule that matches the text typed at the caret, outside code. */
 const fire = (rules: readonly CompiledInputRule[], state: EditorState, end: number): Transaction | null => {
     const { selection } = state;
@@ -140,8 +243,12 @@ const fire = (rules: readonly CompiledInputRule[], state: EditorState, end: numb
         let change: Transaction | null;
         if (rule.kind === 'line-start') {
             change = lineStart(rule, state, $cursor, before);
-        } else {
+        } else if (rule.kind === 'mark-delimiter') {
             change = markDelimiter(rule, state, $cursor, before, after);
+        } else if (rule.kind === 'text-replace') {
+            change = textReplace(rule, state, $cursor, before);
+        } else {
+            change = quotes(rule, state, $cursor, before);
         }
         if (change !== null) {
             return change;
@@ -190,7 +297,14 @@ export const inputRulesPlugin: PluginImplementation = ({ inputRules }) =>
             if (end === undefined) {
                 return null;
             }
-            const change = fire(inputRules, state, end);
+            let rules = inputRules;
+            const setting = root.getMeta(RULES_SETTING) as RuleSetting | undefined;
+            if (setting !== undefined) {
+                rules = rules.filter(
+                    ({ id, featureId }) => !setting.exclude.includes(id) && !setting.refused.includes(featureId),
+                );
+            }
+            const change = fire(rules, state, end);
             if (change === null) {
                 return null;
             }

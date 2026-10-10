@@ -13,6 +13,8 @@ const APPLE_SYMBOLS: readonly (readonly [string, string])[] = [
     ['Mod', '⌘'],
 ];
 const OTHER_ORDER = ['Ctrl', 'Mod', 'Alt', 'Shift'];
+// The Shortcuts table names the arrow keys ↑ and ↓ on Apple platforms and Up and Down elsewhere.
+const ARROWS: Readonly<Record<string, readonly [string, string]>> = { ArrowUp: ['↑', 'Up'], ArrowDown: ['↓', 'Down'] };
 const ARIA_NAMES: Readonly<Record<string, string>> = { Ctrl: 'Control', Alt: 'Alt', Shift: 'Shift' };
 
 /** Whether the platform is an Apple one, by the check the editor's keymaps use, so the shown shortcut is the one that runs. */
@@ -52,9 +54,17 @@ export const shortcutText = (binding: KeyBinding, apple: boolean): string => {
     if (parsed === undefined) {
         return '';
     }
+    let { key } = parsed;
+    const arrow = ARROWS[key];
     if (apple) {
+        if (arrow !== undefined) {
+            key = arrow[0];
+        }
         const symbols = APPLE_SYMBOLS.filter(([name]) => parsed.modifiers.includes(name)).map(([, symbol]) => symbol);
-        return `${symbols.join('')}${parsed.key}`;
+        return `${symbols.join('')}${key}`;
+    }
+    if (arrow !== undefined) {
+        key = arrow[1];
     }
     const names = OTHER_ORDER.filter((name) => parsed.modifiers.includes(name)).map((name) => {
         if (name === 'Mod') {
@@ -62,7 +72,7 @@ export const shortcutText = (binding: KeyBinding, apple: boolean): string => {
         }
         return name;
     });
-    return [...names, parsed.key].join('+');
+    return [...names, key].join('+');
 };
 
 /** The binding as an `aria-keyshortcuts` value, such as `Meta+B` or `Control+B`. */

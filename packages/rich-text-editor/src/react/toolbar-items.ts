@@ -5,12 +5,18 @@ import { type CodecContext, type CommandRef, type JsonValue, type ToolbarEntry }
 import { compiledModel } from '#/model/compile';
 import { canonicalJson } from '#/model/hash';
 import { isPlatformBinding } from '#/model/platform';
-import { type AuthoringPolicy } from '#/runtime/types';
+import { isRecord } from '#/model/values';
+import { type AuthoringPolicy, type HeadingLevel } from '#/runtime/types';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
 import { type ReactPresentation } from './types';
 
 type ButtonEntry = Exclude<ToolbarEntry, { readonly kind: 'menu' }>;
+
+/** The control ID of the text style picker in a presentation's toolbar (SPEC-rich-text-react, Default toolbars). */
+const TEXT_STYLE = 'text-style';
+// The picker's rows, in order: Normal text, the heading levels, then Quote.
+const TEXT_STYLE_COMMANDS = ['paragraph.set', 'heading.set', 'quote.toggle'];
 
 /**
  * The manifest label for `lang` by RFC 4647 lookup, without subtags from the end until a tag matches, else `en-US`,
@@ -103,54 +109,118 @@ export const toolbarItems = (
     }
     const marks = (ref: CommandRef) =>
         commands.some(({ id, definition }) => id === routeOf(ref).command && definition.capability === 'toggleMark');
+    const runnable = (command: string) => engine.commands.has(command) && !refused(command);
+    /** The item of one entry, with the presentation's label and icon for its command. */
+    const itemOf = (entry: ButtonEntry, groupStart: boolean, bubble: boolean): ToolbarItem => {
+        const { command, payload } = entry;
+        let label: string;
+        if (entry.label === undefined) {
+            label = t(entry.labelKey as `RichTextEditor_${string}`);
+        } else {
+            label = manifestLabel(entry.label, lang);
+        }
+        let { icon } = entry;
+        const control = presentation.controls?.[command];
+        if (control !== undefined) {
+            if (control.labelKey !== undefined) {
+                label = t(control.labelKey as `RichTextEditor_${string}`);
+            }
+            icon = control.icon ?? icon;
+        }
+        const bindings = keymap
+            .filter((binding) => binding.command === command && payloadKey(binding.payload) === payloadKey(payload))
+            .flatMap((binding) => applying(binding, keymap));
+        const key = `${command} ${payloadKey(payload)}`;
+        return { key, command, payload, toggle: entry.kind === 'toggle', label, icon, bindings, groupStart, bubble };
+    };
+    // A heading level the policy cannot create only names a stored heading (SPEC-rich-text-editing/AC-014).
+    const offered = ({ command, payload }: ButtonEntry) =>
+        command !== 'heading.set' ||
+        !isRecord(payload) ||
+        authoring.creatableHeadingLevels.includes(payload.level as HeadingLevel);
     const items: ToolbarItem[] = [];
     for (const group of presentation.toolbar) {
         let groupStart = items.length > 0;
         const bubble = group.some(marks);
         for (const ref of group) {
             const { command, payload } = routeOf(ref);
+            if (command === TEXT_STYLE) {
+                const options = TEXT_STYLE_COMMANDS.flatMap((id) => entries.filter((entry) => entry.command === id))
+                    .filter((entry) => runnable(entry.command))
+                    .map((entry) => ({ ...itemOf(entry, false, false), offered: offered(entry) }));
+                if (options.some((option) => option.offered) && !items.some((item) => item.key === TEXT_STYLE)) {
+                    const label = t('RichTextEditor_textStyle');
+                    items.push({
+                        key: TEXT_STYLE,
+                        command,
+                        payload,
+                        toggle: false,
+                        label,
+                        icon: '',
+                        bindings: [],
+                        groupStart,
+                        bubble,
+                        options,
+                    });
+                    groupStart = false;
+                }
+                continue;
+            }
             const key = `${command} ${payloadKey(payload)}`;
             const entry = entries.find(
                 (candidate) => candidate.command === command && payloadKey(candidate.payload) === payloadKey(payload),
             );
-            if (
-                entry === undefined ||
-                !engine.commands.has(command) ||
-                refused(command) ||
-                items.some((item) => item.key === key)
-            ) {
+            if (entry === undefined || !runnable(command) || items.some((item) => item.key === key)) {
                 continue;
             }
-            let label: string;
-            if (entry.label === undefined) {
-                label = t(entry.labelKey as `RichTextEditor_${string}`);
-            } else {
-                label = manifestLabel(entry.label, lang);
-            }
-            let { icon } = entry;
-            const control = presentation.controls?.[command];
-            if (control !== undefined) {
-                if (control.labelKey !== undefined) {
-                    label = t(control.labelKey as `RichTextEditor_${string}`);
-                }
-                icon = control.icon ?? icon;
-            }
-            const bindings = keymap
-                .filter((binding) => binding.command === command && payloadKey(binding.payload) === payloadKey(payload))
-                .flatMap((binding) => applying(binding, keymap));
-            items.push({
-                key,
-                command,
-                payload,
-                toggle: entry.kind === 'toggle',
-                label,
-                icon,
-                bindings,
-                groupStart,
-                bubble,
-            });
+            items.push(itemOf(entry, groupStart, bubble));
             groupStart = false;
         }
     }
     return items;
+};
+
+/**
+ * The More rows of the key routes a feature labels and the toolbar does not show, such as Move up and Move down, so
+ * each is reachable without its shortcut (SPEC-rich-text-editing/AC-069, SPEC-rich-text-react, Default toolbars).
+ */
+export const menuItems = (
+    engine: CompiledDefinition,
+    authoring: AuthoringPolicy,
+    items: readonly ToolbarItem[],
+    t: CodecContext['t'],
+): readonly ToolbarItem[] => {
+    const { features, keymap, commands } = compiledModel(engine.model);
+    const shown = new Set(items.flatMap((item) => [item, ...(item.options ?? [])]).map(({ key }) => key));
+    const rows: ToolbarItem[] = [];
+    for (const { declaration } of features) {
+        for (const ref of Object.values(declaration.keys ?? {})) {
+            if (typeof ref === 'string' || ref.labelKey === undefined || !engine.commands.has(ref.command)) {
+                continue;
+            }
+            const { command, payload } = ref;
+            const key = `${command} ${payloadKey(payload)}`;
+            const owner = commands.find(({ id }) => id === command);
+            const refused = owner !== undefined && authoring.features[owner.featureId]?.create === false;
+            if (refused || shown.has(key) || rows.some((row) => row.key === key)) {
+                continue;
+            }
+            const bindings = keymap
+                .filter((binding) => binding.command === command && payloadKey(binding.payload) === payloadKey(payload))
+                .flatMap((binding) => applying(binding, keymap));
+            const label = t(ref.labelKey as `RichTextEditor_${string}`);
+            rows.push({
+                key,
+                command,
+                payload,
+                toggle: false,
+                label,
+                icon: '',
+                bindings,
+                groupStart: false,
+                bubble: false,
+            });
+        }
+    }
+    return rows;
 };

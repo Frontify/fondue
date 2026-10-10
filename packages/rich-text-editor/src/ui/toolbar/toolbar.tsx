@@ -21,6 +21,7 @@ import {
 } from './item';
 import { More, type ModeSwitch } from './more';
 import styles from './styles/toolbar.module.scss';
+import { TextStyle } from './text-style';
 import { useFitting } from './use-fitting';
 
 export { type ToolbarItem, type ToolbarStrings } from './item';
@@ -105,6 +106,7 @@ export const Item = ({
  */
 export const FixedToolbar = ({
     items,
+    menu,
     strings,
     disabled,
     surfaceId,
@@ -115,6 +117,8 @@ export const FixedToolbar = ({
     docked,
 }: {
     readonly items: readonly ToolbarItem[];
+    /** The rows that only More holds, below the items that do not fit. */
+    readonly menu: readonly ToolbarItem[];
     readonly strings: ToolbarStrings;
     /** The editor is `disabled`: every item is disabled and the toolbar leaves the Tab order (SPEC-rich-text-react/AC-029). */
     readonly disabled: boolean;
@@ -162,18 +166,31 @@ export const FixedToolbar = ({
             aria-keyshortcuts={ariaShortcut(shortcut, apple)}
             data-test-id={`${testId}-toolbar`}
         >
-            {items.slice(0, shown).map((item) => (
-                <Item
-                    key={item.key}
-                    item={item}
-                    disabled={disabled}
-                    strings={strings}
-                    keepsFocus={docked !== undefined}
-                    outOfTabOrder={false}
-                />
-            ))}
+            {items.slice(0, shown).map((item) => {
+                if (item.options !== undefined) {
+                    return (
+                        <TextStyle
+                            key={item.key}
+                            item={item}
+                            disabled={disabled}
+                            keepsFocus={docked !== undefined}
+                            outOfTabOrder={false}
+                        />
+                    );
+                }
+                return (
+                    <Item
+                        key={item.key}
+                        item={item}
+                        disabled={disabled}
+                        strings={strings}
+                        keepsFocus={docked !== undefined}
+                        outOfTabOrder={false}
+                    />
+                );
+            })}
             <More
-                items={items.slice(shown)}
+                items={[...items.slice(shown), ...menu]}
                 strings={strings}
                 disabled={disabled}
                 keepsFocus={docked !== undefined}

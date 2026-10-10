@@ -45,7 +45,8 @@ import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from '
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
-import { firedRule, withoutRules } from './input-rules';
+import { firedRule, withoutRules, withRuleSetting } from './input-rules';
+import { passesToBrowser } from './keys';
 import { createLimitCheck } from './limits';
 import { operationMetric } from './metrics';
 import { authoringOf, createPolicyCheck } from './policy';
@@ -175,6 +176,8 @@ export interface EditorRuntimeOptions {
     readonly saves?: ((runtime: EditorRuntime) => SaveCoordinator) | undefined;
     /** The host's recovery service, read when a view fault leaves a candidate (SPEC-rich-text-runtime/AC-015). */
     readonly recovery?: () => RecoveryService | undefined;
+    /** The host's `inputRules` prop, read on each input (SPEC-rich-text-editing/AC-042, AC-101). */
+    readonly inputRules?: () => false | { readonly exclude: readonly string[] } | undefined;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -322,6 +325,33 @@ interface Intent {
     readonly resolve: (result: CommandResult) => void;
 }
 
+/**
+ * Composition keys and AltGr characters reach the browser before any keymap runs (Key precedence row 1). ProseMirror
+ * prevents every Escape and Enter keydown, so an Escape, or an Enter with a modifier, that no handler takes stays
+ * unprevented for the browser and the host (SPEC-rich-text-editing/AC-002, row 10); a plain Enter keeps ProseMirror's
+ * own handling, which mobile keyboards need.
+ */
+const keyGuard = new Plugin({
+    key: new PluginKey('rte.key-guard'),
+    props: {
+        handleDOMEvents: {
+            keydown: (view, event) => {
+                if (passesToBrowser(event)) {
+                    return true;
+                }
+                const modified = event.shiftKey || event.altKey || event.ctrlKey || event.metaKey;
+                if (event.key !== 'Escape' && !(event.key === 'Enter' && modified)) {
+                    return false;
+                }
+                if (view.someProp('handleKeyDown', (handle) => handle(view, event))) {
+                    event.preventDefault();
+                }
+                return true;
+            },
+        },
+    },
+});
+
 /** One editing session: its state, its view while a surface is attached, the commit path and its events. */
 export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntime => {
     const { definition, environment, limits } = options;
@@ -400,7 +430,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     );
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
-        plugins: [typingRecorder, settling.plugin, targetsPlugin, groupsPlugin, ...definition.plugins],
+        plugins: [typingRecorder, keyGuard, settling.plugin, targetsPlugin, groupsPlugin, ...definition.plugins],
     });
     // The state whose document the snapshot and `sequence` last published, and how later provisional batches map it.
     let published = state;
@@ -813,6 +843,23 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         saves?.settled();
     };
 
+    /** Marks a typed root with the rules the host's prop and the policy turn off now (SPEC-rich-text-editing/AC-037). */
+    const markRules = (root: Transaction) => {
+        const setting = options.inputRules?.();
+        if (setting === false) {
+            withoutRules(root);
+            return;
+        }
+        let exclude: readonly string[] = [];
+        if (setting !== undefined) {
+            exclude = setting.exclude;
+        }
+        const refused = Object.entries(policy.features)
+            .filter(([, rules]) => !rules.create)
+            .map(([id]) => id);
+        withRuleSetting(root, { exclude, refused });
+    };
+
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view (SPEC-rich-text-runtime/AC-001). */
     const commit = (root: Transaction) => {
         // A plugin view's `update` may dispatch inside `view.updateState`; its root waits for the install to publish.
@@ -834,6 +881,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // Input rules fire only on typed text, never on a paste or a command after a `beforeinput` that changed nothing (AC-040).
         if (typed && actionOrigin(root) === undefined) {
             root.setMeta(ORIGIN_META, 'input');
+            markRules(root);
         }
         busyWith(() => {
             const prepared = prepare(root, installedIds, true);
