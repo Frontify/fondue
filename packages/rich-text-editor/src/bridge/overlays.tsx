@@ -177,8 +177,10 @@ export const useEditorOverlay = (open: boolean, setOpen: (open: boolean) => void
             scheduler.microtask(() => refocus(runtime, before));
         };
     }, [open, runtime, scope, scheduler]);
-    // Hides the content, keeping its state, while its anchor is clipped; Floating UI's `hide` middleware would, but
-    // Fondue's `Flyout` and `Dropdown` do not expose `hideWhenDetached`.
+    // Hides the content while its anchor is clipped; Floating UI's `hide` middleware would, but Fondue's `Flyout` and
+    // `Dropdown` do not expose `hideWhenDetached`. A zero scale with no pointer input, not `visibility: hidden`, which
+    // blurs a focused field, keeps focus and state inside and the content in the accessibility tree, since focus may be
+    // there (SPEC-rich-text-react/AC-064).
     useEffect(() => {
         if (!open) {
             return undefined;
@@ -186,12 +188,15 @@ export const useEditorOverlay = (open: boolean, setOpen: (open: boolean) => void
         let frame = 0;
         const track = () => {
             const element = elementRef.current;
-            let visibility = '';
+            let transform = '';
+            let pointerEvents = '';
             if (anchor.clipped()) {
-                visibility = 'hidden';
+                transform = 'scale(0)';
+                pointerEvents = 'none';
             }
-            if (element !== null && element.style.visibility !== visibility) {
-                element.style.visibility = visibility;
+            if (element !== null && element.style.transform !== transform) {
+                element.style.transform = transform;
+                element.style.pointerEvents = pointerEvents;
             }
             frame = scheduler.frame(track);
         };
