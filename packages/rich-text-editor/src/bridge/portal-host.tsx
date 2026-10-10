@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFondueTheme } from '@frontify/fondue-components';
-import { Component, memo, type ReactNode, useMemo, useSyncExternalStore } from 'react';
+import { Component, memo, type ReactNode, Suspense, useMemo, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 
 import { type JsonObject } from '#/model';
@@ -77,7 +77,10 @@ const Chrome = memo(
         return createPortal(
             <NodeViewStateContext.Provider value={state}>
                 <ChromeBoundary message={context.t('RichTextEditor_nodeViewError')} attrs={state.attrs}>
-                    <View />
+                    {/* Chrome that loads a dialog lazily suspends here, not as an error, and the surface stays (SPEC-rich-text-react/AC-023). */}
+                    <Suspense fallback={null}>
+                        <View />
+                    </Suspense>
                 </ChromeBoundary>
             </NodeViewStateContext.Provider>,
             slot,

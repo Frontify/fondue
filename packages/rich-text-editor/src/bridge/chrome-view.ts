@@ -14,7 +14,9 @@ export interface ChromeView {
     /** The height a sticky toolbar covers at the top of the viewport (SPEC-rich-text-accessibility/AC-024). */
     setTopInset(height: number): void;
     /** The height the on-screen keyboard covers at the bottom of the viewport. */
-    setBottomInset(height: number): void;
+    setKeyboardInset(height: number): void;
+    /** The height a toolbar docked right above the on-screen keyboard adds to it, or 0 (SPEC-rich-text-react/AC-096). */
+    setDockedInset(height: number): void;
 }
 
 // Node chrome controls keep the caret's top margin clear of the sticky toolbar when they scroll into view.
@@ -38,6 +40,12 @@ export const createChromeView = (): ChromeView => {
     // ProseMirror reads these objects on each scroll, so rewriting their fields needs no new props.
     const margin = { top: MARGIN, bottom: MARGIN, left: MARGIN, right: MARGIN };
     const threshold = { top: 0, bottom: 0, left: 0, right: 0 };
+    // The bottom band sums both parts, so a new keyboard measure keeps the docked toolbar's.
+    const bottom = { keyboard: 0, docked: 0 };
+    const writeBottom = () => {
+        threshold.bottom = bottom.keyboard + bottom.docked;
+        margin.bottom = threshold.bottom + MARGIN;
+    };
     const decorations = (state: EditorView['state']) => {
         const { selection } = state;
         if (!shown || selection.empty) {
@@ -66,9 +74,13 @@ export const createChromeView = (): ChromeView => {
             margin.top = height + MARGIN;
             writeChromeMargin(view, height);
         },
-        setBottomInset: (height) => {
-            threshold.bottom = height;
-            margin.bottom = height + MARGIN;
+        setKeyboardInset: (height) => {
+            bottom.keyboard = height;
+            writeBottom();
+        },
+        setDockedInset: (height) => {
+            bottom.docked = height;
+            writeBottom();
         },
     };
 };

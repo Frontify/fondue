@@ -7,8 +7,10 @@ import { type ComponentType, createRef, lazy, type ReactNode, useEffect, useStat
 import { renderToString } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { defineNodeView } from '#/bridge/define';
 import { fixtureCodeBlockView } from '#/features/__fixtures__/code-block/view';
 import { fixtureItalic, fixtureLink, fixtureToolbar } from '#/features/__fixtures__/features';
+import { fixtureMediaImage } from '#/features/__fixtures__/media/feature';
 import { fixtureMediaImageView } from '#/features/__fixtures__/media/view';
 import {
     type FixtureOverlayProps,
@@ -127,7 +129,7 @@ afterEach(() => {
 });
 
 describe('editor overlays', () => {
-    it('SPEC-rich-text-react/AC-045 renders an overlay into the overlay root inside the editor, or into portalContainer', () => {
+    it('SPEC-rich-text-react/AC-045 renders an overlay into the overlay root inside the editor, or into its own root inside portalContainer', () => {
         const { unmount } = mount({ children: <Opened Overlay={FixtureLinkPopover} /> });
         const overlayRoot = popover()?.closest('[data-rte-overlays]');
         const inEditor =
@@ -139,10 +141,82 @@ describe('editor overlays', () => {
         mount({ portalContainer: host, children: <Opened Overlay={FixtureLinkPopover} /> });
 
         expect(inEditor).toBe(true);
-        expect(host.contains(popover())).toBe(true);
-        expect(popover()?.closest('[data-rte-overlays]')).toBeNull();
+        const ownRoot = popover()?.closest('[data-rte-overlays]');
+        expect(ownRoot?.parentElement).toBe(host);
         host.remove();
     });
+
+    it.each(['tooltip', 'More menu', 'menu', 'alternative text dialog'] as const)(
+        'SPEC-rich-text-react/AC-045 renders the %s into the overlay root inside the editor, or into its own root inside portalContainer',
+        async (kind) => {
+            const host = document.createElement('div');
+            document.body.append(host);
+            const results: { inside: boolean; owner: boolean; host: boolean }[] = [];
+            for (const portalContainer of [undefined, host]) {
+                let props: Props = {};
+                if (kind === 'menu') {
+                    props = { ...props, children: <Opened Overlay={FixtureMenu} /> };
+                }
+                if (kind === 'alternative text dialog') {
+                    props = { ...props, defaultValue: loaded(para('one'), image) };
+                }
+                if (portalContainer !== undefined) {
+                    props = { ...props, portalContainer };
+                }
+                const { unmount, environment } = mount(props);
+                // Node chrome renders once the portal store's microtask runs.
+                await act(() => environment.flushMicrotasks());
+                let overlay: HTMLElement | undefined;
+                if (kind === 'tooltip') {
+                    act(() => {
+                        fireEvent.focus(screen.getAllByRole('button', { name: 'Bold' })[0] as HTMLElement);
+                    });
+                    overlay = screen.getAllByRole('tooltip')[0];
+                }
+                if (kind === 'More menu') {
+                    act(() => {
+                        fireEvent.keyDown(document.querySelector('[data-rte-toolbar-more]') as HTMLElement, {
+                            key: 'Enter',
+                        });
+                    });
+                    overlay = screen.getByRole('menu');
+                }
+                if (kind === 'menu') {
+                    overlay = screen.getByTestId('fixture-menu');
+                }
+                if (kind === 'alternative text dialog') {
+                    act(() => {
+                        fireEvent.click(screen.getByRole('button', { name: 'Alternative text' }));
+                    });
+                    overlay = screen.getByRole('dialog', { name: 'Alternative text' });
+                }
+                let root: Element | null = null;
+                if (overlay !== undefined) {
+                    root = overlay.closest('[data-rte-overlays]');
+                }
+                let own = false;
+                if (portalContainer === undefined) {
+                    own =
+                        root?.closest('[data-test-id="fondue-rich-text-editor"]') ===
+                        screen.getByTestId('fondue-rich-text-editor');
+                } else {
+                    own = root?.parentElement === portalContainer;
+                }
+                results.push({
+                    inside: own,
+                    owner: overlay?.ownerDocument === document,
+                    host: root !== null,
+                });
+                unmount();
+            }
+            host.remove();
+
+            expect(results).toEqual([
+                { inside: true, owner: true, host: true },
+                { inside: true, owner: true, host: true },
+            ]);
+        },
+    );
 
     it('SPEC-rich-text-react/AC-047 keeps every overlay open while focus moves between the surface, toolbars and overlays', () => {
         const closed = vi.fn<(overlay: string) => void>();
@@ -245,6 +319,59 @@ describe('editor overlays', () => {
         expect(editorB()?.innerHTML).toBe(before);
         const ids = [...document.querySelectorAll('[id]')].map(({ id }) => id);
         expect(new Set(ids).size).toBe(ids.length);
+    });
+
+    it('SPEC-rich-text-react/AC-049 keeps two editors that share a host portalContainer in their own interaction scopes', () => {
+        const host = document.createElement('div');
+        document.body.append(host);
+        const environment = createTestEnvironment({ seed: 1 });
+        const closedA = vi.fn();
+        const Later = () => {
+            const [open, setOpen] = useState(false);
+            return (
+                <>
+                    <button type="button" onClick={() => setOpen(true)}>
+                        Open B
+                    </button>
+                    <FixtureLinkPopover open={open} onOpenChange={setOpen} />
+                </>
+            );
+        };
+        const Editor = ({ label, children }: { readonly label: string; readonly children: ReactNode }) => (
+            <RichTextEditor.Root
+                aria-label={label}
+                definition={definition}
+                presentation={presentation}
+                defaultValue={loaded(para('one two three'))}
+                locale={fixtureLocale}
+                environment={environment}
+                portalContainer={host}
+            >
+                <RichTextEditor.Surface />
+                {children}
+            </RichTextEditor.Root>
+        );
+        render(
+            <>
+                <Editor label="A">
+                    <Opened Overlay={FixtureLinkPopover} onClose={closedA} />
+                </Editor>
+                <Editor label="B">
+                    <Later />
+                </Editor>
+            </>,
+        );
+        act(() => environment.flushFrames());
+        act(() => screen.getByRole('textbox', { name: 'URL' }).focus());
+
+        // A click with no press, so only the focus move into B's popover can close A's.
+        act(() => {
+            fireEvent.click(screen.getByRole('button', { name: 'Open B' }));
+        });
+
+        expect(closedA).toHaveBeenCalledTimes(1);
+        expect(host.querySelectorAll(':scope > [data-rte-overlays]')).toHaveLength(2);
+        host.remove();
     });
 
     it('SPEC-rich-text-react/AC-090 calls onFocus and onBlur for moves into the link popover and back, and out to a host button', () => {
@@ -441,7 +568,7 @@ describe('overlay accessibility', () => {
         // Frames stay real, since Floating UI repositions an open overlay in each one.
         vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
         const closed = vi.fn();
-        const { handle } = mount({
+        const { handle, environment } = mount({
             children: (
                 <>
                     <Opened Overlay={FixtureLinkPopover} onClose={closed} />
@@ -452,8 +579,11 @@ describe('overlay accessibility', () => {
         });
         selectWithFocus(handle(), 'two');
 
+        // The editor's own timers run on the environment clock, which the fake timers do not move.
         act(() => {
             vi.advanceTimersByTime(10 * 60 * 1000);
+            environment.advance(600_000);
+            environment.flushFrames();
         });
 
         expect(closed).not.toHaveBeenCalled();
@@ -539,7 +669,101 @@ describe('overlay accessibility', () => {
 
         // `fireEvent` returns false once a handler prevented the default.
         expect([undocked, docked]).toEqual([true, false]);
-        expect(screen.getByRole('toolbar', { name: 'Text formatting' }).style.insetBlockEnd).toBe('400px');
+        // The docked toolbar's top edge sits its height above the keyboard, which happy-dom lays out as 0.
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' }).style.insetBlockStart).toBe('400px');
         Reflect.deleteProperty(window, 'visualViewport');
+    });
+
+    it('SPEC-rich-text-react/AC-096 leaves the toolbar undocked and lets a press take focus when the pointer is not coarse, though the viewport shrinks', () => {
+        const viewport = Object.assign(new EventTarget(), { height: 800, offsetTop: 0 });
+        Object.defineProperty(window, 'visualViewport', { configurable: true, value: viewport });
+        vi.spyOn(window, 'matchMedia').mockImplementation(() => ({ matches: false }) as MediaQueryList);
+        vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(800);
+        mount({});
+        act(() => surface().focus());
+
+        act(() => {
+            viewport.height = 400;
+            viewport.dispatchEvent(new Event('resize'));
+        });
+        const pressed = fireEvent.mouseDown(screen.getByRole('button', { name: 'Bold' }));
+
+        // `fireEvent` returns true while no handler prevented the default.
+        expect(pressed).toBe(true);
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' }).style.insetBlockStart).toBe('');
+        Reflect.deleteProperty(window, 'visualViewport');
+    });
+});
+
+describe('overlay focus and loading', () => {
+    it('SPEC-rich-text-react/AC-023 keeps the surface mounted and editable while a dialog that node chrome loads lazily suspends, then shows it', async () => {
+        let release: () => void = () => undefined;
+        const LazyPart = lazy(
+            () =>
+                new Promise<{ default: () => ReactNode }>((resolve) => {
+                    release = () => resolve({ default: () => <p>Loaded</p> });
+                }),
+        );
+        const Chrome = () => {
+            const [open, setOpen] = useState(false);
+            return (
+                <>
+                    <button type="button" onClick={() => setOpen(true)}>
+                        Open lazy
+                    </button>
+                    {open && <LazyPart />}
+                </>
+            );
+        };
+        const lazyModel = compileContentModel(
+            [core(), defineNodeView(fixtureMediaImage(), { node: 'media_image', component: Chrome })],
+            { id: 'test.overlays', version: 1 },
+        );
+        const environment = createTestEnvironment({ seed: 1 });
+        const ref = createRef<EditorHandle<object>>();
+        render(
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={defineEditor({ id: 'test.overlays', model: lazyModel })}
+                defaultValue={loaded(para('one'), image)}
+                locale={fixtureLocale}
+                environment={environment}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+            </RichTextEditor.Root>,
+        );
+        act(() => environment.flushFrames());
+        await act(() => environment.flushMicrotasks());
+        const viewBefore = runtimeOf(ref.current as object)?.view;
+
+        act(() => {
+            fireEvent.click(screen.getByRole('button', { name: 'Open lazy' }));
+        });
+
+        expect(runtimeOf(ref.current as object)?.view).toBe(viewBefore);
+        expect(surface().getAttribute('contenteditable')).toBe('true');
+        expect(surface()).toBeVisible();
+        await act(async () => {
+            release();
+            await Promise.resolve();
+        });
+        expect(screen.getByText('Loaded')).toBeInTheDocument();
+    });
+
+    it('SPEC-rich-text-accessibility/AC-014 keeps the bubble toolbar closed after Escape while a command only maps the selection', () => {
+        const { handle } = mount({});
+        selectWithFocus(handle(), 'two');
+        expect(bubble()).not.toBeNull();
+        act(() => {
+            fireEvent.keyDown(surface(), { key: 'Escape' });
+        });
+        expect(bubble()).toBeNull();
+
+        act(() => {
+            (handle() as unknown as EditorHandle).execute('mark.bold.toggle');
+        });
+
+        expect(bubble()).toBeNull();
     });
 });

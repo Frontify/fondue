@@ -26,7 +26,6 @@ import { AnnouncerContext, createAnnouncer } from '#/bridge/announcer';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
-import { createInteractionScope } from '#/bridge/interaction-scope';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
 import { createNodeViews, resyncSelection } from '#/bridge/node-views';
 import { OverlayContext, useScopedFocus } from '#/bridge/overlays';
@@ -53,9 +52,11 @@ import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
-import { moveChromeFocus } from './chrome-focus';
+import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
 import { engineOf, viewsOf } from './define';
+import { useKeyboardInset } from './keyboard-inset';
 import { useEditorLocale } from './locale';
+import { useOverlayRoot } from './overlay-root';
 import { BlockedShell, RecoveryShell } from './shells';
 import { toolbarItems } from './toolbar-items';
 import {
@@ -82,9 +83,6 @@ const VISUALLY_HIDDEN: CSSProperties = {
     clipPath: 'inset(50%)',
     whiteSpace: 'nowrap',
 };
-
-// Overlays stack above the sticky and docked toolbar, whose `z-index` is 1.
-const OVERLAY_ROOT: CSSProperties = { position: 'relative', zIndex: 2 };
 
 /** Why a toolbar item's command cannot run, by its `disabledReason` (SPEC-rich-text-react/AC-038). */
 const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
@@ -264,42 +262,25 @@ const SessionComponent = (
     const handleRef = useRef<EditorHandle<object> | null>(null);
     const bubbleRef = useRef<HTMLDivElement | null>(null);
     const showBubbleRef = useRef<(() => void) | null>(null);
-    const rootRef = useRef<HTMLDivElement | null>(null);
-    // The default portal container, inside the root and so inside the interaction scope (SPEC-rich-text-react/AC-045).
-    const [overlayRoot, setOverlayRoot] = useState<HTMLDivElement | null>(null);
-    const [scope] = useState(() =>
-        createInteractionScope(() => {
-            const roots: (HTMLElement | null)[] = [rootRef.current];
-            const { portalContainer } = latestRef.current;
-            if (portalContainer !== undefined) {
-                roots.push(portalContainer);
-            }
-            const { runtime } = coordinator;
-            if (runtime !== undefined) {
-                roots.push(...runtime.interactionRoots);
-            }
-            return roots;
-        }),
-    );
+    const {
+        rootRef,
+        overlayRoot,
+        overlayRootRef,
+        scope,
+        element: overlayRootElement,
+    } = useOverlayRoot(coordinator, props.portalContainer);
     const [toolbarMode, setToolbarMode] = useState<ToolbarMode>(() => props.defaultToolbarMode ?? 'fixed');
     const switchToolbar = useCallback((next: ToolbarMode) => {
         setToolbarMode(next);
         latestRef.current.onToolbarModeChange?.(next);
     }, []);
-    const [keyboard, setKeyboard] = useState(0);
+    const keyboard = useKeyboardInset(rootRef, coordinator);
 
     useClientLayoutEffect(() => {
         latestRef.current = props;
     });
 
-    // An editor in an iframe hears the iframe's document.
-    useClientLayoutEffect(() => {
-        const root = rootRef.current;
-        if (root === null) {
-            return undefined;
-        }
-        return scope.listen(root.ownerDocument);
-    }, [scope]);
+    useEscapeToSurface(rootRef, toolbarRef, overlayRootRef, coordinator);
 
     // The view attaches in a layout effect, so the first frame painted after hydration shows the content (SPEC-rich-text-output/AC-034).
     useClientLayoutEffect(() => {
@@ -424,27 +405,6 @@ const SessionComponent = (
 
     const onFlush = useCallback(() => resyncSelection(coordinator.runtime?.view), [coordinator]);
 
-    // The on-screen keyboard covers the bottom of the layout viewport, which the caret scrolls clear of (SPEC-rich-text-accessibility/AC-024).
-    useEffect(() => {
-        // Some test DOMs have no `visualViewport` at all.
-        const viewport: VisualViewport | null | undefined = window.visualViewport;
-        if (viewport === null || viewport === undefined) {
-            return undefined;
-        }
-        const measure = () => {
-            const inset = Math.max(0, window.innerHeight - viewport.offsetTop - viewport.height);
-            coordinator.chrome.setBottomInset(inset);
-            // Only a touch device docks its toolbar above the on-screen keyboard (SPEC-rich-text-react/AC-096).
-            if (window.matchMedia('(pointer: coarse)').matches) {
-                // oxlint-disable-next-line @eslint-react/set-state-in-effect -- the state is the measured viewport.
-                setKeyboard(inset);
-            }
-        };
-        measure();
-        viewport.addEventListener('resize', measure);
-        return () => viewport.removeEventListener('resize', measure);
-    }, [coordinator]);
-
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         // A disabled editor's toolbar takes no focus.
         let toolbar = toolbarRef.current;
@@ -516,14 +476,11 @@ const SessionComponent = (
         };
     }, [items, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard, lang]);
 
-    const { portalContainer, environment = browserEnvironment } = props;
-    const overlays = useMemo(() => {
-        let container: HTMLElement | null = overlayRoot;
-        if (portalContainer !== undefined && portalContainer !== null) {
-            container = portalContainer;
-        }
-        return { container, scope, microtask: environment.scheduler.microtask };
-    }, [overlayRoot, portalContainer, scope, environment]);
+    const { environment = browserEnvironment } = props;
+    const overlays = useMemo(
+        () => ({ container: overlayRoot, scope, scheduler: environment.scheduler }),
+        [overlayRoot, scope, environment],
+    );
 
     const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
     if (mounted.blocked !== undefined) {
@@ -563,7 +520,7 @@ const SessionComponent = (
                                     style={VISUALLY_HIDDEN}
                                     data-test-id={`${testId}-announcer`}
                                 />
-                                <div ref={setOverlayRoot} style={OVERLAY_ROOT} data-rte-overlays="" />
+                                {overlayRootElement}
                                 {work !== undefined && <Phase work={work} open={false} />}
                             </div>
                         </OverlayContext.Provider>
@@ -788,15 +745,17 @@ const Toolbar = () => {
             const { height } = element.getBoundingClientRect();
             if (docked === undefined) {
                 coordinator.chrome.setTopInset(height);
+                coordinator.chrome.setDockedInset(0);
                 return;
             }
             coordinator.chrome.setTopInset(0);
-            coordinator.chrome.setBottomInset(docked + height);
+            coordinator.chrome.setDockedInset(height);
         });
         observer.observe(element);
         return () => {
             observer.disconnect();
             coordinator.chrome.setTopInset(0);
+            coordinator.chrome.setDockedInset(0);
         };
     }, [toolbarRef, coordinator, shown, docked]);
     if (!shown || surfaceId === undefined) {
