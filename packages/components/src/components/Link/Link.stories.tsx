@@ -110,6 +110,22 @@ export const AllVariants: Story = {
     },
 };
 
+export const Targets: Story = {
+    render: () => (
+        <RouterProvider navigate={(path: string) => alert(`Navigate to: ${path}`)} useHref={(path: string) => path}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <Link href="/hello">Default: navigates through the router</Link>
+                <Link href="/hello" target="_self">
+                    target=&quot;_self&quot;: navigates through the router
+                </Link>
+                <Link href="https://www.frontify.com" target="_blank" rel="noopener noreferrer">
+                    target=&quot;_blank&quot;: opens a new tab
+                </Link>
+            </div>
+        </RouterProvider>
+    ),
+};
+
 export const Truncated: Story = {
     args: {
         children: 'This is a very long link text that should be truncated if it overflows the container.',
