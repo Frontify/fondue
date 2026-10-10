@@ -26,6 +26,17 @@ test('should have proper accessibility attributes', async ({ mount }) => {
     await expect(notice).toHaveAttribute('data-component', 'notice');
 });
 
+test('should announce assertively when role is alert', async ({ mount }) => {
+    const component = await mount(
+        <Notice data-test-id="notice-root" variant="danger" role="alert">
+            {NOTICE_TEXT}
+        </Notice>,
+    );
+    const notice = component.getByTestId('notice-root');
+    await expect(notice).toHaveAttribute('role', 'alert');
+    await expect(notice).toHaveAttribute('aria-live', 'assertive');
+});
+
 test('should apply default variant', async ({ mount }) => {
     const component = await mount(<Notice data-test-id="notice-root">{NOTICE_TEXT}</Notice>);
     const notice = component.getByTestId('notice-root');
