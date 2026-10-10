@@ -78,6 +78,39 @@ test('SPEC-rich-text-persistence/AC-037 leaves focus on a host button during a r
     expect(await focusedSurface(page)).toBe(false);
 });
 
+test('SPEC-rich-text-persistence/AC-036 gives focus back to the editor when a replacement fails after step 4', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['ab']} persistence holdSaves />);
+    await ready(page);
+    await surfaceOf(page).click();
+    await page.evaluate(() => {
+        const rte = window.rte as Rte;
+        rte.setSelection(rte.handle, { text: 'ab', from: 2, to: 2 });
+    });
+    await page.keyboard.type('c');
+    // The autosave's write stays in flight, so step 6 refuses the replacement.
+    await expect.poll(() => page.evaluate(() => (window.rte as Rte).saves.length)).toBe(1);
+
+    const result = await page.evaluate(async () => {
+        const { handle } = window.rte as Rte;
+        const { stamp, document } = handle.getSnapshot();
+        return handle.replaceDocument({
+            expected: stamp,
+            next: { documentId: 'document-2', revision: null, document },
+            unsaved: { action: 'discard', confirmed: true },
+            selection: 'start',
+            history: 'reset',
+        });
+    });
+
+    expect(result).toEqual({ status: 'rejected', code: 'save-unresolved' });
+    expect(await focusedSurface(page)).toBe(true);
+    await page.keyboard.type('!');
+    await expect(surfaceOf(page)).toHaveText('abc!');
+});
+
 /** Puts the caret in the surface after `text` and starts composing `x` there through CDP (SPEC-rich-text-quality/AC-012). */
 const composeAfter = async (page: Page, text: string) => {
     await surfaceOf(page).click();
