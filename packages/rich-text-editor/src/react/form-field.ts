@@ -2,10 +2,9 @@
 
 import { type Ref, useMemo } from 'react';
 
-import { type RichTextDocument, type RuntimeEnvironment } from '#/model';
+import { type RichTextDocument } from '#/model';
 import { isRecord } from '#/model/values';
 import { type LoadedDocument, type ReplaceResult } from '#/persistence/types';
-import { browserEnvironment } from '#/runtime/environment';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { type ShippedCommands } from '#/runtime/types';
 
@@ -28,7 +27,6 @@ export interface RichTextFormField {
 interface FieldProps {
     readonly required?: boolean | undefined;
     readonly defaultValue: LoadedDocument;
-    readonly environment?: RuntimeEnvironment | undefined;
 }
 const fieldProps = new WeakMap<object, () => FieldProps>();
 
@@ -112,18 +110,16 @@ export const useRichTextFormField = <C extends object = ShippedCommands>(
             },
             // A form never submits half-composed text (SPEC-rich-text-persistence/AC-061).
             getSettledValue: ({ timeoutMs }) => {
-                const { handle, runtime, props } = sessionOf();
+                const { handle, runtime } = sessionOf();
                 if (!handle.getSummary().compositionActive) {
                     return Promise.resolve(handle.getSnapshot().document);
                 }
-                const { clock } = props.environment ?? browserEnvironment;
                 return new Promise((resolve, reject) => {
-                    const stop = runtime.afterInput(() => {
-                        clock.clearTimeout(timer);
-                        resolve(handle.getSnapshot().document);
-                    });
-                    const timer = clock.setTimeout(() => {
-                        stop();
+                    runtime.afterInput((settled) => {
+                        if (settled) {
+                            resolve(handle.getSnapshot().document);
+                            return;
+                        }
                         reject(Object.assign(new Error('The input did not settle in time.'), { code: 'timeout' }));
                     }, timeoutMs);
                 });

@@ -150,8 +150,11 @@ export interface EditorRuntime {
     nodeActions(nodeId: string): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
-    /** Calls `settled` once input settles after the composition that runs now (SPEC-rich-text-runtime/AC-070). */
-    afterInput(settled: () => void): Unsubscribe;
+    /**
+     * Calls `settled` with `true` once input settles after the composition that runs now, or with `false` when
+     * `timeoutMs` passes first on the environment clock (SPEC-rich-text-runtime/AC-070).
+     */
+    afterInput(settled: (settled: boolean) => void, timeoutMs: number): void;
     /** Empties the history and keeps the document and selection, as a form reset to the current record does (SPEC-rich-text-persistence/AC-054). */
     clearHistory(): void;
     /** Emits the `operationMetric` of an operation that started at `started` on the environment clock (SPEC-rich-text-quality/AC-029). */
@@ -818,7 +821,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         coordinator.settle();
         saves?.settled();
         for (const settled of [...afterInput]) {
-            afterInput.delete(settled);
             settled();
         }
     };
@@ -1306,13 +1308,28 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return 'unsaved';
     };
 
+    /**
+     * Gives focus back to a surface that had it when the replacement started and is editable again, unless focus moved
+     * on meanwhile; Chromium blurs a focused surface whose `contenteditable` turns false (SPEC-rich-text-persistence/AC-036, AC-037).
+     */
+    const refocus = (focused: boolean) => {
+        if (!focused || shownMode !== 'editable' || view === undefined) {
+            return;
+        }
+        const { activeElement, body } = view.dom.ownerDocument;
+        if (activeElement === null || activeElement === body) {
+            focus();
+        }
+    };
+
     /** Leaves `transitioning` after a failed step, so what waited runs on the unchanged session (AC-032, AC-033). */
-    const resume = (code: ReplaceCode): ReplaceResult => {
+    const resume = (code: ReplaceCode, focused: boolean): ReplaceResult => {
         phase = 'ready';
         refreshView();
         coordinator.settle();
         saves?.settled();
         drain();
+        refocus(focused);
         return refused(code);
     };
 
@@ -1324,6 +1341,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         request: ReplaceDocumentRequest,
         tree: TreeNode,
         stored: readonly CapabilityRef[],
+        focused: boolean,
     ): ReplaceResult => {
         let fresh: EditorState;
         try {
@@ -1376,6 +1394,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         emitSelection();
         emitSaveStatus();
         emit('replaced', session);
+        refocus(focused);
         return { status: 'replaced', session };
     };
 
@@ -1406,6 +1425,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (settling.active()) {
             return refused('composition-active');
         }
+        const focused = view?.hasFocus() === true;
         phase = 'transitioning';
         refreshView();
         if (unsavedChanges()) {
@@ -1415,17 +1435,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return refused('not-ready');
             }
             if (code !== undefined) {
-                return resume(code);
+                return resume(code, focused);
             }
         }
         if (saves?.outcomeUnknown() === true) {
-            return resume('save-unresolved');
+            return resume('save-unresolved', focused);
         }
         // A keystroke the view read during step 5 is kept, not replaced.
         if (!sameStamp(request.expected, { ...session, sequence })) {
-            return resume('changed-since-request');
+            return resume('changed-since-request', focused);
         }
-        return installNext(request, tree, result.document.requiredCapabilities);
+        return installNext(request, tree, result.document.requiredCapabilities, focused);
     };
 
     const interactionRoots = new Set<HTMLElement>();
@@ -1661,11 +1681,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 busyWith(notify);
             }
         },
-        afterInput: (settled) => {
-            afterInput.add(settled);
-            return () => {
-                afterInput.delete(settled);
+        afterInput: (settled, timeoutMs) => {
+            const finish = (value: boolean) => {
+                // Whichever comes first, the settle or the timeout, answers; the other finds nothing.
+                if (afterInput.delete(waiter)) {
+                    environment.clock.clearTimeout(timer);
+                    settled(value);
+                }
             };
+            const waiter = () => finish(true);
+            const timer = environment.clock.setTimeout(() => finish(false), timeoutMs);
+            afterInput.add(waiter);
         },
         measure: (kind, started, failureCode) => measure(kind, started, failureCode),
     };

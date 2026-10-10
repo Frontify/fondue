@@ -1,24 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MutableRefObject, useCallback, useContext, useEffect, useRef, useSyncExternalStore } from 'react';
+import { useCallback, useContext, useEffect, useRef, useSyncExternalStore } from 'react';
 
 import { useAnnounce } from '#/bridge/announcer';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { SessionContext } from '#/bridge/hooks';
 import { type CodecContext } from '#/model';
-import { type Rejection } from '#/persistence/coordinator';
+import { type createSaveCoordinator, type Rejection } from '#/persistence/coordinator';
 import { type SaveStatus } from '#/runtime/types';
 
 import styles from './styles/status.module.scss';
 
 type Key = `RichTextEditor_${string}`;
 type State = SaveStatus['state'];
+type SaveCauses = Pick<ReturnType<typeof createSaveCoordinator>, 'rejection' | 'committed'>;
 
-/** What the status reads from the save coordinator beside `SaveStatus`. */
-export interface SaveCauses {
-    readonly rejection: () => Rejection | null;
-    readonly committed: () => boolean;
-}
+/** The coordinator readers of each managed session, by its handle, which `SaveStatus` does not carry. */
+const causesByHandle = new WeakMap<object, SaveCauses>();
+
+/** Lets the status of the session behind `handle` read why its save state is what it is. */
+export const registerSaveCauses = (handle: object, causes: SaveCauses) => {
+    causesByHandle.set(handle, causes);
+};
 
 // SPEC-rich-text-persistence/AC-048: unsaved, saving, saved, retrying, offline, conflict and failed.
 const STATE_KEYS: Readonly<Record<State, Key | null>> = {
@@ -56,19 +59,65 @@ const keyOf = (status: SaveStatus, causes: SaveCauses | undefined): Key | null =
     return STATE_KEYS[status.state];
 };
 
+/** One save state as the status saw it: the state, the session generation it belongs to and the key it shows. */
+export interface Seen {
+    readonly state: State;
+    readonly generation: number;
+    readonly key: Key | null;
+}
+/** What the announcements remember between changes. */
+export interface Memory {
+    /** A `clean` now ends an outage or a failure, so it is announced (AC-047). */
+    readonly recovering: boolean;
+    /** The retrying or offline state last announced, which a replay in between does not announce again (AC-046). */
+    readonly outage: State | null;
+}
+export const QUIET: Memory = { recovering: false, outage: null };
+
+/** The key a change from `previous` to `next` announces, if any, and what to remember (SPEC-rich-text-persistence/AC-046, AC-047). */
+export const announcementOf = (
+    memory: Memory,
+    previous: Seen,
+    next: Seen,
+    committed: boolean,
+): readonly [Memory, Key | null] => {
+    // A replacement, such as a form reset, discards what the old generation held, so nothing of it is saved.
+    if (next.generation !== previous.generation) {
+        return [QUIET, null];
+    }
+    if (next.state === previous.state) {
+        return [memory, null];
+    }
+    let { recovering, outage } = memory;
+    if (RECOVERING.has(previous.state)) {
+        recovering = true;
+    }
+    if (next.state === 'clean' || next.state === 'dirty') {
+        outage = null;
+    }
+    if (ANNOUNCED.has(next.state)) {
+        if (previous.state === 'saving' && next.state === outage) {
+            return [{ recovering, outage }, null];
+        }
+        if (next.state === 'uncertain' || next.state === 'offline') {
+            outage = next.state;
+        }
+        return [{ recovering, outage }, next.key];
+    }
+    if (next.state !== 'clean') {
+        return [{ recovering, outage }, null];
+    }
+    if (!recovering && !committed) {
+        return [{ recovering, outage }, null];
+    }
+    return [{ recovering: false, outage }, next.key];
+};
+
 /**
  * The session's save state as text, which changes silently during autosave and is announced through the editor's
  * polite live region only for the states that need the author (SPEC-rich-text-persistence/AC-046, AC-047).
  */
-export const SaveStatusText = ({
-    t,
-    causes,
-    testId,
-}: {
-    readonly t: CodecContext['t'];
-    readonly causes: MutableRefObject<SaveCauses | undefined>;
-    readonly testId: string;
-}) => {
+export const SaveStatusText = ({ t, testId }: { readonly t: CodecContext['t']; readonly testId: string }) => {
     const runtime = useContext(SessionContext);
     // The shown key only, so a save status that changes on each keystroke rerenders nothing.
     const subscribe = useCallback(
@@ -84,7 +133,7 @@ export const SaveStatusText = ({
         if (runtime === undefined) {
             return null;
         }
-        return keyOf(runtime.handle.getSaveStatus(), causes.current);
+        return keyOf(runtime.handle.getSaveStatus(), causesByHandle.get(runtime.handle));
     };
     const key = useSyncExternalStore(subscribe, read, read);
     const announce = useAnnounce();
@@ -97,61 +146,24 @@ export const SaveStatusText = ({
         if (runtime === undefined) {
             return undefined;
         }
-        let shown = runtime.handle.getSaveStatus().state;
-        let { generation } = runtime.handle.getSummary().session;
-        let recovering = false;
-        // The retrying or offline state last announced, which a replay in between does not announce again (AC-046).
-        let outage: State | null = null;
-        const say = (message: Key | null) => {
-            if (message !== null) {
-                announce(tRef.current(message));
-            }
-        };
-        return runtime.handle.subscribe('saveStatusChange', (next: SaveStatus) => {
-            const previous = shown;
-            shown = next.state;
-            if (previous === next.state) {
-                return;
-            }
-            // A replacement, such as a form reset, discards what the old generation held, so nothing of it is saved.
-            const current = runtime.handle.getSummary().session.generation;
-            if (current !== generation) {
-                generation = current;
-                recovering = false;
-                outage = null;
-                return;
-            }
-            if (RECOVERING.has(previous)) {
-                recovering = true;
-            }
-            if (next.state === 'clean' || next.state === 'dirty') {
-                outage = null;
-            }
-            const message = keyOf(next, causes.current);
-            if (ANNOUNCED.has(next.state)) {
-                // Only replacement leaves a conflict, and the record it loads has nothing to recover.
-                if (next.state === 'conflict') {
-                    recovering = false;
-                }
-                if (previous === 'saving' && next.state === outage) {
-                    return;
-                }
-                if (next.state === 'uncertain' || next.state === 'offline') {
-                    outage = next.state;
-                }
-                say(message);
-                return;
-            }
-            if (next.state !== 'clean') {
-                return;
-            }
-            const heard = recovering || causes.current?.committed() === true;
-            recovering = false;
-            if (heard) {
-                say(message);
+        const causes = causesByHandle.get(runtime.handle);
+        const seen = (status: SaveStatus): Seen => ({
+            state: status.state,
+            generation: runtime.handle.getSummary().session.generation,
+            key: keyOf(status, causes),
+        });
+        let previous = seen(runtime.handle.getSaveStatus());
+        let memory = QUIET;
+        return runtime.handle.subscribe('saveStatusChange', (status: SaveStatus) => {
+            const next = seen(status);
+            const [kept, announced] = announcementOf(memory, previous, next, causes?.committed() === true);
+            memory = kept;
+            previous = next;
+            if (announced !== null) {
+                announce(tRef.current(announced));
             }
         });
-    }, [runtime, causes, announce]);
+    }, [runtime, announce]);
     let text = '';
     if (key !== null) {
         text = t(key);

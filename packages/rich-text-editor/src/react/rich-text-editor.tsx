@@ -59,7 +59,7 @@ import { useKeyboardInset } from './keyboard-inset';
 import { useEditorLocale } from './locale';
 import { useOverlayRoot } from './overlay-root';
 import { BlockedShell, RecoveryShell } from './shells';
-import { type SaveCauses, SaveStatusText } from './status';
+import { registerSaveCauses, SaveStatusText } from './status';
 import { toolbarItems } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
@@ -129,13 +129,16 @@ interface Mounted {
     /** The document's own language and direction, which win over the theme's (SPEC-rich-text-react/AC-061). */
     readonly lang: string | undefined;
     readonly dir: 'ltr' | 'rtl' | undefined;
+    /** Mounted with `services.persistence`, which keeps the session managed for its whole life (SPEC-rich-text-persistence/AC-001). */
+    readonly managed: boolean;
 }
 
 const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
     const { definition, profile } = props;
     const engine = engineOf(definition);
     const { result, tree } = decodeToTree(loaded.document, engine.model, { limits: definition.limits });
-    const unset = { lang: undefined, dir: undefined };
+    const managed = memberOf(props.services, 'persistence') !== undefined;
+    const unset = { lang: undefined, dir: undefined, managed };
     if (result.status === 'blocked') {
         return { definition, profile, decoded: undefined, blocked: result, ...unset };
     }
@@ -153,7 +156,7 @@ const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
         dir = tree.attrs.dir;
     }
     const decoded = { tree, capabilities: result.document.requiredCapabilities };
-    return { definition, profile, decoded, blocked: undefined, lang, dir };
+    return { definition, profile, decoded, blocked: undefined, lang, dir, managed };
 };
 
 /** What the parts share for the toolbars and focus moves between the surface and the chrome (SPEC-rich-text-react, Overlay focus). */
@@ -184,8 +187,6 @@ interface RootContextValue {
     readonly mounted: Mounted;
     readonly coordinator: MountCoordinator;
     readonly chrome: Chrome;
-    /** Why the save state is what it is, which the status reads beside `SaveStatus`. */
-    readonly causes: MutableRefObject<SaveCauses | undefined>;
 }
 const RootContext = createContext<RootContextValue | null>(null);
 RootContext.displayName = 'RichTextEditorRootContext';
@@ -272,7 +273,6 @@ const SessionComponent = (
     const handleRef = useRef<EditorHandle<object> | null>(null);
     const bubbleRef = useRef<HTMLDivElement | null>(null);
     const showBubbleRef = useRef<(() => void) | null>(null);
-    const causesRef = useRef<SaveCauses | undefined>(undefined);
     const {
         rootRef,
         overlayRoot,
@@ -362,7 +362,9 @@ const SessionComponent = (
             }
         });
         handleRef.current = runtime.handle;
-        causesRef.current = created;
+        if (created !== undefined) {
+            registerSaveCauses(runtime.handle, created);
+        }
         registerFormField(runtime.handle, () => latestRef.current);
         onSession({ handle: runtime.handle, unresolved: () => created?.unresolved() });
         coordinator.start(runtime);
@@ -519,10 +521,7 @@ const SessionComponent = (
         [overlayRoot, scope, environment],
     );
 
-    const context = useMemo(
-        () => ({ props, mounted, coordinator, chrome, causes: causesRef }),
-        [props, mounted, coordinator, chrome],
-    );
+    const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
     if (mounted.blocked !== undefined) {
         return <BlockedShell result={mounted.blocked} {...shell} />;
     }
@@ -868,9 +867,13 @@ BubbleToolbarPart.displayName = 'RichTextEditor.BubbleToolbar';
 
 /** The session's save state (SPEC-rich-text-persistence/AC-046 to AC-048, AC-062). */
 const Status = () => {
-    const { props, chrome, causes } = useRoot('Status');
+    const { props, mounted, chrome } = useRoot('Status');
     const { 'data-test-id': testId = DEFAULT_TEST_ID } = props;
-    return <SaveStatusText t={chrome.t} causes={causes} testId={testId} />;
+    // An unmanaged session has no save state to show.
+    if (!mounted.managed) {
+        return null;
+    }
+    return <SaveStatusText t={chrome.t} testId={testId} />;
 };
 Status.displayName = 'RichTextEditor.Status';
 

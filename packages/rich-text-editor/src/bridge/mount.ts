@@ -4,7 +4,6 @@ import { type EditorRuntime } from '#/runtime/runtime';
 
 import { type ChromeView, createChromeView } from './chrome-view';
 import { markReady } from './dev-checks';
-import { keepReplacementFocus } from './replacement-focus';
 
 export interface MountCoordinator {
     readonly runtime: EditorRuntime | undefined;
@@ -20,15 +19,8 @@ export interface MountCoordinator {
 export const createMountCoordinator = (): MountCoordinator => {
     let surface: HTMLElement | null = null;
     let current: EditorRuntime | undefined;
-    let releaseFocus: (() => void) | undefined;
     const chrome = createChromeView();
-    const stopFocus = () => {
-        releaseFocus?.();
-        releaseFocus = undefined;
-    };
     const attach = (runtime: EditorRuntime, element: HTMLElement) => {
-        stopFocus();
-        releaseFocus = keepReplacementFocus(runtime, element);
         runtime.attach(element);
         if (runtime.view !== undefined) {
             chrome.take(runtime.view);
@@ -45,7 +37,6 @@ export const createMountCoordinator = (): MountCoordinator => {
                 return;
             }
             if (element === null) {
-                stopFocus();
                 current.detach();
                 return;
             }
@@ -62,7 +53,6 @@ export const createMountCoordinator = (): MountCoordinator => {
             }
         },
         stop: () => {
-            stopFocus();
             current = undefined;
         },
     };
