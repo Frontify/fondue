@@ -237,7 +237,8 @@ export const createPolicyCheck = (model: ContentModel) => {
     };
 
     /** Whether the change from `before` to `after` creates, edits or removes an occurrence the policy forbids. */
-    return (policy: AuthoringPolicy, before: Node, after: Node, mapping: BatchMapping): boolean => {
+    /** `history` marks an undo or redo, which may bring back a heading of any level that a document held. */
+    return (policy: AuthoringPolicy, before: Node, after: Node, mapping: BatchMapping, history = false): boolean => {
         let previous: Occurrences = { nodes: new Map(), runs: new Map() };
         let next: Occurrences = { nodes: new Map(), runs: new Map() };
         const start = before.content.findDiffStart(after.content);
@@ -254,12 +255,12 @@ export const createPolicyCheck = (model: ContentModel) => {
             add(previous.nodes, nodeOwners.get(before.type.name), before);
             add(next.nodes, nodeOwners.get(after.type.name), after);
         }
-        // A stored heading keeps a level the policy does not offer, but no batch makes one (SPEC-rich-text-editing/AC-013, AC-014).
-        const kept = headingsOf(previous);
+        // A stored heading keeps a level the policy does not offer, and Enter may split it, but no batch makes one from
+        // another block or level (SPEC-rich-text-editing/AC-013, AC-014).
+        const levels = new Set<unknown>(headingsOf(previous).map((heading): unknown => heading.attrs.level));
         for (const heading of headingsOf(next)) {
-            const { level, nodeId } = heading.attrs;
-            const same = (old: Node) => old.attrs.level === level && old.attrs.nodeId === nodeId;
-            if (!policy.creatableHeadingLevels.includes(level as HeadingLevel) && take(kept, same) === undefined) {
+            const { level } = heading.attrs;
+            if (!history && !policy.creatableHeadingLevels.includes(level as HeadingLevel) && !levels.has(level)) {
                 return true;
             }
         }

@@ -7,7 +7,7 @@ import {
     wrapIn as wrapInEngine,
 } from 'prosemirror-commands';
 import { keydownHandler } from 'prosemirror-keymap';
-import { type MarkType, type Node, type NodeRange, type NodeType, type ResolvedPos } from 'prosemirror-model';
+import { type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos } from 'prosemirror-model';
 import { type EditorState, Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
@@ -304,7 +304,21 @@ const wrapIn: CapabilityImplementation = (args, schema) => {
 const block: CapabilityImplementation = (args) => ({
     run: (state, dispatch) => {
         const { $from, $to } = state.selection;
-        const range = $from.blockRange($to);
+        let range = $from.blockRange($to);
+        // Blocks that fill their container, as the only paragraph of a quote does, move with it.
+        while (
+            range !== null &&
+            range.depth > 0 &&
+            range.startIndex === 0 &&
+            range.endIndex === range.parent.childCount
+        ) {
+            const { depth } = range;
+            range = new NodeRange(
+                state.doc.resolve($from.before(depth)),
+                state.doc.resolve($from.after(depth)),
+                depth - 1,
+            );
+        }
         if (range === null) {
             return false;
         }

@@ -182,7 +182,7 @@ export const compileDefinition = (
         }
         return { featureId: contributor.id, capability: id };
     };
-    const inputRules = compileInputRules(features, schema, (id) => commands.get(id)?.run);
+    const inputRules = compileInputRules(features, schema, (id) => commands.get(id));
     const pluginOf = (id: string) => {
         const built = capabilities.plugins?.[id];
         if (built !== undefined) {
