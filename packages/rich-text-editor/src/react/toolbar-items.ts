@@ -9,10 +9,7 @@ import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
 import { type ReactPresentation } from './types';
 
-/** A data manifest's entry carries its translations in `label` in place of a package `labelKey`. */
-type ButtonEntry = Exclude<ToolbarEntry, { readonly kind: 'menu' }> & {
-    readonly label?: Readonly<Record<string, string>>;
-};
+type ButtonEntry = Exclude<ToolbarEntry, { readonly kind: 'menu' }>;
 
 /**
  * The manifest label for `lang` by RFC 4647 lookup, without subtags from the end until a tag matches, else `en-US`,

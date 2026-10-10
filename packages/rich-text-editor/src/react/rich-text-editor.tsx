@@ -173,6 +173,8 @@ interface Chrome {
     readonly setMode: (mode: ToolbarMode) => void;
     /** The height the on-screen keyboard of a touch device covers, which a focused editor docks its toolbar above (SPEC-rich-text-react/AC-096). */
     readonly keyboard: number;
+    /** The language of the chrome's strings, which the root, node chrome and data manifest labels take (WCAG 2.2 SC 3.1.2). */
+    readonly lang: string;
 }
 
 interface RootContextValue {
@@ -464,6 +466,12 @@ const SessionComponent = (
 
     const shell = shellPropsOf(props);
     const { locale, presentation, testId } = shell;
+    const theme = useFondueTheme();
+    // The shown locale's language, else the theme's.
+    let lang = locale.lang ?? theme.lang;
+    if (lang === undefined) {
+        lang = enUS.lang;
+    }
     // Chrome reads the newest presentation and locale with no view rebuild (SPEC-rich-text-react/AC-065).
     const chromeContext = useMemo(() => readerContext(locale, presentation), [locale, presentation]);
     const items = useMemo(
@@ -473,9 +481,9 @@ const SessionComponent = (
                 mounted.definition.authoring,
                 props.presentation,
                 chromeContext.t,
-                locale.lang ?? enUS.lang,
+                lang,
             ),
-        [mounted.definition, props.presentation, chromeContext, locale.lang],
+        [mounted.definition, props.presentation, chromeContext, lang],
     );
     const chrome = useMemo(() => {
         const { t } = chromeContext;
@@ -504,8 +512,9 @@ const SessionComponent = (
             mode: toolbarMode,
             setMode: switchToolbar,
             keyboard,
+            lang,
         };
-    }, [items, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard]);
+    }, [items, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard, lang]);
 
     const { portalContainer, environment = browserEnvironment } = props;
     const overlays = useMemo(() => {
@@ -533,8 +542,7 @@ const SessionComponent = (
                             {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- the root only hears keys and focus that bubble from the surface and chrome. */}
                             <div
                                 ref={rootRef}
-                                // The chrome's strings are in the shown locale, whatever the theme's (WCAG 2.2 SC 3.1.2).
-                                lang={locale.lang}
+                                lang={lang}
                                 data-test-id={testId}
                                 aria-busy={live === undefined ? true : undefined}
                                 onKeyDown={onKeyDown}
@@ -548,7 +556,7 @@ const SessionComponent = (
                                 {work !== undefined && <Phase work={work} open />}
                                 {children}
                                 {toolbarMode === 'bubble' && <Bubble />}
-                                <PortalHost store={portals} context={chromeContext} onFlush={onFlush} />
+                                <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
                                 <div
                                     ref={announcer.setRegion}
                                     aria-live="polite"
@@ -690,13 +698,10 @@ const Surface = () => {
     const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
     const contentClassName = presentation?.contentClassName;
     const theme = useFondueTheme();
-    // The document's language and direction, else the theme's, while the chrome keeps the theme's (SPEC-rich-text-react/AC-060, AC-061).
+    // The document's language and direction, else the theme's, while the chrome keeps its own (SPEC-rich-text-react/AC-060, AC-061).
     let lang = mounted.lang ?? theme.lang;
-    if (lang === undefined && props.locale !== undefined) {
-        lang = props.locale.lang;
-    }
     if (lang === undefined) {
-        lang = enUS.lang;
+        lang = chrome.lang;
     }
     const dir = mounted.dir ?? theme.dir;
     // React writes the first classes only: ProseMirror adds its own to this element with `classList`, which a rewritten attribute would drop.

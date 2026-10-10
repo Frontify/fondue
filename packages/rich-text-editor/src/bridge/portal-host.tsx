@@ -56,29 +56,34 @@ class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
 }
 
 // An entry keeps its object until its node view publishes, so the other chrome skips each rerender.
-const Chrome = memo(({ entry, context }: { readonly entry: PortalEntry; readonly context: NodeViewContext }) => {
-    const { component: View, slot } = entry;
-    const state = useMemo(() => ({ ...entry.state, context }), [entry.state, context]);
-    const theme = useFondueTheme();
-    const lang = context.locale.lang ?? theme.lang;
-    // The slot sits in the surface, which takes the document's lang and dir; chrome keeps its strings' and the theme's (SPEC-rich-text-react/AC-061).
-    useClientLayoutEffect(() => {
-        slot.dir = theme.dir;
-        if (lang === undefined) {
-            slot.removeAttribute('lang');
-            return;
-        }
-        slot.lang = lang;
-    }, [slot, theme.dir, lang]);
-    return createPortal(
-        <NodeViewStateContext.Provider value={state}>
-            <ChromeBoundary message={context.t('RichTextEditor_nodeViewError')} attrs={state.attrs}>
-                <View />
-            </ChromeBoundary>
-        </NodeViewStateContext.Provider>,
-        slot,
-    );
-});
+const Chrome = memo(
+    ({
+        entry,
+        context,
+        lang,
+    }: {
+        readonly entry: PortalEntry;
+        readonly context: NodeViewContext;
+        readonly lang: string;
+    }) => {
+        const { component: View, slot } = entry;
+        const state = useMemo(() => ({ ...entry.state, context }), [entry.state, context]);
+        const { dir } = useFondueTheme();
+        // The slot sits in the surface, which takes the document's lang and dir; chrome keeps its strings' and the theme's (SPEC-rich-text-react/AC-061).
+        useClientLayoutEffect(() => {
+            slot.dir = dir;
+            slot.lang = lang;
+        }, [slot, dir, lang]);
+        return createPortal(
+            <NodeViewStateContext.Provider value={state}>
+                <ChromeBoundary message={context.t('RichTextEditor_nodeViewError')} attrs={state.attrs}>
+                    <View />
+                </ChromeBoundary>
+            </NodeViewStateContext.Provider>,
+            slot,
+        );
+    },
+);
 Chrome.displayName = 'RichTextEditor.NodeViewChrome';
 
 /**
@@ -89,10 +94,13 @@ Chrome.displayName = 'RichTextEditor.NodeViewChrome';
 export const PortalHost = ({
     store,
     context,
+    lang,
     onFlush,
 }: {
     readonly store: PortalStore;
     readonly context: NodeViewContext;
+    /** The language of the chrome's strings, which each slot takes over the surface's (SPEC-rich-text-react/AC-061). */
+    readonly lang: string;
     readonly onFlush: () => void;
 }) => {
     const entries = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
@@ -100,7 +108,7 @@ export const PortalHost = ({
     return (
         <>
             {entries.map((entry) => (
-                <Chrome key={entry.key} entry={entry} context={context} />
+                <Chrome key={entry.key} entry={entry} context={context} lang={lang} />
             ))}
         </>
     );

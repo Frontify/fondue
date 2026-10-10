@@ -139,9 +139,9 @@ export const literalColors = (value: string, forced = false): string[] =>
             return !/^[a-z]+$/i.test(match) || NAMED_COLORS.has(name);
         });
 
-/** Whether a rule sits inside `@media (forced-colors: active)`. */
+/** Whether a rule sits inside `@media (forced-colors: active)`, which a `not` before it would invert. */
 export const inForcedColors = (atRules: readonly string[]): boolean =>
-    atRules.some((prelude) => /forced-colors:\s*active/.test(prelude));
+    atRules.some((prelude) => /^@media\s+\(\s*forced-colors:\s*active\s*\)/.test(prelude));
 
 /** Whether `selector` stays inside one content root at zero specificity: one `:where()` argument that starts with the root class, then at most a pseudo-element, and no sibling combinator. */
 const insideRoot = (selector: string): boolean => {

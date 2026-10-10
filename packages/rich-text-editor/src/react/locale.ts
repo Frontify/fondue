@@ -7,7 +7,7 @@ import { enUS } from '#/locales/en-US';
 import { type RichTextLocale } from '#/model';
 
 // One `import()` per shipped locale, so only `enUS` is in the static graph (DR-012).
-const LOADERS: Readonly<Record<string, () => Promise<RichTextLocale>>> = {
+export const LOADERS: Readonly<Record<string, () => Promise<RichTextLocale>>> = {
     'de-CH': () => import('#/locales/de-CH').then(({ deCH }) => deCH),
     'de-DE': () => import('#/locales/de-DE').then(({ deDE }) => deDE),
     'es-ES': () => import('#/locales/es-ES').then(({ esES }) => esES),
