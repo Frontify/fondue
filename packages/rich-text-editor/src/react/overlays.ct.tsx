@@ -757,6 +757,10 @@ for (const within of ['shadow', 'iframe'] as const) {
         const tooltip = root.getByRole('tooltip');
         await expect(tooltip.first()).toBeAttached();
         expect(await placement(tooltip)).toEqual(expected);
+        // Radix tracks a hover tooltip's pointer on the top document, so in an iframe it stays open after the pointer
+        // leaves; left open it is an older layer that the menus below wait behind for Escape. Escape closes it first.
+        await page.keyboard.press('Escape');
+        await expect(tooltip).toHaveCount(0);
 
         await toolbar.locator('[data-rte-toolbar-more]').click();
         const more = root.getByRole('menu');

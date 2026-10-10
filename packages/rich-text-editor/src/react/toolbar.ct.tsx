@@ -1022,6 +1022,36 @@ test('SPEC-rich-text-react/AC-037 checks the toggle row of the block at the care
     await expect(checkMark('Heading 5')).toHaveCount(0);
 });
 
+test('SPEC-rich-text-react/AC-043 leaves focus where it moved after More closed, rather than returning it to More late', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    await itemOf(page, 'More').click();
+    await expect(page.getByRole('menu')).toBeVisible();
+
+    // The surface takes focus as soon as the closed menu leaves the DOM, before the timeout in which Radix returns focus.
+    await page.evaluate(
+        () =>
+            new Promise<void>((resolve) => {
+                const observer = new MutationObserver(() => {
+                    if (document.querySelector('[role="menu"]') === null) {
+                        observer.disconnect();
+                        (document.querySelector('[role="textbox"]') as HTMLElement).focus();
+                        resolve();
+                    }
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+                document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            }),
+    );
+    // A timeout set now runs after the one Radix set when the menu unmounted.
+    await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 0)));
+
+    expect(await focusedName(page)).toBe('Notes');
+});
+
 test('SPEC-rich-text-accessibility/AC-026 does not open More when the pointer leaves it before release', async ({
     mount,
     page,
