@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue-components",
-    "version": "33.0.0",
+    "version": "33.0.2",
     "homepage": "https://github.com/Frontify/fondue",
     "bugs": {
         "url": "https://github.com/frontify/fondue/issues"
@@ -92,7 +92,6 @@
         "@storybook/addon-a11y": "^10.6.0",
         "@storybook/addon-docs": "^10.6.0",
         "@storybook/addon-links": "^10.6.0",
-        "@storybook/addon-mcp": "^10.6.0",
         "@storybook/react-vite": "^10.6.0",
         "@tailwindcss/forms": "^0.5.11",
         "@testing-library/dom": "^10.4.1",
