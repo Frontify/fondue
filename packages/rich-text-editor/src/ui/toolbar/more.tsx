@@ -144,6 +144,19 @@ export const More = ({
                                 pointerRef.current = true;
                                 openAtPressRef.current = open;
                             }}
+                            // WebKit sends no click for a touch whose `pointerdown` Radix prevented, so a touch released
+                            // over More opens it here; one that slid off opens nothing (SPEC-rich-text-accessibility/AC-026).
+                            onPointerUp={(event) => {
+                                pointerRef.current = false;
+                                if (event.pointerType === 'mouse' || openAtPressRef.current) {
+                                    return;
+                                }
+                                const { left, right, top, bottom } = event.currentTarget.getBoundingClientRect();
+                                const { clientX, clientY } = event;
+                                if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
+                                    setOpen(true);
+                                }
+                            }}
                             onMouseDown={(event) => {
                                 if (keepsFocus) {
                                     keepFocus(event);
