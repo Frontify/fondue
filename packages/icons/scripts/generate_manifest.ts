@@ -5,6 +5,7 @@ import { basename, resolve } from 'node:path';
 
 import { camelCase, upperFirst } from 'lodash-es';
 
+import { ICON_SYNONYMS, IGNORED_NAME_PARTS } from './iconSynonyms';
 import { getCurrentDirPath, getFileInDirectoryByExtension } from './utilities/file';
 
 const currentDir = getCurrentDirPath(import.meta.url);
@@ -49,15 +50,26 @@ const getAvailableSizes = (iconDir: string, iconBaseName: string, filled: boolea
     return AVAILABLE_SIZES.filter((size) => files.includes(`${iconBaseName}-${size}${suffix}`));
 };
 
-const deriveTags = (name: string): string[] => {
-    return name.split('-').filter((part) => part.length > 0);
+const RATIO_PATTERN = /(\d+)-to-(\d+)/g;
+
+/**
+ * Tags are the meaningful words of the icon name plus curated synonyms, so that e.g. searching `settings` finds
+ * `IconCog`. Filler words are dropped and aspect ratios are kept as one tag (`ratio-1-to-2` becomes `1:2`).
+ */
+const deriveTags = (name: string, baseIconName: string): string[] => {
+    const ratios = [...name.matchAll(RATIO_PATTERN)].map(([, from, to]) => `${from}:${to}`);
+    const nameParts = name
+        .replaceAll(RATIO_PATTERN, '')
+        .split('-')
+        .filter((part) => part.length > 0 && !IGNORED_NAME_PARTS.has(part));
+    return [...new Set([...nameParts, ...ratios, ...(ICON_SYNONYMS[baseIconName] ?? [])])];
 };
 
-const buildExamples = (componentName: string, defaultSize: number): IconExample[] => {
+const buildExamples = (componentName: string, defaultSize: number, availableSizes: IconSize[]): IconExample[] => {
     return [
         {
             name: 'Default',
-            description: `Default usage of ${componentName} at size ${defaultSize}.`,
+            description: `Default usage of ${componentName} at size ${defaultSize}. The size prop accepts ${availableSizes.join(', ')} (default ${defaultSize}); the icon uses currentColor unless a color prop or className is given.`,
             code: `import { ${componentName} } from '${PACKAGE_NAME}';\n\n<${componentName} size={${defaultSize}} />`,
             isCanonical: true,
         },
@@ -88,12 +100,18 @@ const buildExamples = (componentName: string, defaultSize: number): IconExample[
             filled,
             availableSizes,
             defaultSize,
-            tags: deriveTags(iconName),
-            examples: buildExamples(componentName, defaultSize),
+            tags: deriveTags(iconName, baseIconName),
+            examples: buildExamples(componentName, defaultSize, availableSizes),
         };
     });
 
     icons.sort((a, b) => a.name.localeCompare(b.name));
+
+    const iconNames = new Set(icons.map((icon) => icon.name));
+    const unknownSynonymKeys = Object.keys(ICON_SYNONYMS).filter((name) => !iconNames.has(name));
+    if (unknownSynonymKeys.length > 0) {
+        throw new Error(`ICON_SYNONYMS references unknown icons: ${unknownSynonymKeys.join(', ')}`);
+    }
 
     const manifest: IconManifest = {
         packageName: PACKAGE_NAME,
