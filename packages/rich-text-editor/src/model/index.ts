@@ -45,6 +45,7 @@ export {
     type JsonObject,
     type JsonValue,
     type KeyBinding,
+    type ListLevels,
     type MarkDeclaration,
     type MarksOfDeclaration,
     type MigrationContext,

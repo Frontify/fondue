@@ -8,7 +8,7 @@ export {
     useRichTextNodeView,
 } from '#/bridge/define';
 export { useCommandState, useEditorSelection } from '#/bridge/hooks';
-export { type RuntimeEnvironment } from '#/model';
+export { type ListLevels, type RuntimeEnvironment } from '#/model';
 export {
     type LoadedDocument,
     type PersistenceOptions,
@@ -37,7 +37,6 @@ export {
     type EditorEventMap,
     type EditorHandle,
     type EditorServices,
-    type ListLevels,
     type PresentationStyle,
     type ReactPresentation,
     type ReferencePage,

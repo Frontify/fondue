@@ -438,6 +438,11 @@ export interface RichTextLocale {
     readonly translationStrings: TranslationStrings;
     readonly lang?: string;
 }
+/** List markers by nesting depth, for lists whose `marker` is null; CSS `list-style-type` values (SPEC-rich-text-editing, List levels). */
+export interface ListLevels {
+    readonly ordered: readonly { readonly counterType: string; readonly color?: string }[];
+    readonly bullet: readonly { readonly shape: string; readonly color?: string; readonly size?: string }[];
+}
 export type ReferenceResolution =
     | { readonly status: 'current'; readonly label: string }
     | { readonly status: 'unavailable'; readonly code: 'deleted' | 'forbidden' }

@@ -131,9 +131,9 @@ export const More = ({
         if (runtime === undefined) {
             return;
         }
+        // The row opens its dialog once the menu has closed, so it runs no command, whose host `execute` would open one now.
         if (item.numbering !== undefined) {
             pendingRef.current = item.numbering;
-            await runItem(runtime, item, false);
             return;
         }
         ranRef.current = true;

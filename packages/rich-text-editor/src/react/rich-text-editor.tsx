@@ -50,6 +50,7 @@ import {
 } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
+import { NumberingDialog } from '#/ui/menus/numbering';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
@@ -60,7 +61,7 @@ import { useEditorLocale } from './locale';
 import { useOverlayRoot } from './overlay-root';
 import { BlockedShell, RecoveryShell } from './shells';
 import { registerSaveCauses, SaveStatusText } from './status';
-import { menuItems, toolbarItems } from './toolbar-items';
+import { menuItems, numberingStrings, toolbarItems } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
     type EditorHandle,
@@ -283,6 +284,8 @@ const SessionComponent = (
         element: overlayRootElement,
     } = useOverlayRoot(coordinator, props.portalContainer);
     const [toolbarMode, setToolbarMode] = useState<ToolbarMode>(() => props.defaultToolbarMode ?? 'fixed');
+    // The package-built control a host `execute` opened.
+    const [control, setControl] = useState<string>();
     const switchToolbar = useCallback((next: ToolbarMode) => {
         setToolbarMode(next);
         latestRef.current.onToolbarModeChange?.(next);
@@ -337,6 +340,7 @@ const SessionComponent = (
             saves,
             recovery: () => memberOf(latestRef.current.services, 'recovery'),
             inputRules: () => latestRef.current.inputRules,
+            openControl: setControl,
         });
         // Each event calls the newest callback the host passed (SPEC-rich-text-react/AC-004).
         runtime.handle.subscribe('ready', (session: SessionToken) => {
@@ -388,6 +392,10 @@ const SessionComponent = (
     useClientLayoutEffect(() => {
         coordinator.runtime?.setDisabled(disabled);
     }, [coordinator, disabled]);
+    const listLevels = props.presentation?.listLevels;
+    useClientLayoutEffect(() => {
+        coordinator.chrome.setListLevels(listLevels);
+    }, [coordinator, listLevels]);
 
     // A changed `services` member aborts the operations it started, with no rebuild (SPEC-rich-text-runtime/AC-073, DR-074).
     const { services } = props;
@@ -561,6 +569,12 @@ const SessionComponent = (
                                 {children}
                                 {toolbarMode === 'bubble' && <Bubble />}
                                 <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
+                                {control === 'numbering' && (
+                                    <NumberingDialog
+                                        strings={numberingStrings(chromeContext.t)}
+                                        onClose={() => setControl(undefined)}
+                                    />
+                                )}
                                 <div
                                     ref={announcer.setRegion}
                                     aria-live="polite"
