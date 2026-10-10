@@ -1226,6 +1226,18 @@ describe('pasted HTML', () => {
         mounted.unmount();
     });
 
+    it('SPEC-rich-text-clipboard/AC-010 keeps the text of a pasted object and drops its embed, param and nested object', () => {
+        const mounted = mount({ blocks: [paragraph()] });
+
+        pasteInto(mounted, {
+            'text/html':
+                '<p>a</p><object data="x.swf"><param name="p" value="v">fallback <b>text</b><embed src="y"><object>no</object></object>',
+        });
+
+        expect(mounted.content()).toEqual([paragraph(text('a')), paragraph(text('fallback text'))]);
+        mounted.unmount();
+    });
+
     it('SPEC-rich-text-clipboard/AC-010 lets the parse rules of shipped features read only the attributes and styles the Parse rules on external HTML section lists', () => {
         const attributes = new Set([
             'href',

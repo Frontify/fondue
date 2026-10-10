@@ -131,7 +131,7 @@ describe('external HTML', () => {
         'iframe.html': 'a|b',
         'javascript-urls.html': 'js mixed encoded data',
         'math.html': 'Before|pimath link|After',
-        'object.html': '',
+        'object.html': 'fallback',
         'script-style.html': 'Kept',
         'svg.html': 'Before|svg text svg link|After',
     };
