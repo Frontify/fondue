@@ -3,6 +3,7 @@
 import { ThemeProvider } from '@frontify/fondue-components';
 import { undoDepth } from 'prosemirror-history';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { bold, core } from '../../src/features';
 import { fixtureChromeViews } from '../../src/features/__fixtures__/chrome/view';
@@ -20,7 +21,9 @@ import {
     type EditorHandle,
     type PersistenceService,
     RichTextEditor,
+    type RichTextFormField,
     type SaveRequest,
+    useRichTextFormField,
 } from '../../src/index';
 import { compileContentModel, type ContentModel, type ContentNodeJSON } from '../../src/model';
 import { boldRules } from '../../src/react/playground.stories';
@@ -108,6 +111,8 @@ declare global {
             readonly saves: readonly SaveRequest[];
             /** Answers each save that `holdSaves` holds. */
             readonly answerSaves: () => void;
+            /** The editor as a host form field. */
+            readonly field: RichTextFormField;
         };
     }
 }
@@ -131,6 +136,7 @@ export const EditorProbe = ({
     profile,
     withReader = false,
     inForm = false,
+    inFrame = false,
     rerendered = {},
     persistence = false,
     holdSaves = false,
@@ -154,6 +160,8 @@ export const EditorProbe = ({
     readonly withReader?: boolean;
     /** Puts the editor in a form. */
     readonly inForm?: boolean;
+    /** Renders the editor in the body of a same-origin iframe, after a parent page button named Parent. */
+    readonly inFrame?: boolean;
     readonly rerendered?: Rerendered;
     /** Mounts with the reference fake persistence service, which records each request in `window.rte.saves`. */
     readonly persistence?: boolean;
@@ -162,6 +170,15 @@ export const EditorProbe = ({
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
+    const field = useRichTextFormField(ref);
+    const frameRef = useRef<HTMLIFrameElement>(null);
+    const [frameBody, setFrameBody] = useState<HTMLElement | null>(null);
+    useEffect(() => {
+        const frame = frameRef.current;
+        if (inFrame && frame !== null && frame.contentDocument !== null) {
+            setFrameBody(frame.contentDocument.body);
+        }
+    }, [inFrame]);
     const [environment] = useState(() => {
         if (controlled) {
             return createTestEnvironment({ seed: 1 });
@@ -243,9 +260,10 @@ export const EditorProbe = ({
                         answer();
                     }
                 },
+                field,
             };
         }
-    }, [environment, saves, held]);
+    }, [environment, saves, held, field, frameBody]);
     const editor = (
         <>
             <button type="button">Before</button>
@@ -275,6 +293,15 @@ export const EditorProbe = ({
     );
     if (inForm) {
         return <form onSubmit={(event) => event.preventDefault()}>{editor}</form>;
+    }
+    if (inFrame) {
+        return (
+            <>
+                <button type="button">Parent</button>
+                <iframe ref={frameRef} title="Embedded editor" style={{ inlineSize: 600, blockSize: 400 }} />
+                {frameBody !== null && createPortal(editor, frameBody)}
+            </>
+        );
     }
     return editor;
 };

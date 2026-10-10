@@ -1,0 +1,166 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of de-CH its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Jemand anderes hat diesen Inhalt geändert. Ihre Änderungen bleiben erhalten, sind aber nicht gespeichert.",
+  "RichTextEditor_saveFailed": "Speichern fehlgeschlagen. Ihre Änderungen sind nicht gespeichert.",
+  "RichTextEditor_saveForbidden": "Nicht gespeichert: Sie dürfen diesen Inhalt nicht bearbeiten. Fordern Sie Zugriff an oder melden Sie sich erneut an.",
+  "RichTextEditor_saveIncompatible": "Nicht gespeichert: Dieser Editor ist veraltet. Laden Sie die Seite neu.",
+  "RichTextEditor_saveInvalid": "Nicht gespeichert: Der Inhalt wurde nicht angenommen. Kopieren Sie ihn, um Ihre Änderungen zu behalten.",
+  "RichTextEditor_saveOffline": "Offline. Änderungen werden gespeichert, sobald Sie wieder online sind.",
+  "RichTextEditor_saveRetrying": "Speichern fehlgeschlagen. Neuer Versuch…",
+  "RichTextEditor_saveSaved": "Alle Änderungen gespeichert",
+  "RichTextEditor_saveSaving": "Wird gespeichert…",
+  "RichTextEditor_saveUnsaved": "Nicht gespeicherte Änderungen",
+}
+`;
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of de-DE its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Jemand anderes hat diesen Inhalt geändert. Ihre Änderungen bleiben erhalten, sind aber nicht gespeichert.",
+  "RichTextEditor_saveFailed": "Speichern fehlgeschlagen. Ihre Änderungen sind nicht gespeichert.",
+  "RichTextEditor_saveForbidden": "Nicht gespeichert: Sie dürfen diesen Inhalt nicht bearbeiten. Fordern Sie Zugriff an oder melden Sie sich erneut an.",
+  "RichTextEditor_saveIncompatible": "Nicht gespeichert: Dieser Editor ist veraltet. Laden Sie die Seite neu.",
+  "RichTextEditor_saveInvalid": "Nicht gespeichert: Der Inhalt wurde nicht angenommen. Kopieren Sie ihn, um Ihre Änderungen zu behalten.",
+  "RichTextEditor_saveOffline": "Offline. Änderungen werden gespeichert, sobald Sie wieder online sind.",
+  "RichTextEditor_saveRetrying": "Speichern fehlgeschlagen. Neuer Versuch…",
+  "RichTextEditor_saveSaved": "Alle Änderungen gespeichert",
+  "RichTextEditor_saveSaving": "Wird gespeichert…",
+  "RichTextEditor_saveUnsaved": "Nicht gespeicherte Änderungen",
+}
+`;
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of en-US its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Someone else changed this content. Your changes are kept but not saved.",
+  "RichTextEditor_saveFailed": "Saving failed. Your changes are not saved.",
+  "RichTextEditor_saveForbidden": "Not saved: you cannot edit this content. Ask for access or sign in again.",
+  "RichTextEditor_saveIncompatible": "Not saved: this editor is out of date. Reload the page.",
+  "RichTextEditor_saveInvalid": "Not saved: the content was not accepted. Copy it to keep your changes.",
+  "RichTextEditor_saveOffline": "Offline. Changes save when you are back online.",
+  "RichTextEditor_saveRetrying": "Saving failed. Trying again…",
+  "RichTextEditor_saveSaved": "All changes saved",
+  "RichTextEditor_saveSaving": "Saving…",
+  "RichTextEditor_saveUnsaved": "Unsaved changes",
+}
+`;
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of es-ES its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Otra persona ha cambiado este contenido. Tus cambios se conservan, pero no se han guardado.",
+  "RichTextEditor_saveFailed": "No se ha podido guardar. Tus cambios no están guardados.",
+  "RichTextEditor_saveForbidden": "No guardado: no puedes editar este contenido. Solicita acceso o vuelve a iniciar sesión.",
+  "RichTextEditor_saveIncompatible": "No guardado: este editor está desactualizado. Vuelve a cargar la página.",
+  "RichTextEditor_saveInvalid": "No guardado: el contenido no se ha aceptado. Cópialo para conservar tus cambios.",
+  "RichTextEditor_saveOffline": "Sin conexión. Los cambios se guardarán cuando vuelvas a estar en línea.",
+  "RichTextEditor_saveRetrying": "No se ha podido guardar. Reintentando…",
+  "RichTextEditor_saveSaved": "Todos los cambios guardados",
+  "RichTextEditor_saveSaving": "Guardando…",
+  "RichTextEditor_saveUnsaved": "Cambios sin guardar",
+}
+`;
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of fr-CH its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Quelqu’un d’autre a modifié ce contenu. Vos modifications sont conservées mais pas enregistrées.",
+  "RichTextEditor_saveFailed": "L’enregistrement a échoué. Vos modifications ne sont pas enregistrées.",
+  "RichTextEditor_saveForbidden": "Non enregistré : vous ne pouvez pas modifier ce contenu. Demandez l’accès ou reconnectez-vous.",
+  "RichTextEditor_saveIncompatible": "Non enregistré : cet éditeur n’est plus à jour. Rechargez la page.",
+  "RichTextEditor_saveInvalid": "Non enregistré : le contenu n’a pas été accepté. Copiez-le pour conserver vos modifications.",
+  "RichTextEditor_saveOffline": "Hors ligne. Les modifications seront enregistrées dès votre retour en ligne.",
+  "RichTextEditor_saveRetrying": "L’enregistrement a échoué. Nouvelle tentative…",
+  "RichTextEditor_saveSaved": "Toutes les modifications sont enregistrées",
+  "RichTextEditor_saveSaving": "Enregistrement…",
+  "RichTextEditor_saveUnsaved": "Modifications non enregistrées",
+}
+`;
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of fr-FR its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Quelqu’un d’autre a modifié ce contenu. Vos modifications sont conservées mais pas enregistrées.",
+  "RichTextEditor_saveFailed": "L’enregistrement a échoué. Vos modifications ne sont pas enregistrées.",
+  "RichTextEditor_saveForbidden": "Non enregistré : vous ne pouvez pas modifier ce contenu. Demandez l’accès ou reconnectez-vous.",
+  "RichTextEditor_saveIncompatible": "Non enregistré : cet éditeur n’est plus à jour. Rechargez la page.",
+  "RichTextEditor_saveInvalid": "Non enregistré : le contenu n’a pas été accepté. Copiez-le pour conserver vos modifications.",
+  "RichTextEditor_saveOffline": "Hors ligne. Les modifications seront enregistrées dès votre retour en ligne.",
+  "RichTextEditor_saveRetrying": "L’enregistrement a échoué. Nouvelle tentative…",
+  "RichTextEditor_saveSaved": "Toutes les modifications sont enregistrées",
+  "RichTextEditor_saveSaving": "Enregistrement…",
+  "RichTextEditor_saveUnsaved": "Modifications non enregistrées",
+}
+`;
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of it-CH its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Qualcun altro ha modificato questo contenuto. Le tue modifiche sono conservate ma non salvate.",
+  "RichTextEditor_saveFailed": "Salvataggio non riuscito. Le tue modifiche non sono salvate.",
+  "RichTextEditor_saveForbidden": "Non salvato: non puoi modificare questo contenuto. Richiedi l’accesso o accedi di nuovo.",
+  "RichTextEditor_saveIncompatible": "Non salvato: questo editor non è aggiornato. Ricarica la pagina.",
+  "RichTextEditor_saveInvalid": "Non salvato: il contenuto non è stato accettato. Copialo per conservare le tue modifiche.",
+  "RichTextEditor_saveOffline": "Offline. Le modifiche verranno salvate quando tornerai online.",
+  "RichTextEditor_saveRetrying": "Salvataggio non riuscito. Nuovo tentativo…",
+  "RichTextEditor_saveSaved": "Tutte le modifiche salvate",
+  "RichTextEditor_saveSaving": "Salvataggio…",
+  "RichTextEditor_saveUnsaved": "Modifiche non salvate",
+}
+`;
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of it-IT its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Qualcun altro ha modificato questo contenuto. Le tue modifiche sono conservate ma non salvate.",
+  "RichTextEditor_saveFailed": "Salvataggio non riuscito. Le tue modifiche non sono salvate.",
+  "RichTextEditor_saveForbidden": "Non salvato: non puoi modificare questo contenuto. Richiedi l’accesso o accedi di nuovo.",
+  "RichTextEditor_saveIncompatible": "Non salvato: questo editor non è aggiornato. Ricarica la pagina.",
+  "RichTextEditor_saveInvalid": "Non salvato: il contenuto non è stato accettato. Copialo per conservare le tue modifiche.",
+  "RichTextEditor_saveOffline": "Offline. Le modifiche verranno salvate quando tornerai online.",
+  "RichTextEditor_saveRetrying": "Salvataggio non riuscito. Nuovo tentativo…",
+  "RichTextEditor_saveSaved": "Tutte le modifiche salvate",
+  "RichTextEditor_saveSaving": "Salvataggio…",
+  "RichTextEditor_saveUnsaved": "Modifiche non salvate",
+}
+`;
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of nl-NL its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Iemand anders heeft deze inhoud gewijzigd. Je wijzigingen blijven behouden, maar zijn niet opgeslagen.",
+  "RichTextEditor_saveFailed": "Opslaan is mislukt. Je wijzigingen zijn niet opgeslagen.",
+  "RichTextEditor_saveForbidden": "Niet opgeslagen: je mag deze inhoud niet bewerken. Vraag toegang aan of meld je opnieuw aan.",
+  "RichTextEditor_saveIncompatible": "Niet opgeslagen: deze editor is verouderd. Laad de pagina opnieuw.",
+  "RichTextEditor_saveInvalid": "Niet opgeslagen: de inhoud is niet geaccepteerd. Kopieer de inhoud om je wijzigingen te bewaren.",
+  "RichTextEditor_saveOffline": "Offline. Wijzigingen worden opgeslagen zodra je weer online bent.",
+  "RichTextEditor_saveRetrying": "Opslaan is mislukt. Opnieuw proberen…",
+  "RichTextEditor_saveSaved": "Alle wijzigingen opgeslagen",
+  "RichTextEditor_saveSaving": "Opslaan…",
+  "RichTextEditor_saveUnsaved": "Niet-opgeslagen wijzigingen",
+}
+`;
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of pl-PL its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Ktoś inny zmienił tę treść. Twoje zmiany są zachowane, ale niezapisane.",
+  "RichTextEditor_saveFailed": "Zapisywanie nie powiodło się. Twoje zmiany nie są zapisane.",
+  "RichTextEditor_saveForbidden": "Nie zapisano: nie możesz edytować tej treści. Poproś o dostęp lub zaloguj się ponownie.",
+  "RichTextEditor_saveIncompatible": "Nie zapisano: ten edytor jest nieaktualny. Odśwież stronę.",
+  "RichTextEditor_saveInvalid": "Nie zapisano: treść nie została przyjęta. Skopiuj ją, aby zachować zmiany.",
+  "RichTextEditor_saveOffline": "Brak połączenia. Zmiany zostaną zapisane po powrocie do sieci.",
+  "RichTextEditor_saveRetrying": "Zapisywanie nie powiodło się. Ponawianie…",
+  "RichTextEditor_saveSaved": "Wszystkie zmiany zapisane",
+  "RichTextEditor_saveSaving": "Zapisywanie…",
+  "RichTextEditor_saveUnsaved": "Niezapisane zmiany",
+}
+`;
+
+exports[`package locales > SPEC-rich-text-persistence/AC-048 SPEC-rich-text-persistence/AC-062 gives each save state of pt-PT its own message 1`] = `
+{
+  "RichTextEditor_saveConflict": "Outra pessoa alterou este conteúdo. As suas alterações são mantidas, mas não foram guardadas.",
+  "RichTextEditor_saveFailed": "Não foi possível guardar. As suas alterações não estão guardadas.",
+  "RichTextEditor_saveForbidden": "Não guardado: não pode editar este conteúdo. Peça acesso ou inicie sessão novamente.",
+  "RichTextEditor_saveIncompatible": "Não guardado: este editor está desatualizado. Recarregue a página.",
+  "RichTextEditor_saveInvalid": "Não guardado: o conteúdo não foi aceite. Copie-o para manter as suas alterações.",
+  "RichTextEditor_saveOffline": "Sem ligação. As alterações serão guardadas quando voltar a estar online.",
+  "RichTextEditor_saveRetrying": "Não foi possível guardar. A tentar novamente…",
+  "RichTextEditor_saveSaved": "Todas as alterações guardadas",
+  "RichTextEditor_saveSaving": "A guardar…",
+  "RichTextEditor_saveUnsaved": "Alterações não guardadas",
+}
+`;

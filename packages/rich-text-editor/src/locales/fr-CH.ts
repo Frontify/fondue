@@ -37,6 +37,19 @@ export const frCH = {
             'L’éditeur a cessé de fonctionner. Vos dernières modifications sont affichées ci-dessous.',
         RichTextEditor_redo: 'Rétablir',
         RichTextEditor_retry: 'Réessayer',
+        RichTextEditor_saveConflict:
+            'Quelqu’un d’autre a modifié ce contenu. Vos modifications sont conservées mais pas enregistrées.',
+        RichTextEditor_saveFailed: 'L’enregistrement a échoué. Vos modifications ne sont pas enregistrées.',
+        RichTextEditor_saveForbidden:
+            'Non enregistré\u00A0: vous ne pouvez pas modifier ce contenu. Demandez l’accès ou reconnectez-vous.',
+        RichTextEditor_saveIncompatible: 'Non enregistré\u00A0: cet éditeur n’est plus à jour. Rechargez la page.',
+        RichTextEditor_saveInvalid:
+            'Non enregistré\u00A0: le contenu n’a pas été accepté. Copiez-le pour conserver vos modifications.',
+        RichTextEditor_saveOffline: 'Hors ligne. Les modifications seront enregistrées dès votre retour en ligne.',
+        RichTextEditor_saveRetrying: 'L’enregistrement a échoué. Nouvelle tentative…',
+        RichTextEditor_saveSaved: 'Toutes les modifications sont enregistrées',
+        RichTextEditor_saveSaving: 'Enregistrement…',
+        RichTextEditor_saveUnsaved: 'Modifications non enregistrées',
         RichTextEditor_strike: 'Barré',
         RichTextEditor_subscript: 'Indice',
         RichTextEditor_superscript: 'Exposant',

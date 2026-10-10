@@ -32,7 +32,7 @@ import { OverlayContext, useScopedFocus } from '#/bridge/overlays';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
 import { enUS } from '#/locales/en-US';
-import { type CapabilityRef, type DecodeResult, type Diagnostic, type RichTextDocument } from '#/model';
+import { type CapabilityRef, type DecodeResult, type Diagnostic, hashDocument, type RichTextDocument } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { contentClasses } from '#/model/output';
@@ -54,10 +54,12 @@ import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolba
 
 import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
 import { engineOf, viewsOf } from './define';
+import { registerFormField } from './form-field';
 import { useKeyboardInset } from './keyboard-inset';
 import { useEditorLocale } from './locale';
 import { useOverlayRoot } from './overlay-root';
 import { BlockedShell, RecoveryShell } from './shells';
+import { registerSaveCauses, SaveStatusText } from './status';
 import { menuItems, toolbarItems } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
@@ -127,13 +129,16 @@ interface Mounted {
     /** The document's own language and direction, which win over the theme's (SPEC-rich-text-react/AC-061). */
     readonly lang: string | undefined;
     readonly dir: 'ltr' | 'rtl' | undefined;
+    /** Mounted with `services.persistence`, which keeps the session managed for its whole life (SPEC-rich-text-persistence/AC-001). */
+    readonly managed: boolean;
 }
 
-const mountOf = (props: Defined): Mounted => {
-    const { definition, profile, defaultValue } = props;
+const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
+    const { definition, profile } = props;
     const engine = engineOf(definition);
-    const { result, tree } = decodeToTree(defaultValue.document, engine.model, { limits: definition.limits });
-    const unset = { lang: undefined, dir: undefined };
+    const { result, tree } = decodeToTree(loaded.document, engine.model, { limits: definition.limits });
+    const managed = memberOf(props.services, 'persistence') !== undefined;
+    const unset = { lang: undefined, dir: undefined, managed };
     if (result.status === 'blocked') {
         return { definition, profile, decoded: undefined, blocked: result, ...unset };
     }
@@ -151,7 +156,7 @@ const mountOf = (props: Defined): Mounted => {
         dir = tree.attrs.dir;
     }
     const decoded = { tree, capabilities: result.document.requiredCapabilities };
-    return { definition, profile, decoded, blocked: undefined, lang, dir };
+    return { definition, profile, decoded, blocked: undefined, lang, dir, managed };
 };
 
 /** What the parts share for the toolbars and focus moves between the surface and the chrome (SPEC-rich-text-react, Overlay focus). */
@@ -175,6 +180,8 @@ interface Chrome {
     readonly keyboard: number;
     /** The language of the chrome's strings, which the root, node chrome and data manifest labels take (WCAG 2.2 SC 3.1.2). */
     readonly lang: string;
+    /** The chrome's strings in the shown locale. */
+    readonly t: ReturnType<typeof readerContext>['t'];
 }
 
 interface RootContextValue {
@@ -220,6 +227,8 @@ interface RecoverySession {
 
 type SessionProps = Defined & {
     readonly children: ReactNode;
+    /** The snapshot Retry mounts this session from, in place of `defaultValue` (SPEC-rich-text-react/AC-085). */
+    readonly retried: LoadedDocument | undefined;
     /** Receives the handle of each session it runs, whose snapshot the recovery shell reads. */
     readonly onSession: (session: RecoverySession) => void;
     /** The document holds changes the failed session before Retry never saved. */
@@ -231,10 +240,12 @@ type SessionProps = Defined & {
 };
 
 const SessionComponent = (
-    { children, onSession, onRetry, ...props }: SessionProps,
+    { children, onSession, onRetry, retried, ...props }: SessionProps,
     ref: ForwardedRef<EditorHandle<object>>,
 ) => {
-    const [mounted] = useState(() => mountOf(props));
+    // The record this session loads, which a later `defaultValue` never replaces (SPEC-rich-text-persistence/AC-038).
+    const [loaded] = useState(() => retried ?? props.defaultValue);
+    const [mounted] = useState(() => mountOf(props, loaded));
     // The snapshot of a session that entered `faulted`, which the recovery shell shows (DR-078).
     const [faulted, setFaulted] = useState<RichTextDocument>();
     const [coordinator] = useState(createMountCoordinator);
@@ -290,7 +301,7 @@ const SessionComponent = (
         if (decoded === undefined) {
             return;
         }
-        const { environment = browserEnvironment, defaultValue } = latestRef.current;
+        const { environment = browserEnvironment } = latestRef.current;
         const engine = engineOf(definition);
         // A session is managed for its whole life when it mounts with `services.persistence` (SPEC-rich-text-persistence/AC-001).
         const persistence = memberOf(latestRef.current.services, 'persistence');
@@ -302,7 +313,7 @@ const SessionComponent = (
                     // A host that drops the member later keeps the service the session mounted with.
                     service: () => memberOf(latestRef.current.services, 'persistence') ?? persistence,
                     options: () => latestRef.current.persistenceOptions,
-                    revision: defaultValue.revision,
+                    revision: loaded.revision,
                     unsavedOnMount: latestRef.current.unsavedOnMount,
                     carried: latestRef.current.carried,
                     model: engine.model,
@@ -313,7 +324,7 @@ const SessionComponent = (
         }
         const runtime = createEditorRuntime({
             definition: engine,
-            documentId: defaultValue.documentId,
+            documentId: loaded.documentId,
             tree: decoded.tree,
             capabilities: decoded.capabilities,
             environment,
@@ -322,7 +333,7 @@ const SessionComponent = (
             limits: definition.limits,
             nodeViews: (session) => createNodeViews(viewsOf(definition), { portals, runtime: session }),
             inRender: () => inReactWork(work),
-            revision: defaultValue.revision,
+            revision: loaded.revision,
             saves,
             recovery: () => memberOf(latestRef.current.services, 'recovery'),
             inputRules: () => latestRef.current.inputRules,
@@ -354,13 +365,17 @@ const SessionComponent = (
             }
         });
         handleRef.current = runtime.handle;
+        if (created !== undefined) {
+            registerSaveCauses(runtime.handle, created);
+        }
+        registerFormField(runtime.handle, () => latestRef.current);
         onSession({ handle: runtime.handle, unresolved: () => created?.unresolved() });
         coordinator.start(runtime);
         return () => {
             coordinator.stop();
             runtime.handle.dispose();
         };
-    }, [mounted, coordinator, portals, work, onSession]);
+    }, [mounted, loaded, coordinator, portals, work, onSession]);
 
     // A blocked document gets no session and so no handle.
     useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
@@ -405,6 +420,29 @@ const SessionComponent = (
             });
         }
     }, [definition, profile, mounted, coordinator]);
+
+    // A changed `defaultValue` replaces nothing, so a development build says so once per change (SPEC-rich-text-persistence/AC-039).
+    const { defaultValue } = props;
+    const defaultValueRef = useRef(defaultValue);
+    useEffect(() => {
+        const previous = defaultValueRef.current;
+        defaultValueRef.current = defaultValue;
+        if (process.env.NODE_ENV === 'production' || previous === defaultValue) {
+            return;
+        }
+        // A host that builds an equal record on each render changes nothing.
+        if (
+            previous.documentId === defaultValue.documentId &&
+            hashDocument(previous.document) === hashDocument(defaultValue.document)
+        ) {
+            return;
+        }
+        coordinator.runtime?.report({
+            code: 'react.default-value-changed',
+            severity: 'warning',
+            messageKey: 'react.default-value-changed',
+        });
+    }, [defaultValue, coordinator]);
 
     const onFlush = useCallback(() => resyncSelection(coordinator.runtime?.view), [coordinator]);
 
@@ -481,6 +519,7 @@ const SessionComponent = (
             setMode: switchToolbar,
             keyboard,
             lang,
+            t,
         };
     }, [items, menu, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard, lang]);
 
@@ -615,7 +654,7 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
                 <Session
                     key={this.state.retries}
                     {...props}
-                    defaultValue={this.defaultValue()}
+                    retried={this.state.retried}
                     unsavedOnMount={this.state.unsavedOnMount}
                     carried={this.state.carried}
                     onSession={this.onSession}
@@ -835,10 +874,23 @@ const BubbleToolbarPart = () => {
 };
 BubbleToolbarPart.displayName = 'RichTextEditor.BubbleToolbar';
 
+/** The session's save state (SPEC-rich-text-persistence/AC-046 to AC-048, AC-062). */
+const Status = () => {
+    const { props, mounted, chrome } = useRoot('Status');
+    const { 'data-test-id': testId = DEFAULT_TEST_ID } = props;
+    // An unmanaged session has no save state to show.
+    if (!mounted.managed) {
+        return null;
+    }
+    return <SaveStatusText t={chrome.t} testId={testId} />;
+};
+Status.displayName = 'RichTextEditor.Status';
+
 const Editor = forwardRef((props: Props, ref: ForwardedRef<EditorHandle<object>>) => (
     <Root {...props} ref={ref}>
         <Toolbar />
         <Surface />
+        <Status />
     </Root>
 ));
 Editor.displayName = 'RichTextEditor';
@@ -849,6 +901,7 @@ export const RichTextEditor = Object.assign(Editor, {
     Surface,
     Toolbar,
     BubbleToolbar: BubbleToolbarPart,
+    Status,
 }) as unknown as (<C extends object = ShippedCommands>(props: RichTextEditorProps<C>) => ReactNode) & {
     /** Takes the editor props and renders its own layout from the parts; `RichTextEditor` is Root with the default parts. */
     readonly Root: <C extends object = ShippedCommands>(
@@ -857,4 +910,5 @@ export const RichTextEditor = Object.assign(Editor, {
     readonly Surface: ComponentType<object>;
     readonly Toolbar: ComponentType<object>;
     readonly BubbleToolbar: ComponentType<object>;
+    readonly Status: ComponentType<object>;
 };

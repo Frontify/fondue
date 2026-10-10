@@ -35,6 +35,18 @@ export const esES = {
         RichTextEditor_recoveryMessage: 'El editor dejó de funcionar. Tus últimos cambios se muestran a continuación.',
         RichTextEditor_redo: 'Rehacer',
         RichTextEditor_retry: 'Reintentar',
+        RichTextEditor_saveConflict:
+            'Otra persona ha cambiado este contenido. Tus cambios se conservan, pero no se han guardado.',
+        RichTextEditor_saveFailed: 'No se ha podido guardar. Tus cambios no están guardados.',
+        RichTextEditor_saveForbidden:
+            'No guardado: no puedes editar este contenido. Solicita acceso o vuelve a iniciar sesión.',
+        RichTextEditor_saveIncompatible: 'No guardado: este editor está desactualizado. Vuelve a cargar la página.',
+        RichTextEditor_saveInvalid: 'No guardado: el contenido no se ha aceptado. Cópialo para conservar tus cambios.',
+        RichTextEditor_saveOffline: 'Sin conexión. Los cambios se guardarán cuando vuelvas a estar en línea.',
+        RichTextEditor_saveRetrying: 'No se ha podido guardar. Reintentando…',
+        RichTextEditor_saveSaved: 'Todos los cambios guardados',
+        RichTextEditor_saveSaving: 'Guardando…',
+        RichTextEditor_saveUnsaved: 'Cambios sin guardar',
         RichTextEditor_strike: 'Tachado',
         RichTextEditor_subscript: 'Subíndice',
         RichTextEditor_superscript: 'Superíndice',
