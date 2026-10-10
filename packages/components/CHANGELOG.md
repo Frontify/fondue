@@ -1,5 +1,40 @@
 # @frontify/fondue-components
 
+## 33.0.2
+
+### Patch Changes
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: improve the component manifest data. Canonical examples of `TextInput`, `Checkbox`, `Label`, `Switch`, `Dialog`, `ThemeProvider`, `Select`, `DatePicker`, `Flyout`, `RadioList`, `Textarea` and `Tooltip` are now copy-pasteable, `Text` lists its props, `Switch` and other labelled inputs list `aria-label`/`aria-labelledby`/`aria-describedby`, `Select` no longer lists internal props or a non-existent `Select.Multi`/`Select.Menu`, and the `Checkbox.onChange` and `Select.onSelect` docs explain how to read the checked state and the `null` value on clear
+
+- [#2878](https://github.com/Frontify/fondue/pull/2878) [`557a49d`](https://github.com/Frontify/fondue/commit/557a49dc1226498e121660acc2869d47610eca48) Thanks [@syeo66](https://github.com/syeo66)! - fix(OrderableList): prevent stale a11y attributes after disabled state
+
+- [#2879](https://github.com/Frontify/fondue/pull/2879) [`cff52fb`](https://github.com/Frontify/fondue/commit/cff52fbfb2349bffae3b498a72a01d959d98942f) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(Link): respect `target="_blank"` and modifier clicks instead of always navigating through the router
+
+- [#2873](https://github.com/Frontify/fondue/pull/2873) [`9e83eee`](https://github.com/Frontify/fondue/commit/9e83eee7cf76830d5e6e1f28e5dd72fde8036393) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add entrypoint for ai agents
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(ThemeProvider): remove `base` from the accepted `theme` values; it only holds the primitive palette and left components without their semantic colours
+
+- [#2870](https://github.com/Frontify/fondue/pull/2870) [`07d0eb8`](https://github.com/Frontify/fondue/commit/07d0eb8b048b119cbc251bd77618b667563e1c3f) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): hide the drag handle until the pointer or keyboard focus is on the row
+
+- [#2871](https://github.com/Frontify/fondue/pull/2871) [`5f55b89`](https://github.com/Frontify/fondue/commit/5f55b892dd6ce8fd9ba9c744c4e95df01cf0e816) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): round the ends of the drop line, and composite the dragged row so the preview keeps its rounded corners
+
+- Updated dependencies [[`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703)]:
+  - @frontify/fondue-icons@0.29.1
+  - @frontify/fondue-tokens@5.1.2
+
+## 33.0.1
+
+### Patch Changes
+
+- [#2866](https://github.com/Frontify/fondue/pull/2866) [`f8a87bd`](https://github.com/Frontify/fondue/commit/f8a87bd1ab2ec860a02a8b67c06ef1e0fa9c7b8a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Select): filter `Select.Combobox` items inside `Select.Group` and hide groups without matches, so selecting a filtered grouped item works
+
+- [#2867](https://github.com/Frontify/fondue/pull/2867) [`9e286b1`](https://github.com/Frontify/fondue/commit/9e286b180734d5aa53922fce34d2f6b063f607e6) Thanks [@syeo66](https://github.com/syeo66)! - feat(Dialog): enable container prop
+
+- [#2869](https://github.com/Frontify/fondue/pull/2869) [`64345cf`](https://github.com/Frontify/fondue/commit/64345cfe58d90fdb636e3830974265d76d816acc) Thanks [@syeo66](https://github.com/syeo66)! - fix(TextInput): hide the visual placeholder from screen readers so the placeholder is not announced twice
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.1.2
+
 ## 33.0.0
 
 ### Minor Changes
