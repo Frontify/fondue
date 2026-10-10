@@ -187,8 +187,9 @@ const textReplace = (rule: TextReplaceRule, state: EditorState, $cursor: Resolve
     if (found === null) {
         return null;
     }
-    // A boundary rule replaces a whole run, so `a --- b` keeps its three hyphens.
-    if (rule.boundary && text.charAt(found.index - 1) === found[0].charAt(0)) {
+    // A boundary rule replaces a whole run, so `a --- b` keeps its three hyphens, and `<!-- ` and `<-- ` stay as typed.
+    const lead = text.charAt(found.index - 1);
+    if (rule.boundary && (lead === found[0].charAt(0) || lead === '<' || lead === '!')) {
         return null;
     }
     const from = $cursor.pos - before.length + found.index;
@@ -232,11 +233,20 @@ const quotes = (rule: QuotesRule, state: EditorState, $cursor: ResolvedPos, befo
     if (rule.marker === "'") {
         [open, close] = marks.secondary;
     }
-    const previous = Array.from(before.slice(0, -1)).at(-1) ?? '';
+    const typed = before.slice(0, -1);
+    const previous = Array.from(typed).at(-1) ?? '';
+    // An inner quote that the text before opened and did not close closes after a letter; otherwise that is an apostrophe.
+    const [innerOpen, innerClose] = marks.secondary;
+    const depth = typed.split(innerOpen).length - typed.split(innerClose).length;
+    // French nests « » in « », so an inner quote is open only inside an open outer one.
+    let innerOpened = depth > 0;
+    if (innerOpen === marks.primary[0]) {
+        innerOpened = depth > 1;
+    }
     let quote = close;
-    if (previous === '' || OPENS_AFTER.test(previous) || [...marks.primary, ...marks.secondary].includes(previous)) {
+    if (previous === '' || OPENS_AFTER.test(previous) || previous === marks.primary[0] || previous === innerOpen) {
         quote = open;
-    } else if (rule.marker === "'" && WORD.test(previous)) {
+    } else if (rule.marker === "'" && WORD.test(previous) && !innerOpened) {
         quote = marks.apostrophe;
     }
     return state.tr.insertText(quote, $cursor.pos - 1, $cursor.pos);

@@ -187,6 +187,33 @@ const sameRun = (a: Run, b: Run) => a.text === b.text && a.mark.eq(b.mark);
 
 const headingsOf = ({ nodes }: Occurrences): Node[] =>
     [...nodes.values()].flat().filter((node) => node.type.name === HEADING);
+const textblocksIn = ({ nodes }: Occurrences): number =>
+    [...nodes.values()].flat().filter((node) => node.isTextblock).length;
+
+/**
+ * Whether a batch makes a heading of a level the policy does not offer. A stored heading keeps its level, and Enter may
+ * split it: a heading with a new `nodeId` passes only as one of the blocks the batch added, next to a heading of its
+ * level, so turning other blocks into that level never does (SPEC-rich-text-editing/AC-013, AC-014).
+ */
+const makesRefusedHeading = (policy: AuthoringPolicy, previous: Occurrences, next: Occurrences): boolean => {
+    const before = headingsOf(previous);
+    let splits = Math.max(0, textblocksIn(next) - textblocksIn(previous));
+    for (const heading of headingsOf(next)) {
+        const { level, nodeId } = heading.attrs;
+        if (
+            !refusesLevel(policy, heading.attrs) ||
+            before.some((old) => old.attrs.nodeId === nodeId && old.attrs.level === level)
+        ) {
+            continue;
+        }
+        const fresh = !before.some((old) => old.attrs.nodeId === nodeId);
+        if (!fresh || splits === 0 || !before.some((old) => old.attrs.level === level)) {
+            return true;
+        }
+        splits -= 1;
+    }
+    return false;
+};
 
 /**
  * A mark's runs compared piece by piece through the batch's mapping, as `prosemirror-changeset` maps spans through
@@ -264,13 +291,8 @@ export const createPolicyCheck = (model: ContentModel) => {
             add(previous.nodes, nodeOwners.get(before.type.name), before);
             add(next.nodes, nodeOwners.get(after.type.name), after);
         }
-        // A stored heading keeps a level the policy does not offer, and Enter may split it, but no batch makes one from
-        // another block or level (SPEC-rich-text-editing/AC-013, AC-014).
-        const levels = new Set<unknown>(headingsOf(previous).map((heading): unknown => heading.attrs.level));
-        for (const heading of headingsOf(next)) {
-            if (!history && refusesLevel(policy, heading.attrs) && !levels.has(heading.attrs.level)) {
-                return true;
-            }
+        if (!history && makesRefusedHeading(policy, previous, next)) {
+            return true;
         }
         const features = new Set([
             ...previous.nodes.keys(),
