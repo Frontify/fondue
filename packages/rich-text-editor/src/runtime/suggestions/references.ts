@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { checkHref } from '#/model';
-import { withoutBidiControls } from '#/model/references';
+import { holdsControls, withoutBidiControls } from '#/model/references';
 import { isRecord, isValidValue } from '#/model/values';
 
 import { type SuggestionItem } from './plugin';
@@ -29,6 +29,20 @@ export interface ReferenceResults {
 
 const nonEmpty = (value: unknown): value is string => typeof value === 'string' && value !== '';
 
+/** Whether `value` passes `checkHref` as an absolute `https:` URL, the only avatar the list loads. */
+const isHttpsUrl = (value: string): boolean => {
+    const checked = checkHref(value);
+    if (!checked.ok || checked.href !== value) {
+        return false;
+    }
+    try {
+        return new URL(value).protocol === 'https:';
+    } catch {
+        // A relative reference parses against no base.
+        return false;
+    }
+};
+
 /** A host result as an option, or `undefined` when its type, IDs or label cannot be stored or shown. */
 const itemOf = (
     value: unknown,
@@ -39,13 +53,13 @@ const itemOf = (
         return undefined;
     }
     const { resourceType, resourceId, imageUrl, kind } = value;
-    if (!nonEmpty(resourceType) || !isValidValue(STORED_ID, resourceType)) {
+    if (!nonEmpty(resourceType) || !isValidValue(STORED_ID, resourceType) || holdsControls(resourceType)) {
         return undefined;
     }
     if (resourceTypes.length > 0 && !resourceTypes.includes(resourceType)) {
         return undefined;
     }
-    if (!nonEmpty(resourceId) || resourceId.length > maxAttributeLength) {
+    if (!nonEmpty(resourceId) || resourceId.length > maxAttributeLength || holdsControls(resourceId)) {
         return undefined;
     }
     let labelSnapshot: unknown = value.labelSnapshot;
@@ -56,11 +70,8 @@ const itemOf = (
         return undefined;
     }
     let shown: Pick<SuggestionItem, 'imageUrl' | 'kind'> = {};
-    if (typeof imageUrl === 'string') {
-        const checked = checkHref(imageUrl);
-        if (checked.ok) {
-            shown = { imageUrl: checked.href };
-        }
+    if (typeof imageUrl === 'string' && isHttpsUrl(imageUrl)) {
+        shown = { imageUrl };
     }
     if (typeof kind === 'string' && KINDS.has(kind)) {
         shown = { ...shown, kind: kind as NonNullable<SuggestionItem['kind']> };
