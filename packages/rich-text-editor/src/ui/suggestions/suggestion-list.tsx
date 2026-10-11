@@ -100,8 +100,35 @@ const useSlowRequest = (active: ActiveSuggestion | null): boolean => {
 };
 
 /**
+ * The place of option `index` that a screen reader hears: a result among the results, so Load more adds no place to
+ * them, and Load more or Retry among every option.
+ */
+export const placeOf = (items: readonly SuggestionItem[], index: number) => {
+    let total = items.length;
+    if (items[index]?.action === undefined) {
+        total = resultCount(items);
+    }
+    return { position: index + 1, total };
+};
+
+/** What the active option of `items` says, with its place, or `undefined` with none. */
+export const spokenOption = (
+    items: readonly SuggestionItem[],
+    index: number,
+    strings: ReferenceListStrings,
+): string | undefined => {
+    const option = items[index];
+    if (option === undefined) {
+        return undefined;
+    }
+    const { position, total } = placeOf(items, index);
+    return strings.option(listOption(option, strings), position, total);
+};
+
+/**
  * What a reference list announces: when a search answers, its result count, or that it found none or failed, with the
- * option Enter takes; after that, the active option whenever it changes. A search that starts or loads says nothing.
+ * option Enter takes; after that, the active option whenever it changes, while a newer query loads too. The start of a
+ * load says nothing.
  */
 const useReferenceAnnouncements = (active: ActiveSuggestion | null, strings: ReferenceListStrings) => {
     const announce = useAnnounce();
@@ -109,15 +136,19 @@ const useReferenceAnnouncements = (active: ActiveSuggestion | null, strings: Ref
     useEffect(() => {
         const last = lastRef.current;
         lastRef.current = active;
-        if (active === null || active.source !== 'references' || active.status === 'loading') {
+        if (active === null || active.source !== 'references') {
             return;
         }
-        const option = active.items[active.index];
-        let spoken: string | undefined;
-        if (option !== undefined) {
-            spoken = strings.option(listOption(option, strings), active.index + 1, active.items.length);
+        const spoken = spokenOption(active.items, active.index, strings);
+        const moved = last !== null && last.items[last.index]?.key !== active.items[active.index]?.key;
+        const changed = last === null || last.request !== active.request || last.status !== active.status;
+        if (active.status === 'loading') {
+            if (!changed && moved && spoken !== undefined) {
+                announce(spoken);
+            }
+            return;
         }
-        if (last === null || last.request !== active.request || last.status !== active.status) {
+        if (changed) {
             let status = strings.failed;
             if (active.status === 'ready') {
                 const count = resultCount(active.items);
@@ -126,7 +157,7 @@ const useReferenceAnnouncements = (active: ActiveSuggestion | null, strings: Ref
             announce(spoken === undefined ? status : strings.both(status, spoken));
             return;
         }
-        if (spoken !== undefined && last.items[last.index]?.key !== option?.key) {
+        if (moved && spoken !== undefined) {
             announce(spoken);
         }
     }, [active, announce, strings]);

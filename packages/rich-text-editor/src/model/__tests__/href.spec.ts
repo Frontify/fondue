@@ -213,6 +213,15 @@ describe('checkHref with a host policy', () => {
         });
     });
 
+    it('checks an explicit base.invalid host like any other, while a relative reference takes no host check', () => {
+        for (const input of ['https://base.invalid/phish', '//base.invalid/phish', 'https://BASE.invalid/a']) {
+            expect(checkHref(input, { allowedHosts: ['good.com'] })).toEqual({ ok: false, code: 'host-not-allowed' });
+        }
+        for (const input of ['/guides', 'guide.html', '#top', '?q=a']) {
+            expect(checkHref(input, { allowedHosts: ['good.com'] })).toEqual({ ok: true, href: input });
+        }
+    });
+
     it('matches a Unicode host entry, with or without the *. prefix, against the ASCII hostname', () => {
         expect(checkHref('https://münchen.example/a', { allowedHosts: ['münchen.example'] }).ok).toBe(true);
         expect(checkHref('https://xn--mnchen-3ya.example/a', { allowedHosts: ['münchen.example'] }).ok).toBe(true);

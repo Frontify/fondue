@@ -4,6 +4,7 @@ import { Fragment, type Node, type NodeType, type Schema, Slice } from 'prosemir
 
 import { type ContentModel } from '#/model';
 import { compiledModel } from '#/model/compile';
+import { shownLabel } from '#/model/references';
 
 /** What the paste filter reads of an `AuthoringPolicy`: whether each feature's content may be pasted. */
 export type PastePolicy = Readonly<Record<string, { readonly paste: boolean }>>;
@@ -37,8 +38,12 @@ export const resliced = (slice: Slice, content: Fragment): Slice => {
 
 /** The text a mention keeps where it cannot stay: its label. */
 export const labelText = (schema: Schema, node: Node): Node[] => {
-    const label: unknown = node.attrs.labelSnapshot;
-    if (typeof label !== 'string' || label === '') {
+    const stored: unknown = node.attrs.labelSnapshot;
+    if (typeof stored !== 'string') {
+        return [];
+    }
+    const label = shownLabel(stored);
+    if (label === '') {
         return [];
     }
     return [schema.text(label, node.marks)];

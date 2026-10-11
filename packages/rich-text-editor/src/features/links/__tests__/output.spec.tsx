@@ -5,6 +5,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { SLICE_TYPE } from '#/clipboard/slice';
 import { createCodecs } from '#/codecs/codecs';
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
@@ -228,6 +229,25 @@ describe('the links policy where content enters', () => {
     it('pastes an HTML link outside allowedHosts as its text, and one inside it as a link', () => {
         expect(pasteInto({ 'text/html': '<a href="https://example.com">away</a>' })).toEqual([text('away')]);
         expect(pasteInto({ 'text/html': '<a href="https://brand.frontify.com">home</a>' })).toEqual([
+            linked('home', 'https://brand.frontify.com'),
+        ]);
+    });
+
+    it('pastes an internal slice link outside allowedHosts as its text, and one inside it as a link', () => {
+        const slice = (...content: readonly ContentNodeJSON[]) =>
+            JSON.stringify({
+                format: 'frontify.rich-text-slice',
+                formatVersion: 1,
+                model: narrowed.ref,
+                requiredCapabilities: narrowed.capabilities,
+                context: null,
+                openStart: 1,
+                openEnd: 1,
+                content: [para(...content)],
+            });
+
+        expect(pasteInto({ [SLICE_TYPE]: slice(linked('away', 'https://example.com')) })).toEqual([text('away')]);
+        expect(pasteInto({ [SLICE_TYPE]: slice(linked('home', 'https://brand.frontify.com')) })).toEqual([
             linked('home', 'https://brand.frontify.com'),
         ]);
     });

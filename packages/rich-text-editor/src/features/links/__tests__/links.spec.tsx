@@ -220,6 +220,19 @@ describe('link.set and link.remove', () => {
         ]);
     });
 
+    it('keeps the text, its marks and a hard break when the visible text equals the selection text without the break', () => {
+        const breakNode = { type: 'hard_break' } as ContentNodeJSON;
+        const { handle } = mountText({ model: model(), blocks: [para(text('ab', 'bold'), breakNode, text('cd'))] });
+        setSelection(handle, { text: 'ab\uFFFCcd' });
+
+        expect(handle.execute('link.set', value('https://frontify.com', { text: 'abcd' })).status).toBe('applied');
+        expect(blockOf(handle)).toEqual([
+            linked('ab', 'https://frontify.com', { type: 'bold' }),
+            { ...breakNode, marks: [link('https://frontify.com')] },
+            linked('cd', 'https://frontify.com'),
+        ]);
+    });
+
     it('writes rel noopener on a link in the editor surface', () => {
         const { view } = mountText({ model: model(), blocks: [para(linked('guide', 'https://frontify.com'))] });
 

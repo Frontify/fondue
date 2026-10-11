@@ -33,7 +33,7 @@ const Lead = ({ option }: { readonly option: ListboxOption }) => {
         );
     }
     if (option.imageUrl !== undefined) {
-        return <img className={styles.image} src={option.imageUrl} alt="" />;
+        return <img className={styles.image} src={option.imageUrl} alt="" referrerPolicy="no-referrer" />;
     }
     if (option.kind !== undefined) {
         const KindIcon = KIND_ICONS[option.kind];

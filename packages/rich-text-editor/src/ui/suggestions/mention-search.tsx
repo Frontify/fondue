@@ -18,13 +18,13 @@ import { SessionContext } from '#/bridge/hooks';
 import { useEditorOverlay } from '#/bridge/overlays';
 import { passesToBrowser } from '#/runtime/keys';
 import { type SuggestionItem, suggestionOptionId } from '#/runtime/suggestions/plugin';
-import { afterFailure, afterPage, MAX_ITEMS, MENTION_DIALOG_SEARCH, resultsOf } from '#/runtime/suggestions/references';
+import { afterFailure, afterPage, MENTION_DIALOG_SEARCH, resultsOf } from '#/runtime/suggestions/references';
 import { createReferenceSearch } from '#/runtime/suggestions/search';
 import { type SelectionHandle } from '#/runtime/types';
 
 import { Listbox } from './listbox';
 import styles from './styles/suggestions.module.scss';
-import { listOption, type ReferenceListStrings, SPINNER_DELAY_MS } from './suggestion-list';
+import { listOption, type ReferenceListStrings, SPINNER_DELAY_MS, spokenOption } from './suggestion-list';
 
 /** The feature whose search the dialog runs, and the command that inserts the chosen result. */
 export const MENTIONS_FEATURE = 'mentions';
@@ -134,13 +134,17 @@ export const MentionSearchDialog = ({
             if (ask.page !== null) {
                 shown = resultsOf(itemsRef.current);
             }
-            setIndex(Math.min(shown.length, MAX_ITEMS - 1));
-            setFound((current) => {
-                if (results === undefined) {
-                    return { status: 'failed', items: afterFailure(shown), answers: current.answers + 1 };
-                }
-                return { status: 'ready', items: afterPage(shown, results), answers: current.answers + 1 };
-            });
+            let items = afterFailure(shown);
+            if (results !== undefined) {
+                items = afterPage(shown, results);
+            }
+            // The first new option, or the last one when the page added none, so Enter takes the option announced.
+            setIndex(Math.max(0, Math.min(shown.length, items.length - 1)));
+            setFound((current) => ({
+                status: results === undefined ? 'failed' : 'ready',
+                items,
+                answers: current.answers + 1,
+            }));
         });
         const spinner = setTimeout(() => setSlow(true), SPINNER_DELAY_MS);
         return () => {
@@ -208,17 +212,23 @@ export const MentionSearchDialog = ({
     };
     const shownIndex = Math.min(index, Math.max(0, options.length - 1));
     // Each answer says its status and the option Enter takes; an arrow says the option it lands on.
-    const spokenRef = useRef<{ readonly answers: number; readonly key: string | undefined } | null>(null);
+    const spokenRef = useRef<{
+        readonly answers: number;
+        readonly status: Found['status'];
+        readonly key: string | undefined;
+    } | null>(null);
     useEffect(() => {
         const item = found.items[shownIndex];
-        const option = options[shownIndex];
-        let spoken: string | undefined;
-        if (option !== undefined) {
-            spoken = strings.option(option, shownIndex + 1, options.length);
-        }
+        const spoken = spokenOption(found.items, shownIndex, strings);
         const last = spokenRef.current;
-        spokenRef.current = { answers: found.answers, key: item?.key };
+        spokenRef.current = { answers: found.answers, status: found.status, key: item?.key };
         if (found.status === 'loading') {
+            // Arrows still move over the options a newer query keeps, but the start of the load says nothing.
+            if (last?.status === 'loading' && last.answers === found.answers && last.key !== item?.key) {
+                if (spoken !== undefined) {
+                    announcer.announce(spoken);
+                }
+            }
             return;
         }
         if (last === null || last.answers !== found.answers) {
@@ -229,7 +239,7 @@ export const MentionSearchDialog = ({
         if (spoken !== undefined && last.key !== item?.key) {
             announcer.announce(spoken);
         }
-    }, [announcer, found, options, shownIndex, strings]);
+    }, [announcer, found, shownIndex, strings]);
     let controls: string | undefined;
     let activeId: string | undefined;
     const active = options[shownIndex];

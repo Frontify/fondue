@@ -11,8 +11,18 @@ const UNKNOWN: ReferenceResolution = { status: 'unknown' };
 // Bidirectional marks, embeddings, overrides and isolates, which would reorder the text around a label.
 const BIDI_CONTROLS = /[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/gu;
 
+// C0 and C1 control characters, such as the escape that starts a terminal hyperlink.
+const CONTROLS = /[\u0000-\u001F\u007F-\u009F]/gu;
+const UNSAFE = /[\u0000-\u001F\u007F-\u009F\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/u;
+
 /** `text` without bidirectional control characters; the letters of every script stay. */
 export const withoutBidiControls = (text: string): string => text.replaceAll(BIDI_CONTROLS, '');
+
+/** A label as it is shown and written: without bidirectional and C0 and C1 control characters. */
+export const shownLabel = (text: string): string => withoutBidiControls(text).replaceAll(CONTROLS, '');
+
+/** Whether `text` holds a bidirectional or control character, which no stored ID may. */
+export const holdsControls = (text: string): boolean => UNSAFE.test(text);
 
 /** `resolve`, or none, as a resolver that gives `unknown` where it has none or throws, for that call only. */
 export const resolvingSafely =
@@ -34,9 +44,9 @@ export interface MentionLabel {
     readonly unavailable: 'deleted' | 'forbidden' | null;
 }
 
-const textOf = (value: unknown): string => {
+const stringOf = (value: unknown): string => {
     if (typeof value === 'string') {
-        return withoutBidiControls(value);
+        return value;
     }
     return '';
 };
@@ -50,19 +60,20 @@ export const mentionLabel = (
     attrs: JsonObject,
     { t, resolveReference }: Pick<CodecContext, 't'> & { readonly resolveReference?: ResolveReference | undefined },
 ): MentionLabel => {
-    const resourceType = textOf(attrs.resourceType);
-    const resolution: unknown = resolvingSafely(resolveReference)(resourceType, textOf(attrs.resourceId));
+    // IDs resolve as stored, so the chip names the resource `diffReferences` reports.
+    const resourceType = stringOf(attrs.resourceType);
+    const resolution: unknown = resolvingSafely(resolveReference)(resourceType, stringOf(attrs.resourceId));
     let status: unknown;
     if (typeof resolution === 'object' && resolution !== null) {
         status = (resolution as { readonly status?: unknown }).status;
     }
     if (status === 'current') {
-        const current = textOf((resolution as { readonly label?: unknown }).label);
+        const current = shownLabel(stringOf((resolution as { readonly label?: unknown }).label));
         if (current !== '') {
             return { label: current, unavailable: null };
         }
     }
-    let label = textOf(attrs.labelSnapshot);
+    let label = shownLabel(stringOf(attrs.labelSnapshot));
     if (label === '') {
         label = t('RichTextEditor_mentionUnknown', { resourceType });
     }
