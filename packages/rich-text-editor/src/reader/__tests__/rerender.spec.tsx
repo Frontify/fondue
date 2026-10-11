@@ -28,7 +28,7 @@ describe('RichTextReader rerenders', () => {
     it('decodes once across three renders of the same document object and presentation', () => {
         vi.mocked(decodeToTree).mockClear();
         const document = create();
-        const presentation = {};
+        const presentation = { styles: [], colorTokens: [] };
         const view = render(<RichTextReader document={document} model={model} presentation={presentation} />);
         const first = view.container.innerHTML;
 
@@ -46,7 +46,9 @@ describe('RichTextReader rerenders', () => {
         const view = render(<RichTextReader document={document} model={model} />);
 
         view.rerender(<RichTextReader document={create()} model={model} />);
-        view.rerender(<RichTextReader document={document} model={model} presentation={{}} />);
+        view.rerender(
+            <RichTextReader document={document} model={model} presentation={{ styles: [], colorTokens: [] }} />,
+        );
 
         expect(decodeToTree).toHaveBeenCalledTimes(3);
     });

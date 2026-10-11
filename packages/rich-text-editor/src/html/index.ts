@@ -2,6 +2,7 @@
 
 import { type Node, Slice } from 'prosemirror-model';
 
+import { colorReadingOf } from '#/clipboard/import/colors';
 import { importHtml } from '#/clipboard/import/html';
 import { type PastePolicy, withoutRefused } from '#/clipboard/import/policy';
 import { buildSchema, withNodeIds } from '#/definition/schema';
@@ -40,7 +41,8 @@ export const fromHTML = (html: string, model: ContentModel, options: HtmlImportO
     const schema = buildSchema(model);
     const headingLevels = definition?.authoring.creatableHeadingLevels;
     // The blocks of a new document sit below `doc`, which `exceededStructure` counts as depth 1.
-    let { content } = importHtml(html, schema, options.window, { limits, headingLevels, depth: 2 });
+    const colors = colorReadingOf(model);
+    let { content } = importHtml(html, schema, options.window, { limits, headingLevels, depth: 2, colors });
     if (definition !== undefined) {
         content = withoutRefused(new Slice(content, 0, 0), schema, model, definition.authoring.features).content;
     }

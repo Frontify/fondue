@@ -5,6 +5,8 @@ import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
     attrsOf,
+    COLUMN_BREAK,
+    type ColumnLayout,
     contentClasses,
     failedFallback,
     groupRun,
@@ -14,10 +16,17 @@ import {
     itemsOf,
     listDepths,
     type ListDepths,
+    MIN_COLUMN_WIDTH,
+    type OutputStyles,
     spaced,
     type Spacing,
+    styleOfNode,
     VOID_TAGS,
+    withActiveBreak,
+    withColor,
     withListLevel,
+    withStyle,
+    withStyleId,
     writesAttribute,
 } from '#/model/output';
 import { isStyleAttribute } from '#/model/values';
@@ -33,6 +42,20 @@ interface HtmlState extends Spacing {
     readonly losses: Losses;
     readonly listLevels: ListLevels | undefined;
     readonly depths: ListDepths;
+    readonly styles: OutputStyles;
+    readonly columns: ColumnLayout | undefined;
+    /** The column breaks written so far, whose first `count - 1` are active. */
+    breaks: number;
+}
+
+const NO_STYLES: OutputStyles = { styles: [], colorTokens: [], inline: false };
+
+/** What `writeHtml` writes around and into the blocks; every field is optional. */
+export interface HtmlWriteOptions {
+    readonly contentClassName?: string | undefined;
+    readonly listLevels?: ListLevels | undefined;
+    readonly columns?: ColumnLayout | undefined;
+    readonly styles?: OutputStyles | undefined;
 }
 
 const ESCAPES: Readonly<Record<string, string>> = {
@@ -146,7 +169,12 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
     if (plan === undefined) {
         return inner;
     }
-    return build(resolveHtmlSpec(plan.spec, attrsOf(mark.attrs), plan.options), inner);
+    const attrs = attrsOf(mark.attrs);
+    const { styles, colorTokens, inline } = state.styles;
+    let template = withStyleId(resolveHtmlSpec(plan.spec, attrs, plan.options), attrs);
+    template = withStyle(template, styleOfNode(styles, mark.type, attrs).style, inline);
+    template = withColor(template, mark.type, attrs, colorTokens);
+    return build(template, inner);
 };
 
 const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): string => {
@@ -200,6 +228,14 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     if (!plan.inline) {
         template = withAutoDirection(template);
     }
+    template = withStyle(template, styleOfNode(state.styles.styles, node.type, attrs).style, state.styles.inline);
+    if (node.type === COLUMN_BREAK) {
+        // Stored HTML has no package styles, so an active break carries its own.
+        if (state.columns !== undefined && state.breaks < state.columns.count - 1) {
+            template = withActiveBreak(template, 'break-after: column');
+        }
+        state.breaks += 1;
+    }
     return build(template, inner);
 };
 
@@ -248,13 +284,17 @@ export const isEmptyDocument = (plan: CodecPlan, root: TreeNode): boolean => {
     return node !== undefined && !node.leaf;
 };
 
-/** The reader's static markup as text: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the island notice. */
+/**
+ * The reader's static markup as text: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its
+ * blocks, then the island notice; with `columns`, an inline `columns` of the count and the narrowest column width, and
+ * `column-gap`, so a narrow viewport shows fewer columns with no stylesheet. `styles`
+ * adds recipe classes, inline recipes and token colours.
+ */
 export const writeHtml = (
     plan: CodecPlan,
     root: TreeNode,
     context: CodecContext,
-    contentClassName?: string,
-    listLevels?: ListLevels,
+    { contentClassName, listLevels, columns, styles = NO_STYLES }: HtmlWriteOptions = {},
 ): { readonly html: string; readonly diagnostics: readonly Diagnostic[] } => {
     const state: HtmlState = {
         plan,
@@ -265,6 +305,9 @@ export const writeHtml = (
         carried: 0,
         listLevels,
         depths: listDepths(),
+        styles,
+        columns,
+        breaks: 0,
     };
     if (isEmptyDocument(plan, root)) {
         return { html: '', diagnostics: [] };
@@ -295,5 +338,10 @@ export const writeHtml = (
             details: { count },
         }),
     );
-    return { html: `<div${props}>${html}</div>`, diagnostics: [...state.diagnostics, ...lossy] };
+    // On the content root itself, so a `normal` gap resolves against the content font, as in the editor.
+    if (columns !== undefined) {
+        props += ` style="columns:${columns.count} ${MIN_COLUMN_WIDTH}px;column-gap:${escapeHtml(columns.gap)}"`;
+    }
+    html = `<div${props}>${html}</div>`;
+    return { html, diagnostics: [...state.diagnostics, ...lossy] };
 };

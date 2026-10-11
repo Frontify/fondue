@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    type ColorToken,
     type DecodeResult,
     type Diagnostic,
     type ListLevels,
+    type PresentationStyle,
     type ResourceLimits,
     type RichTextDocument,
     type RichTextLocale,
@@ -15,6 +17,10 @@ export interface CodecLoss {
     readonly count: number;
 }
 export interface HtmlOptions {
+    /** The presentation's `styles`; each used recipe is written inline, beside its class. */
+    readonly inlineStyles?: readonly PresentationStyle[];
+    /** The presentation's `colorTokens`; a token colour is written inline from it. */
+    readonly colorTokens?: readonly ColorToken[];
     /** Localized output text; default `enUS`. */
     readonly locale?: RichTextLocale;
     readonly resolveAssetUrl?: ResolveAssetUrl;
@@ -22,6 +28,10 @@ export interface HtmlOptions {
     readonly contentClassName?: string;
     /** The presentation's `listLevels`, which writes each list's marker inline as the reader does. */
     readonly listLevels?: ListLevels;
+    /** Column count `toHTML` writes on the content root, with the narrowest column width. Default 1, which writes none. */
+    readonly columns?: number;
+    /** Column gap `toHTML` writes on the content root. Default `normal`. */
+    readonly columnGap?: string;
 }
 /** One dialect: CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks. */
 export interface MarkdownOptions {
@@ -38,7 +48,12 @@ export interface RichTextCodecs {
     toHTML(
         document: RichTextDocument,
         options?: HtmlOptions,
-    ): { readonly html: string; readonly diagnostics: readonly Diagnostic[] };
+    ): {
+        readonly html: string;
+        /** Generated recipe stylesheet, including `hover`. Empty when no recipes are passed. */
+        readonly css: string;
+        readonly diagnostics: readonly Diagnostic[];
+    };
     toPlainText(document: RichTextDocument): {
         readonly text: string;
         readonly losses: readonly CodecLoss[];

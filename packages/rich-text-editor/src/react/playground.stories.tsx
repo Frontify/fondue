@@ -6,23 +6,28 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
     align,
     bold,
+    brandStyles,
     code,
     codeBlock,
+    columns,
     core,
     emoji,
     featuresById,
+    fontColor,
     formatClear,
     heading,
     inputRules,
     italic,
     language,
     quote,
+    rule,
     strike,
     subscript,
     superscript,
     underline,
 } from '#/features';
 import {
+    type ColorToken,
     type CommandResult,
     type CommandsOfModel,
     defineEditor,
@@ -30,6 +35,7 @@ import {
     defineReactPresentation,
     type EditorHandle,
     type PersistenceService,
+    type PresentationStyle,
     type RichTextEditorProps,
     RichTextEditor,
     type SaveResponse,
@@ -108,6 +114,11 @@ const model = compileContentModel(
         heading(),
         quote(),
         codeBlock(),
+        // Any colour through the picker, beside the presentation's tokens.
+        fontColor({ literalColors: true }),
+        brandStyles(),
+        rule(),
+        columns(),
         ...featuresById(['lists.item', 'lists.bullet', 'lists.ordered', 'lists.task']),
         inputRules({ typography }),
         align(),
@@ -132,6 +143,7 @@ const TOOLBAR = [
         'mark.subscript.toggle',
         'mark.superscript.toggle',
     ],
+    ['mark.color.menu.open'],
     ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
     ['quote.toggle', 'code-block.toggle', 'emoji.picker.open'],
     [
@@ -141,6 +153,38 @@ const TOOLBAR = [
         { command: 'block.align.set', payload: { align: 'justify' } },
     ],
     ['mark.language.edit', 'format.clear'],
+    ['rule.insert', 'column.break.insert'],
+];
+
+// Brand styles as a host passes them: headings and paragraphs, and one deprecated style the picker leaves out.
+const brandStylesOf = (leadSize: number): readonly PresentationStyle[] => [
+    {
+        id: 'brand.title',
+        label: 'Title',
+        appliesTo: ['heading'],
+        deprecated: false,
+        recipe: { fontFamily: 'Georgia, serif', fontSize: 32, fontWeight: 700, color: '#1d4ed8' },
+    },
+    {
+        id: 'brand.lead',
+        label: 'Lead',
+        appliesTo: ['paragraph'],
+        deprecated: false,
+        recipe: { fontSize: leadSize, lineHeight: 1.5, fontWeight: 300 },
+    },
+    {
+        id: 'brand.caption',
+        label: 'Caption',
+        appliesTo: ['paragraph'],
+        deprecated: false,
+        recipe: { fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' },
+    },
+    { id: 'brand.legacy', label: 'Legacy', appliesTo: ['paragraph'], deprecated: true, recipe: { fontSize: 18 } },
+];
+const COLOR_TOKENS: readonly ColorToken[] = [
+    { id: 'brand.red', label: 'Brand red', value: '#c0392b', usage: ['font_color'] },
+    { id: 'brand.blue', label: 'Brand blue', value: '#1d4ed8', usage: ['font_color'] },
+    { id: 'brand.gray', label: 'Gray', value: '#4b5563', usage: ['font_color'] },
 ];
 
 type Commands = CommandsOfModel<typeof model>;
@@ -155,6 +199,10 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly contentClassName: string;
     /** The presentation's `toolbarShortcut`, which moves focus between the surface and the toolbars. */
     readonly toolbarShortcut: string;
+    /** The presentation's `columns`, 1 to 6; above 1, the first `columns - 1` column breaks each end a column. */
+    readonly columns: number;
+    /** The presentation's `columnGap`: `normal`, or a length in `px` or `rem`. */
+    readonly columnGap: string;
     /** Throws in render at mount, so the story opens on the recovery shell. */
     readonly brokenAtMount: boolean;
     /** Composes `RichTextEditor.BubbleToolbar`, which shows above a text selection beside the fixed toolbar. */
@@ -165,6 +213,8 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly serverAnswer: 'saved' | 'conflict' | 'forbidden' | 'invalid' | 'incompatible-writer';
     /** Strikethrough and secondary text colour on a checked task item, in the editor and the reader. */
     readonly strikeCheckedTasks: boolean;
+    /** The font size of the Lead brand style's recipe, in px; a change restyles every Lead block with no document change. */
+    readonly leadFontSize: number;
 };
 
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
@@ -197,11 +247,14 @@ const Playground = ({
     sliceContext,
     contentClassName,
     toolbarShortcut,
+    columns: columnCount,
+    columnGap,
     brokenAtMount,
     bubbleToolbar,
     hostPortalContainer,
     serverAnswer,
     strikeCheckedTasks,
+    leadFontSize,
     ...props
 }: PlaygroundProps) => {
     const [hostContainer, setHostContainer] = useState<HTMLElement | null>(null);
@@ -217,8 +270,12 @@ const Playground = ({
             toolbarShortcut,
             sliceContext: context,
             strikeCheckedTasks,
+            styles: brandStylesOf(leadFontSize),
+            colorTokens: COLOR_TOKENS,
+            columns: columnCount,
+            columnGap,
         });
-    }, [contentClassName, toolbarShortcut, sliceContext, strikeCheckedTasks]);
+    }, [contentClassName, toolbarShortcut, sliceContext, strikeCheckedTasks, leadFontSize, columnCount, columnGap]);
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
@@ -334,6 +391,22 @@ const Playground = ({
                     }
                 >
                     Move the block down
+                </button>
+                <button
+                    type="button"
+                    onClick={() => log(`execute rule.insert ${resultText(handleRef.current?.execute('rule.insert'))}`)}
+                >
+                    Insert a divider
+                </button>
+                <button
+                    type="button"
+                    onClick={() =>
+                        log(
+                            `execute column.break.insert ${resultText(handleRef.current?.execute('column.break.insert'))}`,
+                        )
+                    }
+                >
+                    Insert a column break
                 </button>
                 <button
                     type="button"
@@ -616,6 +689,7 @@ Type \`:\` at the start of a word, then at least two letters, to open emoji sugg
 | Code | \`mark.code.toggle\` | \`Mod-e\` | ⌘E | Ctrl+E |
 | Subscript | \`mark.subscript.toggle\` | \`Mod-,\` | ⌘, | Ctrl+, |
 | Superscript | \`mark.superscript.toggle\` | \`Mod-.\` | ⌘. | Ctrl+. |
+| Set the last text colour again | \`mark.color.reapply\` | \`Mod-Shift-h\` | ⇧⌘H | Ctrl+Shift+H |
 
 ## Blocks
 
@@ -638,6 +712,12 @@ Type \`:\` at the start of a word, then at least two letters, to open emoji sugg
 | Heading 6 | \`heading.set\` with \`{ level: 6 }\` | \`other:Ctrl-Shift-6\` | none | Ctrl+Shift+6 |
 | Move up | \`block.move.up\` | \`Mod-Alt-ArrowUp\` | ⌥⌘↑ | Ctrl+Alt+Up |
 | Move down | \`block.move.down\` | \`Mod-Alt-ArrowDown\` | ⌥⌘↓ | Ctrl+Alt+Down |
+| Column break, while \`columns\` is above 1 | \`column.break.insert\` | \`Mod-Shift-Enter\` | ⇧⌘Enter | Ctrl+Shift+Enter |
+| Remove the column break before the caret |  | \`Backspace\` | Backspace | Backspace |
+| Remove a selected rule, image or column break |  | \`Backspace\`, \`Delete\` | Backspace, Delete | Backspace, Delete |
+| Gap cursor beside a block with no text position next to it |  | \`ArrowUp\`, \`ArrowDown\`, \`ArrowLeft\`, \`ArrowRight\` | ↑ ↓ ← → | Up Down Left Right |
+
+Type \`---\`, \`***\` or \`___\` and a space at the start of a paragraph for a divider. Typing at a gap cursor starts a paragraph there.
 
 ## Code blocks
 
@@ -692,11 +772,14 @@ Align left, center, right or justify with the toolbar or Mod+Shift+L, Mod+Shift+
         sliceContext: '',
         contentClassName: 'playground-content',
         toolbarShortcut: 'Alt-F10',
+        columns: 1,
+        columnGap: 'normal',
         brokenAtMount: false,
         bubbleToolbar: false,
         hostPortalContainer: false,
         serverAnswer: 'saved',
         strikeCheckedTasks: false,
+        leadFontSize: 20,
         defaultToolbarMode: 'fixed',
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },
@@ -721,6 +804,8 @@ Align left, center, right or justify with the toolbar or Mod+Shift+L, Mod+Shift+
         inputRules: { control: 'object' },
         tabMovesFocus: { control: 'boolean' },
         strikeCheckedTasks: { control: 'boolean' },
+        columns: { control: { type: 'number', min: 1, max: 6, step: 1 } },
+        columnGap: { control: 'text' },
         scrollSelectionIntoView: { control: 'boolean' },
         profile: { control: 'select', options: ['inline', 'comment', 'document', 'brand-document'] },
         status: { control: 'select', options: ['neutral', 'success', 'error', 'loading'] },
@@ -729,6 +814,7 @@ Align left, center, right or justify with the toolbar or Mod+Shift+L, Mod+Shift+
             control: 'select',
             options: ['saved', 'conflict', 'forbidden', 'invalid', 'incompatible-writer'],
         },
+        leadFontSize: { control: { type: 'range', min: 12, max: 32, step: 1 } },
     },
 };
 export default meta;

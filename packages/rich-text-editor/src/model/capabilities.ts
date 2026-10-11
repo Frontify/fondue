@@ -65,16 +65,21 @@ export const BASE_KEYS_PLUGIN: PluginDescriptor = { id: 'base-keys', phase: 'bas
 export const CLIPBOARD_PLUGIN: PluginDescriptor = { id: 'clipboard', phase: 'guard' };
 /** The drop cursor of `prosemirror-dropcursor`. */
 export const DROP_CURSOR_PLUGIN: PluginDescriptor = { id: 'drop-cursor', phase: 'structure' };
+/** The last mark a `setMark` command set in the session, which `reapplyMark` sets again. */
+export const LAST_MARK_PLUGIN: PluginDescriptor = { id: 'last-mark', phase: 'late' };
+/** The gap cursor of `prosemirror-gapcursor`, whose arrow keys run before every base key. */
+export const GAP_CURSOR_PLUGIN: PluginDescriptor = { id: 'gap-cursor', phase: 'structure' };
 /** One plugin key, one instance: a plugin several capabilities contribute sits at its first contributor's position. */
 export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonly PluginDescriptor[]>>> = {
     history: [HISTORY_PLUGIN],
     // `core` always declares `text.insert`, so its capability carries the base keys, paste, copy and drop into every model.
-    insertText: [BASE_KEYS_PLUGIN, CLIPBOARD_PLUGIN, DROP_CURSOR_PLUGIN],
+    insertText: [BASE_KEYS_PLUGIN, CLIPBOARD_PLUGIN, DROP_CURSOR_PLUGIN, GAP_CURSOR_PLUGIN],
     wrapIn: [CONTAINER_KEYS_PLUGIN],
     // Every list feature indents its items, so this capability carries the list keys into each model with lists.
     indentItem: [LIST_KEYS_PLUGIN],
     // A code block's indent and outdent, so the code keys ride with either command.
     indentLines: [CODE_KEYS_PLUGIN],
+    reapplyMark: [LAST_MARK_PLUGIN],
 };
 /** The decoration sources a feature may name. `find-matches` and `content-issues` have no plugin yet. */
 export const DECORATION_SOURCES: readonly DecorationSource[] = ['code-syntax', 'find-matches', 'content-issues'];
@@ -136,7 +141,11 @@ export const setBlock = <const P extends PayloadDeclaration | undefined = undefi
 
 /**
  * Inserts `node` at the selection, or adds or removes it as an optional child; with `newlineInCode`, a code block
- * gets a newline in its place, as a hard break does.
+ * gets a newline in its place, as a hard break does. A block replaces the empty textblock that holds a caret, goes
+ * before a textblock with the caret at its start, and otherwise after the block that holds the selection end, or
+ * always after the top-level block with `place: 'after-top-level-block'`; a block that ends up last gets an empty
+ * paragraph after it. With `limit: 'columns'`, it applies only while the document holds fewer of `node` than the
+ * presentation's columns minus one.
  */
 export const insertNode = <const P extends PayloadDeclaration | undefined = undefined>(
     node: string,
@@ -144,12 +153,21 @@ export const insertNode = <const P extends PayloadDeclaration | undefined = unde
         readonly attrs?: JsonObject;
         readonly child?: 'add' | 'remove' | 'toggle';
         readonly newlineInCode?: boolean;
+        readonly place?: 'after-top-level-block';
+        readonly limit?: 'columns';
         readonly payload?: P;
     },
 ): CommandDefinition<PayloadOf<P>> =>
     command(
         'insertNode',
-        { node, attrs: options?.attrs, child: options?.child, newlineInCode: options?.newlineInCode },
+        {
+            node,
+            attrs: options?.attrs,
+            child: options?.child,
+            newlineInCode: options?.newlineInCode,
+            place: options?.place,
+            limit: options?.limit,
+        },
         options === undefined ? undefined : options.payload,
     );
 
@@ -217,38 +235,98 @@ export const toggleTask = (item: string, setChecked: string): CommandDefinition 
     command('toggleTask', { item, setChecked });
 
 /**
- * Sets the payload's fields as attributes. With `nodes`, every selected node of those types, and with `toggle` the
- * value comes off when every one of them already has it. Otherwise the node its `nodeId` names, else the nearest one.
+ * Sets the payload's fields as attributes of the node that its `nodeId` names, else of every selected textblock of a
+ * listed type, else of the nearest node of a listed type around the selection; `'textblocks'` lists every textblock
+ * type. With `toggle`, restores each attribute's default when every target already has the values.
  */
 export const setAttributes = <const P extends PayloadDeclaration>(
-    node: string,
+    node: string | readonly string[],
     payload: P,
-    options?: { readonly nodes?: readonly string[]; readonly toggle?: boolean },
+    options?: { readonly toggle?: boolean },
 ): CommandDefinition<PayloadOf<P>> => {
-    const args: Record<string, JsonValue | undefined> = {};
-    if (options?.nodes !== undefined) {
-        args.nodes = [...options.nodes];
-    } else {
-        args.node = node;
+    let nodes: string | string[] = node as string;
+    if (Array.isArray(node)) {
+        nodes = [...(node as readonly string[])];
     }
-    if (options?.toggle === true) {
-        args.toggle = true;
-    }
-    return command('setAttributes', args, payload);
+    return command('setAttributes', { node: nodes, toggle: options?.toggle }, payload);
 };
 
-/** Sets a mark from the payload, or removes it when the payload is null. */
+/** Package-built controls a command opens; `text-style` is the toolbar picker a presentation names. */
+export type ControlId =
+    | 'text-style'
+    | 'link'
+    | 'color-menu'
+    | 'language'
+    | 'mention-search'
+    | 'emoji'
+    | 'find'
+    | 'outline'
+    | 'checks'
+    | 'numbering'
+    | 'image-alt'
+    | 'media-picker'
+    | 'embed'
+    | 'embed-edit';
+
+/** Opens a package-built control, such as the numbering dialog of `list.ordered.start.edit` or the emoji picker. */
+export const openControl = <const P extends PayloadDeclaration | undefined = undefined>(
+    control: ControlId,
+    payload?: P,
+): CommandDefinition<PayloadOf<P>> => command('openControl', { control }, payload);
+
+/**
+ * Sets `mark` with the payload's fields as its attributes on the selection, or in the stored marks at a caret; a null
+ * payload removes it. With `extendToMarkRange`, a caret inside the mark acts on the whole mark range.
+ */
 export const setMark = <const P extends PayloadDeclaration>(
     mark: string,
     payload: P,
-): CommandDefinition<PayloadOf<P>> => command('setMark', { mark }, payload);
+    options?: { readonly extendToMarkRange?: boolean },
+): CommandDefinition<PayloadOf<P>> =>
+    command('setMark', { mark, extendToMarkRange: options?.extendToMarkRange }, payload);
 
-/** `inline` removes formatting marks. `all` also lifts lists, turns blocks into paragraphs and clears alignment and indent. */
-export const clearFormatting = (scope: 'inline' | 'all'): CommandDefinition => command('removeMark', { scope });
+/**
+ * Removes the listed marks that the model installs from the selection, or from the stored marks at a caret, as one
+ * undo step; like `removes` of `toggleMark`, a mark the model does not install is skipped.
+ */
+export const removeMark = (
+    marks: string | readonly string[],
+    options?: { readonly extendToMarkRange?: boolean },
+): CommandDefinition => {
+    let names: string[] = [marks as string];
+    if (Array.isArray(marks)) {
+        names = [...(marks as readonly string[])];
+    }
+    return command('removeMark', { installed: names, extendToMarkRange: options?.extendToMarkRange });
+};
 
-/** Opens a package-built control, such as the numbering dialog of `list.ordered.start.edit` or the emoji picker. */
-export const openControl = (control: 'numbering' | 'emoji' | 'language'): CommandDefinition =>
-    command('openControl', { control });
+// Links, mentions and `language` passages carry meaning, so clearing inline formatting keeps them.
+const FORMATTING_MARKS = [
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'code',
+    'subscript',
+    'superscript',
+    'highlight',
+    'font_color',
+];
+
+/**
+ * `inline` removes the formatting marks the model installs, as `removeMark` does. `all` removes every mark, lifts the
+ * selected blocks out of lists, turns them into paragraphs and clears alignment and indent.
+ */
+export const clearFormatting = (scope: 'inline' | 'all'): CommandDefinition => {
+    if (scope === 'inline') {
+        return removeMark(FORMATTING_MARKS);
+    }
+    return command('removeMark', { scope });
+};
+
+/** Sets again the last of the listed marks that a `setMark` command set in this session, with its attributes. */
+export const reapplyMark = (marks: readonly string[]): CommandDefinition =>
+    command('reapplyMark', { installed: [...marks] });
 
 /** The first cycle that `next` reaches from `starts`, as a path that ends where it starts. */
 export const findCycle = (starts: readonly string[], next: (id: string) => readonly string[]): string[] | undefined => {

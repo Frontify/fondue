@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`blocks.rule > renders a rule as hr in the reader and toHTML 1`] = `"<div class="fondue-rte-content"><p dir="auto">Logo</p><hr dir="auto"/><p dir="auto">Colour</p></div>"`;

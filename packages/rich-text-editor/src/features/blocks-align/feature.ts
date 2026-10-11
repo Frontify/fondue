@@ -52,12 +52,9 @@ export const align = (options?: { readonly justify?: boolean }) => {
         formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
         commands: {
             'block.align.set': setAttributes(
-                'paragraph',
+                ['paragraph', 'heading'],
                 { fields: { align: { type: 'enum', values } } },
-                {
-                    nodes: ['paragraph', 'heading'],
-                    toggle: true,
-                },
+                { toggle: true },
             ),
         },
         keys: {

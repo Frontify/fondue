@@ -19,7 +19,7 @@ type HrefFailure = Extract<HrefResult, { ok: false }>;
 const BASE = 'https://base.invalid/';
 const MAX_LENGTH = 2048;
 const SAFE_SCHEMES = new Set(['https:', 'http:', 'mailto:', 'tel:']);
-const EDGE_CONTROLS = /^[\u0000-\u0020]+|[\u0000-\u0020]+$/g;
+const LAST_EDGE_CONTROL = 0x20;
 const CONTROL = /[\u0000-\u001F\u007F-\u009F]/;
 /**
  * Every HTML5 named reference whose value is ASCII, keyed by its case-sensitive name. Only ASCII can form a URL
@@ -133,6 +133,19 @@ const hostAllowed = (hostname: string, entries: readonly string[]) =>
         return hostname === entry;
     });
 
+/** Removes the C0 controls and spaces at both ends, as URL parsing does, in one linear pass. */
+const stripEdgeControls = (input: string): string => {
+    let start = 0;
+    let end = input.length;
+    while (start < end && input.charCodeAt(start) <= LAST_EDGE_CONTROL) {
+        start += 1;
+    }
+    while (end > start && input.charCodeAt(end - 1) <= LAST_EDGE_CONTROL) {
+        end -= 1;
+    }
+    return input.slice(start, end);
+};
+
 const checkPolicy = (url: URL, { allowedSchemes, allowedHosts }: HrefPolicy): HrefFailure | undefined => {
     if (allowedSchemes !== undefined && !allowedSchemes.some((scheme) => `${scheme}:` === url.protocol)) {
         return { ok: false, code: 'unsafe-scheme' };
@@ -146,7 +159,7 @@ const checkPolicy = (url: URL, { allowedSchemes, allowedHosts }: HrefPolicy): Hr
 
 /** The one URL check; it fails closed, and a policy only narrows it. */
 export const checkHref = (input: string, policy?: HrefPolicy): HrefResult => {
-    const trimmed = input.replaceAll(EDGE_CONTROLS, '');
+    const trimmed = stripEdgeControls(input);
     if (CONTROL.test(trimmed) || !isWellFormed(trimmed)) {
         return { ok: false, code: 'unparsable' };
     }

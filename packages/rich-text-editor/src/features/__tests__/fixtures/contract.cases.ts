@@ -20,10 +20,13 @@ import { findInvalidPayload } from '#/model/values';
 import { defineEditor, engineOf, viewsOf } from '#/react/define';
 import { readerContext } from '#/reader/context';
 import { CAPABILITIES } from '#/runtime/capabilities';
+import { columnsPlugin } from '#/runtime/columns';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 
 import { countingIds } from './notes';
 
+// The most columns a presentation sets, so a column break has room in every fixture.
+const ROOM = { count: 6, fits: true, label: 'Column break', inactiveLabel: 'Column break, inactive' };
 /** A valid payload for each shipped command that declares one, so the case runs it for real. */
 const PAYLOADS: Readonly<Record<string, unknown>> = {
     'text.insert': { text: 'a' },
@@ -35,6 +38,8 @@ const PAYLOADS: Readonly<Record<string, unknown>> = {
     'code-block.language.set': { languageId: 'javascript' },
     'code-block.indent': undefined,
     'code-block.outdent': undefined,
+    'mark.font-color.set': { tokenId: 'brand.blue' },
+    'block.style.set': { styleId: 'brand.body' },
 };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [
@@ -99,7 +104,10 @@ export const commandCases = (features: readonly Feature[]): void => {
                 if (tree === undefined) {
                     throw new Error('A fixture of the features does not decode.');
                 }
-                const state = EditorState.create({ doc: engine.schema.nodeFromJSON(tree), plugins: engine.plugins });
+                const state = EditorState.create({
+                    doc: engine.schema.nodeFromJSON(tree),
+                    plugins: [...engine.plugins, columnsPlugin(() => ROOM)],
+                });
                 const { doc } = state;
                 const whole = TextSelection.between(doc.resolve(0), doc.resolve(doc.content.size));
                 return [
@@ -116,6 +124,20 @@ export const commandCases = (features: readonly Feature[]): void => {
                 engine.commands
                     .get('history.undo')
                     ?.run(edited, (transaction) => states.push(edited.apply(transaction)));
+            }
+            // A colour set and cleared again, so the reapply command has a last colour to set.
+            const setColor = engine.commands.get('mark.font-color.set');
+            if (setColor !== undefined) {
+                for (const state of [...states]) {
+                    setColor.run(
+                        state,
+                        (transaction) => {
+                            const colored = state.apply(transaction);
+                            setColor.run(colored, (cleared) => states.push(colored.apply(cleared)), null);
+                        },
+                        PAYLOADS['mark.font-color.set'],
+                    );
+                }
             }
             const stubs = stubForbidden(id);
             let changed = false;

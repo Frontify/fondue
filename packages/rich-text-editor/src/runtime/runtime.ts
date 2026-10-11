@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { GapCursor } from 'prosemirror-gapcursor';
 import { type Node } from 'prosemirror-model';
 import {
     AllSelection,
@@ -11,7 +12,7 @@ import {
     TextSelection,
     type Transaction,
 } from 'prosemirror-state';
-import { EditorView, type NodeViewConstructor } from 'prosemirror-view';
+import { EditorView, type MarkViewConstructor, type NodeViewConstructor } from 'prosemirror-view';
 
 import {
     APPEND_BATCH_META,
@@ -29,6 +30,7 @@ import {
     type Diagnostic,
     hashDocument,
     type JsonObject,
+    type PresentationStyle,
     type ResourceLimits,
     type RichTextDocument,
 } from '#/model';
@@ -41,6 +43,7 @@ import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
 import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
+import { type ColumnState, columnsPlugin, ONE_COLUMN, sameColumns } from './columns';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
@@ -52,6 +55,7 @@ import { authoringOf, createPolicyCheck, refusesLevel, setsHeading } from './pol
 import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { createInputSettling } from './settle';
+import { stylesPlugin } from './styles';
 import { suggestionHosts } from './suggestions/host';
 import { activeSuggestion, suggestionOptionId } from './suggestions/plugin';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
@@ -166,6 +170,8 @@ export interface EditorRuntime {
     faultView(): void;
     /** The host's `disabled`, which runs in mode `readonly` and takes the surface out of the Tab order. */
     setDisabled(disabled: boolean): void;
+    /** The presentation's columns as the surface shows them, which `column.break.insert` and the break decorations read. */
+    setColumns(columns: ColumnState): void;
     nodeActions(target: NodeTarget): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
@@ -194,6 +200,8 @@ export interface EditorRuntimeOptions {
     readonly limits: ResourceLimits;
     /** Builds the bridge's node views by node name for this runtime, which only passes them to the view. */
     readonly nodeViews?: (runtime: EditorRuntime) => Readonly<Record<string, NodeViewConstructor>>;
+    /** The mark views that give styled and coloured marks their presentation, built once per session. */
+    readonly markViews?: (runtime: EditorRuntime) => Readonly<Record<string, MarkViewConstructor>>;
     /** Whether the editor's React tree renders or runs an effect now, which a development build passes. */
     readonly inRender?: () => boolean;
     /** The loaded record's revision, which an unmanaged session reports as acknowledged. */
@@ -208,10 +216,14 @@ export interface EditorRuntimeOptions {
     readonly tabMovesFocus?: () => boolean | undefined;
     /** The host's `scrollSelectionIntoView` prop, read on each scroll to the selection; default true. */
     readonly scrollSelectionIntoView?: () => boolean | undefined;
-    /** Opens the package-built control of an `openControl` command that a host `execute` ran. */
-    readonly openControl?: (control: string) => void;
+    /** Opens the package-built control of an `openControl` command that a host `execute` ran, with its payload. */
+    readonly openControl?: (control: string, payload: unknown) => void;
     /** The editor's locale, such as `de-CH`, read when a suggestion list asks its source; default `en-US`. */
     readonly locale?: () => string;
+    /** The presentation's brand styles, read when `block.style.set` runs; default none. */
+    readonly styles?: () => readonly PresentationStyle[];
+    /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
+    readonly columns?: ColumnState;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -246,6 +258,9 @@ const kindOf = (selection: Selection): SelectionSummary['kind'] => {
     }
     if (selection instanceof AllSelection) {
         return 'all';
+    }
+    if (selection instanceof GapCursor) {
+        return 'gap';
     }
     return 'none';
 };
@@ -394,6 +409,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // The mode the surface shows, which follows `mode` once input has settled.
     let shownMode = mode;
     let disabled = false;
+    let columns = options.columns ?? ONE_COLUMN;
+    // The columns the decorations show, which follow `columns` once input has settled.
+    let shownColumns = columns;
     let commitSequence = 0;
     let sequence = 0;
     let saves: SaveCoordinator | undefined;
@@ -415,6 +433,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let viewThrew = false;
     // Node views come from the bridge once this runtime exists, since they act on it.
     let nodeViews: Readonly<Record<string, NodeViewConstructor>> = {};
+    let markViews: Readonly<Record<string, MarkViewConstructor>> = {};
     // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
     let busy = 0;
     let draining = false;
@@ -451,7 +470,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const keyGuard = createKeyGuard(() => options.tabMovesFocus?.() === true);
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
-        plugins: [typingRecorder, keyGuard, settling.plugin, targetsPlugin, groupsPlugin, ...definition.plugins],
+        plugins: [
+            typingRecorder,
+            keyGuard,
+            settling.plugin,
+            targetsPlugin,
+            groupsPlugin,
+            columnsPlugin(() => shownColumns),
+            stylesPlugin(() => options.styles?.() ?? []),
+            ...definition.plugins,
+        ],
     });
     // The state whose document the snapshot and `sequence` last published, and how later provisional batches map it.
     let published = state;
@@ -534,12 +562,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const encode = (doc: Node): RichTextDocument =>
         encodeTree(doc.toJSON() as TreeNode, definition.model, capabilities).document;
 
-    // Recomputes `editable` and the surface attributes from the phase and the mode, which waits for input to settle.
+    // Recomputes `editable`, the surface attributes and the break decorations from the phase, the mode and the
+    // columns, which waits for input to settle.
     const refreshView = () => {
         if (settling.active() || recovery !== undefined) {
             return;
         }
         shownMode = mode;
+        shownColumns = columns;
         if (view !== undefined) {
             view.setProps({});
         }
@@ -1085,7 +1115,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const result = run(id, given, commandOptions, 'host');
         const control = controls.get(id);
         if (control !== undefined && result.status === 'no-op') {
-            options.openControl?.(control);
+            options.openControl?.(control, given);
         }
         // Without `focus: 'editor'` a command leaves focus where it is.
         if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
@@ -1721,6 +1751,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 return attributes;
                             },
                             nodeViews,
+                            markViews,
                             // Returning true reports the scroll as handled, so the view leaves it out.
                             handleScrollToSelection: () => options.scrollSelectionIntoView?.() === false,
                             dispatchTransaction: commit,
@@ -1788,6 +1819,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             disabled = next;
             view?.setProps({});
         },
+        setColumns: (next) => {
+            if (sameColumns(columns, next)) {
+                return;
+            }
+            columns = next;
+            refreshView();
+        },
         faultView: () => {
             if (viewCall) {
                 viewThrew = true;
@@ -1823,6 +1861,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
     if (options.nodeViews !== undefined) {
         nodeViews = options.nodeViews(runtime);
+    }
+    if (options.markViews !== undefined) {
+        markViews = options.markViews(runtime);
     }
     if (options.saves !== undefined) {
         saves = options.saves(runtime);
