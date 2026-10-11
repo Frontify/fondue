@@ -30,7 +30,7 @@ export const highlightDocument: RichTextDocument = {
         content: [
             {
                 type: 'paragraph',
-                attrs: { lang: null },
+                attrs: { lang: null, align: null },
                 content: [
                     { type: 'text', text: 'Read the ' },
                     { type: 'text', text: 'highlighted', marks: [{ type: 'fixture_highlight' }] },

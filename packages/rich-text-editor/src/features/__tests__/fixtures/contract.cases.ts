@@ -40,6 +40,8 @@ const PAYLOADS: Readonly<Record<string, unknown>> = {
     'code-block.outdent': undefined,
     'mark.font-color.set': { tokenId: 'brand.blue' },
     'block.style.set': { styleId: 'brand.body' },
+    'block.align.set': { align: 'center' },
+    'mark.language.set': { lang: 'de-CH', dir: null },
 };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [

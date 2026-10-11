@@ -6,6 +6,8 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
 import { highlight, highlightDocument } from '#/features/__tests__/fixtures/outside-feature';
+import { align } from '#/features/blocks-align/feature';
+import { heading } from '#/features/blocks-heading/feature';
 import { core } from '#/features/core/feature';
 import { compileContentModel } from '#/model';
 import { fixturesIn, renderReader } from '#/reader/__tests__/helpers/helpers';
@@ -44,7 +46,10 @@ describe('./features with no DOM globals', () => {
 describe('the outside fixture feature with no DOM globals', () => {
     it('renders in the reader and writes through every codec', () => {
         expect([typeof window, typeof document, typeof navigator]).toEqual(['undefined', 'undefined', 'undefined']);
-        const model = compileContentModel([core(), highlight()], { id: 'fixture.highlight', version: 1 });
+        const model = compileContentModel([core(), heading(), align(), highlight()], {
+            id: 'fixture.highlight',
+            version: 1,
+        });
         const codecs = createCodecs(model);
         const html = '<div class="fondue-rte-content"><p dir="auto">Read the <mark>highlighted</mark> part.</p></div>';
 

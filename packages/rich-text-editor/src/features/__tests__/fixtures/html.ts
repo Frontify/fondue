@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { align } from '#/features/blocks-align/feature';
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
@@ -7,6 +8,7 @@ import { bold } from '#/features/marks-bold/feature';
 import { code } from '#/features/marks-code/feature';
 import { fontColor } from '#/features/marks-font-color/feature';
 import { italic } from '#/features/marks-italic/feature';
+import { language } from '#/features/marks-language/feature';
 import { strike } from '#/features/marks-strike/feature';
 import { subscript } from '#/features/marks-subscript/feature';
 import { superscript } from '#/features/marks-superscript/feature';
@@ -62,38 +64,6 @@ export const htmlLists = defineFeature({
     },
 });
 
-/** Stands in for `marks.language`: `lang` and `dir` on a span. */
-export const htmlLanguage = defineFeature({
-    id: 'fixture.html-language',
-    version: 1,
-    requires,
-    marks: {
-        language: {
-            attrs: {
-                lang: { type: 'language', required: true },
-                dir: { type: 'enum', values: ['ltr', 'rtl', 'auto'], nullable: true, default: null },
-            },
-            html: ['span', { lang: { attr: 'lang' }, dir: { attr: 'dir' } }, 0],
-            parse: [{ tag: 'span[lang]', attrs: { lang: { from: 'lang' }, dir: { from: 'dir' } } }],
-        },
-    },
-});
-
-/** Stands in for `blocks.align` with `justify`: a shared `align` read from `text-align`. */
-export const htmlAlign = defineFeature({
-    id: 'fixture.html-align',
-    version: 1,
-    requires: [...requires, { id: 'blocks.heading', version: 1 }],
-    attributes: {
-        align: {
-            on: ['paragraph', 'heading'],
-            value: { type: 'enum', values: ['left', 'center', 'right', 'justify'], nullable: true, default: null },
-            html: { style: 'text-align' },
-            parse: { style: 'text-align' },
-        },
-    },
-});
-
 /** The shipped text features and `marks.font-color` with `literalColors` on, with the stand-ins above. */
 export const htmlFeatures = () =>
     [
@@ -107,9 +77,9 @@ export const htmlFeatures = () =>
         code(),
         subscript(),
         superscript(),
-        htmlAlign(),
+        align(),
         htmlLists(),
-        htmlLanguage(),
+        language(),
         fontColor({ literalColors: true }),
         htmlLink(),
     ] as const;

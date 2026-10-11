@@ -5,6 +5,7 @@ import { TextSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { vocabularyAlign, vocabularyStyles } from '#/features/__tests__/fixtures/vocabulary';
+import { align } from '#/features/blocks-align/feature';
 import { type ContentNodeJSON } from '#/model';
 import { mountText, para, storedIn, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { setSelection, typeText } from '#/testing';
@@ -98,8 +99,11 @@ describe('blocks.heading', () => {
     });
 
     it('opens every heading fixture with zero document changes', () => {
-        const model = textModel();
-        const levels = [1, 2, 3, 4, 5, 6].map((level) => storedIn(model, [headingOf(level, text(`Level ${level}`))]));
+        const model = textModel([...textFeatures(), align()]);
+        const levels = [1, 2, 3, 4, 5, 6].map((level) => {
+            const block = headingOf(level, text(`Level ${level}`));
+            return storedIn(model, [{ ...block, attrs: { ...block.attrs, align: null } }]);
+        });
         const documents = [{ ...headings, model: model.ref } as never, ...levels];
         const opened = documents.map((document) => {
             const { handle, view, changes, unmount } = mountText({

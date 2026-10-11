@@ -1,0 +1,44 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`alignment > keeps stored direction and alignment when the theme direction and the locale change 1`] = `
+{
+  "content": {
+    "attrs": {
+      "dir": "rtl",
+      "lang": "en",
+    },
+    "content": [
+      {
+        "attrs": {
+          "align": "left",
+          "lang": null,
+        },
+        "content": [
+          {
+            "text": "Note",
+            "type": "text",
+          },
+        ],
+        "type": "paragraph",
+      },
+    ],
+    "type": "doc",
+  },
+  "format": "frontify.rich-text",
+  "formatVersion": 1,
+  "model": {
+    "id": "test.align",
+    "version": 1,
+  },
+  "requiredCapabilities": [
+    {
+      "id": "blocks.align",
+      "version": 1,
+    },
+    {
+      "id": "core",
+      "version": 1,
+    },
+  ],
+}
+`;

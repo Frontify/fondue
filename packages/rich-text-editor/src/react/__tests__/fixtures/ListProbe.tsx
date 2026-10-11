@@ -69,6 +69,7 @@ export const ListProbe = ({
     reader = false,
     listLevels,
     tabMovesFocus,
+    strikeCheckedTasks = false,
 }: {
     /** Stored blocks, such as `list-blocks.ts` builds. */
     readonly blocks: readonly object[];
@@ -78,16 +79,22 @@ export const ListProbe = ({
     readonly listLevels?: ListLevels;
     /** Passed to the editor when set, else the editor keeps its default. */
     readonly tabMovesFocus?: boolean;
+    /** Strikethrough and the secondary text colour on a checked task, in the editor and the reader. */
+    readonly strikeCheckedTasks?: boolean;
 }) => {
     let options: Pick<RichTextEditorProps, 'tabMovesFocus'> = {};
     if (tabMovesFocus !== undefined) {
         options = { tabMovesFocus };
     }
     const [shownPresentation] = useState(() => {
-        if (listLevels === undefined) {
-            return presentation;
+        let next = presentation;
+        if (listLevels !== undefined) {
+            next = { ...presentation, listLevels };
         }
-        return { ...presentation, listLevels };
+        if (strikeCheckedTasks) {
+            next = { ...next, strikeCheckedTasks: true };
+        }
+        return next;
     });
     const ref = useRef<EditorHandle>(null);
     const changesRef = useRef<ListChange[]>([]);
