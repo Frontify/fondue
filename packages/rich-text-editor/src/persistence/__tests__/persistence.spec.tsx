@@ -14,12 +14,16 @@ import { fixtureChromeViews } from '#/features/__tests__/fixtures/chrome/view';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import {
+    type CommandResult,
     type CommitResult,
     defineEditor,
     type EditorHandle,
     type OperationMetric,
     type PersistenceOptions,
     type PersistenceService,
+    type RecoveryService,
+    type ReplaceDocumentRequest,
+    type ReplaceResult,
     RichTextEditor,
     type SaveRequest,
     type SaveResponse,
@@ -32,6 +36,7 @@ import {
     type Diagnostic,
     type Feature,
     type JsonValue,
+    type RichTextDocument,
     setBlock,
 } from '#/model';
 import { encodeTree } from '#/model/encode';
@@ -158,6 +163,7 @@ const peek = async <T,>(promise: Promise<T>) => {
 
 interface MountOptions {
     readonly service?: PersistenceService;
+    readonly recovery?: RecoveryService;
     readonly revision?: string | null;
     readonly persistenceOptions?: PersistenceOptions;
     readonly blocks?: readonly JsonValue[];
@@ -189,7 +195,7 @@ const mount = (options: MountOptions = {}) => {
     const element = (readOnly: boolean, service = options.service) => {
         const managed: Record<string, unknown> = { ...props };
         if (service !== undefined) {
-            managed.services = { persistence: service };
+            managed.services = { persistence: service, recovery: options.recovery };
         }
         return (
             <RichTextEditor
@@ -1686,6 +1692,1117 @@ describe('commit checkpoints', () => {
     );
 });
 
+type Mounted = ReturnType<typeof mount>;
+type ReplaceCode = Extract<ReplaceResult, { readonly status: 'rejected' }>['code'];
+
+/** A request that replaces the editor's document by `document-2` at `revision-9`, rejecting unsaved changes unless `overrides` says otherwise. */
+const replacing = (
+    handle: EditorHandle<object>,
+    overrides: Partial<ReplaceDocumentRequest> = {},
+): ReplaceDocumentRequest => ({
+    expected: handle.getSnapshot().stamp,
+    next: { ...loaded('revision-9', para('next')), documentId: 'document-2' },
+    unsaved: { action: 'reject' },
+    selection: 'start',
+    history: 'reset',
+    ...overrides,
+});
+const textIn = (document: RichTextDocument) => JSON.stringify(document.content).match(/"text":"([^"]*)"/)?.[1];
+const replace = (handle: EditorHandle<object>, overrides: Partial<ReplaceDocumentRequest> = {}) =>
+    act(() => handle.replaceDocument(replacing(handle, overrides)));
+/** The handle with the command IDs of any model, as the test model's are not the shipped ones. */
+const untyped = (handle: EditorHandle<object>) => handle as unknown as RuntimeHandle;
+/** Runs `history.undo` until it no longer applies, and returns how many steps it undid. */
+const undoSteps = (handle: EditorHandle<object>) => {
+    const results: CommandResult[] = [];
+    do {
+        act(() => {
+            results.push(untyped(handle).execute('history.undo'));
+        });
+    } while (results.at(-1)?.status === 'applied');
+    return results.length - 1;
+};
+
+interface Step {
+    readonly step: number;
+    readonly code: ReplaceCode;
+    /** Holds each save until the case answers it. */
+    readonly held?: boolean;
+    readonly mounting?: boolean;
+    /** Runs before the call and returns what the request changes. */
+    readonly setup?: (
+        editor: Mounted,
+        calls: readonly Call[],
+    ) => Partial<ReplaceDocumentRequest> | Promise<Partial<ReplaceDocumentRequest>>;
+    /** Runs while the replacement waits at step 5. */
+    readonly during?: (editor: Mounted, calls: readonly Call[]) => Promise<void>;
+    /** The step 5 `save` write may change the save state. */
+    readonly saves?: boolean;
+    /** The view reads a keystroke while the replacement waits, which the document keeps. */
+    readonly kept?: boolean;
+}
+const typed = ({ type }: Mounted) => {
+    type('x');
+    return {};
+};
+const steps: readonly Step[] = [
+    { step: 0, code: 'not-ready', mounting: true },
+    {
+        step: 2,
+        code: 'wrong-model',
+        setup: () => {
+            const { document } = loaded('revision-9', para('next'));
+            return {
+                next: {
+                    documentId: 'document-2',
+                    revision: 'revision-9',
+                    document: { ...document, model: { id: 'test.other', version: 1 } },
+                },
+            };
+        },
+    },
+    {
+        step: 2,
+        code: 'invalid-document',
+        setup: () => {
+            const { document } = loaded('revision-9', para('next'));
+            return {
+                next: {
+                    documentId: 'document-2',
+                    revision: 'revision-9',
+                    document: { ...document, formatVersion: 2 as 1 },
+                },
+            };
+        },
+    },
+    {
+        step: 3,
+        code: 'changed-since-request',
+        setup: ({ handle, type }) => {
+            const expected = handle().getSnapshot().stamp;
+            type('x');
+            return { expected };
+        },
+    },
+    {
+        step: 4,
+        code: 'composition-active',
+        setup: ({ handle }) => {
+            compose(handle(), 'x');
+            return {};
+        },
+    },
+    { step: 5, code: 'unsaved', setup: typed },
+    {
+        step: 5,
+        code: 'unsaved',
+        held: true,
+        saves: true,
+        setup: ({ type }) => {
+            type('x');
+            return { unsaved: { action: 'save' } };
+        },
+        during: async ({ flush }, calls) => {
+            await flush();
+            calls[0]?.answer({ status: 'rejected', code: 'forbidden', diagnostics: [] });
+            await settle();
+        },
+    },
+    {
+        step: 5,
+        code: 'checkpoint-invalid',
+        setup: ({ handle, type }) => {
+            const { stamp } = handle().getSnapshot();
+            type('x');
+            return { unsaved: { action: 'checkpoint', receipt: { stamp, receiptId: 'receipt-1' } } };
+        },
+    },
+    {
+        step: 6,
+        code: 'save-unresolved',
+        held: true,
+        setup: async ({ type, advance }, calls) => {
+            type('x');
+            advance(500);
+            calls[0]?.fail();
+            await settle();
+            return { unsaved: { action: 'discard', confirmed: true } };
+        },
+    },
+    {
+        step: 7,
+        code: 'changed-since-request',
+        held: true,
+        saves: true,
+        kept: true,
+        setup: ({ type }) => {
+            type('x');
+            return { unsaved: { action: 'save' } };
+        },
+        during: async ({ handle, flush }, calls) => {
+            await flush();
+            // A keystroke the view reads from the DOM while the write runs.
+            act(() => {
+                const view = viewOf(handle());
+                view.dispatch(view.state.tr.insertText('y'));
+            });
+            calls[0]?.answer();
+            await settle();
+        },
+    },
+];
+
+describe('replacement', () => {
+    it('answers an echo of the acknowledged record with the current session, keeping history, selection and save state', async () => {
+        const { service } = serviceOf();
+        const { handle, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        await settle();
+        const { session, selection } = handle().getSummary();
+        const status = handle().getSaveStatus();
+        const { document, acknowledgedRevision } = handle().getSnapshot();
+
+        const result = await replace(handle(), {
+            next: { documentId: 'document-1', revision: acknowledgedRevision, document },
+        });
+
+        expect(result).toEqual({ status: 'replaced', session });
+        expect(handle().getSummary()).toMatchObject({ session: { generation: 0 }, selection });
+        expect(handle().getSaveStatus()).toBe(status);
+        expect(undoSteps(handle())).toBe(1);
+        unmount();
+    });
+
+    it.each(steps)(
+        'stops at step $step with $code and leaves the session as it was',
+        async ({ code, held = false, mounting = false, setup, during, saves = false, kept = false }) => {
+            const { service, calls } = serviceOf(held);
+            const editor = mount({ service, mounting });
+            const { handle } = editor;
+            let overrides: Partial<ReplaceDocumentRequest> = {};
+            if (setup !== undefined) {
+                overrides = await setup(editor, calls);
+            }
+            const record = () => ({
+                phase: handle().getSummary().phase,
+                document: handle().getSnapshot().document,
+                selection: handle().getSummary().selection,
+                state: runtimeOf(handle())?.state,
+                status: handle().getSaveStatus(),
+            });
+            const before = record();
+
+            const pending = handle().replaceDocument(replacing(handle(), overrides));
+            await during?.(editor, calls);
+            const result = await act(() => pending);
+
+            expect(result).toEqual({ status: 'rejected', code });
+            const after = record();
+            expect(after.phase).toBe(before.phase);
+            if (kept) {
+                expect(textIn(after.document)).toBe('xyab');
+            } else {
+                expect(after.document).toEqual(before.document);
+                expect(after.selection).toEqual(before.selection);
+                expect(after.state).toBe(before.state);
+            }
+            if (!saves) {
+                expect(after.status).toEqual(before.status);
+            }
+            editor.unmount();
+        },
+    );
+
+    it('runs an intent enqueued during a step 5 save on the old session once that save is rejected', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, flush, unmount } = mount({ service });
+        type('x');
+        const replaced = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
+        await flush();
+        const inserted = untyped(handle()).enqueue('text.insert', { text: 'y' });
+        expect(await peek(inserted)).toBe('pending');
+
+        calls[0]?.answer({ status: 'rejected', code: 'invalid', diagnostics: [] });
+
+        expect(await act(() => replaced)).toEqual({ status: 'rejected', code: 'unsaved' });
+        expect(await inserted).toMatchObject({ status: 'applied', contentChanged: true });
+        expect(textIn(handle().getSnapshot().document)).toBe('xyab');
+        unmount();
+    });
+
+    it('starts the next generation with the sequence of a load and empty history, and acknowledges it with no write', async () => {
+        const { service } = serviceOf();
+        const { handle, type, flush, unmount } = mount({ service });
+        type('x');
+        const { session, commitSequence } = handle().getSummary();
+
+        const result = await replace(handle(), { unsaved: { action: 'discard', confirmed: true } });
+
+        const next = { documentId: 'document-2', sessionId: session.sessionId, generation: 1 };
+        expect(result).toEqual({ status: 'replaced', session: next });
+        expect(handle().getSummary()).toMatchObject({ session: next, sequence: 0 });
+        expect(handle().getSummary().commitSequence).toBeGreaterThan(commitSequence);
+        expect(handle().getSaveStatus()).toEqual({
+            state: 'clean',
+            latestSequence: 0,
+            acknowledgedSequence: 0,
+            revision: 'revision-9',
+            inFlightOperationId: null,
+            diagnostic: null,
+        });
+        expect(untyped(handle()).query('history.undo').enabled).toBe(false);
+        const committed = handle().requestCommit({ reason: 'manual' });
+        await flush();
+        expect(await committed).toEqual({
+            status: 'acknowledged',
+            acknowledgment: { operationId: null, stamp: { ...next, sequence: 0 }, revision: 'revision-9' },
+        });
+        expect(service.save).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('ignores a late save response and a late mention search from the old generation', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, advance, diagnostics, unmount } = mount({
+            service,
+            persistenceOptions: { timeoutMs: 1000 },
+        });
+        type('x');
+        advance(500);
+        // The first write times out, and its replay is saved, so the session is clean with the first still open.
+        advance(1000);
+        advance(2000);
+        calls[1]?.answer();
+        await settle();
+        expect(handle().getSaveStatus().state).toBe('clean');
+        let found: (result: unknown) => void = () => undefined;
+        runtimeOf(handle())?.startAsync({
+            key: 'mention-search',
+            service: 'references',
+            featureId: 'core',
+            action: 'create',
+            command: 'text.insert',
+            run: () =>
+                new Promise((resolve) => {
+                    found = resolve;
+                }),
+        });
+        await replace(handle());
+        const status = handle().getSaveStatus();
+        const { document } = handle().getSnapshot();
+
+        found({ text: 'late ' });
+        calls[0]?.answer({ status: 'conflict', currentRevision: 'revision-8' });
+        await settle();
+
+        expect(handle().getSaveStatus()).toBe(status);
+        expect(handle().getSnapshot().document).toEqual(document);
+        expect(diagnostics.map(({ code, details }) => [code, details])).toEqual([
+            ['runtime.async-discarded', { reason: 'wrong-session' }],
+        ]);
+        unmount();
+    });
+
+    it('hands no conflict read of the old document to onConflict after a replacement', async () => {
+        const onConflict = vi.fn();
+        const { service, calls } = serviceOf(true);
+        type Remote = Awaited<ReturnType<PersistenceService['read']>>;
+        let release: (remote: Remote) => void = () => undefined;
+        service.read.mockImplementationOnce(
+            () =>
+                new Promise<Remote>((resolve) => {
+                    release = resolve;
+                }),
+        );
+        const { handle, type, advance, unmount } = mount({ service, persistenceOptions: { onConflict } });
+        type('x');
+        advance(500);
+        calls[0]?.answer({ status: 'conflict', currentRevision: 'revision-1' });
+        await settle();
+        expect(service.read).toHaveBeenCalledTimes(1);
+
+        await replace(handle(), { unsaved: { action: 'discard', confirmed: true } });
+        release(loaded('revision-1', para('remote')));
+        await settle();
+
+        expect(handle().getSummary().session.documentId).toBe('document-2');
+        expect(onConflict).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('resolves intents queued during transitioning as wrong-session in the next generation', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, flush, unmount } = mount({ service });
+        type('x');
+        act(() => setSelection(handle(), { text: 'xab' }));
+        const captured = handle().captureTarget({ purpose: 'format', onIntersectingEdit: 'map' });
+        if (captured.status !== 'captured') {
+            throw new Error('expected a target');
+        }
+        const replaced = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
+        await flush();
+        const queued = [
+            untyped(handle()).enqueue('mark.bold.toggle', undefined, { target: captured.target }),
+            untyped(handle()).enqueue('text.insert', { text: 'y' }),
+        ];
+
+        calls[0]?.answer();
+
+        expect(await act(() => replaced)).toMatchObject({ status: 'replaced' });
+        expect(await Promise.all(queued)).toEqual([
+            { status: 'rejected', code: 'wrong-session' },
+            { status: 'rejected', code: 'wrong-session' },
+        ]);
+        expect(textIn(handle().getSnapshot().document)).toBe('next');
+        unmount();
+    });
+
+    it('blocks requestCommit with not-ready while transitioning, pinning nothing', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, flush, unmount } = mount({ service });
+        type('x');
+        const replaced = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
+        expect(handle().getSummary().phase).toBe('transitioning');
+
+        expect(await peek(handle().requestCommit({ reason: 'manual' }))).toEqual({
+            status: 'blocked',
+            code: 'not-ready',
+        });
+        await flush();
+        calls[0]?.answer();
+        await act(() => replaced);
+        await settle();
+
+        // The one write is the replacement's own `save`.
+        expect(calls).toHaveLength(1);
+        unmount();
+    });
+
+    it('accepts a checkpoint only with a receipt for the current stamp, with no save', async () => {
+        const { service } = serviceOf();
+        const { handle, type, unmount } = mount({ service });
+        type('x');
+        const older = handle().getSnapshot().stamp;
+        type('y');
+        const checkpoint = (stamp: typeof older) =>
+            ({ action: 'checkpoint', receipt: { stamp, receiptId: 'receipt-1' } }) as const;
+
+        expect(await replace(handle(), { unsaved: checkpoint(older) })).toEqual({
+            status: 'rejected',
+            code: 'checkpoint-invalid',
+        });
+        expect(await replace(handle(), { unsaved: checkpoint(handle().getSnapshot().stamp) })).toMatchObject({
+            status: 'replaced',
+        });
+        await settle();
+        expect(service.save).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('resolves faulted and leaves the phase faulted when a node view of the next document throws', async () => {
+        vi.mocked(createPortalStore).mockImplementationOnce(() => {
+            const store = actualStore();
+            return {
+                ...store,
+                set: (entry: PortalEntry) => {
+                    if (entry.state.attrs.language === 'boom') {
+                        throw new Error('node view failed');
+                    }
+                    store.set(entry);
+                },
+            };
+        });
+        const { service } = serviceOf();
+        const { handle, unmount } = mount({ service, blocks: [para('ab'), chromeBlock('b1')] });
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(0);
+        });
+        const replaced = vi.fn();
+        handle().subscribe('replaced', replaced);
+        const { document } = loaded('revision-9', para('next'), {
+            ...chromeBlock('b2'),
+            attrs: { nodeId: 'b2', language: 'boom', checked: false },
+        });
+
+        const result = await replace(handle(), {
+            next: { documentId: 'document-2', revision: 'revision-9', document },
+        });
+
+        expect(result).toEqual({ status: 'rejected', code: 'faulted' });
+        expect(handle().getSummary().phase).toBe('faulted');
+        expect(replaced).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('shows the recovery shell with the old document after an install fault', async () => {
+        vi.mocked(createPortalStore).mockImplementationOnce(() => {
+            const store = actualStore();
+            return {
+                ...store,
+                set: (entry: PortalEntry) => {
+                    if (entry.state.attrs.language === 'boom') {
+                        throw new Error('node view failed');
+                    }
+                    store.set(entry);
+                },
+            };
+        });
+        const { handle, type, unmount } = mount({
+            service: serviceOf().service,
+            blocks: [para('ab'), chromeBlock('b1')],
+        });
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(0);
+        });
+        type('x');
+        const next = loaded('revision-9', para('next'), {
+            ...chromeBlock('b2'),
+            attrs: { nodeId: 'b2', language: 'boom', checked: false },
+        });
+
+        await replace(handle(), {
+            next: { documentId: 'document-2', revision: 'revision-9', document: next.document },
+            unsaved: { action: 'discard', confirmed: true },
+        });
+
+        const shell = document.querySelector('[data-rte-shell="recovery"]');
+        expect(shell?.textContent).toContain('xab');
+        expect(shell?.textContent).not.toContain('next');
+        expect(document.querySelector('[role="textbox"]')).toBeNull();
+        unmount();
+    });
+
+    it('stores no recovery checkpoint when the next document faults the install', async () => {
+        vi.mocked(createPortalStore).mockImplementationOnce(() => {
+            const store = actualStore();
+            return {
+                ...store,
+                set: (entry: PortalEntry) => {
+                    if (entry.state.attrs.language === 'boom') {
+                        throw new Error('node view failed');
+                    }
+                    store.set(entry);
+                },
+            };
+        });
+        const store = vi.fn((checkpoint: Parameters<RecoveryService['store']>[0]) =>
+            Promise.resolve({ stamp: checkpoint.stamp, receiptId: 'receipt-1' }),
+        );
+        const { handle, unmount } = mount({
+            service: serviceOf().service,
+            recovery: { store },
+            blocks: [para('ab'), chromeBlock('b1')],
+        });
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(0);
+        });
+        const { document } = loaded('revision-9', para('next'), {
+            ...chromeBlock('b2'),
+            attrs: { nodeId: 'b2', language: 'boom', checked: false },
+        });
+
+        expect(
+            await replace(handle(), { next: { documentId: 'document-2', revision: 'revision-9', document } }),
+        ).toEqual({
+            status: 'rejected',
+            code: 'faulted',
+        });
+        await settle();
+
+        expect(store).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('resolves an intent queued during transitioning as wrong-session when a held async result settles first', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, flush, unmount } = mount({ service });
+        let found: (result: unknown) => void = () => undefined;
+        const search = new Promise((resolve) => {
+            found = resolve;
+        });
+        runtimeOf(handle())?.startAsync({
+            key: 'mention-search',
+            service: 'references',
+            featureId: 'core',
+            action: 'create',
+            command: 'text.insert',
+            run: () => search,
+        });
+        type('x');
+        const replaced = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
+        await flush();
+        const queued = untyped(handle()).enqueue('text.insert', { text: 'y' });
+        // The result arrives while the replacement waits, so the coordinator holds it.
+        found({ text: 'late ' });
+        await settle();
+
+        calls[0]?.answer();
+
+        expect(await act(() => replaced)).toMatchObject({ status: 'replaced' });
+        expect(await queued).toEqual({ status: 'rejected', code: 'wrong-session' });
+        expect(textIn(handle().getSnapshot().document)).toBe('next');
+        unmount();
+    });
+
+    it('runs the full steps for another untouched new record with an equal document', async () => {
+        const { handle, unmount } = mount({ service: serviceOf().service });
+        const { document } = handle().getSnapshot();
+
+        const result = await replace(handle(), { next: { documentId: 'document-2', revision: null, document } });
+
+        expect(result).toMatchObject({ status: 'replaced', session: { documentId: 'document-2', generation: 1 } });
+        expect(handle().getSummary().session.documentId).toBe('document-2');
+        unmount();
+    });
+
+    it.each([
+        ['an untouched new record', null, { status: 'failed', code: 'transport', outcome: 'not-sent' }],
+        [
+            'a clean existing record',
+            'revision-1',
+            {
+                status: 'acknowledged',
+                acknowledgment: {
+                    operationId: null,
+                    stamp: { documentId: 'document-1', sessionId: 'id-1', generation: 0, sequence: 0 },
+                    revision: 'revision-1',
+                },
+            },
+        ],
+    ] as const)(
+        'answers a requestCommit made before a replacement in the same task for %s, with no save of the next document',
+        async (_name, revision, expected) => {
+            const { service } = serviceOf();
+            const { handle, flush, unmount } = mount({ service, revision });
+
+            const committed = handle().requestCommit({ reason: 'navigate' });
+            await replace(handle());
+            await flush();
+            await settle();
+
+            expect(await committed).toEqual(expected);
+            expect(service.save).not.toHaveBeenCalled();
+            unmount();
+        },
+    );
+
+    it('refuses with unsaved when a documentChange listener replaces under the reject policy', async () => {
+        const { handle, type, unmount } = mount({
+            service: serviceOf().service,
+            revision: 'revision-1',
+        });
+        const results: Promise<ReplaceResult>[] = [];
+        handle().subscribe('documentChange', () => {
+            if (results.length === 0) {
+                results.push(handle().replaceDocument(replacing(handle())));
+            }
+        });
+
+        type('x');
+
+        expect(await act(() => results[0])).toEqual({ status: 'rejected', code: 'unsaved' });
+        expect(textIn(handle().getSnapshot().document)).toBe('xab');
+        unmount();
+    });
+
+    it('gives the session back with unsaved when a host passes a checkpoint with no receipt', async () => {
+        const { handle, type, unmount } = mount({ service: serviceOf().service });
+        type('x');
+
+        const result = await replace(handle(), { unsaved: { action: 'checkpoint' } as never });
+
+        expect(result).toEqual({ status: 'rejected', code: 'unsaved' });
+        expect(handle().getSummary().phase).toBe('ready');
+        let inserted: CommandResult | undefined;
+        act(() => {
+            inserted = untyped(handle()).execute('text.insert', { text: 'y' });
+        });
+        expect(inserted).toMatchObject({ status: 'applied' });
+        expect(textIn(handle().getSnapshot().document)).toBe('xyab');
+        unmount();
+    });
+
+    it('replaces an untouched new record under the reject policy and disposes it with no disposed-dirty', async () => {
+        const { service } = serviceOf();
+        const replaced = mount({ service });
+        expect(await replace(replaced.handle())).toMatchObject({ status: 'replaced' });
+        replaced.unmount();
+        const disposed = mount({ service });
+        disposed.unmount();
+
+        expect([...replaced.diagnostics, ...disposed.diagnostics]).toEqual([]);
+        expect(service.save).not.toHaveBeenCalled();
+    });
+
+    it('notifies selector stores with the fresh state before replaced', async () => {
+        const { handle, type, unmount } = mount({ service: serviceOf().service });
+        let undoable = false;
+        runtimeOf(handle())?.watch(
+            () => untyped(handle()).query('history.undo').enabled,
+            Object.is,
+            (value) => {
+                undoable = value;
+            },
+        );
+        type('x');
+        expect(undoable).toBe(true);
+        const seen: boolean[] = [];
+        handle().subscribe('replaced', () => seen.push(undoable));
+
+        await replace(handle(), { unsaved: { action: 'discard', confirmed: true } });
+
+        expect(seen).toEqual([false]);
+        unmount();
+    });
+});
+
+describe('replacement of the session state', () => {
+    const NOT_SENT = { status: 'failed', code: 'transport', outcome: 'not-sent' };
+    const discard = { action: 'discard', confirmed: true } as const;
+    const offline = () => {
+        const onLine = vi.spyOn(navigator, 'onLine', 'get');
+        onLine.mockReturnValue(false);
+        return onLine;
+    };
+    /** A record whose first block is a chrome block, so a selection at its start differs from one at its end. */
+    const withChromeFirst = () => ({
+        ...loaded('revision-9', chromeBlock('b2'), para('next')),
+        documentId: 'document-2',
+    });
+
+    it('sends the first write of the next generation under its own document and generation after the retries ran out', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, advance, unmount } = mount({
+            service,
+            persistenceOptions: { maxRetries: 1 },
+        });
+        type('x');
+        advance(500);
+        calls[0]?.fail();
+        await settle();
+        advance(2000);
+        calls[1]?.fail();
+        await settle();
+        expect(handle().getSaveStatus().state).toBe('error');
+        const { sessionId } = handle().getSummary().session;
+
+        expect(await replace(handle(), { unsaved: discard })).toMatchObject({ status: 'replaced' });
+        type('y');
+        advance(500);
+
+        expect(calls).toHaveLength(3);
+        expect(calls[2]?.request).toMatchObject({
+            stamp: { documentId: 'document-2', sessionId, generation: 1, sequence: 1 },
+            baseRevision: 'revision-9',
+        });
+        unmount();
+    });
+
+    it('answers a requestCommit made before a discarding replacement as not sent, though the loaded record was acknowledged', async () => {
+        const { service } = serviceOf();
+        const { handle, type, flush, unmount } = mount({ service, revision: 'revision-1' });
+        type('x');
+
+        const committed = handle().requestCommit({ reason: 'navigate' });
+        await replace(handle(), { unsaved: discard });
+        await flush();
+        await settle();
+
+        expect(await committed).toEqual(NOT_SENT);
+        expect(service.save).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('answers a requestCommit made before a saving replacement disposed when the editor is disposed during that save', async () => {
+        const { service } = serviceOf(true);
+        const { handle, type, flush, unmount } = mount({ service });
+        type('x');
+
+        const committed = handle().requestCommit({ reason: 'navigate' });
+        const pending = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
+        await flush();
+        act(() => handle().dispose());
+
+        expect(await peek(committed)).toMatchObject({ status: 'failed', code: 'disposed' });
+        expect(await pending).toMatchObject({ status: 'rejected', code: 'not-ready' });
+        unmount();
+    });
+
+    it('drops a checkpoint pinned offline with a replacement, so the next write is the next document', async () => {
+        const { service, calls } = serviceOf();
+        const { handle, type, advance, flush, unmount } = mount({ service });
+        const onLine = offline();
+        type('x');
+        const committed = handle().requestCommit({ reason: 'manual' });
+        await flush();
+        expect(await committed).toEqual(NOT_SENT);
+
+        expect(await replace(handle(), { unsaved: discard })).toMatchObject({ status: 'replaced' });
+        onLine.mockRestore();
+        type('y');
+        advance(500);
+        await settle();
+
+        expect(calls.map(({ request }) => [request.stamp.documentId, textOf(request)])).toEqual([
+            ['document-2', 'ynext'],
+        ]);
+        unmount();
+    });
+
+    it('refuses with save-unresolved when the save policy write times out with an unknown outcome', async () => {
+        const { service } = serviceOf(true);
+        const { handle, type, advance, flush, unmount } = mount({
+            service,
+            persistenceOptions: { timeoutMs: 1000 },
+        });
+        type('x');
+        const pending = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
+        await flush();
+
+        advance(1000);
+
+        expect(await act(() => pending)).toEqual({ status: 'rejected', code: 'save-unresolved' });
+        expect(handle().getSummary().phase).toBe('ready');
+        unmount();
+    });
+
+    it('refuses a discard that is not confirmed with unsaved', async () => {
+        const { handle, type, unmount } = mount({ service: serviceOf().service });
+        type('x');
+
+        const result = await replace(handle(), { unsaved: { action: 'discard' } as never });
+
+        expect(result).toEqual({ status: 'rejected', code: 'unsaved' });
+        expect(textIn(handle().getSnapshot().document)).toBe('xab');
+        unmount();
+    });
+
+    it.each(['start', 'end'] as const)('puts the selection at the %s of the next document', async (selection) => {
+        const { handle, unmount } = mount({ service: serviceOf().service });
+        let blockType = 'chrome_block';
+        if (selection === 'end') {
+            blockType = 'paragraph';
+        }
+
+        await replace(handle(), { next: withChromeFirst(), selection });
+
+        expect(handle().getSummary().selection).toMatchObject({ kind: 'text', collapsed: true, blockType });
+        unmount();
+    });
+
+    it('saves the capabilities of the next document, not the first one, while an island keeps its content', async () => {
+        const { handle, type, unmount } = mount({ service: serviceOf().service });
+        const next = loaded('revision-9', para('next'), { type: 'widget', attrs: {} });
+        const requiredCapabilities = [
+            { id: 'core', version: 1 },
+            { id: 'future.widget', version: 3 },
+        ];
+
+        const result = await replace(handle(), {
+            next: {
+                documentId: 'document-2',
+                revision: 'revision-9',
+                document: { ...next.document, requiredCapabilities },
+            },
+        });
+        type('x');
+
+        expect(result).toMatchObject({ status: 'replaced' });
+        expect(handle().getSnapshot().document.requiredCapabilities).toEqual(requiredCapabilities);
+        unmount();
+    });
+
+    it('reports the revision of the next document as acknowledged in an unmanaged session', async () => {
+        const { handle, unmount } = mount({ revision: 'revision-1' });
+        expect(handle().getSaveStatus().revision).toBe('revision-1');
+
+        await replace(handle());
+
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'unmanaged',
+            revision: 'revision-9',
+            acknowledgedSequence: 0,
+        });
+        unmount();
+    });
+
+    it('answers a second replaceDocument with not-ready while the first waits at step 5', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, flush, unmount } = mount({ service });
+        type('x');
+        const first = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
+        await flush();
+
+        const second = await act(() => handle().replaceDocument(replacing(handle())));
+
+        expect(second).toEqual({ status: 'rejected', code: 'not-ready' });
+        expect(handle().getSummary().phase).toBe('transitioning');
+        calls[0]?.answer();
+        expect(await act(() => first)).toMatchObject({ status: 'replaced' });
+        unmount();
+    });
+
+    it('replaces by the same document and a newer revision, in the next generation', async () => {
+        const { handle, unmount } = mount({
+            service: serviceOf().service,
+            revision: 'revision-1',
+        });
+        const { document } = handle().getSnapshot();
+
+        const result = await replace(handle(), {
+            next: { documentId: 'document-1', revision: 'revision-2', document },
+        });
+
+        expect(result).toMatchObject({ status: 'replaced', session: { documentId: 'document-1', generation: 1 } });
+        expect(handle().getSaveStatus().revision).toBe('revision-2');
+        unmount();
+    });
+
+    it.each([
+        ['wrong-model', 'test.other', 1 as const],
+        ['invalid-document', 'test.persistence', 2 as 1],
+    ] as const)(
+        'reports %s for a request that also changed since it was made',
+        async (code, modelId, formatVersion) => {
+            const { handle, type, unmount } = mount({ service: serviceOf().service });
+            const expected = handle().getSnapshot().stamp;
+            type('x');
+            const { document } = loaded('revision-9', para('next'));
+
+            const result = await replace(handle(), {
+                expected,
+                next: {
+                    documentId: 'document-2',
+                    revision: 'revision-9',
+                    document: { ...document, model: { id: modelId, version: 1 }, formatVersion },
+                },
+            });
+
+            expect(result).toEqual({ status: 'rejected', code });
+            unmount();
+        },
+    );
+
+    it('makes the surface editable and not busy again after a rejected replacement', async () => {
+        const { handle, type, unmount } = mount({ service: serviceOf().service });
+        type('x');
+
+        expect(await replace(handle())).toEqual({ status: 'rejected', code: 'unsaved' });
+
+        const surface = screen.getByRole('textbox', { name: 'Notes' });
+        expect(surface.getAttribute('contenteditable')).toBe('true');
+        expect(surface.hasAttribute('aria-busy')).toBe(false);
+        unmount();
+    });
+
+    it('emits the selection and save status changes, then replaced with the returned session', async () => {
+        const { handle, type, unmount } = mount({ service: serviceOf().service });
+        type('x');
+        const order: string[] = [];
+        const sessions: unknown[] = [];
+        handle().subscribe('selectionChange', () => order.push('selectionChange'));
+        handle().subscribe('saveStatusChange', () => order.push('saveStatusChange'));
+        handle().subscribe('replaced', (session) => {
+            order.push('replaced');
+            sessions.push(session);
+        });
+
+        const result = await replace(handle(), { next: withChromeFirst(), unsaved: discard });
+
+        expect(order).toEqual(['selectionChange', 'saveStatusChange', 'replaced']);
+        expect(result).toMatchObject({ status: 'replaced' });
+        if (result.status === 'replaced') {
+            expect(sessions).toEqual([result.session]);
+        }
+        unmount();
+    });
+
+    it('starts the next generation clean after a Retry mount that held unsaved changes', async () => {
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const { service } = serviceOf(true);
+        const ref = createRef<EditorHandle<object>>();
+        const Bomb = ({ armed }: { readonly armed: boolean }) => {
+            if (armed) {
+                throw new Error('render failed');
+            }
+            return null;
+        };
+        const tree = (armed: boolean) => (
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={loaded('revision-1', para('ab'))}
+                services={{ persistence: service }}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+                <Bomb armed={armed} />
+            </RichTextEditor.Root>
+        );
+        const view = render(tree(false));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        act(() => typeText(ref.current as EditorHandle<object>, 'c'));
+        view.rerender(tree(true));
+        view.rerender(tree(false));
+        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        const handle = ref.current as EditorHandle<object>;
+        expect(handle.getSaveStatus().state).toBe('dirty');
+
+        expect(await replace(handle, { unsaved: discard })).toMatchObject({ status: 'replaced' });
+
+        expect(handle.getSaveStatus()).toMatchObject({ state: 'clean', acknowledgedSequence: 0 });
+        view.unmount();
+        consoleError.mockRestore();
+    });
+
+    it('starts a replacement by a new record below the first sequence and bases its first write on no revision', async () => {
+        const { service, calls } = serviceOf();
+        const { handle, type, advance, unmount } = mount({ service, revision: 'revision-1' });
+
+        await replace(handle(), { next: { ...loaded(null, para('next')), documentId: 'document-2' } });
+
+        expect(handle().getSaveStatus()).toMatchObject({ acknowledgedSequence: -1, revision: null });
+        type('x');
+        advance(500);
+        await settle();
+        expect(calls[0]?.request.baseRevision).toBeNull();
+        unmount();
+    });
+
+    it('refuses with save-unresolved at step 6 while a write is in flight', async () => {
+        const { service } = serviceOf(true);
+        const { handle, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        expect(handle().getSaveStatus().state).toBe('saving');
+
+        expect(await replace(handle(), { unsaved: discard })).toEqual({ status: 'rejected', code: 'save-unresolved' });
+        unmount();
+    });
+
+    it('refuses with save-unresolved at step 6 while a write the network left unknown waits offline', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        const onLine = offline();
+        calls[0]?.fail();
+        await settle();
+        expect(handle().getSaveStatus().state).toBe('offline');
+
+        expect(await replace(handle(), { unsaved: discard })).toEqual({ status: 'rejected', code: 'save-unresolved' });
+        onLine.mockRestore();
+        unmount();
+    });
+});
+
+describe('recovery', () => {
+    it('stores the candidate of a view fault and reports the receipt', async () => {
+        vi.mocked(createPortalStore).mockImplementationOnce(() => {
+            const store = actualStore();
+            return {
+                ...store,
+                set: (entry: PortalEntry) => {
+                    if (entry.state.attrs.language === 'boom') {
+                        throw new Error('node view failed');
+                    }
+                    store.set(entry);
+                },
+            };
+        });
+        const store = vi.fn((checkpoint: Parameters<RecoveryService['store']>[0]) =>
+            Promise.resolve({ stamp: checkpoint.stamp, receiptId: 'receipt-1' }),
+        );
+        const { handle, type, diagnostics, unmount } = mount({
+            service: serviceOf().service,
+            recovery: { store },
+            blocks: [para('ab'), chromeBlock('b1')],
+        });
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(0);
+        });
+        type('x');
+        const { session, sequence } = handle().getSummary();
+
+        act(() => {
+            runtimeOf(handle())?.nodeActions('b1').update({ language: 'boom' });
+        });
+        await settle();
+
+        expect(handle().getSummary().phase).toBe('faulted');
+        expect(store).toHaveBeenCalledTimes(1);
+        const [[checkpoint]] = store.mock.calls as unknown as [[Parameters<RecoveryService['store']>[0]]];
+        expect(checkpoint).toMatchObject({ stamp: { ...session, sequence: sequence + 1 }, acknowledgedRevision: null });
+        expect(checkpoint.document).toEqual(handle().getRecoveryCandidate());
+        expect(diagnostics.filter(({ code }) => code === 'runtime.recovery-stored')).toEqual([
+            {
+                code: 'runtime.recovery-stored',
+                severity: 'info',
+                messageKey: 'runtime.recovery-stored',
+                details: { receiptId: 'receipt-1' },
+            },
+        ]);
+        unmount();
+    });
+
+    it('stores the acknowledged revision of the session with the candidate, in the context of the session', async () => {
+        vi.mocked(createPortalStore).mockImplementationOnce(() => {
+            const store = actualStore();
+            return {
+                ...store,
+                set: (entry: PortalEntry) => {
+                    if (entry.state.attrs.language === 'boom') {
+                        throw new Error('node view failed');
+                    }
+                    store.set(entry);
+                },
+            };
+        });
+        const store = vi.fn((checkpoint: Parameters<RecoveryService['store']>[0]) =>
+            Promise.resolve({ stamp: checkpoint.stamp, receiptId: 'receipt-1' }),
+        );
+        const { handle, unmount } = mount({
+            service: serviceOf().service,
+            recovery: { store },
+            revision: 'revision-1',
+            blocks: [para('ab'), chromeBlock('b1')],
+        });
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(0);
+        });
+        const { session } = handle().getSummary();
+
+        act(() => {
+            runtimeOf(handle())?.nodeActions('b1').update({ language: 'boom' });
+        });
+        await settle();
+
+        const [[checkpoint, context]] = store.mock.calls as unknown as [
+            [Parameters<RecoveryService['store']>[0], ServiceContext],
+        ];
+        expect(checkpoint.acknowledgedRevision).toBe('revision-1');
+        expect(context.session).toEqual(session);
+        unmount();
+    });
+
+    it('states the host obligations for browser-stored checkpoints on the switching documents page', () => {
+        const page = readFileSync(
+            join(dirname(fileURLToPath(import.meta.url)), '..', 'persistence.stories.tsx'),
+            'utf8',
+        );
+
+        expect(page).toMatch(/namespace[^.]*by user, tenant and document/i);
+        expect(page).toMatch(/retention period/i);
+        expect(page).toMatch(/delete[^.]*on logout and on account switch/i);
+    });
+});
+
 describe('the runtime with a save coordinator', () => {
     it('warns of an undeclared capability on decode and saves the corrected list after one edit', async () => {
         const boldText = { type: 'text', text: 'ab', marks: [{ type: 'bold' }] };
@@ -2082,6 +3199,44 @@ describe('operation metrics', () => {
             { ...common, kind: 'save', durationMs: replayedFor, failureCode: null },
         ]);
         expect(replayedFor).toBeGreaterThan(0);
+        unmount();
+    });
+
+    it('emits one replace metric for a replacement, timed from the call to its end', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, metrics, type, advance, flush, unmount } = mount({ service });
+        const common = {
+            packageVersion: PACKAGE_VERSION,
+            model: { id: 'test.persistence', version: 1 },
+            capabilityIds: model.capabilities.map(({ id }) => id),
+            normalizationTransactions: 0,
+        };
+        type('x');
+        const { session } = handle().getSummary();
+
+        const replaced = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
+        await flush();
+        advance(40);
+        calls[0]?.answer();
+        const result = await act(() => replaced);
+
+        const next = { ...session, documentId: 'document-2', generation: 1 };
+        expect(result).toEqual({ status: 'replaced', session: next });
+        expect(metrics.filter(({ kind }) => kind === 'replace')).toEqual([
+            { ...common, session: next, kind: 'replace', durationMs: 40, failureCode: null },
+        ]);
+        unmount();
+    });
+
+    it('reports the code of a rejected replacement as its failureCode', async () => {
+        const { handle, metrics, type, unmount } = mount({ service: serviceOf().service });
+        type('x');
+
+        expect(await replace(handle())).toEqual({ status: 'rejected', code: 'unsaved' });
+
+        expect(metrics.filter(({ kind }) => kind === 'replace')).toEqual([
+            expect.objectContaining({ session: handle().getSummary().session, durationMs: 0, failureCode: 'unsaved' }),
+        ]);
         unmount();
     });
 });

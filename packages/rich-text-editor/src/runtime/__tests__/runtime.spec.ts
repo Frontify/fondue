@@ -40,6 +40,7 @@ import {
     type JsonValue,
     migrateDocument,
     type ResourceLimits,
+    type RichTextDocument,
     setBlock,
     toggleMark,
 } from '#/model';
@@ -62,6 +63,7 @@ import {
     type CommandResult,
     type DocumentChange,
     type FeaturePolicy,
+    type ReplaceDocumentRequest,
 } from '../types';
 
 const boldModel = compileContentModel([core(), bold()], { id: 'test.bold', version: 1 });
@@ -173,6 +175,18 @@ const undoSteps = (handle: EditorRuntime['handle']) => {
     }
     return steps;
 };
+/** A request that replaces the session's document by `document`, discarding unsaved changes unless `unsaved` says otherwise. */
+const replacing = (
+    handle: EditorRuntime['handle'],
+    document: unknown,
+    unsaved: ReplaceDocumentRequest['unsaved'] = { action: 'discard', confirmed: true },
+): ReplaceDocumentRequest => ({
+    expected: handle.getSnapshot().stamp,
+    next: { documentId: 'document-2', revision: null, document: document as RichTextDocument },
+    unsaved,
+    selection: 'start',
+    history: 'reset',
+});
 const discarded = (reason: string) => ({
     code: 'runtime.async-discarded',
     severity: 'info',
@@ -456,6 +470,32 @@ describe('the session lifecycle', () => {
         expect(ready).toHaveBeenCalledTimes(1);
         expect(ready).toHaveBeenCalledWith(runtime.handle.getSummary().session);
         expect(runtime.handle.getSummary().phase).toBe('ready');
+    });
+
+    it('emits no ready after a replacement', async () => {
+        const { handle } = start(stored(para(words('ab'))));
+        const ready = vi.fn();
+        handle.subscribe('ready', ready);
+
+        const result = await handle.replaceDocument(replacing(handle, stored(para(words('cd')))));
+        vi.runAllTimers();
+
+        expect(result).toEqual({ status: 'replaced', session: handle.getSummary().session });
+        expect(ready).not.toHaveBeenCalled();
+    });
+
+    it('resolves intents queued during transitioning as not-ready on dispose', async () => {
+        const { handle } = start(stored(para(words('ab'))));
+        typeText(handle, 'x');
+        // An unmanaged session refuses the `save` policy, but only once the step 5 call resolves.
+        const replaced = handle.replaceDocument(replacing(handle, stored(para()), { action: 'save' }));
+        expect(handle.getSummary().phase).toBe('transitioning');
+        const queued = handle.enqueue('text.insert', { text: 'y' });
+
+        handle.dispose();
+
+        expect(await queued).toEqual({ status: 'rejected', code: 'not-ready' });
+        expect(await replaced).toEqual({ status: 'rejected', code: 'not-ready' });
     });
 
     it('emits disposed with the final token, then holds no subscription, view or frame', () => {
@@ -2816,6 +2856,36 @@ describe('targets on release and dispose', () => {
         expect(handle.query('mark.bold.toggle', undefined, { target }).disabledReason).toBe('target-invalid');
     });
 
+    it('removes every target from plugin state on replaceDocument, and later use is wrong-session', async () => {
+        const { handle, runtime } = start(stored(para(words('abcd'))), { model: targetModel });
+        setSelection(handle, { text: 'bc' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        expect(probeRuntimes().targets).toBe(2);
+
+        await handle.replaceDocument(replacing(handle, stored(para(words('cd')))));
+
+        expect(countTargets(runtime.state)).toBe(0);
+        expect(probeRuntimes().targets).toBe(0);
+        expect(handle.execute('mark.bold.toggle', undefined, { target })).toEqual({
+            status: 'rejected',
+            code: 'wrong-session',
+        });
+    });
+
+    it('refuses a capture while transitioning and creates no target', async () => {
+        const { handle } = start(stored(para(words('ab'))), { model: targetModel });
+        typeText(handle, 'x');
+        const replaced = handle.replaceDocument(replacing(handle, stored(para()), { action: 'save' }));
+
+        expect([
+            handle.getSummary().phase,
+            handle.captureTarget({ purpose: 'format', onIntersectingEdit: 'map' }),
+        ]).toEqual(['transitioning', { status: 'rejected', code: 'not-ready' }]);
+        expect(probeRuntimes().targets).toBe(0);
+        expect(await replaced).toEqual({ status: 'rejected', code: 'unsaved' });
+    });
+
     it('refuses a capture while mounting, faulted or disposed and creates no target', () => {
         const { tree } = decodeToTree(stored(para(words('ab'))), boldModel);
         const mounting = createEditorRuntime({
@@ -2937,6 +3007,18 @@ describe('the async coordinator', () => {
                 ({ runtime }) => {
                     const operation = pending(runtime);
                     return () => operation.resolve({ text: 'x', at: () => 1 });
+                },
+            ],
+            [
+                'a session generation that a replacement ended',
+                'wrong-session',
+                ({ handle, runtime }) => {
+                    const operation = pending(runtime);
+                    const replaced = handle.replaceDocument(replacing(handle, stored(para(words('cd')))));
+                    return async () => {
+                        await replaced;
+                        await operation.resolve({ text: 'x' });
+                    };
                 },
             ],
         ];
@@ -3214,6 +3296,45 @@ describe('history', () => {
         expect([canUndo(next), canRedo(next)]).toEqual([false, false]);
         expect(next.plugins).toHaveLength(state.plugins.length);
         expect(next.plugins.every((plugin, index) => plugin === state.plugins[index])).toBe(true);
+    });
+
+    it('resolves faulted when building the fresh state for the next document throws', async () => {
+        // A plugin whose state cannot start on the next document, as a broken feature's would.
+        const picky = new Plugin({
+            state: {
+                init: (_config, { doc }) => {
+                    if (doc.textContent === 'boom') {
+                        throw new Error('plugin state failed');
+                    }
+                    return null;
+                },
+                apply: (_tr, value: null) => value,
+            },
+        });
+        const { handle, diagnostics } = start(stored(para(words('ab'))), { plugins: [picky] });
+        const replaced = vi.fn();
+        handle.subscribe('replaced', replaced);
+
+        const result = await handle.replaceDocument(replacing(handle, stored(para(words('boom')))));
+
+        expect(result).toEqual({ status: 'rejected', code: 'faulted' });
+        expect(handle.getSummary().phase).toBe('faulted');
+        expect(diagnostics.map(({ code }) => code)).toEqual(['runtime.view-fault']);
+        expect(replaced).not.toHaveBeenCalled();
+    });
+
+    it('leaves nothing to undo or redo after replaceDocument', async () => {
+        const { handle, runtime } = start(stored(para()));
+        typeText(handle, 'a');
+        vi.advanceTimersByTime(600);
+        typeText(handle, 'b');
+        handle.execute('history.undo');
+        expect([canUndo(runtime.state), canRedo(runtime.state)]).toEqual([true, true]);
+
+        await handle.replaceDocument(replacing(handle, stored(para(words('cd')))));
+
+        expect([canUndo(runtime.state), canRedo(runtime.state)]).toEqual([false, false]);
+        expect(handle.execute('history.undo')).toEqual({ status: 'rejected', code: 'not-applicable' });
     });
 
     it('closes the undo group around a command and a paste: typing, bold and typing, typing, an insert and typing, and typing, a paste and typing, are three steps each', () => {
@@ -3767,14 +3888,17 @@ describe('input rules', () => {
             ]);
         });
 
-        it(`fires no ${id} for its pattern pasted as plain text, inserted by a command or loaded`, () => {
+        it(`fires no ${id} for its pattern pasted as plain text, inserted by a command, loaded or replaced`, async () => {
             const pasted = start(stored(para()), { model: ruleModel });
             pasted.view.pasteText(typed);
             const inserted = start(stored(para()), { model: ruleModel });
             inserted.handle.execute('text.insert', { text: typed });
             const loaded = start(stored(para(words(typed))), { model: ruleModel });
+            const replaced = start(stored(para()), { model: ruleModel });
+            await replaced.handle.replaceDocument(replacing(replaced.handle, stored(para(words(typed)))));
 
-            expect([pasted, inserted, loaded].map(({ view }) => shapeOf(view.state.doc))).toEqual([
+            expect([pasted, inserted, loaded, replaced].map(({ view }) => shapeOf(view.state.doc))).toEqual([
+                `paragraph ${typed}`,
                 `paragraph ${typed}`,
                 `paragraph ${typed}`,
                 `paragraph ${typed}`,

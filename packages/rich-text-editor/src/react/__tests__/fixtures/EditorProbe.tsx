@@ -99,6 +99,8 @@ declare global {
             readonly undoDepth: () => number | undefined;
             /** Each request the fake persistence service got, when the probe mounts with `persistence`. */
             readonly saves: readonly SaveRequest[];
+            /** Answers each save that `holdSaves` holds. */
+            readonly answerSaves: () => void;
         };
     }
 }
@@ -123,6 +125,7 @@ export const EditorProbe = ({
     inForm = false,
     rerendered = {},
     persistence = false,
+    holdSaves = false,
     onChange,
 }: {
     readonly texts?: readonly string[];
@@ -144,10 +147,13 @@ export const EditorProbe = ({
     readonly rerendered?: Rerendered;
     /** Mounts with the reference fake persistence service, which records each request in `window.rte.saves`. */
     readonly persistence?: boolean;
+    /** Holds each save of the fake service until `window.rte.answerSaves()`. */
+    readonly holdSaves?: boolean;
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const [saves] = useState<SaveRequest[]>([]);
+    const [held] = useState<(() => void)[]>([]);
     const [services] = useState(() => {
         if (!persistence) {
             return undefined;
@@ -156,7 +162,12 @@ export const EditorProbe = ({
         const service: PersistenceService = {
             save: (request, context) => {
                 saves.push(request);
-                return server.save(request, context);
+                if (!holdSaves) {
+                    return server.save(request, context);
+                }
+                return new Promise((resolve) => {
+                    held.push(() => resolve(server.save(request, context)));
+                });
             },
             read: server.read,
         };
@@ -205,9 +216,14 @@ export const EditorProbe = ({
                 text: () => runtime?.view?.state.doc.textContent,
                 undoDepth: () => (runtime === undefined ? undefined : undoDepth(runtime.state)),
                 saves,
+                answerSaves: () => {
+                    for (const answer of held.splice(0)) {
+                        answer();
+                    }
+                },
             };
         }
-    }, [saves]);
+    }, [saves, held]);
     const editor = (
         <>
             <button type="button">Before</button>
