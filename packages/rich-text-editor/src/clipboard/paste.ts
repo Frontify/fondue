@@ -304,7 +304,8 @@ export const pastePayload = (
             slice = converted.slice;
             droppedMedia = converted.dropped;
         }
-        insert(prepared(slice));
+        const content = withinLinkPolicy(slice.content, markHrefPolicy(model, 'link'));
+        insert(prepared(new Slice(content, slice.openStart, slice.openEnd)));
         return { droppedMedia };
     }
     // HTML, which goes no further even when it parses to nothing.
