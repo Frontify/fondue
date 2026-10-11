@@ -38,6 +38,7 @@ import { columnsOf } from './columns';
 import { historyPlugin, redo, undo } from './history';
 import { enterRules, inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
+import { linkAt } from './links';
 import { listAround, repeated } from './lists';
 import { nearest, positionOf } from './positions';
 import { stylesOf } from './styles';
@@ -904,7 +905,8 @@ const enclosingRange = (
     state: EditorState,
     type: MarkType,
 ): { readonly from: number; readonly to: number } | undefined => {
-    const range = markRangeAt(state, type);
+    // A caret at a link's trailing edge still edits the link the link bubble shows there; a passage's end stays outside.
+    const range = type.name === 'link' ? linkAt(state) : markRangeAt(state, type);
     const { from, to } = state.selection;
     if (range === undefined || from < range.from || to > range.to) {
         return undefined;
@@ -998,9 +1000,8 @@ const applyMark = (
     }
     if (dispatch !== undefined) {
         const transaction = state.tr;
-        const { from, to } = state.selection;
-        const single = texts.length === 1 && texts[0]?.from === from && texts[0].to === to;
-        if (single) {
+        const { from, to, $from, $to } = state.selection;
+        if ($from.sameParent($to)) {
             markRange(transaction, from, to, mark, text);
         } else {
             for (const range of texts) {
@@ -1022,7 +1023,7 @@ const clearMarks = (
     if (state.selection.empty) {
         const stored = state.storedMarks ?? state.selection.$from.marks();
         const held = types.flatMap((type) => {
-            const range = extend ? markRangeAt(state, type) : undefined;
+            const range = extend ? enclosingRange(state, type) : undefined;
             if (range === undefined && type.isInSet(stored) === undefined) {
                 return [];
             }

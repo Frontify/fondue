@@ -5,8 +5,7 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 
 import { type AttributeDeclarations, type HrefPolicy, type PayloadDeclaration } from '#/model';
 import { type CompiledFeature } from '#/model/compile';
-
-import { hrefPolicyOf } from './href-policy';
+import { hrefPolicyOf } from '#/model/href';
 
 /** A command as a line-start rule runs it, with the payload of its marker, and whether its target is active there. */
 interface RuleCommand {

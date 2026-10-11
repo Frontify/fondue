@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Checkbox, Flyout, Label, TextInput } from '@frontify/fondue-components';
+import { Button, Checkbox, Dropdown, Flyout, Label, TextInput } from '@frontify/fondue-components';
 import {
     type CompositionEvent,
     type FormEvent,
@@ -12,17 +12,19 @@ import {
     useState,
 } from 'react';
 
+import { useAnnounce } from '#/bridge/announcer';
 import { SessionContext } from '#/bridge/hooks';
 import { useEditorOverlay } from '#/bridge/overlays';
-import { hrefPolicyOf } from '#/definition';
 import { checkHref, type ContentModel, type HrefPolicy } from '#/model';
 import { compiledModel } from '#/model/compile';
+import { hrefPolicyOf } from '#/model/href';
 import { passesToBrowser } from '#/runtime/keys';
 import { linkAt } from '#/runtime/links';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { suggestionOptionId } from '#/runtime/suggestions/plugin';
 import { type ReferenceValue, type SelectionHandle, type SessionToken } from '#/runtime/types';
 import { Listbox } from '#/ui/suggestions/listbox';
+import { CheckedSlot } from '#/ui/toolbar/item';
 
 import { type Destination, destinationsOf, withScheme } from './destination';
 import { rangeAnchor } from './range-anchor';
@@ -44,9 +46,17 @@ export interface LinkPopoverStrings {
     readonly style: string;
     readonly noStyle: string;
     readonly invalid: string;
+    /** The schemes `allowedSchemes` lists, joined in the UI locale, which a link must start with. */
+    readonly schemesAllowed: (schemes: string) => string;
+    /** The hosts `allowedHosts` lists, joined in the UI locale, which a link must go to. */
+    readonly hostsAllowed: (hosts: string) => string;
+    /** Apply could not run for another reason, such as a read-only editor. */
+    readonly failed: string;
     readonly removed: string;
     readonly insertNew: string;
     readonly results: string;
+    /** What the live region says for the active destination, such as `Brand colors, 1 of 3`. */
+    readonly result: (label: string, position: number, total: number) => string;
     readonly apply: string;
 }
 
@@ -126,8 +136,10 @@ const initialOf = (runtime: EditorRuntime | undefined): Initial => {
     return { ...empty, text, focus: 'destination' };
 };
 
-const capture = (runtime: EditorRuntime | undefined): SelectionHandle | undefined => {
-    const captured = runtime?.handle.captureTarget({ purpose: 'format', onIntersectingEdit: 'invalidate' });
+/** The target Apply runs at: the whole link the popover edits, so removing its text invalidates it, else the selection. */
+const capture = (runtime: EditorRuntime | undefined, link: Initial['link']): SelectionHandle | undefined => {
+    const options = { purpose: 'format', onIntersectingEdit: 'invalidate' } as const;
+    const captured = link === undefined ? runtime?.handle.captureTarget(options) : runtime?.captureRange(link, options);
     if (captured === undefined || captured.status !== 'captured') {
         return undefined;
     }
@@ -135,6 +147,15 @@ const capture = (runtime: EditorRuntime | undefined): SelectionHandle | undefine
 };
 
 const wrapped = (index: number, length: number): number => ((index % length) + length) % length;
+
+/** Why Apply did not link: a destination the check or the policy refuses, linked text removed meanwhile, or another refusal. */
+type Problem = 'invalid' | 'scheme' | 'host' | 'removed' | 'failed';
+// The problems of the destination itself, which mark the field invalid.
+const FIELD_PROBLEMS: ReadonlySet<Problem | undefined> = new Set(['invalid', 'scheme', 'host']);
+
+/** The policy's list in the UI locale, such as `https: or mailto:`. */
+const listed = (items: readonly string[], lang: string | undefined): string =>
+    new Intl.ListFormat(lang, { type: 'disjunction' }).format(items);
 
 /**
  * The link popover: a non-modal `Flyout` on the link or the selection with the destination, the visible text, "Open in
@@ -150,6 +171,7 @@ export const LinkPopover = ({
     linkStyles,
     strings,
     testId,
+    lang,
     opener,
     onClose,
 }: {
@@ -159,6 +181,8 @@ export const LinkPopover = ({
     readonly linkStyles: readonly LinkStyleOption[];
     readonly strings: LinkPopoverStrings;
     readonly testId: string;
+    /** The UI locale, which lists the allowed schemes and hosts. */
+    readonly lang: string | undefined;
     /** The element that had focus when the popover opened, such as the toolbar button, which a dismissal returns focus to. */
     readonly opener: Element | null;
     readonly onClose: () => void;
@@ -166,12 +190,12 @@ export const LinkPopover = ({
     const runtime = useContext(SessionContext);
     const [open, setOpen] = useState(true);
     const [initial] = useState(() => initialOf(runtime));
-    const [target] = useState(() => capture(runtime));
+    const [target] = useState(() => capture(runtime, initial.link));
     const [href, setHref] = useState(initial.href);
     const [text, setText] = useState(initial.text);
     const [newWindow, setNewWindow] = useState(initial.openInNewWindow);
     const [styleId, setStyleId] = useState(initial.styleId);
-    const [problem, setProblem] = useState<'invalid' | 'removed' | undefined>(undefined);
+    const [problem, setProblem] = useState<Problem | undefined>(undefined);
     // Each rejected Apply, after whose error renders focus moves to the field that holds it.
     const [rejections, setRejections] = useState(0);
     const [typed, setTyped] = useState(false);
@@ -188,8 +212,13 @@ export const LinkPopover = ({
     const textId = useId();
     const newWindowId = useId();
     const styleFieldId = useId();
+    const styleLabelId = useId();
+    const styleValueId = useId();
     const errorId = useId();
+    const removedId = useId();
     const listId = useId();
+    const formId = useId();
+    const announce = useAnnounce();
     const close = (next: boolean) => {
         if (!next) {
             setOpen(false);
@@ -254,9 +283,11 @@ export const LinkPopover = ({
             controller.abort();
         };
     }, [search, runtime, typed, query, policy]);
-    const reject = (next: 'invalid' | 'removed') => {
+    const reject = (next: Problem) => {
         setProblem(next);
-        setRejections((count) => count + 1);
+        if (next !== 'failed') {
+            setRejections((count) => count + 1);
+        }
     };
     /** Runs `link.set`, at the captured target unless `here`, with `fallback` as the text when none is typed. */
     const run = (destination: string, here: boolean, fallback = '') => {
@@ -275,20 +306,34 @@ export const LinkPopover = ({
         }
         const result = runtime.handle.execute(SET_LINK, value, options);
         if (result.status === 'rejected') {
-            reject(result.code === 'target-invalid' ? 'removed' : 'invalid');
+            if (result.code === 'target-invalid') {
+                reject('removed');
+            } else if (result.code === 'invalid-payload') {
+                reject('invalid');
+            } else {
+                reject('failed');
+            }
             return;
         }
         overlay.returnFocusTo(null);
         close(false);
     };
     const checked = () => {
-        const result = checkHref(withScheme(href), policy);
+        const destination = withScheme(href);
+        const result = checkHref(destination, policy);
         // An empty destination parses as the page itself, which is no link.
-        if (!result.ok || result.href === '') {
-            reject('invalid');
-            return undefined;
+        if (result.ok && result.href !== '') {
+            return result.href;
         }
-        return result.href;
+        const unchecked = checkHref(destination);
+        if (result.ok || !unchecked.ok || unchecked.href === '') {
+            reject('invalid');
+        } else if (result.code === 'host-not-allowed') {
+            reject('host');
+        } else {
+            reject('scheme');
+        }
+        return undefined;
     };
     const apply = (event: FormEvent) => {
         event.preventDefault();
@@ -310,12 +355,29 @@ export const LinkPopover = ({
         }
     };
     const shown = results.length > 0;
+    // The field names the active destination with `aria-activedescendant`, which a screen reader does not follow to a
+    // list outside the field, so the editor's live region says it too.
+    let spoken = '';
+    const activeResult = results[index];
+    if (activeResult !== undefined) {
+        spoken = strings.result(activeResult.label, index + 1, results.length);
+    }
+    useEffect(() => {
+        if (spoken !== '') {
+            announce(spoken);
+        }
+    }, [announce, spoken]);
     const onDestinationKey = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (passesToBrowser(event.nativeEvent) || !shown) {
+        if (passesToBrowser(event.nativeEvent)) {
             return;
         }
+        // The Enter that confirms a composition keeps its candidate in the field and submits nothing.
         if (event.key === 'Enter' && event.timeStamp - composedAtRef.current < COMPOSITION_ENTER_MS) {
             composedAtRef.current = Number.NEGATIVE_INFINITY;
+            event.preventDefault();
+            return;
+        }
+        if (!shown) {
             return;
         }
         if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -329,24 +391,41 @@ export const LinkPopover = ({
         }
     };
     // Fondue's `TextInput` passes props it does not declare on to its `input`, and declares no `role` or composition events.
-    let combobox = {};
+    let combobox: Readonly<Record<string, unknown>> = {
+        onCompositionEnd: (event: CompositionEvent<HTMLInputElement>) => {
+            composedAtRef.current = event.timeStamp;
+        },
+    };
     if (search !== undefined) {
-        const active = results[index];
         combobox = {
+            ...combobox,
             role: 'combobox',
             'aria-autocomplete': 'list',
             'aria-expanded': shown,
             'aria-controls': shown ? listId : undefined,
-            'aria-activedescendant': active === undefined ? undefined : suggestionOptionId(listId, active.key),
-            onCompositionEnd: (event: CompositionEvent<HTMLInputElement>) => {
-                composedAtRef.current = event.timeStamp;
-            },
+            'aria-activedescendant':
+                activeResult === undefined ? undefined : suggestionOptionId(listId, activeResult.key),
         };
     }
+    const invalid = FIELD_PROBLEMS.has(problem);
     let described: { readonly 'aria-describedby'?: string } = {};
-    if (problem === 'invalid') {
+    if (invalid) {
         described = { 'aria-describedby': errorId };
+    } else if (problem === 'removed') {
+        described = { 'aria-describedby': removedId };
     }
+    let message = strings.invalid;
+    if (problem === 'scheme') {
+        message = strings.schemesAllowed(
+            listed(
+                (policy?.allowedSchemes ?? []).map((scheme) => `${scheme}:`),
+                lang,
+            ),
+        );
+    } else if (problem === 'host') {
+        message = strings.hostsAllowed(listed(policy?.allowedHosts ?? [], lang));
+    }
+    const chosenStyle = linkStyles.find((style) => style.id === styleId);
     return (
         <Flyout.Root open={open} onOpenChange={dismiss} virtualAnchor={anchor}>
             <Flyout.Content
@@ -364,7 +443,7 @@ export const LinkPopover = ({
                 }}
             >
                 <Flyout.Body>
-                    <form className={styles.form} onSubmit={apply} noValidate>
+                    <form id={formId} className={styles.form} onSubmit={apply} noValidate>
                         <Label htmlFor={destinationId}>{strings.destination}</Label>
                         <TextInput
                             {...combobox}
@@ -373,14 +452,14 @@ export const LinkPopover = ({
                             id={destinationId}
                             type="text"
                             value={href}
-                            status={problem === 'invalid' ? 'error' : 'neutral'}
+                            status={invalid ? 'error' : 'neutral'}
                             aria-errormessage={errorId}
                             autoComplete="off"
                             spellCheck={false}
                             onChange={(event) => {
                                 setHref(event.target.value);
                                 setTyped(true);
-                                if (problem === 'invalid') {
+                                if (invalid) {
                                     setProblem(undefined);
                                 }
                             }}
@@ -397,9 +476,9 @@ export const LinkPopover = ({
                                 testId={`${testId}-link-results`}
                             />
                         )}
-                        {problem === 'invalid' && (
+                        {invalid && (
                             <p id={errorId} role="alert" className={styles.error}>
-                                {strings.invalid}
+                                {message}
                             </p>
                         )}
                         <Label htmlFor={textId}>{strings.text}</Label>
@@ -420,36 +499,60 @@ export const LinkPopover = ({
                         </div>
                         {linkStyles.length > 0 && (
                             <>
-                                <Label htmlFor={styleFieldId}>{strings.style}</Label>
-                                <select
-                                    id={styleFieldId}
-                                    value={styleId}
-                                    onChange={(event) => setStyleId(event.target.value)}
-                                >
-                                    <option value="">{strings.noStyle}</option>
-                                    {linkStyles.map((style) => (
-                                        <option key={style.id} value={style.id}>
-                                            {style.label}
-                                        </option>
-                                    ))}
-                                </select>
+                                <Label id={styleLabelId} htmlFor={styleFieldId}>
+                                    {strings.style}
+                                </Label>
+                                <Dropdown.Root>
+                                    <Dropdown.Trigger asChild>
+                                        <Button
+                                            // Fondue's `Button` passes props it does not declare on to its `button`.
+                                            {...{
+                                                id: styleFieldId,
+                                                'aria-labelledby': `${styleLabelId} ${styleValueId}`,
+                                            }}
+                                            emphasis="default"
+                                        >
+                                            <span id={styleValueId}>{chosenStyle?.label ?? strings.noStyle}</span>
+                                        </Button>
+                                    </Dropdown.Trigger>
+                                    <Dropdown.Content container={overlay.container}>
+                                        {[{ id: '', label: strings.noStyle }, ...linkStyles].map((style) => (
+                                            <Dropdown.Item
+                                                key={style.id}
+                                                // Fondue's `Dropdown.Item` types no menu item role or state, which Radix still takes.
+                                                {...{ role: 'menuitemradio', 'aria-checked': style.id === styleId }}
+                                                onSelect={() => setStyleId(style.id)}
+                                            >
+                                                {style.label}
+                                                {style.id === styleId && <CheckedSlot />}
+                                            </Dropdown.Item>
+                                        ))}
+                                    </Dropdown.Content>
+                                </Dropdown.Root>
                             </>
                         )}
                         {problem === 'removed' && (
-                            <div role="alert" className={styles.removed}>
-                                <p className={styles.error}>{strings.removed}</p>
+                            <div className={styles.removed}>
+                                <p id={removedId} role="alert" className={styles.error}>
+                                    {strings.removed}
+                                </p>
                                 <Button emphasis="default" onPress={insertNew}>
                                     {strings.insertNew}
                                 </Button>
                             </div>
                         )}
-                        <div className={styles.actions}>
-                            <Button type="submit" emphasis="strong">
-                                {strings.apply}
-                            </Button>
-                        </div>
+                        {problem === 'failed' && (
+                            <p role="alert" className={styles.error}>
+                                {strings.failed}
+                            </p>
+                        )}
                     </form>
                 </Flyout.Body>
+                <Flyout.Footer>
+                    <Button type="submit" form={formId} emphasis="strong">
+                        {strings.apply}
+                    </Button>
+                </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>
     );
