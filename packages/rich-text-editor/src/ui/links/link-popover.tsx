@@ -136,10 +136,17 @@ const initialOf = (runtime: EditorRuntime | undefined): Initial => {
     return { ...empty, text, focus: 'destination' };
 };
 
-/** The target Apply runs at: the whole link the popover edits, so removing its text invalidates it, else the selection. */
+/**
+ * The target Apply runs at: the whole link the popover edits, which maps through edits inside it and is invalid once
+ * its text is removed, else the selection.
+ */
 const capture = (runtime: EditorRuntime | undefined, link: Initial['link']): SelectionHandle | undefined => {
-    const options = { purpose: 'format', onIntersectingEdit: 'invalidate' } as const;
-    const captured = link === undefined ? runtime?.handle.captureTarget(options) : runtime?.captureRange(link, options);
+    let captured: ReturnType<NonNullable<EditorRuntime>['captureRange']> | undefined;
+    if (link === undefined) {
+        captured = runtime?.handle.captureTarget({ purpose: 'format', onIntersectingEdit: 'invalidate' });
+    } else {
+        captured = runtime?.captureRange(link, { purpose: 'format', onIntersectingEdit: 'map' });
+    }
     if (captured === undefined || captured.status !== 'captured') {
         return undefined;
     }
@@ -294,9 +301,12 @@ export const LinkPopover = ({
         if (runtime === undefined) {
             return;
         }
+        const visible = text === '' ? fallback : text;
+        // Text the author left as it opened sends none, so what was typed in the link meanwhile stays; a new link inserts it.
+        const unchanged = !here && initial.text !== '' && visible === initial.text;
         const value = {
             href: destination,
-            text: text === '' ? fallback : text,
+            ...(unchanged ? {} : { text: visible }),
             openInNewWindow: newWindow,
             styleId: styleId === '' ? null : styleId,
         };
@@ -368,6 +378,10 @@ export const LinkPopover = ({
         }
     }, [announce, spoken]);
     const onDestinationKey = (event: KeyboardEvent<HTMLInputElement>) => {
+        // Chromium confirms a composition with an Enter of its own, so only Safari's later Enter is left to swallow.
+        if (event.key === 'Enter' && event.nativeEvent.isComposing) {
+            composedAtRef.current = Number.NEGATIVE_INFINITY;
+        }
         if (passesToBrowser(event.nativeEvent)) {
             return;
         }

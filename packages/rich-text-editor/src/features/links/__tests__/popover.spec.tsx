@@ -16,7 +16,7 @@ import {
 import { type ContentNodeJSON } from '#/model';
 import { para, storedIn, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { type ReferenceValue } from '#/runtime/types';
-import { setSelection } from '#/testing';
+import { setSelection, typeText } from '#/testing';
 
 beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
@@ -237,6 +237,46 @@ describe('link popover', () => {
         expect(screen.getByRole('alert').textContent).toBe('The link could not be applied.');
         expect(destination().getAttribute('aria-invalid')).toBe('false');
         expect(destination().hasAttribute('aria-describedby')).toBe(false);
+    });
+
+    it.each([
+        ['typing inside the link', false],
+        ['typing inside the link and undoing it', true],
+    ])('applies to the whole link after %s while the popover is open', (_case, undone) => {
+        const { handle } = mount({
+            blocks: [para(text('Read '), linked('guide', 'https://frontify.com/a'), text(' now'))],
+        });
+        setSelection(handle, { text: 'guide', from: 2, to: 2 });
+        open(handle);
+        type(destination(), 'https://frontify.com/b');
+        act(() => {
+            setSelection(handle, { text: 'guide', from: 3, to: 3 });
+            typeText(handle, 'X');
+            if (undone) {
+                handle.execute('history.undo');
+            }
+        });
+        apply();
+
+        expect(screen.queryByRole('alert')).toBeNull();
+        expect(blockOf(handle)).toEqual([
+            text('Read '),
+            linked(undone ? 'guide' : 'guiXde', 'https://frontify.com/b'),
+            text(' now'),
+        ]);
+    });
+
+    it('lets the next Enter apply after a composition that Chromium confirms with an Enter of its own', () => {
+        const { handle } = mount({ blocks: [para(text('word'))] });
+        setSelection(handle, { text: 'word' });
+        open(handle);
+        type(destination(), 'frontify.com');
+        act(() => {
+            fireEvent.compositionEnd(destination());
+        });
+
+        expect(fireEvent.keyDown(destination(), { key: 'Enter', isComposing: true })).toBe(true);
+        expect(fireEvent.keyDown(destination(), { key: 'Enter' })).toBe(true);
     });
 
     it('keeps the confirmed composition candidate in the field on the Enter that confirms it', () => {

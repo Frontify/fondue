@@ -18,6 +18,7 @@ export type HrefResult =
 type HrefFailure = Extract<HrefResult, { ok: false }>;
 
 const BASE = 'https://base.invalid/';
+const OTHER_BASE = 'https://other.invalid/';
 const MAX_LENGTH = 2048;
 const SAFE_SCHEMES = new Set(['https:', 'http:', 'mailto:', 'tel:']);
 const LAST_EDGE_CONTROL = 0x20;
@@ -162,11 +163,24 @@ const stripEdgeControls = (input: string): string => {
     return input.slice(start, end);
 };
 
-const checkPolicy = (url: URL, { allowedSchemes, allowedHosts }: HrefPolicy): HrefFailure | undefined => {
+/** Whether `input` names its own host, rather than taking the base's: a second base gives it the same host. */
+const namesHost = (input: string, url: URL): boolean => {
+    try {
+        return new URL(input, OTHER_BASE).hostname === url.hostname;
+    } catch {
+        return true;
+    }
+};
+
+const checkPolicy = (
+    input: string,
+    url: URL,
+    { allowedSchemes, allowedHosts }: HrefPolicy,
+): HrefFailure | undefined => {
     if (allowedSchemes !== undefined && !allowedSchemes.some((scheme) => `${scheme}:` === url.protocol)) {
         return { ok: false, code: 'unsafe-scheme' };
     }
-    const absolute = url.hostname !== '' && url.hostname !== 'base.invalid';
+    const absolute = url.hostname !== '' && namesHost(input, url);
     if (allowedHosts !== undefined && absolute && !hostAllowed(url.hostname, allowedHosts)) {
         return { ok: false, code: 'host-not-allowed' };
     }
@@ -186,14 +200,15 @@ export const checkHref = (input: string, policy?: HrefPolicy): HrefResult => {
     if (!(url instanceof URL)) {
         return url;
     }
-    const decoded = parse(decodePercent(decodeReferences(trimmed)));
+    const plain = decodePercent(decodeReferences(trimmed));
+    const decoded = parse(plain);
     if (!(decoded instanceof URL)) {
         return decoded;
     }
     if (policy === undefined) {
         return { ok: true, href: trimmed };
     }
-    const refused = checkPolicy(url, policy) ?? checkPolicy(decoded, policy);
+    const refused = checkPolicy(trimmed, url, policy) ?? checkPolicy(plain, decoded, policy);
     return refused ?? { ok: true, href: trimmed };
 };
 

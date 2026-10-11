@@ -942,11 +942,13 @@ const sharedMarks = (doc: Node, from: number, to: number, type: MarkType): reado
 const markRange = (transaction: Transaction, from: number, to: number, mark: Mark, text: string | undefined) => {
     const { doc } = transaction;
     const $from = doc.resolve(from);
+    // A hard break or other leaf in the range counts as nothing too, as the popover prefills the text without it.
     const replaces =
         text !== undefined &&
         text !== '' &&
         $from.sameParent(doc.resolve(to)) &&
-        doc.textBetween(from, to, undefined, OBJECT_REPLACEMENT) !== text;
+        doc.textBetween(from, to, undefined, OBJECT_REPLACEMENT) !== text &&
+        doc.textBetween(from, to, undefined, '') !== text;
     if (!replaces) {
         transaction.addMark(from, to, mark);
         return;
