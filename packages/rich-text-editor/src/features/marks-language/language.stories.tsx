@@ -25,7 +25,7 @@ The language of a passage, as a \`span\` with \`lang\` and \`dir\`.
 |---|---|---|---|---|---|
 | \`marks.language\` | \`mark.language.edit\`, \`mark.language.set\` \`{ lang, dir }\` or \`null\` | none | Language picker | none | Sets or removes \`language\` |
 
-The picker lists the \`languages\` option, labelled in the UI locale. With no list, it takes a typed tag that \`Intl.getCanonicalLocales\` accepts. A rejected tag does not change the document.
+The picker lists the \`languages\` option, labelled in the UI locale, with a stored tag the list misses first and checked. With no list, it takes a typed tag that \`Intl.getCanonicalLocales\` accepts. A rejected tag does not change the document. At a caret inside a passage, Apply and Remove change the whole passage; text typed at its end stays outside it.
 `,
             },
         },

@@ -65,7 +65,7 @@ export const BASE_KEYS_PLUGIN: PluginDescriptor = { id: 'base-keys', phase: 'bas
 export const CLIPBOARD_PLUGIN: PluginDescriptor = { id: 'clipboard', phase: 'guard' };
 /** The drop cursor of `prosemirror-dropcursor`. */
 export const DROP_CURSOR_PLUGIN: PluginDescriptor = { id: 'drop-cursor', phase: 'structure' };
-/** The last mark a `setMark` command set in the session, which `reapplyMark` sets again. */
+/** The last mark of each type that a `setMark` command set in the session, which `reapplyMark` sets again. */
 export const LAST_MARK_PLUGIN: PluginDescriptor = { id: 'last-mark', phase: 'late' };
 /** The gap cursor of `prosemirror-gapcursor`, whose arrow keys run before every base key. */
 export const GAP_CURSOR_PLUGIN: PluginDescriptor = { id: 'gap-cursor', phase: 'structure' };

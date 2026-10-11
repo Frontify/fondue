@@ -352,6 +352,8 @@ const SessionComponent = (
     // The package-built control a host `execute` opened, and the payload it ran with.
     const [control, setControl] = useState<string>();
     const [controlPayload, setControlPayload] = useState<unknown>();
+    // The element that had focus when the control opened, such as the toolbar button or More.
+    const [controlOpener, setControlOpener] = useState<Element | null>(null);
     const switchToolbar = useCallback((next: ToolbarMode) => {
         setToolbarMode(next);
         latestRef.current.onToolbarModeChange?.(next);
@@ -413,6 +415,7 @@ const SessionComponent = (
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             openControl: (opened, payload) => {
                 setControlPayload(payload);
+                setControlOpener(scope.active());
                 setControl(opened);
             },
             locale: () => langRef.current,
@@ -477,7 +480,7 @@ const SessionComponent = (
             coordinator.stop();
             runtime.handle.dispose();
         };
-    }, [mounted, loaded, coordinator, portals, work, onSession]);
+    }, [mounted, loaded, coordinator, portals, work, onSession, scope]);
 
     // A blocked document gets no session and so no handle.
     useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
@@ -769,6 +772,7 @@ const SessionComponent = (
                                     <LanguageDialog
                                         languages={languageOptions(engineOf(mounted.definition).model)}
                                         locale={lang}
+                                        opener={controlOpener}
                                         strings={{
                                             title: chromeContext.t('RichTextEditor_languageTitle'),
                                             tag: chromeContext.t('RichTextEditor_languageTag'),

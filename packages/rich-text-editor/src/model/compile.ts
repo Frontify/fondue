@@ -66,7 +66,7 @@ export const URL_ATTRIBUTES = new Set(
 );
 /** By local name: the engine sets a `namespace name` key with `setAttributeNS`, and `xlink:href` is `href`. */
 const isUrlAttribute = (name: string) => URL_ATTRIBUTES.has(name.toLowerCase().split(/[\s:]/).at(-1) ?? '');
-const NODE_ARGUMENTS = ['node', 'nodes', 'list', 'item'];
+const NODE_ARGUMENTS = ['node', 'list', 'item'];
 const MARK_ARGUMENTS = ['mark', 'marks'];
 
 export interface CompiledFeature {
@@ -673,6 +673,10 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
                         );
                     }
                 }
+            }
+            // `setAttributes` reads its types from `node` only, so a `nodes` list would change nothing.
+            if (definition.capability === 'setAttributes' && args.nodes !== undefined) {
+                throw failure('definition.invalid-declaration', feature.id, argument('nodes'));
             }
             if (
                 definition.capability === 'indentLines' &&

@@ -709,7 +709,40 @@ const defaultOf = (type: NodeType, name: string): unknown => {
     return spec.default;
 };
 
-/** The nodes a `setAttributes` command changes: the one `nodeId` names, else the selected textblocks of `types`, else the nearest node of `types`. */
+/** The innermost node of `types` that holds the textblock at `pos`, or that textblock itself. */
+const holderOf = (doc: Node, pos: number, types: readonly NodeType[]): Located | undefined => {
+    const $inside = doc.resolve(pos + 1);
+    for (let depth = $inside.depth; depth > 0; depth -= 1) {
+        const node = $inside.node(depth);
+        if (types.includes(node.type)) {
+            return { node, pos: $inside.before(depth) };
+        }
+    }
+    return undefined;
+};
+
+/**
+ * The nodes of `types` the selection touches, in document order: each selected atom of a type, and for each selected
+ * textblock the innermost node of a type that holds it, so a caret in a nested list names that list only.
+ */
+const selectedOf = (state: EditorState, types: readonly NodeType[]): Located[] => {
+    const found = new Map<number, Located>();
+    for (const { $from, $to } of state.selection.ranges) {
+        state.doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
+            if (node.isTextblock) {
+                const holder = holderOf(state.doc, pos, types);
+                if (holder !== undefined) {
+                    found.set(holder.pos, holder);
+                }
+            } else if (node.isAtom && types.includes(node.type)) {
+                found.set(pos, { node, pos });
+            }
+        });
+    }
+    return [...found.values()].sort((a, b) => a.pos - b.pos);
+};
+
+/** The nodes a `setAttributes` command changes: the one `nodeId` names, else the selected nodes of `types`, else the nearest node of `types`. */
 const attributeTargets = (state: EditorState, types: readonly NodeType[], nodeId: unknown): Located[] => {
     if (typeof nodeId === 'string') {
         const pos = positionOf(state.doc, nodeId);
@@ -722,9 +755,9 @@ const attributeTargets = (state: EditorState, types: readonly NodeType[], nodeId
         }
         return [{ node, pos }];
     }
-    const blocks = selectedTextblocks(state).filter(({ node }) => types.includes(node.type));
-    if (blocks.length > 0) {
-        return blocks;
+    const selected = selectedOf(state, types);
+    if (selected.length > 0) {
+        return selected;
     }
     for (const type of types) {
         const found = nearest(state, type);
@@ -748,7 +781,7 @@ const styleTargets = (state: EditorState, targets: Located[], attrs: Readonly<Re
 };
 
 /**
- * Sets the payload's other fields on the node its `nodeId` names, else on the selected textblocks of the listed types,
+ * Sets the payload's other fields on the node its `nodeId` names, else on the selected nodes of the listed types,
  * else on the nearest node of one; with `toggle`, removes the values when every target already has them. A `styleId`
  * of a session style lands only on the node types the style applies to.
  */
@@ -807,20 +840,20 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
 
 /** The transaction meta that carries the mark a `setMark` command set, which the last-mark plugin keeps. */
 const LAST_MARK_META = 'rte.last-mark';
-const lastMarkKey = new PluginKey<Mark | null>('rte.last-mark');
+const lastMarkKey = new PluginKey<readonly Mark[]>('rte.last-mark');
 
-/** Keeps the last mark a `setMark` command set in the session. */
+/** Keeps the last mark of each type that a `setMark` command set in the session, the latest first. */
 const lastMarkPlugin = () =>
-    new Plugin<Mark | null>({
+    new Plugin<readonly Mark[]>({
         key: lastMarkKey,
         state: {
-            init: () => null,
-            apply: (transaction, value) => {
+            init: () => [],
+            apply: (transaction, marks) => {
                 const mark = transaction.getMeta(LAST_MARK_META) as Mark | undefined;
                 if (mark === undefined) {
-                    return value;
+                    return marks;
                 }
-                return mark;
+                return [mark, ...marks.filter((other) => other.type !== mark.type)];
             },
         },
     });
@@ -999,8 +1032,8 @@ const reapplyMark: CapabilityImplementation = (args, schema) => {
     const types = markTypesOf(args.installed, schema);
     return {
         run: (state, dispatch) => {
-            const last = lastMarkKey.getState(state);
-            if (last === undefined || last === null || !types.includes(last.type)) {
+            const last = (lastMarkKey.getState(state) ?? []).find((mark) => types.includes(mark.type));
+            if (last === undefined) {
                 return false;
             }
             return applyMark(state, dispatch, last, false);
@@ -1054,28 +1087,46 @@ const take = (outer: Transaction, current: EditorState, next: Transaction | unde
     return current.apply(next);
 };
 
-/** Lifts the selection out of every list around it, one level at a time. */
+/** Lifts the item of the selected textblock at `pos` one level out of its list, or returns `undefined` outside a list. */
+const liftItemAt = (state: EditorState, pos: number): Transaction | undefined => {
+    const $inside = state.doc.resolve(pos + 1);
+    const around = listAround($inside);
+    if (around === undefined) {
+        return undefined;
+    }
+    const item = $inside.node(around.depth + 1).type;
+    // `liftListItem` lifts the items of the selection's block range, which a selection that leaves the list lacks.
+    const caret = state.apply(state.tr.setSelection(TextSelection.create(state.doc, pos + 1)));
+    const built: Transaction[] = [];
+    liftListItem(item)(caret, (next) => {
+        built.push(next);
+    });
+    const next = built[0];
+    if (next === undefined || !next.docChanged) {
+        return undefined;
+    }
+    return next;
+};
+
+/** Lifts every selected item, nested ones included, one level at a time until no selected textblock sits in a list. */
 const liftLists = (state: EditorState): Transaction | undefined => {
     const transaction = state.tr;
     let current = state;
-    let depth = 0;
-    while (depth < 32) {
-        const around = listAround(current.selection.$from);
-        if (around === undefined) {
-            break;
+    for (;;) {
+        let next: Transaction | undefined;
+        for (const { pos } of selectedTextblocks(current)) {
+            next = liftItemAt(current, pos);
+            if (next !== undefined) {
+                break;
+            }
         }
-        const item = current.selection.$from.node(around.depth + 1).type;
-        const built: Transaction[] = [];
-        liftListItem(item)(current, (next) => {
-            built.push(next);
-        });
-        const next = built[0];
-        if (next === undefined || !next.docChanged) {
+        if (next === undefined) {
             break;
         }
         appendSteps(transaction, next);
+        const selection = current.selection.map(next.doc, next.mapping);
         current = current.apply(next);
-        depth += 1;
+        current = current.apply(current.tr.setSelection(selection));
     }
     if (!transaction.docChanged) {
         return undefined;
@@ -1083,35 +1134,29 @@ const liftLists = (state: EditorState): Transaction | undefined => {
     return transaction.setSelection(carrySelection(transaction.doc, current.selection));
 };
 
-const hasAttribute = (node: Node, name: string) => Object.hasOwn(node.type.spec.attrs ?? {}, name);
+// The block attributes clearing all formatting restores to their declared defaults.
+const CLEARED_ATTRIBUTES = ['align', 'indent'];
 
-/** Turns the selected textblocks into paragraphs and drops alignment and indent. */
+/** Turns the selected textblocks into paragraphs and restores alignment and indent to their defaults. */
 const plainParagraphs = (state: EditorState): Transaction | undefined => {
     const paragraph = state.schema.nodes.paragraph;
     if (paragraph === undefined) {
         return undefined;
     }
+    const cleared = CLEARED_ATTRIBUTES.filter((name) => Object.hasOwn(paragraph.spec.attrs ?? {}, name));
     const blocks = selectedTextblocks(state);
-    const needs = blocks.some(({ node }) => {
-        if (node.type !== paragraph) {
-            return true;
-        }
-        if (hasAttribute(node, 'align') && node.attrs.align !== null) {
-            return true;
-        }
-        return hasAttribute(node, 'indent') && node.attrs.indent !== null;
-    });
+    const needs = blocks.some(
+        ({ node }) =>
+            node.type !== paragraph || cleared.some((name) => node.attrs[name] !== defaultOf(paragraph, name)),
+    );
     if (!needs) {
         return undefined;
     }
     const { $from, $to } = state.selection;
     const transaction = state.tr.setBlockType($from.pos, $to.pos, paragraph, (node) => {
         const attrs = carried(node, paragraph, {});
-        if (Object.hasOwn(attrs, 'align')) {
-            attrs.align = null;
-        }
-        if (Object.hasOwn(attrs, 'indent')) {
-            attrs.indent = null;
+        for (const name of cleared) {
+            attrs[name] = defaultOf(paragraph, name);
         }
         return attrs;
     });
