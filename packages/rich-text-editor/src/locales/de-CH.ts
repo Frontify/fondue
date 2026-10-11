@@ -29,6 +29,8 @@ export const deCH = {
         RichTextEditor_moveUp: 'Nach oben verschieben',
         RichTextEditor_nodeViewError: 'Dieser Teil des Inhalts kann nicht angezeigt werden',
         RichTextEditor_normalText: 'Normaler Text',
+        RichTextEditor_pasteMediaDropped: 'Medien nicht eingefügt: ${count}',
+        RichTextEditor_pasteTooLarge: 'Der eingefügte Inhalt ist zu gross.',
         RichTextEditor_quote: 'Zitat',
         RichTextEditor_readerBlockedInvalid: 'Dieser Inhalt kann nicht angezeigt werden',
         RichTextEditor_readerBlockedUnsupported: 'Dieser Inhalt kann hier nicht angezeigt werden',

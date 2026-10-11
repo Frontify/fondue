@@ -28,6 +28,8 @@ export const itIT = {
         RichTextEditor_moveUp: 'Sposta su',
         RichTextEditor_nodeViewError: 'Questa parte del contenuto non può essere visualizzata',
         RichTextEditor_normalText: 'Testo normale',
+        RichTextEditor_pasteMediaDropped: 'Contenuti multimediali non incollati: ${count}',
+        RichTextEditor_pasteTooLarge: 'Il contenuto incollato è troppo grande.',
         RichTextEditor_quote: 'Citazione',
         RichTextEditor_readerBlockedInvalid: 'Questo contenuto non può essere mostrato',
         RichTextEditor_readerBlockedUnsupported: 'Questo contenuto non può essere mostrato qui',

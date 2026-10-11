@@ -27,6 +27,8 @@ export const ptPT = {
         RichTextEditor_moveUp: 'Mover para cima',
         RichTextEditor_nodeViewError: 'Esta parte do conteúdo não pode ser apresentada',
         RichTextEditor_normalText: 'Texto normal',
+        RichTextEditor_pasteMediaDropped: 'Multimédia não colado: ${count}',
+        RichTextEditor_pasteTooLarge: 'O conteúdo colado é demasiado grande.',
         RichTextEditor_quote: 'Citação',
         RichTextEditor_readerBlockedInvalid: 'Este conteúdo não pode ser apresentado',
         RichTextEditor_readerBlockedUnsupported: 'Este conteúdo não pode ser apresentado aqui',

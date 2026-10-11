@@ -3,8 +3,10 @@
 import { type ComponentType } from 'react';
 
 import { declaredViews } from '#/bridge/define';
+import { clipboardPlugin, dropCursorPlugin } from '#/clipboard/plugin';
 import { compileDefinition, type CompiledDefinition } from '#/definition';
 import { type ContentModel, DefinitionError, type ResourceLimits } from '#/model';
+import { CLIPBOARD_PLUGIN, DROP_CURSOR_PLUGIN } from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
 import { limitsOf } from '#/model/decode';
 import { pointer } from '#/model/errors';
@@ -80,7 +82,12 @@ export const defineEditor = <Model extends ContentModel>(
         authoring: authoringOf(model, policy),
         limits: limitsWithin(options.limits, options.limitOverrides),
     });
-    engines.set(definition, compileDefinition(model, CAPABILITIES));
+    const plugins = {
+        ...CAPABILITIES.plugins,
+        [CLIPBOARD_PLUGIN.id]: clipboardPlugin(model),
+        [DROP_CURSOR_PLUGIN.id]: dropCursorPlugin,
+    };
+    engines.set(definition, compileDefinition(model, { ...CAPABILITIES, plugins }));
     nodeViews.set(definition, views);
     return definition as unknown as CompiledEditorDefinition<CommandsOfModel<Model>>;
 };
