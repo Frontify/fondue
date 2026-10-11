@@ -13,8 +13,10 @@ import {
     fixtureItalic,
     fixtureRedo,
 } from '#/features/__tests__/fixtures/features';
+import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
+import { mediaImage } from '#/features/media-image/feature';
 import { compileContentModel, defineFeature, DefinitionError, type FeatureDeclaration } from '#/model';
 import { compiledModel } from '#/model/compile';
 
@@ -126,6 +128,18 @@ describe('compileDefinition', () => {
         const figure = schema.nodes.figure?.createAndFill();
         expect(list?.firstChild).toMatchObject({ attrs: { nodeId: null } });
         expect(figure?.firstChild).toMatchObject({ type: { name: 'asset_image' } });
+    });
+
+    it('builds the figure of media.image and of the vocabulary, whose image has required attributes with no default', () => {
+        const shipped = compileDefinition(compileContentModel([core(), mediaImage()], options)).schema;
+        const generated = shipped.nodes.figure?.createAndFill();
+
+        expect(generated?.firstChild?.attrs).toMatchObject({
+            assetId: null,
+            labelSnapshot: null,
+            altIntent: 'missing',
+        });
+        expect(() => compileDefinition(vocabularyModel())).not.toThrow();
     });
 
     it('writes a shared attribute bound to a style property only for a plain CSS value', () => {

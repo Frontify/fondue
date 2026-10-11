@@ -16,6 +16,7 @@ import { vocabularyLists } from '#/features/__tests__/fixtures/vocabulary';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
+import { mediaImage } from '#/features/media-image/feature';
 import { registry } from '#/features/registry';
 import { defineEditor, defineNodeView, type EditorHandle, RichTextEditor } from '#/index';
 import {
@@ -114,6 +115,7 @@ const chromeDocument = stored(
     ['core', 'fixture.chrome'],
 );
 nodeViewCases([core(), fixtureChromeViews()], [chromeDocument]);
+nodeViewCases([core(), mediaImage()], [featureFixtures['media.image']?.images as RichTextDocument]);
 
 const DECODES = (name: string) => `decodes and encodes ${name} to itself`;
 const RENDERS = (name: string) => `renders ${name} in the reader and writes it through every codec`;
@@ -173,7 +175,6 @@ describe('the feature contract suite', () => {
             'fetch',
             (run: EngineCommand['run']): EngineCommand['run'] =>
                 (state, dispatch, payload) => {
-                    // oxlint-disable-next-line no-restricted-globals -- the case proves the suite fails a capability that calls `fetch`.
                     fetch('https://frontify.com').catch(() => undefined);
                     return run(state, dispatch, payload);
                 },

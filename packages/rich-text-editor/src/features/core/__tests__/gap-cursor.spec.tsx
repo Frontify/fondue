@@ -18,8 +18,12 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
+// The second figure starts at 3, after the first figure's open, image and close; each image sits right inside its figure.
+const FIRST_IMAGE = 1;
+const SECOND_IMAGE = 4;
+
 /** Two images at the document start, then a paragraph, with the image at `selected` selected. */
-const imagesFirst = (selected = 1) => {
+const imagesFirst = (selected = SECOND_IMAGE) => {
     const mounted = mountLayout({ blocks: [image('asset-1'), image('asset-2'), para(text('Text'))] });
     const { state } = mounted.view;
     mounted.view.dispatch(state.tr.setSelection(NodeSelection.create(state.doc, selected)));
@@ -43,7 +47,7 @@ describe('gap cursor', () => {
 
         expect(prevented).toBe(true);
         expect(selection).toBeInstanceOf(GapCursor);
-        expect(selection.from).toBe(1);
+        expect(selection.from).toBe(SECOND_IMAGE - 1);
         expect(mounted.handle.getSummary().selection.kind).toBe('gap');
         expect(mounted.view.dom.querySelector('.ProseMirror-gapcursor')).not.toBeNull();
     });
@@ -80,7 +84,7 @@ describe('gap cursor', () => {
     });
 
     it('shows a gap cursor before the first image at the document start, where text can be typed', () => {
-        const mounted = imagesFirst(0);
+        const mounted = imagesFirst(FIRST_IMAGE);
 
         press(mounted, 'ArrowUp');
         const at = mounted.view.state.selection;
