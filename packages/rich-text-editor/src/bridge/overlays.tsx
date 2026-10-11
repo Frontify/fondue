@@ -67,7 +67,10 @@ export interface EditorOverlay {
     readonly container: HTMLElement | null;
     /** Takes the content element Fondue forwards, which hides while its anchor is clipped. */
     readonly contentRef: RefCallback<HTMLDivElement>;
-    /** Takes every close request but one from a focus move or press inside the editor and outside this overlay. */
+    /**
+     * Takes every close request but one from a focus move or press inside the editor and outside this overlay, or from
+     * a focus move during a press inside this overlay.
+     */
     readonly onOpenChange: (open: boolean) => void;
     /** The selection's rectangle as a virtual anchor. */
     readonly anchor: SelectionAnchor;
@@ -155,6 +158,10 @@ export const useEditorOverlay = (open: boolean, setOpen: (open: boolean) => void
         (next: boolean) => {
             const { kind, target } = scope.last();
             if (!next && kind !== 'key' && scope.contains(target) && !holds(elementRef.current, target)) {
+                return;
+            }
+            // A host dialog's focus trap may move focus to its container while a press inside this overlay is held.
+            if (!next && kind === 'focus' && holds(elementRef.current, scope.pressed())) {
                 return;
             }
             setOpenRef.current(next);

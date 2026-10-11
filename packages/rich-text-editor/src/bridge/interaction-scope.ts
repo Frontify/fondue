@@ -16,6 +16,8 @@ export interface InteractionScope {
     active(): Element | null;
     /** The last interaction, which tells an overlay's close request from a move inside the scope. */
     last(): Interaction;
+    /** The target of the pointer press still held, else `null`. */
+    pressed(): Node | null;
     /** Calls `listener` after each focus move in the editor's document. */
     subscribe(listener: () => void): () => void;
     /** Listens on the document that holds the editor's root, also inside an iframe; returns the removal. */
@@ -33,6 +35,7 @@ const deepActive = (owner: Document): Element | null => {
 
 export const createInteractionScope = (roots: () => readonly (HTMLElement | null)[]): InteractionScope => {
     let last: Interaction = { kind: 'focus', target: null };
+    let pressed: Node | null = null;
     let listened: Document | undefined;
     const listeners = new Set<() => void>();
     const contains = (node: Node | null) =>
@@ -51,6 +54,7 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
             return deepActive(listened);
         },
         last: () => last,
+        pressed: () => pressed,
         subscribe: (listener) => {
             listeners.add(listener);
             return () => {
@@ -70,6 +74,13 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
                 last = { kind, target: node };
             };
             const onPointer = record('pointer');
+            const onPointerDown = (event: PointerEvent) => {
+                onPointer(event);
+                pressed = last.target;
+            };
+            const onPointerEnd = () => {
+                pressed = null;
+            };
             const onKey = record('key');
             const onFocus = record('focus');
             const onFocusIn = (event: FocusEvent) => {
@@ -83,16 +94,21 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
                 }
             };
             // Capture runs before the overlays' own listeners, which close them on an outside press or focus.
-            owner.addEventListener('pointerdown', onPointer, true);
+            owner.addEventListener('pointerdown', onPointerDown, true);
+            owner.addEventListener('pointerup', onPointerEnd, true);
+            owner.addEventListener('pointercancel', onPointerEnd, true);
             owner.addEventListener('keydown', onKey, true);
             owner.addEventListener('focusin', onFocusIn, true);
             owner.addEventListener('focusout', onFocusOut, true);
             return () => {
-                owner.removeEventListener('pointerdown', onPointer, true);
+                owner.removeEventListener('pointerdown', onPointerDown, true);
+                owner.removeEventListener('pointerup', onPointerEnd, true);
+                owner.removeEventListener('pointercancel', onPointerEnd, true);
                 owner.removeEventListener('keydown', onKey, true);
                 owner.removeEventListener('focusin', onFocusIn, true);
                 owner.removeEventListener('focusout', onFocusOut, true);
                 listened = undefined;
+                pressed = null;
             };
         },
     };
