@@ -57,6 +57,27 @@ describe('blocks.rule', () => {
         expect(mounted.view.state.selection.$from.parent.textContent).toBe('Colour');
     });
 
+    it.each([
+        ['a column break', columnBreak()],
+        ['an image', image('asset-1')],
+    ])('puts a gap cursor after a rule inserted before %s, so typing adds a paragraph and keeps it', (_name, leaf) => {
+        const mounted = mountLayout({ columns: 2, blocks: [para(text('Logo')), leaf, para(text('Colour'))] });
+        setSelection(mounted.handle, { text: 'Logo', from: 4, to: 4 });
+
+        mounted.handle.execute('rule.insert');
+        const kind = mounted.handle.getSummary().selection.kind;
+        typeText(mounted.handle, 'x');
+
+        expect(kind).toBe('gap');
+        expect(mounted.blocks()).toEqual([
+            para(text('Logo')),
+            horizontalRule(),
+            para(text('x')),
+            leaf,
+            para(text('Colour')),
+        ]);
+    });
+
     it('adds an empty paragraph after a rule that ends up last, with the caret in it', () => {
         const mounted = mountLayout({ blocks: [para(text('Logo'))] });
         setSelection(mounted.handle, { text: 'Logo', from: 4, to: 4 });
