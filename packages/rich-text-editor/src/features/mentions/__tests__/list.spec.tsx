@@ -101,10 +101,56 @@ describe('mention suggestion list', () => {
         await flush();
 
         expect(spoken).toEqual([
-            'Results: 2. Design team, user, 1 of 3',
-            'Design team, group, 2 of 3',
+            'Results: 2. Design team, user, 1 of 2',
+            'Design team, group, 2 of 2',
             'Load more, 3 of 3',
             'Results: 3. Grace Hopper, user, 3 of 3',
+        ]);
+    });
+
+    it('announces the active option the arrows land on while a refined query loads, and not the start of the load', async () => {
+        const { service, pending } = deferredService();
+        const mounted = mountMentions({ services: { references: service } });
+        const spoken = announcements();
+        typeText(mounted.handle, '@');
+        await advance(200);
+        pending[0]?.resolve(page([ADA, GRACE, DESIGN]));
+        await flush();
+
+        typeText(mounted.handle, 'e');
+        await flush();
+        expect(mounted.active()?.status).toBe('loading');
+        pressKey(mounted.handle, 'ArrowDown');
+        await flush();
+
+        expect(spoken).toEqual(['Results: 3. Ada Lovelace, user, 1 of 3', 'Grace Hopper, user, 2 of 3']);
+    });
+
+    it('shows only an absolute https avatar, without sending a referrer, and the icon for a relative or http one', async () => {
+        const { service, pending } = deferredService();
+        const mounted = mountMentions({ services: { references: service } });
+        typeText(mounted.handle, '@');
+        await advance(200);
+        pending[0]?.resolve(
+            page([
+                { ...ADA, imageUrl: 'https://cdn.example.com/ada.png' },
+                { ...GRACE, imageUrl: '/api/export' },
+                { ...DESIGN, imageUrl: 'http://cdn.example.com/team.png' },
+            ]),
+        );
+        await flush();
+        const options = within(listbox() as HTMLElement).getAllByRole('option');
+
+        expect(options.map((option) => option.querySelector('img')?.getAttribute('src') ?? null)).toEqual([
+            'https://cdn.example.com/ada.png',
+            null,
+            null,
+        ]);
+        expect(options[0]?.querySelector('img')?.getAttribute('referrerpolicy')).toBe('no-referrer');
+        expect(mounted.active()?.items.map((item) => item.imageUrl)).toEqual([
+            'https://cdn.example.com/ada.png',
+            undefined,
+            undefined,
         ]);
     });
 

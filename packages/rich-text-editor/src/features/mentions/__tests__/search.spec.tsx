@@ -170,6 +170,23 @@ describe('the mention search session', () => {
         expect(mounted.inline()[0]?.attrs?.labelSnapshot).toBe('Ada Lovelace');
     });
 
+    it('drops results whose resource ID holds a bidirectional or control character, keeping the IDs it stores as given', async () => {
+        const { service, pending } = deferredService();
+        const mounted = mountMentions({ services: { references: service } });
+        typeText(mounted.handle, '@');
+        await advance(200);
+        pending[0]?.resolve(
+            page([
+                { ...ADA, resourceId: 'ada\u200E' },
+                { ...ADA, resourceId: 'ada\u0007' },
+                { ...GRACE, resourceId: 'grace-\u00E9' },
+            ]),
+        );
+        await flush();
+
+        expect(mounted.active()?.items.map((item) => item.payload.resourceId)).toEqual(['grace-\u00E9']);
+    });
+
     it('gives options with different keys different ids', () => {
         const keys = [':a', '3aa', '_3a_a', 'a:user', 'a3auser', 'a', 'user', 'user:a', 'user-a', 'user_a'];
         const ids = keys.map((key) => suggestionOptionId('list', key));

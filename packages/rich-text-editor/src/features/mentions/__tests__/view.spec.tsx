@@ -221,4 +221,39 @@ describe('mention labels in every output', () => {
         expect(codecs.toPlainText(document).text).toBe('@Ada @ليلى');
         expect(codecs.toMarkdown(document).markdown).not.toMatch(/[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/u);
     });
+
+    it('resolves a stored mention by its resource ID as stored, a bidirectional mark included', async () => {
+        const asked: string[] = [];
+        const mounted = mountMentions({
+            blocks: [para(mention('m-1', 'Ada', 'ada\u200E'))],
+            presentation: resolving((_type, id) => {
+                asked.push(id);
+                return id === 'ada' ? { status: 'current', label: 'Mallory' } : { status: 'unknown' };
+            }),
+        });
+        const shown = await chips(mounted);
+
+        expect(shown.map((chip) => chip.textContent)).toEqual(['@Ada']);
+        expect(new Set(asked)).toEqual(new Set(['ada\u200E']));
+        expect(
+            codecs.toHTML(storedIn(model, [para(mention('m-1', 'Ada', 'ada\u200E'))]), {
+                resolveReference: (_type, id) =>
+                    id === 'ada' ? { status: 'current', label: 'Mallory' } : { status: 'unknown' },
+            }).html,
+        ).toContain('@<bdi>Ada</bdi>');
+    });
+
+    it('strips C0 and C1 controls from a stored label in the chip, the reader and copied plain text', async () => {
+        const label = 'Ada\u001B]8;;https://evil.example\u0007 Lovelace\u009B';
+        const blocks = [para(mention('m-1', label))];
+        const mounted = mountMentions({ blocks });
+        const shown = await chips(mounted);
+
+        const { text: plain } = copied(mounted);
+
+        expect(shown.map((chip) => chip.textContent)).toEqual(['@Ada]8;;https://evil.example Lovelace']);
+        expect(readerMarkup(blocks)).not.toMatch(/[\u0000-\u001F\u007F-\u009F]/u);
+        expect(plain).toBe('@Ada]8;;https://evil.example Lovelace');
+        expect(codecs.toPlainText(storedIn(model, blocks)).text).toBe(plain);
+    });
 });

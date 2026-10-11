@@ -127,11 +127,49 @@ describe('mention search dialog', () => {
         await flush();
 
         expect(written).toEqual([
-            'Results: 2. Ada Lovelace, user, 1 of 3',
-            'Grace Hopper, user, 2 of 3',
+            'Results: 2. Ada Lovelace, user, 1 of 2',
+            'Grace Hopper, user, 2 of 2',
             'Load more, 3 of 3',
             'Search failed. Retry, 1 of 1',
         ]);
+    });
+
+    it('announces the active option the arrows land on while a refined query loads', async () => {
+        const { service, pending } = deferredService();
+        const mounted = mountMentions({ services: { references: service } });
+        await openDialog(mounted);
+        const written = statusWrites();
+        type('a');
+        await advance(200);
+        pending.at(-1)?.resolve(page([ADA, GRACE]));
+        await flush();
+
+        type('ab');
+        press('ArrowDown');
+
+        expect(written).toEqual(['Results: 2. Ada Lovelace, user, 1 of 2', 'Grace Hopper, user, 2 of 2']);
+    });
+
+    it('names and inserts the same person after Load more answers with an empty last page', async () => {
+        const { service, pending } = deferredService();
+        const mounted = mountMentions({ services: { references: service } });
+        await openDialog(mounted);
+        const written = statusWrites();
+        type('a');
+        await advance(200);
+        pending.at(-1)?.resolve(page([ADA], 'page-2'));
+        await flush();
+        press('ArrowDown');
+        press('Enter');
+        pending.at(-1)?.resolve(page([]));
+        await flush();
+
+        expect(written.at(-1)).toBe('Results: 1. Ada Lovelace, user, 1 of 1');
+        press('Enter');
+        await flush();
+
+        expect(screen.queryByRole('dialog')).toBeNull();
+        expect(mounted.inline().find((node) => node.type === 'mention')?.attrs?.labelSnapshot).toBe('Ada Lovelace');
     });
 
     it('announces a repeated status again after each completed search', async () => {

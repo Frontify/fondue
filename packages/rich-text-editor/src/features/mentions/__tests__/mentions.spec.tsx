@@ -5,7 +5,7 @@ import { AllSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
 import { core, mentions } from '#/features';
-import { type EditorServices } from '#/index';
+import { defineReactPresentation, type EditorServices } from '#/index';
 import { defaultLimits } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
@@ -495,5 +495,30 @@ describe('mentions on the clipboard', () => {
         });
 
         expect(target.inline()).toEqual([text('Ask @Ada Lovelace')]);
+    });
+
+    it('pastes a mention from another context as its label text without bidirectional or control characters', async () => {
+        const blocks = [para(text('Ask '), mention('mention-7', '\u202EAda\u202C Lovelace\u0007', 'user-42'))];
+        const source = mountMentions({
+            blocks,
+            presentation: defineReactPresentation({ toolbar: [], sliceContext: 'a' }),
+        });
+        await flush();
+        const clipboardData = new DataTransfer();
+        act(() => {
+            source.view.dispatch(source.view.state.tr.setSelection(new AllSelection(source.view.state.doc)));
+            source.view.dom.dispatchEvent(
+                new ClipboardEvent('copy', { clipboardData, bubbles: true, cancelable: true }),
+            );
+        });
+        const target = mountMentions({ presentation: defineReactPresentation({ toolbar: [], sliceContext: 'b' }) });
+
+        act(() => {
+            target.view.dom.dispatchEvent(
+                new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true }),
+            );
+        });
+
+        expect(target.inline()).toEqual([text('Ask Ada Lovelace')]);
     });
 });
