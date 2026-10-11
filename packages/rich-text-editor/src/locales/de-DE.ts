@@ -11,6 +11,7 @@ export const deDE = {
         RichTextEditor_blockedVersion:
             'Bearbeiten ist nicht möglich, weil dieser Inhalt ein unbekanntes Format oder Modell verwendet.',
         RichTextEditor_bold: 'Fett',
+        RichTextEditor_bubbleToolbar: 'Formatierung der Auswahl',
         RichTextEditor_copyContent: 'Inhalt kopieren',
         RichTextEditor_copyFailed:
             'Kopieren fehlgeschlagen. Wählen Sie den Inhalt aus und kopieren Sie ihn mit der Tastatur.',
@@ -26,6 +27,8 @@ export const deDE = {
             'Der Editor funktioniert nicht mehr. Ihre letzten Änderungen werden unten angezeigt.',
         RichTextEditor_retry: 'Erneut versuchen',
         RichTextEditor_toolbar: 'Textformatierung',
+        RichTextEditor_toolbarAlways: 'Symbolleiste immer anzeigen',
+        RichTextEditor_toolbarOnSelection: 'Symbolleiste nur bei Auswahl anzeigen',
         RichTextEditor_unavailable: 'An der aktuellen Auswahl nicht verfügbar',
         RichTextEditor_unavailableNotAllowed: 'In diesem Editor nicht erlaubt',
         RichTextEditor_unavailableReadOnly: 'Der Inhalt ist schreibgeschützt',

@@ -10,6 +10,7 @@ export const frFR = {
         RichTextEditor_blockedVersion:
             'La modification est impossible, car ce contenu utilise un format ou un modèle inconnu.',
         RichTextEditor_bold: 'Gras',
+        RichTextEditor_bubbleToolbar: 'Mise en forme de la sélection',
         RichTextEditor_copyContent: 'Copier le contenu',
         RichTextEditor_copyFailed: 'La copie a échoué. Sélectionnez le contenu et copiez-le avec le clavier.',
         RichTextEditor_copyOriginal: 'Copier l’original',
@@ -24,6 +25,8 @@ export const frFR = {
             'L’éditeur a cessé de fonctionner. Vos dernières modifications sont affichées ci-dessous.',
         RichTextEditor_retry: 'Réessayer',
         RichTextEditor_toolbar: 'Mise en forme du texte',
+        RichTextEditor_toolbarAlways: 'Toujours afficher la barre d’outils',
+        RichTextEditor_toolbarOnSelection: 'Afficher la barre d’outils uniquement lors d’une sélection',
         RichTextEditor_unavailable: 'Non disponible pour la sélection actuelle',
         RichTextEditor_unavailableNotAllowed: 'Non autorisé dans cet éditeur',
         RichTextEditor_unavailableReadOnly: 'Le contenu est en lecture seule',

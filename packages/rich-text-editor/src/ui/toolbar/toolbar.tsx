@@ -4,26 +4,46 @@ import { Tooltip, useFondueTheme } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type MutableRefObject, useContext } from 'react';
 
+import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { SessionContext, useCommandQuery } from '#/bridge/hooks';
+import { useOverlayContainer } from '#/bridge/overlays';
 import { ariaShortcut, useApplePlatform } from '#/ui/shortcuts';
 
-import { Icon, returnFocus, runItem, type ToolbarItem, type ToolbarStrings, useShortcut } from './item';
-import { More } from './more';
+import {
+    Icon,
+    keepFocus,
+    returnFocus,
+    runItem,
+    tabStop,
+    type ToolbarItem,
+    type ToolbarStrings,
+    useShortcut,
+} from './item';
+import { More, type ModeSwitch } from './more';
 import styles from './styles/toolbar.module.scss';
 import { useFitting } from './use-fitting';
 
 export { type ToolbarItem, type ToolbarStrings } from './item';
+export { More, type ModeSwitch } from './more';
 
-const Item = ({
+/** One toolbar button, with its tooltip in the editor's portal container. */
+export const Item = ({
     item,
     disabled,
     strings,
+    keepsFocus,
+    outOfTabOrder,
 }: {
     readonly item: ToolbarItem;
     readonly disabled: boolean;
     readonly strings: ToolbarStrings;
+    /** A press leaves focus in the surface: in the bubble toolbar and the docked toolbar. */
+    readonly keepsFocus: boolean;
+    /** The item takes no Tab stop, as in the bubble toolbar. */
+    readonly outOfTabOrder: boolean;
 }) => {
     const runtime = useContext(SessionContext);
+    const container = useOverlayContainer();
     const state = useCommandQuery(item.command, item.payload);
     let pressed: boolean | 'mixed' | undefined;
     if (item.toggle) {
@@ -36,11 +56,16 @@ const Item = ({
         unavailable = true;
         reason = strings.reason(state.disabledReason ?? '');
     }
+    let onMouseDown: typeof keepFocus | undefined;
+    if (keepsFocus) {
+        onMouseDown = keepFocus;
+    }
     const { shortcut, keyshortcuts } = useShortcut(item);
     return (
         <Tooltip.Root>
             <Tooltip.Trigger asChild>
                 <RadixToolbar.Button
+                    {...tabStop(outOfTabOrder)}
                     type="button"
                     className={styles.item}
                     aria-label={item.label}
@@ -50,19 +75,20 @@ const Item = ({
                     disabled={disabled}
                     data-rte-toolbar-item=""
                     data-group-start={item.groupStart || undefined}
+                    onMouseDown={onMouseDown}
                     onClick={async (event) => {
                         const button = event.currentTarget;
                         if (runtime === undefined || unavailable) {
                             return;
                         }
-                        await runItem(runtime, item);
+                        await runItem(runtime, item, keepsFocus);
                         returnFocus(runtime, [button.closest('[role="toolbar"]')]);
                     }}
                 >
                     <Icon name={item.icon} />
                 </RadixToolbar.Button>
             </Tooltip.Trigger>
-            <Tooltip.Content padding="compact">
+            <Tooltip.Content padding="compact" container={container}>
                 <span className={styles.tooltip}>
                     <span data-rte-tooltip-label="">{item.label}</span>
                     {shortcut !== undefined && <kbd>{shortcut}</kbd>}
@@ -85,6 +111,8 @@ export const FixedToolbar = ({
     shortcut,
     testId,
     toolbarRef,
+    modeSwitch,
+    docked,
 }: {
     readonly items: readonly ToolbarItem[];
     readonly strings: ToolbarStrings;
@@ -96,15 +124,38 @@ export const FixedToolbar = ({
     readonly testId: string;
     /** The toolbar element, which Alt+F10 focuses. */
     readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
+    /** The More row that switches to the bubble toolbar. */
+    readonly modeSwitch: ModeSwitch;
+    /** The bottom inset of the on-screen keyboard while the toolbar docks above it, else `undefined`. */
+    readonly docked: number | undefined;
 }) => {
     const { dir } = useFondueTheme();
     const apple = useApplePlatform();
     const itemsKey = items.map(({ key }) => key).join(' ');
     const shown = useFitting(toolbarRef, items.length, itemsKey);
+    let className = styles.root;
+    if (docked !== undefined) {
+        className = `${styles.root} ${styles.docked}`;
+    }
+    // A transformed ancestor, as a host dialog's, moves the origin of fixed positioning, so it is measured first, as
+    // Fondue's `Dropdown` places its virtual trigger.
+    useClientLayoutEffect(() => {
+        const element = toolbarRef.current;
+        const view = element?.ownerDocument.defaultView;
+        if (element === null || view === null || view === undefined || docked === undefined) {
+            return undefined;
+        }
+        element.style.insetBlockStart = '0px';
+        const { top, height } = element.getBoundingClientRect();
+        element.style.insetBlockStart = `${view.innerHeight - docked - height - top}px`;
+        return () => {
+            element.style.insetBlockStart = '';
+        };
+    }, [toolbarRef, docked]);
     return (
         <RadixToolbar.Root
             ref={toolbarRef}
-            className={styles.root}
+            className={className}
             dir={dir}
             aria-label={strings.label}
             aria-controls={surfaceId}
@@ -112,9 +163,23 @@ export const FixedToolbar = ({
             data-test-id={`${testId}-toolbar`}
         >
             {items.slice(0, shown).map((item) => (
-                <Item key={item.key} item={item} disabled={disabled} strings={strings} />
+                <Item
+                    key={item.key}
+                    item={item}
+                    disabled={disabled}
+                    strings={strings}
+                    keepsFocus={docked !== undefined}
+                    outOfTabOrder={false}
+                />
             ))}
-            {shown < items.length && <More items={items.slice(shown)} strings={strings} disabled={disabled} />}
+            <More
+                items={items.slice(shown)}
+                strings={strings}
+                disabled={disabled}
+                keepsFocus={docked !== undefined}
+                outOfTabOrder={false}
+                modeSwitch={modeSwitch}
+            />
         </RadixToolbar.Root>
     );
 };

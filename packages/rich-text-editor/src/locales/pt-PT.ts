@@ -10,6 +10,7 @@ export const ptPT = {
         RichTextEditor_blockedVersion:
             'Não é possível editar porque este conteúdo usa um formato ou modelo desconhecido.',
         RichTextEditor_bold: 'Negrito',
+        RichTextEditor_bubbleToolbar: 'Formatação da seleção',
         RichTextEditor_copyContent: 'Copiar conteúdo',
         RichTextEditor_copyFailed: 'Não foi possível copiar. Selecione o conteúdo e copie-o com o teclado.',
         RichTextEditor_copyOriginal: 'Copiar original',
@@ -24,6 +25,8 @@ export const ptPT = {
             'O editor deixou de funcionar. As suas alterações mais recentes são mostradas abaixo.',
         RichTextEditor_retry: 'Tentar novamente',
         RichTextEditor_toolbar: 'Formatação de texto',
+        RichTextEditor_toolbarAlways: 'Mostrar sempre a barra de ferramentas',
+        RichTextEditor_toolbarOnSelection: 'Mostrar a barra de ferramentas apenas ao selecionar',
         RichTextEditor_unavailable: 'Indisponível na seleção atual',
         RichTextEditor_unavailableNotAllowed: 'Não permitido neste editor',
         RichTextEditor_unavailableReadOnly: 'O conteúdo é só de leitura',
