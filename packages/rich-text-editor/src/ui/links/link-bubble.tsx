@@ -2,7 +2,7 @@
 
 import { Flyout, Tooltip, useFondueTheme } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
-import { type MutableRefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { type MutableRefObject, useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { AnnouncerContext } from '#/bridge/announcer';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
@@ -64,10 +64,13 @@ export const openLink = (owner: Window | null, href: unknown): void => {
 const BubbleButton = ({
     label,
     icon,
+    describedBy,
     onPress,
 }: {
     readonly label: string;
     readonly icon: string;
+    /** The URL, so each control says which destination it acts on. */
+    readonly describedBy: string;
     readonly onPress: (button: HTMLButtonElement) => void;
 }) => {
     const container = useOverlayContainer();
@@ -79,6 +82,7 @@ const BubbleButton = ({
                     tabIndex={OUT_OF_TAB_ORDER}
                     className={toolbarStyles.item}
                     aria-label={label}
+                    aria-describedby={describedBy}
                     onMouseDown={keepFocus}
                     onClick={(event) => onPress(event.currentTarget)}
                 >
@@ -117,6 +121,7 @@ export const LinkBubble = ({
     const link = useSessionValue(caretLink, sameLink);
     const caret = useSessionValue(caretOf, Object.is);
     const focus = useScopedFocus();
+    const urlId = useId();
     const [closedAt, setClosedAt] = useState<number | null>(null);
     // A caret move ends the close, so moving again within or into the link shows the bubble once more.
     if (closedAt !== null && closedAt !== caret) {
@@ -202,12 +207,20 @@ export const LinkBubble = ({
                     tabIndex={OUT_OF_TAB_ORDER}
                     data-rte-link-bubble=""
                 >
-                    <span className={styles.url} title={href}>
-                        <bdi>{href}</bdi>
-                    </span>
+                    <Tooltip.Root>
+                        <Tooltip.Trigger asChild>
+                            <span id={urlId} className={styles.url}>
+                                <bdi>{href}</bdi>
+                            </span>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content padding="compact" container={overlay.container}>
+                            <bdi>{href}</bdi>
+                        </Tooltip.Content>
+                    </Tooltip.Root>
                     <BubbleButton
                         label={strings.open}
                         icon="IconArrowOutExternal"
+                        describedBy={urlId}
                         onPress={(button) => {
                             openLink(button.ownerDocument.defaultView, href);
                         }}
@@ -215,6 +228,7 @@ export const LinkBubble = ({
                     <BubbleButton
                         label={strings.edit}
                         icon="IconPen"
+                        describedBy={urlId}
                         onPress={() => {
                             runtime?.handle.execute(EDIT_LINK);
                         }}
@@ -222,6 +236,7 @@ export const LinkBubble = ({
                     <BubbleButton
                         label={strings.copy}
                         icon="IconClipboard"
+                        describedBy={urlId}
                         onPress={(button) => {
                             const clipboard = button.ownerDocument.defaultView?.navigator.clipboard;
                             clipboard
@@ -234,6 +249,7 @@ export const LinkBubble = ({
                     <BubbleButton
                         label={strings.remove}
                         icon="IconTrashBin"
+                        describedBy={urlId}
                         onPress={(button) => {
                             runtime?.handle.execute(REMOVE_LINK);
                             back(button);

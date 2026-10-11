@@ -191,7 +191,7 @@ test('returns focus to the surface with the resulting selection after bold, link
     }
 
     expect(await documentHtml(page)).toBe(
-        '<blockquote>one <a href="https://example.com/fixture"><strong>two</strong></a> three</blockquote>',
+        '<blockquote>one <a href="https://example.com/fixture" rel="noopener"><strong>two</strong></a> three</blockquote>',
     );
 });
 

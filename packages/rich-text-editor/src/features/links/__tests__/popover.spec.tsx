@@ -164,29 +164,120 @@ describe('link popover', () => {
         expect(blockOf(handle)).toEqual([text('word')]);
     });
 
-    it('offers None and the link styles, prefilled from the link, and stores the chosen style', () => {
-        const { handle } = mount({
+    it('offers None and the link styles in a menu inside the editor, prefilled from the link, and stores the chosen style', () => {
+        const { handle, container } = mount({
             blocks: [para(linked('start', 'https://frontify.com', { styleId: 'brand.secondary' }))],
             styles: BUTTON_STYLES,
         });
         setSelection(handle, { text: 'start', from: 2, to: 2 });
         open(handle);
-        const style = screen.getByRole('combobox', { name: 'Style' });
+        const trigger = screen.getByRole('button', { name: 'Style Button secondary' });
+        act(() => {
+            fireEvent.keyDown(trigger, { key: 'Enter' });
+        });
+        const menu = screen.getByRole('menu');
+        const rows = screen.getAllByRole('menuitemradio');
 
-        expect(style).toHaveProperty('value', 'brand.secondary');
-        expect([...style.querySelectorAll('option')].map((option) => option.textContent)).toEqual([
+        expect(container.contains(menu)).toBe(true);
+        expect(rows.map((row) => row.textContent)).toEqual([
             'None',
             'Button primary',
             'Button secondary',
             'Button tertiary',
         ]);
+        expect(rows.map((row) => row.getAttribute('aria-checked'))).toEqual(['false', 'false', 'true', 'false']);
         act(() => {
-            fireEvent.change(style, { target: { value: 'brand.tertiary' } });
+            fireEvent.click(screen.getByRole('menuitemradio', { name: 'Button tertiary' }));
         });
         apply();
 
         expect(blockOf(handle)).toEqual([linked('start', 'https://frontify.com', { styleId: 'brand.tertiary' })]);
     });
+
+    it('puts Apply in the popover footer as the submit button of its form', () => {
+        const { handle } = mount({ blocks: [para(text('word'))] });
+        setSelection(handle, { text: 'word' });
+        const dialog = open(handle);
+        const button = screen.getByRole('button', { name: 'Apply' });
+
+        expect(button.closest('[data-test-id="fondue-flyout-footer"]')).not.toBeNull();
+        expect(button.closest('form')).toBeNull();
+        expect(button.getAttribute('form')).toBe(dialog.querySelector('form')?.id);
+        type(destination(), 'frontify.com');
+        apply();
+        expect(blockOf(handle)).toEqual([linked('word', 'https://frontify.com')]);
+    });
+
+    it.each([
+        [{ allowedSchemes: ['https'] }, 'mailto:a@b.co', 'Use a link that starts with https:.'],
+        [
+            { allowedHosts: ['*.frontify.com', 'frontify.com'] },
+            'https://example.com',
+            'Use a link to *.frontify.com or frontify.com.',
+        ],
+    ] as const)('names the schemes or hosts the policy %o allows when it refuses %s', (options, typed, message) => {
+        const { handle } = mount({ blocks: [para(text('word'))], options });
+        setSelection(handle, { text: 'word' });
+        open(handle);
+        type(destination(), typed);
+        apply();
+
+        expect(screen.getByRole('alert').textContent).toBe(message);
+        expect(destination().getAttribute('aria-invalid')).toBe('true');
+    });
+
+    it('keeps the field valid and says the link could not be applied when Apply is refused for another reason', () => {
+        const { handle } = mount({ blocks: [para(text('word'))] });
+        setSelection(handle, { text: 'word' });
+        open(handle);
+        type(destination(), 'https://frontify.com');
+        act(() => handle.setMode('readonly'));
+        apply();
+
+        expect(screen.getByRole('alert').textContent).toBe('The link could not be applied.');
+        expect(destination().getAttribute('aria-invalid')).toBe('false');
+        expect(destination().hasAttribute('aria-describedby')).toBe(false);
+    });
+
+    it('keeps the confirmed composition candidate in the field on the Enter that confirms it', () => {
+        const { handle } = mount({ blocks: [para(text('word'))] });
+        setSelection(handle, { text: 'word' });
+        open(handle);
+        type(destination(), 'ブランド');
+        act(() => {
+            fireEvent.compositionEnd(destination());
+        });
+
+        expect(fireEvent.keyDown(destination(), { key: 'Enter' })).toBe(false);
+        expect(fireEvent.keyDown(destination(), { key: 'Enter' })).toBe(true);
+    });
+
+    it.each([
+        ['a caret at its start', 0],
+        ['a caret inside it', 3],
+    ])(
+        'says the linked text was removed, on the focused field, when it goes while the popover is open at %s',
+        (_where, offset) => {
+            const { handle } = mount({
+                blocks: [para(text('Read '), linked('guide', 'https://frontify.com/a'), text(' now'))],
+            });
+            setSelection(handle, { text: 'guide', from: offset, to: offset });
+            open(handle);
+            type(destination(), 'https://frontify.com/b');
+            act(() => {
+                setSelection(handle, { text: 'guide' });
+                handle.execute('text.insert', { text: '' });
+            });
+            apply();
+
+            const message = screen.getByRole('alert');
+            expect(message.textContent).toBe('The linked text was removed.');
+            expect(document.activeElement).toBe(destination());
+            expect(destination().getAttribute('aria-describedby')).toBe(message.id);
+            expect(message.contains(screen.getByRole('button', { name: 'Insert as new link' }))).toBe(false);
+            expect(JSON.stringify(blockOf(handle))).not.toContain('https://frontify.com/b');
+        },
+    );
 });
 
 describe('link destination search', () => {
@@ -241,6 +332,26 @@ describe('link destination search', () => {
         expect(blockOf(handle)).toEqual([linked('colors', 'https://brand.frontify.com/colors')]);
     });
 
+    it('announces the active destination with its place when the list shows and when the arrows move it', async () => {
+        const references = service([page('p-1', 'Brand colors', '/colors'), page('p-2', 'Brand fonts', '/fonts')]);
+        const { handle, container } = mount({
+            blocks: [para(text('word'))],
+            options: { resourceTypes: ['guideline-page'] },
+            references,
+        });
+        const region = () => container.querySelector('[aria-live="polite"]')?.textContent;
+        setSelection(handle, { text: 'word' });
+        open(handle);
+        type(destination(), 'Brand');
+        await settle();
+
+        expect(region()).toBe('Brand colors, 1 of 2');
+        act(() => {
+            fireEvent.keyDown(destination(), { key: 'ArrowDown' });
+        });
+        expect(region()).toBe('Brand fonts, 2 of 2');
+    });
+
     it('lists no result without an href or with one that fails the check', async () => {
         const references = service([
             page('p-1', 'No address'),
@@ -262,18 +373,22 @@ describe('link destination search', () => {
 });
 
 describe('link bubble', () => {
-    it('shows the link URL and Open, Edit, Copy and Remove at a caret inside a link, and Remove unlinks it', () => {
-        const { handle } = mount({ blocks: [para(text('Read '), linked('the guide', 'https://frontify.com/a'))] });
+    const showBubble = () => {
+        const mounted = mount({ blocks: [para(text('Read '), linked('the guide', 'https://frontify.com/a'))] });
         act(() => {
-            handle.focus();
-            setSelection(handle, { text: 'the guide', from: 3, to: 3 });
+            mounted.handle.focus();
+            setSelection(mounted.handle, { text: 'the guide', from: 3, to: 3 });
             vi.advanceTimersToNextFrame();
         });
-        const bubble = screen.getByRole('toolbar', { name: 'Link' });
+        return { ...mounted, bubble: screen.getByRole('toolbar', { name: 'Link' }) };
+    };
+
+    it('shows the link URL and Open, Edit, Copy and Remove at a caret inside a link, and Remove unlinks it', () => {
+        const { handle, bubble } = showBubble();
 
         expect(bubble.querySelector('bdi')?.textContent).toBe('https://frontify.com/a');
         expect([...bubble.querySelectorAll('button')].map((button) => button.getAttribute('aria-label'))).toEqual([
-            'Open link',
+            'Open link in a new tab',
             'Edit link',
             'Copy link',
             'Remove link',
@@ -283,5 +398,18 @@ describe('link bubble', () => {
         });
 
         expect(blockOf(handle)).toEqual([text('Read the guide')]);
+    });
+
+    it('describes every bubble control by the URL, and shows a long URL in a Fondue tooltip, not a title', () => {
+        const { bubble } = showBubble();
+        const url = bubble.querySelector('bdi')?.parentElement;
+
+        for (const button of bubble.querySelectorAll('button')) {
+            expect(document.getElementById(button.getAttribute('aria-describedby') ?? '')?.textContent).toBe(
+                'https://frontify.com/a',
+            );
+        }
+        expect(url?.hasAttribute('title')).toBe(false);
+        expect(url?.getAttribute('data-state')).toBe('closed');
     });
 });
