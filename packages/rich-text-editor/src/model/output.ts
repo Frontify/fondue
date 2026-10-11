@@ -154,6 +154,49 @@ export const contentClasses = (contentClassName?: string): string => {
     return `fondue-rte-content ${contentClassName}`;
 };
 
+/** The narrowest column; a content root with no room for every column at this width shows one column. */
+export const MIN_COLUMN_WIDTH = 240;
+const MAX_COLUMNS = 6;
+const COLUMN_GAP = /^(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem)$/;
+
+/** The presentation's columns as CSS values: the gap as written, and as a length, since `normal` is `1em` in multi-column layout. */
+export interface ColumnLayout {
+    readonly count: number;
+    readonly gap: string;
+    readonly length: string;
+}
+
+/** The presentation's column count and gap, or `undefined` for one column; a gap that is no `px` or `rem` length is `normal`. */
+export const columnLayout = (columns: number | undefined, columnGap: string | undefined): ColumnLayout | undefined => {
+    if (columns === undefined || !Number.isInteger(columns) || columns < 2) {
+        return undefined;
+    }
+    if (columnGap === undefined || !COLUMN_GAP.test(columnGap)) {
+        return { count: Math.min(columns, MAX_COLUMNS), gap: 'normal', length: '1em' };
+    }
+    return { count: Math.min(columns, MAX_COLUMNS), gap: columnGap, length: columnGap };
+};
+
+/** The node that forces a column break; the first `count - 1` in document order are active. */
+export const COLUMN_BREAK = 'column_break';
+
+/** An active column break's `template`, marked `active`, with `style` on it when given. */
+export const withActiveBreak = (template: HtmlTemplate, style?: string): HtmlTemplate => {
+    const [outer, ...inner] = template.layers;
+    if (outer === undefined) {
+        return template;
+    }
+    const attrs: Record<string, string> = {};
+    for (const [name, value] of Object.entries(outer.attrs)) {
+        attrs[name] = value;
+    }
+    attrs['data-rte-column-break'] = 'active';
+    if (style !== undefined) {
+        attrs.style = style;
+    }
+    return { content: template.content, layers: [{ tag: outer.tag, attrs }, ...inner] };
+};
+
 /** The list nodes whose `marker` null takes the presentation's `listLevels`, by kind. */
 export const LIST_LEVEL_KINDS: Readonly<Record<string, keyof ListLevels>> = {
     ordered_list: 'ordered',

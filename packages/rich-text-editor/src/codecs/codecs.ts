@@ -4,7 +4,7 @@ import { enUS } from '#/locales/en-US';
 import { type ContentModel, type DecodeOptions, type Diagnostic } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
-import { codecContext } from '#/model/output';
+import { codecContext, columnLayout } from '#/model/output';
 import { randomId } from '#/model/random-id';
 
 import { createParser, readMarkdown } from './from-markdown';
@@ -39,7 +39,14 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
                 return { html: '', diagnostics };
             }
             const context = codecContext(htmlOptions.locale, enUS, htmlOptions.resolveAssetUrl);
-            const output = writeHtml(plan, tree, context, htmlOptions.contentClassName, htmlOptions.listLevels);
+            const output = writeHtml(
+                plan,
+                tree,
+                context,
+                htmlOptions.contentClassName,
+                htmlOptions.listLevels,
+                columnLayout(htmlOptions.columns, htmlOptions.columnGap),
+            );
             return { html: output.html, diagnostics: [...diagnostics, ...output.diagnostics] };
         },
         toPlainText: (document) => {

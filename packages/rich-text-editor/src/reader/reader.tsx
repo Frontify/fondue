@@ -16,7 +16,7 @@ import {
 import { type ResolveAssetUrl } from '#/model/declarations';
 import { decodeToTree } from '#/model/decode';
 import { canonicalJson } from '#/model/hash';
-import { listDepths } from '#/model/output';
+import { columnLayout, listDepths } from '#/model/output';
 
 import { readerContext } from './context';
 import { planOf } from './plan';
@@ -31,6 +31,10 @@ export interface ReaderPresentation {
     readonly contentClassName?: string;
     /** List markers by depth. */
     readonly listLevels?: ListLevels;
+    /** 1 to 6. */
+    readonly columns?: number;
+    /** `normal`, or a length in `px` or `rem`. */
+    readonly columnGap?: string;
 }
 
 export interface RichTextReaderProps {
@@ -83,6 +87,8 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
         carried: 0,
         listLevels: resolvers.listLevels,
         depths: listDepths(),
+        columns: columnLayout(resolvers.columns, resolvers.columnGap),
+        breaks: 0,
     };
     return { element: renderDocument(state, tree, resolvers.contentClassName), diagnostics, notified };
 };

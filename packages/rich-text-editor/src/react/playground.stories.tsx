@@ -7,6 +7,7 @@ import {
     bold,
     code,
     codeBlock,
+    columns,
     core,
     emoji,
     featuresById,
@@ -14,6 +15,7 @@ import {
     inputRules,
     italic,
     quote,
+    rule,
     strike,
     subscript,
     superscript,
@@ -105,6 +107,8 @@ const model = compileContentModel(
         heading(),
         quote(),
         codeBlock(),
+        rule(),
+        columns(),
         ...featuresById(['lists.item', 'lists.bullet', 'lists.ordered', 'lists.task']),
         inputRules({ typography }),
         callouts,
@@ -128,6 +132,7 @@ const TOOLBAR = [
     ],
     ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
     ['quote.toggle', 'code-block.toggle', 'emoji.picker.open'],
+    ['rule.insert', 'column.break.insert'],
 ];
 
 type Commands = CommandsOfModel<typeof model>;
@@ -142,6 +147,10 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly contentClassName: string;
     /** The presentation's `toolbarShortcut`, which moves focus between the surface and the toolbars. */
     readonly toolbarShortcut: string;
+    /** The presentation's `columns`, 1 to 6; above 1, the first `columns - 1` column breaks each end a column. */
+    readonly columns: number;
+    /** The presentation's `columnGap`: `normal`, or a length in `px` or `rem`. */
+    readonly columnGap: string;
     /** Throws in render at mount, so the story opens on the recovery shell. */
     readonly brokenAtMount: boolean;
     /** Composes `RichTextEditor.BubbleToolbar`, which shows above a text selection beside the fixed toolbar. */
@@ -182,6 +191,8 @@ const Playground = ({
     sliceContext,
     contentClassName,
     toolbarShortcut,
+    columns: columnCount,
+    columnGap,
     brokenAtMount,
     bubbleToolbar,
     hostPortalContainer,
@@ -195,8 +206,15 @@ const Playground = ({
         if (sliceContext !== '') {
             context = sliceContext;
         }
-        return defineReactPresentation({ contentClassName, toolbar: TOOLBAR, toolbarShortcut, sliceContext: context });
-    }, [contentClassName, toolbarShortcut, sliceContext]);
+        return defineReactPresentation({
+            contentClassName,
+            toolbar: TOOLBAR,
+            toolbarShortcut,
+            sliceContext: context,
+            columns: columnCount,
+            columnGap,
+        });
+    }, [contentClassName, toolbarShortcut, sliceContext, columnCount, columnGap]);
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
@@ -312,6 +330,22 @@ const Playground = ({
                     }
                 >
                     Move the block down
+                </button>
+                <button
+                    type="button"
+                    onClick={() => log(`execute rule.insert ${resultText(handleRef.current?.execute('rule.insert'))}`)}
+                >
+                    Insert a divider
+                </button>
+                <button
+                    type="button"
+                    onClick={() =>
+                        log(
+                            `execute column.break.insert ${resultText(handleRef.current?.execute('column.break.insert'))}`,
+                        )
+                    }
+                >
+                    Insert a column break
                 </button>
                 <button
                     type="button"
@@ -616,6 +650,12 @@ Type \`:\` at the start of a word, then at least two letters, to open emoji sugg
 | Heading 6 | \`heading.set\` with \`{ level: 6 }\` | \`other:Ctrl-Shift-6\` | none | Ctrl+Shift+6 |
 | Move up | \`block.move.up\` | \`Mod-Alt-ArrowUp\` | ⌥⌘↑ | Ctrl+Alt+Up |
 | Move down | \`block.move.down\` | \`Mod-Alt-ArrowDown\` | ⌥⌘↓ | Ctrl+Alt+Down |
+| Column break, while \`columns\` is above 1 | \`column.break.insert\` | \`Mod-Shift-Enter\` | ⇧⌘Enter | Ctrl+Shift+Enter |
+| Remove the column break before the caret |  | \`Backspace\` | Backspace | Backspace |
+| Remove a selected rule, image or column break |  | \`Backspace\`, \`Delete\` | Backspace, Delete | Backspace, Delete |
+| Gap cursor beside a block with no text position next to it |  | \`ArrowUp\`, \`ArrowDown\`, \`ArrowLeft\`, \`ArrowRight\` | ↑ ↓ ← → | Up Down Left Right |
+
+Type \`---\`, \`***\` or \`___\` and a space at the start of a paragraph for a divider. Typing at a gap cursor starts a paragraph there.
 
 ## Code blocks
 
@@ -666,6 +706,8 @@ With \`tabMovesFocus\`, Tab and Shift+Tab always move focus out of the editor an
         sliceContext: '',
         contentClassName: 'playground-content',
         toolbarShortcut: 'Alt-F10',
+        columns: 1,
+        columnGap: 'normal',
         brokenAtMount: false,
         bubbleToolbar: false,
         hostPortalContainer: false,
@@ -693,6 +735,8 @@ With \`tabMovesFocus\`, Tab and Shift+Tab always move focus out of the editor an
         presentation: { control: false },
         inputRules: { control: 'object' },
         tabMovesFocus: { control: 'boolean' },
+        columns: { control: { type: 'number', min: 1, max: 6, step: 1 } },
+        columnGap: { control: 'text' },
         scrollSelectionIntoView: { control: 'boolean' },
         profile: { control: 'select', options: ['inline', 'comment', 'document', 'brand-document'] },
         status: { control: 'select', options: ['neutral', 'success', 'error', 'loading'] },

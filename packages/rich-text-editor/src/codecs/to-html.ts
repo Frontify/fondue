@@ -5,6 +5,8 @@ import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
     attrsOf,
+    COLUMN_BREAK,
+    type ColumnLayout,
     contentClasses,
     failedFallback,
     groupRun,
@@ -17,6 +19,7 @@ import {
     spaced,
     type Spacing,
     VOID_TAGS,
+    withActiveBreak,
     withListLevel,
     writesAttribute,
 } from '#/model/output';
@@ -33,6 +36,9 @@ interface HtmlState extends Spacing {
     readonly losses: Losses;
     readonly listLevels: ListLevels | undefined;
     readonly depths: ListDepths;
+    readonly columns: ColumnLayout | undefined;
+    /** The column breaks written so far, whose first `count - 1` are active. */
+    breaks: number;
 }
 
 const ESCAPES: Readonly<Record<string, string>> = {
@@ -200,6 +206,13 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     if (!plan.inline) {
         template = withAutoDirection(template);
     }
+    if (node.type === COLUMN_BREAK) {
+        // Stored HTML has no package styles, so an active break carries its own.
+        if (state.columns !== undefined && state.breaks < state.columns.count - 1) {
+            template = withActiveBreak(template, 'break-after: column');
+        }
+        state.breaks += 1;
+    }
     return build(template, inner);
 };
 
@@ -248,13 +261,17 @@ export const isEmptyDocument = (plan: CodecPlan, root: TreeNode): boolean => {
     return node !== undefined && !node.leaf;
 };
 
-/** The reader's static markup as text: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the island notice. */
+/**
+ * The reader's static markup as text: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its
+ * blocks, then the island notice; with `columns`, inside a wrapper that sets `columns` and `column-gap`.
+ */
 export const writeHtml = (
     plan: CodecPlan,
     root: TreeNode,
     context: CodecContext,
     contentClassName?: string,
     listLevels?: ListLevels,
+    columns?: ColumnLayout,
 ): { readonly html: string; readonly diagnostics: readonly Diagnostic[] } => {
     const state: HtmlState = {
         plan,
@@ -265,6 +282,8 @@ export const writeHtml = (
         carried: 0,
         listLevels,
         depths: listDepths(),
+        columns,
+        breaks: 0,
     };
     if (isEmptyDocument(plan, root)) {
         return { html: '', diagnostics: [] };
@@ -295,5 +314,9 @@ export const writeHtml = (
             details: { count },
         }),
     );
-    return { html: `<div${props}>${html}</div>`, diagnostics: [...state.diagnostics, ...lossy] };
+    html = `<div${props}>${html}</div>`;
+    if (columns !== undefined) {
+        html = `<div style="columns:${columns.count};column-gap:${escapeHtml(columns.gap)}">${html}</div>`;
+    }
+    return { html, diagnostics: [...state.diagnostics, ...lossy] };
 };
