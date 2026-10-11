@@ -185,4 +185,10 @@ describe('checkHref', () => {
     it('keeps the stored form, with only edge whitespace removed', () => {
         expect(checkHref('  /brand?x=%20y\t')).toEqual({ ok: true, href: '/brand?x=%20y' });
     });
+
+    it('checks a long run of inner control characters in linear time', () => {
+        const controls = '\u0001'.repeat(200_000);
+        expect(checkHref(`/a${controls}b`)).toEqual({ ok: false, code: 'unparsable' });
+        expect(checkHref(`${controls}/brand${controls}`)).toEqual({ ok: true, href: '/brand' });
+    });
 });
