@@ -12,14 +12,15 @@ import {
     islandLabel,
     type Item,
     itemsOf,
-    LIST_LEVEL_KINDS,
+    listDepths,
+    type ListDepths,
     spaced,
     type Spacing,
     VOID_TAGS,
     withListLevel,
     writesAttribute,
 } from '#/model/output';
-import { isStyleAttribute, ownValue } from '#/model/values';
+import { isStyleAttribute } from '#/model/values';
 
 import { type CodecPlan, Losses } from './plan';
 import { keepMark, noteNode, reportFailure } from './walk';
@@ -31,8 +32,7 @@ interface HtmlState extends Spacing {
     /** Uses of features whose `html` support is `lossy`. */
     readonly losses: Losses;
     readonly listLevels: ListLevels | undefined;
-    /** How many lists of each kind hold the node being written. */
-    readonly lists: Record<keyof ListLevels, number>;
+    readonly depths: ListDepths;
 }
 
 const ESCAPES: Readonly<Record<string, string>> = {
@@ -168,19 +168,15 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     }
     noteNode(state, node, 'html');
     const before = state.carried;
-    const kind = ownValue(LIST_LEVEL_KINDS, node.type);
-    let depth = 0;
-    if (kind !== undefined) {
-        state.lists[kind] += 1;
-        depth = state.lists[kind];
-    }
-    let inner = renderChildren(state, node, path, plan.pre);
-    if (node.type === 'task_item' && plan.featureId === 'lists.task') {
-        inner = taskItemInner(state, node, path, plan.pre);
-    }
-    if (kind !== undefined) {
-        state.lists[kind] -= 1;
-    }
+    const { inner, entered } = state.depths.within(node.type, (level) => {
+        let content: string;
+        if (node.type === 'task_item' && plan.featureId === 'lists.task') {
+            content = taskItemInner(state, node, path, plan.pre);
+        } else {
+            content = renderChildren(state, node, path, plan.pre);
+        }
+        return { inner: content, entered: level };
+    });
     const attrs = attrsOf(node.attrs);
     let template: HtmlTemplate;
     if (plan.html === undefined) {
@@ -198,8 +194,8 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         }
     }
     state.carried = 0;
-    if (kind !== undefined) {
-        template = withListLevel(template, attrs, kind, depth, state.listLevels);
+    if (entered !== undefined) {
+        template = withListLevel(template, attrs, entered.kind, entered.depth, state.listLevels);
     }
     if (!plan.inline) {
         template = withAutoDirection(template);
@@ -268,7 +264,7 @@ export const writeHtml = (
         islands: 0,
         carried: 0,
         listLevels,
-        lists: { ordered: 0, bullet: 0 },
+        depths: listDepths(),
     };
     if (isEmptyDocument(plan, root)) {
         return { html: '', diagnostics: [] };

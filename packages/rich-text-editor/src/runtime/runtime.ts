@@ -49,6 +49,7 @@ import { keyGuard } from './keys';
 import { createLimitCheck, type ExceededLimit } from './limits';
 import { operationMetric } from './metrics';
 import { authoringOf, createPolicyCheck, refusesLevel, setsHeading } from './policy';
+import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { createInputSettling } from './settle';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
@@ -288,18 +289,6 @@ const originOf = (root: Transaction): ChangeOrigin => {
 /** One empty paragraph is an empty document, which shows the placeholder. */
 export const isEmpty = ({ doc }: EditorState) =>
     doc.childCount === 1 && doc.firstChild !== null && doc.firstChild.isTextblock && doc.firstChild.content.size === 0;
-
-/** The position of the node with `nodeId`, read when it is needed, so no caller holds one. */
-export const positionOf = (doc: Node, nodeId: string): number | undefined => {
-    let found: number | undefined;
-    doc.descendants((node, pos) => {
-        if (found === undefined && node.attrs.nodeId === nodeId) {
-            found = pos;
-        }
-        return found === undefined;
-    });
-    return found;
-};
 
 const rejected = (code: RejectedCode): CommandResult => ({ status: 'rejected', code });
 const refused = (code: ReplaceCode): ReplaceResult => ({ status: 'rejected', code });

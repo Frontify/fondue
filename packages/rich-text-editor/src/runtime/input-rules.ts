@@ -1,15 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type ResolvedPos } from 'prosemirror-model';
-import {
-    type Command,
-    type EditorState,
-    Plugin,
-    PluginKey,
-    Selection,
-    TextSelection,
-    type Transaction,
-} from 'prosemirror-state';
+import { type Command, type EditorState, Plugin, PluginKey, TextSelection, type Transaction } from 'prosemirror-state';
 import { ReplaceStep } from 'prosemirror-transform';
 
 import {
@@ -28,6 +20,7 @@ import { INPUT_RULES_PLUGIN } from '#/model/capabilities';
 import { findInvalidPayload, OBJECT_REPLACEMENT } from '#/model/values';
 
 import { closeGroup, isHistoryTransaction, undo } from './history';
+import { appendSteps, carrySelection } from './transactions';
 
 // As `prosemirror-inputrules`, a rule reads at most this much text before the caret.
 const MAX_MATCH = 500;
@@ -135,10 +128,8 @@ const withoutMarker = (
     if (built === undefined) {
         return null;
     }
-    for (const step of built.steps) {
-        transaction.step(step);
-    }
-    transaction.setSelection(Selection.fromJSON(transaction.doc, built.selection.toJSON()));
+    appendSteps(transaction, built);
+    transaction.setSelection(carrySelection(transaction.doc, built.selection));
     if (built.scrolledIntoView) {
         transaction.scrollIntoView();
     }

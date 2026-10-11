@@ -2,7 +2,8 @@
 
 import { type KeyBinding } from '#/model';
 import { OBJECT_REPLACEMENT } from '#/model/values';
-import { type EditorRuntime, positionOf, runtimeOf } from '#/runtime/runtime';
+import { positionOf } from '#/runtime/positions';
+import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 
 /** Names content, never document positions. */
 export type SelectionTarget =

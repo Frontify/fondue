@@ -27,7 +27,7 @@ export const taskList = defineFeature({
         'list.task.toggle': toggleList('task_list', 'task_item', {
             fields: { checked: { type: 'boolean', optional: true } },
         }),
-        'task.toggle': toggleTask('task_item'),
+        'task.toggle': toggleTask('task_item', 'task.setChecked'),
         'task.setChecked': setAttributes('task_item', {
             fields: { nodeId: { type: 'string' }, checked: { type: 'boolean' } },
         }),

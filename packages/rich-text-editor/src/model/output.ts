@@ -20,7 +20,7 @@ import { pointer } from './errors';
 import { canonicalJson } from './hash';
 import { checkHref } from './href';
 import { type HtmlTemplate, islandText, renderSpaces } from './html-spec';
-import { addDeclaration } from './values';
+import { addDeclaration, ownValue } from './values';
 
 /** The context a reader or codec override reads, in `locale`, else `fallback`, whose strings fill any key `locale` lacks; a resolver that throws gives `null` for that call only. */
 export const codecContext = (
@@ -159,6 +159,33 @@ export const LIST_LEVEL_KINDS: Readonly<Record<string, keyof ListLevels>> = {
     ordered_list: 'ordered',
     bullet_list: 'bullet',
 };
+
+/** The kind and depth of a list a walk has entered: 1 for the outermost list of that kind. */
+export interface EnteredList {
+    readonly kind: keyof ListLevels;
+    readonly depth: number;
+}
+
+/** Counts nested lists of each kind for one walk and gives each list node its depth while `render` runs. */
+export const listDepths = () => {
+    const counts: Record<keyof ListLevels, number> = { ordered: 0, bullet: 0 };
+    return {
+        within<T>(type: string, render: (entered: EnteredList | undefined) => T): T {
+            const kind = ownValue(LIST_LEVEL_KINDS, type);
+            if (kind === undefined) {
+                return render(undefined);
+            }
+            counts[kind] += 1;
+            try {
+                return render({ kind, depth: counts[kind] });
+            } finally {
+                counts[kind] -= 1;
+            }
+        },
+    };
+};
+export type ListDepths = ReturnType<typeof listDepths>;
+
 /** Without `listLevels`, the default markers by nesting depth. */
 const DEFAULT_LIST_LEVELS: ListLevels = {
     ordered: [{ counterType: 'decimal' }, { counterType: 'lower-alpha' }, { counterType: 'lower-roman' }],
