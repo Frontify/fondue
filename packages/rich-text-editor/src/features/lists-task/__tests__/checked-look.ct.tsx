@@ -103,11 +103,14 @@ const strikeOf = async (page: Page, surface: Surface, text: string) =>
         };
     });
 
-test('strikes and greys only a checked task own text, not the unchecked task nested in it', async ({ mount, page }) => {
+test('strikes and greys every own block of a checked task, not the unchecked task nested in it', async ({
+    mount,
+    page,
+}) => {
     const nested = [
         tasks({
             ...taskItem('task-1', 'Done', true),
-            content: [paragraph('Done'), tasks(taskItem('task-2', 'Open', false))],
+            content: [paragraph('Done'), paragraph('Also'), tasks(taskItem('task-2', 'Open', false))],
         }),
     ];
     await mount(<ListProbe blocks={nested} reader strikeCheckedTasks />);
@@ -115,8 +118,11 @@ test('strikes and greys only a checked task own text, not the unchecked task nes
 
     for (const surface of ['editor', 'reader'] as const) {
         const done = await strikeOf(page, surface, 'Done');
+        const also = await strikeOf(page, surface, 'Also');
         const open = await strikeOf(page, surface, 'Open');
         expect(done.struck).toBe(true);
+        expect(also.struck).toBe(true);
+        expect(also.color).toBe(done.color);
         expect(open.struck).toBe(false);
         expect(open.color).not.toBe(done.color);
     }

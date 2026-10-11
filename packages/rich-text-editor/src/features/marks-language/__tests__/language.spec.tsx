@@ -108,6 +108,36 @@ describe('language passages', () => {
         expect(blockOf(handle)).toEqual([text('Hello Bonjour end')]);
     });
 
+    it.each([
+        ['inside the second passage', { text: 'Bonjour', from: 3, to: 3 }],
+        ['between the two passages', { text: 'Bonjour', from: 0, to: 0 }],
+    ] as const)('changes only the passage under a caret %s, not its neighbour in another language', (_where, caret) => {
+        const { handle } = mountText({
+            model: model(),
+            blocks: [para(passage('Hello', 'en'), passage('Bonjour', 'fr'))],
+        });
+        setSelection(handle, caret);
+
+        expect(handle.execute('mark.language.set', { lang: 'de', dir: null }).status).toBe('applied');
+        expect(blockOf(handle)).toEqual([passage('Hello', 'en'), passage('Bonjour', 'de')]);
+
+        setSelection(handle, caret);
+        expect(handle.execute('mark.language.set', null).status).toBe('applied');
+        expect(blockOf(handle)).toEqual([passage('Hello', 'en'), text('Bonjour')]);
+    });
+
+    it('changes and removes the whole passage from a caret on its first character', () => {
+        const { handle } = mountText({ model: model(), blocks: [para(passage('Bonjour', 'fr'))] });
+        setSelection(handle, { text: 'Bonjour', from: 0, to: 0 });
+
+        expect(handle.execute('mark.language.set', { lang: 'de', dir: null }).status).toBe('applied');
+        expect(blockOf(handle)).toEqual([passage('Bonjour', 'de')]);
+
+        setSelection(handle, { text: 'Bonjour', from: 0, to: 0 });
+        expect(handle.execute('mark.language.set', null).status).toBe('applied');
+        expect(blockOf(handle)).toEqual([text('Bonjour')]);
+    });
+
     it('keeps text typed at the end of a passage out of it', () => {
         const { handle } = mountText({ model: model(), blocks: [para(passage('مرحبا', 'ar', 'rtl'), text(' end'))] });
         setSelection(handle, { text: 'مرحبا', from: 5, to: 5 });

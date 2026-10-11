@@ -88,7 +88,7 @@ describe('language dialog', () => {
         expect(handle.getSnapshot().document.content.content?.[0]?.content).toEqual([passage('Ciao', 'it')]);
     });
 
-    it('names the error of a rejected tag on the field, marks it invalid and focuses it', () => {
+    it('names and describes the error of a rejected tag on the field, marks it invalid and focuses it', () => {
         const { handle } = mount(typedModel(), [para(text('Hallo'))]);
         setSelection(handle, { text: 'Hallo' });
         open(handle);
@@ -106,11 +106,12 @@ describe('language dialog', () => {
         const error = screen.getByRole('alert');
         expect(error.id).not.toBe('');
         expect(field.getAttribute('aria-errormessage')).toBe(error.id);
+        expect(field.getAttribute('aria-describedby')).toBe(error.id);
         expect(field.getAttribute('aria-invalid')).toBe('true');
         expect(document.activeElement).toBe(field);
     });
 
-    it('names the error of a rejected language on the radio group, marks it invalid and focuses its radio', () => {
+    it('marks the group invalid and describes the radio a rejected language focuses by the error, once the error shows', () => {
         const { handle } = mount(offeredModel(), [para(passage('Bonjour', 'fr'))]);
         setSelection(handle, { text: 'Bonjour', from: 3, to: 3 });
         open(handle);
@@ -118,6 +119,11 @@ describe('language dialog', () => {
             status: 'rejected',
             code: 'invalid-payload',
         } as ReturnType<typeof handle.execute>);
+        const french = screen.getByRole('radio', { name: 'French' });
+        let shownAtFocus = false;
+        french.addEventListener('focus', () => {
+            shownAtFocus = screen.queryByRole('alert') !== null;
+        });
         const apply = screen.getByRole('button', { name: 'Apply' });
         apply.focus();
 
@@ -131,7 +137,10 @@ describe('language dialog', () => {
         expect(error.id).not.toBe('');
         expect(group.getAttribute('aria-errormessage')).toBe(error.id);
         expect(group.getAttribute('aria-invalid')).toBe('true');
-        expect(document.activeElement).toBe(screen.getByRole('radio', { name: 'French' }));
+        expect(document.activeElement).toBe(french);
+        expect(shownAtFocus).toBe(true);
+        expect(french.getAttribute('aria-describedby')).toBe(error.id);
+        expect(screen.getByRole('radio', { name: 'English' }).hasAttribute('aria-describedby')).toBe(false);
     });
 
     it('returns focus to the toolbar button on Cancel and Escape, and to the surface on Apply', async () => {

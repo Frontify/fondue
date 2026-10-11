@@ -38,7 +38,7 @@ const struckRules = () =>
         }))
         .filter(({ selectors }) => selectors.some((selector) => selector.includes('data-rte-strike-checked-tasks')));
 
-/** The editor's DOM of a checked task with an unchecked nested task: chrome, then the content with its blocks. */
+/** The editor's DOM of a checked task of two blocks with an unchecked nested task: chrome, then the content with its blocks. */
 const editorTree = () => {
     const root = document.createElement('div');
     root.innerHTML = `
@@ -48,6 +48,7 @@ const editorTree = () => {
                     <div data-rte-chrome=""><input type="checkbox" checked></div>
                     <div>
                         <p data-test="done-text">Done <span data-test="done-run" style="color: #ff0000">red</span></p>
+                        <p data-test="also-text">Also</p>
                         <ul data-task-list="" data-test="nested">
                             <li>
                                 <div data-rte-chrome=""><input type="checkbox"></div>
@@ -70,6 +71,7 @@ const readerTree = () => {
                 <li data-checked="true">
                     <input type="checkbox" disabled checked>
                     <div data-test="done-text"><p>Done <a data-test="done-run" href="https://frontify.com">link</a></p></div>
+                    <p data-test="also-text">Also</p>
                     <ul data-task-list="" data-test="nested">
                         <li data-checked="false">
                             <input type="checkbox" disabled>
@@ -100,15 +102,12 @@ describe('the struck checked-task look', () => {
     it.each([
         ['editor', editorTree],
         ['reader', readerTree],
-    ])(
-        'strikes and greys only the checked item own first block in the %s, never its nested tasks',
-        (_surface, tree) => {
-            const root = tree();
+    ])('strikes and greys every own block of the checked item in the %s, never its nested tasks', (_surface, tree) => {
+        const root = tree();
 
-            expect(styled(root, (text) => text.startsWith('text-decoration-line'))).toEqual(['done-text']);
-            expect(styled(root, (text) => text.startsWith('color'))).toEqual(['done-run', 'done-text']);
-        },
-    );
+        expect(styled(root, (text) => text.startsWith('text-decoration-line'))).toEqual(['also-text', 'done-text']);
+        expect(styled(root, (text) => text.startsWith('color'))).toEqual(['also-text', 'done-run', 'done-text']);
+    });
 
     it('gives the secondary text colour priority over a run own colour, through the variable a host overrides', () => {
         const colors = struckRules().flatMap(({ declarations }) =>
