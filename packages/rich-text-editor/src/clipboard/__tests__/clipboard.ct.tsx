@@ -23,7 +23,15 @@ const SLICE_TYPE = 'application/x-frontify-rich-text+json';
 const CURSOR = '.prosemirror-dropcursor-block';
 
 const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Notes' });
-const ready = (page: Page) => page.waitForFunction(() => window.clip !== undefined);
+// The probe publishes `window.clip` once the runtime exists, and the view makes the surface editable after that.
+const ready = async (page: Page, { readOnly = false } = {}) => {
+    await page.waitForFunction(() => window.clip !== undefined);
+    if (readOnly) {
+        await expect(surfaceOf(page)).toHaveAttribute('aria-readonly', 'true');
+    } else {
+        await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
+    }
+};
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 
 /** Records the flavors of the next `type` event once the editor's own handler wrote them. */
@@ -457,7 +465,7 @@ test('keeps the document and selection in readonly through paste, cut and drops,
     page,
 }) => {
     await mount(<ClipboardProbe texts={['abc', 'def']} readOnly />);
-    await ready(page);
+    await ready(page, { readOnly: true });
     await surfaceOf(page).focus();
     await select(page, { text: 'b' });
     const content = await contentOf(page);
