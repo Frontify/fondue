@@ -5,10 +5,12 @@ import { createElement, createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { type CapabilityImplementation, type EngineCommand } from '#/definition';
+import { type CapabilityImplementation, type EngineCommand, type Normalizer, NORMALIZERS } from '#/definition';
 import { bold, featuresById } from '#/features';
-import { commandCases } from '#/features/__tests__/fixtures/contract.cases';
+import { commandCases, normalizerCases } from '#/features/__tests__/fixtures/contract.cases';
+import { fixtureHeadingSet, fixtureMedia, fixtureMention, fixtureTable } from '#/features/__tests__/fixtures/features';
 import { highlight, highlightDocument } from '#/features/__tests__/fixtures/outside-feature';
+import { vocabularyLists } from '#/features/__tests__/fixtures/vocabulary';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
 import { registry } from '#/features/registry';
@@ -22,6 +24,7 @@ vi.mock('#/codecs', { spy: true });
 
 runFeatureContract([...featuresById(Object.keys(registry)), highlight()], { fixtures: [highlightDocument] });
 commandCases(featuresById(Object.keys(registry)));
+normalizerCases(featuresById(Object.keys(registry)));
 
 /** Registers cases on a stand-in runner, runs each one and returns the titles of those that fail. */
 const failingTitles = async (register: () => void): Promise<string[]> => {
@@ -68,6 +71,28 @@ const text = (value: string, ...marks: readonly string[]) => {
     }
     return { type: 'text', text: value, marks: marks.map((type) => ({ type })) };
 };
+
+/** The stand-ins with a `nodeId` node and one document that holds each, for the normalizer cases. */
+const nodeIdFeatures = () => [
+    core(),
+    fixtureHeadingSet(),
+    fixtureMention(),
+    fixtureTable(),
+    fixtureMedia(),
+    vocabularyLists(),
+];
+const nodeIdDocument = stored([
+    { type: 'heading', attrs: { nodeId: 'h-1', level: 2 }, content: [text('Title')] },
+    paragraph(text('Hi '), { type: 'mention', attrs: { nodeId: 'm-1', label: 'Ada' } }),
+    { type: 'table', attrs: { nodeId: 't-1' }, content: [paragraph(text('Cell'))] },
+    {
+        type: 'task_list',
+        content: [{ type: 'task_item', attrs: { nodeId: 'k-1', checked: false }, content: [paragraph(text('Todo'))] }],
+    },
+    { type: 'figure', attrs: { nodeId: 'f-1' }, content: [paragraph(text('Logo'))] },
+    { type: 'embed', attrs: { nodeId: 'e-1', url: 'https://www.youtube.com/watch?v=1' } },
+]);
+normalizerCases(nodeIdFeatures(), [nodeIdDocument]);
 
 const DECODES = (name: string) => `decodes and encodes ${name} to itself`;
 const RENDERS = (name: string) => `renders ${name} in the reader and writes it through every codec`;
@@ -144,6 +169,71 @@ describe('the feature contract suite', () => {
             expect(await failingTitles(() => commandCases([core(), bold()]))).toEqual([
                 'runs mark.bold.toggle synchronously with no I/O or timer, dispatching at most once',
             ]);
+        } finally {
+            spy.mockRestore();
+        }
+    });
+
+    it.each([
+        [
+            'toggles an attribute',
+            'runs the node-ids normalizer to equal steps on equal states and to nothing on its output',
+            (): Normalizer => (state) => {
+                let found: { readonly pos: number; readonly nodeId: unknown } | undefined;
+                state.doc.descendants((node, pos) => {
+                    if (found === undefined && 'nodeId' in node.attrs) {
+                        found = { pos, nodeId: node.attrs.nodeId };
+                    }
+                    return found === undefined;
+                });
+                if (found === undefined) {
+                    return null;
+                }
+                let next = 'on';
+                if (found.nodeId === 'on') {
+                    next = 'off';
+                }
+                return state.tr.setNodeAttribute(found.pos, 'nodeId', next);
+            },
+        ],
+        [
+            'calls setTimeout',
+            'runs the node-ids normalizer synchronously with no I/O or timer',
+            (original: Normalizer): Normalizer =>
+                (state, ids) => {
+                    setTimeout(() => undefined, 0);
+                    return original(state, ids);
+                },
+        ],
+        [
+            'schedules promise work',
+            'runs the node-ids normalizer synchronously with no I/O or timer',
+            (original: Normalizer): Normalizer =>
+                (state, ids) => {
+                    Promise.resolve()
+                        .then(() => undefined)
+                        .catch(() => undefined);
+                    return original(state, ids);
+                },
+        ],
+        [
+            'draws IDs from the current time',
+            'runs the node-ids normalizer to equal steps on equal states and to nothing on its output',
+            (original: Normalizer): Normalizer =>
+                (state) => {
+                    let drawn = 0;
+                    return original(state, () => {
+                        drawn += 1;
+                        return `node-${Date.now()}-${drawn}`;
+                    });
+                },
+        ],
+    ])('fails a normalizer that %s', async (_name, title, replace) => {
+        const plugin = NORMALIZERS['node-ids'] as { normalize: Normalizer };
+        const original = plugin.normalize;
+        const spy = vi.spyOn(plugin, 'normalize').mockImplementation(replace(original));
+        try {
+            expect(await failingTitles(() => normalizerCases(nodeIdFeatures(), [nodeIdDocument]))).toEqual([title]);
         } finally {
             spy.mockRestore();
         }
