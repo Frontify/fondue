@@ -1257,11 +1257,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 commit(release);
             }
         },
-        requestCommit: () => {
+        requestCommit: (commitOptions) => {
             if (saves === undefined) {
                 return Promise.resolve({ status: 'blocked', code: 'unmanaged' });
             }
-            return notBuiltYet('requestCommit')();
+            return saves.commit(commitOptions);
         },
         replaceDocument: notBuiltYet('replaceDocument'),
         setMode: (next) => {

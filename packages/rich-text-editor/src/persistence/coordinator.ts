@@ -1,11 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ContentModel, type Diagnostic } from '#/model';
+import { type ContentModel, type Diagnostic, type RichTextDocument } from '#/model';
 import { diagnostic } from '#/model/format';
 import { packageVersionOf } from '#/model/migrate';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { sameStamp, type SaveCoordinator } from '#/runtime/saves';
-import { type SaveStatus, type ServerRevision } from '#/runtime/types';
+import {
+    type CommitOptions,
+    type CommitResult,
+    type DocumentStamp,
+    type SaveAcknowledgment,
+    type SaveStatus,
+    type ServerRevision,
+} from '#/runtime/types';
 
 import {
     type LoadedDocument,
@@ -47,6 +54,17 @@ interface InFlight {
     readonly controller: AbortController;
     readonly started: number;
 }
+
+/** A snapshot `requestCommit` pinned, which is written as it is, ahead of any later autosave. */
+interface Checkpoint {
+    readonly stamp: DocumentStamp;
+    readonly document: RichTextDocument;
+    /** The calls that share its next result; a call after that result waits for a later one. */
+    readonly waiters: ((result: CommitResult) => void)[];
+}
+
+const DISPOSED: CommitResult = { status: 'failed', code: 'disposed', outcome: 'unknown' };
+const CONFLICT: CommitResult = { status: 'blocked', code: 'conflict' };
 
 const STATUS_KEYS = [
     'state',
@@ -91,6 +109,16 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         state = 'dirty';
     }
     let revision = given.revision;
+    // What `requestCommit` answers with while it holds for the current stamp: the loaded record's, then each accepted one.
+    let accepted: SaveAcknowledgment | undefined;
+    if (given.revision !== null && !unsavedOnMount) {
+        const stamp = { ...runtime.handle.getSummary().session, sequence: 0 };
+        accepted = { operationId: null, stamp, revision: given.revision };
+    }
+    // In call order; the oldest stays until its write is answered.
+    const pinned: Checkpoint[] = [];
+    // The captures of `requestCommit` calls that wait for input to settle.
+    const waiting = new Set<() => void>();
     let problem: Diagnostic | null = null;
     let inFlight: InFlight | undefined;
     // The write whose outcome is not known yet, which every later try replays unchanged.
@@ -137,8 +165,51 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
 
     // A new record that nobody changed has nothing to save.
     const unsaved = () => (latest > acknowledged && latest > 0) || unsavedOnMount;
-    // A session that is not ready, such as a faulted one, writes nothing.
-    const ready = () => runtime.handle.getSummary().phase === 'ready';
+    // A faulted session writes only what `requestCommit` pinned.
+    const writable = () => {
+        const { phase } = runtime.handle.getSummary();
+        return phase === 'ready' || (phase === 'faulted' && pinned.length > 0);
+    };
+    /** The oldest pinned checkpoint when `request` writes it. */
+    const checkpointOf = (request: SaveRequest) => {
+        const [checkpoint] = pinned;
+        if (checkpoint !== undefined && sameStamp(checkpoint.stamp, request.stamp)) {
+            return checkpoint;
+        }
+        return undefined;
+    };
+    const settle = (checkpoint: Checkpoint, result: CommitResult) => {
+        for (const waiter of checkpoint.waiters.splice(0)) {
+            waiter(result);
+        }
+    };
+    /** Takes a call that got its own answer off `checkpoint`, so a later call there is not held by it. */
+    const leave = (checkpoint: Checkpoint | undefined, waiter: Checkpoint['waiters'][number]) => {
+        if (checkpoint === undefined) {
+            return;
+        }
+        const index = checkpoint.waiters.indexOf(waiter);
+        if (index >= 0) {
+            checkpoint.waiters.splice(index, 1);
+        }
+    };
+    /** Why `requestCommit` answers at once with no capture. */
+    const refusal = (): CommitResult | undefined => {
+        if (ended.signal.aborted) {
+            return DISPOSED;
+        }
+        if (state === 'conflict') {
+            return CONFLICT;
+        }
+        return undefined;
+    };
+    /** `unknown` once a write carried the snapshot of `stamp`, which the server may have stored. */
+    const outcomeOf = (stamp: DocumentStamp | undefined): 'not-sent' | 'unknown' => {
+        if (stamp !== undefined && unresolved !== undefined && sameStamp(unresolved.stamp, stamp)) {
+            return 'unknown';
+        }
+        return 'not-sent';
+    };
     /** Sets state `offline` while the browser reports no network; `true` when it did. */
     const parkedOffline = () => {
         if (navigator.onLine) {
@@ -205,14 +276,38 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         response.then((value) => answer(current, value)).catch(() => fail(current, 'transport'));
     };
 
-    /** Sends the latest snapshot once nothing holds it. */
+    const writeNew = (stamp: DocumentStamp, document: RichTextDocument) => {
+        unresolved = Object.freeze({
+            operationId: generateId(),
+            stamp,
+            baseRevision: revision,
+            document,
+            writer,
+        });
+        replays = 0;
+        write(unresolved);
+    };
+
+    /**
+     * Sends the oldest pinned checkpoint, else the latest snapshot, once nothing holds it.
+     */
     const send = () => {
         // A write in flight stays unresolved until its answer, so this keeps at most one in flight.
-        if (!due || ended.signal.aborted || unresolved !== undefined || paused()) {
+        if (ended.signal.aborted || unresolved !== undefined || state === 'conflict') {
+            return;
+        }
+        const [checkpoint] = pinned;
+        if (checkpoint !== undefined) {
+            if (writable() && !parkedOffline()) {
+                writeNew(checkpoint.stamp, checkpoint.document);
+            }
+            return;
+        }
+        if (!due || paused()) {
             return;
         }
         const summary = runtime.handle.getSummary();
-        if (!ready() || summary.compositionActive) {
+        if (summary.phase !== 'ready' || summary.compositionActive) {
             return;
         }
         if (!unsaved()) {
@@ -224,15 +319,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         }
         due = false;
         const snapshot = runtime.handle.getSnapshot();
-        unresolved = Object.freeze({
-            operationId: generateId(),
-            stamp: snapshot.stamp,
-            baseRevision: revision,
-            document: snapshot.document,
-            writer,
-        });
-        replays = 0;
-        write(unresolved);
+        writeNew(snapshot.stamp, snapshot.document);
     };
 
     const flush = () => {
@@ -243,7 +330,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
 
     const replay = () => {
         retry = undefined;
-        if (unresolved === undefined || ended.signal.aborted || !ready()) {
+        if (unresolved === undefined || ended.signal.aborted || !writable()) {
             return;
         }
         if (parkedOffline()) {
@@ -260,6 +347,10 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         }
         end(current);
         current.controller.abort();
+        const checkpoint = checkpointOf(current.request);
+        if (checkpoint !== undefined) {
+            settle(checkpoint, { status: 'failed', code, outcome: 'unknown' });
+        }
         if (parkedOffline()) {
             runtime.measure('save', current.started, code);
             return;
@@ -321,7 +412,13 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             unresolved = undefined;
             acknowledged = acknowledgment.stamp.sequence;
             revision = acknowledgment.revision;
+            accepted = acknowledgment;
             unsavedOnMount = false;
+            const checkpoint = checkpointOf(current.request);
+            if (checkpoint !== undefined) {
+                pinned.shift();
+                settle(checkpoint, { status: 'acknowledged', acknowledgment });
+            }
             problem = null;
             // A newer change keeps the session dirty, and the next write takes this revision as its base.
             idle();
@@ -335,6 +432,10 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         due = false;
         stopTimers();
         if (response.status === 'conflict') {
+            // Only replacement leaves a conflict, so no pinned checkpoint is written.
+            for (const checkpoint of pinned.splice(0)) {
+                settle(checkpoint, CONFLICT);
+            }
             state = 'conflict';
             const details = { currentRevision: response.currentRevision };
             problem = diagnostic('persistence.conflict', undefined, details, 'error');
@@ -344,6 +445,15 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             readRemote();
             return;
         }
+        const checkpoint = checkpointOf(current.request);
+        if (checkpoint !== undefined) {
+            pinned.shift();
+            let refused: CommitResult = { status: 'blocked', code: 'forbidden' };
+            if (response.code !== 'forbidden') {
+                refused = { status: 'failed', code: response.code, outcome: 'rejected' };
+            }
+            settle(checkpoint, refused);
+        }
         state = 'error';
         problem = response.diagnostics[0] ?? null;
         publish();
@@ -351,6 +461,42 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             runtime.report(reported);
         }
         runtime.measure('save', current.started, response.code);
+        // A later pinned checkpoint is a `requestCommit` call, which `error` lets through.
+        send();
+    };
+
+    /**
+     * Pins the published snapshot for `finish` and returns its checkpoint, or answers at once when refused or
+     * acknowledged already.
+     */
+    const pin = (finish: Checkpoint['waiters'][number]): Checkpoint | undefined => {
+        const refused = refusal();
+        if (refused !== undefined) {
+            finish(refused);
+            return undefined;
+        }
+        const { stamp, document } = runtime.handle.getSnapshot();
+        if (accepted !== undefined && sameStamp(accepted.stamp, stamp)) {
+            finish({ status: 'acknowledged', acknowledgment: accepted });
+            return undefined;
+        }
+        let checkpoint = pinned.at(-1);
+        if (checkpoint === undefined || !sameStamp(checkpoint.stamp, stamp)) {
+            checkpoint = { stamp, document, waiters: [] };
+            pinned.push(checkpoint);
+        }
+        checkpoint.waiters.push(finish);
+        // The write a fault, the network or spent retries left unresolved goes first, unchanged.
+        if (unresolved !== undefined && inFlight === undefined && retry === undefined) {
+            replay();
+        }
+        send();
+        // Only this call answers at once; the others keep waiting for the write.
+        if (!navigator.onLine) {
+            leave(checkpoint, finish);
+            finish({ status: 'failed', code: 'transport', outcome: outcomeOf(stamp) });
+        }
+        return checkpoint;
     };
 
     const online = () => {
@@ -359,7 +505,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         }
         // The write whose outcome the network left unknown goes first, unchanged.
         if (unresolved !== undefined) {
-            if (ready()) {
+            if (writable()) {
                 write(unresolved);
             }
             return;
@@ -391,7 +537,54 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             schedule();
             refresh();
         },
-        settled: send,
+        settled: () => {
+            for (const capture of waiting) {
+                capture();
+            }
+            send();
+        },
+        commit: (options: CommitOptions) => {
+            const summary = runtime.handle.getSummary();
+            // A faulted session still saves its last published snapshot.
+            if (summary.phase !== 'ready' && summary.phase !== 'faulted') {
+                return Promise.resolve({ status: 'blocked', code: 'not-ready' });
+            }
+            // A listener of what `dispose` reported may call this while the phase is still `ready`.
+            const refused = refusal();
+            if (refused !== undefined) {
+                return Promise.resolve(refused);
+            }
+            if (summary.compositionActive && options.composition === 'reject') {
+                return Promise.resolve({ status: 'blocked', code: 'composition-active' });
+            }
+            return new Promise<CommitResult>((resolve) => {
+                let checkpoint: Checkpoint | undefined;
+                const finish = (result: CommitResult) => {
+                    clear(timer);
+                    resolve(result);
+                };
+                // Past the timeout the call resolves, while its pinned checkpoint stays for the write.
+                const timer = setTimeout(
+                    () => {
+                        waiting.delete(capture);
+                        leave(checkpoint, finish);
+                        resolve({ status: 'failed', code: 'timeout', outcome: outcomeOf(checkpoint?.stamp) });
+                    },
+                    options.timeoutMs ?? option('timeoutMs'),
+                );
+                const capture = () => {
+                    waiting.delete(capture);
+                    checkpoint = pin(finish);
+                };
+                waiting.add(capture);
+                // ProseMirror reads a DOM change in a microtask queued before this one, so the capture holds the last keystroke.
+                queueMicrotask(() => {
+                    if (waiting.has(capture) && !runtime.handle.getSummary().compositionActive) {
+                        capture();
+                    }
+                });
+            });
+        },
         serviceChanged: () => {
             const current = inFlight;
             if (current === undefined || unresolved === undefined) {
@@ -400,7 +593,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             // The old service's answer no longer counts; the same operation goes to the new one.
             end(current);
             current.controller.abort();
-            if (!ready()) {
+            if (!writable()) {
                 state = 'uncertain';
                 publish();
                 return;
@@ -420,6 +613,13 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
                 end(current);
                 current.controller.abort();
                 refresh();
+            }
+            for (const checkpoint of pinned.splice(0)) {
+                settle(checkpoint, DISPOSED);
+            }
+            // With `ended` aborted, each waiting call's capture answers `disposed`.
+            for (const capture of waiting) {
+                capture();
             }
             // A session that leaves unsaved changes says so and starts no write.
             if (shown && unsaved()) {
