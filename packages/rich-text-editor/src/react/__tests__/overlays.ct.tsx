@@ -123,9 +123,11 @@ const lines = (count: number) => Array.from({ length: count }, (_, index) => `Li
 /** Opens the alternative text dialog from the image's node chrome, by keyboard. */
 const openAltText = async (page: Page) => {
     await surfaceOf(page).focus();
+    // Focus places the caret a task later, which would replace a selection set before it.
+    await expectFocus(page, 'Notes');
+    await frames(page);
     await page.evaluate(() => window.overlayProbe?.select({ nodeId: 'image-1' }));
     // Alt+F10 from node chrome moves on to the next toolbar, so it starts from the surface with the image selected.
-    await expectFocus(page, 'Notes');
     await expect.poll(() => summary(page)).toMatchObject({ selectedNodeId: 'image-1' });
     await page.keyboard.press('Alt+F10');
     await expectFocus(page, 'Alternative text');
@@ -676,6 +678,10 @@ for (const within of ['shadow', 'iframe'] as const) {
         const tooltip = root.getByRole('tooltip');
         await expect(tooltip.first()).toBeAttached();
         expect(await placement(tooltip)).toEqual(expected);
+        // A hovered tooltip in an iframe stays open once the pointer leaves, and as the top layer it takes the Escape meant for a menu.
+        await page.mouse.move(0, 0);
+        await page.keyboard.press('Escape');
+        await expect(tooltip).toHaveCount(0);
 
         await toolbar.locator('[data-rte-toolbar-more]').click();
         const more = root.getByRole('menu');
