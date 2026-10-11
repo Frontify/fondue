@@ -58,7 +58,7 @@ const MentionChrome = () => {
     const [open, setOpen] = useState(false);
     // oxlint-disable-next-line @eslint-react/set-state-in-effect -- runs chrome that does.
     useEffect(() => setMounted(true), []);
-    const resolved = context.resolveReference('user', nodeId);
+    const resolved = context.resolveReference('user', nodeId ?? '');
     let label = textOf(attrs.label);
     if (resolved.status === 'current') {
         label = resolved.label;

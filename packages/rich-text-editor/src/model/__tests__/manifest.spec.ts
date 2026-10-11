@@ -610,4 +610,12 @@ describe('featureFromManifest', () => {
 
         expect(() => compileContentModel([core(), codeFeature()], { id: 'acme.model', version: 1 })).not.toThrow();
     });
+
+    it('rejects a manifest that names decorations', () => {
+        const manifest = withChange((value) => {
+            value.decorations = ['code-syntax'];
+        });
+
+        expect(failureOf(() => featureFromManifest(manifest))).toEqual(invalidAt('/decorations'));
+    });
 });

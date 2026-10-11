@@ -31,6 +31,10 @@ const PAYLOADS: Readonly<Record<string, unknown>> = {
     'list.ordered.toggle': { start: 1 },
     'list.ordered.start.set': { start: 2 },
     'task.setChecked': { nodeId: 'task-1', checked: false },
+    'code-block.toggle': { languageId: 'typescript' },
+    'code-block.language.set': { languageId: 'javascript' },
+    'code-block.indent': undefined,
+    'code-block.outdent': undefined,
 };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [

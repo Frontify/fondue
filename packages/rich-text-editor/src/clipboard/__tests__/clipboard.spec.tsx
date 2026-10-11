@@ -1300,6 +1300,7 @@ describe('pasted HTML', () => {
             'lang',
             'checked',
             'data-checked',
+            'data-language',
             'data-marker',
             'aria-checked',
             'color',
