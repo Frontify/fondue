@@ -88,8 +88,40 @@ export const createKeyGuard = (tabMovesFocus: () => boolean) =>
     });
 
 /**
+ * The leaf right before a caret at the start of a top-level block, or before a gap cursor between top-level blocks,
+ * when only the document takes it, as a column break, which sits only between top-level blocks.
+ */
+const breakBefore = (state: EditorState): { readonly from: number; readonly to: number } | undefined => {
+    const { selection } = state;
+    const { $from } = selection;
+    if (!selection.empty) {
+        return undefined;
+    }
+    let at = $from.pos;
+    if ($from.parent.inlineContent) {
+        if ($from.parentOffset > 0) {
+            return undefined;
+        }
+        for (let depth = $from.depth; depth > 1; depth -= 1) {
+            if ($from.index(depth - 1) > 0) {
+                return undefined;
+            }
+        }
+        at = $from.before(1);
+    } else if ($from.depth > 0) {
+        return undefined;
+    }
+    const before = state.doc.resolve(at).nodeBefore;
+    if (before === null || !before.isLeaf || before.type.isInGroup('block')) {
+        return undefined;
+    }
+    return { from: at - before.nodeSize, to: at };
+};
+
+/**
  * Enter splits a list or task item, or lifts an empty one out one level, and Backspace at the start of an item's first
- * block lifts the item, so a nested item outdents and a top-level one becomes a paragraph with its child lists after it.
+ * block lifts the item, so a nested item outdents and a top-level one becomes a paragraph with its child lists after it;
+ * right after a column break, Backspace is left to the base keys, which remove the break.
  */
 export const listKeysPlugin = () =>
     new Plugin({
@@ -109,6 +141,9 @@ export const listKeysPlugin = () =>
                     return splitItem(item)(state, view.dispatch);
                 }
                 if (event.key === 'Backspace' && empty && $from.parentOffset === 0 && $from.index(-1) === 0) {
+                    if (breakBefore(state) !== undefined) {
+                        return false;
+                    }
                     return liftListItem(item)(state, view.dispatch);
                 }
                 return false;
@@ -169,37 +204,6 @@ export const containerKeysPlugin = () =>
             },
         },
     });
-
-/**
- * The leaf right before a caret at the start of a top-level block, or before a gap cursor between top-level blocks,
- * when only the document takes it, as a column break, which sits only between top-level blocks.
- */
-const breakBefore = (state: EditorState): { readonly from: number; readonly to: number } | undefined => {
-    const { selection } = state;
-    const { $from } = selection;
-    if (!selection.empty) {
-        return undefined;
-    }
-    let at = $from.pos;
-    if ($from.parent.inlineContent) {
-        if ($from.parentOffset > 0) {
-            return undefined;
-        }
-        for (let depth = $from.depth; depth > 1; depth -= 1) {
-            if ($from.index(depth - 1) > 0) {
-                return undefined;
-            }
-        }
-        at = $from.before(1);
-    } else if ($from.depth > 0) {
-        return undefined;
-    }
-    const before = state.doc.resolve(at).nodeBefore;
-    if (before === null || !before.isLeaf || before.type.isInGroup('block')) {
-        return undefined;
-    }
-    return { from: at - before.nodeSize, to: at };
-};
 
 /** Backspace right after a column break removes it, where the base keymap would select it from an empty block. */
 const removeBreakBefore: Command = (state, dispatch) => {

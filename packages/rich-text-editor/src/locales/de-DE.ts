@@ -20,6 +20,7 @@ export const deDE = {
         RichTextEditor_codeLanguage: 'Sprache: ${language}',
         RichTextEditor_codePlainText: 'Klartext',
         RichTextEditor_columnBreak: 'Spaltenumbruch',
+        RichTextEditor_columnBreakInactive: 'Spaltenumbruch, inaktiv',
         RichTextEditor_copyCode: 'Code kopieren',
         RichTextEditor_copyContent: 'Inhalt kopieren',
         RichTextEditor_copyFailed:
@@ -31,6 +32,7 @@ export const deDE = {
         RichTextEditor_emojiLoading: 'Emoji werden geladen…',
         RichTextEditor_emojiNoResults: 'Kein Emoji gefunden',
         RichTextEditor_emojiSearch: 'Emoji suchen',
+        RichTextEditor_gapCursor: 'Zwischen Blöcken. Tippen Sie, um einen Absatz hinzuzufügen.',
         RichTextEditor_heading1: 'Überschrift 1',
         RichTextEditor_heading2: 'Überschrift 2',
         RichTextEditor_heading3: 'Überschrift 3',
