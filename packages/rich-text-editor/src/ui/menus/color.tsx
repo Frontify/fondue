@@ -291,6 +291,8 @@ const Swatches = ({
         return value;
     };
     const run = (command: string, payload?: object) => {
+        // The command moves focus to the editor first, which the overlay reads as a move that keeps the menu open.
+        close(false);
         runtime?.handle.execute(command, payload, { focus: 'editor' });
     };
     const groups: { readonly mark: ColorMark; readonly heading: string; readonly custom: string }[] = [

@@ -119,12 +119,24 @@ describe('pasted colours', () => {
         },
     );
 
-    it('drops opaque black text, the source default, without a mark or an announcement', () => {
+    it('drops opaque black on a block, the source default, and keeps black on a run as the author set it', () => {
         const html =
             '<p style="color: rgb(0, 0, 0)">Plain <b style="color:#000000">bold</b> <font color="#000">old</font></p>';
 
+        expect(pasteHtml(styleModel(true), html)).toEqual({
+            colors: ['font_color "#000000"', 'font_color "#000000"'],
+            announced: '',
+        });
+        expect(pasteHtml(styleModel(), '<p style="color: rgb(0, 0, 0)">Plain</p>')).toEqual({
+            colors: [],
+            announced: '',
+        });
+    });
+
+    it('keeps the font colour of an element with data-rte-style out of the colour marks, uncounted', () => {
+        const html = '<p><font data-rte-style="brand.button" color="#ff0000">x</font></p>';
+
         expect(pasteHtml(styleModel(true), html)).toEqual({ colors: [], announced: '' });
-        expect(pasteHtml(styleModel(), html)).toEqual({ colors: [], announced: '' });
     });
 
     it('announces nothing for the paint of a token colour, which its token keeps', () => {
