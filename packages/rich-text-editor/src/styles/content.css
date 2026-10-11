@@ -60,36 +60,36 @@
     }
 
     /*
-     * Checked tasks keep their text unless the presentation asks for the struck secondary look, which takes the item's
-     * own first block, never its nested tasks: the reader's block after the checkbox, the editor's first content block.
+     * Checked tasks keep their text unless the presentation asks for the struck secondary look, which takes each of the
+     * item's own blocks, never a nested list: the reader's blocks after the checkbox, the editor's content blocks.
      */
-    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > input + *),
+    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > :not(input, ul, ol)),
     :where(
         .fondue-rte-content[data-rte-strike-checked-tasks]
             li:has(> [data-rte-chrome] input:checked)
             > [data-rte-chrome]
             + *
-            > :first-child
+            > :not(ul, ol)
     ) {
         text-decoration-line: line-through;
     }
 
     /* A run's own colour, inline or from a link or brand style, gives way only to `!important`. */
-    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > input + *),
-    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > input + * *),
+    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > :not(input, ul, ol)),
+    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > :not(input, ul, ol) *),
     :where(
         .fondue-rte-content[data-rte-strike-checked-tasks]
             li:has(> [data-rte-chrome] input:checked)
             > [data-rte-chrome]
             + *
-            > :first-child
+            > :not(ul, ol)
     ),
     :where(
         .fondue-rte-content[data-rte-strike-checked-tasks]
             li:has(> [data-rte-chrome] input:checked)
             > [data-rte-chrome]
             + *
-            > :first-child
+            > :not(ul, ol)
             *
     ) {
         color: var(--rte-content-secondary-text-color) !important;
