@@ -231,14 +231,14 @@ export const fixtureImage = defineFeature({
     },
 });
 
-/** Stands in for `lists.bullet`: a list whose items hold paragraphs. */
+/** Stands in for `lists.bullet`: a list whose items hold paragraphs and a nested list. */
 export const fixtureList = defineFeature({
     id: 'fixture.list',
     version: 1,
     requires: requiresCore,
     nodes: {
         bullet_list: { group: 'block', content: 'list_item+', attrs: {}, html: ['ul', 0], parse: [{ tag: 'ul' }] },
-        list_item: { content: 'paragraph+', attrs: {}, html: ['li', 0], parse: [{ tag: 'li' }] },
+        list_item: { content: 'paragraph+ bullet_list?', attrs: {}, html: ['li', 0], parse: [{ tag: 'li' }] },
     },
 });
 
