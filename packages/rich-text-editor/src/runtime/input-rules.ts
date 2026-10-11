@@ -120,8 +120,12 @@ const withoutMarker = (
     payload: unknown,
 ): Transaction | null => {
     const transaction = state.tr.delete($cursor.start(), $cursor.pos);
+    const without = state.apply(transaction);
     const dispatched: Transaction[] = [];
-    if (!command.run(state.apply(transaction), (built) => dispatched.push(built), payload)) {
+    if (
+        command.refuses?.(without, payload) === true ||
+        !command.run(without, (built) => dispatched.push(built), payload)
+    ) {
         return null;
     }
     const [built] = dispatched;
@@ -161,7 +165,8 @@ const payloadOf = (rule: BlockRule, groups: Readonly<Record<string, string | und
             payload[name] = value !== undefined;
         } else if (value !== undefined && (field.type === 'integer' || field.type === 'number')) {
             payload[name] = Number(value);
-        } else if (value !== undefined) {
+        } else if (value !== undefined && value !== '') {
+            // An empty capture fills no field, so a fence with no language sets none.
             payload[name] = value;
         }
     }
@@ -203,6 +208,10 @@ const markDelimiter = (
     const closeAt = before.length - close.length;
     const openAt = before.lastIndexOf(open, closeAt - open.length - 1);
     const text = before.slice(openAt + open.length, closeAt);
+    // A longer run, such as ```, is not a pair of this delimiter.
+    if (close.includes(before.charAt(closeAt - 1))) {
+        return null;
+    }
     const previous = before.charAt(openAt - 1);
     if (
         openAt < 0 ||

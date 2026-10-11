@@ -1,0 +1,35 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "feature-contract", "version": 1 },
+    "requiredCapabilities": [
+        { "id": "blocks.code", "version": 1 },
+        { "id": "core", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": { "lang": null },
+                "content": [{ "type": "text", "text": "Before the samples" }]
+            },
+            {
+                "type": "code_block",
+                "attrs": { "languageId": null },
+                "content": [{ "type": "text", "text": "const value = 1;" }]
+            },
+            {
+                "type": "code_block",
+                "attrs": { "languageId": "typescript" },
+                "content": [{ "type": "text", "text": "const name: string = 'Ada';" }]
+            },
+            {
+                "type": "code_block",
+                "attrs": { "languageId": "unknown-lang" },
+                "content": [{ "type": "text", "text": "keep\n  this" }]
+            }
+        ]
+    }
+}

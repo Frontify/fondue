@@ -266,6 +266,8 @@ export type CommandRef =
           readonly labelKey?: string;
           readonly when?: OptionGuard;
       };
+/** Package-built decoration sources. A data manifest cannot add one. */
+export type DecorationSource = 'code-syntax' | 'find-matches' | 'content-issues';
 export type ToolbarEntry =
     | {
           readonly kind: 'toggle' | 'button';
@@ -350,6 +352,8 @@ export interface FeatureDeclaration {
     readonly commands?: Readonly<Record<string, CommandDefinition<unknown>>>;
     readonly keys?: Readonly<Record<KeyBinding, CommandRef>>;
     readonly inputRules?: readonly InputRule[];
+    /** Package-built decoration sources; a data manifest cannot add one. */
+    readonly decorations?: readonly DecorationSource[];
     readonly toolbar?: readonly ToolbarEntry[];
 }
 declare const featureBrand: unique symbol;

@@ -6,7 +6,13 @@ import { type Command, type EditorState, Plugin, PluginKey, type Transaction } f
 import { type EditorView } from 'prosemirror-view';
 
 import { type CapabilityName, type ContentModel, type JsonObject, type PayloadDeclaration } from '#/model';
-import { CAPABILITY_PLUGINS, declaresNodeIds, INPUT_RULES_PLUGIN, NODE_IDS_PLUGIN } from '#/model/capabilities';
+import {
+    CAPABILITY_PLUGINS,
+    CODE_SYNTAX_PLUGIN,
+    declaresNodeIds,
+    INPUT_RULES_PLUGIN,
+    NODE_IDS_PLUGIN,
+} from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
 import { isApple, isPlatformBinding, keyOn, modOn } from '#/model/platform';
 
@@ -39,6 +45,8 @@ export const APPEND_BATCH_META = 'rte.append-batch';
 export interface EngineCommand {
     readonly run: (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => boolean;
     readonly active: (state: EditorState, payload?: unknown) => boolean | 'mixed';
+    /** Whether running would drop content its target cannot hold, which the runtime rejects as `not-allowed`. */
+    readonly refuses?: (state: EditorState, payload?: unknown) => boolean;
     /** The command's payload declaration; none means it takes no payload. */
     readonly payload?: PayloadDeclaration;
 }
@@ -126,8 +134,10 @@ export const countAppends = (plugin: Plugin, origin: PluginOrigin): Plugin => {
     return counted;
 };
 
-const withCommandId = (id: string, { run, active }: EngineCommand, payload: PayloadDeclaration | undefined) => {
+const withCommandId = (id: string, inner: EngineCommand, payload: PayloadDeclaration | undefined) => {
+    const { run } = inner;
     const command: EngineCommand = {
+        ...inner,
         run: (state, dispatch, given) => {
             if (dispatch === undefined) {
                 return run(state, undefined, given);
@@ -144,7 +154,6 @@ const withCommandId = (id: string, { run, active }: EngineCommand, payload: Payl
                 given,
             );
         },
-        active,
     };
     if (payload === undefined) {
         return command;
@@ -171,7 +180,7 @@ export const compileDefinition = (
             commands.set(id, withCommandId(id, implementation(definition.args, schema, lookup), definition.payload));
         }
     }
-    /** The first feature that contributes a plugin, with its capability, or the plugin ID for the package's keymaps and input rules. */
+    /** The first feature that contributes a plugin, with its capability, or the plugin ID for the package's keymaps, input rules and decoration sources. */
     const originOf = (id: string): PluginOrigin => {
         const command = declared.find(({ definition }) =>
             (CAPABILITY_PLUGINS[definition.capability] ?? []).some((plugin) => plugin.id === id),
@@ -183,7 +192,8 @@ export const compileDefinition = (
             (feature) =>
                 id === `keymap:${feature.id}` ||
                 (id === INPUT_RULES_PLUGIN.id && (feature.declaration.inputRules ?? []).length > 0) ||
-                (id === NODE_IDS_PLUGIN.id && declaresNodeIds(feature.declaration)),
+                (id === NODE_IDS_PLUGIN.id && declaresNodeIds(feature.declaration)) ||
+                (id === CODE_SYNTAX_PLUGIN.id && (feature.declaration.decorations ?? []).includes('code-syntax')),
         );
         if (contributor === undefined) {
             return { featureId: id, capability: id };

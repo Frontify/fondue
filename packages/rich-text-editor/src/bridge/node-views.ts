@@ -5,7 +5,7 @@ import { type EditorView, type NodeView, type NodeViewConstructor } from 'prosem
 import { type ComponentType } from 'react';
 
 import { snapshot } from '#/model/values';
-import { type EditorRuntime, liveResources } from '#/runtime/runtime';
+import { type EditorRuntime, liveResources, type NodeTarget } from '#/runtime/runtime';
 
 import { ISLAND_VIEWS } from './island';
 import { type PortalEntry, type PortalStore } from './portals';
@@ -78,6 +78,24 @@ const outerTagOf = (node: ProseMirrorNode) => {
     return tagOf(node);
 };
 
+/** Whether `value` is a `code` element whose hole is the node's content. */
+const isCodeHole = (value: unknown): boolean => {
+    if (!Array.isArray(value)) {
+        return false;
+    }
+    const [tag, second, third] = value as readonly unknown[];
+    return tag === 'code' && (second === 0 || third === 0);
+};
+
+/** A `pre` whose content hole is a `code` element, as a code block's HTML spec writes it. */
+const codeShell = (node: ProseMirrorNode): boolean => {
+    const spec = node.type.spec.toDOM?.(node);
+    if (!Array.isArray(spec) || spec[0] !== 'pre') {
+        return false;
+    }
+    return isCodeHole(spec[spec.length - 1]);
+};
+
 /**
  * The node views of one editor by node name. Each builds `dom`, its chrome slot and `contentDOM` with DOM calls and
  * renders `component` into the slot through `host`'s portals.
@@ -99,13 +117,20 @@ export const createNodeViews = (
         }
     };
 
-    const stateOf = (node: ProseMirrorNode, selected: boolean, contentId: string | null): PortalEntry['state'] => {
-        let nodeId = '';
+    const stateOf = (
+        node: ProseMirrorNode,
+        selected: boolean,
+        contentId: string | null,
+        getPos: () => number | undefined,
+    ): PortalEntry['state'] => {
+        let nodeId: string | null = null;
+        let target: NodeTarget = getPos;
         if (typeof node.attrs.nodeId === 'string') {
             nodeId = node.attrs.nodeId;
+            target = nodeId;
         }
         return {
-            ...host.runtime.nodeActions(nodeId),
+            ...host.runtime.nodeActions(target),
             nodeId,
             attrs: snapshot(node.attrs),
             selected,
@@ -113,12 +138,18 @@ export const createNodeViews = (
         };
     };
 
-    const build = (component: ComponentType<object>, node: ProseMirrorNode, view: EditorView): NodeView => {
+    const build = (
+        component: ComponentType<object>,
+        node: ProseMirrorNode,
+        view: EditorView,
+        getPos: () => number | undefined,
+    ): NodeView => {
         created += 1;
         const key = String(created);
         const document = view.dom.ownerDocument;
         const tag = tagOf(node);
-        const dom = document.createElement(outerTagOf(node));
+        const shell = codeShell(node);
+        const dom = document.createElement(shell ? 'pre' : outerTagOf(node));
         const chrome = document.createElement(tag);
         chrome.setAttribute('contenteditable', 'false');
         chrome.setAttribute('data-rte-chrome', '');
@@ -127,7 +158,13 @@ export const createNodeViews = (
         let contentDOM: HTMLElement | null = null;
         let contentId: string | null = null;
         if (!node.isAtom) {
-            contentDOM = document.createElement(tag);
+            contentDOM = document.createElement(shell ? 'code' : tag);
+            // Editing attributes stay off the HTML spec, so copied and read HTML stays the stored markup.
+            if (node.type.spec.code === true) {
+                contentDOM.spellcheck = false;
+                contentDOM.setAttribute('autocorrect', 'off');
+                contentDOM.setAttribute('autocapitalize', 'off');
+            }
             dom.append(contentDOM);
             const labeled = labelsFirstBlock(node);
             if (labeled !== undefined) {
@@ -138,7 +175,7 @@ export const createNodeViews = (
             }
         }
         let current = node;
-        let state = stateOf(node, false, contentId);
+        let state = stateOf(node, false, contentId, getPos);
         const publish = (next: PortalEntry['state']) => {
             state = next;
             host.portals.set({ key, slot: chrome, component, state });
@@ -162,7 +199,7 @@ export const createNodeViews = (
                         current = next;
                         // Chrome reads attributes only, so typing inside the node rerenders nothing.
                         if (changed) {
-                            publish(stateOf(next, state.selected, contentId));
+                            publish(stateOf(next, state.selected, contentId, getPos));
                         }
                         return true;
                     },
@@ -204,10 +241,10 @@ export const createNodeViews = (
 
     const constructors: Record<string, NodeViewConstructor> = {};
     for (const [name, component] of [...ISLAND_VIEWS, ...views]) {
-        constructors[name] = (node, view) =>
+        constructors[name] = (node, view, getPos) =>
             faultOnThrow(
                 () => ({ dom: view.dom.ownerDocument.createElement(tagOf(node)) }),
-                () => build(component, node, view),
+                () => build(component, node, view, getPos),
             );
     }
     return constructors;

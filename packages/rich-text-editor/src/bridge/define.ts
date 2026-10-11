@@ -28,9 +28,10 @@ export interface NodeViewContext extends CodecContext {
     readonly resolveReference: (resourceType: string, resourceId: string) => ReferenceResolution;
 }
 
-/** What `useRichTextNodeView` returns: plain data and node-ID actions, never a position or a ProseMirror value. */
+/** What `useRichTextNodeView` returns: plain data and actions that find their node, never a position or a ProseMirror value. */
 export interface NodeViewState<C extends object = ShippedCommands> {
-    readonly nodeId: string;
+    /** `null` for a node type that carries no `nodeId`, such as `code_block`, whose actions read its live position instead. */
+    readonly nodeId: string | null;
     readonly attrs: JsonObject;
     readonly selected: boolean;
     /**
@@ -39,11 +40,11 @@ export interface NodeViewState<C extends object = ShippedCommands> {
      */
     readonly contentId: string | null;
     readonly context: NodeViewContext;
-    /** Node view actions keyed by the node's ID, never a position. */
+    /** Node view actions keyed by the node's ID, or its live position when it has none; never a position held from before. */
     readonly update: (attrs: JsonObject) => CommandResult;
     readonly remove: () => CommandResult;
     readonly select: () => void;
-    /** Selects this node by ID at execution time, then runs or queries the command, so a delayed menu action still reaches this node. */
+    /** Selects this node at execution time, then runs or queries the command, so a delayed menu action still reaches this node. */
     readonly execute: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandResult;
     readonly query: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandState;
 }

@@ -112,7 +112,13 @@ export interface RuntimeHandle {
     dispose(): void;
 }
 
-/** The actions of one node view, which find their node by its `nodeId` when they run, never by a position. */
+/**
+ * The node an action changes: its `nodeId`, or, for a node that carries none, such as a code block, the node view's
+ * live position reader, which reads the position when the action runs.
+ */
+export type NodeTarget = string | (() => number | undefined);
+
+/** The actions of one node view, which find their node when they run, never by a position held from before. */
 export interface NodeActions {
     update(attrs: JsonObject): CommandResult;
     remove(): CommandResult;
@@ -156,7 +162,7 @@ export interface EditorRuntime {
     faultView(): void;
     /** The host's `disabled`, which runs in mode `readonly` and takes the surface out of the Tab order. */
     setDisabled(disabled: boolean): void;
-    nodeActions(nodeId: string): NodeActions;
+    nodeActions(target: NodeTarget): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
     /**
@@ -958,6 +964,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (headingCommands.has(command) && refusesLevel(policy, payload)) {
             return { code: 'not-allowed' };
         }
+        if (command.refuses?.(base, payload) === true) {
+            return { code: 'not-allowed' };
+        }
         const dispatched: Transaction[] = [];
         const applicable = command.run(base, (transaction) => dispatched.push(transaction), payload);
         if (dispatched.length > 1) {
@@ -1061,20 +1070,31 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     /** The state with the node `nodeId` selected, as a node view action runs on it. */
-    const nodeBase = (nodeId: string): EditorState | RejectedCode => {
-        const pos = positionOf(state.doc, nodeId);
+    /** The position of `target` in `doc` when it holds a node there, read when it is needed. */
+    const targetIn = (doc: Node, target: NodeTarget): number | undefined => {
+        if (typeof target === 'string') {
+            return positionOf(doc, target);
+        }
+        const pos = target();
+        if (pos === undefined || pos < 0 || pos >= doc.content.size || doc.nodeAt(pos) === null) {
+            return undefined;
+        }
+        return pos;
+    };
+    const nodeBase = (target: NodeTarget): EditorState | RejectedCode => {
+        const pos = targetIn(state.doc, target);
         if (pos === undefined) {
             return 'target-invalid';
         }
         return state.apply(state.tr.setSelection(NodeSelection.create(state.doc, pos)));
     };
-    /** A command that changes the node `nodeId` wherever it is when it runs. */
+    /** A command that changes the node `target` wherever it is when it runs. */
     const nodeCommand = (
-        nodeId: string,
+        target: NodeTarget,
         change: (tr: Transaction, pos: number, node: Node) => boolean,
     ): EngineCommand => ({
         run: (base, dispatch) => {
-            const pos = positionOf(base.doc, nodeId);
+            const pos = targetIn(base.doc, target);
             if (pos === undefined) {
                 return false;
             }
@@ -1088,14 +1108,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         active: () => false,
     });
-    const nodeActions = (nodeId: string): NodeActions => ({
+    const nodeActions = (target: NodeTarget): NodeActions => ({
         update: (attrs) => {
             const checked = checkedPayload(attrs);
             if (checked === undefined || !isRecord(checked.payload)) {
                 return rejected('invalid-payload');
             }
             const values = checked.payload;
-            const update = nodeCommand(nodeId, (tr, pos, node) => {
+            const update = nodeCommand(target, (tr, pos, node) => {
                 const declared = compiledModel(definition.model).nodes.find(({ name }) => name === node.type.name);
                 if (declared === undefined) {
                     return false;
@@ -1114,22 +1134,22 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return runOn(update, { payload: undefined }, () => state, 'host');
         },
         remove: () => {
-            const remove = nodeCommand(nodeId, (tr, pos, node) => {
+            const remove = nodeCommand(target, (tr, pos, node) => {
                 tr.delete(pos, pos + node.nodeSize);
                 return true;
             });
             return runOn(remove, { payload: undefined }, () => state, 'host');
         },
         select: () => {
-            const pos = positionOf(state.doc, nodeId);
+            const pos = targetIn(state.doc, target);
             if (pos !== undefined) {
                 commit(state.tr.setSelection(NodeSelection.create(state.doc, pos)));
             }
         },
         // The author's selection stays, so typing after a press on chrome, such as a task checkbox, keeps the node.
         execute: (id, payload) =>
-            runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(nodeId), 'node'),
-        query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(nodeId)),
+            runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(target), 'node'),
+        query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(target)),
     });
 
     /** Commits a capture of the selection as target `id`. */

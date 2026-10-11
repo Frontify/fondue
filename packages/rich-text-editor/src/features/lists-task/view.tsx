@@ -22,7 +22,12 @@ const TaskCheckbox = () => {
             className={styles.checkbox}
             checked={checked}
             aria-labelledby={labelledBy}
-            onChange={() => execute('task.setChecked', { nodeId, checked: !checked })}
+            onChange={() => {
+                // The runtime gives every task item a `nodeId` before a commit publishes.
+                if (nodeId !== null) {
+                    execute('task.setChecked', { nodeId, checked: !checked });
+                }
+            }}
         />
     );
 };
