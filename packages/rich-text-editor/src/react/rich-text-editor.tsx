@@ -785,6 +785,7 @@ const SessionComponent = (
                                         linkStyles={linkStylesOf(presentation.styles)}
                                         strings={linkPopoverStrings(chromeContext.t)}
                                         testId={testId}
+                                        lang={lang}
                                         opener={controlOpener}
                                         onClose={() => setControl(undefined)}
                                     />

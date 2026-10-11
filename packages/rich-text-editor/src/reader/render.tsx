@@ -10,7 +10,7 @@ import {
     type ReactNode,
 } from 'react';
 
-import { type Diagnostic, type JsonObject, type ListLevels } from '#/model';
+import { checkHref, type Diagnostic, type JsonObject, type ListLevels } from '#/model';
 import { isIsland, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, passageDirection, resolveHtmlSpec, treeRuns, withAutoDirection } from '#/model/html-spec';
 import {
@@ -210,6 +210,8 @@ const styled = (state: RenderState, type: string, attrs: JsonObject, path: strin
     return style;
 };
 
+const textOf = (value: unknown): string => (typeof value === 'string' ? value : '');
+
 const renderMark = (
     state: RenderState,
     items: readonly Item[],
@@ -223,6 +225,10 @@ const renderMark = (
         return createElement(Fragment, null, ...children);
     }
     const attrs = attrsOf(mark.attrs);
+    // A link whose `href` fails the check is its text alone, with no link style, as `toHTML` and the editor show it.
+    if (mark.type === 'link' && plan.featureId === 'links' && !checkHref(textOf(attrs.href)).ok) {
+        return createElement(Fragment, null, ...children);
+    }
     const style = styled(state, mark.type, attrs, markPath(items, index));
     const decorate = (template: HtmlTemplate) =>
         withColor(withStyle(withStyleId(template, attrs), style, false), mark.type, attrs, state.styles.colorTokens);

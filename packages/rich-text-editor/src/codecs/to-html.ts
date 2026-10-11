@@ -179,7 +179,7 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
         }
         // The reader's out-of-sight "opens in a new window" text would become content when the output is pasted.
         if (attrs.openInNewWindow === true) {
-            const opened = { ...anchor.attrs, target: '_blank', rel: 'noopener noreferrer' };
+            const opened = { ...anchor.attrs, rel: 'noopener noreferrer', target: '_blank' };
             template = { ...template, layers: [{ ...anchor, attrs: opened }, ...template.layers.slice(1)] };
         }
     }
