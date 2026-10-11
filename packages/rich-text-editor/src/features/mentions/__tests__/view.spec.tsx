@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { act } from '@testing-library/react';
+import { AllSelection } from 'prosemirror-state';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -147,5 +148,77 @@ describe('mention display', () => {
         expect(markup).toBe(
             '<div class="fondue-rte-content"><p dir="auto"><span data-mention="">@<bdi>Ada</bdi> (unavailable)</span></p></div>',
         );
+    });
+});
+
+describe('mention labels in every output', () => {
+    const codecs = createCodecs(model);
+    const copied = (mounted: ReturnType<typeof mountMentions>) => {
+        const clipboardData = new DataTransfer();
+        act(() => {
+            mounted.view.dispatch(mounted.view.state.tr.setSelection(new AllSelection(mounted.view.state.doc)));
+            mounted.view.dom.dispatchEvent(
+                new ClipboardEvent('copy', { clipboardData, bubbles: true, cancelable: true }),
+            );
+        });
+        return { html: clipboardData.getData('text/html'), text: clipboardData.getData('text/plain') };
+    };
+
+    it('writes Unknown and the resource type for an empty labelSnapshot in plain text and Markdown too', () => {
+        const document = storedIn(model, [para(text('Ask '), mention('m-1', ''))]);
+
+        expect(codecs.toPlainText(document).text).toBe('Ask @Unknown user');
+        expect(codecs.toMarkdown(document).markdown).toContain('@Unknown user');
+    });
+
+    it('writes the current label, or the snapshot with the unavailable note, in toHTML given resolveReference, and the snapshot without it', () => {
+        const document = storedIn(model, twoMentions);
+        const resolveReference = (_type: string, id: string): ReferenceResolution =>
+            id === 'user-1' ? { status: 'current', label: 'Ada King' } : { status: 'unavailable', code: 'deleted' };
+
+        const resolved = codecs.toHTML(document, { resolveReference }).html;
+
+        expect(resolved).toBe(readerMarkup(twoMentions, resolveReference));
+        expect(resolved).toContain('@<bdi>Ada King</bdi></span>');
+        expect(resolved).toContain('@<bdi>Grace</bdi> (unavailable)</span>');
+        expect(codecs.toHTML(document).html).toBe(readerMarkup(twoMentions));
+    });
+
+    it('copies the label the chip shows, through the session resolver, in HTML and plain text', async () => {
+        const mounted = mountMentions({
+            blocks: twoMentions,
+            presentation: resolving((_type, id) =>
+                id === 'user-1' ? { status: 'current', label: 'Ada King' } : { status: 'unavailable', code: 'deleted' },
+            ),
+        });
+        const shown = await chips(mounted);
+
+        const { html, text: plain } = copied(mounted);
+
+        expect(shown.map((chip) => chip.textContent)).toEqual(['@Ada King', '@Grace (unavailable)']);
+        expect(html).toContain('@<bdi>Ada King</bdi>');
+        expect(html).toContain('@<bdi>Grace</bdi> (unavailable)');
+        expect(plain).toBe('Ask @Ada King and @Grace (unavailable)');
+    });
+
+    it('strips bidirectional controls from stored and current labels and keeps the letters of every script', async () => {
+        const blocks = [
+            para(mention('m-1', '\u202EAda\u202C\u200F'), text(' '), mention('m-2', 'ليلى\u2066', 'user-2')),
+        ];
+        const mounted = mountMentions({
+            blocks,
+            presentation: resolving((_type, id) =>
+                id === 'user-2' ? { status: 'current', label: '\u061Cليلى حسن\u2069' } : { status: 'unknown' },
+            ),
+        });
+        const document = storedIn(model, blocks);
+
+        const shown = await chips(mounted);
+
+        expect(shown.map((chip) => chip.textContent)).toEqual(['@Ada', '@ليلى حسن']);
+        expect(readerMarkup(blocks)).toContain('@<bdi>Ada</bdi></span> <span data-mention="">@<bdi>ليلى</bdi>');
+        expect(codecs.toHTML(document).html).toBe(readerMarkup(blocks));
+        expect(codecs.toPlainText(document).text).toBe('@Ada @ليلى');
+        expect(codecs.toMarkdown(document).markdown).not.toMatch(/[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/u);
     });
 });

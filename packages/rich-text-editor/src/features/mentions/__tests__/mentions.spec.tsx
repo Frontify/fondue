@@ -366,7 +366,7 @@ describe('mention suggestions', () => {
 });
 
 describe('mention search through the async coordinator', () => {
-    const searches = () => probeRuntimes().operations.filter((operation) => operation.key === 'mention-search');
+    const searches = () => probeRuntimes().operations.filter((operation) => operation.key === 'mention-search:list');
 
     it('registers each search under one interaction key, the second query as request 2, and discards the superseded result', async () => {
         const { service, pending } = deferredService();

@@ -81,4 +81,94 @@ describe('mention search dialog', () => {
         expect(pending[0]?.context.signal.aborted).toBe(true);
         expect(mounted.handle.getSnapshot().document).toEqual(before);
     });
+
+    /** Every text the dialog's status region is given once it exists, without the clears before each message. */
+    const statusWrites = () => {
+        const region = within(screen.getByRole('dialog')).getByRole('status');
+        const written: string[] = [];
+        const descriptor = Object.getOwnPropertyDescriptor(Node.prototype, 'textContent');
+        Object.defineProperty(region, 'textContent', {
+            configurable: true,
+            get: () => descriptor?.get?.call(region) as string,
+            set: (value: string) => {
+                if (value !== '') {
+                    written.push(value);
+                }
+                descriptor?.set?.call(region, value);
+            },
+        });
+        return written;
+    };
+    const type = (value: string) =>
+        act(() => {
+            fireEvent.change(field(), { target: { value } });
+        });
+    const openDialog = async (mounted: ReturnType<typeof mountMentions>) => {
+        act(() => {
+            mounted.handle.execute('mention.search.open');
+        });
+        await flush();
+    };
+
+    it('announces the active option with its place and type after each answer and each arrow, Retry and Load more included', async () => {
+        const { service, pending } = deferredService();
+        const mounted = mountMentions({ services: { references: service } });
+        await openDialog(mounted);
+        const written = statusWrites();
+        type('a');
+        await advance(200);
+        pending.at(-1)?.resolve(page([ADA, GRACE], 'page-2'));
+        await flush();
+        press('ArrowDown');
+        press('ArrowDown');
+        type('ab');
+        await advance(200);
+        pending.at(-1)?.reject(new Error('offline'));
+        await flush();
+
+        expect(written).toEqual([
+            'Results: 2. Ada Lovelace, user, 1 of 3',
+            'Grace Hopper, user, 2 of 3',
+            'Load more, 3 of 3',
+            'Search failed. Retry, 1 of 1',
+        ]);
+    });
+
+    it('announces a repeated status again after each completed search', async () => {
+        const { service, pending } = deferredService();
+        const mounted = mountMentions({ services: { references: service } });
+        await openDialog(mounted);
+        const written = statusWrites();
+        type('zz');
+        await advance(200);
+        pending.at(-1)?.resolve(page([]));
+        await flush();
+        type('zzz');
+        await advance(200);
+        pending.at(-1)?.resolve(page([]));
+        await flush();
+
+        expect(written.map((value) => value.trim())).toEqual(['No results', 'No results']);
+        expect(written[0]).not.toBe(written[1]);
+    });
+
+    it('consumes the Enter that confirms a composition while no option shows, so the next Enter chooses', async () => {
+        const { service, pending } = deferredService();
+        const mounted = mountMentions({ services: { references: service } });
+        await openDialog(mounted);
+        type('ad');
+        act(() => {
+            fireEvent.compositionEnd(field());
+        });
+        press('Enter');
+        await advance(200);
+        pending.at(-1)?.resolve(page([ADA]));
+        await flush();
+
+        press('Enter');
+        await flush();
+
+        expect(screen.queryByRole('dialog')).toBeNull();
+        expect(mounted.inline().some((node) => node.type === 'mention')).toBe(true);
+    });
 });

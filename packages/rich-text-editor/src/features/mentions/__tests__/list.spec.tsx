@@ -52,11 +52,11 @@ describe('mention suggestion list', () => {
         pending[0]?.resolve(page([ADA, GRACE, DESIGN]));
         await flush();
         expect(within(listbox() as HTMLElement).getAllByRole('option')).toHaveLength(3);
-        expect(spoken).toEqual(['Results: 3']);
+        expect(spoken).toEqual(['Results: 3. Ada Lovelace, user, 1 of 3']);
 
         typeText(mounted.handle, 'a');
         await advance(200);
-        expect(spoken).toEqual(['Results: 3']);
+        expect(spoken).toHaveLength(1);
         pending[1]?.resolve(page([ADA]));
         await flush();
         expect(within(listbox() as HTMLElement).getAllByRole('option')).toHaveLength(1);
@@ -75,22 +75,37 @@ describe('mention suggestion list', () => {
         expect(rowOf('failed')?.textContent).toBe('Search failed');
         expect(within(listbox() as HTMLElement).getByRole('option', { name: 'Retry' })).toBeDefined();
 
-        expect(spoken).toEqual(['Results: 3', 'Results: 1', 'No results', 'Search failed']);
+        expect(spoken).toEqual([
+            'Results: 3. Ada Lovelace, user, 1 of 3',
+            'Results: 1. Ada Lovelace, user, 1 of 1',
+            'No results',
+            'Search failed. Retry, 1 of 1',
+        ]);
     });
 
-    it('announces the active option with its place only when the author moves it', async () => {
+    it('announces the active option with its place and type whenever it changes, after the status of each answer', async () => {
         const { service, pending } = deferredService();
         const mounted = mountMentions({ services: { references: service } });
         const spoken = announcements();
         typeText(mounted.handle, '@');
         await advance(200);
-        pending[0]?.resolve(page([ADA, GRACE]));
+        pending[0]?.resolve(page([{ ...DESIGN, resourceType: 'user', kind: 'user' }, DESIGN], 'page-2'));
         await flush();
 
         pressKey(mounted.handle, 'ArrowDown');
         await flush();
+        pressKey(mounted.handle, 'ArrowDown');
+        await flush();
+        pressKey(mounted.handle, 'Enter');
+        pending[1]?.resolve(page([GRACE]));
+        await flush();
 
-        expect(spoken).toEqual(['Results: 2', 'Grace Hopper, 2 of 2']);
+        expect(spoken).toEqual([
+            'Results: 2. Design team, user, 1 of 3',
+            'Design team, group, 2 of 3',
+            'Load more, 3 of 3',
+            'Results: 3. Grace Hopper, user, 3 of 3',
+        ]);
     });
 
     it('shows a safe avatar, the group icon without one, drops a javascript: image, and stores neither on the mention', async () => {
