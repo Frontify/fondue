@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mountStyled } from '#/features/__tests__/fixtures/style-editor';
@@ -28,8 +28,7 @@ const openMenu = (mounted: Mounted, payload?: { readonly tokenIds: readonly stri
     act(() => {
         mounted.handle.execute('mark.color.menu.open', payload);
     });
-    // Radix names the menu by its hidden virtual trigger, so the menu is found by role alone.
-    return screen.getByRole('menu');
+    return screen.getByRole('menu', { name: 'Color' });
 };
 const pick = (name: string) => {
     act(() => {
@@ -173,8 +172,73 @@ describe('marks.font-color', () => {
 
         openMenu(mounted);
 
-        expect(screen.getByRole('menuitem', { name: 'Custom text color' })).toBeInTheDocument();
-        expect(screen.getByRole('menuitem', { name: 'Custom highlight color' })).toBeInTheDocument();
+        expect(screen.getByRole('menuitemradio', { name: 'Custom text color', checked: false })).toBeInTheDocument();
+        expect(
+            screen.getByRole('menuitemradio', { name: 'Custom highlight color', checked: false }),
+        ).toBeInTheDocument();
+    });
+
+    it('names the colour menu by its localized label', () => {
+        const mounted = mountStyled({ blocks: [styled(null, plain('word'))] });
+        setSelection(mounted.handle, { text: 'word' });
+
+        expect(openMenu(mounted)).toHaveAccessibleName('Color');
+    });
+
+    it('shows each swatch as a chip filled with its colour, and a check mark on the checked swatch only', () => {
+        const mounted = mountStyled({ blocks: [styled(null, marked('word', 'font_color', red.attrs))] });
+        setSelection(mounted.handle, { text: 'word' });
+
+        openMenu(mounted);
+        const swatches = screen
+            .getAllByRole('menuitemradio')
+            .map((swatch) => [
+                swatch.textContent,
+                swatch.querySelector<HTMLElement>('[data-rte-swatch]')?.style.getPropertyValue('--rte-chip-color'),
+                swatch.querySelector('[data-name="right"] svg') !== null,
+            ]);
+
+        expect(swatches).toEqual([
+            ['Brand red#c0392b', '#c0392b', true],
+            ['Brand blue#1d4ed8', '#1d4ed8', false],
+            ['Sun#fde68a', '#fde68a', false],
+        ]);
+    });
+
+    it('checks the custom colour row, described by its hex, when the selection holds a literal colour', () => {
+        const literal = { tokenId: null, value: '#0f766e' };
+        const mounted = mountStyled({
+            model: styleModel(true),
+            blocks: [styled(null, marked('teal', 'font_color', literal), plain(' plain'))],
+        });
+        setSelection(mounted.handle, { text: 'teal' });
+
+        openMenu(mounted);
+        const custom = screen.getByRole('menuitemradio', { name: 'Custom text color' });
+
+        expect(custom).toHaveAttribute('aria-checked', 'true');
+        expect(custom).toHaveAccessibleDescription('#0f766e');
+        expect(custom.querySelector('[data-name="right"] svg')).not.toBeNull();
+        expect(screen.getByRole('menuitemradio', { name: 'Custom highlight color' })).toHaveAttribute(
+            'aria-checked',
+            'false',
+        );
+    });
+
+    it('starts the custom colour draft from the value of the token the selection holds', () => {
+        const mounted = mountStyled({
+            model: styleModel(true),
+            blocks: [styled(null, marked('word', 'font_color', red.attrs))],
+        });
+        setSelection(mounted.handle, { text: 'word' });
+
+        openMenu(mounted);
+        act(() => {
+            fireEvent.click(screen.getByRole('menuitemradio', { name: 'Custom text color' }));
+        });
+        const picker = screen.getByRole('dialog', { name: 'Custom text color' });
+
+        expect((within(picker).getAllByRole('textbox')[0] as HTMLInputElement).value.toLowerCase()).toContain('c0392b');
     });
 
     for (const apple of [true, false]) {

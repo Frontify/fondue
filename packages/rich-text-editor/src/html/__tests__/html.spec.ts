@@ -49,9 +49,9 @@ describe('fromHTML', () => {
         },
     );
 
-    it('keeps the headings, marks, lists, link target, lang, dir and alt text of the Chromium capture', () => {
+    it('keeps the headings, marks, lists, link target, lang, dir and alt text of the Chromium capture, with no default black', () => {
         const content = JSON.stringify(contentOf(readUrl(new URL('chromium-article.html', clipboardFixtures))));
-
+        // Chromium writes each block's computed colour, which the model keeps as a literal colour of its text.
         for (const kept of [
             '"type":"heading","attrs":{"nodeId":',
             '"level":2',
@@ -265,6 +265,7 @@ describe('external HTML', () => {
         'href',
         'openInNewWindow',
         'styleId',
+        'tokenId',
         'value',
     ]);
     const attributeNames = (value: unknown): string[] => {

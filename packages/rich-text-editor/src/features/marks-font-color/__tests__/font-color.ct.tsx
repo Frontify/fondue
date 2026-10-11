@@ -36,7 +36,7 @@ const colorButton = (page: Page) => page.getByRole('toolbar').getByRole('button'
 const draftColor = async (page: Page) => {
     await select(page, 'two');
     await colorButton(page).click();
-    await page.getByRole('menuitem', { name: 'Custom text color' }).click();
+    await page.getByRole('menuitemradio', { name: 'Custom text color' }).click();
     const picker = page.getByRole('dialog', { name: 'Custom text color' });
     const pointer = picker.locator('.react-colorful__saturation-pointer').first();
     await expect(pointer).toBeVisible();
@@ -88,6 +88,34 @@ test('leaves the document unchanged when the colour draft is cancelled or closed
     expect(await marksOf(page)).toEqual([['one two three', []]]);
 });
 
+test('draws the focus outline on the focused gradient slider of the colour draft, also with forced colours', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ColorProbe literal />);
+    await ready(page);
+    await select(page, 'two');
+    await colorButton(page).click();
+    await page.getByRole('menuitemradio', { name: 'Custom text color' }).click();
+    const picker = page.getByRole('dialog', { name: 'Custom text color' });
+    const slider = picker.locator('.react-colorful__interactive').first();
+    await expect(slider).toBeVisible();
+    const outlineOf = () =>
+        slider.evaluate((element) => {
+            const style = getComputedStyle(element);
+            return [style.outlineStyle, style.outlineWidth];
+        });
+
+    await slider.focus();
+    await page.keyboard.press('ArrowRight');
+    const outline = await outlineOf();
+    await page.emulateMedia({ forcedColors: 'active' });
+    const forced = await outlineOf();
+
+    expect(outline).toEqual(['solid', '2px']);
+    expect(forced).toEqual(['solid', '2px']);
+});
+
 test('names each swatch by its token and describes it by its colour, checks the active one, and applies one by keyboard', async ({
     mount,
     page,
@@ -100,7 +128,7 @@ test('names each swatch by its token and describes it by its colour, checks the 
     const red = page.getByRole('menuitemradio', { name: 'Brand red' });
     await expect(red).toHaveAccessibleDescription('#c0392b');
     await expect(page.getByRole('menuitemradio', { name: 'Sun' })).toHaveAccessibleDescription('#fde68a');
-    await expect(page.getByRole('menuitem', { name: 'Custom text color' })).toHaveCount(0);
+    await expect(page.getByRole('menuitemradio', { name: 'Custom text color' })).toHaveCount(0);
     await expect(red).toBeFocused();
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');

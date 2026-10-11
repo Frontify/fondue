@@ -5,7 +5,7 @@ import { TextSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mountStyled } from '#/features/__tests__/fixtures/style-editor';
-import { plain, STYLE_MAP, styled, styledHeading } from '#/features/__tests__/fixtures/styles';
+import { linked, plain, STYLE_MAP, styled, styledHeading } from '#/features/__tests__/fixtures/styles';
 import { vocabularyAlign } from '#/features/__tests__/fixtures/vocabulary';
 import { compileContentModel, resolveStyle } from '#/model';
 import { textFeatures } from '#/react/__tests__/fixtures/text';
@@ -41,7 +41,7 @@ const flush = () =>
     });
 
 describe('styles.brand', () => {
-    it('keeps a paragraph a paragraph with no heading level for every brand style applied to it', () => {
+    it('keeps a paragraph a paragraph with no heading level for every brand style applied to it, setting only the paragraph styles', () => {
         const applied = STYLE_MAP.map(({ id }) => {
             const mounted = mountStyled({ blocks: [styled(null, plain('Body'))] });
             setSelection(mounted.handle, { text: 'Body', from: 1, to: 1 });
@@ -52,8 +52,91 @@ describe('styles.brand', () => {
         });
 
         expect(applied).toEqual(
-            STYLE_MAP.map(({ id }) => ['applied', 'paragraph', { lang: null, styleId: id }] as const),
+            STYLE_MAP.map(({ id, appliesTo }) => {
+                if (appliesTo.includes('paragraph')) {
+                    return ['applied', 'paragraph', { lang: null, styleId: id }];
+                }
+                return ['rejected', 'paragraph', { lang: null, styleId: null }];
+            }),
         );
+    });
+
+    it('sets a heading style only on the headings of a selection that also holds a paragraph', () => {
+        const mounted = mountStyled({
+            blocks: [styled(null, plain('One')), styledHeading(null, 2, plain('Two')), styled(null, plain('Three'))],
+        });
+        const { state } = mounted.view;
+        mounted.view.dispatch(state.tr.setSelection(TextSelection.create(state.doc, 1, state.doc.content.size - 1)));
+
+        const result = mounted.handle.execute('block.style.set', { styleId: 'brand.title' });
+
+        expect(result.status).toBe('applied');
+        expect(blocksOf(mounted).map((block) => [block.type, block.attrs?.styleId])).toEqual([
+            ['paragraph', null],
+            ['heading', 'brand.title'],
+            ['paragraph', null],
+        ]);
+    });
+
+    it('reports one styles.unknown-style warning per style ID when the presentation has no styles', async () => {
+        const mounted = mountStyled({
+            blocks: [styled('brand.lead', plain('One')), styled('brand.lead', plain('Two'))],
+            presentation: { styles: [] },
+        });
+        await flush();
+
+        expect(mounted.diagnostics.filter(({ code }) => code === 'styles.unknown-style')).toEqual([
+            {
+                code: 'styles.unknown-style',
+                severity: 'warning',
+                messageKey: 'styles.unknown-style',
+                path: '/content/content/0',
+                featureId: 'styles.brand',
+            },
+        ]);
+    });
+
+    it('offers in More of the selection toolbar the brand styles of the block type at the selection, checking the block style', () => {
+        const mounted = mountStyled({
+            blocks: [styled('brand.lead', plain('Body text'))],
+            presentation: { toolbar: [['text-style']] },
+            toolbarMode: 'bubble',
+        });
+        act(() => mounted.view.dom.focus());
+        act(() => setSelection(mounted.handle, { text: 'Body' }));
+        const bubble = screen.getByRole('toolbar', { name: 'Selection formatting' });
+        act(() => {
+            fireEvent.keyDown(bubble.querySelector('[data-rte-toolbar-more]') as HTMLElement, { key: 'Enter' });
+        });
+        const rows = screen
+            .getAllByRole('menuitemradio')
+            .map((row) => [
+                row.textContent,
+                row.getAttribute('aria-checked'),
+                row.querySelector('[data-name="right"] svg') !== null,
+            ]);
+
+        act(() => {
+            fireEvent.click(screen.getByRole('menuitemradio', { name: 'Caption' }));
+        });
+
+        expect(rows).toEqual([
+            ['Default style', 'false', false],
+            ['Lead', 'true', true],
+            ['Caption', 'false', false],
+        ]);
+        expect(blocksOf(mounted)).toEqual([styled('brand.caption', plain('Body text'))]);
+    });
+
+    it('names a styled link mark by data-rte-style in the editor', () => {
+        const mounted = mountStyled({
+            blocks: [styled(null, linked('button', 'brand.button'), linked('plain', null))],
+        });
+
+        expect([...mounted.view.dom.querySelectorAll('a')].map((link) => link.dataset.rteStyle)).toEqual([
+            'brand.button',
+            undefined,
+        ]);
     });
 
     it('changes only the styleId of a heading with block.style.set, never its type, level, nodeId or text, and null resets it', () => {
@@ -176,7 +259,7 @@ describe('styles.brand', () => {
         expect(onHeading.slice(-3)).toEqual(['Default style', 'Title', 'Caption']);
     });
 
-    it('previews each brand style row in its font family, size and weight, without its colour, and checks the block style', () => {
+    it('previews each brand style row in its font family, size and weight on a unitless line height, without its colour, and checks the block style with a check mark', () => {
         const mounted = mountStyled({
             blocks: [styledHeading('brand.title', 2, plain('Title'))],
             presentation: { toolbar: [['text-style']] },
@@ -187,9 +270,22 @@ describe('styles.brand', () => {
         const title = rows.find((row) => row.textContent === 'Title');
         const preview = title?.querySelector<HTMLElement>('[data-rte-style-preview]');
 
-        expect(preview?.getAttribute('style')).toBe('font-family: Georgia, serif; font-size: 32px; font-weight: 700;');
-        expect(rows.filter((row) => row.getAttribute('aria-checked') === 'true').map((row) => row.textContent)).toEqual(
-            ['Heading 2', 'Title'],
+        expect(preview?.getAttribute('style')).toBe(
+            'font-family: Georgia, serif; font-size: 32px; font-weight: 700; line-height: 1.25;',
+        );
+        expect(
+            rows.map((row) => [
+                row.textContent,
+                row.getAttribute('aria-checked'),
+                row.querySelector('[data-name="right"] svg') !== null,
+            ]),
+        ).toEqual(
+            expect.arrayContaining([
+                ['Heading 2', 'true', true],
+                ['Title', 'true', true],
+                ['Heading 1', 'false', false],
+                ['Caption', 'false', false],
+            ]),
         );
     });
 

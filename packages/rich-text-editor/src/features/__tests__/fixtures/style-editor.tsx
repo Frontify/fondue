@@ -11,6 +11,7 @@ import {
     type EditorHandle,
     type ReactPresentation,
     RichTextEditor,
+    type ToolbarMode,
 } from '#/index';
 import { type ContentModel, type ContentNodeJSON, type Diagnostic } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
@@ -23,10 +24,17 @@ interface Mount {
     readonly blocks: readonly ContentNodeJSON[];
     readonly presentation?: Partial<ReactPresentation>;
     readonly policy?: Partial<AuthoringPolicy>;
+    readonly toolbarMode?: ToolbarMode;
 }
 
 /** Mounts `RichTextEditor` over the brand style and colour features with the shared style map and tokens, and runs the first frame. */
-export const mountStyled = ({ model = styleModel(), blocks, presentation = {}, policy }: Mount) => {
+export const mountStyled = ({
+    model = styleModel(),
+    blocks,
+    presentation = {},
+    policy,
+    toolbarMode = 'fixed',
+}: Mount) => {
     const ref = createRef<EditorHandle>();
     const changes: DocumentChange[] = [];
     const diagnostics: Diagnostic[] = [];
@@ -41,6 +49,7 @@ export const mountStyled = ({ model = styleModel(), blocks, presentation = {}, p
             definition={definition}
             presentation={shown}
             defaultValue={{ documentId: 'document-1', revision: null, document }}
+            defaultToolbarMode={toolbarMode}
             onDocumentChange={(change) => changes.push(change)}
             onDiagnostic={(diagnostic) => diagnostics.push(diagnostic)}
             ref={ref}

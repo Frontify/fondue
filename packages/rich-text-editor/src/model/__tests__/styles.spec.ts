@@ -52,6 +52,10 @@ describe('the style resolver', () => {
         ['a link style with a transparent outline', { textDecoration: 'none', outline: '2px solid transparent' }],
         ['a link style with a zero-width border', { textDecoration: 'none', border: '0 solid #000' }],
         ['a link style with a hidden border', { textDecoration: 'none', borderStyle: 'hidden', borderWidth: 2 }],
+        [
+            'a link style whose only background is an image the resolver drops',
+            { textDecoration: 'none', backgroundImage: 'url(https://tracker.test/a.png)' },
+        ],
     ])('keeps the underline on %s', (_, recipe) => {
         expect(underlined(recipe)).toEqual(['text-decoration-line', 'underline']);
     });
@@ -117,6 +121,52 @@ describe('the style resolver', () => {
     ])('drops a recipe value with %s', (_, value) => {
         expect(cssValue('color', value)).toBe(undefined);
         expect(styleSheetOf([linkStyle({ color: value })])).not.toContain(value);
+    });
+
+    it('drops every declaration that positions, layers or transforms its element, and every negative margin, from a recipe and its hover', () => {
+        const placing: StyleRecipe = {
+            position: 'fixed',
+            inset: 0,
+            insetInlineStart: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            zIndex: 2_147_483_647,
+            transform: 'translateY(-100%)',
+            WebkitTransform: 'scale(2)',
+            translate: '10px',
+            rotate: '45deg',
+            scale: 2,
+            marginTop: -40,
+            margin: '0 -2px',
+            marginInlineStart: 'calc(0px - 1em)',
+        };
+        const { style } = resolveStyle(
+            [linkStyle({ ...placing, opacity: 0, marginBottom: 8, hover: { ...placing, color: '#1e3a8a' } }, 'p')],
+            'paragraph',
+            'p',
+        );
+
+        expect([style?.declarations, style?.hover]).toEqual([
+            [
+                ['opacity', '0'],
+                ['margin-bottom', '8px'],
+            ],
+            [['color', '#1e3a8a']],
+        ]);
+    });
+
+    it('skips a styles entry that is not an object or whose recipe is not one', () => {
+        const styles = [
+            null,
+            'brand.lead',
+            { id: 'brand.lead', label: 'Lead', appliesTo: ['paragraph'], deprecated: false, recipe: null },
+            { id: 'brand.lead', label: 'Lead', appliesTo: ['paragraph'], deprecated: false, recipe: { fontSize: 20 } },
+        ] as unknown as PresentationStyle[];
+
+        expect(resolveStyle(styles, 'paragraph', 'brand.lead').style?.declarations).toEqual([['font-size', '20px']]);
+        expect(styleSheetOf(styles)).toMatch(/^\.rte-style-[0-9a-f]{12}\{font-size:20px\}\n/);
     });
 
     it('keeps the CSS values a brand recipe uses', () => {

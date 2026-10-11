@@ -89,6 +89,57 @@ describe('pasted colours', () => {
         expect(announced).toBe('');
     });
 
+    it.each([
+        ['a paragraph', '<p style="color:#ff0000">text</p>', ['font_color "#ff0000"']],
+        ['a heading', '<h2 style="color:#0000ff">text</h2>', ['font_color "#0000ff"']],
+        ['a bold run', '<p><b style="color:#ff0000">text</b></p>', ['font_color "#ff0000"']],
+        ['a paragraph background', '<p style="background-color:#ffff00">text</p>', ['highlight "#ffff00"']],
+        [
+            'a paragraph with both',
+            '<p style="color:#ff0000;background-color:#ffff00">text</p>',
+            ['font_color "#ff0000"', 'highlight "#ffff00"'],
+        ],
+    ])('keeps the colour pasted on %s with literalColors', (_, html, expected) => {
+        expect(pasteHtml(styleModel(true), html)).toEqual({ colors: expected, announced: '' });
+    });
+
+    it('announces removed formatting for a pasted colour in a variable, which it cannot keep as hex', () => {
+        const html = '<p><span style="color:var(--brand)">text</span></p>';
+
+        expect(pasteHtml(styleModel(true), html)).toEqual({ colors: [], announced: 'Some formatting was removed.' });
+        expect(pasteHtml(styleModel(), html)).toEqual({ colors: [], announced: 'Some formatting was removed.' });
+    });
+
+    it.each(['transparent', 'inherit', 'initial', 'unset', 'currentcolor'])(
+        'announces nothing for a pasted colour of %s, which paints no colour',
+        (color) => {
+            const html = `<p><span style="color:${color};background-color:${color}">text</span></p>`;
+
+            expect(pasteHtml(styleModel(), html)).toEqual({ colors: [], announced: '' });
+        },
+    );
+
+    it('drops opaque black text, the source default, without a mark or an announcement', () => {
+        const html =
+            '<p style="color: rgb(0, 0, 0)">Plain <b style="color:#000000">bold</b> <font color="#000">old</font></p>';
+
+        expect(pasteHtml(styleModel(true), html)).toEqual({ colors: [], announced: '' });
+        expect(pasteHtml(styleModel(), html)).toEqual({ colors: [], announced: '' });
+    });
+
+    it('announces nothing for the paint of a token colour, which its token keeps', () => {
+        const html = '<p><span data-rte-color="brand.red" style="color:#d32f2f">red</span></p>';
+
+        expect(pasteHtml(styleModel(), html).announced).toBe('');
+    });
+
+    it('keeps the recipe paint of a link with data-rte-style out of the colour marks', () => {
+        const html =
+            '<p><a href="https://frontify.com/" data-rte-style="brand.button" style="color:#ffffff;background-color:#1d4ed8">start</a></p>';
+
+        expect(pasteHtml(styleModel(true), html).colors).toEqual([]);
+    });
+
     it.each(Object.keys(SOURCES) as (keyof typeof SOURCES)[])(
         'keeps the colours of a %s paste as lowercase #rrggbb or #rrggbbaa with literalColors',
         (source) => {

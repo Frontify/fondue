@@ -105,6 +105,31 @@ describe('toHTML with brand styles', () => {
         expect(html).toContain('<mark data-rte-color="brand.sun" style="background-color:#fde68a">mark</mark>');
     });
 
+    it('writes data-rte-style on a link with a styleId, and none on a link without one', () => {
+        const document = styledDocument(model, [
+            styled(null, linked('start', 'brand.button'), plain(' '), linked('basics', null)),
+        ]);
+
+        const plainHtml = codecs.toHTML(document).html;
+        const { html } = codecs.toHTML(document, { inlineStyles: STYLE_MAP });
+
+        expect(plainHtml).toContain('<a href="https://frontify.com/" data-rte-style="brand.button">start</a>');
+        expect(plainHtml).toContain('<a href="https://frontify.com/">basics</a>');
+        expect(html).toMatch(/<a href="https:\/\/frontify\.com\/" data-rte-style="brand\.button" class="rte-style-/);
+    });
+
+    it('skips a styles entry whose recipe is not an object, writing the others', () => {
+        const styles = [
+            { id: 'brand.lead', label: 'Lead', appliesTo: ['paragraph'], deprecated: false, recipe: null },
+            ...STYLE_MAP,
+        ] as unknown as typeof STYLE_MAP;
+        const document = styledDocument(model, [styled('brand.lead', plain('Lead'))]);
+
+        const { html } = codecs.toHTML(document, { inlineStyles: styles });
+
+        expect(html).toContain('style="font-family:Arial, sans-serif;font-size:20px;font-weight:300;line-height:1.5"');
+    });
+
     it('writes no class and an empty css without inlineStyles, keeping data-rte-style', () => {
         const document = styledDocument(model, [styled('brand.lead', plain('Lead'))]);
 

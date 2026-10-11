@@ -2,8 +2,11 @@
 
 // @vitest-environment node
 
+import { createElement, Fragment } from 'react';
 import { describe, expect, it } from 'vitest';
 
+import { fixtureLink } from '#/features/__tests__/fixtures/features';
+import { fixtureHighlight } from '#/features/__tests__/fixtures/highlight';
 import {
     COLOR_TOKENS,
     linked,
@@ -15,7 +18,14 @@ import {
     styledHeading,
     styleModel,
 } from '#/features/__tests__/fixtures/styles';
-import { type Diagnostic, resolveStyle } from '#/model';
+import { heading } from '#/features/blocks-heading/feature';
+import { quote } from '#/features/blocks-quote/feature';
+import { core } from '#/features/core/feature';
+import { fontColor } from '#/features/marks-font-color/feature';
+import { brandStyles } from '#/features/styles-brand/feature';
+import { compileContentModel, type Diagnostic, resolveStyle } from '#/model';
+
+import { defineReaderFeature } from '../define';
 
 import { renderReader } from './helpers/helpers';
 
@@ -76,6 +86,73 @@ describe('the reader with brand styles', () => {
         expect(html.replaceAll(/rte-style-[0-9a-f]{12}/g, 'rte-style-*')).toMatchSnapshot();
         expect(html.match(/<style/g)).toHaveLength(1);
         expect(html).toContain(`.${classOf(null, 'link')}{text-decoration:none;text-decoration-line:underline}`);
+    });
+
+    it('writes data-rte-style on a link with a styleId beside its recipe class', () => {
+        const document = styledDocument(model, [styled(null, linked('start', 'brand.button'))]);
+
+        const html = renderReader(document, model, { presentation });
+
+        expect(html).toContain(
+            `<a href="https://frontify.com/" data-rte-style="brand.button" class="${classOf('brand.button', 'link')}">start</a>`,
+        );
+    });
+
+    it('applies the recipe, the colour and data-rte-style around a reader override, as toHTML does', () => {
+        const overridden = compileContentModel(
+            [
+                defineReaderFeature(core(), {
+                    paragraph: ({ children }) =>
+                        createElement('p', { className: 'own', style: { margin: 0 } }, children),
+                }),
+                heading(),
+                quote(),
+                brandStyles(),
+                defineReaderFeature(fontColor(), {
+                    font_color: ({ children }) => createElement(Fragment, null, children),
+                }),
+                fixtureHighlight(),
+                defineReaderFeature(fixtureLink(), {
+                    link: ({ attrs, children }) => createElement('a', { href: attrs.href }, children),
+                }),
+            ],
+            { id: 'test.styles', version: 1 },
+        );
+        const document = styledDocument(overridden, [
+            styled(
+                'brand.lead',
+                linked('start', 'brand.button'),
+                marked('red', 'font_color', { tokenId: 'brand.red', value: null }),
+            ),
+        ]);
+
+        const html = renderReader(document, overridden, { presentation });
+
+        expect(html).toContain(`<p class="own ${classOf('brand.lead')}" style="margin:0" data-rte-style="brand.lead">`);
+        expect(html).toContain(
+            `<a href="https://frontify.com/" data-rte-style="brand.button" class="${classOf('brand.button', 'link')}">start</a>`,
+        );
+        expect(html).toContain('<span style="color:#c0392b">red</span>');
+    });
+
+    it('reports an unknown style for every stored style ID when the presentation has no styles, and nothing without a presentation', () => {
+        const document = styledDocument(model, [
+            styled('brand.lead', plain('One')),
+            styled('brand.lead', plain('Two')),
+        ]);
+        const reported: Diagnostic[] = [];
+        const silent: Diagnostic[] = [];
+
+        renderReader(document, model, {
+            presentation: { styles: [], colorTokens: [] },
+            onDiagnostic: (diagnostic) => reported.push(diagnostic),
+        });
+        renderReader(document, model, { onDiagnostic: (diagnostic) => silent.push(diagnostic) });
+
+        expect(reported.map(({ code, path }) => [code, path])).toEqual([
+            ['styles.unknown-style', '/content/content/0'],
+        ]);
+        expect(silent).toEqual([]);
     });
 
     it('writes the token and literal colours of font_color and highlight inline, with data-rte-color naming the token', () => {

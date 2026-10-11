@@ -132,6 +132,24 @@ test('previews each brand style row in its font family, size and weight but not 
     await expect(page.getByRole('menuitemradio', { name: 'Title' })).toHaveCount(0);
 });
 
+test('grows a brand style row to hold its preview font, so a 32px style shows uncropped', async ({ mount, page }) => {
+    await mount(<StyleProbe />);
+    await ready(page);
+    await placeCaret(page, 'Title style');
+    const trigger = page.getByRole('toolbar').getByRole('button').first();
+    await trigger.click();
+
+    const title = page.getByRole('menuitemradio', { name: 'Title' });
+    const fit = await title.locator('[data-rte-style-preview]').evaluate((element) => {
+        const { height } = element.getBoundingClientRect();
+        return [element.scrollHeight <= element.clientHeight, height >= 32];
+    });
+    const row = await title.boundingBox();
+
+    expect(fit).toEqual([true, true]);
+    expect(row?.height ?? 0).toBeGreaterThanOrEqual(40);
+});
+
 test('lists the heading styles in the text style picker on a heading, and sets one as a change of styleId only', async ({
     mount,
     page,
