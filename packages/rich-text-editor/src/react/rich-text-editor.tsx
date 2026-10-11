@@ -4,12 +4,16 @@ import {
     Component,
     type ComponentType,
     createContext,
+    type CSSProperties,
     forwardRef,
     type ForwardedRef,
+    type KeyboardEvent,
+    type MutableRefObject,
     type ReactNode,
     useCallback,
     useContext,
     useEffect,
+    useId,
     useImperativeHandle,
     useMemo,
     useRef,
@@ -17,6 +21,7 @@ import {
 } from 'react';
 
 import '#/styles/content.css';
+import { AnnouncerContext, createAnnouncer } from '#/bridge/announcer';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
@@ -42,9 +47,12 @@ import {
     type RuntimeHandle,
 } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
+import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
+import { moveChromeFocus } from './chrome-focus';
 import { engineOf, viewsOf } from './define';
 import { BlockedShell, RecoveryShell } from './shells';
+import { toolbarItems } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
     type EditorHandle,
@@ -58,6 +66,30 @@ type Defined = Props & { readonly definition: CompiledEditorDefinition<object> }
 const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 const NO_PRESENTATION: ReaderPresentation = {};
 const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'uploads', 'assets'] as const;
+const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
+// Read by screen readers and never seen.
+const VISUALLY_HIDDEN: CSSProperties = {
+    position: 'absolute',
+    inlineSize: 1,
+    blockSize: 1,
+    overflow: 'hidden',
+    clipPath: 'inset(50%)',
+    whiteSpace: 'nowrap',
+};
+
+/** Why a toolbar item's command cannot run, by its `disabledReason`. */
+const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
+    'not-allowed': 'RichTextEditor_unavailableNotAllowed',
+    readonly: 'RichTextEditor_unavailableReadOnly',
+};
+
+/** The key that moves focus to the toolbars, Alt+F10 unless the presentation sets another. */
+const toolbarShortcutOf = ({ presentation }: Props) => {
+    if (presentation === undefined || presentation.toolbarShortcut === undefined) {
+        return DEFAULT_TOOLBAR_SHORTCUT;
+    }
+    return presentation.toolbarShortcut;
+};
 
 const memberOf = <K extends (typeof SERVICE_MEMBERS)[number]>(
     services: EditorServices | undefined,
@@ -113,10 +145,20 @@ const mountOf = (props: Defined): Mounted => {
     return { definition, profile, decoded, blocked: undefined, lang };
 };
 
+/** What the parts share for the toolbar and focus moves between the surface and the chrome. */
+interface Chrome {
+    readonly items: readonly ToolbarItem[];
+    readonly strings: ToolbarStrings;
+    /** The surface element `id`, generated when a toolbar's `aria-controls` needs one and the host set none. */
+    readonly surfaceId: string | undefined;
+    readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
+}
+
 interface RootContextValue {
     readonly props: Props;
     readonly mounted: Mounted;
     readonly coordinator: MountCoordinator;
+    readonly chrome: Chrome;
 }
 const RootContext = createContext<RootContextValue | null>(null);
 RootContext.displayName = 'RichTextEditorRootContext';
@@ -182,6 +224,10 @@ const SessionComponent = (
         }
         return createReactWork();
     });
+    const [announcer] = useState(createAnnouncer);
+    useEffect(() => () => announcer.dispose(), [announcer]);
+    const generatedId = useId();
+    const toolbarRef = useRef<HTMLDivElement | null>(null);
     // The session once it is ready, which the parts and hooks read.
     const [live, setLive] = useState<EditorRuntime>();
     const latestRef = useRef(props);
@@ -276,6 +322,10 @@ const SessionComponent = (
     useClientLayoutEffect(() => {
         handleRef.current?.setMode(mode);
     }, [mode]);
+    const disabled = props.disabled === true;
+    useClientLayoutEffect(() => {
+        coordinator.runtime?.setDisabled(disabled);
+    }, [coordinator, disabled]);
 
     // A changed `services` member aborts the operations it started, with no rebuild.
     const { services } = props;
@@ -311,12 +361,58 @@ const SessionComponent = (
 
     const onFlush = useCallback(() => resyncSelection(coordinator.runtime?.view), [coordinator]);
 
+    // The on-screen keyboard covers the bottom of the layout viewport, which the caret scrolls clear of.
+    useEffect(() => {
+        // Some test DOMs have no `visualViewport` at all.
+        const viewport: VisualViewport | null | undefined = window.visualViewport;
+        if (viewport === null || viewport === undefined) {
+            return undefined;
+        }
+        const measure = () =>
+            coordinator.chrome.setBottomInset(Math.max(0, window.innerHeight - viewport.offsetTop - viewport.height));
+        measure();
+        viewport.addEventListener('resize', measure);
+        return () => viewport.removeEventListener('resize', measure);
+    }, [coordinator]);
+
+    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        // A disabled editor's toolbar takes no focus.
+        let toolbar = toolbarRef.current;
+        if (props.disabled === true) {
+            toolbar = null;
+        }
+        moveChromeFocus(event, { runtime: coordinator.runtime, toolbar, shortcut: toolbarShortcutOf(props) });
+    };
+
     const shell = shellPropsOf(props);
     const { locale, presentation, testId } = shell;
     // Chrome reads the newest presentation and locale with no view rebuild.
     const chromeContext = useMemo(() => readerContext(locale, presentation), [locale, presentation]);
+    const items = useMemo(
+        () =>
+            toolbarItems(
+                engineOf(mounted.definition),
+                mounted.definition.authoring,
+                props.presentation,
+                chromeContext.t,
+            ),
+        [mounted.definition, props.presentation, chromeContext],
+    );
+    const chrome = useMemo(() => {
+        const { t } = chromeContext;
+        let surfaceId = props.id;
+        if (surfaceId === undefined && items.length > 0) {
+            surfaceId = generatedId;
+        }
+        const strings = {
+            label: t('RichTextEditor_toolbar'),
+            more: t('RichTextEditor_more'),
+            reason: (code: string) => t(REASON_KEYS[code] ?? 'RichTextEditor_unavailable'),
+        };
+        return { items, strings, surfaceId, toolbarRef };
+    }, [items, chromeContext, props.id, generatedId]);
 
-    const context = useMemo(() => ({ props, mounted, coordinator }), [props, mounted, coordinator]);
+    const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
     if (mounted.blocked !== undefined) {
         return <BlockedShell result={mounted.blocked} {...shell} />;
     }
@@ -327,12 +423,30 @@ const SessionComponent = (
         <RootContext.Provider value={context}>
             <SessionContext.Provider value={live}>
                 <ReactWorkContext.Provider value={work}>
-                    <div data-test-id={testId} aria-busy={live === undefined ? true : undefined}>
-                        {work !== undefined && <Phase work={work} open />}
-                        {children}
-                        <PortalHost store={portals} context={chromeContext} onFlush={onFlush} />
-                        {work !== undefined && <Phase work={work} open={false} />}
-                    </div>
+                    <AnnouncerContext.Provider value={announcer}>
+                        {/* Focus in the chrome keeps the selection visible until it returns. */}
+                        {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- the root only hears keys and focus that bubble from the surface and chrome. */}
+                        <div
+                            data-test-id={testId}
+                            aria-busy={live === undefined ? true : undefined}
+                            onKeyDown={onKeyDown}
+                            onFocus={(event) =>
+                                coordinator.chrome.showSelection(event.target.getAttribute('data-rte-surface') === null)
+                            }
+                            onBlur={() => coordinator.chrome.showSelection(false)}
+                        >
+                            {work !== undefined && <Phase work={work} open />}
+                            {children}
+                            <PortalHost store={portals} context={chromeContext} onFlush={onFlush} />
+                            <div
+                                ref={announcer.setRegion}
+                                aria-live="polite"
+                                style={VISUALLY_HIDDEN}
+                                data-test-id={`${testId}-announcer`}
+                            />
+                            {work !== undefined && <Phase work={work} open={false} />}
+                        </div>
+                    </AnnouncerContext.Provider>
                 </ReactWorkContext.Provider>
             </SessionContext.Provider>
         </RootContext.Provider>
@@ -458,7 +572,7 @@ const emptiness = (runtime: EditorRuntime | undefined) => {
  * after mount.
  */
 const Surface = () => {
-    const { props, mounted, coordinator } = useRoot('Surface');
+    const { props, mounted, coordinator, chrome } = useRoot('Surface');
     const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
     const contentClassName = presentation?.contentClassName;
     // React writes the first classes only: ProseMirror adds its own to this element with `classList`, which a rewritten attribute would drop.
@@ -498,27 +612,78 @@ const Surface = () => {
             aria-invalid={props.status === 'error' ? true : undefined}
             aria-errormessage={props['aria-errormessage']}
             aria-required={props.required === true ? true : undefined}
+            aria-disabled={props.disabled === true ? true : undefined}
             aria-placeholder={shownPlaceholder}
             data-placeholder={placeholder}
-            id={props.id}
+            id={chrome.surfaceId}
             lang={mounted.lang}
             spellCheck={spellCheck}
             data-test-id={`${testId}-surface`}
             data-rte-surface=""
+            // Native focus events of the surface itself, so a move into chrome or an overlay blurs it.
+            onFocus={(event) => {
+                if (event.target === event.currentTarget) {
+                    props.onFocus?.(event);
+                }
+            }}
+            onBlur={(event) => {
+                if (event.target === event.currentTarget) {
+                    props.onBlur?.(event);
+                }
+            }}
         />
     );
 };
 Surface.displayName = 'RichTextEditor.Surface';
 
+/** The fixed toolbar the presentation configures; with no item it renders nothing. */
+const Toolbar = () => {
+    const { props, coordinator, chrome } = useRoot('Toolbar');
+    const { disabled = false, 'data-test-id': testId = DEFAULT_TEST_ID } = props;
+    const { items, strings, surfaceId, toolbarRef } = chrome;
+    // The caret scrolls clear of the sticky toolbar's measured height.
+    const shown = items.length > 0;
+    useEffect(() => {
+        const element = toolbarRef.current;
+        if (element === null) {
+            return undefined;
+        }
+        const observer = new ResizeObserver(() =>
+            coordinator.chrome.setTopInset(element.getBoundingClientRect().height),
+        );
+        observer.observe(element);
+        return () => {
+            observer.disconnect();
+            coordinator.chrome.setTopInset(0);
+        };
+    }, [toolbarRef, coordinator, shown]);
+    if (!shown || surfaceId === undefined) {
+        return null;
+    }
+    return (
+        <FixedToolbar
+            items={items}
+            strings={strings}
+            disabled={disabled}
+            surfaceId={surfaceId}
+            shortcut={toolbarShortcutOf(props)}
+            testId={testId}
+            toolbarRef={toolbarRef}
+        />
+    );
+};
+Toolbar.displayName = 'RichTextEditor.Toolbar';
+
 const Editor = forwardRef((props: Props, ref: ForwardedRef<EditorHandle<object>>) => (
     <Root {...props} ref={ref}>
+        <Toolbar />
         <Surface />
     </Root>
 ));
 Editor.displayName = 'RichTextEditor';
 
 /** Generic, so a definition compiled from any model types its handle. */
-export const RichTextEditor = Object.assign(Editor, { Root, Surface }) as unknown as (<
+export const RichTextEditor = Object.assign(Editor, { Root, Surface, Toolbar }) as unknown as (<
     C extends object = ShippedCommands,
 >(
     props: RichTextEditorProps<C>,
@@ -528,4 +693,5 @@ export const RichTextEditor = Object.assign(Editor, { Root, Surface }) as unknow
         props: RichTextEditorProps<C> & { readonly children: ReactNode },
     ) => ReactNode;
     readonly Surface: ComponentType<object>;
+    readonly Toolbar: ComponentType<object>;
 };

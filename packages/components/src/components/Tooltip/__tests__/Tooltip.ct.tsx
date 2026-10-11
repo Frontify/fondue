@@ -7,6 +7,8 @@ import { Button } from '#/components/Button/Button';
 
 import { Tooltip } from '../Tooltip';
 
+import { TooltipWithCustomContainer } from './TooltipWithCustomContainer';
+
 const TOOLTIP_TRIGGER_TEST_ID = 'fondue-tooltip-trigger';
 const TOOLTIP_CONTENT_TEST_ID = 'fondue-tooltip-content';
 const TOOLTIP_TEXT =
@@ -412,4 +414,26 @@ test('should render lang on the tooltip content', async ({ mount, page }) => {
     );
     await component.getByTestId(TOOLTIP_TRIGGER_TEST_ID).hover();
     await expect(page.getByTestId(TOOLTIP_CONTENT_TEST_ID)).toHaveAttribute('lang', 'fr-CH');
+});
+
+test('should portal into document.body by default', async ({ mount, page }) => {
+    await mount(
+        <Tooltip.Root open>
+            <Tooltip.Trigger>Tooltip Trigger</Tooltip.Trigger>
+            <Tooltip.Content>{TOOLTIP_TEXT}</Tooltip.Content>
+        </Tooltip.Root>,
+    );
+
+    await expect(page.getByTestId(TOOLTIP_CONTENT_TEST_ID)).toBeVisible();
+    await expect(page.locator('#root').getByTestId(TOOLTIP_CONTENT_TEST_ID)).toHaveCount(0);
+});
+
+test('should render inside the given container', async ({ mount, page }) => {
+    await mount(
+        <TooltipWithCustomContainer containerTestId="custom-container" contentTestId={TOOLTIP_CONTENT_TEST_ID} />,
+    );
+
+    const tooltipContent = page.getByTestId('custom-container').getByTestId(TOOLTIP_CONTENT_TEST_ID);
+    await expect(tooltipContent).toBeVisible();
+    await expect(tooltipContent).toContainText('Tooltip Content');
 });
