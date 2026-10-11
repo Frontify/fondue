@@ -39,8 +39,11 @@ const domSelection = (page: Page) =>
         text: window.getSelection()?.toString(),
         inSurface: document.activeElement?.getAttribute('role') === 'textbox',
     }));
-// More rows are menu items, and checkbox items for toggles.
-const menuRows = (page: Page) => page.locator('[role="menuitem"], [role="menuitemcheckbox"]');
+// More rows are menu items, and checkbox items for toggles, above the toolbar mode switch.
+const menuRows = (page: Page) =>
+    page
+        .locator('[role="menuitem"], [role="menuitemcheckbox"]')
+        .filter({ hasNotText: 'Show toolbar on selection only' });
 const documentHtml = (page: Page) => page.evaluate(() => window.toolbarEditor?.html());
 
 /** WCAG relative luminance of a computed `rgb()` colour. */
@@ -98,9 +101,9 @@ test('is one tab stop with a label, aria-controls and arrow, Home and End keys',
     for (const [key, name] of [
         ['ArrowRight', 'Italic'],
         ['ArrowRight', 'Link'],
-        ['End', 'List'],
+        ['End', 'More'],
         ['Home', 'Bold'],
-        ['ArrowLeft', 'List'],
+        ['ArrowLeft', 'More'],
     ] as const) {
         await page.keyboard.press(key);
         await expectFocus(page, name);
@@ -339,6 +342,67 @@ test.describe('at 320 CSS pixels', () => {
 
 test.describe('with a coarse pointer', () => {
     test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+
+    test('opens More on a tap', async ({ mount, page }) => {
+        await mount(<ToolbarProbe />);
+        await ready(page);
+
+        await itemOf(page, 'More').tap();
+
+        await expect(page.getByRole('menu')).toBeVisible();
+        await expect(page.getByRole('menuitem', { name: 'Show toolbar on selection only' })).toBeVisible();
+    });
+
+    test('opens no More on a tap in a disabled editor', async ({ mount, page }) => {
+        await mount(<ToolbarProbe disabled />);
+        await ready(page);
+
+        await itemOf(page, 'More').tap({ force: true });
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await expect(page.getByRole('menu')).toHaveCount(0);
+    });
+
+    test('does not open More when a touch slides off it before release', async ({ mount, page }) => {
+        await mount(<ToolbarProbe />);
+        await ready(page);
+        const box = await boxOf(itemOf(page, 'More'));
+        const client = await page
+            .context()
+            .newCDPSession(page)
+            .catch(() => undefined);
+        test.skip(client === undefined, 'CDP dispatches a sliding touch in Chromium only');
+        const point = (x: number, y: number) => [{ x, y }];
+        // A slide that pans the page ends in `pointercancel`, which never reaches the release handler; without panning,
+        // the release must reach More's own handler, or the test would pass for any release.
+        await itemOf(page, 'More').evaluate((more) => {
+            more.style.touchAction = 'none';
+            const released: string[] = [];
+            Object.assign(window, { moreReleases: released });
+            more.addEventListener('pointerup', (event) => released.push((event as PointerEvent).pointerType));
+        });
+
+        await client?.send('Input.dispatchTouchEvent', {
+            type: 'touchStart',
+            touchPoints: point(box.x + 4, box.y + 4),
+        });
+        await client?.send('Input.dispatchTouchEvent', {
+            type: 'touchMove',
+            touchPoints: point(box.x + 200, box.y + 200),
+        });
+        await client?.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+
+        await expect
+            .poll(() => page.evaluate(() => (window as unknown as { moreReleases: string[] }).moreReleases))
+            .toEqual(['touch']);
+        // Radix opens a menu in effects and frames after the release.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+        await expect(page.getByRole('menu')).toHaveCount(0);
+    });
 
     test('gives every toolbar item a 44 by 44 CSS pixel target', async ({ mount, page }) => {
         await mount(<ToolbarProbe wide />);
@@ -967,6 +1031,8 @@ test.describe('from 1000 to 320 CSS pixels', () => {
         await page.keyboard.press('Alt+F10');
         await expectFocus(page, 'Bold');
         await page.keyboard.press('End');
+        await expectFocus(page, 'More');
+        await page.keyboard.press('ArrowLeft');
         await expectFocus(page, 'Heading 6');
 
         await page.setViewportSize({ width: 320, height: 640 });
@@ -974,7 +1040,10 @@ test.describe('from 1000 to 320 CSS pixels', () => {
         await expectFocus(page, 'More');
     });
 
-    test('shows every item again, with no More, when the toolbar widens again', async ({ mount, page }) => {
+    test('shows every item again, with only More for the mode switch, when the toolbar widens again', async ({
+        mount,
+        page,
+    }) => {
         await mount(<ToolbarProbe wide />);
         await ready(page);
         const names = () =>
@@ -984,12 +1053,14 @@ test.describe('from 1000 to 320 CSS pixels', () => {
         const wideNames = await names();
 
         await page.setViewportSize({ width: 320, height: 640 });
-        await expect(itemOf(page, 'More')).toBeVisible();
+        // More shows at every width, so the refit is read from the last heading leaving.
+        await expect(itemOf(page, 'Heading 6')).toHaveCount(0);
         const narrowNames = await names();
         await page.setViewportSize({ width: 1000, height: 640 });
 
-        await expect(itemOf(page, 'More')).toHaveCount(0);
+        await expect(itemOf(page, 'Heading 6')).toBeVisible();
         expect(await names()).toEqual(wideNames);
+        expect(wideNames.at(-1)).toBe('More');
         expect(wideNames).toContain('Heading 6');
         expect(narrowNames).not.toContain('Heading 6');
     });
@@ -1049,7 +1120,10 @@ test('opens More on a click with no pointer or key press before it, as browse mo
 test.describe('from 320 to 1000 CSS pixels', () => {
     test.use({ viewport: { width: 320, height: 640 } });
 
-    test('moves focus to a toolbar item when a refit removes the focused More', async ({ mount, page }) => {
+    test('keeps focus on More through a widening refit, and moves it to a toolbar item when the refit empties the menu row that held it', async ({
+        mount,
+        page,
+    }) => {
         await mount(<ToolbarProbe wide />);
         await ready(page);
         await surfaceOf(page).focus();
@@ -1057,11 +1131,19 @@ test.describe('from 320 to 1000 CSS pixels', () => {
         await expectFocus(page, 'Bold');
         await page.keyboard.press('End');
         await expectFocus(page, 'More');
+        await page.setViewportSize({ width: 1000, height: 640 });
+        await expect(itemOf(page, 'Heading 6')).toBeVisible();
+        const onMore = await focusedName(page);
+        await page.setViewportSize({ width: 320, height: 640 });
+        await expect(itemOf(page, 'Heading 6')).toHaveCount(0);
+        await page.keyboard.press('Enter');
+        await expect(menuRows(page).first()).toBeFocused();
 
         await page.setViewportSize({ width: 1000, height: 640 });
 
         await expect
             .poll(() => page.evaluate(() => document.activeElement?.hasAttribute('data-rte-toolbar-item')))
             .toBe(true);
+        expect(onMore).toBe('More');
     });
 });
