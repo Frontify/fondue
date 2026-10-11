@@ -29,6 +29,13 @@ export interface ToolbarItem {
     readonly options?: readonly (ToolbarItem & { readonly offered: boolean })[];
     /** Its command opens a package-built control, which a More row runs only once the menu has closed. */
     readonly opensControl?: boolean;
+    /** The heading of the text style picker's brand style rows. */
+    readonly groupLabel?: string;
+    /** A brand style row of the text style picker: the block types it applies to and the font it previews. */
+    readonly brand?: {
+        readonly appliesTo: readonly string[];
+        readonly preview: Readonly<Record<string, string>>;
+    };
 }
 
 export interface ToolbarStrings {

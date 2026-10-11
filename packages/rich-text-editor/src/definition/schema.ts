@@ -162,6 +162,7 @@ const tagRule = (
     declarations: AttributeDeclarations,
     specs: Readonly<Record<string, AttributeSpec>>,
     shared: readonly SharedAttribute[],
+    exactlyOne: readonly string[] = [],
 ): TagParseRule => {
     const sources: Record<string, ParseAttributeSource> = {};
     for (const { name, declaration } of shared) {
@@ -189,6 +190,11 @@ const tagRule = (
             } else if (!('default' in (specs[name] ?? {}))) {
                 return false;
             }
+        }
+        // A rule that fills none of the `exactlyOne` attributes, such as a colour rule on an uncoloured span, does not match.
+        const filled = exactlyOne.filter((name) => attrs[name] !== undefined && attrs[name] !== null);
+        if (exactlyOne.length > 0 && filled.length !== 1) {
+            return false;
         }
         return attrs;
     };
@@ -242,7 +248,7 @@ export const buildSchema = (model: ContentModel): Schema => {
             toDOM: (instance) => render(declaration.html, instance.attrs, options, shared),
             // The engine reads style rules only for marks.
             parseDOM: declaration.parse.flatMap((rule) =>
-                'tag' in rule ? [tagRule(rule, attributes, specs, shared)] : [],
+                'tag' in rule ? [tagRule(rule, attributes, specs, shared, declaration.exactlyOne)] : [],
             ),
         };
         if (declaration.content !== undefined) {
@@ -277,7 +283,7 @@ export const buildSchema = (model: ContentModel): Schema => {
             parseDOM: declaration.parse.map(
                 (rule): EngineParseRule =>
                     'tag' in rule
-                        ? tagRule(rule, declaration.attrs, specs, [])
+                        ? tagRule(rule, declaration.attrs, specs, [], declaration.exactlyOne)
                         : { style: `${rule.style}=${rule.value}` },
             ),
         };

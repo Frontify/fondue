@@ -1,18 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CSSProperties, type FocusEvent, type Ref } from 'react';
+import { type FocusEvent, type Ref } from 'react';
 
 import {
     type CapabilityRef,
+    type ColorToken,
     type CommandRef,
     type ContentModel,
     type Diagnostic,
     type Feature,
     type ListLevels,
     type ModelRef,
+    type PresentationStyle,
     type ResourceLimits,
     type RichTextDocument,
     type RichTextLocale,
+    type StyleRecipe,
 } from '#/model';
 import {
     type LoadedDocument,
@@ -44,11 +47,10 @@ import {
     type SessionToken,
     type ShippedCommands,
     type Snapshot,
-    type StoredId,
     type Unsubscribe,
 } from '#/runtime/types';
 
-export type { ListLevels, OperationMetric };
+export type { ColorToken, ListLevels, OperationMetric, PresentationStyle, StyleRecipe };
 
 // Host-facing editor types. Some members are typed before their behavior is built.
 
@@ -160,25 +162,6 @@ export interface EditorHandle<C extends object = ShippedCommands> {
     subscribe<K extends keyof EditorEventMap>(event: K, listener: (value: EditorEventMap[K]) => void): Unsubscribe;
     /** Synchronous invalidation. Does not promise that remote saves were cancelled. */
     dispose(): void;
-}
-
-/** csstype's `Properties<string | number>`, which React's `CSSProperties` extends. */
-export type StyleRecipe = CSSProperties;
-export interface PresentationStyle {
-    readonly id: StoredId;
-    readonly label: string;
-    readonly appliesTo: readonly ('paragraph' | 'heading' | 'link')[];
-    readonly deprecated: boolean;
-    readonly recipe: StyleRecipe;
-}
-export interface ColorToken {
-    /** Stored as `tokenId`. */
-    readonly id: StoredId;
-    /** The swatch's accessible name. */
-    readonly label: string;
-    /** CSS colour for rendering and contrast checks. */
-    readonly value: string;
-    readonly usage: readonly ('font_color' | 'highlight')[];
 }
 
 export type ToolbarMode = 'fixed' | 'bubble';

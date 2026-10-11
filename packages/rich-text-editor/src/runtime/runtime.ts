@@ -11,7 +11,7 @@ import {
     TextSelection,
     type Transaction,
 } from 'prosemirror-state';
-import { EditorView, type NodeViewConstructor } from 'prosemirror-view';
+import { EditorView, type MarkViewConstructor, type NodeViewConstructor } from 'prosemirror-view';
 
 import {
     APPEND_BATCH_META,
@@ -194,6 +194,8 @@ export interface EditorRuntimeOptions {
     readonly limits: ResourceLimits;
     /** Builds the bridge's node views by node name for this runtime, which only passes them to the view. */
     readonly nodeViews?: (runtime: EditorRuntime) => Readonly<Record<string, NodeViewConstructor>>;
+    /** The mark views that give styled and coloured marks their presentation, built once per session. */
+    readonly markViews?: (runtime: EditorRuntime) => Readonly<Record<string, MarkViewConstructor>>;
     /** Whether the editor's React tree renders or runs an effect now, which a development build passes. */
     readonly inRender?: () => boolean;
     /** The loaded record's revision, which an unmanaged session reports as acknowledged. */
@@ -208,8 +210,8 @@ export interface EditorRuntimeOptions {
     readonly tabMovesFocus?: () => boolean | undefined;
     /** The host's `scrollSelectionIntoView` prop, read on each scroll to the selection; default true. */
     readonly scrollSelectionIntoView?: () => boolean | undefined;
-    /** Opens the package-built control of an `openControl` command that a host `execute` ran. */
-    readonly openControl?: (control: string) => void;
+    /** Opens the package-built control of an `openControl` command that a host `execute` ran, with its payload. */
+    readonly openControl?: (control: string, payload: unknown) => void;
     /** The editor's locale, such as `de-CH`, read when a suggestion list asks its source; default `en-US`. */
     readonly locale?: () => string;
 }
@@ -415,6 +417,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let viewThrew = false;
     // Node views come from the bridge once this runtime exists, since they act on it.
     let nodeViews: Readonly<Record<string, NodeViewConstructor>> = {};
+    let markViews: Readonly<Record<string, MarkViewConstructor>> = {};
     // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
     let busy = 0;
     let draining = false;
@@ -1085,7 +1088,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const result = run(id, given, commandOptions, 'host');
         const control = controls.get(id);
         if (control !== undefined && result.status === 'no-op') {
-            options.openControl?.(control);
+            options.openControl?.(control, given);
         }
         // Without `focus: 'editor'` a command leaves focus where it is.
         if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
@@ -1721,6 +1724,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 return attributes;
                             },
                             nodeViews,
+                            markViews,
                             // Returning true reports the scroll as handled, so the view leaves it out.
                             handleScrollToSelection: () => options.scrollSelectionIntoView?.() === false,
                             dispatchTransaction: commit,
@@ -1823,6 +1827,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
     if (options.nodeViews !== undefined) {
         nodeViews = options.nodeViews(runtime);
+    }
+    if (options.markViews !== undefined) {
+        markViews = options.markViews(runtime);
     }
     if (options.saves !== undefined) {
         saves = options.saves(runtime);

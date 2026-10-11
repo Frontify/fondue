@@ -1,0 +1,29 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.swatch {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+}
+
+// A letter in the colour, as the text and highlight colour menus of document editors show it.
+.sample {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 20px;
+    block-size: 20px;
+    border: var(--border-width-default) solid var(--color-line-mid);
+    border-radius: var(--border-radius-small);
+    font-weight: 700;
+}
+
+// The colour value names the swatch for assistive technology only, as its description.
+.description {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}

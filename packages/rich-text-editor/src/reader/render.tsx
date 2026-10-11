@@ -2,7 +2,7 @@
 
 import { type ComponentType, createElement, Fragment, type ReactElement, type ReactNode } from 'react';
 
-import { type Diagnostic, type ListLevels } from '#/model';
+import { type Diagnostic, type JsonObject, type ListLevels } from '#/model';
 import { isIsland, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
@@ -16,10 +16,15 @@ import {
     itemsOf,
     type ListDepths,
     markPath,
+    type OutputStyles,
     spaced,
     type Spacing,
+    styleOfNode,
+    unknownStyle,
     VOID_TAGS,
+    withColor,
     withListLevel,
+    withStyle,
     writesAttribute,
 } from '#/model/output';
 
@@ -33,6 +38,9 @@ export interface RenderState extends Spacing {
     readonly diagnostics: Diagnostic[];
     readonly listLevels: ListLevels | undefined;
     readonly depths: ListDepths;
+    readonly styles: OutputStyles;
+    /** The stored style IDs reported unknown, once each; `undefined` when the render reports none, with no presentation. */
+    readonly unknownStyles: Set<string> | undefined;
 }
 
 // Every HTML attribute whose React prop is not its lowercase name; the rest pass through unchanged.
@@ -136,6 +144,19 @@ const callOverride = (override: ComponentType<ReaderNodeProps>, props: ReaderNod
     return result;
 };
 
+/** The recipe a node or mark renders with, reporting an unknown stored `styleId` once per render. */
+const styled = (state: RenderState, type: string, attrs: JsonObject, path: string) => {
+    const { style, unknown } = styleOfNode(state.styles.styles, type, attrs);
+    const { unknownStyles } = state;
+    if (unknown && unknownStyles !== undefined && typeof attrs.styleId === 'string') {
+        if (!unknownStyles.has(attrs.styleId)) {
+            unknownStyles.add(attrs.styleId);
+            state.diagnostics.push(unknownStyle(path));
+        }
+    }
+    return style;
+};
+
 const renderMark = (
     state: RenderState,
     items: readonly Item[],
@@ -158,7 +179,10 @@ const renderMark = (
             return fallback(state, 'span', plan.featureId, children);
         }
     }
-    return build(resolveHtmlSpec(plan.spec, attrs, plan.options), children);
+    let template = resolveHtmlSpec(plan.spec, attrs, plan.options);
+    template = withStyle(template, styled(state, mark.type, attrs, markPath(items, index)), false);
+    template = withColor(template, mark.type, attrs, state.styles.colorTokens);
+    return build(template, children);
 };
 
 const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): ReactNode => {
@@ -204,6 +228,7 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
     if (!plan.inline) {
         template = withAutoDirection(template);
     }
+    template = withStyle(template, styled(state, node.type, attrs, path), false);
     return build(template, children);
 };
 
@@ -239,8 +264,16 @@ export const message = ({ locale, t }: ReaderContext, kind: keyof typeof MESSAGE
     return createElement('div', props, t(MESSAGE_KEYS[kind]));
 };
 
-/** The reader root: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the island notice. */
-export const renderDocument = (state: RenderState, root: TreeNode, contentClassName?: string): ReactElement => {
+/**
+ * The reader root: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the
+ * island notice, after one `style` element with the presentation's recipe stylesheet when it has one.
+ */
+export const renderDocument = (
+    state: RenderState,
+    root: TreeNode,
+    contentClassName?: string,
+    styleSheet = '',
+): ReactElement => {
     const children = renderChildren(state, root, '/content', false);
     const props: Record<string, unknown> = { className: contentClasses(contentClassName) };
     const lang = root.attrs?.lang;
@@ -254,5 +287,11 @@ export const renderDocument = (state: RenderState, root: TreeNode, contentClassN
     if (state.islands > 0) {
         children.push(message(state.context, 'islands'));
     }
-    return createElement('div', props, ...children);
+    const content = createElement('div', props, ...children);
+    if (styleSheet === '') {
+        return content;
+    }
+    // The stylesheet holds only checked declarations, so it can never close its element.
+    const sheet = createElement('style', { 'data-rte-styles': '', dangerouslySetInnerHTML: { __html: styleSheet } });
+    return createElement(Fragment, null, sheet, content);
 };

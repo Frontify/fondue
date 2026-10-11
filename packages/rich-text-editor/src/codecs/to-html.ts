@@ -14,10 +14,14 @@ import {
     itemsOf,
     listDepths,
     type ListDepths,
+    type OutputStyles,
     spaced,
     type Spacing,
+    styleOfNode,
     VOID_TAGS,
+    withColor,
     withListLevel,
+    withStyle,
     writesAttribute,
 } from '#/model/output';
 import { isStyleAttribute } from '#/model/values';
@@ -33,7 +37,10 @@ interface HtmlState extends Spacing {
     readonly losses: Losses;
     readonly listLevels: ListLevels | undefined;
     readonly depths: ListDepths;
+    readonly styles: OutputStyles;
 }
+
+const NO_STYLES: OutputStyles = { styles: [], colorTokens: [], inline: false };
 
 const ESCAPES: Readonly<Record<string, string>> = {
     '&': '&amp;',
@@ -146,7 +153,12 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
     if (plan === undefined) {
         return inner;
     }
-    return build(resolveHtmlSpec(plan.spec, attrsOf(mark.attrs), plan.options), inner);
+    const attrs = attrsOf(mark.attrs);
+    const { styles, colorTokens, inline } = state.styles;
+    let template = resolveHtmlSpec(plan.spec, attrs, plan.options);
+    template = withStyle(template, styleOfNode(styles, mark.type, attrs).style, inline);
+    template = withColor(template, mark.type, attrs, colorTokens);
+    return build(template, inner);
 };
 
 const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): string => {
@@ -200,6 +212,7 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     if (!plan.inline) {
         template = withAutoDirection(template);
     }
+    template = withStyle(template, styleOfNode(state.styles.styles, node.type, attrs).style, state.styles.inline);
     return build(template, inner);
 };
 
@@ -248,13 +261,17 @@ export const isEmptyDocument = (plan: CodecPlan, root: TreeNode): boolean => {
     return node !== undefined && !node.leaf;
 };
 
-/** The reader's static markup as text: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the island notice. */
+/**
+ * The reader's static markup as text: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its
+ * blocks, then the island notice. `styles` adds recipe classes, inline recipes and token colours.
+ */
 export const writeHtml = (
     plan: CodecPlan,
     root: TreeNode,
     context: CodecContext,
     contentClassName?: string,
     listLevels?: ListLevels,
+    styles: OutputStyles = NO_STYLES,
 ): { readonly html: string; readonly diagnostics: readonly Diagnostic[] } => {
     const state: HtmlState = {
         plan,
@@ -265,6 +282,7 @@ export const writeHtml = (
         carried: 0,
         listLevels,
         depths: listDepths(),
+        styles,
     };
     if (isEmptyDocument(plan, root)) {
         return { html: '', diagnostics: [] };

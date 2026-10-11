@@ -233,7 +233,8 @@ export const More = ({
                         if (item.options === undefined) {
                             return [item];
                         }
-                        return item.options.filter(({ offered }) => offered);
+                        // Brand style rows apply only to some block types, which the picker checks when it opens.
+                        return item.options.filter(({ offered, brand }) => offered && brand === undefined);
                     })
                     .map((item) => (
                         <MoreRow key={item.key} item={item} strings={strings} onRun={onRun} />

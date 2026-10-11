@@ -12,6 +12,7 @@ import { decodeToTree } from '#/model/decode';
 import { randomId } from '#/model/random-id';
 import { isRecord } from '#/model/values';
 
+import { colorReadingOf } from './import/colors';
 import { importHtml } from './import/html';
 import { exceededStructure } from './import/limits';
 import { labelText, type PastePolicy, refusedNames, resliced, withoutRefused } from './import/policy';
@@ -47,6 +48,8 @@ export interface Pasted {
     readonly followUp?: FollowUp;
     /** Media that a slice from another context dropped. */
     readonly droppedMedia: number;
+    /** Pasted formatting the model does not keep, such as colours without `literalColors`, was removed. */
+    readonly removedFormatting?: boolean;
 }
 
 /** Inserts `slice` between `from` and `to` as ProseMirror's paste does, and returns where it landed. */
@@ -287,13 +290,14 @@ export const pastePayload = (
         if ($from.parent.isTextblock) {
             depth = $from.depth + 1;
         }
-        const { content, droppedImages } = importHtml(payload.html, schema, settings.window, {
+        const { content, droppedImages, removedColors } = importHtml(payload.html, schema, settings.window, {
             limits,
             headingLevels,
             depth,
+            colors: colorReadingOf(model),
         });
         insert(prepared(insertable(content)));
-        return { droppedMedia: droppedImages };
+        return { droppedMedia: droppedImages, removedFormatting: removedColors > 0 };
     }
     // Plain text, which Markdown structure converts in a second step.
     if (text === '') {
