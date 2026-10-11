@@ -52,6 +52,12 @@ const DEFINITION_MESSAGE = '`definition` builds the engine definition from `mode
 const SCHEMA_MESSAGE =
     '`schema` imports only `model` and `prosemirror-model`, because `./html` and `clipboard/import` load the schema without the engine.';
 
+const CLIPBOARD_IMPORT_MESSAGE =
+    '`clipboard/import` imports only `model` and `prosemirror-model`, because `./html` loads it without the engine.';
+
+const HTML_MESSAGE =
+    '`html` imports only `model`, `#/definition/schema`, `clipboard/import` and `prosemirror-model`, because `./html` runs on the server without the engine or React.';
+
 const FEATURE_FILE_MESSAGE =
     "A feature file imports only `#/model`, its own `./migration` and a declared dependency's `#/features/<id>/feature`, as an outside feature must.";
 
@@ -84,6 +90,10 @@ const aliasPatterns = (folders: readonly string[]): string[] =>
 
 const relativePatterns = (folders: readonly string[]): string[] =>
     folders.flatMap((folder) => [`../${folder}`, `../${folder}/**`, `../../${folder}`, `../../${folder}/**`]);
+
+// A `!` pattern lets paths back in that earlier patterns of the same group ban.
+const exceptPatterns = (paths: readonly string[]): string[] =>
+    ['#/', '../', '../../'].flatMap((root) => paths.map((path) => `!${root}${path}`));
 
 const FEATURE_ROOTS = ['#/features', '../features', '../../features'] as const;
 
@@ -227,6 +237,12 @@ const codecsFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !=
 
 const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
 
+const clipboardImportFolders = FOLDERS.filter((folder) => folder !== 'model');
+
+const CLIPBOARD_IMPORT_PATHS = ['clipboard/import', 'clipboard/import/**'];
+
+const htmlFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'html');
+
 const TESTING_MESSAGE =
     '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, and from `features` only conformance and fixtures.';
 
@@ -368,6 +384,31 @@ export default defineConfig({
                     ...PROSEMIRROR_EXCEPT_MODEL,
                 ],
                 message: SCHEMA_MESSAGE,
+            },
+        ]),
+        layerOverride('src/clipboard/import/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(clipboardImportFolders),
+                    ...relativePatterns(clipboardImportFolders),
+                    '../*',
+                    ...PROSEMIRROR_EXCEPT_MODEL,
+                    ...REACT_PATTERNS,
+                    ...exceptPatterns(CLIPBOARD_IMPORT_PATHS),
+                ],
+                message: CLIPBOARD_IMPORT_MESSAGE,
+            },
+        ]),
+        layerOverride('src/html/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(htmlFolders),
+                    ...relativePatterns(htmlFolders),
+                    ...PROSEMIRROR_EXCEPT_MODEL,
+                    ...REACT_PATTERNS,
+                    ...exceptPatterns(['definition/schema', ...CLIPBOARD_IMPORT_PATHS]),
+                ],
+                message: HTML_MESSAGE,
             },
         ]),
         layerOverride(

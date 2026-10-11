@@ -21,7 +21,7 @@ export {
     type QuotesRule,
     type TextReplaceRule,
 } from './input-rules';
-export { carriesNodeId } from './schema';
+export { carriesNodeId, withNodeIds } from './schema';
 export { NORMALIZE_META, type Normalizer, NORMALIZERS } from './normalizers';
 
 /** The transaction meta that names the command a transaction runs, so the runtime reports it. */
