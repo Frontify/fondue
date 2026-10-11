@@ -1,5 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { readdirSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { act, render } from '@testing-library/react';
 import MarkdownIt from 'markdown-it';
 import { DOMParser as SchemaParser } from 'prosemirror-model';
@@ -7,6 +11,7 @@ import { AllSelection, NodeSelection, Selection } from 'prosemirror-state';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { createCodecs } from '#/codecs';
 import { fixtureChromeViews } from '#/features/__tests__/fixtures/chrome/view';
 import { fixtureCodeBlockView } from '#/features/__tests__/fixtures/code-block/view';
 import {
@@ -27,6 +32,7 @@ import {
     text,
 } from '#/features/__tests__/fixtures/documents';
 import { fixtureMedia } from '#/features/__tests__/fixtures/features';
+import { htmlFeatures, htmlLanguage, htmlLink } from '#/features/__tests__/fixtures/html';
 import { fixtureMediaImageView } from '#/features/__tests__/fixtures/media/view';
 import { fixtureTableBlockView } from '#/features/__tests__/fixtures/table/view';
 import {
@@ -40,15 +46,22 @@ import {
     vocabularyStyles,
     vocabularyTables,
 } from '#/features/__tests__/fixtures/vocabulary';
+import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
+import { registry } from '#/features/registry';
+import { fromHTML } from '#/html';
 import {
     compileContentModel,
     type ContentModel,
+    decodeDocument,
+    defaultLimits,
     defineFeature,
     type Diagnostic,
+    featureFromManifest,
     type JsonValue,
     type ResourceLimits,
 } from '#/model';
+import { compiledModel } from '#/model/compile';
 import { defineEditor, defineReactPresentation } from '#/react/define';
 import { RichTextEditor } from '#/react/rich-text-editor';
 import { type EditorHandle } from '#/react/types';
@@ -56,6 +69,7 @@ import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { type AuthoringPolicy, type DocumentChange } from '#/runtime/types';
 import { setSelection } from '#/testing';
 
+import { importHtml } from '../import/html';
 import { SLICE_TYPE } from '../slice';
 
 // The vocabulary stand-ins the engine can build, with a figure whose caption it can fill.
@@ -375,11 +389,18 @@ describe('paste order', () => {
             [paragraph(text('a'), boldLink, text('b'))],
         ],
         [
-            'Files with text/html and no media feature go on to the text',
+            'Shift keeps text/plain over text/html',
+            { 'text/plain': 't', 'text/html': '<p>h</p>' },
+            [],
+            'caret',
+            [paragraph(text('atb'))],
+        ],
+        [
+            'Files with text/html and no media feature go on to the HTML',
             { 'text/html': '<p>h</p>', 'text/plain': 't' },
             [new File(['x'], 'x.png', { type: 'image/png' })],
             'caret',
-            [paragraph(text('atb'))],
+            [paragraph(text('ahb'))],
         ],
         [
             'Files with text/plain and no media feature go on to the text',
@@ -397,6 +418,30 @@ describe('paste order', () => {
             [],
             'caret',
             [paragraph(text('a'), text('rich', mark('italic')), text('b'))],
+        ],
+        [
+            'The internal slice comes before text/html',
+            {
+                'text/html': '<p>html</p>',
+                [SLICE_TYPE]: slicePayload([paragraph(text('rich', mark('italic')))], { openStart: 1, openEnd: 1 }),
+            },
+            [],
+            'caret',
+            [paragraph(text('a'), text('rich', mark('italic')), text('b'))],
+        ],
+        [
+            'Text/html comes before text/plain, and its paragraphs are inserted closed',
+            { 'text/html': '<p>one</p><p>two</p>', 'text/plain': 'plain' },
+            [],
+            'caret',
+            [paragraph(text('a')), paragraph(text('one')), paragraph(text('two')), paragraph(text('b'))],
+        ],
+        [
+            'A span holding only U+00A0, as WebKit and Chrome copy a space, becomes a space',
+            { 'text/html': '<p>x<span>\u00A0</span>y<span class="Apple-converted-space">\u00A0</span>z</p>' },
+            [],
+            'caret',
+            [paragraph(text('ax y zb'))],
         ],
         [
             'Text/plain lines become paragraphs',
@@ -420,6 +465,17 @@ describe('paste order', () => {
         pasteInto(mounted, data, files);
 
         expect(mounted.content()).toEqual(expected);
+        mounted.unmount();
+    });
+
+    it('uses text/html over a word even when it parses to no content, and does not use the text/plain', () => {
+        const mounted = mount();
+        setSelection(mounted.handle, { text: 'b' });
+
+        pasteInto(mounted, { 'text/html': '<img src=x>', 'text/plain': 'u' });
+
+        expect(mounted.content()).toEqual([paragraph(text('a'))]);
+        expect(mounted.announced()).toBe('Media not pasted: 1');
         mounted.unmount();
     });
 
@@ -1053,13 +1109,13 @@ describe('undo and failures', () => {
         mounted.unmount();
     });
 
-    it('keeps plain text with no Markdown structure, or with text/html beside it, as typed', () => {
+    it('keeps plain text with no Markdown structure as typed, and takes the text/html beside Markdown text', () => {
         const mounted = mount({ blocks: [paragraph()] });
 
         pasteInto(mounted, { 'text/plain': 'Read https://frontify.com now' });
-        pasteInto(mounted, { 'text/plain': ' **x**', 'text/html': '<p><b>x</b></p>' });
+        pasteInto(mounted, { 'text/plain': ' **x**', 'text/html': '<p>**x**</p>' });
 
-        expect(mounted.content()).toEqual([paragraph(text('Read https://frontify.com now **x**'))]);
+        expect(mounted.content()).toEqual([paragraph(text('Read https://frontify.com now**x**'))]);
         mounted.unmount();
     });
 });
@@ -1156,6 +1212,482 @@ describe('copy', () => {
         ]);
         expect(flavors.html).toContain('Kept');
         expect(flavors.text).toBe('Kept');
+        mounted.unmount();
+    });
+});
+
+describe('pasted HTML', () => {
+    const htmlModel = compileContentModel(htmlFeatures(), { id: 'fixture.vocabulary', version: 1 });
+    const block = (...content: readonly JsonValue[]) => node('paragraph', { lang: null, align: null }, ...content);
+    /** An editor of the shipped text features and the HTML stand-ins, with the caret in an empty paragraph. */
+    const mountHtml = (options: Options = {}) => mount({ editorModel: htmlModel, blocks: [block()], ...options });
+
+    it('turns each U+00A0 after a space back into a space and keeps a lone U+00A0', () => {
+        const mounted = mount({ blocks: [paragraph()] });
+
+        pasteInto(mounted, { 'text/html': '<p>a &nbsp; &nbsp;b</p><p>a&nbsp;b</p>' });
+
+        expect(mounted.content()).toEqual([paragraph(text('a    b')), paragraph(text('a\u00A0b'))]);
+        mounted.unmount();
+    });
+
+    const preBlock = defineFeature({
+        id: 'fixture.pre-block',
+        version: 1,
+        requires: [{ id: 'core', version: 1 }],
+        nodes: {
+            code_block: {
+                group: 'block',
+                content: 'text*',
+                marks: [],
+                whitespace: 'pre',
+                attrs: {},
+                html: ['pre', 0],
+                parse: [{ tag: 'pre' }],
+            },
+        },
+    });
+    it.each([
+        [
+            'a list item paragraph',
+            '<ul><li>a &nbsp; &nbsp;b</li></ul>',
+            [node('bullet_list', undefined, node('list_item', undefined, block(text('a    b'))))],
+        ],
+        [
+            'a space and a U+00A0 split across marks',
+            '<p>a <b>&nbsp;</b>x</p>',
+            [block(text('a '), text(' ', mark('bold')), text('x'))],
+        ],
+        [
+            'a code block that keeps its U+00A0',
+            '<pre>a &nbsp; b</pre>',
+            [{ type: 'code_block', content: [text('a \u00A0 b')] }],
+        ],
+    ] as const)('turns each U+00A0 after a space back into a space in %s', (_name, html, expected) => {
+        const editorModel = compileContentModel([...htmlFeatures(), preBlock()], {
+            id: 'fixture.vocabulary',
+            version: 1,
+        });
+        const mounted = mount({ editorModel, blocks: [block()] });
+
+        pasteInto(mounted, { 'text/html': html });
+
+        expect(mounted.content()).toEqual(expected);
+        mounted.unmount();
+    });
+
+    it('keeps the text of a pasted object and drops its embed, param and nested object', () => {
+        const mounted = mount({ blocks: [paragraph()] });
+
+        pasteInto(mounted, {
+            'text/html':
+                '<p>a</p><object data="x.swf"><param name="p" value="v">fallback <b>text</b><embed src="y"><object>no</object></object>',
+        });
+
+        expect(mounted.content()).toEqual([paragraph(text('a')), paragraph(text('fallback text'))]);
+        mounted.unmount();
+    });
+
+    it('lets the parse rules of shipped features read only the listed attributes and styles', () => {
+        const attributes = new Set([
+            'href',
+            'target',
+            'start',
+            'colspan',
+            'rowspan',
+            'scope',
+            'dir',
+            'lang',
+            'checked',
+            'aria-checked',
+            'color',
+        ]);
+        const styles = new Set([
+            'text-align',
+            'list-style-type',
+            'font-weight',
+            'font-style',
+            'text-decoration',
+            'vertical-align',
+            'color',
+            'background-color',
+        ]);
+        const shipped = compiledModel(
+            compileContentModel(
+                Object.values(registry).map((factory) => factory()),
+                { id: 'test.shipped', version: 1 },
+            ),
+        );
+        const read: string[] = [];
+        for (const { parse } of [...shipped.nodes, ...shipped.marks].map(({ declaration }) => declaration)) {
+            for (const rule of parse) {
+                if ('style' in rule) {
+                    read.push(`style:${rule.style}`);
+                }
+                for (const source of Object.values('tag' in rule ? (rule.attrs ?? {}) : {})) {
+                    if ('from' in source) {
+                        read.push(`attr:${source.from}`);
+                    } else if ('fromStyle' in source) {
+                        read.push(`style:${source.fromStyle}`);
+                    }
+                }
+            }
+        }
+        for (const { parse } of shipped.nodes.flatMap(({ shared }) => shared.map(({ declaration }) => declaration))) {
+            if (parse !== undefined && 'attr' in parse) {
+                read.push(`attr:${parse.attr}`);
+            } else if (parse !== undefined) {
+                read.push(`style:${parse.style}`);
+            }
+        }
+
+        expect(read.length).toBeGreaterThan(0);
+        expect(
+            read.filter((entry) => {
+                const [kind, name] = entry.split(':') as [string, string];
+                return !(kind === 'attr' ? attributes : styles).has(name);
+            }),
+        ).toEqual([]);
+    });
+
+    it('maps only the listed style properties to marks and stores no CSS text', () => {
+        const mounted = mountHtml();
+
+        pasteInto(mounted, {
+            'text/html':
+                '<p><span style="color:red;background:url(x);position:fixed">x</span> <span style="font-weight: bold; position: fixed">b</span></p>',
+        });
+
+        expect(mounted.content()).toEqual([block(text('x '), text('b', mark('bold')))]);
+        expect(JSON.stringify(mounted.content())).not.toMatch(/red|url|fixed|style/);
+        mounted.unmount();
+    });
+
+    it.each([
+        ['h1 with levels 2 to 4 allowed', [2, 3, 4], '<h1>a</h1><h3>b</h3><h6>c</h6>', [2, 3, 4]],
+        ['h2 with no level allowed', [], '<h2>a</h2>', []],
+    ] as const)(
+        'moves a pasted %s to the nearest allowed level, or makes it a paragraph',
+        (_name, allowed, html, levels) => {
+            const mounted = mountHtml({ policy: { creatableHeadingLevels: allowed } });
+
+            pasteInto(mounted, { 'text/html': html });
+
+            const content = mounted.content() as readonly { readonly type: string; readonly attrs: object }[];
+            if (levels.length === 0) {
+                expect(content).toEqual([block(text('a'))]);
+            } else {
+                expect(content.map(({ type, attrs }) => [type, (attrs as { readonly level: number }).level])).toEqual(
+                    levels.map((level) => ['heading', level]),
+                );
+            }
+            mounted.unmount();
+        },
+    );
+
+    it('pastes HTML with a link while links have paste: false as its text with no link mark', () => {
+        const mounted = mountHtml({ policy: { features: { 'fixture.html-link': { ...ALLOW, paste: false } } } });
+
+        pasteInto(mounted, { 'text/html': '<p><a href="https://frontify.com"><strong>linked</strong></a> text</p>' });
+
+        expect(mounted.content()).toEqual([block(text('linked', mark('bold')), text(' text'))]);
+        mounted.unmount();
+    });
+
+    it.each([
+        ['maxDocumentNodes', 6, '<p>1</p><p>2</p><p>3</p><p>4</p>'],
+        ['maxDepth', 4, '<blockquote><blockquote><blockquote><p>deep</p></blockquote></blockquote></blockquote>'],
+    ] as const)('rejects pasted HTML over %s once inserted, with the state unchanged', (limit, value, html) => {
+        const mounted = mountHtml({ limits: { [limit]: value } });
+        const before = mounted.view.state;
+
+        pasteInto(mounted, { 'text/html': html });
+
+        expect(mounted.view.state.doc).toBe(before.doc);
+        expect(mounted.view.state.selection.eq(before.selection)).toBe(true);
+        expect(mounted.diagnostics.map(({ code, details }) => [code, details])).toEqual([
+            ['clipboard.paste-rejected', { reason: limit }],
+        ]);
+        mounted.unmount();
+    });
+
+    it('pastes mention markup in HTML as its label text, dropping and announcing the images', () => {
+        const mounted = mount({ blocks: [paragraph()] });
+
+        pasteInto(mounted, {
+            'text/html':
+                '<p>Hi <span data-mention="u-1" data-resource-id="u-1">@Ada</span><img src="https://example.com/a.png" alt=""><img src="data:image/png;base64,iVBORw0KGgo=" alt="Logo"></p>',
+        });
+
+        expect(mounted.content()).toEqual([paragraph(text('Hi @AdaLogo'))]);
+        expect(mounted.announced()).toBe('Media not pasted: 2');
+        mounted.unmount();
+    });
+
+    it('reports an HTML parser that throws with codes only and changes nothing', () => {
+        const mounted = mount();
+        setSelection(mounted.handle, { text: 'a' });
+        const before = mounted.view.state;
+        vi.spyOn(DOMParser.prototype, 'parseFromString').mockImplementation(() => {
+            throw new Error('Secret fixture text');
+        });
+
+        pasteInto(mounted, { 'text/html': '<p>Secret <b>fixture</b> text</p>', 'text/plain': 'Secret fixture text' });
+
+        expect(mounted.view.state.doc).toBe(before.doc);
+        expect(mounted.view.state.selection.eq(before.selection)).toBe(true);
+        expect(mounted.diagnostics.map(({ code, details }) => [code, details])).toEqual([
+            ['clipboard.paste-rejected', { reason: 'error' }],
+        ]);
+        expect(JSON.stringify(mounted.diagnostics)).not.toMatch(/Secret|fixture/);
+        mounted.unmount();
+    });
+
+    it('pastes the copied text/html of a run of three spaces back as three spaces', () => {
+        const source = mount({ blocks: [paragraph(text('a   b'))] });
+        selectAll(source);
+        const { html } = copyFrom(source);
+        source.unmount();
+        const target = mount({ blocks: [paragraph()] });
+
+        pasteInto(target, { 'text/html': html });
+
+        expect(html).toContain('a \u00A0 b');
+        expect(target.content()).toEqual([paragraph(text('a   b'))]);
+        target.unmount();
+    });
+
+    // A path, not a `URL`: happy-dom replaces the global `URL`, which rejects a `file:` URL.
+    const here = dirname(fileURLToPath(import.meta.url));
+    const valid = join(here, '..', '..', 'model', '__tests__', 'fixtures', 'model', 'valid');
+    const manifests = join(here, '..', '..', 'model', '__tests__', 'fixtures', 'manifest');
+    const security = join(here, '..', '..', 'html', '__tests__', 'fixtures', 'security');
+    it.each(readdirSync(valid))(
+        'parses the copied text/html and the toHTML output of %s to equal documents',
+        (name) => {
+            const stored = JSON.parse(readFileSync(join(valid, name), 'utf8')) as {
+                readonly content: { readonly content: readonly JsonValue[] };
+            };
+            const mounted = mount({ blocks: stored.content.content });
+            selectAll(mounted);
+            const copied = copyFrom(mounted).html;
+            const written = createCodecs(model).toHTML(mounted.handle.getSnapshot().document).html;
+            const { schema } = mounted.view.state;
+            const parsed = (html: string) =>
+                schema.topNodeType.create(
+                    null,
+                    importHtml(html, schema, window, { limits: defaultLimits, headingLevels: undefined }).content,
+                );
+
+            expect(parsed(copied).eq(parsed(written))).toBe(true);
+            mounted.unmount();
+        },
+    );
+
+    const withoutIds = (value: unknown): unknown =>
+        JSON.parse(JSON.stringify(value, (property, item: unknown) => (property === 'nodeId' ? undefined : item)));
+    /** What `fromHTML` makes of the copied text/html of `blocks` under `editorModel`, with the mounted source content. */
+    const roundTrip = (editorModel: ContentModel, blocks: readonly JsonValue[]) => {
+        const mounted = mount({ editorModel, blocks });
+        selectAll(mounted);
+        const { html } = copyFrom(mounted);
+        const source = mounted.handle.getSnapshot().document.content.content;
+        mounted.unmount();
+        const result = fromHTML(html, editorModel, { window });
+        expect(result.status).toBe('editable');
+        return { imported: result.status === 'editable' && result.document.content.content, source };
+    };
+
+    it('converts the copied text/html of the spaces fixture with fromHTML to the mounted source document', () => {
+        const stored = JSON.parse(readFileSync(join(valid, 'spaces.json'), 'utf8')) as {
+            readonly content: { readonly content: readonly JsonValue[] };
+        };
+
+        const { imported, source } = roundTrip(model, stored.content.content);
+
+        expect(imported).not.toEqual([]);
+        expect(JSON.stringify(imported)).toContain('two  spaces and five     spaces');
+        expect(withoutIds(imported)).toEqual(withoutIds(source));
+    });
+
+    it('converts the copied text/html of runs of spaces in marks, list items and code with fromHTML to the mounted source document', () => {
+        const { imported, source } = roundTrip(htmlModel, [
+            block(text('a   b'), text('  x', mark('bold')), text('y   z')),
+            node('bullet_list', undefined, node('list_item', undefined, block(text('item   two')))),
+        ]);
+
+        expect(JSON.stringify(imported)).toContain('item   two');
+        expect(withoutIds(imported)).toEqual(withoutIds(source));
+    });
+
+    it('pastes the toHTML output of a document with an island without its notice as text', () => {
+        const source = mount({
+            blocks: [paragraph(text('before')), { type: 'callout', content: [paragraph(text('Kept'))] } as JsonValue],
+        });
+        const html = createCodecs(model).toHTML(source.handle.getSnapshot().document).html;
+        source.unmount();
+        const found = /data-rte-message="islands"[^>]*>([^<]+)</.exec(html);
+        const notice = String(found?.[1]);
+        const target = mount({ blocks: [paragraph()] });
+
+        pasteInto(target, { 'text/html': html });
+
+        expect(found).not.toBeNull();
+        expect(JSON.stringify(target.content())).toContain('before');
+        expect(JSON.stringify(target.content())).not.toContain(notice);
+        target.unmount();
+    });
+
+    it('replaces each attribute value decode would reject with its default, so the document still decodes as editable', () => {
+        const long = `en-x-${'abcdefgh-'.repeat(1000)}abcdefgh`;
+        const mounted = mountHtml();
+
+        pasteInto(mounted, {
+            'text/html': `<ol start="-1"><li>a</li></ol><p><span lang="fr" dir="x">b</span></p><p lang="${long}">c</p><p><a href="https://x.io/${'a'.repeat(9000)}">d</a></p>`,
+        });
+
+        expect(mounted.content()).toEqual([
+            node('ordered_list', { start: 1 }, node('list_item', undefined, block(text('a')))),
+            block(text('b', mark('language', { lang: 'fr', dir: null }))),
+            block(text('c')),
+            block(text('d')),
+        ]);
+        expect(decodeDocument(mounted.handle.getSnapshot().document, htmlModel).status).toBe('editable');
+        mounted.unmount();
+    });
+
+    it('applies maxAttributeLength of the editor limits, keeps a value exactly at it, and the default limit when none is given', () => {
+        const html = '<p lang="en-x-abc">at</p><p lang="en-x-abcd">over</p><p><span lang="en-x-abcd">mark</span></p>';
+        const limited = mountHtml({ limits: { maxAttributeLength: 8 } });
+        const unlimited = mountHtml();
+
+        pasteInto(limited, { 'text/html': html });
+        pasteInto(unlimited, { 'text/html': html });
+
+        expect(limited.content()).toEqual([
+            node('paragraph', { lang: 'en-x-abc', align: null }, text('at')),
+            block(text('over')),
+            block(text('mark')),
+        ]);
+        expect(unlimited.content()).toEqual([
+            node('paragraph', { lang: 'en-x-abc', align: null }, text('at')),
+            node('paragraph', { lang: 'en-x-abcd', align: null }, text('over')),
+            block(text('mark', mark('language', { lang: 'en-x-abcd', dir: null }))),
+        ]);
+        limited.unmount();
+        unlimited.unmount();
+    });
+
+    // happy-dom's parser drops what follows a `script` inside `svg`, so `svg.html` runs through `fromHTML` in jsdom only.
+    it.each(['math-mark.html', 'math.html', 'svg-foreign-object.html', 'svg-link.html'])(
+        'pastes the SVG or MathML of %s as its text only',
+        (name) => {
+            const mounted = mountHtml();
+
+            pasteInto(mounted, { 'text/html': readFileSync(join(security, name), 'utf8') });
+
+            const content = mounted.content() as readonly { readonly type: string }[];
+            expect(content.map(({ type }) => type)).toEqual(['paragraph', 'paragraph', 'paragraph']);
+            expect(JSON.stringify(content)).not.toMatch(/"marks"|evil|javascript/);
+            mounted.unmount();
+        },
+    );
+
+    it('pastes an element whose required attribute passes maxAttributeLength as a paragraph of its text', () => {
+        const slug = featureFromManifest(JSON.parse(readFileSync(join(manifests, 'acme-slug.json'), 'utf8')));
+        const editorModel = compileContentModel([...htmlFeatures(), slug()], { id: 'fixture.vocabulary', version: 1 });
+        const mounted = mount({ editorModel, blocks: [block()] });
+
+        pasteInto(mounted, { 'text/html': `<div class="acme-slug" data-slug="${'s'.repeat(10_000)}">kept</div>` });
+
+        expect(mounted.content()).toEqual([block(text('kept'))]);
+        expect(decodeDocument(mounted.handle.getSnapshot().document, editorModel).status).toBe('editable');
+        mounted.unmount();
+    });
+
+    const bareLink = defineFeature({
+        id: 'fixture.bare-link',
+        version: 1,
+        requires: [{ id: 'core', version: 1 }],
+        marks: { plain_link: { attrs: {}, html: ['a', 0], parse: [{ tag: 'a' }], rank: -2 } },
+    });
+    const bareSpan = defineFeature({
+        id: 'fixture.bare-span',
+        version: 1,
+        requires: [{ id: 'core', version: 1 }],
+        marks: { plain_span: { attrs: {}, html: ['span', 0], parse: [{ tag: 'span' }] } },
+    });
+    it.each([
+        ['a[href] after a bare a', [core(), bareLink(), htmlLink()], '<a href="https://x.io">x</a>', 'link'],
+        ['a[href] before a bare a', [core(), htmlLink(), bareLink()], '<a href="https://x.io">x</a>', 'link'],
+        ['span[lang] after a bare span', [core(), bareSpan(), htmlLanguage()], '<span lang="fr">x</span>', 'language'],
+        ['span[lang] before a bare span', [core(), htmlLanguage(), bareSpan()], '<span lang="fr">x</span>', 'language'],
+        ['a bare a after a[href], with no href', [core(), htmlLink(), bareLink()], '<a>x</a>', 'plain_link'],
+        [
+            'a bare span after span[lang], with no lang',
+            [core(), htmlLanguage(), bareSpan()],
+            '<span>x</span>',
+            'plain_span',
+        ],
+    ] as const)(
+        'takes a mark rule with an attribute selector over a bare tag in either model order, with %s',
+        (_name, installed, html, type) => {
+            const editorModel = compileContentModel(installed, { id: 'fixture.vocabulary', version: 1 });
+            const mounted = mount({ editorModel, blocks: [{ type: 'paragraph', attrs: { lang: null } }] });
+
+            pasteInto(mounted, { 'text/html': `<p>${html}</p>` });
+
+            const paragraphs = mounted.content() as readonly {
+                readonly content: readonly { readonly marks: readonly { readonly type: string }[] }[];
+            }[];
+            expect(
+                paragraphs.flatMap((child) => child.content.flatMap((run) => run.marks.map((entry) => entry.type))),
+            ).toEqual([type]);
+            mounted.unmount();
+        },
+    );
+
+    const pullQuote = featureFromManifest(JSON.parse(readFileSync(join(manifests, 'acme-pull-quote.json'), 'utf8')));
+    const aside = defineFeature({
+        id: 'fixture.aside',
+        version: 1,
+        requires: [{ id: 'core', version: 1 }],
+        nodes: {
+            aside: { group: 'block', content: 'block+', attrs: {}, html: ['aside', 0], parse: [{ tag: 'blockquote' }] },
+        },
+    });
+    it.each([
+        [
+            'blocks.quote first',
+            [core(), quote(), pullQuote()],
+            '<blockquote class="acme-pull-quote">x</blockquote>',
+            'acme_pull_quote',
+        ],
+        [
+            'the manifest first',
+            [core(), pullQuote(), quote()],
+            '<blockquote class="acme-pull-quote">x</blockquote>',
+            'acme_pull_quote',
+        ],
+        [
+            'blocks.quote before a bare-tag rule',
+            [core(), quote(), aside()],
+            '<blockquote><p>x</p></blockquote>',
+            'blockquote',
+        ],
+        [
+            'a bare-tag rule before blocks.quote',
+            [core(), aside(), quote()],
+            '<blockquote><p>x</p></blockquote>',
+            'aside',
+        ],
+    ] as const)('takes the more specific rule, then model order, with %s', (_name, installed, html, type) => {
+        const editorModel = compileContentModel(installed, { id: 'fixture.vocabulary', version: 1 });
+        const mounted = mount({ editorModel, blocks: [{ type: 'paragraph', attrs: { lang: null } }] });
+
+        pasteInto(mounted, { 'text/html': html });
+
+        expect((mounted.content() as readonly { readonly type: string }[]).map((child) => child.type)).toEqual([type]);
         mounted.unmount();
     });
 });

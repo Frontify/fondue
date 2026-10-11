@@ -24,10 +24,7 @@ const liveRegionFaults = (root: ParentNode): string[] => {
 };
 
 // Every story file of the package, as the Storybook test runner renders them.
-const modules = (import.meta as unknown as { readonly glob: Glob }).glob(
-    ['../../**/*.stories.tsx', '!../../**/__lint-fixtures__/**'],
-    { eager: true },
-);
+const modules = (import.meta as unknown as { readonly glob: Glob }).glob(['../../**/*.stories.tsx'], { eager: true });
 const stories = Object.entries(modules).flatMap(([path, module]) =>
     Object.entries(composeStories(module)).map(([name, Story]) => ({
         title: `${path} ${name}`,
