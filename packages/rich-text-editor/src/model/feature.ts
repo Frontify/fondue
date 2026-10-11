@@ -61,13 +61,18 @@ type FactoryOf<D> = FeatureFactory<
 
 /** Returns the feature's factory; hosts call it, with typed and serializable options or none. */
 export const defineFeature = <const D extends FeatureDeclaration>(declaration: D): FactoryOf<D> => {
-    // Migration steps and codec overrides hold functions, which a JSON snapshot would reject, so they are copied apart.
-    const { migrations, codecs, ...data } = declaration;
+    // Migration steps and codec overrides hold functions, and `text-rule` input rules a `RegExp`, which a JSON snapshot
+    // would reject, so they are copied apart.
+    const { migrations, codecs, inputRules, ...data } = declaration;
+    const patterns = inputRules !== undefined && inputRules.some(({ kind }) => kind === 'text-rule');
     let copy: FeatureDeclaration;
-    if (migrations === undefined && codecs === undefined) {
+    if (migrations === undefined && codecs === undefined && !patterns) {
         copy = snapshot(declaration);
     } else {
         const parts: Record<string, unknown> = { ...snapshot(data) };
+        if (inputRules !== undefined) {
+            parts.inputRules = Object.freeze(inputRules.map((rule) => Object.freeze({ ...rule })));
+        }
         if (migrations !== undefined) {
             parts.migrations = Object.freeze(migrations.map((step) => ({ ...step })));
         }

@@ -12,6 +12,19 @@ const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/marks.bold',
     component: RichTextEditor,
     tags: ['autodocs'],
+    parameters: {
+        docs: {
+            description: {
+                component: `
+Strong importance as \`strong\`, toggled on the selection or at the caret.
+
+| Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
+|---|---|---|---|---|---|
+| \`marks.bold\` | \`mark.bold.toggle\` | \`Mod-b\` | Bold toggle | \`bold.stars\`, \`bold.underscores\` | Adds or removes \`bold\` on the selection, or in the stored marks at a caret |
+`,
+            },
+        },
+    },
     args: {
         'aria-label': 'Notes',
         definition: defineEditor({ id: 'story.bold', model }),

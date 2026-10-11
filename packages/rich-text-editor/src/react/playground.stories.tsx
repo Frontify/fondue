@@ -3,7 +3,19 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { bold, core } from '#/features';
+import {
+    bold,
+    code,
+    core,
+    heading,
+    inputRules,
+    italic,
+    quote,
+    strike,
+    subscript,
+    superscript,
+    underline,
+} from '#/features';
 import {
     type CommandResult,
     type CommandsOfModel,
@@ -22,14 +34,6 @@ import {
 } from '#/index';
 import { compileContentModel, createEmptyDocument, defineFeature, type JsonValue, setBlock } from '#/model';
 import { createFakePersistenceService } from '#/testing';
-
-// Turns on the package's input rule engine with `bold.stars`, until `marks.bold` declares its own rules; the CT probe shares it.
-export const boldRules = defineFeature({
-    id: 'story.bold-rules',
-    version: 1,
-    requires: [{ id: 'marks.bold', version: 1 }],
-    inputRules: [{ id: 'bold.stars', kind: 'mark-delimiter', open: '**', close: '**', mark: 'bold' }],
-});
 
 /** The chrome of the callout stand-in: a button that switches its tone through a node view action. */
 const CalloutChrome = () => {
@@ -76,8 +80,48 @@ const callouts = defineNodeView(
     { node: 'callout', component: CalloutChrome },
 );
 
-const model = compileContentModel([core(), bold(), boldRules(), callouts], { id: 'story.playground', version: 1 });
+// Every typography rule is on.
+const typography = [
+    'typography.quotes',
+    'typography.ellipsis',
+    'typography.dashes',
+    'typography.symbols',
+    'typography.numeric',
+] as const;
+const model = compileContentModel(
+    [
+        core(),
+        bold(),
+        italic(),
+        underline(),
+        strike(),
+        code(),
+        subscript(),
+        superscript(),
+        heading(),
+        quote(),
+        inputRules({ typography }),
+        callouts,
+    ],
+    { id: 'story.playground', version: 1 },
+);
 const definition = defineEditor({ id: 'story.playground', model });
+
+// The document toolbar's groups of the shipped features.
+const TOOLBAR = [
+    ['history.undo', 'history.redo'],
+    ['text-style'],
+    [
+        'mark.bold.toggle',
+        'mark.italic.toggle',
+        'mark.underline.toggle',
+        'mark.strike.toggle',
+        'mark.code.toggle',
+        'mark.subscript.toggle',
+        'mark.superscript.toggle',
+    ],
+    ['quote.toggle'],
+];
 
 type Commands = CommandsOfModel<typeof model>;
 type PlaygroundProps = RichTextEditorProps<Commands> & {
@@ -134,7 +178,7 @@ const Playground = ({
     const [hostContainer, setHostContainer] = useState<HTMLElement | null>(null);
     const hostPanelRef = useRef<HTMLElement>(null);
     const presentation = useMemo(
-        () => defineReactPresentation({ contentClassName, toolbar: [['mark.bold.toggle']], toolbarShortcut }),
+        () => defineReactPresentation({ contentClassName, toolbar: TOOLBAR, toolbarShortcut }),
         [contentClassName, toolbarShortcut],
     );
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
@@ -234,6 +278,24 @@ const Playground = ({
                     }
                 >
                     Toggle callout
+                </button>
+                <button
+                    type="button"
+                    onClick={() =>
+                        log(
+                            `execute heading.set ${resultText(handleRef.current?.execute('heading.set', { level: 2 }))}`,
+                        )
+                    }
+                >
+                    Heading 2
+                </button>
+                <button
+                    type="button"
+                    onClick={() =>
+                        log(`execute block.move.down ${resultText(handleRef.current?.execute('block.move.down'))}`)
+                    }
+                >
+                    Move the block down
                 </button>
                 <button
                     type="button"
@@ -485,7 +547,65 @@ const meta: Meta<typeof Playground> = {
     title: 'Rich Text Editor/Playground',
     component: Playground,
     tags: ['autodocs'],
-    excludeStories: ['boldRules'],
+    parameters: {
+        docs: {
+            description: {
+                component: `
+## Keyboard reference
+
+Shortcuts of the shipped features, in the package key syntax and as each platform shows them.
+
+## History
+
+| Action | Command | Key | Apple | Other platforms |
+|---|---|---|---|---|
+| Undo | \`history.undo\` | \`Mod-z\` | ⌘Z | Ctrl+Z |
+| Redo | \`history.redo\` | \`Mod-Shift-z\` | ⇧⌘Z | Ctrl+Shift+Z |
+| Redo | \`history.redo\` | \`other:Ctrl-y\` | none | Ctrl+Y |
+
+## Text formatting
+
+| Action | Command | Key | Apple | Other platforms |
+|---|---|---|---|---|
+| Bold | \`mark.bold.toggle\` | \`Mod-b\` | ⌘B | Ctrl+B |
+| Italic | \`mark.italic.toggle\` | \`Mod-i\` | ⌘I | Ctrl+I |
+| Underline | \`mark.underline.toggle\` | \`Mod-u\` | ⌘U | Ctrl+U |
+| Strikethrough | \`mark.strike.toggle\` | \`Mod-Shift-x\` | ⇧⌘X | Ctrl+Shift+X |
+| Code | \`mark.code.toggle\` | \`Mod-e\` | ⌘E | Ctrl+E |
+| Subscript | \`mark.subscript.toggle\` | \`Mod-,\` | ⌘, | Ctrl+, |
+| Superscript | \`mark.superscript.toggle\` | \`Mod-.\` | ⌘. | Ctrl+. |
+
+## Blocks
+
+| Action | Command | Key | Apple | Other platforms |
+|---|---|---|---|---|
+| Line break | \`hard-break.insert\` | \`Shift-Enter\` | ⇧Enter | Shift+Enter |
+| Normal text | \`paragraph.set\` | \`mac:Mod-Alt-0\` | ⌥⌘0 | none |
+| Normal text | \`paragraph.set\` | \`other:Ctrl-Shift-0\` | none | Ctrl+Shift+0 |
+| Heading 1 | \`heading.set\` with \`{ level: 1 }\` | \`mac:Mod-Alt-1\` | ⌥⌘1 | none |
+| Heading 2 | \`heading.set\` with \`{ level: 2 }\` | \`mac:Mod-Alt-2\` | ⌥⌘2 | none |
+| Heading 3 | \`heading.set\` with \`{ level: 3 }\` | \`mac:Mod-Alt-3\` | ⌥⌘3 | none |
+| Heading 4 | \`heading.set\` with \`{ level: 4 }\` | \`mac:Mod-Alt-4\` | ⌥⌘4 | none |
+| Heading 5 | \`heading.set\` with \`{ level: 5 }\` | \`mac:Mod-Alt-5\` | ⌥⌘5 | none |
+| Heading 6 | \`heading.set\` with \`{ level: 6 }\` | \`mac:Mod-Alt-6\` | ⌥⌘6 | none |
+| Heading 1 | \`heading.set\` with \`{ level: 1 }\` | \`other:Ctrl-Shift-1\` | none | Ctrl+Shift+1 |
+| Heading 2 | \`heading.set\` with \`{ level: 2 }\` | \`other:Ctrl-Shift-2\` | none | Ctrl+Shift+2 |
+| Heading 3 | \`heading.set\` with \`{ level: 3 }\` | \`other:Ctrl-Shift-3\` | none | Ctrl+Shift+3 |
+| Heading 4 | \`heading.set\` with \`{ level: 4 }\` | \`other:Ctrl-Shift-4\` | none | Ctrl+Shift+4 |
+| Heading 5 | \`heading.set\` with \`{ level: 5 }\` | \`other:Ctrl-Shift-5\` | none | Ctrl+Shift+5 |
+| Heading 6 | \`heading.set\` with \`{ level: 6 }\` | \`other:Ctrl-Shift-6\` | none | Ctrl+Shift+6 |
+| Move up | \`block.move.up\` | \`Mod-Alt-ArrowUp\` | ⌥⌘↑ | Ctrl+Alt+Up |
+| Move down | \`block.move.down\` | \`Mod-Alt-ArrowDown\` | ⌥⌘↓ | Ctrl+Alt+Down |
+
+## Surface
+
+| Action | Key | Apple | Other platforms |
+|---|---|---|---|
+| Select all, node views included | \`Mod-a\` | ⌘A | Ctrl+A |
+`,
+            },
+        },
+    },
     args: {
         'aria-label': 'Notes',
         allowNewBold: true,
@@ -498,7 +618,8 @@ const meta: Meta<typeof Playground> = {
         defaultToolbarMode: 'fixed',
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },
-        placeholder: 'Write something, press Mod+B or type **text** for bold, and Mod+Z to undo',
+        placeholder: 'Write something, type **text** or ## and a space, pick a text style, and Mod+Z to undo',
+        inputRules: { exclude: [] },
         readOnly: false,
         disabled: false,
         required: false,
@@ -513,6 +634,7 @@ const meta: Meta<typeof Playground> = {
         services: { control: false },
         portalContainer: { control: false },
         presentation: { control: false },
+        inputRules: { control: 'object' },
         profile: { control: 'select', options: ['inline', 'comment', 'document', 'brand-document'] },
         status: { control: 'select', options: ['neutral', 'success', 'error', 'loading'] },
         defaultToolbarMode: { control: 'select', options: ['fixed', 'bubble'] },

@@ -211,9 +211,17 @@ export const More = ({
                     }
                 }}
             >
-                {items.map((item) => (
-                    <MoreRow key={item.key} item={item} strings={strings} onRun={onRun} />
-                ))}
+                {/* The text style picker that does not fit offers its rows here. */}
+                {items
+                    .flatMap((item) => {
+                        if (item.options === undefined) {
+                            return [item];
+                        }
+                        return item.options.filter(({ offered }) => offered);
+                    })
+                    .map((item) => (
+                        <MoreRow key={item.key} item={item} strings={strings} onRun={onRun} />
+                    ))}
                 <Dropdown.Item
                     onSelect={() => {
                         // The toolbar that held More unmounts, so focus goes to the surface.

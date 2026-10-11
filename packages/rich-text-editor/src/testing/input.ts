@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type KeyBinding } from '#/model';
+import { OBJECT_REPLACEMENT } from '#/model/values';
 import { type EditorRuntime, positionOf, runtimeOf } from '#/runtime/runtime';
 
 /** Names content, never document positions. */
@@ -68,7 +69,7 @@ export const setSelection = (handle: object, target: SelectionTarget): void => {
             return start === undefined;
         }
         // One character per position, so an offset in the string is an offset in the block.
-        const content = node.textBetween(0, node.content.size, undefined, '￼');
+        const content = node.textBetween(0, node.content.size, undefined, OBJECT_REPLACEMENT);
         let index = content.indexOf(text);
         while (index >= 0 && start === undefined) {
             found += 1;
