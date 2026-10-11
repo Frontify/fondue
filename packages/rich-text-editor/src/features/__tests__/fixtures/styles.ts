@@ -3,6 +3,7 @@
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { fontColor } from '#/features/marks-font-color/feature';
 import { brandStyles } from '#/features/styles-brand/feature';
 import {
@@ -15,7 +16,6 @@ import {
     type RichTextDocument,
 } from '#/model';
 
-import { fixtureLink } from './features';
 import { fixtureHighlight } from './highlight';
 
 /** The style map the brand style tests share: a heading, a paragraph and two link styles, a default link and a deprecated style. */
@@ -72,7 +72,7 @@ export const COLOR_TOKENS: readonly ColorToken[] = [
     { id: 'brand.sun', label: 'Sun', value: '#fde68a', usage: ['highlight'] },
 ];
 
-/** Brand styles and colours with their block types, a link stand-in and the highlight stand-in. */
+/** Brand styles and colours with their block types, links and the highlight stand-in. */
 export const styleFeatures = (literalColors = false): readonly Feature[] => [
     core(),
     heading(),
@@ -80,7 +80,7 @@ export const styleFeatures = (literalColors = false): readonly Feature[] => [
     brandStyles(),
     fontColor({ literalColors }),
     fixtureHighlight({ literalColors }),
-    fixtureLink(),
+    links(),
 ];
 
 export const styleModel = (literalColors = false): ContentModel =>

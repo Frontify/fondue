@@ -3,15 +3,16 @@
 import { DOMSerializer } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
-import { fixtureBold, fixtureColor, fixtureLink } from '#/features/__tests__/fixtures/features';
+import { fixtureBold, fixtureColor } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { compileContentModel } from '#/model';
 
 import { buildSchema } from '../schema';
 
 describe('buildSchema DOM output', () => {
     it('renders a partly bold, partly coloured link as one a in the editor DOM', () => {
-        const model = compileContentModel([core(), fixtureBold(), fixtureColor(), fixtureLink()], {
+        const model = compileContentModel([core(), fixtureBold(), fixtureColor(), links()], {
             id: 'test',
             version: 1,
         });
@@ -31,7 +32,7 @@ describe('buildSchema DOM output', () => {
     });
 
     it('leaves out a url attribute that fails checkHref in the editor DOM', () => {
-        const model = compileContentModel([core(), fixtureLink()], { id: 'test', version: 1 });
+        const model = compileContentModel([core(), links()], { id: 'test', version: 1 });
         const schema = buildSchema(model);
         const unsafe = schema.mark('link', { href: 'javascript:alert(1)' });
         const host = document.createElement('div');

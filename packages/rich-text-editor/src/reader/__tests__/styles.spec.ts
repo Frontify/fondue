@@ -5,7 +5,6 @@
 import { createElement, Fragment } from 'react';
 import { describe, expect, it } from 'vitest';
 
-import { fixtureLink } from '#/features/__tests__/fixtures/features';
 import { fixtureHighlight } from '#/features/__tests__/fixtures/highlight';
 import {
     COLOR_TOKENS,
@@ -21,6 +20,7 @@ import {
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { fontColor } from '#/features/marks-font-color/feature';
 import { brandStyles } from '#/features/styles-brand/feature';
 import { compileContentModel, type Diagnostic, resolveStyle } from '#/model';
@@ -112,7 +112,7 @@ describe('the reader with brand styles', () => {
                     font_color: ({ children }) => createElement(Fragment, null, children),
                 }),
                 fixtureHighlight(),
-                defineReaderFeature(fixtureLink(), {
+                defineReaderFeature(links(), {
                     link: ({ attrs, children }) => createElement('a', { href: attrs.href }, children),
                 }),
             ],

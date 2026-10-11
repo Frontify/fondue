@@ -5,8 +5,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { compileDefinition } from '#/definition';
-import { fixtureLink } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, defaultLimits } from '#/model';
 import { type TreeNode } from '#/model/content';
@@ -15,7 +15,7 @@ import { encodeTree } from '#/model/encode';
 
 import { createLimitCheck } from '../limits';
 
-const model = compileContentModel([core(), bold(), fixtureLink()], { id: 'test.limits', version: 1 });
+const model = compileContentModel([core(), bold(), links()], { id: 'test.limits', version: 1 });
 const link = { type: 'link', attrs: { href: 'https://frontify.com', openInNewWindow: false, styleId: null } };
 const stored = {
     format: 'frontify.rich-text',
@@ -24,7 +24,7 @@ const stored = {
     requiredCapabilities: [
         { id: 'acme.callout', version: 1 },
         { id: 'core', version: 1 },
-        { id: 'fixture.link', version: 1 },
+        { id: 'links', version: 1 },
         { id: 'marks.bold', version: 1 },
     ],
     content: {

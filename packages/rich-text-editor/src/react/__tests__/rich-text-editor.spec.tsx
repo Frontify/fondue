@@ -12,7 +12,7 @@ import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'v
 import { useEditorSelection } from '#/bridge/hooks';
 import * as schemaModule from '#/definition/schema';
 import { doc, envelope, link, node, text } from '#/features/__tests__/fixtures/documents';
-import { fixtureItalic, fixtureLink, fixtureMedia } from '#/features/__tests__/fixtures/features';
+import { fixtureItalic, fixtureMedia } from '#/features/__tests__/fixtures/features';
 import { notesModel } from '#/features/__tests__/fixtures/notes';
 import {
     vocabularyAlign,
@@ -27,6 +27,7 @@ import {
     vocabularyTables,
 } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
@@ -934,12 +935,12 @@ describe('RichTextEditor documents', () => {
     const urls = load('urls.json') as readonly { readonly input: string; readonly ok: boolean }[];
     const linked = defineEditor({
         id: 'test.urls',
-        model: compileContentModel([core(), fixtureLink(), fixtureMedia()], { id: 'fixture.vocabulary', version: 1 }),
+        model: compileContentModel([core(), links(), fixtureMedia()], { id: 'fixture.vocabulary', version: 1 }),
     });
     const withUrl = (url: string) =>
         envelope(doc(para(text('Go', link(url))), node('embed', { nodeId: 'e-1', url })), [
             'core',
-            'fixture.link',
+            'links',
             'fixture.media',
         ]);
     const surfaceOf = (url: string) => {
