@@ -1,0 +1,90 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.root {
+    display: flex;
+    flex-direction: column;
+    align-items: var(--rte-image-align, center);
+    gap: var(--spacing-xx-small);
+}
+
+// The figure's side places the image and its chrome, as `text-align` places the reader's image.
+:where(:global(.fondue-rte-content) figure[data-align='left'] .root) {
+    --rte-image-align: flex-start;
+}
+
+:where(:global(.fondue-rte-content) figure[data-align='right'] .root) {
+    --rte-image-align: flex-end;
+}
+
+.frame {
+    position: relative;
+    display: inline-block;
+    max-inline-size: 100%;
+    line-height: 0;
+}
+
+.picture {
+    max-inline-size: 100%;
+    block-size: auto;
+}
+
+// At a set width the frame takes it, and the image fills the frame.
+.frame[style] > .picture {
+    inline-size: 100%;
+}
+
+.still {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+}
+
+// The resize handle on the inline end of a selected image, for a mouse, pen or finger.
+.handle {
+    display: none;
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-end: -6px;
+    inline-size: 12px;
+    block-size: 32px;
+    border: var(--border-width-default) solid var(--color-surface-default);
+    border-radius: var(--border-radius-small);
+    background-color: var(--color-focus-default);
+    cursor: ew-resize;
+    touch-action: none;
+    transform: translateY(-50%);
+
+    @media (pointer: coarse) {
+        inline-size: 24px;
+        block-size: 44px;
+        inset-inline-end: -12px;
+    }
+}
+
+:where(:global(.ProseMirror-selectednode)) .handle {
+    display: block;
+}
+
+.placeholder {
+    display: inline-block;
+    padding: var(--spacing-small);
+    border: var(--border-width-default) dashed var(--color-line-strong);
+    border-radius: var(--border-radius-small);
+    color: var(--color-secondary-default);
+}
+
+.review {
+    margin: 0;
+    color: var(--color-secondary-default);
+    font-size: var(--text-body-small-default-font-size);
+}
+
+// A printed page keeps the image and drops its controls.
+@media print {
+    .controls,
+    .review,
+    .handle {
+        display: none;
+    }
+}

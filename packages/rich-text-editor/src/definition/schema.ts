@@ -71,11 +71,15 @@ export const withNodeIds = (fragment: Fragment, next: () => string | null): Frag
     return Fragment.from(nodes);
 };
 
-/** Declared attributes, then `unknownAttributes`, which holds what the vocabulary does not declare. */
-const attributeSpecs = (declarations: AttributeDeclarations) => {
+/**
+ * Declared attributes, then `unknownAttributes`, which holds what the vocabulary does not declare. With `leaf`, every
+ * required attribute gets a null default too, since the engine rejects a schema whose parent requires a leaf it
+ * cannot create, such as a figure's image; decode and parse rules still require the values.
+ */
+const attributeSpecs = (declarations: AttributeDeclarations, leaf = false) => {
     const specs: Record<string, AttributeSpec> = {};
     for (const [name, declaration] of Object.entries(declarations)) {
-        if (name === 'nodeId') {
+        if (name === 'nodeId' || (leaf && !('default' in declaration))) {
             // The runtime fills it before a commit publishes, so engine-made nodes may start without one; decode still requires it.
             specs[name] = { default: null };
             continue;
@@ -164,7 +168,6 @@ const readSource = (element: HTMLElement, source: ParseAttributeSource, declarat
 const tagRule = (
     rule: Extract<ParseRule, { readonly tag: string }>,
     declarations: AttributeDeclarations,
-    specs: Readonly<Record<string, AttributeSpec>>,
     shared: readonly SharedAttribute[],
     exactlyOne: readonly string[] = [],
 ): TagParseRule => {
@@ -191,7 +194,7 @@ const tagRule = (
             }
             if (value !== undefined && isValidValue(declaration, value)) {
                 attrs[name] = value;
-            } else if (!('default' in (specs[name] ?? {}))) {
+            } else if (name !== 'nodeId' && !('default' in declaration)) {
                 return false;
             }
         }
@@ -245,14 +248,14 @@ export const buildSchema = (model: ContentModel): Schema => {
         let specs: Record<string, AttributeSpec> = {};
         // A text node takes no attribute.
         if (node.name !== 'text') {
-            specs = attributeSpecs(attributes);
+            specs = attributeSpecs(attributes, declaration.content === undefined);
         }
         const spec: NodeSpec = {
             attrs: specs,
             toDOM: (instance) => render(declaration.html, instance.attrs, options, shared),
             // The engine reads style rules only for marks.
             parseDOM: declaration.parse.flatMap((rule) =>
-                'tag' in rule ? [tagRule(rule, attributes, specs, shared, declaration.exactlyOne)] : [],
+                'tag' in rule ? [tagRule(rule, attributes, shared, declaration.exactlyOne)] : [],
             ),
         };
         if (declaration.content !== undefined) {
@@ -287,7 +290,7 @@ export const buildSchema = (model: ContentModel): Schema => {
             parseDOM: declaration.parse.map(
                 (rule): EngineParseRule =>
                     'tag' in rule
-                        ? tagRule(rule, declaration.attrs, specs, [], declaration.exactlyOne)
+                        ? tagRule(rule, declaration.attrs, [], declaration.exactlyOne)
                         : { style: `${rule.style}=${rule.value}` },
             ),
         };

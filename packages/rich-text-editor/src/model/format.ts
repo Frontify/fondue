@@ -90,6 +90,7 @@ export type DiagnosticCode =
     | 'codecs.markdown-unsupported'
     | 'codecs.lossy-output'
     | 'codecs.override-failed'
+    | 'codecs.unresolved-asset'
     | 'clipboard.paste-rejected'
     | 'reader.override-failed'
     | 'styles.unknown-style'

@@ -53,6 +53,7 @@ import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history'
 import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
 import { controlKeysPlugin, createKeyGuard } from './keys';
 import { createLimitCheck, type ExceededLimit } from './limits';
+import { insertPicked, MEDIA_PICKER, pickedAsset, refillPicked } from './media';
 import { operationMetric } from './metrics';
 import { authoringOf, createPolicyCheck, refusesLevel, setsHeading } from './policy';
 import { positionOf } from './positions';
@@ -181,6 +182,19 @@ export interface EditorRuntime {
     /** The presentation's columns as the surface shows them, which `column.break.insert` and the break decorations read. */
     setColumns(columns: ColumnState): void;
     nodeActions(target: NodeTarget): NodeActions;
+    /**
+     * Applies a host asset picker's result, checked as untrusted input, as one undo step: a figure at the insert
+     * `target`, or the image `nodeId` refilled, which then asks the author to review its alternative text.
+     */
+    placeAsset(
+        asset: unknown,
+        place: { readonly target: SelectionHandle } | { readonly nodeId: string },
+    ): CommandResult;
+    /**
+     * The images whose asset a replacement changed this session, with the asset it set, whose chrome asks to review
+     * the alternative text while the image still holds that asset, so an undone replacement asks nothing.
+     */
+    readonly altReviews: Map<string, string>;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
     /**
@@ -422,11 +436,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return [[command, policy] as const];
         }),
     );
-    // The control of each `openControl` command by command ID.
+    // The control of each `openControl` command by command ID; an upload start refills its node through the picker.
     const controls = new Map(
-        compiledModel(definition.model)
-            .commands.filter((command) => command.definition.capability === 'openControl')
-            .map(({ id, definition: { args } }) => [id, args.control as string]),
+        compiledModel(definition.model).commands.flatMap(
+            ({ id, definition: { capability, args } }): [string, string][] => {
+                if (capability === 'openControl') {
+                    return [[id, args.control as string]];
+                }
+                if (capability === 'upload' && args.action === 'start') {
+                    return [[id, MEDIA_PICKER]];
+                }
+                return [];
+            },
+        ),
     );
     let { capabilities } = options;
     let exceedsLimits = createLimitCheck(definition.model, capabilities);
@@ -1270,10 +1292,39 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
         },
         // The author's selection stays, so typing after a press on chrome, such as a task checkbox, keeps the node.
-        execute: (id, payload) =>
-            runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(target), 'node'),
+        execute: (id, payload) => {
+            const result = runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(target), 'node');
+            // A command that opens a control, such as Replace opening the asset picker for this node, opens it here too.
+            const control = controls.get(id);
+            if (control !== undefined && result.status === 'no-op') {
+                options.openControl?.(control, payload);
+            }
+            return result;
+        },
         query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(target)),
     });
+
+    // Session-only: a reload or another editor of the document asks nothing.
+    const altReviews = new Map<string, string>();
+    const placeAsset: EditorRuntime['placeAsset'] = (value, place) => {
+        const asset = pickedAsset(value);
+        if (asset === undefined) {
+            return rejected('invalid-payload');
+        }
+        if ('target' in place) {
+            const insert = insertPicked(definition.schema, asset);
+            return runOn(insert, { payload: undefined }, () => baseOf({ target: place.target }), 'host');
+        }
+        const { nodeId } = place;
+        if (positionOf(state.doc, nodeId) === undefined) {
+            return rejected('target-invalid');
+        }
+        const result = runOn(refillPicked(nodeId, asset), { payload: undefined }, () => state, 'host');
+        if (result.status === 'applied') {
+            altReviews.set(nodeId, asset.assetId);
+        }
+        return result;
+    };
 
     /** Commits a capture of the selection, or of `range`, as target `id`. */
     const captureNow = (
@@ -1958,6 +2009,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
         },
         nodeActions,
+        placeAsset,
+        altReviews,
         saveStatusChanged: emitSaveStatus,
         clearHistory: () => {
             if (phase !== 'ready' || settling.active()) {

@@ -2,7 +2,7 @@
 
 import { Dropdown, useFondueTheme } from '@frontify/fondue-components';
 import * as Toolbar from '@radix-ui/react-toolbar';
-import { type ReactNode } from 'react';
+import { type ReactNode, useCallback } from 'react';
 
 import { useOverlayContainer } from './overlays';
 import styles from './styles/chrome-toolbar.module.scss';
@@ -56,27 +56,48 @@ export const NodeChromeButton = ({
 NodeChromeButton.displayName = 'NodeChromeButton';
 
 /**
- * A node chrome button that opens a Fondue `Dropdown` of `children`, its items; Radix returns focus to the button when
- * the menu closes. `label` is the button's accessible name and holds its visible `text`.
+ * A node chrome button that opens a Fondue `Dropdown` of `children`, its items, with focus on the checked item, else
+ * the first; Radix returns focus to the button when the menu closes. `label` is the button's accessible name and
+ * holds its visible `text`.
  */
 export const NodeChromeMenu = ({
     label,
     text,
+    command,
     children,
 }: {
     readonly label: string;
     readonly text: string;
+    /** The command its items run, which the button names in `data-rte-command`, as a drag's alternative does. */
+    readonly command?: string;
     readonly children: ReactNode;
 }) => {
     const container = useOverlayContainer();
+    // Radix focuses the first item as the menu opens, so the checked one takes focus a frame later.
+    const focusChecked = useCallback((content: HTMLDivElement | null) => {
+        if (content === null) {
+            return;
+        }
+        requestAnimationFrame(() =>
+            content.querySelector<HTMLElement>('[role="menuitemradio"][aria-checked="true"]')?.focus(),
+        );
+    }, []);
     return (
         <Dropdown.Root>
             <Dropdown.Trigger asChild>
-                <Toolbar.Button type="button" className={styles.button} aria-label={label} tabIndex={OUT_OF_TAB_ORDER}>
+                <Toolbar.Button
+                    type="button"
+                    className={styles.button}
+                    aria-label={label}
+                    tabIndex={OUT_OF_TAB_ORDER}
+                    data-rte-command={command}
+                >
                     {text}
                 </Toolbar.Button>
             </Dropdown.Trigger>
-            <Dropdown.Content container={container}>{children}</Dropdown.Content>
+            <Dropdown.Content ref={focusChecked} container={container}>
+                {children}
+            </Dropdown.Content>
         </Dropdown.Root>
     );
 };

@@ -54,6 +54,7 @@ import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
 import { type ColumnState } from '#/runtime/columns';
+import { IMAGE_ALT, MEDIA_PICKER, selectedImage } from '#/runtime/media';
 import {
     createEditorRuntime,
     type EditorRuntime,
@@ -65,6 +66,8 @@ import { type DocumentChange, type SelectionSummary, type SessionToken, type Shi
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { LinkBubble } from '#/ui/links/link-bubble';
 import { linkOptions, LinkPopover } from '#/ui/links/link-popover';
+import { AltTextDialog, altTextStrings } from '#/ui/media/alt-text-dialog';
+import { pickAsset } from '#/ui/media/asset-picker';
 import { ColorMenu, type ColorMenuOptions } from '#/ui/menus/color';
 import { LanguageDialog, languageOptions } from '#/ui/menus/language';
 import { NumberingDialog, SET_START } from '#/ui/menus/numbering';
@@ -401,6 +404,27 @@ const SessionComponent = (
         const { t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
         const engine = engineOf(definition);
         const ids = generateId ?? randomId;
+        /** The host asset picker for a new figure, or for the image a payload's `nodeId` names. */
+        const openPicker = (session: EditorRuntime, payload: unknown) => {
+            const picker = memberOf(latestRef.current.services, 'assets');
+            // Without a host picker the file chooser opens, which needs the upload of a chosen file.
+            if (picker === undefined) {
+                return;
+            }
+            let nodeId: string | undefined;
+            if (isRecord(payload) && typeof payload.nodeId === 'string') {
+                nodeId = payload.nodeId;
+            }
+            pickAsset(session, picker, {
+                ...(nodeId === undefined ? {} : { nodeId }),
+                removed: (kind) => {
+                    const { locale } = shellPropsOf(latestRef.current);
+                    const key =
+                        kind === 'target' ? 'RichTextEditor_imageTargetRemoved' : 'RichTextEditor_imageReplaceRemoved';
+                    announcer.announce(codecContext(locale, enUS).t(key));
+                },
+            });
+        };
         // A session is managed for its whole life when it mounts with `services.persistence`.
         const persistence = memberOf(latestRef.current.services, 'persistence');
         let saves: EditorRuntimeOptions['saves'];
@@ -439,7 +463,16 @@ const SessionComponent = (
             tabMovesFocus: () => latestRef.current.tabMovesFocus,
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             openControl: (opened, payload) => {
-                setControlPayload(payload);
+                if (opened === MEDIA_PICKER) {
+                    openPicker(runtime, payload);
+                    return;
+                }
+                let given = payload;
+                // The dialog edits the image selected when it opened, wherever the selection goes next.
+                if (opened === IMAGE_ALT) {
+                    given = { nodeId: selectedImage(runtime.state) };
+                }
+                setControlPayload(given);
                 setControlOpener(scope.active());
                 setControl(opened);
             },
@@ -459,6 +492,7 @@ const SessionComponent = (
             locale: () => shellPropsOf(latestRef.current).locale,
             announce: (message) => announcer.announce(message),
             resolveReference: () => latestRef.current.presentation?.resolveReference,
+            resolveAssetUrl: () => latestRef.current.presentation?.resolveAssetUrl,
         });
         // A gap cursor shows no caret to a screen reader, so moving onto one is announced.
         let atGap = false;
@@ -796,6 +830,16 @@ const SessionComponent = (
                                         onClose={() => setControl(undefined)}
                                     />
                                 )}
+                                {control === IMAGE_ALT &&
+                                    isRecord(controlPayload) &&
+                                    typeof controlPayload.nodeId === 'string' && (
+                                        <AltTextDialog
+                                            nodeId={controlPayload.nodeId}
+                                            opener={controlOpener}
+                                            strings={altTextStrings(chromeContext.t)}
+                                            onClose={() => setControl(undefined)}
+                                        />
+                                    )}
                                 {control === 'mention-search' && (
                                     <MentionSearchDialog
                                         opener={controlOpener}

@@ -308,6 +308,16 @@ export const openControl = <const P extends PayloadDeclaration | undefined = und
 ): CommandDefinition<PayloadOf<P>> => command('openControl', { control }, payload);
 
 /**
+ * Starts, cancels or retries an upload into the existing slot `node` that the payload's `nodeId` names; `start`
+ * refills it, as `image.replace` does, through the host asset picker when set, else the file chooser.
+ */
+export const upload = (
+    action: 'start' | 'cancel' | 'retry',
+    node: string,
+): CommandDefinition<{ readonly nodeId: string }> =>
+    command('upload', { action, node }, { fields: { nodeId: { type: 'string', minLength: 1 } } });
+
+/**
  * Sets `mark` with the payload's fields as its attributes on the selection, or in the stored marks at a caret; a null
  * payload removes it. With `extendToMarkRange`, a caret inside the mark acts on the whole mark range.
  */

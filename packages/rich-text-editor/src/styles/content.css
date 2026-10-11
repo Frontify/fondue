@@ -99,6 +99,22 @@
         white-space: pre-wrap;
     }
 
+    /* A figure is block-level and text never wraps around its image, which shrinks to the content width. */
+    :where(.fondue-rte-content figure) {
+        margin-block: 0 var(--rte-content-paragraph-spacing);
+        margin-inline: 0;
+    }
+
+    :where(.fondue-rte-content figure img) {
+        max-inline-size: 100%;
+        block-size: auto;
+        vertical-align: middle;
+    }
+
+    :where(.fondue-rte-content [data-rte-image-unavailable]) {
+        color: var(--rte-content-secondary-text-color);
+    }
+
     :where(.fondue-rte-content hr) {
         margin-block: var(--rte-content-paragraph-spacing);
         border: none;
@@ -198,9 +214,9 @@
         }
     }
 
-    /* Printed content keeps its text and drops node chrome. */
+    /* Printed content keeps its text and images and drops node chrome; an image's chrome hides its own controls. */
     @media print {
-        :where(.fondue-rte-content [data-rte-chrome]) {
+        :where(.fondue-rte-content [data-rte-chrome]:not(:has(> [data-rte-image]))) {
             display: none;
         }
     }
