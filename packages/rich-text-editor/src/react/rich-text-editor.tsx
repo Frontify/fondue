@@ -34,15 +34,23 @@ import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
 import { connectClipboard } from '#/clipboard/plugin';
 import { enUS } from '#/locales/en-US';
-import { type CapabilityRef, type DecodeResult, type Diagnostic, hashDocument, type RichTextDocument } from '#/model';
+import {
+    type CapabilityRef,
+    type CodecContext,
+    type DecodeResult,
+    type Diagnostic,
+    hashDocument,
+    type RichTextDocument,
+} from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
-import { columnLayout, contentClasses } from '#/model/output';
+import { codecContext, columnLayout, contentClasses } from '#/model/output';
 import { randomId } from '#/model/random-id';
 import { createSaveCoordinator } from '#/persistence/coordinator';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
+import { type ColumnState } from '#/runtime/columns';
 import {
     createEditorRuntime,
     type EditorRuntime,
@@ -50,7 +58,7 @@ import {
     isEmpty,
     type RuntimeHandle,
 } from '#/runtime/runtime';
-import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
+import { type DocumentChange, type SelectionSummary, type SessionToken, type ShippedCommands } from '#/runtime/types';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { NumberingDialog, SET_START } from '#/ui/menus/numbering';
 import { EmojiPicker, emojiStrings } from '#/ui/suggestions/emoji-picker';
@@ -81,6 +89,8 @@ const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 const NO_PRESENTATION: ReaderPresentation = {};
 const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'uploads', 'assets'] as const;
 const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
+// A composition that outlasts this wait is measured again, which waits again while it runs.
+const COMPOSITION_WAIT_MS = 1000;
 // Read by screen readers and never seen.
 const VISUALLY_HIDDEN: CSSProperties = {
     position: 'absolute',
@@ -113,6 +123,21 @@ const memberOf = <K extends (typeof SERVICE_MEMBERS)[number]>(
         return undefined;
     }
     return services[member];
+};
+
+/** The presentation's column count and the break labels in `t`'s locale, before the surface measured room for them. */
+const columnsAtMount = (presentation: ReaderPresentation | undefined, t: CodecContext['t']): ColumnState => {
+    let count = 1;
+    const layout = columnLayout(presentation?.columns, presentation?.columnGap);
+    if (layout !== undefined) {
+        count = layout.count;
+    }
+    return {
+        count,
+        fits: false,
+        label: t('RichTextEditor_columnBreak'),
+        inactiveLabel: t('RichTextEditor_columnBreakInactive'),
+    };
 };
 
 /** The surface element of a session whose view is attached. */
@@ -315,6 +340,7 @@ const SessionComponent = (
             return;
         }
         const { generateId } = latestRef.current;
+        const { t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
         const engine = engineOf(definition);
         const ids = generateId ?? randomId;
         // A session is managed for its whole life when it mounts with `services.persistence`.
@@ -355,6 +381,7 @@ const SessionComponent = (
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             openControl: setControl,
             locale: () => langRef.current,
+            columns: columnsAtMount(latestRef.current.presentation, t),
         });
         connectClipboard(runtime, {
             sliceContext: () => {
@@ -366,6 +393,16 @@ const SessionComponent = (
             },
             locale: () => shellPropsOf(latestRef.current).locale,
             announce: (message) => announcer.announce(message),
+        });
+        // A gap cursor shows no caret to a screen reader, so moving onto one is announced.
+        let atGap = false;
+        runtime.handle.subscribe('selectionChange', (selection: SelectionSummary) => {
+            const entered = selection.kind === 'gap' && !atGap;
+            atGap = selection.kind === 'gap';
+            if (entered) {
+                const { locale } = shellPropsOf(latestRef.current);
+                announcer.announce(codecContext(locale, enUS).t('RichTextEditor_gapCursor'));
+            }
         });
         // Each event calls the newest callback the host passed.
         runtime.handle.subscribe('ready', (session: SessionToken) => {
@@ -571,15 +608,32 @@ const SessionComponent = (
     }
     const [columnsFit, setColumnsFit] = useState(false);
     const breakLabel = chromeContext.t('RichTextEditor_columnBreak');
+    const inactiveBreakLabel = chromeContext.t('RichTextEditor_columnBreakInactive');
     useClientLayoutEffect(() => {
-        live?.setColumns({ count: columnCount, fits: columnsFit, label: breakLabel });
-    }, [live, columnCount, columnsFit, breakLabel]);
+        live?.setColumns({
+            count: columnCount,
+            fits: columnsFit,
+            label: breakLabel,
+            inactiveLabel: inactiveBreakLabel,
+        });
+    }, [live, columnCount, columnsFit, breakLabel, inactiveBreakLabel]);
     useClientLayoutEffect(() => {
         const surface = surfaceOf(live);
-        if (surface === undefined || columnGap === undefined) {
+        if (live === undefined || surface === undefined || columnGap === undefined) {
             return undefined;
         }
-        return showColumns(surface, columnCount, columnGap, setColumnsFit);
+        const holds = (measure: () => void) => {
+            if (live.view?.composing !== true) {
+                return false;
+            }
+            live.afterInput((outcome) => {
+                if (outcome !== 'disposed') {
+                    measure();
+                }
+            }, COMPOSITION_WAIT_MS);
+            return true;
+        };
+        return showColumns(surface, columnCount, columnGap, setColumnsFit, holds);
     }, [live, columnCount, columnGap]);
 
     const overlays = useMemo(() => ({ container: overlayRoot, scope }), [overlayRoot, scope]);

@@ -191,7 +191,10 @@ export interface ReactPresentation extends ReaderPresentation {
     readonly listLevels?: ListLevels;
     /** 1 to 6. */
     readonly columns?: number;
-    /** `normal`, or a length in `px` or `rem`. */
+    /**
+     * `normal`, or a length in `px` or `rem`. With `normal` and a font size on `contentClassName` that differs from the
+     * surrounding font, the reader's column thresholds use the surrounding font; a `px` or `rem` gap avoids it.
+     */
     readonly columnGap?: string;
     readonly contentClassName?: string;
     /** Strikethrough and secondary colour on checked task items; default false. */

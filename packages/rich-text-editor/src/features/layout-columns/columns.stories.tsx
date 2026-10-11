@@ -28,8 +28,8 @@ Column breaks as \`column_break\`, which sit only between top-level blocks. The 
 - With N columns, the first N - 1 breaks in document order are active and each ends a column. Later breaks stay in the document and show as inactive, so no presentation change removes content.
 - \`column.break.insert\` is disabled, and \`execute\` returns \`not-applicable\`, while the document holds N - 1 or more breaks, which every document does under one column. A break inserted after the last block gets an empty paragraph after it, with the caret in it.
 - A content root narrower than N times 240 px plus the gaps shows one column in document order, with every break inactive.
-- In the editor a break is a separator named "Column break", with \`aria-disabled\` while it is inactive. Backspace right after a break, or Delete on a selected break, removes it as one undo step.
-- The reader renders columns inside a \`fondue-rte-columns\` container, and \`toHTML\` with \`columns\` above 1 writes a wrapper that sets \`columns\` and \`column-gap\`, with \`break-after: column\` on each active break.
+- In the editor a break is a separator named "Column break", and "Column break, inactive" while it is inactive. Backspace right after a break, or Delete on a selected break, removes it as one undo step, at the start of a list item too.
+- The reader renders columns inside a \`fondue-rte-columns\` container, and \`toHTML\` with \`columns\` above 1 sets \`columns: N 240px\` and \`column-gap\` on the content root, with \`break-after: column\` on each active break.
 - Package styles sit in the \`fondue-rte\` cascade layer, so a host rule on \`contentClassName\` overrides the column layout without \`!important\`.
 `,
             },

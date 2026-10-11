@@ -216,6 +216,8 @@ export interface EditorRuntimeOptions {
     readonly openControl?: (control: string) => void;
     /** The editor's locale, such as `de-CH`, read when a suggestion list asks its source; default `en-US`. */
     readonly locale?: () => string;
+    /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
+    readonly columns?: ColumnState;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -401,7 +403,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // The mode the surface shows, which follows `mode` once input has settled.
     let shownMode = mode;
     let disabled = false;
-    let columns = ONE_COLUMN;
+    let columns = options.columns ?? ONE_COLUMN;
+    // The columns the decorations show, which follow `columns` once input has settled.
+    let shownColumns = columns;
     let commitSequence = 0;
     let sequence = 0;
     let saves: SaveCoordinator | undefined;
@@ -465,7 +469,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             settling.plugin,
             targetsPlugin,
             groupsPlugin,
-            columnsPlugin(() => columns),
+            columnsPlugin(() => shownColumns),
             ...definition.plugins,
         ],
     });
@@ -550,12 +554,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const encode = (doc: Node): RichTextDocument =>
         encodeTree(doc.toJSON() as TreeNode, definition.model, capabilities).document;
 
-    // Recomputes `editable` and the surface attributes from the phase and the mode, which waits for input to settle.
+    // Recomputes `editable`, the surface attributes and the break decorations from the phase, the mode and the
+    // columns, which waits for input to settle.
     const refreshView = () => {
         if (settling.active() || recovery !== undefined) {
             return;
         }
         shownMode = mode;
+        shownColumns = columns;
         if (view !== undefined) {
             view.setProps({});
         }
@@ -1809,7 +1815,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return;
             }
             columns = next;
-            view?.setProps({});
+            refreshView();
         },
         faultView: () => {
             if (viewCall) {

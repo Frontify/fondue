@@ -13,18 +13,33 @@ const pixels = (value: string): number => {
 
 /**
  * Writes the presentation's `count` columns and `gap` on the surface, and marks it, and tells `onFit`, while its
- * content box has room for every column at the narrowest column width; returns what undoes it.
+ * content box has room for every column at the narrowest column width; returns what undoes it. `holds` takes a
+ * measure while a composition runs, which changes nothing inside the editing host, and gives `true` once it calls
+ * that measure again when input has settled.
  */
 export const showColumns = (
     surface: HTMLElement,
     count: number,
     gap: string,
     onFit: (fits: boolean) => void,
+    holds: (measure: () => void) => boolean,
 ): (() => void) => {
     surface.setAttribute('data-rte-columns', String(count));
     surface.style.setProperty('--rte-columns', String(count));
     surface.style.setProperty('--rte-column-gap', gap);
+    let held = false;
+    let stopped = false;
     const measure = () => {
+        if (stopped || held) {
+            return;
+        }
+        held = holds(() => {
+            held = false;
+            measure();
+        });
+        if (held) {
+            return;
+        }
         const style = getComputedStyle(surface);
         const width = surface.clientWidth - pixels(style.paddingInlineStart) - pixels(style.paddingInlineEnd);
         const fits = width >= count * MIN_COLUMN_WIDTH + (count - 1) * pixels(style.columnGap);
@@ -38,6 +53,7 @@ export const showColumns = (
         observer.observe(surface);
     }
     return () => {
+        stopped = true;
         observer?.disconnect();
         surface.removeAttribute('data-rte-columns');
         surface.removeAttribute('data-rte-columns-fit');
