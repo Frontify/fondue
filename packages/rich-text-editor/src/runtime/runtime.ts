@@ -21,14 +21,17 @@ import {
     COMMAND_META,
     type CompiledDefinition,
     type EngineCommand,
+    hrefPolicyOf,
     NORMALIZE_META,
     ORIGIN_META,
     type PluginOrigin,
 } from '#/definition';
 import {
     type CapabilityRef,
+    checkHref,
     type Diagnostic,
     hashDocument,
+    type HrefPolicy,
     type JsonObject,
     type PresentationStyle,
     type ResourceLimits,
@@ -47,8 +50,8 @@ import { type ColumnState, columnsPlugin, ONE_COLUMN, sameColumns } from './colu
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
-import { firedRule, withoutRules, withRuleSetting } from './input-rules';
-import { createKeyGuard } from './keys';
+import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
+import { controlKeysPlugin, createKeyGuard } from './keys';
 import { createLimitCheck, type ExceededLimit } from './limits';
 import { operationMetric } from './metrics';
 import { authoringOf, createPolicyCheck, refusesLevel, setsHeading } from './policy';
@@ -405,6 +408,18 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             .commands.filter((command) => setsHeading(command.definition))
             .flatMap(({ id }) => definition.commands.get(id) ?? []),
     );
+    // The URL policy of each command whose feature narrows `checkHref`, which its `url` payload fields must pass too.
+    const hrefPolicies = new Map<EngineCommand, HrefPolicy>(
+        compiledModel(definition.model).commands.flatMap(({ id, featureId }) => {
+            const command = definition.commands.get(id);
+            const feature = compiledModel(definition.model).features.find((candidate) => candidate.id === featureId);
+            const policy = feature === undefined ? undefined : hrefPolicyOf(feature.options);
+            if (command === undefined || policy === undefined) {
+                return [];
+            }
+            return [[command, policy] as const];
+        }),
+    );
     // The control of each `openControl` command by command ID.
     const controls = new Map(
         compiledModel(definition.model)
@@ -481,11 +496,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         () => settleInput(),
     );
     const keyGuard = createKeyGuard(() => options.tabMovesFocus?.() === true);
+    const controlKeys = controlKeysPlugin(
+        compiledModel(definition.model).keymap.filter(({ command }) => controls.has(command)),
+        (id, payload) => {
+            const result = execute(id, payload ?? undefined);
+            return result.status !== 'rejected';
+        },
+    );
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
         plugins: [
             typingRecorder,
             keyGuard,
+            controlKeys,
             settling.plugin,
             targetsPlugin,
             groupsPlugin,
@@ -941,6 +964,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (typed && actionOrigin(root) === undefined) {
             root.setMeta(ORIGIN_META, 'input');
             markRules(root);
+        } else if (root.getMeta(ENTER_RULES_META) === true) {
+            markRules(root);
         }
         busyWith(() => {
             const prepared = prepare(root, installedId, true);
@@ -984,6 +1009,30 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return state.apply(state.tr.setSelection(selection));
     };
 
+    /**
+     * The payload with each `url` field in the form `checkHref` stores, after the policy of the command's feature, or
+     * `undefined` when one fails it.
+     */
+    const withCheckedUrls = (command: EngineCommand, payload: unknown): { readonly payload: unknown } | undefined => {
+        if (command.payload === undefined || !isRecord(payload)) {
+            return { payload };
+        }
+        const policy = hrefPolicies.get(command);
+        const checked: Record<string, unknown> = { ...payload };
+        for (const [name, field] of Object.entries(command.payload.fields)) {
+            const value = payload[name];
+            if (field.type !== 'url' || typeof value !== 'string') {
+                continue;
+            }
+            const result = checkHref(value, policy);
+            if (!result.ok) {
+                return undefined;
+            }
+            checked[name] = result.href;
+        }
+        return { payload: checked };
+    };
+
     /** Runs a command against the current state with a dispatch that captures its transaction, then prepares it. */
     const attempt = (
         command: EngineCommand | undefined,
@@ -999,10 +1048,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (checked === undefined) {
             return { code: 'invalid-payload' };
         }
-        const { payload } = checked;
-        if (findInvalidPayload(command.payload, payload) !== undefined) {
+        if (findInvalidPayload(command.payload, checked.payload) !== undefined) {
             return { code: 'invalid-payload' };
         }
+        const urls = withCheckedUrls(command, checked.payload);
+        if (urls === undefined) {
+            return { code: 'invalid-payload' };
+        }
+        const { payload } = urls;
         if (phase === 'transitioning') {
             return { code: 'busy' };
         }

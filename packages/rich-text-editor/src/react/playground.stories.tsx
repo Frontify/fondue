@@ -19,6 +19,7 @@ import {
     inputRules,
     italic,
     language,
+    links,
     mentions,
     quote,
     rule,
@@ -37,6 +38,7 @@ import {
     type EditorHandle,
     type PersistenceService,
     type PresentationStyle,
+    type ReferenceValue,
     type RichTextEditorProps,
     RichTextEditor,
     type SaveResponse,
@@ -132,6 +134,7 @@ const model = compileContentModel(
         inputRules({ typography }),
         align(),
         language(),
+        links({ resourceTypes: ['guideline-page'] }),
         formatClear(),
         mentions(),
         callouts,
@@ -140,14 +143,14 @@ const model = compileContentModel(
 );
 const definition = defineEditor({ id: 'story.playground', model });
 
-// The people and teams the mention list and dialog search, as a host's directory answers.
-const PEOPLE = createFakeReferenceService([
+// The people and teams the mention list and dialog search.
+const PEOPLE: readonly ReferenceValue[] = [
     { resourceType: 'user', resourceId: 'user-ada', labelSnapshot: 'Ada Lovelace', kind: 'user' },
     { resourceType: 'user', resourceId: 'user-grace', labelSnapshot: 'Grace Hopper', kind: 'user' },
     { resourceType: 'user', resourceId: 'user-layla', labelSnapshot: 'ليلى حسن', kind: 'user' },
     { resourceType: 'group', resourceId: 'group-design', labelSnapshot: 'Design team', kind: 'group' },
     { resourceType: 'group', resourceId: 'group-all', labelSnapshot: 'Everyone', kind: 'everyone' },
-]);
+];
 
 // The document toolbar's groups of the shipped features.
 const TOOLBAR = [
@@ -162,7 +165,7 @@ const TOOLBAR = [
         'mark.subscript.toggle',
         'mark.superscript.toggle',
     ],
-    ['mark.color.menu.open'],
+    ['mark.color.menu.open', 'link.edit'],
     ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
     ['quote.toggle', 'code-block.toggle', 'mention.search.open', 'emoji.picker.open'],
     [
@@ -199,7 +202,23 @@ const brandStylesOf = (leadSize: number): readonly PresentationStyle[] => [
         recipe: { fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' },
     },
     { id: 'brand.legacy', label: 'Legacy', appliesTo: ['paragraph'], deprecated: true, recipe: { fontSize: 18 } },
+    {
+        id: 'brand.button',
+        label: 'Button',
+        appliesTo: ['link'],
+        deprecated: false,
+        recipe: { backgroundColor: '#1d4ed8', color: '#ffffff', paddingInline: 8, borderRadius: 4 },
+    },
 ];
+// Guideline pages the link popover finds by name, as a host's reference service returns them.
+const PAGES = ['Logo', 'Colors', 'Typography', 'Imagery'].map((label) => ({
+    resourceType: 'guideline-page',
+    resourceId: label.toLowerCase(),
+    labelSnapshot: label,
+    href: `https://brand.example.com/${label.toLowerCase()}`,
+}));
+// One host directory answers both, by resource type: people for mentions, guideline pages for link destinations.
+const references = createFakeReferenceService([...PEOPLE, ...PAGES]);
 const COLOR_TOKENS: readonly ColorToken[] = [
     { id: 'brand.red', label: 'Brand red', value: '#c0392b', usage: ['font_color'] },
     { id: 'brand.blue', label: 'Brand blue', value: '#1d4ed8', usage: ['font_color'] },
@@ -324,7 +343,7 @@ const Playground = ({
             },
             read: server.read,
         };
-        return { persistence, references: PEOPLE };
+        return { persistence, references };
     });
     const [saveStatus, setSaveStatus] = useState('not mounted');
     const log = (text: string) => {
@@ -780,6 +799,14 @@ Tab and Shift+Tab in a code block are not handled, so focus leaves the editor. M
 Tab in an item that cannot nest, such as the first item, moves focus out of the editor.
 
 With \`tabMovesFocus\`, Tab and Shift+Tab always move focus out of the editor and indent or outdent no item; Mod-] and Mod-[ still do. Tab still accepts an open suggestion.
+
+## Links
+
+Link, in the toolbar or with Mod+K, opens the link popover on the link at the caret or the selection: the URL, the text, Open in new window and, with link styles in the presentation, a Style select. A URL with no scheme that names a host gets \`https://\`; one that fails the URL check stays in the field with an error. Typing a page name lists the guideline pages the reference service finds. A caret at a link shows the link bubble with Open, Edit, Copy and Remove; Alt+F10 moves focus into it. Mod+click opens a link in a new tab. Typing a URL and a space or Enter links it, and Backspace right after removes that link.
+
+| Action | Command | Key | Apple | Other platforms |
+|---|---|---|---|---|
+| Edit link | \`link.edit\` | \`Mod-k\` | ⌘K | Ctrl+K |
 
 ## Alignment, language and clear formatting
 

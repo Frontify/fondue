@@ -94,6 +94,9 @@ exports[`compileContentModel manifest > emits the manifest of the document profi
     "block.move.down",
     "fixture.undo",
     "fixture.paragraph.set",
+    "link.edit",
+    "link.set",
+    "link.remove",
     "fixture.heading.set",
     "fixture.rule.insert",
   ],
@@ -119,8 +122,12 @@ exports[`compileContentModel manifest > emits the manifest of the document profi
       "version": 1,
     },
     {
-      "id": "fixture.link",
-      "options": {},
+      "id": "links",
+      "options": {
+        "allowedHosts": null,
+        "allowedSchemes": null,
+        "resourceTypes": [],
+      },
       "version": 1,
     },
     {
@@ -188,6 +195,11 @@ exports[`compileContentModel manifest > emits the manifest of the document profi
       "payload": null,
     },
     {
+      "command": "link.edit",
+      "key": "Mod-k",
+      "payload": null,
+    },
+    {
       "command": "fixture.heading.set",
       "key": "Mod-Alt-2",
       "payload": {
@@ -219,7 +231,9 @@ exports[`compileContentModel manifest > emits the manifest of the document profi
     "keymap:core",
     "keymap:fixture.history",
     "keymap:fixture.bold",
+    "keymap:links",
     "keymap:fixture.heading",
+    "input-rules",
     "drop-cursor",
     "gap-cursor",
     "base-keys",

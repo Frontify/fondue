@@ -1,0 +1,53 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-x-small);
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-x-small);
+}
+
+.error {
+    margin: 0;
+    color: var(--color-error-default);
+    font-family: var(--text-body-small-default-font-family);
+    font-size: var(--text-body-small-default-font-size);
+    line-height: var(--text-body-small-default-line-height);
+}
+
+.removed {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-x-small);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-x-small);
+}
+
+.bubble {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xx-small);
+}
+
+// A long URL shortens to one line; the bubble's buttons stay in view.
+.url {
+    max-inline-size: 240px;
+    padding-inline: var(--spacing-x-small);
+    overflow: hidden;
+    color: var(--color-secondary-default);
+    font-family: var(--text-body-small-default-font-family);
+    font-size: var(--text-body-small-default-font-size);
+    line-height: var(--text-body-small-default-line-height);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

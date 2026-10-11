@@ -26,9 +26,11 @@ export {
     type CompiledInputRule,
     type LineStartRule,
     type MarkDelimiterRule,
+    type MarkRule,
     type QuotesRule,
     type TextReplaceRule,
 } from './input-rules';
+export { hrefPolicyOf } from './href-policy';
 export { carriesNodeId, withNodeIds } from './schema';
 export { NORMALIZE_META, type Normalizer, NORMALIZERS } from './normalizers';
 

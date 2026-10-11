@@ -6,13 +6,9 @@ import { createPortal } from 'react-dom';
 
 import { bold, core } from '#/features';
 import { fixtureChromeViews } from '#/features/__tests__/fixtures/chrome/view';
-import {
-    fixtureHeadingSet,
-    fixtureInputRules,
-    fixtureItalic,
-    fixtureLink,
-} from '#/features/__tests__/fixtures/features';
+import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/features/__tests__/fixtures/features';
 import { fixtureProfiles } from '#/features/__tests__/fixtures/profiles';
+import { links } from '#/features/links/feature';
 import {
     type CompiledEditorDefinition,
     defineEditor,
@@ -30,13 +26,13 @@ import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { createFakePersistenceService, setSelection } from '#/testing';
 
-const model = compileContentModel([core(), bold(), fixtureLink(), fixtureHeadingSet(), fixtureChromeViews()], {
+const model = compileContentModel([core(), bold(), links(), fixtureHeadingSet(), fixtureChromeViews()], {
     id: 'test.ct',
     version: 1,
 });
 // Adds a `pre` code block and the heading input rule to the component-test model.
 const inputRulesModel = compileContentModel(
-    [core(), bold(), fixtureItalic(), fixtureLink(), fixtureHeadingSet(), fixtureInputRules(), fixtureChromeViews()],
+    [core(), bold(), fixtureItalic(), links(), fixtureHeadingSet(), fixtureInputRules(), fixtureChromeViews()],
     { id: 'test.ct', version: 1 },
 );
 const ALLOW = { create: true, edit: true, remove: true, paste: true };

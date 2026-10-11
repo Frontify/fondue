@@ -69,9 +69,19 @@ export const inlineToken = (token: MarkdownToken): InlineToken | undefined => {
 };
 
 /** One dialect: CommonMark with GFM tables and strikethrough, raw HTML off, `http`, `https` and email literals linked. */
+// markdown-it's own link check refuses this scheme, so the destination stays literal text.
+const REFUSED_LINK = 'javascript:';
+
 export const createParser = (): Parser => {
     const parser = new MarkdownIt('default', { html: false, linkify: true });
-    parser.linkify.set({ fuzzyLink: false });
+    parser.linkify.set({ fuzzyLink: true });
+    // Of the links with no scheme, only `www.` ones become links, as GitHub's extended autolinks do; a bare domain stays text.
+    const match = parser.linkify.match.bind(parser.linkify);
+    parser.linkify.match = (text) =>
+        (match(text) ?? []).filter(({ schema, raw }) => schema !== '' || /^www\./i.test(raw));
+    // A destination that fails the URL check as written stays text, though markdown-it's encoding would repair it.
+    const normalizeLink = parser.normalizeLink.bind(parser);
+    parser.normalizeLink = (url) => (checkHref(url).ok ? normalizeLink(url) : REFUSED_LINK);
     return parser;
 };
 

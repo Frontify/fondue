@@ -6,10 +6,11 @@ import { createPortal } from 'react-dom';
 
 import { bold, core } from '#/features';
 import { fixtureCodeBlockView } from '#/features/__tests__/fixtures/code-block/view';
-import { fixtureItalic, fixtureLink, fixtureToolbar } from '#/features/__tests__/fixtures/features';
+import { fixtureItalic, fixtureToolbar } from '#/features/__tests__/fixtures/features';
 import { fixtureMediaImageView } from '#/features/__tests__/fixtures/media/view';
 import { FixtureLinkPopover, FixtureMenu, FixtureSuggestions } from '#/features/__tests__/fixtures/overlays/overlays';
 import { fixtureTableBlockView } from '#/features/__tests__/fixtures/table/view';
+import { links } from '#/features/links/feature';
 import {
     defineEditor,
     defineReactPresentation,
@@ -30,7 +31,7 @@ const model = compileContentModel(
         core(),
         bold(),
         fixtureItalic(),
-        fixtureLink(),
+        links(),
         fixtureToolbar(),
         fixtureCodeBlockView(),
         fixtureMediaImageView(),
