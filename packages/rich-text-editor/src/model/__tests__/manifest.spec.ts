@@ -67,7 +67,7 @@ describe('featureFromManifest', () => {
     it('compiles the acme.pull-quote manifest like a code feature', () => {
         const model = compile(pullQuote());
         expect(model.manifest.nodes).toEqual(['doc', 'paragraph', 'text', 'hard_break', 'acme_pull_quote']);
-        expect(model.manifest.commands).toEqual(['acme.pull-quote.set']);
+        expect(model.manifest.commands).toEqual(['text.insert', 'acme.pull-quote.set']);
         expect(model.manifest.plugins).toEqual(['keymap:acme.pull-quote', 'input-rules']);
         expect(model.manifest.keys).toEqual([
             { key: 'mac:Mod-Alt-q', command: 'acme.pull-quote.set', payload: null },
@@ -386,7 +386,7 @@ describe('featureFromManifest', () => {
                 manifest.inputRules = [];
                 manifest.toolbar = [];
             });
-        expect(compile(card('/x', '/y')).manifest.commands).toEqual(['acme.card.insert']);
+        expect(compile(card('/x', '/y')).manifest.commands).toEqual(['text.insert', 'acme.card.insert']);
         expect(failureOf(() => compile(card('/x', 'javascript:alert(1)')))).toEqual({
             code: 'definition.invalid-declaration',
             details: { feature: 'acme.pull-quote', path: '/commands/acme.card.insert/attrs/href' },

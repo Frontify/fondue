@@ -3,12 +3,35 @@
 import { useEffect, useRef } from 'react';
 
 import { bold, core } from '#/features';
+import { fixtureLink } from '#/features/__tests__/fixtures/features';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
+import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
-const model = compileContentModel([core(), bold()], { id: 'test.ct', version: 1 });
-const definition = defineEditor({ id: 'test.ct', model });
+const model = compileContentModel([core(), bold(), fixtureLink()], { id: 'test.ct', version: 1 });
+const ALLOW = { create: true, edit: true, remove: true, paste: true };
+/** The CT model's definitions: every feature allowed, and paragraphs that may not change. */
+const definitions = {
+    open: defineEditor({ id: 'test.ct', model }),
+    guarded: defineEditor({ id: 'test.ct', model, policy: { features: { core: { ...ALLOW, edit: false } } } }),
+};
+
+/** A text, or a link around the text inside `[` and `]`, as `Read the [guide]`. */
+const textOf = (text: string) =>
+    text.split(/(\[[^\]]*\])/).flatMap((part) => {
+        if (part === '') {
+            return [];
+        }
+        if (!part.startsWith('[')) {
+            return [{ type: 'text', text: part }];
+        }
+        const link = {
+            type: 'link',
+            attrs: { href: 'https://example.com/followed', openInNewWindow: false, styleId: null },
+        };
+        return [{ type: 'text', text: part.slice(1, -1), marks: [link] }];
+    });
 
 /** A document of one paragraph per text, in the component-test model. */
 export const storedOf = (...texts: readonly string[]) => ({
@@ -25,7 +48,7 @@ export const storedOf = (...texts: readonly string[]) => ({
             content: texts.map((text) => ({
                 type: 'paragraph',
                 attrs: { lang: null },
-                content: text === '' ? [] : [{ type: 'text', text }],
+                content: textOf(text),
             })),
         },
     },
@@ -34,7 +57,12 @@ export const storedOf = (...texts: readonly string[]) => ({
 declare global {
     interface Window {
         /** The mounted editor's handle and the selection helper, for tests that drive it from the page. */
-        rte?: { readonly handle: EditorHandle; readonly setSelection: typeof setSelection };
+        rte?: {
+            readonly handle: EditorHandle;
+            readonly setSelection: typeof setSelection;
+            /** The text of the runtime's document. */
+            readonly text: () => string | undefined;
+        };
     }
 }
 
@@ -42,18 +70,26 @@ declare global {
 export const EditorProbe = ({
     texts = ['ab'],
     readOnly = false,
+    guarded = false,
     placeholder,
     onChange,
 }: {
     readonly texts?: readonly string[];
     readonly readOnly?: boolean;
+    /** Mounts the definition whose policy keeps every paragraph as it is. */
+    readonly guarded?: boolean;
     readonly placeholder?: string;
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
+    let definition = definitions.open;
+    if (guarded) {
+        definition = definitions.guarded;
+    }
     useEffect(() => {
         if (ref.current !== null) {
-            window.rte = { handle: ref.current as EditorHandle, setSelection };
+            const handle = ref.current as EditorHandle;
+            window.rte = { handle, setSelection, text: () => runtimeOf(handle)?.view?.state.doc.textContent };
         }
     }, []);
     return (
