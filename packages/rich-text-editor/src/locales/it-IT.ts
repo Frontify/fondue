@@ -4,6 +4,7 @@ export const itIT = {
     lang: 'it-IT',
     translationStrings: {
         RichTextEditor_bold: 'Grassetto',
+        RichTextEditor_nodeViewError: 'Questa parte del contenuto non può essere visualizzata',
         RichTextEditor_readerBlockedInvalid: 'Questo contenuto non può essere mostrato',
         RichTextEditor_readerBlockedUnsupported: 'Questo contenuto non può essere mostrato qui',
         RichTextEditor_readerIslandFeature: 'Contenuto non supportato: ${feature}',
