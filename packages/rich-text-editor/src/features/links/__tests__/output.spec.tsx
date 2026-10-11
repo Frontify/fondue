@@ -60,10 +60,10 @@ describe('link output', () => {
         const { html } = codecs.toHTML(document);
 
         expect(markup).toMatchInlineSnapshot(
-            `"<div class="fondue-rte-content"><p dir="auto">See <a href="https://frontify.com" target="_blank" rel="noopener noreferrer">the guide<span style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap" data-rte-hidden-text=""> (opens in a new window)</span></a></p></div>"`,
+            `"<div class="fondue-rte-content"><p dir="auto">See <a href="https://frontify.com" rel="noopener noreferrer" target="_blank">the guide<span style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap" data-rte-hidden-text=""> (opens in a new window)</span></a></p></div>"`,
         );
         expect(html).toMatchInlineSnapshot(
-            `"<div class="fondue-rte-content"><p dir="auto">See <a href="https://frontify.com" target="_blank" rel="noopener noreferrer">the guide</a></p></div>"`,
+            `"<div class="fondue-rte-content"><p dir="auto">See <a href="https://frontify.com" rel="noopener noreferrer" target="_blank">the guide</a></p></div>"`,
         );
         expect(reader(document, { locale: deDE })).toContain('(öffnet in einem neuen Fenster)');
     });
@@ -124,8 +124,8 @@ describe('the URL check at every boundary', () => {
         if (ok) {
             expect(plain).toBe(`go (${href ?? ''})`);
             const escaped = (href ?? '').replaceAll('&', '&amp;');
-            expect(markup).toContain(`<a href="${escaped}">go</a>`);
-            expect(html).toContain(`<a href="${escaped}">go</a>`);
+            expect(markup).toContain(`<a href="${escaped}" rel="noopener">go</a>`);
+            expect(html).toContain(`<a href="${escaped}" rel="noopener">go</a>`);
             expect(markdown).toContain('[go](');
         } else {
             expect(plain).toBe('go');
@@ -205,4 +205,66 @@ describe('pasting a URL over a selection', () => {
         });
         expect(handle.getSnapshot().document.content.content?.[0]?.content).toEqual([text('Read the guide')]);
     });
+});
+
+describe('the links policy where content enters', () => {
+    const narrowed = compileContentModel([core(), bold(), links({ allowedHosts: ['*.frontify.com'] })], {
+        id: 'test.links',
+        version: 1,
+    });
+    const pasteInto = (data: Readonly<Record<string, string>>) => {
+        const { handle, view } = mountText({ model: narrowed, blocks: [para(text('word'))] });
+        setSelection(handle, { text: 'word' });
+        const clipboardData = new DataTransfer();
+        for (const [type, value] of Object.entries(data)) {
+            clipboardData.setData(type, value);
+        }
+        act(() => {
+            view.dom.dispatchEvent(new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true }));
+        });
+        return handle.getSnapshot().document.content.content?.[0]?.content;
+    };
+
+    it('pastes an HTML link outside allowedHosts as its text, and one inside it as a link', () => {
+        expect(pasteInto({ 'text/html': '<a href="https://example.com">away</a>' })).toEqual([text('away')]);
+        expect(pasteInto({ 'text/html': '<a href="https://brand.frontify.com">home</a>' })).toEqual([
+            linked('home', 'https://brand.frontify.com'),
+        ]);
+    });
+
+    it('pastes a URL outside allowedHosts over a selection as text, not as a link over it', () => {
+        expect(pasteInto({ 'text/plain': 'https://example.com' })).toEqual([text('https://example.com')]);
+        expect(pasteInto({ 'text/plain': 'https://brand.frontify.com' })).toEqual([
+            linked('word', 'https://brand.frontify.com'),
+        ]);
+    });
+
+    it('imports Markdown links and literals outside allowedHosts as text', () => {
+        const result = createCodecs(narrowed).fromMarkdown(
+            '[away](https://example.com) https://example.com [home](https://brand.frontify.com)',
+        );
+        if (result.status === 'blocked') {
+            throw new Error('The Markdown did not import.');
+        }
+
+        expect(result.document.content.content?.[0]?.content).toEqual([
+            text('[away](https://example.com) https://example.com '),
+            linked('home', 'https://brand.frontify.com'),
+        ]);
+    });
+});
+
+describe('Markdown literals the URL check refuses', () => {
+    it.each(['see https://evil.com:secret@frontify.com now', '[go](https://evil.com:secret@frontify.com)'])(
+        'links no part of %s',
+        (markdown) => {
+            const result = codecs.fromMarkdown(markdown);
+            if (result.status === 'blocked') {
+                throw new Error('The Markdown did not import.');
+            }
+
+            expect(JSON.stringify(result.document)).not.toContain('"type":"link"');
+            expect(result.document.content.content?.[0]?.content).toEqual([text(markdown)]);
+        },
+    );
 });

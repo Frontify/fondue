@@ -192,6 +192,40 @@ describe('link.set and link.remove', () => {
         expect(blockOf(bold.handle)).toEqual([linked('xyz', 'https://a.example', { type: 'bold' })]);
     });
 
+    it('edits and removes the link whose trailing edge holds the caret', () => {
+        const { handle } = mountText({
+            model: model(),
+            blocks: [para(text('Read '), linked('guide', 'https://frontify.com/a'), text(' now'))],
+        });
+        setSelection(handle, { text: 'guide', from: 5, to: 5 });
+
+        expect(handle.execute('link.set', value('https://frontify.com/b')).status).toBe('applied');
+        expect(blockOf(handle)).toEqual([text('Read '), linked('guide', 'https://frontify.com/b'), text(' now')]);
+
+        setSelection(handle, { text: 'guide', from: 5, to: 5 });
+        expect(handle.execute('link.remove').status).toBe('applied');
+        expect(blockOf(handle)).toEqual([text('Read guide now')]);
+    });
+
+    it('replaces the text of a selection over runs with different marks, keeping only the marks over all of it', () => {
+        const { handle } = mountText({
+            model: model(),
+            blocks: [para(text('a ', 'italic'), text('b', 'italic', 'bold'), text(' c', 'italic'))],
+        });
+        setSelection(handle, { text: 'a b c' });
+
+        expect(handle.execute('link.set', value('https://frontify.com', { text: 'new' })).status).toBe('applied');
+        expect(blockOf(handle)).toEqual([
+            { type: 'text', text: 'new', marks: [link('https://frontify.com'), { type: 'italic' }] },
+        ]);
+    });
+
+    it('writes rel noopener on a link in the editor surface', () => {
+        const { view } = mountText({ model: model(), blocks: [para(linked('guide', 'https://frontify.com'))] });
+
+        expect(view.dom.querySelector('a')?.getAttribute('rel')).toBe('noopener');
+    });
+
     it.each(URLS)('gives link.set the URL check verdict for $input', ({ input, ok, href }) => {
         const { handle } = mountText({ model: model(), blocks: [para(text('word'))] });
         setSelection(handle, { text: 'word' });
@@ -232,6 +266,29 @@ describe('link policy', () => {
         expect(() => compileContentModel([...textFeatures(), links(unsafe)], { id: 'test', version: 1 })).toThrow(
             DefinitionError,
         );
+    });
+
+    it('keeps a stored link the policy refuses when the surface re-reads text typed inside it', async () => {
+        const { handle, view } = mountText({
+            model: model({ allowedHosts: ['*.frontify.com'] }),
+            blocks: [para(text('Read '), linked('guide', 'https://example.com'))],
+        });
+        const anchor = view.dom.querySelector('a');
+        const before = anchor?.previousSibling;
+        if (anchor === null || before === null || before === undefined) {
+            throw new Error('The link has no text before it in the surface.');
+        }
+        // Text typed on both sides of the link's start, which the view re-reads by parsing the link's element.
+        before.textContent = 'Read X ';
+        anchor.textContent = 'guiXde';
+        // The view reads typed DOM through its observer, which the browser would run on the mutation.
+        const observed = view as unknown as { readonly domObserver: { flush(): void } };
+        await act(async () => {
+            observed.domObserver.flush();
+            await Promise.resolve();
+        });
+
+        expect(blockOf(handle)).toEqual([text('Read X '), linked('guiXde', 'https://example.com')]);
     });
 
     it('applies allowedSchemes and allowedHosts to link.set and the autolink rule', () => {

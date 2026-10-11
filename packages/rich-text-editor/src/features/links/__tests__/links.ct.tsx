@@ -49,7 +49,7 @@ test('places the caret and shows the link bubble on a plain click in the editabl
     await linkIn(page, 'guide').click();
 
     await expect(bubbleOf(page)).toBeVisible();
-    for (const name of ['Open link', 'Edit link', 'Copy link', 'Remove link']) {
+    for (const name of ['Open link in a new tab', 'Edit link', 'Copy link', 'Remove link']) {
         await expect(bubbleOf(page).getByRole('button', { name })).toBeVisible();
     }
     await expect(bubbleOf(page).locator('bdi')).toHaveText('#followed');
@@ -74,7 +74,7 @@ test('opens the checked href in a new tab with no opener on Mod+click and from t
     await linkIn(page, 'apart').click();
     await expect(bubbleOf(page)).toBeVisible();
     const opened = page.waitForEvent('popup');
-    await bubbleOf(page).getByRole('button', { name: 'Open link' }).click();
+    await bubbleOf(page).getByRole('button', { name: 'Open link in a new tab' }).click();
     const second = await opened;
     expect(await second.evaluate(() => window.opener === null)).toBe(true);
     expect(second.url()).toBe('https://example.com/apart');
@@ -131,7 +131,7 @@ test('moves focus into the link bubble on Alt+F10 and back to the surface on Esc
     await expect(bubbleOf(page)).toBeVisible();
 
     await page.keyboard.press('Alt+F10');
-    await expect(bubbleOf(page).getByRole('button', { name: 'Open link' })).toBeFocused();
+    await expect(bubbleOf(page).getByRole('button', { name: 'Open link in a new tab' })).toBeFocused();
     await page.keyboard.press('ArrowRight');
     await expect(bubbleOf(page).getByRole('button', { name: 'Edit link' })).toBeFocused();
     // The first Escape closes the tooltip that focus opened.
@@ -212,12 +212,15 @@ test('keeps the popover open with a message when the linked text was removed mea
     expect(JSON.stringify(await blockOf(page))).not.toContain('"href":"https://frontify.com"');
 });
 
-test('renders a link whose href was injected past the checks with no href in the surface', async ({ mount, page }) => {
+test('renders a link whose href was injected past the checks as its text alone in the surface', async ({
+    mount,
+    page,
+}) => {
     await mount(<LinkProbe />);
     await ready(page);
 
     await page.evaluate(() => (window.linkRte as LinkRte).injectUnsafe('Read'));
 
-    await expect(linkIn(page, 'Read')).toHaveCount(1);
-    await expect(linkIn(page, 'Read')).not.toHaveAttribute('href');
+    await expect(surfaceOf(page).locator('a', { hasText: 'Read' })).toHaveCount(0);
+    await expect(surfaceOf(page).locator('p')).toContainText('Read the guide');
 });

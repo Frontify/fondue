@@ -27,7 +27,7 @@ describe('buildSchema DOM output', () => {
 
         expect(host.querySelectorAll('a')).toHaveLength(1);
         expect(host.innerHTML).toBe(
-            '<p><a href="https://frontify.com"><strong>bold </strong><span data-color="#ff0000">colour</span></a></p>',
+            '<p><a href="https://frontify.com" rel="noopener"><strong>bold </strong><span data-color="#ff0000">colour</span></a></p>',
         );
     });
 
@@ -42,6 +42,6 @@ describe('buildSchema DOM output', () => {
             ),
         );
 
-        expect(host.innerHTML).toBe('<p><a>x</a></p>');
+        expect(host.innerHTML).toBe('<p><a rel="noopener">x</a></p>');
     });
 });
