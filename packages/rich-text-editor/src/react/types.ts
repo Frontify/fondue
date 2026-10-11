@@ -14,17 +14,13 @@ import {
     type RichTextLocale,
 } from '#/model';
 import {
-    type CommitOptions,
-    type CommitResult,
     type LoadedDocument,
     type PersistenceOptions,
     type PersistenceService,
     type RecoveryService,
     type ReplaceDocumentRequest,
     type ReplaceResult,
-    type SaveStatus,
     type ServiceContext,
-    type Snapshot,
 } from '#/persistence/types';
 import { type ReaderPresentation } from '#/reader/reader';
 import {
@@ -35,16 +31,23 @@ import {
     type CommandKey,
     type CommandResult,
     type CommandState,
+    type CommitOptions,
+    type CommitResult,
     type DocumentChange,
     type EditorSummary,
+    type OperationMetric,
     type ReferenceValue,
+    type SaveStatus,
     type SelectionHandle,
     type SelectionSummary,
     type SessionToken,
     type ShippedCommands,
+    type Snapshot,
     type StoredId,
     type Unsubscribe,
 } from '#/runtime/types';
+
+export type { OperationMetric };
 
 // Host-facing editor types. Some members are typed before their behavior is built.
 
@@ -123,16 +126,6 @@ export interface EditorServices {
     readonly assets?: AssetPickerService;
 }
 
-export interface OperationMetric {
-    readonly kind: 'mount' | 'commit' | 'paste' | 'save' | 'replace';
-    readonly session: SessionToken;
-    readonly packageVersion: string;
-    readonly model: ModelRef;
-    readonly capabilityIds: readonly string[];
-    readonly durationMs: number;
-    readonly normalizationTransactions: number;
-    readonly failureCode: string | null;
-}
 export interface EditorEventMap {
     readonly ready: SessionToken;
     readonly documentChange: DocumentChange;
@@ -206,7 +199,7 @@ export interface ReactPresentation extends ReaderPresentation {
     readonly contentClassName?: string;
     /** Strikethrough and secondary colour on checked task items; default false. */
     readonly strikeCheckedTasks?: boolean;
-    /** Groups of command IDs, `{ command, payload }` items and the `text-style` control ID, in order (Default toolbars). */
+    /** Groups of command IDs, `{ command, payload }` items and the `text-style` control ID, in order. */
     readonly toolbar: readonly (readonly CommandRef[])[];
     readonly controls?: Readonly<Record<string, { readonly labelKey?: string; readonly icon?: string }>>;
     readonly sliceContext: string | null;

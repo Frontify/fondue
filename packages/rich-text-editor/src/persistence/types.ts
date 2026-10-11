@@ -1,23 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CapabilityRef, type Diagnostic, type ModelRef, type RichTextDocument } from '#/model';
-import { type DocumentStamp, type SessionToken } from '#/runtime/types';
+import {
+    type DocumentStamp,
+    type LoadedDocument,
+    type SaveAcknowledgment,
+    type ServerRevision,
+    type ServiceContext,
+    type Snapshot,
+} from '#/runtime/types';
 
-// Persistence types the host-facing editor types reference.
-
-/** Opaque, never parsed or compared numerically. `null` at load or base means create-only. */
-export type ServerRevision = string;
-export interface LoadedDocument {
-    readonly documentId: string;
-    readonly revision: ServerRevision | null;
-    readonly document: RichTextDocument;
-}
-export interface Snapshot {
-    readonly stamp: DocumentStamp;
-    readonly document: RichTextDocument;
-    readonly acknowledgedRevision: ServerRevision | null;
-    readonly compositionActive: boolean;
-}
+export type {
+    CommitOptions,
+    CommitResult,
+    LoadedDocument,
+    RecoveryCheckpoint,
+    RecoveryReceipt,
+    RecoveryService,
+    ReplaceDocumentRequest,
+    ReplaceResult,
+    SaveAcknowledgment,
+    SaveStatus,
+    ServerRevision,
+    ServiceContext,
+    Snapshot,
+} from '#/runtime/types';
 
 export interface SaveRequest {
     readonly operationId: string;
@@ -31,12 +38,6 @@ export interface SaveRequest {
         readonly capabilities: readonly CapabilityRef[];
     };
 }
-export interface SaveAcknowledgment {
-    /** `null` only in the acknowledgment synthesized for a loaded or replaced record that no save has touched. */
-    readonly operationId: string | null;
-    readonly stamp: DocumentStamp;
-    readonly revision: ServerRevision;
-}
 export type SaveResponse =
     | { readonly status: 'saved'; readonly acknowledgment: SaveAcknowledgment }
     | { readonly status: 'conflict'; readonly currentRevision: ServerRevision }
@@ -45,10 +46,6 @@ export type SaveResponse =
           readonly code: 'forbidden' | 'invalid' | 'incompatible-writer';
           readonly diagnostics: readonly Diagnostic[];
       };
-export interface ServiceContext {
-    readonly signal: AbortSignal;
-    readonly session: SessionToken;
-}
 export interface PersistenceService {
     save(request: SaveRequest, context: ServiceContext): Promise<SaveResponse>;
     read(documentId: string, context: ServiceContext): Promise<LoadedDocument>;
@@ -63,70 +60,3 @@ export interface PersistenceOptions {
     readonly backoffMs?: number;
     readonly onConflict?: (remote: LoadedDocument | null, local: Snapshot) => void;
 }
-export interface SaveStatus {
-    readonly state: 'unmanaged' | 'clean' | 'dirty' | 'saving' | 'uncertain' | 'offline' | 'conflict' | 'error';
-    readonly latestSequence: number;
-    readonly acknowledgedSequence: number;
-    readonly revision: ServerRevision | null;
-    readonly inFlightOperationId: string | null;
-    readonly diagnostic: Diagnostic | null;
-}
-export interface CommitOptions {
-    readonly reason: 'submit' | 'navigate' | 'manual';
-    /** Default `wait`. */
-    readonly composition?: 'wait' | 'reject';
-    /** Default `PersistenceOptions.timeoutMs`. */
-    readonly timeoutMs?: number;
-}
-export type CommitResult =
-    | { readonly status: 'acknowledged'; readonly acknowledgment: SaveAcknowledgment }
-    | {
-          readonly status: 'blocked';
-          readonly code: 'unmanaged' | 'composition-active' | 'conflict' | 'forbidden' | 'not-ready';
-      }
-    | {
-          readonly status: 'failed';
-          readonly code: 'timeout' | 'transport' | 'disposed' | 'incompatible-writer' | 'invalid';
-          readonly outcome: 'not-sent' | 'unknown' | 'rejected';
-      };
-export interface RecoveryCheckpoint {
-    /** The snapshot's stamp; at a fault, the last published sequence plus one. */
-    readonly stamp: DocumentStamp;
-    readonly acknowledgedRevision: ServerRevision | null;
-    readonly document: RichTextDocument;
-}
-/** Created only by a host recovery service after acknowledgment. */
-export interface RecoveryReceipt {
-    readonly stamp: DocumentStamp;
-    readonly receiptId: string;
-}
-export interface RecoveryService {
-    store(checkpoint: RecoveryCheckpoint, context: ServiceContext): Promise<RecoveryReceipt>;
-}
-export interface ReplaceDocumentRequest {
-    readonly expected: DocumentStamp;
-    readonly next: LoadedDocument;
-    readonly unsaved:
-        | { readonly action: 'reject' }
-        | { readonly action: 'save' }
-        | { readonly action: 'checkpoint'; readonly receipt: RecoveryReceipt }
-        | { readonly action: 'discard'; readonly confirmed: true };
-    readonly selection: 'start' | 'end';
-    /** Replacement cannot keep history in v1. */
-    readonly history: 'reset';
-}
-export type ReplaceResult =
-    | { readonly status: 'replaced'; readonly session: SessionToken }
-    | {
-          readonly status: 'rejected';
-          readonly code:
-              | 'changed-since-request'
-              | 'invalid-document'
-              | 'wrong-model'
-              | 'unsaved'
-              | 'composition-active'
-              | 'save-unresolved'
-              | 'checkpoint-invalid'
-              | 'not-ready'
-              | 'faulted';
-      };
