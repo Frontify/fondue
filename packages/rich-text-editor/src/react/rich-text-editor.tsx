@@ -45,7 +45,7 @@ import {
 import { compiledModel } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
-import { contentClasses, styleSheetOf, unknownStyle } from '#/model/output';
+import { columnLayout, contentClasses, styleSheetOf, unknownStyle } from '#/model/output';
 import { randomId } from '#/model/random-id';
 import { isRecord } from '#/model/values';
 import { createSaveCoordinator } from '#/persistence/coordinator';
@@ -68,6 +68,7 @@ import { SuggestionList } from '#/ui/suggestions/suggestion-list';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
+import { showColumns } from './columns';
 import { engineOf, viewsOf } from './define';
 import { registerFormField } from './form-field';
 import { useKeyboardInset } from './keyboard-inset';
@@ -147,6 +148,14 @@ const memberOf = <K extends (typeof SERVICE_MEMBERS)[number]>(
         return undefined;
     }
     return services[member];
+};
+
+/** The surface element of a session whose view is attached. */
+const surfaceOf = (runtime: EditorRuntime | undefined): HTMLElement | undefined => {
+    if (runtime === undefined || runtime.view === undefined) {
+        return undefined;
+    }
+    return runtime.view.dom;
 };
 
 /** Whether a services member changed: added, removed, or holding another function under some name. */
@@ -607,6 +616,27 @@ const SessionComponent = (
             t,
         };
     }, [items, menu, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard, lang]);
+
+    // The surface shows the presentation's columns while it has room for them, and the session reads both.
+    const columns = columnLayout(props.presentation?.columns, props.presentation?.columnGap);
+    let columnCount = 1;
+    let columnGap: string | undefined;
+    if (columns !== undefined) {
+        columnCount = columns.count;
+        columnGap = columns.length;
+    }
+    const [columnsFit, setColumnsFit] = useState(false);
+    const breakLabel = chromeContext.t('RichTextEditor_columnBreak');
+    useClientLayoutEffect(() => {
+        live?.setColumns({ count: columnCount, fits: columnsFit, label: breakLabel });
+    }, [live, columnCount, columnsFit, breakLabel]);
+    useClientLayoutEffect(() => {
+        const surface = surfaceOf(live);
+        if (surface === undefined || columnGap === undefined) {
+            return undefined;
+        }
+        return showColumns(surface, columnCount, columnGap, setColumnsFit);
+    }, [live, columnCount, columnGap]);
 
     const overlays = useMemo(() => ({ container: overlayRoot, scope }), [overlayRoot, scope]);
 

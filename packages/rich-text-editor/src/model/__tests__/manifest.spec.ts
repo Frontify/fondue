@@ -84,6 +84,7 @@ describe('featureFromManifest', () => {
             'keymap:acme.pull-quote',
             'input-rules',
             'drop-cursor',
+            'gap-cursor',
             'base-keys',
         ]);
         expect(model.manifest.keys).toEqual([

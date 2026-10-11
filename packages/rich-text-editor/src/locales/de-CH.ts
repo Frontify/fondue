@@ -23,6 +23,7 @@ export const deCH = {
         RichTextEditor_codePlainText: 'Klartext',
         RichTextEditor_colorMenu: 'Farbe',
         RichTextEditor_colorPickerSave: 'Speichern',
+        RichTextEditor_columnBreak: 'Spaltenumbruch',
         RichTextEditor_copyCode: 'Code kopieren',
         RichTextEditor_copyContent: 'Inhalt kopieren',
         RichTextEditor_copyFailed:
@@ -31,6 +32,7 @@ export const deCH = {
         RichTextEditor_customColor: 'Eigene Textfarbe',
         RichTextEditor_customHighlight: 'Eigene Hervorhebungsfarbe',
         RichTextEditor_defaultStyle: 'Standardstil',
+        RichTextEditor_divider: 'Trennlinie',
         RichTextEditor_emoji: 'Emoji',
         RichTextEditor_emojiFailed: 'Emoji konnte nicht geladen werden.',
         RichTextEditor_emojiLoading: 'Emoji werden geladen…',

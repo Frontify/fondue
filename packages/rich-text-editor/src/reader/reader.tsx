@@ -18,7 +18,7 @@ import {
 import { type ResolveAssetUrl } from '#/model/declarations';
 import { decodeToTree } from '#/model/decode';
 import { canonicalJson } from '#/model/hash';
-import { listDepths, styleSheetOf } from '#/model/output';
+import { columnLayout, listDepths, styleSheetOf } from '#/model/output';
 
 import { readerContext } from './context';
 import { planOf } from './plan';
@@ -37,6 +37,10 @@ export interface ReaderPresentation {
     readonly contentClassName?: string;
     /** List markers by depth. */
     readonly listLevels?: ListLevels;
+    /** 1 to 6. */
+    readonly columns?: number;
+    /** `normal`, or a length in `px` or `rem`. */
+    readonly columnGap?: string;
 }
 
 export interface RichTextReaderProps {
@@ -103,6 +107,8 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
         styles: { styles, colorTokens: listOf<ColorToken>(resolvers.colorTokens), inline: false },
         // Without a presentation no style map is given, so no stored style is unknown.
         unknownStyles: presentation === undefined ? undefined : new Set(),
+        columns: columnLayout(resolvers.columns, resolvers.columnGap),
+        breaks: 0,
     };
     const element = renderDocument(state, tree, resolvers.contentClassName, styleSheetOf(styles));
     return { element, diagnostics, notified };

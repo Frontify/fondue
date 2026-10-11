@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { GapCursor } from 'prosemirror-gapcursor';
 import { type Node } from 'prosemirror-model';
 import {
     AllSelection,
@@ -41,6 +42,7 @@ import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
 import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
+import { type ColumnState, columnsPlugin, ONE_COLUMN, sameColumns } from './columns';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
@@ -166,6 +168,8 @@ export interface EditorRuntime {
     faultView(): void;
     /** The host's `disabled`, which runs in mode `readonly` and takes the surface out of the Tab order. */
     setDisabled(disabled: boolean): void;
+    /** The presentation's columns as the surface shows them, which `column.break.insert` and the break decorations read. */
+    setColumns(columns: ColumnState): void;
     nodeActions(target: NodeTarget): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
@@ -248,6 +252,9 @@ const kindOf = (selection: Selection): SelectionSummary['kind'] => {
     }
     if (selection instanceof AllSelection) {
         return 'all';
+    }
+    if (selection instanceof GapCursor) {
+        return 'gap';
     }
     return 'none';
 };
@@ -396,6 +403,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // The mode the surface shows, which follows `mode` once input has settled.
     let shownMode = mode;
     let disabled = false;
+    let columns = ONE_COLUMN;
     let commitSequence = 0;
     let sequence = 0;
     let saves: SaveCoordinator | undefined;
@@ -454,7 +462,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const keyGuard = createKeyGuard(() => options.tabMovesFocus?.() === true);
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
-        plugins: [typingRecorder, keyGuard, settling.plugin, targetsPlugin, groupsPlugin, ...definition.plugins],
+        plugins: [
+            typingRecorder,
+            keyGuard,
+            settling.plugin,
+            targetsPlugin,
+            groupsPlugin,
+            columnsPlugin(() => columns),
+            ...definition.plugins,
+        ],
     });
     // The state whose document the snapshot and `sequence` last published, and how later provisional batches map it.
     let published = state;
@@ -1790,6 +1806,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         setDisabled: (next) => {
             disabled = next;
+            view?.setProps({});
+        },
+        setColumns: (next) => {
+            if (sameColumns(columns, next)) {
+                return;
+            }
+            columns = next;
             view?.setProps({});
         },
         faultView: () => {

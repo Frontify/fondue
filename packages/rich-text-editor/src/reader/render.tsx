@@ -7,6 +7,8 @@ import { isIsland, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
     attrsOf,
+    COLUMN_BREAK,
+    type ColumnLayout,
     contentClasses,
     failedFallback,
     groupRun,
@@ -22,6 +24,7 @@ import {
     styleOfNode,
     unknownStyle,
     VOID_TAGS,
+    withActiveBreak,
     withColor,
     withListLevel,
     withStyle,
@@ -41,6 +44,10 @@ export interface RenderState extends Spacing {
     readonly styles: OutputStyles;
     /** The stored style IDs reported unknown, once each; `undefined` when the render reports none, with no presentation. */
     readonly unknownStyles: Set<string> | undefined;
+    /** The presentation's columns, or `undefined` for one column. */
+    readonly columns: ColumnLayout | undefined;
+    /** The column breaks rendered so far, whose first `count - 1` are active. */
+    breaks: number;
 }
 
 // Every HTML attribute whose React prop is not its lowercase name; the rest pass through unchanged.
@@ -229,6 +236,12 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         template = withAutoDirection(template);
     }
     template = withStyle(template, styled(state, node.type, attrs, path), false);
+    if (node.type === COLUMN_BREAK) {
+        if (state.columns !== undefined && state.breaks < state.columns.count - 1) {
+            template = withActiveBreak(template);
+        }
+        state.breaks += 1;
+    }
     return build(template, children);
 };
 
@@ -266,7 +279,8 @@ export const message = ({ locale, t }: ReaderContext, kind: keyof typeof MESSAGE
 
 /**
  * The reader root: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the
- * island notice, after one `style` element with the presentation's recipe stylesheet when it has one.
+ * island notice, after one `style` element with the presentation's recipe stylesheet when it has one; with columns,
+ * inside the container whose width decides, through the package styles, whether they show.
  */
 export const renderDocument = (
     state: RenderState,
@@ -288,10 +302,24 @@ export const renderDocument = (
         children.push(message(state.context, 'islands'));
     }
     const content = createElement('div', props, ...children);
+    const laidOut = withColumns(state.columns, content);
     if (styleSheet === '') {
-        return content;
+        return laidOut;
     }
     // The stylesheet holds only checked declarations, so it can never close its element.
     const sheet = createElement('style', { 'data-rte-styles': '', dangerouslySetInnerHTML: { __html: styleSheet } });
-    return createElement(Fragment, null, sheet, content);
+    return createElement(Fragment, null, sheet, laidOut);
+};
+
+/** The container whose width decides, through the package styles, whether the columns show. */
+const withColumns = (columns: ColumnLayout | undefined, content: ReactElement): ReactElement => {
+    if (columns === undefined) {
+        return content;
+    }
+    const style = { '--rte-columns': String(columns.count), '--rte-column-gap': columns.length };
+    return createElement(
+        'div',
+        { className: 'fondue-rte-columns', 'data-rte-columns': String(columns.count), style },
+        content,
+    );
 };
