@@ -39,7 +39,8 @@
         "./testing": {
             "types": "./dist/testing/index.d.ts",
             "import": "./dist/testing/index.js"
-        }
+        },
+        "./styles": "./dist/style.css"
     },
     "publishConfig": {
         "access": "public"

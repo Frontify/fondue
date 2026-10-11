@@ -16,7 +16,7 @@ import {
     useState,
 } from 'react';
 
-import '#/styles/placeholder.css';
+import '#/styles/content.css';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
@@ -28,6 +28,7 @@ import { enUS } from '#/locales/en-US';
 import { type CapabilityRef, type DecodeResult, type Diagnostic } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
+import { contentClasses } from '#/model/output';
 import { type LoadedDocument } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
@@ -308,6 +309,12 @@ const Root = forwardRef((props: Props & { readonly children: ReactNode }, ref: F
 });
 Root.displayName = 'RichTextEditor.Root';
 
+/** The host's class tokens the surface may add and remove: never the package's root class nor one of ProseMirror's own. */
+const hostClassNames = (contentClassName: string) =>
+    contentClassName
+        .split(/\s+/)
+        .filter((name) => name !== '' && contentClasses() !== name && !/^ProseMirror(-|$)/.test(name));
+
 const emptiness = (runtime: EditorRuntime | undefined) => {
     if (runtime === undefined) {
         return undefined;
@@ -321,7 +328,28 @@ const emptiness = (runtime: EditorRuntime | undefined) => {
  */
 const Surface = () => {
     const { props, mounted, coordinator } = useRoot('Surface');
-    const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder } = props;
+    const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
+    const contentClassName = presentation?.contentClassName;
+    // React writes the first classes only: ProseMirror adds its own to this element with `classList`, which a rewritten attribute would drop.
+    const [className] = useState(() => contentClasses(contentClassName));
+    const surfaceRef = useRef<HTMLElement | null>(null);
+    const setSurface = useCallback(
+        (element: HTMLElement | null) => {
+            surfaceRef.current = element;
+            coordinator.setSurface(element);
+        },
+        [coordinator],
+    );
+    // A later host class swaps in with `classList`, as ProseMirror's own class changes do.
+    useClientLayoutEffect(() => {
+        const surface = surfaceRef.current;
+        if (surface === null || contentClassName === undefined) {
+            return undefined;
+        }
+        const names = hostClassNames(contentClassName);
+        surface.classList.add(...names);
+        return () => surface.classList.remove(...names);
+    }, [contentClassName]);
     // A document that is not empty shows no placeholder; before the session is ready the container is empty, as on the server.
     let shownPlaceholder = placeholder;
     if (useSessionValue(emptiness, Object.is) === false) {
@@ -329,7 +357,8 @@ const Surface = () => {
     }
     return (
         <div
-            ref={coordinator.setSurface}
+            ref={setSurface}
+            className={className}
             role="textbox"
             aria-multiline
             aria-label={props['aria-label']}

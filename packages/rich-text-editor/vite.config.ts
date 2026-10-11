@@ -65,6 +65,7 @@ export default defineConfig({
                 'codecs/index': './src/codecs/index.ts',
                 'testing/index': './src/testing/index.ts',
             },
+            cssFileName: 'style',
             formats: ['es'],
         },
         sourcemap: true,
