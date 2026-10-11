@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineFeature } from '#/model';
+import { defineFeature, insertText } from '#/model';
 
 const lang = { type: 'language', nullable: true, default: null } as const;
 
@@ -26,4 +26,5 @@ export const core = defineFeature({
         hard_break: { group: 'inline', attrs: {}, html: ['br'], parse: [{ tag: 'br' }] },
     },
     formats: { html: 'lossless', text: 'lossless', markdown: 'lossless' },
+    commands: { 'text.insert': insertText() },
 });

@@ -1,28 +1,81 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { bold, core } from '#/features';
-import { defineEditor, type RichTextEditorProps, RichTextEditor } from '#/index';
+import {
+    type CommandResult,
+    type CommandsOfModel,
+    defineEditor,
+    type EditorHandle,
+    type RichTextEditorProps,
+    RichTextEditor,
+} from '#/index';
 import { compileContentModel, createEmptyDocument, type JsonValue } from '#/model';
 
 const model = compileContentModel([core(), bold()], { id: 'story.playground', version: 1 });
 const definition = defineEditor({ id: 'story.playground', model });
 
-const Playground = (props: RichTextEditorProps<object>) => {
+type Commands = CommandsOfModel<typeof model>;
+type PlaygroundProps = RichTextEditorProps<Commands> & {
+    /** The `create` value of the `marks.bold` authoring policy, which `updatePolicy` applies to the mounted editor. */
+    readonly allowNewBold: boolean;
+};
+
+const resultText = (result: CommandResult | undefined) => {
+    if (result === undefined) {
+        return 'no editor';
+    }
+    if (result.status === 'rejected') {
+        return `rejected ${result.code}`;
+    }
+    return result.status;
+};
+
+const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const counterRef = useRef(0);
+    const handleRef = useRef<EditorHandle<Commands>>(null);
     const [document, setDocument] = useState<JsonValue>(props.defaultValue.document.content as unknown as JsonValue);
     const log = (text: string) => {
         counterRef.current += 1;
         const id = counterRef.current;
         setEvents((previous) => [...previous.slice(-19), { id, text }]);
     };
+    useEffect(() => {
+        const { authoring } = definition;
+        const rules = { create: allowNewBold, edit: true, remove: true, paste: true };
+        handleRef.current?.updatePolicy({ ...authoring, features: { ...authoring.features, 'marks.bold': rules } });
+    }, [allowNewBold]);
     return (
         <div style={{ display: 'grid', gap: '1rem' }}>
+            <section aria-label="Commands" style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                    type="button"
+                    onClick={() =>
+                        log(`execute mark.bold.toggle ${resultText(handleRef.current?.execute('mark.bold.toggle'))}`)
+                    }
+                >
+                    Toggle bold
+                </button>
+                <button
+                    type="button"
+                    onClick={async () => {
+                        const handle = handleRef.current;
+                        if (handle !== null) {
+                            log(
+                                `enqueue text.insert ${resultText(await handle.enqueue('text.insert', { text: '*' }))}`,
+                            );
+                        }
+                    }}
+                >
+                    Insert a star
+                </button>
+            </section>
             <RichTextEditor
                 {...props}
+                ref={handleRef}
                 onReady={(session) => log(`ready ${session.sessionId}`)}
                 onDocumentChange={(change) => {
                     log(`documentChange ${change.origin} ${change.commandId ?? ''} #${change.stamp.sequence}`);
@@ -50,6 +103,7 @@ const meta: Meta<typeof Playground> = {
     tags: ['autodocs'],
     args: {
         'aria-label': 'Notes',
+        allowNewBold: true,
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },
         placeholder: 'Write something, and press Mod+B for bold',
