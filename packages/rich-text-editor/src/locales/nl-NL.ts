@@ -23,6 +23,19 @@ export const nlNL = {
         RichTextEditor_readerIslandNotice: 'Sommige inhoud wordt hier niet ondersteund.',
         RichTextEditor_recoveryMessage: 'De editor werkt niet meer. Je laatste wijzigingen staan hieronder.',
         RichTextEditor_retry: 'Opnieuw proberen',
+        RichTextEditor_saveConflict:
+            'Iemand anders heeft deze inhoud gewijzigd. Je wijzigingen blijven behouden, maar zijn niet opgeslagen.',
+        RichTextEditor_saveFailed: 'Opslaan is mislukt. Je wijzigingen zijn niet opgeslagen.',
+        RichTextEditor_saveForbidden:
+            'Niet opgeslagen: je mag deze inhoud niet bewerken. Vraag toegang aan of meld je opnieuw aan.',
+        RichTextEditor_saveIncompatible: 'Niet opgeslagen: deze editor is verouderd. Laad de pagina opnieuw.',
+        RichTextEditor_saveInvalid:
+            'Niet opgeslagen: de inhoud is niet geaccepteerd. Kopieer de inhoud om je wijzigingen te bewaren.',
+        RichTextEditor_saveOffline: 'Offline. Wijzigingen worden opgeslagen zodra je weer online bent.',
+        RichTextEditor_saveRetrying: 'Opslaan is mislukt. Opnieuw proberen…',
+        RichTextEditor_saveSaved: 'Alle wijzigingen opgeslagen',
+        RichTextEditor_saveSaving: 'Opslaan…',
+        RichTextEditor_saveUnsaved: 'Niet-opgeslagen wijzigingen',
         RichTextEditor_toolbar: 'Tekstopmaak',
         RichTextEditor_toolbarAlways: 'Werkbalk altijd tonen',
         RichTextEditor_toolbarOnSelection: 'Werkbalk alleen bij een selectie tonen',
