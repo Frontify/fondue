@@ -16,7 +16,6 @@ import {
     itemsOf,
     listDepths,
     type ListDepths,
-    MIN_COLUMN_WIDTH,
     spaced,
     type Spacing,
     VOID_TAGS,
@@ -264,8 +263,8 @@ export const isEmptyDocument = (plan: CodecPlan, root: TreeNode): boolean => {
 
 /**
  * The reader's static markup as text: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its
- * blocks, then the island notice; with `columns`, an inline `columns` of the count and the narrowest column width, and
- * `column-gap`, so a narrow viewport shows fewer columns with no stylesheet.
+ * blocks, then the island notice; with `columns`, an inline `columns` and `column-gap` on that root. The count stays
+ * fixed, since an active break forces a column that a narrower count would push out of the box.
  */
 export const writeHtml = (
     plan: CodecPlan,
@@ -318,7 +317,7 @@ export const writeHtml = (
     );
     // On the content root itself, so a `normal` gap resolves against the content font, as in the editor.
     if (columns !== undefined) {
-        props += ` style="columns:${columns.count} ${MIN_COLUMN_WIDTH}px;column-gap:${escapeHtml(columns.gap)}"`;
+        props += ` style="columns:${columns.count};column-gap:${escapeHtml(columns.gap)}"`;
     }
     html = `<div${props}>${html}</div>`;
     return { html, diagnostics: [...state.diagnostics, ...lossy] };

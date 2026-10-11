@@ -66,7 +66,7 @@ import { SuggestionList } from '#/ui/suggestions/suggestion-list';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
-import { showColumns } from './columns';
+import { type ColumnsLayout, showColumns } from './columns';
 import { engineOf, viewsOf } from './define';
 import { registerFormField } from './form-field';
 import { useKeyboardInset } from './keyboard-inset';
@@ -617,23 +617,32 @@ const SessionComponent = (
             inactiveLabel: inactiveBreakLabel,
         });
     }, [live, columnCount, columnsFit, breakLabel, inactiveBreakLabel]);
+    const columnsLayoutRef = useRef<ColumnsLayout | undefined>(undefined);
     useClientLayoutEffect(() => {
         const surface = surfaceOf(live);
-        if (live === undefined || surface === undefined || columnGap === undefined) {
+        if (live === undefined || surface === undefined) {
             return undefined;
         }
-        const holds = (measure: () => void) => {
+        const holds = (write: () => void) => {
             if (live.view?.composing !== true) {
                 return false;
             }
             live.afterInput((outcome) => {
                 if (outcome !== 'disposed') {
-                    measure();
+                    write();
                 }
             }, COMPOSITION_WAIT_MS);
             return true;
         };
-        return showColumns(surface, columnCount, columnGap, setColumnsFit, holds);
+        const layout = showColumns(surface, setColumnsFit, holds);
+        columnsLayoutRef.current = layout;
+        return () => {
+            columnsLayoutRef.current = undefined;
+            layout.dispose();
+        };
+    }, [live]);
+    useClientLayoutEffect(() => {
+        columnsLayoutRef.current?.update(columnCount, columnGap);
     }, [live, columnCount, columnGap]);
 
     const overlays = useMemo(() => ({ container: overlayRoot, scope }), [overlayRoot, scope]);
