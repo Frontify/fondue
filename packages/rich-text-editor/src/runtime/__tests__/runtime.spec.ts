@@ -42,10 +42,13 @@ import { decodeToTree, limitsOf } from '#/model/decode';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
+import { type AsyncRequest } from '../async';
 import { CAPABILITIES } from '../capabilities';
 import { createLimitCheck } from '../limits';
 import { authoringOf } from '../policy';
 import { createEditorRuntime, type EditorRuntime } from '../runtime';
+import { SETTLE_MS } from '../settle';
+import { countTargets } from '../targets';
 import {
     type AuthoringPolicy,
     type CaptureTargetOptions,
@@ -131,6 +134,36 @@ const start = (input: unknown, options: Start = {}) => {
 };
 
 const contentOf = (change: DocumentChange | undefined) => change?.readDocument().content;
+
+/** Starts an operation through the coordinator whose service call resolves when the test resolves it. */
+const pending = (runtime: EditorRuntime, request: Partial<AsyncRequest> = {}) => {
+    let settle: (result: unknown) => void = () => undefined;
+    const call = new Promise<unknown>((resolve) => {
+        settle = resolve;
+    });
+    const operation = runtime.startAsync({
+        key: 'upload',
+        service: 'uploads',
+        featureId: 'core',
+        action: 'create',
+        command: 'text.insert',
+        run: () => call,
+        ...request,
+    });
+    return {
+        operation,
+        resolve: async (result: unknown) => {
+            settle(result);
+            await call;
+        },
+    };
+};
+const discarded = (reason: string) => ({
+    code: 'runtime.async-discarded',
+    severity: 'info',
+    messageKey: 'runtime.async-discarded',
+    details: { reason },
+});
 
 describe('the commit path', () => {
     it('publishes a root transaction and its appended one as one change', () => {
@@ -1033,7 +1066,9 @@ describe('commands, events and the commit path', () => {
         pressKey(handle, 'Mod-b');
         handle.execute('mark.bold.toggle');
         await handle.enqueue('text.insert', { text: 'e' });
+        await pending(runtime).resolve({ text: 'f' });
 
+        expect(view.state.doc.textContent).toContain('f');
         expect(installed).toHaveLength(handle.getSummary().commitSequence);
         expect(installed.at(-1)).toBe(view.state);
         expect([view.props.handleDOMEvents, view.props.handleKeyDown, view.props.handleTextInput]).toEqual([
@@ -1093,10 +1128,12 @@ describe('commands, events and the commit path', () => {
             plugins: [appendForever('fixture.a', 'insertNode'), appendForever('fixture.b', 'setBlock')],
         });
         const before = view.state;
+        const snapshot = handle.getSnapshot();
 
         typeText(handle, 'x');
 
         expect(view.state).toBe(before);
+        expect(handle.getSnapshot()).toBe(snapshot);
         expect(changes).toEqual([]);
         expect(handle.getSummary()).toMatchObject({ phase: 'faulted', commitSequence: 0, sequence: 0 });
         expect(view.editable).toBe(false);
@@ -1632,7 +1669,7 @@ describe('origins with an appended normalization', () => {
             return state.tr.insertText('!', state.doc.content.size - 1);
         },
     });
-    const cases: readonly (readonly [string, (session: ReturnType<typeof start>) => void])[] = [
+    const cases: readonly (readonly [string, (session: ReturnType<typeof start>) => unknown])[] = [
         ['input', ({ handle }) => typeText(handle, 'c')],
         ['paste', ({ view }) => view.pasteHTML('<p>d</p>')],
         [
@@ -1644,12 +1681,13 @@ describe('origins with an appended normalization', () => {
         ],
         ['command', ({ handle }) => handle.execute('text.insert', { text: 'e' })],
         ['unknown', ({ view }) => view.dispatch(view.state.tr.insertText('f'))],
+        ['async', ({ runtime }) => pending(runtime).resolve({ text: 'g' })],
     ];
     for (const [origin, act] of cases) {
-        it(`reports the root's origin ${origin} for a batch with an appended normalization`, () => {
+        it(`reports the root's origin ${origin} for a batch with an appended normalization`, async () => {
             const session = start(stored(para(words('ab'))), { plugins: [repair] });
 
-            act(session);
+            await act(session);
 
             expect(session.changes.map((change) => change.origin)).toEqual([origin]);
             expect(session.view.state.doc.textContent.endsWith('!')).toBe(true);
@@ -2325,5 +2363,711 @@ describe('disposal', () => {
         expect(settled.map(({ status }) => status)).toEqual(
             Array.from({ length: 5 }).flatMap(() => ['rejected', 'applied']),
         );
+    });
+});
+
+/** Starts a composition as the browser does, so ProseMirror's own handler sets `view.composing`, and composes `text`. */
+const compose = ({ view }: ReturnType<typeof start>, text: string) => {
+    view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+    // ProseMirror marks the composed text it reads from the DOM with its composition ID.
+    view.dispatch(view.state.tr.insertText(text).setMeta('composition', 1));
+};
+const endComposition = ({ view }: ReturnType<typeof start>) =>
+    view.dom.dispatchEvent(new CompositionEvent('compositionend'));
+/** Runs the microtask, then the 20 ms timer after which input has settled. */
+const settleInput = async () => {
+    await vi.advanceTimersByTimeAsync(0);
+    await vi.advanceTimersByTimeAsync(20);
+};
+const NOT_EDITABLE_CORE: Partial<AuthoringPolicy> = {
+    features: { core: { create: true, edit: false, remove: true, paste: true } },
+};
+
+describe('the published snapshot and composition', () => {
+    it('keeps sequence for a selection move and a stored mark, and counts a typed character', () => {
+        const { handle } = start(stored(para(words('ab'))));
+
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        expect(handle.getSummary().sequence).toBe(0);
+        pressKey(handle, 'Mod-b');
+        expect(handle.getSummary().sequence).toBe(0);
+        typeText(handle, 'c');
+        expect(handle.getSummary().sequence).toBe(1);
+    });
+
+    it('returns one frozen snapshot until a commit, then the new one to every selector', () => {
+        const { handle, runtime } = start(stored(para(words('ab'))));
+        const first = handle.getSnapshot();
+        const seen: unknown[] = [];
+        runtime.watch(
+            () => handle.getSnapshot(),
+            Object.is,
+            (value) => seen.push(value),
+        );
+        runtime.watch(
+            () => handle.getSnapshot(),
+            Object.is,
+            (value) => seen.push(value),
+        );
+
+        expect(handle.getSnapshot()).toBe(first);
+        expect(() => {
+            (first.stamp as { sequence: number }).sequence = 9;
+        }).toThrow(TypeError);
+        expect(() => {
+            (first.document as { formatVersion: number }).formatVersion = 2;
+        }).toThrow(TypeError);
+        typeText(handle, 'c');
+
+        const next = handle.getSnapshot();
+        expect(next).not.toBe(first);
+        expect(seen).toEqual([next, next]);
+        expect(seen.every((value) => value === next)).toBe(true);
+        expect(next).toMatchObject({
+            stamp: { sequence: 1 },
+            acknowledgedRevision: null,
+            compositionActive: false,
+            document: stored(para(words('cab'))),
+        });
+    });
+
+    it('counts a composition commit and notifies selectors while the snapshot holds', () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, runtime } = session;
+        const before = handle.getSnapshot();
+        const seen: number[] = [];
+        runtime.watch(
+            () => handle.getSummary().commitSequence,
+            Object.is,
+            (value) => seen.push(value),
+        );
+        const { commitSequence } = handle.getSummary();
+
+        compose(session, 'x');
+
+        expect(seen).toEqual([commitSequence + 1]);
+        expect(handle.getSummary()).toMatchObject({ commitSequence: commitSequence + 1, sequence: 0 });
+        expect(handle.getSnapshot()).toMatchObject({
+            stamp: { sequence: 0 },
+            compositionActive: true,
+            document: before.document,
+        });
+    });
+
+    it('publishes a composition and runs a queued intent once compositionend, a microtask and 20 ms passed', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view, changes } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        const before = handle.getSnapshot();
+        const waiting = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
+
+        compose(session, 'c');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        endComposition(session);
+        // ProseMirror reads the last composed characters in its flush after compositionend.
+        view.dispatch(view.state.tr.insertText('d').setMeta('composition', 1));
+        await vi.advanceTimersByTimeAsync(0);
+        await vi.advanceTimersByTimeAsync(19);
+
+        expect(await waiting(queued)).toBe('pending');
+        expect(changes).toEqual([]);
+        expect(handle.getSummary()).toMatchObject({ sequence: 0, compositionActive: true });
+        expect(handle.getSnapshot()).toMatchObject({ document: before.document, compositionActive: true });
+
+        await vi.advanceTimersByTimeAsync(1);
+
+        expect(await waiting(queued)).toMatchObject({ status: 'applied', contentChanged: true });
+        expect(changes.map(contentOf)).toEqual([
+            stored(para(words('abcd'))).content,
+            stored(para(words('abcd!'))).content,
+        ]);
+        expect(changes.map(({ origin }) => origin)).toEqual(['input', 'command']);
+        expect(handle.getSummary()).toMatchObject({ sequence: 2, compositionActive: false });
+    });
+
+    it('checks a composition once input settled and restores the state from before it', async () => {
+        const session = start(stored(para(words('ab'))), { policy: NOT_EDITABLE_CORE });
+        const { handle, view, changes } = session;
+        const before = view.state;
+
+        compose(session, 'x');
+        expect(view.state.doc.textContent).toBe('xab');
+        endComposition(session);
+        await settleInput();
+
+        expect(view.state).toBe(before);
+        expect(changes).toEqual([]);
+        expect(handle.getSummary()).toMatchObject({ sequence: 0, compositionActive: false });
+    });
+
+    it('rejects a host execute and keeps the surface editable until input settled', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view } = session;
+        const surface = () => view.dom.getAttribute('contenteditable');
+
+        compose(session, 'x');
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual({
+            status: 'rejected',
+            code: 'composition-active',
+        });
+        handle.setMode('readonly');
+        const queued = handle.enqueue('text.insert', { text: 'z' });
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual({ status: 'rejected', code: 'readonly' });
+        compose(session, 'w');
+        expect([surface(), view.state.doc.textContent]).toEqual(['true', 'xwab']);
+        endComposition(session);
+        await settleInput();
+
+        expect(await queued).toEqual({ status: 'rejected', code: 'readonly' });
+        expect([surface(), view.state.doc.textContent]).toEqual(['false', 'xwab']);
+    });
+
+    it('keeps a composition active through a host stored-mark toggle until compositionend', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view, changes } = session;
+        const waiting = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+
+        compose(session, 'x');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        // Bold at a caret sets stored marks, and ProseMirror ends its own record of a composition for a state with them.
+        expect(handle.execute('mark.bold.toggle').status).toBe('applied');
+        expect(view.state.storedMarks).not.toBeNull();
+
+        expect(handle.getSummary().compositionActive).toBe(true);
+        expect(await waiting(queued)).toBe('pending');
+        expect(changes).toEqual([]);
+        endComposition(session);
+        await settleInput();
+
+        expect(await waiting(queued)).toMatchObject({ status: 'applied' });
+        expect(changes.map(({ origin }) => origin)).toEqual(['input', 'command']);
+        expect(view.state.doc.textContent).toBe('abx!');
+    });
+
+    it('waits as long as ProseMirror does after compositionend', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view, changes } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        compose(session, 'x');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        const timers = vi.spyOn(globalThis, 'setTimeout');
+
+        // The last composed character reaches the DOM right before compositionend, so ProseMirror reads it in its flush.
+        (view.dom.firstChild?.firstChild as Text).appendData('y');
+        endComposition(session);
+        const delays = timers.mock.calls.map(([, delay]) => delay);
+        timers.mockRestore();
+        await vi.advanceTimersByTimeAsync(0);
+        await vi.advanceTimersByTimeAsync(SETTLE_MS);
+
+        // ProseMirror ends a composition in its own timer of this delay, which the settle timer copies.
+        expect(delays).toContain(SETTLE_MS);
+        expect(await queued).toMatchObject({ status: 'applied' });
+        expect(changes.map(contentOf)).toEqual([
+            stored(para(words('abxy'))).content,
+            stored(para(words('abxy!'))).content,
+        ]);
+    });
+
+    it('answers query as a host execute during a composition', () => {
+        const states = [{}, NOT_EDITABLE_CORE].map((policy) => {
+            const session = start(stored(para(words('ab'))), { policy });
+            compose(session, 'x');
+            const { disabledReason } = session.handle.query('text.insert', { text: 'y' });
+            return [disabledReason, session.handle.execute('text.insert', { text: 'y' })];
+        });
+
+        expect(states).toEqual([
+            ['composition-active', { status: 'rejected', code: 'composition-active' }],
+            ['not-allowed', { status: 'rejected', code: 'not-allowed' }],
+        ]);
+    });
+
+    it('repairs a nodeId that a composition repeats only once input settled', async () => {
+        const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
+        const session = start(stored(heading(2, words('abcd'))), { model });
+        const { view, changes } = session;
+        const ids = () => view.state.doc.children.map((node): unknown => node.attrs.nodeId);
+
+        compose(session, 'x');
+        // An Enter during a composition, as Android sends it, splits the heading under the composition's meta.
+        view.dispatch(view.state.tr.split(3).setMeta('composition', 1));
+        expect(ids()).toEqual(['h-1', 'h-1']);
+        endComposition(session);
+        await settleInput();
+
+        const settled = ids();
+        expect([settled[0], new Set(settled).size]).toEqual(['h-1', 2]);
+        expect(changes).toHaveLength(1);
+        expect(JSON.stringify(contentOf(changes[0])).split('"h-1"')).toHaveLength(2);
+        expect(textOf(view.state.doc)).toBe('xabcd');
+    });
+
+    it('judges the settle repair with its composition, so a heading with remove false still gets unique IDs', async () => {
+        const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
+        const policy = {
+            features: { 'fixture.heading-set': { create: true, edit: true, remove: false, paste: true } },
+        };
+        const session = start(stored(heading(2, words('abcd'))), { model, policy });
+        const { view, changes } = session;
+
+        compose(session, 'x');
+        view.dispatch(view.state.tr.split(3).setMeta('composition', 1));
+        endComposition(session);
+        await settleInput();
+
+        const ids = view.state.doc.children.map((node): unknown => node.attrs.nodeId);
+        expect([ids[0], new Set(ids).size, changes.length]).toEqual(['h-1', 2, 1]);
+    });
+
+    it('ends a composition when the view detaches, so held work settles', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, runtime } = session;
+
+        compose(session, 'x');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        runtime.detach();
+        await settleInput();
+
+        expect(handle.getSummary().compositionActive).toBe(false);
+        expect(await queued).toMatchObject({ status: 'applied' });
+        expect(handle.execute('text.insert', { text: '?' }).status).toBe('applied');
+    });
+
+    it('keeps a target captured during a rejected composition, so its result applies', async () => {
+        const policy = { features: { 'marks.bold': { create: true, edit: false, remove: true, paste: true } } };
+        const session = start(stored(para(strong('ab'), words('cd'))), { model: targetModel, policy });
+        const { handle, runtime, view } = session;
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+
+        compose(session, 'x');
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        const upload = pending(runtime, { target });
+        endComposition(session);
+        await settleInput();
+        expect(textOf(view.state.doc)).toBe('abcd');
+        await upload.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('abcd!');
+        expect(session.diagnostics).toEqual([]);
+    });
+
+    it('defers a root a plugin view dispatches while the settled state installs, so the check still judges the composition', async () => {
+        const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
+        const policy = {
+            features: { 'fixture.heading-set': { create: true, edit: false, remove: true, paste: true } },
+        };
+        let dispatched = false;
+        // Dispatches once it sees the repaired headings, as a plugin view that reacts to a new state does.
+        const late = new Plugin({
+            view: () => ({
+                update: (view) => {
+                    const ids = view.state.doc.children
+                        .filter((node) => node.type.name === 'heading')
+                        .map((node): unknown => node.attrs.nodeId);
+                    if (!dispatched && ids.length === 2 && ids[0] !== ids[1]) {
+                        dispatched = true;
+                        view.dispatch(view.state.tr.insertText('z', view.state.doc.content.size - 1));
+                    }
+                },
+            }),
+        });
+        const session = start(stored(heading(2, words('abcd')), para(words('p'))), { model, policy, plugins: [late] });
+        const { view, changes } = session;
+
+        compose(session, 'x');
+        view.dispatch(view.state.tr.split(3).setMeta('composition', 1));
+        endComposition(session);
+        await settleInput();
+
+        expect(dispatched).toBe(true);
+        expect(textOf(view.state.doc)).toBe('abcdp');
+        expect(changes.filter((change) => JSON.stringify(contentOf(change)).includes('x'))).toEqual([]);
+    });
+
+    it('resolves intents queued during composition as not-ready on dispose and drops the settle timer', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle } = session;
+
+        compose(session, 'x');
+        const queued = [handle.enqueue('text.insert', { text: 'y' }), handle.enqueue('mark.bold.toggle')];
+        endComposition(session);
+        await vi.advanceTimersByTimeAsync(0);
+        expect(probeRuntimes()).toMatchObject({ intents: 2, timers: 1 });
+        handle.dispose();
+
+        expect(await Promise.all(queued)).toEqual([
+            { status: 'rejected', code: 'not-ready' },
+            { status: 'rejected', code: 'not-ready' },
+        ]);
+        expect(probeRuntimes()).toMatchObject({ intents: 0, timers: 0 });
+    });
+});
+
+describe('targets on release and dispose', () => {
+    it('removes a released target, and every target on dispose, from plugin state', () => {
+        const generateId = countingIds();
+        const { handle, runtime } = start(stored(para(words('abcd'))), { model: targetModel, generateId });
+        const other = start(stored(para(words('abcd'))), { model: targetModel, generateId });
+        setSelection(handle, { text: 'bc' });
+        const kept = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        const released = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        expect(probeRuntimes().targets).toBe(2);
+
+        handle.releaseTarget(released);
+        expect(probeRuntimes().targets).toBe(1);
+        expect(handle.execute('mark.bold.toggle', undefined, { target: released })).toEqual(INVALID);
+        expect(handle.execute('mark.bold.toggle', undefined, { target: kept }).status).toBe('applied');
+
+        handle.dispose();
+        expect(countTargets(runtime.state)).toBe(0);
+        expect(probeRuntimes().targets).toBe(0);
+        expect(other.handle.execute('mark.bold.toggle', undefined, { target: kept })).toEqual({
+            status: 'rejected',
+            code: 'wrong-session',
+        });
+    });
+
+    it('keeps a target released during a composition released when the settled check restores the state', async () => {
+        const session = start(stored(para(words('ab'))), { model: targetModel, policy: NOT_EDITABLE_CORE });
+        const { handle } = session;
+        setSelection(handle, { text: 'ab' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+
+        compose(session, 'x');
+        handle.releaseTarget(target);
+        endComposition(session);
+        await settleInput();
+
+        expect(session.view.state.doc.textContent).toBe('ab');
+        expect(probeRuntimes().targets).toBe(0);
+        expect(handle.query('mark.bold.toggle', undefined, { target }).disabledReason).toBe('target-invalid');
+    });
+
+    it('refuses a capture while mounting, faulted or disposed and creates no target', () => {
+        const { tree } = decodeToTree(stored(para(words('ab'))), boldModel);
+        const mounting = createEditorRuntime({
+            definition: compileDefinition(boldModel, CAPABILITIES),
+            documentId: 'document-1',
+            tree: tree as NonNullable<typeof tree>,
+            capabilities: [],
+            generateId: countingIds(),
+            mode: 'editable',
+            policy: authoringOf(boldModel),
+            limits: limitsOf(undefined),
+        });
+        started.push(mounting);
+        const faulted = start(stored(para()), {
+            plugins: [appendForever('fixture.a', 'insertNode'), appendForever('fixture.b', 'setBlock')],
+        });
+        typeText(faulted.handle, 'x');
+        const disposed = start(stored(para(words('ab'))));
+        disposed.handle.dispose();
+        // Attached after the other sessions' frames, so this one is still mounting.
+        mounting.attach(document.body.appendChild(document.createElement('div')));
+        const options = { purpose: 'format', onIntersectingEdit: 'map' } as const;
+
+        const phases = [mounting.handle, faulted.handle, disposed.handle].map((handle) => [
+            handle.getSummary().phase,
+            handle.captureTarget(options),
+        ]);
+
+        expect(phases).toEqual([
+            ['mounting', { status: 'rejected', code: 'not-ready' }],
+            ['faulted', { status: 'rejected', code: 'not-ready' }],
+            ['disposed', { status: 'rejected', code: 'not-ready' }],
+        ]);
+        expect(probeRuntimes().targets).toBe(0);
+    });
+});
+
+describe('the async coordinator', () => {
+    it('registers each operation with its ID, session, target, policy revision, controller and request sequence', () => {
+        const { handle, runtime } = start(stored(para(words('abcd'))), { model: targetModel });
+        setSelection(handle, { text: 'bc' });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        handle.updatePolicy(authoringOf(targetModel));
+
+        pending(runtime, { key: 'mention-search', service: 'references', target });
+        const search = pending(runtime, { key: 'mention-search', service: 'references', target }).operation;
+        const upload = pending(runtime, { key: 'upload' }).operation;
+
+        const { session } = handle.getSummary();
+        const registry = probeRuntimes().operations;
+        expect(registry).toEqual([search, upload]);
+        expect(search).toMatchObject({ session, target, policyRevision: 1, key: 'mention-search', request: 2 });
+        expect(upload).toMatchObject({ session, policyRevision: 1, key: 'upload', request: 1 });
+        expect(upload.target).toMatchObject({ session });
+        expect(search.id).not.toBe(upload.id);
+        expect(registry.map(({ controller }) => controller instanceof AbortController)).toEqual([true, true]);
+    });
+
+    it('aborts an older request for the same interaction and ignores its result when it resolves last', async () => {
+        const { runtime, view, diagnostics } = start(stored(para(words('ab'))));
+        const older = pending(runtime, { key: 'mention-search' });
+        const newer = pending(runtime, { key: 'mention-search' });
+
+        expect([older.operation.controller.signal.aborted, newer.operation.controller.signal.aborted]).toEqual([
+            true,
+            false,
+        ]);
+        await newer.resolve({ text: 'new ' });
+        await older.resolve({ text: 'old ' });
+
+        expect(view.state.doc.textContent).toBe('new ab');
+        expect(diagnostics).toEqual([discarded('superseded')]);
+    });
+
+    /** Each case starts an operation, makes one check fail, and returns the call that resolves it. */
+    const failures: readonly (readonly [string, string, (session: ReturnType<typeof start>) => () => Promise<void>])[] =
+        [
+            [
+                'a target that an edit invalidated',
+                'target-invalid',
+                ({ handle, runtime, view }) => {
+                    setSelection(handle, { text: 'ab' });
+                    const target = capture(handle, { purpose: 'replace-text', onIntersectingEdit: 'invalidate' });
+                    const operation = pending(runtime, { target });
+                    view.dispatch(view.state.tr.delete(1, 2));
+                    return () => operation.resolve({ text: 'x' });
+                },
+            ],
+            [
+                'a policy that forbids the change',
+                'not-allowed',
+                ({ handle, runtime }) => {
+                    const operation = pending(runtime);
+                    handle.updatePolicy(authoringOf(targetModel, NOT_EDITABLE_CORE));
+                    return () => operation.resolve({ text: 'x' });
+                },
+            ],
+            [
+                'a field of the wrong type',
+                'invalid-payload',
+                ({ runtime }) => {
+                    const operation = pending(runtime);
+                    return () => operation.resolve({ text: 7 });
+                },
+            ],
+            [
+                'a value that is not plain JSON',
+                'invalid-payload',
+                ({ runtime }) => {
+                    const operation = pending(runtime);
+                    return () => operation.resolve({ text: 'x', at: () => 1 });
+                },
+            ],
+        ];
+    for (const [name, reason, act] of failures) {
+        it(`discards a result with ${name} as ${reason}, with no content change`, async () => {
+            const session = start(stored(para(words('ab'))), { model: targetModel });
+            const resolve = act(session);
+            const { sequence } = session.handle.getSummary();
+            const before = session.view.state.doc;
+
+            await resolve();
+
+            expect(session.view.state.doc).toBe(before);
+            expect(session.handle.getSummary().sequence).toBe(sequence);
+            expect(session.diagnostics).toEqual([discarded(reason)]);
+        });
+    }
+
+    it('applies a result through its target from the current state as async, keeping the caret of an author typing elsewhere', async () => {
+        const { handle, runtime, view, changes } = start(stored(para(words('ab')), para(words('cd'))), {
+            model: targetModel,
+        });
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        const upload = pending(runtime, { target });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        typeText(handle, 'x');
+        const caret = view.state.selection;
+
+        await upload.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('axbcd!');
+        expect(view.state.selection.eq(caret)).toBe(true);
+        expect(changes.at(-1)).toMatchObject({ origin: 'async', commandId: null });
+    });
+
+    it('runs a queued intent through its target without moving the caret of an author typing elsewhere', async () => {
+        const { handle, view } = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        setSelection(handle, { text: 'cd' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        let queued: Promise<CommandResult> | undefined;
+        let caret = view.state.selection;
+        handle.subscribe('documentChange', () => {
+            if (queued === undefined) {
+                caret = view.state.selection;
+                queued = handle.enqueue('mark.bold.toggle', undefined, { target });
+            }
+        });
+
+        typeText(handle, 'x');
+        const result = await queued;
+
+        expect(result?.status).toBe('applied');
+        expect(textOf(view.state.doc)).toBe('axbcd');
+        expect(markedText(view.state.doc, 'bold')).toBe('cd');
+        expect(view.state.selection.eq(caret)).toBe(true);
+    });
+
+    it('applies a result started with no target where the selection was, keeping the caret, and releases the captured target', async () => {
+        const { handle, runtime, view } = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        const upload = pending(runtime);
+        expect(upload.operation.target).not.toBeNull();
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        typeText(handle, 'x');
+        const caret = view.state.selection;
+
+        await upload.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('a!bcdx');
+        // The caret after `cdx` maps one position on through the `!` inserted before it.
+        expect([view.state.selection.empty, view.state.selection.head]).toEqual([true, caret.head + 1]);
+        expect(probeRuntimes().targets).toBe(0);
+    });
+
+    it('registers an operation a running command starts with a target where that command leaves the selection', async () => {
+        let upload: ReturnType<typeof pending> | undefined;
+        let session: ReturnType<typeof start> | undefined;
+        // Stands in for an `upload` capability: it changes the slot synchronously and hands the service call over.
+        const startUpload: EngineCommand = {
+            run: (state, dispatch) => {
+                if (dispatch !== undefined && session !== undefined) {
+                    dispatch(state.tr.insertText('[]'));
+                    upload = pending(session.runtime);
+                }
+                return true;
+            },
+            active: () => false,
+        };
+        session = start(stored(para(words('ab')), para(words('cd'))), {
+            model: targetModel,
+            commands: { 'fixture.upload': startUpload },
+        });
+        const { handle, view } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+
+        expect(handle.execute('fixture.upload').status).toBe('applied');
+        expect(upload?.operation.target).not.toBeNull();
+        expect(probeRuntimes()).toMatchObject({ targets: 1, operations: [upload?.operation] });
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        typeText(handle, 'x');
+        const caret = view.state.selection;
+        await upload?.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('ab[]!cdx');
+        expect([view.state.selection.empty, view.state.selection.head]).toEqual([true, caret.head + 1]);
+        expect(probeRuntimes().targets).toBe(0);
+    });
+
+    it('discards a result holding a revoked proxy as invalid-payload', async () => {
+        const { runtime, view, diagnostics } = start(stored(para(words('ab'))));
+        const upload = pending(runtime);
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+
+        // Promise resolution reads `then` on the result itself, so the revoked proxy sits one level down.
+        await upload.resolve({ text: proxy });
+
+        expect(view.state.doc.textContent).toBe('ab');
+        expect(diagnostics).toEqual([discarded('invalid-payload')]);
+    });
+
+    it('starts nothing after dispose: the operation is aborted and never registered', () => {
+        const { handle, runtime } = start(stored(para(words('ab'))));
+        const run = vi.fn(() => new Promise<unknown>(() => undefined));
+        handle.dispose();
+
+        const operation = runtime.startAsync({
+            key: 'upload',
+            service: 'uploads',
+            featureId: 'core',
+            action: 'create',
+            command: 'text.insert',
+            run,
+        });
+
+        expect(operation.controller.signal.aborted).toBe(true);
+        expect(run).not.toHaveBeenCalled();
+        expect(probeRuntimes().operations).toEqual([]);
+    });
+
+    it('aborts every pending operation on dispose and ignores their results', async () => {
+        const { handle, runtime, diagnostics } = start(stored(para(words('ab'))));
+        const upload = pending(runtime);
+        const search = pending(runtime, { key: 'mention-search', service: 'references' });
+
+        handle.dispose();
+        const { commitSequence } = handle.getSummary();
+        const { document } = handle.getSnapshot();
+        await upload.resolve({ text: 'x' });
+        await search.resolve({ text: 'y' });
+
+        expect(handle.getSummary().commitSequence).toBe(commitSequence);
+        expect(handle.getSnapshot().document).toBe(document);
+
+        expect([upload, search].map(({ operation }) => operation.controller.signal.aborted)).toEqual([true, true]);
+        expect(probeRuntimes().operations).toEqual([]);
+        expect(diagnostics).toEqual([]);
+    });
+
+    it('aborts an upload once the policy disables create for its feature and discards its result', async () => {
+        const { handle, runtime, view } = start(stored(para(words('ab'))));
+        const upload = pending(runtime, { featureId: 'core', action: 'create' });
+
+        handle.updatePolicy(
+            authoringOf(boldModel, { features: { core: { create: false, edit: true, remove: true, paste: true } } }),
+        );
+        await upload.resolve({ text: 'x' });
+
+        expect(upload.operation.controller.signal.aborted).toBe(true);
+        expect(view.state.doc.textContent).toBe('ab');
+    });
+
+    it('aborts only the operation of a changed services member and keeps the view', async () => {
+        const { runtime, view } = start(stored(para(words('ab'))));
+        const search = pending(runtime, { key: 'mention-search', service: 'references' });
+        const upload = pending(runtime, { service: 'uploads' });
+
+        runtime.changeServices(['references']);
+        await search.resolve({ text: 'mention ' });
+        await upload.resolve({ text: 'upload ' });
+
+        expect([search, upload].map(({ operation }) => operation.controller.signal.aborted)).toEqual([true, false]);
+        expect(view.state.doc.textContent).toBe('upload ab');
+        expect(runtime.view).toBe(view);
+    });
+
+    it('holds a result during composition and checks it again once input settled', async () => {
+        const session = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        const { handle, runtime, view, diagnostics } = session;
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        const applied = pending(runtime, { target });
+        const refused = pending(runtime, { key: 'other', target });
+        setSelection(handle, { text: 'ab', from: 0, to: 0 });
+
+        compose(session, 'x');
+        await applied.resolve({ text: '!' });
+        expect(textOf(view.state.doc)).toBe('xabcd');
+        endComposition(session);
+        await settleInput();
+        expect(textOf(view.state.doc)).toBe('xabcd!');
+
+        compose(session, 'y');
+        handle.setMode('readonly');
+        await refused.resolve({ text: '?' });
+        endComposition(session);
+        await settleInput();
+
+        expect(textOf(view.state.doc)).toBe('xyabcd!');
+        expect(diagnostics).toEqual([discarded('readonly')]);
     });
 });

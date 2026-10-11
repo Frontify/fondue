@@ -3,13 +3,16 @@
 import { useEffect, useRef } from 'react';
 
 import { bold, core } from '#/features';
-import { fixtureLink } from '#/features/__tests__/fixtures/features';
+import { fixtureHeadingSet, fixtureLink } from '#/features/__tests__/fixtures/features';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
-import { runtimeOf } from '#/runtime/runtime';
+import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
-const model = compileContentModel([core(), bold(), fixtureLink()], { id: 'test.ct', version: 1 });
+const model = compileContentModel([core(), bold(), fixtureLink(), fixtureHeadingSet()], {
+    id: 'test.ct',
+    version: 1,
+});
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
 /** The CT model's definitions: every feature allowed, and paragraphs that may not change. */
 const definitions = {
@@ -59,6 +62,8 @@ declare global {
         /** The mounted editor's handle and the selection helper, for tests that drive it from the page. */
         rte?: {
             readonly handle: EditorHandle;
+            /** The runtime behind the handle, which starts async operations through its coordinator. */
+            readonly runtime: EditorRuntime | undefined;
             readonly setSelection: typeof setSelection;
             /** The text of the runtime's document. */
             readonly text: () => string | undefined;
@@ -89,7 +94,8 @@ export const EditorProbe = ({
     useEffect(() => {
         if (ref.current !== null) {
             const handle = ref.current as EditorHandle;
-            window.rte = { handle, setSelection, text: () => runtimeOf(handle)?.view?.state.doc.textContent };
+            const runtime = runtimeOf(handle);
+            window.rte = { handle, runtime, setSelection, text: () => runtime?.view?.state.doc.textContent };
         }
     }, []);
     return (
