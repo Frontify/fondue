@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { act, fireEvent, screen } from '@testing-library/react';
+import { AllSelection, TextSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { align } from '#/features/blocks-align/feature';
@@ -9,7 +10,7 @@ import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { language } from '#/features/marks-language/feature';
 import { type ContentNodeJSON, defineFeature } from '#/model';
-import { mountText, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
+import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { setSelection } from '#/testing';
 
 beforeEach(() => {
@@ -169,5 +170,94 @@ describe('clear formatting', () => {
         expect(first(handle)?.attrs).toMatchObject({ align: null });
         expect(first(handle)?.content?.[0]?.text).toBe('Styled');
         expect(first(handle)?.content?.[0]?.marks).toBeUndefined();
+    });
+});
+
+const bullets = (...items: readonly ContentNodeJSON[]): ContentNodeJSON => ({
+    type: 'bullet_list',
+    attrs: { marker: null },
+    content: [...items],
+});
+const bullet = (value: string, ...children: readonly ContentNodeJSON[]): ContentNodeJSON => ({
+    type: 'list_item',
+    content: [para(text(value)), ...children],
+});
+const nestedLists = () => [
+    para(text('Before')),
+    bullets(bullet('One', bullets(bullet('Nested'))), bullet('Two')),
+    para(text('After')),
+];
+const outline = (handle: ReturnType<typeof mountText>['handle']) =>
+    (handle.getSnapshot().document.content.content ?? []).map((block) => [
+        block.type,
+        block.content?.[0]?.text ?? null,
+    ]);
+const plainOutline = [
+    ['paragraph', 'Before'],
+    ['paragraph', 'One'],
+    ['paragraph', 'Nested'],
+    ['paragraph', 'Two'],
+    ['paragraph', 'After'],
+];
+
+describe('clear formatting across lists', () => {
+    it('lifts every list item, nested ones included, out of a selection that starts before the list and ends after it', () => {
+        const { handle, view } = mountText({ model: model(), blocks: nestedLists() });
+        act(() => {
+            view.dispatch(
+                view.state.tr.setSelection(TextSelection.create(view.state.doc, 1, view.state.doc.content.size - 1)),
+            );
+        });
+
+        expect(handle.execute('format.clear').status).toBe('applied');
+
+        expect(outline(handle)).toEqual(plainOutline);
+        expect(handle.execute('history.undo').status).toBe('applied');
+        expect(outline(handle)).toEqual([
+            ['paragraph', 'Before'],
+            ['bullet_list', null],
+            ['paragraph', 'After'],
+        ]);
+    });
+
+    it('lifts every list item out of a select-all', () => {
+        const { handle, view } = mountText({ model: model(), blocks: nestedLists() });
+        act(() => {
+            view.dispatch(view.state.tr.setSelection(new AllSelection(view.state.doc)));
+        });
+
+        expect(handle.execute('format.clear').status).toBe('applied');
+
+        expect(outline(handle)).toEqual(plainOutline);
+    });
+});
+
+describe('clear formatting of block attributes', () => {
+    const indent = defineFeature({
+        id: 'fixture.indent',
+        version: 1,
+        requires: [{ id: 'core', version: 1 }],
+        attributes: {
+            indent: {
+                on: ['paragraph'],
+                value: { type: 'integer', min: 0, max: 8, default: 0 },
+                html: { attr: 'data-indent' },
+            },
+        },
+    })();
+
+    it('restores each cleared attribute to its declared default', () => {
+        const indented = textModel([...textFeatures(), align(), formatClear(), indent]);
+        const { handle } = mountText({
+            model: indented,
+            blocks: [
+                { type: 'paragraph', attrs: { lang: null, align: 'center', indent: 2 }, content: [text('Moved')] },
+            ],
+        });
+        setSelection(handle, { text: 'Moved' });
+
+        expect(handle.execute('format.clear').status).toBe('applied');
+
+        expect(first(handle)?.attrs).toMatchObject({ align: null, indent: 0 });
     });
 });

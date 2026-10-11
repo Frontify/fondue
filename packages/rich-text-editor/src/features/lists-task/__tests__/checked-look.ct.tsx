@@ -3,8 +3,10 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
-import { taskItem, tasks } from '#/react/__tests__/fixtures/list-blocks';
+import { paragraph, taskItem, tasks } from '#/react/__tests__/fixtures/list-blocks';
 import { ListProbe } from '#/react/__tests__/fixtures/ListProbe';
+
+import { StruckProbe } from './fixtures/StruckProbe';
 
 const blocks = [tasks(taskItem('task-1', 'Open', false), taskItem('task-2', 'Done', true))];
 
@@ -30,22 +32,15 @@ const ready = async (page: Page) => {
     });
 };
 
-// `text-decoration-line` is not inherited, so it is read on the item wrapper the rule styles, not the paragraph.
+// `text-decoration-line` is not inherited, so it is read on the text and each ancestor up to its item.
 const lookOf = async (page: Page, surface: Surface, text: string) =>
     textOf(page, surface, text).evaluate((element) => {
         const item = element.closest('li');
-        let styled: Element = element;
-        if (item !== null) {
-            let node: Element = element;
-            while (node.parentElement !== null && node.parentElement !== item) {
-                node = node.parentElement;
-            }
-            styled = node;
+        const decorations: string[] = [];
+        for (let node: Element | null = element; node !== null && node !== item; node = node.parentElement) {
+            decorations.push(getComputedStyle(node).textDecorationLine);
         }
-        return {
-            decoration: getComputedStyle(styled).textDecorationLine,
-            color: getComputedStyle(element).color,
-        };
+        return { decoration: decorations.join(' '), color: getComputedStyle(element).color };
     });
 
 const shotOf = (page: Page, surface: Surface, text: string): Promise<Buffer> =>
@@ -88,4 +83,62 @@ test('keeps a checked task text colour and decoration unless checked tasks are s
     expect(after.readerDone.equals(before.readerDone)).toBe(false);
     expect(after.editorOpen.equals(before.editorOpen)).toBe(true);
     expect(after.readerOpen.equals(before.readerOpen)).toBe(true);
+});
+
+/** The colour of `text` and of its block, and whether it or an ancestor inside the content root draws a line through it. */
+const strikeOf = async (page: Page, surface: Surface, text: string) =>
+    textOf(page, surface, text).evaluate((element) => {
+        let struck = false;
+        for (
+            let node: Element | null = element;
+            node !== null && !node.classList.contains('fondue-rte-content');
+            node = node.parentElement
+        ) {
+            struck ||= getComputedStyle(node).textDecorationLine.includes('line-through');
+        }
+        return {
+            color: getComputedStyle(element).color,
+            block: getComputedStyle(element.closest('p') ?? element).color,
+            struck,
+        };
+    });
+
+test('strikes and greys only a checked task own text, not the unchecked task nested in it', async ({ mount, page }) => {
+    const nested = [
+        tasks({
+            ...taskItem('task-1', 'Done', true),
+            content: [paragraph('Done'), tasks(taskItem('task-2', 'Open', false))],
+        }),
+    ];
+    await mount(<ListProbe blocks={nested} reader strikeCheckedTasks />);
+    await ready(page);
+
+    for (const surface of ['editor', 'reader'] as const) {
+        const done = await strikeOf(page, surface, 'Done');
+        const open = await strikeOf(page, surface, 'Open');
+        expect(done.struck).toBe(true);
+        expect(open.struck).toBe(false);
+        expect(open.color).not.toBe(done.color);
+    }
+});
+
+test('greys every run of a struck checked task, over its inline colour, a link and a brand style colour', async ({
+    mount,
+    page,
+}) => {
+    await mount(<StruckProbe />);
+    await ready(page);
+
+    for (const surface of ['editor', 'reader'] as const) {
+        const red = await strikeOf(page, surface, 'Red');
+        const button = await strikeOf(page, surface, 'Button');
+        const nested = await strikeOf(page, surface, 'Nested');
+        expect(red.struck).toBe(true);
+        expect(red.color).toBe(red.block);
+        expect(button.color).toBe(red.block);
+        expect(red.color).not.toBe('rgb(255, 0, 0)');
+        expect(button.color).not.toBe('rgb(255, 255, 255)');
+        expect(nested.struck).toBe(false);
+        expect(nested.color).not.toBe(red.block);
+    }
 });
