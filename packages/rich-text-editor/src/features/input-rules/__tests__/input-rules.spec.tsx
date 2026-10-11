@@ -280,6 +280,41 @@ describe('input rules', () => {
         ]);
     });
 
+    it('turns _text_ italic and replaces an arrow, a service mark, plus-minus, inequality, a guillemet, one half and a subscript digit', () => {
+        const model = textModel(textFeatures(ALL_TYPOGRAPHY));
+        const typed = ['_text_', '->', '(sm)', '+/-', '!=', '<<', '1/2 ', '~2 '].map((value) =>
+            typedIn(value, { model }),
+        );
+
+        expect(typed).toEqual([
+            'paragraph text[italic]',
+            'paragraph →',
+            'paragraph ℠',
+            'paragraph ±',
+            'paragraph ≠',
+            'paragraph «',
+            'paragraph ½ ',
+            'paragraph ₂ ',
+        ]);
+    });
+
+    it('replaces the other arrows and guillemet, and leaves --> and a subscript digit with no space as typed', () => {
+        const model = textModel(textFeatures(['typography.symbols', 'typography.dashes', 'typography.numeric']));
+
+        expect(
+            ['-->', '->', '<->', '<- ', '>>', '~2', '~2 ', 'a~2 '].map((value) => typedIn(value, { model })),
+        ).toEqual([
+            'paragraph -->',
+            'paragraph →',
+            'paragraph ↔',
+            'paragraph ← ',
+            'paragraph »',
+            'paragraph ~2',
+            'paragraph ₂ ',
+            'paragraph a~2 ',
+        ]);
+    });
+
     it('keeps <!-- and <-- as typed while typography.dashes is on', () => {
         const model = textModel(textFeatures(['typography.dashes']));
 

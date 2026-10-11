@@ -14,6 +14,7 @@ const ready = async (page: Page) => {
     await expect.poll(() => page.evaluate(() => window.listRte !== undefined)).toBe(true);
 };
 const blocks = [tasks(taskItem('task-1', 'Approve the palette'), taskItem('task-2', 'Print'))];
+const liveRegionOf = (page: Page) => page.getByTestId('fondue-rich-text-editor').locator('[aria-live="polite"]');
 
 test('runs one task.setChecked with one undo step for a click, Space on the checkbox and the command', async ({
     mount,
@@ -58,6 +59,35 @@ test('runs one task.setChecked with one undo step for a click, Space on the chec
     ]);
     expect(space).toEqual(click);
     expect(command).toEqual(click);
+});
+
+test('announces Checked and Not checked from the keyboard, and nothing more when the checkbox is clicked', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ListProbe blocks={blocks} />);
+    await ready(page);
+    const box = page.getByRole('checkbox', { name: 'Approve the palette' });
+    const region = liveRegionOf(page);
+    await surfaceOf(page).focus();
+    await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
+    await page.evaluate(() => {
+        const rte = window.listRte as ListRte;
+        rte.setSelection(rte.handle, { text: 'Approve the palette', from: 1, to: 1 });
+    });
+
+    await page.keyboard.press('ControlOrMeta+Enter');
+    await expect(box).toBeChecked();
+    await expect(region).toHaveText('Checked');
+
+    await page.keyboard.press('ControlOrMeta+Enter');
+    await expect(box).not.toBeChecked();
+    await expect(region).toHaveText('Not checked');
+
+    await box.click();
+    await expect(box).toBeChecked();
+    await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
+    await expect(region).toHaveText('Not checked');
 });
 
 test.describe('on a touch screen', () => {

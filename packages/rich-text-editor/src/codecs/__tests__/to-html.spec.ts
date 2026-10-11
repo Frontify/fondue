@@ -21,8 +21,8 @@ import {
 import { core } from '#/features/core/feature';
 import { compileContentModel, defineFeature, type JsonValue, type RichTextDocument } from '#/model';
 
-import { semanticModel } from '../../reader/__tests__/fixtures/semantic';
-import { fixturesIn } from '../../reader/__tests__/helpers/helpers';
+import { semanticFeatures, semanticModel } from '../../reader/__tests__/fixtures/semantic';
+import { fixturesIn, renderReader } from '../../reader/__tests__/helpers/helpers';
 import { createCodecs } from '../codecs';
 
 const requires = [{ id: 'core', version: 1 }];
@@ -196,5 +196,52 @@ describe('toHTML direction', () => {
         } as unknown as RichTextDocument);
 
         expect(html).toBe('<div class="fondue-rte-content"><q cite="https://frontify.com" dir="auto">Said</q></div>');
+    });
+
+    it('snapshots a paragraph, a heading and a list item that store no direction, and keeps rtl on a paragraph that stores it', () => {
+        const direction = defineFeature({
+            id: 'test.direction',
+            version: 1,
+            requires,
+            attributes: {
+                dir: {
+                    on: ['paragraph'],
+                    value: { type: 'enum', values: ['ltr', 'rtl'], nullable: true, default: null },
+                    html: { attr: 'dir' },
+                },
+            },
+            formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
+        });
+        const model = compileContentModel([...semanticFeatures(), direction()], {
+            id: 'fixture.vocabulary',
+            version: 1,
+        });
+        const right = {
+            type: 'paragraph',
+            attrs: { lang: null, styleId: null, align: null, indent: 0, dir: 'rtl' },
+            content: [text('Right')],
+        };
+        const stored = document(
+            paragraph(text('Plain')),
+            node(
+                'heading',
+                { nodeId: 'h-1', level: 1, lang: null, styleId: null, align: null, indent: 0 },
+                text('Title'),
+            ),
+            bulletList(listItem(paragraph(text('Item')))),
+            right,
+        );
+        const withDirection = {
+            ...stored,
+            requiredCapabilities: [
+                ...(stored.requiredCapabilities as readonly { id: string; version: number }[]),
+                { id: 'test.direction', version: 1 },
+            ],
+        } as unknown as RichTextDocument;
+        const { html } = createCodecs(model).toHTML(withDirection);
+        const reader = renderReader(withDirection, model).replaceAll('<!-- -->', '');
+
+        expect(reader).toBe(html);
+        expect(html).toMatchSnapshot();
     });
 });

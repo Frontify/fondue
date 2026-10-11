@@ -278,7 +278,7 @@ const Mention = ({ attrs }: ReaderNodeProps): ReactElement => {
 };
 
 /** Splits the leading header rows of a table into a `thead`: a table is one node, so only an override can. */
-const Table = ({ children }: ReaderNodeProps): ReactElement => {
+const Table = ({ attrs, children }: ReaderNodeProps): ReactElement => {
     const rows = Children.toArray((children as ReactElement<{ children: ReactElement[] }>).props.children);
     const isHeader = (row: unknown) =>
         Children.toArray((row as ReactElement<{ children: ReactElement | ReactElement[] }>).props.children).every(
@@ -286,8 +286,12 @@ const Table = ({ children }: ReaderNodeProps): ReactElement => {
         );
     const head = rows.findIndex((row) => !isHeader(row));
     const split = head === -1 ? rows.length : head;
+    let dir = 'auto';
+    if (attrs.dir === 'ltr' || attrs.dir === 'rtl') {
+        dir = attrs.dir;
+    }
     return (
-        <table>
+        <table dir={dir}>
             {split > 0 && <thead>{rows.slice(0, split)}</thead>}
             <tbody>{rows.slice(split)}</tbody>
         </table>

@@ -8,7 +8,14 @@ import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { orderedList } from '#/features/lists-ordered/feature';
 import { taskList } from '#/features/lists-task/feature';
-import { defineEditor, defineReactPresentation, type EditorHandle, type ListLevels, RichTextEditor } from '#/index';
+import {
+    defineEditor,
+    defineReactPresentation,
+    type EditorHandle,
+    type ListLevels,
+    RichTextEditor,
+    type RichTextEditorProps,
+} from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { RichTextReader } from '#/reader';
 import { setSelection } from '#/testing';
@@ -61,6 +68,7 @@ export const ListProbe = ({
     dir = 'ltr',
     reader = false,
     listLevels,
+    tabMovesFocus,
 }: {
     /** Stored blocks, such as `list-blocks.ts` builds. */
     readonly blocks: readonly object[];
@@ -68,7 +76,13 @@ export const ListProbe = ({
     readonly dir?: 'ltr' | 'rtl';
     readonly reader?: boolean;
     readonly listLevels?: ListLevels;
+    /** Passed to the editor when set, else the editor keeps its default. */
+    readonly tabMovesFocus?: boolean;
 }) => {
+    let options: Pick<RichTextEditorProps, 'tabMovesFocus'> = {};
+    if (tabMovesFocus !== undefined) {
+        options = { tabMovesFocus };
+    }
     const [shownPresentation] = useState(() => {
         if (listLevels === undefined) {
             return presentation;
@@ -95,6 +109,7 @@ export const ListProbe = ({
                 definition={definition}
                 presentation={shownPresentation}
                 defaultValue={{ documentId: 'document-1', revision: null, document: documentOf(blocks) }}
+                {...options}
                 ref={ref}
                 onDocumentChange={({ origin, commandId, readDocument }) => {
                     const document = readDocument();

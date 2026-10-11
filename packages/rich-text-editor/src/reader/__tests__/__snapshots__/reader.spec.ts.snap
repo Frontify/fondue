@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`RichTextReader direction > snapshots a paragraph, a heading and a list item that store no direction, and keeps rtl on a paragraph that stores it 1`] = `"<div class="fondue-rte-content"><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul style="list-style-type:disc" dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul><p dir="rtl">Right</p></div>"`;

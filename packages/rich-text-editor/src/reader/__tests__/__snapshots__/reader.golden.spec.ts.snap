@@ -31,7 +31,7 @@ exports[`reader golden files > renders the valid fixture blocks.json as its gold
 	b();</code>
 </pre>
 <hr dir="auto"/>
-<table>
+<table dir="auto">
 <thead>
 <tr dir="auto">
 <th colSpan="2" rowspan="1" scope="col" dir="auto">

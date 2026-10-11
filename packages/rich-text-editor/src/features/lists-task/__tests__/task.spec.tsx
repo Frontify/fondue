@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { act, render, screen, within } from '@testing-library/react';
+import { AllSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
@@ -165,6 +166,124 @@ describe('lists.task', () => {
 
         expect(converted).toEqual([{ A: false }, { B: false }, { '': true }]);
         expect(outlineOf(handle)).toEqual([{ ul: [['A'], ['B'], ['[x] ']] }]);
+    });
+
+    it('starts an unchecked task item when "[] " is typed at the start of a paragraph', () => {
+        const { handle } = mountText({ model, blocks: [para(text('Draft'))] });
+        setSelection(handle, { text: 'Draft', from: 0, to: 0 });
+
+        typeText(handle, '[] ');
+
+        expect(outlineOf(handle)).toEqual([{ tasks: [['[ ]', 'Draft']] }]);
+    });
+
+    const pasteHtml = (view: ReturnType<typeof mountText>['view'], html: string) => {
+        const clipboardData = new DataTransfer();
+        clipboardData.setData('text/html', html);
+        act(() => {
+            view.dom.dispatchEvent(new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true }));
+        });
+    };
+    /** The `nodeId` of each task item of the snapshot, in document order. */
+    const taskIdsOf = (handle: ReturnType<typeof mountText>['handle']) => {
+        const ids: unknown[] = [];
+        const visit = (node: ContentNodeJSON) => {
+            if (node.type === 'task_item') {
+                ids.push(node.attrs?.nodeId);
+            }
+            for (const child of node.content ?? []) {
+                visit(child);
+            }
+        };
+        visit(handle.getSnapshot().document.content);
+        return ids;
+    };
+
+    it("pastes the editor's own copied HTML of a task list as a task list with each item's checked state and new nodeIds", () => {
+        const nested = list('task', [done('Social media')]);
+        const source = mountText({
+            model,
+            blocks: [list('task', [done('Approve the palette', nested), item('task', 'Print')])],
+        });
+        act(() => {
+            source.view.dispatch(source.view.state.tr.setSelection(new AllSelection(source.view.state.doc)));
+        });
+        const clipboardData = new DataTransfer();
+        act(() => {
+            source.view.dom.dispatchEvent(
+                new ClipboardEvent('copy', { clipboardData, bubbles: true, cancelable: true }),
+            );
+        });
+        const html = clipboardData.getData('text/html');
+        source.unmount();
+        const { handle, view } = mountText({ model });
+
+        pasteHtml(view, html);
+
+        expect(html).toContain('<input type="checkbox"');
+        expect(outlineOf(handle)).toEqual([
+            {
+                tasks: [
+                    ['[x]', 'Approve the palette', { tasks: [['[x]', 'Social media']] }],
+                    ['[ ]', 'Print'],
+                ],
+            },
+        ]);
+        const ids = taskIdsOf(handle);
+        expect(ids.every((id) => typeof id === 'string' && !id.startsWith('task-'))).toBe(true);
+        expect(new Set(ids).size).toBe(3);
+    });
+
+    it("pastes a GitHub checkbox list as a task list with each item's checked state, without the checkboxes", () => {
+        const { handle, view } = mountText({ model });
+
+        pasteHtml(
+            view,
+            '<ul class="contains-task-list">' +
+                '<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked disabled> Draft' +
+                '<ul class="contains-task-list"><li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled> Outline</li></ul></li>' +
+                '<li class="task-list-item"><p><input type="checkbox" class="task-list-item-checkbox" disabled> Review</p></li>' +
+                '</ul>',
+        );
+
+        expect(outlineOf(handle)).toEqual([
+            {
+                tasks: [
+                    ['[x]', 'Draft', { tasks: [['[ ]', 'Outline']] }],
+                    ['[ ]', 'Review'],
+                ],
+            },
+        ]);
+        expect(taskIdsOf(handle).every((id) => typeof id === 'string')).toBe(true);
+    });
+
+    it('pastes a list without task list markup as a bulleted list, even when its items hold a checkbox', () => {
+        const { handle, view } = mountText({ model });
+
+        pasteHtml(
+            view,
+            '<ul><li><input type="checkbox" checked> Plain</li><li class="task-list-item"><input type="checkbox" checked> Classed</li></ul>',
+        );
+
+        expect(outlineOf(handle)).toEqual([{ ul: [['Plain'], ['Classed']] }]);
+    });
+
+    it('pastes a GitHub task list as a bullet list of its item text when the model has no task list', () => {
+        const bullets = compileContentModel(featuresById(['core', 'lists.item', 'lists.bullet']), {
+            id: 'test.bullets',
+            version: 1,
+        });
+        const { handle, view } = mountText({ model: bullets });
+
+        pasteHtml(
+            view,
+            '<ul class="contains-task-list">' +
+                '<li class="task-list-item"><input type="checkbox" checked disabled> Done</li>' +
+                '<li class="task-list-item"><input type="checkbox" disabled> Open</li>' +
+                '</ul>',
+        );
+
+        expect(outlineOf(handle)).toEqual([{ ul: [['Done'], ['Open']] }]);
     });
 
     it('runs Mod-Enter in a task item as one task.setChecked', () => {
