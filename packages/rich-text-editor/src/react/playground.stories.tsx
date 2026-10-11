@@ -127,6 +127,10 @@ type Commands = CommandsOfModel<typeof model>;
 type PlaygroundProps = RichTextEditorProps<Commands> & {
     /** The `create` value of the `marks.bold` authoring policy, which `updatePolicy` applies to the mounted editor. */
     readonly allowNewBold: boolean;
+    /** The `paste` value of the `marks.bold` authoring policy: off, pasted and dropped bold keeps its text only. */
+    readonly allowPastedBold: boolean;
+    /** The presentation's `sliceContext`; empty is `null`, the package's value for this page load. */
+    readonly sliceContext: string;
     /** The presentation's `contentClassName`, which the surface carries beside `fondue-rte-content`. */
     readonly contentClassName: string;
     /** The presentation's `toolbarShortcut`, which moves focus between the surface and the toolbars. */
@@ -167,6 +171,8 @@ const resultText = (result: CommandResult | undefined) => {
 
 const Playground = ({
     allowNewBold,
+    allowPastedBold,
+    sliceContext,
     contentClassName,
     toolbarShortcut,
     brokenAtMount,
@@ -177,10 +183,13 @@ const Playground = ({
 }: PlaygroundProps) => {
     const [hostContainer, setHostContainer] = useState<HTMLElement | null>(null);
     const hostPanelRef = useRef<HTMLElement>(null);
-    const presentation = useMemo(
-        () => defineReactPresentation({ contentClassName, toolbar: TOOLBAR, toolbarShortcut }),
-        [contentClassName, toolbarShortcut],
-    );
+    const presentation = useMemo(() => {
+        let context: string | null = null;
+        if (sliceContext !== '') {
+            context = sliceContext;
+        }
+        return defineReactPresentation({ contentClassName, toolbar: TOOLBAR, toolbarShortcut, sliceContext: context });
+    }, [contentClassName, toolbarShortcut, sliceContext]);
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
@@ -219,9 +228,9 @@ const Playground = ({
     };
     useEffect(() => {
         const { authoring } = definition;
-        const rules = { create: allowNewBold, edit: true, remove: true, paste: true };
+        const rules = { create: allowNewBold, edit: true, remove: true, paste: allowPastedBold };
         handleRef.current?.updatePolicy({ ...authoring, features: { ...authoring.features, 'marks.bold': rules } });
-    }, [allowNewBold]);
+    }, [allowNewBold, allowPastedBold]);
     // `null` keeps the editor's own overlay root.
     let portalContainer: HTMLElement | null = null;
     if (hostPortalContainer) {
@@ -471,7 +480,9 @@ const Playground = ({
                     log(`documentChange ${change.origin} ${change.commandId ?? ''} #${change.stamp.sequence}`);
                     setDocument(change.readDocument().content as unknown as JsonValue);
                 }}
-                onDiagnostic={(diagnostic) => log(`diagnostic ${diagnostic.code}`)}
+                onDiagnostic={(diagnostic) =>
+                    log(`diagnostic ${diagnostic.code} ${JSON.stringify(diagnostic.details ?? {})}`)
+                }
                 onFocus={() => log('focus')}
                 onBlur={() => log('blur')}
                 onToolbarModeChange={(mode) => log(`toolbarModeChange ${mode}`)}
@@ -609,6 +620,8 @@ Shortcuts of the shipped features, in the package key syntax and as each platfor
     args: {
         'aria-label': 'Notes',
         allowNewBold: true,
+        allowPastedBold: true,
+        sliceContext: '',
         contentClassName: 'playground-content',
         toolbarShortcut: 'Alt-F10',
         brokenAtMount: false,

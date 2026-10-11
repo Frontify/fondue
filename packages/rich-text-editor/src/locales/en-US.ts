@@ -26,6 +26,8 @@ export const enUS = {
         RichTextEditor_moveUp: 'Move up',
         RichTextEditor_nodeViewError: 'This part of the content cannot be shown',
         RichTextEditor_normalText: 'Normal text',
+        RichTextEditor_pasteMediaDropped: 'Media not pasted: ${count}',
+        RichTextEditor_pasteTooLarge: 'The pasted content is too large.',
         RichTextEditor_quote: 'Quote',
         RichTextEditor_readerBlockedInvalid: 'This content cannot be shown',
         RichTextEditor_readerBlockedUnsupported: 'This content cannot be shown here',
