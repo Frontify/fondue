@@ -11,6 +11,7 @@
     /* The field's border holds 3:1 on the surface, which `--color-line-mid` misses in the light theme. */
     --rte-content-surface-border: var(--border-width-default) solid var(--color-line-strong);
     --rte-content-surface-padding: var(--spacing-x-small) var(--spacing-small);
+    --rte-content-secondary-text-color: var(--color-secondary-default);
     --rte-content-placeholder-color: var(--color-secondary-default);
     --rte-content-placeholder-opacity: 1;
     --rte-content-selected-node-color: var(--color-focus-default);
@@ -48,6 +49,17 @@
 /* A task item shows its checkbox and no list marker, whatever marker its list inherits. */
 :where(.fondue-rte-content ul[data-task-list] > li) {
     list-style: none;
+}
+
+/* Checked tasks keep their text unless the presentation asks for the struck secondary look. */
+:where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > :not(input)),
+:where(
+    .fondue-rte-content[data-rte-strike-checked-tasks]
+        li:has(> [data-rte-chrome] input:checked)
+        > :not([data-rte-chrome])
+) {
+    color: var(--rte-content-secondary-text-color);
+    text-decoration-line: line-through;
 }
 
 :where(.fondue-rte-content pre) {

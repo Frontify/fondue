@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { align } from '#/features/blocks-align/feature';
 import { codeBlock } from '#/features/blocks-code/feature';
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
 import { emoji } from '#/features/emoji/feature';
+import { formatClear } from '#/features/format-clear/feature';
 import { inputRules } from '#/features/input-rules/feature';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
@@ -13,6 +15,7 @@ import { taskList } from '#/features/lists-task/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { code } from '#/features/marks-code/feature';
 import { italic } from '#/features/marks-italic/feature';
+import { language } from '#/features/marks-language/feature';
 import { strike } from '#/features/marks-strike/feature';
 import { subscript } from '#/features/marks-subscript/feature';
 import { superscript } from '#/features/marks-superscript/feature';
@@ -25,6 +28,7 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     emoji,
     'marks.bold': bold,
     'marks.italic': italic,
+    'marks.language': language,
     'marks.underline': underline,
     'marks.strike': strike,
     'marks.code': code,
@@ -33,6 +37,8 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'blocks.heading': heading,
     'blocks.quote': quote,
     'blocks.code': codeBlock,
+    'blocks.align': align,
+    'format.clear': formatClear,
     'lists.item': listItem,
     'lists.bullet': bulletList,
     'lists.ordered': orderedList,

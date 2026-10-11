@@ -216,14 +216,39 @@ export const indentLines = (direction: 'indent' | 'outdent'): CommandDefinition 
 export const toggleTask = (item: string, setChecked: string): CommandDefinition =>
     command('toggleTask', { item, setChecked });
 
-/** Sets the payload's fields as attributes of the `node` that its `nodeId` names, else of the nearest one around the selection. */
+/**
+ * Sets the payload's fields as attributes. With `nodes`, every selected node of those types, and with `toggle` the
+ * value comes off when every one of them already has it. Otherwise the node its `nodeId` names, else the nearest one.
+ */
 export const setAttributes = <const P extends PayloadDeclaration>(
     node: string,
     payload: P,
-): CommandDefinition<PayloadOf<P>> => command('setAttributes', { node }, payload);
+    options?: { readonly nodes?: readonly string[]; readonly toggle?: boolean },
+): CommandDefinition<PayloadOf<P>> => {
+    const args: Record<string, JsonValue | undefined> = {};
+    if (options?.nodes !== undefined) {
+        args.nodes = [...options.nodes];
+    } else {
+        args.node = node;
+    }
+    if (options?.toggle === true) {
+        args.toggle = true;
+    }
+    return command('setAttributes', args, payload);
+};
+
+/** Sets a mark from the payload, or removes it when the payload is null. */
+export const setMark = <const P extends PayloadDeclaration>(
+    mark: string,
+    payload: P,
+): CommandDefinition<PayloadOf<P>> => command('setMark', { mark }, payload);
+
+/** `inline` removes formatting marks. `all` also lifts lists, turns blocks into paragraphs and clears alignment and indent. */
+export const clearFormatting = (scope: 'inline' | 'all'): CommandDefinition => command('removeMark', { scope });
 
 /** Opens a package-built control, such as the numbering dialog of `list.ordered.start.edit` or the emoji picker. */
-export const openControl = (control: 'numbering' | 'emoji'): CommandDefinition => command('openControl', { control });
+export const openControl = (control: 'numbering' | 'emoji' | 'language'): CommandDefinition =>
+    command('openControl', { control });
 
 /** The first cycle that `next` reaches from `starts`, as a path that ends where it starts. */
 export const findCycle = (starts: readonly string[], next: (id: string) => readonly string[]): string[] | undefined => {

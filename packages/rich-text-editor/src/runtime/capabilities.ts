@@ -1,7 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
-import { Fragment, type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos } from 'prosemirror-model';
+import {
+    Fragment,
+    type MarkType,
+    type Node,
+    NodeRange,
+    type NodeType,
+    type ResolvedPos,
+    type Schema,
+} from 'prosemirror-model';
 import { liftListItem, sinkListItem, wrapRangeInList } from 'prosemirror-schema-list';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
@@ -27,7 +35,7 @@ import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
 import { listAround, repeated } from './lists';
 import { nearest, positionOf } from './positions';
 import { suggestionsPlugin } from './suggestions/plugin';
-import { carrySelection } from './transactions';
+import { appendSteps, carrySelection } from './transactions';
 
 interface TextRange {
     readonly from: number;
@@ -564,8 +572,90 @@ const toggleTask: CapabilityImplementation = (args, schema, command) => {
     };
 };
 
+/** The payload's fields except `nodeId`, which names a node instead of setting an attribute. */
+const attributeFields = (payload: unknown): Record<string, unknown> | undefined => {
+    if (!isRecord(payload)) {
+        return undefined;
+    }
+    const attrs: Record<string, unknown> = {};
+    for (const [name, value] of Object.entries(payload)) {
+        if (name !== 'nodeId') {
+            attrs[name] = value;
+        }
+    }
+    return attrs;
+};
+
+const hasAttribute = (node: Node, name: string) => Object.hasOwn(node.type.spec.attrs ?? {}, name);
+
+const sameAttributes = (node: Node, attrs: Readonly<Record<string, unknown>>) =>
+    Object.entries(attrs).every(([name, value]) => node.attrs[name] === value);
+
+/** Sets one attribute value on every selected node of `args.nodes`, or removes it when every one already has it. */
+const setOnSelected = (args: { readonly nodes?: unknown; readonly toggle?: unknown }, schema: Schema) => {
+    const names = Array.isArray(args.nodes)
+        ? args.nodes.filter((name): name is string => typeof name === 'string')
+        : [];
+    const types = names.flatMap((name) => {
+        const type = schema.nodes[name];
+        if (type === undefined) {
+            return [];
+        }
+        return [type];
+    });
+    const targets = (state: EditorState) =>
+        selectedTextblocks(state).filter(({ node }) => types.some((type) => node.type === type));
+    const writtenFor = (found: readonly { readonly node: Node }[], attrs: Readonly<Record<string, unknown>>) => {
+        if (args.toggle === true && found.length > 0 && found.every(({ node }) => sameAttributes(node, attrs))) {
+            const cleared: Record<string, unknown> = {};
+            for (const name of Object.keys(attrs)) {
+                cleared[name] = null;
+            }
+            return cleared;
+        }
+        return attrs;
+    };
+    return {
+        run: (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => {
+            const attrs = attributeFields(payload);
+            const found = targets(state);
+            if (attrs === undefined || found.length === 0) {
+                return false;
+            }
+            const written = writtenFor(found, attrs);
+            const changed = found.some(({ node }) => !sameAttributes(node, written));
+            if (!changed) {
+                return false;
+            }
+            if (dispatch !== undefined) {
+                const transaction = state.tr;
+                for (const { node, pos } of found) {
+                    for (const [name, value] of Object.entries(written)) {
+                        if (hasAttribute(node, name) && node.attrs[name] !== value) {
+                            transaction.setNodeAttribute(pos, name, value);
+                        }
+                    }
+                }
+                dispatch(transaction.scrollIntoView());
+            }
+            return true;
+        },
+        active: (state: EditorState, payload?: unknown) => {
+            const attrs = attributeFields(payload);
+            const found = targets(state);
+            if (attrs === undefined) {
+                return false;
+            }
+            return tristate(found.filter(({ node }) => sameAttributes(node, attrs)).length, found.length);
+        },
+    };
+};
+
 /** Sets the payload's other fields on the node its `nodeId` names, else on the nearest one around the selection. */
 const setAttributes: CapabilityImplementation = (args, schema) => {
+    if (Array.isArray(args.nodes)) {
+        return setOnSelected(args, schema);
+    }
     const type = schema.nodes[args.node as string] as NodeType;
     return {
         run: (state, dispatch, payload) => {
@@ -632,6 +722,230 @@ const history: CapabilityImplementation = (args) => {
     return { run: (state, dispatch) => command(state, dispatch), active: () => false };
 };
 
+const setMark: CapabilityImplementation = (args, schema) => {
+    const type = schema.marks[args.mark as string] as MarkType;
+    const remove = (state: EditorState, dispatch?: (transaction: Transaction) => void) => {
+        if (state.selection.empty) {
+            const stored = state.storedMarks ?? state.selection.$from.marks();
+            if (type.isInSet(stored) === undefined) {
+                return false;
+            }
+            dispatch?.(state.tr.removeStoredMark(type));
+            return true;
+        }
+        const texts = markableText(state, type).filter((text) => text.marked);
+        if (texts.length === 0) {
+            return false;
+        }
+        if (dispatch !== undefined) {
+            const transaction = state.tr;
+            for (const { from, to } of texts) {
+                transaction.removeMark(from, to, type);
+            }
+            dispatch(transaction.scrollIntoView());
+        }
+        return true;
+    };
+    return {
+        run: (state, dispatch, payload) => {
+            if (payload === null) {
+                return remove(state, dispatch);
+            }
+            if (!isRecord(payload)) {
+                return false;
+            }
+            const mark = type.create(payload);
+            if (state.selection.empty) {
+                const stored = state.storedMarks ?? state.selection.$from.marks();
+                const current = type.isInSet(stored);
+                if (current !== undefined && current.eq(mark)) {
+                    return false;
+                }
+                if (dispatch !== undefined) {
+                    dispatch(state.tr.removeStoredMark(type).addStoredMark(mark));
+                }
+                return true;
+            }
+            const texts = markableText(state, type);
+            if (texts.length === 0) {
+                return false;
+            }
+            const transaction = state.tr;
+            for (const { from, to } of texts) {
+                transaction.removeMark(from, to, type);
+                transaction.addMark(from, to, mark);
+            }
+            if (!transaction.docChanged) {
+                return false;
+            }
+            dispatch?.(transaction.scrollIntoView());
+            return true;
+        },
+        active: (state) => markState(state, type),
+    };
+};
+
+// Author formatting. An island mark stays, because it holds content the model cannot store as itself.
+const FORMATTING_MARKS: ReadonlySet<string> = new Set([
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'code',
+    'subscript',
+    'superscript',
+    'highlight',
+    'font_color',
+]);
+
+const marksToClear = (schema: Schema, inline: boolean): readonly MarkType[] => {
+    const types: MarkType[] = [];
+    for (const type of Object.values(schema.marks)) {
+        if (type.name === 'unsupported_mark') {
+            continue;
+        }
+        if (inline && !FORMATTING_MARKS.has(type.name)) {
+            continue;
+        }
+        types.push(type);
+    }
+    return types;
+};
+
+const take = (outer: Transaction, current: EditorState, next: Transaction | undefined): EditorState => {
+    if (next === undefined || (!next.docChanged && !next.storedMarksSet)) {
+        return current;
+    }
+    appendSteps(outer, next);
+    if (next.storedMarksSet) {
+        outer.setStoredMarks(next.storedMarks);
+    }
+    return current.apply(next);
+};
+
+/** Lifts the selection out of every list around it, one level at a time. */
+const liftLists = (state: EditorState): Transaction | undefined => {
+    const transaction = state.tr;
+    let current = state;
+    let depth = 0;
+    while (depth < 32) {
+        const around = listAround(current.selection.$from);
+        if (around === undefined) {
+            break;
+        }
+        const item = current.selection.$from.node(around.depth + 1).type;
+        const built: Transaction[] = [];
+        liftListItem(item)(current, (next) => {
+            built.push(next);
+        });
+        const next = built[0];
+        if (next === undefined || !next.docChanged) {
+            break;
+        }
+        appendSteps(transaction, next);
+        current = current.apply(next);
+        depth += 1;
+    }
+    if (!transaction.docChanged) {
+        return undefined;
+    }
+    return transaction.setSelection(carrySelection(transaction.doc, current.selection));
+};
+
+/** Turns the selected textblocks into paragraphs and drops alignment and indent. */
+const plainParagraphs = (state: EditorState): Transaction | undefined => {
+    const paragraph = state.schema.nodes.paragraph;
+    if (paragraph === undefined) {
+        return undefined;
+    }
+    const blocks = selectedTextblocks(state);
+    const needs = blocks.some(({ node }) => {
+        if (node.type !== paragraph) {
+            return true;
+        }
+        if (hasAttribute(node, 'align') && node.attrs.align !== null) {
+            return true;
+        }
+        return hasAttribute(node, 'indent') && node.attrs.indent !== null;
+    });
+    if (!needs) {
+        return undefined;
+    }
+    const { $from, $to } = state.selection;
+    const transaction = state.tr.setBlockType($from.pos, $to.pos, paragraph, (node) => {
+        const attrs = carried(node, paragraph, {});
+        if (Object.hasOwn(attrs, 'align')) {
+            attrs.align = null;
+        }
+        if (Object.hasOwn(attrs, 'indent')) {
+            attrs.indent = null;
+        }
+        return attrs;
+    });
+    if (!transaction.docChanged) {
+        return undefined;
+    }
+    return transaction;
+};
+
+const markRanges = (state: EditorState, wholeBlocks: boolean): { readonly from: number; readonly to: number }[] => {
+    if (!wholeBlocks || !state.selection.empty) {
+        return [{ from: state.selection.from, to: state.selection.to }];
+    }
+    const blocks = selectedTextblocks(state);
+    if (blocks.length > 0) {
+        return blocks.map(({ node, pos }) => ({ from: pos + 1, to: pos + 1 + node.content.size }));
+    }
+    const { $from } = state.selection;
+    if ($from.parent.isTextblock) {
+        return [{ from: $from.start(), to: $from.end() }];
+    }
+    return [{ from: state.selection.from, to: state.selection.to }];
+};
+
+const clearStored = (transaction: Transaction, state: EditorState, types: readonly MarkType[]) => {
+    if (!state.selection.empty) {
+        return;
+    }
+    const stored = state.storedMarks ?? state.selection.$from.marks();
+    const kept = stored.filter((mark) => !types.includes(mark.type));
+    if (kept.length !== stored.length) {
+        transaction.setStoredMarks(kept);
+    }
+};
+
+const removeMark: CapabilityImplementation = (args, schema) => {
+    const inline = args.scope !== 'all';
+    const types = marksToClear(schema, inline);
+    return {
+        run: (state, dispatch) => {
+            const transaction = state.tr;
+            let current = state;
+            if (!inline) {
+                current = take(transaction, current, liftLists(current));
+                current = take(transaction, current, plainParagraphs(current));
+            }
+            const marks = current.tr;
+            for (const range of markRanges(current, !inline)) {
+                for (const type of types) {
+                    if (range.from !== range.to) {
+                        marks.removeMark(range.from, range.to, type);
+                    }
+                }
+            }
+            clearStored(marks, current, types);
+            current = take(transaction, current, marks);
+            if (!transaction.docChanged && !transaction.storedMarksSet) {
+                return false;
+            }
+            transaction.setSelection(carrySelection(transaction.doc, current.selection));
+            dispatch?.(transaction.scrollIntoView());
+            return true;
+        },
+        active: () => false,
+    };
+};
+
 /** The command capabilities and package plugins the runtime implements so far, by capability name and plugin ID. */
 export const CAPABILITIES: CapabilityImplementations = {
     block,
@@ -642,8 +956,10 @@ export const CAPABILITIES: CapabilityImplementations = {
     insertText,
     openControl,
     outdentItem,
+    removeMark,
     setAttributes,
     setBlock,
+    setMark,
     toggleList,
     toggleMark,
     toggleTask,

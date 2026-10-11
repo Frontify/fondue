@@ -25,7 +25,8 @@
             {
                 "type": "paragraph",
                 "attrs": {
-                    "lang": null
+                    "lang": null,
+                    "align": null
                 },
                 "content": [
                     {
@@ -40,7 +41,8 @@
                     {
                         "type": "paragraph",
                         "attrs": {
-                            "lang": null
+                            "lang": null,
+                            "align": null
                         },
                         "content": [
                             {
@@ -52,7 +54,8 @@
                     {
                         "type": "paragraph",
                         "attrs": {
-                            "lang": null
+                            "lang": null,
+                            "align": null
                         },
                         "content": [
                             {

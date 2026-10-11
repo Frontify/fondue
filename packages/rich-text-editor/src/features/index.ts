@@ -1,12 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+export { align } from '#/features/blocks-align/feature';
 export { codeBlock } from '#/features/blocks-code/feature';
 export { quote } from '#/features/blocks-quote/feature';
 export { heading } from '#/features/blocks-heading/feature';
 export { core } from '#/features/core/feature';
 export { emoji } from '#/features/emoji/feature';
+export { formatClear } from '#/features/format-clear/feature';
 export { inputRules } from '#/features/input-rules/feature';
 export { bold } from '#/features/marks-bold/feature';
+export { language } from '#/features/marks-language/feature';
 export { code } from '#/features/marks-code/feature';
 export { italic } from '#/features/marks-italic/feature';
 export { strike } from '#/features/marks-strike/feature';

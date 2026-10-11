@@ -1,0 +1,27 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "feature-contract", "version": 1 },
+    "requiredCapabilities": [
+        { "id": "core", "version": 1 },
+        { "id": "marks.language", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": "en", "dir": "ltr" },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": { "lang": "de", "align": null },
+                "content": [
+                    { "type": "text", "text": "Danke " },
+                    {
+                        "type": "text",
+                        "text": "شكرا",
+                        "marks": [{ "type": "language", "attrs": { "lang": "ar", "dir": "rtl" } }]
+                    }
+                ]
+            }
+        ]
+    }
+}

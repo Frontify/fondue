@@ -71,6 +71,7 @@ export interface ShippedCommands {
     readonly 'mark.color.menu.open': undefined | { readonly tokenIds: readonly StoredId[] };
     readonly 'mark.language.set': { readonly lang: LanguageTag; readonly dir: Direction | null } | null;
     readonly 'mark.language.edit': undefined;
+    readonly 'format.clear': undefined;
     readonly 'format.inline.clear': undefined;
     // blocks
     readonly 'heading.set': { readonly level: HeadingLevel };

@@ -31,6 +31,8 @@ export interface ReaderPresentation {
     readonly contentClassName?: string;
     /** List markers by depth. */
     readonly listLevels?: ListLevels;
+    /** Strikethrough and secondary colour on checked task items; default false. */
+    readonly strikeCheckedTasks?: boolean;
 }
 
 export interface RichTextReaderProps {
@@ -83,6 +85,7 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
         carried: 0,
         listLevels: resolvers.listLevels,
         depths: listDepths(),
+        strikeCheckedTasks: resolvers.strikeCheckedTasks === true,
     };
     return { element: renderDocument(state, tree, resolvers.contentClassName), diagnostics, notified };
 };

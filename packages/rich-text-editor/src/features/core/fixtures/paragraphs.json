@@ -9,12 +9,12 @@
         "content": [
             {
                 "type": "paragraph",
-                "attrs": { "lang": null },
+                "attrs": { "lang": null, "align": null },
                 "content": [{ "type": "text", "text": "A paragraph of plain text." }]
             },
             {
                 "type": "paragraph",
-                "attrs": { "lang": "de-CH" },
+                "attrs": { "lang": "de-CH", "align": null },
                 "content": [
                     { "type": "text", "text": "Eine Zeile," },
                     { "type": "hard_break" },

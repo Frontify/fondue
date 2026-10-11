@@ -33,6 +33,7 @@ export interface RenderState extends Spacing {
     readonly diagnostics: Diagnostic[];
     readonly listLevels: ListLevels | undefined;
     readonly depths: ListDepths;
+    readonly strikeCheckedTasks: boolean;
 }
 
 // Every HTML attribute whose React prop is not its lowercase name; the rest pass through unchanged.
@@ -250,6 +251,9 @@ export const renderDocument = (state: RenderState, root: TreeNode, contentClassN
     }
     if (dir === 'ltr' || dir === 'rtl') {
         props.dir = dir;
+    }
+    if (state.strikeCheckedTasks) {
+        props['data-rte-strike-checked-tasks'] = '';
     }
     if (state.islands > 0) {
         children.push(message(state.context, 'islands'));
