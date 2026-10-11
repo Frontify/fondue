@@ -43,6 +43,8 @@ export interface SaveCoordinatorOptions {
     readonly revision: ServerRevision | null;
     /** The document holds changes a failed session never saved, as after Retry. */
     readonly unsavedOnMount: boolean;
+    /** The write a failed session left with an unknown outcome, which this session replays unchanged before its own. */
+    readonly carried?: SaveRequest | undefined;
     readonly model: ContentModel;
     /** Operation ids, the same source as the session id and new `nodeId`s. */
     readonly generateId: () => string;
@@ -65,6 +67,7 @@ interface Checkpoint {
 
 const DISPOSED: CommitResult = { status: 'failed', code: 'disposed', outcome: 'unknown' };
 const CONFLICT: CommitResult = { status: 'blocked', code: 'conflict' };
+const NOT_SENT: CommitResult = { status: 'failed', code: 'transport', outcome: 'not-sent' };
 
 const STATUS_KEYS = [
     'state',
@@ -80,7 +83,10 @@ const STATUS_KEYS = [
  * longest wait, the same operation replayed while its outcome is unknown, and writes paused on a conflict or a
  * rejection.
  */
-export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordinatorOptions): SaveCoordinator => {
+export const createSaveCoordinator = (
+    runtime: EditorRuntime,
+    given: SaveCoordinatorOptions,
+): SaveCoordinator & { readonly unresolved: () => SaveRequest | undefined } => {
     const { generateId } = given;
     const writer: SaveRequest['writer'] = {
         build: packageVersionOf(),
@@ -98,31 +104,41 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
 
     let state: SaveStatus['state'] = 'clean';
     let latest = 0;
-    // A new record starts below the first sequence, an existing one at it.
     let acknowledged = 0;
-    if (given.revision === null) {
-        acknowledged = -1;
-    }
     // Cleared by the first accepted acknowledgment, which saves what the session mounted with.
-    let unsavedOnMount = given.unsavedOnMount;
-    if (unsavedOnMount) {
-        state = 'dirty';
-    }
-    let revision = given.revision;
+    let unsavedOnMount = false;
+    let revision: ServerRevision | null = null;
     // What `requestCommit` answers with while it holds for the current stamp: the loaded record's, then each accepted one.
     let accepted: SaveAcknowledgment | undefined;
-    if (given.revision !== null && !unsavedOnMount) {
-        const stamp = { ...runtime.handle.getSummary().session, sequence: 0 };
-        accepted = { operationId: null, stamp, revision: given.revision };
-    }
+    /** Starts from a loaded record: at mount, and in the new generation of a replacement. */
+    const load = (loaded: ServerRevision | null, unsavedAtLoad: boolean) => {
+        latest = 0;
+        // A new record starts below the first sequence, an existing one at it.
+        acknowledged = 0;
+        if (loaded === null) {
+            acknowledged = -1;
+        }
+        unsavedOnMount = unsavedAtLoad;
+        state = 'clean';
+        if (unsavedOnMount) {
+            state = 'dirty';
+        }
+        revision = loaded;
+        accepted = undefined;
+        if (loaded !== null && !unsavedOnMount) {
+            const stamp = { ...runtime.handle.getSummary().session, sequence: 0 };
+            accepted = { operationId: null, stamp, revision: loaded };
+        }
+    };
+    load(given.revision, given.unsavedOnMount);
     // In call order; the oldest stays until its write is answered.
     const pinned: Checkpoint[] = [];
     // The captures of `requestCommit` calls that wait for input to settle.
-    const waiting = new Set<() => void>();
+    const waiting = new Map<() => void, (result: CommitResult) => void>();
     let problem: Diagnostic | null = null;
     let inFlight: InFlight | undefined;
     // The write whose outcome is not known yet, which every later try replays unchanged.
-    let unresolved: SaveRequest | undefined;
+    let unresolved: SaveRequest | undefined = given.carried;
     let replays = 0;
     // A write came due while a write in flight, a replay, the network or unsettled input held it.
     let due = false;
@@ -164,11 +180,15 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     };
 
     // A new record that nobody changed has nothing to save.
-    const unsaved = () => (latest > acknowledged && latest > 0) || unsavedOnMount;
-    // A faulted session writes only what `requestCommit` pinned.
+    // Reads the session's sequence, which a `documentChange` listener sees before `changed` runs.
+    const unsaved = () => {
+        const { sequence } = runtime.handle.getSummary();
+        return (sequence > acknowledged && sequence > 0) || unsavedOnMount;
+    };
+    // A faulted session writes only what `requestCommit` pinned, and a replacement writes its `save`.
     const writable = () => {
         const { phase } = runtime.handle.getSummary();
-        return phase === 'ready' || (phase === 'faulted' && pinned.length > 0);
+        return phase === 'ready' || phase === 'transitioning' || (phase === 'faulted' && pinned.length > 0);
     };
     /** The oldest pinned checkpoint when `request` writes it. */
     const checkpointOf = (request: SaveRequest) => {
@@ -381,7 +401,13 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         }
         const handOver = (remote: LoadedDocument | null) => {
             const onConflict = given.options()?.onConflict;
-            if (!ended.signal.aborted && onConflict !== undefined) {
+            // A replacement since the read moved the session to another generation and document.
+            const current = runtime.handle.getSummary().session;
+            const same =
+                current.documentId === session.documentId &&
+                current.sessionId === session.sessionId &&
+                current.generation === session.generation;
+            if (!ended.signal.aborted && same && onConflict !== undefined) {
                 onConflict(remote, runtime.handle.getSnapshot());
             }
         };
@@ -410,10 +436,13 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             }
             end(current);
             unresolved = undefined;
-            acknowledged = acknowledgment.stamp.sequence;
             revision = acknowledgment.revision;
-            accepted = acknowledgment;
-            unsavedOnMount = false;
+            // A failed session's write saved a sequence of that session, so what this one mounted with stays unsaved.
+            if (current.request !== given.carried) {
+                acknowledged = acknowledgment.stamp.sequence;
+                accepted = acknowledgment;
+                unsavedOnMount = false;
+            }
             const checkpoint = checkpointOf(current.request);
             if (checkpoint !== undefined) {
                 pinned.shift();
@@ -519,8 +548,12 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     let shown = false;
     runtime.handle.subscribe('ready', () => {
         shown = true;
+        // A write a failed session left unresolved goes first, unchanged.
+        if (unresolved !== undefined) {
+            replay();
+        }
     });
-    if (unsavedOnMount) {
+    if (given.unsavedOnMount) {
         schedule();
     }
 
@@ -538,15 +571,15 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             refresh();
         },
         settled: () => {
-            for (const capture of waiting) {
+            for (const capture of waiting.keys()) {
                 capture();
             }
             send();
         },
         commit: (options: CommitOptions) => {
             const summary = runtime.handle.getSummary();
-            // A faulted session still saves its last published snapshot.
-            if (summary.phase !== 'ready' && summary.phase !== 'faulted') {
+            // A faulted session still saves its last published snapshot, and the runtime refuses a host call while `transitioning`.
+            if (summary.phase === 'mounting' || summary.phase === 'disposed') {
                 return Promise.resolve({ status: 'blocked', code: 'not-ready' });
             }
             // A listener of what `dispose` reported may call this while the phase is still `ready`.
@@ -557,6 +590,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             if (summary.compositionActive && options.composition === 'reject') {
                 return Promise.resolve({ status: 'blocked', code: 'composition-active' });
             }
+            const startedPhase = summary.phase;
             return new Promise<CommitResult>((resolve) => {
                 let checkpoint: Checkpoint | undefined;
                 const finish = (result: CommitResult) => {
@@ -573,10 +607,19 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
                     options.timeoutMs ?? option('timeoutMs'),
                 );
                 const capture = () => {
+                    // A replacement that started after this call answers it; its own save starts while transitioning,
+                    // and `dispose` answers every call even mid-replacement.
+                    if (
+                        !ended.signal.aborted &&
+                        runtime.handle.getSummary().phase === 'transitioning' &&
+                        startedPhase !== 'transitioning'
+                    ) {
+                        return;
+                    }
                     waiting.delete(capture);
                     checkpoint = pin(finish);
                 };
-                waiting.add(capture);
+                waiting.set(capture, finish);
                 // ProseMirror reads a DOM change in a microtask queued before this one, so the capture holds the last keystroke.
                 queueMicrotask(() => {
                     if (waiting.has(capture) && !runtime.handle.getSummary().compositionActive) {
@@ -600,6 +643,33 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             }
             write(unresolved);
         },
+        unsaved,
+        outcomeUnknown: () =>
+            inFlight !== undefined || (unresolved !== undefined && (state === 'uncertain' || state === 'offline')),
+        replaced: (next, previous) => {
+            stopTimers();
+            due = false;
+            // A checkpoint held offline was never sent, and the next document does not hold it.
+            for (const checkpoint of pinned.splice(0)) {
+                settle(checkpoint, NOT_SENT);
+            }
+            // A call that has not captured yet answers for the old generation, never with the next document.
+            let old: CommitResult = NOT_SENT;
+            if (accepted !== undefined && sameStamp(accepted.stamp, previous)) {
+                old = { status: 'acknowledged', acknowledgment: accepted };
+            }
+            for (const [capture, finish] of waiting) {
+                waiting.delete(capture);
+                finish(old);
+            }
+            // The operation that spent its retries in `error` is dropped with the document it carried.
+            unresolved = undefined;
+            replays = 0;
+            problem = null;
+            load(next, false);
+            refresh();
+        },
+        unresolved: () => unresolved,
         dispose: () => {
             if (ended.signal.aborted) {
                 return;
@@ -618,7 +688,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
                 settle(checkpoint, DISPOSED);
             }
             // With `ended` aborted, each waiting call's capture answers `disposed`.
-            for (const capture of waiting) {
+            for (const capture of waiting.keys()) {
                 capture();
             }
             // A session that leaves unsaved changes says so and starts no write.

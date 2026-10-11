@@ -256,6 +256,33 @@ const Playground = ({ allowNewBold, contentClassName, ...props }: PlaygroundProp
                 >
                     Read the snapshot
                 </button>
+                <button
+                    type="button"
+                    onClick={async () => {
+                        const handle = handleRef.current;
+                        if (handle === null) {
+                            return;
+                        }
+                        const result = await handle.replaceDocument({
+                            expected: handle.getSnapshot().stamp,
+                            next: {
+                                documentId: 'story-replaced',
+                                revision: null,
+                                document: createEmptyDocument(model),
+                            },
+                            unsaved: { action: 'save' },
+                            selection: 'start',
+                            history: 'reset',
+                        });
+                        if (result.status === 'rejected') {
+                            log(`replaceDocument rejected ${result.code}`);
+                            return;
+                        }
+                        log(`replaceDocument ${result.status}`);
+                    }}
+                >
+                    Replace with an empty document
+                </button>
                 <button type="button" onClick={() => setBroken(true)}>
                     Throw in render
                 </button>
@@ -285,6 +312,7 @@ const Playground = ({ allowNewBold, contentClassName, ...props }: PlaygroundProp
                         show();
                     });
                     handle.subscribe('selectionChange', (selection) => log(`selectionChange ${selection.kind}`));
+                    handle.subscribe('replaced', (replaced) => log(`replaced generation ${replaced.generation}`));
                     handle.subscribe('operationMetric', (metric) =>
                         log(`operationMetric ${metric.kind} ${metric.durationMs} ms ${metric.failureCode ?? ''}`),
                     );

@@ -20,12 +20,18 @@ export interface SaveCoordinator {
     status(): SaveStatus;
     /** A batch published an effective change; the batch emits `saveStatusChange` after this returns. */
     changed(): void;
-    /** Input has settled after a composition, so a write that waited for it may capture now. */
+    /** Input has settled, or a failed replacement left `transitioning`, so a write that waited may go now. */
     settled(): void;
     /** The host replaced `services.persistence`, so the write in flight goes to the new service. */
     serviceChanged(): void;
-    /** `EditorHandle.requestCommit` of a managed session. */
+    /** `EditorHandle.requestCommit` of a managed session, and the `save` policy of a replacement. */
     commit(options: CommitOptions): Promise<CommitResult>;
+    /** Whether the session has unsaved changes. */
+    unsaved(): boolean;
+    /** Whether a write's outcome is unknown, in flight or waiting for replay, which a replacement may not drop (step 6). */
+    outcomeUnknown(): boolean;
+    /** Replacement step 8: the session starts again from a loaded record with `revision`, after the `previous` stamp. */
+    replaced(revision: ServerRevision | null, previous: DocumentStamp): void;
     /** Runs before the session is disposed, while listeners still hear its diagnostics. */
     dispose(): void;
 }
