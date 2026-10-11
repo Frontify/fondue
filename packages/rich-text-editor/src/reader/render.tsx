@@ -12,7 +12,7 @@ import {
 
 import { type Diagnostic, type JsonObject, type ListLevels } from '#/model';
 import { isIsland, type TreeNode } from '#/model/content';
-import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
+import { type HtmlTemplate, passageDirection, resolveHtmlSpec, treeRuns, withAutoDirection } from '#/model/html-spec';
 import {
     attrsOf,
     COLUMN_BREAK,
@@ -280,7 +280,7 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         template = withListLevel(template, attrs, entered.kind, entered.depth, state.listLevels);
     }
     if (!plan.inline) {
-        template = withAutoDirection(template);
+        template = withAutoDirection(template, passageDirection(treeRuns(node.content)));
     }
     template = withStyle(template, styled(state, node.type, attrs, path), false);
     if (node.type === COLUMN_BREAK) {

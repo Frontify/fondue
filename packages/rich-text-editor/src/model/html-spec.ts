@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type SharedAttribute, URL_ATTRIBUTES } from './compile';
+import { type TreeNode } from './content';
 import { type HtmlAttributeValue, type HtmlSpec, type JsonObject } from './declarations';
 import { checkHref } from './href';
 import { addDeclaration, isPlainCss, isRecord, isSrcdocAttribute, isStyleAttribute, ownValue } from './values';
@@ -123,14 +124,52 @@ export const resolveHtmlSpec = (
     return { layers, content };
 };
 
-/** `template` with `dir="auto"` on its outer element when it writes no `dir`, so a block takes its direction from its own text. */
-export const withAutoDirection = (template: HtmlTemplate): HtmlTemplate => {
+/**
+ * `template` with `dir` on its outer element when it writes none: `direction`, else `auto`, so a block takes its
+ * direction from its own text.
+ */
+export const withAutoDirection = (
+    template: HtmlTemplate,
+    direction: 'ltr' | 'rtl' | undefined = undefined,
+): HtmlTemplate => {
     const [outer, ...inner] = template.layers;
     if (outer === undefined || Object.hasOwn(outer.attrs, 'dir')) {
         return template;
     }
-    return { ...template, layers: [{ ...outer, attrs: { ...outer.attrs, dir: 'auto' } }, ...inner] };
+    return { ...template, layers: [{ ...outer, attrs: { ...outer.attrs, dir: direction ?? 'auto' } }, ...inner] };
 };
+
+// Digits, punctuation and spaces take their direction from the text around them; letters set it.
+const LETTER = /\p{L}/u;
+
+/** One text run of a textblock: its text and the `dir` of the `language` mark over it, if any. */
+export interface DirectedRun {
+    readonly text: string;
+    readonly dir: unknown;
+}
+
+/**
+ * The `dir` of the `language` mark over a textblock's first letter, when that is `ltr` or `rtl`. `dir="auto"` skips
+ * text inside an element with its own `dir`, so such a block would otherwise take its direction from the text around
+ * the passage, or the left-to-right default.
+ */
+export const passageDirection = (runs: readonly DirectedRun[]): 'ltr' | 'rtl' | undefined => {
+    const first = runs.find(({ text }) => LETTER.test(text));
+    if (first?.dir === 'ltr' || first?.dir === 'rtl') {
+        return first.dir;
+    }
+    return undefined;
+};
+
+/** The text runs of a stored node's children, which `passageDirection` reads. */
+export const treeRuns = (content: readonly TreeNode[] | undefined): DirectedRun[] =>
+    (content ?? []).flatMap((child) => {
+        if (child.type !== 'text' || child.text === undefined) {
+            return [];
+        }
+        const language = child.marks?.find((mark) => mark.type === 'language');
+        return [{ text: child.text, dir: language?.attrs.dir }];
+    });
 
 /** A run of spaces alternates U+0020 and U+00A0 from a space, so a long line still wraps; `carried` spaces from the text before count as the run's start. */
 export const renderSpaces = (text: string, carried = 0): string =>
