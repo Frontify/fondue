@@ -3,6 +3,7 @@
 import { type Mark, type Node } from 'prosemirror-model';
 import { type Transaction } from 'prosemirror-state';
 
+import { carriesNodeId } from '#/definition';
 import { type ContentModel, DefinitionError } from '#/model';
 import { compiledModel } from '#/model/compile';
 import { findUnsafeJson } from '#/model/values';
@@ -114,11 +115,11 @@ const take = <T>(items: T[], match: (item: T) => boolean): T | undefined => {
 
 // A node's own marks belong to the mark's feature, so its markup here is its type and attributes.
 const sameNode = (a: Node, b: Node) => a === b || (a.hasMarkup(b.type, b.attrs, a.marks) && a.content.eq(b.content));
-const carriesId = (node: Node) => node.type.spec.attrs !== undefined && Object.hasOwn(node.type.spec.attrs, 'nodeId');
 
 /**
- * Pairs a feature's nodes before and after a batch, by `nodeId` where the type carries one, as Tiptap's UniqueID
- * keys a node by its ID attribute, and by type, attributes and content otherwise, so a moved node keeps its pair.
+ * Pairs a feature's nodes before and after a batch. A node whose type carries a `nodeId` pairs with an identical
+ * node, then by `nodeId`, as Tiptap's UniqueID keys a node by its ID attribute and the repair leaves the ID on the
+ * node that existed; any other node pairs by type, attributes and content, so a moved node keeps its pair.
  * A changed node with no ID pairs with a leftover node of its type as an edit; an unpaired node is a create or a remove.
  */
 const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change => {
@@ -128,10 +129,10 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
     let remove = false;
     for (const node of before) {
         let other: Node | undefined;
-        if (carriesId(node)) {
+        if (carriesNodeId(node)) {
             const sameId = (candidate: Node) =>
                 candidate.type === node.type && candidate.attrs.nodeId === node.attrs.nodeId;
-            // A pasted copy shares the ID, so an unchanged node with that ID pairs first.
+            // A stored document may repeat an ID, which the repair leaves alone, so an unchanged node with that ID pairs first.
             other = take(left, (candidate) => sameId(candidate) && sameNode(node, candidate));
             if (other === undefined) {
                 other = take(left, sameId);
@@ -146,7 +147,7 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
         edit ||= other !== undefined && !sameNode(node, other);
     }
     for (const node of changed) {
-        const other = take(left, (candidate) => candidate.type === node.type && !carriesId(candidate));
+        const other = take(left, (candidate) => candidate.type === node.type && !carriesNodeId(candidate));
         remove ||= other === undefined;
         edit ||= other !== undefined;
     }

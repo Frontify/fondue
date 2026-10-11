@@ -3,9 +3,11 @@
 import {
     CAPABILITY_NAMES,
     CAPABILITY_PLUGINS,
+    declaresNodeIds,
     findCycle,
     INPUT_RULES_PLUGIN,
     keymapPlugin,
+    NODE_IDS_PLUGIN,
     orderPlugins,
     type PluginContribution,
     type PluginDescriptor,
@@ -703,6 +705,9 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
         }
         if (rules.length > 0) {
             contributions.push({ featureId: feature.id, plugin: INPUT_RULES_PLUGIN });
+        }
+        if (declaresNodeIds(feature.declaration)) {
+            contributions.push({ featureId: feature.id, plugin: NODE_IDS_PLUGIN });
         }
     }
     const plugins = orderPlugins(contributions);

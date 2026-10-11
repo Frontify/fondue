@@ -26,18 +26,22 @@ import { type TreeNode } from '#/model/content';
 import { encodeTree } from '#/model/encode';
 import { diagnostic } from '#/model/format';
 import { randomId } from '#/model/random-id';
-import { findInvalidPayload, findUnsafeJson, snapshot } from '#/model/values';
+import { findInvalidPayload, findUnsafeJson, isRecord, snapshot } from '#/model/values';
 
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { createLimitCheck } from './limits';
 import { authoringOf, createPolicyCheck } from './policy';
+import { captureTarget, countTargets, targetSelection, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
+    type CaptureResult,
+    type CaptureTargetOptions,
     type ChangeOrigin,
     type CommandResult,
     type CommandState,
     type EditorSummary,
+    type SelectionHandle,
     type SelectionSummary,
     type SessionToken,
     type Unsubscribe,
@@ -61,7 +65,7 @@ export interface RuntimeHandle {
     query(id: string, ...args: readonly unknown[]): CommandState;
     execute(id: string, ...args: readonly unknown[]): CommandResult;
     enqueue(id: string, ...args: readonly unknown[]): Promise<CommandResult>;
-    captureTarget(): never;
+    captureTarget(options: CaptureTargetOptions): CaptureResult;
     releaseTarget(): never;
     requestCommit(): never;
     replaceDocument(): never;
@@ -98,7 +102,7 @@ export interface EditorRuntimeOptions {
     readonly tree: TreeNode;
     /** The stored document's capabilities, kept while islands keep their content. */
     readonly capabilities: readonly CapabilityRef[];
-    /** For the session id; default `randomId`. */
+    /** For the session id and the `nodeId`s the runtime creates; default `randomId`. */
     readonly generateId?: () => string;
     readonly mode: Mode;
     readonly policy: AuthoringPolicy;
@@ -112,6 +116,7 @@ export const liveResources = {
     installedFeatures: new Map<object, readonly string[]>(),
     intents: 0,
     frames: 0,
+    targets: 0,
 };
 
 const runtimes = new WeakMap<object, EditorRuntime>();
@@ -193,6 +198,7 @@ type Attempt = Prepared | { readonly unchanged: true };
 interface Intent {
     readonly id: string;
     readonly payload: unknown;
+    readonly options: unknown;
     readonly depth: number;
     readonly resolve: (result: CommandResult) => void;
 }
@@ -240,7 +246,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     });
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
-        plugins: [typingRecorder, ...definition.plugins],
+        plugins: [typingRecorder, targetsPlugin, ...definition.plugins],
     });
 
     const busyWith = <T>(work: () => T): T => {
@@ -284,11 +290,34 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         report(diagnostic);
     };
 
+    // IDs a query drew, which the next install hands out first, so `execute` installs what `query` judged.
+    const recorded: string[] = [];
+    const installedId = (): string => {
+        const id = recorded.shift();
+        if (id !== undefined) {
+            return id;
+        }
+        return generate();
+    };
+    /** An id function for one query: it replays the recorded ids, then records what it draws past them. */
+    const queriedIds = (): (() => string) => {
+        let at = 0;
+        return () => {
+            if (at === recorded.length) {
+                recorded.push(generate());
+            }
+            const id = recorded[at] as string;
+            at += 1;
+            return id;
+        };
+    };
+
     /** Applies a root transaction and every transaction plugins append to it, then the final policy and limit check. */
-    const prepare = (root: Transaction): Prepared => {
+    const prepare = (root: Transaction, ids: () => string): Prepared => {
         const batch: AppendBatch = {
             limit: limits.maxAppendedTransactions,
             now: () => Date.now(),
+            generateId: ids,
             chain: [],
         };
         let applied: ReturnType<EditorState['applyTransaction']>;
@@ -349,6 +378,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             view.updateState(candidate);
         }
         commitSequence += 1;
+        liveResources.targets += countTargets(candidate) - countTargets(previous);
         // An effective change compares documents by node equality, never by serializing them.
         const changed = !candidate.doc.eq(previous.doc);
         if (changed) {
@@ -394,7 +424,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return;
         }
         busyWith(() => {
-            const prepared = prepare(root);
+            const prepared = prepare(root, installedId);
             if ('candidate' in prepared) {
                 install(prepared.candidate, root, typed);
             } else if (prepared.fault !== undefined) {
@@ -406,8 +436,32 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         });
     };
 
+    /** The state a command runs on: the current one, or with the selection at its target's mapped range. */
+    const baseOf = (options: unknown): EditorState | RejectedCode => {
+        if (!isRecord(options) || options.target === undefined) {
+            return state;
+        }
+        const { target } = options;
+        if (!isRecord(target) || typeof target.id !== 'string' || !isRecord(target.session)) {
+            return 'target-invalid';
+        }
+        if (target.session.sessionId !== session.sessionId || target.session.generation !== session.generation) {
+            return 'wrong-session';
+        }
+        const selection = targetSelection(state, target.id);
+        if (selection === undefined) {
+            return 'target-invalid';
+        }
+        return state.apply(state.tr.setSelection(selection));
+    };
+
     /** Runs a command against the current state with a dispatch that captures its transaction, then prepares it. */
-    const attempt = (id: string, checked: { readonly payload: unknown } | undefined): Attempt => {
+    const attempt = (
+        id: string,
+        checked: { readonly payload: unknown } | undefined,
+        base: EditorState | RejectedCode,
+        ids: () => string,
+    ): Attempt => {
         const command = definition.commands.get(id);
         if (command === undefined) {
             return { code: 'unknown-command' };
@@ -426,8 +480,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (mode === 'readonly') {
             return { code: 'readonly' };
         }
+        if (typeof base === 'string') {
+            return { code: base };
+        }
         const dispatched: Transaction[] = [];
-        const applicable = command.run(state, (transaction) => dispatched.push(transaction), payload);
+        const applicable = command.run(base, (transaction) => dispatched.push(transaction), payload);
         if (dispatched.length > 1) {
             return {
                 code: 'not-applicable',
@@ -441,17 +498,18 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (root === undefined) {
             return { unchanged: true };
         }
-        return prepare(root);
+        return prepare(root, ids);
     };
 
-    const query = (id: string, given?: unknown): CommandState => {
+    const query = (id: string, given?: unknown, options?: unknown): CommandState => {
         const command = definition.commands.get(id);
         const checked = checkedPayload(given);
+        const base = baseOf(options);
         let active: boolean | 'mixed' = false;
-        if (command !== undefined && checked !== undefined) {
-            active = command.active(state, checked.payload);
+        if (command !== undefined && checked !== undefined && typeof base !== 'string') {
+            active = command.active(base, checked.payload);
         }
-        const attempted = attempt(id, checked);
+        const attempted = attempt(id, checked, base, queriedIds());
         if ('code' in attempted) {
             return { enabled: false, active, disabledReason: attempted.code };
         }
@@ -459,12 +517,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     // Installs exactly what `query` checked, so the two agree.
-    const execute = (id: string, given?: unknown): CommandResult => {
+    const execute = (id: string, given?: unknown, options?: unknown): CommandResult => {
         if (busy > 0) {
             return rejected('busy');
         }
         return busyWith((): CommandResult => {
-            const attempted = attempt(id, checkedPayload(given));
+            const attempted = attempt(id, checkedPayload(given), baseOf(options), installedId);
             if ('unchanged' in attempted) {
                 return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
             }
@@ -496,7 +554,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 // The intent's depth holds while it runs or is reported, so what its listeners enqueue sits deeper.
                 depth = intent.depth;
                 if (intent.depth <= MAX_ENQUEUE_DEPTH) {
-                    intent.resolve(execute(intent.id, intent.payload));
+                    intent.resolve(execute(intent.id, intent.payload, intent.options));
                 } else {
                     if (!warned) {
                         warned = true;
@@ -512,14 +570,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
     };
 
-    const enqueue = (id: string, payload?: unknown): Promise<CommandResult> =>
+    const enqueue = (id: string, payload?: unknown, options?: unknown): Promise<CommandResult> =>
         new Promise((resolve) => {
             if (phase === 'faulted' || phase === 'disposed') {
                 resolve(rejected('not-ready'));
                 return;
             }
             // An intent that a queued intent's events enqueue sits one level deeper.
-            queue.push({ id, payload, depth: depth + 1, resolve });
+            queue.push({ id, payload, options, depth: depth + 1, resolve });
             liveResources.intents += 1;
             drain();
         });
@@ -549,6 +607,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         phase = 'disposed';
         settleQueue('not-ready');
         deferred.length = 0;
+        liveResources.targets -= countTargets(state);
         emit('disposed', session);
         clear();
         detach();
@@ -601,7 +660,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         query,
         execute,
         enqueue,
-        captureTarget: notBuiltYet('captureTarget'),
+        captureTarget: (options) => {
+            // During a commit or notification the capture's root would wait or go stale, so it is refused, as `execute` is.
+            if (phase !== 'ready' || busy > 0) {
+                return { status: 'rejected', code: 'not-ready' };
+            }
+            const id = generate();
+            commit(captureTarget(state, id, options));
+            return { status: 'captured', target: Object.freeze({ id, session }) as unknown as SelectionHandle };
+        },
         releaseTarget: notBuiltYet('releaseTarget'),
         requestCommit: notBuiltYet('requestCommit'),
         replaceDocument: notBuiltYet('replaceDocument'),
