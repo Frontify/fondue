@@ -131,6 +131,8 @@ test('names each swatch by its token and describes it by its colour, checks the 
     await expect(page.getByRole('menuitemradio', { name: 'Custom text color' })).toHaveCount(0);
     await expect(red).toBeFocused();
     await page.keyboard.press('ArrowDown');
+    // Radix moves the roving focus in a timeout, so Enter waits for it.
+    await expect(page.getByRole('menuitemradio', { name: 'Brand blue' })).toBeFocused();
     await page.keyboard.press('Enter');
 
     await expect(surfaceOf(page)).toBeFocused();
