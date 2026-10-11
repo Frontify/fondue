@@ -227,6 +227,10 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     readonly portalContainer?: HTMLElement | null;
     readonly spellCheck?: boolean;
     readonly inputRules?: false | { readonly exclude: readonly string[] };
+    /** When true, Tab and Shift+Tab move focus and do not indent or change cells. Default false. */
+    readonly tabMovesFocus?: boolean;
+    /** When false, the view does not scroll the selection into view. Default true. */
+    readonly scrollSelectionIntoView?: boolean;
     readonly defaultToolbarMode?: ToolbarMode;
     /** For the session id and the `nodeId`s the editor creates. Default: `crypto.randomUUID()`, or a version 4 UUID where that is missing. */
     readonly generateId?: () => string;
@@ -239,7 +243,11 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     readonly onDiagnostic?: (diagnostic: Diagnostic) => void;
     /** Runs only when `validate()` passes. */
     readonly onSubmit?: (snapshot: Snapshot) => void;
-    /** Native focus events of the surface, including moves into the editor's own overlays. */
+    /**
+     * Native focus events of the surface, including moves into the editor's own overlays.
+     * Pointer and focus events bubble out of the editor root. There is no further focus callback.
+     * The bubble toolbar hides when the editor loses focus, and the selection stays.
+     */
     readonly onFocus?: (event: FocusEvent<HTMLElement>) => void;
     readonly onBlur?: (event: FocusEvent<HTMLElement>) => void;
     readonly onToolbarModeChange?: (mode: ToolbarMode) => void;

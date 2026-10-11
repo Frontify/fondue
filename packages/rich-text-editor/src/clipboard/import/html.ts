@@ -4,6 +4,12 @@ import { DOMParser as SchemaParser, Fragment, type Mark, type Node, type Schema 
 
 import { type ResourceLimits } from '#/model';
 
+import { descriptorOf } from './dom';
+import { cleanGoogleDocs } from './google-docs';
+import { removeEmptySpans, removeItemBreaks, removeMarkup, splitDecorations } from './markup';
+import { rebuildOfficeLists, removeOfficeMarkup } from './office';
+import { adoptTaskLists } from './task-lists';
+
 /** The host's DOM implementation, whose constructors and prototypes the import reads. */
 type DomWindow = Window & typeof globalThis;
 
@@ -11,6 +17,8 @@ export interface HtmlSettings {
     readonly limits: ResourceLimits;
     /** The creatable heading levels of the definition, or `undefined` to keep every level. */
     readonly headingLevels: readonly number[] | undefined;
+    /** The depth, as `exceededStructure` counts it, at which the imported blocks land. */
+    readonly depth: number;
 }
 
 export interface ImportedHtml {
@@ -18,21 +26,6 @@ export interface ImportedHtml {
     /** Images dropped without fetching, for the announcement. */
     readonly droppedImages: number;
 }
-
-/** A property of `prototype` or an ancestor, never an instance's own, which a named element can shadow. */
-const descriptorOf = (prototype: object, name: string): PropertyDescriptor => {
-    for (
-        let current: object | null = prototype;
-        current !== null;
-        current = Object.getPrototypeOf(current) as object | null
-    ) {
-        const descriptor = Object.getOwnPropertyDescriptor(current, name);
-        if (descriptor !== undefined) {
-            return descriptor;
-        }
-    }
-    throw new Error(`The DOM implementation has no ${name}.`);
-};
 
 /**
  * Turns each `form` into a `div`, through prototype accessors only, since a control named `nodeType` or `firstChild`
@@ -233,12 +226,26 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     if (body === null) {
         return { content: Fragment.empty, droppedImages: 0 };
     }
+    // Forms go first, since their controls shadow what later steps read; comments and contentless elements next, so
+    // the vendor steps meet content only; Office lists before the Office markup goes, since they read its `mso-list`
+    // and marker spans; decorations once the Office styles are rewritten; empty spans last, after the steps that empty them.
     replaceForms(dom, inert);
     removeNotes(body);
+    removeMarkup(body);
+    cleanGoogleDocs(body);
+    // Without a task list in the model, other editors' task lists stay plain lists, which the list rules read.
+    if (schema.nodes.task_list !== undefined) {
+        adoptTaskLists(body);
+    }
+    rebuildOfficeLists(body, settings.limits.maxDepth, settings.depth);
+    removeOfficeMarkup(body);
+    splitDecorations(body);
+    removeItemBreaks(body);
     replaceForeign(body);
     const droppedImages = replaceImages(body);
     restoreSpaces(body);
     removeObjectChildren(body);
+    removeEmptySpans(body);
     const parser = new SchemaParser(schema, [{ tag: 'object', skip: true }, ...SchemaParser.fromSchema(schema).rules]);
     let content = withSpaces(schema, parser.parse(body).content);
     content = withValidAttributes(schema, content, settings.limits, settings.headingLevels);

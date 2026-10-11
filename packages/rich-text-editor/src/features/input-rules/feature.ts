@@ -15,7 +15,9 @@ type Typography = (typeof TYPOGRAPHY)[number];
 const numeric = (match: string, replace: string) =>
     textRule({ id: 'typography.numeric', match: new RegExp(String.raw`(?<=^|\s)${match} $`, 'u'), replace });
 
-/** The `typography.*` rows of the Input rules table. */
+const SUBSCRIPT_DIGITS = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'] as const;
+
+/** The `typography.*` rows of the input rules. */
 const RULES: readonly InputRule[] = [
     { id: 'typography.quotes', kind: 'quotes', marker: '"' },
     { id: 'typography.quotes', kind: 'quotes', marker: "'" },
@@ -24,12 +26,22 @@ const RULES: readonly InputRule[] = [
     { id: 'typography.symbols', kind: 'text-replace', find: '(c)', replace: '©' },
     { id: 'typography.symbols', kind: 'text-replace', find: '(r)', replace: '®' },
     { id: 'typography.symbols', kind: 'text-replace', find: '(tm)', replace: '™' },
+    { id: 'typography.symbols', kind: 'text-replace', find: '(sm)', replace: '℠' },
+    { id: 'typography.symbols', kind: 'text-replace', find: '+/-', replace: '±' },
+    { id: 'typography.symbols', kind: 'text-replace', find: '!=', replace: '≠' },
+    { id: 'typography.symbols', kind: 'text-replace', find: '<<', replace: '«' },
+    { id: 'typography.symbols', kind: 'text-replace', find: '>>', replace: '»' },
+    // `<->` precedes `->`, `<-` waits for a following character other than `>`, and `->` ignores a leading hyphen so `-->` stays.
+    { id: 'typography.symbols', kind: 'text-replace', find: '<->', replace: '↔' },
+    textRule({ id: 'typography.symbols', match: /(?<!-)->$/u, replace: '→' }),
+    { id: 'typography.symbols', kind: 'text-replace', find: '<-', replace: '←', boundary: 'word' },
     numeric(String.raw`1\/2`, '½ '),
     numeric(String.raw`1\/4`, '¼ '),
     numeric(String.raw`3\/4`, '¾ '),
     numeric(String.raw`(\d+)\^2`, '$1² '),
     numeric(String.raw`(\d+)\^3`, '$1³ '),
     numeric(String.raw`(\d+)x(\d+)`, '$1×$2 '),
+    ...SUBSCRIPT_DIGITS.map((digit, index) => numeric(`~${index}`, `${digit} `)),
 ];
 
 /**

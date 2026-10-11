@@ -648,6 +648,8 @@ Tab and Shift+Tab in a code block are not handled, so focus leaves the editor. M
 
 Tab in an item that cannot nest, such as the first item, moves focus out of the editor.
 
+With \`tabMovesFocus\`, Tab and Shift+Tab always move focus out of the editor and indent or outdent no item; Mod-] and Mod-[ still do. Tab still accepts an open suggestion.
+
 ## Surface
 
 | Action | Key | Apple | Other platforms |
@@ -677,6 +679,8 @@ Tab in an item that cannot nest, such as the first item, moves focus out of the 
         disabled: false,
         required: false,
         spellCheck: true,
+        tabMovesFocus: false,
+        scrollSelectionIntoView: true,
         status: 'neutral',
         persistenceOptions: { autosave: 'debounced', delayMs: 500, maxWaitMs: 5000 },
     },
@@ -688,6 +692,8 @@ Tab in an item that cannot nest, such as the first item, moves focus out of the 
         portalContainer: { control: false },
         presentation: { control: false },
         inputRules: { control: 'object' },
+        tabMovesFocus: { control: 'boolean' },
+        scrollSelectionIntoView: { control: 'boolean' },
         profile: { control: 'select', options: ['inline', 'comment', 'document', 'brand-document'] },
         status: { control: 'select', options: ['neutral', 'success', 'error', 'loading'] },
         defaultToolbarMode: { control: 'select', options: ['fixed', 'bubble'] },

@@ -10,6 +10,7 @@ import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN, LIST_KEYS_PLUGIN } from '#/mod
 import { isApple, modOn } from '#/model/platform';
 
 import { itemAt, splitItem } from './lists';
+import { showsOptions } from './suggestions/plugin';
 
 // The physical key of a letter or digit, which with Ctrl and Alt alone types itself on any layout.
 const PHYSICAL = /^(?:Key([A-Z])|Digit(\d))$/;
@@ -47,35 +48,44 @@ export const passesToBrowser = (event: KeyboardEvent): boolean =>
 const unmodified = (event: KeyboardEvent): boolean =>
     !event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey;
 
+/** Whether a keydown is Tab or Shift+Tab, with no Alt, Ctrl or ⌘. */
+const isTab = (event: KeyboardEvent): boolean =>
+    event.key === 'Tab' && !event.altKey && !event.ctrlKey && !event.metaKey;
+
 /**
- * Composition keys and AltGr characters reach the browser before any keymap runs. ProseMirror
+ * Composition keys and AltGr characters reach the browser before any keymap runs, and so do Tab and Shift+Tab while
+ * `tabMovesFocus` holds and no suggestion list shows options, so they move focus and indent nothing. ProseMirror
  * prevents every Escape and Enter keydown, so an Escape, or an Enter with a modifier, that no handler takes stays
  * unprevented for the browser and the host; a plain Enter keeps ProseMirror's
  * own handling, which mobile keyboards need.
  */
-export const keyGuard = new Plugin({
-    key: new PluginKey('rte.key-guard'),
-    props: {
-        handleDOMEvents: {
-            keydown: (view, event) => {
-                if (passesToBrowser(event)) {
+export const createKeyGuard = (tabMovesFocus: () => boolean) =>
+    new Plugin({
+        key: new PluginKey('rte.key-guard'),
+        props: {
+            handleDOMEvents: {
+                keydown: (view, event) => {
+                    if (passesToBrowser(event)) {
+                        return true;
+                    }
+                    // ProseMirror runs no key handler on a surface that takes no edits, and neither does this branch.
+                    if (!view.editable) {
+                        return false;
+                    }
+                    if (isTab(event) && tabMovesFocus() && !showsOptions(view.state)) {
+                        return true;
+                    }
+                    if (event.key !== 'Escape' && !(event.key === 'Enter' && !unmodified(event))) {
+                        return false;
+                    }
+                    if (view.someProp('handleKeyDown', (handle) => handle(view, event))) {
+                        event.preventDefault();
+                    }
                     return true;
-                }
-                // ProseMirror runs no key handler on a surface that takes no edits, and neither does this branch.
-                if (!view.editable) {
-                    return false;
-                }
-                if (event.key !== 'Escape' && !(event.key === 'Enter' && !unmodified(event))) {
-                    return false;
-                }
-                if (view.someProp('handleKeyDown', (handle) => handle(view, event))) {
-                    event.preventDefault();
-                }
-                return true;
+                },
             },
         },
-    },
-});
+    });
 
 /**
  * Enter splits a list or task item, or lifts an empty one out one level, and Backspace at the start of an item's first
