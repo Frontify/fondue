@@ -12,7 +12,16 @@ import { type SuggestionSource } from '#/model/declarations';
 import { isHistoryTransaction } from '../history';
 
 import { loadEmoji, searchEmoji } from './emoji';
-import { type SuggestionHost, suggestionHosts } from './host';
+import { suggestionHosts } from './host';
+import {
+    afterFailure,
+    afterPage,
+    MAX_ITEMS,
+    MENTION_LIST_SEARCH,
+    type ReferenceResults,
+    resultsOf,
+} from './references';
+import { createReferenceSearch } from './search';
 
 /** One option of a suggestion list. */
 export interface SuggestionItem {
@@ -70,8 +79,7 @@ type SuggestionsMeta =
     | {
           readonly kind: 'results';
           readonly request: number;
-          readonly items: readonly SuggestionItem[];
-          readonly nextCursor?: string | null;
+          readonly results: ReferenceResults;
       }
     | { readonly kind: 'failed'; readonly request: number }
     | { readonly kind: 'move'; readonly index: number }
@@ -97,16 +105,12 @@ type SourceSearch = (query: string, context: SearchContext) => Promise<readonly 
 
 // Enough for a list that scrolls, few enough to rank well.
 const EMOJI_LIMIT = 50;
-/** How long a reference query waits for the next keystroke before the host is asked. */
-export const SEARCH_DELAY_MS = 200;
 // What `textBetween` writes for an inline leaf, such as a hard break, which also starts a word.
 const LEAF = '\uFFFC';
 const BREAK_BEFORE = /[\s\uFFFC]$/u;
 const PUNCTUATION_BEFORE = /\p{P}$/u;
 const BREAK_INSIDE = /[\s\uFFFC]/u;
 const LINE_BREAK_INSIDE = /[\n\r\u2028\u2029\uFFFC]/u;
-// The longest trigger, which the text read before the caret holds beside the longest query.
-const MAX_TRIGGER = 2;
 // Paste, drop and cut name their event; only typed text opens a list.
 const NOT_TYPED = new Set(['paste', 'drop', 'cut']);
 
@@ -145,27 +149,6 @@ const takesQuery = (rules: SuggestionRules, query: string): boolean => {
     return LEADING_LETTERS.get(rules.leadingLetters)?.test(query) ?? false;
 };
 
-const MORE_KEY = 'load-more';
-const RETRY: SuggestionItem = { key: 'retry', label: '', glyph: null, payload: {}, action: 'retry' };
-
-/** The list's own options: what a page answered, without the options that ask again. */
-const resultsOf = (items: readonly SuggestionItem[]): readonly SuggestionItem[] =>
-    items.filter((item) => item.action === undefined);
-
-/** The list that a `more` page's options extend, once per key, and the option that asks for the page after it. */
-const withPage = (
-    shown: readonly SuggestionItem[],
-    page: readonly SuggestionItem[],
-    nextCursor: string | null,
-): readonly SuggestionItem[] => {
-    const keys = new Set(shown.map((item) => item.key));
-    const items = [...shown, ...page.filter((item) => !keys.has(item.key))];
-    if (nextCursor !== null) {
-        items.push({ key: MORE_KEY, label: '', glyph: null, payload: {}, action: 'more', cursor: nextCursor });
-    }
-    return items;
-};
-
 /** The list the text before the caret opens: the trigger closest to the caret, at a word start, before a query its source takes. */
 const matchAt = (state: EditorState, suggestions: readonly CompiledSuggestion[]): Match | null => {
     const { selection } = state;
@@ -186,23 +169,27 @@ const matchAt = (state: EditorState, suggestions: readonly CompiledSuggestion[])
         if (!searchable(suggestion.source)) {
             continue;
         }
-        const windowStart = Math.max(0, $cursor.parentOffset - rules.maxQuery - MAX_TRIGGER);
+        const { trigger } = suggestion;
+        // The character before the trigger tells whether it starts a word.
+        const windowStart = Math.max(0, $cursor.parentOffset - rules.maxQuery - trigger.length - 1);
         const before = parent.textBetween(windowStart, $cursor.parentOffset, undefined, LEAF);
-        const at = before.lastIndexOf(suggestion.trigger);
-        const from = $cursor.pos - (before.length - at);
-        if (at < 0 || (best !== null && from <= best.from)) {
-            continue;
+        // The nearest trigger that starts a word and whose query the source takes, past ones inside the query.
+        for (let at = before.lastIndexOf(trigger); at >= 0; at = at > 0 ? before.lastIndexOf(trigger, at - 1) : -1) {
+            const from = $cursor.pos - (before.length - at);
+            if (best !== null && from <= best.from) {
+                break;
+            }
+            const preceding = before.slice(0, at);
+            const startsWord =
+                (at === 0 && windowStart === 0) ||
+                (at > 0 &&
+                    (BREAK_BEFORE.test(preceding) || (rules.afterPunctuation && PUNCTUATION_BEFORE.test(preceding))));
+            const query = before.slice(at + trigger.length);
+            if (startsWord && takesQuery(rules, query)) {
+                best = { suggestion, from, to: $cursor.pos, query };
+                break;
+            }
         }
-        const preceding = before.slice(0, at);
-        const startsWord =
-            (at === 0 && windowStart === 0) ||
-            (at > 0 &&
-                (BREAK_BEFORE.test(preceding) || (rules.afterPunctuation && PUNCTUATION_BEFORE.test(preceding))));
-        const query = before.slice(at + suggestion.trigger.length);
-        if (!startsWord || !takesQuery(rules, query)) {
-            continue;
-        }
-        best = { suggestion, from, to: $cursor.pos, query };
     }
     return best;
 };
@@ -245,11 +232,11 @@ const answered = (
 ): Pick<ActiveSuggestion, 'status' | 'items' | 'index'> | undefined => {
     if (meta?.kind === 'results' && meta.request === active.request) {
         if (active.page === null) {
-            return { status: 'ready', items: withPage([], meta.items, meta.nextCursor ?? null), index: 0 };
+            return { status: 'ready', items: afterPage([], meta.results), index: 0 };
         }
         // A further page keeps what the list showed, with the first new option active where Load more was.
         const shown = resultsOf(active.items);
-        return { status: 'ready', items: withPage(shown, meta.items, meta.nextCursor ?? null), index: shown.length };
+        return { status: 'ready', items: afterPage(shown, meta.results), index: Math.min(shown.length, MAX_ITEMS - 1) };
     }
     if (meta?.kind === 'failed' && meta.request === active.request) {
         // A failed reference search offers Retry, after the options of the pages before a failed further page.
@@ -258,7 +245,7 @@ const answered = (
             if (active.page !== null) {
                 shown = resultsOf(active.items);
             }
-            return { status: 'failed', items: [...shown, RETRY], index: shown.length };
+            return { status: 'failed', items: afterFailure(shown), index: shown.length };
         }
         return { status: 'failed', items: [], index: 0 };
     }
@@ -396,15 +383,16 @@ export const showsOptions = (state: EditorState): boolean => {
     return active !== null && active.items.length > 0;
 };
 
-// An `id` holds no white space; other characters outside letters, digits, `-` and `_` become their code point.
-const ID_UNSAFE = /[^\w-]/gu;
+// An `id` holds no white space; every character but ASCII letters, digits and `-` becomes its code point between
+// underscores, which no other character writes, so two keys never give one id.
+const ID_UNSAFE = /[^a-zA-Z0-9-]/gu;
 
 /**
  * The `id` of the option with `key` in the list `listId`, which `aria-activedescendant` names. It follows the option, not its
  * place, so new results at the active place change the attribute and a screen reader announces the new option.
  */
 export const suggestionOptionId = (listId: string, key: string): string =>
-    `${listId}-option-${key.replaceAll(ID_UNSAFE, (character) => (character.codePointAt(0) ?? 0).toString(16))}`;
+    `${listId}-option-${key.replaceAll(ID_UNSAFE, (character) => `_${(character.codePointAt(0) ?? 0).toString(16)}_`)}`;
 
 const withMeta = (state: EditorState, meta: SuggestionsMeta): Transaction =>
     state.tr.setMeta(key, meta).setMeta('addToHistory', false);
@@ -504,7 +492,7 @@ const deliver = async (
 ): Promise<void> => {
     let meta: SuggestionsMeta;
     try {
-        meta = { kind: 'results', request, items: await searched };
+        meta = { kind: 'results', request, results: { items: await searched, nextCursor: null } };
     } catch {
         meta = { kind: 'failed', request };
     }
@@ -515,22 +503,19 @@ const deliver = async (
 
 /**
  * Asks the list's source for the options of a new query once, and dispatches them unless a newer query replaced it.
- * A reference query waits `SEARCH_DELAY_MS` for the next keystroke; a further page and a retry ask at once.
+ * A reference query goes through the list's reference search, which waits for the next keystroke; a further page and a
+ * retry ask at once.
  */
 const createFetcher = (view: EditorView) => {
     let asked = 0;
     let controller: AbortController | undefined;
-    let cancelSearch: (() => void) | undefined;
-    let timer: ReturnType<typeof setTimeout> | undefined;
+    const references = createReferenceSearch(() => suggestionHosts.get(view), MENTION_LIST_SEARCH);
     // The list the last update showed, whose query a further page or a retry asks for again.
     let seen: ActiveSuggestion | null = null;
     const stop = () => {
-        clearTimeout(timer);
-        timer = undefined;
         controller?.abort();
         controller = undefined;
-        cancelSearch?.();
-        cancelSearch = undefined;
+        references.cancel();
     };
     /** Closes a list that cannot search, as Escape does, once the transaction that opened it has applied. */
     const closeLater = (current: EditorView, request: number) => {
@@ -539,25 +524,6 @@ const createFetcher = (view: EditorView) => {
                 dismissSuggestion(current);
             }
         });
-    };
-    const searchReferences = (current: EditorView, active: ActiveSuggestion, host: SuggestionHost) => {
-        const { request } = active;
-        cancelSearch = host.searchReferences(
-            { featureId: active.featureId, command: active.command, query: active.query, cursor: active.page },
-            (results) => {
-                if (current.isDestroyed) {
-                    return;
-                }
-                let meta: SuggestionsMeta = { kind: 'failed', request };
-                if (results !== undefined) {
-                    meta = { kind: 'results', request, items: results.items, nextCursor: results.nextCursor };
-                }
-                current.dispatch(withMeta(current.state, meta));
-            },
-        );
-        if (cancelSearch === undefined) {
-            closeLater(current, request);
-        }
     };
     const fetchFor = (current: EditorView): void => {
         const active = activeSuggestion(current.state);
@@ -581,21 +547,19 @@ const createFetcher = (view: EditorView) => {
                 closeLater(current, active.request);
                 return;
             }
+            const { featureId, command, query, page, request } = active;
             // A new request for the query the list already showed is a further page or a retry.
-            if (previous !== null && previous.from === active.from && previous.query === active.query) {
-                searchReferences(current, active, host);
-                return;
-            }
-            const { request } = active;
-            timer = setTimeout(() => {
-                timer = undefined;
-                const latest = activeSuggestion(current.state);
-                const latestHost = suggestionHosts.get(current);
-                if (current.isDestroyed || latest === null || latest.request !== request || latestHost === undefined) {
+            const again = previous !== null && previous.from === active.from && previous.query === query;
+            references.ask({ featureId, command, query, cursor: page, waits: !again }, (results) => {
+                if (current.isDestroyed) {
                     return;
                 }
-                searchReferences(current, latest, latestHost);
-            }, SEARCH_DELAY_MS);
+                let meta: SuggestionsMeta = { kind: 'failed', request };
+                if (results !== undefined) {
+                    meta = { kind: 'results', request, results };
+                }
+                current.dispatch(withMeta(current.state, meta));
+            });
             return;
         }
         const search = SEARCHES[active.source];

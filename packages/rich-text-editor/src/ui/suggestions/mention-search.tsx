@@ -12,12 +12,14 @@ import {
     useState,
 } from 'react';
 
+import { createAnnouncer } from '#/bridge/announcer';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { SessionContext } from '#/bridge/hooks';
 import { useEditorOverlay } from '#/bridge/overlays';
 import { passesToBrowser } from '#/runtime/keys';
-import { SEARCH_DELAY_MS, type SuggestionItem, suggestionOptionId } from '#/runtime/suggestions/plugin';
-import { type ReferenceResults } from '#/runtime/suggestions/references';
+import { type SuggestionItem, suggestionOptionId } from '#/runtime/suggestions/plugin';
+import { afterFailure, afterPage, MAX_ITEMS, MENTION_DIALOG_SEARCH, resultsOf } from '#/runtime/suggestions/references';
+import { createReferenceSearch } from '#/runtime/suggestions/search';
 import { type SelectionHandle } from '#/runtime/types';
 
 import { Listbox } from './listbox';
@@ -47,33 +49,13 @@ interface Ask {
 interface Found {
     readonly status: 'loading' | 'ready' | 'failed';
     readonly items: readonly SuggestionItem[];
+    /** Counts the answered asks, so each answer is announced, a repeated one too. */
+    readonly answers: number;
 }
 
-const RETRY: SuggestionItem = { key: 'retry', label: '', glyph: null, payload: {}, action: 'retry' };
-const resultsOf = (items: readonly SuggestionItem[]) => items.filter((item) => item.action === undefined);
 const wrapped = (index: number, length: number): number => ((index % length) + length) % length;
 
-/** The options after a page: what a further page extends, the page's own once per key, and Load more. */
-const pageItems = (shown: readonly SuggestionItem[], results: ReferenceResults): readonly SuggestionItem[] => {
-    const keys = new Set(shown.map((item) => item.key));
-    const items = [...shown, ...results.items.filter((item) => !keys.has(item.key))];
-    if (results.nextCursor !== null) {
-        items.push({
-            key: 'load-more',
-            label: '',
-            glyph: null,
-            payload: {},
-            action: 'more',
-            cursor: results.nextCursor,
-        });
-    }
-    return items;
-};
-
-const statusOf = (found: Found, slow: boolean, strings: MentionSearchStrings): string => {
-    if (found.status === 'loading') {
-        return slow ? strings.loading : '';
-    }
+const statusOf = (found: Found, strings: MentionSearchStrings): string => {
     if (found.status === 'failed') {
         return strings.failed;
     }
@@ -103,11 +85,13 @@ export const MentionSearchDialog = ({
     const [open, setOpen] = useState(true);
     const [query, setQuery] = useState('');
     const [ask, setAsk] = useState<Ask>({ query: '', page: null, waits: true });
-    const [found, setFound] = useState<Found>({ status: 'loading', items: [] });
+    const [found, setFound] = useState<Found>({ status: 'loading', items: [], answers: 0 });
     const [slow, setSlow] = useState(false);
     const [index, setIndex] = useState(0);
     const targetRef = useRef<SelectionHandle | null>(null);
-    const statusRef = useRef<HTMLDivElement | null>(null);
+    // The dialog's own polite region, since a modal dialog hides the editor's from a screen reader.
+    const [announcer] = useState(createAnnouncer);
+    useEffect(() => announcer.dispose, [announcer]);
     const composedAtRef = useRef(Number.NEGATIVE_INFINITY);
     const itemsRef = useRef(found.items);
     useClientLayoutEffect(() => {
@@ -142,56 +126,33 @@ export const MentionSearchDialog = ({
             runtime.handle.releaseTarget(captured.target);
         };
     }, [runtime]);
+    const search = useMemo(() => createReferenceSearch(() => runtime, MENTION_DIALOG_SEARCH), [runtime]);
     useEffect(() => {
-        if (runtime === undefined) {
-            return undefined;
-        }
-        let cancel: (() => void) | undefined;
-        const start = () => {
-            cancel = runtime.searchReferences(
-                { featureId: MENTIONS_FEATURE, command: INSERT_MENTION, query: ask.query, cursor: ask.page },
-                (results) => {
-                    let shown: readonly SuggestionItem[] = [];
-                    if (ask.page !== null) {
-                        shown = resultsOf(itemsRef.current);
-                    }
-                    setIndex(shown.length);
-                    if (results === undefined) {
-                        setFound({ status: 'failed', items: [...shown, RETRY] });
-                        return;
-                    }
-                    setFound({ status: 'ready', items: pageItems(shown, results) });
-                },
-            );
-            if (cancel === undefined) {
-                // oxlint-disable-next-line @eslint-react/set-state-in-effect -- a host with no service fails the ask at once.
-                setFound({ status: 'failed', items: [] });
+        const request = { featureId: MENTIONS_FEATURE, command: INSERT_MENTION, query: ask.query, cursor: ask.page };
+        search.ask({ ...request, waits: ask.waits }, (results) => {
+            let shown: readonly SuggestionItem[] = [];
+            if (ask.page !== null) {
+                shown = resultsOf(itemsRef.current);
             }
-        };
-        let timer: ReturnType<typeof setTimeout> | undefined;
-        if (ask.waits) {
-            timer = setTimeout(start, SEARCH_DELAY_MS);
-        } else {
-            start();
-        }
+            setIndex(Math.min(shown.length, MAX_ITEMS - 1));
+            setFound((current) => {
+                if (results === undefined) {
+                    return { status: 'failed', items: afterFailure(shown), answers: current.answers + 1 };
+                }
+                return { status: 'ready', items: afterPage(shown, results), answers: current.answers + 1 };
+            });
+        });
         const spinner = setTimeout(() => setSlow(true), SPINNER_DELAY_MS);
         return () => {
-            clearTimeout(timer);
             clearTimeout(spinner);
             setSlow(false);
-            cancel?.();
+            search.cancel();
         };
-    }, [runtime, ask]);
-    const status = statusOf(found, slow, strings);
-    useEffect(() => {
-        if (statusRef.current !== null) {
-            statusRef.current.textContent = status;
-        }
-    }, [status]);
+    }, [search, ask]);
     const options = useMemo(() => found.items.map((item) => listOption(item, strings)), [found.items, strings]);
     /** Asks again for the same query: the page a Load more option names, or the page that failed. */
     const askAgain = (page: string | null) => {
-        setFound({ status: 'loading', items: resultsOf(found.items) });
+        setFound({ status: 'loading', items: resultsOf(found.items), answers: found.answers });
         setAsk({ query: ask.query, page, waits: false });
     };
     const choose = (position: number) => {
@@ -218,11 +179,16 @@ export const MentionSearchDialog = ({
         close(false);
     };
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (passesToBrowser(event.nativeEvent) || options.length === 0) {
+        if (passesToBrowser(event.nativeEvent)) {
             return;
         }
+        // The Enter that confirms a composition is spent here, with options or none, so it never marks a later Enter.
         if (event.key === 'Enter' && event.timeStamp - composedAtRef.current < COMPOSITION_ENTER_MS) {
             composedAtRef.current = Number.NEGATIVE_INFINITY;
+            event.preventDefault();
+            return;
+        }
+        if (options.length === 0) {
             return;
         }
         if (event.key === 'ArrowDown') {
@@ -241,6 +207,29 @@ export const MentionSearchDialog = ({
         }
     };
     const shownIndex = Math.min(index, Math.max(0, options.length - 1));
+    // Each answer says its status and the option Enter takes; an arrow says the option it lands on.
+    const spokenRef = useRef<{ readonly answers: number; readonly key: string | undefined } | null>(null);
+    useEffect(() => {
+        const item = found.items[shownIndex];
+        const option = options[shownIndex];
+        let spoken: string | undefined;
+        if (option !== undefined) {
+            spoken = strings.option(option, shownIndex + 1, options.length);
+        }
+        const last = spokenRef.current;
+        spokenRef.current = { answers: found.answers, key: item?.key };
+        if (found.status === 'loading') {
+            return;
+        }
+        if (last === null || last.answers !== found.answers) {
+            const status = statusOf(found, strings);
+            announcer.announce(spoken === undefined ? status : strings.both(status, spoken));
+            return;
+        }
+        if (spoken !== undefined && last.key !== item?.key) {
+            announcer.announce(spoken);
+        }
+    }, [announcer, found, options, shownIndex, strings]);
     let controls: string | undefined;
     let activeId: string | undefined;
     const active = options[shownIndex];
@@ -283,7 +272,7 @@ export const MentionSearchDialog = ({
                             onChange={(event) => {
                                 const next = event.target.value;
                                 setQuery(next);
-                                setFound({ status: 'loading', items: resultsOf(found.items) });
+                                setFound({ status: 'loading', items: resultsOf(found.items), answers: found.answers });
                                 setAsk({ query: next, page: null, waits: true });
                                 setIndex(0);
                             }}
@@ -306,7 +295,11 @@ export const MentionSearchDialog = ({
                                 testId={`${testId}-mention-options`}
                             />
                         )}
-                        <div ref={statusRef} role="status" className={styles.status} />
+                        {found.status === 'ready' && resultsOf(found.items).length === 0 && (
+                            <div className={styles.row}>{strings.noResults}</div>
+                        )}
+                        {found.status === 'failed' && <div className={styles.row}>{strings.failed}</div>}
+                        <div ref={announcer.setRegion} role="status" className={styles.announcer} />
                     </div>
                 </Dialog.Body>
                 <Dialog.Footer>

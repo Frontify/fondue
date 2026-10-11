@@ -61,7 +61,7 @@ import { createInputSettling } from './settle';
 import { stylesPlugin } from './styles';
 import { type SuggestionHost, suggestionHosts } from './suggestions/host';
 import { activeSuggestion, suggestionOptionId } from './suggestions/plugin';
-import { MENTION_SEARCH, referenceResults, type ReferenceResults } from './suggestions/references';
+import { referenceResults, type ReferenceResults } from './suggestions/references';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
@@ -1336,7 +1336,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return types.filter((type): type is string => typeof type === 'string');
     };
     /** One page of the host's reference search, as one operation of the coordinator that a newer query supersedes. */
-    const searchReferences: SuggestionHost['searchReferences'] = ({ featureId, command, query, cursor }, receive) => {
+    const searchReferences: SuggestionHost['searchReferences'] = (
+        { key, featureId, command, query, cursor },
+        receive,
+    ) => {
         const service = options.references?.();
         if (service === undefined) {
             return undefined;
@@ -1346,7 +1349,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const call = async (context: { readonly signal: AbortSignal; readonly session: SessionToken }) =>
             service.search({ query, resourceTypes: [...resourceTypes], cursor }, context);
         const operation = coordinator.start({
-            key: MENTION_SEARCH,
+            key,
             service: 'references',
             featureId,
             action: 'create',

@@ -8,8 +8,12 @@ import { type CommandResult } from '../types';
 
 import { type ReferenceResults } from './references';
 
-/** One page of a reference search: the list's feature and command, its query, and the cursor of the page, `null` for the first. */
+/**
+ * One page of a reference search: the interaction it belongs to, whose newer page supersedes it, the list's feature and
+ * command, its query, and the cursor of the page, `null` for the first.
+ */
 export interface ReferenceQuery {
+    readonly key: string;
     readonly featureId: string;
     readonly command: string;
     readonly query: string;

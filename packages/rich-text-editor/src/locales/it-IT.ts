@@ -7,6 +7,7 @@ export const itIT = {
         RichTextEditor_alignJustify: 'Giustifica',
         RichTextEditor_alignLeft: 'Allinea a sinistra',
         RichTextEditor_alignRight: 'Allinea a destra',
+        RichTextEditor_announceBoth: '${first}. ${second}',
         RichTextEditor_apply: 'Applica',
         RichTextEditor_blockedInvalid: 'La modifica non è disponibile perché questo contenuto non è valido.',
         RichTextEditor_blockedLimit:
@@ -83,6 +84,7 @@ export const itIT = {
         RichTextEditor_mentionLoadMore: 'Carica altro',
         RichTextEditor_mentionLoading: 'Ricerca in corso…',
         RichTextEditor_mentionNoResults: 'Nessun risultato',
+        RichTextEditor_mentionOption: '${label}, ${type}, ${position} di ${total}',
         RichTextEditor_mentionResults: 'Risultati: ${count}',
         RichTextEditor_mentionSearch: 'Cerca per menzionare',
         RichTextEditor_mentionSuggestions: 'Suggerimenti di menzione',

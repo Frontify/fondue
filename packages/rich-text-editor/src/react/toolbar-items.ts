@@ -352,6 +352,13 @@ export const mentionStrings = (t: CodecContext['t']): MentionSearchStrings => ({
     loadMore: t('RichTextEditor_mentionLoadMore'),
     retry: t('RichTextEditor_retry'),
     results: (count) => t('RichTextEditor_mentionResults', { count }),
+    option: ({ label, detail }, position, total) => {
+        if (detail === undefined) {
+            return t('RichTextEditor_suggestionOption', { label, position, total });
+        }
+        return t('RichTextEditor_mentionOption', { label, type: detail, position, total });
+    },
+    both: (first, second) => t('RichTextEditor_announceBoth', { first, second }),
     title: t('RichTextEditor_mention'),
     search: t('RichTextEditor_mentionSearch'),
     cancel: t('RichTextEditor_cancel'),

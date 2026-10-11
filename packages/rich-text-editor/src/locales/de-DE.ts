@@ -7,6 +7,7 @@ export const deDE = {
         RichTextEditor_alignJustify: 'Blocksatz',
         RichTextEditor_alignLeft: 'Linksbündig',
         RichTextEditor_alignRight: 'Rechtsbündig',
+        RichTextEditor_announceBoth: '${first}. ${second}',
         RichTextEditor_apply: 'Anwenden',
         RichTextEditor_blockedInvalid: 'Bearbeiten ist nicht möglich, weil dieser Inhalt ungültig ist.',
         RichTextEditor_blockedLimit:
@@ -84,6 +85,7 @@ export const deDE = {
         RichTextEditor_mentionLoadMore: 'Mehr laden',
         RichTextEditor_mentionLoading: 'Suche läuft…',
         RichTextEditor_mentionNoResults: 'Keine Ergebnisse',
+        RichTextEditor_mentionOption: '${label}, ${type}, ${position} von ${total}',
         RichTextEditor_mentionResults: 'Ergebnisse: ${count}',
         RichTextEditor_mentionSearch: 'Zum Erwähnen suchen',
         RichTextEditor_mentionSuggestions: 'Vorschläge zum Erwähnen',

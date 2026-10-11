@@ -5,6 +5,7 @@ import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { pointer } from '#/model/errors';
 import { islandText } from '#/model/html-spec';
 import { attrsOf, groupRun, type Item, itemsOf, markPath, textOf } from '#/model/output';
+import { mentionLabel, type ResolveReference, unavailableNote } from '#/model/references';
 
 import { type CodecPlan, Losses } from './plan';
 import { type CodecLoss } from './types';
@@ -160,12 +161,11 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
         case 'hard_break':
             text = '\n';
             break;
-        case 'mention':
-            text = '@';
-            if (typeof attrs.labelSnapshot === 'string') {
-                text = `@${attrs.labelSnapshot}`;
-            }
+        case 'mention': {
+            const shown = mentionLabel(attrs, { t: state.context.t, resolveReference: state.resolveReference });
+            text = `@${shown.label}${unavailableNote(shown, state.context.t)}`;
             break;
+        }
         case 'asset_image':
             text = null;
             if (attrs.altIntent === 'meaningful' && typeof attrs.altText === 'string' && attrs.altText !== '') {
@@ -238,8 +238,16 @@ export const writeText = (
     plan: CodecPlan,
     root: TreeNode,
     context: CodecContext,
+    { resolveReference }: { readonly resolveReference?: ResolveReference | undefined } = {},
 ): { readonly text: string; readonly losses: readonly CodecLoss[]; readonly diagnostics: readonly Diagnostic[] } => {
-    const state: WalkState = { plan, context, losses: new Losses(), diagnostics: [], headings: headingIds(root) };
+    const state: WalkState = {
+        plan,
+        context,
+        losses: new Losses(),
+        diagnostics: [],
+        headings: headingIds(root),
+        resolveReference,
+    };
     const text = joinBlocks(
         (root.content ?? []).map((child, index) =>
             renderBlock(state, child, `/content${pointer('content', index)}`, 0),
