@@ -80,7 +80,11 @@ describe('fromHTML', () => {
                 attrs: { level, lang: null, align: 'justify' },
                 content: [{ type: 'text', text: `H${level}` }],
             })),
-            paragraph({ type: 'text', text: 'red', marks: [{ type: 'font_color', attrs: { value: '#c0392b' } }] }),
+            paragraph({
+                type: 'text',
+                text: 'red',
+                marks: [{ type: 'font_color', attrs: { tokenId: null, value: '#c0392b' } }],
+            }),
         ]);
     });
 
@@ -88,7 +92,11 @@ describe('fromHTML', () => {
         const content = contentOf('<p><span style="color: rgba(0, 0, 0, 0.5)">half</span></p>');
 
         expect(withoutNodeIds(content)).toEqual([
-            paragraph({ type: 'text', text: 'half', marks: [{ type: 'font_color', attrs: { value: '#00000080' } }] }),
+            paragraph({
+                type: 'text',
+                text: 'half',
+                marks: [{ type: 'font_color', attrs: { tokenId: null, value: '#00000080' } }],
+            }),
         ]);
     });
 

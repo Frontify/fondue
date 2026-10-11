@@ -201,7 +201,7 @@ describe('toHTML', () => {
     it('writes the content classes of the presentation as the reader does', () => {
         const [[, document]] = fixturesIn('valid') as [[string, unknown]];
         const model = vocabularyModel();
-        const presentation = { contentClassName: 'host-content' };
+        const presentation = { styles: [], colorTokens: [], contentClassName: 'host-content' };
         const { html } = createCodecs(model).toHTML(document as RichTextDocument, presentation);
 
         expect(html).toMatch(/^<div class="fondue-rte-content host-content"/);
@@ -211,7 +211,7 @@ describe('toHTML', () => {
     it('escapes a content class that would close the attribute', () => {
         const [[, document]] = fixturesIn('valid') as [[string, unknown]];
         const model = vocabularyModel();
-        const presentation = { contentClassName: 'a" onmouseover="x' };
+        const presentation = { styles: [], colorTokens: [], contentClassName: 'a" onmouseover="x' };
         const { html } = createCodecs(model).toHTML(document as RichTextDocument, presentation);
 
         expect(html).toMatch(/^<div class="fondue-rte-content a&quot; onmouseover=&quot;x"/);
@@ -391,7 +391,11 @@ describe('codecs over blocked and island documents', () => {
         (_, document, codecs, code) => {
             const input = document as RichTextDocument;
 
-            expect(codecs.toHTML(input)).toEqual({ html: '', diagnostics: [expect.objectContaining({ code })] });
+            expect(codecs.toHTML(input)).toEqual({
+                html: '',
+                css: '',
+                diagnostics: [expect.objectContaining({ code })],
+            });
             expect(codecs.toPlainText(input)).toEqual({
                 text: '',
                 losses: [],
@@ -494,7 +498,11 @@ describe('format attributes', () => {
             expect(strip(codecs.toPlainText(dirty))).toEqual(codecs.toPlainText(clean));
             expect(strip(codecs.toMarkdown(dirty))).toEqual(codecs.toMarkdown(clean));
             const { html } = codecs.toHTML(dirty);
-            expect(html).not.toMatch(/ (style|classname)=/i);
+            expect(html).not.toMatch(/ classname=/i);
+            // The only style is a colour mark's, written from its validated `#rrggbb` or `#rrggbbaa` value.
+            expect(html.match(/ style="[^"]*"/gi) ?? []).toEqual(
+                html.match(/ style="(?:background-)?color:#[0-9a-f]{6}(?:[0-9a-f]{2})?"/g) ?? [],
+            );
             // The one class is the content root's, from the presentation, never a stored value.
             expect(html.match(/ class="[^"]*"/gi)).toEqual([' class="fondue-rte-content"']);
         },

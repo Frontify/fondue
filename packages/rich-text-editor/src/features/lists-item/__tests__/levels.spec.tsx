@@ -30,7 +30,9 @@ const typesOf = (html: string) => html.match(/list-style-type:[\w-]+/g)?.map((ma
 describe('list levels', () => {
     it('marks a four-level list by depth in the reader with the default and a custom listLevels, entry n modulo its length', () => {
         const byDefault = renderReader(document, model);
-        const customized = renderReader(document, model, { presentation: { listLevels: custom } });
+        const customized = renderReader(document, model, {
+            presentation: { styles: [], colorTokens: [], listLevels: custom },
+        });
 
         expect(typesOf(byDefault)).toEqual([
             'decimal',
@@ -61,7 +63,7 @@ describe('list levels', () => {
 
         expect(codecs.toHTML(document).html).toBe(renderReader(document, model));
         expect(codecs.toHTML(document, { listLevels: custom }).html).toBe(
-            renderReader(document, model, { presentation: { listLevels: custom } }),
+            renderReader(document, model, { presentation: { styles: [], colorTokens: [], listLevels: custom } }),
         );
     });
 });

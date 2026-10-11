@@ -211,6 +211,7 @@
                                     {
                                         "type": "font_color",
                                         "attrs": {
+                                            "tokenId": null,
                                             "value": "#c0392b"
                                         }
                                     }

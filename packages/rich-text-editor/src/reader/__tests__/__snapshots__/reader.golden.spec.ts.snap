@@ -73,7 +73,7 @@ exports[`reader golden files > renders the valid fixture marks.json as its golde
 <em>
 <br/>
 </em>
-<mark>H</mark>
+<mark style="background-color:#ffcc0080">H</mark>
 <sub>2</sub>
 <span lang="en" dir="ltr">O 😀</span>
 </p>
