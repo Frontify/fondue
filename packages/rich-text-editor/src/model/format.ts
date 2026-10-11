@@ -93,6 +93,7 @@ export type DiagnosticCode =
     | 'clipboard.paste-rejected'
     | 'reader.override-failed'
     | 'styles.unknown-style'
+    | 'reference.unavailable'
     | 'react.default-value-changed'
     | 'react.definition-changed'
     | 'react.duplicate-accessible-name'

@@ -6,6 +6,16 @@ import { type JsonObject } from '#/model';
 
 import { type CommandResult } from '../types';
 
+import { type ReferenceResults } from './references';
+
+/** One page of a reference search: the list's feature and command, its query, and the cursor of the page, `null` for the first. */
+export interface ReferenceQuery {
+    readonly featureId: string;
+    readonly command: string;
+    readonly query: string;
+    readonly cursor: string | null;
+}
+
 /** What the suggestion plugin asks of the session that owns a view, which the runtime registers when it attaches one. */
 export interface SuggestionHost {
     /** The editor's locale, such as `de-CH`, which picks a source's data. */
@@ -18,6 +28,17 @@ export interface SuggestionHost {
         command: string,
         payload: JsonObject,
     ) => CommandResult;
+    /** Whether the host passes a `ReferenceService`, without which a reference list stays closed. */
+    readonly searchesReferences: () => boolean;
+    /**
+     * Asks the host's `ReferenceService` for one page through the session's async coordinator, with the feature's
+     * `resourceTypes`, and hands `receive` the options it keeps, or `undefined` when the call failed. Returns what
+     * aborts the call, or `undefined` when the host passes no service.
+     */
+    readonly searchReferences: (
+        query: ReferenceQuery,
+        receive: (results: ReferenceResults | undefined) => void,
+    ) => (() => void) | undefined;
 }
 
 /** The host of each attached view, read by the plugin, which is built once per definition and shared by sessions. */

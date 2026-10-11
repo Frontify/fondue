@@ -67,6 +67,7 @@ import { ColorMenu, type ColorMenuOptions } from '#/ui/menus/color';
 import { LanguageDialog, languageOptions } from '#/ui/menus/language';
 import { NumberingDialog, SET_START } from '#/ui/menus/numbering';
 import { EmojiPicker, emojiStrings } from '#/ui/suggestions/emoji-picker';
+import { MentionSearchDialog } from '#/ui/suggestions/mention-search';
 import { SuggestionList } from '#/ui/suggestions/suggestion-list';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
@@ -79,7 +80,7 @@ import { useEditorLocale } from './locale';
 import { BlockedShell, RecoveryShell } from './shells';
 import { registerSaveCauses, SaveStatusText } from './status';
 import { useRecipeSheet } from './style-sheet';
-import { colorMenuStrings, menuItems, numberingStrings, toolbarItems } from './toolbar-items';
+import { colorMenuStrings, mentionStrings, menuItems, numberingStrings, toolbarItems } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
     type EditorHandle,
@@ -419,6 +420,7 @@ const SessionComponent = (
                 setControl(opened);
             },
             locale: () => langRef.current,
+            references: () => memberOf(latestRef.current.services, 'references'),
             styles: () => latestRef.current.presentation?.styles ?? [],
             columns: columnsAtMount(latestRef.current.presentation, t),
         });
@@ -701,6 +703,7 @@ const SessionComponent = (
     }, [live, columnCount, columnGap]);
 
     const overlays = useMemo(() => ({ container: overlayRoot, scope }), [overlayRoot, scope]);
+    const referenceStrings = useMemo(() => mentionStrings(chromeContext.t), [chromeContext]);
 
     const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
     if (mounted.blocked !== undefined) {
@@ -746,8 +749,17 @@ const SessionComponent = (
                                     optionLabel={(label, position, total) =>
                                         chromeContext.t('RichTextEditor_suggestionOption', { label, position, total })
                                     }
+                                    references={referenceStrings}
                                     testId={testId}
                                 />
+                                {control === 'mention-search' && (
+                                    <MentionSearchDialog
+                                        opener={controlOpener}
+                                        strings={referenceStrings}
+                                        testId={testId}
+                                        onClose={() => setControl(undefined)}
+                                    />
+                                )}
                                 {control === 'color-menu' && (
                                     <ColorMenu
                                         options={colorMenuOptions(

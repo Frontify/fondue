@@ -5,14 +5,14 @@ import { type EditorView } from 'prosemirror-view';
 
 import { COMMAND_META, type PluginImplementation } from '#/definition';
 import { type JsonObject } from '#/model';
-import { SUGGESTIONS_PLUGIN } from '#/model/capabilities';
+import { SUGGESTION_RULES, type SuggestionRules, SUGGESTIONS_PLUGIN } from '#/model/capabilities';
 import { type CompiledSuggestion } from '#/model/compile';
 import { type SuggestionSource } from '#/model/declarations';
 
 import { isHistoryTransaction } from '../history';
 
 import { loadEmoji, searchEmoji } from './emoji';
-import { suggestionHosts } from './host';
+import { type SuggestionHost, suggestionHosts } from './host';
 
 /** One option of a suggestion list. */
 export interface SuggestionItem {
@@ -23,6 +23,16 @@ export interface SuggestionItem {
     readonly glyph: string | null;
     /** What the list's command receives when the option is accepted. */
     readonly payload: JsonObject;
+    /** What the option shows after its label, such as a mention's resource type. */
+    readonly detail?: string;
+    /** An image that passed `checkHref`, such as an avatar. */
+    readonly imageUrl?: string;
+    /** The icon an option shows without an image. */
+    readonly kind?: 'user' | 'group' | 'everyone';
+    /** An option that asks again instead of running the command: the next page, or the failed page once more. */
+    readonly action?: 'more' | 'retry';
+    /** The cursor of the page a `more` option asks for. */
+    readonly cursor?: string;
 }
 
 /** The open suggestion list: what was typed, the range an accepted option replaces, and the options so far. */
@@ -44,6 +54,8 @@ export interface ActiveSuggestion {
     readonly index: number;
     /** The request the current options answer, so a late result for an older query is dropped. */
     readonly request: number;
+    /** The cursor of the page the request asks for, `null` for a query's first page. */
+    readonly page: string | null;
 }
 
 interface SuggestionsState {
@@ -55,9 +67,16 @@ interface SuggestionsState {
 }
 
 type SuggestionsMeta =
-    | { readonly kind: 'results'; readonly request: number; readonly items: readonly SuggestionItem[] }
+    | {
+          readonly kind: 'results';
+          readonly request: number;
+          readonly items: readonly SuggestionItem[];
+          readonly nextCursor?: string | null;
+      }
     | { readonly kind: 'failed'; readonly request: number }
     | { readonly kind: 'move'; readonly index: number }
+    | { readonly kind: 'more'; readonly cursor: string }
+    | { readonly kind: 'retry' }
     | { readonly kind: 'dismiss' }
     | { readonly kind: 'close' };
 
@@ -76,16 +95,18 @@ interface SearchContext {
 
 type SourceSearch = (query: string, context: SearchContext) => Promise<readonly SuggestionItem[]>;
 
-// Longer text after a trigger is a sentence, not a query.
-const MAX_QUERY = 32;
 // Enough for a list that scrolls, few enough to rank well.
 const EMOJI_LIMIT = 50;
+/** How long a reference query waits for the next keystroke before the host is asked. */
+export const SEARCH_DELAY_MS = 200;
 // What `textBetween` writes for an inline leaf, such as a hard break, which also starts a word.
 const LEAF = '\uFFFC';
 const BREAK_BEFORE = /[\s\uFFFC]$/u;
+const PUNCTUATION_BEFORE = /\p{P}$/u;
 const BREAK_INSIDE = /[\s\uFFFC]/u;
-// An emoji list opens at two letters, so a time such as `12:30` or a smiley such as `:)` opens none.
-const EMOJI_QUERY = /^\p{L}{2}/u;
+const LINE_BREAK_INSIDE = /[\n\r\u2028\u2029\uFFFC]/u;
+// The longest trigger, which the text read before the caret holds beside the longest query.
+const MAX_TRIGGER = 2;
 // Paste, drop and cut name their event; only typed text opens a list.
 const NOT_TYPED = new Set(['paste', 'drop', 'cut']);
 
@@ -101,17 +122,51 @@ const emojiSearch: SourceSearch = async (query, { locale }) => {
     }));
 };
 
-// A source with no search here, such as `references` before its feature lands, never opens a list.
+// The package's own data; `references` asks the host's service through the session instead.
 const SEARCHES: Readonly<Partial<Record<SuggestionSource, SourceSearch>>> = { emoji: emojiSearch };
 
-const opensOn = (source: SuggestionSource, query: string): boolean => {
-    if (source === 'emoji') {
-        return EMOJI_QUERY.test(query);
+const searchable = (source: SuggestionSource): boolean => source === 'references' || SEARCHES[source] !== undefined;
+
+const LEADING_LETTERS = new Map(
+    Object.values(SUGGESTION_RULES).map(({ leadingLetters }) => [
+        leadingLetters,
+        new RegExp(`^\\p{L}{${leadingLetters}}`, 'u'),
+    ]),
+);
+
+/** Whether `query` after a trigger at a word start, or after punctuation for `afterPunctuation`, opens a list of `rules`. */
+const takesQuery = (rules: SuggestionRules, query: string): boolean => {
+    if (query.length > rules.maxQuery) {
+        return false;
     }
-    return true;
+    if ((rules.spaces ? LINE_BREAK_INSIDE : BREAK_INSIDE).test(query)) {
+        return false;
+    }
+    return LEADING_LETTERS.get(rules.leadingLetters)?.test(query) ?? false;
 };
 
-/** The list the text before the caret opens: the trigger closest to the caret, at a word start, before a query with no space. */
+const MORE_KEY = 'load-more';
+const RETRY: SuggestionItem = { key: 'retry', label: '', glyph: null, payload: {}, action: 'retry' };
+
+/** The list's own options: what a page answered, without the options that ask again. */
+const resultsOf = (items: readonly SuggestionItem[]): readonly SuggestionItem[] =>
+    items.filter((item) => item.action === undefined);
+
+/** The list that a `more` page's options extend, once per key, and the option that asks for the page after it. */
+const withPage = (
+    shown: readonly SuggestionItem[],
+    page: readonly SuggestionItem[],
+    nextCursor: string | null,
+): readonly SuggestionItem[] => {
+    const keys = new Set(shown.map((item) => item.key));
+    const items = [...shown, ...page.filter((item) => !keys.has(item.key))];
+    if (nextCursor !== null) {
+        items.push({ key: MORE_KEY, label: '', glyph: null, payload: {}, action: 'more', cursor: nextCursor });
+    }
+    return items;
+};
+
+/** The list the text before the caret opens: the trigger closest to the caret, at a word start, before a query its source takes. */
 const matchAt = (state: EditorState, suggestions: readonly CompiledSuggestion[]): Match | null => {
     const { selection } = state;
     if (!(selection instanceof TextSelection) || selection.$cursor === null) {
@@ -125,22 +180,29 @@ const matchAt = (state: EditorState, suggestions: readonly CompiledSuggestion[])
     if ($cursor.marks().some((mark) => mark.type.spec.code === true)) {
         return null;
     }
-    const windowStart = Math.max(0, $cursor.parentOffset - MAX_QUERY - 2);
-    const before = parent.textBetween(windowStart, $cursor.parentOffset, undefined, LEAF);
     let best: Match | null = null;
-    let bestAt = -1;
     for (const suggestion of suggestions) {
+        const rules = SUGGESTION_RULES[suggestion.source];
+        if (!searchable(suggestion.source)) {
+            continue;
+        }
+        const windowStart = Math.max(0, $cursor.parentOffset - rules.maxQuery - MAX_TRIGGER);
+        const before = parent.textBetween(windowStart, $cursor.parentOffset, undefined, LEAF);
         const at = before.lastIndexOf(suggestion.trigger);
-        if (at <= bestAt || SEARCHES[suggestion.source] === undefined) {
+        const from = $cursor.pos - (before.length - at);
+        if (at < 0 || (best !== null && from <= best.from)) {
             continue;
         }
-        const startsWord = (at === 0 && windowStart === 0) || (at > 0 && BREAK_BEFORE.test(before.slice(0, at)));
+        const preceding = before.slice(0, at);
+        const startsWord =
+            (at === 0 && windowStart === 0) ||
+            (at > 0 &&
+                (BREAK_BEFORE.test(preceding) || (rules.afterPunctuation && PUNCTUATION_BEFORE.test(preceding))));
         const query = before.slice(at + suggestion.trigger.length);
-        if (!startsWord || query.length > MAX_QUERY || BREAK_INSIDE.test(query) || !opensOn(suggestion.source, query)) {
+        if (!startsWord || !takesQuery(rules, query)) {
             continue;
         }
-        best = { suggestion, from: $cursor.pos - (before.length - at), to: $cursor.pos, query };
-        bestAt = at;
+        best = { suggestion, from, to: $cursor.pos, query };
     }
     return best;
 };
@@ -176,18 +238,39 @@ const wrapped = (index: number, length: number): number => {
     return ((index % length) + length) % length;
 };
 
+/** The options a request's results or failure give the list. */
+const answered = (
+    active: ActiveSuggestion,
+    meta: SuggestionsMeta | undefined,
+): Pick<ActiveSuggestion, 'status' | 'items' | 'index'> | undefined => {
+    if (meta?.kind === 'results' && meta.request === active.request) {
+        if (active.page === null) {
+            return { status: 'ready', items: withPage([], meta.items, meta.nextCursor ?? null), index: 0 };
+        }
+        // A further page keeps what the list showed, with the first new option active where Load more was.
+        const shown = resultsOf(active.items);
+        return { status: 'ready', items: withPage(shown, meta.items, meta.nextCursor ?? null), index: shown.length };
+    }
+    if (meta?.kind === 'failed' && meta.request === active.request) {
+        // A failed reference search offers Retry, after the options of the pages before a failed further page.
+        if (active.source === 'references') {
+            let shown: readonly SuggestionItem[] = [];
+            if (active.page !== null) {
+                shown = resultsOf(active.items);
+            }
+            return { status: 'failed', items: [...shown, RETRY], index: shown.length };
+        }
+        return { status: 'failed', items: [], index: 0 };
+    }
+    return undefined;
+};
+
 /** The open list after a transaction that kept its trigger and query, with the meta's results or move applied. */
 const keptList = (active: ActiveSuggestion, match: Match, meta: SuggestionsMeta | undefined): ActiveSuggestion => {
     let { status, items, index } = active;
-    if (meta?.kind === 'results' && meta.request === active.request) {
-        status = 'ready';
-        items = meta.items;
-        index = 0;
-    }
-    if (meta?.kind === 'failed' && meta.request === active.request) {
-        status = 'failed';
-        items = [];
-        index = 0;
+    const answer = answered(active, meta);
+    if (answer !== undefined) {
+        ({ status, items, index } = answer);
     }
     if (meta?.kind === 'move') {
         index = wrapped(meta.index, items.length);
@@ -204,6 +287,7 @@ const keptList = (active: ActiveSuggestion, match: Match, meta: SuggestionsMeta 
         items,
         index,
         request: active.request,
+        page: active.page,
     };
 };
 
@@ -211,7 +295,7 @@ const keptList = (active: ActiveSuggestion, match: Match, meta: SuggestionsMeta 
 const requestedList = (match: Match, previous: ActiveSuggestion | null, request: number): ActiveSuggestion => {
     let items: readonly SuggestionItem[] = [];
     if (previous !== null && previous.from === match.from) {
-        items = previous.items;
+        items = resultsOf(previous.items);
     }
     return {
         featureId: match.suggestion.featureId,
@@ -225,7 +309,21 @@ const requestedList = (match: Match, previous: ActiveSuggestion | null, request:
         items,
         index: 0,
         request,
+        page: null,
     };
+};
+
+/**
+ * The same query asked again: for the page a `more` option names, which stays shown until the page arrives, or for
+ * the page that failed, whose Retry goes.
+ */
+const askedAgain = (active: ActiveSuggestion, match: Match, page: string | null, request: number): ActiveSuggestion => {
+    let { items, index } = active;
+    if (active.status === 'failed') {
+        items = resultsOf(items);
+        index = Math.max(0, Math.min(index, items.length - 1));
+    }
+    return { ...active, from: match.from, to: match.to, status: 'loading', items, index, request, page };
 };
 
 const nextState = (
@@ -266,6 +364,20 @@ const nextState = (
         return { active: null, dismissed, requests };
     }
     if (kept && previous !== null && previous.query === match.query) {
+        if (meta?.kind === 'more') {
+            return {
+                active: askedAgain(previous, match, meta.cursor, requests + 1),
+                dismissed,
+                requests: requests + 1,
+            };
+        }
+        if (meta?.kind === 'retry' && previous.status === 'failed') {
+            return {
+                active: askedAgain(previous, match, previous.page, requests + 1),
+                dismissed,
+                requests: requests + 1,
+            };
+        }
         return { active: keptList(previous, match, meta), dismissed, requests };
     }
     let mappedPrevious: ActiveSuggestion | null = null;
@@ -324,6 +436,14 @@ export const acceptSuggestion = (view: EditorView, index: number): void => {
         dismissSuggestion(view);
         return;
     }
+    if (item.action === 'more' && item.cursor !== undefined) {
+        view.dispatch(withMeta(view.state, { kind: 'more', cursor: item.cursor }));
+        return;
+    }
+    if (item.action === 'retry') {
+        view.dispatch(withMeta(view.state, { kind: 'retry' }));
+        return;
+    }
     const result = host.accept({ from: active.from, to: active.to }, active.command, item.payload);
     if (result.status !== 'rejected') {
         return;
@@ -339,7 +459,15 @@ const hasModifier = (event: KeyboardEvent): boolean => event.ctrlKey || event.me
 
 const handleKeyDown = (view: EditorView, event: KeyboardEvent): boolean => {
     const active = activeSuggestion(view.state);
-    if (active === null || active.items.length === 0 || event.isComposing || hasModifier(event)) {
+    if (active === null || event.isComposing || hasModifier(event)) {
+        return false;
+    }
+    // A reference list also shows its loading, empty and failed rows, which Escape closes like options.
+    if (event.key === 'Escape' && (active.items.length > 0 || active.source === 'references')) {
+        dismissSuggestion(view);
+        return true;
+    }
+    if (active.items.length === 0) {
         return false;
     }
     if (event.key === 'ArrowDown') {
@@ -348,10 +476,6 @@ const handleKeyDown = (view: EditorView, event: KeyboardEvent): boolean => {
     }
     if (event.key === 'ArrowUp') {
         moveSuggestion(view, active.index - 1);
-        return true;
-    }
-    if (event.key === 'Escape') {
-        dismissSuggestion(view);
         return true;
     }
     // Tab accepts as Enter does; Shift+Tab is left to the browser in `keydown` below.
@@ -389,32 +513,100 @@ const deliver = async (
     }
 };
 
-/** Asks the list's source for the options of a new query once, and dispatches them unless a newer query replaced it. */
+/**
+ * Asks the list's source for the options of a new query once, and dispatches them unless a newer query replaced it.
+ * A reference query waits `SEARCH_DELAY_MS` for the next keystroke; a further page and a retry ask at once.
+ */
 const createFetcher = (view: EditorView) => {
     let asked = 0;
     let controller: AbortController | undefined;
+    let cancelSearch: (() => void) | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    // The list the last update showed, whose query a further page or a retry asks for again.
+    let seen: ActiveSuggestion | null = null;
+    const stop = () => {
+        clearTimeout(timer);
+        timer = undefined;
+        controller?.abort();
+        controller = undefined;
+        cancelSearch?.();
+        cancelSearch = undefined;
+    };
+    /** Closes a list that cannot search, as Escape does, once the transaction that opened it has applied. */
+    const closeLater = (current: EditorView, request: number) => {
+        queueMicrotask(() => {
+            if (!current.isDestroyed && activeSuggestion(current.state)?.request === request) {
+                dismissSuggestion(current);
+            }
+        });
+    };
+    const searchReferences = (current: EditorView, active: ActiveSuggestion, host: SuggestionHost) => {
+        const { request } = active;
+        cancelSearch = host.searchReferences(
+            { featureId: active.featureId, command: active.command, query: active.query, cursor: active.page },
+            (results) => {
+                if (current.isDestroyed) {
+                    return;
+                }
+                let meta: SuggestionsMeta = { kind: 'failed', request };
+                if (results !== undefined) {
+                    meta = { kind: 'results', request, items: results.items, nextCursor: results.nextCursor };
+                }
+                current.dispatch(withMeta(current.state, meta));
+            },
+        );
+        if (cancelSearch === undefined) {
+            closeLater(current, request);
+        }
+    };
     const fetchFor = (current: EditorView): void => {
         const active = activeSuggestion(current.state);
+        const previous = seen;
+        seen = active;
         if (active === null) {
-            controller?.abort();
-            controller = undefined;
+            stop();
             return;
         }
         if (active.status !== 'loading' || active.request === asked) {
             return;
         }
-        const search = SEARCHES[active.source];
         const host = suggestionHosts.get(current);
-        if (search === undefined || host === undefined || !host.creates(active.featureId)) {
+        if (host === undefined) {
             return;
         }
         asked = active.request;
-        controller?.abort();
+        stop();
+        if (active.source === 'references') {
+            if (!host.creates(active.featureId) || !host.searchesReferences()) {
+                closeLater(current, active.request);
+                return;
+            }
+            // A new request for the query the list already showed is a further page or a retry.
+            if (previous !== null && previous.from === active.from && previous.query === active.query) {
+                searchReferences(current, active, host);
+                return;
+            }
+            const { request } = active;
+            timer = setTimeout(() => {
+                timer = undefined;
+                const latest = activeSuggestion(current.state);
+                const latestHost = suggestionHosts.get(current);
+                if (current.isDestroyed || latest === null || latest.request !== request || latestHost === undefined) {
+                    return;
+                }
+                searchReferences(current, latest, latestHost);
+            }, SEARCH_DELAY_MS);
+            return;
+        }
+        const search = SEARCHES[active.source];
+        if (search === undefined || !host.creates(active.featureId)) {
+            return;
+        }
         const own = new AbortController();
         controller = own;
-        const searched = search(active.query, { locale: host.locale(), signal: own.signal });
+        const found = search(active.query, { locale: host.locale(), signal: own.signal });
         // A view whose dispatch throws, such as a faulted session, drops the options.
-        deliver(current, searched, active.request, own.signal).catch(() => undefined);
+        deliver(current, found, active.request, own.signal).catch(() => undefined);
     };
     // The view runs this during its constructor, before the runtime registers the view's host, so the first search waits a microtask.
     queueMicrotask(() => {
@@ -424,7 +616,7 @@ const createFetcher = (view: EditorView) => {
     });
     return {
         update: fetchFor,
-        destroy: () => controller?.abort(),
+        destroy: stop,
     };
 };
 

@@ -23,6 +23,7 @@ import { strike } from '#/features/marks-strike/feature';
 import { subscript } from '#/features/marks-subscript/feature';
 import { superscript } from '#/features/marks-superscript/feature';
 import { underline } from '#/features/marks-underline/feature';
+import { mentions } from '#/features/mentions/feature';
 import { brandStyles } from '#/features/styles-brand/feature';
 import { DefinitionError, type Feature } from '#/model';
 
@@ -52,6 +53,7 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'lists.task': taskList,
     'styles.brand': brandStyles,
     'input-rules': inputRules,
+    mentions,
 };
 
 /**

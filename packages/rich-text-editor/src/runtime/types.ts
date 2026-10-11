@@ -26,6 +26,10 @@ export interface ReferenceValue {
     readonly labelSnapshot: string;
     /** Set on link destination results. */
     readonly href?: string;
+    /** Suggestion avatar, shown when it passes `checkHref`. Not stored on the mention. */
+    readonly imageUrl?: string;
+    /** Suggestion fallback icon. Not stored on the mention. */
+    readonly kind?: 'user' | 'group' | 'everyone';
 }
 
 export interface FeaturePolicy {

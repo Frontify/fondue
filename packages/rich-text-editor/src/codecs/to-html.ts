@@ -199,6 +199,8 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         let content: string;
         if (node.type === 'task_item' && plan.featureId === 'lists.task') {
             content = taskItemInner(state, node, path, plan.pre);
+        } else if (isMention(node, plan.featureId)) {
+            content = mentionInner(state, node);
         } else {
             content = renderChildren(state, node, path, plan.pre);
         }
@@ -226,6 +228,9 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     }
     if (!plan.inline) {
         template = withAutoDirection(template, passageDirection(treeRuns(node.content)));
+    }
+    if (isMention(node, plan.featureId)) {
+        template = { ...template, content: true };
     }
     template = withStyle(template, styleOfNode(state.styles.styles, node.type, attrs).style, state.styles.inline);
     if (node.type === COLUMN_BREAK) {
@@ -258,6 +263,27 @@ const taskItemInner = (state: HtmlState, node: TreeNode, path: string, pre: bool
     }
     const checkbox = `<input type="checkbox" disabled="" aria-labelledby="${label}"${checked}/>`;
     return `${checkbox}<div id="${label}">${first}</div>${rest.join('')}`;
+};
+
+const isMention = (node: TreeNode, featureId: string) => node.type === 'mention' && featureId === 'mentions';
+
+/**
+ * A mention's `@` and its label isolated for bidirectional text, as the `mentions` reader override renders it with
+ * no resolver, which no `HtmlSpec` can express: the label is text, never a resource ID.
+ */
+const mentionInner = (state: HtmlState, node: TreeNode): string => {
+    let label = '';
+    if (typeof node.attrs?.labelSnapshot === 'string') {
+        label = node.attrs.labelSnapshot;
+    }
+    if (label === '') {
+        let resourceType = '';
+        if (typeof node.attrs?.resourceType === 'string') {
+            resourceType = node.attrs.resourceType;
+        }
+        label = state.context.t('RichTextEditor_mentionUnknown', { resourceType });
+    }
+    return `@<bdi>${escapeHtml(label)}</bdi>`;
 };
 
 const renderRun = (state: HtmlState, items: readonly Item[], depth: number, pre: boolean): string =>

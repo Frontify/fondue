@@ -1,0 +1,32 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "feature-contract", "version": 1 },
+    "requiredCapabilities": [
+        { "id": "core", "version": 1 },
+        { "id": "mentions", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": { "lang": null, "align": null },
+                "content": [
+                    { "type": "text", "text": "Ask " },
+                    {
+                        "type": "mention",
+                        "attrs": {
+                            "nodeId": "mention-1",
+                            "resourceType": "user",
+                            "resourceId": "user-42",
+                            "labelSnapshot": "Ada Lovelace"
+                        }
+                    },
+                    { "type": "text", "text": " about the palette." }
+                ]
+            }
+        ]
+    }
+}
