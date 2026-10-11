@@ -71,6 +71,9 @@
     },
     "devDependencies": {
         "@axe-core/playwright": "^4.13.0",
+        "@frontify/fondue-components": "workspace:^",
+        "@frontify/fondue-icons": "workspace:^",
+        "@frontify/fondue-tokens": "workspace:^",
         "@frontify/oxfmt-config": "^0.0.2",
         "@frontify/oxlint-config-react": "^0.0.2",
         "@playwright/experimental-ct-react": "^1.60.0",
@@ -110,6 +113,9 @@
         "vitest": "^5.0.0"
     },
     "peerDependencies": {
+        "@frontify/fondue-components": "workspace:^",
+        "@frontify/fondue-icons": "workspace:^",
+        "@frontify/fondue-tokens": "workspace:^",
         "axe-core": "^4.13.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
