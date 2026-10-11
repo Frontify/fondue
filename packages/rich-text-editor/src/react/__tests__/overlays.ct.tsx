@@ -124,6 +124,9 @@ const lines = (count: number) => Array.from({ length: count }, (_, index) => `Li
 const openAltText = async (page: Page) => {
     await surfaceOf(page).focus();
     await page.evaluate(() => window.overlayProbe?.select({ nodeId: 'image-1' }));
+    // Alt+F10 from node chrome moves on to the next toolbar, so it starts from the surface with the image selected.
+    await expectFocus(page, 'Notes');
+    await expect.poll(() => summary(page)).toMatchObject({ selectedNodeId: 'image-1' });
     await page.keyboard.press('Alt+F10');
     await expectFocus(page, 'Alternative text');
     await page.keyboard.press('Enter');
@@ -322,6 +325,7 @@ test('keeps the link popover and the mention list usable inside a host dialog', 
 
     await page.evaluate(() => window.overlayProbe?.select({ text: 'Hi @', from: 4 }));
     await open(page, 'suggestions');
+    await expect(suggestionsOf(page)).toBeVisible();
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     await expect(suggestionsOf(page)).toBeHidden();
@@ -333,6 +337,29 @@ test('keeps the link popover and the mention list usable inside a host dialog', 
     expect(await documentHtml(page)).toBe(
         '<p>one <a href="https://example.com/fixture">two</a> three</p><p>Hi @GraceLinus</p>',
     );
+});
+
+test('keeps the link popover open while the host dialog moves focus to its container during a press inside it', async ({
+    mount,
+    page,
+}) => {
+    await mount(<OverlayProbe within="dialog" bubble={false} texts={['one two three']} />);
+    await ready(page);
+    const host = page.getByRole('dialog', { name: 'Host dialog' });
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    await open(page, 'link');
+    await expectFocus(page, 'URL');
+    const apply = await boxOf(popoverOf(page).getByRole('button', { name: 'Apply' }));
+    await page.mouse.move((apply.left + apply.right) / 2, (apply.top + apply.bottom) / 2);
+    await page.mouse.down();
+    // As Radix's focus trap does when a render removes a node while the press leaves focus on `body`.
+    await host.evaluate((element: HTMLElement) => element.focus());
+    await expect(popoverOf(page)).toBeVisible();
+    await page.mouse.up();
+
+    await expect(popoverOf(page)).toBeHidden();
+    expect(await documentHtml(page)).toBe('<p>one <a href="https://example.com/fixture">two</a> three</p>');
 });
 
 test('leaves the host dialog open when Escape or a click outside closes an editor overlay inside it', async ({
@@ -467,6 +494,7 @@ test('hides the bubble toolbar and the mention list while the selection is scrol
     await surfaceOf(page).focus();
     await select(page, 'Line 3');
     await open(page, 'suggestions');
+    await expect(suggestionsOf(page)).toBeVisible();
     await page.keyboard.press('ArrowDown');
     await expect(page.getByRole('option', { name: 'Grace' })).toHaveAttribute('aria-selected', 'true');
     const scrollTo = (top: number) =>
