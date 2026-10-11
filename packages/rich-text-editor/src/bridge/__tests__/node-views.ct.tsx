@@ -46,7 +46,7 @@ test('renders the chrome of an inserted code block before the next frame', async
         }
         rte.setSelection(rte.handle, { text: 'code' });
         const { status } = rte.runtime.handle.execute('fixture.chrome-block.set');
-        // Scheduled right after the transaction, so it runs before the next paint (CL-4013, #7438).
+        // Scheduled right after the transaction, so it runs before the next paint (#7438).
         return new Promise<{ status: string; chrome: boolean }>((resolve) => {
             requestAnimationFrame(() =>
                 resolve({ status, chrome: document.querySelector('[data-chrome="block"]') !== null }),

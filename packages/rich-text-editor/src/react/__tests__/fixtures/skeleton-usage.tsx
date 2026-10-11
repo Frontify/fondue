@@ -10,6 +10,7 @@ import {
     defineReactPresentation,
     type EditorHandle,
     RichTextEditor,
+    useCommandState,
 } from '#/index';
 import { compileContentModel, createEmptyDocument } from '#/model';
 
@@ -49,4 +50,17 @@ export const commands = () => {
     shipped.query('link.set', { href: 'https://frontify.com', openInNewWindow: false, styleId: null });
     // @ts-expect-error: `link.set` needs a link value.
     shipped.query('link.set', { href: 1 });
+};
+
+// `useCommandState` takes the same typed IDs and payloads.
+type Commands = CommandsOfModel<typeof model>;
+export const useStates = () => {
+    useCommandState<Commands, 'mark.bold.toggle'>('mark.bold.toggle');
+    // @ts-expect-error: the model installs no italic command.
+    useCommandState<Commands>('mark.italic.toggle');
+    // @ts-expect-error: `mark.bold.toggle` takes no payload.
+    useCommandState<Commands, 'mark.bold.toggle'>('mark.bold.toggle', { level: 1 });
+    useCommandState('link.set', { href: 'https://frontify.com', openInNewWindow: false, styleId: null });
+    // @ts-expect-error: `link.set` needs a link value.
+    useCommandState('link.set', { href: 1 });
 };
