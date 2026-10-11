@@ -117,8 +117,8 @@ const COVERS = 'brings fixtures that hold each of its nodes, marks and shared at
 const dispatchRangeQueries = () => {
     const original = CAPABILITIES.toggleMark as CapabilityImplementation;
     const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
-    spy.mockImplementation((args, schema) => {
-        const command = original(args, schema);
+    spy.mockImplementation((args, schema, lookup) => {
+        const command = original(args, schema, lookup);
         const run: typeof command.run = (state, dispatch, payload) => {
             if (!state.selection.empty) {
                 (dispatch as NonNullable<typeof dispatch>)(state.tr);
@@ -187,8 +187,8 @@ describe('the feature contract suite', () => {
     ])('fails a command whose capability runs %s', async (_name, wrap) => {
         const original = CAPABILITIES.toggleMark as CapabilityImplementation;
         const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
-        spy.mockImplementation((args, schema) => {
-            const command = original(args, schema);
+        spy.mockImplementation((args, schema, lookup) => {
+            const command = original(args, schema, lookup);
             return { run: wrap(command.run), active: command.active };
         });
         try {

@@ -6,9 +6,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCodecs } from '#/codecs';
 import { fixtureItalic } from '#/features/__tests__/fixtures/features';
 import { featuresById } from '#/features/registry';
-import { compileContentModel, type ContentNodeJSON } from '#/model';
+import { compileContentModel, type ContentNodeJSON, defineFeature } from '#/model';
 import { done, item, list, listModel, outline, outlineOf } from '#/react/__tests__/fixtures/lists';
-import { mountText, storedIn } from '#/react/__tests__/fixtures/text';
+import { mountText, para, storedIn, text } from '#/react/__tests__/fixtures/text';
 import { RichTextReader } from '#/reader';
 import { pressKey, setSelection, typeText } from '#/testing';
 
@@ -187,5 +187,47 @@ describe('lists.task', () => {
         ]);
         expect(screen.getByRole('checkbox', { name: 'Parent' })).toBeDefined();
         expect(screen.getByRole('checkbox', { name: 'Child' })).toBeDefined();
+    });
+
+    it('counts a lossy block and an island inside a task item once', () => {
+        const note = defineFeature({
+            id: 'test.note',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            nodes: {
+                note: {
+                    group: 'block',
+                    content: 'block+',
+                    attrs: {},
+                    html: ['aside', 0],
+                    parse: [{ tag: 'aside' }],
+                },
+            },
+            formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
+        });
+        const withNote = listModel([note()]);
+        const document = storedIn(withNote, [
+            list('task', [
+                item(
+                    'task',
+                    'Keep',
+                    { type: 'note', content: [para(text('aside'))] },
+                    { type: 'mystery', content: [para(text('gone'))] },
+                ),
+            ]),
+        ]);
+
+        const output = createCodecs(withNote).toHTML(document);
+
+        expect(output.diagnostics.filter(({ code }) => code === 'codecs.lossy-output')).toEqual([
+            {
+                code: 'codecs.lossy-output',
+                severity: 'info',
+                messageKey: 'codecs.lossy-output',
+                featureId: 'test.note',
+                details: { count: 1 },
+            },
+        ]);
+        expect(output.html.match(/data-rte-island=""/g)).toEqual(['data-rte-island=""']);
     });
 });
