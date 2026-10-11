@@ -1,6 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Node as ProseMirrorNode } from 'prosemirror-model';
 import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
+
+import { type ListLevels } from '#/model';
+import { LIST_LEVEL_KINDS, listLevelStyle } from '#/model/output';
+import { ownValue } from '#/model/values';
+
+import { firstBlockId } from './node-views';
 
 // ProseMirror's own default margin, kept beyond the space the chrome covers.
 const MARGIN = 5;
@@ -17,6 +24,8 @@ export interface ChromeView {
     setKeyboardInset(height: number): void;
     /** The height a toolbar docked right above the on-screen keyboard adds to it, or 0. */
     setDockedInset(height: number): void;
+    /** The presentation's list markers by depth, which the view shows with no rebuild. */
+    setListLevels(levels: ListLevels | undefined): void;
 }
 
 // Node chrome controls keep the caret's top margin clear of the sticky toolbar when they scroll into view.
@@ -34,6 +43,45 @@ const writeChromeMargin = (view: EditorView | undefined, height: number) => {
     view.dom.style.setProperty(CHROME_SCROLL_MARGIN, `${height + MARGIN}px`);
 };
 
+/**
+ * A node decoration with its list level style on each list whose `marker` is null, as the reader writes it, and one
+ * with the `firstBlockId` on the first block of each node with a `nodeId` whose node view holds blocks.
+ */
+const contentDecorations = (view: EditorView, doc: ProseMirrorNode, levels: ListLevels | undefined): Decoration[] => {
+    const found: Decoration[] = [];
+    const nodeViews = view.props.nodeViews ?? {};
+    const lists = { ordered: 0, bullet: 0 };
+    const visit = (parent: ProseMirrorNode, start: number) => {
+        let pos = start;
+        for (let index = 0; index < parent.childCount; index += 1) {
+            const child = parent.child(index);
+            const first = child.firstChild;
+            const { nodeId } = child.attrs;
+            const viewed = Object.hasOwn(nodeViews, child.type.name);
+            if (viewed && !child.isTextblock && first !== null && first.isBlock && typeof nodeId === 'string') {
+                found.push(Decoration.node(pos + 1, pos + 1 + first.nodeSize, { id: firstBlockId(view, nodeId) }));
+            }
+            const kind = ownValue(LIST_LEVEL_KINDS, child.type.name);
+            if (kind !== undefined) {
+                lists[kind] += 1;
+                const style = listLevelStyle(kind, lists[kind], levels);
+                if (style !== undefined && child.attrs.marker === null) {
+                    found.push(Decoration.node(pos, pos + child.nodeSize, { style }));
+                }
+            }
+            if (!child.isTextblock) {
+                visit(child, pos + 1);
+            }
+            if (kind !== undefined) {
+                lists[kind] -= 1;
+            }
+            pos += child.nodeSize;
+        }
+    };
+    visit(doc, 0);
+    return found;
+};
+
 export const createChromeView = (): ChromeView => {
     let view: EditorView | undefined;
     let shown = false;
@@ -46,18 +94,32 @@ export const createChromeView = (): ChromeView => {
         threshold.bottom = bottom.keyboard + bottom.docked;
         margin.bottom = threshold.bottom + MARGIN;
     };
-    const decorations = (state: EditorView['state']) => {
-        const { selection } = state;
-        if (!shown || selection.empty) {
-            return null;
+    let levels: ListLevels | undefined;
+    // A selection change keeps the document, so it draws no content decoration again.
+    let markers = new WeakMap<ProseMirrorNode, DecorationSet>();
+    const listsOf = (doc: ProseMirrorNode) => {
+        if (view === undefined) {
+            return DecorationSet.empty;
         }
-        return DecorationSet.create(state.doc, [
-            Decoration.inline(selection.from, selection.to, { 'data-rte-selection': '' }),
-        ]);
+        let lists = markers.get(doc);
+        if (lists === undefined) {
+            lists = DecorationSet.create(doc, contentDecorations(view, doc, levels));
+            markers.set(doc, lists);
+        }
+        return lists;
+    };
+    const decorations = (state: EditorView['state']) => {
+        const { doc, selection } = state;
+        const lists = listsOf(doc);
+        if (!shown || selection.empty) {
+            return lists;
+        }
+        return lists.add(doc, [Decoration.inline(selection.from, selection.to, { 'data-rte-selection': '' })]);
     };
     return {
         take: (next) => {
             view = next;
+            markers = new WeakMap();
             next.setProps({ decorations, scrollMargin: margin, scrollThreshold: threshold });
             writeChromeMargin(next, threshold.top);
         },
@@ -81,6 +143,14 @@ export const createChromeView = (): ChromeView => {
         setDockedInset: (height) => {
             bottom.docked = height;
             writeBottom();
+        },
+        setListLevels: (next) => {
+            if (levels === next) {
+                return;
+            }
+            levels = next;
+            markers = new WeakMap();
+            view?.setProps({});
         },
     };
 };

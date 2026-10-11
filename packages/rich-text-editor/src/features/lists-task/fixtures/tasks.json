@@ -1,0 +1,121 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "feature-contract",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "core",
+            "version": 1
+        },
+        {
+            "id": "lists.task",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": {
+            "lang": null,
+            "dir": "auto"
+        },
+        "content": [
+            {
+                "type": "task_list",
+                "content": [
+                    {
+                        "type": "task_item",
+                        "attrs": {
+                            "nodeId": "task-1",
+                            "checked": true
+                        },
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "attrs": {
+                                    "lang": null
+                                },
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Approve the palette"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "task_item",
+                        "attrs": {
+                            "nodeId": "task-2",
+                            "checked": false
+                        },
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "attrs": {
+                                    "lang": null
+                                },
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Update the templates"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "task_list",
+                                "content": [
+                                    {
+                                        "type": "task_item",
+                                        "attrs": {
+                                            "nodeId": "task-3",
+                                            "checked": false
+                                        },
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "attrs": {
+                                                    "lang": null
+                                                },
+                                                "content": [
+                                                    {
+                                                        "type": "text",
+                                                        "text": "Social media"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "task_item",
+                                        "attrs": {
+                                            "nodeId": "task-4",
+                                            "checked": true
+                                        },
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "attrs": {
+                                                    "lang": null
+                                                },
+                                                "content": [
+                                                    {
+                                                        "type": "text",
+                                                        "text": "Print"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

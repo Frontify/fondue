@@ -3,12 +3,14 @@
 import { type MarkType, type Schema } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
+import { type PayloadDeclaration } from '#/model';
 import { type CompiledFeature } from '#/model/compile';
 
 /** A command as a line-start rule runs it, with the payload of its marker, and whether its target is active there. */
 interface RuleCommand {
     readonly run: (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => boolean;
     readonly active: (state: EditorState, payload?: unknown) => boolean | 'mixed';
+    readonly payload?: PayloadDeclaration;
 }
 
 interface RuleOf {
@@ -21,6 +23,12 @@ export interface LineStartRule extends RuleOf {
     readonly marker: string;
     readonly command: RuleCommand;
     readonly payload: unknown;
+}
+/** A code feature's pattern over the text from the block start to the caret, whose named groups fill the payload. */
+export interface BlockRule extends RuleOf {
+    readonly kind: 'block-rule';
+    readonly match: RegExp;
+    readonly command: RuleCommand;
 }
 export interface MarkDelimiterRule extends RuleOf {
     readonly kind: 'mark-delimiter';
@@ -41,7 +49,7 @@ export interface QuotesRule extends RuleOf {
     readonly marker: '"' | "'";
 }
 /** An input rule as the package's rule engine runs it. */
-export type CompiledInputRule = LineStartRule | MarkDelimiterRule | TextReplaceRule | QuotesRule;
+export type CompiledInputRule = LineStartRule | BlockRule | MarkDelimiterRule | TextReplaceRule | QuotesRule;
 
 const escaped = (text: string) => text.replaceAll(/[$()*+.?[\\\]^{|}]/g, String.raw`\$&`);
 
@@ -55,6 +63,7 @@ export const compileInputRules = (
     commandOf: (id: string) => RuleCommand | undefined,
 ): readonly CompiledInputRule[] => {
     const lines: LineStartRule[] = [];
+    const blocks: BlockRule[] = [];
     const marks: MarkDelimiterRule[] = [];
     const texts: (TextReplaceRule | QuotesRule)[] = [];
     for (const { id: featureId, declaration } of features) {
@@ -83,6 +92,12 @@ export const compileInputRules = (
             if (rule.kind === 'quotes') {
                 texts.push({ id, featureId, kind: rule.kind, marker: rule.marker });
             }
+            if (rule.kind === 'block-rule') {
+                const command = commandOf(rule.command);
+                if (command !== undefined) {
+                    blocks.push({ id, featureId, kind: rule.kind, match: rule.match, command });
+                }
+            }
             if (rule.kind !== 'line-start') {
                 continue;
             }
@@ -100,5 +115,5 @@ export const compileInputRules = (
             }
         }
     }
-    return [...lines, ...marks.sort((a, b) => b.open.length - a.open.length), ...texts];
+    return [...lines, ...blocks, ...marks.sort((a, b) => b.open.length - a.open.length), ...texts];
 };

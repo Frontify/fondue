@@ -7,6 +7,7 @@ import { canonicalJson } from '#/model/hash';
 import { isPlatformBinding } from '#/model/platform';
 import { refusesLevel, setsHeading } from '#/runtime/policy';
 import { type AuthoringPolicy } from '#/runtime/types';
+import { type NumberingStrings } from '#/ui/menus/numbering';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
 import { type ReactPresentation } from './types';
@@ -188,6 +189,15 @@ export const toolbarItems = (
     return items;
 };
 
+/** The numbering dialog's strings in the UI locale. */
+export const numberingStrings = (t: CodecContext['t']): NumberingStrings => ({
+    title: t('RichTextEditor_startNumbering'),
+    field: t('RichTextEditor_startNumberingField'),
+    range: t('RichTextEditor_startNumberingRange', { min: 0, max: 1_000_000 }),
+    apply: t('RichTextEditor_apply'),
+    cancel: t('RichTextEditor_cancel'),
+});
+
 /**
  * The More rows of the key routes a feature labels and the toolbar does not show, such as Move up and Move down, so
  * each is reachable without its shortcut.
@@ -223,6 +233,30 @@ export const menuItems = (
                 bindings,
                 groupStart: false,
                 bubble: false,
+            });
+        }
+        // A command that opens a control has no key, so its toolbar entry names its row, as Start numbering at does.
+        for (const entry of declaration.toolbar ?? []) {
+            const compiled = commands.find(({ id }) => id === entry.command);
+            const key = `${entry.command} ${payloadKey(undefined)}`;
+            const opens = compiled !== undefined && compiled.definition.capability === 'openControl';
+            if (!opens || !engine.commands.has(entry.command) || refusedBy(authoring, commands, entry.command)) {
+                continue;
+            }
+            if (shown.has(key) || rows.some((row) => row.key === key)) {
+                continue;
+            }
+            rows.push({
+                key,
+                command: entry.command,
+                payload: undefined,
+                toggle: false,
+                label: t(entry.labelKey as `RichTextEditor_${string}`),
+                icon: entry.icon,
+                bindings: [],
+                groupStart: false,
+                bubble: false,
+                numbering: numberingStrings(t),
             });
         }
     }

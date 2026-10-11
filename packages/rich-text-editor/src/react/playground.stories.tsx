@@ -7,6 +7,7 @@ import {
     bold,
     code,
     core,
+    featuresById,
     heading,
     inputRules,
     italic,
@@ -100,6 +101,7 @@ const model = compileContentModel(
         superscript(),
         heading(),
         quote(),
+        ...featuresById(['lists.item', 'lists.bullet', 'lists.ordered', 'lists.task']),
         inputRules({ typography }),
         callouts,
     ],
@@ -120,6 +122,7 @@ const TOOLBAR = [
         'mark.subscript.toggle',
         'mark.superscript.toggle',
     ],
+    ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
     ['quote.toggle'],
 ];
 
@@ -607,6 +610,25 @@ Shortcuts of the shipped features, in the package key syntax and as each platfor
 | Heading 6 | \`heading.set\` with \`{ level: 6 }\` | \`other:Ctrl-Shift-6\` | none | Ctrl+Shift+6 |
 | Move up | \`block.move.up\` | \`Mod-Alt-ArrowUp\` | ⌥⌘↑ | Ctrl+Alt+Up |
 | Move down | \`block.move.down\` | \`Mod-Alt-ArrowDown\` | ⌥⌘↓ | Ctrl+Alt+Down |
+
+## Lists
+
+| Action | Command | Key | Apple | Other platforms |
+|---|---|---|---|---|
+| Bulleted list | \`list.bullet.toggle\` | \`Mod-Shift-8\` | ⇧⌘8 | Ctrl+Shift+8 |
+| Numbered list | \`list.ordered.toggle\` with \`{ start: 1 }\` | \`Mod-Shift-7\` | ⇧⌘7 | Ctrl+Shift+7 |
+| Task list | \`list.task.toggle\` | \`Mod-Shift-9\` | ⇧⌘9 | Ctrl+Shift+9 |
+| Indent a list item | \`list.indent\` | \`Mod-]\` | ⌘] | Ctrl+] |
+| Indent a list item | \`list.indent\` | \`Tab\` | Tab | Tab |
+| Outdent a list item | \`list.outdent\` | \`Mod-[\` | ⌘[ | Ctrl+[ |
+| Outdent a list item | \`list.outdent\` | \`Shift-Tab\` | ⇧Tab | Shift+Tab |
+| Indent a task | \`task.indent\` | \`Mod-]\` | ⌘] | Ctrl+] |
+| Indent a task | \`task.indent\` | \`Tab\` | Tab | Tab |
+| Outdent a task | \`task.outdent\` | \`Mod-[\` | ⌘[ | Ctrl+[ |
+| Outdent a task | \`task.outdent\` | \`Shift-Tab\` | ⇧Tab | Shift+Tab |
+| Check or uncheck a task | \`task.toggle\` | \`Mod-Enter\` | ⌘Enter | Ctrl+Enter |
+
+Tab in an item that cannot nest, such as the first item, moves focus out of the editor.
 
 ## Surface
 

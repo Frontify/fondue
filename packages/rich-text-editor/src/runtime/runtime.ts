@@ -193,6 +193,8 @@ export interface EditorRuntimeOptions {
     readonly recovery?: () => RecoveryService | undefined;
     /** The host's `inputRules` prop, read on each input. */
     readonly inputRules?: () => false | { readonly exclude: readonly string[] } | undefined;
+    /** Opens the package-built control of an `openControl` command that a host `execute` ran. */
+    readonly openControl?: (control: string) => void;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -338,7 +340,7 @@ type Prepared =
           readonly limit?: ExceededLimit | undefined;
       };
 /** Who runs a command: a host call, a queued intent, or an async result. */
-type Route = 'host' | 'queue' | 'async';
+type Route = 'host' | 'queue' | 'async' | 'node';
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
 type Attempt = Prepared | { readonly unchanged: true };
 
@@ -368,6 +370,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         compiledModel(definition.model)
             .commands.filter((command) => setsHeading(command.definition))
             .flatMap(({ id }) => definition.commands.get(id) ?? []),
+    );
+    // The control of each `openControl` command by command ID.
+    const controls = new Map(
+        compiledModel(definition.model)
+            .commands.filter((command) => command.definition.capability === 'openControl')
+            .map(({ id, definition: { args } }) => [id, args.control as string]),
     );
     let { capabilities } = options;
     let exceedsLimits = createLimitCheck(definition.model, capabilities);
@@ -1052,6 +1060,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return rejected('busy');
         }
         const result = run(id, given, commandOptions, 'host');
+        const control = controls.get(id);
+        if (control !== undefined && result.status === 'no-op') {
+            options.openControl?.(control);
+        }
         // Without `focus: 'editor'` a command leaves focus where it is.
         if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
             focus();
@@ -1125,8 +1137,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 commit(state.tr.setSelection(NodeSelection.create(state.doc, pos)));
             }
         },
+        // The author's selection stays, so typing after a press on chrome, such as a task checkbox, keeps the node.
         execute: (id, payload) =>
-            runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(nodeId), 'host'),
+            runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(nodeId), 'node'),
         query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(nodeId)),
     });
 

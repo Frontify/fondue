@@ -1,0 +1,152 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "feature-contract",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "core",
+            "version": 1
+        },
+        {
+            "id": "lists.bullet",
+            "version": 1
+        },
+        {
+            "id": "lists.item",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": {
+            "lang": null,
+            "dir": "auto"
+        },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Brand assets:"
+                    }
+                ]
+            },
+            {
+                "type": "bullet_list",
+                "attrs": {
+                    "marker": null
+                },
+                "content": [
+                    {
+                        "type": "list_item",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "attrs": {
+                                    "lang": null
+                                },
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Logos"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "bullet_list",
+                                "attrs": {
+                                    "marker": null
+                                },
+                                "content": [
+                                    {
+                                        "type": "list_item",
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "attrs": {
+                                                    "lang": null
+                                                },
+                                                "content": [
+                                                    {
+                                                        "type": "text",
+                                                        "text": "Primary"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "bullet_list",
+                                                "attrs": {
+                                                    "marker": "square"
+                                                },
+                                                "content": [
+                                                    {
+                                                        "type": "list_item",
+                                                        "content": [
+                                                            {
+                                                                "type": "paragraph",
+                                                                "attrs": {
+                                                                    "lang": null
+                                                                },
+                                                                "content": [
+                                                                    {
+                                                                        "type": "text",
+                                                                        "text": "Horizontal"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "list_item",
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "attrs": {
+                                                    "lang": null
+                                                },
+                                                "content": [
+                                                    {
+                                                        "type": "text",
+                                                        "text": "Secondary"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "list_item",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "attrs": {
+                                    "lang": null
+                                },
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Fonts"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

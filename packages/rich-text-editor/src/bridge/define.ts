@@ -33,6 +33,11 @@ export interface NodeViewState<C extends object = ShippedCommands> {
     readonly nodeId: string;
     readonly attrs: JsonObject;
     readonly selected: boolean;
+    /**
+     * The `id` of the element that names the node, which chrome takes as its label, as the task checkbox does: the content
+     * element, or the first block of a node with a `nodeId` that holds blocks; `null` for a leaf or atom.
+     */
+    readonly contentId: string | null;
     readonly context: NodeViewContext;
     /** Node view actions keyed by the node's ID, never a position. */
     readonly update: (attrs: JsonObject) => CommandResult;

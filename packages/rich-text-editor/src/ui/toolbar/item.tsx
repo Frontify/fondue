@@ -6,6 +6,7 @@ import { type ComponentType } from 'react';
 import { endComposition } from '#/bridge/chrome-view';
 import { type JsonValue } from '#/model';
 import { type EditorRuntime } from '#/runtime/runtime';
+import { type NumberingStrings } from '#/ui/menus/numbering';
 import { ariaShortcut, bindingHere, shortcutText, useApplePlatform } from '#/ui/shortcuts';
 
 /** One command of the presentation's toolbar, with the registry's label and icon unless `controls` replaced them. */
@@ -27,6 +28,8 @@ export interface ToolbarItem {
     readonly bubble: boolean;
     /** The rows of the text style picker, which the item is; a row it does not offer only names the active block type. */
     readonly options?: readonly (ToolbarItem & { readonly offered: boolean })[];
+    /** The numbering dialog that the More row opens once its command applies. */
+    readonly numbering?: NumberingStrings;
 }
 
 export interface ToolbarStrings {

@@ -664,6 +664,9 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
             if (rule.kind === 'mark-delimiter' && !marks.has(rule.mark)) {
                 throw failure('definition.orphan-behavior', feature.id, `${path}/mark`);
             }
+            if (rule.kind === 'block-rule' && !commands.has(rule.command) && !guardedOut.has(rule.command)) {
+                throw failure('definition.orphan-behavior', feature.id, `${path}/command`);
+            }
             if (rule.kind === 'line-start') {
                 if (!commands.has(rule.command) && !guardedOut.has(rule.command)) {
                     throw failure('definition.orphan-behavior', feature.id, `${path}/command`);

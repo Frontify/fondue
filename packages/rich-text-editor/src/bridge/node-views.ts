@@ -20,6 +20,22 @@ const CONTROLS = 'input, textarea, select, button';
 // Drop-target events over chrome stay stopped, so ProseMirror never accepts a drop it would then not receive.
 const DRAG_SOURCE_EVENTS: ReadonlySet<string> = new Set(['dragstart', 'drag', 'dragend']);
 
+const viewIndexes = new WeakMap<EditorView, number>();
+let viewCount = 0;
+/**
+ * The `id` that the chrome view's decoration gives the first block of the node `nodeId`, which names a node that
+ * holds blocks, as a task item's text does without its child tasks; unique per view, since a page may show a document twice.
+ */
+export const firstBlockId = (view: EditorView, nodeId: string): string => {
+    let index = viewIndexes.get(view);
+    if (index === undefined) {
+        viewCount += 1;
+        index = viewCount;
+        viewIndexes.set(view, index);
+    }
+    return `rte-node-label-${index}-${encodeURIComponent(nodeId)}`;
+};
+
 /** Whether `target` sits in an interactive control of the chrome, which keeps its own events. */
 const inControl = (chrome: HTMLElement, target: Node) => {
     let element: Element | null = target.parentElement;
@@ -36,6 +52,18 @@ const tagOf = (node: ProseMirrorNode) => {
     }
     return 'div';
 };
+
+/** A list item keeps its `li`, since a list holds only `li` children. */
+const outerTagOf = (node: ProseMirrorNode) => {
+    const spec = node.type.spec.toDOM?.(node);
+    if (Array.isArray(spec) && spec[0] === 'li') {
+        return 'li';
+    }
+    return tagOf(node);
+};
+
+// Content elements of every editor on a page take distinct IDs, which chrome labels refer to.
+let contents = 0;
 
 /**
  * The node views of one editor by node name. Each builds `dom`, its chrome slot and `contentDOM` with DOM calls and
@@ -58,7 +86,7 @@ export const createNodeViews = (
         }
     };
 
-    const stateOf = (node: ProseMirrorNode, selected: boolean): PortalEntry['state'] => {
+    const stateOf = (node: ProseMirrorNode, selected: boolean, contentId: string | null): PortalEntry['state'] => {
         let nodeId = '';
         if (typeof node.attrs.nodeId === 'string') {
             nodeId = node.attrs.nodeId;
@@ -68,6 +96,7 @@ export const createNodeViews = (
             nodeId,
             attrs: snapshot(node.attrs),
             selected,
+            contentId,
         };
     };
 
@@ -76,19 +105,26 @@ export const createNodeViews = (
         const key = String(created);
         const document = view.dom.ownerDocument;
         const tag = tagOf(node);
-        const dom = document.createElement(tag);
+        const dom = document.createElement(outerTagOf(node));
         const chrome = document.createElement(tag);
         chrome.setAttribute('contenteditable', 'false');
         chrome.setAttribute('data-rte-chrome', '');
         dom.append(chrome);
         // Leaf and atom views have no `contentDOM`, so their chrome shows the node.
         let contentDOM: HTMLElement | null = null;
+        let contentId: string | null = null;
         if (!node.isAtom) {
             contentDOM = document.createElement(tag);
+            contents += 1;
+            contentId = `rte-node-content-${contents}`;
+            contentDOM.id = contentId;
             dom.append(contentDOM);
+            if (!node.isTextblock && typeof node.attrs.nodeId === 'string') {
+                contentId = firstBlockId(view, node.attrs.nodeId);
+            }
         }
         let current = node;
-        let state = stateOf(node, false);
+        let state = stateOf(node, false, contentId);
         const publish = (next: PortalEntry['state']) => {
             state = next;
             host.portals.set({ key, slot: chrome, component, state });
@@ -112,7 +148,7 @@ export const createNodeViews = (
                         current = next;
                         // Chrome reads attributes only, so typing inside the node rerenders nothing.
                         if (changed) {
-                            publish(stateOf(next, state.selected));
+                            publish(stateOf(next, state.selected, contentId));
                         }
                         return true;
                     },

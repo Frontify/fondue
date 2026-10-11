@@ -2,7 +2,7 @@
 
 import { type ComponentType, createElement, Fragment, type ReactElement, type ReactNode } from 'react';
 
-import { type Diagnostic } from '#/model';
+import { type Diagnostic, type ListLevels } from '#/model';
 import { isIsland, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
@@ -14,12 +14,15 @@ import {
     islandLabel,
     type Item,
     itemsOf,
+    LIST_LEVEL_KINDS,
     markPath,
     spaced,
     type Spacing,
     VOID_TAGS,
+    withListLevel,
     writesAttribute,
 } from '#/model/output';
+import { ownValue } from '#/model/values';
 
 import { type ReaderContext, type ReaderNodeProps } from './define';
 import { type Plan } from './plan';
@@ -29,6 +32,9 @@ export interface RenderState extends Spacing {
     readonly plan: Plan;
     readonly context: ReaderContext;
     readonly diagnostics: Diagnostic[];
+    readonly listLevels: ListLevels | undefined;
+    /** How many lists of each kind hold the node being rendered. */
+    readonly lists: Record<keyof ListLevels, number>;
 }
 
 // Every HTML attribute whose React prop is not its lowercase name; the rest pass through unchanged.
@@ -175,7 +181,16 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         return null;
     }
     const before = state.carried;
+    const kind = ownValue(LIST_LEVEL_KINDS, node.type);
+    let depth = 0;
+    if (kind !== undefined) {
+        state.lists[kind] += 1;
+        depth = state.lists[kind];
+    }
     const children = renderChildren(state, node, path, plan.pre);
+    if (kind !== undefined) {
+        state.lists[kind] -= 1;
+    }
     const attrs = attrsOf(node.attrs);
     if (plan.override !== undefined) {
         try {
@@ -191,6 +206,9 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
     }
     state.carried = 0;
     let template = resolveHtmlSpec(plan.spec, attrs, plan.options, plan.shared);
+    if (kind !== undefined) {
+        template = withListLevel(template, attrs, kind, depth, state.listLevels);
+    }
     if (!plan.inline) {
         template = withAutoDirection(template);
     }

@@ -3,10 +3,13 @@
 import { macBaseKeymap, pcBaseKeymap } from 'prosemirror-commands';
 import { keydownHandler } from 'prosemirror-keymap';
 import { type NodeType } from 'prosemirror-model';
+import { liftListItem } from 'prosemirror-schema-list';
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 
-import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN } from '#/model/capabilities';
+import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN, LIST_KEYS_PLUGIN } from '#/model/capabilities';
 import { isApple, modOn } from '#/model/platform';
+
+import { itemAt, splitItem } from './lists';
 
 // The physical key of a letter or digit, which with Ctrl and Alt alone types itself on any layout.
 const PHYSICAL = /^(?:Key([A-Z])|Digit(\d))$/;
@@ -73,6 +76,35 @@ export const keyGuard = new Plugin({
         },
     },
 });
+
+/**
+ * Enter splits a list or task item, or lifts an empty one out one level, and Backspace at the start of an item's first
+ * block lifts the item, so a nested item outdents and a top-level one becomes a paragraph with its child lists after it.
+ */
+export const listKeysPlugin = () =>
+    new Plugin({
+        key: new PluginKey(LIST_KEYS_PLUGIN.id),
+        props: {
+            handleKeyDown: (view, event) => {
+                const { state } = view;
+                const { $from, empty } = state.selection;
+                const item = itemAt($from);
+                if (item === undefined || !unmodified(event)) {
+                    return false;
+                }
+                if (event.key === 'Enter') {
+                    if (empty && $from.parent.content.size === 0 && $from.node(-1).childCount === 1) {
+                        return liftListItem(item)(state, view.dispatch);
+                    }
+                    return splitItem(item)(state, view.dispatch);
+                }
+                if (event.key === 'Backspace' && empty && $from.parentOffset === 0 && $from.index(-1) === 0) {
+                    return liftListItem(item)(state, view.dispatch);
+                }
+                return false;
+            },
+        },
+    });
 
 /**
  * Whether `type` is a container: a block whose content takes only blocks, such as a quote, and not a list item,
