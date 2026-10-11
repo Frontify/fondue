@@ -30,6 +30,7 @@ import {
     type Diagnostic,
     hashDocument,
     type JsonObject,
+    type PresentationStyle,
     type ResourceLimits,
     type RichTextDocument,
 } from '#/model';
@@ -54,6 +55,7 @@ import { authoringOf, createPolicyCheck, refusesLevel, setsHeading } from './pol
 import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { createInputSettling } from './settle';
+import { stylesPlugin } from './styles';
 import { suggestionHosts } from './suggestions/host';
 import { activeSuggestion, suggestionOptionId } from './suggestions/plugin';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
@@ -218,6 +220,8 @@ export interface EditorRuntimeOptions {
     readonly openControl?: (control: string, payload: unknown) => void;
     /** The editor's locale, such as `de-CH`, read when a suggestion list asks its source; default `en-US`. */
     readonly locale?: () => string;
+    /** The presentation's brand styles, read when `block.style.set` runs; default none. */
+    readonly styles?: () => readonly PresentationStyle[];
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -469,6 +473,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             targetsPlugin,
             groupsPlugin,
             columnsPlugin(() => columns),
+            stylesPlugin(() => options.styles?.() ?? []),
             ...definition.plugins,
         ],
     });

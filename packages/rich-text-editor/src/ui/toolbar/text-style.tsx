@@ -9,13 +9,13 @@ import { useOverlayContainer } from '#/bridge/overlays';
 import { isRecord } from '#/model/values';
 import { type EditorRuntime } from '#/runtime/runtime';
 
-import { keepFocus, returnFocus, runItem, tabStop, type ToolbarItem } from './item';
+import { CheckedSlot, keepFocus, returnFocus, runItem, tabStop, type ToolbarItem } from './item';
 import styles from './styles/toolbar.module.scss';
 
 type Row = NonNullable<ToolbarItem['options']>[number];
 
 /** The type of the block that holds the selection's start, which the brand style rows apply to. */
-const blockTypeOf = (session: EditorRuntime | undefined): string => {
+export const blockTypeOf = (session: EditorRuntime | undefined): string => {
     const view = session?.view;
     if (view === undefined) {
         return '';
@@ -101,6 +101,7 @@ export const TextStyle = ({
                     {option.label}
                 </span>
             )}
+            {checked && <CheckedSlot />}
         </Dropdown.Item>
     );
     return (

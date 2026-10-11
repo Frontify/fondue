@@ -3,7 +3,7 @@
 import { type Properties as CssProperties } from 'csstype';
 
 import { sha256 } from './hash';
-import { ownValue } from './values';
+import { isRecord, ownValue } from './values';
 
 /** Resting declarations are csstype's `Properties<string | number>`. `hover` is optional and is not a CSS property. */
 export type StyleRecipe = CssProperties<string | number> & {
@@ -134,18 +134,42 @@ export const cssValue = (property: string, value: unknown): string | undefined =
     return text;
 };
 
-/** The declarations of a recipe that pass `cssValue`, in recipe order; any other is dropped. */
-const declarationsOf = (recipe: object): [string, string][] => {
-    const declarations: [string, string][] = [];
+// A recipe styles text in the content flow, so it never places, layers or transforms its element.
+const PLACING = new Set(
+    (
+        'position inset inset-block inset-block-start inset-block-end inset-inline inset-inline-start ' +
+        'inset-inline-end top right bottom left z-index transform translate rotate scale'
+    ).split(' '),
+);
+const MARGIN = /^margin(?:-(?:top|right|bottom|left|block|inline|block-start|block-end|inline-start|inline-end))?$/;
+// Only `auto` and non-negative lengths, since a function or a variable may still resolve below zero.
+const NON_NEGATIVE = /^(?:auto|[\d.]+(?:[a-z]+|%)?)(?:\s+(?:auto|[\d.]+(?:[a-z]+|%)?))*$/i;
+
+/** Whether a checked declaration may stay: none positions or transforms its element or pulls it over its neighbours. */
+const allowed = (property: string, text: string): boolean => {
+    const unprefixed = property.replace(/^-(?:webkit|moz|ms)-/, '');
+    if (PLACING.has(unprefixed)) {
+        return false;
+    }
+    return !MARGIN.test(unprefixed) || NON_NEGATIVE.test(text);
+};
+
+/** The recipe name, CSS property and value of each declaration that passes `cssValue` and `allowed`, in recipe order. */
+const entriesOf = (recipe: object): [string, string, string][] => {
+    const entries: [string, string, string][] = [];
     for (const [name, value] of Object.entries(recipe)) {
         const property = cssProperty(name);
         const text = cssValue(name, value);
-        if (property !== undefined && text !== undefined) {
-            declarations.push([property, text]);
+        if (property !== undefined && text !== undefined && allowed(property, text)) {
+            entries.push([name, property, text]);
         }
     }
-    return declarations;
+    return entries;
 };
+
+/** The declarations of a recipe that pass `cssValue` and `allowed`, in recipe order; any other is dropped. */
+const declarationsOf = (recipe: object): [string, string][] =>
+    entriesOf(recipe).map(([, property, text]) => [property, text]);
 
 /** The alpha of a colour function, after its `/` or as its fourth comma-separated argument. */
 const alphaOf = (color: string): string | undefined => {
@@ -286,9 +310,10 @@ const drawsBox = (recipe: Readonly<Record<string, unknown>>): boolean => {
 };
 
 const resolved = (recipe: StyleRecipe, link: boolean): ResolvedStyle => {
-    let declarations = declarationsOf(recipe);
-    // A link stays underlined unless its look gives a cue other than colour.
-    if (link && !drawsBox(recipe as Readonly<Record<string, unknown>>)) {
+    const entries = entriesOf(recipe);
+    let declarations = entries.map(([, property, text]): [string, string] => [property, text]);
+    // A link stays underlined unless the look it renders with gives a cue other than colour.
+    if (link && !drawsBox(Object.fromEntries(entries.map(([name, , text]) => [name, text])))) {
         declarations = declarations.filter(([property]) => property !== 'text-decoration-line');
         declarations.push(['text-decoration-line', 'underline']);
     }
@@ -300,8 +325,16 @@ const resolved = (recipe: StyleRecipe, link: boolean): ResolvedStyle => {
     return { className: `${CLASS_PREFIX}${sha256(key).slice(0, 12)}`, declarations, hover };
 };
 
+/** Whether a host `styles` entry can resolve: an object whose `recipe` is one; any other entry is skipped. */
+export const isPresentationStyle = (style: unknown): style is PresentationStyle =>
+    isRecord(style) && isRecord(style.recipe);
+
 const usable = (styles: readonly PresentationStyle[], id: string): PresentationStyle | undefined =>
-    styles.find((style) => style.id === id && style.deprecated !== true);
+    styles.find((style) => isPresentationStyle(style) && style.id === id && style.deprecated !== true);
+
+/** The node and mark types the style `id` applies to, or `undefined` when the styles hold no such style. */
+export const appliesToOf = (styles: readonly PresentationStyle[], id: string): readonly string[] | undefined =>
+    styles.find((style) => isPresentationStyle(style) && style.id === id)?.appliesTo;
 
 /**
  * The style a node or mark of `target` renders with: the style `styleId` names, else, for a null or unknown ID, the
@@ -343,7 +376,7 @@ export const inlineStyleText = (style: ResolvedStyle): string => block(style.dec
 export const styleSheetOf = (styles: readonly PresentationStyle[]): string => {
     const rules = new Map<string, string>();
     for (const style of styles) {
-        if (style.deprecated === true) {
+        if (!isPresentationStyle(style) || style.deprecated === true) {
             continue;
         }
         for (const link of [false, true]) {

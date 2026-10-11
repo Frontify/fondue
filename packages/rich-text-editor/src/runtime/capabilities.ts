@@ -29,6 +29,7 @@ import {
     LIST_KEYS_PLUGIN,
     SUGGESTIONS_PLUGIN,
 } from '#/model/capabilities';
+import { appliesToOf } from '#/model/styles';
 import { isRecord } from '#/model/values';
 
 import { codeKeysPlugin } from './code-keys';
@@ -39,6 +40,7 @@ import { inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
 import { listAround, repeated } from './lists';
 import { nearest, positionOf } from './positions';
+import { stylesOf } from './styles';
 import { suggestionsPlugin } from './suggestions/plugin';
 import { carrySelection } from './transactions';
 
@@ -723,9 +725,22 @@ const attributeTargets = (state: EditorState, types: readonly NodeType[], nodeId
     return [];
 };
 
+/** The targets a brand style lands on: those whose node type its `appliesTo` names, when the session holds the style. */
+const styleTargets = (state: EditorState, targets: Located[], attrs: Readonly<Record<string, unknown>>): Located[] => {
+    if (typeof attrs.styleId !== 'string') {
+        return targets;
+    }
+    const applies = appliesToOf(stylesOf(state), attrs.styleId);
+    if (applies === undefined) {
+        return targets;
+    }
+    return targets.filter(({ node }) => applies.includes(node.type.name));
+};
+
 /**
  * Sets the payload's other fields on the node its `nodeId` names, else on the selected textblocks of the listed types,
- * else on the nearest node of one; with `toggle`, removes the values when every target already has them.
+ * else on the nearest node of one; with `toggle`, removes the values when every target already has them. A `styleId`
+ * of a session style lands only on the node types the style applies to.
  */
 const setAttributes: CapabilityImplementation = (args, schema) => {
     const types = typesOf(args.node, schema);
@@ -744,7 +759,7 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
             if (parts === undefined) {
                 return false;
             }
-            const targets = attributeTargets(state, types, parts.nodeId);
+            const targets = styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs);
             const removes =
                 args.toggle === true && targets.length > 0 && targets.every(({ node }) => has(node, parts.attrs));
             const changes = targets.flatMap(({ node, pos }) =>
@@ -774,7 +789,7 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
             if (parts === undefined) {
                 return false;
             }
-            const targets = attributeTargets(state, types, parts.nodeId);
+            const targets = styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs);
             return tristate(targets.filter(({ node }) => has(node, parts.attrs)).length, targets.length);
         },
     };

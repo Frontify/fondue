@@ -395,6 +395,7 @@ const SessionComponent = (
                 setControl(opened);
             },
             locale: () => langRef.current,
+            styles: () => latestRef.current.presentation?.styles ?? [],
         });
         connectClipboard(runtime, {
             sliceContext: () => {

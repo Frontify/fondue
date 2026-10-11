@@ -25,6 +25,7 @@ import {
     withColor,
     withListLevel,
     withStyle,
+    withStyleId,
     writesAttribute,
 } from '#/model/output';
 import { isStyleAttribute } from '#/model/values';
@@ -169,7 +170,7 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
     }
     const attrs = attrsOf(mark.attrs);
     const { styles, colorTokens, inline } = state.styles;
-    let template = resolveHtmlSpec(plan.spec, attrs, plan.options);
+    let template = withStyleId(resolveHtmlSpec(plan.spec, attrs, plan.options), attrs);
     template = withStyle(template, styleOfNode(styles, mark.type, attrs).style, inline);
     template = withColor(template, mark.type, attrs, colorTokens);
     return build(template, inner);

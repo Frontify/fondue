@@ -304,7 +304,10 @@ export interface OutputStyles {
 }
 
 /** The colour property each colour mark writes. */
-const COLOR_PROPERTIES: Readonly<Record<string, string>> = { font_color: 'color', highlight: 'background-color' };
+export const COLOR_PROPERTIES: Readonly<Record<string, string>> = {
+    font_color: 'color',
+    highlight: 'background-color',
+};
 
 /** `template` with `attribute` set on its outer element, after the value it already holds and a space. */
 const withOuterAttribute = (template: HtmlTemplate, attribute: 'class' | 'style', value: string): HtmlTemplate => {
@@ -324,14 +327,23 @@ const withOuterAttribute = (template: HtmlTemplate, attribute: 'class' | 'style'
 
 /** The style recipe a node or mark of `type` with `attrs` renders with, and whether its stored `styleId` is unknown. */
 export const styleOfNode = (styles: readonly PresentationStyle[], type: string, attrs: JsonObject): StyleResolution => {
-    if (styles.length === 0) {
-        return { style: undefined, unknown: false };
-    }
     let styleId: string | null = null;
     if (typeof attrs.styleId === 'string') {
         styleId = attrs.styleId;
     }
     return resolveStyle(styles, type, styleId);
+};
+
+/** `template` with `data-rte-style` naming a stored `styleId` on its outer element, unless that element already names one. */
+export const withStyleId = (template: HtmlTemplate, attrs: JsonObject): HtmlTemplate => {
+    const [outer, ...inner] = template.layers;
+    if (outer === undefined || typeof attrs.styleId !== 'string' || outer.attrs['data-rte-style'] !== undefined) {
+        return template;
+    }
+    return {
+        ...template,
+        layers: [{ ...outer, attrs: { ...outer.attrs, 'data-rte-style': attrs.styleId } }, ...inner],
+    };
 };
 
 /** `template` with the recipe class of `style` on its outer element, and its declarations inline when `inline` is set. */
