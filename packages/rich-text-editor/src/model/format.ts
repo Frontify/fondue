@@ -73,7 +73,9 @@ export type RuntimeDiagnosticCode =
     | 'runtime.enqueue-loop'
     | 'runtime.listener-error'
     | 'runtime.multiple-dispatch'
-    | 'runtime.stale-transaction';
+    | 'runtime.plugin-error'
+    | 'runtime.stale-transaction'
+    | 'runtime.view-fault';
 /** The codes the package emits so far; later layers add theirs. */
 export type DiagnosticCode =
     | FormatDiagnosticCode

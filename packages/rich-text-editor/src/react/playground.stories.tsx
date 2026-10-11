@@ -13,9 +13,17 @@ import {
     RichTextEditor,
     type SelectionHandle,
 } from '#/index';
-import { compileContentModel, createEmptyDocument, type JsonValue } from '#/model';
+import { compileContentModel, createEmptyDocument, defineFeature, type JsonValue } from '#/model';
 
-const model = compileContentModel([core(), bold()], { id: 'story.playground', version: 1 });
+// Turns on the package's input rule engine with `bold.stars`, until `marks.bold` declares its own rules; the CT probe shares it.
+export const boldRules = defineFeature({
+    id: 'story.bold-rules',
+    version: 1,
+    requires: [{ id: 'marks.bold', version: 1 }],
+    inputRules: [{ id: 'bold.stars', kind: 'mark-delimiter', open: '**', close: '**', mark: 'bold' }],
+});
+
+const model = compileContentModel([core(), bold(), boldRules()], { id: 'story.playground', version: 1 });
 const definition = defineEditor({ id: 'story.playground', model });
 
 type Commands = CommandsOfModel<typeof model>;
@@ -53,6 +61,22 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
     return (
         <div style={{ display: 'grid', gap: '1rem' }}>
             <section aria-label="Commands" style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                    type="button"
+                    onClick={() =>
+                        log(`execute history.undo ${resultText(handleRef.current?.execute('history.undo'))}`)
+                    }
+                >
+                    Undo
+                </button>
+                <button
+                    type="button"
+                    onClick={() =>
+                        log(`execute history.redo ${resultText(handleRef.current?.execute('history.redo'))}`)
+                    }
+                >
+                    Redo
+                </button>
                 <button
                     type="button"
                     onClick={() =>
@@ -165,12 +189,13 @@ const meta: Meta<typeof Playground> = {
     title: 'Rich Text Editor/Playground',
     component: Playground,
     tags: ['autodocs'],
+    excludeStories: ['boldRules'],
     args: {
         'aria-label': 'Notes',
         allowNewBold: true,
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },
-        placeholder: 'Write something, and press Mod+B for bold',
+        placeholder: 'Write something, press Mod+B or type **text** for bold, and Mod+Z to undo',
         readOnly: false,
         disabled: false,
         required: false,

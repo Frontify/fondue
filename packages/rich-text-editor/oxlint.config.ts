@@ -138,6 +138,7 @@ const READER_FEATURE_TAILS = [
 type ImportRestriction = {
     group?: string[];
     regex?: string;
+    importNamePattern?: string;
     message: string;
 };
 
@@ -180,6 +181,21 @@ const frameworkRestriction: ImportRestriction = {
     message: FRAMEWORK_MESSAGE,
 };
 
+const historyRestriction: ImportRestriction = {
+    group: ['prosemirror-history'],
+    message: 'Only `src/runtime/history/` imports `prosemirror-history`.',
+};
+
+const tablesInternalsRestriction: ImportRestriction = {
+    group: ['prosemirror-tables'],
+    importNamePattern: '^_',
+    message: 'The underscore exports of `prosemirror-tables` are its internals.',
+};
+
+const SOURCE_RESTRICTIONS = [frameworkRestriction, historyRestriction, tablesInternalsRestriction];
+
+const VIEW_INTERNALS_MESSAGE = 'The input state and DOM observer of the editor view are ProseMirror internals.';
+
 // Later overrides replace rule options, so each layer repeats the bans that still apply.
 // oxlint 1.67 accepts excludeFiles, but the published override type omits it.
 type LayerOverride = OxlintOverride & { excludeFiles?: string[] };
@@ -193,7 +209,7 @@ const layerOverride = (
     files: typeof files === 'string' ? [files] : [...files],
     excludeFiles: ['**/__tests__/**', '**/*.stories.tsx', ...excludeFiles],
     rules: {
-        'no-restricted-imports': ['error', { paths: [...paths], patterns: [frameworkRestriction, ...restrictions] }],
+        'no-restricted-imports': ['error', { paths: [...paths], patterns: [...SOURCE_RESTRICTIONS, ...restrictions] }],
     },
 });
 
@@ -242,6 +258,11 @@ const testingFolders = FOLDERS.filter((folder) => !testingAllowed.has(folder));
 const runtimeAllowed = new Set(['model', 'definition', 'runtime']);
 
 const runtimeFolders = FOLDERS.filter((folder) => !runtimeAllowed.has(folder));
+
+const runtimeRestriction: ImportRestriction = {
+    group: [...aliasPatterns(runtimeFolders), ...relativePatterns(runtimeFolders), ...REACT_PATTERNS],
+    message: RUNTIME_MESSAGE,
+};
 
 const bridgeFolders = FOLDERS.filter((folder) => folder !== 'runtime' && folder !== 'bridge');
 
@@ -321,9 +342,20 @@ export default defineConfig({
             rules: {
                 'import/no-cycle': 'error',
                 'no-nested-ternary': 'error',
-                'no-restricted-imports': ['error', { patterns: [frameworkRestriction] }],
+                'no-restricted-imports': ['error', { patterns: SOURCE_RESTRICTIONS }],
             },
         },
+        {
+            files: ['src/**/*.{ts,tsx}'],
+            excludeFiles: ['**/__tests__/**', '**/*.stories.tsx'],
+            rules: {
+                'no-restricted-properties': [
+                    'error',
+                    { property: 'input', message: VIEW_INTERNALS_MESSAGE },
+                    { property: 'domObserver', message: VIEW_INTERNALS_MESSAGE },
+                ],
+            },
+        } satisfies LayerOverride,
         layerOverride('src/model/**/*.{ts,tsx}', [
             {
                 group: [...aliasPatterns(modelFolders), ...relativePatterns(modelFolders), ...ENGINE_PATTERNS],
@@ -419,12 +451,17 @@ export default defineConfig({
                 message: TESTING_MESSAGE,
             },
         ]),
-        layerOverride('src/runtime/**/*.{ts,tsx}', [
-            {
-                group: [...aliasPatterns(runtimeFolders), ...relativePatterns(runtimeFolders), ...REACT_PATTERNS],
-                message: RUNTIME_MESSAGE,
+        layerOverride('src/runtime/**/*.{ts,tsx}', [runtimeRestriction]),
+        {
+            files: ['src/runtime/history/**/*.{ts,tsx}'],
+            excludeFiles: ['**/__tests__/**'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    { patterns: [frameworkRestriction, tablesInternalsRestriction, runtimeRestriction] },
+                ],
             },
-        ]),
+        } satisfies LayerOverride,
         layerOverride('src/bridge/**/*.{ts,tsx}', [
             {
                 group: [...aliasPatterns(bridgeFolders), ...relativePatterns(bridgeFolders), ...ENGINE_PATTERNS],

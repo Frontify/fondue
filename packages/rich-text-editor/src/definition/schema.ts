@@ -229,6 +229,10 @@ export const buildSchema = (model: ContentModel): Schema => {
         if (declaration.inclusive !== undefined) {
             spec.inclusive = declaration.inclusive;
         }
+        // Input rules never fire inside inline code.
+        if (name === 'code') {
+            spec.code = true;
+        }
         marks[name] = spec;
     }
     marks[ISLAND_MARK] = ISLAND_MARK_SPEC;
