@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
-import { gapCursor } from 'prosemirror-gapcursor';
+import { GapCursor, gapCursor } from 'prosemirror-gapcursor';
 import {
     Fragment,
     type Mark,
@@ -295,12 +295,22 @@ const countOf = (doc: Node, type: NodeType) => {
     return count;
 };
 
-/** Puts `node` at `spot`, adds an empty paragraph after it when it ends up last, and puts the selection after it. */
+// The pinned prosemirror-gapcursor declares `GapCursor.valid` internal, so its types leave it out.
+const gapCursorValid = ($pos: ResolvedPos): boolean =>
+    (GapCursor as unknown as { readonly valid: (at: ResolvedPos) => boolean }).valid($pos);
+
+/**
+ * Puts `node` at `spot`, adds an empty paragraph after it when it ends up last, and puts the selection after it: a
+ * caret in a textblock that follows, else a gap cursor, so typing never replaces a selected leaf such as a column break.
+ */
 const insertBlock = (state: EditorState, spot: BlockSpot, node: Node): Transaction => {
     const transaction = state.tr.replaceWith(spot.from, spot.to, node);
     const after = spot.from + node.nodeSize;
     const $after = transaction.doc.resolve(after);
     if ($after.nodeAfter !== null) {
+        if (!$after.nodeAfter.isTextblock && gapCursorValid($after)) {
+            return transaction.setSelection(new GapCursor($after)).scrollIntoView();
+        }
         return transaction.setSelection(Selection.near($after, 1)).scrollIntoView();
     }
     const paragraph = $after.parent.contentMatchAt($after.index()).defaultType;

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { act, screen } from '@testing-library/react';
 import { GapCursor } from 'prosemirror-gapcursor';
 import { NodeSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -45,6 +46,23 @@ describe('gap cursor', () => {
         expect(selection.from).toBe(1);
         expect(mounted.handle.getSummary().selection.kind).toBe('gap');
         expect(mounted.view.dom.querySelector('.ProseMirror-gapcursor')).not.toBeNull();
+    });
+
+    it('announces the gap cursor in the live region when the selection becomes one, and not on a move between gaps', () => {
+        const mounted = imagesFirst();
+        const region = screen.getByTestId('fondue-rich-text-editor-announcer');
+
+        press(mounted, 'ArrowLeft');
+        const entered = region.textContent;
+        region.textContent = '';
+        act(() => {
+            const { state } = mounted.view;
+            mounted.view.dispatch(state.tr.setSelection(new GapCursor(state.doc.resolve(0))));
+        });
+        const moved = region.textContent;
+
+        expect(entered).toBe('Between blocks. Type to add a paragraph.');
+        expect(moved).toBe('');
     });
 
     it('lets text be typed at the gap cursor between two images, as a new paragraph', () => {

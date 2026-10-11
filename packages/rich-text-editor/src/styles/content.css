@@ -13,6 +13,8 @@
         --rte-content-surface-background: var(--color-surface-default);
         /* The field's border holds 3:1 on the surface, which `--color-line-mid` misses in the light theme. */
         --rte-content-surface-border: var(--border-width-default) solid var(--color-line-strong);
+        /* A horizontal rule holds 3:1 on the surface for the same reason. */
+        --rte-content-rule-color: var(--color-line-strong);
         --rte-content-surface-padding: var(--spacing-x-small) var(--spacing-small);
         --rte-content-placeholder-color: var(--color-secondary-default);
         --rte-content-placeholder-opacity: 1;
@@ -57,6 +59,12 @@
 
     :where(.fondue-rte-content pre) {
         white-space: pre-wrap;
+    }
+
+    :where(.fondue-rte-content hr) {
+        margin-block: var(--rte-content-paragraph-spacing);
+        border: none;
+        border-block-start: var(--border-width-default) solid var(--rte-content-rule-color);
     }
 
     /* The editing-only rules of the same stylesheet, on the surface. */
@@ -207,7 +215,7 @@
     /* A column break in the editor: a dashed rule with its label, dotted while it forces no break. */
     :where(.fondue-rte-content[data-rte-surface] [data-rte-column-break]) {
         margin-block: var(--spacing-x-small);
-        border-block-start: 1px dashed var(--color-line-strong);
+        border-block-start: var(--border-width-default) dashed var(--color-line-strong);
         color: var(--color-secondary-default);
         font-size: var(--text-body-small-default-font-size);
         text-align: center;

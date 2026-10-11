@@ -100,4 +100,31 @@ describe('package content stylesheet', () => {
         );
         expect(declarations.filter((declaration) => /^(left|right):/.test(declaration))).toEqual([]);
     });
+
+    it('draws the editor column break with the border width token, never a pixel literal', () => {
+        const breaks = rules(content).filter(({ selector }) => selector.includes('[data-rte-column-break]'));
+        const borders = breaks
+            .flatMap(({ declarations }) => declarations)
+            .filter((declaration) => declaration.startsWith('border'));
+
+        expect(borders).toContain('border-block-start: var(--border-width-default) dashed var(--color-line-strong)');
+        expect(borders.filter((declaration) => /\dpx\b/.test(declaration))).toEqual([]);
+    });
+
+    it('draws a horizontal rule in the editor and the reader as one top border in the rule colour alias', () => {
+        const aliases = rules(content).find(({ selector }) => selector === ':where(.fondue-rte-content)');
+        const hr = rules(content).filter(({ selector }) => /\bhr\b/.test(selector));
+
+        expect(aliases?.declarations).toContain('--rte-content-rule-color: var(--color-line-strong)');
+        expect(hr).toEqual([
+            {
+                selector: ':where(.fondue-rte-content hr)',
+                declarations: [
+                    'margin-block: var(--rte-content-paragraph-spacing)',
+                    'border: none',
+                    'border-block-start: var(--border-width-default) solid var(--rte-content-rule-color)',
+                ],
+            },
+        ]);
+    });
 });

@@ -6,14 +6,21 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { COLUMN_BREAK } from '#/model/output';
 
-/** What the editor shows of the presentation's columns: their count, whether the surface has room for them, and the break label. */
+/** What the editor shows of the presentation's columns: their count, whether the surface has room for them, and the break labels. */
 export interface ColumnState {
     readonly count: number;
     readonly fits: boolean;
     readonly label: string;
+    /** The name of a break that forces no break. */
+    readonly inactiveLabel: string;
 }
 
-export const ONE_COLUMN: ColumnState = { count: 1, fits: false, label: 'Column break' };
+export const ONE_COLUMN: ColumnState = {
+    count: 1,
+    fits: false,
+    label: 'Column break',
+    inactiveLabel: 'Column break, inactive',
+};
 const key = new PluginKey<() => ColumnState>('rte.columns');
 
 /** The session's columns, or one column for a state that no editor session made. */
@@ -25,12 +32,12 @@ export const columnsOf = (state: EditorState): ColumnState => {
     return read();
 };
 
-/** A column break's attributes in the editor: a labelled separator, marked inactive when it forces no break. */
-const breakAttrs = (active: boolean, label: string): Record<string, string> => {
+/** A column break's attributes in the editor: a labelled separator, named and marked inactive when it forces no break. */
+const breakAttrs = (active: boolean, columns: ColumnState): Record<string, string> => {
     if (active) {
-        return { role: 'separator', 'aria-label': label, 'data-rte-column-break': 'active' };
+        return { role: 'separator', 'aria-label': columns.label, 'data-rte-column-break': 'active' };
     }
-    return { role: 'separator', 'aria-label': label, 'aria-disabled': 'true', 'data-rte-column-break': 'inactive' };
+    return { role: 'separator', 'aria-label': columns.inactiveLabel, 'data-rte-column-break': 'inactive' };
 };
 
 /** Each column break as a labelled separator, active for the first `count - 1` while the surface has room for the columns. */
@@ -43,7 +50,7 @@ const breakDecorations = (doc: ProseMirrorNode, columns: ColumnState): Decoratio
         const node = doc.child(child);
         if (node.type.name === COLUMN_BREAK) {
             const active = columns.fits && index < columns.count - 1;
-            decorations.push(Decoration.node(offset, offset + node.nodeSize, breakAttrs(active, columns.label)));
+            decorations.push(Decoration.node(offset, offset + node.nodeSize, breakAttrs(active, columns)));
             index += 1;
         }
         offset += node.nodeSize;
@@ -73,4 +80,4 @@ export const columnsPlugin = (read: () => ColumnState): Plugin => {
 
 /** Whether two column states show the same, so an equal one draws nothing again. */
 export const sameColumns = (a: ColumnState, b: ColumnState): boolean =>
-    a.count === b.count && a.fits === b.fits && a.label === b.label;
+    a.count === b.count && a.fits === b.fits && a.label === b.label && a.inactiveLabel === b.inactiveLabel;
