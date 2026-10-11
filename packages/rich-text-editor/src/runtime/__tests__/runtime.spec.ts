@@ -6,7 +6,7 @@ import { Fragment, Node, Schema, Slice } from 'prosemirror-model';
 import { type EditorState, Plugin, TextSelection, type Transaction } from 'prosemirror-state';
 import { tableEditing, tableNodes } from 'prosemirror-tables';
 import { Step, StepResult } from 'prosemirror-transform';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
     compileDefinition,
@@ -45,6 +45,7 @@ import {
 } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/decode';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
+import { STORAGE, stubStorage } from '#/testing/__tests__/fixtures/storage';
 
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
 import { type AsyncRequest } from '../async';
@@ -177,6 +178,27 @@ const discarded = (reason: string) => ({
     severity: 'info',
     messageKey: 'runtime.async-discarded',
     details: { reason },
+});
+
+// every browser storage API fails while this suite runs.
+let storage: ReturnType<typeof stubStorage>;
+beforeAll(() => {
+    storage = stubStorage();
+});
+afterAll(() => {
+    const { accessed } = storage;
+    storage.restore();
+    expect(accessed).toEqual([]);
+});
+
+it('runs the runtime suite with every browser storage API failing', () => {
+    for (const name of STORAGE) {
+        expect(() => {
+            Reflect.get(Reflect.get(globalThis, name) as object, 'open');
+        }).toThrow(name);
+    }
+    // The probe above is the only access this suite may make.
+    expect(storage.accessed.splice(0)).toEqual([...STORAGE]);
 });
 
 describe('the commit path', () => {
@@ -1167,7 +1189,7 @@ describe('commands, events and the commit path', () => {
         expect(handle.execute('text.insert', { text: 'y' })).toEqual({ status: 'rejected', code: 'not-ready' });
     });
 
-    it('counts the tableEditing() repair and stamps the appended transaction with the current time', () => {
+    it('counts the tableEditing repair and stamps the appended transaction with the current time', () => {
         const schema = new Schema({
             nodes: {
                 doc: { content: 'block+' },

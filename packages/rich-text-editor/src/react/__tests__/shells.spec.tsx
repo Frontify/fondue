@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { createRef, type RefObject } from 'react';
+import { createRef, type RefObject, StrictMode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -11,7 +11,7 @@ import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, type ContentModel, type JsonValue } from '#/model';
 import { type LoadedDocument, type PersistenceService } from '#/persistence/types';
 import { RichTextReader } from '#/reader/reader';
-import { typeText } from '#/testing';
+import { createFakePersistenceService, typeText } from '#/testing';
 
 import { defineEditor } from '../define';
 import { RichTextEditor } from '../rich-text-editor';
@@ -158,6 +158,182 @@ describe('the recovery shell', () => {
         expect(handleOf(ref).getSnapshot().stamp.documentId).toBe('document-1');
         expect(handleOf(ref).getSnapshot().document).toEqual(before.document);
         unmount();
+    });
+
+    it('mounts on Retry under the acknowledged revision, so the next write after a save does not conflict', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const server = createFakePersistenceService();
+        const save = vi.fn(server.save);
+        const ref = createRef<EditorHandle<object>>();
+        const tree = (armed: boolean) => (
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={stored(envelope([para('ab')]))}
+                services={{ persistence: { save, read: server.read } }}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+                <Bomb armed={armed} />
+            </RichTextEditor.Root>
+        );
+        const settle = () =>
+            act(async () => {
+                await vi.advanceTimersByTimeAsync(0);
+            });
+        const view = render(tree(false));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        act(() => typeText(handleOf(ref), 'c'));
+        act(() => {
+            vi.advanceTimersByTime(500);
+        });
+        await settle();
+        const { revision } = handleOf(ref).getSaveStatus();
+        view.rerender(tree(true));
+        view.rerender(tree(false));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        // A session that saved everything before the error mounts clean and writes nothing until typing.
+        act(() => {
+            vi.advanceTimersByTime(10_000);
+        });
+        await settle();
+        expect(handleOf(ref).getSaveStatus().state).toBe('clean');
+        expect(save).toHaveBeenCalledTimes(1);
+        act(() => typeText(handleOf(ref), 'd'));
+        act(() => {
+            vi.advanceTimersByTime(500);
+        });
+        await settle();
+
+        expect(revision).toBe('revision-1');
+        expect(save.mock.calls.map(([request]) => request.baseRevision)).toEqual([null, 'revision-1']);
+        expect(handleOf(ref).getSaveStatus()).toMatchObject({ state: 'clean', revision: 'revision-2' });
+        view.unmount();
+    });
+
+    /**
+     * An editor on an existing record at `revision-1` that the fake server holds, with `c` typed and a render error
+     * shown before its write; `strict` mounts it under StrictMode.
+     */
+    const breakBeforeSave = async (strict = false) => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const server = createFakePersistenceService();
+        const existing = stored(envelope([para('ab')]));
+        await server.save(
+            {
+                operationId: 'elsewhere-1',
+                stamp: { documentId: 'document-1', sessionId: 'elsewhere', generation: 0, sequence: 1 },
+                baseRevision: null,
+                document: existing.document,
+                writer: {
+                    build: '0.0.0',
+                    formatVersion: 1,
+                    model: { id: 'test.editor', version: 1 },
+                    capabilities: model.capabilities,
+                },
+            },
+            {
+                signal: new AbortController().signal,
+                session: { documentId: 'document-1', sessionId: 'x', generation: 0 },
+            },
+        );
+        const save = vi.fn(server.save);
+        const ref = createRef<EditorHandle<object>>();
+        const diagnostics: string[] = [];
+        const tree = (armed: boolean) => {
+            const root = (
+                <RichTextEditor.Root
+                    aria-label="Notes"
+                    definition={definition}
+                    defaultValue={{ ...existing, revision: 'revision-1' }}
+                    services={{ persistence: { save, read: server.read } }}
+                    onDiagnostic={({ code }) => diagnostics.push(code)}
+                    ref={ref}
+                >
+                    <RichTextEditor.Surface />
+                    <Bomb armed={armed} />
+                </RichTextEditor.Root>
+            );
+            if (strict) {
+                return <StrictMode>{root}</StrictMode>;
+            }
+            return root;
+        };
+        const view = render(tree(false));
+        const breakAgain = () => {
+            view.rerender(tree(true));
+            view.rerender(tree(false));
+        };
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        act(() => typeText(handleOf(ref), 'c'));
+        breakAgain();
+        const retry = () => {
+            fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+            act(() => {
+                vi.advanceTimersToNextFrame();
+            });
+        };
+        const saveAll = async () => {
+            act(() => {
+                vi.advanceTimersByTime(10_000);
+            });
+            await act(async () => {
+                await vi.advanceTimersByTimeAsync(0);
+            });
+        };
+        return { view, ref, save, diagnostics, breakAgain, retry, saveAll };
+    };
+
+    it('saves on Retry the edit that a render error caught before its write', async () => {
+        const { view, ref, save, retry, saveAll } = await breakBeforeSave();
+
+        retry();
+        expect(handleOf(ref).getSaveStatus()).toMatchObject({
+            state: 'dirty',
+            acknowledgedSequence: 0,
+            revision: 'revision-1',
+        });
+        await saveAll();
+
+        expect(save).toHaveBeenCalledTimes(1);
+        expect(JSON.stringify(save.mock.calls[0]?.[0].document)).toContain('cab');
+        expect(handleOf(ref).getSaveStatus().state).toBe('clean');
+        view.unmount();
+    });
+
+    it('keeps the unsaved edit across two Retries in a row', async () => {
+        const { view, save, breakAgain, retry, saveAll } = await breakBeforeSave();
+
+        retry();
+        breakAgain();
+        retry();
+        await saveAll();
+
+        expect(save).toHaveBeenCalledTimes(1);
+        expect(JSON.stringify(save.mock.calls[0]?.[0].document)).toContain('cab');
+        view.unmount();
+    });
+
+    it('reports no disposed-dirty from the StrictMode remount on Retry', async () => {
+        const { view, save, diagnostics, retry, saveAll } = await breakBeforeSave(true);
+        // The session the render error ended did hold the unsaved edit.
+        expect(diagnostics).toEqual(['persistence.disposed-dirty']);
+        diagnostics.length = 0;
+
+        retry();
+        await saveAll();
+
+        expect(diagnostics).toEqual([]);
+        expect(save).toHaveBeenCalledTimes(1);
+        view.unmount();
     });
 
     it('copies the snapshot as plain text and HTML from the codecs with no recovery service', async () => {
