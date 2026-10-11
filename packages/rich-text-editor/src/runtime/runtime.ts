@@ -52,6 +52,8 @@ import { authoringOf, createPolicyCheck, refusesLevel, setsHeading } from './pol
 import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { createInputSettling } from './settle';
+import { suggestionHosts } from './suggestions/host';
+import { activeSuggestion, suggestionOptionId } from './suggestions/plugin';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
@@ -130,6 +132,8 @@ export interface NodeActions {
 
 export interface EditorRuntime {
     readonly handle: RuntimeHandle;
+    /** The `id` of the session's suggestion list, which the surface's `aria-controls` names while the list shows options. */
+    readonly suggestionListId: string;
     /** The view on the attached surface, for the `src/testing` helpers. */
     readonly view: EditorView | undefined;
     /** The host roots whose focus and pointer moves stay inside the editor. */
@@ -202,6 +206,8 @@ export interface EditorRuntimeOptions {
     readonly inputRules?: () => false | { readonly exclude: readonly string[] } | undefined;
     /** Opens the package-built control of an `openControl` command that a host `execute` ran. */
     readonly openControl?: (control: string) => void;
+    /** The editor's locale, such as `de-CH`, read when a suggestion list asks its source; default `en-US`. */
+    readonly locale?: () => string;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -357,6 +363,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         sessionId: generate(),
         generation: 0,
     };
+    const suggestionListId = `rte-suggestions-${session.sessionId}`;
     const createdAt = Date.now();
     let unmanaged = createUnmanagedStatus(options.revision ?? null);
     const breaksPolicy = createPolicyCheck(definition.model);
@@ -1051,6 +1058,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
     const run = (id: string, given: unknown, options: unknown, route: Route): CommandResult =>
         runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options), route);
+    /** The state with exactly `from` to `to` selected as text, which an accepted suggestion replaces. */
+    const rangeBase = (from: number, to: number): EditorState | RejectedCode => {
+        if (from < 0 || to > state.doc.content.size || from > to) {
+            return 'target-invalid';
+        }
+        const selection = TextSelection.between(state.doc.resolve(from), state.doc.resolve(to));
+        if (selection.from !== from || selection.to !== to) {
+            return 'target-invalid';
+        }
+        return state.apply(state.tr.setSelection(selection));
+    };
+    const acceptSuggestion = (range: { readonly from: number; readonly to: number }, id: string, payload: JsonObject) =>
+        runOn(definition.commands.get(id), checkedPayload(payload), () => rangeBase(range.from, range.to), 'host');
     const execute = (id: string, given?: unknown, commandOptions?: unknown): CommandResult => {
         // Commands belong in event handlers; a call inside a notification is already `busy`.
         if (busy === 0 && options.inRender?.() === true) {
@@ -1631,6 +1651,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const runtime: EditorRuntime = {
         handle,
+        suggestionListId,
         get view() {
             return view;
         },
@@ -1679,6 +1700,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 if (phase === 'transitioning') {
                                     attributes['aria-busy'] = 'true';
                                 }
+                                // The surface keeps focus while a suggestion list shows options, and names the active one.
+                                const suggestion = activeSuggestion(current);
+                                if (suggestion !== null) {
+                                    const option = suggestion.items[suggestion.index];
+                                    if (option !== undefined) {
+                                        attributes['aria-autocomplete'] = 'list';
+                                        attributes['aria-controls'] = suggestionListId;
+                                        attributes['aria-activedescendant'] = suggestionOptionId(
+                                            suggestionListId,
+                                            option.key,
+                                        );
+                                    }
+                                }
                                 return attributes;
                             },
                             nodeViews,
@@ -1704,6 +1738,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             view = attached;
             liveResources.views.add(attached);
             viewRuntimes.set(attached, runtime);
+            suggestionHosts.set(attached, {
+                locale: () => options.locale?.() ?? 'en-US',
+                creates: (featureId) => policy.features[featureId]?.create !== false,
+                accept: acceptSuggestion,
+            });
             if (secondCopyAtMount(state)) {
                 report(DUPLICATE_ENGINE);
             }

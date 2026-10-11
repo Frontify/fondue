@@ -12,8 +12,9 @@ import {
     declaresNodeIds,
     INPUT_RULES_PLUGIN,
     NODE_IDS_PLUGIN,
+    SUGGESTIONS_PLUGIN,
 } from '#/model/capabilities';
-import { compiledModel } from '#/model/compile';
+import { type CompiledSuggestion, compiledModel } from '#/model/compile';
 import { isApple, isPlatformBinding, keyOn, modOn } from '#/model/platform';
 
 import { type CompiledInputRule, compileInputRules } from './input-rules';
@@ -55,7 +56,10 @@ export type CommandLookup = (id: string) => EngineCommand | undefined;
 /** Builds the engine command of one capability from a command's data arguments. */
 export type CapabilityImplementation = (args: JsonObject, schema: Schema, command: CommandLookup) => EngineCommand;
 /** Builds a package plugin whose code lives in the runtime, such as the history or the input rule engine. */
-export type PluginImplementation = (context: { readonly inputRules: readonly CompiledInputRule[] }) => Plugin;
+export type PluginImplementation = (context: {
+    readonly inputRules: readonly CompiledInputRule[];
+    readonly suggestions: readonly CompiledSuggestion[];
+}) => Plugin;
 export type CapabilityImplementations = Readonly<Partial<Record<CapabilityName, CapabilityImplementation>>> & {
     /** The package plugins the runtime builds, by plugin ID; any other plugin holds only its key until it is built. */
     readonly plugins?: Readonly<Record<string, PluginImplementation>>;
@@ -170,7 +174,7 @@ export const compileDefinition = (
     model: ContentModel,
     capabilities: CapabilityImplementations = {},
 ): CompiledDefinition => {
-    const { features, keymap, plugins, commands: declared } = compiledModel(model);
+    const { features, keymap, plugins, commands: declared, suggestions } = compiledModel(model);
     const schema = buildSchema(model);
     const commands = new Map<string, EngineCommand>();
     const lookup: CommandLookup = (id) => commands.get(id);
@@ -180,7 +184,7 @@ export const compileDefinition = (
             commands.set(id, withCommandId(id, implementation(definition.args, schema, lookup), definition.payload));
         }
     }
-    /** The first feature that contributes a plugin, with its capability, or the plugin ID for the package's keymaps, input rules and decoration sources. */
+    /** The first feature that contributes a plugin, with its capability, or the plugin ID for the package's keymaps, input rules, decoration sources and suggestion lists. */
     const originOf = (id: string): PluginOrigin => {
         const command = declared.find(({ definition }) =>
             (CAPABILITY_PLUGINS[definition.capability] ?? []).some((plugin) => plugin.id === id),
@@ -193,7 +197,8 @@ export const compileDefinition = (
                 id === `keymap:${feature.id}` ||
                 (id === INPUT_RULES_PLUGIN.id && (feature.declaration.inputRules ?? []).length > 0) ||
                 (id === NODE_IDS_PLUGIN.id && declaresNodeIds(feature.declaration)) ||
-                (id === CODE_SYNTAX_PLUGIN.id && (feature.declaration.decorations ?? []).includes('code-syntax')),
+                (id === CODE_SYNTAX_PLUGIN.id && (feature.declaration.decorations ?? []).includes('code-syntax')) ||
+                (id === SUGGESTIONS_PLUGIN.id && (feature.declaration.suggestions ?? []).length > 0),
         );
         if (contributor === undefined) {
             return { featureId: id, capability: id };
@@ -204,7 +209,7 @@ export const compileDefinition = (
     const pluginOf = (id: string) => {
         const built = capabilities.plugins?.[id];
         if (built !== undefined) {
-            return built({ inputRules });
+            return built({ inputRules, suggestions });
         }
         const normalizer = NORMALIZERS[id];
         if (normalizer !== undefined) {

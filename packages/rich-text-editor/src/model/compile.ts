@@ -13,6 +13,9 @@ import {
     orderPlugins,
     type PluginContribution,
     type PluginDescriptor,
+    SUGGESTION_PAYLOADS,
+    SUGGESTION_SOURCES,
+    SUGGESTIONS_PLUGIN,
 } from './capabilities';
 import { contentNames } from './content-expression';
 import {
@@ -34,6 +37,8 @@ import {
     type OptionGuard,
     type ParseRule,
     type SharedAttributeDeclaration,
+    type SuggestionDeclaration,
+    type SuggestionSource,
 } from './declarations';
 import { DefinitionError, type DefinitionErrorCode, pointer } from './errors';
 import { featureInternals } from './feature';
@@ -94,6 +99,13 @@ export interface CompiledCommand {
     readonly featureId: string;
     readonly definition: CommandDefinition<unknown>;
 }
+/** A suggestion list as it runs: its trigger read from the feature's options, its source and its command. */
+export interface CompiledSuggestion {
+    readonly featureId: string;
+    readonly trigger: string;
+    readonly source: SuggestionSource;
+    readonly command: string;
+}
 export interface KeymapEntry {
     readonly plugin: string;
     readonly key: string;
@@ -111,6 +123,8 @@ export interface CompiledModel {
     /** In plugin order. */
     readonly keymap: readonly KeymapEntry[];
     readonly plugins: readonly PluginDescriptor[];
+    /** In feature order; each trigger belongs to one list. */
+    readonly suggestions: readonly CompiledSuggestion[];
     readonly migrations: readonly ModelMigration[];
 }
 
@@ -432,6 +446,36 @@ const guardHolds = (feature: CompiledFeature, when: OptionGuard | undefined, pat
     return canonicalJson(value) === canonicalJson(when.equals);
 };
 
+// One or two characters that are neither letters, digits nor white space, so a trigger never fires inside a word.
+const TRIGGER = /^[^\p{L}\p{N}\s]{1,2}$/u;
+
+/** Checks a suggestion list: a valid trigger, a known source and a command that takes the source's items. */
+const compileSuggestion = (
+    feature: CompiledFeature,
+    declared: SuggestionDeclaration,
+    path: string,
+    commands: ReadonlyMap<string, CompiledCommand>,
+): CompiledSuggestion => {
+    let trigger: unknown = declared.trigger;
+    if (typeof declared.trigger !== 'string') {
+        trigger = ownValue(feature.options, declared.trigger.option);
+    }
+    if (typeof trigger !== 'string' || !TRIGGER.test(trigger)) {
+        throw failure('definition.invalid-declaration', feature.id, `${path}/trigger`);
+    }
+    if (!SUGGESTION_SOURCES.includes(declared.source)) {
+        throw failure('definition.invalid-declaration', feature.id, `${path}/source`);
+    }
+    const command = commands.get(declared.command);
+    if (command === undefined) {
+        throw failure('definition.orphan-behavior', feature.id, `${path}/command`);
+    }
+    if (findInvalidPayload(command.definition.payload, SUGGESTION_PAYLOADS[declared.source]) !== undefined) {
+        throw failure('definition.invalid-declaration', feature.id, `${path}/command`);
+    }
+    return { featureId: feature.id, trigger, source: declared.source, command: declared.command };
+};
+
 /**
  * Compiles a feature list once under a model ID and version. The same list always gives the same model,
  * manifest and fingerprint; every inconsistency throws `DefinitionError` before anything runs.
@@ -676,6 +720,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
     };
 
     const keymap: KeymapEntry[] = [];
+    const suggestions: CompiledSuggestion[] = [];
     const contributions: PluginContribution[] = [];
     for (const feature of list) {
         const plugin = keymapPlugin(feature.id);
@@ -745,6 +790,15 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
                 contributions.push({ featureId: feature.id, plugin: descriptor });
             }
         }
+        for (const [index, declared] of (feature.declaration.suggestions ?? []).entries()) {
+            const suggestion = compileSuggestion(feature, declared, pointer('suggestions', index), commands);
+            const first = suggestions.find(({ trigger }) => trigger === suggestion.trigger);
+            if (first !== undefined) {
+                throw duplicate('suggestion', suggestion.trigger, first.featureId, feature.id);
+            }
+            suggestions.push(suggestion);
+            contributions.push({ featureId: feature.id, plugin: SUGGESTIONS_PLUGIN });
+        }
         if (declaresNodeIds(feature.declaration)) {
             contributions.push({ featureId: feature.id, plugin: NODE_IDS_PLUGIN });
         }
@@ -759,6 +813,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
         commands: [...commands.values()],
         keymap,
         plugins,
+        suggestions,
         migrations: options.migrations ?? [],
     };
     const manifest: JsonObject = snapshot({

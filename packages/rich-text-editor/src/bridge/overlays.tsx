@@ -135,17 +135,24 @@ const refocus = (runtime: EditorRuntime, before: Element | null) => {
 
 /**
  * An overlay's place and focus rules: it renders into the portal container, stays open for moves inside the editor,
- * closes when the document is replaced, and returns focus that a close leaves on `body`.
+ * closes when the document is replaced, and returns focus that a close leaves on `body`. Its anchor is the selection, or the
+ * document position that `position` reads while it returns one, such as a suggestion list's trigger.
  */
-export const useEditorOverlay = (open: boolean, setOpen: (open: boolean) => void): EditorOverlay => {
+export const useEditorOverlay = (
+    open: boolean,
+    setOpen: (open: boolean) => void,
+    position?: () => number | undefined,
+): EditorOverlay => {
     const { container, scope } = useOverlays();
     const runtime = useContext(SessionContext);
     const runtimeRef = useRef(runtime);
     // A caller's inline `setOpen` is new on each render, which must not end and restart the open overlay's effect.
     const setOpenRef = useRef(setOpen);
+    const positionRef = useRef(position);
     useClientLayoutEffect(() => {
         runtimeRef.current = runtime;
         setOpenRef.current = setOpen;
+        positionRef.current = position;
     });
     const elementRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useCallback((element: HTMLDivElement | null) => {
@@ -153,7 +160,12 @@ export const useEditorOverlay = (open: boolean, setOpen: (open: boolean) => void
         elementRef.current = element;
         element?.addEventListener('keydown', leaveOnTab);
     }, []);
-    const [anchor] = useState(() => createSelectionAnchor(() => runtimeRef.current?.view));
+    const [anchor] = useState(() =>
+        createSelectionAnchor(
+            () => runtimeRef.current?.view,
+            () => positionRef.current?.(),
+        ),
+    );
     const onOpenChange = useCallback(
         (next: boolean) => {
             const { kind, target } = scope.last();

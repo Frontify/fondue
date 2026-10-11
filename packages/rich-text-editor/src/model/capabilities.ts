@@ -10,6 +10,7 @@ import {
     type JsonValue,
     type PayloadDeclaration,
     type PayloadOf,
+    type SuggestionSource,
 } from './declarations';
 import { DefinitionError } from './errors';
 
@@ -83,6 +84,15 @@ export const CODE_SYNTAX_PLUGIN: PluginDescriptor = { id: 'code-syntax', phase: 
 export const DECORATION_PLUGINS: Readonly<Partial<Record<DecorationSource, readonly PluginDescriptor[]>>> = {
     'code-syntax': [CODE_SYNTAX_PLUGIN],
 };
+/** The suggestion sources a feature may name. */
+export const SUGGESTION_SOURCES: readonly SuggestionSource[] = ['references', 'emoji'];
+/** A payload of the kind each source's items carry, which a suggestion's command must accept. */
+export const SUGGESTION_PAYLOADS: Readonly<Record<SuggestionSource, JsonObject>> = {
+    references: { resourceType: 'user', resourceId: 'user-1', labelSnapshot: 'Ada' },
+    emoji: { text: '\u{1F600}' },
+};
+/** The open suggestion list: its query, its keys and the replacement of the trigger and query by the chosen item. */
+export const SUGGESTIONS_PLUGIN: PluginDescriptor = { id: 'suggestions', phase: 'suggestions' };
 /** The package's input rule engine, one plugin for every feature's rules. */
 export const INPUT_RULES_PLUGIN: PluginDescriptor = { id: 'input-rules', phase: 'input-rules' };
 /** The normalizer that gives nodes a missing or repeated `nodeId` a new one. */
@@ -212,8 +222,8 @@ export const setAttributes = <const P extends PayloadDeclaration>(
     payload: P,
 ): CommandDefinition<PayloadOf<P>> => command('setAttributes', { node }, payload);
 
-/** Opens a package-built control, such as the numbering dialog of `list.ordered.start.edit`. */
-export const openControl = (control: 'numbering'): CommandDefinition => command('openControl', { control });
+/** Opens a package-built control, such as the numbering dialog of `list.ordered.start.edit` or the emoji picker. */
+export const openControl = (control: 'numbering' | 'emoji'): CommandDefinition => command('openControl', { control });
 
 /** The first cycle that `next` reaches from `starts`, as a path that ends where it starts. */
 export const findCycle = (starts: readonly string[], next: (id: string) => readonly string[]): string[] | undefined => {
@@ -258,6 +268,7 @@ const PACKAGE_PLUGIN_KEYS: ReadonlySet<string> = new Set([
     ...Object.values(DECORATION_PLUGINS).flatMap((plugins) => (plugins ?? []).map(({ id }) => id)),
     INPUT_RULES_PLUGIN.id,
     NODE_IDS_PLUGIN.id,
+    SUGGESTIONS_PLUGIN.id,
 ]);
 
 const sameDescriptor = (a: PluginDescriptor, b: PluginDescriptor) => JSON.stringify(a) === JSON.stringify(b);

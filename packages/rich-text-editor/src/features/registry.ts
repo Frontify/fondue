@@ -4,6 +4,7 @@ import { codeBlock } from '#/features/blocks-code/feature';
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
+import { emoji } from '#/features/emoji/feature';
 import { inputRules } from '#/features/input-rules/feature';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
@@ -21,6 +22,7 @@ import { DefinitionError, type Feature } from '#/model';
 /** Every shipped feature factory by feature ID. */
 export const registry: Readonly<Record<string, () => Feature>> = {
     core,
+    emoji,
     'marks.bold': bold,
     'marks.italic': italic,
     'marks.underline': underline,

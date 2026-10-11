@@ -67,6 +67,8 @@ export {
     type ReferenceResolution,
     type RichTextLocale,
     type SharedAttributeDeclaration,
+    type SuggestionDeclaration,
+    type SuggestionSource,
     type ToolbarEntry,
     type TranslationStrings,
     type ValueDeclaration,

@@ -268,6 +268,17 @@ export type CommandRef =
       };
 /** Package-built decoration sources. A data manifest cannot add one. */
 export type DecorationSource = 'code-syntax' | 'find-matches' | 'content-issues';
+/** Package-built sources of suggestion results. A data manifest cannot add one. */
+export type SuggestionSource = 'references' | 'emoji';
+/**
+ * Typing `trigger`, one or two characters, at a word start opens a suggestion list from `source`; the chosen item
+ * replaces the trigger and the query by running `command` with the item's payload.
+ */
+export interface SuggestionDeclaration {
+    readonly trigger: string | OptionRef;
+    readonly source: SuggestionSource;
+    readonly command: string;
+}
 export type ToolbarEntry =
     | {
           readonly kind: 'toggle' | 'button';
@@ -354,6 +365,7 @@ export interface FeatureDeclaration {
     readonly inputRules?: readonly InputRule[];
     /** Package-built decoration sources; a data manifest cannot add one. */
     readonly decorations?: readonly DecorationSource[];
+    readonly suggestions?: readonly SuggestionDeclaration[];
     readonly toolbar?: readonly ToolbarEntry[];
 }
 declare const featureBrand: unique symbol;

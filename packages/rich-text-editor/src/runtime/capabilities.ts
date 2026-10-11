@@ -15,6 +15,7 @@ import {
     HISTORY_PLUGIN,
     INPUT_RULES_PLUGIN,
     LIST_KEYS_PLUGIN,
+    SUGGESTIONS_PLUGIN,
 } from '#/model/capabilities';
 import { isRecord } from '#/model/values';
 
@@ -25,6 +26,7 @@ import { inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
 import { listAround, repeated } from './lists';
 import { nearest, positionOf } from './positions';
+import { suggestionsPlugin } from './suggestions/plugin';
 import { carrySelection } from './transactions';
 
 interface TextRange {
@@ -600,12 +602,22 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
     };
 };
 
-// The node a control acts on, around the selection, without which its command does not apply.
+// The node a control acts on, around the selection, without which its command does not apply. A control with no node,
+// such as the emoji picker, inserts inline content and applies where the selection's block takes it.
 const CONTROL_NODES: Readonly<Record<string, string>> = { numbering: 'ordered_list' };
+
+const takesInlineContent = (state: EditorState): boolean => {
+    const { parent } = state.selection.$from;
+    return parent.inlineContent && parent.type.spec.code !== true;
+};
 
 /** Applies where its control can act and changes nothing: the editor opens the control. */
 const openControl: CapabilityImplementation = (args, schema) => {
-    const type = schema.nodes[CONTROL_NODES[args.control as string] ?? ''];
+    const name = CONTROL_NODES[args.control as string];
+    if (name === undefined) {
+        return { run: takesInlineContent, active: () => false };
+    }
+    const type = schema.nodes[name];
     return {
         run: (state) => type !== undefined && nearest(state, type) !== undefined,
         active: () => false,
@@ -645,5 +657,6 @@ export const CAPABILITIES: CapabilityImplementations = {
         [CONTAINER_KEYS_PLUGIN.id]: containerKeysPlugin,
         [BASE_KEYS_PLUGIN.id]: baseKeysPlugin,
         [CODE_SYNTAX_PLUGIN.id]: codeSyntaxPlugin,
+        [SUGGESTIONS_PLUGIN.id]: suggestionsPlugin,
     },
 };
