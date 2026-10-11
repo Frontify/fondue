@@ -4,9 +4,9 @@ import { useContext, useEffect } from 'react';
 
 import { type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
 import { SessionContext } from '#/bridge/hooks';
+import { mentionLabel } from '#/model/references';
 import { type EditorRuntime } from '#/runtime/runtime';
 
-import { shownMention } from './reader';
 import styles from './styles/mention.module.scss';
 
 // The mentions of each session already reported unavailable, so an undo or a rerender reports none again.
@@ -42,7 +42,7 @@ const reportOnce = (runtime: EditorRuntime | undefined, nodeId: string | null, c
 const MentionChip = () => {
     const { attrs, nodeId, context } = useRichTextNodeView();
     const runtime = useContext(SessionContext);
-    const shown = shownMention(attrs, context);
+    const shown = mentionLabel(attrs, context);
     const { unavailable } = shown;
     useEffect(() => {
         if (unavailable !== null) {

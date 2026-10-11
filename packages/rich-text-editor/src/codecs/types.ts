@@ -6,6 +6,7 @@ import {
     type Diagnostic,
     type ListLevels,
     type PresentationStyle,
+    type ReferenceResolution,
     type ResourceLimits,
     type RichTextDocument,
     type RichTextLocale,
@@ -24,6 +25,8 @@ export interface HtmlOptions {
     /** Localized output text; default `enUS`. */
     readonly locale?: RichTextLocale;
     readonly resolveAssetUrl?: ResolveAssetUrl;
+    /** Mention labels as the reader shows them: the current label, or the stored one with the unavailable note. */
+    readonly resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
     /** The presentation's `contentClassName`, written on the root beside `fondue-rte-content`, as the reader writes it. */
     readonly contentClassName?: string;
     /** The presentation's `listLevels`, which writes each list's marker inline as the reader does. */

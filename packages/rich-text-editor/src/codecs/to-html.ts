@@ -28,6 +28,7 @@ import {
     withStyleId,
     writesAttribute,
 } from '#/model/output';
+import { mentionLabel, type ResolveReference, unavailableNote } from '#/model/references';
 import { isStyleAttribute } from '#/model/values';
 
 import { type CodecPlan, Losses } from './plan';
@@ -43,6 +44,7 @@ interface HtmlState extends Spacing {
     readonly depths: ListDepths;
     readonly styles: OutputStyles;
     readonly columns: ColumnLayout | undefined;
+    readonly resolveReference: ResolveReference | undefined;
     /** The column breaks written so far, whose first `count - 1` are active. */
     breaks: number;
 }
@@ -55,6 +57,8 @@ export interface HtmlWriteOptions {
     readonly listLevels?: ListLevels | undefined;
     readonly columns?: ColumnLayout | undefined;
     readonly styles?: OutputStyles | undefined;
+    /** Mention labels as the reader shows them; without it, each mention's stored label. */
+    readonly resolveReference?: ResolveReference | undefined;
 }
 
 const ESCAPES: Readonly<Record<string, string>> = {
@@ -179,7 +183,7 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
         }
         // The reader's out-of-sight "opens in a new window" text would become content when the output is pasted.
         if (attrs.openInNewWindow === true) {
-            const opened = { ...anchor.attrs, target: '_blank', rel: 'noopener noreferrer' };
+            const opened = { ...anchor.attrs, rel: 'noopener noreferrer', target: '_blank' };
             template = { ...template, layers: [{ ...anchor, attrs: opened }, ...template.layers.slice(1)] };
         }
     }
@@ -281,22 +285,12 @@ const taskItemInner = (state: HtmlState, node: TreeNode, path: string, pre: bool
 const isMention = (node: TreeNode, featureId: string) => node.type === 'mention' && featureId === 'mentions';
 
 /**
- * A mention's `@` and its label isolated for bidirectional text, as the `mentions` reader override renders it with
- * no resolver, which no `HtmlSpec` can express: the label is text, never a resource ID.
+ * A mention's `@` and its label isolated for bidirectional text, then its unavailable note, as the `mentions` reader
+ * override renders it, which no `HtmlSpec` can express: the label is text, never a resource ID.
  */
 const mentionInner = (state: HtmlState, node: TreeNode): string => {
-    let label = '';
-    if (typeof node.attrs?.labelSnapshot === 'string') {
-        label = node.attrs.labelSnapshot;
-    }
-    if (label === '') {
-        let resourceType = '';
-        if (typeof node.attrs?.resourceType === 'string') {
-            resourceType = node.attrs.resourceType;
-        }
-        label = state.context.t('RichTextEditor_mentionUnknown', { resourceType });
-    }
-    return `@<bdi>${escapeHtml(label)}</bdi>`;
+    const shown = mentionLabel(attrsOf(node.attrs), { t: state.context.t, resolveReference: state.resolveReference });
+    return `@<bdi>${escapeHtml(shown.label)}</bdi>${escapeHtml(unavailableNote(shown, state.context.t))}`;
 };
 
 const renderRun = (state: HtmlState, items: readonly Item[], depth: number, pre: boolean): string =>
@@ -332,7 +326,7 @@ export const writeHtml = (
     plan: CodecPlan,
     root: TreeNode,
     context: CodecContext,
-    { contentClassName, listLevels, columns, styles = NO_STYLES }: HtmlWriteOptions = {},
+    { contentClassName, listLevels, columns, styles = NO_STYLES, resolveReference }: HtmlWriteOptions = {},
 ): { readonly html: string; readonly diagnostics: readonly Diagnostic[] } => {
     const state: HtmlState = {
         plan,
@@ -345,6 +339,7 @@ export const writeHtml = (
         depths: listDepths(),
         styles,
         columns,
+        resolveReference,
         breaks: 0,
     };
     if (isEmptyDocument(plan, root)) {

@@ -1,7 +1,85 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type CodecContext, type JsonObject, type ReferenceResolution } from './declarations';
 import { type RichTextDocument } from './format';
 import { isRecord } from './values';
+
+/** A host's lookup of a mentioned resource's current label. */
+export type ResolveReference = (resourceType: string, resourceId: string) => ReferenceResolution;
+
+const UNKNOWN: ReferenceResolution = { status: 'unknown' };
+// Bidirectional marks, embeddings, overrides and isolates, which would reorder the text around a label.
+const BIDI_CONTROLS = /[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/gu;
+
+/** `text` without bidirectional control characters; the letters of every script stay. */
+export const withoutBidiControls = (text: string): string => text.replaceAll(BIDI_CONTROLS, '');
+
+/** `resolve`, or none, as a resolver that gives `unknown` where it has none or throws, for that call only. */
+export const resolvingSafely =
+    (resolve: ResolveReference | undefined): ResolveReference =>
+    (resourceType, resourceId) => {
+        if (resolve === undefined) {
+            return UNKNOWN;
+        }
+        try {
+            return resolve(resourceType, resourceId);
+        } catch {
+            return UNKNOWN;
+        }
+    };
+
+/** What a mention shows: its label, and whether its resource is unavailable, with the reason. */
+export interface MentionLabel {
+    readonly label: string;
+    readonly unavailable: 'deleted' | 'forbidden' | null;
+}
+
+const textOf = (value: unknown): string => {
+    if (typeof value === 'string') {
+        return withoutBidiControls(value);
+    }
+    return '';
+};
+
+/**
+ * The label a mention shows in the editor, the reader and every codec: the label `resolveReference` reports as current,
+ * else `labelSnapshot`, else `Unknown` and the resource type, so no mention shows an empty label. An unavailable
+ * resource keeps its snapshot, since a deleted and a forbidden one look the same.
+ */
+export const mentionLabel = (
+    attrs: JsonObject,
+    { t, resolveReference }: Pick<CodecContext, 't'> & { readonly resolveReference?: ResolveReference | undefined },
+): MentionLabel => {
+    const resourceType = textOf(attrs.resourceType);
+    const resolution: unknown = resolvingSafely(resolveReference)(resourceType, textOf(attrs.resourceId));
+    let status: unknown;
+    if (typeof resolution === 'object' && resolution !== null) {
+        status = (resolution as { readonly status?: unknown }).status;
+    }
+    if (status === 'current') {
+        const current = textOf((resolution as { readonly label?: unknown }).label);
+        if (current !== '') {
+            return { label: current, unavailable: null };
+        }
+    }
+    let label = textOf(attrs.labelSnapshot);
+    if (label === '') {
+        label = t('RichTextEditor_mentionUnknown', { resourceType });
+    }
+    if (status === 'unavailable') {
+        const { code } = resolution as { readonly code?: unknown };
+        return { label, unavailable: code === 'forbidden' ? 'forbidden' : 'deleted' };
+    }
+    return { label, unavailable: null };
+};
+
+/** The text after a mention's label that says its resource is unavailable, or nothing. */
+export const unavailableNote = ({ unavailable }: MentionLabel, t: CodecContext['t']): string => {
+    if (unavailable === null) {
+        return '';
+    }
+    return ` (${t('RichTextEditor_mentionUnavailable')})`;
+};
 
 /** One mention occurrence: its `nodeId` and the resource it names. */
 export interface MentionReference {

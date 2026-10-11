@@ -352,6 +352,13 @@ export const mentionStrings = (t: CodecContext['t']): MentionSearchStrings => ({
     loadMore: t('RichTextEditor_mentionLoadMore'),
     retry: t('RichTextEditor_retry'),
     results: (count) => t('RichTextEditor_mentionResults', { count }),
+    option: ({ label, detail }, position, total) => {
+        if (detail === undefined) {
+            return t('RichTextEditor_suggestionOption', { label, position, total });
+        }
+        return t('RichTextEditor_mentionOption', { label, type: detail, position, total });
+    },
+    both: (first, second) => t('RichTextEditor_announceBoth', { first, second }),
     title: t('RichTextEditor_mention'),
     search: t('RichTextEditor_mentionSearch'),
     cancel: t('RichTextEditor_cancel'),
@@ -377,16 +384,20 @@ export const linkPopoverStrings = (t: CodecContext['t']): LinkPopoverStrings => 
     style: t('RichTextEditor_linkStyle'),
     noStyle: t('RichTextEditor_linkStyleNone'),
     invalid: t('RichTextEditor_linkInvalid'),
+    schemesAllowed: (schemes) => t('RichTextEditor_linkSchemesAllowed', { schemes }),
+    hostsAllowed: (hosts) => t('RichTextEditor_linkHostsAllowed', { hosts }),
+    failed: t('RichTextEditor_linkFailed'),
     removed: t('RichTextEditor_linkTextRemoved'),
     insertNew: t('RichTextEditor_linkInsertNew'),
     results: t('RichTextEditor_linkResults'),
+    result: (label, position, total) => t('RichTextEditor_suggestionOption', { label, position, total }),
     apply: t('RichTextEditor_apply'),
 });
 
 /** The link bubble's strings in the UI locale. */
 export const linkBubbleStrings = (t: CodecContext['t']): LinkBubbleStrings => ({
     label: t('RichTextEditor_link'),
-    open: t('RichTextEditor_linkOpen'),
+    open: t('RichTextEditor_linkOpenInNewTab'),
     edit: t('RichTextEditor_linkEdit'),
     copy: t('RichTextEditor_linkCopy'),
     remove: t('RichTextEditor_linkRemove'),

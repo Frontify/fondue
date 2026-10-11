@@ -32,6 +32,10 @@ export interface ReferenceListStrings {
     readonly loadMore: string;
     readonly retry: string;
     readonly results: (count: number) => string;
+    /** The active option with its place, and its type when it has one, so a user and a group of one name differ. */
+    readonly option: (option: ListboxOption, position: number, total: number) => string;
+    /** Two messages as one announcement, so the second does not cut the first off. */
+    readonly both: (first: string, second: string) => string;
 }
 
 const activeOf = (runtime: EditorRuntime | undefined): ActiveSuggestion | null => {
@@ -96,36 +100,36 @@ const useSlowRequest = (active: ActiveSuggestion | null): boolean => {
 };
 
 /**
- * What a reference list announces: its result count or that it found none or failed when a search answers, and the
- * active option only when the author moves it. A search that starts or loads announces nothing.
+ * What a reference list announces: when a search answers, its result count, or that it found none or failed, with the
+ * option Enter takes; after that, the active option whenever it changes. A search that starts or loads says nothing.
  */
-const useReferenceAnnouncements = (
-    active: ActiveSuggestion | null,
-    strings: ReferenceListStrings,
-    optionLabel: (label: string, position: number, total: number) => string,
-) => {
+const useReferenceAnnouncements = (active: ActiveSuggestion | null, strings: ReferenceListStrings) => {
     const announce = useAnnounce();
     const lastRef = useRef<ActiveSuggestion | null>(null);
     useEffect(() => {
         const last = lastRef.current;
         lastRef.current = active;
-        if (active === null || active.source !== 'references') {
-            return;
-        }
-        if (last === null || last.request !== active.request || last.status !== active.status) {
-            if (active.status === 'ready') {
-                const count = resultCount(active.items);
-                announce(count > 0 ? strings.results(count) : strings.noResults);
-            } else if (active.status === 'failed') {
-                announce(strings.failed);
-            }
+        if (active === null || active.source !== 'references' || active.status === 'loading') {
             return;
         }
         const option = active.items[active.index];
-        if (last.index !== active.index && option !== undefined) {
-            announce(optionLabel(listOption(option, strings).label, active.index + 1, active.items.length));
+        let spoken: string | undefined;
+        if (option !== undefined) {
+            spoken = strings.option(listOption(option, strings), active.index + 1, active.items.length);
         }
-    }, [active, announce, strings, optionLabel]);
+        if (last === null || last.request !== active.request || last.status !== active.status) {
+            let status = strings.failed;
+            if (active.status === 'ready') {
+                const count = resultCount(active.items);
+                status = count > 0 ? strings.results(count) : strings.noResults;
+            }
+            announce(spoken === undefined ? status : strings.both(status, spoken));
+            return;
+        }
+        if (spoken !== undefined && last.items[last.index]?.key !== option?.key) {
+            announce(spoken);
+        }
+    }, [active, announce, strings]);
 };
 
 /** The row a reference list shows below its options: its spinner, no results, or its failure. */
@@ -190,7 +194,7 @@ export const SuggestionList = ({
     });
     const active = useSessionValue(activeOf, sameShown);
     const slow = useSlowRequest(active);
-    useReferenceAnnouncements(active, references, optionLabel);
+    useReferenceAnnouncements(active, references);
     const isReference = active?.source === 'references';
     const items = active?.items;
     const options = useMemo(() => (items ?? []).map((item) => listOption(item, references)), [items, references]);

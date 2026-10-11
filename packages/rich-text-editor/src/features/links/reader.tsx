@@ -24,10 +24,14 @@ const Link = ({ attrs, children, context }: ReaderNodeProps) => {
         return <>{children}</>;
     }
     if (attrs.openInNewWindow !== true) {
-        return <a href={checked.href}>{children}</a>;
+        return (
+            <a href={checked.href} rel="noopener">
+                {children}
+            </a>
+        );
     }
     return (
-        <a href={checked.href} target="_blank" rel="noopener noreferrer">
+        <a href={checked.href} rel="noopener noreferrer" target="_blank">
             {children}
             <span style={VISUALLY_HIDDEN} data-rte-hidden-text="">
                 {` ${context.t('RichTextEditor_linkNewWindow')}`}

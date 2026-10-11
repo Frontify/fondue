@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type JsonObject } from './declarations';
 import { isWellFormed } from './well-formed';
 
 export interface HrefPolicy {
@@ -107,8 +108,14 @@ const decodePercent = (text: string) =>
         }
     });
 
+// Against the base an `http:` or `https:` with no `//` reads as a path, which a browser on an `http:` page resolves to a host.
+const SCHEME_WITHOUT_AUTHORITY = /^https?:(?![/\\]{2})/i;
+
 /** Parses the URL, then rejects an unsafe scheme or embedded credentials. */
 const parse = (input: string): URL | HrefFailure => {
+    if (SCHEME_WITHOUT_AUTHORITY.test(input)) {
+        return { ok: false, code: 'unparsable' };
+    }
     let url: URL;
     try {
         url = new URL(input, BASE);
@@ -124,13 +131,22 @@ const parse = (input: string): URL | HrefFailure => {
     return url;
 };
 
+/** A host entry in the ASCII form a parsed URL's `hostname` takes, such as `xn--mnchen-3ya.example`, or `undefined`. */
+const asciiHost = (host: string): string | undefined => {
+    try {
+        return new URL(`https://${host}/`).hostname;
+    } catch {
+        return undefined;
+    }
+};
+
 const hostAllowed = (hostname: string, entries: readonly string[]) =>
     entries.some((entry) => {
         if (entry.startsWith('*.')) {
-            const suffix = entry.slice(2);
-            return hostname === suffix || hostname.endsWith(`.${suffix}`);
+            const suffix = asciiHost(entry.slice(2));
+            return suffix !== undefined && (hostname === suffix || hostname.endsWith(`.${suffix}`));
         }
-        return hostname === entry;
+        return hostname === asciiHost(entry);
     });
 
 /** Removes the C0 controls and spaces at both ends, as URL parsing does, in one linear pass. */
@@ -179,4 +195,37 @@ export const checkHref = (input: string, policy?: HrefPolicy): HrefResult => {
     }
     const refused = checkPolicy(url, policy) ?? checkPolicy(decoded, policy);
     return refused ?? { ok: true, href: trimmed };
+};
+
+const SCHEMES = new Set(['https', 'http', 'mailto', 'tel']);
+
+const listOf = (value: unknown): readonly string[] | undefined => {
+    if (!Array.isArray(value)) {
+        return undefined;
+    }
+    return value.filter((item): item is string => typeof item === 'string');
+};
+
+/**
+ * The URL policy of a feature's `allowedSchemes` and `allowedHosts` options, or `undefined` when it sets neither, so
+ * only the default check applies. A null option sets nothing.
+ */
+export const hrefPolicyOf = (options: JsonObject): HrefPolicy | undefined => {
+    const schemes = listOf(options.allowedSchemes);
+    const hosts = listOf(options.allowedHosts);
+    if (schemes === undefined && hosts === undefined) {
+        return undefined;
+    }
+    let policy: HrefPolicy = {};
+    if (schemes !== undefined) {
+        policy = {
+            allowedSchemes: schemes.filter((scheme): scheme is 'https' | 'http' | 'mailto' | 'tel' =>
+                SCHEMES.has(scheme),
+            ),
+        };
+    }
+    if (hosts !== undefined) {
+        policy = { ...policy, allowedHosts: hosts.map((host) => host.toLowerCase()) };
+    }
+    return policy;
 };

@@ -113,9 +113,13 @@ describe('toHTML with brand styles', () => {
         const plainHtml = codecs.toHTML(document).html;
         const { html } = codecs.toHTML(document, { inlineStyles: STYLE_MAP });
 
-        expect(plainHtml).toContain('<a href="https://frontify.com/" data-rte-style="brand.button">start</a>');
-        expect(plainHtml).toContain('<a href="https://frontify.com/">basics</a>');
-        expect(html).toMatch(/<a href="https:\/\/frontify\.com\/" data-rte-style="brand\.button" class="rte-style-/);
+        expect(plainHtml).toContain(
+            '<a href="https://frontify.com/" rel="noopener" data-rte-style="brand.button">start</a>',
+        );
+        expect(plainHtml).toContain('<a href="https://frontify.com/" rel="noopener">basics</a>');
+        expect(html).toMatch(
+            /<a href="https:\/\/frontify\.com\/" rel="noopener" data-rte-style="brand\.button" class="rte-style-/,
+        );
     });
 
     it('skips a styles entry whose recipe is not an object, writing the others', () => {

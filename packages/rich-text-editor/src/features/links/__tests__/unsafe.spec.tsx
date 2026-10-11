@@ -43,39 +43,52 @@ const model = compileContentModel([core(), links()], { id: 'test.links', version
 const linked: ContentNodeJSON = {
     type: 'text',
     text: 'guide',
-    marks: [{ type: 'link', attrs: { href: 'https://frontify.com', openInNewWindow: true, styleId: null } }],
+    marks: [{ type: 'link', attrs: { href: 'https://frontify.com', openInNewWindow: true, styleId: 'brand.button' } }],
 } as ContentNodeJSON;
 const document = storedIn(model, [para(text('Read the '), linked)]);
+const presentation = {
+    styles: [
+        {
+            id: 'brand.button',
+            label: 'Button',
+            appliesTo: ['link'],
+            deprecated: false,
+            recipe: { backgroundColor: '#1d4ed8' },
+        },
+    ],
+    colorTokens: [],
+} as const;
+// The paragraph's own markup, which a link that failed the check leaves as plain text in every output.
+const PLAIN = '<p dir="auto">Read the guide</p>';
 
 describe('a link whose href reached the model past the checks', () => {
-    it('renders in the reader as its text alone, with no anchor or href', () => {
-        const markup = renderToStaticMarkup(createElement(RichTextReader, { model, document }));
+    it('renders in the reader as its text alone, with no anchor, href or link style', () => {
+        const markup = renderToStaticMarkup(createElement(RichTextReader, { model, document, presentation }));
 
-        expect(markup).toContain('Read the guide');
-        expect(markup).not.toContain('<a');
-        expect(markup).not.toContain('href');
+        expect(markup).toContain(PLAIN);
         expect(markup.toLowerCase()).not.toContain('javascript:');
     });
 
-    it('writes no href through any codec', () => {
+    it('writes no href or link style through any codec', () => {
         const codecs = createCodecs(model);
-        const { html } = codecs.toHTML(document);
+        const { html } = codecs.toHTML(document, { inlineStyles: presentation.styles });
         const { markdown } = codecs.toMarkdown(document);
         const { text: plain } = codecs.toPlainText(document);
 
-        expect(html).toContain('Read the guide');
-        expect(html).not.toContain('href');
+        expect(html).toContain(PLAIN);
         for (const output of [html, markdown, plain]) {
             expect(output.toLowerCase()).not.toContain('javascript:');
         }
     });
 
-    it('renders in the editor surface with no href', () => {
+    it('renders in the editor surface as its text alone, with no link element or link style', () => {
         const { view } = mountText({ model, document });
-        const anchor = view.dom.querySelector('a');
+        const paragraph = view.dom.querySelector('p');
 
         expect(view.state.doc.textContent).toBe('Read the guide');
-        expect(anchor?.hasAttribute('href')).toBe(false);
+        expect(view.dom.querySelector('a')).toBeNull();
+        expect(view.dom.querySelector('[data-rte-style], [class*="rte-style"]')).toBeNull();
+        expect(paragraph?.textContent).toBe('Read the guide');
         expect(view.dom.innerHTML.toLowerCase()).not.toContain('javascript:');
     });
 });

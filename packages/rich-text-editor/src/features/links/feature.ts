@@ -33,7 +33,7 @@ export const links = defineFeature({
                 openInNewWindow: { type: 'boolean', default: false },
                 styleId: { type: 'id', nullable: true, default: null },
             },
-            html: ['a', { href: { attr: 'href' } }, 0],
+            html: ['a', { href: { attr: 'href' }, rel: 'noopener' }, 0],
             parse: [
                 {
                     tag: 'a[href]',

@@ -94,7 +94,7 @@ describe('the reader with brand styles', () => {
         const html = renderReader(document, model, { presentation });
 
         expect(html).toContain(
-            `<a href="https://frontify.com/" data-rte-style="brand.button" class="${classOf('brand.button', 'link')}">start</a>`,
+            `<a href="https://frontify.com/" rel="noopener" data-rte-style="brand.button" class="${classOf('brand.button', 'link')}">start</a>`,
         );
     });
 
