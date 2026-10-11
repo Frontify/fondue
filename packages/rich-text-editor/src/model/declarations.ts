@@ -252,7 +252,9 @@ export type InputRule =
           readonly replace: string;
           readonly boundary?: 'word';
       }
-    | { readonly id: string; readonly kind: 'quotes'; readonly marker: '"' | "'" };
+    | { readonly id: string; readonly kind: 'quotes'; readonly marker: '"' | "'" }
+    /** Code features only, from `textRule`; a manifest cannot hold a `RegExp`. */
+    | { readonly id: string; readonly kind: 'text-rule'; readonly match: RegExp; readonly replace: string };
 /** A command ID, or a command with the payload a route passes, such as `{ command: 'heading.set', payload: { level: 1 } }`. */
 export type CommandRef =
     | string

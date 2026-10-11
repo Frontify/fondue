@@ -1,0 +1,68 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "feature-contract",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "blocks.quote",
+            "version": 1
+        },
+        {
+            "id": "core",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": {
+            "lang": null,
+            "dir": "auto"
+        },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "As the guide says:"
+                    }
+                ]
+            },
+            {
+                "type": "blockquote",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Keep the logo clear."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Never stretch it."
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
