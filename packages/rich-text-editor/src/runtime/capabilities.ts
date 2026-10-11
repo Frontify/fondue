@@ -858,23 +858,25 @@ const lastMarkPlugin = () =>
         },
     });
 
-/** The range of the run of text with a mark of `type` around a caret strictly inside it. */
+/**
+ * The range of the run of text with one mark of `type`, equal attributes included, that holds the caret or starts at
+ * it, so a neighbouring passage with other attributes stays outside.
+ */
 const markRangeAt = (
     state: EditorState,
     type: MarkType,
 ): { readonly from: number; readonly to: number } | undefined => {
     const { $from } = state.selection;
     const { parent } = $from;
-    const holds = (index: number) =>
-        index >= 0 && index < parent.childCount && type.isInSet(parent.child(index).marks) !== undefined;
     const index = $from.index();
-    // Between two nodes the caret is inside the run only when both hold the mark.
-    if ($from.textOffset === 0 && !holds(index - 1)) {
+    if (index >= parent.childCount) {
         return undefined;
     }
-    if (!holds(index)) {
+    const mark = type.isInSet(parent.child(index).marks);
+    if (mark === undefined) {
         return undefined;
     }
+    const holds = (at: number) => at >= 0 && at < parent.childCount && mark.isInSet(parent.child(at).marks);
     let first = index;
     while (holds(first - 1)) {
         first -= 1;
@@ -937,14 +939,19 @@ const clearMarks = (
 ): boolean => {
     if (state.selection.empty) {
         const stored = state.storedMarks ?? state.selection.$from.marks();
-        const held = types.filter((type) => type.isInSet(stored) !== undefined);
+        const held = types.flatMap((type) => {
+            const range = extend ? markRangeAt(state, type) : undefined;
+            if (range === undefined && type.isInSet(stored) === undefined) {
+                return [];
+            }
+            return [{ type, range }];
+        });
         if (held.length === 0) {
             return false;
         }
         if (dispatch !== undefined) {
             const transaction = state.tr;
-            for (const type of held) {
-                const range = extend ? markRangeAt(state, type) : undefined;
+            for (const { type, range } of held) {
                 if (range === undefined) {
                     transaction.removeStoredMark(type);
                 } else {

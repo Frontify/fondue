@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, Dialog, Label, TextInput } from '@frontify/fondue-components';
-import { type FormEvent, useCallback, useContext, useId, useRef, useState } from 'react';
+import { type FormEvent, useCallback, useContext, useEffect, useId, useRef, useState } from 'react';
 
 import { SessionContext } from '#/bridge/hooks';
 import { useEditorOverlay } from '#/bridge/overlays';
@@ -113,6 +113,8 @@ export const LanguageDialog = ({
     const [tag, setTag] = useState(current.lang);
     const [dir, setDir] = useState(current.dir);
     const [invalid, setInvalid] = useState(false);
+    // Each rejected Apply, after whose error renders focus moves to the field that holds it.
+    const [rejections, setRejections] = useState(0);
     const fieldRef = useRef<HTMLInputElement>(null);
     const groupRef = useRef<HTMLFieldSetElement>(null);
     const close = (next: boolean) => {
@@ -165,9 +167,7 @@ export const LanguageDialog = ({
         const result = runtime.handle.execute(SET_LANGUAGE, { lang: tag, dir: directionOf(dir) });
         if (result.status === 'rejected') {
             setInvalid(true);
-            const radios = groupRef.current?.querySelectorAll<HTMLInputElement>('input[type="radio"]');
-            const radio = [...(radios ?? [])].find((input) => input.checked) ?? radios?.[0];
-            (radio ?? fieldRef.current)?.focus();
+            setRejections((count) => count + 1);
             return;
         }
         overlay.returnFocusTo(null);
@@ -183,9 +183,22 @@ export const LanguageDialog = ({
         status = 'error';
     }
     let errorMessage: string | undefined;
+    let describedBy: { readonly 'aria-describedby'?: string } = {};
+    // The radio a rejected Apply focuses, described by the error: the checked one, else the first. The invalid state stays on
+    // the group, since a radio takes no `aria-invalid`.
+    let invalidOption: string | undefined;
     if (invalid) {
         errorMessage = errorId;
+        describedBy = { 'aria-describedby': errorId };
+        invalidOption = offered.includes(tag) ? tag : offered[0];
     }
+    useEffect(() => {
+        if (rejections === 0) {
+            return;
+        }
+        const radio = groupRef.current?.querySelector<HTMLInputElement>('input[aria-describedby]');
+        (radio ?? fieldRef.current)?.focus();
+    }, [rejections]);
     return (
         <Dialog.Root open={open} onOpenChange={dismiss} modal>
             <Dialog.Content ref={overlay.contentRef} container={overlay.container} maxWidth="400px">
@@ -203,6 +216,7 @@ export const LanguageDialog = ({
                                     value={tag}
                                     status={status}
                                     aria-errormessage={errorId}
+                                    {...describedBy}
                                     onChange={(event) => {
                                         setTag(event.target.value);
                                         setInvalid(false);
@@ -234,6 +248,7 @@ export const LanguageDialog = ({
                                                 name="language"
                                                 value={option}
                                                 checked={tag === option}
+                                                aria-describedby={option === invalidOption ? errorId : undefined}
                                                 onChange={() => {
                                                     setTag(option);
                                                     setInvalid(false);
