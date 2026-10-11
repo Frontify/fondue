@@ -989,8 +989,10 @@ describe('compileContentModel order', () => {
     it('orders plugins of one phase by the host list, in both orders', () => {
         const forward = compile([core(), fixtureBold(), fixtureHeading()]);
         const reverse = compile([core(), fixtureHeading(), fixtureBold()]);
-        expect(forward.manifest.plugins).toEqual(['keymap:fixture.bold', 'keymap:fixture.heading']);
-        expect(reverse.manifest.plugins).toEqual(['keymap:fixture.heading', 'keymap:fixture.bold']);
+        // `core` contributes the history plugin and its own keys first.
+        const corePlugins = ['history', 'keymap:core'];
+        expect(forward.manifest.plugins).toEqual([...corePlugins, 'keymap:fixture.bold', 'keymap:fixture.heading']);
+        expect(reverse.manifest.plugins).toEqual([...corePlugins, 'keymap:fixture.heading', 'keymap:fixture.bold']);
         expect(forward.fingerprint).not.toBe(reverse.fingerprint);
     });
 
@@ -998,6 +1000,7 @@ describe('compileContentModel order', () => {
         const model = compile([core(), fixtureBold(), fixtureRedo(), fixtureHistory()]);
         expect(model.manifest.plugins).toEqual([
             'history',
+            'keymap:core',
             'keymap:fixture.bold',
             'keymap:fixture.redo',
             'keymap:fixture.history',

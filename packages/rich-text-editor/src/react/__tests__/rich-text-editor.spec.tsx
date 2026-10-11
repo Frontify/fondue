@@ -20,6 +20,7 @@ import {
 } from '#/model';
 import * as model from '#/model';
 import { type LoadedDocument } from '#/persistence/types';
+import { type RuntimeHandle } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
@@ -94,6 +95,11 @@ const mount = (props: Props = {}, strict = false) => {
 };
 
 const surface = () => screen.getByRole('textbox', { name: 'Notes' });
+/** Undoes once, and reads whether another undo step is left. */
+const undoOnce = (handle: EditorHandle<object>) => {
+    const commands = handle as unknown as Pick<RuntimeHandle, 'execute' | 'query'>;
+    return [commands.execute('history.undo').status, commands.query('history.undo').enabled];
+};
 const viewOf = () => {
     const [view] = probeRuntimes().views;
     if (view === undefined) {
@@ -113,6 +119,7 @@ describe('RichTextEditor', () => {
 
     it('keeps the view, selection and plugins across 50 rerenders with new callbacks and locale', () => {
         const { handle, rerender, unmount } = mount();
+        act(() => typeText(handle(), 'c'));
         setSelection(handle(), { text: 'b' });
         const view = viewOf();
         const { plugins, selection } = view.state;
@@ -128,6 +135,8 @@ describe('RichTextEditor', () => {
         expect(probeRuntimes().views).toEqual([view]);
         expect(view.state.plugins).toBe(plugins);
         expect(view.state.selection.eq(selection)).toBe(true);
+        // The typed step is still the one undo step.
+        expect(undoOnce(handle())).toEqual(['applied', false]);
         unmount();
     });
 
@@ -224,13 +233,15 @@ describe('RichTextEditor', () => {
 
     it('keeps the mounted definition when the prop changes, and a new key mounts the new one', () => {
         vi.spyOn(console, 'error').mockImplementation(() => undefined);
-        const { rerender, unmount } = mount();
+        const { handle, rerender, unmount } = mount();
+        act(() => typeText(handle(), 'c'));
         const view = viewOf();
         const { schema } = view.state;
 
         rerender({ definition: otherDefinition });
         expect(viewOf()).toBe(view);
         expect(viewOf().state.schema).toBe(schema);
+        expect(undoOnce(handle())).toEqual(['applied', false]);
 
         unmount();
         const remounted = mount({ definition: otherDefinition });

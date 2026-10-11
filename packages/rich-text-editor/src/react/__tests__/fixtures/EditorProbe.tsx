@@ -6,10 +6,11 @@ import { bold, core } from '#/features';
 import { fixtureHeadingSet, fixtureLink } from '#/features/__tests__/fixtures/features';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
+import { boldRules } from '#/react/playground.stories';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
-const model = compileContentModel([core(), bold(), fixtureLink(), fixtureHeadingSet()], {
+const model = compileContentModel([core(), bold(), fixtureLink(), fixtureHeadingSet(), boldRules()], {
     id: 'test.ct',
     version: 1,
 });
