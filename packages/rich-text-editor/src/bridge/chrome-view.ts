@@ -4,7 +4,7 @@ import { DOMSerializer, type Mark, type Node as ProseMirrorNode, type Schema } f
 import { Decoration, DecorationSet, type EditorView, type MarkViewConstructor } from 'prosemirror-view';
 
 import { type ColorToken, type JsonObject, type ListLevels, type PresentationStyle } from '#/model';
-import { listDepths, listLevelStyle, styleOfNode } from '#/model/output';
+import { COLOR_PROPERTIES, listDepths, listLevelStyle, styleOfNode } from '#/model/output';
 import { colorOf } from '#/model/styles';
 import { ownValue } from '#/model/values';
 
@@ -43,10 +43,6 @@ export interface ChromeStyles {
     readonly colorTokens: readonly ColorToken[];
     readonly onUnknown: (path: string) => void;
 }
-
-// The colour property each colour mark writes, as the reader writes it.
-const COLOR_PROPERTIES: Readonly<Record<string, string>> = { font_color: 'color', highlight: 'background-color' };
-
 // Node chrome controls keep the caret's top margin clear of the sticky toolbar when they scroll into view.
 const CHROME_SCROLL_MARGIN = '--rte-chrome-scroll-margin';
 
@@ -279,6 +275,10 @@ export const createChromeView = (): ChromeView => {
                         throw new Error(`The mark ${name} has no DOM output.`);
                     }
                     const { dom, contentDOM } = DOMSerializer.renderSpec(markView.dom.ownerDocument, spec);
+                    const { styleId } = mark.attrs as JsonObject;
+                    if (typeof styleId === 'string' && !dom.hasAttribute('data-rte-style')) {
+                        dom.setAttribute('data-rte-style', styleId);
+                    }
                     const element: MarkElement = { dom, mark, className: undefined };
                     styleMark(element, styles);
                     marks.add(element);

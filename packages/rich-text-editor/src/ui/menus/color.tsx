@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, ColorPicker, Dropdown, Flyout } from '@frontify/fondue-components';
-import { useContext, useEffect, useId, useRef, useState } from 'react';
+import { type CSSProperties, useContext, useEffect, useId, useRef, useState } from 'react';
 
 import { SessionContext } from '#/bridge/hooks';
 import { useEditorOverlay } from '#/bridge/overlays';
+import { hexColor } from '#/clipboard/import/colors';
 import { type ColorToken } from '#/model';
 import { type EditorRuntime } from '#/runtime/runtime';
+import { CheckedSlot } from '#/ui/toolbar/item';
 
 import styles from './styles/color.module.scss';
 
@@ -66,36 +68,74 @@ const rgbaOf = (hex: string): Rgba => {
     return color;
 };
 
-/** The literal colour of `mark` at the selection's start, which the picker's draft starts from, else black. */
-const startColor = (runtime: EditorRuntime | undefined, mark: ColorMark): Rgba => {
+/** The attributes of `mark` at the selection's start, in the stored marks at a caret. */
+const heldAttrs = (
+    runtime: EditorRuntime | undefined,
+    mark: ColorMark,
+): Readonly<Record<string, unknown>> | undefined => {
     const view = runtime?.view;
-    const black = { red: 0, green: 0, blue: 0, alpha: 1 };
     if (view === undefined) {
-        return black;
+        return undefined;
     }
     const { selection, storedMarks } = view.state;
-    const found = (storedMarks ?? selection.$from.marks()).find((held) => held.type.name === mark);
-    if (found === undefined || typeof found.attrs.value !== 'string') {
-        return black;
-    }
-    return rgbaOf(found.attrs.value);
+    return (storedMarks ?? selection.$from.marks()).find((held) => held.type.name === mark)?.attrs;
 };
 
-const Swatch = ({
-    token,
-    mark,
+/** The literal colour of `mark` at the selection's start, if it holds one. */
+const literalAt = (runtime: EditorRuntime | undefined, mark: ColorMark): string | undefined => {
+    const value = heldAttrs(runtime, mark)?.value;
+    if (typeof value !== 'string') {
+        return undefined;
+    }
+    return value;
+};
+
+/** The colour of `mark` at the selection's start, its literal or its token's, which the picker's draft starts from, else black. */
+const startColor = (runtime: EditorRuntime | undefined, mark: ColorMark, tokens: readonly ColorToken[]): Rgba => {
+    const black = { red: 0, green: 0, blue: 0, alpha: 1 };
+    const attrs = heldAttrs(runtime, mark);
+    let hex: string | undefined;
+    if (typeof attrs?.value === 'string') {
+        hex = attrs.value;
+    } else if (typeof attrs?.tokenId === 'string') {
+        const token = tokens.find(({ id }) => id === attrs.tokenId);
+        // A token value may be any CSS colour, which the picker takes only as hex.
+        hex = token === undefined ? undefined : hexColor(token.value);
+    }
+    if (hex === undefined) {
+        return black;
+    }
+    return rgbaOf(hex);
+};
+
+/** A colour as a filled chip with a border, over a checkerboard that shows its translucency. */
+const Chip = ({ color }: { readonly color: string }) => (
+    <span
+        className={styles.chip}
+        style={{ '--rte-chip-color': color } as CSSProperties}
+        data-rte-swatch=""
+        aria-hidden
+    />
+);
+
+/** A row of the colour menu, a `menuitemradio` named `label` and described by `description`, with a check mark when checked. */
+const ColorRow = ({
+    label,
+    description,
+    color,
     checked,
-    onPick,
+    onSelect,
 }: {
-    readonly token: ColorToken;
-    readonly mark: ColorMark;
+    readonly label: string;
+    readonly description: string | undefined;
+    readonly color: string | undefined;
     readonly checked: boolean;
-    readonly onPick: () => void;
+    readonly onSelect: (event: Event) => void;
 }) => {
     const descriptionId = useId();
-    let sample: Readonly<Record<string, string>> = { color: token.value };
-    if (mark === 'highlight') {
-        sample = { backgroundColor: token.value };
+    let describedBy: string | undefined;
+    if (description !== undefined) {
+        describedBy = descriptionId;
     }
     return (
         <Dropdown.Item
@@ -103,20 +143,21 @@ const Swatch = ({
             {...{
                 role: 'menuitemradio',
                 'aria-checked': checked,
-                'aria-label': token.label,
-                'aria-describedby': descriptionId,
+                'aria-label': label,
+                'aria-describedby': describedBy,
             }}
-            onSelect={onPick}
+            onSelect={onSelect}
         >
             <span className={styles.swatch}>
-                <span className={styles.sample} style={sample} aria-hidden>
-                    A
-                </span>
-                <span>{token.label}</span>
-                <span id={descriptionId} className={styles.description}>
-                    {token.value}
-                </span>
+                {color !== undefined && <Chip color={color} />}
+                <span>{label}</span>
+                {description !== undefined && (
+                    <span id={descriptionId} className={styles.description}>
+                        {description}
+                    </span>
+                )}
             </span>
+            {checked && <CheckedSlot />}
         </Dropdown.Item>
     );
 };
@@ -124,18 +165,20 @@ const Swatch = ({
 /** The draft of a literal colour: the Fondue `ColorPicker`, whose Save writes the mark as one undo step. */
 const ColorDraft = ({
     mark,
+    tokens,
     strings,
     testId,
     onClose,
 }: {
     readonly mark: ColorMark;
+    readonly tokens: readonly ColorToken[];
     readonly strings: ColorMenuStrings;
     readonly testId: string;
     readonly onClose: () => void;
 }) => {
     const runtime = useContext(SessionContext);
     const [open, setOpen] = useState(true);
-    const [draft, setDraft] = useState(() => startColor(runtime, mark));
+    const [draft, setDraft] = useState(() => startColor(runtime, mark, tokens));
     const close = (next: boolean) => {
         if (!next) {
             setOpen(false);
@@ -160,10 +203,12 @@ const ColorDraft = ({
                 data-test-id={`${testId}-color-picker`}
             >
                 <Flyout.Body>
-                    <ColorPicker.Root currentColor={draft} onColorChange={setDraft} defaultFormat="HEX">
-                        <ColorPicker.Values />
-                        <ColorPicker.Gradient />
-                    </ColorPicker.Root>
+                    <div className={styles.draft}>
+                        <ColorPicker.Root currentColor={draft} onColorChange={setDraft} defaultFormat="HEX">
+                            <ColorPicker.Values />
+                            <ColorPicker.Gradient />
+                        </ColorPicker.Root>
+                    </div>
                 </Flyout.Body>
                 <Flyout.Footer>
                     <Button emphasis="default" onPress={() => close(false)}>
@@ -182,6 +227,19 @@ const ColorDraft = ({
             </Flyout.Content>
         </Flyout.Root>
     );
+};
+
+/**
+ * Names the hidden trigger of a virtually anchored menu, whose `aria-labelledby` on the content names the menu over
+ * its `aria-label`.
+ */
+const nameTrigger = (content: HTMLElement | null, label: string) => {
+    const triggerId = content?.getAttribute('aria-labelledby');
+    if (content === null || triggerId === null || triggerId === undefined) {
+        return;
+    }
+    const root = content.getRootNode() as Document | ShadowRoot;
+    root.getElementById(triggerId)?.setAttribute('aria-label', label);
 };
 
 /** The swatches of the colour menu, focusing the checked one on open, else the first. */
@@ -222,8 +280,16 @@ const Swatches = ({
         });
         return () => cancelAnimationFrame(frame);
     }, []);
-    const checked = (mark: ColorMark, token: ColorToken) =>
-        runtime !== undefined && runtime.handle.query(SET_COMMANDS[mark], { tokenId: token.id }).active === true;
+    const holds = (mark: ColorMark, payload: object) =>
+        runtime !== undefined && runtime.handle.query(SET_COMMANDS[mark], payload).active === true;
+    /** The literal colour of `mark` that the whole selection holds, which checks the custom row. */
+    const literalOf = (mark: ColorMark) => {
+        const value = literalAt(runtime, mark);
+        if (value === undefined || !holds(mark, { value })) {
+            return undefined;
+        }
+        return value;
+    };
     const run = (command: string, payload?: object) => {
         runtime?.handle.execute(command, payload, { focus: 'editor' });
     };
@@ -239,36 +305,43 @@ const Swatches = ({
                 ref={(element) => {
                     contentRef.current = element;
                     overlay.contentRef(element);
+                    nameTrigger(element, strings.label);
                 }}
                 aria-label={strings.label}
                 container={overlay.container}
                 data-test-id={`${testId}-color-menu`}
             >
-                {groups.map(({ mark, heading, custom }) => (
-                    <Dropdown.Group key={mark} heading={heading}>
-                        {options.tokens
-                            .filter((token) => token.usage.includes(mark))
-                            .map((token) => (
-                                <Swatch
-                                    key={token.id}
-                                    token={token}
-                                    mark={mark}
-                                    checked={checked(mark, token)}
-                                    onPick={() => run(SET_COMMANDS[mark], { tokenId: token.id })}
+                {groups.map(({ mark, heading, custom }) => {
+                    const literal = options.literal.includes(mark) ? literalOf(mark) : undefined;
+                    return (
+                        <Dropdown.Group key={mark} heading={heading}>
+                            {options.tokens
+                                .filter((token) => token.usage.includes(mark))
+                                .map((token) => (
+                                    <ColorRow
+                                        key={token.id}
+                                        label={token.label}
+                                        description={token.value}
+                                        color={token.value}
+                                        checked={holds(mark, { tokenId: token.id })}
+                                        onSelect={() => run(SET_COMMANDS[mark], { tokenId: token.id })}
+                                    />
+                                ))}
+                            {options.literal.includes(mark) && (
+                                <ColorRow
+                                    label={custom}
+                                    description={literal}
+                                    color={literal}
+                                    checked={literal !== undefined}
+                                    onSelect={(event) => {
+                                        event.preventDefault();
+                                        onCustom(mark);
+                                    }}
                                 />
-                            ))}
-                        {options.literal.includes(mark) && (
-                            <Dropdown.Item
-                                onSelect={(event) => {
-                                    event.preventDefault();
-                                    onCustom(mark);
-                                }}
-                            >
-                                {custom}
-                            </Dropdown.Item>
-                        )}
-                    </Dropdown.Group>
-                ))}
+                            )}
+                        </Dropdown.Group>
+                    );
+                })}
                 <Dropdown.Item onSelect={() => run(CLEAR_COLOR)}>{strings.clear}</Dropdown.Item>
             </Dropdown.Content>
         </Dropdown.Root>
@@ -293,7 +366,7 @@ export const ColorMenu = ({
 }) => {
     const [custom, setCustom] = useState<ColorMark>();
     if (custom !== undefined) {
-        return <ColorDraft mark={custom} strings={strings} testId={testId} onClose={onClose} />;
+        return <ColorDraft mark={custom} tokens={options.tokens} strings={strings} testId={testId} onClose={onClose} />;
     }
     // A custom row replaces the menu with the picker.
     return <Swatches options={options} strings={strings} testId={testId} onCustom={setCustom} onClose={onClose} />;

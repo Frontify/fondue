@@ -16,6 +16,7 @@ import {
     itemsOf,
     listDepths,
     type ListDepths,
+    MIN_COLUMN_WIDTH,
     type OutputStyles,
     spaced,
     type Spacing,
@@ -25,6 +26,7 @@ import {
     withColor,
     withListLevel,
     withStyle,
+    withStyleId,
     writesAttribute,
 } from '#/model/output';
 import { isStyleAttribute } from '#/model/values';
@@ -169,7 +171,7 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
     }
     const attrs = attrsOf(mark.attrs);
     const { styles, colorTokens, inline } = state.styles;
-    let template = resolveHtmlSpec(plan.spec, attrs, plan.options);
+    let template = withStyleId(resolveHtmlSpec(plan.spec, attrs, plan.options), attrs);
     template = withStyle(template, styleOfNode(styles, mark.type, attrs).style, inline);
     template = withColor(template, mark.type, attrs, colorTokens);
     return build(template, inner);
@@ -284,7 +286,8 @@ export const isEmptyDocument = (plan: CodecPlan, root: TreeNode): boolean => {
 
 /**
  * The reader's static markup as text: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its
- * blocks, then the island notice; with `columns`, inside a wrapper that sets `columns` and `column-gap`. `styles`
+ * blocks, then the island notice; with `columns`, an inline `columns` of the count and the narrowest column width, and
+ * `column-gap`, so a narrow viewport shows fewer columns with no stylesheet. `styles`
  * adds recipe classes, inline recipes and token colours.
  */
 export const writeHtml = (
@@ -335,9 +338,10 @@ export const writeHtml = (
             details: { count },
         }),
     );
-    html = `<div${props}>${html}</div>`;
+    // On the content root itself, so a `normal` gap resolves against the content font, as in the editor.
     if (columns !== undefined) {
-        html = `<div style="columns:${columns.count};column-gap:${escapeHtml(columns.gap)}">${html}</div>`;
+        props += ` style="columns:${columns.count} ${MIN_COLUMN_WIDTH}px;column-gap:${escapeHtml(columns.gap)}"`;
     }
+    html = `<div${props}>${html}</div>`;
     return { html, diagnostics: [...state.diagnostics, ...lossy] };
 };

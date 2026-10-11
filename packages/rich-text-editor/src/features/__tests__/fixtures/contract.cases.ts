@@ -26,7 +26,7 @@ import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 import { countingIds } from './notes';
 
 // The most columns a presentation sets, so a column break has room in every fixture.
-const ROOM = { count: 6, fits: true, label: 'Column break' };
+const ROOM = { count: 6, fits: true, label: 'Column break', inactiveLabel: 'Column break, inactive' };
 /** A valid payload for each shipped command that declares one, so the case runs it for real. */
 const PAYLOADS: Readonly<Record<string, unknown>> = {
     'text.insert': { text: 'a' },

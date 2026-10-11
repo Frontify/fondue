@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { icons } from '@frontify/fondue-icons';
+import { Dropdown } from '@frontify/fondue-components';
+import { IconCheckMark, icons } from '@frontify/fondue-icons';
 import { type ComponentType } from 'react';
 
 import { endComposition } from '#/bridge/chrome-view';
@@ -56,6 +57,13 @@ export const Icon = ({ name }: { readonly name: string }) => {
     }
     return <Found size={20} aria-hidden />;
 };
+
+/** The check mark of a checked menu row, so its state shows by more than colour. */
+export const CheckedSlot = () => (
+    <Dropdown.Slot name="right">
+        <IconCheckMark size={16} aria-hidden />
+    </Dropdown.Slot>
+);
 
 /**
  * Runs an item's command through the one registered definition, as keys and input rules do. A press that took focus

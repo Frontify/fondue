@@ -1,16 +1,32 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { NodeSelection } from 'prosemirror-state';
-import { createElement } from 'react';
+import { type EditorView } from 'prosemirror-view';
+import { createElement, createRef } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { columnBreak, layoutModel, mountLayout, onPlatform, press } from '#/features/__tests__/fixtures/layout';
+import {
+    columnBreak,
+    layoutFeatures,
+    layoutModel,
+    mountLayout,
+    onPlatform,
+    press,
+} from '#/features/__tests__/fixtures/layout';
+import { bulletList } from '#/features/lists-bullet/feature';
+import { listItem } from '#/features/lists-item/feature';
+import { orderedList } from '#/features/lists-ordered/feature';
+import { taskList } from '#/features/lists-task/feature';
+import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { deDE } from '#/locales/de-DE';
 import { type ContentNodeJSON } from '#/model';
 import { para, storedIn, text } from '#/react/__tests__/fixtures/text';
 import { RichTextReader } from '#/reader';
+import { columnsOf } from '#/runtime/columns';
+import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
 beforeEach(() => {
@@ -28,8 +44,13 @@ const quoted = (...content: readonly ContentNodeJSON[]): ContentNodeJSON => ({
 });
 /** An empty paragraph as a snapshot writes it, with no `content`. */
 const emptyParagraph = (): ContentNodeJSON => ({ type: 'paragraph', attrs: { lang: null } });
-/** The columns of a surface with room for `count` of them. */
-const room = (count: number) => ({ count, fits: true, label: 'Column break' });
+/** The columns of a surface with room for `count` of them, or too narrow for them. */
+const room = (count: number, fits = true) => ({
+    count,
+    fits,
+    label: 'Column break',
+    inactiveLabel: 'Column break, inactive',
+});
 
 /** The three paragraphs of a brand page, with `breaks` column breaks after the first one. */
 const pageWith = (breaks: number): ContentNodeJSON[] => [
@@ -38,12 +59,38 @@ const pageWith = (breaks: number): ContentNodeJSON[] => [
     para(text('Secondary')),
 ];
 
-/** The `data-rte-column-break` and `aria-disabled` of each column break the surface shows. */
+/** The `data-rte-column-break`, `aria-label` and `aria-disabled` of each column break the surface shows. */
 const shownBreaks = (surface: HTMLElement) =>
     [...surface.querySelectorAll('[data-rte-column-break]')].map((element) => [
         element.getAttribute('data-rte-column-break'),
+        element.getAttribute('aria-label'),
         element.getAttribute('aria-disabled'),
     ]);
+const ACTIVE = ['active', 'Column break', null];
+const INACTIVE = ['inactive', 'Column break, inactive', null];
+
+/** Starts a composition as the browser does, so ProseMirror's own handler sets `view.composing`, and composes `typed`. */
+const compose = (view: EditorView, typed: string) => {
+    view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+    // ProseMirror marks the composed text it reads from the DOM with its composition ID.
+    view.dispatch(view.state.tr.insertText(typed).setMeta('composition', 1));
+};
+/** Runs the microtask, then the 20 ms timer after which input has settled. */
+const settleInput = async () => {
+    await vi.advanceTimersByTimeAsync(0);
+    await vi.advanceTimersByTimeAsync(20);
+};
+
+/** A list of `type` whose one item holds `content`, as a snapshot writes it. */
+const listOf = (type: 'bullet_list' | 'ordered_list' | 'task_list', content: ContentNodeJSON): ContentNodeJSON => {
+    if (type === 'task_list') {
+        return {
+            type,
+            content: [{ type: 'task_item', attrs: { nodeId: 'task-1', checked: false }, content: [content] }],
+        };
+    }
+    return { type, content: [{ type: 'list_item', content: [content] }] };
+};
 
 describe('layout.columns', () => {
     for (const apple of [true, false]) {
@@ -157,14 +204,14 @@ describe('layout.columns', () => {
         expect(mounted.handle.query('column.break.insert')).toMatchObject({ enabled: true, disabledReason: null });
     });
 
-    it('shows each break as a separator labelled Column break, inactive while the surface has no room for columns', () => {
+    it('names each break Column break, inactive, with no aria-disabled, while the surface has no room for columns', () => {
         mountLayout({ columns: 2, blocks: pageWith(2) });
 
-        const separators = screen.getAllByRole('separator', { name: 'Column break' });
+        const separators = screen.getAllByRole('separator', { name: 'Column break, inactive' });
 
         expect(separators).toHaveLength(2);
         for (const separator of separators) {
-            expect(separator).toHaveAttribute('aria-disabled', 'true');
+            expect(separator).not.toHaveAttribute('aria-disabled');
             expect(separator).toHaveAttribute('data-rte-column-break', 'inactive');
         }
     });
@@ -172,7 +219,30 @@ describe('layout.columns', () => {
     it('labels the separator in the editor locale', () => {
         const mounted = mountLayout({ columns: 2, blocks: pageWith(1) });
 
-        expect(mounted.view.dom.querySelector('[role="separator"]')).toHaveAttribute('aria-label', 'Column break');
+        expect(mounted.view.dom.querySelector('[role="separator"]')).toHaveAttribute(
+            'aria-label',
+            'Column break, inactive',
+        );
+    });
+
+    it('paints the breaks in the editor locale with the presentation count before the ready frame', () => {
+        const model = layoutModel();
+        const ref = createRef<EditorHandle>();
+        const { container } = render(
+            <RichTextEditor
+                aria-label="Notizen"
+                locale={deDE}
+                definition={defineEditor({ id: 'test.layout', model })}
+                presentation={defineReactPresentation({ columns: 3, toolbar: [] })}
+                defaultValue={{ documentId: 'document-1', revision: null, document: storedIn(model, pageWith(1)) }}
+                ref={ref}
+            />,
+        );
+        const runtime = ref.current === null ? undefined : runtimeOf(ref.current);
+
+        expect(runtime?.handle.getSummary().phase).toBe('mounting');
+        expect(container.querySelector('[role="separator"]')).toHaveAttribute('aria-label', 'Spaltenumbruch, inaktiv');
+        expect(runtime === undefined ? undefined : columnsOf(runtime.state).count).toBe(3);
     });
 
     it('activates the first columns minus one breaks while the surface has room, leaving later breaks inactive', () => {
@@ -180,28 +250,72 @@ describe('layout.columns', () => {
 
         act(() => mounted.runtime.setColumns(room(3)));
 
-        expect(shownBreaks(mounted.view.dom)).toEqual([
-            ['active', null],
-            ['active', null],
-            ['inactive', 'true'],
-        ]);
+        expect(shownBreaks(mounted.view.dom)).toEqual([ACTIVE, ACTIVE, INACTIVE]);
         act(() => mounted.runtime.setColumns(room(2)));
-        expect(shownBreaks(mounted.view.dom)).toEqual([
-            ['active', null],
-            ['inactive', 'true'],
-            ['inactive', 'true'],
-        ]);
+        expect(shownBreaks(mounted.view.dom)).toEqual([ACTIVE, INACTIVE, INACTIVE]);
     });
 
     it('marks every break inactive while the surface is too narrow for its columns', () => {
         const mounted = mountLayout({ columns: 3, blocks: pageWith(2) });
 
-        act(() => mounted.runtime.setColumns({ count: 3, fits: false, label: 'Column break' }));
+        act(() => mounted.runtime.setColumns(room(3, false)));
 
-        expect(shownBreaks(mounted.view.dom)).toEqual([
-            ['inactive', 'true'],
-            ['inactive', 'true'],
-        ]);
+        expect(shownBreaks(mounted.view.dom)).toEqual([INACTIVE, INACTIVE]);
+    });
+
+    it('keeps the break decorations of a column change during a composition until input settles', async () => {
+        const mounted = mountLayout({ columns: 2, blocks: pageWith(1) });
+        setSelection(mounted.handle, { text: 'Primary', from: 7, to: 7 });
+        act(() => compose(mounted.view, 'x'));
+
+        act(() => mounted.runtime.setColumns(room(2)));
+        // A later composed character redraws the view, which must still draw the columns from before.
+        act(() => mounted.view.dispatch(mounted.view.state.tr.insertText('y').setMeta('composition', 1)));
+        const composing = shownBreaks(mounted.view.dom);
+        act(() => {
+            mounted.view.dom.dispatchEvent(new CompositionEvent('compositionend'));
+        });
+        await act(settleInput);
+
+        expect(composing).toEqual([INACTIVE]);
+        expect(shownBreaks(mounted.view.dom)).toEqual([ACTIVE]);
+    });
+
+    it('measures a resize during a composition once input settles, changing nothing on the surface before', async () => {
+        const observers: ResizeObserverCallback[] = [];
+        vi.stubGlobal(
+            'ResizeObserver',
+            class {
+                constructor(callback: ResizeObserverCallback) {
+                    observers.push(callback);
+                }
+                observe() {}
+                disconnect() {}
+            },
+        );
+        const mounted = mountLayout({ columns: 2, columnGap: '16px', blocks: pageWith(1) });
+        setSelection(mounted.handle, { text: 'Primary', from: 7, to: 7 });
+        act(() => compose(mounted.view, 'x'));
+
+        vi.spyOn(mounted.view.dom, 'clientWidth', 'get').mockReturnValue(1000);
+        act(() => {
+            for (const callback of observers) {
+                callback([], {} as ResizeObserver);
+            }
+        });
+        const composing = {
+            fit: mounted.view.dom.hasAttribute('data-rte-columns-fit'),
+            breaks: shownBreaks(mounted.view.dom),
+        };
+        act(() => {
+            mounted.view.dom.dispatchEvent(new CompositionEvent('compositionend'));
+        });
+        await act(settleInput);
+        vi.unstubAllGlobals();
+
+        expect(composing).toEqual({ fit: false, breaks: [INACTIVE] });
+        expect(mounted.view.dom).toHaveAttribute('data-rte-columns-fit', '');
+        expect(shownBreaks(mounted.view.dom)).toEqual([ACTIVE]);
     });
 
     it('writes the presentation columns and gap on the surface', () => {
@@ -230,6 +344,24 @@ describe('layout.columns', () => {
         expect(removed).toEqual(pageWith(0));
         expect(mounted.blocks()).toEqual(pageWith(1));
     });
+
+    it.each(['bullet_list', 'ordered_list', 'task_list'] as const)(
+        'removes a break with Backspace at the start of the %s item after it, as one undo step, leaving the list',
+        (type) => {
+            const model = layoutModel([...layoutFeatures(), listItem(), bulletList(), orderedList(), taskList()]);
+            const blocks = [para(text('Before')), columnBreak(), listOf(type, para(text('After')))];
+            const mounted = mountLayout({ model, columns: 2, blocks });
+            setSelection(mounted.handle, { text: 'After', from: 0, to: 0 });
+            const shape = () => mounted.blocks()?.map((block) => block.type);
+
+            press(mounted, 'Backspace');
+            const removed = shape();
+            mounted.handle.execute('history.undo');
+
+            expect(removed).toEqual(['paragraph', type]);
+            expect(shape()).toEqual(['paragraph', 'column_break', type]);
+        },
+    );
 
     it('removes a break with Backspace from the empty paragraph after it, which the base keymap would select', () => {
         const blocks = [para(text('Primary')), columnBreak(), para()];
@@ -305,19 +437,26 @@ describe('layout.columns', () => {
         expect(markup).not.toContain('data-rte-column-break="active"');
     });
 
-    it('writes the columns and column-gap wrapper in toHTML, with the active breaks breaking a column inline', () => {
+    it('writes columns with the narrowest column width and column-gap on the toHTML content root, with the active breaks breaking a column inline', () => {
         const model = layoutModel();
-        const { html } = createCodecs(model).toHTML(storedIn(model, pageWith(2)), { columns: 2, columnGap: '2rem' });
+        const { html } = createCodecs(model).toHTML(storedIn(model, pageWith(2)), {
+            columns: 2,
+            columnGap: '2rem',
+            contentClassName: 'host-columns',
+        });
 
         expect(html).toMatchSnapshot();
-        expect(html.startsWith('<div style="columns:2;column-gap:2rem"><div class="fondue-rte-content">')).toBe(true);
+        expect(
+            html.startsWith('<div class="fondue-rte-content host-columns" style="columns:2 240px;column-gap:2rem">'),
+        ).toBe(true);
+        expect(html.match(/<div/g)?.length).toBe(3);
         expect(html.match(/break-after:column/g)).toHaveLength(1);
     });
 
     it.each([
         ['one column', { columns: 1 }],
         ['no columns', {}],
-    ])('writes no wrapper in toHTML with %s', (_case, options) => {
+    ])('writes no columns style in toHTML with %s', (_case, options) => {
         const model = layoutModel();
         const { html } = createCodecs(model).toHTML(storedIn(model, pageWith(1)), options);
 
@@ -331,6 +470,8 @@ describe('layout.columns', () => {
             columnGap: '1px;background:red',
         });
 
-        expect(html.startsWith('<div style="columns:2;column-gap:normal">')).toBe(true);
+        expect(html.startsWith('<div class="fondue-rte-content" style="columns:2 240px;column-gap:normal">')).toBe(
+            true,
+        );
     });
 });

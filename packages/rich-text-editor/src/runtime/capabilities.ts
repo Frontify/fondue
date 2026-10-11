@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
-import { gapCursor } from 'prosemirror-gapcursor';
+import { GapCursor, gapCursor } from 'prosemirror-gapcursor';
 import {
     Fragment,
     type Mark,
@@ -29,6 +29,7 @@ import {
     LIST_KEYS_PLUGIN,
     SUGGESTIONS_PLUGIN,
 } from '#/model/capabilities';
+import { appliesToOf } from '#/model/styles';
 import { isRecord } from '#/model/values';
 
 import { codeKeysPlugin } from './code-keys';
@@ -39,6 +40,7 @@ import { inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
 import { listAround, repeated } from './lists';
 import { nearest, positionOf } from './positions';
+import { stylesOf } from './styles';
 import { suggestionsPlugin } from './suggestions/plugin';
 import { carrySelection } from './transactions';
 
@@ -293,12 +295,22 @@ const countOf = (doc: Node, type: NodeType) => {
     return count;
 };
 
-/** Puts `node` at `spot`, adds an empty paragraph after it when it ends up last, and puts the selection after it. */
+// The pinned prosemirror-gapcursor declares `GapCursor.valid` internal, so its types leave it out.
+const gapCursorValid = ($pos: ResolvedPos): boolean =>
+    (GapCursor as unknown as { readonly valid: (at: ResolvedPos) => boolean }).valid($pos);
+
+/**
+ * Puts `node` at `spot`, adds an empty paragraph after it when it ends up last, and puts the selection after it: a
+ * caret in a textblock that follows, else a gap cursor, so typing never replaces a selected leaf such as a column break.
+ */
 const insertBlock = (state: EditorState, spot: BlockSpot, node: Node): Transaction => {
     const transaction = state.tr.replaceWith(spot.from, spot.to, node);
     const after = spot.from + node.nodeSize;
     const $after = transaction.doc.resolve(after);
     if ($after.nodeAfter !== null) {
+        if (!$after.nodeAfter.isTextblock && gapCursorValid($after)) {
+            return transaction.setSelection(new GapCursor($after)).scrollIntoView();
+        }
         return transaction.setSelection(Selection.near($after, 1)).scrollIntoView();
     }
     const paragraph = $after.parent.contentMatchAt($after.index()).defaultType;
@@ -723,9 +735,22 @@ const attributeTargets = (state: EditorState, types: readonly NodeType[], nodeId
     return [];
 };
 
+/** The targets a brand style lands on: those whose node type its `appliesTo` names, when the session holds the style. */
+const styleTargets = (state: EditorState, targets: Located[], attrs: Readonly<Record<string, unknown>>): Located[] => {
+    if (typeof attrs.styleId !== 'string') {
+        return targets;
+    }
+    const applies = appliesToOf(stylesOf(state), attrs.styleId);
+    if (applies === undefined) {
+        return targets;
+    }
+    return targets.filter(({ node }) => applies.includes(node.type.name));
+};
+
 /**
  * Sets the payload's other fields on the node its `nodeId` names, else on the selected textblocks of the listed types,
- * else on the nearest node of one; with `toggle`, removes the values when every target already has them.
+ * else on the nearest node of one; with `toggle`, removes the values when every target already has them. A `styleId`
+ * of a session style lands only on the node types the style applies to.
  */
 const setAttributes: CapabilityImplementation = (args, schema) => {
     const types = typesOf(args.node, schema);
@@ -744,7 +769,7 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
             if (parts === undefined) {
                 return false;
             }
-            const targets = attributeTargets(state, types, parts.nodeId);
+            const targets = styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs);
             const removes =
                 args.toggle === true && targets.length > 0 && targets.every(({ node }) => has(node, parts.attrs));
             const changes = targets.flatMap(({ node, pos }) =>
@@ -774,7 +799,7 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
             if (parts === undefined) {
                 return false;
             }
-            const targets = attributeTargets(state, types, parts.nodeId);
+            const targets = styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs);
             return tristate(targets.filter(({ node }) => has(node, parts.attrs)).length, targets.length);
         },
     };

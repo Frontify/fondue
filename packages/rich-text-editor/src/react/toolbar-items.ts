@@ -5,7 +5,7 @@ import { type CodecContext, type CommandRef, type JsonValue, type PresentationSt
 import { compiledModel } from '#/model/compile';
 import { canonicalJson } from '#/model/hash';
 import { isPlatformBinding } from '#/model/platform';
-import { cssValue } from '#/model/styles';
+import { cssValue, isPresentationStyle } from '#/model/styles';
 import { refusesLevel, setsHeading } from '#/runtime/policy';
 import { type AuthoringPolicy } from '#/runtime/types';
 import { type ColorMenuStrings } from '#/ui/menus/color';
@@ -26,7 +26,10 @@ export const SET_STYLE = 'block.style.set';
 const STYLED_BLOCKS = new Set(['paragraph', 'heading']);
 const PREVIEW = ['fontFamily', 'fontSize', 'fontWeight'] as const;
 
-/** The font family, size and weight a brand style row previews, never its colour or background. */
+/**
+ * The font family, size and weight a brand style row previews, never its colour or background, on a unitless line
+ * height, so the row grows to hold a large font.
+ */
 const previewOf = ({ recipe }: PresentationStyle): Readonly<Record<string, string>> => {
     const preview: Record<string, string> = {};
     for (const name of PREVIEW) {
@@ -35,6 +38,7 @@ const previewOf = ({ recipe }: PresentationStyle): Readonly<Record<string, strin
             preview[name] = value;
         }
     }
+    preview.lineHeight = '1.25';
     return preview;
 };
 
@@ -184,7 +188,10 @@ export const toolbarItems = (
     /** The brand style rows: the default style, then each style that is not deprecated and applies to a styled block type. */
     const brandRows = (defaults: readonly ButtonEntry[]) => {
         const styles = presentation.styles.filter(
-            (style) => style.deprecated !== true && style.appliesTo.some((type) => STYLED_BLOCKS.has(type)),
+            (style) =>
+                isPresentationStyle(style) &&
+                style.deprecated !== true &&
+                style.appliesTo.some((type) => STYLED_BLOCKS.has(type)),
         );
         if (!runnable(SET_STYLE) || styles.length === 0) {
             return [];
