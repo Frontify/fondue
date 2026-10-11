@@ -3,6 +3,7 @@
 import { TextSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { mentions } from '#/features';
 import { fixtureMention } from '#/features/__tests__/fixtures/features';
 import { type ContentNodeJSON } from '#/model';
 import { done, item, list, LIST_KINDS, type ListKind, listModel, outlineOf } from '#/react/__tests__/fixtures/lists';
@@ -86,6 +87,40 @@ describe('block conversions', () => {
 
             expect(run(handle, command, payload).status).toBe('applied');
             expect(firstInline(handle)).toEqual(INLINE);
+        });
+    }
+});
+
+describe('block conversions with the shipped mentions', () => {
+    const shipped = listModel([mentions()]);
+    const inline: readonly ContentNodeJSON[] = [
+        text('Brand', 'bold'),
+        {
+            type: 'mention',
+            attrs: { nodeId: 'mention-1', resourceType: 'user', resourceId: 'user-1', labelSnapshot: 'Ada' },
+        },
+        text(' guide'),
+    ];
+    const targets: readonly (readonly [string, string, unknown])[] = [
+        ['a paragraph', 'paragraph.set', undefined],
+        ['a heading', 'heading.set', { level: 3 }],
+        ['a bulleted list item', 'list.bullet.toggle', undefined],
+        ['a numbered list item', 'list.ordered.toggle', { start: 1 }],
+        ['a task item', 'list.task.toggle', undefined],
+        ['a quote', 'quote.toggle', undefined],
+    ];
+    for (const [name, command, payload] of targets) {
+        it(`keeps the marks and the mention of a heading converted to ${name}`, () => {
+            const { handle } = mountText({
+                model: shipped,
+                blocks: [
+                    { type: 'heading', attrs: { nodeId: 'heading-1', level: 2, lang: null }, content: [...inline] },
+                ],
+            });
+            setSelection(handle, { text: 'Brand', from: 2, to: 2 });
+
+            expect(run(handle, command, payload).status).toBe('applied');
+            expect(firstInline(handle)).toEqual(inline);
         });
     }
 });

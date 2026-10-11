@@ -18,7 +18,14 @@ import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { registry } from '#/features/registry';
 import { defineEditor, defineNodeView, type EditorHandle, RichTextEditor } from '#/index';
-import { compileContentModel, defineFeature, type Feature, type RichTextDocument, toggleMark } from '#/model';
+import {
+    compileContentModel,
+    defineFeature,
+    type Diagnostic,
+    type Feature,
+    type RichTextDocument,
+    toggleMark,
+} from '#/model';
 import { CAPABILITIES } from '#/runtime/capabilities';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, runFeatureContract, setSelection } from '#/testing';
@@ -436,6 +443,60 @@ describe('the feature contract suite', () => {
             const newline = await failingCases([core(), heading(), blockAlign(), bold(), code()], [spaced, indented]);
 
             expect([intact, space, newline]).toEqual([[], [RENDERS('fixture 1')], [RENDERS('fixture 2')]]);
+        } finally {
+            vi.mocked(createCodecs).mockRestore();
+        }
+    });
+
+    it('accepts the lossy-output info that a codec owes a feature declaring its format lossy, and fails any other diagnostic', async () => {
+        const note = defineFeature({
+            id: 'fixture.note',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            marks: { fixture_note: { attrs: {}, html: ['mark', 0], parse: [] } },
+            formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
+        });
+        const document = stored(
+            [{ type: 'paragraph', attrs: { lang: null, align: null }, content: [text('See', 'fixture_note')] }],
+            ['core', 'fixture.note'],
+        );
+        const { createCodecs: actual } = await vi.importActual<{ createCodecs: typeof createCodecs }>('#/codecs');
+        const adding = (extra: readonly Diagnostic[]) =>
+            vi.mocked(createCodecs).mockImplementation((model, options) => {
+                const codecs = actual(model, options);
+                return {
+                    ...codecs,
+                    toHTML: (input, htmlOptions) => {
+                        const output = codecs.toHTML(input, htmlOptions);
+                        if (!JSON.stringify(input).includes('fixture_note')) {
+                            return output;
+                        }
+                        return { ...output, diagnostics: [...output.diagnostics, ...extra] };
+                    },
+                };
+            });
+        const lossy = (featureId: string, severity: Diagnostic['severity'] = 'info'): Diagnostic => ({
+            code: 'codecs.lossy-output',
+            severity,
+            messageKey: 'codecs.lossy-output',
+            featureId,
+            details: { count: 1 },
+        });
+        const failed: Diagnostic = {
+            code: 'codecs.override-failed',
+            severity: 'error',
+            messageKey: 'codecs.override-failed',
+            featureId: 'fixture.note',
+        };
+        try {
+            const cases = [[], [lossy('core')], [lossy('fixture.note', 'warning')], [failed]];
+            const failing: string[][] = [];
+            for (const extra of cases) {
+                adding(extra);
+                failing.push(await failingCases([core(), heading(), blockAlign(), note()], [document]));
+            }
+
+            expect(failing).toEqual([[], [RENDERS('fixture 1')], [RENDERS('fixture 1')], [RENDERS('fixture 1')]]);
         } finally {
             vi.mocked(createCodecs).mockRestore();
         }
