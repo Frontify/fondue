@@ -128,6 +128,22 @@ describe('styles.brand', () => {
         expect(blocksOf(mounted)).toEqual([styled('brand.caption', plain('Body text'))]);
     });
 
+    it('keeps a styled link through the restyle of its mount, reading no document change from the mark element', async () => {
+        const mounted = mountStyled({
+            blocks: [styled(null, linked('plain', null), plain(' and '), linked('button', 'brand.button'))],
+        });
+        // ProseMirror reads observed DOM mutations 20 ms after the update that held them back.
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        });
+
+        expect(mounted.changes).toEqual([]);
+        expect(blocksOf(mounted)).toEqual([
+            styled(null, linked('plain', null), plain(' and '), linked('button', 'brand.button')),
+        ]);
+        expect(mounted.view.dom.querySelector('a[data-rte-style="brand.button"]')?.textContent).toBe('button');
+    });
+
     it('names a styled link mark by data-rte-style in the editor', () => {
         const mounted = mountStyled({
             blocks: [styled(null, linked('button', 'brand.button'), linked('plain', null))],

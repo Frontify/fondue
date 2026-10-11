@@ -318,6 +318,20 @@ describe('layout.columns', () => {
         expect(shownBreaks(mounted.view.dom)).toEqual([ACTIVE]);
     });
 
+    it('keeps the surface columns through a presentation change during a composition, and writes the new ones after', async () => {
+        const mounted = mountLayout({ columns: 2, columnGap: '16px', blocks: pageWith(1) });
+        act(() => compose(mounted.view, 'x'));
+        act(() => mounted.rerenderWithColumns(3));
+        const composing = mounted.view.dom.getAttribute('data-rte-columns');
+        act(() => {
+            mounted.view.dom.dispatchEvent(new CompositionEvent('compositionend'));
+        });
+        await act(settleInput);
+
+        expect(composing).toBe('2');
+        expect(mounted.view.dom).toHaveAttribute('data-rte-columns', '3');
+    });
+
     it('writes the presentation columns and gap on the surface', () => {
         const mounted = mountLayout({ columns: 3, columnGap: '2rem', blocks: pageWith(1) });
 
@@ -437,7 +451,7 @@ describe('layout.columns', () => {
         expect(markup).not.toContain('data-rte-column-break="active"');
     });
 
-    it('writes columns with the narrowest column width and column-gap on the toHTML content root, with the active breaks breaking a column inline', () => {
+    it('writes a fixed column count and column-gap on the toHTML content root, with the active breaks breaking a column inline', () => {
         const model = layoutModel();
         const { html } = createCodecs(model).toHTML(storedIn(model, pageWith(2)), {
             columns: 2,
@@ -446,9 +460,9 @@ describe('layout.columns', () => {
         });
 
         expect(html).toMatchSnapshot();
-        expect(
-            html.startsWith('<div class="fondue-rte-content host-columns" style="columns:2 240px;column-gap:2rem">'),
-        ).toBe(true);
+        expect(html.startsWith('<div class="fondue-rte-content host-columns" style="columns:2;column-gap:2rem">')).toBe(
+            true,
+        );
         expect(html.match(/<div/g)?.length).toBe(3);
         expect(html.match(/break-after:column/g)).toHaveLength(1);
     });
@@ -470,8 +484,6 @@ describe('layout.columns', () => {
             columnGap: '1px;background:red',
         });
 
-        expect(html.startsWith('<div class="fondue-rte-content" style="columns:2 240px;column-gap:normal">')).toBe(
-            true,
-        );
+        expect(html.startsWith('<div class="fondue-rte-content" style="columns:2;column-gap:normal">')).toBe(true);
     });
 });

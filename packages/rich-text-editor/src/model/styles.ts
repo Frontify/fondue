@@ -141,7 +141,9 @@ const PLACING = new Set(
         'inset-inline-end top right bottom left z-index transform translate rotate scale'
     ).split(' '),
 );
-const MARGIN = /^margin(?:-(?:top|right|bottom|left|block|inline|block-start|block-end|inline-start|inline-end))?$/;
+// `before`, `after`, `start` and `end` are the legacy WebKit names of the logical margins, which browsers still alias.
+const MARGIN =
+    /^margin(?:-(?:top|right|bottom|left|block|inline|block-start|block-end|inline-start|inline-end|before|after|start|end))?$/;
 // Only `auto` and non-negative lengths, since a function or a variable may still resolve below zero.
 const NON_NEGATIVE = /^(?:auto|[\d.]+(?:[a-z]+|%)?)(?:\s+(?:auto|[\d.]+(?:[a-z]+|%)?))*$/i;
 
@@ -327,7 +329,7 @@ const resolved = (recipe: StyleRecipe, link: boolean): ResolvedStyle => {
 
 /** Whether a host `styles` entry can resolve: an object whose `recipe` is one; any other entry is skipped. */
 export const isPresentationStyle = (style: unknown): style is PresentationStyle =>
-    isRecord(style) && isRecord(style.recipe);
+    isRecord(style) && typeof style.id === 'string' && Array.isArray(style.appliesTo) && isRecord(style.recipe);
 
 const usable = (styles: readonly PresentationStyle[], id: string): PresentationStyle | undefined =>
     styles.find((style) => isPresentationStyle(style) && style.id === id && style.deprecated !== true);

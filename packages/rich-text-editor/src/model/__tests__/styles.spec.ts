@@ -140,6 +140,9 @@ describe('the style resolver', () => {
             scale: 2,
             marginTop: -40,
             margin: '0 -2px',
+            // Untyped in csstype, as a host's JSON can still send it.
+            ...({ WebkitMarginBefore: '-100vh' } as StyleRecipe),
+            WebkitMarginStart: -8,
             marginInlineStart: 'calc(0px - 1em)',
         };
         const { style } = resolveStyle(
@@ -157,11 +160,12 @@ describe('the style resolver', () => {
         ]);
     });
 
-    it('skips a styles entry that is not an object or whose recipe is not one', () => {
+    it('skips a styles entry that is not an object, has no appliesTo list or whose recipe is not one', () => {
         const styles = [
             null,
             'brand.lead',
             { id: 'brand.lead', label: 'Lead', appliesTo: ['paragraph'], deprecated: false, recipe: null },
+            { id: 'brand.lead', label: 'Lead', appliesTo: null, deprecated: false, recipe: { fontSize: 32 } },
             { id: 'brand.lead', label: 'Lead', appliesTo: ['paragraph'], deprecated: false, recipe: { fontSize: 20 } },
         ] as unknown as PresentationStyle[];
 

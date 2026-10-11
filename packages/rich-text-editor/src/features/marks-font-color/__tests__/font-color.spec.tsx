@@ -72,7 +72,7 @@ describe('marks.font-color', () => {
         setSelection(mounted.handle, { text: 'one' });
         openMenu(mounted);
         const names = namesOf(screen.getAllByRole('menuitemradio'));
-        const clear = screen.getByRole('menuitem', { name: 'Clear color' });
+        const clear = screen.queryByRole('menuitem', { name: 'Clear color' }) !== null;
 
         pick('Brand blue');
         setSelection(mounted.handle, { text: 'two' });
@@ -82,7 +82,7 @@ describe('marks.font-color', () => {
         press(mounted, navigator.platform.startsWith('Mac'));
 
         expect(names).toEqual(['Brand red', 'Brand blue', 'Sun']);
-        expect(clear).toBeInTheDocument();
+        expect(clear).toBe(true);
         const sun = { type: 'highlight', attrs: { tokenId: 'brand.sun', value: null } };
         expect(marksOf(mounted)).toEqual([
             ['one', [{ type: 'font_color', attrs: { tokenId: 'brand.blue', value: null } }]],
@@ -176,6 +176,24 @@ describe('marks.font-color', () => {
         expect(
             screen.getByRole('menuitemradio', { name: 'Custom highlight color', checked: false }),
         ).toBeInTheDocument();
+    });
+
+    it('closes the colour menu when a swatch is chosen by keyboard, which moves focus to the editor', () => {
+        const mounted = mountStyled({ blocks: [styled(null, plain('word'))] });
+        setSelection(mounted.handle, { text: 'word' });
+        openMenu(mounted);
+        const blue = screen.getByRole('menuitemradio', { name: 'Brand blue' });
+
+        act(() => {
+            blue.focus();
+            fireEvent.keyDown(blue, { key: 'Enter' });
+        });
+
+        expect(marksOf(mounted)).toEqual([
+            ['word', [{ type: 'font_color', attrs: { tokenId: 'brand.blue', value: null } }]],
+        ]);
+        expect(screen.queryByRole('menu', { name: 'Color' })).toBeNull();
+        expect(mounted.view.dom).toHaveFocus();
     });
 
     it('names the colour menu by its localized label', () => {
