@@ -412,8 +412,11 @@ test('keeps the link popover and the mention list usable inside a host dialog', 
 
     await page.evaluate(() => window.overlayProbe?.select({ text: 'Hi @', from: 4 }));
     await open(page, 'suggestions');
+    // The list takes keys once it shows its first option as active, and Enter takes the option the arrow key moved to.
     await expect(suggestionsOf(page)).toBeVisible();
+    await expect(suggestionsOf(page).getByRole('option').first()).toHaveAttribute('aria-selected', 'true');
     await page.keyboard.press('ArrowDown');
+    await expect(suggestionsOf(page).getByRole('option').nth(1)).toHaveAttribute('aria-selected', 'true');
     await page.keyboard.press('Enter');
     await expect(suggestionsOf(page)).toBeHidden();
     await open(page, 'suggestions');

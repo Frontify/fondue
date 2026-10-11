@@ -25,19 +25,15 @@ import {
     useRichTextFormField,
 } from '#/index';
 import { compileContentModel, type ContentModel, type ContentNodeJSON } from '#/model';
-import { boldRules } from '#/react/playground.stories';
 import { RichTextReader } from '#/reader';
 import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { createFakePersistenceService, setSelection } from '#/testing';
 
-const model = compileContentModel(
-    [core(), bold(), fixtureLink(), fixtureHeadingSet(), boldRules(), fixtureChromeViews()],
-    {
-        id: 'test.ct',
-        version: 1,
-    },
-);
+const model = compileContentModel([core(), bold(), fixtureLink(), fixtureHeadingSet(), fixtureChromeViews()], {
+    id: 'test.ct',
+    version: 1,
+});
 // Adds a `pre` code block and the heading input rule to the component-test model.
 const inputRulesModel = compileContentModel(
     [core(), bold(), fixtureItalic(), fixtureLink(), fixtureHeadingSet(), fixtureInputRules(), fixtureChromeViews()],
