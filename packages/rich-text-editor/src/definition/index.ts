@@ -3,10 +3,12 @@
 import { keydownHandler } from 'prosemirror-keymap';
 import { type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
+import { type EditorView } from 'prosemirror-view';
 
 import { type CapabilityName, type ContentModel, type JsonObject, type PayloadDeclaration } from '#/model';
 import { CAPABILITY_PLUGINS, declaresNodeIds, INPUT_RULES_PLUGIN, NODE_IDS_PLUGIN } from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
+import { isApple, isPlatformBinding, keyOn, modOn } from '#/model/platform';
 
 import { type CompiledInputRule, compileInputRules } from './input-rules';
 import { NORMALIZE_META, NORMALIZERS } from './normalizers';
@@ -198,17 +200,48 @@ export const compileDefinition = (
                 },
             });
         }
-        const bindings: Record<string, Command> = {};
-        for (const entry of keymap) {
+        // A binding that starts with `mac:` or `other:` runs only on that platform.
+        const apple: Record<string, Command> = {};
+        const other: Record<string, Command> = {};
+        const bind = (entry: (typeof keymap)[number]) => {
             const command = commands.get(entry.command);
-            if (entry.plugin === id && command !== undefined) {
-                bindings[entry.key] = (state, dispatch) => command.run(state, dispatch, entry.payload);
+            if (entry.plugin !== id || command === undefined) {
+                return;
+            }
+            const run: Command = (state, dispatch) => command.run(state, dispatch, entry.payload);
+            const appleKey = keyOn(entry.key, true);
+            if (appleKey !== undefined) {
+                apple[modOn(appleKey, true)] = run;
+            }
+            const otherKey = keyOn(entry.key, false);
+            if (otherKey !== undefined) {
+                other[modOn(otherKey, false)] = run;
+            }
+        };
+        // Plain bindings first, so on its platform a prefixed one of the same key wins.
+        for (const entry of keymap) {
+            if (!isPlatformBinding(entry.key)) {
+                bind(entry);
             }
         }
-        if (Object.keys(bindings).length === 0) {
+        for (const entry of keymap) {
+            if (isPlatformBinding(entry.key)) {
+                bind(entry);
+            }
+        }
+        if (Object.keys(other).length === 0 && Object.keys(apple).length === 0) {
             return new Plugin({ key: new PluginKey(id) });
         }
-        return new Plugin({ key: new PluginKey(id), props: { handleKeyDown: keydownHandler(bindings) } });
+        const handlers = { apple: keydownHandler(apple), other: keydownHandler(other) };
+        const handleKeyDown = (view: EditorView, event: KeyboardEvent) => {
+            // The tooltips name the bindings of the same platform check.
+            const owner = view.dom.ownerDocument.defaultView;
+            if (owner !== null && isApple(owner.navigator)) {
+                return handlers.apple(view, event);
+            }
+            return handlers.other(view, event);
+        };
+        return new Plugin({ key: new PluginKey(id), props: { handleKeyDown } });
     };
     // Every plugin's appended transactions count against the append limit.
     return { model, schema, plugins: plugins.map(({ id }) => countAppends(pluginOf(id), originOf(id))), commands };

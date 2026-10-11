@@ -4,12 +4,55 @@ import { type CompiledDefinition } from '#/definition';
 import { type CodecContext, type CommandRef, type JsonValue, type ToolbarEntry } from '#/model';
 import { compiledModel } from '#/model/compile';
 import { canonicalJson } from '#/model/hash';
+import { isPlatformBinding } from '#/model/platform';
 import { type AuthoringPolicy } from '#/runtime/types';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
 import { type ReactPresentation } from './types';
 
 type ButtonEntry = Exclude<ToolbarEntry, { readonly kind: 'menu' }>;
+
+/**
+ * The manifest label for `lang` by RFC 4647 lookup, without subtags from the end until a tag matches, else `en-US`,
+ * which every manifest label holds.
+ */
+const manifestLabel = (label: Readonly<Record<string, string>>, lang: string): string => {
+    // Language tags match case-insensitively (RFC 4647, section 2).
+    const byTag = new Map(Object.entries(label).map(([tag, text]) => [tag.toLowerCase(), text]));
+    for (let tag = lang.toLowerCase(); tag !== ''; tag = tag.slice(0, Math.max(tag.lastIndexOf('-'), 0))) {
+        const found = byTag.get(tag);
+        if (found !== undefined) {
+            return found;
+        }
+    }
+    return label['en-US'] ?? '';
+};
+
+type Keymap = ReturnType<typeof compiledModel>['keymap'];
+
+/**
+ * Where a binding applies: a plain one not on the platform whose `mac:` or `other:` binding of the same key, in the same
+ * keymap, the editor runs instead.
+ */
+const applying = (binding: Keymap[number], keymap: Keymap): readonly string[] => {
+    if (isPlatformBinding(binding.key)) {
+        return [binding.key];
+    }
+    const replaced = (platform: 'mac' | 'other') =>
+        keymap.some(({ plugin, key }) => plugin === binding.plugin && key === `${platform}:${binding.key}`);
+    const onApple = !replaced('mac');
+    const onOther = !replaced('other');
+    if (onApple && onOther) {
+        return [binding.key];
+    }
+    if (onApple) {
+        return [`mac:${binding.key}`];
+    }
+    if (onOther) {
+        return [`other:${binding.key}`];
+    }
+    return [];
+};
 
 const payloadKey = (payload: JsonValue | null | undefined) => {
     if (payload === undefined) {
@@ -37,6 +80,8 @@ export const toolbarItems = (
     authoring: AuthoringPolicy,
     presentation: ReactPresentation | undefined,
     t: CodecContext['t'],
+    /** The UI locale's language tag, which picks a data manifest's label. */
+    lang: string,
 ): readonly ToolbarItem[] => {
     if (presentation === undefined) {
         return [];
@@ -76,22 +121,29 @@ export const toolbarItems = (
             ) {
                 continue;
             }
-            let label = entry.labelKey;
+            let label: string;
+            if (entry.label === undefined) {
+                label = t(entry.labelKey as `RichTextEditor_${string}`);
+            } else {
+                label = manifestLabel(entry.label, lang);
+            }
             let { icon } = entry;
             const control = presentation.controls?.[command];
             if (control !== undefined) {
-                label = control.labelKey ?? label;
+                if (control.labelKey !== undefined) {
+                    label = t(control.labelKey as `RichTextEditor_${string}`);
+                }
                 icon = control.icon ?? icon;
             }
             const bindings = keymap
                 .filter((binding) => binding.command === command && payloadKey(binding.payload) === payloadKey(payload))
-                .map((binding) => binding.key);
+                .flatMap((binding) => applying(binding, keymap));
             items.push({
                 key,
                 command,
                 payload,
                 toggle: entry.kind === 'toggle',
-                label: t(label as `RichTextEditor_${string}`),
+                label,
                 icon,
                 bindings,
                 groupStart,
