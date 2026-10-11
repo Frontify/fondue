@@ -3,10 +3,10 @@
 import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
 import { Fragment, type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos } from 'prosemirror-model';
 import { liftListItem, sinkListItem, wrapRangeInList } from 'prosemirror-schema-list';
-import { type EditorState, Selection, type Transaction } from 'prosemirror-state';
+import { type EditorState, type Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { type CapabilityImplementation, type CapabilityImplementations, COMMAND_META } from '#/definition';
+import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
 import {
     BASE_KEYS_PLUGIN,
     CONTAINER_KEYS_PLUGIN,
@@ -20,6 +20,8 @@ import { historyPlugin, redo, undo } from './history';
 import { inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
 import { listAround, repeated } from './lists';
+import { nearest, positionOf } from './positions';
+import { carrySelection } from './transactions';
 
 interface TextRange {
     readonly from: number;
@@ -382,7 +384,7 @@ const wrapInList = (state: EditorState, list: NodeType, item: NodeType, payload:
 /**
  * Turns the list at the selection's depth into `list`, keeping items, nesting and children: an ordered list takes the
  * payload's `start`, new task items are unchecked unless a rule's `checked` names the item at the caret, and items that
- * leave a task list drop `checked` (List keys).
+ * leave a task list drop `checked`.
  */
 const convertList = (state: EditorState, list: NodeType, item: NodeType, payload: unknown) => {
     const around = listAround(state.selection.$from);
@@ -409,7 +411,7 @@ const convertList = (state: EditorState, list: NodeType, item: NodeType, payload
         list.create(declaredIn(list, payload), content),
     );
     // Items and lists keep their sizes, so every position, and the selection with them, stays the same.
-    return transaction.setSelection(Selection.fromJSON(transaction.doc, state.selection.toJSON())).scrollIntoView();
+    return transaction.setSelection(carrySelection(transaction.doc, state.selection)).scrollIntoView();
 };
 
 const toggleList: CapabilityImplementation = (args, schema) => {
@@ -456,33 +458,18 @@ const outdentItem: CapabilityImplementation = (args, schema) => {
     };
 };
 
-/** The nearest node of `type` around the selection, with its position. */
-export const nearest = (
-    state: EditorState,
-    type: NodeType,
-): { readonly node: Node; readonly pos: number } | undefined => {
-    const { $from } = state.selection;
-    for (let depth = $from.depth; depth > 0; depth -= 1) {
-        const node = $from.node(depth);
-        if (node.type === type) {
-            return { node, pos: $from.before(depth) };
-        }
-    }
-    return undefined;
-};
-
-const toggleTask: CapabilityImplementation = (args, schema) => {
+const toggleTask: CapabilityImplementation = (args, schema, command) => {
     const item = schema.nodes[args.item as string] as NodeType;
+    const setChecked = args.setChecked as string;
     return {
         run: (state, dispatch) => {
             const found = nearest(state, item);
-            if (found === undefined) {
+            const target = command(setChecked);
+            if (found === undefined || target === undefined) {
                 return false;
             }
-            // Each keyboard toggle is one `task.setChecked`, which this command runs.
-            const transaction = state.tr.setNodeAttribute(found.pos, 'checked', found.node.attrs.checked !== true);
-            dispatch?.(transaction.setMeta(COMMAND_META, 'task.setChecked'));
-            return true;
+            const { nodeId, checked } = found.node.attrs as { readonly nodeId: string; readonly checked: boolean };
+            return target.run(state, dispatch, { nodeId, checked: !checked });
         },
         active: () => false,
     };
@@ -497,15 +484,15 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
                 return false;
             }
             const { nodeId, ...attrs } = payload;
-            let found = nearest(state, type);
+            let found: { readonly node: Node; readonly pos: number } | undefined;
             if (typeof nodeId === 'string') {
-                found = undefined;
-                state.doc.descendants((node, pos) => {
-                    if (found === undefined && node.type === type && node.attrs.nodeId === nodeId) {
-                        found = { node, pos };
-                    }
-                    return found === undefined;
-                });
+                const pos = positionOf(state.doc, nodeId);
+                const node = pos === undefined ? null : state.doc.nodeAt(pos);
+                if (pos !== undefined && node?.type === type) {
+                    found = { node, pos };
+                }
+            } else {
+                found = nearest(state, type);
             }
             if (found === undefined) {
                 return false;

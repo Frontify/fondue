@@ -76,6 +76,10 @@ const refusedBy = (authoring: AuthoringPolicy, commands: Commands, command: stri
     return compiled !== undefined && authoring.features[compiled.featureId]?.create === false;
 };
 
+/** Whether `command` opens a package-built control rather than changing the document. */
+const opensControl = (commands: Commands, command: string) =>
+    commands.some(({ id, definition }) => id === command && definition.capability === 'openControl');
+
 /** The compiled key bindings of a route, each where it applies. */
 const bindingsOf = (keymap: Keymap, command: string, payload: JsonValue | undefined) =>
     keymap
@@ -140,7 +144,18 @@ export const toolbarItems = (
         }
         const bindings = bindingsOf(keymap, command, payload);
         const key = `${command} ${payloadKey(payload)}`;
-        return { key, command, payload, toggle: entry.kind === 'toggle', label, icon, bindings, groupStart, bubble };
+        return {
+            key,
+            command,
+            payload,
+            toggle: entry.kind === 'toggle',
+            label,
+            icon,
+            bindings,
+            groupStart,
+            bubble,
+            opensControl: opensControl(commands, command),
+        };
     };
     // A heading level the policy cannot create only names a stored heading.
     const offered = ({ command, payload }: ButtonEntry) => {
@@ -193,7 +208,7 @@ export const toolbarItems = (
 export const numberingStrings = (t: CodecContext['t']): NumberingStrings => ({
     title: t('RichTextEditor_startNumbering'),
     field: t('RichTextEditor_startNumberingField'),
-    range: t('RichTextEditor_startNumberingRange', { min: 0, max: 1_000_000 }),
+    range: (min, max) => t('RichTextEditor_startNumberingRange', { min, max }),
     apply: t('RichTextEditor_apply'),
     cancel: t('RichTextEditor_cancel'),
 });
@@ -237,10 +252,12 @@ export const menuItems = (
         }
         // A command that opens a control has no key, so its toolbar entry names its row, as Start numbering at does.
         for (const entry of declaration.toolbar ?? []) {
-            const compiled = commands.find(({ id }) => id === entry.command);
             const key = `${entry.command} ${payloadKey(undefined)}`;
-            const opens = compiled !== undefined && compiled.definition.capability === 'openControl';
-            if (!opens || !engine.commands.has(entry.command) || refusedBy(authoring, commands, entry.command)) {
+            if (
+                !opensControl(commands, entry.command) ||
+                !engine.commands.has(entry.command) ||
+                refusedBy(authoring, commands, entry.command)
+            ) {
                 continue;
             }
             if (shown.has(key) || rows.some((row) => row.key === key)) {
@@ -256,7 +273,7 @@ export const menuItems = (
                 bindings: [],
                 groupStart: false,
                 bubble: false,
-                numbering: numberingStrings(t),
+                opensControl: true,
             });
         }
     }

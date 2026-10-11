@@ -2,7 +2,9 @@
 
 import { type Node, type NodeType, type ResolvedPos } from 'prosemirror-model';
 import { splitListItem } from 'prosemirror-schema-list';
-import { type Command, type EditorState, Selection, type Transaction } from 'prosemirror-state';
+import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
+
+import { appendSteps, carrySelection } from './transactions';
 
 /** Whether `item` is the item of `list`: a block whose default content is `item`, which is no block, as `list_item` is. */
 const holdsItems = (list: NodeType, item: NodeType) =>
@@ -42,15 +44,13 @@ export const repeated = (
         if (next === undefined || !next.docChanged) {
             break;
         }
-        for (const step of next.steps) {
-            transaction.step(step);
-        }
+        appendSteps(transaction, next);
         current = current.apply(next);
     } while (again(current));
     if (!transaction.docChanged) {
         return undefined;
     }
-    return transaction.setSelection(Selection.fromJSON(transaction.doc, current.selection.toJSON())).scrollIntoView();
+    return transaction.setSelection(carrySelection(transaction.doc, current.selection)).scrollIntoView();
 };
 
 /**

@@ -52,7 +52,7 @@ import {
 } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
-import { NumberingDialog } from '#/ui/menus/numbering';
+import { NumberingDialog, SET_START } from '#/ui/menus/numbering';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
@@ -503,6 +503,7 @@ const SessionComponent = (
             ),
         [mounted.definition, props.presentation, chromeContext, lang],
     );
+    const startPayload = engineOf(mounted.definition).commands.get(SET_START)?.payload;
     const menu = useMemo(
         () => menuItems(engineOf(mounted.definition), mounted.definition.authoring, items, chromeContext.t),
         [mounted.definition, items, chromeContext],
@@ -574,8 +575,9 @@ const SessionComponent = (
                                 {children}
                                 {toolbarMode === 'bubble' && <Bubble />}
                                 <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
-                                {control === 'numbering' && (
+                                {control === 'numbering' && startPayload !== undefined && (
                                     <NumberingDialog
+                                        payload={startPayload}
                                         strings={numberingStrings(chromeContext.t)}
                                         onClose={() => setControl(undefined)}
                                     />

@@ -5,19 +5,32 @@ import { type FormEvent, useContext, useId, useState } from 'react';
 
 import { SessionContext } from '#/bridge/hooks';
 import { useEditorOverlay } from '#/bridge/overlays';
-import { nearest } from '#/runtime/capabilities';
+import { type PayloadDeclaration } from '#/model';
+import { findInvalidPayload } from '#/model/values';
+import { nearest } from '#/runtime/positions';
 import { type EditorRuntime } from '#/runtime/runtime';
+
+/** The command the dialog runs, whose payload declaration bounds the number. */
+export const SET_START = 'list.ordered.start.set';
 
 /** The numbering dialog's strings, in the UI locale. */
 export interface NumberingStrings {
     readonly title: string;
     readonly field: string;
-    readonly range: string;
+    /** The error for a value outside `min` to `max`. */
+    readonly range: (min: number, max: number) => string;
     readonly apply: string;
     readonly cancel: string;
 }
 
-const MAX_START = 1_000_000;
+/** The bounds that `payload` declares for `start`. */
+const boundsOf = ({ fields }: PayloadDeclaration) => {
+    const field = fields.start;
+    if (field?.type === 'integer' || field?.type === 'number') {
+        return { min: field.min ?? 0, max: field.max ?? Number.MAX_SAFE_INTEGER };
+    }
+    return { min: 0, max: Number.MAX_SAFE_INTEGER };
+};
 
 /** The `start` of the nearest ordered list around the selection, which `list.ordered.start.set` changes. */
 const currentStart = (runtime: EditorRuntime | undefined): string => {
@@ -34,13 +47,16 @@ const currentStart = (runtime: EditorRuntime | undefined): string => {
 };
 
 /**
- * Start numbering at: one labelled number field from 0 to 1,000,000, whose Apply runs `list.ordered.start.set` on the
- * list at the selection as one undo step, and whose other values show an error and change nothing.
+ * Start numbering at: one labelled number field whose Apply runs `SET_START` on the list at the selection as one undo
+ * step when `payload` accepts the number, and otherwise shows the declared range and changes nothing.
  */
 export const NumberingDialog = ({
+    payload,
     strings,
     onClose,
 }: {
+    /** The payload declaration of `SET_START`. */
+    readonly payload: PayloadDeclaration;
     readonly strings: NumberingStrings;
     /** Runs once the dialog closes, with or without a change. */
     readonly onClose: () => void;
@@ -58,6 +74,7 @@ export const NumberingDialog = ({
     const overlay = useEditorOverlay(open, close);
     const fieldId = useId();
     const formId = useId();
+    const { min, max } = boundsOf(payload);
     let status: 'error' | 'neutral' = 'neutral';
     if (invalid) {
         status = 'error';
@@ -65,11 +82,11 @@ export const NumberingDialog = ({
     const apply = (event: FormEvent) => {
         event.preventDefault();
         const start = Number(value);
-        if (value.trim() === '' || !Number.isInteger(start) || start < 0 || start > MAX_START) {
+        if (value.trim() === '' || findInvalidPayload(payload, { start }) !== undefined) {
             setInvalid(true);
             return;
         }
-        runtime?.handle.execute('list.ordered.start.set', { start });
+        runtime?.handle.execute(SET_START, { start });
         close(false);
     };
     return (
@@ -91,7 +108,7 @@ export const NumberingDialog = ({
                                 setInvalid(false);
                             }}
                         />
-                        {invalid && <p role="alert">{strings.range}</p>}
+                        {invalid && <p role="alert">{strings.range(min, max)}</p>}
                     </form>
                 </Dialog.Body>
                 <Dialog.Footer>

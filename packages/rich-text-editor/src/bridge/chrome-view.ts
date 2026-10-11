@@ -4,10 +4,9 @@ import { type Node as ProseMirrorNode } from 'prosemirror-model';
 import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
 
 import { type ListLevels } from '#/model';
-import { LIST_LEVEL_KINDS, listLevelStyle } from '#/model/output';
-import { ownValue } from '#/model/values';
+import { listDepths, listLevelStyle } from '#/model/output';
 
-import { firstBlockId } from './node-views';
+import { firstBlockId, labelsFirstBlock } from './node-views';
 
 // ProseMirror's own default margin, kept beyond the space the chrome covers.
 const MARGIN = 5;
@@ -45,36 +44,36 @@ const writeChromeMargin = (view: EditorView | undefined, height: number) => {
 
 /**
  * A node decoration with its list level style on each list whose `marker` is null, as the reader writes it, and one
- * with the `firstBlockId` on the first block of each node with a `nodeId` whose node view holds blocks.
+ * with the `firstBlockId` on the first block of each node `labelsFirstBlock` names.
  */
 const contentDecorations = (view: EditorView, doc: ProseMirrorNode, levels: ListLevels | undefined): Decoration[] => {
     const found: Decoration[] = [];
     const nodeViews = view.props.nodeViews ?? {};
-    const lists = { ordered: 0, bullet: 0 };
+    const depths = listDepths();
     const visit = (parent: ProseMirrorNode, start: number) => {
         let pos = start;
         for (let index = 0; index < parent.childCount; index += 1) {
             const child = parent.child(index);
-            const first = child.firstChild;
-            const { nodeId } = child.attrs;
             const viewed = Object.hasOwn(nodeViews, child.type.name);
-            if (viewed && !child.isTextblock && first !== null && first.isBlock && typeof nodeId === 'string') {
-                found.push(Decoration.node(pos + 1, pos + 1 + first.nodeSize, { id: firstBlockId(view, nodeId) }));
+            const labeled = labelsFirstBlock(child);
+            if (viewed && labeled !== undefined) {
+                found.push(
+                    Decoration.node(pos + 1, pos + 1 + labeled.block.nodeSize, {
+                        id: firstBlockId(view, labeled.nodeId),
+                    }),
+                );
             }
-            const kind = ownValue(LIST_LEVEL_KINDS, child.type.name);
-            if (kind !== undefined) {
-                lists[kind] += 1;
-                const style = listLevelStyle(kind, lists[kind], levels);
-                if (style !== undefined && child.attrs.marker === null) {
-                    found.push(Decoration.node(pos, pos + child.nodeSize, { style }));
+            depths.within(child.type.name, (entered) => {
+                if (entered !== undefined) {
+                    const style = listLevelStyle(entered.kind, entered.depth, levels);
+                    if (style !== undefined && child.attrs.marker === null) {
+                        found.push(Decoration.node(pos, pos + child.nodeSize, { style }));
+                    }
                 }
-            }
-            if (!child.isTextblock) {
-                visit(child, pos + 1);
-            }
-            if (kind !== undefined) {
-                lists[kind] -= 1;
-            }
+                if (!child.isTextblock) {
+                    visit(child, pos + 1);
+                }
+            });
             pos += child.nodeSize;
         }
     };

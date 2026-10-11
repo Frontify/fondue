@@ -16,6 +16,7 @@ import {
 import { type ResolveAssetUrl } from '#/model/declarations';
 import { decodeToTree } from '#/model/decode';
 import { canonicalJson } from '#/model/hash';
+import { listDepths } from '#/model/output';
 
 import { readerContext } from './context';
 import { planOf } from './plan';
@@ -81,7 +82,7 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
         islands: 0,
         carried: 0,
         listLevels: resolvers.listLevels,
-        lists: { ordered: 0, bullet: 0 },
+        depths: listDepths(),
     };
     return { element: renderDocument(state, tree, resolvers.contentClassName), diagnostics, notified };
 };

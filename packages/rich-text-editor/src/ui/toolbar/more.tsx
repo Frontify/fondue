@@ -7,7 +7,6 @@ import { type AriaAttributes, type AriaRole, useContext, useId, useRef, useState
 
 import { SessionContext, useCommandQuery } from '#/bridge/hooks';
 import { useOverlayContainer } from '#/bridge/overlays';
-import { NumberingDialog, type NumberingStrings } from '#/ui/menus/numbering';
 
 import {
     Icon,
@@ -122,18 +121,17 @@ export const More = ({
     const triggerRef = useRef<HTMLButtonElement>(null);
     // Radix opens a menu on pointer down; More opens on the click, so a press dragged away opens nothing.
     const [open, setOpen] = useState(false);
-    const [numbering, setNumbering] = useState<NumberingStrings | undefined>(undefined);
-    // The dialog a row opens once the menu has closed and returned focus to More, which the dialog then returns it to.
-    const pendingRef = useRef<NumberingStrings | undefined>(undefined);
+    // The row whose control opens once the menu has closed and returned focus to More, which the control then returns it to.
+    const pendingRef = useRef<ToolbarItem | undefined>(undefined);
     const pointerRef = useRef(false);
     const openAtPressRef = useRef(false);
     const onRun = async (item: ToolbarItem) => {
         if (runtime === undefined) {
             return;
         }
-        // The row opens its dialog once the menu has closed, so it runs no command, whose host `execute` would open one now.
-        if (item.numbering !== undefined) {
-            pendingRef.current = item.numbering;
+        // A row that opens a control runs once the menu has closed, so the control does not open under the menu.
+        if (item.opensControl === true) {
+            pendingRef.current = item;
             return;
         }
         ranRef.current = true;
@@ -142,123 +140,115 @@ export const More = ({
         returnFocus(runtime, [contentRef.current]);
     };
     return (
-        <>
-            {numbering !== undefined && <NumberingDialog strings={numbering} onClose={() => setNumbering(undefined)} />}
-            <Dropdown.Root
-                open={open}
-                onOpenChange={(next) => {
-                    if (!next || !pointerRef.current) {
-                        setOpen(next);
+        <Dropdown.Root
+            open={open}
+            onOpenChange={(next) => {
+                if (!next || !pointerRef.current) {
+                    setOpen(next);
+                }
+            }}
+        >
+            <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                    <Dropdown.Trigger asChild>
+                        <RadixToolbar.Button
+                            {...tabStop(outOfTabOrder)}
+                            ref={triggerRef}
+                            type="button"
+                            className={styles.item}
+                            aria-label={strings.more}
+                            disabled={disabled}
+                            data-rte-toolbar-more=""
+                            onPointerDown={() => {
+                                pointerRef.current = true;
+                                openAtPressRef.current = open;
+                            }}
+                            // WebKit sends no click for a touch whose `pointerdown` Radix prevented, so a touch released
+                            // over More opens it here; one that slid off opens nothing.
+                            onPointerUp={(event) => {
+                                // Only a press that began on More opens it, never in a disabled editor.
+                                const pressed = pointerRef.current;
+                                pointerRef.current = false;
+                                if (disabled || !pressed || event.pointerType === 'mouse' || openAtPressRef.current) {
+                                    return;
+                                }
+                                const { left, right, top, bottom } = event.currentTarget.getBoundingClientRect();
+                                const { clientX, clientY } = event;
+                                if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
+                                    setOpen(true);
+                                }
+                            }}
+                            onMouseDown={(event) => {
+                                if (keepsFocus) {
+                                    keepFocus(event);
+                                }
+                            }}
+                            onKeyDown={() => {
+                                pointerRef.current = false;
+                            }}
+                            // A click with no press before it, as browse mode, voice control and `click()` send, opens too.
+                            onClick={() => {
+                                if (!openAtPressRef.current) {
+                                    setOpen(true);
+                                }
+                                pointerRef.current = false;
+                                openAtPressRef.current = false;
+                            }}
+                        >
+                            <IconDotsHorizontal size={20} aria-hidden />
+                        </RadixToolbar.Button>
+                    </Dropdown.Trigger>
+                </Tooltip.Trigger>
+                <Tooltip.Content padding="compact" container={container}>
+                    <span data-rte-tooltip-label="">{strings.more}</span>
+                </Tooltip.Content>
+            </Tooltip.Root>
+            <Dropdown.Content
+                ref={contentRef}
+                container={container}
+                onCloseAutoFocus={(event) => {
+                    const pending = pendingRef.current;
+                    if (pending !== undefined) {
+                        // Focus is on More when the control opens, so the control returns it there.
+                        event.preventDefault();
+                        pendingRef.current = undefined;
+                        triggerRef.current?.focus();
+                        runtime?.handle.execute(pending.command, pending.payload);
+                        return;
+                    }
+                    if (ranRef.current) {
+                        event.preventDefault();
+                        ranRef.current = false;
+                        return;
+                    }
+                    // Radix returns focus to More in a timeout, after which focus that already moved on stays there.
+                    if (focusMoved(triggerRef.current)) {
+                        event.preventDefault();
                     }
                 }}
             >
-                <Tooltip.Root>
-                    <Tooltip.Trigger asChild>
-                        <Dropdown.Trigger asChild>
-                            <RadixToolbar.Button
-                                {...tabStop(outOfTabOrder)}
-                                ref={triggerRef}
-                                type="button"
-                                className={styles.item}
-                                aria-label={strings.more}
-                                disabled={disabled}
-                                data-rte-toolbar-more=""
-                                onPointerDown={() => {
-                                    pointerRef.current = true;
-                                    openAtPressRef.current = open;
-                                }}
-                                // WebKit sends no click for a touch whose `pointerdown` Radix prevented, so a touch released
-                                // over More opens it here; one that slid off opens nothing.
-                                onPointerUp={(event) => {
-                                    // Only a press that began on More opens it, never in a disabled editor.
-                                    const pressed = pointerRef.current;
-                                    pointerRef.current = false;
-                                    if (
-                                        disabled ||
-                                        !pressed ||
-                                        event.pointerType === 'mouse' ||
-                                        openAtPressRef.current
-                                    ) {
-                                        return;
-                                    }
-                                    const { left, right, top, bottom } = event.currentTarget.getBoundingClientRect();
-                                    const { clientX, clientY } = event;
-                                    if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
-                                        setOpen(true);
-                                    }
-                                }}
-                                onMouseDown={(event) => {
-                                    if (keepsFocus) {
-                                        keepFocus(event);
-                                    }
-                                }}
-                                onKeyDown={() => {
-                                    pointerRef.current = false;
-                                }}
-                                // A click with no press before it, as browse mode, voice control and `click()` send, opens too.
-                                onClick={() => {
-                                    if (!openAtPressRef.current) {
-                                        setOpen(true);
-                                    }
-                                    pointerRef.current = false;
-                                    openAtPressRef.current = false;
-                                }}
-                            >
-                                <IconDotsHorizontal size={20} aria-hidden />
-                            </RadixToolbar.Button>
-                        </Dropdown.Trigger>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content padding="compact" container={container}>
-                        <span data-rte-tooltip-label="">{strings.more}</span>
-                    </Tooltip.Content>
-                </Tooltip.Root>
-                <Dropdown.Content
-                    ref={contentRef}
-                    container={container}
-                    onCloseAutoFocus={(event) => {
-                        const pending = pendingRef.current;
-                        if (pending !== undefined) {
-                            // Focus is on More when the dialog opens, so the dialog returns it there.
-                            event.preventDefault();
-                            pendingRef.current = undefined;
-                            triggerRef.current?.focus();
-                            setNumbering(pending);
-                            return;
+                {/* The text style picker that does not fit offers its rows here. */}
+                {items
+                    .flatMap((item) => {
+                        if (item.options === undefined) {
+                            return [item];
                         }
-                        if (ranRef.current) {
-                            event.preventDefault();
-                            ranRef.current = false;
-                            return;
-                        }
-                        // Radix returns focus to More in a timeout, after which focus that already moved on stays there.
-                        if (focusMoved(triggerRef.current)) {
-                            event.preventDefault();
-                        }
+                        return item.options.filter(({ offered }) => offered);
+                    })
+                    .map((item) => (
+                        <MoreRow key={item.key} item={item} strings={strings} onRun={onRun} />
+                    ))}
+                <Dropdown.Item
+                    onSelect={() => {
+                        // The toolbar that held More unmounts, so focus goes to the surface.
+                        ranRef.current = true;
+                        modeSwitch.onSelect();
+                        runtime?.handle.focus();
                     }}
                 >
-                    {/* The text style picker that does not fit offers its rows here. */}
-                    {items
-                        .flatMap((item) => {
-                            if (item.options === undefined) {
-                                return [item];
-                            }
-                            return item.options.filter(({ offered }) => offered);
-                        })
-                        .map((item) => (
-                            <MoreRow key={item.key} item={item} strings={strings} onRun={onRun} />
-                        ))}
-                    <Dropdown.Item
-                        onSelect={() => {
-                            // The toolbar that held More unmounts, so focus goes to the surface.
-                            ranRef.current = true;
-                            modeSwitch.onSelect();
-                            runtime?.handle.focus();
-                        }}
-                    >
-                        {modeSwitch.label}
-                    </Dropdown.Item>
-                </Dropdown.Content>
-            </Dropdown.Root>
-        </>
+                    {modeSwitch.label}
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
     );
 };

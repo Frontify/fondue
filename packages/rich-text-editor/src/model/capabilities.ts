@@ -181,8 +181,9 @@ export const indentItem = (item: string): CommandDefinition => command('indentIt
 /** Moves the selected `item`s one level out, or out of the list as paragraphs at the top level. */
 export const outdentItem = (item: string): CommandDefinition => command('outdentItem', { item });
 
-/** Flips `checked` on the `item` at the selection. */
-export const toggleTask = (item: string): CommandDefinition => command('toggleTask', { item });
+/** Flips `checked` on the `item` at the selection by running `setChecked`, which takes `{ nodeId, checked }`. */
+export const toggleTask = (item: string, setChecked: string): CommandDefinition =>
+    command('toggleTask', { item, setChecked });
 
 /** Sets the payload's fields as attributes of the `node` that its `nodeId` names, else of the nearest one around the selection. */
 export const setAttributes = <const P extends PayloadDeclaration>(
