@@ -325,7 +325,7 @@ describe('RichTextReader unknown marks and attributes', () => {
         });
 
         expect(read(attributeFixture)).toBe(read(stripped));
-        expect(read(attributeFixture)).toBe('<div><p dir="auto">Warm words</p></div>');
+        expect(read(attributeFixture)).toBe('<div class="fondue-rte-content"><p dir="auto">Warm words</p></div>');
     });
 });
 
@@ -359,8 +359,12 @@ describe('RichTextReader format attributes', () => {
             content: withHostileAttributes(document.content as unknown as JsonValue),
         };
 
-        expect(read(hostileDocument)).toBe(read(document));
-        expect(read(hostileDocument)).not.toMatch(/ (style|class|className)=/);
+        const html = read(hostileDocument);
+
+        expect(html).toBe(read(document));
+        expect(html).not.toMatch(/ (style|className)=/);
+        // The one class is the content root's, from the presentation, never a stored value.
+        expect(html.match(/ class="[^"]*"/g)).toEqual([' class="fondue-rte-content"']);
     });
 
     it('hands a reader override only declared attributes, never unknownAttributes', () => {
@@ -590,7 +594,7 @@ describe('RichTextReader data manifest', () => {
         const constructed = vi.spyOn(globalThis, 'Function');
         try {
             expect(renderReader(document, acme)).toBe(
-                '<div><p dir="auto">Intro</p><blockquote class="acme-pull-quote" data-tone="brand" dir="auto">Design &lt;is&gt; how it works</blockquote></div>',
+                '<div class="fondue-rte-content"><p dir="auto">Intro</p><blockquote class="acme-pull-quote" data-tone="brand" dir="auto">Design &lt;is&gt; how it works</blockquote></div>',
             );
             expect(evaluated).not.toHaveBeenCalled();
             expect(constructed).not.toHaveBeenCalled();
@@ -678,16 +682,22 @@ describe('RichTextReader document attributes', () => {
     };
 
     it('renders the declared defaults of doc for omitted attributes, writing no lang or dir', () => {
-        expect(read(root())).toBe('<div><p dir="auto">a</p></div>');
-        expect(read(root({ lang: null, dir: 'auto' }))).toBe('<div><p dir="auto">a</p></div>');
+        expect(read(root())).toBe('<div class="fondue-rte-content"><p dir="auto">a</p></div>');
+        expect(read(root({ lang: null, dir: 'auto' }))).toBe(
+            '<div class="fondue-rte-content"><p dir="auto">a</p></div>',
+        );
     });
 
     it('renders the default for a doc attribute that fails its declaration, not the stored value', () => {
-        expect(read(root({ lang: 'not a language', dir: 'sideways' }))).toBe('<div><p dir="auto">a</p></div>');
+        expect(read(root({ lang: 'not a language', dir: 'sideways' }))).toBe(
+            '<div class="fondue-rte-content"><p dir="auto">a</p></div>',
+        );
     });
 
     it('writes a valid doc lang and dir on the reader root', () => {
-        expect(read(root({ lang: 'ar', dir: 'rtl' }))).toBe('<div lang="ar" dir="rtl"><p dir="auto">a</p></div>');
+        expect(read(root({ lang: 'ar', dir: 'rtl' }))).toBe(
+            '<div class="fondue-rte-content" lang="ar" dir="rtl"><p dir="auto">a</p></div>',
+        );
     });
 });
 
@@ -704,7 +714,7 @@ describe('RichTextReader marks', () => {
         );
 
         expect(html).toBe(
-            '<div><p dir="auto"><a href="https://frontify.com"><strong>bold </strong><span data-rte-color="brand.red">colour</span></a></p></div>',
+            '<div class="fondue-rte-content"><p dir="auto"><a href="https://frontify.com"><strong>bold </strong><span data-rte-color="brand.red">colour</span></a></p></div>',
         );
     });
 });
@@ -716,13 +726,15 @@ describe('RichTextReader direction', () => {
         );
 
         expect(html).toBe(
-            '<div><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul></div>',
+            '<div class="fondue-rte-content"><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul></div>',
         );
     });
 
     it('renders a link and bold with no dir', () => {
         const html = read(wrap(paragraph(text('Go', link('https://frontify.com'), mark('bold')))));
 
-        expect(html).toBe('<div><p dir="auto"><a href="https://frontify.com"><strong>Go</strong></a></p></div>');
+        expect(html).toBe(
+            '<div class="fondue-rte-content"><p dir="auto"><a href="https://frontify.com"><strong>Go</strong></a></p></div>',
+        );
     });
 });
