@@ -285,6 +285,8 @@ export const createChromeView = (): ChromeView => {
                     return {
                         dom,
                         contentDOM: contentDOM ?? null,
+                        // A restyle writes the mark element's class and colour, which is no content change to read back.
+                        ignoreMutation: (mutation) => mutation.type === 'attributes' && mutation.target === dom,
                         destroy: () => {
                             marks.delete(element);
                         },
