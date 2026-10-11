@@ -40,7 +40,7 @@ export const LinkForm = ({ onApply }: { readonly onApply: () => void }) => {
 };
 
 /**
- * Stands in for the link popover until ships it: a non-modal Fondue `Flyout` on the selection,
+ * Stands in for the link popover until the editor ships one: a non-modal Fondue `Flyout` on the selection,
  * whose form may load lazily as `Body`.
  */
 export const FixtureLinkPopover = ({
@@ -78,7 +78,7 @@ export const FixtureLinkPopover = ({
 const MENTIONS = ['Ada', 'Grace', 'Linus'];
 
 /**
- * Stands in for the mention list until ships it: a Fondue `Flyout` at the caret that never takes
+ * Stands in for the mention list until the editor ships one: a Fondue `Flyout` at the caret that never takes
  * focus, whose active option the arrow keys move and Enter or Tab accepts.
  */
 export const FixtureSuggestions = ({ open, onOpenChange }: FixtureOverlayProps) => {
@@ -144,7 +144,7 @@ export const FixtureSuggestions = ({ open, onOpenChange }: FixtureOverlayProps) 
     );
 };
 
-/** Stands in for the context menu until ships it: a Fondue `Dropdown` on the selection's rectangle. */
+/** Stands in for the context menu until the editor ships one: a Fondue `Dropdown` on the selection's rectangle. */
 export const FixtureMenu = ({ open, onOpenChange }: FixtureOverlayProps) => {
     const overlay = useEditorOverlay(open, onOpenChange);
     const handle = useEditorHandle<FixtureCommands>();
