@@ -268,8 +268,8 @@ describe('RichTextReader semantic elements', () => {
         '<h5 dir="auto">Level 5</h5>',
         '<h6 dir="auto">Level 6</h6>',
         '<blockquote dir="auto"><p dir="auto">Quoted</p></blockquote>',
-        '<ul dir="auto"><li dir="auto"><p dir="auto">Bullet</p></li></ul>',
-        '<ol start="3" dir="auto"><li dir="auto"><p dir="auto">Ordered</p></li></ol>',
+        '<ul style="list-style-type:disc" dir="auto"><li dir="auto"><p dir="auto">Bullet</p></li></ul>',
+        '<ol start="3" style="list-style-type:decimal" dir="auto"><li dir="auto"><p dir="auto">Ordered</p></li></ol>',
         '<pre dir="auto"><code>const a = 1;</code></pre>',
         '<hr dir="auto"/>',
         '<figure dir="auto"><img alt="A chart" dir="auto"/></figure>',
@@ -726,7 +726,7 @@ describe('RichTextReader direction', () => {
         );
 
         expect(html).toBe(
-            '<div class="fondue-rte-content"><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul></div>',
+            '<div class="fondue-rte-content"><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul style="list-style-type:disc" dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul></div>',
         );
     });
 

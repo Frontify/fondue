@@ -1,0 +1,91 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`list levels > marks a four-level list by depth in the reader with the default and a custom listLevels, entry n modulo its length > custom 1`] = `
+"<div class="fondue-rte-content">
+<ol start="1" style="list-style-type:upper-roman;--rte-list-marker-color:rgb(200, 0, 0)" dir="auto">
+<li dir="auto">
+<p dir="auto">ordered1</p>
+<ol start="1" style="list-style-type:lower-greek" dir="auto">
+<li dir="auto">
+<p dir="auto">ordered2</p>
+<ol start="1" style="list-style-type:upper-roman;--rte-list-marker-color:rgb(200, 0, 0)" dir="auto">
+<li dir="auto">
+<p dir="auto">ordered3</p>
+<ol start="1" style="list-style-type:lower-greek" dir="auto">
+<li dir="auto">
+<p dir="auto">ordered4</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<ul style="list-style-type:square;--rte-list-marker-color:rgb(0, 0, 200);--rte-list-marker-size:24px" dir="auto">
+<li dir="auto">
+<p dir="auto">bullet1</p>
+<ul style="list-style-type:circle" dir="auto">
+<li dir="auto">
+<p dir="auto">bullet2</p>
+<ul style="list-style-type:square;--rte-list-marker-color:rgb(0, 0, 200);--rte-list-marker-size:24px" dir="auto">
+<li dir="auto">
+<p dir="auto">bullet3</p>
+<ul style="list-style-type:circle" dir="auto">
+<li dir="auto">
+<p dir="auto">bullet4</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>"
+`;
+
+exports[`list levels > marks a four-level list by depth in the reader with the default and a custom listLevels, entry n modulo its length > default 1`] = `
+"<div class="fondue-rte-content">
+<ol start="1" style="list-style-type:decimal" dir="auto">
+<li dir="auto">
+<p dir="auto">ordered1</p>
+<ol start="1" style="list-style-type:lower-alpha" dir="auto">
+<li dir="auto">
+<p dir="auto">ordered2</p>
+<ol start="1" style="list-style-type:lower-roman" dir="auto">
+<li dir="auto">
+<p dir="auto">ordered3</p>
+<ol start="1" style="list-style-type:decimal" dir="auto">
+<li dir="auto">
+<p dir="auto">ordered4</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<ul style="list-style-type:disc" dir="auto">
+<li dir="auto">
+<p dir="auto">bullet1</p>
+<ul style="list-style-type:circle" dir="auto">
+<li dir="auto">
+<p dir="auto">bullet2</p>
+<ul style="list-style-type:square" dir="auto">
+<li dir="auto">
+<p dir="auto">bullet3</p>
+<ul style="list-style-type:disc" dir="auto">
+<li dir="auto">
+<p dir="auto">bullet4</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>"
+`;
