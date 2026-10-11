@@ -153,6 +153,91 @@ test('shows the bubble toolbar for a mouse selection and leaves focus in the sur
     await expectFocus(page, 'After');
 });
 
+test('keeps the bubble toolbar focus ring and pressed bar visible in forced colours', async ({
+    mount,
+    page,
+}, testInfo) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+    await mount(<OverlayProbe />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    await expect(bubbleOf(page)).toBeVisible();
+    const bold = bubbleOf(page).getByRole('button', { name: 'Bold' });
+    const around = async () => {
+        const box = await boxOf(bold);
+        return page.screenshot({
+            clip: {
+                x: box.left - 6,
+                y: box.top - 6,
+                width: box.right - box.left + 12,
+                height: box.bottom - box.top + 12,
+            },
+        });
+    };
+    const bar = async () => {
+        const box = await boxOf(bold);
+        return page.screenshot({
+            clip: { x: box.left, y: box.bottom - 3, width: box.right - box.left, height: 3 },
+        });
+    };
+    const unfocused = await around();
+    const unpressed = await bar();
+
+    await page.keyboard.press('Alt+F10');
+    await expectFocus(page, 'Bold');
+    await page.mouse.move(0, 0);
+    const focused = await around();
+    const ring = await bold.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return { style: style.outlineStyle, width: Number.parseFloat(style.outlineWidth) };
+    });
+    await testInfo.attach('focused bubble toolbar item in forced colours', { body: focused, contentType: 'image/png' });
+    await page.evaluate(() => window.overlayProbe?.handle.execute('mark.bold.toggle'));
+    await expect(bold).toHaveAttribute('aria-pressed', 'true');
+    await page.keyboard.press('Escape');
+    await frames(page);
+    await select(page, 'two');
+    await expect(bubbleOf(page)).toBeVisible();
+    const pressed = await bar();
+
+    // Forced colours drops a box-shadow, so only a real outline is a ring that stays.
+    expect(ring, 'focus ring outline').toMatchObject({ style: 'solid', width: 2 });
+    expect(focused.equals(unfocused), 'focus ring').toBe(false);
+    expect(pressed.equals(unpressed), 'pressed bar').toBe(false);
+});
+
+for (const theme of ['light', 'dark'] as const) {
+    test(`draws the bubble toolbar on the Fondue overlay surface in the ${theme} theme`, async ({ mount, page }) => {
+        await mount(<OverlayProbe theme={theme} />);
+        await ready(page);
+        await surfaceOf(page).focus();
+        await select(page, 'two');
+        await expect(bubbleOf(page)).toBeVisible();
+
+        const shown = await bubbleOf(page).evaluate((toolbar) => {
+            const flyout = toolbar.closest('[role="dialog"]');
+            const colors = (element: Element | null) => {
+                if (element === null) {
+                    throw new Error('no flyout around the bubble toolbar');
+                }
+                const style = getComputedStyle(element);
+                return { background: style.backgroundColor, color: style.color };
+            };
+            const probe = document.createElement('span');
+            probe.style.color = 'var(--color-surface-default)';
+            toolbar.append(probe);
+            const surface = getComputedStyle(probe).color;
+            probe.remove();
+            return { toolbar: colors(toolbar), flyout: colors(flyout), surface };
+        });
+
+        // The toolbar adds no colour of its own to the flyout, and the flyout takes the surface token of the theme.
+        expect(shown.toolbar.background).toMatch(/^rgba\(0, 0, 0, 0\)$|^transparent$/);
+        expect(shown.flyout.background).toBe(shown.surface);
+    });
+}
+
 test('runs Bold from a mouse click on the bubble toolbar without the surface losing focus', async ({ mount, page }) => {
     await mount(<OverlayProbe />);
     await ready(page);
@@ -678,8 +763,8 @@ for (const within of ['shadow', 'iframe'] as const) {
         const tooltip = root.getByRole('tooltip');
         await expect(tooltip.first()).toBeAttached();
         expect(await placement(tooltip)).toEqual(expected);
-        // A hovered tooltip in an iframe stays open once the pointer leaves, and as the top layer it takes the Escape meant for a menu.
-        await page.mouse.move(0, 0);
+        // Radix tracks a hover tooltip's pointer on the top document, so in an iframe it stays open after the pointer
+        // leaves; left open it is an older layer that the menus below wait behind for Escape. Escape closes it first.
         await page.keyboard.press('Escape');
         await expect(tooltip).toHaveCount(0);
 
@@ -1194,6 +1279,124 @@ test('keeps a toolbar tooltip open while the pointer is over it, until the point
 
     await expect(tooltip).toBeHidden();
     expect(whileOver).toBe(true);
+});
+
+// Sampled as soon as each part shows, inside the 150 ms a Fondue transition would run.
+const running = (page: Page) =>
+    page.evaluate(() =>
+        document
+            .getAnimations()
+            .filter((animation) => animation.playState === 'running')
+            .map((animation) => animation.constructor.name),
+    );
+
+/** Opens the toolbars, overlays and node chrome in turn, and returns the animations running as each one showed. */
+const sampleMotion = async (page: Page, reducedMotion: 'reduce' | 'no-preference') => {
+    const seen: Record<string, string[]> = {};
+    await page.emulateMedia({ reducedMotion });
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    await expect(bubbleOf(page)).toBeVisible();
+    seen['bubble toolbar'] = await running(page);
+    await page.keyboard.press('Alt+F10');
+    await expect(page.getByRole('tooltip')).toBeVisible();
+    seen.tooltip = await running(page);
+    await page.keyboard.press('Escape');
+    await frames(page);
+    await page.keyboard.press('Escape');
+    await expect(bubbleOf(page)).toBeHidden();
+    await toolbarOf(page).getByRole('button', { name: 'Bold', exact: true }).hover();
+    seen['hovered item'] = await running(page);
+    await toolbarOf(page).getByRole('button', { name: 'Bold', exact: true }).click();
+    await expect(toolbarOf(page).getByRole('button', { name: 'Bold', exact: true })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+    );
+    seen['pressed item'] = await running(page);
+    await toolbarOf(page).getByRole('button', { name: 'More' }).click();
+    await expect(page.getByRole('menu')).toBeVisible();
+    seen['More menu'] = await running(page);
+    await page.keyboard.press('Escape');
+    for (const [kind, testId] of [
+        ['link', 'fixture-link-popover'],
+        ['suggestions', 'fixture-suggestions'],
+        ['menu', 'fixture-menu'],
+    ] as const) {
+        await surfaceOf(page).focus();
+        await select(page, 'two');
+        await open(page, kind);
+        await expect(page.getByTestId(testId)).toBeVisible();
+        seen[kind] = await running(page);
+        await page.keyboard.press('Escape');
+    }
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    await page.keyboard.press('Shift+F10');
+    await expect(menuOf(page)).toBeVisible();
+    seen['block actions menu'] = await running(page);
+    await page.keyboard.press('Escape');
+    await openAltText(page);
+    seen['node chrome and dialog'] = await running(page);
+    return seen;
+};
+
+test('runs no animation while the toolbars, overlays and node chrome open', async ({ mount, page }) => {
+    await mount(<OverlayProbe blocks={[paragraph('one two three'), image]} />);
+    await ready(page);
+
+    const seen = await sampleMotion(page, 'reduce');
+
+    expect(Object.keys(seen)).toHaveLength(10);
+    expect(seen).toEqual(Object.fromEntries(Object.keys(seen).map((part) => [part, []])));
+});
+
+// Nothing in the package or in Fondue's chrome starts a transition or animation when it opens, so the control is a probe element
+// whose transition only the no-preference query allows; it shows the sampler sees motion that the preference lets run.
+const probeMotion = (page: Page) =>
+    page.evaluate(async () => {
+        const style = document.createElement('style');
+        style.textContent =
+            '@media (prefers-reduced-motion: no-preference) { [data-motion-probe] { transition: margin-inline-start 2s; } } [data-motion-probe][data-moved] { margin-inline-start: 40px; }';
+        const probe = document.createElement('div');
+        probe.setAttribute('data-motion-probe', '');
+        document.body.append(style, probe);
+        // Reading the style commits the start value, so the next change runs as a transition.
+        probe.getBoundingClientRect();
+        probe.setAttribute('data-moved', '');
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+    });
+
+for (const [reducedMotion, expected] of [
+    ['no-preference', ['CSSTransition']],
+    ['reduce', []],
+] as const) {
+    test(`samples ${expected.length} running transitions of a probe with reduced motion ${reducedMotion}`, async ({
+        mount,
+        page,
+    }) => {
+        await mount(<OverlayProbe blocks={[paragraph('one two three'), image]} />);
+        await ready(page);
+        await page.emulateMedia({ reducedMotion });
+
+        await probeMotion(page);
+
+        expect(await running(page)).toEqual(expected);
+    });
+}
+
+test('moves through the bubble toolbar in visual order under an rtl theme', async ({ mount, page }) => {
+    await mount(<OverlayProbe dir="rtl" />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    await expect(bubbleOf(page)).toBeVisible();
+
+    await expect(bubbleOf(page)).toHaveAttribute('dir', 'rtl');
+    await page.keyboard.press('Alt+F10');
+    await expectFocus(page, 'Bold');
+    // Italic sits to the left of Bold under rtl.
+    await page.keyboard.press('ArrowLeft');
+    await expectFocus(page, 'Italic');
 });
 
 for (const [where, blocks, name] of [

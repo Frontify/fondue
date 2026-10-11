@@ -4,6 +4,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { ThemeProvider } from '@frontify/fondue-components';
 import { act, render, screen } from '@testing-library/react';
 import { createRef, Profiler, StrictMode, useEffect, useLayoutEffect, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -81,6 +82,8 @@ const ALLOWED = { create: true, edit: true, remove: true, paste: true };
 
 type Props = Partial<RichTextEditorBaseProps<object>>;
 
+type Theme = 'light' | 'dark';
+
 beforeEach(() => {
     vi.useFakeTimers();
 });
@@ -88,8 +91,8 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
-/** Mounts an editor and runs its first frame, so it is `ready`. */
-const mount = (props: Props = {}, strict = false) => {
+/** Mounts an editor, under a Fondue `theme` when given, and runs its first frame, so it is `ready`. */
+const mount = (props: Props = {}, strict = false, theme?: Theme) => {
     const ref = createRef<EditorHandle<object>>();
     const element = (extra: Props) => (
         <RichTextEditor
@@ -101,7 +104,16 @@ const mount = (props: Props = {}, strict = false) => {
             {...extra}
         />
     );
-    const wrap = (extra: Props) => (strict ? <StrictMode>{element(extra)}</StrictMode> : element(extra));
+    const wrap = (extra: Props, shown = theme) => {
+        let editor = element(extra);
+        if (strict) {
+            editor = <StrictMode>{editor}</StrictMode>;
+        }
+        if (shown === undefined) {
+            return editor;
+        }
+        return <ThemeProvider theme={shown}>{editor}</ThemeProvider>;
+    };
     const view = render(wrap({}));
     act(() => {
         vi.runAllTimers();
@@ -112,7 +124,11 @@ const mount = (props: Props = {}, strict = false) => {
         }
         return ref.current;
     };
-    return { ...view, handle, rerender: (extra: Props = {}) => view.rerender(wrap(extra)) };
+    return {
+        ...view,
+        handle,
+        rerender: (extra: Props = {}, shown?: Theme) => view.rerender(wrap(extra, shown)),
+    };
 };
 
 const surface = () => screen.getByRole('textbox', { name: 'Notes' });
@@ -157,6 +173,25 @@ describe('RichTextEditor', () => {
         expect(view.state.plugins).toBe(plugins);
         expect(view.state.selection.eq(selection)).toBe(true);
         // The typed step is still the one undo step.
+        expect(undoOnce(handle())).toEqual(['applied', false]);
+        unmount();
+    });
+
+    it('keeps the view, selection, plugins and undo step across 50 rerenders that switch the Fondue theme', () => {
+        const { handle, rerender, unmount } = mount({}, false, 'light');
+        act(() => typeText(handle(), 'c'));
+        setSelection(handle(), { text: 'b' });
+        const view = viewOf();
+        const { plugins, selection } = view.state;
+
+        for (let index = 0; index < 50; index += 1) {
+            rerender({ onDocumentChange: () => index }, index % 2 === 0 ? 'dark' : 'light');
+        }
+
+        expect(document.querySelector('.fondue-theme-provider')?.className).toMatch(/light|dark/);
+        expect(probeRuntimes().views).toEqual([view]);
+        expect(view.state.plugins).toBe(plugins);
+        expect(view.state.selection.eq(selection)).toBe(true);
         expect(undoOnce(handle())).toEqual(['applied', false]);
         unmount();
     });

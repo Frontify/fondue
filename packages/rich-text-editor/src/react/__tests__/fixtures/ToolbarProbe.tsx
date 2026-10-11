@@ -6,7 +6,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AnnouncerContext } from '#/bridge/announcer';
 import { bold, core } from '#/features';
 import { fixtureCodeBlockView } from '#/features/__tests__/fixtures/code-block/view';
-import { fixtureItalic, fixtureLink, fixtureToolbar } from '#/features/__tests__/fixtures/features';
+import { fixtureItalic, fixtureLink, fixtureList, fixtureToolbar } from '#/features/__tests__/fixtures/features';
 import {
     defineEditor,
     defineReactPresentation,
@@ -20,7 +20,7 @@ import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel(
-    [core(), bold(), fixtureItalic(), fixtureLink(), fixtureToolbar(), fixtureCodeBlockView()],
+    [core(), bold(), fixtureItalic(), fixtureLink(), fixtureList(), fixtureToolbar(), fixtureCodeBlockView()],
     { id: 'test.toolbar', version: 1 },
 );
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
@@ -82,6 +82,8 @@ declare global {
             readonly setSelection: typeof setSelection;
             /** The HTML of the runtime's document, as the surface shows it. */
             readonly html: () => string;
+            /** The runtime's view, which a theme or media change must keep. */
+            readonly view: () => object | undefined;
         };
     }
 }
@@ -170,6 +172,7 @@ export const ToolbarProbe = ({
         window.toolbarEditor = {
             handle,
             setSelection,
+            view: () => runtimeOf(handle)?.view,
             html: () => {
                 const view = runtimeOf(handle)?.view;
                 if (view === undefined) {

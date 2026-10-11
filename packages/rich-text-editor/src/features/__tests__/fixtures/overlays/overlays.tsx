@@ -75,7 +75,8 @@ export const FixtureLinkPopover = ({
     );
 };
 
-const MENTIONS = ['Ada', 'Grace', 'Linus'];
+// A right-to-left name too, as reference labels come from authors.
+const MENTIONS = ['Ada', 'Grace', 'Linus', 'נועה'];
 
 /**
  * Stands in for the mention list until the editor ships one: a Fondue `Flyout` at the caret that never takes
@@ -135,7 +136,7 @@ export const FixtureSuggestions = ({ open, onOpenChange }: FixtureOverlayProps) 
                             aria-selected={index === active}
                             onClick={() => accept(index)}
                         >
-                            {label}
+                            <bdi>{label}</bdi>
                         </div>
                     ))}
                 </div>

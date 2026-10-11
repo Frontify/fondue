@@ -1,15 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { ThemeProvider } from '@frontify/fondue-components';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { createRef, Profiler, type ReactNode, useContext } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnnouncerContext } from '#/bridge/announcer';
+import { fixtureCodeBlockView } from '#/features/__tests__/fixtures/code-block/view';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
-import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
+import { deDE } from '#/locales/de-DE';
+import { enUS } from '#/locales/en-US';
+import { compileContentModel, type ContentNodeJSON, featureFromManifest, type JsonValue } from '#/model';
 import { pressKey, setSelection, typeText } from '#/testing';
 
+import pullQuoteManifest from '../../model/__tests__/fixtures/manifest/acme-pull-quote.json';
 import { defineEditor, defineReactPresentation } from '../define';
 import { boldRules } from '../playground.stories';
 import { RichTextEditor } from '../rich-text-editor';
@@ -36,8 +41,10 @@ const loaded = (...blocks: readonly JsonValue[]) => ({
 });
 
 type Props = Partial<RichTextEditorBaseProps<object>> & { readonly children?: ReactNode };
-/** Mounts the toolbar stand-ins and runs the first frame, so the editor is `ready`. */
-const mount = (props: Props = {}, toolbar: ReactPresentation['toolbar'] = TOOLBAR) => {
+type Theme = Omit<Parameters<typeof ThemeProvider>[0], 'children'>;
+
+/** Mounts the toolbar stand-ins, under `theme` when given, and runs the first frame, so the editor is `ready`. */
+const mount = (props: Props = {}, toolbar: ReactPresentation['toolbar'] = TOOLBAR, theme?: Theme) => {
     const ref = createRef<EditorHandle<object>>();
     const { children, ...rest } = props;
     const editorProps = {
@@ -58,6 +65,9 @@ const mount = (props: Props = {}, toolbar: ReactPresentation['toolbar'] = TOOLBA
                 {children}
             </RichTextEditor.Root>
         );
+    }
+    if (theme !== undefined) {
+        element = <ThemeProvider {...theme}>{element}</ThemeProvider>;
     }
     const view = render(element);
     act(() => {
@@ -466,5 +476,242 @@ describe('the announcer', () => {
         await Promise.resolve();
 
         expect(seen.filter((text) => text !== '').sort()).toEqual(['Find 3', 'Saved']);
+    });
+});
+
+describe('toolbar theming and localization', () => {
+    it('labels a data manifest entry in the UI locale by RFC 4647 lookup, else en-US', () => {
+        const [entry] = pullQuoteManifest.toolbar;
+        // The fixture's platform-prefixed keys fail in the engine keymap today, and no label needs them.
+        const manifest = {
+            ...pullQuoteManifest,
+            keys: {},
+            toolbar: [
+                {
+                    ...entry,
+                    label: {
+                        'en-US': 'Pull quote',
+                        de: 'Zitat',
+                        'de-CH': 'Zitat CH',
+                        'zh-Hant': '引言',
+                        'zh-hant-tw': '引言 TW',
+                    },
+                },
+            ],
+        };
+        const definition = defineEditor({
+            id: 'test.toolbar',
+            model: compileContentModel([core(), featureFromManifest(manifest)()], { id: 'test.toolbar', version: 1 }),
+        });
+        const labels = ['de-CH', 'DE-ch', 'de-AT', 'de', 'zh-Hant-TW', 'zh-Hant-HK', 'fr-FR'].map((lang) => {
+            const { unmount } = mount({ definition, locale: { ...enUS, lang } }, [['acme.pull-quote.set']]);
+            const name = within(screen.getByRole('toolbar')).getAllByRole('button')[0]?.getAttribute('aria-label');
+            unmount();
+            return name;
+        });
+
+        expect(labels).toEqual(['Zitat CH', 'Zitat CH', 'Zitat', 'Zitat', '引言 TW', '引言', 'Pull quote']);
+    });
+
+    it('shows the items of two editors with one presentation in the same order', () => {
+        const presentation = defineReactPresentation({ toolbar: TOOLBAR });
+        const names = () =>
+            screen.getAllByRole('toolbar', { name: 'Text formatting' }).map((toolbar) =>
+                within(toolbar)
+                    .getAllByRole('button')
+                    .map((item) => item.getAttribute('aria-label')),
+            );
+        const { unmount } = mount({
+            presentation,
+            children: (
+                <RichTextEditor
+                    aria-label="Second"
+                    definition={toolbarDefinitions.open}
+                    presentation={presentation}
+                    defaultValue={loaded(para(text('four five')))}
+                    locale={fixtureLocale}
+                />
+            ),
+        });
+        const [first, second] = names();
+
+        expect(first).toEqual(['Bold', 'Italic', 'Link', 'List', 'More']);
+        expect(second).toEqual(first);
+        unmount();
+    });
+
+    it('takes the surface lang and dir from the theme when the document sets neither', () => {
+        const { unmount } = mount({}, TOOLBAR, { lang: 'ar', dir: 'rtl' });
+
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'ar');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('dir', 'rtl');
+        unmount();
+    });
+
+    it('takes the document lang and dir on the surface while the toolbar keeps the theme direction', () => {
+        const stored = loaded(para(text('שלום')));
+        const document = {
+            ...stored.document,
+            content: { ...stored.document.content, attrs: { lang: 'he', dir: 'rtl' } },
+        };
+        const { unmount } = mount({ defaultValue: { ...stored, document } }, TOOLBAR, { lang: 'en-US', dir: 'ltr' });
+
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'he');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('dir', 'rtl');
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' })).toHaveAttribute('dir', 'ltr');
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' }).closest('[lang]')).toHaveAttribute(
+            'lang',
+            'en-US',
+        );
+        unmount();
+    });
+
+    it('gives node chrome inside an rtl Hebrew document the theme lang and dir', async () => {
+        const stored = loaded(para(text('שלום')), codeBlock('let a'));
+        const document = {
+            ...stored.document,
+            content: { ...stored.document.content, attrs: { lang: 'he', dir: 'rtl' } },
+        };
+        const { unmount } = mount({ defaultValue: { ...stored, document } }, TOOLBAR, {
+            lang: 'en-US',
+            dir: 'ltr',
+        });
+        await act(async () => {
+            await new Promise((resolve) => {
+                queueMicrotask(() => {
+                    resolve(undefined);
+                });
+            });
+        });
+
+        const slot = screen.getByRole('textbox', { name: 'Notes' }).querySelector('[data-rte-chrome]');
+        if (slot === null) {
+            throw new Error('no node chrome');
+        }
+        expect([slot.getAttribute('lang'), slot.getAttribute('dir')]).toEqual(['en-US', 'ltr']);
+        unmount();
+    });
+
+    it('gives node chrome the lang of the shown strings under a theme of another lang', async () => {
+        const { unmount } = mount({ locale: deDE, defaultValue: loaded(codeBlock('let a')) }, TOOLBAR, {
+            lang: 'en-US',
+            dir: 'ltr',
+        });
+        await act(async () => {
+            await new Promise((resolve) => {
+                queueMicrotask(() => {
+                    resolve(undefined);
+                });
+            });
+        });
+
+        const slot = screen.getByRole('textbox', { name: 'Notes' }).querySelector('[data-rte-chrome]');
+        if (slot === null) {
+            throw new Error('no node chrome');
+        }
+        expect(slot).toHaveAttribute('lang', 'de-DE');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'en-US');
+        unmount();
+    });
+
+    it('sets the surface dir from a document with a dir and no lang, and leaves its lang to the theme', () => {
+        const stored = loaded(para(text('שלום')));
+        const document = {
+            ...stored.document,
+            content: { ...stored.document.content, attrs: { lang: null, dir: 'rtl' } },
+        };
+        const { unmount } = mount({ defaultValue: { ...stored, document } }, TOOLBAR, { lang: 'en-US', dir: 'ltr' });
+
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('dir', 'rtl');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'en-US');
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' })).toHaveAttribute('dir', 'ltr');
+        unmount();
+    });
+
+    it('gives the node chrome toolbar the theme direction under rtl', async () => {
+        const { unmount } = mount({ defaultValue: loaded(codeBlock('let a')) }, TOOLBAR, { dir: 'rtl' });
+        await act(async () => {
+            await new Promise((resolve) => {
+                queueMicrotask(() => {
+                    resolve(undefined);
+                });
+            });
+        });
+
+        expect(screen.getByRole('toolbar', { name: 'plain' })).toHaveAttribute('dir', 'rtl');
+        unmount();
+    });
+
+    it('marks the root with the language of the shown strings, while the surface keeps the theme one', () => {
+        const { unmount } = mount({ locale: deDE }, TOOLBAR, { lang: 'en-US', dir: 'ltr' });
+
+        expect(screen.getByTestId('fondue-rich-text-editor')).toHaveAttribute('lang', 'de-DE');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'en-US');
+        unmount();
+    });
+
+    it('gives the root, node chrome and manifest labels the theme lang when the locale has none', async () => {
+        const [entry] = pullQuoteManifest.toolbar;
+        const manifest = {
+            ...pullQuoteManifest,
+            keys: {},
+            toolbar: [{ ...entry, label: { 'en-US': 'Pull quote', fr: 'Citation' } }],
+        };
+        const definition = defineEditor({
+            id: 'test.toolbar',
+            model: compileContentModel([core(), featureFromManifest(manifest)(), fixtureCodeBlockView()], {
+                id: 'test.toolbar',
+                version: 1,
+            }),
+        });
+        const { unmount } = mount(
+            {
+                definition,
+                locale: { translationStrings: enUS.translationStrings },
+                defaultValue: loaded(codeBlock('let a')),
+            },
+            [['acme.pull-quote.set']],
+            { lang: 'fr-FR' },
+        );
+        await act(async () => {
+            await new Promise((resolve) => {
+                queueMicrotask(() => {
+                    resolve(undefined);
+                });
+            });
+        });
+        const slot = screen.getByRole('textbox', { name: 'Notes' }).querySelector('[data-rte-chrome]');
+
+        expect(screen.getByTestId('fondue-rich-text-editor')).toHaveAttribute('lang', 'fr-FR');
+        expect(slot).toHaveAttribute('lang', 'fr-FR');
+        expect(screen.getByRole('button', { name: 'Citation' })).toBeInTheDocument();
+        unmount();
+    });
+
+    it('leaves out a plain binding that a mac: binding of the same key replaces on Apple platforms', () => {
+        const platform = vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+        const manifest = {
+            ...pullQuoteManifest,
+            commands: {
+                ...pullQuoteManifest.commands,
+                'acme.pull-quote.unset': { capability: 'setBlock', node: 'paragraph' },
+            },
+            keys: { 'Mod-Alt-q': 'acme.pull-quote.set', 'mac:Mod-Alt-q': 'acme.pull-quote.unset' },
+        };
+        const definition = defineEditor({
+            id: 'test.toolbar',
+            model: compileContentModel([core(), featureFromManifest(manifest)()], { id: 'test.toolbar', version: 1 }),
+        });
+        const shortcutOf = () => {
+            const { unmount } = mount({ definition }, [['acme.pull-quote.set']]);
+            const shown = screen.getByRole('button', { name: 'Pull quote' }).getAttribute('aria-keyshortcuts');
+            unmount();
+            return shown;
+        };
+
+        const apple = shortcutOf();
+        platform.mockReturnValue('Win32');
+
+        expect([apple, shortcutOf()]).toEqual([null, 'Control+Alt+Q']);
     });
 });

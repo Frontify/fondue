@@ -47,7 +47,9 @@ import {
 import { decodeToTree, limitsOf } from '#/model/decode';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 import { STORAGE, stubStorage } from '#/testing/__tests__/fixtures/storage';
+import { bindingHere, isApplePlatform } from '#/ui/shortcuts';
 
+import pullQuoteManifest from '../../model/__tests__/fixtures/manifest/acme-pull-quote.json';
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
 import { type AsyncRequest } from '../async';
 import { CAPABILITIES } from '../capabilities';
@@ -4039,5 +4041,87 @@ describe('input rules', () => {
         const shapes = cases.map(([typed, block]) => shapeOf(typedIn(stored(block), typed).view.state.doc));
 
         expect(shapes).toEqual(cases.map(([, , text]) => `paragraph ${text}`));
+    });
+});
+
+describe('platform key bindings', () => {
+    const model = compileContentModel([core(), featureFromManifest(pullQuoteManifest)()], {
+        id: 'test.bold',
+        version: 1,
+    });
+    const firstType = ({ view }: ReturnType<typeof start>) => view.state.doc.child(0).type.name;
+    // `Mod` is Meta on the platform the keymap takes for Apple's, else Ctrl.
+    const modAltQ = (apple: boolean) =>
+        new KeyboardEvent('keydown', { key: 'q', altKey: true, metaKey: apple, ctrlKey: !apple, bubbles: true });
+    afterEach(() => vi.restoreAllMocks());
+
+    it('compiles the mac: and other: keys of the spec manifest and runs each on its platform only', () => {
+        const platform = vi.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
+        const session = start(stored(para(words('ab'))), { model });
+        setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+
+        pressKey(session.handle, 'Ctrl-Shift-q');
+        expect(firstType(session)).toBe('acme_pull_quote');
+        platform.mockReturnValue('MacIntel');
+        // The `other:` binding does nothing on an Apple platform, where the `mac:` one turns the block back.
+        pressKey(session.handle, 'Ctrl-Shift-q');
+        expect(firstType(session)).toBe('acme_pull_quote');
+        session.view.dom.dispatchEvent(modAltQ(true));
+        expect(firstType(session)).toBe('paragraph');
+    });
+
+    it('runs the mac: binding over a plain binding of the same key on an Apple platform', () => {
+        const both = featureFromManifest({
+            ...pullQuoteManifest,
+            commands: {
+                ...pullQuoteManifest.commands,
+                'acme.pull-quote.unset': { capability: 'setBlock', node: 'paragraph' },
+            },
+            keys: { 'mac:Mod-Alt-q': 'acme.pull-quote.set', 'Mod-Alt-q': 'acme.pull-quote.unset' },
+        });
+        const mixed = compileContentModel([core(), both()], { id: 'test.bold', version: 1 });
+        const platform = vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+        const session = start(stored(para(words('ab'))), { model: mixed });
+        setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+
+        session.view.dom.dispatchEvent(modAltQ(true));
+        expect(firstType(session)).toBe('acme_pull_quote');
+        platform.mockReturnValue('Win32');
+        session.view.dom.dispatchEvent(modAltQ(false));
+        expect(firstType(session)).toBe('paragraph');
+    });
+
+    it('picks the mac: binding for the keydown and the tooltip alike when only userAgentData names macOS', () => {
+        vi.spyOn(navigator, 'platform', 'get').mockReturnValue('');
+        Object.defineProperty(navigator, 'userAgentData', { configurable: true, get: () => ({ platform: 'macOS' }) });
+        try {
+            const session = start(stored(para(words('ab'))), { model });
+            setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+
+            expect(bindingHere(['mac:Mod-Alt-q', 'other:Ctrl-Shift-q'], isApplePlatform())).toBe('mac:Mod-Alt-q');
+            pressKey(session.handle, 'Ctrl-Shift-q');
+            expect(firstType(session)).toBe('paragraph');
+            session.view.dom.dispatchEvent(modAltQ(true));
+            expect(firstType(session)).toBe('acme_pull_quote');
+        } finally {
+            Reflect.deleteProperty(navigator, 'userAgentData');
+        }
+    });
+
+    it('runs a mac:Mod binding on the Meta key when only userAgentData names macOS', () => {
+        vi.spyOn(navigator, 'platform', 'get').mockReturnValue('');
+        Object.defineProperty(navigator, 'userAgentData', { configurable: true, get: () => ({ platform: 'macOS' }) });
+        try {
+            const bound = featureFromManifest({ ...pullQuoteManifest, keys: { 'mac:Mod-b': 'acme.pull-quote.set' } });
+            const session = start(stored(para(words('ab'))), {
+                model: compileContentModel([core(), bound()], { id: 'test.bold', version: 1 }),
+            });
+            setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+
+            session.view.dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'b', metaKey: true, bubbles: true }));
+            expect(firstType(session)).toBe('acme_pull_quote');
+        } finally {
+            Reflect.deleteProperty(navigator, 'userAgentData');
+        }
     });
 });
