@@ -737,7 +737,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
         const rules = feature.declaration.inputRules ?? [];
         for (const [index, rule] of rules.entries()) {
             const path = pointer('inputRules', index);
-            if (rule.kind === 'mark-delimiter' && !marks.has(rule.mark)) {
+            if ((rule.kind === 'mark-delimiter' || rule.kind === 'mark-rule') && !marks.has(rule.mark)) {
                 throw failure('definition.orphan-behavior', feature.id, `${path}/mark`);
             }
             if (rule.kind === 'block-rule' && !commands.has(rule.command) && !guardedOut.has(rule.command)) {

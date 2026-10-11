@@ -14,6 +14,8 @@ interface ChromeFocus {
     readonly runtime: EditorRuntime | undefined;
     /** The fixed toolbar, unless none renders or the editor is disabled. */
     readonly toolbar: HTMLElement | null;
+    /** The link bubble while it shows. */
+    readonly linkBubble: HTMLElement | null;
     /** The bubble toolbar while it shows. */
     readonly bubble: HTMLElement | null;
     /** In bubble mode, opens the bubble toolbar at the selection and focuses it. */
@@ -26,12 +28,12 @@ interface ChromeFocus {
 type Stop = HTMLElement | (() => void);
 
 /**
- * Alt+F10 moves to the most specific toolbar present, node chrome, then the bubble toolbar, then the fixed toolbar,
+ * Alt+F10 moves to the most specific toolbar present, the link bubble, node chrome, then the bubble toolbar, then the fixed toolbar,
  * and on to the next one, wrapping around; Escape in one returns to the surface with its selection.
  */
 export const moveChromeFocus = (
     event: KeyboardEvent<HTMLElement>,
-    { runtime, toolbar, bubble, showBubble, shortcut }: ChromeFocus,
+    { runtime, toolbar, linkBubble, bubble, showBubble, shortcut }: ChromeFocus,
 ) => {
     const toToolbars = pressesBinding(event.nativeEvent, shortcut);
     if (!toToolbars && event.key !== 'Escape') {
@@ -47,6 +49,9 @@ export const moveChromeFocus = (
         return;
     }
     const stops: Stop[] = [];
+    if (linkBubble !== null) {
+        stops.push(linkBubble);
+    }
     const nodeChrome = nodeChromeAt(view);
     if (nodeChrome !== null) {
         stops.push(nodeChrome);
@@ -71,7 +76,7 @@ export const moveChromeFocus = (
             next();
             return;
         }
-        // Node chrome and the bubble toolbar open on their first enabled control; Radix Toolbar sends focus to the last focused item.
+        // The link bubble, node chrome and the bubble toolbar open on their first enabled control; Radix Toolbar sends focus to the last focused item.
         const first = next.querySelector<HTMLElement>('button:not([disabled])');
         if (next !== toolbar && first !== null) {
             // WebKit's focus scroll ignores `scroll-margin`, which `scrollIntoView` keeps clear of the sticky toolbar.

@@ -7,7 +7,7 @@ import { liftListItem } from 'prosemirror-schema-list';
 import { type Command, type EditorState, Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 
 import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN, LIST_KEYS_PLUGIN } from '#/model/capabilities';
-import { isApple, modOn } from '#/model/platform';
+import { isApple, isPlatformBinding, keyOn, modOn } from '#/model/platform';
 
 import { itemAt, splitItem } from './lists';
 import { showsOptions } from './suggestions/plugin';
@@ -241,3 +241,48 @@ export const baseKeysPlugin = () =>
             },
         },
     });
+
+/** A key binding of a command that opens a package-built control. */
+export interface ControlKey {
+    readonly key: string;
+    readonly command: string;
+    readonly payload: unknown;
+}
+
+/**
+ * Runs the bindings of commands that open a package-built control, such as Mod+K for the link popover, through
+ * `open`, which opens the control as a host `execute` does, since the engine command itself changes nothing.
+ */
+export const controlKeysPlugin = (
+    bindings: readonly ControlKey[],
+    open: (command: string, payload: unknown) => boolean,
+) => {
+    const handlers = (apple: boolean) => {
+        const keys: Record<string, Command> = {};
+        // Plain bindings first, so on its platform a prefixed one of the same key wins.
+        const ordered = [
+            ...bindings.filter(({ key }) => !isPlatformBinding(key)),
+            ...bindings.filter(({ key }) => isPlatformBinding(key)),
+        ];
+        for (const { key, command, payload } of ordered) {
+            const own = keyOn(key, apple);
+            if (own !== undefined) {
+                keys[modOn(own, apple)] = () => open(command, payload);
+            }
+        }
+        return keydownHandler(keys);
+    };
+    const keys = { apple: handlers(true), other: handlers(false) };
+    return new Plugin({
+        key: new PluginKey('rte.control-keys'),
+        props: {
+            handleKeyDown: (view, event) => {
+                const owner = view.dom.ownerDocument.defaultView;
+                if (owner !== null && isApple(owner.navigator)) {
+                    return keys.apple(view, event);
+                }
+                return keys.other(view, event);
+            },
+        },
+    });
+};

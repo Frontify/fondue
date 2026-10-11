@@ -10,14 +10,16 @@ import {
     type CompiledInputRule,
     type LineStartRule,
     type MarkDelimiterRule,
+    type MarkRule,
     NORMALIZE_META,
     ORIGIN_META,
     type PluginImplementation,
     type QuotesRule,
     type TextReplaceRule,
 } from '#/definition';
+import { checkHref } from '#/model';
 import { INPUT_RULES_PLUGIN } from '#/model/capabilities';
-import { findInvalidPayload, OBJECT_REPLACEMENT } from '#/model/values';
+import { findInvalidPayload, isValidValue, OBJECT_REPLACEMENT } from '#/model/values';
 
 import { closeGroup, isHistoryTransaction, undo } from './history';
 import { appendSteps, carrySelection } from './transactions';
@@ -32,6 +34,8 @@ const firedKey = new PluginKey<boolean>(INPUT_RULES_PLUGIN.id);
 const RULES_OFF = 'rte.input-rules-off';
 // The root meta with the rules that one typed root may not fire.
 const RULES_SETTING = 'rte.input-rules-setting';
+/** The meta of the empty root that Enter dispatches, on which the rules that Enter ends fire. */
+export const ENTER_RULES_META = 'rte.enter-rules';
 /** A language's quotation marks, opening and closing, and its apostrophe. */
 interface Quotes {
     readonly primary: readonly [string, string];
@@ -189,6 +193,57 @@ const blockStart = (rule: BlockRule, state: EditorState, $cursor: ResolvedPos, b
     return withoutMarker(rule.command, state, $cursor, payload);
 };
 
+/** The attributes a mark rule's named groups fill, each converted by its declaration, or `undefined` when one fails it. */
+const ruleAttrs = (rule: MarkRule, groups: Readonly<Record<string, string | undefined>>) => {
+    const attrs: Record<string, unknown> = {};
+    for (const [name, declaration] of Object.entries(rule.attrs)) {
+        const value = groups[name];
+        if (value === undefined) {
+            continue;
+        }
+        let converted: unknown = value;
+        if (declaration.type === 'boolean') {
+            converted = true;
+        } else if (declaration.type === 'integer' || declaration.type === 'number') {
+            converted = Number(value);
+        } else if (declaration.type === 'url') {
+            const checked = checkHref(value, rule.policy);
+            if (!checked.ok) {
+                return undefined;
+            }
+            converted = checked.href;
+        }
+        if (!isValidValue(declaration, converted)) {
+            return undefined;
+        }
+        attrs[name] = converted;
+    }
+    return attrs;
+};
+
+/** Puts the rule's mark on its match before the caret, without the whitespace that ends it, unless any of it is marked already. */
+const markPattern = (rule: MarkRule, state: EditorState, $cursor: ResolvedPos, before: string, ending = '') => {
+    const tested = `${before}${ending}`;
+    const found = rule.match.exec(tested);
+    if (found === null || found.index + found[0].length !== tested.length) {
+        return null;
+    }
+    const text = found[0].trimEnd();
+    if (text === '' || !$cursor.parent.type.allowsMarkType(rule.mark)) {
+        return null;
+    }
+    const from = $cursor.pos - before.length + found.index;
+    const to = from + text.length;
+    if (holdsCode(state, from, to) || state.doc.rangeHasMark(from, to, rule.mark)) {
+        return null;
+    }
+    const attrs = ruleAttrs(rule, found.groups ?? {});
+    if (attrs === undefined) {
+        return null;
+    }
+    return state.tr.addMark(from, to, rule.mark.create(attrs));
+};
+
 /**
  * Marks the text between the delimiters and removes them, when the opening one follows a space, punctuation other
  * than a delimiter character or the block start, no word character follows the caret, and the text neither starts
@@ -318,8 +373,16 @@ const quotes = (rule: QuotesRule, state: EditorState, $cursor: ResolvedPos, befo
     return state.tr.insertText(quote, $cursor.pos - 1, $cursor.pos);
 };
 
-/** The change of the first rule that matches the text typed at the caret, outside code. */
-const fire = (rules: readonly CompiledInputRule[], state: EditorState, end: number): Transaction | null => {
+/**
+ * The change of the first rule that matches the text typed at the caret, outside code; on `enter`, of the first mark
+ * rule that Enter ends, which reads Enter as a line break after the text.
+ */
+const fire = (
+    rules: readonly CompiledInputRule[],
+    state: EditorState,
+    end: number,
+    enter = false,
+): Transaction | null => {
     const { selection } = state;
     if (!(selection instanceof TextSelection) || selection.$cursor === null || selection.$cursor.pos !== end) {
         return null;
@@ -341,12 +404,26 @@ const fire = (rules: readonly CompiledInputRule[], state: EditorState, end: numb
         undefined,
         OBJECT_REPLACEMENT,
     );
+    if (enter) {
+        for (const rule of rules) {
+            let change: Transaction | null = null;
+            if (rule.kind === 'mark-rule' && rule.onEnter) {
+                change = markPattern(rule, state, $cursor, before, '\n');
+            }
+            if (change !== null) {
+                return change;
+            }
+        }
+        return null;
+    }
     for (const rule of rules) {
         let change: Transaction | null;
         if (rule.kind === 'line-start') {
             change = lineStart(rule, state, $cursor, before);
         } else if (rule.kind === 'block-rule') {
             change = blockStart(rule, state, $cursor, before);
+        } else if (rule.kind === 'mark-rule') {
+            change = rule.onInput ? markPattern(rule, state, $cursor, before) : null;
         } else if (rule.kind === 'mark-delimiter') {
             change = markDelimiter(rule, state, $cursor, before, after);
         } else if (rule.kind === 'text-replace') {
@@ -397,7 +474,11 @@ export const inputRulesPlugin: PluginImplementation = ({ inputRules }) =>
             if (composed || root.getMeta(RULES_OFF) === true) {
                 return null;
             }
-            const end = typedEnd(root);
+            const enter = root.getMeta(ENTER_RULES_META) === true;
+            let end = typedEnd(root);
+            if (enter) {
+                end = state.selection.head;
+            }
             if (end === undefined) {
                 return null;
             }
@@ -408,13 +489,27 @@ export const inputRulesPlugin: PluginImplementation = ({ inputRules }) =>
                     ({ id, featureId }) => !setting.exclude.includes(id) && !setting.refused.includes(featureId),
                 );
             }
-            const change = fire(rules, state, end);
+            const change = fire(rules, state, end, enter);
             if (change === null) {
                 return null;
             }
             return closeGroup(change.setMeta(firedKey, true));
         },
     });
+
+/**
+ * Enter's own step before its action: when a rule that Enter ends matches at the caret, dispatches the empty root that
+ * the rules fire on, then lets Enter's action run, as ProseMirror's input rules see only typed text.
+ */
+export const enterRules =
+    (rules: readonly CompiledInputRule[]): Command =>
+    (state, dispatch) => {
+        const enders = rules.filter((rule) => rule.kind === 'mark-rule' && rule.onEnter);
+        if (dispatch !== undefined && enders.length > 0 && fire(enders, state, state.selection.head, true) !== null) {
+            dispatch(state.tr.setMeta(ENTER_RULES_META, true));
+        }
+        return false;
+    };
 
 /** Undoes the rule that the last batch fired through history, restoring the typed text. */
 export const undoInputRule: Command = (state, dispatch) => firedKey.getState(state) === true && undo(state, dispatch);

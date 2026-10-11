@@ -256,7 +256,15 @@ export type InputRule =
     /** Code features only, from `textRule`; a manifest cannot hold a `RegExp`. */
     | { readonly id: string; readonly kind: 'text-rule'; readonly match: RegExp; readonly replace: string }
     /** Code features only, from `blockRule`; named groups fill the command's payload fields. */
-    | { readonly id: string; readonly kind: 'block-rule'; readonly match: RegExp; readonly command: string };
+    | { readonly id: string; readonly kind: 'block-rule'; readonly match: RegExp; readonly command: string }
+    /** Code features only, from `markRule`; named groups fill the mark's attributes. */
+    | {
+          readonly id: string;
+          readonly kind: 'mark-rule';
+          readonly match: RegExp;
+          readonly mark: string;
+          readonly on: readonly ('input' | 'enter')[];
+      };
 /** A command ID, or a command with the payload a route passes, such as `{ command: 'heading.set', payload: { level: 1 } }`. */
 export type CommandRef =
     | string

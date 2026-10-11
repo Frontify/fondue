@@ -10,6 +10,7 @@ import emoji from '#/features/emoji/fixtures/emoji.json';
 import clear from '#/features/format-clear/fixtures/clear.json';
 import typography from '#/features/input-rules/fixtures/typography.json';
 import columns from '#/features/layout-columns/fixtures/columns.json';
+import links from '#/features/links/fixtures/links.json';
 import bullets from '#/features/lists-bullet/fixtures/bullets.json';
 import items from '#/features/lists-item/fixtures/items.json';
 import ordered from '#/features/lists-ordered/fixtures/ordered.json';
@@ -42,6 +43,7 @@ export const featureFixtures = {
     'marks.subscript': { subscript },
     'marks.superscript': { superscript },
     'marks.font-color': { colors },
+    links: { links },
     'blocks.heading': { headings },
     'blocks.quote': { quote },
     'blocks.rule': { rules },

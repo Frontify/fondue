@@ -1,0 +1,73 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "feature-contract",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "core",
+            "version": 1
+        },
+        {
+            "id": "links",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "content": [
+            {
+                "type": "paragraph",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Read the "
+                    },
+                    {
+                        "type": "text",
+                        "text": "brand guide",
+                        "marks": [
+                            {
+                                "type": "link",
+                                "attrs": {
+                                    "href": "https://frontify.com/brand",
+                                    "openInNewWindow": false,
+                                    "styleId": null
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "text",
+                        "text": " or "
+                    },
+                    {
+                        "type": "text",
+                        "text": "open it apart",
+                        "marks": [
+                            {
+                                "type": "link",
+                                "attrs": {
+                                    "href": "/guides",
+                                    "openInNewWindow": true,
+                                    "styleId": null
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "attrs": {
+                    "lang": null,
+                    "align": null,
+                    "styleId": null
+                }
+            }
+        ],
+        "attrs": {
+            "lang": null,
+            "dir": "auto"
+        }
+    }
+}
