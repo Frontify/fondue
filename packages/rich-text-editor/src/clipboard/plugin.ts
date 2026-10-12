@@ -345,7 +345,7 @@ const dragstart = (model: ContentModel, view: EditorView, event: DragEvent) => {
     if (data === null || selection.empty) {
         return true;
     }
-    const slice = selection.content();
+    const slice = selectedSlice(selection);
     writeFlavors(model, view, connected.session, data, slice);
     data.effectAllowed = 'copyMove';
     drags.set(view, slice);

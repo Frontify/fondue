@@ -33,18 +33,22 @@ export const NodeChromeButton = ({
     icon,
     pressed,
     disabled,
+    describedBy,
     onClick,
 }: {
     readonly label: string;
     readonly icon?: ReactNode;
     readonly pressed?: boolean;
     readonly disabled?: boolean;
+    /** The `id` of the text that describes the button, such as a prompt shown beside the chrome. */
+    readonly describedBy?: string;
     readonly onClick: () => void;
 }) => (
     <Toolbar.Button
         type="button"
         className={styles.button}
         aria-label={label}
+        aria-describedby={describedBy}
         aria-pressed={pressed}
         disabled={disabled}
         tabIndex={OUT_OF_TAB_ORDER}
@@ -77,8 +81,9 @@ export const NodeChromeMenu = ({
 }) => {
     const container = useOverlayContainer();
     const [open, setOpen] = useState(false);
-    // A touch opens the menu on its release over the button, so a press that becomes a scroll opens nothing.
+    // A touch toggles the menu on its release over the button, so a press that becomes a scroll changes nothing.
     const touchRef = useRef(false);
+    const openAtPressRef = useRef(false);
     // Radix focuses the first item as the menu opens, so the checked one takes focus a frame later.
     const focusChecked = useCallback((content: HTMLDivElement | null) => {
         if (content === null) {
@@ -92,7 +97,7 @@ export const NodeChromeMenu = ({
         <Dropdown.Root
             open={open}
             onOpenChange={(next) => {
-                if (!next || !touchRef.current) {
+                if (!touchRef.current) {
                     setOpen(next);
                 }
             }}
@@ -106,6 +111,7 @@ export const NodeChromeMenu = ({
                     data-rte-command={command}
                     onPointerDown={(event) => {
                         touchRef.current = event.pointerType !== 'mouse';
+                        openAtPressRef.current = open;
                     }}
                     onPointerCancel={() => {
                         touchRef.current = false;
@@ -119,7 +125,7 @@ export const NodeChromeMenu = ({
                         const { left, right, top, bottom } = event.currentTarget.getBoundingClientRect();
                         const { clientX, clientY } = event;
                         if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
-                            setOpen(true);
+                            setOpen(!openAtPressRef.current);
                         }
                     }}
                 >
