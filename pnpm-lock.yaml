@@ -859,6 +859,15 @@ importers:
       '@axe-core/playwright':
         specifier: ^4.13.0
         version: 4.13.0(playwright-core@1.60.0)
+      '@frontify/fondue-components':
+        specifier: workspace:^
+        version: link:../components
+      '@frontify/fondue-icons':
+        specifier: workspace:^
+        version: link:../icons
+      '@frontify/fondue-tokens':
+        specifier: workspace:^
+        version: link:../tokens
       '@frontify/oxfmt-config':
         specifier: ^0.0.2
         version: 0.0.2(oxfmt@0.52.0)

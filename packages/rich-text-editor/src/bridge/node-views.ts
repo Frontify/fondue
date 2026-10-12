@@ -7,13 +7,12 @@ import { type ComponentType } from 'react';
 import { snapshot } from '#/model/values';
 import { type EditorRuntime, liveResources } from '#/runtime/runtime';
 
-import { type NodeViewContext, type NodeViewState } from './define';
-import { type PortalStore } from './portals';
+import { ISLAND_VIEWS } from './island';
+import { type PortalEntry, type PortalStore } from './portals';
 
-/** What the node views of one editor share: its portals, what chrome reads, and the session they act on. */
+/** What the node views of one editor share: its portals and the session they act on. */
 export interface NodeViewHost {
     readonly portals: PortalStore;
-    readonly context: NodeViewContext;
     readonly runtime: EditorRuntime;
 }
 
@@ -59,7 +58,7 @@ export const createNodeViews = (
         }
     };
 
-    const stateOf = (node: ProseMirrorNode, selected: boolean): NodeViewState<object> => {
+    const stateOf = (node: ProseMirrorNode, selected: boolean): PortalEntry['state'] => {
         let nodeId = '';
         if (typeof node.attrs.nodeId === 'string') {
             nodeId = node.attrs.nodeId;
@@ -69,7 +68,6 @@ export const createNodeViews = (
             nodeId,
             attrs: snapshot(node.attrs),
             selected,
-            context: host.context,
         };
     };
 
@@ -91,7 +89,7 @@ export const createNodeViews = (
         }
         let current = node;
         let state = stateOf(node, false);
-        const publish = (next: NodeViewState<object>) => {
+        const publish = (next: PortalEntry['state']) => {
             state = next;
             host.portals.set({ key, slot: chrome, component, state });
         };
@@ -155,7 +153,7 @@ export const createNodeViews = (
     };
 
     const constructors: Record<string, NodeViewConstructor> = {};
-    for (const [name, component] of views) {
+    for (const [name, component] of [...ISLAND_VIEWS, ...views]) {
         constructors[name] = (node, view) =>
             faultOnThrow(
                 () => ({ dom: view.dom.ownerDocument.createElement(tagOf(node)) }),
