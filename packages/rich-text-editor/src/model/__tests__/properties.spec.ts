@@ -4,6 +4,7 @@
 
 import { readdirSync, readFileSync } from 'node:fs';
 
+import Ajv2020 from 'ajv/dist/2020';
 import fc from 'fast-check';
 import { Node, Schema } from 'prosemirror-model';
 import { TableMap, tableNodes } from 'prosemirror-tables';
@@ -29,7 +30,7 @@ import {
     text,
 } from '#/features/__tests__/fixtures/documents';
 import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
-import { decodeDocument, type RichTextDocument } from '#/model';
+import { decodeDocument, type RichTextDocument, toJsonSchema } from '#/model';
 
 import { type TreeNode } from '../content';
 import { decodeToTree } from '../decode';
@@ -221,6 +222,22 @@ describe(seeded('round trips'), () => {
                     expect(result).toMatchObject({ status: 'editable', diagnostics: [] });
                     expect(canonicalJson(document?.content as unknown as Json)).toBe(canonicalJson(content));
                 }
+            }),
+            settings,
+        );
+    });
+
+    it('validates each serialized generated document against the schema of its model', () => {
+        const validate = new Ajv2020({ strict: true, strictTypes: false, allowUnionTypes: true }).compile(
+            toJsonSchema(model),
+        );
+        fc.assert(
+            fc.property(documentArb, (content) => {
+                const { result, document } = encodedOf(envelope(content));
+                // No island and no unknown attribute: the decoded document is exactly the generated one.
+                expect(result).toMatchObject({ status: 'editable', diagnostics: [] });
+                expect(document).toMatchObject({ format: 'frontify.rich-text', formatVersion: 1, model: model.ref });
+                expect(validate(document), JSON.stringify(validate.errors)).toBe(true);
             }),
             settings,
         );
