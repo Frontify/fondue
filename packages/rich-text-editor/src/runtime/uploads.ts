@@ -10,7 +10,7 @@ import { diagnostic } from '#/model/format';
 
 import { type AsyncOperation, type AsyncRequest } from './async';
 import { placeBlock } from './capabilities';
-import { readImageHeader } from './image-header';
+import { readImageHeader, svgHoldsScript } from './image-header';
 import { INSERT_IMAGE, type PickedAsset, pickedAsset, REPLACE_IMAGE } from './media';
 import { positionOf } from './positions';
 import { type SelectionHandle, type SessionToken } from './types';
@@ -87,13 +87,24 @@ export interface UploadServiceLike {
     ): Promise<void>;
 }
 
-/** Why a file did not upload, which the editor says with how to fix it. */
-export type UploadRejection = 'type' | 'size' | 'pixels';
+/**
+ * Why a file did not upload, which the editor says with how to fix it: its type, its size, its pixels, a size its
+ * header does not tell, or an SVG that holds active content.
+ */
+export type UploadRejection = 'type' | 'size' | 'pixels' | 'unreadable' | 'unsafe';
 
-/** What the live region announces: once per upload start, end and failure, and once per file refused. */
+/**
+ * What the live region announces: once per gesture of chosen, pasted or dropped files, with each file refused and
+ * the uploads it started, then once per upload's later start, end, failure or cancel.
+ */
 export type UploadEvent =
-    | { readonly kind: 'started' | 'completed' | 'failed' | 'cancelled'; readonly name: string }
-    | { readonly kind: 'rejected'; readonly name: string; readonly reason: UploadRejection };
+    | { readonly kind: 'started' | 'failed' | 'cancelled'; readonly name: string }
+    | { readonly kind: 'completed'; readonly name: string; readonly altMissing: boolean }
+    | {
+          readonly kind: 'gesture';
+          readonly refused: readonly { readonly name: string; readonly reason: UploadRejection }[];
+          readonly started: readonly string[];
+      };
 
 /** What the chrome of a slot shows of its upload; never a document attribute. */
 export interface UploadStatus {
@@ -218,27 +229,34 @@ export const createUploads = (host: UploadHost) => {
         const state = slots.get(nodeId)?.state;
         return state === 'pending' || state === 'queued' || state === 'running';
     };
+    // A failed or stopped slot keeps how it entered the document, which a retry's Cancel then reverses.
+    const kept = (nodeId: string) => {
+        const state = slots.get(nodeId)?.state;
+        return state !== undefined && state !== 'done';
+    };
     const retryable = (nodeId: string) => {
         const slot = slots.get(nodeId);
         return slot !== undefined && slot.file !== undefined && (slot.state === 'failed' || slot.state === 'stopped');
     };
 
     const check = async (file: File): Promise<Checked | UploadRejection> => {
-        const header = await readImageHeader(file);
-        // The content's type wins over the one the file name gave, so an HTML file named `photo.png` is HTML.
-        const type = header.mediaType ?? file.type;
-        if (!host.acceptTypes.includes(type)) {
-            return 'type';
-        }
         if (file.size > host.limits.maxAssetBytes) {
             return 'size';
         }
+        const header = await readImageHeader(file);
+        // Only the content names the type, so an HTML file named `photo.png`, or content no reader knows, is refused.
+        const type = header.mediaType;
+        if (type === null || !host.acceptTypes.includes(type)) {
+            return 'type';
+        }
         const { width, height } = header;
-        if (
-            width !== null &&
-            height !== null &&
-            (width > MAX_IMAGE_SIDE || height > MAX_IMAGE_SIDE || width * height > host.limits.maxImagePixels)
-        ) {
+        if (type === 'image/svg+xml') {
+            if (svgHoldsScript(await file.text())) {
+                return 'unsafe';
+            }
+        } else if (width === null || height === null) {
+            return 'unreadable';
+        } else if (width > MAX_IMAGE_SIDE || height > MAX_IMAGE_SIDE || width * height > host.limits.maxImagePixels) {
             return 'pixels';
         }
         const measured = (value: number | null) => (value === null || value < 1 ? null : value);
@@ -270,10 +288,15 @@ export const createUploads = (host: UploadHost) => {
             release();
             return 'superseded';
         }
-        const asset = pickedAsset(value);
+        // An answer that holds a URL or token, a type the session does not accept, or no asset fails the upload.
+        const asset = pickedAsset(value, {
+            mediaTypes: host.acceptTypes,
+            maxLabel: host.limits.maxAttributeLength,
+        });
         if (asset === undefined) {
             release();
             stop(slot, 'failed');
+            host.report(diagnostic('media.upload-failed', undefined, undefined, 'warning'));
             host.event({ kind: 'failed', name: slot.name });
             return 'invalid-payload';
         }
@@ -303,7 +326,14 @@ export const createUploads = (host: UploadHost) => {
         slot.state = 'done';
         slot.file = undefined;
         slot.operation = undefined;
-        host.event({ kind: 'completed', name: slot.name });
+        const { doc } = host.state();
+        const pos = positionOf(doc, slot.nodeId);
+        const intent: unknown = pos === undefined ? undefined : doc.nodeAt(pos)?.attrs.altIntent;
+        host.event({
+            kind: 'completed',
+            name: slot.name,
+            altMissing: intent !== 'meaningful' && intent !== 'decorative',
+        });
         if (slot.kind === 'replace') {
             host.reviewAlt(slot.nodeId, asset.assetId);
         }
@@ -311,8 +341,11 @@ export const createUploads = (host: UploadHost) => {
         return undefined;
     };
 
-    /** Sends the slot's file as a new operation, which waits while `maxConcurrentUploads` others run. */
-    const send = (slot: Slot) => {
+    /**
+     * Sends the slot's file as a new operation, which waits while `maxConcurrentUploads` others run, and announces its
+     * start unless its gesture announces it.
+     */
+    const send = (slot: Slot, announce = true) => {
         const service = host.service();
         const { file } = slot;
         if (service === undefined || file === undefined) {
@@ -322,10 +355,12 @@ export const createUploads = (host: UploadHost) => {
         let sent = false;
         let released = false;
         let release = () => undefined as void;
+        // The service's own answer to the request, after which a cleanup can no longer race it.
+        let settled: Promise<unknown> = Promise.resolve();
         const releaseOnce = () => {
             if (sent && !released) {
                 released = true;
-                release();
+                settled.then(() => release()).catch(() => undefined);
             }
         };
         slot.state = 'queued';
@@ -358,12 +393,17 @@ export const createUploads = (host: UploadHost) => {
                     }
                 };
                 // A service that throws instead of rejecting fails the same way.
-                return Promise.resolve().then(() =>
+                const call = Promise.resolve().then(() =>
                     service.upload(
                         { operationId, blob: file, filename: slot.name },
                         { signal, session, reportProgress },
                     ),
                 );
+                settled = call.then(
+                    () => undefined,
+                    () => undefined,
+                );
+                return call;
             },
             deliver: (result) =>
                 own.operation === undefined ? 'superseded' : complete(slot, own.operation, result, releaseOnce),
@@ -392,7 +432,9 @@ export const createUploads = (host: UploadHost) => {
                 host.event({ kind: 'cancelled', name: slot.name });
             }
         });
-        host.event({ kind: 'started', name: slot.name });
+        if (announce) {
+            host.event({ kind: 'started', name: slot.name });
+        }
         host.changed();
     };
 
@@ -465,11 +507,11 @@ export const createUploads = (host: UploadHost) => {
         accepted: readonly Checked[],
         place: Extract<UploadPlace, { kind: 'insert' }>,
         target: SelectionHandle,
-    ) => {
+    ): readonly string[] => {
         const { schema } = host.state();
         const { figure, asset_image: image } = schema.nodes;
         if (figure === undefined || image === undefined) {
-            return;
+            return [];
         }
         const added = accepted.map((checked) => {
             const slot = slotOf(host.generateId(), 'insert', checked);
@@ -493,19 +535,20 @@ export const createUploads = (host: UploadHost) => {
         );
         for (const { slot } of added) {
             if (applied) {
-                send(slot);
+                send(slot, false);
             } else {
                 slots.delete(slot.nodeId);
             }
         }
+        return applied ? added.map(({ slot }) => slot.name) : [];
     };
 
-    const replace = (checked: Checked, nodeId: string) => {
+    const replace = (checked: Checked, nodeId: string): readonly string[] => {
         const { doc } = host.state();
         const pos = positionOf(doc, nodeId);
         const node = pos === undefined ? null : doc.nodeAt(pos);
         if (node === null || node.type.name !== 'asset_image') {
-            return;
+            return [];
         }
         const previous: JsonObject = Object.fromEntries(
             Object.keys(slotAttrs(checked)).map((name) => [name, node.attrs[name] as JsonObject[string]]),
@@ -519,9 +562,10 @@ export const createUploads = (host: UploadHost) => {
             } else {
                 slots.set(nodeId, before);
             }
-            return;
+            return [];
         }
-        send(slot);
+        send(slot, false);
+        return [slot.name];
     };
 
     /** Checks `files` and starts their uploads at `place`, once their headers are read. */
@@ -546,25 +590,28 @@ export const createUploads = (host: UploadHost) => {
                 return;
             }
             const accepted: Checked[] = [];
+            const refused: { readonly name: string; readonly reason: UploadRejection }[] = [];
             for (const [index, result] of checked.entries()) {
                 if (typeof result === 'string') {
-                    host.event({ kind: 'rejected', name: nameOf(files[index] as File), reason: result });
+                    refused.push({ name: nameOf(files[index] as File), reason: result });
                 } else {
                     accepted.push(result);
                 }
             }
-            if (accepted.length === 0 || cacheFull()) {
-                return;
-            }
-            if (place.kind === 'replace') {
-                if (host.allows('edit')) {
-                    replace(accepted[0] as Checked, place.nodeId);
+            let started: readonly string[] = [];
+            if (accepted.length > 0 && !cacheFull()) {
+                const action = place.kind === 'replace' || place.origin === 'command' ? 'create' : 'paste';
+                if (place.kind === 'replace') {
+                    if (host.allows('edit')) {
+                        started = replace(accepted[0] as Checked, place.nodeId);
+                    }
+                } else if (target !== undefined && host.allows('create') && host.allows(action)) {
+                    started = insert(accepted, place, target);
                 }
-                return;
             }
-            const action = place.origin === 'command' ? 'create' : 'paste';
-            if (target !== undefined && host.allows('create') && host.allows(action)) {
-                insert(accepted, place, target);
+            // One message per gesture, so no refusal or start overwrites another in the polite region.
+            if (refused.length > 0 || started.length > 0) {
+                host.event({ kind: 'gesture', refused, started });
             }
         } finally {
             if (target !== undefined) {
@@ -668,13 +715,14 @@ export const createUploads = (host: UploadHost) => {
 
     /**
      * History reset, `replaceDocument` or `dispose`: each completed upload whose asset `left` no longer holds is
-     * released, then the cache empties, and only slots whose upload still runs in `left` stay.
+     * released, then the cache empties. Where the session keeps the document, as a history reset does, its slots that
+     * are not done stay with their uploads; otherwise none stays.
      */
-    const reset = (left: Node) => {
+    const reset = (left: Node, keeps = false) => {
         cache.empty(assetsIn(left));
         fills.length = 0;
         for (const [nodeId, slot] of slots) {
-            if (slot.operation === undefined || positionOf(left, nodeId) === undefined) {
+            if (!keeps || slot.state === 'done' || positionOf(left, nodeId) === undefined) {
                 slots.delete(nodeId);
             }
         }
@@ -695,7 +743,7 @@ export const createUploads = (host: UploadHost) => {
         return { state: slot.state, progress: slot.progress, name: slot.name };
     };
 
-    return { begin, retry, statusOf, active, retryable, committed, flush, reset, dispose, cache };
+    return { begin, retry, statusOf, active, kept, retryable, committed, flush, reset, dispose, cache };
 };
 
 export type Uploads = ReturnType<typeof createUploads>;

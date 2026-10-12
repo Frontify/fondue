@@ -12,12 +12,24 @@ const UNKNOWN: ImageHeader = { mediaType: null, width: null, height: null };
 // Enough for every signature and fixed-place size below; JPEG and AVIF read further where they need to.
 const HEAD_BYTES = 64;
 const TEXT_BYTES = 1024;
-const BOX_BYTES = 64 * 1024;
-// A JPEG whose frame header is further in holds metadata no camera writes.
-const MAX_JPEG_SEGMENTS = 256;
+// The bytes one read takes from the file, so walking a JPEG's or an AVIF's structure reads it in a few slices.
+const WINDOW_BYTES = 1024 * 1024;
 
 const bytesOf = async (blob: Blob, start: number, length: number): Promise<Uint8Array> =>
     new Uint8Array(await blob.slice(start, start + length).arrayBuffer());
+
+/** Reads `blob` through one window of `WINDOW_BYTES` at a time, which a walk of its structure moves along. */
+const windowed = (blob: Blob) => {
+    let start = 0;
+    let bytes: Uint8Array = new Uint8Array();
+    return async (at: number, length: number): Promise<Uint8Array> => {
+        if (at < start || at + length > start + bytes.length) {
+            start = at;
+            bytes = await bytesOf(blob, at, Math.max(length, WINDOW_BYTES));
+        }
+        return bytes.subarray(at - start, at - start + length);
+    };
+};
 
 const ascii = (bytes: Uint8Array, start: number, length: number) =>
     String.fromCodePoint(...bytes.subarray(start, start + length));
@@ -31,12 +43,10 @@ const sized = (mediaType: string, width: number, height: number): ImageHeader =>
 
 const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
 
+/** A PNG by its signature and the `IHDR` chunk that must follow it; other bytes after the signature are no PNG. */
 const png = (head: Uint8Array): ImageHeader | undefined => {
-    if (!PNG_SIGNATURE.every((byte, index) => head[index] === byte)) {
+    if (!PNG_SIGNATURE.every((byte, index) => head[index] === byte) || ascii(head, 12, 4) !== 'IHDR') {
         return undefined;
-    }
-    if (ascii(head, 12, 4) !== 'IHDR') {
-        return { ...UNKNOWN, mediaType: 'image/png' };
     }
     return sized('image/png', uint32BE(head, 16), uint32BE(head, 20));
 };
@@ -49,6 +59,7 @@ const gif = (head: Uint8Array): ImageHeader | undefined => {
     return sized('image/gif', uint16LE(head, 6), uint16LE(head, 8));
 };
 
+/** A WebP by its RIFF header and a `VP8 `, `VP8L` or `VP8X` chunk with its size; any other chunk is no WebP. */
 const webp = (head: Uint8Array): ImageHeader | undefined => {
     if (ascii(head, 0, 4) !== 'RIFF' || ascii(head, 8, 4) !== 'WEBP') {
         return undefined;
@@ -64,31 +75,81 @@ const webp = (head: Uint8Array): ImageHeader | undefined => {
     if (chunk === 'VP8X') {
         return sized('image/webp', 1 + uint24LE(head, 24), 1 + uint24LE(head, 27));
     }
-    return { ...UNKNOWN, mediaType: 'image/webp' };
+    return undefined;
 };
 
-/** The frame header of a JPEG, found by walking its segments from the start of the file. */
+// Markers with no length after them: TEM and the restart markers.
+const STANDALONE = new Set([0x01, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7]);
+const START_OF_SCAN = 0xda;
+const END_OF_IMAGE = 0xd9;
+
+/**
+ * The frame header of a JPEG, found by walking its segments from the start of the file up to the start of the scan,
+ * however many come first; a JPEG with none before it has no size this reader can tell.
+ */
 const jpeg = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefined> => {
     if (head[0] !== 0xff || head[1] !== 0xd8 || head[2] !== 0xff) {
         return undefined;
     }
+    const read = windowed(blob);
     let at = 2;
-    for (let segment = 0; segment < MAX_JPEG_SEGMENTS && at + 4 <= blob.size; segment += 1) {
-        const marker = await bytesOf(blob, at, 9);
+    while (at + 4 <= blob.size) {
+        const marker = await read(at, 9);
         if (marker[0] !== 0xff) {
             break;
         }
         const code = marker[1] ?? 0;
+        // Fill bytes may pad a marker.
+        if (code === 0xff) {
+            at += 1;
+            continue;
+        }
+        if (code === START_OF_SCAN || code === END_OF_IMAGE) {
+            break;
+        }
         // SOF0 to SOF15, except DHT (C4), JPG (C8) and DAC (CC), which share the range.
         if (code >= 0xc0 && code <= 0xcf && code !== 0xc4 && code !== 0xc8 && code !== 0xcc) {
             return sized('image/jpeg', uint16BE(marker, 7), uint16BE(marker, 5));
         }
-        at += 2 + uint16BE(marker, 2);
+        at += STANDALONE.has(code) ? 2 : 2 + uint16BE(marker, 2);
     }
     return { ...UNKNOWN, mediaType: 'image/jpeg' };
 };
 
-/** The largest `ispe` property of an AVIF, which holds the primary image's size, in the file's first boxes. */
+/** One ISO base media box: its type, where its content starts and where it ends. */
+interface Box {
+    readonly type: string;
+    readonly content: number;
+    readonly end: number;
+}
+
+/** The boxes between `start` and `end`, read from their headers alone. */
+const boxesIn = async (read: ReturnType<typeof windowed>, start: number, end: number): Promise<Box[]> => {
+    const boxes: Box[] = [];
+    let at = start;
+    while (at + 8 <= end) {
+        const header = await read(at, 16);
+        let size = uint32BE(header, 0);
+        let content = at + 8;
+        if (size === 1) {
+            size = uint32BE(header, 8) * 2 ** 32 + uint32BE(header, 12);
+            content = at + 16;
+        } else if (size === 0) {
+            size = end - at;
+        }
+        if (size < content - at) {
+            break;
+        }
+        boxes.push({ type: ascii(header, 4, 4), content, end: Math.min(end, at + size) });
+        at += size;
+    }
+    return boxes;
+};
+
+/**
+ * The largest `ispe` property of an AVIF, which holds the primary image's size, found through its boxes:
+ * `meta`, then `iprp`, then `ipco`, wherever they sit in the file.
+ */
 const avif = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefined> => {
     if (ascii(head, 4, 4) !== 'ftyp') {
         return undefined;
@@ -97,13 +158,31 @@ const avif = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
     if (!/avi[fs]/.test(brands)) {
         return undefined;
     }
-    const boxes = await bytesOf(blob, 0, BOX_BYTES);
+    const read = windowed(blob);
+    const child = async (box: Box | undefined, type: string, skip = 0) => {
+        if (box === undefined) {
+            return undefined;
+        }
+        const children = await boxesIn(read, box.content + skip, box.end);
+        return children.find((found) => found.type === type);
+    };
+    const top = await boxesIn(read, 0, blob.size);
+    const meta = top.find(({ type }) => type === 'meta');
+    // `meta` is a full box, whose version and flags come before its children.
+    const properties = await child(await child(meta, 'iprp', 4), 'ipco');
     let width = 0;
     let height = 0;
-    for (let at = boxes.indexOf(0x69); at >= 0 && at + 16 <= boxes.length; at = boxes.indexOf(0x69, at + 1)) {
-        if (ascii(boxes, at, 4) === 'ispe' && uint32BE(boxes, at + 8) * uint32BE(boxes, at + 12) > width * height) {
-            width = uint32BE(boxes, at + 8);
-            height = uint32BE(boxes, at + 12);
+    if (properties !== undefined) {
+        for (const box of await boxesIn(read, properties.content, properties.end)) {
+            if (box.type !== 'ispe') {
+                continue;
+            }
+            const values = await read(box.content, 12);
+            const [w, h] = [uint32BE(values, 4), uint32BE(values, 8)];
+            if (w * h > width * height) {
+                width = w;
+                height = h;
+            }
         }
     }
     if (width === 0) {
@@ -135,6 +214,29 @@ export const readImageHeader = async (blob: Blob): Promise<ImageHeader> => {
     return markup(text) ?? UNKNOWN;
 };
 
-/** Whether an SVG's text holds script: a `script` element, an event handler attribute or a `javascript:` URL. */
-export const svgHoldsScript = (text: string): boolean =>
-    /<script[\s>/]/i.test(text) || /\son[a-z]+\s*=/i.test(text) || /javascript\s*:/i.test(text);
+const NAMED_REFERENCES: Readonly<Record<string, string>> = { lt: '<', gt: '>', amp: '&', quot: '"', apos: "'" };
+
+/** `text` with its numeric and basic named character references decoded, as an XML parser reads them. */
+const decodeReferences = (text: string) =>
+    text.replaceAll(/&(?:#x([\da-f]+)|#(\d+)|([a-z]+));?/gi, (whole, hex?: string, decimal?: string, name?: string) => {
+        if (name !== undefined) {
+            return NAMED_REFERENCES[name.toLowerCase()] ?? whole;
+        }
+        const code = Number.parseInt(hex ?? decimal ?? '', hex === undefined ? 10 : 16);
+        return Number.isInteger(code) && code >= 0 && code <= 0x10_ff_ff ? String.fromCodePoint(code) : whole;
+    });
+
+/**
+ * Whether an SVG's text holds active content once its character references are decoded: a `script` or
+ * `foreignObject` element, an event handler attribute or a `javascript:` reference, which tabs and line breaks
+ * inside it do not hide.
+ */
+export const svgHoldsScript = (text: string): boolean => {
+    const decoded = decodeReferences(text);
+    const compact = decoded.replaceAll(/[\t\n\r]/g, '');
+    return (
+        /<\s*(?:[\w-]+:)?(?:script|foreignobject)[\s>/]/i.test(decoded) ||
+        /[\s"'/]on[a-z]+\s*=/i.test(decoded) ||
+        /javascript\s*:/i.test(compact)
+    );
+};

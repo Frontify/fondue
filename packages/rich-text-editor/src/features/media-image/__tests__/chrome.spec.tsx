@@ -144,7 +144,7 @@ describe('the image chrome', () => {
         mounted.unmount();
     });
 
-    it('opens the size menu on the release of a touch over its button, never on the press that may become a scroll', async () => {
+    it('toggles the size menu on the release of a touch over its button, never on the press that may become a scroll', async () => {
         const mounted = await mountImages();
         const trigger = screen.getByRole('button', { name: 'Size: Original size' });
         vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue({
@@ -170,6 +170,19 @@ describe('the image chrome', () => {
 
         expect(pressed).toBeNull();
         expect(screen.getByRole('menu')).toBeInTheDocument();
+        act(() => {
+            fireEvent.pointerDown(trigger, {
+                button: 0,
+                ctrlKey: false,
+                pointerType: 'touch',
+                clientX: 10,
+                clientY: 10,
+            });
+            fireEvent.pointerUp(trigger, { pointerType: 'touch', clientX: 10, clientY: 10 });
+        });
+        await flush();
+
+        expect(screen.queryByRole('menu')).toBeNull();
         mounted.unmount();
     });
 
@@ -288,7 +301,7 @@ describe('motion', () => {
 });
 
 describe('a replaced image', () => {
-    it('keeps the review in the plugin state, announces the prompt and moves focus to its action', async () => {
+    it('keeps the review in the plugin state and moves focus to its action, which the prompt describes, announcing nothing more', async () => {
         const picker = deferredPicker();
         const mounted = await mountImages({ services: { assets: picker.service } });
 
@@ -297,8 +310,12 @@ describe('a replaced image', () => {
         await flush();
 
         expect(altReviewOf(mounted.runtime.state, 'image-1')).toBe(PALETTE.assetId);
-        expect(announced()).toBe('The image changed. Check that its alternative text still describes it.');
-        expect(screen.getByRole('button', { name: 'Review alternative text' })).toHaveFocus();
+        const review = screen.getByRole('button', { name: 'Review alternative text' });
+        expect(review).toHaveFocus();
+        expect(review).toHaveAccessibleDescription(
+            'The image changed. Check that its alternative text still describes it.',
+        );
+        expect(announced()).not.toContain('The image changed.');
         mounted.unmount();
     });
 
@@ -460,5 +477,84 @@ describe('the image styles', () => {
         expect(print).toContain('[data-rte-node-chrome]');
         expect(print).not.toContain(':has(');
         expect(print).not.toMatch(/\[data-rte-chrome\]\)/);
+    });
+});
+
+describe('an image after a rerender, a drag or a failure', () => {
+    it('clears the reader failure flag once the image shows another URL, and once an image loads', () => {
+        const model = imageModel();
+        const reader = (resolve: typeof resolving) =>
+            createElement(RichTextReader, {
+                document: storedIn(model, [figure('image-1')]),
+                model,
+                presentation: { styles: [], colorTokens: [], resolveAssetUrl: resolve },
+            });
+        const rendered = render(reader(resolving));
+        const figureOf = () => rendered.container.querySelector('figure');
+        fireEvent.error(rendered.container.querySelector('img') as Element);
+        expect(figureOf()).toHaveAttribute('data-rte-image-failed');
+
+        rendered.rerender(reader((assetId) => `https://cdn2.frontify.test/${assetId}.png`));
+        const moved = figureOf()?.hasAttribute('data-rte-image-failed');
+        fireEvent.error(rendered.container.querySelector('img') as Element);
+        const failedAgain = figureOf()?.hasAttribute('data-rte-image-failed');
+        fireEvent.load(rendered.container.querySelector('img') as Element);
+
+        expect([moved, failedAgain, figureOf()?.hasAttribute('data-rte-image-failed')]).toEqual([false, true, false]);
+    });
+
+    it('lets a press on a selected image start its drag, which carries the whole figure', async () => {
+        const mounted = await mountImages({
+            blocks: [para(text('Before')), figure('image-1', { displayWidth: 50 }, 'right')],
+        });
+        mounted.selectImage('image-1');
+        await flush();
+        const press = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 });
+        act(() => {
+            mounted.view.dom.querySelector('figure img')?.dispatchEvent(press);
+        });
+        const dataTransfer = new DataTransfer();
+        const drag = new DragEvent('dragstart', { bubbles: true, cancelable: true });
+        // happy-dom's DragEvent ignores the `dataTransfer` init.
+        Object.defineProperty(drag, 'dataTransfer', { value: dataTransfer });
+
+        act(() => {
+            mounted.view.dom.querySelector('figure')?.dispatchEvent(drag);
+        });
+
+        expect(press.defaultPrevented).toBe(false);
+        expect(mounted.view.dragging?.slice.content.firstChild?.type.name).toBe('figure');
+        expect(dataTransfer.getData('text/html')).toContain('<figure dir="auto" style="text-align:right">');
+        mounted.unmount();
+    });
+
+    it('names each alternative text choice by its label alone, with its hint as the description only', async () => {
+        const mounted = await mountImages();
+
+        await press(screen.getByRole('button', { name: 'Alternative text' }));
+        const dialog = screen.getByRole('dialog', { name: 'Alternative text' });
+
+        expect(within(dialog).getByRole('radio', { name: 'Meaningful' })).toHaveAccessibleDescription(
+            'It carries information. Describe it for people who cannot see it.',
+        );
+        expect(within(dialog).getByRole('radio', { name: 'Decorative' })).toHaveAccessibleDescription(
+            'It adds no information, so screen readers skip it.',
+        );
+        mounted.unmount();
+    });
+
+    it('announces a selected image again when it fails to load', async () => {
+        const mounted = await mountImages();
+        mounted.selectImage('image-1');
+        await flush();
+        expect(announced()).toBe('Image: Frontify logo');
+
+        act(() => {
+            fireEvent.error(mounted.view.dom.querySelector('figure img') as Element);
+        });
+        await flush();
+
+        expect(announced()).toBe('Image unavailable logo.png');
+        mounted.unmount();
     });
 });

@@ -88,7 +88,7 @@ import {
     type Snapshot,
     type Unsubscribe,
 } from './types';
-import { uploadSlotsPlugin } from './upload-slots';
+import { carrySlots, uploadSlotsPlugin } from './upload-slots';
 import {
     createUploads,
     DEFAULT_ACCEPT_TYPES,
@@ -582,7 +582,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return result.status === 'applied' ? undefined : 'not-applicable';
         },
         // A completed upload's review prompt is session state, no undo step.
-        reviewAlt: (nodeId, assetId) => commit(withAltReview(state.tr, nodeId, assetId).setMeta('addToHistory', false)),
+        // The upload completes in the background, so its prompt does not take focus.
+        reviewAlt: (nodeId, assetId) =>
+            commit(withAltReview(state.tr, nodeId, assetId, false).setMeta('addToHistory', false)),
         report: (found) => report(found),
         event: (event) => {
             if (phase !== 'disposed') {
@@ -2131,9 +2133,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (phase !== 'ready' || settling.active()) {
                 return;
             }
-            if (installState(reset(state))) {
+            const fresh = reset(state);
+            // Uploads that run go on, so their slots keep what Cancel restores.
+            if (installState(fresh.apply(carrySlots(state, fresh)))) {
                 published = state;
-                uploads.reset(state.doc);
+                uploads.reset(state.doc, true);
                 busyWith(notify);
             }
         },

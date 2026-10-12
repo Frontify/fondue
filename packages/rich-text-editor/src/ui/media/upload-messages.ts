@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CodecContext, type ResourceLimits } from '#/model';
-import { MAX_IMAGE_SIDE, megabytes, type UploadEvent } from '#/runtime/uploads';
+import { MAX_IMAGE_SIDE, megabytes, type UploadEvent, type UploadRejection } from '#/runtime/uploads';
 
 // The names authors know the accepted media types by.
 const TYPE_NAMES: Readonly<Record<string, string>> = {
@@ -19,9 +19,15 @@ const typeName = (type: string) =>
 
 const EVENT_KEYS = {
     started: 'RichTextEditor_uploadStarted',
-    completed: 'RichTextEditor_uploadCompleted',
     failed: 'RichTextEditor_uploadFailed',
     cancelled: 'RichTextEditor_uploadCancelled',
+} as const;
+
+const REFUSAL_KEYS = {
+    type: 'RichTextEditor_uploadWrongType',
+    size: 'RichTextEditor_uploadTooLarge',
+    unreadable: 'RichTextEditor_uploadUnreadable',
+    unsafe: 'RichTextEditor_uploadUnsafe',
 } as const;
 
 /** `items` as one alternative list in `lang`, such as "PNG, JPEG or GIF". */
@@ -33,23 +39,18 @@ const alternatives = (items: readonly string[], lang: string) => {
     }
 };
 
-/**
- * The live region message of an upload event in `lang`; a refused file's message names how to fix it: the accepted
- * types and size, or the pixel limits.
- */
-export const uploadMessage = (
-    event: UploadEvent,
+type Limits = Pick<ResourceLimits, 'maxAssetBytes' | 'maxImagePixels'>;
+
+/** Why one file was refused, with how to fix it: the accepted types and size, or the pixel limits. */
+const refusalOf = (
+    { name, reason }: { readonly name: string; readonly reason: UploadRejection },
     t: CodecContext['t'],
     lang: string,
-    limits: Pick<ResourceLimits, 'maxAssetBytes' | 'maxImagePixels'>,
+    limits: Limits,
     accepts: readonly string[],
-): string => {
-    const { name } = event;
-    if (event.kind !== 'rejected') {
-        return t(EVENT_KEYS[event.kind], { name });
-    }
+) => {
     const numbers = new Intl.NumberFormat(lang, { maximumFractionDigits: 1 });
-    if (event.reason === 'pixels') {
+    if (reason === 'pixels') {
         return t('RichTextEditor_uploadTooManyPixels', {
             name,
             megapixels: numbers.format(limits.maxImagePixels / 1_000_000),
@@ -60,8 +61,33 @@ export const uploadMessage = (
         megabytes(limits.maxAssetBytes),
     );
     const types = alternatives([...new Set(accepts.map(typeName))], lang);
-    if (event.reason === 'size') {
-        return t('RichTextEditor_uploadTooLarge', { name, types, size });
+    return t(REFUSAL_KEYS[reason], { name, types, size });
+};
+
+/**
+ * The live region message of an upload event in `lang`. A gesture's message says why each file it refused was
+ * refused and how to fix it, then the upload it started by its name, or how many it started.
+ */
+export const uploadMessage = (
+    event: UploadEvent,
+    t: CodecContext['t'],
+    lang: string,
+    limits: Limits,
+    accepts: readonly string[],
+): string => {
+    if (event.kind === 'completed') {
+        const key = event.altMissing ? 'RichTextEditor_uploadCompletedNoAlt' : 'RichTextEditor_uploadCompleted';
+        return t(key, { name: event.name });
     }
-    return t('RichTextEditor_uploadWrongType', { name, types, size });
+    if (event.kind !== 'gesture') {
+        return t(EVENT_KEYS[event.kind], { name: event.name });
+    }
+    const parts = event.refused.map((refused) => refusalOf(refused, t, lang, limits, accepts));
+    const [first] = event.started;
+    if (event.started.length === 1 && first !== undefined) {
+        parts.push(t('RichTextEditor_uploadStarted', { name: first }));
+    } else if (event.started.length > 1) {
+        parts.push(t('RichTextEditor_uploadStartedCount', { count: event.started.length }));
+    }
+    return parts.join(' ');
 };

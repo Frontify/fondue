@@ -35,19 +35,41 @@ export interface PickedAsset {
     readonly labelSnapshot: string;
 }
 
-/** A host picker's result as untrusted input: an `AssetValue` with an `assetId`, else `undefined`. */
-export const pickedAsset = (value: unknown): PickedAsset | undefined => {
+/**
+ * Whether `assetId` reads as a URL, a signed URL or an access token, which an asset ID never is: an address with a
+ * scheme and authority, a scheme that loads content, or a query key that signs or authorizes a request.
+ */
+export const isAssetLocator = (assetId: string): boolean =>
+    /^(?:[a-z][\d+.a-z-]*:)?\/\//i.test(assetId) ||
+    /^(?:https?|data|blob|javascript|vbscript|file|ftp):/i.test(assetId) ||
+    /[?&;](?:token|access_token|signature|x-amz-signature|sig)=/i.test(assetId);
+
+/**
+ * A host's answer as untrusted input: an `AssetValue` whose `assetId` is no URL or token, whose `mediaType` is one of
+ * `mediaTypes` when given, and whose `labelSnapshot` is cut to `maxLabel` characters when given, else `undefined`.
+ */
+export const pickedAsset = (
+    value: unknown,
+    options: { readonly mediaTypes?: readonly string[]; readonly maxLabel?: number } = {},
+): PickedAsset | undefined => {
     if (!isRecord(value)) {
         return undefined;
     }
     const { assetId, mediaType, labelSnapshot } = value;
-    if (typeof assetId !== 'string' || assetId === '' || typeof mediaType !== 'string') {
+    if (typeof assetId !== 'string' || assetId === '' || isAssetLocator(assetId) || typeof mediaType !== 'string') {
         return undefined;
     }
     if (typeof labelSnapshot !== 'string') {
         return undefined;
     }
-    return { assetId, mediaType, labelSnapshot };
+    if (options.mediaTypes !== undefined && !options.mediaTypes.includes(mediaType)) {
+        return undefined;
+    }
+    let label = labelSnapshot;
+    if (options.maxLabel !== undefined && [...label].length > options.maxLabel) {
+        label = [...label].slice(0, options.maxLabel).join('');
+    }
+    return { assetId, mediaType, labelSnapshot: label };
 };
 
 /** Inserts a figure that holds the picked image where `insertNode` puts a block, as the step of `image.insert`. */
