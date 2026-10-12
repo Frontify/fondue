@@ -19,6 +19,12 @@ import { NODE_IDS_PLUGIN } from '#/model/capabilities';
 import { carriesNodeId } from './schema';
 
 /**
+ * The root transaction meta that times a batch's repair: `later` for a composition batch, whose repair waits so it never
+ * changes composing text, and `now` for the root that settles it.
+ */
+export const NORMALIZE_META = 'rte.normalize';
+
+/**
  * A repair transaction appended after another: the same steps for equal states and nothing on its own output,
  * computed synchronously with no I/O, timer or promise.
  */
@@ -31,6 +37,8 @@ export type Normalizer = (state: EditorState, generateId: () => string) => Trans
 interface NodeIdIndex {
     readonly counts: ReadonlyMap<string, number>;
     readonly touched: readonly number[];
+    /** Whether the last root's repair waits, so the next root keeps the touched positions and the batch mapping. */
+    readonly later: boolean;
     readonly mapping: Mapping;
 }
 
@@ -74,10 +82,10 @@ const countNodeIds = (doc: Node): Map<string, number> => {
 };
 
 /** The index of `doc` read whole: its counts, with every node that carries a `nodeId` touched. */
-const touchEveryNode = (doc: Node, mapping: Mapping): NodeIdIndex => {
+const touchEveryNode = (doc: Node, later: boolean, mapping: Mapping): NodeIdIndex => {
     const touched: number[] = [];
     startingIn(doc, 0, doc.content.size, (_node, pos) => touched.push(pos));
-    return { counts: countNodeIds(doc), touched, mapping };
+    return { counts: countNodeIds(doc), touched, later, mapping };
 };
 
 /** Whether a node is a leaf or holds one, such as text, unlike the empty part a split at a node's very start leaves. */
@@ -111,17 +119,23 @@ const keeperOf = (holders: readonly Holder[], back: Mapping): Holder => {
 
 /**
  * Keeps the counts current through each transaction from the nodes that start in its steps' changed ranges, so a
- * keystroke reads only what it changed; the touched positions start over with each root transaction.
+ * keystroke reads only what it changed; the touched positions and the batch mapping start over with each root
+ * transaction, unless the last root's repair waits.
  */
 const nodeIdIndex: StateField<NodeIdIndex> = {
-    init: (_config, state) => ({ counts: countNodeIds(state.doc), touched: [], mapping: new Mapping() }),
+    init: (_config, state) => ({ counts: countNodeIds(state.doc), touched: [], later: false, mapping: new Mapping() }),
     apply: (transaction, index) => {
         let touched: number[] = [];
         let mapping = transaction.mapping;
-        if (transaction.getMeta('appendedTransaction') !== undefined) {
+        const appended = transaction.getMeta('appendedTransaction') !== undefined;
+        if (appended || index.later) {
             touched = index.touched.map((pos) => transaction.mapping.map(pos, 1));
             mapping = index.mapping.slice();
             mapping.appendMapping(transaction.mapping);
+        }
+        let { later } = index;
+        if (!appended) {
+            later = transaction.getMeta(NORMALIZE_META) === 'later';
         }
         // Copied on the first change only, since most transactions change no `nodeId`.
         let own: Map<string, number> | undefined;
@@ -159,14 +173,14 @@ const nodeIdIndex: StateField<NodeIdIndex> = {
                     });
                 });
             } else if (!KEEPS_IDS.some((kind) => step instanceof kind)) {
-                return touchEveryNode(transaction.doc, mapping);
+                return touchEveryNode(transaction.doc, later, mapping);
             }
         }
         let counts = index.counts;
         if (own !== undefined) {
             counts = own;
         }
-        return { counts, touched, mapping };
+        return { counts, touched, later, mapping };
     },
 };
 
@@ -180,7 +194,7 @@ const fillNodeIds: Normalizer = (state, generateId) => {
     const { doc } = state;
     let index = NODE_ID_INDEX.getState(state);
     if (index === undefined) {
-        index = touchEveryNode(doc, new Mapping());
+        index = touchEveryNode(doc, false, new Mapping());
     }
     const repairs = new Set<number>();
     const repeated = new Set<string>();

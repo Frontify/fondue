@@ -8,11 +8,11 @@ import { type CapabilityName, type ContentModel, type JsonObject, type PayloadDe
 import { CAPABILITY_PLUGINS, declaresNodeIds, INPUT_RULES_PLUGIN, NODE_IDS_PLUGIN } from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
 
-import { NORMALIZERS } from './normalizers';
+import { NORMALIZE_META, NORMALIZERS } from './normalizers';
 import { buildSchema } from './schema';
 
 export { carriesNodeId } from './schema';
-export { type Normalizer, NORMALIZERS } from './normalizers';
+export { NORMALIZE_META, type Normalizer, NORMALIZERS } from './normalizers';
 
 /** The transaction meta that names the command a transaction runs, so the runtime reports it. */
 export const COMMAND_META = 'rte.command';
@@ -67,15 +67,19 @@ export class AppendLimitError extends Error {
     }
 }
 
-/** The batch of the root that `transactions` belong to; ProseMirror marks each appended transaction with its root. */
-const batchOf = (transactions: readonly Transaction[]): AppendBatch | undefined => {
-    let root = transactions[0];
+/** The root transaction that `transactions` belong to; ProseMirror marks each appended transaction with its root. */
+const rootOf = (transactions: readonly Transaction[]): Transaction | undefined => {
+    const root = transactions[0];
     const rootOfAppended: unknown = root?.getMeta('appendedTransaction');
     if (rootOfAppended !== undefined) {
-        root = rootOfAppended as Transaction;
+        return rootOfAppended as Transaction;
     }
-    return root?.getMeta(APPEND_BATCH_META) as AppendBatch | undefined;
+    return root;
 };
+
+/** The batch of the root that `transactions` belong to. */
+const batchOf = (transactions: readonly Transaction[]): AppendBatch | undefined =>
+    rootOf(transactions)?.getMeta(APPEND_BATCH_META) as AppendBatch | undefined;
 
 /**
  * Wraps a plugin's `appendTransaction`, since `state.applyTransaction` loops with no cap: each appended transaction
@@ -165,8 +169,13 @@ export const compileDefinition = (
                 state: normalizer.field,
                 appendTransaction: (transactions, _old, state) => {
                     const batch = batchOf(transactions);
-                    // Outside a commit no id function is on the batch, and a batch that kept the document has nothing to repair.
-                    if (batch === undefined || !transactions.some(({ docChanged }) => docChanged)) {
+                    const timing: unknown = rootOf(transactions)?.getMeta(NORMALIZE_META);
+                    // Outside a commit no id function is on the batch, and a composition batch is repaired once input settles.
+                    if (batch === undefined || timing === 'later') {
+                        return null;
+                    }
+                    // A batch that kept the document has nothing to repair, unless it settles a composition.
+                    if (timing !== 'now' && !transactions.some(({ docChanged }) => docChanged)) {
                         return null;
                     }
                     const repair = normalizer.normalize(state, batch.generateId);

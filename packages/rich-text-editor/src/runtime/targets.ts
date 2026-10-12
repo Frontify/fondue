@@ -23,6 +23,11 @@ interface Target extends CaptureTargetOptions {
     readonly valid: boolean;
 }
 type Targets = ReadonlyMap<string, Target>;
+/** What a transaction does to the targets beside mapping them: capture one, release some, or set them all. */
+type TargetsMeta =
+    | { readonly id: string; readonly target: Target }
+    | { readonly release: readonly string[] }
+    | { readonly restore: Targets };
 
 const TARGETS = new PluginKey<Targets>('rte.targets');
 
@@ -68,10 +73,8 @@ export const targetsPlugin = new Plugin<Targets>({
     state: {
         init: () => new Map(),
         apply: (transaction, targets) => {
-            const captured = transaction.getMeta(TARGETS) as
-                | { readonly id: string; readonly target: Target }
-                | undefined;
-            if (!transaction.docChanged && captured === undefined) {
+            const meta = transaction.getMeta(TARGETS) as TargetsMeta | undefined;
+            if (!transaction.docChanged && meta === undefined) {
                 return targets;
             }
             const next = new Map<string, Target>();
@@ -82,8 +85,15 @@ export const targetsPlugin = new Plugin<Targets>({
                 }
                 next.set(id, mapped);
             }
-            if (captured !== undefined) {
-                next.set(captured.id, captured.target);
+            if (meta !== undefined && 'restore' in meta) {
+                return meta.restore;
+            }
+            if (meta !== undefined && 'release' in meta) {
+                for (const id of meta.release) {
+                    next.delete(id);
+                }
+            } else if (meta !== undefined) {
+                next.set(meta.id, meta.target);
             }
             return next;
         },
@@ -111,6 +121,43 @@ export const captureTarget = (state: EditorState, id: string, options: CaptureTa
     }
     const target: Target = { purpose, onIntersectingEdit, from, to, node, valid };
     return state.tr.setMeta(TARGETS, { id, target });
+};
+
+/** A transaction that removes targets `ids`, or every target, from plugin state, or `undefined` when it holds none of them. */
+export const releaseTargets = (state: EditorState, ids?: readonly string[]): Transaction | undefined => {
+    const held = [...targetsOf(state).keys()].filter((id) => ids === undefined || ids.includes(id));
+    if (held.length === 0) {
+        return undefined;
+    }
+    return state.tr.setMeta(TARGETS, { release: held });
+};
+
+/**
+ * A transaction on `before` that gives it the targets of `after`, which `mapping` reached from it: a target released
+ * since is gone, and one captured since maps back through the inverted mapping; `undefined` when both hold the same.
+ */
+export const restoreTargets = (
+    before: EditorState,
+    after: EditorState,
+    mapping: Transaction['mapping'],
+): Transaction | undefined => {
+    const earlier = targetsOf(before);
+    const later = targetsOf(after);
+    if (earlier.size === later.size && [...later.keys()].every((id) => earlier.has(id))) {
+        return undefined;
+    }
+    const back = mapping.invert();
+    const restored = new Map<string, Target>();
+    for (const [id, target] of later) {
+        const kept = earlier.get(id);
+        if (kept !== undefined) {
+            restored.set(id, kept);
+        } else {
+            const from = back.map(target.from, 1);
+            restored.set(id, { ...target, from, to: Math.max(from, back.map(target.to, -1)) });
+        }
+    }
+    return before.tr.setMeta(TARGETS, { restore: restored });
 };
 
 /** The selection a command runs on through target `id`, or `undefined` when the target is gone or invalid. */
