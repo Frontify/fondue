@@ -4,6 +4,7 @@ import { DOMParser as SchemaParser, Fragment, type Mark, type Node, type Schema 
 
 import { type ResourceLimits } from '#/model';
 
+import { type ColorReading, NO_COLORS, normalizeColors } from './colors';
 import { descriptorOf } from './dom';
 import { cleanGoogleDocs } from './google-docs';
 import { removeEmptySpans, removeItemBreaks, removeMarkup, splitDecorations } from './markup';
@@ -19,12 +20,16 @@ export interface HtmlSettings {
     readonly headingLevels: readonly number[] | undefined;
     /** The depth, as `exceededStructure` counts it, at which the imported blocks land. */
     readonly depth: number;
+    /** The pasted colours the model keeps; none when omitted. */
+    readonly colors?: ColorReading;
 }
 
 export interface ImportedHtml {
     readonly content: Fragment;
     /** Images dropped without fetching, for the announcement. */
     readonly droppedImages: number;
+    /** Colours the model does not keep, removed for the announcement. */
+    readonly removedColors: number;
 }
 
 /**
@@ -224,7 +229,7 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     // An element named `body` shadows `document.body`.
     const body = (descriptorOf(dom.Document.prototype, 'body').get as () => HTMLElement | null).call(inert);
     if (body === null) {
-        return { content: Fragment.empty, droppedImages: 0 };
+        return { content: Fragment.empty, droppedImages: 0, removedColors: 0 };
     }
     // Forms go first, since their controls shadow what later steps read; comments and contentless elements next, so
     // the vendor steps meet content only; Office lists before the Office markup goes, since they read its `mso-list`
@@ -240,6 +245,7 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     rebuildOfficeLists(body, settings.limits.maxDepth, settings.depth);
     removeOfficeMarkup(body);
     splitDecorations(body);
+    const removedColors = normalizeColors(body, settings.colors ?? NO_COLORS);
     removeItemBreaks(body);
     replaceForeign(body);
     const droppedImages = replaceImages(body);
@@ -249,5 +255,5 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     const parser = new SchemaParser(schema, [{ tag: 'object', skip: true }, ...SchemaParser.fromSchema(schema).rules]);
     let content = withSpaces(schema, parser.parse(body).content);
     content = withValidAttributes(schema, content, settings.limits, settings.headingLevels);
-    return { content, droppedImages };
+    return { content, droppedImages, removedColors };
 };

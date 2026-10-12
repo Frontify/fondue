@@ -16,11 +16,16 @@ import {
     itemsOf,
     listDepths,
     type ListDepths,
+    type OutputStyles,
     spaced,
     type Spacing,
+    styleOfNode,
     VOID_TAGS,
     withActiveBreak,
+    withColor,
     withListLevel,
+    withStyle,
+    withStyleId,
     writesAttribute,
 } from '#/model/output';
 import { isStyleAttribute } from '#/model/values';
@@ -36,9 +41,20 @@ interface HtmlState extends Spacing {
     readonly losses: Losses;
     readonly listLevels: ListLevels | undefined;
     readonly depths: ListDepths;
+    readonly styles: OutputStyles;
     readonly columns: ColumnLayout | undefined;
     /** The column breaks written so far, whose first `count - 1` are active. */
     breaks: number;
+}
+
+const NO_STYLES: OutputStyles = { styles: [], colorTokens: [], inline: false };
+
+/** What `writeHtml` writes around and into the blocks; every field is optional. */
+export interface HtmlWriteOptions {
+    readonly contentClassName?: string | undefined;
+    readonly listLevels?: ListLevels | undefined;
+    readonly columns?: ColumnLayout | undefined;
+    readonly styles?: OutputStyles | undefined;
 }
 
 const ESCAPES: Readonly<Record<string, string>> = {
@@ -152,7 +168,12 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
     if (plan === undefined) {
         return inner;
     }
-    return build(resolveHtmlSpec(plan.spec, attrsOf(mark.attrs), plan.options), inner);
+    const attrs = attrsOf(mark.attrs);
+    const { styles, colorTokens, inline } = state.styles;
+    let template = withStyleId(resolveHtmlSpec(plan.spec, attrs, plan.options), attrs);
+    template = withStyle(template, styleOfNode(styles, mark.type, attrs).style, inline);
+    template = withColor(template, mark.type, attrs, colorTokens);
+    return build(template, inner);
 };
 
 const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): string => {
@@ -206,6 +227,7 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     if (!plan.inline) {
         template = withAutoDirection(template);
     }
+    template = withStyle(template, styleOfNode(state.styles.styles, node.type, attrs).style, state.styles.inline);
     if (node.type === COLUMN_BREAK) {
         // Stored HTML has no package styles, so an active break carries its own.
         if (state.columns !== undefined && state.breaks < state.columns.count - 1) {
@@ -264,15 +286,14 @@ export const isEmptyDocument = (plan: CodecPlan, root: TreeNode): boolean => {
 /**
  * The reader's static markup as text: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its
  * blocks, then the island notice; with `columns`, an inline `columns` and `column-gap` on that root. The count stays
- * fixed, since an active break forces a column that a narrower count would push out of the box.
+ * fixed, since an active break forces a column that a narrower count would push out of the box. `styles` adds recipe
+ * classes, inline recipes and token colours.
  */
 export const writeHtml = (
     plan: CodecPlan,
     root: TreeNode,
     context: CodecContext,
-    contentClassName?: string,
-    listLevels?: ListLevels,
-    columns?: ColumnLayout,
+    { contentClassName, listLevels, columns, styles = NO_STYLES }: HtmlWriteOptions = {},
 ): { readonly html: string; readonly diagnostics: readonly Diagnostic[] } => {
     const state: HtmlState = {
         plan,
@@ -283,6 +304,7 @@ export const writeHtml = (
         carried: 0,
         listLevels,
         depths: listDepths(),
+        styles,
         columns,
         breaks: 0,
     };

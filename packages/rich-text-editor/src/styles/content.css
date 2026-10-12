@@ -35,8 +35,10 @@
         margin-block: 0 var(--rte-content-paragraph-spacing);
     }
 
+    /* A link stays underlined, a cue other than colour; a link style that draws a box replaces the underline. */
     :where(.fondue-rte-content a) {
         color: var(--rte-content-link-color);
+        text-decoration-line: underline;
     }
 
     /* A list level's marker colour and size, which a nested list does not inherit. */

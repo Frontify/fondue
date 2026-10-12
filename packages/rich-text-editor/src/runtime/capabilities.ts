@@ -2,7 +2,16 @@
 
 import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
 import { GapCursor, gapCursor } from 'prosemirror-gapcursor';
-import { Fragment, type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos } from 'prosemirror-model';
+import {
+    Fragment,
+    type Mark,
+    type MarkType,
+    type Node,
+    NodeRange,
+    type NodeType,
+    type ResolvedPos,
+    type Schema,
+} from 'prosemirror-model';
 import { liftListItem, sinkListItem, wrapRangeInList } from 'prosemirror-schema-list';
 import { type EditorState, Plugin, PluginKey, Selection, TextSelection, type Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
@@ -16,9 +25,11 @@ import {
     GAP_CURSOR_PLUGIN,
     HISTORY_PLUGIN,
     INPUT_RULES_PLUGIN,
+    LAST_MARK_PLUGIN,
     LIST_KEYS_PLUGIN,
     SUGGESTIONS_PLUGIN,
 } from '#/model/capabilities';
+import { appliesToOf } from '#/model/styles';
 import { isRecord } from '#/model/values';
 
 import { codeKeysPlugin } from './code-keys';
@@ -29,6 +40,7 @@ import { inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
 import { listAround, repeated } from './lists';
 import { nearest, positionOf } from './positions';
+import { stylesOf } from './styles';
 import { suggestionsPlugin } from './suggestions/plugin';
 import { carrySelection } from './transactions';
 
@@ -667,39 +679,341 @@ const toggleTask: CapabilityImplementation = (args, schema, command) => {
     };
 };
 
-/** Sets the payload's other fields on the node its `nodeId` names, else on the nearest one around the selection. */
+/** The node types a `setAttributes` command names: one, a list, or every textblock type. */
+const typesOf = (node: unknown, schema: Schema): readonly NodeType[] => {
+    if (node === 'textblocks') {
+        return Object.values(schema.nodes).filter((type) => type.isTextblock);
+    }
+    const names = Array.isArray(node) ? (node as readonly unknown[]) : [node];
+    return names.flatMap((name) => {
+        const type = typeof name === 'string' ? schema.nodes[name] : undefined;
+        if (type === undefined) {
+            return [];
+        }
+        return [type];
+    });
+};
+
+type Located = { readonly node: Node; readonly pos: number };
+
+/** The default of a node type's attribute, which a toggle that removes a value restores. */
+const defaultOf = (type: NodeType, name: string): unknown => {
+    const specs = type.spec.attrs;
+    if (specs === undefined) {
+        return null;
+    }
+    const spec = specs[name];
+    if (spec === undefined) {
+        return null;
+    }
+    return spec.default;
+};
+
+/** The nodes a `setAttributes` command changes: the one `nodeId` names, else the selected textblocks of `types`, else the nearest node of `types`. */
+const attributeTargets = (state: EditorState, types: readonly NodeType[], nodeId: unknown): Located[] => {
+    if (typeof nodeId === 'string') {
+        const pos = positionOf(state.doc, nodeId);
+        if (pos === undefined) {
+            return [];
+        }
+        const node = state.doc.nodeAt(pos);
+        if (node === null || !types.includes(node.type)) {
+            return [];
+        }
+        return [{ node, pos }];
+    }
+    const blocks = selectedTextblocks(state).filter(({ node }) => types.includes(node.type));
+    if (blocks.length > 0) {
+        return blocks;
+    }
+    for (const type of types) {
+        const found = nearest(state, type);
+        if (found !== undefined) {
+            return [found];
+        }
+    }
+    return [];
+};
+
+/** The targets a brand style lands on: those whose node type its `appliesTo` names, when the session holds the style. */
+const styleTargets = (state: EditorState, targets: Located[], attrs: Readonly<Record<string, unknown>>): Located[] => {
+    if (typeof attrs.styleId !== 'string') {
+        return targets;
+    }
+    const applies = appliesToOf(stylesOf(state), attrs.styleId);
+    if (applies === undefined) {
+        return targets;
+    }
+    return targets.filter(({ node }) => applies.includes(node.type.name));
+};
+
+/**
+ * Sets the payload's other fields on the node its `nodeId` names, else on the selected textblocks of the listed types,
+ * else on the nearest node of one; with `toggle`, removes the values when every target already has them. A `styleId`
+ * of a session style lands only on the node types the style applies to.
+ */
 const setAttributes: CapabilityImplementation = (args, schema) => {
-    const type = schema.nodes[args.node as string] as NodeType;
+    const types = typesOf(args.node, schema);
+    const has = (node: Node, attrs: Readonly<Record<string, unknown>>) =>
+        Object.entries(attrs).every(([name, value]) => node.attrs[name] === value);
+    const split = (payload: unknown) => {
+        if (!isRecord(payload)) {
+            return undefined;
+        }
+        const { nodeId, ...attrs } = payload;
+        return { nodeId, attrs };
+    };
     return {
         run: (state, dispatch, payload) => {
+            const parts = split(payload);
+            if (parts === undefined) {
+                return false;
+            }
+            const targets = styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs);
+            const removes =
+                args.toggle === true && targets.length > 0 && targets.every(({ node }) => has(node, parts.attrs));
+            const changes = targets.flatMap(({ node, pos }) =>
+                Object.entries(parts.attrs)
+                    .map(([name, value]) => {
+                        if (removes) {
+                            return { pos, name, value: defaultOf(node.type, name) };
+                        }
+                        return { pos, name, value };
+                    })
+                    .filter(({ name, value }) => node.attrs[name] !== value),
+            );
+            if (changes.length === 0) {
+                return false;
+            }
+            if (dispatch !== undefined) {
+                const transaction = state.tr;
+                for (const { pos, name, value } of changes) {
+                    transaction.setNodeAttribute(pos, name, value);
+                }
+                dispatch(transaction);
+            }
+            return true;
+        },
+        active: (state, payload) => {
+            const parts = split(payload);
+            if (parts === undefined) {
+                return false;
+            }
+            const targets = styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs);
+            return tristate(targets.filter(({ node }) => has(node, parts.attrs)).length, targets.length);
+        },
+    };
+};
+
+/** The transaction meta that carries the mark a `setMark` command set, which the last-mark plugin keeps. */
+const LAST_MARK_META = 'rte.last-mark';
+const lastMarkKey = new PluginKey<Mark | null>('rte.last-mark');
+
+/** Keeps the last mark a `setMark` command set in the session. */
+const lastMarkPlugin = () =>
+    new Plugin<Mark | null>({
+        key: lastMarkKey,
+        state: {
+            init: () => null,
+            apply: (transaction, value) => {
+                const mark = transaction.getMeta(LAST_MARK_META) as Mark | undefined;
+                if (mark === undefined) {
+                    return value;
+                }
+                return mark;
+            },
+        },
+    });
+
+/** The range of the run of text with a mark of `type` around a caret strictly inside it. */
+const markRangeAt = (
+    state: EditorState,
+    type: MarkType,
+): { readonly from: number; readonly to: number } | undefined => {
+    const { $from } = state.selection;
+    const { parent } = $from;
+    const holds = (index: number) =>
+        index >= 0 && index < parent.childCount && type.isInSet(parent.child(index).marks) !== undefined;
+    const index = $from.index();
+    // Between two nodes the caret is inside the run only when both hold the mark.
+    if ($from.textOffset === 0 && !holds(index - 1)) {
+        return undefined;
+    }
+    if (!holds(index)) {
+        return undefined;
+    }
+    let first = index;
+    while (holds(first - 1)) {
+        first -= 1;
+    }
+    let last = index;
+    while (holds(last + 1)) {
+        last += 1;
+    }
+    let from = $from.start();
+    for (let child = 0; child < first; child += 1) {
+        from += parent.child(child).nodeSize;
+    }
+    let to = from;
+    for (let child = first; child <= last; child += 1) {
+        to += parent.child(child).nodeSize;
+    }
+    return { from, to };
+};
+
+/** Adds `mark` to the selected text, or to the stored marks at a caret, as one transaction that records it as the last mark. */
+const applyMark = (
+    state: EditorState,
+    dispatch: ((transaction: Transaction) => void) | undefined,
+    mark: Mark,
+    extend: boolean,
+): boolean => {
+    const { type } = mark;
+    if (state.selection.empty) {
+        const range = extend ? markRangeAt(state, type) : undefined;
+        if (range === undefined) {
+            if (!state.selection.$from.parent.type.allowsMarkType(type)) {
+                return false;
+            }
+            dispatch?.(state.tr.addStoredMark(mark).setMeta(LAST_MARK_META, mark));
+            return true;
+        }
+        dispatch?.(state.tr.addMark(range.from, range.to, mark).setMeta(LAST_MARK_META, mark));
+        return true;
+    }
+    const texts = markableText(state, type);
+    if (texts.length === 0) {
+        return false;
+    }
+    if (dispatch !== undefined) {
+        const transaction = state.tr;
+        for (const { from, to } of texts) {
+            transaction.addMark(from, to, mark);
+        }
+        dispatch(transaction.setMeta(LAST_MARK_META, mark).scrollIntoView());
+    }
+    return true;
+};
+
+/** Removes every mark of `types` from the selected text, or from the stored marks at a caret. */
+const clearMarks = (
+    state: EditorState,
+    dispatch: ((transaction: Transaction) => void) | undefined,
+    types: readonly MarkType[],
+    extend: boolean,
+): boolean => {
+    if (state.selection.empty) {
+        const stored = state.storedMarks ?? state.selection.$from.marks();
+        const held = types.filter((type) => type.isInSet(stored) !== undefined);
+        if (held.length === 0) {
+            return false;
+        }
+        if (dispatch !== undefined) {
+            const transaction = state.tr;
+            for (const type of held) {
+                const range = extend ? markRangeAt(state, type) : undefined;
+                if (range === undefined) {
+                    transaction.removeStoredMark(type);
+                } else {
+                    transaction.removeMark(range.from, range.to, type);
+                }
+            }
+            dispatch(transaction);
+        }
+        return true;
+    }
+    const ranges = types.flatMap((type) =>
+        markableText(state, type)
+            .filter((text) => text.marked)
+            .map((text) => ({ ...text, type })),
+    );
+    if (ranges.length === 0) {
+        return false;
+    }
+    if (dispatch !== undefined) {
+        const transaction = state.tr;
+        for (const { from, to, type } of ranges) {
+            transaction.removeMark(from, to, type);
+        }
+        dispatch(transaction.scrollIntoView());
+    }
+    return true;
+};
+
+/** Whether every selected text carries `type` with `attrs`, some of it, or none; at a caret, the marks the next typed text gets. */
+const markWithAttrs = (state: EditorState, type: MarkType, attrs: Readonly<Record<string, unknown>>) => {
+    const matches = (marks: readonly Mark[]) => {
+        const found = type.isInSet(marks);
+        return found !== undefined && Object.entries(attrs).every(([name, value]) => found.attrs[name] === value);
+    };
+    if (state.selection.empty) {
+        return matches(state.storedMarks ?? state.selection.$from.marks());
+    }
+    const texts: boolean[] = [];
+    for (const { $from, $to } of state.selection.ranges) {
+        state.doc.nodesBetween($from.pos, $to.pos, (node, _pos, parent) => {
+            if (node.isText && parent !== null && parent.type.allowsMarkType(type)) {
+                texts.push(matches(node.marks));
+            }
+        });
+    }
+    return tristate(texts.filter(Boolean).length, texts.length);
+};
+
+/** Sets the mark with the payload's fields as attributes, or removes it for a null payload. */
+const setMark: CapabilityImplementation = (args, schema) => {
+    const type = schema.marks[args.mark as string] as MarkType;
+    const extend = args.extendToMarkRange === true;
+    return {
+        run: (state, dispatch, payload) => {
+            if (payload === null) {
+                return clearMarks(state, dispatch, [type], extend);
+            }
             if (!isRecord(payload)) {
                 return false;
             }
-            const { nodeId, ...attrs } = payload;
-            let found: { readonly node: Node; readonly pos: number } | undefined;
-            if (typeof nodeId === 'string') {
-                const pos = positionOf(state.doc, nodeId);
-                const node = pos === undefined ? null : state.doc.nodeAt(pos);
-                if (pos !== undefined && node?.type === type) {
-                    found = { node, pos };
-                }
-            } else {
-                found = nearest(state, type);
-            }
-            if (found === undefined) {
+            return applyMark(state, dispatch, type.create(payload), extend);
+        },
+        active: (state, payload) => {
+            if (!isRecord(payload)) {
                 return false;
             }
-            const { node, pos } = found;
-            const changed = Object.entries(attrs).filter(([name, value]) => node.attrs[name] !== value);
-            if (changed.length === 0) {
+            return markWithAttrs(state, type, payload);
+        },
+    };
+};
+
+const markTypesOf = (marks: unknown, schema: Schema): MarkType[] => {
+    const names = Array.isArray(marks) ? (marks as readonly unknown[]) : [marks];
+    return names.flatMap((name) => {
+        const type = typeof name === 'string' ? schema.marks[name] : undefined;
+        if (type === undefined) {
+            return [];
+        }
+        return [type];
+    });
+};
+
+/** Removes the listed marks the model installs, as one undo step. */
+const removeMark: CapabilityImplementation = (args, schema) => {
+    const types = markTypesOf(args.installed, schema);
+    const extend = args.extendToMarkRange === true;
+    return {
+        run: (state, dispatch) => clearMarks(state, dispatch, types, extend),
+        active: () => false,
+    };
+};
+
+/** Sets again the last mark of the listed types that a `setMark` command set in this session. */
+const reapplyMark: CapabilityImplementation = (args, schema) => {
+    const types = markTypesOf(args.installed, schema);
+    return {
+        run: (state, dispatch) => {
+            const last = lastMarkKey.getState(state);
+            if (last === undefined || last === null || !types.includes(last.type)) {
                 return false;
             }
-            const transaction = state.tr;
-            for (const [name, value] of changed) {
-                transaction.setNodeAttribute(pos, name, value);
-            }
-            dispatch?.(transaction);
-            return true;
+            return applyMark(state, dispatch, last, false);
         },
         active: () => false,
     };
@@ -745,13 +1059,17 @@ export const CAPABILITIES: CapabilityImplementations = {
     insertText,
     openControl,
     outdentItem,
+    reapplyMark,
+    removeMark,
     setAttributes,
     setBlock,
+    setMark,
     toggleList,
     toggleMark,
     toggleTask,
     wrapIn,
     plugins: {
+        [LAST_MARK_PLUGIN.id]: lastMarkPlugin,
         // Backspace right after a rule fired undoes it before any list or block key sees it.
         [HISTORY_PLUGIN.id]: () => historyPlugin({ Backspace: undoInputRule }),
         [INPUT_RULES_PLUGIN.id]: inputRulesPlugin,

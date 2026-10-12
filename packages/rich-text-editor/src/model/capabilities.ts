@@ -65,6 +65,8 @@ export const BASE_KEYS_PLUGIN: PluginDescriptor = { id: 'base-keys', phase: 'bas
 export const CLIPBOARD_PLUGIN: PluginDescriptor = { id: 'clipboard', phase: 'guard' };
 /** The drop cursor of `prosemirror-dropcursor`. */
 export const DROP_CURSOR_PLUGIN: PluginDescriptor = { id: 'drop-cursor', phase: 'structure' };
+/** The last mark a `setMark` command set in the session, which `reapplyMark` sets again. */
+export const LAST_MARK_PLUGIN: PluginDescriptor = { id: 'last-mark', phase: 'late' };
 /** The gap cursor of `prosemirror-gapcursor`, whose arrow keys run before every base key. */
 export const GAP_CURSOR_PLUGIN: PluginDescriptor = { id: 'gap-cursor', phase: 'structure' };
 /** One plugin key, one instance: a plugin several capabilities contribute sits at its first contributor's position. */
@@ -77,6 +79,7 @@ export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonl
     indentItem: [LIST_KEYS_PLUGIN],
     // A code block's indent and outdent, so the code keys ride with either command.
     indentLines: [CODE_KEYS_PLUGIN],
+    reapplyMark: [LAST_MARK_PLUGIN],
 };
 /** The decoration sources a feature may name. `find-matches` and `content-issues` have no plugin yet. */
 export const DECORATION_SOURCES: readonly DecorationSource[] = ['code-syntax', 'find-matches', 'content-issues'];
@@ -231,14 +234,75 @@ export const indentLines = (direction: 'indent' | 'outdent'): CommandDefinition 
 export const toggleTask = (item: string, setChecked: string): CommandDefinition =>
     command('toggleTask', { item, setChecked });
 
-/** Sets the payload's fields as attributes of the `node` that its `nodeId` names, else of the nearest one around the selection. */
+/**
+ * Sets the payload's fields as attributes of the node that its `nodeId` names, else of every selected textblock of a
+ * listed type, else of the nearest node of a listed type around the selection. With `toggle`, removes the values when
+ * every target already has them.
+ */
 export const setAttributes = <const P extends PayloadDeclaration>(
-    node: string,
+    node: string | readonly string[],
     payload: P,
-): CommandDefinition<PayloadOf<P>> => command('setAttributes', { node }, payload);
+    options?: { readonly toggle?: boolean },
+): CommandDefinition<PayloadOf<P>> => {
+    let nodes: string | string[] = node as string;
+    if (Array.isArray(node)) {
+        nodes = [...(node as readonly string[])];
+    }
+    return command('setAttributes', { node: nodes, toggle: options?.toggle }, payload);
+};
+
+/** Package-built controls a command opens; `text-style` is the toolbar picker a presentation names. */
+export type ControlId =
+    | 'text-style'
+    | 'link'
+    | 'color-menu'
+    | 'language'
+    | 'mention-search'
+    | 'emoji'
+    | 'find'
+    | 'outline'
+    | 'checks'
+    | 'numbering'
+    | 'image-alt'
+    | 'media-picker'
+    | 'embed'
+    | 'embed-edit';
 
 /** Opens a package-built control, such as the numbering dialog of `list.ordered.start.edit` or the emoji picker. */
-export const openControl = (control: 'numbering' | 'emoji'): CommandDefinition => command('openControl', { control });
+export const openControl = <const P extends PayloadDeclaration | undefined = undefined>(
+    control: ControlId,
+    payload?: P,
+): CommandDefinition<PayloadOf<P>> => command('openControl', { control }, payload);
+
+/**
+ * Sets `mark` with the payload's fields as its attributes on the selection, or in the stored marks at a caret; a null
+ * payload removes it. With `extendToMarkRange`, a caret inside the mark acts on the whole mark range.
+ */
+export const setMark = <const P extends PayloadDeclaration>(
+    mark: string,
+    payload: P,
+    options?: { readonly extendToMarkRange?: boolean },
+): CommandDefinition<PayloadOf<P>> =>
+    command('setMark', { mark, extendToMarkRange: options?.extendToMarkRange }, payload);
+
+/**
+ * Removes the listed marks that the model installs from the selection, or from the stored marks at a caret, as one
+ * undo step; like `removes` of `toggleMark`, a mark the model does not install is skipped.
+ */
+export const removeMark = (
+    marks: string | readonly string[],
+    options?: { readonly extendToMarkRange?: boolean },
+): CommandDefinition => {
+    let names: string[] = [marks as string];
+    if (Array.isArray(marks)) {
+        names = [...(marks as readonly string[])];
+    }
+    return command('removeMark', { installed: names, extendToMarkRange: options?.extendToMarkRange });
+};
+
+/** Sets again the last of the listed marks that a `setMark` command set in this session, with its attributes. */
+export const reapplyMark = (marks: readonly string[]): CommandDefinition =>
+    command('reapplyMark', { installed: [...marks] });
 
 /** The first cycle that `next` reaches from `starts`, as a path that ends where it starts. */
 export const findCycle = (starts: readonly string[], next: (id: string) => readonly string[]): string[] | undefined => {

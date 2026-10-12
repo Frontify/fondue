@@ -1,0 +1,43 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "feature-contract", "version": 1 },
+    "requiredCapabilities": [
+        { "id": "blocks.heading", "version": 1 },
+        { "id": "blocks.quote", "version": 1 },
+        { "id": "core", "version": 1 },
+        { "id": "styles.brand", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "heading",
+                "attrs": { "nodeId": "heading-1", "level": 2, "lang": null, "styleId": "brand.title" },
+                "content": [{ "type": "text", "text": "Our voice" }]
+            },
+            {
+                "type": "paragraph",
+                "attrs": { "lang": null, "styleId": "brand.lead" },
+                "content": [{ "type": "text", "text": "We speak plainly and warmly." }]
+            },
+            {
+                "type": "paragraph",
+                "attrs": { "lang": null, "styleId": null },
+                "content": [{ "type": "text", "text": "Body text keeps the default style." }]
+            },
+            {
+                "type": "blockquote",
+                "attrs": { "styleId": "brand.quote" },
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": { "lang": null, "styleId": null },
+                        "content": [{ "type": "text", "text": "Say less, mean more." }]
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,8 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ComponentType, createElement, Fragment, type ReactElement, type ReactNode } from 'react';
+import {
+    cloneElement,
+    type ComponentType,
+    createElement,
+    Fragment,
+    isValidElement,
+    type ReactElement,
+    type ReactNode,
+} from 'react';
 
-import { type Diagnostic, type ListLevels } from '#/model';
+import { type Diagnostic, type JsonObject, type ListLevels } from '#/model';
 import { isIsland, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
@@ -18,13 +26,20 @@ import {
     itemsOf,
     type ListDepths,
     markPath,
+    type OutputStyles,
     spaced,
     type Spacing,
+    styleOfNode,
+    unknownStyle,
     VOID_TAGS,
     withActiveBreak,
+    withColor,
     withListLevel,
+    withStyle,
+    withStyleId,
     writesAttribute,
 } from '#/model/output';
+import { isRecord } from '#/model/values';
 
 import { type ReaderContext, type ReaderNodeProps } from './define';
 import { type Plan } from './plan';
@@ -36,6 +51,9 @@ export interface RenderState extends Spacing {
     readonly diagnostics: Diagnostic[];
     readonly listLevels: ListLevels | undefined;
     readonly depths: ListDepths;
+    readonly styles: OutputStyles;
+    /** The stored style IDs reported unknown, once each; `undefined` when the render reports none, with no presentation. */
+    readonly unknownStyles: Set<string> | undefined;
     /** The presentation's columns, or `undefined` for one column. */
     readonly columns: ColumnLayout | undefined;
     /** The column breaks rendered so far, whose first `count - 1` are active. */
@@ -143,6 +161,54 @@ const callOverride = (override: ComponentType<ReaderNodeProps>, props: ReaderNod
     return result;
 };
 
+/**
+ * An override's output with what the declared path writes on its outer element: the style ID, the recipe class and the
+ * colour, on its own root when that is a host element, else, for a mark, on a `span` around it. A node's other output
+ * stays as it is, since a wrapper could break the structure its parent needs.
+ */
+const decorated = (
+    rendered: ReactNode,
+    wraps: boolean,
+    decorate: (template: HtmlTemplate) => HtmlTemplate,
+): ReactNode => {
+    const outer = decorate({ layers: [{ tag: 'span', attrs: {} }], content: true }).layers[0];
+    if (outer === undefined || Object.keys(outer.attrs).length === 0) {
+        return rendered;
+    }
+    const props = propsOf(outer.attrs);
+    if (!isValidElement<Record<string, unknown>>(rendered) || typeof rendered.type !== 'string') {
+        if (!wraps) {
+            return rendered;
+        }
+        return createElement('span', props, rendered);
+    }
+    const own = rendered.props;
+    if (typeof own.className === 'string' && typeof props.className === 'string') {
+        props.className = `${own.className} ${props.className}`;
+    }
+    if (isRecord(own.style) && isRecord(props.style)) {
+        props.style = { ...own.style, ...props.style };
+    }
+    if (own['data-rte-style'] !== undefined) {
+        delete props['data-rte-style'];
+    }
+    // oxlint-disable-next-line @eslint-react/no-clone-element -- the override's own root takes what the declared path writes on it.
+    return cloneElement(rendered, props);
+};
+
+/** The recipe a node or mark renders with, reporting an unknown stored `styleId` once per render. */
+const styled = (state: RenderState, type: string, attrs: JsonObject, path: string) => {
+    const { style, unknown } = styleOfNode(state.styles.styles, type, attrs);
+    const { unknownStyles } = state;
+    if (unknown && unknownStyles !== undefined && typeof attrs.styleId === 'string') {
+        if (!unknownStyles.has(attrs.styleId)) {
+            unknownStyles.add(attrs.styleId);
+            state.diagnostics.push(unknownStyle(path));
+        }
+    }
+    return style;
+};
+
 const renderMark = (
     state: RenderState,
     items: readonly Item[],
@@ -156,16 +222,19 @@ const renderMark = (
         return createElement(Fragment, null, ...children);
     }
     const attrs = attrsOf(mark.attrs);
+    const style = styled(state, mark.type, attrs, markPath(items, index));
+    const decorate = (template: HtmlTemplate) =>
+        withColor(withStyle(withStyleId(template, attrs), style, false), mark.type, attrs, state.styles.colorTokens);
     if (plan.override !== undefined) {
         try {
             const props = { attrs, children: createElement(Fragment, null, ...children), context: state.context };
-            return callOverride(plan.override, props);
+            return decorated(callOverride(plan.override, props), true, decorate);
         } catch {
             reportFailure(state, plan.featureId, markPath(items, index), mark.type);
             return fallback(state, 'span', plan.featureId, children);
         }
     }
-    return build(resolveHtmlSpec(plan.spec, attrs, plan.options), children);
+    return build(decorate(resolveHtmlSpec(plan.spec, attrs, plan.options)), children);
 };
 
 const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): ReactNode => {
@@ -196,7 +265,8 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
             const props = { attrs, children: createElement(Fragment, null, ...children), context: state.context };
             const rendered = callOverride(plan.override, props);
             state.carried = 0;
-            return rendered;
+            const style = styled(state, node.type, attrs, path);
+            return decorated(rendered, false, (template) => withStyle(withStyleId(template, attrs), style, false));
         } catch {
             reportFailure(state, plan.featureId, path, node.type);
             const { tag, text } = failedFallback(state, node, plan, before);
@@ -211,6 +281,7 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
     if (!plan.inline) {
         template = withAutoDirection(template);
     }
+    template = withStyle(template, styled(state, node.type, attrs, path), false);
     if (node.type === COLUMN_BREAK) {
         if (state.columns !== undefined && state.breaks < state.columns.count - 1) {
             template = withActiveBreak(template);
@@ -254,9 +325,15 @@ export const message = ({ locale, t }: ReaderContext, kind: keyof typeof MESSAGE
 
 /**
  * The reader root: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the
- * island notice; with columns, inside the container whose width decides, through the package styles, whether they show.
+ * island notice, after one `style` element with the presentation's recipe stylesheet when it has one; with columns,
+ * inside the container whose width decides, through the package styles, whether they show.
  */
-export const renderDocument = (state: RenderState, root: TreeNode, contentClassName?: string): ReactElement => {
+export const renderDocument = (
+    state: RenderState,
+    root: TreeNode,
+    contentClassName?: string,
+    styleSheet = '',
+): ReactElement => {
     const children = renderChildren(state, root, '/content', false);
     const props: Record<string, unknown> = { className: contentClasses(contentClassName) };
     const lang = root.attrs?.lang;
@@ -271,7 +348,17 @@ export const renderDocument = (state: RenderState, root: TreeNode, contentClassN
         children.push(message(state.context, 'islands'));
     }
     const content = createElement('div', props, ...children);
-    const { columns } = state;
+    const laidOut = withColumns(state.columns, content);
+    if (styleSheet === '') {
+        return laidOut;
+    }
+    // The stylesheet holds only checked declarations, so it can never close its element.
+    const sheet = createElement('style', { 'data-rte-styles': '', dangerouslySetInnerHTML: { __html: styleSheet } });
+    return createElement(Fragment, null, sheet, laidOut);
+};
+
+/** The container whose width decides, through the package styles, whether the columns show. */
+const withColumns = (columns: ColumnLayout | undefined, content: ReactElement): ReactElement => {
     if (columns === undefined) {
         return content;
     }

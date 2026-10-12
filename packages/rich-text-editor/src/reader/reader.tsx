@@ -4,11 +4,13 @@ import { type ReactElement } from 'react';
 
 import { enUS } from '#/locales/en-US';
 import {
+    type ColorToken,
     type ContentModel,
     type DecodeOptions,
     type Diagnostic,
     type JsonValue,
     type ListLevels,
+    type PresentationStyle,
     type ReferenceResolution,
     type ResourceLimits,
     type RichTextLocale,
@@ -16,14 +18,18 @@ import {
 import { type ResolveAssetUrl } from '#/model/declarations';
 import { decodeToTree } from '#/model/decode';
 import { canonicalJson } from '#/model/hash';
-import { columnLayout, listDepths } from '#/model/output';
+import { columnLayout, listDepths, styleSheetOf } from '#/model/output';
 
 import { readerContext } from './context';
 import { planOf } from './plan';
 import { message, renderDocument, type RenderState } from './render';
 
-/** What the host decides about one reader output: the resolvers it renders with. */
+/** What the host decides about one reader output: its styles, colours and the resolvers it renders with. */
 export interface ReaderPresentation {
+    /** Brand style recipes by style ID, which `styleId` names. */
+    readonly styles: readonly PresentationStyle[];
+    /** The colours a `tokenId` of `font_color` or `highlight` names. */
+    readonly colorTokens: readonly ColorToken[];
     readonly resolveAssetUrl?: ResolveAssetUrl;
     /** Synchronous, so the reader renders on the server in one pass. */
     readonly resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
@@ -58,11 +64,22 @@ interface Output {
     readonly notified: WeakSet<object>;
 }
 
+const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
+
+/** A list the host passed, or none: plain JavaScript hosts may leave a member out. */
+const listOf = <T,>(value: readonly T[] | undefined): readonly T[] => {
+    if (value !== undefined && Array.isArray(value)) {
+        return value as readonly T[];
+    }
+    return [];
+};
+
 const build = ({ document, model, presentation, locale = enUS, limits }: RichTextReaderProps): Output => {
-    let resolvers: ReaderPresentation = {};
+    let resolvers: ReaderPresentation = NO_PRESENTATION;
     if (presentation !== undefined) {
         resolvers = presentation;
     }
+    const styles = listOf<PresentationStyle>(resolvers.styles);
     const context = readerContext(locale, resolvers);
     const notified = new WeakSet<object>();
     let options: DecodeOptions = {};
@@ -90,10 +107,14 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
         carried: 0,
         listLevels: resolvers.listLevels,
         depths: listDepths(),
+        styles: { styles, colorTokens: listOf<ColorToken>(resolvers.colorTokens), inline: false },
+        // Without a presentation no style map is given, so no stored style is unknown.
+        unknownStyles: presentation === undefined ? undefined : new Set(),
         columns: columnLayout(resolvers.columns, resolvers.columnGap),
         breaks: 0,
     };
-    return { element: renderDocument(state, tree, resolvers.contentClassName), diagnostics, notified };
+    const element = renderDocument(state, tree, resolvers.contentClassName, styleSheetOf(styles));
+    return { element, diagnostics, notified };
 };
 
 interface Slot {

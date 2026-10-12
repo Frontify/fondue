@@ -118,6 +118,43 @@ const setAttributesIn = (
     return found;
 };
 
+interface SharedDefault {
+    readonly name: string;
+    readonly on: readonly string[] | 'textblocks';
+    readonly fallback: JsonValue;
+}
+
+/**
+ * `node` with each attribute that a feature of the model adds to its type and that it leaves out, at its default: a
+ * fixture written for its own feature holds no attribute that another feature of the model adds.
+ */
+const withSharedDefaults = (
+    node: ContentNodeJSON,
+    shared: readonly SharedDefault[],
+    isTextblock: (type: string) => boolean,
+): ContentNodeJSON => {
+    const attrs: Record<string, JsonValue> = {};
+    for (const [name, value] of Object.entries(node.attrs ?? {})) {
+        attrs[name] = value;
+    }
+    let added = false;
+    for (const { name, on, fallback } of shared) {
+        const targeted = on === 'textblocks' ? isTextblock(node.type) : on.includes(node.type);
+        if (targeted && !Object.hasOwn(attrs, name)) {
+            attrs[name] = fallback;
+            added = true;
+        }
+    }
+    const copy: Record<string, unknown> = { ...node };
+    if (added) {
+        copy.attrs = attrs;
+    }
+    if (node.content !== undefined) {
+        copy.content = node.content.map((child) => withSharedDefaults(child, shared, isTextblock));
+    }
+    return copy as unknown as ContentNodeJSON;
+};
+
 /** Collapses each whitespace run to one space, outside `pre`, whose text keeps every character. */
 const normalized = (html: string) =>
     html
@@ -186,6 +223,14 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
         }
         return { ...fixture, model: compiled().ref } as unknown as RichTextDocument;
     };
+    const sharedDefaults: SharedDefault[] = features.flatMap((feature) =>
+        Object.entries(declarationOf(feature).attributes ?? {}).flatMap(([name, { on, value }]) => {
+            if (!('default' in value)) {
+                return [];
+            }
+            return [{ name, on, fallback: value.default as JsonValue }];
+        }),
+    );
     /** The decode, reader, codec and axe cases of one stored document. */
     const fixtureCases = (name: string, fixture: unknown) => {
         it(`decodes and encodes ${name} to itself`, () => {
@@ -195,9 +240,16 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
             if (tree === undefined) {
                 throw new Error(`${name} does not decode.`);
             }
-            const node = engineOf().schema.nodeFromJSON(tree);
+            const { schema } = engineOf();
+            const node = schema.nodeFromJSON(tree);
             const encoded = encodeTree(node.toJSON() as TreeNode, compiled(), stored.requiredCapabilities);
-            expect(encoded.document).toEqual(stored);
+            const isTextblock = (type: string) => schema.nodes[type]?.isTextblock === true;
+            const content = withSharedDefaults(
+                stored.content as unknown as ContentNodeJSON,
+                sharedDefaults,
+                isTextblock,
+            );
+            expect(encoded.document).toEqual({ ...stored, content });
         });
 
         it(`renders ${name} in the reader and writes it through every codec`, () => {

@@ -4,7 +4,7 @@ import { enUS } from '#/locales/en-US';
 import { type ContentModel, type DecodeOptions, type Diagnostic } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
-import { codecContext, columnLayout } from '#/model/output';
+import { codecContext, columnLayout, styleSheetOf } from '#/model/output';
 import { randomId } from '#/model/random-id';
 
 import { createParser, readMarkdown } from './from-markdown';
@@ -34,20 +34,21 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
     };
     return {
         toHTML: (document, htmlOptions = {}) => {
+            const { inlineStyles = [], colorTokens = [] } = htmlOptions;
+            const css = styleSheetOf(inlineStyles);
             const { tree, diagnostics } = decode(document);
             if (tree === undefined) {
-                return { html: '', diagnostics };
+                return { html: '', css, diagnostics };
             }
             const context = codecContext(htmlOptions.locale, enUS, htmlOptions.resolveAssetUrl);
-            const output = writeHtml(
-                plan,
-                tree,
-                context,
-                htmlOptions.contentClassName,
-                htmlOptions.listLevels,
-                columnLayout(htmlOptions.columns, htmlOptions.columnGap),
-            );
-            return { html: output.html, diagnostics: [...diagnostics, ...output.diagnostics] };
+            const { contentClassName, listLevels } = htmlOptions;
+            const output = writeHtml(plan, tree, context, {
+                contentClassName,
+                listLevels,
+                columns: columnLayout(htmlOptions.columns, htmlOptions.columnGap),
+                styles: { styles: inlineStyles, colorTokens, inline: true },
+            });
+            return { html: output.html, css, diagnostics: [...diagnostics, ...output.diagnostics] };
         },
         toPlainText: (document) => {
             const { tree, diagnostics } = decode(document);

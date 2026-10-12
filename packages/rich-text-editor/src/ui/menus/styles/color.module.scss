@@ -1,0 +1,52 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../styles/focus-outline';
+
+.swatch {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+}
+
+// A chip filled with the colour, as Fondue's `ColorPicker` shows one, so a light or a dark colour shows on any surface.
+.chip {
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+    inline-size: 16px;
+    block-size: 16px;
+    border: var(--border-width-default) solid var(--color-line-mid);
+    border-radius: var(--border-radius-small);
+    background-clip: padding-box;
+    background-image: repeating-conic-gradient(var(--color-surface-default) 0% 25%, var(--color-line-subtle) 0% 50%);
+    background-size: 6px 6px;
+    background-position: -0.5px -0.5px;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-color: var(--rte-chip-color);
+    }
+}
+
+// The colour value names the swatch for assistive technology only, as its description.
+.description {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+// react-colorful sets `outline: none` on its sliders, so the editor's focus outline marks them.
+.draft :global(.react-colorful__interactive) {
+    @include focus-outline.focus-outline;
+
+    @media (forced-colors: active) {
+        &:focus-visible {
+            outline: 2px solid Highlight;
+        }
+    }
+}

@@ -3,6 +3,7 @@
 export {
     block,
     blockRule,
+    type ControlId,
     history,
     indentItem,
     indentLines,
@@ -10,8 +11,11 @@ export {
     insertText,
     openControl,
     outdentItem,
+    reapplyMark,
+    removeMark,
     setAttributes,
     setBlock,
+    setMark,
     textRule,
     toggleList,
     toggleMark,
@@ -98,3 +102,12 @@ export { toJsonSchema } from './json-schema';
 export { featureFromManifest } from './manifest';
 export { type MigrationManifest, type MigrationResult, migrateDocument } from './migrate';
 export { featureManifestSchema } from './manifest-schema';
+export {
+    type ColorToken,
+    type PresentationStyle,
+    type ResolvedStyle,
+    resolveStyle,
+    type StyleRecipe,
+    type StyleResolution,
+    styleSheetOf,
+} from './styles';

@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Dropdown, Tooltip } from '@frontify/fondue-components';
-import { IconCheckMark, IconDotsHorizontal } from '@frontify/fondue-icons';
+import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type AriaAttributes, type AriaRole, useContext, useId, useRef, useState } from 'react';
 
-import { SessionContext, useCommandQuery } from '#/bridge/hooks';
+import { SessionContext, useCommandQuery, useSessionValue } from '#/bridge/hooks';
 import { useOverlayContainer } from '#/bridge/overlays';
 
 import {
+    CheckedSlot,
     Icon,
     keepFocus,
     returnFocus,
@@ -19,6 +20,7 @@ import {
     useShortcut,
 } from './item';
 import styles from './styles/toolbar.module.scss';
+import { blockTypeOf } from './text-style';
 
 const MoreRow = ({
     item,
@@ -34,15 +36,20 @@ const MoreRow = ({
     const reasonId = useId();
     // Fondue's `Dropdown.Item` types no menu item role or state, which Radix still takes through the spread.
     let semantics: { role: AriaRole } & Pick<AriaAttributes, 'aria-checked' | 'aria-disabled'>;
-    if (item.toggle) {
+    // A brand style row is one of the block's styles, as in the text style picker.
+    const radio = item.brand !== undefined;
+    const checked = radio ? state.active === true : state.active !== false;
+    if (radio) {
+        semantics = { role: 'menuitemradio', 'aria-checked': checked };
+    } else if (item.toggle) {
         semantics = { role: 'menuitemcheckbox', 'aria-checked': state.active };
     } else {
         semantics = { role: 'menuitem' };
     }
-    // An unavailable row stays focusable with its reason, as a toolbar item does.
+    // An unavailable row stays focusable with its reason, as a toolbar item does; a checked style is already set.
     let reason: string | undefined;
     let describedBy: string | undefined;
-    if (!state.enabled) {
+    if (!state.enabled && !(radio && checked)) {
         reason = strings.reason(state.disabledReason ?? '');
         describedBy = reasonId;
         semantics['aria-disabled'] = true;
@@ -64,12 +71,7 @@ const MoreRow = ({
                 <Icon name={item.icon} />
             </Dropdown.Slot>
             {item.label}
-            {/* A check mark, not only a colour, shows a checked toggle. */}
-            {item.toggle && state.active !== false && (
-                <Dropdown.Slot name="right">
-                    <IconCheckMark size={16} aria-hidden />
-                </Dropdown.Slot>
-            )}
+            {item.toggle && checked && <CheckedSlot />}
             {shortcut !== undefined && <Dropdown.Shortcut>{shortcut}</Dropdown.Shortcut>}
             {reason !== undefined && (
                 <span id={reasonId} aria-hidden className={styles.reason}>
@@ -115,6 +117,7 @@ export const More = ({
 }) => {
     const runtime = useContext(SessionContext);
     const container = useOverlayContainer();
+    const blockType = useSessionValue(blockTypeOf, Object.is);
     // A row that ran its command sends focus to the surface rather than back to More.
     const ranRef = useRef(false);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -233,7 +236,11 @@ export const More = ({
                         if (item.options === undefined) {
                             return [item];
                         }
-                        return item.options.filter(({ offered }) => offered);
+                        // A brand style row applies only to the block types its style names.
+                        return item.options.filter(
+                            ({ offered, brand }) =>
+                                offered && (brand === undefined || brand.appliesTo.includes(blockType)),
+                        );
                     })
                     .map((item) => (
                         <MoreRow key={item.key} item={item} strings={strings} onRun={onRun} />

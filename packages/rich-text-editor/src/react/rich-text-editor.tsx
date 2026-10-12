@@ -37,15 +37,18 @@ import { enUS } from '#/locales/en-US';
 import {
     type CapabilityRef,
     type CodecContext,
+    type ColorToken,
     type DecodeResult,
     type Diagnostic,
     hashDocument,
     type RichTextDocument,
 } from '#/model';
+import { compiledModel } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
-import { codecContext, columnLayout, contentClasses } from '#/model/output';
+import { codecContext, columnLayout, contentClasses, styleSheetOf, unknownStyle } from '#/model/output';
 import { randomId } from '#/model/random-id';
+import { isRecord } from '#/model/values';
 import { createSaveCoordinator } from '#/persistence/coordinator';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
@@ -60,6 +63,7 @@ import {
 } from '#/runtime/runtime';
 import { type DocumentChange, type SelectionSummary, type SessionToken, type ShippedCommands } from '#/runtime/types';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
+import { ColorMenu, type ColorMenuOptions } from '#/ui/menus/color';
 import { NumberingDialog, SET_START } from '#/ui/menus/numbering';
 import { EmojiPicker, emojiStrings } from '#/ui/suggestions/emoji-picker';
 import { SuggestionList } from '#/ui/suggestions/suggestion-list';
@@ -73,7 +77,8 @@ import { useKeyboardInset } from './keyboard-inset';
 import { useEditorLocale } from './locale';
 import { BlockedShell, RecoveryShell } from './shells';
 import { registerSaveCauses, SaveStatusText } from './status';
-import { menuItems, numberingStrings, toolbarItems } from './toolbar-items';
+import { useRecipeSheet } from './style-sheet';
+import { colorMenuStrings, menuItems, numberingStrings, toolbarItems } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
     type EditorHandle,
@@ -86,9 +91,11 @@ type Props = RichTextEditorProps<object>;
 /** The props once `definition` is known to be set. */
 type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };
 const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
-const NO_PRESENTATION: ReaderPresentation = {};
+const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
 const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'uploads', 'assets'] as const;
 const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
+// The colour features by mark, whose `literalColors` option lets the colour menu take any colour.
+const COLOR_FEATURES = { font_color: 'marks.font-color', highlight: 'marks.highlight' } as const;
 // A composition that outlasts this wait is measured again, which waits again while it runs.
 const COMPOSITION_WAIT_MS = 1000;
 // Read by screen readers and never seen.
@@ -105,6 +112,28 @@ const VISUALLY_HIDDEN: CSSProperties = {
 const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
     'not-allowed': 'RichTextEditor_unavailableNotAllowed',
     readonly: 'RichTextEditor_unavailableReadOnly',
+};
+
+/**
+ * What the colour menu offers: the presentation's tokens, only those a `tokenIds` payload names when it has one, the
+ * highlight colours when the definition installs them, and any colour for each feature with `literalColors`.
+ */
+const colorMenuOptions = (
+    definition: CompiledEditorDefinition<object>,
+    tokens: readonly ColorToken[],
+    payload: unknown,
+): ColorMenuOptions => {
+    const engine = engineOf(definition);
+    const { features } = compiledModel(engine.model);
+    const literal = (['font_color', 'highlight'] as const).filter((mark) =>
+        features.some(({ id, options }) => id === COLOR_FEATURES[mark] && options.literalColors === true),
+    );
+    let shown = tokens;
+    if (isRecord(payload) && Array.isArray(payload.tokenIds)) {
+        const named: readonly unknown[] = payload.tokenIds;
+        shown = tokens.filter(({ id }) => named.includes(id));
+    }
+    return { tokens: shown, highlight: engine.commands.has('mark.highlight.set'), literal };
 };
 
 /** The key that moves focus to the toolbars, Alt+F10 unless the presentation sets another. */
@@ -319,8 +348,9 @@ const SessionComponent = (
         element: overlayRootElement,
     } = useOverlayRoot(coordinator, props.portalContainer);
     const [toolbarMode, setToolbarMode] = useState<ToolbarMode>(() => props.defaultToolbarMode ?? 'fixed');
-    // The package-built control a host `execute` opened.
+    // The package-built control a host `execute` opened, and the payload it ran with.
     const [control, setControl] = useState<string>();
+    const [controlPayload, setControlPayload] = useState<unknown>();
     const switchToolbar = useCallback((next: ToolbarMode) => {
         setToolbarMode(next);
         latestRef.current.onToolbarModeChange?.(next);
@@ -372,6 +402,7 @@ const SessionComponent = (
             limits: definition.limits,
             generateId: ids,
             nodeViews: (session) => createNodeViews(viewsOf(definition), { portals, runtime: session }),
+            markViews: () => coordinator.chrome.markViews(engine.schema),
             inRender: () => inReactWork(work),
             revision: loaded.revision,
             saves,
@@ -379,8 +410,12 @@ const SessionComponent = (
             inputRules: () => latestRef.current.inputRules,
             tabMovesFocus: () => latestRef.current.tabMovesFocus,
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
-            openControl: setControl,
+            openControl: (opened, payload) => {
+                setControlPayload(payload);
+                setControl(opened);
+            },
             locale: () => langRef.current,
+            styles: () => latestRef.current.presentation?.styles ?? [],
             columns: columnsAtMount(latestRef.current.presentation, t),
         });
         connectClipboard(runtime, {
@@ -458,6 +493,22 @@ const SessionComponent = (
     useClientLayoutEffect(() => {
         coordinator.chrome.setListLevels(listLevels);
     }, [coordinator, listLevels]);
+    // Without a presentation no style map is given, so no stored style is unknown.
+    const recipes = props.presentation?.styles;
+    const colorTokens = props.presentation?.colorTokens;
+    useClientLayoutEffect(() => {
+        if (recipes === undefined || colorTokens === undefined) {
+            coordinator.chrome.setStyles(undefined);
+            return;
+        }
+        coordinator.chrome.setStyles({
+            styles: recipes,
+            colorTokens,
+            onUnknown: (path) => coordinator.runtime?.report(unknownStyle(path)),
+        });
+    }, [coordinator, recipes, colorTokens]);
+    const styleSheet = useMemo(() => styleSheetOf(recipes ?? []), [recipes]);
+    useRecipeSheet(rootRef, styleSheet);
 
     // A changed `services` member aborts the operations it started, with no rebuild.
     const { services } = props;
@@ -693,6 +744,18 @@ const SessionComponent = (
                                     }
                                     testId={testId}
                                 />
+                                {control === 'color-menu' && (
+                                    <ColorMenu
+                                        options={colorMenuOptions(
+                                            mounted.definition,
+                                            presentation.colorTokens,
+                                            controlPayload,
+                                        )}
+                                        strings={colorMenuStrings(chromeContext.t)}
+                                        testId={testId}
+                                        onClose={() => setControl(undefined)}
+                                    />
+                                )}
                                 {control === 'emoji' && (
                                     <EmojiPicker
                                         lang={lang}

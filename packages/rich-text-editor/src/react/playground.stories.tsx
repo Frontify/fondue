@@ -5,12 +5,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
     bold,
+    brandStyles,
     code,
     codeBlock,
     columns,
     core,
     emoji,
     featuresById,
+    fontColor,
     heading,
     inputRules,
     italic,
@@ -22,6 +24,7 @@ import {
     underline,
 } from '#/features';
 import {
+    type ColorToken,
     type CommandResult,
     type CommandsOfModel,
     defineEditor,
@@ -29,6 +32,7 @@ import {
     defineReactPresentation,
     type EditorHandle,
     type PersistenceService,
+    type PresentationStyle,
     type RichTextEditorProps,
     RichTextEditor,
     type SaveResponse,
@@ -107,6 +111,9 @@ const model = compileContentModel(
         heading(),
         quote(),
         codeBlock(),
+        // Any colour through the picker, beside the presentation's tokens.
+        fontColor({ literalColors: true }),
+        brandStyles(),
         rule(),
         columns(),
         ...featuresById(['lists.item', 'lists.bullet', 'lists.ordered', 'lists.task']),
@@ -130,9 +137,41 @@ const TOOLBAR = [
         'mark.subscript.toggle',
         'mark.superscript.toggle',
     ],
+    ['mark.color.menu.open'],
     ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
     ['quote.toggle', 'code-block.toggle', 'emoji.picker.open'],
     ['rule.insert', 'column.break.insert'],
+];
+
+// Brand styles as a host passes them: headings and paragraphs, and one deprecated style the picker leaves out.
+const brandStylesOf = (leadSize: number): readonly PresentationStyle[] => [
+    {
+        id: 'brand.title',
+        label: 'Title',
+        appliesTo: ['heading'],
+        deprecated: false,
+        recipe: { fontFamily: 'Georgia, serif', fontSize: 32, fontWeight: 700, color: '#1d4ed8' },
+    },
+    {
+        id: 'brand.lead',
+        label: 'Lead',
+        appliesTo: ['paragraph'],
+        deprecated: false,
+        recipe: { fontSize: leadSize, lineHeight: 1.5, fontWeight: 300 },
+    },
+    {
+        id: 'brand.caption',
+        label: 'Caption',
+        appliesTo: ['paragraph'],
+        deprecated: false,
+        recipe: { fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' },
+    },
+    { id: 'brand.legacy', label: 'Legacy', appliesTo: ['paragraph'], deprecated: true, recipe: { fontSize: 18 } },
+];
+const COLOR_TOKENS: readonly ColorToken[] = [
+    { id: 'brand.red', label: 'Brand red', value: '#c0392b', usage: ['font_color'] },
+    { id: 'brand.blue', label: 'Brand blue', value: '#1d4ed8', usage: ['font_color'] },
+    { id: 'brand.gray', label: 'Gray', value: '#4b5563', usage: ['font_color'] },
 ];
 
 type Commands = CommandsOfModel<typeof model>;
@@ -159,6 +198,8 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly hostPortalContainer: boolean;
     /** How the in-memory server answers each save, so `RichTextEditor.Status` shows each message. */
     readonly serverAnswer: 'saved' | 'conflict' | 'forbidden' | 'invalid' | 'incompatible-writer';
+    /** The font size of the Lead brand style's recipe, in px; a change restyles every Lead block with no document change. */
+    readonly leadFontSize: number;
 };
 
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
@@ -197,6 +238,7 @@ const Playground = ({
     bubbleToolbar,
     hostPortalContainer,
     serverAnswer,
+    leadFontSize,
     ...props
 }: PlaygroundProps) => {
     const [hostContainer, setHostContainer] = useState<HTMLElement | null>(null);
@@ -211,10 +253,12 @@ const Playground = ({
             toolbar: TOOLBAR,
             toolbarShortcut,
             sliceContext: context,
+            styles: brandStylesOf(leadFontSize),
+            colorTokens: COLOR_TOKENS,
             columns: columnCount,
             columnGap,
         });
-    }, [contentClassName, toolbarShortcut, sliceContext, columnCount, columnGap]);
+    }, [contentClassName, toolbarShortcut, sliceContext, leadFontSize, columnCount, columnGap]);
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
@@ -628,6 +672,7 @@ Type \`:\` at the start of a word, then at least two letters, to open emoji sugg
 | Code | \`mark.code.toggle\` | \`Mod-e\` | ⌘E | Ctrl+E |
 | Subscript | \`mark.subscript.toggle\` | \`Mod-,\` | ⌘, | Ctrl+, |
 | Superscript | \`mark.superscript.toggle\` | \`Mod-.\` | ⌘. | Ctrl+. |
+| Set the last text colour again | \`mark.color.reapply\` | \`Mod-Shift-h\` | ⇧⌘H | Ctrl+Shift+H |
 
 ## Blocks
 
@@ -712,6 +757,7 @@ With \`tabMovesFocus\`, Tab and Shift+Tab always move focus out of the editor an
         bubbleToolbar: false,
         hostPortalContainer: false,
         serverAnswer: 'saved',
+        leadFontSize: 20,
         defaultToolbarMode: 'fixed',
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },
@@ -745,6 +791,7 @@ With \`tabMovesFocus\`, Tab and Shift+Tab always move focus out of the editor an
             control: 'select',
             options: ['saved', 'conflict', 'forbidden', 'invalid', 'incompatible-writer'],
         },
+        leadFontSize: { control: { type: 'range', min: 12, max: 32, step: 1 } },
     },
 };
 export default meta;
