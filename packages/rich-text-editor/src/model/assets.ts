@@ -61,6 +61,23 @@ export const unresolvedAsset = (path: string): Diagnostic => ({
     featureId: IMAGE_FEATURE,
 });
 
+/**
+ * Whether the reader or a codec leaves out `node`, a figure of `media.image` whose image has no `assetId` yet, which
+ * it then reports once, never resolving the image.
+ */
+export const leavesOutUnresolved = (
+    state: { readonly diagnostics: Diagnostic[] },
+    featureId: string,
+    node: TreeNode,
+    path: string,
+): boolean => {
+    if (featureId !== IMAGE_FEATURE || !isUnresolvedImage(node)) {
+        return false;
+    }
+    state.diagnostics.push(unresolvedAsset(path));
+    return true;
+};
+
 /** The `alt` an image renders with: empty for a decorative image, its text for a meaningful one, none while missing. */
 export const altOf = (attrs: JsonObject): string | undefined => {
     if (attrs.altIntent === 'decorative') {
@@ -83,13 +100,19 @@ export type ImageOutput =
           readonly height: number | undefined;
           /** `displayWidth` as a CSS width in percent of the content width, or `undefined` at natural size. */
           readonly cssWidth: string | undefined;
+          /** The placeholder an image that fails to load shows in its place. */
+          readonly unavailable: Unavailable;
       }
-    | {
-          readonly kind: 'unavailable';
-          readonly message: string;
-          /** `labelSnapshot`, or empty. */
-          readonly label: string;
-      };
+    | ({ readonly kind: 'unavailable' } & Unavailable);
+
+/** The "Image unavailable" placeholder: its localized message and the image's `labelSnapshot`, or empty. */
+export interface Unavailable {
+    readonly message: string;
+    readonly label: string;
+}
+
+// A stored size with a longer side more than this many times the shorter reserves no box, which it could make huge.
+const MAX_ASPECT = 32;
 
 const sizeOf = (value: unknown): number | undefined => {
     if (typeof value === 'number' && Number.isInteger(value) && value > 0) {
@@ -121,12 +144,22 @@ export const imageSource = (attrs: JsonObject, context: CodecContext): string | 
 };
 
 /** The unavailable placeholder of an image, with its `labelSnapshot`. */
-export const unavailableImage = (attrs: JsonObject, context: CodecContext): ImageOutput => {
+export const unavailableOf = (attrs: JsonObject, context: CodecContext): Unavailable => {
     let label = '';
     if (typeof attrs.labelSnapshot === 'string') {
         label = attrs.labelSnapshot;
     }
-    return { kind: 'unavailable', message: context.t('RichTextEditor_imageUnavailable'), label };
+    return { message: context.t('RichTextEditor_imageUnavailable'), label };
+};
+
+/** The intrinsic size an image's box reserves before it loads, or none for a missing or extreme aspect ratio. */
+const reservedSize = (attrs: JsonObject): { readonly width?: number; readonly height?: number } => {
+    const width = sizeOf(attrs.width);
+    const height = sizeOf(attrs.height);
+    if (width === undefined || height === undefined || Math.max(width, height) > Math.min(width, height) * MAX_ASPECT) {
+        return {};
+    }
+    return { width, height };
 };
 
 /**
@@ -135,22 +168,17 @@ export const unavailableImage = (attrs: JsonObject, context: CodecContext): Imag
  */
 export const imageOutput = (attrs: JsonObject, context: CodecContext): ImageOutput => {
     const src = imageSource(attrs, context);
+    const unavailable = unavailableOf(attrs, context);
     if (src === undefined) {
-        return unavailableImage(attrs, context);
+        return { kind: 'unavailable', ...unavailable };
     }
     let cssWidth: string | undefined;
     const display = sizeOf(attrs.displayWidth);
     if (display !== undefined && display <= 100) {
         cssWidth = `${display}%`;
     }
-    return {
-        kind: 'image',
-        src,
-        alt: altOf(attrs),
-        width: sizeOf(attrs.width),
-        height: sizeOf(attrs.height),
-        cssWidth,
-    };
+    const { width, height } = reservedSize(attrs);
+    return { kind: 'image', src, alt: altOf(attrs), width, height, cssWidth, unavailable };
 };
 
 /** A figure's side as the `text-align` that places its image; `center` unless the stored value is another side. */

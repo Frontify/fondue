@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { checkHref, type CodecContext, type Diagnostic, type JsonObject } from '#/model';
-import { IMAGE_FEATURE, isUnresolvedImage, unresolvedAsset } from '#/model/assets';
+import { leavesOutUnresolved } from '#/model/assets';
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { pointer } from '#/model/errors';
 import { islandText } from '#/model/html-spec';
@@ -155,8 +155,7 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
     if (plan === undefined) {
         return null;
     }
-    if (plan.featureId === IMAGE_FEATURE && isUnresolvedImage(node)) {
-        state.diagnostics.push(unresolvedAsset(path));
+    if (leavesOutUnresolved(state, plan.featureId, node, path)) {
         return null;
     }
     noteNode(state, node, 'text');

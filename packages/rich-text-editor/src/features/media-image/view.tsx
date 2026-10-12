@@ -1,13 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Dropdown } from '@frontify/fondue-components';
-import { type PointerEvent, type RefObject, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { IconArrowSwap, IconPause, IconPlay } from '@frontify/fondue-icons';
+import {
+    type MouseEvent,
+    type PointerEvent,
+    type RefObject,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
+import { AnnouncerContext } from '#/bridge/announcer';
 import { NodeChromeMenu } from '#/bridge/chrome-toolbar';
 import { NodeChromeButton, NodeChromeToolbar, type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
 import { type JsonObject } from '#/model';
-import { altOf, figureAlign, imageOutput } from '#/model/assets';
+import { altOf, figureAlign, imageOutput, unavailableOf } from '#/model/assets';
+import { altReviewOf, withAltReview } from '#/runtime/alt-review';
 import { positionOf } from '#/runtime/positions';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { AltTextDialog, altTextStrings } from '#/ui/media/alt-text-dialog';
@@ -15,6 +27,7 @@ import { MAX_WIDTH, MIN_WIDTH, SET_SIZE, WidthDialog } from '#/ui/media/width-di
 
 import { mayAnimate } from './animation';
 import { ContentImage } from './image';
+import { ImageUnavailable } from './reader';
 import styles from './styles/image.module.scss';
 
 const PRESETS = [25, 50, 75, 100] as const;
@@ -24,6 +37,8 @@ const SIDE_KEYS = {
     center: 'RichTextEditor_imageAlignCenter',
     right: 'RichTextEditor_imageAlignRight',
 } as const;
+// How far a pointer moves before a press on the handle counts as a horizontal resize, or as a scroll.
+const SLOP = 8;
 
 /** The side of the figure that holds the image `nodeId`, which its chrome's alignment menu shows. */
 const sideOf = (runtime: EditorRuntime | undefined, nodeId: string | null) => {
@@ -39,20 +54,34 @@ const sideOf = (runtime: EditorRuntime | undefined, nodeId: string | null) => {
 const percentOf = (pixels: number, total: number) =>
     Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, Math.round((pixels / total) * 100)));
 
+const reducedMotion = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+
+const generationOf = (runtime: EditorRuntime | undefined) => runtime?.handle.getSnapshot().stamp.generation;
+
 interface Drag {
     readonly startX: number;
+    readonly startY: number;
     readonly startWidth: number;
     readonly total: number;
     /** -1 where the inline end is on the left. */
     readonly direction: number;
+    /** The session generation the drag started in; a replacement since drops the drag. */
+    readonly generation: number | undefined;
+    /** Whether the pointer moved past the slop horizontally, so the drag resizes. */
+    resizing: boolean;
     readonly stop: () => void;
 }
 
 /**
- * A resize drag from the frame's inline-end handle: the frame shows the dragged width as it moves, and the drag's end
- * runs `image.size.set` once, one undo step. Escape during the drag restores the old width and runs nothing.
+ * A resize drag from the frame's inline-end handle: once the pointer moves past the slop more across than down, the
+ * frame shows the dragged width, and the drag's end runs `image.size.set` once, one undo step. A vertical move leaves
+ * the page to scroll, and Escape during the drag, or a replaced document, restores the old width and runs nothing.
  */
-const useResize = (frameRef: RefObject<HTMLSpanElement>, commit: (displayWidth: number) => void) => {
+const useResize = (
+    frameRef: RefObject<HTMLSpanElement>,
+    runtime: EditorRuntime | undefined,
+    commit: (displayWidth: number) => void,
+) => {
     const [shown, setShown] = useState<number>();
     const dragRef = useRef<Drag | null>(null);
     const shownRef = useRef<number | undefined>(undefined);
@@ -71,8 +100,10 @@ const useResize = (frameRef: RefObject<HTMLSpanElement>, commit: (displayWidth: 
         if (frame === null || figure === null || figure === undefined || figure.clientWidth <= 0) {
             return;
         }
-        // The node's own drag and the browser's text selection never start from the handle.
-        event.preventDefault();
+        // A touch may still scroll, which its `touch-action` leaves to the browser; a mouse drag never selects text.
+        if (event.pointerType === 'mouse') {
+            event.preventDefault();
+        }
         const handle = event.currentTarget;
         handle.setPointerCapture?.(event.pointerId);
         const document = frame.ownerDocument;
@@ -93,9 +124,12 @@ const useResize = (frameRef: RefObject<HTMLSpanElement>, commit: (displayWidth: 
         }
         dragRef.current = {
             startX: event.clientX,
+            startY: event.clientY,
             startWidth: frame.getBoundingClientRect().width,
             total: figure.clientWidth,
             direction,
+            generation: generationOf(runtime),
+            resizing: false,
             stop: () => {
                 document.removeEventListener('keydown', onKey, true);
                 if (handle.hasPointerCapture?.(event.pointerId) === true) {
@@ -109,10 +143,26 @@ const useResize = (frameRef: RefObject<HTMLSpanElement>, commit: (displayWidth: 
         if (drag === null) {
             return;
         }
+        const across = Math.abs(event.clientX - drag.startX);
+        const down = Math.abs(event.clientY - drag.startY);
+        if (!drag.resizing) {
+            if (down > SLOP && down >= across) {
+                end();
+                return;
+            }
+            if (across <= SLOP) {
+                return;
+            }
+            drag.resizing = true;
+        }
         show(percentOf(drag.startWidth + (event.clientX - drag.startX) * drag.direction, drag.total));
     };
     const onPointerUp = () => {
-        const dragged = dragRef.current !== null ? shownRef.current : undefined;
+        const drag = dragRef.current;
+        let dragged: number | undefined;
+        if (drag !== null && drag.resizing && drag.generation === generationOf(runtime)) {
+            dragged = shownRef.current;
+        }
         end();
         if (dragged !== undefined) {
             commit(dragged);
@@ -126,6 +176,26 @@ const useResize = (frameRef: RefObject<HTMLSpanElement>, commit: (displayWidth: 
     return { shown, handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel } };
 };
 
+/** What a screen reader hears as the image becomes node-selected, since an image with an empty `alt` says nothing. */
+const spokenOf = (attrs: JsonObject, context: Parameters<typeof imageOutput>[1], unavailable: boolean) => {
+    const { t } = context;
+    if (attrs.assetId === null) {
+        return t('RichTextEditor_imageUnfinished');
+    }
+    if (unavailable) {
+        const { message, label } = unavailableOf(attrs, context);
+        return label === '' ? message : `${message} ${label}`;
+    }
+    const alt = altOf(attrs);
+    if (alt === undefined) {
+        return t('RichTextEditor_imageSelectedMissing');
+    }
+    if (alt === '') {
+        return t('RichTextEditor_imageSelectedDecorative');
+    }
+    return t('RichTextEditor_imageSelected', { description: alt });
+};
+
 /**
  * The image as the author edits it, with the `alt` the reader writes, its placeholder when it cannot show, and its
  * chrome: alternative text, a visible Add alternative text while it is missing, size presets and a numeric width
@@ -133,23 +203,28 @@ const useResize = (frameRef: RefObject<HTMLSpanElement>, commit: (displayWidth: 
  * motion. After a replacement this session, it asks the author to review the alternative text.
  */
 const ImageChrome = () => {
-    const { attrs, nodeId, context, execute, select } = useRichTextNodeView();
+    const { attrs, nodeId, selected, context, execute, select } = useRichTextNodeView();
     const runtime = useContext(SessionContext);
+    const announcer = useContext(AnnouncerContext);
     const { t } = context;
     const shown = useMemo(() => imageOutput(attrs, context), [attrs, context]);
     const src = shown.kind === 'image' ? shown.src : undefined;
     const [failed, setFailed] = useState<string>();
     // Whether the image at `src` may animate, once the check for that `src` answered.
     const [animation, setAnimation] = useState<{ readonly src: string; readonly may: boolean }>();
-    const [paused, setPaused] = useState(
-        () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true,
-    );
+    // The author's own Pause or Play, for one `src` only: a new image starts as reduced motion has it.
+    const [played, setPlayed] = useState<{ readonly src: string; readonly paused: boolean }>();
     const [dialog, setDialog] = useState<{ readonly kind: 'alt' | 'width'; readonly opener: Element | null }>();
-    // The session's review list lives outside React, so a change to it rerenders the chrome by hand.
-    const [, rerender] = useReducer((count: number) => count + 1, 0);
+    const pendingRef = useRef<'width' | undefined>(undefined);
     const barRef = useRef<HTMLDivElement>(null);
     const frameRef = useRef<HTMLSpanElement>(null);
     const side = useSessionValue((session) => sideOf(session, nodeId), Object.is);
+    const asked = useSessionValue(
+        (session) => (session === undefined || nodeId === null ? undefined : altReviewOf(session.state, nodeId)),
+        Object.is,
+    );
+    // An undone replacement gives back the old asset, which asks nothing.
+    const review = asked !== undefined && asked === attrs.assetId;
     const mediaType = typeof attrs.mediaType === 'string' ? attrs.mediaType : null;
     useEffect(() => {
         if (src === undefined) {
@@ -166,9 +241,34 @@ const ImageChrome = () => {
             .catch(() => undefined);
         return () => controller.abort();
     }, [src, mediaType]);
-    const animated = animation !== undefined && animation.src === src && animation.may;
+    const decided = animation !== undefined && animation.src === src;
+    const animated = decided && animation.may;
+    let paused = reducedMotion();
+    if (played !== undefined && played.src === src) {
+        paused = played.paused;
+    }
+    const unavailable = shown.kind !== 'image' || failed === shown.src;
+    const spoken = spokenOf(attrs, context, unavailable);
+    const spokenRef = useRef(spoken);
+    useEffect(() => {
+        spokenRef.current = spoken;
+    });
+    useEffect(() => {
+        if (selected) {
+            announcer?.announce(spokenRef.current);
+        }
+    }, [selected, announcer]);
+    const altLabel = review ? t('RichTextEditor_imageAltReview') : undefined;
+    // A new asset asks for a review once: the prompt is spoken and focus moves to its action.
+    useEffect(() => {
+        if (!review || altLabel === undefined) {
+            return;
+        }
+        announcer?.announce(t('RichTextEditor_imageAltReviewPrompt'));
+        barRef.current?.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(altLabel)}"]`)?.focus();
+    }, [review, altLabel, announcer, t]);
     const displayWidth = typeof attrs.displayWidth === 'number' ? attrs.displayWidth : null;
-    const resize = useResize(frameRef, (width) => {
+    const resize = useResize(frameRef, runtime, (width) => {
         if (width !== displayWidth) {
             execute(SET_SIZE, { displayWidth: width });
         }
@@ -181,20 +281,21 @@ const ImageChrome = () => {
         opener: Element | null = barRef.current?.ownerDocument.activeElement ?? null,
     ) => setDialog({ kind, opener });
     const missing = attrs.altIntent !== 'meaningful' && attrs.altIntent !== 'decorative';
-    const review = runtime !== undefined && runtime.altReviews.get(nodeId) === attrs.assetId;
-    let altLabel = t('RichTextEditor_imageAltEdit');
+    let altText = t('RichTextEditor_imageAltEdit');
     if (review) {
-        altLabel = t('RichTextEditor_imageAltReview');
+        altText = t('RichTextEditor_imageAltReview');
     } else if (missing) {
-        altLabel = t('RichTextEditor_imageAltAdd');
+        altText = t('RichTextEditor_imageAltAdd');
     }
     let sizeText = t('RichTextEditor_imageSizeOriginal');
     if (displayWidth !== null) {
         sizeText = t('RichTextEditor_imageSizePercent', { percent: displayWidth });
     }
     const unfinished = attrs.assetId === null;
-    // The chrome keeps mouse events from the editor, so a press on the image selects it here, as on any atom.
-    const selectImage = () => {
+    // The chrome keeps mouse events from the editor, so a press on the image selects it here, as on any atom, and
+    // keeps the browser from putting the caret in a neighbouring block.
+    const selectImage = (event: MouseEvent) => {
+        event.preventDefault();
         select();
         if (runtime?.view?.hasFocus() === false) {
             runtime.view.focus();
@@ -208,7 +309,7 @@ const ImageChrome = () => {
                 {t('RichTextEditor_imageUnfinished')}
             </span>
         );
-    } else if (shown.kind === 'image' && failed !== shown.src) {
+    } else if (shown.kind === 'image' && !unavailable) {
         let width = shown.cssWidth;
         if (resize.shown !== undefined) {
             width = `${resize.shown}%`;
@@ -220,7 +321,8 @@ const ImageChrome = () => {
                 width={shown.width}
                 height={shown.height}
                 shownWidth={width}
-                paused={animated && paused}
+                // Under reduced motion the still shows while the check runs, so nothing moves before it answers.
+                paused={paused && (animated || !decided)}
                 frameRef={frameRef}
                 onFailed={() => setFailed(shown.src)}
                 onMouseDown={selectImage}
@@ -235,16 +337,12 @@ const ImageChrome = () => {
             </ContentImage>
         );
     } else {
-        let label = '';
-        if (typeof attrs.labelSnapshot === 'string') {
-            label = attrs.labelSnapshot;
-        }
         content = (
-            // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- a press selects the node as on any atom; the keyboard selects it with the arrows.
-            <span className={styles.placeholder} data-rte-image-unavailable="" onMouseDown={selectImage}>
-                {label === '' ? t('RichTextEditor_imageUnavailable') : `${t('RichTextEditor_imageUnavailable')} `}
-                {label !== '' && <bdi>{label}</bdi>}
-            </span>
+            <ImageUnavailable
+                unavailable={unavailableOf(attrs, context)}
+                className={styles.placeholder}
+                onMouseDown={selectImage}
+            />
         );
     }
     const close = () => setDialog(undefined);
@@ -260,13 +358,14 @@ const ImageChrome = () => {
                             onClick={() => execute('image.replace', { nodeId })}
                         />
                     )}
-                    <NodeChromeButton label={altLabel} onClick={() => open('alt')} />
+                    <NodeChromeButton label={altText} onClick={() => open('alt')} />
                     {review && (
                         <NodeChromeButton
                             label={t('RichTextEditor_imageAltKeep')}
                             onClick={() => {
-                                runtime?.altReviews.delete(nodeId);
-                                rerender();
+                                if (runtime?.view !== undefined) {
+                                    runtime.view.dispatch(withAltReview(runtime.state.tr, nodeId, null));
+                                }
                             }}
                         />
                     )}
@@ -274,6 +373,15 @@ const ImageChrome = () => {
                         label={t('RichTextEditor_imageSize', { size: sizeText })}
                         text={sizeText}
                         command={SET_SIZE}
+                        onCloseAutoFocus={(event) => {
+                            if (pendingRef.current === undefined) {
+                                return;
+                            }
+                            // The width dialog opens once the menu returned focus, so its field keeps it.
+                            pendingRef.current = undefined;
+                            event.preventDefault();
+                            open('width', barRef.current?.querySelector(`[data-rte-command="${SET_SIZE}"]`) ?? null);
+                        }}
                     >
                         {PRESETS.map((preset) => (
                             <Dropdown.Item
@@ -291,9 +399,9 @@ const ImageChrome = () => {
                             {t('RichTextEditor_imageSizeOriginal')}
                         </Dropdown.Item>
                         <Dropdown.Item
-                            onSelect={() =>
-                                open('width', barRef.current?.querySelector(`[data-rte-command="${SET_SIZE}"]`) ?? null)
-                            }
+                            onSelect={() => {
+                                pendingRef.current = 'width';
+                            }}
                         >
                             {t('RichTextEditor_imageSizeCustom')}
                         </Dropdown.Item>
@@ -315,27 +423,21 @@ const ImageChrome = () => {
                     {!unfinished && (
                         <NodeChromeButton
                             label={t('RichTextEditor_imageReplace')}
+                            icon={<IconArrowSwap size={16} aria-hidden />}
                             onClick={() => execute('image.replace', { nodeId })}
                         />
                     )}
                     {animated && shown.kind === 'image' && (
                         <NodeChromeButton
                             label={paused ? t('RichTextEditor_imagePlay') : t('RichTextEditor_imagePause')}
-                            onClick={() => setPaused((was) => !was)}
+                            icon={paused ? <IconPlay size={16} aria-hidden /> : <IconPause size={16} aria-hidden />}
+                            onClick={() => setPlayed({ src: shown.src, paused: !paused })}
                         />
                     )}
                 </NodeChromeToolbar>
             </div>
             {dialog?.kind === 'alt' && (
-                <AltTextDialog
-                    nodeId={nodeId}
-                    opener={dialog.opener}
-                    strings={altTextStrings(t)}
-                    onClose={() => {
-                        close();
-                        rerender();
-                    }}
-                />
+                <AltTextDialog nodeId={nodeId} opener={dialog.opener} strings={altTextStrings(t)} onClose={close} />
             )}
             {dialog?.kind === 'width' && (
                 <WidthDialog

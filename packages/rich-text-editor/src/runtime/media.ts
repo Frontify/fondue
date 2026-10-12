@@ -6,6 +6,7 @@ import { type EditorState } from 'prosemirror-state';
 import { COMMAND_META, type EngineCommand } from '#/definition';
 import { isRecord } from '#/model/values';
 
+import { withAltReview } from './alt-review';
 import { placeBlock } from './capabilities';
 import { nearest, positionOf } from './positions';
 
@@ -79,7 +80,7 @@ export const refillPicked = (nodeId: string, asset: PickedAsset): EngineCommand 
         for (const [name, value] of Object.entries({ ...asset, width: null, height: null })) {
             transaction.setNodeAttribute(pos, name, value);
         }
-        dispatch?.(transaction.setMeta(COMMAND_META, REPLACE_IMAGE));
+        dispatch?.(withAltReview(transaction, nodeId, asset.assetId).setMeta(COMMAND_META, REPLACE_IMAGE));
         return true;
     },
     active: () => false,
