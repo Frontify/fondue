@@ -6,8 +6,18 @@ import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type AriaAttributes, type AriaRole, useContext, useId, useRef, useState } from 'react';
 
 import { SessionContext, useCommandQuery } from '#/bridge/hooks';
+import { useOverlayContainer } from '#/bridge/overlays';
 
-import { Icon, returnFocus, runItem, type ToolbarItem, type ToolbarStrings, useShortcut } from './item';
+import {
+    Icon,
+    keepFocus,
+    returnFocus,
+    runItem,
+    tabStop,
+    type ToolbarItem,
+    type ToolbarStrings,
+    useShortcut,
+} from './item';
 import styles from './styles/toolbar.module.scss';
 
 const MoreRow = ({
@@ -70,17 +80,31 @@ const MoreRow = ({
     );
 };
 
-/** The items that do not fit move into More, from the end. */
+/** The last More row, which switches between the fixed and the bubble toolbar. */
+export interface ModeSwitch {
+    readonly label: string;
+    readonly onSelect: () => void;
+}
+
+/** The items that do not fit move into More, from the end, above the toolbar mode switch. */
 export const More = ({
     items,
     strings,
     disabled,
+    keepsFocus,
+    outOfTabOrder,
+    modeSwitch,
 }: {
     readonly items: readonly ToolbarItem[];
     readonly strings: ToolbarStrings;
     readonly disabled: boolean;
+    /** A press leaves focus in the surface, as on the docked toolbar. */
+    readonly keepsFocus: boolean;
+    readonly outOfTabOrder: boolean;
+    readonly modeSwitch: ModeSwitch;
 }) => {
     const runtime = useContext(SessionContext);
+    const container = useOverlayContainer();
     // A row that ran its command sends focus to the surface rather than back to More.
     const ranRef = useRef(false);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -93,7 +117,7 @@ export const More = ({
             return;
         }
         ranRef.current = true;
-        await runItem(runtime, item);
+        await runItem(runtime, item, false);
         // The row sits in the menu's portal, outside the toolbar.
         returnFocus(runtime, [contentRef.current]);
     };
@@ -110,6 +134,7 @@ export const More = ({
                 <Tooltip.Trigger asChild>
                     <Dropdown.Trigger asChild>
                         <RadixToolbar.Button
+                            {...tabStop(outOfTabOrder)}
                             type="button"
                             className={styles.item}
                             aria-label={strings.more}
@@ -118,6 +143,26 @@ export const More = ({
                             onPointerDown={() => {
                                 pointerRef.current = true;
                                 openAtPressRef.current = open;
+                            }}
+                            // WebKit sends no click for a touch whose `pointerdown` Radix prevented, so a touch released
+                            // over More opens it here; one that slid off opens nothing.
+                            onPointerUp={(event) => {
+                                // Only a press that began on More opens it, never in a disabled editor.
+                                const pressed = pointerRef.current;
+                                pointerRef.current = false;
+                                if (disabled || !pressed || event.pointerType === 'mouse' || openAtPressRef.current) {
+                                    return;
+                                }
+                                const { left, right, top, bottom } = event.currentTarget.getBoundingClientRect();
+                                const { clientX, clientY } = event;
+                                if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
+                                    setOpen(true);
+                                }
+                            }}
+                            onMouseDown={(event) => {
+                                if (keepsFocus) {
+                                    keepFocus(event);
+                                }
                             }}
                             onKeyDown={() => {
                                 pointerRef.current = false;
@@ -135,12 +180,13 @@ export const More = ({
                         </RadixToolbar.Button>
                     </Dropdown.Trigger>
                 </Tooltip.Trigger>
-                <Tooltip.Content padding="compact">
+                <Tooltip.Content padding="compact" container={container}>
                     <span data-rte-tooltip-label="">{strings.more}</span>
                 </Tooltip.Content>
             </Tooltip.Root>
             <Dropdown.Content
                 ref={contentRef}
+                container={container}
                 onCloseAutoFocus={(event) => {
                     if (ranRef.current) {
                         event.preventDefault();
@@ -151,6 +197,16 @@ export const More = ({
                 {items.map((item) => (
                     <MoreRow key={item.key} item={item} strings={strings} onRun={onRun} />
                 ))}
+                <Dropdown.Item
+                    onSelect={() => {
+                        // The toolbar that held More unmounts, so focus goes to the surface.
+                        ranRef.current = true;
+                        modeSwitch.onSelect();
+                        runtime?.handle.focus();
+                    }}
+                >
+                    {modeSwitch.label}
+                </Dropdown.Item>
             </Dropdown.Content>
         </Dropdown.Root>
     );

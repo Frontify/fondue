@@ -26,7 +26,7 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
     const [fitting, setFitting] = useState<Fitting>({ itemsKey, shown: count });
     const endsRef = useRef<readonly number[]>([]);
     const moreSizeRef = useRef(0);
-    // A refit that removes the focused control sends focus to More, or to the first item More held, not to the body.
+    // A refit that removes the focused control sends focus to More, or to the first item its menu held, not to the body.
     const refocusRef = useRef<'more' | number | undefined>(undefined);
     const shownRef = useRef(count);
     // A new item set shows every item once, so the layout effect measures them all.
@@ -48,18 +48,15 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
         const fit = () => {
             const measured = endsRef.current;
             const gap = Number.parseFloat(style.columnGap) || 0;
-            // More is as wide as an item, and only shows once something overflows.
-            const sample = element.querySelector('[data-rte-toolbar-more], [data-rte-toolbar-item]');
-            if (sample !== null) {
-                moreSizeRef.current = gap + sample.getBoundingClientRect().width;
+            // More always shows, since it holds the toolbar mode switch.
+            const more = element.querySelector('[data-rte-toolbar-more]');
+            if (more !== null) {
+                moreSizeRef.current = gap + more.getBoundingClientRect().width;
             }
             const limit = element.getBoundingClientRect().width - Number.parseFloat(style.paddingInlineEnd);
             let next = 0;
             while (next < measured.length) {
-                let needed = measured[next] ?? 0;
-                if (next < measured.length - 1) {
-                    needed += moreSizeRef.current;
-                }
+                const needed = (measured[next] ?? 0) + moreSizeRef.current;
                 // Subpixel layout rounds an exact fit either way.
                 if (needed > limit + 0.5) {
                     break;
@@ -71,15 +68,14 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
             if (focused >= next) {
                 refocusRef.current = 'more';
             }
-            // More's menu is a portal that its trigger names in `aria-controls` while open.
-            const more = element.querySelector('[data-rte-toolbar-more]');
+            // More stays for the mode switch, but its menu loses every command row once all items fit; the menu is a
+            // portal that its trigger names in `aria-controls` while open.
             const menuId = more?.getAttribute('aria-controls');
             let menu: Element | null = null;
             if (menuId !== null && menuId !== undefined) {
                 menu = element.ownerDocument.getElementById(menuId);
             }
-            const inMore = more !== null && (more === activeElement || (menu !== null && menu.contains(activeElement)));
-            if (inMore && next === measured.length) {
+            if (menu !== null && menu.contains(activeElement) && next === measured.length) {
                 refocusRef.current = shownRef.current;
             }
             // Only the rendered items tell what fits, so the layout effect measures them before paint.

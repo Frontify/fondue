@@ -1,0 +1,162 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { Flyout } from '@frontify/fondue-components';
+import * as RadixToolbar from '@radix-ui/react-toolbar';
+import { type MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+
+import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
+import { useEditorSelection, useSessionValue } from '#/bridge/hooks';
+import { passEscape, useEditorOverlay, useScopedFocus } from '#/bridge/overlays';
+import { type EditorRuntime } from '#/runtime/runtime';
+import { type SelectionSummary } from '#/runtime/types';
+import { ariaShortcut, useApplePlatform } from '#/ui/shortcuts';
+import { Item, More, type ModeSwitch, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
+
+import styles from './styles/bubble-toolbar.module.scss';
+
+// The bubble toolbar stays out of the Tab order; Alt+F10 reaches it.
+const OUT_OF_TAB_ORDER = -1;
+
+/** Where the selection is, so a command that only maps it, as Mod+B does, leaves the toolbar as it was. */
+const selectionOf = (runtime: EditorRuntime | undefined): string => {
+    if (runtime === undefined) {
+        return '';
+    }
+    const { anchor, head } = runtime.state.selection;
+    return `${anchor} ${head}`;
+};
+
+/** In bubble mode, the commands with no bubble item and the switch back to the fixed toolbar. */
+export interface BubbleMore {
+    readonly items: readonly ToolbarItem[];
+    readonly modeSwitch: ModeSwitch;
+}
+
+const holdsText = ({ kind, collapsed }: SelectionSummary) => (kind === 'text' || kind === 'all') && !collapsed;
+
+/**
+ * The bubble toolbar: Radix Toolbar in a Fondue `Flyout` above the selection, shown for a text selection while focus is
+ * in the editor, out of focus until Alt+F10. It closes on Escape and stays while
+ * the pointer is over it or focus is in it, holding its place meanwhile.
+ */
+export const BubbleToolbar = ({
+    items,
+    more,
+    label,
+    strings,
+    shortcut,
+    testId,
+    toolbarRef,
+    showRef,
+}: {
+    readonly items: readonly ToolbarItem[];
+    readonly more: BubbleMore | undefined;
+    readonly label: string;
+    readonly strings: ToolbarStrings;
+    /** The package key binding that moves focus here. */
+    readonly shortcut: string;
+    readonly testId: string;
+    /** The toolbar element while it shows, which Alt+F10 focuses. */
+    readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
+    /** In bubble mode, opens the toolbar at any selection and focuses it, as Alt+F10 does when none shows. */
+    readonly showRef: MutableRefObject<(() => void) | null> | undefined;
+}) => {
+    const apple = useApplePlatform();
+    const key = useSessionValue(selectionOf, Object.is);
+    const selected = useEditorSelection(holdsText);
+    const focus = useScopedFocus();
+    const [closedAt, setClosedAt] = useState<string | null>(null);
+    const [shownAt, setShownAt] = useState<string | null>(null);
+    // A move away ends both, so a later return to the same range shows the toolbar for its text again.
+    if (closedAt !== null && closedAt !== key) {
+        setClosedAt(null);
+    }
+    if (shownAt !== null && shownAt !== key) {
+        setShownAt(null);
+    }
+    const [hovered, setHovered] = useState(false);
+    const keyRef = useRef(key);
+    const focusOnOpenRef = useRef(false);
+    useClientLayoutEffect(() => {
+        keyRef.current = key;
+    });
+    const setOpen = useCallback((next: boolean) => {
+        if (next) {
+            return;
+        }
+        // A toolbar that closes under the pointer hears no pointer leave.
+        setHovered(false);
+        setShownAt(null);
+        setClosedAt(keyRef.current);
+    }, []);
+    const held = hovered || (focus !== null && focus.closest('[data-rte-bubble-toolbar]') !== null);
+    const shown = focus !== null && (selected || shownAt === key);
+    const open = (shown || held) && closedAt !== key;
+    const overlay = useEditorOverlay(open, setOpen);
+    const { anchor } = overlay;
+    useEffect(() => anchor.hold(held), [anchor, held]);
+    useClientLayoutEffect(() => {
+        if (showRef === undefined) {
+            return undefined;
+        }
+        showRef.current = () => {
+            focusOnOpenRef.current = true;
+            setClosedAt(null);
+            setShownAt(keyRef.current);
+        };
+        return () => {
+            showRef.current = null;
+        };
+    }, [showRef]);
+    return (
+        <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={anchor}>
+            <Flyout.Content
+                ref={overlay.contentRef}
+                // Radix gives the content `role="dialog"`, which `Flyout` passes this name to.
+                aria-label={label}
+                container={overlay.container}
+                side="top"
+                align="center"
+                padding="tight"
+                onOpenAutoFocus={(event) => {
+                    event.preventDefault();
+                    if (!focusOnOpenRef.current) {
+                        return;
+                    }
+                    focusOnOpenRef.current = false;
+                    const first = toolbarRef.current?.querySelector<HTMLElement>('button:not([disabled])');
+                    if (first !== null && first !== undefined) {
+                        first.focus();
+                    }
+                }}
+                onEscapeKeyDown={passEscape}
+            >
+                <RadixToolbar.Root
+                    ref={toolbarRef}
+                    className={styles.root}
+                    aria-label={label}
+                    aria-keyshortcuts={ariaShortcut(shortcut, apple)}
+                    tabIndex={OUT_OF_TAB_ORDER}
+                    data-rte-bubble-toolbar=""
+                    data-test-id={`${testId}-bubble-toolbar`}
+                    onPointerEnter={() => setHovered(true)}
+                    onPointerLeave={() => setHovered(false)}
+                >
+                    {items.map((item) => (
+                        <Item key={item.key} item={item} disabled={false} strings={strings} keepsFocus outOfTabOrder />
+                    ))}
+                    {more !== undefined && (
+                        <More
+                            items={more.items}
+                            strings={strings}
+                            disabled={false}
+                            keepsFocus
+                            outOfTabOrder
+                            modeSwitch={more.modeSwitch}
+                        />
+                    )}
+                </RadixToolbar.Root>
+            </Flyout.Content>
+        </Flyout.Root>
+    );
+};
