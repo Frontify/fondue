@@ -28,7 +28,9 @@ import {
     type JsonObject,
     type JsonValue,
     insertNode,
+    setAttributes,
     setBlock,
+    toggleTask,
 } from '#/model';
 
 import { orderPlugins, type PluginDescriptor } from '../capabilities';
@@ -279,6 +281,57 @@ describe('compileContentModel orphan behavior', () => {
             });
         },
     );
+});
+
+describe('compileContentModel toggleTask', () => {
+    const todo = (commands: NonNullable<FeatureDeclaration['commands']>) =>
+        feature({
+            id: 'a.todo',
+            version: 1,
+            requires: requiresCore,
+            nodes: {
+                todo: {
+                    ...block('paragraph+'),
+                    attrs: {
+                        nodeId: { type: 'string', required: true },
+                        checked: { type: 'boolean', default: false },
+                    },
+                },
+            },
+            commands,
+        });
+    const setChecked = setAttributes('todo', {
+        fields: { nodeId: { type: 'string' }, checked: { type: 'boolean' } },
+    });
+
+    it('accepts a setChecked command that takes a nodeId and a boolean checked', () => {
+        const model = compile([
+            core(),
+            todo({ 'a.todo.toggle': toggleTask('todo', 'a.todo.set'), 'a.todo.set': setChecked }),
+        ]);
+        expect(model.manifest.commands).toContain('a.todo.toggle');
+    });
+
+    it('rejects a setChecked that names no command', () => {
+        expect(failureOf(() => compile([core(), todo({ 'a.todo.toggle': toggleTask('todo', 'a.todo.set') })]))).toEqual(
+            {
+                code: 'definition.orphan-behavior',
+                details: { feature: 'a.todo', path: '/commands/a.todo.toggle/args/setChecked' },
+            },
+        );
+    });
+
+    it('rejects a setChecked whose payload takes no boolean checked', () => {
+        const wrong = setAttributes('todo', { fields: { nodeId: { type: 'string' }, checked: { type: 'string' } } });
+        expect(
+            failureOf(() =>
+                compile([core(), todo({ 'a.todo.toggle': toggleTask('todo', 'a.todo.set'), 'a.todo.set': wrong })]),
+            ),
+        ).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'a.todo', path: '/commands/a.todo.toggle/args/setChecked' },
+        });
+    });
 });
 
 describe('compileContentModel declarations', () => {

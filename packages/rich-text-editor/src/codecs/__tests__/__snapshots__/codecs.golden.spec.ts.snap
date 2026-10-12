@@ -374,7 +374,7 @@ exports[`codec golden files > writes unknown-nodes.json as its golden HTML, plai
 "<div class="fondue-rte-content">
 <p dir="auto">Before</p>
 <div role="group" aria-label="Unsupported content: callout" data-rte-island="">Heads up &lt;b&gt;&amp;&lt;/b&gt;</div>
-<ul dir="auto">
+<ul style="list-style-type:disc" dir="auto">
 <li dir="auto">
 <p dir="auto">Item</p>
 <div role="group" aria-label="Unsupported content: poll" data-rte-island="">Deep</div>

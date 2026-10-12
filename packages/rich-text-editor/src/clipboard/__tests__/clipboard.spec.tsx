@@ -1299,6 +1299,8 @@ describe('pasted HTML', () => {
             'dir',
             'lang',
             'checked',
+            'data-checked',
+            'data-marker',
             'aria-checked',
             'color',
         ]);

@@ -156,7 +156,7 @@ describe('toHTML direction', () => {
         );
 
         expect(html).toBe(
-            '<div class="fondue-rte-content"><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul></div>',
+            '<div class="fondue-rte-content"><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul style="list-style-type:disc" dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul></div>',
         );
     });
 
