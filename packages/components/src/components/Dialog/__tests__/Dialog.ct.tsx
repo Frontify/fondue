@@ -313,6 +313,25 @@ test('should call event handler on open and close', async ({ mount, page }) => {
     expect(onOpenChange.callCount).toBe(2);
 });
 
+test('should render the header close button as a single tab stop', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root>
+            <Dialog.Trigger>
+                <Button data-test-id={DIALOG_TRIGGER_TEST_ID}>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    await page.getByTestId(DIALOG_TRIGGER_TEST_ID).click();
+    const closeElement = page.getByTestId(DIALOG_HEADER_CLOSE_TEST_ID);
+    await expect(closeElement).toBeVisible();
+    await expect(closeElement.locator('button')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Close' })).toHaveCount(1);
+});
+
 test('should show layout elements', async ({ mount, page }) => {
     await mount(
         <Dialog.Root open>

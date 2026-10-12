@@ -341,7 +341,7 @@ export const DialogHeader = (
             <div>{children}</div>
             {showCloseButton && (
                 <RadixDialog.Close
-                    role="button"
+                    asChild
                     data-test-id={`${dataTestId}-close`}
                     aria-label={t('Dialog_close')}
                     {...closeProps}
