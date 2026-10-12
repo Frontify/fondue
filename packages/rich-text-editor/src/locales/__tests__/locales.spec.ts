@@ -97,7 +97,21 @@ describe('package locales', () => {
     });
 
     it('names every enUS placeholder as a count or as one that holds no count', () => {
-        const notCounts = ['feature', 'language', 'min', 'max', 'label', 'position', 'total', 'schemes', 'hosts'];
+        const notCounts = [
+            'feature',
+            'language',
+            'min',
+            'max',
+            'label',
+            'position',
+            'total',
+            'resourceType',
+            'type',
+            'first',
+            'second',
+            'schemes',
+            'hosts',
+        ];
         const unnamed = Object.values(enUS.translationStrings)
             .flatMap(placeholders)
             .map((placeholder) => placeholder.slice(2, -1))
