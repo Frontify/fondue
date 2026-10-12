@@ -156,7 +156,7 @@ describe('toHTML direction', () => {
         );
 
         expect(html).toBe(
-            '<div><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul></div>',
+            '<div class="fondue-rte-content"><p dir="auto">Plain</p><h1 dir="auto">Title</h1><ul dir="auto"><li dir="auto"><p dir="auto">Item</p></li></ul></div>',
         );
     });
 
@@ -173,7 +173,9 @@ describe('toHTML direction', () => {
             ),
         );
 
-        expect(html).toBe('<div><p dir="auto"><a href="https://frontify.com"><strong>Go</strong></a></p></div>');
+        expect(html).toBe(
+            '<div class="fondue-rte-content"><p dir="auto"><a href="https://frontify.com"><strong>Go</strong></a></p></div>',
+        );
     });
 
     it('writes dir auto when an html override returns a spec for a block', () => {
@@ -193,6 +195,6 @@ describe('toHTML direction', () => {
             model: model.ref,
         } as unknown as RichTextDocument);
 
-        expect(html).toBe('<div><q cite="https://frontify.com" dir="auto">Said</q></div>');
+        expect(html).toBe('<div class="fondue-rte-content"><q cite="https://frontify.com" dir="auto">Said</q></div>');
     });
 });

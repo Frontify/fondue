@@ -1,13 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useRef, useState } from 'react';
+import { ThemeProvider } from '@frontify/fondue-components';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { bold, core } from '#/features';
 import { fixtureChromeViews } from '#/features/__tests__/fixtures/chrome/view';
-import { fixtureHeadingSet, fixtureLink } from '#/features/__tests__/fixtures/features';
+import {
+    fixtureHeadingSet,
+    fixtureInputRules,
+    fixtureItalic,
+    fixtureLink,
+} from '#/features/__tests__/fixtures/features';
 import { fixtureProfiles } from '#/features/__tests__/fixtures/profiles';
-import { type CompiledEditorDefinition, defineEditor, type EditorHandle, RichTextEditor } from '#/index';
-import { compileContentModel, type ContentNodeJSON } from '#/model';
+import {
+    type CompiledEditorDefinition,
+    defineEditor,
+    defineReactPresentation,
+    type EditorHandle,
+    RichTextEditor,
+} from '#/index';
+import { compileContentModel, type ContentModel, type ContentNodeJSON } from '#/model';
 import { boldRules } from '#/react/playground.stories';
 import { RichTextReader } from '#/reader';
 import { undoDepth } from '#/runtime/history';
@@ -21,11 +33,18 @@ const model = compileContentModel(
         version: 1,
     },
 );
+// Adds a `pre` code block and the heading input rule to the component-test model.
+const inputRulesModel = compileContentModel(
+    [core(), bold(), fixtureItalic(), fixtureLink(), fixtureHeadingSet(), fixtureInputRules(), fixtureChromeViews()],
+    { id: 'test.ct', version: 1 },
+);
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
 /** The component-test model's definitions: every feature allowed, and paragraphs that may not change. */
 const definitions = {
     open: defineEditor({ id: 'test.ct', model }),
     guarded: defineEditor({ id: 'test.ct', model, policy: { features: { core: { ...ALLOW, edit: false } } } }),
+    // The heading input rule turns `## ` into a heading, which needs the typed space kept.
+    inputRules: defineEditor({ id: 'test.ct', model: inputRulesModel }),
 };
 
 /** A text, or a link around the text inside `[` and `]`, as `Read the [guide]`. */
@@ -92,7 +111,9 @@ export const EditorProbe = ({
     blocks,
     readOnly = false,
     guarded = false,
+    inputRules = false,
     placeholder,
+    contentClassName,
     profile,
     withReader = false,
     inForm = false,
@@ -105,7 +126,10 @@ export const EditorProbe = ({
     readonly readOnly?: boolean;
     /** Mounts the definition whose policy keeps every paragraph as it is. */
     readonly guarded?: boolean;
+    /** Mounts the definition with the heading input rule. */
+    readonly inputRules?: boolean;
     readonly placeholder?: string;
+    readonly contentClassName?: string;
     /** Mounts a definition of this fixture profile in place of the component-test model's. */
     readonly profile?: string;
     /** Renders the reader of the same document after the editor, in a region named Reader. */
@@ -130,9 +154,20 @@ export const EditorProbe = ({
             model: compileContentModel(features, { id: 'test.ct', version: 1 }),
         });
     });
+    const presentation = useMemo(() => {
+        if (contentClassName === undefined) {
+            return undefined;
+        }
+        return defineReactPresentation({ contentClassName });
+    }, [contentClassName]);
     let definition: CompiledEditorDefinition<object> = definitions.open;
     if (guarded) {
         definition = definitions.guarded;
+    }
+    let readerModel: ContentModel = model;
+    if (inputRules) {
+        definition = definitions.inputRules;
+        readerModel = inputRulesModel;
     }
     if (profileDefinition !== undefined) {
         definition = profileDefinition;
@@ -159,13 +194,18 @@ export const EditorProbe = ({
                 defaultValue={defaultValue}
                 readOnly={readOnly}
                 {...(placeholder === undefined ? {} : { placeholder })}
+                {...(presentation === undefined ? {} : { presentation })}
                 {...rerendered}
                 ref={ref}
                 onDocumentChange={({ origin, commandId }) => onChange?.({ origin, commandId })}
             />
             {withReader && (
                 <section aria-label="Reader">
-                    <RichTextReader document={defaultValue.document} model={model} />
+                    <RichTextReader
+                        document={defaultValue.document}
+                        model={readerModel}
+                        {...(presentation === undefined ? {} : { presentation })}
+                    />
                 </section>
             )}
         </>
@@ -174,4 +214,28 @@ export const EditorProbe = ({
         return <form onSubmit={(event) => event.preventDefault()}>{editor}</form>;
     }
     return editor;
+};
+
+/** The editor under a Fondue theme that a button switches between light and dark. */
+export const ThemeSwitchProbe = () => {
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
+    let next: 'light' | 'dark' = 'dark';
+    if (theme === 'dark') {
+        next = 'light';
+    }
+    return (
+        <>
+            <button type="button" onClick={() => setTheme(next)}>
+                Switch theme
+            </button>
+            <ThemeProvider theme={theme}>
+                {/* Tests compare the editor with what the tokens compute to here, rather than restating token values. */}
+                <span
+                    data-token-probe=""
+                    style={{ color: 'var(--color-primary-default)', backgroundColor: 'var(--color-surface-default)' }}
+                />
+                <EditorProbe texts={['ab']} />
+            </ThemeProvider>
+        </>
+    );
 };
