@@ -1,12 +1,38 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { crc32, deflateSync } from 'node:zlib';
+
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
 import { UploadProbe } from './fixtures/UploadProbe';
 
-// A 1 by 1 pixel PNG, which the asset route serves for every completed upload.
-const PIXEL_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+/** One PNG chunk with its length and CRC. */
+const chunk = (type: string, data: Buffer) => {
+    const body = Buffer.concat([Buffer.from(type, 'latin1'), data]);
+    const out = Buffer.alloc(body.length + 8);
+    out.writeUInt32BE(data.length, 0);
+    body.copy(out, 4);
+    out.writeUInt32BE(crc32(body), body.length + 4);
+    return out;
+};
+
+/** A valid, decodable greyscale PNG of `width` by `height` pixels, as the uploaded file's asset is. */
+const decodablePng = (width: number, height: number) => {
+    const header = Buffer.alloc(13);
+    header.writeUInt32BE(width, 0);
+    header.writeUInt32BE(height, 4);
+    header.set([8, 0, 0, 0, 0], 8);
+    // Each row is a filter byte, then one byte per pixel.
+    const rows = Buffer.alloc((width + 1) * height);
+    const signature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    return Buffer.concat([
+        signature,
+        chunk('IHDR', header),
+        chunk('IDAT', deflateSync(rows)),
+        chunk('IEND', Buffer.alloc(0)),
+    ]);
+};
 
 /** The bytes of a PNG whose header declares `width` by `height` pixels. */
 const pngBytes = (width: number, height: number) => {
@@ -61,9 +87,10 @@ test('keeps the height of the image box when the uploaded image loads', async ({
     const served = new Promise<void>((resolve) => {
         serve = resolve;
     });
+    // The asset has the size of the uploaded file, as the host's server stores it.
     await page.route('https://assets.frontify.test/**', async (route) => {
         await served;
-        await route.fulfill({ contentType: 'image/png', body: Buffer.from(PIXEL_PNG, 'base64') });
+        await route.fulfill({ contentType: 'image/png', body: decodablePng(400, 300) });
     });
     await mount(<UploadProbe />);
     await ready(page);
@@ -78,7 +105,12 @@ test('keeps the height of the image box when the uploaded image loads', async ({
     serve();
     await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).complete)).toBe(true);
     const after = await image.boundingBox();
+    const natural = await image.evaluate((element) => [
+        (element as HTMLImageElement).naturalWidth,
+        (element as HTMLImageElement).naturalHeight,
+    ]);
 
+    expect(natural).toEqual([400, 300]);
     expect(before?.height).toBeGreaterThan(0);
     expect(after?.height).toBe(before?.height);
     expect(slotBox?.height).toBeCloseTo(before?.height ?? 0, 0);

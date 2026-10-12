@@ -104,6 +104,7 @@ interface Start {
     readonly limits?: Partial<ResourceLimits>;
     readonly generateId?: () => string;
     readonly uploads?: UploadServiceLike;
+    readonly openControl?: (control: string, payload: unknown) => void;
 }
 
 /** A runtime on an attached surface, `ready` after the first frame. */
@@ -130,6 +131,7 @@ const start = (input: unknown, options: Start = {}) => {
         policy: authoringOf(model, options.policy),
         limits: limitsOf(options.limits),
         uploads: () => options.uploads,
+        ...(options.openControl === undefined ? {} : { openControl: options.openControl }),
     });
     started.push(runtime);
     const changes: DocumentChange[] = [];
@@ -3410,6 +3412,34 @@ describe('history', () => {
         view.state.doc.textContent,
         view.state.doc.child(0).firstChild?.attrs.assetId as unknown,
     ];
+
+    it('opens the asset picker for image.insert and the upload start control of its node for image.replace', () => {
+        const opened: unknown[] = [];
+        const image = {
+            type: 'figure',
+            attrs: { nodeId: 'figure-1', align: 'center' },
+            content: [
+                {
+                    type: 'asset_image',
+                    attrs: { nodeId: 'image-1', assetId: 'asset-1', labelSnapshot: 'logo.png', width: 40, height: 30 },
+                },
+            ],
+        };
+        const document = { ...stored(para(words('ab')), image), requiredCapabilities: imageModel.capabilities };
+        const { handle } = start(document, {
+            model: imageModel,
+            openControl: (control, payload) => opened.push([control, payload]),
+        });
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+
+        handle.execute('image.insert');
+        handle.execute('image.replace', { nodeId: 'image-1' });
+
+        expect(opened).toEqual([
+            ['media-picker', undefined],
+            ['upload-start', { nodeId: 'image-1' }],
+        ]);
+    });
 
     it('adds no undo step for an upload completion that sets an assetId', async () => {
         const upload = oneUpload();

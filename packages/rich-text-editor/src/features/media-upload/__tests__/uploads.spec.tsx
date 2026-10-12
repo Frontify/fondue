@@ -4,8 +4,9 @@ import { act, fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { core, mediaImage, mediaUpload, mentions } from '#/features';
-import { figure } from '#/features/media-image/__tests__/fixtures/mount';
+import { deferredPicker, figure, PALETTE } from '#/features/media-image/__tests__/fixtures/mount';
 import { ADA, advance, deferredService, page } from '#/features/mentions/__tests__/fixtures/mount';
+import { defineFeature, openControl } from '#/model';
 import { compiledModel } from '#/model/compile';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 import { probeUploads } from '#/testing/probe';
@@ -385,6 +386,60 @@ describe('an upload beside other async work', () => {
         expect(mounted.view.state.doc.textContent).toBe('Before @ad');
         expect(mounted.runtime.view).toBe(view);
         expect(mounted.handle.query('history.undo')).toEqual(undo);
+        mounted.unmount();
+    });
+});
+
+describe('the controls an image insert and an upload start open', () => {
+    // A host command that opens the asset picker with a payload naming an image, which the picker never refills.
+    const acmePick = defineFeature({
+        id: 'acme.pick',
+        version: 1,
+        requires: [
+            { id: 'core', version: 1 },
+            { id: 'media.image', version: 1 },
+        ],
+        commands: { 'acme.image.pick': openControl('media-picker', { fields: { nodeId: { type: 'string' } } }) },
+    });
+
+    it('inserts a new figure through the asset picker for a picker command whose payload names an image, leaving that image', async () => {
+        const picker = deferredPicker();
+        const uploads = deferredUploads();
+        const mounted = await mountUploads({
+            model: uploadModel([core(), mediaImage(), mediaUpload(), acmePick()]),
+            blocks: [para(text('Before')), figure('image-1')],
+            uploads,
+            services: { assets: picker.service, uploads: uploads.service },
+        });
+        caretAfterBefore(mounted);
+
+        act(() => {
+            mounted.handle.execute('acme.image.pick' as never, { nodeId: 'image-1' } as never);
+        });
+        picker.pending[0]?.resolve(PALETTE);
+        await settle();
+
+        expect(
+            mounted.images().map(({ nodeId, assetId }) => [nodeId === 'image-1' ? 'image-1' : 'new', assetId]),
+        ).toEqual([
+            ['new', 'asset-palette'],
+            ['image-1', 'asset-logo'],
+        ]);
+        mounted.unmount();
+    });
+
+    it('opens the file chooser for one file to replace the image with Replace, and for many files with Image, without services.assets', async () => {
+        const mounted = await mountUploads({ blocks: [para(text('Before')), figure('image-1')] });
+        caretAfterBefore(mounted);
+
+        act(() => {
+            fireEvent.click(screen.getByRole('button', { name: 'Image' }));
+        });
+        expect(mounted.chooser().multiple).toBe(true);
+        await mounted.replace('image-1', pngFile('photo.png'));
+
+        expect(mounted.chooser().multiple).toBe(false);
+        expect(mounted.images()).toEqual([expect.objectContaining({ nodeId: 'image-1', labelSnapshot: 'photo.png' })]);
         mounted.unmount();
     });
 });
