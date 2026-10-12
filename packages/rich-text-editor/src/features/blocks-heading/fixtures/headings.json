@@ -1,0 +1,123 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "feature-contract",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "blocks.heading",
+            "version": 1
+        },
+        {
+            "id": "core",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": {
+            "lang": null,
+            "dir": "auto"
+        },
+        "content": [
+            {
+                "type": "heading",
+                "attrs": {
+                    "nodeId": "heading-1",
+                    "level": 1,
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Level 1"
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "attrs": {
+                    "nodeId": "heading-2",
+                    "level": 2,
+                    "lang": "de-CH"
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Level 2"
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "attrs": {
+                    "nodeId": "heading-3",
+                    "level": 3,
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Level 3"
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "attrs": {
+                    "nodeId": "heading-4",
+                    "level": 4,
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Level 4"
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "attrs": {
+                    "nodeId": "heading-5",
+                    "level": 5,
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Level 5"
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "attrs": {
+                    "nodeId": "heading-6",
+                    "level": 6,
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Level 6"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "A paragraph after the headings."
+                    }
+                ]
+            }
+        ]
+    }
+}

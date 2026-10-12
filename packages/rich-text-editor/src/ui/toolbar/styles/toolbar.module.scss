@@ -70,6 +70,19 @@
     }
 }
 
+// The text style picker shows the active block type's name, so it takes the width of its text.
+.picker {
+    inline-size: auto;
+    min-inline-size: 7rem;
+    justify-content: flex-start;
+    padding-inline: var(--spacing-x-small);
+    white-space: nowrap;
+
+    @media (pointer: coarse) {
+        inline-size: auto;
+    }
+}
+
 .tooltip {
     display: inline-flex;
     gap: var(--spacing-x-small);

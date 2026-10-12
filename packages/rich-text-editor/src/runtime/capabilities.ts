@@ -1,21 +1,34 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { toggleMark as toggleEngineMark } from 'prosemirror-commands';
-import { type MarkType, type Node, type NodeType } from 'prosemirror-model';
+import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
+import { type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
+import { liftTarget } from 'prosemirror-transform';
 
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
-import { HISTORY_PLUGIN, INPUT_RULES_PLUGIN } from '#/model/capabilities';
+import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN, HISTORY_PLUGIN, INPUT_RULES_PLUGIN } from '#/model/capabilities';
 import { isRecord } from '#/model/values';
 
 import { historyPlugin, redo, undo } from './history';
 import { inputRulesPlugin, undoInputRule } from './input-rules';
+import { baseKeysPlugin, containerKeysPlugin } from './keys';
 
 interface TextRange {
     readonly from: number;
     readonly to: number;
     readonly marked: boolean;
 }
+
+/** Whether all of `total` items match, some of them, or none. */
+const tristate = (matching: number, total: number): boolean | 'mixed' => {
+    if (matching === 0) {
+        return false;
+    }
+    if (matching === total) {
+        return true;
+    }
+    return 'mixed';
+};
 
 /** The selected parts of text nodes whose parent allows `type`: a mark toggle acts on text only. */
 const markableText = (state: EditorState, type: MarkType): TextRange[] => {
@@ -42,14 +55,7 @@ const markState = (state: EditorState, type: MarkType): boolean | 'mixed' => {
         return type.isInSet(marks) !== undefined;
     }
     const texts = markableText(state, type);
-    const marked = texts.filter((text) => text.marked).length;
-    if (marked === 0) {
-        return false;
-    }
-    if (marked === texts.length) {
-        return true;
-    }
-    return 'mixed';
+    return tristate(texts.filter((text) => text.marked).length, texts.length);
 };
 
 const toggleMark: CapabilityImplementation = (args, schema) => {
@@ -61,10 +67,28 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     }
     // At a caret ProseMirror toggles the stored mark.
     const engineToggle = toggleEngineMark(type, attrs);
+    // The mark this one replaces, such as superscript for subscript, when the model installs it.
+    const yielding: MarkType[] = [];
+    if (typeof args.removes === 'string') {
+        const other = schema.marks[args.removes];
+        if (other !== undefined) {
+            yielding.push(other);
+        }
+    }
     return {
         run: (state, dispatch) => {
             if (state.selection.empty) {
-                return engineToggle(state, dispatch);
+                const stored = state.storedMarks ?? state.selection.$from.marks();
+                const giving = yielding.filter((other) => other.isInSet(stored) !== undefined);
+                if (giving.length === 0 || type.isInSet(stored) !== undefined) {
+                    return engineToggle(state, dispatch);
+                }
+                const transaction = state.tr;
+                for (const other of giving) {
+                    transaction.removeStoredMark(other);
+                }
+                dispatch?.(transaction.addStoredMark(type.create(attrs)));
+                return true;
             }
             const texts = markableText(state, type);
             if (texts.length === 0) {
@@ -78,6 +102,9 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
             const transaction = state.tr;
             for (const { from, to } of texts) {
                 if (add) {
+                    for (const other of yielding) {
+                        transaction.removeMark(from, to, other);
+                    }
                     transaction.addMark(from, to, type.create(attrs));
                 } else {
                     transaction.removeMark(from, to, type);
@@ -169,15 +196,29 @@ const setBlock: CapabilityImplementation = (args, schema) => {
         active: (state, payload) => {
             const attrs = attrsOf(payload);
             const blocks = selectedTextblocks(state);
-            const matching = blocks.filter(({ node }) => matches(node, attrs)).length;
-            if (matching === 0) {
-                return false;
-            }
-            if (matching === blocks.length) {
+            return tristate(blocks.filter(({ node }) => matches(node, attrs)).length, blocks.length);
+        },
+    };
+};
+
+const insertNode: CapabilityImplementation = (args, schema) => {
+    // Compilation checked that the model declares the node.
+    const type = schema.nodes[args.node as string] as NodeType;
+    return {
+        run: (state, dispatch) => {
+            const { $from } = state.selection;
+            // A code block keeps a line break as text, as ProseMirror's `newlineInCode` does (Enter by profile).
+            if (args.newlineInCode === true && $from.parent.type.spec.code === true) {
+                dispatch?.(state.tr.insertText('\n').scrollIntoView());
                 return true;
             }
-            return 'mixed';
+            if (!$from.parent.canReplaceWith($from.index(), $from.index(), type)) {
+                return false;
+            }
+            dispatch?.(state.tr.replaceSelectionWith(type.create()).scrollIntoView());
+            return true;
         },
+        active: () => false,
     };
 };
 
@@ -194,6 +235,95 @@ const insertText: CapabilityImplementation = () => ({
     active: () => false,
 });
 
+/** The blocks the selection spans inside the nearest ancestor of `type`, or `undefined` outside one. */
+const rangeIn = ($from: ResolvedPos, $to: ResolvedPos, type: NodeType): NodeRange | undefined =>
+    $from.blockRange($to, (node) => node.type === type) ?? undefined;
+
+const wrapIn: CapabilityImplementation = (args, schema) => {
+    // Compilation checked that the model declares the node.
+    const type = schema.nodes[args.node as string] as NodeType;
+    const wrap = wrapInEngine(type);
+    return {
+        run: (state, dispatch) => {
+            const { $from, $to } = state.selection;
+            const range = rangeIn($from, $to, type);
+            if (range === undefined) {
+                return wrap(state, dispatch);
+            }
+            const target = liftTarget(range);
+            if (target === null) {
+                return false;
+            }
+            dispatch?.(state.tr.lift(range, target).scrollIntoView());
+            return true;
+        },
+        active: (state) => {
+            const blocks = selectedTextblocks(state);
+            const within = blocks.filter(({ pos }) => {
+                const $pos = state.doc.resolve(pos);
+                for (let depth = $pos.depth; depth > 0; depth -= 1) {
+                    if ($pos.node(depth).type === type) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            return tristate(within.length, blocks.length);
+        },
+    };
+};
+
+/** Swaps the blocks the selection spans with their previous or next sibling, so the selection moves with them. */
+const block: CapabilityImplementation = (args) => ({
+    run: (state, dispatch) => {
+        const { $from, $to } = state.selection;
+        let range = $from.blockRange($to);
+        // Blocks that fill their container, as the only paragraph of a quote does, move with it.
+        while (
+            range !== null &&
+            range.depth > 0 &&
+            range.startIndex === 0 &&
+            range.endIndex === range.parent.childCount
+        ) {
+            const { depth } = range;
+            range = new NodeRange(
+                state.doc.resolve($from.before(depth)),
+                state.doc.resolve($from.after(depth)),
+                depth - 1,
+            );
+        }
+        if (range === null) {
+            return false;
+        }
+        const { parent, start, end, startIndex, endIndex } = range;
+        if (args.action === 'move-up') {
+            if (startIndex === 0) {
+                return false;
+            }
+            const previous = parent.child(startIndex - 1);
+            dispatch?.(
+                state.tr
+                    .insert(end, previous)
+                    .delete(start - previous.nodeSize, start)
+                    .scrollIntoView(),
+            );
+            return true;
+        }
+        if (endIndex === parent.childCount) {
+            return false;
+        }
+        const next = parent.child(endIndex);
+        dispatch?.(
+            state.tr
+                .delete(end, end + next.nodeSize)
+                .insert(start, next)
+                .scrollIntoView(),
+        );
+        return true;
+    },
+    active: () => false,
+});
+
 const history: CapabilityImplementation = (args) => {
     let command = undo;
     if (args.action === 'redo') {
@@ -204,13 +334,18 @@ const history: CapabilityImplementation = (args) => {
 
 /** The command capabilities and package plugins the runtime implements so far, by capability name and plugin ID. */
 export const CAPABILITIES: CapabilityImplementations = {
+    block,
     history,
+    insertNode,
     insertText,
     setBlock,
     toggleMark,
+    wrapIn,
     plugins: {
         // Backspace right after a rule fired undoes it before any list or block key sees it.
         [HISTORY_PLUGIN.id]: () => historyPlugin({ Backspace: undoInputRule }),
         [INPUT_RULES_PLUGIN.id]: inputRulesPlugin,
+        [CONTAINER_KEYS_PLUGIN.id]: containerKeysPlugin,
+        [BASE_KEYS_PLUGIN.id]: baseKeysPlugin,
     },
 };

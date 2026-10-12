@@ -175,3 +175,6 @@ export const findInvalidPayload = (
     }
     return undefined;
 };
+
+/** The character that stands for an inline node other than text in a block's text, U+FFFC. */
+export const OBJECT_REPLACEMENT = '\uFFFC';

@@ -18,6 +18,10 @@ export const bold = defineFeature({
     formats: { html: 'lossless', text: 'lossy', markdown: 'lossless' },
     commands: { 'mark.bold.toggle': toggleMark('bold') },
     keys: { 'Mod-b': 'mark.bold.toggle' },
+    inputRules: [
+        { id: 'bold.stars', kind: 'mark-delimiter', open: '**', close: '**', mark: 'bold' },
+        { id: 'bold.underscores', kind: 'mark-delimiter', open: '__', close: '__', mark: 'bold' },
+    ],
     toolbar: [
         { kind: 'toggle', command: 'mark.bold.toggle', labelKey: 'RichTextEditor_bold', icon: 'IconTextFormatBold' },
     ],

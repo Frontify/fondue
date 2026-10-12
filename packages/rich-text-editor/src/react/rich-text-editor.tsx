@@ -60,7 +60,7 @@ import { useKeyboardInset } from './keyboard-inset';
 import { useEditorLocale } from './locale';
 import { BlockedShell, RecoveryShell } from './shells';
 import { registerSaveCauses, SaveStatusText } from './status';
-import { toolbarItems } from './toolbar-items';
+import { menuItems, toolbarItems } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
     type EditorHandle,
@@ -165,6 +165,8 @@ const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
 /** What the parts share for the toolbars and focus moves between the surface and the chrome. */
 interface Chrome {
     readonly items: readonly ToolbarItem[];
+    /** The rows that only the More menus hold. */
+    readonly menu: readonly ToolbarItem[];
     readonly strings: ToolbarStrings;
     /** The bubble toolbar's name and the More rows that switch the toolbar mode. */
     readonly labels: { readonly bubble: string; readonly toBubble: string; readonly toFixed: string };
@@ -331,6 +333,7 @@ const SessionComponent = (
             revision: loaded.revision,
             saves,
             recovery: () => memberOf(latestRef.current.services, 'recovery'),
+            inputRules: () => latestRef.current.inputRules,
         });
         // Each event calls the newest callback the host passed.
         runtime.handle.subscribe('ready', (session: SessionToken) => {
@@ -480,6 +483,10 @@ const SessionComponent = (
             ),
         [mounted.definition, props.presentation, chromeContext, lang],
     );
+    const menu = useMemo(
+        () => menuItems(engineOf(mounted.definition), mounted.definition.authoring, items, chromeContext.t),
+        [mounted.definition, items, chromeContext],
+    );
     const chrome = useMemo(() => {
         const { t } = chromeContext;
         let surfaceId = props.id;
@@ -498,6 +505,7 @@ const SessionComponent = (
         };
         return {
             items,
+            menu,
             strings,
             labels,
             surfaceId,
@@ -510,7 +518,7 @@ const SessionComponent = (
             lang,
             t,
         };
-    }, [items, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard, lang]);
+    }, [items, menu, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard, lang]);
 
     const overlays = useMemo(() => ({ container: overlayRoot, scope }), [overlayRoot, scope]);
 
@@ -759,7 +767,7 @@ Surface.displayName = 'RichTextEditor.Surface';
 const Toolbar = () => {
     const { props, coordinator, chrome } = useRoot('Toolbar');
     const { disabled = false, 'data-test-id': testId = DEFAULT_TEST_ID } = props;
-    const { items, strings, labels, surfaceId, toolbarRef, mode, setMode, keyboard } = chrome;
+    const { items, menu, strings, labels, surfaceId, toolbarRef, mode, setMode, keyboard } = chrome;
     const focus = useScopedFocus();
     // A focused editor on a touch device docks its toolbar above the on-screen keyboard.
     let docked: number | undefined;
@@ -796,6 +804,7 @@ const Toolbar = () => {
     return (
         <FixedToolbar
             items={items}
+            menu={menu}
             strings={strings}
             disabled={disabled}
             surfaceId={surfaceId}
@@ -813,7 +822,7 @@ Toolbar.displayName = 'RichTextEditor.Toolbar';
 const Bubble = () => {
     const { props, chrome } = useRoot('BubbleToolbar');
     const { 'data-test-id': testId = DEFAULT_TEST_ID } = props;
-    const { items, strings, labels, bubbleRef, showBubbleRef, mode, setMode } = chrome;
+    const { items, menu, strings, labels, bubbleRef, showBubbleRef, mode, setMode } = chrome;
     const bubbleItems = useMemo(
         () =>
             items
@@ -825,7 +834,7 @@ const Bubble = () => {
     let showRef: typeof showBubbleRef | undefined;
     if (mode === 'bubble') {
         more = {
-            items: items.filter((item) => !item.bubble),
+            items: [...items.filter((item) => !item.bubble), ...menu],
             modeSwitch: { label: labels.toFixed, onSelect: () => setMode('fixed') },
         };
         showRef = showBubbleRef;

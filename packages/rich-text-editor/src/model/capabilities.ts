@@ -4,6 +4,7 @@ import {
     type CapabilityName,
     type CommandDefinition,
     type FeatureDeclaration,
+    type InputRule,
     type JsonObject,
     type JsonValue,
     type PayloadDeclaration,
@@ -42,9 +43,16 @@ export interface PluginDescriptor {
 
 /** The undo history, whose phase puts Backspace right after an input rule before the list keys. */
 export const HISTORY_PLUGIN: PluginDescriptor = { id: 'history', phase: 'history' };
+/** Enter in the empty last paragraph of a container leaves it. */
+export const CONTAINER_KEYS_PLUGIN: PluginDescriptor = { id: 'container-keys', phase: 'structure-keys' };
+/** ProseMirror's base keymap: Enter, Backspace, Delete and select-all. */
+export const BASE_KEYS_PLUGIN: PluginDescriptor = { id: 'base-keys', phase: 'base-keys' };
 /** One plugin key, one instance: a plugin several capabilities contribute sits at its first contributor's position. */
 export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonly PluginDescriptor[]>>> = {
     history: [HISTORY_PLUGIN],
+    // `core` always declares `text.insert`, so its capability carries the base keys into every model.
+    insertText: [BASE_KEYS_PLUGIN],
+    wrapIn: [CONTAINER_KEYS_PLUGIN],
 };
 /** The package's input rule engine, one plugin for every feature's rules. */
 export const INPUT_RULES_PLUGIN: PluginDescriptor = { id: 'input-rules', phase: 'input-rules' };
@@ -87,14 +95,22 @@ export const setBlock = <const P extends PayloadDeclaration | undefined = undefi
         options === undefined ? undefined : options.payload,
     );
 
-/** Inserts `node` at the selection, or adds or removes it as an optional child. */
+/**
+ * Inserts `node` at the selection, or adds or removes it as an optional child; with `newlineInCode`, a code block
+ * gets a newline in its place, as a hard break does.
+ */
 export const insertNode = <const P extends PayloadDeclaration | undefined = undefined>(
     node: string,
-    options?: { readonly attrs?: JsonObject; readonly child?: 'add' | 'remove' | 'toggle'; readonly payload?: P },
+    options?: {
+        readonly attrs?: JsonObject;
+        readonly child?: 'add' | 'remove' | 'toggle';
+        readonly newlineInCode?: boolean;
+        readonly payload?: P;
+    },
 ): CommandDefinition<PayloadOf<P>> =>
     command(
         'insertNode',
-        { node, attrs: options?.attrs, child: options?.child },
+        { node, attrs: options?.attrs, child: options?.child, newlineInCode: options?.newlineInCode },
         options === undefined ? undefined : options.payload,
     );
 
@@ -104,9 +120,28 @@ export const history = (action: 'undo' | 'redo'): CommandDefinition => command('
 export const insertText = (): CommandDefinition<{ readonly text: string }> =>
     command('insertText', {}, { fields: { text: { type: 'string' } } });
 
-/** Toggles `mark` with `attrs` on the selection, or in the stored marks at a caret. */
-export const toggleMark = (mark: string, attrs?: JsonObject): CommandDefinition =>
-    command('toggleMark', { mark, attrs });
+/**
+ * Toggles `mark` with `attrs` on the selection, or in the stored marks at a caret; adding it removes the `removes`
+ * mark from the range when the model installs that one, as subscript and superscript do to each other.
+ */
+export const toggleMark = (mark: string, attrs?: JsonObject, removes?: string): CommandDefinition =>
+    command('toggleMark', { mark, attrs, removes });
+
+/** Wraps the selected blocks in `node`, or lifts them out when they are already inside one. */
+export const wrapIn = (node: string): CommandDefinition => command('wrapIn', { node });
+
+/** Moves the block at the selection up or down among its siblings, as one undo step. */
+export const block = (action: 'move-up' | 'move-down'): CommandDefinition => command('block', { action });
+
+/**
+ * A code feature's rule that replaces the text before the caret matching `match`, which ends where the typed text
+ * ends, with `replace`, where `$1` and `$<name>` insert its groups as `String.prototype.replace` does.
+ */
+export const textRule = (rule: {
+    readonly id: string;
+    readonly match: RegExp;
+    readonly replace: string;
+}): InputRule => ({ id: rule.id, kind: 'text-rule', match: rule.match, replace: rule.replace });
 
 /** The first cycle that `next` reaches from `starts`, as a path that ends where it starts. */
 export const findCycle = (starts: readonly string[], next: (id: string) => readonly string[]): string[] | undefined => {
