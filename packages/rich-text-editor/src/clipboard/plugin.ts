@@ -153,12 +153,19 @@ const commit = (
     }
 };
 
-const settingsOf = (model: ContentModel, { runtime, session }: Connected, plain: boolean): PasteSettings => ({
+const settingsOf = (
+    model: ContentModel,
+    view: EditorView,
+    { runtime, session }: Connected,
+    plain: boolean,
+): PasteSettings => ({
     model,
     limits: runtime.limits,
     policy: runtime.policy.features,
     context: contextOf(session),
     plain,
+    headingLevels: runtime.policy.creatableHeadingLevels,
+    window: view.dom.ownerDocument.defaultView ?? window,
 });
 
 /** Runs the paste pipeline, reporting a throw as a rejection. */
@@ -240,7 +247,7 @@ const paste = (model: ContentModel, view: EditorView, event: ClipboardEvent) => 
     }
     const { tr } = view.state;
     const { from, to } = tr.selection;
-    const settings = settingsOf(model, connected, shiftHeld.get(view) === true);
+    const settings = settingsOf(model, view, connected, shiftHeld.get(view) === true);
     const pasted = attempt(connected, () => pastePayload(tr, from, to, payload, settings));
     if (pasted !== null) {
         commit(view, connected, tr.scrollIntoView(), pasted, 'paste');
@@ -274,7 +281,7 @@ const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
     if (dragged === undefined || (copying && islandsCannotStay(dragged, tr.doc, false))) {
         // A drop from outside, or an inside copy that falls back, takes the paste order at the drop cursor's block boundary.
         const position = dropPoint(tr.doc, at.pos, blockSlice(view)) ?? at.pos;
-        const settings = settingsOf(model, connected, false);
+        const settings = settingsOf(model, view, connected, false);
         pasted = attempt(connected, () => pastePayload(tr, position, position, payload, settings));
     } else {
         // A drag inside moves its content with the same `nodeId`s, or with the copy modifier inserts a copy.

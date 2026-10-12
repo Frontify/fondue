@@ -5,13 +5,14 @@ import { type EditorState, Selection, type Transaction } from 'prosemirror-state
 import { type Step, Transform } from 'prosemirror-transform';
 
 import { createParser, readMarkdown } from '#/codecs/from-markdown';
-import { carriesNodeId } from '#/definition';
+import { withNodeIds } from '#/definition';
 import { checkHref, type ContentModel, type ResourceLimits } from '#/model';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { randomId } from '#/model/random-id';
 import { isRecord } from '#/model/values';
 
+import { importHtml } from './import/html';
 import { exceededStructure } from './import/limits';
 import { labelText, type PastePolicy, refusedNames, resliced, withoutRefused } from './import/policy';
 import { readSlice } from './slice';
@@ -33,6 +34,10 @@ export interface PasteSettings {
     readonly context: string;
     /** Shift was held. */
     readonly plain: boolean;
+    /** The policy's creatable heading levels, which pasted HTML headings move to. */
+    readonly headingLevels: readonly number[];
+    /** The view's window, whose `DOMParser` makes the inert document of pasted HTML. */
+    readonly window: Window;
 }
 
 /** A change that follows the paste as its own undo step: a Markdown conversion or a caret link. */
@@ -74,19 +79,7 @@ export const insertAndSelect = (tr: Transaction, from: number, to: number, slice
 };
 
 /** The content with every `nodeId` cleared: the runtime gives each pasted node a new one, and copied HTML holds none. */
-export const withoutIds = (fragment: Fragment): Fragment =>
-    Fragment.from(
-        fragment.content.map((node) => {
-            if (node.isText) {
-                return node;
-            }
-            let { attrs } = node;
-            if (carriesNodeId(node)) {
-                attrs = { ...attrs, nodeId: null };
-            }
-            return node.type.create(attrs, withoutIds(node.content), node.marks);
-        }),
-    );
+export const withoutIds = (fragment: Fragment): Fragment => withNodeIds(fragment, () => null);
 
 /** The `nodeId`s and resource references inside the island originals of `fragment`, which a paste cannot renew. */
 const islandIdentities = (fragment: Fragment) => {
@@ -206,7 +199,15 @@ const isMarkdown = (text: string) =>
                 (children ?? []).some((child) => !PLAIN_INLINE.has(child.type) && child.markup !== 'linkify'),
         );
 
-/** `text` converted with `fromMarkdown`: one paragraph stays open to join the text around it, other content is closed. */
+/** One paragraph stays open to join the text around it; other content is inserted closed. */
+const insertable = (content: Fragment) => {
+    if (content.childCount === 1 && content.firstChild?.type.name === 'paragraph') {
+        return Slice.maxOpen(content);
+    }
+    return new Slice(content, 0, 0);
+};
+
+/** `text` converted with `fromMarkdown`. */
 const markdownSlice = (schema: Schema, text: string, { model, limits }: PasteSettings): Slice | undefined => {
     const result = readMarkdown(markdownParser(), text, model, randomId, { limits });
     if (result.status !== 'editable') {
@@ -216,14 +217,13 @@ const markdownSlice = (schema: Schema, text: string, { model, limits }: PasteSet
     if (tree === undefined) {
         return undefined;
     }
-    const content = Fragment.fromJSON(schema, tree.content);
-    if (content.childCount === 1 && content.firstChild?.type.name === 'paragraph') {
-        return Slice.maxOpen(content);
-    }
-    return new Slice(content, 0, 0);
+    return insertable(Fragment.fromJSON(schema, tree.content));
 };
 
-/** Pastes between `from` and `to`. HTML is not built yet, so plain text follows the internal slice. */
+/**
+ * Pastes between `from` and `to`. A code block takes the text as typed. Otherwise the internal slice wins, then a
+ * bare URL, then HTML, then plain text, which Markdown structure converts in a second step.
+ */
 export const pastePayload = (
     tr: Transaction,
     from: number,
@@ -279,6 +279,13 @@ export const pastePayload = (
         insert(prepared(slice));
         return { droppedMedia };
     }
+    // HTML, which goes no further even when it parses to nothing.
+    if (!settings.plain && payload.html !== '') {
+        const { limits, headingLevels } = settings;
+        const { content, droppedImages } = importHtml(payload.html, schema, settings.window, { limits, headingLevels });
+        insert(prepared(insertable(content)));
+        return { droppedMedia: droppedImages };
+    }
     // Plain text, which Markdown structure converts in a second step.
     if (text === '') {
         return undefined;
@@ -287,7 +294,7 @@ export const pastePayload = (
     const start = tr.steps.length;
     insert(prepared(plainSlice(schema, text, $from.marks())));
     let converted: Slice | undefined;
-    if (!settings.plain && payload.html === '' && isMarkdown(text)) {
+    if (!settings.plain && isMarkdown(text)) {
         converted = markdownSlice(schema, text, settings);
     }
     if (converted === undefined) {

@@ -36,6 +36,10 @@
             "types": "./dist/codecs/index.d.ts",
             "import": "./dist/codecs/index.js"
         },
+        "./html": {
+            "types": "./dist/html/index.d.ts",
+            "import": "./dist/html/index.js"
+        },
         "./testing": {
             "types": "./dist/testing/index.d.ts",
             "import": "./dist/testing/index.js"
