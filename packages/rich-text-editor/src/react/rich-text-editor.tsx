@@ -342,6 +342,8 @@ const SessionComponent = (
             saves,
             recovery: () => memberOf(latestRef.current.services, 'recovery'),
             inputRules: () => latestRef.current.inputRules,
+            tabMovesFocus: () => latestRef.current.tabMovesFocus,
+            scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             openControl: setControl,
             locale: () => langRef.current,
         });

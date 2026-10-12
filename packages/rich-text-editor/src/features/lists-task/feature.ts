@@ -43,7 +43,7 @@ export const taskList = defineFeature({
         'Shift-Tab': 'task.outdent',
     },
     inputRules: [
-        blockRule({ id: 'list.task.brackets', match: /^\[(?:(?<checked>x)| )\] $/, command: 'list.task.toggle' }),
+        blockRule({ id: 'list.task.brackets', match: /^\[(?:(?<checked>x)| )?\] $/, command: 'list.task.toggle' }),
     ],
     toolbar: [
         { kind: 'toggle', command: 'list.task.toggle', labelKey: 'RichTextEditor_taskList', icon: 'IconListCheck' },

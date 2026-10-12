@@ -11,7 +11,16 @@ export const bold = defineFeature({
         bold: {
             attrs: {},
             html: ['strong', 0],
-            parse: [{ tag: 'strong' }, { tag: 'b' }, { style: 'font-weight', value: 'bold' }],
+            parse: [
+                { tag: 'strong' },
+                { tag: 'b' },
+                { style: 'font-weight', value: 'bold' },
+                // CSS reads a weight from 600 as bold.
+                { style: 'font-weight', value: '600' },
+                { style: 'font-weight', value: '700' },
+                { style: 'font-weight', value: '800' },
+                { style: 'font-weight', value: '900' },
+            ],
             markdown: { open: '**', close: '**' },
         },
     },

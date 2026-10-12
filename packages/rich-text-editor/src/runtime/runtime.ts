@@ -45,7 +45,7 @@ import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
 import { firedRule, withoutRules, withRuleSetting } from './input-rules';
-import { keyGuard } from './keys';
+import { createKeyGuard } from './keys';
 import { createLimitCheck, type ExceededLimit } from './limits';
 import { operationMetric } from './metrics';
 import { authoringOf, createPolicyCheck, refusesLevel, setsHeading } from './policy';
@@ -204,6 +204,10 @@ export interface EditorRuntimeOptions {
     readonly recovery?: () => RecoveryService | undefined;
     /** The host's `inputRules` prop, read on each input. */
     readonly inputRules?: () => false | { readonly exclude: readonly string[] } | undefined;
+    /** The host's `tabMovesFocus` prop, read on each Tab; default false. */
+    readonly tabMovesFocus?: () => boolean | undefined;
+    /** The host's `scrollSelectionIntoView` prop, read on each scroll to the selection; default true. */
+    readonly scrollSelectionIntoView?: () => boolean | undefined;
     /** Opens the package-built control of an `openControl` command that a host `execute` ran. */
     readonly openControl?: (control: string) => void;
     /** The editor's locale, such as `de-CH`, read when a suggestion list asks its source; default `en-US`. */
@@ -444,6 +448,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         () => view !== undefined && view.composing,
         () => settleInput(),
     );
+    const keyGuard = createKeyGuard(() => options.tabMovesFocus?.() === true);
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
         plugins: [typingRecorder, keyGuard, settling.plugin, targetsPlugin, groupsPlugin, ...definition.plugins],
@@ -1716,6 +1721,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 return attributes;
                             },
                             nodeViews,
+                            // Returning true reports the scroll as handled, so the view leaves it out.
+                            handleScrollToSelection: () => options.scrollSelectionIntoView?.() === false,
                             dispatchTransaction: commit,
                         },
                     ),

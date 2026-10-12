@@ -39,7 +39,8 @@ export const fromHTML = (html: string, model: ContentModel, options: HtmlImportO
     const limits = limitsOf(options.limits, definition?.limits);
     const schema = buildSchema(model);
     const headingLevels = definition?.authoring.creatableHeadingLevels;
-    let { content } = importHtml(html, schema, options.window, { limits, headingLevels });
+    // The blocks of a new document sit below `doc`, which `exceededStructure` counts as depth 1.
+    let { content } = importHtml(html, schema, options.window, { limits, headingLevels, depth: 2 });
     if (definition !== undefined) {
         content = withoutRefused(new Slice(content, 0, 0), schema, model, definition.authoring.features).content;
     }
