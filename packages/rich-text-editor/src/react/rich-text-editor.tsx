@@ -6,6 +6,7 @@ import {
     forwardRef,
     type ForwardedRef,
     type ReactNode,
+    useCallback,
     useContext,
     useEffect,
     useImperativeHandle,
@@ -15,16 +16,20 @@ import {
 } from 'react';
 
 import '#/styles/placeholder.css';
+import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
+import { createNodeViews, resyncSelection } from '#/bridge/node-views';
+import { PortalHost } from '#/bridge/portal-host';
+import { createPortalStore } from '#/bridge/portals';
 import { enUS } from '#/locales/en-US';
 import { type CapabilityRef, type Diagnostic } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
+import { readerContext } from '#/reader/context';
 import { createEditorRuntime } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 
-import { useClientLayoutEffect } from './client-layout-effect';
-import { engineOf } from './define';
+import { engineOf, viewsOf } from './define';
 import { type EditorHandle, type RichTextEditorProps } from './types';
 
 type Props = RichTextEditorProps<object>;
@@ -89,6 +94,8 @@ const RootComponent = (
 ) => {
     const [mounted] = useState(() => mountOf(props));
     const [coordinator] = useState(createMountCoordinator);
+    // One portal store per mount, so no session shares chrome state with another.
+    const [portals] = useState(createPortalStore);
     const [ready, setReady] = useState(false);
     const latestRef = useRef(props);
     const handleRef = useRef<EditorHandle<object> | null>(null);
@@ -103,7 +110,8 @@ const RootComponent = (
         if (definition === undefined || decoded === undefined) {
             return;
         }
-        const { generateId, defaultValue } = latestRef.current;
+        const { generateId, defaultValue, locale = enUS, presentation } = latestRef.current;
+        const context = readerContext(locale, presentation ?? {});
         const runtime = createEditorRuntime({
             definition: engineOf(definition),
             documentId: defaultValue.documentId,
@@ -113,6 +121,7 @@ const RootComponent = (
             policy: definition.authoring,
             limits: definition.limits,
             ...(generateId === undefined ? {} : { generateId }),
+            nodeViews: (session) => createNodeViews(viewsOf(definition), { portals, context, runtime: session }),
         });
         // Each event calls the newest callback the host passed.
         runtime.handle.subscribe('ready', (session: SessionToken) => {
@@ -131,7 +140,7 @@ const RootComponent = (
             coordinator.stop();
             runtime.handle.dispose();
         };
-    }, [mounted, coordinator]);
+    }, [mounted, coordinator, portals]);
 
     // A blocked document gets no session and so no handle.
     useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
@@ -159,12 +168,15 @@ const RootComponent = (
         }
     }, [definition, profile, mounted, coordinator]);
 
+    const onFlush = useCallback(() => resyncSelection(coordinator.runtime?.view), [coordinator]);
+
     const context = useMemo(() => ({ props, mounted, coordinator }), [props, mounted, coordinator]);
     const { 'data-test-id': testId = DEFAULT_TEST_ID } = props;
     return (
         <RootContext.Provider value={context}>
             <div data-test-id={testId} aria-busy={ready ? undefined : true}>
                 {children}
+                <PortalHost store={portals} onFlush={onFlush} />
             </div>
         </RootContext.Provider>
     );

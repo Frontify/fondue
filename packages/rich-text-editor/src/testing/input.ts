@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type KeyBinding } from '#/model';
-import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
+import { type EditorRuntime, positionOf, runtimeOf } from '#/runtime/runtime';
 
 /** Names content, never document positions. */
 export type SelectionTarget =
@@ -53,13 +53,7 @@ export const setSelection = (handle: object, target: SelectionTarget): void => {
     const { runtime, view } = attachedOf(handle);
     const { doc } = view.state;
     if ('nodeId' in target) {
-        let position: number | undefined;
-        doc.descendants((node, pos) => {
-            if (node.attrs.nodeId === target.nodeId) {
-                position = pos;
-            }
-            return position === undefined;
-        });
+        const position = positionOf(doc, target.nodeId);
         if (position === undefined) {
             throw new Error(`No node has the nodeId ${target.nodeId}.`);
         }

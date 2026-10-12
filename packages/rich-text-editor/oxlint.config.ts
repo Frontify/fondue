@@ -236,10 +236,10 @@ const TESTING_MESSAGE =
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition` and ProseMirror.';
 
-const BRIDGE_MESSAGE = '`bridge` imports `runtime`.';
+const BRIDGE_MESSAGE =
+    '`bridge` imports `model`, `runtime`, `persistence`, `prosemirror-view`, `prosemirror-model` and React.';
 
-const REACT_FOLDER_MESSAGE =
-    '`react` imports `model`, `definition`, `runtime`, `persistence`, `bridge`, `reader`, `locales`, `styles` and React.';
+const REACT_FOLDER_MESSAGE = '`react` imports every folder except `testing`, and neither `react-dom` nor ProseMirror.';
 
 const PERSISTENCE_MESSAGE = '`persistence` imports `model` and `runtime`.';
 
@@ -268,21 +268,15 @@ const runtimeRestriction: ImportRestriction = {
     message: RUNTIME_MESSAGE,
 };
 
-const bridgeFolders = FOLDERS.filter((folder) => folder !== 'runtime' && folder !== 'bridge');
+const bridgeAllowed = new Set(['model', 'runtime', 'persistence', 'bridge']);
 
-const reactAllowed = new Set([
-    'model',
-    'definition',
-    'runtime',
-    'persistence',
-    'bridge',
-    'reader',
-    'locales',
-    'styles',
-    'react',
-]);
+const bridgeFolders = FOLDERS.filter((folder) => !bridgeAllowed.has(folder));
 
-const reactFolders = FOLDERS.filter((folder) => !reactAllowed.has(folder));
+const bridgeEnginePatterns = Object.keys({ ...packageJson.dependencies, ...packageJson.devDependencies }).filter(
+    (name) => name.startsWith('prosemirror-') && name !== 'prosemirror-view' && name !== 'prosemirror-model',
+);
+
+const reactFolders = FOLDERS.filter((folder) => folder === 'testing');
 
 const persistenceFolders = FOLDERS.filter(
     (folder) => folder !== 'model' && folder !== 'runtime' && folder !== 'persistence',
@@ -480,7 +474,7 @@ export default defineConfig({
         } satisfies LayerOverride,
         layerOverride('src/bridge/**/*.{ts,tsx}', [
             {
-                group: [...aliasPatterns(bridgeFolders), ...relativePatterns(bridgeFolders), ...ENGINE_PATTERNS],
+                group: [...aliasPatterns(bridgeFolders), ...relativePatterns(bridgeFolders), ...bridgeEnginePatterns],
                 message: BRIDGE_MESSAGE,
             },
         ]),

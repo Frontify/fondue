@@ -43,7 +43,7 @@ export default defineConfig({
         dts({
             entryRoot: 'src',
             include: ['src'],
-            exclude: ['**/__tests__/**', '**/*.{spec,test,stories}.{ts,tsx}'],
+            exclude: ['**/__tests__/**', '**/*.{spec,test,stories}.{ts,tsx}', 'src/setupTests.ts'],
         }),
         externalizeJsDeps(),
     ],
@@ -74,6 +74,7 @@ export default defineConfig({
     },
     test: {
         environment: 'happy-dom',
+        setupFiles: ['./src/setupTests.ts'],
         // `runFeatureContract` registers its cases through the runner globals, as it does in a host's tests.
         globals: true,
         coverage: {
@@ -82,6 +83,7 @@ export default defineConfig({
                 '**.config.{ts,cjs}',
                 '**/**/*.{ct,spec,test,stories}.{ts,tsx}',
                 '**/__tests__/**',
+                'src/setupTests.ts',
             ],
             enabled: true,
             provider: 'v8',

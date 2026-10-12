@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { closeHistory, history, isHistoryTransaction, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
+import {
+    closeHistory,
+    history,
+    isHistoryTransaction,
+    redo,
+    redoDepth,
+    undo,
+    undoDepth as historyUndoDepth,
+} from 'prosemirror-history';
 import { keydownHandler } from 'prosemirror-keymap';
 import { type Command, EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 
@@ -17,6 +25,9 @@ export const historyPlugin = (keys: Readonly<Record<string, Command>>): Plugin =
     const stock = history({ depth: 100, newGroupDelay: 500 });
     return new Plugin({ ...stock.spec, props: { ...stock.spec.props, handleKeyDown: keydownHandler(keys) } });
 };
+
+/** The number of undo groups in `state`'s history. */
+export const undoDepth = (state: EditorState): number => Number(historyUndoDepth(state));
 
 export const canUndo = (state: EditorState): boolean => undoDepth(state) > 0;
 export const canRedo = (state: EditorState): boolean => redoDepth(state) > 0;

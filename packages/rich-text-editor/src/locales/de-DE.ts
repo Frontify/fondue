@@ -4,6 +4,7 @@ export const deDE = {
     lang: 'de-DE',
     translationStrings: {
         RichTextEditor_bold: 'Fett',
+        RichTextEditor_nodeViewError: 'Dieser Teil des Inhalts kann nicht angezeigt werden',
         RichTextEditor_readerBlockedInvalid: 'Dieser Inhalt kann nicht angezeigt werden',
         RichTextEditor_readerBlockedUnsupported: 'Dieser Inhalt kann hier nicht angezeigt werden',
         RichTextEditor_readerIslandFeature: 'Nicht unterstützter Inhalt: ${feature}',
