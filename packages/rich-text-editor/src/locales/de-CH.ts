@@ -16,6 +16,10 @@ export const deCH = {
         RichTextEditor_bulletList: 'Aufzählung',
         RichTextEditor_cancel: 'Abbrechen',
         RichTextEditor_code: 'Code',
+        RichTextEditor_codeBlock: 'Codeblock',
+        RichTextEditor_codeLanguage: 'Sprache: ${language}',
+        RichTextEditor_codePlainText: 'Klartext',
+        RichTextEditor_copyCode: 'Code kopieren',
         RichTextEditor_copyContent: 'Inhalt kopieren',
         RichTextEditor_copyFailed:
             'Kopieren fehlgeschlagen. Wählen Sie den Inhalt aus und kopieren Sie ihn mit der Tastatur.',

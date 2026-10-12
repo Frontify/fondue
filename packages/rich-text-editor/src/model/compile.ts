@@ -3,6 +3,8 @@
 import {
     CAPABILITY_NAMES,
     CAPABILITY_PLUGINS,
+    DECORATION_PLUGINS,
+    DECORATION_SOURCES,
     declaresNodeIds,
     findCycle,
     INPUT_RULES_PLUGIN,
@@ -628,6 +630,13 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
                     }
                 }
             }
+            if (
+                definition.capability === 'indentLines' &&
+                args.direction !== 'indent' &&
+                args.direction !== 'outdent'
+            ) {
+                throw failure('definition.invalid-declaration', feature.id, argument('direction'));
+            }
             if (definition.capability === 'toggleTask') {
                 setCheckedRefs.push({ featureId: feature.id, command: args.setChecked, path: argument('setChecked') });
             }
@@ -726,6 +735,15 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
         }
         if (rules.length > 0) {
             contributions.push({ featureId: feature.id, plugin: INPUT_RULES_PLUGIN });
+        }
+        const sources = feature.declaration.decorations ?? [];
+        for (const [index, source] of sources.entries()) {
+            if (!DECORATION_SOURCES.includes(source)) {
+                throw failure('definition.invalid-declaration', feature.id, pointer('decorations', index));
+            }
+            for (const descriptor of DECORATION_PLUGINS[source] ?? []) {
+                contributions.push({ featureId: feature.id, plugin: descriptor });
+            }
         }
         if (declaresNodeIds(feature.declaration)) {
             contributions.push({ featureId: feature.id, plugin: NODE_IDS_PLUGIN });

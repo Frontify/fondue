@@ -66,6 +66,7 @@
     },
     "dependencies": {
         "@radix-ui/react-toolbar": "^1.1.19",
+        "lowlight": "^3.3.0",
         "markdown-it": "^15.0.2",
         "prosemirror-commands": "^1.7.2",
         "prosemirror-dropcursor": "^1.8.4",

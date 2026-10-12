@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useFondueTheme } from '@frontify/fondue-components';
+import { Dropdown, useFondueTheme } from '@frontify/fondue-components';
 import * as Toolbar from '@radix-ui/react-toolbar';
 import { type ReactNode } from 'react';
 
+import { useOverlayContainer } from './overlays';
 import styles from './styles/chrome-toolbar.module.scss';
 
 // Node chrome sits inside the surface, so its controls take no Tab stop of their own; Alt+F10 reaches them.
@@ -53,3 +54,30 @@ export const NodeChromeButton = ({
     </Toolbar.Button>
 );
 NodeChromeButton.displayName = 'NodeChromeButton';
+
+/**
+ * A node chrome button that opens a Fondue `Dropdown` of `children`, its items; Radix returns focus to the button when
+ * the menu closes. `label` is the button's accessible name and holds its visible `text`.
+ */
+export const NodeChromeMenu = ({
+    label,
+    text,
+    children,
+}: {
+    readonly label: string;
+    readonly text: string;
+    readonly children: ReactNode;
+}) => {
+    const container = useOverlayContainer();
+    return (
+        <Dropdown.Root>
+            <Dropdown.Trigger asChild>
+                <Toolbar.Button type="button" className={styles.button} aria-label={label} tabIndex={OUT_OF_TAB_ORDER}>
+                    {text}
+                </Toolbar.Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content container={container}>{children}</Dropdown.Content>
+        </Dropdown.Root>
+    );
+};
+NodeChromeMenu.displayName = 'NodeChromeMenu';

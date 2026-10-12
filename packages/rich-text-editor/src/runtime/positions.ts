@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Node, type NodeType } from 'prosemirror-model';
-import { type EditorState } from 'prosemirror-state';
+import { type EditorState, NodeSelection } from 'prosemirror-state';
 
 /** The position of the node with `nodeId`, read when it is needed, so no caller holds one. */
 export const positionOf = (doc: Node, nodeId: string): number | undefined => {
@@ -15,12 +15,16 @@ export const positionOf = (doc: Node, nodeId: string): number | undefined => {
     return found;
 };
 
-/** The nearest node of `type` around the selection, with its position. */
+/** The selected node of `type`, else the nearest one around the selection, with its position. */
 export const nearest = (
     state: EditorState,
     type: NodeType,
 ): { readonly node: Node; readonly pos: number } | undefined => {
-    const { $from } = state.selection;
+    const { selection } = state;
+    if (selection instanceof NodeSelection && selection.node.type === type) {
+        return { node: selection.node, pos: selection.from };
+    }
+    const { $from } = selection;
     for (let depth = $from.depth; depth > 0; depth -= 1) {
         const node = $from.node(depth);
         if (node.type === type) {

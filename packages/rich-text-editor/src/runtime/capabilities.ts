@@ -9,6 +9,8 @@ import { liftTarget } from 'prosemirror-transform';
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
 import {
     BASE_KEYS_PLUGIN,
+    CODE_KEYS_PLUGIN,
+    CODE_SYNTAX_PLUGIN,
     CONTAINER_KEYS_PLUGIN,
     HISTORY_PLUGIN,
     INPUT_RULES_PLUGIN,
@@ -16,6 +18,8 @@ import {
 } from '#/model/capabilities';
 import { isRecord } from '#/model/values';
 
+import { codeKeysPlugin } from './code-keys';
+import { codeSyntaxPlugin } from './code-syntax';
 import { historyPlugin, redo, undo } from './history';
 import { inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
@@ -174,15 +178,17 @@ const setBlock: CapabilityImplementation = (args, schema) => {
     };
     const matches = (block: Node, attrs: Readonly<Record<string, unknown>>) =>
         block.type === type && Object.entries(attrs).every(([name, value]) => block.attrs[name] === value);
+    /** The selected textblocks and what they become: the node, or a paragraph when the toggle finds them all set. */
+    const planOf = (state: EditorState, payload: unknown) => {
+        const blocks = selectedTextblocks(state);
+        if (args.toggle === true && blocks.length > 0 && blocks.every(({ node }) => matches(node, attrsOf(payload)))) {
+            return { blocks, target: paragraph, over: {} };
+        }
+        return { blocks, target: type, over: attrsOf(payload) };
+    };
     return {
         run: (state, dispatch, payload) => {
-            const blocks = selectedTextblocks(state);
-            let target = type;
-            let over = attrsOf(payload);
-            if (args.toggle === true && blocks.length > 0 && blocks.every(({ node }) => matches(node, over))) {
-                target = paragraph;
-                over = {};
-            }
+            const { blocks, target, over } = planOf(state, payload);
             const applicable = blocks.some(({ node, pos }) => {
                 if (node.hasMarkup(target, carried(node, target, over))) {
                     return false;
@@ -207,6 +213,11 @@ const setBlock: CapabilityImplementation = (args, schema) => {
             const attrs = attrsOf(payload);
             const blocks = selectedTextblocks(state);
             return tristate(blocks.filter(({ node }) => matches(node, attrs)).length, blocks.length);
+        },
+        // `setBlockType` drops the marks and inline nodes the target refuses, such as a mention turned into code.
+        refuses: (state, payload) => {
+            const { blocks, target } = planOf(state, payload);
+            return blocks.some(({ node }) => node.type !== target && !target.validContent(node.content));
         },
     };
 };
@@ -440,11 +451,14 @@ const toggleList: CapabilityImplementation = (args, schema) => {
     };
 };
 
+/** Tab and the list indent keys pass through a code block, so they never move an item that contains one. */
+const inCodeTextblock = (state: EditorState) => state.selection.$from.parent.type.spec.code === true;
+
 const indentItem: CapabilityImplementation = (args, schema) => {
     const item = schema.nodes[args.item as string] as NodeType;
     const sink = sinkListItem(item);
     return {
-        run: (state, dispatch) => inListOf(state, item) && sink(state, dispatch),
+        run: (state, dispatch) => !inCodeTextblock(state) && inListOf(state, item) && sink(state, dispatch),
         active: () => false,
     };
 };
@@ -453,10 +467,83 @@ const outdentItem: CapabilityImplementation = (args, schema) => {
     const item = schema.nodes[args.item as string] as NodeType;
     const lift = liftListItem(item);
     return {
-        run: (state, dispatch) => inListOf(state, item) && lift(state, dispatch),
+        run: (state, dispatch) => !inCodeTextblock(state) && inListOf(state, item) && lift(state, dispatch),
         active: () => false,
     };
 };
+
+/** The lines of `text` the range `from`–`to` touches. A collapsed range is its own line. */
+const touchedLines = (text: string, from: number, to: number): { readonly start: number; readonly end: number }[] => {
+    const lines: { readonly start: number; readonly end: number }[] = [];
+    let lineStart = 0;
+    const consider = (lineEnd: number) => {
+        const touches = from === to ? from >= lineStart && from <= lineEnd : from <= lineEnd && to > lineStart;
+        if (touches) {
+            lines.push({ start: lineStart, end: lineEnd });
+        }
+    };
+    for (let index = 0; index < text.length; index += 1) {
+        if (text[index] === '\n') {
+            consider(index);
+            lineStart = index + 1;
+        }
+    }
+    consider(text.length);
+    return lines;
+};
+
+/** How many leading spaces an outdent removes: two, one, or none. */
+const leadingSpaces = (line: string): number => {
+    if (line.startsWith('  ')) {
+        return 2;
+    }
+    if (line.startsWith(' ')) {
+        return 1;
+    }
+    return 0;
+};
+
+const indentLines: CapabilityImplementation = (args) => ({
+    run: (state, dispatch) => {
+        const { $from, $to } = state.selection;
+        const block = $from.parent;
+        if (block !== $to.parent || block.type.spec.code !== true || !block.isTextblock) {
+            return false;
+        }
+        const text = block.textContent;
+        const lines = touchedLines(text, $from.parentOffset, $to.parentOffset);
+        const indent = args.direction !== 'outdent';
+        // `remove` of 0 inserts two spaces. Later lines are edited first, so earlier offsets stay valid.
+        const edits: { readonly at: number; readonly remove: number }[] = [];
+        for (const line of lines) {
+            if (indent) {
+                edits.push({ at: line.start, remove: 0 });
+            } else {
+                const remove = leadingSpaces(text.slice(line.start, line.end));
+                if (remove > 0) {
+                    edits.push({ at: line.start, remove });
+                }
+            }
+        }
+        if (edits.length === 0) {
+            return false;
+        }
+        if (dispatch !== undefined) {
+            const origin = $from.start();
+            const transaction = state.tr;
+            for (const edit of [...edits].reverse()) {
+                if (edit.remove === 0) {
+                    transaction.insertText('  ', origin + edit.at);
+                } else {
+                    transaction.delete(origin + edit.at, origin + edit.at + edit.remove);
+                }
+            }
+            dispatch(transaction.scrollIntoView());
+        }
+        return true;
+    },
+    active: () => false,
+});
 
 const toggleTask: CapabilityImplementation = (args, schema, command) => {
     const item = schema.nodes[args.item as string] as NodeType;
@@ -538,6 +625,7 @@ export const CAPABILITIES: CapabilityImplementations = {
     block,
     history,
     indentItem,
+    indentLines,
     insertNode,
     insertText,
     openControl,
@@ -553,7 +641,9 @@ export const CAPABILITIES: CapabilityImplementations = {
         [HISTORY_PLUGIN.id]: () => historyPlugin({ Backspace: undoInputRule }),
         [INPUT_RULES_PLUGIN.id]: inputRulesPlugin,
         [LIST_KEYS_PLUGIN.id]: listKeysPlugin,
+        [CODE_KEYS_PLUGIN.id]: codeKeysPlugin,
         [CONTAINER_KEYS_PLUGIN.id]: containerKeysPlugin,
         [BASE_KEYS_PLUGIN.id]: baseKeysPlugin,
+        [CODE_SYNTAX_PLUGIN.id]: codeSyntaxPlugin,
     },
 };

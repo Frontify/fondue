@@ -10,6 +10,8 @@ import { type CompiledFeature } from '#/model/compile';
 interface RuleCommand {
     readonly run: (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => boolean;
     readonly active: (state: EditorState, payload?: unknown) => boolean | 'mixed';
+    /** Whether running would drop content its target cannot hold, so the rule does not fire. */
+    readonly refuses?: (state: EditorState, payload?: unknown) => boolean;
     readonly payload?: PayloadDeclaration;
 }
 

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+export { codeBlock } from '#/features/blocks-code/feature';
 export { quote } from '#/features/blocks-quote/feature';
 export { heading } from '#/features/blocks-heading/feature';
 export { core } from '#/features/core/feature';

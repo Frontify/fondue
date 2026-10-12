@@ -3,6 +3,7 @@
 import {
     type CapabilityName,
     type CommandDefinition,
+    type DecorationSource,
     type FeatureDeclaration,
     type InputRule,
     type JsonObject,
@@ -51,6 +52,12 @@ export const LIST_KEYS_PLUGIN: PluginDescriptor = {
     phase: 'structure-keys',
     before: [CONTAINER_KEYS_PLUGIN.id],
 };
+/** Mod-Enter and ArrowDown in a code block, before the list keys. */
+export const CODE_KEYS_PLUGIN: PluginDescriptor = {
+    id: 'code-keys',
+    phase: 'structure-keys',
+    before: [LIST_KEYS_PLUGIN.id],
+};
 /** ProseMirror's base keymap: Enter, Backspace, Delete and select-all. */
 export const BASE_KEYS_PLUGIN: PluginDescriptor = { id: 'base-keys', phase: 'base-keys' };
 /** The package's own paste, drop, copy, cut and dragstart handlers. */
@@ -65,6 +72,16 @@ export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonl
     wrapIn: [CONTAINER_KEYS_PLUGIN],
     // Every list feature indents its items, so this capability carries the list keys into each model with lists.
     indentItem: [LIST_KEYS_PLUGIN],
+    // A code block's indent and outdent, so the code keys ride with either command.
+    indentLines: [CODE_KEYS_PLUGIN],
+};
+/** The decoration sources a feature may name. `find-matches` and `content-issues` have no plugin yet. */
+export const DECORATION_SOURCES: readonly DecorationSource[] = ['code-syntax', 'find-matches', 'content-issues'];
+/** Highlighting of code blocks, drawn as decorations. */
+export const CODE_SYNTAX_PLUGIN: PluginDescriptor = { id: 'code-syntax', phase: 'late' };
+/** The plugins each decoration source contributes. A source with none is still a valid name. */
+export const DECORATION_PLUGINS: Readonly<Partial<Record<DecorationSource, readonly PluginDescriptor[]>>> = {
+    'code-syntax': [CODE_SYNTAX_PLUGIN],
 };
 /** The package's input rule engine, one plugin for every feature's rules. */
 export const INPUT_RULES_PLUGIN: PluginDescriptor = { id: 'input-rules', phase: 'input-rules' };
@@ -181,6 +198,10 @@ export const indentItem = (item: string): CommandDefinition => command('indentIt
 /** Moves the selected `item`s one level out, or out of the list as paragraphs at the top level. */
 export const outdentItem = (item: string): CommandDefinition => command('outdentItem', { item });
 
+/** Indents or outdents, by two spaces, the lines the selection touches in one code block. */
+export const indentLines = (direction: 'indent' | 'outdent'): CommandDefinition =>
+    command('indentLines', { direction });
+
 /** Flips `checked` on the `item` at the selection by running `setChecked`, which takes `{ nodeId, checked }`. */
 export const toggleTask = (item: string, setChecked: string): CommandDefinition =>
     command('toggleTask', { item, setChecked });
@@ -234,6 +255,7 @@ export interface PluginContribution {
 /** Every plugin key a capability of the package contributes, whether or not a model uses that capability. */
 const PACKAGE_PLUGIN_KEYS: ReadonlySet<string> = new Set([
     ...Object.values(CAPABILITY_PLUGINS).flatMap((plugins) => (plugins ?? []).map(({ id }) => id)),
+    ...Object.values(DECORATION_PLUGINS).flatMap((plugins) => (plugins ?? []).map(({ id }) => id)),
     INPUT_RULES_PLUGIN.id,
     NODE_IDS_PLUGIN.id,
 ]);

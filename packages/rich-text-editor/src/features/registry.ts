@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { codeBlock } from '#/features/blocks-code/feature';
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
@@ -29,6 +30,7 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'marks.superscript': superscript,
     'blocks.heading': heading,
     'blocks.quote': quote,
+    'blocks.code': codeBlock,
     'lists.item': listItem,
     'lists.bullet': bulletList,
     'lists.ordered': orderedList,

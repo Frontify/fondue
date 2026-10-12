@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
     bold,
     code,
+    codeBlock,
     core,
     featuresById,
     heading,
@@ -101,6 +102,7 @@ const model = compileContentModel(
         superscript(),
         heading(),
         quote(),
+        codeBlock(),
         ...featuresById(['lists.item', 'lists.bullet', 'lists.ordered', 'lists.task']),
         inputRules({ typography }),
         callouts,
@@ -123,7 +125,7 @@ const TOOLBAR = [
         'mark.superscript.toggle',
     ],
     ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
-    ['quote.toggle'],
+    ['quote.toggle', 'code-block.toggle'],
 ];
 
 type Commands = CommandsOfModel<typeof model>;
@@ -610,6 +612,18 @@ Shortcuts of the shipped features, in the package key syntax and as each platfor
 | Heading 6 | \`heading.set\` with \`{ level: 6 }\` | \`other:Ctrl-Shift-6\` | none | Ctrl+Shift+6 |
 | Move up | \`block.move.up\` | \`Mod-Alt-ArrowUp\` | ⌥⌘↑ | Ctrl+Alt+Up |
 | Move down | \`block.move.down\` | \`Mod-Alt-ArrowDown\` | ⌥⌘↓ | Ctrl+Alt+Down |
+
+## Code blocks
+
+| Action | Command | Key | Apple | Other platforms |
+|---|---|---|---|---|
+| Indent the lines the selection touches | \`code-block.indent\` | \`Mod-]\` | ⌘] | Ctrl+] |
+| Outdent the lines the selection touches | \`code-block.outdent\` | \`Mod-[\` | ⌘[ | Ctrl+[ |
+| Leave the block for a new paragraph |  | \`Mod-Enter\` | ⌘Enter | Ctrl+Enter |
+| New paragraph after the block, when the caret is at its end and nothing follows it |  | \`ArrowDown\` | ↓ | Down |
+| Move focus out of the editor |  | \`Tab\` | Tab | Tab |
+
+Tab and Shift+Tab in a code block are not handled, so focus leaves the editor. Mod-] and Mod-[ indent and outdent lines there, and do not move a list or task item that contains the block.
 
 ## Lists
 
