@@ -187,5 +187,29 @@ export const itIT = {
         RichTextEditor_unavailableReadOnly: 'Il contenuto è di sola lettura',
         RichTextEditor_underline: 'Sottolineato',
         RichTextEditor_undo: 'Annulla',
+        RichTextEditor_uploadCancel: 'Annulla caricamento',
+        RichTextEditor_uploadCancelled: 'Caricamento annullato: ${name}',
+        RichTextEditor_uploadCompleted: 'Caricato: ${name}',
+        RichTextEditor_uploadCompletedNoAlt: 'Caricato: ${name}. L’immagine non ha ancora un testo alternativo.',
+        RichTextEditor_uploadError: 'Il caricamento non è riuscito. Riprova oppure rimuovi l’immagine.',
+        RichTextEditor_uploadFailed: 'Caricamento non riuscito: ${name}',
+        RichTextEditor_uploadPercent: '${percent}% caricato',
+        RichTextEditor_uploadRemove: 'Rimuovi immagine',
+        RichTextEditor_uploadRetry: 'Riprova caricamento',
+        RichTextEditor_uploadRunning: 'Caricamento…',
+        RichTextEditor_uploadStarted: 'Caricamento: ${name}',
+        RichTextEditor_uploadStartedCount: 'Caricamento file: ${count}',
+        RichTextEditor_uploadStopped: 'Il caricamento si è interrotto. Riprova oppure rimuovi l’immagine.',
+        RichTextEditor_uploadTooLarge:
+            '${name} non è stato caricato perché il file è troppo grande. Scegli un file di tipo ${types} fino a ${size}.',
+        RichTextEditor_uploadTooManyPixels:
+            '${name} non è stato caricato perché l’immagine ha troppi pixel. Scegli un’immagine di al massimo ${megapixels} megapixel e ${side} pixel per lato.',
+        RichTextEditor_uploadUnreadable:
+            '${name} non è stato caricato perché non è possibile leggere le dimensioni dell’immagine. Scegli un file di tipo ${types} fino a ${size}.',
+        RichTextEditor_uploadUnsafe:
+            '${name} non è stato caricato perché l’SVG contiene uno script. Scegli un file di tipo ${types} fino a ${size}.',
+        RichTextEditor_uploadWaiting: 'In attesa di caricamento',
+        RichTextEditor_uploadWrongType:
+            '${name} non è stato caricato perché questo tipo di file non è accettato. Scegli un file di tipo ${types} fino a ${size}.',
     },
 };

@@ -16,6 +16,14 @@ export const mediaImage = defineFeature({
     id: 'media.image',
     version: 1,
     requires: [{ id: 'core', version: 1 }],
+    options: {
+        // SVG is left out, since it can hold script.
+        acceptTypes: {
+            type: 'list',
+            items: { type: 'string', minLength: 1 },
+            default: ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/avif'],
+        },
+    },
     nodes: {
         figure: {
             group: 'block',

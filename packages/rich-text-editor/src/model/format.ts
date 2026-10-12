@@ -92,6 +92,8 @@ export type DiagnosticCode =
     | 'codecs.override-failed'
     | 'codecs.unresolved-asset'
     | 'clipboard.paste-rejected'
+    | 'media.upload-failed'
+    | 'media.cache-full'
     | 'reader.override-failed'
     | 'styles.unknown-style'
     | 'reference.unavailable'

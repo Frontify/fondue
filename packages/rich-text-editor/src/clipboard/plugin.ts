@@ -11,6 +11,7 @@ import { writeHtml } from '#/codecs/to-html';
 import { writeText } from '#/codecs/to-text';
 import { type PluginImplementation } from '#/definition';
 import { type ContentModel, type RichTextLocale, type TranslationStrings } from '#/model';
+import { markHrefPolicy } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { type ResolveAssetUrl } from '#/model/declarations';
 import { diagnostic } from '#/model/format';
@@ -25,6 +26,7 @@ import { type EditorRuntime, runtimeOfView } from '#/runtime/runtime';
 import { exceededStructure } from './import/limits';
 import {
     type FollowUp,
+    hrefOf,
     insertAndSelect,
     islandsCannotStay,
     type Pasted,
@@ -112,6 +114,25 @@ const rejectsSize = (connected: Connected, payload: Payload) => {
     reject(connected, 'maxPasteBytes');
     announce(session, 'RichTextEditor_pasteTooLarge');
     return true;
+};
+
+/**
+ * Whether the files of a paste or an outside drop upload, as step 4 of the paste order: `media.image` and the
+ * host's upload service are there, and neither plain text nor a pasted URL comes first.
+ */
+const uploadsFiles = (
+    model: ContentModel,
+    view: EditorView,
+    runtime: EditorRuntime,
+    payload: Payload,
+    plain: boolean,
+) => {
+    if (!runtime.uploads.available() || plain || view.state.selection.$from.parent.type.spec.code === true) {
+        return false;
+    }
+    return (
+        view.state.schema.marks.link === undefined || hrefOf(payload.text, markHrefPolicy(model, 'link')) === undefined
+    );
 };
 
 const payloadOf = (data: DataTransfer): Payload => ({
@@ -276,7 +297,16 @@ const paste = (model: ContentModel, view: EditorView, event: ClipboardEvent) => 
     }
     const { tr } = view.state;
     const { from, to } = tr.selection;
-    const settings = settingsOf(model, view, connected, shiftHeld.get(view) === true);
+    const plain = shiftHeld.get(view) === true;
+    const files = [...event.clipboardData.files];
+    // The text flavors that come with files are left unread.
+    if (files.length > 0 && uploadsFiles(model, view, connected.runtime, payload, plain)) {
+        connected.runtime.uploads
+            .begin(files, { kind: 'insert', origin: 'paste', range: { from, to } })
+            .catch(() => undefined);
+        return true;
+    }
+    const settings = settingsOf(model, view, connected, plain);
     const pasted = attempt(connected, () => pastePayload(tr, from, to, payload, settings));
     if (pasted !== null) {
         commit(view, connected, tr.scrollIntoView(), pasted, 'paste');
@@ -310,6 +340,13 @@ const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
     if (dragged === undefined || (copying && islandsCannotStay(dragged, tr.doc, false))) {
         // A drop from outside, or an inside copy that falls back, takes the paste order at the drop cursor's block boundary.
         const position = dropPoint(tr.doc, at.pos, blockSlice(view)) ?? at.pos;
+        const files = [...data.files];
+        if (dragged === undefined && files.length > 0 && uploadsFiles(model, view, connected.runtime, payload, false)) {
+            view.focus();
+            const range = { from: position, to: position };
+            connected.runtime.uploads.begin(files, { kind: 'insert', origin: 'drop', range }).catch(() => undefined);
+            return true;
+        }
         const settings = settingsOf(model, view, connected, false);
         pasted = attempt(connected, () => pastePayload(tr, position, position, payload, settings));
     } else {

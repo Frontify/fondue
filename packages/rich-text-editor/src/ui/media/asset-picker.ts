@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { INSERT_IMAGE, MEDIA_PICKER, REPLACE_IMAGE } from '#/runtime/media';
+import { INSERT_IMAGE, MEDIA_PICKER, REPLACE_IMAGE, UPLOAD_START } from '#/runtime/media';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { type SelectionHandle, type SessionToken } from '#/runtime/types';
 
@@ -46,7 +46,7 @@ export const pickAsset = (
         }
     };
     const operation = runtime.startAsync({
-        key: MEDIA_PICKER,
+        key: nodeId === undefined ? MEDIA_PICKER : UPLOAD_START,
         service: ASSETS_SERVICE,
         featureId: IMAGE_FEATURE,
         action: nodeId === undefined ? 'create' : 'edit',

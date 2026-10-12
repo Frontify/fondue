@@ -46,6 +46,7 @@ import { nearest, positionOf } from './positions';
 import { stylesOf } from './styles';
 import { suggestionsPlugin } from './suggestions/plugin';
 import { appendSteps, carrySelection } from './transactions';
+import { cancelSlot, slotUploadsOf } from './upload-slots';
 
 interface TextRange {
     readonly from: number;
@@ -306,9 +307,9 @@ const gapCursorValid = ($pos: ResolvedPos): boolean =>
  * Puts `node` at `spot`, adds an empty paragraph after it when it ends up last, and puts the selection after it: a
  * caret in a textblock that follows, else a gap cursor, so typing never replaces a selected leaf such as a column break.
  */
-const insertBlock = (state: EditorState, spot: BlockSpot, node: Node): Transaction => {
+const insertBlock = (state: EditorState, spot: BlockSpot, node: Node | Fragment): Transaction => {
     const transaction = state.tr.replaceWith(spot.from, spot.to, node);
-    const after = spot.from + node.nodeSize;
+    const after = spot.from + (node instanceof Fragment ? node.size : node.nodeSize);
     const $after = transaction.doc.resolve(after);
     if ($after.nodeAfter !== null) {
         if (!$after.nodeAfter.isTextblock && gapCursorValid($after)) {
@@ -328,9 +329,13 @@ const insertBlock = (state: EditorState, spot: BlockSpot, node: Node): Transacti
 const placesBlock = (state: EditorState, type: NodeType): boolean =>
     blockSpots(state, false).some((spot) => takes(state.doc, spot, type));
 
-/** Puts block `node` where `insertNode` puts a block, or `undefined` where no spot at the selection takes it. */
-export const placeBlock = (state: EditorState, node: Node): Transaction | undefined => {
-    const spot = blockSpots(state, false).find((candidate) => takes(state.doc, candidate, node.type));
+/**
+ * Puts block `node`, or blocks of one type, where `insertNode` puts a block, or `undefined` where no spot at the
+ * selection takes it.
+ */
+export const placeBlock = (state: EditorState, node: Node | Fragment): Transaction | undefined => {
+    const type = node instanceof Fragment ? node.firstChild?.type : node.type;
+    const spot = blockSpots(state, false).find((candidate) => type !== undefined && takes(state.doc, candidate, type));
     if (spot === undefined) {
         return undefined;
     }
@@ -1206,19 +1211,36 @@ const openControl: CapabilityImplementation = (args, schema) => {
 };
 
 /**
- * Applies to the slot node of type `node` that its payload's `nodeId` names and changes nothing: for `start` the editor
- * opens the host asset picker, else the file chooser, for that node. `cancel` and `retry` act on an upload the editor
- * runs, so they apply to none yet.
+ * Acts on the slot node of type `node` that its payload's `nodeId` names. `start` changes nothing, and the editor opens
+ * the host asset picker, else the file chooser, for that node. `cancel` applies while the slot's upload runs or waits
+ * and removes the slot, restoring what its insertion replaced, or gives a replaced image its previous attributes back.
+ * `retry` applies to a slot whose upload failed or stopped and changes nothing, and the editor sends its file again.
  */
 const upload: CapabilityImplementation = (args, schema) => {
     const type = schema.nodes[args.node as string];
     return {
-        run: (state, _dispatch, payload) => {
-            if (args.action !== 'start' || !isRecord(payload) || typeof payload.nodeId !== 'string') {
+        run: (state, dispatch, payload) => {
+            if (!isRecord(payload) || typeof payload.nodeId !== 'string') {
                 return false;
             }
-            const pos = positionOf(state.doc, payload.nodeId);
-            return pos !== undefined && type !== undefined && state.doc.nodeAt(pos)?.type === type;
+            const { nodeId } = payload;
+            const pos = positionOf(state.doc, nodeId);
+            const node = pos === undefined ? null : state.doc.nodeAt(pos);
+            if (node === null || type === undefined || node.type !== type) {
+                return false;
+            }
+            if (args.action === 'start') {
+                return true;
+            }
+            if (args.action === 'retry') {
+                return node.attrs.assetId === null && slotUploadsOf(state)?.retryable(nodeId) === true;
+            }
+            const cancel = cancelSlot(state, nodeId);
+            if (cancel === undefined) {
+                return false;
+            }
+            dispatch?.(cancel);
+            return true;
         },
         active: () => false,
     };

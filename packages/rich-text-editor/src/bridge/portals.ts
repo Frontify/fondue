@@ -11,7 +11,7 @@ export interface PortalEntry {
     readonly key: string;
     readonly slot: HTMLElement;
     readonly component: ComponentType<object>;
-    readonly state: Omit<NodeViewState<object>, 'context'>;
+    readonly state: Omit<NodeViewState<object>, 'context' | 'pending'>;
 }
 
 /** The portals of one editor, which one host component reads. */

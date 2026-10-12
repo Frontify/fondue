@@ -10,8 +10,10 @@ import { withAltReview } from './alt-review';
 import { placeBlock } from './capabilities';
 import { nearest, positionOf } from './positions';
 
-/** The control that `image.insert` opens, and an upload start for one node: the host asset picker. */
+/** The control that `image.insert` opens for a new figure: the host asset picker when set, else the file chooser. */
 export const MEDIA_PICKER = 'media-picker';
+/** The control an upload start opens for its node, as `image.replace` does: the asset picker, else the file chooser. */
+export const UPLOAD_START = 'upload-start';
 export const INSERT_IMAGE = 'image.insert';
 export const REPLACE_IMAGE = 'image.replace';
 
@@ -33,19 +35,72 @@ export interface PickedAsset {
     readonly labelSnapshot: string;
 }
 
-/** A host picker's result as untrusted input: an `AssetValue` with an `assetId`, else `undefined`. */
-export const pickedAsset = (value: unknown): PickedAsset | undefined => {
+const SPACE = 0x20;
+
+/**
+ * `value` as a URL parser and its query reader read it: without tabs and line breaks, or spaces and controls at its
+ * ends, with `\` as `/` and percent escapes decoded.
+ */
+const asUrlReads = (value: string) => {
+    let start = 0;
+    let end = value.length;
+    while (start < end && value.charCodeAt(start) <= SPACE) {
+        start += 1;
+    }
+    while (end > start && value.charCodeAt(end - 1) <= SPACE) {
+        end -= 1;
+    }
+    return value
+        .slice(start, end)
+        .replaceAll(/[\t\n\r]/g, '')
+        .replaceAll('\\', '/')
+        .replaceAll(/%([\da-f]{2})/gi, (_whole, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)));
+};
+
+/**
+ * Whether `assetId` reads as a URL, a signed URL or an access token, which an asset ID never is: an address with a
+ * scheme and authority, a scheme that loads content, or a query key that signs or authorizes a request, as a URL
+ * parser would read it.
+ */
+export const isAssetLocator = (assetId: string): boolean => {
+    const read = asUrlReads(assetId);
+    return (
+        /^(?:[a-z][\d+.a-z-]*:)?\/\//i.test(read) ||
+        /^(?:https?|data|blob|javascript|vbscript|file|ftp):/i.test(read) ||
+        /[?&;][\w.-]*(?:token|signature|sig|credential|secret|api[_-]?key)=/i.test(read)
+    );
+};
+
+/**
+ * A host's answer as untrusted input: an `AssetValue` whose `assetId` is no URL or token and no longer than
+ * `maxLength`, whose `mediaType` is one of `mediaTypes` when given, and whose `labelSnapshot` is cut to `maxLength`
+ * characters, else `undefined`.
+ */
+export const pickedAsset = (
+    value: unknown,
+    options: { readonly mediaTypes?: readonly string[]; readonly maxLength: number },
+): PickedAsset | undefined => {
     if (!isRecord(value)) {
         return undefined;
     }
     const { assetId, mediaType, labelSnapshot } = value;
-    if (typeof assetId !== 'string' || assetId === '' || typeof mediaType !== 'string') {
+    if (typeof assetId !== 'string' || assetId === '' || assetId.length > options.maxLength) {
         return undefined;
     }
-    if (typeof labelSnapshot !== 'string') {
+    if (isAssetLocator(assetId) || typeof mediaType !== 'string' || typeof labelSnapshot !== 'string') {
         return undefined;
     }
-    return { assetId, mediaType, labelSnapshot };
+    if (mediaType.length > options.maxLength) {
+        return undefined;
+    }
+    if (options.mediaTypes !== undefined && !options.mediaTypes.includes(mediaType)) {
+        return undefined;
+    }
+    // No more code units than twice the characters kept can hold them, so a huge label is cut before it is split.
+    const head = labelSnapshot.slice(0, options.maxLength * 2);
+    const characters = [...head];
+    const label = characters.length > options.maxLength ? characters.slice(0, options.maxLength).join('') : head;
+    return { assetId, mediaType, labelSnapshot: label };
 };
 
 /** Inserts a figure that holds the picked image where `insertNode` puts a block, as the step of `image.insert`. */
@@ -67,7 +122,7 @@ export const insertPicked = (schema: Schema, asset: PickedAsset): EngineCommand 
 
 /**
  * Sets the picked asset on the image `nodeId` with no intrinsic size, keeping its `nodeId` and alternative text, as
- * the step of `image.replace`.
+ * the step of `image.replace`, and asks the author to review that text when there is one.
  */
 export const refillPicked = (nodeId: string, asset: PickedAsset): EngineCommand => ({
     run: (state, dispatch) => {
@@ -80,7 +135,10 @@ export const refillPicked = (nodeId: string, asset: PickedAsset): EngineCommand 
         for (const [name, value] of Object.entries({ ...asset, width: null, height: null })) {
             transaction.setNodeAttribute(pos, name, value);
         }
-        dispatch?.(withAltReview(transaction, nodeId, asset.assetId).setMeta(COMMAND_META, REPLACE_IMAGE));
+        // An image with no alternative text keeps asking for it, which no review replaces.
+        const kept = node.attrs.altIntent === 'meaningful' || node.attrs.altIntent === 'decorative';
+        transaction.setMeta(COMMAND_META, REPLACE_IMAGE);
+        dispatch?.(kept ? withAltReview(transaction, nodeId, asset.assetId) : transaction);
         return true;
     },
     active: () => false,

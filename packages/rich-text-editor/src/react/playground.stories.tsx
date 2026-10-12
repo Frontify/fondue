@@ -21,6 +21,7 @@ import {
     language,
     links,
     mediaImage,
+    mediaUpload,
     mentions,
     quote,
     rule,
@@ -42,6 +43,7 @@ import {
     type PresentationStyle,
     type ReferenceValue,
     type RichTextEditorProps,
+    type UploadService,
     RichTextEditor,
     type SaveResponse,
     type SelectionHandle,
@@ -141,6 +143,7 @@ const model = compileContentModel(
         formatClear(),
         mentions(),
         mediaImage(),
+        mediaUpload(),
         callouts,
     ],
     { id: 'story.playground', version: 1 },
@@ -235,6 +238,26 @@ const assets: AssetPickerService = {
 };
 const resolveAssetUrl = (assetId: string, { width }: { readonly width?: number }) =>
     `https://picsum.photos/seed/${encodeURIComponent(assetId)}/${width ?? 960}/540`;
+// A host upload service that reports progress for two seconds, then answers an asset ID for the file.
+const uploads: UploadService = {
+    upload: ({ operationId, filename }, { signal, reportProgress }) =>
+        new Promise((resolve, reject) => {
+            let step = 0;
+            const timer = setInterval(() => {
+                step += 1;
+                reportProgress(step / 10);
+                if (step === 10) {
+                    clearInterval(timer);
+                    resolve({ assetId: `upload-${operationId}`, mediaType: 'image/jpeg', labelSnapshot: filename });
+                }
+            }, 200);
+            signal.addEventListener('abort', () => {
+                clearInterval(timer);
+                reject(new DOMException('The upload was aborted.', 'AbortError'));
+            });
+        }),
+    releaseUnused: () => Promise.resolve(),
+};
 const COLOR_TOKENS: readonly ColorToken[] = [
     { id: 'brand.red', label: 'Brand red', value: '#c0392b', usage: ['font_color'] },
     { id: 'brand.blue', label: 'Brand blue', value: '#1d4ed8', usage: ['font_color'] },
@@ -271,6 +294,8 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly leadFontSize: number;
     /** The presentation's `resolveAssetUrl`; off, every image shows Image unavailable with its label. */
     readonly resolveImages: boolean;
+    /** `services.assets`; off, Image opens the file chooser, whose files upload through `services.uploads`. */
+    readonly assetPicker: boolean;
 };
 
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
@@ -312,6 +337,7 @@ const Playground = ({
     strikeCheckedTasks,
     leadFontSize,
     resolveImages,
+    assetPicker,
     ...props
 }: PlaygroundProps) => {
     const [hostContainer, setHostContainer] = useState<HTMLElement | null>(null);
@@ -372,8 +398,9 @@ const Playground = ({
             },
             read: server.read,
         };
-        return { persistence, references, assets };
+        return { persistence, references, uploads };
     });
+    const shownServices = useMemo(() => (assetPicker ? { ...services, assets } : services), [services, assetPicker]);
     const [saveStatus, setSaveStatus] = useState('not mounted');
     const log = (text: string) => {
         counterRef.current += 1;
@@ -618,7 +645,7 @@ const Playground = ({
                 key={props.defaultToolbarMode}
                 {...props}
                 presentation={presentation}
-                services={services}
+                services={shownServices}
                 portalContainer={portalContainer}
                 ref={handleRef}
                 onReady={(session) => {
@@ -844,7 +871,7 @@ Link, in the toolbar or with Mod+K, opens the link popover on the link at the ca
 
 ## Images
 
-Image in the toolbar opens the host asset picker, here a library that hands back its next picture, and inserts the picked image at the selection. A selected image's chrome, which Alt+F10 reaches, sets its alternative text (Meaningful with its text, or Decorative), its size from presets, a custom width or the handle on its edge, its alignment, and replaces it through the picker, which asks to review the alternative text. Resolve images, in the controls, turns the presentation's \`resolveAssetUrl\` off, so each image shows Image unavailable with its label.
+Image in the toolbar opens the host asset picker, here a library that hands back its next picture, and inserts the picked image at the selection. Asset picker, in the controls, turns the picker off, so Image opens the file chooser; a chosen, pasted or dropped file uploads through \`services.uploads\`, here two seconds of progress, into a slot that shows the progress with Cancel, and Retry and Remove once it failed. A selected image's chrome, which Alt+F10 reaches, sets its alternative text (Meaningful with its text, or Decorative), its size from presets, a custom width or the handle on its edge, its alignment, and replaces it through the picker, which asks to review the alternative text. Resolve images, in the controls, turns the presentation's \`resolveAssetUrl\` off, so each image shows Image unavailable with its label.
 
 ## Alignment, language and clear formatting
 
@@ -875,6 +902,7 @@ Align left, center, right or justify with the toolbar or Mod+Shift+L, Mod+Shift+
         strikeCheckedTasks: false,
         leadFontSize: 20,
         resolveImages: true,
+        assetPicker: true,
         defaultToolbarMode: 'fixed',
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },

@@ -54,7 +54,7 @@ import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
 import { type ColumnState } from '#/runtime/columns';
-import { IMAGE_ALT, MEDIA_PICKER, selectedImage } from '#/runtime/media';
+import { IMAGE_ALT, MEDIA_PICKER, selectedImage, UPLOAD_START } from '#/runtime/media';
 import {
     createEditorRuntime,
     type EditorRuntime,
@@ -63,11 +63,13 @@ import {
     type RuntimeHandle,
 } from '#/runtime/runtime';
 import { type DocumentChange, type SelectionSummary, type SessionToken, type ShippedCommands } from '#/runtime/types';
+import { UPLOAD_FEATURE, type UploadPlace } from '#/runtime/uploads';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { LinkBubble } from '#/ui/links/link-bubble';
 import { linkOptions, LinkPopover } from '#/ui/links/link-popover';
 import { AltTextDialog, altTextStrings } from '#/ui/media/alt-text-dialog';
 import { pickAsset } from '#/ui/media/asset-picker';
+import { uploadMessage } from '#/ui/media/upload-messages';
 import { ColorMenu, type ColorMenuOptions } from '#/ui/menus/color';
 import { LanguageDialog, languageOptions } from '#/ui/menus/language';
 import { NumberingDialog, SET_START } from '#/ui/menus/numbering';
@@ -382,6 +384,9 @@ const SessionComponent = (
     const [controlPayload, setControlPayload] = useState<unknown>();
     // The element that had focus when the control opened, such as the toolbar button or More.
     const [controlOpener, setControlOpener] = useState<Element | null>(null);
+    // The file chooser of hosts with no asset picker, and where the files it gives go.
+    const chooserRef = useRef<HTMLInputElement | null>(null);
+    const choosingRef = useRef<UploadPlace | undefined>(undefined);
     const switchToolbar = useCallback((next: ToolbarMode) => {
         setToolbarMode(next);
         latestRef.current.onToolbarModeChange?.(next);
@@ -404,16 +409,27 @@ const SessionComponent = (
         const { t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
         const engine = engineOf(definition);
         const ids = generateId ?? randomId;
-        /** The host asset picker for a new figure, or for the image a payload's `nodeId` names. */
-        const openPicker = (session: EditorRuntime, payload: unknown) => {
+        /** The host asset picker, else the file chooser, for a new figure or for the image `nodeId`. */
+        const openPicker = (session: EditorRuntime, nodeId: string | undefined) => {
             const picker = memberOf(latestRef.current.services, 'assets');
-            // Without a host picker the file chooser opens, which needs the upload of a chosen file.
+            // Without a host picker the file chooser opens, whose files upload through `services.uploads`.
             if (picker === undefined) {
+                const chooser = chooserRef.current;
+                const accepts = session.uploads.accepts;
+                if (
+                    chooser === null ||
+                    accepts === undefined ||
+                    memberOf(latestRef.current.services, 'uploads') === undefined
+                ) {
+                    return;
+                }
+                choosingRef.current =
+                    nodeId === undefined ? { kind: 'insert', origin: 'command' } : { kind: 'replace', nodeId };
+                chooser.accept = accepts.join(',');
+                chooser.multiple = nodeId === undefined;
+                chooser.value = '';
+                chooser.click();
                 return;
-            }
-            let nodeId: string | undefined;
-            if (isRecord(payload) && typeof payload.nodeId === 'string') {
-                nodeId = payload.nodeId;
             }
             pickAsset(session, picker, {
                 ...(nodeId === undefined ? {} : { nodeId }),
@@ -463,8 +479,15 @@ const SessionComponent = (
             tabMovesFocus: () => latestRef.current.tabMovesFocus,
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             openControl: (opened, payload) => {
+                // The figure an image insert adds belongs to the image feature, whatever its payload names.
                 if (opened === MEDIA_PICKER) {
-                    openPicker(runtime, payload);
+                    openPicker(runtime, undefined);
+                    return;
+                }
+                if (opened === UPLOAD_START) {
+                    if (isRecord(payload) && typeof payload.nodeId === 'string') {
+                        openPicker(runtime, payload.nodeId);
+                    }
                     return;
                 }
                 let given = payload;
@@ -478,6 +501,13 @@ const SessionComponent = (
             },
             locale: () => langRef.current,
             references: () => memberOf(latestRef.current.services, 'references'),
+            uploads: () => memberOf(latestRef.current.services, 'uploads'),
+            uploadEvent: (event) => {
+                const { locale, limits } = shellPropsOf(latestRef.current);
+                const { t } = codecContext(locale, enUS);
+                const lang = locale.lang ?? enUS.lang;
+                announcer.announce(uploadMessage(event, t, lang, limits, runtime.uploads.accepts ?? []));
+            },
             styles: () => latestRef.current.presentation?.styles ?? [],
             columns: columnsAtMount(latestRef.current.presentation, t),
         });
@@ -764,6 +794,10 @@ const SessionComponent = (
     }, [live, columnCount, columnGap]);
 
     const overlays = useMemo(() => ({ container: overlayRoot, scope }), [overlayRoot, scope]);
+    // The file chooser exists where `media.image` takes files that `services.uploads` sends.
+    const choosesFiles =
+        engineOf(mounted.definition).model.capabilities.some(({ id }) => id === UPLOAD_FEATURE) &&
+        memberOf(props.services, 'uploads') !== undefined;
     const referenceStrings = useMemo(() => mentionStrings(chromeContext.t), [chromeContext]);
 
     const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
@@ -887,6 +921,25 @@ const SessionComponent = (
                                             cancel: chromeContext.t('RichTextEditor_cancel'),
                                         }}
                                         onClose={() => setControl(undefined)}
+                                    />
+                                )}
+                                {choosesFiles && (
+                                    <input
+                                        ref={chooserRef}
+                                        type="file"
+                                        hidden
+                                        tabIndex={-1}
+                                        aria-hidden="true"
+                                        data-test-id={`${testId}-file-chooser`}
+                                        onChange={(event) => {
+                                            const files = [...(event.currentTarget.files ?? [])];
+                                            const place = choosingRef.current;
+                                            choosingRef.current = undefined;
+                                            event.currentTarget.value = '';
+                                            if (place !== undefined) {
+                                                coordinator.runtime?.uploads.begin(files, place).catch(() => undefined);
+                                            }
+                                        }}
                                     />
                                 )}
                                 <div

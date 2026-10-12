@@ -6,3 +6,4 @@ export { pressKey, type SelectionTarget, setSelection, typeText } from './input'
 export { createFakePersistenceService, type PersistenceServerHarness, runPersistenceConformance } from './persistence';
 export { probeRuntimes } from './probe';
 export { createFakeReferenceService, type FakeReferenceService } from './references';
+export { createFakeUploadService, type FakeUploadService, runUploadConformance } from './uploads';

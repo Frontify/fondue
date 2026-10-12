@@ -18,11 +18,13 @@ import { AnnouncerContext } from '#/bridge/announcer';
 import { NodeChromeMenu } from '#/bridge/chrome-toolbar';
 import { NodeChromeButton, NodeChromeToolbar, type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
+import { UploadControls, UploadSlot, uploadStatusText, useUploadStatus } from '#/features/media-upload/view';
 import { type JsonObject } from '#/model';
 import { altOf, figureAlign, imageOutput, unavailableOf } from '#/model/assets';
-import { altReviewOf, withAltReview } from '#/runtime/alt-review';
+import { altReviewOf, altReviewTakesFocus, withAltReview } from '#/runtime/alt-review';
 import { positionOf } from '#/runtime/positions';
 import { type EditorRuntime } from '#/runtime/runtime';
+import { type UploadStatus } from '#/runtime/uploads';
 import { AltTextDialog, altTextStrings } from '#/ui/media/alt-text-dialog';
 import { MAX_WIDTH, MIN_WIDTH, SET_SIZE, WidthDialog } from '#/ui/media/width-dialog';
 
@@ -49,6 +51,24 @@ const sideOf = (runtime: EditorRuntime | undefined, nodeId: string | null) => {
         return 'center';
     }
     return figureAlign(doc.resolve(pos).parent.attrs as JsonObject);
+};
+
+/** A stored intrinsic size, or `null` where the image has none. */
+const sizeOf = (value: unknown) => (typeof value === 'number' ? value : null);
+
+/** Removes the figure that holds the image `nodeId`, as one undo step. */
+const removeFigure = (runtime: EditorRuntime | undefined, nodeId: string) => {
+    const figureAt = () => {
+        const doc = runtime?.state.doc;
+        const pos = doc === undefined ? undefined : positionOf(doc, nodeId);
+        if (doc === undefined || pos === undefined) {
+            return undefined;
+        }
+        const $pos = doc.resolve(pos);
+        return $pos.depth > 0 ? $pos.before() : undefined;
+    };
+    runtime?.nodeActions(figureAt).remove();
+    runtime?.view?.focus();
 };
 
 /** A drag's width as a whole percent of the content width, within the stored bounds. */
@@ -177,10 +197,21 @@ const useResize = (
     return { shown, handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel } };
 };
 
-/** What a screen reader hears as the image becomes node-selected, since an image with an empty `alt` says nothing. */
-const spokenOf = (attrs: JsonObject, context: Parameters<typeof imageOutput>[1], unavailable: boolean) => {
+/**
+ * What a screen reader hears as the image becomes node-selected, since an image with an empty `alt` says nothing:
+ * for a slot, its upload as it stands, with how to fix a failed one.
+ */
+const spokenOf = (
+    attrs: JsonObject,
+    context: Parameters<typeof imageOutput>[1],
+    unavailable: boolean,
+    upload: UploadStatus | undefined,
+) => {
     const { t } = context;
     if (attrs.assetId === null) {
+        if (upload !== undefined) {
+            return t('RichTextEditor_announceBoth', { first: upload.name, second: uploadStatusText(upload, t) });
+        }
         return t('RichTextEditor_imageUnfinished');
     }
     if (unavailable) {
@@ -250,21 +281,42 @@ const ImageChrome = () => {
         paused = played.paused;
     }
     const unavailable = shown.kind !== 'image' || failed === shown.src;
-    const spoken = spokenOf(attrs, context, unavailable);
-    // A selected image is spoken as it becomes selected, and again when what it says changes, as when it fails to load.
+    // The upload chrome follows the session's upload of this slot, which no reload keeps.
+    const upload = useUploadStatus(nodeId ?? '');
+    const slot = attrs.assetId === null;
+    const spoken = spokenOf(attrs, context, unavailable, slot ? upload : undefined);
+    // A slot's progress is shown, not spoken: only whether it runs, failed or stopped counts as a change.
+    let heard = spoken;
+    if (slot && upload !== undefined) {
+        heard = upload.state === 'failed' || upload.state === 'stopped' ? upload.state : 'running';
+    }
+    const heardRef = useRef<{ readonly heard: string; readonly slot: boolean } | undefined>(undefined);
+    // A selected image is spoken as it becomes selected, and again when what it says changes, as when it fails to
+    // load; a slot that fills is not, since the upload's completion speaks for it.
     useEffect(() => {
-        if (selected) {
-            announcer?.announce(spoken);
-        }
-    }, [selected, spoken, announcer]);
-    const altLabel = review ? t('RichTextEditor_imageAltReview') : undefined;
-    // A new asset asks for a review once: focus moves to its action, which the prompt describes.
-    useEffect(() => {
-        if (altLabel === undefined) {
+        if (!selected) {
+            heardRef.current = undefined;
             return;
         }
-        barRef.current?.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(altLabel)}"]`)?.focus();
-    }, [altLabel]);
+        const before = heardRef.current;
+        heardRef.current = { heard, slot };
+        if (before !== undefined && (before.heard === heard || (before.slot && !slot))) {
+            return;
+        }
+        announcer?.announce(spoken);
+    }, [selected, spoken, heard, slot, announcer]);
+    const altLabel = review ? t('RichTextEditor_imageAltReview') : undefined;
+    const takesFocus = useSessionValue(
+        (session) => session !== undefined && nodeId !== null && altReviewTakesFocus(session.state, nodeId),
+        Object.is,
+    );
+    // After the author's own pick focus moves to the review action, which the prompt describes; a background
+    // completion leaves focus where the author is, and its announcement carries the prompt.
+    useEffect(() => {
+        if (altLabel !== undefined && takesFocus) {
+            barRef.current?.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(altLabel)}"]`)?.focus();
+        }
+    }, [altLabel, takesFocus]);
     const displayWidth = typeof attrs.displayWidth === 'number' ? attrs.displayWidth : null;
     const resize = useResize(frameRef, runtime, (width) => {
         if (width !== displayWidth) {
@@ -290,6 +342,7 @@ const ImageChrome = () => {
         sizeText = t('RichTextEditor_imageSizePercent', { percent: displayWidth });
     }
     const unfinished = attrs.assetId === null;
+    const status = unfinished ? upload : undefined;
     // The chrome keeps mouse events from the editor, so a press on the image selects it here, as on any atom, and
     // keeps the browser from putting the caret in a neighbouring block; on a selected image it starts the node's drag.
     const selectImage = (event: MouseEvent) => {
@@ -303,7 +356,17 @@ const ImageChrome = () => {
         }
     };
     let content;
-    if (unfinished) {
+    if (status !== undefined) {
+        content = (
+            <UploadSlot
+                status={status}
+                width={sizeOf(attrs.width)}
+                height={sizeOf(attrs.height)}
+                t={t}
+                onMouseDown={selectImage}
+            />
+        );
+    } else if (unfinished) {
         content = (
             // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- a press selects the node as on any atom; the keyboard selects it with the arrows.
             <span className={styles.placeholder} onMouseDown={selectImage}>
@@ -357,7 +420,15 @@ const ImageChrome = () => {
             )}
             <div className={styles.controls}>
                 <NodeChromeToolbar aria-label={t('RichTextEditor_image')}>
-                    {unfinished && (
+                    {status !== undefined && (
+                        <UploadControls
+                            nodeId={nodeId}
+                            status={status}
+                            t={t}
+                            onRemove={() => removeFigure(runtime, nodeId)}
+                        />
+                    )}
+                    {unfinished && status === undefined && (
                         <NodeChromeButton
                             label={t('RichTextEditor_imageChooseAgain')}
                             onClick={() => execute('image.replace', { nodeId })}
