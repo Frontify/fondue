@@ -274,7 +274,45 @@ describe('what a screen reader hears of uploads', () => {
         await record.stop();
 
         expect(record.messages).toContain('Uploaded: logo.png. It has no alternative text yet.');
-        expect(record.messages).toContain('Uploaded: photo.png');
+        expect(record.messages).toContain(
+            'Uploaded: photo.png. The image changed. Check that its alternative text still describes it.',
+        );
+        mounted.unmount();
+    });
+
+    it('speaks a node-selected slot once while its progress moves, and only the completion when it fills', async () => {
+        const mounted = await started();
+        act(() => mounted.runtime.select({ node: mounted.runtime.state.doc.child(0).nodeSize + 1 }));
+        await settle();
+        const record = recordAnnouncements();
+
+        for (const fraction of [0.1, 0.11, 0.5]) {
+            act(() => mounted.uploads.pending[0]?.context.reportProgress(fraction));
+            await settle();
+        }
+        await mounted.uploads.complete(0);
+        await record.stop();
+
+        expect(record.messages.map((message) => message.trim())).toEqual([
+            'Uploaded: logo.png. It has no alternative text yet.',
+        ]);
+        mounted.unmount();
+    });
+
+    it('asks for no review when an image with no alternative text is replaced, and keeps its Add alternative text', async () => {
+        const mounted = await started();
+        await mounted.uploads.complete(0);
+        await mounted.replace(mounted.nodeId, pngFile('photo.png'));
+        const record = recordAnnouncements();
+
+        await mounted.uploads.complete(1);
+        await record.stop();
+
+        expect(record.messages.map((message) => message.trim())).toEqual([
+            'Uploaded: photo.png. It has no alternative text yet.',
+        ]);
+        expect(screen.queryByText('The image changed. Check that its alternative text still describes it.')).toBeNull();
+        expect(screen.getByRole('button', { name: 'Add alternative text' })).toBeTruthy();
         mounted.unmount();
     });
 });
@@ -282,7 +320,7 @@ describe('what a screen reader hears of uploads', () => {
 describe('focus in the upload chrome', () => {
     const button = (name: string) => screen.getByRole('button', { name });
 
-    it('moves focus from Cancel to Retry when the upload fails, from Retry to Cancel on a retry, and to the surface when it completes', async () => {
+    it("moves focus from Cancel to Retry when the upload fails, from Retry to Cancel on a retry, and to the image's first button when it completes", async () => {
         const mounted = await started();
 
         act(() => button('Cancel upload').focus());
@@ -296,13 +334,31 @@ describe('focus in the upload chrome', () => {
         expect(document.activeElement).toBe(button('Cancel upload'));
 
         await mounted.uploads.complete(1);
+        expect(document.activeElement).toBe(button('Add alternative text'));
+        mounted.unmount();
+    });
+
+    it('leaves focus on the surface when Remove takes the failed slot away', async () => {
+        const mounted = await started();
+        act(() => button('Cancel upload').focus());
+        await mounted.uploads.fail(0);
+
+        act(() => {
+            fireEvent.click(button('Remove image'));
+        });
+        await settle();
+
+        expect(mounted.images()).toEqual([]);
         expect(document.activeElement).toBe(mounted.view.dom);
         mounted.unmount();
     });
 
-    it('leaves focus where the author types when a replacement uploads in the background, and still speaks the review prompt', async () => {
+    it('leaves focus where the author types when a replacement uploads in the background, and speaks the review prompt with its completion', async () => {
         const mounted = await started();
         await mounted.uploads.complete(0);
+        act(() => {
+            mounted.runtime.nodeActions(mounted.nodeId).update({ altIntent: 'meaningful', altText: 'Logo' });
+        });
         await mounted.replace(mounted.nodeId, pngFile('photo.png'));
         act(() => mounted.view.focus());
         const record = recordAnnouncements();
@@ -311,7 +367,9 @@ describe('focus in the upload chrome', () => {
         await record.stop();
 
         expect(document.activeElement).toBe(mounted.view.dom);
-        expect(record.messages).toContain('The image changed. Check that its alternative text still describes it.');
+        expect(record.messages.map((message) => message.trim())).toEqual([
+            'Uploaded: photo.png. The image changed. Check that its alternative text still describes it.',
+        ]);
         mounted.unmount();
     });
 });

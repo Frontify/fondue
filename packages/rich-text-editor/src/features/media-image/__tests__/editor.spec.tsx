@@ -398,6 +398,24 @@ describe('the asset picker', () => {
         mounted.unmount();
     });
 
+    it('asks for no review when Replace image refills an image with no alternative text, which keeps asking for it', async () => {
+        const picker = deferredPicker();
+        const mounted = await mountImages({
+            services: { assets: picker.service },
+            blocks: [figure('image-1', { altIntent: 'missing', altText: '' })],
+        });
+
+        await press(screen.getByRole('button', { name: 'Replace image' }));
+        picker.pending[0]?.resolve(PALETTE);
+        await flush();
+
+        expect(mounted.imageOf('image-1')).toMatchObject({ ...PALETTE, altIntent: 'missing', altText: '' });
+        expect(mounted.view.dom.querySelector('figure')).not.toHaveTextContent('The image changed.');
+        expect(screen.queryByRole('button', { name: 'Review alternative text' })).toBeNull();
+        expect(screen.getByRole('button', { name: 'Add alternative text' })).toBeInTheDocument();
+        mounted.unmount();
+    });
+
     it('drops the review prompt of a replacement that is undone', async () => {
         const picker = deferredPicker();
         const mounted = await mountImages({ services: { assets: picker.service } });

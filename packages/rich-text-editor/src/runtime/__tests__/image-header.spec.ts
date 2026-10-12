@@ -55,6 +55,26 @@ describe('the image header reader', () => {
         expect(await readImageHeader(file)).toEqual({ mediaType: 'image/avif', width: 4032, height: 3024 });
     });
 
+    it('reads no size of a JPEG that needs more than 4096 markers or fill bytes before its frame header', async () => {
+        const jpeg = await decodableImage('image/jpeg', 640, 480);
+        const file = new Blob([jpeg.subarray(0, 2), new Uint8Array(5000).fill(0xff), jpeg.subarray(2)]);
+
+        expect(await readImageHeader(file)).toEqual({ mediaType: 'image/jpeg', width: null, height: null });
+    });
+
+    it('reads no size of an AVIF whose meta box comes after more than 4096 other boxes', async () => {
+        const ftyp = box('ftyp', ascii('avif'), uint32(0), ascii('avifmif1'));
+        const ispe = box('ispe', VERSION, uint32(4032), uint32(3024));
+        const meta = box('meta', VERSION, box('hdlr', VERSION, new Uint8Array(20)), box('iprp', box('ipco', ispe)));
+        const free = Array.from({ length: 5000 }, () => box('free'));
+
+        expect(await readImageHeader(new Blob([ftyp, ...free, meta]))).toEqual({
+            mediaType: 'image/avif',
+            width: null,
+            height: null,
+        });
+    });
+
     it.each([
         [
             'a PNG signature with no IHDR chunk',
@@ -86,6 +106,39 @@ describe('the SVG active content check', () => {
         ['a javascript: link spelled in character references', '<a href="&#106;avascript:alert(1)"/>'],
     ])('finds %s', (_name, body) => {
         expect(svgHoldsScript(`<svg xmlns="http://www.w3.org/2000/svg">${body}</svg>`)).toBe(true);
+    });
+
+    it.each([
+        [
+            'a script under a dotted prefix',
+            '<svg xmlns="http://www.w3.org/2000/svg" xmlns:s.s="http://www.w3.org/2000/svg"><s.s:script>alert(1)</s.s:script></svg>',
+        ],
+        [
+            'a script under a non-ASCII prefix',
+            '<svg xmlns="http://www.w3.org/2000/svg" xmlns:ä="http://www.w3.org/2000/svg"><ä:script>alert(1)</ä:script></svg>',
+        ],
+        [
+            'a script built by nested entities',
+            `<!DOCTYPE svg [<!ENTITY x "&#60;"><!ENTITY y "&x;script>alert(1)&x;/script>">]><svg xmlns="http://www.w3.org/2000/svg">&y;</svg>`,
+        ],
+        [
+            'a script named by an entity',
+            '<!DOCTYPE svg [<!ENTITY s "script">]><svg xmlns="http://www.w3.org/2000/svg"><&s;>alert(1)</&s;></svg>',
+        ],
+        [
+            'an external entity',
+            '<!DOCTYPE svg [<!ENTITY x SYSTEM "https://example.test/x.xml">]><svg xmlns="http://www.w3.org/2000/svg">&x;</svg>',
+        ],
+        ['a parameter entity', '<!DOCTYPE svg [<!ENTITY % x "y">]><svg xmlns="http://www.w3.org/2000/svg"/>'],
+    ])('finds %s', (_name, svg) => {
+        expect(svgHoldsScript(svg)).toBe(true);
+    });
+
+    it('finds nothing in a drawing whose entities name namespaces, as older editors write', () => {
+        const svg =
+            '<!DOCTYPE svg [<!ENTITY ns_svg "http://www.w3.org/2000/svg">]><svg xmlns="&ns_svg;"><rect width="1"/></svg>';
+
+        expect(svgHoldsScript(svg)).toBe(false);
     });
 
     it('finds nothing in a plain drawing', () => {
