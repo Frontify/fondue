@@ -310,6 +310,9 @@ test.describe('at 320 CSS pixels', () => {
             'Link',
             'List',
             ...[1, 2, 3, 4, 5, 6].map((level) => `Heading ${level}`),
+            // The labelled key routes of `core` that only More holds.
+            'Move up',
+            'Move down',
         ]);
     });
 
@@ -319,8 +322,12 @@ test.describe('at 320 CSS pixels', () => {
         await itemOf(page, 'More').click();
         const rows = await menuRows(page).evaluateAll((items) =>
             items.map((item) => {
+                // The shortcut and the hidden reason of an unavailable row follow the label.
                 const label = [...item.childNodes]
-                    .filter((node) => !(node instanceof HTMLElement && node.tagName === 'KBD'))
+                    .filter(
+                        (node) =>
+                            !(node instanceof HTMLElement && (node.tagName === 'KBD' || node.ariaHidden === 'true')),
+                    )
                     .map((node) => node.textContent ?? '')
                     .join('')
                     .trim();
@@ -861,7 +868,8 @@ test('shows each command with the same registry label and icon in the toolbar an
     const inMore = await namesAndIcons(page, true);
 
     expect(inToolbar.map(({ name }) => name)).toEqual(['Bold', 'Italic', 'Link', 'List']);
-    expect(inMore).toEqual(inToolbar);
+    // The rows that only More holds follow the items that did not fit.
+    expect(inMore.slice(0, inToolbar.length)).toEqual(inToolbar);
 });
 
 test('uses the presentation controls label and icon for bold in the toolbar and in More', async ({ mount, page }) => {

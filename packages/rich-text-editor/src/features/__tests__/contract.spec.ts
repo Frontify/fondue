@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
 import { type CapabilityImplementation, type EngineCommand, type Normalizer, NORMALIZERS } from '#/definition';
-import { bold, featuresById } from '#/features';
+import { bold, featuresById, heading } from '#/features';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { fixtureChromeViews } from '#/features/__tests__/fixtures/chrome/view';
 import { commandCases, nodeViewCases, normalizerCases } from '#/features/__tests__/fixtures/contract.cases';
@@ -192,7 +192,7 @@ describe('the feature contract suite', () => {
             return { run: wrap(command.run), active: command.active };
         });
         try {
-            expect(await failingTitles(() => commandCases([core(), bold()]))).toEqual([
+            expect(await failingTitles(() => commandCases([core(), heading(), bold()]))).toEqual([
                 'runs mark.bold.toggle synchronously with no I/O or timer, dispatching at most once',
             ]);
         } finally {

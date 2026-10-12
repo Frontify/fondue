@@ -16,7 +16,6 @@ import { pressKey, setSelection, typeText } from '#/testing';
 
 import pullQuoteManifest from '../../model/__tests__/fixtures/manifest/acme-pull-quote.json';
 import { defineEditor, defineReactPresentation } from '../define';
-import { boldRules } from '../playground.stories';
 import { RichTextEditor } from '../rich-text-editor';
 import { type EditorHandle, type ReactPresentation, type RichTextEditorBaseProps } from '../types';
 
@@ -193,7 +192,7 @@ describe('the fixed toolbar', () => {
     });
 
     it('gives the reason not allowed for a command the policy refuses after mount', async () => {
-        const model = compileContentModel([core(), bold(), boldRules()], { id: 'test.toolbar', version: 1 });
+        const model = compileContentModel([core(), bold()], { id: 'test.toolbar', version: 1 });
         const definition = defineEditor({ id: 'test.toolbar', model });
         const { handle } = mount({
             definition,
@@ -303,7 +302,7 @@ describe('the fixed toolbar', () => {
     });
 
     it('leaves the document unchanged by the button, Mod-b and **x** when the policy refuses bold', async () => {
-        const model = compileContentModel([core(), bold(), boldRules()], { id: 'test.toolbar', version: 1 });
+        const model = compileContentModel([core(), bold()], { id: 'test.toolbar', version: 1 });
         const ALLOW = { create: true, edit: true, remove: true, paste: true };
         const definition = defineEditor({ id: 'test.toolbar', model });
         const { handle } = mount({
