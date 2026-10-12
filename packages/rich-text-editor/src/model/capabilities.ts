@@ -90,6 +90,10 @@ export const insertNode = <const P extends PayloadDeclaration | undefined = unde
 
 export const history = (action: 'undo' | 'redo'): CommandDefinition => command('history', { action });
 
+/** Toggles `mark` with `attrs` on the selection, or in the stored marks at a caret. */
+export const toggleMark = (mark: string, attrs?: JsonObject): CommandDefinition =>
+    command('toggleMark', { mark, attrs });
+
 /** The first cycle that `next` reaches from `starts`, as a path that ends where it starts. */
 export const findCycle = (starts: readonly string[], next: (id: string) => readonly string[]): string[] | undefined => {
     const done = new Set<string>();

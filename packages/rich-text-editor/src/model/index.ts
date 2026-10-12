@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { history, insertNode, setBlock } from './capabilities';
+export { history, insertNode, setBlock, toggleMark } from './capabilities';
 export { compileContentModel } from './compile';
 export {
     type AttributeDeclaration,

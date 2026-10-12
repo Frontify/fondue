@@ -3,6 +3,7 @@
 export const ptPT = {
     lang: 'pt-PT',
     translationStrings: {
+        RichTextEditor_bold: 'Negrito',
         RichTextEditor_readerBlockedInvalid: 'Este conteúdo não pode ser apresentado',
         RichTextEditor_readerBlockedUnsupported: 'Este conteúdo não pode ser apresentado aqui',
         RichTextEditor_readerIslandFeature: 'Conteúdo não suportado: ${feature}',

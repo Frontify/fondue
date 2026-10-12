@@ -834,12 +834,21 @@ importers:
       markdown-it:
         specifier: ^15.0.2
         version: 15.0.2
+      prosemirror-commands:
+        specifier: ^1.7.2
+        version: 1.7.2
+      prosemirror-keymap:
+        specifier: ^1.2.3
+        version: 1.2.3
       prosemirror-model:
         specifier: ^1.25.12
         version: 1.25.12
       prosemirror-state:
         specifier: ^1.4.4
         version: 1.4.4
+      prosemirror-view:
+        specifier: ^1.42.6
+        version: 1.42.6
     devDependencies:
       '@axe-core/playwright':
         specifier: ^4.13.0
@@ -9052,6 +9061,9 @@ packages:
 
   prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
+
+  prosemirror-commands@1.7.2:
+    resolution: {integrity: sha512-q6Q6szxqdu9Xd6EcdKsqXghu5nQdZTpB4Q9yd04WRc7/jt763e/rT60Owh0L1GYY+T46o5rD+9lEN36dZS43tw==}
 
   prosemirror-keymap@1.2.3:
     resolution: {integrity: sha512-4HucRlpiLd1IPQQXNqeo81BGtkY8Ai5smHhKW9jjPKRc2wQIxksg7Hl1tTI2IfT2B/LgX6bfYvXxEpJl7aKYKw==}
@@ -19297,6 +19309,12 @@ snapshots:
       loose-envify: 1.4.0
       object-assign: 4.1.1
       react-is: 16.13.1
+
+  prosemirror-commands@1.7.2:
+    dependencies:
+      prosemirror-model: 1.25.12
+      prosemirror-state: 1.4.4
+      prosemirror-transform: 1.12.2
 
   prosemirror-keymap@1.2.3:
     dependencies:
