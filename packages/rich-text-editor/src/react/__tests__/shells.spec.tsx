@@ -126,10 +126,58 @@ const withoutClipboard = () => {
 };
 
 describe('the recovery shell', () => {
+    it('moves focus to the recovery message, which is read with no live region', () => {
+        const { unmount } = breakAfterTyping();
+        const message = screen.getByText(/^The editor stopped working\./);
+
+        expect(message).toHaveFocus();
+        expect(message).toHaveAttribute('tabindex', '-1');
+        expect(document.querySelectorAll('[aria-live], [role="alert"], [role="status"]')).toHaveLength(0);
+        unmount();
+    });
+
+    it.each([
+        ['a host field, which keeps it', 'host'],
+        ['the surface, which hands it to the message', 'surface'],
+    ] as const)('leaves focus that was on %s', (_, focused) => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const tree = (armed: boolean) => (
+            <>
+                <input aria-label="Host field" />
+                <RichTextEditor.Root
+                    aria-label="Notes"
+                    definition={definition}
+                    defaultValue={stored(envelope([para('ab')]))}
+                >
+                    <RichTextEditor.Surface />
+                    <Bomb armed={armed} />
+                </RichTextEditor.Root>
+            </>
+        );
+        const view = render(tree(false));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        let before = screen.getByRole('textbox', { name: 'Host field' });
+        if (focused === 'surface') {
+            before = screen.getByRole('textbox', { name: 'Notes' });
+        }
+        act(() => before.focus());
+
+        view.rerender(tree(true));
+
+        if (focused === 'host') {
+            expect(screen.getByRole('textbox', { name: 'Host field' })).toHaveFocus();
+        } else {
+            expect(screen.getByText(/^The editor stopped working\./)).toHaveFocus();
+        }
+        view.unmount();
+    });
+
     it('shows the last published snapshot through the reader after a render error, with no save', () => {
         const { before, spy, unmount } = breakAfterTyping();
 
-        expect(screen.getByRole('alert')).toHaveTextContent('The editor stopped working.');
+        expect(screen.getByText(/^The editor stopped working\./)).toBeVisible();
         const reader = renderToStaticMarkup(<RichTextReader document={before.document} model={model} />);
         expect(reader).toContain('cab');
         expect(shell('recovery').innerHTML).toContain(reader);

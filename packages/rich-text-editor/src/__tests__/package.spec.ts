@@ -124,8 +124,13 @@ describe('package manifest and built output', () => {
         const jsFiles = builtFiles.filter((file) => file.endsWith('.js')).sort();
         const sourceModules = new Set([
             ...listFiles(join(packageRoot, 'src'))
-                .filter((file) => /\.(tsx?|json)$/.test(file) && !file.endsWith('.d.ts'))
-                .map((file) => file.replace(/\.tsx?$/, '.js').replace(/\.json$/, '.json.js')),
+                .filter((file) => /\.(tsx?|json|scss)$/.test(file) && !file.endsWith('.d.ts'))
+                .map((file) =>
+                    file
+                        .replace(/\.tsx?$/, '.js')
+                        .replace(/\.json$/, '.json.js')
+                        .replace(/\.scss$/, '.scss.js'),
+                ),
             'package.json.js',
         ]);
         expect(builtFiles.some((file) => file.endsWith('.cjs'))).toBe(false);
