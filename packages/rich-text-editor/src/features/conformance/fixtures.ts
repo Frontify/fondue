@@ -25,6 +25,7 @@ import subscript from '#/features/marks-subscript/fixtures/subscript.json';
 import superscript from '#/features/marks-superscript/fixtures/superscript.json';
 import underline from '#/features/marks-underline/fixtures/underline.json';
 import images from '#/features/media-image/fixtures/images.json';
+import uploaded from '#/features/media-upload/fixtures/uploaded.json';
 import mentions from '#/features/mentions/fixtures/mentions.json';
 import styles from '#/features/styles-brand/fixtures/styles.json';
 import { type RichTextDocument } from '#/model';
@@ -58,4 +59,5 @@ export const featureFixtures = {
     'input-rules': { typography },
     mentions: { mentions },
     'media.image': { images },
+    'media.upload': { uploaded },
 } as unknown as Readonly<Record<string, Readonly<Record<string, RichTextDocument>>>>;

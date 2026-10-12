@@ -87,6 +87,16 @@ import {
     type Snapshot,
     type Unsubscribe,
 } from './types';
+import { uploadSlotsPlugin } from './upload-slots';
+import {
+    createUploads,
+    DEFAULT_ACCEPT_TYPES,
+    UPLOAD_FEATURE,
+    type UploadEvent,
+    type UploadPlace,
+    type UploadServiceLike,
+    type UploadStatus,
+} from './uploads';
 
 type Mode = EditorSummary['mode'];
 type RejectedCode = Extract<CommandResult, { readonly status: 'rejected' }>['code'];
@@ -195,6 +205,16 @@ export interface EditorRuntime {
      * the alternative text while the image still holds that asset, so an undone replacement asks nothing.
      */
     readonly altReviews: Map<string, string>;
+    /** The session's uploads: `accepts` holds the media types `media.image` takes, `undefined` without it. */
+    readonly uploads: {
+        readonly accepts: readonly string[] | undefined;
+        /** Whether files upload now: `media.image` is installed and the host has `services.uploads`. */
+        available(): boolean;
+        /** Checks `files` and starts their uploads at `place`, once their headers are read. */
+        begin(files: readonly File[], place: UploadPlace): Promise<void>;
+        /** What the chrome of slot `nodeId` shows of its upload. */
+        statusOf(nodeId: string): UploadStatus | undefined;
+    };
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
     /**
@@ -244,6 +264,10 @@ export interface EditorRuntimeOptions {
     readonly locale?: () => string;
     /** The host's `services.references`, read when a reference list asks it; without one, its trigger opens no list. */
     readonly references?: () => ReferenceSearch | undefined;
+    /** The host's `services.uploads`, read when an upload starts; without one, no file uploads. */
+    readonly uploads?: () => UploadServiceLike | undefined;
+    /** Hears each upload start, end, failure and refused file, which the live region announces. */
+    readonly uploadEvent?: (event: UploadEvent) => void;
     /** The presentation's brand styles, read when `block.style.set` runs; default none. */
     readonly styles?: () => readonly PresentationStyle[];
     /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
@@ -375,6 +399,8 @@ const DUPLICATE_ENGINE = diagnostic(
 interface Candidate {
     readonly candidate: EditorState;
     readonly root: Transaction;
+    /** The root and what plugins appended to it. */
+    readonly transactions: readonly Transaction[];
     readonly mapping: Transaction['mapping'];
     /** When the batch started, and how many transactions plugins appended to it. */
     readonly started: number;
@@ -450,6 +476,20 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             },
         ),
     );
+    // The commands that send a slot's file again, which their capability leaves to the session.
+    const retries = new Set(
+        compiledModel(definition.model)
+            .commands.filter(
+                ({ definition: { capability, args } }) => capability === 'upload' && args.action === 'retry',
+            )
+            .map(({ id }) => id),
+    );
+    /** Hands a retry that applied to the session's uploads. */
+    const retried = (id: string, result: CommandResult, payload: unknown) => {
+        if (retries.has(id) && result.status === 'no-op' && isRecord(payload) && typeof payload.nodeId === 'string') {
+            uploads.retry(payload.nodeId);
+        }
+    };
     let { capabilities } = options;
     let exceedsLimits = createLimitCheck(definition.model, capabilities);
     // Aborted by `dispose`, which ends the session's own service calls.
@@ -498,6 +538,53 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const queue: Intent[] = [];
     // What waits for input to settle outside the queue, such as a form's settled value.
     const afterInput = new Set<(outcome: InputOutcome) => void>();
+    // `media.image` and the media types it accepts, which its `acceptTypes` option sets.
+    const imageFeature = compiledModel(definition.model).features.find(({ id }) => id === UPLOAD_FEATURE);
+    let acceptTypes: readonly string[] | undefined;
+    if (imageFeature !== undefined) {
+        const option: unknown = imageFeature.options.acceptTypes;
+        acceptTypes = Array.isArray(option)
+            ? option.filter((type): type is string => typeof type === 'string')
+            : DEFAULT_ACCEPT_TYPES;
+    }
+    const uploads = createUploads({
+        state: () => state,
+        limits,
+        acceptTypes: acceptTypes ?? [],
+        service: () => (acceptTypes === undefined ? undefined : options.uploads?.()),
+        session: () => session,
+        generateId: () => generate(),
+        allows: (action) => policy.features[UPLOAD_FEATURE]?.[action] !== false,
+        start: (request) => coordinator.start(request),
+        abort: (operations) => coordinator.abortWhere((other) => operations.includes(other)),
+        capture: (range) => {
+            const captured = captureRange({ purpose: 'replace-text', onIntersectingEdit: 'map' }, range);
+            return captured.status === 'captured' ? captured.target : undefined;
+        },
+        release: (target) => handle.releaseTarget(target),
+        run: (command, target) =>
+            runOn(command, { payload: undefined }, () => (target === undefined ? state : baseOf({ target })), 'host')
+                .status === 'applied',
+        fill: (command) => {
+            const result = runOn(command, { payload: undefined }, () => state, 'async');
+            if (result.status === 'rejected') {
+                return result.code;
+            }
+            return result.status === 'applied' ? undefined : 'not-applicable';
+        },
+        reviewAlt: (nodeId, assetId) => altReviews.set(nodeId, assetId),
+        report: (found) => report(found),
+        event: (event) => {
+            if (phase !== 'disposed') {
+                options.uploadEvent?.(event);
+            }
+        },
+        changed: () => {
+            if (phase !== 'disposed') {
+                busyWith(notify);
+            }
+        },
+    });
 
     // Records typing before any other handler sees the event, so the view itself gets no event handler.
     const typingRecorder = new Plugin({
@@ -538,6 +625,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             groupsPlugin,
             columnsPlugin(() => shownColumns),
             stylesPlugin(() => options.styles?.() ?? []),
+            uploadSlotsPlugin(uploads),
             ...definition.plugins,
         ],
     });
@@ -563,6 +651,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (busy === 0) {
                 flushMetric();
                 flushCaptures();
+                uploads.flush();
             }
             drain();
         }
@@ -764,7 +853,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return { code: 'not-allowed', limit };
             }
         }
-        return { candidate: applied.state, root, mapping, started, appended: applied.transactions.length - 1 };
+        const { transactions } = applied;
+        return { candidate: applied.state, root, transactions, mapping, started, appended: transactions.length - 1 };
     };
 
     /** Publishes a checked batch, then commits the roots that plugin views dispatched while it was installed. */
@@ -794,7 +884,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
      * Publishes the current state's document: counts an effective change, notifies selector stores, then emits the
      * change, the selection and the save status in the Event order.
      */
-    const announce = (origin: ChangeOrigin, commandId: string | null, batch: BatchMetric): boolean => {
+    const announce = (
+        origin: ChangeOrigin,
+        commandId: string | null,
+        batch: BatchMetric,
+        transactions: readonly Transaction[] = [],
+    ): boolean => {
         const previous = published;
         const current = state;
         published = current;
@@ -819,6 +914,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 },
             });
             metric = batch;
+            uploads.committed(transactions, origin === 'history');
         }
         emitSelection();
         if (changed) {
@@ -860,7 +956,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
-    const publish = ({ candidate, root, mapping, started, appended }: Candidate): boolean => {
+    const publish = ({ candidate, root, transactions, mapping, started, appended }: Candidate): boolean => {
         if (!installState(candidate)) {
             return false;
         }
@@ -884,7 +980,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (event === 'paste' || event === 'drop') {
             kind = 'paste';
         }
-        return announce(origin, commandId, { kind, started, appended });
+        return announce(origin, commandId, { kind, started, appended }, transactions);
     };
 
     /** Repairs the provisional batches, then checks them as one change from the published document; `false` on a fault. */
@@ -1207,6 +1303,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (control !== undefined && result.status === 'no-op') {
             options.openControl?.(control, given);
         }
+        retried(id, result, given);
         // Without `focus: 'editor'` a command leaves focus where it is.
         if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
             focus();
@@ -1299,6 +1396,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (control !== undefined && result.status === 'no-op') {
                 options.openControl?.(control, payload);
             }
+            retried(id, result, payload);
             return result;
         },
         query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(target)),
@@ -1523,6 +1621,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             settled('disposed');
         }
         coordinator.dispose();
+        uploads.dispose(state.doc);
         settleQueue('not-ready');
         deferred.length = 0;
         deferredCaptures.length = 0;
@@ -1656,6 +1755,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
             return refused('faulted');
         }
+        const outgoing = state.doc;
         // Roots that plugin views dispatch while the state installs commit in the new generation.
         const installed = guarded(() => {
             installingNext = true;
@@ -1690,6 +1790,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // What the old generation started or queued ends now and changes nothing here.
         coordinator.abortWhere(() => true);
+        uploads.reset(outgoing);
         coordinator.settle();
         busyWith(notify);
         emitSelection();
@@ -2011,6 +2112,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         nodeActions,
         placeAsset,
         altReviews,
+        uploads: {
+            accepts: acceptTypes,
+            available: () => acceptTypes !== undefined && options.uploads?.() !== undefined,
+            begin: (files, place) => uploads.begin(files, place),
+            statusOf: (nodeId) => uploads.statusOf(nodeId),
+        },
         saveStatusChanged: emitSaveStatus,
         clearHistory: () => {
             if (phase !== 'ready' || settling.active()) {
@@ -2018,6 +2125,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             if (installState(reset(state))) {
                 published = state;
+                uploads.reset(state.doc);
                 busyWith(notify);
             }
         },

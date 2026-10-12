@@ -5,10 +5,12 @@ import { Component, memo, type ReactNode, Suspense, useMemo, useSyncExternalStor
 import { createPortal } from 'react-dom';
 
 import { type JsonObject } from '#/model';
+import { type EditorRuntime } from '#/runtime/runtime';
 
 import { useClientLayoutEffect } from './client-layout-effect';
-import { type NodeViewContext, NodeViewStateContext } from './define';
+import { type NodePending, type NodeViewContext, NodeViewStateContext } from './define';
 import { type ReactWork, ReactWorkContext } from './dev-checks';
+import { useSessionValue } from './hooks';
 import { type PortalEntry, type PortalStore } from './portals';
 
 interface BoundaryProps {
@@ -55,6 +57,19 @@ class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
     }
 }
 
+/** The upload of node `nodeId`, as its chrome reads it. */
+const pendingOf = (runtime: EditorRuntime | undefined, nodeId: string | null): NodePending | null => {
+    const status = nodeId === null ? undefined : runtime?.uploads.statusOf(nodeId);
+    if (status === undefined) {
+        return null;
+    }
+    const running = status.state === 'queued' || status.state === 'running';
+    return { kind: 'upload', state: running ? 'running' : 'failed', progress: status.progress };
+};
+
+const samePending = (a: NodePending | null, b: NodePending | null) =>
+    a === b || (a !== null && b !== null && a.state === b.state && a.progress === b.progress);
+
 // An entry keeps its object until its node view publishes, so the other chrome skips each rerender.
 const Chrome = memo(
     ({
@@ -67,7 +82,9 @@ const Chrome = memo(
         readonly lang: string;
     }) => {
         const { component: View, slot } = entry;
-        const state = useMemo(() => ({ ...entry.state, context }), [entry.state, context]);
+        const { nodeId } = entry.state;
+        const pending = useSessionValue((runtime) => pendingOf(runtime, nodeId), samePending);
+        const state = useMemo(() => ({ ...entry.state, context, pending }), [entry.state, context, pending]);
         const { dir } = useFondueTheme();
         // The slot sits in the surface, which takes the document's lang and dir; chrome keeps its strings' and the theme's.
         useClientLayoutEffect(() => {

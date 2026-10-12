@@ -16,7 +16,11 @@ export interface AsyncRequest {
     readonly action: keyof FeaturePolicy;
     /** Where the result applies; without one, the coordinator captures a `map` target at the selection. */
     readonly target?: SelectionHandle;
-    readonly run: (context: { readonly signal: AbortSignal; readonly session: SessionToken }) => Promise<unknown>;
+    readonly run: (context: {
+        readonly signal: AbortSignal;
+        readonly session: SessionToken;
+        readonly operationId: string;
+    }) => Promise<unknown>;
     /** The command that takes the result as its payload, whose declaration checks it as untrusted input. */
     readonly command: string;
     /**
@@ -24,6 +28,10 @@ export interface AsyncRequest {
      * it cannot, as `apply` does. Such an operation captures no target.
      */
     readonly deliver?: (result: unknown) => string | undefined;
+    /** Hears a service call that rejected while the operation was still registered, which no abort caused. */
+    readonly fail?: (error: unknown) => void;
+    /** At most `limit` operations of the pool `name` run at once; the others wait registered, in start order. */
+    readonly pool?: { readonly name: string; readonly limit: number };
 }
 
 /** A registered operation; only one that never started, or one that delivers its result, has no target. */
@@ -72,6 +80,10 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
     const held: { readonly operation: AsyncOperation; readonly result: unknown }[] = [];
     // Operations whose target the coordinator captured, and so releases once they end.
     const captured = new Set<AsyncOperation>();
+    // The pooled operations whose service call runs, and those that wait for room, by pool name.
+    const running = new Map<string, Set<AsyncOperation>>();
+    const waiting = new Map<string, { readonly operation: AsyncOperation; readonly request: AsyncRequest }[]>();
+    const pools = new Map<AsyncOperation, AsyncRequest['pool']>();
 
     const forget = (operation: AsyncOperation) => {
         operations.delete(operation.id);
@@ -83,14 +95,37 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
         if (captured.delete(operation) && operation.target !== null) {
             release(operation.target);
         }
+        const pool = pools.get(operation);
+        if (pool === undefined) {
+            return;
+        }
+        pools.delete(operation);
+        const queued = waiting.get(pool.name) ?? [];
+        const at = queued.findIndex((entry) => entry.operation === operation);
+        if (at >= 0) {
+            queued.splice(at, 1);
+        }
+        if (running.get(pool.name)?.delete(operation) === true) {
+            next(pool.name);
+        }
     };
 
+    // While an abort runs, a pool starts no waiting operation that the same abort may end next.
+    let aborting = 0;
     const abortWhere = (aborts: (operation: AsyncOperation) => boolean) => {
-        for (const operation of [...operations.values()]) {
-            if (aborts(operation)) {
-                end(operation);
-                operation.controller.abort();
+        aborting += 1;
+        try {
+            for (const operation of [...operations.values()]) {
+                if (aborts(operation)) {
+                    end(operation);
+                    operation.controller.abort();
+                }
             }
+        } finally {
+            aborting -= 1;
+        }
+        for (const name of [...waiting.keys()]) {
+            next(name);
         }
     };
 
@@ -140,6 +175,41 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
         }
     };
 
+    const call = (operation: AsyncOperation, request: AsyncRequest) => {
+        const { signal } = operation.controller;
+        request
+            .run({ signal, session: operation.session, operationId: operation.id })
+            .then((result) => arrive(operation, result))
+            // A failed service call leaves the document as it is.
+            .catch((error: unknown) => {
+                const live = operations.get(operation.id) === operation && !signal.aborted;
+                end(operation);
+                if (live) {
+                    request.fail?.(error);
+                }
+            });
+    };
+
+    /** Starts the next waiting operation of pool `name` while it has room. */
+    const next = (name: string) => {
+        if (aborting > 0 || isDisposed()) {
+            return;
+        }
+        const queued = waiting.get(name) ?? [];
+        const busy = running.get(name) ?? new Set<AsyncOperation>();
+        running.set(name, busy);
+        while (queued.length > 0) {
+            const entry = queued[0];
+            const limit = entry === undefined ? 0 : (entry.request.pool?.limit ?? 0);
+            if (entry === undefined || busy.size >= limit) {
+                return;
+            }
+            queued.shift();
+            busy.add(entry.operation);
+            call(entry.operation, entry.request);
+        }
+    };
+
     const start = (request: AsyncRequest): AsyncOperation => {
         const { key } = request;
         const { deliver } = request;
@@ -184,11 +254,16 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
         }
         operations.set(operation.id, operation);
         liveOperations.add(operation);
-        request
-            .run({ signal: operation.controller.signal, session: operation.session })
-            .then((result) => arrive(operation, result))
-            // A failed service call leaves the document as it is.
-            .catch(() => end(operation));
+        const { pool } = request;
+        if (pool === undefined) {
+            call(operation, request);
+            return operation;
+        }
+        pools.set(operation, pool);
+        const queued = waiting.get(pool.name) ?? [];
+        queued.push({ operation, request });
+        waiting.set(pool.name, queued);
+        next(pool.name);
         return operation;
     };
 

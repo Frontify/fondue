@@ -6,6 +6,7 @@ import { type PointerEvent, type RefObject, useContext, useEffect, useMemo, useR
 import { NodeChromeMenu } from '#/bridge/chrome-toolbar';
 import { NodeChromeButton, NodeChromeToolbar, type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
+import { UploadControls, UploadSlot, useUploadStatus } from '#/features/media-upload/view';
 import { type JsonObject } from '#/model';
 import { altOf, figureAlign, imageOutput } from '#/model/assets';
 import { positionOf } from '#/runtime/positions';
@@ -33,6 +34,24 @@ const sideOf = (runtime: EditorRuntime | undefined, nodeId: string | null) => {
         return 'center';
     }
     return figureAlign(doc.resolve(pos).parent.attrs as JsonObject);
+};
+
+/** A stored intrinsic size, or `null` where the image has none. */
+const sizeOf = (value: unknown) => (typeof value === 'number' ? value : null);
+
+/** Removes the figure that holds the image `nodeId`, as one undo step. */
+const removeFigure = (runtime: EditorRuntime | undefined, nodeId: string) => {
+    const figureAt = () => {
+        const doc = runtime?.state.doc;
+        const pos = doc === undefined ? undefined : positionOf(doc, nodeId);
+        if (doc === undefined || pos === undefined) {
+            return undefined;
+        }
+        const $pos = doc.resolve(pos);
+        return $pos.depth > 0 ? $pos.before() : undefined;
+    };
+    runtime?.nodeActions(figureAt).remove();
+    runtime?.view?.focus();
 };
 
 /** A drag's width as a whole percent of the content width, within the stored bounds. */
@@ -173,6 +192,8 @@ const ImageChrome = () => {
             execute(SET_SIZE, { displayWidth: width });
         }
     });
+    // The upload chrome follows the session's upload of this slot, which no reload keeps.
+    const upload = useUploadStatus(nodeId ?? '');
     if (nodeId === null) {
         return null;
     }
@@ -193,6 +214,7 @@ const ImageChrome = () => {
         sizeText = t('RichTextEditor_imageSizePercent', { percent: displayWidth });
     }
     const unfinished = attrs.assetId === null;
+    const status = unfinished ? upload : undefined;
     // The chrome keeps mouse events from the editor, so a press on the image selects it here, as on any atom.
     const selectImage = () => {
         select();
@@ -201,7 +223,17 @@ const ImageChrome = () => {
         }
     };
     let content;
-    if (unfinished) {
+    if (status !== undefined) {
+        content = (
+            <UploadSlot
+                status={status}
+                width={sizeOf(attrs.width)}
+                height={sizeOf(attrs.height)}
+                t={t}
+                onMouseDown={selectImage}
+            />
+        );
+    } else if (unfinished) {
         content = (
             // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- a press selects the node as on any atom; the keyboard selects it with the arrows.
             <span className={styles.placeholder} onMouseDown={selectImage}>
@@ -254,7 +286,15 @@ const ImageChrome = () => {
             {review && <p className={styles.review}>{t('RichTextEditor_imageAltReviewPrompt')}</p>}
             <div className={styles.controls}>
                 <NodeChromeToolbar aria-label={t('RichTextEditor_image')}>
-                    {unfinished && (
+                    {status !== undefined && (
+                        <UploadControls
+                            nodeId={nodeId}
+                            status={status}
+                            t={t}
+                            onRemove={() => removeFigure(runtime, nodeId)}
+                        />
+                    )}
+                    {unfinished && status === undefined && (
                         <NodeChromeButton
                             label={t('RichTextEditor_imageChooseAgain')}
                             onClick={() => execute('image.replace', { nodeId })}
