@@ -171,3 +171,62 @@ export const fixtureMedia = defineFeature({
         },
     },
 });
+
+/**
+ * Stands in for the input rules of the text features: `heading.hashes` over `heading.set`, and the mark rules over
+ * `bold`, `italic`, a `strike` mark and a `code` mark, beside a `code_block` whose whitespace is `pre`.
+ */
+export const fixtureInputRules = defineFeature({
+    id: 'fixture.input-rules',
+    version: 1,
+    requires: [
+        { id: 'marks.bold', version: 1 },
+        { id: 'fixture.italic', version: 1 },
+        { id: 'fixture.heading-set', version: 1 },
+    ],
+    nodes: {
+        code_block: {
+            group: 'block',
+            content: 'text*',
+            marks: [],
+            whitespace: 'pre',
+            attrs: {},
+            html: ['pre', 0],
+            parse: [{ tag: 'pre' }],
+        },
+    },
+    marks: {
+        strike: { attrs: {}, html: ['s', 0], parse: [{ tag: 's' }] },
+        code: { attrs: {}, html: ['code', 0], parse: [{ tag: 'code' }], inclusive: false },
+    },
+    inputRules: [
+        {
+            id: 'heading.hashes',
+            kind: 'line-start',
+            command: 'heading.set',
+            markers: [1, 2, 3, 4, 5, 6].map((level) => ({ marker: '#'.repeat(level), payload: { level } })),
+        },
+        { id: 'bold.stars', kind: 'mark-delimiter', open: '**', close: '**', mark: 'bold' },
+        { id: 'bold.underscores', kind: 'mark-delimiter', open: '__', close: '__', mark: 'bold' },
+        { id: 'italic.star', kind: 'mark-delimiter', open: '*', close: '*', mark: 'italic' },
+        { id: 'italic.underscore', kind: 'mark-delimiter', open: '_', close: '_', mark: 'italic' },
+        { id: 'strike.tildes', kind: 'mark-delimiter', open: '~~', close: '~~', mark: 'strike' },
+        { id: 'code.backtick', kind: 'mark-delimiter', open: '`', close: '`', mark: 'code' },
+    ],
+});
+
+/** Stands in for an upload: a leaf whose `assetId` an async completion sets. */
+export const fixtureImage = defineFeature({
+    id: 'fixture.image',
+    version: 1,
+    requires: requiresCore,
+    nodes: {
+        image: {
+            group: 'block',
+            atom: true,
+            attrs: { assetId: { type: 'id', nullable: true, default: null } },
+            html: ['img', { 'data-asset': { attr: 'assetId' } }],
+            parse: [],
+        },
+    },
+});

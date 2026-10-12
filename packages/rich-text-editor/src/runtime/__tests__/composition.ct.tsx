@@ -344,3 +344,28 @@ test('leaves focus on a host input when an async result applies', async ({ mount
     await expect(surfaceOf(page)).toHaveText('abup');
     await expect(page.getByRole('textbox', { name: 'Host input' })).toBeFocused();
 });
+
+test('fires no input rule for composed text, which stays one undo step', async ({ mount, page }) => {
+    await mount(<EditorProbe texts={['ab.']} />);
+    await ready(page);
+    await caretAfter(page, 'ab.');
+    const ime = await imeOf(page);
+    const text = () => page.evaluate(() => (window.rte as Rte).text());
+
+    await ime.compose('**x*');
+    await ime.compose('**x**');
+    const during = await text();
+    await ime.commit('**x**');
+    await expect
+        .poll(() => page.evaluate(() => (window.rte as Rte).handle.getSnapshot().compositionActive))
+        .toBe(false);
+
+    expect([during, await text()]).toEqual(['ab.**x**', 'ab.**x**']);
+    await expect(surfaceOf(page).locator('strong')).toHaveCount(0);
+    const undone = await page.evaluate(() => {
+        const { handle } = window.rte as Rte;
+        handle.execute('history.undo');
+        return handle.query('history.undo').enabled;
+    });
+    expect([await text(), undone]).toEqual(['ab.', false]);
+});
