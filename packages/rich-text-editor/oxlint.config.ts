@@ -88,8 +88,12 @@ const EXTERNAL_SPECIFIER = '^[^.#]';
 const aliasPatterns = (folders: readonly string[]): string[] =>
     folders.flatMap((folder) => [`#/${folder}`, `#/${folder}/**`]);
 
+// Patterns match the specifier text, not the resolved path, so list a parent prefix for every depth that a source
+// file can sit below `src`, with one level to spare.
+const PARENT_PREFIXES = ['../', '../../', '../../../', '../../../../'];
+
 const relativePatterns = (folders: readonly string[]): string[] =>
-    folders.flatMap((folder) => [`../${folder}`, `../${folder}/**`, `../../${folder}`, `../../${folder}/**`]);
+    folders.flatMap((folder) => PARENT_PREFIXES.flatMap((prefix) => [`${prefix}${folder}`, `${prefix}${folder}/**`]));
 
 // A `!` pattern lets paths back in that earlier patterns of the same group ban.
 const exceptPatterns = (paths: readonly string[]): string[] =>
