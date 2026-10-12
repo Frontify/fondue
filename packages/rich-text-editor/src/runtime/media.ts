@@ -10,8 +10,10 @@ import { withAltReview } from './alt-review';
 import { placeBlock } from './capabilities';
 import { nearest, positionOf } from './positions';
 
-/** The control that `image.insert` opens, and an upload start for one node: the host asset picker. */
+/** The control that `image.insert` opens for a new figure: the host asset picker when set, else the file chooser. */
 export const MEDIA_PICKER = 'media-picker';
+/** The control an upload start opens for its node, as `image.replace` does: the asset picker, else the file chooser. */
+export const UPLOAD_START = 'upload-start';
 export const INSERT_IMAGE = 'image.insert';
 export const REPLACE_IMAGE = 'image.replace';
 
