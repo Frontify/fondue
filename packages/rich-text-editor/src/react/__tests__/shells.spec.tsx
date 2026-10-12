@@ -9,7 +9,13 @@ import { createCodecs } from '#/codecs/codecs';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, type ContentModel, type JsonValue } from '#/model';
-import { type LoadedDocument, type PersistenceService } from '#/persistence/types';
+import {
+    type LoadedDocument,
+    type PersistenceService,
+    type SaveRequest,
+    type SaveResponse,
+    type ServiceContext,
+} from '#/persistence/types';
 import { RichTextReader } from '#/reader/reader';
 import { createFakePersistenceService, typeText } from '#/testing';
 
@@ -214,6 +220,111 @@ describe('the recovery shell', () => {
         expect(revision).toBe('revision-1');
         expect(save.mock.calls.map(([request]) => request.baseRevision)).toEqual([null, 'revision-1']);
         expect(handleOf(ref).getSaveStatus()).toMatchObject({ state: 'clean', revision: 'revision-2' });
+        view.unmount();
+    });
+
+    it('replays on Retry the write whose outcome was unknown, unchanged, before a write on its revision', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const server = createFakePersistenceService();
+        const requests: SaveRequest[] = [];
+        // The server stores the first write, and its answer never arrives.
+        const save = (request: SaveRequest, context: ServiceContext) => {
+            requests.push(request);
+            const answer = server.save(request, context);
+            if (requests.length === 1) {
+                return new Promise<SaveResponse>(() => undefined);
+            }
+            return answer;
+        };
+        const ref = createRef<EditorHandle<object>>();
+        const tree = (armed: boolean) => (
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={stored(envelope([para('ab')]))}
+                services={{ persistence: { save, read: server.read } }}
+                persistenceOptions={{ timeoutMs: 1000 }}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+                <Bomb armed={armed} />
+            </RichTextEditor.Root>
+        );
+        const settle = () =>
+            act(async () => {
+                await vi.advanceTimersByTimeAsync(0);
+            });
+        const view = render(tree(false));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        act(() => typeText(handleOf(ref), 'c'));
+        act(() => {
+            vi.advanceTimersByTime(500);
+        });
+        act(() => {
+            vi.advanceTimersByTime(1000);
+        });
+        await settle();
+        expect(handleOf(ref).getSaveStatus().state).toBe('uncertain');
+        view.rerender(tree(true));
+        view.rerender(tree(false));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        await settle();
+        act(() => {
+            vi.advanceTimersByTime(500);
+        });
+        await settle();
+
+        expect(requests[1]).toEqual(requests[0]);
+        expect(requests.map(({ baseRevision }) => baseRevision)).toEqual([null, null, 'revision-1']);
+        expect(handleOf(ref).getSaveStatus()).toMatchObject({ state: 'clean', revision: 'revision-2' });
+        view.unmount();
+    });
+
+    it('mounts on Retry under the document ID that a replacement switched to', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const ref = createRef<EditorHandle<object>>();
+        const tree = (armed: boolean) => (
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={stored(envelope([para('ab')]))}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+                <Bomb armed={armed} />
+            </RichTextEditor.Root>
+        );
+        const view = render(tree(false));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        await act(() =>
+            handleOf(ref).replaceDocument({
+                expected: handleOf(ref).getSnapshot().stamp,
+                next: { ...stored(envelope([para('cd')])), documentId: 'document-2' },
+                unsaved: { action: 'reject' },
+                selection: 'start',
+                history: 'reset',
+            }),
+        );
+        act(() => typeText(handleOf(ref), 'x'));
+        const before = handleOf(ref).getSnapshot();
+        view.rerender(tree(true));
+        view.rerender(tree(false));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+
+        expect(handleOf(ref).getSnapshot().stamp.documentId).toBe('document-2');
+        expect(handleOf(ref).getSnapshot().document).toEqual(before.document);
         view.unmount();
     });
 
