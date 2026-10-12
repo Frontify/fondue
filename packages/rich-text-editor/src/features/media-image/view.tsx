@@ -283,30 +283,40 @@ const ImageChrome = () => {
     const unavailable = shown.kind !== 'image' || failed === shown.src;
     // The upload chrome follows the session's upload of this slot, which no reload keeps.
     const upload = useUploadStatus(nodeId ?? '');
-    const spoken = spokenOf(attrs, context, unavailable, attrs.assetId === null ? upload : undefined);
-    // A selected image is spoken as it becomes selected, and again when what it says changes, as when it fails to load.
+    const slot = attrs.assetId === null;
+    const spoken = spokenOf(attrs, context, unavailable, slot ? upload : undefined);
+    // A slot's progress is shown, not spoken: only whether it runs, failed or stopped counts as a change.
+    let heard = spoken;
+    if (slot && upload !== undefined) {
+        heard = upload.state === 'failed' || upload.state === 'stopped' ? upload.state : 'running';
+    }
+    const heardRef = useRef<{ readonly heard: string; readonly slot: boolean } | undefined>(undefined);
+    // A selected image is spoken as it becomes selected, and again when what it says changes, as when it fails to
+    // load; a slot that fills is not, since the upload's completion speaks for it.
     useEffect(() => {
-        if (selected) {
-            announcer?.announce(spoken);
+        if (!selected) {
+            heardRef.current = undefined;
+            return;
         }
-    }, [selected, spoken, announcer]);
+        const before = heardRef.current;
+        heardRef.current = { heard, slot };
+        if (before !== undefined && (before.heard === heard || (before.slot && !slot))) {
+            return;
+        }
+        announcer?.announce(spoken);
+    }, [selected, spoken, heard, slot, announcer]);
     const altLabel = review ? t('RichTextEditor_imageAltReview') : undefined;
     const takesFocus = useSessionValue(
         (session) => session !== undefined && nodeId !== null && altReviewTakesFocus(session.state, nodeId),
         Object.is,
     );
-    // A new asset asks for a review once: after the author's own pick focus moves to its action, which the prompt
-    // describes; a background completion speaks the prompt and leaves focus where the author is.
+    // After the author's own pick focus moves to the review action, which the prompt describes; a background
+    // completion leaves focus where the author is, and its announcement carries the prompt.
     useEffect(() => {
-        if (altLabel === undefined) {
-            return;
-        }
-        if (takesFocus) {
+        if (altLabel !== undefined && takesFocus) {
             barRef.current?.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(altLabel)}"]`)?.focus();
-            return;
         }
-        announcer?.announce(t('RichTextEditor_imageAltReviewPrompt'));
-    }, [altLabel, announcer, t, takesFocus]);
+    }, [altLabel, takesFocus]);
     const displayWidth = typeof attrs.displayWidth === 'number' ? attrs.displayWidth : null;
     const resize = useResize(frameRef, runtime, (width) => {
         if (width !== displayWidth) {

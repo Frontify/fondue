@@ -77,7 +77,11 @@ export const uploadMessage = (
 ): string => {
     if (event.kind === 'completed') {
         const key = event.altMissing ? 'RichTextEditor_uploadCompletedNoAlt' : 'RichTextEditor_uploadCompleted';
-        return t(key, { name: event.name });
+        const completed = t(key, { name: event.name });
+        if (!event.review) {
+            return completed;
+        }
+        return t('RichTextEditor_announceBoth', { first: completed, second: t('RichTextEditor_imageAltReviewPrompt') });
     }
     if (event.kind !== 'gesture') {
         return t(EVENT_KEYS[event.kind], { name: event.name });

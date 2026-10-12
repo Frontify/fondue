@@ -35,40 +35,67 @@ export interface PickedAsset {
     readonly labelSnapshot: string;
 }
 
-/**
- * Whether `assetId` reads as a URL, a signed URL or an access token, which an asset ID never is: an address with a
- * scheme and authority, a scheme that loads content, or a query key that signs or authorizes a request.
- */
-export const isAssetLocator = (assetId: string): boolean =>
-    /^(?:[a-z][\d+.a-z-]*:)?\/\//i.test(assetId) ||
-    /^(?:https?|data|blob|javascript|vbscript|file|ftp):/i.test(assetId) ||
-    /[?&;](?:token|access_token|signature|x-amz-signature|sig)=/i.test(assetId);
+const SPACE = 0x20;
+
+/** `value` as a URL parser reads it: without tabs and line breaks, or spaces and controls at its ends, and `\` as `/`. */
+const asUrlReads = (value: string) => {
+    let start = 0;
+    let end = value.length;
+    while (start < end && value.charCodeAt(start) <= SPACE) {
+        start += 1;
+    }
+    while (end > start && value.charCodeAt(end - 1) <= SPACE) {
+        end -= 1;
+    }
+    return value
+        .slice(start, end)
+        .replaceAll(/[\t\n\r]/g, '')
+        .replaceAll('\\', '/');
+};
 
 /**
- * A host's answer as untrusted input: an `AssetValue` whose `assetId` is no URL or token, whose `mediaType` is one of
- * `mediaTypes` when given, and whose `labelSnapshot` is cut to `maxLabel` characters when given, else `undefined`.
+ * Whether `assetId` reads as a URL, a signed URL or an access token, which an asset ID never is: an address with a
+ * scheme and authority, a scheme that loads content, or a query key that signs or authorizes a request, as a URL
+ * parser would read it.
+ */
+export const isAssetLocator = (assetId: string): boolean => {
+    const read = asUrlReads(assetId);
+    return (
+        /^(?:[a-z][\d+.a-z-]*:)?\/\//i.test(read) ||
+        /^(?:https?|data|blob|javascript|vbscript|file|ftp):/i.test(read) ||
+        /[?&;][\w.-]*(?:token|signature|sig|credential|secret|api_?key)=/i.test(read)
+    );
+};
+
+/**
+ * A host's answer as untrusted input: an `AssetValue` whose `assetId` is no URL or token and no longer than
+ * `maxLength`, whose `mediaType` is one of `mediaTypes` when given, and whose `labelSnapshot` is cut to `maxLength`
+ * characters, else `undefined`.
  */
 export const pickedAsset = (
     value: unknown,
-    options: { readonly mediaTypes?: readonly string[]; readonly maxLabel?: number } = {},
+    options: { readonly mediaTypes?: readonly string[]; readonly maxLength: number },
 ): PickedAsset | undefined => {
     if (!isRecord(value)) {
         return undefined;
     }
     const { assetId, mediaType, labelSnapshot } = value;
-    if (typeof assetId !== 'string' || assetId === '' || isAssetLocator(assetId) || typeof mediaType !== 'string') {
+    if (typeof assetId !== 'string' || assetId === '' || assetId.length > options.maxLength) {
         return undefined;
     }
-    if (typeof labelSnapshot !== 'string') {
+    if (isAssetLocator(assetId) || typeof mediaType !== 'string' || typeof labelSnapshot !== 'string') {
+        return undefined;
+    }
+    if (mediaType.length > options.maxLength) {
         return undefined;
     }
     if (options.mediaTypes !== undefined && !options.mediaTypes.includes(mediaType)) {
         return undefined;
     }
-    let label = labelSnapshot;
-    if (options.maxLabel !== undefined && [...label].length > options.maxLabel) {
-        label = [...label].slice(0, options.maxLabel).join('');
-    }
+    // No more code units than twice the characters kept can hold them, so a huge label is cut before it is split.
+    const head = labelSnapshot.slice(0, options.maxLength * 2);
+    const characters = [...head];
+    const label = characters.length > options.maxLength ? characters.slice(0, options.maxLength).join('') : head;
     return { assetId, mediaType, labelSnapshot: label };
 };
 
@@ -91,7 +118,7 @@ export const insertPicked = (schema: Schema, asset: PickedAsset): EngineCommand 
 
 /**
  * Sets the picked asset on the image `nodeId` with no intrinsic size, keeping its `nodeId` and alternative text, as
- * the step of `image.replace`.
+ * the step of `image.replace`, and asks the author to review that text when there is one.
  */
 export const refillPicked = (nodeId: string, asset: PickedAsset): EngineCommand => ({
     run: (state, dispatch) => {
@@ -104,7 +131,10 @@ export const refillPicked = (nodeId: string, asset: PickedAsset): EngineCommand 
         for (const [name, value] of Object.entries({ ...asset, width: null, height: null })) {
             transaction.setNodeAttribute(pos, name, value);
         }
-        dispatch?.(withAltReview(transaction, nodeId, asset.assetId).setMeta(COMMAND_META, REPLACE_IMAGE));
+        // An image with no alternative text keeps asking for it, which no review replaces.
+        const kept = node.attrs.altIntent === 'meaningful' || node.attrs.altIntent === 'decorative';
+        transaction.setMeta(COMMAND_META, REPLACE_IMAGE);
+        dispatch?.(kept ? withAltReview(transaction, nodeId, asset.assetId) : transaction);
         return true;
     },
     active: () => false,

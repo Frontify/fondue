@@ -113,7 +113,8 @@ export const UploadSlot = ({
 /**
  * The upload's buttons in the image chrome toolbar: Cancel while it runs or waits, then Retry and Remove once it
  * failed or stopped. Cancel and Retry show where `media.upload` is installed. When the upload's change takes away
- * the button that has focus, the button that takes its place gets focus, else the surface.
+ * the button that has focus, the button that takes its place gets focus, or once the upload completes the image's
+ * first button, else the surface.
  */
 export const UploadControls = ({
     nodeId,
@@ -144,14 +145,28 @@ export const UploadControls = ({
         }
         next.focus();
     }, [running, runtime]);
-    useLayoutEffect(
-        () => () => {
-            if (focusedRef.current) {
-                runtime?.view?.focus();
+    useLayoutEffect(() => {
+        const wrapper = wrapperRef.current;
+        const toolbar = wrapper?.closest<HTMLElement>('[data-rte-node-chrome]') ?? null;
+        return () => {
+            if (!focusedRef.current) {
+                return;
             }
-        },
-        [runtime],
-    );
+            const view = runtime?.view;
+            view?.focus();
+            // A completed upload leaves the image and its toolbar, whose first button then takes focus; a removed
+            // image takes its toolbar along, which leaves focus on the surface.
+            queueMicrotask(() => {
+                if (toolbar === null || !toolbar.isConnected || view?.hasFocus() !== true) {
+                    return;
+                }
+                const next = toolbar.querySelector<HTMLElement>('button');
+                if (next !== null && !wrapper?.contains(next)) {
+                    next.focus();
+                }
+            });
+        };
+    }, [runtime]);
     const onBlur = (event: FocusEvent<HTMLSpanElement>) => {
         const { target } = event;
         // A button that leaves the DOM blurs too, which is no move of the author's.

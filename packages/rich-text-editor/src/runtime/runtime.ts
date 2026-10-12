@@ -1420,7 +1420,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     });
 
     const placeAsset: EditorRuntime['placeAsset'] = (value, place) => {
-        const asset = pickedAsset(value);
+        const asset = pickedAsset(value, { maxLength: limits.maxAttributeLength });
         if (asset === undefined) {
             return rejected('invalid-payload');
         }
