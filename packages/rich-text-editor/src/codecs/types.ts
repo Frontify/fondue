@@ -17,9 +17,15 @@ export interface HtmlOptions {
     /** Localized output text; default `enUS`. */
     readonly locale?: RichTextLocale;
     readonly resolveAssetUrl?: ResolveAssetUrl;
+    /** The presentation's `contentClassName`, written on the root beside `fondue-rte-content`, as the reader writes it. */
+    readonly contentClassName?: string;
 }
 /** One dialect: CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks. */
-export type MarkdownOptions = HtmlOptions;
+export interface MarkdownOptions {
+    /** Localized output text; default `enUS`. */
+    readonly locale?: RichTextLocale;
+    readonly resolveAssetUrl?: ResolveAssetUrl;
+}
 /**
  * Each codec first runs `decodeDocument(document, model, options)`. `diagnostics` holds the decode
  * diagnostics, which carry the diagnostic that made each island, with the path of the failing value, then the codec's own. A `blocked`

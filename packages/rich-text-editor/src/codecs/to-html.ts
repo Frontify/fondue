@@ -5,6 +5,7 @@ import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
     attrsOf,
+    contentClasses,
     failedFallback,
     groupRun,
     islandFallback,
@@ -209,18 +210,19 @@ export const isEmptyDocument = (plan: CodecPlan, root: TreeNode): boolean => {
     return node !== undefined && !node.leaf;
 };
 
-/** The reader's static markup as text: the `doc` node as one `div` with its `lang` and `dir`, its blocks, then the island notice. */
+/** The reader's static markup as text: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the island notice. */
 export const writeHtml = (
     plan: CodecPlan,
     root: TreeNode,
     context: CodecContext,
+    contentClassName?: string,
 ): { readonly html: string; readonly diagnostics: readonly Diagnostic[] } => {
     const state: HtmlState = { plan, context, diagnostics: [], losses: new Losses(), islands: 0, carried: 0 };
     if (isEmptyDocument(plan, root)) {
         return { html: '', diagnostics: [] };
     }
     let html = renderChildren(state, root, '/content', false);
-    let props = '';
+    let props = ` class="${escapeHtml(contentClasses(contentClassName))}"`;
     const lang = root.attrs?.lang;
     const dir = root.attrs?.dir;
     if (typeof lang === 'string') {
