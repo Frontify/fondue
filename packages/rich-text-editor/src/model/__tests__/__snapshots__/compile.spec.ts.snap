@@ -76,6 +76,7 @@ exports[`compileContentModel manifest > emits the manifest of the core profile s
     "history",
     "keymap:core",
     "drop-cursor",
+    "gap-cursor",
     "base-keys",
   ],
 }
@@ -220,6 +221,7 @@ exports[`compileContentModel manifest > emits the manifest of the document profi
     "keymap:fixture.bold",
     "keymap:fixture.heading",
     "drop-cursor",
+    "gap-cursor",
     "base-keys",
   ],
 }

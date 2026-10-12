@@ -1042,13 +1042,14 @@ describe('compileContentModel order', () => {
     it('orders plugins of one phase by the host list, in both orders', () => {
         const forward = compile([core(), fixtureBold(), fixtureHeading()]);
         const reverse = compile([core(), fixtureHeading(), fixtureBold()]);
-        // `core` contributes the clipboard, the history plugin and its own keys first, and the drop cursor and base keys last.
+        // `core` contributes the clipboard, the history plugin and its own keys first, and the drop and gap cursors and base keys last.
         const corePlugins = ['clipboard', 'history', 'keymap:core'];
         expect(forward.manifest.plugins).toEqual([
             ...corePlugins,
             'keymap:fixture.bold',
             'keymap:fixture.heading',
             'drop-cursor',
+            'gap-cursor',
             'base-keys',
         ]);
         expect(reverse.manifest.plugins).toEqual([
@@ -1056,6 +1057,7 @@ describe('compileContentModel order', () => {
             'keymap:fixture.heading',
             'keymap:fixture.bold',
             'drop-cursor',
+            'gap-cursor',
             'base-keys',
         ]);
         expect(forward.fingerprint).not.toBe(reverse.fingerprint);
@@ -1071,6 +1073,7 @@ describe('compileContentModel order', () => {
             'keymap:fixture.redo',
             'keymap:fixture.history',
             'drop-cursor',
+            'gap-cursor',
             'base-keys',
         ]);
     });
