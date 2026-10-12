@@ -3,15 +3,16 @@
 import { DOMParser } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
-import { fixtureHeading, fixtureLink } from '#/features/__tests__/fixtures/features';
+import { fixtureHeading } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel } from '#/model';
 
 import { buildSchema } from '../schema';
 
 const schema = buildSchema(
-    compileContentModel([core(), bold(), fixtureLink(), fixtureHeading()], { id: 'test.parse', version: 1 }),
+    compileContentModel([core(), bold(), links(), fixtureHeading()], { id: 'test.parse', version: 1 }),
 );
 const parse = (html: string) => {
     const host = document.createElement('div');

@@ -21,7 +21,6 @@ import {
     fixtureImage,
     fixtureInputRules,
     fixtureItalic,
-    fixtureLink,
     fixtureMedia,
     fixtureMention,
     fixtureTable,
@@ -29,6 +28,7 @@ import {
 import { countingIds, notesModel } from '#/features/__tests__/fixtures/notes';
 import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { defineEditor, type CommandsOfModel, type EditorHandle } from '#/index';
 import {
@@ -42,7 +42,6 @@ import {
     type ResourceLimits,
     type RichTextDocument,
     setBlock,
-    toggleMark,
 } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/decode';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
@@ -516,7 +515,7 @@ describe('the session lifecycle', () => {
 });
 
 describe('stored content the session keeps', () => {
-    const linked = compileContentModel([core(), bold(), fixtureLink()], { id: 'test.bold', version: 1 });
+    const linked = compileContentModel([core(), bold(), links()], { id: 'test.bold', version: 1 });
     const link = {
         type: 'link',
         attrs: { href: 'https://frontify.com', openInNewWindow: false, styleId: null, rel: 'x' },
@@ -1002,7 +1001,7 @@ const appendForever = (featureId: string, capability: string) =>
     );
 
 describe('occurrences the policy pairs across a batch', () => {
-    const model = compileContentModel([core(), bold(), fixtureLink(), fixtureMention()], {
+    const model = compileContentModel([core(), bold(), links(), fixtureMention()], {
         id: 'test.bold',
         version: 1,
     });
@@ -1044,14 +1043,14 @@ describe('occurrences the policy pairs across a batch', () => {
         [
             'link href',
             stored(para(linked)),
-            { features: { 'fixture.link': { ...ALLOW, create: false, remove: false } } },
+            { features: { links: { ...ALLOW, create: false, remove: false } } },
             (state) => state.tr.addMark(1, 3, state.schema.mark('link', link('https://frontify.com/b').attrs)),
             true,
         ],
         [
             'link href, edit: false',
             stored(para(linked)),
-            forbid('fixture.link', 'edit'),
+            forbid('links', 'edit'),
             (state) => state.tr.addMark(1, 3, state.schema.mark('link', link('https://frontify.com/b').attrs)),
             false,
         ],
@@ -1079,7 +1078,7 @@ describe('occurrences the policy pairs across a batch', () => {
         [
             'text with another link inserted at the end of a link',
             stored(para(linked)),
-            forbid('fixture.link', 'create'),
+            forbid('links', 'create'),
             (state) =>
                 state.tr.insert(
                     3,
@@ -1807,12 +1806,6 @@ describe('origins with an appended normalization', () => {
     });
 });
 
-const linkSet = defineFeature({
-    id: 'fixture.link-set',
-    version: 1,
-    requires: [{ id: 'fixture.link', version: 1 }],
-    commands: { 'link.set': toggleMark('link', { href: 'https://frontify.com' }) },
-});
 /** An inline atom of another type that carries a `nodeId`, as a mention does. */
 const chip = defineFeature({
     id: 'fixture.chip',
@@ -1828,7 +1821,7 @@ const chip = defineFeature({
         },
     },
 });
-const targetModel = compileContentModel([core(), bold(), fixtureLink(), linkSet(), fixtureMention(), chip()], {
+const targetModel = compileContentModel([core(), bold(), links(), fixtureMention(), chip()], {
     id: 'test.bold',
     version: 1,
 });
@@ -1989,7 +1982,8 @@ describe('targets', () => {
                 typeText(handle, 'X');
                 setSelection(handle, { text: 'cd', from: 2, to: 2 });
                 typeText(handle, 'Y');
-                expect(handle.execute('link.set', undefined, { target }).status).toBe('applied');
+                const value = { href: 'https://frontify.com', openInNewWindow: false, styleId: null };
+                expect(handle.execute('link.set', value, { target }).status).toBe('applied');
 
                 expect([textOf(view.state.doc), markedText(view.state.doc, 'link')]).toEqual(['abXcdYef', 'cd']);
             });

@@ -5,8 +5,8 @@
 import { forwardRef, memo } from 'react';
 import { describe, expect, it } from 'vitest';
 
-import { fixtureLink } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { DefinitionError, type Feature } from '#/model';
 import { featureInternals } from '#/model/feature';
 
@@ -30,14 +30,14 @@ describe('defineReaderFeature', () => {
     it('rejects an override for a node or mark the feature does not declare', () => {
         let failure: unknown;
         try {
-            defineReaderFeature(fixtureLink(), { link: renderer, mention: renderer });
+            defineReaderFeature(links(), { link: renderer, mention: renderer });
         } catch (error) {
             failure = error;
         }
         expect(failure).toBeInstanceOf(DefinitionError);
         expect(failure).toMatchObject({
             code: 'definition.missing-reader',
-            details: { feature: 'fixture.link', name: 'mention' },
+            details: { feature: 'links', name: 'mention' },
         });
     });
 
@@ -48,24 +48,24 @@ describe('defineReaderFeature', () => {
     ])('rejects %s as an override, since the reader calls overrides as functions', (_, value) => {
         let failure: unknown;
         try {
-            defineReaderFeature(fixtureLink(), { link: value as never });
+            defineReaderFeature(links(), { link: value as never });
         } catch (error) {
             failure = error;
         }
         expect(failure).toBeInstanceOf(DefinitionError);
         expect(failure).toMatchObject({
             code: 'definition.invalid-declaration',
-            details: { feature: 'fixture.link', path: '/marks/link' },
+            details: { feature: 'links', path: '/marks/link' },
         });
     });
 
     it('attaches overrides for declared nodes and marks and keeps the feature', () => {
-        const link = defineReaderFeature(fixtureLink(), { link: renderer });
+        const link = defineReaderFeature(links(), { link: renderer });
         const doc = defineReaderFeature(core(), { paragraph: renderer });
 
-        expect(link.id).toBe('fixture.link');
+        expect(link.id).toBe('links');
         expect(readerOverrides(link)).toEqual({ link: renderer });
         expect(readerOverrides(doc)).toEqual({ paragraph: renderer });
-        expect(readerOverrides(fixtureLink())).toBeUndefined();
+        expect(readerOverrides(links())).toBeUndefined();
     });
 });

@@ -9,5 +9,5 @@ exports[`the reader with brand styles > renders the generated stylesheet once be
 .rte-style-*{font-size:12px;font-weight:600;text-transform:uppercase;text-decoration-line:underline}
 .rte-style-*{text-decoration:none}
 .rte-style-*{text-decoration:none;text-decoration-line:underline}
-.rte-style-*{text-decoration:none;color:#ffffff;background-color:#1d4ed8;padding:2px 8px;border-radius:4px;font-weight:700}.rte-style-*:hover{background-color:#1e3a8a}</style><div class="fondue-rte-content"><p dir="auto"><a href="https://frontify.com/" class="rte-style-*">basics</a></p></div>"
+.rte-style-*{text-decoration:none;color:#ffffff;background-color:#1d4ed8;padding:2px 8px;border-radius:4px;font-weight:700}.rte-style-*:hover{background-color:#1e3a8a}</style><div class="fondue-rte-content"><p dir="auto"><a href="https://frontify.com/" rel="noopener" class="rte-style-*">basics</a></p></div>"
 `;

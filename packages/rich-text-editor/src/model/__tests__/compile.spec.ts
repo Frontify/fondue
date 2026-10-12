@@ -10,11 +10,11 @@ import {
     fixtureHeading,
     fixtureHistory,
     fixtureItalic,
-    fixtureLink,
     fixtureRedo,
 } from '#/features/__tests__/fixtures/features';
 import { fixtureProfiles } from '#/features/__tests__/fixtures/profiles';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import {
     compileContentModel,
     defineFeature,
@@ -567,7 +567,7 @@ describe('compileContentModel declarations', () => {
         });
     });
 
-    it('rejects a javascript: literal src in a code feature and accepts the link stand-in', () => {
+    it('rejects a javascript: literal src in a code feature and accepts the links feature', () => {
         const image = {
             id: 'a.image',
             version: 1,
@@ -577,7 +577,7 @@ describe('compileContentModel declarations', () => {
             code: 'definition.unsafe-url-binding',
             details: { feature: 'a.image', path: '/nodes/picture/html/1/src' },
         });
-        expect(compile([core(), fixtureLink()]).manifest.marks).toEqual(['link']);
+        expect(compile([core(), links()]).manifest.marks).toEqual(['link']);
     });
 
     it('checks a namespaced or prefixed URL attribute by its local name', () => {
@@ -1126,14 +1126,7 @@ describe('compileContentModel order', () => {
     });
 
     it('orders nodes as declared and marks by rank, then as declared', () => {
-        const model = compile([
-            core(),
-            fixtureItalic(),
-            fixtureBold(),
-            fixtureColor(),
-            fixtureLink(),
-            fixtureHeading(),
-        ]);
+        const model = compile([core(), fixtureItalic(), fixtureBold(), fixtureColor(), links(), fixtureHeading()]);
         expect(model.manifest.nodes).toEqual(['doc', 'paragraph', 'text', 'hard_break', 'heading', 'rule']);
         expect(model.manifest.marks).toEqual(['link', 'font_color', 'italic', 'bold']);
     });

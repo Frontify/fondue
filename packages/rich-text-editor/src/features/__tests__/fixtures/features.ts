@@ -4,26 +4,6 @@ import { defineFeature, history, insertNode, setBlock, toggleMark } from '#/mode
 
 const requiresCore = [{ id: 'core', version: 1 }];
 
-/** Stands in for `links`: a mark with a `url` attribute, outermost by rank. */
-export const fixtureLink = defineFeature({
-    id: 'fixture.link',
-    version: 1,
-    requires: requiresCore,
-    marks: {
-        link: {
-            attrs: {
-                href: { type: 'url', required: true },
-                openInNewWindow: { type: 'boolean', default: false },
-                styleId: { type: 'id', nullable: true, default: null },
-            },
-            html: ['a', { href: { attr: 'href' } }, 0],
-            parse: [{ tag: 'a[href]', attrs: { href: { from: 'href' } } }],
-            rank: -2,
-            inclusive: false,
-        },
-    },
-});
-
 export const fixtureBold = defineFeature({
     id: 'fixture.bold',
     version: 1,
@@ -266,16 +246,16 @@ export const fixtureList = defineFeature({
 });
 
 /**
- * Stands in for the toolbar entries of `marks.italic`, `links`, a list toggle, the heading levels and history until
- * they ship: an italic toggle, a link button, a block toggle over a `toggled_block`, six heading items with payloads
- * and undo and redo buttons, with keys for italic and the block.
+ * Stands in for the toolbar entries of `marks.italic`, a mark button, a list toggle, the heading levels and history:
+ * an italic toggle, a button that toggles the shipped `link` mark, a block toggle over a `toggled_block`, six heading
+ * items with payloads and undo and redo buttons, with keys for italic and the block.
  */
 export const fixtureToolbar = defineFeature({
     id: 'fixture.toolbar',
     version: 1,
     requires: [
         { id: 'fixture.italic', version: 1 },
-        { id: 'fixture.link', version: 1 },
+        { id: 'links', version: 1 },
     ],
     nodes: {
         toggled_block: { group: 'block', content: 'inline*', attrs: {}, html: ['blockquote', 0], parse: [] },

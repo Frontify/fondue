@@ -42,6 +42,7 @@ const PAYLOADS: Readonly<Record<string, unknown>> = {
     'block.style.set': { styleId: 'brand.body' },
     'block.align.set': { align: 'center' },
     'mark.language.set': { lang: 'de-CH', dir: null },
+    'link.set': { href: 'https://frontify.com/brand', openInNewWindow: false, styleId: null },
 };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [

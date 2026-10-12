@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { featuresById } from '#/features/registry';
 import { type Feature } from '#/model';
 
-import { fixtureBold, fixtureColor, fixtureHeading, fixtureHistory, fixtureItalic, fixtureLink } from './features';
+import { fixtureBold, fixtureColor, fixtureHeading, fixtureHistory, fixtureItalic } from './features';
 
 const MARKS = [
     'marks.bold',
@@ -28,7 +29,7 @@ export const fixtureProfiles = (): Readonly<Record<string, readonly Feature[]>> 
         fixtureHistory(),
         fixtureBold(),
         fixtureItalic(),
-        fixtureLink(),
+        links(),
         fixtureColor(),
         fixtureHeading({ defaultLevel: 3 }),
     ],

@@ -191,7 +191,7 @@ test('returns focus to the surface with the resulting selection after bold, link
     }
 
     expect(await documentHtml(page)).toBe(
-        '<blockquote>one <a href="https://example.com/fixture"><strong>two</strong></a> three</blockquote>',
+        '<blockquote>one <a href="https://example.com/fixture" rel="noopener"><strong>two</strong></a> three</blockquote>',
     );
 });
 
@@ -313,6 +313,8 @@ test.describe('at 320 CSS pixels', () => {
             // The labelled key routes of `core` that only More holds.
             'Move up',
             'Move down',
+            // The shipped `link.edit`, which opens the link popover; the probe's toolbar shows the link stand-in instead.
+            'Link',
         ]);
     });
 
@@ -1138,9 +1140,11 @@ test('shows no check on a More row of a command that is no toggle, even while it
     await select(page, 'linked');
     await itemOf(page, 'More').click();
 
-    const row = page.getByRole('menuitem', { name: 'Link' });
-    await expect(row).toBeVisible();
-    await expect(row.locator('[data-test-id^="fondue-icons-check"]')).toHaveCount(0);
+    // The active link stand-in's row, then the row of the shipped `link.edit`, which the probe's toolbar does not show.
+    const rows = page.getByRole('menuitem', { name: 'Link' });
+    await expect(rows).toHaveCount(2);
+    await expect(rows.first()).toBeVisible();
+    await expect(rows.locator('[data-test-id^="fondue-icons-check"]')).toHaveCount(0);
 });
 
 test('opens More on a click with no pointer or key press before it, as browse mode and voice control send', async ({

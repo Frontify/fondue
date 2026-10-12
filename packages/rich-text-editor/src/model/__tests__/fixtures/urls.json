@@ -17,6 +17,8 @@
     { "input": "https://user:secret@example.com/", "ok": false, "code": "credentials" },
     { "input": "http://[::1", "ok": false, "code": "unparsable" },
     { "input": "https://exa mple.com", "ok": false, "code": "unparsable" },
+    { "input": "https:evil.com", "ok": false, "code": "unparsable" },
+    { "input": "HTTP:/evil.com", "ok": false, "code": "unparsable" },
     { "input": "https://example.com/\ud800", "ok": false, "code": "unparsable" },
     { "input": "https://frontify.com/brand", "ok": true, "href": "https://frontify.com/brand" },
     { "input": "  https://frontify.com/brand\n", "ok": true, "href": "https://frontify.com/brand" },

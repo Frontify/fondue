@@ -6,7 +6,8 @@ import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AnnouncerContext } from '#/bridge/announcer';
 import { bold, core } from '#/features';
 import { fixtureCodeBlockView } from '#/features/__tests__/fixtures/code-block/view';
-import { fixtureItalic, fixtureLink, fixtureList, fixtureToolbar } from '#/features/__tests__/fixtures/features';
+import { fixtureItalic, fixtureList, fixtureToolbar } from '#/features/__tests__/fixtures/features';
+import { links } from '#/features/links/feature';
 import {
     defineEditor,
     defineReactPresentation,
@@ -20,7 +21,7 @@ import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel(
-    [core(), bold(), fixtureItalic(), fixtureLink(), fixtureList(), fixtureToolbar(), fixtureCodeBlockView()],
+    [core(), bold(), fixtureItalic(), links(), fixtureList(), fixtureToolbar(), fixtureCodeBlockView()],
     { id: 'test.toolbar', version: 1 },
 );
 const ALLOW = { create: true, edit: true, remove: true, paste: true };

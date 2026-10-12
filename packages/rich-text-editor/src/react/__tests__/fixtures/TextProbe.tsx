@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 
 import { bold, code, core, heading, italic, quote, strike, subscript, superscript, underline } from '#/features';
 import { fixtureChromeViews } from '#/features/__tests__/fixtures/chrome/view';
-import { fixtureLink } from '#/features/__tests__/fixtures/features';
+import { links } from '#/features/links/feature';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON, defineFeature, toggleMark } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
@@ -34,7 +34,7 @@ const model = compileContentModel(
         superscript(),
         heading(),
         quote(),
-        fixtureLink(),
+        links(),
         fixtureChromeViews(),
         altGraphKeys(),
     ],

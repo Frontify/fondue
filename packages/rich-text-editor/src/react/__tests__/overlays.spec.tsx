@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineNodeView } from '#/bridge/define';
 import { fixtureCodeBlockView } from '#/features/__tests__/fixtures/code-block/view';
-import { fixtureItalic, fixtureLink, fixtureToolbar } from '#/features/__tests__/fixtures/features';
+import { fixtureItalic, fixtureToolbar } from '#/features/__tests__/fixtures/features';
 import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
 import { fixtureMediaImageView } from '#/features/__tests__/fixtures/media/view';
 import {
@@ -20,6 +20,7 @@ import {
     LinkForm,
 } from '#/features/__tests__/fixtures/overlays/overlays';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
@@ -33,7 +34,7 @@ import { type EditorHandle, type RichTextEditorBaseProps } from '../types';
 import { fixtureLocale, TOOLBAR } from './fixtures/ToolbarProbe';
 
 const model = compileContentModel(
-    [core(), bold(), fixtureItalic(), fixtureLink(), fixtureToolbar(), fixtureCodeBlockView(), fixtureMediaImageView()],
+    [core(), bold(), fixtureItalic(), links(), fixtureToolbar(), fixtureCodeBlockView(), fixtureMediaImageView()],
     { id: 'test.overlays', version: 1 },
 );
 const definition = defineEditor({ id: 'test.overlays', model });

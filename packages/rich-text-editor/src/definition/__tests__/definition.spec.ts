@@ -11,10 +11,10 @@ import {
     fixtureHeading,
     fixtureHistory,
     fixtureItalic,
-    fixtureLink,
     fixtureRedo,
 } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { compileContentModel, defineFeature, DefinitionError, type FeatureDeclaration } from '#/model';
 import { compiledModel } from '#/model/compile';
 
@@ -64,7 +64,7 @@ describe('compileDefinition', () => {
     });
 
     it('builds schema nodes in declared order and marks by rank, then declared order', () => {
-        const features = [core(), fixtureItalic(), fixtureBold(), fixtureColor(), fixtureLink(), fixtureHeading()];
+        const features = [core(), fixtureItalic(), fixtureBold(), fixtureColor(), links(), fixtureHeading()];
         const { schema } = compileDefinition(compileContentModel(features, { id: 'test', version: 1 }));
 
         expect(Object.keys(schema.nodes)).toEqual([
