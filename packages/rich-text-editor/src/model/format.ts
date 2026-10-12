@@ -71,6 +71,9 @@ export type DiagnosticCode =
     | FormatDiagnosticCode
     | 'migration.requires-review'
     | 'migration.unsupported'
+    | 'codecs.markdown-unsupported'
+    | 'codecs.lossy-output'
+    | 'codecs.override-failed'
     | 'reader.override-failed';
 
 export interface Diagnostic {

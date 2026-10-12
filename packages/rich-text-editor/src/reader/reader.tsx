@@ -57,7 +57,7 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
         options = { limits };
     }
     const { result, tree } = decodeToTree(document, model, options);
-    // Decode diagnostics stay first; render appends onto this same array.
+    // The decode diagnostics come first, as the codecs report them.
     const diagnostics: Diagnostic[] = [...result.diagnostics];
     let reason: 'unsupported' | 'invalid' = 'invalid';
     if (result.status === 'blocked') {
