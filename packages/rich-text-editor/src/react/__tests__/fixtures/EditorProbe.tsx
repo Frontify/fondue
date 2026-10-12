@@ -17,14 +17,16 @@ import {
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
+    type PersistenceService,
     RichTextEditor,
+    type SaveRequest,
 } from '#/index';
 import { compileContentModel, type ContentModel, type ContentNodeJSON } from '#/model';
 import { boldRules } from '#/react/playground.stories';
 import { RichTextReader } from '#/reader';
 import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
-import { setSelection } from '#/testing';
+import { createFakePersistenceService, setSelection } from '#/testing';
 
 const model = compileContentModel(
     [core(), bold(), fixtureLink(), fixtureHeadingSet(), boldRules(), fixtureChromeViews()],
@@ -95,6 +97,8 @@ declare global {
             readonly text: () => string | undefined;
             /** The undo steps of the runtime's history. */
             readonly undoDepth: () => number | undefined;
+            /** Each request the fake persistence service got, when the probe mounts with `persistence`. */
+            readonly saves: readonly SaveRequest[];
         };
     }
 }
@@ -118,6 +122,7 @@ export const EditorProbe = ({
     withReader = false,
     inForm = false,
     rerendered = {},
+    persistence = false,
     onChange,
 }: {
     readonly texts?: readonly string[];
@@ -137,9 +142,26 @@ export const EditorProbe = ({
     /** Puts the editor in a form. */
     readonly inForm?: boolean;
     readonly rerendered?: Rerendered;
+    /** Mounts with the reference fake persistence service, which records each request in `window.rte.saves`. */
+    readonly persistence?: boolean;
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
+    const [saves] = useState<SaveRequest[]>([]);
+    const [services] = useState(() => {
+        if (!persistence) {
+            return undefined;
+        }
+        const server = createFakePersistenceService();
+        const service: PersistenceService = {
+            save: (request, context) => {
+                saves.push(request);
+                return server.save(request, context);
+            },
+            read: server.read,
+        };
+        return { persistence: service };
+    });
     let defaultValue = storedOf(...texts);
     if (blocks !== undefined) {
         defaultValue = documentOf(blocks, ['core', 'fixture.chrome']);
@@ -182,9 +204,10 @@ export const EditorProbe = ({
                 setSelection,
                 text: () => runtime?.view?.state.doc.textContent,
                 undoDepth: () => (runtime === undefined ? undefined : undoDepth(runtime.state)),
+                saves,
             };
         }
-    }, []);
+    }, [saves]);
     const editor = (
         <>
             <button type="button">Before</button>
@@ -195,6 +218,7 @@ export const EditorProbe = ({
                 readOnly={readOnly}
                 {...(placeholder === undefined ? {} : { placeholder })}
                 {...(presentation === undefined ? {} : { presentation })}
+                {...(services === undefined ? {} : { services })}
                 {...rerendered}
                 ref={ref}
                 onDocumentChange={({ origin, commandId }) => onChange?.({ origin, commandId })}

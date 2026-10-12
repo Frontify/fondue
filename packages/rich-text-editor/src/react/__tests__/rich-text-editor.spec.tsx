@@ -40,7 +40,8 @@ import {
 import * as model from '#/model';
 import { type LoadedDocument, type PersistenceService } from '#/persistence/types';
 import { fixturesIn } from '#/reader/__tests__/helpers/helpers';
-import { type RuntimeHandle } from '#/runtime/runtime';
+import { type AsyncOperation } from '#/runtime/async';
+import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { type CommandResult, type DocumentChange } from '#/runtime/types';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
@@ -170,6 +171,35 @@ describe('RichTextEditor', () => {
 
         expect(first).not.toHaveBeenCalled();
         expect(second).toHaveBeenCalledTimes(1);
+        unmount();
+    });
+
+    it('aborts only the operations of the services member a rerender replaces', () => {
+        const uploads = { upload: vi.fn(), releaseUnused: vi.fn() };
+        const { handle, rerender, unmount } = mount({ services: { references: { search: vi.fn() }, uploads } });
+        const view = viewOf();
+        const start = (service: string) => {
+            let started: AsyncOperation | undefined;
+            act(() => {
+                started = runtimeOf(handle())?.startAsync({
+                    key: service,
+                    service,
+                    featureId: 'core',
+                    action: 'create',
+                    command: 'text.insert',
+                    run: () => new Promise(() => undefined),
+                });
+            });
+            return started;
+        };
+        const search = start('references');
+        const upload = start('uploads');
+
+        rerender({ services: { references: { search: vi.fn() }, uploads } });
+
+        expect(search?.controller.signal.aborted).toBe(true);
+        expect(upload?.controller.signal.aborted).toBe(false);
+        expect(viewOf()).toBe(view);
         unmount();
     });
 

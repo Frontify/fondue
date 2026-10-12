@@ -1,0 +1,1182 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { act, render } from '@testing-library/react';
+import fc from 'fast-check';
+import { createRef } from 'react';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { createPortalStore, type PortalEntry } from '#/bridge/portals';
+import { fixtureChromeViews } from '#/features/__tests__/fixtures/chrome/view';
+import { core } from '#/features/core/feature';
+import { bold } from '#/features/marks-bold/feature';
+import {
+    defineEditor,
+    type EditorHandle,
+    type OperationMetric,
+    type PersistenceOptions,
+    type PersistenceService,
+    RichTextEditor,
+    type SaveRequest,
+    type SaveResponse,
+    type ServiceContext,
+} from '#/index';
+import {
+    compileContentModel,
+    decodeDocument,
+    defineFeature,
+    type Diagnostic,
+    type Feature,
+    type JsonValue,
+    setBlock,
+} from '#/model';
+import { encodeTree } from '#/model/encode';
+import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
+import { createFakePersistenceService, runPersistenceConformance, setSelection, typeText } from '#/testing';
+import { STORAGE, stubStorage } from '#/testing/__tests__/fixtures/storage';
+import { createFakeServer } from '#/testing/persistence';
+
+vi.mock('#/bridge/portals', { spy: true });
+vi.mock('#/model/encode', { spy: true });
+const { createPortalStore: actualStore } = await vi.importActual<{
+    readonly createPortalStore: typeof createPortalStore;
+}>('#/bridge/portals');
+
+// A block whose new occurrences get their `nodeId` from the `node-ids` normalizer.
+const stampedBlock = defineFeature({
+    id: 'test.stamped',
+    version: 1,
+    requires: [{ id: 'core', version: 1 }],
+    nodes: {
+        stamped: {
+            group: 'block',
+            content: 'text*',
+            marks: [],
+            attrs: { nodeId: { type: 'string', required: true } },
+            html: ['aside', 0],
+            parse: [{ tag: 'aside' }],
+        },
+    },
+    commands: { 'test.stamped.set': setBlock('stamped', { toggle: true }) },
+});
+const features: readonly Feature[] = [core(), bold(), fixtureChromeViews(), stampedBlock()];
+const model = compileContentModel(features, { id: 'test.persistence', version: 1 });
+const definition = defineEditor({ id: 'test.persistence', model });
+const packageFile = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'package.json');
+const { version: PACKAGE_VERSION } = JSON.parse(readFileSync(packageFile, 'utf8')) as { readonly version: string };
+const WRITER: SaveRequest['writer'] = {
+    build: PACKAGE_VERSION,
+    formatVersion: 1,
+    model: { id: 'test.persistence', version: 1 },
+    capabilities: model.capabilities.map(({ id, version }) => ({ id, version })),
+};
+
+const para = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
+const chromeBlock = (nodeId: string) => ({
+    type: 'chrome_block',
+    attrs: { nodeId, language: 'plain', checked: false },
+    content: [{ type: 'text', text: 'code' }],
+});
+const loaded = (revision: string | null, ...blocks: readonly JsonValue[]) => ({
+    documentId: 'document-1',
+    revision,
+    document: {
+        format: 'frontify.rich-text' as const,
+        formatVersion: 1 as const,
+        model: { id: 'test.persistence', version: 1 },
+        requiredCapabilities: [
+            { id: 'core', version: 1 },
+            { id: 'fixture.chrome', version: 1 },
+        ],
+        content: {
+            type: 'doc',
+            attrs: { lang: null, dir: 'auto' },
+            content: blocks,
+        } as never,
+    },
+});
+const textOf = (request: SaveRequest) => JSON.stringify(request.document.content).match(/"text":"([^"]*)"/)?.[1];
+
+/** One `save` call: what it got, when, and how the test answers it. */
+interface Call {
+    readonly request: SaveRequest;
+    readonly context: ServiceContext;
+    readonly at: number;
+    /** Resolves with `response`, or with the reference fake's answer when none is given. */
+    answer(response?: SaveResponse): void;
+    fail(): void;
+}
+
+/** A service in front of the reference fake that records each call; `held` saves wait until the test answers them. */
+const serviceOf = (held = false) => {
+    const server = createFakePersistenceService();
+    const calls: Call[] = [];
+    const service = {
+        save: vi.fn(
+            (request: SaveRequest, context: ServiceContext) =>
+                new Promise<SaveResponse>((resolve, reject) => {
+                    const call: Call = {
+                        request,
+                        context,
+                        at: Date.now(),
+                        answer: (response) => {
+                            if (response === undefined) {
+                                resolve(server.save(request, context));
+                                return;
+                            }
+                            resolve(response);
+                        },
+                        fail: () => reject(new Error('The connection dropped.')),
+                    };
+                    calls.push(call);
+                    if (!held) {
+                        call.answer();
+                    }
+                }),
+        ),
+        read: vi.fn((documentId: string, context: ServiceContext) => server.read(documentId, context)),
+    };
+    return { service, calls, server };
+};
+
+/** Lets every pending promise continuation run, as the browser does between tasks. */
+const settle = () =>
+    act(async () => {
+        await vi.advanceTimersByTimeAsync(0);
+    });
+
+interface MountOptions {
+    readonly service?: PersistenceService;
+    readonly revision?: string | null;
+    readonly persistenceOptions?: PersistenceOptions;
+    readonly blocks?: readonly JsonValue[];
+    /** Time that passes between the mount and its first frame. */
+    readonly beforeReady?: number;
+}
+
+/** Mounts an editor on a test then runs its first frame, so it is `ready`. */
+const mount = (options: MountOptions = {}) => {
+    const ref = createRef<EditorHandle<object>>();
+    const diagnostics: Diagnostic[] = [];
+    const metrics: OperationMetric[] = [];
+    const props: Record<string, unknown> = {};
+    if (options.persistenceOptions !== undefined) {
+        props.persistenceOptions = options.persistenceOptions;
+    }
+    let revision: string | null = null;
+    if (options.revision !== undefined) {
+        revision = options.revision;
+    }
+    const blocks = options.blocks ?? [para('ab')];
+    let generated = 0;
+    const generateId = () => {
+        generated += 1;
+        return `id-${generated}`;
+    };
+    const element = (readOnly: boolean, service = options.service) => {
+        const managed: Record<string, unknown> = { ...props };
+        if (service !== undefined) {
+            managed.services = { persistence: service };
+        }
+        return (
+            <RichTextEditor
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={loaded(revision, ...blocks)}
+                generateId={generateId}
+                readOnly={readOnly}
+                onDiagnostic={(diagnostic) => diagnostics.push(diagnostic)}
+                ref={ref}
+                {...managed}
+            />
+        );
+    };
+    const view = render(element(false));
+    const handle = () => {
+        if (ref.current === null) {
+            throw new Error('no handle');
+        }
+        return ref.current;
+    };
+    handle().subscribe('operationMetric', (metric) => metrics.push(metric));
+    act(() => {
+        vi.advanceTimersByTime(options.beforeReady ?? 0);
+        vi.advanceTimersToNextFrame();
+    });
+    return {
+        ...view,
+        handle,
+        diagnostics,
+        metrics,
+        rerender: (readOnly: boolean, service?: PersistenceService) => view.rerender(element(readOnly, service)),
+        type: (text: string) => act(() => typeText(handle(), text)),
+        advance: (ms: number) =>
+            act(() => {
+                vi.advanceTimersByTime(ms);
+            }),
+    };
+};
+
+// every browser storage API fails while this suite runs.
+let storage: ReturnType<typeof stubStorage>;
+beforeAll(() => {
+    storage = stubStorage();
+});
+afterAll(() => {
+    const { accessed } = storage;
+    storage.restore();
+    expect(accessed).toEqual([]);
+});
+/** Seeded so backoff delays stay repeatable. */
+const seededRandom = (seed: number) => {
+    let state = seed >>> 0;
+    return () => {
+        state = (state + 0x6d2b79f5) >>> 0;
+        let value = Math.imul(state ^ (state >>> 15), state | 1);
+        value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+        return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296;
+    };
+};
+beforeEach(() => {
+    vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockImplementation(seededRandom(1));
+});
+afterEach(() => {
+    vi.useRealTimers();
+});
+
+describe('save state at load', () => {
+    it('runs the persistence suite with every browser storage API failing', () => {
+        for (const name of STORAGE) {
+            expect(() => {
+                Reflect.get(Reflect.get(globalThis, name) as object, 'open');
+            }).toThrow(name);
+        }
+        // The probe above is the only access this suite may make.
+        expect(storage.accessed.splice(0)).toEqual([...STORAGE]);
+    });
+
+    it('reports unmanaged without services.persistence, after mount and after typing', () => {
+        const { handle, type, unmount } = mount();
+        expect(handle().getSaveStatus().state).toBe('unmanaged');
+        type('x');
+        expect(handle().getSaveStatus()).toMatchObject({ state: 'unmanaged', latestSequence: 1 });
+        unmount();
+    });
+
+    it('resolves requestCommit blocked with unmanaged without services.persistence', async () => {
+        const { handle, unmount } = mount();
+        await expect(handle().requestCommit({ reason: 'manual' })).resolves.toEqual({
+            status: 'blocked',
+            code: 'unmanaged',
+        });
+        unmount();
+    });
+
+    it.each([
+        ['a new record', null],
+        ['an existing record', 'revision-7'],
+    ])('sends no write for %s over 60 seconds after load', async (_name, revision) => {
+        const { service } = serviceOf();
+        const { advance, unmount } = mount({ service, revision });
+        advance(60_000);
+        await settle();
+        expect(service.save).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('starts a new record at latestSequence 0 and acknowledgedSequence -1', () => {
+        const { handle, unmount } = mount({ service: serviceOf().service });
+        expect(handle().getSaveStatus()).toEqual({
+            state: 'clean',
+            latestSequence: 0,
+            acknowledgedSequence: -1,
+            revision: null,
+            inFlightOperationId: null,
+            diagnostic: null,
+        });
+        unmount();
+    });
+
+    it('starts an existing record at latestSequence 0 and acknowledgedSequence 0', () => {
+        const { handle, unmount } = mount({
+            service: serviceOf().service,
+            revision: 'revision-7',
+        });
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'clean',
+            latestSequence: 0,
+            acknowledgedSequence: 0,
+            revision: 'revision-7',
+        });
+        expect(handle().getSnapshot().acknowledgedRevision).toBe('revision-7');
+        unmount();
+    });
+});
+
+describe('writes', () => {
+    it('keeps at most one write in flight across random edits and delayed responses', async () => {
+        const step = fc.oneof(
+            fc.constant({ kind: 'type' as const }),
+            fc.record({ kind: fc.constant('advance' as const), ms: fc.integer({ min: 0, max: 40_000 }) }),
+            fc.record({ kind: fc.constant('answer' as const), saved: fc.boolean() }),
+        );
+        await fc.assert(
+            fc.asyncProperty(fc.array(step, { maxLength: 25 }), async (steps) => {
+                const server = createFakePersistenceService();
+                let open = 0;
+                let most = 0;
+                const waiting: { readonly saved: () => void; readonly failed: () => void }[] = [];
+                const service: PersistenceService = {
+                    save: (request, context) =>
+                        new Promise((resolve, reject) => {
+                            open += 1;
+                            most = Math.max(most, open);
+                            let ended = false;
+                            const end = () => {
+                                if (!ended) {
+                                    ended = true;
+                                    open -= 1;
+                                }
+                            };
+                            // An aborted request is no longer in flight for the coordinator.
+                            context.signal.addEventListener('abort', end);
+                            waiting.push({
+                                saved: () => {
+                                    end();
+                                    resolve(server.save(request, context));
+                                },
+                                failed: () => {
+                                    end();
+                                    reject(new Error('lost'));
+                                },
+                            });
+                        }),
+                    read: server.read,
+                };
+                const { type, advance, unmount } = mount({ service });
+                for (const next of steps) {
+                    if (next.kind === 'type') {
+                        type('x');
+                    } else if (next.kind === 'advance') {
+                        advance(next.ms);
+                    } else {
+                        const first = waiting.shift();
+                        if (first !== undefined && next.saved) {
+                            first.saved();
+                        } else if (first !== undefined) {
+                            first.failed();
+                        }
+                    }
+                    await settle();
+                }
+                unmount();
+                expect(most).toBeLessThanOrEqual(1);
+            }),
+            { numRuns: 40 },
+        );
+    });
+
+    it('writes at 5 s and 10 s of continuous typing and 500 ms after the last character', async () => {
+        const { service, calls } = serviceOf();
+        const { type, advance, unmount } = mount({ service });
+        const start = Date.now();
+        for (let character = 0; character < 120; character += 1) {
+            type('x');
+            advance(100);
+            await settle();
+        }
+        advance(1000);
+        await settle();
+        expect(calls.map(({ at }) => at - start)).toEqual([5000, 10_000, 12_400]);
+        expect(calls.map(({ request }) => textOf(request)?.length)).toEqual([52, 102, 122]);
+        unmount();
+    });
+
+    it('neither serializes the document nor schedules a write for 100 selection moves', async () => {
+        const { service } = serviceOf();
+        const { handle, advance, unmount } = mount({ service, blocks: [para('abcdef')] });
+        const status = handle().getSaveStatus();
+        vi.mocked(encodeTree).mockClear();
+        for (let move = 0; move < 100; move += 1) {
+            act(() => setSelection(handle(), { text: 'abcdef', from: move % 6, to: (move % 6) + 1 }));
+        }
+        expect(encodeTree).not.toHaveBeenCalled();
+        advance(10_000);
+        await settle();
+        expect(service.save).not.toHaveBeenCalled();
+        expect(handle().getSaveStatus()).toBe(status);
+        unmount();
+    });
+
+    it('builds each write from the ID source, the snapshot, the acknowledged revision and the writer', async () => {
+        const { service, calls } = serviceOf();
+        const { handle, type, advance, unmount } = mount({ service });
+        const snapshots = [];
+        type('x');
+        snapshots.push(handle().getSnapshot());
+        advance(500);
+        await settle();
+        type('y');
+        snapshots.push(handle().getSnapshot());
+        advance(500);
+        await settle();
+
+        expect(calls[0]?.request.operationId).toMatch(/^id-/);
+        expect(calls[1]?.request.operationId).toMatch(/^id-/);
+        expect(calls[0]?.request.operationId).not.toBe(calls[1]?.request.operationId);
+        expect(calls.map(({ request }) => ({ ...request, operationId: 'id' }))).toEqual([
+            {
+                operationId: 'id',
+                stamp: snapshots[0]?.stamp,
+                baseRevision: null,
+                document: snapshots[0]?.document,
+                writer: WRITER,
+            },
+            {
+                operationId: 'id',
+                stamp: snapshots[1]?.stamp,
+                baseRevision: 'revision-1',
+                document: snapshots[1]?.document,
+                writer: WRITER,
+            },
+        ]);
+        unmount();
+    });
+
+    it.each([
+        ['another operation ID', (request: SaveRequest) => ({ ...request, operationId: 'operation-99' })],
+        ['another generation', (request: SaveRequest) => ({ ...request, stamp: { ...request.stamp, generation: 1 } })],
+        [
+            'a sequence one higher',
+            (request: SaveRequest) => ({
+                ...request,
+                stamp: { ...request.stamp, sequence: request.stamp.sequence + 1 },
+            }),
+        ],
+        [
+            'another session ID',
+            (request: SaveRequest) => ({ ...request, stamp: { ...request.stamp, sessionId: 'other' } }),
+        ],
+        [
+            'another document ID',
+            (request: SaveRequest) => ({ ...request, stamp: { ...request.stamp, documentId: 'document-2' } }),
+        ],
+    ])('ignores an acknowledgment with %s and warns persistence.ack-mismatch', async (_name, change) => {
+        const { service, calls } = serviceOf(true);
+        const { handle, diagnostics, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        const [call] = calls;
+        if (call === undefined) {
+            throw new Error('no write');
+        }
+        const other = change(call.request);
+        call.answer({
+            status: 'saved',
+            acknowledgment: { operationId: other.operationId, stamp: other.stamp, revision: 'revision-1' },
+        });
+        await settle();
+
+        expect(diagnostics.map(({ code, severity }) => [code, severity])).toEqual([
+            ['persistence.ack-mismatch', 'warning'],
+        ]);
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'saving',
+            acknowledgedSequence: -1,
+            revision: null,
+            inFlightOperationId: call.request.operationId,
+        });
+        unmount();
+    });
+
+    it('stays dirty after an older acknowledgment and bases the next write on its revision (trace 15.7)', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        type('y');
+        calls[0]?.answer();
+        await settle();
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'dirty',
+            latestSequence: 2,
+            acknowledgedSequence: 1,
+            revision: 'revision-1',
+        });
+
+        advance(500);
+        expect(calls[1]?.request).toMatchObject({ baseRevision: 'revision-1', stamp: { sequence: 2 } });
+        calls[1]?.answer();
+        await settle();
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'clean',
+            latestSequence: 2,
+            acknowledgedSequence: 2,
+            revision: 'revision-2',
+        });
+        unmount();
+    });
+
+    it.each(['a rejected promise', 'a timeout'])(
+        'replays the same request after %s, writer included',
+        async (cause) => {
+            const { service, calls } = serviceOf(true);
+            const { handle, type, advance, unmount } = mount({ service });
+            type('x');
+            advance(500);
+            if (cause === 'a timeout') {
+                advance(30_000);
+                expect(calls[0]?.context.signal.aborted).toBe(true);
+            } else {
+                calls[0]?.fail();
+            }
+            await settle();
+            expect(handle().getSaveStatus().state).toBe('uncertain');
+
+            advance(1200);
+            const [first, replayed] = calls.map(({ request }) => request);
+            expect(calls).toHaveLength(2);
+            expect(replayed).toEqual(first);
+            expect(replayed?.writer).toEqual(WRITER);
+            unmount();
+        },
+    );
+
+    it('sends only replays while uncertain, then the newer snapshot once the replay is answered', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        calls[0]?.fail();
+        await settle();
+        for (let round = 0; round < 3; round += 1) {
+            type('y');
+            advance(10_000);
+            calls.at(-1)?.fail();
+            await settle();
+        }
+        const first = calls[0]?.request.operationId;
+        expect(calls.map(({ request }) => request.operationId)).toEqual(calls.map(() => first));
+
+        advance(20_000);
+        // Every replay carries the stamp and document of the first try, not the newer edits.
+        for (const call of calls) {
+            expect(call.request).toEqual(calls[0]?.request);
+        }
+        calls.at(-1)?.answer();
+        await settle();
+        advance(500);
+        expect(calls.at(-1)?.request.operationId).not.toBe(first);
+        expect(textOf(calls.at(-1)?.request as SaveRequest)).toBe('xyyyab');
+        expect(handle().getSaveStatus().state).toBe('saving');
+        unmount();
+    });
+
+    it('replays the unresolved write unchanged on the online event, ahead of newer edits', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        const onLine = vi.spyOn(navigator, 'onLine', 'get');
+        onLine.mockReturnValue(false);
+        calls[0]?.fail();
+        await settle();
+        expect(handle().getSaveStatus().state).toBe('offline');
+        type('y');
+        advance(10_000);
+        expect(calls).toHaveLength(1);
+
+        onLine.mockReturnValue(true);
+        act(() => {
+            window.dispatchEvent(new Event('online'));
+        });
+        onLine.mockRestore();
+        expect(calls).toHaveLength(2);
+        const [first, replayed] = calls.map(({ request }) => request);
+        expect(replayed).toEqual(first);
+        unmount();
+    });
+
+    it('replays after about 1, 2, 4, 8 and 16 seconds, then reports retries-exhausted', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, diagnostics, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        const failedAt: number[] = [];
+        for (let attempt = 0; attempt < 6; attempt += 1) {
+            failedAt.push(Date.now());
+            calls.at(-1)?.fail();
+            await settle();
+            advance(20_000);
+        }
+        const delays = calls.slice(1).map(({ at }, index) => at - (failedAt[index] ?? 0));
+        for (const [index, delay] of delays.entries()) {
+            const expected = 1000 * 2 ** index;
+            expect(delay).toBeGreaterThanOrEqual(expected * 0.8);
+            expect(delay).toBeLessThanOrEqual(expected * 1.2);
+        }
+        expect(delays).toHaveLength(5);
+        expect(new Set(calls.map(({ request }) => request.operationId)).size).toBe(1);
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'error',
+            diagnostic: { code: 'persistence.retries-exhausted' },
+        });
+        expect(diagnostics.map(({ code }) => code)).toEqual(['persistence.retries-exhausted']);
+        unmount();
+    });
+
+    it('gives equal seeds equal backoff delays and different seeds different ones', async () => {
+        const delaysFor = async (seed: number) => {
+            const random = vi.spyOn(Math, 'random').mockImplementation(seededRandom(seed));
+            const { service, calls } = serviceOf(true);
+            const { type, advance, unmount } = mount({ service });
+            type('x');
+            advance(500);
+            const failedAt: number[] = [];
+            for (let attempt = 0; attempt < 5; attempt += 1) {
+                failedAt.push(Date.now());
+                calls.at(-1)?.fail();
+                await settle();
+                advance(20_000);
+            }
+            unmount();
+            random.mockRestore();
+            return calls.slice(1).map(({ at }, index) => at - (failedAt[index] ?? 0));
+        };
+        const seven = await delaysFor(7);
+        expect(await delaysFor(7)).toEqual(seven);
+        expect(await delaysFor(8)).not.toEqual(seven);
+        expect(seven.some((delay, index) => delay !== 1000 * 2 ** index)).toBe(true);
+    });
+
+    it('reports the operation ID in flight, and null before and after', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, advance, unmount } = mount({ service });
+        type('x');
+        expect(handle().getSaveStatus().inFlightOperationId).toBeNull();
+        advance(500);
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'saving',
+            inFlightOperationId: calls[0]?.request.operationId,
+        });
+        calls[0]?.answer();
+        await settle();
+        expect(handle().getSaveStatus()).toMatchObject({ state: 'clean', inFlightOperationId: null });
+        unmount();
+    });
+
+    it('reports no operation ID in flight during the backoff of an uncertain write', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        calls[0]?.fail();
+        await settle();
+        expect(handle().getSaveStatus()).toMatchObject({ state: 'uncertain', inFlightOperationId: null });
+        advance(1200);
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'saving',
+            inFlightOperationId: calls[0]?.request.operationId,
+        });
+        unmount();
+    });
+});
+
+describe('persistence options', () => {
+    it('follows delayMs, maxWaitMs, timeoutMs and maxRetries', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, diagnostics, type, advance, unmount } = mount({
+            service,
+            persistenceOptions: { delayMs: 100, maxWaitMs: 300, timeoutMs: 2000, maxRetries: 2 },
+        });
+        const start = Date.now();
+        type('x');
+        advance(99);
+        expect(calls).toHaveLength(0);
+        advance(1);
+        expect(calls.map(({ at }) => at - start)).toEqual([100]);
+        calls[0]?.answer();
+        await settle();
+
+        // Typing every 50 ms keeps resetting the delay, so only the longest wait writes.
+        const typing = Date.now();
+        for (let character = 0; character < 6; character += 1) {
+            type('y');
+            advance(50);
+        }
+        expect(calls.map(({ at }) => at - typing).slice(1)).toEqual([300]);
+        advance(1999);
+        expect(calls[1]?.context.signal.aborted).toBe(false);
+        advance(1);
+        expect(calls[1]?.context.signal.aborted).toBe(true);
+        await settle();
+
+        // Two replays, then no more.
+        advance(1200);
+        calls[2]?.fail();
+        await settle();
+        advance(2400);
+        calls[3]?.fail();
+        await settle();
+        advance(60_000);
+        expect(calls).toHaveLength(4);
+        expect(new Set(calls.slice(1).map(({ request }) => request.operationId)).size).toBe(1);
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'error',
+            diagnostic: { code: 'persistence.retries-exhausted', details: { retries: 2 } },
+        });
+        expect(diagnostics.map(({ code }) => code)).toEqual(['persistence.retries-exhausted']);
+        unmount();
+    });
+
+    it('writes nothing on its own with autosave off', async () => {
+        const { service } = serviceOf();
+        const { handle, type, advance, unmount } = mount({
+            service,
+            persistenceOptions: { autosave: 'off' },
+        });
+        type('x');
+        advance(60_000);
+        await settle();
+        expect(service.save).not.toHaveBeenCalled();
+        expect(handle().getSaveStatus().state).toBe('dirty');
+        unmount();
+    });
+});
+
+describe('conflicts and rejections', () => {
+    const conflicted = async (options: PersistenceOptions = {}) => {
+        const services = serviceOf(true);
+        const mounted = mount({ service: services.service, persistenceOptions: options });
+        // The server holds a newer copy of the record.
+        await services.server.save(
+            {
+                operationId: 'elsewhere-1',
+                stamp: { documentId: 'document-1', sessionId: 'elsewhere', generation: 0, sequence: 1 },
+                baseRevision: null,
+                document: loaded(null, para('remote')).document,
+                writer: WRITER,
+            },
+            { signal: new AbortController().signal, session: mounted.handle().getSummary().session },
+        );
+        mounted.type('x');
+        mounted.advance(500);
+        services.calls[0]?.answer();
+        await settle();
+        return { ...mounted, calls: services.calls, service: services.service };
+    };
+
+    it('pauses writes on a conflict and keeps local content editable', async () => {
+        const { handle, calls, diagnostics, type, advance, unmount } = await conflicted();
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'conflict',
+            diagnostic: { code: 'persistence.conflict', details: { currentRevision: 'revision-1' } },
+        });
+        expect(diagnostics.map(({ code }) => code)).toEqual(['persistence.conflict']);
+
+        type('y');
+        advance(10_000);
+        await settle();
+        expect(calls).toHaveLength(1);
+        expect(JSON.stringify(handle().getSnapshot().document)).toContain('xyab');
+        unmount();
+    });
+
+    it('never retries against the server revision on its own', async () => {
+        const { calls, type, advance, unmount } = await conflicted();
+        type('y');
+        advance(60_000);
+        await settle();
+        expect(calls.filter(({ request }) => request.baseRevision === 'revision-1')).toEqual([]);
+        expect(calls).toHaveLength(1);
+        unmount();
+    });
+
+    it('hands one read of the server copy and the local snapshot to onConflict', async () => {
+        const onConflict = vi.fn();
+        const { service, handle, unmount } = await conflicted({ onConflict });
+        await settle();
+        expect(service.read).toHaveBeenCalledTimes(1);
+        expect(service.read.mock.calls[0]?.[0]).toBe('document-1');
+        expect(onConflict).toHaveBeenCalledTimes(1);
+        const [remote, local] = onConflict.mock.calls[0] as [{ readonly revision: string }, unknown];
+        expect(remote).toMatchObject({ documentId: 'document-1', revision: 'revision-1' });
+        expect(JSON.stringify(remote)).toContain('remote');
+        expect(local).toBe(handle().getSnapshot());
+        expect(JSON.stringify(local)).toContain('xab');
+        unmount();
+    });
+
+    it('hands null to onConflict when the read fails', async () => {
+        const onConflict = vi.fn();
+        const { service, calls } = serviceOf(true);
+        service.read.mockRejectedValueOnce(new Error('The read failed.'));
+        const { handle, type, advance, unmount } = mount({
+            service,
+            persistenceOptions: { onConflict },
+        });
+        type('x');
+        advance(500);
+        calls[0]?.answer({ status: 'conflict', currentRevision: 'revision-9' });
+        await settle();
+        expect(service.read).toHaveBeenCalledTimes(1);
+        expect(onConflict).toHaveBeenCalledTimes(1);
+        expect(onConflict).toHaveBeenCalledWith(null, handle().getSnapshot());
+        unmount();
+    });
+
+    it.each(['forbidden', 'invalid', 'incompatible-writer'] as const)(
+        'enters error with the service diagnostics on %s, with no retry',
+        async (code) => {
+            const { service, calls } = serviceOf(true);
+            const { handle, diagnostics, type, advance, unmount } = mount({ service });
+            const reported: Diagnostic = {
+                code: 'format.invalid-structure',
+                severity: 'error',
+                messageKey: `server.${code}`,
+            };
+            const alsoReported: Diagnostic = { ...reported, messageKey: `server.${code}.detail` };
+            type('x');
+            advance(500);
+            calls[0]?.answer({ status: 'rejected', code, diagnostics: [reported, alsoReported] });
+            await settle();
+            type('y');
+            advance(60_000);
+            await settle();
+
+            expect(handle().getSaveStatus()).toMatchObject({ state: 'error', diagnostic: reported });
+            expect(diagnostics).toEqual([reported, alsoReported]);
+            expect(calls).toHaveLength(1);
+            unmount();
+        },
+    );
+});
+
+describe('disposal', () => {
+    it('aborts the signal of the write in flight on dispose', () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        act(() => handle().dispose());
+        expect(calls[0]?.context.signal.aborted).toBe(true);
+        expect(handle().getSaveStatus().inFlightOperationId).toBeNull();
+        unmount();
+    });
+
+    it('warns persistence.disposed-dirty on dispose with unsaved changes and starts no write', async () => {
+        const { service } = serviceOf();
+        const { handle, diagnostics, type, advance, unmount } = mount({ service });
+        type('x');
+        act(() => handle().dispose());
+        advance(10_000);
+        await settle();
+        expect(diagnostics.map(({ code, severity }) => [code, severity])).toEqual([
+            ['persistence.disposed-dirty', 'warning'],
+        ]);
+        expect(service.save).not.toHaveBeenCalled();
+        unmount();
+    });
+});
+
+describe('the runtime with a save coordinator', () => {
+    it('warns of an undeclared capability on decode and saves the corrected list after one edit', async () => {
+        const boldText = { type: 'text', text: 'ab', marks: [{ type: 'bold' }] };
+        const blocks = [{ type: 'paragraph', attrs: { lang: null }, content: [boldText] }];
+        const decoded = decodeDocument(loaded(null, ...blocks).document, model);
+        expect(decoded.status).toBe('editable');
+        expect(decoded.diagnostics).toEqual([
+            {
+                code: 'format.capability-undeclared',
+                severity: 'warning',
+                messageKey: 'format.capability-undeclared',
+                path: '/requiredCapabilities',
+                details: { capability: 'marks.bold' },
+            },
+        ]);
+        const { service, calls } = serviceOf();
+        const { type, advance, unmount } = mount({ service, blocks });
+        type('x');
+        advance(500);
+        await settle();
+        expect(calls[0]?.request.document.requiredCapabilities).toEqual([
+            { id: 'core', version: 1 },
+            { id: 'marks.bold', version: 1 },
+        ]);
+        unmount();
+    });
+
+    it('notifies selector stores, then emits the change, selection, save status and metric', () => {
+        const { handle, type, unmount } = mount({ service: serviceOf().service });
+        const runtime = runtimeOf(handle());
+        const order: string[] = [];
+        runtime?.watch(
+            () => handle().getSummary().sequence,
+            Object.is,
+            () => order.push('selector'),
+        );
+        for (const event of ['documentChange', 'selectionChange', 'saveStatusChange', 'operationMetric'] as const) {
+            handle().subscribe(event, () => order.push(event));
+        }
+        act(() => setSelection(handle(), { text: 'ab' }));
+        order.length = 0;
+        type('x');
+        expect(order).toEqual(['selector', 'documentChange', 'selectionChange', 'saveStatusChange', 'operationMetric']);
+
+        // A caret that stays in the same kind of block leaves the selection summary as it was.
+        order.length = 0;
+        type('y');
+        expect(order).toEqual(['selector', 'documentChange', 'saveStatusChange', 'operationMetric']);
+        unmount();
+    });
+
+    it('emits undo as a history change and autosaves it', async () => {
+        const { service, calls } = serviceOf();
+        const { handle, type, advance, unmount } = mount({ service });
+        const origins: string[] = [];
+        handle().subscribe('documentChange', ({ origin }) => origins.push(origin));
+        type('x');
+        advance(500);
+        await settle();
+        act(() => {
+            (handle() as unknown as Pick<RuntimeHandle, 'execute'>).execute('history.undo');
+        });
+        advance(500);
+        await settle();
+        expect(origins).toEqual(['input', 'history']);
+        expect(calls.map(({ request }) => textOf(request))).toEqual(['xab', 'ab']);
+        unmount();
+    });
+
+    it('keeps the save state and the autosave due time across two mode changes', async () => {
+        const { service, calls } = serviceOf();
+        const { handle, type, advance, rerender, unmount } = mount({ service });
+        type('x');
+        const due = Date.now() + 500;
+        const status = handle().getSaveStatus();
+        advance(200);
+        rerender(true);
+        expect(handle().getSaveStatus()).toBe(status);
+        rerender(false);
+        expect(handle().getSaveStatus()).toBe(status);
+        advance(1000);
+        await settle();
+        expect(calls.map(({ at }) => at)).toEqual([due]);
+        unmount();
+    });
+
+    it('stops autosave once a node view update faults a dirty session', async () => {
+        vi.mocked(createPortalStore).mockImplementationOnce(() => {
+            const store = actualStore();
+            return {
+                ...store,
+                set: (entry: PortalEntry) => {
+                    if (entry.state.attrs.language === 'boom') {
+                        throw new Error('node view failed');
+                    }
+                    store.set(entry);
+                },
+            };
+        });
+        const { service } = serviceOf();
+        const { handle, type, advance, unmount } = mount({
+            service,
+            blocks: [para('ab'), chromeBlock('b1')],
+        });
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(0);
+        });
+        type('x');
+        act(() => {
+            runtimeOf(handle())?.nodeActions('b1').update({ language: 'boom' });
+        });
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(0);
+        });
+        expect(handle().getSummary().phase).toBe('faulted');
+        expect(handle().getSaveStatus().state).toBe('dirty');
+
+        advance(10_000);
+        await settle();
+        expect(service.save).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it.each(['a backoff replay', 'the online event'])(
+        'sends no write through %s once a dirty session faulted',
+        async (path) => {
+            vi.mocked(createPortalStore).mockImplementationOnce(() => {
+                const store = actualStore();
+                return {
+                    ...store,
+                    set: (entry: PortalEntry) => {
+                        if (entry.state.attrs.language === 'boom') {
+                            throw new Error('node view failed');
+                        }
+                        store.set(entry);
+                    },
+                };
+            });
+            const { service, calls } = serviceOf(true);
+            const { handle, type, advance, unmount } = mount({
+                service,
+                blocks: [para('ab'), chromeBlock('b1')],
+            });
+            await act(async () => {
+                await vi.advanceTimersByTimeAsync(0);
+            });
+            type('x');
+            advance(500);
+            act(() => {
+                runtimeOf(handle())?.nodeActions('b1').update({ language: 'boom' });
+            });
+            await act(async () => {
+                await vi.advanceTimersByTimeAsync(0);
+            });
+            expect(handle().getSummary().phase).toBe('faulted');
+            const onLine = vi.spyOn(navigator, 'onLine', 'get');
+            onLine.mockReturnValue(path === 'a backoff replay');
+            calls[0]?.fail();
+            await settle();
+            onLine.mockReturnValue(true);
+            act(() => {
+                window.dispatchEvent(new Event('online'));
+            });
+            advance(10_000);
+            await settle();
+            onLine.mockRestore();
+            expect(service.save).toHaveBeenCalledTimes(1);
+            unmount();
+        },
+    );
+
+    it('keeps the write in flight across rerenders that pass services inline with the same functions', () => {
+        const { service, calls } = serviceOf(true);
+        const { type, advance, rerender, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        for (let render = 0; render < 3; render += 1) {
+            rerender(false, { save: service.save, read: service.read });
+        }
+        expect(service.save).toHaveBeenCalledTimes(1);
+        expect(calls[0]?.context.signal.aborted).toBe(false);
+        unmount();
+    });
+
+    it('replays the write in flight through a replaced services.persistence', async () => {
+        const first = serviceOf(true);
+        const second = serviceOf(true);
+        const { handle, type, advance, rerender, unmount } = mount({ service: first.service });
+        type('x');
+        advance(500);
+        const view = runtimeOf(handle())?.view;
+        rerender(false, second.service);
+        const [held] = first.calls;
+        expect(held?.context.signal.aborted).toBe(true);
+        expect(second.calls.map(({ request }) => request)).toEqual([held?.request]);
+
+        held?.answer();
+        await settle();
+        expect(handle().getSaveStatus()).toMatchObject({ state: 'saving', acknowledgedSequence: -1 });
+        second.calls[0]?.answer();
+        await settle();
+        expect(handle().getSaveStatus()).toMatchObject({ state: 'clean', acknowledgedSequence: 1 });
+        expect(runtimeOf(handle())?.view).toBe(view);
+        unmount();
+    });
+
+    it('runs the node-ids normalizer in a managed session with no service call', () => {
+        const failing = () => {
+            throw new Error('A normalizer reached a service.');
+        };
+        const service = { save: vi.fn(failing), read: vi.fn(failing) };
+        const { handle, metrics, unmount } = mount({ service });
+        metrics.length = 0;
+        act(() => {
+            (handle() as unknown as Pick<RuntimeHandle, 'execute'>).execute('test.stamped.set');
+        });
+        expect(metrics.map(({ kind, normalizationTransactions }) => [kind, normalizationTransactions])).toEqual([
+            ['commit', 1],
+        ]);
+        expect(service.save).not.toHaveBeenCalled();
+        expect(service.read).not.toHaveBeenCalled();
+        unmount();
+    });
+});
+
+describe('operation metrics', () => {
+    it('emits one metric per mount, commit, paste and save round trip, with every field set', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, metrics, type, advance, unmount } = mount({ service, beforeReady: 25 });
+        const common = {
+            session: handle().getSummary().session,
+            packageVersion: PACKAGE_VERSION,
+            model: { id: 'test.persistence', version: 1 },
+            capabilityIds: model.capabilities.map(({ id }) => id),
+            normalizationTransactions: 0,
+        };
+        type('x');
+        act(() => {
+            const view = runtimeOf(handle())?.view;
+            view?.dispatch(view.state.tr.insertText('p').setMeta('uiEvent', 'paste'));
+            view?.dispatch(view.state.tr.insertText('d').setMeta('uiEvent', 'drop'));
+        });
+        advance(500);
+        advance(40);
+        calls[0]?.fail();
+        await settle();
+        advance(1200);
+        const [, replay] = calls;
+        if (replay === undefined) {
+            throw new Error('no replay');
+        }
+        const replayedFor = Date.now() - replay.at;
+        replay.answer();
+        await settle();
+
+        expect(metrics).toEqual([
+            { ...common, kind: 'mount', durationMs: 16, failureCode: null },
+            { ...common, kind: 'commit', durationMs: 0, failureCode: null },
+            { ...common, kind: 'paste', durationMs: 0, failureCode: null },
+            // A drop is measured as a paste.
+            { ...common, kind: 'paste', durationMs: 0, failureCode: null },
+            { ...common, kind: 'save', durationMs: 40, failureCode: 'transport' },
+            { ...common, kind: 'save', durationMs: replayedFor, failureCode: null },
+        ]);
+        expect(replayedFor).toBeGreaterThan(0);
+        unmount();
+    });
+});
+
+describe('save metric failure codes', () => {
+    it.each([
+        ['conflict', { status: 'conflict', currentRevision: 'revision-9' } as const],
+        ['forbidden', { status: 'rejected', code: 'forbidden', diagnostics: [] } as const],
+    ])('reports failureCode %s on the save metric of that answer', async (failureCode, response) => {
+        const { service, calls } = serviceOf(true);
+        const { metrics, type, advance, unmount } = mount({ service });
+        type('x');
+        advance(500);
+        calls[0]?.answer(response);
+        await settle();
+        expect(metrics.filter(({ kind }) => kind === 'save').map((metric) => metric.failureCode)).toEqual([
+            failureCode,
+        ]);
+        unmount();
+    });
+});
+
+describe('the persistence conformance kit', () => {
+    describe('runs against the reference fake', () => {
+        runPersistenceConformance(() => ({
+            ...createFakeServer(),
+            rejectedWriter: { ...WRITER, capabilities: [] },
+            writer: WRITER,
+            document: loaded(null, para('ab')).document,
+        }));
+    });
+});
