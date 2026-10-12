@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - packages/rich-text-editor/**
+      - .changeset/rich-text-editor-*.md
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
