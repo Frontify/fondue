@@ -17,12 +17,13 @@ import { AnnouncerContext } from '#/bridge/announcer';
 import { NodeChromeMenu } from '#/bridge/chrome-toolbar';
 import { NodeChromeButton, NodeChromeToolbar, type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
-import { UploadControls, UploadSlot, useUploadStatus } from '#/features/media-upload/view';
+import { UploadControls, UploadSlot, uploadStatusText, useUploadStatus } from '#/features/media-upload/view';
 import { type JsonObject } from '#/model';
 import { altOf, figureAlign, imageOutput, unavailableOf } from '#/model/assets';
-import { altReviewOf, withAltReview } from '#/runtime/alt-review';
+import { altReviewOf, altReviewTakesFocus, withAltReview } from '#/runtime/alt-review';
 import { positionOf } from '#/runtime/positions';
 import { type EditorRuntime } from '#/runtime/runtime';
+import { type UploadStatus } from '#/runtime/uploads';
 import { AltTextDialog, altTextStrings } from '#/ui/media/alt-text-dialog';
 import { MAX_WIDTH, MIN_WIDTH, SET_SIZE, WidthDialog } from '#/ui/media/width-dialog';
 
@@ -195,10 +196,21 @@ const useResize = (
     return { shown, handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel } };
 };
 
-/** What a screen reader hears as the image becomes node-selected, since an image with an empty `alt` says nothing. */
-const spokenOf = (attrs: JsonObject, context: Parameters<typeof imageOutput>[1], unavailable: boolean) => {
+/**
+ * What a screen reader hears as the image becomes node-selected, since an image with an empty `alt` says nothing:
+ * for a slot, its upload as it stands, with how to fix a failed one.
+ */
+const spokenOf = (
+    attrs: JsonObject,
+    context: Parameters<typeof imageOutput>[1],
+    unavailable: boolean,
+    upload: UploadStatus | undefined,
+) => {
     const { t } = context;
     if (attrs.assetId === null) {
+        if (upload !== undefined) {
+            return t('RichTextEditor_announceBoth', { first: upload.name, second: uploadStatusText(upload, t) });
+        }
         return t('RichTextEditor_imageUnfinished');
     }
     if (unavailable) {
@@ -267,7 +279,9 @@ const ImageChrome = () => {
         paused = played.paused;
     }
     const unavailable = shown.kind !== 'image' || failed === shown.src;
-    const spoken = spokenOf(attrs, context, unavailable);
+    // The upload chrome follows the session's upload of this slot, which no reload keeps.
+    const upload = useUploadStatus(nodeId ?? '');
+    const spoken = spokenOf(attrs, context, unavailable, attrs.assetId === null ? upload : undefined);
     const spokenRef = useRef(spoken);
     useEffect(() => {
         spokenRef.current = spoken;
@@ -278,22 +292,26 @@ const ImageChrome = () => {
         }
     }, [selected, announcer]);
     const altLabel = review ? t('RichTextEditor_imageAltReview') : undefined;
-    // A new asset asks for a review once: the prompt is spoken and focus moves to its action.
+    const takesFocus = useSessionValue(
+        (session) => session !== undefined && nodeId !== null && altReviewTakesFocus(session.state, nodeId),
+        Object.is,
+    );
+    // A new asset asks for a review once: the prompt is spoken, and after the author's own pick focus moves to its action.
     useEffect(() => {
         if (!review || altLabel === undefined) {
             return;
         }
         announcer?.announce(t('RichTextEditor_imageAltReviewPrompt'));
-        barRef.current?.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(altLabel)}"]`)?.focus();
-    }, [review, altLabel, announcer, t]);
+        if (takesFocus) {
+            barRef.current?.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(altLabel)}"]`)?.focus();
+        }
+    }, [review, altLabel, announcer, t, takesFocus]);
     const displayWidth = typeof attrs.displayWidth === 'number' ? attrs.displayWidth : null;
     const resize = useResize(frameRef, runtime, (width) => {
         if (width !== displayWidth) {
             execute(SET_SIZE, { displayWidth: width });
         }
     });
-    // The upload chrome follows the session's upload of this slot, which no reload keeps.
-    const upload = useUploadStatus(nodeId ?? '');
     if (nodeId === null) {
         return null;
     }

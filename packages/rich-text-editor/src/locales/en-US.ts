@@ -182,6 +182,7 @@ export const enUS = {
         RichTextEditor_uploadCancel: 'Cancel upload',
         RichTextEditor_uploadCancelled: 'Upload cancelled: ${name}',
         RichTextEditor_uploadCompleted: 'Uploaded: ${name}',
+        RichTextEditor_uploadCompletedNoAlt: 'Uploaded: ${name}. It has no alternative text yet.',
         RichTextEditor_uploadError: 'The upload failed. Retry it, or remove the image.',
         RichTextEditor_uploadFailed: 'Upload failed: ${name}',
         RichTextEditor_uploadPercent: '${percent}% uploaded',
@@ -189,11 +190,16 @@ export const enUS = {
         RichTextEditor_uploadRetry: 'Retry upload',
         RichTextEditor_uploadRunning: 'Uploading…',
         RichTextEditor_uploadStarted: 'Uploading: ${name}',
+        RichTextEditor_uploadStartedCount: 'Uploading files: ${count}',
         RichTextEditor_uploadStopped: 'The upload stopped. Retry it, or remove the image.',
         RichTextEditor_uploadTooLarge:
             '${name} was not uploaded because it is too large. Choose a file of type ${types}, of up to ${size}.',
         RichTextEditor_uploadTooManyPixels:
             '${name} was not uploaded because the image has too many pixels. Choose an image of at most ${megapixels} megapixels and ${side} pixels on each side.',
+        RichTextEditor_uploadUnreadable:
+            '${name} was not uploaded because its image size cannot be read. Choose a file of type ${types}, of up to ${size}.',
+        RichTextEditor_uploadUnsafe:
+            '${name} was not uploaded because the SVG holds script. Choose a file of type ${types}, of up to ${size}.',
         RichTextEditor_uploadWaiting: 'Waiting to upload',
         RichTextEditor_uploadWrongType:
             '${name} was not uploaded because its file type is not accepted. Choose a file of type ${types}, of up to ${size}.',

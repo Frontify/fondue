@@ -18,6 +18,8 @@ export type SlotStart =
 export interface SlotUploads {
     /** Whether the slot's upload runs or waits, which Cancel ends. */
     readonly active: (nodeId: string) => boolean;
+    /** Whether the slot is not done: its upload runs, waits, failed or stopped, and a retry may start it again. */
+    readonly kept: (nodeId: string) => boolean;
     /** Whether the slot keeps the file of an upload that failed or stopped, which Retry sends again. */
     readonly retryable: (nodeId: string) => boolean;
 }
@@ -37,16 +39,22 @@ interface SlotState {
 }
 
 const key = new PluginKey<SlotState>('rte.upload-slots');
+// The transaction meta that gives a fresh state the entries of the state it replaces, as a history reset does.
+const CARRY_META = 'rte.upload-slots-carry';
 
-/** The entries of the slots whose upload still runs, with the maps of `tr`, then the slots that `tr` starts. */
+/** The entries of the slots that are not done, with the maps of `tr`, then the slots that `tr` starts. */
 const applySlots = (tr: Transaction, value: SlotState): SlotState => {
+    const carried = tr.getMeta(CARRY_META) as SlotState['entries'] | undefined;
+    if (carried !== undefined) {
+        return { uploads: value.uploads, entries: carried };
+    }
     const started = tr.getMeta(SLOT_START_META) as SlotStart | undefined;
     if (!tr.docChanged && started === undefined) {
         return value;
     }
     const entries = new Map<string, SlotEntry>();
     for (const [nodeId, entry] of value.entries) {
-        if (!value.uploads.active(nodeId)) {
+        if (!value.uploads.kept(nodeId)) {
             continue;
         }
         if (entry.kind === 'insert') {
@@ -70,12 +78,16 @@ const applySlots = (tr: Transaction, value: SlotState): SlotState => {
     return { uploads: value.uploads, entries };
 };
 
-/** Keeps how each slot with a running upload entered the document, which `cancelSlot` reverses. */
+/** Keeps how each slot that is not done entered the document, which `cancelSlot` reverses. */
 export const uploadSlotsPlugin = (uploads: SlotUploads): Plugin<SlotState> =>
     new Plugin<SlotState>({
         key,
         state: { init: () => ({ uploads, entries: new Map() }), apply: applySlots },
     });
+
+/** A transaction on `fresh`, a state of the same document, that gives it the slot entries of `from`. */
+export const carrySlots = (from: EditorState, fresh: EditorState): Transaction =>
+    fresh.tr.setMeta(CARRY_META, key.getState(from)?.entries ?? new Map()).setMeta('addToHistory', false);
 
 /** The session's uploads, or none for a state that no editor session made. */
 export const slotUploadsOf = (state: EditorState): SlotUploads | undefined => key.getState(state)?.uploads;

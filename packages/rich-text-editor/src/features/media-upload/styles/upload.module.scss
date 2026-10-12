@@ -38,6 +38,16 @@
         visibility: hidden;
         animation: none;
     }
+
+    // A determinate bar jumps to each step, with no transition of its width.
+    .bar [role='progressbar'] [data-indeterminate='false'] {
+        transition: none;
+    }
+}
+
+// The upload's buttons sit in the image chrome toolbar as its own items.
+.controls {
+    display: contents;
 }
 
 .text {
