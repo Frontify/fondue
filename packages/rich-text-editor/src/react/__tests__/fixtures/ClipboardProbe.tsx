@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { bold, core } from '#/features';
 import { fixtureLabelledMention } from '#/features/__tests__/fixtures/features';
+import { taskList as taskListFeature } from '#/features/lists-task/feature';
 import {
     defineEditor,
     defineReactPresentation,
@@ -19,6 +20,11 @@ import { type SelectionTarget, setSelection } from '#/testing';
 
 const model = compileContentModel([core(), bold(), fixtureLabelledMention()], { id: 'test.clipboard', version: 1 });
 const definition = defineEditor({ id: 'test.clipboard', model });
+const taskEditorModel = compileContentModel([core(), bold(), fixtureLabelledMention(), taskListFeature()], {
+    id: 'test.clipboard',
+    version: 1,
+});
+const taskDefinition = defineEditor({ id: 'test.clipboard', model: taskEditorModel });
 const ALLOW = { create: true, edit: true, remove: true };
 // The mentions may move and be created, but no paste or drop brings one in.
 const unpastedMentions = defineEditor({
@@ -62,9 +68,17 @@ declare global {
     }
 }
 
+/** One task item the probe stores when `tasks` is set. */
+interface ProbeTask {
+    readonly nodeId: string;
+    readonly text: string;
+    readonly checked: boolean;
+}
+
 /**
- * The editor of `core`, bold and a visible mention, in a scrolling box when `scroll` is set, after a draggable host
- * element whose `text/plain` is `dragged` and whose `text/html` holds it in a paragraph.
+ * The editor of `core`, bold and a visible mention, or a task list when `tasks` is set, in a scrolling box when
+ * `scroll` is set, after a draggable host element whose `text/plain` is `dragged` and whose `text/html` holds it in a
+ * paragraph.
  */
 export const ClipboardProbe = ({
     texts = ['ab'],
@@ -73,6 +87,7 @@ export const ClipboardProbe = ({
     island = false,
     scroll = false,
     dragged = 'Dropped',
+    tasks,
 }: {
     readonly texts?: readonly string[];
     readonly readOnly?: boolean;
@@ -82,6 +97,8 @@ export const ClipboardProbe = ({
     readonly island?: boolean;
     readonly scroll?: boolean;
     readonly dragged?: string;
+    /** Replaces the paragraphs with one task list of these items, on a model that installs `lists.task`. */
+    readonly tasks?: readonly ProbeTask[];
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const [changes] = useState<DocumentChange[]>([]);
@@ -126,7 +143,36 @@ export const ClipboardProbe = ({
             selection: () => [runtime.state.selection.anchor, runtime.state.selection.head],
         };
     }, [changes, uploads]);
-    const blocks: ContentNodeJSON[] = texts.map(paragraphOf);
+    let blocks: ContentNodeJSON[] = texts.map(paragraphOf);
+    let shown = definition;
+    let documentModel: { readonly id: string; readonly version: number } = { id: 'test.clipboard', version: 1 };
+    let requiredCapabilities: readonly { readonly id: string; readonly version: number }[] = [
+        { id: 'core', version: 1 },
+    ];
+    if (unpasted) {
+        shown = unpastedMentions;
+    }
+    if (tasks !== undefined) {
+        shown = taskDefinition;
+        documentModel = taskEditorModel.ref;
+        requiredCapabilities = taskEditorModel.capabilities;
+        blocks = [
+            {
+                type: 'task_list',
+                content: tasks.map((item) => ({
+                    type: 'task_item',
+                    attrs: { nodeId: item.nodeId, checked: item.checked },
+                    content: [
+                        {
+                            type: 'paragraph',
+                            attrs: { lang: null },
+                            content: [{ type: 'text', text: item.text }],
+                        },
+                    ],
+                })),
+            } as unknown as ContentNodeJSON,
+        ];
+    }
     if (island) {
         blocks.push({
             type: 'callout',
@@ -137,14 +183,10 @@ export const ClipboardProbe = ({
     const document = {
         format: 'frontify.rich-text' as const,
         formatVersion: 1 as const,
-        model: { id: 'test.clipboard', version: 1 },
-        requiredCapabilities: [{ id: 'core', version: 1 }],
+        model: documentModel,
+        requiredCapabilities,
         content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: blocks },
     };
-    let shown = definition;
-    if (unpasted) {
-        shown = unpastedMentions;
-    }
     let editor = (
         <RichTextEditor
             aria-label="Notes"

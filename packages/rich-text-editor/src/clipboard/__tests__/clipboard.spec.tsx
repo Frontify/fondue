@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { act, render } from '@testing-library/react';
 import MarkdownIt from 'markdown-it';
-import { DOMParser as SchemaParser } from 'prosemirror-model';
+import { type Node as EngineNode, DOMParser as SchemaParser } from 'prosemirror-model';
 import { AllSelection, NodeSelection, Selection } from 'prosemirror-state';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -595,6 +595,33 @@ describe('internal slices', () => {
         pasteInto(mounted, { [SLICE_TYPE]: payload, 'text/plain': 'plain' });
 
         expect(mounted.content()).toEqual([paragraph(text('aplainb'))]);
+        mounted.unmount();
+    });
+
+    const withHtml = new Set([
+        'an unknown node',
+        'a javascript: link',
+        'a depth of 100',
+        'openStart -1',
+        'an openEnd above the content depth',
+        'an openStart above the content depth',
+        'a fractional openStart',
+        'a string openStart',
+        'a model the editor does not install',
+        'a capability the editor does not install',
+    ]);
+    const htmlFallback = fallsBack.filter(([name]) => withHtml.has(name));
+    it.each(htmlFallback)('ignores a slice with %s and pastes the HTML, keeping its line break', (_name, payload) => {
+        const mounted = mount();
+        setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
+
+        pasteInto(mounted, {
+            [SLICE_TYPE]: payload,
+            'text/html': '<p>line<br>break</p>',
+            'text/plain': 'plain',
+        });
+
+        expect(mounted.content()).toEqual([paragraph(text('aline'), node('hard_break'), text('breakb'))]);
         mounted.unmount();
     });
 
@@ -1414,6 +1441,41 @@ describe('pasted HTML', () => {
         mounted.unmount();
     });
 
+    /** A Word list paragraph, its bullet in the `mso-list:Ignore` span Word writes. */
+    const wordItem = (level: number, value: string) =>
+        `<p class="MsoListParagraph" style="margin-left:.5in;text-indent:-.25in;mso-list:l0 level${level} lfo1"><![if !supportLists]><span style="font-family:Symbol"><span style="mso-list:Ignore">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;</span></span></span><![endif]>${value}<o:p></o:p></p>`;
+    /** The depth of the deepest node under `node`, as the resource limits count it. */
+    const deepestOf = (node: EngineNode, depth = 1): number =>
+        Math.max(depth, ...node.children.map((child) => deepestOf(child, depth + 1)));
+
+    it.each([
+        ['a top-level paragraph', [block()], 12],
+        ['a paragraph in a blockquote', [blockquote(block())], 12],
+        ['a top-level paragraph at the default limit', [block()], defaultLimits.maxDepth],
+    ] as const)(
+        'clamps the mso-list levels of pasted Word list paragraphs in %s so the nesting fits maxDepth',
+        (_name, blocks, maxDepth) => {
+            const mounted = mountHtml({ blocks, limits: { maxDepth } });
+            act(() => {
+                mounted.view.dispatch(mounted.view.state.tr.setSelection(Selection.atStart(mounted.view.state.doc)));
+            });
+            const levels = [...Array.from({ length: 40 }, (_, index) => index + 1), 2_000_000_000];
+            const html = levels.map((level) => wordItem(level, `L${level}`)).join('');
+
+            const started = performance.now();
+            pasteInto(mounted, { 'text/html': html });
+            const elapsed = performance.now() - started;
+
+            const { doc } = mounted.view.state;
+            expect(elapsed).toBeLessThan(100);
+            expect(mounted.diagnostics).toEqual([]);
+            expect(doc.textContent).toBe(levels.map((level) => `L${level}`).join(''));
+            expect(deepestOf(doc)).toBeLessThanOrEqual(maxDepth);
+            expect(deepestOf(doc)).toBeGreaterThanOrEqual(maxDepth - 1);
+            mounted.unmount();
+        },
+    );
+
     it('pastes mention markup in HTML as its label text, dropping and announcing the images', () => {
         const mounted = mount({ blocks: [paragraph()] });
 
@@ -1479,7 +1541,8 @@ describe('pasted HTML', () => {
             const parsed = (html: string) =>
                 schema.topNodeType.create(
                     null,
-                    importHtml(html, schema, window, { limits: defaultLimits, headingLevels: undefined }).content,
+                    importHtml(html, schema, window, { limits: defaultLimits, headingLevels: undefined, depth: 2 })
+                        .content,
                 );
 
             expect(parsed(copied).eq(parsed(written))).toBe(true);

@@ -45,7 +45,7 @@ import {
 
 import { defineReaderFeature, type ReaderNodeProps } from '../define';
 
-import { semanticModel } from './fixtures/semantic';
+import { semanticFeatures, semanticModel } from './fixtures/semantic';
 import { fixturesIn, renderReader } from './helpers/helpers';
 
 const model = semanticModel();
@@ -273,7 +273,7 @@ describe('RichTextReader semantic elements', () => {
         '<pre dir="auto"><code>const a = 1;</code></pre>',
         '<hr dir="auto"/>',
         '<figure dir="auto"><img alt="A chart" dir="auto"/></figure>',
-        '<table><thead><tr dir="auto"><th colSpan="1" rowspan="1" scope="col" dir="auto"><p dir="auto">Head</p></th></tr></thead>',
+        '<table dir="auto"><thead><tr dir="auto"><th colSpan="1" rowspan="1" scope="col" dir="auto"><p dir="auto">Head</p></th></tr></thead>',
         '<tbody><tr dir="auto"><td colSpan="1" rowspan="1" dir="auto"><p dir="auto">Cell</p></td></tr></tbody></table>',
         '<a href="https://frontify.com">Frontify</a>',
     ])('uses the semantic element %s', (element) => {
@@ -736,5 +736,44 @@ describe('RichTextReader direction', () => {
         expect(html).toBe(
             '<div class="fondue-rte-content"><p dir="auto"><a href="https://frontify.com"><strong>Go</strong></a></p></div>',
         );
+    });
+
+    it('snapshots a paragraph, a heading and a list item that store no direction, and keeps rtl on a paragraph that stores it', () => {
+        const direction = defineFeature({
+            id: 'test.direction',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            attributes: {
+                dir: {
+                    on: ['paragraph'],
+                    value: { type: 'enum', values: ['ltr', 'rtl'], nullable: true, default: null },
+                    html: { attr: 'dir' },
+                },
+            },
+            formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
+        });
+        const directed = compileContentModel([...semanticFeatures(), direction()], {
+            id: 'fixture.vocabulary',
+            version: 1,
+        });
+        const right = {
+            type: 'paragraph',
+            attrs: { lang: null, styleId: null, align: null, indent: 0, dir: 'rtl' },
+            content: [text('Right')],
+        };
+        const html = renderReader(
+            envelope(
+                doc(
+                    paragraph(text('Plain')),
+                    levelled(1, text('Title')),
+                    bulletList(listItem(paragraph(text('Item')))),
+                    right,
+                ),
+                [...capabilities, 'test.direction'],
+            ),
+            directed,
+        );
+
+        expect(html).toMatchSnapshot();
     });
 });

@@ -1,0 +1,1410 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`vendor cleanups > cleans the Google Docs wrapper, and its id on the first block of a Firefox capture > google-docs-chrome.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+      "level": 2,
+    },
+    "content": [
+      {
+        "text": "Launch plan",
+        "type": "text",
+      },
+    ],
+    "type": "heading",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "The ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "bold",
+          },
+        ],
+        "text": "brand refresh",
+        "type": "text",
+      },
+      {
+        "text": " ships in May.",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Logo",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "marks": [
+                  {
+                    "type": "bold",
+                  },
+                ],
+                "text": "Colours",
+                "type": "text",
+              },
+              {
+                "text": " and type",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "bullet_list",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "marks": [
+          {
+            "attrs": {
+              "href": "https://www.frontify.com/",
+              "openInNewWindow": false,
+              "styleId": null,
+            },
+            "type": "link",
+          },
+          {
+            "type": "underline",
+          },
+        ],
+        "text": "Frontify",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the Google Docs wrapper, and its id on the first block of a Firefox capture > google-docs-firefox.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Meeting notes, ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "bold",
+          },
+        ],
+        "text": "Tuesday",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "marks": [
+          {
+            "type": "italic",
+          },
+        ],
+        "text": "Attendees",
+        "type": "text",
+      },
+      {
+        "text": ": Ada, Grace",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the breaks between Google Docs blocks and in its empty items > google-docs-empty.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Agenda",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Welcome",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Questions",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "bullet_list",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Thanks",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the conditional comments, o:p, Mso classes and mso- properties of Office > excel.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Region Q1 Q2 EMEA 12.5% 14.0%",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the conditional comments, o:p, Mso classes and mso- properties of Office > word-windows-paragraphs.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Brand review",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "The ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "bold",
+          },
+        ],
+        "text": "new palette",
+        "type": "text",
+      },
+      {
+        "text": " is ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "italic",
+          },
+        ],
+        "text": "warmer",
+        "type": "text",
+      },
+      {
+        "text": ", see ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "attrs": {
+              "href": "https://www.frontify.com/brand",
+              "openInNewWindow": false,
+              "styleId": null,
+            },
+            "type": "link",
+          },
+        ],
+        "text": "the guidelines",
+        "type": "text",
+      },
+      {
+        "text": ".",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Due ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "underline",
+          },
+        ],
+        "text": "Friday",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the images of any source > word-windows-image.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Our logo:",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Frontify logo",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "End",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the meta, style, script, link, comments and empty spans of any source > libreoffice.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+      "level": 2,
+    },
+    "content": [
+      {
+        "text": "Release notes",
+        "type": "text",
+      },
+    ],
+    "type": "heading",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "This release is ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "bold",
+          },
+        ],
+        "text": "faster",
+        "type": "text",
+      },
+      {
+        "text": " and ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "italic",
+          },
+        ],
+        "text": "simpler",
+        "type": "text",
+      },
+      {
+        "text": ".",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "start": 1,
+    },
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Faster export",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Fewer clicks",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "ordered_list",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "marks": [
+          {
+            "attrs": {
+              "dir": null,
+              "lang": "de-CH",
+            },
+            "type": "language",
+          },
+        ],
+        "text": "Danke",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the meta, style, script, link, comments and empty spans of any source > word-online.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": "left",
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Quarterly ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "bold",
+          },
+        ],
+        "text": "update",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "marks": [
+          {
+            "type": "italic",
+          },
+        ],
+        "text": "Numbers",
+        "type": "text",
+      },
+      {
+        "text": " follow",
+        "type": "text",
+      },
+      {
+        "type": "hard_break",
+      },
+      {
+        "text": "next week",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the mso-list paragraphs, headings and items of Word and Outlook > outlook-lists.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Hi all,",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Logos are final",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "attrs": {
+                      "align": null,
+                      "lang": null,
+                    },
+                    "content": [
+                      {
+                        "text": "Dark and light",
+                        "type": "text",
+                      },
+                    ],
+                    "type": "paragraph",
+                  },
+                ],
+                "type": "list_item",
+              },
+            ],
+            "type": "bullet_list",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "bullet_list",
+  },
+  {
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Fonts need a licence",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Icons are next",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "bullet_list",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Ship the kit",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "attrs": {
+                      "align": null,
+                      "lang": null,
+                    },
+                    "content": [
+                      {
+                        "text": "Templates",
+                        "type": "text",
+                      },
+                    ],
+                    "type": "paragraph",
+                  },
+                ],
+                "type": "list_item",
+              },
+              {
+                "content": [
+                  {
+                    "attrs": {
+                      "align": null,
+                      "lang": null,
+                    },
+                    "type": "paragraph",
+                  },
+                ],
+                "type": "list_item",
+              },
+            ],
+            "type": "bullet_list",
+          },
+        ],
+        "type": "list_item",
+      },
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Announce it",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "bullet_list",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Best,",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Ada",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the mso-list paragraphs, headings and items of Word and Outlook > word-mac-headings.html 1`] = `
+[
+  {
+    "attrs": {
+      "start": 1,
+    },
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "marks": [
+                  {
+                    "attrs": {
+                      "dir": null,
+                      "lang": "EN-US",
+                    },
+                    "type": "language",
+                  },
+                ],
+                "text": "Introduction",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "ordered_list",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "marks": [
+          {
+            "attrs": {
+              "dir": null,
+              "lang": "EN-US",
+            },
+            "type": "language",
+          },
+        ],
+        "text": "Why the brand moves to one system.",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "start": 1,
+    },
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "marks": [
+                  {
+                    "attrs": {
+                      "dir": null,
+                      "lang": "EN-US",
+                    },
+                    "type": "language",
+                  },
+                ],
+                "text": "Scope",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "ordered_list",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "marks": [
+          {
+            "attrs": {
+              "dir": null,
+              "lang": "EN-US",
+            },
+            "type": "language",
+          },
+        ],
+        "text": "Logos, colours and type.",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "start": 2,
+    },
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "marks": [
+                  {
+                    "attrs": {
+                      "dir": null,
+                      "lang": "EN-US",
+                    },
+                    "type": "language",
+                  },
+                ],
+                "text": "Out of scope",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "ordered_list",
+  },
+  {
+    "attrs": {
+      "start": 2,
+    },
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "marks": [
+                  {
+                    "attrs": {
+                      "dir": null,
+                      "lang": "EN-US",
+                    },
+                    "type": "language",
+                  },
+                ],
+                "text": "Timeline",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "ordered_list",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the mso-list paragraphs, headings and items of Word and Outlook > word-windows-lists.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "marks": [
+          {
+            "type": "bold",
+          },
+        ],
+        "text": "Launch checklist",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Brief the team",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "attrs": {
+                      "align": null,
+                      "lang": null,
+                    },
+                    "content": [
+                      {
+                        "text": "Share the ",
+                        "type": "text",
+                      },
+                      {
+                        "marks": [
+                          {
+                            "type": "italic",
+                          },
+                        ],
+                        "text": "brand book",
+                        "type": "text",
+                      },
+                    ],
+                    "type": "paragraph",
+                  },
+                  {
+                    "content": [
+                      {
+                        "content": [
+                          {
+                            "attrs": {
+                              "align": null,
+                              "lang": null,
+                            },
+                            "content": [
+                              {
+                                "text": "Agree on the palette",
+                                "type": "text",
+                              },
+                            ],
+                            "type": "paragraph",
+                          },
+                        ],
+                        "type": "list_item",
+                      },
+                    ],
+                    "type": "bullet_list",
+                  },
+                ],
+                "type": "list_item",
+              },
+            ],
+            "type": "bullet_list",
+          },
+        ],
+        "type": "list_item",
+      },
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Book the room",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "bullet_list",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "start": 1,
+    },
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Draft the copy",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Review it with ",
+                "type": "text",
+              },
+              {
+                "marks": [
+                  {
+                    "type": "bold",
+                  },
+                ],
+                "text": "Legal",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "ordered_list",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Legal signs off before anything is published.",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "start": 3,
+    },
+    "content": [
+      {
+        "content": [
+          {
+            "attrs": {
+              "align": null,
+              "lang": null,
+            },
+            "content": [
+              {
+                "text": "Publish",
+                "type": "text",
+              },
+            ],
+            "type": "paragraph",
+          },
+        ],
+        "type": "list_item",
+      },
+    ],
+    "type": "ordered_list",
+  },
+]
+`;
+
+exports[`vendor cleanups > cleans the styled runs of Google Docs > google-docs-runs.html 1`] = `
+[
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "Normal ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "bold",
+          },
+        ],
+        "text": "bold semibold ",
+        "type": "text",
+      },
+      {
+        "text": "medium ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "bold",
+          },
+          {
+            "type": "italic",
+          },
+        ],
+        "text": "extrabold italic",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "marks": [
+          {
+            "type": "underline",
+          },
+        ],
+        "text": "under",
+        "type": "text",
+      },
+      {
+        "text": " ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "strike",
+          },
+        ],
+        "text": "struck",
+        "type": "text",
+      },
+      {
+        "text": " ",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "underline",
+          },
+          {
+            "type": "strike",
+          },
+        ],
+        "text": "both",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+  {
+    "attrs": {
+      "align": null,
+      "lang": null,
+    },
+    "content": [
+      {
+        "text": "H",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "subscript",
+          },
+        ],
+        "text": "2",
+        "type": "text",
+      },
+      {
+        "text": "O and E=mc",
+        "type": "text",
+      },
+      {
+        "marks": [
+          {
+            "type": "superscript",
+          },
+        ],
+        "text": "2",
+        "type": "text",
+      },
+    ],
+    "type": "paragraph",
+  },
+]
+`;

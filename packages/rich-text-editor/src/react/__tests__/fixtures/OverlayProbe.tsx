@@ -16,6 +16,7 @@ import {
     type EditorHandle,
     type ReactPresentation,
     RichTextEditor,
+    type RichTextEditorProps,
     type ToolbarMode,
 } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
@@ -60,6 +61,8 @@ declare global {
             readonly insert: (text: string, at: number) => void;
             /** The HTML of the runtime's document, without the kept selection. */
             readonly html: () => string;
+            /** The anchor and head of the runtime's selection. */
+            readonly selection: () => { readonly anchor: number; readonly head: number } | undefined;
             /** The modes `onToolbarModeChange` reported. */
             readonly modes: ToolbarMode[];
             readonly hostDialogChanges: boolean[];
@@ -116,6 +119,7 @@ export const OverlayProbe = ({
     dir = 'ltr',
     theme = 'light',
     hostButtons = true,
+    scrollSelectionIntoView,
 }: {
     readonly blocks?: readonly ContentNodeJSON[];
     readonly texts?: readonly string[];
@@ -136,7 +140,13 @@ export const OverlayProbe = ({
     readonly theme?: 'light' | 'dark';
     /** Puts host buttons before and after the editor. */
     readonly hostButtons?: boolean;
+    /** Passed to the editor when set, else the editor keeps its default. */
+    readonly scrollSelectionIntoView?: boolean;
 }) => {
+    let options: Pick<RichTextEditorProps, 'scrollSelectionIntoView'> = {};
+    if (scrollSelectionIntoView !== undefined) {
+        options = { scrollSelectionIntoView };
+    }
     const ref = useRef<EditorHandle<object>>(null);
     const [open, setOpen] = useState<OverlayKind | null>(null);
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
@@ -198,6 +208,14 @@ export const OverlayProbe = ({
                     copy.normalize();
                     return copy.innerHTML;
                 },
+                selection: () => {
+                    const runtime = runtimeOf(handle);
+                    if (runtime === undefined) {
+                        return undefined;
+                    }
+                    const { anchor, head } = runtime.state.selection;
+                    return { anchor, head };
+                },
                 modes,
                 hostDialogChanges,
             };
@@ -218,6 +236,7 @@ export const OverlayProbe = ({
             {...(defaultToolbarMode === undefined ? {} : { defaultToolbarMode })}
             {...(hostContainer ? { portalContainer: container } : {})}
             onToolbarModeChange={(mode) => modes.push(mode)}
+            {...options}
             ref={ref}
         >
             <RichTextEditor.Toolbar />
