@@ -20,6 +20,9 @@ describe('a host answer as an asset', () => {
         ['a security token query key', 'b/o?X-Amz-Security-Token=IQoJSecret'],
         ['a credential query key', 'b/o?X-Amz-Credential=AKIAIOSFODNN7EXAMPLE'],
         ['an API key query key', 'b/o?api_key=secret'],
+        ['a hyphenated API key query key', 'b/o?x-api-key=secret'],
+        ['a percent-encoded token query key', 'library/1?to%6Ben=secret'],
+        ['a percent-encoded signature query key', 'library/1?X-Amz-Sig%6Eature=deadbeef'],
     ])('refuses %s as an asset ID', (_name, assetId) => {
         expect(pickedAsset(answer({ assetId }), { maxLength: 4096 })).toBeUndefined();
     });

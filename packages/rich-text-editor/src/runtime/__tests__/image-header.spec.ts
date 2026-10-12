@@ -129,6 +129,14 @@ describe('the SVG active content check', () => {
             'an external entity',
             '<!DOCTYPE svg [<!ENTITY x SYSTEM "https://example.test/x.xml">]><svg xmlns="http://www.w3.org/2000/svg">&x;</svg>',
         ],
+        [
+            'a javascript: link built from an entity declared twice, which XML reads by its first value',
+            '<!DOCTYPE svg [<!ENTITY c ":"><!ENTITY c "x">]><svg xmlns="http://www.w3.org/2000/svg"><a href="javascript&c;alert(1)"><text>x</text></a></svg>',
+        ],
+        [
+            'entities that expand to more than twice the file',
+            `<!DOCTYPE svg [<!ENTITY a "${'A'.repeat(20_000)}">]><svg xmlns="http://www.w3.org/2000/svg">${'&a;'.repeat(100)}</svg>`,
+        ],
         ['a parameter entity', '<!DOCTYPE svg [<!ENTITY % x "y">]><svg xmlns="http://www.w3.org/2000/svg"/>'],
     ])('finds %s', (_name, svg) => {
         expect(svgHoldsScript(svg)).toBe(true);
