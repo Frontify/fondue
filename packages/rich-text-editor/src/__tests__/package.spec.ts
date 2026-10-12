@@ -88,7 +88,7 @@ describe('package manifest and built output', () => {
     afterAll(() => rmSync(outDir, { recursive: true, force: true }));
 
     it('declares the package name, an ES module type, public publish access, and the entries that export code', () => {
-        expect(manifest.name).toBe('@frontify/fondue-rich-text-editor');
+        expect(manifest.name).toBe('@frontify/rich-text-editor');
         expect(manifest.type).toBe('module');
         expect(manifest.publishConfig?.access).toBe('public');
         const exportsMap = manifest.exports ?? {};
