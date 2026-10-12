@@ -142,6 +142,7 @@ export const fixtureHeadingSet = defineFeature({
             group: 'block',
             content: 'inline*',
             attrs: {
+                nodeId,
                 level: { type: 'integer', min: 1, max: 6, required: true },
                 lang: { type: 'language', nullable: true, default: null },
             },
@@ -151,5 +152,22 @@ export const fixtureHeadingSet = defineFeature({
     },
     commands: {
         'heading.set': setBlock('heading', { payload: { fields: { level: { type: 'integer', min: 1, max: 6 } } } }),
+    },
+});
+
+/** Stands in for `media.image` and `media.embed`: a figure with a caption and a leaf embed, each with a `nodeId`. */
+export const fixtureMedia = defineFeature({
+    id: 'fixture.media',
+    version: 1,
+    requires: requiresCore,
+    nodes: {
+        figure: { group: 'block', content: 'paragraph', attrs: { nodeId }, html: ['div', 0], parse: [] },
+        embed: {
+            group: 'block',
+            atom: true,
+            attrs: { nodeId, url: { type: 'url', required: true } },
+            html: ['div'],
+            parse: [],
+        },
     },
 });
