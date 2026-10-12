@@ -18,6 +18,7 @@ import { liftTarget } from 'prosemirror-transform';
 
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
 import {
+    ALT_REVIEW_PLUGIN,
     BASE_KEYS_PLUGIN,
     CODE_KEYS_PLUGIN,
     CODE_SYNTAX_PLUGIN,
@@ -32,6 +33,7 @@ import {
 import { appliesToOf } from '#/model/styles';
 import { isRecord, OBJECT_REPLACEMENT } from '#/model/values';
 
+import { altReviewPlugin } from './alt-review';
 import { codeKeysPlugin } from './code-keys';
 import { codeSyntaxPlugin } from './code-syntax';
 import { columnsOf } from './columns';
@@ -320,6 +322,19 @@ const insertBlock = (state: EditorState, spot: BlockSpot, node: Node): Transacti
     }
     transaction.insert(after, paragraph.create());
     return transaction.setSelection(TextSelection.create(transaction.doc, after + 1)).scrollIntoView();
+};
+
+/** Whether a block of `type` has a spot at the selection, as `insertNode` finds one. */
+const placesBlock = (state: EditorState, type: NodeType): boolean =>
+    blockSpots(state, false).some((spot) => takes(state.doc, spot, type));
+
+/** Puts block `node` where `insertNode` puts a block, or `undefined` where no spot at the selection takes it. */
+export const placeBlock = (state: EditorState, node: Node): Transaction | undefined => {
+    const spot = blockSpots(state, false).find((candidate) => takes(state.doc, candidate, node.type));
+    if (spot === undefined) {
+        return undefined;
+    }
+    return insertBlock(state, spot, node);
 };
 
 const insertNode: CapabilityImplementation = (args, schema) => {
@@ -1162,7 +1177,9 @@ const reapplyMark: CapabilityImplementation = (args, schema) => {
 
 // The node a control acts on, around the selection, without which its command does not apply. A control with no node,
 // such as the emoji picker, inserts inline content and applies where the selection's block takes it.
-const CONTROL_NODES: Readonly<Record<string, string>> = { numbering: 'ordered_list' };
+const CONTROL_NODES: Readonly<Record<string, string>> = { numbering: 'ordered_list', 'image-alt': 'asset_image' };
+// The block a control inserts, such as the asset picker's figure, which applies where a spot at the selection takes it.
+const CONTROL_BLOCKS: Readonly<Record<string, string>> = { 'media-picker': 'figure' };
 
 const takesInlineContent = (state: EditorState): boolean => {
     const { parent } = state.selection.$from;
@@ -1171,13 +1188,38 @@ const takesInlineContent = (state: EditorState): boolean => {
 
 /** Applies where its control can act and changes nothing: the editor opens the control. */
 const openControl: CapabilityImplementation = (args, schema) => {
-    const name = CONTROL_NODES[args.control as string];
+    const control = args.control as string;
+    const block = CONTROL_BLOCKS[control];
+    if (block !== undefined) {
+        const type = schema.nodes[block];
+        return { run: (state) => type !== undefined && placesBlock(state, type), active: () => false };
+    }
+    const name = CONTROL_NODES[control];
     if (name === undefined) {
         return { run: takesInlineContent, active: () => false };
     }
     const type = schema.nodes[name];
     return {
         run: (state) => type !== undefined && nearest(state, type) !== undefined,
+        active: () => false,
+    };
+};
+
+/**
+ * Applies to the slot node of type `node` that its payload's `nodeId` names and changes nothing: for `start` the editor
+ * opens the host asset picker, else the file chooser, for that node. `cancel` and `retry` act on an upload the editor
+ * runs, so they apply to none yet.
+ */
+const upload: CapabilityImplementation = (args, schema) => {
+    const type = schema.nodes[args.node as string];
+    return {
+        run: (state, _dispatch, payload) => {
+            if (args.action !== 'start' || !isRecord(payload) || typeof payload.nodeId !== 'string') {
+                return false;
+            }
+            const pos = positionOf(state.doc, payload.nodeId);
+            return pos !== undefined && type !== undefined && state.doc.nodeAt(pos)?.type === type;
+        },
         active: () => false,
     };
 };
@@ -1371,8 +1413,10 @@ export const CAPABILITIES: CapabilityImplementations = {
     toggleList,
     toggleMark,
     toggleTask,
+    upload,
     wrapIn,
     plugins: {
+        [ALT_REVIEW_PLUGIN.id]: altReviewPlugin,
         [LAST_MARK_PLUGIN.id]: lastMarkPlugin,
         // Backspace right after a rule fired undoes it before any list or block key sees it.
         [HISTORY_PLUGIN.id]: ({ inputRules }) =>

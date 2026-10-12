@@ -71,11 +71,15 @@ export const withNodeIds = (fragment: Fragment, next: () => string | null): Frag
     return Fragment.from(nodes);
 };
 
-/** Declared attributes, then `unknownAttributes`, which holds what the vocabulary does not declare. */
-const attributeSpecs = (declarations: AttributeDeclarations) => {
+/**
+ * Declared attributes, then `unknownAttributes`, which holds what the vocabulary does not declare. With `generated`,
+ * every required attribute gets a null default too, for a leaf the engine must be able to create where its parent
+ * requires it, such as a figure's image; decode and parse rules still require the values.
+ */
+const attributeSpecs = (declarations: AttributeDeclarations, generated = false) => {
     const specs: Record<string, AttributeSpec> = {};
     for (const [name, declaration] of Object.entries(declarations)) {
-        if (name === 'nodeId') {
+        if (name === 'nodeId' || (generated && !('default' in declaration))) {
             // The runtime fills it before a commit publishes, so engine-made nodes may start without one; decode still requires it.
             specs[name] = { default: null };
             continue;
@@ -85,6 +89,9 @@ const attributeSpecs = (declarations: AttributeDeclarations) => {
     specs.unknownAttributes = { default: null };
     return specs;
 };
+
+// The engine's message for a required position that only nodes with required attributes can fill.
+const NON_GENERATABLE = /Only non-generatable nodes \(([^)]*)\) in a required position/;
 
 const RGB = /^rgba?\((\d+), ?(\d+), ?(\d+)(?:, ?([\d.]+))?\)$/;
 
@@ -164,7 +171,6 @@ const readSource = (element: HTMLElement, source: ParseAttributeSource, declarat
 const tagRule = (
     rule: Extract<ParseRule, { readonly tag: string }>,
     declarations: AttributeDeclarations,
-    specs: Readonly<Record<string, AttributeSpec>>,
     shared: readonly SharedAttribute[],
     exactlyOne: readonly string[] = [],
 ): TagParseRule => {
@@ -191,7 +197,7 @@ const tagRule = (
             }
             if (value !== undefined && isValidValue(declaration, value)) {
                 attrs[name] = value;
-            } else if (!('default' in (specs[name] ?? {}))) {
+            } else if (name !== 'nodeId' && !('default' in declaration)) {
                 return false;
             }
         }
@@ -252,7 +258,7 @@ export const buildSchema = (model: ContentModel): Schema => {
             toDOM: (instance) => render(declaration.html, instance.attrs, options, shared),
             // The engine reads style rules only for marks.
             parseDOM: declaration.parse.flatMap((rule) =>
-                'tag' in rule ? [tagRule(rule, attributes, specs, shared, declaration.exactlyOne)] : [],
+                'tag' in rule ? [tagRule(rule, attributes, shared, declaration.exactlyOne)] : [],
             ),
         };
         if (declaration.content !== undefined) {
@@ -287,7 +293,7 @@ export const buildSchema = (model: ContentModel): Schema => {
             parseDOM: declaration.parse.map(
                 (rule): EngineParseRule =>
                     'tag' in rule
-                        ? tagRule(rule, declaration.attrs, specs, [], declaration.exactlyOne)
+                        ? tagRule(rule, declaration.attrs, [], declaration.exactlyOne)
                         : { style: `${rule.style}=${rule.value}` },
             ),
         };
@@ -304,10 +310,27 @@ export const buildSchema = (model: ContentModel): Schema => {
         marks[name] = spec;
     }
     marks[ISLAND_MARK] = ISLAND_MARK_SPEC;
-    try {
-        return new Schema({ nodes, marks, topNode: 'doc' });
-    } catch (error) {
-        const engine = error instanceof Error ? error.message : String(error);
-        throw new DefinitionError('definition.invalid-declaration', { engine });
+    // The leaves the engine reports it cannot create in a required position get null defaults, and only those.
+    const leaves = new Map(
+        compiled.nodes
+            .filter(({ name, declaration }) => name !== 'text' && declaration.content === undefined)
+            .map((node) => [node.name, attributesOf(node)]),
+    );
+    const generated = new Set<string>();
+    for (;;) {
+        try {
+            return new Schema({ nodes, marks, topNode: 'doc' });
+        } catch (error) {
+            const engine = error instanceof Error ? error.message : String(error);
+            const named = NON_GENERATABLE.exec(engine)?.[1]?.split(', ') ?? [];
+            const fixable = named.filter((name) => leaves.has(name) && !generated.has(name));
+            if (fixable.length === 0) {
+                throw new DefinitionError('definition.invalid-declaration', { engine });
+            }
+            for (const name of fixable) {
+                generated.add(name);
+                nodes[name] = { ...nodes[name], attrs: attributeSpecs(leaves.get(name) ?? {}, true) };
+            }
+        }
     }
 };

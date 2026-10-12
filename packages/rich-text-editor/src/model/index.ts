@@ -22,8 +22,10 @@ export {
     toggleList,
     toggleMark,
     toggleTask,
+    upload,
     wrapIn,
 } from './capabilities';
+export { findUnresolvedAssets, type UnresolvedAsset } from './assets';
 export { compileContentModel } from './compile';
 export {
     type AttributeDeclaration,

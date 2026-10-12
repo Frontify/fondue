@@ -2,7 +2,7 @@
 
 import { dropCursor } from 'prosemirror-dropcursor';
 import { Fragment, Slice } from 'prosemirror-model';
-import { Plugin, PluginKey, type Transaction } from 'prosemirror-state';
+import { NodeSelection, Plugin, PluginKey, type Selection, type Transaction } from 'prosemirror-state';
 import { dropPoint } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
 
@@ -12,6 +12,7 @@ import { writeText } from '#/codecs/to-text';
 import { type PluginImplementation } from '#/definition';
 import { type ContentModel, type RichTextLocale, type TranslationStrings } from '#/model';
 import { type TreeNode } from '#/model/content';
+import { type ResolveAssetUrl } from '#/model/declarations';
 import { diagnostic } from '#/model/format';
 import { codecContext } from '#/model/output';
 import { isApple } from '#/model/platform';
@@ -44,6 +45,8 @@ export interface ClipboardSession {
     readonly announce: (message: string) => void;
     /** The presentation's `resolveReference`, read at each copy, so copied mentions name whom the chip shows. */
     readonly resolveReference?: () => ResolveReference | undefined;
+    /** The presentation's `resolveAssetUrl`, read at each copy, so a copied image keeps the URL the editor shows. */
+    readonly resolveAssetUrl?: () => ResolveAssetUrl | undefined;
 }
 
 const sessions = new WeakMap<EditorRuntime, ClipboardSession>();
@@ -193,7 +196,7 @@ const writeFlavors = (
     slice: Slice,
 ) => {
     const locale = session.locale();
-    const context = codecContext(locale, locale);
+    const context = codecContext(locale, locale, session.resolveAssetUrl?.());
     const plan = planOf(model);
     const tree: TreeNode = {
         type: 'doc',
@@ -219,6 +222,25 @@ const copies = (view: EditorView, event: DragEvent) => {
 /** A closed paragraph, whose drop point is the block boundary nearest the pointer. */
 const blockSlice = (view: EditorView) => new Slice(Fragment.from(view.state.schema.node('paragraph')), 0, 0);
 
+/**
+ * The selection's content, or for a node-selected leaf that only stands inside its parent, such as a figure's image,
+ * that parent whole, so a paste keeps what the parent stores.
+ */
+const selectedSlice = (selection: Selection): Slice => {
+    const { $from } = selection;
+    const parent = $from.parent;
+    if (
+        selection instanceof NodeSelection &&
+        $from.depth > 0 &&
+        parent.childCount === 1 &&
+        !parent.type.contentMatch.validEnd &&
+        !selection.node.type.isInGroup('block')
+    ) {
+        return new Slice(Fragment.from(parent), 0, 0);
+    }
+    return selection.content();
+};
+
 const copy = (model: ContentModel, view: EditorView, event: ClipboardEvent) => {
     const connected = connectedOf(view);
     if (connected === undefined) {
@@ -229,7 +251,7 @@ const copy = (model: ContentModel, view: EditorView, event: ClipboardEvent) => {
         return true;
     }
     event.preventDefault();
-    writeFlavors(model, view, connected.session, event.clipboardData, selection.content());
+    writeFlavors(model, view, connected.session, event.clipboardData, selectedSlice(selection));
     // `handleDOMEvents` runs while the view is not editable too.
     if (event.type === 'cut' && view.editable) {
         view.dispatch(view.state.tr.deleteSelection().scrollIntoView().setMeta('uiEvent', 'cut'));
@@ -323,7 +345,7 @@ const dragstart = (model: ContentModel, view: EditorView, event: DragEvent) => {
     if (data === null || selection.empty) {
         return true;
     }
-    const slice = selection.content();
+    const slice = selectedSlice(selection);
     writeFlavors(model, view, connected.session, data, slice);
     data.effectAllowed = 'copyMove';
     drags.set(view, slice);

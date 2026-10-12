@@ -3,6 +3,7 @@
 import { type MarkdownIt as Parser } from 'markdown-it';
 
 import { checkHref, type CodecContext, type Diagnostic, type JsonObject } from '#/model';
+import { altOf, imageSource, leavesOutUnresolved } from '#/model/assets';
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { pointer } from '#/model/errors';
 import { islandText } from '#/model/html-spec';
@@ -461,28 +462,13 @@ const renderTable = (state: MarkdownState, table: TreeNode, plan: NodePlan, path
 /** The `![alt](url)` of an image through `resolveAssetUrl` after `checkHref`, or `null` when unresolved or unsafe. */
 const imageOf = (state: MarkdownState, node: TreeNode): string | null => {
     const attrs = attrsOf(node.attrs);
-    const { resolveAssetUrl } = state.context;
-    if (typeof attrs.assetId !== 'string' || resolveAssetUrl === undefined) {
+    const src = imageSource(attrs, state.context);
+    if (src === undefined) {
         return null;
     }
-    const options: { width?: number } = {};
-    if (typeof attrs.width === 'number') {
-        options.width = attrs.width;
-    }
-    const url = resolveAssetUrl(attrs.assetId, options);
-    if (url === null) {
-        return null;
-    }
-    const checked = checkHref(url);
-    if (!checked.ok) {
-        return null;
-    }
-    let alt = '';
-    if (attrs.altIntent === 'meaningful' && typeof attrs.altText === 'string') {
-        alt = attrs.altText;
-    }
+    const alt = altOf(attrs) ?? '';
     const lost = (featureId: string) => state.losses.add(featureId);
-    return `![${serialize([{ kind: 'text', text: alt }], lost)}](${destination(checked.href)})`;
+    return `![${serialize([{ kind: 'text', text: alt }], lost)}](${destination(src)})`;
 };
 
 /** `[title](url)`, or `<url>` when the title is null. */
@@ -631,6 +617,9 @@ const renderBlock = (state: MarkdownState, node: TreeNode, path: string, alterna
     }
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
+        return null;
+    }
+    if (leavesOutUnresolved(state, plan.featureId, node, path)) {
         return null;
     }
     noteShared(state, plan, node);

@@ -20,6 +20,7 @@ export { strike } from '#/features/marks-strike/feature';
 export { subscript } from '#/features/marks-subscript/feature';
 export { superscript } from '#/features/marks-superscript/feature';
 export { underline } from '#/features/marks-underline/feature';
+export { mediaImage } from '#/features/media-image/feature';
 export { mentions } from '#/features/mentions/feature';
 export { brandStyles } from '#/features/styles-brand/feature';
 

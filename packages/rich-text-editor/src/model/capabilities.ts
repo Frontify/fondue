@@ -69,6 +69,8 @@ export const DROP_CURSOR_PLUGIN: PluginDescriptor = { id: 'drop-cursor', phase: 
 export const LAST_MARK_PLUGIN: PluginDescriptor = { id: 'last-mark', phase: 'late' };
 /** The gap cursor of `prosemirror-gapcursor`, whose arrow keys run before every base key. */
 export const GAP_CURSOR_PLUGIN: PluginDescriptor = { id: 'gap-cursor', phase: 'structure' };
+/** The images whose alternative text the author is asked to review after their asset changed. */
+export const ALT_REVIEW_PLUGIN: PluginDescriptor = { id: 'alt-review', phase: 'late' };
 /** One plugin key, one instance: a plugin several capabilities contribute sits at its first contributor's position. */
 export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonly PluginDescriptor[]>>> = {
     history: [HISTORY_PLUGIN],
@@ -80,6 +82,7 @@ export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonl
     // A code block's indent and outdent, so the code keys ride with either command.
     indentLines: [CODE_KEYS_PLUGIN],
     reapplyMark: [LAST_MARK_PLUGIN],
+    upload: [ALT_REVIEW_PLUGIN],
 };
 /** The decoration sources a feature may name. `find-matches` and `content-issues` have no plugin yet. */
 export const DECORATION_SOURCES: readonly DecorationSource[] = ['code-syntax', 'find-matches', 'content-issues'];
@@ -306,6 +309,16 @@ export const openControl = <const P extends PayloadDeclaration | undefined = und
     control: ControlId,
     payload?: P,
 ): CommandDefinition<PayloadOf<P>> => command('openControl', { control }, payload);
+
+/**
+ * Starts, cancels or retries an upload into the existing slot `node` that the payload's `nodeId` names; `start`
+ * refills it, as `image.replace` does, through the host asset picker when set, else the file chooser.
+ */
+export const upload = (
+    action: 'start' | 'cancel' | 'retry',
+    node: string,
+): CommandDefinition<{ readonly nodeId: string }> =>
+    command('upload', { action, node }, { fields: { nodeId: { type: 'string', minLength: 1 } } });
 
 /**
  * Sets `mark` with the payload's fields as its attributes on the selection, or in the stored marks at a caret; a null

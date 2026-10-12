@@ -20,6 +20,7 @@ import {
     italic,
     language,
     links,
+    mediaImage,
     mentions,
     quote,
     rule,
@@ -29,6 +30,7 @@ import {
     underline,
 } from '#/features';
 import {
+    type AssetPickerService,
     type ColorToken,
     type CommandResult,
     type CommandsOfModel,
@@ -52,6 +54,7 @@ import {
     createEmptyDocument,
     defineFeature,
     diffReferences,
+    findUnresolvedAssets,
     type JsonValue,
     type RichTextDocument,
     setBlock,
@@ -137,6 +140,7 @@ const model = compileContentModel(
         links({ resourceTypes: ['guideline-page'] }),
         formatClear(),
         mentions(),
+        mediaImage(),
         callouts,
     ],
     { id: 'story.playground', version: 1 },
@@ -175,7 +179,7 @@ const TOOLBAR = [
         { command: 'block.align.set', payload: { align: 'justify' } },
     ],
     ['mark.language.edit', 'format.clear'],
-    ['rule.insert', 'column.break.insert'],
+    ['image.insert', 'rule.insert', 'column.break.insert'],
 ];
 
 // Brand styles as a host passes them: headings and paragraphs, and one deprecated style the picker leaves out.
@@ -219,6 +223,18 @@ const PAGES = ['Logo', 'Colors', 'Typography', 'Imagery'].map((label) => ({
 }));
 // One host directory answers both, by resource type: people for mentions, guideline pages for link destinations.
 const references = createFakeReferenceService([...PEOPLE, ...PAGES]);
+// A host asset library whose picker hands back its next asset each time it opens, and whose URLs the presentation resolves.
+const LIBRARY = ['harbour', 'forest', 'studio'];
+let pickedAssets = 0;
+const assets: AssetPickerService = {
+    pick: () => {
+        const assetId = LIBRARY[pickedAssets % LIBRARY.length] ?? 'harbour';
+        pickedAssets += 1;
+        return Promise.resolve({ assetId, mediaType: 'image/jpeg', labelSnapshot: `${assetId}.jpg` });
+    },
+};
+const resolveAssetUrl = (assetId: string, { width }: { readonly width?: number }) =>
+    `https://picsum.photos/seed/${encodeURIComponent(assetId)}/${width ?? 960}/540`;
 const COLOR_TOKENS: readonly ColorToken[] = [
     { id: 'brand.red', label: 'Brand red', value: '#c0392b', usage: ['font_color'] },
     { id: 'brand.blue', label: 'Brand blue', value: '#1d4ed8', usage: ['font_color'] },
@@ -253,6 +269,8 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly strikeCheckedTasks: boolean;
     /** The font size of the Lead brand style's recipe, in px; a change restyles every Lead block with no document change. */
     readonly leadFontSize: number;
+    /** The presentation's `resolveAssetUrl`; off, every image shows Image unavailable with its label. */
+    readonly resolveImages: boolean;
 };
 
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
@@ -293,6 +311,7 @@ const Playground = ({
     serverAnswer,
     strikeCheckedTasks,
     leadFontSize,
+    resolveImages,
     ...props
 }: PlaygroundProps) => {
     const [hostContainer, setHostContainer] = useState<HTMLElement | null>(null);
@@ -312,8 +331,18 @@ const Playground = ({
             colorTokens: COLOR_TOKENS,
             columns: columnCount,
             columnGap,
+            ...(resolveImages ? { resolveAssetUrl } : {}),
         });
-    }, [contentClassName, toolbarShortcut, sliceContext, strikeCheckedTasks, leadFontSize, columnCount, columnGap]);
+    }, [
+        contentClassName,
+        toolbarShortcut,
+        sliceContext,
+        strikeCheckedTasks,
+        leadFontSize,
+        columnCount,
+        columnGap,
+        resolveImages,
+    ]);
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
@@ -343,7 +372,7 @@ const Playground = ({
             },
             read: server.read,
         };
-        return { persistence, references };
+        return { persistence, references, assets };
     });
     const [saveStatus, setSaveStatus] = useState('not mounted');
     const log = (text: string) => {
@@ -625,6 +654,11 @@ const Playground = ({
                     if (added.length > 0 || removed.length > 0) {
                         log(`mentions added ${added.length} removed ${removed.length}`);
                     }
+                    // What would block publishing: images whose upload never finished.
+                    const unresolved = findUnresolvedAssets(next);
+                    if (unresolved.length > 0) {
+                        log(`unresolved images ${unresolved.length}`);
+                    }
                     previousRef.current = next;
                     setDocument(next.content as unknown as JsonValue);
                 }}
@@ -808,6 +842,10 @@ Link, in the toolbar or with Mod+K, opens the link popover on the link at the ca
 |---|---|---|---|---|
 | Edit link | \`link.edit\` | \`Mod-k\` | ⌘K | Ctrl+K |
 
+## Images
+
+Image in the toolbar opens the host asset picker, here a library that hands back its next picture, and inserts the picked image at the selection. A selected image's chrome, which Alt+F10 reaches, sets its alternative text (Meaningful with its text, or Decorative), its size from presets, a custom width or the handle on its edge, its alignment, and replaces it through the picker, which asks to review the alternative text. Resolve images, in the controls, turns the presentation's \`resolveAssetUrl\` off, so each image shows Image unavailable with its label.
+
 ## Alignment, language and clear formatting
 
 Align left, center, right or justify with the toolbar or Mod+Shift+L, Mod+Shift+E, Mod+Shift+R and Mod+Shift+J. Pressing the alignment a selection already has removes it. Language opens a picker that sets or removes the language of the selection. Clear formatting removes marks, lifts list items out and turns the selection into plain paragraphs. Mod+\\ clears inline marks only. Strike checked tasks, in the controls, strikes a checked task's text.
@@ -836,6 +874,7 @@ Align left, center, right or justify with the toolbar or Mod+Shift+L, Mod+Shift+
         serverAnswer: 'saved',
         strikeCheckedTasks: false,
         leadFontSize: 20,
+        resolveImages: true,
         defaultToolbarMode: 'fixed',
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },

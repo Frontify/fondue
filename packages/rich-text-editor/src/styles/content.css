@@ -99,6 +99,34 @@
         white-space: pre-wrap;
     }
 
+    /* A figure is block-level and text never wraps around its image, which shrinks to the content width. */
+    :where(.fondue-rte-content figure) {
+        margin-block: 0 var(--rte-content-paragraph-spacing);
+        margin-inline: 0;
+    }
+
+    /* The block size stays within the viewport, so no stored size reserves a box taller than the screen. */
+    :where(.fondue-rte-content figure img) {
+        max-inline-size: 100%;
+        max-block-size: 100vh;
+        block-size: auto;
+        object-fit: contain;
+        vertical-align: middle;
+    }
+
+    :where(.fondue-rte-content [data-rte-image-unavailable]) {
+        color: var(--rte-content-secondary-text-color);
+    }
+
+    /* A reader image that failed to load gives way to the placeholder beside it. */
+    :where(.fondue-rte-content figure[data-rte-image-failed] img) {
+        display: none;
+    }
+
+    :where(.fondue-rte-content figure[data-rte-image-failed] [data-rte-image-unavailable][hidden]) {
+        display: inline;
+    }
+
     :where(.fondue-rte-content hr) {
         margin-block: var(--rte-content-paragraph-spacing);
         border: none;
@@ -198,9 +226,9 @@
         }
     }
 
-    /* Printed content keeps its text and drops node chrome. */
+    /* Printed content keeps its text, atoms and images and drops the node chrome toolbars. */
     @media print {
-        :where(.fondue-rte-content [data-rte-chrome]) {
+        :where(.fondue-rte-content [data-rte-node-chrome]) {
             display: none;
         }
     }

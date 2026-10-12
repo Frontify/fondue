@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CodecContext, type Diagnostic, type HtmlSpec, type ListLevels } from '#/model';
+import {
+    ASSET_IMAGE,
+    FIGURE,
+    figureAlign,
+    IMAGE_FEATURE,
+    imageOutput,
+    leavesOutUnresolved,
+    type Unavailable,
+} from '#/model/assets';
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, passageDirection, resolveHtmlSpec, treeRuns, withAutoDirection } from '#/model/html-spec';
 import {
@@ -210,7 +219,15 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         state.carried = 0;
         return '';
     }
+    if (leavesOutUnresolved(state, plan.featureId, node, path)) {
+        state.carried = 0;
+        return '';
+    }
     noteNode(state, node, 'html');
+    if (plan.featureId === IMAGE_FEATURE && (node.type === FIGURE || node.type === ASSET_IMAGE)) {
+        state.carried = 0;
+        return imageMarkup(state, node, path);
+    }
     const before = state.carried;
     const { inner, entered } = state.depths.within(node.type, (level) => {
         let content: string;
@@ -283,6 +300,45 @@ const taskItemInner = (state: HtmlState, node: TreeNode, path: string, pre: bool
 };
 
 const isMention = (node: TreeNode, featureId: string) => node.type === 'mention' && featureId === 'mentions';
+
+/**
+ * A figure on its side, or its image from `resolveAssetUrl` with the `alt` its intent gives, else the unavailable
+ * placeholder, as the `media.image` reader overrides render them: the `src` is resolved at render time, never stored.
+ */
+const imageMarkup = (state: HtmlState, node: TreeNode, path: string): string => {
+    const attrs = attrsOf(node.attrs);
+    if (node.type === FIGURE) {
+        const inner = renderChildren(state, node, path, false);
+        return `<figure dir="auto" style="text-align:${figureAlign(attrs)}">${inner}</figure>`;
+    }
+    const shown = imageOutput(attrs, state.context);
+    if (shown.kind === 'unavailable') {
+        return unavailableMarkup(shown, false);
+    }
+    let written = ` src="${escapeHtml(shown.src)}"`;
+    if (shown.alt !== undefined) {
+        written += ` alt="${escapeHtml(shown.alt)}"`;
+    }
+    if (shown.width !== undefined) {
+        written += ` width="${shown.width}"`;
+    }
+    if (shown.height !== undefined) {
+        written += ` height="${shown.height}"`;
+    }
+    if (shown.cssWidth !== undefined) {
+        written += ` style="width:${shown.cssWidth}"`;
+    }
+    return `<img${written}/>${unavailableMarkup(shown.unavailable, true)}`;
+};
+
+/** The reader's `ImageUnavailable` as text, which no `HtmlSpec` can express: a message, then the label in `bdi`. */
+const unavailableMarkup = ({ message, label }: Unavailable, hidden: boolean): string => {
+    let text = escapeHtml(message);
+    if (label !== '') {
+        text += ` <bdi>${escapeHtml(label)}</bdi>`;
+    }
+    return `<span data-rte-image-unavailable=""${hidden ? ' hidden=""' : ''}>${text}</span>`;
+};
 
 /**
  * A mention's `@` and its label isolated for bidirectional text, then its unavailable note, as the `mentions` reader
