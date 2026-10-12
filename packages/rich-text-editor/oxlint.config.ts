@@ -89,7 +89,7 @@ const PARENT_PREFIXES = ['../', '../../', '../../../', '../../../../'];
 const relativePatterns = (folders: readonly string[]): string[] =>
     folders.flatMap((folder) => PARENT_PREFIXES.flatMap((prefix) => [`${prefix}${folder}`, `${prefix}${folder}/**`]));
 
-const FEATURE_ROOTS = ['#/features', '../features', '../../features'] as const;
+const FEATURE_ROOTS = ['#/features', ...PARENT_PREFIXES.map((prefix) => `${prefix}features`)];
 
 const featurePathPatterns = (tails: readonly string[]): string[] =>
     FEATURE_ROOTS.flatMap((root) => tails.map((tail) => `${root}${tail}`));
