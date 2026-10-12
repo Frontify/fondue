@@ -7,6 +7,8 @@ import { isIsland, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
     attrsOf,
+    COLUMN_BREAK,
+    type ColumnLayout,
     contentClasses,
     failedFallback,
     groupRun,
@@ -19,6 +21,7 @@ import {
     spaced,
     type Spacing,
     VOID_TAGS,
+    withActiveBreak,
     withListLevel,
     writesAttribute,
 } from '#/model/output';
@@ -33,6 +36,10 @@ export interface RenderState extends Spacing {
     readonly diagnostics: Diagnostic[];
     readonly listLevels: ListLevels | undefined;
     readonly depths: ListDepths;
+    /** The presentation's columns, or `undefined` for one column. */
+    readonly columns: ColumnLayout | undefined;
+    /** The column breaks rendered so far, whose first `count - 1` are active. */
+    breaks: number;
 }
 
 // Every HTML attribute whose React prop is not its lowercase name; the rest pass through unchanged.
@@ -204,6 +211,12 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
     if (!plan.inline) {
         template = withAutoDirection(template);
     }
+    if (node.type === COLUMN_BREAK) {
+        if (state.columns !== undefined && state.breaks < state.columns.count - 1) {
+            template = withActiveBreak(template);
+        }
+        state.breaks += 1;
+    }
     return build(template, children);
 };
 
@@ -239,7 +252,10 @@ export const message = ({ locale, t }: ReaderContext, kind: keyof typeof MESSAGE
     return createElement('div', props, t(MESSAGE_KEYS[kind]));
 };
 
-/** The reader root: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the island notice. */
+/**
+ * The reader root: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the
+ * island notice; with columns, inside the container whose width decides, through the package styles, whether they show.
+ */
 export const renderDocument = (state: RenderState, root: TreeNode, contentClassName?: string): ReactElement => {
     const children = renderChildren(state, root, '/content', false);
     const props: Record<string, unknown> = { className: contentClasses(contentClassName) };
@@ -254,5 +270,15 @@ export const renderDocument = (state: RenderState, root: TreeNode, contentClassN
     if (state.islands > 0) {
         children.push(message(state.context, 'islands'));
     }
-    return createElement('div', props, ...children);
+    const content = createElement('div', props, ...children);
+    const { columns } = state;
+    if (columns === undefined) {
+        return content;
+    }
+    const style = { '--rte-columns': String(columns.count), '--rte-column-gap': columns.length };
+    return createElement(
+        'div',
+        { className: 'fondue-rte-columns', 'data-rte-columns': String(columns.count), style },
+        content,
+    );
 };

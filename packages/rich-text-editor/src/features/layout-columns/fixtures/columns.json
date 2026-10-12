@@ -1,0 +1,69 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "feature-contract",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "core",
+            "version": 1
+        },
+        {
+            "id": "layout.columns",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": {
+            "lang": null,
+            "dir": "auto"
+        },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Primary colours"
+                    }
+                ]
+            },
+            {
+                "type": "column_break"
+            },
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Secondary colours"
+                    }
+                ]
+            },
+            {
+                "type": "column_break"
+            },
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Neutral colours"
+                    }
+                ]
+            }
+        ]
+    }
+}

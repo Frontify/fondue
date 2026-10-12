@@ -3,9 +3,11 @@
 import { codeBlock } from '#/features/blocks-code/feature';
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
+import { rule } from '#/features/blocks-rule/feature';
 import { core } from '#/features/core/feature';
 import { emoji } from '#/features/emoji/feature';
 import { inputRules } from '#/features/input-rules/feature';
+import { columns } from '#/features/layout-columns/feature';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { orderedList } from '#/features/lists-ordered/feature';
@@ -33,6 +35,8 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'blocks.heading': heading,
     'blocks.quote': quote,
     'blocks.code': codeBlock,
+    'blocks.rule': rule,
+    'layout.columns': columns,
     'lists.item': listItem,
     'lists.bullet': bulletList,
     'lists.ordered': orderedList,

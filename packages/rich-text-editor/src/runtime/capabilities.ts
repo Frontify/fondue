@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
+import { GapCursor, gapCursor } from 'prosemirror-gapcursor';
 import { Fragment, type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos } from 'prosemirror-model';
 import { liftListItem, sinkListItem, wrapRangeInList } from 'prosemirror-schema-list';
-import { type EditorState, type Transaction } from 'prosemirror-state';
+import { type EditorState, Plugin, PluginKey, Selection, TextSelection, type Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
@@ -12,6 +13,7 @@ import {
     CODE_KEYS_PLUGIN,
     CODE_SYNTAX_PLUGIN,
     CONTAINER_KEYS_PLUGIN,
+    GAP_CURSOR_PLUGIN,
     HISTORY_PLUGIN,
     INPUT_RULES_PLUGIN,
     LIST_KEYS_PLUGIN,
@@ -21,6 +23,7 @@ import { isRecord } from '#/model/values';
 
 import { codeKeysPlugin } from './code-keys';
 import { codeSyntaxPlugin } from './code-syntax';
+import { columnsOf } from './columns';
 import { historyPlugin, redo, undo } from './history';
 import { inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
@@ -224,9 +227,109 @@ const setBlock: CapabilityImplementation = (args, schema) => {
     };
 };
 
+/** A range `from`–`to` in one parent that a block replaces; an empty range inserts it there. */
+interface BlockSpot {
+    readonly from: number;
+    readonly to: number;
+}
+
+/**
+ * Where a block goes, in order of preference: in place of the empty textblock at a caret, before a textblock with the
+ * caret at its start, then after the block that holds the selection end at the deepest level that takes it; with
+ * `topLevel`, only after the top-level block. A selection between blocks, such as a selected node, is that spot.
+ */
+const blockSpots = (state: EditorState, topLevel: boolean): BlockSpot[] => {
+    const { selection } = state;
+    const $end = selection.$to;
+    const spots: BlockSpot[] = [];
+    if (!$end.parent.inlineContent) {
+        if (topLevel && $end.depth > 0) {
+            return [{ from: $end.after(1), to: $end.after(1) }];
+        }
+        spots.push({ from: $end.pos, to: $end.pos });
+    } else if (!topLevel && selection.empty) {
+        if ($end.parent.content.size === 0) {
+            spots.push({ from: $end.before(), to: $end.after() });
+        } else if ($end.parentOffset === 0) {
+            spots.push({ from: $end.before(), to: $end.before() });
+        }
+    }
+    for (let depth = $end.depth; depth >= 1; depth -= 1) {
+        if (!topLevel || depth === 1) {
+            spots.push({ from: $end.after(depth), to: $end.after(depth) });
+        }
+    }
+    return spots;
+};
+
+/** Whether `type` may replace the range of `spot`. */
+const takes = (doc: Node, spot: BlockSpot, type: NodeType) => {
+    const $from = doc.resolve(spot.from);
+    let end = $from.index();
+    if (spot.to > spot.from) {
+        end += 1;
+    }
+    return $from.parent.canReplaceWith($from.index(), end, type);
+};
+
+/** How many nodes of `type` the document holds. */
+const countOf = (doc: Node, type: NodeType) => {
+    let count = 0;
+    doc.descendants((node) => {
+        if (node.type === type) {
+            count += 1;
+        }
+    });
+    return count;
+};
+
+// The pinned prosemirror-gapcursor declares `GapCursor.valid` internal, so its types leave it out.
+const gapCursorValid = ($pos: ResolvedPos): boolean =>
+    (GapCursor as unknown as { readonly valid: (at: ResolvedPos) => boolean }).valid($pos);
+
+/**
+ * Puts `node` at `spot`, adds an empty paragraph after it when it ends up last, and puts the selection after it: a
+ * caret in a textblock that follows, else a gap cursor, so typing never replaces a selected leaf such as a column break.
+ */
+const insertBlock = (state: EditorState, spot: BlockSpot, node: Node): Transaction => {
+    const transaction = state.tr.replaceWith(spot.from, spot.to, node);
+    const after = spot.from + node.nodeSize;
+    const $after = transaction.doc.resolve(after);
+    if ($after.nodeAfter !== null) {
+        if (!$after.nodeAfter.isTextblock && gapCursorValid($after)) {
+            return transaction.setSelection(new GapCursor($after)).scrollIntoView();
+        }
+        return transaction.setSelection(Selection.near($after, 1)).scrollIntoView();
+    }
+    const paragraph = $after.parent.contentMatchAt($after.index()).defaultType;
+    if (paragraph === null || !paragraph.isTextblock) {
+        return transaction.setSelection(Selection.near($after, -1)).scrollIntoView();
+    }
+    transaction.insert(after, paragraph.create());
+    return transaction.setSelection(TextSelection.create(transaction.doc, after + 1)).scrollIntoView();
+};
+
 const insertNode: CapabilityImplementation = (args, schema) => {
     // Compilation checked that the model declares the node.
     const type = schema.nodes[args.node as string] as NodeType;
+    if (type.isBlock) {
+        const topLevel = args.place === 'after-top-level-block';
+        return {
+            run: (state, dispatch) => {
+                // Breaks past the first `columns - 1` would force no break, so none is added.
+                if (args.limit === 'columns' && countOf(state.doc, type) >= columnsOf(state).count - 1) {
+                    return false;
+                }
+                const spot = blockSpots(state, topLevel).find((candidate) => takes(state.doc, candidate, type));
+                if (spot === undefined) {
+                    return false;
+                }
+                dispatch?.(insertBlock(state, spot, type.create()));
+                return true;
+            },
+            active: () => false,
+        };
+    }
     return {
         run: (state, dispatch) => {
             const { $from } = state.selection;
@@ -657,6 +760,9 @@ export const CAPABILITIES: CapabilityImplementations = {
         [CONTAINER_KEYS_PLUGIN.id]: containerKeysPlugin,
         [BASE_KEYS_PLUGIN.id]: baseKeysPlugin,
         [CODE_SYNTAX_PLUGIN.id]: codeSyntaxPlugin,
+        // Keyed by its plugin ID, as every package plugin is; `gapCursor()` itself carries no key.
+        [GAP_CURSOR_PLUGIN.id]: () =>
+            new Plugin({ key: new PluginKey(GAP_CURSOR_PLUGIN.id), props: gapCursor().props }),
         [SUGGESTIONS_PLUGIN.id]: suggestionsPlugin,
     },
 };

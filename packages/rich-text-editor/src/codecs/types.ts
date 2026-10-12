@@ -22,6 +22,10 @@ export interface HtmlOptions {
     readonly contentClassName?: string;
     /** The presentation's `listLevels`, which writes each list's marker inline as the reader does. */
     readonly listLevels?: ListLevels;
+    /** Column count `toHTML` writes on the content root, with the narrowest column width. Default 1, which writes none. */
+    readonly columns?: number;
+    /** Column gap `toHTML` writes on the content root. Default `normal`. */
+    readonly columnGap?: string;
 }
 /** One dialect: CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks. */
 export interface MarkdownOptions {

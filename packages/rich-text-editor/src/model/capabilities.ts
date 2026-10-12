@@ -65,11 +65,13 @@ export const BASE_KEYS_PLUGIN: PluginDescriptor = { id: 'base-keys', phase: 'bas
 export const CLIPBOARD_PLUGIN: PluginDescriptor = { id: 'clipboard', phase: 'guard' };
 /** The drop cursor of `prosemirror-dropcursor`. */
 export const DROP_CURSOR_PLUGIN: PluginDescriptor = { id: 'drop-cursor', phase: 'structure' };
+/** The gap cursor of `prosemirror-gapcursor`, whose arrow keys run before every base key. */
+export const GAP_CURSOR_PLUGIN: PluginDescriptor = { id: 'gap-cursor', phase: 'structure' };
 /** One plugin key, one instance: a plugin several capabilities contribute sits at its first contributor's position. */
 export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonly PluginDescriptor[]>>> = {
     history: [HISTORY_PLUGIN],
     // `core` always declares `text.insert`, so its capability carries the base keys, paste, copy and drop into every model.
-    insertText: [BASE_KEYS_PLUGIN, CLIPBOARD_PLUGIN, DROP_CURSOR_PLUGIN],
+    insertText: [BASE_KEYS_PLUGIN, CLIPBOARD_PLUGIN, DROP_CURSOR_PLUGIN, GAP_CURSOR_PLUGIN],
     wrapIn: [CONTAINER_KEYS_PLUGIN],
     // Every list feature indents its items, so this capability carries the list keys into each model with lists.
     indentItem: [LIST_KEYS_PLUGIN],
@@ -136,7 +138,11 @@ export const setBlock = <const P extends PayloadDeclaration | undefined = undefi
 
 /**
  * Inserts `node` at the selection, or adds or removes it as an optional child; with `newlineInCode`, a code block
- * gets a newline in its place, as a hard break does.
+ * gets a newline in its place, as a hard break does. A block replaces the empty textblock that holds a caret, goes
+ * before a textblock with the caret at its start, and otherwise after the block that holds the selection end, or
+ * always after the top-level block with `place: 'after-top-level-block'`; a block that ends up last gets an empty
+ * paragraph after it. With `limit: 'columns'`, it applies only while the document holds fewer of `node` than the
+ * presentation's columns minus one.
  */
 export const insertNode = <const P extends PayloadDeclaration | undefined = undefined>(
     node: string,
@@ -144,12 +150,21 @@ export const insertNode = <const P extends PayloadDeclaration | undefined = unde
         readonly attrs?: JsonObject;
         readonly child?: 'add' | 'remove' | 'toggle';
         readonly newlineInCode?: boolean;
+        readonly place?: 'after-top-level-block';
+        readonly limit?: 'columns';
         readonly payload?: P;
     },
 ): CommandDefinition<PayloadOf<P>> =>
     command(
         'insertNode',
-        { node, attrs: options?.attrs, child: options?.child, newlineInCode: options?.newlineInCode },
+        {
+            node,
+            attrs: options?.attrs,
+            child: options?.child,
+            newlineInCode: options?.newlineInCode,
+            place: options?.place,
+            limit: options?.limit,
+        },
         options === undefined ? undefined : options.payload,
     );
 
