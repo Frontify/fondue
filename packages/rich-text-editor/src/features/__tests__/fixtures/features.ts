@@ -218,22 +218,6 @@ export const fixtureInputRules = defineFeature({
     ],
 });
 
-/** Stands in for an upload: a leaf whose `assetId` an async completion sets. */
-export const fixtureImage = defineFeature({
-    id: 'fixture.image',
-    version: 1,
-    requires: requiresCore,
-    nodes: {
-        image: {
-            group: 'block',
-            atom: true,
-            attrs: { assetId: { type: 'id', nullable: true, default: null } },
-            html: ['img', { 'data-asset': { attr: 'assetId' } }],
-            parse: [],
-        },
-    },
-});
-
 /** Stands in for `lists.bullet`: a list whose items hold paragraphs and a nested list. */
 export const fixtureList = defineFeature({
     id: 'fixture.list',

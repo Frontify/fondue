@@ -1,0 +1,147 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { expect, test } from '@playwright/experimental-ct-react';
+import { type Page } from '@playwright/test';
+
+import { UploadProbe } from './fixtures/UploadProbe';
+
+// A 1 by 1 pixel PNG, which the asset route serves for every completed upload.
+const PIXEL_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
+/** The bytes of a PNG whose header declares `width` by `height` pixels. */
+const pngBytes = (width: number, height: number) => {
+    const bytes = Buffer.alloc(33);
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(bytes, 0);
+    bytes.writeUInt32BE(13, 8);
+    bytes.write('IHDR', 12, 'latin1');
+    bytes.writeUInt32BE(width, 16);
+    bytes.writeUInt32BE(height, 20);
+    bytes.set([8, 6, 0, 0, 0], 24);
+    return bytes;
+};
+
+const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Notes' });
+const ready = async (page: Page) => {
+    await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
+    await expect.poll(() => page.evaluate(() => window.uploadRte !== undefined)).toBe(true);
+};
+const imagesOf = (page: Page) => page.evaluate(() => window.uploadRte?.images() ?? []);
+
+/** Puts the caret at the end of the paragraph `Before`, then chooses `logo.png` in the file chooser that Image opens. */
+const chooseLogo = async (page: Page, width = 40, height = 30) => {
+    await page.evaluate(() => {
+        const rte = window.uploadRte;
+        rte?.setSelection(rte.handle, { text: 'Before', from: 6, to: 6 });
+        rte?.handle.focus();
+    });
+    const opened = page.waitForEvent('filechooser');
+    await page.getByRole('button', { name: 'Image' }).click();
+    const chooser = await opened;
+    await chooser.setFiles({ name: 'logo.png', mimeType: 'image/png', buffer: pngBytes(width, height) });
+    await expect.poll(() => page.evaluate(() => window.uploadRte?.requests().length)).toBe(1);
+};
+
+test('starts an upload of a 40 by 30 pixel logo.png with its file name as labelSnapshot and its measured size', async ({
+    mount,
+    page,
+}) => {
+    await mount(<UploadProbe />);
+    await ready(page);
+
+    await chooseLogo(page);
+
+    expect(await imagesOf(page)).toEqual([
+        expect.objectContaining({ assetId: null, labelSnapshot: 'logo.png', width: 40, height: 30 }),
+    ]);
+    await expect(surfaceOf(page).getByRole('progressbar', { name: 'logo.png' })).toBeVisible();
+});
+
+test('keeps the height of the image box when the uploaded image loads', async ({ mount, page }) => {
+    let serve: () => void = () => undefined;
+    const served = new Promise<void>((resolve) => {
+        serve = resolve;
+    });
+    await page.route('https://assets.frontify.test/**', async (route) => {
+        await served;
+        await route.fulfill({ contentType: 'image/png', body: Buffer.from(PIXEL_PNG, 'base64') });
+    });
+    await mount(<UploadProbe />);
+    await ready(page);
+    await chooseLogo(page, 400, 300);
+    const slot = surfaceOf(page).locator('figure [data-rte-upload]');
+    const slotBox = await slot.boundingBox();
+
+    await page.evaluate(() => window.uploadRte?.complete(0, 'logo-asset'));
+    const image = surfaceOf(page).locator('figure img');
+    await expect(image).toHaveCount(1);
+    const before = await image.boundingBox();
+    serve();
+    await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).complete)).toBe(true);
+    const after = await image.boundingBox();
+
+    expect(before?.height).toBeGreaterThan(0);
+    expect(after?.height).toBe(before?.height);
+    expect(slotBox?.height).toBeCloseTo(before?.height ?? 0, 0);
+});
+
+test('shows the drop cursor at the nearest block boundary for a dropped file and inserts its upload slot there', async ({
+    mount,
+    page,
+}) => {
+    await mount(<UploadProbe texts={['first', 'second']} />);
+    await ready(page);
+    const box = await surfaceOf(page).locator('p').nth(1).boundingBox();
+    if (box === null) {
+        throw new Error('no paragraph box');
+    }
+    // Over the text of `second`, nearer its start, so the boundary above it is nearest.
+    const point = { x: box.x + 8, y: box.y + box.height / 2 };
+    const send = (type: string) =>
+        page.evaluate(
+            ({ x, y, eventType, bytes }) => {
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(new File([Uint8Array.from(bytes)], 'logo.png', { type: 'image/png' }));
+                const surface = document.querySelector('[data-rte-surface]') as HTMLElement;
+                surface.dispatchEvent(
+                    new DragEvent(eventType, { dataTransfer, clientX: x, clientY: y, bubbles: true, cancelable: true }),
+                );
+            },
+            { ...point, eventType: type, bytes: [...pngBytes(40, 30)] },
+        );
+
+    await send('dragenter');
+    await send('dragover');
+    const cursor = page.locator('.prosemirror-dropcursor-block');
+    await expect(cursor).toHaveCount(1);
+    const shown = await cursor.boundingBox();
+    await send('drop');
+
+    await expect
+        .poll(() => page.evaluate(() => window.uploadRte?.blocks()))
+        .toEqual(['paragraph', 'figure', 'paragraph']);
+    await expect(cursor).toHaveCount(0);
+    expect(shown?.y).toBeLessThanOrEqual(box.y);
+    expect(await page.evaluate(() => window.uploadRte?.changes.map(({ origin }) => origin))).toEqual(['drop']);
+});
+
+test.describe('with a coarse pointer', () => {
+    test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+
+    test('gives the upload Cancel and Retry targets of at least 44 by 44 CSS pixels', async ({ mount, page }) => {
+        await mount(<UploadProbe />);
+        await ready(page);
+        await chooseLogo(page);
+        const cancel = surfaceOf(page).getByRole('button', { name: 'Cancel upload' });
+        const cancelBox = await cancel.boundingBox();
+
+        await page.evaluate(() => window.uploadRte?.fail(0));
+        const retry = surfaceOf(page).getByRole('button', { name: 'Retry upload' });
+        await expect(retry).toBeVisible();
+        const retryBox = await retry.boundingBox();
+
+        for (const found of [cancelBox, retryBox]) {
+            expect(found?.width).toBeGreaterThanOrEqual(44);
+            expect(found?.height).toBeGreaterThanOrEqual(44);
+        }
+    });
+});

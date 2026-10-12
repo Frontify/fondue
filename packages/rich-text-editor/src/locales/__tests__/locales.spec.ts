@@ -115,6 +115,9 @@ describe('package locales', () => {
             'size',
             'percent',
             'description',
+            'name',
+            'types',
+            'megapixels',
         ];
         const unnamed = Object.values(enUS.translationStrings)
             .flatMap(placeholders)
