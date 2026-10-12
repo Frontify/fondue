@@ -351,3 +351,17 @@ test('paints no native selection over the text of a selected node', async ({ mou
     const selected = await shot();
     expect(selected.equals(unselected)).toBe(true);
 });
+
+test('draws the placeholder in the GrayText system colour in forced colours', async ({ mount, page, browserName }) => {
+    test.skip(
+        browserName === 'webkit',
+        'WebKit has no forced colours mode: its emulation matches the query and keeps author colours',
+    );
+    await page.emulateMedia({ forcedColors: 'active' });
+    await mount(<EditorProbe texts={['']} placeholder="Write a note" />);
+    await ready(page);
+
+    expect(await surfaceOf(page).evaluate((surface) => getComputedStyle(surface, '::before').color)).toBe(
+        await computedColor(page, 'GrayText'),
+    );
+});
