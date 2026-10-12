@@ -10,7 +10,7 @@ import {
     undoDepth as historyUndoDepth,
 } from 'prosemirror-history';
 import { keydownHandler } from 'prosemirror-keymap';
-import { type Command, EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
+import { type Command, EditorState, Plugin, PluginKey, type Selection, type Transaction } from 'prosemirror-state';
 
 export { isHistoryTransaction, redo, undo };
 
@@ -69,6 +69,6 @@ export const groupRoot = (state: EditorState, root: Transaction, action: boolean
     return root;
 };
 
-/** A new state with the same plugins and an empty history. */
-export const reset = (state: EditorState): EditorState =>
-    EditorState.create({ doc: state.doc, selection: state.selection, plugins: state.plugins });
+/** A new state with the same plugins and an empty history, holding `doc`. */
+export const reset = (state: EditorState, doc = state.doc, selection: Selection = state.selection): EditorState =>
+    EditorState.create({ doc, selection, plugins: state.plugins });

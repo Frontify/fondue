@@ -10,6 +10,7 @@ import {
     type Snapshot,
 } from '#/runtime/types';
 
+// The runtime builds replacement and recovery, so their types live with the runtime types.
 export type {
     CommitOptions,
     CommitResult,

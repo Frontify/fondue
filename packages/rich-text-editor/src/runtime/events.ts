@@ -20,6 +20,7 @@ export interface RuntimeEvents {
     readonly saveStatusChange: SaveStatus;
     readonly diagnostic: Diagnostic;
     readonly operationMetric: OperationMetric;
+    readonly replaced: SessionToken;
     readonly disposed: SessionToken;
 }
 export type Listener = (value: never) => void;
