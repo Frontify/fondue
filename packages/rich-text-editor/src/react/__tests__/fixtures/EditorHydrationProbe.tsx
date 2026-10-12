@@ -45,10 +45,11 @@ export const EditorHydrationProbe = ({
 }) => {
     const hostRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
+        const defaultValue = storedOf(text);
         const container = window.document.createElement('div');
         const tree = (done: () => void) => (
             <>
-                <RichTextEditor aria-label="Notes" definition={definition} defaultValue={storedOf(text)} />
+                <RichTextEditor aria-label="Notes" definition={definition} defaultValue={defaultValue} />
                 <Committed onCommit={done} />
             </>
         );
@@ -76,6 +77,7 @@ export const EditorHydrationProbe = ({
         const root = hydrateRoot(
             container,
             tree(() => {
+                // This sibling's layout effect runs after the editor's, so a view attached later would miss it.
                 atCommit = surfaceText();
                 requestAnimationFrame(sample);
             }),

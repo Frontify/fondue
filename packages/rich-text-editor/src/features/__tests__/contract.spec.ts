@@ -7,14 +7,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCodecs } from '#/codecs';
 import { type CapabilityImplementation, type EngineCommand, type Normalizer, NORMALIZERS } from '#/definition';
 import { bold, featuresById } from '#/features';
-import { commandCases, normalizerCases } from '#/features/__tests__/fixtures/contract.cases';
+import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
+import { fixtureChromeViews } from '#/features/__tests__/fixtures/chrome/view';
+import { commandCases, nodeViewCases, normalizerCases } from '#/features/__tests__/fixtures/contract.cases';
 import { fixtureHeadingSet, fixtureMedia, fixtureMention, fixtureTable } from '#/features/__tests__/fixtures/features';
 import { highlight, highlightDocument } from '#/features/__tests__/fixtures/outside-feature';
 import { vocabularyLists } from '#/features/__tests__/fixtures/vocabulary';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
 import { registry } from '#/features/registry';
-import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, defineNodeView, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature, type Feature, type RichTextDocument, toggleMark } from '#/model';
 import { CAPABILITIES } from '#/runtime/capabilities';
 import { type DocumentChange } from '#/runtime/types';
@@ -94,6 +96,17 @@ const nodeIdDocument = stored([
 ]);
 normalizerCases(nodeIdFeatures(), [nodeIdDocument]);
 
+// No shipped feature has a node view yet, so the cases run over the stand-ins.
+const chromeDocument = stored(
+    [
+        paragraph(text('Hi '), { type: 'chrome_mention', attrs: { nodeId: 'm-1', label: 'Ada' } }),
+        { type: 'chrome_block', attrs: { nodeId: 'b-1', language: 'ts', checked: false }, content: [text('code')] },
+        { type: 'chrome_image', attrs: { nodeId: 'i-1', assetId: null } },
+    ],
+    ['core', 'fixture.chrome'],
+);
+nodeViewCases([core(), fixtureChromeViews()], [chromeDocument]);
+
 const DECODES = (name: string) => `decodes and encodes ${name} to itself`;
 const RENDERS = (name: string) => `renders ${name} in the reader and writes it through every codec`;
 const AXE = (name: string) => `passes axe on the reader output of ${name}`;
@@ -118,6 +131,19 @@ const dispatchRangeQueries = () => {
 };
 
 describe('the feature contract suite', () => {
+    it('fails the node view cases of an inline view whose chrome hides a button in a div', async () => {
+        const Hidden = () =>
+            createElement('div', { 'aria-hidden': 'true' }, createElement('button', { type: 'button' }));
+        const hidden = defineNodeView(fixtureChrome(), { node: 'chrome_mention', component: Hidden });
+
+        const failing = await failingTitles(() => nodeViewCases([core(), hidden], [chromeDocument]));
+
+        expect(failing).toEqual([
+            'keeps valid HTML nesting for the chrome_mention view under each parent its schema allows',
+            'keeps every control in the chrome of the chrome_mention view out of aria-hidden',
+        ]);
+    });
+
     it.each([
         [
             'setTimeout',

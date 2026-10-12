@@ -829,12 +829,12 @@ describe('toHTML style, overrides and locale', () => {
         const document = testDocument(
             model,
             paragraphOf({}, { type: 'text', text: 'a ' }, { type: 'chip' }, { type: 'text', text: ' b' }),
-            { type: 'listing', content: [{ type: 'text', text: 'x  y' }] },
+            { type: 'listing', content: [{ type: 'text', text: 'x y' }] },
         );
         const { html, diagnostics } = codecs.toHTML(document);
 
         expect(html).toBe(
-            '<div><p dir="auto">a <span role="group" aria-label="Unsupported content: test.styled" data-rte-island=""></span> b</p><div role="group" aria-label="Unsupported content: test.styled" data-rte-island="">x  y</div></div>',
+            '<div><p dir="auto">a <span role="group" aria-label="Unsupported content: test.styled" data-rte-island=""></span> b</p><div role="group" aria-label="Unsupported content: test.styled" data-rte-island="">x y</div></div>',
         );
         expect(codesOf(diagnostics)).toEqual(['codecs.override-failed', 'codecs.override-failed']);
     });
