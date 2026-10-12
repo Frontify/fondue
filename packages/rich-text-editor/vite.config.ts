@@ -74,6 +74,8 @@ export default defineConfig({
     },
     test: {
         environment: 'happy-dom',
+        // `runFeatureContract` registers its cases through the runner globals, as it does in a host's tests.
+        globals: true,
         coverage: {
             exclude: [
                 ...configDefaults.exclude,

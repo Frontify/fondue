@@ -33,4 +33,4 @@ Run these from `packages/rich-text-editor`.
 | `./features` | The shipped features |
 | `./reader` | `RichTextReader` and `defineReaderFeature` |
 | `./codecs` | `createCodecs` |
-| `./testing` | The input helpers and the runtime probe |
+| `./testing` | The feature contract suite, the input helpers and the runtime probe |
