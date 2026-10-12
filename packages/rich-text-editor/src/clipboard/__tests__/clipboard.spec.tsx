@@ -32,7 +32,7 @@ import {
     text,
 } from '#/features/__tests__/fixtures/documents';
 import { fixtureMedia } from '#/features/__tests__/fixtures/features';
-import { htmlFeatures, htmlLanguage, htmlLink } from '#/features/__tests__/fixtures/html';
+import { htmlFeatures, htmlLink } from '#/features/__tests__/fixtures/html';
 import { fixtureMediaImageView } from '#/features/__tests__/fixtures/media/view';
 import { fixtureTableBlockView } from '#/features/__tests__/fixtures/table/view';
 import {
@@ -48,6 +48,7 @@ import {
 } from '#/features/__tests__/fixtures/vocabulary';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
+import { language } from '#/features/marks-language/feature';
 import { registry } from '#/features/registry';
 import { fromHTML } from '#/html';
 import {
@@ -1695,12 +1696,12 @@ describe('pasted HTML', () => {
     it.each([
         ['a[href] after a bare a', [core(), bareLink(), htmlLink()], '<a href="https://x.io">x</a>', 'link'],
         ['a[href] before a bare a', [core(), htmlLink(), bareLink()], '<a href="https://x.io">x</a>', 'link'],
-        ['span[lang] after a bare span', [core(), bareSpan(), htmlLanguage()], '<span lang="fr">x</span>', 'language'],
-        ['span[lang] before a bare span', [core(), htmlLanguage(), bareSpan()], '<span lang="fr">x</span>', 'language'],
+        ['span[lang] after a bare span', [core(), bareSpan(), language()], '<span lang="fr">x</span>', 'language'],
+        ['span[lang] before a bare span', [core(), language(), bareSpan()], '<span lang="fr">x</span>', 'language'],
         ['a bare a after a[href], with no href', [core(), htmlLink(), bareLink()], '<a>x</a>', 'plain_link'],
         [
             'a bare span after span[lang], with no lang',
-            [core(), htmlLanguage(), bareSpan()],
+            [core(), language(), bareSpan()],
             '<span>x</span>',
             'plain_span',
         ],

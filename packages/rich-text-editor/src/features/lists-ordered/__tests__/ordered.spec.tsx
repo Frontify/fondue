@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { act, screen } from '@testing-library/react';
+import { type Node } from 'prosemirror-model';
+import { TextSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
 import { item, list, listModel, outlineOf } from '#/react/__tests__/fixtures/lists';
-import { mountText, para, storedIn } from '#/react/__tests__/fixtures/text';
+import { mountText, para, storedIn, text } from '#/react/__tests__/fixtures/text';
 import { pressKey, setSelection, typeText } from '#/testing';
 
 beforeEach(() => {
@@ -84,5 +86,56 @@ describe('lists.ordered', () => {
         });
 
         expect(screen.getByRole('spinbutton', { name: 'First number' })).toHaveProperty('value', '5');
+    });
+});
+
+/** The position of the first character of `value` in `doc`. */
+const textAt = (doc: Node, value: string): number => {
+    let found = -1;
+    doc.descendants((node, pos) => {
+        if (found < 0 && node.isText && node.text?.includes(value) === true) {
+            found = pos + node.text.indexOf(value);
+        }
+        return found < 0;
+    });
+    return found;
+};
+
+describe('list.ordered.start.set', () => {
+    const blocks = [
+        list('ordered', [item('ordered', 'one', list('ordered', [item('ordered', 'inner')]))]),
+        para(text('between')),
+        list('ordered', [item('ordered', 'two')]),
+    ];
+
+    it('sets the start of every ordered list a selection reaches', () => {
+        const { handle, view } = mountText({ model, blocks });
+        act(() => {
+            const { doc } = view.state;
+            view.dispatch(
+                view.state.tr.setSelection(TextSelection.create(doc, textAt(doc, 'one'), textAt(doc, 'two'))),
+            );
+        });
+
+        expect(handle.execute('list.ordered.start.set', { start: 5 }).status).toBe('applied');
+
+        expect(outlineOf(handle)).toEqual([
+            { ol: [['one', { ol: [['inner']], start: 5 }]], start: 5 },
+            'between',
+            { ol: [['two']], start: 5 },
+        ]);
+    });
+
+    it('sets the start of the innermost ordered list around a caret only', () => {
+        const { handle } = mountText({ model, blocks });
+        setSelection(handle, { text: 'inner', from: 2, to: 2 });
+
+        expect(handle.execute('list.ordered.start.set', { start: 5 }).status).toBe('applied');
+
+        expect(outlineOf(handle)).toEqual([
+            { ol: [['one', { ol: [['inner']], start: 5 }]] },
+            'between',
+            { ol: [['two']] },
+        ]);
     });
 });

@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
 import { type CapabilityImplementation, type EngineCommand, type Normalizer, NORMALIZERS } from '#/definition';
-import { bold, featuresById, heading } from '#/features';
+import { align as blockAlign, bold, featuresById, heading } from '#/features';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { fixtureChromeViews } from '#/features/__tests__/fixtures/chrome/view';
 import { commandCases, nodeViewCases, normalizerCases } from '#/features/__tests__/fixtures/contract.cases';
@@ -268,7 +268,7 @@ describe('the feature contract suite', () => {
     it('fails the fixture cases of an outside document that misspells its mark', async () => {
         const misspelled = stored([paragraph(text('Read', 'highlite'))], ['core', 'fixture.highlight']);
 
-        expect(await failingCases([core(), highlight()], [misspelled])).toEqual([
+        expect(await failingCases([core(), heading(), blockAlign(), highlight()], [misspelled])).toEqual([
             DECODES('fixture 1'),
             RENDERS('fixture 1'),
         ]);
@@ -292,13 +292,15 @@ describe('the feature contract suite', () => {
             ],
         });
 
-        expect(await failingCases([core(), menu()])).toEqual([LABELS]);
+        expect(await failingCases([core(), heading(), blockAlign(), menu()])).toEqual([LABELS]);
     });
 
     it('fails a command whose query over a range dispatches', async () => {
         const spy = dispatchRangeQueries();
         try {
-            expect(await failingCases([core(), bold()])).toEqual(['queries mark.bold.toggle without dispatching']);
+            expect(await failingCases([core(), heading(), blockAlign(), bold()])).toEqual([
+                'queries mark.bold.toggle without dispatching',
+            ]);
         } finally {
             spy.mockRestore();
         }
@@ -307,7 +309,7 @@ describe('the feature contract suite', () => {
     it('fails an outside command whose query over a range of a given fixture dispatches', async () => {
         const spy = dispatchRangeQueries();
         try {
-            expect(await failingCases([core(), highlight()], [highlightDocument])).toEqual([
+            expect(await failingCases([core(), heading(), blockAlign(), highlight()], [highlightDocument])).toEqual([
                 'queries fixture.highlight.toggle without dispatching',
             ]);
         } finally {
@@ -398,7 +400,16 @@ describe('the feature contract suite', () => {
             },
             formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
         });
-        const spaced = stored([paragraph(text('a', 'bold'), text(' '), text('b', 'bold'))], ['core', 'marks.bold']);
+        const spaced = stored(
+            [
+                {
+                    type: 'paragraph',
+                    attrs: { lang: null, align: null },
+                    content: [text('a', 'bold'), text(' '), text('b', 'bold')],
+                },
+            ],
+            ['core', 'marks.bold'],
+        );
         const indented = stored(
             [{ type: 'fixture_code', content: [text('if (a) {\n b();\n}')] }],
             ['core', 'fixture.code'],
@@ -417,11 +428,11 @@ describe('the feature contract suite', () => {
             });
         try {
             breaking('', '');
-            const intact = await failingCases([core(), bold(), code()], [spaced, indented]);
+            const intact = await failingCases([core(), heading(), blockAlign(), bold(), code()], [spaced, indented]);
             breaking('</strong> <strong>', '</strong><strong>');
-            const space = await failingCases([core(), bold(), code()], [spaced, indented]);
+            const space = await failingCases([core(), heading(), blockAlign(), bold(), code()], [spaced, indented]);
             breaking('\n ', ' ');
-            const newline = await failingCases([core(), bold(), code()], [spaced, indented]);
+            const newline = await failingCases([core(), heading(), blockAlign(), bold(), code()], [spaced, indented]);
 
             expect([intact, space, newline]).toEqual([[], [RENDERS('fixture 1')], [RENDERS('fixture 2')]]);
         } finally {
@@ -436,9 +447,18 @@ describe('the feature contract suite', () => {
             requires: [{ id: 'core', version: 1 }],
             marks: { fixture_hidden: { attrs: {}, html: ['strong', { 'aria-hidden': 'maybe' }, 0], parse: [] } },
         });
-        const document = stored([paragraph(text('Make '), text('this', 'fixture_hidden'))], ['core', 'fixture.hidden']);
+        const document = stored(
+            [
+                {
+                    type: 'paragraph',
+                    attrs: { lang: null, align: null },
+                    content: [text('Make '), text('this', 'fixture_hidden')],
+                },
+            ],
+            ['core', 'fixture.hidden'],
+        );
 
-        expect(await failingCases([core(), hidden()], [document])).toEqual([AXE('fixture 1')]);
+        expect(await failingCases([core(), heading(), blockAlign(), hidden()], [document])).toEqual([AXE('fixture 1')]);
     });
 });
 
@@ -451,7 +471,10 @@ describe('the outside fixture feature', () => {
     });
 
     it('shows and toggles its mark in the editor', () => {
-        const model = compileContentModel([core(), highlight()], { id: 'fixture.highlight', version: 1 });
+        const model = compileContentModel([core(), heading(), blockAlign(), highlight()], {
+            id: 'fixture.highlight',
+            version: 1,
+        });
         const ref = createRef<EditorHandle<object>>();
         const changes: DocumentChange[] = [];
         render(
@@ -483,7 +506,7 @@ describe('the outside fixture feature', () => {
             content: [
                 {
                     type: 'paragraph',
-                    attrs: { lang: null },
+                    attrs: { lang: null, align: null },
                     content: [
                         { type: 'text', text: 'Read the ' },
                         { type: 'text', text: 'highlighted', marks: [{ type: 'fixture_highlight' }] },

@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`alignment, direction and language output > writes each alignment as an inline text-align style in the reader and in HTML 1`] = `"<div class="fondue-rte-content" lang="en" dir="ltr"><p lang="de" dir="auto">Danke <span lang="ar" dir="rtl">شكرا</span></p><p style="text-align:left" dir="auto">left</p><p style="text-align:center" dir="auto">center</p><p style="text-align:right" dir="auto">right</p><p style="text-align:justify" dir="auto">justify</p></div>"`;
+
+exports[`alignment, direction and language output > writes lang and dir from the document, a block and a language mark 1`] = `"<div class="fondue-rte-content" lang="en" dir="ltr"><p lang="de" dir="auto">Danke <span lang="ar" dir="rtl">شكرا</span></p><p style="text-align:left" dir="auto">left</p><p style="text-align:center" dir="auto">center</p><p style="text-align:right" dir="auto">right</p><p style="text-align:justify" dir="auto">justify</p></div>"`;

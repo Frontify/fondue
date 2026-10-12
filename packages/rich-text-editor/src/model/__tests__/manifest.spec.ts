@@ -436,6 +436,28 @@ describe('featureFromManifest', () => {
         });
     });
 
+    it('rejects a setAttributes command that names its types under nodes, which no setAttributes reads', () => {
+        const tone = (args: Manifest) =>
+            withChange((manifest) => {
+                manifest.commands = {
+                    'acme.pull-quote.tone.set': {
+                        capability: 'setAttributes',
+                        ...args,
+                        payload: { fields: { tone: { type: 'enum', values: ['neutral', 'brand'] } } },
+                    },
+                };
+                manifest.keys = {};
+                manifest.inputRules = [];
+                manifest.toolbar = [];
+            });
+
+        expect(compile(tone({ node: 'acme_pull_quote' })).manifest.commands).toContain('acme.pull-quote.tone.set');
+        expect(failureOf(() => compile(tone({ node: 'acme_pull_quote', nodes: ['acme_pull_quote'] })))).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'acme.pull-quote', path: '/commands/acme.pull-quote.tone.set/nodes' },
+        });
+    });
+
     it.each([
         ['prefix', '<b>', '/nodes/acme_pull_quote/markdown/prefix'],
         ['prefix', '[x](', '/nodes/acme_pull_quote/markdown/prefix'],
