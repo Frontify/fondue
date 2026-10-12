@@ -9,9 +9,10 @@ import {
     type DecodeOptions,
     type DecodeResult,
     decodeDocument,
+    type HrefPolicy,
     type Diagnostic,
 } from '#/model';
-import { attributesOf } from '#/model/compile';
+import { attributesOf, markHrefPolicy } from '#/model/compile';
 import { type TreeMark, type TreeNode, type Vocabulary, vocabularyOf } from '#/model/content';
 import { encodeTree } from '#/model/encode';
 import { pointer } from '#/model/errors';
@@ -69,9 +70,35 @@ export const inlineToken = (token: MarkdownToken): InlineToken | undefined => {
 };
 
 /** One dialect: CommonMark with GFM tables and strikethrough, raw HTML off, `http`, `https` and email literals linked. */
-export const createParser = (): Parser => {
+// markdown-it's own link check refuses this scheme, so the destination stays literal text.
+const REFUSED_LINK = 'javascript:';
+
+/** The text from a linkify match to the next space, which the URL check judges whole, so a refused URL links no part of it. */
+const candidateAt = (text: string, index: number): string => text.slice(index).split(/\s/, 1)[0] ?? '';
+
+/** `policy` is the `allowedSchemes` and `allowedHosts` of the feature that declares `link`, which links must pass too. */
+export const createParser = (policy?: HrefPolicy): Parser => {
     const parser = new MarkdownIt('default', { html: false, linkify: true });
-    parser.linkify.set({ fuzzyLink: false });
+    parser.linkify.set({ fuzzyLink: true });
+    const accepts = (url: string) => checkHref(url, policy).ok;
+    // Of the links with no scheme, only `www.` ones become links, as GitHub's extended autolinks do; a bare domain stays text.
+    const match = parser.linkify.match.bind(parser.linkify);
+    parser.linkify.match = (text) =>
+        (match(text) ?? []).filter(
+            ({ schema, raw, index, url }) =>
+                (schema !== '' || /^www\./i.test(raw)) && accepts(url) && accepts(candidateAt(text, index)),
+        );
+    const matchAtStart = parser.linkify.matchAtStart.bind(parser.linkify);
+    parser.linkify.matchAtStart = (text) => {
+        const found = matchAtStart(text);
+        if (found === null || !accepts(found.url) || !accepts(candidateAt(text, 0))) {
+            return null;
+        }
+        return found;
+    };
+    // A destination that fails the URL check as written stays text, though markdown-it's encoding would repair it.
+    const normalizeLink = parser.normalizeLink.bind(parser);
+    parser.normalizeLink = (url) => (accepts(url) ? normalizeLink(url) : REFUSED_LINK);
     return parser;
 };
 
@@ -87,12 +114,15 @@ class Builder {
     readonly vocabulary: Vocabulary;
     private readonly stack: Frame[];
     readonly root: { type: string; attrs: Record<string, unknown>; content: TreeNode[] };
+    /** The `allowedSchemes` and `allowedHosts` of the feature that declares `link`. */
+    readonly linkPolicy: HrefPolicy | undefined;
 
     constructor(
         model: ContentModel,
         private readonly generateId: () => string,
     ) {
         this.vocabulary = vocabularyOf(model);
+        this.linkPolicy = markHrefPolicy(model, 'link');
         this.root = { type: 'doc', attrs: this.attrsFor('doc', {}), content: [] };
         this.stack = [{ node: this.root, path: '/content', task: false }];
     }
@@ -252,7 +282,7 @@ const inlineNodes = (builder: Builder, token: MarkdownToken, path: string, strip
         } else if (read.kind === 'open') {
             let mark: TreeMark | undefined;
             if (read.mark === 'link') {
-                const href = checkHref(read.href);
+                const href = checkHref(read.href, builder.linkPolicy);
                 if (href.ok && builder.hasMark('link')) {
                     mark = builder.markOf('link', { href: href.href });
                 } else if (href.ok) {

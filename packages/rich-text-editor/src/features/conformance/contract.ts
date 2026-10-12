@@ -168,6 +168,12 @@ const normalized = (html: string) =>
         .join('')
         .trim();
 
+// Screen-reader-only text holds text alone, so its element closes before any other tag opens.
+const HIDDEN_TEXT = /<(\w+)(?:\s[^>]*)?\sdata-rte-hidden-text(?:="[^"]*")?(?:\s[^>]*)?>[^<]*<\/\1>/g;
+
+/** The reader's markup without its visually hidden text, which `toHTML` leaves out so pasted output adds no text. */
+const withoutHiddenText = (markup: string) => markup.replaceAll(HIDDEN_TEXT, '');
+
 /** The reader's static markup of a document, with the diagnostics it reported. */
 const readerOutput = (document: RichTextDocument, model: ContentModel) => {
     const diagnostics: Diagnostic[] = [];
@@ -260,7 +266,7 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
             const text = codecs.toPlainText(stored);
             const markdown = codecs.toMarkdown(stored);
             expect([reader, html, text, markdown].flatMap(({ diagnostics }) => diagnostics)).toEqual([]);
-            expect(normalized(html.html)).toBe(normalized(reader.markup));
+            expect(normalized(html.html)).toBe(normalized(withoutHiddenText(reader.markup)));
         });
 
         it(`passes axe on the reader output of ${name}`, async () => {

@@ -30,14 +30,15 @@ import {
     SUGGESTIONS_PLUGIN,
 } from '#/model/capabilities';
 import { appliesToOf } from '#/model/styles';
-import { isRecord } from '#/model/values';
+import { isRecord, OBJECT_REPLACEMENT } from '#/model/values';
 
 import { codeKeysPlugin } from './code-keys';
 import { codeSyntaxPlugin } from './code-syntax';
 import { columnsOf } from './columns';
 import { historyPlugin, redo, undo } from './history';
-import { inputRulesPlugin, undoInputRule } from './input-rules';
+import { enterRules, inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
+import { linkAt } from './links';
 import { listAround, repeated } from './lists';
 import { nearest, positionOf } from './positions';
 import { stylesOf } from './styles';
@@ -896,24 +897,103 @@ const markRangeAt = (
     return { from, to };
 };
 
-/** Adds `mark` to the selected text, or to the stored marks at a caret, as one transaction that records it as the last mark. */
+/**
+ * The whole run of `type` that the selection lies in, a caret or a range inside it, or `undefined` when the selection
+ * leaves that run or holds no such mark.
+ */
+const enclosingRange = (
+    state: EditorState,
+    type: MarkType,
+): { readonly from: number; readonly to: number } | undefined => {
+    // A caret at a link's trailing edge still edits the link the link bubble shows there; a passage's end stays outside.
+    const range = type.name === 'link' ? linkAt(state) : markRangeAt(state, type);
+    const { from, to } = state.selection;
+    if (range === undefined || from < range.from || to > range.to) {
+        return undefined;
+    }
+    return range;
+};
+
+/** The marks other than `type` that every text node between `from` and `to` carries. */
+const sharedMarks = (doc: Node, from: number, to: number, type: MarkType): readonly Mark[] => {
+    let shared: readonly Mark[] | undefined;
+    doc.nodesBetween(from, to, (node) => {
+        if (node.isText) {
+            const own = node.marks.filter((mark) => mark.type !== type);
+            shared = shared === undefined ? own : shared.filter((mark) => mark.isInSet(own));
+        }
+    });
+    return shared ?? [];
+};
+
+/**
+ * Puts `mark` on `from` to `to`. Visible `text` that differs from the text there replaces it, with the marks that
+ * covered all of it, so text kept as it was keeps its inner marks; text across blocks is never replaced.
+ */
+const markRange = (transaction: Transaction, from: number, to: number, mark: Mark, text: string | undefined) => {
+    const { doc } = transaction;
+    const $from = doc.resolve(from);
+    // A hard break or other leaf in the range counts as nothing too, as the popover prefills the text without it.
+    const replaces =
+        text !== undefined &&
+        text !== '' &&
+        $from.sameParent(doc.resolve(to)) &&
+        doc.textBetween(from, to, undefined, OBJECT_REPLACEMENT) !== text &&
+        doc.textBetween(from, to, undefined, '') !== text;
+    if (!replaces) {
+        transaction.addMark(from, to, mark);
+        return;
+    }
+    const marks = mark.addToSet(sharedMarks(doc, from, to, mark.type));
+    transaction.replaceWith(from, to, mark.type.schema.text(text, marks));
+    transaction.setSelection(TextSelection.create(transaction.doc, from, from + text.length));
+};
+
+/**
+ * Adds `mark` to the selected text, or to the stored marks at a caret, as one transaction that records it as the last
+ * mark. With `extend`, a selection inside one run of the mark acts on the whole run. Visible `text` at a caret outside
+ * the mark inserts that text with the mark, or the mark's `href` when it is empty.
+ */
 const applyMark = (
     state: EditorState,
     dispatch: ((transaction: Transaction) => void) | undefined,
     mark: Mark,
     extend: boolean,
+    text?: string,
 ): boolean => {
     const { type } = mark;
+    const range = extend ? enclosingRange(state, type) : undefined;
+    if (range !== undefined) {
+        if (dispatch !== undefined) {
+            const transaction = state.tr;
+            markRange(transaction, range.from, range.to, mark, text);
+            dispatch(transaction.setMeta(LAST_MARK_META, mark).scrollIntoView());
+        }
+        return true;
+    }
     if (state.selection.empty) {
-        const range = extend ? markRangeAt(state, type) : undefined;
-        if (range === undefined) {
-            if (!state.selection.$from.parent.type.allowsMarkType(type)) {
-                return false;
-            }
+        const { $from } = state.selection;
+        if (!$from.parent.type.allowsMarkType(type)) {
+            return false;
+        }
+        if (text === undefined) {
             dispatch?.(state.tr.addStoredMark(mark).setMeta(LAST_MARK_META, mark));
             return true;
         }
-        dispatch?.(state.tr.addMark(range.from, range.to, mark).setMeta(LAST_MARK_META, mark));
+        let inserted = text;
+        if (inserted === '' && typeof mark.attrs.href === 'string') {
+            inserted = mark.attrs.href;
+        }
+        if (inserted === '') {
+            return false;
+        }
+        const marks = mark.addToSet((state.storedMarks ?? $from.marks()).filter((other) => other.type !== type));
+        dispatch?.(
+            state.tr
+                .insert($from.pos, type.schema.text(inserted, marks))
+                .setMeta(LAST_MARK_META, mark)
+                .scrollIntoView(),
+        );
         return true;
     }
     const texts = markableText(state, type);
@@ -922,8 +1002,13 @@ const applyMark = (
     }
     if (dispatch !== undefined) {
         const transaction = state.tr;
-        for (const { from, to } of texts) {
-            transaction.addMark(from, to, mark);
+        const { from, to, $from, $to } = state.selection;
+        if ($from.sameParent($to)) {
+            markRange(transaction, from, to, mark, text);
+        } else {
+            for (const range of texts) {
+                transaction.addMark(range.from, range.to, mark);
+            }
         }
         dispatch(transaction.setMeta(LAST_MARK_META, mark).scrollIntoView());
     }
@@ -940,7 +1025,7 @@ const clearMarks = (
     if (state.selection.empty) {
         const stored = state.storedMarks ?? state.selection.$from.marks();
         const held = types.flatMap((type) => {
-            const range = extend ? markRangeAt(state, type) : undefined;
+            const range = extend ? enclosingRange(state, type) : undefined;
             if (range === undefined && type.isInSet(stored) === undefined) {
                 return [];
             }
@@ -962,11 +1047,15 @@ const clearMarks = (
         }
         return true;
     }
-    const ranges = types.flatMap((type) =>
-        markableText(state, type)
+    const ranges = types.flatMap((type) => {
+        const run = extend ? enclosingRange(state, type) : undefined;
+        if (run !== undefined) {
+            return [{ ...run, type }];
+        }
+        return markableText(state, type)
             .filter((text) => text.marked)
-            .map((text) => ({ ...text, type })),
-    );
+            .map((text) => ({ ...text, type }));
+    });
     if (ranges.length === 0) {
         return false;
     }
@@ -1000,7 +1089,19 @@ const markWithAttrs = (state: EditorState, type: MarkType, attrs: Readonly<Recor
     return tristate(texts.filter(Boolean).length, texts.length);
 };
 
-/** Sets the mark with the payload's fields as attributes, or removes it for a null payload. */
+/** A payload's attributes, and its `text` field, the visible text, unless the mark declares a `text` attribute. */
+const splitText = (type: MarkType, payload: Readonly<Record<string, unknown>>) => {
+    if (Object.hasOwn(type.spec.attrs ?? {}, 'text') || !Object.hasOwn(payload, 'text')) {
+        return { attrs: payload, text: undefined };
+    }
+    const { text, ...attrs } = payload;
+    return { attrs, text: typeof text === 'string' ? text : undefined };
+};
+
+/**
+ * Sets the mark with the payload's fields as attributes, or removes it for a null payload; a `text` field is the
+ * visible text that `applyMark` inserts or replaces.
+ */
 const setMark: CapabilityImplementation = (args, schema) => {
     const type = schema.marks[args.mark as string] as MarkType;
     const extend = args.extendToMarkRange === true;
@@ -1012,13 +1113,14 @@ const setMark: CapabilityImplementation = (args, schema) => {
             if (!isRecord(payload)) {
                 return false;
             }
-            return applyMark(state, dispatch, type.create(payload), extend);
+            const { attrs, text } = splitText(type, payload);
+            return applyMark(state, dispatch, type.create(attrs), extend, text);
         },
         active: (state, payload) => {
             if (!isRecord(payload)) {
                 return false;
             }
-            return markWithAttrs(state, type, payload);
+            return markWithAttrs(state, type, splitText(type, payload).attrs);
         },
     };
 };
@@ -1264,7 +1366,8 @@ export const CAPABILITIES: CapabilityImplementations = {
     plugins: {
         [LAST_MARK_PLUGIN.id]: lastMarkPlugin,
         // Backspace right after a rule fired undoes it before any list or block key sees it.
-        [HISTORY_PLUGIN.id]: () => historyPlugin({ Backspace: undoInputRule }),
+        [HISTORY_PLUGIN.id]: ({ inputRules }) =>
+            historyPlugin({ Backspace: undoInputRule, Enter: enterRules(inputRules) }),
         [INPUT_RULES_PLUGIN.id]: inputRulesPlugin,
         [LIST_KEYS_PLUGIN.id]: listKeysPlugin,
         [CODE_KEYS_PLUGIN.id]: codeKeysPlugin,

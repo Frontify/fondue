@@ -170,7 +170,20 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
     }
     const attrs = attrsOf(mark.attrs);
     const { styles, colorTokens, inline } = state.styles;
-    let template = withStyleId(resolveHtmlSpec(plan.spec, attrs, plan.options), attrs);
+    let template = resolveHtmlSpec(plan.spec, attrs, plan.options);
+    if (mark.type === 'link' && plan.featureId === 'links') {
+        const [anchor] = template.layers;
+        // A link whose `href` failed the check is its text alone, as in the reader.
+        if (anchor === undefined || anchor.attrs.href === undefined) {
+            return inner;
+        }
+        // The reader's out-of-sight "opens in a new window" text would become content when the output is pasted.
+        if (attrs.openInNewWindow === true) {
+            const opened = { ...anchor.attrs, rel: 'noopener noreferrer', target: '_blank' };
+            template = { ...template, layers: [{ ...anchor, attrs: opened }, ...template.layers.slice(1)] };
+        }
+    }
+    template = withStyleId(template, attrs);
     template = withStyle(template, styleOfNode(styles, mark.type, attrs).style, inline);
     template = withColor(template, mark.type, attrs, colorTokens);
     return build(template, inner);

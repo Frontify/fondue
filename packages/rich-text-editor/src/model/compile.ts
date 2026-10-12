@@ -43,7 +43,7 @@ import {
 import { DefinitionError, type DefinitionErrorCode, pointer } from './errors';
 import { featureInternals } from './feature';
 import { canonicalJson, sha256 } from './hash';
-import { checkHref } from './href';
+import { checkHref, type HrefPolicy, hrefPolicyOf } from './href';
 import { markdownDelimiterPattern, markdownFencePattern } from './markdown';
 import {
     findInvalidPayload,
@@ -132,6 +132,14 @@ const COMPILED = Symbol('compiled-model');
 
 export const compiledModel = (model: ContentModel): CompiledModel =>
     (model as unknown as { readonly [COMPILED]: CompiledModel })[COMPILED];
+
+/** The URL policy of the feature that declares `mark`, from its `allowedSchemes` and `allowedHosts` options. */
+export const markHrefPolicy = (model: ContentModel, mark: string): HrefPolicy | undefined => {
+    const { marks, features } = compiledModel(model);
+    const owner = marks.find(({ name }) => name === mark)?.featureId;
+    const feature = features.find(({ id }) => id === owner);
+    return feature === undefined ? undefined : hrefPolicyOf(feature.options);
+};
 
 /** Own attributes, then shared ones. */
 export const attributesOf = (node: CompiledNode): Readonly<Record<string, AttributeDeclaration>> => {
@@ -737,7 +745,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
         const rules = feature.declaration.inputRules ?? [];
         for (const [index, rule] of rules.entries()) {
             const path = pointer('inputRules', index);
-            if (rule.kind === 'mark-delimiter' && !marks.has(rule.mark)) {
+            if ((rule.kind === 'mark-delimiter' || rule.kind === 'mark-rule') && !marks.has(rule.mark)) {
                 throw failure('definition.orphan-behavior', feature.id, `${path}/mark`);
             }
             if (rule.kind === 'block-rule' && !commands.has(rule.command) && !guardedOut.has(rule.command)) {

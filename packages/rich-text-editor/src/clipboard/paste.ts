@@ -6,7 +6,8 @@ import { type Step, Transform } from 'prosemirror-transform';
 
 import { createParser, readMarkdown } from '#/codecs/from-markdown';
 import { withNodeIds } from '#/definition';
-import { checkHref, type ContentModel, type ResourceLimits } from '#/model';
+import { checkHref, type ContentModel, type HrefPolicy, type ResourceLimits } from '#/model';
+import { markHrefPolicy } from '#/model/compile';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { randomId } from '#/model/random-id';
@@ -170,12 +171,12 @@ const plainSlice = (schema: Schema, text: string, marks: readonly Mark[]) => {
 const ABSOLUTE_URL = /^[a-z][\d+.a-z-]*:\S+$/i;
 
 /** The URL that `text` is, when it is one absolute URL that passes `checkHref`. */
-const hrefOf = (text: string): string | undefined => {
+const hrefOf = (text: string, policy: HrefPolicy | undefined): string | undefined => {
     const trimmed = text.trim();
     if (!ABSOLUTE_URL.test(trimmed)) {
         return undefined;
     }
-    const checked = checkHref(trimmed);
+    const checked = checkHref(trimmed, policy);
     if (!checked.ok) {
         return undefined;
     }
@@ -184,23 +185,47 @@ const hrefOf = (text: string): string | undefined => {
 
 const PLAIN_BLOCKS = new Set(['paragraph_open', 'paragraph_close', 'inline']);
 const PLAIN_INLINE = new Set(['text', 'softbreak']);
-let parser: ReturnType<typeof createParser> | undefined;
-const markdownParser = () => {
+const parsers = new WeakMap<ContentModel, ReturnType<typeof createParser>>();
+/** The Markdown parser of `model`, whose links pass the policy of its `link` mark. */
+const markdownParser = (model: ContentModel) => {
+    let parser = parsers.get(model);
     if (parser === undefined) {
-        parser = createParser();
+        parser = createParser(markHrefPolicy(model, 'link'));
+        parsers.set(model, parser);
     }
     return parser;
 };
 
 /** Whether `text` has Markdown block or inline structure; a bare URL that linkify finds is no structure. */
-const isMarkdown = (text: string) =>
-    markdownParser()
+const isMarkdown = (text: string, model: ContentModel) =>
+    markdownParser(model)
         .parse(text, {})
         .some(
             ({ type, children }) =>
                 !PLAIN_BLOCKS.has(type) ||
                 (children ?? []).some((child) => !PLAIN_INLINE.has(child.type) && child.markup !== 'linkify'),
         );
+
+/**
+ * `fragment` without the link marks whose `href` fails `policy`, keeping their text, so pasted content brings no link
+ * the host's `allowedSchemes` and `allowedHosts` refuse; stored links never pass here.
+ */
+const withinLinkPolicy = (fragment: Fragment, policy: HrefPolicy | undefined): Fragment => {
+    if (policy === undefined) {
+        return fragment;
+    }
+    const nodes: Node[] = [];
+    for (const node of fragment.content) {
+        const marked = node.mark(
+            node.marks.filter(
+                ({ type, attrs }) =>
+                    type.name !== 'link' || (typeof attrs.href === 'string' && checkHref(attrs.href, policy).ok),
+            ),
+        );
+        nodes.push(marked.isText ? marked : marked.copy(withinLinkPolicy(node.content, policy)));
+    }
+    return Fragment.fromArray(nodes);
+};
 
 /** One paragraph stays open to join the text around it; other content is inserted closed. */
 const insertable = (content: Fragment) => {
@@ -212,7 +237,7 @@ const insertable = (content: Fragment) => {
 
 /** `text` converted with `fromMarkdown`. */
 const markdownSlice = (schema: Schema, text: string, { model, limits }: PasteSettings): Slice | undefined => {
-    const result = readMarkdown(markdownParser(), text, model, randomId, { limits });
+    const result = readMarkdown(markdownParser(model), text, model, randomId, { limits });
     if (result.status !== 'editable') {
         return undefined;
     }
@@ -257,7 +282,7 @@ export const pastePayload = (
         internal = undefined;
     }
     // A URL links the selected text, or a caret paste with no usable slice inserts it linked as a second step.
-    const href = hrefOf(text);
+    const href = hrefOf(text, markHrefPolicy(model, 'link'));
     const link = schema.marks.link;
     if (!settings.plain && href !== undefined && link !== undefined && !refusedNames(model, policy).marks.has('link')) {
         const mark = link.create({ href });
@@ -279,7 +304,8 @@ export const pastePayload = (
             slice = converted.slice;
             droppedMedia = converted.dropped;
         }
-        insert(prepared(slice));
+        const content = withinLinkPolicy(slice.content, markHrefPolicy(model, 'link'));
+        insert(prepared(new Slice(content, slice.openStart, slice.openEnd)));
         return { droppedMedia };
     }
     // HTML, which goes no further even when it parses to nothing.
@@ -296,7 +322,7 @@ export const pastePayload = (
             depth,
             colors: colorReadingOf(model),
         });
-        insert(prepared(insertable(content)));
+        insert(prepared(insertable(withinLinkPolicy(content, markHrefPolicy(model, 'link')))));
         return { droppedMedia: droppedImages, removedFormatting: removedColors > 0 };
     }
     // Plain text, which Markdown structure converts in a second step.
@@ -307,7 +333,7 @@ export const pastePayload = (
     const start = tr.steps.length;
     insert(prepared(plainSlice(schema, text, $from.marks())));
     let converted: Slice | undefined;
-    if (!settings.plain && isMarkdown(text)) {
+    if (!settings.plain && isMarkdown(text, model)) {
         converted = markdownSlice(schema, text, settings);
     }
     if (converted === undefined) {

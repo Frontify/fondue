@@ -3,7 +3,7 @@
 import { DOMSerializer, type Mark, type Node as ProseMirrorNode, type Schema } from 'prosemirror-model';
 import { Decoration, DecorationSet, type EditorView, type MarkViewConstructor } from 'prosemirror-view';
 
-import { type ColorToken, type JsonObject, type ListLevels, type PresentationStyle } from '#/model';
+import { checkHref, type ColorToken, type JsonObject, type ListLevels, type PresentationStyle } from '#/model';
 import { type DirectedRun, passageDirection } from '#/model/html-spec';
 import { COLOR_PROPERTIES, listDepths, listLevelStyle, styleOfNode } from '#/model/output';
 import { colorOf } from '#/model/styles';
@@ -186,6 +186,12 @@ const styleMark = (element: MarkElement, styles: ChromeStyles | undefined) => {
     }
 };
 
+/** Whether `mark` is a link whose `href` fails the URL check. */
+const unlinked = (mark: Mark): boolean => {
+    const { href } = mark.attrs as JsonObject;
+    return mark.type.name === 'link' && typeof href === 'string' && !checkHref(href).ok;
+};
+
 export const createChromeView = (): ChromeView => {
     let view: EditorView | undefined;
     let shown = false;
@@ -289,6 +295,11 @@ export const createChromeView = (): ChromeView => {
                     continue;
                 }
                 views[name] = (mark, markView, inline) => {
+                    // A link whose `href` fails the check shows its text alone, as the reader and `toHTML` write it.
+                    if (unlinked(mark)) {
+                        const dom = markView.dom.ownerDocument.createElement('span');
+                        return { dom, contentDOM: dom };
+                    }
                     const spec = type.spec.toDOM?.(mark, inline);
                     if (spec === undefined) {
                         throw new Error(`The mark ${name} has no DOM output.`);

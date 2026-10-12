@@ -26,6 +26,7 @@ export {
     type CompiledInputRule,
     type LineStartRule,
     type MarkDelimiterRule,
+    type MarkRule,
     type QuotesRule,
     type TextReplaceRule,
 } from './input-rules';

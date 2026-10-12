@@ -100,11 +100,19 @@ export const targetsPlugin = new Plugin<Targets>({
     },
 });
 
-/** A transaction that captures the selection as target `id`: its range, its start for `insert`, or the node after its start for `edit-node`. */
-export const captureTarget = (state: EditorState, id: string, options: CaptureTargetOptions): Transaction => {
+/**
+ * A transaction that captures the selection, or `range` in its place, as target `id`: its range, its start for
+ * `insert`, or the node after its start for `edit-node`.
+ */
+export const captureTarget = (
+    state: EditorState,
+    id: string,
+    options: CaptureTargetOptions,
+    range: { readonly from: number; readonly to: number } = state.selection,
+): Transaction => {
     const { purpose, onIntersectingEdit } = options;
-    const { from } = state.selection;
-    let { to } = state.selection;
+    const { from } = range;
+    let { to } = range;
     let node: Target['node'] = null;
     let valid = true;
     if (purpose === 'insert') {

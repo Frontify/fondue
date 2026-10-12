@@ -10,6 +10,7 @@ export { emoji } from '#/features/emoji/feature';
 export { formatClear } from '#/features/format-clear/feature';
 export { inputRules } from '#/features/input-rules/feature';
 export { columns } from '#/features/layout-columns/feature';
+export { links } from '#/features/links/feature';
 export { bold } from '#/features/marks-bold/feature';
 export { language } from '#/features/marks-language/feature';
 export { code } from '#/features/marks-code/feature';

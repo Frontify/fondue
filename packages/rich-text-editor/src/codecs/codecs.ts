@@ -2,6 +2,7 @@
 
 import { enUS } from '#/locales/en-US';
 import { type ContentModel, type DecodeOptions, type Diagnostic } from '#/model';
+import { markHrefPolicy } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { codecContext, columnLayout, styleSheetOf } from '#/model/output';
@@ -23,7 +24,7 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
     if (options.limits !== undefined) {
         decodeOptions = { limits: options.limits };
     }
-    const parser = createParser();
+    const parser = createParser(markHrefPolicy(model, 'link'));
     /** The decode diagnostics and the island tree, or no tree when the document is blocked. */
     const decode = (document: unknown): { readonly tree?: TreeNode; readonly diagnostics: readonly Diagnostic[] } => {
         const { result, tree } = decodeToTree(document, model, decodeOptions);

@@ -3,8 +3,9 @@
 import { type MarkType, type Schema } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { type PayloadDeclaration } from '#/model';
+import { type AttributeDeclarations, type HrefPolicy, type PayloadDeclaration } from '#/model';
 import { type CompiledFeature } from '#/model/compile';
+import { hrefPolicyOf } from '#/model/href';
 
 /** A command as a line-start rule runs it, with the payload of its marker, and whether its target is active there. */
 interface RuleCommand {
@@ -32,6 +33,21 @@ export interface BlockRule extends RuleOf {
     readonly match: RegExp;
     readonly command: RuleCommand;
 }
+/**
+ * A code feature's pattern before the caret whose match, without the whitespace that ends it, gets `mark`, with the
+ * attributes its named groups fill; `enter` also tests it when Enter ends the match.
+ */
+export interface MarkRule extends RuleOf {
+    readonly kind: 'mark-rule';
+    readonly match: RegExp;
+    readonly mark: MarkType;
+    /** The mark's attribute declarations, which convert the named groups. */
+    readonly attrs: AttributeDeclarations;
+    readonly onInput: boolean;
+    readonly onEnter: boolean;
+    /** The declaring feature's `allowedSchemes` and `allowedHosts`, which a `url` group must also pass. */
+    readonly policy: HrefPolicy | undefined;
+}
 export interface MarkDelimiterRule extends RuleOf {
     readonly kind: 'mark-delimiter';
     readonly open: string;
@@ -51,7 +67,7 @@ export interface QuotesRule extends RuleOf {
     readonly marker: '"' | "'";
 }
 /** An input rule as the package's rule engine runs it. */
-export type CompiledInputRule = LineStartRule | BlockRule | MarkDelimiterRule | TextReplaceRule | QuotesRule;
+export type CompiledInputRule = LineStartRule | BlockRule | MarkRule | MarkDelimiterRule | TextReplaceRule | QuotesRule;
 
 const escaped = (text: string) => text.replaceAll(/[$()*+.?[\\\]^{|}]/g, String.raw`\$&`);
 
@@ -66,11 +82,32 @@ export const compileInputRules = (
 ): readonly CompiledInputRule[] => {
     const lines: LineStartRule[] = [];
     const blocks: BlockRule[] = [];
+    const patterns: MarkRule[] = [];
     const marks: MarkDelimiterRule[] = [];
     const texts: (TextReplaceRule | QuotesRule)[] = [];
-    for (const { id: featureId, declaration } of features) {
+    const markAttrs = new Map(
+        features.flatMap(({ declaration }) =>
+            Object.entries(declaration.marks ?? {}).map(([name, mark]) => [name, mark.attrs] as const),
+        ),
+    );
+    for (const { id: featureId, declaration, options } of features) {
         for (const rule of declaration.inputRules ?? []) {
             const { id } = rule;
+            if (rule.kind === 'mark-rule') {
+                // Compilation checked that the model declares the mark.
+                const mark = schema.marks[rule.mark] as MarkType;
+                patterns.push({
+                    id,
+                    featureId,
+                    kind: rule.kind,
+                    match: rule.match,
+                    mark,
+                    attrs: markAttrs.get(rule.mark) ?? {},
+                    onInput: rule.on.includes('input'),
+                    onEnter: rule.on.includes('enter'),
+                    policy: hrefPolicyOf(options),
+                });
+            }
             if (rule.kind === 'mark-delimiter') {
                 // Compilation checked that the model declares the mark.
                 const mark = schema.marks[rule.mark] as MarkType;
@@ -117,5 +154,5 @@ export const compileInputRules = (
             }
         }
     }
-    return [...lines, ...blocks, ...marks.sort((a, b) => b.open.length - a.open.length), ...texts];
+    return [...lines, ...blocks, ...patterns, ...marks.sort((a, b) => b.open.length - a.open.length), ...texts];
 };

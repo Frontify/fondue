@@ -63,6 +63,8 @@ import {
 } from '#/runtime/runtime';
 import { type DocumentChange, type SelectionSummary, type SessionToken, type ShippedCommands } from '#/runtime/types';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
+import { LinkBubble } from '#/ui/links/link-bubble';
+import { linkOptions, LinkPopover } from '#/ui/links/link-popover';
 import { ColorMenu, type ColorMenuOptions } from '#/ui/menus/color';
 import { LanguageDialog, languageOptions } from '#/ui/menus/language';
 import { NumberingDialog, SET_START } from '#/ui/menus/numbering';
@@ -79,7 +81,15 @@ import { useEditorLocale } from './locale';
 import { BlockedShell, RecoveryShell } from './shells';
 import { registerSaveCauses, SaveStatusText } from './status';
 import { useRecipeSheet } from './style-sheet';
-import { colorMenuStrings, menuItems, numberingStrings, toolbarItems } from './toolbar-items';
+import {
+    colorMenuStrings,
+    linkBubbleStrings,
+    linkPopoverStrings,
+    linkStylesOf,
+    menuItems,
+    numberingStrings,
+    toolbarItems,
+} from './toolbar-items';
 import {
     type CompiledEditorDefinition,
     type EditorHandle,
@@ -135,6 +145,16 @@ const colorMenuOptions = (
         shown = tokens.filter(({ id }) => named.includes(id));
     }
     return { tokens: shown, highlight: engine.commands.has('mark.highlight.set'), literal };
+};
+
+/** The link popover's URL policy, and its destination search when the host has a reference service and `links` names resource types. */
+const linkPopoverOptions = (definition: CompiledEditorDefinition<object>, services: EditorServices | undefined) => {
+    const { policy, resourceTypes } = linkOptions(engineOf(definition).model);
+    const service = memberOf(services, 'references');
+    if (service === undefined || resourceTypes.length === 0) {
+        return { policy, search: undefined };
+    }
+    return { policy, search: { service, resourceTypes } };
 };
 
 /** The key that moves focus to the toolbars, Alt+F10 unless the presentation sets another. */
@@ -242,6 +262,8 @@ interface Chrome {
     readonly surfaceId: string | undefined;
     readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
     readonly bubbleRef: MutableRefObject<HTMLDivElement | null>;
+    /** The link bubble's toolbar while it shows. */
+    readonly linkBubbleRef: MutableRefObject<HTMLDivElement | null>;
     /** Opens the bubble toolbar of bubble mode at the selection and focuses it. */
     readonly showBubbleRef: MutableRefObject<(() => void) | null>;
     readonly mode: ToolbarMode;
@@ -340,6 +362,7 @@ const SessionComponent = (
     const langRef = useRef<string>(enUS.lang);
     const handleRef = useRef<EditorHandle<object> | null>(null);
     const bubbleRef = useRef<HTMLDivElement | null>(null);
+    const linkBubbleRef = useRef<HTMLDivElement | null>(null);
     const showBubbleRef = useRef<(() => void) | null>(null);
     const {
         rootRef,
@@ -584,6 +607,7 @@ const SessionComponent = (
         moveChromeFocus(event, {
             runtime: coordinator.runtime,
             toolbar,
+            linkBubble: linkBubbleRef.current,
             bubble: bubbleRef.current,
             showBubble,
             shortcut: toolbarShortcutOf(props),
@@ -644,6 +668,7 @@ const SessionComponent = (
             surfaceId,
             toolbarRef,
             bubbleRef,
+            linkBubbleRef,
             showBubbleRef,
             mode: toolbarMode,
             setMode: switchToolbar,
@@ -748,6 +773,23 @@ const SessionComponent = (
                                     }
                                     testId={testId}
                                 />
+                                <LinkBubble
+                                    strings={linkBubbleStrings(chromeContext.t)}
+                                    hidden={control === 'link'}
+                                    testId={testId}
+                                    bubbleRef={linkBubbleRef}
+                                />
+                                {control === 'link' && (
+                                    <LinkPopover
+                                        {...linkPopoverOptions(mounted.definition, props.services)}
+                                        linkStyles={linkStylesOf(presentation.styles)}
+                                        strings={linkPopoverStrings(chromeContext.t)}
+                                        testId={testId}
+                                        lang={lang}
+                                        opener={controlOpener}
+                                        onClose={() => setControl(undefined)}
+                                    />
+                                )}
                                 {control === 'color-menu' && (
                                     <ColorMenu
                                         options={colorMenuOptions(

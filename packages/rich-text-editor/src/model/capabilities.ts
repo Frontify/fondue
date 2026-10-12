@@ -211,6 +211,18 @@ export const blockRule = (rule: {
 }): InputRule => ({ id: rule.id, kind: 'block-rule', match: rule.match, command: rule.command });
 
 /**
+ * A code feature's rule that puts `mark` on the text before the caret matching `match`, without the whitespace that
+ * ends it, with the attributes its named groups fill, converted by the mark's declarations; a `url` group passes
+ * `checkHref` and the feature's `allowedSchemes` and `allowedHosts`. With `enter`, Enter also ends a match.
+ */
+export const markRule = (rule: {
+    readonly id: string;
+    readonly match: RegExp;
+    readonly mark: string;
+    readonly on?: readonly ('input' | 'enter')[];
+}): InputRule => ({ id: rule.id, kind: 'mark-rule', match: rule.match, mark: rule.mark, on: rule.on ?? ['input'] });
+
+/**
  * Wraps the selected blocks in `list` with `item`s, turns the list at the selection's depth into `list`, or turns its
  * selected items into paragraphs when it already is one.
  */

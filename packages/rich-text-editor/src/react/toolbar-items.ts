@@ -8,6 +8,8 @@ import { isPlatformBinding } from '#/model/platform';
 import { cssValue, isPresentationStyle } from '#/model/styles';
 import { refusesLevel, setsHeading } from '#/runtime/policy';
 import { type AuthoringPolicy } from '#/runtime/types';
+import { type LinkBubbleStrings } from '#/ui/links/link-bubble';
+import { type LinkPopoverStrings, type LinkStyleOption } from '#/ui/links/link-popover';
 import { type ColorMenuStrings } from '#/ui/menus/color';
 import { type NumberingStrings } from '#/ui/menus/numbering';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
@@ -350,3 +352,38 @@ export const colorMenuStrings = (t: CodecContext['t']): ColorMenuStrings => ({
     save: t('RichTextEditor_colorPickerSave'),
     cancel: t('RichTextEditor_cancel'),
 });
+
+/** The link popover's strings in the UI locale. */
+export const linkPopoverStrings = (t: CodecContext['t']): LinkPopoverStrings => ({
+    title: t('RichTextEditor_link'),
+    destination: t('RichTextEditor_linkDestination'),
+    text: t('RichTextEditor_linkText'),
+    newWindow: t('RichTextEditor_linkOpenInNewWindow'),
+    style: t('RichTextEditor_linkStyle'),
+    noStyle: t('RichTextEditor_linkStyleNone'),
+    invalid: t('RichTextEditor_linkInvalid'),
+    schemesAllowed: (schemes) => t('RichTextEditor_linkSchemesAllowed', { schemes }),
+    hostsAllowed: (hosts) => t('RichTextEditor_linkHostsAllowed', { hosts }),
+    failed: t('RichTextEditor_linkFailed'),
+    removed: t('RichTextEditor_linkTextRemoved'),
+    insertNew: t('RichTextEditor_linkInsertNew'),
+    results: t('RichTextEditor_linkResults'),
+    result: (label, position, total) => t('RichTextEditor_suggestionOption', { label, position, total }),
+    apply: t('RichTextEditor_apply'),
+});
+
+/** The link bubble's strings in the UI locale. */
+export const linkBubbleStrings = (t: CodecContext['t']): LinkBubbleStrings => ({
+    label: t('RichTextEditor_link'),
+    open: t('RichTextEditor_linkOpenInNewTab'),
+    edit: t('RichTextEditor_linkEdit'),
+    copy: t('RichTextEditor_linkCopy'),
+    remove: t('RichTextEditor_linkRemove'),
+    copied: t('RichTextEditor_linkCopied'),
+});
+
+/** The presentation styles the link popover offers: each that applies to links and is not deprecated. */
+export const linkStylesOf = (styles: readonly PresentationStyle[]): readonly LinkStyleOption[] =>
+    styles
+        .filter((style) => isPresentationStyle(style) && style.deprecated !== true && style.appliesTo.includes('link'))
+        .map(({ id, label }) => ({ id, label }));
