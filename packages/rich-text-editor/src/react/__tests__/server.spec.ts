@@ -1,0 +1,51 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment node
+
+import { createElement } from 'react';
+import { renderToString } from 'react-dom/server';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+import { bold, core } from '#/features';
+import { defineEditor, RichTextEditor } from '#/index';
+import { compileContentModel, createEmptyDocument } from '#/model';
+import { probeRuntimes } from '#/testing';
+
+const DOM_GLOBALS = ['document', 'window', 'navigator'] as const;
+const saved = DOM_GLOBALS.map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)] as const);
+
+// `prosemirror-view` reads `navigator` and `document` with `typeof` at module load, so the getters go in after the imports.
+beforeAll(() => {
+    for (const name of DOM_GLOBALS) {
+        Object.defineProperty(globalThis, name, {
+            configurable: true,
+            get: () => {
+                throw new Error(`${name} was read on the server`);
+            },
+        });
+    }
+});
+afterAll(() => {
+    for (const [name, descriptor] of saved) {
+        if (descriptor === undefined) {
+            delete (globalThis as Record<string, unknown>)[name];
+        } else {
+            Object.defineProperty(globalThis, name, descriptor);
+        }
+    }
+});
+
+describe('RichTextEditor on the server', () => {
+    it('renders an empty surface container, attaches no view and reads no DOM global', () => {
+        const model = compileContentModel([core(), bold()], { id: 'test.server', version: 1 });
+        const definition = defineEditor({ id: 'test.server', model });
+        const defaultValue = { documentId: 'document-1', revision: null, document: createEmptyDocument(model) };
+
+        const html = renderToString(createElement(RichTextEditor, { 'aria-label': 'Notes', definition, defaultValue }));
+
+        expect(html).toBe(
+            '<div data-test-id="fondue-rich-text-editor" aria-busy="true"><div role="textbox" aria-multiline="true" aria-label="Notes" lang="en-US" spellcheck="true" data-test-id="fondue-rich-text-editor-surface" data-rte-surface=""></div></div>',
+        );
+        expect(probeRuntimes().views).toEqual([]);
+    });
+});

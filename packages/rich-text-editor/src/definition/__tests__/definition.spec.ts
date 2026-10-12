@@ -16,6 +16,7 @@ import {
 } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
 import { compileContentModel, defineFeature, DefinitionError, type FeatureDeclaration } from '#/model';
+import { compiledModel } from '#/model/compile';
 
 import { compileDefinition } from '..';
 
@@ -51,7 +52,8 @@ describe('compileDefinition', () => {
             [core(), fixtureHeading(), fixtureBold()],
         ]) {
             const model = compileContentModel(features, { id: 'test', version: 1 });
-            const { plugins, keymap } = compileDefinition(model);
+            const { plugins } = compileDefinition(model);
+            const { keymap } = compiledModel(model);
             const ids = model.manifest.plugins as string[];
 
             expect(plugins.map(keyOf).map((key) => key.replace(/\$\d*$/, ''))).toEqual(ids);
@@ -63,8 +65,17 @@ describe('compileDefinition', () => {
         const features = [core(), fixtureItalic(), fixtureBold(), fixtureColor(), fixtureLink(), fixtureHeading()];
         const { schema } = compileDefinition(compileContentModel(features, { id: 'test', version: 1 }));
 
-        expect(Object.keys(schema.nodes)).toEqual(['doc', 'paragraph', 'text', 'hard_break', 'heading', 'rule']);
-        expect(Object.keys(schema.marks)).toEqual(['link', 'font_color', 'italic', 'bold']);
+        expect(Object.keys(schema.nodes)).toEqual([
+            'doc',
+            'paragraph',
+            'text',
+            'hard_break',
+            'heading',
+            'rule',
+            'unsupported_block',
+            'unsupported_inline',
+        ]);
+        expect(Object.keys(schema.marks)).toEqual(['link', 'font_color', 'italic', 'bold', 'unsupported_mark']);
         expect(schema.topNodeType.name).toBe('doc');
         expect(schema.nodes.heading?.spec.group).toBe('block section');
     });
@@ -105,7 +116,10 @@ describe('compileDefinition', () => {
         })();
         const { schema } = compileDefinition(compileContentModel([core(), feature], options));
 
-        expect(schema.nodes.task_item?.spec.attrs).toEqual({ nodeId: { default: null } });
+        expect(schema.nodes.task_item?.spec.attrs).toEqual({
+            nodeId: { default: null },
+            unknownAttributes: { default: null },
+        });
         const list = schema.nodes.task_list?.createAndFill();
         const figure = schema.nodes.figure?.createAndFill();
         expect(list?.firstChild).toMatchObject({ attrs: { nodeId: null } });
@@ -181,7 +195,7 @@ describe('compileDefinition', () => {
         (declaration.nodes.card.attrs.href as { default: string }).default = 'javascript:alert(1)';
         for (const compiled of [model, compileContentModel([core(), factory()], options)]) {
             const card = compileDefinition(compiled).schema.nodes.card;
-            expect(card?.spec.attrs).toEqual({ href: { default: '/x' } });
+            expect(card?.spec.attrs).toEqual({ href: { default: '/x' }, unknownAttributes: { default: null } });
         }
     });
 });
