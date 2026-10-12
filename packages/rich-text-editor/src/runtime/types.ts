@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RichTextDocument } from '#/model';
+import { type Diagnostic, type ModelRef, type RichTextDocument } from '#/model';
 
 // Host-facing runtime types.
 
@@ -225,4 +225,105 @@ export interface EditorSummary {
     readonly sequence: number;
     readonly compositionActive: boolean;
     readonly selection: SelectionSummary;
+}
+
+/** Opaque, never parsed or compared numerically. `null` at load or base means create-only. */
+export type ServerRevision = string;
+export interface Snapshot {
+    readonly stamp: DocumentStamp;
+    readonly document: RichTextDocument;
+    readonly acknowledgedRevision: ServerRevision | null;
+    readonly compositionActive: boolean;
+}
+export interface SaveAcknowledgment {
+    /** `null` only in the acknowledgment synthesized for a loaded or replaced record that no save has touched. */
+    readonly operationId: string | null;
+    readonly stamp: DocumentStamp;
+    readonly revision: ServerRevision;
+}
+export interface SaveStatus {
+    readonly state: 'unmanaged' | 'clean' | 'dirty' | 'saving' | 'uncertain' | 'offline' | 'conflict' | 'error';
+    readonly latestSequence: number;
+    readonly acknowledgedSequence: number;
+    readonly revision: ServerRevision | null;
+    readonly inFlightOperationId: string | null;
+    readonly diagnostic: Diagnostic | null;
+}
+export interface CommitOptions {
+    readonly reason: 'submit' | 'navigate' | 'manual';
+    /** Default `wait`. */
+    readonly composition?: 'wait' | 'reject';
+    /** Default `PersistenceOptions.timeoutMs`. */
+    readonly timeoutMs?: number;
+}
+export type CommitResult =
+    | { readonly status: 'acknowledged'; readonly acknowledgment: SaveAcknowledgment }
+    | {
+          readonly status: 'blocked';
+          readonly code: 'unmanaged' | 'composition-active' | 'conflict' | 'forbidden' | 'not-ready';
+      }
+    | {
+          readonly status: 'failed';
+          readonly code: 'timeout' | 'transport' | 'disposed' | 'incompatible-writer' | 'invalid';
+          readonly outcome: 'not-sent' | 'unknown' | 'rejected';
+      };
+export interface LoadedDocument {
+    readonly documentId: string;
+    readonly revision: ServerRevision | null;
+    readonly document: RichTextDocument;
+}
+export interface ServiceContext {
+    readonly signal: AbortSignal;
+    readonly session: SessionToken;
+}
+export interface RecoveryCheckpoint {
+    /** The snapshot's stamp; at a fault, the last published sequence plus one. */
+    readonly stamp: DocumentStamp;
+    readonly acknowledgedRevision: ServerRevision | null;
+    readonly document: RichTextDocument;
+}
+/** Created only by a host recovery service after acknowledgment. */
+export interface RecoveryReceipt {
+    readonly stamp: DocumentStamp;
+    readonly receiptId: string;
+}
+export interface RecoveryService {
+    store(checkpoint: RecoveryCheckpoint, context: ServiceContext): Promise<RecoveryReceipt>;
+}
+export interface ReplaceDocumentRequest {
+    readonly expected: DocumentStamp;
+    readonly next: LoadedDocument;
+    readonly unsaved:
+        | { readonly action: 'reject' }
+        | { readonly action: 'save' }
+        | { readonly action: 'checkpoint'; readonly receipt: RecoveryReceipt }
+        | { readonly action: 'discard'; readonly confirmed: true };
+    readonly selection: 'start' | 'end';
+    /** Replacement cannot keep history in v1. */
+    readonly history: 'reset';
+}
+export type ReplaceResult =
+    | { readonly status: 'replaced'; readonly session: SessionToken }
+    | {
+          readonly status: 'rejected';
+          readonly code:
+              | 'changed-since-request'
+              | 'invalid-document'
+              | 'wrong-model'
+              | 'unsaved'
+              | 'composition-active'
+              | 'save-unresolved'
+              | 'checkpoint-invalid'
+              | 'not-ready'
+              | 'faulted';
+      };
+export interface OperationMetric {
+    readonly kind: 'mount' | 'commit' | 'paste' | 'save' | 'replace';
+    readonly session: SessionToken;
+    readonly packageVersion: string;
+    readonly model: ModelRef;
+    readonly capabilityIds: readonly string[];
+    readonly durationMs: number;
+    readonly normalizationTransactions: number;
+    readonly failureCode: string | null;
 }
