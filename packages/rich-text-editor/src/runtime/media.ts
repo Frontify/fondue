@@ -37,7 +37,10 @@ export interface PickedAsset {
 
 const SPACE = 0x20;
 
-/** `value` as a URL parser reads it: without tabs and line breaks, or spaces and controls at its ends, and `\` as `/`. */
+/**
+ * `value` as a URL parser and its query reader read it: without tabs and line breaks, or spaces and controls at its
+ * ends, with `\` as `/` and percent escapes decoded.
+ */
 const asUrlReads = (value: string) => {
     let start = 0;
     let end = value.length;
@@ -50,7 +53,8 @@ const asUrlReads = (value: string) => {
     return value
         .slice(start, end)
         .replaceAll(/[\t\n\r]/g, '')
-        .replaceAll('\\', '/');
+        .replaceAll('\\', '/')
+        .replaceAll(/%([\da-f]{2})/gi, (_whole, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)));
 };
 
 /**
@@ -63,7 +67,7 @@ export const isAssetLocator = (assetId: string): boolean => {
     return (
         /^(?:[a-z][\d+.a-z-]*:)?\/\//i.test(read) ||
         /^(?:https?|data|blob|javascript|vbscript|file|ftp):/i.test(read) ||
-        /[?&;][\w.-]*(?:token|signature|sig|credential|secret|api_?key)=/i.test(read)
+        /[?&;][\w.-]*(?:token|signature|sig|credential|secret|api[_-]?key)=/i.test(read)
     );
 };
 
