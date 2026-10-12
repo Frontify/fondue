@@ -1,6 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type DocumentStamp, type SaveStatus, type ServerRevision } from './types';
+import {
+    type CommitOptions,
+    type CommitResult,
+    type DocumentStamp,
+    type SaveStatus,
+    type ServerRevision,
+} from './types';
 
 export const sameStamp = (a: DocumentStamp, b: DocumentStamp) =>
     a.documentId === b.documentId &&
@@ -18,6 +24,8 @@ export interface SaveCoordinator {
     settled(): void;
     /** The host replaced `services.persistence`, so the write in flight goes to the new service. */
     serviceChanged(): void;
+    /** `EditorHandle.requestCommit` of a managed session. */
+    commit(options: CommitOptions): Promise<CommitResult>;
     /** Runs before the session is disposed, while listeners still hear its diagnostics. */
     dispose(): void;
 }
