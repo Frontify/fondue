@@ -1,0 +1,64 @@
+name: Fondue Rich Text Editor CI
+
+on:
+  pull_request:
+    paths:
+      - packages/rich-text-editor/**
+      - .github/workflows/rich-text-editor-pull-requests.yaml
+
+# Ensures that only one workflow per branch will run at a time.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Lint code
+        run: pnpm --stream --filter {packages/rich-text-editor} lint
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Typecheck code
+        run: pnpm --stream --filter {packages/rich-text-editor} typecheck
+
+      - name: Build
+        run: pnpm --stream --filter {packages/rich-text-editor} build
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Unit tests
+        run: pnpm --stream --filter {packages/rich-text-editor} test
