@@ -97,9 +97,9 @@ const relativePatterns = (folders: readonly string[]): string[] =>
 
 // A `!` pattern lets paths back in that earlier patterns of the same group ban.
 const exceptPatterns = (paths: readonly string[]): string[] =>
-    ['#/', '../', '../../'].flatMap((root) => paths.map((path) => `!${root}${path}`));
+    ['#/', ...PARENT_PREFIXES].flatMap((root) => paths.map((path) => `!${root}${path}`));
 
-const FEATURE_ROOTS = ['#/features', '../features', '../../features'] as const;
+const FEATURE_ROOTS = ['#/features', ...PARENT_PREFIXES.map((prefix) => `${prefix}features`)];
 
 const featurePathPatterns = (tails: readonly string[]): string[] =>
     FEATURE_ROOTS.flatMap((root) => tails.map((tail) => `${root}${tail}`));
