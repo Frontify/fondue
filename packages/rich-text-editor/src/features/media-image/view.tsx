@@ -8,6 +8,7 @@ import {
     type RefObject,
     useContext,
     useEffect,
+    useId,
     useMemo,
     useRef,
     useState,
@@ -217,6 +218,7 @@ const ImageChrome = () => {
     const [dialog, setDialog] = useState<{ readonly kind: 'alt' | 'width'; readonly opener: Element | null }>();
     const pendingRef = useRef<'width' | undefined>(undefined);
     const barRef = useRef<HTMLDivElement>(null);
+    const reviewId = useId();
     const frameRef = useRef<HTMLSpanElement>(null);
     const side = useSessionValue((session) => sideOf(session, nodeId), Object.is);
     const asked = useSessionValue(
@@ -249,24 +251,20 @@ const ImageChrome = () => {
     }
     const unavailable = shown.kind !== 'image' || failed === shown.src;
     const spoken = spokenOf(attrs, context, unavailable);
-    const spokenRef = useRef(spoken);
-    useEffect(() => {
-        spokenRef.current = spoken;
-    });
+    // A selected image is spoken as it becomes selected, and again when what it says changes, as when it fails to load.
     useEffect(() => {
         if (selected) {
-            announcer?.announce(spokenRef.current);
+            announcer?.announce(spoken);
         }
-    }, [selected, announcer]);
+    }, [selected, spoken, announcer]);
     const altLabel = review ? t('RichTextEditor_imageAltReview') : undefined;
-    // A new asset asks for a review once: the prompt is spoken and focus moves to its action.
+    // A new asset asks for a review once: focus moves to its action, which the prompt describes.
     useEffect(() => {
-        if (!review || altLabel === undefined) {
+        if (altLabel === undefined) {
             return;
         }
-        announcer?.announce(t('RichTextEditor_imageAltReviewPrompt'));
         barRef.current?.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(altLabel)}"]`)?.focus();
-    }, [review, altLabel, announcer, t]);
+    }, [altLabel]);
     const displayWidth = typeof attrs.displayWidth === 'number' ? attrs.displayWidth : null;
     const resize = useResize(frameRef, runtime, (width) => {
         if (width !== displayWidth) {
@@ -293,8 +291,11 @@ const ImageChrome = () => {
     }
     const unfinished = attrs.assetId === null;
     // The chrome keeps mouse events from the editor, so a press on the image selects it here, as on any atom, and
-    // keeps the browser from putting the caret in a neighbouring block.
+    // keeps the browser from putting the caret in a neighbouring block; on a selected image it starts the node's drag.
     const selectImage = (event: MouseEvent) => {
+        if (selected && event.button === 0) {
+            return;
+        }
         event.preventDefault();
         select();
         if (runtime?.view?.hasFocus() === false) {
@@ -349,7 +350,11 @@ const ImageChrome = () => {
     return (
         <div ref={barRef} className={styles.root} data-rte-image="">
             {content}
-            {review && <p className={styles.review}>{t('RichTextEditor_imageAltReviewPrompt')}</p>}
+            {review && (
+                <p id={reviewId} className={styles.review}>
+                    {t('RichTextEditor_imageAltReviewPrompt')}
+                </p>
+            )}
             <div className={styles.controls}>
                 <NodeChromeToolbar aria-label={t('RichTextEditor_image')}>
                     {unfinished && (
@@ -358,7 +363,11 @@ const ImageChrome = () => {
                             onClick={() => execute('image.replace', { nodeId })}
                         />
                     )}
-                    <NodeChromeButton label={altText} onClick={() => open('alt')} />
+                    <NodeChromeButton
+                        label={altText}
+                        {...(review ? { describedBy: reviewId } : {})}
+                        onClick={() => open('alt')}
+                    />
                     {review && (
                         <NodeChromeButton
                             label={t('RichTextEditor_imageAltKeep')}

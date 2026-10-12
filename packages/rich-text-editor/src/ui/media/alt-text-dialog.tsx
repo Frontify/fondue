@@ -191,12 +191,12 @@ export const AltTextDialog = ({
                                             value={option.value}
                                             aria-describedby={`${radioId}-${option.value}-hint`}
                                         />
-                                        <label htmlFor={`${radioId}-${option.value}`}>
-                                            {option.label}
+                                        <span>
+                                            <label htmlFor={`${radioId}-${option.value}`}>{option.label}</label>
                                             <span id={`${radioId}-${option.value}-hint`} className={styles.hint}>
                                                 {option.hint}
                                             </span>
-                                        </label>
+                                        </span>
                                     </div>
                                 ))}
                             </RadioList.Root>

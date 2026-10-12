@@ -34,9 +34,24 @@ export const ImageUnavailable = ({
     </span>
 );
 
-// The content stylesheet then hides the image and shows the placeholder beside it.
+// The figure names the URL that failed, so the content stylesheet hides that image and shows the placeholder.
+const FAILED = 'data-rte-image-failed';
 const markFailed = (event: SyntheticEvent<HTMLImageElement>) =>
-    event.currentTarget.closest('figure')?.setAttribute('data-rte-image-failed', '');
+    event.currentTarget.closest('figure')?.setAttribute(FAILED, event.currentTarget.getAttribute('src') ?? '');
+const clearFailed = (event: SyntheticEvent<HTMLImageElement>) =>
+    event.currentTarget.closest('figure')?.removeAttribute(FAILED);
+/** Drops the flag of a URL that failed once the image shows another one, since a new URL may load. */
+const keepFailedFor = (image: HTMLImageElement | null) => {
+    const figure = image?.closest('figure');
+    if (
+        image !== null &&
+        figure !== null &&
+        figure !== undefined &&
+        figure.getAttribute(FAILED) !== image.getAttribute('src')
+    ) {
+        figure.removeAttribute(FAILED);
+    }
+};
 
 /**
  * The image from `resolveAssetUrl` at render time with the `alt` its intent gives, none while it is missing, beside
@@ -55,12 +70,15 @@ const Image = ({ attrs, context }: ReaderNodeProps) => {
     return (
         <>
             <img
+                // A new callback each render runs it again, so a rerender with another URL drops an old flag.
+                ref={(image) => keepFailedFor(image)}
                 src={shown.src}
                 alt={shown.alt}
                 width={shown.width}
                 height={shown.height}
                 style={style}
                 onError={markFailed}
+                onLoad={clearFailed}
             />
             <ImageUnavailable unavailable={shown.unavailable} hidden />
         </>
