@@ -2,7 +2,7 @@
 
 import { IconArrowMove, IconIcon, IconPen, IconPlus, IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 
 import { Button } from '../Button/Button';
 import { Tooltip } from '../Tooltip/Tooltip';
@@ -18,6 +18,7 @@ import {
     DropdownSubMenu,
     DropdownSubTrigger,
     DropdownTrigger,
+    type DropdownVirtualAnchor,
 } from './Dropdown';
 
 type Story = StoryObj<typeof meta>;
@@ -548,4 +549,70 @@ export const PreventCloseOnEscape: Story = {
             </Dropdown.Content>
         </Dropdown.Root>
     ),
+};
+
+export const WithCustomContainer: Story = {
+    render: ({ ...args }) => {
+        const [container, setContainer] = useState<HTMLDivElement | null>(null);
+        return (
+            <>
+                <Dropdown.Root {...args}>
+                    <Dropdown.Trigger>
+                        <Button>Trigger</Button>
+                    </Dropdown.Trigger>
+                    <Dropdown.Content container={container}>
+                        <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                        <Dropdown.SubMenu>
+                            <Dropdown.SubTrigger>Item 2</Dropdown.SubTrigger>
+                            <Dropdown.SubContent container={container}>
+                                <Dropdown.Item onSelect={() => {}}>Item 2.1</Dropdown.Item>
+                            </Dropdown.SubContent>
+                        </Dropdown.SubMenu>
+                    </Dropdown.Content>
+                </Dropdown.Root>
+                <div ref={setContainer} data-test-id="dropdown-custom-container" />
+            </>
+        );
+    },
+};
+
+export const WithVirtualAnchor: Story = {
+    render: ({ ...args }) => {
+        const [virtualAnchor, setVirtualAnchor] = useState<DropdownVirtualAnchor>();
+
+        const handleContextMenu = (event: MouseEvent<HTMLDivElement>) => {
+            event.preventDefault();
+            const rect = new DOMRect(event.clientX, event.clientY, 0, 0);
+            setVirtualAnchor({ getBoundingClientRect: () => rect });
+        };
+
+        const handleOpenChange = (open: boolean) => {
+            if (!open) {
+                setVirtualAnchor(undefined);
+            }
+        };
+
+        return (
+            <>
+                <div
+                    className="tw-flex tw-items-center tw-justify-center tw-h-40 tw-border tw-border-dashed"
+                    onContextMenu={handleContextMenu}
+                >
+                    Right-click anywhere in this area
+                </div>
+                <Dropdown.Root
+                    {...args}
+                    open={virtualAnchor !== undefined}
+                    onOpenChange={handleOpenChange}
+                    virtualAnchor={virtualAnchor}
+                >
+                    <Dropdown.Content>
+                        <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+                    </Dropdown.Content>
+                </Dropdown.Root>
+            </>
+        );
+    },
 };

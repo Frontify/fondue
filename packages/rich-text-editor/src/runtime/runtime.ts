@@ -145,6 +145,8 @@ export interface EditorRuntime {
     changeServices(members: readonly string[]): void;
     /** The bridge caught a throw from a node view's constructor, `update` or `destroy`. */
     faultView(): void;
+    /** The host's `disabled`, which runs in mode `readonly` and takes the surface out of the Tab order. */
+    setDisabled(disabled: boolean): void;
     nodeActions(nodeId: string): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
@@ -344,6 +346,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let mode = options.mode;
     // The mode the surface shows, which follows `mode` once input has settled.
     let shownMode = mode;
+    let disabled = false;
     let commitSequence = 0;
     let sequence = 0;
     let saves: SaveCoordinator | undefined;
@@ -1537,8 +1540,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                             attributes: (current) => {
                                 const attributes: Record<string, string> = {};
                                 if (shownMode === 'readonly') {
-                                    // A surface that is not contenteditable takes no focus by itself.
-                                    attributes.tabindex = '0';
+                                    // A surface that is not contenteditable takes no focus by itself,
+                                    // unless it is disabled, which leaves the Tab order.
+                                    if (!disabled) {
+                                        attributes.tabindex = '0';
+                                    }
                                     attributes['aria-readonly'] = 'true';
                                 }
                                 if (isEmpty(current)) {
@@ -1605,6 +1611,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (members.includes('persistence')) {
                 saves?.serviceChanged();
             }
+        },
+        setDisabled: (next) => {
+            disabled = next;
+            view?.setProps({});
         },
         faultView: () => {
             if (viewCall) {

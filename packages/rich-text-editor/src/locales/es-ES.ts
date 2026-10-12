@@ -12,6 +12,7 @@ export const esES = {
         RichTextEditor_copyContent: 'Copiar contenido',
         RichTextEditor_copyFailed: 'No se ha podido copiar. Selecciona el contenido y cópialo con el teclado.',
         RichTextEditor_copyOriginal: 'Copiar original',
+        RichTextEditor_more: 'Más',
         RichTextEditor_nodeViewError: 'Esta parte del contenido no se puede mostrar',
         RichTextEditor_readerBlockedInvalid: 'Este contenido no se puede mostrar',
         RichTextEditor_readerBlockedUnsupported: 'Este contenido no se puede mostrar aquí',
@@ -20,5 +21,9 @@ export const esES = {
         RichTextEditor_readerIslandNotice: 'Algunos contenidos no son compatibles aquí.',
         RichTextEditor_recoveryMessage: 'El editor dejó de funcionar. Tus últimos cambios se muestran a continuación.',
         RichTextEditor_retry: 'Reintentar',
+        RichTextEditor_toolbar: 'Formato de texto',
+        RichTextEditor_unavailable: 'No disponible en la selección actual',
+        RichTextEditor_unavailableNotAllowed: 'No permitido en este editor',
+        RichTextEditor_unavailableReadOnly: 'El contenido es de solo lectura',
     },
 };

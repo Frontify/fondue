@@ -15,6 +15,7 @@ export const deDE = {
         RichTextEditor_copyFailed:
             'Kopieren fehlgeschlagen. Wählen Sie den Inhalt aus und kopieren Sie ihn mit der Tastatur.',
         RichTextEditor_copyOriginal: 'Original kopieren',
+        RichTextEditor_more: 'Mehr',
         RichTextEditor_nodeViewError: 'Dieser Teil des Inhalts kann nicht angezeigt werden',
         RichTextEditor_readerBlockedInvalid: 'Dieser Inhalt kann nicht angezeigt werden',
         RichTextEditor_readerBlockedUnsupported: 'Dieser Inhalt kann hier nicht angezeigt werden',
@@ -24,5 +25,9 @@ export const deDE = {
         RichTextEditor_recoveryMessage:
             'Der Editor funktioniert nicht mehr. Ihre letzten Änderungen werden unten angezeigt.',
         RichTextEditor_retry: 'Erneut versuchen',
+        RichTextEditor_toolbar: 'Textformatierung',
+        RichTextEditor_unavailable: 'An der aktuellen Auswahl nicht verfügbar',
+        RichTextEditor_unavailableNotAllowed: 'In diesem Editor nicht erlaubt',
+        RichTextEditor_unavailableReadOnly: 'Der Inhalt ist schreibgeschützt',
     },
 };

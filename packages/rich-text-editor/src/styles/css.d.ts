@@ -2,3 +2,9 @@
 
 // Vite bundles the stylesheets that modules import for their side effect.
 declare module '*.css';
+
+// Chrome CSS Modules map each local class to its scoped name.
+declare module '*.module.scss' {
+    const classes: Readonly<Record<string, string>>;
+    export default classes;
+}

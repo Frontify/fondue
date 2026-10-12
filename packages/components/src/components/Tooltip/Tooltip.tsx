@@ -114,6 +114,11 @@ export type TooltipContentProps = CommonGlobalProps & {
      */
     side?: 'top' | 'right' | 'bottom' | 'left';
     maxWidth?: string;
+    /**
+     * The element the tooltip is portalled into
+     * @default document.body
+     */
+    container?: HTMLElement | null;
     className?: string;
     children: ReactNode;
     'data-test-id'?: string;
@@ -123,6 +128,7 @@ export const TooltipContent = (
     {
         children,
         className,
+        container,
         lang,
         maxWidth,
         'data-test-id': dataTestId = 'fondue-tooltip-content',
@@ -149,7 +155,7 @@ export const TooltipContent = (
     };
 
     return (
-        <RadixTooltip.Portal>
+        <RadixTooltip.Portal container={container}>
             <ThemeProvider>
                 <RadixTooltip.Content
                     dir={dir}
