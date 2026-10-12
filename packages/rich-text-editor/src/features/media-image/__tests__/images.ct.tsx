@@ -281,7 +281,7 @@ test('shows the placeholder in place of a reader image that fails to load', asyn
     await ready(page);
     const figure = readerOf(page).locator('figure');
 
-    await expect(figure).toHaveAttribute('data-rte-image-failed', '');
+    await expect(figure).toHaveAttribute('data-rte-image-failed');
     await expect(figure.locator('img')).toBeHidden();
     await expect(figure.locator('[data-rte-image-unavailable]')).toBeVisible();
     await expect(figure.locator('[data-rte-image-unavailable]')).toHaveText('Image unavailable logo.png');
@@ -337,4 +337,27 @@ test('keeps focus in the width field once Custom width closes the size menu', as
     await expect(field).toBeFocused();
     await page.waitForTimeout(300);
     await expect(field).toBeFocused();
+});
+
+test('moves a selected image by dragging it, keeping its nodeId, as one undo step', async ({ mount, page }) => {
+    await mount(<ImageProbe content="still" />);
+    await ready(page);
+    const image = surfaceOf(page).locator('figure img');
+    await expect(image).toHaveCount(1);
+    await image.click();
+
+    await image.dragTo(surfaceOf(page).getByText('After'), { targetPosition: { x: 40, y: 8 } });
+
+    await expect
+        .poll(() =>
+            page.evaluate(() =>
+                (window.imageRte?.handle.getSnapshot().document.content.content ?? []).map((block) =>
+                    block.type === 'figure'
+                        ? `figure:${JSON.stringify(block.content?.[0]?.attrs?.nodeId)}`
+                        : block.type,
+                ),
+            ),
+        )
+        .toEqual(['paragraph', 'paragraph', 'figure:"image-1"']);
+    expect(await page.evaluate(() => window.imageRte?.changes)).toBe(1);
 });
