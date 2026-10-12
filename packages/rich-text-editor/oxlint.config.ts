@@ -318,8 +318,20 @@ export default defineConfig({
                         trailingEmptyLines: { minimum: 2 },
                     },
                 ],
+
+                '@eslint-react/dom-no-missing-button-type': 'warn',
+
+                // Unlike the other Fondue packages, the type-aware rules keep the shared config's error severity.
             },
         },
+        {
+            files: ['**/*.stories.tsx'],
+            rules: {
+                '@eslint-react/rules-of-hooks': 'off',
+                '@eslint-community/eslint-comments/disable-enable-pair': 'off',
+            },
+        },
+        // The editor's own rules: layer boundaries, import cycles and nested ternaries.
         {
             files: ['src/**/*.{ts,tsx}'],
             rules: {
