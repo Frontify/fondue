@@ -233,7 +233,7 @@ describe('the React bridge', () => {
             readonly 'fixture.chrome-block.set': undefined;
             readonly 'fixture.chrome-block.unset': undefined;
         };
-        const captured = new Map<string, NodeViewState<ChromeCommands>>();
+        const captured = new Map<string | null, NodeViewState<ChromeCommands>>();
         const Capture = () => {
             const state = useRichTextNodeView<ChromeCommands>();
             captured.set(state.nodeId, state);
