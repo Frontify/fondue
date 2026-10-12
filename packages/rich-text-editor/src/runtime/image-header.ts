@@ -232,18 +232,28 @@ const ENTITY_DECLARATION = /<!ENTITY\s+([^\s%>"']+)\s+(?:"([^"<&]*)"|'([^'<&]*)'
 
 /**
  * `decoded` with the references to the entities it declares replaced by their text, or `undefined` when a
- * declaration could hold markup or another reference, refers to an outside file, or is not one this reader can tell.
+ * declaration could hold markup or another reference, refers to an outside file, names an entity again, or is not
+ * one this reader can tell, or when the replaced text would grow past twice the file.
  */
 const expandEntities = (decoded: string): string | undefined => {
-    const values = new Map<string, string>();
-    for (const [, name = '', double, single] of decoded.matchAll(ENTITY_DECLARATION)) {
-        values.set(name, double ?? single ?? '');
-    }
-    if ((decoded.match(/<!ENTITY/gi)?.length ?? 0) !== [...decoded.matchAll(ENTITY_DECLARATION)].length) {
+    const declarations = [...decoded.matchAll(ENTITY_DECLARATION)];
+    if ((decoded.match(/<!ENTITY/gi)?.length ?? 0) !== declarations.length) {
         return undefined;
+    }
+    const values = new Map<string, string>();
+    for (const [, name = '', double, single] of declarations) {
+        if (values.has(name)) {
+            return undefined;
+        }
+        values.set(name, double ?? single ?? '');
     }
     if (values.size === 0) {
         return decoded;
+    }
+    const references = [...decoded.matchAll(/&([^\s&;<>]+);/g)];
+    const grown = references.reduce((total, [whole, name = '']) => total + (values.get(name) ?? whole).length, 0);
+    if (grown > decoded.length * 2) {
+        return undefined;
     }
     return decoded.replaceAll(/&([^\s&;<>]+);/g, (whole, name: string) => values.get(name) ?? whole);
 };
