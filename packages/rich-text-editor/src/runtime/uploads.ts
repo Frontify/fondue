@@ -99,7 +99,13 @@ export type UploadRejection = 'type' | 'size' | 'pixels' | 'unreadable' | 'unsaf
  */
 export type UploadEvent =
     | { readonly kind: 'started' | 'failed' | 'cancelled'; readonly name: string }
-    | { readonly kind: 'completed'; readonly name: string; readonly altMissing: boolean }
+    | {
+          readonly kind: 'completed';
+          readonly name: string;
+          readonly altMissing: boolean;
+          /** Whether a replacement asks the author to review the alternative text it kept. */
+          readonly review: boolean;
+      }
     | {
           readonly kind: 'gesture';
           readonly refused: readonly { readonly name: string; readonly reason: UploadRejection }[];
@@ -291,7 +297,7 @@ export const createUploads = (host: UploadHost) => {
         // An answer that holds a URL or token, a type the session does not accept, or no asset fails the upload.
         const asset = pickedAsset(value, {
             mediaTypes: host.acceptTypes,
-            maxLabel: host.limits.maxAttributeLength,
+            maxLength: host.limits.maxAttributeLength,
         });
         if (asset === undefined) {
             release();
@@ -329,12 +335,11 @@ export const createUploads = (host: UploadHost) => {
         const { doc } = host.state();
         const pos = positionOf(doc, slot.nodeId);
         const intent: unknown = pos === undefined ? undefined : doc.nodeAt(pos)?.attrs.altIntent;
-        host.event({
-            kind: 'completed',
-            name: slot.name,
-            altMissing: intent !== 'meaningful' && intent !== 'decorative',
-        });
-        if (slot.kind === 'replace') {
+        const altMissing = intent !== 'meaningful' && intent !== 'decorative';
+        // An image with no alternative text keeps asking for it, which no review replaces.
+        const review = slot.kind === 'replace' && !altMissing;
+        host.event({ kind: 'completed', name: slot.name, altMissing, review });
+        if (review) {
             host.reviewAlt(slot.nodeId, asset.assetId);
         }
         host.changed();

@@ -14,6 +14,8 @@ const HEAD_BYTES = 64;
 const TEXT_BYTES = 1024;
 // The bytes one read takes from the file, so walking a JPEG's or an AVIF's structure reads it in a few slices.
 const WINDOW_BYTES = 1024 * 1024;
+// The markers, fill bytes or boxes one walk reads at most; a file that needs more has no size this reader can tell.
+const MAX_STEPS = 4096;
 
 const bytesOf = async (blob: Blob, start: number, length: number): Promise<Uint8Array> =>
     new Uint8Array(await blob.slice(start, start + length).arrayBuffer());
@@ -93,7 +95,7 @@ const jpeg = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
     }
     const read = windowed(blob);
     let at = 2;
-    while (at + 4 <= blob.size) {
+    for (let step = 0; step < MAX_STEPS && at + 4 <= blob.size; step += 1) {
         const marker = await read(at, 9);
         if (marker[0] !== 0xff) {
             break;
@@ -105,7 +107,7 @@ const jpeg = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
             continue;
         }
         if (code === START_OF_SCAN || code === END_OF_IMAGE) {
-            break;
+            return { ...UNKNOWN, mediaType: 'image/jpeg' };
         }
         // SOF0 to SOF15, except DHT (C4), JPG (C8) and DAC (CC), which share the range.
         if (code >= 0xc0 && code <= 0xcf && code !== 0xc4 && code !== 0xc8 && code !== 0xcc) {
@@ -123,11 +125,11 @@ interface Box {
     readonly end: number;
 }
 
-/** The boxes between `start` and `end`, read from their headers alone. */
+/** The boxes between `start` and `end`, read from their headers alone, up to `MAX_STEPS` of them. */
 const boxesIn = async (read: ReturnType<typeof windowed>, start: number, end: number): Promise<Box[]> => {
     const boxes: Box[] = [];
     let at = start;
-    while (at + 8 <= end) {
+    while (at + 8 <= end && boxes.length < MAX_STEPS) {
         const header = await read(at, 16);
         let size = uint32BE(header, 0);
         let content = at + 8;
@@ -226,16 +228,40 @@ const decodeReferences = (text: string) =>
         return Number.isInteger(code) && code >= 0 && code <= 0x10_ff_ff ? String.fromCodePoint(code) : whole;
     });
 
+const ENTITY_DECLARATION = /<!ENTITY\s+([^\s%>"']+)\s+(?:"([^"<&]*)"|'([^'<&]*)')\s*>/gi;
+
 /**
- * Whether an SVG's text holds active content once its character references are decoded: a `script` or
- * `foreignObject` element, an event handler attribute or a `javascript:` reference, which tabs and line breaks
- * inside it do not hide.
+ * `decoded` with the references to the entities it declares replaced by their text, or `undefined` when a
+ * declaration could hold markup or another reference, refers to an outside file, or is not one this reader can tell.
+ */
+const expandEntities = (decoded: string): string | undefined => {
+    const values = new Map<string, string>();
+    for (const [, name = '', double, single] of decoded.matchAll(ENTITY_DECLARATION)) {
+        values.set(name, double ?? single ?? '');
+    }
+    if ((decoded.match(/<!ENTITY/gi)?.length ?? 0) !== [...decoded.matchAll(ENTITY_DECLARATION)].length) {
+        return undefined;
+    }
+    if (values.size === 0) {
+        return decoded;
+    }
+    return decoded.replaceAll(/&([^\s&;<>]+);/g, (whole, name: string) => values.get(name) ?? whole);
+};
+
+/**
+ * Whether an SVG's text holds active content once its character references and the entities it declares are
+ * expanded: a `script` or `foreignObject` element under any prefix, an event handler attribute or a `javascript:`
+ * reference, which tabs and line breaks inside it do not hide. An entity whose text holds markup or a reference is
+ * refused outright, since only a full XML parser could tell what it builds.
  */
 export const svgHoldsScript = (text: string): boolean => {
-    const decoded = decodeReferences(text);
+    const decoded = expandEntities(decodeReferences(text));
+    if (decoded === undefined) {
+        return true;
+    }
     const compact = decoded.replaceAll(/[\t\n\r]/g, '');
     return (
-        /<\s*(?:[\w-]+:)?(?:script|foreignobject)[\s>/]/i.test(decoded) ||
+        /<\s*(?:[^\s"'/:<=>]+:)?(?:script|foreignobject)[\s>/]/i.test(decoded) ||
         /[\s"'/]on[a-z]+\s*=/i.test(decoded) ||
         /javascript\s*:/i.test(compact)
     );
