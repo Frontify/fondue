@@ -1,14 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useRef } from 'react';
 
-import { bold, code, core, italic, mediaImage, strike, underline } from '#/features';
+import { bold, code, core, italic, mediaImage, mentions, strike, underline } from '#/features';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { RichTextReader } from '#/reader';
 import { setSelection } from '#/testing';
 
-const model = compileContentModel([core(), bold(), italic(), underline(), strike(), code(), mediaImage()], {
+const model = compileContentModel([core(), bold(), italic(), underline(), strike(), code(), mediaImage(), mentions()], {
     id: 'test.images-ct',
     version: 1,
 });
@@ -45,9 +46,13 @@ declare global {
 }
 
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
-const figure = (nodeId: string, image: Readonly<Record<string, unknown>>) => ({
+const figure = (
+    nodeId: string,
+    image: Readonly<Record<string, unknown>>,
+    align: 'left' | 'center' | 'right' = 'center',
+) => ({
     type: 'figure',
-    attrs: { nodeId: `figure-${nodeId}`, align: 'center' },
+    attrs: { nodeId: `figure-${nodeId}`, align },
     content: [
         {
             type: 'asset_image',
@@ -75,6 +80,28 @@ const DOCUMENTS = {
     animated: [paragraph('Before'), figure('image-1', { assetId: 'moving.gif', mediaType: 'image/gif' })],
     still: [paragraph('Before'), figure('image-1', {})],
     broken: [paragraph('Before'), figure('image-1', { assetId: 'missing.png' })],
+    // A stored size far taller than the file, which must not reserve a box of that height.
+    extreme: [paragraph('Before'), figure('image-1', { assetId: 'pending.png', width: 1, height: 65_535 })],
+    // Hebrew first, so the content's own direction is right to left.
+    sides: [
+        paragraph('שלום'),
+        figure('image-1', { width: 40, height: 30 }, 'left'),
+        figure('image-2', { width: 40, height: 30 }, 'right'),
+    ],
+    print: [
+        {
+            type: 'paragraph',
+            attrs: { lang: null },
+            content: [
+                { type: 'text', text: 'Ask ' },
+                {
+                    type: 'mention',
+                    attrs: { nodeId: 'mention-1', resourceType: 'user', resourceId: 'user-1', labelSnapshot: 'Ada' },
+                },
+            ],
+        },
+        figure('image-1', {}),
+    ],
 };
 
 const stored = (content: keyof typeof DOCUMENTS) =>
@@ -91,7 +118,14 @@ const stored = (content: keyof typeof DOCUMENTS) =>
     }) as unknown as RichTextDocument;
 
 /** Mounts `media.image` with a resolver for every asset, and the reader of the same document beside it. */
-export const ImageProbe = ({ content = 'still' }: { readonly content?: keyof typeof DOCUMENTS }) => {
+export const ImageProbe = ({
+    content = 'still',
+    dir,
+}: {
+    readonly content?: keyof typeof DOCUMENTS;
+    /** The direction of the page around the editor and the reader. */
+    readonly dir?: 'ltr' | 'rtl';
+}) => {
     const ref = useRef<EditorHandle>(null);
     const changesRef = useRef(0);
     useEffect(() => {
@@ -111,18 +145,20 @@ export const ImageProbe = ({ content = 'still' }: { readonly content?: keyof typ
     }, []);
     const document = stored(content);
     return (
-        <>
-            <RichTextEditor
-                aria-label="Notes"
-                definition={definition}
-                presentation={presentation}
-                services={services}
-                defaultValue={{ documentId: 'document-1', revision: null, document }}
-                onDocumentChange={() => {
-                    changesRef.current += 1;
-                }}
-                ref={ref}
-            />
+        <div dir={dir}>
+            <ThemeProvider {...(dir === undefined ? {} : { dir })}>
+                <RichTextEditor
+                    aria-label="Notes"
+                    definition={definition}
+                    presentation={presentation}
+                    services={services}
+                    defaultValue={{ documentId: 'document-1', revision: null, document }}
+                    onDocumentChange={() => {
+                        changesRef.current += 1;
+                    }}
+                    ref={ref}
+                />
+            </ThemeProvider>
             <section aria-label="Published">
                 <RichTextReader
                     document={document}
@@ -130,6 +166,6 @@ export const ImageProbe = ({ content = 'still' }: { readonly content?: keyof typ
                     presentation={{ styles: [], colorTokens: [], resolveAssetUrl }}
                 />
             </section>
-        </>
+        </div>
     );
 };

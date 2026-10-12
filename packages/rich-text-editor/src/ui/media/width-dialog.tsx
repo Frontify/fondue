@@ -6,6 +6,8 @@ import { type FormEvent, useContext, useId, useState } from 'react';
 import { SessionContext } from '#/bridge/hooks';
 import { useEditorOverlay } from '#/bridge/overlays';
 
+import styles from './styles/media.module.scss';
+
 /** The command the dialog runs, whose payload declares the width in percent. */
 export const SET_SIZE = 'image.size.set';
 export const MIN_WIDTH = 10;
@@ -101,7 +103,7 @@ export const WidthDialog = ({
                             }}
                         />
                         {invalid && (
-                            <p id={errorId} role="alert">
+                            <p id={errorId} role="alert" className={styles.error}>
                                 {strings.range}
                             </p>
                         )}

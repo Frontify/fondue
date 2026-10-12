@@ -255,7 +255,10 @@ test('follows a theme switch in the content without a transaction or a new view'
     expect(after.session?.sameView).toBe(true);
 });
 
-test('prints the text and links of the editor and the reader without node chrome', async ({ mount, page }) => {
+test('prints the text of the editor and the chrome that renders content, such as a mention', async ({
+    mount,
+    page,
+}) => {
     const document = blocks(
         para(text('Read the '), { type: 'chrome_mention', attrs: { nodeId: 'm1', label: 'Ada' } }),
         { type: 'chrome_block', attrs: { nodeId: 'b1', language: 'plain', checked: false }, content: [text('code')] },
@@ -268,11 +271,9 @@ test('prints the text and links of the editor and the reader without node chrome
     await page.emulateMedia({ media: 'print' });
 
     await expect(chrome).toHaveCount(2);
-    for (const slot of await chrome.all()) {
-        await expect(slot).toBeHidden();
-    }
     await expect(surfaceOf(page).getByText('Read the')).toBeVisible();
     await expect(surfaceOf(page).getByText('code')).toBeVisible();
+    await expect(surfaceOf(page).getByRole('button', { name: 'Ada' })).toBeVisible();
 });
 
 test('prints a link in the editor and the reader', async ({ mount, page }) => {

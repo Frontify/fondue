@@ -11,7 +11,7 @@ import {
 } from 'react';
 
 import { checkHref, type Diagnostic, type JsonObject, type ListLevels } from '#/model';
-import { IMAGE_FEATURE, isUnresolvedImage, unresolvedAsset } from '#/model/assets';
+import { leavesOutUnresolved } from '#/model/assets';
 import { isIsland, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, passageDirection, resolveHtmlSpec, treeRuns, withAutoDirection } from '#/model/html-spec';
 import {
@@ -263,8 +263,7 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         return null;
     }
     // An unfinished upload is no published content, so its figure is left out and never resolved.
-    if (plan.featureId === IMAGE_FEATURE && isUnresolvedImage(node)) {
-        state.diagnostics.push(unresolvedAsset(path));
+    if (leavesOutUnresolved(state, plan.featureId, node, path)) {
         state.carried = 0;
         return null;
     }

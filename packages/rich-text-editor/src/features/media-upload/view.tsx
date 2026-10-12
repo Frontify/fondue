@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { LoadingBar } from '@frontify/fondue-components';
-import { type CSSProperties, useContext, useEffect, useState } from 'react';
+import { type CSSProperties, type MouseEvent, useContext, useEffect, useState } from 'react';
 
 import { NodeChromeButton } from '#/bridge/define';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
@@ -79,7 +79,7 @@ export const UploadSlot = ({
     readonly height: number | null;
     readonly t: CodecContext['t'];
     /** Selects the image, since node chrome keeps its own mouse events from the editor. */
-    readonly onMouseDown: () => void;
+    readonly onMouseDown: (event: MouseEvent) => void;
 }) => {
     let shape: CSSProperties | undefined;
     if (width !== null && height !== null) {

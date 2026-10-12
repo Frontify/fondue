@@ -11,10 +11,13 @@ interface DecoderClass {
 
 // Formats that hold one frame only.
 const STILL_TYPES: ReadonlySet<string> = new Set(['image/jpeg', 'image/bmp']);
+// A file larger than this is not read to tell; it counts as possibly animated.
+const MAX_PROBE_BYTES = 8 * 1024 * 1024;
 
 /**
- * Whether an image may animate: `ImageDecoder` reads the file's first track where the browser has it, and where it is
- * missing, cannot read the file or its type, the image counts as possibly animated, so its chrome offers Pause.
+ * Whether an image may animate: `ImageDecoder` reads the file's first track where the browser has it, with no
+ * credentials, and where it is missing, cannot read the file or its type, or the file declares more than
+ * `MAX_PROBE_BYTES`, the image counts as possibly animated, so its chrome offers Pause.
  */
 export const mayAnimate = async (src: string, mediaType: string | null, signal: AbortSignal): Promise<boolean> => {
     if (mediaType !== null && STILL_TYPES.has(mediaType)) {
@@ -25,9 +28,15 @@ export const mayAnimate = async (src: string, mediaType: string | null, signal: 
         return true;
     }
     try {
-        const response = await fetch(src, { signal });
+        const response = await fetch(src, { signal, credentials: 'omit' });
         const type = mediaType ?? response.headers.get('content-type') ?? '';
-        if (!response.ok || response.body === null || !(await decoderClass.isTypeSupported(type))) {
+        const declared = Number(response.headers.get('content-length') ?? 0);
+        if (!response.ok || response.body === null || declared > MAX_PROBE_BYTES) {
+            await response.body?.cancel();
+            return true;
+        }
+        if (!(await decoderClass.isTypeSupported(type))) {
+            await response.body.cancel();
             return true;
         }
         const decoder = new decoderClass({ data: response.body, type });

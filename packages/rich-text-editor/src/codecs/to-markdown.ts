@@ -3,7 +3,7 @@
 import { type MarkdownIt as Parser } from 'markdown-it';
 
 import { checkHref, type CodecContext, type Diagnostic, type JsonObject } from '#/model';
-import { altOf, IMAGE_FEATURE, imageSource, isUnresolvedImage, unresolvedAsset } from '#/model/assets';
+import { altOf, imageSource, leavesOutUnresolved } from '#/model/assets';
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { pointer } from '#/model/errors';
 import { islandText } from '#/model/html-spec';
@@ -619,8 +619,7 @@ const renderBlock = (state: MarkdownState, node: TreeNode, path: string, alterna
     if (plan === undefined) {
         return null;
     }
-    if (plan.featureId === IMAGE_FEATURE && isUnresolvedImage(node)) {
-        state.diagnostics.push(unresolvedAsset(path));
+    if (leavesOutUnresolved(state, plan.featureId, node, path)) {
         return null;
     }
     noteShared(state, plan, node);

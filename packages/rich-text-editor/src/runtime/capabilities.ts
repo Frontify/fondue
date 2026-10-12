@@ -18,6 +18,7 @@ import { liftTarget } from 'prosemirror-transform';
 
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
 import {
+    ALT_REVIEW_PLUGIN,
     BASE_KEYS_PLUGIN,
     CODE_KEYS_PLUGIN,
     CODE_SYNTAX_PLUGIN,
@@ -32,6 +33,7 @@ import {
 import { appliesToOf } from '#/model/styles';
 import { isRecord, OBJECT_REPLACEMENT } from '#/model/values';
 
+import { altReviewPlugin } from './alt-review';
 import { codeKeysPlugin } from './code-keys';
 import { codeSyntaxPlugin } from './code-syntax';
 import { columnsOf } from './columns';
@@ -1436,6 +1438,7 @@ export const CAPABILITIES: CapabilityImplementations = {
     upload,
     wrapIn,
     plugins: {
+        [ALT_REVIEW_PLUGIN.id]: altReviewPlugin,
         [LAST_MARK_PLUGIN.id]: lastMarkPlugin,
         // Backspace right after a rule fired undoes it before any list or block key sees it.
         [HISTORY_PLUGIN.id]: ({ inputRules }) =>

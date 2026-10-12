@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Dialog, Label, TextInput } from '@frontify/fondue-components';
+import { Button, Dialog, Label, RadioList, TextInput } from '@frontify/fondue-components';
 import { type FormEvent, useCallback, useContext, useId, useRef, useState } from 'react';
 
 import { SessionContext } from '#/bridge/hooks';
 import { useEditorOverlay } from '#/bridge/overlays';
 import { type CodecContext } from '#/model';
+import { withAltReview } from '#/runtime/alt-review';
 import { positionOf } from '#/runtime/positions';
 import { type EditorRuntime } from '#/runtime/runtime';
 
@@ -123,15 +124,16 @@ export const AltTextDialog = ({
         }
         overlay.onOpenChange(next);
     };
-    // Focus inside the content before Radix autofocuses it keeps Fondue from moving it elsewhere.
+    // Focus inside the content before Radix autofocuses it keeps Fondue from moving it to the first control.
     const focusedRef = useRef(false);
-    const focusOnce = useCallback((element: HTMLInputElement | null) => {
-        if (element !== null && !focusedRef.current) {
+    const focusChecked = useCallback((group: HTMLDivElement | null) => {
+        if (group !== null && !focusedRef.current) {
             focusedRef.current = true;
-            element.focus();
+            group.querySelector<HTMLElement>('[role="radio"][aria-checked="true"]')?.focus();
         }
     }, []);
     const legendId = useId();
+    const radioId = useId();
     const fieldId = useId();
     const errorId = useId();
     const formId = useId();
@@ -147,7 +149,9 @@ export const AltTextDialog = ({
             altText = text;
         }
         runtime?.nodeActions(nodeId).update({ altIntent: intent, altText });
-        runtime?.altReviews.delete(nodeId);
+        if (runtime?.view !== undefined) {
+            runtime.view.dispatch(withAltReview(runtime.state.tr, nodeId, null));
+        }
         overlay.returnFocusTo(opener);
         close(false);
     };
@@ -162,34 +166,41 @@ export const AltTextDialog = ({
     const { suggestion } = stored;
     return (
         <Dialog.Root open={open} onOpenChange={dismiss} modal>
-            <Dialog.Content ref={overlay.contentRef} container={overlay.container} maxWidth="440px">
+            <Dialog.Content ref={overlay.contentRef} container={overlay.container} maxWidth="400px">
                 <Dialog.Header showCloseButton={false}>
                     <Dialog.Title>{strings.title}</Dialog.Title>
                 </Dialog.Header>
                 <Dialog.Body>
                     <form id={formId} className={styles.form} onSubmit={save} noValidate>
-                        <fieldset role="radiogroup" className={styles.choice} aria-labelledby={legendId}>
-                            <legend id={legendId}>{strings.choice}</legend>
-                            {options.map((option) => (
-                                <label key={option.value} className={styles.option}>
-                                    <input
-                                        ref={option.value === intent ? focusOnce : undefined}
-                                        type="radio"
-                                        name="intent"
-                                        value={option.value}
-                                        checked={intent === option.value}
-                                        onChange={() => {
-                                            setIntent(option.value);
-                                            setInvalid(false);
-                                        }}
-                                    />
-                                    <span>
-                                        {option.label}
-                                        <span className={styles.hint}>{option.hint}</span>
-                                    </span>
-                                </label>
-                            ))}
-                        </fieldset>
+                        <div ref={focusChecked} className={styles.choice}>
+                            <span id={legendId}>{strings.choice}</span>
+                            <RadioList.Root
+                                aria-labelledby={legendId}
+                                value={intent}
+                                onValueChange={(next) => {
+                                    if (next === 'meaningful' || next === 'decorative') {
+                                        setIntent(next);
+                                        setInvalid(false);
+                                    }
+                                }}
+                            >
+                                {options.map((option) => (
+                                    <div key={option.value} className={styles.option}>
+                                        <RadioList.RadioButton
+                                            id={`${radioId}-${option.value}`}
+                                            value={option.value}
+                                            aria-describedby={`${radioId}-${option.value}-hint`}
+                                        />
+                                        <label htmlFor={`${radioId}-${option.value}`}>
+                                            {option.label}
+                                            <span id={`${radioId}-${option.value}-hint`} className={styles.hint}>
+                                                {option.hint}
+                                            </span>
+                                        </label>
+                                    </div>
+                                ))}
+                            </RadioList.Root>
+                        </div>
                         {intent === 'meaningful' && (
                             <>
                                 <Label htmlFor={fieldId} required>
@@ -208,7 +219,7 @@ export const AltTextDialog = ({
                                     }}
                                 />
                                 {invalid && (
-                                    <p id={errorId} role="alert">
+                                    <p id={errorId} role="alert" className={styles.error}>
                                         {strings.required}
                                     </p>
                                 )}

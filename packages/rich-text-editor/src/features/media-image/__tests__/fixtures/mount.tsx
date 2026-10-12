@@ -7,6 +7,7 @@ import { vi } from 'vitest';
 import { core, mediaImage, mentions } from '#/features';
 import {
     type AssetValue,
+    type AuthoringPolicy,
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
@@ -109,6 +110,7 @@ interface Mount {
     readonly services?: EditorServices;
     readonly presentation?: ReactPresentation;
     readonly toolbar?: ReactPresentation['toolbar'];
+    readonly policy?: Partial<AuthoringPolicy>;
 }
 
 /** Mounts `RichTextEditor` with `media.image`, runs the first frame and renders the node views' chrome. */
@@ -118,11 +120,12 @@ export const mountImages = async ({
     services,
     presentation,
     toolbar = [['image.insert']],
+    policy = {},
 }: Mount = {}) => {
     const ref = createRef<EditorHandle>();
     const diagnostics: Diagnostic[] = [];
     const changes: DocumentChange[] = [];
-    const definition = defineEditor({ id: 'test.images', model });
+    const definition = defineEditor({ id: 'test.images', model, policy });
     const shown = presentation ?? defineReactPresentation({ toolbar, resolveAssetUrl: resolving });
     const rendered = render(
         <RichTextEditor

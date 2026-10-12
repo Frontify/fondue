@@ -56,7 +56,7 @@ describe('image output', () => {
         const { reader, html, markdown } = outputsOf(blocks, { resolveAssetUrl });
 
         expect(reader.markup).toBe(
-            '<div class="fondue-rte-content"><figure dir="auto" style="text-align:center"><img src="https://cdn.frontify.test/asset-logo.png?w=40" alt="Frontify logo" width="40" height="30"/></figure></div>',
+            '<div class="fondue-rte-content"><figure dir="auto" style="text-align:center"><img src="https://cdn.frontify.test/asset-logo.png?w=40" alt="Frontify logo" width="40" height="30"/><span data-rte-image-unavailable="" hidden="">Image unavailable <bdi>logo.png</bdi></span></figure></div>',
         );
         expect(html.html).toBe(reader.markup);
         expect(markdown.markdown).toBe('![Frontify logo](https://cdn.frontify.test/asset-logo.png?w=40)');
@@ -111,7 +111,7 @@ describe('image output', () => {
         const { reader, html } = outputsOf(blocks, { resolveAssetUrl: resolving });
 
         expect(reader.markup).toMatchInlineSnapshot(
-            `"<div class="fondue-rte-content"><figure dir="auto" style="text-align:center"><img src="https://cdn.frontify.test/asset-logo.png?w=40" alt="" width="40" height="30"/></figure><figure dir="auto" style="text-align:right"><img src="https://cdn.frontify.test/asset-logo.png?w=40" alt="Five swatches" width="40" height="30"/></figure></div>"`,
+            `"<div class="fondue-rte-content"><figure dir="auto" style="text-align:center"><img src="https://cdn.frontify.test/asset-logo.png?w=40" alt="" width="40" height="30"/><span data-rte-image-unavailable="" hidden="">Image unavailable <bdi>logo.png</bdi></span></figure><figure dir="auto" style="text-align:right"><img src="https://cdn.frontify.test/asset-logo.png?w=40" alt="Five swatches" width="40" height="30"/><span data-rte-image-unavailable="" hidden="">Image unavailable <bdi>logo.png</bdi></span></figure></div>"`,
         );
         expect(html.html).toBe(reader.markup);
     });
@@ -122,10 +122,13 @@ describe('image output', () => {
         const { reader, html, text: plain } = outputsOf(blocks, { resolveAssetUrl: resolving });
 
         expect(reader.markup).toMatchInlineSnapshot(
-            `"<div class="fondue-rte-content"><figure dir="auto" style="text-align:center"><img src="https://cdn.frontify.test/asset-logo.png?w=40" width="40" height="30"/></figure></div>"`,
+            `"<div class="fondue-rte-content"><figure dir="auto" style="text-align:center"><img src="https://cdn.frontify.test/asset-logo.png?w=40" width="40" height="30"/><span data-rte-image-unavailable="" hidden="">Image unavailable <bdi>IMG_2044.jpg</bdi></span></figure></div>"`,
         );
         expect(reader.markup).not.toContain('alt=');
-        expect(reader.markup).not.toContain('IMG_2044');
+        // Only the placeholder an image that fails to load shows names the file.
+        expect(reader.markup.replace(/<span data-rte-image-unavailable="" hidden="">.*?<\/span>/, '')).not.toContain(
+            'IMG_2044',
+        );
         expect(html.html).toBe(reader.markup);
         expect(plain.text).toBe('');
     });

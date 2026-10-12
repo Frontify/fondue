@@ -1,17 +1,33 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CSSProperties, type ReactNode, type RefObject, useCallback, useEffect, useRef } from 'react';
+import {
+    type CSSProperties,
+    type MouseEvent,
+    type ReactNode,
+    type RefObject,
+    useCallback,
+    useEffect,
+    useRef,
+} from 'react';
 
 import styles from './styles/image.module.scss';
 
-/** Draws the image's current frame on `canvas`, a still that covers it while its animation is paused. */
-const drawStill = (image: HTMLImageElement | null, canvas: HTMLCanvasElement | null) => {
+// The longest side of a still in device pixels, whatever the image's own size.
+const MAX_STILL = 4096;
+
+/**
+ * Draws the image's current frame on `canvas`, a still that covers it while its animation is paused, at the size the
+ * image shows, in device pixels, at most `MAX_STILL` on either side.
+ */
+export const drawStill = (image: HTMLImageElement | null, canvas: HTMLCanvasElement | null) => {
     if (image === null || canvas === null || !image.complete || image.naturalWidth === 0) {
         return;
     }
-    canvas.width = image.naturalWidth;
-    canvas.height = image.naturalHeight;
-    canvas.getContext('2d')?.drawImage(image, 0, 0);
+    const { width, height } = image.getBoundingClientRect();
+    const ratio = image.ownerDocument.defaultView?.devicePixelRatio ?? 1;
+    canvas.width = Math.max(1, Math.min(MAX_STILL, Math.round(width * ratio)));
+    canvas.height = Math.max(1, Math.min(MAX_STILL, Math.round(height * ratio)));
+    canvas.getContext('2d')?.drawImage(image, 0, 0, canvas.width, canvas.height);
 };
 
 /**
@@ -40,7 +56,7 @@ export const ContentImage = ({
     readonly frameRef: RefObject<HTMLSpanElement>;
     readonly onFailed: () => void;
     /** Selects the image, since node chrome keeps its own mouse events from the editor. */
-    readonly onMouseDown: () => void;
+    readonly onMouseDown: (event: MouseEvent) => void;
     /** The resize handle, drawn over the frame's edge. */
     readonly children?: ReactNode;
 }) => {
