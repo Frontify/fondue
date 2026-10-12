@@ -18,6 +18,10 @@ const serveAssets = (page: Page) =>
             await route.fulfill({ contentType: 'image/png', body: Buffer.from(STILL_PNG, 'base64') });
             return;
         }
+        // An image the test never answers keeps the box its stored size reserves.
+        if (url.endsWith('/pending.png')) {
+            return;
+        }
         if (url.endsWith('/moving.gif')) {
             await route.fulfill({ contentType: 'image/gif', body: Buffer.from(MOVING_GIF, 'base64') });
             return;
@@ -256,4 +260,81 @@ test('lists Image in More when it does not fit the toolbar, and opens the asset 
     await expect.poll(() => page.evaluate(() => window.imageRte?.picks)).toBe(1);
     await expect.poll(() => page.evaluate(() => window.imageRte?.changes)).toBe(1);
     await expect(surfaceOf(page).locator('figure')).toHaveCount(2);
+});
+
+test('reserves no box beyond the viewport for a stored size much taller than the file, in the editor and the reader', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ImageProbe content="extreme" />);
+    await ready(page);
+    const viewport = page.viewportSize()?.height ?? 0;
+
+    for (const root of [surfaceOf(page), readerOf(page)]) {
+        const box = await root.locator('figure').first().boundingBox();
+        expect(box?.height ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(viewport);
+    }
+});
+
+test('shows the placeholder in place of a reader image that fails to load', async ({ mount, page }) => {
+    await mount(<ImageProbe content="broken" />);
+    await ready(page);
+    const figure = readerOf(page).locator('figure');
+
+    await expect(figure).toHaveAttribute('data-rte-image-failed', '');
+    await expect(figure.locator('img')).toBeHidden();
+    await expect(figure.locator('[data-rte-image-unavailable]')).toBeVisible();
+    await expect(figure.locator('[data-rte-image-unavailable]')).toHaveText('Image unavailable logo.png');
+});
+
+test('places a left and a right figure on those physical sides in the editor and the reader of a right-to-left page', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ImageProbe content="sides" dir="rtl" />);
+    await ready(page);
+    await expect(surfaceOf(page).locator('figure img')).toHaveCount(2);
+
+    for (const root of [surfaceOf(page), readerOf(page)]) {
+        const sides = await root.locator('figure').evaluateAll((figures) =>
+            figures.map((figure) => {
+                const outer = figure.getBoundingClientRect();
+                const image = figure.querySelector('img')?.getBoundingClientRect();
+                return { left: (image?.left ?? 0) - outer.left, right: outer.right - (image?.right ?? 0) };
+            }),
+        );
+        const [left, right] = sides;
+        expect(left?.left).toBeLessThan(left?.right ?? 0);
+        expect(right?.right).toBeLessThan(right?.left ?? 0);
+    }
+});
+
+test('prints a mention chip and the image, and leaves out the image toolbar', async ({ mount, page }) => {
+    await mount(<ImageProbe content="print" />);
+    await ready(page);
+    await expect(surfaceOf(page).locator('figure img')).toHaveCount(1);
+
+    await page.emulateMedia({ media: 'print' });
+
+    await expect(surfaceOf(page).getByText('@Ada')).toBeVisible();
+    await expect(surfaceOf(page).locator('figure img')).toBeVisible();
+    await expect(surfaceOf(page).getByRole('toolbar', { name: 'Image' })).toBeHidden();
+});
+
+test('keeps focus in the width field once Custom width closes the size menu', async ({ mount, page }) => {
+    await mount(<ImageProbe content="still" />);
+    await ready(page);
+    await expect(surfaceOf(page).locator('figure img')).toHaveCount(1);
+
+    const size = surfaceOf(page).getByRole('button', { name: 'Size: Original size' });
+    await size.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('menuitemradio', { name: 'Original size' })).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    const field = page.getByRole('spinbutton', { name: 'Width in percent of the content width' });
+    await expect(field).toBeFocused();
+    await page.waitForTimeout(300);
+    await expect(field).toBeFocused();
 });

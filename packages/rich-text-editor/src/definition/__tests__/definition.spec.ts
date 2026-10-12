@@ -17,6 +17,7 @@ import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { mediaImage } from '#/features/media-image/feature';
+import { mentions } from '#/features/mentions/feature';
 import { compileContentModel, defineFeature, DefinitionError, type FeatureDeclaration } from '#/model';
 import { compiledModel } from '#/model/compile';
 
@@ -128,6 +129,14 @@ describe('compileDefinition', () => {
         const figure = schema.nodes.figure?.createAndFill();
         expect(list?.firstChild).toMatchObject({ attrs: { nodeId: null } });
         expect(figure?.firstChild).toMatchObject({ type: { name: 'asset_image' } });
+    });
+
+    it('gives null engine defaults only to the leaf the engine must create, never to a mention', () => {
+        const { schema } = compileDefinition(compileContentModel([core(), mediaImage(), mentions()], options));
+
+        expect(schema.nodes.asset_image?.spec.attrs?.labelSnapshot).toEqual({ default: null });
+        expect(schema.nodes.mention?.spec.attrs?.labelSnapshot).toEqual({});
+        expect(schema.nodes.mention?.hasRequiredAttrs()).toBe(true);
     });
 
     it('builds the figure of media.image and of the vocabulary, whose image has required attributes with no default', () => {

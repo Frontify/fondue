@@ -156,7 +156,7 @@ describe('copying an image', () => {
         const html = clipboardData.getData('text/html');
 
         expect(html).toContain(
-            '<figure dir="auto" style="text-align:center"><img src="https://cdn.frontify.test/asset-logo.png?w=40" alt="Frontify logo" width="40" height="30"/></figure>',
+            '<figure dir="auto" style="text-align:center"><img src="https://cdn.frontify.test/asset-logo.png?w=40" alt="Frontify logo" width="40" height="30"/><span data-rte-image-unavailable="" hidden="">Image unavailable <bdi>logo.png</bdi></span></figure>',
         );
         expect(html).not.toContain('asset-logo"');
         mounted.unmount();
