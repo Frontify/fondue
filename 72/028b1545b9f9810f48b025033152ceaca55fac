@@ -1,0 +1,34 @@
+packages/components/src/components/Tabs/__tests__/Tabs.ct.tsx
+  s_f489c5190545b3::t_9be24ab5969c77 242-299
+packages/components/src/components/Tabs/Tabs.tsx
+  s_f489c5190545b3::t_ab668d5e995a11 221
+packages/components/src/components/Tabs/Tabs.stories.tsx
+  s_f489c5190545b3::t_d6a9a2c419c043 9
+  s_f489c5190545b3::t_911c657350b1d1 185-223
+packages/components/src/components/Tabs/hooks/useTabTriggers.ts
+  s_f489c5190545b3::t_3b3471b524e1d4 143,145-153,155
+  s_f489c5190545b3::t_126eeee06d2b46 3
+.changeset/tame-bats-strive.md
+  h_72595612499821 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "72028b1545b9f9810f48b025033152ceaca55fac",
+  "prompts": {},
+  "humans": {
+    "h_72595612499821": {
+      "author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_f489c5190545b3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5b8afe15-fdc9-4171-b44e-64103b901367",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}

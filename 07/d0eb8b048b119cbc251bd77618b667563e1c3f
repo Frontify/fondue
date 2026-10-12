@@ -1,0 +1,27 @@
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_68254d0d83d78c::t_58af6f5dd7f19e 115-118
+  s_68254d0d83d78c::t_f6a1eff76fbe56 114,119
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_68254d0d83d78c::t_491b5873c52973 548
+  s_68254d0d83d78c::t_e7e37b83549674 567,569
+  s_68254d0d83d78c::t_a6176663defba4 571,573
+  s_68254d0d83d78c::t_626a2a78a3b145 568,570,572,574
+.changeset/tree-drag-handle-visibility.md
+  s_68254d0d83d78c::t_fef62cc600c3a1 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "07d0eb8b048b119cbc251bd77618b667563e1c3f",
+  "prompts": {},
+  "sessions": {
+    "s_68254d0d83d78c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "df3dcb80-010b-40ab-bde9-b5db35224c1d",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

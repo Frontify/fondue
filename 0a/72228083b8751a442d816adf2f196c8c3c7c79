@@ -1,0 +1,17 @@
+packages/components/src/components/Card/styles/card.module.scss
+  h_2139c5e5c94509 114,257,368
+  h_2139c5e5c94509 73-76,109,120
+.changeset/many-candles-return.md
+  h_2139c5e5c94509 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "0a72228083b8751a442d816adf2f196c8c3c7c79",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

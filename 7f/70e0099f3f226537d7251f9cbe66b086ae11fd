@@ -1,0 +1,41 @@
+packages/components/src/components/SegmentedControl/SegmentedControl.tsx
+  s_6aefee771b4b89::t_057f0e6535e4c5 7
+  s_6aefee771b4b89::t_7f12c30682857c 37-38
+packages/components/src/components/SegmentedControl/SegmentedControl.metadata.json
+  s_6aefee771b4b89::t_13496f61a4fb80 4
+packages/components/src/components/RadioList/RadioList.tsx
+  s_6aefee771b4b89::t_cba5d9a63bb6fd 7,11,17,24,31,38-40,46-48,57
+packages/components/src/components/SegmentedControl/__tests__/SegmentedControl.ct.tsx
+  s_6aefee771b4b89::t_46cce9ec739366 134-203
+packages/components/src/components/RadioList/RadioList.metadata.json
+  s_6aefee771b4b89::t_5c2638bb063b57 4
+packages/components/src/utilities/types.ts
+  s_6aefee771b4b89::t_ffbe52c46abe5c 15-16
+packages/components/src/components/SegmentedControl/SegmentedControl.stories.tsx
+  s_6aefee771b4b89::t_0905c01d93a6bd 8
+  s_6aefee771b4b89::t_961ed4247c1c8f 152-154,156-158,168-187,189-197
+  s_6aefee771b4b89::t_81d2308f72b10d 188
+  s_6aefee771b4b89::t_ce5cb078a8602c 198-199
+packages/components/src/components/RadioList/RadioList.stories.tsx
+  s_6aefee771b4b89::t_18a09f55239274 9
+  s_6aefee771b4b89::t_fcb0473615c285 139-168,170-175
+  s_6aefee771b4b89::t_82a1d7798fd240 169
+packages/components/src/components/RadioList/__tests__/RadioList.spec.tsx
+  s_6aefee771b4b89::t_9b5ff0b0936a08 188-243
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "7f70e0099f3f226537d7251f9cbe66b086ae11fd",
+  "prompts": {},
+  "sessions": {
+    "s_6aefee771b4b89": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "278334f6-9dec-4f7f-ab55-a9007a1e0ae4",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}

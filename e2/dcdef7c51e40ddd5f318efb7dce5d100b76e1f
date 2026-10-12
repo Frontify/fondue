@@ -1,0 +1,20 @@
+packages/components/src/components/Flyout/styles/flyout.module.scss
+  h_2139c5e5c94509 105-108
+packages/components/src/components/Flyout/Flyout.tsx
+  h_2139c5e5c94509 226
+packages/components/src/components/Dialog/Dialog.stories.tsx
+  h_2139c5e5c94509 462
+packages/components/src/components/DatePicker/styles/datePickerInput.module.scss
+  h_2139c5e5c94509 8,87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "e2dcdef7c51e40ddd5f318efb7dce5d100b76e1f",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

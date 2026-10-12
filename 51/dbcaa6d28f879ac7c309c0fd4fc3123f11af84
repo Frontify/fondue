@@ -1,0 +1,28 @@
+packages/fondue/src/foundation/Pattern/PatternScaleOrigin.ts
+  s_d35bedffdfdb73::t_554070b979816e 3-5
+packages/fondue/src/components/Flyout/helpers/getVerticalPositioning.ts
+  s_d35bedffdfdb73::t_d099f21b86cbcc 5-7
+packages/fondue/scripts/detectDeprecatedExports/detectDeprecatedExports.ts
+  s_d35bedffdfdb73::t_159d53502396ce 20-22
+packages/fondue/tools/constants/fondueExports.json
+  s_d35bedffdfdb73::t_03687cd07db0e2 167
+  s_d35bedffdfdb73::t_dd865e0a7be140 54,83,153
+packages/fondue/src/components/InputLabel/InputLabel.tsx
+  s_d35bedffdfdb73::t_1b160ff20a8b72 17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "51dbcaa6d28f879ac7c309c0fd4fc3123f11af84",
+  "prompts": {},
+  "sessions": {
+    "s_d35bedffdfdb73": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8889b5a-1944-4e24-829d-bbce859830bf",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

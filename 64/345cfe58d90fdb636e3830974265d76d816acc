@@ -1,0 +1,23 @@
+.changeset/quiet-placeholder-hidden.md
+  s_c6af68721dfd70::t_500a1fde78087a 1-6
+packages/components/src/components/TextInput/__tests__/TextInput.ct.tsx
+  s_c6af68721dfd70::t_c95bc9eef11ab8 27-32
+packages/components/src/components/TextInput/TextInput.tsx
+  s_c6af68721dfd70::t_9ddc679804bd31 138-142
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "64345cfe58d90fdb636e3830974265d76d816acc",
+  "prompts": {},
+  "sessions": {
+    "s_c6af68721dfd70": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "462ce3d5-1a64-4b36-a29f-1cdcfd4ad925",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}

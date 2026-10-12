@@ -1,0 +1,23 @@
+packages/tokens/package.json
+  s_1b46040c5662a5::t_fbbcd049a7086b 81
+packages/tokens/src/styleDictionary/buildStyleDictionary.ts
+  s_1b46040c5662a5::t_69bcbe8373f3e1 234,250,263
+pnpm-lock.yaml
+  s_1b46040c5662a5::t_30ee092c71dad7 1340-1341,2141-2142,2144-2145,7105-7107,10388-10390,12225,12229,12233,17528-17529,21656,21658-21659,21664,21669
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "507b2ca71658aa4b03d7f8fb8e74e8c71c554772",
+  "prompts": {},
+  "sessions": {
+    "s_1b46040c5662a5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee5c5d4f-284a-4c01-9dfe-4129f5cf5373",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+packages/rte/package.json
+  s_b20a2523b09abe::t_23182c90874610 180
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "005b4c619ce3ba582e06a0dfbdff0337453d9a22",
+  "prompts": {},
+  "sessions": {
+    "s_b20a2523b09abe": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8946b022-6794-4512-a0ba-55f88ae40f7c",
+        "model": "claude-opus-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

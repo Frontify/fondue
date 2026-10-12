@@ -1,0 +1,77 @@
+packages/rich-text-edior/src/RichTextEditor/prosemirror/editor.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 6
+packages/rich-text-edior/src/RichTextEditor/prosemirror/attributes.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 5
+packages/rich-text-edior/src/RichTextEditor/hooks/useFloating.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 6
+packages/rich-text-edior/src/RichTextEditor/prosemirror/document.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 5
+packages/rich-text-edior/src/RichTextEditor/components/Toolbar.tsx
+  s_935f2ee3f678c2::t_5bb4afd12979f0 7-18
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/marks.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 8
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/lists.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 8
+packages/rich-text-edior/src/domain/index.ts
+  s_935f2ee3f678c2::t_269f49b16f3290 4-45
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/selection.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 7
+packages/rich-text-edior/src/RichTextEditor/prosemirror/schema.ts
+  s_935f2ee3f678c2::t_d36212486891e7 43
+  s_935f2ee3f678c2::t_41728fcbd1d705 50
+  s_935f2ee3f678c2::t_2db3668b7a041a 5
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/blocks.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 7
+packages/rich-text-edior/src/RichTextEditor/prosemirror/render.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 6
+packages/rich-text-edior/src/domain/plugin.ts
+  s_935f2ee3f678c2::t_d7fe7166eef576 5
+packages/rich-text-edior/src/domain/vocabulary.ts
+  s_935f2ee3f678c2::t_ede1de4e16b6e8 1-30
+packages/rich-text-edior/src/RichTextEditor/prosemirror/enginePlugins.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 8
+packages/rich-text-edior/src/RichTextEditor/RichTextEditor.tsx
+  s_935f2ee3f678c2::t_9b55a00396e3bb 7
+  s_935f2ee3f678c2::t_1ef01505073744 14
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/index.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 5
+packages/rich-text-edior/src/domain/document.ts
+  s_935f2ee3f678c2::t_0e43dabe972e48 3,6,8,18,24,33,39-44,53,60,66,70
+packages/rich-text-edior/src/RichTextEditor/prosemirror/triggers.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 6
+packages/rich-text-edior/src/RichTextEditor/index.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 33
+  s_935f2ee3f678c2::t_42e3ed03a4bb37 31-32
+packages/rich-text-edior/src/RichTextEditor/prosemirror/floating.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 6
+packages/rich-text-edior/src/domain/protocol.ts
+  s_935f2ee3f678c2::t_633c4d4eb21de5 1-21
+packages/rich-text-edior/src/RichTextEditor/hooks/useEditorHandle.ts
+  s_935f2ee3f678c2::t_f6f15eb702512b 8
+  s_935f2ee3f678c2::t_5b0e3dc7d91e4f 67
+packages/rich-text-edior/src/RichTextEditor/prosemirror/nodeSpecs.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 5
+packages/rich-text-edior/src/RichTextEditor/prosemirror/inputRules.ts
+  s_935f2ee3f678c2::t_5659b8127c12f5 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "2b992a16dc54b826d007c1c7635ceb49ca4f6472",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_935f2ee3f678c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e91df161-b427-4aab-9538-43b52a6f0323",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+packages/sdk/docs/recipes.md
+  s_619093e29711c0::t_95eb7b8daa257e 9-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "93189c5fe6e1ef8d0cec53439a5a8cb22b1f7e2a",
+  "prompts": {},
+  "sessions": {
+    "s_619093e29711c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79c608df-cc50-4980-919a-b0fd0f655617",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

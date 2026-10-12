@@ -1,0 +1,29 @@
+packages/rte/src/components/RichTextEditor/context/EditorResizeContext.tsx
+  s_0477cda841a8cb::t_1ccd7a6929bbc5 10
+packages/rte/src/components/RichTextEditor/hooks/useEditorResize.ts
+  s_0477cda841a8cb::t_4ee03316dd57b3 33
+  s_0477cda841a8cb::t_23e616f61780b6 4,12-16,22,24-25,28,30,32,34,37-38
+.changeset/strong-tools-fetch.md
+  h_72595612499821 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "60980ec64eeee58b45e0a82f65d088faca2683a9",
+  "prompts": {},
+  "humans": {
+    "h_72595612499821": {
+      "author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_0477cda841a8cb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6dd2b36b-1626-4a19-b717-1681b7118e58",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}

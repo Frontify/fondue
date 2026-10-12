@@ -1,0 +1,154 @@
+packages/components/src/locales/fr-FR.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 45
+packages/components/src/components/Link/Link.tsx
+  s_8413b6d135ca6e::t_55fac7c589b428 5-6,18
+packages/components/src/locales/nl-NL.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 45
+packages/components/src/components/Label/Label.tsx
+  s_8413b6d135ca6e::t_55fac7c589b428 6-7,12
+packages/components/src/components/Box/__tests__/Box.ct.tsx
+  s_8413b6d135ca6e::t_8b9ea684ce968e 108-116
+packages/components/src/components/ThemeProvider/__tests__/ThemeProvider.spec.tsx
+  s_8413b6d135ca6e::t_2ea7e20961715d 139-187
+  s_8413b6d135ca6e::t_2f52d737f921a5 10,17
+packages/components/src/components/Notice/Notice.tsx
+  s_8413b6d135ca6e::t_0da445ea78ea19 96-98
+  s_8413b6d135ca6e::t_b4107eeaa4a27e 76
+  s_8413b6d135ca6e::t_73bdb04075ebc1 6
+  s_8413b6d135ca6e::t_2c21091ee9f5b1 19
+packages/components/src/locales/pl-PL.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 45
+packages/components/src/components/Tag/tests/Tag.ct.tsx
+  s_8413b6d135ca6e::t_62c288293c4346 102-110
+packages/components/src/components/Tag/Tag.tsx
+  s_8413b6d135ca6e::t_1043ff87689bd4 116
+  s_8413b6d135ca6e::t_3776c797d88888 159
+  s_8413b6d135ca6e::t_91fd3484d7f91f 75
+  s_8413b6d135ca6e::t_20d732981e566d 6-7
+  s_8413b6d135ca6e::t_1e529b325da5d2 16
+  s_8413b6d135ca6e::t_fa95f733c2cc7c 214
+  s_8413b6d135ca6e::t_98a6d21ee53315 197
+  s_8413b6d135ca6e::t_3c738df69507b4 137
+packages/components/src/components/TextInput/__tests__/TextInput.ct.tsx
+  s_8413b6d135ca6e::t_b8d64bdbee2bc4 175-186
+packages/components/src/components/Textarea/Textarea.tsx
+  s_8413b6d135ca6e::t_3916f5e7a2a131 20
+  s_8413b6d135ca6e::t_4c4e167bfcb900 36
+packages/components/src/components/Button/Button.tsx
+  s_8413b6d135ca6e::t_dab080d37380fb 5-6
+  s_8413b6d135ca6e::t_7d9aaa6fb0a31e 21
+packages/components/src/components/Tooltip/__tests__/Tooltip.ct.tsx
+  s_8413b6d135ca6e::t_62c288293c4346 401,403,407,411-412,415
+  s_8413b6d135ca6e::t_166909ca95f151 402,404-406,408-410,413-414
+packages/components/src/components/Flex/Flex.tsx
+  s_8413b6d135ca6e::t_5636cb4307c798 5,54-55,70,87
+packages/components/src/components/Select/__tests__/Combobox.ct.tsx
+  s_8413b6d135ca6e::t_62c288293c4346 596-606
+packages/components/src/components/EditableText/__tests__/EditableText.ct.tsx
+  s_8413b6d135ca6e::t_b8d64bdbee2bc4 205-209
+packages/components/src/components/Button/tests/Button.ct.tsx
+  s_8413b6d135ca6e::t_b8d64bdbee2bc4 73-81
+packages/components/src/locales/es-ES.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 45
+packages/components/src/components/Badge/Badge.tsx
+  s_8413b6d135ca6e::t_f4191572993820 6
+  s_8413b6d135ca6e::t_d4605e204d14bb 18
+  s_8413b6d135ca6e::t_b0dd7cbc5196f2 59
+  s_8413b6d135ca6e::t_7868347a499fa5 79
+packages/components/src/components/Box/Box.tsx
+  s_8413b6d135ca6e::t_5636cb4307c798 5,25-26,41,58
+packages/components/src/components/Section/__tests__/Section.ct.tsx
+  s_8413b6d135ca6e::t_8b9ea684ce968e 71-79
+packages/components/src/components/Tooltip/Tooltip.tsx
+  s_8413b6d135ca6e::t_75a53c94c71113 158
+  s_8413b6d135ca6e::t_c81dd635f5bf3d 107
+  s_8413b6d135ca6e::t_3b24e8c05d8d7b 126
+  s_8413b6d135ca6e::t_7e315581d03c16 6
+packages/components/src/components/Textarea/__tests__/Textarea.ct.tsx
+  s_8413b6d135ca6e::t_b8d64bdbee2bc4 182-193
+packages/components/src/components/TextInput/TextInput.tsx
+  s_8413b6d135ca6e::t_cdf4891a339ded 15-16,21
+packages/components/src/components/EditableText/EditableText.tsx
+  s_8413b6d135ca6e::t_1796fa24ff88b2 100
+  s_8413b6d135ca6e::t_e504e261cae88d 6-7,10
+  s_8413b6d135ca6e::t_80def242a1014b 42
+packages/components/src/components/Text/Text.tsx
+  s_8413b6d135ca6e::t_55fac7c589b428 11,23
+packages/components/src/locales/it-IT.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 45
+packages/components/src/helpers/aria.ts
+  s_8413b6d135ca6e::t_7c0f37f77221ee 27-35,37-39
+  s_8413b6d135ca6e::t_81777e3660d34f 36
+packages/components/src/components/ThemeProvider/ThemeProvider.tsx
+  s_8413b6d135ca6e::t_b1187e86113cf2 41-49
+  s_8413b6d135ca6e::t_68a98f0762273a 67,75
+  s_8413b6d135ca6e::t_d245d309dda166 91,103,106,114
+  s_8413b6d135ca6e::t_33b8fb282e9270 40
+packages/components/.storybook/components/StoryWithTheme.tsx
+  s_8413b6d135ca6e::t_3c1cd0a3181d2f 18
+  s_8413b6d135ca6e::t_4eb94becd6ac61 6
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_8413b6d135ca6e::t_c0a0bffa07e80c 18
+  s_8413b6d135ca6e::t_dd77c31ae6a8dd 127
+  s_8413b6d135ca6e::t_651159224e984c 330
+  s_8413b6d135ca6e::t_8961528ea099a3 356
+  s_8413b6d135ca6e::t_b0495d66486d42 88-89
+packages/components/src/locales/it-CH.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 45
+packages/components/src/components/Grid/__tests__/Grid.ct.tsx
+  s_8413b6d135ca6e::t_8b9ea684ce968e 158-166
+packages/components/src/components/Flex/__tests__/Flex.ct.tsx
+  s_8413b6d135ca6e::t_8b9ea684ce968e 101-109
+packages/components/src/components/Card/CardRoot.tsx
+  s_8413b6d135ca6e::t_d281b64cf0fa14 16
+  s_8413b6d135ca6e::t_c07dd02477a1a9 25
+  s_8413b6d135ca6e::t_bd590d66a06441 189
+  s_8413b6d135ca6e::t_d09198a306885b 118
+packages/components/src/locales/de-DE.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 45
+packages/components/src/components/Card/__tests__/Card.ct.tsx
+  s_8413b6d135ca6e::t_0e3f95033fd035 176-184
+packages/components/src/components/Grid/Grid.tsx
+  s_8413b6d135ca6e::t_5636cb4307c798 5,58-59,74,91
+packages/components/src/components/Heading/Heading.tsx
+  s_8413b6d135ca6e::t_55fac7c589b428 5,15
+packages/components/src/components/Badge/tests/Badge.ct.tsx
+  s_8413b6d135ca6e::t_62c288293c4346 127-135
+packages/components/src/locales/de-CH.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 45
+packages/components/src/locales/en-US.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 43
+packages/components/src/components/Section/Section.tsx
+  s_8413b6d135ca6e::t_5636cb4307c798 5,20-21,35,52
+packages/components/src/components/Notice/tests/Notice.ct.tsx
+  s_8413b6d135ca6e::t_62c288293c4346 364-368
+packages/components/src/locales/pt-PT.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 45
+packages/components/src/locales/fr-CH.ts
+  s_8413b6d135ca6e::t_593c20da5743f7 45
+packages/components/src/locales/types.ts
+  s_8413b6d135ca6e::t_189e28eb906095 11
+.changeset/giant-needles-travel.md
+  h_72595612499821 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "cacf33d1a1f12b735f055377175adae2b74cb813",
+  "prompts": {},
+  "humans": {
+    "h_72595612499821": {
+      "author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_8413b6d135ca6e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "11789851-1807-4b47-aa52-10dfeb79ce0c",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}

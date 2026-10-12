@@ -1,0 +1,19 @@
+packages/components/src/components/SegmentedControl/styles/segmentedControl.module.scss
+  s_77661417433e8c::t_6f75917f493a64 54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "bbb1585e306e3ffce8036de665065c2c26505685",
+  "prompts": {},
+  "sessions": {
+    "s_77661417433e8c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "43662a23-4a80-44bb-9b5e-92e19c52dffd",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}
