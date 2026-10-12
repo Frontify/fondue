@@ -552,6 +552,111 @@ describe('compileContentModel declarations', () => {
         }
     });
 
+    it('rejects a string attribute bound to a React URL prop or srcdoc', () => {
+        for (const name of ['xlinkHref', 'srcDoc', 'formAction', 'srcSet', 'SRCDOC']) {
+            const card = feature({
+                id: 'a.card',
+                version: 1,
+                nodes: {
+                    card: {
+                        group: 'block',
+                        attrs: { label: { type: 'string', default: '' } },
+                        html: ['svg', { [name]: { attr: 'label' } }],
+                        parse: [],
+                    },
+                },
+            });
+            expect(failureOf(() => compile([core(), card]))).toEqual({
+                code: 'definition.unsafe-url-binding',
+                details: { feature: 'a.card', path: `/nodes/card/html/1${pointer(name)}` },
+            });
+        }
+    });
+
+    it('rejects any srcdoc key, literal or binding, whatever the attribute type or the case', () => {
+        const bound = (name: string, value: object) =>
+            ({
+                id: 'a.card',
+                version: 1,
+                options: { target: { type: 'url', default: '/x' } },
+                nodes: {
+                    card: {
+                        group: 'block',
+                        attrs: { page: { type: 'url', default: '/x' } },
+                        html: ['iframe', { [name]: value }],
+                        parse: [],
+                    },
+                },
+            }) as FeatureDeclaration;
+        for (const name of ['srcdoc', 'SRCDOC', 'srcDoc']) {
+            for (const value of [{ attr: 'page' }, { option: 'target' }, '/brand']) {
+                expect(failureOf(() => compile([core(), feature(bound(name, value as object))]))).toEqual({
+                    code: 'definition.unsafe-url-binding',
+                    details: { feature: 'a.card', path: `/nodes/card/html/1${pointer(name)}` },
+                });
+            }
+        }
+    });
+
+    it('rejects a shared attribute bound to srcdoc even when it is a url', () => {
+        const shared = feature({
+            id: 'a.shared',
+            version: 1,
+            attributes: {
+                page: {
+                    on: ['paragraph'],
+                    value: { type: 'url', default: null, nullable: true },
+                    html: { attr: 'srcDoc' },
+                },
+            },
+        });
+
+        expect(failureOf(() => compile([core(), shared]))).toEqual({
+            code: 'definition.unsafe-url-binding',
+            details: { feature: 'a.shared', path: '/attributes/page/html' },
+        });
+    });
+
+    it('rejects a stored value bound to the style attribute, whatever the case', () => {
+        const bound = (name: string) =>
+            feature({
+                id: 'a.card',
+                version: 1,
+                nodes: {
+                    card: {
+                        group: 'block',
+                        attrs: { css: { type: 'string', default: '' } },
+                        html: ['div', { [name]: { attr: 'css' } }, 0],
+                        parse: [],
+                    },
+                },
+            });
+        for (const name of ['style', 'STYLE', 'Style']) {
+            expect(failureOf(() => compile([core(), bound(name)]))).toEqual({
+                code: 'definition.invalid-declaration',
+                details: { feature: 'a.card', path: `/nodes/card/html/1${pointer(name)}` },
+            });
+        }
+        for (const name of ['style', 'STYLE']) {
+            const shared = feature({
+                id: 'a.shared',
+                version: 1,
+                attributes: {
+                    css: {
+                        on: ['paragraph'],
+                        value: { type: 'string', default: null, nullable: true },
+                        html: { attr: name },
+                    },
+                },
+            });
+
+            expect(failureOf(() => compile([core(), shared]))).toEqual({
+                code: 'definition.invalid-declaration',
+                details: { feature: 'a.shared', path: '/attributes/css/html' },
+            });
+        }
+    });
+
     it('rejects a parse rule literal that fails its attribute declaration', () => {
         const link = (value: JsonValue) =>
             feature({
@@ -839,6 +944,44 @@ describe('compileContentModel declarations', () => {
             });
             expect(() => compile([core(), ok])).not.toThrow();
         });
+    });
+});
+
+describe('compileContentModel formats', () => {
+    const quote = (formats: unknown) =>
+        feature({
+            id: 'test.quote',
+            version: 1,
+            requires: requiresCore,
+            nodes: { quote: block('inline*') },
+            formats,
+        } as FeatureDeclaration);
+
+    it('rejects html marked unsupported, since every node and mark derives HTML from its spec', () => {
+        expect(
+            failureOf(() => compile([core(), quote({ html: 'unsupported', text: 'lossy', markdown: 'lossy' })])),
+        ).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'test.quote', path: '/formats/html' },
+        });
+    });
+
+    it.each(['text', 'markdown'])('rejects a %s support that is not a support level', (format) => {
+        const formats = { html: 'lossless', text: 'lossy', markdown: 'lossy', [format]: 'partial' };
+
+        expect(failureOf(() => compile([core(), quote(formats)]))).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'test.quote', path: `/formats/${format}` },
+        });
+    });
+
+    it('accepts each support level and a feature with no nodes, marks or formats', () => {
+        const empty = feature({ id: 'test.empty', version: 1, requires: requiresCore });
+
+        expect(() =>
+            compile([core(), quote({ html: 'lossy', text: 'unsupported', markdown: 'lossless' })]),
+        ).not.toThrow();
+        expect(() => compile([core(), empty])).not.toThrow();
     });
 });
 

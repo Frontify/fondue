@@ -1,0 +1,164 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "fixture.vocabulary",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "core",
+            "version": 1
+        },
+        {
+            "id": "fixture.align",
+            "version": 1
+        },
+        {
+            "id": "fixture.blocks",
+            "version": 1
+        },
+        {
+            "id": "fixture.lists",
+            "version": 1
+        },
+        {
+            "id": "fixture.styles",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": {
+            "lang": null,
+            "dir": "auto"
+        },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null,
+                    "styleId": null,
+                    "align": null,
+                    "indent": 0
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Before"
+                    }
+                ]
+            },
+            {
+                "type": "callout",
+                "attrs": {
+                    "tone": "warm"
+                },
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Heads up <b>&</b>"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "bullet_list",
+                "attrs": {
+                    "marker": null
+                },
+                "content": [
+                    {
+                        "type": "list_item",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "attrs": {
+                                    "lang": null,
+                                    "styleId": null,
+                                    "align": null,
+                                    "indent": 0
+                                },
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Item"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "poll",
+                                "attrs": {
+                                    "question": "Which?"
+                                },
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Deep"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            5,
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null,
+                    "styleId": null,
+                    "align": null,
+                    "indent": 0
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Mood "
+                    },
+                    {
+                        "type": "sticker",
+                        "attrs": {
+                            "name": "smile"
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "smile"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "text",
+                        "text": " and after"
+                    }
+                ]
+            },
+            {
+                "type": "embed3d",
+                "attrs": {
+                    "src": "javascript:alert(1)"
+                }
+            },
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null,
+                    "styleId": null,
+                    "align": null,
+                    "indent": 0
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "After"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,51 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "acme.model",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "acme.pull-quote",
+            "version": 1
+        },
+        {
+            "id": "core",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": {
+            "lang": null,
+            "dir": "auto"
+        },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Intro"
+                    }
+                ]
+            },
+            {
+                "type": "acme_pull_quote",
+                "attrs": {
+                    "tone": "brand"
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Design <is> how it works"
+                    }
+                ]
+            }
+        ]
+    }
+}
