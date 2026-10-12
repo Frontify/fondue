@@ -3,6 +3,7 @@
 import {
     type CapabilityName,
     type CommandDefinition,
+    type FeatureDeclaration,
     type JsonObject,
     type JsonValue,
     type PayloadDeclaration,
@@ -45,6 +46,13 @@ export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonl
 };
 /** The package's input rule engine, one plugin for every feature's rules. */
 export const INPUT_RULES_PLUGIN: PluginDescriptor = { id: 'input-rules', phase: 'input-rules' };
+/** The normalizer that gives nodes a missing or repeated `nodeId` a new one. */
+export const NODE_IDS_PLUGIN: PluginDescriptor = { id: 'node-ids', phase: 'structure' };
+/** Whether a node's attributes, declared or as the engine schema holds them, include an occurrence `nodeId`. */
+export const hasNodeId = (attrs: object): boolean => Object.hasOwn(attrs, 'nodeId');
+/** Whether a feature declares a node that carries a `nodeId`, so it contributes the `node-ids` normalizer. */
+export const declaresNodeIds = (declaration: FeatureDeclaration): boolean =>
+    Object.values(declaration.nodes ?? {}).some(({ attrs }) => hasNodeId(attrs));
 /** Each feature's own key bindings; features that bind one key run in plugin order. */
 export const keymapPlugin = (featureId: string): PluginDescriptor => ({
     id: `keymap:${featureId}`,
@@ -139,6 +147,7 @@ export interface PluginContribution {
 const PACKAGE_PLUGIN_KEYS: ReadonlySet<string> = new Set([
     ...Object.values(CAPABILITY_PLUGINS).flatMap((plugins) => (plugins ?? []).map(({ id }) => id)),
     INPUT_RULES_PLUGIN.id,
+    NODE_IDS_PLUGIN.id,
 ]);
 
 const sameDescriptor = (a: PluginDescriptor, b: PluginDescriptor) => JSON.stringify(a) === JSON.stringify(b);

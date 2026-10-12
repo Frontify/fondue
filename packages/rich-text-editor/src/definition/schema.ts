@@ -4,6 +4,7 @@ import {
     type AttributeSpec,
     type DOMOutputSpec,
     type MarkSpec,
+    type Node,
     type NodeSpec,
     type ParseRule as EngineParseRule,
     Schema,
@@ -21,6 +22,7 @@ import {
     type ParseAttributeSource,
     type ParseRule,
 } from '#/model';
+import { hasNodeId } from '#/model/capabilities';
 import { attributesOf, compiledModel, type SharedAttribute } from '#/model/compile';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
 import { resolveHtmlSpec } from '#/model/html-spec';
@@ -47,6 +49,9 @@ const render = (
     }
     return inner[0] as DOMOutputSpec;
 };
+
+/** Whether a node's type carries an occurrence `nodeId`, which the schema gives a null default below. */
+export const carriesNodeId = (node: Node): boolean => hasNodeId(node.type.spec.attrs ?? {});
 
 /** Declared attributes, then `unknownAttributes`, which holds what the vocabulary does not declare. */
 const attributeSpecs = (declarations: AttributeDeclarations) => {

@@ -5,7 +5,7 @@ import { liveResources } from '#/runtime/runtime';
 
 /**
  * What every live runtime owns now: its views, the installed feature IDs of each session, and its event
- * subscriptions, selector subscriptions, queued intents and pending frames.
+ * subscriptions, selector subscriptions, queued intents, pending frames and targets.
  */
 export const probeRuntimes = () => ({
     views: [...liveResources.views],
@@ -14,4 +14,5 @@ export const probeRuntimes = () => ({
     selectors: busResources.selectors,
     intents: liveResources.intents,
     frames: liveResources.frames,
+    targets: liveResources.targets,
 });
