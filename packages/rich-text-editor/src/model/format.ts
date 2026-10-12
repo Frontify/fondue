@@ -66,9 +66,17 @@ export type FormatDiagnosticCode =
     | 'format.limit-exceeded'
     | 'format.duplicate-occurrence-id'
     | 'format.unsafe-url';
+export type RuntimeDiagnosticCode =
+    | 'runtime.append-limit'
+    | 'runtime.duplicate-engine'
+    | 'runtime.enqueue-loop'
+    | 'runtime.listener-error'
+    | 'runtime.multiple-dispatch'
+    | 'runtime.stale-transaction';
 /** The codes the package emits so far; later layers add theirs. */
 export type DiagnosticCode =
     | FormatDiagnosticCode
+    | RuntimeDiagnosticCode
     | 'migration.requires-review'
     | 'migration.unsupported'
     | 'codecs.markdown-unsupported'

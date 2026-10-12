@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { compileDefinition, type CompiledDefinition } from '#/definition';
-import { type ContentModel, DefinitionError, type ResourceLimits } from '#/model';
+import { type ContentModel, type ResourceLimits } from '#/model';
 import { limitsOf } from '#/model/decode';
-import { findUnsafeJson } from '#/model/values';
 import { CAPABILITIES } from '#/runtime/capabilities';
-import { type AuthoringPolicy, type FeaturePolicy, type HeadingLevel } from '#/runtime/types';
+import { authoringOf } from '#/runtime/policy';
 
 import {
     type CommandsOfModel,
@@ -16,8 +15,6 @@ import {
 
 // Kept off the definition, so no engine value is reachable from what a host holds.
 const engines = new WeakMap<object, CompiledDefinition>();
-const EVERYTHING: FeaturePolicy = { create: true, edit: true, remove: true, paste: true };
-const HEADING_LEVELS: readonly HeadingLevel[] = [1, 2, 3, 4, 5, 6];
 
 /** The engine a definition compiled once, which every editor mounted with it shares. */
 export const engineOf = (definition: CompiledEditorDefinition<object>): CompiledDefinition => {
@@ -26,25 +23,6 @@ export const engineOf = (definition: CompiledEditorDefinition<object>): Compiled
         throw new Error('RichTextEditor takes only a definition that defineEditor made.');
     }
     return engine;
-};
-
-/** Every installed feature fully allowed, with the policy's own values over it; a policy for an uninstalled feature throws. */
-const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy> = {}): AuthoringPolicy => {
-    const features: Record<string, FeaturePolicy> = {};
-    for (const { id } of model.capabilities) {
-        features[id] = EVERYTHING;
-    }
-    for (const [id, feature] of Object.entries(policy.features ?? {})) {
-        if (!Object.hasOwn(features, id)) {
-            throw new DefinitionError('definition.unknown-policy-feature', { feature: id });
-        }
-        features[id] = feature;
-    }
-    return {
-        features,
-        creatableHeadingLevels: policy.creatableHeadingLevels ?? HEADING_LEVELS,
-        enterBehavior: policy.enterBehavior ?? 'paragraph',
-    };
 };
 
 /** The defaults with `limitOverrides`, then each of `limits` that is stricter; invalid values are ignored. */
@@ -66,12 +44,6 @@ export const defineEditor = <Model extends ContentModel>(
     options: EditorDefinitionOptions<Model>,
 ): CompiledEditorDefinition<CommandsOfModel<Model>> => {
     const { id, model, policy } = options;
-    if (policy !== undefined) {
-        const unsafe = findUnsafeJson(policy, '/policy');
-        if (unsafe !== undefined) {
-            throw new DefinitionError('definition.invalid-manifest', { path: unsafe });
-        }
-    }
     const definition = Object.freeze({
         id,
         model: model.ref,

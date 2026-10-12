@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { toggleMark as toggleEngineMark } from 'prosemirror-commands';
-import { type MarkType } from 'prosemirror-model';
+import { type MarkType, type Node, type NodeType } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
@@ -58,9 +58,9 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     // At a caret ProseMirror toggles the stored mark.
     const engineToggle = toggleEngineMark(type, attrs);
     return {
-        run: (state, dispatch, view) => {
+        run: (state, dispatch) => {
             if (state.selection.empty) {
-                return engineToggle(state, dispatch, view);
+                return engineToggle(state, dispatch);
             }
             const texts = markableText(state, type);
             if (texts.length === 0) {
@@ -86,5 +86,109 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     };
 };
 
+/** The textblocks the selection touches, with their positions. */
+const selectedTextblocks = (state: EditorState): { readonly node: Node; readonly pos: number }[] => {
+    const blocks: { readonly node: Node; readonly pos: number }[] = [];
+    for (const { $from, $to } of state.selection.ranges) {
+        state.doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
+            if (node.isTextblock) {
+                blocks.push({ node, pos });
+            }
+        });
+    }
+    return blocks;
+};
+
+/** The attributes a block keeps as `target`: its own ones that `target` declares, with `over` applied on top. */
+const carried = (block: Node, target: NodeType, over: Readonly<Record<string, unknown>>) => {
+    const attrs: Record<string, unknown> = {};
+    for (const name of Object.keys(target.spec.attrs ?? {})) {
+        if (Object.hasOwn(block.attrs, name)) {
+            attrs[name] = block.attrs[name];
+        }
+    }
+    for (const [name, value] of Object.entries(over)) {
+        attrs[name] = value;
+    }
+    return attrs;
+};
+
+const setBlock: CapabilityImplementation = (args, schema) => {
+    // Compilation checked that the model declares the node.
+    const type = schema.nodes[args.node as string] as NodeType;
+    const paragraph = schema.nodes.paragraph as NodeType;
+    let fixed: Readonly<Record<string, unknown>> = {};
+    if (isRecord(args.attrs)) {
+        fixed = args.attrs;
+    }
+    // The payload's fields are attributes of the node, such as `level` for `heading.set`.
+    const attrsOf = (payload: unknown) => {
+        const attrs: Record<string, unknown> = { ...fixed };
+        if (isRecord(payload)) {
+            for (const [name, value] of Object.entries(payload)) {
+                attrs[name] = value;
+            }
+        }
+        return attrs;
+    };
+    const matches = (block: Node, attrs: Readonly<Record<string, unknown>>) =>
+        block.type === type && Object.entries(attrs).every(([name, value]) => block.attrs[name] === value);
+    return {
+        run: (state, dispatch, payload) => {
+            const blocks = selectedTextblocks(state);
+            let target = type;
+            let over = attrsOf(payload);
+            if (args.toggle === true && blocks.length > 0 && blocks.every(({ node }) => matches(node, over))) {
+                target = paragraph;
+                over = {};
+            }
+            const applicable = blocks.some(({ node, pos }) => {
+                if (node.hasMarkup(target, carried(node, target, over))) {
+                    return false;
+                }
+                const $pos = state.doc.resolve(pos);
+                return node.type === target || $pos.parent.canReplaceWith($pos.index(), $pos.index() + 1, target);
+            });
+            if (!applicable) {
+                return false;
+            }
+            if (dispatch !== undefined) {
+                // `setBlockType` takes a function of the old node for its attributes, so each block keeps its own.
+                const transaction = state.tr;
+                for (const { $from, $to } of state.selection.ranges) {
+                    transaction.setBlockType($from.pos, $to.pos, target, (node) => carried(node, target, over));
+                }
+                dispatch(transaction.scrollIntoView());
+            }
+            return true;
+        },
+        active: (state, payload) => {
+            const attrs = attrsOf(payload);
+            const blocks = selectedTextblocks(state);
+            const matching = blocks.filter(({ node }) => matches(node, attrs)).length;
+            if (matching === 0) {
+                return false;
+            }
+            if (matching === blocks.length) {
+                return true;
+            }
+            return 'mixed';
+        },
+    };
+};
+
+const insertText: CapabilityImplementation = () => ({
+    run: (state, dispatch, payload) => {
+        if (!isRecord(payload) || typeof payload.text !== 'string') {
+            return false;
+        }
+        if (dispatch !== undefined) {
+            dispatch(state.tr.insertText(payload.text).scrollIntoView());
+        }
+        return true;
+    },
+    active: () => false,
+});
+
 /** The command capabilities the runtime implements so far, by capability name. */
-export const CAPABILITIES: CapabilityImplementations = { toggleMark };
+export const CAPABILITIES: CapabilityImplementations = { insertText, setBlock, toggleMark };

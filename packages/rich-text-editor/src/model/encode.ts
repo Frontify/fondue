@@ -20,14 +20,13 @@ interface Encoding {
 }
 
 /** Declared attributes in declared order, with `unknownAttributes` written back in place under their own names. */
-const encodeAttrs = (encoding: Encoding, attrs: Readonly<Record<string, unknown>>, declared: readonly string[]) => {
+const writeAttrs = (attrs: Readonly<Record<string, unknown>>, declared: readonly string[]) => {
     const written: Writable = {};
     for (const name of declared) {
         written[name] = attrs[name];
     }
     const unknown = attrs.unknownAttributes;
     if (isRecord(unknown)) {
-        encoding.foreign = true;
         for (const [name, value] of Object.entries(unknown)) {
             written[name] = value;
         }
@@ -35,21 +34,57 @@ const encodeAttrs = (encoding: Encoding, attrs: Readonly<Record<string, unknown>
     return Object.keys(written).length > 0 ? written : undefined;
 };
 
-const encodeMark = (encoding: Encoding, mark: TreeMark): unknown => {
+/** A mark as the format stores it: an island mark's `original`, or its type with its written attributes. */
+const writeMark = (vocabulary: Vocabulary, mark: TreeMark): unknown => {
     if (mark.type === ISLAND_MARK) {
-        encoding.foreign = true;
         return mark.attrs.original;
     }
-    const declaration = encoding.vocabulary.marks.get(mark.type);
-    if (declaration !== undefined) {
-        encoding.used.add(declaration.featureId);
-    }
-    const attrs = encodeAttrs(
-        encoding,
-        mark.attrs,
-        Object.keys(declaration === undefined ? {} : declaration.declaration.attrs),
-    );
+    const declaration = vocabulary.marks.get(mark.type);
+    const attrs = writeAttrs(mark.attrs, Object.keys(declaration === undefined ? {} : declaration.declaration.attrs));
     return attrs === undefined ? { type: mark.type } : { type: mark.type, attrs };
+};
+
+/**
+ * A node that is not an island as the format stores it, with the given `content` in place: type, text, attributes,
+ * content and marks, in that order. The encoder and the runtime's byte count both write through it.
+ */
+export const writeNode = (
+    vocabulary: Vocabulary,
+    node: TreeNode,
+    content: readonly unknown[] | undefined,
+): Writable => {
+    const declaration = vocabulary.nodes.get(node.type);
+    const written: Writable = { type: node.type };
+    if (node.text !== undefined) {
+        written.text = node.text;
+    }
+    if (node.attrs !== undefined && declaration !== undefined) {
+        const attrs = writeAttrs(node.attrs, Object.keys(attributesOf(declaration)));
+        if (attrs !== undefined) {
+            written.attrs = attrs;
+        }
+    }
+    if (content !== undefined) {
+        written.content = content;
+    }
+    if (node.marks !== undefined && node.marks.length > 0) {
+        written.marks = node.marks.map((mark) => writeMark(vocabulary, mark));
+    }
+    return written;
+};
+
+/** Notes what a node or mark uses: its feature, and whether foreign content survives in an island or unknown attributes. */
+const note = (
+    encoding: Encoding,
+    featureId: string | undefined,
+    attrs: Readonly<Record<string, unknown>> | undefined,
+) => {
+    if (featureId !== undefined) {
+        encoding.used.add(featureId);
+    }
+    if (attrs !== undefined && isRecord(attrs.unknownAttributes)) {
+        encoding.foreign = true;
+    }
 };
 
 const noteSharedAttributes = (encoding: Encoding, node: TreeNode) => {
@@ -70,28 +105,24 @@ const encodeNode = (encoding: Encoding, node: TreeNode): unknown => {
     }
     const declaration = encoding.vocabulary.nodes.get(node.type);
     if (declaration !== undefined) {
-        encoding.used.add(declaration.featureId);
+        note(encoding, declaration.featureId, node.attrs);
         noteSharedAttributes(encoding, node);
     }
-    const written: Writable = { type: node.type };
-    if (node.text !== undefined) {
-        written.text = node.text;
-    }
-    const attrs =
-        node.attrs === undefined || declaration === undefined
-            ? undefined
-            : encodeAttrs(encoding, node.attrs, Object.keys(attributesOf(declaration)));
-    if (attrs !== undefined) {
-        written.attrs = attrs;
+    for (const mark of node.marks ?? []) {
+        const markDeclaration = encoding.vocabulary.marks.get(mark.type);
+        if (mark.type === ISLAND_MARK) {
+            encoding.foreign = true;
+        } else if (markDeclaration === undefined) {
+            note(encoding, undefined, mark.attrs);
+        } else {
+            note(encoding, markDeclaration.featureId, mark.attrs);
+        }
     }
     const content = joinText(encoding, node.content ?? []);
-    if (content.length > 0) {
-        written.content = content;
+    if (content.length === 0) {
+        return writeNode(encoding.vocabulary, node, undefined);
     }
-    if (node.marks !== undefined && node.marks.length > 0) {
-        written.marks = node.marks.map((mark) => encodeMark(encoding, mark));
-    }
-    return written;
+    return writeNode(encoding.vocabulary, node, content);
 };
 
 type EncodedText = { readonly type: 'text'; readonly text: string; readonly marks?: unknown };

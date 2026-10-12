@@ -110,6 +110,8 @@ const RootComponent = (
             tree: decoded.tree,
             capabilities: decoded.capabilities,
             mode: modeOf(latestRef.current),
+            policy: definition.authoring,
+            limits: definition.limits,
             ...(generateId === undefined ? {} : { generateId }),
         });
         // Each event calls the newest callback the host passed.

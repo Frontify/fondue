@@ -90,6 +90,10 @@ export const insertNode = <const P extends PayloadDeclaration | undefined = unde
 
 export const history = (action: 'undo' | 'redo'): CommandDefinition => command('history', { action });
 
+/** Replaces the selection with the payload's `text`. */
+export const insertText = (): CommandDefinition<{ readonly text: string }> =>
+    command('insertText', {}, { fields: { text: { type: 'string' } } });
+
 /** Toggles `mark` with `attrs` on the selection, or in the stored marks at a caret. */
 export const toggleMark = (mark: string, attrs?: JsonObject): CommandDefinition =>
     command('toggleMark', { mark, attrs });
