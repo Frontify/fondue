@@ -40,6 +40,8 @@ import {
     findInvalidPayload,
     findUnsafeJson,
     isRecord,
+    isSrcdocAttribute,
+    isStyleAttribute,
     isValidValue,
     MAX_DEPTH,
     ownValue,
@@ -47,9 +49,9 @@ import {
     snapshot,
 } from './values';
 
-/** HTML attributes whose value is a URL. */
+/** HTML attributes whose value is a URL, by lowercase name, so the React props `xlinkHref` and `srcDoc` match too. */
 export const URL_ATTRIBUTES = new Set(
-    'href src srcset action formaction poster cite data xlink:href ping background longdesc usemap manifest codebase icon profile'.split(
+    'href src srcset srcdoc action formaction poster cite data xlink:href xlinkhref ping background longdesc usemap manifest codebase icon profile'.split(
         ' ',
     ),
 );
@@ -184,6 +186,25 @@ const checkNames = (declaration: FeatureDeclaration) => {
     }
 };
 
+const SUPPORT: Readonly<Record<'html' | 'text' | 'markdown', readonly string[]>> = {
+    html: ['lossless', 'lossy'],
+    text: ['lossless', 'lossy', 'unsupported'],
+    markdown: ['lossless', 'lossy', 'unsupported'],
+};
+
+/** HTML derives from the `html` spec every node and mark declares, so it can never be `unsupported`. */
+const checkFormats = (declaration: FeatureDeclaration) => {
+    const { formats } = declaration;
+    if (formats === undefined) {
+        return;
+    }
+    for (const format of ['html', 'text', 'markdown'] as const) {
+        if (!SUPPORT[format].includes(formats[format])) {
+            throw failure('definition.invalid-declaration', declaration.id, pointer('formats', format));
+        }
+    }
+};
+
 /** Each step starts below `version`, and no two steps start at one version. */
 const checkMigrations = (steps: readonly ModelMigration[] = [], version: number, feature?: string) => {
     for (const [index, { from, migrate }] of steps.entries()) {
@@ -210,6 +231,7 @@ const readFeatures = (features: readonly Feature[]): CompiledFeature[] => {
             throw failure('definition.invalid-declaration', declaration.id, pointer('version'));
         }
         checkNames(declaration);
+        checkFormats(declaration);
         checkMigrations(declaration.migrations, declaration.version, declaration.id);
         if (seen.has(declaration.id)) {
             throw duplicate('feature', declaration.id, declaration.id, declaration.id);
@@ -296,13 +318,16 @@ const checkHtml = (
     for (const [name, value] of Object.entries(attributes ?? {})) {
         const at = `${path}/1${pointer(name)}`;
         const isUrl = isUrlAttribute(name);
+        if (isSrcdocAttribute(name)) {
+            throw failure('definition.unsafe-url-binding', feature.id, at);
+        }
         if (typeof value === 'string') {
             if (isUrl && !checkHref(value).ok) {
                 throw failure('definition.unsafe-url-binding', feature.id, at);
             }
         } else if ('attr' in value) {
             const attribute = ownValue(attrs, value.attr);
-            if (attribute === undefined) {
+            if (attribute === undefined || isStyleAttribute(name)) {
                 throw failure('definition.invalid-declaration', feature.id, at);
             }
             if (isUrl && attribute.type !== 'url') {
@@ -499,7 +524,10 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
             checkAttributes(feature.id, { value: shared.value }, ['attributes', name]);
             const binding = shared.html;
             const boundName = binding !== undefined && 'attr' in binding ? binding.attr : '';
-            if (isUrlAttribute(boundName) && shared.value.type !== 'url') {
+            if (isStyleAttribute(boundName)) {
+                throw failure('definition.invalid-declaration', feature.id, pointer('attributes', name, 'html'));
+            }
+            if (isSrcdocAttribute(boundName) || (isUrlAttribute(boundName) && shared.value.type !== 'url')) {
                 throw failure('definition.unsafe-url-binding', feature.id, pointer('attributes', name, 'html'));
             }
             for (const target of shared.on === 'textblocks' ? textblocks : shared.on) {
