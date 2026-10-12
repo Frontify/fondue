@@ -97,3 +97,59 @@ export const fixtureHeading = defineFeature({
     },
     keys: { 'Mod-Alt-2': { command: 'fixture.heading.set', payload: { level: 2 } } },
 });
+
+const nodeId = { type: 'string', required: true } as const;
+
+/** Stands in for `tables`: a block with content and a `nodeId`. */
+export const fixtureTable = defineFeature({
+    id: 'fixture.table',
+    version: 1,
+    requires: requiresCore,
+    nodes: {
+        table: {
+            group: 'block',
+            content: 'paragraph+',
+            attrs: { nodeId },
+            html: ['section', { 'data-table': { attr: 'nodeId' } }, 0],
+            parse: [{ tag: 'section[data-table]', attrs: { nodeId: { from: 'data-table' } } }],
+        },
+    },
+});
+
+/** Stands in for `mentions`: an inline atom with a `nodeId`. */
+export const fixtureMention = defineFeature({
+    id: 'fixture.mention',
+    version: 1,
+    requires: requiresCore,
+    nodes: {
+        mention: {
+            group: 'inline',
+            atom: true,
+            attrs: { nodeId, label: { type: 'string', default: '' } },
+            html: ['span', { 'data-mention': { attr: 'nodeId' } }],
+            parse: [{ tag: 'span[data-mention]', attrs: { nodeId: { from: 'data-mention' } } }],
+        },
+    },
+});
+
+/** Stands in for `blocks.heading`: `heading.set` turns the selected textblocks into headings of the payload's level. */
+export const fixtureHeadingSet = defineFeature({
+    id: 'fixture.heading-set',
+    version: 1,
+    requires: requiresCore,
+    nodes: {
+        heading: {
+            group: 'block',
+            content: 'inline*',
+            attrs: {
+                level: { type: 'integer', min: 1, max: 6, required: true },
+                lang: { type: 'language', nullable: true, default: null },
+            },
+            html: [{ attr: 'level', tags: { 1: 'h1', 2: 'h2', 3: 'h3', 4: 'h4', 5: 'h5', 6: 'h6' } }, 0],
+            parse: [{ tag: 'h2', attrs: { level: { value: 2 } } }],
+        },
+    },
+    commands: {
+        'heading.set': setBlock('heading', { payload: { fields: { level: { type: 'integer', min: 1, max: 6 } } } }),
+    },
+});

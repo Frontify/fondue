@@ -158,7 +158,7 @@ describe('RichTextEditor', () => {
             frames: once.frames,
         });
         strict.unmount();
-        expect(probeRuntimes()).toEqual({ views: [], subscriptions: 0, frames: 0 });
+        expect(probeRuntimes()).toMatchObject({ views: [], installedFeatures: [], subscriptions: 0, frames: 0 });
     });
 
     it('destroys the view of a detached surface at once and attaches a new one', () => {

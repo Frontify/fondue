@@ -5,8 +5,9 @@ import { createElement, createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { type CapabilityImplementation } from '#/definition';
+import { type CapabilityImplementation, type EngineCommand } from '#/definition';
 import { bold, featuresById } from '#/features';
+import { commandCases } from '#/features/__tests__/fixtures/contract.cases';
 import { highlight, highlightDocument } from '#/features/__tests__/fixtures/outside-feature';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
@@ -20,18 +21,15 @@ import { pressKey, runFeatureContract, setSelection } from '#/testing';
 vi.mock('#/codecs', { spy: true });
 
 runFeatureContract([...featuresById(Object.keys(registry)), highlight()], { fixtures: [highlightDocument] });
+commandCases(featuresById(Object.keys(registry)));
 
-/** Registers the suite on a stand-in runner, runs each case and returns the titles of those that fail. */
-const failingCases = async (features: readonly Feature[], fixtures?: readonly unknown[]): Promise<string[]> => {
+/** Registers cases on a stand-in runner, runs each one and returns the titles of those that fail. */
+const failingTitles = async (register: () => void): Promise<string[]> => {
     const cases = new Map<string, () => unknown>();
     vi.stubGlobal('describe', (_name: string, body: () => void) => body());
     vi.stubGlobal('it', (name: string, body: () => unknown) => cases.set(name, body));
     try {
-        if (fixtures === undefined) {
-            runFeatureContract(features);
-        } else {
-            runFeatureContract(features, { fixtures });
-        }
+        register();
     } finally {
         vi.unstubAllGlobals();
     }
@@ -45,6 +43,14 @@ const failingCases = async (features: readonly Feature[], fixtures?: readonly un
     }
     return failing;
 };
+const failingCases = (features: readonly Feature[], fixtures?: readonly unknown[]): Promise<string[]> =>
+    failingTitles(() => {
+        if (fixtures === undefined) {
+            runFeatureContract(features);
+            return;
+        }
+        runFeatureContract(features, { fixtures });
+    });
 
 /** A stored document of one paragraph with `content`, or of the given blocks. */
 const stored = (blocks: readonly unknown[], capabilities: readonly string[] = ['core']): RichTextDocument =>
@@ -75,11 +81,11 @@ const dispatchRangeQueries = () => {
     const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
     spy.mockImplementation((args, schema) => {
         const command = original(args, schema);
-        const run: typeof command.run = (state, dispatch, view) => {
+        const run: typeof command.run = (state, dispatch, payload) => {
             if (!state.selection.empty) {
                 (dispatch as NonNullable<typeof dispatch>)(state.tr);
             }
-            return command.run(state, dispatch, view);
+            return command.run(state, dispatch, payload);
         };
         return { run, active: command.active };
     });
@@ -87,6 +93,62 @@ const dispatchRangeQueries = () => {
 };
 
 describe('the feature contract suite', () => {
+    it.each([
+        [
+            'setTimeout',
+            (run: EngineCommand['run']): EngineCommand['run'] =>
+                (state, dispatch, payload) => {
+                    setTimeout(() => undefined, 0);
+                    return run(state, dispatch, payload);
+                },
+        ],
+        [
+            'setImmediate',
+            (run: EngineCommand['run']): EngineCommand['run'] =>
+                (state, dispatch, payload) => {
+                    setImmediate(() => undefined);
+                    return run(state, dispatch, payload);
+                },
+        ],
+        [
+            'fetch',
+            (run: EngineCommand['run']): EngineCommand['run'] =>
+                (state, dispatch, payload) => {
+                    // oxlint-disable-next-line no-restricted-globals -- the case proves the suite fails a capability that calls `fetch`.
+                    fetch('https://frontify.com').catch(() => undefined);
+                    return run(state, dispatch, payload);
+                },
+        ],
+        [
+            'a second dispatch',
+            (run: EngineCommand['run']): EngineCommand['run'] =>
+                (state, dispatch, payload) => {
+                    dispatch?.(state.tr.insertText('a', 1));
+                    return run(state, dispatch, payload);
+                },
+        ],
+        [
+            'a returned promise',
+            (run: EngineCommand['run']): EngineCommand['run'] =>
+                (state, dispatch, payload) =>
+                    Promise.resolve(run(state, dispatch, payload)) as unknown as boolean,
+        ],
+    ])('fails a command whose capability runs %s', async (_name, wrap) => {
+        const original = CAPABILITIES.toggleMark as CapabilityImplementation;
+        const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
+        spy.mockImplementation((args, schema) => {
+            const command = original(args, schema);
+            return { run: wrap(command.run), active: command.active };
+        });
+        try {
+            expect(await failingTitles(() => commandCases([core(), bold()]))).toEqual([
+                'runs mark.bold.toggle synchronously with no I/O or timer, dispatching at most once',
+            ]);
+        } finally {
+            spy.mockRestore();
+        }
+    });
+
     it('fails the fixture cases of an outside document that misspells its mark', async () => {
         const misspelled = stored([paragraph(text('Read', 'highlite'))], ['core', 'fixture.highlight']);
 
@@ -222,7 +284,7 @@ describe('the feature contract suite', () => {
         });
         const spaced = stored([paragraph(text('a', 'bold'), text(' '), text('b', 'bold'))], ['core', 'marks.bold']);
         const indented = stored(
-            [{ type: 'fixture_code', content: [text('if (a) {\n    b();\n}')] }],
+            [{ type: 'fixture_code', content: [text('if (a) {\n b();\n}')] }],
             ['core', 'fixture.code'],
         );
         const { createCodecs: actual } = await vi.importActual<{ createCodecs: typeof createCodecs }>('#/codecs');
@@ -242,7 +304,7 @@ describe('the feature contract suite', () => {
             const intact = await failingCases([core(), bold(), code()], [spaced, indented]);
             breaking('</strong> <strong>', '</strong><strong>');
             const space = await failingCases([core(), bold(), code()], [spaced, indented]);
-            breaking('\n    ', ' ');
+            breaking('\n ', ' ');
             const newline = await failingCases([core(), bold(), code()], [spaced, indented]);
 
             expect([intact, space, newline]).toEqual([[], [RENDERS('fixture 1')], [RENDERS('fixture 2')]]);
