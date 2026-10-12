@@ -5,7 +5,11 @@ import { type MarkType, type Node, type NodeType } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
+import { HISTORY_PLUGIN, INPUT_RULES_PLUGIN } from '#/model/capabilities';
 import { isRecord } from '#/model/values';
+
+import { historyPlugin, redo, undo } from './history';
+import { inputRulesPlugin, undoInputRule } from './input-rules';
 
 interface TextRange {
     readonly from: number;
@@ -190,5 +194,23 @@ const insertText: CapabilityImplementation = () => ({
     active: () => false,
 });
 
-/** The command capabilities the runtime implements so far, by capability name. */
-export const CAPABILITIES: CapabilityImplementations = { insertText, setBlock, toggleMark };
+const history: CapabilityImplementation = (args) => {
+    let command = undo;
+    if (args.action === 'redo') {
+        command = redo;
+    }
+    return { run: (state, dispatch) => command(state, dispatch), active: () => false };
+};
+
+/** The command capabilities and package plugins the runtime implements so far, by capability name and plugin ID. */
+export const CAPABILITIES: CapabilityImplementations = {
+    history,
+    insertText,
+    setBlock,
+    toggleMark,
+    plugins: {
+        // Backspace right after a rule fired undoes it before any list or block key sees it.
+        [HISTORY_PLUGIN.id]: () => historyPlugin({ Backspace: undoInputRule }),
+        [INPUT_RULES_PLUGIN.id]: inputRulesPlugin,
+    },
+};
