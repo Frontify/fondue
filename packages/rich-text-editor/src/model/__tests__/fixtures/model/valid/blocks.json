@@ -1,0 +1,154 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "fixture.vocabulary", "version": 1 },
+    "requiredCapabilities": [
+        { "id": "core", "version": 1 },
+        { "id": "fixture.align", "version": 1 },
+        { "id": "fixture.blocks", "version": 1 },
+        { "id": "fixture.lists", "version": 1 },
+        { "id": "fixture.media", "version": 1 },
+        { "id": "fixture.mention", "version": 1 },
+        { "id": "fixture.tables", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "rtl" },
+        "content": [
+            {
+                "type": "heading",
+                "attrs": { "nodeId": "h-1", "level": 1, "lang": null, "styleId": null, "align": "right", "indent": 0 },
+                "content": [{ "type": "text", "text": "Plan" }]
+            },
+            {
+                "type": "ordered_list",
+                "attrs": { "start": 0, "marker": "lower-roman" },
+                "content": [
+                    {
+                        "type": "list_item",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "attrs": { "lang": null, "styleId": null, "align": null, "indent": 0 }
+                            },
+                            {
+                                "type": "task_list",
+                                "content": [
+                                    {
+                                        "type": "task_item",
+                                        "attrs": { "nodeId": "t-1", "checked": true },
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "attrs": { "lang": null, "styleId": null, "align": null, "indent": 0 },
+                                                "content": [
+                                                    {
+                                                        "type": "mention",
+                                                        "attrs": {
+                                                            "nodeId": "m-1",
+                                                            "resourceType": "user",
+                                                            "resourceId": "42",
+                                                            "labelSnapshot": "Ada"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            { "type": "column_break" },
+            {
+                "type": "code_block",
+                "attrs": { "languageId": "typescript" },
+                "content": [{ "type": "text", "text": "const a = 1;\n\tb();" }]
+            },
+            { "type": "horizontal_rule" },
+            {
+                "type": "table",
+                "attrs": { "nodeId": "tb-1" },
+                "content": [
+                    {
+                        "type": "table_row",
+                        "content": [
+                            {
+                                "type": "table_header",
+                                "attrs": { "colspan": 2, "rowspan": 1, "colwidth": [120, 80], "scope": "col" },
+                                "content": [
+                                    {
+                                        "type": "paragraph",
+                                        "attrs": { "lang": null, "styleId": null, "align": null, "indent": 0 }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "table_row",
+                        "content": [
+                            {
+                                "type": "table_cell",
+                                "attrs": { "colspan": 1, "rowspan": 1, "colwidth": [120] },
+                                "content": [
+                                    {
+                                        "type": "paragraph",
+                                        "attrs": { "lang": null, "styleId": null, "align": null, "indent": 0 }
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "table_cell",
+                                "attrs": { "colspan": 1, "rowspan": 1, "colwidth": [80] },
+                                "content": [
+                                    {
+                                        "type": "blockquote",
+                                        "attrs": { "styleId": null },
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "attrs": { "lang": null, "styleId": null, "align": null, "indent": 0 }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "figure",
+                "attrs": { "nodeId": "f-1", "align": "center" },
+                "content": [
+                    {
+                        "type": "asset_image",
+                        "attrs": {
+                            "nodeId": "i-1",
+                            "assetId": null,
+                            "labelSnapshot": "Upload",
+                            "altIntent": "decorative",
+                            "altText": "",
+                            "width": 640,
+                            "height": 480,
+                            "displayWidth": 50,
+                            "mediaType": "image/png"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "embed",
+                "attrs": {
+                    "nodeId": "e-1",
+                    "url": "https://www.youtube.com/watch?v=x",
+                    "provider": "youtube",
+                    "title": null
+                }
+            }
+        ]
+    }
+}

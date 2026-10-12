@@ -1,0 +1,48 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "fixture.vocabulary", "version": 1 },
+    "requiredCapabilities": [
+        { "id": "core", "version": 1 },
+        { "id": "fixture.colors", "version": 1 },
+        { "id": "fixture.link", "version": 1 },
+        { "id": "fixture.marks", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": "de-CH", "dir": "auto" },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": { "lang": null, "styleId": null, "align": null, "indent": 0 },
+                "content": [
+                    { "type": "text", "text": "Grüezi " },
+                    {
+                        "type": "text",
+                        "text": "Welt",
+                        "marks": [
+                            {
+                                "type": "link",
+                                "attrs": { "href": "https://frontify.com", "openInNewWindow": true, "styleId": null }
+                            },
+                            { "type": "font_color", "attrs": { "tokenId": "brand.red", "value": null } },
+                            { "type": "bold" }
+                        ]
+                    },
+                    { "type": "hard_break", "marks": [{ "type": "italic" }] },
+                    {
+                        "type": "text",
+                        "text": "H",
+                        "marks": [{ "type": "highlight", "attrs": { "tokenId": null, "value": "#ffcc0080" } }]
+                    },
+                    { "type": "text", "text": "2", "marks": [{ "type": "subscript" }] },
+                    {
+                        "type": "text",
+                        "text": "O 😀",
+                        "marks": [{ "type": "language", "attrs": { "lang": "en", "dir": "ltr" } }]
+                    }
+                ]
+            }
+        ]
+    }
+}
