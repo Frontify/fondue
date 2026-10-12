@@ -22,6 +22,7 @@ import {
     vocabularyLink,
     vocabularyLists,
     vocabularyMarks,
+    vocabularyMedia,
     vocabularyMention,
     vocabularyStyles,
     vocabularyTables,
@@ -876,7 +877,6 @@ describe('RichTextEditor documents', () => {
     // A path, not a `URL`: happy-dom replaces the global `URL`, which rejects a `file:` URL.
     const fixtures = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'model', '__tests__', 'fixtures');
     const load = (...path: readonly string[]) => JSON.parse(readFileSync(join(fixtures, ...path), 'utf8')) as unknown;
-    // The engine builds no figure stand-in, whose `asset_image` has required attributes and no default, so it opens as an island.
     const vocabulary = defineEditor({
         id: 'test.vocabulary',
         model: compileContentModel(
@@ -888,6 +888,7 @@ describe('RichTextEditor documents', () => {
                 vocabularyBlocks(),
                 vocabularyLists(),
                 vocabularyTables(),
+                vocabularyMedia(),
                 vocabularyMention(),
                 vocabularyMarks(),
                 vocabularyLink(),

@@ -4,8 +4,7 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { vi } from 'vitest';
 
-import { columns, core, inputRules, quote, rule } from '#/features';
-import { fixtureImage } from '#/features/__tests__/fixtures/features';
+import { columns, core, inputRules, mediaImage, quote, rule } from '#/features';
 import {
     type AuthoringPolicy,
     defineEditor,
@@ -19,13 +18,13 @@ import { storedIn } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 
-/** The layout features, a quote to nest blocks in, and the `fixture.image` leaf that stands in for `media.image`. */
+/** The layout features, a quote to nest blocks in, and `media.image`, whose figure holds a leaf image. */
 export const layoutFeatures = (): readonly Feature[] => [
     core(),
     quote(),
     rule(),
     columns(),
-    fixtureImage(),
+    mediaImage(),
     inputRules(),
 ];
 
@@ -34,7 +33,27 @@ export const layoutModel = (features: readonly Feature[] = layoutFeatures()): Co
 
 export const columnBreak = (): ContentNodeJSON => ({ type: 'column_break' });
 export const horizontalRule = (): ContentNodeJSON => ({ type: 'horizontal_rule' });
-export const image = (assetId: string): ContentNodeJSON => ({ type: 'image', attrs: { assetId } });
+/** A figure that holds one decorative image of `assetId`. */
+export const image = (assetId: string): ContentNodeJSON => ({
+    type: 'figure',
+    attrs: { nodeId: `figure-${assetId}`, align: 'center' },
+    content: [
+        {
+            type: 'asset_image',
+            attrs: {
+                nodeId: `image-${assetId}`,
+                assetId,
+                labelSnapshot: `${assetId}.png`,
+                altIntent: 'decorative',
+                altText: '',
+                width: null,
+                height: null,
+                displayWidth: null,
+                mediaType: null,
+            },
+        },
+    ],
+});
 
 interface LayoutMount {
     readonly model?: ContentModel;

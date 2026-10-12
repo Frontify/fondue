@@ -3,8 +3,8 @@
 import { TextSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { fixtureFigure } from '#/features/__tests__/fixtures/features';
 import { vocabularyLists, vocabularyTables } from '#/features/__tests__/fixtures/vocabulary';
+import { mediaImage } from '#/features/media-image/feature';
 import { type ContentNodeJSON, featureFromManifest } from '#/model';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { setSelection, typeText } from '#/testing';
@@ -28,7 +28,7 @@ const acmeBox = featureFromManifest({
     formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
     commands: { 'acme.box.toggle': { capability: 'wrapIn', node: 'acme_box' } },
 });
-const model = textModel([...textFeatures(), acmeBox(), vocabularyLists(), vocabularyTables(), fixtureFigure()]);
+const model = textModel([...textFeatures(), acmeBox(), vocabularyLists(), vocabularyTables(), mediaImage()]);
 
 type Mounted = ReturnType<typeof mountText>;
 
@@ -182,8 +182,10 @@ describe('blocks.quote', () => {
         };
         const figure = {
             type: 'figure',
-            attrs: { nodeId: 'figure-1' },
-            content: [{ type: 'figure_image', attrs: { nodeId: 'image-1' } }],
+            attrs: { nodeId: 'figure-1', align: 'center' },
+            content: [
+                { type: 'asset_image', attrs: { nodeId: 'image-1', assetId: 'asset-1', labelSnapshot: 'logo.png' } },
+            ],
         };
         const quote = { type: 'blockquote', content: [para(text('Quoted')), para()] };
         // Whether the container row takes Enter, apart from the base keys of later rows.

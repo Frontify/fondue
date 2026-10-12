@@ -171,28 +171,34 @@ describe('blocks.rule', () => {
 });
 
 describe('leaf blocks', () => {
+    // An image is selected inside its figure, which goes with it.
     it.each([
-        ['a horizontal rule', horizontalRule()],
-        ['an image', image('asset-1')],
-        ['a column break', columnBreak()],
-    ])('removes %s that is node-selected with Backspace and with Delete, each as one undo step', (_name, leaf) => {
-        const blocks = [para(text('Before')), leaf, para(text('After'))];
-        const removed = ['Backspace', 'Delete'].map((key) => {
-            const mounted = mountLayout({ columns: 2, blocks });
-            const at = mounted.view.state.doc.child(0).nodeSize;
-            mounted.view.dispatch(mounted.view.state.tr.setSelection(NodeSelection.create(mounted.view.state.doc, at)));
+        ['a horizontal rule', horizontalRule(), 0],
+        ['an image', image('asset-1'), 1],
+        ['a column break', columnBreak(), 0],
+    ])(
+        'removes %s that is node-selected with Backspace and with Delete, each as one undo step',
+        (_name, leaf, inside) => {
+            const blocks = [para(text('Before')), leaf, para(text('After'))];
+            const removed = ['Backspace', 'Delete'].map((key) => {
+                const mounted = mountLayout({ columns: 2, blocks });
+                const at = mounted.view.state.doc.child(0).nodeSize + inside;
+                mounted.view.dispatch(
+                    mounted.view.state.tr.setSelection(NodeSelection.create(mounted.view.state.doc, at)),
+                );
 
-            press(mounted, key);
-            const after = mounted.blocks();
-            mounted.handle.execute('history.undo');
-            const undone = mounted.blocks();
-            mounted.unmount();
-            return { after, undone };
-        });
+                press(mounted, key);
+                const after = mounted.blocks();
+                mounted.handle.execute('history.undo');
+                const undone = mounted.blocks();
+                mounted.unmount();
+                return { after, undone };
+            });
 
-        for (const { after, undone } of removed) {
-            expect(after).toEqual([para(text('Before')), para(text('After'))]);
-            expect(undone).toEqual(blocks);
-        }
-    });
+            for (const { after, undone } of removed) {
+                expect(after).toEqual([para(text('Before')), para(text('After'))]);
+                expect(undone).toEqual(blocks);
+            }
+        },
+    );
 });

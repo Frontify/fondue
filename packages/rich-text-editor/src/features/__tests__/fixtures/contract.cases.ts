@@ -44,6 +44,9 @@ const PAYLOADS: Readonly<Record<string, unknown>> = {
     'mark.language.set': { lang: 'de-CH', dir: null },
     'link.set': { href: 'https://frontify.com/brand', openInNewWindow: false, styleId: null },
     'reference.insert': { resourceType: 'user', resourceId: 'user-1', labelSnapshot: 'Ada' },
+    'image.replace': { nodeId: 'image-1' },
+    'image.size.set': { displayWidth: 50 },
+    'image.align.set': { align: 'left' },
 };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [
@@ -93,8 +96,11 @@ export const commandCases = (features: readonly Feature[]): void => {
     const { it } = globalThis as unknown as { readonly it: typeof runnerIt };
     const model = compileContentModel(features, { id: 'feature-contract', version: 1 });
     for (const { id, definition } of compiledModel(model).commands) {
-        // A control opener applies where its control can act and dispatches nothing; the editor opens the control.
-        const opens = definition.capability === 'openControl';
+        // A control opener applies where its control can act and dispatches nothing; the editor opens the control,
+        // as it opens the asset picker for an upload start.
+        const opens =
+            definition.capability === 'openControl' ||
+            (definition.capability === 'upload' && definition.args.action === 'start');
         it(`runs ${id} synchronously with no I/O or timer, dispatching at most once`, () => {
             const engine = compileDefinition(model, CAPABILITIES);
             const command = engine.commands.get(id);
@@ -365,7 +371,10 @@ export const nodeViewCases = (features: readonly Feature[], documents: readonly 
             return capturing;
         };
         const elements: HTMLElement[] = [];
-        const context = readerContext(enUS, {});
+        // Every asset resolves, so an image view renders its image and the controls around it.
+        const context = readerContext(enUS, {
+            resolveAssetUrl: (assetId) => `https://assets.frontify.test/${assetId}`,
+        });
         const hosts = [];
         for (const document of documents) {
             const { result, tree } = decodeToTree({ ...document, model: model.ref }, model);
@@ -518,6 +527,18 @@ export const nodeViewCases = (features: readonly Feature[], documents: readonly 
                         if (allowed !== undefined) {
                             expect(allowed).toContain(element.localName);
                         }
+                    }
+                }
+            }));
+        it(`names a command for every drag in the chrome of the ${name} view, which a node chrome control runs`, () =>
+            withViews(name, async (built, renderChrome) => {
+                await renderChrome();
+                for (const { chrome } of built) {
+                    for (const drag of chrome.querySelectorAll('[data-rte-drag]')) {
+                        const command = drag.getAttribute('data-rte-drag') ?? '';
+                        const control = chrome.querySelector(`button[data-rte-command="${CSS.escape(command)}"]`);
+                        expect(engineOf(definition).commands.has(command)).toBe(true);
+                        expect(control?.closest('[data-rte-node-chrome]')).toBeInstanceOf(HTMLElement);
                     }
                 }
             }));

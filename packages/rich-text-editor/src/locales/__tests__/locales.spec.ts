@@ -111,6 +111,10 @@ describe('package locales', () => {
             'second',
             'schemes',
             'hosts',
+            'side',
+            'size',
+            'percent',
+            'description',
         ];
         const unnamed = Object.values(enUS.translationStrings)
             .flatMap(placeholders)
