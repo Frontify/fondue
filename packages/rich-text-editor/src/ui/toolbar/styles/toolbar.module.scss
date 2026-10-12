@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @use '../../../styles/focus-outline';
+@use '../../../styles/pressed-bar';
 
 // The toolbar sticks to the top of its scrolling container.
 .root {
@@ -46,16 +47,12 @@
         background-color: var(--color-surface-hover);
     }
 
-    // A pressed item shows a bar under its icon as well as a fill, dashed when mixed.
+    @include pressed-bar.pressed-bar;
+
+    // The bar takes the 2 px the padding holds, so the icon stays put.
     &[aria-pressed='true'],
     &[aria-pressed='mixed'] {
         padding-block-end: 0;
-        border-block-end: 2px solid currentcolor;
-        background-color: var(--color-container-secondary-default);
-    }
-
-    &[aria-pressed='mixed'] {
-        border-block-end-style: dashed;
     }
 
     &[aria-disabled='true'],

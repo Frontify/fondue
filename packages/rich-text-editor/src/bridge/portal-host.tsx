@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useFondueTheme } from '@frontify/fondue-components';
 import { Component, memo, type ReactNode, Suspense, useMemo, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -55,21 +56,37 @@ class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
 }
 
 // An entry keeps its object until its node view publishes, so the other chrome skips each rerender.
-const Chrome = memo(({ entry, context }: { readonly entry: PortalEntry; readonly context: NodeViewContext }) => {
-    const { component: View, slot } = entry;
-    const state = useMemo(() => ({ ...entry.state, context }), [entry.state, context]);
-    return createPortal(
-        <NodeViewStateContext.Provider value={state}>
-            <ChromeBoundary message={context.t('RichTextEditor_nodeViewError')} attrs={state.attrs}>
-                {/* Chrome that loads a dialog lazily suspends here, not as an error, and the surface stays. */}
-                <Suspense fallback={null}>
-                    <View />
-                </Suspense>
-            </ChromeBoundary>
-        </NodeViewStateContext.Provider>,
-        slot,
-    );
-});
+const Chrome = memo(
+    ({
+        entry,
+        context,
+        lang,
+    }: {
+        readonly entry: PortalEntry;
+        readonly context: NodeViewContext;
+        readonly lang: string;
+    }) => {
+        const { component: View, slot } = entry;
+        const state = useMemo(() => ({ ...entry.state, context }), [entry.state, context]);
+        const { dir } = useFondueTheme();
+        // The slot sits in the surface, which takes the document's lang and dir; chrome keeps its strings' and the theme's.
+        useClientLayoutEffect(() => {
+            slot.dir = dir;
+            slot.lang = lang;
+        }, [slot, dir, lang]);
+        return createPortal(
+            <NodeViewStateContext.Provider value={state}>
+                <ChromeBoundary message={context.t('RichTextEditor_nodeViewError')} attrs={state.attrs}>
+                    {/* Chrome that loads a dialog lazily suspends here, not as an error, and the surface stays. */}
+                    <Suspense fallback={null}>
+                        <View />
+                    </Suspense>
+                </ChromeBoundary>
+            </NodeViewStateContext.Provider>,
+            slot,
+        );
+    },
+);
 Chrome.displayName = 'RichTextEditor.NodeViewChrome';
 
 /**
@@ -80,10 +97,13 @@ Chrome.displayName = 'RichTextEditor.NodeViewChrome';
 export const PortalHost = ({
     store,
     context,
+    lang,
     onFlush,
 }: {
     readonly store: PortalStore;
     readonly context: NodeViewContext;
+    /** The language of the chrome's strings, which each slot takes over the surface's. */
+    readonly lang: string;
     readonly onFlush: () => void;
 }) => {
     const entries = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
@@ -91,7 +111,7 @@ export const PortalHost = ({
     return (
         <>
             {entries.map((entry) => (
-                <Chrome key={entry.key} entry={entry} context={context} />
+                <Chrome key={entry.key} entry={entry} context={context} lang={lang} />
             ))}
         </>
     );
