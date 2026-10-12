@@ -53,6 +53,8 @@ import {
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { NumberingDialog, SET_START } from '#/ui/menus/numbering';
+import { EmojiPicker, emojiStrings } from '#/ui/suggestions/emoji-picker';
+import { SuggestionList } from '#/ui/suggestions/suggestion-list';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
@@ -270,6 +272,8 @@ const SessionComponent = (
     // The session once it is ready, which the parts and hooks read.
     const [live, setLive] = useState<EditorRuntime>();
     const latestRef = useRef(props);
+    // The shown locale's language, which the session's suggestion lists read when they search.
+    const langRef = useRef<string>(enUS.lang);
     const handleRef = useRef<EditorHandle<object> | null>(null);
     const bubbleRef = useRef<HTMLDivElement | null>(null);
     const showBubbleRef = useRef<(() => void) | null>(null);
@@ -339,6 +343,7 @@ const SessionComponent = (
             recovery: () => memberOf(latestRef.current.services, 'recovery'),
             inputRules: () => latestRef.current.inputRules,
             openControl: setControl,
+            locale: () => langRef.current,
         });
         connectClipboard(runtime, {
             sliceContext: () => {
@@ -490,6 +495,10 @@ const SessionComponent = (
     if (lang === undefined) {
         lang = enUS.lang;
     }
+    const shownLang = lang;
+    useClientLayoutEffect(() => {
+        langRef.current = shownLang;
+    });
     // Chrome reads the newest presentation and locale with no view rebuild.
     const chromeContext = useMemo(() => readerContext(locale, presentation), [locale, presentation]);
     const items = useMemo(
@@ -579,6 +588,21 @@ const SessionComponent = (
                                     <NumberingDialog
                                         payload={startPayload}
                                         strings={numberingStrings(chromeContext.t)}
+                                        onClose={() => setControl(undefined)}
+                                    />
+                                )}
+                                <SuggestionList
+                                    label={chromeContext.t('RichTextEditor_suggestions')}
+                                    optionLabel={(label, position, total) =>
+                                        chromeContext.t('RichTextEditor_suggestionOption', { label, position, total })
+                                    }
+                                    testId={testId}
+                                />
+                                {control === 'emoji' && (
+                                    <EmojiPicker
+                                        lang={lang}
+                                        strings={emojiStrings(chromeContext.t)}
+                                        testId={testId}
                                         onClose={() => setControl(undefined)}
                                     />
                                 )}

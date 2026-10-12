@@ -8,6 +8,7 @@ import {
     code,
     codeBlock,
     core,
+    emoji,
     featuresById,
     heading,
     inputRules,
@@ -98,6 +99,7 @@ const model = compileContentModel(
         underline(),
         strike(),
         code(),
+        emoji(),
         subscript(),
         superscript(),
         heading(),
@@ -125,7 +127,7 @@ const TOOLBAR = [
         'mark.superscript.toggle',
     ],
     ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
-    ['quote.toggle', 'code-block.toggle'],
+    ['quote.toggle', 'code-block.toggle', 'emoji.picker.open'],
 ];
 
 type Commands = CommandsOfModel<typeof model>;
@@ -570,6 +572,8 @@ const meta: Meta<typeof Playground> = {
 ## Keyboard reference
 
 Shortcuts of the shipped features, in the package key syntax and as each platform shows them.
+
+Type \`:\` at the start of a word, then at least two letters, to open emoji suggestions. Enter or Tab inserts the active emoji as text. Escape closes the list and keeps what was typed.
 
 ## History
 

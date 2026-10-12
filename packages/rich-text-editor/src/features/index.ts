@@ -4,6 +4,7 @@ export { codeBlock } from '#/features/blocks-code/feature';
 export { quote } from '#/features/blocks-quote/feature';
 export { heading } from '#/features/blocks-heading/feature';
 export { core } from '#/features/core/feature';
+export { emoji } from '#/features/emoji/feature';
 export { inputRules } from '#/features/input-rules/feature';
 export { bold } from '#/features/marks-bold/feature';
 export { code } from '#/features/marks-code/feature';

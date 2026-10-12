@@ -78,14 +78,33 @@ const selectionRect = (view: EditorView): DOMRect => {
     return range.getBoundingClientRect();
 };
 
-/** Anchors an overlay to the selection and tells when a scrolling ancestor clips it. */
-export const createSelectionAnchor = (view: () => EditorView | undefined): SelectionAnchor => {
+/** The caret rectangle at `pos`, as a zero-width box on its line. */
+const positionRect = (view: EditorView, pos: number): DOMRect => {
+    const caret = view.coordsAtPos(pos, 1);
+    return new DOMRect(caret.left, caret.top, 0, caret.bottom - caret.top);
+};
+
+/**
+ * Anchors an overlay to the selection and tells when a scrolling ancestor clips it. With `position`, it anchors at the
+ * document position that `position` returns when read, and at the selection while it returns `undefined`.
+ */
+export const createSelectionAnchor = (
+    view: () => EditorView | undefined,
+    position?: () => number | undefined,
+): SelectionAnchor => {
     // The held rectangle's offset from the surface, which scrolls and resizes with it.
     let held: { readonly x: number; readonly y: number; readonly width: number; readonly height: number } | undefined;
     let read = false;
+    const anchorRect = (current: EditorView): DOMRect => {
+        const pos = position?.();
+        if (pos === undefined || pos < 0 || pos > current.state.doc.content.size) {
+            return selectionRect(current);
+        }
+        return positionRect(current, pos);
+    };
     const rectOf = (current: EditorView): DOMRect => {
         if (held === undefined) {
-            return selectionRect(current);
+            return anchorRect(current);
         }
         const surface = current.dom.getBoundingClientRect();
         return new DOMRect(surface.left + held.x, surface.top + held.y, held.width, held.height);
@@ -112,7 +131,7 @@ export const createSelectionAnchor = (view: () => EditorView | undefined): Selec
             if (held !== undefined) {
                 return;
             }
-            const rect = selectionRect(current);
+            const rect = anchorRect(current);
             const surface = current.dom.getBoundingClientRect();
             held = { x: rect.left - surface.left, y: rect.top - surface.top, width: rect.width, height: rect.height };
         },

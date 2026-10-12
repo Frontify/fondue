@@ -66,6 +66,7 @@
     },
     "dependencies": {
         "@radix-ui/react-toolbar": "^1.1.19",
+        "emojibase-data": "^17.0.0",
         "lowlight": "^3.3.0",
         "markdown-it": "^15.0.2",
         "prosemirror-commands": "^1.7.2",
