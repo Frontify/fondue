@@ -294,6 +294,30 @@ H2O 😀",
 }
 `;
 
+exports[`codec golden files > writes the valid fixture spaces.json as its golden HTML, plain text and Markdown > html 1`] = `
+"<div class="fondue-rte-content">
+<p dir="auto">two  spaces and five     spaces</p>
+</div>"
+`;
+
+exports[`codec golden files > writes the valid fixture spaces.json as its golden HTML, plain text and Markdown > html diagnostics 1`] = `[]`;
+
+exports[`codec golden files > writes the valid fixture spaces.json as its golden HTML, plain text and Markdown > markdown 1`] = `
+{
+  "diagnostics": [],
+  "losses": [],
+  "markdown": "two  spaces and five     spaces",
+}
+`;
+
+exports[`codec golden files > writes the valid fixture spaces.json as its golden HTML, plain text and Markdown > text 1`] = `
+{
+  "diagnostics": [],
+  "losses": [],
+  "text": "two  spaces and five     spaces",
+}
+`;
+
 exports[`codec golden files > writes unknown-attribute.json as its golden HTML, plain text and Markdown > html 1`] = `
 "<div class="fondue-rte-content">
 <p dir="auto">Warm words</p>

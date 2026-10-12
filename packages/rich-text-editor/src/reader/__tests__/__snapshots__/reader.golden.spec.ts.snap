@@ -80,6 +80,12 @@ exports[`reader golden files > renders the valid fixture marks.json as its golde
 </div>"
 `;
 
+exports[`reader golden files > renders the valid fixture spaces.json as its golden HTML 1`] = `
+"<div class="fondue-rte-content">
+<p dir="auto">two  spaces and five     spaces</p>
+</div>"
+`;
+
 exports[`reader golden files > renders unknown-attribute.json as its golden HTML 1`] = `
 "<div class="fondue-rte-content">
 <p dir="auto">Warm words</p>
