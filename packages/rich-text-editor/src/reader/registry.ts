@@ -2,6 +2,7 @@
 
 import { linkReader } from '#/features/links/reader';
 import { taskReader } from '#/features/lists-task/reader';
+import { mentionReader } from '#/features/mentions/reader';
 
 import { type ReaderRenderers } from './define';
 
@@ -9,4 +10,5 @@ import { type ReaderRenderers } from './define';
 export const SHIPPED_OVERRIDES: Readonly<Record<string, ReaderRenderers>> = {
     links: linkReader,
     'lists.task': taskReader,
+    mentions: mentionReader,
 };

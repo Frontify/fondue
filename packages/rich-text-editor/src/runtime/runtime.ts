@@ -59,8 +59,9 @@ import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { createInputSettling } from './settle';
 import { stylesPlugin } from './styles';
-import { suggestionHosts } from './suggestions/host';
+import { type SuggestionHost, suggestionHosts } from './suggestions/host';
 import { activeSuggestion, suggestionOptionId } from './suggestions/plugin';
+import { referenceResults, type ReferenceResults } from './suggestions/references';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
@@ -171,6 +172,8 @@ export interface EditorRuntime {
     startAsync(request: AsyncRequest): AsyncOperation;
     /** Aborts the operations that the changed `services` members started. */
     changeServices(members: readonly string[]): void;
+    /** One page of the host's reference search, as the suggestion list and the mention search dialog ask for it. */
+    readonly searchReferences: SuggestionHost['searchReferences'];
     /** The bridge caught a throw from a node view's constructor, `update` or `destroy`. */
     faultView(): void;
     /** The host's `disabled`, which runs in mode `readonly` and takes the surface out of the Tab order. */
@@ -225,10 +228,20 @@ export interface EditorRuntimeOptions {
     readonly openControl?: (control: string, payload: unknown) => void;
     /** The editor's locale, such as `de-CH`, read when a suggestion list asks its source; default `en-US`. */
     readonly locale?: () => string;
+    /** The host's `services.references`, read when a reference list asks it; without one, its trigger opens no list. */
+    readonly references?: () => ReferenceSearch | undefined;
     /** The presentation's brand styles, read when `block.style.set` runs; default none. */
     readonly styles?: () => readonly PresentationStyle[];
     /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
     readonly columns?: ColumnState;
+}
+
+/** The search of a host's `ReferenceService`, whose page the session checks as untrusted input. */
+export interface ReferenceSearch {
+    search(
+        request: { readonly query: string; readonly resourceTypes: readonly string[]; readonly cursor: string | null },
+        context: { readonly signal: AbortSignal; readonly session: SessionToken },
+    ): Promise<unknown>;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -1332,6 +1345,47 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         report,
     });
 
+    /** The `resourceTypes` option of `featureId`, empty when it sets none, so the service decides. */
+    const resourceTypesOf = (featureId: string): readonly string[] => {
+        const types = compiledModel(definition.model).features.find(({ id }) => id === featureId)?.options
+            .resourceTypes;
+        if (!Array.isArray(types)) {
+            return [];
+        }
+        return types.filter((type): type is string => typeof type === 'string');
+    };
+    /** One page of the host's reference search, as one operation of the coordinator that a newer query supersedes. */
+    const searchReferences: SuggestionHost['searchReferences'] = (
+        { key, featureId, command, query, cursor },
+        receive,
+    ) => {
+        const service = options.references?.();
+        if (service === undefined) {
+            return undefined;
+        }
+        const resourceTypes = resourceTypesOf(featureId);
+        // A service that throws instead of rejecting fails the same way.
+        const call = async (context: { readonly signal: AbortSignal; readonly session: SessionToken }) =>
+            service.search({ query, resourceTypes: [...resourceTypes], cursor }, context);
+        const operation = coordinator.start({
+            key,
+            service: 'references',
+            featureId,
+            action: 'create',
+            command,
+            run: (context) =>
+                call(context).then(
+                    (page) => referenceResults(page, resourceTypes, limits.maxAttributeLength),
+                    () => undefined,
+                ),
+            deliver: (results) => {
+                receive(results as ReferenceResults | undefined);
+                return undefined;
+            },
+        });
+        return () => coordinator.abortWhere((other) => other === operation);
+    };
+
     /**
      * Runs queued intents in call order once no commit or notification is in progress
      * and input has settled.
@@ -1844,6 +1898,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 locale: () => options.locale?.() ?? 'en-US',
                 creates: (featureId) => policy.features[featureId]?.create !== false,
                 accept: acceptSuggestion,
+                searchesReferences: () => options.references?.() !== undefined,
+                searchReferences,
             });
             if (secondCopyAtMount(state)) {
                 report(DUPLICATE_ENGINE);
@@ -1874,6 +1930,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         watch,
         startAsync: coordinator.start,
+        searchReferences,
         changeServices: (members) => {
             coordinator.abortWhere((operation) => members.includes(operation.service));
             if (members.includes('persistence')) {

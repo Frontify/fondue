@@ -20,6 +20,7 @@ import {
     italic,
     language,
     links,
+    mentions,
     quote,
     rule,
     strike,
@@ -37,7 +38,7 @@ import {
     type EditorHandle,
     type PersistenceService,
     type PresentationStyle,
-    type ReferenceService,
+    type ReferenceValue,
     type RichTextEditorProps,
     RichTextEditor,
     type SaveResponse,
@@ -46,8 +47,16 @@ import {
     useRichTextFormField,
     useRichTextNodeView,
 } from '#/index';
-import { compileContentModel, createEmptyDocument, defineFeature, type JsonValue, setBlock } from '#/model';
-import { createFakePersistenceService } from '#/testing';
+import {
+    compileContentModel,
+    createEmptyDocument,
+    defineFeature,
+    diffReferences,
+    type JsonValue,
+    type RichTextDocument,
+    setBlock,
+} from '#/model';
+import { createFakePersistenceService, createFakeReferenceService } from '#/testing';
 
 /** The chrome of the callout stand-in: a button that switches its tone through a node view action. */
 const CalloutChrome = () => {
@@ -127,11 +136,21 @@ const model = compileContentModel(
         language(),
         links({ resourceTypes: ['guideline-page'] }),
         formatClear(),
+        mentions(),
         callouts,
     ],
     { id: 'story.playground', version: 1 },
 );
 const definition = defineEditor({ id: 'story.playground', model });
+
+// The people and teams the mention list and dialog search.
+const PEOPLE: readonly ReferenceValue[] = [
+    { resourceType: 'user', resourceId: 'user-ada', labelSnapshot: 'Ada Lovelace', kind: 'user' },
+    { resourceType: 'user', resourceId: 'user-grace', labelSnapshot: 'Grace Hopper', kind: 'user' },
+    { resourceType: 'user', resourceId: 'user-layla', labelSnapshot: 'ليلى حسن', kind: 'user' },
+    { resourceType: 'group', resourceId: 'group-design', labelSnapshot: 'Design team', kind: 'group' },
+    { resourceType: 'group', resourceId: 'group-all', labelSnapshot: 'Everyone', kind: 'everyone' },
+];
 
 // The document toolbar's groups of the shipped features.
 const TOOLBAR = [
@@ -148,7 +167,7 @@ const TOOLBAR = [
     ],
     ['mark.color.menu.open', 'link.edit'],
     ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
-    ['quote.toggle', 'code-block.toggle', 'emoji.picker.open'],
+    ['quote.toggle', 'code-block.toggle', 'mention.search.open', 'emoji.picker.open'],
     [
         { command: 'block.align.set', payload: { align: 'left' } },
         { command: 'block.align.set', payload: { align: 'center' } },
@@ -198,13 +217,8 @@ const PAGES = ['Logo', 'Colors', 'Typography', 'Imagery'].map((label) => ({
     labelSnapshot: label,
     href: `https://brand.example.com/${label.toLowerCase()}`,
 }));
-const references: ReferenceService = {
-    search: ({ query }) =>
-        Promise.resolve({
-            items: PAGES.filter(({ labelSnapshot }) => labelSnapshot.toLowerCase().includes(query.toLowerCase())),
-            nextCursor: null,
-        }),
-};
+// One host directory answers both, by resource type: people for mentions, guideline pages for link destinations.
+const references = createFakeReferenceService([...PEOPLE, ...PAGES]);
 const COLOR_TOKENS: readonly ColorToken[] = [
     { id: 'brand.red', label: 'Brand red', value: '#c0392b', usage: ['font_color'] },
     { id: 'brand.blue', label: 'Brand blue', value: '#1d4ed8', usage: ['font_color'] },
@@ -304,6 +318,7 @@ const Playground = ({
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
     const targetRef = useRef<SelectionHandle | null>(null);
+    const previousRef = useRef<RichTextDocument>(props.defaultValue.document);
     const [document, setDocument] = useState<JsonValue>(props.defaultValue.document.content as unknown as JsonValue);
     const [broken, setBroken] = useState(brokenAtMount);
     const field = useRichTextFormField(handleRef);
@@ -604,7 +619,14 @@ const Playground = ({
                 }}
                 onDocumentChange={(change) => {
                     log(`documentChange ${change.origin} ${change.commandId ?? ''} #${change.stamp.sequence}`);
-                    setDocument(change.readDocument().content as unknown as JsonValue);
+                    const next = change.readDocument();
+                    // What a host would notify about: the mentions the change added or removed.
+                    const { added, removed } = diffReferences(previousRef.current, next);
+                    if (added.length > 0 || removed.length > 0) {
+                        log(`mentions added ${added.length} removed ${removed.length}`);
+                    }
+                    previousRef.current = next;
+                    setDocument(next.content as unknown as JsonValue);
                 }}
                 onDiagnostic={(diagnostic) =>
                     log(`diagnostic ${diagnostic.code} ${JSON.stringify(diagnostic.details ?? {})}`)
@@ -693,6 +715,8 @@ const meta: Meta<typeof Playground> = {
 Shortcuts of the shipped features, in the package key syntax and as each platform shows them.
 
 Type \`:\` at the start of a word, then at least two letters, to open emoji suggestions. Enter or Tab inserts the active emoji as text. Escape closes the list and keeps what was typed.
+
+Type \`@\` at the start of a word to search the story's people and teams; Enter or Tab inserts the active one as a mention followed by a space. The Mention toolbar button opens the same search in a dialog.
 
 ## History
 

@@ -96,6 +96,24 @@ export const SUGGESTION_PAYLOADS: Readonly<Record<SuggestionSource, JsonObject>>
     references: { resourceType: 'user', resourceId: 'user-1', labelSnapshot: 'Ada' },
     emoji: { text: '\u{1F600}' },
 };
+/** Where a source's trigger opens a list and what query it takes. */
+export interface SuggestionRules {
+    /** A word starts at the block start, after white space or a hard break, and with this, after punctuation too. */
+    readonly afterPunctuation: boolean;
+    /** The longest query; a longer one closes the list. */
+    readonly maxQuery: number;
+    /** Whether the query may hold spaces; a line break always ends it. */
+    readonly spaces: boolean;
+    /** The letters the query starts with before the list opens. */
+    readonly leadingLetters: number;
+}
+/** The trigger and query rules of each source; a feature's `suggestions` entry names only its source. */
+export const SUGGESTION_RULES: Readonly<Record<SuggestionSource, SuggestionRules>> = {
+    // Names hold spaces, and a mention often follows an opening bracket or quote.
+    references: { afterPunctuation: true, maxQuery: 50, spaces: true, leadingLetters: 0 },
+    // Two letters first, so a time such as `12:30` or a smiley such as `:)` opens none.
+    emoji: { afterPunctuation: false, maxQuery: 32, spaces: false, leadingLetters: 2 },
+};
 /** The open suggestion list: its query, its keys and the replacement of the trigger and query by the chosen item. */
 export const SUGGESTIONS_PLUGIN: PluginDescriptor = { id: 'suggestions', phase: 'suggestions' };
 /** The package's input rule engine, one plugin for every feature's rules. */
@@ -145,7 +163,8 @@ export const setBlock = <const P extends PayloadDeclaration | undefined = undefi
  * before a textblock with the caret at its start, and otherwise after the block that holds the selection end, or
  * always after the top-level block with `place: 'after-top-level-block'`; a block that ends up last gets an empty
  * paragraph after it. With `limit: 'columns'`, it applies only while the document holds fewer of `node` than the
- * presentation's columns minus one.
+ * presentation's columns minus one. An inline node takes the payload's fields that it declares as attributes, and
+ * with `spaceAfter` a space follows it, as a mention does.
  */
 export const insertNode = <const P extends PayloadDeclaration | undefined = undefined>(
     node: string,
@@ -155,6 +174,7 @@ export const insertNode = <const P extends PayloadDeclaration | undefined = unde
         readonly newlineInCode?: boolean;
         readonly place?: 'after-top-level-block';
         readonly limit?: 'columns';
+        readonly spaceAfter?: boolean;
         readonly payload?: P;
     },
 ): CommandDefinition<PayloadOf<P>> =>
@@ -167,6 +187,7 @@ export const insertNode = <const P extends PayloadDeclaration | undefined = unde
             newlineInCode: options?.newlineInCode,
             place: options?.place,
             limit: options?.limit,
+            spaceAfter: options?.spaceAfter,
         },
         options === undefined ? undefined : options.payload,
     );

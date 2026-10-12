@@ -344,7 +344,7 @@ const insertNode: CapabilityImplementation = (args, schema) => {
         };
     }
     return {
-        run: (state, dispatch) => {
+        run: (state, dispatch, payload) => {
             const { $from } = state.selection;
             // A code block keeps a line break as text, as ProseMirror's `newlineInCode` does (Enter by profile).
             if (args.newlineInCode === true && $from.parent.type.spec.code === true) {
@@ -354,7 +354,16 @@ const insertNode: CapabilityImplementation = (args, schema) => {
             if (!$from.parent.canReplaceWith($from.index(), $from.index(), type)) {
                 return false;
             }
-            dispatch?.(state.tr.replaceSelectionWith(type.create()).scrollIntoView());
+            if (dispatch === undefined) {
+                return true;
+            }
+            // A node whose `marks` declaration is empty, such as a mention, takes no mark from the text around it.
+            const inheritMarks = type.spec.marks !== '';
+            const transaction = state.tr.replaceSelectionWith(type.create(declaredIn(type, payload)), inheritMarks);
+            if (args.spaceAfter === true) {
+                transaction.insertText(' ');
+            }
+            dispatch(transaction.scrollIntoView());
             return true;
         },
         active: () => false,

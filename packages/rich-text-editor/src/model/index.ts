@@ -104,6 +104,7 @@ export { toJsonSchema } from './json-schema';
 export { featureFromManifest } from './manifest';
 export { type MigrationManifest, type MigrationResult, migrateDocument } from './migrate';
 export { featureManifestSchema } from './manifest-schema';
+export { diffReferences, type ReferenceDiff } from './references';
 export {
     type ColorToken,
     type PresentationStyle,

@@ -12,6 +12,7 @@ import { type LinkBubbleStrings } from '#/ui/links/link-bubble';
 import { type LinkPopoverStrings, type LinkStyleOption } from '#/ui/links/link-popover';
 import { type ColorMenuStrings } from '#/ui/menus/color';
 import { type NumberingStrings } from '#/ui/menus/numbering';
+import { type MentionSearchStrings } from '#/ui/suggestions/mention-search';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
 import { type ReactPresentation } from './types';
@@ -342,6 +343,27 @@ export const menuItems = (
 };
 
 /** The colour menu's strings in the UI locale. */
+/** The mention list's and the mention search dialog's strings from the chrome's `t`. */
+export const mentionStrings = (t: CodecContext['t']): MentionSearchStrings => ({
+    label: t('RichTextEditor_mentionSuggestions'),
+    loading: t('RichTextEditor_mentionLoading'),
+    noResults: t('RichTextEditor_mentionNoResults'),
+    failed: t('RichTextEditor_mentionFailed'),
+    loadMore: t('RichTextEditor_mentionLoadMore'),
+    retry: t('RichTextEditor_retry'),
+    results: (count) => t('RichTextEditor_mentionResults', { count }),
+    option: ({ label, detail }, position, total) => {
+        if (detail === undefined) {
+            return t('RichTextEditor_suggestionOption', { label, position, total });
+        }
+        return t('RichTextEditor_mentionOption', { label, type: detail, position, total });
+    },
+    both: (first, second) => t('RichTextEditor_announceBoth', { first, second }),
+    title: t('RichTextEditor_mention'),
+    search: t('RichTextEditor_mentionSearch'),
+    cancel: t('RichTextEditor_cancel'),
+});
+
 export const colorMenuStrings = (t: CodecContext['t']): ColorMenuStrings => ({
     label: t('RichTextEditor_colorMenu'),
     textColors: t('RichTextEditor_textColors'),

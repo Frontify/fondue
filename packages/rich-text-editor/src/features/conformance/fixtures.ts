@@ -24,6 +24,7 @@ import strike from '#/features/marks-strike/fixtures/strike.json';
 import subscript from '#/features/marks-subscript/fixtures/subscript.json';
 import superscript from '#/features/marks-superscript/fixtures/superscript.json';
 import underline from '#/features/marks-underline/fixtures/underline.json';
+import mentions from '#/features/mentions/fixtures/mentions.json';
 import styles from '#/features/styles-brand/fixtures/styles.json';
 import { type RichTextDocument } from '#/model';
 
@@ -54,4 +55,5 @@ export const featureFixtures = {
     'lists.task': { tasks },
     'styles.brand': { styles },
     'input-rules': { typography },
+    mentions: { mentions },
 } as unknown as Readonly<Record<string, Readonly<Record<string, RichTextDocument>>>>;

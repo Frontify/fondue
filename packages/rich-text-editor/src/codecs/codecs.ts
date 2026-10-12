@@ -42,10 +42,11 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
                 return { html: '', css, diagnostics };
             }
             const context = codecContext(htmlOptions.locale, enUS, htmlOptions.resolveAssetUrl);
-            const { contentClassName, listLevels } = htmlOptions;
+            const { contentClassName, listLevels, resolveReference } = htmlOptions;
             const output = writeHtml(plan, tree, context, {
                 contentClassName,
                 listLevels,
+                resolveReference,
                 columns: columnLayout(htmlOptions.columns, htmlOptions.columnGap),
                 styles: { styles: inlineStyles, colorTokens, inline: true },
             });

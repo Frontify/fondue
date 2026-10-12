@@ -2,6 +2,7 @@
 
 import { type CodecContext, type Diagnostic } from '#/model';
 import { type TreeMark, type TreeNode } from '#/model/content';
+import { type ResolveReference } from '#/model/references';
 
 import { type CodecPlan, type Format, type Losses, setShared } from './plan';
 
@@ -12,6 +13,8 @@ export interface WalkState {
     readonly losses: Losses;
     readonly diagnostics: Diagnostic[];
     readonly headings: ReadonlySet<string>;
+    /** Mention labels as the reader shows them; without it, each mention's stored label. */
+    readonly resolveReference?: ResolveReference | undefined;
 }
 
 /** The `nodeId` of every heading, so a link to `#` plus one of them is known as a link inside the document. */

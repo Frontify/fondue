@@ -17,6 +17,7 @@ import {
     type Diagnostic,
     type Feature,
     type FeatureDeclaration,
+    type FeatureFormats,
     type JsonValue,
     type RichTextDocument,
 } from '#/model';
@@ -237,6 +238,18 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
             return [{ name, on, fallback: value.default as JsonValue }];
         }),
     );
+    const lossyIn = (format: keyof FeatureFormats) =>
+        new Set(features.filter((feature) => declarationOf(feature).formats?.[format] === 'lossy').map(({ id }) => id));
+    const lossy = { html: lossyIn('html'), text: lossyIn('text'), markdown: lossyIn('markdown') };
+    /** A codec's diagnostics but the `codecs.lossy-output` info it owes each feature that declares `format` lossy. */
+    const unexpected = (diagnostics: readonly Diagnostic[], format: keyof FeatureFormats) =>
+        diagnostics.filter(
+            ({ code, severity, featureId }) =>
+                code !== 'codecs.lossy-output' ||
+                severity !== 'info' ||
+                featureId === undefined ||
+                !lossy[format].has(featureId),
+        );
     /** The decode, reader, codec and axe cases of one stored document. */
     const fixtureCases = (name: string, fixture: unknown) => {
         it(`decodes and encodes ${name} to itself`, () => {
@@ -265,7 +278,12 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
             const html = codecs.toHTML(stored);
             const text = codecs.toPlainText(stored);
             const markdown = codecs.toMarkdown(stored);
-            expect([reader, html, text, markdown].flatMap(({ diagnostics }) => diagnostics)).toEqual([]);
+            expect([
+                ...reader.diagnostics,
+                ...unexpected(html.diagnostics, 'html'),
+                ...unexpected(text.diagnostics, 'text'),
+                ...unexpected(markdown.diagnostics, 'markdown'),
+            ]).toEqual([]);
             expect(normalized(html.html)).toBe(normalized(withoutHiddenText(reader.markup)));
         });
 

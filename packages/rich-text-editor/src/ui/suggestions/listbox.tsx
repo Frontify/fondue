@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconMegaphone, IconPeople, IconPerson } from '@frontify/fondue-icons';
 import { useRef } from 'react';
 
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
@@ -8,17 +9,48 @@ import { keepFocus } from '#/ui/toolbar/item';
 
 import styles from './styles/suggestions.module.scss';
 
-/** What one option shows: its glyph, such as the emoji itself, then its label. */
+/** What one option shows: its glyph, such as the emoji itself, or an image or icon, then its label and detail. */
 export interface ListboxOption {
     readonly key: string;
     readonly label: string;
     readonly glyph: string | null;
+    /** Text after the label, such as a mention's resource type. */
+    readonly detail?: string;
+    /** An image that passed `checkHref`, which an option with no glyph shows. */
+    readonly imageUrl?: string;
+    /** The icon an option with no glyph and no image shows. */
+    readonly kind?: 'user' | 'group' | 'everyone';
 }
+
+const KIND_ICONS = { user: IconPerson, group: IconPeople, everyone: IconMegaphone } as const;
+
+const Lead = ({ option }: { readonly option: ListboxOption }) => {
+    if (option.glyph !== null) {
+        return (
+            <span className={styles.glyph} aria-hidden>
+                {option.glyph}
+            </span>
+        );
+    }
+    if (option.imageUrl !== undefined) {
+        return <img className={styles.image} src={option.imageUrl} alt="" referrerPolicy="no-referrer" />;
+    }
+    if (option.kind !== undefined) {
+        const KindIcon = KIND_ICONS[option.kind];
+        return (
+            <span className={styles.icon} data-kind={option.kind}>
+                <KindIcon size={16} aria-hidden />
+            </span>
+        );
+    }
+    return null;
+};
 
 /**
  * A listbox whose active option the element that keeps focus names with `aria-activedescendant`, as the WAI-ARIA
  * combobox pattern has it. The options take no focus; a press keeps focus where it is, a click picks the option, and a
- * pointer move over one makes it active. The active option scrolls into the list's own scrolling box.
+ * pointer move over one makes it active. The active option scrolls into the list's own scrolling box. Labels and
+ * details are isolated for bidirectional text, since they come from the host or the document.
  */
 export const Listbox = ({
     id,
@@ -63,12 +95,15 @@ export const Listbox = ({
                         }
                     }}
                 >
-                    {option.glyph !== null && (
-                        <span className={styles.glyph} aria-hidden>
-                            {option.glyph}
+                    <Lead option={option} />
+                    <span className={styles.label}>
+                        <bdi>{option.label}</bdi>
+                    </span>
+                    {option.detail !== undefined && (
+                        <span className={styles.detail}>
+                            <bdi>{option.detail}</bdi>
                         </span>
                     )}
-                    <span className={styles.label}>{option.label}</span>
                 </div>
             ))}
         </div>

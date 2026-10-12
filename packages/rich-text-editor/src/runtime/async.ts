@@ -19,9 +19,14 @@ export interface AsyncRequest {
     readonly run: (context: { readonly signal: AbortSignal; readonly session: SessionToken }) => Promise<unknown>;
     /** The command that takes the result as its payload, whose declaration checks it as untrusted input. */
     readonly command: string;
+    /**
+     * Takes a result that changes no content, such as the options of a search, in place of `command`, and returns why
+     * it cannot, as `apply` does. Such an operation captures no target.
+     */
+    readonly deliver?: (result: unknown) => string | undefined;
 }
 
-/** A registered operation; only one that never started has no target. */
+/** A registered operation; only one that never started, or one that delivers its result, has no target. */
 export interface AsyncOperation {
     readonly id: string;
     readonly session: SessionToken;
@@ -35,6 +40,7 @@ export interface AsyncOperation {
     readonly featureId: string;
     readonly action: keyof FeaturePolicy;
     readonly command: string;
+    readonly deliver?: (result: unknown) => string | undefined;
 }
 
 /** The registered operations of every live runtime, which the `src/testing` probe reads. */
@@ -118,7 +124,11 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
         forget(operation);
         let code: string | undefined;
         try {
-            code = apply(operation, result);
+            if (operation.deliver === undefined) {
+                code = apply(operation, result);
+            } else {
+                code = operation.deliver(result);
+            }
         } catch {
             // A result whose accessor or proxy throws while it is read is untrusted input that fails its check.
             code = 'invalid-payload';
@@ -132,14 +142,21 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
 
     const start = (request: AsyncRequest): AsyncOperation => {
         const { key } = request;
+        const { deliver } = request;
         let target: SelectionHandle | null = null;
         let owned = false;
+        let ready = false;
         if (!isDisposed()) {
             target = request.target ?? null;
-            if (target === null) {
+            if (target === null && deliver === undefined) {
                 target = capture() ?? null;
                 owned = target !== null;
             }
+            ready = target !== null || deliver !== undefined;
+        }
+        let delivered: Pick<AsyncOperation, 'deliver'> = {};
+        if (deliver !== undefined) {
+            delivered = { deliver };
         }
         const operation: AsyncOperation = Object.freeze({
             id: generateId(),
@@ -153,9 +170,10 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
             featureId: request.featureId,
             action: request.action,
             command: request.command,
+            ...delivered,
         });
         // A session that is not ready starts nothing: the operation is aborted and unregistered.
-        if (target === null) {
+        if (!ready) {
             operation.controller.abort();
             return operation;
         }
