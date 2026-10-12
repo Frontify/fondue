@@ -39,7 +39,7 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
                 return { html: '', diagnostics };
             }
             const context = codecContext(htmlOptions.locale, enUS, htmlOptions.resolveAssetUrl);
-            const output = writeHtml(plan, tree, context, htmlOptions.contentClassName);
+            const output = writeHtml(plan, tree, context, htmlOptions.contentClassName, htmlOptions.listLevels);
             return { html: output.html, diagnostics: [...diagnostics, ...output.diagnostics] };
         },
         toPlainText: (document) => {

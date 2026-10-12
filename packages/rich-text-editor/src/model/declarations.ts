@@ -254,7 +254,9 @@ export type InputRule =
       }
     | { readonly id: string; readonly kind: 'quotes'; readonly marker: '"' | "'" }
     /** Code features only, from `textRule`; a manifest cannot hold a `RegExp`. */
-    | { readonly id: string; readonly kind: 'text-rule'; readonly match: RegExp; readonly replace: string };
+    | { readonly id: string; readonly kind: 'text-rule'; readonly match: RegExp; readonly replace: string }
+    /** Code features only, from `blockRule`; named groups fill the command's payload fields. */
+    | { readonly id: string; readonly kind: 'block-rule'; readonly match: RegExp; readonly command: string };
 /** A command ID, or a command with the payload a route passes, such as `{ command: 'heading.set', payload: { level: 1 } }`. */
 export type CommandRef =
     | string
@@ -434,6 +436,11 @@ export interface TranslationStrings {
 export interface RichTextLocale {
     readonly translationStrings: TranslationStrings;
     readonly lang?: string;
+}
+/** List markers by nesting depth, for lists whose `marker` is null; CSS `list-style-type` values. */
+export interface ListLevels {
+    readonly ordered: readonly { readonly counterType: string; readonly color?: string }[];
+    readonly bullet: readonly { readonly shape: string; readonly color?: string; readonly size?: string }[];
 }
 export type ReferenceResolution =
     | { readonly status: 'current'; readonly label: string }

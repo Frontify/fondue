@@ -5,6 +5,7 @@ import { type Command, type EditorState, Plugin, PluginKey, TextSelection, type 
 import { ReplaceStep } from 'prosemirror-transform';
 
 import {
+    type BlockRule,
     COMMAND_META,
     type CompiledInputRule,
     type LineStartRule,
@@ -16,9 +17,10 @@ import {
     type TextReplaceRule,
 } from '#/definition';
 import { INPUT_RULES_PLUGIN } from '#/model/capabilities';
-import { OBJECT_REPLACEMENT } from '#/model/values';
+import { findInvalidPayload, OBJECT_REPLACEMENT } from '#/model/values';
 
 import { closeGroup, isHistoryTransaction, undo } from './history';
+import { appendSteps, carrySelection } from './transactions';
 
 // As `prosemirror-inputrules`, a rule reads at most this much text before the caret.
 const MAX_MATCH = 500;
@@ -107,7 +109,34 @@ const holdsCode = (state: EditorState, from: number, to: number) => {
     return code;
 };
 
-/** Runs the rule's command, then removes its marker, so the block keeps the text after the caret. */
+/**
+ * Removes the marker from the block start to the caret, then runs the rule's command on the block, as one transaction.
+ * A command that rebuilds the block, as a list conversion rebuilds the whole list, would map a later removal to nothing.
+ */
+const withoutMarker = (
+    command: BlockRule['command'],
+    state: EditorState,
+    $cursor: ResolvedPos,
+    payload: unknown,
+): Transaction | null => {
+    const transaction = state.tr.delete($cursor.start(), $cursor.pos);
+    const dispatched: Transaction[] = [];
+    if (!command.run(state.apply(transaction), (built) => dispatched.push(built), payload)) {
+        return null;
+    }
+    const [built] = dispatched;
+    if (built === undefined) {
+        return null;
+    }
+    appendSteps(transaction, built);
+    transaction.setSelection(carrySelection(transaction.doc, built.selection));
+    if (built.scrolledIntoView) {
+        transaction.scrollIntoView();
+    }
+    return transaction;
+};
+
+/** Runs the rule's command without its marker, so the block keeps the text after the caret. */
 const lineStart = (rule: LineStartRule, state: EditorState, $cursor: ResolvedPos, before: string) => {
     if (before !== `${rule.marker} ` || before.length !== $cursor.parentOffset) {
         return null;
@@ -116,15 +145,43 @@ const lineStart = (rule: LineStartRule, state: EditorState, $cursor: ResolvedPos
     if (holdsCode(state, $cursor.start(), $cursor.pos) || rule.command.active(state, rule.payload) === true) {
         return null;
     }
-    const dispatched: Transaction[] = [];
-    if (!rule.command.run(state, (transaction) => dispatched.push(transaction), rule.payload)) {
+    return withoutMarker(rule.command, state, $cursor, rule.payload);
+};
+
+/** The payload that a block rule's named groups fill, each converted by its field's declaration. */
+const payloadOf = (rule: BlockRule, groups: Readonly<Record<string, string | undefined>>) => {
+    const payload: Record<string, unknown> = {};
+    const declaration = rule.command.payload;
+    if (declaration === undefined) {
+        return payload;
+    }
+    for (const [name, field] of Object.entries(declaration.fields)) {
+        const value = groups[name];
+        if (field.type === 'boolean') {
+            payload[name] = value !== undefined;
+        } else if (value !== undefined && (field.type === 'integer' || field.type === 'number')) {
+            payload[name] = Number(value);
+        } else if (value !== undefined) {
+            payload[name] = value;
+        }
+    }
+    return payload;
+};
+
+/** Runs the rule's command when the text from the block start matches, unless the payload fails its declaration. */
+const blockStart = (rule: BlockRule, state: EditorState, $cursor: ResolvedPos, before: string) => {
+    const found = rule.match.exec(before);
+    if (found === null || before.length !== $cursor.parentOffset || holdsCode(state, $cursor.start(), $cursor.pos)) {
         return null;
     }
-    const [built] = dispatched;
-    if (built === undefined) {
+    const payload = payloadOf(rule, found.groups ?? {});
+    if (
+        findInvalidPayload(rule.command.payload, payload) !== undefined ||
+        rule.command.active(state, payload) === true
+    ) {
         return null;
     }
-    return built.delete(built.mapping.map($cursor.start()), built.mapping.map($cursor.pos));
+    return withoutMarker(rule.command, state, $cursor, payload);
 };
 
 /**
@@ -279,6 +336,8 @@ const fire = (rules: readonly CompiledInputRule[], state: EditorState, end: numb
         let change: Transaction | null;
         if (rule.kind === 'line-start') {
             change = lineStart(rule, state, $cursor, before);
+        } else if (rule.kind === 'block-rule') {
+            change = blockStart(rule, state, $cursor, before);
         } else if (rule.kind === 'mark-delimiter') {
             change = markDelimiter(rule, state, $cursor, before, after);
         } else if (rule.kind === 'text-replace') {

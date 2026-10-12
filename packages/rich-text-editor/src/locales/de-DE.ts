@@ -3,6 +3,7 @@
 export const deDE = {
     lang: 'de-DE',
     translationStrings: {
+        RichTextEditor_apply: 'Anwenden',
         RichTextEditor_blockedInvalid: 'Bearbeiten ist nicht möglich, weil dieser Inhalt ungültig ist.',
         RichTextEditor_blockedLimit:
             'Bearbeiten ist nicht möglich, weil dieser Inhalt eine Größenbegrenzung überschreitet.',
@@ -12,6 +13,8 @@ export const deDE = {
             'Bearbeiten ist nicht möglich, weil dieser Inhalt ein unbekanntes Format oder Modell verwendet.',
         RichTextEditor_bold: 'Fett',
         RichTextEditor_bubbleToolbar: 'Formatierung der Auswahl',
+        RichTextEditor_bulletList: 'Aufzählung',
+        RichTextEditor_cancel: 'Abbrechen',
         RichTextEditor_code: 'Code',
         RichTextEditor_copyContent: 'Inhalt kopieren',
         RichTextEditor_copyFailed:
@@ -29,6 +32,7 @@ export const deDE = {
         RichTextEditor_moveUp: 'Nach oben verschieben',
         RichTextEditor_nodeViewError: 'Dieser Teil des Inhalts kann nicht angezeigt werden',
         RichTextEditor_normalText: 'Normaler Text',
+        RichTextEditor_numberedList: 'Nummerierte Liste',
         RichTextEditor_pasteMediaDropped: 'Medien nicht eingefügt: ${count}',
         RichTextEditor_pasteTooLarge: 'Der eingefügte Inhalt ist zu groß.',
         RichTextEditor_quote: 'Zitat',
@@ -54,9 +58,13 @@ export const deDE = {
         RichTextEditor_saveSaved: 'Alle Änderungen gespeichert',
         RichTextEditor_saveSaving: 'Wird gespeichert…',
         RichTextEditor_saveUnsaved: 'Nicht gespeicherte Änderungen',
+        RichTextEditor_startNumbering: 'Nummerierung beginnen bei',
+        RichTextEditor_startNumberingField: 'Erste Nummer',
+        RichTextEditor_startNumberingRange: 'Geben Sie eine ganze Zahl von ${min} bis ${max} ein.',
         RichTextEditor_strike: 'Durchgestrichen',
         RichTextEditor_subscript: 'Tiefgestellt',
         RichTextEditor_superscript: 'Hochgestellt',
+        RichTextEditor_taskList: 'Aufgabenliste',
         RichTextEditor_textStyle: 'Textstil',
         RichTextEditor_toolbar: 'Textformatierung',
         RichTextEditor_toolbarAlways: 'Symbolleiste immer anzeigen',

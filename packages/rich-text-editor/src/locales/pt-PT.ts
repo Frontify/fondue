@@ -3,6 +3,7 @@
 export const ptPT = {
     lang: 'pt-PT',
     translationStrings: {
+        RichTextEditor_apply: 'Aplicar',
         RichTextEditor_blockedInvalid: 'Não é possível editar porque este conteúdo não é válido.',
         RichTextEditor_blockedLimit: 'Não é possível editar porque este conteúdo excede um limite de tamanho.',
         RichTextEditor_blockedMigration:
@@ -11,6 +12,8 @@ export const ptPT = {
             'Não é possível editar porque este conteúdo usa um formato ou modelo desconhecido.',
         RichTextEditor_bold: 'Negrito',
         RichTextEditor_bubbleToolbar: 'Formatação da seleção',
+        RichTextEditor_bulletList: 'Lista com marcadores',
+        RichTextEditor_cancel: 'Cancelar',
         RichTextEditor_code: 'Código',
         RichTextEditor_copyContent: 'Copiar conteúdo',
         RichTextEditor_copyFailed: 'Não foi possível copiar. Selecione o conteúdo e copie-o com o teclado.',
@@ -27,6 +30,7 @@ export const ptPT = {
         RichTextEditor_moveUp: 'Mover para cima',
         RichTextEditor_nodeViewError: 'Esta parte do conteúdo não pode ser apresentada',
         RichTextEditor_normalText: 'Texto normal',
+        RichTextEditor_numberedList: 'Lista numerada',
         RichTextEditor_pasteMediaDropped: 'Multimédia não colado: ${count}',
         RichTextEditor_pasteTooLarge: 'O conteúdo colado é demasiado grande.',
         RichTextEditor_quote: 'Citação',
@@ -51,9 +55,13 @@ export const ptPT = {
         RichTextEditor_saveSaved: 'Todas as alterações guardadas',
         RichTextEditor_saveSaving: 'A guardar…',
         RichTextEditor_saveUnsaved: 'Alterações não guardadas',
+        RichTextEditor_startNumbering: 'Iniciar a numeração em',
+        RichTextEditor_startNumberingField: 'Primeiro número',
+        RichTextEditor_startNumberingRange: 'Introduza um número inteiro entre ${min} e ${max}.',
         RichTextEditor_strike: 'Rasurado',
         RichTextEditor_subscript: 'Inferior à linha',
         RichTextEditor_superscript: 'Superior à linha',
+        RichTextEditor_taskList: 'Lista de tarefas',
         RichTextEditor_textStyle: 'Estilo de texto',
         RichTextEditor_toolbar: 'Formatação de texto',
         RichTextEditor_toolbarAlways: 'Mostrar sempre a barra de ferramentas',

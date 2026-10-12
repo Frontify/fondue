@@ -10,6 +10,7 @@ import {
     type HtmlSpec,
     type JsonObject,
     type JsonValue,
+    type ListLevels,
     type MarkDeclaration,
     type NodeDeclaration,
     type ResolveAssetUrl,
@@ -18,7 +19,8 @@ import {
 import { pointer } from './errors';
 import { canonicalJson } from './hash';
 import { checkHref } from './href';
-import { islandText, renderSpaces } from './html-spec';
+import { type HtmlTemplate, islandText, renderSpaces } from './html-spec';
+import { addDeclaration, ownValue } from './values';
 
 /** The context a reader or codec override reads, in `locale`, else `fallback`, whose strings fill any key `locale` lacks; a resolver that throws gives `null` for that call only. */
 export const codecContext = (
@@ -150,6 +152,92 @@ export const contentClasses = (contentClassName?: string): string => {
         return 'fondue-rte-content';
     }
     return `fondue-rte-content ${contentClassName}`;
+};
+
+/** The list nodes whose `marker` null takes the presentation's `listLevels`, by kind. */
+export const LIST_LEVEL_KINDS: Readonly<Record<string, keyof ListLevels>> = {
+    ordered_list: 'ordered',
+    bullet_list: 'bullet',
+};
+
+/** The kind and depth of a list a walk has entered: 1 for the outermost list of that kind. */
+export interface EnteredList {
+    readonly kind: keyof ListLevels;
+    readonly depth: number;
+}
+
+/** Counts nested lists of each kind for one walk and gives each list node its depth while `render` runs. */
+export const listDepths = () => {
+    const counts: Record<keyof ListLevels, number> = { ordered: 0, bullet: 0 };
+    return {
+        within<T>(type: string, render: (entered: EnteredList | undefined) => T): T {
+            const kind = ownValue(LIST_LEVEL_KINDS, type);
+            if (kind === undefined) {
+                return render(undefined);
+            }
+            counts[kind] += 1;
+            try {
+                return render({ kind, depth: counts[kind] });
+            } finally {
+                counts[kind] -= 1;
+            }
+        },
+    };
+};
+export type ListDepths = ReturnType<typeof listDepths>;
+
+/** Without `listLevels`, the default markers by nesting depth. */
+const DEFAULT_LIST_LEVELS: ListLevels = {
+    ordered: [{ counterType: 'decimal' }, { counterType: 'lower-alpha' }, { counterType: 'lower-roman' }],
+    bullet: [{ shape: 'disc' }, { shape: 'circle' }, { shape: 'square' }],
+};
+
+/**
+ * The `style` of a list of `kind` at `depth`, 1 for the outermost list of its kind: entry `depth - 1` modulo the levels'
+ * length, whose colour and size the content CSS gives the marker.
+ */
+export const listLevelStyle = (
+    kind: keyof ListLevels,
+    depth: number,
+    levels: ListLevels = DEFAULT_LIST_LEVELS,
+): string | undefined => {
+    const entries: readonly Partial<ListLevels['ordered'][number] & ListLevels['bullet'][number]>[] = levels[kind];
+    const entry = entries[(depth - 1) % entries.length];
+    if (entry === undefined) {
+        return undefined;
+    }
+    const type = entry.counterType ?? entry.shape;
+    if (type === undefined) {
+        return undefined;
+    }
+    let style = addDeclaration(undefined, 'list-style-type', type);
+    if (entry.color !== undefined) {
+        style = addDeclaration(style, '--rte-list-marker-color', entry.color);
+    }
+    if (entry.size !== undefined) {
+        style = addDeclaration(style, '--rte-list-marker-size', entry.size);
+    }
+    return style;
+};
+
+/** `template` with the list level style on its outer element, when the list's `marker` is null, as the reader and `toHTML` write it. */
+export const withListLevel = (
+    template: HtmlTemplate,
+    attrs: JsonObject,
+    kind: keyof ListLevels,
+    depth: number,
+    levels: ListLevels | undefined,
+): HtmlTemplate => {
+    const [outer, ...inner] = template.layers;
+    const style = listLevelStyle(kind, depth, levels);
+    if (outer === undefined || style === undefined || attrs.marker !== null) {
+        return template;
+    }
+    let text = style;
+    if (outer.attrs.style !== undefined) {
+        text = `${outer.attrs.style};${style}`;
+    }
+    return { ...template, layers: [{ ...outer, attrs: { ...outer.attrs, style: text } }, ...inner] };
 };
 
 export const VOID_TAGS = new Set('area base br col embed hr img input link meta source track wbr'.split(' '));

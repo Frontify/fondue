@@ -7,6 +7,7 @@ import { canonicalJson } from '#/model/hash';
 import { isPlatformBinding } from '#/model/platform';
 import { refusesLevel, setsHeading } from '#/runtime/policy';
 import { type AuthoringPolicy } from '#/runtime/types';
+import { type NumberingStrings } from '#/ui/menus/numbering';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
 import { type ReactPresentation } from './types';
@@ -75,6 +76,10 @@ const refusedBy = (authoring: AuthoringPolicy, commands: Commands, command: stri
     return compiled !== undefined && authoring.features[compiled.featureId]?.create === false;
 };
 
+/** Whether `command` opens a package-built control rather than changing the document. */
+const opensControl = (commands: Commands, command: string) =>
+    commands.some(({ id, definition }) => id === command && definition.capability === 'openControl');
+
 /** The compiled key bindings of a route, each where it applies. */
 const bindingsOf = (keymap: Keymap, command: string, payload: JsonValue | undefined) =>
     keymap
@@ -139,7 +144,18 @@ export const toolbarItems = (
         }
         const bindings = bindingsOf(keymap, command, payload);
         const key = `${command} ${payloadKey(payload)}`;
-        return { key, command, payload, toggle: entry.kind === 'toggle', label, icon, bindings, groupStart, bubble };
+        return {
+            key,
+            command,
+            payload,
+            toggle: entry.kind === 'toggle',
+            label,
+            icon,
+            bindings,
+            groupStart,
+            bubble,
+            opensControl: opensControl(commands, command),
+        };
     };
     // A heading level the policy cannot create only names a stored heading.
     const offered = ({ command, payload }: ButtonEntry) => {
@@ -188,6 +204,15 @@ export const toolbarItems = (
     return items;
 };
 
+/** The numbering dialog's strings in the UI locale. */
+export const numberingStrings = (t: CodecContext['t']): NumberingStrings => ({
+    title: t('RichTextEditor_startNumbering'),
+    field: t('RichTextEditor_startNumberingField'),
+    range: (min, max) => t('RichTextEditor_startNumberingRange', { min, max }),
+    apply: t('RichTextEditor_apply'),
+    cancel: t('RichTextEditor_cancel'),
+});
+
 /**
  * The More rows of the key routes a feature labels and the toolbar does not show, such as Move up and Move down, so
  * each is reachable without its shortcut.
@@ -223,6 +248,32 @@ export const menuItems = (
                 bindings,
                 groupStart: false,
                 bubble: false,
+            });
+        }
+        // A command that opens a control has no key, so its toolbar entry names its row, as Start numbering at does.
+        for (const entry of declaration.toolbar ?? []) {
+            const key = `${entry.command} ${payloadKey(undefined)}`;
+            if (
+                !opensControl(commands, entry.command) ||
+                !engine.commands.has(entry.command) ||
+                refusedBy(authoring, commands, entry.command)
+            ) {
+                continue;
+            }
+            if (shown.has(key) || rows.some((row) => row.key === key)) {
+                continue;
+            }
+            rows.push({
+                key,
+                command: entry.command,
+                payload: undefined,
+                toggle: false,
+                label: t(entry.labelKey as `RichTextEditor_${string}`),
+                icon: entry.icon,
+                bindings: [],
+                groupStart: false,
+                bubble: false,
+                opensControl: true,
             });
         }
     }

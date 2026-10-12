@@ -34,6 +34,22 @@
     color: var(--rte-content-link-color);
 }
 
+/* A list level's marker colour and size, which a nested list does not inherit. */
+:where(.fondue-rte-content :is(ol, ul)) {
+    --rte-list-marker-color: initial;
+    --rte-list-marker-size: initial;
+}
+
+:where(.fondue-rte-content li)::marker {
+    color: var(--rte-list-marker-color);
+    font-size: var(--rte-list-marker-size);
+}
+
+/* A task item shows its checkbox and no list marker, whatever marker its list inherits. */
+:where(.fondue-rte-content ul[data-task-list] > li) {
+    list-style: none;
+}
+
 :where(.fondue-rte-content pre) {
     white-space: pre-wrap;
 }

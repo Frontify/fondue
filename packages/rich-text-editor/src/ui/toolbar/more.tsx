@@ -121,10 +121,17 @@ export const More = ({
     const triggerRef = useRef<HTMLButtonElement>(null);
     // Radix opens a menu on pointer down; More opens on the click, so a press dragged away opens nothing.
     const [open, setOpen] = useState(false);
+    // The row whose control opens once the menu has closed and returned focus to More, which the control then returns it to.
+    const pendingRef = useRef<ToolbarItem | undefined>(undefined);
     const pointerRef = useRef(false);
     const openAtPressRef = useRef(false);
     const onRun = async (item: ToolbarItem) => {
         if (runtime === undefined) {
+            return;
+        }
+        // A row that opens a control runs once the menu has closed, so the control does not open under the menu.
+        if (item.opensControl === true) {
+            pendingRef.current = item;
             return;
         }
         ranRef.current = true;
@@ -200,6 +207,15 @@ export const More = ({
                 ref={contentRef}
                 container={container}
                 onCloseAutoFocus={(event) => {
+                    const pending = pendingRef.current;
+                    if (pending !== undefined) {
+                        // Focus is on More when the control opens, so the control returns it there.
+                        event.preventDefault();
+                        pendingRef.current = undefined;
+                        triggerRef.current?.focus();
+                        runtime?.handle.execute(pending.command, pending.payload);
+                        return;
+                    }
                     if (ranRef.current) {
                         event.preventDefault();
                         ranRef.current = false;

@@ -578,6 +578,11 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
     /** Every command ID, guarded out or not, with its feature. */
     const owners = new Map<string, string>();
     const guardedOut = new Set<string>();
+    const setCheckedRefs: {
+        readonly featureId: string;
+        readonly command: JsonValue | undefined;
+        readonly path: string;
+    }[] = [];
     for (const feature of list) {
         for (const [id, definition] of Object.entries(feature.declaration.commands ?? {})) {
             const first = owners.get(id);
@@ -623,7 +628,20 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
                     }
                 }
             }
+            if (definition.capability === 'toggleTask') {
+                setCheckedRefs.push({ featureId: feature.id, command: args.setChecked, path: argument('setChecked') });
+            }
             commands.set(id, { id, featureId: feature.id, definition });
+        }
+    }
+    // A toggle runs its `setChecked` command with the item's `nodeId` and flipped `checked`, so that payload must pass.
+    for (const { featureId, command, path } of setCheckedRefs) {
+        const target = typeof command === 'string' ? commands.get(command) : undefined;
+        if (target === undefined) {
+            throw failure('definition.orphan-behavior', featureId, path);
+        }
+        if (findInvalidPayload(target.definition.payload, { nodeId: '', checked: true }) !== undefined) {
+            throw failure('definition.invalid-declaration', featureId, path);
         }
     }
 
@@ -663,6 +681,9 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
             const path = pointer('inputRules', index);
             if (rule.kind === 'mark-delimiter' && !marks.has(rule.mark)) {
                 throw failure('definition.orphan-behavior', feature.id, `${path}/mark`);
+            }
+            if (rule.kind === 'block-rule' && !commands.has(rule.command) && !guardedOut.has(rule.command)) {
+                throw failure('definition.orphan-behavior', feature.id, `${path}/command`);
             }
             if (rule.kind === 'line-start') {
                 if (!commands.has(rule.command) && !guardedOut.has(rule.command)) {

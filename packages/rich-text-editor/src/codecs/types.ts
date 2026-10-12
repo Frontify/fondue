@@ -3,6 +3,7 @@
 import {
     type DecodeResult,
     type Diagnostic,
+    type ListLevels,
     type ResourceLimits,
     type RichTextDocument,
     type RichTextLocale,
@@ -19,6 +20,8 @@ export interface HtmlOptions {
     readonly resolveAssetUrl?: ResolveAssetUrl;
     /** The presentation's `contentClassName`, written on the root beside `fondue-rte-content`, as the reader writes it. */
     readonly contentClassName?: string;
+    /** The presentation's `listLevels`, which writes each list's marker inline as the reader does. */
+    readonly listLevels?: ListLevels;
 }
 /** One dialect: CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks. */
 export interface MarkdownOptions {

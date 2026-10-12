@@ -27,6 +27,8 @@ export interface ToolbarItem {
     readonly bubble: boolean;
     /** The rows of the text style picker, which the item is; a row it does not offer only names the active block type. */
     readonly options?: readonly (ToolbarItem & { readonly offered: boolean })[];
+    /** Its command opens a package-built control, which a More row runs only once the menu has closed. */
+    readonly opensControl?: boolean;
 }
 
 export interface ToolbarStrings {

@@ -4,6 +4,10 @@ import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
 import { inputRules } from '#/features/input-rules/feature';
+import { bulletList } from '#/features/lists-bullet/feature';
+import { listItem } from '#/features/lists-item/feature';
+import { orderedList } from '#/features/lists-ordered/feature';
+import { taskList } from '#/features/lists-task/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { code } from '#/features/marks-code/feature';
 import { italic } from '#/features/marks-italic/feature';
@@ -25,6 +29,10 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'marks.superscript': superscript,
     'blocks.heading': heading,
     'blocks.quote': quote,
+    'lists.item': listItem,
+    'lists.bullet': bulletList,
+    'lists.ordered': orderedList,
+    'lists.task': taskList,
     'input-rules': inputRules,
 };
 

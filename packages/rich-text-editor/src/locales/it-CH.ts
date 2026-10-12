@@ -3,6 +3,7 @@
 export const itCH = {
     lang: 'it-CH',
     translationStrings: {
+        RichTextEditor_apply: 'Applica',
         RichTextEditor_blockedInvalid: 'La modifica non è disponibile perché questo contenuto non è valido.',
         RichTextEditor_blockedLimit:
             'La modifica non è disponibile perché questo contenuto supera un limite di dimensione.',
@@ -12,6 +13,8 @@ export const itCH = {
             'La modifica non è disponibile perché questo contenuto usa un formato o un modello sconosciuto.',
         RichTextEditor_bold: 'Grassetto',
         RichTextEditor_bubbleToolbar: 'Formattazione della selezione',
+        RichTextEditor_bulletList: 'Elenco puntato',
+        RichTextEditor_cancel: 'Annulla',
         RichTextEditor_code: 'Codice',
         RichTextEditor_copyContent: 'Copia contenuto',
         RichTextEditor_copyFailed: 'Copia non riuscita. Seleziona il contenuto e copialo con la tastiera.',
@@ -28,6 +31,7 @@ export const itCH = {
         RichTextEditor_moveUp: 'Sposta su',
         RichTextEditor_nodeViewError: 'Questa parte del contenuto non può essere visualizzata',
         RichTextEditor_normalText: 'Testo normale',
+        RichTextEditor_numberedList: 'Elenco numerato',
         RichTextEditor_pasteMediaDropped: 'Contenuti multimediali non incollati: ${count}',
         RichTextEditor_pasteTooLarge: 'Il contenuto incollato è troppo grande.',
         RichTextEditor_quote: 'Citazione',
@@ -53,9 +57,13 @@ export const itCH = {
         RichTextEditor_saveSaved: 'Tutte le modifiche salvate',
         RichTextEditor_saveSaving: 'Salvataggio…',
         RichTextEditor_saveUnsaved: 'Modifiche non salvate',
+        RichTextEditor_startNumbering: 'Inizia la numerazione da',
+        RichTextEditor_startNumberingField: 'Primo numero',
+        RichTextEditor_startNumberingRange: 'Inserisci un numero intero da ${min} a ${max}.',
         RichTextEditor_strike: 'Barrato',
         RichTextEditor_subscript: 'Pedice',
         RichTextEditor_superscript: 'Apice',
+        RichTextEditor_taskList: 'Elenco di attività',
         RichTextEditor_textStyle: 'Stile del testo',
         RichTextEditor_toolbar: 'Formattazione del testo',
         RichTextEditor_toolbarAlways: 'Mostra sempre la barra degli strumenti',

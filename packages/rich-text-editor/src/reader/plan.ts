@@ -7,6 +7,7 @@ import { buildPlan, type MarkPlan, type NodePlan, type Plan as BasePlan } from '
 import { ownValue } from '#/model/values';
 
 import { declaredOverrides, type ReaderNodeProps } from './define';
+import { SHIPPED_OVERRIDES } from './registry';
 
 /** What the reader reads about one node or mark type: the shared plan and its override. */
 interface Overridden {
@@ -15,7 +16,10 @@ interface Overridden {
 export type Plan = BasePlan<NodePlan & Overridden, MarkPlan & Overridden>;
 
 const overrideOf = (feature: FeatureDeclaration, name: string): Overridden => {
-    const renderers = declaredOverrides(feature);
+    let renderers = declaredOverrides(feature);
+    if (renderers === undefined) {
+        renderers = ownValue(SHIPPED_OVERRIDES, feature.id);
+    }
     if (renderers === undefined) {
         return { override: undefined };
     }

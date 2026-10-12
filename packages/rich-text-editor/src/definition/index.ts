@@ -15,6 +15,7 @@ import { NORMALIZE_META, NORMALIZERS } from './normalizers';
 import { buildSchema } from './schema';
 
 export {
+    type BlockRule,
     type CompiledInputRule,
     type LineStartRule,
     type MarkDelimiterRule,
@@ -41,8 +42,10 @@ export interface EngineCommand {
     /** The command's payload declaration; none means it takes no payload. */
     readonly payload?: PayloadDeclaration;
 }
+/** The compiled command with `id`, read when a command runs, since commands compile in declaration order. */
+export type CommandLookup = (id: string) => EngineCommand | undefined;
 /** Builds the engine command of one capability from a command's data arguments. */
-export type CapabilityImplementation = (args: JsonObject, schema: Schema) => EngineCommand;
+export type CapabilityImplementation = (args: JsonObject, schema: Schema, command: CommandLookup) => EngineCommand;
 /** Builds a package plugin whose code lives in the runtime, such as the history or the input rule engine. */
 export type PluginImplementation = (context: { readonly inputRules: readonly CompiledInputRule[] }) => Plugin;
 export type CapabilityImplementations = Readonly<Partial<Record<CapabilityName, CapabilityImplementation>>> & {
@@ -129,7 +132,17 @@ const withCommandId = (id: string, { run, active }: EngineCommand, payload: Payl
             if (dispatch === undefined) {
                 return run(state, undefined, given);
             }
-            return run(state, (transaction) => dispatch(transaction.setMeta(COMMAND_META, id)), given);
+            return run(
+                state,
+                (transaction) => {
+                    // A command that runs another command keeps the inner command's ID.
+                    if (transaction.getMeta(COMMAND_META) === undefined) {
+                        transaction.setMeta(COMMAND_META, id);
+                    }
+                    dispatch(transaction);
+                },
+                given,
+            );
         },
         active,
     };
@@ -151,10 +164,11 @@ export const compileDefinition = (
     const { features, keymap, plugins, commands: declared } = compiledModel(model);
     const schema = buildSchema(model);
     const commands = new Map<string, EngineCommand>();
+    const lookup: CommandLookup = (id) => commands.get(id);
     for (const { id, definition } of declared) {
         const implementation = capabilities[definition.capability];
         if (implementation !== undefined) {
-            commands.set(id, withCommandId(id, implementation(definition.args, schema), definition.payload));
+            commands.set(id, withCommandId(id, implementation(definition.args, schema, lookup), definition.payload));
         }
     }
     /** The first feature that contributes a plugin, with its capability, or the plugin ID for the package's keymaps and input rules. */

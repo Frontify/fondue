@@ -3,6 +3,7 @@
 export const frCH = {
     lang: 'fr-CH',
     translationStrings: {
+        RichTextEditor_apply: 'Appliquer',
         RichTextEditor_blockedInvalid: 'La modification est impossible, car ce contenu n’est pas valide.',
         RichTextEditor_blockedLimit: 'La modification est impossible, car ce contenu dépasse une limite de taille.',
         RichTextEditor_blockedMigration:
@@ -11,6 +12,8 @@ export const frCH = {
             'La modification est impossible, car ce contenu utilise un format ou un modèle inconnu.',
         RichTextEditor_bold: 'Gras',
         RichTextEditor_bubbleToolbar: 'Mise en forme de la sélection',
+        RichTextEditor_bulletList: 'Liste à puces',
+        RichTextEditor_cancel: 'Annuler',
         RichTextEditor_code: 'Code',
         RichTextEditor_copyContent: 'Copier le contenu',
         RichTextEditor_copyFailed: 'La copie a échoué. Sélectionnez le contenu et copiez-le avec le clavier.',
@@ -27,6 +30,7 @@ export const frCH = {
         RichTextEditor_moveUp: 'Déplacer vers le haut',
         RichTextEditor_nodeViewError: 'Cette partie du contenu ne peut pas être affichée',
         RichTextEditor_normalText: 'Texte normal',
+        RichTextEditor_numberedList: 'Liste numérotée',
         RichTextEditor_pasteMediaDropped: 'Médias non collés\u00A0: ${count}',
         RichTextEditor_pasteTooLarge: 'Le contenu collé est trop volumineux.',
         RichTextEditor_quote: 'Citation',
@@ -52,9 +56,13 @@ export const frCH = {
         RichTextEditor_saveSaved: 'Toutes les modifications sont enregistrées',
         RichTextEditor_saveSaving: 'Enregistrement…',
         RichTextEditor_saveUnsaved: 'Modifications non enregistrées',
+        RichTextEditor_startNumbering: 'Commencer la numérotation à',
+        RichTextEditor_startNumberingField: 'Premier numéro',
+        RichTextEditor_startNumberingRange: 'Saisissez un nombre entier entre ${min} et ${max}.',
         RichTextEditor_strike: 'Barré',
         RichTextEditor_subscript: 'Indice',
         RichTextEditor_superscript: 'Exposant',
+        RichTextEditor_taskList: 'Liste de tâches',
         RichTextEditor_textStyle: 'Style de texte',
         RichTextEditor_toolbar: 'Mise en forme du texte',
         RichTextEditor_toolbarAlways: 'Toujours afficher la barre d’outils',

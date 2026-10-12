@@ -1,17 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
-import { type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos } from 'prosemirror-model';
-import { type EditorState } from 'prosemirror-state';
+import { Fragment, type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos } from 'prosemirror-model';
+import { liftListItem, sinkListItem, wrapRangeInList } from 'prosemirror-schema-list';
+import { type EditorState, type Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
-import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN, HISTORY_PLUGIN, INPUT_RULES_PLUGIN } from '#/model/capabilities';
+import {
+    BASE_KEYS_PLUGIN,
+    CONTAINER_KEYS_PLUGIN,
+    HISTORY_PLUGIN,
+    INPUT_RULES_PLUGIN,
+    LIST_KEYS_PLUGIN,
+} from '#/model/capabilities';
 import { isRecord } from '#/model/values';
 
 import { historyPlugin, redo, undo } from './history';
 import { inputRulesPlugin, undoInputRule } from './input-rules';
-import { baseKeysPlugin, containerKeysPlugin } from './keys';
+import { baseKeysPlugin, containerKeysPlugin, listKeysPlugin } from './keys';
+import { listAround, repeated } from './lists';
+import { nearest, positionOf } from './positions';
+import { carrySelection } from './transactions';
 
 interface TextRange {
     readonly from: number;
@@ -324,6 +334,197 @@ const block: CapabilityImplementation = (args) => ({
     active: () => false,
 });
 
+/** The payload's fields that `type` declares as attributes, such as `start` for `ordered_list`. */
+const declaredIn = (type: NodeType, payload: unknown) => {
+    const attrs: Record<string, unknown> = {};
+    if (isRecord(payload)) {
+        for (const [name, value] of Object.entries(payload)) {
+            if (Object.hasOwn(type.spec.attrs ?? {}, name)) {
+                attrs[name] = value;
+            }
+        }
+    }
+    return attrs;
+};
+
+/** Whether the innermost list at the selection holds items of `item`, so a key of another list's items passes on. */
+const inListOf = (state: EditorState, item: NodeType) => {
+    const around = listAround(state.selection.$from);
+    return around !== undefined && around.list.firstChild?.type === item;
+};
+
+/**
+ * Wraps the selected blocks in the list, with headings and other textblocks first turned into paragraphs, which keeps
+ * their inline content and references.
+ */
+const wrapInList = (state: EditorState, list: NodeType, item: NodeType, payload: unknown) => {
+    const paragraph = state.schema.nodes.paragraph as NodeType;
+    const { $from, $to } = state.selection;
+    const transaction = state.tr.setBlockType($from.pos, $to.pos, paragraph, (node) => carried(node, paragraph, {}));
+    const range = transaction.doc
+        .resolve(transaction.mapping.map($from.pos))
+        .blockRange(transaction.doc.resolve(transaction.mapping.map($to.pos)));
+    if (range === null || !wrapRangeInList(transaction, range, list, declaredIn(list, payload))) {
+        return undefined;
+    }
+    // A rule's payload, such as `checked` from `[x] `, applies to the new items.
+    const itemAttrs = Object.entries(declaredIn(item, payload));
+    const { start, end } = range;
+    transaction.doc.nodesBetween(transaction.mapping.map(start), transaction.mapping.map(end), (node, pos) => {
+        if (node.type === item) {
+            for (const [name, value] of itemAttrs) {
+                transaction.setNodeAttribute(pos, name, value);
+            }
+        }
+        return node.type !== item;
+    });
+    return transaction.scrollIntoView();
+};
+
+/**
+ * Turns the list at the selection's depth into `list`, keeping items, nesting and children: an ordered list takes the
+ * payload's `start`, new task items are unchecked unless a rule's `checked` names the item at the caret, and items that
+ * leave a task list drop `checked`.
+ */
+const convertList = (state: EditorState, list: NodeType, item: NodeType, payload: unknown) => {
+    const around = listAround(state.selection.$from);
+    if (around === undefined) {
+        return undefined;
+    }
+    const caret = state.selection.$from.index(around.depth);
+    const content = Fragment.from(
+        around.list.children.map((child, index) => {
+            let attrs = {};
+            if (index === caret) {
+                attrs = declaredIn(item, payload);
+            }
+            return item.create(attrs, child.content, child.marks);
+        }),
+    );
+    if (!list.validContent(content)) {
+        return undefined;
+    }
+    const pos = state.selection.$from.before(around.depth);
+    const transaction = state.tr.replaceWith(
+        pos,
+        pos + around.list.nodeSize,
+        list.create(declaredIn(list, payload), content),
+    );
+    // Items and lists keep their sizes, so every position, and the selection with them, stays the same.
+    return transaction.setSelection(carrySelection(transaction.doc, state.selection)).scrollIntoView();
+};
+
+const toggleList: CapabilityImplementation = (args, schema) => {
+    // Compilation checked that the model declares both nodes.
+    const list = schema.nodes[args.list as string] as NodeType;
+    const item = schema.nodes[args.item as string] as NodeType;
+    const isList = (state: EditorState) => listAround(state.selection.$from)?.list.type === list;
+    return {
+        run: (state, dispatch, payload) => {
+            let transaction: Transaction | undefined;
+            if (listAround(state.selection.$from) === undefined) {
+                transaction = wrapInList(state, list, item, payload);
+            } else if (isList(state)) {
+                // The selected items leave every level of this list type and become paragraphs.
+                transaction = repeated(state, liftListItem(item), isList);
+            } else {
+                transaction = convertList(state, list, item, payload);
+            }
+            if (transaction === undefined) {
+                return false;
+            }
+            dispatch?.(transaction);
+            return true;
+        },
+        active: (state) => isList(state),
+    };
+};
+
+const indentItem: CapabilityImplementation = (args, schema) => {
+    const item = schema.nodes[args.item as string] as NodeType;
+    const sink = sinkListItem(item);
+    return {
+        run: (state, dispatch) => inListOf(state, item) && sink(state, dispatch),
+        active: () => false,
+    };
+};
+
+const outdentItem: CapabilityImplementation = (args, schema) => {
+    const item = schema.nodes[args.item as string] as NodeType;
+    const lift = liftListItem(item);
+    return {
+        run: (state, dispatch) => inListOf(state, item) && lift(state, dispatch),
+        active: () => false,
+    };
+};
+
+const toggleTask: CapabilityImplementation = (args, schema, command) => {
+    const item = schema.nodes[args.item as string] as NodeType;
+    const setChecked = args.setChecked as string;
+    return {
+        run: (state, dispatch) => {
+            const found = nearest(state, item);
+            const target = command(setChecked);
+            if (found === undefined || target === undefined) {
+                return false;
+            }
+            const { nodeId, checked } = found.node.attrs as { readonly nodeId: string; readonly checked: boolean };
+            return target.run(state, dispatch, { nodeId, checked: !checked });
+        },
+        active: () => false,
+    };
+};
+
+/** Sets the payload's other fields on the node its `nodeId` names, else on the nearest one around the selection. */
+const setAttributes: CapabilityImplementation = (args, schema) => {
+    const type = schema.nodes[args.node as string] as NodeType;
+    return {
+        run: (state, dispatch, payload) => {
+            if (!isRecord(payload)) {
+                return false;
+            }
+            const { nodeId, ...attrs } = payload;
+            let found: { readonly node: Node; readonly pos: number } | undefined;
+            if (typeof nodeId === 'string') {
+                const pos = positionOf(state.doc, nodeId);
+                const node = pos === undefined ? null : state.doc.nodeAt(pos);
+                if (pos !== undefined && node?.type === type) {
+                    found = { node, pos };
+                }
+            } else {
+                found = nearest(state, type);
+            }
+            if (found === undefined) {
+                return false;
+            }
+            const { node, pos } = found;
+            const changed = Object.entries(attrs).filter(([name, value]) => node.attrs[name] !== value);
+            if (changed.length === 0) {
+                return false;
+            }
+            const transaction = state.tr;
+            for (const [name, value] of changed) {
+                transaction.setNodeAttribute(pos, name, value);
+            }
+            dispatch?.(transaction);
+            return true;
+        },
+        active: () => false,
+    };
+};
+
+// The node a control acts on, around the selection, without which its command does not apply.
+const CONTROL_NODES: Readonly<Record<string, string>> = { numbering: 'ordered_list' };
+
+/** Applies where its control can act and changes nothing: the editor opens the control. */
+const openControl: CapabilityImplementation = (args, schema) => {
+    const type = schema.nodes[CONTROL_NODES[args.control as string] ?? ''];
+    return {
+        run: (state) => type !== undefined && nearest(state, type) !== undefined,
+        active: () => false,
+    };
+};
+
 const history: CapabilityImplementation = (args) => {
     let command = undo;
     if (args.action === 'redo') {
@@ -336,15 +537,22 @@ const history: CapabilityImplementation = (args) => {
 export const CAPABILITIES: CapabilityImplementations = {
     block,
     history,
+    indentItem,
     insertNode,
     insertText,
+    openControl,
+    outdentItem,
+    setAttributes,
     setBlock,
+    toggleList,
     toggleMark,
+    toggleTask,
     wrapIn,
     plugins: {
         // Backspace right after a rule fired undoes it before any list or block key sees it.
         [HISTORY_PLUGIN.id]: () => historyPlugin({ Backspace: undoInputRule }),
         [INPUT_RULES_PLUGIN.id]: inputRulesPlugin,
+        [LIST_KEYS_PLUGIN.id]: listKeysPlugin,
         [CONTAINER_KEYS_PLUGIN.id]: containerKeysPlugin,
         [BASE_KEYS_PLUGIN.id]: baseKeysPlugin,
     },

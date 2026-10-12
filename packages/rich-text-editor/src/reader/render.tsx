@@ -2,7 +2,7 @@
 
 import { type ComponentType, createElement, Fragment, type ReactElement, type ReactNode } from 'react';
 
-import { type Diagnostic } from '#/model';
+import { type Diagnostic, type ListLevels } from '#/model';
 import { isIsland, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
 import {
@@ -14,10 +14,12 @@ import {
     islandLabel,
     type Item,
     itemsOf,
+    type ListDepths,
     markPath,
     spaced,
     type Spacing,
     VOID_TAGS,
+    withListLevel,
     writesAttribute,
 } from '#/model/output';
 
@@ -29,6 +31,8 @@ export interface RenderState extends Spacing {
     readonly plan: Plan;
     readonly context: ReaderContext;
     readonly diagnostics: Diagnostic[];
+    readonly listLevels: ListLevels | undefined;
+    readonly depths: ListDepths;
 }
 
 // Every HTML attribute whose React prop is not its lowercase name; the rest pass through unchanged.
@@ -175,7 +179,10 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         return null;
     }
     const before = state.carried;
-    const children = renderChildren(state, node, path, plan.pre);
+    const { children, entered } = state.depths.within(node.type, (level) => ({
+        children: renderChildren(state, node, path, plan.pre),
+        entered: level,
+    }));
     const attrs = attrsOf(node.attrs);
     if (plan.override !== undefined) {
         try {
@@ -191,6 +198,9 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
     }
     state.carried = 0;
     let template = resolveHtmlSpec(plan.spec, attrs, plan.options, plan.shared);
+    if (entered !== undefined) {
+        template = withListLevel(template, attrs, entered.kind, entered.depth, state.listLevels);
+    }
     if (!plan.inline) {
         template = withAutoDirection(template);
     }

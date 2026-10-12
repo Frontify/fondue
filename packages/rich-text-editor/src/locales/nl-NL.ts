@@ -3,6 +3,7 @@
 export const nlNL = {
     lang: 'nl-NL',
     translationStrings: {
+        RichTextEditor_apply: 'Toepassen',
         RichTextEditor_blockedInvalid: 'Bewerken is niet mogelijk omdat deze inhoud ongeldig is.',
         RichTextEditor_blockedLimit: 'Bewerken is niet mogelijk omdat deze inhoud een groottelimiet overschrijdt.',
         RichTextEditor_blockedMigration:
@@ -11,6 +12,8 @@ export const nlNL = {
             'Bewerken is niet mogelijk omdat deze inhoud een onbekend formaat of model gebruikt.',
         RichTextEditor_bold: 'Vet',
         RichTextEditor_bubbleToolbar: 'Opmaak van de selectie',
+        RichTextEditor_bulletList: 'Lijst met opsommingstekens',
+        RichTextEditor_cancel: 'Annuleren',
         RichTextEditor_code: 'Code',
         RichTextEditor_copyContent: 'Inhoud kopiëren',
         RichTextEditor_copyFailed: 'Kopiëren is mislukt. Selecteer de inhoud en kopieer deze met het toetsenbord.',
@@ -27,6 +30,7 @@ export const nlNL = {
         RichTextEditor_moveUp: 'Omhoog verplaatsen',
         RichTextEditor_nodeViewError: 'Dit deel van de inhoud kan niet worden weergegeven',
         RichTextEditor_normalText: 'Normale tekst',
+        RichTextEditor_numberedList: 'Genummerde lijst',
         RichTextEditor_pasteMediaDropped: 'Media niet geplakt: ${count}',
         RichTextEditor_pasteTooLarge: 'De geplakte inhoud is te groot.',
         RichTextEditor_quote: 'Citaat',
@@ -51,9 +55,13 @@ export const nlNL = {
         RichTextEditor_saveSaved: 'Alle wijzigingen opgeslagen',
         RichTextEditor_saveSaving: 'Opslaan…',
         RichTextEditor_saveUnsaved: 'Niet-opgeslagen wijzigingen',
+        RichTextEditor_startNumbering: 'Nummering beginnen bij',
+        RichTextEditor_startNumberingField: 'Eerste nummer',
+        RichTextEditor_startNumberingRange: 'Voer een geheel getal in van ${min} tot ${max}.',
         RichTextEditor_strike: 'Doorhalen',
         RichTextEditor_subscript: 'Subscript',
         RichTextEditor_superscript: 'Superscript',
+        RichTextEditor_taskList: 'Takenlijst',
         RichTextEditor_textStyle: 'Tekststijl',
         RichTextEditor_toolbar: 'Tekstopmaak',
         RichTextEditor_toolbarAlways: 'Werkbalk altijd tonen',
