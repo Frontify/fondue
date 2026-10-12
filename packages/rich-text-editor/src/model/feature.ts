@@ -43,7 +43,13 @@ type FactoryOf<D> = FeatureFactory<
 
 /** Returns the feature's factory; hosts call it, with typed and serializable options or none. */
 export const defineFeature = <const D extends FeatureDeclaration>(declaration: D): FactoryOf<D> => {
-    const copy = snapshot(declaration);
+    // Migration steps hold functions, which a JSON snapshot would reject, so they are copied apart.
+    const { migrations, ...data } = declaration;
+    const copy = (
+        migrations === undefined
+            ? snapshot(declaration)
+            : Object.freeze({ ...snapshot(data), migrations: Object.freeze(migrations.map((step) => ({ ...step }))) })
+    ) as FeatureDeclaration;
     const factory = (options?: object) => createFeature(copy, options, false);
     return factory as unknown as FactoryOf<D>;
 };

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type JsonValue } from './declarations';
+import { type RichTextDocument } from './format';
 
 const codePoint = (characters: readonly string[], index: number) => {
     const character = characters[index];
@@ -90,3 +91,7 @@ export const sha256 = (text: string): string => {
     }
     return [...state].map((value) => value.toString(16).padStart(8, '0')).join('');
 };
+
+/** Lowercase hex SHA-256 over canonical JSON with keys sorted by code point, computed synchronously in JavaScript. */
+export const hashDocument = (document: RichTextDocument): string =>
+    sha256(canonicalJson(document as unknown as JsonValue));
