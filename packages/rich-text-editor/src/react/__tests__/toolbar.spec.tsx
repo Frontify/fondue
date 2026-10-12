@@ -129,6 +129,7 @@ describe('the fixed toolbar', () => {
             'Bold',
             'Italic',
             'Link',
+            'More',
         ]);
         expect(renders).toBe(0);
         expect(JSON.stringify(handle.getSnapshot().document.content)).toContain(`three${'x'.repeat(100)}`);
@@ -236,7 +237,7 @@ describe('the fixed toolbar', () => {
         const { handle } = mount({ defaultValue: loaded(codeBlock('let code = 1')) });
         act(() => setSelection(handle(), { text: 'code' }));
 
-        expect(refused).toEqual(['Italic', 'Link', 'List']);
+        expect(refused).toEqual(['Italic', 'Link', 'List', 'More']);
         expect(button('Bold')).toHaveAttribute('aria-disabled', 'true');
     });
 
