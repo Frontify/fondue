@@ -10,6 +10,8 @@ import { isRecord } from '#/model/values';
 interface Size {
     readonly bytes: number;
     readonly nodes: number;
+    /** The longest text node, which the engine keeps joined as the encoder does; an island's text was checked at decode. */
+    readonly longest: number;
 }
 
 const encoder = new TextEncoder();
@@ -23,8 +25,11 @@ const storedNodes = (value: unknown): number => {
     return value.content.reduce((total: number, child: unknown) => total + storedNodes(child), 1);
 };
 
+/** The limit of a commit's check that a document exceeds. */
+export type ExceededLimit = 'maxDocumentNodes' | 'maxDocumentBytes' | 'maxTextLength';
+
 /**
- * The `maxDocumentBytes` and `maxDocumentNodes` checks of a commit: the UTF-8 size
+ * The `maxDocumentBytes`, `maxDocumentNodes` and `maxTextLength` checks of a commit: the UTF-8 size
  * of the JSON the encoder writes, through its own `writeNode`, cached per immutable node, so a commit measures only the nodes along its changed
  * path, never through `Node.toJSON` or a whole-document serialization.
  */
@@ -51,7 +56,7 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
         const name = node.type.name;
         if (name === ISLAND_BLOCK || name === ISLAND_INLINE) {
             const original = node.attrs.original as JsonValue;
-            return { bytes: utf8Bytes(JSON.stringify(original)), nodes: storedNodes(original) };
+            return { bytes: utf8Bytes(JSON.stringify(original)), nodes: storedNodes(original), longest: 0 };
         }
         let content: unknown[] | undefined;
         if (node.childCount > 0) {
@@ -62,8 +67,10 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
             attrs: node.attrs,
             marks: node.marks.map(({ type, attrs }) => ({ type: type.name, attrs })),
         };
+        let longest = 0;
         if (node.text !== undefined) {
             tree.text = node.text;
+            longest = node.text.length;
         }
         const shell = writeNode(vocabulary, tree, content);
         // The children go between the brackets of the empty `content` array, one comma apart.
@@ -73,8 +80,9 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
             const size = sizeOf(child);
             bytes += size.bytes;
             nodes += size.nodes;
+            longest = Math.max(longest, size.longest);
         }
-        return { bytes, nodes };
+        return { bytes, nodes, longest };
     };
 
     const sizeOf = (node: Node): Size => {
@@ -86,9 +94,22 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
         return size;
     };
 
-    /** Whether the document has more nodes or bytes than the limits allow. */
-    return (doc: Node, limits: ResourceLimits): boolean => {
+    /** The limit the document exceeds, if any, and with `current` only one whose measure it grows over `current`'s. */
+    return (doc: Node, limits: ResourceLimits, current?: Node): ExceededLimit | undefined => {
         const size = sizeOf(doc);
-        return size.nodes > limits.maxDocumentNodes || envelopeBytes + size.bytes > limits.maxDocumentBytes;
+        let before: Size = { bytes: 0, nodes: 0, longest: 0 };
+        if (current !== undefined) {
+            before = sizeOf(current);
+        }
+        if (size.nodes > limits.maxDocumentNodes && size.nodes > before.nodes) {
+            return 'maxDocumentNodes';
+        }
+        if (envelopeBytes + size.bytes > limits.maxDocumentBytes && size.bytes > before.bytes) {
+            return 'maxDocumentBytes';
+        }
+        if (size.longest > limits.maxTextLength && size.longest > before.longest) {
+            return 'maxTextLength';
+        }
+        return undefined;
     };
 };

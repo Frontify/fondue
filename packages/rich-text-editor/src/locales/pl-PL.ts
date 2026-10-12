@@ -27,6 +27,8 @@ export const plPL = {
         RichTextEditor_moveUp: 'Przenieś w górę',
         RichTextEditor_nodeViewError: 'Nie można wyświetlić tej części treści',
         RichTextEditor_normalText: 'Zwykły tekst',
+        RichTextEditor_pasteMediaDropped: 'Niewklejone multimedia: ${count}',
+        RichTextEditor_pasteTooLarge: 'Wklejona zawartość jest za duża.',
         RichTextEditor_quote: 'Cytat',
         RichTextEditor_readerBlockedInvalid: 'Ta treść nie może być wyświetlona',
         RichTextEditor_readerBlockedUnsupported: 'Ta treść nie może być tutaj wyświetlona',

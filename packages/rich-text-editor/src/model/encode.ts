@@ -35,7 +35,7 @@ const writeAttrs = (attrs: Readonly<Record<string, unknown>>, declared: readonly
 };
 
 /** A mark as the format stores it: an island mark's `original`, or its type with its written attributes. */
-const writeMark = (vocabulary: Vocabulary, mark: TreeMark): unknown => {
+export const writeMark = (vocabulary: Vocabulary, mark: TreeMark): unknown => {
     if (mark.type === ISLAND_MARK) {
         return mark.attrs.original;
     }

@@ -27,6 +27,8 @@ export const nlNL = {
         RichTextEditor_moveUp: 'Omhoog verplaatsen',
         RichTextEditor_nodeViewError: 'Dit deel van de inhoud kan niet worden weergegeven',
         RichTextEditor_normalText: 'Normale tekst',
+        RichTextEditor_pasteMediaDropped: 'Media niet geplakt: ${count}',
+        RichTextEditor_pasteTooLarge: 'De geplakte inhoud is te groot.',
         RichTextEditor_quote: 'Citaat',
         RichTextEditor_readerBlockedInvalid: 'Deze inhoud kan niet worden getoond',
         RichTextEditor_readerBlockedUnsupported: 'Deze inhoud kan hier niet worden getoond',
