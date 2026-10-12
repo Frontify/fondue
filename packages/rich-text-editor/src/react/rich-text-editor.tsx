@@ -54,7 +54,7 @@ import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
 import { type ColumnState } from '#/runtime/columns';
-import { IMAGE_ALT, MEDIA_PICKER, selectedImage } from '#/runtime/media';
+import { IMAGE_ALT, MEDIA_PICKER, selectedImage, UPLOAD_START } from '#/runtime/media';
 import {
     createEditorRuntime,
     type EditorRuntime,
@@ -409,13 +409,9 @@ const SessionComponent = (
         const { t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
         const engine = engineOf(definition);
         const ids = generateId ?? randomId;
-        /** The host asset picker for a new figure, or for the image a payload's `nodeId` names. */
-        const openPicker = (session: EditorRuntime, payload: unknown) => {
+        /** The host asset picker, else the file chooser, for a new figure or for the image `nodeId`. */
+        const openPicker = (session: EditorRuntime, nodeId: string | undefined) => {
             const picker = memberOf(latestRef.current.services, 'assets');
-            let nodeId: string | undefined;
-            if (isRecord(payload) && typeof payload.nodeId === 'string') {
-                nodeId = payload.nodeId;
-            }
             // Without a host picker the file chooser opens, whose files upload through `services.uploads`.
             if (picker === undefined) {
                 const chooser = chooserRef.current;
@@ -483,8 +479,15 @@ const SessionComponent = (
             tabMovesFocus: () => latestRef.current.tabMovesFocus,
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             openControl: (opened, payload) => {
+                // The figure an image insert adds belongs to the image feature, whatever its payload names.
                 if (opened === MEDIA_PICKER) {
-                    openPicker(runtime, payload);
+                    openPicker(runtime, undefined);
+                    return;
+                }
+                if (opened === UPLOAD_START) {
+                    if (isRecord(payload) && typeof payload.nodeId === 'string') {
+                        openPicker(runtime, payload.nodeId);
+                    }
                     return;
                 }
                 let given = payload;

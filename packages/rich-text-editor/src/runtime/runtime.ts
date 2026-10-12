@@ -54,7 +54,7 @@ import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history'
 import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
 import { controlKeysPlugin, createKeyGuard } from './keys';
 import { createLimitCheck, type ExceededLimit } from './limits';
-import { insertPicked, MEDIA_PICKER, pickedAsset, refillPicked } from './media';
+import { insertPicked, MEDIA_PICKER, pickedAsset, refillPicked, UPLOAD_START } from './media';
 import { operationMetric } from './metrics';
 import { authoringOf, createPolicyCheck, refusesLevel, setsHeading } from './policy';
 import { positionOf } from './positions';
@@ -458,7 +458,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return [[command, policy] as const];
         }),
     );
-    // The control of each `openControl` command by command ID; an upload start refills its node through the picker.
+    // The control each command opens by command ID: an `openControl` command's own, and an upload start's for its node.
     const controls = new Map(
         compiledModel(definition.model).commands.flatMap(
             ({ id, definition: { capability, args } }): [string, string][] => {
@@ -466,7 +466,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                     return [[id, args.control as string]];
                 }
                 if (capability === 'upload' && args.action === 'start') {
-                    return [[id, MEDIA_PICKER]];
+                    return [[id, UPLOAD_START]];
                 }
                 return [];
             },
