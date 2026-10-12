@@ -190,11 +190,6 @@ export interface EditorRuntime {
         asset: unknown,
         place: { readonly target: SelectionHandle } | { readonly nodeId: string },
     ): CommandResult;
-    /**
-     * The images whose asset a replacement changed this session, with the asset it set, whose chrome asks to review
-     * the alternative text while the image still holds that asset, so an undone replacement asks nothing.
-     */
-    readonly altReviews: Map<string, string>;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
     /**
@@ -450,6 +445,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             },
         ),
     );
+    // The policy action a command needs that opens the asset picker, whose answer then creates or edits content.
+    const pickerActions = new Map<EngineCommand, { readonly featureId: string; readonly action: 'create' | 'edit' }>();
+    for (const { id, featureId, definition: declared } of compiledModel(definition.model).commands) {
+        const command = definition.commands.get(id);
+        if (command === undefined) {
+            continue;
+        }
+        if (declared.capability === 'openControl' && declared.args.control === MEDIA_PICKER) {
+            pickerActions.set(command, { featureId, action: 'create' });
+        } else if (declared.capability === 'upload' && declared.args.action === 'start') {
+            pickerActions.set(command, { featureId, action: 'edit' });
+        }
+    }
     let { capabilities } = options;
     let exceedsLimits = createLimitCheck(definition.model, capabilities);
     // Aborted by `dispose`, which ends the session's own service calls.
@@ -1092,6 +1100,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (typeof base === 'string') {
             return { code: base };
         }
+        // The picker never opens for content the policy would refuse once it answers.
+        const picks = pickerActions.get(command);
+        if (picks !== undefined && policy.features[picks.featureId]?.[picks.action] === false) {
+            return { code: 'not-allowed' };
+        }
         // A level the policy does not offer is refused before applicability, even in a heading of that level.
         if (headingCommands.has(command) && refusesLevel(policy, payload)) {
             return { code: 'not-allowed' };
@@ -1304,8 +1317,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(target)),
     });
 
-    // Session-only: a reload or another editor of the document asks nothing.
-    const altReviews = new Map<string, string>();
     const placeAsset: EditorRuntime['placeAsset'] = (value, place) => {
         const asset = pickedAsset(value);
         if (asset === undefined) {
@@ -1319,11 +1330,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (positionOf(state.doc, nodeId) === undefined) {
             return rejected('target-invalid');
         }
-        const result = runOn(refillPicked(nodeId, asset), { payload: undefined }, () => state, 'host');
-        if (result.status === 'applied') {
-            altReviews.set(nodeId, asset.assetId);
-        }
-        return result;
+        return runOn(refillPicked(nodeId, asset), { payload: undefined }, () => state, 'host');
     };
 
     /** Commits a capture of the selection, or of `range`, as target `id`. */
@@ -2010,7 +2017,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         nodeActions,
         placeAsset,
-        altReviews,
         saveStatusChanged: emitSaveStatus,
         clearHistory: () => {
             if (phase !== 'ready' || settling.active()) {

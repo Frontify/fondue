@@ -35,3 +35,11 @@
     gap: var(--spacing-x-small);
     margin: 0;
 }
+
+.error {
+    margin: 0;
+    color: var(--color-error-default);
+    font-family: var(--text-body-small-default-font-family);
+    font-size: var(--text-body-small-default-font-size);
+    line-height: var(--text-body-small-default-line-height);
+}

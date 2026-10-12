@@ -7,8 +7,8 @@ import {
     figureAlign,
     IMAGE_FEATURE,
     imageOutput,
-    isUnresolvedImage,
-    unresolvedAsset,
+    leavesOutUnresolved,
+    type Unavailable,
 } from '#/model/assets';
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, passageDirection, resolveHtmlSpec, treeRuns, withAutoDirection } from '#/model/html-spec';
@@ -219,8 +219,7 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         state.carried = 0;
         return '';
     }
-    if (plan.featureId === IMAGE_FEATURE && isUnresolvedImage(node)) {
-        state.diagnostics.push(unresolvedAsset(path));
+    if (leavesOutUnresolved(state, plan.featureId, node, path)) {
         state.carried = 0;
         return '';
     }
@@ -314,13 +313,7 @@ const imageMarkup = (state: HtmlState, node: TreeNode, path: string): string => 
     }
     const shown = imageOutput(attrs, state.context);
     if (shown.kind === 'unavailable') {
-        let label = '';
-        let message = escapeHtml(shown.message);
-        if (shown.label !== '') {
-            message += ' ';
-            label = `<bdi>${escapeHtml(shown.label)}</bdi>`;
-        }
-        return `<span data-rte-image-unavailable="">${message}${label}</span>`;
+        return unavailableMarkup(shown, false);
     }
     let written = ` src="${escapeHtml(shown.src)}"`;
     if (shown.alt !== undefined) {
@@ -335,7 +328,16 @@ const imageMarkup = (state: HtmlState, node: TreeNode, path: string): string => 
     if (shown.cssWidth !== undefined) {
         written += ` style="width:${shown.cssWidth}"`;
     }
-    return `<img${written}/>`;
+    return `<img${written}/>${unavailableMarkup(shown.unavailable, true)}`;
+};
+
+/** The reader's `ImageUnavailable` as text, which no `HtmlSpec` can express: a message, then the label in `bdi`. */
+const unavailableMarkup = ({ message, label }: Unavailable, hidden: boolean): string => {
+    let text = escapeHtml(message);
+    if (label !== '') {
+        text += ` <bdi>${escapeHtml(label)}</bdi>`;
+    }
+    return `<span data-rte-image-unavailable=""${hidden ? ' hidden=""' : ''}>${text}</span>`;
 };
 
 /**

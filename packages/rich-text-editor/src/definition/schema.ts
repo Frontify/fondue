@@ -72,14 +72,14 @@ export const withNodeIds = (fragment: Fragment, next: () => string | null): Frag
 };
 
 /**
- * Declared attributes, then `unknownAttributes`, which holds what the vocabulary does not declare. With `leaf`, every
- * required attribute gets a null default too, since the engine rejects a schema whose parent requires a leaf it
- * cannot create, such as a figure's image; decode and parse rules still require the values.
+ * Declared attributes, then `unknownAttributes`, which holds what the vocabulary does not declare. With `generated`,
+ * every required attribute gets a null default too, for a leaf the engine must be able to create where its parent
+ * requires it, such as a figure's image; decode and parse rules still require the values.
  */
-const attributeSpecs = (declarations: AttributeDeclarations, leaf = false) => {
+const attributeSpecs = (declarations: AttributeDeclarations, generated = false) => {
     const specs: Record<string, AttributeSpec> = {};
     for (const [name, declaration] of Object.entries(declarations)) {
-        if (name === 'nodeId' || (leaf && !('default' in declaration))) {
+        if (name === 'nodeId' || (generated && !('default' in declaration))) {
             // The runtime fills it before a commit publishes, so engine-made nodes may start without one; decode still requires it.
             specs[name] = { default: null };
             continue;
@@ -89,6 +89,9 @@ const attributeSpecs = (declarations: AttributeDeclarations, leaf = false) => {
     specs.unknownAttributes = { default: null };
     return specs;
 };
+
+// The engine's message for a required position that only nodes with required attributes can fill.
+const NON_GENERATABLE = /Only non-generatable nodes \(([^)]*)\) in a required position/;
 
 const RGB = /^rgba?\((\d+), ?(\d+), ?(\d+)(?:, ?([\d.]+))?\)$/;
 
@@ -248,7 +251,7 @@ export const buildSchema = (model: ContentModel): Schema => {
         let specs: Record<string, AttributeSpec> = {};
         // A text node takes no attribute.
         if (node.name !== 'text') {
-            specs = attributeSpecs(attributes, declaration.content === undefined);
+            specs = attributeSpecs(attributes);
         }
         const spec: NodeSpec = {
             attrs: specs,
@@ -307,10 +310,27 @@ export const buildSchema = (model: ContentModel): Schema => {
         marks[name] = spec;
     }
     marks[ISLAND_MARK] = ISLAND_MARK_SPEC;
-    try {
-        return new Schema({ nodes, marks, topNode: 'doc' });
-    } catch (error) {
-        const engine = error instanceof Error ? error.message : String(error);
-        throw new DefinitionError('definition.invalid-declaration', { engine });
+    // The leaves the engine reports it cannot create in a required position get null defaults, and only those.
+    const leaves = new Map(
+        compiled.nodes
+            .filter(({ name, declaration }) => name !== 'text' && declaration.content === undefined)
+            .map((node) => [node.name, attributesOf(node)]),
+    );
+    const generated = new Set<string>();
+    for (;;) {
+        try {
+            return new Schema({ nodes, marks, topNode: 'doc' });
+        } catch (error) {
+            const engine = error instanceof Error ? error.message : String(error);
+            const named = NON_GENERATABLE.exec(engine)?.[1]?.split(', ') ?? [];
+            const fixable = named.filter((name) => leaves.has(name) && !generated.has(name));
+            if (fixable.length === 0) {
+                throw new DefinitionError('definition.invalid-declaration', { engine });
+            }
+            for (const name of fixable) {
+                generated.add(name);
+                nodes[name] = { ...nodes[name], attrs: attributeSpecs(leaves.get(name) ?? {}, true) };
+            }
+        }
     }
 };
