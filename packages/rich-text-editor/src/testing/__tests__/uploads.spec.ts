@@ -10,12 +10,15 @@ const ACCEPT = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg
 const OPTIONS = { maxAssetBytes: 2 * 1024 * 1024, acceptTypes: ACCEPT };
 
 /** Registers the kit's cases on a stand-in runner, runs each one and returns the titles of those that fail. */
-const failingTitles = async (createService: () => FakeUploadService): Promise<string[]> => {
+const failingTitles = async (
+    createService: () => FakeUploadService,
+    options: Parameters<typeof runUploadConformance>[1] = OPTIONS,
+): Promise<string[]> => {
     const cases = new Map<string, () => unknown>();
     vi.stubGlobal('describe', (_name: string, body: () => void) => body());
     vi.stubGlobal('it', (name: string, body: () => unknown) => cases.set(name, body));
     try {
-        runUploadConformance(createService, OPTIONS);
+        runUploadConformance(createService, options);
     } finally {
         vi.unstubAllGlobals();
     }
@@ -30,13 +33,16 @@ const failingTitles = async (createService: () => FakeUploadService): Promise<st
     return failing;
 };
 
-type Check = 'size' | 'content type' | 'pixels' | 'side' | 'script' | 'asset ID';
+type Check = 'size' | 'content type' | 'pixels' | 'side' | 'script' | 'asset ID' | 'everything';
 
 /** A service that checks as the reference fake does, except for `skipped`. */
 const flawed = (skipped: Check) => (): FakeUploadService => {
     let stored = 0;
     return {
         upload: async ({ blob, filename }) => {
+            if (skipped === 'everything') {
+                throw new Error('refused');
+            }
             const header = await readImageHeader(blob);
             const mediaType = skipped === 'content type' ? blob.type : header.mediaType;
             const { width, height } = header;
@@ -65,12 +71,20 @@ const flawed = (skipped: Check) => (): FakeUploadService => {
 };
 
 const BROKEN: readonly (readonly [Check, string])[] = [
-    ['size', 'refuses a file larger than maxAssetBytes'],
+    ['size', 'of maxAssetBytes + 1 bytes'],
     ['content type', 'reads the type from the content'],
     ['pixels', 'over maxImagePixels'],
     ['side', 'over 65,535 pixels on a side'],
-    ['script', 'refuses an accepted SVG that holds a script element'],
+    ['script', 'refuses an accepted SVG that holds active content'],
     ['asset ID', 'answers an accepted image with an asset ID that is no URL or access token'],
+];
+const TITLES = [
+    'Service obligation 1 refuses a decodable PNG of maxAssetBytes + 1 bytes and accepts it within maxAssetBytes',
+    'Service obligation 1 reads the type from the content: it refuses an HTML file named photo.png and accepts a PNG under that name',
+    'Service obligation 1 refuses a decodable 9,460 by 9,460 pixel PNG over maxImagePixels and a 20,000 by 20,000 one, and accepts 9,459 by 9,459',
+    'Service obligation 1 refuses a decodable 70,000 by 10 pixel PNG over 65,535 pixels on a side, and accepts 65,535 by 10',
+    'Service obligation 1 refuses an accepted SVG that holds active content, also behind character references, and accepts one with none',
+    'Service obligation 2 answers an accepted image with an asset ID that is no URL or access token',
 ];
 
 describe('runUploadConformance', () => {
@@ -93,15 +107,44 @@ describe('runUploadConformance', () => {
             return names;
         };
 
-        expect(titles(ACCEPT)).toEqual([
-            'Service obligation 1 refuses a file larger than maxAssetBytes',
-            'Service obligation 1 reads the type from the content and refuses an HTML file named photo.png',
-            'Service obligation 1 refuses a 20,000 by 20,000 pixel PNG over maxImagePixels',
-            'Service obligation 1 refuses a 70,000 by 10 pixel PNG over 65,535 pixels on a side',
-            'Service obligation 1 refuses an accepted SVG that holds a script element',
-            'Service obligation 2 answers an accepted image with an asset ID that is no URL or access token',
-        ]);
+        expect(titles(ACCEPT)).toEqual(TITLES);
         expect(titles(['image/png'])).toHaveLength(5);
+    });
+
+    it('probes the smallest square over a lowered maxImagePixels, and expects acceptance where no square within 65,535 pixels a side is over it', () => {
+        const titles = (maxImagePixels: number) => {
+            const names: string[] = [];
+            vi.stubGlobal('describe', (_name: string, body: () => void) => body());
+            vi.stubGlobal('it', (name: string) => names.push(name));
+            try {
+                runUploadConformance(() => createFakeUploadService(), { ...OPTIONS, maxImagePixels });
+            } finally {
+                vi.unstubAllGlobals();
+            }
+            return names.filter((name) => name.includes('pixel') && !name.includes('70,000'));
+        };
+
+        expect(titles(1_000_000)).toEqual([
+            'Service obligation 1 refuses a decodable 1,001 by 1,001 pixel PNG over maxImagePixels and a 20,000 by 20,000 one, and accepts 1,000 by 1,000',
+        ]);
+        expect(titles(65_535 * 65_535)).toEqual([
+            'Service obligation 1 accepts a decodable 65,535 by 2 pixel image, since no image within 65,535 pixels a side is over maxImagePixels',
+        ]);
+    });
+
+    it('fails every case for a service that refuses every file, since each refusal case also needs an acceptance', async () => {
+        const failing = await failingTitles(flawed('everything'));
+
+        expect(failing).toEqual(TITLES);
+    });
+
+    it.each([
+        ['JPEG', ['image/jpeg']],
+        ['AVIF', ['image/avif']],
+    ])('passes every case against the reference fake for a host that accepts %s only', async (_name, acceptTypes) => {
+        const options = { ...OPTIONS, acceptTypes };
+
+        expect(await failingTitles(() => createFakeUploadService(options), options)).toEqual([]);
     });
 
     it.each(BROKEN)('fails only the matching case for a service that skips the %s check', async (skipped, title) => {

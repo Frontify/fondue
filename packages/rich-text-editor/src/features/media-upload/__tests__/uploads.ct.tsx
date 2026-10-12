@@ -5,6 +5,8 @@ import { crc32, deflateSync } from 'node:zlib';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
+import { decodableImage, sampleImage } from '#/testing/images';
+
 import { UploadProbe } from './fixtures/UploadProbe';
 
 /** One PNG chunk with its length and CRC. */
@@ -156,6 +158,24 @@ test('shows the drop cursor at the nearest block boundary for a dropped file and
     expect(await page.evaluate(() => window.uploadRte?.changes.map(({ origin }) => origin))).toEqual(['drop']);
 });
 
+test('moves the determinate progress bar to each step with no transition under reduced motion', async ({
+    mount,
+    page,
+}) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await mount(<UploadProbe />);
+    await ready(page);
+    await chooseLogo(page);
+
+    await page.evaluate(() => window.uploadRte?.progress(0, 0.4));
+    const indicator = surfaceOf(page)
+        .getByRole('progressbar', { name: 'logo.png' })
+        .locator('[data-indeterminate="false"]');
+    await expect(indicator).toHaveCount(1);
+
+    expect(await indicator.evaluate((element) => getComputedStyle(element).transitionDuration)).toBe('0s');
+});
+
 test.describe('with a coarse pointer', () => {
     test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
 
@@ -176,4 +196,64 @@ test.describe('with a coarse pointer', () => {
             expect(found?.height).toBeGreaterThanOrEqual(44);
         }
     });
+});
+
+test('decodes every image the upload conformance kit builds and samples, at the size it declares', async ({
+    mount,
+    page,
+}) => {
+    await mount(<UploadProbe />);
+    await ready(page);
+    const images: {
+        readonly label: string;
+        readonly type: string;
+        readonly base64: string;
+        readonly size: [number, number];
+    }[] = [];
+    const sizes: [number, number][] = [
+        [1, 1],
+        [40, 30],
+        [3000, 3000],
+    ];
+    for (const type of ['image/png', 'image/gif', 'image/jpeg'] as const) {
+        for (const [width, height] of sizes) {
+            const bytes = await decodableImage(type, width, height, width === 40 ? 70_000 : 0);
+            images.push({
+                label: `${type} ${width}x${height}`,
+                type,
+                base64: Buffer.from(bytes).toString('base64'),
+                size: [width, height],
+            });
+        }
+    }
+    for (const type of ['image/webp', 'image/avif'] as const) {
+        for (const padding of [0, 5000]) {
+            const sample = await sampleImage(type, padding);
+            const size: [number, number] = type === 'image/avif' ? [2, 2] : [1, 1];
+            images.push({
+                label: `${type} +${padding}`,
+                type,
+                base64: Buffer.from(sample?.bytes ?? []).toString('base64'),
+                size,
+            });
+        }
+    }
+
+    const decoded = await page.evaluate(
+        async (all) =>
+            Promise.all(
+                all.map(async ({ label, type, base64 }) => {
+                    const bytes = Uint8Array.from(atob(base64), (character) => character.codePointAt(0) ?? 0);
+                    try {
+                        const bitmap = await createImageBitmap(new Blob([bytes], { type }));
+                        return [label, bitmap.width, bitmap.height];
+                    } catch (error) {
+                        return [label, String(error)];
+                    }
+                }),
+            ),
+        images.map(({ label, type, base64 }) => ({ label, type, base64 })),
+    );
+
+    expect(decoded).toEqual(images.map(({ label, size }) => [label, ...size]));
 });

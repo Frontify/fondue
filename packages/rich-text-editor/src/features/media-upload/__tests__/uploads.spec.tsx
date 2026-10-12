@@ -700,7 +700,7 @@ describe('upload progress', () => {
 
         expect(record.messages).toEqual([
             'Uploading: done.png',
-            'Uploaded: done.png',
+            'Uploaded: done.png. It has no alternative text yet.',
             'Uploading: broken.png',
             'Upload failed: broken.png',
             'Uploading: dropped.png',
@@ -724,8 +724,8 @@ describe('the checks before an upload', () => {
         expect(mounted.uploads.upload).not.toHaveBeenCalled();
         expect(mounted.images()).toEqual([]);
         expect(record.messages).toEqual([
-            `poster.png was not uploaded because it is too large. Choose a file of type ${ACCEPTED}, of up to 25 MB.`,
-            `page.html was not uploaded because its file type is not accepted. Choose a file of type ${ACCEPTED}, of up to 25 MB.`,
+            `poster.png was not uploaded because it is too large. Choose a file of type ${ACCEPTED}, of up to 25 MB. ` +
+                `page.html was not uploaded because its file type is not accepted. Choose a file of type ${ACCEPTED}, of up to 25 MB.`,
         ]);
         mounted.unmount();
     });
@@ -801,8 +801,7 @@ describe('the checks before an upload', () => {
         await record.stop();
 
         expect(record.messages).toEqual([
-            `logo.svg was not uploaded because its file type is not accepted. Choose a file of type ${ACCEPTED}, of up to 25 MB.`,
-            'Uploading: photo.jpg',
+            `logo.svg was not uploaded because its file type is not accepted. Choose a file of type ${ACCEPTED}, of up to 25 MB. Uploading: photo.jpg`,
         ]);
         expect(mounted.images()).toEqual([{ nodeId: mounted.imageIds()[0], ...slot('photo.jpg', 640, 480) }]);
         expect(mounted.uploads.upload).toHaveBeenCalledTimes(1);
@@ -958,6 +957,7 @@ describe('the completed-upload cache', () => {
 
             if (how === 'dispose') {
                 mounted.unmount();
+                await settle();
             } else {
                 const empty = { ...mounted.handle.getSnapshot().document };
                 await act(async () => {

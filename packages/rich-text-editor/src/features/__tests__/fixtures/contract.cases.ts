@@ -90,7 +90,7 @@ const fixturesOf = (features: readonly Feature[]) =>
     features.flatMap((feature) => Object.values(featureFixtures[feature.id] ?? {}));
 
 // A session whose every slot has an upload that runs and a file to send again, so Cancel and Retry apply.
-const RUNNING_UPLOADS = uploadSlotsPlugin({ active: () => true, retryable: () => true });
+const RUNNING_UPLOADS = uploadSlotsPlugin({ active: () => true, kept: () => true, retryable: () => true });
 
 /**
  * The states with an upload slot `slot-1` after `state`, where the schema holds images: one that an insertion started

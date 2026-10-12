@@ -33,6 +33,8 @@ declare global {
             readonly complete: (index: number, assetId: string) => void;
             /** Rejects upload `index`, as a service that refused the file does. */
             readonly fail: (index: number) => void;
+            /** Reports `fraction` of upload `index` as sent. */
+            readonly progress: (index: number, fraction: number) => void;
             /** The stored attributes of the document's images. */
             readonly images: () => readonly Readonly<Record<string, unknown>>[];
             /** The types of the document's top-level blocks. */
@@ -53,11 +55,13 @@ export const UploadProbe = ({ texts = ['Before'] }: { readonly texts?: readonly 
             readonly name: string;
             readonly resolve: (asset: AssetValue) => void;
             readonly reject: () => void;
+            readonly progress: (fraction: number) => void;
         }[] = [];
         const service: UploadService = {
-            upload: ({ filename }) =>
+            upload: ({ filename }, { reportProgress }) =>
                 new Promise<AssetValue>((resolve, reject) => {
-                    held.push({ name: filename, resolve, reject: () => reject(new Error('refused')) });
+                    const refuse = () => reject(new Error('refused'));
+                    held.push({ name: filename, resolve, reject: refuse, progress: reportProgress });
                 }),
             releaseUnused: () => Promise.resolve(),
         };
@@ -78,6 +82,7 @@ export const UploadProbe = ({ texts = ['Before'] }: { readonly texts?: readonly 
                 upload?.resolve({ assetId, mediaType: 'image/png', labelSnapshot: upload.name });
             },
             fail: (index) => uploads.held[index]?.reject(),
+            progress: (index, fraction) => uploads.held[index]?.progress(fraction),
             images: () =>
                 content()
                     .flatMap((block) => block.content ?? [])
