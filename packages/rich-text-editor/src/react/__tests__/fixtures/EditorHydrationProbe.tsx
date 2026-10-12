@@ -38,14 +38,20 @@ const Committed = ({ onCommit }: { readonly onCommit: () => void }) => {
  */
 export const EditorHydrationProbe = ({
     text,
+    blocked = false,
     onDone,
 }: {
     readonly text: string;
+    /** Stores the text in an unknown format version, which shows the blocked shell. */
+    readonly blocked?: boolean;
     readonly onDone: (result: EditorHydrationResult) => void;
 }) => {
     const hostRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-        const defaultValue = storedOf(text);
+        let defaultValue = storedOf(text);
+        if (blocked) {
+            defaultValue = { ...defaultValue, document: { ...defaultValue.document, formatVersion: 2 as 1 } };
+        }
         const container = window.document.createElement('div');
         const tree = (done: () => void) => (
             <>
@@ -84,6 +90,6 @@ export const EditorHydrationProbe = ({
             { onRecoverableError: (error) => recoverable.push(String(error)) },
         );
         return () => root.unmount();
-    }, [text, onDone]);
+    }, [text, blocked, onDone]);
     return <div ref={hostRef} />;
 };

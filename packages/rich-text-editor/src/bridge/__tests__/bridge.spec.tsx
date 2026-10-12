@@ -14,6 +14,7 @@ import { core } from '#/features/core/feature';
 import {
     defineEditor,
     defineNodeView,
+    defineReactPresentation,
     type EditorHandle,
     type NodeViewState,
     RichTextEditor,
@@ -356,6 +357,37 @@ describe('the React bridge', () => {
         unmount();
     });
 
+    it('runs a host command after chrome throws on an update', async () => {
+        const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const BoomMention = () => {
+            const { attrs } = useRichTextNodeView();
+            if (attrs.label === 'boom') {
+                throw new Error('chrome failed');
+            }
+            return <span data-chrome="boom-mention">mention</span>;
+        };
+        const booming = defineEditor({
+            id: 'test.bridge',
+            model: modelOf([defineNodeView(fixtureChromeViews(), { node: 'chrome_mention', component: BoomMention })]),
+        });
+        const { handle, runtime, flush, onDiagnostic, unmount } = await mount([para(text('ab'), mention('m1'))], {
+            definition: booming,
+        });
+
+        act(() => {
+            runtime().nodeActions('m1').update({ label: 'boom' });
+        });
+        await flush();
+
+        expect(surface().querySelector('[data-rte-chrome]')).toHaveTextContent(
+            'This part of the content cannot be shown',
+        );
+        expect(commandsOf(handle()).execute('text.insert', { text: 'x' }).status).toBe('applied');
+        expect(onDiagnostic.mock.calls.map(([{ code }]) => code)).not.toContain('react.execute-in-render');
+        errors.mockRestore();
+        unmount();
+    });
+
     it('renders chrome again once an update changes the attribute it threw for', async () => {
         const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
         const Strict = () => {
@@ -599,6 +631,45 @@ describe('the React bridge', () => {
         }
 
         expect(probeRuntimes()).toMatchObject({ views: [], nodeViews: 0, portals: 0 });
+    });
+
+    it('shows the label of a new presentation and the island label of a new locale with the same view and snapshot', async () => {
+        const ref = createRef<EditorHandle<object>>();
+        const resolving = (label: string) =>
+            defineReactPresentation({ resolveReference: () => ({ status: 'current', label }) });
+        const editor = (label: string, locale: RichTextLocale) => (
+            <RichTextEditor
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={stored(para(mention('m1')), { type: 'callout', content: [text('kept')] })}
+                presentation={resolving(label)}
+                locale={locale}
+                ref={ref}
+            />
+        );
+        const { rerender, unmount } = render(editor('Ada Lovelace', enUS));
+        await act(async () => {
+            await Promise.resolve();
+        });
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        const mentionButton = () => surface().querySelector('[data-chrome="mention"] button');
+        const handle = () => ref.current as EditorHandle<object>;
+        const view = probeRuntimes().views[0];
+        const snapshot = handle().getSnapshot();
+        const { commitSequence } = handle().getSummary();
+        expect(mentionButton()).toHaveTextContent('Ada Lovelace');
+        expect(screen.getByRole('group')).toHaveAccessibleName('Unsupported content: callout');
+
+        rerender(editor('Grace Hopper', deDE));
+
+        expect(mentionButton()).toHaveTextContent('Grace Hopper');
+        expect(screen.getByRole('group')).toHaveAccessibleName('Nicht unterstützter Inhalt: callout');
+        expect(probeRuntimes().views).toEqual([view]);
+        expect(handle().getSnapshot()).toBe(snapshot);
+        expect(handle().getSummary().commitSequence).toBe(commitSequence);
+        unmount();
     });
 
     it('runs ready listeners after the first portal flush, with node chrome present', async () => {

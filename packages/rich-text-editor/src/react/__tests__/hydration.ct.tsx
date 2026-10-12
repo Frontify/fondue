@@ -53,3 +53,29 @@ for (const text of ['', 'Rotate the signing keys']) {
         test.info().annotations.push({ type: 'react build', description: result.mode });
     });
 }
+
+test('hydrates the blocked shell of a document in an unknown format version with no mismatch', async ({
+    mount,
+    page,
+}) => {
+    const problems = watch(page);
+    let reported: EditorHydrationResult | undefined;
+
+    await mount(
+        <EditorHydrationProbe
+            text="Rotate the signing keys"
+            blocked
+            onDone={(result) => {
+                reported = result;
+            }}
+        />,
+    );
+    const result = await settle(() => reported);
+
+    expect(result.recoverable).toEqual([]);
+    expect(problems).toEqual([]);
+    expect(result.serverHtml).toContain('data-rte-shell="blocked"');
+    expect(result.serverHtml).not.toContain('contenteditable');
+    await expect(page.getByRole('button', { name: 'Copy original' })).toBeVisible();
+    test.info().annotations.push({ type: 'react build', description: result.mode });
+});

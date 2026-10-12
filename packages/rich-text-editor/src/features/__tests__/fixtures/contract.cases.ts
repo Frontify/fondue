@@ -336,7 +336,7 @@ export const nodeViewCases = (features: readonly Feature[], documents: readonly 
             const portals = createPortalStore();
             stores.push(portals);
             // The host mounts before the view, so its render does not flush the portal microtask the view queues.
-            hosts.push(render(createElement(PortalHost, { store: portals, onFlush: () => undefined })));
+            hosts.push(render(createElement(PortalHost, { store: portals, context, onFlush: () => undefined })));
             const runtime = createEditorRuntime({
                 definition: engineOf(definition),
                 documentId: 'document-1',
@@ -346,7 +346,7 @@ export const nodeViewCases = (features: readonly Feature[], documents: readonly 
                 mode: 'editable',
                 policy: definition.authoring,
                 limits: definition.limits,
-                nodeViews: (session) => capture(createNodeViews(views, { portals, context, runtime: session })),
+                nodeViews: (session) => capture(createNodeViews(views, { portals, runtime: session })),
             });
             runtimes.push(runtime);
             const element = globalThis.document.createElement('div');
