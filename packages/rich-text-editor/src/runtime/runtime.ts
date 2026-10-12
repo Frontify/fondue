@@ -86,6 +86,9 @@ const COMPOSITION_META = 'composition';
 // The target an async operation started with none gets at the selection.
 const ASYNC_TARGET: CaptureTargetOptions = { purpose: 'insert', onIntersectingEdit: 'map' };
 
+/** How a wait for input to settle ended. */
+export type InputOutcome = 'settled' | 'timeout' | 'disposed';
+
 /** What the host calls. */
 export interface RuntimeHandle {
     getSummary(): EditorSummary;
@@ -148,6 +151,13 @@ export interface EditorRuntime {
     nodeActions(nodeId: string): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
+    /**
+     * Calls `settled` once input settles after the composition that runs now, or when `timeoutMs` passes first, or
+     * when the session is disposed first.
+     */
+    afterInput(settled: (outcome: InputOutcome) => void, timeoutMs: number): void;
+    /** Empties the history and keeps the document and selection, as a form reset to the current record does. */
+    clearHistory(): void;
     /** Emits the `operationMetric` of an operation that started at `started`. */
     measure(kind: OperationMetric['kind'], started: number, failureCode: string | null): void;
 }
@@ -376,6 +386,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // Targets the coordinator captures during a commit, such as from a running command, captured once it ends.
     const deferredCaptures: string[] = [];
     const queue: Intent[] = [];
+    // What waits for input to settle outside the queue, such as a form's settled value.
+    const afterInput = new Set<(outcome: InputOutcome) => void>();
 
     // Records typing before any other handler sees the event, so the view itself gets no event handler.
     const typingRecorder = new Plugin({
@@ -801,6 +813,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         });
         coordinator.settle();
         saves?.settled();
+        for (const settled of [...afterInput]) {
+            settled('settled');
+        }
     };
 
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view. */
@@ -1202,6 +1217,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         phase = 'disposed';
         ended.abort();
         settling.cancel();
+        for (const settled of [...afterInput]) {
+            settled('disposed');
+        }
         coordinator.dispose();
         settleQueue('not-ready');
         deferred.length = 0;
@@ -1286,13 +1304,31 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return 'unsaved';
     };
 
+    /**
+     * Gives focus back to a surface that had it when the replacement started, editable or readonly, unless focus moved
+     * on meanwhile, in its own document or out of it to a parent page; Chromium blurs a focused surface whose
+     * `contenteditable` turns false.
+     */
+    const refocus = (focused: boolean) => {
+        // A disabled surface leaves the Tab order and takes no focus.
+        if (!focused || disabled || view === undefined) {
+            return;
+        }
+        const owner = view.dom.ownerDocument;
+        const { activeElement, body } = owner;
+        if (owner.hasFocus() && (activeElement === null || activeElement === body)) {
+            focus();
+        }
+    };
+
     /** Leaves `transitioning` after a failed step, so what waited runs on the unchanged session. */
-    const resume = (code: ReplaceCode): ReplaceResult => {
+    const resume = (code: ReplaceCode, focused: boolean): ReplaceResult => {
         phase = 'ready';
         refreshView();
         coordinator.settle();
         saves?.settled();
         drain();
+        refocus(focused);
         return refused(code);
     };
 
@@ -1304,6 +1340,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         request: ReplaceDocumentRequest,
         tree: TreeNode,
         stored: readonly CapabilityRef[],
+        focused: boolean,
     ): ReplaceResult => {
         let fresh: EditorState;
         try {
@@ -1356,6 +1393,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         emitSelection();
         emitSaveStatus();
         emit('replaced', session);
+        refocus(focused);
         return { status: 'replaced', session };
     };
 
@@ -1386,6 +1424,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (settling.active()) {
             return refused('composition-active');
         }
+        const focused = view?.hasFocus() === true;
         phase = 'transitioning';
         refreshView();
         if (unsavedChanges()) {
@@ -1395,17 +1434,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return refused('not-ready');
             }
             if (code !== undefined) {
-                return resume(code);
+                return resume(code, focused);
             }
         }
         if (saves?.outcomeUnknown() === true) {
-            return resume('save-unresolved');
+            return resume('save-unresolved', focused);
         }
         // A keystroke the view read during step 5 is kept, not replaced.
         if (!sameStamp(request.expected, { ...session, sequence })) {
-            return resume('changed-since-request');
+            return resume('changed-since-request', focused);
         }
-        return installNext(request, tree, result.document.requiredCapabilities);
+        return installNext(request, tree, result.document.requiredCapabilities, focused);
     };
 
     const interactionRoots = new Set<HTMLElement>();
@@ -1632,6 +1671,26 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         nodeActions,
         saveStatusChanged: emitSaveStatus,
+        clearHistory: () => {
+            if (phase !== 'ready' || settling.active()) {
+                return;
+            }
+            if (installState(reset(state))) {
+                published = state;
+                busyWith(notify);
+            }
+        },
+        afterInput: (settled, timeoutMs) => {
+            // Whichever comes first, the settle, the timeout or `dispose`, answers; the others find nothing.
+            const waiter = (outcome: InputOutcome) => {
+                if (afterInput.delete(waiter)) {
+                    clearTimeout(timer);
+                    settled(outcome);
+                }
+            };
+            const timer = setTimeout(() => waiter('timeout'), timeoutMs);
+            afterInput.add(waiter);
+        },
         measure: (kind, started, failureCode) => measure(kind, started, failureCode),
     };
     if (options.nodeViews !== undefined) {

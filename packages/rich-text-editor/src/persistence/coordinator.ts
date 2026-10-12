@@ -69,6 +69,9 @@ const DISPOSED: CommitResult = { status: 'failed', code: 'disposed', outcome: 'u
 const CONFLICT: CommitResult = { status: 'blocked', code: 'conflict' };
 const NOT_SENT: CommitResult = { status: 'failed', code: 'transport', outcome: 'not-sent' };
 
+/** The code of a rejected write, which `SaveStatus` does not carry. */
+export type Rejection = Extract<SaveResponse, { readonly status: 'rejected' }>['code'];
+
 const STATUS_KEYS = [
     'state',
     'latestSequence',
@@ -86,7 +89,13 @@ const STATUS_KEYS = [
 export const createSaveCoordinator = (
     runtime: EditorRuntime,
     given: SaveCoordinatorOptions,
-): SaveCoordinator & { readonly unresolved: () => SaveRequest | undefined } => {
+): SaveCoordinator & {
+    readonly unresolved: () => SaveRequest | undefined;
+    /** Why the state is `error`: the rejection code, or `null` once retries ran out. */
+    readonly rejection: () => Rejection | null;
+    /** Whether the last accepted acknowledgment answered a `requestCommit` call. */
+    readonly committed: () => boolean;
+} => {
     const { generateId } = given;
     const writer: SaveRequest['writer'] = {
         build: packageVersionOf(),
@@ -110,6 +119,8 @@ export const createSaveCoordinator = (
     let revision: ServerRevision | null = null;
     // What `requestCommit` answers with while it holds for the current stamp: the loaded record's, then each accepted one.
     let accepted: SaveAcknowledgment | undefined;
+    let rejection: Rejection | null = null;
+    let committed = false;
     /** Starts from a loaded record: at mount, and in the new generation of a replacement. */
     const load = (loaded: ServerRevision | null, unsavedAtLoad: boolean) => {
         latest = 0;
@@ -125,6 +136,7 @@ export const createSaveCoordinator = (
         }
         revision = loaded;
         accepted = undefined;
+        committed = false;
         if (loaded !== null && !unsavedOnMount) {
             const stamp = { ...runtime.handle.getSummary().session, sequence: 0 };
             accepted = { operationId: null, stamp, revision: loaded };
@@ -377,6 +389,7 @@ export const createSaveCoordinator = (
         }
         if (replays >= option('maxRetries')) {
             state = 'error';
+            rejection = null;
             problem = diagnostic('persistence.retries-exhausted', undefined, { retries: replays }, 'error');
             publish();
             runtime.report(problem);
@@ -444,6 +457,7 @@ export const createSaveCoordinator = (
                 unsavedOnMount = false;
             }
             const checkpoint = checkpointOf(current.request);
+            committed = checkpoint !== undefined;
             if (checkpoint !== undefined) {
                 pinned.shift();
                 settle(checkpoint, { status: 'acknowledged', acknowledgment });
@@ -484,6 +498,7 @@ export const createSaveCoordinator = (
             settle(checkpoint, refused);
         }
         state = 'error';
+        rejection = response.code;
         problem = response.diagnostics[0] ?? null;
         publish();
         for (const reported of response.diagnostics) {
@@ -670,6 +685,8 @@ export const createSaveCoordinator = (
             refresh();
         },
         unresolved: () => unresolved,
+        rejection: () => rejection,
+        committed: () => committed,
         dispose: () => {
             if (ended.signal.aborted) {
                 return;
