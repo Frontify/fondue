@@ -4,7 +4,6 @@ on:
   pull_request:
     paths:
       - packages/**
-      - '!packages/rich-text-editor/**'
       - .npmrc
       - .nvmrc
       - package.json
