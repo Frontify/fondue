@@ -22,6 +22,7 @@ import { readerContext } from '#/reader/context';
 import { CAPABILITIES } from '#/runtime/capabilities';
 import { columnsPlugin } from '#/runtime/columns';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
+import { SLOT_START_META, uploadSlotsPlugin } from '#/runtime/upload-slots';
 
 import { countingIds } from './notes';
 
@@ -47,6 +48,8 @@ const PAYLOADS: Readonly<Record<string, unknown>> = {
     'image.replace': { nodeId: 'image-1' },
     'image.size.set': { displayWidth: 50 },
     'image.align.set': { align: 'left' },
+    'media.upload.cancel': { nodeId: 'slot-1' },
+    'media.upload.retry': { nodeId: 'slot-1' },
 };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [
@@ -86,6 +89,43 @@ const stubForbidden = (label: string) => {
 const fixturesOf = (features: readonly Feature[]) =>
     features.flatMap((feature) => Object.values(featureFixtures[feature.id] ?? {}));
 
+// A session whose every slot has an upload that runs and a file to send again, so Cancel and Retry apply.
+const RUNNING_UPLOADS = uploadSlotsPlugin({ active: () => true, kept: () => true, retryable: () => true });
+
+/**
+ * The states with an upload slot `slot-1` after `state`, where the schema holds images: one that an insertion started
+ * and one that a replacement of a stored image started.
+ */
+const slotStates = (state: EditorState): EditorState[] => {
+    const { figure, asset_image: image } = state.schema.nodes;
+    if (figure === undefined || image === undefined) {
+        return [];
+    }
+    const attrs = (assetId: string | null) => ({
+        nodeId: 'slot-1',
+        assetId,
+        labelSnapshot: 'logo.png',
+        width: 40,
+        height: 30,
+    });
+    const end = state.doc.content.size;
+    const inserted = state.apply(
+        state.tr
+            .insert(end, figure.create({ nodeId: 'figure-1' }, image.create(attrs(null))))
+            .setMeta(SLOT_START_META, { kind: 'insert', nodeIds: ['slot-1'] }),
+    );
+    const stored = state.apply(
+        state.tr.insert(end, figure.create({ nodeId: 'figure-1' }, image.create(attrs('asset-1')))),
+    );
+    const pos = end + 1;
+    const replaced = stored.apply(
+        stored.tr
+            .setNodeAttribute(pos, 'assetId', null)
+            .setMeta(SLOT_START_META, { kind: 'replace', nodeId: 'slot-1', previous: attrs('asset-1') }),
+    );
+    return [inserted, replaced];
+};
+
 /**
  * Registers one case per command of `features`, which runs it over every fixture of those features, selected
  * whole and at a caret at either end, while the network and timers fail: the command returns a boolean, never a
@@ -98,9 +138,10 @@ export const commandCases = (features: readonly Feature[]): void => {
     for (const { id, definition } of compiledModel(model).commands) {
         // A control opener applies where its control can act and dispatches nothing; the editor opens the control,
         // as it opens the asset picker for an upload start.
+        // An upload retry applies the same way and hands the file back to the session, which sends it.
         const opens =
             definition.capability === 'openControl' ||
-            (definition.capability === 'upload' && definition.args.action === 'start');
+            (definition.capability === 'upload' && definition.args.action !== 'cancel');
         it(`runs ${id} synchronously with no I/O or timer, dispatching at most once`, () => {
             const engine = compileDefinition(model, CAPABILITIES);
             const command = engine.commands.get(id);
@@ -116,7 +157,7 @@ export const commandCases = (features: readonly Feature[]): void => {
                 }
                 const state = EditorState.create({
                     doc: engine.schema.nodeFromJSON(tree),
-                    plugins: [...engine.plugins, columnsPlugin(() => ROOM)],
+                    plugins: [...engine.plugins, columnsPlugin(() => ROOM), RUNNING_UPLOADS],
                 });
                 const { doc } = state;
                 const whole = TextSelection.between(doc.resolve(0), doc.resolve(doc.content.size));
@@ -124,6 +165,7 @@ export const commandCases = (features: readonly Feature[]): void => {
                     state.apply(state.tr.setSelection(whole)),
                     state.apply(state.tr.setSelection(Selection.atEnd(doc))),
                     state.apply(state.tr.setSelection(Selection.atStart(doc))),
+                    ...slotStates(state),
                 ];
             });
             // An edit, and the same edit undone, so the history commands have a step to undo and one to redo.

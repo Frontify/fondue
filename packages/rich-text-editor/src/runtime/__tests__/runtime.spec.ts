@@ -18,7 +18,6 @@ import {
 } from '#/definition';
 import {
     fixtureHeadingSet,
-    fixtureImage,
     fixtureInputRules,
     fixtureItalic,
     fixtureMedia,
@@ -30,6 +29,7 @@ import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixture
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
+import { mediaImage } from '#/features/media-image/feature';
 import { defineEditor, type CommandsOfModel, type EditorHandle } from '#/index';
 import {
     compileContentModel,
@@ -46,13 +46,14 @@ import {
 import { decodeToTree, limitsOf } from '#/model/decode';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 import { STORAGE, stubStorage } from '#/testing/__tests__/fixtures/storage';
+import { declaredPng } from '#/testing/uploads';
 import { bindingHere, isApplePlatform } from '#/ui/shortcuts';
 
 import pullQuoteManifest from '../../model/__tests__/fixtures/manifest/acme-pull-quote.json';
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
 import { type AsyncRequest } from '../async';
 import { CAPABILITIES } from '../capabilities';
-import { canRedo, canUndo, reset } from '../history';
+import { canRedo, canUndo, reset, undoDepth } from '../history';
 import { createLimitCheck } from '../limits';
 import { authoringOf } from '../policy';
 import { createEditorRuntime, type EditorRuntime } from '../runtime';
@@ -66,6 +67,7 @@ import {
     type FeaturePolicy,
     type ReplaceDocumentRequest,
 } from '../types';
+import { type UploadServiceLike } from '../uploads';
 
 const boldModel = compileContentModel([core(), bold()], { id: 'test.bold', version: 1 });
 const stored = (...blocks: readonly JsonValue[]) => ({
@@ -101,6 +103,8 @@ interface Start {
     readonly policy?: Partial<AuthoringPolicy>;
     readonly limits?: Partial<ResourceLimits>;
     readonly generateId?: () => string;
+    readonly uploads?: UploadServiceLike;
+    readonly openControl?: (control: string, payload: unknown) => void;
 }
 
 /** A runtime on an attached surface, `ready` after the first frame. */
@@ -126,6 +130,8 @@ const start = (input: unknown, options: Start = {}) => {
         mode,
         policy: authoringOf(model, options.policy),
         limits: limitsOf(options.limits),
+        uploads: () => options.uploads,
+        ...(options.openControl === undefined ? {} : { openControl: options.openControl }),
     });
     started.push(runtime);
     const changes: DocumentChange[] = [];
@@ -3379,45 +3385,84 @@ describe('history', () => {
         expect(handle.query('history.undo').enabled).toBe(false);
     });
 
-    const imageModel = compileContentModel([core(), bold(), fixtureImage()], { id: 'test.bold', version: 1 });
-    const image = { type: 'image', attrs: { assetId: null } };
-    /** Sets the `assetId` of the document's last block, an image, as an upload completion does. */
-    const complete: EngineCommand = {
-        run: (state, dispatch, payload) => {
-            const at = state.doc.content.size - state.doc.child(state.doc.childCount - 1).nodeSize;
-            if (dispatch !== undefined) {
-                dispatch(state.tr.setNodeAttribute(at, 'assetId', (payload as { readonly assetId: string }).assetId));
-            }
-            return true;
-        },
-        active: () => false,
-        payload: { fields: { assetId: { type: 'string' } } },
+    const imageModel = compileContentModel([core(), bold(), mediaImage()], { id: 'test.bold', version: 1 });
+    /** An upload service whose one upload answers when `complete` runs. */
+    const oneUpload = () => {
+        let answer: (asset: unknown) => void = () => undefined;
+        const service: UploadServiceLike = {
+            upload: () =>
+                new Promise((resolve) => {
+                    answer = resolve;
+                }),
+            releaseUnused: () => Promise.resolve(),
+        };
+        const complete = async () => {
+            answer({ assetId: 'asset-1', mediaType: 'image/png', labelSnapshot: 'logo.png' });
+            await vi.advanceTimersByTimeAsync(0);
+        };
+        return { service, complete };
     };
-    const upload = (session: ReturnType<typeof start>) =>
-        pending(session.runtime, { featureId: 'fixture.image', command: 'upload.complete' }).resolve({
-            assetId: 'asset-1',
-        });
+    /** Starts an upload of `logo.png` from the toolbar into a new slot, which replaces the empty paragraph. */
+    const startUpload = async (session: ReturnType<typeof start>) => {
+        const file = new File([declaredPng(40, 30)], 'logo.png', { type: 'image/png' });
+        await session.runtime.uploads.begin([file], { kind: 'insert', origin: 'command' });
+    };
+    /** The text of the paragraph after the slot, and the slot's asset. */
     const shown = ({ view }: ReturnType<typeof start>): unknown[] => [
         view.state.doc.textContent,
-        view.state.doc.child(1).attrs.assetId as unknown,
+        view.state.doc.child(0).firstChild?.attrs.assetId as unknown,
     ];
 
-    it('adds no undo step for an upload completion that sets an assetId', async () => {
-        const session = start(stored(para(), image), { model: imageModel, commands: { 'upload.complete': complete } });
-        typeText(session.handle, 'a');
+    it('opens the asset picker for image.insert and the upload start control of its node for image.replace', () => {
+        const opened: unknown[] = [];
+        const image = {
+            type: 'figure',
+            attrs: { nodeId: 'figure-1', align: 'center' },
+            content: [
+                {
+                    type: 'asset_image',
+                    attrs: { nodeId: 'image-1', assetId: 'asset-1', labelSnapshot: 'logo.png', width: 40, height: 30 },
+                },
+            ],
+        };
+        const document = { ...stored(para(words('ab')), image), requiredCapabilities: imageModel.capabilities };
+        const { handle } = start(document, {
+            model: imageModel,
+            openControl: (control, payload) => opened.push([control, payload]),
+        });
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
 
-        await upload(session);
+        handle.execute('image.insert');
+        handle.execute('image.replace', { nodeId: 'image-1' });
+
+        expect(opened).toEqual([
+            ['media-picker', undefined],
+            ['upload-start', { nodeId: 'image-1' }],
+        ]);
+    });
+
+    it('adds no undo step for an upload completion that sets an assetId', async () => {
+        const upload = oneUpload();
+        const session = start(stored(para()), { model: imageModel, uploads: upload.service });
+        await startUpload(session);
+        typeText(session.handle, 'a');
+        const depth = undoDepth(session.runtime.state);
+
+        await upload.complete();
 
         expect(shown(session)).toEqual(['a', 'asset-1']);
-        expect(undoSteps(session.handle)).toBe(1);
+        expect(undoDepth(session.runtime.state)).toBe(depth);
+        session.handle.execute('history.undo');
         expect(shown(session)).toEqual(['', 'asset-1']);
     });
 
     it('starts a new undo step for typing right after an upload completion', async () => {
-        const session = start(stored(para(), image), { model: imageModel, commands: { 'upload.complete': complete } });
+        const upload = oneUpload();
+        const session = start(stored(para()), { model: imageModel, uploads: upload.service });
+        await startUpload(session);
         typeText(session.handle, 'a');
         vi.advanceTimersByTime(50);
-        await upload(session);
+        await upload.complete();
         vi.advanceTimersByTime(50);
         typeText(session.handle, 'b');
 
