@@ -12,7 +12,7 @@
         "content": [
             {
                 "type": "paragraph",
-                "attrs": { "lang": null },
+                "attrs": { "lang": null, "align": null },
                 "content": [
                     { "type": "text", "text": "Make " },
                     { "type": "text", "text": "this", "marks": [{ "type": "bold" }] },

@@ -4,6 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
+    align,
     bold,
     brandStyles,
     code,
@@ -13,9 +14,11 @@ import {
     emoji,
     featuresById,
     fontColor,
+    formatClear,
     heading,
     inputRules,
     italic,
+    language,
     quote,
     rule,
     strike,
@@ -118,6 +121,9 @@ const model = compileContentModel(
         columns(),
         ...featuresById(['lists.item', 'lists.bullet', 'lists.ordered', 'lists.task']),
         inputRules({ typography }),
+        align(),
+        language(),
+        formatClear(),
         callouts,
     ],
     { id: 'story.playground', version: 1 },
@@ -140,6 +146,13 @@ const TOOLBAR = [
     ['mark.color.menu.open'],
     ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
     ['quote.toggle', 'code-block.toggle', 'emoji.picker.open'],
+    [
+        { command: 'block.align.set', payload: { align: 'left' } },
+        { command: 'block.align.set', payload: { align: 'center' } },
+        { command: 'block.align.set', payload: { align: 'right' } },
+        { command: 'block.align.set', payload: { align: 'justify' } },
+    ],
+    ['mark.language.edit', 'format.clear'],
     ['rule.insert', 'column.break.insert'],
 ];
 
@@ -198,6 +211,8 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly hostPortalContainer: boolean;
     /** How the in-memory server answers each save, so `RichTextEditor.Status` shows each message. */
     readonly serverAnswer: 'saved' | 'conflict' | 'forbidden' | 'invalid' | 'incompatible-writer';
+    /** Strikethrough and secondary text colour on a checked task item, in the editor and the reader. */
+    readonly strikeCheckedTasks: boolean;
     /** The font size of the Lead brand style's recipe, in px; a change restyles every Lead block with no document change. */
     readonly leadFontSize: number;
 };
@@ -238,6 +253,7 @@ const Playground = ({
     bubbleToolbar,
     hostPortalContainer,
     serverAnswer,
+    strikeCheckedTasks,
     leadFontSize,
     ...props
 }: PlaygroundProps) => {
@@ -253,12 +269,13 @@ const Playground = ({
             toolbar: TOOLBAR,
             toolbarShortcut,
             sliceContext: context,
+            strikeCheckedTasks,
             styles: brandStylesOf(leadFontSize),
             colorTokens: COLOR_TOKENS,
             columns: columnCount,
             columnGap,
         });
-    }, [contentClassName, toolbarShortcut, sliceContext, leadFontSize, columnCount, columnGap]);
+    }, [contentClassName, toolbarShortcut, sliceContext, strikeCheckedTasks, leadFontSize, columnCount, columnGap]);
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
@@ -735,6 +752,10 @@ Tab in an item that cannot nest, such as the first item, moves focus out of the 
 
 With \`tabMovesFocus\`, Tab and Shift+Tab always move focus out of the editor and indent or outdent no item; Mod-] and Mod-[ still do. Tab still accepts an open suggestion.
 
+## Alignment, language and clear formatting
+
+Align left, center, right or justify with the toolbar or Mod+Shift+L, Mod+Shift+E, Mod+Shift+R and Mod+Shift+J. Pressing the alignment a selection already has removes it. Language opens a picker that sets or removes the language of the selection. Clear formatting removes marks, lifts list items out and turns the selection into plain paragraphs. Mod+\\ clears inline marks only. Strike checked tasks, in the controls, strikes a checked task's text.
+
 ## Surface
 
 | Action | Key | Apple | Other platforms |
@@ -757,6 +778,7 @@ With \`tabMovesFocus\`, Tab and Shift+Tab always move focus out of the editor an
         bubbleToolbar: false,
         hostPortalContainer: false,
         serverAnswer: 'saved',
+        strikeCheckedTasks: false,
         leadFontSize: 20,
         defaultToolbarMode: 'fixed',
         definition,
@@ -781,6 +803,7 @@ With \`tabMovesFocus\`, Tab and Shift+Tab always move focus out of the editor an
         presentation: { control: false },
         inputRules: { control: 'object' },
         tabMovesFocus: { control: 'boolean' },
+        strikeCheckedTasks: { control: 'boolean' },
         columns: { control: { type: 'number', min: 1, max: 6, step: 1 } },
         columnGap: { control: 'text' },
         scrollSelectionIntoView: { control: 'boolean' },

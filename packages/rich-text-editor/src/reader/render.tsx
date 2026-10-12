@@ -12,7 +12,7 @@ import {
 
 import { type Diagnostic, type JsonObject, type ListLevels } from '#/model';
 import { isIsland, type TreeNode } from '#/model/content';
-import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
+import { type HtmlTemplate, passageDirection, resolveHtmlSpec, treeRuns, withAutoDirection } from '#/model/html-spec';
 import {
     attrsOf,
     COLUMN_BREAK,
@@ -51,6 +51,7 @@ export interface RenderState extends Spacing {
     readonly diagnostics: Diagnostic[];
     readonly listLevels: ListLevels | undefined;
     readonly depths: ListDepths;
+    readonly strikeCheckedTasks: boolean;
     readonly styles: OutputStyles;
     /** The stored style IDs reported unknown, once each; `undefined` when the render reports none, with no presentation. */
     readonly unknownStyles: Set<string> | undefined;
@@ -279,7 +280,7 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         template = withListLevel(template, attrs, entered.kind, entered.depth, state.listLevels);
     }
     if (!plan.inline) {
-        template = withAutoDirection(template);
+        template = withAutoDirection(template, passageDirection(treeRuns(node.content)));
     }
     template = withStyle(template, styled(state, node.type, attrs, path), false);
     if (node.type === COLUMN_BREAK) {
@@ -343,6 +344,9 @@ export const renderDocument = (
     }
     if (dir === 'ltr' || dir === 'rtl') {
         props.dir = dir;
+    }
+    if (state.strikeCheckedTasks) {
+        props['data-rte-strike-checked-tasks'] = '';
     }
     if (state.islands > 0) {
         children.push(message(state.context, 'islands'));

@@ -64,6 +64,7 @@ import {
 import { type DocumentChange, type SelectionSummary, type SessionToken, type ShippedCommands } from '#/runtime/types';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { ColorMenu, type ColorMenuOptions } from '#/ui/menus/color';
+import { LanguageDialog, languageOptions } from '#/ui/menus/language';
 import { NumberingDialog, SET_START } from '#/ui/menus/numbering';
 import { EmojiPicker, emojiStrings } from '#/ui/suggestions/emoji-picker';
 import { SuggestionList } from '#/ui/suggestions/suggestion-list';
@@ -351,6 +352,8 @@ const SessionComponent = (
     // The package-built control a host `execute` opened, and the payload it ran with.
     const [control, setControl] = useState<string>();
     const [controlPayload, setControlPayload] = useState<unknown>();
+    // The element that had focus when the control opened, such as the toolbar button or More.
+    const [controlOpener, setControlOpener] = useState<Element | null>(null);
     const switchToolbar = useCallback((next: ToolbarMode) => {
         setToolbarMode(next);
         latestRef.current.onToolbarModeChange?.(next);
@@ -412,6 +415,7 @@ const SessionComponent = (
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             openControl: (opened, payload) => {
                 setControlPayload(payload);
+                setControlOpener(scope.active());
                 setControl(opened);
             },
             locale: () => langRef.current,
@@ -476,7 +480,7 @@ const SessionComponent = (
             coordinator.stop();
             runtime.handle.dispose();
         };
-    }, [mounted, loaded, coordinator, portals, work, onSession]);
+    }, [mounted, loaded, coordinator, portals, work, onSession, scope]);
 
     // A blocked document gets no session and so no handle.
     useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
@@ -764,6 +768,27 @@ const SessionComponent = (
                                         onClose={() => setControl(undefined)}
                                     />
                                 )}
+                                {control === 'language' && (
+                                    <LanguageDialog
+                                        languages={languageOptions(engineOf(mounted.definition).model)}
+                                        locale={lang}
+                                        opener={controlOpener}
+                                        strings={{
+                                            title: chromeContext.t('RichTextEditor_languageTitle'),
+                                            tag: chromeContext.t('RichTextEditor_languageTag'),
+                                            direction: chromeContext.t('RichTextEditor_languageDirection'),
+                                            none: chromeContext.t('RichTextEditor_languageNone'),
+                                            automatic: chromeContext.t('RichTextEditor_languageAutomatic'),
+                                            leftToRight: chromeContext.t('RichTextEditor_languageLeftToRight'),
+                                            rightToLeft: chromeContext.t('RichTextEditor_languageRightToLeft'),
+                                            invalid: chromeContext.t('RichTextEditor_languageInvalid'),
+                                            remove: chromeContext.t('RichTextEditor_languageRemove'),
+                                            apply: chromeContext.t('RichTextEditor_apply'),
+                                            cancel: chromeContext.t('RichTextEditor_cancel'),
+                                        }}
+                                        onClose={() => setControl(undefined)}
+                                    />
+                                )}
                                 <div
                                     ref={announcer.setRegion}
                                     aria-live="polite"
@@ -904,6 +929,7 @@ const Surface = () => {
     const { props, mounted, coordinator, chrome } = useRoot('Surface');
     const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
     const contentClassName = presentation?.contentClassName;
+    const strikeCheckedTasks = presentation?.strikeCheckedTasks === true;
     const theme = useFondueTheme();
     // The document's language and direction, else the theme's, while the chrome keeps its own.
     let lang = mounted.lang ?? theme.lang;
@@ -957,6 +983,7 @@ const Surface = () => {
             spellCheck={spellCheck}
             data-test-id={`${testId}-surface`}
             data-rte-surface=""
+            data-rte-strike-checked-tasks={strikeCheckedTasks ? '' : undefined}
             // Native focus events of the surface itself, so a move into chrome or an overlay blurs it.
             onFocus={(event) => {
                 if (event.target === event.currentTarget) {

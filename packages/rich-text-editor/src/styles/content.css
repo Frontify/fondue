@@ -2,7 +2,8 @@
 
 /*
  * Every rule sits in the one `fondue-rte` cascade layer and every selector inside `:where()`, so any host rule, on
- * `contentClassName` or anywhere else, wins without `!important`.
+ * `contentClassName` or anywhere else, wins without `!important`. The struck checked-task colour must beat a run's
+ * inline colour, so it is `!important` and hosts change it through its variable.
  */
 @layer fondue-rte {
     /* Hosts override these per root, and each default is a Fondue token. */
@@ -16,6 +17,7 @@
         /* A horizontal rule holds 3:1 on the surface for the same reason. */
         --rte-content-rule-color: var(--color-line-strong);
         --rte-content-surface-padding: var(--spacing-x-small) var(--spacing-small);
+        --rte-content-secondary-text-color: var(--color-secondary-default);
         --rte-content-placeholder-color: var(--color-secondary-default);
         --rte-content-placeholder-opacity: 1;
         --rte-content-selected-node-color: var(--color-focus-default);
@@ -55,6 +57,42 @@
     /* A task item shows its checkbox and no list marker, whatever marker its list inherits. */
     :where(.fondue-rte-content ul[data-task-list] > li) {
         list-style: none;
+    }
+
+    /*
+     * Checked tasks keep their text unless the presentation asks for the struck secondary look, which takes each of the
+     * item's own blocks, never a nested list: the reader's blocks after the checkbox, the editor's content blocks.
+     */
+    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > :not(input, ul, ol)),
+    :where(
+        .fondue-rte-content[data-rte-strike-checked-tasks]
+            li:has(> [data-rte-chrome] input:checked)
+            > [data-rte-chrome]
+            + *
+            > :not(ul, ol)
+    ) {
+        text-decoration-line: line-through;
+    }
+
+    /* A run's own colour, inline or from a link or brand style, gives way only to `!important`. */
+    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > :not(input, ul, ol)),
+    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > :not(input, ul, ol) *),
+    :where(
+        .fondue-rte-content[data-rte-strike-checked-tasks]
+            li:has(> [data-rte-chrome] input:checked)
+            > [data-rte-chrome]
+            + *
+            > :not(ul, ol)
+    ),
+    :where(
+        .fondue-rte-content[data-rte-strike-checked-tasks]
+            li:has(> [data-rte-chrome] input:checked)
+            > [data-rte-chrome]
+            + *
+            > :not(ul, ol)
+            *
+    ) {
+        color: var(--rte-content-secondary-text-color) !important;
     }
 
     :where(.fondue-rte-content pre) {

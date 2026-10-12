@@ -65,7 +65,7 @@ export const BASE_KEYS_PLUGIN: PluginDescriptor = { id: 'base-keys', phase: 'bas
 export const CLIPBOARD_PLUGIN: PluginDescriptor = { id: 'clipboard', phase: 'guard' };
 /** The drop cursor of `prosemirror-dropcursor`. */
 export const DROP_CURSOR_PLUGIN: PluginDescriptor = { id: 'drop-cursor', phase: 'structure' };
-/** The last mark a `setMark` command set in the session, which `reapplyMark` sets again. */
+/** The last mark of each type that a `setMark` command set in the session, which `reapplyMark` sets again. */
 export const LAST_MARK_PLUGIN: PluginDescriptor = { id: 'last-mark', phase: 'late' };
 /** The gap cursor of `prosemirror-gapcursor`, whose arrow keys run before every base key. */
 export const GAP_CURSOR_PLUGIN: PluginDescriptor = { id: 'gap-cursor', phase: 'structure' };
@@ -236,8 +236,8 @@ export const toggleTask = (item: string, setChecked: string): CommandDefinition 
 
 /**
  * Sets the payload's fields as attributes of the node that its `nodeId` names, else of every selected textblock of a
- * listed type, else of the nearest node of a listed type around the selection. With `toggle`, removes the values when
- * every target already has them.
+ * listed type, else of the nearest node of a listed type around the selection; `'textblocks'` lists every textblock
+ * type. With `toggle`, restores each attribute's default when every target already has the values.
  */
 export const setAttributes = <const P extends PayloadDeclaration>(
     node: string | readonly string[],
@@ -298,6 +298,30 @@ export const removeMark = (
         names = [...(marks as readonly string[])];
     }
     return command('removeMark', { installed: names, extendToMarkRange: options?.extendToMarkRange });
+};
+
+// Links, mentions and `language` passages carry meaning, so clearing inline formatting keeps them.
+const FORMATTING_MARKS = [
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'code',
+    'subscript',
+    'superscript',
+    'highlight',
+    'font_color',
+];
+
+/**
+ * `inline` removes the formatting marks the model installs, as `removeMark` does. `all` removes every mark, lifts the
+ * selected blocks out of lists, turns them into paragraphs and clears alignment and indent.
+ */
+export const clearFormatting = (scope: 'inline' | 'all'): CommandDefinition => {
+    if (scope === 'inline') {
+        return removeMark(FORMATTING_MARKS);
+    }
+    return command('removeMark', { scope });
 };
 
 /** Sets again the last of the listed marks that a `setMark` command set in this session, with its attributes. */

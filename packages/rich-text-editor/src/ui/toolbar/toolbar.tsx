@@ -82,6 +82,10 @@ export const Item = ({
                         if (runtime === undefined || unavailable) {
                             return;
                         }
+                        // A control returns focus to its opener, which a click on macOS Safari or Firefox never focuses.
+                        if (item.opensControl === true && !keepsFocus) {
+                            button.focus();
+                        }
                         await runItem(runtime, item, keepsFocus);
                         returnFocus(runtime, [button.closest('[role="toolbar"]')]);
                     }}

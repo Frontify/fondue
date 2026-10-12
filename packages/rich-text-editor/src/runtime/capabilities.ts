@@ -42,7 +42,7 @@ import { listAround, repeated } from './lists';
 import { nearest, positionOf } from './positions';
 import { stylesOf } from './styles';
 import { suggestionsPlugin } from './suggestions/plugin';
-import { carrySelection } from './transactions';
+import { appendSteps, carrySelection } from './transactions';
 
 interface TextRange {
     readonly from: number;
@@ -709,7 +709,40 @@ const defaultOf = (type: NodeType, name: string): unknown => {
     return spec.default;
 };
 
-/** The nodes a `setAttributes` command changes: the one `nodeId` names, else the selected textblocks of `types`, else the nearest node of `types`. */
+/** The innermost node of `types` that holds the textblock at `pos`, or that textblock itself. */
+const holderOf = (doc: Node, pos: number, types: readonly NodeType[]): Located | undefined => {
+    const $inside = doc.resolve(pos + 1);
+    for (let depth = $inside.depth; depth > 0; depth -= 1) {
+        const node = $inside.node(depth);
+        if (types.includes(node.type)) {
+            return { node, pos: $inside.before(depth) };
+        }
+    }
+    return undefined;
+};
+
+/**
+ * The nodes of `types` the selection touches, in document order: each selected atom of a type, and for each selected
+ * textblock the innermost node of a type that holds it, so a caret in a nested list names that list only.
+ */
+const selectedOf = (state: EditorState, types: readonly NodeType[]): Located[] => {
+    const found = new Map<number, Located>();
+    for (const { $from, $to } of state.selection.ranges) {
+        state.doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
+            if (node.isTextblock) {
+                const holder = holderOf(state.doc, pos, types);
+                if (holder !== undefined) {
+                    found.set(holder.pos, holder);
+                }
+            } else if (node.isAtom && types.includes(node.type)) {
+                found.set(pos, { node, pos });
+            }
+        });
+    }
+    return [...found.values()].sort((a, b) => a.pos - b.pos);
+};
+
+/** The nodes a `setAttributes` command changes: the one `nodeId` names, else the selected nodes of `types`, else the nearest node of `types`. */
 const attributeTargets = (state: EditorState, types: readonly NodeType[], nodeId: unknown): Located[] => {
     if (typeof nodeId === 'string') {
         const pos = positionOf(state.doc, nodeId);
@@ -722,9 +755,9 @@ const attributeTargets = (state: EditorState, types: readonly NodeType[], nodeId
         }
         return [{ node, pos }];
     }
-    const blocks = selectedTextblocks(state).filter(({ node }) => types.includes(node.type));
-    if (blocks.length > 0) {
-        return blocks;
+    const selected = selectedOf(state, types);
+    if (selected.length > 0) {
+        return selected;
     }
     for (const type of types) {
         const found = nearest(state, type);
@@ -748,7 +781,7 @@ const styleTargets = (state: EditorState, targets: Located[], attrs: Readonly<Re
 };
 
 /**
- * Sets the payload's other fields on the node its `nodeId` names, else on the selected textblocks of the listed types,
+ * Sets the payload's other fields on the node its `nodeId` names, else on the selected nodes of the listed types,
  * else on the nearest node of one; with `toggle`, removes the values when every target already has them. A `styleId`
  * of a session style lands only on the node types the style applies to.
  */
@@ -807,41 +840,43 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
 
 /** The transaction meta that carries the mark a `setMark` command set, which the last-mark plugin keeps. */
 const LAST_MARK_META = 'rte.last-mark';
-const lastMarkKey = new PluginKey<Mark | null>('rte.last-mark');
+const lastMarkKey = new PluginKey<readonly Mark[]>('rte.last-mark');
 
-/** Keeps the last mark a `setMark` command set in the session. */
+/** Keeps the last mark of each type that a `setMark` command set in the session, the latest first. */
 const lastMarkPlugin = () =>
-    new Plugin<Mark | null>({
+    new Plugin<readonly Mark[]>({
         key: lastMarkKey,
         state: {
-            init: () => null,
-            apply: (transaction, value) => {
+            init: () => [],
+            apply: (transaction, marks) => {
                 const mark = transaction.getMeta(LAST_MARK_META) as Mark | undefined;
                 if (mark === undefined) {
-                    return value;
+                    return marks;
                 }
-                return mark;
+                return [mark, ...marks.filter((other) => other.type !== mark.type)];
             },
         },
     });
 
-/** The range of the run of text with a mark of `type` around a caret strictly inside it. */
+/**
+ * The range of the run of text with one mark of `type`, equal attributes included, that holds the caret or starts at
+ * it, so a neighbouring passage with other attributes stays outside.
+ */
 const markRangeAt = (
     state: EditorState,
     type: MarkType,
 ): { readonly from: number; readonly to: number } | undefined => {
     const { $from } = state.selection;
     const { parent } = $from;
-    const holds = (index: number) =>
-        index >= 0 && index < parent.childCount && type.isInSet(parent.child(index).marks) !== undefined;
     const index = $from.index();
-    // Between two nodes the caret is inside the run only when both hold the mark.
-    if ($from.textOffset === 0 && !holds(index - 1)) {
+    if (index >= parent.childCount) {
         return undefined;
     }
-    if (!holds(index)) {
+    const mark = type.isInSet(parent.child(index).marks);
+    if (mark === undefined) {
         return undefined;
     }
+    const holds = (at: number) => at >= 0 && at < parent.childCount && mark.isInSet(parent.child(at).marks);
     let first = index;
     while (holds(first - 1)) {
         first -= 1;
@@ -904,14 +939,19 @@ const clearMarks = (
 ): boolean => {
     if (state.selection.empty) {
         const stored = state.storedMarks ?? state.selection.$from.marks();
-        const held = types.filter((type) => type.isInSet(stored) !== undefined);
+        const held = types.flatMap((type) => {
+            const range = extend ? markRangeAt(state, type) : undefined;
+            if (range === undefined && type.isInSet(stored) === undefined) {
+                return [];
+            }
+            return [{ type, range }];
+        });
         if (held.length === 0) {
             return false;
         }
         if (dispatch !== undefined) {
             const transaction = state.tr;
-            for (const type of held) {
-                const range = extend ? markRangeAt(state, type) : undefined;
+            for (const { type, range } of held) {
                 if (range === undefined) {
                     transaction.removeStoredMark(type);
                 } else {
@@ -994,23 +1034,13 @@ const markTypesOf = (marks: unknown, schema: Schema): MarkType[] => {
     });
 };
 
-/** Removes the listed marks the model installs, as one undo step. */
-const removeMark: CapabilityImplementation = (args, schema) => {
-    const types = markTypesOf(args.installed, schema);
-    const extend = args.extendToMarkRange === true;
-    return {
-        run: (state, dispatch) => clearMarks(state, dispatch, types, extend),
-        active: () => false,
-    };
-};
-
 /** Sets again the last mark of the listed types that a `setMark` command set in this session. */
 const reapplyMark: CapabilityImplementation = (args, schema) => {
     const types = markTypesOf(args.installed, schema);
     return {
         run: (state, dispatch) => {
-            const last = lastMarkKey.getState(state);
-            if (last === undefined || last === null || !types.includes(last.type)) {
+            const last = (lastMarkKey.getState(state) ?? []).find((mark) => types.includes(mark.type));
+            if (last === undefined) {
                 return false;
             }
             return applyMark(state, dispatch, last, false);
@@ -1047,6 +1077,169 @@ const history: CapabilityImplementation = (args) => {
         command = redo;
     }
     return { run: (state, dispatch) => command(state, dispatch), active: () => false };
+};
+
+// An island mark stays, because it holds content the model cannot store as itself.
+const clearedMarks = (schema: Schema): readonly MarkType[] =>
+    Object.values(schema.marks).filter((type) => type.name !== 'unsupported_mark');
+
+const take = (outer: Transaction, current: EditorState, next: Transaction | undefined): EditorState => {
+    if (next === undefined || (!next.docChanged && !next.storedMarksSet)) {
+        return current;
+    }
+    appendSteps(outer, next);
+    if (next.storedMarksSet) {
+        outer.setStoredMarks(next.storedMarks);
+    }
+    return current.apply(next);
+};
+
+/** Lifts the item of the selected textblock at `pos` one level out of its list, or returns `undefined` outside a list. */
+const liftItemAt = (state: EditorState, pos: number): Transaction | undefined => {
+    const $inside = state.doc.resolve(pos + 1);
+    const around = listAround($inside);
+    if (around === undefined) {
+        return undefined;
+    }
+    const item = $inside.node(around.depth + 1).type;
+    // `liftListItem` lifts the items of the selection's block range, which a selection that leaves the list lacks.
+    const caret = state.apply(state.tr.setSelection(TextSelection.create(state.doc, pos + 1)));
+    const built: Transaction[] = [];
+    liftListItem(item)(caret, (next) => {
+        built.push(next);
+    });
+    const next = built[0];
+    if (next === undefined || !next.docChanged) {
+        return undefined;
+    }
+    return next;
+};
+
+/** Lifts every selected item, nested ones included, one level at a time until no selected textblock sits in a list. */
+const liftLists = (state: EditorState): Transaction | undefined => {
+    const transaction = state.tr;
+    let current = state;
+    for (;;) {
+        let next: Transaction | undefined;
+        for (const { pos } of selectedTextblocks(current)) {
+            next = liftItemAt(current, pos);
+            if (next !== undefined) {
+                break;
+            }
+        }
+        if (next === undefined) {
+            break;
+        }
+        appendSteps(transaction, next);
+        const selection = current.selection.map(next.doc, next.mapping);
+        current = current.apply(next);
+        current = current.apply(current.tr.setSelection(selection));
+    }
+    if (!transaction.docChanged) {
+        return undefined;
+    }
+    return transaction.setSelection(carrySelection(transaction.doc, current.selection));
+};
+
+// The block attributes clearing all formatting restores to their declared defaults.
+const CLEARED_ATTRIBUTES = ['align', 'indent'];
+
+/** Turns the selected textblocks into paragraphs and restores alignment and indent to their defaults. */
+const plainParagraphs = (state: EditorState): Transaction | undefined => {
+    const paragraph = state.schema.nodes.paragraph;
+    if (paragraph === undefined) {
+        return undefined;
+    }
+    const cleared = CLEARED_ATTRIBUTES.filter((name) => Object.hasOwn(paragraph.spec.attrs ?? {}, name));
+    const blocks = selectedTextblocks(state);
+    const needs = blocks.some(
+        ({ node }) =>
+            node.type !== paragraph || cleared.some((name) => node.attrs[name] !== defaultOf(paragraph, name)),
+    );
+    if (!needs) {
+        return undefined;
+    }
+    const { $from, $to } = state.selection;
+    const transaction = state.tr.setBlockType($from.pos, $to.pos, paragraph, (node) => {
+        const attrs = carried(node, paragraph, {});
+        for (const name of cleared) {
+            attrs[name] = defaultOf(paragraph, name);
+        }
+        return attrs;
+    });
+    if (!transaction.docChanged) {
+        return undefined;
+    }
+    return transaction;
+};
+
+/** The selected range, or at a caret the whole textblocks around it. */
+const blockRanges = (state: EditorState): { readonly from: number; readonly to: number }[] => {
+    if (!state.selection.empty) {
+        return [{ from: state.selection.from, to: state.selection.to }];
+    }
+    const blocks = selectedTextblocks(state);
+    if (blocks.length > 0) {
+        return blocks.map(({ node, pos }) => ({ from: pos + 1, to: pos + 1 + node.content.size }));
+    }
+    const { $from } = state.selection;
+    if ($from.parent.isTextblock) {
+        return [{ from: $from.start(), to: $from.end() }];
+    }
+    return [{ from: state.selection.from, to: state.selection.to }];
+};
+
+const clearStored = (transaction: Transaction, state: EditorState, types: readonly MarkType[]) => {
+    if (!state.selection.empty) {
+        return;
+    }
+    const stored = state.storedMarks ?? state.selection.$from.marks();
+    const kept = stored.filter((mark) => !types.includes(mark.type));
+    if (kept.length !== stored.length) {
+        transaction.setStoredMarks(kept);
+    }
+};
+
+/** Removes every mark but an island's, lifts the selection out of lists and leaves plain paragraphs, as one undo step. */
+const clearAll: CapabilityImplementation = (_args, schema) => {
+    const types = clearedMarks(schema);
+    return {
+        run: (state, dispatch) => {
+            const transaction = state.tr;
+            let current = take(transaction, state, liftLists(state));
+            current = take(transaction, current, plainParagraphs(current));
+            const marks = current.tr;
+            for (const range of blockRanges(current)) {
+                for (const type of types) {
+                    if (range.from !== range.to) {
+                        marks.removeMark(range.from, range.to, type);
+                    }
+                }
+            }
+            clearStored(marks, current, types);
+            current = take(transaction, current, marks);
+            if (!transaction.docChanged && !transaction.storedMarksSet) {
+                return false;
+            }
+            transaction.setSelection(carrySelection(transaction.doc, current.selection));
+            dispatch?.(transaction.scrollIntoView());
+            return true;
+        },
+        active: () => false,
+    };
+};
+
+/** Removes the listed marks the model installs as one undo step, or with `scope: 'all'` clears all formatting. */
+const removeMark: CapabilityImplementation = (args, schema, command) => {
+    if (args.scope === 'all') {
+        return clearAll(args, schema, command);
+    }
+    const types = markTypesOf(args.installed, schema);
+    const extend = args.extendToMarkRange === true;
+    return {
+        run: (state, dispatch) => clearMarks(state, dispatch, types, extend),
+        active: () => false,
+    };
 };
 
 /** The command capabilities and package plugins the runtime implements so far, by capability name and plugin ID. */

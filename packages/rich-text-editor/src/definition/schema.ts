@@ -141,6 +141,10 @@ const readSource = (element: HTMLElement, source: ParseAttributeSource, declarat
     if (target !== null) {
         text = target.getAttribute(source.from);
     }
+    // HTML matches `dir` values in any case, so `RTL` is `rtl`.
+    if (text !== null && source.from.toLowerCase() === 'dir') {
+        text = text.toLowerCase();
+    }
     if (source.equals !== undefined) {
         return text === source.equals;
     }

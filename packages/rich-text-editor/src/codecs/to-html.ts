@@ -2,7 +2,7 @@
 
 import { type CodecContext, type Diagnostic, type HtmlSpec, type ListLevels } from '#/model';
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
-import { type HtmlTemplate, resolveHtmlSpec, withAutoDirection } from '#/model/html-spec';
+import { type HtmlTemplate, passageDirection, resolveHtmlSpec, treeRuns, withAutoDirection } from '#/model/html-spec';
 import {
     attrsOf,
     COLUMN_BREAK,
@@ -225,7 +225,7 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         template = withListLevel(template, attrs, entered.kind, entered.depth, state.listLevels);
     }
     if (!plan.inline) {
-        template = withAutoDirection(template);
+        template = withAutoDirection(template, passageDirection(treeRuns(node.content)));
     }
     template = withStyle(template, styleOfNode(state.styles.styles, node.type, attrs).style, state.styles.inline);
     if (node.type === COLUMN_BREAK) {

@@ -180,8 +180,6 @@ export interface ReactPresentation extends ReaderPresentation {
      */
     readonly columnGap?: string;
     readonly contentClassName?: string;
-    /** Strikethrough and secondary colour on checked task items; default false. */
-    readonly strikeCheckedTasks?: boolean;
     /** Groups of command IDs, `{ command, payload }` items and the `text-style` control ID, in order. */
     readonly toolbar: readonly (readonly CommandRef[])[];
     readonly controls?: Readonly<Record<string, { readonly labelKey?: string; readonly icon?: string }>>;

@@ -9,6 +9,7 @@ export {
     indentLines,
     insertNode,
     insertText,
+    clearFormatting,
     openControl,
     outdentItem,
     reapplyMark,

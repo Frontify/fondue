@@ -37,6 +37,8 @@ export interface ReaderPresentation {
     readonly contentClassName?: string;
     /** List markers by depth. */
     readonly listLevels?: ListLevels;
+    /** Strikethrough and secondary colour on checked task items; default false. */
+    readonly strikeCheckedTasks?: boolean;
     /** 1 to 6. */
     readonly columns?: number;
     /**
@@ -107,6 +109,7 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
         carried: 0,
         listLevels: resolvers.listLevels,
         depths: listDepths(),
+        strikeCheckedTasks: resolvers.strikeCheckedTasks === true,
         styles: { styles, colorTokens: listOf<ColorToken>(resolvers.colorTokens), inline: false },
         // Without a presentation no style map is given, so no stored style is unknown.
         unknownStyles: presentation === undefined ? undefined : new Set(),
