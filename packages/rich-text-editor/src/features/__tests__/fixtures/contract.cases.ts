@@ -38,6 +38,8 @@ const PAYLOADS: Readonly<Record<string, unknown>> = {
     'code-block.language.set': { languageId: 'javascript' },
     'code-block.indent': undefined,
     'code-block.outdent': undefined,
+    'mark.font-color.set': { tokenId: 'brand.blue' },
+    'block.style.set': { styleId: 'brand.body' },
 };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [
@@ -122,6 +124,20 @@ export const commandCases = (features: readonly Feature[]): void => {
                 engine.commands
                     .get('history.undo')
                     ?.run(edited, (transaction) => states.push(edited.apply(transaction)));
+            }
+            // A colour set and cleared again, so the reapply command has a last colour to set.
+            const setColor = engine.commands.get('mark.font-color.set');
+            if (setColor !== undefined) {
+                for (const state of [...states]) {
+                    setColor.run(
+                        state,
+                        (transaction) => {
+                            const colored = state.apply(transaction);
+                            setColor.run(colored, (cleared) => states.push(colored.apply(cleared)), null);
+                        },
+                        PAYLOADS['mark.font-color.set'],
+                    );
+                }
             }
             const stubs = stubForbidden(id);
             let changed = false;

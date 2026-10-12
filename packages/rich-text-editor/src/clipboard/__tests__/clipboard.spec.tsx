@@ -1331,6 +1331,8 @@ describe('pasted HTML', () => {
             'data-marker',
             'aria-checked',
             'color',
+            'data-rte-color',
+            'data-rte-style',
         ]);
         const styles = new Set([
             'text-align',
@@ -1388,7 +1390,14 @@ describe('pasted HTML', () => {
                 '<p><span style="color:red;background:url(x);position:fixed">x</span> <span style="font-weight: bold; position: fixed">b</span></p>',
         });
 
-        expect(mounted.content()).toEqual([block(text('x '), text('b', mark('bold')))]);
+        // The model keeps literal colours, so `red` becomes its hex value.
+        expect(mounted.content()).toEqual([
+            block(
+                text('x', mark('font_color', { tokenId: null, value: '#ff0000' })),
+                text(' '),
+                text('b', mark('bold')),
+            ),
+        ]);
         expect(JSON.stringify(mounted.content())).not.toMatch(/red|url|fixed|style/);
         mounted.unmount();
     });

@@ -5,6 +5,7 @@ import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { code } from '#/features/marks-code/feature';
+import { fontColor } from '#/features/marks-font-color/feature';
 import { italic } from '#/features/marks-italic/feature';
 import { strike } from '#/features/marks-strike/feature';
 import { subscript } from '#/features/marks-subscript/feature';
@@ -78,21 +79,6 @@ export const htmlLanguage = defineFeature({
     },
 });
 
-/** Stands in for `marks.font-color` with `literalColors` on: a literal CSS `color`. */
-export const htmlColor = defineFeature({
-    id: 'fixture.html-color',
-    version: 1,
-    requires,
-    marks: {
-        font_color: {
-            attrs: { value: { type: 'color', required: true } },
-            html: ['span', { 'data-color': { attr: 'value' } }, 0],
-            parse: [{ tag: 'span', attrs: { value: { fromStyle: 'color' } } }],
-            rank: -1,
-        },
-    },
-});
-
 /** Stands in for `blocks.align` with `justify`: a shared `align` read from `text-align`. */
 export const htmlAlign = defineFeature({
     id: 'fixture.html-align',
@@ -108,7 +94,7 @@ export const htmlAlign = defineFeature({
     },
 });
 
-/** The shipped text features with the stand-ins above. */
+/** The shipped text features and `marks.font-color` with `literalColors` on, with the stand-ins above. */
 export const htmlFeatures = () =>
     [
         core(),
@@ -124,7 +110,7 @@ export const htmlFeatures = () =>
         htmlAlign(),
         htmlLists(),
         htmlLanguage(),
-        htmlColor(),
+        fontColor({ literalColors: true }),
         htmlLink(),
     ] as const;
 

@@ -678,7 +678,19 @@ test('pastes an rgba colour as a hex value with its alpha pair', async ({ mount,
 
     await pasteHtml(page, '<p><span style="color: rgba(0, 0, 0, 0.5)">half</span></p>');
 
-    expect(JSON.stringify(await htmlContentOf(page))).toContain('"attrs":{"value":"#00000080"}');
+    expect(JSON.stringify(await htmlContentOf(page))).toContain('"attrs":{"tokenId":null,"value":"#00000080"}');
+});
+
+test('announces removed formatting for a pasted oklch() colour, which it cannot keep as hex', async ({
+    mount,
+    page,
+}) => {
+    await mountHtml(page, mount);
+
+    await pasteHtml(page, '<p><span style="color: oklch(0.6 0.2 30)">tone</span></p>');
+
+    expect(JSON.stringify(await htmlContentOf(page))).not.toContain('"value"');
+    await expect(page.locator('[aria-live="polite"]')).toHaveText('Some formatting was removed.');
 });
 
 for (const name of ['clobbering-create-element.html', 'clobbering-query-selector.html']) {

@@ -362,7 +362,11 @@ describe('RichTextReader format attributes', () => {
         const html = read(hostileDocument);
 
         expect(html).toBe(read(document));
-        expect(html).not.toMatch(/ (style|className)=/);
+        expect(html).not.toMatch(/ className=/);
+        // The only style is a colour mark's, written from its validated `#rrggbb` or `#rrggbbaa` value.
+        expect(html.match(/ style="[^"]*"/g) ?? []).toEqual(
+            html.match(/ style="(?:background-)?color:#[0-9a-f]{6}(?:[0-9a-f]{2})?"/g) ?? [],
+        );
         // The one class is the content root's, from the presentation, never a stored value.
         expect(html.match(/ class="[^"]*"/g)).toEqual([' class="fondue-rte-content"']);
     });
@@ -561,11 +565,15 @@ describe('RichTextReader resolvers', () => {
         };
 
         expect(
-            renderReader(document, probed, { presentation: { resolveAssetUrl: thrower, resolveReference: thrower } }),
+            renderReader(document, probed, {
+                presentation: { styles: [], colorTokens: [], resolveAssetUrl: thrower, resolveReference: thrower },
+            }),
         ).toContain('[null,{&quot;status&quot;:&quot;unknown&quot;}]');
         expect(
             renderReader(document, probed, {
                 presentation: {
+                    styles: [],
+                    colorTokens: [],
                     resolveAssetUrl: (id) => `https://assets.test/${id}`,
                     resolveReference: () => ({ status: 'current', label: 'Ada' }),
                 },

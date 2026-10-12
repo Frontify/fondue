@@ -31,7 +31,7 @@ const fixtures = new URL('../../clipboard/__tests__/fixtures/vendor/', import.me
 const readFixture = (name: string) => readFileSync(new URL(name, fixtures), 'utf8');
 // Without literal colours, as `marks.font-color` ships, so the colour every Google Docs run sets stays out.
 const vendorModel = compileContentModel(
-    [...htmlFeatures().filter((feature) => feature.id !== 'fixture.html-color'), taskList()],
+    [...htmlFeatures().filter((feature) => feature.id !== 'marks.font-color'), taskList()],
     { id: 'fixture.vendor', version: 1 },
 );
 const withoutNodeIds = (value: unknown): unknown =>

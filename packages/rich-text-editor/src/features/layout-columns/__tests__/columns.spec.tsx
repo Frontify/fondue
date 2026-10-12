@@ -423,7 +423,13 @@ describe('layout.columns', () => {
             createElement(RichTextReader, {
                 document: storedIn(model, pageWith(3)),
                 model,
-                presentation: { columns: 3, columnGap: '24px', contentClassName: 'host-columns' },
+                presentation: {
+                    styles: [],
+                    colorTokens: [],
+                    columns: 3,
+                    columnGap: '24px',
+                    contentClassName: 'host-columns',
+                },
             }),
         );
 
@@ -437,7 +443,7 @@ describe('layout.columns', () => {
             createElement(RichTextReader, {
                 document: storedIn(model, pageWith(1)),
                 model,
-                presentation: { columns: 1 },
+                presentation: { styles: [], colorTokens: [], columns: 1 },
             }),
         );
 
