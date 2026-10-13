@@ -18,6 +18,7 @@ import {
     type BlockDefinition,
     type EditorControlApi,
     type InlineNodeDefinition,
+    type MarkDefinition,
     type MarkNodeDefinition,
     type PluginRegistry,
     type RteBlockNode,
@@ -388,6 +389,53 @@ export class ReactMarkView implements MarkView {
     }
 }
 
+/**
+ * A mark without editing UI, drawn in the editor exactly as the readonly view
+ * draws it: its `renderComponent`. It depends on nothing but the mark's value
+ * and its text, and the engine builds a new view whenever the value changes —
+ * so it renders once and stays out of the per-keystroke repaint.
+ */
+class RenderedMarkView implements MarkView {
+    dom: HTMLElement;
+    contentDOM: HTMLElement;
+    private readonly root: Root;
+
+    constructor(mark: PmMark, definition: MarkDefinition) {
+        this.dom = document.createElement('span');
+        // The text is in the page before React renders, as in ReactMarkView:
+        // typing that creates this view goes on at once.
+        const reactContainer = document.createElement('span');
+        reactContainer.style.display = 'contents';
+        this.contentDOM = document.createElement('span');
+        this.contentDOM.style.display = 'contents';
+        this.dom.append(reactContainer, this.contentDOM);
+        this.root = createRoot(reactContainer);
+        this.root.render(
+            definition.renderComponent({
+                value: markValueOf(mark),
+                children: <ContentHole element={this.contentDOM} />,
+            }),
+        );
+    }
+
+    ignoreMutation(mutation: ViewMutationRecord): boolean {
+        if (mutation.type === 'selection') {
+            return false;
+        }
+        return !this.contentDOM.contains(mutation.target);
+    }
+
+    destroy(): void {
+        const root = this.root;
+        queueMicrotask(() => root.unmount());
+    }
+}
+
+/**
+ * Every mark is drawn by its components, the same rule as the readonly view:
+ * `editorComponent` when it has one, `renderComponent` otherwise. `toHtml` is
+ * only what copying puts on the clipboard.
+ */
 export const createMarkViews = (
     registry: PluginRegistry,
     getApi: () => EditorControlApi,
@@ -397,11 +445,9 @@ export const createMarkViews = (
     const views: Record<string, MarkViewConstructor> = {};
     for (const [type, definition] of registry.marks) {
         const component = definition.valueMark;
-        // Only a mark with editing UI needs React in the editor; the rest are
-        // drawn from `toHtml` like any other mark.
-        if (component?.editorComponent) {
-            views[type] = (mark, view) => new ReactMarkView(mark, view, component, getApi, live, openEditors);
-        }
+        views[type] = component?.editorComponent
+            ? (mark, view) => new ReactMarkView(mark, view, component, getApi, live, openEditors)
+            : (mark) => new RenderedMarkView(mark, definition);
     }
     return views;
 };

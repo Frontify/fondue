@@ -40,8 +40,8 @@ export const mentionPlugin = ({ items, href, trigger = '@' }: MentionPluginOptio
     inlines: {
         mention: defineInline<MentionValue>({
             /**
-             * Portable markup: what copy/paste carries and `serializeToHtml`
-             * writes. A plain link — no tooltip outside the app.
+             * Portable markup: what copying out of the editor puts on the
+             * clipboard. A plain link — no tooltip outside the app.
              */
             toHtml: (mention) => ({
                 tag: 'a',

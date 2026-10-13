@@ -35,7 +35,7 @@ export const linkPlugin = (): RtePlugin => ({
             // Typing at the end of a link does not extend it.
             inclusive: false,
 
-            /** Portable markup: what copy/paste carries and `serializeToHtml` writes. */
+            /** Portable markup: what copying out of the editor puts on the clipboard. */
             toHtml: (link) => ({
                 tag: 'a',
                 attrs: { href: link.href, class: styles.link ?? '', ...newTabAttrs(link) },
