@@ -51,7 +51,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
     &[data-icon-only='true'] {
         aspect-ratio: 1;
-        width: sizeToken.get(9);
+        width: calc(#{sizeToken.get(9)} - 2 * var(--border-width-default));
     }
 
     &[data-icon-only='true'] .itemLabel {
