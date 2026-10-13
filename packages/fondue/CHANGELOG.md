@@ -1,5 +1,22 @@
 # @frontify/fondue
 
+## 13.10.0
+
+### Minor Changes
+
+- [#2881](https://github.com/Frontify/fondue/pull/2881) [`56f03e4`](https://github.com/Frontify/fondue/commit/56f03e4a733e88e21f0b5c9a367b1d7176148355) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat(Notice): add `role` prop to announce urgent notices as `alert` instead of the default `status`
+
+### Patch Changes
+
+- [#2891](https://github.com/Frontify/fondue/pull/2891) [`e384f9b`](https://github.com/Frontify/fondue/commit/e384f9ba46ee3269e10757c5fb787535d9667a70) Thanks [@syeo66](https://github.com/syeo66)! - fix(SegmentedControl): keep bottom border visible on hover for icon-only items
+
+- Updated dependencies [[`99d46d8`](https://github.com/Frontify/fondue/commit/99d46d8bb3a64d7989b4d2af8fe7343ee9fff89c), [`56f03e4`](https://github.com/Frontify/fondue/commit/56f03e4a733e88e21f0b5c9a367b1d7176148355), [`e384f9b`](https://github.com/Frontify/fondue/commit/e384f9ba46ee3269e10757c5fb787535d9667a70), [`cd3ff93`](https://github.com/Frontify/fondue/commit/cd3ff9384b7160ec3ece9b4169026e9a7daf91e5)]:
+  - @frontify/fondue-components@34.0.0
+  - @frontify/fondue-sdk@0.2.4
+  - @frontify/fondue-icons@0.30.0
+  - @frontify/fondue-tokens@5.1.2
+  - @frontify/fondue-rte@0.1.12
+
 ## 13.9.0
 
 ### Minor Changes
