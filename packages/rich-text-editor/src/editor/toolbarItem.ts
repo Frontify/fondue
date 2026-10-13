@@ -2,8 +2,8 @@
 
 import {
     type EditorControlApi,
+    type OwnType,
     PARAGRAPH,
-    type RtePlugin,
     type RteSelectionSnapshot,
     type SelectedNode,
     type ToolbarItemProps,
@@ -12,32 +12,6 @@ import {
 /**
  * What a plugin's `toolbarItem` is handed, composed from the control API — so it holds for any engine.
  */
-
-/** The type a plugin's toolbar item is about: the first one it declares. */
-type OwnType =
-    | { kind: 'mark'; type: string }
-    | { kind: 'list'; type: string }
-    | { kind: 'textBlock'; type: string }
-    | { kind: 'voidBlock'; type: string }
-    | { kind: 'none' };
-
-const ownTypeOf = (plugin: RtePlugin): OwnType => {
-    const mark = Object.keys(plugin.marks ?? {})[0];
-    if (mark !== undefined) {
-        return { kind: 'mark', type: mark };
-    }
-    const [type, block] = Object.entries(plugin.blocks ?? {})[0] ?? [];
-    if (type === undefined || block === undefined) {
-        return { kind: 'none' };
-    }
-    if (block.content === undefined) {
-        return { kind: 'voidBlock', type };
-    }
-    if (block.content !== 'text' && 'items' in block.content) {
-        return { kind: 'list', type };
-    }
-    return { kind: 'textBlock', type };
-};
 
 const attributesOf = (block: Record<string, unknown>): Record<string, unknown> =>
     Object.fromEntries(Object.entries(block).filter(([name]) => name !== 'type' && name !== 'children'));
@@ -63,12 +37,12 @@ const clearMark = (api: EditorControlApi, type: string): void => {
     }
 };
 
+/** `own` is what the plugin acts on, resolved by the registry (`ownTypeOf`). */
 export const toolbarItemProps = (
-    plugin: RtePlugin,
+    own: OwnType,
     api: EditorControlApi,
     selection: RteSelectionSnapshot,
 ): ToolbarItemProps => {
-    const own = ownTypeOf(plugin);
     const selectedNode = selectedNodeOf(own, api, selection);
     const isActive = own.kind === 'mark' ? own.type in selection.marks : selectedNode !== null;
 

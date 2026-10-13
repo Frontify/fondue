@@ -3,7 +3,7 @@
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { buildPluginRegistry, type EditorControlApi } from '#/core';
+import { type EditorControlApi } from '#/core';
 import { type EditorHandle, type MountDocument } from '#/editor/port';
 
 import { createControlApi, type OpenEditors } from './controlApi';
@@ -26,7 +26,7 @@ const HOST_DOC = 'rte-host-doc';
 
 export const mountDocument: MountDocument = ({
     container,
-    plugins: features,
+    registry,
     initialDoc,
     readOnly,
     placeholder,
@@ -36,7 +36,6 @@ export const mountDocument: MountDocument = ({
     onStateChange,
     onBlur,
 }) => {
-    const registry = buildPluginRegistry(features);
     const bundle = buildSchema(registry);
     const { schema } = bundle;
     const current = { readOnly, placeholder };
@@ -75,7 +74,7 @@ export const mountDocument: MountDocument = ({
         state: EditorState.create({
             doc: toEngineDocument(initialDoc, schema),
             plugins: [
-                ...keystrokePipeline(features, bundle, getApi),
+                ...keystrokePipeline(registry, bundle, getApi),
                 placeholderPlugin(() => current.placeholder, placeholderClassName),
                 wholeIslandsPlugin(),
                 inlineElementsCarryNoMarksPlugin(),

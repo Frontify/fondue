@@ -6,7 +6,16 @@ import { act, useLayoutEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ANY_LIST, defineBlock, defineInline, defineMark, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    ANY_LIST,
+    defineBlock,
+    defineInline,
+    defineMark,
+    PARAGRAPH,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 
 import { mountDocument } from './editing';
 
@@ -115,7 +124,7 @@ const mountInto = (container: HTMLElement, initialDoc: RteDocumentOf) => {
     const live = mountDocument({
         container,
         initialDoc,
-        plugins,
+        registry: buildPluginRegistry(plugins),
         readOnly: false,
         placeholder: '',
         contentClassName: 'content',

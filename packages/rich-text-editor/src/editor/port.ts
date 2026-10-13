@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorControlApi, type RteDocumentOf, type RtePlugin } from '#/core';
+import { type EditorControlApi, type PluginRegistry, type RteDocumentOf } from '#/core';
 
 /**
  * The editor engine as a contract: what the React shell drives, and what an
@@ -15,7 +15,8 @@ export type FloatingRect = { left: number; top: number; width: number; height: n
 export type MountOptions = {
     container: HTMLElement;
     initialDoc: RteDocumentOf;
-    plugins: RtePlugin[];
+    /** The mounted plugins, already gathered: the engine never reads a plugin itself. */
+    registry: PluginRegistry;
     /** Starting value; change it later through `setReadOnly`. */
     readOnly: boolean;
     /** Starting value; change it later through `setPlaceholder`. */

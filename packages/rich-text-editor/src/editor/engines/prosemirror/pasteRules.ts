@@ -26,11 +26,20 @@ import { VALUE_ATTR } from './valueAttr';
  */
 const qualifiedPriority = (tag: string): number | undefined => (/[[.#:]/.test(tag) ? 60 : undefined);
 
+/**
+ * Mark rules, and inline rules above them. An inline element's markup may
+ * also match a mark's rule — a mention is written as `<a href data-mention-id>`,
+ * which a link's `a[href]` reads too — and on equal priority the engine tries
+ * mark rules first, so a pasted mention came back as linked text.
+ */
+export const MARK_PRIORITY = 60;
+export const INLINE_PRIORITY = 70;
+
 /** Mark and inline rules keep their whole value in one attribute; a null value means "not this node". */
-export const valueParseRules = (rules: readonly ParseRule<unknown>[]): TagParseRule[] =>
+export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: number): TagParseRule[] =>
     rules.map((rule) => ({
         tag: rule.tag,
-        priority: 60,
+        priority,
         getAttrs: (element: HTMLElement) => {
             const value = rule.value ? rule.value(element) : {};
             return value === null ? false : { [VALUE_ATTR]: value };

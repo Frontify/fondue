@@ -14,7 +14,7 @@ import {
 } from '#/core';
 
 import { htmlSpecToDom } from './htmlSpec';
-import { blockParseRules, valueParseRules } from './pasteRules';
+import { blockParseRules, INLINE_PRIORITY, MARK_PRIORITY, valueParseRules } from './pasteRules';
 import { VALUE_ATTR } from './valueAttr';
 
 /**
@@ -108,7 +108,7 @@ const inlineNodeSpec = (definition: InlineDefinition): PmNodeSpec => ({
     // With editing UI, a node inserted without a value is a draft the UI
     // completes (null); without it there is nothing to complete it.
     attrs: { [VALUE_ATTR]: { default: definition.render?.edit ? null : {} } },
-    parseDOM: valueParseRules(definition.parse),
+    parseDOM: valueParseRules(definition.parse, INLINE_PRIORITY),
     toDOM: (node) => {
         const value = node.attrs[VALUE_ATTR] as Record<string, unknown> | null;
         // A draft has nothing portable to say yet.
@@ -119,7 +119,7 @@ const inlineNodeSpec = (definition: InlineDefinition): PmNodeSpec => ({
 const markSpec = (definition: MarkDefinition): PmMarkSpec => ({
     attrs: { [VALUE_ATTR]: { default: {} } },
     inclusive: definition.inclusive ?? true,
-    parseDOM: valueParseRules(definition.parse),
+    parseDOM: valueParseRules(definition.parse, MARK_PRIORITY),
     toDOM: (mark) => htmlSpecToDom(definition.toHtml(mark.attrs[VALUE_ATTR] as Record<string, unknown>)),
 });
 

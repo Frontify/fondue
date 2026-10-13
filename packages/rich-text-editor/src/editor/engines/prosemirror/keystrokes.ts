@@ -7,7 +7,7 @@ import { keymap } from 'prosemirror-keymap';
 import { type Schema } from 'prosemirror-model';
 import { type Command, Plugin, type Plugin as PmPlugin } from 'prosemirror-state';
 
-import { type EditorControlApi, type RteInputRule, type RtePlugin } from '#/core';
+import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
 import { listKeys } from './lists';
 import { type SchemaBundle } from './schema';
@@ -35,7 +35,7 @@ import { type SchemaBundle } from './schema';
  * (2) A feature's hotkeys come before the list keys, so a feature may take a key
  *     the list behaviour would otherwise claim — how `blurOnBreak` gets Enter.
  * (3) Longer mark delimiters are tried first, or `**bold**` is read as an italic
- *     `*` wrapping `*bold*`.
+ *     `*` wrapping `*bold*`. The registry hands the rules over in that order.
  *
  * One place the seam leaks, worth knowing: a mark can be applied three ways and
  * only two go through `EditorControlApi`. The toolbar button and the hotkey
@@ -47,52 +47,34 @@ import { type SchemaBundle } from './schema';
 
 // (2) A feature's own hotkeys
 
-/** Handlers for the same key run in mount order until one returns anything but `false`. */
-const featureHotkeys = (features: RtePlugin[], getApi: () => EditorControlApi): Record<string, Command> => {
-    const hotkeys = new Map<string, Array<(api: EditorControlApi) => boolean | void>>();
-    for (const feature of features) {
-        for (const [keys, command] of Object.entries(feature.hotkeys ?? {})) {
-            if (isCharacterHotkey(keys)) {
-                continue;
-            }
-            const handlers = hotkeys.get(keys) ?? [];
-            handlers.push(command);
-            hotkeys.set(keys, handlers);
-        }
-    }
-
-    return Object.fromEntries(
-        Array.from(hotkeys, ([keys, handlers]): [string, Command] => [
-            keys,
-            () => handlers.some((handler) => handler(getApi()) !== false),
-        ]),
-    );
-};
-
 /** `@`, not `Mod-b`: a hotkey that names a character rather than a key combination. */
 const isCharacterHotkey = (keys: string): boolean => [...keys].length === 1;
+
+/** Handlers for the same key run in mount order until one returns anything but `false`. */
+const runUntilHandled = (handlers: readonly HotkeyHandler[], api: EditorControlApi): boolean =>
+    handlers.some((handler) => handler(api) !== false);
+
+const featureHotkeys = (hotkeys: PluginRegistry['hotkeys'], getApi: () => EditorControlApi): Record<string, Command> =>
+    Object.fromEntries(
+        [...hotkeys]
+            .filter(([keys]) => !isCharacterHotkey(keys))
+            .map(([keys, handlers]): [string, Command] => [keys, () => runUntilHandled(handlers, getApi())]),
+    );
 
 /**
  * Character hotkeys fire on the character being TYPED, not on the keys pressed
  * — on a Swiss Mac `@` is Option-G, which the keymap would read as `Alt-@` and
  * never match.
  */
-const characterHotkeys = (features: RtePlugin[], getApi: () => EditorControlApi): PmPlugin => {
-    const hotkeys = new Map<string, Array<(api: EditorControlApi) => boolean | void>>();
-    for (const feature of features) {
-        for (const [keys, command] of Object.entries(feature.hotkeys ?? {})) {
-            if (isCharacterHotkey(keys)) {
-                hotkeys.set(keys, [...(hotkeys.get(keys) ?? []), command]);
-            }
-        }
-    }
-    return new Plugin({
+const characterHotkeys = (hotkeys: PluginRegistry['hotkeys'], getApi: () => EditorControlApi): PmPlugin =>
+    new Plugin({
         props: {
-            handleTextInput: (_view, _from, _to, text) =>
-                hotkeys.get(text)?.some((handler) => handler(getApi()) !== false) ?? false,
+            handleTextInput: (_view, _from, _to, text) => {
+                const handlers = isCharacterHotkey(text) ? hotkeys.get(text) : undefined;
+                return handlers ? runUntilHandled(handlers, getApi()) : false;
+            },
         },
     });
-};
 
 // (4) Typing rewrites
 //
@@ -169,16 +151,13 @@ const toEngineRule = (rule: RteInputRule, schema: Schema, itemTypeByList: Map<st
     }
 };
 
-const typingRewrites = (features: RtePlugin[], schema: Schema, itemTypeByList: Map<string, string>): PmPlugin[] => {
-    const declared = features.flatMap((feature) => [...(feature.inputRules ?? [])]);
-    // invariant (3): longer mark delimiters first. Everything else keeps its
-    // declared order.
-    const markRules = declared
-        .filter((rule) => rule.kind === 'mark')
-        .sort((left, right) => right.delimiter.length - left.delimiter.length);
-    const ordered = [...markRules, ...declared.filter((rule) => rule.kind !== 'mark')];
-
-    const rules = ordered.flatMap((rule) => {
+const typingRewrites = (
+    declared: readonly RteInputRule[],
+    schema: Schema,
+    itemTypeByList: Map<string, string>,
+): PmPlugin[] => {
+    // invariant (3): already in matching order.
+    const rules = declared.flatMap((rule) => {
         const engineRule = toEngineRule(rule, schema, itemTypeByList);
         return engineRule ? [engineRule] : [];
     });
@@ -196,7 +175,7 @@ const typingRewrites = (features: RtePlugin[], schema: Schema, itemTypeByList: M
  * it is only ever called from a key handler, by which time the editor is live.
  */
 export const keystrokePipeline = (
-    features: RtePlugin[],
+    registry: PluginRegistry,
     bundle: SchemaBundle,
     getApi: () => EditorControlApi,
 ): PmPlugin[] => {
@@ -207,12 +186,12 @@ export const keystrokePipeline = (
         history(),
         keymap({ 'Mod-z': undo, 'Mod-y': redo, 'Mod-Shift-z': redo }),
         // (2) a feature's own keys — invariant (2): before the list keys below
-        keymap(featureHotkeys(features, getApi)),
-        characterHotkeys(features, getApi),
+        keymap(featureHotkeys(registry.hotkeys, getApi)),
+        characterHotkeys(registry.hotkeys, getApi),
         // (3) the list keys, when there is a list to use them in
         ...(hasLists ? [keymap(listKeys(getApi))] : []),
         // (4) typing rewrites
-        ...typingRewrites(features, bundle.schema, bundle.itemTypeByList),
+        ...typingRewrites(registry.inputRules, bundle.schema, bundle.itemTypeByList),
         // (5) everything an editor does without being asked
         keymap(baseKeymap),
     ];

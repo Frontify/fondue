@@ -89,12 +89,13 @@ export const editorWith = (plugins: RtePlugin[], blocks: BlockInput[]) => {
     window.document.body.append(container);
     const onDocChange = vi.fn<(doc: RteDocumentOf) => void>();
 
-    const bundle = buildSchema(buildPluginRegistry(plugins));
+    const registry = buildPluginRegistry(plugins);
+    const bundle = buildSchema(registry);
     let api!: EditorControlApi;
     const view: EditorView = new EditorView(container, {
         state: EditorState.create({
             doc: toEngineDocument({ version: 1, blocks: blocks as RteBlockNode[] }, bundle.schema),
-            plugins: [...keystrokePipeline(plugins, bundle, () => api), inlineElementsCarryNoMarksPlugin()],
+            plugins: [...keystrokePipeline(registry, bundle, () => api), inlineElementsCarryNoMarksPlugin()],
         }),
         dispatchTransaction(transaction) {
             view.updateState(view.state.apply(transaction));

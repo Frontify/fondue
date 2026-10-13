@@ -6,6 +6,7 @@ import {
     defineBlock,
     defineMark,
     type EditorControlApi,
+    ownTypeOf,
     type RteBlockNode,
     type RtePlugin,
     type RteSelectionSnapshot,
@@ -100,26 +101,26 @@ describe('a mark plugin', () => {
     it('is active when the selection carries its mark', () => {
         const selection = snapshot({ marks: { link: LINK } });
 
-        expect(toolbarItemProps(markPlugin, fakeApi(selection), selection).isActive).toBe(true);
+        expect(toolbarItemProps(ownTypeOf(markPlugin), fakeApi(selection), selection).isActive).toBe(true);
     });
 
     it('is not active at the edge of its run, where typing would not carry the mark', () => {
         const api = fakeApi(snapshot(), { value: LINK, text: 'here' });
 
-        const props = toolbarItemProps(markPlugin, api, snapshot());
+        const props = toolbarItemProps(ownTypeOf(markPlugin), api, snapshot());
 
         expect(props.isActive).toBe(false);
         expect(props.selectedNode).toEqual({ type: 'link', value: LINK, text: 'here' });
     });
 
     it('has no selected node away from its mark', () => {
-        expect(toolbarItemProps(markPlugin, fakeApi(), snapshot()).selectedNode).toBeNull();
+        expect(toolbarItemProps(ownTypeOf(markPlugin), fakeApi(), snapshot()).selectedNode).toBeNull();
     });
 
     it('toggles its mark with the value given', () => {
         const api = fakeApi();
 
-        toolbarItemProps(markPlugin, api, snapshot()).toggle(LINK);
+        toolbarItemProps(ownTypeOf(markPlugin), api, snapshot()).toggle(LINK);
 
         expect(api.marks.toggle).toHaveBeenCalledWith('link', LINK);
     });
@@ -128,7 +129,7 @@ describe('a mark plugin', () => {
         const selection = snapshot({ marks: { link: LINK } });
         const api = fakeApi(selection, { value: LINK, text: 'here' });
 
-        toolbarItemProps(markPlugin, api, selection).setValue({ href: 'https://new.example' });
+        toolbarItemProps(ownTypeOf(markPlugin), api, selection).setValue({ href: 'https://new.example' });
 
         expect(api.marks.select).toHaveBeenCalledWith('link');
         expect(api.marks.toggle.mock.calls).toEqual([['link'], ['link', { href: 'https://new.example' }]]);
@@ -137,7 +138,7 @@ describe('a mark plugin', () => {
     it('sets a value on a selection without the mark by only putting it on', () => {
         const api = fakeApi();
 
-        toolbarItemProps(markPlugin, api, snapshot()).setValue(LINK);
+        toolbarItemProps(ownTypeOf(markPlugin), api, snapshot()).setValue(LINK);
 
         expect(api.marks.toggle.mock.calls).toEqual([['link', LINK]]);
     });
@@ -146,7 +147,7 @@ describe('a mark plugin', () => {
         const selection = snapshot({ marks: { link: LINK } });
         const api = fakeApi(selection, { value: LINK, text: 'here' });
 
-        toolbarItemProps(markPlugin, api, selection).remove();
+        toolbarItemProps(ownTypeOf(markPlugin), api, selection).remove();
 
         expect(api.marks.select).toHaveBeenCalledWith('link');
         expect(api.marks.toggle.mock.calls).toEqual([['link']]);
@@ -155,7 +156,7 @@ describe('a mark plugin', () => {
     it('replaces the text of its whole run', () => {
         const api = fakeApi(snapshot(), { value: LINK, text: 'here' });
 
-        toolbarItemProps(markPlugin, api, snapshot()).setText('there');
+        toolbarItemProps(ownTypeOf(markPlugin), api, snapshot()).setText('there');
 
         expect(api.marks.select).toHaveBeenCalledWith('link');
         expect(api.selection.replaceWithText).toHaveBeenCalledWith('there');
@@ -172,20 +173,20 @@ describe('a list plugin', () => {
     });
 
     it('is active anywhere inside its list, with the list as the selected node', () => {
-        const props = toolbarItemProps(listPlugin, fakeApi(inList), inList);
+        const props = toolbarItemProps(ownTypeOf(listPlugin), fakeApi(inList), inList);
 
         expect(props.isActive).toBe(true);
         expect(props.selectedNode).toEqual({ type: 'bulletList', value: {}, text: 'item' });
     });
 
     it('is not active outside its list', () => {
-        expect(toolbarItemProps(listPlugin, fakeApi(), snapshot()).isActive).toBe(false);
+        expect(toolbarItemProps(ownTypeOf(listPlugin), fakeApi(), snapshot()).isActive).toBe(false);
     });
 
     it('toggles its list', () => {
         const api = fakeApi();
 
-        toolbarItemProps(listPlugin, api, snapshot()).toggle();
+        toolbarItemProps(ownTypeOf(listPlugin), api, snapshot()).toggle();
 
         expect(api.lists.toggle).toHaveBeenCalledWith('bulletList');
     });
@@ -193,7 +194,7 @@ describe('a list plugin', () => {
     it('removes its list by toggling it off when inside it', () => {
         const api = fakeApi(inList);
 
-        toolbarItemProps(listPlugin, api, inList).remove();
+        toolbarItemProps(ownTypeOf(listPlugin), api, inList).remove();
 
         expect(api.lists.toggle).toHaveBeenCalledWith('bulletList');
     });
@@ -201,7 +202,7 @@ describe('a list plugin', () => {
     it('does nothing on remove outside its list', () => {
         const api = fakeApi();
 
-        toolbarItemProps(listPlugin, api, snapshot()).remove();
+        toolbarItemProps(ownTypeOf(listPlugin), api, snapshot()).remove();
 
         expect(api.lists.toggle).not.toHaveBeenCalled();
     });
@@ -214,7 +215,7 @@ describe('a text block plugin', () => {
     });
 
     it('is active in its block, with the block attributes as the value', () => {
-        const props = toolbarItemProps(textBlockPlugin, fakeApi(inQuote), inQuote);
+        const props = toolbarItemProps(ownTypeOf(textBlockPlugin), fakeApi(inQuote), inQuote);
 
         expect(props.isActive).toBe(true);
         expect(props.selectedNode).toEqual({ type: 'quote', value: { align: 'center' }, text: '' });
@@ -223,7 +224,7 @@ describe('a text block plugin', () => {
     it('turns the block into its type when not active', () => {
         const api = fakeApi();
 
-        toolbarItemProps(textBlockPlugin, api, snapshot()).toggle({ level: 1 });
+        toolbarItemProps(ownTypeOf(textBlockPlugin), api, snapshot()).toggle({ level: 1 });
 
         expect(api.blocks.setType).toHaveBeenCalledWith('quote', { level: 1 });
     });
@@ -231,7 +232,7 @@ describe('a text block plugin', () => {
     it('turns its block back into a paragraph when active', () => {
         const api = fakeApi(inQuote);
 
-        toolbarItemProps(textBlockPlugin, api, inQuote).toggle();
+        toolbarItemProps(ownTypeOf(textBlockPlugin), api, inQuote).toggle();
 
         expect(api.blocks.setType).toHaveBeenCalledWith('paragraph', undefined);
     });
@@ -239,7 +240,7 @@ describe('a text block plugin', () => {
     it('removes itself by turning its block back into a paragraph', () => {
         const api = fakeApi(inQuote);
 
-        toolbarItemProps(textBlockPlugin, api, inQuote).remove();
+        toolbarItemProps(ownTypeOf(textBlockPlugin), api, inQuote).remove();
 
         expect(api.blocks.setType).toHaveBeenCalledWith('paragraph', undefined);
     });
@@ -247,7 +248,7 @@ describe('a text block plugin', () => {
     it('sets a value as attributes on the blocks', () => {
         const api = fakeApi(inQuote);
 
-        toolbarItemProps(textBlockPlugin, api, inQuote).setValue({ align: 'right' });
+        toolbarItemProps(ownTypeOf(textBlockPlugin), api, inQuote).setValue({ align: 'right' });
 
         expect(api.blocks.updateAttributes).toHaveBeenCalledWith({ align: 'right' });
         expect(api.marks.toggle).not.toHaveBeenCalled();
@@ -256,7 +257,7 @@ describe('a text block plugin', () => {
     it('replaces the selected text without growing the selection first', () => {
         const api = fakeApi(inQuote);
 
-        toolbarItemProps(textBlockPlugin, api, inQuote).setText('new');
+        toolbarItemProps(ownTypeOf(textBlockPlugin), api, inQuote).setText('new');
 
         expect(api.marks.select).not.toHaveBeenCalled();
         expect(api.selection.replaceWithText).toHaveBeenCalledWith('new');
@@ -267,7 +268,7 @@ describe('a void block plugin', () => {
     it('inserts its block on toggle, with the value given', () => {
         const api = fakeApi();
 
-        toolbarItemProps(voidBlockPlugin, api, snapshot()).toggle({ src: 'a.png' });
+        toolbarItemProps(ownTypeOf(voidBlockPlugin), api, snapshot()).toggle({ src: 'a.png' });
 
         expect(api.insert).toHaveBeenCalledWith('image', { src: 'a.png' });
     });
@@ -275,14 +276,14 @@ describe('a void block plugin', () => {
     it('is active while its block is selected', () => {
         const selected = snapshot({ block: { type: 'image' }, blocks: [{ type: 'image' }] });
 
-        expect(toolbarItemProps(voidBlockPlugin, fakeApi(selected), selected).isActive).toBe(true);
+        expect(toolbarItemProps(ownTypeOf(voidBlockPlugin), fakeApi(selected), selected).isActive).toBe(true);
     });
 
     it('does nothing on remove', () => {
         const selected = snapshot({ block: { type: 'image' }, blocks: [{ type: 'image' }] });
         const api = fakeApi(selected);
 
-        toolbarItemProps(voidBlockPlugin, api, selected).remove();
+        toolbarItemProps(ownTypeOf(voidBlockPlugin), api, selected).remove();
 
         expect(api.insert).not.toHaveBeenCalled();
         expect(api.blocks.setType).not.toHaveBeenCalled();
@@ -291,7 +292,7 @@ describe('a void block plugin', () => {
     it('opens its editor', () => {
         const api = fakeApi();
 
-        toolbarItemProps(voidBlockPlugin, api, snapshot()).openEditor();
+        toolbarItemProps(ownTypeOf(voidBlockPlugin), api, snapshot()).openEditor();
 
         expect(api.editors.open).toHaveBeenCalledWith('image');
     });
@@ -299,7 +300,7 @@ describe('a void block plugin', () => {
 
 describe('a plugin with no type of its own', () => {
     it('is never active and has no selected node', () => {
-        const props = toolbarItemProps(attributePlugin, fakeApi(), snapshot());
+        const props = toolbarItemProps(ownTypeOf(attributePlugin), fakeApi(), snapshot());
 
         expect(props.isActive).toBe(false);
         expect(props.selectedNode).toBeNull();
@@ -307,7 +308,7 @@ describe('a plugin with no type of its own', () => {
 
     it('does nothing on toggle, remove or openEditor', () => {
         const api = fakeApi();
-        const props = toolbarItemProps(attributePlugin, api, snapshot());
+        const props = toolbarItemProps(ownTypeOf(attributePlugin), api, snapshot());
 
         props.toggle();
         props.remove();
@@ -322,7 +323,7 @@ describe('a plugin with no type of its own', () => {
     it('still sets a value as block attributes', () => {
         const api = fakeApi();
 
-        toolbarItemProps(attributePlugin, api, snapshot()).setValue({ align: 'left' });
+        toolbarItemProps(ownTypeOf(attributePlugin), api, snapshot()).setValue({ align: 'left' });
 
         expect(api.blocks.updateAttributes).toHaveBeenCalledWith({ align: 'left' });
     });
@@ -331,7 +332,7 @@ describe('a plugin with no type of its own', () => {
         const api = fakeApi();
         const selection = snapshot();
 
-        const props = toolbarItemProps(attributePlugin, api, selection);
+        const props = toolbarItemProps(ownTypeOf(attributePlugin), api, selection);
 
         expect(props.api).toBe(api);
         expect(props.selection).toBe(selection);

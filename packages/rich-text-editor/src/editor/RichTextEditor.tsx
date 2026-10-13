@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CSSProperties, type ReactNode, useState } from 'react';
+import { type CSSProperties, type ReactNode, useMemo, useState } from 'react';
 
-import { emptyDocument, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
+import { buildPluginRegistry, emptyDocument, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
 import { RichTextRenderer } from '#/renderer';
+import documentStyles from '#/renderer/document.module.scss';
 
 import { FloatingToolbar } from './FloatingToolbar';
 import { useEditorHandle } from './hooks/useEditorHandle';
@@ -89,11 +90,11 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const [ownDocument, setOwnDocument] = useState<RteDocumentOf>(() => value ?? emptyDocument());
     const document = value ?? ownDocument;
 
-    const contentClassName = [styles.content, ...plugins.map((plugin) => plugin.contentClassName)]
-        .filter(Boolean)
-        .join(' ');
+    // Everything below reads the plugins through this, never the list itself.
+    const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
+    const contentClassName = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
     const { containerRef, handle, editorState } = useEditorHandle({
-        plugins,
+        registry,
         document,
         placeholder,
         contentClassName,
@@ -112,15 +113,16 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const toolbarFloats = toolbarPlacement === 'floating';
     const toolbar =
         handle && !readOnly && showEditor ? (
-            <Toolbar plugins={plugins} api={handle.api} editorState={editorState} placement={toolbarPlacement} />
+            <Toolbar
+                items={registry.toolbarItems}
+                api={handle.api}
+                editorState={editorState}
+                placement={toolbarPlacement}
+            />
         ) : null;
 
-    const contentProperties = Object.fromEntries(
-        plugins.flatMap((plugin) => Object.entries(plugin.contentProperties ?? {})),
-    );
-
     return (
-        <div {...focusProps} className={styles.root} style={contentProperties as CSSProperties}>
+        <div {...focusProps} className={styles.root} style={registry.contentProperties as CSSProperties}>
             {toolbarFloats && handle && toolbar !== null && focusWithin ? (
                 <FloatingToolbar handle={handle} editorState={editorState}>
                     {toolbar}
@@ -129,7 +131,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             <div className={styles.frame} data-chrome={String(showEditor)}>
                 {toolbarFloats ? null : toolbar}
                 {readOnly ? (
-                    <RichTextRenderer value={document} plugins={plugins} className={contentClassName} />
+                    // The renderer adds the document and plugin classes itself.
+                    <RichTextRenderer value={document} plugins={plugins} className={styles.content} />
                 ) : (
                     <div ref={containerRef} />
                 )}

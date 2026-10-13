@@ -9,7 +9,15 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
-import { defaultPlugins, RichTextEditor, type RteDocument, type RtePlugin } from '../index';
+import {
+    defaultPlugins,
+    filterByName,
+    mentionPlugin,
+    RichTextEditor,
+    type RteDocument,
+    type RtePlugin,
+    serializeToHtml,
+} from '../index';
 
 import { useFocusWithin } from './hooks/useFocusWithin';
 
@@ -91,6 +99,40 @@ const paste = (container: HTMLElement, html: string): void => {
 };
 
 describe('pasting', () => {
+    it('turns a copied mention back into a mention, even where links are mounted', () => {
+        // A mention is written as `<a href data-mention-id>`, which the link's
+        // `a[href]` rule matches as well.
+        const plugins = [
+            ...defaultPlugins,
+            mentionPlugin({ items: filterByName([]), href: (mention) => `/people/${mention.id}` }),
+        ];
+        const copied = serializeToHtml(
+            {
+                version: 1,
+                blocks: [
+                    {
+                        type: 'paragraph',
+                        children: [
+                            { text: 'Ask ' },
+                            { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
+                        ],
+                    },
+                ],
+            },
+            { plugins },
+        );
+        const { container, stored, ready } = mount((onChange) => (
+            <RichTextEditor value={paragraph('')} onChange={onChange} plugins={plugins} />
+        ));
+        ready();
+
+        paste(container, copied);
+
+        const block = stored()?.blocks[0];
+        const children = block && 'children' in block ? block.children : [];
+        expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
+    });
+
     it('keeps the marks and blocks the pasted HTML carried', () => {
         const { container, stored, ready } = mount((onChange) => (
             <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />

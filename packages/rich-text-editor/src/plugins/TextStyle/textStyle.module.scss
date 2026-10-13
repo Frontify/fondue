@@ -21,28 +21,28 @@
 .heading1 {
     @include heading;
 
-    font-size: 1.6em;
+    font-size: var(--typography-font-size-xxx-large);
     font-weight: var(--typography-font-weight-bold);
 }
 
 .heading2 {
     @include heading;
 
-    font-size: 1.3em;
+    font-size: var(--typography-font-size-xx-large);
     font-weight: var(--typography-font-weight-bold);
 }
 
 .heading3 {
     @include heading;
 
-    font-size: 1.1em;
+    font-size: var(--typography-font-size-x-large);
     font-weight: var(--typography-font-weight-medium);
 }
 
 .heading4 {
     @include heading;
 
-    font-size: 1em;
+    font-size: var(--typography-font-size-large);
     font-weight: var(--typography-font-weight-medium);
 }
 
@@ -60,14 +60,14 @@
     @include preset;
 
     color: var(--color-secondary-default);
-    font-size: 1em;
+    font-size: var(--typography-font-size-medium);
     font-style: italic;
 }
 
 .custom3 {
     @include preset;
 
-    font-size: 0.9em;
+    font-size: var(--typography-font-size-small);
     letter-spacing: 0.08em;
     text-transform: var(--typography-text-transform-uppercase);
 }
@@ -83,5 +83,5 @@
     @include preset;
 
     color: var(--color-secondary-default);
-    font-size: 0.85em;
+    font-size: var(--typography-font-size-x-small);
 }

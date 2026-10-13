@@ -4,7 +4,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineInline, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '#/core';
+import { buildPluginRegistry, defineInline, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '#/core';
 
 import { mountDocument } from './editing';
 
@@ -35,7 +35,7 @@ const mount = () => {
     return mountDocument({
         container,
         initialDoc: doc,
-        plugins,
+        registry: buildPluginRegistry(plugins),
         readOnly: false,
         placeholder: '',
         contentClassName: 'content',

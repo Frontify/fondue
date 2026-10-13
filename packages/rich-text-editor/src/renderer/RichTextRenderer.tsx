@@ -4,6 +4,7 @@ import { type CSSProperties, type ReactNode, useMemo } from 'react';
 
 import { buildPluginRegistry, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
 
+import styles from './document.module.scss';
 import { documentTree } from './documentTree';
 import { toReact } from './toReact';
 
@@ -30,13 +31,11 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
 }: RichTextRendererProps<TBlock>): ReactNode => {
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
     const drawn = useMemo(() => toReact(documentTree(value, registry, { useComponents: true })), [value, registry]);
-    const contentClassName = [className, ...plugins.map((plugin) => plugin.contentClassName)].filter(Boolean).join(' ');
-    const style = Object.fromEntries(
-        plugins.flatMap((plugin) => Object.entries(plugin.contentProperties ?? {})),
-    ) as CSSProperties;
+    const contentClassName = [styles.document, className, ...registry.contentClassNames].filter(Boolean).join(' ');
+    const style = registry.contentProperties as CSSProperties;
 
     return (
-        <div className={contentClassName || undefined} style={Object.keys(style).length > 0 ? style : undefined}>
+        <div className={contentClassName} style={Object.keys(style).length > 0 ? style : undefined}>
             {drawn}
         </div>
     );

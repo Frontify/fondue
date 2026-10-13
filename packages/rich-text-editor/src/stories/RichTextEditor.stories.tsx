@@ -88,7 +88,14 @@ export const Default: Story = {
                         {
                             type: 'listItem',
                             children: [
-                                { type: 'paragraph', children: [{ text: 'A list item — Tab nests, Shift-Tab lifts' }] },
+                                {
+                                    type: 'paragraph',
+                                    children: [
+                                        {
+                                            text: 'A list item — Tab nests, Shift-Tab lifts',
+                                        },
+                                    ],
+                                },
                             ],
                         },
                     ],
@@ -98,7 +105,11 @@ export const Default: Story = {
 
         return (
             <div className={LAYOUT}>
-                <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
+                <div>
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
+                    <RichTextRenderer value={doc} plugins={defaultPlugins} />
+                </div>
+
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );
@@ -141,11 +152,19 @@ export const ToolbarPlacement: Story = {
             blocks: [
                 {
                     type: 'paragraph',
-                    children: [{ text: 'Select a few of these words and the floating toolbar appears over them.' }],
+                    children: [
+                        {
+                            text: 'Select a few of these words and the floating toolbar appears over them.',
+                        },
+                    ],
                 },
                 {
                     type: 'paragraph',
-                    children: [{ text: 'Switch the placement with the button above to compare the two.' }],
+                    children: [
+                        {
+                            text: 'Switch the placement with the button above to compare the two.',
+                        },
+                    ],
                 },
             ],
         });
@@ -181,7 +200,11 @@ export const Renderer: Story = {
         const doc: RteDocument = {
             version: 1,
             blocks: [
-                { type: 'textStyle', style: 'heading2', children: [{ text: 'Rendered, not edited' }] },
+                {
+                    type: 'textStyle',
+                    style: 'heading2',
+                    children: [{ text: 'Rendered, not edited' }],
+                },
                 {
                     type: 'paragraph',
                     children: [
@@ -208,13 +231,19 @@ export const Readonly: Story = {
         const [doc, setDoc] = useState<RteDocument>({
             version: 1,
             blocks: [
-                { type: 'textStyle', style: 'heading3', children: [{ text: 'Read this, do not change it' }] },
+                {
+                    type: 'textStyle',
+                    style: 'heading3',
+                    children: [{ text: 'Read this, do not change it' }],
+                },
                 {
                     type: 'paragraph',
                     children: [
                         { text: 'Toggling readonly keeps the ' },
                         { text: 'content', bold: true },
-                        { text: ' and the selection, and takes the toolbar away.' },
+                        {
+                            text: ' and the selection, and takes the toolbar away.',
+                        },
                     ],
                 },
             ],
@@ -248,13 +277,19 @@ export const ContentOnly: Story = {
         const [doc, setDoc] = useState<RteDocument>({
             version: 1,
             blocks: [
-                { type: 'textStyle', style: 'heading3', children: [{ text: 'Just the content' }] },
+                {
+                    type: 'textStyle',
+                    style: 'heading3',
+                    children: [{ text: 'Just the content' }],
+                },
                 {
                     type: 'paragraph',
                     children: [
                         { text: 'No border, no background, no toolbar — the ' },
                         { text: 'content', bold: true },
-                        { text: ' sits in the page as if it were written there.' },
+                        {
+                            text: ' sits in the page as if it were written there.',
+                        },
                     ],
                 },
                 {
@@ -262,7 +297,12 @@ export const ContentOnly: Story = {
                     children: [
                         {
                             type: 'listItem',
-                            children: [{ type: 'paragraph', children: [{ text: 'Plugin styling is untouched' }] }],
+                            children: [
+                                {
+                                    type: 'paragraph',
+                                    children: [{ text: 'Plugin styling is untouched' }],
+                                },
+                            ],
                         },
                     ],
                 },
@@ -316,7 +356,12 @@ export const CommitOnBlur: Story = {
     render: () => {
         const [doc, setDoc] = useState<RteDocument>({
             version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'Edit me, then click outside the editor.' }] }],
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'Edit me, then click outside the editor.' }],
+                },
+            ],
         });
         const [committed, setCommitted] = useState<RteDocument | null>(null);
 
@@ -343,7 +388,16 @@ export const ControlledValue: Story = {
     render: () => {
         const [doc, setDoc] = useState<RteDocument>({
             version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'Use the buttons above to replace this content.' }] }],
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        {
+                            text: 'Use the buttons above to replace this content.',
+                        },
+                    ],
+                },
+            ],
         });
 
         return (
@@ -356,10 +410,18 @@ export const ControlledValue: Story = {
                             setDoc({
                                 version: 1,
                                 blocks: [
-                                    { type: 'textStyle', style: 'heading2', children: [{ text: 'Loaded document' }] },
+                                    {
+                                        type: 'textStyle',
+                                        style: 'heading2',
+                                        children: [{ text: 'Loaded document' }],
+                                    },
                                     {
                                         type: 'paragraph',
-                                        children: [{ text: 'This content was set from outside the editor.' }],
+                                        children: [
+                                            {
+                                                text: 'This content was set from outside the editor.',
+                                            },
+                                        ],
                                     },
                                 ],
                             })
@@ -371,7 +433,15 @@ export const ControlledValue: Story = {
                         type="button"
                         className={buttonClasses(false)}
                         onClick={() =>
-                            setDoc({ version: 1, blocks: [{ type: 'paragraph', children: [{ text: '' }] }] })
+                            setDoc({
+                                version: 1,
+                                blocks: [
+                                    {
+                                        type: 'paragraph',
+                                        children: [{ text: '' }],
+                                    },
+                                ],
+                            })
                         }
                     >
                         Clear
@@ -392,7 +462,16 @@ export const PlainText: Story = {
     render: () => {
         const [doc, setDoc] = useState<RteDocument>({
             version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'Just paragraphs. No plugins, no toolbar, no marks.' }] }],
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        {
+                            text: 'Just paragraphs. No plugins, no toolbar, no marks.',
+                        },
+                    ],
+                },
+            ],
         });
 
         return (
@@ -415,7 +494,11 @@ export const CommentBox: Story = {
             blocks: [
                 {
                     type: 'paragraph',
-                    children: [{ text: 'Marks and mentions only — no headings, no lists, no images.' }],
+                    children: [
+                        {
+                            text: 'Marks and mentions only — no headings, no lists, no images.',
+                        },
+                    ],
                 },
             ],
         });
@@ -429,7 +512,10 @@ export const CommentBox: Story = {
                         boldPlugin(),
                         italicPlugin(),
                         linkPlugin(),
-                        mentionPlugin({ items: filterByName(MENTIONABLE), href: profileHref }),
+                        mentionPlugin({
+                            items: filterByName(MENTIONABLE),
+                            href: profileHref,
+                        }),
                     ]}
                 />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -464,7 +550,12 @@ export const ManyEditors: Story = {
                 { length: MANY },
                 (_, index): RteDocument => ({
                     version: 1,
-                    blocks: [{ type: 'paragraph', children: [{ text: `Editor ${index + 1} — type here.` }] }],
+                    blocks: [
+                        {
+                            type: 'paragraph',
+                            children: [{ text: `Editor ${index + 1} — type here.` }],
+                        },
+                    ],
                 }),
             ),
         );
@@ -504,13 +595,29 @@ export const TwoEditors: Story = {
         const [fullDoc, setFullDoc] = useState<RteDocument>({
             version: 1,
             blocks: [
-                { type: 'textStyle', style: 'heading3', children: [{ text: 'Full editor' }] },
-                { type: 'paragraph', children: [{ text: 'The default plugins are mounted.' }] },
+                {
+                    type: 'textStyle',
+                    style: 'heading3',
+                    children: [{ text: 'Full editor' }],
+                },
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'The default plugins are mounted.' }],
+                },
             ],
         });
         const [boldDoc, setBoldDoc] = useState<RteDocument>({
             version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'Bold-only editor — its own state, its own toolbar.' }] }],
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        {
+                            text: 'Bold-only editor — its own state, its own toolbar.',
+                        },
+                    ],
+                },
+            ],
         });
 
         return (

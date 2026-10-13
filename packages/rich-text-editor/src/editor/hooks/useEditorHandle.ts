@@ -2,7 +2,7 @@
 
 import { type MutableRefObject, useEffect, useRef, useState } from 'react';
 
-import { type RteDocumentOf, type RtePlugin } from '#/core';
+import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { mountDocument } from '#/editor/engines/prosemirror';
 import { type EditorHandle, type MountedDocument } from '#/editor/port';
 
@@ -61,24 +61,20 @@ const createEditorStateStore = (): EditorStateStore & { notify: () => void } => 
  * them silently stands in for the other. Worth a word in development; in
  * production the check is not even compiled in.
  */
-const warnOnDuplicateIds = (plugins: RtePlugin[]): void => {
+const warnOnDuplicateIds = (duplicateIds: readonly string[]): void => {
     if (process.env.NODE_ENV === 'production') {
         return;
     }
-    const seen = new Set<string>();
-    for (const { id } of plugins) {
-        if (seen.has(id)) {
-            console.warn(
-                `[RichTextEditor] Two plugins share the id "${id}". Plugin ids must be unique: the editor keys its ` +
-                    'toolbar and decides when to rebuild itself by them.',
-            );
-        }
-        seen.add(id);
+    for (const id of duplicateIds) {
+        console.warn(
+            `[RichTextEditor] Two plugins share the id "${id}". Plugin ids must be unique: the editor keys its ` +
+                'toolbar and decides when to rebuild itself by them.',
+        );
     }
 };
 
 type UseEditorHandleOptions = {
-    plugins: RtePlugin[];
+    registry: PluginRegistry;
     /** The document as it currently stands — what a (re)mount starts from. */
     document: RteDocumentOf;
     placeholder: string;
@@ -91,7 +87,7 @@ type UseEditorHandleOptions = {
 };
 
 export const useEditorHandle = ({
-    plugins,
+    registry,
     document,
     placeholder,
     contentClassName,
@@ -118,13 +114,13 @@ export const useEditorHandle = ({
     onBlurRef.current = onBlur;
     // Read at mount, which also happens after readonly is turned off or the
     // plugins change — so it has to be the latest, not the first.
-    const latestRef = useRef({ document, placeholder });
-    latestRef.current = { document, placeholder };
+    const latestRef = useRef({ document, placeholder, registry });
+    latestRef.current = { document, placeholder, registry };
 
-    const pluginsKey = plugins.map((plugin) => plugin.id).join('|');
+    const pluginsKey = registry.ids.join('|');
 
     useEffect(() => {
-        warnOnDuplicateIds(plugins);
+        warnOnDuplicateIds(registry.duplicateIds);
         // Intentional: the ids are what is checked, and they are the key.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [pluginsKey]);
@@ -141,7 +137,7 @@ export const useEditorHandle = ({
         const mounted = mountDocument({
             container,
             initialDoc: latestRef.current.document,
-            plugins,
+            registry: latestRef.current.registry,
             readOnly: false,
             placeholder: latestRef.current.placeholder,
             contentClassName,

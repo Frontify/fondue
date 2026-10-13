@@ -92,26 +92,15 @@
 }
 
 /**
- * The editable element itself. The whitespace rules are not cosmetic: without
- * `pre-wrap` the browser turns a typed trailing space into a non-breaking one,
- * which stops it from being read back as a space — and every typing rule that
- * ends in a space (`## `, `- `) silently never fires.
+ * The editable element's chrome — the inset, the minimum height, the caret
+ * cursor. How the text itself reads comes from the renderer's `.document`
+ * class, which the element carries too, so the readonly view matches it.
  */
 .content {
     position: relative;
     min-height: 80px;
     padding: var(--spacing-x-small) var(--spacing-small);
     outline: none;
-    color: var(--color-primary-default);
-    font-family: var(--typography-font-family-primary);
-    font-size: var(--typography-font-size-medium);
-    // A ratio rather than a token: the content's own typography (headings, text
-    // style presets) is sized in `em`, so its leading has to scale with it.
-    line-height: 1.6;
-    font-variant-ligatures: none;
-    white-space: pre-wrap;
-    white-space: break-spaces;
-    word-wrap: break-word;
     cursor: text;
 
     /**

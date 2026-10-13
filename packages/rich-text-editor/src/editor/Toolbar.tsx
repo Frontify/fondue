@@ -2,7 +2,7 @@
 
 import { memo, type MouseEvent, type ReactNode, useCallback, useSyncExternalStore } from 'react';
 
-import { type EditorControlApi, type RtePlugin, type ToolbarItemProps } from '#/core';
+import { type EditorControlApi, type ToolbarEntry, type ToolbarItemProps } from '#/core';
 
 import { type EditorStateStore } from './hooks/useEditorHandle';
 import styles from './richTextEditor.module.scss';
@@ -54,7 +54,7 @@ const sameData = (a: unknown, b: unknown): boolean => {
 };
 
 type ToolbarItemSlotProps = {
-    render: NonNullable<RtePlugin['toolbarItem']>;
+    render: ToolbarEntry['render'];
     itemProps: ToolbarItemProps;
 };
 
@@ -88,12 +88,13 @@ const ToolbarItemSlot = memo(
  * editor around it — and of the toolbar only the items whose props changed.
  */
 export const Toolbar = ({
-    plugins,
+    items,
     api,
     editorState,
     placement,
 }: {
-    plugins: RtePlugin[];
+    /** The registry's toolbar entries, in mount order. */
+    items: readonly ToolbarEntry[];
     api: EditorControlApi;
     editorState: EditorStateStore;
     /** Only the strip inside the frame is drawn as one — a floating bar is a surface of its own. */
@@ -102,7 +103,7 @@ export const Toolbar = ({
     const getSelection = useCallback(() => api.selection.get(), [api]);
     const selection = useSyncExternalStore(editorState.subscribe, getSelection, getSelection);
 
-    if (!plugins.some((plugin) => plugin.toolbarItem)) {
+    if (items.length === 0) {
         return null;
     }
 
@@ -117,15 +118,13 @@ export const Toolbar = ({
             // Where the bar ended up, for the stylesheet to read.
             data-placement={placement}
         >
-            {plugins.map((plugin) =>
-                plugin.toolbarItem ? (
-                    <ToolbarItemSlot
-                        key={plugin.id}
-                        render={plugin.toolbarItem}
-                        itemProps={toolbarItemProps(plugin, api, selection)}
-                    />
-                ) : null,
-            )}
+            {items.map((item) => (
+                <ToolbarItemSlot
+                    key={item.id}
+                    render={item.render}
+                    itemProps={toolbarItemProps(item.own, api, selection)}
+                />
+            ))}
         </div>
     );
 };
