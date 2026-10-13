@@ -2,7 +2,7 @@
 
 import { IconTextFormatUnderline } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/core';
+import { defineMark, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -13,15 +13,13 @@ export type UnderlineMark = {
 
 export const underlinePlugin = (): RtePlugin => ({
     id: 'underline',
-    schema: [
-        {
-            kind: 'mark',
-            type: 'underline',
-            toDom: () => ({ tag: 'u', children: true }),
+    marks: {
+        underline: defineMark({
+            toHtml: () => ({ tag: 'u', children: true }),
+            parse: [{ tag: 'u', value: () => ({}) }],
             renderComponent: ({ children }) => <u>{children}</u>,
-            parseRules: [{ tag: 'u' }],
-        },
-    ],
+        }),
+    },
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton title="Underline" active={isActive} onClick={() => toggle()}>
             <IconTextFormatUnderline size={16} />

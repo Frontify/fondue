@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec, Schema } from 'prosemirror-model';
+import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec, Schema, type TagParseRule } from 'prosemirror-model';
 
 import {
     ANY_LIST,
@@ -8,11 +8,10 @@ import {
     type AttributeSpec,
     type BlockDefinition,
     type InlineDefinition,
-    type InlineNodeDefinition,
     type MarkDefinition,
+    type NodeParseRule,
     PARAGRAPH,
-    buildPluginRegistry,
-    type RtePlugin,
+    type PluginRegistry,
 } from '#/core';
 
 import { htmlSpecToDom, withRootStyle } from './htmlSpec';
@@ -25,9 +24,10 @@ import { pasteRules } from './pasteRules';
  *
  * Four invariants live here, each marked at the line that carries it:
  *
- * (1) The paragraph baseline is declared FIRST. The first node matching the
- *     document's `block+` content is the engine's default block type — what an
- *     empty document holds and what pressing Enter creates.
+ * (1) The paragraph baseline is declared FIRST (the registry puts it there).
+ *     The first node matching the document's `block+` content is the engine's
+ *     default block type — what an empty document holds and what pressing
+ *     Enter creates.
  * (2) Marks are declared in NESTING order, not mount order, since the
  *     first-declared mark wraps the rest.
  * (3) Every content block except paragraph and lists is `defining`, which makes
@@ -51,14 +51,6 @@ const attrDefaults = (attributes: Record<string, AttributeSpec> = {}): Record<st
 
 const injectedAttrDefaults = (injected: readonly AttributeDefinition[]): Record<string, { default: unknown }> =>
     Object.fromEntries(injected.map((attribute) => [attribute.type, { default: attribute.default ?? null }]));
-
-const withExtraStyle = (attrs: Record<string, string>, declarations: string[]): Record<string, string> => {
-    if (declarations.length === 0) {
-        return attrs;
-    }
-    const style = [attrs.style, ...declarations].filter(Boolean).join('; ');
-    return { ...attrs, style };
-};
 
 const injectedDeclarations = (attrs: Record<string, unknown>, injected: readonly AttributeDefinition[]): string[] =>
     injected.flatMap((attribute) => {
@@ -107,7 +99,7 @@ const blockNodeSpec = (
     return {
         content: contentExpression(spec, known, lists),
         atom: isVoid,
-        ...(isVoid || isList ? {} : { defining: true }),
+        ...(isVoid || isList || spec.type === PARAGRAPH ? {} : { defining: true }),
         ...(isListItem ? {} : { group: 'block' }),
         attrs: { ...attrDefaults(spec.attributes), ...injectedAttrDefaults(injectedHere) },
         parseDOM: pasteRules(spec.attributes ?? {}, spec.parseRules, injectedHere),
@@ -118,86 +110,56 @@ const blockNodeSpec = (
     };
 };
 
+/**
+ * Marks and inline elements keep their whole value in ONE engine attribute, so
+ * the engine needs to know nothing about its shape; the document boundary
+ * flattens it onto the document node.
+ */
+export const VALUE_ATTR = 'value';
+
+/** Rules for pasted HTML; an element whose `value` comes back null is not this node. */
+const valueParseRules = (rules: readonly NodeParseRule<unknown>[]): TagParseRule[] =>
+    rules.map((rule) => ({
+        tag: rule.tag,
+        // Qualified selectors outrank bare tags, as in pasteRules.
+        priority: 60,
+        getAttrs: (element: HTMLElement) => {
+            const value = rule.value(element);
+            return value === null ? false : { [VALUE_ATTR]: value };
+        },
+    }));
+
 const inlineNodeSpec = (spec: InlineDefinition): PmNodeSpec => ({
     group: 'inline',
     inline: true,
     atom: true,
-    attrs: attrDefaults(spec.attributes),
-    parseDOM: pasteRules(spec.attributes ?? {}, spec.parseRules),
-    toDOM: (node) => htmlSpecToDom(spec.toDom(node.attrs)),
-});
-
-/**
- * A component-based inline node keeps its whole value in ONE attribute, so the
- * engine needs to know nothing about its shape. `rteValueNode` marks the spec
- * for the document boundary, which flattens the value onto the document node.
- */
-export const VALUE_ATTR = 'value';
-
-const valueInlineNodeSpec = (spec: InlineNodeDefinition): PmNodeSpec => ({
-    group: 'inline',
-    inline: true,
-    atom: true,
-    rteValueNode: true,
-    attrs: { [VALUE_ATTR]: { default: null } },
-    parseDOM: spec.parse.map((rule) => ({
-        tag: rule.tag,
-        // Qualified selectors outrank bare tags, as in pasteRules.
-        priority: 60,
-        getAttrs: (element: HTMLElement) => ({ [VALUE_ATTR]: rule.value(element) }),
-    })),
+    // With an editing UI, a node inserted without a value is a draft the UI
+    // completes (null); without one there is nothing to complete it.
+    attrs: { [VALUE_ATTR]: { default: spec.editorComponent ? null : {} } },
+    parseDOM: valueParseRules(spec.parse),
     toDOM: (node) => {
         const value = node.attrs[VALUE_ATTR] as Record<string, unknown> | null;
-        // A node still being made has nothing portable to say yet.
+        // A draft has nothing portable to say yet.
         return value === null ? ['span'] : htmlSpecToDom(spec.toHtml(value));
     },
 });
 
-const valueMarkSpec = (spec: NonNullable<MarkDefinition['valueMark']>): PmMarkSpec => ({
-    attrs: { [VALUE_ATTR]: { default: null } },
+const markSpec = (spec: MarkDefinition): PmMarkSpec => ({
+    attrs: { [VALUE_ATTR]: { default: {} } },
     inclusive: spec.inclusive ?? true,
-    rteValueMark: true,
-    parseDOM: spec.parse.map((rule) => ({
-        tag: rule.tag,
-        priority: 60,
-        getAttrs: (element: HTMLElement) => ({ [VALUE_ATTR]: rule.value(element) }),
-    })),
-    toDOM: (mark) => htmlSpecToDom(spec.toHtml((mark.attrs[VALUE_ATTR] ?? {}) as Record<string, unknown>)),
+    parseDOM: valueParseRules(spec.parse),
+    toDOM: (mark) => htmlSpecToDom(spec.toHtml(mark.attrs[VALUE_ATTR] as Record<string, unknown>)),
 });
 
-const markNodeSpec = (spec: MarkDefinition): PmMarkSpec => {
-    if (spec.valueMark) {
-        return valueMarkSpec(spec.valueMark);
-    }
-    const attrs = attrDefaults(spec.attributes);
-    return {
-        attrs,
-        inclusive: Object.keys(attrs).length === 0,
-        parseDOM: pasteRules(spec.attributes ?? {}, spec.parseRules),
-        toDOM: (mark) => htmlSpecToDom(spec.toDom(mark.attrs)),
-    };
-};
-
-export const buildSchema = (features: RtePlugin[]): SchemaBundle => {
-    const registry = buildPluginRegistry(features);
+export const buildSchema = (registry: PluginRegistry): SchemaBundle => {
     const blockSpecs = [...registry.blocks.values()];
     const injected = registry.attributes;
     const itemTypeByList = registry.itemTypeByList;
     const itemTypes = new Set(itemTypeByList.values());
     const lists = new Set(itemTypeByList.keys());
-    const known = new Set([PARAGRAPH, ...blockSpecs.map((spec) => spec.type)]);
+    const known = new Set(blockSpecs.map((spec) => spec.type));
 
-    const nodes: Record<string, PmNodeSpec> = {
-        doc: { content: 'block+' },
-        [PARAGRAPH]: {
-            content: 'inline*',
-            group: 'block',
-            attrs: injectedAttrDefaults(injected),
-            parseDOM: pasteRules({}, [{ tag: 'p' }], injected),
-            toDOM: (node) => ['p', withExtraStyle({}, injectedDeclarations(node.attrs, injected)), 0],
-        },
-        text: { group: 'inline' },
-    };
+    const nodes: Record<string, PmNodeSpec> = { doc: { content: 'block+' }, text: { group: 'inline' } };
 
     for (const block of blockSpecs) {
         nodes[block.type] = blockNodeSpec(block, {
@@ -207,20 +169,17 @@ export const buildSchema = (features: RtePlugin[]): SchemaBundle => {
             lists,
         });
     }
-    for (const inline of registry.inlines.values()) {
-        nodes[inline.type] = inlineNodeSpec(inline);
-    }
-    for (const [type, inline] of registry.inlineNodes) {
-        nodes[type] = valueInlineNodeSpec(inline);
+    for (const [type, inline] of registry.inlines) {
+        nodes[type] = inlineNodeSpec(inline);
     }
 
-    const markSpecs = [...registry.marks.values()]
-        .map((mark, index) => ({ mark, index }))
+    const markSpecs = [...registry.marks]
+        .map(([type, mark], index) => ({ type, mark, index }))
         .sort((left, right) => (left.mark.nesting ?? 0) - (right.mark.nesting ?? 0) || left.index - right.index);
 
     const marks: Record<string, PmMarkSpec> = {};
-    for (const { mark } of markSpecs) {
-        marks[mark.type] = markNodeSpec(mark);
+    for (const { type, mark } of markSpecs) {
+        marks[type] = markSpec(mark);
     }
 
     return { schema: new Schema({ nodes, marks }), itemTypeByList, attributes: injected };

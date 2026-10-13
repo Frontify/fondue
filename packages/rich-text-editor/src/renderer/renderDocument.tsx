@@ -99,16 +99,12 @@ const renderInline = (inline: RteInlineNode, registry: PluginRegistry, key: stri
     if (inline.text !== undefined) {
         return renderText(inline, registry, key);
     }
-    const node = registry.inlineNodes.get(inline.type);
-    if (node) {
-        const { type: _type, text: _text, ...value } = inline;
-        return <Fragment key={key}>{node.renderComponent({ value })}</Fragment>;
-    }
     const definition = registry.inlines.get(inline.type);
     if (!definition) {
         throw unknownInlineType(inline.type);
     }
-    return <Fragment key={key}>{definition.renderComponent({ node: inline })}</Fragment>;
+    const { type: _type, text: _text, ...value } = inline;
+    return <Fragment key={key}>{definition.renderComponent({ value })}</Fragment>;
 };
 
 const renderInlines = (inlines: readonly RteInlineNode[], registry: PluginRegistry): ReactNode => {
@@ -131,14 +127,6 @@ const renderBlockChildren = (block: RteBlockNode, registry: PluginRegistry, defi
 };
 
 const renderBlock = (block: RteBlockNode, registry: PluginRegistry, key: string): ReactNode => {
-    if (block.type === 'paragraph') {
-        return (
-            <p key={key} style={injectedStyle(block, registry)}>
-                {renderInlines((block.children as RteInlineNode[] | undefined) ?? [], registry)}
-            </p>
-        );
-    }
-
     const definition = registry.blocks.get(block.type);
     if (!definition) {
         throw unknownBlockType(block.type);

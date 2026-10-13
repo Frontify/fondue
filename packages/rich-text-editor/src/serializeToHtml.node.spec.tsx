@@ -5,7 +5,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { PARAGRAPH, type RteDocumentOf, type RtePlugin } from './core';
+import { defineMark, PARAGRAPH, type RteDocumentOf, type RtePlugin } from './core';
 import { serializeToHtml } from './renderer/serializeToHtml';
 
 /**
@@ -16,15 +16,13 @@ import { serializeToHtml } from './renderer/serializeToHtml';
 const features: RtePlugin[] = [
     {
         id: 'bold',
-        schema: [
-            {
-                kind: 'mark',
-                type: 'bold',
-                toDom: () => ({ tag: 'strong', children: true }),
+        marks: {
+            bold: defineMark({
+                toHtml: () => ({ tag: 'strong', children: true }),
+                parse: [{ tag: 'strong', value: () => ({}) }],
                 renderComponent: ({ children }) => <strong>{children}</strong>,
-                parseRules: [{ tag: 'strong' }],
-            },
-        ],
+            }),
+        },
     },
     {
         id: 'heading',

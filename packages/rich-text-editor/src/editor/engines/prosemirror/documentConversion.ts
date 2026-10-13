@@ -1,21 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    type Mark as PmMark,
-    type MarkType as PmMarkType,
-    type Node as PmNode,
-    type NodeType as PmNodeType,
-    type Schema,
-} from 'prosemirror-model';
+import { type Mark as PmMark, type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
 
 import {
+    DOCUMENT_VERSION,
     type RteBlockNode,
     type RteDocumentOf,
     type RteInlineNode,
     type StoredMarkValue,
     unknownBlockType,
     unknownInlineType,
+    unknownMarkType,
 } from '#/core';
+
+import { VALUE_ATTR } from './schema';
 
 /**
  * The document boundary: RTE format ↔ engine format. The only place either
@@ -23,7 +21,7 @@ import {
  *
  * Both directions run while the editor is live: inbound when a new `value` prop
  * arrives, outbound on every keystroke that changes the document (see
- * `dispatchTransaction` in editor.ts).
+ * `dispatchTransaction` in editing.ts).
  */
 
 // Reading engine nodes — shared by both directions, and by the control API
@@ -41,20 +39,18 @@ export const mapChildren = <TResult>(node: PmNode, map: (child: PmNode) => TResu
 export const definedAttrs = (attrs: Record<string, unknown>): Record<string, unknown> =>
     Object.fromEntries(Object.entries(attrs).filter(([, value]) => value !== null && value !== undefined));
 
-/**
- * A mark's value as the document and the control API see it. A component-based
- * mark (`defineMark`) keeps the whole value in one engine attribute.
- */
+/** A mark's value as the document and the control API see it: the one engine attribute it lives in. */
 export const markValueOf = (mark: PmMark): Record<string, unknown> =>
-    mark.type.spec.rteValueMark === true
-        ? ((mark.attrs.value as Record<string, unknown> | null) ?? {})
-        : definedAttrs(mark.attrs);
+    (mark.attrs[VALUE_ATTR] as Record<string, unknown> | null) ?? {};
 
-/** The reverse: engine attributes for a mark value. */
-export const markAttrsFor = (
-    markType: PmMarkType,
-    value: Record<string, unknown> | undefined,
-): Record<string, unknown> | undefined => (markType.spec.rteValueMark === true ? { value: value ?? {} } : value);
+/**
+ * The reverse, for a mark or an inline element: engine attributes for a value.
+ * An empty or absent value leaves the attribute to its default — `{}` for a
+ * mark, a draft (`null`) for an inline that has editing UI to complete it.
+ */
+export const valueAttrsFor = (value: Record<string, unknown> | undefined): Record<string, unknown> => ({
+    [VALUE_ATTR]: value !== undefined && Object.keys(value).length > 0 ? value : undefined,
+});
 
 /** Type and attributes only — what the toolbar needs, without dragging the subtree along. */
 export const shallowBlock = (node: PmNode): RteBlockNode =>
@@ -82,28 +78,30 @@ const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] =>
             if (child.text === '') {
                 continue;
             }
-            const marks = Object.entries(schema.marks)
-                .filter(([key]) => child[key] !== undefined)
-                .map(([key, markType]) => {
+            const { text, type: _type, ...markValues } = child;
+            const marks = Object.entries(markValues)
+                .filter(([, value]) => value !== undefined)
+                .map(([key, value]) => {
+                    // Thrown rather than dropped: the next `onChange` would
+                    // otherwise write the document back without it.
+                    const markType = schema.marks[key];
+                    if (!markType) {
+                        throw unknownMarkType(key);
+                    }
                     // A mark is stored as `true` when it carries nothing and as
-                    // its attributes when it does — see `StoredMarkValue`.
-                    const value = child[key] as StoredMarkValue;
-                    return markType.create(markAttrsFor(markType, value === true ? undefined : value));
+                    // its value when it does — see `StoredMarkValue`.
+                    const stored = value as StoredMarkValue;
+                    return markType.create(valueAttrsFor(stored === true ? undefined : stored));
                 });
-            nodes.push(schema.text(child.text, marks));
+            nodes.push(schema.text(text, marks));
             continue;
         }
-        const { type } = child;
+        const { type, text: _text, ...value } = child;
         const nodeType = schema.nodes[type];
         if (!nodeType) {
             throw unknownInlineType(type);
         }
-        if (nodeType.spec.rteValueNode === true) {
-            const { type: _type, text: _text, ...value } = child;
-            nodes.push(nodeType.create({ value: Object.keys(value).length > 0 ? value : null }));
-            continue;
-        }
-        nodes.push(nodeType.create(declaredAttrs(child, nodeType.spec.attrs)));
+        nodes.push(nodeType.create(valueAttrsFor(value)));
     }
     return nodes;
 };
@@ -157,8 +155,8 @@ const convertedInlines = new WeakMap<PmNode, RteInlineNode>();
 const convertedBlocks = new WeakMap<PmNode, RteBlockNode>();
 
 const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
-    // A component-based inline still being made is not part of the document yet.
-    if (child.type.spec.rteValueNode === true && child.attrs.value === null) {
+    // An inline still being made (a draft) is not part of the document yet.
+    if (!child.isText && child.attrs[VALUE_ATTR] === null) {
         return null;
     }
     const remembered = convertedInlines.get(child);
@@ -175,10 +173,8 @@ const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
             text[mark.type.name] = Object.keys(value).length > 0 ? value : true;
         }
         converted = text as RteInlineNode;
-    } else if (child.type.spec.rteValueNode === true) {
-        converted = { type: child.type.name, ...(child.attrs.value as Record<string, unknown>) };
     } else {
-        converted = { type: child.type.name, ...definedAttrs(child.attrs) };
+        converted = { type: child.type.name, ...(child.attrs[VALUE_ATTR] as Record<string, unknown>) };
     }
 
     convertedInlines.set(child, converted);
@@ -208,6 +204,6 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
  * object is what tells a host its `value` changed.
  */
 export const toRteDocument = (doc: PmNode): RteDocumentOf => ({
-    version: 1,
+    version: DOCUMENT_VERSION,
     blocks: mapChildren(doc, blockFromEngine),
 });

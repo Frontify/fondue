@@ -18,8 +18,8 @@ import { type RteBlockNode } from './document';
  * What is selected, as one value: everything plugin UI renders itself from,
  * read in one go rather than a property at a time.
  *
- * Read it in a toolbar or autocomplete render function — both run on every
- * editor state change, so what comes back is always current.
+ * Read it in a toolbar render function — it runs on every editor state change,
+ * so what comes back is always current.
  */
 export type RteSelectionSnapshot = {
     /** A caret rather than a range, so it covers nothing and `text` is empty. */

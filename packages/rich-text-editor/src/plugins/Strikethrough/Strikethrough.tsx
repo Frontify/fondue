@@ -2,7 +2,7 @@
 
 import { IconTextFormatStrikethrough } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/core';
+import { defineMark, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -13,15 +13,17 @@ export type StrikethroughMark = {
 
 export const strikethroughPlugin = (): RtePlugin => ({
     id: 'strikethrough',
-    schema: [
-        {
-            kind: 'mark',
-            type: 'strikethrough',
-            toDom: () => ({ tag: 's', children: true }),
+    marks: {
+        strikethrough: defineMark({
+            toHtml: () => ({ tag: 's', children: true }),
+            parse: [
+                { tag: 's', value: () => ({}) },
+                { tag: 'del', value: () => ({}) },
+                { tag: 'strike', value: () => ({}) },
+            ],
             renderComponent: ({ children }) => <s>{children}</s>,
-            parseRules: [{ tag: 's' }, { tag: 'del' }, { tag: 'strike' }],
-        },
-    ],
+        }),
+    },
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton title="Strikethrough" active={isActive} onClick={() => toggle()}>
             <IconTextFormatStrikethrough size={16} />

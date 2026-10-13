@@ -9,7 +9,6 @@ import { type Command, Plugin, type Plugin as PmPlugin } from 'prosemirror-state
 
 import { type EditorControlApi, type RteInputRule, type RtePlugin } from '#/core';
 
-import { declaredTriggers, triggerTrackingPlugin } from './autocomplete';
 import { listKeys } from './lists';
 import { type SchemaBundle } from './schema';
 
@@ -26,9 +25,7 @@ import { type SchemaBundle } from './schema';
  *    a list. They report "not handled" outside a list, so they fall through.
  * 4. Typing rewrites: the input rules that turn `**bold**` into bold text and
  *    `- ` into a list.
- * 5. Trigger tracking, which watches the result to see whether the caret is now
- *    typing after a `@`. Not a key handler — it observes.
- * 6. The engine's baseline keymap: Enter, Backspace, and everything else an
+ * 5. The engine's baseline keymap: Enter, Backspace, and everything else an
  *    editor does without being asked.
  *
  * Three invariants, each marked at the line that carries it:
@@ -193,9 +190,9 @@ const typingRewrites = (features: RtePlugin[], schema: Schema, itemTypeByList: M
 
 /**
  * Everything above, in the order the engine consults it — the numbers match the
- * six steps in this file's header, and invariant (1) says to keep them matched.
+ * five steps in this file's header, and invariant (1) says to keep them matched.
  *
- * `getApi` is a thunk because this runs before the view exists (see editor.ts);
+ * `getApi` is a thunk because this runs before the view exists (see editing.ts);
  * it is only ever called from a key handler, by which time the editor is live.
  */
 export const keystrokePipeline = (
@@ -203,7 +200,6 @@ export const keystrokePipeline = (
     bundle: SchemaBundle,
     getApi: () => EditorControlApi,
 ): PmPlugin[] => {
-    const triggers = declaredTriggers(features);
     const hasLists = bundle.itemTypeByList.size > 0;
 
     return [
@@ -217,9 +213,7 @@ export const keystrokePipeline = (
         ...(hasLists ? [keymap(listKeys(getApi))] : []),
         // (4) typing rewrites
         ...typingRewrites(features, bundle.schema, bundle.itemTypeByList),
-        // (5) trigger tracking, when some feature declared a trigger
-        ...(triggers.length > 0 ? [triggerTrackingPlugin(triggers)] : []),
-        // (6) everything an editor does without being asked
+        // (5) everything an editor does without being asked
         keymap(baseKeymap),
     ];
 };

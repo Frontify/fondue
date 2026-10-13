@@ -30,12 +30,37 @@ import {
  * changing the import in `useEditorHandle`. Plugins and stored JSON stay.
  */
 
+// Everything a plugin is written against — what the shipped plugins use, an
+// external one can use too.
 export {
-    type AutocompleteContext,
+    ANY_LIST,
+    type AttributeDefinition,
+    type AttributeSpec,
+    type BlockDefinition,
+    defineInline,
+    defineMark,
     type EditorControlApi,
     emptyDocument,
+    type HtmlSpec,
+    type InlineDefinition,
+    type InlineEditorProps,
+    type MarkDefinition,
+    type MarkEditorProps,
+    type NodeParseRule,
+    PARAGRAPH,
+    type ParagraphBlock,
+    type ParseRule,
+    type RteBlockNode,
+    type RteDocumentOf,
+    type RteInlineElementNode,
     type RteInlineNode,
+    type RteInputRule,
     type RtePlugin,
+    type RteSelectionSnapshot,
+    type RteTextNode,
+    type SchemaDefinition,
+    type SelectedNode,
+    type ToolbarItemProps,
 } from './core';
 
 export { defaultPlugins } from './plugins';

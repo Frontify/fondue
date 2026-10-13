@@ -4,7 +4,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { emptyDocument, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '#/core';
+import { defineMark, emptyDocument, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '#/core';
 
 import { mountDocument } from './editing';
 
@@ -15,15 +15,13 @@ import { mountDocument } from './editing';
 const plugins: RtePlugin[] = [
     {
         id: 'bold',
-        schema: [
-            {
-                kind: 'mark',
-                type: 'bold',
-                toDom: () => ({ tag: 'strong', children: true }),
+        marks: {
+            bold: defineMark({
+                toHtml: () => ({ tag: 'strong', children: true }),
+                parse: [{ tag: 'strong', value: () => ({}) }],
                 renderComponent: ({ children }) => <strong>{children}</strong>,
-                parseRules: [{ tag: 'strong' }],
-            },
-        ],
+            }),
+        },
     },
 ];
 
@@ -118,13 +116,5 @@ describe('a document set by the host', () => {
         handle.api.insertText('!');
 
         expect(stored()).toEqual(paragraph('!host'));
-    });
-});
-
-describe('autocomplete placements', () => {
-    it('are empty while no trigger is open', () => {
-        const { handle } = mount(paragraph('anchored'));
-
-        expect(handle.autocomplete.placements()).toEqual([]);
     });
 });

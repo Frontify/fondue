@@ -120,6 +120,20 @@ describe('pasting', () => {
         expect(emitted).toContain('A heading');
     });
 
+    it('reads a colour only off a span that sets one', async () => {
+        const { container, stored, ready } = mount((onChange) => (
+            <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
+        ));
+        await ready();
+
+        paste(container, '<p><span>plain</span> <span style="color: red">red</span></p>');
+
+        const block = stored()?.blocks[0];
+        const children = block && 'children' in block ? block.children : [];
+        expect(children).toContainEqual({ text: 'plain ' });
+        expect(children).toContainEqual({ text: 'red', fontColor: { color: 'red' } });
+    });
+
     it('shows what was pasted', async () => {
         const { container, ready } = mount((onChange) => (
             <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
@@ -217,7 +231,34 @@ describe('a readonly editor', () => {
         expect(container.textContent).not.toContain('first');
     });
 
-    it('fetches the engine once it is allowed to be edited', async () => {
+    it('starts editing from the document it was last given, not the first', async () => {
+        const second = paragraph('second');
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('first')} plugins={defaultPlugins} readonly />
+        ));
+
+        rerender(<RichTextEditor value={second} plugins={defaultPlugins} readonly />);
+        rerender(<RichTextEditor value={second} plugins={defaultPlugins} />);
+        await ready();
+
+        expect(container.textContent).toContain('second');
+        expect(container.textContent).not.toContain('first');
+    });
+
+    it('keeps what was typed into an uncontrolled editor across a readonly toggle', async () => {
+        const { container, rerender, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        await ready();
+
+        paste(container, '<p>typed</p>');
+        rerender(<RichTextEditor plugins={defaultPlugins} readonly />);
+        expect(container.textContent).toContain('typed');
+
+        rerender(<RichTextEditor plugins={defaultPlugins} />);
+        await ready();
+        expect(container.textContent).toContain('typed');
+    });
+
+    it('becomes editable once readonly is turned off', async () => {
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor value={paragraph('was readonly')} plugins={defaultPlugins} readonly />
         ));

@@ -6,13 +6,13 @@ import { EditorView } from 'prosemirror-view';
 import { buildPluginRegistry, type EditorControlApi } from '#/core';
 import { type EditorHandle, type MountDocument } from '#/editor/port';
 
-import { createAutocompleteLocator, createSelectionRectReader, createTriggerController } from './autocomplete';
 import { createControlApi, type OpenEditors } from './controlApi';
 import { toEngineDocument, toRteDocument } from './documentConversion';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, type Repaintable } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
+import { createSelectionRectReader } from './selectionRect';
 import { wholeIslandsPlugin } from './wholeIslands';
 import './engine.scss';
 
@@ -35,9 +35,9 @@ export const mountDocument: MountDocument = ({
     onStateChange,
     onBlur,
 }) => {
-    const bundle = buildSchema(features);
-    const { schema } = bundle;
     const registry = buildPluginRegistry(features);
+    const bundle = buildSchema(registry);
+    const { schema } = bundle;
     const current = { readOnly, placeholder };
 
     let api!: EditorControlApi;
@@ -102,17 +102,11 @@ export const mountDocument: MountDocument = ({
     });
 
     api = createControlApi(view, bundle, openEditors);
-    const triggers = createTriggerController(view);
     const refresh = (): void => view.setProps({});
 
     const handle: EditorHandle = {
         api,
         selectionRect: createSelectionRectReader(view),
-        autocomplete: {
-            placements: createAutocompleteLocator(view, features, triggers),
-            clearQuery: triggers.clear,
-            dismiss: triggers.dismiss,
-        },
     };
 
     return {

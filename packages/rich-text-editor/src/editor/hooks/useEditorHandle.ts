@@ -2,7 +2,7 @@
 
 import { type MutableRefObject, useEffect, useReducer, useRef } from 'react';
 
-import { emptyDocument, type RteDocumentOf, type RtePlugin } from '#/core';
+import { type RteDocumentOf, type RtePlugin } from '#/core';
 import { mountDocument } from '#/editor/engines/prosemirror';
 import { type EditorHandle, type MountedDocument } from '#/editor/port';
 
@@ -19,7 +19,8 @@ import { type EditorHandle, type MountedDocument } from '#/editor/port';
 
 type UseEditorHandleOptions = {
     plugins: RtePlugin[];
-    value: RteDocumentOf | undefined;
+    /** The document as it currently stands — what a (re)mount starts from. */
+    document: RteDocumentOf;
     placeholder: string;
     contentClassName: string;
     placeholderClassName: string;
@@ -31,7 +32,7 @@ type UseEditorHandleOptions = {
 
 export const useEditorHandle = ({
     plugins,
-    value,
+    document,
     placeholder,
     contentClassName,
     placeholderClassName,
@@ -49,7 +50,10 @@ export const useEditorHandle = ({
     onDocChangeRef.current = onDocChange;
     const onBlurRef = useRef(onBlur);
     onBlurRef.current = onBlur;
-    const initialRef = useRef({ placeholder, value });
+    // Read at mount, which also happens after readonly is turned off or the
+    // plugins change — so it has to be the latest, not the first.
+    const latestRef = useRef({ document, placeholder });
+    latestRef.current = { document, placeholder };
 
     const [, force] = useReducer((count: number) => count + 1, 0);
 
@@ -66,10 +70,10 @@ export const useEditorHandle = ({
 
         const mounted = mountDocument({
             container,
-            initialDoc: initialRef.current.value ?? emptyDocument(),
+            initialDoc: latestRef.current.document,
             plugins,
             readOnly: false,
-            placeholder: initialRef.current.placeholder,
+            placeholder: latestRef.current.placeholder,
             contentClassName,
             placeholderClassName,
             onDocChange: (doc) => onDocChangeRef.current(doc),
@@ -91,10 +95,8 @@ export const useEditorHandle = ({
     }, [pluginsKey, enabled]);
 
     useEffect(() => {
-        if (value) {
-            mountedRef.current?.setDoc(value);
-        }
-    }, [value]);
+        mountedRef.current?.setDoc(document);
+    }, [document]);
 
     useEffect(() => {
         mountedRef.current?.setPlaceholder(placeholder);

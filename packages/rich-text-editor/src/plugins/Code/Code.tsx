@@ -2,7 +2,7 @@
 
 import { IconCode } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/core';
+import { defineMark, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -15,15 +15,13 @@ export type CodeMark = {
 
 export const codePlugin = (): RtePlugin => ({
     id: 'code',
-    schema: [
-        {
-            kind: 'mark',
-            type: 'code',
-            toDom: () => ({ tag: 'code', attrs: { class: styles.code ?? '' }, children: true }),
+    marks: {
+        code: defineMark({
+            toHtml: () => ({ tag: 'code', attrs: { class: styles.code ?? '' }, children: true }),
+            parse: [{ tag: 'code', value: () => ({}) }],
             renderComponent: ({ children }) => <code className={styles.code}>{children}</code>,
-            parseRules: [{ tag: 'code' }],
-        },
-    ],
+        }),
+    },
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton title="Code" active={isActive} onClick={() => toggle()}>
             <IconCode size={16} />

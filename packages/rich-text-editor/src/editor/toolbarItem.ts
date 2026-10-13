@@ -27,9 +27,6 @@ const ownTypeOf = (plugin: RtePlugin): OwnType => {
         return { kind: 'mark', type: mark };
     }
     for (const entry of plugin.schema ?? []) {
-        if (entry.kind === 'mark') {
-            return { kind: 'mark', type: entry.type };
-        }
         if (entry.kind === 'block') {
             if (entry.children === undefined) {
                 return { kind: 'voidBlock', type: entry.type };

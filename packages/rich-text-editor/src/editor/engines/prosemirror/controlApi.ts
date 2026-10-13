@@ -7,7 +7,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type RteBlockNode, type RteSelectionSnapshot } from '#/core';
 
-import { markAttrsFor, markValueOf, shallowBlock } from './documentConversion';
+import { markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi } from './lists';
 import { type SchemaBundle } from './schema';
 
@@ -64,7 +64,7 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
         const shallow = shallowBlock(node);
         blocks.push(shallow);
         // The innermost node the document accepts as a block. A list item is
-        // deliberately out of that group (invariant (4) in setup/schema.ts), so
+        // deliberately out of that group (invariant (4) in schema.ts), so
         // `block` is the paragraph inside an item rather than the item itself.
         if (block === null && node.type.spec.group === 'block') {
             block = shallow;
@@ -127,7 +127,7 @@ const createSelectionApi = (view: EditorView): EditorControlApi['selection'] => 
 // Note what is NOT here: a mark applied by typing `**bold**` never comes
 // through this api. The toolbar button and the hotkey call `toggle` below; the
 // markdown shortcut builds its own transaction. See the header of
-// setup/keystrokes.ts.
+// keystrokes.ts.
 
 /**
  * The stretch of text around the selection start that carries a mark, or null
@@ -172,7 +172,7 @@ const createMarkApi = (view: EditorView, schema: Schema): EditorControlApi['mark
     toggle(key, value) {
         const markType = schema.marks[key];
         if (markType) {
-            pmToggleMark(markType, markAttrsFor(markType, value))(view.state, view.dispatch);
+            pmToggleMark(markType, valueAttrsFor(value))(view.state, view.dispatch);
             view.focus();
         }
     },
@@ -282,7 +282,9 @@ export const createControlApi = (
     insert(type, attrs) {
         const nodeType = bundle.schema.nodes[type];
         if (nodeType) {
-            view.dispatch(view.state.tr.replaceSelectionWith(nodeType.create(attrs)));
+            // Inline elements keep their value in one attribute; blocks keep theirs flat.
+            const engineAttrs = nodeType.isInline ? valueAttrsFor(attrs) : attrs;
+            view.dispatch(view.state.tr.replaceSelectionWith(nodeType.create(engineAttrs)));
             view.focus();
         }
     },

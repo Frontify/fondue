@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Flyout } from "@frontify/fondue-components";
-import { type ReactNode, useState } from "react";
+import { Button, Flyout } from '@frontify/fondue-components';
+import { type ReactNode, useState } from 'react';
 
-import { type MarkEditorProps } from "#/core";
+import { type MarkEditorProps } from '#/core';
 
-import { type LinkValue } from "../helpers/draft";
-import styles from "../link.module.scss";
+import { type LinkValue } from '../helpers/draft';
+import styles from '../link.module.scss';
 
-import { LinkTargetForm } from "./LinkTargetForm";
+import { LinkTargetForm } from './LinkTargetForm';
 
 /**
  * A link while editing: the anchor around the editable text, and a flyout
@@ -43,17 +43,14 @@ export const LinkEditor = ({
     const close = (): void => {
         setOpen(false);
         setDismissed(true);
-        if (value.href === "") {
+        if (value.href === '') {
             remove();
         }
         api.focus();
     };
 
     return (
-        <Flyout.Root
-            open={isOpen || (isFocused && !dismissed)}
-            onOpenChange={(open) => (open ? undefined : close())}
-        >
+        <Flyout.Root open={isOpen || (isFocused && !dismissed)} onOpenChange={(open) => (open ? undefined : close())}>
             <Flyout.Trigger asChild>
                 <a
                     href={value.href}
@@ -87,19 +84,10 @@ export const LinkEditor = ({
                         />
                     ) : (
                         <div className={styles.panel}>
-                            <a
-                                href={value.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={styles.target}
-                            >
+                            <a href={value.href} target="_blank" rel="noopener noreferrer" className={styles.target}>
                                 {value.href}
                             </a>
-                            <Button
-                                size="small"
-                                emphasis="weak"
-                                onPress={() => setOpen(true)}
-                            >
+                            <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
                                 Edit
                             </Button>
                             <Button

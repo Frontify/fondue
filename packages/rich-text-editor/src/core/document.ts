@@ -55,10 +55,12 @@ export type RteInlineNode = RteTextNode | RteInlineElementNode;
  * its attributes (`link: { href }`). Presence is what turns a mark on — there
  * is no `false`, an absent key is off.
  *
- * The index signature keeps the format open, so a stored document may carry
- * marks from plugins this build doesn't know. Authoring goes through the
- * package root's closed `RteText`, which lists the marks that actually ship, so
- * typos in mark keys are caught.
+ * The index signature keeps the format open over the marks plugins
+ * contribute. Displaying or editing a document still needs the plugin behind
+ * every mark it carries: a missing one throws, naming the mark, rather than
+ * quietly dropping it. Authoring goes through the package root's closed
+ * `RteText`, which lists the marks that actually ship, so typos in mark keys
+ * are caught.
  */
 export type RteTextNode = {
     text: string;

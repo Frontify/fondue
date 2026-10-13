@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/core';
+import { defineMark, type RtePlugin } from '#/core';
 
 import { ColorFlyout } from './components/ColorFlyout';
 
@@ -16,29 +16,19 @@ export type FontColorMark = {
 
 export const fontColorPlugin = (): RtePlugin => ({
     id: 'font-color',
-    schema: [
-        {
-            kind: 'mark',
-            type: 'fontColor',
-            attributes: { color: { parseFromStyle: 'color' } },
+    marks: {
+        fontColor: defineMark<FontColorValue>({
             // Underline and strikethrough draw their line in the colour of
             // their own element, which a descendant cannot change, so the
             // colour has to be set on an element wrapping them.
             nesting: -1,
-            toDom: (attrs) => {
-                const { color } = attrs as Partial<FontColorValue>;
-                return {
-                    tag: 'span',
-                    attrs: color ? { style: `color: ${color}` } : undefined,
-                    children: true,
-                };
-            },
-            renderComponent: ({ value, children }) => {
-                const { color } = value as Partial<FontColorValue>;
-                return <span style={{ color }}>{children}</span>;
-            },
-            parseRules: [{ tag: 'span' }],
-        },
-    ],
+            // Typing at the end of coloured text does not carry the colour on.
+            inclusive: false,
+            toHtml: ({ color }) => ({ tag: 'span', attrs: { style: `color: ${color}` }, children: true }),
+            // Any span may be pasted; only one that sets a colour is one.
+            parse: [{ tag: 'span', value: (element) => (element.style.color ? { color: element.style.color } : null) }],
+            renderComponent: ({ value, children }) => <span style={{ color: value.color }}>{children}</span>,
+        }),
+    },
     toolbarItem: ({ api, selection }) => <ColorFlyout selection={selection} api={api} />,
 });

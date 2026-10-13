@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/core';
+import { defineInline, type RtePlugin } from '#/core';
 
 /** A line break inside a block — the void inline this plugin adds. */
 export type BreakInline = {
@@ -13,14 +13,12 @@ export type BreakInline = {
  */
 export const softBreakPlugin = (): RtePlugin => ({
     id: 'soft-break',
-    schema: [
-        {
-            kind: 'inline',
-            type: 'break',
-            toDom: () => ({ tag: 'br' }),
+    inlines: {
+        break: defineInline({
+            toHtml: () => ({ tag: 'br' }),
+            parse: [{ tag: 'br', value: () => ({}) }],
             renderComponent: () => <br />,
-            parseRules: [{ tag: 'br' }],
-        },
-    ],
+        }),
+    },
     hotkeys: { 'Shift-Enter': (api) => api.insert('break') },
 });

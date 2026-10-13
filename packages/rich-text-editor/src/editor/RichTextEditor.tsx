@@ -1,14 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CSSProperties, type ReactNode } from 'react';
+import { type CSSProperties, type ReactNode, useState } from 'react';
 
 import { emptyDocument, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
 import { RichTextRenderer } from '#/renderer';
 
-import { FloatingLayer } from './FloatingLayer';
 import { FloatingToolbar } from './FloatingToolbar';
 import { useEditorHandle } from './hooks/useEditorHandle';
-import { useFloating } from './hooks/useFloating';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { useSelectionRect } from './hooks/useSelectionRect';
 import styles from './richTextEditor.module.scss';
@@ -83,20 +81,27 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     placeholder = '',
     onBlur,
 }: RichTextEditorProps<TBlock>): ReactNode => {
+    // What the editor last reported, so an uncontrolled editor keeps its
+    // content across readonly toggles and remounts. A `value` always wins.
+    const [ownDocument, setOwnDocument] = useState<RteDocumentOf>(() => value ?? emptyDocument());
+    const document = value ?? ownDocument;
+
     const contentClassName = [styles.content, ...plugins.map((plugin) => plugin.contentClassName)]
         .filter(Boolean)
         .join(' ');
     const { containerRef, handle } = useEditorHandle({
         plugins,
-        value,
+        document,
         placeholder,
         contentClassName,
         placeholderClassName: styles.placeholder ?? '',
-        onDocChange: (doc) => onChange?.(doc as RteDocumentOf<TBlock>),
+        onDocChange: (doc) => {
+            setOwnDocument(doc);
+            onChange?.(doc as RteDocumentOf<TBlock>);
+        },
         onBlur: (doc) => onBlur?.(doc as RteDocumentOf<TBlock>),
         enabled: !readOnly,
     });
-    const floating = useFloating({ handle, plugins, enabled: !readOnly });
     const { focusWithin, focusProps } = useFocusWithin();
 
     const api = handle?.api;
@@ -109,29 +114,19 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         plugins.flatMap((plugin) => Object.entries(plugin.contentProperties ?? {})),
     );
 
-    const document = value ?? emptyDocument();
-
     return (
-        <>
-            <div
-                onKeyDownCapture={floating.onKeyDownCapture}
-                {...focusProps}
-                className={styles.root}
-                style={contentProperties as CSSProperties}
-            >
-                {toolbarFloats && selectionRect !== null ? (
-                    <FloatingToolbar rect={selectionRect}>{toolbar}</FloatingToolbar>
-                ) : null}
-                <div className={styles.frame} data-chrome={String(showEditor)}>
-                    {toolbarFloats ? null : toolbar}
-                    {readOnly ? (
-                        <RichTextRenderer value={document} plugins={plugins} className={contentClassName} />
-                    ) : (
-                        <div ref={containerRef} />
-                    )}
-                </div>
+        <div {...focusProps} className={styles.root} style={contentProperties as CSSProperties}>
+            {toolbarFloats && selectionRect !== null ? (
+                <FloatingToolbar rect={selectionRect}>{toolbar}</FloatingToolbar>
+            ) : null}
+            <div className={styles.frame} data-chrome={String(showEditor)}>
+                {toolbarFloats ? null : toolbar}
+                {readOnly ? (
+                    <RichTextRenderer value={document} plugins={plugins} className={contentClassName} />
+                ) : (
+                    <div ref={containerRef} />
+                )}
             </div>
-            <FloatingLayer surfaces={floating.surfaces} />
-        </>
+        </div>
     );
 };

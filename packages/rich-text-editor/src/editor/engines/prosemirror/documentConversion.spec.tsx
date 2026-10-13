@@ -3,7 +3,16 @@
 import { EditorState } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { ANY_LIST, emptyDocument, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '#/core';
+import {
+    ANY_LIST,
+    buildPluginRegistry,
+    defineInline,
+    defineMark,
+    emptyDocument,
+    PARAGRAPH,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 
 import { toEngineDocument, toRteDocument } from './documentConversion';
 import { buildSchema } from './schema';
@@ -17,32 +26,23 @@ import { buildSchema } from './schema';
 const plugins: RtePlugin[] = [
     {
         id: 'bold',
-        schema: [
-            {
-                kind: 'mark',
-                type: 'bold',
-                toDom: () => ({ tag: 'strong', children: true }),
+        marks: {
+            bold: defineMark({
+                toHtml: () => ({ tag: 'strong', children: true }),
+                parse: [{ tag: 'strong', value: () => ({}) }],
                 renderComponent: ({ children }) => <strong>{children}</strong>,
-                parseRules: [{ tag: 'strong' }],
-            },
-        ],
+            }),
+        },
     },
     {
         id: 'link',
-        schema: [
-            {
-                kind: 'mark',
-                type: 'link',
-                attributes: { href: {} },
-                toDom: (attrs) => ({
-                    tag: 'a',
-                    attrs: { href: typeof attrs.href === 'string' ? attrs.href : '' },
-                    children: true,
-                }),
-                renderComponent: ({ children, value }) => <a href={(value as { href?: string }).href}>{children}</a>,
-                parseRules: [{ tag: 'a' }],
-            },
-        ],
+        marks: {
+            link: defineMark<{ href: string }>({
+                toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
+                parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
+                renderComponent: ({ children, value }) => <a href={value.href}>{children}</a>,
+            }),
+        },
     },
     {
         id: 'heading',
@@ -60,19 +60,13 @@ const plugins: RtePlugin[] = [
     },
     {
         id: 'mention',
-        schema: [
-            {
-                kind: 'inline',
-                type: 'mention',
-                attributes: { id: {} },
-                toDom: (attrs) => ({
-                    tag: 'span',
-                    children: typeof attrs.id === 'string' ? attrs.id : '',
-                }),
-                renderComponent: ({ node }) => <span>{String(node.id)}</span>,
-                parseRules: [{ tag: 'span' }],
-            },
-        ],
+        inlines: {
+            mention: defineInline<{ id: string }>({
+                toHtml: ({ id }) => ({ tag: 'span', children: id }),
+                parse: [{ tag: 'span', value: (element) => ({ id: element.textContent ?? '' }) }],
+                renderComponent: ({ value }) => <span>{value.id}</span>,
+            }),
+        },
     },
     {
         id: 'list',
@@ -101,7 +95,7 @@ const plugins: RtePlugin[] = [
     },
 ];
 
-const { schema } = buildSchema(plugins);
+const { schema } = buildSchema(buildPluginRegistry(plugins));
 
 const document: RteDocumentOf = {
     version: 1,
@@ -140,6 +134,15 @@ const document: RteDocumentOf = {
 describe('the document boundary', () => {
     it('round-trips every shape a document can hold', () => {
         expect(toRteDocument(toEngineDocument(document, schema))).toEqual(document);
+    });
+
+    it('refuses a mark no mounted plugin defines, rather than dropping it', () => {
+        const withUnknownMark: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: PARAGRAPH, children: [{ text: 'x', highlight: true }] }],
+        };
+
+        expect(() => toEngineDocument(withUnknownMark, schema)).toThrow(/Unknown mark type "highlight"/);
     });
 
     it('drops the empty text run an empty document is written with', () => {

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 
 // Stories import only the package public API. The consumer-plugin stories at
 // the bottom double as proof that the plugin contract is open: they define a
@@ -21,6 +21,8 @@ import {
     codePlugin,
     columnBreakPlugin,
     defaultPlugins,
+    defineInline,
+    defineMark,
     fontColorPlugin,
     italicPlugin,
     linkPlugin,
@@ -30,7 +32,6 @@ import {
     numberedListPlugin,
     quotePlugin,
     resetFormattingPlugin,
-    type AutocompleteContext,
     type RteDocument,
     type RteDocumentWith,
     type RteInlineNode,
@@ -820,19 +821,17 @@ type HighlightMark = {
 
 const highlightPlugin = (): RtePlugin => ({
     id: 'highlight',
-    schema: [
-        {
-            kind: 'mark',
-            type: 'highlight',
-            toDom: () => ({ tag: 'mark', children: true }),
+    marks: {
+        highlight: defineMark({
+            toHtml: () => ({ tag: 'mark', children: true }),
+            parse: [{ tag: 'mark', value: () => ({}) }],
             renderComponent: ({ children }) => (
                 <mark className="tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container">
                     {children}
                 </mark>
             ),
-            parseRules: [{ tag: 'mark' }],
-        },
-    ],
+        }),
+    },
     toolbarItem: ({ api, selection }) => {
         const active = 'highlight' in selection.marks;
         return (
@@ -960,100 +959,71 @@ const EMBEDS = [
     { id: 'sheet', label: 'Spreadsheet', hint: '📊' },
 ];
 
+type EmbedValue = Omit<EmbedInline, 'type'>;
+
+const embedClasses =
+    'tw-rounded-small tw-bg-container-highlight tw-px-1 tw-font-medium tw-text-container-highlight-on-highlight-container';
+
 /**
- * A consumer-written picker, showing what the floating contract gives an
- * external plugin: the editor anchors it at the trigger and hands over the keys
- * through `onKeys`, while the list, the highlight and what picking one does
- * stay local.
+ * A consumer-written picker, showing what an inline's `editorComponent` gives
+ * an external plugin: the node is inserted without a value, and the component
+ * completes it with `setValue` — or takes it away with `remove`.
  */
-const EmbedPicker = ({ context }: { context: AutocompleteContext }): ReactNode => {
-    const { api, query, clearQuery, close, onKeys } = context;
-    const found = EMBEDS.filter((embed) => embed.label.toLowerCase().includes(query.toLowerCase()));
-    // Tagged with its query, so a new list starts at the top on its own.
-    const [highlighted, setHighlighted] = useState({ query, index: 0 });
-    const active = highlighted.query === query ? Math.min(highlighted.index, found.length - 1) : 0;
-
-    const choose = (item: (typeof EMBEDS)[number]): void => {
-        clearQuery();
-        api.insert('embed', { provider: item.id });
-        api.insertText(' ');
-    };
-
-    useEffect(() =>
-        onKeys((event) => {
-            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                const step = event.key === 'ArrowDown' ? 1 : found.length - 1;
-                setHighlighted({ query, index: (active + step) % found.length });
-                return true;
-            }
-            if (event.key === 'Enter' || event.key === 'Tab') {
-                const item = found[active];
-                if (item) {
-                    choose(item);
-                }
-                return true;
-            }
-            if (event.key === 'Escape') {
-                close();
-                return true;
-            }
-            return false;
-        }),
-    );
-
-    return (
-        <ul role="listbox" aria-label="Embed suggestions" className="tw-m-0 tw-list-none tw-p-0 tw-text-body-small">
-            {found.map((item, index) => (
-                <li key={item.id} role="option" aria-selected={index === active}>
-                    <button
-                        type="button"
-                        // Never take the selection away from the editor.
-                        onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => choose(item)}
-                        onMouseEnter={() => setHighlighted({ query, index })}
-                        className={`tw-flex tw-w-full tw-gap-2 tw-rounded-small tw-px-2 tw-py-1 tw-text-left ${
-                            index === active ? 'tw-bg-container-selected' : 'tw-bg-transparent'
-                        }`}
-                    >
-                        <span aria-hidden>{item.hint}</span>
-                        <span>{item.label}</span>
-                    </button>
-                </li>
-            ))}
-        </ul>
-    );
-};
+const EmbedDraft = ({
+    onChoose,
+    onRemove,
+}: {
+    onChoose: (provider: string) => void;
+    onRemove: () => void;
+}): ReactNode => (
+    <span role="listbox" aria-label="Embed suggestions" className="tw-inline-flex tw-gap-1">
+        {EMBEDS.map((item) => (
+            <button
+                key={item.id}
+                type="button"
+                role="option"
+                aria-selected={false}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => onChoose(item.id)}
+                className="tw-rounded-small tw-bg-container-selected tw-px-1"
+            >
+                <span aria-hidden>{item.hint}</span> {item.label}
+            </button>
+        ))}
+        <button type="button" aria-label="Cancel" onClick={onRemove} className="tw-px-1">
+            ×
+        </button>
+    </span>
+);
 
 const embedPlugin = (): RtePlugin => ({
     id: 'embed',
-    schema: [
-        {
-            kind: 'inline',
-            type: 'embed',
-            attributes: { provider: { parseFromDomAttribute: 'data-embed' } },
-            toDom: (attrs) => {
-                const provider = typeof attrs.provider === 'string' ? attrs.provider : '';
-                return {
-                    tag: 'span',
-                    attrs: { 'data-embed': provider },
-                    children: `▤ ${provider}`,
-                };
-            },
-            renderComponent: ({ node }) => {
-                const embed = node as EmbedInline;
-                return (
-                    <span
-                        data-embed={embed.provider}
-                        className="tw-rounded-small tw-bg-container-highlight tw-px-1 tw-font-medium tw-text-container-highlight-on-highlight-container"
-                    >
-                        {`▤ ${embed.provider}`}
-                    </span>
-                );
-            },
-            parseRules: [{ tag: 'span[data-embed]' }],
-        },
-    ],
-    autocomplete: { trigger: '/', component: (context) => <EmbedPicker context={context} /> },
+    inlines: {
+        embed: defineInline<EmbedValue>({
+            toHtml: ({ provider }) => ({ tag: 'span', attrs: { 'data-embed': provider }, children: `▤ ${provider}` }),
+            parse: [{ tag: 'span[data-embed]', value: (element) => ({ provider: element.dataset.embed ?? '' }) }],
+            renderComponent: ({ value }) => (
+                <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
+            ),
+            editorComponent: ({ value, setValue, remove, api }) =>
+                value === null ? (
+                    <EmbedDraft
+                        onChoose={(provider) => {
+                            setValue({ provider });
+                            api.focus();
+                        }}
+                        onRemove={() => {
+                            remove();
+                            api.focus();
+                        }}
+                    />
+                ) : (
+                    <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
+                ),
+        }),
+    },
+    // An empty embed, which its editorComponent then takes over.
+    hotkeys: { '/': (api) => api.insert('embed') },
 });
 
 /** A consumer inline element widens the same parameter as a consumer mark. */

@@ -12,23 +12,6 @@ import { type EditorControlApi, type RteDocumentOf, type RtePlugin } from '#/cor
 /** A box in viewport coordinates. */
 export type FloatingRect = { left: number; top: number; width: number; height: number };
 
-/** Where one plugin's autocomplete currently belongs on screen. */
-export type FloatingPlacement = {
-    pluginId: string;
-    /** What has been typed after the trigger. */
-    query: string;
-    /**
-     * The box it hangs at, in viewport coordinates.
-     *
-     * A call rather than a field, because turning a document position into a
-     * box forces the browser to lay the page out. A plugin decides whether to
-     * draw anything *after* seeing the placement — a picker whose query matches
-     * nothing draws nothing — so measuring up front would spend a layout on
-     * every anchor that exists rather than on every one that shows.
-     */
-    measure(): FloatingRect;
-};
-
 export type MountOptions = {
     container: HTMLElement;
     initialDoc: RteDocumentOf;
@@ -52,7 +35,7 @@ export type MountOptions = {
 };
 
 /**
- * What a live editor offers: the commands, and where things are on screen.
+ * What a live editor offers: the commands, and where the selection is on screen.
  */
 export type EditorHandle = {
     api: EditorControlApi;
@@ -62,18 +45,6 @@ export type EditorHandle = {
      * selection.
      */
     selectionRect(): FloatingRect | null;
-    /**
-     * Autocomplete: where each declared picker hangs, plus control over the
-     * trigger one of them may be anchored to. A picker whose trigger is not
-     * currently in the document is absent from the list.
-     */
-    autocomplete: {
-        placements(): FloatingPlacement[];
-        /** Delete the open trigger and its query, so a choice can take their place. */
-        clearQuery(): void;
-        /** Close the open trigger until the caret moves on (Escape). */
-        dismiss(): void;
-    };
 };
 
 export type MountedDocument = {

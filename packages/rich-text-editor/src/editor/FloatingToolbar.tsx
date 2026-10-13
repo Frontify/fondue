@@ -18,8 +18,8 @@ const VIEWPORT_MARGIN = 8;
  * rather than read once, since its width follows what is in it (a longer style
  * name in the dropdown) and its height jumps the moment the controls wrap.
  *
- * The editor's OWN chrome, positioned from `handle.selectionRect()` — not the
- * plugins' floating mechanism, which is `FloatingLayer.tsx`.
+ * The editor's OWN chrome, positioned from `handle.selectionRect()`. Plugin UI
+ * anchors itself, from its own `editorComponent`.
  */
 export const FloatingToolbar = ({ rect, children }: { rect: FloatingRect; children: ReactNode }): ReactNode => {
     const barRef = useRef<HTMLDivElement | null>(null);

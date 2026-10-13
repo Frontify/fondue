@@ -17,9 +17,8 @@ import { createRoot, type Root } from 'react-dom/client';
 import {
     type BlockDefinition,
     type EditorControlApi,
-    type InlineNodeDefinition,
+    type InlineEditorProps,
     type MarkDefinition,
-    type MarkNodeDefinition,
     type PluginRegistry,
     type RteBlockNode,
 } from '#/core';
@@ -142,8 +141,9 @@ class ReactBlockView implements NodeView {
 const IN_SELECTION_CLASS = 'rte-in-selection';
 
 /**
- * Hosts a component-based inline node: the editor renders `editorComponent`
- * (or `renderComponent`) with generic props and does nothing else. Events from
+ * Hosts an inline element's `editorComponent`: the editor renders it with
+ * generic props and does nothing else. Inline elements without one are drawn
+ * from `toHtml` and need no view. Events from
  * inside it belong to it — an input in there types into the input, not the
  * document.
  *
@@ -159,7 +159,7 @@ export class ReactInlineView implements NodeView {
         node: PmNode,
         private readonly view: EditorView,
         private readonly getPos: () => number | undefined,
-        private readonly definition: InlineNodeDefinition,
+        private readonly Component: (props: InlineEditorProps<Record<string, unknown>>) => ReactNode,
         private readonly getApi: () => EditorControlApi,
         private readonly live: Set<Repaintable>,
         private readonly openEditors: OpenEditors,
@@ -194,7 +194,7 @@ export class ReactInlineView implements NodeView {
     }
 
     paint(): { type: string; focused: boolean } {
-        const Component = this.definition.editorComponent;
+        const { Component } = this;
         const value = this.node.attrs.value as Record<string, unknown> | null;
         const type = this.node.type.name;
         const focused = this.isFocused();
@@ -203,33 +203,29 @@ export class ReactInlineView implements NodeView {
         // (Safari does not), so the editor paints it — see engine.scss.
         this.dom.classList.toggle(IN_SELECTION_CLASS, selected);
         this.root.render(
-            Component ? (
-                <Component
-                    value={value}
-                    isFocused={focused}
-                    isSelected={selected}
-                    isOpen={focused && this.openEditors.type === type}
-                    setOpen={(open) => (open ? this.getApi().editors.open(type) : this.getApi().editors.close())}
-                    api={this.getApi()}
-                    setValue={(next) => {
-                        const pos = this.getPos();
-                        if (pos !== undefined) {
-                            this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { value: next }));
-                        }
-                    }}
-                    remove={() => {
-                        const pos = this.getPos();
-                        if (pos === undefined) {
-                            return;
-                        }
-                        const transaction = this.view.state.tr.delete(pos, pos + this.node.nodeSize);
-                        transaction.setSelection(TextSelection.create(transaction.doc, pos));
-                        this.view.dispatch(transaction);
-                    }}
-                />
-            ) : value === null ? null : (
-                this.definition.renderComponent({ value })
-            ),
+            <Component
+                value={value}
+                isFocused={focused}
+                isSelected={selected}
+                isOpen={focused && this.openEditors.type === type}
+                setOpen={(open) => (open ? this.getApi().editors.open(type) : this.getApi().editors.close())}
+                api={this.getApi()}
+                setValue={(next) => {
+                    const pos = this.getPos();
+                    if (pos !== undefined) {
+                        this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { value: next }));
+                    }
+                }}
+                remove={() => {
+                    const pos = this.getPos();
+                    if (pos === undefined) {
+                        return;
+                    }
+                    const transaction = this.view.state.tr.delete(pos, pos + this.node.nodeSize);
+                    transaction.setSelection(TextSelection.create(transaction.doc, pos));
+                    this.view.dispatch(transaction);
+                }}
+            />,
         );
         return { type, focused };
     }
@@ -290,7 +286,7 @@ export class ReactMarkView implements MarkView {
     constructor(
         private readonly mark: PmMark,
         private readonly view: EditorView,
-        private readonly definition: MarkNodeDefinition,
+        private readonly definition: MarkDefinition,
         private readonly getApi: () => EditorControlApi,
         private readonly live: Set<Repaintable>,
         private readonly openEditors: OpenEditors,
@@ -444,9 +440,8 @@ export const createMarkViews = (
 ): Record<string, MarkViewConstructor> => {
     const views: Record<string, MarkViewConstructor> = {};
     for (const [type, definition] of registry.marks) {
-        const component = definition.valueMark;
-        views[type] = component?.editorComponent
-            ? (mark, view) => new ReactMarkView(mark, view, component, getApi, live, openEditors)
+        views[type] = definition.editorComponent
+            ? (mark, view) => new ReactMarkView(mark, view, definition, getApi, live, openEditors)
             : (mark) => new RenderedMarkView(mark, definition);
     }
     return views;
@@ -464,9 +459,11 @@ export const createNodeViews = (
             views[type] = (node, view, getPos) => new ReactBlockView(node, view, getPos, definition);
         }
     }
-    for (const [type, definition] of registry.inlineNodes) {
-        views[type] = (node, view, getPos) =>
-            new ReactInlineView(node, view, getPos, definition, getApi, liveInlines, openEditors);
+    for (const [type, { editorComponent }] of registry.inlines) {
+        if (editorComponent) {
+            views[type] = (node, view, getPos) =>
+                new ReactInlineView(node, view, getPos, editorComponent, getApi, liveInlines, openEditors);
+        }
     }
     return views;
 };

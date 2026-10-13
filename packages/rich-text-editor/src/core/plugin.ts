@@ -1,35 +1,37 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type KeyboardEvent, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
-import { type RteBlockNode, type RteInlineElementNode } from './document';
+import { type RteBlockNode } from './document';
 
 /**
  * A feature described in engine-agnostic terms. A plugin is a plain object: it
- * declares what exists (`schema`), how it looks (`toDom` / `renderComponent`),
- * and how to interact with it (toolbar, hotkeys, input rules, autocomplete).
+ * declares what exists (`schema`, `marks`, `inlines`), how it looks
+ * (`toDom` / `toHtml`, `renderComponent`), and how to interact with it
+ * (toolbar, hotkeys, input rules).
  * It never executes anything itself — runtime effects go through the
  * EditorControlApi it is handed.
  *
  * Plugins are written as functions returning this object:
  *
  * ```ts
- * export const boldPlugin = (): RtePlugin => ({ id: 'bold', schema: [{ kind: 'mark', type: 'bold', … }] });
+ * export const boldPlugin = (): RtePlugin => ({ id: 'bold', marks: { bold: defineMark({ … }) } });
  * plugins={[boldPlugin(), mentionPlugin({ items })]}
  * ```
  */
 export type RtePlugin = {
     id: string;
+    /** Block types, and attributes every text block carries (alignment). */
     schema?: readonly SchemaDefinition[];
+    /** Marks (`defineMark`), keyed by the key they are stored under on a text node. */
+    marks?: Record<string, MarkDefinition>;
     /**
-     * Inline nodes in the component-based shape (`defineInline`), keyed by
-     * type. The editor only renders `editorComponent` with generic props; every
-     * behaviour beyond that belongs to the plugin.
+     * Void inline elements (`defineInline`), keyed by type. The editor only
+     * renders `editorComponent` with generic props; every behaviour beyond
+     * that belongs to the plugin.
      */
-    inlines?: Record<string, InlineNodeDefinition>;
-    /** Marks in the component-based shape (`defineMark`), keyed by type. */
-    marks?: Record<string, MarkNodeDefinition>;
+    inlines?: Record<string, InlineDefinition>;
     /**
      * This feature's control in the toolbar. Re-rendered on every editor state
      * change, handed the feature's own node at the selection (or null) and the
@@ -46,15 +48,6 @@ export type RtePlugin = {
     /** Text rewritten as it is typed: markdown shortcuts and typography. */
     inputRules?: readonly RteInputRule[];
     /**
-     * A suggestion menu opened by typing a trigger at the start of a word (`@`).
-     * The editor anchors it, tracks the query, and routes keys; the plugin
-     * decides what to show.
-     */
-    autocomplete?: {
-        trigger: string;
-        component: (context: AutocompleteContext) => ReactNode | null;
-    };
-    /**
      * A class for the editable element itself, for a feature that styles the
      * content as a whole rather than nodes it renders — the column layout.
      */
@@ -66,30 +59,29 @@ export type RtePlugin = {
     contentProperties?: Record<string, string>;
 };
 
-export type SchemaDefinition = BlockDefinition | InlineDefinition | MarkDefinition | AttributeDefinition;
+export type SchemaDefinition = BlockDefinition | AttributeDefinition;
 
 /**
- * One piece of data a block, inline or mark carries, stored flat on the
- * document node. Rendering writes it out; the fields below only say how to read
- * it back from pasted HTML.
+ * One piece of data a block carries, stored flat on the document node.
+ * Rendering writes it out; the fields below only say how to read it back from
+ * pasted HTML.
  */
 export type AttributeSpec = {
     /** Value when the attribute is absent. */
     default?: unknown;
     /**
      * The DOM attribute to read this one back from when parsing pasted HTML:
-     * `href: { parseFromDomAttribute: 'href' }`, or a differently named one
-     * (`id: { parseFromDomAttribute: 'data-mention-id' }`).
+     * `level: { parseFromDomAttribute: 'data-level' }`.
      */
     parseFromDomAttribute?: string;
     /**
      * Read it back from a CSS property instead, for a value that lives in the
-     * style attribute — `color` for a font-color mark.
+     * style attribute.
      */
     parseFromStyle?: string;
 };
 
-/** One rule for recognizing pasted HTML. Required on every block, inline and mark. */
+/** One rule for recognizing pasted HTML as a block. Required on every block. */
 export type ParseRule = {
     /** Element that is recognized, e.g. `h2` or `b`. */
     tag: string;
@@ -132,35 +124,6 @@ export type BlockDefinition = {
     parseRules: readonly ParseRule[];
 };
 
-export type InlineDefinition = {
-    kind: 'inline';
-    type: string;
-    attributes?: Record<string, AttributeSpec>;
-    toDom: (attrs: Record<string, unknown>) => HtmlSpec;
-    renderComponent: (props: { node: RteInlineElementNode }) => ReactNode;
-    editorComponent?: (props: { node: RteInlineElementNode }) => ReactNode;
-    /** How pasted HTML becomes this inline. Always listed — nothing is inferred from `toDom`. */
-    parseRules: readonly ParseRule[];
-};
-
-export type MarkDefinition = {
-    kind: 'mark';
-    type: string;
-    attributes?: Record<string, AttributeSpec>;
-    /**
-     * Where this mark sits when marks nest on the same text: lower wraps
-     * higher, ties keep the order their plugins were passed in. Defaults to
-     * `0`.
-     */
-    nesting?: number;
-    toDom: (attrs: Record<string, unknown>) => HtmlSpec;
-    renderComponent: (props: { children: ReactNode; value: Record<string, unknown> }) => ReactNode;
-    /** How pasted HTML becomes this mark. Always listed — nothing is inferred from `toDom`. */
-    parseRules: readonly ParseRule[];
-    /** Set when the mark came from `RtePlugin.marks` (`defineMark`): the engine stores its value whole. */
-    valueMark?: MarkNodeDefinition;
-};
-
 /**
  * A field every text block carries (alignment). Same `schema` list as nodes —
  * not a parallel plugin key.
@@ -189,35 +152,15 @@ export type RteInputRule =
     /** A prefix wraps the block in a list: `- `, `1. `. */
     | { kind: 'list'; match: string; list: string };
 
-/** Consumes the key when it returns true, leaving it to the editor otherwise. */
-export type AutocompleteKeyHandler = (event: KeyboardEvent<HTMLElement>) => boolean;
-
-/** What the editor hands an autocomplete menu: the API, what was typed, and the keyboard. */
-export type AutocompleteContext = {
-    api: EditorControlApi;
-    /** What has been typed after the trigger. */
-    query: string;
-    /**
-     * Remove the trigger and its query from the document, so a choice can be
-     * inserted in their place.
-     */
-    clearQuery(): void;
-    /** Close without touching the text (Escape). */
-    close(): void;
-    /**
-     * Take keys while this content is open, before the editor sees them — how a
-     * picker gets the arrow keys without stealing the caret. Register from an
-     * effect and return the result as its cleanup; registering again replaces
-     * the previous handler, so re-running on every render is fine.
-     */
-    onKeys(handler: AutocompleteKeyHandler): () => void;
-};
-
-/** Read a node's value back from a pasted element. */
+/** Read a mark's or inline's value back from a pasted element. */
 export type NodeParseRule<TValue> = {
     /** Element that is recognized, e.g. `a[data-mention-id]`. */
     tag: string;
-    value: (element: HTMLElement) => TValue;
+    /**
+     * The value the element carries, or null when it turns out not to be this
+     * node after all — a `span` without a colour is no font colour.
+     */
+    value: (element: HTMLElement) => TValue | null;
 };
 
 /** What the editor hands an inline node's `editorComponent`. */
@@ -239,12 +182,16 @@ export type InlineEditorProps<TValue> = {
 };
 
 /**
- * An inline node described by components: portable markup (`toHtml`), how to
- * read it back (`parse`), how it looks readonly (`renderComponent`) and
- * everything shown while editing (`editorComponent`, defaults to
- * `renderComponent`). Its value is stored flat on the document node.
+ * A void inline element: portable markup (`toHtml`), how to read it back
+ * (`parse`), how it looks readonly (`renderComponent`) and, optionally,
+ * everything shown while editing (`editorComponent`). Its value is stored flat
+ * on the document node.
+ *
+ * Without an `editorComponent` the editor draws `toHtml`. With one, a node
+ * inserted without a value (`api.insert(type)`) is a draft the component
+ * completes: it is left out of the document until it has a value.
  */
-export type InlineNodeDefinition<TValue = Record<string, unknown>> = {
+export type InlineDefinition<TValue = Record<string, unknown>> = {
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly NodeParseRule<TValue>[];
     renderComponent: (props: { value: TValue }) => ReactNode;
@@ -255,8 +202,8 @@ export type InlineNodeDefinition<TValue = Record<string, unknown>> = {
  * Types an inline node's callbacks by its value, then erases the type so the
  * definition fits `RtePlugin.inlines` beside nodes with other values.
  */
-export const defineInline = <TValue extends object>(definition: InlineNodeDefinition<TValue>): InlineNodeDefinition =>
-    definition as unknown as InlineNodeDefinition;
+export const defineInline = <TValue extends object>(definition: InlineDefinition<TValue>): InlineDefinition =>
+    definition as unknown as InlineDefinition;
 
 /**
  * The plugin's own node at the selection: the first type it declares (a mark,
@@ -314,10 +261,17 @@ export type MarkEditorProps<TValue> = {
 };
 
 /**
- * A mark described by components. `nesting` is where it sits when marks nest
- * on the same text: lower wraps higher.
+ * A mark: portable markup (`toHtml`), how to read it back (`parse`), how it
+ * looks (`renderComponent`) and, optionally, UI shown while editing
+ * (`editorComponent`). A mark carrying nothing is stored as `true` on the text
+ * node, one carrying a value as that value.
  */
-export type MarkNodeDefinition<TValue = Record<string, unknown>> = {
+export type MarkDefinition<TValue = Record<string, unknown>> = {
+    /**
+     * Where this mark sits when marks nest on the same text: lower wraps
+     * higher, ties keep the order their plugins were passed in. Defaults to
+     * `0`.
+     */
     nesting?: number;
     /** Text typed at the end of the mark carries it on. Defaults to true; a link says false. */
     inclusive?: boolean;
@@ -328,5 +282,5 @@ export type MarkNodeDefinition<TValue = Record<string, unknown>> = {
 };
 
 /** `defineInline` for marks. */
-export const defineMark = <TValue extends object>(definition: MarkNodeDefinition<TValue>): MarkNodeDefinition =>
-    definition as unknown as MarkNodeDefinition;
+export const defineMark = <TValue extends object>(definition: MarkDefinition<TValue>): MarkDefinition =>
+    definition as unknown as MarkDefinition;

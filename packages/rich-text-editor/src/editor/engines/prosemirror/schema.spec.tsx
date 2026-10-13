@@ -4,39 +4,35 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type RtePlugin } from '#/core';
+import { buildPluginRegistry, defineMark, type RtePlugin } from '#/core';
 
-import { buildSchema } from './schema';
+import { buildSchema as buildSchemaFromRegistry } from './schema';
+
+const buildSchema = (plugins: RtePlugin[]) => buildSchemaFromRegistry(buildPluginRegistry(plugins));
 
 const plugins: RtePlugin[] = [
     {
         id: 'bold',
-        schema: [
-            {
-                kind: 'mark',
-                type: 'bold',
-                toDom: () => ({ tag: 'strong', children: true }),
+        marks: {
+            bold: defineMark({
+                toHtml: () => ({ tag: 'strong', children: true }),
+                parse: [
+                    { tag: 'strong', value: () => ({}) },
+                    { tag: 'b', value: () => ({}) },
+                ],
                 renderComponent: ({ children }) => <strong>{children}</strong>,
-                parseRules: [{ tag: 'strong' }, { tag: 'b' }],
-            },
-        ],
+            }),
+        },
     },
     {
         id: 'link',
-        schema: [
-            {
-                kind: 'mark',
-                type: 'link',
-                attributes: { href: { parseFromDomAttribute: 'href' } },
-                toDom: (attrs) => ({
-                    tag: 'a',
-                    attrs: { href: typeof attrs.href === 'string' ? attrs.href : '' },
-                    children: true,
-                }),
-                renderComponent: ({ children, value }) => <a href={(value as { href?: string }).href}>{children}</a>,
-                parseRules: [{ tag: 'a' }],
-            },
-        ],
+        marks: {
+            link: defineMark<{ href: string }>({
+                toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
+                parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
+                renderComponent: ({ children, value }) => <a href={value.href}>{children}</a>,
+            }),
+        },
     },
     {
         id: 'quote',
@@ -70,6 +66,12 @@ describe('buildSchema', () => {
         }
 
         expect(schema.marks.bold.spec.toDOM(mark, true)).toEqual(['strong', 0]);
+    });
+
+    it('declares the paragraph baseline first, so it is the default block', () => {
+        const { schema } = buildSchema(plugins);
+
+        expect(schema.topNodeType.contentMatch.defaultType?.name).toBe('paragraph');
     });
 
     it('keeps list items out of the top-level block group', () => {

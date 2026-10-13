@@ -1,6 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { createElement } from 'react';
+
 import { type RteDocumentOf } from './document';
+import { type BlockDefinition } from './plugin';
 
 /**
  * The handful of names the editor itself depends on. Deliberately short: a
@@ -10,6 +13,19 @@ import { type RteDocumentOf } from './document';
 
 /** The baseline block every editor has; the default for empty documents and Enter-key splits. */
 export const PARAGRAPH = 'paragraph';
+
+/**
+ * The paragraph itself, registered ahead of every plugin's blocks so the
+ * editor and the renderer treat it like any other block.
+ */
+export const paragraphBlock: BlockDefinition = {
+    kind: 'block',
+    type: PARAGRAPH,
+    children: 'text',
+    toDom: () => ({ tag: 'p', children: true }),
+    renderComponent: ({ children }) => createElement('p', null, children),
+    parseRules: [{ tag: 'p' }],
+};
 
 /** The document format's version, carried on every document. */
 export const DOCUMENT_VERSION = 1;

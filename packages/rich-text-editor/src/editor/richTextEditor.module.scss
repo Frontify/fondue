@@ -127,15 +127,3 @@
         pointer-events: none;
     }
 }
-
-/**
- * The stand-in a plugin's floating UI hangs off: an invisible copy of the box the
- * content it is about occupies, which is what puts the flyout under the whole
- * link rather than under the caret in it. Nothing is drawn, and it takes no
- * clicks, so the text underneath stays reachable.
- */
-.floatingAnchor {
-    position: fixed;
-    display: block;
-    pointer-events: none;
-}
