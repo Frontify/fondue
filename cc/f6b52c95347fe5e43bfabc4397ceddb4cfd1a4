@@ -1,0 +1,14 @@
+packages/fondue/src/components/Tree/Tree.stories.tsx
+  h_2139c5e5c94509 34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "ccf6b52c95347fe5e43bfabc4397ceddb4cfd1a4",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
