@@ -40,5 +40,5 @@ export const fontColorPlugin = (): RtePlugin => ({
             parseRules: [{ tag: 'span' }],
         },
     ],
-    toolbar: (api) => <ColorFlyout api={api} />,
+    toolbarItem: ({ api, selection }) => <ColorFlyout selection={selection} api={api} />,
 });

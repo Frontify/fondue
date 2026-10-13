@@ -32,3 +32,29 @@
         background: transparent;
     }
 }
+
+/**
+ * An inline node view (a mention) inside a selected range. It is a
+ * non-editable island, and browsers disagree on painting a selection inside
+ * one — Safari does not — so the native highlight is switched off in it and the
+ * same colour is laid over it instead, the same in every browser.
+ */
+.rte-in-selection {
+    position: relative;
+
+    *::selection {
+        background: transparent;
+    }
+
+    &::after {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: Highlight;
+        content: '';
+        // Multiplied rather than faded: the node's own background shows
+        // through as it does under a text highlight, and its text stays dark.
+        mix-blend-mode: multiply;
+        pointer-events: none;
+    }
+}

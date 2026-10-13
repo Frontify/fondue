@@ -2,7 +2,7 @@
 
 import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
 
-import { PARAGRAPH, type RteInlineNode, type RtePlugin } from '#/core';
+import { type RteInlineNode, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -26,19 +26,11 @@ export const quotePlugin = (): RtePlugin => ({
             parseRules: [{ tag: 'blockquote' }],
         },
     ],
-    toolbar: (api) => {
-        // A quote holds text, so it is the block the selection is in — never
-        // one wrapped around it.
-        const active = api.selection.get().block?.type === 'quote';
-        return (
-            <ToolbarButton
-                title="Quote"
-                active={active}
-                onClick={() => api.blocks.setType(active ? PARAGRAPH : 'quote')}
-            >
-                <IconSpeechBubbleQuote size={16} />
-            </ToolbarButton>
-        );
-    },
+    // Toggling a text block switches between it and the paragraph.
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Quote" active={isActive} onClick={() => toggle()}>
+            <IconSpeechBubbleQuote size={16} />
+        </ToolbarButton>
+    ),
     inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
 });

@@ -22,12 +22,8 @@ export const superscriptPlugin = (): RtePlugin => ({
             parseRules: [{ tag: 'sup' }],
         },
     ],
-    toolbar: (api) => (
-        <ToolbarButton
-            title="Superscript"
-            active={'superscript' in api.selection.get().marks}
-            onClick={() => api.marks.toggle('superscript')}
-        >
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Superscript" active={isActive} onClick={() => toggle()}>
             <IconSuperscript size={16} />
         </ToolbarButton>
     ),

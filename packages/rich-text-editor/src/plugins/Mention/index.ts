@@ -1,3 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { mentionPlugin, type MentionInline, type MentionItem } from './Mention';
+export { filterByName, mentionPlugin } from './Mention';
+export { type MentionInline, type MentionItem, type MentionItems, type MentionValue } from './types';

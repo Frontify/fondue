@@ -1,14 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Node as PmNode } from 'prosemirror-model';
-import { type EditorView, type NodeView, type NodeViewConstructor } from 'prosemirror-view';
+import { type Mark as PmMark, type Node as PmNode } from 'prosemirror-model';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
+import {
+    type EditorView,
+    type MarkView,
+    type MarkViewConstructor,
+    type NodeView,
+    type NodeViewConstructor,
+    type ViewMutationRecord,
+} from 'prosemirror-view';
 import { type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import { createRoot, type Root } from 'react-dom/client';
 
-import { type BlockDefinition, type PluginRegistry, type RteBlockNode } from '#/core';
+import {
+    type BlockDefinition,
+    type EditorControlApi,
+    type InlineNodeDefinition,
+    type MarkNodeDefinition,
+    type PluginRegistry,
+    type RteBlockNode,
+} from '#/core';
 
-import { definedAttrs } from './documentConversion';
+import { type OpenEditors } from './controlApi';
+import { definedAttrs, markValueOf } from './documentConversion';
 import { htmlSpecToDom } from './htmlSpec';
 
 /**
@@ -121,12 +137,290 @@ class ReactBlockView implements NodeView {
     }
 }
 
-export const createNodeViews = (registry: PluginRegistry): Record<string, NodeViewConstructor> => {
+/** Set on an inline node view inside a selected range; engine.scss paints the highlight. */
+const IN_SELECTION_CLASS = 'rte-in-selection';
+
+/**
+ * Hosts a component-based inline node: the editor renders `editorComponent`
+ * (or `renderComponent`) with generic props and does nothing else. Events from
+ * inside it belong to it — an input in there types into the input, not the
+ * document.
+ *
+ * Prototype: one React root per node, so the component does not see the host
+ * app's context providers yet.
+ */
+export class ReactInlineView implements NodeView {
+    dom: HTMLElement;
+    private readonly root: Root;
+    private node: PmNode;
+
+    constructor(
+        node: PmNode,
+        private readonly view: EditorView,
+        private readonly getPos: () => number | undefined,
+        private readonly definition: InlineNodeDefinition,
+        private readonly getApi: () => EditorControlApi,
+        private readonly live: Set<Repaintable>,
+        private readonly openEditors: OpenEditors,
+    ) {
+        this.node = node;
+        this.dom = document.createElement('span');
+        this.dom.contentEditable = 'false';
+        this.root = createRoot(this.dom);
+        live.add(this);
+        this.paint();
+    }
+
+    private isFocused(): boolean {
+        const pos = this.getPos();
+        if (pos === undefined) {
+            return false;
+        }
+        const { selection } = this.view.state;
+        if (selection instanceof NodeSelection) {
+            return selection.from === pos;
+        }
+        return selection.empty && selection.from === pos + this.node.nodeSize;
+    }
+
+    /** Inside a selected range — a drag across the text that this node sits in. */
+    private isSelected(): boolean {
+        const pos = this.getPos();
+        const { selection } = this.view.state;
+        return (
+            pos !== undefined && !selection.empty && selection.from <= pos && selection.to >= pos + this.node.nodeSize
+        );
+    }
+
+    paint(): { type: string; focused: boolean } {
+        const Component = this.definition.editorComponent;
+        const value = this.node.attrs.value as Record<string, unknown> | null;
+        const type = this.node.type.name;
+        const focused = this.isFocused();
+        const selected = this.isSelected();
+        // Browsers disagree on painting a selection inside a non-editable island
+        // (Safari does not), so the editor paints it — see engine.scss.
+        this.dom.classList.toggle(IN_SELECTION_CLASS, selected);
+        this.root.render(
+            Component ? (
+                <Component
+                    value={value}
+                    isFocused={focused}
+                    isSelected={selected}
+                    isOpen={focused && this.openEditors.type === type}
+                    setOpen={(open) => (open ? this.getApi().editors.open(type) : this.getApi().editors.close())}
+                    api={this.getApi()}
+                    setValue={(next) => {
+                        const pos = this.getPos();
+                        if (pos !== undefined) {
+                            this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { value: next }));
+                        }
+                    }}
+                    remove={() => {
+                        const pos = this.getPos();
+                        if (pos === undefined) {
+                            return;
+                        }
+                        const transaction = this.view.state.tr.delete(pos, pos + this.node.nodeSize);
+                        transaction.setSelection(TextSelection.create(transaction.doc, pos));
+                        this.view.dispatch(transaction);
+                    }}
+                />
+            ) : value === null ? null : (
+                this.definition.renderComponent({ value })
+            ),
+        );
+        return { type, focused };
+    }
+
+    update(node: PmNode): boolean {
+        if (node.type !== this.node.type) {
+            return false;
+        }
+        this.node = node;
+        this.paint();
+        return true;
+    }
+
+    selectNode(): void {
+        this.paint();
+    }
+
+    deselectNode(): void {
+        this.paint();
+    }
+
+    stopEvent(event: Event): boolean {
+        // Form controls inside the component own their events; everything else
+        // (a click on the finished node) still reaches the editor.
+        return event.target instanceof HTMLElement && event.target.closest('input, textarea, select, button') !== null;
+    }
+
+    ignoreMutation(): boolean {
+        return true;
+    }
+
+    destroy(): void {
+        this.live.delete(this);
+        const root = this.root;
+        queueMicrotask(() => root.unmount());
+    }
+}
+
+/**
+ * A view that redraws on every editor state change, because `isFocused` follows
+ * the selection. Reports its type and focus, so the editor can tell when the
+ * node whose editing UI is open has been left.
+ */
+export type Repaintable = { paint(): { type: string; focused: boolean } };
+
+/**
+ * Hosts a component-based mark: the editor renders `editorComponent` (or
+ * `renderComponent`) around the marked text and does nothing else. The text
+ * stays editable in a content hole the component places via `{children}`.
+ *
+ * Prototype: one React root per mark view, like the inline view.
+ */
+export class ReactMarkView implements MarkView {
+    dom: HTMLElement;
+    contentDOM: HTMLElement;
+    private readonly root: Root;
+
+    constructor(
+        private readonly mark: PmMark,
+        private readonly view: EditorView,
+        private readonly definition: MarkNodeDefinition,
+        private readonly getApi: () => EditorControlApi,
+        private readonly live: Set<Repaintable>,
+        private readonly openEditors: OpenEditors,
+    ) {
+        this.dom = document.createElement('span');
+        // React gets a container of its own, and the text starts out right next
+        // to it: React renders later than the engine needs the text in the
+        // page (typing that creates a mark view goes on at once), and its first
+        // render would clear the container it owns. `ContentHole` moves the
+        // text into the component once it has rendered.
+        const reactContainer = document.createElement('span');
+        reactContainer.style.display = 'contents';
+        this.contentDOM = document.createElement('span');
+        this.contentDOM.style.display = 'contents';
+        this.dom.append(reactContainer, this.contentDOM);
+        this.root = createRoot(reactContainer);
+        live.add(this);
+        this.paint();
+    }
+
+    /** Where this run of the mark sits in the document, read off its content. */
+    private range(): { from: number; to: number } | null {
+        if (!this.contentDOM.isConnected) {
+            return null;
+        }
+        try {
+            return {
+                from: this.view.posAtDOM(this.contentDOM, 0),
+                to: this.view.posAtDOM(this.contentDOM, this.contentDOM.childNodes.length),
+            };
+        } catch {
+            return null;
+        }
+    }
+
+    private isFocused(): boolean {
+        const range = this.range();
+        const { from, to } = this.view.state.selection;
+        return range !== null && from >= range.from && to <= range.to;
+    }
+
+    paint(): { type: string; focused: boolean } {
+        const value = markValueOf(this.mark);
+        const children = <ContentHole element={this.contentDOM} />;
+        const Component = this.definition.editorComponent;
+        const type = this.mark.type.name;
+        const focused = this.isFocused();
+        this.root.render(
+            Component ? (
+                <Component
+                    value={value}
+                    isFocused={focused}
+                    isOpen={focused && this.openEditors.type === type}
+                    setOpen={(open) => (open ? this.getApi().editors.open(type) : this.getApi().editors.close())}
+                    api={this.getApi()}
+                    setValue={(next) => {
+                        const range = this.range();
+                        if (range === null) {
+                            return;
+                        }
+                        this.view.dispatch(
+                            this.view.state.tr
+                                .removeMark(range.from, range.to, this.mark.type)
+                                .addMark(range.from, range.to, this.mark.type.create({ value: next })),
+                        );
+                    }}
+                    remove={() => {
+                        const range = this.range();
+                        if (range !== null) {
+                            this.view.dispatch(this.view.state.tr.removeMark(range.from, range.to, this.mark.type));
+                        }
+                    }}
+                >
+                    {children}
+                </Component>
+            ) : (
+                this.definition.renderComponent({ value, children })
+            ),
+        );
+        return { type, focused };
+    }
+
+    ignoreMutation(mutation: ViewMutationRecord): boolean {
+        // Selection changes and typing inside the text are the engine's; what
+        // React does to the chrome around it is not.
+        if (mutation.type === 'selection') {
+            return false;
+        }
+        return !this.contentDOM.contains(mutation.target);
+    }
+
+    destroy(): void {
+        this.live.delete(this);
+        const root = this.root;
+        queueMicrotask(() => root.unmount());
+    }
+}
+
+export const createMarkViews = (
+    registry: PluginRegistry,
+    getApi: () => EditorControlApi,
+    live: Set<Repaintable>,
+    openEditors: OpenEditors,
+): Record<string, MarkViewConstructor> => {
+    const views: Record<string, MarkViewConstructor> = {};
+    for (const [type, definition] of registry.marks) {
+        const component = definition.valueMark;
+        // Only a mark with editing UI needs React in the editor; the rest are
+        // drawn from `toHtml` like any other mark.
+        if (component?.editorComponent) {
+            views[type] = (mark, view) => new ReactMarkView(mark, view, component, getApi, live, openEditors);
+        }
+    }
+    return views;
+};
+
+export const createNodeViews = (
+    registry: PluginRegistry,
+    getApi: () => EditorControlApi,
+    liveInlines: Set<Repaintable>,
+    openEditors: OpenEditors,
+): Record<string, NodeViewConstructor> => {
     const views: Record<string, NodeViewConstructor> = {};
     for (const [type, definition] of registry.blocks) {
         if (definition.editorComponent) {
             views[type] = (node, view, getPos) => new ReactBlockView(node, view, getPos, definition);
         }
+    }
+    for (const [type, definition] of registry.inlineNodes) {
+        views[type] = (node, view, getPos) =>
+            new ReactInlineView(node, view, getPos, definition, getApi, liveInlines, openEditors);
     }
     return views;
 };

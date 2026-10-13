@@ -7,7 +7,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type RteBlockNode, type RteSelectionSnapshot } from '#/core';
 
-import { definedAttrs, shallowBlock } from './documentConversion';
+import { markAttrsFor, markValueOf, shallowBlock } from './documentConversion';
 import { createListApi } from './lists';
 import { type SchemaBundle } from './schema';
 
@@ -31,7 +31,7 @@ const marksAt = (state: EditorState): Record<string, Record<string, unknown>> =>
     // one the selection starts in.
     const record = (found: readonly PmMark[]): void => {
         for (const mark of found) {
-            marks[mark.type.name] ??= definedAttrs(mark.attrs);
+            marks[mark.type.name] ??= markValueOf(mark);
         }
     };
 
@@ -172,7 +172,7 @@ const createMarkApi = (view: EditorView, schema: Schema): EditorControlApi['mark
     toggle(key, value) {
         const markType = schema.marks[key];
         if (markType) {
-            pmToggleMark(markType, value)(view.state, view.dispatch);
+            pmToggleMark(markType, markAttrsFor(markType, value))(view.state, view.dispatch);
             view.focus();
         }
     },
@@ -193,7 +193,7 @@ const createMarkApi = (view: EditorView, schema: Schema): EditorControlApi['mark
         const first = view.state.doc.resolve(range.from).nodeAfter;
         const mark = first ? markType.isInSet(first.marks) : null;
         return {
-            value: mark ? definedAttrs(mark.attrs) : {},
+            value: mark ? markValueOf(mark) : {},
             // Void nodes in between contribute nothing, as with the snapshot's
             // text.
             text: view.state.doc.textBetween(range.from, range.to, ' '),
@@ -266,7 +266,14 @@ const createBlockApi = (view: EditorView, bundle: SchemaBundle): EditorControlAp
 // The whole api
 
 /** The flat members act on the editor as a whole rather than on one kind of thing in it. */
-export const createControlApi = (view: EditorView, bundle: SchemaBundle): EditorControlApi => ({
+/** Which type's editing UI is open, and how to redraw the views that show it. */
+export type OpenEditors = { type: string | null; repaint: () => void };
+
+export const createControlApi = (
+    view: EditorView,
+    bundle: SchemaBundle,
+    openEditors: OpenEditors,
+): EditorControlApi => ({
     selection: createSelectionApi(view),
     marks: createMarkApi(view, bundle.schema),
     blocks: createBlockApi(view, bundle),
@@ -285,6 +292,16 @@ export const createControlApi = (view: EditorView, bundle: SchemaBundle): Editor
     },
     focus() {
         view.focus();
+    },
+    editors: {
+        open(type) {
+            openEditors.type = type;
+            openEditors.repaint();
+        },
+        close() {
+            openEditors.type = null;
+            openEditors.repaint();
+        },
     },
     blur() {
         view.dom.blur();

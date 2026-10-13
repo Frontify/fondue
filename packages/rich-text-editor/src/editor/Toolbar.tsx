@@ -5,6 +5,7 @@ import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import { type EditorControlApi, type RtePlugin } from '#/core';
 
 import styles from './richTextEditor.module.scss';
+import { toolbarItemProps } from './toolbarItem';
 
 /**
  * Where the plugins' toolbar is drawn. A presentation choice the host makes for
@@ -39,9 +40,10 @@ export const Toolbar = ({
     /** Only the strip inside the frame is drawn as one — a floating bar is a surface of its own. */
     placement: ToolbarPlacement;
 }): ReactNode => {
-    if (!plugins.some((plugin) => plugin.toolbar)) {
+    if (!plugins.some((plugin) => plugin.toolbarItem)) {
         return null;
     }
+    const selection = api.selection.get();
 
     return (
         <div
@@ -54,9 +56,14 @@ export const Toolbar = ({
             // Where the bar ended up, for the stylesheet to read.
             data-placement={placement}
         >
-            {plugins.map((plugin) =>
-                plugin.toolbar ? <Fragment key={plugin.id}>{plugin.toolbar(api)}</Fragment> : null,
-            )}
+            {plugins.map((plugin) => {
+                if (!plugin.toolbarItem) {
+                    return null;
+                }
+                return (
+                    <Fragment key={plugin.id}>{plugin.toolbarItem(toolbarItemProps(plugin, api, selection))}</Fragment>
+                );
+            })}
         </div>
     );
 };

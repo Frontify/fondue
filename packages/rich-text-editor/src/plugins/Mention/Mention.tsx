@@ -1,99 +1,111 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/core';
+import { defineInline, type RtePlugin } from '#/core';
 
-import { Combobox } from './components/Combobox';
+import { MentionDraft } from './components/MentionDraft';
+import { MentionLink } from './components/MentionLink';
 import styles from './mention.module.scss';
-
-/** The void inline this plugin adds. */
-export type MentionInline = {
-    type: 'mention';
-    id: string;
-    label: string;
-};
-
-/** Someone (or something) that can be mentioned. `hint` shows as secondary text in the picker. */
-export type MentionItem = {
-    id: string;
-    label: string;
-    hint?: string;
-};
-
-/** How many candidates are offered at once. */
-const COMBOBOX_LIMIT = 8;
+import { type MentionItem, type MentionItems, type MentionValue } from './types';
 
 type MentionPluginOptions = {
-    items: readonly MentionItem[];
-    /** The character that opens the picker. `@` unless the app needs something else. */
+    /** The people matching a query. `filterByName(list)` covers a fixed list. */
+    items: MentionItems;
+    /** Where a mention links to — the person's profile. */
+    href: (mention: MentionValue) => string;
+    /** The character that starts a mention. `@` unless the app needs something else. */
     trigger?: string;
 };
 
+/** `items` for a fixed list: everyone whose username or name contains the query. */
+export const filterByName =
+    (list: readonly MentionItem[]): MentionItems =>
+    (query) => {
+        const needle = query.toLowerCase();
+        return list.filter(
+            (item) => item.username.toLowerCase().includes(needle) || item.name.toLowerCase().includes(needle),
+        );
+    };
+
 /**
- * Typing `@` opens a picker at the caret; choosing an entry inserts a mention
- * element. The candidates are a required option, because whom you can mention
- * is not something the package can know.
+ * A mention is the username as a link to the person, with their full name on
+ * hover.
  *
- * A mention is indivisible: clicking it puts the caret after it (as for every
- * void inline element) and Backspace there takes the whole mention, rather than
- * leaving text that no longer matches its id. To change one, delete it and type
- * `@` again.
+ * The editor does no mention-specific work. Typing the trigger inserts an empty
+ * mention through an ordinary hotkey, and from then on the plugin's
+ * `editorComponent` draws everything — the query input, the flyout, the list —
+ * from the handful of props the editor gives every node.
  */
-export const mentionPlugin = ({ items, trigger = '@' }: MentionPluginOptions): RtePlugin => ({
+export const mentionPlugin = ({ items, href, trigger = '@' }: MentionPluginOptions): RtePlugin => ({
     id: 'mention',
-    schema: [
-        {
-            kind: 'inline',
-            type: 'mention',
-            attributes: {
-                id: { parseFromDomAttribute: 'data-mention-id' },
-                label: { parseFromDomAttribute: 'data-mention-label' },
-            },
-            toDom: (attrs) => {
-                const mention = attrs as Partial<MentionInline>;
-                const id = typeof mention.id === 'string' ? mention.id : '';
-                const label = typeof mention.label === 'string' ? mention.label : '';
-                return {
-                    tag: 'span',
-                    attrs: {
-                        'data-mention-id': id,
-                        'data-mention-label': label,
-                        class: styles.mention ?? '',
-                    },
-                    children: `${trigger}${label}`,
-                };
-            },
-            renderComponent: ({ node }) => {
-                const mention = node as MentionInline;
-                return (
-                    <span data-mention-id={mention.id} data-mention-label={mention.label} className={styles.mention}>
-                        {trigger}
-                        {mention.label}
-                    </span>
-                );
-            },
-            parseRules: [{ tag: 'span[data-mention-id]' }],
-        },
-    ],
-    autocomplete: {
-        trigger,
-        component: (context) => {
-            const needle = context.query.toLowerCase();
-            const found = items.filter((item) => item.label.toLowerCase().includes(needle)).slice(0, COMBOBOX_LIMIT);
-            // Nothing to offer means no picker, so what was typed stays
-            // ordinary text.
-            return found.length === 0 ? null : (
-                <Combobox
-                    context={context}
-                    items={found}
-                    label={`${trigger} suggestions`}
-                    onSelect={(item, api) => {
-                        api.insert('mention', { id: item.id, label: item.label });
-                        // A space after the mention, so typing continues
-                        // outside it.
-                        api.insertText(' ');
-                    }}
-                />
-            );
-        },
+    inlines: {
+        mention: defineInline<MentionValue>({
+            /**
+             * Portable markup: what copy/paste carries and `serializeToHtml`
+             * writes. A plain link — no tooltip outside the app.
+             */
+            toHtml: (mention) => ({
+                tag: 'a',
+                attrs: {
+                    href: href(mention),
+                    title: mention.name,
+                    'data-mention-id': mention.id,
+                    'data-mention-username': mention.username,
+                    class: styles.mention ?? '',
+                },
+                children: `${trigger}${mention.username}`,
+            }),
+
+            /** Read back from what `toHtml` wrote, so a copied mention pastes as a mention. */
+            parse: [
+                {
+                    tag: 'a[data-mention-id]',
+                    value: (element) => ({
+                        id: element.dataset.mentionId ?? '',
+                        username: element.dataset.mentionUsername ?? '',
+                        name: element.title,
+                    }),
+                },
+            ],
+
+            /** Readonly display. */
+            renderComponent: ({ value }) => <MentionLink value={value} href={href(value)} trigger={trigger} />,
+
+            /**
+             * Everything the editor shows for a mention. `value` is null until
+             * someone is chosen.
+             */
+            editorComponent: ({ value, setValue, isFocused, remove, api }) =>
+                value === null ? (
+                    <MentionDraft
+                        trigger={trigger}
+                        items={items}
+                        focused={isFocused}
+                        onChoose={(person) => {
+                            setValue({ id: person.id, username: person.username, name: person.name });
+                            // The caret was left after the mention when it was
+                            // inserted; going back to the editor puts it there,
+                            // and a space keeps typing outside the mention.
+                            api.focus();
+                            api.insertText(' ');
+                        }}
+                        onCancel={(text) => {
+                            // The mention makes way for what was typed into it.
+                            remove();
+                            api.focus();
+                            api.insertText(text);
+                        }}
+                        onRemove={() => {
+                            remove();
+                            api.focus();
+                        }}
+                    />
+                ) : (
+                    <MentionLink value={value} href={href(value)} trigger={trigger} />
+                ),
+        }),
+    },
+    hotkeys: {
+        // An empty mention, which its editorComponent then takes over.
+        [trigger]: (api) => api.insert('mention'),
     },
 });

@@ -77,14 +77,10 @@ const listPlugin = ({
             parseRules: [{ tag: 'li' }],
         },
     ],
-    toolbar: (api) => (
-        <ToolbarButton
-            // The list wraps the item holding the text, so it is above the
-            // block the caret is in rather than being that block.
-            active={api.selection.get().blocks.some((block) => block.type === type)}
-            title={title}
-            onClick={() => api.lists.toggle(type)}
-        >
+    // Active anywhere inside the list (the caret sits in a paragraph inside an
+    // item); toggling wraps or unwraps.
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton active={isActive} title={title} onClick={() => toggle()}>
             <Icon size={16} />
         </ToolbarButton>
     ),

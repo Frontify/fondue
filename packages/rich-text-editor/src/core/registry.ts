@@ -4,6 +4,7 @@ import {
     type AttributeDefinition,
     type BlockDefinition,
     type InlineDefinition,
+    type InlineNodeDefinition,
     type MarkDefinition,
     type RtePlugin,
 } from './plugin';
@@ -17,6 +18,8 @@ import {
 export type PluginRegistry = {
     blocks: Map<string, BlockDefinition>;
     inlines: Map<string, InlineDefinition>;
+    /** Inline nodes in the component-based shape (`RtePlugin.inlines`). */
+    inlineNodes: Map<string, InlineNodeDefinition>;
     marks: Map<string, MarkDefinition>;
     attributes: readonly AttributeDefinition[];
     /** List type → its item type, inferred from `children: { items }`. */
@@ -33,11 +36,28 @@ export const unknownMarkType = (type: string): Error => new Error(unknownTypeMes
 export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegistry => {
     const blocks = new Map<string, BlockDefinition>();
     const inlines = new Map<string, InlineDefinition>();
+    const inlineNodes = new Map<string, InlineNodeDefinition>();
     const marks = new Map<string, MarkDefinition>();
     const attributes: AttributeDefinition[] = [];
     const itemTypeByList = new Map<string, string>();
 
     for (const plugin of plugins) {
+        for (const [type, definition] of Object.entries(plugin.inlines ?? {})) {
+            inlineNodes.set(type, definition);
+        }
+        // Component-based marks join the ordinary ones, so nesting order and
+        // the renderer treat both alike; `valueMark` tells the engine apart.
+        for (const [type, definition] of Object.entries(plugin.marks ?? {})) {
+            marks.set(type, {
+                kind: 'mark',
+                type,
+                nesting: definition.nesting,
+                toDom: (attrs) => definition.toHtml(attrs.value as Record<string, unknown>),
+                renderComponent: ({ children, value }) => definition.renderComponent({ children, value }),
+                parseRules: [],
+                valueMark: definition,
+            });
+        }
         for (const entry of plugin.schema ?? []) {
             switch (entry.kind) {
                 case 'block':
@@ -59,5 +79,5 @@ export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegist
         }
     }
 
-    return { blocks, inlines, marks, attributes, itemTypeByList };
+    return { blocks, inlines, inlineNodes, marks, attributes, itemTypeByList };
 };

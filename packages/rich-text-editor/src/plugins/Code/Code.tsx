@@ -24,12 +24,8 @@ export const codePlugin = (): RtePlugin => ({
             parseRules: [{ tag: 'code' }],
         },
     ],
-    toolbar: (api) => (
-        <ToolbarButton
-            title="Code"
-            active={'code' in api.selection.get().marks}
-            onClick={() => api.marks.toggle('code')}
-        >
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Code" active={isActive} onClick={() => toggle()}>
             <IconCode size={16} />
         </ToolbarButton>
     ),

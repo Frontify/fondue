@@ -3,7 +3,7 @@
 import { Select } from '@frontify/fondue-components';
 import { type ReactNode } from 'react';
 
-import { type EditorControlApi, PARAGRAPH } from '#/core';
+import { type EditorControlApi, PARAGRAPH, type RteSelectionSnapshot } from '#/core';
 
 import { findPreset, isTextStyle, labelOf, type TextStyleOption } from '../helpers/presets';
 
@@ -15,13 +15,15 @@ import styles from './textStyleSelect.module.scss';
  * controlled by the editor, never by local state.
  */
 export const TextStyleSelect = ({
+    selection,
     api,
     options,
 }: {
+    selection: RteSelectionSnapshot;
     api: EditorControlApi;
     options: readonly TextStyleOption[];
 }): ReactNode => {
-    const currentBlock = api.selection.get().block;
+    const currentBlock = selection.block;
     // A stored document may carry a style this editor was not configured with.
     // It still renders, but the dropdown can only show what it offers, so
     // anything else reads as the paragraph baseline.

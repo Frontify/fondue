@@ -5,7 +5,7 @@ import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, textblockTypeInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type Schema } from 'prosemirror-model';
-import { type Command, type Plugin as PmPlugin } from 'prosemirror-state';
+import { type Command, Plugin, type Plugin as PmPlugin } from 'prosemirror-state';
 
 import { type EditorControlApi, type RteInputRule, type RtePlugin } from '#/core';
 
@@ -55,6 +55,9 @@ const featureHotkeys = (features: RtePlugin[], getApi: () => EditorControlApi): 
     const hotkeys = new Map<string, Array<(api: EditorControlApi) => boolean | void>>();
     for (const feature of features) {
         for (const [keys, command] of Object.entries(feature.hotkeys ?? {})) {
+            if (isCharacterHotkey(keys)) {
+                continue;
+            }
             const handlers = hotkeys.get(keys) ?? [];
             handlers.push(command);
             hotkeys.set(keys, handlers);
@@ -67,6 +70,31 @@ const featureHotkeys = (features: RtePlugin[], getApi: () => EditorControlApi): 
             () => handlers.some((handler) => handler(getApi()) !== false),
         ]),
     );
+};
+
+/** `@`, not `Mod-b`: a hotkey that names a character rather than a key combination. */
+const isCharacterHotkey = (keys: string): boolean => [...keys].length === 1;
+
+/**
+ * Character hotkeys fire on the character being TYPED, not on the keys pressed
+ * — on a Swiss Mac `@` is Option-G, which the keymap would read as `Alt-@` and
+ * never match.
+ */
+const characterHotkeys = (features: RtePlugin[], getApi: () => EditorControlApi): PmPlugin => {
+    const hotkeys = new Map<string, Array<(api: EditorControlApi) => boolean | void>>();
+    for (const feature of features) {
+        for (const [keys, command] of Object.entries(feature.hotkeys ?? {})) {
+            if (isCharacterHotkey(keys)) {
+                hotkeys.set(keys, [...(hotkeys.get(keys) ?? []), command]);
+            }
+        }
+    }
+    return new Plugin({
+        props: {
+            handleTextInput: (_view, _from, _to, text) =>
+                hotkeys.get(text)?.some((handler) => handler(getApi()) !== false) ?? false,
+        },
+    });
 };
 
 // (4) Typing rewrites
@@ -184,6 +212,7 @@ export const keystrokePipeline = (
         keymap({ 'Mod-z': undo, 'Mod-y': redo, 'Mod-Shift-z': redo }),
         // (2) a feature's own keys — invariant (2): before the list keys below
         keymap(featureHotkeys(features, getApi)),
+        characterHotkeys(features, getApi),
         // (3) the list keys, when there is a list to use them in
         ...(hasLists ? [keymap(listKeys(getApi))] : []),
         // (4) typing rewrites

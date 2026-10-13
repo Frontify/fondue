@@ -78,7 +78,11 @@ const shippedInlines: RteDocument = {
         {
             type: 'paragraph',
             align: 'center',
-            children: [{ text: 'Ask ' }, { type: 'mention', id: 'jane', label: 'Jane' }, { type: 'break' }],
+            children: [
+                { text: 'Ask ' },
+                { type: 'mention', id: 'jane', username: 'jane', name: 'Jane' },
+                { type: 'break' },
+            ],
         },
     ],
 };

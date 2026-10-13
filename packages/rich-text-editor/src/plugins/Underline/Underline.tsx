@@ -22,12 +22,8 @@ export const underlinePlugin = (): RtePlugin => ({
             parseRules: [{ tag: 'u' }],
         },
     ],
-    toolbar: (api) => (
-        <ToolbarButton
-            title="Underline"
-            active={'underline' in api.selection.get().marks}
-            onClick={() => api.marks.toggle('underline')}
-        >
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Underline" active={isActive} onClick={() => toggle()}>
             <IconTextFormatUnderline size={16} />
         </ToolbarButton>
     ),

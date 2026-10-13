@@ -22,12 +22,8 @@ export const italicPlugin = (): RtePlugin => ({
             parseRules: [{ tag: 'em' }, { tag: 'i' }],
         },
     ],
-    toolbar: (api) => (
-        <ToolbarButton
-            title="Italic"
-            active={'italic' in api.selection.get().marks}
-            onClick={() => api.marks.toggle('italic')}
-        >
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Italic" active={isActive} onClick={() => toggle()}>
             <IconTextFormatItalic size={16} />
         </ToolbarButton>
     ),

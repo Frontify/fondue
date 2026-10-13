@@ -24,7 +24,7 @@ const reset = (api: EditorControlApi): void => {
 
 export const resetFormattingPlugin = (): RtePlugin => ({
     id: 'reset-formatting',
-    toolbar: (api) => (
+    toolbarItem: ({ api }) => (
         <ToolbarButton title="Reset formatting" onClick={() => reset(api)}>
             <IconEraser size={16} />
         </ToolbarButton>

@@ -22,12 +22,8 @@ export const subscriptPlugin = (): RtePlugin => ({
             parseRules: [{ tag: 'sub' }],
         },
     ],
-    toolbar: (api) => (
-        <ToolbarButton
-            title="Subscript"
-            active={'subscript' in api.selection.get().marks}
-            onClick={() => api.marks.toggle('subscript')}
-        >
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Subscript" active={isActive} onClick={() => toggle()}>
             <IconSubscript size={16} />
         </ToolbarButton>
     ),

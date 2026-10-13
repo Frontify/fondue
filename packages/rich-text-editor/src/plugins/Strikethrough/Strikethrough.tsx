@@ -22,12 +22,8 @@ export const strikethroughPlugin = (): RtePlugin => ({
             parseRules: [{ tag: 's' }, { tag: 'del' }, { tag: 'strike' }],
         },
     ],
-    toolbar: (api) => (
-        <ToolbarButton
-            title="Strikethrough"
-            active={'strikethrough' in api.selection.get().marks}
-            onClick={() => api.marks.toggle('strikethrough')}
-        >
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Strikethrough" active={isActive} onClick={() => toggle()}>
             <IconTextFormatStrikethrough size={16} />
         </ToolbarButton>
     ),

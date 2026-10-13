@@ -38,10 +38,10 @@ export const alignPlugin = (): RtePlugin => ({
             parseFromStyle: 'text-align',
         },
     ],
-    toolbar: (api) => {
+    toolbarItem: ({ api, selection }) => {
         // The block the selection is in carries the attribute this plugin
         // added, which the structural node type does not know about.
-        const current = api.selection.get().block as (RteBlockNode & AlignAttribute) | null;
+        const current = selection.block as (RteBlockNode & AlignAttribute) | null;
         return (
             <>
                 {ALIGNMENTS.map(({ value, icon: Icon, title }) => {

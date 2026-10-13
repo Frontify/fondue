@@ -2,7 +2,7 @@
 
 import { IconTextFormatBold } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/core';
+import { defineMark, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -13,21 +13,18 @@ export type BoldMark = {
 
 export const boldPlugin = (): RtePlugin => ({
     id: 'bold',
-    schema: [
-        {
-            kind: 'mark',
-            type: 'bold',
-            toDom: () => ({ tag: 'strong', children: true }),
+    marks: {
+        bold: defineMark({
+            toHtml: () => ({ tag: 'strong', children: true }),
+            parse: [
+                { tag: 'strong', value: () => ({}) },
+                { tag: 'b', value: () => ({}) },
+            ],
             renderComponent: ({ children }) => <strong>{children}</strong>,
-            parseRules: [{ tag: 'strong' }, { tag: 'b' }],
-        },
-    ],
-    toolbar: (api) => (
-        <ToolbarButton
-            title="Bold"
-            active={'bold' in api.selection.get().marks}
-            onClick={() => api.marks.toggle('bold')}
-        >
+        }),
+    },
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Bold" active={isActive} onClick={() => toggle()}>
             <IconTextFormatBold size={16} />
         </ToolbarButton>
     ),

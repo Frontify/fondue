@@ -36,8 +36,9 @@ export const columnBreakPlugin = ({ columns = 2, gap = 'normal' }: ColumnBreakPl
             parseRules: [{ tag: 'div[data-column-break]' }],
         },
     ],
-    toolbar: (api) => (
-        <ToolbarButton title="Column break" onClick={() => api.insert('columnBreak')}>
+    // Toggling a void block inserts it.
+    toolbarItem: ({ toggle }) => (
+        <ToolbarButton title="Column break" onClick={() => toggle()}>
             <IconTextColumnBreak size={16} />
         </ToolbarButton>
     ),

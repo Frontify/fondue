@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 // that are its own rather than a plugin's.
 import {
     boldPlugin,
+    filterByName,
     mentionPlugin,
     defaultPlugins,
     italicPlugin,
@@ -20,10 +21,13 @@ import {
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
 const MENTIONABLE: MentionItem[] = [
-    { id: 'jane', label: 'Jane Doe', hint: 'jane@example.com' },
-    { id: 'john', label: 'John Smith', hint: 'john@example.com' },
-    { id: 'design', label: 'Design team', hint: 'group' },
+    { id: 'jane', username: 'jane', name: 'Jane Doe' },
+    { id: 'john', username: 'john', name: 'John Smith' },
+    { id: 'design', username: 'design', name: 'Design team' },
 ];
+
+/** Where a mention links to — a profile page in a real app. */
+const profileHref = (mention: MentionItem): string => `#/people/${mention.id}`;
 
 /**
  * Story chrome is styled with the `@frontify/fondue-tokens` Tailwind preset
@@ -421,7 +425,12 @@ export const CommentBox: Story = {
                 <RichTextEditor
                     value={doc}
                     onChange={setDoc}
-                    plugins={[boldPlugin(), italicPlugin(), linkPlugin(), mentionPlugin({ items: MENTIONABLE })]}
+                    plugins={[
+                        boldPlugin(),
+                        italicPlugin(),
+                        linkPlugin(),
+                        mentionPlugin({ items: filterByName(MENTIONABLE), href: profileHref }),
+                    ]}
                 />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

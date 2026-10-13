@@ -77,7 +77,7 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
                 parseRules: offered.map(parseRuleFor),
             },
         ],
-        toolbar: (api) => <TextStyleSelect api={api} options={options} />,
+        toolbarItem: ({ api, selection }) => <TextStyleSelect selection={selection} api={api} options={options} />,
         // `# ` through `#### `, for the headings this editor offers.
         inputRules: offered.flatMap(markdownRuleFor),
     };

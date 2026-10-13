@@ -8,6 +8,7 @@ import {
     type AttributeSpec,
     type BlockDefinition,
     type InlineDefinition,
+    type InlineNodeDefinition,
     type MarkDefinition,
     PARAGRAPH,
     buildPluginRegistry,
@@ -126,7 +127,48 @@ const inlineNodeSpec = (spec: InlineDefinition): PmNodeSpec => ({
     toDOM: (node) => htmlSpecToDom(spec.toDom(node.attrs)),
 });
 
+/**
+ * A component-based inline node keeps its whole value in ONE attribute, so the
+ * engine needs to know nothing about its shape. `rteValueNode` marks the spec
+ * for the document boundary, which flattens the value onto the document node.
+ */
+export const VALUE_ATTR = 'value';
+
+const valueInlineNodeSpec = (spec: InlineNodeDefinition): PmNodeSpec => ({
+    group: 'inline',
+    inline: true,
+    atom: true,
+    rteValueNode: true,
+    attrs: { [VALUE_ATTR]: { default: null } },
+    parseDOM: spec.parse.map((rule) => ({
+        tag: rule.tag,
+        // Qualified selectors outrank bare tags, as in pasteRules.
+        priority: 60,
+        getAttrs: (element: HTMLElement) => ({ [VALUE_ATTR]: rule.value(element) }),
+    })),
+    toDOM: (node) => {
+        const value = node.attrs[VALUE_ATTR] as Record<string, unknown> | null;
+        // A node still being made has nothing portable to say yet.
+        return value === null ? ['span'] : htmlSpecToDom(spec.toHtml(value));
+    },
+});
+
+const valueMarkSpec = (spec: NonNullable<MarkDefinition['valueMark']>): PmMarkSpec => ({
+    attrs: { [VALUE_ATTR]: { default: null } },
+    inclusive: spec.inclusive ?? true,
+    rteValueMark: true,
+    parseDOM: spec.parse.map((rule) => ({
+        tag: rule.tag,
+        priority: 60,
+        getAttrs: (element: HTMLElement) => ({ [VALUE_ATTR]: rule.value(element) }),
+    })),
+    toDOM: (mark) => htmlSpecToDom(spec.toHtml((mark.attrs[VALUE_ATTR] ?? {}) as Record<string, unknown>)),
+});
+
 const markNodeSpec = (spec: MarkDefinition): PmMarkSpec => {
+    if (spec.valueMark) {
+        return valueMarkSpec(spec.valueMark);
+    }
     const attrs = attrDefaults(spec.attributes);
     return {
         attrs,
@@ -167,6 +209,9 @@ export const buildSchema = (features: RtePlugin[]): SchemaBundle => {
     }
     for (const inline of registry.inlines.values()) {
         nodes[inline.type] = inlineNodeSpec(inline);
+    }
+    for (const [type, inline] of registry.inlineNodes) {
+        nodes[type] = valueInlineNodeSpec(inline);
     }
 
     const markSpecs = [...registry.marks.values()]

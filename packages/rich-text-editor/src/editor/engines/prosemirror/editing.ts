@@ -7,12 +7,13 @@ import { buildPluginRegistry, type EditorControlApi } from '#/core';
 import { type EditorHandle, type MountDocument } from '#/editor/port';
 
 import { createAutocompleteLocator, createSelectionRectReader, createTriggerController } from './autocomplete';
-import { createControlApi } from './controlApi';
+import { createControlApi, type OpenEditors } from './controlApi';
 import { toEngineDocument, toRteDocument } from './documentConversion';
 import { keystrokePipeline } from './keystrokes';
-import { createNodeViews } from './nodeViews';
+import { createMarkViews, createNodeViews, type Repaintable } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
+import { wholeIslandsPlugin } from './wholeIslands';
 import './engine.scss';
 
 /**
@@ -42,16 +43,36 @@ export const mountDocument: MountDocument = ({
     let api!: EditorControlApi;
     const getApi = (): EditorControlApi => api;
     let agreedDoc = initialDoc;
+    // Inline node views repaint on every state change, since `isFocused` follows the selection.
+    const liveInlines = new Set<Repaintable>();
+    const repaintViews = (): void => {
+        let openStillFocused = false;
+        for (const live of liveInlines) {
+            const { type, focused } = live.paint();
+            openStillFocused ||= focused && type === openEditors.type;
+        }
+        // The caret left the node whose editing UI was open: it closes, and
+        // stays closed when the caret comes back.
+        if (openEditors.type !== null && !openStillFocused) {
+            openEditors.type = null;
+            for (const live of liveInlines) {
+                live.paint();
+            }
+        }
+    };
+    const openEditors: OpenEditors = { type: null, repaint: repaintViews };
 
     const view: EditorView = new EditorView(container, {
         attributes: { class: contentClassName },
         editable: () => !current.readOnly,
-        nodeViews: createNodeViews(registry),
+        nodeViews: createNodeViews(registry, getApi, liveInlines, openEditors),
+        markViews: createMarkViews(registry, getApi, liveInlines, openEditors),
         state: EditorState.create({
             doc: toEngineDocument(initialDoc, schema),
             plugins: [
                 ...keystrokePipeline(features, bundle, getApi),
                 placeholderPlugin(() => current.placeholder, placeholderClassName),
+                wholeIslandsPlugin(),
             ],
         }),
         handleDOMEvents: {
@@ -71,6 +92,7 @@ export const mountDocument: MountDocument = ({
         },
         dispatchTransaction(transaction) {
             view.updateState(view.state.apply(transaction));
+            repaintViews();
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
                 agreedDoc = toRteDocument(view.state.doc);
                 onDocChange(agreedDoc);
@@ -79,7 +101,7 @@ export const mountDocument: MountDocument = ({
         },
     });
 
-    api = createControlApi(view, bundle);
+    api = createControlApi(view, bundle, openEditors);
     const triggers = createTriggerController(view);
     const refresh = (): void => view.setProps({});
 

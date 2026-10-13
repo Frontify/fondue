@@ -139,4 +139,15 @@ export type EditorControlApi = {
     focus(): void;
     /** Give up focus, e.g. to commit a single-line editor on Enter. */
     blur(): void;
+
+    /**
+     * Whose editing UI is open. The editor holds it rather than the component,
+     * so something outside the node — a toolbar button — can open it. Only
+     * the node of that type at the selection is open, and leaving it closes it.
+     */
+    editors: {
+        /** Open the `editorComponent` of the node of this type at the selection. */
+        open(type: string): void;
+        close(): void;
+    };
 };

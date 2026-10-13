@@ -24,6 +24,7 @@ import {
     fontColorPlugin,
     italicPlugin,
     linkPlugin,
+    filterByName,
     type MentionItem,
     mentionPlugin,
     numberedListPlugin,
@@ -45,15 +46,21 @@ import {
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
 const MENTIONABLE: MentionItem[] = [
-    { id: 'jane', label: 'Jane Doe', hint: 'jane@example.com' },
-    { id: 'john', label: 'John Smith', hint: 'john@example.com' },
-    { id: 'ada', label: 'Ada Lovelace', hint: 'ada@example.com' },
-    { id: 'design', label: 'Design team', hint: 'group' },
-    { id: 'engineering', label: 'Engineering team', hint: 'group' },
+    { id: 'jane', username: 'jane', name: 'Jane Doe' },
+    { id: 'john', username: 'john', name: 'John Smith' },
+    { id: 'ada', username: 'ada', name: 'Ada Lovelace' },
+    { id: 'design', username: 'design', name: 'Design team' },
+    { id: 'engineering', username: 'engineering', name: 'Engineering team' },
 ];
 
+/** Where a mention links to — a profile page in a real app. */
+const profileHref = (mention: MentionItem): string => `#/people/${mention.id}`;
+
 /** Everything the package ships, plus the ones that need arguments. */
-const ALL_PLUGINS: RtePlugin[] = [...defaultPlugins, mentionPlugin({ items: MENTIONABLE })];
+const ALL_PLUGINS: RtePlugin[] = [
+    ...defaultPlugins,
+    mentionPlugin({ items: filterByName(MENTIONABLE), href: profileHref }),
+];
 
 /**
  * Story chrome is styled with the `@frontify/fondue-tokens` Tailwind preset
@@ -522,7 +529,7 @@ export const Mention: Story = {
                     type: 'paragraph',
                     children: [
                         { text: 'Ask ' },
-                        { type: 'mention', id: 'jane', label: 'Jane Doe' },
+                        { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
                         { text: ' about it.' },
                     ],
                 },
@@ -535,7 +542,11 @@ export const Mention: Story = {
                     Type <code>@</code> to open the picker. A mention is a void inline element: clicking one puts the
                     caret after it, and it deletes as one.
                 </p>
-                <RichTextEditor value={doc} onChange={setDoc} plugins={[mentionPlugin({ items: MENTIONABLE })]} />
+                <RichTextEditor
+                    value={doc}
+                    onChange={setDoc}
+                    plugins={[mentionPlugin({ items: filterByName(MENTIONABLE), href: profileHref })]}
+                />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );
@@ -822,8 +833,8 @@ const highlightPlugin = (): RtePlugin => ({
             parseRules: [{ tag: 'mark' }],
         },
     ],
-    toolbar: (api) => {
-        const active = 'highlight' in api.selection.get().marks;
+    toolbarItem: ({ api, selection }) => {
+        const active = 'highlight' in selection.marks;
         return (
             <button
                 type="button"
@@ -892,8 +903,8 @@ const calloutPlugin = (): RtePlugin => ({
             parseRules: [{ tag: 'aside' }],
         },
     ],
-    toolbar: (api) => {
-        const active = api.selection.get().block?.type === 'callout';
+    toolbarItem: ({ api, selection }) => {
+        const active = selection.block?.type === 'callout';
         return (
             <button
                 type="button"

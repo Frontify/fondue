@@ -99,6 +99,11 @@ const renderInline = (inline: RteInlineNode, registry: PluginRegistry, key: stri
     if (inline.text !== undefined) {
         return renderText(inline, registry, key);
     }
+    const node = registry.inlineNodes.get(inline.type);
+    if (node) {
+        const { type: _type, text: _text, ...value } = inline;
+        return <Fragment key={key}>{node.renderComponent({ value })}</Fragment>;
+    }
     const definition = registry.inlines.get(inline.type);
     if (!definition) {
         throw unknownInlineType(inline.type);

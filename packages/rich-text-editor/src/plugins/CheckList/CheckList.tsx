@@ -110,12 +110,8 @@ export const checkListPlugin = (): RtePlugin => ({
             ],
         },
     ],
-    toolbar: (api) => (
-        <ToolbarButton
-            active={api.selection.get().blocks.some((block) => block.type === 'checkList')}
-            title="To-do list"
-            onClick={() => api.lists.toggle('checkList')}
-        >
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton active={isActive} title="To-do list" onClick={() => toggle()}>
             <IconListCheck size={16} />
         </ToolbarButton>
     ),

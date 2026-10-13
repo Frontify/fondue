@@ -50,7 +50,7 @@ export { fontColorPlugin } from './plugins/FontColor';
 export { italicPlugin } from './plugins/Italic';
 export { linkPlugin } from './plugins/Link';
 export { bulletListPlugin, numberedListPlugin } from './plugins/List';
-export { mentionPlugin, type MentionItem } from './plugins/Mention';
+export { filterByName, mentionPlugin, type MentionItem } from './plugins/Mention';
 export { quotePlugin } from './plugins/Quote';
 export { resetFormattingPlugin } from './plugins/ResetFormatting';
 export { softBreakPlugin } from './plugins/SoftBreak';

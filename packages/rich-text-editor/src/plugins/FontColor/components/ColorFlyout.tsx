@@ -4,7 +4,7 @@ import { Button, ColorPicker, Flyout } from '@frontify/fondue-components';
 import { IconDroplet } from '@frontify/fondue-icons';
 import { type ReactNode, useState } from 'react';
 
-import { type EditorControlApi } from '#/core';
+import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { type FontColorValue } from '../FontColor';
@@ -22,9 +22,15 @@ import styles from './colorFlyout.module.scss';
  * dragged around the gradient: choosing a colour sweeps through dozens of them,
  * and none of those belong in the undo history.
  */
-export const ColorFlyout = ({ api }: { api: EditorControlApi }): ReactNode => {
+export const ColorFlyout = ({
+    selection,
+    api,
+}: {
+    selection: RteSelectionSnapshot;
+    api: EditorControlApi;
+}): ReactNode => {
     // The snapshot's marks are untyped; this plugin knows what its own carries.
-    const value = api.selection.get().marks.fontColor as Partial<FontColorValue> | undefined;
+    const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
     const current = parseCssColor(value?.color);
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<RgbaColor | undefined>(undefined);
@@ -39,7 +45,7 @@ export const ColorFlyout = ({ api }: { api: EditorControlApi }): ReactNode => {
     const apply = (color: RgbaColor | undefined): void => {
         // A value-carrying mark has to be cleared before it can be re-set:
         // toggling on top of an existing colour would only remove it.
-        if ('fontColor' in api.selection.get().marks) {
+        if ('fontColor' in selection.marks) {
             api.marks.toggle('fontColor');
         }
         if (color !== undefined) {

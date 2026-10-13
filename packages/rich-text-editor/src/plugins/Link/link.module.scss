@@ -23,3 +23,22 @@
         @include link.underline;
     }
 }
+
+/** The flyout over a link in the editor: its target, then what can be done to it. */
+.panel {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-x-small);
+    max-width: 360px;
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+}
+
+.target {
+    overflow: hidden;
+    color: var(--color-highlight-default);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @include link.underline;
+}
