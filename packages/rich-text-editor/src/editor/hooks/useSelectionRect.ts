@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useSyncExternalStore } from 'react';
 
 import { type EditorHandle, type FloatingRect } from '../port';
 
+import { type EditorStateStore } from './useEditorHandle';
+
 /**
  * Where the selection sits on screen, for UI that hangs over it. Read during
- * render rather than kept in state: the component re-renders on every editor
- * state change, so the box is recomputed exactly when the selection can have
- * moved.
+ * render rather than kept in state: the calling component subscribes to the
+ * editor state, so it re-renders — and the box is recomputed — exactly when the
+ * selection can have moved. Only the caller re-renders, not the editor around
+ * it.
  *
  * Scrolling and resizing move the text without changing editor state, and
  * neither re-renders on its own — hence the listeners. Scroll is listened for
@@ -23,18 +26,15 @@ import { type EditorHandle, type FloatingRect } from '../port';
  */
 export const useSelectionRect = ({
     handle,
-    enabled,
+    editorState,
 }: {
-    handle: EditorHandle | null;
-    /** Off unless something is actually anchored to the selection. */
-    enabled: boolean;
+    handle: EditorHandle;
+    editorState: EditorStateStore;
 }): FloatingRect | null => {
+    useSyncExternalStore(editorState.subscribe, editorState.getVersion, editorState.getVersion);
     const [, follow] = useReducer((count: number) => count + 1, 0);
 
     useEffect(() => {
-        if (!enabled) {
-            return;
-        }
         let frame: number | null = null;
         const followNextFrame = (): void => {
             if (frame !== null) {
@@ -55,7 +55,7 @@ export const useSelectionRect = ({
             window.removeEventListener('scroll', followNextFrame, true);
             window.removeEventListener('resize', followNextFrame);
         };
-    }, [enabled]);
+    }, []);
 
-    return enabled && handle ? handle.selectionRect() : null;
+    return handle.selectionRect();
 };

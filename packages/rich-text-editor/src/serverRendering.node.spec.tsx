@@ -8,10 +8,16 @@ import { describe, expect, it } from 'vitest';
 
 import { PARAGRAPH, type RteDocumentOf } from './core';
 
+import { defaultPlugins, RichTextEditor } from './index';
+
 /**
  * The package root imported where a server imports it: no page, no `document`.
  * Readonly rendering goes through `RichTextRenderer`, so the document is in
  * the markup.
+ *
+ * Imported statically, so loading the package happens while the file is
+ * collected rather than inside the test, where it would count against the test
+ * timeout. Had the import touched a DOM global, collection fails instead.
  */
 
 const doc: RteDocumentOf = {
@@ -20,10 +26,9 @@ const doc: RteDocumentOf = {
 };
 
 describe('importing the package where there is no browser', () => {
-    it('imports and renders the document', async () => {
+    it('imports and renders the document', () => {
         expect('document' in globalThis).toBe(false);
 
-        const { RichTextEditor, defaultPlugins } = await import('./index');
         const html = renderToString(
             <RichTextEditor value={doc} plugins={defaultPlugins} readonly showEditor={false} />,
         );

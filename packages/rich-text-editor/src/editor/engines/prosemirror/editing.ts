@@ -8,6 +8,7 @@ import { type EditorHandle, type MountDocument } from '#/editor/port';
 
 import { createControlApi, type OpenEditors } from './controlApi';
 import { toEngineDocument, toRteDocument } from './documentConversion';
+import { inlineElementsCarryNoMarksPlugin } from './inlineMarks';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, type Repaintable } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
@@ -43,7 +44,10 @@ export const mountDocument: MountDocument = ({
     let api!: EditorControlApi;
     const getApi = (): EditorControlApi => api;
     let agreedDoc = initialDoc;
-    // Inline node views repaint on every state change, since `isFocused` follows the selection.
+    // The views with editing UI (inline elements, marks like a link) are offered
+    // every state change, since `isFocused` follows the selection. Each one
+    // re-renders only when what it hands its component has changed, so a
+    // keystroke elsewhere costs a position check per view, not a render.
     const liveInlines = new Set<Repaintable>();
     const repaintViews = (): void => {
         let openStillFocused = false;
@@ -52,7 +56,8 @@ export const mountDocument: MountDocument = ({
             openStillFocused ||= focused && type === openEditors.type;
         }
         // The caret left the node whose editing UI was open: it closes, and
-        // stays closed when the caret comes back.
+        // stays closed when the caret comes back. Only the view that was open
+        // has anything new to draw.
         if (openEditors.type !== null && !openStillFocused) {
             openEditors.type = null;
             for (const live of liveInlines) {
@@ -73,6 +78,7 @@ export const mountDocument: MountDocument = ({
                 ...keystrokePipeline(features, bundle, getApi),
                 placeholderPlugin(() => current.placeholder, placeholderClassName),
                 wholeIslandsPlugin(),
+                inlineElementsCarryNoMarksPlugin(),
             ],
         }),
         handleDOMEvents: {

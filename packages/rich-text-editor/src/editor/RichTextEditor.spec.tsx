@@ -2,13 +2,16 @@
 
 // @vitest-environment happy-dom
 
-import { act, type ReactNode } from 'react';
+import { act, type ReactNode, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
-import { defaultPlugins, RichTextEditor, type RteDocument } from '../index';
+import { defaultPlugins, RichTextEditor, type RteDocument, type RtePlugin } from '../index';
+
+import { useFocusWithin } from './hooks/useFocusWithin';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -280,5 +283,157 @@ describe('a page of editors', () => {
 
         expect(container.textContent).toContain('edited');
         expect(onChange).not.toHaveBeenCalled();
+    });
+});
+
+describe('the toolbar', () => {
+    /** A control with state of its own, the way a flyout keeps whether it is open. */
+    const ClickCounter = (): ReactNode => {
+        const [clicks, setClicks] = useState(0);
+        return (
+            <button type="button" data-testid="clicks" onClick={() => setClicks((count) => count + 1)}>
+                {clicks}
+            </button>
+        );
+    };
+    const statefulPlugin: RtePlugin = { id: 'stateful', toolbarItem: ClickCounter };
+
+    /** A control using hooks of other kinds, so a shifted hook order would show. */
+    const OtherHooks = (): ReactNode => {
+        const [label] = useState(() => 'other');
+        return <span>{label}</span>;
+    };
+    const otherPlugin: RtePlugin = { id: 'other', toolbarItem: OtherHooks };
+
+    const clickCount = (container: HTMLElement): string | null | undefined =>
+        container.querySelector('[data-testid="clicks"]')?.textContent;
+
+    it("keeps a control's own state across edits and plugins added before it", () => {
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor plugins={[...defaultPlugins, statefulPlugin]} toolbarPlacement="top" />
+        ));
+        ready();
+
+        const button = container.querySelector<HTMLButtonElement>('[data-testid="clicks"]');
+        act(() => {
+            button?.click();
+            button?.click();
+        });
+        expect(clickCount(container)).toBe('2');
+
+        paste(container, '<p>Some <strong>bold</strong> text</p>');
+        expect(clickCount(container)).toBe('2');
+
+        rerender(<RichTextEditor plugins={[otherPlugin, ...defaultPlugins, statefulPlugin]} toolbarPlacement="top" />);
+        ready();
+        expect(container.textContent).toContain('other');
+        expect(clickCount(container)).toBe('2');
+    });
+
+    it('re-renders a control only when what it is handed changed', () => {
+        let renders = 0;
+        const CountingItem = (): ReactNode => {
+            renders++;
+            return null;
+        };
+        const countingPlugin: RtePlugin = { id: 'counting', toolbarItem: CountingItem };
+
+        const { container, ready } = mount((onChange) => (
+            <RichTextEditor plugins={[...defaultPlugins, countingPlugin]} onChange={onChange} toolbarPlacement="top" />
+        ));
+        ready();
+        const settled = renders;
+
+        // Plain text where there was none: a new document and a new caret, but
+        // the same block and no marks — nothing a control shows.
+        paste(container, '<p>plain</p>');
+        expect(container.textContent).toContain('plain');
+        expect(renders).toBe(settled);
+
+        // Ending up in bold text is a different selection, so it does reach
+        // the control.
+        paste(container, '<p><strong>bold</strong></p>');
+        expect(renders).toBeGreaterThan(settled);
+    });
+
+    it('warns in development when two plugins share an id', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        // The duplicate toolbar key gets React's own complaint too.
+        const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+        try {
+            const { ready } = mount(() => (
+                <RichTextEditor plugins={[statefulPlugin, { ...statefulPlugin }]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Two plugins share the id "stateful"'));
+        } finally {
+            warn.mockRestore();
+            error.mockRestore();
+        }
+    });
+
+    it('does not warn when every id is distinct', () => {
+        const warn = vi.spyOn(console, 'warn');
+        try {
+            const { ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+            ready();
+
+            expect(warn).not.toHaveBeenCalled();
+        } finally {
+            warn.mockRestore();
+        }
+    });
+});
+
+describe('focus within', () => {
+    /** A trigger inside, and a field it portals out of the subtree — a flyout. */
+    const Probe = (): ReactNode => {
+        const { focusWithin, focusProps } = useFocusWithin();
+        return (
+            <div {...focusProps} data-testid="probe" data-focus-within={String(focusWithin)}>
+                <button type="button" data-testid="inside">
+                    inside
+                </button>
+                {createPortal(<input data-testid="portalled" />, window.document.body)}
+            </div>
+        );
+    };
+
+    const focus = (element: Element | null): void => {
+        act(() => {
+            (element as HTMLElement | null)?.focus();
+        });
+    };
+
+    it('follows focus into a portal and out of the tree, without waiting', () => {
+        const outside = window.document.createElement('input');
+        window.document.body.append(outside);
+        teardown.push(() => outside.remove());
+
+        const { container } = mount(() => <Probe />);
+        const state = (): string | null | undefined =>
+            container.querySelector('[data-testid="probe"]')?.getAttribute('data-focus-within');
+        const inside = container.querySelector('[data-testid="inside"]');
+        const portalled = window.document.querySelector('[data-testid="portalled"]');
+
+        expect(state()).toBe('false');
+
+        focus(inside);
+        expect(state()).toBe('true');
+
+        // Out of the subtree in the DOM, but still inside in the component tree.
+        focus(portalled);
+        expect(state()).toBe('true');
+
+        focus(outside);
+        expect(state()).toBe('false');
+
+        focus(inside);
+        expect(state()).toBe('true');
+        act(() => {
+            (inside as HTMLElement | null)?.blur();
+        });
+        expect(state()).toBe('false');
     });
 });

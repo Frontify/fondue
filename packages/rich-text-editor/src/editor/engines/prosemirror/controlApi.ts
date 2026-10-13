@@ -41,10 +41,10 @@ const marksAt = (state: EditorState): Record<string, Record<string, unknown>> =>
         // not yet typed into — and otherwise it inherits what is behind it.
         record(state.storedMarks ?? $from.marks());
     } else {
-        // Every inline node, not only text: an atom (a mention) carries marks
-        // too, so a link around one is found even where no text is covered.
+        // Only text contributes: inline elements carry no marks (see
+        // `inlineMarks.ts`).
         state.doc.nodesBetween(from, to, (node) => {
-            if (node.isInline) {
+            if (node.isText) {
                 record(node.marks);
             }
         });
@@ -233,8 +233,14 @@ const createBlockApi = (view: EditorView, bundle: SchemaBundle): EditorControlAp
         view.state.doc.nodesBetween(from, to, (node, pos) => {
             if (node.isTextblock) {
                 // Attributes a node type never declared are ignored by the
-                // engine, so this is safe across mixed selections.
-                transaction.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs });
+                // engine, so this is safe across mixed selections. An unchanged
+                // block is skipped so a no-op reports nothing and adds no undo step.
+                const changes = Object.entries(attrs).some(
+                    ([name, value]) => name in node.attrs && (node.attrs[name] ?? null) !== (value ?? null),
+                );
+                if (changes) {
+                    transaction.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs });
+                }
             }
         });
         if (transaction.docChanged) {
@@ -284,7 +290,8 @@ export const createControlApi = (
         if (nodeType) {
             // Inline elements keep their value in one attribute; blocks keep theirs flat.
             const engineAttrs = nodeType.isInline ? valueAttrsFor(attrs) : attrs;
-            view.dispatch(view.state.tr.replaceSelectionWith(nodeType.create(engineAttrs)));
+            // Inline elements carry no marks, so they must not inherit the caret's.
+            view.dispatch(view.state.tr.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
             view.focus();
         }
     },

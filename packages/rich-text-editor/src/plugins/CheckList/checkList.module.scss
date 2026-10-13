@@ -27,8 +27,12 @@
 .label {
     flex: 1;
 
-    /** An item holds blocks, so its text sits in a paragraph that must not add space. */
-    > p {
+    /**
+     * An item holds blocks, so its text sits in a paragraph that must not add
+     * space. A descendant rather than a child selector: in the editor the
+     * paragraph sits inside the node view's content hole.
+     */
+    p {
         margin: 0;
     }
 }

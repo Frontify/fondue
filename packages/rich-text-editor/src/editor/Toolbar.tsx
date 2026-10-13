@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Fragment, type MouseEvent, type ReactNode } from 'react';
+import { memo, type MouseEvent, type ReactNode, useCallback, useSyncExternalStore } from 'react';
 
-import { type EditorControlApi, type RtePlugin } from '#/core';
+import { type EditorControlApi, type RtePlugin, type ToolbarItemProps } from '#/core';
 
+import { type EditorStateStore } from './hooks/useEditorHandle';
 import styles from './richTextEditor.module.scss';
 import { toolbarItemProps } from './toolbarItem';
 
@@ -29,21 +30,81 @@ const keepSelection = (event: MouseEvent<HTMLDivElement>): void => {
     }
 };
 
-/** The plugins' toolbar UI, in mount order. Nothing at all when no plugin has any. */
+/**
+ * Structural equality for the plain data a toolbar item is handed — the
+ * selection snapshot and the plugin's own node are JSON-shaped, rebuilt as new
+ * objects on every editor state change whether or not anything in them moved.
+ */
+const sameData = (a: unknown, b: unknown): boolean => {
+    if (Object.is(a, b)) {
+        return true;
+    }
+    if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) {
+        return false;
+    }
+    if (Array.isArray(a) !== Array.isArray(b)) {
+        return false;
+    }
+    const aEntries = Object.entries(a);
+    const bRecord = b as Record<string, unknown>;
+    return (
+        aEntries.length === Object.keys(b).length &&
+        aEntries.every(([key, value]) => key in bRecord && sameData(value, bRecord[key]))
+    );
+};
+
+type ToolbarItemSlotProps = {
+    render: NonNullable<RtePlugin['toolbarItem']>;
+    itemProps: ToolbarItemProps;
+};
+
+/**
+ * One plugin's control, as a component of its own: the hooks a `toolbarItem`
+ * calls live in this fiber, so each item keeps its own state, and adding or
+ * removing a plugin does not shift another item's hooks.
+ *
+ * Re-rendered only when what it is handed changed. Typing moves the editor
+ * state on every keystroke, but rarely anything a control shows: the data is
+ * compared by value, and the commands are left out of the comparison because
+ * they are derived from the same data (`toggle` and `remove` read `isActive`,
+ * the rest only the api and the plugin's type).
+ */
+const ToolbarItemSlot = memo(
+    ({ render, itemProps }: ToolbarItemSlotProps): ReactNode => render(itemProps),
+    (previous, next) =>
+        previous.render === next.render &&
+        previous.itemProps.api === next.itemProps.api &&
+        previous.itemProps.isActive === next.itemProps.isActive &&
+        sameData(previous.itemProps.selectedNode, next.itemProps.selectedNode) &&
+        sameData(previous.itemProps.selection, next.itemProps.selection),
+);
+
+/**
+ * The plugins' toolbar UI, in mount order. Nothing at all when no plugin has
+ * any.
+ *
+ * Follows the editor state itself, through the selection snapshot (one object
+ * per editor state), so a keystroke re-renders the toolbar rather than the
+ * editor around it — and of the toolbar only the items whose props changed.
+ */
 export const Toolbar = ({
     plugins,
     api,
+    editorState,
     placement,
 }: {
     plugins: RtePlugin[];
     api: EditorControlApi;
+    editorState: EditorStateStore;
     /** Only the strip inside the frame is drawn as one — a floating bar is a surface of its own. */
     placement: ToolbarPlacement;
 }): ReactNode => {
+    const getSelection = useCallback(() => api.selection.get(), [api]);
+    const selection = useSyncExternalStore(editorState.subscribe, getSelection, getSelection);
+
     if (!plugins.some((plugin) => plugin.toolbarItem)) {
         return null;
     }
-    const selection = api.selection.get();
 
     return (
         <div
@@ -56,14 +117,15 @@ export const Toolbar = ({
             // Where the bar ended up, for the stylesheet to read.
             data-placement={placement}
         >
-            {plugins.map((plugin) => {
-                if (!plugin.toolbarItem) {
-                    return null;
-                }
-                return (
-                    <Fragment key={plugin.id}>{plugin.toolbarItem(toolbarItemProps(plugin, api, selection))}</Fragment>
-                );
-            })}
+            {plugins.map((plugin) =>
+                plugin.toolbarItem ? (
+                    <ToolbarItemSlot
+                        key={plugin.id}
+                        render={plugin.toolbarItem}
+                        itemProps={toolbarItemProps(plugin, api, selection)}
+                    />
+                ) : null,
+            )}
         </div>
     );
 };

@@ -33,9 +33,15 @@ export type RtePlugin = {
      */
     inlines?: Record<string, InlineDefinition>;
     /**
-     * This feature's control in the toolbar. Re-rendered on every editor state
-     * change, handed the feature's own node at the selection (or null) and the
-     * commands bound to it — so a button is `isActive` + `toggle`.
+     * This feature's control in the toolbar, handed the feature's own node at
+     * the selection (or null) and the commands bound to it — so a button is
+     * `isActive` + `toggle`.
+     *
+     * Rendered as a component of its own, keyed by the plugin's `id`: it may
+     * use hooks, and its state survives edits and other plugins coming and
+     * going. It re-renders when what it is handed changes — the selection
+     * snapshot, the own node, `isActive` — not on every keystroke, so derive
+     * what it shows from its props rather than reading the editor elsewhere.
      */
     toolbarItem?: (props: ToolbarItemProps) => ReactNode;
     /**

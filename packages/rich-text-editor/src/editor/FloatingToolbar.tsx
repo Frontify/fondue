@@ -2,7 +2,9 @@
 
 import { type ReactNode, useLayoutEffect, useRef, useState } from 'react';
 
-import { type FloatingRect } from './port';
+import { type EditorStateStore } from './hooks/useEditorHandle';
+import { useSelectionRect } from './hooks/useSelectionRect';
+import { type EditorHandle, type FloatingRect } from './port';
 import styles from './richTextEditor.module.scss';
 
 /** How close to the viewport edge the bar may come before it is pushed back in. */
@@ -20,8 +22,31 @@ const VIEWPORT_MARGIN = 8;
  *
  * The editor's OWN chrome, positioned from `handle.selectionRect()`. Plugin UI
  * anchors itself, from its own `editorComponent`.
+ *
+ * This is the component that follows the editor state, so a moving caret
+ * re-renders the bar and its position and nothing around it. Mount it only
+ * while there is something to show — it listens to scrolling for as long as it
+ * is mounted. Nothing is drawn while there is no selection to hang over.
  */
-export const FloatingToolbar = ({ rect, children }: { rect: FloatingRect; children: ReactNode }): ReactNode => {
+export const FloatingToolbar = ({
+    handle,
+    editorState,
+    children,
+}: {
+    handle: EditorHandle;
+    editorState: EditorStateStore;
+    children: ReactNode;
+}): ReactNode => {
+    const rect = useSelectionRect({ handle, editorState });
+    return rect === null ? null : <FloatingBar rect={rect}>{children}</FloatingBar>;
+};
+
+/**
+ * The bar itself, at a box that exists. Its own component so the size observer
+ * is set up when the bar is, rather than once for a bar that may not be there
+ * yet.
+ */
+const FloatingBar = ({ rect, children }: { rect: FloatingRect; children: ReactNode }): ReactNode => {
     const barRef = useRef<HTMLDivElement | null>(null);
     const [size, setSize] = useState({ width: 0, height: 0 });
 

@@ -17,6 +17,18 @@ const islandOf = (view: EditorView, node: Node | null): HTMLElement | null => {
     return island !== null && island !== view.dom && view.dom.contains(island) ? island : null;
 };
 
+/**
+ * The engine's position for a DOM point, or null where it has none — a point in
+ * DOM it does not own throws rather than answering.
+ */
+const posAtDom = (view: EditorView, node: Node, offset: number): number | null => {
+    try {
+        return view.posAtDOM(node, offset);
+    } catch {
+        return null;
+    }
+};
+
 const extendOverIsland = (view: EditorView, settled: boolean): void => {
     const dom = view.dom.ownerDocument.getSelection();
     if (!dom || dom.isCollapsed) {
@@ -27,7 +39,10 @@ const extendOverIsland = (view: EditorView, settled: boolean): void => {
     if (!island || !parent) {
         return;
     }
-    const before = view.posAtDOM(parent, Array.prototype.indexOf.call(parent.childNodes, island));
+    const before = posAtDom(view, parent, Array.prototype.indexOf.call(parent.childNodes, island));
+    if (before === null) {
+        return;
+    }
     const node = view.state.doc.nodeAt(before);
     if (!node?.isInline || !node.isAtom) {
         return;
@@ -52,21 +67,32 @@ export const wholeIslandsPlugin = (): PmPlugin =>
         view: (view) => {
             const document = view.dom.ownerDocument;
             let mouseDown = false;
+            // The view can be destroyed between the event and the microtask —
+            // a host unmounting on the same event — and a destroyed view has
+            // no positions to read.
+            let destroyed = false;
+            const extendLater = (settled: () => boolean): void =>
+                queueMicrotask(() => {
+                    if (!destroyed) {
+                        extendOverIsland(view, settled());
+                    }
+                });
             // After the engine has read the same change, so this adjusts its
             // result rather than racing it.
-            const onSelectionChange = (): void => queueMicrotask(() => extendOverIsland(view, !mouseDown));
+            const onSelectionChange = (): void => extendLater(() => !mouseDown);
             const onMouseDown = (): void => {
                 mouseDown = true;
             };
             const onMouseUp = (): void => {
                 mouseDown = false;
-                queueMicrotask(() => extendOverIsland(view, true));
+                extendLater(() => true);
             };
             document.addEventListener('selectionchange', onSelectionChange);
             document.addEventListener('mousedown', onMouseDown);
             document.addEventListener('mouseup', onMouseUp);
             return {
                 destroy: () => {
+                    destroyed = true;
                     document.removeEventListener('selectionchange', onSelectionChange);
                     document.removeEventListener('mousedown', onMouseDown);
                     document.removeEventListener('mouseup', onMouseUp);

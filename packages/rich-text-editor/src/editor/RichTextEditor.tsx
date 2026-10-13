@@ -8,7 +8,6 @@ import { RichTextRenderer } from '#/renderer';
 import { FloatingToolbar } from './FloatingToolbar';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFocusWithin } from './hooks/useFocusWithin';
-import { useSelectionRect } from './hooks/useSelectionRect';
 import styles from './richTextEditor.module.scss';
 import { Toolbar, type ToolbarPlacement } from './Toolbar';
 
@@ -26,12 +25,16 @@ export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * The plugins to mount, in toolbar order (e.g. `defaultPlugins`, extended
      * or reduced as needed). Defaults to `defaultPlugins` at the package root.
      *
-     * Mount-time configuration: the editor is built once per plugin set and
-     * reads the schema, the hotkeys and the typing rules off it then. Changing
-     * which plugins are in the list builds a new editor; changing an option
-     * *inside* one (a different `items` for the mention picker) does not reach
-     * the editor that is already running, so drive that from a `key` on the
-     * editor instead — memoize the list, or remount.
+     * Every plugin needs an `id` of its own: the ids are the toolbar's keys
+     * and the editor's identity. Two plugins sharing one is a mistake, warned
+     * about in development.
+     *
+     * Read once per set of ids. The editor is built when the ids change and
+     * reads the schema, the hotkeys and the typing rules off the plugins then;
+     * a new list with the same ids — the same plugins rebuilt inline on every
+     * render, or one with a changed option (a different `items` for the
+     * mention picker) — does not reach the editor already running. To apply a
+     * changed option, remount the editor with a new `key`.
      */
     plugins?: RtePlugin[];
     /**
@@ -89,7 +92,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const contentClassName = [styles.content, ...plugins.map((plugin) => plugin.contentClassName)]
         .filter(Boolean)
         .join(' ');
-    const { containerRef, handle } = useEditorHandle({
+    const { containerRef, handle, editorState } = useEditorHandle({
         plugins,
         document,
         placeholder,
@@ -104,11 +107,13 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     });
     const { focusWithin, focusProps } = useFocusWithin();
 
-    const api = handle?.api;
+    // Nothing here reads the editor state: the toolbar and the floating bar
+    // subscribe to it themselves, so a keystroke re-renders them, not this.
     const toolbarFloats = toolbarPlacement === 'floating';
     const toolbar =
-        api && !readOnly && showEditor ? <Toolbar plugins={plugins} api={api} placement={toolbarPlacement} /> : null;
-    const selectionRect = useSelectionRect({ handle, enabled: toolbarFloats && toolbar !== null && focusWithin });
+        handle && !readOnly && showEditor ? (
+            <Toolbar plugins={plugins} api={handle.api} editorState={editorState} placement={toolbarPlacement} />
+        ) : null;
 
     const contentProperties = Object.fromEntries(
         plugins.flatMap((plugin) => Object.entries(plugin.contentProperties ?? {})),
@@ -116,8 +121,10 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
 
     return (
         <div {...focusProps} className={styles.root} style={contentProperties as CSSProperties}>
-            {toolbarFloats && selectionRect !== null ? (
-                <FloatingToolbar rect={selectionRect}>{toolbar}</FloatingToolbar>
+            {toolbarFloats && handle && toolbar !== null && focusWithin ? (
+                <FloatingToolbar handle={handle} editorState={editorState}>
+                    {toolbar}
+                </FloatingToolbar>
             ) : null}
             <div className={styles.frame} data-chrome={String(showEditor)}>
                 {toolbarFloats ? null : toolbar}

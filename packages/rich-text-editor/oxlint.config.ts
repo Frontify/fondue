@@ -45,6 +45,12 @@ export default defineConfig({
         typeAware: true,
     },
     ignorePatterns: ['dist/', 'storybook-static/', '**/*.mdx'],
+    /**
+     * A later override's `no-restricted-imports` replaces an earlier one for the
+     * same file rather than adding to it. So every override repeats each shared
+     * group that applies to its files, which is what the `NO_ENGINE` /
+     * `NO_SERVER_RENDER` / `CORE_ONLY` constants are for.
+     */
     overrides: [
         {
             files: ['**/*.{js,jsx,ts,tsx,mts,cts,cjs}'],
@@ -94,9 +100,10 @@ export default defineConfig({
                 'src/renderer/serializeToHtml.ts',
                 'src/serverRendering*.spec.tsx',
                 'src/serializeToHtml*.spec.tsx',
+                'src/editor/engines/prosemirror/**/*.{ts,tsx}',
             ],
             rules: {
-                'no-restricted-imports': ['error', { patterns: [NO_SERVER_RENDER] }],
+                'no-restricted-imports': ['error', { patterns: [NO_ENGINE, NO_SERVER_RENDER] }],
             },
         },
         {
@@ -179,6 +186,7 @@ export default defineConfig({
                     'error',
                     {
                         patterns: [
+                            NO_ENGINE,
                             {
                                 group: ['#/editor/engines/**'],
                                 message:

@@ -84,6 +84,40 @@ jobs:
           shard: ${{ matrix.shard }}
           total: ${{ strategy.job-total }}
 
+  rich-text-editor:
+    name: Rich Text Editor (lint, typecheck, test, build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      # The editor's tests import the component library's dist; build it from source so a stale build can't fail them.
+      - name: Build Fondue Components
+        run: pnpm build:components
+
+      - name: Format
+        run: pnpm --filter {packages/rich-text-editor} format:check
+
+      - name: Lint
+        run: pnpm --filter {packages/rich-text-editor} lint
+
+      - name: Typecheck
+        run: pnpm --filter {packages/rich-text-editor} typecheck
+
+      - name: Unit tests
+        run: pnpm --filter {packages/rich-text-editor} test
+
+      - name: Build
+        run: pnpm --filter {packages/rich-text-editor} build
+
   component-unit-tests:
     name: Component Unit Tests
     runs-on: ubuntu-latest
