@@ -5,8 +5,8 @@ import { type EditorControlApi, type RteDocumentOf, type RtePlugin } from '#/cor
 /**
  * The editor engine as a contract: what the React shell drives, and what an
  * engine adapter has to provide. Both sides depend on this file and neither on
- * the other. There is no render probe — markup in the editor comes from
- * `toDom`, and readonly display is `RichTextRenderer`.
+ * the other. Readonly display does not go through it: that is
+ * `RichTextRenderer`.
  */
 
 /** A box in viewport coordinates. */

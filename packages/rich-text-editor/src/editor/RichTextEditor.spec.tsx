@@ -24,24 +24,14 @@ const paragraph = (text: string): RteDocument => ({
 const teardown: (() => void)[] = [];
 
 /**
- * The engine is fetched rather than imported, so an editor is not editable the
- * moment it is mounted — the document is drawn as content first. Every test
- * driving the editor waits here for the editable element to take over.
- *
- * Rounds rather than one flush: the first fetch has a module to evaluate, which
- * takes a turn of the event loop that a microtask drain would not cover. Once it
- * is loaded, later mounts are ready on the first round.
+ * The engine mounts in an effect, which `act` flushes, so an editor is
+ * editable as soon as `mount` or `rerender` returns. Tests driving it assert
+ * that first, so a failure says where it went wrong.
  */
-const editorReady = async (container: HTMLElement): Promise<void> => {
-    for (let round = 0; round < 20; round++) {
-        if (container.querySelector('[contenteditable]')) {
-            return;
-        }
-        await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 0));
-        });
+const expectEditable = (container: HTMLElement): void => {
+    if (!container.querySelector('[contenteditable]')) {
+        throw new Error('the editor never became editable');
     }
-    throw new Error('the editor never became editable');
 };
 
 const mount = (render: (onChange: (doc: RteDocument) => void) => ReactNode) => {
@@ -63,8 +53,8 @@ const mount = (render: (onChange: (doc: RteDocument) => void) => ReactNode) => {
     return {
         container,
         onChange,
-        /** Resolves once the engine has arrived and taken the content over. */
-        ready: (): Promise<void> => editorReady(container),
+        /** Throws unless the engine has taken the content over. */
+        ready: (): void => expectEditable(container),
         /** What the host would now be holding, or null if it was never told. */
         stored: (): RteDocument | null => {
             const { calls } = onChange.mock;
@@ -98,11 +88,11 @@ const paste = (container: HTMLElement, html: string): void => {
 };
 
 describe('pasting', () => {
-    it('keeps the marks and blocks the pasted HTML carried', async () => {
+    it('keeps the marks and blocks the pasted HTML carried', () => {
         const { container, stored, ready } = mount((onChange) => (
             <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
         ));
-        await ready();
+        ready();
 
         paste(
             container,
@@ -110,9 +100,6 @@ describe('pasting', () => {
                 '<a href="https://example.com">a link</a> in it.</p>',
         );
 
-        // The rules that recognized all of this are built the first time the
-        // engine has HTML to read rather than at mount (see setup/schema.ts);
-        // this says they are still the right rules by then.
         const emitted = JSON.stringify(stored());
         expect(emitted).toContain('"style":"heading2"');
         expect(emitted).toContain('"bold":true');
@@ -120,11 +107,11 @@ describe('pasting', () => {
         expect(emitted).toContain('A heading');
     });
 
-    it('reads a colour only off a span that sets one', async () => {
+    it('reads a colour only off a span that sets one', () => {
         const { container, stored, ready } = mount((onChange) => (
             <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
         ));
-        await ready();
+        ready();
 
         paste(container, '<p><span>plain</span> <span style="color: red">red</span></p>');
 
@@ -134,11 +121,11 @@ describe('pasting', () => {
         expect(children).toContainEqual({ text: 'red', fontColor: { color: 'red' } });
     });
 
-    it('shows what was pasted', async () => {
+    it('shows what was pasted', () => {
         const { container, ready } = mount((onChange) => (
             <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
         ));
-        await ready();
+        ready();
 
         paste(container, '<p>Pasted content.</p>');
 
@@ -147,22 +134,22 @@ describe('pasting', () => {
 });
 
 describe('a `value` set from outside', () => {
-    it('is shown, and is not reported back', async () => {
+    it('is shown, and is not reported back', () => {
         const { container, onChange, ready } = mount((change) => (
             <RichTextEditor value={paragraph('first')} onChange={change} plugins={defaultPlugins} />
         ));
-        await ready();
+        ready();
 
         expect(container.textContent).toContain('first');
         expect(onChange).not.toHaveBeenCalled();
     });
 
-    it('replaces the content when it genuinely differs', async () => {
+    it('replaces the content when it genuinely differs', () => {
         const onChange = vi.fn<(doc: RteDocument) => void>();
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor value={paragraph('before')} onChange={onChange} plugins={defaultPlugins} />
         ));
-        await ready();
+        ready();
 
         rerender(<RichTextEditor value={paragraph('after')} onChange={onChange} plugins={defaultPlugins} />);
 
@@ -170,13 +157,13 @@ describe('a `value` set from outside', () => {
         expect(container.textContent).not.toContain('before');
     });
 
-    it('is ignored when an equal document arrives as a new object', async () => {
+    it('is ignored when an equal document arrives as a new object', () => {
         const onChange = vi.fn<(doc: RteDocument) => void>();
         const doc = paragraph('settled');
         const { rerender, ready } = mount(() => (
             <RichTextEditor value={doc} onChange={onChange} plugins={defaultPlugins} />
         ));
-        await ready();
+        ready();
 
         // A host that normalizes what it stores, or whose value went through a
         // `JSON.parse`: the same content, a new object on every render.
@@ -191,12 +178,12 @@ describe('a `value` set from outside', () => {
 });
 
 describe('an editable editor', () => {
-    it('shows the document once the view mounts, once', async () => {
+    it('shows the document once the view mounts, once', () => {
         const { container, ready } = mount((onChange) => (
             <RichTextEditor value={paragraph('already here')} onChange={onChange} plugins={defaultPlugins} />
         ));
 
-        await ready();
+        ready();
 
         expect(container.querySelectorAll('p')).toHaveLength(1);
         expect(container.textContent).toBe('already here');
@@ -204,17 +191,10 @@ describe('an editable editor', () => {
 });
 
 describe('a readonly editor', () => {
-    it('shows the document without ever becoming editable', async () => {
+    it('shows the document without ever becoming editable', () => {
         const { container } = mount(() => (
             <RichTextEditor value={paragraph('for reading')} plugins={defaultPlugins} readonly />
         ));
-
-        // Long enough for a load to have finished, had one been started.
-        for (let round = 0; round < 5; round++) {
-            await act(async () => {
-                await new Promise((resolve) => setTimeout(resolve, 0));
-            });
-        }
 
         expect(container.textContent).toContain('for reading');
         expect(container.querySelector('[contenteditable]')).toBeNull();
@@ -231,7 +211,7 @@ describe('a readonly editor', () => {
         expect(container.textContent).not.toContain('first');
     });
 
-    it('starts editing from the document it was last given, not the first', async () => {
+    it('starts editing from the document it was last given, not the first', () => {
         const second = paragraph('second');
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor value={paragraph('first')} plugins={defaultPlugins} readonly />
@@ -239,26 +219,26 @@ describe('a readonly editor', () => {
 
         rerender(<RichTextEditor value={second} plugins={defaultPlugins} readonly />);
         rerender(<RichTextEditor value={second} plugins={defaultPlugins} />);
-        await ready();
+        ready();
 
         expect(container.textContent).toContain('second');
         expect(container.textContent).not.toContain('first');
     });
 
-    it('keeps what was typed into an uncontrolled editor across a readonly toggle', async () => {
+    it('keeps what was typed into an uncontrolled editor across a readonly toggle', () => {
         const { container, rerender, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
-        await ready();
+        ready();
 
         paste(container, '<p>typed</p>');
         rerender(<RichTextEditor plugins={defaultPlugins} readonly />);
         expect(container.textContent).toContain('typed');
 
         rerender(<RichTextEditor plugins={defaultPlugins} />);
-        await ready();
+        ready();
         expect(container.textContent).toContain('typed');
     });
 
-    it('becomes editable once readonly is turned off', async () => {
+    it('becomes editable once readonly is turned off', () => {
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor value={paragraph('was readonly')} plugins={defaultPlugins} readonly />
         ));
@@ -266,7 +246,7 @@ describe('a readonly editor', () => {
         expect(container.querySelector('[contenteditable]')).toBeNull();
 
         rerender(<RichTextEditor value={paragraph('was readonly')} plugins={defaultPlugins} />);
-        await ready();
+        ready();
 
         expect(container.textContent).toContain('was readonly');
     });
@@ -276,7 +256,7 @@ describe('a page of editors', () => {
     const COUNT = 30;
     const KEYS = Array.from({ length: COUNT }, (_, index) => `editor-${index}`);
 
-    it('mounts them all, and none of them talks when nothing changed', async () => {
+    it('mounts them all, and none of them talks when nothing changed', () => {
         const onChange = vi.fn<(doc: RteDocument) => void>();
         const docs = Array.from({ length: COUNT }, (_, index) => paragraph(`editor ${index}`));
         const page = (values: RteDocument[]): ReactNode => (
@@ -288,7 +268,7 @@ describe('a page of editors', () => {
         );
 
         const { container, rerender, ready } = mount(() => page(docs));
-        await ready();
+        ready();
 
         expect(container.querySelectorAll('[contenteditable]')).toHaveLength(COUNT);
         expect(container.textContent).toContain('editor 0');

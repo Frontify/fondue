@@ -85,18 +85,7 @@ export default defineConfig({
             files: ['src/**/*.{ts,tsx}'],
             excludeFiles: ['src/editor/engines/prosemirror/**/*.{ts,tsx}'],
             rules: {
-                'no-restricted-imports': [
-                    'error',
-                    {
-                        patterns: [
-                            {
-                                group: ['prosemirror-*'],
-                                message:
-                                    'ProseMirror imports are forbidden outside src/editor/engines/prosemirror/. Use the RtePlugin + EditorControlApi seam instead.',
-                            },
-                        ],
-                    },
-                ],
+                'no-restricted-imports': ['error', { patterns: [NO_ENGINE] }],
             },
         },
         {
@@ -107,17 +96,7 @@ export default defineConfig({
                 'src/serializeToHtml*.spec.tsx',
             ],
             rules: {
-                'no-restricted-imports': [
-                    'error',
-                    {
-                        patterns: [
-                            {
-                                group: ['react-dom/server'],
-                                message: 'Only src/renderer/serializeToHtml.ts renders React outside the tree.',
-                            },
-                        ],
-                    },
-                ],
+                'no-restricted-imports': ['error', { patterns: [NO_SERVER_RENDER] }],
             },
         },
         {
@@ -246,11 +225,7 @@ export default defineConfig({
                     'error',
                     {
                         patterns: [
-                            {
-                                group: ['prosemirror-*'],
-                                message:
-                                    'ProseMirror imports are forbidden outside src/editor/engines/prosemirror/. Use the RtePlugin + EditorControlApi seam instead.',
-                            },
+                            NO_ENGINE,
                             {
                                 group: [
                                     '#/core',

@@ -7,9 +7,10 @@ import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
 import { configDefaults, defineConfig } from 'vitest/config';
 
-import { peerDependencies as peerDependenciesMap } from './package.json';
+import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
-const externalCandidates = [...Object.keys(peerDependenciesMap)];
+// The consumer installs these anyway, so bundling them would ship a second copy.
+const externalCandidates = [...Object.keys(dependenciesMap), ...Object.keys(peerDependenciesMap)];
 const matchesExternalCandidate = (id: string) =>
     externalCandidates.some((pkg) => id === pkg || id.startsWith(`${pkg}/`));
 
@@ -65,8 +66,10 @@ export default defineConfig({
         },
     },
     /**
-     * The engine hosts a `contenteditable`, so the tests that drive one need a DOM
-     * — `happy-dom` rather than a browser, since nothing here is about layout.
+     * Tests run without a DOM by default. A file that drives the editor's
+     * `contenteditable` opts into `happy-dom` with a
+     * `// @vitest-environment happy-dom` docblock — a fake DOM rather than a
+     * browser, since nothing here is about layout.
      *
      * `type-derivation.spec.ts` is deliberately excluded: it asserts at compile
      * time and `tsgo --noEmit` is its runner (see its header), so it holds no test
@@ -80,7 +83,7 @@ export default defineConfig({
         lib: {
             entry: './src/index.ts',
             name: 'Rte',
-            fileName: 'rte',
+            fileName: (format: string) => `[name].${format}.js`,
             formats: ['es'],
         },
         sourcemap: true,

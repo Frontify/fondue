@@ -19,6 +19,11 @@ export type PluginRegistry = {
     /** Every block type, the paragraph baseline first. */
     blocks: Map<string, BlockDefinition>;
     inlines: Map<string, InlineDefinition>;
+    /**
+     * Every mark, in NESTING order: outermost first. Lower `nesting` wraps
+     * higher; ties keep the order their plugins were passed in. The engine's
+     * schema and the renderer both read this order, so they nest alike.
+     */
     marks: Map<string, MarkDefinition>;
     attributes: readonly AttributeDefinition[];
     /** List type → its item type, inferred from `children: { items }`. */
@@ -31,6 +36,10 @@ const unknownTypeMessage = (kind: string, type: string): string =>
 export const unknownBlockType = (type: string): Error => new Error(unknownTypeMessage('block', type));
 export const unknownInlineType = (type: string): Error => new Error(unknownTypeMessage('inline', type));
 export const unknownMarkType = (type: string): Error => new Error(unknownTypeMessage('mark', type));
+
+/** A stable sort, so ties stay in mount order. */
+const byNesting = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> =>
+    new Map([...marks].sort(([, left], [, right]) => (left.nesting ?? 0) - (right.nesting ?? 0)));
 
 export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegistry => {
     const blocks = new Map<string, BlockDefinition>([[paragraphBlock.type, paragraphBlock]]);
@@ -61,5 +70,5 @@ export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegist
         }
     }
 
-    return { blocks, inlines, marks, attributes, itemTypeByList };
+    return { blocks, inlines, marks: byNesting(marks), attributes, itemTypeByList };
 };

@@ -63,15 +63,6 @@ const withInjectedStyle = (node: ReactNode, style: CSSProperties | undefined, ke
     );
 };
 
-const markEntries = (text: RteTextNode, registry: PluginRegistry) =>
-    [...registry.marks.entries()]
-        .filter(([type]) => text[type] !== undefined)
-        .map(([type, definition], index) => ({ type, definition, index }))
-        .sort(
-            (left, right) =>
-                (left.definition.nesting ?? 0) - (right.definition.nesting ?? 0) || left.index - right.index,
-        );
-
 const renderText = (text: RteTextNode, registry: PluginRegistry, key: string): ReactNode => {
     for (const type of Object.keys(text).filter((name) => name !== 'text' && text[name] !== undefined)) {
         if (!registry.marks.has(type)) {
@@ -79,18 +70,14 @@ const renderText = (text: RteTextNode, registry: PluginRegistry, key: string): R
         }
     }
 
-    // Wrap from innermost (highest nesting) to outermost (lowest), matching
-    // the engine: the first-declared / lowest-nesting mark wraps the rest.
+    // The registry holds marks outermost first, so wrapping starts from the
+    // innermost: the same nesting the engine draws.
     let node: ReactNode = text.text;
-    const entries = markEntries(text, registry);
-    for (let index = entries.length - 1; index >= 0; index--) {
-        const entry = entries[index];
-        if (entry === undefined) {
-            continue;
-        }
-        const stored = text[entry.type];
-        const value = stored === true || stored === undefined ? {} : (stored as Record<string, unknown>);
-        node = entry.definition.renderComponent({ children: node, value });
+    const carried = [...registry.marks].filter(([type]) => text[type] !== undefined);
+    for (const [type, definition] of carried.reverse()) {
+        const stored = text[type];
+        const value = stored === true ? {} : (stored as Record<string, unknown>);
+        node = definition.renderComponent({ children: node, value });
     }
     return <Fragment key={key}>{node}</Fragment>;
 };

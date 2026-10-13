@@ -147,8 +147,8 @@ const IN_SELECTION_CLASS = 'rte-in-selection';
  * inside it belong to it — an input in there types into the input, not the
  * document.
  *
- * Prototype: one React root per node, so the component does not see the host
- * app's context providers yet.
+ * Known limitation: one React root per node, so the component does not see
+ * the host app's context providers.
  */
 export class ReactInlineView implements NodeView {
     dom: HTMLElement;
@@ -276,7 +276,7 @@ export type Repaintable = { paint(): { type: string; focused: boolean } };
  * `renderComponent`) around the marked text and does nothing else. The text
  * stays editable in a content hole the component places via `{children}`.
  *
- * Prototype: one React root per mark view, like the inline view.
+ * Known limitation: one React root per mark view, like the inline view.
  */
 export class ReactMarkView implements MarkView {
     dom: HTMLElement;

@@ -453,9 +453,9 @@ const MANY_KEYS = Array.from({ length: MANY }, (_, index) => `editor-${index + 1
  * the content DOM, so a keystroke redraws the text it changed and nothing else.
  *
  * `defaultPlugins` is imported rather than built per editor, so all thirty
- * share one set of probed renders. Worth copying in an app that mounts many:
- * build the plugin array once, at module level, rather than inside the
- * component.
+ * share one plugin array and nothing derived from it is rebuilt on render.
+ * Worth copying in an app that mounts many: build the plugin array once, at
+ * module level, rather than inside the component.
  */
 export const ManyEditors: Story = {
     render: () => {

@@ -173,12 +173,9 @@ export const buildSchema = (registry: PluginRegistry): SchemaBundle => {
         nodes[type] = inlineNodeSpec(inline);
     }
 
-    const markSpecs = [...registry.marks]
-        .map(([type, mark], index) => ({ type, mark, index }))
-        .sort((left, right) => (left.mark.nesting ?? 0) - (right.mark.nesting ?? 0) || left.index - right.index);
-
+    // invariant (2): the registry already holds marks in nesting order.
     const marks: Record<string, PmMarkSpec> = {};
-    for (const { type, mark } of markSpecs) {
+    for (const [type, mark] of registry.marks) {
         marks[type] = markSpec(mark);
     }
 
