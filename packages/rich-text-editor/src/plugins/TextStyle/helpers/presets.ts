@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type RteBlockNode, type RteInlineNode, type RteInputRule } from '#/core';
+import { PARAGRAPH, type ParseRule, type RteBlockNode, type RteInlineNode, type RteInputRule } from '#/core';
 
 import styles from '../textStyle.module.scss';
 
@@ -87,9 +87,9 @@ export const markdownRuleFor = ({ name, tag }: Preset): RteInputRule[] => {
  * tag, so an `h2` from anywhere lands as one; a preset rendering as a paragraph
  * is told apart by the attribute it wrote.
  */
-export const parseRuleFor = ({ name, tag }: Preset) => ({
+export const parseRuleFor = ({ name, tag }: Preset): ParseRule<{ style: string }> => ({
     tag: tag === 'p' ? `p[data-text-style=${name}]` : tag,
-    attributes: { style: name },
+    value: () => ({ style: name }),
 });
 
 /** The selection snapshot's `block` is the structural node; narrowing it makes `style` readable. */

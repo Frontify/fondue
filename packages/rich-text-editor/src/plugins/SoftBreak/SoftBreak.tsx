@@ -16,8 +16,7 @@ export const softBreakPlugin = (): RtePlugin => ({
     inlines: {
         break: defineInline({
             toHtml: () => ({ tag: 'br' }),
-            parse: [{ tag: 'br', value: () => ({}) }],
-            renderComponent: () => <br />,
+            parse: [{ tag: 'br' }],
         }),
     },
     hotkeys: { 'Shift-Enter': (api) => api.insert('break') },

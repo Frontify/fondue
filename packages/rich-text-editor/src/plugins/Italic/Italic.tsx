@@ -16,11 +16,7 @@ export const italicPlugin = (): RtePlugin => ({
     marks: {
         italic: defineMark({
             toHtml: () => ({ tag: 'em', children: true }),
-            parse: [
-                { tag: 'em', value: () => ({}) },
-                { tag: 'i', value: () => ({}) },
-            ],
-            renderComponent: ({ children }) => <em>{children}</em>,
+            parse: [{ tag: 'em' }, { tag: 'i' }],
         }),
     },
     toolbarItem: ({ isActive, toggle }) => (

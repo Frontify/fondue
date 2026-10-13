@@ -3,7 +3,7 @@
 import { Button, Flyout } from '@frontify/fondue-components';
 import { type ReactNode, useState } from 'react';
 
-import { type MarkEditorProps } from '#/core';
+import { type EditProps } from '#/core';
 
 import { type LinkValue } from '../helpers/draft';
 import styles from '../link.module.scss';
@@ -30,7 +30,7 @@ export const LinkEditor = ({
     setOpen,
     remove,
     api,
-}: MarkEditorProps<LinkValue>): ReactNode => {
+}: EditProps<LinkValue>): ReactNode => {
     // Closed by hand (Escape, a click elsewhere) stays closed until the caret
     // leaves the link and comes back.
     const [dismissed, setDismissed] = useState(false);

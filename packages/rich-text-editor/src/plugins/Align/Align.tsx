@@ -30,14 +30,12 @@ const ALIGNMENTS: { value: NonNullable<AlignAttribute['align']>; icon: FondueIco
 
 export const alignPlugin = (): RtePlugin => ({
     id: 'align',
-    schema: [
-        {
-            kind: 'attribute',
-            type: 'align',
-            toStyle: (value) => `text-align: ${value}`,
-            parseFromStyle: 'text-align',
+    blockAttributes: {
+        align: {
+            style: (value) => ({ 'text-align': value }),
+            parse: (element) => element.style.textAlign || null,
         },
-    ],
+    },
     toolbarItem: ({ api, selection }) => {
         // The block the selection is in carries the attribute this plugin
         // added, which the structural node type does not know about.

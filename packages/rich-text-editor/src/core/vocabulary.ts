@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createElement } from 'react';
-
 import { type RteDocumentOf } from './document';
-import { type BlockDefinition } from './plugin';
+import { type BlockDefinition, defineBlock } from './plugin';
 
 /**
  * The handful of names the editor itself depends on. Deliberately short: a
@@ -18,23 +16,20 @@ export const PARAGRAPH = 'paragraph';
  * The paragraph itself, registered ahead of every plugin's blocks so the
  * editor and the renderer treat it like any other block.
  */
-export const paragraphBlock: BlockDefinition = {
-    kind: 'block',
-    type: PARAGRAPH,
-    children: 'text',
-    toDom: () => ({ tag: 'p', children: true }),
-    renderComponent: ({ children }) => createElement('p', null, children),
-    parseRules: [{ tag: 'p' }],
-};
+export const paragraphBlock: BlockDefinition = defineBlock({
+    content: 'text',
+    toHtml: () => ({ tag: 'p', children: true }),
+    parse: [{ tag: 'p' }],
+});
 
 /** The document format's version, carried on every document. */
 export const DOCUMENT_VERSION = 1;
 
 /**
- * Stands in for "every list that is mounted" inside a block's `children.blocks`,
+ * Stands in for "every list that is mounted" inside a block's `content.blocks`,
  * so a list item can allow nesting without naming lists that may not exist yet.
  * The schema assembler expands it to every mounted block declared as a list
- * (`children: { items }`).
+ * (`content: { items }`).
  */
 export const ANY_LIST = '@anyList';
 

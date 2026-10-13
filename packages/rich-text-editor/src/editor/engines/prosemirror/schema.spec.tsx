@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, defineMark, type RtePlugin } from '#/core';
+import { buildPluginRegistry, defineBlock, defineMark, type RtePlugin } from '#/core';
 
 import { buildSchema as buildSchemaFromRegistry } from './schema';
 
@@ -16,11 +16,7 @@ const plugins: RtePlugin[] = [
         marks: {
             bold: defineMark({
                 toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [
-                    { tag: 'strong', value: () => ({}) },
-                    { tag: 'b', value: () => ({}) },
-                ],
-                renderComponent: ({ children }) => <strong>{children}</strong>,
+                parse: [{ tag: 'strong' }, { tag: 'b' }],
             }),
         },
     },
@@ -30,27 +26,23 @@ const plugins: RtePlugin[] = [
             link: defineMark<{ href: string }>({
                 toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
                 parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
-                renderComponent: ({ children, value }) => <a href={value.href}>{children}</a>,
             }),
         },
     },
     {
         id: 'quote',
-        schema: [
-            {
-                kind: 'block',
-                type: 'quote',
-                children: 'text',
-                toDom: () => ({ tag: 'blockquote', children: true }),
-                renderComponent: ({ children }) => <blockquote>{children}</blockquote>,
-                parseRules: [{ tag: 'blockquote' }],
-            },
-        ],
+        blocks: {
+            quote: defineBlock({
+                content: 'text',
+                toHtml: () => ({ tag: 'blockquote', children: true }),
+                parse: [{ tag: 'blockquote' }],
+            }),
+        },
     },
 ];
 
 describe('buildSchema', () => {
-    it('uses the declared parseRules', () => {
+    it('uses the declared parse rules', () => {
         const { schema } = buildSchema(plugins);
 
         expect(schema.marks.bold?.spec.parseDOM?.map((rule) => rule.tag)).toEqual(['strong', 'b']);
@@ -78,24 +70,18 @@ describe('buildSchema', () => {
         const { schema, itemTypeByList } = buildSchema([
             {
                 id: 'list',
-                schema: [
-                    {
-                        kind: 'block',
-                        type: 'bulletList',
-                        children: { items: 'listItem' },
-                        toDom: () => ({ tag: 'ul', children: true }),
-                        renderComponent: ({ children }) => <ul>{children}</ul>,
-                        parseRules: [{ tag: 'ul' }],
-                    },
-                    {
-                        kind: 'block',
-                        type: 'listItem',
-                        children: { blocks: ['paragraph'] },
-                        toDom: () => ({ tag: 'li', children: true }),
-                        renderComponent: ({ children }) => <li>{children}</li>,
-                        parseRules: [{ tag: 'li' }],
-                    },
-                ],
+                blocks: {
+                    bulletList: defineBlock({
+                        content: { items: 'listItem' },
+                        toHtml: () => ({ tag: 'ul', children: true }),
+                        parse: [{ tag: 'ul' }],
+                    }),
+                    listItem: defineBlock({
+                        content: { blocks: ['paragraph'] },
+                        toHtml: () => ({ tag: 'li', children: true }),
+                        parse: [{ tag: 'li' }],
+                    }),
+                },
             },
         ]);
 

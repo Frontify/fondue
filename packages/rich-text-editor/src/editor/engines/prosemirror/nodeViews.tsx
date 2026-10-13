@@ -10,25 +10,18 @@ import {
     type NodeViewConstructor,
     type ViewMutationRecord,
 } from 'prosemirror-view';
-import { type ReactNode, useCallback } from 'react';
+import { type ComponentType, type ReactNode, useCallback } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
-import {
-    type BlockDefinition,
-    type EditorControlApi,
-    type InlineEditorProps,
-    type MarkDefinition,
-    type PluginRegistry,
-    type RteBlockNode,
-} from '#/core';
+import { type BlockDefinition, blockValueOf, type EditorControlApi, type EditProps, type PluginRegistry } from '#/core';
 
 import { type OpenEditors } from './controlApi';
-import { definedAttrs, markValueOf } from './documentConversion';
+import { markValueOf } from './documentConversion';
 
 /**
- * The React-hosted views: the editing UI a plugin draws with an
- * `editorComponent`. Everything without one is drawn by the engine itself,
- * from `toDom` / `toHtml`, synchronously and without React.
+ * The React-hosted views: the editing UI a plugin draws with `render.edit`.
+ * Everything without one is drawn by the engine itself, from `toHtml`,
+ * synchronously and without React.
  *
  * Every view here follows the same two rules.
  *
@@ -100,8 +93,8 @@ const unmountLater = (root: Root): void => {
 
 /**
  * The outer element the engine's own `toDOM` draws for a node — the block's
- * `toDom` with what the schema adds to it (injected styles). The node view
- * takes its tag and attributes; the inner chrome is the component's.
+ * `toHtml` with what every text block carries (alignment) applied. The node
+ * view takes its tag and attributes; what is inside is the component's.
  */
 const outerElementOf = (node: PmNode): { tag: string; attrs: Record<string, string> } => {
     const output: DOMOutputSpec | undefined = node.type.spec.toDOM?.(node);
@@ -122,23 +115,26 @@ const outerElementOf = (node: PmNode): { tag: string; attrs: Record<string, stri
 
 const classTokens = (value: string | undefined): string[] => (value ?? '').split(/\s+/).filter(Boolean);
 
+type BlockEditComponent = ComponentType<EditProps<Record<string, unknown>>>;
+
 /**
- * Hosts a block's `editorComponent` as a NodeView. The outer element comes from
- * `toDom`; React draws the inner chrome, and the block's children sit in the
+ * Hosts a block's `render.edit` as a NodeView. The outer element comes from
+ * `toHtml`; React draws what is inside, and the block's content sits in the
  * content hole the component places via `{children}`.
  *
  * The view keeps track of the attributes it set on the outer element itself,
  * because it is not the only one setting them: the engine puts its selection
  * class and decoration attributes there too. An update removes what the new
- * `toDom` no longer says and leaves the rest alone.
+ * `toHtml` no longer says and leaves the rest alone.
  */
-class ReactBlockView implements NodeView {
+class ReactBlockView implements NodeView, Repaintable {
     dom: HTMLElement;
     contentDOM: HTMLElement | undefined;
     private readonly root: Root;
     private readonly tag: string;
     private node: PmNode;
     private ownAttrs: Record<string, string> = {};
+    private painted: Painted | null = null;
     private destroyed = false;
 
     constructor(
@@ -146,6 +142,10 @@ class ReactBlockView implements NodeView {
         private readonly view: EditorView,
         private readonly getPos: () => number | undefined,
         private readonly definition: BlockDefinition,
+        private readonly Component: BlockEditComponent,
+        private readonly getApi: () => EditorControlApi,
+        private readonly live: Set<Repaintable>,
+        private readonly openEditors: OpenEditors,
     ) {
         this.node = node;
         const { tag, attrs } = outerElementOf(node);
@@ -155,13 +155,14 @@ class ReactBlockView implements NodeView {
 
         const container = reactContainer();
         this.dom.append(container);
-        if (definition.children !== undefined) {
+        if (definition.content !== undefined) {
             // Inline content in a span, blocks in a div; neither adds a box.
-            this.contentDOM = document.createElement(definition.children === 'text' ? 'span' : 'div');
+            this.contentDOM = document.createElement(definition.content === 'text' ? 'span' : 'div');
             this.contentDOM.style.display = 'contents';
             this.dom.append(this.contentDOM);
         }
         this.root = createRoot(container);
+        live.add(this);
         this.paint();
     }
 
@@ -183,28 +184,73 @@ class ReactBlockView implements NodeView {
         this.ownAttrs = next;
     }
 
-    private readonly updateAttributes = (attrs: Record<string, unknown>): void => {
-        if (this.destroyed || this.view.isDestroyed) {
-            return;
+    /** Where the node is, while the view still stands for one. */
+    private pos(): number | undefined {
+        return this.destroyed || this.view.isDestroyed ? undefined : this.getPos();
+    }
+
+    private readonly setValue = (value: Record<string, unknown>): void => {
+        const pos = this.pos();
+        if (pos !== undefined) {
+            this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { ...this.node.attrs, ...value }));
         }
-        const pos = this.getPos();
-        if (pos === undefined) {
-            return;
-        }
-        this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { ...this.node.attrs, ...attrs }));
     };
 
-    private paint(): void {
-        const Component = this.definition.editorComponent;
-        if (!Component || this.destroyed) {
-            return;
+    private readonly remove = (): void => {
+        const pos = this.pos();
+        if (pos !== undefined) {
+            this.view.dispatch(this.view.state.tr.delete(pos, pos + this.node.nodeSize));
         }
-        const node = { type: this.node.type.name, ...definedAttrs(this.node.attrs) } as unknown as RteBlockNode;
+    };
+
+    private readonly setOpen = (open: boolean): void => {
+        if (open) {
+            this.getApi().editors.open(this.node.type.name);
+        } else {
+            this.getApi().editors.close();
+        }
+    };
+
+    paint(): { type: string; focused: boolean } {
+        const type = this.node.type.name;
+        // Not `view.isDestroyed`: that is also true while the engine is still
+        // building its first DOM, which is when this view first paints.
+        if (this.destroyed) {
+            return { type, focused: false };
+        }
+        // Not placed yet while the engine is still building the view: it
+        // paints unfocused now and again once the state moves.
+        const pos = this.getPos();
+        const { from, to, empty } = this.view.state.selection;
+        const end = pos === undefined ? undefined : pos + this.node.nodeSize;
+        const focused = pos !== undefined && end !== undefined && from >= pos && to <= end;
+        const next: Painted = {
+            focused,
+            selected: pos !== undefined && end !== undefined && !empty && from <= pos && to >= end,
+            open: focused && this.openEditors.type === type,
+            // The engine's attributes object is replaced whenever one changes.
+            value: this.node.attrs,
+        };
+        if (samePaint(this.painted, next)) {
+            return { type, focused };
+        }
+        this.painted = next;
+        const { Component } = this;
         this.root.render(
-            <Component node={node} updateAttributes={this.updateAttributes}>
+            <Component
+                value={blockValueOf(this.definition, this.node.attrs)}
+                isFocused={next.focused}
+                isSelected={next.selected}
+                isOpen={next.open}
+                setOpen={this.setOpen}
+                api={this.getApi()}
+                setValue={this.setValue}
+                remove={this.remove}
+            >
                 {this.contentDOM ? <ContentHole element={this.contentDOM} home={this.dom} /> : undefined}
             </Component>,
         );
+        return { type, focused };
     }
 
     update(node: PmNode): boolean {
@@ -227,6 +273,7 @@ class ReactBlockView implements NodeView {
             return;
         }
         this.destroyed = true;
+        this.live.delete(this);
         unmountLater(this.root);
     }
 
@@ -262,7 +309,7 @@ const samePaint = (a: Painted | null, b: Painted): boolean =>
     a !== null && a.focused === b.focused && a.selected === b.selected && a.open === b.open && a.value === b.value;
 
 /**
- * Hosts an inline element's `editorComponent`: the editor renders it with
+ * Hosts an inline element's `render.edit`: the editor renders it with
  * generic props and does nothing else. Inline elements without one are drawn
  * from `toHtml` and need no view. Events from
  * inside it belong to it — an input in there types into the input, not the
@@ -282,7 +329,7 @@ export class ReactInlineView implements NodeView {
         node: PmNode,
         private readonly view: EditorView,
         private readonly getPos: () => number | undefined,
-        private readonly Component: (props: InlineEditorProps<Record<string, unknown>>) => ReactNode,
+        private readonly Component: ComponentType<EditProps<Record<string, unknown>, Record<string, unknown> | null>>,
         private readonly getApi: () => EditorControlApi,
         private readonly live: Set<Repaintable>,
         private readonly openEditors: OpenEditors,
@@ -417,10 +464,10 @@ export class ReactInlineView implements NodeView {
     }
 }
 
-type MarkEditorComponent = NonNullable<MarkDefinition['editorComponent']>;
+type MarkEditorComponent = ComponentType<EditProps<Record<string, unknown>>>;
 
 /**
- * Hosts a mark's `editorComponent` around the marked text. The text stays
+ * Hosts a mark's `render.edit` around the marked text. The text stays
  * editable in a content hole the component places via `{children}`.
  *
  * The engine builds a new view whenever the mark's value changes, so the
@@ -470,12 +517,6 @@ export class ReactMarkView implements MarkView {
         }
     }
 
-    private isFocused(): boolean {
-        const range = this.range();
-        const { from, to } = this.view.state.selection;
-        return range !== null && from >= range.from && to <= range.to;
-    }
-
     private readonly setOpen = (open: boolean): void => {
         if (open) {
             this.getApi().editors.open(this.mark.type.name);
@@ -508,10 +549,12 @@ export class ReactMarkView implements MarkView {
         if (this.destroyed) {
             return { type, focused: false };
         }
-        const focused = this.isFocused();
+        const range = this.range();
+        const { from, to, empty } = this.view.state.selection;
+        const focused = range !== null && from >= range.from && to <= range.to;
         const next: Painted = {
             focused,
-            selected: false,
+            selected: range !== null && !empty && from <= range.from && to >= range.to,
             open: focused && this.openEditors.type === type,
             value: this.value,
         };
@@ -524,6 +567,7 @@ export class ReactMarkView implements MarkView {
             <Component
                 value={this.value}
                 isFocused={next.focused}
+                isSelected={next.selected}
                 isOpen={next.open}
                 setOpen={this.setOpen}
                 api={this.getApi()}
@@ -558,7 +602,7 @@ export class ReactMarkView implements MarkView {
 /**
  * Only marks with editing UI get a view. Every other mark is drawn by the
  * engine from its `toHtml` — synchronously, with no React root per run of
- * text — which is the same element its `renderComponent` draws readonly.
+ * text — the same markup the readonly view and export use.
  */
 export const createMarkViews = (
     registry: PluginRegistry,
@@ -567,9 +611,10 @@ export const createMarkViews = (
     openEditors: OpenEditors,
 ): Record<string, MarkViewConstructor> => {
     const views: Record<string, MarkViewConstructor> = {};
-    for (const [type, { editorComponent }] of registry.marks) {
-        if (editorComponent) {
-            views[type] = (mark, view) => new ReactMarkView(mark, view, editorComponent, getApi, live, openEditors);
+    for (const [type, { render }] of registry.marks) {
+        const edit = render?.edit;
+        if (edit) {
+            views[type] = (mark, view) => new ReactMarkView(mark, view, edit, getApi, live, openEditors);
         }
     }
     return views;
@@ -583,14 +628,17 @@ export const createNodeViews = (
 ): Record<string, NodeViewConstructor> => {
     const views: Record<string, NodeViewConstructor> = {};
     for (const [type, definition] of registry.blocks) {
-        if (definition.editorComponent) {
-            views[type] = (node, view, getPos) => new ReactBlockView(node, view, getPos, definition);
+        const edit = definition.render?.edit;
+        if (edit) {
+            views[type] = (node, view, getPos) =>
+                new ReactBlockView(node, view, getPos, definition, edit, getApi, liveInlines, openEditors);
         }
     }
-    for (const [type, { editorComponent }] of registry.inlines) {
-        if (editorComponent) {
+    for (const [type, { render }] of registry.inlines) {
+        const edit = render?.edit;
+        if (edit) {
             views[type] = (node, view, getPos) =>
-                new ReactInlineView(node, view, getPos, editorComponent, getApi, liveInlines, openEditors);
+                new ReactInlineView(node, view, getPos, edit, getApi, liveInlines, openEditors);
         }
     }
     return views;

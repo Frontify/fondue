@@ -19,7 +19,8 @@ const NO_ENGINE = {
 
 const NO_SERVER_RENDER = {
     group: ['react-dom/server'],
-    message: 'Only src/renderer/serializeToHtml.ts renders React outside the tree.',
+    message:
+        'The package never renders React to a string: serializeToHtml writes HTML itself. Only the server-rendering specs, standing in for a host, use react-dom/server.',
 };
 
 const CORE_ONLY = {
@@ -96,12 +97,7 @@ export default defineConfig({
         },
         {
             files: ['src/**/*.{ts,tsx}'],
-            excludeFiles: [
-                'src/renderer/serializeToHtml.ts',
-                'src/serverRendering*.spec.tsx',
-                'src/serializeToHtml*.spec.tsx',
-                'src/editor/engines/prosemirror/**/*.{ts,tsx}',
-            ],
+            excludeFiles: ['src/serverRendering*.spec.tsx', 'src/editor/engines/prosemirror/**/*.{ts,tsx}'],
             rules: {
                 'no-restricted-imports': ['error', { patterns: [NO_ENGINE, NO_SERVER_RENDER] }],
             },
@@ -141,6 +137,7 @@ export default defineConfig({
                     'error',
                     {
                         patterns: [
+                            NO_SERVER_RENDER,
                             {
                                 group: ['prosemirror-*'],
                                 message: 'The renderer never imports an engine.',
@@ -186,6 +183,7 @@ export default defineConfig({
                     'error',
                     {
                         patterns: [
+                            NO_SERVER_RENDER,
                             NO_ENGINE,
                             {
                                 group: ['#/editor/engines/**'],
@@ -208,6 +206,7 @@ export default defineConfig({
                     'error',
                     {
                         patterns: [
+                            NO_SERVER_RENDER,
                             {
                                 group: [
                                     '#/editor/RichTextEditor',
@@ -233,6 +232,7 @@ export default defineConfig({
                     'error',
                     {
                         patterns: [
+                            NO_SERVER_RENDER,
                             NO_ENGINE,
                             {
                                 group: [

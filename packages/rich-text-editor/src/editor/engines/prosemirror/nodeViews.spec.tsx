@@ -6,15 +6,7 @@ import { act, useLayoutEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-    ANY_LIST,
-    defineInline,
-    defineMark,
-    PARAGRAPH,
-    type RteBlockNode,
-    type RteDocumentOf,
-    type RtePlugin,
-} from '#/core';
+import { ANY_LIST, defineBlock, defineInline, defineMark, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '#/core';
 
 import { mountDocument } from './editing';
 
@@ -38,53 +30,44 @@ declare global {
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-type CheckItem = { type: 'checkItem'; checked?: boolean; children: RteBlockNode[] };
-
 /** A mirror of the shipped check list: the engine adapter may not import plugins. */
 const checkList: RtePlugin = {
     id: 'check-list',
-    schema: [
-        {
-            kind: 'block',
-            type: 'checkList',
-            children: { items: 'checkItem' },
-            toDom: () => ({ tag: 'ul', attrs: { 'data-check-list': '' }, children: true }),
-            renderComponent: ({ children }) => <ul data-check-list="">{children}</ul>,
-            parseRules: [{ tag: 'ul[data-check-list]' }],
-        },
-        {
-            kind: 'block',
-            type: 'checkItem',
-            children: { blocks: [PARAGRAPH, ANY_LIST] },
-            attributes: { checked: { default: false } },
-            toDom: (attrs) => ({
+    blocks: {
+        checkList: defineBlock({
+            content: { items: 'checkItem' },
+            toHtml: () => ({ tag: 'ul', attrs: { 'data-check-list': '' }, children: true }),
+            parse: [{ tag: 'ul[data-check-list]' }],
+        }),
+        checkItem: defineBlock<{ checked: boolean }>({
+            content: { blocks: [PARAGRAPH, ANY_LIST] },
+            defaults: { checked: false },
+            toHtml: ({ checked }) => ({
                 tag: 'li',
                 attrs: {
-                    'data-checked': String(attrs.checked === true),
-                    class: attrs.checked === true ? 'item done' : 'item',
+                    'data-checked': String(checked),
+                    class: checked ? 'item done' : 'item',
                     // Only there while checked, to prove it goes away again.
-                    ...(attrs.checked === true ? { 'data-done': '' } : {}),
+                    ...(checked ? { 'data-done': '' } : {}),
                 },
                 children: true,
             }),
-            renderComponent: ({ children }) => <li>{children}</li>,
-            editorComponent: ({ node, children, updateAttributes }) => {
-                const checked = (node as CheckItem).checked === true;
-                return (
+            parse: [{ tag: 'li[data-checked]' }],
+            render: {
+                edit: ({ value, setValue, children }) => (
                     <>
                         <input
                             type="checkbox"
-                            checked={checked}
+                            checked={value.checked}
                             contentEditable={false}
-                            onChange={() => updateAttributes({ checked: !checked })}
+                            onChange={() => setValue({ checked: !value.checked })}
                         />
                         <span className="label">{children}</span>
                     </>
-                );
+                ),
             },
-            parseRules: [{ tag: 'li[data-checked]' }],
-        },
-    ],
+        }),
+    },
 };
 
 const bold: RtePlugin = {
@@ -92,8 +75,7 @@ const bold: RtePlugin = {
     marks: {
         bold: defineMark({
             toHtml: () => ({ tag: 'strong', children: true }),
-            parse: [{ tag: 'strong', value: () => ({}) }],
-            renderComponent: ({ children }) => <strong>{children}</strong>,
+            parse: [{ tag: 'strong' }],
         }),
     },
 };
@@ -105,10 +87,11 @@ const tag: RtePlugin = {
         tag: defineInline<{ label: string }>({
             toHtml: ({ label }) => ({ tag: 'span', attrs: { 'data-tag': '' }, children: label }),
             parse: [{ tag: 'span[data-tag]', value: (element) => ({ label: element.textContent ?? '' }) }],
-            renderComponent: ({ value }) => <span>{value.label}</span>,
-            editorComponent: ({ value, isFocused }) => {
-                tagRenders();
-                return <span data-focused={String(isFocused)}>{value?.label}</span>;
+            render: {
+                edit: ({ value, isFocused }) => {
+                    tagRenders();
+                    return <span data-focused={String(isFocused)}>{value?.label}</span>;
+                },
             },
         }),
     },
@@ -242,7 +225,7 @@ describe('a block with editing UI', () => {
         expect(selection?.anchorOffset).toBe(2);
     });
 
-    it('updates its element and drops the attributes the new `toDom` does not have', () => {
+    it('updates its element and drops the attributes the new `toHtml` does not have', () => {
         const { container } = mount(checkListDoc(false));
         const item = container.querySelector('li');
         const checkbox = (): HTMLInputElement | null | undefined => item?.querySelector('input');
@@ -304,7 +287,7 @@ describe('a block with editing UI', () => {
 
         live.destroy();
         // The component is still mounted until the microtask after the
-        // engine is done, so its checkbox still calls `updateAttributes`.
+        // engine is done, so its checkbox still calls `setValue`.
         expect(() => checkbox?.click()).not.toThrow();
         await act(async () => {
             await Promise.resolve();

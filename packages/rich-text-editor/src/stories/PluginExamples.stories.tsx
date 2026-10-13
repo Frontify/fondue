@@ -21,6 +21,7 @@ import {
     codePlugin,
     columnBreakPlugin,
     defaultPlugins,
+    defineBlock,
     defineInline,
     defineMark,
     fontColorPlugin,
@@ -823,13 +824,14 @@ const highlightPlugin = (): RtePlugin => ({
     id: 'highlight',
     marks: {
         highlight: defineMark({
-            toHtml: () => ({ tag: 'mark', children: true }),
-            parse: [{ tag: 'mark', value: () => ({}) }],
-            renderComponent: ({ children }) => (
-                <mark className="tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container">
-                    {children}
-                </mark>
-            ),
+            toHtml: () => ({
+                tag: 'mark',
+                attrs: {
+                    class: 'tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container',
+                },
+                children: true,
+            }),
+            parse: [{ tag: 'mark' }],
         }),
     },
     toolbarItem: ({ api, selection }) => {
@@ -888,20 +890,19 @@ type CalloutBlock = {
 
 const calloutPlugin = (): RtePlugin => ({
     id: 'callout',
-    schema: [
-        {
-            kind: 'block',
-            type: 'callout',
-            children: 'text',
-            toDom: () => ({ tag: 'aside', children: true }),
-            renderComponent: ({ children }) => (
-                <aside className="tw-m-0 tw-rounded-medium tw-border tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2">
-                    {children}
-                </aside>
-            ),
-            parseRules: [{ tag: 'aside' }],
-        },
-    ],
+    blocks: {
+        callout: defineBlock({
+            content: 'text',
+            toHtml: () => ({
+                tag: 'aside',
+                attrs: {
+                    class: 'tw-m-0 tw-rounded-medium tw-border tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2',
+                },
+                children: true,
+            }),
+            parse: [{ tag: 'aside' }],
+        }),
+    },
     toolbarItem: ({ api, selection }) => {
         const active = selection.block?.type === 'callout';
         return (
@@ -965,7 +966,7 @@ const embedClasses =
     'tw-rounded-small tw-bg-container-highlight tw-px-1 tw-font-medium tw-text-container-highlight-on-highlight-container';
 
 /**
- * A consumer-written picker, showing what an inline's `editorComponent` gives
+ * A consumer-written picker, showing what an inline's `render.edit` gives
  * an external plugin: the node is inserted without a value, and the component
  * completes it with `setValue` — or takes it away with `remove`.
  */
@@ -1000,29 +1001,32 @@ const embedPlugin = (): RtePlugin => ({
     id: 'embed',
     inlines: {
         embed: defineInline<EmbedValue>({
-            toHtml: ({ provider }) => ({ tag: 'span', attrs: { 'data-embed': provider }, children: `▤ ${provider}` }),
+            toHtml: ({ provider }) => ({
+                tag: 'span',
+                attrs: { 'data-embed': provider, class: embedClasses },
+                children: `▤ ${provider}`,
+            }),
             parse: [{ tag: 'span[data-embed]', value: (element) => ({ provider: element.dataset.embed ?? '' }) }],
-            renderComponent: ({ value }) => (
-                <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
-            ),
-            editorComponent: ({ value, setValue, remove, api }) =>
-                value === null ? (
-                    <EmbedDraft
-                        onChoose={(provider) => {
-                            setValue({ provider });
-                            api.focus();
-                        }}
-                        onRemove={() => {
-                            remove();
-                            api.focus();
-                        }}
-                    />
-                ) : (
-                    <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
-                ),
+            render: {
+                edit: ({ value, setValue, remove, api }) =>
+                    value === null ? (
+                        <EmbedDraft
+                            onChoose={(provider) => {
+                                setValue({ provider });
+                                api.focus();
+                            }}
+                            onRemove={() => {
+                                remove();
+                                api.focus();
+                            }}
+                        />
+                    ) : (
+                        <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
+                    ),
+            },
         }),
     },
-    // An empty embed, which its editorComponent then takes over.
+    // An empty embed, which its `render.edit` then takes over.
     hotkeys: { '/': (api) => api.insert('embed') },
 });
 

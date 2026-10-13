@@ -224,7 +224,7 @@ const createMarkApi = (view: EditorView, schema: Schema): EditorControlApi['mark
  * not here: features read that off the selection snapshot.
  */
 const createBlockApi = (view: EditorView, bundle: SchemaBundle): EditorControlApi['blocks'] => {
-    const { schema, attributes } = bundle;
+    const { schema, blockAttributes } = bundle;
 
     /** Every text block the selection touches, with the given attributes applied. */
     const applyToTextBlocks = (attrs: Record<string, unknown>): void => {
@@ -263,7 +263,7 @@ const createBlockApi = (view: EditorView, bundle: SchemaBundle): EditorControlAp
             // every text block are the ones reset, so nothing here names
             // `align`.
             applyToTextBlocks(
-                Object.fromEntries(attributes.map((attribute) => [attribute.type, attribute.default ?? null])),
+                Object.fromEntries([...blockAttributes].map(([name, attribute]) => [name, attribute.default ?? null])),
             );
         },
     };

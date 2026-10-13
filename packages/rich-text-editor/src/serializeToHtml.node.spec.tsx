@@ -5,12 +5,12 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defineMark, PARAGRAPH, type RteDocumentOf, type RtePlugin } from './core';
+import { defineBlock, defineMark, PARAGRAPH, type RteDocumentOf, type RtePlugin } from './core';
 import { serializeToHtml } from './renderer/serializeToHtml';
 
 /**
  * Serializing where an app actually does it: on a server, with no page. The
- * renderer walks JSON through `renderComponent` — no engine, no `document`.
+ * serializer writes each node's `toHtml` as a string — no engine, no React, no `document`.
  */
 
 const features: RtePlugin[] = [
@@ -19,23 +19,19 @@ const features: RtePlugin[] = [
         marks: {
             bold: defineMark({
                 toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong', value: () => ({}) }],
-                renderComponent: ({ children }) => <strong>{children}</strong>,
+                parse: [{ tag: 'strong' }],
             }),
         },
     },
     {
         id: 'heading',
-        schema: [
-            {
-                kind: 'block',
-                type: 'heading',
-                children: 'text',
-                toDom: () => ({ tag: 'h2', children: true }),
-                renderComponent: ({ children }) => <h2>{children}</h2>,
-                parseRules: [{ tag: 'h2' }],
-            },
-        ],
+        blocks: {
+            heading: defineBlock({
+                content: 'text',
+                toHtml: () => ({ tag: 'h2', children: true }),
+                parse: [{ tag: 'h2' }],
+            }),
+        },
     },
 ];
 

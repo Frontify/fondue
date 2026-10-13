@@ -98,7 +98,7 @@ export type EditorControlApi = {
         updateAttributes(attrs: Record<string, unknown>): void;
         /**
          * Put every attribute that a plugin adds to *all* text blocks
-         * (`kind: 'attribute'` — alignment) back to its default, across the
+         * (`blockAttributes` — alignment) back to its default, across the
          * selection. The block half of "reset formatting", without having to
          * know which plugins contributed what.
          */
@@ -146,7 +146,7 @@ export type EditorControlApi = {
      * the node of that type at the selection is open, and leaving it closes it.
      */
     editors: {
-        /** Open the `editorComponent` of the node of this type at the selection. */
+        /** Open the `render.edit` of the node of this type at the selection. */
         open(type: string): void;
         close(): void;
     };

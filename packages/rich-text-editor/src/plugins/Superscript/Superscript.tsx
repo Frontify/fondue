@@ -16,8 +16,7 @@ export const superscriptPlugin = (): RtePlugin => ({
     marks: {
         superscript: defineMark({
             toHtml: () => ({ tag: 'sup', children: true }),
-            parse: [{ tag: 'sup', value: () => ({}) }],
-            renderComponent: ({ children }) => <sup>{children}</sup>,
+            parse: [{ tag: 'sup' }],
         }),
     },
     toolbarItem: ({ isActive, toggle }) => (

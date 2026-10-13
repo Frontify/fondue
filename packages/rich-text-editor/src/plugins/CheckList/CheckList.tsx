@@ -2,7 +2,7 @@
 
 import { IconListCheck } from '@frontify/fondue-icons';
 
-import { ANY_LIST, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/core';
+import { ANY_LIST, defineBlock, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -10,8 +10,8 @@ import styles from './checkList.module.scss';
 
 /**
  * A to-do list: the same nesting shape as the other lists, with a `checked`
- * attribute per item. The renderer draws a static checkbox; the editor's
- * `editorComponent` makes it interactive via `updateAttributes`.
+ * attribute per item. `toHtml` draws a static checkbox; the editor's
+ * `render.edit` makes it interactive via `setValue`.
  */
 export type CheckItemBlock<TContent extends RteBlockNode = RteBlockNode> = {
     type: 'checkItem';
@@ -24,92 +24,45 @@ export type CheckListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     children: TItem[];
 };
 
-const checkItemAttrs = (checked: boolean): Record<string, string> => ({
-    'data-checked': String(checked),
-    class: styles.item ?? '',
-});
-
 export const checkListPlugin = (): RtePlugin => ({
     id: 'check-list',
-    schema: [
-        {
-            kind: 'block',
-            type: 'checkList',
-            children: { items: 'checkItem' },
-            toDom: () => ({
-                tag: 'ul',
-                attrs: { 'data-check-list': '', class: styles.checkList ?? '' },
-                children: true,
-            }),
-            renderComponent: ({ children }) => (
-                <ul data-check-list="" className={styles.checkList}>
-                    {children}
-                </ul>
-            ),
-            parseRules: [{ tag: 'ul[data-check-list]' }],
-        },
-        {
-            kind: 'block',
-            type: 'checkItem',
-            children: { blocks: [PARAGRAPH, ANY_LIST] },
-            attributes: { checked: { default: false } },
-            toDom: (attrs) => ({
+    blocks: {
+        checkList: defineBlock({
+            content: { items: 'checkItem' },
+            toHtml: () => ({ tag: 'ul', attrs: { 'data-check-list': '', class: styles.checkList }, children: true }),
+            parse: [{ tag: 'ul[data-check-list]' }],
+        }),
+        checkItem: defineBlock<{ checked: boolean }>({
+            content: { blocks: [PARAGRAPH, ANY_LIST] },
+            defaults: { checked: false },
+            toHtml: ({ checked }) => ({
                 tag: 'li',
-                attrs: checkItemAttrs(attrs.checked === true),
+                attrs: { 'data-checked': String(checked), class: styles.item },
                 children: [
-                    {
-                        tag: 'input',
-                        attrs: {
-                            type: 'checkbox',
-                            ...(attrs.checked === true ? { checked: '' } : {}),
-                            class: styles.checkbox ?? '',
-                        },
-                    },
-                    { tag: 'span', attrs: { class: styles.label ?? '' }, children: true },
+                    { tag: 'input', attrs: { type: 'checkbox', checked, disabled: true, class: styles.checkbox } },
+                    { tag: 'span', attrs: { class: styles.label }, children: true },
                 ],
             }),
-            renderComponent: ({ node, children }) => {
-                const item = node as CheckItemBlock;
-                const checked = item.checked === true;
-                return (
-                    <li data-checked={String(checked)} className={styles.item}>
-                        <input
-                            type="checkbox"
-                            checked={checked}
-                            readOnly
-                            contentEditable={false}
-                            className={styles.checkbox}
-                        />
-                        <span className={styles.label}>{children}</span>
-                    </li>
-                );
-            },
-            // Inner chrome only: the NodeView owns the `<li>` from `toDom`.
-            editorComponent: ({ node, children, updateAttributes }) => {
-                const item = node as CheckItemBlock;
-                const checked = item.checked === true;
-                return (
+            // Read from the attribute value rather than off the checkbox, so
+            // it comes back as a boolean rather than a string.
+            parse: [{ tag: 'li[data-checked]', value: (element) => ({ checked: element.dataset.checked === 'true' }) }],
+            render: {
+                // Only what is inside: the item keeps the `<li>` from `toHtml`.
+                edit: ({ value, setValue, children }) => (
                     <>
                         <input
                             type="checkbox"
-                            checked={checked}
+                            checked={value.checked}
                             contentEditable={false}
-                            onChange={() => updateAttributes({ checked: !checked })}
+                            onChange={() => setValue({ checked: !value.checked })}
                             className={styles.checkbox}
                         />
                         <span className={styles.label}>{children}</span>
                     </>
-                );
+                ),
             },
-            // The state is read from the attribute value rather than off
-            // the element, so it comes back as a boolean rather than a
-            // string.
-            parseRules: [
-                { tag: 'li[data-checked=true]', attributes: { checked: true } },
-                { tag: 'li[data-checked=false]', attributes: { checked: false } },
-            ],
-        },
-    ],
+        }),
+    },
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton active={isActive} title="To-do list" onClick={() => toggle()}>
             <IconListCheck size={16} />

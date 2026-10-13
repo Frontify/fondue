@@ -21,7 +21,7 @@ const VIEWPORT_MARGIN = 8;
  * name in the dropdown) and its height jumps the moment the controls wrap.
  *
  * The editor's OWN chrome, positioned from `handle.selectionRect()`. Plugin UI
- * anchors itself, from its own `editorComponent`.
+ * anchors itself, from its own `render.edit`.
  *
  * This is the component that follows the editor state, so a moving caret
  * re-renders the bar and its position and nothing around it. Mount it only

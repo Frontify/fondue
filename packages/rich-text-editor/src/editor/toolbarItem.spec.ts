@@ -3,6 +3,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+    defineBlock,
     defineMark,
     type EditorControlApi,
     type RteBlockNode,
@@ -56,65 +57,41 @@ const fakeApi = (
     return api;
 };
 
-const renderNothing = () => null;
-
 const markPlugin: RtePlugin = {
     id: 'link',
     marks: {
         link: defineMark<{ href: string }>({
             toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
             parse: [],
-            renderComponent: renderNothing,
         }),
     },
 };
 
 const listPlugin: RtePlugin = {
     id: 'bullets',
-    schema: [
-        {
-            kind: 'block',
-            type: 'bulletList',
-            children: { items: 'listItem' },
-            toDom: () => ({ tag: 'ul' }),
-            renderComponent: renderNothing,
-            parseRules: [],
-        },
-        {
-            kind: 'block',
-            type: 'listItem',
-            children: { blocks: ['paragraph'] },
-            toDom: () => ({ tag: 'li' }),
-            renderComponent: renderNothing,
-            parseRules: [],
-        },
-    ],
+    blocks: {
+        bulletList: defineBlock({ content: { items: 'listItem' }, toHtml: () => ({ tag: 'ul' }), parse: [] }),
+        listItem: defineBlock({ content: { blocks: ['paragraph'] }, toHtml: () => ({ tag: 'li' }), parse: [] }),
+    },
 };
 
 const textBlockPlugin: RtePlugin = {
     id: 'quote',
-    schema: [
-        {
-            kind: 'block',
-            type: 'quote',
-            children: 'text',
-            toDom: () => ({ tag: 'blockquote' }),
-            renderComponent: renderNothing,
-            parseRules: [],
-        },
-    ],
+    blocks: {
+        quote: defineBlock({ content: 'text', toHtml: () => ({ tag: 'blockquote' }), parse: [] }),
+    },
 };
 
 const voidBlockPlugin: RtePlugin = {
     id: 'image',
-    schema: [
-        { kind: 'block', type: 'image', toDom: () => ({ tag: 'img' }), renderComponent: renderNothing, parseRules: [] },
-    ],
+    blocks: {
+        image: defineBlock({ toHtml: () => ({ tag: 'img' }), parse: [] }),
+    },
 };
 
 const attributePlugin: RtePlugin = {
     id: 'align',
-    schema: [{ kind: 'attribute', type: 'align', toStyle: (value) => `text-align: ${value}` }],
+    blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } },
 };
 
 const LINK = { href: 'https://example.com' };

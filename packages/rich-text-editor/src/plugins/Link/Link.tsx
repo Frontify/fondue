@@ -18,7 +18,7 @@ const newTabAttrs = (link: LinkValue): Record<string, string> =>
 /**
  * A link is a mark: the text stays text, and the target rides along on it.
  *
- * In the editor, `editorComponent` draws the anchor around the text and the
+ * In the editor, `render.edit` draws the anchor around the text and the
  * flyout that hangs off it while the caret is inside — showing the target,
  * editing it, removing the link. The toolbar button (`toolbarItem`) is how a
  * link is made.
@@ -35,10 +35,10 @@ export const linkPlugin = (): RtePlugin => ({
             // Typing at the end of a link does not extend it.
             inclusive: false,
 
-            /** Portable markup: what copying out of the editor puts on the clipboard. */
+            /** The link everywhere but while editing: readonly, export, copy. */
             toHtml: (link) => ({
                 tag: 'a',
-                attrs: { href: link.href, class: styles.link ?? '', ...newTabAttrs(link) },
+                attrs: { href: link.href, class: styles.link, ...newTabAttrs(link) },
                 children: true,
             }),
 
@@ -52,14 +52,7 @@ export const linkPlugin = (): RtePlugin => ({
                 },
             ],
 
-            /** Readonly display. */
-            renderComponent: ({ value, children }) => (
-                <a href={value.href} className={styles.link} {...newTabAttrs(value)}>
-                    {children}
-                </a>
-            ),
-
-            editorComponent: (props) => <LinkEditor {...props} />,
+            render: { edit: LinkEditor },
         }),
     },
     toolbarItem: ({ api, selectedNode, ...rest }) => (

@@ -9,7 +9,7 @@ import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 
 /**
  * The toolbar's way in. It has no UI of its own: it hands over to the link's
- * `editorComponent`, opening its form — on the link the selection is in, or on
+ * `render.edit`, opening its form — on the link the selection is in, or on
  * a new link made out of the selected text.
  */
 export const LinkToolbarButton = ({ selectedNode, selection, toggle, openEditor }: ToolbarItemProps): ReactNode => {

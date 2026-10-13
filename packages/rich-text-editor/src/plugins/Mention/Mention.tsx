@@ -32,7 +32,7 @@ export const filterByName =
  *
  * The editor does no mention-specific work. Typing the trigger inserts an empty
  * mention through an ordinary hotkey, and from then on the plugin's
- * `editorComponent` draws everything — the query input, the flyout, the list —
+ * `render.edit` draws everything — the query input, the flyout, the list —
  * from the handful of props the editor gives every node.
  */
 export const mentionPlugin = ({ items, href, trigger = '@' }: MentionPluginOptions): RtePlugin => ({
@@ -67,45 +67,47 @@ export const mentionPlugin = ({ items, href, trigger = '@' }: MentionPluginOptio
                 },
             ],
 
-            /** Readonly display. */
-            renderComponent: ({ value }) => <MentionLink value={value} href={href(value)} trigger={trigger} />,
+            render: {
+                /** Readonly: the link with the person's full name in a Tooltip. */
+                component: ({ value }) => <MentionLink value={value} href={href(value)} trigger={trigger} />,
 
-            /**
-             * Everything the editor shows for a mention. `value` is null until
-             * someone is chosen.
-             */
-            editorComponent: ({ value, setValue, isFocused, remove, api }) =>
-                value === null ? (
-                    <MentionDraft
-                        trigger={trigger}
-                        items={items}
-                        focused={isFocused}
-                        onChoose={(person) => {
-                            setValue({ id: person.id, username: person.username, name: person.name });
-                            // The caret was left after the mention when it was
-                            // inserted; going back to the editor puts it there,
-                            // and a space keeps typing outside the mention.
-                            api.focus();
-                            api.insertText(' ');
-                        }}
-                        onCancel={(text) => {
-                            // The mention makes way for what was typed into it.
-                            remove();
-                            api.focus();
-                            api.insertText(text);
-                        }}
-                        onRemove={() => {
-                            remove();
-                            api.focus();
-                        }}
-                    />
-                ) : (
-                    <MentionLink value={value} href={href(value)} trigger={trigger} />
-                ),
+                /**
+                 * Everything the editor shows for a mention. `value` is null
+                 * until someone is chosen.
+                 */
+                edit: ({ value, setValue, isFocused, remove, api }) =>
+                    value === null ? (
+                        <MentionDraft
+                            trigger={trigger}
+                            items={items}
+                            focused={isFocused}
+                            onChoose={(person) => {
+                                setValue({ id: person.id, username: person.username, name: person.name });
+                                // The caret was left after the mention when it was
+                                // inserted; going back to the editor puts it there,
+                                // and a space keeps typing outside the mention.
+                                api.focus();
+                                api.insertText(' ');
+                            }}
+                            onCancel={(text) => {
+                                // The mention makes way for what was typed into it.
+                                remove();
+                                api.focus();
+                                api.insertText(text);
+                            }}
+                            onRemove={() => {
+                                remove();
+                                api.focus();
+                            }}
+                        />
+                    ) : (
+                        <MentionLink value={value} href={href(value)} trigger={trigger} />
+                    ),
+            },
         }),
     },
     hotkeys: {
-        // An empty mention, which its editorComponent then takes over.
+        // An empty mention, which its `render.edit` then takes over.
         [trigger]: (api) => api.insert('mention'),
     },
 });

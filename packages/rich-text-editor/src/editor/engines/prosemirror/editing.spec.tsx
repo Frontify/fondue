@@ -18,8 +18,7 @@ const plugins: RtePlugin[] = [
         marks: {
             bold: defineMark({
                 toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong', value: () => ({}) }],
-                renderComponent: ({ children }) => <strong>{children}</strong>,
+                parse: [{ tag: 'strong' }],
             }),
         },
     },

@@ -16,8 +16,7 @@ export const underlinePlugin = (): RtePlugin => ({
     marks: {
         underline: defineMark({
             toHtml: () => ({ tag: 'u', children: true }),
-            parse: [{ tag: 'u', value: () => ({}) }],
-            renderComponent: ({ children }) => <u>{children}</u>,
+            parse: [{ tag: 'u' }],
         }),
     },
     toolbarItem: ({ isActive, toggle }) => (

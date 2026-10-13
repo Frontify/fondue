@@ -16,12 +16,7 @@ export const strikethroughPlugin = (): RtePlugin => ({
     marks: {
         strikethrough: defineMark({
             toHtml: () => ({ tag: 's', children: true }),
-            parse: [
-                { tag: 's', value: () => ({}) },
-                { tag: 'del', value: () => ({}) },
-                { tag: 'strike', value: () => ({}) },
-            ],
-            renderComponent: ({ children }) => <s>{children}</s>,
+            parse: [{ tag: 's' }, { tag: 'del' }, { tag: 'strike' }],
         }),
     },
     toolbarItem: ({ isActive, toggle }) => (

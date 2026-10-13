@@ -2,7 +2,7 @@
 
 import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
 
-import { type RteInlineNode, type RtePlugin } from '#/core';
+import { type RteInlineNode, defineBlock, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -16,16 +16,13 @@ export type QuoteBlock = {
 
 export const quotePlugin = (): RtePlugin => ({
     id: 'quote',
-    schema: [
-        {
-            kind: 'block',
-            type: 'quote',
-            children: 'text',
-            toDom: () => ({ tag: 'blockquote', attrs: { class: styles.quote ?? '' }, children: true }),
-            renderComponent: ({ children }) => <blockquote className={styles.quote}>{children}</blockquote>,
-            parseRules: [{ tag: 'blockquote' }],
-        },
-    ],
+    blocks: {
+        quote: defineBlock({
+            content: 'text',
+            toHtml: () => ({ tag: 'blockquote', attrs: { class: styles.quote }, children: true }),
+            parse: [{ tag: 'blockquote' }],
+        }),
+    },
     // Toggling a text block switches between it and the paragraph.
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton title="Quote" active={isActive} onClick={() => toggle()}>

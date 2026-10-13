@@ -13,7 +13,7 @@ import {
     unknownMarkType,
 } from '#/core';
 
-import { VALUE_ATTR } from './schema';
+import { VALUE_ATTR } from './valueAttr';
 
 /**
  * The document boundary: RTE format ↔ engine format. The only place either

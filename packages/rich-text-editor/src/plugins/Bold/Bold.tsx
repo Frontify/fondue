@@ -16,11 +16,7 @@ export const boldPlugin = (): RtePlugin => ({
     marks: {
         bold: defineMark({
             toHtml: () => ({ tag: 'strong', children: true }),
-            parse: [
-                { tag: 'strong', value: () => ({}) },
-                { tag: 'b', value: () => ({}) },
-            ],
-            renderComponent: ({ children }) => <strong>{children}</strong>,
+            parse: [{ tag: 'strong' }, { tag: 'b' }],
         }),
     },
     toolbarItem: ({ isActive, toggle }) => (

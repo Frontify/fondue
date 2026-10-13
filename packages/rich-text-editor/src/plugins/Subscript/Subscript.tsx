@@ -16,8 +16,7 @@ export const subscriptPlugin = (): RtePlugin => ({
     marks: {
         subscript: defineMark({
             toHtml: () => ({ tag: 'sub', children: true }),
-            parse: [{ tag: 'sub', value: () => ({}) }],
-            renderComponent: ({ children }) => <sub>{children}</sub>,
+            parse: [{ tag: 'sub' }],
         }),
     },
     toolbarItem: ({ isActive, toggle }) => (

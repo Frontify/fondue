@@ -26,18 +26,17 @@ const ownTypeOf = (plugin: RtePlugin): OwnType => {
     if (mark !== undefined) {
         return { kind: 'mark', type: mark };
     }
-    for (const entry of plugin.schema ?? []) {
-        if (entry.kind === 'block') {
-            if (entry.children === undefined) {
-                return { kind: 'voidBlock', type: entry.type };
-            }
-            if (entry.children !== 'text' && 'items' in entry.children) {
-                return { kind: 'list', type: entry.type };
-            }
-            return { kind: 'textBlock', type: entry.type };
-        }
+    const [type, block] = Object.entries(plugin.blocks ?? {})[0] ?? [];
+    if (type === undefined || block === undefined) {
+        return { kind: 'none' };
     }
-    return { kind: 'none' };
+    if (block.content === undefined) {
+        return { kind: 'voidBlock', type };
+    }
+    if (block.content !== 'text' && 'items' in block.content) {
+        return { kind: 'list', type };
+    }
+    return { kind: 'textBlock', type };
 };
 
 const attributesOf = (block: Record<string, unknown>): Record<string, unknown> =>

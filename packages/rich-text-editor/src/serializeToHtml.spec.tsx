@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import { defaultPlugins, type RteDocument, RichTextRenderer, serializeToHtml } from './index';
+import { defaultPlugins, type RteDocument, serializeToHtml } from './index';
 
 /**
- * The document as HTML, drawn by the same `renderComponent` walk as
- * `RichTextRenderer` — so export and on-screen readonly stay one path.
+ * The document as HTML: each node's `toHtml`, the same markup the readonly
+ * view draws by default (`htmlParity.spec.tsx` holds the two together).
  */
 
 const doc: RteDocument = {
@@ -33,15 +32,6 @@ const doc: RteDocument = {
 };
 
 describe('a document serialized to HTML', () => {
-    it('is what RichTextRenderer draws for it', () => {
-        expect(serializeToHtml(doc, { plugins: defaultPlugins })).toBe(
-            renderToStaticMarkup(<RichTextRenderer value={doc} plugins={defaultPlugins} />).replaceAll(
-                /^<div[^>]*>|<\/div>$/g,
-                '',
-            ),
-        );
-    });
-
     it('carries what the plugins drew, classes and all', () => {
         const html = serializeToHtml(doc, { plugins: defaultPlugins });
 

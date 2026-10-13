@@ -4,13 +4,15 @@ import { type CSSProperties, type ReactNode, useMemo } from 'react';
 
 import { buildPluginRegistry, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
 
-import { renderDocument } from './renderDocument';
+import { documentTree } from './documentTree';
+import { toReact } from './toReact';
 
 export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
     value: RteDocumentOf<TBlock>;
     /**
-     * The plugins whose `renderComponent` draws the document — the same list
-     * the editor is given. A document drawn without the plugin that wrote part
+     * The plugins whose markup draws the document — the same list the editor
+     * is given. Each node shows its `render.component` if it has one, its
+     * `toHtml` otherwise. A document drawn without the plugin that wrote part
      * of it throws, naming the missing schema `type`.
      */
     plugins?: readonly RtePlugin[];
@@ -18,8 +20,8 @@ export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlockNode> = 
 };
 
 /**
- * A stored document as React, with no editing engine. Used for readonly
- * display, SSR, and HTML export.
+ * A stored document as React, with no editing engine: readonly display, on
+ * the client or a server.
  */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
@@ -27,6 +29,7 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
     className,
 }: RichTextRendererProps<TBlock>): ReactNode => {
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
+    const drawn = useMemo(() => toReact(documentTree(value, registry, { useComponents: true })), [value, registry]);
     const contentClassName = [className, ...plugins.map((plugin) => plugin.contentClassName)].filter(Boolean).join(' ');
     const style = Object.fromEntries(
         plugins.flatMap((plugin) => Object.entries(plugin.contentProperties ?? {})),
@@ -34,7 +37,7 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
 
     return (
         <div className={contentClassName || undefined} style={Object.keys(style).length > 0 ? style : undefined}>
-            {renderDocument(value, registry)}
+            {drawn}
         </div>
     );
 };

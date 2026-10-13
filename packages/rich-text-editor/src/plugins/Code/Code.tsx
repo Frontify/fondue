@@ -18,8 +18,7 @@ export const codePlugin = (): RtePlugin => ({
     marks: {
         code: defineMark({
             toHtml: () => ({ tag: 'code', attrs: { class: styles.code ?? '' }, children: true }),
-            parse: [{ tag: 'code', value: () => ({}) }],
-            renderComponent: ({ children }) => <code className={styles.code}>{children}</code>,
+            parse: [{ tag: 'code' }],
         }),
     },
     toolbarItem: ({ isActive, toggle }) => (

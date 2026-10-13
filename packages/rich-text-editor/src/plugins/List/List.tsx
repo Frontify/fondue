@@ -2,7 +2,7 @@
 
 import { IconListBullet, IconListNumbers, type FondueIcon } from '@frontify/fondue-icons';
 
-import { ANY_LIST, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/core';
+import { ANY_LIST, PARAGRAPH, type RteBlockNode, defineBlock, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -57,26 +57,19 @@ const listPlugin = ({
     markdown: readonly string[];
 }): RtePlugin => ({
     id,
-    schema: [
-        {
-            kind: 'block',
-            type,
-            children: { items: 'listItem' },
-            toDom: () => ({ tag, attrs: className ? { class: className } : undefined, children: true }),
-            renderComponent: ({ children }) =>
-                tag === 'ul' ? <ul className={className}>{children}</ul> : <ol className={className}>{children}</ol>,
-            parseRules: [{ tag }],
-        },
-        {
-            kind: 'block',
-            type: 'listItem',
+    blocks: {
+        [type]: defineBlock({
+            content: { items: 'listItem' },
+            toHtml: () => ({ tag, attrs: { class: className }, children: true }),
+            parse: [{ tag }],
+        }),
+        listItem: defineBlock({
             // The paragraph comes first: it is what a new item is filled with.
-            children: { blocks: [PARAGRAPH, ANY_LIST] },
-            toDom: () => ({ tag: 'li', attrs: { class: styles.item ?? '' }, children: true }),
-            renderComponent: ({ children }) => <li className={styles.item}>{children}</li>,
-            parseRules: [{ tag: 'li' }],
-        },
-    ],
+            content: { blocks: [PARAGRAPH, ANY_LIST] },
+            toHtml: () => ({ tag: 'li', attrs: { class: styles.item }, children: true }),
+            parse: [{ tag: 'li' }],
+        }),
+    },
     // Active anywhere inside the list (the caret sits in a paragraph inside an
     // item); toggling wraps or unwraps.
     toolbarItem: ({ isActive, toggle }) => (

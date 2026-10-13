@@ -5,7 +5,7 @@
 import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { defineInline, type RtePlugin } from '#/core';
+import { defineBlock, defineInline, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
@@ -22,7 +22,6 @@ const tagPlugin: RtePlugin = {
         tag: defineInline<{ name: string }>({
             toHtml: ({ name }) => ({ tag: 'span', children: name }),
             parse: [],
-            renderComponent: ({ value }) => value.name,
         }),
     },
 };
@@ -30,15 +29,9 @@ const tagPlugin: RtePlugin = {
 /** A void block of the spec's own: the shipped ones need options or are not in `defaultPlugins`. */
 const dividerPlugin: RtePlugin = {
     id: 'divider',
-    schema: [
-        {
-            kind: 'block',
-            type: 'divider',
-            toDom: () => ({ tag: 'hr' }),
-            renderComponent: () => <hr />,
-            parseRules: [{ tag: 'hr' }],
-        },
-    ],
+    blocks: {
+        divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
+    },
 };
 
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];

@@ -24,10 +24,9 @@ export const fontColorPlugin = (): RtePlugin => ({
             nesting: -1,
             // Typing at the end of coloured text does not carry the colour on.
             inclusive: false,
-            toHtml: ({ color }) => ({ tag: 'span', attrs: { style: `color: ${color}` }, children: true }),
+            toHtml: ({ color }) => ({ tag: 'span', attrs: { style: { color } }, children: true }),
             // Any span may be pasted; only one that sets a colour is one.
             parse: [{ tag: 'span', value: (element) => (element.style.color ? { color: element.style.color } : null) }],
-            renderComponent: ({ value, children }) => <span style={{ color: value.color }}>{children}</span>,
         }),
     },
     toolbarItem: ({ api, selection }) => <ColorFlyout selection={selection} api={api} />,

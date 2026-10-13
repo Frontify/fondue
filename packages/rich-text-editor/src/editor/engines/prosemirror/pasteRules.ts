@@ -2,58 +2,61 @@
 
 import { type TagParseRule } from 'prosemirror-model';
 
-import { type AttributeDefinition, type AttributeSpec, type ParseRule } from '#/core';
+import { type BlockAttributeDefinition, type BlockDefinition, type ParseRule } from '#/core';
+
+import { VALUE_ATTR } from './valueAttr';
 
 /**
- * How pasted HTML is recognized as one of our blocks, inlines or marks.
+ * How pasted HTML is recognized as one of our blocks, inlines or marks: each
+ * plugin's `parse` turned into the engine's `parseDOM`. It runs once, at mount
+ * — the rules are then fixed for the editor's life.
  *
- * A feature declares what its content looks like (`parseRules`) and where its
- * attributes can be read back from (`parseFromDomAttribute`, `parseFromStyle`);
- * this turns that into the engine's `parseDOM`. It runs once, at mount — the
- * rules are then fixed for the editor's life.
- *
- * Invariant (1): a qualified selector must outrank a bare tag. The engine keeps
- * rules of equal priority in schema order, and the paragraph baseline is
+ * Invariant (1): a qualified block selector must outrank a bare tag. The engine
+ * keeps rules of equal priority in schema order, and the paragraph baseline is
  * registered first, so without this every pasted `<p>` became a plain paragraph
  * (losing text styles) and every `<ul>` became a bullet list (losing check
  * marks). Hence `qualifiedPriority` below.
  */
 
 /**
- * Which rule claims an element when more than one matches it. A qualified
- * selector (`p[data-text-style=imageCaption]`, `ul[data-check-list]`) describes
- * exactly what one feature wrote; a bare tag is a fallback for anything of that
- * shape — so the qualified one wins. See invariant (1).
+ * Which block rule claims an element when more than one matches it. A
+ * qualified selector (`p[data-text-style=imageCaption]`, `ul[data-check-list]`)
+ * describes exactly what one feature wrote; a bare tag is a fallback for
+ * anything of that shape — so the qualified one wins. See invariant (1).
  */
 const qualifiedPriority = (tag: string): number | undefined => (/[[.#:]/.test(tag) ? 60 : undefined);
 
-/** Rules for recognizing pasted HTML: the tag, the attributes it implies, and any read off the element or its style. */
-export const pasteRules = (
-    attributes: Record<string, AttributeSpec>,
-    rules: readonly ParseRule[],
-    injected: readonly AttributeDefinition[] = [],
-): TagParseRule[] => {
-    const domAttributeNames = Object.entries(attributes).flatMap(([name, attribute]): [string, string][] =>
-        attribute.parseFromDomAttribute ? [[name, attribute.parseFromDomAttribute]] : [],
-    );
-    const styleNames: [string, string][] = [
-        ...Object.entries(attributes).flatMap(([name, attribute]): [string, string][] =>
-            attribute.parseFromStyle ? [[name, attribute.parseFromStyle]] : [],
-        ),
-        ...injected.flatMap((attribute): [string, string][] =>
-            attribute.parseFromStyle ? [[attribute.type, attribute.parseFromStyle]] : [],
-        ),
-    ];
-
-    return rules.map(({ tag, attributes: implied }) => ({
-        tag,
-        priority: qualifiedPriority(tag),
-        getAttrs: (element: HTMLElement) => ({
-            ...Object.fromEntries(domAttributeNames.map(([name, domName]) => [name, element.getAttribute(domName)])),
-            ...Object.fromEntries(
-                styleNames.map(([name, property]) => [name, element.style.getPropertyValue(property) || null]),
-            ),
-            ...implied,
-        }),
+/** Mark and inline rules keep their whole value in one attribute; a null value means "not this node". */
+export const valueParseRules = (rules: readonly ParseRule<unknown>[]): TagParseRule[] =>
+    rules.map((rule) => ({
+        tag: rule.tag,
+        priority: 60,
+        getAttrs: (element: HTMLElement) => {
+            const value = rule.value ? rule.value(element) : {};
+            return value === null ? false : { [VALUE_ATTR]: value };
+        },
     }));
-};
+
+/**
+ * Block rules: the value the element carries becomes the block's attributes,
+ * plus whatever the attributes every text block carries read off it.
+ */
+export const blockParseRules = (
+    definition: BlockDefinition,
+    carried: readonly (readonly [string, BlockAttributeDefinition])[],
+): TagParseRule[] =>
+    definition.parse.map((rule) => ({
+        tag: rule.tag,
+        priority: qualifiedPriority(rule.tag),
+        getAttrs: (element: HTMLElement) => {
+            const value = rule.value ? rule.value(element) : {};
+            if (value === null) {
+                return false;
+            }
+            const read = carried.flatMap(([name, attribute]) => {
+                const found = attribute.parse?.(element);
+                return found ? [[name, found] as const] : [];
+            });
+            return { ...value, ...Object.fromEntries(read) };
+        },
+    }));

@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import {
     ANY_LIST,
     buildPluginRegistry,
+    defineBlock,
     defineInline,
     defineMark,
     emptyDocument,
@@ -29,8 +30,7 @@ const plugins: RtePlugin[] = [
         marks: {
             bold: defineMark({
                 toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong', value: () => ({}) }],
-                renderComponent: ({ children }) => <strong>{children}</strong>,
+                parse: [{ tag: 'strong' }],
             }),
         },
     },
@@ -40,23 +40,19 @@ const plugins: RtePlugin[] = [
             link: defineMark<{ href: string }>({
                 toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
                 parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
-                renderComponent: ({ children, value }) => <a href={value.href}>{children}</a>,
             }),
         },
     },
     {
         id: 'heading',
-        schema: [
-            {
-                kind: 'block',
-                type: 'heading',
-                children: 'text',
-                attributes: { level: { default: 1 } },
-                toDom: () => ({ tag: 'h1', children: true }),
-                renderComponent: ({ children }) => <h1>{children}</h1>,
-                parseRules: [{ tag: 'h1' }],
-            },
-        ],
+        blocks: {
+            heading: defineBlock({
+                content: 'text',
+                defaults: { level: 1 },
+                toHtml: () => ({ tag: 'h1', children: true }),
+                parse: [{ tag: 'h1' }],
+            }),
+        },
     },
     {
         id: 'mention',
@@ -64,34 +60,27 @@ const plugins: RtePlugin[] = [
             mention: defineInline<{ id: string }>({
                 toHtml: ({ id }) => ({ tag: 'span', children: id }),
                 parse: [{ tag: 'span', value: (element) => ({ id: element.textContent ?? '' }) }],
-                renderComponent: ({ value }) => <span>{value.id}</span>,
             }),
         },
     },
     {
         id: 'list',
-        schema: [
-            {
-                kind: 'block',
-                type: 'bulletList',
-                children: { items: 'listItem' },
-                toDom: () => ({ tag: 'ul', children: true }),
-                renderComponent: ({ children }) => <ul>{children}</ul>,
-                parseRules: [{ tag: 'ul' }],
-            },
-            {
-                kind: 'block',
-                type: 'listItem',
-                children: { blocks: [PARAGRAPH, ANY_LIST] },
-                toDom: () => ({ tag: 'li', children: true }),
-                renderComponent: ({ children }) => <li>{children}</li>,
-                parseRules: [{ tag: 'li' }],
-            },
-        ],
+        blocks: {
+            bulletList: defineBlock({
+                content: { items: 'listItem' },
+                toHtml: () => ({ tag: 'ul', children: true }),
+                parse: [{ tag: 'ul' }],
+            }),
+            listItem: defineBlock({
+                content: { blocks: [PARAGRAPH, ANY_LIST] },
+                toHtml: () => ({ tag: 'li', children: true }),
+                parse: [{ tag: 'li' }],
+            }),
+        },
     },
     {
         id: 'align',
-        schema: [{ kind: 'attribute', type: 'align', toStyle: (value) => `text-align: ${value}` }],
+        blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } },
     },
 ];
 

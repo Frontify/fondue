@@ -19,7 +19,6 @@ const plugins: RtePlugin[] = [
             tag: defineInline<{ label: string }>({
                 toHtml: ({ label }) => ({ tag: 'span', attrs: { 'data-tag': label }, children: label }),
                 parse: [{ tag: 'span[data-tag]', value: (element) => ({ label: element.dataset.tag ?? '' }) }],
-                renderComponent: ({ value }) => <span>{value.label}</span>,
             }),
         },
     },
