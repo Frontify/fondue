@@ -15,7 +15,7 @@ declare global {
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 /**
- * The floating bar's own controls — "Turn into", the inline marks, "More" —
+ * The floating bar's own controls — "Turn into", the inline marks and everything else —
  * and the `/` menu, driven through the public editor the way a host mounts it.
  */
 
@@ -100,18 +100,16 @@ describe('the floating bar', () => {
         return { ...editor, bar };
     };
 
-    it('shows Turn into first, naming what the block is, then the inline marks, then More', () => {
+    it('shows Turn into first, naming what the block is, then every inline item in plugin order', () => {
         const { bar } = open('<p>text</p>');
 
         const controls = labels(bar.querySelectorAll('button'));
         expect(controls[0]).toBe('Turn into: Text');
-        expect(controls[controls.length - 1]).toBe('More');
+        expect(controls).not.toContain('More');
         expect(controls).toContain('Bold');
         expect(controls).toContain('Italic');
-        // Blocks and the overflow items are not in the bar itself.
+        // Blocks reach the bar through Turn into, not as buttons.
         expect(controls).not.toContain('Quote');
-        expect(controls).not.toContain('Align left');
-        expect(controls).not.toContain('Subscript');
     });
 
     it('names the style of a heading in Turn into', () => {
@@ -120,16 +118,29 @@ describe('the floating bar', () => {
         expect(bar.querySelector('button')?.getAttribute('aria-label')).toBe('Turn into: Heading 2');
     });
 
-    it('keeps alignment, subscript, superscript and reset formatting behind More', () => {
+    it('shows alignment, subscript, superscript and reset formatting in the bar', () => {
         const { bar } = open('<p>text</p>');
-        const more = bar.querySelector<HTMLElement>('[aria-label="More"]');
-        act(() => more?.click());
 
-        const overflow = window.document.querySelector('[aria-label="More formatting"][role="group"]');
-        expect(overflow).not.toBeNull();
-        const names = labels(overflow?.querySelectorAll('button') ?? []);
+        const names = labels(bar.querySelectorAll('button'));
         expect(names).toEqual(expect.arrayContaining(['Align left', 'Subscript', 'Superscript']));
         expect(names.some((name) => /reset/i.test(name ?? ''))).toBe(true);
+        expect(window.document.querySelector('[aria-label="More formatting"]')).toBeNull();
+    });
+
+    it('draws no bar when there is nothing to put in it', () => {
+        const editor = mount((onChange) => (
+            <RichTextEditor
+                plugins={[{ id: 'quiet', toolbarItem: () => null, floatingToolbar: 'hidden' }]}
+                toolbarPlacement="floating"
+                onChange={onChange}
+            />
+        ));
+        paste(editor.editable, { html: '<p>text</p>' });
+        act(() => editor.editable.focus());
+        press(editor.editable, 'F10', { altKey: true });
+
+        expect(editor.container.querySelector('[role="toolbar"]')).toBeNull();
+        expect(editor.container.querySelector('[data-side]')).toBeNull();
     });
 
     it('turns the block into a heading from Turn into', () => {

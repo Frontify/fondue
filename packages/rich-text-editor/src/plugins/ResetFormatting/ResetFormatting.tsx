@@ -30,5 +30,5 @@ export const resetFormattingPlugin = (): RtePlugin => ({
             <IconEraser size={16} />
         </ToolbarButton>
     ),
-    floatingToolbar: 'overflow',
+    floatingToolbar: 'inline',
 });

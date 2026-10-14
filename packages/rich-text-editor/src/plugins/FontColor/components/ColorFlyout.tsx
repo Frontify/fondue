@@ -6,7 +6,7 @@ import { type ReactNode, useId, useRef, useState } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 
-import { useFocusAfterClose } from '../../shared/helpers/useFocusAfterClose';
+import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { type FontColorValue, parseCssColor, type RgbaColor, toCssColor } from '../helpers/colors';
 

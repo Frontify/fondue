@@ -249,8 +249,8 @@ describe('where a toolbar item goes in the floating bar', () => {
     });
 
     it('is what the plugin says, over the default', () => {
-        expect(placementOf({ id: 'sub', marks: { sub: mark() }, floatingToolbar: 'overflow' })).toBe('overflow');
-        expect(placementOf({ id: 'align', floatingToolbar: 'overflow' })).toBe('overflow');
+        expect(placementOf({ id: 'bold', marks: { bold: mark() }, floatingToolbar: 'hidden' })).toBe('hidden');
+        expect(placementOf({ id: 'align', floatingToolbar: 'inline' })).toBe('inline');
         expect(placementOf({ id: 'quote', blocks: { quote: textBlock() }, floatingToolbar: 'inline' })).toBe('inline');
     });
 });

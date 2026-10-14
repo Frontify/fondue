@@ -13,7 +13,7 @@ import {
 } from '#/core';
 
 import { VALUE_ATTR } from './documentConversion';
-import { htmlSpecToDom } from './htmlSpec';
+import { htmlSpecToDom } from './htmlSpecToDom';
 import { blockParseRules, INLINE_PRIORITY, MARK_PRIORITY, valueParseRules } from './pasteRules';
 
 /**
@@ -82,6 +82,9 @@ const blockNodeSpec = (
     return {
         content: contentExpression(type, definition, known, lists),
         atom: isVoid,
+        // Mod-click selects the innermost selectable node whole; for a block of
+        // text that would only draw a ring around it.
+        selectable: isVoid || definition.render?.edit !== undefined,
         // invariant (3)
         ...(isVoid || isList || type === PARAGRAPH ? {} : { defining: true }),
         // invariant (4)

@@ -23,12 +23,9 @@
         border-color: var(--color-line-strong);
     }
 
-    /** Fondue's focus ring around the whole field, only while the text itself has focus. */
-    &:has(.content:focus-visible) {
+    /** A text field shows focus as a firmer border; a ring would sit on it the whole time it is typed in. */
+    &:focus-within {
         border-color: var(--color-line-strong);
-        box-shadow:
-            0 0 0 2px var(--color-surface-default),
-            0 0 0 6px var(--color-focus-default);
     }
 
     /** `showEditor={false}`: the content alone, without the box or the inset around it. */
@@ -102,20 +99,25 @@
 /**
  * The editable element's chrome: inset, minimum height, cursor. Text styling
  * comes from the renderer's `.document` class, so the readonly view matches.
- * The transparent outline shows focus in forced colours, where the frame's box
- * shadow is not drawn.
  */
 .content {
     position: relative;
     box-sizing: border-box;
     min-height: 5rem;
     padding: var(--spacing-x-small) var(--spacing-small);
-    outline: 2px solid transparent;
+    outline: none;
     // The readonly view is read, not typed into: no caret cursor there.
     cursor: default;
 
     &[contenteditable='true'] {
         cursor: text;
+    }
+
+    /** Forced colours draw no border change; a transparent outline turns visible there. */
+    @media (forced-colors: active) {
+        &:focus {
+            outline: 2px solid transparent;
+        }
     }
 
     /**
@@ -151,12 +153,4 @@
 .turnInto {
     gap: var(--spacing-xx-small);
     white-space: nowrap;
-}
-
-/** What sits behind the floating bar's "More" button: the controls, side by side. */
-.overflow {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--spacing-xx-small);
 }

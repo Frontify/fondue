@@ -14,7 +14,7 @@ export type SuperscriptMark = {
 /** The key the toolbar button names as its shortcut, so the two cannot drift apart. */
 const HOTKEY = 'Mod-.';
 
-/** Superscript text: `<sup>` and `Mod-.`. Lives in the floating toolbar overflow. */
+/** Superscript text: `<sup>` and `Mod-.`. */
 export const superscriptPlugin = (): RtePlugin => ({
     id: 'superscript',
     marks: {
@@ -29,5 +29,5 @@ export const superscriptPlugin = (): RtePlugin => ({
         </ToolbarButton>
     ),
     hotkeys: { [HOTKEY]: (api) => api.marks.toggle('superscript') },
-    floatingToolbar: 'overflow',
+    floatingToolbar: 'inline',
 });

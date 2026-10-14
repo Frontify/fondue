@@ -6,8 +6,10 @@ import { buildPluginRegistry, emptyDocument, type RteBlockNode, type RteDocument
 import { RegistryRenderer } from '#/renderer';
 import documentStyles from '#/renderer/document.module.scss';
 
-import { commandsOf } from './blockCommands';
-import { FloatingToolbar } from './FloatingToolbar';
+import { FloatingToolbar } from './components/FloatingToolbar';
+import { SlashMenu } from './components/SlashMenu';
+import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
+import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
 import { type EditorStateStore, useEditorHandle } from './hooks/useEditorHandle';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { useMouseDrag } from './hooks/useMouseDrag';
@@ -15,8 +17,6 @@ import { useExpectedAnnouncement, useStatusAnnouncement } from './hooks/useStatu
 import { useToolbarSummon } from './hooks/useToolbarSummon';
 import { type EditorHandle } from './port';
 import styles from './richTextEditor.module.scss';
-import { SlashMenu } from './SlashMenu';
-import { Toolbar, type ToolbarPlacement } from './Toolbar';
 
 /**
  * `TBlock` is the document's block union. It defaults to the structural
@@ -148,8 +148,13 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     // floating bar waits for the button to come up rather than chasing the pointer.
     const { isDragging, startDragging } = useMouseDrag();
 
-    const hasToolbar = handle !== null && !readOnly && showEditor && registry.toolbarItems.length > 0;
     const toolbarFloats = toolbarPlacement === 'floating';
+    // The floating bar holds Turn into (more than the built-in Text) and the
+    // inline items; with neither there is no bar to draw.
+    const hasToolbarContent = toolbarFloats
+        ? turnIntoCommands(commands).length > 1 || registry.toolbarItems.some((item) => item.floating === 'inline')
+        : registry.toolbarItems.length > 0;
+    const hasToolbar = handle !== null && !readOnly && showEditor && hasToolbarContent;
 
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
         if (isCommandKey(event)) {

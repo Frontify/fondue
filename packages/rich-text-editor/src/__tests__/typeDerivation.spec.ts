@@ -4,7 +4,7 @@
  * Compile-time assertions for the document types. `tsc --noEmit` is the test
  * runner: an unused @ts-expect-error fails the build.
  */
-import { type RteBlock, type RteDocument, type RteDocumentWith, type RteInlineNode, type RteText } from './index';
+import { type RteBlock, type RteDocument, type RteDocumentWith, type RteInlineNode, type RteText } from '../index';
 
 // The shipped case: one annotation, everything checked
 const doc: RteDocument = {

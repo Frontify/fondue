@@ -21,11 +21,12 @@ import {
     type ToolbarItemProps,
 } from '#/core';
 
-import { turnIntoCommands } from './blockCommands';
-import { MoreControls, TurnInto } from './BubbleControls';
-import { type EditorStateStore } from './hooks/useEditorHandle';
-import styles from './richTextEditor.module.scss';
-import { toolbarItemProps } from './toolbarItem';
+import { turnIntoCommands } from '../helpers/blockCommands';
+import { toolbarItemProps } from '../helpers/toolbarItem';
+import { type EditorStateStore } from '../hooks/useEditorHandle';
+import styles from '../richTextEditor.module.scss';
+
+import { TurnInto } from './TurnInto';
 
 /**
  * Where the plugins' toolbar is drawn. A host choice for the whole editor, not
@@ -58,7 +59,7 @@ export const Toolbar = ({
     controls,
     focusRequestRef,
 }: {
-    /** The registry's toolbar entries, in mount order. The floating bar sorts them by where each asked to go. */
+    /** The registry's toolbar entries, in mount order. The floating bar keeps the inline ones. */
     items: readonly ToolbarEntry[];
     /** Floating bar only: every block command, for its "Turn into" menu. */
     commands?: readonly RteBlockCommand[];
@@ -155,14 +156,9 @@ export const Toolbar = ({
 
     const floating = placement === 'floating';
     const items = floating ? allItems.filter((item) => item.floating === 'inline') : allItems;
-    const overflowItems = floating ? allItems.filter((item) => item.floating === 'overflow') : [];
     const turnInto = floating ? turnIntoCommands(commands) : [];
     // The built-in Text alone is nothing to turn into.
     const showTurnInto = turnInto.length > 1;
-    const showMore = floating && overflowItems.length > 0;
-    if (items.length === 0 && !showTurnInto && !showMore) {
-        return null;
-    }
 
     return (
         <div
@@ -188,17 +184,6 @@ export const Toolbar = ({
                     itemProps={toolbarItemProps(item.own, api, selection)}
                 />
             ))}
-            {showMore ? (
-                <MoreControls api={api}>
-                    {overflowItems.map((item) => (
-                        <ToolbarItemSlot
-                            key={item.id}
-                            render={item.render}
-                            itemProps={toolbarItemProps(item.own, api, selection)}
-                        />
-                    ))}
-                </MoreControls>
-            ) : null}
         </div>
     );
 };

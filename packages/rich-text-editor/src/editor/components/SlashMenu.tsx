@@ -7,10 +7,11 @@ import { createPortal } from 'react-dom';
 
 import { PARAGRAPH, type RteBlockCommand } from '#/core';
 
-import { matchCommands } from './blockCommands';
-import { type EditorStateStore } from './hooks/useEditorHandle';
-import { readSelectionRect, useFollowViewport } from './hooks/useSelectionRect';
-import { type EditorHandle, type FloatingRect } from './port';
+import { matchCommands } from '../helpers/blockCommands';
+import { type EditorStateStore } from '../hooks/useEditorHandle';
+import { readSelectionRect, useFollowViewport } from '../hooks/useSelectionRect';
+import { type EditorHandle, type FloatingRect } from '../port';
+
 import styles from './slashMenu.module.scss';
 
 /** The character that opens the menu. */

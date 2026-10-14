@@ -15,7 +15,7 @@ import {
     RichTextRenderer,
     type RtePlugin,
     serializeToHtml,
-} from './index';
+} from '../index';
 
 // The readonly view and export draw the same tree, so they are tested side by
 // side: the renderer as React in the test DOM, export as the string it returns.

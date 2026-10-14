@@ -10,10 +10,10 @@ import {
     useState,
 } from 'react';
 
-import { type EditorStateStore } from './hooks/useEditorHandle';
-import { readSelectionRect, useFollowViewport, useSelectionRect } from './hooks/useSelectionRect';
-import { type EditorHandle, type FloatingRect } from './port';
-import styles from './richTextEditor.module.scss';
+import { type EditorStateStore } from '../hooks/useEditorHandle';
+import { readSelectionRect, useFollowViewport, useSelectionRect } from '../hooks/useSelectionRect';
+import { type EditorHandle, type FloatingRect } from '../port';
+import styles from '../richTextEditor.module.scss';
 
 /** How close to the viewport edge the bar may come before it is pushed back in. */
 const VIEWPORT_MARGIN = 8;

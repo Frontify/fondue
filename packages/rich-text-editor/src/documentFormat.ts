@@ -8,7 +8,7 @@
 // to fail. Everything is closed here, three levels deep into nested lists.
 // Exported: `RteText`, `RteBlock`, `RteDocument`, `RteDocumentWith`; the rest is
 // private machinery. This file may import `plugins/` (as `index.ts` does);
-// `editor/` and the renderer never see it. `type-derivation.spec.ts` asserts it.
+// `editor/` and the renderer never see it. `__tests__/typeDerivation.spec.ts` asserts it.
 
 import { type ParagraphBlock, type RteBlockNode, type RteDocumentOf, type RteInlineNode } from './core';
 import { type AlignAttribute } from './plugins/Align';

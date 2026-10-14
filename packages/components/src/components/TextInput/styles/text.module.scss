@@ -91,6 +91,11 @@
 .input {
     box-sizing: border-box;
     width: 100%;
+    // The package ships no reset: a host without one would draw the native border and font.
+    margin: 0;
+    border: none;
+    font: inherit;
+    color: inherit;
     background-color: transparent;
     display: flex;
     align-items: center;

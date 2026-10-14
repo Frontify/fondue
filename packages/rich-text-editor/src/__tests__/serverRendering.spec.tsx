@@ -3,9 +3,8 @@
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import { PARAGRAPH, type RteDocumentOf } from './core';
-
-import { defaultPlugins, RichTextEditor, RichTextRenderer, serializeToHtml } from './index';
+import { PARAGRAPH, type RteDocumentOf } from '../core';
+import { defaultPlugins, RichTextEditor, RichTextRenderer, serializeToHtml } from '../index';
 
 // A server-rendered page can show a document without mounting an editor.
 

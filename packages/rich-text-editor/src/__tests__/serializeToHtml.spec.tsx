@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defaultPlugins, type RteDocument, serializeToHtml } from './index';
+import { defaultPlugins, type RteDocument, serializeToHtml } from '../index';
 
 // The document as HTML: each node's `toHtml`, matching the readonly view (`htmlParity.spec.tsx`).
 

@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /**
- * The "on" state of a toggle or radio, which Fondue's Button has no form for. A
- * tint alone is too close to hover, so a 3:1 highlight bar runs along the bottom
- * edge. The doubled class outweighs the Button's variant selectors without `!important`.
+ * The "on" state of a toggle or radio, which Fondue's Button has no form for:
+ * the highlight fill. The doubled class outweighs the Button's variant
+ * selectors without `!important`.
  */
 .button.button:is([aria-pressed='true'], [aria-checked='true']):not([disabled]) {
     background-color: var(--color-container-highlight-default);
-    box-shadow: inset 0 -2px 0 var(--color-highlight-default);
     color: var(--color-container-highlight-on-highlight-container);
 
     &:hover {

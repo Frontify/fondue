@@ -94,7 +94,7 @@ export default defineConfig({
      * No DOM by default; a spec that needs one opts into `happy-dom` with a
      * `// @vitest-environment happy-dom` docblock.
      *
-     * Excluded: `type-derivation.spec.ts` (asserts at compile time, `tsgo --noEmit`
+     * Excluded: `__tests__/typeDerivation.spec.ts` (asserts at compile time, `tsgo --noEmit`
      * runs it) and `lint-fixtures/src/` (lint input, not tests).
      *
      * CSS modules compile in tests, so markup carries the shipped class names.
@@ -102,7 +102,7 @@ export default defineConfig({
     test: {
         environment: 'node',
         css: { include: [CSS_MODULE_SUFFIX], modules: { classNameStrategy: 'scoped' } },
-        exclude: [...configDefaults.exclude, 'src/type-derivation.spec.ts', 'lint-fixtures/src/**'],
+        exclude: [...configDefaults.exclude, 'src/__tests__/typeDerivation.spec.ts', 'lint-fixtures/src/**'],
     },
     build: {
         lib: {

@@ -160,7 +160,7 @@ export default defineConfig({
         },
         {
             files: ['src/**/*.{ts,tsx}'],
-            excludeFiles: ['src/serverRendering*.spec.tsx', `${ENGINE}/**/*.{ts,tsx}`],
+            excludeFiles: ['src/__tests__/serverRendering*.spec.tsx', `${ENGINE}/**/*.{ts,tsx}`],
             rules: {
                 'no-restricted-imports': ['error', { patterns: [NO_ENGINE, NO_SERVER_RENDER] }],
             },
@@ -285,7 +285,7 @@ export default defineConfig({
             },
         },
         {
-            files: ['src/editor/hooks/**/*.{ts,tsx}'],
+            files: ['src/editor/{components,helpers,hooks}/**/*.{ts,tsx}'],
             excludeFiles: ['src/editor/hooks/useEditorHandle.ts'],
             rules: {
                 'no-restricted-imports': [

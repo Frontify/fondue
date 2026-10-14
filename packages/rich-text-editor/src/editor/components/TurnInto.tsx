@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Dropdown, Flyout } from '@frontify/fondue-components';
-import { IconCaretDown, IconCheckMark, IconDotsHorizontal } from '@frontify/fondue-icons';
-import { type ComponentProps, type MouseEvent, type ReactNode, useRef, useState } from 'react';
+import { Button, Dropdown } from '@frontify/fondue-components';
+import { IconCaretDown, IconCheckMark } from '@frontify/fondue-icons';
+import { type ComponentProps, type MouseEvent, type ReactNode, useRef } from 'react';
 
 import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
-import { activeCommand, TEXT_COMMAND } from './blockCommands';
-import styles from './richTextEditor.module.scss';
+import { activeCommand, TEXT_COMMAND } from '../helpers/blockCommands';
+import styles from '../richTextEditor.module.scss';
 
 /** Never take the selection away from the text: the controls act on it. */
 const keepSelection = (event: MouseEvent<HTMLElement>): void => event.preventDefault();
@@ -109,39 +109,5 @@ export const TurnInto = ({
                 })}
             </Dropdown.Content>
         </Dropdown.Root>
-    );
-};
-
-/**
- * The "More" menu: the controls the floating bar has no room for, drawn as
- * they are in the top toolbar. A flyout rather than a menu, because they are
- * arbitrary controls (a group of alignment buttons) and not a list of actions.
- */
-export const MoreControls = ({
-    api,
-    children,
-}: {
-    api: EditorControlApi;
-    /** The overflow items, already rendered. */
-    children: ReactNode;
-}): ReactNode => {
-    const [open, setOpen] = useState(false);
-    const { returnToText, contentProps } = useReturnToText(api);
-
-    return (
-        <Flyout.Root open={open} onOpenChange={setOpen}>
-            <Flyout.Trigger>
-                <Button type="button" size="medium" emphasis="weak" aria-label="More" title="More" {...keepsSelection}>
-                    <IconDotsHorizontal size={16} />
-                </Button>
-            </Flyout.Trigger>
-            <Flyout.Content {...contentProps} onEscapeKeyDown={returnToText} aria-label="More formatting" width="auto">
-                <Flyout.Body>
-                    <div className={styles.overflow} role="group" aria-label="More formatting">
-                        {children}
-                    </div>
-                </Flyout.Body>
-            </Flyout.Content>
-        </Flyout.Root>
     );
 };

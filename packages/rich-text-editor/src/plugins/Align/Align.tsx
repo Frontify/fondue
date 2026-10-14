@@ -72,5 +72,5 @@ export const alignPlugin = (): RtePlugin => ({
             </div>
         );
     },
-    floatingToolbar: 'overflow',
+    floatingToolbar: 'inline',
 });

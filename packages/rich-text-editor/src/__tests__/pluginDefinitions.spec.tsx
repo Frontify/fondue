@@ -6,9 +6,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, defineBlock, type EditorControlApi, type RteInputRule, type RtePlugin } from './core';
-import { searchIn } from './plugins/Mention/Mention';
-
+import { buildPluginRegistry, defineBlock, type EditorControlApi, type RteInputRule, type RtePlugin } from '../core';
 import {
     autoformatPlugin,
     blurOnBreakPlugin,
@@ -20,7 +18,8 @@ import {
     RichTextRenderer,
     serializeToHtml,
     textStylePlugin,
-} from './index';
+} from '../index';
+import { searchIn } from '../plugins/Mention/Mention';
 
 /**
  * The plugin definitions that hold behaviour of their own — what they declare,

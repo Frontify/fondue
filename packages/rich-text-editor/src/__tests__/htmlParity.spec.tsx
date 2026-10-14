@@ -6,10 +6,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry } from './core';
-import { documentTree } from './renderer/documentTree';
-import { toReact } from './renderer/toReact';
-
+import { buildPluginRegistry } from '../core';
 import {
     columnBreakPlugin,
     defaultPlugins,
@@ -17,7 +14,9 @@ import {
     type RteDocument,
     type RteDocumentWith,
     serializeToHtml,
-} from './index';
+} from '../index';
+import { documentTree } from '../renderer/documentTree';
+import { toReact } from '../renderer/toReact';
 
 // A node's `toHtml` reaches the page as React elements (readonly view) and as
 // attributes written directly (editor, HTML export). This holds the one place

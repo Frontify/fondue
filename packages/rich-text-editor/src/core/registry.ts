@@ -44,7 +44,7 @@ export type ToolbarEntry = {
     render: (props: ToolbarItemProps) => ReactNode;
     own: OwnType;
     /** Where the floating bar puts it: the plugin's choice, else by what it owns. */
-    floating: 'inline' | 'overflow' | 'hidden';
+    floating: 'inline' | 'hidden';
 };
 
 export type PluginRegistry = {

@@ -45,14 +45,13 @@ export type RtePlugin = {
      */
     toolbarItem?: (props: ToolbarItemProps) => ReactNode;
     /**
-     * Where `toolbarItem` goes in the floating bar: `'inline'` in the bar,
-     * `'overflow'` behind its "More" button, `'hidden'` not at all. The top
-     * toolbar shows every item regardless.
+     * Whether `toolbarItem` is in the floating bar (`'inline'`) or not
+     * (`'hidden'`). The top toolbar shows every item regardless.
      *
      * Defaults to `'inline'` for a plugin that owns a mark, `'hidden'`
      * otherwise — a block reaches the floating bar through `commands`.
      */
-    floatingToolbar?: 'inline' | 'overflow' | 'hidden';
+    floatingToolbar?: 'inline' | 'hidden';
     /** Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given. */
     commands?: readonly RteBlockCommand[];
     /**

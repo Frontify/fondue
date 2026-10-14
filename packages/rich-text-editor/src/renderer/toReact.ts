@@ -2,7 +2,7 @@
 
 // The drawn tree as React elements, for the readonly view. The only place an
 // `HtmlSpec`'s attributes become React props — the counterpart of the core's
-// `attributeEntries`; `htmlParity.spec.tsx` holds the two to the same output.
+// `attributeEntries`; `__tests__/htmlParity.spec.tsx` holds the two to the same output.
 
 import { createElement, type CSSProperties, type ReactNode } from 'react';
 

@@ -6,7 +6,7 @@ import { type ReactNode, useEffect, useId, useState } from 'react';
 
 import { type ToolbarItemProps } from '#/core';
 
-import { useFocusAfterClose } from '../../shared/helpers/useFocusAfterClose';
+import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { registerNewLinkForm } from '../helpers/newLinkForms';
 

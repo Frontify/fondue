@@ -194,8 +194,8 @@ export const ToolbarPlacement: Story = {
 /**
  * The floating bar, Notion-style. Select text and it appears over it: a "Turn
  * into" menu naming the block (text, headings, lists, quote), the inline marks
- * (bold, italic, link, colour…), and a "More" menu holding alignment,
- * subscript, superscript and reset formatting.
+ * (bold, italic, link, colour…), alignment, subscript, superscript and reset
+ * formatting, all in the bar itself.
  *
  * Type `/` on an empty line for the command menu: the same block types, plus
  * what can only be inserted (a column break). Keep typing to filter, ↑/↓ to
