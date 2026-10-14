@@ -143,7 +143,8 @@ const register = <TDefinition>(
     }
 };
 
-const MODIFIERS = new Set(['Mod', 'Cmd', 'Meta', 'Ctrl', 'Control', 'Alt', 'Shift', 'a', 'c', 'm', 's']);
+// Case-insensitive, and the exact set the engine's key parser accepts: it throws on any other.
+const MODIFIER = /^(mod|cmd|meta|m|alt|a|ctrl|control|c|shift|s)$/i;
 const KEY_NAMES = new Set([
     'Enter',
     'Backspace',
@@ -165,7 +166,7 @@ const KEY_NAMES = new Set([
 
 /**
  * A key a binding can actually match: one character, a key name, or either
- * behind modifiers (`Mod-Shift-7`). Anything else — `@@` — never fires.
+ * behind modifiers (`Mod-Shift-7`). Anything else — `@@`, `Option-x` — is not one.
  */
 export const isValidHotkey = (keys: string): boolean => {
     // The last part is the key itself; `Mod--` binds the minus key.
@@ -175,26 +176,23 @@ export const isValidHotkey = (keys: string): boolean => {
     }
     const [, modifiers = '', key = ''] = match;
     const isKey = [...key].length === 1 || KEY_NAMES.has(key);
-    return isKey && (modifiers === '' || modifiers.split('-').every((modifier) => MODIFIERS.has(modifier)));
+    return isKey && (modifiers === '' || modifiers.split('-').every((modifier) => MODIFIER.test(modifier)));
 };
 
-/** Plugins already warned about, so a registry built per render warns once. */
-const checkedPlugins = new WeakSet<RtePlugin>();
+/** `plugin id + keys` already warned about, so a registry rebuilt per render warns once. */
+const warnedHotkeys = new Set<string>();
 
-/** Warns in development about a hotkey that can never fire; compiled out in production. */
-const warnOnInvalidHotkeys = (plugin: RtePlugin): void => {
-    if (process.env.NODE_ENV === 'production' || checkedPlugins.has(plugin)) {
+/** Warns in development that an invalid hotkey is ignored; compiled out in production. */
+const warnAboutInvalidHotkey = (pluginId: string, keys: string): void => {
+    const warning = `${pluginId}\0${keys}`;
+    if (process.env.NODE_ENV === 'production' || warnedHotkeys.has(warning)) {
         return;
     }
-    checkedPlugins.add(plugin);
-    for (const keys of Object.keys(plugin.hotkeys ?? {})) {
-        if (!isValidHotkey(keys)) {
-            console.warn(
-                `[RichTextEditor] Plugin "${plugin.id}" binds "${keys}", which is not a key: it never fires. ` +
-                    'Name one character, a key such as `Enter`, or either behind modifiers (`Mod-Shift-7`).',
-            );
-        }
-    }
+    warnedHotkeys.add(warning);
+    console.warn(
+        `[RichTextEditor] Plugin "${pluginId}" binds "${keys}", which is not a valid hotkey: it is ignored. ` +
+            'Name one character, a key such as `Enter`, or either behind the modifiers Mod, Cmd, Meta, Ctrl, Alt or Shift (`Mod-Shift-7`).',
+    );
 };
 
 /** Mark rules first, longest delimiter first; everything else keeps its declared order. */
@@ -234,8 +232,11 @@ export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegist
             duplicateIds.add(plugin.id);
         }
         seenIds.add(plugin.id);
-        warnOnInvalidHotkeys(plugin);
         for (const [keys, handler] of Object.entries(plugin.hotkeys ?? {})) {
+            if (!isValidHotkey(keys)) {
+                warnAboutInvalidHotkey(plugin.id, keys);
+                continue;
+            }
             hotkeys.set(keys, [...(hotkeys.get(keys) ?? []), handler]);
         }
         inputRules.push(...(plugin.inputRules ?? []));

@@ -2,13 +2,13 @@
 
 import { setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
 import { type Mark as PmMark, type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
-import { type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
+import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
 
 import { markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
-import { createListApi } from './lists';
+import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
 /**
@@ -230,7 +230,26 @@ const createBlockApi = (
                 return;
             }
             const view = getView();
-            pmSetBlockType(nodeType, value ?? {})(view.state, view.dispatch);
+            // A list item cannot hold the new type, so the blocks leave their lists
+            // first. Everything is one transaction: one undo restores the list.
+            const combined = view.state.tr;
+            let current = view.state;
+            const lifts = liftOutOfLists(current, registry, schema);
+            for (const lift of lifts) {
+                for (const step of lift.steps) {
+                    combined.step(step);
+                }
+                current = current.apply(lift);
+            }
+            const typed: Transaction[] = [];
+            const applied = pmSetBlockType(nodeType, value ?? {})(current, (transaction) => typed.push(transaction));
+            for (const step of typed.flatMap((transaction) => transaction.steps)) {
+                combined.step(step);
+            }
+            // Lifting alone is not enough: if the type cannot be set, nothing changes.
+            if (applied && combined.docChanged) {
+                view.dispatch(combined.scrollIntoView());
+            }
             view.focus();
         },
         updateAttributes: applyToTextBlocks,

@@ -114,6 +114,19 @@ describe('typography while typing', () => {
         expect(typed(input)).toEqual([paragraph(text(output))]);
     });
 
+    it('leaves a code span being typed as typed', () => {
+        expect(typed('`a--b`')).toEqual([paragraph(text('a--b', { code: true }))]);
+        expect(typed('`run --force (c)`')).toEqual([paragraph(text('run --force (c)', { code: true }))]);
+    });
+
+    it('keeps straight quotes inside a code span being typed', () => {
+        expect(typed('`say "hi"`')).toEqual([paragraph(text('say "hi"', { code: true }))]);
+    });
+
+    it('rewrites again after a code span is closed', () => {
+        expect(typed('`a` and -- b')).toEqual([paragraph(text('a', { code: true }), text(' and \u2014 b'))]);
+    });
+
     it('opens a double quote at the start of a word and closes it after one', () => {
         expect(typed('say "hi" now')).toEqual([paragraph(text('say “hi” now'))]);
     });

@@ -148,6 +148,39 @@ describe('the floating bar', () => {
 
         expect(stored()?.blocks[0]).toMatchObject({ type: 'textStyle', style: 'heading1' });
     });
+
+    const turnInto = (bar: HTMLElement, label: string): void => {
+        const trigger = bar.querySelector<HTMLElement>('[aria-label^="Turn into"]');
+        if (!trigger) {
+            throw new Error('no Turn into');
+        }
+        act(() => trigger.focus());
+        press(trigger, 'ArrowDown');
+        const items = [...window.document.querySelectorAll<HTMLElement>('[role="menuitem"]')];
+        act(() => items.find((item) => spokenText(item) === label)?.click());
+    };
+
+    it('turns a list item into a heading, leaving the list', () => {
+        const { bar, stored } = open('<ul><li>one</li></ul>');
+
+        turnInto(bar, 'Heading 1');
+
+        expect(stored()?.blocks[0]).toMatchObject({
+            type: 'textStyle',
+            style: 'heading1',
+            children: [{ text: 'one' }],
+        });
+    });
+
+    it('does nothing when the entry chosen is the one the block already is', () => {
+        const { bar, stored } = open('<ul><li>one</li></ul>');
+        const before = stored();
+
+        turnInto(bar, 'Bulleted list');
+
+        expect(stored()).toBe(before);
+        expect(stored()?.blocks[0]).toMatchObject({ type: 'bulletList' });
+    });
 });
 
 describe('the / menu', () => {

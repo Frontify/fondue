@@ -18,6 +18,7 @@ const inline = () => defineInline({ toHtml: () => ({ tag: 'br' }), parse: [] });
 
 afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
 });
 
 describe('the marks of a registry', () => {
@@ -132,15 +133,51 @@ describe('a hotkey', () => {
         expect(isValidHotkey(keys)).toBe(false);
     });
 
-    it('that can never fire is warned about in development, once per plugin', () => {
-        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const plugin: RtePlugin = { id: 'mentions', hotkeys: { '@@': () => true, '@': () => true } };
+    it.each(['mod-b', 'alt-x', 'Shift-Mod-7', 'Mod--', 'CTRL-a', 'cmd-Enter', 'm-k', 's-Tab'])(
+        'is kept without a warning when written "%s"',
+        (keys) => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-        buildPluginRegistry([plugin]);
-        buildPluginRegistry([plugin]);
+            const registry = buildPluginRegistry([{ id: `keeps-${keys}`, hotkeys: { [keys]: () => true } }]);
+
+            expect([...registry.hotkeys.keys()]).toEqual([keys]);
+            expect(warn).not.toHaveBeenCalled();
+        },
+    );
+
+    it.each(['Option-x', 'Foo-x'])('with the unknown modifier "%s" is dropped and warned about', (keys) => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const handler = () => true;
+
+        const registry = buildPluginRegistry([{ id: `drops-${keys}`, hotkeys: { [keys]: handler, 'Mod-b': handler } }]);
+
+        expect([...registry.hotkeys.keys()]).toEqual(['Mod-b']);
+        expect(warn).toHaveBeenCalledTimes(1);
+        expect(warn.mock.calls[0]?.[0]).toContain(`"${keys}"`);
+        expect(warn.mock.calls[0]?.[0]).toContain('ignored');
+    });
+
+    it('that is invalid warns once per plugin and key, even when plugins are rebuilt', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const build = (): RtePlugin => ({ id: 'mentions', hotkeys: { '@@': () => true, '@': () => true } });
+
+        buildPluginRegistry([build()]);
+        buildPluginRegistry([build()]);
 
         expect(warn).toHaveBeenCalledTimes(1);
         expect(warn.mock.calls[0]?.[0]).toContain('"@@"');
+    });
+
+    it('that is invalid is dropped in production, without a warning', () => {
+        vi.stubEnv('NODE_ENV', 'production');
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const registry = buildPluginRegistry([
+            { id: 'production-keys', hotkeys: { 'Option-x': () => true, 'Mod-b': () => true } },
+        ]);
+
+        expect([...registry.hotkeys.keys()]).toEqual(['Mod-b']);
+        expect(warn).not.toHaveBeenCalled();
     });
 });
 

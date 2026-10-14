@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type RteBlockCommand } from '#/core';
+import { type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
 import { activeCommand, matchCommands, TEXT_COMMAND } from './blockCommands';
 
@@ -59,6 +59,20 @@ describe('the active command', () => {
                 marks: {},
             }),
         ).toBe(heading);
+    });
+
+    it('is the innermost list when lists nest', () => {
+        const listCommand = (type: string) => ({
+            ...command(type),
+            isActive: (selection: RteSelectionSnapshot) => selection.blocks.some((block) => block.type === type),
+        });
+        const bullet = listCommand('bulletList');
+        const numbered = listCommand('numberedList');
+        const blocks = ['paragraph', 'listItem', 'numberedList', 'listItem', 'bulletList'].map((type) => ({ type }));
+
+        const selection = { isCollapsed: true, text: '', block: blocks[0] ?? null, blocks, marks: {} };
+
+        expect(activeCommand([TEXT_COMMAND, bullet, numbered], selection)).toBe(numbered);
     });
 
     it('is the built-in Text only on a paragraph that is not in a list', () => {

@@ -389,9 +389,31 @@ describe('the editable element', () => {
         const editable = editableIn(container);
         act(() => editable.focus());
 
-        press(editable, 'Escape');
+        // A browser's keydown carries `keyCode`, which ProseMirror reads to
+        // prevent Escape's default.
+        press(editable, 'Escape', { keyCode: 27 });
 
         expect(editable.contains(window.document.activeElement)).toBe(false);
+    });
+
+    it('keeps focus in the text when Escape closed the `/` menu', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+        const data = new DataTransfer();
+        data.setData('text/plain', '/');
+        act(() => {
+            editable.dispatchEvent(
+                new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
+            );
+        });
+        expect(window.document.querySelector('[role="listbox"]')).not.toBeNull();
+
+        press(editable, 'Escape', { keyCode: 27 });
+
+        expect(window.document.querySelector('[role="listbox"]')).toBeNull();
+        expect(window.document.activeElement).toBe(editable);
     });
 
     it('does not re-render the editor around the text for an edit', () => {
@@ -571,6 +593,46 @@ describe('the toolbar from the keyboard', () => {
 
         press(window.document.activeElement as Element, 'Escape');
         expect(editable.contains(window.document.activeElement)).toBe(true);
+    });
+
+    const focusedLabel = (): string | null | undefined => window.document.activeElement?.getAttribute('aria-label');
+
+    describe.each(['top', 'floating'] as const)('with the %s toolbar, asked for again', (placement) => {
+        const start = (): { editable: HTMLElement; rerender: () => void } => {
+            const element = (label: string): ReactNode => (
+                <RichTextEditor plugins={plugins} toolbarPlacement={placement} aria-label={label} />
+            );
+            const { container, ready, rerender } = mount(() => element('One'));
+            ready();
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            return { editable, rerender: () => rerender(element('Two')) };
+        };
+
+        it('takes focus on every Alt+F10', () => {
+            const { editable } = start();
+
+            press(editable, 'F10', { altKey: true });
+            expect(focusedLabel()).toBe('Bold');
+            press(window.document.activeElement as Element, 'Escape');
+            expect(window.document.activeElement).toBe(editable);
+
+            press(editable, 'F10', { altKey: true });
+            expect(focusedLabel()).toBe('Bold');
+        });
+
+        it('leaves no request pending to pull focus later', () => {
+            const { editable, rerender } = start();
+            press(editable, 'F10', { altKey: true });
+            press(window.document.activeElement as Element, 'Escape');
+            press(editable, 'F10', { altKey: true });
+            press(window.document.activeElement as Element, 'Escape');
+            expect(window.document.activeElement).toBe(editable);
+
+            rerender();
+
+            expect(window.document.activeElement).toBe(editable);
+        });
     });
 
     it('floats in after the text on Alt+F10, even over a caret', () => {

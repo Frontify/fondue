@@ -57,8 +57,9 @@ export type RtePlugin = {
     commands?: readonly RteBlockCommand[];
     /**
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
-     * by a single typed character (`@`). They run before the editor's own, in
-     * plugin order.
+     * by a single typed character (`@`). Modifiers are Mod, Cmd, Meta, Ctrl,
+     * Alt and Shift in any case; a binding with any other is dropped. They run
+     * before the editor's own, in plugin order.
      */
     hotkeys?: Record<string, HotkeyHandler>;
     /** Text rewritten as it is typed: markdown shortcuts and typography. */

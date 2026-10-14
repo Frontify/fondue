@@ -2,7 +2,7 @@
 
 import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
-import { type Command, type EditorState } from 'prosemirror-state';
+import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
@@ -117,6 +117,41 @@ export const createListApi = (
             return true;
         },
     };
+};
+
+// Leaving lists
+
+/** More than any realistic nesting: a guard so a command that never settles cannot hang the editor. */
+const MAX_NESTING = 32;
+
+/**
+ * The transactions that take every list item the selection touches out of its
+ * list, nested levels included, in the order they apply. Empty when the
+ * selection is in no list. The caller decides whether to dispatch them, so a
+ * follow-up edit can share one undo step with them.
+ */
+export const liftOutOfLists = (
+    state: EditorState,
+    { itemTypeByList }: PluginRegistry,
+    schema: Schema,
+): Transaction[] => {
+    const itemTypes = [...new Set(itemTypeByList.values())].flatMap((name) => schema.nodes[name] ?? []);
+    const transactions: Transaction[] = [];
+    let current = state;
+    for (let round = 0; round < MAX_NESTING; round++) {
+        let lifted: Transaction | null = null;
+        for (const itemType of itemTypes) {
+            if (liftListItem(itemType)(current, (transaction) => (lifted = transaction))) {
+                break;
+            }
+        }
+        if (lifted === null) {
+            break;
+        }
+        transactions.push(lifted);
+        current = current.apply(lifted);
+    }
+    return transactions;
 };
 
 // The keys that only mean something inside a list

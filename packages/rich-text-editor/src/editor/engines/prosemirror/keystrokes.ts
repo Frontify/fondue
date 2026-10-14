@@ -115,13 +115,26 @@ type RuleContext = {
     schema: Schema;
     registry: PluginRegistry;
     excludedMarks: readonly PmMarkType[];
+    /** Delimiters of mark rules whose mark opts out (`` ` ``): what follows an unclosed one is typed as is. */
+    verbatimDelimiters: readonly string[];
+    /** Start of a token a `markPattern` rule will link; typography leaves it alone. */
+    patternStarts: readonly RegExp[];
 };
 
 const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
     const excludedMarks = [...registry.marks]
         .filter(([, definition]) => definition.excludesInputRules === true)
         .flatMap(([type]) => schema.marks[type] ?? []);
-    const context: RuleContext = { schema, registry, excludedMarks };
+    const excludedTypes = new Set(
+        [...registry.marks].filter(([, definition]) => definition.excludesInputRules === true).map(([type]) => type),
+    );
+    const verbatimDelimiters = registry.inputRules.flatMap((rule) =>
+        rule.kind === 'mark' && excludedTypes.has(rule.key) ? rule.delimiter : [],
+    );
+    const patternStarts = registry.inputRules.flatMap((rule) =>
+        rule.kind === 'markPattern' ? new RegExp(`^(?:${rule.pattern.source})`, withoutStateFlags(rule.pattern)) : [],
+    );
+    const context: RuleContext = { schema, registry, excludedMarks, verbatimDelimiters, patternStarts };
     // The registry orders rules longest delimiter first; otherwise `**bold**`
     // reads as an italic `*` wrapping `*bold*`.
     const rules = registry.inputRules.flatMap((rule) => toEngineRule(rule, context) ?? []);
@@ -164,6 +177,26 @@ const unlessInExcludedMark =
         return excluded.some((markType) => markType.isInSet(marks)) ? null : handler(state, match, start, end);
     };
 
+const withoutStateFlags = (pattern: RegExp): string => pattern.flags.replaceAll(/[gy]/g, '');
+
+/**
+ * Typography must not rewrite a code span still being typed (its mark only
+ * exists once the closing delimiter lands) or an address (its mark only exists
+ * once the space lands). A span is open while the text before the match holds an
+ * odd number of its delimiter; an address is a whitespace-delimited token that
+ * starts like a `markPattern` match.
+ */
+const unlessTypedAsIs =
+    ({ verbatimDelimiters, patternStarts }: RuleContext, handler: RuleHandler): RuleHandler =>
+    (state, match, start, end) => {
+        const $start = state.doc.resolve(start);
+        const before = $start.parent.textBetween(0, $start.parentOffset, undefined, ' ');
+        const inOpenSpan = verbatimDelimiters.some((delimiter) => (before.split(delimiter).length - 1) % 2 === 1);
+        const token = `${before.slice(before.search(/\S*$/))}${match[0]}`;
+        const inAddress = patternStarts.some((pattern) => pattern.test(token));
+        return inOpenSpan || inAddress ? null : handler(state, match, start, end);
+    };
+
 const toInputRule = ({ pattern, handler }: RulePattern, { excludedMarks }: RuleContext): InputRule =>
     new InputRule(pattern, unlessInExcludedMark(excludedMarks, handler));
 
@@ -176,7 +209,9 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
     return toInputRule(
         {
             pattern: new RegExp(`${boundary}${escapeForRegExp(rule.match)}$`, 'u'),
-            handler: (state, _match, start, end) => state.tr.insertText(rule.replaceWith, start, end),
+            handler: unlessTypedAsIs(context, (state, _match, start, end) =>
+                state.tr.insertText(rule.replaceWith, start, end),
+            ),
         },
         context,
     );
@@ -187,11 +222,11 @@ const quotesRule = (rule: RuleOfKind<'quotes'>, context: RuleContext): InputRule
     toInputRule(
         {
             pattern: new RegExp(`${escapeForRegExp(rule.match)}$`),
-            handler: (state, _match, start, end) => {
+            handler: unlessTypedAsIs(context, (state, _match, start, end) => {
                 const before = start > 0 ? state.doc.textBetween(start - 1, start) : '';
                 const opens = before === '' || WORD_BOUNDARY_BEFORE.test(before);
                 return state.tr.insertText(opens ? rule.open : rule.close, start, end);
-            },
+            }),
         },
         context,
     );
@@ -229,7 +264,22 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
 };
 
 /** Punctuation that ends a sentence rather than a link, though a link may contain it. */
-const TRAILING_PUNCTUATION = /[.,;:!?)]+$/;
+const TRAILING_PUNCTUATION = /[.,;:!?]+$/;
+
+const count = (text: string, character: string): number => text.split(character).length - 1;
+
+/** Drops trailing punctuation, and a trailing `)` only while it has no `(` to close. */
+const trimTrailingPunctuation = (address: string): string => {
+    let trimmed = address;
+    for (;;) {
+        const next = trimmed.replace(TRAILING_PUNCTUATION, '');
+        const unbalanced = next.endsWith(')') && count(next, ')') > count(next, '(');
+        if (!unbalanced && next === trimmed) {
+            return trimmed;
+        }
+        trimmed = unbalanced ? next.slice(0, -1) : next;
+    }
+};
 
 /**
  * `https://example.com ` -> the address carries the mark, the space does not.
@@ -241,7 +291,7 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
     if (!markType) {
         return null;
     }
-    const flags = rule.pattern.flags.replaceAll(/[gy]/g, '');
+    const flags = withoutStateFlags(rule.pattern);
     const token = new RegExp(`^(?:${rule.pattern.source})$`, flags);
     const pattern = new RegExp(`(?:^|\\s)((?:${rule.pattern.source}))\\s$`, flags);
 
@@ -250,7 +300,7 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
         if (!typed) {
             return null;
         }
-        const linked = typed.replace(TRAILING_PUNCTUATION, '');
+        const linked = trimTrailingPunctuation(typed);
         if (!token.test(linked)) {
             return null;
         }

@@ -39,6 +39,30 @@ describe('typing a web address', () => {
         expect(stored).toEqual([paragraph(text('go to '), link('https://example.com'), text('. '))]);
     });
 
+    it('leaves typography alone inside the address', () => {
+        const stored = typedIntoEmptyParagraph('https://example.com/a--b?x=1->2 ');
+
+        expect(stored).toEqual([paragraph(link('https://example.com/a--b?x=1->2'), text(' '))]);
+    });
+
+    it('keeps a closing parenthesis that balances an opening one', () => {
+        const stored = typedIntoEmptyParagraph('https://en.wikipedia.org/wiki/Foo_(bar) ');
+
+        expect(stored).toEqual([paragraph(link('https://en.wikipedia.org/wiki/Foo_(bar)'), text(' '))]);
+    });
+
+    it('leaves a full stop after a balanced parenthesis out of the link', () => {
+        const stored = typedIntoEmptyParagraph('https://en.wikipedia.org/wiki/Foo_(bar). ');
+
+        expect(stored).toEqual([paragraph(link('https://en.wikipedia.org/wiki/Foo_(bar)'), text('. '))]);
+    });
+
+    it('leaves an unbalanced closing parenthesis out of the link', () => {
+        const stored = typedIntoEmptyParagraph('(see https://a.com/x). ');
+
+        expect(stored).toEqual([paragraph(text('(see '), link('https://a.com/x'), text('). '))]);
+    });
+
     it('does not carry the link on into what is typed next', () => {
         const stored = typedIntoEmptyParagraph('https://example.com next');
 

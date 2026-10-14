@@ -50,8 +50,9 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      *
      * `'top'` puts it inside the frame as an always-visible strip above the content.
      *
-     * Either way it is one tab stop after the text, moved through with the
-     * arrow keys, reached from the text with Alt+F10; Escape goes back to the text.
+     * Either way it is one tab stop, moved through with the arrow keys,
+     * reached from the text with Alt+F10; Escape goes back to the text. The
+     * strip comes before the text in the tab order, the floating bar after it.
      *
      * @default 'top'
      */
@@ -154,20 +155,26 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         if (isCommandKey(event)) {
             expectAnnouncement();
         }
-        if (event.defaultPrevented || handle === null) {
+        if (handle === null) {
+            return;
+        }
+        // Escape in the text gives the keyboard a way out that Tab is not —
+        // Tab indents in a list. ProseMirror prevents Escape's default itself,
+        // so `defaultPrevented` says nothing here: the UI that takes an Escape
+        // (the `/` menu, a mention draft) stops it from reaching this handler,
+        // and the toolbar and its menus sit outside the editable element.
+        const editable = containerRef.current;
+        if (event.key === 'Escape' && editable !== null && editable.contains(event.target as Node)) {
+            event.preventDefault();
+            handle.api.blur();
+            return;
+        }
+        if (event.defaultPrevented) {
             return;
         }
         if (isToolbarHotkey(event) && hasToolbar) {
             event.preventDefault();
             toolbarSummon.summon();
-            return;
-        }
-        // Escape in the text gives the keyboard a way out that Tab is not —
-        // Tab indents in a list. (The toolbar handles its own Escape.)
-        const editable = containerRef.current;
-        if (event.key === 'Escape' && editable !== null && editable.contains(event.target as Node)) {
-            event.preventDefault();
-            handle.api.blur();
         }
     };
 

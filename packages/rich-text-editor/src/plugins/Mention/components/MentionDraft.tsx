@@ -160,6 +160,8 @@ export const MentionDraft = ({
                 finish(() => onCancel(`${trigger}${query} `));
                 break;
             case 'Escape':
+                // Taken here: the editor must not also read it as leaving the text.
+                event.stopPropagation();
                 finish(() => onCancel(`${trigger}${query}`));
                 break;
             case 'Backspace':

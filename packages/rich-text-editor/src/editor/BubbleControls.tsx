@@ -87,7 +87,11 @@ export const TurnInto = ({
                             aria-label={isActive ? `${command.label}, current` : command.label}
                             onSelect={() => {
                                 returnToText();
-                                command.run(api);
+                                // Idempotent: picking what the block already is changes nothing
+                                // (a list entry would otherwise toggle the list off).
+                                if (!isActive) {
+                                    command.run(api);
+                                }
                             }}
                         >
                             {command.icon === undefined ? null : (

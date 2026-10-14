@@ -2,10 +2,11 @@
 
 // @vitest-environment happy-dom
 
+import { undo } from 'prosemirror-history';
 import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineBlock, defineInline, defineMark, type RtePlugin } from '#/core';
+import { defineBlock, defineInline, defineMark, type RteBlockNode, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
@@ -331,6 +332,65 @@ describe('blocks.setType', () => {
             { type: 'quote', children: [{ text: 'one' }] },
             { type: 'quote', children: [{ text: 'two' }] },
         ]);
+    });
+});
+
+describe('blocks.setType inside a list', () => {
+    const item = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'listItem', children }) as RteBlockNode;
+    const bullets = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'bulletList', children }) as RteBlockNode;
+    const heading = { type: 'textStyle', style: 'heading1', children: [{ text: 'one' }] } as RteBlockNode;
+
+    it('takes the item out of its list to leave a paragraph', () => {
+        const editor = editorWith(plugins, [bullets(item(paragraph(text('one'))))]);
+        editor.caretAfter('on');
+
+        editor.api.blocks.setType('paragraph');
+
+        expect(editor.stored()).toEqual([paragraph(text('one'))]);
+    });
+
+    it('takes the item out of its list to leave a heading', () => {
+        const editor = editorWith(plugins, [bullets(item(paragraph(text('one'))))]);
+        editor.caretAfter('on');
+
+        editor.api.blocks.setType('textStyle', { style: 'heading1' });
+
+        expect(editor.stored()).toEqual([heading]);
+    });
+
+    it('works for a check list', () => {
+        const editor = editorWith(plugins, [
+            {
+                type: 'checkList',
+                children: [{ type: 'checkItem', checked: false, children: [paragraph(text('one'))] }],
+            } as RteBlockNode,
+        ]);
+        editor.caretAfter('on');
+
+        editor.api.blocks.setType('textStyle', { style: 'heading1' });
+
+        expect(editor.stored()).toEqual([heading]);
+    });
+
+    it('lifts a nested item all the way out, leaving the rest in place', () => {
+        const editor = editorWith(plugins, [
+            bullets(item(paragraph(text('outer')), bullets(item(paragraph(text('one')))))),
+        ]);
+        editor.caretAfter('on');
+
+        editor.api.blocks.setType('textStyle', { style: 'heading1' });
+
+        expect(editor.stored()).toEqual([bullets(item(paragraph(text('outer')))), heading]);
+    });
+
+    it('is one undo step', () => {
+        const editor = editorWith(plugins, [bullets(item(paragraph(text('one'))))]);
+        editor.caretAfter('on');
+
+        editor.api.blocks.setType('textStyle', { style: 'heading1' });
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([bullets(item(paragraph(text('one'))))]);
     });
 });
 

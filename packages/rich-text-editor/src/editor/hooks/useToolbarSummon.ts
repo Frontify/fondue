@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MutableRefObject, useRef, useState } from 'react';
+import { type MutableRefObject, useReducer, useRef, useState } from 'react';
 
 /**
  * The floating toolbar is normally shown over selected text only. While it has
@@ -20,6 +20,9 @@ export const useToolbarSummon = (
     focusRequestRef: MutableRefObject<boolean>;
 } => {
     const [isPinned, setIsPinned] = useState(false);
+    // Bumped by every request so the editor renders and the toolbar sees it,
+    // even when the bar was already pinned and nothing else changes.
+    const [, renderForRequest] = useReducer((count: number) => count + 1, 0);
     const focusRequestRef = useRef(false);
 
     if (isPinned && !focusWithin) {
@@ -33,6 +36,7 @@ export const useToolbarSummon = (
         summon: () => {
             focusRequestRef.current = true;
             setIsPinned(true);
+            renderForRequest();
         },
         focusRequestRef,
     };

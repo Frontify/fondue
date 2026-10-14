@@ -56,7 +56,10 @@ export type EditorControlApi = {
     };
 
     blocks: {
-        /** Turn every text block the selection touches into this type, with `value` as its attributes. */
+        /**
+         * Turn every text block the selection touches into this type, with `value` as its attributes.
+         * A block inside a list is first taken out of its list, so the result stands on its own.
+         */
         setType(type: string, value?: Record<string, unknown>): void;
         /** Set attributes on every block the selection touches — how alignment is applied. */
         updateAttributes(attributes: Record<string, unknown>): void;
