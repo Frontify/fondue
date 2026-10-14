@@ -7,6 +7,7 @@ import tsconfig from './tsconfig.json' with { type: 'json' };
 
 const internalPatterns = Object.keys(tsconfig.compilerOptions.paths).map((path) => path.replace('/*', '/**'));
 
+// oxlint-disable-next-line typescript/no-unsafe-call -- untyped import (see above)
 export default defineConfig({
     internalPatterns,
     trailingComma: 'all',

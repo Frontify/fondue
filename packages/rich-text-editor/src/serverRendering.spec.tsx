@@ -7,10 +7,7 @@ import { PARAGRAPH, type RteDocumentOf } from './core';
 
 import { defaultPlugins, RichTextEditor, RichTextRenderer, serializeToHtml } from './index';
 
-/**
- * Readonly display and HTML export share the renderer, so a server-rendered
- * page can show the document without mounting an editor.
- */
+// A server-rendered page can show a document without mounting an editor.
 
 const TEXT = 'Hello from the server';
 
@@ -30,7 +27,7 @@ describe('rendering on a server', () => {
     });
 
     it('draws the same markup through RichTextRenderer and serializeToHtml', () => {
-        expect(serializeToHtml(doc, { plugins: defaultPlugins })).toBe(`<p>${TEXT}</p>`);
+        expect(serializeToHtml(doc, { plugins: defaultPlugins, wrap: false })).toBe(`<p>${TEXT}</p>`);
         expect(renderToString(<RichTextRenderer value={doc} plugins={defaultPlugins} />)).toContain(TEXT);
     });
 });

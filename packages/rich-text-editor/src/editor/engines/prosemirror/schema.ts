@@ -4,7 +4,6 @@ import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec, Schema } from
 
 import {
     ANY_LIST,
-    type BlockAttributeDefinition,
     type BlockDefinition,
     blockHtml,
     type InlineDefinition,
@@ -13,16 +12,16 @@ import {
     type PluginRegistry,
 } from '#/core';
 
+import { VALUE_ATTR } from './documentConversion';
 import { htmlSpecToDom } from './htmlSpec';
 import { blockParseRules, INLINE_PRIORITY, MARK_PRIORITY, valueParseRules } from './pasteRules';
-import { VALUE_ATTR } from './valueAttr';
 
 /**
- * The mounted features → one engine schema. Runs once, at mount: the schema is
- * immutable afterwards, which is why changing the feature set means building a
- * new editor rather than reconfiguring this one.
+ * The mounted features -> one engine schema (`buildSchema`, at the bottom, with
+ * the per-kind spec builders above it). Built once at mount: the schema is
+ * immutable, so changing the feature set means building a new editor.
  *
- * Four invariants live here, each marked at the line that carries it:
+ * Four invariants live here, each marked where it is carried:
  *
  * (1) The paragraph baseline is declared FIRST (the registry puts it there).
  *     The first node matching the document's `block+` content is the engine's
@@ -36,13 +35,6 @@ import { VALUE_ATTR } from './valueAttr';
  *     through its list. That is also why the selection snapshot's `block` is the
  *     paragraph inside an item rather than the item itself.
  */
-
-export type SchemaBundle = {
-    schema: Schema;
-    itemTypeByList: Map<string, string>;
-    /** Attributes every text block carries, for resetting them generically. */
-    blockAttributes: Map<string, BlockAttributeDefinition>;
-};
 
 const contentExpression = (
     type: string,
@@ -58,7 +50,11 @@ const contentExpression = (
         return 'inline*';
     }
     if ('items' in content) {
-        return known.has(content.items) ? `${content.items}+` : undefined;
+        // Thrown, as with `blocks` below: left out, the list would lose its items on the way out.
+        if (!known.has(content.items)) {
+            throw new Error(`Block "${type}" declares items of type "${content.items}", which is not registered.`);
+        }
+        return `${content.items}+`;
     }
     const expanded = content.blocks.flatMap((name) => (name === ANY_LIST ? [...lists] : [name]));
     const contains = [...new Set(expanded)].filter((name) => known.has(name));
@@ -105,9 +101,9 @@ const inlineNodeSpec = (definition: InlineDefinition): PmNodeSpec => ({
     group: 'inline',
     inline: true,
     atom: true,
-    // With editing UI, a node inserted without a value is a draft the UI
-    // completes (null); without it there is nothing to complete it.
-    attrs: { [VALUE_ATTR]: { default: definition.render?.edit ? null : {} } },
+    // With editing UI, a node inserted without a value is a draft (null) the UI
+    // completes; without it, it stores the declared defaults.
+    attrs: { [VALUE_ATTR]: { default: definition.render?.edit ? null : (definition.defaults ?? {}) } },
     parseDOM: valueParseRules(definition.parse, INLINE_PRIORITY),
     toDOM: (node) => {
         const value = node.attrs[VALUE_ATTR] as Record<string, unknown> | null;
@@ -117,13 +113,14 @@ const inlineNodeSpec = (definition: InlineDefinition): PmNodeSpec => ({
 });
 
 const markSpec = (definition: MarkDefinition): PmMarkSpec => ({
-    attrs: { [VALUE_ATTR]: { default: {} } },
+    // A mark turned on without a value carries its declared defaults.
+    attrs: { [VALUE_ATTR]: { default: definition.defaults ?? {} } },
     inclusive: definition.inclusive ?? true,
     parseDOM: valueParseRules(definition.parse, MARK_PRIORITY),
     toDOM: (mark) => htmlSpecToDom(definition.toHtml(mark.attrs[VALUE_ATTR] as Record<string, unknown>)),
 });
 
-export const buildSchema = (registry: PluginRegistry): SchemaBundle => {
+export const buildSchema = (registry: PluginRegistry): Schema => {
     const { itemTypeByList } = registry;
     const itemTypes = new Set(itemTypeByList.values());
     const lists = new Set(itemTypeByList.keys());
@@ -145,5 +142,5 @@ export const buildSchema = (registry: PluginRegistry): SchemaBundle => {
         marks[type] = markSpec(mark);
     }
 
-    return { schema: new Schema({ nodes, marks }), itemTypeByList, blockAttributes: registry.blockAttributes };
+    return new Schema({ nodes, marks });
 };

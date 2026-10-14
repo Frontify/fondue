@@ -1,19 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/**
- * The document format: what gets stored and sent over the wire, engine-agnostic
- * and open over the blocks, marks and inlines plugins contribute.
- */
+// The document format: what gets stored and sent over the wire, open over the
+// blocks, marks and inlines plugins contribute.
 
 /**
- * The canonical RTE document. It is NOT the editor's internal representation —
- * the adapter converts to and from the engine's native format at the boundary.
- *
- * This is the *open* form, parameterized over the blocks it may contain: the
- * editor knows only the structural skeleton plus the paragraph baseline.
- * Concrete blocks and marks are declared by the plugins implementing them, and
- * the package root closes the parameter over the official union — `RteDocument`
- * (no `Of`) is the type consumers use.
+ * A stored document: plain JSON, the same whichever editor wrote it. The *open*
+ * form, parameterized over its blocks; `RteDocument` closes it over the blocks
+ * the shipped plugins write.
  */
 export type RteDocumentOf<TBlock extends RteBlockNode = RteBlockNode> = {
     version: 1;
@@ -21,26 +14,17 @@ export type RteDocumentOf<TBlock extends RteBlockNode = RteBlockNode> = {
 };
 
 /**
- * Structural shape of any block. Plugin-declared attributes (a heading's
- * `level`) live flat on the node; the adapter reads them by the names the
- * plugin registered.
- *
- * `children` holds text runs for a text block, or other blocks for a container
- * block (a list holds its items). Which one applies follows from the block's
- * declared `children`, so the adapter never has to guess. Void blocks (images)
- * have no `children` at all.
+ * Structural shape of any block; plugin-declared attributes live flat on it.
+ * `children` is text runs for a text block, blocks for a container (a list
+ * holds its items) — per the block's declared `content` — and absent for a void
+ * block (a column break).
  */
 export type RteBlockNode = {
     type: string;
     children?: RteInlineNode[] | RteBlockNode[];
 };
 
-/**
- * The baseline block every editor has; the default for empty documents and
- * Enter-key splits. Code reaches for `PARAGRAPH` in `vocabulary.ts` instead of
- * the literal — it is written out here only because a type cannot reference a
- * constant.
- */
+/** The baseline block every editor has. */
 export type ParagraphBlock = {
     type: 'paragraph';
     children: RteInlineNode[];
@@ -50,17 +34,14 @@ export type ParagraphBlock = {
 export type RteInlineNode = RteTextNode | RteInlineElementNode;
 
 /**
- * A text leaf. Marks live flat on the node, keyed by the mark type a plugin
- * registered: a plain mark as `true` (`bold: true`), a value-carrying one as
- * its attributes (`link: { href }`). Presence is what turns a mark on — there
- * is no `false`, an absent key is off.
+ * A text leaf. Marks live flat on the node, keyed by mark type: `true` for a
+ * plain mark (`bold: true`), the attributes for a valued one (`link: { href }`).
+ * Presence turns a mark on; there is no `false`.
  *
- * The index signature keeps the format open over the marks plugins
- * contribute. Displaying or editing a document still needs the plugin behind
- * every mark it carries: a missing one throws, naming the mark, rather than
- * quietly dropping it. Authoring goes through the package root's closed
- * `RteText`, which lists the marks that actually ship, so typos in mark keys
- * are caught.
+ * The index signature keeps the format open over plugin marks. Displaying a
+ * document needs the plugin behind every mark it carries: a missing one throws,
+ * naming the mark. Authoring goes through the closed `RteText`, which catches
+ * typos in mark keys.
  */
 export type RteTextNode = {
     text: string;
@@ -69,23 +50,16 @@ export type RteTextNode = {
     [mark: string]: unknown;
 };
 
-/**
- * What a mark key holds on a text node: `true` for a mark that carries nothing,
- * its attributes for one that does. Named, because the two are told apart by
- * the value rather than by the key.
- */
+/** What a mark key holds on a text node: `true` for a mark carrying nothing, else its attributes. */
 export type StoredMarkValue = true | Record<string, unknown>;
 
 /**
- * A void inline element (e.g. a mention): no text content of its own, data
- * lives flat in attributes. Discriminated from text nodes by having `type`
- * instead of `text`, and open for the same reason.
+ * A void inline element (e.g. a mention): no text, data flat in attributes.
+ * Told apart from text nodes by having `type` instead of `text`.
  *
- * Both members spell the absent half out as `?: undefined`, which is what makes
- * the discrimination work for the compiler: the index signatures would
- * otherwise let `text` and `type` be "possibly present" on either member, so
- * neither `in` nor a plain property read would narrow. The cost is that no mark
- * may be named `type` and no attribute `text`.
+ * Both members spell the absent half out as `?: undefined`: without it the index
+ * signatures make `text` and `type` "possibly present" on either, and nothing
+ * narrows. The cost is that no mark may be named `type` and no attribute `text`.
  */
 export type RteInlineElementNode = {
     type: string;

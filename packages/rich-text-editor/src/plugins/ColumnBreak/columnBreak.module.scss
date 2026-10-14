@@ -7,7 +7,7 @@
  */
 .columns {
     columns: var(--rte-columns, 1);
-    column-gap: var(--rte-column-gap, normal);
+    column-gap: var(--rte-column-gap, var(--spacing-large));
 }
 
 /** The break itself: a hairline the author can see, taking up no space. */

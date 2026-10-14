@@ -12,8 +12,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "paths": {
-            "#/*": ["./src/*"],
-            "#storybook/*": ["./.storybook/*"]
+            "#/*": ["./src/*"]
         },
         "resolveJsonModule": true,
         "skipLibCheck": true,

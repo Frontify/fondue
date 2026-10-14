@@ -1,20 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/**
- * The static markup a node becomes: what the editor draws for it, what the
- * readonly view shows by default, and what export and copy write out. A plain
- * description rather than DOM or React, so every surface reads the same thing.
- */
+// The static markup a node becomes (editor, readonly view, export, copy), as a
+// plain description rather than DOM or React, so every surface reads the same thing.
 
 /** CSS properties by their CSS name: `{ 'text-align': 'center' }`. */
 export type StyleMap = Record<string, string>;
 
-/**
- * The attributes markup may carry. A closed list on purpose: every surface
- * turns these into its own form (DOM attributes, React props, an HTML string),
- * and a short list is one they cannot disagree on. Adding one is a change here
- * and in `renderer/toReact.ts`.
- */
+/** The attributes markup may carry. Closed on purpose: every surface maps them to its own form, and a short list can't be read differently. */
 export type HtmlAttributes = {
     class?: string;
     style?: StyleMap;
@@ -25,6 +17,10 @@ export type HtmlAttributes = {
     target?: string;
     rel?: string;
     type?: string;
+    role?: string;
+    id?: string;
+    /** As HTML spells it; the readonly view passes it to React as `tabIndex`. */
+    tabindex?: string;
     /** Boolean attributes: present when true, absent otherwise. */
     checked?: boolean;
     disabled?: boolean;
@@ -50,9 +46,8 @@ export const cssText = (style: StyleMap): string =>
         .join(' ');
 
 /**
- * The attributes as the DOM and HTML strings spell them: the style joined into
- * CSS text, a boolean attribute present as `''` or left out, an undefined one
- * left out. The engine and the HTML printer both write exactly this.
+ * The attributes as DOM and HTML strings spell them: style as CSS text, a true
+ * boolean as `''`, false or undefined left out. Shared by engine and HTML printer.
  */
 export const attributeEntries = (attrs: HtmlAttributes = {}): [string, string][] =>
     Object.entries(attrs).flatMap(([name, value]): [string, string][] => {
@@ -69,11 +64,7 @@ export const attributeEntries = (attrs: HtmlAttributes = {}): [string, string][]
         return [[name, value as string]];
     });
 
-/**
- * Styles that land on the outermost element of a node's markup — how an
- * attribute every text block carries (alignment) reaches whatever element the
- * block renders, without the block knowing about it.
- */
+/** Merges styles onto the outermost element, so a block-wide attribute (alignment) lands without the block knowing. */
 export const withRootStyle = (spec: HtmlSpec, style: StyleMap): HtmlSpec =>
     Object.keys(style).length === 0
         ? spec

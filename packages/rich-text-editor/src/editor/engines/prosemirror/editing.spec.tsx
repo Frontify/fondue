@@ -2,11 +2,12 @@
 
 // @vitest-environment happy-dom
 
+import { redo, undo } from 'prosemirror-history';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { buildPluginRegistry, defineMark, emptyDocument, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '#/core';
 
-import { mountDocument } from './editing';
+import { mountEditorForTests } from './editing';
 
 /**
  * The controlled-`value` protocol: a host hands back the document it was given,
@@ -31,22 +32,25 @@ const paragraph = (text: string): RteDocumentOf => ({
 
 const mounted: { destroy(): void }[] = [];
 
-const mount = (initialDoc: RteDocumentOf) => {
+const mount = (
+    initialDoc: RteDocumentOf,
+    { placeholder = '', attributes = {} }: { placeholder?: string; attributes?: Record<string, string> } = {},
+) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const onDocChange = vi.fn<(doc: RteDocumentOf) => void>();
 
-    const live = mountDocument({
+    const { mounted: live, view } = mountEditorForTests({
         container,
         initialDoc,
         registry: buildPluginRegistry(plugins),
-        readOnly: false,
-        placeholder: '',
-        contentClassName: 'content',
+        placeholder,
+        attributes,
         placeholderClassName: 'placeholder',
         onDocChange,
         onStateChange: () => {},
         onBlur: () => {},
+        viewPortals: { set: () => {}, delete: () => {} },
     });
     mounted.push(live);
     const handle = { ...live.handle, setDoc: live.setDoc };
@@ -55,7 +59,7 @@ const mount = (initialDoc: RteDocumentOf) => {
         const { calls } = onDocChange.mock;
         return calls.length === 0 ? null : (calls[calls.length - 1]?.[0] ?? null);
     };
-    return { handle, onDocChange, stored };
+    return { handle, onDocChange, stored, live, view, container };
 };
 
 afterEach(() => {
@@ -96,7 +100,7 @@ describe('a document set by the host', () => {
         expect(onDocChange).not.toHaveBeenCalled();
     });
 
-    it('leaves the caret where the user left it', () => {
+    it('puts the caret at the end of the new content, not at the old offset mid-word', () => {
         const { handle, onDocChange, stored } = mount(paragraph('abcdef'));
         handle.api.insertText('XY');
 
@@ -104,7 +108,7 @@ describe('a document set by the host', () => {
         onDocChange.mockClear();
         handle.api.insertText('|');
 
-        expect(stored()).toEqual(paragraph('12|3456'));
+        expect(stored()).toEqual(paragraph('123456|'));
         expect(onDocChange).toHaveBeenCalledTimes(1);
     });
 
@@ -114,6 +118,76 @@ describe('a document set by the host', () => {
         handle.setDoc(paragraph('host'));
         handle.api.insertText('!');
 
-        expect(stored()).toEqual(paragraph('!host'));
+        expect(stored()).toEqual(paragraph('host!'));
+    });
+
+    it('is not undone by the user undoing their own edits', () => {
+        const { handle, view, stored } = mount(paragraph('mine'));
+        handle.api.insertText('typed ');
+
+        handle.setDoc(paragraph('from the host'));
+        undo(view.state, view.dispatch);
+
+        expect(view.state.doc.textContent).toBe('from the host');
+        expect(stored()).toEqual(paragraph('typed mine'));
+    });
+});
+
+describe('undo and redo', () => {
+    it('take an edit back and bring it again', () => {
+        const { handle, view, stored } = mount(paragraph('text'));
+        handle.api.insertText('more ');
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('text'));
+
+        redo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('more text'));
+    });
+});
+
+describe('the placeholder', () => {
+    const placeholderText = (container: HTMLElement): string | null =>
+        container.querySelector('.placeholder')?.getAttribute('data-placeholder') ?? null;
+
+    it('shows on an empty document, and goes once something is typed', () => {
+        const { handle, container } = mount(emptyDocument(), { placeholder: 'Write…' });
+
+        expect(placeholderText(container)).toBe('Write…');
+
+        handle.api.insertText('a');
+        expect(placeholderText(container)).toBeNull();
+    });
+
+    it('changes with `setPlaceholder`, and goes when set to nothing', () => {
+        const { live, container } = mount(emptyDocument(), { placeholder: 'Write…' });
+
+        live.setPlaceholder('Something else');
+        expect(placeholderText(container)).toBe('Something else');
+
+        live.setPlaceholder('');
+        expect(placeholderText(container)).toBeNull();
+    });
+});
+
+describe('the editable element', () => {
+    it('carries the attributes it is mounted with, its class among them', () => {
+        const { container } = mount(emptyDocument(), { attributes: { 'aria-label': 'Notes', class: 'content' } });
+        const editable = container.querySelector('[contenteditable]');
+
+        expect(editable?.getAttribute('aria-label')).toBe('Notes');
+        expect(editable?.classList.contains('content')).toBe(true);
+    });
+
+    it('takes new attributes from `setAttributes`, dropping ones no longer given', () => {
+        const { live, container } = mount(emptyDocument(), { attributes: { 'aria-label': 'Notes', class: 'two' } });
+
+        live.setAttributes({ 'aria-describedby': 'hint', class: 'three' });
+        const editable = container.querySelector('[contenteditable]');
+
+        expect(editable?.hasAttribute('aria-label')).toBe(false);
+        expect(editable?.getAttribute('aria-describedby')).toBe('hint');
+        expect(editable?.classList.contains('three')).toBe(true);
+        expect(editable?.classList.contains('two')).toBe(false);
     });
 });

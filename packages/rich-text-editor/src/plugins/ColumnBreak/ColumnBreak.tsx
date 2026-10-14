@@ -13,7 +13,7 @@ export type ColumnBreakBlock = {
     type: 'columnBreak';
 };
 
-type ColumnBreakPluginOptions = {
+export type ColumnBreakPluginOptions = {
     /** How many columns the content is laid out in. */
     columns?: number;
     /** The gap between them, as a CSS length: `'24px'`, `'2rem'`, `'normal'`. */
@@ -29,7 +29,15 @@ export const columnBreakPlugin = ({ columns = 2, gap = 'normal' }: ColumnBreakPl
     id: 'column-break',
     blocks: {
         columnBreak: defineBlock({
-            toHtml: () => ({ tag: 'div', attrs: { 'data-column-break': '', class: styles.break } }),
+            toHtml: () => ({
+                tag: 'div',
+                attrs: {
+                    'data-column-break': '',
+                    class: styles.break,
+                    role: 'separator',
+                    'aria-label': 'Column break',
+                },
+            }),
             parse: [{ tag: 'div[data-column-break]' }],
         }),
     },
@@ -39,6 +47,16 @@ export const columnBreakPlugin = ({ columns = 2, gap = 'normal' }: ColumnBreakPl
             <IconTextColumnBreak size={16} />
         </ToolbarButton>
     ),
+    commands: [
+        {
+            id: 'column-break',
+            label: 'Column break',
+            icon: <IconTextColumnBreak size={16} />,
+            keywords: ['columns', 'break', 'split'],
+            group: 'insert',
+            run: (api) => api.insert('columnBreak'),
+        },
+    ],
     // The layout belongs to the content as a whole, so it goes on the editable
     // element; the options reach the stylesheet as custom properties.
     contentClassName: styles.columns,

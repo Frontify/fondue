@@ -9,11 +9,7 @@ import { findPreset, isTextStyle, labelOf, type TextStyleOption } from '../helpe
 
 import styles from './textStyleSelect.module.scss';
 
-/**
- * The style dropdown. Its value is derived from the document on every render
- * (the toolbar re-renders on every editor state change), so the Select is fully
- * controlled by the editor, never by local state.
- */
+/** The style dropdown, controlled by the document: its value is derived from the selection on every render. */
 export const TextStyleSelect = ({
     selection,
     api,
@@ -24,9 +20,7 @@ export const TextStyleSelect = ({
     options: readonly TextStyleOption[];
 }): ReactNode => {
     const currentBlock = selection.block;
-    // A stored document may carry a style this editor was not configured with.
-    // It still renders, but the dropdown can only show what it offers, so
-    // anything else reads as the paragraph baseline.
+    // A stored style this editor does not offer still renders, but the dropdown shows it as a paragraph.
     const current = isTextStyle(currentBlock) && options.includes(currentBlock.style) ? currentBlock.style : PARAGRAPH;
 
     const handleSelect = (selected: string | null): void => {
@@ -38,21 +32,16 @@ export const TextStyleSelect = ({
         } else {
             api.blocks.setType('textStyle', { style: selected });
         }
-        // The menu hands focus back to its own trigger as it closes, which
-        // would undo the focus setType already restored.
+        // The menu returns focus to its trigger as it closes, which would undo the focus setType restored.
         requestAnimationFrame(() => api.focus());
     };
 
     return (
-        // A Select fills its container, and in the toolbar's flex row that
-        // means the whole width — so the plugin gives it a box to fill.
+        // A Select fills its container, which in the toolbar's flex row is the whole width.
         <div className={styles.control}>
             <Select aria-label="Text style" value={current} onSelect={handleSelect}>
                 {options.map((option) => (
-                    // Each row is drawn in the style it applies, so the menu
-                    // previews the scale. The trigger keeps the plain label
-                    // (`showStringValue`, on by default): styling that too
-                    // would change the toolbar's height with every selection.
+                    // Rows preview their style; the trigger keeps the plain label so the toolbar height stays fixed.
                     <Select.Item key={option} value={option} label={labelOf(option)}>
                         <span className={styles.preview}>
                             <span className={findPreset(option)?.className}>{labelOf(option)}</span>

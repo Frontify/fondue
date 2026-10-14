@@ -7,9 +7,15 @@ import { defineConfig } from 'oxlint';
 /**
  * The layer boundaries, as import rings. Dependencies point inward: core ←
  * plugins / renderer / editor, with ProseMirror confined to
- * `editor/engines/prosemirror/`. The groups below are shared by the rings that
- * need them, so that a ring scoped to one folder depth still carries the whole
- * rule.
+ * `editor/engines/prosemirror/`. Another layer is reached through its `#/…`
+ * alias only, so each ring bans the aliases it may not use — always the bare
+ * alias too (`#/plugins`, not just `#/plugins/**`) — and bans relative paths
+ * that climb out of the importing file's own layer. How far `../` may climb
+ * depends on how deep the importing file sits, hence one ring per depth.
+ *
+ * Patterns are globs matched against the import specifier: `*` stays within one
+ * path segment, `**` crosses any number, and a later `!pattern` re-allows what
+ * an earlier one banned.
  */
 const NO_ENGINE = {
     group: ['prosemirror-*'],
@@ -23,34 +29,91 @@ const NO_SERVER_RENDER = {
         'The package never renders React to a string: serializeToHtml writes HTML itself. Only the server-rendering specs, standing in for a host, use react-dom/server.',
 };
 
+/** Every alias outside the core, which is all a plugin or the renderer may not use. */
+const OUTER_LAYERS = [
+    '#/editor',
+    '#/editor/**',
+    '#/renderer',
+    '#/renderer/**',
+    '#/plugins',
+    '#/plugins/**',
+    '#/index',
+    '#/documentFormat',
+];
+
+/** Bans relative imports that climb `up` (`..`, `../..`, …) or further. */
+const noRelativeEscape = (up: string, message: string) => ({
+    group: [`${up}/**`],
+    message,
+});
+
 const CORE_ONLY = {
-    group: ['#/editor', '#/editor/**', '#/renderer', '#/renderer/**', '#/plugins/**', '#/index', '#/documentFormat'],
+    group: OUTER_LAYERS,
     message: 'Plugins may only import the core surface (#/core).',
 };
 
 /**
  * One plugin reaching into another is how "anything a shipped plugin does, an
  * external author can do too" stops being true. A plugin's own subfolders are
- * fine, so what counts as another plugin depends on how deep the importing file
- * sits — hence one group per depth, each applied to files at that depth.
+ * fine, so what counts as another plugin — or as leaving `src/plugins/`
+ * altogether — depends on how deep the importing file sits: `up` is the
+ * relative path from the importing file to `src/plugins/`.
  */
 const noSiblingPlugin = (up: string) => ({
-    group: [`${up}/*`, `${up}/*/**`, `!${up}/shared`, `!${up}/shared/**`],
+    group: [`${up}/**`, `!${up}/shared`, `!${up}/shared/**`],
     message:
-        'A plugin may not import another plugin. What several plugins are built out of belongs in src/plugins/shared/.',
+        'A plugin may not import another plugin, nor reach out of src/plugins/ by a relative path (use #/core). What several plugins are built out of belongs in src/plugins/shared/.',
 });
+
+/** The shell reaches the engine only through `useEditorHandle`; `up` is the relative path to `src/editor/`. */
+const noEngineFromShell = (up: string) => ({
+    group: ['#/editor/engines', '#/editor/engines/**', `${up}/engines`, `${up}/engines/**`],
+    message: 'Only useEditorHandle wires an adapter in. Everything else uses the editor port.',
+});
+
+const SHELL_OUTER_LAYERS = {
+    group: ['#/plugins', '#/plugins/**', '#/index', '#/documentFormat'],
+    message: 'The editor shell may import core, the renderer, and the port.',
+};
+
+const SHELL_ESCAPE_MESSAGE = 'The editor shell reaches other layers through their #/… alias, never a relative path.';
+
+/**
+ * The engine adapter's allowed targets are listed positively: the core, and of
+ * the editor only the port. `allowPluginBarrel` lets its test harness and specs
+ * build editors from the shipped plugins (`#/plugins`), which the adapter itself
+ * must never depend on.
+ */
+const engineRing = (allowPluginBarrel: boolean) => ({
+    group: [
+        '#/editor',
+        '#/editor/**',
+        '!#/editor/port',
+        '#/renderer',
+        '#/renderer/**',
+        ...(allowPluginBarrel ? [] : ['#/plugins']),
+        '#/plugins/**',
+        '#/index',
+        '#/documentFormat',
+        '../**',
+    ],
+    message:
+        'The engine adapter may import #/core and #/editor/port, nothing further out — and never by a relative path out of its folder.',
+});
+
+const ENGINE = 'src/editor/engines/prosemirror';
 
 export default defineConfig({
     extends: [reactConfig],
     options: {
         typeAware: true,
     },
-    ignorePatterns: ['dist/', 'storybook-static/', '**/*.mdx'],
+    ignorePatterns: ['dist/', 'storybook-static/', 'lint-fixtures/src/'],
     /**
      * A later override's `no-restricted-imports` replaces an earlier one for the
      * same file rather than adding to it. So every override repeats each shared
-     * group that applies to its files, which is what the `NO_ENGINE` /
-     * `NO_SERVER_RENDER` / `CORE_ONLY` constants are for.
+     * group that applies to its files, which is what the constants and helpers
+     * above are for.
      */
     overrides: [
         {
@@ -90,14 +153,14 @@ export default defineConfig({
         },
         {
             files: ['src/**/*.{ts,tsx}'],
-            excludeFiles: ['src/editor/engines/prosemirror/**/*.{ts,tsx}'],
+            excludeFiles: [`${ENGINE}/**/*.{ts,tsx}`],
             rules: {
                 'no-restricted-imports': ['error', { patterns: [NO_ENGINE] }],
             },
         },
         {
             files: ['src/**/*.{ts,tsx}'],
-            excludeFiles: ['src/serverRendering*.spec.tsx', 'src/editor/engines/prosemirror/**/*.{ts,tsx}'],
+            excludeFiles: ['src/serverRendering*.spec.tsx', `${ENGINE}/**/*.{ts,tsx}`],
             rules: {
                 'no-restricted-imports': ['error', { patterns: [NO_ENGINE, NO_SERVER_RENDER] }],
             },
@@ -114,15 +177,7 @@ export default defineConfig({
                                 message: 'The core may use React types, never an engine or a renderer.',
                             },
                             {
-                                group: [
-                                    '#/editor',
-                                    '#/editor/**',
-                                    '#/renderer',
-                                    '#/renderer/**',
-                                    '#/plugins/**',
-                                    '#/index',
-                                    '#/documentFormat',
-                                ],
+                                group: [...OUTER_LAYERS, '../**'],
                                 message: 'The core imports from no other layer — it is what the other layers import.',
                             },
                         ],
@@ -143,8 +198,16 @@ export default defineConfig({
                                 message: 'The renderer never imports an engine.',
                             },
                             {
-                                group: ['#/editor', '#/editor/**', '#/plugins/**', '#/index', '#/documentFormat'],
-                                message: 'The renderer may import core and nothing else.',
+                                group: [
+                                    '#/editor',
+                                    '#/editor/**',
+                                    '#/plugins',
+                                    '#/plugins/**',
+                                    '#/index',
+                                    '#/documentFormat',
+                                    '../**',
+                                ],
+                                message: 'The renderer may import #/core and nothing else.',
                             },
                         ],
                     },
@@ -152,9 +215,20 @@ export default defineConfig({
             },
         },
         {
-            files: ['src/plugins/**/*.{ts,tsx}'],
+            // The plugin barrel, `src/plugins/index.ts`, gathers the plugins and nothing from outside.
+            files: ['src/plugins/*.{ts,tsx}'],
             rules: {
-                'no-restricted-imports': ['error', { patterns: [NO_ENGINE, NO_SERVER_RENDER, CORE_ONLY] }],
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_ENGINE,
+                            NO_SERVER_RENDER,
+                            CORE_ONLY,
+                            noRelativeEscape('..', 'Plugins reach the core through #/core, never a relative path.'),
+                        ],
+                    },
+                ],
             },
         },
         {
@@ -176,8 +250,7 @@ export default defineConfig({
             },
         },
         {
-            files: ['src/editor/**/*.{ts,tsx}'],
-            excludeFiles: ['src/editor/hooks/useEditorHandle.ts', 'src/editor/engines/prosemirror/**/*.{ts,tsx}'],
+            files: ['src/editor/*.{ts,tsx}'],
             rules: {
                 'no-restricted-imports': [
                     'error',
@@ -185,44 +258,78 @@ export default defineConfig({
                         patterns: [
                             NO_SERVER_RENDER,
                             NO_ENGINE,
-                            {
-                                group: ['#/editor/engines/**'],
-                                message:
-                                    'Only useEditorHandle wires an adapter in. Everything else uses the editor port.',
-                            },
-                            {
-                                group: ['#/plugins/**', '#/index', '#/documentFormat'],
-                                message: 'The editor shell may import core, the renderer, and the port.',
-                            },
+                            noEngineFromShell('.'),
+                            SHELL_OUTER_LAYERS,
+                            noRelativeEscape('..', SHELL_ESCAPE_MESSAGE),
                         ],
                     },
                 ],
             },
         },
         {
-            files: ['src/editor/engines/prosemirror/**/*.{ts,tsx}'],
+            // A spec drives the editor the way a host does, so it may import the public API.
+            files: ['src/editor/*.spec.{ts,tsx}'],
             rules: {
                 'no-restricted-imports': [
                     'error',
                     {
                         patterns: [
                             NO_SERVER_RENDER,
-                            {
-                                group: [
-                                    '#/editor/RichTextEditor',
-                                    '#/editor/Toolbar',
-                                    '#/editor/hooks/**',
-                                    '#/plugins/**',
-                                    '#/renderer',
-                                    '#/renderer/**',
-                                    '#/index',
-                                    '#/documentFormat',
-                                ],
-                                message: 'The engine adapter may import core and the editor port, nothing further out.',
-                            },
+                            NO_ENGINE,
+                            noEngineFromShell('.'),
+                            SHELL_OUTER_LAYERS,
+                            { ...noRelativeEscape('..', SHELL_ESCAPE_MESSAGE), group: ['../**', '!../index'] },
                         ],
                     },
                 ],
+            },
+        },
+        {
+            files: ['src/editor/hooks/**/*.{ts,tsx}'],
+            excludeFiles: ['src/editor/hooks/useEditorHandle.ts'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_SERVER_RENDER,
+                            NO_ENGINE,
+                            noEngineFromShell('..'),
+                            SHELL_OUTER_LAYERS,
+                            noRelativeEscape('../..', SHELL_ESCAPE_MESSAGE),
+                        ],
+                    },
+                ],
+            },
+        },
+        {
+            // The one shell file that wires the engine in.
+            files: ['src/editor/hooks/useEditorHandle.ts'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_SERVER_RENDER,
+                            NO_ENGINE,
+                            SHELL_OUTER_LAYERS,
+                            noRelativeEscape('../..', SHELL_ESCAPE_MESSAGE),
+                        ],
+                    },
+                ],
+            },
+        },
+        {
+            files: [`${ENGINE}/**/*.{ts,tsx}`],
+            rules: {
+                'no-restricted-imports': ['error', { patterns: [NO_SERVER_RENDER, engineRing(false)] }],
+            },
+        },
+        {
+            // The engine's test harness and specs build editors from the shipped plugins.
+            files: [`${ENGINE}/testEditor.ts`, `${ENGINE}/**/*.spec.{ts,tsx}`],
+            rules: {
+                'no-restricted-imports': ['error', { patterns: [NO_SERVER_RENDER, engineRing(true)] }],
             },
         },
         {
@@ -235,19 +342,8 @@ export default defineConfig({
                             NO_SERVER_RENDER,
                             NO_ENGINE,
                             {
-                                group: [
-                                    '#/core',
-                                    '#/core/**',
-                                    '#/editor',
-                                    '#/editor/**',
-                                    '#/renderer',
-                                    '#/renderer/**',
-                                    '#/plugins',
-                                    '#/plugins/**',
-                                    './plugins/**',
-                                    './documentFormat',
-                                ],
-                                message: 'Stories may only import the package public API (./index).',
+                                group: ['#/**', './**', '../**', '!../index'],
+                                message: 'Stories may only import the package public API (../index).',
                             },
                         ],
                     },

@@ -1,0 +1,82 @@
+// The `/` menu: a listbox hung under the caret. Drawn like Fondue's floating
+// surfaces, and above the page's content.
+
+/** The surface, fixed to the viewport — the component places it. */
+.popup {
+    position: fixed;
+    z-index: 1;
+    box-sizing: border-box;
+    min-width: 220px;
+    max-width: min(320px, calc(100vw - var(--spacing-medium) * 2));
+    padding: var(--spacing-xx-small);
+    border: var(--border-width-default) solid var(--color-line-subtle);
+    border-radius: var(--border-radius-medium);
+    background: var(--color-surface-default);
+    box-shadow: var(--shadow-mid);
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+}
+
+.list {
+    max-height: 288px;
+    overflow-y: auto;
+}
+
+.heading {
+    padding: var(--spacing-x-small) var(--spacing-small) var(--spacing-xx-small);
+    color: var(--color-secondary-default);
+    font-size: var(--typography-font-size-x-small);
+    font-weight: var(--typography-font-weight-medium);
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-x-small);
+    box-sizing: border-box;
+    width: 100%;
+    padding: var(--spacing-x-small) var(--spacing-small);
+    border-radius: var(--border-radius-medium);
+    color: var(--color-primary-default);
+    cursor: pointer;
+}
+
+/** The highlighted row, as Fondue highlights a row in its menus. */
+.optionActive {
+    background: var(--color-surface-hover);
+}
+
+@media (forced-colors: active) {
+    .optionActive {
+        background: Highlight;
+        color: HighlightText;
+        forced-color-adjust: none;
+    }
+}
+
+.icon {
+    display: inline-flex;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    color: var(--color-secondary-default);
+}
+
+/** Said in the list's place when nothing matches. */
+.empty {
+    padding: var(--spacing-x-small) var(--spacing-small);
+    color: var(--color-secondary-default);
+}
+
+/** Announced, never drawn: how many commands match. */
+.visuallyHidden {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}

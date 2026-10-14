@@ -11,6 +11,10 @@ export type SuperscriptMark = {
     superscript?: true;
 };
 
+/** The key the toolbar button names as its shortcut, so the two cannot drift apart. */
+const HOTKEY = 'Mod-.';
+
+/** Superscript text: `<sup>` and `Mod-.`. Lives in the floating toolbar overflow. */
 export const superscriptPlugin = (): RtePlugin => ({
     id: 'superscript',
     marks: {
@@ -20,9 +24,10 @@ export const superscriptPlugin = (): RtePlugin => ({
         }),
     },
     toolbarItem: ({ isActive, toggle }) => (
-        <ToolbarButton title="Superscript" active={isActive} onClick={() => toggle()}>
+        <ToolbarButton title="Superscript" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
             <IconSuperscript size={16} />
         </ToolbarButton>
     ),
-    hotkeys: { 'Mod-.': (api) => api.marks.toggle('superscript') },
+    hotkeys: { [HOTKEY]: (api) => api.marks.toggle('superscript') },
+    floatingToolbar: 'overflow',
 });

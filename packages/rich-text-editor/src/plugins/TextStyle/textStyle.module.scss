@@ -1,13 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// Every preset: the heading scale plus the ones legacy kept beside it. Sizes are
-// relative to the editor's content font, so the whole scale follows whatever the
-// host sets. The shared declarations are a mixin rather than a second class, so a
-// block's style is one lookup in the render function.
-//
-// The presets table (helpers/presets.ts) is what reads these, and it hands them
-// to both the block's render function and the dropdown's preview rows — so they
-// live with the plugin rather than with either one.
+// Every preset. Headings use Fondue's semantic heading tokens, the rest the typography scale.
+// The presets table (helpers/presets.ts) reads these for both the block and the dropdown previews.
 @mixin preset {
     margin: 0;
 }
@@ -21,38 +15,38 @@
 .heading1 {
     @include heading;
 
-    font-size: var(--typography-font-size-xxx-large);
-    font-weight: var(--typography-font-weight-bold);
+    font-size: var(--text-heading-xx-large-strong-font-size);
+    font-weight: var(--text-heading-xx-large-strong-font-weight);
 }
 
 .heading2 {
     @include heading;
 
-    font-size: var(--typography-font-size-xx-large);
-    font-weight: var(--typography-font-weight-bold);
+    font-size: var(--text-heading-x-large-strong-font-size);
+    font-weight: var(--text-heading-x-large-strong-font-weight);
 }
 
 .heading3 {
     @include heading;
 
-    font-size: var(--typography-font-size-x-large);
-    font-weight: var(--typography-font-weight-medium);
+    font-size: var(--text-heading-large-default-font-size);
+    font-weight: var(--text-heading-large-default-font-weight);
 }
 
 .heading4 {
     @include heading;
 
-    font-size: var(--typography-font-size-large);
-    font-weight: var(--typography-font-weight-medium);
+    font-size: var(--text-heading-medium-default-font-size);
+    font-weight: var(--text-heading-medium-default-font-weight);
 }
 
 .custom1 {
     @include preset;
 
-    font-size: 1.05em;
+    font-size: var(--typography-font-size-medium);
     font-weight: var(--typography-font-weight-medium);
-    // `em` rather than `--typography-letter-spacing-*`: those tokens are
-    // absolute px, and a preset's tracking has to scale with its own size.
+    // `em` rather than `--typography-letter-spacing-*`: the wide token is far
+    // more than this slight tracking, and it has to scale with the size.
     letter-spacing: 0.02em;
 }
 
@@ -68,14 +62,14 @@
     @include preset;
 
     font-size: var(--typography-font-size-small);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--typography-letter-spacing-wide);
     text-transform: var(--typography-text-transform-uppercase);
 }
 
 .imageTitle {
     @include preset;
 
-    font-size: 1.05em;
+    font-size: var(--typography-font-size-medium);
     font-weight: var(--typography-font-weight-bold);
 }
 

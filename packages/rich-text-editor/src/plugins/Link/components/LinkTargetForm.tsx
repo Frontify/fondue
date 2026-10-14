@@ -3,38 +3,53 @@
 import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
-import { type LinkValue } from '../helpers/draft';
 import { toHref } from '../helpers/href';
+import { type LinkValue } from '../helpers/value';
 
 import styles from './linkForm.module.scss';
 
 /**
- * Where an existing link points, and whether it opens a new tab. The text is
- * not here: it is in the document, edited in place.
+ * Where a link points, and whether it opens a new tab. The text is edited in
+ * place, not here. Input is validated on save, with the reason announced under
+ * the field.
  */
 export const LinkTargetForm = ({
     initial,
     onSave,
     onCancel,
+    onRemove,
 }: {
     initial: LinkValue;
     onSave: (value: LinkValue) => void;
     onCancel: () => void;
+    /** Offered for a link that exists: take it away, keeping its text. */
+    onRemove?: () => void;
 }): ReactNode => {
     const [typed, setTyped] = useState(initial.href);
     const [openInNewTab, setOpenInNewTab] = useState(initial.openInNewTab === true);
+    // Set by a failed save, cleared when the field changes.
+    const [error, setError] = useState<string | null>(null);
     const urlId = useId();
+    const newTabId = useId();
+    const errorId = useId();
     const urlFieldRef = useRef<HTMLInputElement>(null);
-    const href = toHref(typed);
 
     useEffect(() => {
         urlFieldRef.current?.focus();
     }, []);
 
     const save = (): void => {
-        if (href !== null) {
-            onSave(openInNewTab ? { href, openInNewTab: true } : { href });
+        const href = toHref(typed);
+        if (href === null) {
+            setError(
+                typed.trim() === ''
+                    ? 'Enter where the link goes.'
+                    : 'Enter a web address (example.com), an email address, or a phone number (tel:…).',
+            );
+            urlFieldRef.current?.focus();
+            return;
         }
+        onSave(openInNewTab ? { href, openInNewTab: true } : { href });
     };
 
     const saveOnEnter = (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -54,24 +69,38 @@ export const LinkTargetForm = ({
                     type="url"
                     placeholder="example.com"
                     value={typed}
-                    status={typed !== '' && href === null ? 'error' : 'neutral'}
-                    onChange={(event) => setTyped(event.target.value)}
+                    status={error === null ? 'neutral' : 'error'}
+                    aria-describedby={error === null ? undefined : errorId}
+                    aria-errormessage={errorId}
+                    onChange={(event) => {
+                        setTyped(event.target.value);
+                        setError(null);
+                    }}
                     onKeyDown={saveOnEnter}
                 />
+                {/* Always in the page, so the message is announced as it appears. */}
+                <span id={errorId} role="alert" className={styles.error}>
+                    {error}
+                </span>
             </div>
             <div className={styles.newTab}>
                 <Checkbox
-                    aria-label="Open in new tab"
+                    id={newTabId}
                     value={openInNewTab}
                     onChange={() => setOpenInNewTab((previous) => !previous)}
                 />
-                <span>Open in new tab</span>
+                <Label htmlFor={newTabId}>Open in new tab</Label>
             </div>
             <div className={styles.formActions}>
+                {onRemove ? (
+                    <Button size="small" emphasis="weak" onPress={onRemove}>
+                        Remove link
+                    </Button>
+                ) : null}
                 <Button size="small" emphasis="weak" onPress={onCancel}>
                     Cancel
                 </Button>
-                <Button size="small" disabled={href === null} onPress={save}>
+                <Button size="small" onPress={save}>
                     Save
                 </Button>
             </div>

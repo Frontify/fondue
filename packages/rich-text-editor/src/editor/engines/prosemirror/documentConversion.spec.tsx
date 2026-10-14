@@ -84,7 +84,7 @@ const plugins: RtePlugin[] = [
     },
 ];
 
-const { schema } = buildSchema(buildPluginRegistry(plugins));
+const schema = buildSchema(buildPluginRegistry(plugins));
 
 const document: RteDocumentOf = {
     version: 1,
@@ -167,5 +167,33 @@ describe('the document boundary', () => {
                 { type: 'mention', id: 'jane' },
             ],
         });
+    });
+
+    it('refuses blocks that do not fit together, rather than storing them', () => {
+        const listHoldingParagraph = {
+            version: 1,
+            blocks: [{ type: 'bulletList', children: [{ type: PARAGRAPH, children: [{ text: 'x' }] }] }],
+        } as RteDocumentOf;
+
+        expect(() => toEngineDocument(listHoldingParagraph, schema)).toThrow(
+            'Invalid document: a "bulletList" cannot hold "paragraph".',
+        );
+    });
+
+    it('fills in content that is only missing, as an empty document is', () => {
+        expect(toRteDocument(toEngineDocument({ version: 1, blocks: [] }, schema))).toEqual({
+            version: 1,
+            blocks: [{ type: PARAGRAPH, children: [] }],
+        });
+    });
+
+    it('takes back a block it handed out as the node it came from', () => {
+        const doc = toEngineDocument(document, schema);
+        const handedOut = toRteDocument(doc);
+
+        const echoed = toEngineDocument({ ...handedOut, blocks: [...handedOut.blocks] }, schema);
+
+        expect(echoed.child(1)).toBe(doc.child(1));
+        expect(echoed.eq(doc)).toBe(true);
     });
 });

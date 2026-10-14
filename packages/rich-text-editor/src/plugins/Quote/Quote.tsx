@@ -14,6 +14,7 @@ export type QuoteBlock = {
     children: RteInlineNode[];
 };
 
+/** A block quote: `<blockquote>`, `> ` while typing, and a turn-into command. */
 export const quotePlugin = (): RtePlugin => ({
     id: 'quote',
     blocks: {
@@ -30,4 +31,15 @@ export const quotePlugin = (): RtePlugin => ({
         </ToolbarButton>
     ),
     inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
+    commands: [
+        {
+            id: 'quote',
+            label: 'Quote',
+            icon: <IconSpeechBubbleQuote size={16} />,
+            keywords: ['blockquote', 'citation'],
+            group: 'turnInto',
+            isActive: (selection) => selection.block?.type === 'quote',
+            run: (api) => api.blocks.setType('quote'),
+        },
+    ],
 });

@@ -4,10 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { defaultPlugins, type RteDocument, serializeToHtml } from './index';
 
-/**
- * The document as HTML: each node's `toHtml`, the same markup the readonly
- * view draws by default (`htmlParity.spec.tsx` holds the two together).
- */
+// The document as HTML: each node's `toHtml`, matching the readonly view (`htmlParity.spec.tsx`).
 
 const doc: RteDocument = {
     version: 1,

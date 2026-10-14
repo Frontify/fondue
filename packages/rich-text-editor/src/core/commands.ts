@@ -1,107 +1,66 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RteBlockNode } from './document';
+// The commands plugins run and the selection they read — the only way plugin
+// code reaches the editor.
 
-/**
- * The API exposed to plugins. This is the seam that hides the engine: if the
- * engine is swapped, this interface stays stable and only the adapter changes.
- * Plugin code never imports from the engine, only from here.
- *
- * Reads and writes are shaped differently on purpose. Everything a plugin needs
- * to *know* is one value — `selection.get()` — because its UI only ever asks
- * the one question: what is selected right now. Everything a plugin *does* is
- * one command per act, keyed by the type or mark it acts on, so a feature this
- * editor has never heard of needs nothing added here.
- */
-
-/**
- * What is selected, as one value: everything plugin UI renders itself from,
- * read in one go rather than a property at a time.
- *
- * Read it in a toolbar render function — it runs on every editor state change,
- * so what comes back is always current.
- */
+/** What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change. */
 export type RteSelectionSnapshot = {
     /** A caret rather than a range, so it covers nothing and `text` is empty. */
     isCollapsed: boolean;
     /** The plain text the selection covers — what plugin UI prefills a text field with. */
     text: string;
+    /** The block the selection is in, attributes flat, no children — in a list item, the paragraph inside it. */
+    block: { type: string; [attribute: string]: unknown } | null;
+    /** Every block around the selection, innermost first (`block`, then its list items and lists) — what a wrapper's active state reads. */
+    blocks: { type: string; [attribute: string]: unknown }[];
     /**
-     * The block the selection is in — type and attributes flat on it, no
-     * children. What a block-type control acts on, so for a caret in a list
-     * item this is the paragraph inside the item rather than the item or its
-     * list.
-     */
-    block: RteBlockNode | null;
-    /**
-     * Every block around the selection, innermost first: `block` plus what
-     * contains it, list items and lists included. This is what a wrapper
-     * answers to — a list button is on while the caret sits in a paragraph
-     * nested two levels inside the list.
-     */
-    blocks: RteBlockNode[];
-    /**
-     * The marks the selection carries, keyed by mark type. Presence is the
-     * on/off state (`'bold' in marks`); the value is the mark's attributes, so
-     * a plain mark maps to `{}` and a value-carrying one to what it holds
-     * (`link: { href }`).
+     * The marks the selection carries, by mark type. Presence is on/off
+     * (`'bold' in marks`); the value is the mark's attributes (`{}` for a plain
+     * mark, `{ href }` for a link).
      *
-     * On a caret these are the marks typing here would carry; over a range,
-     * every mark any part of it carries, each with the first value found.
+     * On a caret, the marks typing here would carry; over a range, the marks
+     * every text in it carries — a half-bold range is not bold.
      */
     marks: Record<string, Record<string, unknown>>;
 };
 
+/**
+ * The API plugins are handed in their toolbar item, hotkeys and `render.edit`:
+ * all a plugin needs to drive the editor, whatever the engine.
+ *
+ * Reads and writes are shaped differently on purpose: everything to *know* is
+ * one value (`selection.get()`); everything to *do* is one command per act,
+ * keyed by the type it acts on, so new features need nothing added here.
+ */
 export type EditorControlApi = {
-    /** What is selected, and the one write that is about the selection itself. */
+    /** What is selected. */
     selection: {
         get(): RteSelectionSnapshot;
-        /**
-         * Replace the selection with text and leave that text selected, so a
-         * mark command right after applies to exactly it — how the link flyout
-         * attaches a link to text that was typed in it rather than selected in
-         * the editor.
-         */
-        replaceWithText(text: string): void;
     };
 
     marks: {
-        /** Toggle a mark over the selection. `value` sets its attributes when turning it on (`{ href }` for links). */
-        toggle(key: string, value?: Record<string, unknown>): void;
+        /**
+         * Toggle a mark over the selection: on when not all of it carries the
+         * mark, off otherwise. `value` is what it carries when turning it on
+         * (`{ href }` for links).
+         */
+        toggle(type: string, value?: Record<string, unknown>): void;
         /** Strip every mark from the selection — the formatting half of "reset formatting". */
         removeAll(): void;
         /**
-         * The whole run of a mark around the selection — what it carries and
-         * what it covers — or null when the mark is not there. The read-only
-         * half of `select`, so plugin UI opened on a caret can read the link it
-         * sits in without turning that caret into a selection.
-         *
-         * Unlike the snapshot's `marks` this is about the run rather than the
-         * point, so a caret at either *edge* of a link still finds it — which
-         * is what UI attached to a link needs, because clicking the end of a
-         * word is where a caret routinely lands. The snapshot answers "what
-         * would typing here carry" and correctly says nothing there.
+         * The whole run of a mark around the selection (its value and text), or
+         * null. Unlike the snapshot's `marks` it is about the run, not the
+         * point, so a caret at either edge of a link still finds it.
          */
-        getRun(key: string): { value: Record<string, unknown>; text: string } | null;
-        /**
-         * Grow the selection to cover the whole run of a mark around the caret,
-         * so a collapsed caret inside a link can be edited or removed as a
-         * unit. Left alone when the selection is already a range — that is what
-         * the user meant. Returns false when the mark is not at the caret.
-         */
-        select(key: string): boolean;
+        getRun(type: string): { value: Record<string, unknown>; text: string } | null;
     };
 
     blocks: {
-        setType(type: string, attrs?: Record<string, unknown>): void;
+        /** Turn every text block the selection touches into this type, with `value` as its attributes. */
+        setType(type: string, value?: Record<string, unknown>): void;
         /** Set attributes on every block the selection touches — how alignment is applied. */
-        updateAttributes(attrs: Record<string, unknown>): void;
-        /**
-         * Put every attribute that a plugin adds to *all* text blocks
-         * (`blockAttributes` — alignment) back to its default, across the
-         * selection. The block half of "reset formatting", without having to
-         * know which plugins contributed what.
-         */
+        updateAttributes(attributes: Record<string, unknown>): void;
+        /** Reset every `blockAttributes` attribute (alignment) to its default across the selection. */
         resetAttributes(): void;
     };
 
@@ -117,34 +76,35 @@ export type EditorControlApi = {
         outdent(): boolean;
         /** Split the current list item in two — Enter inside a list. Returns false outside one. */
         split(): boolean;
-        /**
-         * Replace every list the selection touches with the blocks its items
-         * held. Unlike `outdent`, this works on a selection that merely
-         * *contains* lists rather than sitting inside one — what "reset
-         * formatting" needs.
-         */
+        /** Replace every list the selection touches with the blocks its items held, even when the selection merely contains lists. */
         unwrapAll(): boolean;
     };
 
     /**
-     * Insert a node at the selection — how void blocks (images) and inline
-     * elements (mentions) get added. A selected node is replaced by it, and the
-     * caret ends up after what was inserted.
+     * Insert a node at the selection — how void blocks (a column break) and
+     * inline elements (mentions) get added, with `value` as what it stores.
+     * The caret ends up after what was inserted.
      */
-    insert(type: string, attrs?: Record<string, unknown>): void;
-    /** Insert plain text at the selection, marks and all — what a combobox choice usually comes down to. */
+    insert(type: string, value?: Record<string, unknown>): void;
+    /** Insert plain text at the selection, carrying the marks typing there would. */
     insertText(text: string): void;
+
+    /** The text around the caret, within its block. */
+    text: {
+        /** Everything in the caret's block before the caret; empty when the selection is not a caret in text. */
+        beforeCaret(): string;
+        /** Everything in the caret's block after the caret. */
+        afterCaret(): string;
+        /** Delete this many characters before the caret, without leaving the block. */
+        deleteBefore(count: number): void;
+    };
 
     /** Return focus to the editor, e.g. after closing plugin UI. */
     focus(): void;
     /** Give up focus, e.g. to commit a single-line editor on Enter. */
     blur(): void;
 
-    /**
-     * Whose editing UI is open. The editor holds it rather than the component,
-     * so something outside the node — a toolbar button — can open it. Only
-     * the node of that type at the selection is open, and leaving it closes it.
-     */
+    /** Which node's editing UI is open. The editor holds it so a toolbar button can open it; leaving the node closes it. */
     editors: {
         /** Open the `render.edit` of the node of this type at the selection. */
         open(type: string): void;

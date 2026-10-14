@@ -2,8 +2,9 @@
 
 // @vitest-environment happy-dom
 
-import { act, useLayoutEffect, useRef } from 'react';
-import { createRoot } from 'react-dom/client';
+import { TextSelection } from 'prosemirror-state';
+import { act, createContext, type ReactNode, useContext, useLayoutEffect, useRef, useSyncExternalStore } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -14,24 +15,19 @@ import {
     defineMark,
     PARAGRAPH,
     type RteDocumentOf,
+    type EditorControlApi,
     type RtePlugin,
 } from '#/core';
+import { type ViewPortals } from '#/editor/port';
 
-import { mountDocument } from './editing';
-
-import type * as ReactDomClient from 'react-dom/client';
+import { mountEditorForTests } from './editing';
 
 /**
  * The React-hosted views must never make the engine wait on React, nor React
  * on the engine: plain marks have no React at all, and the views that do host
- * a component render it whenever React gets to it — never with `flushSync`
- * inside the engine's dispatch.
+ * a component hand it to the shell as a portal, which renders it whenever
+ * React gets to it — never with `flushSync` inside the engine's dispatch.
  */
-
-vi.mock('react-dom/client', async (importOriginal) => {
-    const actual = await importOriginal<typeof ReactDomClient>();
-    return { ...actual, createRoot: vi.fn(actual.createRoot) };
-});
 
 declare global {
     // eslint-disable-next-line no-var
@@ -119,48 +115,103 @@ const checkListDoc = (checked: boolean): RteDocumentOf => ({
 });
 
 const mounted: { destroy(): void }[] = [];
+const hosts: Root[] = [];
 
+/**
+ * The shell's side of `ViewPortals`, as small as it gets: the portals in a
+ * store, and one component rendering them all.
+ */
+const createViewPortals = () => {
+    const portals = new Map<object, ReactNode>();
+    const listeners = new Set<() => void>();
+    let snapshot: ReactNode[] = [];
+    const changed = (): void => {
+        snapshot = [...portals.values()];
+        for (const listener of listeners) {
+            listener();
+        }
+    };
+    const store: ViewPortals = {
+        set: (owner, portal) => {
+            portals.set(owner, portal);
+            changed();
+        },
+        delete: (owner) => {
+            portals.delete(owner);
+            changed();
+        },
+    };
+    return {
+        ...store,
+        subscribe: (listener: () => void) => {
+            listeners.add(listener);
+            return () => listeners.delete(listener);
+        },
+        getSnapshot: () => snapshot,
+    };
+};
+
+const ViewPortalHost = ({ store }: { store: ReturnType<typeof createViewPortals> }): ReactNode =>
+    useSyncExternalStore(store.subscribe, store.getSnapshot);
+
+/** What a component inside the shell's providers reads. */
+const ShellContext = createContext('none');
+
+/** Mounts the editor, and the shell's one host for its views' portals inside a provider. Call inside `act`. */
 const mountInto = (container: HTMLElement, initialDoc: RteDocumentOf) => {
-    const live = mountDocument({
+    const portals = createViewPortals();
+    const hostElement = window.document.createElement('div');
+    window.document.body.append(hostElement);
+    const host = createRoot(hostElement);
+    hosts.push(host);
+    host.render(
+        <ShellContext.Provider value="shell">
+            <ViewPortalHost store={portals} />
+        </ShellContext.Provider>,
+    );
+    const { mounted: live, view } = mountEditorForTests({
         container,
         initialDoc,
         registry: buildPluginRegistry(plugins),
-        readOnly: false,
         placeholder: '',
-        contentClassName: 'content',
+        attributes: {},
         placeholderClassName: 'placeholder',
-        onDocChange: () => {},
+        onDocChange,
         onStateChange: () => {},
         onBlur: () => {},
+        viewPortals: portals,
     });
     mounted.push(live);
-    return live;
+    return { live, portals, view };
 };
+
+const onDocChange = vi.fn<(doc: RteDocumentOf) => void>();
 
 const mount = (initialDoc: RteDocumentOf) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
-    let live!: ReturnType<typeof mountInto>;
+    let mountedEditor!: ReturnType<typeof mountInto>;
     act(() => {
-        live = mountInto(container, initialDoc);
+        mountedEditor = mountInto(container, initialDoc);
     });
-    return { container, live };
+    return { container, ...mountedEditor };
 };
 
 let consoleError: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
-    vi.mocked(createRoot).mockClear();
     tagRenders.mockClear();
+    onDocChange.mockClear();
     consoleError = vi.spyOn(console, 'error');
 });
 
 afterEach(async () => {
-    // The views unmount their roots in a microtask after the engine is done
-    // with them; that is still React work, so it is awaited inside `act`.
     await act(async () => {
         for (const live of mounted.splice(0)) {
             live.destroy();
+        }
+        for (const host of hosts.splice(0)) {
+            host.unmount();
         }
         await Promise.resolve();
     });
@@ -174,19 +225,23 @@ afterEach(async () => {
  * Inside `act`, React queues its work until the callback returns — so what
  * `expectBeforeReact` sees is what is in the page before React has rendered.
  */
-const mountBeforeReact = (initialDoc: RteDocumentOf, expectBeforeReact: (container: HTMLElement) => void) => {
+const mountBeforeReact = (
+    initialDoc: RteDocumentOf,
+    expectBeforeReact: (container: HTMLElement) => void,
+): { container: HTMLElement; portals: ReturnType<typeof createViewPortals> } => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
+    let portals!: ReturnType<typeof createViewPortals>;
     act(() => {
-        mountInto(container, initialDoc);
+        ({ portals } = mountInto(container, initialDoc));
         expectBeforeReact(container);
     });
-    return container;
+    return { container, portals };
 };
 
 describe('a mark without editing UI', () => {
-    it('is drawn by the engine at once, with no React root', () => {
-        mountBeforeReact(
+    it('is drawn by the engine at once, with no React', () => {
+        const { portals } = mountBeforeReact(
             {
                 version: 1,
                 blocks: [{ type: PARAGRAPH, children: [{ text: 'plain ' }, { text: 'bold', bold: true }] }],
@@ -197,7 +252,7 @@ describe('a mark without editing UI', () => {
             },
         );
 
-        expect(createRoot).not.toHaveBeenCalled();
+        expect(portals.getSnapshot()).toHaveLength(0);
     });
 });
 
@@ -220,8 +275,10 @@ describe('a block with editing UI', () => {
 
     it('keeps the caret when its content moves into the hole', () => {
         let text: ChildNode | null | undefined;
-        const container = mountBeforeReact(checkListDoc(false), (beforeReact) => {
+        const { container } = mountBeforeReact(checkListDoc(false), (beforeReact) => {
             text = beforeReact.querySelector('p')?.firstChild;
+            // Only an editor holding focus has a caret to keep.
+            beforeReact.querySelector<HTMLElement>('[contenteditable]')?.focus();
             if (text) {
                 window.document.getSelection()?.setBaseAndExtent(text, 2, text, 2);
             }
@@ -275,7 +332,7 @@ describe('a block with editing UI', () => {
                 if (!ref.current) {
                     return;
                 }
-                const live = mountInto(ref.current, { version: 1, blocks: [] });
+                const { live } = mountInto(ref.current, { version: 1, blocks: [] });
                 // The engine dispatches from inside a React commit, as a host
                 // handing over a document from an effect does.
                 live.setDoc(checkListDoc(true));
@@ -294,11 +351,11 @@ describe('a block with editing UI', () => {
         const { container, live } = mount(checkListDoc(false));
         const checkbox = container.querySelector('input');
 
-        live.destroy();
-        // The component is still mounted until the microtask after the
-        // engine is done, so its checkbox still calls `setValue`.
-        expect(() => checkbox?.click()).not.toThrow();
         await act(async () => {
+            live.destroy();
+            // The component is still mounted until React next renders the
+            // portals, so its checkbox still calls `setValue`.
+            expect(() => checkbox?.click()).not.toThrow();
             await Promise.resolve();
         });
 
@@ -307,6 +364,28 @@ describe('a block with editing UI', () => {
 });
 
 describe('an inline element with editing UI', () => {
+    it('is focused while the caret sits right after it, and not once the caret moves away', () => {
+        const { container, view } = mount({
+            version: 1,
+            blocks: [
+                { type: PARAGRAPH, children: [{ text: 'ab' }, { type: 'tag', label: 'x' }, { text: 'cd' }] },
+                { type: PARAGRAPH, children: [{ text: 'far away' }] },
+            ],
+        });
+        const focused = (): string | null | undefined =>
+            container.querySelector('[data-focused]')?.getAttribute('data-focused');
+        const caretAt = (pos: number): void =>
+            act(() => {
+                view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, pos)));
+            });
+
+        caretAt(4);
+        expect(focused()).toBe('true');
+
+        caretAt(12);
+        expect(focused()).toBe('false');
+    });
+
     it('re-renders only when what it is handed changes', () => {
         const { live } = mount({
             version: 1,
@@ -319,5 +398,121 @@ describe('an inline element with editing UI', () => {
         act(() => live.handle.api.insertText('2'));
 
         expect(tagRenders).toHaveBeenCalledTimes(rendersAfterMount);
+    });
+});
+
+describe('every view with editing UI', () => {
+    it('is handed a working api on its very first render', () => {
+        const seen: (EditorControlApi | undefined)[] = [];
+        plugins.push({
+            id: 'probe',
+            blocks: {
+                probe: defineBlock({
+                    content: 'text',
+                    toHtml: () => ({ tag: 'div', children: true }),
+                    parse: [],
+                    render: {
+                        edit: ({ api, children }) => {
+                            seen.push(api);
+                            return <>{children}</>;
+                        },
+                    },
+                }),
+            },
+        });
+        try {
+            mount({ version: 1, blocks: [{ type: 'probe', children: [{ text: 'x' }] }] });
+        } finally {
+            plugins.pop();
+        }
+
+        expect(seen.length).toBeGreaterThan(0);
+        expect(seen[0]?.selection.get().block).toEqual({ type: 'probe' });
+    });
+
+    it("renders inside the shell, so it sees the shell's context providers", () => {
+        const contexts: string[] = [];
+        const ContextProbe = (): null => {
+            contexts.push(useContext(ShellContext));
+            return null;
+        };
+        plugins.push({
+            id: 'probe',
+            inlines: {
+                probe: defineInline({
+                    toHtml: () => ({ tag: 'span' }),
+                    parse: [],
+                    render: { edit: ContextProbe },
+                }),
+            },
+        });
+        try {
+            mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [{ type: 'probe' }] }] });
+        } finally {
+            plugins.pop();
+        }
+
+        expect(contexts).toContain('shell');
+        expect(contexts).not.toContain('none');
+    });
+
+    it('keeps host element rules off the elements it wraps content in', () => {
+        const { container } = mount(checkListDoc(false));
+
+        const wrappers = container.querySelectorAll('li .rte-view-wrapper');
+        expect(wrappers.length).toBeGreaterThan(0);
+        for (const wrapper of wrappers) {
+            expect(wrapper.getAttribute('style')).toBe('display: contents;');
+        }
+    });
+});
+
+describe('a mark with editing UI', () => {
+    const linkLike: RtePlugin = {
+        id: 'anchor',
+        marks: {
+            anchor: defineMark<{ href: string }>({
+                inclusive: false,
+                toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
+                parse: [{ tag: 'a[href]', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
+                render: {
+                    edit: ({ value, children }) => <a href={value.href}>{children}</a>,
+                },
+            }),
+        },
+    };
+
+    it('takes in text the browser typed beside its content rather than dropping it', async () => {
+        plugins.push(linkLike);
+        let container!: HTMLElement;
+        try {
+            ({ container } = mount({
+                version: 1,
+                blocks: [
+                    {
+                        type: PARAGRAPH,
+                        children: [{ text: 'see ' }, { text: 'link', anchor: { href: 'https://e.com' } }],
+                    },
+                ],
+            }));
+        } finally {
+            plugins.pop();
+        }
+        const anchor = container.querySelector('a');
+        expect(anchor?.textContent).toBe('link');
+
+        // What Chrome does with a character typed at the end of a link: it
+        // lands after the component's `<a>`, beside the content.
+        anchor?.after('Z');
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 0));
+        });
+
+        expect(onDocChange.mock.lastCall?.[0].blocks).toEqual([
+            {
+                type: PARAGRAPH,
+                children: [{ text: 'see ' }, { text: 'link', anchor: { href: 'https://e.com' } }, { text: 'Z' }],
+            },
+        ]);
     });
 });

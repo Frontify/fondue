@@ -8,10 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { defineBlock, defineMark, PARAGRAPH, type RteDocumentOf, type RtePlugin } from './core';
 import { serializeToHtml } from './renderer/serializeToHtml';
 
-/**
- * Serializing where an app actually does it: on a server, with no page. The
- * serializer writes each node's `toHtml` as a string — no engine, no React, no `document`.
- */
+// Serializing where an app does it: on a server, with no page — no engine, no React, no `document`.
 
 const features: RtePlugin[] = [
     {
@@ -49,7 +46,7 @@ describe('serializing without a browser', () => {
         expect('document' in globalThis).toBe(false);
         expect('DOMParser' in globalThis).toBe(false);
 
-        const html = serializeToHtml(doc, { plugins: features });
+        const html = serializeToHtml(doc, { plugins: features, wrap: false });
 
         expect(html).toMatch(/^<h2>Hello<\/h2><p>Sent from <strong>a server<\/strong>\.<\/p><p><br\s*\/?><\/p>$/);
     });

@@ -11,6 +11,7 @@
  * same in both places, whatever font size the host page uses.
  */
 .document {
+    box-sizing: border-box;
     color: var(--color-primary-default);
     font-family: var(--typography-font-family-primary);
     font-size: var(--typography-font-size-medium);
@@ -24,7 +25,10 @@
     // fires. The readonly view keeps the same spaces the editor shows.
     white-space: pre-wrap;
     white-space: break-spaces;
-    word-wrap: break-word;
+    // `anywhere` rather than `break-word`: only it lets a long word shrink the
+    // content's minimum width, so a URL breaks instead of widening a grid or
+    // flex parent that the document sits in.
+    overflow-wrap: anywhere;
 
     // A paragraph adds no space of its own, like every other block: spacing
     // between blocks belongs to the document, not to the page's default
@@ -32,5 +36,24 @@
     // hosts and none in others).
     p {
         margin: 0;
+    }
+
+    // Raised and lowered text without growing the line it sits on. Browsers'
+    // own `vertical-align: super`/`sub` push the line box apart, so a host
+    // without a CSS reset would get uneven leading wherever one appears.
+    sub,
+    sup {
+        position: relative;
+        font-size: 0.75em;
+        line-height: 0;
+        vertical-align: baseline;
+    }
+
+    sup {
+        top: -0.5em;
+    }
+
+    sub {
+        bottom: -0.25em;
     }
 }

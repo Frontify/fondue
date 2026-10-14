@@ -1,15 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@mixin list {
+// Markers hang in the list's own padding, so it has to be wide enough for the
+// widest one: a marker wider than the padding pokes out of the document and is
+// cut off by a host that clips its overflow.
+@mixin list($indent) {
     margin: 0;
-    padding-left: 1.5em;
+    padding-left: $indent;
 }
 
 // The marker changes with the nesting depth, the way legacy configured it per
 // level. A list nested in a list of the *other* type starts over at its own
 // first level, which is what the tag-based selectors did too.
 .bulletList {
-    @include list;
+    @include list(1.5em);
 
     list-style-type: disc;
 
@@ -22,8 +25,9 @@
     }
 }
 
+// Two digits and a full stop (`10.`) need more room than a bullet.
 .numberedList {
-    @include list;
+    @include list(2em);
 
     list-style-type: decimal;
 

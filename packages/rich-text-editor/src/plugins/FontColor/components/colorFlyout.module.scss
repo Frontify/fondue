@@ -1,9 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/**
- * The button's label: the icon with the current colour under it, the way a
- * font-colour control is normally read.
- */
+/** The icon with the current colour under it. */
 .trigger {
     display: flex;
     flex-direction: column;
@@ -18,11 +15,34 @@
     border-radius: var(--border-radius-small);
 }
 
-/**
- * The picker's box. It lays itself out against the width it is given, so this
- * is what decides whether its inputs sit in one row or stack.
- */
+/** The picker lays itself out against this width, which decides whether its inputs sit in one row. */
 .picker {
     width: 100%;
     min-width: 260px;
+}
+
+/** The suggested colours, a row of swatches above the picker. */
+.presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-x-small);
+    margin-bottom: var(--spacing-small);
+}
+
+/** One swatch: big enough to hit (24px), its colour its whole face. */
+.preset {
+    box-sizing: border-box;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: var(--border-width-default) solid var(--color-line-mid);
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+
+    &:focus-visible {
+        outline: none;
+        box-shadow:
+            0 0 0 2px var(--color-surface-default),
+            0 0 0 6px var(--color-focus-default);
+    }
 }

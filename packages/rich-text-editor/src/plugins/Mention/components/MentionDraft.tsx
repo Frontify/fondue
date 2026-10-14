@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Flyout } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
@@ -9,12 +9,16 @@ import { type MentionItem, type MentionItems } from '../types';
 /** How many people the picker offers at once. */
 const SUGGESTION_LIMIT = 8;
 
+/** The gap between the query and the list under it. */
+const LIST_OFFSET = 4;
+
 /**
- * The people for a query. Tagged with the query they answer, so a slow answer
- * for an older query never overwrites the current one.
+ * The people for a query. Answers are tagged with their query so a slow one
+ * never overwrites a newer one; the last answer stays up while `pending`, so a
+ * server-backed list does not flicker on every key.
  */
-const usePeople = (items: MentionItems, query: string): readonly MentionItem[] => {
-    const [answer, setAnswer] = useState<{ query: string; people: readonly MentionItem[] }>({ query, people: [] });
+const usePeople = (items: MentionItems, query: string): { people: readonly MentionItem[]; pending: boolean } => {
+    const [answer, setAnswer] = useState<{ query: string; people: readonly MentionItem[] } | null>(null);
 
     useEffect(() => {
         let current = true;
@@ -24,23 +28,60 @@ const usePeople = (items: MentionItems, query: string): readonly MentionItem[] =
             }
         };
         // A failed lookup offers nobody rather than leaving the last list up.
-        Promise.resolve(items(query)).then(settle, () => settle([]));
+        Promise.resolve(items(query))
+            .then(settle)
+            .catch(() => settle([]));
         return () => {
             current = false;
         };
     }, [items, query]);
 
-    return answer.query === query ? answer.people : [];
+    return { people: answer?.people ?? [], pending: answer?.query !== query };
+};
+
+/** Viewport position under the query, kept in step with scrolling and resizing. */
+const useListPosition = (
+    anchorRef: { current: HTMLElement | null },
+    open: boolean,
+): { left: number; top: number } | null => {
+    const [position, setPosition] = useState<{ left: number; top: number } | null>(null);
+
+    useEffect(() => {
+        if (!open) {
+            return;
+        }
+        const place = (): void => {
+            const box = anchorRef.current?.getBoundingClientRect();
+            if (box) {
+                setPosition((previous) =>
+                    previous?.left === box.left && previous.top === box.bottom + LIST_OFFSET
+                        ? previous
+                        : { left: box.left, top: box.bottom + LIST_OFFSET },
+                );
+            }
+        };
+        // Next frame: the one the list first appears in.
+        const frame = requestAnimationFrame(place);
+        window.addEventListener('scroll', place, { capture: true, passive: true });
+        window.addEventListener('resize', place, { passive: true });
+        return () => {
+            cancelAnimationFrame(frame);
+            window.removeEventListener('scroll', place, true);
+            window.removeEventListener('resize', place);
+        };
+    }, [anchorRef, open]);
+
+    return open ? position : null;
 };
 
 /**
- * A mention being made: what the editor shows from the moment the trigger is
- * typed until a person is chosen.
+ * A mention being made, from the typed trigger until a person is chosen.
  *
- * The query is typed into a real input inside the mention, so there is a caret
- * the whole time and the keys belong to this component — the editor routes
- * nothing. Backspace on an empty query takes the mention away again; Escape, or
- * leaving it, turns what was typed back into plain text.
+ * The query goes into a real input (a combobox over a listbox of people), so
+ * the caret and keys belong to this component: arrows move, Enter or Tab
+ * chooses, Backspace on an empty query removes the mention, and Escape, blur or
+ * a space with no match turns the text back into plain text. The popup is
+ * portaled to the page end and focus never leaves the input.
  */
 export const MentionDraft = ({
     trigger,
@@ -61,26 +102,29 @@ export const MentionDraft = ({
     onRemove: () => void;
 }): ReactNode => {
     const listId = useId();
+    const draftRef = useRef<HTMLSpanElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
-    // Each way out runs once. Choosing or cancelling hands focus back to the
-    // editor, which blurs the input — and blurring is itself a way out.
-    const finished = useRef(false);
+    // Each way out runs once: handing focus back to the editor blurs the input, and blur is itself a way out.
+    const finishedRef = useRef(false);
     const finish = (leave: () => void): void => {
-        if (finished.current) {
+        if (finishedRef.current) {
             return;
         }
-        finished.current = true;
+        finishedRef.current = true;
         leave();
     };
     const [query, setQuery] = useState('');
-    const people = usePeople(items, query);
+    const { people, pending } = usePeople(items, query);
+    const noMatches = people.length === 0 && !pending;
+    const open = people.length > 0 || (noMatches && query !== '');
+    const position = useListPosition(draftRef, open);
 
-    // Tagged with the query it belongs to: a new query means a new list, so the
-    // highlight falls back to the top without an effect having to reset it.
+    // Tagged with its query so a new query resets the highlight to the top without an effect.
     const [highlighted, setHighlighted] = useState({ query, index: 0 });
     const activeIndex = highlighted.query === query ? Math.min(highlighted.index, people.length - 1) : 0;
     const highlight = (index: number): void => setHighlighted({ query, index });
     const active = people[activeIndex];
+    const optionId = (index: number): string => `${listId}-option-${index}`;
 
     useEffect(() => {
         if (focused) {
@@ -91,10 +135,15 @@ export const MentionDraft = ({
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
         switch (event.key) {
             case 'ArrowDown':
-                highlight((activeIndex + 1) % people.length);
-                break;
             case 'ArrowUp':
-                highlight((activeIndex - 1 + people.length) % people.length);
+                if (people.length === 0) {
+                    break;
+                }
+                highlight(
+                    event.key === 'ArrowDown'
+                        ? (activeIndex + 1) % people.length
+                        : (activeIndex - 1 + people.length) % people.length,
+                );
                 break;
             case 'Enter':
             case 'Tab':
@@ -102,6 +151,13 @@ export const MentionDraft = ({
                     return;
                 }
                 finish(() => onChoose(active));
+                break;
+            case ' ':
+                // Nobody by that name: the text was just text after all.
+                if (!noMatches) {
+                    return;
+                }
+                finish(() => onCancel(`${trigger}${query} `));
                 break;
             case 'Escape':
                 finish(() => onCancel(`${trigger}${query}`));
@@ -118,66 +174,71 @@ export const MentionDraft = ({
         event.preventDefault();
     };
 
+    const status = pending
+        ? ''
+        : noMatches
+          ? 'No matches'
+          : `${people.length} ${people.length === 1 ? 'person' : 'people'}`;
+
     return (
-        <Flyout.Root open={people.length > 0}>
-            <Flyout.Trigger asChild>
-                <span className={styles.draft}>
-                    {trigger}
-                    <input
-                        ref={inputRef}
-                        role="combobox"
-                        aria-expanded={people.length > 0}
-                        aria-controls={listId}
-                        aria-activedescendant={active ? `${listId}-${active.id}` : undefined}
-                        aria-label="Mention someone"
-                        value={query}
-                        size={Math.max(query.length, 1)}
-                        onChange={(event) => setQuery(event.target.value)}
-                        onKeyDown={onKeyDown}
-                        onBlur={() => finish(() => onCancel(`${trigger}${query}`))}
-                        className={styles.input}
-                    />
-                </span>
-            </Flyout.Trigger>
-            <Flyout.Content
-                padding="tight"
-                side="bottom"
-                align="start"
-                // The caret stays in the input while the list is open.
-                onOpenAutoFocus={(event) => event.preventDefault()}
-            >
-                <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
-                    {people.map((person, index) => (
-                        <li
-                            key={person.id}
-                            id={`${listId}-${person.id}`}
-                            role="option"
-                            aria-selected={index === activeIndex}
-                        >
-                            <button
-                                type="button"
-                                // The keyboard stays in the input, which drives
-                                // the list.
-                                tabIndex={-1}
-                                // Never take focus from the input, or blurring
-                                // it would cancel before the click lands.
-                                onMouseDown={(event) => event.preventDefault()}
-                                onClick={() => finish(() => onChoose(person))}
-                                onMouseEnter={() => highlight(index)}
-                                className={
-                                    index === activeIndex ? `${styles.option} ${styles.optionActive}` : styles.option
-                                }
-                            >
-                                <span>{person.name}</span>
-                                <span className={styles.hint}>
-                                    {trigger}
-                                    {person.username}
-                                </span>
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            </Flyout.Content>
-        </Flyout.Root>
+        <span ref={draftRef} className={styles.draft}>
+            {trigger}
+            <input
+                ref={inputRef}
+                role="combobox"
+                aria-expanded={open}
+                aria-controls={listId}
+                aria-autocomplete="list"
+                aria-activedescendant={open && active ? optionId(activeIndex) : undefined}
+                aria-label="Mention someone"
+                value={query}
+                size={Math.max(query.length, 1)}
+                onChange={(event) => setQuery(event.target.value)}
+                onKeyDown={onKeyDown}
+                onBlur={() => finish(() => onCancel(`${trigger}${query}`))}
+                className={styles.input}
+            />
+            <span role="status" className={styles.visuallyHidden}>
+                {status}
+            </span>
+            {open && position !== null
+                ? createPortal(
+                      <div className={styles.popup} style={{ left: position.left, top: position.top }}>
+                          {noMatches ? (
+                              <div className={styles.empty}>No matches</div>
+                          ) : (
+                              <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
+                                  {people.map((person, index) => (
+                                      // The keyboard drives the list from the input; the mouse picks here.
+                                      // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
+                                      <li
+                                          key={optionId(index)}
+                                          id={optionId(index)}
+                                          role="option"
+                                          aria-selected={index === activeIndex}
+                                          // Keep focus in the input: blurring would cancel before the click lands.
+                                          onMouseDown={(event) => event.preventDefault()}
+                                          onClick={() => finish(() => onChoose(person))}
+                                          onMouseEnter={() => highlight(index)}
+                                          className={
+                                              index === activeIndex
+                                                  ? `${styles.option} ${styles.optionActive}`
+                                                  : styles.option
+                                          }
+                                      >
+                                          <span>{person.name}</span>
+                                          <span className={styles.hint}>
+                                              {trigger}
+                                              {person.username}
+                                          </span>
+                                      </li>
+                                  ))}
+                              </ul>
+                          )}
+                      </div>,
+                      draftRef.current?.ownerDocument.body ?? document.body,
+                  )
+                : null}
+        </span>
     );
 };

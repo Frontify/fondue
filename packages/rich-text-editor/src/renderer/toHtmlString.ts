@@ -1,13 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// The drawn tree as an HTML string, for export. Plain string building — no
+// React, no DOM — so it runs anywhere, a server included.
+
 import { attributeEntries, type HtmlSpec } from '#/core';
 
 import { type DrawnNode } from './documentTree';
-
-/**
- * The drawn tree as an HTML string, for export. Plain string building — no
- * React, no DOM — so it runs anywhere, a server included.
- */
 
 /** Elements HTML writes without a closing tag. */
 const VOID_ELEMENTS = new Set([
@@ -36,7 +34,7 @@ const specToString = (spec: HtmlSpec, content: string): string => {
         .map(([name, value]) => ` ${name}="${escapeAttribute(value)}"`)
         .join('');
     if (VOID_ELEMENTS.has(spec.tag)) {
-        // Self-closed, which HTML and XHTML-minded email clients both read.
+        // Self-closed: read by HTML and XHTML-minded email clients alike.
         return `<${spec.tag}${attributes}/>`;
     }
     const open = `<${spec.tag}${attributes}>`;

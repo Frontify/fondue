@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type DOMOutputSpec, type Mark as PmMark, type Node as PmNode } from 'prosemirror-model';
+import { type Mark as PmMark, type Node as PmNode } from 'prosemirror-model';
 import { NodeSelection, TextSelection } from 'prosemirror-state';
 import {
     type EditorView,
@@ -11,159 +11,445 @@ import {
     type ViewMutationRecord,
 } from 'prosemirror-view';
 import { type ComponentType, type ReactNode, useCallback } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
+import { createPortal } from 'react-dom';
 
-import { type BlockDefinition, blockValueOf, type EditorControlApi, type EditProps, type PluginRegistry } from '#/core';
+import {
+    attributeEntries,
+    type BlockDefinition,
+    blockHtml,
+    blockValueOf,
+    type EditorControlApi,
+    type EditProps,
+    type PluginRegistry,
+} from '#/core';
+import { type ViewPortals } from '#/editor/port';
 
 import { type OpenEditors } from './controlApi';
-import { markValueOf } from './documentConversion';
+import { markValueOf, VALUE_ATTR } from './documentConversion';
 
 /**
  * The React-hosted views: the editing UI a plugin draws with `render.edit`.
- * Everything without one is drawn by the engine itself, from `toHtml`,
- * synchronously and without React.
+ * Anything without one is drawn by the engine from `toHtml`, without React.
  *
- * Every view here follows the same two rules.
+ * Lifecycle of a view (`ReactEditView` and its subclasses):
+ *   construct  build the DOM synchronously, register with `LiveViews`, paint.
+ *   portal     `paint` hands the plugin's component to the shell as a portal
+ *              into the view's container (`ViewPortals`). No view owns a React
+ *              root: the shell renders all portals in one commit and the
+ *              components see the host app's context providers.
+ *   update     the engine calls `update` on a new node; `LiveViews.repaint`
+ *              re-offers views whose focus, selection or openness changed.
+ *   destroy    the view drops its portal; React unmounts it on its next render.
  *
+ * Two rules every view follows:
  * (1) The engine never waits on React. The editable content (`contentDOM`) is
  *     built up front, outside React, and is in the page the moment the view
- *     is — typing that creates a view goes on at once. React renders into a
- *     container of its own beside it, whenever React gets to it: no
- *     `flushSync`, which inside the engine's dispatch (itself often inside
- *     React work — a `setDoc` from an effect) is what React warns about and
- *     drops. Once the component has rendered, `ContentHole` moves the content
- *     to where the component placed `{children}`.
- * (2) A view's React root is unmounted after the engine is done with it, never
- *     during — the engine destroys views in the middle of its own update,
- *     which may be in the middle of React's.
+ *     is, so typing that creates a view goes on at once. No `flushSync`: inside
+ *     the engine's dispatch (often itself inside React work) React warns about
+ *     it and drops it. Once the component has rendered, `ContentHole` moves the
+ *     content to where the component placed `{children}`.
+ * (2) A view only hands React work over, never does it: the engine destroys
+ *     views in the middle of its own update, which may be in the middle of
+ *     React's.
  */
 
-/** A container React may own whole: its first render clears it. */
-const reactContainer = (): HTMLElement => {
-    const container = document.createElement('span');
-    container.style.display = 'contents';
-    return container;
-};
+// --- Entry points ---
 
-/**
- * Moves the engine's content into `parent`, keeping the caret. A selection
- * inside a node that is moved collapses onto the node's old parent, which
- * would put the caret somewhere the engine did not — so it is put back.
- */
-const moveContent = (content: HTMLElement, parent: HTMLElement): void => {
-    if (content.parentNode === parent) {
-        return;
-    }
-    const selection = content.ownerDocument.getSelection();
-    const { anchorNode, anchorOffset, focusNode, focusOffset } = selection ?? {};
-    const caretInside =
-        anchorNode !== null &&
-        anchorNode !== undefined &&
-        focusNode !== null &&
-        focusNode !== undefined &&
-        content.contains(anchorNode) &&
-        content.contains(focusNode);
-    parent.append(content);
-    if (selection && caretInside) {
-        selection.setBaseAndExtent(anchorNode, anchorOffset ?? 0, focusNode, focusOffset ?? 0);
-    }
-};
-
-/**
- * Where the component put `{children}`. The content moves in once, when the
- * hole mounts — the ref is stable, so a re-render does not move it out and
- * back — and goes back to the view's element (`home`) if the component stops
- * rendering the hole, so the engine's content never leaves the page.
- */
-const ContentHole = ({ element, home }: { element: HTMLElement; home: HTMLElement }): ReactNode => {
-    const place = useCallback((node: HTMLSpanElement | null) => moveContent(element, node ?? home), [element, home]);
-    return <span ref={place} style={{ display: 'contents' }} />;
-};
-
-/** See rule (2). Unmounting a root that is already gone is not an error worth surfacing. */
-const unmountLater = (root: Root): void => {
-    queueMicrotask(() => {
-        try {
-            root.unmount();
-        } catch {
-            // The page is being torn down around it.
+/** Only marks with editing UI get a view; the rest are drawn from `toHtml`, as in the readonly view and export. */
+export const createMarkViews = (
+    registry: PluginRegistry,
+    api: EditorControlApi,
+    live: LiveViews,
+    openEditors: OpenEditors,
+): Record<string, MarkViewConstructor> => {
+    const views: Record<string, MarkViewConstructor> = {};
+    for (const [type, { render }] of registry.marks) {
+        const edit = render?.edit;
+        if (edit) {
+            views[type] = (mark, view) => new ReactMarkView(mark, view, edit, api, live, openEditors);
         }
-    });
+    }
+    return views;
 };
 
-/**
- * The outer element the engine's own `toDOM` draws for a node — the block's
- * `toHtml` with what every text block carries (alignment) applied. The node
- * view takes its tag and attributes; what is inside is the component's.
- */
-const outerElementOf = (node: PmNode): { tag: string; attrs: Record<string, string> } => {
-    const output: DOMOutputSpec | undefined = node.type.spec.toDOM?.(node);
-    if (!Array.isArray(output)) {
-        return { tag: 'div', attrs: {} };
+export const createNodeViews = (
+    registry: PluginRegistry,
+    api: EditorControlApi,
+    live: LiveViews,
+    openEditors: OpenEditors,
+): Record<string, NodeViewConstructor> => {
+    const views: Record<string, NodeViewConstructor> = {};
+    for (const [type, definition] of registry.blocks) {
+        const edit = definition.render?.edit;
+        if (edit) {
+            views[type] = (node, view, getPos) =>
+                new ReactBlockView(node, view, getPos, registry, definition, edit, api, live, openEditors);
+        }
     }
-    const [tag, second] = output as readonly unknown[];
-    const attrs: Record<string, string> = {};
-    if (second !== null && typeof second === 'object' && !Array.isArray(second) && !(second instanceof Node)) {
-        for (const [name, value] of Object.entries(second as Record<string, unknown>)) {
-            if (typeof value === 'string') {
-                attrs[name] = value;
+    for (const [type, { render }] of registry.inlines) {
+        const edit = render?.edit;
+        if (edit) {
+            views[type] = (node, view, getPos) => new ReactInlineView(node, view, getPos, edit, api, live, openEditors);
+        }
+    }
+    return views;
+};
+
+// --- LiveViews: which views a state change can concern ---
+
+/** A plugin's `render.edit`, for any kind of node; `TCurrent` is what its value can be right now. */
+type EditComponent<TCurrent = Record<string, unknown>> = ComponentType<EditProps<Record<string, unknown>, TCurrent>>;
+
+/** What a live view last handed its component; the callbacks are stable, so this is all that changes. */
+type Painted = { focused: boolean; selected: boolean; open: boolean; value: unknown };
+
+const samePaint = (a: Painted | null, b: Painted): boolean =>
+    a !== null && a.focused === b.focused && a.selected === b.selected && a.open === b.open && a.value === b.value;
+
+/** What a repaint reports: its type and focus, and whether it is drawn as anything but idle. */
+type PaintResult = { type: string; focused: boolean; engaged: boolean };
+
+/** A view whose props follow the selection (focus, selection, openness); `LiveViews.repaint` offers it changes. */
+type Repaintable = { paint(): PaintResult };
+
+/**
+ * The React-hosted views of one editor. A view's props only change when the
+ * selection reaches or leaves it, so a repaint offers only the views drawn
+ * engaged (focused, selected, open) last time plus those at the new selection,
+ * found through the DOM element each registered. Offering every view every
+ * change cost a position lookup per view per keystroke.
+ */
+export class LiveViews {
+    private readonly elements = new Map<Repaintable, HTMLElement>();
+    private readonly byElement = new WeakMap<Node, Repaintable>();
+    private readonly engaged = new Set<Repaintable>();
+
+    constructor(readonly portals: ViewPortals) {}
+
+    add(view: Repaintable, element: HTMLElement): void {
+        this.elements.set(view, element);
+        this.byElement.set(element, view);
+    }
+
+    remove(view: Repaintable): void {
+        this.elements.delete(view);
+        this.engaged.delete(view);
+    }
+
+    /** Record what a paint reported, so the next repaint knows to offer it again. */
+    painted(view: Repaintable, result: PaintResult): PaintResult {
+        if (result.engaged) {
+            this.engaged.add(view);
+        } else {
+            this.engaged.delete(view);
+        }
+        return result;
+    }
+
+    /** The views around a DOM node, up to the editable element. */
+    private collect(node: Node | null | undefined, root: HTMLElement, into: Set<Repaintable>): void {
+        for (let current = node; current && current !== root; current = current.parentNode) {
+            const found = this.byElement.get(current);
+            if (found) {
+                into.add(found);
             }
         }
     }
-    return { tag: String(tag), attrs };
+
+    /** The views at a position: around it, and on either side of it (a mark ending there, an inline before it). */
+    private collectAt(view: EditorView, pos: number, into: Set<Repaintable>): void {
+        for (const side of [-1, 1]) {
+            const { node, offset } = view.domAtPos(pos, side);
+            this.collect(node, view.dom, into);
+            this.collect(node.childNodes[offset - 1], view.dom, into);
+            this.collect(node.childNodes[offset], view.dom, into);
+        }
+    }
+
+    /** The views the selection reaches: at both ends, and every one a range touches. */
+    private atSelection(view: EditorView): Set<Repaintable> {
+        const found = new Set<Repaintable>();
+        const { from, to, empty } = view.state.selection;
+        this.collectAt(view, from, found);
+        this.collect(view.nodeDOM(from), view.dom, found);
+        if (empty) {
+            return found;
+        }
+        this.collectAt(view, to, found);
+        // Compared in the DOM, which needs no position lookup per view.
+        const start = view.domAtPos(from);
+        const end = view.domAtPos(to);
+        const range = view.dom.ownerDocument.createRange();
+        range.setStart(start.node, start.offset);
+        range.setEnd(end.node, end.offset);
+        for (const [live, element] of this.elements) {
+            if (range.intersectsNode(element)) {
+                found.add(live);
+            }
+        }
+        return found;
+    }
+
+    /**
+     * Offer the views a state change can concern a repaint. Reports whether
+     * one of `openType` is still focused — when none is, its editing UI closes.
+     */
+    repaint(view: EditorView, openType: string | null): boolean {
+        let openStillFocused = false;
+        for (const live of new Set([...this.engaged, ...this.atSelection(view)])) {
+            const { type, focused } = live.paint();
+            openStillFocused ||= focused && type === openType;
+        }
+        return openStillFocused;
+    }
+}
+
+// --- View lifecycle: construct, portal, update, destroy ---
+
+/**
+ * What every React-hosted view shares: its place among the live views, open
+ * state, the paint diff and props, and tearing down. A kind of view says where
+ * its node is, what its value is, and how to change or remove it.
+ */
+abstract class ReactEditView<TCurrent> implements Repaintable {
+    private container: HTMLElement | null = null;
+    private painted: Painted | null = null;
+    protected destroyed = false;
+
+    constructor(
+        protected readonly view: EditorView,
+        private readonly Component: EditComponent<TCurrent>,
+        private readonly api: EditorControlApi,
+        private readonly live: LiveViews,
+        private readonly openEditors: OpenEditors,
+    ) {}
+
+    /** The node or mark type this view draws. */
+    protected abstract get type(): string;
+    /** Whether the selection is in the node, and whether it covers it whole. */
+    protected abstract placement(): { focused: boolean; selected: boolean };
+    /** The value handed to the component; a new identity means a repaint. */
+    protected abstract value(): TCurrent;
+    /** What goes in as `children`. */
+    protected abstract children(): ReactNode;
+    protected abstract store(value: Record<string, unknown>): void;
+    protected abstract drop(): void;
+    /** Called with each new paint, before React renders it. */
+    protected painting(_next: Painted): void {}
+    /** Where the editable content sits in the document, for views that have some. */
+    protected contentRange(): { from: number; to: number } | null {
+        return null;
+    }
+
+    private absorbQueued = false;
+
+    /**
+     * Whether a DOM change is not the engine's business: what React does to the
+     * chrome (elements, attributes, the content moving into its hole), as
+     * opposed to selection changes and typing inside the content.
+     *
+     * Text typed BESIDE the content (see `isTypedText`) is also ignored, but
+     * the engine would lose it, so it is taken out of the chrome and inserted
+     * into the document where it was meant to go, once the browser is done.
+     */
+    protected ignoresMutation(mutation: ViewMutationRecord, dom: HTMLElement, content: HTMLElement): boolean {
+        if (mutation.type === 'selection' || content.contains(mutation.target)) {
+            return false;
+        }
+        if (!this.absorbQueued && isTypedBesideContent(mutation, dom)) {
+            this.absorbQueued = true;
+            queueMicrotask(() => {
+                this.absorbQueued = false;
+                this.absorbTypedText(dom, content);
+            });
+        }
+        return true;
+    }
+
+    private absorbTypedText(dom: HTMLElement, content: HTMLElement): void {
+        const range = this.destroyed || this.view.isDestroyed ? null : this.contentRange();
+        const { before, after } = takeTypedText(dom, content);
+        if (range === null || before + after === '') {
+            return;
+        }
+        // After the content first, so `range.from` still holds for the rest.
+        const transaction = this.view.state.tr.insertText(after, range.to).insertText(before, range.from);
+        const caret = after === '' ? range.from + before.length : range.to + before.length + after.length;
+        transaction.setSelection(TextSelection.create(transaction.doc, caret));
+        this.view.dispatch(transaction);
+    }
+
+    /**
+     * Call last in the constructor, once the DOM is built: the component is
+     * portalled into `container`, and the view is found by its `dom`.
+     */
+    protected start(container: HTMLElement, dom: HTMLElement): void {
+        this.container = container;
+        this.live.add(this, dom);
+        this.paint();
+    }
+
+    private readonly setOpen = (open: boolean): void => {
+        if (open) {
+            this.api.editors.open(this.type);
+        } else {
+            this.api.editors.close();
+        }
+    };
+
+    // `setValue` and `remove` are stable so a repaint hands the component the same callbacks.
+    private readonly setValue = (value: Record<string, unknown>): void => {
+        if (!this.destroyed && !this.view.isDestroyed) {
+            this.store(value);
+        }
+    };
+
+    private readonly remove = (): void => {
+        if (!this.destroyed && !this.view.isDestroyed) {
+            this.drop();
+        }
+    };
+
+    paint(): PaintResult {
+        const { type } = this;
+        if (this.destroyed || this.container === null) {
+            return { type, focused: false, engaged: false };
+        }
+        const { focused, selected } = this.placement();
+        const value = this.value();
+        const next: Painted = { focused, selected, open: focused && this.openEditors.type === type, value };
+        const result = { type, focused, engaged: focused || selected || next.open };
+        if (samePaint(this.painted, next)) {
+            return this.live.painted(this, result);
+        }
+        this.painted = next;
+        this.painting(next);
+        const { Component } = this;
+        this.live.portals.set(
+            this,
+            createPortal(
+                <Component
+                    value={value}
+                    isFocused={next.focused}
+                    isSelected={next.selected}
+                    isOpen={next.open}
+                    setOpen={this.setOpen}
+                    api={this.api}
+                    setValue={this.setValue}
+                    remove={this.remove}
+                >
+                    {this.children()}
+                </Component>,
+                this.container,
+            ),
+        );
+        return this.live.painted(this, result);
+    }
+
+    destroy(): void {
+        if (this.destroyed) {
+            return;
+        }
+        this.destroyed = true;
+        this.live.remove(this);
+        this.live.portals.delete(this);
+    }
+}
+
+/** A view standing for a node — a block or an inline — rather than a mark's run. */
+abstract class ReactNodeView<TCurrent> extends ReactEditView<TCurrent> implements NodeView {
+    abstract dom: HTMLElement;
+
+    constructor(
+        protected node: PmNode,
+        view: EditorView,
+        private readonly getPos: () => number | undefined,
+        Component: EditComponent<TCurrent>,
+        api: EditorControlApi,
+        live: LiveViews,
+        openEditors: OpenEditors,
+    ) {
+        super(view, Component, api, live, openEditors);
+    }
+
+    protected get type(): string {
+        return this.node.type.name;
+    }
+
+    /** Where the node is, while the view still stands for one. Not gated on `view.isDestroyed`, which is also true during the engine's first DOM build, when the position is already known. */
+    protected pos(): number | undefined {
+        return this.destroyed ? undefined : this.getPos();
+    }
+
+    /** A new node of the same type: take it, or say no and get a new view. */
+    protected accepts(node: PmNode): boolean {
+        return !this.destroyed && node.type === this.node.type;
+    }
+
+    update(node: PmNode): boolean {
+        if (!this.accepts(node)) {
+            return false;
+        }
+        this.node = node;
+        this.paint();
+        return true;
+    }
+}
+
+// --- Block views ---
+
+/** The tag and attributes of a block's outermost element, as `toHtml` (with alignment) says. */
+const outerElement = (
+    registry: PluginRegistry,
+    definition: BlockDefinition,
+    node: PmNode,
+): { tag: string; attrs: Record<string, string> } => {
+    const spec = blockHtml(registry, definition, node.attrs);
+    return { tag: spec.tag, attrs: Object.fromEntries(attributeEntries(spec.attrs)) };
 };
 
 const classTokens = (value: string | undefined): string[] => (value ?? '').split(/\s+/).filter(Boolean);
 
-type BlockEditComponent = ComponentType<EditProps<Record<string, unknown>>>;
-
 /**
- * Hosts a block's `render.edit` as a NodeView. The outer element comes from
- * `toHtml`; React draws what is inside, and the block's content sits in the
- * content hole the component places via `{children}`.
+ * Hosts a block's `render.edit`. The outer element comes from the block's
+ * `toHtml` (alignment applied); React draws what is inside, and the block's
+ * content sits in the hole the component places via `{children}`.
  *
- * The view keeps track of the attributes it set on the outer element itself,
- * because it is not the only one setting them: the engine puts its selection
- * class and decoration attributes there too. An update removes what the new
- * `toHtml` no longer says and leaves the rest alone.
+ * The engine also sets attributes on the outer element (selection class,
+ * decorations), so the view tracks the ones it set and on update removes only
+ * what the new `toHtml` no longer says.
  */
-class ReactBlockView implements NodeView, Repaintable {
+class ReactBlockView extends ReactNodeView<Record<string, unknown>> {
     dom: HTMLElement;
     contentDOM: HTMLElement | undefined;
-    private readonly root: Root;
     private readonly tag: string;
-    private node: PmNode;
     private ownAttrs: Record<string, string> = {};
-    private painted: Painted | null = null;
-    private destroyed = false;
 
     constructor(
         node: PmNode,
-        private readonly view: EditorView,
-        private readonly getPos: () => number | undefined,
+        view: EditorView,
+        getPos: () => number | undefined,
+        private readonly registry: PluginRegistry,
         private readonly definition: BlockDefinition,
-        private readonly Component: BlockEditComponent,
-        private readonly getApi: () => EditorControlApi,
-        private readonly live: Set<Repaintable>,
-        private readonly openEditors: OpenEditors,
+        Component: EditComponent,
+        api: EditorControlApi,
+        live: LiveViews,
+        openEditors: OpenEditors,
     ) {
-        this.node = node;
-        const { tag, attrs } = outerElementOf(node);
+        super(node, view, getPos, Component, api, live, openEditors);
+        const { tag, attrs } = outerElement(registry, definition, node);
         this.tag = tag;
         this.dom = document.createElement(tag);
         this.syncAttrs(attrs);
 
-        const container = reactContainer();
+        const container = wrapper('span');
         this.dom.append(container);
         if (definition.content !== undefined) {
             // Inline content in a span, blocks in a div; neither adds a box.
-            this.contentDOM = document.createElement(definition.content === 'text' ? 'span' : 'div');
-            this.contentDOM.style.display = 'contents';
+            this.contentDOM = wrapper(definition.content === 'text' ? 'span' : 'div');
             this.dom.append(this.contentDOM);
         }
-        this.root = createRoot(container);
-        live.add(this);
-        this.paint();
+        this.start(container, this.dom);
     }
 
     private syncAttrs(next: Record<string, string>): void {
@@ -184,80 +470,50 @@ class ReactBlockView implements NodeView, Repaintable {
         this.ownAttrs = next;
     }
 
-    /** Where the node is, while the view still stands for one. */
-    private pos(): number | undefined {
-        return this.destroyed || this.view.isDestroyed ? undefined : this.getPos();
+    protected placement(): { focused: boolean; selected: boolean } {
+        // Unplaced while the engine is still building the view: paints unfocused, then again once the state moves.
+        const pos = this.pos();
+        if (pos === undefined) {
+            return { focused: false, selected: false };
+        }
+        const end = pos + this.node.nodeSize;
+        const { from, to, empty } = this.view.state.selection;
+        return { focused: from >= pos && to <= end, selected: !empty && from <= pos && to >= end };
     }
 
-    private readonly setValue = (value: Record<string, unknown>): void => {
+    private cachedValue: { attrs: PmNode['attrs']; value: Record<string, unknown> } | null = null;
+
+    /** Rebuilt only when `node.attrs` is replaced, so its identity tells a repaint whether it changed. */
+    protected value(): Record<string, unknown> {
+        if (this.cachedValue?.attrs !== this.node.attrs) {
+            this.cachedValue = { attrs: this.node.attrs, value: blockValueOf(this.definition, this.node.attrs) };
+        }
+        return this.cachedValue.value;
+    }
+
+    protected children(): ReactNode {
+        return this.contentDOM ? <ContentHole element={this.contentDOM} home={this.dom} /> : undefined;
+    }
+
+    protected store(value: Record<string, unknown>): void {
         const pos = this.pos();
         if (pos !== undefined) {
             this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { ...this.node.attrs, ...value }));
         }
-    };
+    }
 
-    private readonly remove = (): void => {
+    protected drop(): void {
         const pos = this.pos();
         if (pos !== undefined) {
             this.view.dispatch(this.view.state.tr.delete(pos, pos + this.node.nodeSize));
         }
-    };
-
-    private readonly setOpen = (open: boolean): void => {
-        if (open) {
-            this.getApi().editors.open(this.node.type.name);
-        } else {
-            this.getApi().editors.close();
-        }
-    };
-
-    paint(): { type: string; focused: boolean } {
-        const type = this.node.type.name;
-        // Not `view.isDestroyed`: that is also true while the engine is still
-        // building its first DOM, which is when this view first paints.
-        if (this.destroyed) {
-            return { type, focused: false };
-        }
-        // Not placed yet while the engine is still building the view: it
-        // paints unfocused now and again once the state moves.
-        const pos = this.getPos();
-        const { from, to, empty } = this.view.state.selection;
-        const end = pos === undefined ? undefined : pos + this.node.nodeSize;
-        const focused = pos !== undefined && end !== undefined && from >= pos && to <= end;
-        const next: Painted = {
-            focused,
-            selected: pos !== undefined && end !== undefined && !empty && from <= pos && to >= end,
-            open: focused && this.openEditors.type === type,
-            // The engine's attributes object is replaced whenever one changes.
-            value: this.node.attrs,
-        };
-        if (samePaint(this.painted, next)) {
-            return { type, focused };
-        }
-        this.painted = next;
-        const { Component } = this;
-        this.root.render(
-            <Component
-                value={blockValueOf(this.definition, this.node.attrs)}
-                isFocused={next.focused}
-                isSelected={next.selected}
-                isOpen={next.open}
-                setOpen={this.setOpen}
-                api={this.getApi()}
-                setValue={this.setValue}
-                remove={this.remove}
-            >
-                {this.contentDOM ? <ContentHole element={this.contentDOM} home={this.dom} /> : undefined}
-            </Component>,
-        );
-        return { type, focused };
     }
 
     update(node: PmNode): boolean {
-        if (this.destroyed || node.type !== this.node.type) {
+        if (!this.accepts(node)) {
             return false;
         }
-        const { tag, attrs } = outerElementOf(node);
+        const { tag, attrs } = outerElement(this.registry, this.definition, node);
         if (tag !== this.tag) {
             // A different element altogether: the engine builds a new view.
             return false;
@@ -268,120 +524,79 @@ class ReactBlockView implements NodeView, Repaintable {
         return true;
     }
 
-    destroy(): void {
-        if (this.destroyed) {
-            return;
-        }
-        this.destroyed = true;
-        this.live.delete(this);
-        unmountLater(this.root);
+    protected contentRange(): { from: number; to: number } | null {
+        const pos = this.pos();
+        return pos === undefined || !this.node.isTextblock ? null : { from: pos + 1, to: pos + this.node.nodeSize - 1 };
     }
 
     ignoreMutation(mutation: ViewMutationRecord): boolean {
-        if (!this.contentDOM) {
-            return true;
-        }
-        // Selection changes and typing inside the content are the engine's;
-        // what React does to the chrome — and the content moving into its
-        // hole — is not.
-        if (mutation.type === 'selection') {
-            return false;
-        }
-        return !this.contentDOM.contains(mutation.target);
+        return this.contentDOM ? this.ignoresMutation(mutation, this.dom, this.contentDOM) : true;
     }
 }
+
+// --- Inline views ---
 
 /** Set on an inline node view inside a selected range; engine.scss paints the highlight. */
 const IN_SELECTION_CLASS = 'rte-in-selection';
 
-/**
- * A view that follows the selection, so the editor offers it every state
- * change. Reports its type and focus, so the editor can tell when the node
- * whose editing UI is open has been left. It re-renders only when what it
- * hands its component has changed.
- */
-export type Repaintable = { paint(): { type: string; focused: boolean } };
+/** Class on an inline node view's element; engine.scss keeps host styles off it. */
+const INLINE_VIEW_CLASS = 'rte-inline-view';
 
-/** What a live view last handed its component; the callbacks are stable, so this is all that changes. */
-type Painted = { focused: boolean; selected: boolean; open: boolean; value: unknown };
-
-const samePaint = (a: Painted | null, b: Painted): boolean =>
-    a !== null && a.focused === b.focused && a.selected === b.selected && a.open === b.open && a.value === b.value;
-
-/**
- * Hosts an inline element's `render.edit`: the editor renders it with
- * generic props and does nothing else. Inline elements without one are drawn
- * from `toHtml` and need no view. Events from
- * inside it belong to it — an input in there types into the input, not the
- * document.
- *
- * Known limitation: one React root per node, so the component does not see
- * the host app's context providers.
- */
-export class ReactInlineView implements NodeView {
+/** Hosts an inline element's `render.edit`. Events from inside it belong to it: an input there types into the input, not the document. */
+class ReactInlineView extends ReactNodeView<Record<string, unknown> | null> {
     dom: HTMLElement;
-    private readonly root: Root;
-    private node: PmNode;
-    private painted: Painted | null = null;
-    private destroyed = false;
 
     constructor(
         node: PmNode,
-        private readonly view: EditorView,
-        private readonly getPos: () => number | undefined,
-        private readonly Component: ComponentType<EditProps<Record<string, unknown>, Record<string, unknown> | null>>,
-        private readonly getApi: () => EditorControlApi,
-        private readonly live: Set<Repaintable>,
-        private readonly openEditors: OpenEditors,
+        view: EditorView,
+        getPos: () => number | undefined,
+        Component: EditComponent<Record<string, unknown> | null>,
+        api: EditorControlApi,
+        live: LiveViews,
+        openEditors: OpenEditors,
     ) {
-        this.node = node;
+        super(node, view, getPos, Component, api, live, openEditors);
         this.dom = document.createElement('span');
+        this.dom.className = INLINE_VIEW_CLASS;
         this.dom.contentEditable = 'false';
-        this.root = createRoot(this.dom);
-        live.add(this);
-        this.paint();
+        this.start(this.dom, this.dom);
     }
 
-    /** Where the node is, while the view still stands for one. */
-    private pos(): number | undefined {
-        return this.destroyed || this.view.isDestroyed ? undefined : this.getPos();
-    }
-
-    private isFocused(pos: number | undefined): boolean {
+    protected placement(): { focused: boolean; selected: boolean } {
+        const pos = this.pos();
         if (pos === undefined) {
-            return false;
+            return { focused: false, selected: false };
         }
         const { selection } = this.view.state;
-        if (selection instanceof NodeSelection) {
-            return selection.from === pos;
-        }
-        return selection.empty && selection.from === pos + this.node.nodeSize;
+        const end = pos + this.node.nodeSize;
+        const focused =
+            selection instanceof NodeSelection ? selection.from === pos : selection.empty && selection.from === end;
+        // Inside a selected range, e.g. a drag across the text around this node.
+        const selected = !selection.empty && selection.from <= pos && selection.to >= end;
+        return { focused, selected };
     }
 
-    /** Inside a selected range — a drag across the text that this node sits in. */
-    private isSelected(pos: number | undefined): boolean {
-        const { selection } = this.view.state;
-        return (
-            pos !== undefined && !selection.empty && selection.from <= pos && selection.to >= pos + this.node.nodeSize
-        );
+    protected value(): Record<string, unknown> | null {
+        return this.node.attrs[VALUE_ATTR] as Record<string, unknown> | null;
     }
 
-    private readonly setOpen = (open: boolean): void => {
-        if (open) {
-            this.getApi().editors.open(this.node.type.name);
-        } else {
-            this.getApi().editors.close();
-        }
-    };
+    protected children(): ReactNode {
+        return undefined;
+    }
 
-    private readonly setValue = (next: Record<string, unknown>): void => {
+    protected painting(next: Painted): void {
+        // Safari does not paint a selection inside a non-editable island; engine.scss does.
+        this.dom.classList.toggle(IN_SELECTION_CLASS, next.selected);
+    }
+
+    protected store(value: Record<string, unknown>): void {
         const pos = this.pos();
         if (pos !== undefined) {
-            this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { value: next }));
+            this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { [VALUE_ATTR]: value }));
         }
-    };
+    }
 
-    private readonly remove = (): void => {
+    protected drop(): void {
         const pos = this.pos();
         if (pos === undefined) {
             return;
@@ -389,51 +604,6 @@ export class ReactInlineView implements NodeView {
         const transaction = this.view.state.tr.delete(pos, pos + this.node.nodeSize);
         transaction.setSelection(TextSelection.create(transaction.doc, pos));
         this.view.dispatch(transaction);
-    };
-
-    paint(): { type: string; focused: boolean } {
-        const type = this.node.type.name;
-        if (this.destroyed) {
-            return { type, focused: false };
-        }
-        const pos = this.pos();
-        const focused = this.isFocused(pos);
-        const next: Painted = {
-            focused,
-            selected: this.isSelected(pos),
-            open: focused && this.openEditors.type === type,
-            value: this.node.attrs.value,
-        };
-        if (samePaint(this.painted, next)) {
-            return { type, focused };
-        }
-        this.painted = next;
-        const { Component } = this;
-        // Browsers disagree on painting a selection inside a non-editable island
-        // (Safari does not), so the editor paints it — see engine.scss.
-        this.dom.classList.toggle(IN_SELECTION_CLASS, next.selected);
-        this.root.render(
-            <Component
-                value={next.value as Record<string, unknown> | null}
-                isFocused={next.focused}
-                isSelected={next.selected}
-                isOpen={next.open}
-                setOpen={this.setOpen}
-                api={this.getApi()}
-                setValue={this.setValue}
-                remove={this.remove}
-            />,
-        );
-        return { type, focused };
-    }
-
-    update(node: PmNode): boolean {
-        if (this.destroyed || node.type !== this.node.type) {
-            return false;
-        }
-        this.node = node;
-        this.paint();
-        return true;
     }
 
     selectNode(): void {
@@ -445,61 +615,46 @@ export class ReactInlineView implements NodeView {
     }
 
     stopEvent(event: Event): boolean {
-        // Form controls inside the component own their events; everything else
-        // (a click on the finished node) still reaches the editor.
+        // Form controls own their events; a click on the finished node still reaches the editor.
         return event.target instanceof HTMLElement && event.target.closest('input, textarea, select, button') !== null;
     }
 
     ignoreMutation(): boolean {
         return true;
     }
-
-    destroy(): void {
-        if (this.destroyed) {
-            return;
-        }
-        this.destroyed = true;
-        this.live.delete(this);
-        unmountLater(this.root);
-    }
 }
 
-type MarkEditorComponent = ComponentType<EditProps<Record<string, unknown>>>;
+// --- Mark views ---
 
 /**
- * Hosts a mark's `render.edit` around the marked text. The text stays
- * editable in a content hole the component places via `{children}`.
- *
- * The engine builds a new view whenever the mark's value changes, so the
- * value is fixed for the view's lifetime; only focus and openness repaint it.
- *
- * Known limitation: one React root per mark view, like the inline view.
+ * Hosts a mark's `render.edit` around the marked text, which stays editable in
+ * the hole the component places via `{children}`. The engine builds a new view
+ * whenever the mark's value changes, so only focus and openness repaint it.
  */
-export class ReactMarkView implements MarkView {
+class ReactMarkView extends ReactEditView<Record<string, unknown>> implements MarkView {
     dom: HTMLElement;
     contentDOM: HTMLElement;
-    private readonly root: Root;
-    private readonly value: Record<string, unknown>;
-    private painted: Painted | null = null;
-    private destroyed = false;
+    private readonly fixedValue: Record<string, unknown>;
 
     constructor(
         private readonly mark: PmMark,
-        private readonly view: EditorView,
-        private readonly Component: MarkEditorComponent,
-        private readonly getApi: () => EditorControlApi,
-        private readonly live: Set<Repaintable>,
-        private readonly openEditors: OpenEditors,
+        view: EditorView,
+        Component: EditComponent,
+        api: EditorControlApi,
+        live: LiveViews,
+        openEditors: OpenEditors,
     ) {
-        this.value = markValueOf(mark);
+        super(view, Component, api, live, openEditors);
+        this.fixedValue = markValueOf(mark);
         this.dom = document.createElement('span');
-        const container = reactContainer();
-        this.contentDOM = document.createElement('span');
-        this.contentDOM.style.display = 'contents';
+        const container = wrapper('span');
+        this.contentDOM = wrapper('span');
         this.dom.append(container, this.contentDOM);
-        this.root = createRoot(container);
-        live.add(this);
-        this.paint();
+        this.start(container, this.dom);
+    }
+
+    protected get type(): string {
+        return this.mark.type.name;
     }
 
     /** Where this run of the mark sits in the document, read off its content. */
@@ -517,129 +672,145 @@ export class ReactMarkView implements MarkView {
         }
     }
 
-    private readonly setOpen = (open: boolean): void => {
-        if (open) {
-            this.getApi().editors.open(this.mark.type.name);
-        } else {
-            this.getApi().editors.close();
-        }
-    };
-
-    private readonly setValue = (next: Record<string, unknown>): void => {
+    protected placement(): { focused: boolean; selected: boolean } {
         const range = this.range();
         if (range === null) {
-            return;
+            return { focused: false, selected: false };
         }
-        this.view.dispatch(
-            this.view.state.tr
-                .removeMark(range.from, range.to, this.mark.type)
-                .addMark(range.from, range.to, this.mark.type.create({ value: next })),
-        );
-    };
+        const { from, to, empty } = this.view.state.selection;
+        return {
+            focused: from >= range.from && to <= range.to,
+            selected: !empty && from <= range.from && to >= range.to,
+        };
+    }
 
-    private readonly remove = (): void => {
+    protected value(): Record<string, unknown> {
+        return this.fixedValue;
+    }
+
+    protected children(): ReactNode {
+        return <ContentHole element={this.contentDOM} home={this.dom} />;
+    }
+
+    protected store(value: Record<string, unknown>): void {
+        const range = this.range();
+        if (range !== null) {
+            this.view.dispatch(
+                this.view.state.tr
+                    .removeMark(range.from, range.to, this.mark.type)
+                    .addMark(range.from, range.to, this.mark.type.create({ [VALUE_ATTR]: value })),
+            );
+        }
+    }
+
+    protected drop(): void {
         const range = this.range();
         if (range !== null) {
             this.view.dispatch(this.view.state.tr.removeMark(range.from, range.to, this.mark.type));
         }
-    };
+    }
 
-    paint(): { type: string; focused: boolean } {
-        const type = this.mark.type.name;
-        if (this.destroyed) {
-            return { type, focused: false };
-        }
-        const range = this.range();
-        const { from, to, empty } = this.view.state.selection;
-        const focused = range !== null && from >= range.from && to <= range.to;
-        const next: Painted = {
-            focused,
-            selected: range !== null && !empty && from <= range.from && to >= range.to,
-            open: focused && this.openEditors.type === type,
-            value: this.value,
-        };
-        if (samePaint(this.painted, next)) {
-            return { type, focused };
-        }
-        this.painted = next;
-        const { Component } = this;
-        this.root.render(
-            <Component
-                value={this.value}
-                isFocused={next.focused}
-                isSelected={next.selected}
-                isOpen={next.open}
-                setOpen={this.setOpen}
-                api={this.getApi()}
-                setValue={this.setValue}
-                remove={this.remove}
-            >
-                <ContentHole element={this.contentDOM} home={this.dom} />
-            </Component>,
-        );
-        return { type, focused };
+    protected contentRange(): { from: number; to: number } | null {
+        return this.range();
     }
 
     ignoreMutation(mutation: ViewMutationRecord): boolean {
-        // Selection changes and typing inside the text are the engine's; what
-        // React does to the chrome around it is not.
-        if (mutation.type === 'selection') {
-            return false;
-        }
-        return !this.contentDOM.contains(mutation.target);
-    }
-
-    destroy(): void {
-        if (this.destroyed) {
-            return;
-        }
-        this.destroyed = true;
-        this.live.delete(this);
-        unmountLater(this.root);
+        return this.ignoresMutation(mutation, this.dom, this.contentDOM);
     }
 }
 
+// --- Content hole: moving the engine content into the component ---
+
 /**
- * Only marks with editing UI get a view. Every other mark is drawn by the
- * engine from its `toHtml` — synchronously, with no React root per run of
- * text — the same markup the readonly view and export use.
+ * Class on every element the views add around the content without meaning a
+ * box: engine.scss resets it, so a host's element rules (`span { line-height:
+ * 2 }`) cannot reach in, and keeps it out of layout.
  */
-export const createMarkViews = (
-    registry: PluginRegistry,
-    getApi: () => EditorControlApi,
-    live: Set<Repaintable>,
-    openEditors: OpenEditors,
-): Record<string, MarkViewConstructor> => {
-    const views: Record<string, MarkViewConstructor> = {};
-    for (const [type, { render }] of registry.marks) {
-        const edit = render?.edit;
-        if (edit) {
-            views[type] = (mark, view) => new ReactMarkView(mark, view, edit, getApi, live, openEditors);
-        }
-    }
-    return views;
+const WRAPPER_CLASS = 'rte-view-wrapper';
+
+/** A wrapper element: no box of its own, and no host styles. */
+const wrapper = (tag: 'span' | 'div'): HTMLElement => {
+    const element = document.createElement(tag);
+    element.className = WRAPPER_CLASS;
+    element.style.display = 'contents';
+    return element;
 };
 
-export const createNodeViews = (
-    registry: PluginRegistry,
-    getApi: () => EditorControlApi,
-    liveInlines: Set<Repaintable>,
-    openEditors: OpenEditors,
-): Record<string, NodeViewConstructor> => {
-    const views: Record<string, NodeViewConstructor> = {};
-    for (const [type, definition] of registry.blocks) {
-        const edit = definition.render?.edit;
-        if (edit) {
-            views[type] = (node, view, getPos) =>
-                new ReactBlockView(node, view, getPos, definition, edit, getApi, liveInlines, openEditors);
+/** Moves the engine's content into `parent`, restoring the caret that the move would collapse. */
+const moveContent = (content: HTMLElement, parent: HTMLElement): void => {
+    if (content.parentNode === parent) {
+        return;
+    }
+    // Only a focused editor holds the caret, and reading the selection forces a layout.
+    if (!content.ownerDocument.activeElement?.contains(content)) {
+        parent.append(content);
+        return;
+    }
+    const selection = content.ownerDocument.getSelection();
+    const { anchorNode, anchorOffset, focusNode, focusOffset } = selection ?? {};
+    const caretInside =
+        anchorNode !== null &&
+        anchorNode !== undefined &&
+        focusNode !== null &&
+        focusNode !== undefined &&
+        content.contains(anchorNode) &&
+        content.contains(focusNode);
+    parent.append(content);
+    if (selection && caretInside) {
+        selection.setBaseAndExtent(anchorNode, anchorOffset ?? 0, focusNode, focusOffset ?? 0);
+    }
+};
+
+/**
+ * Where the component put `{children}`. The content moves in once, when the
+ * hole mounts, and back to the view's element (`home`) if the component stops
+ * rendering the hole, so the engine's content never leaves the page.
+ */
+const ContentHole = ({ element, home }: { element: HTMLElement; home: HTMLElement }): ReactNode => {
+    const place = useCallback((node: HTMLSpanElement | null) => moveContent(element, node ?? home), [element, home]);
+    return <span ref={place} className={WRAPPER_CLASS} style={{ display: 'contents' }} />;
+};
+
+// --- Text typed beside the content ---
+
+/**
+ * A text node the browser typed into the view's element outside the content
+ * (Chrome puts a character typed at the end of a link AFTER the component's
+ * `<a>`). Text inside a non-editable island is React's own, not typed.
+ */
+const isTypedText = (node: Node, dom: HTMLElement): node is Text => {
+    if (node.nodeType !== Node.TEXT_NODE) {
+        return false;
+    }
+    const island = node.parentElement?.closest('[contenteditable="false"]');
+    return island === null || island === undefined || !dom.contains(island);
+};
+
+/** A DOM change outside the content that is typing rather than React drawing the chrome. */
+const isTypedBesideContent = (mutation: ViewMutationRecord, dom: HTMLElement): boolean => {
+    if (mutation.type === 'characterData') {
+        return isTypedText(mutation.target, dom);
+    }
+    if (mutation.type === 'childList') {
+        return [...mutation.addedNodes].some((node) => isTypedText(node, dom));
+    }
+    return false;
+};
+
+/** Takes the typed text outside `content` out of the DOM, split by whether it sat before or after it. */
+const takeTypedText = (dom: HTMLElement, content: HTMLElement): { before: string; after: string } => {
+    const found = { before: '', after: '' };
+    const walker = dom.ownerDocument.createTreeWalker(dom, NodeFilter.SHOW_TEXT);
+    const typed: Text[] = [];
+    for (let node = walker.nextNode(); node !== null; node = walker.nextNode()) {
+        if (!content.contains(node) && isTypedText(node, dom)) {
+            typed.push(node);
         }
     }
-    for (const [type, { render }] of registry.inlines) {
-        const edit = render?.edit;
-        if (edit) {
-            views[type] = (node, view, getPos) =>
-                new ReactInlineView(node, view, getPos, edit, getApi, liveInlines, openEditors);
-        }
+    for (const node of typed) {
+        const isBefore = node.compareDocumentPosition(content) === Node.DOCUMENT_POSITION_FOLLOWING;
+        found[isBefore ? 'before' : 'after'] += node.data;
+        node.remove();
     }
-    return views;
+    return found;
 };

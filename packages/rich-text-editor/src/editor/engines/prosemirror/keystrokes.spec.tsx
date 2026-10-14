@@ -18,7 +18,7 @@ import { destroyEditors, editorWith, paragraph, shipped, text } from './testEdit
 
 const empty = (): RteBlockNode[] => [paragraph()];
 
-const typed = (value: string, plugins: RtePlugin[] = defaultPlugins): RteBlockNode[] | null => {
+const typed = (value: string, plugins: readonly RtePlugin[] = defaultPlugins): RteBlockNode[] | null => {
     const editor = editorWith(plugins, empty());
     editor.type(value);
     return editor.stored();
@@ -125,6 +125,69 @@ describe('typography while typing', () => {
     it('turns an apostrophe inside a word into a closing single quote', () => {
         expect(typed("it's 'fine'")).toEqual([paragraph(text('it’s ‘fine’'))]);
     });
+
+    it('leaves a match starting with a digit alone in the middle of a number', () => {
+        expect(typed('11/2 ')).toEqual([paragraph(text('11/2 '))]);
+    });
+
+    it('still rewrites a match starting with a digit after punctuation', () => {
+        expect(typed('(1/2 ')).toEqual([paragraph(text('(½ '))]);
+    });
+
+    it('leaves text alone inside a mark that opts out — inline code keeps `--` and `**`', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        editor.caretAfter('x');
+
+        editor.type(' a -- b **c**');
+
+        expect(editor.stored()).toEqual([paragraph(text('x a -- b **c**', { code: true }))]);
+    });
+});
+
+describe('undoing a typing rewrite', () => {
+    it('takes a text rewrite back on Backspace, leaving what was typed', () => {
+        const editor = editorWith(defaultPlugins, empty());
+        editor.type('a--');
+
+        expect(editor.stored()).toEqual([paragraph(text('a—'))]);
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(text('a--'))]);
+    });
+
+    it('takes a block rewrite back on Backspace, leaving what was typed', () => {
+        const editor = editorWith(defaultPlugins, empty());
+        editor.type('## ');
+
+        expect(editor.stored()?.[0]?.type).toBe('textStyle');
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(text('## '))]);
+    });
+
+    it('takes just the rewrite back on undo', () => {
+        const editor = editorWith(defaultPlugins, empty());
+        editor.type('a--');
+
+        const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+        expect(press(editor.view, 'z', mod)).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(text('a--'))]);
+    });
+});
+
+describe('Backspace', () => {
+    it('turns an emptied heading at the top of the document back into a paragraph', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'textStyle', style: 'heading2', children: [] },
+            paragraph(text('body')),
+        ]);
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.create(editor.view.state.doc, 1)));
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(), paragraph(text('body'))]);
+    });
 });
 
 describe('a feature hotkey', () => {
@@ -168,6 +231,16 @@ describe('a feature hotkey', () => {
 
         expect(claim).toHaveBeenCalledTimes(1);
         expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('naming a character does not fire in the middle of a word', () => {
+        const mention = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+
+        editor.type('noah@frontify.com');
+
+        expect(mention).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('noah@frontify.com'))]);
     });
 
     it('naming a character fires on that character being typed, and the character is not inserted', () => {
@@ -268,6 +341,26 @@ describe('the list keys', () => {
                 ],
             },
         ]);
+    });
+
+    it('take an item out of the list on Backspace at its start, rather than joining it into the one above', () => {
+        const editor = inList();
+        editor.caretBefore('two');
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('one'))] }] },
+            paragraph(text('two')),
+        ]);
+    });
+
+    it('leave Backspace in the middle of an item to the browser', () => {
+        const editor = inList();
+        editor.caretAfter('tw');
+
+        expect(press(editor.view, 'Backspace')).toBe(false);
+        expect(editor.onDocChange).not.toHaveBeenCalled();
     });
 
     it('leave Tab unhandled outside a list', () => {

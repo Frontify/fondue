@@ -1,17 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/**
- * The form's own layout. Plugin UI is plain React, styled the same way — and it
- * carries its own width, since it is shown both in a flyout sized for it and in
- * the panel, which is sized by whatever it is given.
- */
+/** Carries its own width: shown in a flyout and in the panel, which is sized by its content. */
 .fields {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-small);
     width: 240px;
     // Portaled out of the editor's frame like the panel: the fields are Fondue
-    // components that carry their own font, but the checkbox's label is not.
+    // components that carry their own font, but the error message is not.
     font-family: var(--typography-font-family-primary);
 }
 
@@ -26,7 +22,6 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-x-small);
-    font-size: var(--typography-font-size-small);
 }
 
 /** The form ends in its buttons, wherever it is being shown. */
@@ -34,4 +29,10 @@
     display: flex;
     justify-content: flex-end;
     gap: var(--spacing-x-small);
+}
+
+/** A live region must exist before its message arrives to be announced, so it is always rendered. */
+.error {
+    color: var(--color-error-default);
+    font-size: var(--typography-font-size-small);
 }

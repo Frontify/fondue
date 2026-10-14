@@ -13,21 +13,16 @@ import { toReact } from './renderer/toReact';
 import {
     columnBreakPlugin,
     defaultPlugins,
-    filterByName,
     mentionPlugin,
     type RteDocument,
     type RteDocumentWith,
     serializeToHtml,
 } from './index';
 
-/**
- * Every node's `toHtml` reaches the page two ways: as React elements in the
- * readonly view, and as attributes written out directly by the editor and the
- * HTML export. Both read the same `HtmlSpec`; this holds the one place they
- * translate it differently — attributes to React props — to the other.
- *
- * Drawn with `react-dom/client` into the test DOM, never `react-dom/server`.
- */
+// A node's `toHtml` reaches the page as React elements (readonly view) and as
+// attributes written directly (editor, HTML export). This holds the one place
+// the two translate the `HtmlSpec` differently — attributes to React props —
+// to the same output. Drawn with `react-dom/client`, never `react-dom/server`.
 
 declare global {
     // eslint-disable-next-line no-var
@@ -37,7 +32,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const plugins = [
     ...defaultPlugins,
-    mentionPlugin({ items: filterByName([]), href: (mention) => `/people/${mention.id}` }),
+    mentionPlugin({ items: [], href: (mention) => `/people/${mention.id}` }),
     columnBreakPlugin(),
 ];
 
@@ -114,6 +109,6 @@ const normalized = (html: string): string => {
 
 describe('toHtml drawn by React and written out directly', () => {
     it('is the same HTML for every shipped node', () => {
-        expect(normalized(drawnWithReact(doc))).toBe(normalized(serializeToHtml(doc, { plugins })));
+        expect(normalized(drawnWithReact(doc))).toBe(normalized(serializeToHtml(doc, { plugins, wrap: false })));
     });
 });

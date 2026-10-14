@@ -13,18 +13,21 @@ import {
     unknownMarkType,
 } from '#/core';
 
-import { VALUE_ATTR } from './valueAttr';
-
 /**
- * The document boundary: RTE format ↔ engine format. The only place either
- * shape is read structurally — everything else works on one side or the other.
- *
- * Both directions run while the editor is live: inbound when a new `value` prop
- * arrives, outbound on every keystroke that changes the document (see
- * `dispatchTransaction` in editing.ts).
+ * The document boundary: RTE format <-> engine format. The only place either
+ * shape is read structurally. Inbound runs when a new `value` arrives, outbound
+ * on every keystroke that changes the document (see `dispatchTransaction` in
+ * editing.ts).
  */
 
-// Reading engine nodes — shared by both directions, and by the control API
+/**
+ * Marks and inline elements keep their whole value in ONE engine attribute, so
+ * the engine needs to know nothing about its shape; this boundary flattens it
+ * onto the document node. Every other file reads the value through this name.
+ */
+export const VALUE_ATTR = 'value';
+
+// --- Reading engine nodes: shared by both directions and the control API ---
 
 /** ProseMirror nodes are not iterable — children have to be indexed. */
 export const mapChildren = <TResult>(node: PmNode, map: (child: PmNode) => TResult): TResult[] => {
@@ -36,7 +39,7 @@ export const mapChildren = <TResult>(node: PmNode, map: (child: PmNode) => TResu
 };
 
 /** Attributes with a value; unset ones are absent from the document, not null. */
-export const definedAttrs = (attrs: Record<string, unknown>): Record<string, unknown> =>
+const definedAttrs = (attrs: Record<string, unknown>): Record<string, unknown> =>
     Object.fromEntries(Object.entries(attrs).filter(([, value]) => value !== null && value !== undefined));
 
 /** A mark's value as the document and the control API see it: the one engine attribute it lives in. */
@@ -53,8 +56,10 @@ export const valueAttrsFor = (value: Record<string, unknown> | undefined): Recor
 });
 
 /** Type and attributes only — what the toolbar needs, without dragging the subtree along. */
-export const shallowBlock = (node: PmNode): RteBlockNode =>
-    ({ type: node.type.name, ...definedAttrs(node.attrs) }) as unknown as RteBlockNode;
+export const shallowBlock = (node: PmNode): { type: string; [attribute: string]: unknown } => ({
+    ...definedAttrs(node.attrs),
+    type: node.type.name,
+});
 
 /** The attributes a node type declared, picked off a document node (they live flat on it). */
 const declaredAttrs = (
@@ -67,13 +72,38 @@ const declaredAttrs = (
             .map((name) => [name, node[name]]),
     );
 
-// RTE format → engine
+// --- RTE format -> engine ---
+
+/**
+ * A document whose blocks are all known but do not fit together — a list
+ * holding a paragraph where its items belong. Thrown rather than repaired, for
+ * the same reason an unknown type is: the next `onChange` would otherwise write
+ * back a different document than the host handed over.
+ */
+const invalidDocument = (nodeType: PmNodeType, content: readonly PmNode[]): Error =>
+    new Error(
+        `Invalid document: a "${nodeType.name}" cannot hold ${
+            content.length === 0 ? 'nothing' : content.map((node) => `"${node.type.name}"`).join(', ')
+        }.`,
+    );
+
+/**
+ * `create`, refusing content the type does not allow there. Content that is
+ * merely missing (no blocks at all, a list without items) is filled in with
+ * empty blocks, as an empty document is.
+ */
+const createFilled = (nodeType: PmNodeType, attrs: Record<string, unknown> | null, content: PmNode[]): PmNode => {
+    const node = nodeType.createAndFill(attrs, content);
+    if (node === null) {
+        throw invalidDocument(nodeType, content);
+    }
+    return node;
+};
 
 const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] => {
     const nodes: PmNode[] = [];
     for (const child of children) {
-        // Text nodes carry `text`, inline elements carry `type`, and each says
-        // the other is absent — so reading one discriminates the union.
+        // Text nodes carry `text`, inline elements `type`; reading one discriminates the union.
         if (child.text !== undefined) {
             if (child.text === '') {
                 continue;
@@ -82,14 +112,12 @@ const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] =>
             const marks = Object.entries(markValues)
                 .filter(([, value]) => value !== undefined)
                 .map(([key, value]) => {
-                    // Thrown rather than dropped: the next `onChange` would
-                    // otherwise write the document back without it.
+                    // Thrown rather than dropped, or the next `onChange` would lose it.
                     const markType = schema.marks[key];
                     if (!markType) {
                         throw unknownMarkType(key);
                     }
-                    // A mark is stored as `true` when it carries nothing and as
-                    // its value when it does — see `StoredMarkValue`.
+                    // `true` when it carries nothing, else its value (see `StoredMarkValue`).
                     const stored = value as StoredMarkValue;
                     return markType.create(valueAttrsFor(stored === true ? undefined : stored));
                 });
@@ -116,12 +144,17 @@ const childrenToEngine = (nodeType: PmNodeType, children: RteInlineNode[] | RteB
         : (children as RteBlockNode[]).map((child) => blockToEngine(child, schema));
 
 const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
+    // A block this editor handed out: reuse the node it came from (see `engineNodeOf`).
+    const known = engineNodeOf.get(block);
+    if (known !== undefined && known.type.schema === schema) {
+        return known;
+    }
     const nodeType = schema.nodes[block.type];
     if (!nodeType) {
         throw unknownBlockType(block.type);
     }
     const attrs = declaredAttrs(block as Record<string, unknown>, nodeType.spec.attrs);
-    return nodeType.create(attrs, block.children ? childrenToEngine(nodeType, block.children, schema) : []);
+    return createFilled(nodeType, attrs, block.children ? childrenToEngine(nodeType, block.children, schema) : []);
 };
 
 export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => {
@@ -129,30 +162,32 @@ export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => 
     if (!docType) {
         throw new Error('Schema is missing the "doc" node type.');
     }
-    return docType.create(
+    return createFilled(
+        docType,
         null,
         doc.blocks.map((block) => blockToEngine(block, schema)),
     );
 };
 
-// Engine → RTE format
+// --- Engine -> RTE format ---
 //
-// This direction runs on every keystroke, over a document with no bound on its
-// size. What makes that affordable: the engine's nodes are immutable, and an
-// edit rebuilds only the nodes on the path it touched. So conversions
-// remembered against the node they came from happen once per node that ever
-// existed, and the walk below costs what changed rather than what the document
-// holds.
+// Runs on every keystroke over an unbounded document. Engine nodes are
+// immutable and an edit rebuilds only the path it touched, so conversions are
+// remembered per node and the walk costs what changed, not the document size.
 //
-// Two consequences at the boundary:
-//
-// - The documents handed to `onChange` SHARE their unchanged parts, so a host
-//   memoizing on a block holds still while another block is edited.
-// - What comes out must therefore not be mutated.
+// Consequences: documents handed to `onChange` SHARE their unchanged parts (a
+// host memoizing on a block holds still while another is edited), so what comes
+// out must not be mutated.
 
 /** Keyed on the engine node, so entries go away exactly when it does. */
 const convertedInlines = new WeakMap<PmNode, RteInlineNode>();
 const convertedBlocks = new WeakMap<PmNode, RteBlockNode>();
+/**
+ * The way back: which engine node a block handed out came from. A host that
+ * echoes a document as a new object, its unchanged blocks shared, then costs
+ * what changed rather than the whole document on the way in.
+ */
+const engineNodeOf = new WeakMap<RteBlockNode, PmNode>();
 
 const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
     // An inline still being made (a draft) is not part of the document yet.
@@ -196,6 +231,7 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
 
     const converted = block as unknown as RteBlockNode;
     convertedBlocks.set(node, converted);
+    engineNodeOf.set(converted, node);
     return converted;
 };
 

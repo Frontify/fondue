@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import {
     defineBlock,
+    defineInline,
     defineMark,
     type EditorControlApi,
     ownTypeOf,
-    type RteBlockNode,
+    PARAGRAPH,
     type RtePlugin,
     type RteSelectionSnapshot,
 } from '#/core';
@@ -15,47 +16,98 @@ import {
 import { toolbarItemProps } from './toolbarItem';
 
 /**
- * What a plugin's toolbar item is handed, composed from the control API alone —
- * so a fake API stands in for the editor, and each test checks which commands a
- * prop turns into.
+ * What a plugin's toolbar item is handed, composed from the control API alone.
+ * A small fake editor stands in for the real one: it keeps a selection snapshot
+ * and changes it the way the commands would, so each test presses a control and
+ * then reads what the control shows afterwards — the outcome, not which
+ * command ran.
  */
+
+type Block = RteSelectionSnapshot['block'] & object;
 
 const snapshot = (overrides: Partial<RteSelectionSnapshot> = {}): RteSelectionSnapshot => ({
     isCollapsed: true,
     text: '',
-    block: { type: 'paragraph' },
-    blocks: [{ type: 'paragraph' }],
+    block: { type: PARAGRAPH },
+    blocks: [{ type: PARAGRAPH }],
     marks: {},
     ...overrides,
 });
 
-const fakeApi = (
-    selection: RteSelectionSnapshot = snapshot(),
-    run: ReturnType<EditorControlApi['marks']['getRun']> = null,
-) => {
-    const api = {
-        selection: { get: vi.fn(() => selection), replaceWithText: vi.fn() },
+const LIST_ITEM = 'listItem';
+
+const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
+    let selection = snapshot(initial);
+    const inserted: { type: string; value?: Record<string, unknown> }[] = [];
+    let openEditor: string | null = null;
+
+    const setBlocks = (blocks: Block[]): void => {
+        selection = { ...selection, block: blocks[0] ?? null, blocks };
+    };
+
+    const api: EditorControlApi = {
+        selection: { get: () => selection },
+        text: { beforeCaret: () => '', afterCaret: () => '', deleteBefore: () => {} },
         marks: {
-            toggle: vi.fn(),
-            removeAll: vi.fn(),
-            getRun: vi.fn(() => run),
-            select: vi.fn(() => run !== null),
+            toggle: (type, value) => {
+                const { [type]: present, ...others } = selection.marks;
+                selection = {
+                    ...selection,
+                    marks: present === undefined ? { ...others, [type]: value ?? {} } : others,
+                };
+            },
+            removeAll: () => {
+                selection = { ...selection, marks: {} };
+            },
+            getRun: (type) => {
+                const value = selection.marks[type];
+                return value === undefined ? null : { value, text: selection.text };
+            },
         },
-        blocks: { setType: vi.fn(), updateAttributes: vi.fn(), resetAttributes: vi.fn() },
+        blocks: {
+            setType: (type, value) => setBlocks([{ type, ...value }, ...selection.blocks.slice(1)]),
+            updateAttributes: () => {},
+            resetAttributes: () => {},
+        },
         lists: {
-            toggle: vi.fn(),
-            indent: vi.fn(() => true),
-            outdent: vi.fn(() => true),
-            split: vi.fn(() => true),
-            unwrapAll: vi.fn(() => true),
+            // Wraps the text block in a list and an item, or takes it out again.
+            toggle: (type) => {
+                const [textBlock = { type: PARAGRAPH }, ...around] = selection.blocks;
+                const inList = around.some((block) => block.type === type);
+                setBlocks(
+                    inList
+                        ? [textBlock, ...around.filter((block) => block.type !== type && block.type !== LIST_ITEM)]
+                        : [textBlock, { type: LIST_ITEM }, { type }, ...around],
+                );
+            },
+            indent: () => false,
+            outdent: () => false,
+            split: () => false,
+            unwrapAll: () => false,
         },
-        insert: vi.fn(),
-        insertText: vi.fn(),
-        focus: vi.fn(),
-        blur: vi.fn(),
-        editors: { open: vi.fn(), close: vi.fn() },
-    } satisfies EditorControlApi;
-    return api;
+        insert: (type, value) => {
+            inserted.push({ type, value });
+        },
+        insertText: () => {},
+        focus: () => {},
+        blur: () => {},
+        editors: {
+            open: (type) => {
+                openEditor = type;
+            },
+            close: () => {
+                openEditor = null;
+            },
+        },
+    };
+
+    return {
+        api,
+        /** What the plugin's toolbar item is handed right now. */
+        props: (plugin: RtePlugin) => toolbarItemProps(ownTypeOf(plugin), api, api.selection.get()),
+        inserted,
+        openEditor: () => openEditor,
+    };
 };
 
 const markPlugin: RtePlugin = {
@@ -71,8 +123,15 @@ const markPlugin: RtePlugin = {
 const listPlugin: RtePlugin = {
     id: 'bullets',
     blocks: {
-        bulletList: defineBlock({ content: { items: 'listItem' }, toHtml: () => ({ tag: 'ul' }), parse: [] }),
-        listItem: defineBlock({ content: { blocks: ['paragraph'] }, toHtml: () => ({ tag: 'li' }), parse: [] }),
+        bulletList: defineBlock({ content: { items: LIST_ITEM }, toHtml: () => ({ tag: 'ul' }), parse: [] }),
+        [LIST_ITEM]: defineBlock({ content: { blocks: [PARAGRAPH] }, toHtml: () => ({ tag: 'li' }), parse: [] }),
+    },
+};
+
+const containerPlugin: RtePlugin = {
+    id: 'callout',
+    blocks: {
+        callout: defineBlock({ content: { blocks: [PARAGRAPH] }, toHtml: () => ({ tag: 'aside' }), parse: [] }),
     },
 };
 
@@ -84,9 +143,16 @@ const textBlockPlugin: RtePlugin = {
 };
 
 const voidBlockPlugin: RtePlugin = {
-    id: 'image',
+    id: 'divider',
     blocks: {
-        image: defineBlock({ toHtml: () => ({ tag: 'img' }), parse: [] }),
+        divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] }),
+    },
+};
+
+const inlinePlugin: RtePlugin = {
+    id: 'mention',
+    inlines: {
+        mention: defineInline<{ id: string }>({ toHtml: ({ id }) => ({ tag: 'span', children: id }), parse: [] }),
     },
 };
 
@@ -97,244 +163,191 @@ const attributePlugin: RtePlugin = {
 
 const LINK = { href: 'https://example.com' };
 
-describe('a mark plugin', () => {
-    it('is active when the selection carries its mark', () => {
-        const selection = snapshot({ marks: { link: LINK } });
-
-        expect(toolbarItemProps(ownTypeOf(markPlugin), fakeApi(selection), selection).isActive).toBe(true);
+describe('what a plugin acts on', () => {
+    it('is its first mark, ahead of any block or inline it declares', () => {
+        expect(ownTypeOf({ ...inlinePlugin, ...textBlockPlugin, ...markPlugin })).toEqual({
+            kind: 'mark',
+            type: 'link',
+        });
     });
 
-    it('is not active at the edge of its run, where typing would not carry the mark', () => {
-        const api = fakeApi(snapshot(), { value: LINK, text: 'here' });
+    it('is its first block when it declares no mark, by what that block holds', () => {
+        expect(ownTypeOf(listPlugin)).toEqual({ kind: 'list', type: 'bulletList' });
+        expect(ownTypeOf(containerPlugin)).toEqual({ kind: 'container', type: 'callout' });
+        expect(ownTypeOf(textBlockPlugin)).toEqual({ kind: 'textBlock', type: 'quote' });
+        expect(ownTypeOf(voidBlockPlugin)).toEqual({ kind: 'voidBlock', type: 'divider' });
+    });
 
-        const props = toolbarItemProps(ownTypeOf(markPlugin), api, snapshot());
+    it('is its first inline when it declares neither', () => {
+        expect(ownTypeOf(inlinePlugin)).toEqual({ kind: 'inline', type: 'mention' });
+    });
+
+    it('is nothing for a plugin with no type of its own', () => {
+        expect(ownTypeOf(attributePlugin)).toEqual({ kind: 'none' });
+    });
+});
+
+describe('a mark plugin', () => {
+    it('turns its mark on with the value given, and off again', () => {
+        const editor = fakeEditor({ text: 'here', isCollapsed: false });
+
+        editor.props(markPlugin).toggle(LINK);
+
+        expect(editor.props(markPlugin).isActive).toBe(true);
+        expect(editor.props(markPlugin).selectedNode).toEqual({ type: 'link', value: LINK, text: 'here' });
+
+        editor.props(markPlugin).toggle();
+
+        expect(editor.props(markPlugin).isActive).toBe(false);
+        expect(editor.props(markPlugin).selectedNode).toBeNull();
+    });
+
+    it('is not active at the edge of its run, where typing would not carry the mark, but still finds it', () => {
+        const editor = fakeEditor();
+        editor.api.marks.getRun = () => ({ value: LINK, text: 'here' });
+
+        const props = editor.props(markPlugin);
 
         expect(props.isActive).toBe(false);
         expect(props.selectedNode).toEqual({ type: 'link', value: LINK, text: 'here' });
     });
 
-    it('has no selected node away from its mark', () => {
-        expect(toolbarItemProps(ownTypeOf(markPlugin), fakeApi(), snapshot()).selectedNode).toBeNull();
-    });
+    it('opens the editor of its mark', () => {
+        const editor = fakeEditor();
 
-    it('toggles its mark with the value given', () => {
-        const api = fakeApi();
+        editor.props(markPlugin).openEditor();
 
-        toolbarItemProps(ownTypeOf(markPlugin), api, snapshot()).toggle(LINK);
-
-        expect(api.marks.toggle).toHaveBeenCalledWith('link', LINK);
-    });
-
-    it('sets a value by taking the mark off its whole run and putting it back with the new value', () => {
-        const selection = snapshot({ marks: { link: LINK } });
-        const api = fakeApi(selection, { value: LINK, text: 'here' });
-
-        toolbarItemProps(ownTypeOf(markPlugin), api, selection).setValue({ href: 'https://new.example' });
-
-        expect(api.marks.select).toHaveBeenCalledWith('link');
-        expect(api.marks.toggle.mock.calls).toEqual([['link'], ['link', { href: 'https://new.example' }]]);
-    });
-
-    it('sets a value on a selection without the mark by only putting it on', () => {
-        const api = fakeApi();
-
-        toolbarItemProps(ownTypeOf(markPlugin), api, snapshot()).setValue(LINK);
-
-        expect(api.marks.toggle.mock.calls).toEqual([['link', LINK]]);
-    });
-
-    it('removes the mark from its whole run', () => {
-        const selection = snapshot({ marks: { link: LINK } });
-        const api = fakeApi(selection, { value: LINK, text: 'here' });
-
-        toolbarItemProps(ownTypeOf(markPlugin), api, selection).remove();
-
-        expect(api.marks.select).toHaveBeenCalledWith('link');
-        expect(api.marks.toggle.mock.calls).toEqual([['link']]);
-    });
-
-    it('replaces the text of its whole run', () => {
-        const api = fakeApi(snapshot(), { value: LINK, text: 'here' });
-
-        toolbarItemProps(ownTypeOf(markPlugin), api, snapshot()).setText('there');
-
-        expect(api.marks.select).toHaveBeenCalledWith('link');
-        expect(api.selection.replaceWithText).toHaveBeenCalledWith('there');
-        expect(api.marks.select.mock.invocationCallOrder[0]).toBeLessThan(
-            api.selection.replaceWithText.mock.invocationCallOrder[0] ?? 0,
-        );
+        expect(editor.openEditor()).toBe('link');
     });
 });
 
 describe('a list plugin', () => {
-    const inList = snapshot({
-        text: 'item',
-        blocks: [{ type: 'paragraph' }, { type: 'listItem' }, { type: 'bulletList' }],
+    it('wraps the selection in its list, and is active anywhere inside it with the list as the selected node', () => {
+        const editor = fakeEditor({ text: 'item' });
+
+        editor.props(listPlugin).toggle();
+
+        expect(editor.props(listPlugin).isActive).toBe(true);
+        expect(editor.props(listPlugin).selectedNode).toEqual({ type: 'bulletList', value: {}, text: 'item' });
     });
 
-    it('is active anywhere inside its list, with the list as the selected node', () => {
-        const props = toolbarItemProps(ownTypeOf(listPlugin), fakeApi(inList), inList);
+    it('unwraps its list when toggled inside it', () => {
+        const editor = fakeEditor();
+        editor.props(listPlugin).toggle();
 
-        expect(props.isActive).toBe(true);
-        expect(props.selectedNode).toEqual({ type: 'bulletList', value: {}, text: 'item' });
-    });
+        editor.props(listPlugin).toggle();
 
-    it('is not active outside its list', () => {
-        expect(toolbarItemProps(ownTypeOf(listPlugin), fakeApi(), snapshot()).isActive).toBe(false);
-    });
-
-    it('toggles its list', () => {
-        const api = fakeApi();
-
-        toolbarItemProps(ownTypeOf(listPlugin), api, snapshot()).toggle();
-
-        expect(api.lists.toggle).toHaveBeenCalledWith('bulletList');
-    });
-
-    it('removes its list by toggling it off when inside it', () => {
-        const api = fakeApi(inList);
-
-        toolbarItemProps(ownTypeOf(listPlugin), api, inList).remove();
-
-        expect(api.lists.toggle).toHaveBeenCalledWith('bulletList');
-    });
-
-    it('does nothing on remove outside its list', () => {
-        const api = fakeApi();
-
-        toolbarItemProps(ownTypeOf(listPlugin), api, snapshot()).remove();
-
-        expect(api.lists.toggle).not.toHaveBeenCalled();
+        expect(editor.props(listPlugin).isActive).toBe(false);
+        expect(editor.api.selection.get().blocks).toEqual([{ type: PARAGRAPH }]);
     });
 });
 
 describe('a text block plugin', () => {
-    const inQuote = snapshot({
-        block: { type: 'quote' },
-        blocks: [{ type: 'quote', align: 'center' } as RteBlockNode],
+    it('turns the block into its type with the value given, attributes as the selected node value', () => {
+        const editor = fakeEditor();
+
+        editor.props(textBlockPlugin).toggle({ cite: 'Ada' });
+
+        expect(editor.props(textBlockPlugin).isActive).toBe(true);
+        expect(editor.props(textBlockPlugin).selectedNode).toEqual({ type: 'quote', value: { cite: 'Ada' }, text: '' });
     });
 
-    it('is active in its block, with the block attributes as the value', () => {
-        const props = toolbarItemProps(ownTypeOf(textBlockPlugin), fakeApi(inQuote), inQuote);
+    it('turns its block back into a paragraph when toggled while active', () => {
+        const editor = fakeEditor({ block: { type: 'quote' }, blocks: [{ type: 'quote' }] });
 
-        expect(props.isActive).toBe(true);
-        expect(props.selectedNode).toEqual({ type: 'quote', value: { align: 'center' }, text: '' });
+        editor.props(textBlockPlugin).toggle();
+
+        expect(editor.props(textBlockPlugin).isActive).toBe(false);
+        expect(editor.api.selection.get().block).toEqual({ type: PARAGRAPH });
+    });
+});
+
+describe('a container block plugin', () => {
+    it('leaves the document alone on toggle, rather than turning text into a block that holds blocks', () => {
+        const editor = fakeEditor();
+        const before = editor.api.selection.get();
+
+        expect(() => editor.props(containerPlugin).toggle()).not.toThrow();
+        expect(editor.api.selection.get()).toBe(before);
+        expect(editor.inserted).toEqual([]);
     });
 
-    it('turns the block into its type when not active', () => {
-        const api = fakeApi();
+    it('is active inside its block, and opens its editor', () => {
+        const editor = fakeEditor({ blocks: [{ type: PARAGRAPH }, { type: 'callout', tone: 'info' }] });
 
-        toolbarItemProps(ownTypeOf(textBlockPlugin), api, snapshot()).toggle({ level: 1 });
+        expect(editor.props(containerPlugin).isActive).toBe(true);
+        expect(editor.props(containerPlugin).selectedNode?.value).toEqual({ tone: 'info' });
 
-        expect(api.blocks.setType).toHaveBeenCalledWith('quote', { level: 1 });
-    });
+        editor.props(containerPlugin).openEditor();
 
-    it('turns its block back into a paragraph when active', () => {
-        const api = fakeApi(inQuote);
-
-        toolbarItemProps(ownTypeOf(textBlockPlugin), api, inQuote).toggle();
-
-        expect(api.blocks.setType).toHaveBeenCalledWith('paragraph', undefined);
-    });
-
-    it('removes itself by turning its block back into a paragraph', () => {
-        const api = fakeApi(inQuote);
-
-        toolbarItemProps(ownTypeOf(textBlockPlugin), api, inQuote).remove();
-
-        expect(api.blocks.setType).toHaveBeenCalledWith('paragraph', undefined);
-    });
-
-    it('sets a value as attributes on the blocks', () => {
-        const api = fakeApi(inQuote);
-
-        toolbarItemProps(ownTypeOf(textBlockPlugin), api, inQuote).setValue({ align: 'right' });
-
-        expect(api.blocks.updateAttributes).toHaveBeenCalledWith({ align: 'right' });
-        expect(api.marks.toggle).not.toHaveBeenCalled();
-    });
-
-    it('replaces the selected text without growing the selection first', () => {
-        const api = fakeApi(inQuote);
-
-        toolbarItemProps(ownTypeOf(textBlockPlugin), api, inQuote).setText('new');
-
-        expect(api.marks.select).not.toHaveBeenCalled();
-        expect(api.selection.replaceWithText).toHaveBeenCalledWith('new');
+        expect(editor.openEditor()).toBe('callout');
     });
 });
 
 describe('a void block plugin', () => {
     it('inserts its block on toggle, with the value given', () => {
-        const api = fakeApi();
+        const editor = fakeEditor();
 
-        toolbarItemProps(ownTypeOf(voidBlockPlugin), api, snapshot()).toggle({ src: 'a.png' });
+        editor.props(voidBlockPlugin).toggle({ thick: true });
 
-        expect(api.insert).toHaveBeenCalledWith('image', { src: 'a.png' });
+        expect(editor.inserted).toEqual([{ type: 'divider', value: { thick: true } }]);
     });
 
     it('is active while its block is selected', () => {
-        const selected = snapshot({ block: { type: 'image' }, blocks: [{ type: 'image' }] });
+        const editor = fakeEditor({ block: { type: 'divider' }, blocks: [{ type: 'divider' }] });
 
-        expect(toolbarItemProps(ownTypeOf(voidBlockPlugin), fakeApi(selected), selected).isActive).toBe(true);
-    });
-
-    it('does nothing on remove', () => {
-        const selected = snapshot({ block: { type: 'image' }, blocks: [{ type: 'image' }] });
-        const api = fakeApi(selected);
-
-        toolbarItemProps(ownTypeOf(voidBlockPlugin), api, selected).remove();
-
-        expect(api.insert).not.toHaveBeenCalled();
-        expect(api.blocks.setType).not.toHaveBeenCalled();
-    });
-
-    it('opens its editor', () => {
-        const api = fakeApi();
-
-        toolbarItemProps(ownTypeOf(voidBlockPlugin), api, snapshot()).openEditor();
-
-        expect(api.editors.open).toHaveBeenCalledWith('image');
+        expect(editor.props(voidBlockPlugin).isActive).toBe(true);
     });
 });
 
-describe('a plugin with no type of its own', () => {
-    it('is never active and has no selected node', () => {
-        const props = toolbarItemProps(ownTypeOf(attributePlugin), fakeApi(), snapshot());
+describe('an inline plugin', () => {
+    it('inserts its inline on toggle', () => {
+        const editor = fakeEditor();
+
+        editor.props(inlinePlugin).toggle();
+
+        expect(editor.inserted).toEqual([{ type: 'mention', value: undefined }]);
+    });
+
+    it('opens its editor — how a toolbar button hands over to a mention picker', () => {
+        const editor = fakeEditor();
+
+        editor.props(inlinePlugin).openEditor();
+
+        expect(editor.openEditor()).toBe('mention');
+    });
+
+    it('is never active and has no selected node: the selection sits beside an inline, not in it', () => {
+        const props = fakeEditor().props(inlinePlugin);
 
         expect(props.isActive).toBe(false);
         expect(props.selectedNode).toBeNull();
     });
+});
 
-    it('does nothing on toggle, remove or openEditor', () => {
-        const api = fakeApi();
-        const props = toolbarItemProps(ownTypeOf(attributePlugin), api, snapshot());
+describe('a plugin with no type of its own', () => {
+    it('is never active, has no selected node, and does nothing on toggle or openEditor', () => {
+        const editor = fakeEditor();
+        const before = editor.api.selection.get();
+        const props = editor.props(attributePlugin);
 
         props.toggle();
-        props.remove();
         props.openEditor();
 
-        const calls = [api.marks.toggle, api.lists.toggle, api.blocks.setType, api.insert, api.editors.open].flatMap(
-            (command) => command.mock.calls,
-        );
-        expect(calls).toEqual([]);
-    });
-
-    it('still sets a value as block attributes', () => {
-        const api = fakeApi();
-
-        toolbarItemProps(ownTypeOf(attributePlugin), api, snapshot()).setValue({ align: 'left' });
-
-        expect(api.blocks.updateAttributes).toHaveBeenCalledWith({ align: 'left' });
+        expect(props.isActive).toBe(false);
+        expect(props.selectedNode).toBeNull();
+        expect(editor.api.selection.get()).toBe(before);
+        expect(editor.inserted).toEqual([]);
+        expect(editor.openEditor()).toBeNull();
     });
 
     it('hands over the api and the selection it was given', () => {
-        const api = fakeApi();
-        const selection = snapshot();
+        const editor = fakeEditor();
+        const selection = editor.api.selection.get();
 
-        const props = toolbarItemProps(ownTypeOf(attributePlugin), api, selection);
+        const props = toolbarItemProps(ownTypeOf(attributePlugin), editor.api, selection);
 
-        expect(props.api).toBe(api);
+        expect(props.api).toBe(editor.api);
         expect(props.selection).toBe(selection);
     });
 });

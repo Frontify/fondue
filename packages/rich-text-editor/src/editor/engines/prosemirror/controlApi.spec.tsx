@@ -3,9 +3,9 @@
 // @vitest-environment happy-dom
 
 import { NodeSelection } from 'prosemirror-state';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineBlock, defineInline, type RtePlugin } from '#/core';
+import { defineBlock, defineInline, defineMark, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
@@ -109,18 +109,33 @@ describe('the selection snapshot', () => {
         expect(editor.api.selection.get().marks).toEqual({ italic: {} });
     });
 
-    it('reports every mark a range carries, a value-carrying one with its value', () => {
+    it('reports the marks all of a range carries, a value-carrying one with its value', () => {
         const editor = editorWith(plugins, [
-            paragraph(text('bold', { bold: true }), text(' and '), text('link', { link: LINK })),
+            paragraph(
+                text('bold', { bold: true, link: LINK }),
+                text(' and ', { link: LINK }),
+                text('link', { link: LINK }),
+            ),
         ]);
         editor.selectBetween('bold', 'link');
 
-        expect(editor.api.selection.get().marks).toEqual({ bold: {}, link: LINK });
+        expect(editor.api.selection.get().marks).toEqual({ link: LINK });
+    });
+
+    it('does not report a mark only part of a range carries', () => {
+        const editor = editorWith(plugins, [paragraph(text('half', { bold: true }), text(' plain'))]);
+        editor.selectBetween('half', 'plain');
+
+        expect(editor.api.selection.get().marks).toEqual({});
     });
 
     it('reports the value of the run the range starts in when a mark has several', () => {
         const editor = editorWith(plugins, [
-            paragraph(text('first', { link: { href: 'a' } }), text(' '), text('second', { link: { href: 'b' } })),
+            paragraph(
+                text('first', { link: { href: 'a' } }),
+                text(' ', { link: { href: 'a' } }),
+                text('second', { link: { href: 'b' } }),
+            ),
         ]);
         editor.selectBetween('first', 'second');
 
@@ -135,28 +150,6 @@ describe('the selection snapshot', () => {
 
         editor.select('ell');
         expect(editor.api.selection.get()).not.toBe(before);
-    });
-});
-
-describe('replacing the selection with text', () => {
-    it('leaves the new text selected, so a mark toggled next covers exactly it', () => {
-        const editor = editorWith(plugins, [paragraph(text('click here now'))]);
-        editor.select('here');
-
-        editor.api.selection.replaceWithText('there');
-        editor.api.marks.toggle('link', LINK);
-
-        expect(editor.api.selection.get().text).toBe('there');
-        expect(editor.stored()).toEqual([paragraph(text('click '), text('there', { link: LINK }), text(' now'))]);
-    });
-
-    it('does nothing with empty text', () => {
-        const editor = editorWith(plugins, [paragraph(text('keep'))]);
-        editor.select('keep');
-
-        editor.api.selection.replaceWithText('');
-
-        expect(editor.onDocChange).not.toHaveBeenCalled();
     });
 });
 
@@ -209,13 +202,49 @@ describe('marks.toggle', () => {
         ]);
     });
 
-    it('ignores a mark no plugin provides', () => {
+    it('puts the mark on all of a range only part of which carries it', () => {
+        const editor = editorWith(plugins, [paragraph(text('half', { bold: true }), text(' plain'))]);
+        editor.selectBetween('half', 'plain');
+
+        editor.api.marks.toggle('bold');
+
+        expect(editor.stored()).toEqual([paragraph(text('half plain', { bold: true }))]);
+    });
+
+    it('puts a mark turned on without a value on with its declared defaults', () => {
+        const editor = editorWith(
+            [
+                ...plugins,
+                {
+                    id: 'highlight',
+                    marks: {
+                        highlight: defineMark<{ color: string }>({
+                            defaults: { color: 'yellow' },
+                            toHtml: () => ({ tag: 'mark', children: true }),
+                            parse: [],
+                        }),
+                    },
+                },
+            ],
+            [paragraph(text('note'))],
+        );
+        editor.select('note');
+
+        editor.api.marks.toggle('highlight');
+
+        expect(editor.stored()).toEqual([paragraph(text('note', { highlight: { color: 'yellow' } }))]);
+    });
+
+    it('ignores a mark no plugin provides, and says so while developing', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const editor = editorWith(plugins, [paragraph(text('text'))]);
         editor.select('text');
 
         editor.api.marks.toggle('unknown');
 
         expect(editor.onDocChange).not.toHaveBeenCalled();
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('marks.toggle("unknown")'));
+        warn.mockRestore();
     });
 });
 
@@ -276,32 +305,6 @@ describe('the run of a mark around a caret', () => {
 
         expect(editor.api.marks.getRun('link')).toBeNull();
         expect(editor.api.marks.getRun('unknown')).toBeNull();
-    });
-
-    it('becomes the selection when selected from a caret at its edge', () => {
-        const editor = linked();
-        editor.caretAfter('here');
-
-        expect(editor.api.marks.select('link')).toBe(true);
-
-        expect(editor.api.selection.get()).toMatchObject({ isCollapsed: false, text: 'here', marks: { link: LINK } });
-    });
-
-    it('leaves a range selection alone', () => {
-        const editor = linked();
-        editor.select('er');
-
-        expect(editor.api.marks.select('link')).toBe(true);
-
-        expect(editor.api.selection.get().text).toBe('er');
-    });
-
-    it('cannot be selected where the mark is not', () => {
-        const editor = linked();
-        editor.caretAfter('g');
-
-        expect(editor.api.marks.select('link')).toBe(false);
-        expect(editor.api.selection.get().isCollapsed).toBe(true);
     });
 });
 
@@ -424,13 +427,46 @@ describe('insert', () => {
         expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'tag', name: 'Ada' }, text('b'))]);
     });
 
-    it('replaces the selected text', () => {
+    it('replaces the selected text with an inline', () => {
         const editor = editorWith(plugins, [paragraph(text('a-b'))]);
         editor.select('-');
 
         editor.api.insert('break');
 
         expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
+    });
+
+    it('puts a void block after the selected text rather than over it', () => {
+        const editor = editorWith(plugins, [paragraph(text('keep this text'))]);
+        editor.select('this');
+
+        editor.api.insert('divider');
+
+        expect(editor.stored()).toEqual([paragraph(text('keep this')), { type: 'divider' }, paragraph(text(' text'))]);
+    });
+
+    it('stores the declared defaults of an inline without editing UI inserted without a value', () => {
+        const editor = editorWith(
+            [
+                ...plugins,
+                {
+                    id: 'chip',
+                    inlines: {
+                        chip: defineInline<{ label: string }>({
+                            defaults: { label: 'new' },
+                            toHtml: ({ label }) => ({ tag: 'span', children: label }),
+                            parse: [],
+                        }),
+                    },
+                },
+            ],
+            [paragraph(text('ab'))],
+        );
+        editor.caretAfter('a');
+
+        editor.api.insert('chip');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'chip', label: 'new' }, text('b'))]);
     });
 
     it('splits the block around a void block inserted mid-text', () => {
@@ -442,12 +478,21 @@ describe('insert', () => {
         expect(editor.stored()).toEqual([paragraph(text('before ')), { type: 'divider' }, paragraph(text('after'))]);
     });
 
-    it('ignores a type no plugin provides', () => {
+    it('ignores a type no plugin provides, and says so while developing', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const editor = editorWith(plugins, [paragraph(text('ab'))]);
 
         editor.api.insert('unknown');
+        editor.api.blocks.setType('unknown');
+        editor.api.lists.toggle('unknown');
 
         expect(editor.onDocChange).not.toHaveBeenCalled();
+        expect(warn.mock.calls.map(([message]) => String(message))).toEqual([
+            expect.stringContaining('insert("unknown")'),
+            expect.stringContaining('blocks.setType("unknown")'),
+            expect.stringContaining('lists.toggle("unknown")'),
+        ]);
+        warn.mockRestore();
     });
 
     it('reports the document the editor holds when an inline is inserted at a marked caret', () => {

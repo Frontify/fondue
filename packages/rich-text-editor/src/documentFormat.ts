@@ -1,5 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// The official document format: the type of a document written by the shipped
+// plugins, assembled from the fragment each declares. Type-level only.
+//
+// Core types are open (any mark key, any children) so the editor can host
+// plugins it has never heard of; an app authoring a document wants `bod: true`
+// to fail. Everything is closed here, three levels deep into nested lists.
+// Exported: `RteText`, `RteBlock`, `RteDocument`, `RteDocumentWith`; the rest is
+// private machinery. This file may import `plugins/` (as `index.ts` does);
+// `editor/` and the renderer never see it. `type-derivation.spec.ts` asserts it.
+
 import { type ParagraphBlock, type RteBlockNode, type RteDocumentOf, type RteInlineNode } from './core';
 import { type AlignAttribute } from './plugins/Align';
 import { type BoldMark } from './plugins/Bold';
@@ -20,27 +30,6 @@ import { type TextStyleBlock } from './plugins/TextStyle';
 import { type UnderlineMark } from './plugins/Underline';
 
 /**
- * The official RTE document format: the wire format of a document written by
- * *these* plugins, assembled from the fragment each one declares.
- *
- * It sits beside `index.ts` rather than under a layer because it is the one
- * file besides the composition root that may know the shipped plugin list,
- * which is why it may import from `plugins/`. The editor below never sees it:
- * `editor/` and the renderer work in the open `RteDocumentOf`/`RteBlockNode`
- * skeleton from `core/`, and closing that skeleton is purely type-level, with
- * no runtime part.
- *
- * Why the machinery below exists: the plugin-facing types are open (a text node
- * takes any mark key, a block any children) because the editor must host
- * documents from plugins it has never heard of. An app authoring a document
- * wants the opposite — `bod: true` should not compile. So every plugin-declared
- * fragment is closed over here, three levels deep into nested lists, and the
- * result is what `RichTextEditor` reads and emits. Three of these types are
- * exported; the rest are private machinery. `type-derivation.spec.ts` asserts
- * all of it.
- */
-
-/**
  * A text run as the shipped plugins write it: the marks that exist and nothing
  * else. Closed on purpose, so `{ text: 'x', bod: true }` is a compile error.
  */
@@ -54,20 +43,13 @@ export type RteText = { text: string } & BoldMark &
     FontColorMark &
     LinkMark;
 
-/**
- * What may sit inside a text block: a text run, or one of the void inline
- * elements the shipped plugins contribute. Both are closed types, so they keep
- * the excess-property check that catches mark typos; the open
- * `RteInlineElementNode` behind the plugin contract would weaken it.
- */
+/** What may sit in a text block: a text run or a shipped void inline. Closed types, so mark typos still fail the excess-property check. */
 type OfficialInline<TExtraInline extends RteInlineNode> = RteText | BreakInline | MentionInline | TExtraInline;
 
 /**
- * Rewrites an official block's `children` from the open skeleton to the
- * official inline union, and adds the alignment every text block carries.
- * Distributes over the union; container blocks (lists) and blocks without
- * children (the column break) pass through — their children are already
- * concrete. `Omit &` preserves the `type` literal, so `switch` still narrows.
+ * Closes a text block's `children` over the official inlines and adds the
+ * alignment every text block carries. Containers (lists) and childless blocks
+ * pass through. `Omit &` keeps the `type` literal, so `switch` still narrows.
  */
 type WithOfficialChildren<TBlock, TExtraInline extends RteInlineNode> = TBlock extends { children: RteBlockNode[] }
     ? TBlock
@@ -76,14 +58,10 @@ type WithOfficialChildren<TBlock, TExtraInline extends RteInlineNode> = TBlock e
       : TBlock;
 
 /**
- * Lists are where the document nests, so their types are assembled rather than
- * mapped: a list holds items, an item holds a paragraph and any list nested
- * under it. Written out this way, a mark typo three levels deep is still
- * caught.
- *
- * Each level is an interface extending the plugin's own type, which is what
- * makes the recursion legal: a chain of *aliases* referring back to itself is
- * circular, while an interface's members resolve lazily.
+ * Lists are where the document nests, so they are assembled by hand: a list
+ * holds items, an item a paragraph or a nested list, so a typo three levels
+ * deep is still caught. Each level is an interface extending the plugin's type
+ * because recursive *aliases* are circular while interface members resolve lazily.
  */
 /* eslint-disable typescript/no-empty-object-type -- the empty body IS the mechanism: an interface extending the plugin's type is how the recursion stays legal. */
 interface OfficialListItem<TExtraInline extends RteInlineNode> extends ListItemBlock<
@@ -113,15 +91,11 @@ type OfficialList<TExtraInline extends RteInlineNode> =
     | OfficialCheckList<TExtraInline>;
 
 /**
- * The official RTE block union: every block type the built-in plugins produce,
- * with strictly typed children. Apps, serializers and backend code should
- * consume THIS, not the structural `RteBlockNode`. Extending it is a
- * wire-format change, and belongs in the same PR as the plugin implementing the
- * new type.
+ * Every block type the built-in plugins produce, with strictly typed children —
+ * what apps and backends should consume.
  *
- * `TExtraInline` is the escape hatch for consumer plugins that contribute a
- * mark or an inline element: pass `RteText & HighlightMark` for an extra mark,
- * or `EmbedInline` for an extra inline element.
+ * `TExtraInline` adds a consumer plugin's mark or inline: `RteText & HighlightMark`
+ * or `EmbedInline`.
  */
 export type RteBlock<TExtraInline extends RteInlineNode = never> =
     | WithOfficialChildren<ParagraphBlock | QuoteBlock | TextStyleBlock, TExtraInline>
@@ -130,7 +104,7 @@ export type RteBlock<TExtraInline extends RteInlineNode = never> =
 
 /**
  * A document of official blocks — what `RichTextEditor` reads and emits, and
- * the annotation to use when authoring one by hand:
+ * the annotation for authoring one by hand:
  *
  * ```ts
  * const doc: RteDocument = {
@@ -157,9 +131,7 @@ type ExtraInlines<TExtra> = [Extract<TExtra, { inline: unknown }>] extends [neve
     ? never
     : Extract<TExtra, { inline: unknown }>['inline'];
 
-/**
- * Widen the official document by the fragments a consumer plugin adds, named
- * as such rather than nested in `RteDocument<RteBlock<…>>`:
+/** Widen the official document by what consumer plugins add, instead of nesting `RteDocument<RteBlock<…>>`:
  *
  * ```ts
  * type Doc = RteDocumentWith<{ mark: HighlightMark }>;

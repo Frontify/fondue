@@ -11,6 +11,10 @@ export type SubscriptMark = {
     subscript?: true;
 };
 
+/** The key the toolbar button names as its shortcut, so the two cannot drift apart. */
+const HOTKEY = 'Mod-,';
+
+/** Subscript text: `<sub>` and `Mod-,`. Lives in the floating toolbar overflow. */
 export const subscriptPlugin = (): RtePlugin => ({
     id: 'subscript',
     marks: {
@@ -20,9 +24,10 @@ export const subscriptPlugin = (): RtePlugin => ({
         }),
     },
     toolbarItem: ({ isActive, toggle }) => (
-        <ToolbarButton title="Subscript" active={isActive} onClick={() => toggle()}>
+        <ToolbarButton title="Subscript" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
             <IconSubscript size={16} />
         </ToolbarButton>
     ),
-    hotkeys: { 'Mod-,': (api) => api.marks.toggle('subscript') },
+    hotkeys: { [HOTKEY]: (api) => api.marks.toggle('subscript') },
+    floatingToolbar: 'overflow',
 });

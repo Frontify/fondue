@@ -10,22 +10,44 @@
     display: flex;
     align-items: baseline;
     gap: var(--spacing-x-small);
+}
 
-    // Checked items are struck through, which is state on the item and styling
-    // on its content — hence the nested selector rather than a second class.
-    &[data-checked='true'] .label {
+/**
+ * A checked item's own text is struck through — not the items nested in it,
+ * which have a state of their own. Scoped from the checked item down to the
+ * next list, so the decoration stops where a nested list starts, however deep
+ * the elements the editor wraps the content in. The scope is the attribute
+ * alone: CSS modules leave a class in a scope's prelude untranslated, and only
+ * check items carry it.
+ */
+@scope ([data-checked='true']) to (ul, ol) {
+    .label p {
         color: var(--color-secondary-default);
         text-decoration: line-through;
     }
 }
 
+/** 16px box; the margin makes the click area 24px. */
 .checkbox {
-    margin: 0;
+    flex: none;
+    box-sizing: border-box;
+    width: 16px;
+    height: 16px;
+    margin: 4px;
+    accent-color: var(--color-highlight-default);
     cursor: pointer;
+
+    &[aria-readonly='true'] {
+        cursor: default;
+    }
 }
 
 .label {
     flex: 1;
+    min-width: 0;
+    // A div of the plugin's own around editable text: it keeps the editor's
+    // `pre-wrap` even where a host styles every div with its own white-space.
+    white-space: inherit;
 
     /**
      * An item holds blocks, so its text sits in a paragraph that must not add

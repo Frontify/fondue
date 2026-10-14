@@ -13,19 +13,25 @@ export type CodeMark = {
     code?: true;
 };
 
+/** The key the toolbar button names as its shortcut, so the two cannot drift apart. */
+const HOTKEY = 'Mod-e';
+
+/** Inline code: `<code>`, `Mod-e`, and `` `text` `` while typing. */
 export const codePlugin = (): RtePlugin => ({
     id: 'code',
     marks: {
         code: defineMark({
+            // Code is literal: `--` and `**` stay as typed inside it.
+            excludesInputRules: true,
             toHtml: () => ({ tag: 'code', attrs: { class: styles.code ?? '' }, children: true }),
             parse: [{ tag: 'code' }],
         }),
     },
     toolbarItem: ({ isActive, toggle }) => (
-        <ToolbarButton title="Code" active={isActive} onClick={() => toggle()}>
+        <ToolbarButton title="Code" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
             <IconCode size={16} />
         </ToolbarButton>
     ),
-    hotkeys: { 'Mod-e': (api) => api.marks.toggle('code') },
+    hotkeys: { [HOTKEY]: (api) => api.marks.toggle('code') },
     inputRules: [{ kind: 'mark', key: 'code', delimiter: '`' }],
 });

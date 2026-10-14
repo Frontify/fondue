@@ -4,25 +4,36 @@ import { Tooltip } from '@frontify/fondue-components';
 import { type ReactNode } from 'react';
 
 import styles from '../mention.module.scss';
-import { type MentionValue } from '../types';
+import { type MentionItem } from '../types';
 
 /**
- * A finished mention: the username as a link to the person, with their full
- * name on hover. What readonly display shows, and what the editor shows once
- * a mention has been chosen.
+ * A finished mention: the username linking to the person, full name on hover.
+ * Carries the same attributes as `toHtml`, so copied text pastes back as a mention.
  */
 export const MentionLink = ({
     value,
     href,
     trigger,
 }: {
-    value: MentionValue;
+    value: MentionItem;
     href: string;
     trigger: string;
 }): ReactNode => (
     <Tooltip.Root>
         <Tooltip.Trigger asChild>
-            <a href={href} className={styles.mention}>
+            <a
+                href={href}
+                title={value.name}
+                data-mention-id={value.id}
+                data-mention-username={value.username}
+                className={styles.mention}
+                onClick={(event) => {
+                    // In the editor a click places the caret; the link is followed only when reading.
+                    if (event.currentTarget.closest('[contenteditable="true"]') !== null) {
+                        event.preventDefault();
+                    }
+                }}
+            >
                 {trigger}
                 {value.username}
             </a>

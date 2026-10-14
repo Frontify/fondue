@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/**
- * The shared language: document shape, plugin contract, commands, registry.
- * Imports from no other layer. Plugins, renderer and editor all import here.
- */
+// The shared language: document shape, plugin contract, commands, registry.
+// Imports from no other layer; plugins, renderer and editor all import here.
 
 export { type EditorControlApi, type RteSelectionSnapshot } from './commands';
 export {
@@ -15,14 +13,7 @@ export {
     type RteTextNode,
     type StoredMarkValue,
 } from './document';
-export {
-    attributeEntries,
-    cssText,
-    type HtmlAttributes,
-    type HtmlSpec,
-    type StyleMap,
-    withRootStyle,
-} from './htmlSpec';
+export { attributeEntries, type HtmlAttributes, type HtmlSpec, type StyleMap } from './htmlSpec';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
@@ -31,9 +22,12 @@ export {
     defineInline,
     defineMark,
     type EditProps,
+    type HotkeyHandler,
     type InlineDefinition,
     type MarkDefinition,
     type ParseRule,
+    type PasteHandler,
+    type RteBlockCommand,
     type RteInputRule,
     type RtePlugin,
     type SelectedNode,
@@ -44,7 +38,6 @@ export {
     blockHtml,
     blockValueOf,
     buildPluginRegistry,
-    type HotkeyHandler,
     type OwnType,
     ownTypeOf,
     type PluginRegistry,

@@ -1,22 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type ParseRule, type RteBlockNode, type RteInlineNode, type RteInputRule } from '#/core';
+import { PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule } from '#/core';
 
 import styles from '../textStyle.module.scss';
 
 /**
- * Every typography preset a text block can take: the heading scale, and the
- * ones legacy kept beside it (three brand-configurable presets plus the pair
- * used around images).
+ * Every typography preset a text block can take: the heading scale, three
+ * brand-configurable presets and the pair used around images. One block type
+ * carries a `style`, offered by one dropdown.
  *
- * Headings and text styles used to be two plugins with two block types, but
- * picking one is the same act as picking the other, so they are a single block
- * type carrying a `style`, offered by a single dropdown.
- *
- * The table is the source of truth for both halves of the plugin: the style
- * union is derived from it, it says how each style renders (`tag` plus its
- * class) and reads (`label`), and both the block's render function and the
- * dropdown's preview rows draw from it. Order here is order in the dropdown.
+ * Source of truth for how each style renders (`tag` plus class) and reads
+ * (`label`); order here is dropdown order. Must name every `TextStyleName`.
  */
 const PRESETS = [
     { name: 'heading1', label: 'Heading 1', tag: 'h1', className: styles.heading1 },
@@ -28,12 +22,30 @@ const PRESETS = [
     { name: 'custom3', label: 'Custom 3', tag: 'p', className: styles.custom3 },
     { name: 'imageTitle', label: 'Image title', tag: 'p', className: styles.imageTitle },
     { name: 'imageCaption', label: 'Image caption', tag: 'p', className: styles.imageCaption },
-] as const;
+] as const satisfies readonly Preset[];
 
-export type Preset = (typeof PRESETS)[number];
+/** The value of a text block's `style` attribute. */
+type TextStyleName =
+    | 'heading1'
+    | 'heading2'
+    | 'heading3'
+    | 'heading4'
+    | 'custom1'
+    | 'custom2'
+    | 'custom3'
+    | 'imageTitle'
+    | 'imageCaption';
 
-/** The value the `style` attribute carries. */
-export type TextStyleName = Preset['name'];
+type Preset = {
+    name: TextStyleName;
+    label: string;
+    tag: 'h1' | 'h2' | 'h3' | 'h4' | 'p';
+    className: string | undefined;
+};
+
+/** Fails to compile when a style is added to `TextStyleName` without a preset. */
+type EveryStyleHasAPreset<TMissing extends never> = TMissing;
+export type PresetsCheck = EveryStyleHasAPreset<Exclude<TextStyleName, (typeof PRESETS)[number]['name']>>;
 
 /** The block type this plugin adds. Part of the assembled RteBlock union at the package root. */
 export type TextStyleBlock = {
@@ -42,11 +54,7 @@ export type TextStyleBlock = {
     children: RteInlineNode[];
 };
 
-/**
- * What the dropdown may offer. `paragraph` is the editor's own baseline block
- * rather than a preset — picking it is how a style is cleared — so it sits
- * outside `TextStyleName`.
- */
+/** What the dropdown may offer. `paragraph` is the editor's baseline block, not a preset: picking it clears the style. */
 export type TextStyleOption = 'paragraph' | TextStyleName;
 
 /** Every option, in dropdown order: what the host gets by naming none. */
@@ -71,26 +79,17 @@ const MARKDOWN_PREFIX: Partial<Record<Preset['tag'], string>> = {
     h4: '#### ',
 };
 
-/**
- * The markdown shortcut for a preset that has one: `## ` for a level-2 heading.
- * Keyed by the tag rather than listed per preset, so it follows the presets an
- * editor was configured with — one not offering `heading2` does not turn `## `
- * into one either.
- */
+/** The markdown shortcut for a preset that has one (`## ` for a level-2 heading), so it follows the configured presets. */
 export const markdownRuleFor = ({ name, tag }: Preset): RteInputRule[] => {
     const match = MARKDOWN_PREFIX[tag];
     return match === undefined ? [] : [{ kind: 'block', match, block: 'textStyle', attributes: { style: name } }];
 };
 
-/**
- * How a preset is recognized in pasted HTML. A heading is claimed by its bare
- * tag, so an `h2` from anywhere lands as one; a preset rendering as a paragraph
- * is told apart by the attribute it wrote.
- */
+/** How pasted HTML maps to a preset: headings by bare tag, paragraph presets by their `data-text-style` attribute. */
 export const parseRuleFor = ({ name, tag }: Preset): ParseRule<{ style: string }> => ({
     tag: tag === 'p' ? `p[data-text-style=${name}]` : tag,
     value: () => ({ style: name }),
 });
 
 /** The selection snapshot's `block` is the structural node; narrowing it makes `style` readable. */
-export const isTextStyle = (block: RteBlockNode | null): block is TextStyleBlock => block?.type === 'textStyle';
+export const isTextStyle = (block: { type: string } | null): block is TextStyleBlock => block?.type === 'textStyle';

@@ -1,42 +1,57 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CSSProperties, type ReactNode, useMemo } from 'react';
+import { memo, type ReactNode, useMemo } from 'react';
 
-import { buildPluginRegistry, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    type PluginRegistry,
+    type RteBlockNode,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 
-import styles from './document.module.scss';
-import { documentTree } from './documentTree';
-import { toReact } from './toReact';
+import { blockNode, documentRootSpec } from './documentTree';
+import { specToReact, toReact } from './toReact';
 
-export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
+export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
     value: RteDocumentOf<TBlock>;
     /**
-     * The plugins whose markup draws the document — the same list the editor
-     * is given. Each node shows its `render.component` if it has one, its
-     * `toHtml` otherwise. A document drawn without the plugin that wrote part
-     * of it throws, naming the missing schema `type`.
+     * The plugins whose markup draws the document — the editor's list. A node
+     * shows its `render.component`, else its `toHtml`; a missing plugin throws,
+     * naming the `type`.
      */
     plugins?: readonly RtePlugin[];
+    /** A class for the element the document sits in, beside the document's own. */
     className?: string;
 };
 
-/**
- * A stored document as React, with no editing engine: readonly display, on
- * the client or a server.
- */
+type RegistryRendererProps = {
+    value: RteDocumentOf;
+    registry: PluginRegistry;
+    className?: string;
+};
+
+/** One top-level block, memoized on the block itself: the editor keeps the same object for untouched blocks, so an edit redraws only its block. */
+const Block = memo(
+    ({ block, registry }: { block: RteBlockNode; registry: PluginRegistry }): ReactNode =>
+        toReact([blockNode(block, registry, { useComponents: true })]),
+);
+
+/** The renderer for an already built registry, so the editor's readonly view doesn't gather plugins twice. */
+export const RegistryRenderer = ({ value, registry, className }: RegistryRendererProps): ReactNode =>
+    specToReact(
+        documentRootSpec(registry, className),
+        // Blocks carry no id; position is the only key, and the memo skips unchanged ones.
+        // eslint-disable-next-line @eslint-react/no-array-index-key
+        value.blocks.map((block, index) => <Block key={index} block={block} registry={registry} />),
+    );
+
+/** A stored document as React, with no editing engine: readonly display, client or server. */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
     plugins = [],
     className,
-}: RichTextRendererProps<TBlock>): ReactNode => {
+}: RendererProps<TBlock>): ReactNode => {
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
-    const drawn = useMemo(() => toReact(documentTree(value, registry, { useComponents: true })), [value, registry]);
-    const contentClassName = [styles.document, className, ...registry.contentClassNames].filter(Boolean).join(' ');
-    const style = registry.contentProperties as CSSProperties;
-
-    return (
-        <div className={contentClassName} style={Object.keys(style).length > 0 ? style : undefined}>
-            {drawn}
-        </div>
-    );
+    return <RegistryRenderer value={value} registry={registry} className={className} />;
 };

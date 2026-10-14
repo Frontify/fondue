@@ -10,15 +10,9 @@ import { PARAGRAPH, type RteDocumentOf } from './core';
 
 import { defaultPlugins, RichTextEditor } from './index';
 
-/**
- * The package root imported where a server imports it: no page, no `document`.
- * Readonly rendering goes through `RichTextRenderer`, so the document is in
- * the markup.
- *
- * Imported statically, so loading the package happens while the file is
- * collected rather than inside the test, where it would count against the test
- * timeout. Had the import touched a DOM global, collection fails instead.
- */
+// The package root imported where a server imports it: no page, no `document`.
+// Imported statically, so loading happens at collection rather than inside the
+// test (and its timeout); an import touching a DOM global fails collection.
 
 const doc: RteDocumentOf = {
     version: 1,

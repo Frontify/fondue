@@ -4,23 +4,23 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useRef, useState } from 'react';
 
 // Stories import only the package public API. The plugins have their own story
-// file (`plugins.stories.tsx`); this one is about the editor itself — the props
+// file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
 // that are its own rather than a plugin's.
 import {
     boldPlugin,
-    filterByName,
-    mentionPlugin,
+    columnBreakPlugin,
     defaultPlugins,
     italicPlugin,
     linkPlugin,
     type MentionItem,
+    mentionPlugin,
     type RteDocument,
     RichTextEditor,
     RichTextRenderer,
 } from '../index';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
-const MENTIONABLE: MentionItem[] = [
+const MENTIONABLE: readonly MentionItem[] = [
     { id: 'jane', username: 'jane', name: 'Jane Doe' },
     { id: 'john', username: 'john', name: 'John Smith' },
     { id: 'design', username: 'design', name: 'Design team' },
@@ -37,11 +37,11 @@ const profileHref = (mention: MentionItem): string => `#/people/${mention.id}`;
 const LAYOUT = 'tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-primary';
 const JSON_PANEL =
     'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
-const HINT = 'tw-col-span-full tw-m-0 tw-text-body-small tw-text-weak';
+const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
 
 const buttonClasses = (active: boolean): string =>
     [
-        'tw-body-small tw-rounded tw-border tw-border-line-strong tw-px-2 tw-py-1 tw-text-secondary tw-cursor-pointer',
+        'tw-body-small tw-rounded tw-border tw-border-solid tw-border-line-strong tw-px-2 tw-py-1 tw-text-secondary tw-cursor-pointer',
         active ? 'tw-bg-container-secondary' : 'tw-bg-transparent',
     ].join(' ');
 
@@ -137,13 +137,13 @@ export const Placeholder: Story = {
 /**
  * `toolbarPlacement` decides where the controls live.
  *
- * The default, `'floating'`, hangs them over the selected text and shows them
- * only while there is a selection: select a few words to see the bar, and note
- * that it follows the text as the page scrolls.
+ * The default, `'top'`, puts them inside the frame as a strip above the content,
+ * always there — what a field in a dense form wants, where a bar over the text
+ * would cover what is being read.
  *
- * `'top'` puts them inside the frame as a strip above the content, always there
- * — what a field in a dense form wants, where a bar over the text would cover
- * what is being read.
+ * `'floating'` hangs them over the selected text and shows them only while
+ * there is a selection: select a few words to see the bar, and note that it
+ * follows the text as the page scrolls. See the `FloatingToolbar` story.
  */
 export const ToolbarPlacement: Story = {
     render: () => {
@@ -168,7 +168,7 @@ export const ToolbarPlacement: Story = {
                 },
             ],
         });
-        const [floating, setFloating] = useState(true);
+        const [floating, setFloating] = useState(false);
 
         return (
             <div className={LAYOUT}>
@@ -184,6 +184,48 @@ export const ToolbarPlacement: Story = {
                             toolbarPlacement={floating ? 'floating' : 'top'}
                         />
                     </div>
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/**
+ * The floating bar, Notion-style. Select text and it appears over it: a "Turn
+ * into" menu naming the block (text, headings, lists, quote), the inline marks
+ * (bold, italic, link, colour…), and a "More" menu holding alignment,
+ * subscript, superscript and reset formatting.
+ *
+ * Type `/` on an empty line for the command menu: the same block types, plus
+ * what can only be inserted (a column break). Keep typing to filter, ↑/↓ to
+ * move, Enter or Tab to run, Escape to close. Alt+F10 moves focus to the bar.
+ */
+export const FloatingToolbar: Story = {
+    render: () => {
+        const plugins = [...defaultPlugins, columnBreakPlugin()];
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'Select some of this text to see the floating toolbar over it.' }],
+                },
+                { type: 'paragraph', children: [] },
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>Select text for the bar, or type / on the empty line below for the command menu.</p>
+                <div>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={plugins}
+                        toolbarPlacement="floating"
+                        placeholder="Type / for commands"
+                    />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -225,7 +267,12 @@ export const Renderer: Story = {
     },
 };
 
-/** `readonly` shows the content without allowing edits — the toolbar goes with it. */
+/**
+ * `readonly` shows the content without allowing edits — the toolbar goes with
+ * it. A readonly editor draws the document the way `RichTextRenderer` does, so
+ * toggling it keeps the content but not the selection: there is no editing
+ * engine to hold one while readonly.
+ */
 export const Readonly: Story = {
     render: () => {
         const [doc, setDoc] = useState<RteDocument>({
@@ -242,7 +289,7 @@ export const Readonly: Story = {
                         { text: 'Toggling readonly keeps the ' },
                         { text: 'content', bold: true },
                         {
-                            text: ' and the selection, and takes the toolbar away.',
+                            text: ' and takes the toolbar away.',
                         },
                     ],
                 },
@@ -513,7 +560,7 @@ export const CommentBox: Story = {
                         italicPlugin(),
                         linkPlugin(),
                         mentionPlugin({
-                            items: filterByName(MENTIONABLE),
+                            items: MENTIONABLE,
                             href: profileHref,
                         }),
                     ]}

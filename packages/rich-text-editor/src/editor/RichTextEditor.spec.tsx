@@ -2,7 +2,7 @@
 
 // @vitest-environment happy-dom
 
-import { act, type ReactNode, useState } from 'react';
+import { act, Profiler, type ReactNode, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -10,10 +10,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
 import {
+    alignPlugin,
+    boldPlugin,
+    checkListPlugin,
     defaultPlugins,
-    filterByName,
+    linkPlugin,
     mentionPlugin,
     RichTextEditor,
+    RichTextRenderer,
     type RteDocument,
     type RtePlugin,
     serializeToHtml,
@@ -98,85 +102,62 @@ const paste = (container: HTMLElement, html: string): void => {
     });
 };
 
-describe('pasting', () => {
-    it('turns a copied mention back into a mention, even where links are mounted', () => {
-        // A mention is written as `<a href data-mention-id>`, which the link's
-        // `a[href]` rule matches as well.
-        const plugins = [
-            ...defaultPlugins,
-            mentionPlugin({ items: filterByName([]), href: (mention) => `/people/${mention.id}` }),
-        ];
-        const copied = serializeToHtml(
-            {
-                version: 1,
-                blocks: [
-                    {
-                        type: 'paragraph',
-                        children: [
-                            { text: 'Ask ' },
-                            { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
-                        ],
-                    },
-                ],
-            },
-            { plugins },
-        );
-        const { container, stored, ready } = mount((onChange) => (
-            <RichTextEditor value={paragraph('')} onChange={onChange} plugins={plugins} />
-        ));
-        ready();
+/** The editable element, which a mounted editor always has. */
+const editableIn = (container: HTMLElement): HTMLElement => {
+    const editable = container.querySelector<HTMLElement>('[contenteditable]');
+    if (!editable) {
+        throw new Error('the editor has no editable element');
+    }
+    return editable;
+};
 
-        paste(container, copied);
-
-        const block = stored()?.blocks[0];
-        const children = block && 'children' in block ? block.children : [];
-        expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
+const press = (target: Element, key: string, init: KeyboardEventInit = {}): void => {
+    act(() => {
+        target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
     });
+};
 
-    it('keeps the marks and blocks the pasted HTML carried', () => {
-        const { container, stored, ready } = mount((onChange) => (
-            <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
-        ));
-        ready();
+/** The text of a block in what the host was handed, marks and all. */
+const childrenOf = (doc: RteDocument | null, index = 0): unknown[] => {
+    const block = doc?.blocks[index];
+    return block && 'children' in block ? block.children : [];
+};
 
-        paste(
-            container,
-            '<h2>A heading</h2><p>Text with <strong>bold</strong> and ' +
-                '<a href="https://example.com">a link</a> in it.</p>',
-        );
+const checkListPlugins = [checkListPlugin()];
 
-        const emitted = JSON.stringify(stored());
-        expect(emitted).toContain('"style":"heading2"');
-        expect(emitted).toContain('"bold":true');
-        expect(emitted).toContain('"href":"https://example.com"');
-        expect(emitted).toContain('A heading');
+const toDo: RteDocument = {
+    version: 1,
+    blocks: [
+        {
+            type: 'checkList',
+            children: [
+                {
+                    type: 'checkItem',
+                    checked: true,
+                    children: [{ type: 'paragraph', children: [{ text: 'Done this' }] }],
+                },
+                {
+                    type: 'checkItem',
+                    checked: false,
+                    children: [{ type: 'paragraph', children: [{ text: 'Not yet' }] }],
+                },
+            ],
+        },
+    ],
+} as RteDocument;
+
+/** Renders what is not an editor (the readonly renderer) the way `mount` renders an editor. */
+const render = (element: ReactNode): HTMLElement => mount(() => element).container;
+
+/** Each checkbox's state and the name it gets, from its own label or the text it points at. */
+const checkboxes = (container: HTMLElement): string[] =>
+    [...container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')].map((box) => {
+        const labelledBy = box.getAttribute('aria-labelledby');
+        const name = labelledBy
+            ? container.ownerDocument.getElementById(labelledBy)?.textContent
+            : box.getAttribute('aria-label');
+        return `${box.checked ? 'checked' : 'unchecked'}: ${name ?? ''}`;
     });
-
-    it('reads a colour only off a span that sets one', () => {
-        const { container, stored, ready } = mount((onChange) => (
-            <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
-        ));
-        ready();
-
-        paste(container, '<p><span>plain</span> <span style="color: red">red</span></p>');
-
-        const block = stored()?.blocks[0];
-        const children = block && 'children' in block ? block.children : [];
-        expect(children).toContainEqual({ text: 'plain ' });
-        expect(children).toContainEqual({ text: 'red', fontColor: { color: 'red' } });
-    });
-
-    it('shows what was pasted', () => {
-        const { container, ready } = mount((onChange) => (
-            <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
-        ));
-        ready();
-
-        paste(container, '<p>Pasted content.</p>');
-
-        expect(container.textContent).toContain('Pasted content.');
-    });
-});
 
 describe('a `value` set from outside', () => {
     it('is shown, and is not reported back', () => {
@@ -230,8 +211,9 @@ describe('an editable editor', () => {
 
         ready();
 
-        expect(container.querySelectorAll('p')).toHaveLength(1);
-        expect(container.textContent).toBe('already here');
+        const editable = editableIn(container);
+        expect(editable.querySelectorAll('p')).toHaveLength(1);
+        expect(editable.textContent).toBe('already here');
     });
 });
 
@@ -325,6 +307,110 @@ describe('a page of editors', () => {
 
         expect(container.textContent).toContain('edited');
         expect(onChange).not.toHaveBeenCalled();
+    });
+});
+
+describe('the editable element', () => {
+    it("follows a plugin's content class when the plugins change", () => {
+        const columns = (className: string) => [...defaultPlugins, { id: 'columns', contentClassName: className }];
+        const { container, rerender, ready } = mount(() => <RichTextEditor plugins={columns('two')} />);
+        ready();
+        expect(editableIn(container).classList.contains('two')).toBe(true);
+
+        rerender(<RichTextEditor plugins={columns('three')} />);
+
+        const editable = editableIn(container);
+        expect(editable.classList.contains('three')).toBe(true);
+        expect(editable.classList.contains('two')).toBe(false);
+    });
+
+    it('is a multi-line text box, named by the host', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor
+                plugins={defaultPlugins}
+                aria-label="Comment"
+                aria-describedby="help"
+                placeholder="Say something"
+            />
+        ));
+        ready();
+
+        const editable = editableIn(container);
+        expect(editable.getAttribute('role')).toBe('textbox');
+        expect(editable.getAttribute('aria-multiline')).toBe('true');
+        expect(editable.getAttribute('aria-label')).toBe('Comment');
+        expect(editable.getAttribute('aria-describedby')).toBe('help');
+        expect(editable.getAttribute('aria-placeholder')).toBe('Say something');
+    });
+
+    it('takes its name from a visible label when one is pointed at', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} aria-labelledby="label" />);
+        ready();
+
+        const editable = editableIn(container);
+        expect(editable.getAttribute('aria-labelledby')).toBe('label');
+        expect(editable.hasAttribute('aria-label')).toBe(false);
+    });
+
+    it('still has a name when the host gave it none', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        ready();
+
+        expect(editableIn(container).getAttribute('aria-label')).toBe('Rich text editor');
+        expect(editableIn(container).hasAttribute('aria-placeholder')).toBe(false);
+    });
+
+    it('follows a changed name without being rebuilt', () => {
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor plugins={defaultPlugins} aria-label="One" />
+        ));
+        ready();
+        const editable = editableIn(container);
+
+        rerender(<RichTextEditor plugins={defaultPlugins} aria-label="Two" />);
+
+        expect(editableIn(container)).toBe(editable);
+        expect(editable.getAttribute('aria-label')).toBe('Two');
+    });
+
+    it('keeps a labelled editor named when it turns readonly', () => {
+        const { container } = mount(() => (
+            <RichTextEditor value={paragraph('read me')} plugins={defaultPlugins} aria-label="Comment" readonly />
+        ));
+
+        const group = container.querySelector('[role="group"]');
+        expect(group?.getAttribute('aria-label')).toBe('Comment');
+        expect(group?.textContent).toContain('read me');
+    });
+
+    it('lets Escape take focus out of the text', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+
+        press(editable, 'Escape');
+
+        expect(editable.contains(window.document.activeElement)).toBe(false);
+    });
+
+    it('does not re-render the editor around the text for an edit', () => {
+        let commits = 0;
+        // No toolbar, which follows the editor state by design.
+        const { container, ready } = mount((onChange) => (
+            <Profiler id="editor" onRender={() => commits++}>
+                <RichTextEditor plugins={[]} onChange={onChange} />
+            </Profiler>
+        ));
+        ready();
+        paste(container, '<p>first</p>');
+        const settled = commits;
+
+        paste(container, '<p>second</p>');
+        paste(container, '<p>third</p>');
+
+        expect(container.textContent).toContain('third');
+        expect(commits).toBe(settled);
     });
 });
 
@@ -428,6 +514,146 @@ describe('the toolbar', () => {
     });
 });
 
+describe('the toolbar from the keyboard', () => {
+    const plugins = [boldPlugin(), alignPlugin(), linkPlugin()];
+
+    const toolbarIn = (container: HTMLElement): HTMLElement => {
+        const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
+        if (!toolbar) {
+            throw new Error('no toolbar');
+        }
+        return toolbar;
+    };
+
+    const tabStops = (toolbar: HTMLElement): (string | null)[] =>
+        [...toolbar.querySelectorAll('[tabindex="0"]')].map((stop) => stop.getAttribute('aria-label'));
+
+    it('is one tab stop, named, and says which text it acts on', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+        ready();
+
+        const toolbar = toolbarIn(container);
+        expect(toolbar.getAttribute('aria-label')).toBe('Formatting');
+        expect(toolbar.getAttribute('aria-controls')).toBe(editableIn(container).id);
+        expect(tabStops(toolbar)).toEqual(['Bold']);
+    });
+
+    it('moves between its controls with the arrow keys, Home and End, passing over disabled ones', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+        ready();
+        const toolbar = toolbarIn(container);
+        const active = (): string | null | undefined => window.document.activeElement?.getAttribute('aria-label');
+        act(() => toolbar.querySelector<HTMLElement>('[tabindex="0"]')?.focus());
+
+        press(window.document.activeElement as Element, 'ArrowRight');
+        expect(active()).toBe('Align left');
+        press(window.document.activeElement as Element, 'ArrowLeft');
+        expect(active()).toBe('Bold');
+        press(window.document.activeElement as Element, 'ArrowLeft');
+        // Wraps round — and "Add link" is disabled on a caret, so Justify is last.
+        expect(active()).toBe('Justify');
+        press(window.document.activeElement as Element, 'Home');
+        expect(active()).toBe('Bold');
+        press(window.document.activeElement as Element, 'End');
+        expect(active()).toBe('Justify');
+        // The stop moved with focus, so Tab comes back to where it was left.
+        expect(tabStops(toolbar)).toEqual(['Justify']);
+    });
+
+    it('is reached from the text with Alt+F10, and left with Escape', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+
+        press(editable, 'F10', { altKey: true });
+        expect(window.document.activeElement?.getAttribute('aria-label')).toBe('Bold');
+
+        press(window.document.activeElement as Element, 'Escape');
+        expect(editable.contains(window.document.activeElement)).toBe(true);
+    });
+
+    it('floats in after the text on Alt+F10, even over a caret', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="floating" />);
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+        expect(container.querySelector('[role="toolbar"]')).toBeNull();
+
+        press(editable, 'F10', { altKey: true });
+
+        const toolbar = toolbarIn(container);
+        expect(toolbar.contains(window.document.activeElement)).toBe(true);
+        // After the text, so Tab order and reading order agree.
+        expect(editable.compareDocumentPosition(toolbar) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
+    it('draws alignment as one choice of four, left until another is chosen', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+        ready();
+
+        const radios = [...container.querySelectorAll('[role="radiogroup"] [role="radio"]')];
+        expect(radios.map((radio) => radio.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false', 'false']);
+    });
+
+    it('names the shortcut a button has', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+        ready();
+
+        const bold = container.querySelector('[aria-label="Bold"]');
+        expect(bold?.getAttribute('aria-keyshortcuts')).toMatch(/^(Meta|Control)\+B$/);
+        expect(bold?.getAttribute('title')).toMatch(/^Bold \((⌘B|Ctrl\+B)\)$/);
+    });
+});
+
+describe('the status region', () => {
+    it('reads out a formatting change made from the toolbar, once it has settled', () => {
+        vi.useFakeTimers();
+        try {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[boldPlugin()]} toolbarPlacement="top" />
+            ));
+            ready();
+            paste(container, '<p>text</p>');
+            const status = container.querySelector('[role="status"]');
+
+            act(() => container.querySelector<HTMLElement>('[aria-label="Bold"]')?.click());
+            expect(status?.textContent).toBe('');
+            act(() => {
+                vi.runAllTimers();
+            });
+
+            expect(status?.textContent).toBe('Bold on');
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it('stays quiet while the caret only moves', () => {
+        vi.useFakeTimers();
+        try {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[boldPlugin()]} toolbarPlacement="top" />
+            ));
+            ready();
+            act(() => {
+                vi.runAllTimers();
+            });
+            const status = container.querySelector('[role="status"]');
+            const before = status?.textContent;
+
+            act(() => editableIn(container).focus());
+            act(() => {
+                vi.runAllTimers();
+            });
+
+            expect(status?.textContent).toBe(before);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+});
+
 describe('focus within', () => {
     /** A trigger inside, and a field it portals out of the subtree — a flyout. */
     const Probe = (): ReactNode => {
@@ -477,5 +703,190 @@ describe('focus within', () => {
             (inside as HTMLElement | null)?.blur();
         });
         expect(state()).toBe('false');
+    });
+});
+
+describe('pasting', () => {
+    describe('into a mounted editor', () => {
+        it('turns a copied mention back into a mention, even where links are mounted', () => {
+            // A mention is written as `<a href data-mention-id>`, which the link's
+            // `a[href]` rule matches as well.
+            const plugins = [
+                ...defaultPlugins,
+                mentionPlugin({ items: [], href: (mention) => `/people/${mention.id}` }),
+            ];
+            const copied = serializeToHtml(
+                {
+                    version: 1,
+                    blocks: [
+                        {
+                            type: 'paragraph',
+                            children: [
+                                { text: 'Ask ' },
+                                { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
+                            ],
+                        },
+                    ],
+                },
+                { plugins },
+            );
+            const { container, stored, ready } = mount((onChange) => (
+                <RichTextEditor value={paragraph('')} onChange={onChange} plugins={plugins} />
+            ));
+            ready();
+
+            paste(container, copied);
+
+            const block = stored()?.blocks[0];
+            const children = block && 'children' in block ? block.children : [];
+            expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
+        });
+
+        it('keeps the marks and blocks the pasted HTML carried', () => {
+            const { container, stored, ready } = mount((onChange) => (
+                <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
+            ));
+            ready();
+
+            paste(
+                container,
+                '<h2>A heading</h2><p>Text with <strong>bold</strong> and ' +
+                    '<a href="https://example.com">a link</a> in it.</p>',
+            );
+
+            const emitted = JSON.stringify(stored());
+            expect(emitted).toContain('"style":"heading2"');
+            expect(emitted).toContain('"bold":true');
+            expect(emitted).toContain('"href":"https://example.com"');
+            expect(emitted).toContain('A heading');
+        });
+
+        it('reads a colour only off a span that sets one', () => {
+            const { container, stored, ready } = mount((onChange) => (
+                <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
+            ));
+            ready();
+
+            paste(container, '<p><span>plain</span> <span style="color: red">red</span></p>');
+
+            const block = stored()?.blocks[0];
+            const children = block && 'children' in block ? block.children : [];
+            expect(children).toContainEqual({ text: 'plain ' });
+            expect(children).toContainEqual({ text: 'red', fontColor: { color: 'red' } });
+        });
+
+        it('shows what was pasted', () => {
+            const { container, ready } = mount((onChange) => (
+                <RichTextEditor value={paragraph('')} onChange={onChange} plugins={defaultPlugins} />
+            ));
+            ready();
+
+            paste(container, '<p>Pasted content.</p>');
+
+            expect(container.textContent).toContain('Pasted content.');
+        });
+    });
+
+    describe('from other applications', () => {
+        const pasted = (html: string, plugins: readonly RtePlugin[] = defaultPlugins): RteDocument | null => {
+            const { container, stored, ready } = mount((onChange) => (
+                <RichTextEditor value={paragraph('')} onChange={onChange} plugins={plugins} />
+            ));
+            ready();
+            paste(container, html);
+            return stored();
+        };
+
+        it('never makes a link of a javascript: URL', () => {
+            const doc = pasted(
+                '<p><a href="javascript:alert(1)">click</a> and <a href="https://example.com">safe</a></p>',
+            );
+
+            const emitted = JSON.stringify(doc);
+            expect(emitted).not.toContain('javascript:');
+            expect(emitted).toContain('https://example.com');
+            // The text stays, as text.
+            expect(emitted).toContain('"text":"click and "');
+        });
+
+        it('reads Google Docs formatting by its styles, not its wrapper', () => {
+            const doc = pasted(
+                '<b style="font-weight:normal;" id="docs-internal-guid-abc"><p dir="ltr">' +
+                    '<span style="color:#000000;font-weight:400;">plain </span>' +
+                    '<span style="color:#000000;font-weight:700;">bold</span>' +
+                    '<span style="color:#000000;font-style:italic;font-weight:400"> italic</span>' +
+                    '<span style="text-decoration:underline;"> under</span>' +
+                    '<span style="text-decoration:line-through;"> struck</span></p></b>',
+            );
+
+            expect(childrenOf(doc)).toEqual([
+                { text: 'plain ' },
+                { text: 'bold', bold: true },
+                { text: ' italic', italic: true },
+                { text: ' under', underline: true },
+                { text: ' struck', strikethrough: true },
+            ]);
+        });
+
+        it('keeps a colour as it was written, and leaves plain black alone', () => {
+            const doc = pasted(
+                '<p><span style="color: #f00">red</span><span style="color: rgb(0, 0, 0)">black</span></p>',
+            );
+
+            expect(childrenOf(doc)).toEqual([{ text: 'red', fontColor: { color: '#f00' } }, { text: 'black' }]);
+        });
+
+        it('reads only the alignments it offers', () => {
+            const doc = pasted('<p style="text-align: start">start</p><p style="text-align: center">centre</p>');
+
+            expect(doc?.blocks[0]).not.toHaveProperty('align');
+            expect(doc?.blocks[1]).toHaveProperty('align', 'center');
+        });
+    });
+});
+
+describe('exported links', () => {
+    it('drop a target that could run script', () => {
+        const html = serializeToHtml(
+            {
+                version: 1,
+                blocks: [
+                    { type: 'paragraph', children: [{ text: 'bad', link: { href: 'javascript:alert(1)' } }] },
+                    { type: 'paragraph', children: [{ text: 'good', link: { href: 'https://example.com' } }] },
+                ],
+            },
+            { plugins: [linkPlugin()] },
+        );
+
+        expect(html).not.toContain('javascript:');
+        expect(html).toContain('href="https://example.com"');
+    });
+});
+
+describe('a to-do list', () => {
+    it('exports checkboxes named by their state, the text in a block element', () => {
+        const html = serializeToHtml(toDo, { plugins: checkListPlugins });
+
+        expect(html).toContain('aria-label="Done"');
+        expect(html).toContain('aria-label="Not done"');
+        // A paragraph may sit in a div, not in a span.
+        expect(html).not.toMatch(/<span[^>]*><p>/);
+    });
+
+    it('names each checkbox in the editor by its item’s text', () => {
+        const container = render(<RichTextEditor value={toDo} plugins={checkListPlugins} />);
+
+        expect(checkboxes(container)).toEqual(['checked: Done this', 'unchecked: Not yet']);
+    });
+
+    it('shows the readonly state on a checkbox that looks live but cannot be changed', () => {
+        const container = render(<RichTextRenderer value={toDo} plugins={checkListPlugins} />);
+        const box = container.querySelector<HTMLInputElement>('input[type="checkbox"]');
+
+        expect(checkboxes(container)).toEqual(['checked: Done this', 'unchecked: Not yet']);
+        expect(box?.disabled).toBe(false);
+        expect(box?.getAttribute('aria-readonly')).toBe('true');
+        act(() => box?.click());
+        expect(box?.checked).toBe(true);
     });
 });

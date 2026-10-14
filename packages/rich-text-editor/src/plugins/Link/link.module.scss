@@ -1,15 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use './underline.module.scss' as link;
+@use './underline' as link;
 
-/**
- * A stylesheet rule rather than an inline style on the anchor, so an explicit
- * font colour still wins: that mark writes `color` inline, and inline beats a
- * stylesheet whichever way round the two marks nest.
- */
+/** A stylesheet rule, not inline, so an explicit font colour (written inline) still wins. */
 .link {
-    color: var(--color-highlight-default);
     cursor: pointer;
+
+    // Spelled out for both states, so a visited link never falls back to the
+    // browser's own purple.
+    &,
+    &:link,
+    &:visited {
+        color: var(--color-highlight-default);
+    }
 
     @include link.underline;
 
@@ -36,9 +39,27 @@
 
 .target {
     overflow: hidden;
-    color: var(--color-highlight-default);
     text-overflow: ellipsis;
     white-space: nowrap;
 
+    &,
+    &:link,
+    &:visited {
+        color: var(--color-highlight-default);
+    }
+
     @include link.underline;
+}
+
+/** Read out with the target, never drawn: that it opens a new tab. */
+.visuallyHidden {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }

@@ -27,7 +27,6 @@ import {
     fontColorPlugin,
     italicPlugin,
     linkPlugin,
-    filterByName,
     type MentionItem,
     mentionPlugin,
     numberedListPlugin,
@@ -47,7 +46,7 @@ import {
 } from '../index';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
-const MENTIONABLE: MentionItem[] = [
+const MENTIONABLE: readonly MentionItem[] = [
     { id: 'jane', username: 'jane', name: 'Jane Doe' },
     { id: 'john', username: 'john', name: 'John Smith' },
     { id: 'ada', username: 'ada', name: 'Ada Lovelace' },
@@ -59,10 +58,7 @@ const MENTIONABLE: MentionItem[] = [
 const profileHref = (mention: MentionItem): string => `#/people/${mention.id}`;
 
 /** Everything the package ships, plus the ones that need arguments. */
-const ALL_PLUGINS: RtePlugin[] = [
-    ...defaultPlugins,
-    mentionPlugin({ items: filterByName(MENTIONABLE), href: profileHref }),
-];
+const ALL_PLUGINS: readonly RtePlugin[] = [...defaultPlugins, mentionPlugin({ items: MENTIONABLE, href: profileHref })];
 
 /**
  * Story chrome is styled with the `@frontify/fondue-tokens` Tailwind preset
@@ -72,11 +68,11 @@ const ALL_PLUGINS: RtePlugin[] = [
 const LAYOUT = 'tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-primary';
 const JSON_PANEL =
     'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
-const HINT = 'tw-col-span-full tw-m-0 tw-text-body-small tw-text-weak';
+const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
 
 const toolbarButtonClasses = (active: boolean): string =>
     [
-        'tw-body-small tw-rounded tw-border tw-border-line-strong tw-px-2 tw-py-1 tw-text-secondary tw-cursor-pointer',
+        'tw-body-small tw-rounded tw-border tw-border-solid tw-border-line-strong tw-px-2 tw-py-1 tw-text-secondary tw-cursor-pointer',
         active ? 'tw-bg-container-secondary' : 'tw-bg-transparent',
     ].join(' ');
 
@@ -516,11 +512,13 @@ export const CheckList: Story = {
     },
 };
 
-// Comboboxes
+// Inline elements
 
 /**
  * Whom you can mention is not something the package can know, so the
- * candidates (and the trigger character) come from the app.
+ * candidates (and the trigger character) come from the app. Given as a list,
+ * they are matched against what is typed by username and name; a function
+ * instead does its own lookup.
  */
 export const Mention: Story = {
     render: () => {
@@ -547,7 +545,7 @@ export const Mention: Story = {
                 <RichTextEditor
                     value={doc}
                     onChange={setDoc}
-                    plugins={[mentionPlugin({ items: filterByName(MENTIONABLE), href: profileHref })]}
+                    plugins={[mentionPlugin({ items: MENTIONABLE, href: profileHref })]}
                 />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -724,7 +722,7 @@ export const ColumnBreak: Story = {
 
 /**
  * Every built-in plugin: marks, value marks, blocks, lists, a void block, and
- * the mention combobox (`@`).
+ * mentions (`@`).
  */
 export const AllPlugins: Story = {
     render: () => {
@@ -896,7 +894,7 @@ const calloutPlugin = (): RtePlugin => ({
             toHtml: () => ({
                 tag: 'aside',
                 attrs: {
-                    class: 'tw-m-0 tw-rounded-medium tw-border tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2',
+                    class: 'tw-m-0 tw-rounded-medium tw-border tw-border-solid tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2',
                 },
                 children: true,
             }),
@@ -946,8 +944,9 @@ export const ConsumerBlock: Story = {
 };
 
 /**
- * A consumer-defined void inline element, driven by its own combobox — the same
- * contract the shipped mention plugin uses, from outside the package.
+ * A consumer-defined void inline element whose `render.edit` draws its own
+ * picker while it has no value — the same contract the shipped mention plugin
+ * uses, from outside the package.
  */
 type EmbedInline = {
     type: 'embed';
@@ -986,7 +985,7 @@ const EmbedDraft = ({
                 aria-selected={false}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => onChoose(item.id)}
-                className="tw-rounded-small tw-bg-container-selected tw-px-1"
+                className="tw-rounded-small tw-bg-container-secondary tw-px-1"
             >
                 <span aria-hidden>{item.hint}</span> {item.label}
             </button>

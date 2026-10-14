@@ -1,18 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// The drawn tree as React elements, for the readonly view. The only place an
+// `HtmlSpec`'s attributes become React props — the counterpart of the core's
+// `attributeEntries`; `htmlParity.spec.tsx` holds the two to the same output.
+
 import { createElement, type CSSProperties, type ReactNode } from 'react';
 
 import { type HtmlAttributes, type HtmlSpec, type StyleMap } from '#/core';
 
 import { type DrawnNode } from './documentTree';
-
-/**
- * The drawn tree as React elements, for the readonly view. The only place an
- * `HtmlSpec`'s attributes become React props — the counterpart of
- * `attributeEntries` in the core, which the editor and export write out
- * directly. The two lists match one to one; `htmlParity.spec.tsx` holds them to
- * it.
- */
 
 /** `text-align` → `textAlign`; custom properties (`--rte-columns`) stay as written. */
 const reactStyleName = (property: string): string =>
@@ -20,7 +16,7 @@ const reactStyleName = (property: string): string =>
         ? property
         : property.replaceAll(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
 
-export const toReactStyle = (style: StyleMap): CSSProperties =>
+const toReactStyle = (style: StyleMap): CSSProperties =>
     Object.fromEntries(Object.entries(style).map(([property, value]) => [reactStyleName(property), value]));
 
 const reactProps = (attrs: HtmlAttributes = {}): Record<string, unknown> => {
@@ -32,6 +28,9 @@ const reactProps = (attrs: HtmlAttributes = {}): Record<string, unknown> => {
         switch (name) {
             case 'class':
                 props.className = value;
+                break;
+            case 'tabindex':
+                props.tabIndex = value;
                 break;
             case 'style':
                 props.style = toReactStyle(value as StyleMap);
@@ -47,7 +46,7 @@ const reactProps = (attrs: HtmlAttributes = {}): Record<string, unknown> => {
     return props;
 };
 
-const specToReact = (spec: HtmlSpec, content: ReactNode[], key: number): ReactNode => {
+export const specToReact = (spec: HtmlSpec, content: ReactNode[], key?: number): ReactNode => {
     const { children } = spec;
     let inner: ReactNode[] = [];
     if (children === true) {

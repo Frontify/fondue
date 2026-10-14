@@ -1,31 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /**
- * The part of ProseMirror's own stylesheet this editor needs. That stylesheet is
- * deliberately never imported — it carries far more than this — so the two rules
- * that are load-bearing are declared here instead, scoped the way ProseMirror
- * scopes its own: on the classes it puts on the editable element.
+ * The load-bearing part of ProseMirror's own stylesheet (never imported whole)
+ * plus the rules for the elements the engine's views add.
  *
- * This file is the only stylesheet naming an engine class, which is why it sits
- * with the adapter rather than with the editor's own chrome. Swapping the engine
- * replaces it along with everything else in this folder.
+ * Every rule is scoped under `[data-rte-editable]`, set on the editable element
+ * (editing.ts): the class names are ProseMirror's and generic, so unscoped they
+ * would also style other ProseMirror/Tiptap editors on the host's page.
  *
- * A void block (an image) is selected whole rather than as a run of text, and the
- * engine marks it with nothing but a class. Without these rules clicking an image
- * did nothing visible, so it read as unselectable and there was no way to tell
- * what a copy was about to take. `hideselection` — which the engine adds only
- * while a whole node is selected — drops the native caret and text highlight that
- * would otherwise still be showing elsewhere.
+ * The only stylesheet naming an engine class, so it lives with the adapter and
+ * goes with it if the engine is swapped.
  */
 
-.ProseMirror-selectednode {
+/**
+ * A void block (a column break) is selected whole and the engine marks it only
+ * with a class, so it needs a visible ring. `hideselection`, added only while a
+ * whole node is selected, drops the native caret and highlight elsewhere.
+ */
+[data-rte-editable] .ProseMirror-selectednode {
     outline: var(--border-width-large) solid var(--color-focus-default);
     // A literal, not `--border-width-default`: this is the gap between the ring
-    // and the image, which is not a border width.
+    // and the node, which is not a border width.
     outline-offset: 1px;
 }
 
-.ProseMirror.ProseMirror-hideselection {
+[data-rte-editable].ProseMirror-hideselection {
     caret-color: transparent;
 
     *::selection {
@@ -34,27 +33,43 @@
 }
 
 /**
- * An inline node view (a mention) inside a selected range. It is a
- * non-editable island, and browsers disagree on painting a selection inside
- * one — Safari does not — so the native highlight is switched off in it and the
- * same colour is laid over it instead, the same in every browser.
+ * Elements a view adds around content without meaning a box. `all: unset`
+ * keeps a host's element rules (`span { line-height: 2 }`) from reaching the text through them.
  */
-.rte-in-selection {
-    position: relative;
+[data-rte-editable] .rte-view-wrapper {
+    all: unset;
+    display: contents;
+}
+
+/** An inline node view's element (a mention): reset the same way, but an inline box. */
+[data-rte-editable] .rte-inline-view {
+    all: unset;
+}
+
+/**
+ * An inline node view inside a selected range. Safari does not paint a native
+ * selection inside a non-editable island, so it is painted here with the system
+ * highlight colours. Two classes of specificity beat the component's own colours,
+ * so it reads in dark mode and forced colours alike.
+ */
+[data-rte-editable] .rte-inline-view.rte-in-selection {
+    &,
+    * {
+        background-color: Highlight;
+        color: HighlightText;
+    }
 
     *::selection {
         background: transparent;
     }
+}
 
-    &::after {
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: Highlight;
-        content: '';
-        // Multiplied rather than faded: the node's own background shows
-        // through as it does under a text highlight, and its text stays dark.
-        mix-blend-mode: multiply;
-        pointer-events: none;
+@media (forced-colors: active) {
+    // Keep the system highlight colours as they are.
+    [data-rte-editable] .rte-inline-view.rte-in-selection {
+        &,
+        * {
+            forced-color-adjust: none;
+        }
     }
 }

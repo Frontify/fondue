@@ -1,39 +1,47 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// The editor's own chrome. Everything a plugin renders is styled by that
-// plugin's module instead — this file owns the frame, the toolbar strip and the
-// editable surface.
+// The editor's own chrome: the frame, the toolbar and the editable surface.
+// What a plugin renders is styled by that plugin's module.
 
 /**
- * Wraps the frame and, when the toolbar floats, the bar over the selection —
- * which is what gives the editor one element to watch focus and keys on. It draws
- * nothing and takes part in no layout: `display: contents` leaves the frame as the
- * box its container positions and sizes, exactly as if this element were not here.
+ * Wraps the frame and the floating bar so the editor has one element to watch
+ * focus and keys on. `display: contents` keeps it out of layout.
  */
 .root {
     display: contents;
 }
 
 .frame {
+    box-sizing: border-box;
     overflow: hidden;
     border: var(--border-width-default) solid var(--color-line-mid);
     border-radius: var(--border-radius-medium);
     background: var(--color-surface-default);
     box-shadow: var(--shadow-default);
 
-    /**
-     * The frame with its chrome taken away, leaving the content on its own — what
-     * `showEditor={false}` renders. Everything dropped here is the editor *telling
-     * the reader it is an editor*: the box it draws around itself and the inset that
-     * keeps typing off the border. The content's own styling (its typography, and
-     * whatever the plugins draw) is untouched, so it looks like the text it is.
-     */
+    &:hover {
+        border-color: var(--color-line-strong);
+    }
+
+    /** Fondue's focus ring around the whole field, only while the text itself has focus. */
+    &:has(.content:focus-visible) {
+        border-color: var(--color-line-strong);
+        box-shadow:
+            0 0 0 2px var(--color-surface-default),
+            0 0 0 6px var(--color-focus-default);
+    }
+
+    /** `showEditor={false}`: the content alone, without the box or the inset around it. */
     &[data-chrome='false'] {
         overflow: visible;
         border: none;
         border-radius: 0;
         background: none;
         box-shadow: none;
+
+        &:hover {
+            border-color: transparent;
+        }
 
         .content {
             min-height: 0;
@@ -57,31 +65,31 @@
     }
 }
 
+/** Lets the floating bar hear focus entering and leaving its controls, without a box of its own. */
+.toolbarFocus {
+    display: contents;
+}
+
 /**
- * The bar lifted off the editor and hung over the selected text. Fixed rather than
- * absolute because the box it is given is in viewport coordinates — the editor
- * reports where the text is *on screen*, which is the only thing that stays true
- * whichever container the editor happens to be scrolling inside.
+ * The bar hung over the selected text. Fixed because its position is in
+ * viewport coordinates, which holds whichever container the editor scrolls in.
  *
- * `width: max-content` keeps it as wide as its controls rather than stretching to
- * the text it hangs over, and the cap is what makes it wrap instead of leaving the
- * window.
+ * `width: max-content` sizes it to its controls and the cap makes it wrap
+ * instead of leaving the window. `z-index` lifts it over later positioned
+ * blocks; the flyouts its controls open are portalled and stack above it.
  */
 .floatingToolbar {
     position: fixed;
     z-index: 1;
+    box-sizing: border-box;
     max-width: calc(100vw - var(--spacing-medium) * 2);
     width: max-content;
-    border: var(--border-width-default) solid var(--color-line-mid);
+    border: var(--border-width-default) solid var(--color-line-subtle);
     border-radius: var(--border-radius-medium);
     background: var(--color-surface-default);
     box-shadow: var(--shadow-mid);
 
-    /**
-     * The two sides, as a transform: the component supplies one anchor point — the top
-     * of the selection, or its bottom — and the shift off it lives here with the gap
-     * it leaves, so flipping is a changed attribute rather than a second measurement.
-     */
+    /** The component supplies one anchor point; the shift off it lives here, so flipping is only an attribute change. */
     &[data-side='above'] {
         transform: translate(-50%, calc(-100% - var(--spacing-xx-small)));
     }
@@ -92,27 +100,63 @@
 }
 
 /**
- * The editable element's chrome — the inset, the minimum height, the caret
- * cursor. How the text itself reads comes from the renderer's `.document`
- * class, which the element carries too, so the readonly view matches it.
+ * The editable element's chrome: inset, minimum height, cursor. Text styling
+ * comes from the renderer's `.document` class, so the readonly view matches.
+ * The transparent outline shows focus in forced colours, where the frame's box
+ * shadow is not drawn.
  */
 .content {
     position: relative;
-    min-height: 80px;
+    box-sizing: border-box;
+    min-height: 5rem;
     padding: var(--spacing-x-small) var(--spacing-small);
-    outline: none;
-    cursor: text;
+    outline: 2px solid transparent;
+    // The readonly view is read, not typed into: no caret cursor there.
+    cursor: default;
+
+    &[contenteditable='true'] {
+        cursor: text;
+    }
 
     /**
-     * The placeholder decoration sits on the empty block, so its text starts
-     * exactly where typing will. Floating keeps it out of the caret's way and
-     * the zero height keeps it from claiming a line of its own.
+     * Drawn on the empty block so it starts where typing will; the float and
+     * zero height keep it out of the caret's way. The `/ ''` alternative hides
+     * it from assistive technology (the field has `aria-placeholder`); the
+     * first declaration is the fallback for browsers without that syntax.
      */
     .placeholder::before {
         content: attr(data-placeholder);
+        content: attr(data-placeholder) / '';
         float: left;
         height: 0;
         color: var(--color-secondary-default);
         pointer-events: none;
     }
+}
+
+/** Read out by assistive technology, never drawn: the status region. */
+.visuallyHidden {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/** The "Turn into" button of the floating bar: the block's name beside a caret. */
+.turnInto {
+    gap: var(--spacing-xx-small);
+    white-space: nowrap;
+}
+
+/** What sits behind the floating bar's "More" button: the controls, side by side. */
+.overflow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-xx-small);
 }

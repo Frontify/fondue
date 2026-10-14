@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { basename } from 'node:path';
+
 import react from '@vitejs/plugin-react';
 import autoprefixer from 'autoprefixer';
 import { type Plugin } from 'vite';
@@ -34,30 +36,53 @@ const externalizeJsDeps = (): Plugin => ({
     },
 });
 
-export const globals = {
-    react: 'React',
-    'react-dom': 'ReactDOM',
-    'react-dom/client': 'ReactDOMClient',
-    'react/jsx-runtime': 'react/jsx-runtime',
+const CSS_MODULE_SUFFIX = /\.module\.(scss|css)$/;
+
+/**
+ * CSS module class names are `rte-<module>__<class>` (`.quote` in
+ * `quote.module.scss` becomes `rte-quote__quote`). Unhashed, so the classes in
+ * `serializeToHtml` output are stable across builds and a host stylesheet can
+ * rely on them. That only holds while module file names are unique, so a
+ * duplicate fails the build.
+ */
+const stableScopedName = () => {
+    const fileByModule = new Map<string, string>();
+
+    return (local: string, filename: string): string => {
+        const file = filename.split('?')[0] ?? filename;
+        const moduleName = basename(file).replace(CSS_MODULE_SUFFIX, '');
+        const claimedBy = fileByModule.get(moduleName);
+        if (claimedBy !== undefined && claimedBy !== file) {
+            throw new Error(
+                `CSS modules ${claimedBy} and ${file} would both scope their classes as "rte-${moduleName}__…". Rename one.`,
+            );
+        }
+        fileByModule.set(moduleName, file);
+
+        return `rte-${moduleName}__${local}`;
+    };
 };
 
 export default defineConfig({
     plugins: [
         react(),
         tsConfigPaths(),
-        dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx'] }),
+        dts({
+            insertTypesEntry: true,
+            rollupTypes: true,
+            // Only the package source: not `.storybook/`, which the tsconfig also covers.
+            include: ['src'],
+            exclude: ['**/*.stories.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+        }),
         externalizeJsDeps(),
     ],
     /**
-     * The whole package is styled with SCSS modules, which end up in a single
-     * `dist/style.css` consumers import via `@frontify/fondue-rich-text-editor/styles`.
-     *
-     * PostCSS is declared inline — and deliberately without Tailwind — so no
-     * `postcss.config.*` can be picked up and no utility CSS can reach the
-     * bundle. Tailwind is a Storybook-only concern and is added there, in
-     * `.storybook/main.ts`.
+     * SCSS modules end up in one `dist/style.css` (`@frontify/fondue-rich-text-editor/styles`).
+     * PostCSS is inline and without Tailwind, so no `postcss.config.*` is picked
+     * up and no utility CSS reaches the bundle; Tailwind is added in `.storybook/main.ts`.
      */
     css: {
+        modules: { generateScopedName: stableScopedName() },
         postcss: { plugins: [autoprefixer()] },
         preprocessorOptions: {
             scss: {
@@ -66,23 +91,22 @@ export default defineConfig({
         },
     },
     /**
-     * Tests run without a DOM by default. A file that drives the editor's
-     * `contenteditable` opts into `happy-dom` with a
-     * `// @vitest-environment happy-dom` docblock — a fake DOM rather than a
-     * browser, since nothing here is about layout.
+     * No DOM by default; a spec that needs one opts into `happy-dom` with a
+     * `// @vitest-environment happy-dom` docblock.
      *
-     * `type-derivation.spec.ts` is deliberately excluded: it asserts at compile
-     * time and `tsgo --noEmit` is its runner (see its header), so it holds no test
-     * suite for this one to find.
+     * Excluded: `type-derivation.spec.ts` (asserts at compile time, `tsgo --noEmit`
+     * runs it) and `lint-fixtures/src/` (lint input, not tests).
+     *
+     * CSS modules compile in tests, so markup carries the shipped class names.
      */
     test: {
         environment: 'node',
-        exclude: [...configDefaults.exclude, 'src/type-derivation.spec.ts'],
+        css: { include: [CSS_MODULE_SUFFIX], modules: { classNameStrategy: 'scoped' } },
+        exclude: [...configDefaults.exclude, 'src/type-derivation.spec.ts', 'lint-fixtures/src/**'],
     },
     build: {
         lib: {
             entry: './src/index.ts',
-            name: 'Rte',
             fileName: (format: string) => `[name].${format}.js`,
             formats: ['es'],
         },
@@ -91,11 +115,9 @@ export default defineConfig({
         rollupOptions: {
             output: [
                 {
-                    name: 'Rte',
                     format: 'es',
                     preserveModules: true,
                     preserveModulesRoot: 'src',
-                    globals,
                 },
             ],
         },

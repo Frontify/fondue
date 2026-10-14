@@ -17,7 +17,9 @@
     "publishConfig": {
         "access": "public"
     },
-    "sideEffects": false,
+    "sideEffects": [
+        "**/*.css"
+    ],
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -41,16 +43,16 @@
         "storybook": "storybook dev -p 6012",
         "test": "vitest run",
         "test:watch": "vitest",
-        "typecheck": "tsgo --noEmit"
+        "typecheck": "tsgo --noEmit && tsgo --noEmit -p tsconfig.node.json"
     },
     "peerDependencies": {
+        "@frontify/fondue-tokens": "workspace:^",
         "react": "^18",
         "react-dom": "^18"
     },
     "dependencies": {
         "@frontify/fondue-components": "workspace:*",
         "@frontify/fondue-icons": "workspace:*",
-        "@frontify/fondue-tokens": "workspace:*",
         "prosemirror-commands": "^1.7.1",
         "prosemirror-history": "^1.5.0",
         "prosemirror-inputrules": "^1.5.1",
@@ -61,11 +63,10 @@
         "prosemirror-view": "^1.41.8"
     },
     "devDependencies": {
+        "@frontify/fondue-tokens": "workspace:*",
         "@frontify/oxfmt-config": "^0.0.2",
         "@frontify/oxlint-config-react": "^0.0.2",
         "@storybook/addon-a11y": "^10.2.0",
-        "@storybook/addon-docs": "^10.2.0",
-        "@storybook/addon-links": "^10.2.0",
         "@storybook/react-vite": "^10.2.0",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/node": "^24.10.9",

@@ -36,13 +36,13 @@ const mount = () => {
         container,
         initialDoc: doc,
         registry: buildPluginRegistry(plugins),
-        readOnly: false,
         placeholder: '',
-        contentClassName: 'content',
+        attributes: {},
         placeholderClassName: 'placeholder',
         onDocChange: () => {},
         onStateChange: () => {},
         onBlur: () => {},
+        viewPortals: { set: () => {}, delete: () => {} },
     });
 };
 

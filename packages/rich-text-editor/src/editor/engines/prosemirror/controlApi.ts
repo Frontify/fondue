@@ -2,61 +2,61 @@
 
 import { setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
 import { type Mark as PmMark, type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
-import { type EditorState, TextSelection } from 'prosemirror-state';
+import { type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, type RteBlockNode, type RteSelectionSnapshot } from '#/core';
+import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
 
 import { markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi } from './lists';
-import { type SchemaBundle } from './schema';
+import { warnUnknownType } from './warnings';
 
 /**
  * The `EditorControlApi`: the one seam a feature drives the editor through.
- * Every method closes over the live view, so a feature always reads and writes
- * the current state — there is nothing to keep in sync.
+ * Every method reads the live view when it runs, so there is no state to keep
+ * in sync.
  *
- * Read top to bottom: the read side first (the snapshot all feature UI renders
- * from), then the writes, grouped by what they act on. Lists are the exception,
- * and live in `./lists.ts`.
+ * The view is reached through a getter because the api is built BEFORE the
+ * view: the view's constructor paints the initial node views, which are handed
+ * this api. No method is called until the view exists.
+ *
+ * Layout: `createControlApi` (the whole api) is at the bottom, assembled from
+ * the selection snapshot, then marks, then blocks. Lists live in `./lists.ts`.
  */
 
-// The read side: one snapshot of the selection, which all feature UI renders
-// from
+// --- Selection snapshot: what all feature UI renders from ---
 
-/** The marks a caret would type with, or every mark a range carries. */
+/**
+ * The marks a caret would type with, or the marks EVERY text in a range
+ * carries — a half-bold range is not bold. Each with the first value found, so
+ * a mark spanning differently-valued runs reads as the one the range starts in.
+ */
 const marksAt = (state: EditorState): Record<string, Record<string, unknown>> => {
-    const marks: Record<string, Record<string, unknown>> = {};
-    // First value wins, so a mark spanning differently-valued runs reads as the
-    // one the selection starts in.
-    const record = (found: readonly PmMark[]): void => {
-        for (const mark of found) {
-            marks[mark.type.name] ??= markValueOf(mark);
-        }
-    };
-
     const { from, to, empty, $from } = state.selection;
     if (empty) {
-        // Stored marks are what a caret is about to type with — set by a toggle
-        // not yet typed into — and otherwise it inherits what is behind it.
-        record(state.storedMarks ?? $from.marks());
-    } else {
-        // Only text contributes: inline elements carry no marks (see
-        // `inlineMarks.ts`).
-        state.doc.nodesBetween(from, to, (node) => {
-            if (node.isText) {
-                record(node.marks);
-            }
-        });
+        // Stored marks (a toggle not yet typed into), else what is behind the caret.
+        return Object.fromEntries(
+            (state.storedMarks ?? $from.marks()).map((mark) => [mark.type.name, markValueOf(mark)]),
+        );
     }
-    return marks;
+
+    // Only text contributes: inline elements carry no marks (see `inlineMarks.ts`).
+    const runs: (readonly PmMark[])[] = [];
+    state.doc.nodesBetween(from, to, (node) => {
+        if (node.isText) {
+            runs.push(node.marks);
+        }
+    });
+    const [first = [], ...rest] = runs;
+    const carried = first.filter((mark) => rest.every((marks) => mark.type.isInSet(marks) !== undefined));
+    return Object.fromEntries(carried.map((mark) => [mark.type.name, markValueOf(mark)]));
 };
 
 /** The chain of blocks around the selection, and which of them is *the* one. */
 const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blocks'> => {
     const { $from } = state.selection;
-    const blocks: RteBlockNode[] = [];
-    let block: RteBlockNode | null = null;
+    const blocks: RteSelectionSnapshot['blocks'] = [];
+    let block: RteSelectionSnapshot['block'] = null;
 
     // Down to 1: depth 0 is the document, which is not a block.
     for (let depth = $from.depth; depth >= 1; depth--) {
@@ -71,7 +71,7 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
         }
     }
 
-    // A selected void block (an image): the selection sits at doc level, so
+    // A selected void block (a column break): the selection sits at doc level, so
     // there is no ancestor to have found it as.
     const selected = $from.nodeAfter;
     if (block === null && selected?.type.spec.group === 'block') {
@@ -86,58 +86,41 @@ const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
     const { from, to, empty } = state.selection;
     return {
         isCollapsed: empty,
-        // Void nodes in between (a mention, a line break) contribute nothing,
-        // so what comes back is what the user can actually read.
+        // Void nodes (a mention, a line break) contribute nothing: only readable text.
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
         marks: marksAt(state),
     };
 };
 
-const createSelectionApi = (view: EditorView): EditorControlApi['selection'] => {
+const createSelectionApi = (getView: () => EditorView): EditorControlApi['selection'] => {
     // Every feature's UI reads the same snapshot, so it is built once per
-    // editor state. Keying on the state is safe because the engine's state is
-    // immutable: a new state is a new identity.
+    // (immutable, hence identity-keyed) editor state.
     let cached: { state: EditorState; snapshot: RteSelectionSnapshot } | null = null;
 
     return {
         get() {
-            if (cached?.state !== view.state) {
-                cached = { state: view.state, snapshot: snapshotOf(view.state) };
+            const { state } = getView();
+            if (cached?.state !== state) {
+                cached = { state, snapshot: snapshotOf(state) };
             }
             return cached.snapshot;
-        },
-        replaceWithText(text) {
-            if (text === '') {
-                return;
-            }
-            const { from, to } = view.state.selection;
-            // Positions count text in the same units as a JS string, so the run
-            // ends at `from` plus its length.
-            const transaction = view.state.tr.insertText(text, from, to);
-            transaction.setSelection(TextSelection.create(transaction.doc, from, from + text.length));
-            view.dispatch(transaction);
-            view.focus();
         },
     };
 };
 
-// Marks
+// --- Marks ---
 //
-// Note what is NOT here: a mark applied by typing `**bold**` never comes
-// through this api. The toolbar button and the hotkey call `toggle` below; the
-// markdown shortcut builds its own transaction. See the header of
-// keystrokes.ts.
+// A mark applied by typing `**bold**` does not come through this api: the
+// markdown shortcut builds its own transaction (see keystrokes.ts).
 
 /**
  * The stretch of text around the selection start that carries a mark, or null
  * when the mark is not there. A run is a stretch of consecutive children rather
  * than a single node, because other marks may split the text — so a partly-bold
  * link still counts as one link.
- *
- * Exported because floating UI anchored to a mark is positioned over its run.
  */
-export const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number; to: number } | null => {
+const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number; to: number } | null => {
     const { $from } = state.selection;
     const block = $from.parent;
     if (!block.isTextblock) {
@@ -168,78 +151,68 @@ export const findMarkRange = (state: EditorState, markType: PmMarkType): { from:
 };
 
 /** Whether a mark is *on* is not here: that is a field of the selection snapshot. */
-const createMarkApi = (view: EditorView, schema: Schema): EditorControlApi['marks'] => ({
-    toggle(key, value) {
-        const markType = schema.marks[key];
-        if (markType) {
-            pmToggleMark(markType, valueAttrsFor(value))(view.state, view.dispatch);
-            view.focus();
+const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControlApi['marks'] => ({
+    toggle(type, value) {
+        const markType = schema.marks[type];
+        if (!markType) {
+            warnUnknownType('marks.toggle', type);
+            return;
         }
+        const view = getView();
+        // On unless ALL of the selection carries it, matching the snapshot.
+        pmToggleMark(markType, valueAttrsFor(value), { removeWhenPresent: false })(view.state, view.dispatch);
+        view.focus();
     },
     removeAll() {
+        const view = getView();
         const { from, to, empty } = view.state.selection;
         const transaction = empty ? view.state.tr.setStoredMarks([]) : view.state.tr.removeMark(from, to, null);
         view.dispatch(transaction);
         view.focus();
     },
-    getRun(key) {
-        const markType = schema.marks[key];
-        const range = markType ? findMarkRange(view.state, markType) : null;
+    getRun(type) {
+        const { state } = getView();
+        const markType = schema.marks[type];
+        const range = markType ? findMarkRange(state, markType) : null;
         if (!markType || range === null) {
             return null;
         }
-        // The run starts at a text node carrying the mark, so its attributes
-        // are the run's.
-        const first = view.state.doc.resolve(range.from).nodeAfter;
+        // The run starts at a text node carrying the mark: its attributes are the run's.
+        const first = state.doc.resolve(range.from).nodeAfter;
         const mark = first ? markType.isInSet(first.marks) : null;
         return {
             value: mark ? markValueOf(mark) : {},
-            // Void nodes in between contribute nothing, as with the snapshot's
-            // text.
-            text: view.state.doc.textBetween(range.from, range.to, ' '),
+            // Void nodes contribute nothing, as with the snapshot's text.
+            text: state.doc.textBetween(range.from, range.to, ' '),
         };
-    },
-    select(key) {
-        const markType = schema.marks[key];
-        if (!markType) {
-            return false;
-        }
-        const { $from, empty } = view.state.selection;
-        if (!empty) {
-            return markType.isInSet($from.marks()) !== undefined;
-        }
-        const range = findMarkRange(view.state, markType);
-        if (range === null) {
-            return false;
-        }
-        view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, range.from, range.to)));
-        return true;
     },
 });
 
-// Blocks
+// --- Blocks ---
 
 /**
  * Block types and the attributes on them. Which block the selection is in is
  * not here: features read that off the selection snapshot.
  */
-const createBlockApi = (view: EditorView, bundle: SchemaBundle): EditorControlApi['blocks'] => {
-    const { schema, blockAttributes } = bundle;
-
+const createBlockApi = (
+    getView: () => EditorView,
+    schema: Schema,
+    registry: PluginRegistry,
+): EditorControlApi['blocks'] => {
     /** Every text block the selection touches, with the given attributes applied. */
-    const applyToTextBlocks = (attrs: Record<string, unknown>): void => {
+    const applyToTextBlocks = (attributes: Record<string, unknown>): void => {
+        const view = getView();
         const { from, to } = view.state.selection;
         const transaction = view.state.tr;
         view.state.doc.nodesBetween(from, to, (node, pos) => {
             if (node.isTextblock) {
-                // Attributes a node type never declared are ignored by the
-                // engine, so this is safe across mixed selections. An unchanged
-                // block is skipped so a no-op reports nothing and adds no undo step.
-                const changes = Object.entries(attrs).some(
+                // Undeclared attributes are ignored, so mixed selections are safe.
+                // Unchanged blocks are skipped so a no-op adds no undo step.
+                const changes = Object.entries(attributes).some(
                     ([name, value]) => name in node.attrs && (node.attrs[name] ?? null) !== (value ?? null),
                 );
                 if (changes) {
-                    transaction.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs });
+                    transaction.setNodeMarkup(pos, undefined, { ...node.attrs, ...attributes });
                 }
             }
         });
@@ -250,57 +223,95 @@ const createBlockApi = (view: EditorView, bundle: SchemaBundle): EditorControlAp
     };
 
     return {
-        setType(type, attrs) {
+        setType(type, value) {
             const nodeType = schema.nodes[type];
-            if (nodeType) {
-                pmSetBlockType(nodeType, attrs ?? {})(view.state, view.dispatch);
-                view.focus();
+            if (!nodeType) {
+                warnUnknownType('blocks.setType', type);
+                return;
             }
+            const view = getView();
+            pmSetBlockType(nodeType, value ?? {})(view.state, view.dispatch);
+            view.focus();
         },
         updateAttributes: applyToTextBlocks,
         resetAttributes() {
-            // Generic on purpose: whichever attributes features inject into
-            // every text block are the ones reset, so nothing here names
-            // `align`.
+            // Resets whichever attributes features inject into text blocks; names none.
             applyToTextBlocks(
-                Object.fromEntries([...blockAttributes].map(([name, attribute]) => [name, attribute.default ?? null])),
+                Object.fromEntries(
+                    [...registry.blockAttributes].map(([name, attribute]) => [name, attribute.default ?? null]),
+                ),
             );
         },
     };
 };
 
-// The whole api
+// --- The whole api ---
 
-/** The flat members act on the editor as a whole rather than on one kind of thing in it. */
 /** Which type's editing UI is open, and how to redraw the views that show it. */
 export type OpenEditors = { type: string | null; repaint: () => void };
 
+/** The flat members act on the editor as a whole rather than on one kind of thing in it. */
 export const createControlApi = (
-    view: EditorView,
-    bundle: SchemaBundle,
+    getView: () => EditorView,
+    schema: Schema,
+    registry: PluginRegistry,
     openEditors: OpenEditors,
 ): EditorControlApi => ({
-    selection: createSelectionApi(view),
-    marks: createMarkApi(view, bundle.schema),
-    blocks: createBlockApi(view, bundle),
-    lists: createListApi(view, bundle),
+    selection: createSelectionApi(getView),
+    marks: createMarkApi(getView, schema),
+    blocks: createBlockApi(getView, schema, registry),
+    lists: createListApi(getView, schema, registry),
 
-    insert(type, attrs) {
-        const nodeType = bundle.schema.nodes[type];
-        if (nodeType) {
-            // Inline elements keep their value in one attribute; blocks keep theirs flat.
-            const engineAttrs = nodeType.isInline ? valueAttrsFor(attrs) : attrs;
-            // Inline elements carry no marks, so they must not inherit the caret's.
-            view.dispatch(view.state.tr.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
-            view.focus();
+    insert(type, value) {
+        const nodeType = schema.nodes[type];
+        if (!nodeType) {
+            warnUnknownType('insert', type);
+            return;
         }
+        const view = getView();
+        const transaction = view.state.tr;
+        const { selection } = view.state;
+        // A block goes in AFTER selected text rather than over it; a selected node is replaced.
+        if (!nodeType.isInline && !(selection instanceof NodeSelection) && !selection.empty) {
+            transaction.setSelection(TextSelection.create(transaction.doc, selection.to));
+        }
+        // Inline elements keep their value in one attribute; blocks keep theirs flat.
+        const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
+        // Inline elements carry no marks, so they must not inherit the caret's.
+        view.dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
+        view.focus();
     },
     insertText(text) {
+        const view = getView();
         view.dispatch(view.state.tr.insertText(text));
         view.focus();
     },
+    text: {
+        beforeCaret() {
+            const { selection } = getView().state;
+            const { $from, empty } = selection;
+            return empty && $from.parent.isTextblock
+                ? $from.parent.textBetween(0, $from.parentOffset, undefined, '￼')
+                : '';
+        },
+        afterCaret() {
+            const { selection } = getView().state;
+            const { $from, empty } = selection;
+            return empty && $from.parent.isTextblock
+                ? $from.parent.textBetween($from.parentOffset, $from.parent.content.size, undefined, '￼')
+                : '';
+        },
+        deleteBefore(count) {
+            const view = getView();
+            const { $from, empty } = view.state.selection;
+            const length = Math.min(count, $from.parentOffset);
+            if (empty && $from.parent.isTextblock && length > 0) {
+                view.dispatch(view.state.tr.delete($from.pos - length, $from.pos));
+            }
+        },
+    },
     focus() {
-        view.focus();
+        getView().focus();
     },
     editors: {
         open(type) {
@@ -313,6 +324,6 @@ export const createControlApi = (
         },
     },
     blur() {
-        view.dom.blur();
+        getView().dom.blur();
     },
 });

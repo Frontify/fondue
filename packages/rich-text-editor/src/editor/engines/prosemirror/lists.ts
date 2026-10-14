@@ -5,34 +5,21 @@ import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInLis
 import { type Command, type EditorState } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi } from '#/core';
+import { type EditorControlApi, type PluginRegistry } from '#/core';
 
 import { mapChildren } from './documentConversion';
-import { type SchemaBundle } from './schema';
+import { warnUnknownType } from './warnings';
 
 /**
- * Lists, all in one place: which list the caret is in, the commands that edit
- * one, and the three keys that only mean something inside one.
- *
- * Two pieces live elsewhere, because they belong to a phase rather than to
- * lists:
- *
- * - WHICH blocks are lists is decided at mount, in `schema.ts`: a feature
- *   declares `children: { items }` and the schema hands the result over as
- *   `SchemaBundle.itemTypeByList`. That is why nothing here takes an item type
- *   as an argument.
- * - WHERE the list keys sit relative to a feature's own hotkeys is a precedence
- *   question, answered in `keystrokes.ts`. This file only says what the keys
- *   do.
+ * Lists: which list the caret is in, the commands that edit one, and the keys
+ * that only mean something inside one. Which blocks are lists comes from the
+ * registry's `itemTypeByList`; where the keys rank among others is set in `keystrokes.ts`.
  */
 
 // Where the caret is
 
 /** The innermost ancestor that is a list of items, with the position it sits at. */
-export const findList = (
-    state: EditorState,
-    itemTypeByList: Map<string, string>,
-): { node: PmNode; pos: number } | null => {
+const findList = (state: EditorState, itemTypeByList: Map<string, string>): { node: PmNode; pos: number } | null => {
     const { $from } = state.selection;
     for (let depth = $from.depth; depth > 0; depth--) {
         const node = $from.node(depth);
@@ -44,11 +31,7 @@ export const findList = (
 };
 
 /** The item type of the innermost list the selection sits in — what the list commands need. */
-export const findItemType = (
-    state: EditorState,
-    itemTypeByList: Map<string, string>,
-    schema: Schema,
-): PmNodeType | null => {
+const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, schema: Schema): PmNodeType | null => {
     const list = findList(state, itemTypeByList);
     const itemName = list ? itemTypeByList.get(list.node.type.name) : undefined;
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
@@ -56,12 +39,15 @@ export const findItemType = (
 
 // The list half of the control API
 
+/** Implements `EditorControlApi['lists']` against the live view. */
 export const createListApi = (
-    view: EditorView,
-    { schema, itemTypeByList }: SchemaBundle,
+    getView: () => EditorView,
+    schema: Schema,
+    { itemTypeByList }: PluginRegistry,
 ): EditorControlApi['lists'] => {
     /** Run one of the engine's list commands against the item type in scope. */
     const runListCommand = (command: (itemType: PmNodeType) => Command): boolean => {
+        const view = getView();
         const itemType = findItemType(view.state, itemTypeByList, schema);
         if (!itemType) {
             return false;
@@ -75,8 +61,10 @@ export const createListApi = (
             const itemName = itemTypeByList.get(type);
             const itemType = itemName ? schema.nodes[itemName] : undefined;
             if (!listType || !itemType) {
+                warnUnknownType('lists.toggle', type);
                 return;
             }
+            const view = getView();
             const current = findList(view.state, itemTypeByList);
 
             if (!current) {
@@ -84,9 +72,8 @@ export const createListApi = (
             } else if (current.node.type === listType) {
                 runListCommand(liftListItem);
             } else {
-                // Switching list type converts in place. It has to happen in a
-                // single step: a check list holding bullet items (or the other
-                // way round) is invalid content, so two steps would throw.
+                // One step: a check list holding bullet items (or the reverse)
+                // is invalid content, so converting in two steps would throw.
                 const converted = listType.create(
                     current.node.attrs,
                     mapChildren(current.node, (item) =>
@@ -101,6 +88,7 @@ export const createListApi = (
         outdent: () => runListCommand(liftListItem),
         split: () => runListCommand(pmSplitListItem),
         unwrapAll() {
+            const view = getView();
             const { from, to } = view.state.selection;
             const lists: { node: PmNode; pos: number }[] = [];
             view.state.doc.nodesBetween(from, to, (node, pos) => {
@@ -134,18 +122,32 @@ export const createListApi = (
 // The keys that only mean something inside a list
 
 /**
- * Enter, Tab and Shift-Tab inside a list. Not one feature's keys: the behaviour
- * belongs to being in a list at all, so any feature declaring `children: { items }`
- * gets them — a list a consumer wrote included — instead of every list repeating
- * the same three bindings.
- *
- * All three report "not handled" outside a list, so the engine's baseline
- * keymap takes over there.
+ * The caret sits at the very start of a list item's first block — where
+ * Backspace means "this is no longer a list item" rather than "join with what
+ * is before".
  */
-export const listKeys = (getApi: () => EditorControlApi): Record<string, Command> => ({
+const atItemStart = (state: EditorState, itemTypeByList: Map<string, string>): boolean => {
+    const { $from, empty } = state.selection;
+    if (!empty || $from.parentOffset !== 0 || $from.depth < 2) {
+        return false;
+    }
+    const item = $from.node(-1);
+    return [...itemTypeByList.values()].includes(item.type.name) && $from.index(-1) === 0;
+};
+
+/**
+ * Enter, Tab, Shift-Tab and Backspace inside a list. They belong to being in a
+ * list, so any feature declaring `content: { items }` gets them. Outside a list
+ * they report "not handled" and the baseline keymap takes over.
+ */
+export const listKeys = (api: EditorControlApi, itemTypeByList: Map<string, string>): Record<string, Command> => ({
     // The engine's own split deliberately refuses on an empty item at the top
     // level, leaving it to be lifted out of the list instead.
-    Enter: () => getApi().lists.split() || getApi().lists.outdent(),
-    Tab: () => getApi().lists.indent(),
-    'Shift-Tab': () => getApi().lists.outdent(),
+    Enter: () => api.lists.split() || api.lists.outdent(),
+    Tab: () => api.lists.indent(),
+    'Shift-Tab': () => api.lists.outdent(),
+    // At the start of an item, lift it out one level (out of the list at the
+    // top) — the engine's own Backspace would join it into the item above as a
+    // bare paragraph.
+    Backspace: (state) => atItemStart(state, itemTypeByList) && api.lists.outdent(),
 });

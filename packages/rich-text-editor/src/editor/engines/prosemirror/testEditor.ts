@@ -1,40 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Node as PmNode } from 'prosemirror-model';
-import { EditorState, TextSelection } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { TextSelection } from 'prosemirror-state';
 import { vi } from 'vitest';
 
-import {
-    buildPluginRegistry,
-    type EditorControlApi,
-    type RteBlockNode,
-    type RteDocumentOf,
-    type RtePlugin,
-} from '#/core';
+import { buildPluginRegistry, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
+import { type MountedDocument, type MountOptions } from '#/editor/port';
 import { defaultPlugins } from '#/plugins';
 
-import { createControlApi } from './controlApi';
-import { toEngineDocument, toRteDocument } from './documentConversion';
-import { inlineElementsCarryNoMarksPlugin } from './inlineMarks';
-import { keystrokePipeline } from './keystrokes';
-import { buildSchema } from './schema';
+import { mountEditorForTests } from './editing';
 
 /**
- * The editor as `mountDocument` assembles it — schema, keystroke pipeline and
- * control API over one view — minus the React node views, and with the view
- * handed out, so a spec can put the selection where it needs it and type into
- * the editor the way the engine's input handling does.
- *
- * Test-only: imported by the specs next to it, never by the package.
+ * Test-only: the editor as `mountDocument` mounts it, with the view handed out
+ * so a spec can place the selection and type as the engine's input handling
+ * does. Portals go to a shell that renders none of them; node views have specs
+ * of their own.
  */
 
-const mounted: EditorView[] = [];
+const mounted: MountedDocument[] = [];
 
 /** Destroy every editor `editorWith` mounted. Call it from `afterEach`. */
 export const destroyEditors = (): void => {
-    for (const view of mounted.splice(0)) {
-        view.destroy();
+    for (const editor of mounted.splice(0)) {
+        editor.destroy();
     }
     window.document.body.replaceChildren();
 };
@@ -84,28 +72,29 @@ type BlockInput = RteBlockNode | (Record<string, unknown> & { type: string });
 /** Shipped plugins by id, taken from `defaultPlugins` — the one plugin import this folder may make. */
 export const shipped = (...ids: string[]): RtePlugin[] => defaultPlugins.filter((plugin) => ids.includes(plugin.id));
 
-export const editorWith = (plugins: RtePlugin[], blocks: BlockInput[]) => {
+export const editorWith = (
+    plugins: readonly RtePlugin[],
+    blocks: BlockInput[],
+    options: Partial<Pick<MountOptions, 'placeholder' | 'attributes'>> = {},
+) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const onDocChange = vi.fn<(doc: RteDocumentOf) => void>();
 
-    const registry = buildPluginRegistry(plugins);
-    const bundle = buildSchema(registry);
-    let api!: EditorControlApi;
-    const view: EditorView = new EditorView(container, {
-        state: EditorState.create({
-            doc: toEngineDocument({ version: 1, blocks: blocks as RteBlockNode[] }, bundle.schema),
-            plugins: [...keystrokePipeline(registry, bundle, () => api), inlineElementsCarryNoMarksPlugin()],
-        }),
-        dispatchTransaction(transaction) {
-            view.updateState(view.state.apply(transaction));
-            if (transaction.docChanged) {
-                onDocChange(toRteDocument(view.state.doc));
-            }
-        },
+    const { mounted: editor, view } = mountEditorForTests({
+        container,
+        initialDoc: { version: 1, blocks: blocks as RteBlockNode[] },
+        registry: buildPluginRegistry(plugins),
+        placeholder: options.placeholder ?? '',
+        attributes: options.attributes ?? {},
+        placeholderClassName: 'placeholder',
+        onDocChange,
+        onStateChange: () => {},
+        onBlur: () => {},
+        viewPortals: { set: () => {}, delete: () => {} },
     });
-    mounted.push(view);
-    api = createControlApi(view, bundle, { type: null, repaint: () => {} });
+    mounted.push(editor);
+    const { api } = editor.handle;
 
     const setSelection = (from: number, to = from): void => {
         view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, from, to)));
@@ -114,6 +103,7 @@ export const editorWith = (plugins: RtePlugin[], blocks: BlockInput[]) => {
     return {
         api,
         view,
+        editor,
         onDocChange,
         /** The blocks of the document last reported to the host, or null when nothing was. */
         stored: (): RteBlockNode[] | null => onDocChange.mock.lastCall?.[0].blocks ?? null,
@@ -138,6 +128,17 @@ export const editorWith = (plugins: RtePlugin[], blocks: BlockInput[]) => {
                     view.dispatch(insert());
                 }
             }
+        },
+        /** Paste HTML, as the engine reads a paste from the clipboard. */
+        pasteHTML: (html: string): boolean => view.pasteHTML(html),
+        /** Paste text (and HTML, when given) with a clipboard that holds them, as a paste event carries it. */
+        paste: (plain: string, html: string | null = null): boolean => {
+            const data: Record<string, string> = { 'text/plain': plain, 'text/html': html ?? '' };
+            const event = {
+                clipboardData: { getData: (type: string) => data[type] ?? '' },
+                preventDefault: () => {},
+            } as unknown as ClipboardEvent;
+            return html === null ? view.pasteText(plain, event) : view.pasteHTML(html, event);
         },
     };
 };

@@ -22,6 +22,7 @@ const reset = (api: EditorControlApi): void => {
     api.blocks.resetAttributes();
 };
 
+/** A toolbar button that strips the selection back to plain text. */
 export const resetFormattingPlugin = (): RtePlugin => ({
     id: 'reset-formatting',
     toolbarItem: ({ api }) => (
@@ -29,4 +30,5 @@ export const resetFormattingPlugin = (): RtePlugin => ({
             <IconEraser size={16} />
         </ToolbarButton>
     ),
+    floatingToolbar: 'overflow',
 });
