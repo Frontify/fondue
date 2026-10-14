@@ -1,0 +1,55 @@
+packages/components/src/components/Flyout/styles/flyout.module.scss
+  h_2139c5e5c94509 105-108
+packages/components/src/components/Flyout/Flyout.tsx
+  h_2139c5e5c94509 226
+packages/components/src/components/Dialog/Dialog.stories.tsx
+  h_2139c5e5c94509 462
+packages/components/src/components/DatePicker/styles/datePickerInput.module.scss
+  h_2139c5e5c94509 8,87
+packages/components/src/components/DatePicker/DatePickerInput.tsx
+  h_2139c5e5c94509 76
+packages/components/src/components/Select/components/SelectBase.tsx
+  h_2139c5e5c94509 248
+  s_d139ed32990c48::t_d5dd49ba2a2320 249-250
+packages/components/src/components/ColorPicker/ColorPickerInput.stories.tsx
+  h_2139c5e5c94509 31-39
+packages/components/src/components/ColorPicker/ColorPicker.stories.tsx
+  h_2139c5e5c94509 113
+packages/components/src/components/Select/Select.stories.tsx
+  h_2139c5e5c94509 16-17,233
+packages/components/src/components/Select/styles/select.module.scss
+  h_2139c5e5c94509 65-69,235,242
+packages/components/src/components/ColorPicker/ColorPickerInput.tsx
+  h_2139c5e5c94509 58,69,85
+packages/components/src/components/Select/__tests__/Select.ct.tsx
+  s_fa7cbb2ff9ff6d::t_8a458cd935655a 355
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "2dbaebfb9c66fd1cb629c1116abe64def2a42e15",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_d139ed32990c48": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bb4619e9-8cfc-41e0-b3d0-4c2becfc012a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_fa7cbb2ff9ff6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "50b7e354-ddd4-475a-9cde-6b3ca4026f47",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
