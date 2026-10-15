@@ -77,7 +77,12 @@ export default defineConfig({
     test: {
         environment: 'happy-dom',
         coverage: {
-            exclude: [...configDefaults.exclude, '**.config.{ts,cjs}', '**/**/*.{ct,spec,test,stories}.{ts,tsx}'],
+            exclude: [
+                ...configDefaults.exclude,
+                '**.config.{ts,cjs}',
+                '**/**/*.{ct,spec,test,stories}.{ts,tsx}',
+                '**/__tests__/**',
+            ],
             enabled: true,
             provider: 'v8',
             reporter: ['text', 'lcov', 'html'],
