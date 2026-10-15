@@ -19,6 +19,7 @@ publicHoistPattern:
     - "*eslint*"
     - "*prettier*"
     - "*tailwind*"
+    - "*oxlint*"
 
 confirmModulesPurge: false
 
