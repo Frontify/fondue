@@ -156,10 +156,16 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         : registry.toolbarItems.length > 0;
     const hasToolbar = handle !== null && !readOnly && showEditor && hasToolbarContent;
 
-    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    // On the way down: the engine handles a shortcut on the editable element,
+    // before it bubbles here, and a caret-only change (Mod-b with nothing
+    // selected) must already find the announcement expected.
+    const onKeyDownCapture = (event: KeyboardEvent<HTMLDivElement>): void => {
         if (isCommandKey(event)) {
             expectAnnouncement();
         }
+    };
+
+    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
         if (handle === null) {
             return;
         }
@@ -218,6 +224,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
         <div
             {...focusProps}
+            onKeyDownCapture={onKeyDownCapture}
             onKeyDown={onKeyDown}
             onClick={(event) => {
                 // A control clicked, in the toolbar or a flyout; a click in the

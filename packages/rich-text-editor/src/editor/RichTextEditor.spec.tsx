@@ -691,6 +691,44 @@ describe('the status region', () => {
         }
     });
 
+    // A browser runs microtasks between an event's listeners and happy-dom does
+    // not, so this guards the behaviour but cannot fail the way a browser did.
+    it('reads out a shortcut that only changes what the caret will type', () => {
+        vi.useFakeTimers();
+        try {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[boldPlugin()]} toolbarPlacement="top" />
+            ));
+            ready();
+            paste(container, '<p>text</p>');
+            const status = container.querySelector('[role="status"]');
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            // A bare caret at the end of the text, so the shortcut changes no text.
+            act(() => {
+                const text = editable.querySelector('p')?.firstChild;
+                if (text) {
+                    window.getSelection()?.collapse(text, 4);
+                }
+                window.document.dispatchEvent(new Event('selectionchange'));
+            });
+            // Let the paste's own announcement settle, so only the shortcut is left to read out.
+            act(() => {
+                vi.runAllTimers();
+            });
+
+            const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+            press(editable, 'b', { keyCode: 66, ...mod });
+            act(() => {
+                vi.runAllTimers();
+            });
+
+            expect(status?.textContent).toBe('Bold on');
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     it('stays quiet while the caret only moves', () => {
         vi.useFakeTimers();
         try {

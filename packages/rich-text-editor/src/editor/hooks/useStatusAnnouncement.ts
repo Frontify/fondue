@@ -62,7 +62,11 @@ export const describeChange = (before: Formatting, after: Formatting): string =>
 /**
  * The flag `useStatusAnnouncement` reads: raised by `expectAnnouncement` while
  * a command or an edit is being handled, and dropped again once that event is
- * over (end of the microtask), so only its own changes are spoken.
+ * over, so only its own changes are spoken.
+ *
+ * "Over" is the end of the task, not of a microtask: a browser runs microtasks
+ * between an event's listeners, which would drop the flag the shell raises on
+ * the way down before the engine's own listener handles the key.
  */
 export const useExpectedAnnouncement = (): {
     expectedRef: MutableRefObject<boolean>;
@@ -71,9 +75,9 @@ export const useExpectedAnnouncement = (): {
     const expectedRef = useRef(false);
     const expectAnnouncement = (): void => {
         expectedRef.current = true;
-        queueMicrotask(() => {
+        setTimeout(() => {
             expectedRef.current = false;
-        });
+        }, 0);
     };
     return { expectedRef, expectAnnouncement };
 };
