@@ -1,5 +1,16 @@
 # @frontify/fondue-sdk
 
+## 0.2.5
+
+### Patch Changes
+
+- [#2894](https://github.com/Frontify/fondue/pull/2894) [`4ebcdf2`](https://github.com/Frontify/fondue/commit/4ebcdf243182aa7af5a525632a7b72c68f3198a8) Thanks [@syeo66](https://github.com/syeo66)! - fix(TextInput): adjust 'read only' state
+
+- Updated dependencies [[`4ebcdf2`](https://github.com/Frontify/fondue/commit/4ebcdf243182aa7af5a525632a7b72c68f3198a8), [`1756b4f`](https://github.com/Frontify/fondue/commit/1756b4f053643139f6ab622a7df52c70ce7677c2)]:
+    - @frontify/fondue-components@35.0.0
+    - @frontify/fondue-icons@0.31.0
+    - @frontify/fondue-tokens@5.1.2
+
 ## 0.2.4
 
 ### Patch Changes

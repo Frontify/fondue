@@ -1,5 +1,13 @@
 # @frontify/fondue-rte
 
+## 0.1.13
+
+### Patch Changes
+
+- Updated dependencies [[`4ebcdf2`](https://github.com/Frontify/fondue/commit/4ebcdf243182aa7af5a525632a7b72c68f3198a8), [`1756b4f`](https://github.com/Frontify/fondue/commit/1756b4f053643139f6ab622a7df52c70ce7677c2)]:
+  - @frontify/fondue-components@35.0.0
+  - @frontify/fondue-icons@0.31.0
+
 ## 0.1.12
 
 ### Patch Changes
