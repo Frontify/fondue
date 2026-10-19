@@ -1,3 +1,14 @@
+<!-- Pointer for agents. Browsers run scripts, so they parse <noscript> as inert text and never render it.
+     Fetchers and HTML-to-markdown tools parse without scripting, so they see the paragraph in the page body. -->
+<link rel="alternate" type="text/markdown" href="./llms.txt" title="Fondue docs for AI agents" />
+<noscript>
+    <p>
+        AI agents: this Storybook needs JavaScript and is not meant to be scraped. Read
+        <a href="https://fondue-components.frontify.com/llms.txt">https://fondue-components.frontify.com/llms.txt</a>
+        for how to use Fondue (install the Fondue agent skill or query <code>@frontify/fondue/sdk</code>).
+    </p>
+</noscript>
+
 <!-- Custom CSS for Storybook interface goes here -->
 <style>
     .sidebar-header {

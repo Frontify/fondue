@@ -1,5 +1,179 @@
 # @frontify/fondue
 
+## 13.10.0
+
+### Minor Changes
+
+- [#2881](https://github.com/Frontify/fondue/pull/2881) [`56f03e4`](https://github.com/Frontify/fondue/commit/56f03e4a733e88e21f0b5c9a367b1d7176148355) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat(Notice): add `role` prop to announce urgent notices as `alert` instead of the default `status`
+
+### Patch Changes
+
+- [#2891](https://github.com/Frontify/fondue/pull/2891) [`e384f9b`](https://github.com/Frontify/fondue/commit/e384f9ba46ee3269e10757c5fb787535d9667a70) Thanks [@syeo66](https://github.com/syeo66)! - fix(SegmentedControl): keep bottom border visible on hover for icon-only items
+
+- Updated dependencies [[`99d46d8`](https://github.com/Frontify/fondue/commit/99d46d8bb3a64d7989b4d2af8fe7343ee9fff89c), [`56f03e4`](https://github.com/Frontify/fondue/commit/56f03e4a733e88e21f0b5c9a367b1d7176148355), [`e384f9b`](https://github.com/Frontify/fondue/commit/e384f9ba46ee3269e10757c5fb787535d9667a70), [`cd3ff93`](https://github.com/Frontify/fondue/commit/cd3ff9384b7160ec3ece9b4169026e9a7daf91e5)]:
+  - @frontify/fondue-components@34.0.0
+  - @frontify/fondue-sdk@0.2.4
+  - @frontify/fondue-icons@0.30.0
+  - @frontify/fondue-tokens@5.1.2
+  - @frontify/fondue-rte@0.1.12
+
+## 13.9.0
+
+### Minor Changes
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: update documentation
+
+### Patch Changes
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: improve the component manifest data. Canonical examples of `TextInput`, `Checkbox`, `Label`, `Switch`, `Dialog`, `ThemeProvider`, `Select`, `DatePicker`, `Flyout`, `RadioList`, `Textarea` and `Tooltip` are now copy-pasteable, `Text` lists its props, `Switch` and other labelled inputs list `aria-label`/`aria-labelledby`/`aria-describedby`, `Select` no longer lists internal props or a non-existent `Select.Multi`/`Select.Menu`, and the `Checkbox.onChange` and `Select.onSelect` docs explain how to read the checked state and the `null` value on clear
+
+- [#2878](https://github.com/Frontify/fondue/pull/2878) [`557a49d`](https://github.com/Frontify/fondue/commit/557a49dc1226498e121660acc2869d47610eca48) Thanks [@syeo66](https://github.com/syeo66)! - fix(OrderableList): prevent stale a11y attributes after disabled state
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: icon manifest tags now include curated synonyms (e.g. `settings`/`gear` for `IconCog`, `user` for `IconPerson`, `search` for `IconMagnifier`) and drop filler words like `in` and `to`, and the icon example describes the available sizes
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: clarify setup requirements (React 18, Tailwind v3, `tw-` prefix, PostCSS), document colour pairings and page theming, and fix guide ids and utility class examples in the fondue skill
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: ship the SDK documentation (usage, concepts, reference, examples) as `sdk/*` guides so it renders in Storybook and can be read through `guides.get()`; the fondue skill now reads `sdk/Reference` from the installed version instead of bundling its own reference
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(ThemeProvider): remove `base` from the accepted `theme` values; it only holds the primitive palette and left components without their semantic colours
+
+- [#2870](https://github.com/Frontify/fondue/pull/2870) [`07d0eb8`](https://github.com/Frontify/fondue/commit/07d0eb8b048b119cbc251bd77618b667563e1c3f) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): hide the drag handle until the pointer or keyboard focus is on the row
+
+- [#2871](https://github.com/Frontify/fondue/pull/2871) [`5f55b89`](https://github.com/Frontify/fondue/commit/5f55b892dd6ce8fd9ba9c744c4e95df01cf0e816) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): round the ends of the drop line, and composite the dragged row so the preview keeps its rounded corners
+
+- Updated dependencies [[`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`557a49d`](https://github.com/Frontify/fondue/commit/557a49dc1226498e121660acc2869d47610eca48), [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`cff52fb`](https://github.com/Frontify/fondue/commit/cff52fbfb2349bffae3b498a72a01d959d98942f), [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`9e83eee`](https://github.com/Frontify/fondue/commit/9e83eee7cf76830d5e6e1f28e5dd72fde8036393), [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`07d0eb8`](https://github.com/Frontify/fondue/commit/07d0eb8b048b119cbc251bd77618b667563e1c3f), [`5f55b89`](https://github.com/Frontify/fondue/commit/5f55b892dd6ce8fd9ba9c744c4e95df01cf0e816)]:
+  - @frontify/fondue-components@33.0.2
+  - @frontify/fondue-icons@0.29.1
+  - @frontify/fondue-sdk@0.2.3
+  - @frontify/fondue-tokens@5.1.2
+
+## 13.8.1
+
+### Patch Changes
+
+- [#2866](https://github.com/Frontify/fondue/pull/2866) [`f8a87bd`](https://github.com/Frontify/fondue/commit/f8a87bd1ab2ec860a02a8b67c06ef1e0fa9c7b8a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Select): filter `Select.Combobox` items inside `Select.Group` and hide groups without matches, so selecting a filtered grouped item works
+
+- [#2867](https://github.com/Frontify/fondue/pull/2867) [`9e286b1`](https://github.com/Frontify/fondue/commit/9e286b180734d5aa53922fce34d2f6b063f607e6) Thanks [@syeo66](https://github.com/syeo66)! - feat(Dialog): enable container prop
+
+- [#2869](https://github.com/Frontify/fondue/pull/2869) [`64345cf`](https://github.com/Frontify/fondue/commit/64345cfe58d90fdb636e3830974265d76d816acc) Thanks [@syeo66](https://github.com/syeo66)! - fix(TextInput): hide the visual placeholder from screen readers so the placeholder is not announced twice
+
+- Updated dependencies [[`f8a87bd`](https://github.com/Frontify/fondue/commit/f8a87bd1ab2ec860a02a8b67c06ef1e0fa9c7b8a), [`9e286b1`](https://github.com/Frontify/fondue/commit/9e286b180734d5aa53922fce34d2f6b063f607e6), [`64345cf`](https://github.com/Frontify/fondue/commit/64345cfe58d90fdb636e3830974265d76d816acc)]:
+  - @frontify/fondue-components@33.0.1
+
+## 13.8.0
+
+### Minor Changes
+
+- [#2853](https://github.com/Frontify/fondue/pull/2853) [`b3f18e2`](https://github.com/Frontify/fondue/commit/b3f18e25aed00ee5b27fc348ac8256abacc04a25) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Tree): export the Tree prop and callback types (`TreeDropCandidate`, `TreeMoveInfo`, `TreeRootProps` and the rest) from the package entry
+
+### Patch Changes
+
+- [#2863](https://github.com/Frontify/fondue/pull/2863) [`1ba4166`](https://github.com/Frontify/fondue/commit/1ba4166cafcf628a32b412be17c2d568cfa93570) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select.Multiple): respect disable state in badges
+
+- [#2864](https://github.com/Frontify/fondue/pull/2864) [`60980ec`](https://github.com/Frontify/fondue/commit/60980ec64eeee58b45e0a82f65d088faca2683a9) Thanks [@syeo66](https://github.com/syeo66)! - refactor(useEditorResize): stop forcing layout re-evaluations
+
+- [#2855](https://github.com/Frontify/fondue/pull/2855) [`4fda25c`](https://github.com/Frontify/fondue/commit/4fda25c441c8d123fff4022f8ecfc15cfef931e6) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): give the loading row the same transparent border as real rows and start the drop line under the target chevron, both were 2px off
+
+- Updated dependencies [[`1ba4166`](https://github.com/Frontify/fondue/commit/1ba4166cafcf628a32b412be17c2d568cfa93570), [`60980ec`](https://github.com/Frontify/fondue/commit/60980ec64eeee58b45e0a82f65d088faca2683a9), [`b3f18e2`](https://github.com/Frontify/fondue/commit/b3f18e25aed00ee5b27fc348ac8256abacc04a25), [`4fda25c`](https://github.com/Frontify/fondue/commit/4fda25c441c8d123fff4022f8ecfc15cfef931e6), [`0b47424`](https://github.com/Frontify/fondue/commit/0b47424d1102807a48f22333e37b5cb6449de87d)]:
+  - @frontify/fondue-components@33.0.0
+  - @frontify/fondue-rte@0.1.11
+  - @frontify/fondue-icons@0.29.0
+
+## 13.7.10
+
+### Patch Changes
+
+- [#2842](https://github.com/Frontify/fondue/pull/2842) [`2a8b2c8`](https://github.com/Frontify/fondue/commit/2a8b2c8339e83f80d034c9781e39b8c209c066b0) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: missing title attribute on table header
+
+- [#2848](https://github.com/Frontify/fondue/pull/2848) [`394d462`](https://github.com/Frontify/fondue/commit/394d462a0ff9d178607fbd32d7cf7d86beb60d48) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adjust tree styling
+
+- [#2841](https://github.com/Frontify/fondue/pull/2841) [`b5b8684`](https://github.com/Frontify/fondue/commit/b5b8684aebbe36535bc8aec99ec5505bf88f2604) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add patch for radix scrollarea to avoid bug during minification
+
+- [#2847](https://github.com/Frontify/fondue/pull/2847) [`bab07c2`](https://github.com/Frontify/fondue/commit/bab07c2f5b12c0f39e82107f0cf52a05e2d9a0f2) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat(Select): add indeterminate values to the multi-select variants
+
+  `Select.Multi` and `Select.Combobox.Multiple` accept `indeterminateValues` for values that apply to
+  only some of the records being edited. Those options render a dash instead of a checkmark and the
+  field gains a "2 mixed" badge next to the selection badges.
+
+  The prop is purely visual and never reported by `onSelect`. Once the user selects such a value,
+  remove it from `indeterminateValues`; otherwise the dash returns as soon as it is deselected again.
+
+  In a narrow field the selection badges collapse into a "3 selected" badge instead of a lone clipped
+  badge, and into a single "Mixed" badge when not even the counts fit next to each other.
+
+- Updated dependencies [[`2a8b2c8`](https://github.com/Frontify/fondue/commit/2a8b2c8339e83f80d034c9781e39b8c209c066b0), [`394d462`](https://github.com/Frontify/fondue/commit/394d462a0ff9d178607fbd32d7cf7d86beb60d48), [`b5b8684`](https://github.com/Frontify/fondue/commit/b5b8684aebbe36535bc8aec99ec5505bf88f2604), [`bab07c2`](https://github.com/Frontify/fondue/commit/bab07c2f5b12c0f39e82107f0cf52a05e2d9a0f2)]:
+  - @frontify/fondue-components@32.1.0
+  - @frontify/fondue-sdk@0.2.2
+
+## 13.7.9
+
+### Patch Changes
+
+- [#2839](https://github.com/Frontify/fondue/pull/2839) [`3033a66`](https://github.com/Frontify/fondue/commit/3033a66836b8bd8f01c971f26e7d6c553e306240) Thanks [@syeo66](https://github.com/syeo66)! - fix(SegmentedControl): prevent Firefox from collapsing icon only widths
+
+- Updated dependencies [[`3033a66`](https://github.com/Frontify/fondue/commit/3033a66836b8bd8f01c971f26e7d6c553e306240), [`65b05b3`](https://github.com/Frontify/fondue/commit/65b05b323bcd2d6ae6b087eba513e170010a0fdd)]:
+  - @frontify/fondue-components@32.0.3
+  - @frontify/fondue-icons@0.28.2
+
+## 13.7.8
+
+### Patch Changes
+
+- [#2831](https://github.com/Frontify/fondue/pull/2831) [`9fd6a43`](https://github.com/Frontify/fondue/commit/9fd6a436b253530d1b7782a358ccccfaad1ecc05) Thanks [@noahwaldner](https://github.com/noahwaldner)! - pathc: update vite version to 6.x to patch cve
+
+- Updated dependencies [[`507b2ca`](https://github.com/Frontify/fondue/commit/507b2ca71658aa4b03d7f8fb8e74e8c71c554772), [`c75ce34`](https://github.com/Frontify/fondue/commit/c75ce342ae4bbdb3ba6f390c1f7bb09ac99809de), [`9fd6a43`](https://github.com/Frontify/fondue/commit/9fd6a436b253530d1b7782a358ccccfaad1ecc05)]:
+  - @frontify/fondue-tokens@5.1.2
+  - @frontify/fondue-icons@0.28.1
+  - @frontify/fondue-components@32.0.2
+  - @frontify/fondue-charts@8.0.2
+  - @frontify/fondue-rte@0.1.10
+  - @frontify/fondue-sdk@0.2.1
+
+## 13.7.7
+
+### Patch Changes
+
+- [#2829](https://github.com/Frontify/fondue/pull/2829) [`611afc2`](https://github.com/Frontify/fondue/commit/611afc25cd5ed6051e61ce6965b054cbd211b659) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: minor style adjustments in card component
+
+- [#2828](https://github.com/Frontify/fondue/pull/2828) [`e151937`](https://github.com/Frontify/fondue/commit/e15193701148d060c9ba307fdc2b2d123a7051c1) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adjust styling to have background when sticky and pill are combined
+
+- Updated dependencies [[`611afc2`](https://github.com/Frontify/fondue/commit/611afc25cd5ed6051e61ce6965b054cbd211b659), [`e151937`](https://github.com/Frontify/fondue/commit/e15193701148d060c9ba307fdc2b2d123a7051c1)]:
+  - @frontify/fondue-components@32.0.1
+
+## 13.7.6
+
+### Patch Changes
+
+- [#2827](https://github.com/Frontify/fondue/pull/2827) [`39ea4e6`](https://github.com/Frontify/fondue/commit/39ea4e61b222c1522571724ab5c555b87fffa202) Thanks [@syeo66](https://github.com/syeo66)! - feat(SegmentedControl & RadioList): add aria props for improved a11y handling
+
+- [#2821](https://github.com/Frontify/fondue/pull/2821) [`d558c6b`](https://github.com/Frontify/fondue/commit/d558c6bb8df7aa81212be84cf0ad063baa4c2dce) Thanks [@syeo66](https://github.com/syeo66)! - chore(Select): improve error a11y
+
+- Updated dependencies [[`39ea4e6`](https://github.com/Frontify/fondue/commit/39ea4e61b222c1522571724ab5c555b87fffa202), [`d558c6b`](https://github.com/Frontify/fondue/commit/d558c6bb8df7aa81212be84cf0ad063baa4c2dce), [`4c5229a`](https://github.com/Frontify/fondue/commit/4c5229aeb9eb0b101ad2cdac2d9fcefdeaeda706), [`113d84b`](https://github.com/Frontify/fondue/commit/113d84b4f9fc160faebe0f0f488e11cf6712665a)]:
+  - @frontify/fondue-components@32.0.0
+  - @frontify/fondue-icons@0.28.0
+  - @frontify/fondue-rte@0.1.9
+
+## 13.7.5
+
+### Patch Changes
+
+- [#2819](https://github.com/Frontify/fondue/pull/2819) [`cacf33d`](https://github.com/Frontify/fondue/commit/cacf33d1a1f12b735f055377175adae2b74cb813) Thanks [@syeo66](https://github.com/syeo66)! - feat(lang): expose lang prop in appropriate components
+
+- [#2816](https://github.com/Frontify/fondue/pull/2816) [`e0d89ff`](https://github.com/Frontify/fondue/commit/e0d89ff68f4f7cf88ab54904e23c207cd83a6de1) Thanks [@syeo66](https://github.com/syeo66)! - fix(Button): icon hover state colors
+
+- [#2817](https://github.com/Frontify/fondue/pull/2817) [`e762315`](https://github.com/Frontify/fondue/commit/e76231585ea57f564cccc3f1c8cc31974c11a7fd) Thanks [@jcosta33](https://github.com/jcosta33)! - Update runtime dependencies to their latest patch and minor versions. Radix primitives pick up fixes for broken Dialog ARIA references when no title or description is rendered, Tooltip children mounting twice, `Slider.onValueCommit` not firing when thumbs cross, and value updates on form reset for RadioGroup, Slider, Select and Switch. `@react-aria/*` and `@react-stately/*` move to their latest patches, `downshift` gains a React Compiler compatibility fix, and `react-day-picker`, `react-colorful`, `@headless-tree/*` and `motion` move to their latest minors.
+
+- [#2810](https://github.com/Frontify/fondue/pull/2810) [`84272da`](https://github.com/Frontify/fondue/commit/84272dab09bc8d13941c81d073145b81dcb871ea) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: prepare for react 19 compatibility
+
+- [#2818](https://github.com/Frontify/fondue/pull/2818) [`72028b1`](https://github.com/Frontify/fondue/commit/72028b1545b9f9810f48b025033152ceaca55fac) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tabs): allow Tabs to be disabled after init
+
+- Updated dependencies [[`8d06f91`](https://github.com/Frontify/fondue/commit/8d06f91aa7ab63edd2bff2a2c8dcd98dded4213d), [`cacf33d`](https://github.com/Frontify/fondue/commit/cacf33d1a1f12b735f055377175adae2b74cb813), [`e0d89ff`](https://github.com/Frontify/fondue/commit/e0d89ff68f4f7cf88ab54904e23c207cd83a6de1), [`82e01df`](https://github.com/Frontify/fondue/commit/82e01df7936e9b12e52f52e9b5304f17b252e3c0), [`e762315`](https://github.com/Frontify/fondue/commit/e76231585ea57f564cccc3f1c8cc31974c11a7fd), [`84272da`](https://github.com/Frontify/fondue/commit/84272dab09bc8d13941c81d073145b81dcb871ea), [`72028b1`](https://github.com/Frontify/fondue/commit/72028b1545b9f9810f48b025033152ceaca55fac)]:
+  - @frontify/fondue-charts@8.0.1
+  - @frontify/fondue-components@31.2.0
+  - @frontify/fondue-rte@0.1.8
+  - @frontify/fondue-tokens@5.1.1
+  - @frontify/fondue-icons@0.27.1
+
 ## 13.7.4
 
 ### Patch Changes

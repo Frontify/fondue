@@ -22,8 +22,8 @@ describe('useDateRange', () => {
             const { result } = renderHook(() => useDateRange(MARCH_RANGE));
 
             expect(result.current.selectedDateRange).toStrictEqual({
-                from: new Date(Date.UTC(2025, 2, 1)),
-                to: new Date(Date.UTC(2025, 2, 15)),
+                from: new Date(2025, 2, 1),
+                to: new Date(2025, 2, 15),
             });
         });
 
@@ -32,8 +32,8 @@ describe('useDateRange', () => {
 
             act(() => {
                 result.current.handleSelect(
-                    { from: new Date(Date.UTC(2025, 4, 1)), to: new Date(Date.UTC(2025, 4, 1)) },
-                    new Date(Date.UTC(2025, 4, 1)),
+                    { from: new Date(2025, 4, 1), to: new Date(2025, 4, 1) },
+                    new Date(2025, 4, 1),
                     {},
                     {} as React.MouseEvent,
                 );
@@ -41,16 +41,16 @@ describe('useDateRange', () => {
 
             act(() => {
                 result.current.handleSelect(
-                    { from: new Date(Date.UTC(2025, 4, 1)), to: new Date(Date.UTC(2025, 4, 10)) },
-                    new Date(Date.UTC(2025, 4, 10)),
+                    { from: new Date(2025, 4, 1), to: new Date(2025, 4, 10) },
+                    new Date(2025, 4, 10),
                     {},
                     {} as React.MouseEvent,
                 );
             });
 
             expect(result.current.selectedDateRange).toStrictEqual({
-                from: new Date(Date.UTC(2025, 4, 1)),
-                to: new Date(Date.UTC(2025, 4, 10)),
+                from: new Date(2025, 4, 1),
+                to: new Date(2025, 4, 10),
             });
         });
     });
@@ -62,8 +62,8 @@ describe('useDateRange', () => {
 
             act(() => {
                 result.current.handleSelect(
-                    { from: new Date(Date.UTC(2025, 1, 20)), to: new Date(Date.UTC(2025, 2, 15)) },
-                    new Date(Date.UTC(2025, 1, 20)),
+                    { from: new Date(2025, 1, 20), to: new Date(2025, 2, 15) },
+                    new Date(2025, 1, 20),
                     {},
                     {} as React.MouseEvent,
                 );
@@ -82,8 +82,8 @@ describe('useDateRange', () => {
 
             act(() => {
                 result.current.handleSelect(
-                    { from: new Date(Date.UTC(2025, 0, 5)), to: new Date(Date.UTC(2025, 0, 5)) },
-                    new Date(Date.UTC(2025, 0, 5)),
+                    { from: new Date(2025, 0, 5), to: new Date(2025, 0, 5) },
+                    new Date(2025, 0, 5),
                     {},
                     {} as React.MouseEvent,
                 );
@@ -93,8 +93,8 @@ describe('useDateRange', () => {
 
             act(() => {
                 result.current.handleSelect(
-                    { from: new Date(Date.UTC(2025, 0, 5)), to: new Date(Date.UTC(2025, 0, 25)) },
-                    new Date(Date.UTC(2025, 0, 25)),
+                    { from: new Date(2025, 0, 5), to: new Date(2025, 0, 25) },
+                    new Date(2025, 0, 25),
                     {},
                     {} as React.MouseEvent,
                 );
@@ -113,8 +113,8 @@ describe('useDateRange', () => {
 
             act(() => {
                 result.current.handleSelect(
-                    { from: new Date(Date.UTC(2025, 0, 5)), to: new Date(Date.UTC(2025, 0, 5)) },
-                    new Date(Date.UTC(2025, 0, 5)),
+                    { from: new Date(2025, 0, 5), to: new Date(2025, 0, 5) },
+                    new Date(2025, 0, 5),
                     {},
                     {} as React.MouseEvent,
                 );
@@ -122,8 +122,8 @@ describe('useDateRange', () => {
 
             act(() => {
                 result.current.handleSelect(
-                    { from: new Date(Date.UTC(2025, 0, 5)), to: new Date(Date.UTC(2025, 0, 5)) },
-                    new Date(Date.UTC(2025, 0, 5)),
+                    { from: new Date(2025, 0, 5), to: new Date(2025, 0, 5) },
+                    new Date(2025, 0, 5),
                     {},
                     {} as React.MouseEvent,
                 );
@@ -142,8 +142,8 @@ describe('useDateRange', () => {
 
             act(() => {
                 result.current.handleSelect(
-                    { from: new Date(Date.UTC(2025, 0, 5)) },
-                    new Date(Date.UTC(2025, 0, 5)),
+                    { from: new Date(2025, 0, 5) },
+                    new Date(2025, 0, 5),
                     {},
                     {} as React.MouseEvent,
                 );
@@ -158,8 +158,8 @@ describe('useDateRange', () => {
             });
 
             expect(result.current.selectedDateRange).toStrictEqual({
-                from: new Date(Date.UTC(2025, 2, 1)),
-                to: new Date(Date.UTC(2025, 2, 15)),
+                from: new Date(2025, 2, 1),
+                to: new Date(2025, 2, 15),
             });
 
             rerender({
@@ -170,8 +170,8 @@ describe('useDateRange', () => {
             });
 
             expect(result.current.selectedDateRange).toStrictEqual({
-                from: new Date(Date.UTC(2025, 5, 1)),
-                to: new Date(Date.UTC(2025, 5, 30)),
+                from: new Date(2025, 5, 1),
+                to: new Date(2025, 5, 30),
             });
         });
     });

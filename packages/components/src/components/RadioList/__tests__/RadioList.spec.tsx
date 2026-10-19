@@ -185,4 +185,60 @@ describe('RadioList component', () => {
 
         expect(container.querySelector('.custom-wrapper')).toBeInTheDocument();
     });
+
+    it('should name the group with aria-label', () => {
+        render(createRadioList({ 'aria-label': 'Visibility' }));
+
+        expect(screen.getByRole('radiogroup', { name: 'Visibility' })).toBeInTheDocument();
+    });
+
+    it('should name the group with aria-labelledby', () => {
+        render(
+            <>
+                <span id="visibility-label">Visibility</span>
+                {createRadioList({ 'aria-labelledby': 'visibility-label' })}
+            </>,
+        );
+
+        expect(screen.getByRole('radiogroup', { name: 'Visibility' })).toBeInTheDocument();
+    });
+
+    it('should describe the group with aria-describedby', () => {
+        render(
+            <>
+                {createRadioList({ 'aria-label': 'Visibility', 'aria-describedby': 'visibility-hint' })}
+                <span id="visibility-hint">Anyone with the link can view</span>
+            </>,
+        );
+
+        expect(screen.getByRole('radiogroup')).toHaveAccessibleDescription('Anyone with the link can view');
+    });
+
+    it('should not set aria-describedby when none is provided', () => {
+        render(createRadioList({ 'aria-label': 'Visibility' }));
+
+        expect(screen.getByRole('radiogroup')).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should forward id to the group', () => {
+        render(createRadioList({ id: 'visibility-group' }));
+
+        expect(screen.getByRole('radiogroup')).toHaveAttribute('id', 'visibility-group');
+    });
+
+    it('should forward the aria attributes when rendered with asChild', () => {
+        render(
+            <RadioList.Root asChild aria-label="Visibility" aria-describedby="visibility-hint">
+                <div>
+                    <RadioList.RadioButton id="option-1" value="1" />
+                    <Label htmlFor="option-1">Option 1</Label>
+                </div>
+            </RadioList.Root>,
+        );
+
+        expect(screen.getByRole('radiogroup', { name: 'Visibility' })).toHaveAttribute(
+            'aria-describedby',
+            'visibility-hint',
+        );
+    });
 });

@@ -47,12 +47,14 @@ export const Text: Story = {
             canonical: true,
         },
     },
+    render: (args) => <TextInput {...args} />,
 };
 
 export const Password: Story = {
     args: {
         type: 'password',
     },
+    render: (args) => <TextInput {...args} />,
 };
 
 export const Disabled: Story = {

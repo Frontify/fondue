@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .root {
-    &[data-accordion-padding="none"] {
+    &[data-accordion-padding='none'] {
         --accordion-vertical-padding: 0px;
         --accordion-horizontal-padding: 0px;
     }
@@ -21,7 +21,7 @@
         --accordion-horizontal-padding: var(--spacing-x-large);
     }
 
-    &[data-border="true"] {
+    &[data-border='true'] {
         border-bottom: var(--border-width-default) solid var(--color-line-subtle);
         border-top: var(--border-width-default) solid var(--color-line-subtle);
     }
@@ -52,6 +52,10 @@
             border-radius: var(--border-radius-large);
             background-color: var(--color-surface-dim);
             transition: background-color 150ms ease;
+        }
+
+        &[data-sticky='true'] .accordionHeader {
+            background-color: var(--color-surface-dim);
         }
 
         .accordionItem:not([data-disabled]) .accordionHeader:hover {
@@ -108,7 +112,7 @@
     min-width: fit-content;
     display: grid;
     grid-template-columns: auto 1rem 1fr max-content;
-    grid-template-areas: "content caret slot actions";
+    grid-template-areas: 'content caret slot actions';
     gap: 0.75rem;
 
     & > .accordionSlot {
@@ -150,7 +154,7 @@
     padding: var(--accordion-vertical-padding) var(--accordion-horizontal-padding);
 
     &[data-state='open'],
-    &:hover {
+    &:not([data-disabled]):hover {
         color: var(--color-primary-default);
     }
 

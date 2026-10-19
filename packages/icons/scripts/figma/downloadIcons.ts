@@ -16,14 +16,17 @@ export const downloadIcons = async (
 ) => {
     const ids = Object.keys(icons);
     const chunks = chunk(ids, 500);
-    const images: Record<string, string> = {};
+    const images: Record<string, string | null> = {};
 
     for (const chunk of chunks) {
-        const imagesResponse = await api.getImage(FIGMA_ICON_FILE_ID, {
-            ids: chunk.join(','),
-            format: 'svg',
-            scale: 1,
-        });
+        const imagesResponse = await api.getImages(
+            { file_key: FIGMA_ICON_FILE_ID },
+            {
+                ids: chunk.join(','),
+                format: 'svg',
+                scale: 1,
+            },
+        );
 
         for (const key in imagesResponse.images) {
             images[key] = imagesResponse.images[key];

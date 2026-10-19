@@ -72,12 +72,16 @@ export const WithLabel: Story = {
             canonical: true,
         },
     },
+    args: {
+        // The visible label names the switch, so the default aria-label from meta args is not needed
+        'aria-label': undefined,
+    },
     render: (args) => (
         <>
-            <Label id="label" htmlFor="switch" required={args.required}>
-                Switch
+            <Label id="airplane-mode-label" htmlFor="airplane-mode">
+                Airplane mode
             </Label>
-            <Switch {...args} id="switch" aria-labelledby="label" />
+            <Switch {...args} aria-labelledby="airplane-mode-label" />
         </>
     ),
 };

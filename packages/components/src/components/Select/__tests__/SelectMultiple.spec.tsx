@@ -162,4 +162,60 @@ describe('SelectMultiple', () => {
             expect(onSelect).toHaveBeenCalledWith([]);
         });
     });
+
+    describe('indeterminate values', () => {
+        const getOptionRow = (name: string): HTMLElement => screen.getByRole('option', { name });
+
+        it('marks partially applied options as indeterminate', async () => {
+            const user = userEvent.setup();
+            renderMultiSelect({ value: ['apple'], indeterminateValues: ['banana'] });
+
+            await user.click(screen.getByRole('combobox'));
+
+            expect(getOptionRow('Banana')).toHaveAttribute('data-indeterminate', 'true');
+            expect(getOptionRow('Apple')).toHaveAttribute('data-indeterminate', 'false');
+            expect(getOptionRow('Cherry')).toHaveAttribute('data-indeterminate', 'false');
+        });
+
+        it('selects a partially applied option on the first click', async () => {
+            const onSelect = vi.fn();
+            const user = userEvent.setup();
+            renderMultiSelect({ defaultValue: [], indeterminateValues: ['banana', 'cherry'], onSelect });
+
+            await user.click(screen.getByRole('combobox'));
+            await user.click(getMenuOption('Banana'));
+
+            expect(onSelect).toHaveBeenCalledWith(['banana']);
+            expect(getOptionRow('Banana')).toHaveAttribute('data-selected', 'true');
+            expect(getOptionRow('Banana')).toHaveAttribute('data-indeterminate', 'false');
+        });
+
+        it('shows the dash again after deselecting while the consumer still lists the value', async () => {
+            const onSelect = vi.fn();
+            const user = userEvent.setup();
+            renderMultiSelect({ defaultValue: [], indeterminateValues: ['banana'], onSelect });
+
+            await user.click(screen.getByRole('combobox'));
+            await user.click(getMenuOption('Banana'));
+            await user.click(getMenuOption('Banana'));
+
+            expect(onSelect).toHaveBeenLastCalledWith([]);
+            expect(getOptionRow('Banana')).toHaveAttribute('data-selected', 'false');
+            // Dropping a value the user has touched is the consumer's job
+            expect(getOptionRow('Banana')).toHaveAttribute('data-indeterminate', 'true');
+        });
+
+        it('counts the partially applied values in a badge next to the selection badges', () => {
+            renderMultiSelect({ value: ['apple'], indeterminateValues: ['banana', 'cherry'] });
+
+            expect(screen.getByTestId('fondue-select-mixed-count')).toHaveTextContent('2 mixed');
+            expect(getDismissableBadges().map((badge) => badge.textContent)).toEqual(['Apple']);
+        });
+
+        it('is not empty when only partially applied values are present', () => {
+            renderMultiSelect({ value: [], indeterminateValues: ['banana'] });
+
+            expect(screen.getByRole('combobox')).toHaveAttribute('data-empty', 'false');
+        });
+    });
 });

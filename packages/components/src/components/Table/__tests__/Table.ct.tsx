@@ -457,6 +457,34 @@ test('should set title when content is truncated', async ({ mount }) => {
     );
 });
 
+test('should set title on sortable header cell when content is truncated', async ({ mount }) => {
+    const wrapper = await mount(
+        <div style={{ width: '200px' }}>
+            <Table.Root layout="fixed" aria-label="Table" data-test-id="table-root">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell width="100px" truncate onSortChange={() => {}}>
+                            This is a very long header cell content that should definitely get truncated
+                        </Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    <Table.Row>
+                        <Table.RowCell>Test</Table.RowCell>
+                    </Table.Row>
+                </Table.Body>
+            </Table.Root>
+        </div>,
+    );
+    const component = wrapper.getByTestId('table-root');
+
+    const headerCellText = component.locator('th button span');
+    await expect(headerCellText).toHaveAttribute(
+        'title',
+        'This is a very long header cell content that should definitely get truncated',
+    );
+});
+
 test('should support legacy sticky="head" prop', async ({ mount }) => {
     const wrapper = await mount(
         <Table.Root sticky="head" aria-label="Table" data-test-id="table-root">

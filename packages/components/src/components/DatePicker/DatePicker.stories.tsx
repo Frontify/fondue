@@ -41,6 +41,7 @@ export const SingleDate: Story = {
         },
     },
     args: {},
+    render: (args) => <DatePicker {...args} />,
 };
 
 export const ControlledSingleDate: Story = {

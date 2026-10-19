@@ -10,7 +10,7 @@ Use `@frontify/fondue/sdk` as the source of truth for every Fondue question. Nev
 
 **Runs against the project's locally installed Fondue.** Invoke `node` from the project root (or a subdirectory) so `@frontify/fondue` resolves from `node_modules` — results reflect the exact version this project depends on, not the version the skill was authored against.
 
-> Authored against `@frontify/fondue@13.7.2`. If the project's installed version differs, this document may be out of sync — trust what the SDK actually returns over anything written here.
+> Authored against `@frontify/fondue@13.9.0`. If the project's installed version differs, this document may be out of sync — trust what the SDK actually returns over anything written here.
 
 ## Verify the SDK is available
 
@@ -29,13 +29,13 @@ pnpm add @frontify/fondue   # or npm i / yarn add
 The SDK is a synchronous, zero-I/O ES module that resolves from the user's project. Three singletons share the same query surface:
 
 ```ts
-import { components, tokens, guides } from '@frontify/fondue/sdk';
+import { components, tokens, guides } from "@frontify/fondue/sdk";
 
 // Same shape on each domain:
 components.list();
-components.get('Button'); // ComponentNode | undefined (never throws)
-components.has('Button'); // boolean
-components.where({ text: 'dropdown' });
+components.get("Button"); // ComponentNode | undefined (never throws)
+components.has("Button"); // boolean
+components.where({ text: "dropdown" });
 components.size; // number
 ```
 
@@ -44,7 +44,7 @@ components.size; // number
 Nodes have **scalar fields** (read as properties) and **graph edges** (call as methods):
 
 ```ts
-const button = components.get('Button');
+const button = components.get("Button");
 button?.importStatement; // scalar
 button?.props; // scalar (array)
 button?.category(); // edge → ComponentFacetNode { name, list, where, … }
@@ -77,7 +77,7 @@ EOF
 
 Always emit `JSON.stringify(...)` so the response is parseable. Never `console.log(node)` directly — facet methods serialize as `[Function]`.
 
-For the formal contract (every filter clause, node shape, facet method), see [`reference.md`](./reference.md).
+For the formal contract (every filter clause, node shape, facet method), read the `sdk/Reference` guide — see [Going deeper](#going-deeper).
 
 ---
 
@@ -85,23 +85,25 @@ For the formal contract (every filter clause, node shape, facet method), see [`r
 
 Read the canonical setup prose from the SDK rather than paraphrasing — the steps change between releases (font URLs, package layout, theme provider API).
 
-```bash
-node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.get('getting-started')?.content))"
-```
-
-For upgrades:
-
-```bash
-node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.get('upgrading')?.content))"
-```
-
-To discover other bundled guides:
+Guide ids are path-style (`<group>/<Name>`, case-sensitive) and can change between releases, so list them first:
 
 ```bash
 node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(JSON.stringify(guides.list().map((g)=>({id:g.id,title:g.title})))))"
 ```
 
-The output is the same markdown the Storybook docs render. Use it as the source for token imports, component-style imports, font face definitions, the Tailwind preset, `ThemeProvider`.
+Then read the ones you need. For a new project, read both setup and styling:
+
+```bash
+node -e "import('@frontify/fondue/sdk').then(({guides}) => ['getting-started/Setup','usage/Styling'].forEach((id) => console.log(guides.get(id)?.content ?? 'missing guide: ' + id)))"
+```
+
+For upgrades:
+
+```bash
+node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.get('development/Upgrading')?.content))"
+```
+
+The output is the same markdown the Storybook docs render. Use it as the source for peer dependency versions (React, Tailwind), token imports, component-style imports, font face definitions, the Tailwind preset and its `tw-` prefix, `ThemeProvider`, and which colour tokens to use for text and surfaces.
 
 ## Workflow 2 — Finding a component
 
@@ -122,9 +124,9 @@ EOF
 Narrow by category or tag when the use case maps cleanly:
 
 ```ts
-components.where({ category: 'overlay', status: 'released' });
-components.where({ tag: 'cta' });
-components.where({ category: 'input', tag: 'cta' });
+components.where({ category: "overlay", status: "released" });
+components.where({ tag: "cta" });
+components.where({ category: "input", tag: "cta" });
 ```
 
 Once you have a candidate, pull the recommendation shape:
@@ -151,8 +153,8 @@ EOF
 **Icons** live in the components graph under `category: 'icon'`. They carry `status: 'released'` but have empty `props`, empty `related()`, and `instructions: null` — don't probe those fields. Find them with:
 
 ```ts
-components.where({ category: 'icon', tag: 'arrow' });
-components.get('IconAdobeCreativeCloud')?.importStatement;
+components.where({ category: "icon", tag: "arrow" });
+components.get("IconAdobeCreativeCloud")?.importStatement;
 ```
 
 When nothing matches:
@@ -169,24 +171,28 @@ Two layers exist:
 - `tokens.utilities` — composed Tailwind utilities (typography classes like `body-large-strong`) bundling multiple token references.
 
 ```ts
-tokens.where({ text: 'primary' });
-tokens.where({ category: 'colors', themeable: true });
-tokens.where({ keyPathStartsWith: 'colors.text' });
-tokens.type('color')?.where({ themeable: true });
+tokens.where({ text: "primary" });
+tokens.where({ category: "colors", themeable: true });
+tokens.where({ keyPathStartsWith: "colors.surface" }); // surface-default, surface-dim, …
+tokens.type("color")?.where({ themeable: true });
 
-const t = tokens.get('color-charts-primary-default');
+const t = tokens.get("color-charts-primary-default");
 t?.value; // 'var(--color-charts-primary-default)' — a reference, never a resolved color
 t?.cssVariable; // 'var(--color-charts-primary-default)'
 t?.tailwindClass; // '*-charts-primary' — '*' stands in for the utility prefix (bg-, text-, border-, …)
 t?.themeable; // true
 
 // Typography: always use the utility class, not raw font tokens
-tokens.utilities.where({ keyPathStartsWith: 'utilities.text' });
+tokens.utilities.where({ keyPathStartsWith: "utilities.text" });
+tokens.utilities.get("utilities-text-body-large-strong")?.tailwindClass; // 'body-large-strong' — no prefix
 ```
+
+`tailwindClass` never includes the consumer's prefix. Add the prefix the project configures in `tailwind.config.js` (the Fondue guides use `tw-`): `*-surface` → `tw-bg-surface`, `body-large-strong` → `tw-body-large-strong`.
 
 Rules:
 
 - Prefer `themeable: true` tokens for any user-facing surface so dark mode and theming work out of the box.
+- Colour roles are not brand colours: `primary` is the neutral high-contrast foreground, `surface` the background. Default text is `primary` on `surface` (`tw-text-primary tw-bg-surface`); muted text is `secondary`. `*-on-<role>` colours only go on top of the matching `<role>` fill — e.g. `secondary-on-secondary` on `surface` is white on white.
 - Prefer the Tailwind class when the project uses `@frontify/fondue/tokens/tailwind`; prefer the CSS variable otherwise.
 - For typography, recommend the **utility class** — not raw font-size / line-height / weight tokens.
 - Never invent token ids. If `tokens.get(id)` returns `undefined`, search again.
@@ -203,9 +209,22 @@ Rules:
 | Hardcoding a hex / px value in custom code                                  | `tokens.where({ text: '<intent>' })` — most "obvious" values have a token                                    |
 | Treating icons like normal components, reading `props` / `instructions`     | Detect with `node.category().name === 'icon'`. Icons have empty `props`, `related`, and null `instructions`. |
 | Importing `Button` from the wrong path                                      | `components.get('Button')?.importStatement` is authoritative                                                 |
-| Suggesting setup steps from memory                                          | `guides.get('getting-started')?.content` — always the live text                                              |
+| Suggesting setup steps from memory                                          | `guides.get('getting-started/Setup')?.content` — always the live text; `guides.list()` for other ids         |
+| Guessing guide ids (`'getting-started'`, `'upgrading'`)                     | Ids are path-style (`'getting-started/Setup'`); run `guides.list()` first                                    |
+| Using a `tailwindClass` as-is (`body-large-strong`, `*-surface`)            | Add the project's prefix and utility: `tw-body-large-strong`, `tw-bg-surface`                                |
+| Text in an `on-*` colour on a surface (`tw-text-secondary-on-secondary`)    | `on-*` colours only go on their matching fill; text on a surface is `tw-text-primary` / `tw-text-secondary`  |
 | `console.log(node)` instead of `JSON.stringify`                             | Facet methods serialize as `[Function]`; always stringify before logging                                     |
 
 ## Going deeper
 
-[`reference.md`](./reference.md) is the formal contract: every export, every filter clause per domain, every node and facet type, error semantics. Load it when you need to verify a filter clause is valid (`ComponentFilter`, `TokenFilter`, `GuideFilter`) or that a method exists. Prefer it over web lookups or upstream GitHub.
+The SDK documents itself. These guides describe the SDK of the Fondue version installed in the project, so they never fall behind:
+
+```bash
+node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.get('sdk/Reference')?.content))"
+```
+
+- `sdk/Reference` — the formal contract: every export, every filter clause per domain, every node and facet type, error semantics. Load it when you need to verify a filter clause is valid (`ComponentFilter`, `TokenFilter`, `GuideFilter`) or that a method exists.
+- `sdk/Concepts` — nodes vs. facets vs. plain arrays.
+- `sdk/Examples` — query snippets for common tasks.
+
+If `guides.get('sdk/Reference')` returns `undefined`, the installed Fondue predates these guides — read the SDK's type declarations (`@frontify/fondue-sdk/dist/index.d.ts`) instead. Prefer either over web lookups or upstream GitHub.

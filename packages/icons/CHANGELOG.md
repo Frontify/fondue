@@ -1,5 +1,57 @@
 # @frontify/fondue-icons
 
+## 0.30.0
+
+### Minor Changes
+
+- [#2892](https://github.com/Frontify/fondue/pull/2892) [`cd3ff93`](https://github.com/Frontify/fondue/commit/cd3ff9384b7160ec3ece9b4169026e9a7daf91e5) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - feat: update icons
+
+## 0.29.1
+
+### Patch Changes
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: icon manifest tags now include curated synonyms (e.g. `settings`/`gear` for `IconCog`, `user` for `IconPerson`, `search` for `IconMagnifier`) and drop filler words like `in` and `to`, and the icon example describes the available sizes
+
+## 0.29.0
+
+### Minor Changes
+
+- [#2851](https://github.com/Frontify/fondue/pull/2851) [`0b47424`](https://github.com/Frontify/fondue/commit/0b47424d1102807a48f22333e37b5cb6449de87d) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - feat: update icons
+
+## 0.28.2
+
+### Patch Changes
+
+- [#2835](https://github.com/Frontify/fondue/pull/2835) [`65b05b3`](https://github.com/Frontify/fondue/commit/65b05b323bcd2d6ae6b087eba513e170010a0fdd) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: bump dependency versions
+
+## 0.28.1
+
+### Patch Changes
+
+- [#2834](https://github.com/Frontify/fondue/pull/2834) [`c75ce34`](https://github.com/Frontify/fondue/commit/c75ce342ae4bbdb3ba6f390c1f7bb09ac99809de) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: bump iconify-tools to adress cve in sub dependency
+
+- [#2831](https://github.com/Frontify/fondue/pull/2831) [`9fd6a43`](https://github.com/Frontify/fondue/commit/9fd6a436b253530d1b7782a358ccccfaad1ecc05) Thanks [@noahwaldner](https://github.com/noahwaldner)! - pathc: update vite version to 6.x to patch cve
+
+- Updated dependencies [[`507b2ca`](https://github.com/Frontify/fondue/commit/507b2ca71658aa4b03d7f8fb8e74e8c71c554772)]:
+  - @frontify/fondue-tokens@5.1.2
+
+## 0.28.0
+
+### Minor Changes
+
+- [#2815](https://github.com/Frontify/fondue/pull/2815) [`4c5229a`](https://github.com/Frontify/fondue/commit/4c5229aeb9eb0b101ad2cdac2d9fcefdeaeda706) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - feat: update icons
+
+- [#2826](https://github.com/Frontify/fondue/pull/2826) [`113d84b`](https://github.com/Frontify/fondue/commit/113d84b4f9fc160faebe0f0f488e11cf6712665a) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - feat: update icons
+
+## 0.27.1
+
+### Patch Changes
+
+- [#2810](https://github.com/Frontify/fondue/pull/2810) [`84272da`](https://github.com/Frontify/fondue/commit/84272dab09bc8d13941c81d073145b81dcb871ea) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: prepare for react 19 compatibility
+
+- Updated dependencies [[`84272da`](https://github.com/Frontify/fondue/commit/84272dab09bc8d13941c81d073145b81dcb871ea)]:
+  - @frontify/fondue-tokens@5.1.1
+
 ## 0.27.0
 
 ### Minor Changes

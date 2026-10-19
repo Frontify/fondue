@@ -11,6 +11,8 @@ import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 
 import { Dialog } from '../Dialog';
 
+import { DialogWithCustomContainer } from './DialogWithCustomContainer';
+
 const DIALOG_TRIGGER_TEXT = 'Click Me';
 const DIALOG_TRIGGER_TEST_ID = 'fondue-dialog-trigger';
 const DIALOG_HEADER_TEXT = 'Dialog Header';
@@ -309,6 +311,25 @@ test('should call event handler on open and close', async ({ mount, page }) => {
     expect(onOpenChange.callCount).toBe(1);
     await closeElement.click();
     expect(onOpenChange.callCount).toBe(2);
+});
+
+test('should render the header close button as a single tab stop', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root>
+            <Dialog.Trigger>
+                <Button data-test-id={DIALOG_TRIGGER_TEST_ID}>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    await page.getByTestId(DIALOG_TRIGGER_TEST_ID).click();
+    const closeElement = page.getByTestId(DIALOG_HEADER_CLOSE_TEST_ID);
+    await expect(closeElement).toBeVisible();
+    await expect(closeElement.locator('button')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Close' })).toHaveCount(1);
 });
 
 test('should show layout elements', async ({ mount, page }) => {
@@ -845,4 +866,27 @@ test('should close inner dialog before outer dialog when escape is pressed in ne
     await outerDialogContent.press('Escape');
     await expect(outerDialogContent).not.toBeVisible();
     await expect.poll(() => outerOnEscapeKeyDown.callCount).toBe(1);
+});
+
+test('should portal into document.body by default', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Body>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    await expect(page.getByTestId(DIALOG_CONTENT_TEST_ID)).toBeVisible();
+    await expect(page.locator('#root').getByTestId(DIALOG_CONTENT_TEST_ID)).toHaveCount(0);
+});
+
+test('should render inside the given container', async ({ mount, page }) => {
+    await mount(
+        <DialogWithCustomContainer containerTestId="custom-container" contentTestId={DIALOG_CONTENT_TEST_ID} />,
+    );
+
+    const dialogContent = page.getByTestId('custom-container').getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(dialogContent).toBeVisible();
+    await expect(dialogContent).toContainText(DIALOG_BODY_TEXT);
 });

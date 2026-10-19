@@ -5,6 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
 import { Label } from '../Label/Label';
+import { Text } from '../Text/Text';
 import { Tooltip } from '../Tooltip/Tooltip';
 
 import { SegmentedControl, SegmentedControlItem, SegmentedControlRoot } from './SegmentedControl';
@@ -148,9 +149,13 @@ export const WithLabel: Story = {
     render: (args) => {
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
-                <Label htmlFor="segmented-control">Segmented Control</Label>
+                <Label htmlFor="segmented-control" id="segmented-control-label">
+                    Segmented Control
+                </Label>
 
-                <SegmentedControl.Root {...args} id="segmented-control">
+                {/* The root renders a `role="radiogroup"`, which `label for` cannot name, so point
+                    `aria-labelledby` at the label to give the group an accessible name. */}
+                <SegmentedControl.Root {...args} id="segmented-control" aria-labelledby="segmented-control-label">
                     <SegmentedControl.Item value="first">First</SegmentedControl.Item>
                     <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
                     <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
@@ -158,6 +163,38 @@ export const WithLabel: Story = {
             </div>
         );
     },
+};
+
+export const WithLabelAndDescription: Story = {
+    render: (args) => {
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-2">
+                <Label htmlFor="segmented-control-described" id="segmented-control-described-label">
+                    Segmented Control
+                </Label>
+
+                <SegmentedControl.Root
+                    {...args}
+                    id="segmented-control-described"
+                    aria-labelledby="segmented-control-described-label"
+                    aria-describedby="segmented-control-described-hint"
+                >
+                    <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+                    <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+                    <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
+                </SegmentedControl.Root>
+
+                <Text id="segmented-control-described-hint" size="small" color="weak">
+                    Hint text associated with the group through `aria-describedby`.
+                </Text>
+            </div>
+        );
+    },
+    decorators: (Story) => (
+        <div className="tw-w-80">
+            <Story />
+        </div>
+    ),
 };
 
 export const FullWidth: Story = {

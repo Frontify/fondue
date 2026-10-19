@@ -37,11 +37,9 @@ export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableLis
         const wrappedHandleRef = useCallback(
             (element: Element | null) => {
                 setHasHandle(element !== null);
-                if (!disabled) {
-                    handleRef(element);
-                }
+                handleRef(element);
             },
-            [disabled, handleRef],
+            [handleRef],
         );
 
         const itemContextValue = useMemo(

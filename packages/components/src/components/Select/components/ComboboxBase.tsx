@@ -15,7 +15,7 @@ import {
 } from 'react';
 
 import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
-import { type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
+import { mergeAriaIds, type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
 
 import { useBadgeItems } from '../hooks/useBadgeItems';
@@ -23,6 +23,7 @@ import { useFocusRing } from '../hooks/useFocusRing';
 import { useSelectData, type AsyncItemsFetcher } from '../hooks/useSelectData';
 import { useSelectionDescription } from '../hooks/useSelectionDescription';
 import styles from '../styles/select.module.scss';
+import { getIndeterminateItemValues } from '../utils';
 
 import { ClearButton } from './ClearButton';
 import { CollapsibleBadges } from './CollapsibleBadges';
@@ -94,6 +95,11 @@ type ComboboxBaseProps = ComboboxSharedProps & {
      */
     selectedItemValues: string[];
     /**
+     * @internal
+     * Item values that are only partially applied. Only supplied by the multiple variant.
+     */
+    indeterminateValues?: string[];
+    /**
      * Callback fired when an item is selected or deselected
      */
     onItemSelect: (value?: string) => void;
@@ -111,6 +117,7 @@ const ComboboxBaseInput = (
     {
         children,
         selectedItemValues,
+        indeterminateValues,
         onItemSelect,
         onClear,
         placeholder = '',
@@ -137,10 +144,13 @@ const ComboboxBaseInput = (
     const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText, asyncItemStatus } =
         useSelectData(children, getAsyncItems);
     const { wasClickedRef, onMouseDown, onFocus, onBlur } = useFocusRing();
+    const indeterminateItemValues = getIndeterminateItemValues(indeterminateValues, selectedItemValues);
+    const hasIndeterminateValues = indeterminateItemValues.length > 0;
     const { selectionDescriptionId, selectionDescription } = useSelectionDescription(
         multiple,
         selectedItemValues,
         getItemByValue,
+        indeterminateItemValues.length,
     );
     const badgeItems = useBadgeItems(selectedItemValues, getItemByValue);
 
@@ -251,7 +261,8 @@ const ComboboxBaseInput = (
         return !getAsyncItems && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
     }, [inputValue, items, getAsyncItems, multiple]);
 
-    const hasError = valueInvalid || !!asyncItemStatus.error || status === 'error';
+    const hasStatusError = status === 'error';
+    const hasError = valueInvalid || !!asyncItemStatus.error || hasStatusError;
 
     const handleDismissBadge = (value: string, preventFocusRing: boolean): void => {
         const item = getItemByValue(value);
@@ -297,7 +308,7 @@ const ComboboxBaseInput = (
                     className={styles.root}
                     data-status={hasError ? 'error' : status}
                     data-disabled={disabled}
-                    data-empty={selectedItemValues.length === 0}
+                    data-empty={selectedItemValues.length === 0 && !hasIndeterminateValues}
                 >
                     {multiple ? (
                         <>
@@ -308,7 +319,9 @@ const ComboboxBaseInput = (
                             <CollapsibleBadges
                                 items={badgeItems}
                                 onDismiss={handleDismissBadge}
+                                disabled={disabled}
                                 selectedCount={selectedItemValues.length}
+                                indeterminateCount={indeterminateItemValues.length}
                             >
                                 <input
                                     {...getInputProps({
@@ -324,11 +337,17 @@ const ComboboxBaseInput = (
                                             'aria-labelledby' in props && props['aria-labelledby']
                                                 ? props['aria-labelledby']
                                                 : undefined,
-                                        'aria-describedby': selectionDescription ? selectionDescriptionId : undefined,
+                                        'aria-describedby': mergeAriaIds(
+                                            selectionDescription && selectionDescriptionId,
+                                            props['aria-describedby'],
+                                        ),
+                                        'aria-invalid': hasStatusError || undefined,
                                     })}
                                     data-test-id={dataTestId}
                                     lang={lang}
-                                    placeholder={selectedItemValues.length === 0 ? placeholder : ''}
+                                    placeholder={
+                                        selectedItemValues.length === 0 && !hasIndeterminateValues ? placeholder : ''
+                                    }
                                     className={styles.multiSelectInput}
                                     disabled={disabled}
                                     onMouseDown={onMouseDown}
@@ -351,6 +370,8 @@ const ComboboxBaseInput = (
                                     'aria-labelledby' in props && props['aria-labelledby']
                                         ? props['aria-labelledby']
                                         : undefined,
+                                'aria-describedby': props['aria-describedby'],
+                                'aria-invalid': hasStatusError || undefined,
                             })}
                             data-test-id={dataTestId}
                             lang={lang}
@@ -394,6 +415,7 @@ const ComboboxBaseInput = (
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
                 selectedItemValues={selectedItemValues}
+                indeterminateItemValues={indeterminateItemValues}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
                 onEscapeKeyDown={onEscapeKeyDown}
@@ -403,6 +425,6 @@ const ComboboxBaseInput = (
         </RadixPopover.Root>
     );
 };
-ComboboxBaseInput.displayName = 'Select.Combobox';
+ComboboxBaseInput.displayName = 'ComboboxBase';
 
 export const ComboboxBase = forwardRef<HTMLDivElement, ComboboxBaseProps>(ComboboxBaseInput);

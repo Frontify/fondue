@@ -7,7 +7,7 @@ import { useEditorResize } from '../hooks';
 
 type EditorResizeContextProps = {
     editorWidth: number | undefined;
-    editorRef: ((node: HTMLDivElement) => ResizeObserver | undefined) | null;
+    editorRef: ((node: HTMLDivElement | null) => void) | null;
 };
 const EditorResizeContext = createContext<EditorResizeContextProps>({
     editorWidth: 0,

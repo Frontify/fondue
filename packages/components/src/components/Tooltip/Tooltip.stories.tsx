@@ -46,6 +46,14 @@ export const Default: Story = {
         },
     },
     args: {},
+    render: (args) => (
+        <Tooltip.Root {...args}>
+            <Tooltip.Trigger>
+                <p>Hover over me!</p>
+            </Tooltip.Trigger>
+            <Tooltip.Content>I am a tooltip!</Tooltip.Content>
+        </Tooltip.Root>
+    ),
 };
 
 export const NoDelay: Story = {

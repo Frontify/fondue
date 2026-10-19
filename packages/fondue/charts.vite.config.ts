@@ -15,6 +15,7 @@ export default defineConfig({
             entry: 'src/subpackages/charts.ts',
             name: 'FondueCharts',
             fileName: 'fondue-charts',
+            cssFileName: 'style',
         },
         rollupOptions: {
             external: ['@frontify/fondue-charts'],

@@ -1,5 +1,51 @@
 # @frontify/fondue-sdk
 
+## 0.2.4
+
+### Patch Changes
+
+- [#2891](https://github.com/Frontify/fondue/pull/2891) [`e384f9b`](https://github.com/Frontify/fondue/commit/e384f9ba46ee3269e10757c5fb787535d9667a70) Thanks [@syeo66](https://github.com/syeo66)! - fix(SegmentedControl): keep bottom border visible on hover for icon-only items
+
+- Updated dependencies [[`99d46d8`](https://github.com/Frontify/fondue/commit/99d46d8bb3a64d7989b4d2af8fe7343ee9fff89c), [`56f03e4`](https://github.com/Frontify/fondue/commit/56f03e4a733e88e21f0b5c9a367b1d7176148355), [`e384f9b`](https://github.com/Frontify/fondue/commit/e384f9ba46ee3269e10757c5fb787535d9667a70), [`cd3ff93`](https://github.com/Frontify/fondue/commit/cd3ff9384b7160ec3ece9b4169026e9a7daf91e5)]:
+    - @frontify/fondue-components@34.0.0
+    - @frontify/fondue-icons@0.30.0
+    - @frontify/fondue-tokens@5.1.2
+
+## 0.2.3
+
+### Patch Changes
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: clarify setup requirements (React 18, Tailwind v3, `tw-` prefix, PostCSS), document colour pairings and page theming, and fix guide ids and utility class examples in the fondue skill
+
+- [#2872](https://github.com/Frontify/fondue/pull/2872) [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: ship the SDK documentation (usage, concepts, reference, examples) as `sdk/*` guides so it renders in Storybook and can be read through `guides.get()`; the fondue skill now reads `sdk/Reference` from the installed version instead of bundling its own reference
+
+- Updated dependencies [[`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`557a49d`](https://github.com/Frontify/fondue/commit/557a49dc1226498e121660acc2869d47610eca48), [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`cff52fb`](https://github.com/Frontify/fondue/commit/cff52fbfb2349bffae3b498a72a01d959d98942f), [`9e83eee`](https://github.com/Frontify/fondue/commit/9e83eee7cf76830d5e6e1f28e5dd72fde8036393), [`1711a8a`](https://github.com/Frontify/fondue/commit/1711a8a40a51bc16962a8067df68bd73dc7f1703), [`07d0eb8`](https://github.com/Frontify/fondue/commit/07d0eb8b048b119cbc251bd77618b667563e1c3f), [`5f55b89`](https://github.com/Frontify/fondue/commit/5f55b892dd6ce8fd9ba9c744c4e95df01cf0e816)]:
+    - @frontify/fondue-components@33.0.2
+    - @frontify/fondue-icons@0.29.1
+    - @frontify/fondue-tokens@5.1.2
+
+## 0.2.2
+
+### Patch Changes
+
+- [#2847](https://github.com/Frontify/fondue/pull/2847) [`bab07c2`](https://github.com/Frontify/fondue/commit/bab07c2f5b12c0f39e82107f0cf52a05e2d9a0f2) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat(Select): add indeterminate values to the multi-select variants
+
+    `Select.Multi` and `Select.Combobox.Multiple` accept `indeterminateValues` for values that apply to
+    only some of the records being edited. Those options render a dash instead of a checkmark and the
+    field gains a "2 mixed" badge next to the selection badges.
+
+    The prop is purely visual and never reported by `onSelect`. Once the user selects such a value,
+    remove it from `indeterminateValues`; otherwise the dash returns as soon as it is deselected again.
+
+    In a narrow field the selection badges collapse into a "3 selected" badge instead of a lone clipped
+    badge, and into a single "Mixed" badge when not even the counts fit next to each other.
+
+## 0.2.1
+
+### Patch Changes
+
+- [#2831](https://github.com/Frontify/fondue/pull/2831) [`9fd6a43`](https://github.com/Frontify/fondue/commit/9fd6a436b253530d1b7782a358ccccfaad1ecc05) Thanks [@noahwaldner](https://github.com/noahwaldner)! - pathc: update vite version to 6.x to patch cve
+
 ## 0.2.0
 
 ### Minor Changes

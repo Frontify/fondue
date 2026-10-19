@@ -1,6 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import { ScrollArea } from './ScrollArea';
 
@@ -296,3 +299,68 @@ export const WithStableGutter: Story = {
         );
     },
 };
+
+const PAGE_SIZE = 30;
+const LOAD_DELAY_MS = 800;
+
+export const LazyLoading: Story = {
+    render: (args) => {
+        const [items, setItems] = useState<number[]>(() => Array.from({ length: PAGE_SIZE }, (_, i) => i));
+        const [isLoading, setIsLoading] = useState(false);
+        const viewportRef = useRef<HTMLDivElement>(null);
+        const isLoadingRef = useRef(false);
+
+        const loadMore = useCallback(() => {
+            if (isLoadingRef.current) {
+                return;
+            }
+            isLoadingRef.current = true;
+            setIsLoading(true);
+
+            setTimeout(() => {
+                setItems((previousItems) =>
+                    previousItems.concat(
+                        Array.from({ length: PAGE_SIZE }, (_, i) => previousItems.length + i),
+                    ),
+                );
+                isLoadingRef.current = false;
+                setIsLoading(false);
+            }, LOAD_DELAY_MS);
+        }, []);
+
+        useEffect(() => {
+            const viewport = viewportRef.current;
+            if (!viewport) {
+                return;
+            }
+
+            const handleScroll = () => {
+                const distanceFromBottom = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
+                if (distanceFromBottom < 100) {
+                    loadMore();
+                }
+            };
+
+            viewport.addEventListener('scroll', handleScroll);
+            return () => viewport.removeEventListener('scroll', handleScroll);
+        }, [loadMore]);
+
+        return (
+            <ScrollArea {...args} ref={viewportRef} maxHeight={300} maxWidth={400} type="always">
+                <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {items.map((item) => (
+                        <li key={item} style={{ padding: '8px 12px', borderBottom: '1px solid #e5e5e5' }}>
+                            Item #{item + 1}
+                        </li>
+                    ))}
+                </ul>
+                {isLoading && (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '12px' }}>
+                        <LoadingCircle />
+                    </div>
+                )}
+            </ScrollArea>
+        );
+    },
+};
+

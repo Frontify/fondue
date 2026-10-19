@@ -8,8 +8,7 @@
     "access": "public",
     "baseBranch": "main",
     "updateInternalDependencies": "patch",
-    "updateInternalDependents": "always",
-    "ignore": ["@frontify/fondue-storybook-docs"],
+    "ignore": ["@frontify/fondue-storybook-docs", "@frontify/rich-text-editor"],
     "linked": [],
     "fixed": []
 }

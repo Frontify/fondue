@@ -1,7 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-vi.mock('node:fs');
-vi.mock('glob');
+vi.mock('node:fs', () => {
+    const readFileSync = vi.fn();
+    return { readFileSync, default: { readFileSync } };
+});
+vi.mock('glob', () => ({ globSync: vi.fn() }));
 
 vi.mock('../utils', () => ({
     resolveFromRoot: (...segments: string[]) => ['<root>', ...segments].filter(Boolean).join('/'),

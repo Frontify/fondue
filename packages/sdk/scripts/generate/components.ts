@@ -116,23 +116,21 @@ const loadRealComponents = (): SdkComponent[] => {
 
 const loadIconComponents = (): SdkComponent[] => {
     const icons = require('@frontify/fondue-icons/manifest.json') as { icons: IconEntry[] };
-    return icons.icons.map(
-        (icon): SdkComponent => ({
-            id: icon.componentName,
-            name: icon.componentName,
-            description: icon.description,
-            status: 'released',
-            category: 'icon',
-            tags: icon.tags,
-            relatedComponents: [],
-            importStatement: icon.importStatement,
-            instructions: null,
-            props: [],
-            subComponents: [],
-            examples: icon.examples,
-            typeDefinitions: {},
-        }),
-    );
+    return icons.icons.map((icon): SdkComponent => ({
+        id: icon.componentName,
+        name: icon.componentName,
+        description: icon.description,
+        status: 'released',
+        category: 'icon',
+        tags: icon.tags,
+        relatedComponents: [],
+        importStatement: icon.importStatement,
+        instructions: null,
+        props: [],
+        subComponents: [],
+        examples: icon.examples,
+        typeDefinitions: {},
+    }));
 };
 
 const validateComponents = (components: readonly SdkComponent[]): string[] => {

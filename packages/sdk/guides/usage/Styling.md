@@ -6,10 +6,12 @@ Explore the available tokens in [Storybook](https://fondue-components.frontify.c
 
 ### Using tailwind classes
 
-When using tailwind, all tokens are available as classes.
+When using tailwind with the Fondue preset, all tokens are available as classes. The examples below assume the `tw-` prefix set up in the Setup guide (`getting-started/Setup`); the preset itself does not set a prefix.
+
+Colour tokens are named `<role>` or `<role>-<variant>`, and the `-default` suffix of the token id is dropped in the class name. Every colour can be used with any colour utility (`tw-bg-*`, `tw-text-*`, `tw-border-*`, `tw-fill-*`, …).
 
 ```tsx
-<div className="tw-bg-primary-default tw-text-primary-on-primary">...</div>
+<div className="tw-bg-primary tw-text-primary-on-primary hover:tw-bg-primary-hover">...</div>
 ```
 
 ### Using CSS variables
@@ -23,12 +25,20 @@ All style tokens are available as css variables. When using the `ThemeProvider`,
 }
 ```
 
+### Tailwind defaults
+
+The preset replaces Tailwind's default theme for the properties that have Fondue tokens: colours, font sizes, font weights, font families, letter spacing, line heights, border radius, border width, box shadows, outlines and breakpoints. Default classes for these such as `tw-text-sm`, `tw-bg-white` or `tw-rounded-lg` are not generated. Use the Fondue equivalents (`tw-body-small`, `tw-bg-surface`, `tw-rounded-large`, …).
+
+Spacing is the exception: the Fondue spacing tokens are added on top of Tailwind's default spacing scale. Both `tw-p-4` / `tw-gap-2` and `tw-p-medium` / `tw-gap-small` work; prefer the token-based classes.
+
+All other Tailwind defaults (layout, flexbox, grid, sizing, …) are unchanged.
+
 ## Utilities
 
 Explore the available utilities in [Storybook](https://fondue-components.frontify.com/?path=/story/tokens_utilities--typography)
 
 **When using tailwind**, we provide a set of utilities to help style your components.
-Currently, we provide utilities for typography styles. Each utility combines definitions for `font-size`, `line-height`, `font-weight`, `letter-spacing` and `letter-casing`.
+Currently, we provide utilities for typography styles. Each utility combines definitions for `font-family`, `font-size`, `line-height`, `font-weight`, `letter-spacing` and `text-transform`.
 
 Use with caution, as these utilities are purely for styling purposes and do not affect the semantic meaning of the text.
 

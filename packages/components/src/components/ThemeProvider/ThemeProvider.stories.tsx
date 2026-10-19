@@ -43,12 +43,30 @@ export const LightTheme: Story = {
     args: {
         theme: 'light',
     },
+    render: (args) => (
+        <ThemeProvider {...args}>
+            <Flex direction="column" gap={4} p={4} align="flex-start">
+                <Button hugWidth emphasis="default">
+                    Wrapped by ThemeProvider
+                </Button>
+            </Flex>
+        </ThemeProvider>
+    ),
 };
 
 export const DarkTheme: Story = {
     args: {
         theme: 'dark',
     },
+    render: (args) => (
+        <ThemeProvider {...args}>
+            <Flex direction="column" gap={4} p={4} align="flex-start">
+                <Button hugWidth emphasis="default">
+                    Wrapped by ThemeProvider
+                </Button>
+            </Flex>
+        </ThemeProvider>
+    ),
 };
 
 export const RightToLeft: Story = {

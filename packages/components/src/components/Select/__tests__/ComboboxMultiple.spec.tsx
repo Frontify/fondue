@@ -223,4 +223,45 @@ describe('ComboboxMultiple', () => {
             expect(onSelect).toHaveBeenCalled();
         });
     });
+
+    describe('indeterminate values', () => {
+        it('counts the partially applied values in a badge next to the selection badges', () => {
+            renderMultiCombobox({ value: ['apple'], indeterminateValues: ['banana', 'cherry'] });
+
+            expect(screen.getByTestId('fondue-select-mixed-count')).toHaveTextContent('2 mixed');
+            expect(screen.getByTestId('badge')).toHaveTextContent('Apple');
+        });
+
+        it('keeps the input usable while showing the mixed label', async () => {
+            const user = userEvent.setup();
+            renderMultiCombobox({ value: [], indeterminateValues: ['banana'] });
+
+            const input = screen.getByRole('combobox');
+            await user.type(input, 'ban');
+
+            expect(input).toHaveValue('ban');
+            expect(screen.getByTestId('fondue-select-mixed-count')).toBeInTheDocument();
+        });
+
+        it('does not show the placeholder while showing the mixed label', () => {
+            renderMultiCombobox({ value: [], indeterminateValues: ['banana'], placeholder: 'Search fruits...' });
+
+            expect(screen.queryByPlaceholderText('Search fruits...')).not.toBeInTheDocument();
+        });
+
+        it('shows the dash again after deselecting while the consumer still lists the value', async () => {
+            const user = userEvent.setup();
+            renderMultiCombobox({ defaultValue: [], indeterminateValues: ['banana'] });
+
+            await user.click(screen.getByRole('combobox'));
+            await user.click(getMenuOption('Banana'));
+            await user.click(getMenuOption('Banana'));
+
+            const option = screen.getByRole('option', { name: 'Banana' });
+            expect(option).toHaveAttribute('data-selected', 'false');
+            // Dropping a value the user has touched is the consumer's job
+            expect(option).toHaveAttribute('data-indeterminate', 'true');
+            expect(screen.getByTestId('fondue-select-mixed-count')).toHaveTextContent('1 mixed');
+        });
+    });
 });

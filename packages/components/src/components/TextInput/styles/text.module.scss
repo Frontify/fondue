@@ -46,6 +46,21 @@
 
     &:has(input[readonly]) {
         border-color: transparent;
+        background-color: transparent;
+
+        .slot {
+            cursor: default;
+            color: var(--color-secondary-default);
+        }
+
+        .slot:not([data-name='right']) {
+            padding-inline-start: 0px;
+        }
+
+        .placeholder {
+            text-indent: 0px;
+            padding-inline-end: 0;
+        }
     }
 
     &:has(input:disabled) {
@@ -123,19 +138,11 @@
 
     // Readonly styles
     &[readonly] {
-        cursor: text;
-        color: var(--color-primary-default);
+        cursor: default;
+        color: var(--color-secondary-default);
         padding-inline-start: 0;
         padding-inline-end: 0;
         text-indent: 0px;
-    }
-
-    &[readonly] ~ .slot {
-        color: var(--color-primary-default);
-    }
-
-    &[readonly] ~ .slot:not([data-name='right']) {
-        padding-inline-start: 0px;
     }
 
     &:disabled {

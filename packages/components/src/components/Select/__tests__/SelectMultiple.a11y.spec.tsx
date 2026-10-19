@@ -110,6 +110,29 @@ describe('SelectMultiple - Accessibility', () => {
             const trigger = screen.getByRole('combobox');
             expect(trigger).not.toHaveAttribute('aria-describedby');
         });
+
+        it('keeps a caller provided aria-describedby alongside the selection description', () => {
+            render(
+                <>
+                    <Select.Multiple aria-label="Fruit picker" value={['apple']} aria-describedby="fruit-error">
+                        <Select.Slot name="menu">
+                            <Select.Item value="apple">Apple</Select.Item>
+                        </Select.Slot>
+                    </Select.Multiple>
+                    <span id="fruit-error">Please pick at least two fruits</span>
+                </>,
+            );
+
+            const trigger = screen.getByRole('combobox');
+            expect(trigger.getAttribute('aria-describedby')?.split(' ')).toContain('fruit-error');
+            expect(trigger).toHaveAccessibleDescription('1 selected: Apple Please pick at least two fruits');
+        });
+
+        it('sets aria-invalid when the status is error', () => {
+            renderMultiSelect({ 'aria-label': 'Fruit picker', status: 'error' });
+
+            expect(screen.getByRole('combobox')).toHaveAttribute('aria-invalid', 'true');
+        });
     });
 
     describe('menu ARIA attributes', () => {
@@ -418,6 +441,38 @@ describe('SelectMultiple - Accessibility', () => {
 
             const clearButton = screen.getByRole('button', { name: 'Clear selection' });
             expect(clearButton).toHaveAttribute('aria-label', 'Clear selection');
+        });
+    });
+
+    describe('indeterminate values', () => {
+        const getOption = (name: string): HTMLElement => screen.getByRole('option', { name });
+
+        it('exposes the mixed state through aria-checked', async () => {
+            const user = userEvent.setup();
+            renderMultiSelect({ 'aria-label': 'Fruits', value: ['apple'], indeterminateValues: ['banana'] });
+
+            await user.click(screen.getByRole('combobox'));
+
+            // `aria-selected` has no mixed value, so the tri-state `aria-checked` carries it.
+            expect(getOption('Banana')).toHaveAttribute('aria-checked', 'mixed');
+            expect(getOption('Apple')).toHaveAttribute('aria-checked', 'true');
+            expect(getOption('Cherry')).toHaveAttribute('aria-checked', 'false');
+        });
+
+        it('does not add aria-checked when no values are partially applied', async () => {
+            const user = userEvent.setup();
+            renderMultiSelect({ 'aria-label': 'Fruits', value: ['apple'] });
+
+            await user.click(screen.getByRole('combobox'));
+
+            expect(getOption('Apple')).not.toHaveAttribute('aria-checked');
+            expect(getOption('Banana')).not.toHaveAttribute('aria-checked');
+        });
+
+        it('describes the selection and the partially applied count, as the trigger shows both', () => {
+            renderMultiSelect({ 'aria-label': 'Fruits', value: ['apple'], indeterminateValues: ['banana', 'cherry'] });
+
+            expect(screen.getByRole('combobox')).toHaveAccessibleDescription('1 selected: Apple, 2 mixed');
         });
     });
 });

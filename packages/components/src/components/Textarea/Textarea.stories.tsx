@@ -57,6 +57,7 @@ export const Default: Story = {
             canonical: true,
         },
     },
+    render: (args) => <Textarea {...args} />,
 };
 
 export const WithDecoratorAndAutosize: Story = {

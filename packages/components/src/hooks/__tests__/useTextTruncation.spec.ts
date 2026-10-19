@@ -16,7 +16,7 @@ describe('useTextTruncation', () => {
 
         mockRef = { current: mockElement };
 
-        global.ResizeObserver = vi.fn().mockImplementation((callback) => {
+        global.ResizeObserver = vi.fn().mockImplementation(function (callback) {
             // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment
             resizeCallback = callback;
             return {
@@ -77,11 +77,13 @@ describe('useTextTruncation', () => {
 
     it('should clean up observer on unmount', () => {
         const disconnect = vi.fn();
-        global.ResizeObserver = vi.fn().mockImplementation(() => ({
-            observe: vi.fn(),
-            disconnect,
-            unobserve: vi.fn(),
-        }));
+        global.ResizeObserver = vi.fn().mockImplementation(function () {
+            return {
+                observe: vi.fn(),
+                disconnect,
+                unobserve: vi.fn(),
+            };
+        });
 
         const { unmount } = renderHook(() => useTextTruncation(mockRef));
         unmount();

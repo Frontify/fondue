@@ -88,6 +88,45 @@ describe('ComboboxSingle - Accessibility', () => {
 
             expect(screen.getByRole('combobox')).not.toHaveAttribute('aria-describedby');
         });
+
+        it('passes a caller provided aria-describedby to the input', () => {
+            render(
+                <>
+                    <Select.Combobox aria-label="Fruit picker" value="apple" aria-describedby="fruit-error">
+                        <Select.Slot name="menu">
+                            <Select.Item value="apple">Apple</Select.Item>
+                        </Select.Slot>
+                    </Select.Combobox>
+                    <span id="fruit-error">Please pick a fruit</span>
+                </>,
+            );
+
+            expect(screen.getByRole('combobox')).toHaveAccessibleDescription('Please pick a fruit');
+        });
+
+        it('does not set aria-invalid when the status is neutral', () => {
+            renderSingleCombobox({ 'aria-label': 'Fruit picker', value: 'apple' });
+
+            expect(screen.getByRole('combobox')).not.toHaveAttribute('aria-invalid');
+        });
+
+        it('sets aria-invalid when the status is error', () => {
+            renderSingleCombobox({ 'aria-label': 'Fruit picker', value: 'apple', status: 'error' });
+
+            expect(screen.getByRole('combobox')).toHaveAttribute('aria-invalid', 'true');
+        });
+
+        it('does not toggle aria-invalid while typing a filter that matches no item', async () => {
+            const user = userEvent.setup();
+            renderSingleCombobox({ 'aria-label': 'Fruit picker' });
+
+            const input = screen.getByRole('combobox');
+            await user.type(input, 'zzz');
+
+            expect(input).toHaveValue('zzz');
+            expect(screen.getByTestId('fondue-select-combobox-error-icon')).toBeInTheDocument();
+            expect(input).not.toHaveAttribute('aria-invalid');
+        });
     });
 
     describe('menu ARIA attributes', () => {

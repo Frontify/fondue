@@ -37,8 +37,8 @@ Explore the new token system in the [token story](https://fondue-components.fron
 
 You can use the [migrate-tokens](#migrate-tokens) codemod to migrate your css variables and tailwind classes to the new token system.
 
-- For properties that have tokens defined, we do no longer include the tailwind default theme tokens along with the fondue tokens.
-- The class prefix is no longer defined by fondue, you need to set it yourself in your tailwind config file.
+- For properties that have tokens defined (colours, typography, border radius, border width, shadows, outlines and breakpoints), the tailwind default theme values are no longer included along with the fondue tokens. Spacing is the exception: the fondue spacing tokens are added on top of the tailwind default spacing scale, so classes like `tw-p-4` keep working.
+- The class prefix is no longer defined by fondue, you need to set it yourself in your tailwind config file. All fondue documentation uses the `tw-` prefix.
 
 
 #### Required changes
@@ -72,7 +72,7 @@ const config = {
 export default config;
 ```
 
-If you are using tokens from the tailwind default theme, you need to add them into your `tailwind.config.js` file, as fondue v13 does not include them anymore.
+If you are using colour, typography, border, shadow or breakpoint values from the tailwind default theme, you need to add them into your `tailwind.config.js` file, as fondue v13 does not include them anymore.
 
 
 ### Rich Text Editor

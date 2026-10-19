@@ -15,6 +15,7 @@ export default defineConfig({
             entry: 'src/subpackages/components.ts',
             name: 'FondueComponents',
             fileName: 'fondue-components',
+            cssFileName: 'style',
         },
         rollupOptions: {
             external: ['@frontify/fondue-components'],

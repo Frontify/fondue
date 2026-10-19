@@ -1,5 +1,55 @@
 # @frontify/fondue-rte
 
+## 0.1.12
+
+### Patch Changes
+
+- Updated dependencies [[`99d46d8`](https://github.com/Frontify/fondue/commit/99d46d8bb3a64d7989b4d2af8fe7343ee9fff89c), [`56f03e4`](https://github.com/Frontify/fondue/commit/56f03e4a733e88e21f0b5c9a367b1d7176148355), [`e384f9b`](https://github.com/Frontify/fondue/commit/e384f9ba46ee3269e10757c5fb787535d9667a70), [`cd3ff93`](https://github.com/Frontify/fondue/commit/cd3ff9384b7160ec3ece9b4169026e9a7daf91e5)]:
+  - @frontify/fondue-components@34.0.0
+  - @frontify/fondue-icons@0.30.0
+
+## 0.1.11
+
+### Patch Changes
+
+- [#2864](https://github.com/Frontify/fondue/pull/2864) [`60980ec`](https://github.com/Frontify/fondue/commit/60980ec64eeee58b45e0a82f65d088faca2683a9) Thanks [@syeo66](https://github.com/syeo66)! - refactor(useEditorResize): stop forcing layout re-evaluations
+
+- Updated dependencies [[`1ba4166`](https://github.com/Frontify/fondue/commit/1ba4166cafcf628a32b412be17c2d568cfa93570), [`b3f18e2`](https://github.com/Frontify/fondue/commit/b3f18e25aed00ee5b27fc348ac8256abacc04a25), [`4fda25c`](https://github.com/Frontify/fondue/commit/4fda25c441c8d123fff4022f8ecfc15cfef931e6), [`0b47424`](https://github.com/Frontify/fondue/commit/0b47424d1102807a48f22333e37b5cb6449de87d)]:
+  - @frontify/fondue-components@33.0.0
+  - @frontify/fondue-icons@0.29.0
+
+## 0.1.10
+
+### Patch Changes
+
+- [#2831](https://github.com/Frontify/fondue/pull/2831) [`9fd6a43`](https://github.com/Frontify/fondue/commit/9fd6a436b253530d1b7782a358ccccfaad1ecc05) Thanks [@noahwaldner](https://github.com/noahwaldner)! - pathc: update vite version to 6.x to patch cve
+
+- Updated dependencies [[`507b2ca`](https://github.com/Frontify/fondue/commit/507b2ca71658aa4b03d7f8fb8e74e8c71c554772), [`c75ce34`](https://github.com/Frontify/fondue/commit/c75ce342ae4bbdb3ba6f390c1f7bb09ac99809de), [`9fd6a43`](https://github.com/Frontify/fondue/commit/9fd6a436b253530d1b7782a358ccccfaad1ecc05)]:
+  - @frontify/fondue-tokens@5.1.2
+  - @frontify/fondue-icons@0.28.1
+  - @frontify/fondue-components@32.0.2
+  - @frontify/fondue-charts@8.0.2
+
+## 0.1.9
+
+### Patch Changes
+
+- Updated dependencies [[`39ea4e6`](https://github.com/Frontify/fondue/commit/39ea4e61b222c1522571724ab5c555b87fffa202), [`d558c6b`](https://github.com/Frontify/fondue/commit/d558c6bb8df7aa81212be84cf0ad063baa4c2dce), [`4c5229a`](https://github.com/Frontify/fondue/commit/4c5229aeb9eb0b101ad2cdac2d9fcefdeaeda706), [`113d84b`](https://github.com/Frontify/fondue/commit/113d84b4f9fc160faebe0f0f488e11cf6712665a)]:
+  - @frontify/fondue-components@32.0.0
+  - @frontify/fondue-icons@0.28.0
+
+## 0.1.8
+
+### Patch Changes
+
+- [#2817](https://github.com/Frontify/fondue/pull/2817) [`e762315`](https://github.com/Frontify/fondue/commit/e76231585ea57f564cccc3f1c8cc31974c11a7fd) Thanks [@jcosta33](https://github.com/jcosta33)! - Update runtime dependencies to their latest patch and minor versions. Radix primitives pick up fixes for broken Dialog ARIA references when no title or description is rendered, Tooltip children mounting twice, `Slider.onValueCommit` not firing when thumbs cross, and value updates on form reset for RadioGroup, Slider, Select and Switch. `@react-aria/*` and `@react-stately/*` move to their latest patches, `downshift` gains a React Compiler compatibility fix, and `react-day-picker`, `react-colorful`, `@headless-tree/*` and `motion` move to their latest minors.
+
+- Updated dependencies [[`8d06f91`](https://github.com/Frontify/fondue/commit/8d06f91aa7ab63edd2bff2a2c8dcd98dded4213d), [`cacf33d`](https://github.com/Frontify/fondue/commit/cacf33d1a1f12b735f055377175adae2b74cb813), [`e0d89ff`](https://github.com/Frontify/fondue/commit/e0d89ff68f4f7cf88ab54904e23c207cd83a6de1), [`82e01df`](https://github.com/Frontify/fondue/commit/82e01df7936e9b12e52f52e9b5304f17b252e3c0), [`e762315`](https://github.com/Frontify/fondue/commit/e76231585ea57f564cccc3f1c8cc31974c11a7fd), [`84272da`](https://github.com/Frontify/fondue/commit/84272dab09bc8d13941c81d073145b81dcb871ea), [`72028b1`](https://github.com/Frontify/fondue/commit/72028b1545b9f9810f48b025033152ceaca55fac)]:
+  - @frontify/fondue-charts@8.0.1
+  - @frontify/fondue-components@31.2.0
+  - @frontify/fondue-tokens@5.1.1
+  - @frontify/fondue-icons@0.27.1
+
 ## 0.1.7
 
 ### Patch Changes

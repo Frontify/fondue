@@ -3,6 +3,21 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+    type TreeActionProps,
+    type TreeChangeState,
+    type TreeDecoratorProps,
+    type TreeDropCandidate,
+    type TreeFolderHeaderProps,
+    type TreeFolderProps,
+    type TreeIconProps,
+    type TreeItemProps,
+    type TreeLabelProps,
+    type TreeMoveInfo,
+    type TreeNodeState,
+    type TreeRootProps,
+} from '../../index';
+
+import {
     Tree,
     TreeAction,
     TreeDecorator,
@@ -21,6 +36,25 @@ import {
  * silent breaking change.
  */
 
+const dropCandidate: TreeDropCandidate = { id: '1', label: 'One', isFolder: false, tags: [] };
+const moveInfo: TreeMoveInfo = { parentId: 'root', index: 0 };
+
+type PublicTreeTypes = [
+    TreeActionProps,
+    TreeChangeState,
+    TreeDecoratorProps,
+    TreeDropCandidate,
+    TreeFolderHeaderProps,
+    TreeFolderProps,
+    TreeIconProps,
+    TreeItemProps,
+    TreeLabelProps,
+    TreeMoveInfo,
+    TreeNodeState,
+    TreeRootProps,
+];
+const publicTreeTypeCount: PublicTreeTypes['length'] = 12;
+
 describe('Tree namespace', () => {
     it('exposes Root / Item / Folder / FolderHeader / Icon / Label / Decorator / Action / Loading on the namespace', () => {
         expect(Tree).toEqual({
@@ -34,6 +68,12 @@ describe('Tree namespace', () => {
             Action: TreeAction,
             Loading: TreeLoading,
         });
+    });
+
+    it('re-exports the Tree prop and callback types from the package entry', () => {
+        expect(dropCandidate.id).toBe('1');
+        expect(moveInfo.parentId).toBe('root');
+        expect(publicTreeTypeCount).toBe(12);
     });
 
     it('aliases each namespace key to the same component as the named export', () => {

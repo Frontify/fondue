@@ -135,6 +135,23 @@ export const WithHeaderAndFooter: Story = {
             canonical: true,
         },
     },
+    render: (args) => (
+        <Flyout.Root>
+            <Flyout.Trigger>
+                <Button>Open flyout</Button>
+            </Flyout.Trigger>
+            <Flyout.Content {...args}>
+                <Flyout.Header showCloseButton>Header</Flyout.Header>
+                <Flyout.Body>Hello World</Flyout.Body>
+                <Flyout.Footer>
+                    <div className="tw-flex tw-justify-end tw-gap-2">
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </div>
+                </Flyout.Footer>
+            </Flyout.Content>
+        </Flyout.Root>
+    ),
 };
 
 export const WithHeaderAndFooterAndScrollableContent: Story = {

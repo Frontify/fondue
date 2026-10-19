@@ -1,7 +1,7 @@
 {
     "category": "input",
     "description": "A binary form input for toggling a boolean value. Supports checked, unchecked, and indeterminate states. Use in forms where multiple independent options can be selected.",
-    "instructions": "Always pair with a Label component for accessibility — connect them via matching id and htmlFor props, or use aria-labelledby. Use value='indeterminate' for partial selection states (e.g. select-all with mixed children). Use RadioList when only one option from a group can be selected. Use Switch for binary settings that take immediate effect rather than form submission.",
+    "instructions": "Always pair with a Label component for accessibility — connect them via matching id and htmlFor props, or use aria-labelledby. onChange receives the click event, not the new checked state (there is no onCheckedChange): to read or react to the state, control it with value plus your own state, e.g. const [checked, setChecked] = useState<boolean | 'indeterminate'>(false) and onChange={() => setChecked((previous) => previous !== true)}. Use defaultValue for uncontrolled usage when the state isn't needed. Use value='indeterminate' for partial selection states (e.g. select-all with mixed children). Use RadioList when only one option from a group can be selected. Use Switch for binary settings that take immediate effect rather than form submission.",
     "name": "Checkbox",
     "relatedComponents": ["RadioList", "Switch"],
     "storyFilePaths": ["src/components/Checkbox/Checkbox.stories.tsx"],

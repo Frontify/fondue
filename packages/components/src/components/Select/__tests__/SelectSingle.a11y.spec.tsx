@@ -91,6 +91,33 @@ describe('SelectSingle - Accessibility', () => {
             expect(trigger).not.toHaveAttribute('aria-describedby');
         });
 
+        it('passes a caller provided aria-describedby to the trigger', () => {
+            render(
+                <>
+                    <Select aria-label="Fruit picker" aria-describedby="fruit-error">
+                        <Select.Slot name="menu">
+                            <Select.Item value="apple">Apple</Select.Item>
+                        </Select.Slot>
+                    </Select>
+                    <span id="fruit-error">Please pick a fruit</span>
+                </>,
+            );
+
+            expect(screen.getByRole('combobox')).toHaveAccessibleDescription('Please pick a fruit');
+        });
+
+        it('does not set aria-invalid when the status is neutral', () => {
+            renderSingleSelect({ 'aria-label': 'Fruit picker' });
+
+            expect(screen.getByRole('combobox')).not.toHaveAttribute('aria-invalid');
+        });
+
+        it('sets aria-invalid when the status is error', () => {
+            renderSingleSelect({ 'aria-label': 'Fruit picker', status: 'error' });
+
+            expect(screen.getByRole('combobox')).toHaveAttribute('aria-invalid', 'true');
+        });
+
         it('does not strip aria attributes when disabled', () => {
             const { container } = renderSingleSelect({ 'aria-label': 'Fruit picker', disabled: true });
 

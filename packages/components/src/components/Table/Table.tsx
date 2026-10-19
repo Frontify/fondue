@@ -278,8 +278,10 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
         const { t } = useTranslation();
         const cellRef = useRef<HTMLTableCellElement>(null);
         useSyncRefs<HTMLTableCellElement>(cellRef, ref);
+        const textRef = useRef<HTMLSpanElement>(null);
 
         useTextTruncation(cellRef);
+        useTextTruncation(textRef);
 
         const sortLabel = useMemo(() => {
             if (typeof children === 'string') {
@@ -319,7 +321,9 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                 {state === 'loading' ? (
                     <div className={styles.cellContent} aria-live="polite" aria-label={loadingStateAriaLabel}>
                         {typeof children === 'string' && truncate ? (
-                            <span className={styles.buttonText}>{children}</span>
+                            <span ref={textRef} className={styles.buttonText}>
+                                {children}
+                            </span>
                         ) : (
                             children
                         )}
@@ -334,7 +338,9 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                         type="button"
                     >
                         {typeof children === 'string' && truncate ? (
-                            <span className={styles.buttonText}>{children}</span>
+                            <span ref={textRef} className={styles.buttonText}>
+                                {children}
+                            </span>
                         ) : (
                             children
                         )}
