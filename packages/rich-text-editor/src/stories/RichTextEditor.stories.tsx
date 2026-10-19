@@ -593,18 +593,15 @@ const MANY_KEYS = Array.from({ length: MANY }, (_, index) => `editor-${index + 1
 export const ManyEditors: Story = {
     render: () => {
         const [docs, setDocs] = useState<RteDocument[]>(() =>
-            Array.from(
-                { length: MANY },
-                (_, index): RteDocument => ({
-                    version: 1,
-                    blocks: [
-                        {
-                            type: 'paragraph',
-                            children: [{ text: `Editor ${index + 1} — type here.` }],
-                        },
-                    ],
-                }),
-            ),
+            Array.from({ length: MANY }, (_, index): RteDocument => ({
+                version: 1,
+                blocks: [
+                    {
+                        type: 'paragraph',
+                        children: [{ text: `Editor ${index + 1} — type here.` }],
+                    },
+                ],
+            })),
         );
         const startedAtRef = useRef(performance.now());
         const [mountedIn, setMountedIn] = useState<number | null>(null);

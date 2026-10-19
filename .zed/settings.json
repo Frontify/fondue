@@ -1,0 +1,9 @@
+// Format with oxfmt (via the Oxc extension's language server) instead of
+// Zed's bundled prettier defaults.
+{
+    "formatter": {
+        "language_server": {
+            "name": "oxfmt"
+        }
+    }
+}
