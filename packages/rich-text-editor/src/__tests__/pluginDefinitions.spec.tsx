@@ -6,9 +6,8 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, defineBlock, type EditorControlApi, type RteInputRule, type RtePlugin } from '../core';
+import { buildPluginRegistry, defineBlock, type EditorControlApi, type RtePlugin } from '../core';
 import {
-    autoformatPlugin,
     blurOnBreakPlugin,
     bulletListPlugin,
     columnBreakPlugin,
@@ -146,20 +145,6 @@ describe('textStylePlugin', () => {
         const hotkeys = textStylePlugin({ styles: ['heading2', 'custom1'] }).hotkeys ?? {};
 
         expect(Object.keys(hotkeys)).toEqual(['Mod-Alt-2']);
-    });
-});
-
-describe('autoformatPlugin', () => {
-    const fractions = (autoformatPlugin().inputRules ?? []).filter(
-        (rule): rule is Extract<RteInputRule, { kind: 'text' }> => rule.kind === 'text' && rule.match.includes('/'),
-    );
-
-    it('rewrites a fraction only once a space ends it, so dates and longer numbers stay as typed', () => {
-        expect(fractions.length).toBeGreaterThan(0);
-        for (const rule of fractions) {
-            expect(rule.match.endsWith(' ')).toBe(true);
-            expect(rule.replaceWith.endsWith(' ')).toBe(true);
-        }
     });
 });
 

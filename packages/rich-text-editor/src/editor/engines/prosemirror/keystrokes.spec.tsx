@@ -101,73 +101,18 @@ describe('typing a list shortcut at the start of a line', () => {
     });
 });
 
-describe('typography while typing', () => {
-    it.each([
-        ['a -> b', 'a → b'],
-        ['a <- b', 'a ← b'],
-        ['a => b', 'a ⇒ b'],
-        ['wait...', 'wait…'],
-        ['a -- b', 'a — b'],
-        ['(c) 2026', '© 2026'],
-        ['1/2 cup', '½ cup'],
-    ])('turns "%s" into "%s"', (input, output) => {
-        expect(typed(input)).toEqual([paragraph(text(output))]);
-    });
-
-    it('leaves a code span being typed as typed', () => {
-        expect(typed('`a--b`')).toEqual([paragraph(text('a--b', { code: true }))]);
-        expect(typed('`run --force (c)`')).toEqual([paragraph(text('run --force (c)', { code: true }))]);
-    });
-
-    it('keeps straight quotes inside a code span being typed', () => {
-        expect(typed('`say "hi"`')).toEqual([paragraph(text('say "hi"', { code: true }))]);
-    });
-
-    it('rewrites again after a code span is closed', () => {
-        expect(typed('`a` and -- b')).toEqual([paragraph(text('a', { code: true }), text(' and \u2014 b'))]);
-    });
-
-    it('opens a double quote at the start of a word and closes it after one', () => {
-        expect(typed('say "hi" now')).toEqual([paragraph(text('say “hi” now'))]);
-    });
-
-    it('opens a quote at the start of the line', () => {
-        expect(typed('"hi"')).toEqual([paragraph(text('“hi”'))]);
-    });
-
-    it('turns an apostrophe inside a word into a closing single quote', () => {
-        expect(typed("it's 'fine'")).toEqual([paragraph(text('it’s ‘fine’'))]);
-    });
-
-    it('leaves a match starting with a digit alone in the middle of a number', () => {
-        expect(typed('11/2 ')).toEqual([paragraph(text('11/2 '))]);
-    });
-
-    it('still rewrites a match starting with a digit after punctuation', () => {
-        expect(typed('(1/2 ')).toEqual([paragraph(text('(½ '))]);
-    });
-
-    it('leaves text alone inside a mark that opts out — inline code keeps `--` and `**`', () => {
+describe('a mark that opts out of typing rules', () => {
+    it('keeps the delimiters typed inside it — inline code keeps `**`', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
         editor.caretAfter('x');
 
-        editor.type(' a -- b **c**');
+        editor.type(' **c**');
 
-        expect(editor.stored()).toEqual([paragraph(text('x a -- b **c**', { code: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('x **c**', { code: true }))]);
     });
 });
 
 describe('undoing a typing rewrite', () => {
-    it('takes a text rewrite back on Backspace, leaving what was typed', () => {
-        const editor = editorWith(defaultPlugins, empty());
-        editor.type('a--');
-
-        expect(editor.stored()).toEqual([paragraph(text('a—'))]);
-        expect(press(editor.view, 'Backspace')).toBe(true);
-
-        expect(editor.stored()).toEqual([paragraph(text('a--'))]);
-    });
-
     it('takes a block rewrite back on Backspace, leaving what was typed', () => {
         const editor = editorWith(defaultPlugins, empty());
         editor.type('## ');
@@ -180,12 +125,12 @@ describe('undoing a typing rewrite', () => {
 
     it('takes just the rewrite back on undo', () => {
         const editor = editorWith(defaultPlugins, empty());
-        editor.type('a--');
+        editor.type('## ');
 
         const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         expect(press(editor.view, 'z', mod)).toBe(true);
 
-        expect(editor.stored()).toEqual([paragraph(text('a--'))]);
+        expect(editor.stored()).toEqual([paragraph(text('## '))]);
     });
 });
 

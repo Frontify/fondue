@@ -57,11 +57,11 @@ export type RtePlugin = {
     /**
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
      * by a single typed character (`@`). Modifiers are Mod, Cmd, Meta, Ctrl,
-     * Alt and Shift in any case; a binding with any other is dropped. They run
+     * Alt and Shift in any case; any other throws when the editor mounts. They run
      * before the editor's own, in plugin order.
      */
     hotkeys?: Record<string, HotkeyHandler>;
-    /** Text rewritten as it is typed: markdown shortcuts and typography. */
+    /** Text rewritten as it is typed: markdown shortcuts and autolinks. */
     inputRules?: readonly RteInputRule[];
     /** Runs before the editor's own paste, in plugin order. */
     onPaste?: PasteHandler;
@@ -280,10 +280,6 @@ export type PasteHandler = (paste: { text: string; html: string | null }, api: E
  * does the matching, so a plugin only says what to look for.
  */
 export type RteInputRule =
-    /** Plain substitution once `match` has been typed: `-->` becomes `→`, `(c)` becomes `©`. */
-    | { kind: 'text'; match: string; replaceWith: string }
-    /** Typographic quotes: `"` becomes `open` at the start of a word, `close` after one. */
-    | { kind: 'quotes'; match: string; open: string; close: string }
     /** Wrapping delimiters turn into a mark: `**bold**`, `` `code` ``. */
     | { kind: 'mark'; key: string; delimiter: string }
     /** A prefix turns the block into another type: `## ` becomes a level-2 heading. */

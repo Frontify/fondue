@@ -3,7 +3,6 @@
 import {
     type FocusEvent,
     type KeyboardEvent,
-    memo,
     type MouseEvent,
     type MutableRefObject,
     type ReactNode,
@@ -13,13 +12,7 @@ import {
     useSyncExternalStore,
 } from 'react';
 
-import {
-    type EditorControlApi,
-    type RteBlockCommand,
-    type RteSelectionSnapshot,
-    type ToolbarEntry,
-    type ToolbarItemProps,
-} from '#/core';
+import { type EditorControlApi, type RteBlockCommand, type ToolbarEntry, type ToolbarItemProps } from '#/core';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { toolbarItemProps } from '../helpers/toolbarItem';
@@ -41,7 +34,7 @@ export type ToolbarPlacement = 'floating' | 'top';
  * The plugins' toolbar UI, in mount order; nothing when no plugin has any.
  *
  * Subscribes to the editor state itself, so a keystroke re-renders the toolbar
- * (and only the items whose props changed) rather than the editor around it.
+ * rather than the editor around it.
  *
  * Keyboard use follows the toolbar pattern: the bar is one tab stop, the arrow
  * keys (and Home/End) move between its controls, Escape returns to the text
@@ -200,36 +193,6 @@ const keepSelection = (event: MouseEvent<HTMLDivElement>): void => {
     }
 };
 
-/** Structural equality for the JSON-shaped data a toolbar item is handed, rebuilt on every editor state change. */
-const sameData = (a: unknown, b: unknown): boolean => {
-    if (Object.is(a, b)) {
-        return true;
-    }
-    if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) {
-        return false;
-    }
-    if (Array.isArray(a) !== Array.isArray(b)) {
-        return false;
-    }
-    const aEntries = Object.entries(a);
-    const bRecord = b as Record<string, unknown>;
-    return (
-        aEntries.length === Object.keys(b).length &&
-        aEntries.every(([key, value]) => key in bRecord && sameData(value, bRecord[key]))
-    );
-};
-
-/**
- * Equality of selections as a control sees them, ignoring `text`: it can be the
- * whole document (select-all) and no control draws from it. `isCollapsed` still
- * tells whether there is any.
- */
-const sameSelection = (a: RteSelectionSnapshot, b: RteSelectionSnapshot): boolean => {
-    const { text: _a, ...restA } = a;
-    const { text: _b, ...restB } = b;
-    return sameData(restA, restB);
-};
-
 type ToolbarItemSlotProps = {
     render: ToolbarEntry['render'];
     itemProps: ToolbarItemProps;
@@ -238,21 +201,8 @@ type ToolbarItemSlotProps = {
 /**
  * One plugin's control as a component of its own, so the hooks it calls keep
  * their state when another plugin is added or removed.
- *
- * Re-rendered only when what it is handed changed: typing moves the editor
- * state on every keystroke but rarely anything a control shows. Data is
- * compared by value (selection without its text, see `sameSelection`); the
- * commands are left out because they derive from the same data.
  */
-const ToolbarItemSlot = memo(
-    ({ render, itemProps }: ToolbarItemSlotProps): ReactNode => render(itemProps),
-    (previous, next) =>
-        previous.render === next.render &&
-        previous.itemProps.api === next.itemProps.api &&
-        previous.itemProps.isActive === next.itemProps.isActive &&
-        sameData(previous.itemProps.selectedNode, next.itemProps.selectedNode) &&
-        sameSelection(previous.itemProps.selection, next.itemProps.selection),
-);
+const ToolbarItemSlot = ({ render, itemProps }: ToolbarItemSlotProps): ReactNode => render(itemProps);
 
 /** Every element in the toolbar a keyboard can land on. Disabled controls are passed over. */
 const CONTROLS = 'button, input, select, textarea, a[href], [role="combobox"]';

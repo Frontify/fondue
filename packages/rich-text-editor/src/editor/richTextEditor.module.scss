@@ -62,40 +62,6 @@
     }
 }
 
-/** Lets the floating bar hear focus entering and leaving its controls, without a box of its own. */
-.toolbarFocus {
-    display: contents;
-}
-
-/**
- * The bar hung over the selected text. Fixed because its position is in
- * viewport coordinates, which holds whichever container the editor scrolls in.
- *
- * `width: max-content` sizes it to its controls and the cap makes it wrap
- * instead of leaving the window. `z-index` lifts it over later positioned
- * blocks; the flyouts its controls open are portalled and stack above it.
- */
-.floatingToolbar {
-    position: fixed;
-    z-index: 1;
-    box-sizing: border-box;
-    max-width: calc(100vw - var(--spacing-medium) * 2);
-    width: max-content;
-    border: var(--border-width-default) solid var(--color-line-subtle);
-    border-radius: var(--border-radius-medium);
-    background: var(--color-surface-default);
-    box-shadow: var(--shadow-mid);
-
-    /** The component supplies one anchor point; the shift off it lives here, so flipping is only an attribute change. */
-    &[data-side='above'] {
-        transform: translate(-50%, calc(-100% - var(--spacing-xx-small)));
-    }
-
-    &[data-side='below'] {
-        transform: translate(-50%, var(--spacing-xx-small));
-    }
-}
-
 /**
  * The editable element's chrome: inset, minimum height, cursor. Text styling
  * comes from the renderer's `.document` class, so the readonly view matches.
@@ -134,19 +100,6 @@
         color: var(--color-secondary-default);
         pointer-events: none;
     }
-}
-
-/** Read out by assistive technology, never drawn: the status region. */
-.visuallyHidden {
-    position: absolute;
-    overflow: hidden;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    border: 0;
-    clip-path: inset(50%);
-    white-space: nowrap;
 }
 
 /** The "Turn into" button of the floating bar: the block's name beside a caret. */

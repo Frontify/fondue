@@ -3,7 +3,6 @@
 import { type RtePlugin } from '#/core';
 
 import { alignPlugin } from './Align';
-import { autoformatPlugin } from './Autoformat';
 import { boldPlugin } from './Bold';
 import { checkListPlugin } from './CheckList';
 import { codePlugin } from './Code';
@@ -53,7 +52,6 @@ export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     checkListPlugin(),
     quotePlugin(),
     resetFormattingPlugin(),
-    // No toolbar of their own: a keybinding and a set of typing rules.
+    // No toolbar of its own: a keybinding.
     softBreakPlugin(),
-    autoformatPlugin(),
 ]);

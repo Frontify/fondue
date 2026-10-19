@@ -73,6 +73,17 @@ const paste = (editable: HTMLElement, content: { html?: string; text?: string })
     });
 };
 
+/** Selects the first run of text, the way a mouse drag over it would: the floating bar needs selected text. */
+const selectText = (editable: HTMLElement): void => {
+    const text = window.document.createTreeWalker(editable, NodeFilter.SHOW_TEXT).nextNode();
+    act(() => {
+        if (text) {
+            window.getSelection()?.setBaseAndExtent(text, 0, text, text.textContent?.length ?? 0);
+        }
+        window.document.dispatchEvent(new Event('selectionchange'));
+    });
+};
+
 const labels = (elements: Iterable<Element>): (string | null)[] =>
     [...elements].map((element) => element.getAttribute('aria-label'));
 
@@ -92,8 +103,8 @@ describe('the floating bar', () => {
         ));
         paste(editor.editable, { html });
         act(() => editor.editable.focus());
-        press(editor.editable, 'F10', { altKey: true });
-        const bar = editor.container.querySelector<HTMLElement>('[role="toolbar"]');
+        selectText(editor.editable);
+        const bar = window.document.querySelector<HTMLElement>('[role="toolbar"]');
         if (!bar) {
             throw new Error('the bar never appeared');
         }
@@ -137,10 +148,9 @@ describe('the floating bar', () => {
         ));
         paste(editor.editable, { html: '<p>text</p>' });
         act(() => editor.editable.focus());
-        press(editor.editable, 'F10', { altKey: true });
+        selectText(editor.editable);
 
-        expect(editor.container.querySelector('[role="toolbar"]')).toBeNull();
-        expect(editor.container.querySelector('[data-side]')).toBeNull();
+        expect(window.document.querySelector('[role="toolbar"]')).toBeNull();
     });
 
     it('turns the block into a heading from Turn into', () => {

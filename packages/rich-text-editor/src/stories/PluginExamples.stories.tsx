@@ -10,10 +10,9 @@ import { type ReactNode, useState } from 'react';
 //
 // One story per plugin, each mounting that plugin alone, so what a plugin
 // contributes on its own is visible. The ones that need company to do anything
-// (autoformat, reset formatting) say so.
+// (markdown shortcuts, reset formatting) say so.
 import {
     alignPlugin,
-    autoformatPlugin,
     blurOnBreakPlugin,
     boldPlugin,
     bulletListPlugin,
@@ -556,11 +555,11 @@ export const Mention: Story = {
 // Plugins without a schema of their own
 
 /**
- * Typing shortcuts only: markdown prefixes, wrapping delimiters and typography.
- * A rule naming a mark, block or list that is not mounted simply never fires,
+ * Markdown shortcuts: prefixes and wrapping delimiters, declared by the plugins
+ * they target. A rule naming a mark, block or list that is not mounted simply never fires,
  * so this story mounts the plugins its rules target.
  */
-export const Autoformat: Story = {
+export const MarkdownShortcuts: Story = {
     render: () => {
         const [doc, setDoc] = useState<RteDocument>({
             version: 1,
@@ -571,8 +570,7 @@ export const Autoformat: Story = {
             <div className={LAYOUT}>
                 <p className={HINT}>
                     Try <code>### </code>, <code>&gt; </code>, <code>- </code>, <code>1. </code>, <code>[] </code>,
-                    <code> **bold**</code>, <code>`code`</code>, <code>~~struck~~</code>, <code>{'->'}</code>,
-                    <code> (c)</code>, <code>1/2</code>, <code>...</code> and <code>&quot;</code>.
+                    <code> **bold**</code>, <code>`code`</code>, and <code>~~struck~~</code>.
                 </p>
                 <RichTextEditor
                     value={doc}
@@ -588,7 +586,6 @@ export const Autoformat: Story = {
                         bulletListPlugin(),
                         numberedListPlugin(),
                         checkListPlugin(),
-                        autoformatPlugin(),
                     ]}
                 />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>

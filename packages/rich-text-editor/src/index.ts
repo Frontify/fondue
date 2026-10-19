@@ -87,7 +87,6 @@ export { type RteBlock, type RteDocument, type RteDocumentWith, type RteText } f
 
 export { defaultPlugins } from './plugins';
 export { alignPlugin } from './plugins/Align';
-export { autoformatPlugin } from './plugins/Autoformat';
 export { blurOnBreakPlugin } from './plugins/BlurOnBreak';
 export { boldPlugin } from './plugins/Bold';
 export { checkListPlugin } from './plugins/CheckList';

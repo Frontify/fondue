@@ -108,12 +108,6 @@ export const ViewPortalHost = ({ store }: { store: ReturnType<typeof createViewP
     // No views on the server: the editor only mounts in the browser.
     useSyncExternalStore(store.subscribe, store.getSnapshot, noPortals);
 
-/** Same keys, same values: the attributes need no update. */
-const sameAttributes = (a: Readonly<Record<string, string>>, b: Readonly<Record<string, string>>): boolean => {
-    const keys = Object.keys(a);
-    return keys.length === Object.keys(b).length && keys.every((key) => a[key] === b[key]);
-};
-
 /**
  * Two plugins under one id share a toolbar key and a remount key, so one of
  * them silently stands in for the other. Worth a word in development; in
@@ -136,7 +130,7 @@ type UseEditorHandleOptions = {
     /** The document as it currently stands — what a (re)mount starts from. */
     document: RteDocumentOf;
     placeholder: string;
-    /** Further attributes for the editable element; a new object with the same entries changes nothing. */
+    /** Further attributes for the editable element. Memoize them: a new object is applied to the editor. */
     attributes: Readonly<Record<string, string>>;
     placeholderClassName: string;
     onDocChange: (doc: RteDocumentOf) => void;
@@ -175,16 +169,10 @@ export const useEditorHandle = ({
     const [store] = useState(createEditorStateStore);
     const [portals] = useState(createViewPortals);
     const [viewPortals] = useState(() => createElement(ViewPortalHost, { store: portals }));
-    const onDocChangeRef = useRef(onDocChange);
-    onDocChangeRef.current = onDocChange;
-    const onBlurRef = useRef(onBlur);
-    onBlurRef.current = onBlur;
-    // Read at mount, which also happens after readonly is turned off or the
-    // plugins change — so it has to be the latest, not the first.
-    const latestRef = useRef({ document, placeholder, registry, attributes });
-    latestRef.current = { document, placeholder, registry, attributes };
-    // What the editor last got, so an equal new object is not pushed again.
-    const appliedAttributesRef = useRef(attributes);
+    // The latest props, read by the mount (which runs only when the plugins
+    // change or editing is turned on) and by the callbacks it hands the editor.
+    const latestRef = useRef({ document, placeholder, registry, attributes, onDocChange, onBlur });
+    latestRef.current = { document, placeholder, registry, attributes, onDocChange, onBlur };
 
     const pluginsKey = registry.ids.join('|');
 
@@ -203,17 +191,17 @@ export const useEditorHandle = ({
             return;
         }
 
-        appliedAttributesRef.current = latestRef.current.attributes;
+        const latest = latestRef.current;
         const mounted = mountDocument({
             container,
-            initialDoc: latestRef.current.document,
-            registry: latestRef.current.registry,
-            placeholder: latestRef.current.placeholder,
-            attributes: latestRef.current.attributes,
+            initialDoc: latest.document,
+            registry: latest.registry,
+            placeholder: latest.placeholder,
+            attributes: latest.attributes,
             placeholderClassName,
-            onDocChange: (doc) => onDocChangeRef.current(doc),
+            onDocChange: (doc) => latestRef.current.onDocChange(doc),
             onStateChange: store.notify,
-            onBlur: (doc) => onBlurRef.current(doc),
+            onBlur: (doc) => latestRef.current.onBlur(doc),
             viewPortals: portals,
         });
         mountedRef.current = mounted;
@@ -237,13 +225,9 @@ export const useEditorHandle = ({
         mountedRef.current?.setPlaceholder(placeholder);
     }, [placeholder]);
 
-    // Every render, but cheap: a shallow compare, and a write only on change.
     useEffect(() => {
-        if (!sameAttributes(appliedAttributesRef.current, attributes)) {
-            appliedAttributesRef.current = attributes;
-            mountedRef.current?.setAttributes(attributes);
-        }
-    });
+        mountedRef.current?.setAttributes(attributes);
+    }, [attributes]);
 
     return {
         containerRef,

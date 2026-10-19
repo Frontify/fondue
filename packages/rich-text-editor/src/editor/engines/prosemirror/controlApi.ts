@@ -40,7 +40,7 @@ const marksAt = (state: EditorState): Record<string, Record<string, unknown>> =>
         );
     }
 
-    // Only text contributes: inline elements carry no marks (see `inlineMarks.ts`).
+    // Only text contributes: the document stores no marks on inline elements.
     const runs: (readonly PmMark[])[] = [];
     state.doc.nodesBetween(from, to, (node) => {
         if (node.isText) {

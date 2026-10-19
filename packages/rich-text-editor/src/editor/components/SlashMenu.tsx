@@ -2,26 +2,20 @@
 
 // The `/` block-command menu: session tracking and keys in `SlashMenu`, the popup in `SlashList`.
 
-import { type ReactNode, type RefObject, useEffect, useId, useReducer, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { Flyout } from '@frontify/fondue-components';
+import { type ReactNode, type RefObject, useEffect, useId, useRef, useState } from 'react';
 
 import { PARAGRAPH, type RteBlockCommand } from '#/core';
 
 import { matchCommands } from '../helpers/blockCommands';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
-import { readSelectionRect, useFollowViewport } from '../hooks/useSelectionRect';
-import { type EditorHandle, type FloatingRect } from '../port';
+import { useSelectionAnchor } from '../hooks/useSelectionAnchor';
+import { type EditorHandle } from '../port';
 
 import styles from './slashMenu.module.scss';
 
 /** The character that opens the menu. */
 const TRIGGER = '/';
-
-/** The gap between the caret and the list. */
-const LIST_OFFSET = 4;
-
-/** The list's tallest: what has to fit under the caret for it to open downward. */
-const LIST_HEIGHT = 288;
 
 const GROUPS: readonly { group: RteBlockCommand['group']; label: string }[] = [
     { group: 'turnInto', label: 'Turn into' },
@@ -179,6 +173,7 @@ export const SlashMenu = ({
     return (
         <SlashList
             handle={handle}
+            editorState={editorState}
             editableRef={editableRef}
             commands={matches}
             index={Math.min(session.index, Math.max(matches.length - 1, 0))}
@@ -189,9 +184,10 @@ export const SlashMenu = ({
     );
 };
 
-/** The open menu: its position, its listbox, and what is said about it. */
+/** The open menu under the caret: its listbox, and what is said about it. */
 const SlashList = ({
     handle,
+    editorState,
     editableRef,
     commands,
     index,
@@ -200,6 +196,7 @@ const SlashList = ({
     onDismiss,
 }: {
     handle: EditorHandle;
+    editorState: EditorStateStore;
     editableRef: RefObject<HTMLElement | null>;
     /** The matches, in list order. */
     commands: readonly RteBlockCommand[];
@@ -211,11 +208,7 @@ const SlashList = ({
     const listId = useId();
     const popupRef = useRef<HTMLDivElement | null>(null);
     const optionId = (position: number): string => `${listId}-option-${position}`;
-    const [, rerender] = useReducer((count: number) => count + 1, 0);
-
-    // Placed from the caret as of this render, and followed while the page scrolls.
-    useFollowViewport(rerender);
-    const rect = readSelectionRect({ handle, editableRef, caret: true });
+    const anchor = useSelectionAnchor({ handle, editorState, editableRef });
 
     // The editable element names the highlighted option, so a screen reader
     // follows the list while the caret stays in the text.
@@ -237,17 +230,6 @@ const SlashList = ({
         };
     }, [editableRef, listId, activeId]);
 
-    // A press anywhere but the list ends it.
-    useEffect(() => {
-        const away = (event: Event): void => {
-            if (!popupRef.current?.contains(event.target as Node)) {
-                onDismiss();
-            }
-        };
-        window.addEventListener('pointerdown', away, true);
-        return () => window.removeEventListener('pointerdown', away, true);
-    }, [onDismiss]);
-
     // Keep the highlighted row in view as the arrows walk the list.
     useEffect(() => {
         if (activeId !== undefined) {
@@ -255,61 +237,65 @@ const SlashList = ({
         }
     }, [activeId]);
 
-    if (rect === null) {
-        return null;
-    }
-    const placement = placementOf(rect);
-
     let nextPosition = 0;
-    return createPortal(
-        <>
-            <span role="status" className={styles.visuallyHidden}>
-                {describeCount(commands.length)}
-            </span>
-            {/* The surface; the keyboard stays in the text, the mouse picks here. */}
-            {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
-            <div
-                ref={popupRef}
-                className={styles.popup}
-                style={placement}
-                // Never take focus from the text: blurring it would end the session.
-                onMouseDown={(event) => event.preventDefault()}
+    return (
+        // A press anywhere but the list ends it.
+        <Flyout.Root open onOpenChange={(open) => !open && onDismiss()}>
+            <Flyout.Anchor virtualRef={anchor} />
+            <Flyout.Content
+                side="bottom"
+                align="start"
+                padding="none"
+                // The caret stays in the text, and the menu's own key handling takes Escape.
+                onOpenAutoFocus={(event) => event.preventDefault()}
+                onEscapeKeyDown={(event) => event.preventDefault()}
             >
-                {commands.length === 0 ? (
-                    <div className={styles.empty}>No results</div>
-                ) : (
-                    <div id={listId} role="listbox" aria-label="Commands" className={styles.list}>
-                        {GROUPS.map(({ group, label }) => {
-                            const inGroup = commands.filter((command) => command.group === group);
-                            if (inGroup.length === 0) {
-                                return null;
-                            }
-                            return (
-                                <div key={group} role="group" aria-label={label}>
-                                    <div aria-hidden className={styles.heading}>
-                                        {label}
+                <span role="status" className={styles.visuallyHidden}>
+                    {describeCount(commands.length)}
+                </span>
+                {/* The surface; the keyboard stays in the text, the mouse picks here. */}
+                {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
+                <div
+                    ref={popupRef}
+                    className={styles.popup}
+                    // Never take focus from the text: blurring it would end the session.
+                    onMouseDown={(event) => event.preventDefault()}
+                >
+                    {commands.length === 0 ? (
+                        <div className={styles.empty}>No results</div>
+                    ) : (
+                        <div id={listId} role="listbox" aria-label="Commands" className={styles.list}>
+                            {GROUPS.map(({ group, label }) => {
+                                const inGroup = commands.filter((command) => command.group === group);
+                                if (inGroup.length === 0) {
+                                    return null;
+                                }
+                                return (
+                                    <div key={group} role="group" aria-label={label}>
+                                        <div aria-hidden className={styles.heading}>
+                                            {label}
+                                        </div>
+                                        {inGroup.map((command) => {
+                                            const position = nextPosition++;
+                                            return (
+                                                <SlashOption
+                                                    key={command.id}
+                                                    id={optionId(position)}
+                                                    command={command}
+                                                    isActive={position === index}
+                                                    onHover={() => onHover(position)}
+                                                    onRun={() => onRun(command)}
+                                                />
+                                            );
+                                        })}
                                     </div>
-                                    {inGroup.map((command) => {
-                                        const position = nextPosition++;
-                                        return (
-                                            <SlashOption
-                                                key={command.id}
-                                                id={optionId(position)}
-                                                command={command}
-                                                isActive={position === index}
-                                                onHover={() => onHover(position)}
-                                                onRun={() => onRun(command)}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
-        </>,
-        popupRoot(editableRef),
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+            </Flyout.Content>
+        </Flyout.Root>
     );
 };
 
@@ -343,15 +329,3 @@ const SlashOption = ({
         <span>{command.label}</span>
     </div>
 );
-
-const popupRoot = (editableRef: RefObject<HTMLElement | null>): HTMLElement =>
-    editableRef.current?.ownerDocument.body ?? document.body;
-
-/** Fixed to the viewport under the caret, or above it where there is no room below. */
-const placementOf = (rect: FloatingRect): { left: number; top?: number; bottom?: number } => {
-    const below = window.innerHeight - (rect.top + rect.height);
-    const left = Math.max(rect.left, LIST_OFFSET);
-    return below >= LIST_HEIGHT || below >= rect.top
-        ? { left, top: rect.top + rect.height + LIST_OFFSET }
-        : { left, bottom: window.innerHeight - rect.top + LIST_OFFSET };
-};

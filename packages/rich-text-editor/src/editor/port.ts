@@ -49,11 +49,11 @@ export type MountedDocument = {
 export type EditorHandle = {
     api: EditorControlApi;
     /**
-     * The box around the selected text, or null while nothing is selected. For
-     * the editor's own chrome (the toolbar placed over the selection); plugin
-     * UI anchors itself.
+     * The box around the selected text, or around the caret when nothing is
+     * selected. For the editor's own chrome (the floating toolbar, the `/`
+     * menu); plugin UI anchors itself.
      */
-    selectionRect(): FloatingRect | null;
+    selectionRect(): FloatingRect;
 };
 
 /**

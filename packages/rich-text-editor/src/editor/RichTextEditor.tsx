@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CSSProperties, type KeyboardEvent, type MouseEvent, type ReactNode, useId, useMemo, useRef } from 'react';
+import {
+    type CSSProperties,
+    type KeyboardEvent,
+    type MouseEvent,
+    type ReactNode,
+    useId,
+    useMemo,
+    useReducer,
+    useRef,
+} from 'react';
 
 import { buildPluginRegistry, emptyDocument, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
 import { RegistryRenderer } from '#/renderer';
@@ -10,12 +19,9 @@ import { FloatingToolbar } from './components/FloatingToolbar';
 import { SlashMenu } from './components/SlashMenu';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
 import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
-import { type EditorStateStore, useEditorHandle } from './hooks/useEditorHandle';
+import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { useMouseDrag } from './hooks/useMouseDrag';
-import { useExpectedAnnouncement, useStatusAnnouncement } from './hooks/useStatusAnnouncement';
-import { useToolbarSummon } from './hooks/useToolbarSummon';
-import { type EditorHandle } from './port';
 import styles from './richTextEditor.module.scss';
 
 /**
@@ -46,13 +52,13 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * Where the toolbar goes.
      *
      * `'floating'` hangs it over the selected text, shown only while there is
-     * a selection to act on (Alt+F10 calls it up on a caret too).
+     * a selection to act on.
      *
      * `'top'` puts it inside the frame as an always-visible strip above the content.
      *
      * Either way it is one tab stop, moved through with the arrow keys,
-     * reached from the text with Alt+F10; Escape goes back to the text. The
-     * strip comes before the text in the tab order, the floating bar after it.
+     * reached from the text with Alt+F10 (the floating bar while text is
+     * selected); Escape goes back to the text.
      *
      * @default 'top'
      */
@@ -118,24 +124,22 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
 
     const editableId = useId();
     const { hostLabels, isNamed } = hostLabelsOf({ ariaLabel, ariaLabelledBy, ariaDescribedBy });
-    const { expectedRef, expectAnnouncement } = useExpectedAnnouncement();
+    const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
+    const attributes = useMemo(
+        () => editableAttributes({ id: editableId, className, hostLabels, isNamed, placeholder }),
+        // `hostLabels` is rebuilt every render; the props it is built from are the deps.
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
+        [editableId, className, ariaLabel, ariaLabelledBy, ariaDescribedBy, placeholder],
+    );
 
     const { containerRef, handle, editorState, viewPortals } = useEditorHandle({
         registry,
         document,
         placeholder,
         placeholderClassName: styles.placeholder ?? '',
-        // Compared entry by entry by the editor, so a new object every render is fine.
-        attributes: editableAttributes({
-            id: editableId,
-            className: [documentStyles.document, styles.content, ...registry.contentClassNames].join(' '),
-            hostLabels,
-            isNamed,
-            placeholder,
-        }),
+        attributes,
         onDocChange: (doc) => {
             ownDocumentRef.current = doc;
-            expectAnnouncement();
             onChange?.(doc as RteDocumentOf<TBlock>);
         },
         onBlur: (doc) => onBlur?.(doc as RteDocumentOf<TBlock>),
@@ -143,7 +147,10 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     });
 
     const { focusWithin, focusProps } = useFocusWithin();
-    const toolbarSummon = useToolbarSummon(focusWithin);
+    // Alt+F10 asks the toolbar to take focus; it reads and clears the request
+    // once it has rendered, which for a floating bar may be its first render.
+    const focusRequestRef = useRef(false);
+    const [, renderForFocusRequest] = useReducer((count: number) => count + 1, 0);
     // A selection being dragged out with the mouse is not finished yet; the
     // floating bar waits for the button to come up rather than chasing the pointer.
     const { isDragging, startDragging } = useMouseDrag();
@@ -155,15 +162,6 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         ? turnIntoCommands(commands).length > 1 || registry.toolbarItems.some((item) => item.floating === 'inline')
         : registry.toolbarItems.length > 0;
     const hasToolbar = handle !== null && !readOnly && showEditor && hasToolbarContent;
-
-    // On the way down: the engine handles a shortcut on the editable element,
-    // before it bubbles here, and a caret-only change (Mod-b with nothing
-    // selected) must already find the announcement expected.
-    const onKeyDownCapture = (event: KeyboardEvent<HTMLDivElement>): void => {
-        if (isCommandKey(event)) {
-            expectAnnouncement();
-        }
-    };
 
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
         if (handle === null) {
@@ -183,9 +181,11 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         if (event.defaultPrevented) {
             return;
         }
-        if (isToolbarHotkey(event) && hasToolbar) {
+        // The floating bar only exists over selected text.
+        if (isToolbarHotkey(event) && hasToolbar && !(toolbarFloats && handle.api.selection.get().isCollapsed)) {
             event.preventDefault();
-            toolbarSummon.summon();
+            focusRequestRef.current = true;
+            renderForFocusRequest();
         }
     };
 
@@ -214,7 +214,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             placement={toolbarPlacement}
             label={toolbarLabel}
             controls={editableId}
-            focusRequestRef={toolbarSummon.focusRequestRef}
+            focusRequestRef={focusRequestRef}
         />
     ) : null;
 
@@ -224,15 +224,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
         <div
             {...focusProps}
-            onKeyDownCapture={onKeyDownCapture}
             onKeyDown={onKeyDown}
-            onClick={(event) => {
-                // A control clicked, in the toolbar or a flyout; a click in the
-                // text only moves the caret.
-                if (!containerRef.current?.contains(event.target as Node)) {
-                    expectAnnouncement();
-                }
-            }}
             className={styles.root}
             style={registry.contentProperties as CSSProperties}
         >
@@ -255,35 +247,13 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     <div ref={containerRef} />
                 )}
             </div>
-            {/* After the text in the DOM, so the bar is the next tab stop after it. */}
             {toolbarFloats && toolbar !== null && handle !== null && focusWithin && !isDragging ? (
-                <FloatingToolbar
-                    handle={handle}
-                    editorState={editorState}
-                    editableRef={containerRef}
-                    caret={toolbarSummon.isPinned}
-                >
-                    {/* Hears focus moving in and out of the toolbar inside. */}
-                    {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
-                    <div
-                        className={styles.toolbarFocus}
-                        onFocus={toolbarSummon.pin}
-                        onBlur={(event) => {
-                            // Back in the text, a caret no longer holds the bar up.
-                            if (containerRef.current?.contains(event.relatedTarget as Node | null)) {
-                                toolbarSummon.unpin();
-                            }
-                        }}
-                    >
-                        {toolbar}
-                    </div>
+                <FloatingToolbar handle={handle} editorState={editorState} editableRef={containerRef}>
+                    {toolbar}
                 </FloatingToolbar>
             ) : null}
             {/* The plugins' editing UI, portalled into the text but part of this tree, so it shares the host's context. */}
             {viewPortals}
-            {readOnly ? null : (
-                <StatusAnnouncer api={handle?.api ?? null} editorState={editorState} expectedRef={expectedRef} />
-            )}
             {/* Only worth having when a plugin offers something beyond the built-in Text. */}
             {readOnly || !showEditor || handle === null || commands.length < 2 ? null : (
                 <SlashMenu handle={handle} editorState={editorState} editableRef={containerRef} commands={commands} />
@@ -299,14 +269,6 @@ const DEFAULT_LABEL = 'Rich text editor';
 
 /** The key that moves focus from the text to the toolbar, the usual one for rich text editors. */
 const isToolbarHotkey = (event: KeyboardEvent): boolean => event.altKey && event.key === 'F10';
-
-/**
- * A key that runs a command rather than typing or moving the caret: what the
- * status region listens after. Enter counts — it is how a heading ends.
- */
-const isCommandKey = (event: KeyboardEvent): boolean =>
-    !/^(Arrow|Home|End|Page)/.test(event.key) &&
-    (event.metaKey || event.ctrlKey || event.altKey || event.key === 'Enter');
 
 /** What the host named and described the editor with, and whether it gave a name. */
 const hostLabelsOf = ({
@@ -348,21 +310,3 @@ const editableAttributes = ({
     ...hostLabels,
     ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
 });
-
-/** A visually hidden live region reading formatting changes out. */
-const StatusAnnouncer = ({
-    api,
-    editorState,
-    expectedRef,
-}: {
-    api: EditorHandle['api'] | null;
-    editorState: EditorStateStore;
-    expectedRef: { current: boolean };
-}): ReactNode => {
-    const message = useStatusAnnouncement({ api, editorState, expectedRef });
-    return (
-        <span role="status" className={styles.visuallyHidden}>
-            {message}
-        </span>
-    );
-};

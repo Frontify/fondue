@@ -3,7 +3,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { defineBlock, defineInline, defineMark, type RteInputRule, type RtePlugin } from './plugin';
-import { buildPluginRegistry, isValidHotkey } from './registry';
+import { buildPluginRegistry } from './registry';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -47,17 +47,17 @@ describe('the typing rules of a registry', () => {
     it('put mark rules first, longest delimiter first, and keep everything else as declared', () => {
         const italic: RteInputRule = { kind: 'mark', key: 'italic', delimiter: '*' };
         const bold: RteInputRule = { kind: 'mark', key: 'bold', delimiter: '**' };
-        const arrow: RteInputRule = { kind: 'text', match: '->', replaceWith: '→' };
+        const bullets: RteInputRule = { kind: 'list', match: '- ', list: 'bulletList' };
         const heading: RteInputRule = { kind: 'block', match: '# ', block: 'heading' };
 
         const registry = buildPluginRegistry([
-            { id: 'arrow', inputRules: [arrow] },
+            { id: 'bullets', inputRules: [bullets] },
             { id: 'italic', inputRules: [italic] },
             { id: 'heading', inputRules: [heading] },
             { id: 'bold', inputRules: [bold] },
         ]);
 
-        expect(registry.inputRules).toEqual([bold, italic, arrow, heading]);
+        expect(registry.inputRules).toEqual([bold, italic, bullets, heading]);
     });
 });
 
@@ -118,66 +118,6 @@ describe('a type declared twice', () => {
         ]);
 
         expect(registry.blocks.get('item')).toBe(shared);
-    });
-});
-
-describe('a hotkey', () => {
-    it.each(['a', '@', 'Enter', 'Shift-Enter', 'Mod-b', 'Mod-Shift-7', 'Mod-Alt-0', 'Mod--', 'ArrowUp', 'F2'])(
-        'is a key when written "%s"',
-        (keys) => {
-            expect(isValidHotkey(keys)).toBe(true);
-        },
-    );
-
-    it.each(['@@', 'Enterr', 'Mod-bb', 'Hyper-b', ''])('is not a key when written "%s"', (keys) => {
-        expect(isValidHotkey(keys)).toBe(false);
-    });
-
-    it.each(['mod-b', 'alt-x', 'Shift-Mod-7', 'Mod--', 'CTRL-a', 'cmd-Enter', 'm-k', 's-Tab'])(
-        'is kept without a warning when written "%s"',
-        (keys) => {
-            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-            const registry = buildPluginRegistry([{ id: `keeps-${keys}`, hotkeys: { [keys]: () => true } }]);
-
-            expect([...registry.hotkeys.keys()]).toEqual([keys]);
-            expect(warn).not.toHaveBeenCalled();
-        },
-    );
-
-    it.each(['Option-x', 'Foo-x'])('with the unknown modifier "%s" is dropped and warned about', (keys) => {
-        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const handler = () => true;
-
-        const registry = buildPluginRegistry([{ id: `drops-${keys}`, hotkeys: { [keys]: handler, 'Mod-b': handler } }]);
-
-        expect([...registry.hotkeys.keys()]).toEqual(['Mod-b']);
-        expect(warn).toHaveBeenCalledTimes(1);
-        expect(warn.mock.calls[0]?.[0]).toContain(`"${keys}"`);
-        expect(warn.mock.calls[0]?.[0]).toContain('ignored');
-    });
-
-    it('that is invalid warns once per plugin and key, even when plugins are rebuilt', () => {
-        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const build = (): RtePlugin => ({ id: 'mentions', hotkeys: { '@@': () => true, '@': () => true } });
-
-        buildPluginRegistry([build()]);
-        buildPluginRegistry([build()]);
-
-        expect(warn).toHaveBeenCalledTimes(1);
-        expect(warn.mock.calls[0]?.[0]).toContain('"@@"');
-    });
-
-    it('that is invalid is dropped in production, without a warning', () => {
-        vi.stubEnv('NODE_ENV', 'production');
-        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-        const registry = buildPluginRegistry([
-            { id: 'production-keys', hotkeys: { 'Option-x': () => true, 'Mod-b': () => true } },
-        ]);
-
-        expect([...registry.hotkeys.keys()]).toEqual(['Mod-b']);
-        expect(warn).not.toHaveBeenCalled();
     });
 });
 

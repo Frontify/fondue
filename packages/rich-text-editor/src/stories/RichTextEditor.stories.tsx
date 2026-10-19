@@ -199,7 +199,7 @@ export const ToolbarPlacement: Story = {
  *
  * Type `/` on an empty line for the command menu: the same block types, plus
  * what can only be inserted (a column break). Keep typing to filter, ↑/↓ to
- * move, Enter or Tab to run, Escape to close. Alt+F10 moves focus to the bar.
+ * move, Enter or Tab to run, Escape to close. With text selected, Alt+F10 moves focus to the bar.
  */
 export const FloatingToolbar: Story = {
     render: () => {
@@ -593,15 +593,18 @@ const MANY_KEYS = Array.from({ length: MANY }, (_, index) => `editor-${index + 1
 export const ManyEditors: Story = {
     render: () => {
         const [docs, setDocs] = useState<RteDocument[]>(() =>
-            Array.from({ length: MANY }, (_, index): RteDocument => ({
-                version: 1,
-                blocks: [
-                    {
-                        type: 'paragraph',
-                        children: [{ text: `Editor ${index + 1} — type here.` }],
-                    },
-                ],
-            })),
+            Array.from(
+                { length: MANY },
+                (_, index): RteDocument => ({
+                    version: 1,
+                    blocks: [
+                        {
+                            type: 'paragraph',
+                            children: [{ text: `Editor ${index + 1} — type here.` }],
+                        },
+                    ],
+                }),
+            ),
         );
         const startedAtRef = useRef(performance.now());
         const [mountedIn, setMountedIn] = useState<number | null>(null);

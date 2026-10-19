@@ -8,13 +8,11 @@ import { type MountedDocument, type MountDocument, type MountOptions } from '#/e
 import { clipboardParser, clipboardSerializer, handlePasteByFeatures, handlePasteIntoEmptyBlock } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
 import { toEngineDocument, toRteDocument } from './documentConversion';
-import { inlineElementsCarryNoMarksPlugin } from './inlineMarks';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
 import { createSelectionRectReader } from './selectionRect';
-import { wholeIslandsPlugin } from './wholeIslands';
 import './engine.scss';
 
 /**
@@ -72,16 +70,14 @@ const mount = ({
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
-    //    those it can concern, and each re-renders only when its props changed.
+    //    all of them, and each re-renders only when its props changed.
     const liveViews = new LiveViews(viewPortals);
     const repaintViews = (): void => {
-        const live = getView();
         // The caret left the node whose editing UI was open: it closes and stays
-        // closed when the caret returns. The open view is still engaged, so the
-        // second pass redraws it.
-        if (!liveViews.repaint(live, openEditors.type) && openEditors.type !== null) {
+        // closed when the caret returns, so a second pass redraws it closed.
+        if (!liveViews.repaint(openEditors.type) && openEditors.type !== null) {
             openEditors.type = null;
-            liveViews.repaint(live, null);
+            liveViews.repaint(null);
         }
     };
     const openEditors: OpenEditors = { type: null, repaint: repaintViews };
@@ -113,8 +109,6 @@ const mount = ({
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
-                wholeIslandsPlugin(),
-                inlineElementsCarryNoMarksPlugin(),
             ],
         }),
         handleDOMEvents: {

@@ -480,32 +480,6 @@ describe('the toolbar', () => {
         expect(clickCount(container)).toBe('2');
     });
 
-    it('re-renders a control only when what it is handed changed', () => {
-        let renders = 0;
-        const CountingItem = (): ReactNode => {
-            renders++;
-            return null;
-        };
-        const countingPlugin: RtePlugin = { id: 'counting', toolbarItem: CountingItem };
-
-        const { container, ready } = mount((onChange) => (
-            <RichTextEditor plugins={[...defaultPlugins, countingPlugin]} onChange={onChange} toolbarPlacement="top" />
-        ));
-        ready();
-        const settled = renders;
-
-        // Plain text where there was none: a new document and a new caret, but
-        // the same block and no marks — nothing a control shows.
-        paste(container, '<p>plain</p>');
-        expect(container.textContent).toContain('plain');
-        expect(renders).toBe(settled);
-
-        // Ending up in bold text is a different selection, so it does reach
-        // the control.
-        paste(container, '<p><strong>bold</strong></p>');
-        expect(renders).toBeGreaterThan(settled);
-    });
-
     it('warns in development when two plugins share an id', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         // The duplicate toolbar key gets React's own complaint too.
@@ -597,15 +571,27 @@ describe('the toolbar from the keyboard', () => {
 
     const focusedLabel = (): string | null | undefined => window.document.activeElement?.getAttribute('aria-label');
 
+    const selectAll = (editable: HTMLElement): void => {
+        const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+        press(editable, 'a', mod);
+    };
+
     describe.each(['top', 'floating'] as const)('with the %s toolbar, asked for again', (placement) => {
         const start = (): { editable: HTMLElement; rerender: () => void } => {
             const element = (label: string): ReactNode => (
-                <RichTextEditor plugins={plugins} toolbarPlacement={placement} aria-label={label} />
+                <RichTextEditor
+                    value={paragraph('text')}
+                    plugins={plugins}
+                    toolbarPlacement={placement}
+                    aria-label={label}
+                />
             );
             const { container, ready, rerender } = mount(() => element('One'));
             ready();
             const editable = editableIn(container);
             act(() => editable.focus());
+            // The floating bar only exists over selected text.
+            selectAll(editable);
             return { editable, rerender: () => rerender(element('Two')) };
         };
 
@@ -635,19 +621,20 @@ describe('the toolbar from the keyboard', () => {
         });
     });
 
-    it('floats in after the text on Alt+F10, even over a caret', () => {
-        const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="floating" />);
+    it('floats over selected text only', () => {
+        const { container, ready } = mount(() => (
+            <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="floating" />
+        ));
         ready();
         const editable = editableIn(container);
         act(() => editable.focus());
-        expect(container.querySelector('[role="toolbar"]')).toBeNull();
+        expect(window.document.querySelector('[role="toolbar"]')).toBeNull();
 
         press(editable, 'F10', { altKey: true });
+        expect(window.document.querySelector('[role="toolbar"]')).toBeNull();
 
-        const toolbar = toolbarIn(container);
-        expect(toolbar.contains(window.document.activeElement)).toBe(true);
-        // After the text, so Tab order and reading order agree.
-        expect(editable.compareDocumentPosition(toolbar) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        selectAll(editable);
+        expect(window.document.querySelector('[role="toolbar"]')).not.toBeNull();
     });
 
     it('draws alignment as one choice of four, left until another is chosen', () => {
@@ -665,92 +652,6 @@ describe('the toolbar from the keyboard', () => {
         const bold = container.querySelector('[aria-label="Bold"]');
         expect(bold?.getAttribute('aria-keyshortcuts')).toMatch(/^(Meta|Control)\+B$/);
         expect(bold?.getAttribute('title')).toMatch(/^Bold \((⌘B|Ctrl\+B)\)$/);
-    });
-});
-
-describe('the status region', () => {
-    it('reads out a formatting change made from the toolbar, once it has settled', () => {
-        vi.useFakeTimers();
-        try {
-            const { container, ready } = mount(() => (
-                <RichTextEditor plugins={[boldPlugin()]} toolbarPlacement="top" />
-            ));
-            ready();
-            paste(container, '<p>text</p>');
-            const status = container.querySelector('[role="status"]');
-
-            act(() => container.querySelector<HTMLElement>('[aria-label="Bold"]')?.click());
-            expect(status?.textContent).toBe('');
-            act(() => {
-                vi.runAllTimers();
-            });
-
-            expect(status?.textContent).toBe('Bold on');
-        } finally {
-            vi.useRealTimers();
-        }
-    });
-
-    // A browser runs microtasks between an event's listeners and happy-dom does
-    // not, so this guards the behaviour but cannot fail the way a browser did.
-    it('reads out a shortcut that only changes what the caret will type', () => {
-        vi.useFakeTimers();
-        try {
-            const { container, ready } = mount(() => (
-                <RichTextEditor plugins={[boldPlugin()]} toolbarPlacement="top" />
-            ));
-            ready();
-            paste(container, '<p>text</p>');
-            const status = container.querySelector('[role="status"]');
-            const editable = editableIn(container);
-            act(() => editable.focus());
-            // A bare caret at the end of the text, so the shortcut changes no text.
-            act(() => {
-                const text = editable.querySelector('p')?.firstChild;
-                if (text) {
-                    window.getSelection()?.collapse(text, 4);
-                }
-                window.document.dispatchEvent(new Event('selectionchange'));
-            });
-            // Let the paste's own announcement settle, so only the shortcut is left to read out.
-            act(() => {
-                vi.runAllTimers();
-            });
-
-            const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
-            press(editable, 'b', { keyCode: 66, ...mod });
-            act(() => {
-                vi.runAllTimers();
-            });
-
-            expect(status?.textContent).toBe('Bold on');
-        } finally {
-            vi.useRealTimers();
-        }
-    });
-
-    it('stays quiet while the caret only moves', () => {
-        vi.useFakeTimers();
-        try {
-            const { container, ready } = mount(() => (
-                <RichTextEditor plugins={[boldPlugin()]} toolbarPlacement="top" />
-            ));
-            ready();
-            act(() => {
-                vi.runAllTimers();
-            });
-            const status = container.querySelector('[role="status"]');
-            const before = status?.textContent;
-
-            act(() => editableIn(container).focus());
-            act(() => {
-                vi.runAllTimers();
-            });
-
-            expect(status?.textContent).toBe(before);
-        } finally {
-            vi.useRealTimers();
-        }
     });
 });
 
@@ -774,7 +675,9 @@ describe('focus within', () => {
         });
     };
 
-    it('follows focus into a portal and out of the tree, without waiting', () => {
+    it('follows focus into a portal and out of the tree', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
         const outside = window.document.createElement('input');
         window.document.body.append(outside);
         teardown.push(() => outside.remove());
@@ -795,12 +698,16 @@ describe('focus within', () => {
         expect(state()).toBe('true');
 
         focus(outside);
+        act(() => {
+            vi.runAllTimers();
+        });
         expect(state()).toBe('false');
 
         focus(inside);
         expect(state()).toBe('true');
         act(() => {
             (inside as HTMLElement | null)?.blur();
+            vi.runAllTimers();
         });
         expect(state()).toBe('false');
     });

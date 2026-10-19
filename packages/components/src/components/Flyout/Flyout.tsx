@@ -2,7 +2,7 @@
 
 import { IconCross } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
-import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode, type RefObject } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
@@ -65,6 +65,33 @@ export const FlyoutTrigger = (
     );
 };
 FlyoutTrigger.displayName = 'Flyout.Trigger';
+
+export type FlyoutAnchorProps = {
+    /**
+     * Position the flyout against something that is not an element, such as a text selection.
+     * When set, nothing is rendered and `children` is ignored.
+     */
+    virtualRef?: RefObject<{ getBoundingClientRect(): DOMRect }>;
+    /**
+     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * @default true
+     */
+    asChild?: boolean;
+    children?: ReactNode;
+};
+
+/**
+ * Positions the flyout against an element other than its trigger, or against a
+ * virtual element through `virtualRef`.
+ */
+export const FlyoutAnchor = ({ virtualRef, asChild = true, children }: FlyoutAnchorProps) => {
+    return (
+        <RadixPopover.Anchor virtualRef={virtualRef} asChild={asChild}>
+            {children}
+        </RadixPopover.Anchor>
+    );
+};
+FlyoutAnchor.displayName = 'Flyout.Anchor';
 
 type FlyoutSpacing = 'compact' | 'comfortable' | 'spacious';
 type FlyoutViewportCollisionPadding = 'compact' | 'spacious';
@@ -287,6 +314,7 @@ FlyoutBody.displayName = 'Flyout.Body';
 export const Flyout = {
     Root: FlyoutRoot,
     Trigger: forwardRef<HTMLButtonElement, FlyoutTriggerProps>(FlyoutTrigger),
+    Anchor: FlyoutAnchor,
     Content: forwardRef<HTMLDivElement, FlyoutContentProps>(FlyoutContent),
     Header: forwardRef<HTMLDivElement, FlyoutHeaderProps>(FlyoutHeader),
     Footer: forwardRef<HTMLDivElement, FlyoutFooterProps>(FlyoutFooter),

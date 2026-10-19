@@ -38,7 +38,8 @@ import { markValueOf, VALUE_ATTR } from './documentConversion';
  *              root: the shell renders all portals in one commit and the
  *              components see the host app's context providers.
  *   update     the engine calls `update` on a new node; `LiveViews.repaint`
- *              re-offers views whose focus, selection or openness changed.
+ *              offers every view each state change, for focus, selection
+ *              and openness.
  *   destroy    the view drops its portal; React unmounts it on its next render.
  *
  * Two rules every view follows:
@@ -106,98 +107,34 @@ type Painted = { focused: boolean; selected: boolean; open: boolean; value: unkn
 const samePaint = (a: Painted | null, b: Painted): boolean =>
     a !== null && a.focused === b.focused && a.selected === b.selected && a.open === b.open && a.value === b.value;
 
-/** What a repaint reports: its type and focus, and whether it is drawn as anything but idle. */
-type PaintResult = { type: string; focused: boolean; engaged: boolean };
+/** What a repaint reports: the view's type, and whether the selection is in it. */
+type PaintResult = { type: string; focused: boolean };
 
 /** A view whose props follow the selection (focus, selection, openness); `LiveViews.repaint` offers it changes. */
 type Repaintable = { paint(): PaintResult };
 
 /**
- * The React-hosted views of one editor. A view's props only change when the
- * selection reaches or leaves it, so a repaint offers only the views drawn
- * engaged (focused, selected, open) last time plus those at the new selection,
- * found through the DOM element each registered. Offering every view every
- * change cost a position lookup per view per keystroke.
+ * The React-hosted views of one editor. Every state change offers each of them
+ * a repaint; a view re-renders only when what it hands its component changed.
  */
 export class LiveViews {
-    private readonly elements = new Map<Repaintable, HTMLElement>();
-    private readonly byElement = new WeakMap<Node, Repaintable>();
-    private readonly engaged = new Set<Repaintable>();
+    private readonly views = new Set<Repaintable>();
 
     constructor(readonly portals: ViewPortals) {}
 
-    add(view: Repaintable, element: HTMLElement): void {
-        this.elements.set(view, element);
-        this.byElement.set(element, view);
+    add(view: Repaintable): void {
+        this.views.add(view);
     }
 
     remove(view: Repaintable): void {
-        this.elements.delete(view);
-        this.engaged.delete(view);
+        this.views.delete(view);
     }
 
-    /** Record what a paint reported, so the next repaint knows to offer it again. */
-    painted(view: Repaintable, result: PaintResult): PaintResult {
-        if (result.engaged) {
-            this.engaged.add(view);
-        } else {
-            this.engaged.delete(view);
-        }
-        return result;
-    }
-
-    /** The views around a DOM node, up to the editable element. */
-    private collect(node: Node | null | undefined, root: HTMLElement, into: Set<Repaintable>): void {
-        for (let current = node; current && current !== root; current = current.parentNode) {
-            const found = this.byElement.get(current);
-            if (found) {
-                into.add(found);
-            }
-        }
-    }
-
-    /** The views at a position: around it, and on either side of it (a mark ending there, an inline before it). */
-    private collectAt(view: EditorView, pos: number, into: Set<Repaintable>): void {
-        for (const side of [-1, 1]) {
-            const { node, offset } = view.domAtPos(pos, side);
-            this.collect(node, view.dom, into);
-            this.collect(node.childNodes[offset - 1], view.dom, into);
-            this.collect(node.childNodes[offset], view.dom, into);
-        }
-    }
-
-    /** The views the selection reaches: at both ends, and every one a range touches. */
-    private atSelection(view: EditorView): Set<Repaintable> {
-        const found = new Set<Repaintable>();
-        const { from, to, empty } = view.state.selection;
-        this.collectAt(view, from, found);
-        this.collect(view.nodeDOM(from), view.dom, found);
-        if (empty) {
-            return found;
-        }
-        this.collectAt(view, to, found);
-        // Compared in the DOM, which needs no position lookup per view.
-        const start = view.domAtPos(from);
-        const end = view.domAtPos(to);
-        const range = view.dom.ownerDocument.createRange();
-        range.setStart(start.node, start.offset);
-        range.setEnd(end.node, end.offset);
-        for (const [live, element] of this.elements) {
-            if (range.intersectsNode(element)) {
-                found.add(live);
-            }
-        }
-        return found;
-    }
-
-    /**
-     * Offer the views a state change can concern a repaint. Reports whether
-     * one of `openType` is still focused — when none is, its editing UI closes.
-     */
-    repaint(view: EditorView, openType: string | null): boolean {
+    /** Repaint every view. Reports whether one of `openType` is still focused — when none is, its editing UI closes. */
+    repaint(openType: string | null): boolean {
         let openStillFocused = false;
-        for (const live of new Set([...this.engaged, ...this.atSelection(view)])) {
-            const { type, focused } = live.paint();
+        for (const view of this.views) {
+            const { type, focused } = view.paint();
             openStillFocused ||= focused && type === openType;
         }
         return openStillFocused;
@@ -281,11 +218,11 @@ abstract class ReactEditView<TCurrent> implements Repaintable {
 
     /**
      * Call last in the constructor, once the DOM is built: the component is
-     * portalled into `container`, and the view is found by its `dom`.
+     * portalled into `container`.
      */
-    protected start(container: HTMLElement, dom: HTMLElement): void {
+    protected start(container: HTMLElement): void {
         this.container = container;
-        this.live.add(this, dom);
+        this.live.add(this);
         this.paint();
     }
 
@@ -313,14 +250,13 @@ abstract class ReactEditView<TCurrent> implements Repaintable {
     paint(): PaintResult {
         const { type } = this;
         if (this.destroyed || this.container === null) {
-            return { type, focused: false, engaged: false };
+            return { type, focused: false };
         }
         const { focused, selected } = this.placement();
         const value = this.value();
         const next: Painted = { focused, selected, open: focused && this.openEditors.type === type, value };
-        const result = { type, focused, engaged: focused || selected || next.open };
         if (samePaint(this.painted, next)) {
-            return this.live.painted(this, result);
+            return { type, focused };
         }
         this.painted = next;
         this.painting(next);
@@ -343,7 +279,7 @@ abstract class ReactEditView<TCurrent> implements Repaintable {
                 this.container,
             ),
         );
-        return this.live.painted(this, result);
+        return { type, focused };
     }
 
     destroy(): void {
@@ -449,7 +385,7 @@ class ReactBlockView extends ReactNodeView<Record<string, unknown>> {
             this.contentDOM = wrapper(definition.content === 'text' ? 'span' : 'div');
             this.dom.append(this.contentDOM);
         }
-        this.start(container, this.dom);
+        this.start(container);
     }
 
     private syncAttrs(next: Record<string, string>): void {
@@ -559,7 +495,7 @@ class ReactInlineView extends ReactNodeView<Record<string, unknown> | null> {
         this.dom = document.createElement('span');
         this.dom.className = INLINE_VIEW_CLASS;
         this.dom.contentEditable = 'false';
-        this.start(this.dom, this.dom);
+        this.start(this.dom);
     }
 
     protected placement(): { focused: boolean; selected: boolean } {
@@ -650,7 +586,7 @@ class ReactMarkView extends ReactEditView<Record<string, unknown>> implements Ma
         const container = wrapper('span');
         this.contentDOM = wrapper('span');
         this.dom.append(container, this.contentDOM);
-        this.start(container, this.dom);
+        this.start(container);
     }
 
     protected get type(): string {

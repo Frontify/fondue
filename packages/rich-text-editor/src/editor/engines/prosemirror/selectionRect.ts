@@ -36,10 +36,12 @@ const rectBetweenEnds = (view: EditorView, from: number, to: number): FloatingRe
     };
 };
 
-/** Where the selected text sits on screen, for the floating toolbar; null when nothing is selected. */
+/** Where the selected text sits on screen, or the caret when nothing is selected — what the floating UI hangs off. */
 export const createSelectionRectReader =
-    (view: EditorView): (() => FloatingRect | null) =>
+    (view: EditorView): (() => FloatingRect) =>
     () => {
         const { from, to, empty } = view.state.selection;
-        return empty ? null : (domRectBetween(view, from, to) ?? rectBetweenEnds(view, from, to));
+        return empty
+            ? rectBetweenEnds(view, from, from)
+            : (domRectBetween(view, from, to) ?? rectBetweenEnds(view, from, to));
     };

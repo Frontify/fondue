@@ -143,58 +143,6 @@ const register = <TDefinition>(
     }
 };
 
-// Case-insensitive, and the exact set the engine's key parser accepts: it throws on any other.
-const MODIFIER = /^(mod|cmd|meta|m|alt|a|ctrl|control|c|shift|s)$/i;
-const KEY_NAMES = new Set([
-    'Enter',
-    'Backspace',
-    'Delete',
-    'Tab',
-    'Escape',
-    'Space',
-    'ArrowUp',
-    'ArrowDown',
-    'ArrowLeft',
-    'ArrowRight',
-    'Home',
-    'End',
-    'PageUp',
-    'PageDown',
-    'Insert',
-    ...Array.from({ length: 12 }, (_, index) => `F${index + 1}`),
-]);
-
-/**
- * A key a binding can actually match: one character, a key name, or either
- * behind modifiers (`Mod-Shift-7`). Anything else — `@@`, `Option-x` — is not one.
- */
-export const isValidHotkey = (keys: string): boolean => {
-    // The last part is the key itself; `Mod--` binds the minus key.
-    const match = /^(.*?)-?([^-]+|-)$/.exec(keys);
-    if (match === null) {
-        return false;
-    }
-    const [, modifiers = '', key = ''] = match;
-    const isKey = [...key].length === 1 || KEY_NAMES.has(key);
-    return isKey && (modifiers === '' || modifiers.split('-').every((modifier) => MODIFIER.test(modifier)));
-};
-
-/** `plugin id + keys` already warned about, so a registry rebuilt per render warns once. */
-const warnedHotkeys = new Set<string>();
-
-/** Warns in development that an invalid hotkey is ignored; compiled out in production. */
-const warnAboutInvalidHotkey = (pluginId: string, keys: string): void => {
-    const warning = `${pluginId}\0${keys}`;
-    if (process.env.NODE_ENV === 'production' || warnedHotkeys.has(warning)) {
-        return;
-    }
-    warnedHotkeys.add(warning);
-    console.warn(
-        `[RichTextEditor] Plugin "${pluginId}" binds "${keys}", which is not a valid hotkey: it is ignored. ` +
-            'Name one character, a key such as `Enter`, or either behind the modifiers Mod, Cmd, Meta, Ctrl, Alt or Shift (`Mod-Shift-7`).',
-    );
-};
-
 /** Mark rules first, longest delimiter first; everything else keeps its declared order. */
 const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
     ...rules
@@ -233,10 +181,6 @@ export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegist
         }
         seenIds.add(plugin.id);
         for (const [keys, handler] of Object.entries(plugin.hotkeys ?? {})) {
-            if (!isValidHotkey(keys)) {
-                warnAboutInvalidHotkey(plugin.id, keys);
-                continue;
-            }
             hotkeys.set(keys, [...(hotkeys.get(keys) ?? []), handler]);
         }
         inputRules.push(...(plugin.inputRules ?? []));
