@@ -42,8 +42,5 @@ export {
     ownTypeOf,
     type PluginRegistry,
     type ToolbarEntry,
-    unknownBlockType,
-    unknownInlineType,
-    unknownMarkType,
 } from './registry';
 export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, PARAGRAPH } from './vocabulary';

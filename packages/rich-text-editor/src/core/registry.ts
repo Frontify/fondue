@@ -86,13 +86,6 @@ export type PluginRegistry = {
     contentProperties: Readonly<Record<string, string>>;
 };
 
-const unknownTypeMessage = (kind: string, type: string): string =>
-    `Unknown ${kind} type "${type}". Did you forget to pass the plugin that defines it in \`plugins\`?`;
-
-export const unknownBlockType = (type: string): Error => new Error(unknownTypeMessage('block', type));
-export const unknownInlineType = (type: string): Error => new Error(unknownTypeMessage('inline', type));
-export const unknownMarkType = (type: string): Error => new Error(unknownTypeMessage('mark', type));
-
 /** A mark sits in the floating bar; a block is reached through its commands instead. */
 const defaultFloatingPlacement = (own: OwnType): ToolbarEntry['floating'] =>
     own.kind === 'mark' ? 'inline' : 'hidden';

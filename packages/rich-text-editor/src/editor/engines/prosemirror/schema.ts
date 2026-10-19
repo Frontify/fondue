@@ -12,7 +12,7 @@ import {
     type PluginRegistry,
 } from '#/core';
 
-import { VALUE_ATTR } from './documentConversion';
+import { plainTextOf, RAW_ATTR, UNKNOWN_BLOCK, UNKNOWN_INLINE, UNKNOWN_MARKS, VALUE_ATTR } from './documentConversion';
 import { htmlSpecToDom } from './htmlSpecToDom';
 import { blockParseRules, INLINE_PRIORITY, MARK_PRIORITY, valueParseRules } from './pasteRules';
 
@@ -61,7 +61,8 @@ const contentExpression = (
     if (contains.length === 0) {
         throw new Error(`Block "${type}" declares content blocks but none of those types are registered.`);
     }
-    return contains.length === 1 ? `${contains[0]}+` : `(${contains.join(' | ')})+`;
+    // Wherever blocks go, one no plugin knows may stand in for one.
+    return `(${[...contains, UNKNOWN_BLOCK].join(' | ')})+`;
 };
 
 const blockNodeSpec = (
@@ -123,6 +124,34 @@ const markSpec = (definition: MarkDefinition): PmMarkSpec => ({
     toDOM: (mark) => htmlSpecToDom(definition.toHtml(mark.attrs[VALUE_ATTR] as Record<string, unknown>)),
 });
 
+// --- Content no mounted plugin knows (see `UNKNOWN_BLOCK` in documentConversion.ts) ---
+//
+// Shown, never edited: the words it holds, in a box the caret steps over. No
+// parse rules, so pasting one in elsewhere brings its words, not the node.
+
+const unknownBlockSpec: PmNodeSpec = {
+    group: 'block',
+    atom: true,
+    selectable: true,
+    attrs: { [RAW_ATTR]: {} },
+    toDOM: (node) => ['div', { 'data-rte-unknown': '', contenteditable: 'false' }, plainTextOf(node.attrs[RAW_ATTR])],
+};
+
+const unknownInlineSpec: PmNodeSpec = {
+    group: 'inline',
+    inline: true,
+    atom: true,
+    attrs: { [RAW_ATTR]: {} },
+    toDOM: (node) => ['span', { 'data-rte-unknown': '', contenteditable: 'false' }, plainTextOf(node.attrs[RAW_ATTR])],
+};
+
+/** Carried along with the text it is on, drawing nothing; typing next to it does not extend it. */
+const unknownMarksSpec: PmMarkSpec = {
+    attrs: { [RAW_ATTR]: {} },
+    inclusive: false,
+    toDOM: () => ['span', 0],
+};
+
 export const buildSchema = (registry: PluginRegistry): Schema => {
     const { itemTypeByList } = registry;
     const itemTypes = new Set(itemTypeByList.values());
@@ -138,12 +167,16 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
     for (const [type, inline] of registry.inlines) {
         nodes[type] = inlineNodeSpec(inline);
     }
+    nodes[UNKNOWN_BLOCK] = unknownBlockSpec;
+    nodes[UNKNOWN_INLINE] = unknownInlineSpec;
 
     // invariant (2): the registry already holds marks in nesting order.
     const marks: Record<string, PmMarkSpec> = {};
     for (const [type, mark] of registry.marks) {
         marks[type] = markSpec(mark);
     }
+    // Last, so it wraps nothing a plugin's mark would.
+    marks[UNKNOWN_MARKS] = unknownMarksSpec;
 
     return new Schema({ nodes, marks });
 };

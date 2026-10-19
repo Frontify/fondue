@@ -14,10 +14,9 @@ import {
     type RteDocumentOf,
     type RteInlineNode,
     type StoredMarkValue,
-    unknownBlockType,
-    unknownInlineType,
-    unknownMarkType,
 } from '#/core';
+
+import { warnUnknownContent } from './warnings';
 
 /**
  * The document boundary: RTE format <-> engine format. The only place either
@@ -32,6 +31,34 @@ import {
  * onto the document node. Every other file reads the value through this name.
  */
 export const VALUE_ATTR = 'value';
+
+// --- Content no mounted plugin knows ---
+//
+// Kept, not thrown and not dropped: a document written by an editor with more
+// plugins must survive being edited by one with fewer, or the next `onChange`
+// would hand the host back less than it gave. Each piece rides through the
+// engine as an opaque value and comes out exactly as it went in.
+
+/** A block of unknown type, whole: an uneditable placeholder in the text. */
+export const UNKNOWN_BLOCK = '__rteUnknownBlock';
+/** An inline element of unknown type, whole. */
+export const UNKNOWN_INLINE = '__rteUnknownInline';
+/** The unknown marks of a run of text, together: `{ glow: true, … }`. */
+export const UNKNOWN_MARKS = '__rteUnknownMarks';
+/** The attribute an unknown block or inline keeps its document node in, and the unknown marks their values. */
+export const RAW_ATTR = 'raw';
+
+/** The words in a piece of unknown content, for its placeholder to show. */
+export const plainTextOf = (raw: unknown): string => {
+    if (typeof raw !== 'object' || raw === null) {
+        return '';
+    }
+    const { text, children } = raw as { text?: unknown; children?: unknown };
+    if (typeof text === 'string') {
+        return text;
+    }
+    return Array.isArray(children) ? children.map(plainTextOf).join('') : '';
+};
 
 // --- Reading engine nodes: shared by both directions and the control API ---
 
@@ -116,25 +143,35 @@ const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] =>
             }
             const { text, type: _type, ...markValues } = child;
             // `false` and `null` say the mark is off, as absent does.
-            const marks = Object.entries(markValues)
-                .filter(([, value]) => value !== undefined && value !== null && value !== false)
-                .map(([key, value]) => {
-                    // Thrown rather than dropped, or the next `onChange` would lose it.
-                    const markType = schema.marks[key];
-                    if (!markType) {
-                        throw unknownMarkType(key);
-                    }
-                    // `true` when it carries nothing, else its value (see `StoredMarkValue`).
-                    const stored = value as StoredMarkValue;
-                    return markType.create(valueAttrsFor(stored === true ? undefined : stored));
-                });
+            const marks: PmMark[] = [];
+            const unknownMarks: Record<string, unknown> = {};
+            for (const [key, value] of Object.entries(markValues)) {
+                if (value === undefined || value === null || value === false) {
+                    continue;
+                }
+                const markType = schema.marks[key];
+                if (!markType || key === UNKNOWN_MARKS) {
+                    warnUnknownContent('mark', key);
+                    unknownMarks[key] = value;
+                    continue;
+                }
+                // `true` when it carries nothing, else its value (see `StoredMarkValue`).
+                const stored = value as StoredMarkValue;
+                marks.push(markType.create(valueAttrsFor(stored === true ? undefined : stored)));
+            }
+            const unknownMarksType = schema.marks[UNKNOWN_MARKS];
+            if (unknownMarksType && Object.keys(unknownMarks).length > 0) {
+                marks.push(unknownMarksType.create({ [RAW_ATTR]: unknownMarks }));
+            }
             nodes.push(schema.text(text, marks));
             continue;
         }
         const { type, text: _text, ...value } = child;
         const nodeType = schema.nodes[type];
-        if (!nodeType) {
-            throw unknownInlineType(type);
+        if (!nodeType || !nodeType.isInline || type === UNKNOWN_INLINE) {
+            warnUnknownContent('inline', type);
+            nodes.push(schema.node(UNKNOWN_INLINE, { [RAW_ATTR]: child }));
+            continue;
         }
         nodes.push(nodeType.create(valueAttrsFor(value)));
     }
@@ -157,8 +194,9 @@ const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
         return known;
     }
     const nodeType = schema.nodes[block.type];
-    if (!nodeType) {
-        throw unknownBlockType(block.type);
+    if (!nodeType || nodeType.isInline || nodeType === schema.topNodeType || block.type === UNKNOWN_BLOCK) {
+        warnUnknownContent('block', block.type);
+        return schema.node(UNKNOWN_BLOCK, { [RAW_ATTR]: block });
     }
     const attrs = declaredAttrs(block as Record<string, unknown>, nodeType.spec.attrs);
     return createFilled(nodeType, attrs, block.children ? childrenToEngine(nodeType, block.children, schema) : []);
@@ -224,9 +262,15 @@ const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
     }
 
     let converted: RteInlineNode;
-    if (child.isText) {
+    if (child.type.name === UNKNOWN_INLINE) {
+        converted = child.attrs[RAW_ATTR] as RteInlineNode;
+    } else if (child.isText) {
         const text: Record<string, unknown> = { text: child.text ?? '' };
         for (const mark of child.marks) {
+            if (mark.type.name === UNKNOWN_MARKS) {
+                Object.assign(text, mark.attrs[RAW_ATTR]);
+                continue;
+            }
             // A mark that carries nothing is stored as `true` — see `StoredMarkValue`.
             const value = markValueOf(mark);
             text[mark.type.name] = Object.keys(value).length > 0 ? value : true;
@@ -244,6 +288,10 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
     const remembered = convertedBlocks.get(node);
     if (remembered !== undefined) {
         return remembered;
+    }
+
+    if (node.type.name === UNKNOWN_BLOCK) {
+        return node.attrs[RAW_ATTR] as RteBlockNode;
     }
 
     const block: Record<string, unknown> = { type: node.type.name, ...definedAttrs(node.attrs) };

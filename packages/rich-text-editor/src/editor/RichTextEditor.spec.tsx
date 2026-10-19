@@ -713,6 +713,30 @@ describe('focus within', () => {
     });
 });
 
+describe('content no mounted plugin knows', () => {
+    it('is shown, not editable, and handed back unchanged after an edit elsewhere', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const callout = { type: 'callout', children: [{ type: 'paragraph', children: [{ text: 'kept' }] }] };
+        const value = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'text' }] }, callout],
+        } as unknown as RteDocument;
+
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={[boldPlugin()]} />
+        ));
+        ready();
+        const placeholder = container.querySelector('[data-rte-unknown]');
+        expect(placeholder?.textContent).toBe('kept');
+        expect(placeholder?.getAttribute('contenteditable')).toBe('false');
+
+        paste(container, '<p>typed</p>');
+
+        expect(stored()?.blocks.find((block) => (block.type as string) === 'callout')).toBe(callout);
+    });
+});
+
 describe('onBlur', () => {
     it('fires once focus leaves the editor, not when it moves into the toolbar, with the document', () => {
         vi.useFakeTimers();

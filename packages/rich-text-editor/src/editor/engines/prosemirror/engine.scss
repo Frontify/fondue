@@ -73,3 +73,12 @@
         }
     }
 }
+
+/**
+ * Content no mounted plugin knows (schema.ts): kept in the document, shown as
+ * its words, not editable. Dimmed and boxed so it does not read as plain text.
+ */
+[data-rte-editable] [data-rte-unknown] {
+    color: var(--color-secondary-default);
+    border: var(--border-width-default) dashed var(--color-line-mid);
+}

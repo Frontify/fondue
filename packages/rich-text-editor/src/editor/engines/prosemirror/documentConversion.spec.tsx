@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { EditorState } from 'prosemirror-state';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
     ANY_LIST,
@@ -125,13 +125,60 @@ describe('the document boundary', () => {
         expect(toRteDocument(toEngineDocument(document, schema))).toEqual(document);
     });
 
-    it('refuses a mark no mounted plugin defines, rather than dropping it', () => {
-        const withUnknownMark: RteDocumentOf = {
+    describe('content no mounted plugin defines', () => {
+        const withUnknown = {
             version: 1,
-            blocks: [{ type: PARAGRAPH, children: [{ text: 'x', highlight: true }] }],
-        };
+            blocks: [
+                {
+                    type: PARAGRAPH,
+                    children: [
+                        { text: 'glowing', highlight: { color: 'gold' }, bold: true },
+                        { type: 'emoji', name: 'wave', text: undefined },
+                        { text: ' after' },
+                    ],
+                },
+                { type: 'callout', tone: 'info', children: [{ type: PARAGRAPH, children: [{ text: 'inside' }] }] },
+                {
+                    type: 'bulletList',
+                    children: [{ type: 'listItem', children: [{ type: 'table', rows: [] }] }],
+                },
+            ],
+        } as unknown as RteDocumentOf;
 
-        expect(() => toEngineDocument(withUnknownMark, schema)).toThrow(/Unknown mark type "highlight"/);
+        it('is kept as it was, warning once per type', () => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const engineDoc = toEngineDocument(withUnknown, schema);
+
+                expect(JSON.parse(JSON.stringify(toRteDocument(engineDoc)))).toEqual(
+                    JSON.parse(JSON.stringify(withUnknown)),
+                );
+                expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown mark type "highlight"'));
+                expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown inline type "emoji"'));
+                expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown block type "callout"'));
+            } finally {
+                warn.mockRestore();
+            }
+        });
+
+        it('survives an edit elsewhere in the document', () => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const state = EditorState.create({ doc: toEngineDocument(withUnknown, schema) });
+                // Typed at the very end of the first paragraph, after " after".
+                const end = (state.doc.firstChild?.nodeSize ?? 2) - 1;
+                const edited = toRteDocument(state.apply(state.tr.insertText('!', end)).doc);
+
+                expect(edited.blocks[0]?.children).toEqual([
+                    { text: 'glowing', bold: true, highlight: { color: 'gold' } },
+                    { type: 'emoji', name: 'wave', text: undefined },
+                    { text: ' after!' },
+                ]);
+                expect(edited.blocks.slice(1)).toEqual(withUnknown.blocks.slice(1));
+            } finally {
+                warn.mockRestore();
+            }
+        });
     });
 
     it('drops the empty text run an empty document is written with', () => {
