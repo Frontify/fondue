@@ -43,11 +43,12 @@ const ReadonlyCheckItem = ({
     style?: CSSProperties;
 }): ReactNode => {
     const labelId = useId();
+    const checked = value.checked === true;
     return (
-        <li data-checked={String(value.checked)} className={styles.item} style={style}>
+        <li data-checked={String(checked)} className={styles.item} style={style}>
             <input
                 type="checkbox"
-                checked={value.checked}
+                checked={checked}
                 readOnly
                 aria-readonly="true"
                 aria-labelledby={labelId}
@@ -74,17 +75,18 @@ const EditCheckItem = ({
     children?: ReactNode;
 }): ReactNode => {
     const labelId = useId();
+    const checked = value.checked === true;
     return (
         <>
             <input
                 type="checkbox"
-                checked={value.checked}
+                checked={checked}
                 contentEditable={false}
                 aria-labelledby={labelId}
                 // Keeps focus — and the caret — in the text, so checking an
                 // item is not the editor losing focus (and firing `onBlur`).
                 onMouseDown={(event) => event.preventDefault()}
-                onChange={() => setValue({ checked: !value.checked })}
+                onChange={() => setValue({ checked: !checked })}
                 className={styles.checkbox}
             />
             <div id={labelId} className={styles.label}>
@@ -108,23 +110,27 @@ export const checkListPlugin = (): RtePlugin => ({
             defaults: { checked: false },
             // Exported HTML cannot be interacted with, so its checkbox is a
             // disabled one, named by its state.
-            toHtml: ({ checked }) => ({
-                tag: 'li',
-                attrs: { 'data-checked': String(checked), class: styles.item },
-                children: [
-                    {
-                        tag: 'input',
-                        attrs: {
-                            type: 'checkbox',
-                            checked,
-                            disabled: true,
-                            'aria-label': stateLabel(checked),
-                            class: styles.checkbox,
+            // Only `true` is checked: a stored `"false"` is truthy, and would draw a tick.
+            toHtml: (value) => {
+                const checked = value.checked === true;
+                return {
+                    tag: 'li',
+                    attrs: { 'data-checked': String(checked), class: styles.item },
+                    children: [
+                        {
+                            tag: 'input',
+                            attrs: {
+                                type: 'checkbox',
+                                checked,
+                                disabled: true,
+                                'aria-label': stateLabel(checked),
+                                class: styles.checkbox,
+                            },
                         },
-                    },
-                    { tag: 'div', attrs: { class: styles.label }, children: true },
-                ],
-            }),
+                        { tag: 'div', attrs: { class: styles.label }, children: true },
+                    ],
+                };
+            },
             // Read from the attribute value rather than off the checkbox, so
             // it comes back as a boolean rather than a string.
             parse: [{ tag: 'li[data-checked]', value: (element) => ({ checked: element.dataset.checked === 'true' }) }],

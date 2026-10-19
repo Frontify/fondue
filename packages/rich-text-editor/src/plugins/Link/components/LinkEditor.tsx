@@ -5,7 +5,7 @@ import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 
 
 import { type EditProps } from '#/core';
 
-import { isSafeHref } from '../helpers/href';
+import { isSafeHref } from '../../shared/helpers/href';
 import { type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
 

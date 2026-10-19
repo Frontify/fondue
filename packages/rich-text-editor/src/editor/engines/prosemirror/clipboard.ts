@@ -74,10 +74,13 @@ const tidyPasted = (dom: HTMLElement): void => {
         block.textContent = text;
         return block;
     };
-    for (const table of dom.querySelectorAll('table')) {
-        const rows = [...table.querySelectorAll('tr')].map((row) =>
+    // Innermost first (document order puts a nested table after its outer
+    // one), so an outer cell reads a nested table as the lines it became; and
+    // `rows` and `cells` are the table's own, so no cell is read twice.
+    for (const table of [...dom.querySelectorAll('table')].reverse()) {
+        const rows = [...table.rows].map((row) =>
             lineBlock(
-                [...row.querySelectorAll('td, th')]
+                [...row.cells]
                     .map((cell) => cell.textContent?.trim() ?? '')
                     .filter(Boolean)
                     .join(' '),

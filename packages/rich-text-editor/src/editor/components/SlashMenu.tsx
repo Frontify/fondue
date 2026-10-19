@@ -10,6 +10,7 @@ import { PARAGRAPH, type RteBlockCommand } from '#/core';
 import { matchCommands } from '../helpers/blockCommands';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { useSelectionAnchor } from '../hooks/useSelectionAnchor';
+import { type RichTextEditorLabels } from '../labels';
 import { type EditorHandle } from '../port';
 
 import styles from './slashMenu.module.scss';
@@ -17,9 +18,10 @@ import styles from './slashMenu.module.scss';
 /** The character that opens the menu. */
 const TRIGGER = '/';
 
-const GROUPS: readonly { group: RteBlockCommand['group']; label: string }[] = [
-    { group: 'turnInto', label: 'Turn into' },
-    { group: 'insert', label: 'Insert' },
+/** The groups in list order, each headed by the label under that key. */
+const GROUPS: readonly { group: RteBlockCommand['group']; label: 'turnInto' | 'insert' }[] = [
+    { group: 'turnInto', label: 'turnInto' },
+    { group: 'insert', label: 'insert' },
 ];
 
 type Session = { query: string; index: number };
@@ -32,8 +34,8 @@ const inListOrder = (commands: readonly RteBlockCommand[]): RteBlockCommand[] =>
     GROUPS.flatMap(({ group }) => commands.filter((command) => command.group === group));
 
 /** `n commands`, or none — what the status region says as the list narrows. */
-const describeCount = (count: number): string =>
-    count === 0 ? 'No results' : `${count} ${count === 1 ? 'command' : 'commands'}`;
+const describeCount = (count: number, labels: RichTextEditorLabels): string =>
+    count === 0 ? labels.noResults : labels.commandCount(count);
 
 /**
  * The `/` menu: typed at the start of an empty paragraph it lists every block
@@ -55,11 +57,13 @@ export const SlashMenu = ({
     editorState,
     editableRef,
     commands,
+    labels,
 }: {
     handle: EditorHandle;
     editorState: EditorStateStore;
     editableRef: RefObject<HTMLElement | null>;
     commands: readonly RteBlockCommand[];
+    labels: RichTextEditorLabels;
 }): ReactNode => {
     const { api } = handle;
     // Null while closed. Escape closes it and it stays shut until a `/` is
@@ -180,6 +184,7 @@ export const SlashMenu = ({
             onHover={(index) => updateSession({ ...session, index })}
             onRun={run}
             onDismiss={() => updateSession(null)}
+            labels={labels}
         />
     );
 };
@@ -194,6 +199,7 @@ const SlashList = ({
     onHover,
     onRun,
     onDismiss,
+    labels,
 }: {
     handle: EditorHandle;
     editorState: EditorStateStore;
@@ -204,6 +210,7 @@ const SlashList = ({
     onHover: (index: number) => void;
     onRun: (command: RteBlockCommand) => void;
     onDismiss: () => void;
+    labels: RichTextEditorLabels;
 }): ReactNode => {
     const listId = useId();
     const popupRef = useRef<HTMLDivElement | null>(null);
@@ -218,10 +225,12 @@ const SlashList = ({
         if (!editable) {
             return;
         }
-        editable.setAttribute('aria-controls', listId);
+        // With nothing matching there is no list to point at, only the "no results" note.
         if (activeId === undefined) {
+            editable.removeAttribute('aria-controls');
             editable.removeAttribute('aria-activedescendant');
         } else {
+            editable.setAttribute('aria-controls', listId);
             editable.setAttribute('aria-activedescendant', activeId);
         }
         return () => {
@@ -251,7 +260,7 @@ const SlashList = ({
                 onEscapeKeyDown={(event) => event.preventDefault()}
             >
                 <span role="status" className={styles.visuallyHidden}>
-                    {describeCount(commands.length)}
+                    {describeCount(commands.length, labels)}
                 </span>
                 {/* The surface; the keyboard stays in the text, the mouse picks here. */}
                 {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
@@ -262,10 +271,11 @@ const SlashList = ({
                     onMouseDown={(event) => event.preventDefault()}
                 >
                     {commands.length === 0 ? (
-                        <div className={styles.empty}>No results</div>
+                        <div className={styles.empty}>{labels.noResults}</div>
                     ) : (
-                        <div id={listId} role="listbox" aria-label="Commands" className={styles.list}>
-                            {GROUPS.map(({ group, label }) => {
+                        <div id={listId} role="listbox" aria-label={labels.commands} className={styles.list}>
+                            {GROUPS.map(({ group, label: labelKey }) => {
+                                const label = labels[labelKey];
                                 const inGroup = commands.filter((command) => command.group === group);
                                 if (inGroup.length === 0) {
                                     return null;

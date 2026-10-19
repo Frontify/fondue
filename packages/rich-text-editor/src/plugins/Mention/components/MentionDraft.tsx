@@ -189,7 +189,8 @@ export const MentionDraft = ({
                 ref={inputRef}
                 role="combobox"
                 aria-expanded={open}
-                aria-controls={listId}
+                // Only while the listbox is in the page: an id pointing at nothing is an error.
+                aria-controls={open && position !== null && !noMatches ? listId : undefined}
                 aria-autocomplete="list"
                 aria-activedescendant={open && active ? optionId(activeIndex) : undefined}
                 aria-label="Mention someone"

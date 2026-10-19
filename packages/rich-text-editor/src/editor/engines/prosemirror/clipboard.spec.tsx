@@ -82,3 +82,13 @@ describe('pasting', () => {
         expect(editor.stored()).toEqual([paragraph(text('first')), paragraph(text('second'))]);
     });
 });
+
+describe('pasting a table inside a table', () => {
+    it('reads each cell once, not again as part of the outer row', () => {
+        const editor = editorWith(defaultPlugins, [paragraph()]);
+
+        editor.pasteHTML('<table><tr><td>outer <table><tr><td>inner</td></tr></table></td></tr></table>');
+
+        expect(editor.stored()).toEqual([paragraph(text('outer inner'))]);
+    });
+});

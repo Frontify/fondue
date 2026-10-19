@@ -3,7 +3,7 @@
 import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
-import { toHref } from '../helpers/href';
+import { toHref } from '../../shared/helpers/href';
 import { type LinkValue } from '../helpers/value';
 
 import styles from './linkForm.module.scss';
@@ -25,7 +25,8 @@ export const LinkTargetForm = ({
     /** Offered for a link that exists: take it away, keeping its text. */
     onRemove?: () => void;
 }): ReactNode => {
-    const [typed, setTyped] = useState(initial.href);
+    // A stored link without a string target opens the form empty rather than uncontrolled.
+    const [typed, setTyped] = useState(typeof initial.href === 'string' ? initial.href : '');
     const [openInNewTab, setOpenInNewTab] = useState(initial.openInNewTab === true);
     // Set by a failed save, cleared when the field changes.
     const [error, setError] = useState<string | null>(null);

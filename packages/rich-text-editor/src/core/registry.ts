@@ -39,8 +39,10 @@ export type OwnType =
 
 /** One plugin's toolbar control, with the type it acts on already resolved. */
 export type ToolbarEntry = {
-    /** The plugin's id — the control's key. */
+    /** The plugin's id. */
     id: string;
+    /** The control's React key: the id, made unique when two plugins share one. */
+    key: string;
     render: (props: ToolbarItemProps) => ReactNode;
     own: OwnType;
     /** Where the floating bar puts it: the plugin's choice, else by what it owns. */
@@ -120,7 +122,7 @@ export const ownTypeOf = (plugin: RtePlugin): OwnType => {
  * object registered twice is fine — two list plugins share their item that way.
  */
 const register = <TDefinition>(
-    kind: 'block' | 'mark' | 'inline',
+    kind: 'block type' | 'mark type' | 'inline type' | 'block attribute',
     target: Map<string, TDefinition>,
     owners: Map<string, string>,
     plugin: RtePlugin,
@@ -132,8 +134,8 @@ const register = <TDefinition>(
             const first = owners.get(type);
             throw new Error(
                 first === undefined
-                    ? `Duplicate ${kind} type "${type}": built into the editor and declared by plugin "${plugin.id}".`
-                    : `Duplicate ${kind} type "${type}": declared by plugin "${first}" and plugin "${plugin.id}".`,
+                    ? `Duplicate ${kind} "${type}": built into the editor and declared by plugin "${plugin.id}".`
+                    : `Duplicate ${kind} "${type}": declared by plugin "${first}" and plugin "${plugin.id}".`,
             );
         }
         target.set(type, definition);
@@ -169,17 +171,20 @@ export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegist
     const commandOwners = new Map<string, string>();
     const contentClassNames: string[] = [];
     const contentProperties: Record<string, string> = {};
-    const seenIds = new Set<string>();
+    /** How often each id has come up so far, for unique toolbar keys. */
+    const seenIds = new Map<string, number>();
     const duplicateIds = new Set<string>();
     const blockOwners = new Map<string, string>();
     const inlineOwners = new Map<string, string>();
     const markOwners = new Map<string, string>();
+    const attributeOwners = new Map<string, string>();
 
     for (const plugin of plugins) {
-        if (seenIds.has(plugin.id)) {
+        const occurrence = seenIds.get(plugin.id) ?? 0;
+        if (occurrence > 0) {
             duplicateIds.add(plugin.id);
         }
-        seenIds.add(plugin.id);
+        seenIds.set(plugin.id, occurrence + 1);
         for (const [keys, handler] of Object.entries(plugin.hotkeys ?? {})) {
             hotkeys.set(keys, [...(hotkeys.get(keys) ?? []), handler]);
         }
@@ -191,6 +196,8 @@ export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegist
             const own = ownTypeOf(plugin);
             toolbarItems.push({
                 id: plugin.id,
+                // A shared id is a mistake the editor warns about; the toolbar still keys each control apart.
+                key: occurrence === 0 ? plugin.id : `${plugin.id}#${occurrence}`,
                 render: plugin.toolbarItem,
                 own,
                 floating: plugin.floatingToolbar ?? defaultFloatingPlacement(own),
@@ -211,16 +218,14 @@ export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegist
         }
         Object.assign(contentProperties, plugin.contentProperties);
 
-        register('block', blocks, blockOwners, plugin, plugin.blocks);
-        register('inline', inlines, inlineOwners, plugin, plugin.inlines);
-        register('mark', marks, markOwners, plugin, plugin.marks);
+        register('block type', blocks, blockOwners, plugin, plugin.blocks);
+        register('inline type', inlines, inlineOwners, plugin, plugin.inlines);
+        register('mark type', marks, markOwners, plugin, plugin.marks);
+        register('block attribute', blockAttributes, attributeOwners, plugin, plugin.blockAttributes);
         for (const [type, definition] of Object.entries(plugin.blocks ?? {})) {
             if (typeof definition.content === 'object' && 'items' in definition.content) {
                 itemTypeByList.set(type, definition.content.items);
             }
-        }
-        for (const [name, definition] of Object.entries(plugin.blockAttributes ?? {})) {
-            blockAttributes.set(name, definition);
         }
     }
 

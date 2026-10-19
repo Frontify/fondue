@@ -10,9 +10,11 @@ import { buildPluginRegistry } from '../core';
 import {
     columnBreakPlugin,
     defaultPlugins,
+    defineMark,
     mentionPlugin,
     type RteDocument,
     type RteDocumentWith,
+    type RtePlugin,
     serializeToHtml,
 } from '../index';
 import { documentTree } from '../renderer/documentTree';
@@ -76,11 +78,11 @@ const doc: RteDocumentWith<{ block: { type: 'columnBreak' } }> = {
 };
 
 /** The React path, rendered into the test DOM. */
-const drawnWithReact = (value: RteDocument | typeof doc): string => {
+const drawnWithReact = (value: RteDocument | typeof doc, withPlugins: readonly RtePlugin[] = plugins): string => {
     const container = window.document.createElement('div');
     const root = createRoot(container);
     act(() => {
-        root.render(toReact(documentTree(value, buildPluginRegistry(plugins), { useComponents: false })));
+        root.render(toReact(documentTree(value, buildPluginRegistry(withPlugins), { useComponents: false })));
     });
     const html = container.innerHTML;
     act(() => root.unmount());
@@ -109,5 +111,50 @@ const normalized = (html: string): string => {
 describe('toHtml drawn by React and written out directly', () => {
     it('is the same HTML for every shipped node', () => {
         expect(normalized(drawnWithReact(doc))).toBe(normalized(serializeToHtml(doc, { plugins, wrap: false })));
+    });
+});
+
+describe('a style value that could break out of its declaration', () => {
+    // A plugin passing a stored value straight into `style`; the core drops
+    // what it must not write, the same way on both paths.
+    const tintPlugin: RtePlugin = {
+        id: 'tint',
+        marks: {
+            tint: defineMark<{ color: string }>({
+                defaults: { color: 'inherit' },
+                toHtml: ({ color }) => ({
+                    tag: 'span',
+                    attrs: { style: { color, 'font-weight': 'bold' } },
+                    children: true,
+                }),
+                parse: [],
+            }),
+        },
+    };
+    const tinted = (color: string): RteDocumentWith<{ mark: { tint?: { color: string } } }> => ({
+        version: 1,
+        blocks: [{ type: 'paragraph', children: [{ text: 'x', tint: { color } }] }],
+    });
+
+    it.each([
+        'red; background: blue',
+        'red} p { color: blue',
+        'url(https://example.com/track.png)',
+        'URL(x)',
+        'expression(alert(1))',
+        'red\\3b',
+        '</style><script>',
+    ])('is dropped from the style, keeping the rest: %s', (color) => {
+        const exported = serializeToHtml(tinted(color), { plugins: [tintPlugin], wrap: false });
+
+        expect(exported).toBe('<p><span style="font-weight: bold;">x</span></p>');
+        expect(normalized(drawnWithReact(tinted(color), [tintPlugin]))).toBe(normalized(exported));
+    });
+
+    it('keeps an ordinary value', () => {
+        const exported = serializeToHtml(tinted('rgb(255, 0, 0)'), { plugins: [tintPlugin], wrap: false });
+
+        expect(exported).toContain('color: rgb(255, 0, 0);');
+        expect(normalized(drawnWithReact(tinted('rgb(255, 0, 0)'), [tintPlugin]))).toBe(normalized(exported));
     });
 });

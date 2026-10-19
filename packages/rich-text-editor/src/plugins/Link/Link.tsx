@@ -2,9 +2,10 @@
 
 import { defineMark, type RtePlugin } from '#/core';
 
+import { isSafeHref, toHref } from '../shared/helpers/href';
+
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
-import { isSafeHref, toHref } from './helpers/href';
 import { openNewLinkForm } from './helpers/newLinkForms';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
@@ -17,8 +18,8 @@ export type LinkMark = {
     link?: LinkValue;
 };
 
-const newTabAttrs = (link: LinkValue): Record<string, string> =>
-    link.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
+    link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 
 /**
  * A link is a mark: the text stays text, and the target rides along on it.
@@ -45,15 +46,21 @@ export const linkPlugin = (): RtePlugin => ({
             inclusive: false,
 
             /** The link everywhere but while editing: readonly, export, copy. */
-            toHtml: (link) => ({
-                tag: 'a',
-                attrs: {
-                    ...(isSafeHref(link.href) ? { href: link.href } : {}),
-                    class: styles.link,
-                    ...newTabAttrs(link),
-                },
-                children: true,
-            }),
+            toHtml: (value) => {
+                // A stored document may hold anything here — `{}`, `true` — so
+                // nothing about its shape is taken on trust.
+                const link = typeof value === 'object' ? (value as Partial<LinkValue> | null) : null;
+                const href = link?.href;
+                return {
+                    tag: 'a',
+                    attrs: {
+                        ...(isSafeHref(href) ? { href } : {}),
+                        class: styles.link,
+                        ...newTabAttrs(link),
+                    },
+                    children: true,
+                };
+            },
 
             parse: [
                 {

@@ -1,6 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Mark as PmMark, type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
+import {
+    Fragment,
+    type Mark as PmMark,
+    type Node as PmNode,
+    type NodeType as PmNodeType,
+    type Schema,
+} from 'prosemirror-model';
 
 import {
     DOCUMENT_VERSION,
@@ -109,8 +115,9 @@ const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] =>
                 continue;
             }
             const { text, type: _type, ...markValues } = child;
+            // `false` and `null` say the mark is off, as absent does.
             const marks = Object.entries(markValues)
-                .filter(([, value]) => value !== undefined)
+                .filter(([, value]) => value !== undefined && value !== null && value !== false)
                 .map(([key, value]) => {
                     // Thrown rather than dropped, or the next `onChange` would lose it.
                     const markType = schema.marks[key];
@@ -189,9 +196,26 @@ const convertedBlocks = new WeakMap<PmNode, RteBlockNode>();
  */
 const engineNodeOf = new WeakMap<RteBlockNode, PmNode>();
 
+/** An inline still being made: not part of the document yet. */
+const isDraft = (node: PmNode): boolean => node.isInline && !node.isText && node.attrs[VALUE_ATTR] === null;
+
+/** The engine document as the host's copy of it reads: drafts left out. Unchanged when there are none. */
+export const withoutDrafts = (node: PmNode): PmNode => {
+    if (node.isLeaf) {
+        return node;
+    }
+    let changed = false;
+    const children = mapChildren(node, (child) => {
+        const kept = isDraft(child) ? null : withoutDrafts(child);
+        changed ||= kept !== child;
+        return kept;
+    }).filter((child) => child !== null);
+    // `Fragment.from` joins the text a draft separated, as reading the host's copy back in does.
+    return changed ? node.copy(Fragment.from(children)) : node;
+};
+
 const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
-    // An inline still being made (a draft) is not part of the document yet.
-    if (!child.isText && child.attrs[VALUE_ATTR] === null) {
+    if (isDraft(child)) {
         return null;
     }
     const remembered = convertedInlines.get(child);

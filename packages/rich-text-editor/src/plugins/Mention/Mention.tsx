@@ -2,6 +2,8 @@
 
 import { defineInline, type RtePlugin } from '#/core';
 
+import { isSafeHref } from '../shared/helpers/href';
+
 import { MentionDraft } from './components/MentionDraft';
 import { MentionLink } from './components/MentionLink';
 import styles from './mention.module.scss';
@@ -44,6 +46,11 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
         throw new Error(`mentionPlugin: \`trigger\` must be exactly one character, got "${trigger}".`);
     }
     const items = typeof options.items === 'function' ? options.items : searchIn(options.items);
+    // The app's `href` is held to what a link is: a `javascript:` profile URL is left off.
+    const safeHref = (mention: MentionItem): string | undefined => {
+        const target = href(mention);
+        return isSafeHref(target) ? target : undefined;
+    };
     return {
         id: 'mention',
         inlines: {
@@ -52,7 +59,7 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
                 toHtml: (mention) => ({
                     tag: 'a',
                     attrs: {
-                        href: href(mention),
+                        href: safeHref(mention),
                         title: mention.name,
                         'data-mention-id': mention.id,
                         'data-mention-username': mention.username,
@@ -61,20 +68,22 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
                     children: `${trigger}${mention.username}`,
                 }),
 
-                // Reads back what `toHtml` wrote, so a copied mention pastes as a mention.
+                // Reads back what `toHtml` wrote, so a copied mention pastes as a
+                // mention. Without an id and a username it names nobody, and
+                // stays the link it is.
                 parse: [
                     {
                         tag: 'a[data-mention-id]',
-                        value: (element) => ({
-                            id: element.dataset.mentionId ?? '',
-                            username: element.dataset.mentionUsername ?? '',
-                            name: element.title,
-                        }),
+                        value: (element) => {
+                            const id = element.dataset.mentionId ?? '';
+                            const username = element.dataset.mentionUsername ?? '';
+                            return id === '' || username === '' ? null : { id, username, name: element.title };
+                        },
                     },
                 ],
 
                 render: {
-                    component: ({ value }) => <MentionLink value={value} href={href(value)} trigger={trigger} />,
+                    component: ({ value }) => <MentionLink value={value} href={safeHref(value)} trigger={trigger} />,
 
                     // `value` is null until someone is chosen.
                     edit: ({ value, setValue, isFocused, remove, api }) =>
@@ -100,7 +109,7 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
                                 }}
                             />
                         ) : (
-                            <MentionLink value={value} href={href(value)} trigger={trigger} />
+                            <MentionLink value={value} href={safeHref(value)} trigger={trigger} />
                         ),
                 },
             }),

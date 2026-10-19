@@ -6,7 +6,7 @@
 
 import { createElement, type CSSProperties, type ReactNode } from 'react';
 
-import { type HtmlAttributes, type HtmlSpec, type StyleMap } from '#/core';
+import { type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from '#/core';
 
 import { type DrawnNode } from './documentTree';
 
@@ -16,8 +16,9 @@ const reactStyleName = (property: string): string =>
         ? property
         : property.replaceAll(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
 
+/** The declarations `cssText` would write, so both surfaces drop the same unsafe ones. */
 const toReactStyle = (style: StyleMap): CSSProperties =>
-    Object.fromEntries(Object.entries(style).map(([property, value]) => [reactStyleName(property), value]));
+    Object.fromEntries(safeStyleEntries(style).map(([property, value]) => [reactStyleName(property), value]));
 
 const reactProps = (attrs: HtmlAttributes = {}): Record<string, unknown> => {
     const props: Record<string, unknown> = {};

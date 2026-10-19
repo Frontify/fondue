@@ -8,7 +8,7 @@ import {
     IconTextAlignmentRight,
 } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/core';
+import { type RtePlugin, type StyleMap } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -30,7 +30,7 @@ const ALIGNMENTS: readonly { value: NonNullable<AlignAttribute['align']>; icon: 
     { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify' },
 ];
 
-const isAlignment = (value: string): value is NonNullable<AlignAttribute['align']> =>
+const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align']> =>
     ALIGNMENTS.some((alignment) => alignment.value === value);
 
 /** Text alignment as a block attribute, with a four-way radio group in the toolbar. */
@@ -38,7 +38,9 @@ export const alignPlugin = (): RtePlugin => ({
     id: 'align',
     blockAttributes: {
         align: {
-            style: (value) => ({ 'text-align': value }),
+            // Only the four this plugin offers reach a style: a stored value is
+            // not trusted to be one, and anything else could carry more CSS.
+            style: (value): StyleMap => (isAlignment(value) ? { 'text-align': value } : {}),
             // Only the four this plugin offers: `start`, `end` or `-webkit-center`
             // pasted from elsewhere would be values no control can show.
             parse: (element) => (isAlignment(element.style.textAlign) ? element.style.textAlign : null),

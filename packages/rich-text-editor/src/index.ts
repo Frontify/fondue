@@ -29,7 +29,8 @@ import {
 
 // --- Editor & renderer ---
 
-export { type ToolbarPlacement } from './editor';
+export { type RichTextEditorLabels, type ToolbarPlacement } from './editor';
+export { type SerializeToHtmlOptions } from './renderer';
 
 /**
  * The editor's props. `TBlock` is the document's block union: the shipped
@@ -68,16 +69,16 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
  * out of the editor produces — never a `render.component`, so what is exported
  * pastes back as what it was. No React, no browser needed.
  *
- * By default the blocks sit in the element `RichTextRenderer` draws around
- * them, carrying the classes that set how a document reads; `wrap: false`
- * leaves it out. A page showing the output wants this package's stylesheet
+ * Draws with `defaultPlugins` when given no `plugins`. By default the blocks
+ * sit in the element `RichTextRenderer` draws around them, carrying the
+ * classes that set how a document reads; `wrap: false` leaves it out. A page showing the output wants this package's stylesheet
  * (`@frontify/fondue-rich-text-editor/styles`). An email client has no
  * stylesheet, so whatever builds the email has to inline the styles it needs.
  */
 export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
-    options: SerializeToHtmlOptions,
-): string => serialize(doc, options);
+    options: SerializeToHtmlOptions = {},
+): string => serialize(doc, { ...options, plugins: options.plugins ?? defaultPlugins });
 
 // --- Document format ---
 
@@ -127,8 +128,9 @@ export {
     type MarkDefinition,
     type ParseRule,
     type PasteHandler,
-    type RteInlineNode,
     type RteBlockCommand,
+    type RteBlockNode,
+    type RteInlineNode,
     type RtePlugin,
     type RteSelectionSnapshot,
     type ToolbarItemProps,

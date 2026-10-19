@@ -8,7 +8,7 @@ import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
-import { type FontColorValue, parseCssColor, type RgbaColor, toCssColor } from '../helpers/colors';
+import { type FontColorValue, isCssColor, parseCssColor, type RgbaColor, toCssColor } from '../helpers/colors';
 
 import styles from './colorFlyout.module.scss';
 
@@ -42,11 +42,16 @@ export const ColorFlyout = ({
     api: EditorControlApi;
 }): ReactNode => {
     const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
+    // Coloured text may carry a colour the picker cannot read (`red`, `hsl()`
+    // pasted in): it is still coloured, and still removable.
+    const hasColor = 'fontColor' in selection.marks;
     const current = parseCssColor(value?.color);
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<RgbaColor | undefined>(undefined);
     const titleId = useId();
     const pickerRef = useRef<HTMLDivElement | null>(null);
+    // What the picker showed when it opened, so Save without a choice changes nothing.
+    const openedWithRef = useRef<string | undefined>(undefined);
 
     const { returnToText, contentProps } = useFocusAfterClose(api);
     // Closing from inside the flyout returns focus to the text.
@@ -66,9 +71,20 @@ export const ColorFlyout = ({
         close();
     };
 
-    const save = (): void => apply(typedHex(pickerRef.current, draft?.alpha) ?? draft);
+    const save = (): void => {
+        const picked = typedHex(pickerRef.current, draft?.alpha) ?? draft;
+        // Nothing picked or typed: an unreadable colour would otherwise be
+        // overwritten with whatever the picker fell back to showing.
+        if (picked === undefined || toCssColor(picked) === openedWithRef.current) {
+            close();
+            return;
+        }
+        apply(picked);
+    };
 
-    const currentCss = current === undefined ? undefined : toCssColor(current);
+    // One the picker cannot read still shows as written, when it is a colour at all.
+    const currentCss =
+        current === undefined ? (isCssColor(value?.color) ? value.color : undefined) : toCssColor(current);
 
     return (
         <Flyout.Root
@@ -85,7 +101,7 @@ export const ColorFlyout = ({
         >
             <Flyout.Trigger>
                 <ToolbarButton
-                    active={current !== undefined}
+                    active={hasColor}
                     // The swatch is visual only, so the colour goes in the name.
                     title={currentCss === undefined ? 'Text colour' : `Text colour: ${currentCss.toUpperCase()}`}
                 >
@@ -107,6 +123,8 @@ export const ColorFlyout = ({
                 // The hex field is the one input a keyboard can pick a colour with.
                 onOpenAutoFocus={(event) => {
                     event.preventDefault();
+                    const shown = typedHex(pickerRef.current, current?.alpha);
+                    openedWithRef.current = shown === undefined ? undefined : toCssColor(shown);
                     pickerRef.current?.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
                 }}
             >
@@ -153,7 +171,7 @@ export const ColorFlyout = ({
                     </div>
                 </Flyout.Body>
                 <Flyout.Footer>
-                    {current !== undefined ? (
+                    {hasColor ? (
                         <Button emphasis="weak" onPress={() => apply(undefined)}>
                             Remove
                         </Button>

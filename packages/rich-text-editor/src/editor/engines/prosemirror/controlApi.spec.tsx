@@ -588,3 +588,45 @@ describe('insertText', () => {
         expect(editor.stored()).toEqual([paragraph(text('one 2 three'))]);
     });
 });
+
+describe('the run of a mark next to another of different value', () => {
+    const OTHER = { href: 'https://example.org' };
+
+    it('ends where the value changes — two links side by side are two runs', () => {
+        const editor = editorWith(plugins, [paragraph(text('one', { link: LINK }), text('two', { link: OTHER }))]);
+
+        editor.caretAfter('on');
+        expect(editor.api.marks.getRun('link')).toEqual({ value: LINK, text: 'one' });
+
+        editor.caretAfter('tw');
+        expect(editor.api.marks.getRun('link')).toEqual({ value: OTHER, text: 'two' });
+    });
+});
+
+describe('blocks.setType with attributes every text block carries', () => {
+    it('keeps them on the block it turns', () => {
+        const editor = editorWith(plugins, [{ type: 'paragraph', align: 'center', children: [{ text: 'Title' }] }]);
+        editor.caretAfter('Ti');
+
+        editor.api.blocks.setType('textStyle', { style: 'heading2' });
+
+        expect(editor.stored()).toEqual([
+            { type: 'textStyle', style: 'heading2', align: 'center', children: [{ text: 'Title' }] },
+        ]);
+    });
+
+    it('keeps each block its own across a range', () => {
+        const editor = editorWith(plugins, [
+            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
+            { type: 'paragraph', align: 'right', children: [{ text: 'two' }] },
+        ]);
+        editor.selectBetween('one', 'two');
+
+        editor.api.blocks.setType('quote');
+
+        expect(editor.stored()).toEqual([
+            { type: 'quote', align: 'center', children: [{ text: 'one' }] },
+            { type: 'quote', align: 'right', children: [{ text: 'two' }] },
+        ]);
+    });
+});

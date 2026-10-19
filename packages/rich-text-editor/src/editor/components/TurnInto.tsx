@@ -6,7 +6,8 @@ import { type ComponentProps, type MouseEvent, type ReactNode, useRef } from 're
 
 import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
-import { activeCommand, TEXT_COMMAND } from '../helpers/blockCommands';
+import { activeCommand } from '../helpers/blockCommands';
+import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
 /** Never take the selection away from the text: the controls act on it. */
@@ -51,15 +52,17 @@ export const TurnInto = ({
     api,
     commands,
     selection,
+    labels,
 }: {
     api: EditorControlApi;
     /** The `'turnInto'` commands. */
     commands: readonly RteBlockCommand[];
     selection: RteSelectionSnapshot;
+    labels: RichTextEditorLabels;
 }): ReactNode => {
     const active = activeCommand(commands, selection);
     const { returnToText, contentProps } = useReturnToText(api);
-    const label = active?.label ?? TEXT_COMMAND.label;
+    const label = active?.label ?? labels.text;
 
     return (
         <Dropdown.Root>
@@ -68,8 +71,8 @@ export const TurnInto = ({
                     type="button"
                     size="medium"
                     emphasis="weak"
-                    aria-label={`Turn into: ${label}`}
-                    title="Turn into"
+                    aria-label={labels.turnIntoCurrent(label)}
+                    title={labels.turnInto}
                     {...keepsSelection}
                     className={styles.turnInto}
                 >
@@ -84,7 +87,7 @@ export const TurnInto = ({
                         <Dropdown.Item
                             key={command.id}
                             textValue={command.label}
-                            aria-label={isActive ? `${command.label}, current` : command.label}
+                            aria-label={isActive ? labels.currentCommand(command.label) : command.label}
                             onSelect={() => {
                                 returnToText();
                                 // Idempotent: picking what the block already is changes nothing

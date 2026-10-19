@@ -134,7 +134,6 @@ type UseEditorHandleOptions = {
     attributes: Readonly<Record<string, string>>;
     placeholderClassName: string;
     onDocChange: (doc: RteDocumentOf) => void;
-    onBlur: (doc: RteDocumentOf) => void;
     /** When false, nothing is mounted — the shell is showing the renderer. */
     enabled: boolean;
 };
@@ -146,7 +145,6 @@ export const useEditorHandle = ({
     attributes,
     placeholderClassName,
     onDocChange,
-    onBlur,
     enabled,
 }: UseEditorHandleOptions): {
     containerRef: MutableRefObject<HTMLDivElement | null>;
@@ -171,8 +169,8 @@ export const useEditorHandle = ({
     const [viewPortals] = useState(() => createElement(ViewPortalHost, { store: portals }));
     // The latest props, read by the mount (which runs only when the plugins
     // change or editing is turned on) and by the callbacks it hands the editor.
-    const latestRef = useRef({ document, placeholder, registry, attributes, onDocChange, onBlur });
-    latestRef.current = { document, placeholder, registry, attributes, onDocChange, onBlur };
+    const latestRef = useRef({ document, placeholder, registry, attributes, onDocChange });
+    latestRef.current = { document, placeholder, registry, attributes, onDocChange };
 
     const pluginsKey = registry.ids.join('|');
 
@@ -201,7 +199,6 @@ export const useEditorHandle = ({
             placeholderClassName,
             onDocChange: (doc) => latestRef.current.onDocChange(doc),
             onStateChange: store.notify,
-            onBlur: (doc) => latestRef.current.onBlur(doc),
             viewPortals: portals,
         });
         mountedRef.current = mounted;

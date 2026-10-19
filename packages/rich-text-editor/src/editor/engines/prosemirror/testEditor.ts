@@ -90,7 +90,6 @@ export const editorWith = (
         placeholderClassName: 'placeholder',
         onDocChange,
         onStateChange: () => {},
-        onBlur: () => {},
         viewPortals: { set: () => {}, delete: () => {} },
     });
     mounted.push(editor);

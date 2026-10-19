@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { defaultPlugins, type RteDocument, serializeToHtml } from '../index';
 
@@ -40,7 +40,22 @@ describe('a document serialized to HTML', () => {
         expect(html).toMatch(/<br\s*\/?>/);
     });
 
-    it('says so when a feature that wrote part of the document is missing', () => {
-        expect(() => serializeToHtml(doc, { plugins: [] })).toThrow(/Unknown block type "textStyle"/);
+    it('draws with the default plugins when given none', () => {
+        expect(serializeToHtml(doc)).toBe(serializeToHtml(doc, { plugins: defaultPlugins }));
+        expect(serializeToHtml(doc, { wrap: false })).toBe(
+            serializeToHtml(doc, { plugins: defaultPlugins, wrap: false }),
+        );
+    });
+
+    it('keeps the text and says so when a feature that wrote part of the document is missing', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const html = serializeToHtml(doc, { plugins: [] });
+
+        expect(html).toContain('A heading');
+        expect(html).toContain('bold');
+        expect(html).not.toContain('<strong>');
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown block type "textStyle"'));
+        warn.mockRestore();
     });
 });

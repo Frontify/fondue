@@ -5,7 +5,7 @@
 import { TextSelection } from 'prosemirror-state';
 import { act, createContext, type ReactNode, useContext, useLayoutEffect, useRef, useSyncExternalStore } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import {
     buildPluginRegistry,
@@ -178,7 +178,6 @@ const mountInto = (container: HTMLElement, initialDoc: RteDocumentOf) => {
         placeholderClassName: 'placeholder',
         onDocChange,
         onStateChange: () => {},
-        onBlur: () => {},
         viewPortals: portals,
     });
     mounted.push(live);
@@ -197,7 +196,7 @@ const mount = (initialDoc: RteDocumentOf) => {
     return { container, ...mountedEditor };
 };
 
-let consoleError: ReturnType<typeof vi.spyOn>;
+let consoleError: MockInstance<typeof console.error>;
 
 beforeEach(() => {
     tagRenders.mockClear();

@@ -39,9 +39,30 @@ export type HtmlSpec = {
     children?: true | string | readonly (HtmlSpec | string)[];
 };
 
+/** A property name as CSS writes one, custom properties (`--rte-columns`) included. */
+const CSS_PROPERTY = /^-{0,2}[a-zA-Z][a-zA-Z0-9-]*$/;
+
+/**
+ * What could end a declaration, open a rule, load a resource or leave the
+ * attribute. Values come from stored documents (a font colour), so this is a
+ * backstop behind each plugin's own checks, not the only one.
+ */
+const UNSAFE_CSS_VALUE = /[;{}\\<]|url\(|expression\(/i;
+
+/**
+ * The declarations safe to write: a property that is a property name, a value
+ * that cannot break out of its declaration. The rest are dropped. Every
+ * surface (DOM, HTML string, React) reads the style through this.
+ */
+export const safeStyleEntries = (style: StyleMap): [string, string][] =>
+    Object.entries(style).filter(
+        ([property, value]) =>
+            CSS_PROPERTY.test(property) && typeof value === 'string' && !UNSAFE_CSS_VALUE.test(value),
+    );
+
 /** `{ 'text-align': 'center' }` → `text-align: center;`, the way browsers write a style attribute. */
 export const cssText = (style: StyleMap): string =>
-    Object.entries(style)
+    safeStyleEntries(style)
         .map(([property, value]) => `${property}: ${value};`)
         .join(' ');
 

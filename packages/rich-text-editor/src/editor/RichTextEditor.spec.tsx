@@ -713,6 +713,37 @@ describe('focus within', () => {
     });
 });
 
+describe('onBlur', () => {
+    it('fires once focus leaves the editor, not when it moves into the toolbar, with the document', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const outside = window.document.createElement('input');
+        window.document.body.append(outside);
+        teardown.push(() => outside.remove());
+        const onBlur = vi.fn<(doc: RteDocument) => void>();
+
+        const { container, ready } = mount(() => (
+            <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={[boldPlugin()]} />
+        ));
+        ready();
+        const focus = (element: Element | null): void => {
+            act(() => {
+                (element as HTMLElement | null)?.focus();
+                vi.runAllTimers();
+            });
+        };
+
+        const bold = container.querySelector('[aria-label="Bold"]');
+        expect(bold).not.toBeNull();
+        focus(container.querySelector('[contenteditable]'));
+        focus(bold);
+        expect(onBlur).not.toHaveBeenCalled();
+
+        focus(outside);
+        expect(onBlur).toHaveBeenCalledExactlyOnceWith(paragraph('text'));
+    });
+});
+
 describe('pasting', () => {
     describe('into a mounted editor', () => {
         it('turns a copied mention back into a mention, even where links are mounted', () => {

@@ -6,7 +6,7 @@ import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type EditorControlApi, type RteBlockNode, type RtePlugin } from '#/core';
+import { defineInline, type EditorControlApi, type RteBlockNode, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -325,5 +325,85 @@ describe('the list keys', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('one'))]);
 
         expect(press(editor.view, 'Tab')).toBe(false);
+    });
+});
+
+describe('a character hotkey during IME composition', () => {
+    it('does not fire: the composition owns the character', () => {
+        const mention = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        vi.spyOn(editor.view, 'composing', 'get').mockReturnValue(true);
+
+        editor.type('@');
+
+        expect(mention).not.toHaveBeenCalled();
+    });
+});
+
+describe('a mark shortcut around content that is more than plain text', () => {
+    const tagPlugin: RtePlugin = {
+        id: 'tag',
+        inlines: {
+            tag: defineInline<{ name: string }>({
+                toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                parse: [],
+            }),
+        },
+    };
+
+    it('keeps an inline element inside it', () => {
+        const editor = editorWith(
+            [...defaultPlugins, tagPlugin],
+            [paragraph(text('**a'), { type: 'tag', name: 'jane' }, text('b*'))],
+        );
+        editor.caretAfter('b*');
+
+        editor.type('*');
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('a', { bold: true }), { type: 'tag', name: 'jane' }, text('b', { bold: true })),
+        ]);
+    });
+
+    it('keeps the marks the content already carries', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('**a'), text('it', { italic: true }), text('b*'))]);
+        editor.caretAfter('b*');
+
+        editor.type('*');
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('a', { bold: true }), text('it', { bold: true, italic: true }), text('b', { bold: true })),
+        ]);
+    });
+});
+
+describe('a block shortcut on a block with attributes every text block carries', () => {
+    it('keeps them', () => {
+        const editor = editorWith(defaultPlugins, [{ type: 'paragraph', align: 'center', children: [] }]);
+
+        editor.type('## Title');
+
+        expect(editor.stored()).toEqual([
+            { type: 'textStyle', style: 'heading2', align: 'center', children: [{ text: 'Title' }] },
+        ]);
+    });
+});
+
+describe('Enter in a list over a range across items', () => {
+    it('is left to the baseline keymap rather than lifting both items out', () => {
+        const editor = editorWith(defaultPlugins, [
+            {
+                type: 'bulletList',
+                children: [
+                    { type: 'listItem', children: [paragraph(text('one'))] },
+                    { type: 'listItem', children: [paragraph(text('two'))] },
+                ],
+            },
+        ]);
+        editor.selectBetween('ne', 'tw');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()?.[0]?.type).toBe('bulletList');
     });
 });

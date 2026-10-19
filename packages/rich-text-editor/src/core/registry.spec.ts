@@ -103,6 +103,17 @@ describe('a type declared twice', () => {
         ).toThrow('Duplicate inline type "embed": declared by plugin "a" and plugin "b".');
     });
 
+    it('is an error for block attributes too', () => {
+        const attribute = () => ({ style: (value: string) => ({ 'text-align': value }), parse: () => null });
+
+        expect(() =>
+            buildPluginRegistry([
+                { id: 'a', blockAttributes: { align: attribute() } },
+                { id: 'b', blockAttributes: { align: attribute() } },
+            ]),
+        ).toThrow('Duplicate block attribute "align": declared by plugin "a" and plugin "b".');
+    });
+
     it('is an error when a plugin replaces the paragraph the editor brings', () => {
         expect(() => buildPluginRegistry([{ id: 'a', blocks: { paragraph: textBlock() } }])).toThrow(
             'Duplicate block type "paragraph": built into the editor and declared by plugin "a".',
@@ -192,5 +203,19 @@ describe('where a toolbar item goes in the floating bar', () => {
         expect(placementOf({ id: 'bold', marks: { bold: mark() }, floatingToolbar: 'hidden' })).toBe('hidden');
         expect(placementOf({ id: 'align', floatingToolbar: 'inline' })).toBe('inline');
         expect(placementOf({ id: 'quote', blocks: { quote: textBlock() }, floatingToolbar: 'inline' })).toBe('inline');
+    });
+});
+
+describe('plugins sharing an id', () => {
+    it('are reported, and their toolbar controls still keyed apart', () => {
+        const button = () => null;
+        const registry = buildPluginRegistry([
+            { id: 'same', toolbarItem: button },
+            { id: 'other', toolbarItem: button },
+            { id: 'same', toolbarItem: button },
+        ]);
+
+        expect(registry.duplicateIds).toEqual(['same']);
+        expect(registry.toolbarItems.map(({ key }) => key)).toEqual(['same', 'other', 'same#1']);
     });
 });

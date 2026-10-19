@@ -5,6 +5,7 @@ import {
     type KeyboardEvent,
     type MouseEvent,
     type ReactNode,
+    useEffect,
     useId,
     useMemo,
     useReducer,
@@ -22,6 +23,7 @@ import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { useMouseDrag } from './hooks/useMouseDrag';
+import { DEFAULT_LABELS, type RichTextEditorLabels } from './labels';
 import styles from './richTextEditor.module.scss';
 
 /**
@@ -77,7 +79,7 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     placeholder?: string;
     /**
      * The editor's accessible name, when no visible label names it ("Comment",
-     * "Description"). Without this or `aria-labelledby` it is called "Rich text editor".
+     * "Description"). Without this or `aria-labelledby` it is called `labels.editor`.
      */
     'aria-label'?: string;
     /** The id of a visible element naming the editor — its label. Preferred over `aria-label`. */
@@ -85,15 +87,16 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /** The id of an element describing the editor further — help text, an error. */
     'aria-describedby'?: string;
     /**
-     * The name of the formatting toolbar, for assistive technology.
-     *
-     * @default 'Formatting'
+     * The words the editor's own UI says — its default name, the toolbar's
+     * name, the "Turn into" and `/` menus — for a host that translates them.
+     * Each one left out stays English.
      */
-    toolbarLabel?: string;
+    labels?: Partial<RichTextEditorLabels>;
     /**
      * The editor lost focus, handed the document as it stands: the hook to
-     * commit on instead of every keystroke. Fires whenever focus leaves the
-     * editable element, including into plugin UI (the link flyout's fields).
+     * commit on instead of every keystroke. Fires once focus has left the
+     * editor: moving into its toolbar or a plugin's UI (the link flyout's
+     * fields, a mention being typed) is still inside.
      */
     onBlur?: (value: RteDocumentOf<TBlock>) => void;
 };
@@ -109,7 +112,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
-    toolbarLabel = 'Formatting',
+    labels: hostLabelOverrides,
     onBlur,
 }: EditorShellProps<TBlock>): ReactNode => {
     // What the editor last reported, so an uncontrolled editor keeps its
@@ -119,17 +122,27 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     ownDocumentRef.current ??= value ?? emptyDocument();
     const document = value ?? ownDocumentRef.current;
 
+    // Hosts usually pass an inline object; what it says is what matters.
+    const labels = useLabels(hostLabelOverrides);
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
-    const commands = useMemo(() => commandsOf(registry), [registry]);
+    const commands = useMemo(() => commandsOf(registry, labels.text), [registry, labels.text]);
 
     const editableId = useId();
     const { hostLabels, isNamed } = hostLabelsOf({ ariaLabel, ariaLabelledBy, ariaDescribedBy });
     const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
     const attributes = useMemo(
-        () => editableAttributes({ id: editableId, className, hostLabels, isNamed, placeholder }),
+        () =>
+            editableAttributes({
+                id: editableId,
+                className,
+                hostLabels,
+                isNamed,
+                placeholder,
+                defaultLabel: labels.editor,
+            }),
         // `hostLabels` is rebuilt every render; the props it is built from are the deps.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
-        [editableId, className, ariaLabel, ariaLabelledBy, ariaDescribedBy, placeholder],
+        [editableId, className, ariaLabel, ariaLabelledBy, ariaDescribedBy, placeholder, labels.editor],
     );
 
     const { containerRef, handle, editorState, viewPortals } = useEditorHandle({
@@ -142,11 +155,21 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             ownDocumentRef.current = doc;
             onChange?.(doc as RteDocumentOf<TBlock>);
         },
-        onBlur: (doc) => onBlur?.(doc as RteDocumentOf<TBlock>),
         enabled: !readOnly,
     });
 
     const { focusWithin, focusProps } = useFocusWithin();
+    // Blur as the host hears it: focus leaving the whole editor — text,
+    // toolbar and the flyouts they portal out — not just the editable element.
+    const hadFocusRef = useRef(false);
+    useEffect(() => {
+        if (hadFocusRef.current && !focusWithin && handle !== null) {
+            onBlur?.(handle.document() as RteDocumentOf<TBlock>);
+        }
+        hadFocusRef.current = focusWithin;
+        // Only the change of focus is the event; the callback is read when it happens.
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
+    }, [focusWithin]);
     // Alt+F10 asks the toolbar to take focus; it reads and clears the request
     // once it has rendered, which for a floating bar may be its first render.
     const focusRequestRef = useRef(false);
@@ -212,7 +235,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             api={handle.api}
             editorState={editorState}
             placement={toolbarPlacement}
-            label={toolbarLabel}
+            labels={labels}
             controls={editableId}
             focusRequestRef={focusRequestRef}
         />
@@ -256,16 +279,19 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             {viewPortals}
             {/* Only worth having when a plugin offers something beyond the built-in Text. */}
             {readOnly || !showEditor || handle === null || commands.length < 2 ? null : (
-                <SlashMenu handle={handle} editorState={editorState} editableRef={containerRef} commands={commands} />
+                <SlashMenu
+                    handle={handle}
+                    editorState={editorState}
+                    editableRef={containerRef}
+                    commands={commands}
+                    labels={labels}
+                />
             )}
         </div>
     );
 };
 
 // Helpers
-
-/** The name of an editor the host did not name. */
-const DEFAULT_LABEL = 'Rich text editor';
 
 /** The key that moves focus from the text to the toolbar, the usual one for rich text editors. */
 const isToolbarHotkey = (event: KeyboardEvent): boolean => event.altKey && event.key === 'F10';
@@ -288,25 +314,41 @@ const hostLabelsOf = ({
     isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined,
 });
 
-/** The attributes of the editable element: a textbox, named by the host or else by `DEFAULT_LABEL`. */
+/** The attributes of the editable element: a textbox, named by the host or else by `defaultLabel`. */
 const editableAttributes = ({
     id,
     className,
     hostLabels,
     isNamed,
     placeholder,
+    defaultLabel,
 }: {
     id: string;
     className: string;
     hostLabels: Record<string, string>;
     isNamed: boolean;
     placeholder: string;
+    defaultLabel: string;
 }): Record<string, string> => ({
     id,
     class: className,
     role: 'textbox',
     'aria-multiline': 'true',
-    ...(isNamed ? {} : { 'aria-label': DEFAULT_LABEL }),
+    ...(isNamed ? {} : { 'aria-label': defaultLabel }),
     ...hostLabels,
     ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
 });
+
+/**
+ * The host's labels over the English defaults, kept the same object while the
+ * host's say the same, however often it builds them anew.
+ */
+const useLabels = (overrides: Partial<RichTextEditorLabels> | undefined): RichTextEditorLabels => {
+    const merged = { ...DEFAULT_LABELS, ...overrides };
+    const ref = useRef(merged);
+    const previous = ref.current;
+    if ((Object.keys(merged) as (keyof RichTextEditorLabels)[]).some((key) => merged[key] !== previous[key])) {
+        ref.current = merged;
+    }
+    return ref.current;
+};

@@ -17,6 +17,7 @@ import { type EditorControlApi, type RteBlockCommand, type ToolbarEntry, type To
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { toolbarItemProps } from '../helpers/toolbarItem';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
+import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
 import { TurnInto } from './TurnInto';
@@ -48,7 +49,7 @@ export const Toolbar = ({
     api,
     editorState,
     placement,
-    label,
+    labels,
     controls,
     focusRequestRef,
 }: {
@@ -60,8 +61,8 @@ export const Toolbar = ({
     editorState: EditorStateStore;
     /** Only the strip inside the frame is drawn as one — a floating bar is a surface of its own. */
     placement: ToolbarPlacement;
-    /** The toolbar's accessible name. */
-    label: string;
+    /** The editor's words: the toolbar's accessible name, and Turn into's. */
+    labels: RichTextEditorLabels;
     /** The id of the editable element the controls act on. */
     controls: string;
     /**
@@ -159,7 +160,7 @@ export const Toolbar = ({
             role="toolbar"
             // Focusable in code only: the keyboard moves between the controls inside.
             tabIndex={-1}
-            aria-label={label}
+            aria-label={labels.toolbar}
             aria-controls={controls}
             aria-orientation="horizontal"
             onMouseDown={keepSelection}
@@ -169,10 +170,10 @@ export const Toolbar = ({
             // Where the bar ended up, for the stylesheet to read.
             data-placement={placement}
         >
-            {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} /> : null}
+            {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
             {items.map((item) => (
                 <ToolbarItemSlot
-                    key={item.id}
+                    key={item.key}
                     render={item.render}
                     itemProps={toolbarItemProps(item.own, api, selection)}
                 />

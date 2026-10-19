@@ -4,7 +4,7 @@
 
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     columnBreakPlugin,
@@ -177,5 +177,54 @@ describe('the element a document sits in', () => {
 
     it('is left out of export with wrap: false', () => {
         expect(serializeToHtml(doc, { plugins, wrap: false })).toBe('<p>Hello</p>');
+    });
+});
+
+describe('a mark stored as false or null', () => {
+    // A host flipping a mark off by value rather than removing the key.
+    const doc = paragraph([{ text: 'plain', bold: false, italic: null } as unknown as { text: string }]);
+
+    it('is not carried: the text is drawn bare', () => {
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} />),
+            exported(serializeToHtml(doc, { plugins: defaultPlugins })),
+        ]) {
+            expect(container.querySelector('strong, em')).toBeNull();
+            expect(container.querySelector('p')?.textContent).toBe('plain');
+        }
+    });
+});
+
+describe('a node no plugin defines', () => {
+    // Stored by a plugin this view was not given, or by a newer version.
+    const doc = {
+        version: 1,
+        blocks: [
+            {
+                type: 'paragraph',
+                children: [{ text: 'before ' }, { type: 'embed', id: 'x' }, { text: 'after', glow: true }],
+            },
+            { type: 'callout', children: [{ text: 'inside a callout' }] },
+            { type: 'tabs', children: [{ type: 'paragraph', children: [{ text: 'in a tab' }] }] },
+            { type: 'divider' },
+        ],
+    } as unknown as RteDocument;
+
+    it('is skipped, keeping the rest of the document and the text it holds', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} />),
+            exported(serializeToHtml(doc, { plugins: defaultPlugins, wrap: false })),
+        ]) {
+            expect(container.textContent).toBe('before afterinside a calloutin a tab');
+            // The unknown container keeps its known block inside a plain `div`.
+            const inDiv = container.querySelectorAll('div > p');
+            expect(inDiv[inDiv.length - 1]?.textContent).toBe('in a tab');
+        }
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown block type "callout"'));
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown inline type "embed"'));
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown mark type "glow"'));
+        warn.mockRestore();
     });
 });

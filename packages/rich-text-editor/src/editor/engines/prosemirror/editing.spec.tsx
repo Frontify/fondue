@@ -3,9 +3,19 @@
 // @vitest-environment happy-dom
 
 import { redo, undo } from 'prosemirror-history';
+import { TextSelection } from 'prosemirror-state';
+import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { buildPluginRegistry, defineMark, emptyDocument, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    defineInline,
+    defineMark,
+    emptyDocument,
+    PARAGRAPH,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 
 import { mountEditorForTests } from './editing';
 
@@ -14,6 +24,15 @@ import { mountEditorForTests } from './editing';
  * and what happens then decides whether the editor is usable at all.
  */
 const plugins: RtePlugin[] = [
+    {
+        id: 'tag',
+        inlines: {
+            tag: defineInline<{ name: string }>({
+                toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                parse: [],
+            }),
+        },
+    },
     {
         id: 'bold',
         marks: {
@@ -49,7 +68,6 @@ const mount = (
         placeholderClassName: 'placeholder',
         onDocChange,
         onStateChange: () => {},
-        onBlur: () => {},
         viewPortals: { set: () => {}, delete: () => {} },
     });
     mounted.push(live);
@@ -130,6 +148,49 @@ describe('a document set by the host', () => {
 
         expect(view.state.doc.textContent).toBe('from the host');
         expect(stored()).toEqual(paragraph('typed mine'));
+    });
+});
+
+describe('a document set by the host while the editor holds more than it reported', () => {
+    /** An inline still being made (a draft) at the caret: never part of what the host is handed. */
+    const withDraft = () => {
+        const editor = mount(paragraph('ab'));
+        const { view } = editor;
+        const tag = view.state.schema.nodes.tag;
+        if (!tag) {
+            throw new Error('no tag node');
+        }
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 2)));
+        view.dispatch(view.state.tr.replaceSelectionWith(tag.create({ value: null }), false));
+        return editor;
+    };
+    const drafts = (view: EditorView): number => {
+        let count = 0;
+        view.state.doc.descendants((node) => {
+            count += node.type.name === 'tag' && node.attrs.value === null ? 1 : 0;
+        });
+        return count;
+    };
+
+    it('leaves an open draft, and the caret, alone when it is an echo of what is there', () => {
+        const { handle, view, stored } = withDraft();
+        const caret = view.state.selection.from;
+
+        handle.setDoc(structuredClone(stored()) as RteDocumentOf);
+
+        expect(drafts(view)).toBe(1);
+        expect(view.state.selection.from).toBe(caret);
+    });
+
+    it('is ignored when it is one the editor reported before, arriving late', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const older = stored() as RteDocumentOf;
+        handle.api.insertText('b');
+
+        handle.setDoc(older);
+
+        expect(view.state.doc.textContent).toBe('ab');
     });
 });
 

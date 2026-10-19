@@ -14,6 +14,17 @@ export type RgbaColor = NonNullable<ComponentProps<typeof ColorPicker.Root>['cur
 const HEX_COLOR = /^#?([\dA-Fa-f]{3}|[\dA-Fa-f]{6})$/;
 const RGB_COLOR = /^rgba?\(([^)]+)\)$/;
 
+/** `red`, `#abc`, `#aabbccdd`, or one `rgb()`/`rgba()`/`hsl()`/`hsla()` holding nothing but numbers. */
+const CSS_COLOR = /^([a-z]+|#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})|(rgba?|hsla?)\([\d.%,\s/]*\))$/i;
+
+/**
+ * Whether a value is a colour safe to write into a `style`: one keyword, a hex
+ * value, or a single colour function of plain numbers. Anything that could
+ * carry more CSS — `;`, braces, `url(`, escapes — is not, so a stored or pasted
+ * colour never becomes a second declaration.
+ */
+export const isCssColor = (value: unknown): value is string => typeof value === 'string' && CSS_COLOR.test(value);
+
 /**
  * Reads hex (what this plugin writes) and `rgb()`/`rgba()` (what browsers
  * normalise a pasted `style` to). Named colours and `hsl()` read as no colour:

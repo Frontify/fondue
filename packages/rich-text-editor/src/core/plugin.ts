@@ -74,11 +74,22 @@ export type RtePlugin = {
 // --- Nodes ---
 
 /**
+ * `defaults` is required once a block's value names attributes: only the ones
+ * listed there are read back off the stored node, so one left out would reach
+ * `toHtml` as nothing. A value without attributes may leave it out.
+ */
+type DefaultsWhenValued<TValue> = [keyof TValue] extends [never]
+    ? unknown
+    : string extends keyof TValue
+      ? unknown
+      : { defaults: TValue };
+
+/**
  * Type a node's callbacks by its value, then erase the type so the definition
  * fits a plugin's map beside nodes with other values.
  */
 export const defineBlock = <TValue extends object = Record<string, never>>(
-    definition: BlockDefinition<TValue>,
+    definition: BlockDefinition<TValue> & DefaultsWhenValued<TValue>,
 ): BlockDefinition => definition as unknown as BlockDefinition;
 
 /**

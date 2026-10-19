@@ -2,19 +2,14 @@
 
 import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
-import {
-    InputRule,
-    inputRules,
-    textblockTypeInputRule,
-    undoInputRule,
-    wrappingInputRule,
-} from 'prosemirror-inputrules';
+import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
+import { keepCarriedAttrs } from './controlApi';
 import { valueAttrsFor } from './documentConversion';
 import { listKeys } from './lists';
 
@@ -96,6 +91,10 @@ const characterHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControl
     new Plugin({
         props: {
             handleTextInput: (view, from, _to, text) => {
+                // Mid-composition the character is not typed yet: the IME owns it.
+                if (view.composing) {
+                    return false;
+                }
                 const handlers = isCharacterHotkey(text) ? hotkeys.get(text) : undefined;
                 return handlers && isAtWordStart(view.state, from) ? runUntilHandled(handlers, api) : false;
             },
@@ -186,10 +185,14 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
         // land, so the closing delimiter is still one character short.
         const leading = match[0].length - (delimiter.length * 2 + content.length);
         const from = start + leading;
+        const contentFrom = from + delimiter.length;
+        const contentTo = end - (delimiter.length - 1);
+        // Only the delimiters go, closing first so the opening one's position
+        // holds: the content stays as it is, inline elements and marks included.
         return state.tr
-            .delete(from, end)
-            .insertText(content, from)
-            .addMark(from, from + content.length, markType.create())
+            .delete(contentTo, end)
+            .delete(from, contentFrom)
+            .addMark(from, contentTo - delimiter.length, markType.create())
             .removeStoredMark(markType);
     };
     return toInputRule({ pattern, handler }, context);
@@ -251,12 +254,25 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
     return toInputRule({ pattern, handler }, context);
 };
 
-/** `# ` at the start of a block turns it into another block type. */
-const blockRule = (rule: RuleOfKind<'block'>, { schema }: RuleContext): InputRule | null => {
+/**
+ * `# ` at the start of a block turns it into another block type. The engine's
+ * `textblockTypeInputRule`, except that the attributes every text block carries
+ * (alignment) stay.
+ */
+const blockRule = (rule: RuleOfKind<'block'>, { schema, registry }: RuleContext): InputRule | null => {
     const nodeType = schema.nodes[rule.block];
-    return nodeType
-        ? textblockTypeInputRule(new RegExp(`^${escapeForRegExp(rule.match)}$`), nodeType, rule.attributes ?? null)
-        : null;
+    if (!nodeType) {
+        return null;
+    }
+    return new InputRule(new RegExp(`^${escapeForRegExp(rule.match)}$`), (state, _match, start, end) => {
+        const $start = state.doc.resolve(start);
+        if (!$start.node(-1).canReplaceWith($start.index(-1), $start.indexAfter(-1), nodeType)) {
+            return null;
+        }
+        return state.tr
+            .delete(start, end)
+            .setBlockType(start, start, nodeType, keepCarriedAttrs(registry, nodeType, rule.attributes));
+    });
 };
 
 /** `- ` at the start of a block wraps it in a list. */

@@ -16,7 +16,8 @@ export const MentionLink = ({
     trigger,
 }: {
     value: MentionItem;
-    href: string;
+    /** Absent when the app's target is not a safe link. */
+    href: string | undefined;
     trigger: string;
 }): ReactNode => (
     <Tooltip.Root>

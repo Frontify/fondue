@@ -7,7 +7,7 @@ import { type MountedDocument, type MountDocument, type MountOptions } from '#/e
 
 import { clipboardParser, clipboardSerializer, handlePasteByFeatures, handlePasteIntoEmptyBlock } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
-import { toEngineDocument, toRteDocument } from './documentConversion';
+import { toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
@@ -60,13 +60,15 @@ const mount = ({
     placeholderClassName,
     onDocChange,
     onStateChange,
-    onBlur,
     viewPortals,
 }: MountOptions): { mounted: MountedDocument; view: EditorView } => {
     const schema = buildSchema(registry);
     let currentPlaceholder = placeholder;
-    // The last document the host and the editor agreed on; lets `setDoc` ignore echoes.
+    // The last document the host handed over that the editor holds; lets `setDoc` ignore it again.
     let agreedDoc = initialDoc;
+    // Every document reported to the host: one arriving back, even late and
+    // behind newer edits, is the editor's own and never replaces what it holds.
+    const emittedDocs = new WeakSet<typeof initialDoc>();
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -111,12 +113,6 @@ const mount = ({
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
             ],
         }),
-        handleDOMEvents: {
-            blur: () => {
-                onBlur(toRteDocument(editorView.state.doc));
-                return false;
-            },
-        },
         // Clicking an inline atom (mention, ...) puts the caret after it rather than selecting it.
         handleClickOn(_view, _pos, node, nodePos) {
             if (node.isInline && node.isAtom) {
@@ -134,8 +130,9 @@ const mount = ({
             repaintViews();
             // Host-originated changes are not reported back to the host.
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
-                agreedDoc = toRteDocument(editorView.state.doc);
-                onDocChange(agreedDoc);
+                const emitted = toRteDocument(editorView.state.doc);
+                emittedDocs.add(emitted);
+                onDocChange(emitted);
             }
             onStateChange();
         },
@@ -144,11 +141,14 @@ const mount = ({
 
     // 4. What the host gets back.
     const setDoc = (doc: typeof initialDoc): void => {
-        if (doc === agreedDoc) {
+        if (doc === agreedDoc || emittedDocs.has(doc)) {
             return;
         }
         const next = toEngineDocument(doc, schema);
-        if (next.eq(editorView.state.doc)) {
+        // Drafts (an inline still being made) are in no document the host holds,
+        // though a block reused from one handed out may bring one along; an
+        // echo of what is there must leave them, and the caret, alone.
+        if (withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
             agreedDoc = doc;
             return;
         }
@@ -163,7 +163,11 @@ const mount = ({
     };
 
     const mounted: MountedDocument = {
-        handle: { api, selectionRect: createSelectionRectReader(editorView) },
+        handle: {
+            api,
+            selectionRect: createSelectionRectReader(editorView),
+            document: () => toRteDocument(editorView.state.doc),
+        },
         setDoc,
         setPlaceholder(next) {
             currentPlaceholder = next;

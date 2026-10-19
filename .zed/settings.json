@@ -1,9 +1,15 @@
-// Format with oxfmt (via the Oxc extension's language server) instead of
-// Zed's bundled prettier defaults.
 {
-    "formatter": {
-        "language_server": {
-            "name": "oxfmt"
+    "format_on_save": "on",
+    "formatter": { "language_server": { "name": "oxfmt" } },
+    "languages": {
+        "TypeScript": {
+            "language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."]
+        },
+        "TSX": {
+            "language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."]
+        },
+        "JavaScript": {
+            "language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."]
         }
     }
 }

@@ -11,7 +11,9 @@ import '@frontify/fondue-rich-text-editor/styles';
 <RichTextRenderer plugins={defaultPlugins} value={doc} />
 ```
 
-The host also loads `@frontify/fondue-tokens/styles` and `@frontify/fondue-components/styles`.
+`@frontify/fondue-components`, `@frontify/fondue-icons` and `@frontify/fondue-tokens` are peer dependencies:
+the host installs them beside this package and loads `@frontify/fondue-tokens/styles` and
+`@frontify/fondue-components/styles`.
 
 ## Where things are
 

@@ -1,8 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
-import { type Mark as PmMark, type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
-import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
+import {
+    type Mark as PmMark,
+    type MarkType as PmMarkType,
+    type Node as PmNode,
+    type NodeType as PmNodeType,
+    type Schema,
+} from 'prosemirror-model';
+import { type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
@@ -130,16 +136,25 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
     let runFrom: number | null = null;
     let runTo = position;
     let range: { from: number; to: number } | null = null;
+    // The mark the open run carries: a neighbour with other values (a second
+    // link right after the first) starts a run of its own.
+    let runMark: PmMark | null = null;
     const closeRun = (): void => {
         if (runFrom !== null && $from.pos >= runFrom && $from.pos <= runTo) {
             range = { from: runFrom, to: runTo };
         }
         runFrom = null;
+        runMark = null;
     };
     for (let index = 0; index < block.childCount; index++) {
         const child = block.child(index);
-        if (markType.isInSet(child.marks)) {
+        const mark = markType.isInSet(child.marks);
+        if (mark && runMark !== null && !mark.eq(runMark)) {
+            closeRun();
+        }
+        if (mark) {
             runFrom ??= position;
+            runMark ??= mark;
             runTo = position + child.nodeSize;
         } else {
             closeRun();
@@ -189,6 +204,26 @@ const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControl
 });
 
 // --- Blocks ---
+
+/**
+ * Attributes for a block turned into another type: the ones every text block
+ * carries (alignment) stay as they were, under the new type's own. Per block,
+ * as the engine's `setBlockType` takes them, since blocks differ.
+ */
+export const keepCarriedAttrs =
+    (
+        { blockAttributes }: PluginRegistry,
+        nodeType: PmNodeType,
+        attributes: Record<string, unknown> | undefined,
+    ): ((node: PmNode) => Record<string, unknown>) =>
+    (node) => ({
+        ...Object.fromEntries(
+            [...blockAttributes.keys()]
+                .filter((name) => name in node.attrs && name in (nodeType.spec.attrs ?? {}))
+                .map((name) => [name, node.attrs[name]]),
+        ),
+        ...attributes,
+    });
 
 /**
  * Block types and the attributes on them. Which block the selection is in is
@@ -241,10 +276,17 @@ const createBlockApi = (
                 }
                 current = current.apply(lift);
             }
-            const typed: Transaction[] = [];
-            const applied = pmSetBlockType(nodeType, value ?? {})(current, (transaction) => typed.push(transaction));
-            for (const step of typed.flatMap((transaction) => transaction.steps)) {
-                combined.step(step);
+            // The engine's command only says whether the type can be set here;
+            // the change itself keeps each block's carried attributes.
+            const applied = pmSetBlockType(nodeType, value ?? {})(current);
+            if (applied) {
+                const typed = current.tr;
+                for (const { $from, $to } of current.selection.ranges) {
+                    typed.setBlockType($from.pos, $to.pos, nodeType, keepCarriedAttrs(registry, nodeType, value));
+                }
+                for (const step of typed.steps) {
+                    combined.step(step);
+                }
             }
             // Lifting alone is not enough: if the type cannot be set, nothing changes.
             if (applied && combined.docChanged) {

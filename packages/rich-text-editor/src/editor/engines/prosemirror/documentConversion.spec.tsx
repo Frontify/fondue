@@ -197,3 +197,20 @@ describe('the document boundary', () => {
         expect(echoed.eq(doc)).toBe(true);
     });
 });
+
+describe('a mark switched off in the document', () => {
+    it('reads as absent when it is `false` or `null`', () => {
+        const switchedOff = {
+            version: 1,
+            blocks: [{ type: PARAGRAPH, children: [{ text: 'plain', bold: false, link: null }] }],
+        } as unknown as RteDocumentOf;
+
+        const engine = toEngineDocument(switchedOff, schema);
+
+        expect(engine.firstChild?.firstChild?.marks).toEqual([]);
+        expect(toRteDocument(engine)).toEqual({
+            version: 1,
+            blocks: [{ type: PARAGRAPH, children: [{ text: 'plain' }] }],
+        });
+    });
+});

@@ -138,6 +138,32 @@ describe('the floating bar', () => {
         expect(window.document.querySelector('[aria-label="More formatting"]')).toBeNull();
     });
 
+    it('says what the host gave it in labels', () => {
+        const editor = mount((onChange) => (
+            <RichTextEditor
+                plugins={defaultPlugins}
+                toolbarPlacement="floating"
+                onChange={onChange}
+                labels={{
+                    editor: 'Texteditor',
+                    toolbar: 'Formatierung',
+                    turnInto: 'Umwandeln',
+                    turnIntoCurrent: (label) => `Umwandeln: ${label}`,
+                }}
+            />
+        ));
+        paste(editor.editable, { html: '<h2>text</h2>' });
+        act(() => editor.editable.focus());
+        selectText(editor.editable);
+
+        const bar = window.document.querySelector<HTMLElement>('[role="toolbar"]');
+        const trigger = bar?.querySelector('button');
+        expect(editor.editable.getAttribute('aria-label')).toBe('Texteditor');
+        expect(bar?.getAttribute('aria-label')).toBe('Formatierung');
+        expect(trigger?.getAttribute('aria-label')).toBe('Umwandeln: Heading 2');
+        expect(trigger?.getAttribute('title')).toBe('Umwandeln');
+    });
+
     it('draws no bar when there is nothing to put in it', () => {
         const editor = mount((onChange) => (
             <RichTextEditor
@@ -288,11 +314,54 @@ describe('the / menu', () => {
         type(editable, 'zzz');
 
         expect(window.document.body.textContent).toContain('No results');
+        // No list is drawn, so the text points at none.
+        expect(listbox()).toBeNull();
+        expect(editable.hasAttribute('aria-controls')).toBe(false);
+        expect(editable.hasAttribute('aria-activedescendant')).toBe(false);
 
         type(editable, ' ');
 
         expect(window.document.querySelector('[role="listbox"]')).toBeNull();
         expect(window.document.body.textContent).not.toContain('No results');
+    });
+
+    it('points the text at the list while there is one', () => {
+        const { editable } = start();
+        act(() => editable.focus());
+
+        type(editable, '/');
+
+        expect(editable.getAttribute('aria-controls')).toBe(listbox()?.id);
+    });
+
+    it('says what the host gave it in labels, English otherwise', () => {
+        const { editable } = mount(() => (
+            <RichTextEditor
+                plugins={plugins}
+                labels={{
+                    turnInto: 'Umwandeln',
+                    insert: 'Einfügen',
+                    commands: 'Befehle',
+                    text: 'Absatz',
+                    noResults: 'Keine Treffer',
+                    commandCount: (count) => `${count} Befehle`,
+                }}
+            />
+        ));
+        act(() => editable.focus());
+
+        type(editable, '/');
+
+        expect(listbox()?.getAttribute('aria-label')).toBe('Befehle');
+        expect(labels(window.document.querySelectorAll('[role="group"]'))).toEqual(['Umwandeln', 'Einfügen']);
+        expect(options()).toContain('Absatz');
+        expect([...window.document.querySelectorAll('[role="status"]')].map((status) => status.textContent)).toContain(
+            `${options().length} Befehle`,
+        );
+
+        type(editable, 'zzz');
+
+        expect(window.document.body.textContent).toContain('Keine Treffer');
     });
 
     it('does not open for a slash in the middle of text', () => {

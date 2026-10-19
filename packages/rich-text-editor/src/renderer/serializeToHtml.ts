@@ -6,8 +6,12 @@ import { documentRootSpec, documentTree } from './documentTree';
 import { toHtmlString } from './toHtmlString';
 
 export type SerializeToHtmlOptions = {
-    /** The plugins whose markup to draw with — the editor's list. A node whose plugin is missing throws rather than being dropped. */
-    plugins: readonly RtePlugin[];
+    /**
+     * The plugins whose markup to draw with — the editor's list. A node whose
+     * plugin is missing is skipped (a block keeps its content), with a warning
+     * in development. The package root defaults it to `defaultPlugins`.
+     */
+    plugins?: readonly RtePlugin[];
     /**
      * Wrap the document in the element `RichTextRenderer` draws, whose class
      * sets how it reads and carries plugins' content-wide styling (columns).
@@ -28,7 +32,7 @@ export type SerializeToHtmlOptions = {
  */
 export const serializeToHtml = <TBlock extends RteBlockNode>(
     doc: RteDocumentOf<TBlock>,
-    { plugins, wrap = true }: SerializeToHtmlOptions,
+    { plugins = [], wrap = true }: SerializeToHtmlOptions = {},
 ): string => {
     const registry = buildPluginRegistry(plugins);
     const blocks = documentTree(doc, registry, { useComponents: false });

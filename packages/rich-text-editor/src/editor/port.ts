@@ -29,8 +29,6 @@ export type MountOptions = {
     onDocChange: (doc: RteDocumentOf) => void;
     /** The editor state moved: any transaction, including a caret move. */
     onStateChange: () => void;
-    /** The editable element lost focus. Handed the current document, so a caller can commit it. */
-    onBlur: (doc: RteDocumentOf) => void;
     viewPortals: ViewPortals;
 };
 
@@ -54,6 +52,8 @@ export type EditorHandle = {
      * menu); plugin UI anchors itself.
      */
     selectionRect(): FloatingRect;
+    /** The document as it stands now, as the host would be handed it. */
+    document(): RteDocumentOf;
 };
 
 /**

@@ -4,7 +4,14 @@
  * Compile-time assertions for the document types. `tsc --noEmit` is the test
  * runner: an unused @ts-expect-error fails the build.
  */
-import { type RteBlock, type RteDocument, type RteDocumentWith, type RteInlineNode, type RteText } from '../index';
+import {
+    defineBlock,
+    type RteBlock,
+    type RteDocument,
+    type RteDocumentWith,
+    type RteInlineNode,
+    type RteText,
+} from '../index';
 
 // The shipped case: one annotation, everything checked
 const doc: RteDocument = {
@@ -133,6 +140,23 @@ const withInline: RteDocumentWith<{ inline: EmbedInline }> = {
     blocks: [{ type: 'paragraph', children: [{ text: 'See ' }, { type: 'embed', provider: 'figma' }] }],
 };
 
+// A block's `toHtml` only receives the attributes listed in `defaults`, so a
+// value with attributes must list them
+const valuedBlock = defineBlock<{ tone: string }>({
+    defaults: { tone: 'info' },
+    toHtml: ({ tone }) => ({ tag: 'div', attrs: { 'data-tone': tone }, children: true }),
+    parse: [],
+});
+
+// @ts-expect-error a valued block without `defaults` would never see its stored value
+const valuedBlockWithoutDefaults = defineBlock<{ tone: string }>({
+    toHtml: ({ tone }) => ({ tag: 'div', attrs: { 'data-tone': tone }, children: true }),
+    parse: [],
+});
+
+// A block without a value needs none
+const plainBlock = defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] });
+
 export const __typeAssertions = [
     doc,
     badBlock,
@@ -152,4 +176,7 @@ export const __typeAssertions = [
     withMark,
     withBlock,
     withInline,
+    valuedBlock,
+    valuedBlockWithoutDefaults,
+    plainBlock,
 ];

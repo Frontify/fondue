@@ -34,6 +34,8 @@ describe('toHref', () => {
         expect(toHref('javascript:alert(1)')).toBeNull();
         expect(toHref('data:text/html,hi')).toBeNull();
         expect(toHref('https://')).toBeNull();
+        expect(toHref('javascript:0/alert(1)')).toBeNull();
+        expect(toHref('javascript:1')).toBeNull();
     });
 });
 
@@ -60,7 +62,24 @@ describe('isSafeHref', () => {
             ' java\tscript:alert(1)',
             'data:text/html,x',
             'vbscript:x',
+            // A scheme followed by digits reads like a host and a port, but a browser runs it.
+            'javascript:0/alert(1)',
+            'javascript:1',
+            'javascript:0?alert(1):0',
+            'JAVASCRIPT:0#x',
         ]) {
+            expect(isSafeHref(href)).toBe(false);
+        }
+    });
+
+    it('refuses control characters and overlong links', () => {
+        expect(isSafeHref('https://example.com/\u0000')).toBe(false);
+        expect(isSafeHref('https://example.com/\u0085')).toBe(false);
+        expect(isSafeHref(`https://example.com/${'a'.repeat(2048)}`)).toBe(false);
+    });
+
+    it('refuses what is not a string', () => {
+        for (const href of [undefined, null, true, 1, {}, ['https://example.com']]) {
             expect(isSafeHref(href)).toBe(false);
         }
     });
