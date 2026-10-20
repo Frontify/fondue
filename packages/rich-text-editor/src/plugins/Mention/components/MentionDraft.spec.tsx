@@ -17,8 +17,9 @@ declare global {
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const PEOPLE: MentionItem[] = [
-    { id: 'jane', username: 'jane', name: 'Jane Doe' },
+    { id: 'jane', username: 'jane', name: 'Jane Doe', image: '/avatars/jane.png' },
     { id: 'john/1', username: 'john', name: 'John Roe' },
+    { id: 'design', username: 'design', name: 'Design team', kind: 'group' },
 ];
 
 const search = (query: string): MentionItem[] => PEOPLE.filter((person) => person.username.includes(query));
@@ -93,7 +94,7 @@ describe('a mention being made', () => {
         expect(options.map((option) => option.id)).toEqual(options.map((_, index) => `${listbox?.id}-option-${index}`));
         expect(listbox?.querySelector('button')).toBeNull();
         expect(input.getAttribute('aria-activedescendant')).toBe(options[0]?.id);
-        expect(status()).toBe('2 people');
+        expect(status()).toBe('3 people');
     });
 
     it('says when nobody matches, and the arrows then do nothing', async () => {
@@ -116,6 +117,19 @@ describe('a mention being made', () => {
         press(' ');
 
         expect(onCancel).toHaveBeenCalledWith('@zz ');
+    });
+
+    it('shows an avatar where there is one, and the icon of their kind otherwise', async () => {
+        const { input } = await mountDraft();
+
+        const listbox = window.document.getElementById(input.getAttribute('aria-controls') ?? '');
+        const [jane, john, design] = [...(listbox?.querySelectorAll('[role="option"]') ?? [])];
+        expect(jane?.querySelector('img')?.getAttribute('src')).toBe('/avatars/jane.png');
+        expect(jane?.querySelector('svg')).toBeNull();
+        expect(john?.querySelector('img')).toBeNull();
+        expect(john?.querySelector('svg')).not.toBeNull();
+        // A group's icon is not a person's.
+        expect(design?.querySelector('svg')?.outerHTML).not.toBe(john?.querySelector('svg')?.outerHTML);
     });
 
     it('chooses the highlighted person with Enter', async () => {

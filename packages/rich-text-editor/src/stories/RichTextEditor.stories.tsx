@@ -23,7 +23,7 @@ import {
 const MENTIONABLE: readonly MentionItem[] = [
     { id: 'jane', username: 'jane', name: 'Jane Doe' },
     { id: 'john', username: 'john', name: 'John Smith' },
-    { id: 'design', username: 'design', name: 'Design team' },
+    { id: 'design', username: 'design', name: 'Design team', kind: 'group' },
 ];
 
 /** Where a mention links to — a profile page in a real app. */
@@ -38,6 +38,13 @@ const LAYOUT = 'tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-
 const JSON_PANEL =
     'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
 const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
+
+/**
+ * The field box around an editor. The editor draws none of its own — no
+ * border, background or inset — so an app wraps it the same way.
+ */
+const FRAME =
+    'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-px-small tw-py-x-small tw-shadow hover:tw-border-line-strong focus-within:tw-border-line-strong';
 
 const buttonClasses = (active: boolean): string =>
     [
@@ -106,7 +113,9 @@ export const Default: Story = {
         return (
             <div className={LAYOUT}>
                 <div>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
+                    <div className={FRAME}>
+                        <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
+                    </div>
                     <RichTextRenderer value={doc} plugins={defaultPlugins} />
                 </div>
 
@@ -127,7 +136,14 @@ export const Placeholder: Story = {
         return (
             <div className={LAYOUT}>
                 <p className={HINT}>Starts empty, so the placeholder shows. It goes away on the first character.</p>
-                <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} placeholder="Write something…" />
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={defaultPlugins}
+                        placeholder="Write something…"
+                    />
+                </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );
@@ -137,9 +153,9 @@ export const Placeholder: Story = {
 /**
  * `toolbarPlacement` decides where the controls live.
  *
- * The default, `'top'`, puts them inside the frame as a strip above the content,
- * always there — what a field in a dense form wants, where a bar over the text
- * would cover what is being read.
+ * The default, `'top'`, puts them in a row above the content, always there —
+ * what a field in a dense form wants, where a bar over the text would cover
+ * what is being read.
  *
  * `'floating'` hangs them over the selected text and shows them only while
  * there is a selection: select a few words to see the bar, and note that it
@@ -177,12 +193,14 @@ export const ToolbarPlacement: Story = {
                         toolbarPlacement: {floating ? 'floating' : 'top'}
                     </button>
                     <div className="tw-w-full">
-                        <RichTextEditor
-                            value={doc}
-                            onChange={setDoc}
-                            plugins={defaultPlugins}
-                            toolbarPlacement={floating ? 'floating' : 'top'}
-                        />
+                        <div className={FRAME}>
+                            <RichTextEditor
+                                value={doc}
+                                onChange={setDoc}
+                                plugins={defaultPlugins}
+                                toolbarPlacement={floating ? 'floating' : 'top'}
+                            />
+                        </div>
                     </div>
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -219,13 +237,15 @@ export const FloatingToolbar: Story = {
             <div className={LAYOUT}>
                 <p className={HINT}>Select text for the bar, or type / on the empty line below for the command menu.</p>
                 <div>
-                    <RichTextEditor
-                        value={doc}
-                        onChange={setDoc}
-                        plugins={plugins}
-                        toolbarPlacement="floating"
-                        placeholder="Type / for commands"
-                    />
+                    <div className={FRAME}>
+                        <RichTextEditor
+                            value={doc}
+                            onChange={setDoc}
+                            plugins={plugins}
+                            toolbarPlacement="floating"
+                            placeholder="Type / for commands"
+                        />
+                    </div>
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -304,7 +324,14 @@ export const Readonly: Story = {
                         readonly: {String(readonly)}
                     </button>
                     <div className="tw-w-full">
-                        <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} readonly={readonly} />
+                        <div className={FRAME}>
+                            <RichTextEditor
+                                value={doc}
+                                onChange={setDoc}
+                                plugins={defaultPlugins}
+                                readonly={readonly}
+                            />
+                        </div>
                     </div>
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -314,10 +341,10 @@ export const Readonly: Story = {
 };
 
 /**
- * `showEditor={false}` drops the editor's chrome — border, background, toolbar
- * and the inset around the text — so the document is rendered as plain content.
- * Paired with `readonly` it displays a document without looking like a field.
- * Toggle them independently to see which does what.
+ * `showEditor={false}` drops the editor's own UI — the toolbar and the `/` menu —
+ * so only the content is rendered. The editor draws no box either way: with
+ * no wrapper around it, as here, the document sits in the page as if it were
+ * written there. Toggle the two independently to see which does what.
  */
 export const ContentOnly: Story = {
     render: () => {
@@ -332,7 +359,7 @@ export const ContentOnly: Story = {
                 {
                     type: 'paragraph',
                     children: [
-                        { text: 'No border, no background, no toolbar — the ' },
+                        { text: 'No box, no toolbar — the ' },
                         { text: 'content', bold: true },
                         {
                             text: ' sits in the page as if it were written there.',
@@ -415,7 +442,9 @@ export const CommitOnBlur: Story = {
         return (
             <div className={LAYOUT}>
                 <p className={HINT}>The panel on the right only updates on blur, not on every keystroke.</p>
-                <RichTextEditor value={doc} onChange={setDoc} onBlur={setCommitted} plugins={defaultPlugins} />
+                <div className={FRAME}>
+                    <RichTextEditor value={doc} onChange={setDoc} onBlur={setCommitted} plugins={defaultPlugins} />
+                </div>
                 <pre className={JSON_PANEL}>
                     {committed === null
                         ? 'Nothing committed yet — type, then click outside the editor.'
@@ -494,7 +523,9 @@ export const ControlledValue: Story = {
                         Clear
                     </button>
                 </div>
-                <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
+                <div className={FRAME}>
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
+                </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );
@@ -523,7 +554,9 @@ export const PlainText: Story = {
 
         return (
             <div className={LAYOUT}>
-                <RichTextEditor value={doc} onChange={setDoc} plugins={[]} />
+                <div className={FRAME}>
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[]} />
+                </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );
@@ -552,19 +585,21 @@ export const CommentBox: Story = {
 
         return (
             <div className={LAYOUT}>
-                <RichTextEditor
-                    value={doc}
-                    onChange={setDoc}
-                    plugins={[
-                        boldPlugin(),
-                        italicPlugin(),
-                        linkPlugin(),
-                        mentionPlugin({
-                            items: MENTIONABLE,
-                            href: profileHref,
-                        }),
-                    ]}
-                />
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[
+                            boldPlugin(),
+                            italicPlugin(),
+                            linkPlugin(),
+                            mentionPlugin({
+                                items: MENTIONABLE,
+                                href: profileHref,
+                            }),
+                        ]}
+                    />
+                </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );
@@ -622,14 +657,15 @@ export const ManyEditors: Story = {
                     {mountedIn === null ? '' : ` Mounted in ${Math.round(mountedIn)}ms.`}
                 </p>
                 {docs.map((doc, index) => (
-                    <RichTextEditor
-                        key={MANY_KEYS[index]}
-                        value={doc}
-                        onChange={(next) =>
-                            setDocs((previous) => previous.map((held, at) => (at === index ? next : held)))
-                        }
-                        plugins={defaultPlugins}
-                    />
+                    <div key={MANY_KEYS[index]} className={FRAME}>
+                        <RichTextEditor
+                            value={doc}
+                            onChange={(next) =>
+                                setDocs((previous) => previous.map((held, at) => (at === index ? next : held)))
+                            }
+                            plugins={defaultPlugins}
+                        />
+                    </div>
                 ))}
             </div>
         );
@@ -670,11 +706,15 @@ export const TwoEditors: Story = {
         return (
             <div className="tw-grid">
                 <div className={LAYOUT}>
-                    <RichTextEditor value={fullDoc} onChange={setFullDoc} plugins={defaultPlugins} />
+                    <div className={FRAME}>
+                        <RichTextEditor value={fullDoc} onChange={setFullDoc} plugins={defaultPlugins} />
+                    </div>
                     <pre className={JSON_PANEL}>{JSON.stringify(fullDoc, null, 2)}</pre>
                 </div>
                 <div className={LAYOUT}>
-                    <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin()]} />
+                    <div className={FRAME}>
+                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin()]} />
+                    </div>
                     <pre className={JSON_PANEL}>{JSON.stringify(boldDoc, null, 2)}</pre>
                 </div>
             </div>

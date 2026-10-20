@@ -56,7 +56,7 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * `'floating'` hangs it over the selected text, shown only while there is
      * a selection to act on.
      *
-     * `'top'` puts it inside the frame as an always-visible strip above the content.
+     * `'top'` puts it in an always-visible row above the content.
      *
      * Either way it is one tab stop, moved through with the arrow keys,
      * reached from the text with Alt+F10 (the floating bar while text is
@@ -68,9 +68,11 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /** Show the content without allowing edits. The toolbar goes away with it. */
     readonly?: boolean;
     /**
-     * Draw the editor's chrome: the border, the background and the toolbar.
-     * Off, only the content is rendered, without the editable surface's inset.
-     * The pairing for `readonly`.
+     * Draw the editor's own UI: the toolbar and the `/` menu. Off, only the
+     * content is rendered, still editable unless `readonly`.
+     *
+     * The editor draws no box either way — no border, background or inset;
+     * a host that wants a field wraps the editor in one.
      *
      * @default true
      */
@@ -216,8 +218,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         if (event.button !== 0 || handle === null) {
             return;
         }
-        // The frame's empty space around the text — below a short document in
-        // a tall editor — puts the caret back in the text rather than nowhere.
+        // The editor's own space outside the text — between the toolbar and
+        // the content — puts the caret back in the text rather than nowhere.
         if (event.target === event.currentTarget) {
             event.preventDefault();
             handle.api.focus();
@@ -251,11 +253,9 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             className={styles.root}
             style={registry.contentProperties as CSSProperties}
         >
-            {/* Its mousedown is for the text inside: a drag starting, or a click below it. */}
+            {/* Its mousedown is for the text inside: a drag starting, or a click beside it. */}
             {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
-                className={styles.frame}
-                data-chrome={String(showEditor)}
                 onMouseDown={readOnly ? undefined : onFrameMouseDown}
                 // The readonly view is not a field, but a host's name for the
                 // editor still applies, so a labelled editor keeps its name

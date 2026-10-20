@@ -142,6 +142,9 @@ const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | nul
         case 'list': {
             return listRule(rule, context);
         }
+        case 'text': {
+            return textRule(rule, context);
+        }
     }
 };
 
@@ -281,6 +284,19 @@ const listRule = (rule: RuleOfKind<'list'>, { schema, registry }: RuleContext): 
     return listType && registry.itemTypeByList.has(rule.list)
         ? wrappingInputRule(new RegExp(`^${escapeForRegExp(rule.match)}$`), listType)
         : null;
+};
+
+/** `->` -> `→`. The replacement carries the marks the matched text did. */
+const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
+    const { match, replace } = rule;
+    const pattern =
+        typeof match === 'string'
+            ? new RegExp(`${escapeForRegExp(match)}$`)
+            : new RegExp(`(?:${match.source})$`, withoutStateFlags(match));
+    // `end` is where the just-typed character will land: it is in the match
+    // but not the document yet, so replacing up to `end` swaps all of it.
+    const handler: RuleHandler = (state, _match, start, end) => state.tr.insertText(replace, start, end);
+    return toInputRule({ pattern, handler }, context);
 };
 
 // Baseline

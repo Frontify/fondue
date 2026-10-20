@@ -13,6 +13,7 @@ export {
     type RteTextNode,
     type StoredMarkValue,
 } from './document';
+export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
 export {
     type BlockAttributeDefinition,

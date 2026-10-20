@@ -772,10 +772,13 @@ describe('pasting', () => {
     describe('into a mounted editor', () => {
         it('turns a copied mention back into a mention, even where links are mounted', () => {
             // A mention is written as `<a href data-mention-id>`, which the link's
-            // `a[href]` rule matches as well.
+            // `a[href]` rule matches as well; one with no profile as a `<span>`.
             const plugins = [
                 ...defaultPlugins,
-                mentionPlugin({ items: [], href: (mention) => `/people/${mention.id}` }),
+                mentionPlugin({
+                    items: [],
+                    href: (mention) => (mention.kind === 'all' ? undefined : `/people/${mention.id}`),
+                }),
             ];
             const copied = serializeToHtml(
                 {
@@ -786,6 +789,8 @@ describe('pasting', () => {
                             children: [
                                 { text: 'Ask ' },
                                 { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
+                                { type: 'mention', id: 'design', username: 'design', name: 'Design', kind: 'group' },
+                                { type: 'mention', id: 'all', username: 'all', name: 'Everyone', kind: 'all' },
                             ],
                         },
                     ],
@@ -802,6 +807,20 @@ describe('pasting', () => {
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
             expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
+            expect(children).toContainEqual({
+                type: 'mention',
+                id: 'design',
+                username: 'design',
+                name: 'Design',
+                kind: 'group',
+            });
+            expect(children).toContainEqual({
+                type: 'mention',
+                id: 'all',
+                username: 'all',
+                name: 'Everyone',
+                kind: 'all',
+            });
         });
 
         it('keeps the marks and blocks the pasted HTML carried', () => {

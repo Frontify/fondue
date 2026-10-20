@@ -4,14 +4,9 @@
  * Compile-time assertions for the document types. `tsc --noEmit` is the test
  * runner: an unused @ts-expect-error fails the build.
  */
-import {
-    defineBlock,
-    type RteBlock,
-    type RteDocument,
-    type RteDocumentWith,
-    type RteInlineNode,
-    type RteText,
-} from '../index';
+// `RteText` is the document format's own building block, not a root export.
+import { type RteText } from '../documentFormat';
+import { defineBlock, type RteBlock, type RteDocument, type RteDocumentWith, type RtePlugin } from '../index';
 
 // The shipped case: one annotation, everything checked
 const doc: RteDocument = {
@@ -118,7 +113,7 @@ const consumerInline: RteDocument<RteBlock<MentionInline>> = {
     blocks: [{ type: 'paragraph', children: [{ text: 'Ask ' }, { type: 'mention', id: 'jane' }] }],
 };
 
-type CalloutBlock = { type: 'callout'; children: RteInlineNode[] };
+type CalloutBlock = { type: 'callout'; children: RtePlugin.InlineNode[] };
 const consumerBlock: RteDocument<RteBlock | CalloutBlock> = {
     version: 1,
     blocks: [{ type: 'callout', children: [{ text: 'x' }] }],

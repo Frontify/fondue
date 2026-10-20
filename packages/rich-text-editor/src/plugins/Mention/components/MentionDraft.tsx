@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -11,6 +12,24 @@ const SUGGESTION_LIMIT = 8;
 
 /** The gap between the query and the list under it. */
 const LIST_OFFSET = 4;
+
+/**
+ * The round picture beside a name: the avatar when there is one, otherwise the
+ * kind's icon — a person, a group, everyone. Decorative: the name is beside it.
+ */
+const Avatar = ({ person }: { person: MentionItem }): ReactNode => (
+    <span className={styles.avatar} aria-hidden>
+        {person.image ? (
+            <img src={person.image} alt="" />
+        ) : person.kind === 'group' ? (
+            <IconPeople size={12} />
+        ) : person.kind === 'all' ? (
+            <IconTarget size={12} />
+        ) : (
+            <IconPerson size={12} />
+        )}
+    </span>
+);
 
 /**
  * The people for a query. Answers are tagged with their query so a slow one
@@ -229,6 +248,7 @@ export const MentionDraft = ({
                                                   : styles.option
                                           }
                                       >
+                                          <Avatar person={person} />
                                           <span>{person.name}</span>
                                           <span className={styles.hint}>
                                               {trigger}

@@ -1,50 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// The editor's own chrome: the frame, the toolbar and the editable surface.
-// What a plugin renders is styled by that plugin's module.
+// The editor's own parts: the toolbar and the editable surface. What a plugin
+// renders is styled by that plugin's module.
+//
+// No frame: no border, background, shadow or inset around the editor. The
+// editor is its content; a host that wants a field draws the box around it.
 
 /**
- * Wraps the frame and the floating bar so the editor has one element to watch
- * focus and keys on. `display: contents` keeps it out of layout.
+ * Wraps the toolbar, the content and the floating bar so the editor has one
+ * element to watch focus and keys on. `display: contents` keeps it out of layout.
  */
 .root {
     display: contents;
-}
-
-.frame {
-    box-sizing: border-box;
-    overflow: hidden;
-    border: var(--border-width-default) solid var(--color-line-mid);
-    border-radius: var(--border-radius-medium);
-    background: var(--color-surface-default);
-    box-shadow: var(--shadow-default);
-
-    &:hover {
-        border-color: var(--color-line-strong);
-    }
-
-    /** A text field shows focus as a firmer border; a ring would sit on it the whole time it is typed in. */
-    &:focus-within {
-        border-color: var(--color-line-strong);
-    }
-
-    /** `showEditor={false}`: the content alone, without the box or the inset around it. */
-    &[data-chrome='false'] {
-        overflow: visible;
-        border: none;
-        border-radius: 0;
-        background: none;
-        box-shadow: none;
-
-        &:hover {
-            border-color: transparent;
-        }
-
-        .content {
-            min-height: 0;
-            padding: 0;
-        }
-    }
 }
 
 /** The controls themselves, wherever the bar holding them ends up. */
@@ -53,24 +20,27 @@
     align-items: center;
     flex-wrap: wrap;
     gap: var(--spacing-xx-small);
+    // The inset inside the floating bar's surface.
     padding: var(--spacing-x-small);
 
-    /** A strip inside the frame, divided from the content it sits above. */
+    /**
+     * A row above the content, lined up with the text's left edge rather than
+     * inset into a strip; the space below keeps it off the first line.
+     */
     &[data-placement='top'] {
-        border-bottom: var(--border-width-default) solid var(--color-line-subtle);
-        background: var(--color-surface-dim);
+        padding: 0;
+        margin-bottom: var(--spacing-x-small);
     }
 }
 
 /**
- * The editable element's chrome: inset, minimum height, cursor. Text styling
- * comes from the renderer's `.document` class, so the readonly view matches.
+ * What the editable element adds to the document: cursor and placeholder, no
+ * inset or minimum height. Text styling comes from the renderer's `.document`
+ * class, so the readonly view matches.
  */
 .content {
     position: relative;
-    box-sizing: border-box;
-    min-height: 5rem;
-    padding: var(--spacing-x-small) var(--spacing-small);
+    // A host's box around the editor shows focus (`:focus-within`), not the text.
     outline: none;
     // The readonly view is read, not typed into: no caret cursor there.
     cursor: default;
@@ -79,7 +49,7 @@
         cursor: text;
     }
 
-    /** Forced colours draw no border change; a transparent outline turns visible there. */
+    /** Forced colours flatten a host's border change on focus; a transparent outline turns visible there. */
     @media (forced-colors: active) {
         &:focus {
             outline: 2px solid transparent;

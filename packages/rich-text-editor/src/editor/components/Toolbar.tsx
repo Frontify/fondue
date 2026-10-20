@@ -27,7 +27,7 @@ import { TurnInto } from './TurnInto';
  * part of the plugin contract: a plugin never learns where its controls end up.
  *
  * - `'floating'` — a detached bar hovering over the selection.
- * - `'top'` — a strip inside the editor's frame, above the text.
+ * - `'top'` — a row above the text.
  */
 export type ToolbarPlacement = 'floating' | 'top';
 
@@ -59,7 +59,7 @@ export const Toolbar = ({
     commands?: readonly RteBlockCommand[];
     api: EditorControlApi;
     editorState: EditorStateStore;
-    /** Only the strip inside the frame is drawn as one — a floating bar is a surface of its own. */
+    /** The row above the text sits flush with it; a floating bar is a surface of its own, inset. */
     placement: ToolbarPlacement;
     /** The editor's words: the toolbar's accessible name, and Turn into's. */
     labels: RichTextEditorLabels;

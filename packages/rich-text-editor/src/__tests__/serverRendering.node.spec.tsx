@@ -26,7 +26,6 @@ describe('importing the package where there is no browser', () => {
             <RichTextEditor value={doc} plugins={defaultPlugins} readonly showEditor={false} />,
         );
 
-        expect(html).toContain('data-chrome="false"');
         expect(html).toContain('Hello from the server');
     });
 });

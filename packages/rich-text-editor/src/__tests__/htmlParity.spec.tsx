@@ -33,7 +33,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const plugins = [
     ...defaultPlugins,
-    mentionPlugin({ items: [], href: (mention) => `/people/${mention.id}` }),
+    mentionPlugin({ items: [], href: (mention) => (mention.kind === 'all' ? undefined : `/people/${mention.id}`) }),
     columnBreakPlugin(),
 ];
 
@@ -58,6 +58,8 @@ const doc: RteDocumentWith<{ block: { type: 'columnBreak' } }> = {
                 { text: 'link', link: { href: 'https://example.com', openInNewTab: true } },
                 { type: 'break' },
                 { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
+                { type: 'mention', id: 'design', username: 'design', name: 'Design team', kind: 'group' },
+                { type: 'mention', id: 'all', username: 'all', name: 'Everyone', kind: 'all' },
             ],
         },
         { type: 'paragraph', children: [{ text: '' }] },

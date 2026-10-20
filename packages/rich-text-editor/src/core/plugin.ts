@@ -302,4 +302,11 @@ export type RteInputRule =
      * carrying the mark — an autolink. `pattern` matches the token only; the
      * engine anchors it to the end of the text before the terminator.
      */
-    | { kind: 'markPattern'; pattern: RegExp; mark: string; value: (match: string) => Record<string, unknown> };
+    | { kind: 'markPattern'; pattern: RegExp; mark: string; value: (match: string) => Record<string, unknown> }
+    /**
+     * Text swapped for other text the moment its last character is typed, no
+     * space needed: `->` becomes `→`. A string matches as written; a pattern
+     * is anchored to the end of the text before the caret, so a lookbehind can
+     * say what may not come before it.
+     */
+    | { kind: 'text'; match: string | RegExp; replace: string };

@@ -6,6 +6,7 @@ import { alignPlugin } from './Align';
 import { boldPlugin } from './Bold';
 import { checkListPlugin } from './CheckList';
 import { codePlugin } from './Code';
+import { emojiPlugin } from './Emoji';
 import { fontColorPlugin } from './FontColor';
 import { italicPlugin } from './Italic';
 import { linkPlugin } from './Link';
@@ -32,8 +33,9 @@ import { underlinePlugin } from './Underline';
  *
  * Left out on purpose, because they need arguments or change how the editor
  * behaves: `mentionPlugin` (needs the people to mention), `columnBreakPlugin`
- * (lays the content out in columns) and `blurOnBreakPlugin` (makes Enter
- * commit instead of adding a paragraph).
+ * (lays the content out in columns), `blurOnBreakPlugin` (makes Enter
+ * commit instead of adding a paragraph) and `typographyPlugin` (rewrites `->`,
+ * `(c)` and `1/2` as they are typed).
  */
 export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     textStylePlugin(),
@@ -52,6 +54,11 @@ export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     checkListPlugin(),
     quotePlugin(),
     resetFormattingPlugin(),
+    // Default in the old editor too; it adds no node, only text.
+    emojiPlugin(),
     // No toolbar of its own: a keybinding.
     softBreakPlugin(),
 ]);
+
+export { emojiPlugin } from './Emoji';
+export { typographyPlugin } from './Typography';

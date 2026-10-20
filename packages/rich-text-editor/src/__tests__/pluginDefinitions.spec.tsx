@@ -83,6 +83,38 @@ describe('mentionPlugin', () => {
         expect(() => mentionPlugin({ items: [], href: () => '#', trigger: '@@' })).toThrow(/exactly one character/);
         expect(() => mentionPlugin({ items: [], href: () => '#', trigger: '' })).toThrow(/exactly one character/);
     });
+
+    it('draws a person and a group as links, and everyone, with no profile, as text', () => {
+        const plugins = [
+            mentionPlugin({ items: [], href: (mention) => (mention.kind === 'all' ? undefined : `/u/${mention.id}`) }),
+        ];
+        const doc = {
+            version: 1 as const,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        // Stored before kinds existed: a person.
+                        { type: 'mention', id: 'ana', username: 'ana', name: 'Ana Muster' },
+                        { type: 'mention', id: 'design', username: 'design', name: 'Design team', kind: 'group' },
+                        { type: 'mention', id: 'all', username: 'all', name: 'Everyone', kind: 'all' },
+                    ],
+                },
+            ],
+        };
+        const container = window.document.createElement('div');
+        const root = createRoot(container);
+
+        act(() => root.render(<RichTextRenderer value={doc} plugins={plugins} />));
+        const mentions = [...container.querySelectorAll('[data-mention-id]')];
+
+        expect(mentions.map((mention) => mention.tagName)).toEqual(['A', 'A', 'SPAN']);
+        expect(mentions.map((mention) => mention.getAttribute('href'))).toEqual(['/u/ana', '/u/design', null]);
+        expect(mentions.map((mention) => mention.textContent)).toEqual(['@ana', '@design', '@all']);
+        // Only the group carries an icon.
+        expect(mentions.map((mention) => mention.querySelector('svg') !== null)).toEqual([false, true, false]);
+        act(() => root.unmount());
+    });
 });
 
 describe('blurOnBreakPlugin', () => {

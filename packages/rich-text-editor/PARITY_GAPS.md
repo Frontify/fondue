@@ -13,23 +13,12 @@ What the old editor (`packages/rte`) does that this package does not yet do. Eac
 
 ## Planned
 
-### Features
-
-| Gap | Old | Plan |
-| --- | --- | --- |
-| Mention kinds | `MentionableCategory`: `user`, `group`, `all`, plus `image` | Optional `kind` and `image` on `MentionItem`; `href` optional (`@all` has no profile). Changes the stored format (additive). |
-| Emoji | `EmojiPlugin`: toolbar picker and `:` combobox, inserts plain text | `emojiPlugin()` reusing Mention's draft/picker pattern; needs a framework-free emoji dataset. |
-| Typographic autoformat | `AutoformatPlugin`: arrows, fractions, ©/®/™, sub/superscript digits | New `{ kind: 'text'; match; replace }` input rule in `core/plugin.ts`, used by a `typographyPlugin()`. |
-| `_x_` shortcut | Underline | Currently italic here. Decide which to keep. |
-| Document helpers | `toPlaintext`, `isPlateValueEmpty`, `EMPTY_RICH_TEXT_VALUE` | `isEmpty(doc)` and `toPlainText(doc)` in `core/`; `emptyDocument()` already exists. |
-
 ### Props and plugin options
 
 | Old | Plan |
 | --- | --- |
 | `position: Position.BOTTOM` | `toolbarPlacement: 'bottom'` |
-| `padding: PaddingSizes` | `padding` mapped to spacing tokens |
-| `border` | Covered by `showEditor`, unless the border is needed without the toolbar |
+| `padding: PaddingSizes`, `border` | Drop: the editor draws no frame (border, background, inset); the host wraps it in its own box. `showEditor` only hides the toolbar and `/` menu |
 | `placeholderOpacity` | Drop unless a consumer uses `'high'` |
 | `toolbarWidth`, `hideExternalFloatingModals`, `id`, `onValueChanged` | Drop |
 | ColumnBreak `customClass`; default of 1 column | `className` option; default `columns` to 1 (currently 2) |

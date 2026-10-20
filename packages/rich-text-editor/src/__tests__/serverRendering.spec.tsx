@@ -21,7 +21,6 @@ describe('rendering on a server', () => {
             <RichTextEditor value={doc} plugins={defaultPlugins} readonly showEditor={false} />,
         );
 
-        expect(html).toContain('data-chrome="false"');
         expect(html).toContain(TEXT);
     });
 

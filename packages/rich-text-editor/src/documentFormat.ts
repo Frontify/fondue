@@ -6,7 +6,7 @@
 // Core types are open (any mark key, any children) so the editor can host
 // plugins it has never heard of; an app authoring a document wants `bod: true`
 // to fail. Everything is closed here, three levels deep into nested lists.
-// Exported: `RteText`, `RteBlock`, `RteDocument`, `RteDocumentWith`; the rest is
+// Exported from the root: `RteBlock`, `RteDocument`, `RteDocumentWith`; the rest is
 // private machinery. This file may import `plugins/` (as `index.ts` does);
 // `editor/` and the renderer never see it. `__tests__/typeDerivation.spec.ts` asserts it.
 

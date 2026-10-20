@@ -2,7 +2,25 @@
 
 import { createElement, type ReactNode } from 'react';
 
-import { type RteBlockNode } from './core';
+import {
+    type BlockDefinition,
+    type EditorControlApi,
+    type EditProps,
+    type HtmlSpec,
+    type InlineDefinition,
+    isEmpty,
+    type MarkDefinition,
+    type ParseRule,
+    type PasteHandler,
+    type RteBlockCommand,
+    type RteBlockNode,
+    type RteInlineNode,
+    type RtePlugin as CorePlugin,
+    type RteSelectionSnapshot,
+    type ToolbarItemProps,
+    toPlainText as plainText,
+    type ToPlainTextOptions,
+} from './core';
 import { type RteBlock, type RteDocument } from './documentFormat';
 import { type EditorShellProps, RichTextEditor as EditorShell } from './editor';
 import { defaultPlugins } from './plugins';
@@ -13,49 +31,25 @@ import {
     type SerializeToHtmlOptions,
 } from './renderer';
 
-// The package's public API, and the composition root: the editor, the renderer,
-// the built-in plugins, and the official document format assembled from them.
-//
-// The folders behind it, innermost first — each may import the ones above it
-// and none of the ones below, which the linter enforces:
-//
-// - `core/`      document, plugin contract, commands, registry
-// - `plugins/`   features, each written against `core/` alone
-// - `renderer/`  JSON → React / HTML; no engine
-// - `editor/`    React shell + port; `engines/prosemirror/` is the replaceable adapter
-//
-// Swapping the engine means writing one more folder under `editor/engines/` and
-// changing the import in `useEditorHandle`. Plugins and stored JSON stay.
+// The public API. Layers import inward only (core ← plugins ← renderer ← editor);
+// see the README. Plugin authoring types live under `RtePlugin.*`.
 
 // --- Editor & renderer ---
 
-export { type RichTextEditorLabels, type ToolbarPlacement } from './editor';
-export { type SerializeToHtmlOptions } from './renderer';
-
-/**
- * The editor's props. `TBlock` is the document's block union: the shipped
- * plugins' `RteBlock` unless a plugin of your own adds blocks —
- * `RichTextEditor<RteBlock | CalloutBlock>`.
- */
+/** `TBlock` widens the document when a plugin adds blocks: `RichTextEditorProps<RteBlock | CalloutBlock>`. */
 export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlock> = EditorShellProps<TBlock>;
 
-/**
- * The rich text editor: a document edited through the plugins it is given,
- * `defaultPlugins` when it is given none.
- */
+/** The editor. Uses `defaultPlugins` when given no `plugins`. */
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlock>(props: RichTextEditorProps<TBlock>): ReactNode =>
     createElement(EditorShell as (next: RichTextEditorProps<TBlock>) => ReactNode, {
         ...props,
         plugins: props.plugins ?? defaultPlugins,
     });
 
-/** The renderer's props; `TBlock` as for `RichTextEditorProps`. */
+/** `TBlock` as for `RichTextEditorProps`. */
 export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlock> = RendererProps<TBlock>;
 
-/**
- * A stored document drawn as React, without an editor — readonly display, on
- * the client or a server. Draws with `defaultPlugins` when given no `plugins`.
- */
+/** A readonly view of a document; works on the server. Uses `defaultPlugins` when given no `plugins`. */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     props: RichTextRendererProps<TBlock>,
 ): ReactNode =>
@@ -65,15 +59,10 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     });
 
 /**
- * The document as an HTML string: each node's `toHtml`, the same markup copying
- * out of the editor produces — never a `render.component`, so what is exported
- * pastes back as what it was. No React, no browser needed.
- *
- * Draws with `defaultPlugins` when given no `plugins`. By default the blocks
- * sit in the element `RichTextRenderer` draws around them, carrying the
- * classes that set how a document reads; `wrap: false` leaves it out. A page showing the output wants this package's stylesheet
- * (`@frontify/fondue-rich-text-editor/styles`). An email client has no
- * stylesheet, so whatever builds the email has to inline the styles it needs.
+ * The document as an HTML string, the same markup the editor copies to the
+ * clipboard. No React or browser needed. Uses `defaultPlugins` when given no
+ * `plugins`; `wrap: false` leaves out the root element. Style it with this
+ * package's stylesheet (emails need the styles inlined).
  */
 export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
@@ -82,7 +71,18 @@ export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
 
 // --- Document format ---
 
-export { type RteBlock, type RteDocument, type RteDocumentWith, type RteText } from './documentFormat';
+export { type RteBlock, type RteDocument, type RteDocumentWith } from './documentFormat';
+
+export { isEmpty };
+
+/**
+ * The document's text, one line per text block. Inlines read as their plugin's
+ * markup (a mention as `@jane`). Uses `defaultPlugins` when given no `plugins`.
+ */
+export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
+    doc: RteDocument<TBlock>,
+    options: ToPlainTextOptions = {},
+): string => plainText(doc, { ...options, plugins: options.plugins ?? defaultPlugins });
 
 // --- Plugins ---
 
@@ -93,6 +93,7 @@ export { boldPlugin } from './plugins/Bold';
 export { checkListPlugin } from './plugins/CheckList';
 export { codePlugin } from './plugins/Code';
 export { columnBreakPlugin } from './plugins/ColumnBreak';
+export { defaultEmojis, emojiPlugin } from './plugins/Emoji';
 export { fontColorPlugin } from './plugins/FontColor';
 export { italicPlugin } from './plugins/Italic';
 export { linkPlugin } from './plugins/Link';
@@ -105,33 +106,47 @@ export { strikethroughPlugin } from './plugins/Strikethrough';
 export { subscriptPlugin } from './plugins/Subscript';
 export { superscriptPlugin } from './plugins/Superscript';
 export { textStylePlugin } from './plugins/TextStyle';
+export { typographyPlugin } from './plugins/Typography';
 export { underlinePlugin } from './plugins/Underline';
 
 // --- Plugin options ---
 
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
-export { type MentionItem, type MentionPluginOptions } from './plugins/Mention';
+export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
+export { type MentionItem, type MentionPluginOptions, type MentionValue } from './plugins/Mention';
 export { type TextStylePluginOptions } from './plugins/TextStyle';
 
-// --- Plugin authoring: everything the shipped plugins are written against ---
+// --- Plugin authoring ---
 
-export {
-    ANY_LIST,
-    type BlockDefinition,
-    defineBlock,
-    defineInline,
-    defineMark,
-    type EditorControlApi,
-    type EditProps,
-    type HtmlSpec,
-    type InlineDefinition,
-    type MarkDefinition,
-    type ParseRule,
-    type PasteHandler,
-    type RteBlockCommand,
-    type RteBlockNode,
-    type RteInlineNode,
-    type RtePlugin,
-    type RteSelectionSnapshot,
-    type ToolbarItemProps,
-} from './core';
+export { ANY_LIST, defineBlock, defineInline, defineMark } from './core';
+
+/** A plugin. The types to write one with are nested: `RtePlugin.EditorControlApi`, `RtePlugin.BlockDefinition<T>`, … */
+export type RtePlugin = CorePlugin;
+
+// Aliases so a namespace member doesn't refer to itself (`type ParseRule<T> = ParseRule<T>`).
+type ControlApi = EditorControlApi;
+type ToolbarProps = ToolbarItemProps;
+type OnPaste = PasteHandler;
+type BlockDef<TValue> = BlockDefinition<TValue>;
+type MarkDef<TValue> = MarkDefinition<TValue>;
+type InlineDef<TValue> = InlineDefinition<TValue>;
+type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
+type Parse<TValue> = ParseRule<TValue>;
+type Html = HtmlSpec;
+
+// oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
+export declare namespace RtePlugin {
+    export type EditorControlApi = ControlApi;
+    export type SelectionSnapshot = RteSelectionSnapshot;
+    export type BlockCommand = RteBlockCommand;
+    export type ToolbarItemProps = ToolbarProps;
+    export type PasteHandler = OnPaste;
+    export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
+    export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
+    export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
+    export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
+    export type ParseRule<TValue> = Parse<TValue>;
+    export type HtmlSpec = Html;
+    export type BlockNode = RteBlockNode;
+    export type InlineNode = RteInlineNode;
+}
