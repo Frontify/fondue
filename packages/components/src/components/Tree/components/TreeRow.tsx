@@ -71,8 +71,15 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
 
     // Disabled rows keep the headless click handler (focus and folder expansion stay
     // available) but drop the consumer's `onClick`; selection is blocked in the setters.
+    // In single-select, the first click on a folder only selects it — headless-tree would
+    // also toggle it — and clicking the already-selected folder toggles it.
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-        headlessProps.onClick?.(event);
+        if (!multiSelect && isFolder && !data.isDisabled && !item.isSelected()) {
+            item.setFocused();
+            item.getTree().setSelectedItems([item.getId()]);
+        } else {
+            headlessProps.onClick?.(event);
+        }
         if (!data.isDisabled) {
             data.onClick?.(event);
         }
@@ -123,6 +130,17 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
         event.currentTarget.click();
     };
 
+    // The chevron toggles without touching selection, so it must not reach the row handler.
+    const handleChevronClick = (event: MouseEvent<HTMLSpanElement>) => {
+        event.stopPropagation();
+        item.setFocused();
+        if (isExpanded) {
+            item.collapse();
+        } else {
+            item.expand();
+        }
+    };
+
     // Keep action clicks from bubbling into the row's select/expand handler.
     const handleActionsClick = (event: MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
@@ -166,7 +184,11 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
                     />
                 )}
                 <span className={styles.indent} aria-hidden />
-                <TreeRowChevron isFolder={isFolder} isExpanded={isExpanded} />
+                <TreeRowChevron
+                    isFolder={isFolder}
+                    isExpanded={isExpanded}
+                    onClick={isFolder ? handleChevronClick : undefined}
+                />
                 {data.icon !== undefined && data.icon !== null && (
                     <span className={styles.icon} aria-hidden>
                         {data.icon}

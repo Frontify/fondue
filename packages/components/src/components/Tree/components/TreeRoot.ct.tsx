@@ -228,11 +228,36 @@ test.describe('TreeRoot multi-select', () => {
 });
 
 test.describe('TreeRoot expansion', () => {
-    test('clicks toggle a folder open and fire onExpandChange', async ({ mount }) => {
+    test('clicking an unselected folder selects it without toggling', async ({ mount }) => {
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).click();
+        expect(selectCalls).toEqual([true]);
+        expect(expandCalls).toEqual([]);
+    });
+
+    test('clicking the selected folder toggles it open and fires onExpandChange', async ({ mount }) => {
         const calls: boolean[] = [];
         const component = await mount(
             <Tree.Root>
-                <Tree.Folder id="f" onExpandChange={(v) => calls.push(v)}>
+                <Tree.Folder id="f" isSelected onExpandChange={(v) => calls.push(v)}>
                     <Tree.FolderHeader>
                         <Tree.Label>Folder</Tree.Label>
                     </Tree.FolderHeader>
@@ -246,6 +271,33 @@ test.describe('TreeRoot expansion', () => {
         await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
         await component.getByRole('treeitem', { name: /Folder/ }).click();
         expect(calls).toEqual([true]);
+    });
+
+    test('clicking the chevron toggles a folder without selecting it', async ({ mount }) => {
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+        await row.locator('[aria-hidden] svg').first().click();
+        expect(expandCalls).toEqual([true]);
+        expect(selectCalls).toEqual([]);
+        await expect(row).toHaveAttribute('aria-selected', 'false');
     });
 });
 
