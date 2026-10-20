@@ -1,0 +1,19 @@
+packages/components/src/components/Dialog/__tests__/Dialog.ct.tsx
+  s_1af455347e7709::t_256d08d2e53933 425-432
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "f39025e861bbf18ce651cd06d9f6024dfd4a6d70",
+  "prompts": {},
+  "sessions": {
+    "s_1af455347e7709": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "725114d3-aa6a-4d20-a6c1-289670de47da",
+        "model": "default"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
