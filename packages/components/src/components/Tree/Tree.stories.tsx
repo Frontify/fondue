@@ -231,6 +231,103 @@ export const SingleSelect: Story = {
     },
 };
 
+export const SingleSelectNestedFolders: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Single-select across nested folders: any row — item or folder, at any depth — can be the ' +
+                    'one selected row. The first click on a folder only selects it; clicking the selected ' +
+                    'folder, or any chevron, expands or collapses it. The `isSelected` and `isExpanded` flags ' +
+                    'emitted via `onChange` are fed straight back into the tree.',
+            },
+        },
+    },
+    render: (args) => {
+        const [nodes, setNodes] = useState<TreeChangeState>([
+            {
+                id: 'brand',
+                name: 'Brand',
+                isFolder: true,
+                isExpanded: true,
+                children: [
+                    {
+                        id: 'brand/logos',
+                        name: 'Logos',
+                        isFolder: true,
+                        isExpanded: true,
+                        children: [
+                            {
+                                id: 'brand/logos/primary',
+                                name: 'Primary',
+                                isFolder: true,
+                                isExpanded: true,
+                                children: [
+                                    { id: 'brand/logos/primary/color.svg', name: 'color.svg', isFolder: false },
+                                    {
+                                        id: 'brand/logos/primary/mono.svg',
+                                        name: 'mono.svg',
+                                        isFolder: false,
+                                        isSelected: true,
+                                    },
+                                ],
+                            },
+                            {
+                                id: 'brand/logos/secondary',
+                                name: 'Secondary',
+                                isFolder: true,
+                                isExpanded: false,
+                                children: [{ id: 'brand/logos/secondary/icon.svg', name: 'icon.svg', isFolder: false }],
+                            },
+                        ],
+                    },
+                    { id: 'brand/guidelines.pdf', name: 'guidelines.pdf', isFolder: false },
+                ],
+            },
+            {
+                id: 'campaigns',
+                name: 'Campaigns',
+                isFolder: true,
+                isExpanded: false,
+                children: [{ id: 'campaigns/spring.png', name: 'spring.png', isFolder: false }],
+            },
+            { id: 'readme.md', name: 'readme.md', isFolder: false },
+        ]);
+
+        const renderNode = (n: TreeNodeState): ReactNode =>
+            n.isFolder ? (
+                <Tree.Folder key={n.id} id={n.id} isExpanded={n.isExpanded} isSelected={n.isSelected}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
+                    {n.children?.map(renderNode)}
+                </Tree.Folder>
+            ) : (
+                <Tree.Item key={n.id} id={n.id} isSelected={n.isSelected}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                </Tree.Item>
+            );
+
+        return (
+            <Tree.Root
+                {...args}
+                onChange={(state) => {
+                    args.onChange?.(state);
+                    setNodes(state);
+                }}
+            >
+                {nodes.map(renderNode)}
+            </Tree.Root>
+        );
+    },
+};
+
 export const MultiSelect: Story = {
     parameters: {
         docs: {
