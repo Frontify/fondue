@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "allowImportingTsExtensions": true,
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "composite": true,
@@ -7,9 +8,20 @@
         "lib": ["ESNext"],
         "module": "ESNext",
         "moduleResolution": "Bundler",
-        "outDir": "./dist/tsconfig-node",
+        "outDir": "node_modules/.cache/tsconfig.node",
         "resolveJsonModule": true,
-        "target": "ESNext"
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "ESNext",
+        "types": ["node"]
     },
-    "include": ["vite.config.ts", "package.json", "oxlint.config.ts"]
+    "include": [
+        "package.json",
+        "tsconfig.json",
+        "vite.config.ts",
+        "oxlint.config.ts",
+        "oxfmt.config.ts",
+        "tailwind.config.ts",
+        "lint-fixtures/*.ts"
+    ]
 }
