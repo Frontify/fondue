@@ -25,18 +25,14 @@ const getSubpackageURL = (subpackage: string): string => {
 };
 
 const config: StorybookConfig = {
-    // Each package keeps its own top-level group, as it had when it was a composed ref.
+    // Story files carry their full sidebar path in `title`; the order lives in `storySort` in preview.tsx.
     stories: [
         '../stories/**/*.mdx',
         '../stories/**/*.stories.@(ts|tsx)',
-        { directory: '../../packages/tokens/stories', files: '**/*.stories.@(ts|tsx)', titlePrefix: 'Tokens' },
-        { directory: '../../packages/icons/src', files: '**/*.stories.@(ts|tsx)', titlePrefix: 'Icons' },
-        {
-            directory: '../../packages/components/src',
-            files: '**/*.stories.@(ts|tsx)',
-            titlePrefix: 'Components',
-        },
-        { directory: '../../packages/charts/src', files: '**/*.stories.@(ts|tsx)', titlePrefix: 'Charts' },
+        '../../packages/tokens/stories/**/*.stories.@(ts|tsx)',
+        '../../packages/icons/src/**/*.stories.@(ts|tsx)',
+        '../../packages/components/src/**/*.stories.@(ts|tsx)',
+        '../../packages/charts/src/**/*.stories.@(ts|tsx)',
     ],
     addons: [
         '@storybook/addon-links',

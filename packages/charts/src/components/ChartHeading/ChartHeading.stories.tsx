@@ -7,7 +7,7 @@ import { ChartHeading, type ChartHeadingProps } from '@components/ChartHeading';
 import { IconRocket } from '../../utils/components/IconRocket';
 
 export default {
-    title: 'Components/Chart Heading',
+    title: 'Charts/Chart Heading',
     component: ChartHeading,
     parameters: {
         status: {

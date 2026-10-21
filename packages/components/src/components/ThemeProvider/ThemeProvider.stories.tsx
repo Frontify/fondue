@@ -14,7 +14,7 @@ import ThemeProviderDocs from './ThemeProvider.mdx';
 type Story = StoryObj<typeof ThemeProvider>;
 
 const meta: Meta<typeof ThemeProvider> = {
-    title: 'Utilities/ThemeProvider',
+    title: 'Providers/ThemeProvider',
     component: ThemeProvider,
     tags: ['autodocs'],
     parameters: {
