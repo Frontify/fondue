@@ -3,6 +3,7 @@
 // The `/` block-command menu: session tracking and keys in `SlashMenu`, the popup in `SlashList`.
 
 import { Flyout } from '@frontify/fondue-components';
+import { Anchor as FlyoutAnchor } from '@radix-ui/react-popover';
 import { type ReactNode, type RefObject, useEffect, useId, useRef, useState } from 'react';
 
 import { PARAGRAPH, type RteBlockCommand } from '#/core';
@@ -250,7 +251,7 @@ const SlashList = ({
     return (
         // A press anywhere but the list ends it.
         <Flyout.Root open onOpenChange={(open) => !open && onDismiss()}>
-            <Flyout.Anchor virtualRef={anchor} />
+            <FlyoutAnchor virtualRef={anchor} />
             <Flyout.Content
                 side="bottom"
                 align="start"

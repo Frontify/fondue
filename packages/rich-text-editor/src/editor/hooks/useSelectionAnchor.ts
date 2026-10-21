@@ -7,7 +7,7 @@ import { type EditorHandle } from '../port';
 import { type EditorStateStore } from './useEditorHandle';
 
 /**
- * A virtual element at the selection for `Flyout.Anchor`, re-rendering the
+ * A virtual element at the selection for the flyout's anchor, re-rendering the
  * caller on every editor state change. A new one whenever the box moves, so the
  * flyout repositions; while the page scrolls the flyout reads the box live.
  * `contextElement` tells the flyout which scrolling containers to follow.

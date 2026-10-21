@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Flyout } from '@frontify/fondue-components';
+import { Anchor as FlyoutAnchor } from '@radix-ui/react-popover';
 import { type ReactNode, type RefObject, useRef } from 'react';
 
 import { type EditorStateStore } from '../hooks/useEditorHandle';
@@ -34,7 +35,7 @@ export const FloatingToolbar = ({
     }
     return (
         <Flyout.Root open>
-            <Flyout.Anchor virtualRef={anchor} />
+            <FlyoutAnchor virtualRef={anchor} />
             <Flyout.Content
                 ref={contentRef}
                 side="top"
