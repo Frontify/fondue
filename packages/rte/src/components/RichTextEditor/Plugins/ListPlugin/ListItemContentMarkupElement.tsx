@@ -48,7 +48,7 @@ const ListBullet = () => {
 
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     return (
-        <p className={getLicElementClassNames(element)} {...attributes}>
+        <p className={merge([getLicElementClassNames(element), '[overflow-wrap:anywhere]'])} {...attributes}>
             <ListBullet />
             <span className={LIST_ITEM_SPAN_CLASSES}>{children}</span>
         </p>
