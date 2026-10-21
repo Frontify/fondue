@@ -30,6 +30,7 @@
         "node": ">=18"
     },
     "scripts": {
+        "storybook": "pnpm --workspace-root storybook",
         "build": "vite build",
         "build:watch": "vite build --watch",
         "format": "oxfmt",

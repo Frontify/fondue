@@ -18,7 +18,7 @@
         "lint": "pnpm --stream --filter {packages/*} --filter {storybook-docs} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
         "storybook:main": "wait-on http://localhost:6011 && pnpm --stream  --filter {storybook-docs} storybook",
-        "storybook:packages": "pnpm --filter {packages/rte} storybook --no-open",
+        "storybook:packages": "pnpm --filter {packages/rte} storybook:ref --no-open",
         "typecheck": "pnpm --stream --filter {packages/*} --filter {storybook-docs} typecheck",
         "changeset": "changeset",
         "release": "pnpm build && changeset tag && pnpm publish -r --access=public",

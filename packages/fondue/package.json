@@ -107,6 +107,7 @@
         "node": ">=18"
     },
     "scripts": {
+        "storybook": "pnpm --workspace-root storybook",
         "build": "pnpm clean && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:package:sdk && pnpm build:tools",
         "build:library": "vite build",
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",

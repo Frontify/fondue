@@ -34,6 +34,7 @@
         "access": "public"
     },
     "scripts": {
+        "storybook": "pnpm --workspace-root storybook",
         "build": "vite build && vite build --config locales.vite.config.ts && pnpm build:manifest",
         "install:playwright": "playwright install --with-deps",
         "format": "oxfmt",
