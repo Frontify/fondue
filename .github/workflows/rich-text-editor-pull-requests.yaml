@@ -27,6 +27,12 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      - name: Build Fondue Components
+        run: pnpm build:components
+
       - name: Lint code
         run: pnpm --stream --filter {packages/rich-text-editor} lint
 
@@ -41,6 +47,12 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup
+
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      - name: Build Fondue Components
+        run: pnpm build:components
 
       - name: Typecheck code
         run: pnpm --stream --filter {packages/rich-text-editor} typecheck
@@ -59,6 +71,12 @@ jobs:
 
       - name: Setup
         uses: ./.github/actions/setup
+
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      - name: Build Fondue Components
+        run: pnpm build:components
 
       - name: Unit tests
         run: pnpm --stream --filter {packages/rich-text-editor} test
