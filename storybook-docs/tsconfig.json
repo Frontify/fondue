@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "allowImportingTsExtensions": true,
-        "baseUrl": ".",
         "paths": {
             "#/*": ["../packages/components/src/*"],
             "#storybook/*": ["./.storybook/*"]
