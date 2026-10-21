@@ -92,7 +92,7 @@ through `tokens.utilities` classes rather than raw font tokens.
 
 Live counts and a browsable catalog are rendered server-side from this
 package in the Fondue Storybook under
-[**Technical → Fondue SDK**](https://fondue-components.frontify.com/?path=/docs/technical-fondue-sdk--docs).
+[**Documentation → SDK**](https://fondue-components.frontify.com/?path=/docs/documentation-sdk-usage--documentation).
 
 ## Top-level shape
 

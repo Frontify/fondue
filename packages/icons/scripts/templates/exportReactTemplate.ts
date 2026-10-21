@@ -28,8 +28,8 @@ import { createFondueIcon } from '../createFondueIcon';
 /**
  * @component @name ${componentName}
  *
- * @preview ![img](data:image/svg+xml;base64,${svgBase64}) - https://fondue-components.frontify.com/?path=/story/icons_icons--default&args=iconName:${iconName}
- * @see https://fondue-components.frontify.com/?path=/story/icons_icons--default - Documentation
+ * @preview ![img](data:image/svg+xml;base64,${svgBase64}) - https://fondue-components.frontify.com/?path=/story/icons-icons--default&args=iconName:${iconName}
+ * @see https://fondue-components.frontify.com/?path=/story/icons-icons--default - Documentation
  */
 export const Icon${componentName} = createFondueIcon('${componentName}', ${JSON.stringify(children)});
 `;

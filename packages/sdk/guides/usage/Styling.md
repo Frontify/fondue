@@ -2,7 +2,7 @@
 
 ## Style tokens
 
-Explore the available tokens in [Storybook](https://fondue-components.frontify.com/?path=/story/tokens_tokens--colors)
+Explore the available tokens in [Storybook](https://fondue-components.frontify.com/?path=/story/tokens-colors--colors)
 
 ### Using tailwind classes
 
@@ -35,7 +35,7 @@ All other Tailwind defaults (layout, flexbox, grid, sizing, …) are unchanged.
 
 ## Utilities
 
-Explore the available utilities in [Storybook](https://fondue-components.frontify.com/?path=/story/tokens_utilities--typography)
+Explore the available utilities in [Storybook](https://fondue-components.frontify.com/?path=/story/tokens-utilities-typography--typography)
 
 **When using tailwind**, we provide a set of utilities to help style your components.
 Currently, we provide utilities for typography styles. Each utility combines definitions for `font-family`, `font-size`, `line-height`, `font-weight`, `letter-spacing` and `text-transform`.
