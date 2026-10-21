@@ -1,0 +1,41 @@
+packages/components/src/helpers/aria.ts
+  s_17140c57649b9f::t_dcb855953d6e17 29-39
+  s_17140c57649b9f::t_84eadbda4e06b9 28
+packages/components/src/components/Select/__tests__/ComboboxSingle.a11y.spec.tsx
+  s_17140c57649b9f::t_c7cdbcf281bd0d 118-129
+  s_17140c57649b9f::t_5a71644749561f 91-117
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_17140c57649b9f::t_c5e9d811a4fd3e 8
+  s_17140c57649b9f::t_f2680d97f4d9f9 218-222
+packages/components/src/components/Select/__tests__/SelectMultiple.a11y.spec.tsx
+  s_17140c57649b9f::t_244800b3623501 113-135
+packages/components/src/helpers/aria.spec.ts
+  s_17140c57649b9f::t_bb08d0fd8e2f97 1-43
+packages/components/src/components/Select/__tests__/SelectSingle.a11y.spec.tsx
+  s_17140c57649b9f::t_d79f5c504698ec 94-120
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_17140c57649b9f::t_a149241e896984 18
+  s_17140c57649b9f::t_e1de144f51a877 254-255
+  s_17140c57649b9f::t_bada66ae40775c 332
+  s_17140c57649b9f::t_dab12540b8c401 359
+  s_17140c57649b9f::t_d8e0e6f70c8b36 328-331
+  s_17140c57649b9f::t_21bc6c06431619 360
+packages/components/src/components/Select/__tests__/ComboboxMultiple.a11y.spec.tsx
+  s_17140c57649b9f::t_1600c51ab4f980 107-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "b86f14f5dce5f7b1bf9daf46961a2bc62da56045",
+  "prompts": {},
+  "sessions": {
+    "s_17140c57649b9f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "742055e7-59dc-4b22-82b3-d507c54c22c2",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}
