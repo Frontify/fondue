@@ -1,0 +1,53 @@
+packages/components/src/locales/de-DE.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/components/Select/__tests__/MultiselectIndeterminate.ct.tsx
+  s_fbbc580b74bf80::t_8283dc6ba432f8 15-17,125,153-226,231
+  s_fbbc580b74bf80::t_03a9f327f2ceca 227-230
+packages/components/src/locales/en-US.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 25,29
+packages/components/src/locales/it-CH.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/components/Select/__tests__/CollapsibleBadges.spec.tsx
+  s_fbbc580b74bf80::t_8283dc6ba432f8 104,111,124,136
+packages/components/src/locales/nl-NL.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/pl-PL.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/de-CH.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/it-IT.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+.changeset/soft-pugs-wander.md
+  s_fbbc580b74bf80::t_8283dc6ba432f8 11-13
+packages/components/src/locales/fr-FR.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/es-ES.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/components/Select/__tests__/SelectMultiple.spec.tsx
+  s_fbbc580b74bf80::t_8283dc6ba432f8 212,239
+packages/components/src/locales/pt-PT.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/locales/fr-CH.ts
+  s_fbbc580b74bf80::t_8283dc6ba432f8 27,31
+packages/components/src/components/Select/__tests__/ComboboxMultiple.spec.tsx
+  s_fbbc580b74bf80::t_8283dc6ba432f8 231,243,264
+packages/components/src/components/Select/components/CollapsibleBadges.tsx
+  s_fbbc580b74bf80::t_8283dc6ba432f8 31-43,46,48,50-52,54-55,72-81,96-98,112-113,127,129-130,183,193-200,202-203,208-211
+  s_fbbc580b74bf80::t_48558d6cdd107e 212-214
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "8784184c244f2faafc111d3f79ee9beb753c2fa3",
+  "prompts": {},
+  "sessions": {
+    "s_fbbc580b74bf80": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "531792a9-9c10-420f-a827-63acef15ca4a",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
