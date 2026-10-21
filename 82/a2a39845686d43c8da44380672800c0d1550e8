@@ -1,0 +1,31 @@
+packages/sdk/tsconfig.json
+  s_2de7cf31efcfc7::t_aa9054fdcaac2e 23
+packages/fondue/package.json
+  s_2de7cf31efcfc7::t_7c1c805fd0d6d1 100
+  s_2de7cf31efcfc7::t_96c9e281781eb8 121
+packages/sdk/package.json
+  s_2de7cf31efcfc7::t_114552ea454abc 24
+packages/sdk/skills/fondue/SKILL.md
+  s_2de7cf31efcfc7::t_8f43b7a98814fc 1-207
+packages/sdk/README.md
+  s_2de7cf31efcfc7::t_f86876efd5cc16 27,29-31
+  s_2de7cf31efcfc7::t_fca62e7dd256c6 28,32-40
+pnpm-lock.yaml
+  s_2de7cf31efcfc7::t_53a7c9a4064a95 86,89,110,294,592,725,728,746,1065,1285,10247,12406,12415,12420,12429,12820,12822,12832,12834,15594,15606,17976,17985,17998,18007
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "82a2a39845686d43c8da44380672800c0d1550e8",
+  "prompts": {},
+  "sessions": {
+    "s_2de7cf31efcfc7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9fee9d4-445c-4181-95d9-bd149c00682c",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

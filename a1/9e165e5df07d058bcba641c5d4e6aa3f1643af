@@ -1,0 +1,26 @@
+packages/sdk/README.md
+  s_1b4cb72f14f783::t_5849b6d3154f7f 60-66
+.changeset/sdk-contract-hardening.md
+  s_1b4cb72f14f783::t_9a16e741ae83e7 2,7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "a19e165e5df07d058bcba641c5d4e6aa3f1643af",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_1b4cb72f14f783": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "23286c54-2204-457f-b5c1-369a06d17011",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

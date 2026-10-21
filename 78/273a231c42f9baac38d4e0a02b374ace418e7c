@@ -1,0 +1,23 @@
+.changeset/tree-rounded-drag-edges.md
+  s_68254d0d83d78c::t_773e6097b37fb7 6
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_68254d0d83d78c::t_92868e03eaeafc 90-93,98-101
+  s_68254d0d83d78c::t_411a76c04fbf68 111-114
+  s_68254d0d83d78c::t_9e49a9d599e4e2 50-66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "78273a231c42f9baac38d4e0a02b374ace418e7c",
+  "prompts": {},
+  "sessions": {
+    "s_68254d0d83d78c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "df3dcb80-010b-40ab-bde9-b5db35224c1d",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
