@@ -13,6 +13,7 @@
     },
     "dependencies": {
         "@frontify/fondue-sdk": "workspace:^",
+        "@frontify/fondue-tokens": "workspace:^",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
     },
@@ -28,10 +29,14 @@
         "@types/node": "^22.20.1",
         "@types/react": "^18.3.31",
         "@types/react-dom": "^18.3.7",
+        "autoprefixer": "^10.5.4",
         "eslint": "^10.8.1",
         "prettier": "^3.9.6",
+        "sass": "^1.102.0",
         "storybook": "^10.6.0",
+        "tailwindcss": "^3.4.19",
         "typescript": "^5.9.3",
-        "vite": "^6.4.3"
+        "vite": "^6.4.3",
+        "vite-tsconfig-paths": "^5.1.4"
     }
 }

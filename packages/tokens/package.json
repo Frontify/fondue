@@ -45,9 +45,7 @@
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
         "migrate": "tsx tools/migrate.js",
-        "typecheck": "tsgo --noEmit",
-        "build:storybook": "tailwindcss -o .storybook/styles.css && storybook build",
-        "storybook": "storybook dev -p 6005"
+        "typecheck": "tsgo --noEmit"
     },
     "publishConfig": {
         "access": "public"
@@ -61,10 +59,6 @@
         "@frontify/oxfmt-config": "^0.0.2",
         "@frontify/oxlint-config-basic": "^0.0.2",
         "@frontify/oxlint-config-react": "^0.0.2",
-        "@storybook/addon-a11y": "^10.6.0",
-        "@storybook/addon-docs": "^10.6.0",
-        "@storybook/addon-links": "^10.6.0",
-        "@storybook/react-vite": "^10.6.0",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/node": "^24.13.3",
         "@types/react": "^18.3.31",
@@ -77,7 +71,6 @@
         "oxlint-tsgolint": "^0.23.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
-        "storybook": "^10.6.0",
         "style-dictionary": "^5.5.2",
         "tailwindcss": "^3.4.19",
         "tsx": "^4.23.11",

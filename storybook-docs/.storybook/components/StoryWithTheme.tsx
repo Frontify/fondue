@@ -2,10 +2,21 @@
 
 import { type ComponentProps, type ComponentType } from 'react';
 
-import { deCH, deDE, enUS, esES, frCH, frFR, itCH, itIT, nlNL, plPL, ptPT } from '#/locales';
-import { type LocaleConfig, type LocaleIdentifier } from '#/locales/types';
-
-import { ThemeProvider } from '../../src/components/ThemeProvider/ThemeProvider';
+import { ThemeProvider } from '../../../packages/components/src/components/ThemeProvider/ThemeProvider';
+import {
+    deCH,
+    deDE,
+    enUS,
+    esES,
+    frCH,
+    frFR,
+    itCH,
+    itIT,
+    nlNL,
+    plPL,
+    ptPT,
+} from '../../../packages/components/src/locales';
+import { type LocaleConfig, type LocaleIdentifier } from '../../../packages/components/src/locales/types';
 
 type WithThemeOptions = {
     label?: string;
@@ -59,7 +70,7 @@ export const withTheme = (Story: ComponentType, options: WithThemeOptions) => {
                             position: 'absolute',
                             top: '0.5rem',
                             right: '0.5rem',
-                            color: 'var(--text-color)',
+                            color: 'var(--color-primary-default)',
                             fontSize: '0.75rem',
                         }}
                     >

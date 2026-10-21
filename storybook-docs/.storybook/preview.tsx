@@ -1,19 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import '@frontify/fondue-tokens/styles';
-import '../src/styles.scss';
+import '../../packages/components/src/styles.scss';
+import '../../packages/charts/src/index.scss';
 
 import { type Decorator, type Preview, type StoryContext } from '@storybook/react-vite';
 import { type ComponentType } from 'react';
 
-import { Flex } from '../src/components/Flex/Flex';
-import { availableLocales } from '../src/locales/types';
+import { Flex } from '../../packages/components/src/components/Flex/Flex';
+import { availableLocales, type LocaleIdentifier } from '../../packages/components/src/locales/types';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 import { withTheme } from './components/StoryWithTheme';
 
+type Globals = {
+    direction?: 'ltr' | 'rtl';
+    theme?: 'light' | 'dark' | 'both';
+    locale?: LocaleIdentifier;
+};
+
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
-    const { direction = 'ltr', theme = 'light', locale = 'en-US' } = context.globals;
+    const { direction = 'ltr', theme = 'light', locale = 'en-US' } = context.globals as Globals;
 
     if (theme === 'both') {
         return (
@@ -82,18 +89,31 @@ const preview: Preview = {
         layout: 'fullscreen',
         options: {
             storySort: {
-                order: ['Tokens', 'Typography', 'Layout', 'Components', 'Utilities'],
+                order: [
+                    'Getting started',
+                    ['Setup'],
+                    'Usage',
+                    ['Components', 'Styling'],
+                    'SDK',
+                    ['Usage', 'Concepts', 'Examples', 'Reference'],
+                    'Development',
+                    ['Contributing', 'Upgrading'],
+                    'Tokens',
+                    ['Tokens', 'Utilities'],
+                    'Icons',
+                    'Components',
+                    ['Typography', 'Layout', 'Components', 'Utilities'],
+                    'Charts',
+                ],
                 method: 'alphabetical',
             },
         },
         docs: {
             page: DocumentationTemplate,
-
             toc: {
                 title: 'Table of contents',
                 headingSelector: 'h2, h3',
             },
-
             codePanel: true,
         },
         controls: {
