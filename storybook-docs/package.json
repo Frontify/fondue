@@ -14,6 +14,7 @@
         "typecheck": "pnpm generate:guides && tsc --noEmit"
     },
     "dependencies": {
+        "@frontify/fondue-components": "workspace:^",
         "@frontify/fondue-sdk": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
         "react": "^18.3.1",

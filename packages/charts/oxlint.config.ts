@@ -18,7 +18,7 @@ export default defineConfig({
     overrides: [
         {
             files: ['**/*.{js,jsx,ts,tsx,mts,cts,cjs}'],
-            jsPlugins: ['@tony.ganchev/eslint-plugin-header', 'eslint-plugin-tailwindcss'],
+            jsPlugins: ['@tony.ganchev/eslint-plugin-header'],
             rules: {
                 '@tony.ganchev/header/header': [
                     'error',
@@ -30,18 +30,6 @@ export default defineConfig({
                         trailingEmptyLines: { minimum: 2 },
                     },
                 ],
-                'tailwindcss/no-custom-classname': [
-                    'warn',
-                    {
-                        whitelist: ['^(?!tw-).*$'],
-                        callees: ['className', 'sv', 'class'],
-                        cssFiles: [],
-                    },
-                ],
-                'tailwindcss/no-contradicting-classname': 'error',
-                'tailwindcss/enforces-negative-arbitrary-values': 'error',
-                'tailwindcss/no-unnecessary-arbitrary-value': 'error',
-
                 'unicorn/prefer-dom-node-text-content': 'warn',
 
                 '@eslint-react/dom-no-missing-button-type': 'warn',

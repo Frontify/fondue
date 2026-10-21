@@ -1,13 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import '@frontify/fondue-tokens/styles';
-import '../../packages/components/src/styles.scss';
+import './tailwind.css';
 import '../../packages/charts/src/index.scss';
+import { Flex, availableLocales, type LocaleIdentifier } from '@frontify/fondue-components';
 import { type Decorator, type Preview, type StoryContext } from '@storybook/react-vite';
 import { type ComponentType } from 'react';
-
-import { Flex } from '../../packages/components/src/components/Flex/Flex';
-import { availableLocales, type LocaleIdentifier } from '../../packages/components/src/locales/types';
 
 import { withTheme } from './components/StoryWithTheme';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
@@ -125,8 +123,8 @@ const preview: Preview = {
                 date: /Date$/i,
             },
         },
+        // No default `type`: only stories that declare a status get a badge, docs pages get none.
         status: {
-            type: 'deprecated',
             statuses: {
                 released: {
                     background: 'rgb(50, 210, 182)',
@@ -137,11 +135,6 @@ const preview: Preview = {
                     background: 'rgb(154, 126, 254)',
                     color: '#ffffff',
                     description: 'This component is in progress',
-                },
-                planned: {
-                    background: 'rgb(254, 194, 50)',
-                    color: '#ffffff',
-                    description: 'This component is planned to be revamped',
                 },
                 legacy: {
                     background: 'rgb(129, 132, 132)',

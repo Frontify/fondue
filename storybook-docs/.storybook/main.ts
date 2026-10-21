@@ -91,6 +91,10 @@ const config: StorybookConfig = {
                         find: /^@frontify\/fondue-components$/,
                         replacement: packagePath('components/src/index.ts'),
                     },
+                    {
+                        find: /^@frontify\/fondue-components\/locales$/,
+                        replacement: packagePath('components/src/locales/index.ts'),
+                    },
                 ],
             },
             css: {

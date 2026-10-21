@@ -1,22 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type LocaleConfig, type LocaleIdentifier, ThemeProvider } from '@frontify/fondue-components';
+import { deCH, deDE, enUS, esES, frCH, frFR, itCH, itIT, nlNL, plPL, ptPT } from '@frontify/fondue-components/locales';
 import { type ComponentProps, type ComponentType } from 'react';
-
-import { ThemeProvider } from '../../../packages/components/src/components/ThemeProvider/ThemeProvider';
-import {
-    deCH,
-    deDE,
-    enUS,
-    esES,
-    frCH,
-    frFR,
-    itCH,
-    itIT,
-    nlNL,
-    plPL,
-    ptPT,
-} from '../../../packages/components/src/locales';
-import { type LocaleConfig, type LocaleIdentifier } from '../../../packages/components/src/locales/types';
 
 type WithThemeOptions = {
     label?: string;

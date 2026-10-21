@@ -1,0 +1,6 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/* Utility classes for the stories' own layout; the packages themselves don't use Tailwind. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
