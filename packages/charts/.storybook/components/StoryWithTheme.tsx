@@ -20,7 +20,7 @@ export const withTheme = (Story: ComponentType, options: WithThemeOptions) => {
                             position: 'absolute',
                             top: '0.5rem',
                             right: '0.5rem',
-                            color: 'var(--text-color)',
+                            color: 'var(--color-primary-default)',
                             fontSize: '0.75rem',
                         }}
                     >
