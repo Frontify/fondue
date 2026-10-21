@@ -459,14 +459,12 @@ const split = (words: string | undefined): readonly string[] => (words ? words.s
 /** The emoji `emojiPlugin` offers unless it is given others, in picker order. */
 export const defaultEmojis: readonly EmojiItem[] = Object.freeze(
     CATEGORIES.flatMap(([category, rows]) =>
-        rows.map(
-            ([emoji, shortcodes, name, keywords]): EmojiItem => ({
-                emoji,
-                name,
-                shortcodes: split(shortcodes),
-                keywords: split(keywords),
-                category,
-            }),
-        ),
+        rows.map(([emoji, shortcodes, name, keywords]): EmojiItem => ({
+            emoji,
+            name,
+            shortcodes: split(shortcodes),
+            keywords: split(keywords),
+            category,
+        })),
     ),
 );
