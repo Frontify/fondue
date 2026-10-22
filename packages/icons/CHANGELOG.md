@@ -1,5 +1,18 @@
 # @frontify/fondue-icons
 
+## 0.31.0
+
+### Minor Changes
+
+- [#2893](https://github.com/Frontify/fondue/pull/2893) [`1756b4f`](https://github.com/Frontify/fondue/commit/1756b4f053643139f6ab622a7df52c70ce7677c2) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - feat: update icons
+
+### Patch Changes
+
+- [#2905](https://github.com/Frontify/fondue/pull/2905) [`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: update dependencies to resolve dependabot vulnerabilities
+
+- Updated dependencies [[`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e)]:
+  - @frontify/fondue-tokens@5.1.3
+
 ## 0.30.0
 
 ### Minor Changes

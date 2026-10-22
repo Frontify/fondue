@@ -1,5 +1,23 @@
 # @frontify/fondue-components
 
+## 35.0.0
+
+### Patch Changes
+
+- [#2905](https://github.com/Frontify/fondue/pull/2905) [`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: update dependencies to resolve dependabot vulnerabilities
+
+- [#2894](https://github.com/Frontify/fondue/pull/2894) [`4ebcdf2`](https://github.com/Frontify/fondue/commit/4ebcdf243182aa7af5a525632a7b72c68f3198a8) Thanks [@syeo66](https://github.com/syeo66)! - fix(TextInput): adjust 'read only' state
+
+- [#2899](https://github.com/Frontify/fondue/pull/2899) [`a92f2c2`](https://github.com/Frontify/fondue/commit/a92f2c21c2507569fa7b3f0ef01fcfc430b3ddaf) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(Table): don't touch DOM globals when the module loads, so it can be imported outside a browser
+
+- [#2899](https://github.com/Frontify/fondue/pull/2899) [`a92f2c2`](https://github.com/Frontify/fondue/commit/a92f2c21c2507569fa7b3f0ef01fcfc430b3ddaf) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(Table): don't read DOM globals at module load, so importing the package in Node/SSR no longer throws
+
+- [#2898](https://github.com/Frontify/fondue/pull/2898) [`24ca3f7`](https://github.com/Frontify/fondue/commit/24ca3f7c5c136ad843114031f41ee7ededc5b908) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(Tree): in single-select mode, the first click on a folder selects it without toggling; clicking the selected folder or its chevron toggles it
+
+- Updated dependencies [[`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e), [`1756b4f`](https://github.com/Frontify/fondue/commit/1756b4f053643139f6ab622a7df52c70ce7677c2)]:
+  - @frontify/fondue-icons@0.31.0
+  - @frontify/fondue-tokens@5.1.3
+
 ## 34.0.0
 
 ### Minor Changes
