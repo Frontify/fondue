@@ -10,12 +10,7 @@ import * as FondueIcons from './icons';
 
 type Story = StoryObj<{ iconName: string }>;
 const meta: Meta = {
-    title: 'Icons',
-    parameters: {
-        status: {
-            type: 'released',
-        },
-    },
+    title: 'Icons/Icons',
     args: {
         iconName: '',
     },

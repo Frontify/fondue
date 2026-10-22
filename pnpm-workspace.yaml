@@ -20,6 +20,7 @@ publicHoistPattern:
     - "*prettier*"
     - "*tailwind*"
     - "*oxlint*"
+    - "*storybook*"
 
 confirmModulesPurge: false
 

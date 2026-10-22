@@ -17,15 +17,6 @@
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": [
-        "src",
-        "legacyTokens",
-        "tools",
-        "stories",
-        ".storybook/*",
-        ".storybook/components/*",
-        "playwright",
-        "tailwind.config.ts"
-    ],
+    "include": ["src", "legacyTokens", "tools", "stories", "playwright"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

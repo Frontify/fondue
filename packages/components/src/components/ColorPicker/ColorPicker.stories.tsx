@@ -12,6 +12,7 @@ import { ColorValueInput } from './ColorValueInput';
 
 type Story = StoryObj<typeof ColorPickerRoot>;
 const meta: Meta<typeof ColorPickerRoot> = {
+    title: 'Components/ColorPicker',
     component: ColorPickerRoot,
     subcomponents: {
         'ColorPicker.Values': ColorValueInput,

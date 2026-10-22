@@ -107,10 +107,10 @@
         "node": ">=18"
     },
     "scripts": {
+        "storybook": "pnpm --workspace-root storybook",
         "build": "pnpm clean && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:package:sdk && pnpm build:tools",
         "build:library": "vite build",
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
-        "build:storybook": "storybook build",
         "build:package:components": "vite build -c components.vite.config.ts",
         "build:package:locales": "tsx scripts/copyLocales.ts",
         "build:package:icons": "vite build -c icons.vite.config.ts",
@@ -127,7 +127,6 @@
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
         "typecheck": "tsgo --noEmit",
-        "storybook": "storybook dev -p 6009",
         "ci": "pnpm install --frozen-lockfile",
         "knip": "knip",
         "knip:fix": "knip --fix --allow-remove-files"
@@ -190,15 +189,10 @@
     },
     "devDependencies": {
         "@babel/core": "^7.29.7",
-        "@etchteam/storybook-addon-status": "^8.1.0",
         "@frontify/fondue-icons": "workspace:*",
         "@frontify/oxfmt-config": "^0.0.2",
         "@frontify/oxlint-config-basic": "^0.0.2",
         "@frontify/oxlint-config-react": "^0.0.2",
-        "@storybook/addon-a11y": "^10.6.0",
-        "@storybook/addon-docs": "^10.6.0",
-        "@storybook/addon-links": "^10.6.0",
-        "@storybook/react-vite": "^10.6.0",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/jscodeshift": "^17.3.0",
         "@types/lodash-es": "^4.17.12",
@@ -224,7 +218,6 @@
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "rimraf": "^6.1.3",
-        "storybook": "^10.6.0",
         "tailwindcss": "^3.4.19",
         "ts-node": "^10.9.2",
         "tsx": "^4.23.11",

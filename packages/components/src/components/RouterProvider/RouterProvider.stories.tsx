@@ -11,7 +11,7 @@ import { RouterProvider } from './RouterProvider';
 type Story = StoryObj<typeof RouterProvider>;
 
 const meta: Meta<typeof RouterProvider> = {
-    title: 'Utilities/RouterProvider',
+    title: 'Providers/RouterProvider',
     component: RouterProvider,
     tags: ['autodocs'],
     parameters: {

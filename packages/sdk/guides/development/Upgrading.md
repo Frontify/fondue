@@ -33,7 +33,7 @@ The token system has been completely overhauled.
 The updated structure features a reduced number of tokens and a more consistent naming convention.
 Stroybook stories are now grouped by category and to make it easier to find the right token.
 
-Explore the new token system in the [token story](https://fondue-components.frontify.com/?path=/story/tokens_tokens--colors).
+Explore the new token system in the [token story](https://fondue-components.frontify.com/?path=/story/tokens-colors--colors).
 
 You can use the [migrate-tokens](#migrate-tokens) codemod to migrate your css variables and tailwind classes to the new token system.
 

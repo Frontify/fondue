@@ -59,7 +59,8 @@
         "test:browser": "cypress open --component",
         "test:file": "cypress run --component --spec",
         "typecheck": "tsgo --noEmit",
-        "storybook": "storybook dev -p 6011",
+        "storybook": "pnpm --workspace-root storybook",
+        "storybook:ref": "storybook dev -p 6011",
         "ci": "pnpm install --frozen-lockfile"
     },
     "peerDependencies": {

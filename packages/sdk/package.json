@@ -37,6 +37,7 @@
         "node": ">=20"
     },
     "scripts": {
+        "storybook": "pnpm --workspace-root storybook",
         "build": "pnpm build:data && vite build",
         "build:data": "tsx scripts/generateData.ts",
         "lint": "eslint .",
