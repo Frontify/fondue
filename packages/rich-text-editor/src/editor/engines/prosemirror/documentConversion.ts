@@ -182,7 +182,11 @@ const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] =>
  * A block's children are inlines or blocks depending on what the block type
  * declared — the schema decides, so the document format needs no marker.
  */
-const childrenToEngine = (nodeType: PmNodeType, children: RteInlineNode[] | RteBlockNode[], schema: Schema): PmNode[] =>
+const childrenToEngine = (
+    nodeType: PmNodeType,
+    children: RteInlineNode[] | RteBlockNode[],
+    schema: Schema,
+): PmNode[] =>
     nodeType.isTextblock
         ? inlinesToEngine(children as RteInlineNode[], schema)
         : (children as RteBlockNode[]).map((child) => blockToEngine(child, schema));
