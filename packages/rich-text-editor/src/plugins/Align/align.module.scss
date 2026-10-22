@@ -1,7 +1,0 @@
-/* (c) Copyright Frontify Ltd., all rights reserved. */
-
-/** A real box rather than `display: contents`, which some browsers still drop the group role with. */
-.group {
-    display: flex;
-    gap: var(--spacing-xx-small);
-}

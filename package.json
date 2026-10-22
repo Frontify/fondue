@@ -14,7 +14,6 @@
         "build:storybook": "pnpm build && pnpm build:storybook:packages && pnpm build:storybook:main",
         "build:storybook:main": "pnpm build:icons && pnpm build:components && pnpm build:sdk && pnpm --stream --filter {storybook-docs} build:storybook",
         "build:storybook:rte": "pnpm build:icons && pnpm build:components && pnpm --stream --filter {packages/rte} build:storybook",
-        "build:storybook:rich-text-editor": "pnpm build:icons && pnpm build:components && pnpm --stream --filter {packages/rich-text-editor} build:storybook",
         "lint": "pnpm --stream --filter {packages/*} --filter {storybook-docs} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
         "storybook:main": "wait-on http://localhost:6011 && pnpm --stream  --filter {storybook-docs} storybook",

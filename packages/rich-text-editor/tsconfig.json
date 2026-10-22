@@ -3,7 +3,7 @@
         "allowImportingTsExtensions": true,
         "isolatedModules": true,
         "jsx": "react-jsx",
-        "lib": ["ES2021", "DOM", "DOM.Iterable"],
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
         "module": "ESNext",
         "moduleResolution": "bundler",
         "noEmit": true,
@@ -17,9 +17,10 @@
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "strict": true,
+        "exactOptionalPropertyTypes": true,
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": [".storybook/**/*", "src"],
+    "include": ["src"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

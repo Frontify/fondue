@@ -1,9 +1,0 @@
-/* (c) Copyright Frontify Ltd., all rights reserved. */
-
-/** The underline shared by the anchor and the panel's target; a mixin-only partial, so it emits no CSS. */
-@mixin underline {
-    text-decoration: underline;
-    // A literal: the offset is the gap between the glyphs and the line, which no
-    // token category covers.
-    text-underline-offset: 2px;
-}
