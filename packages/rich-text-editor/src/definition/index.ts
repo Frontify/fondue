@@ -33,9 +33,19 @@ import { pointer } from '#/model/errors';
 import { isApple, isPlatformBinding, keyOn, modOn } from '#/model/platform';
 import { findInvalidPayload } from '#/model/values';
 
+import { type CompiledInputRule, compileInputRules } from './input-rules';
 import { NORMALIZE_META, NORMALIZERS } from './normalizers';
 import { buildSchema } from './schema';
 
+export {
+    type BlockRule,
+    type CompiledInputRule,
+    type LineStartRule,
+    type MarkDelimiterRule,
+    type MarkRule,
+    type QuotesRule,
+    type TextReplaceRule,
+} from './input-rules';
 export { carriesNodeId, withNodeIds } from './schema';
 export { NodeIdsStep, NORMALIZE_META, type Normalizer, NORMALIZERS } from './normalizers';
 
@@ -115,6 +125,7 @@ const SUGGESTION_TRIGGER = /^[^\p{L}\p{N}\s]{1,2}$/u;
 
 /** Builds a package plugin whose code lives in the runtime, such as the history or the input rule engine. */
 export type PluginImplementation = (context: {
+    readonly inputRules: readonly CompiledInputRule[];
     readonly suggestions: readonly EngineSuggestion[];
     readonly decorations: readonly BlockDecorationSource[];
 }) => Plugin;
@@ -421,11 +432,12 @@ export const compileDefinition = (
         }
         return { featureId: contributor.id, capability: id };
     };
+    const inputRules = compileInputRules(features, schema, (id) => commands.get(id));
     const decorations = extensions.flatMap((extension) => extension.decorations);
     const pluginOf = (id: string) => {
         const built = implementations.plugins?.[id];
         if (built !== undefined) {
-            return built({ suggestions, decorations });
+            return built({ inputRules, suggestions, decorations });
         }
         const normalizer = NORMALIZERS[id];
         if (normalizer !== undefined) {

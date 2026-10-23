@@ -6,10 +6,12 @@ import { type EditorState } from 'prosemirror-state';
 
 import { type CommandLookup, type EngineCommand, type EngineImplementations } from '#/definition';
 import { type JsonObject } from '#/model';
-import { BASE_KEYS_PLUGIN, BLOCK_DECORATIONS_PLUGIN } from '#/model/capabilities';
+import { BASE_KEYS_PLUGIN, BLOCK_DECORATIONS_PLUGIN, HISTORY_PLUGIN, INPUT_RULES_PLUGIN } from '#/model/capabilities';
 import { isRecord } from '#/model/values';
 
 import { blockDecorationsPlugin } from './decorations';
+import { historyPlugin, redo, undo } from './history';
+import { enterRules, inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin } from './keys';
 
 /** Builds the engine command of one edit from its arguments. */
@@ -198,8 +200,17 @@ const insertText: CapabilityImplementation = () => ({
     active: () => false,
 });
 
+const history: CapabilityImplementation = (args) => {
+    let command = undo;
+    if (args.action === 'redo') {
+        command = redo;
+    }
+    return { run: (state, dispatch) => command(state, dispatch), active: () => false };
+};
+
 /** The editor API's edits, each built from its arguments for a model's schema. */
 export const EDITS = {
+    history,
     insertText,
     setBlock,
     toggleMark,
@@ -208,6 +219,10 @@ export const EDITS = {
 /** The package plugins the runtime builds, by plugin ID. */
 export const RUNTIME_PLUGINS: EngineImplementations = {
     plugins: {
+        // Backspace right after a rule fired undoes it before any list or block key sees it.
+        [HISTORY_PLUGIN.id]: ({ inputRules }) =>
+            historyPlugin({ Backspace: undoInputRule, Enter: enterRules(inputRules) }),
+        [INPUT_RULES_PLUGIN.id]: inputRulesPlugin,
         [BASE_KEYS_PLUGIN.id]: baseKeysPlugin,
         [BLOCK_DECORATIONS_PLUGIN.id]: blockDecorationsPlugin,
     },

@@ -20,6 +20,7 @@ import {
     COMMAND_META,
     type CompiledDefinition,
     type EngineCommand,
+    NORMALIZE_META,
     ORIGIN_META,
     type PluginOrigin,
 } from '#/definition';
@@ -41,10 +42,14 @@ import { findInvalidPayload, findUnsafeJson, isRecord, snapshot } from '#/model/
 
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
+import { groupRoot, groupsPlugin, isHistoryTransaction } from './history';
+import { firedRule, withoutRules } from './input-rules';
 import { createLimitCheck } from './limits';
 import { nodeStatePlugin } from './node-state';
 import { authoringOf, createPolicyCheck } from './policy';
-import { captureTarget, countTargets, releaseTargets, targetSelection, targetsPlugin } from './targets';
+import { createUnmanagedStatus } from './saves';
+import { createInputSettling } from './settle';
+import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
     type CaptureResult,
@@ -53,9 +58,12 @@ import {
     type CommandResult,
     type CommandState,
     type EditorSummary,
+    type SaveStatus,
     type SelectionHandle,
     type SelectionSummary,
+    type ServerRevision,
     type SessionToken,
+    type Snapshot,
     type Unsubscribe,
 } from './types';
 
@@ -64,10 +72,14 @@ type RejectedCode = Extract<CommandResult, { readonly status: 'rejected' }>['cod
 
 // Queued intents whose listeners keep enqueuing stop past this depth.
 const MAX_ENQUEUE_DEPTH = 32;
+// ProseMirror marks each DOM change it reads during a composition with this meta.
+const COMPOSITION_META = 'composition';
 
 /** What the host calls. */
 export interface RuntimeHandle {
     getSummary(): EditorSummary;
+    getSnapshot(): Snapshot;
+    getRecoveryCandidate(): RichTextDocument | null;
     query(id: string, ...args: readonly unknown[]): CommandState;
     execute(id: string, ...args: readonly unknown[]): CommandResult;
     enqueue(id: string, ...args: readonly unknown[]): Promise<CommandResult>;
@@ -124,6 +136,8 @@ export interface EditorRuntimeOptions {
     readonly mode: Mode;
     readonly policy: AuthoringPolicy;
     readonly limits: ResourceLimits;
+    /** The loaded record's revision, which an unmanaged session reports as acknowledged. */
+    readonly revision?: ServerRevision | null;
     /** What the editor layer hands the plugin commands it runs. */
     readonly commandHost?: unknown;
 }
@@ -176,7 +190,7 @@ export const summarize = (selection: Selection): SelectionSummary => {
 
 const UI_ORIGINS: ReadonlySet<string> = new Set(['paste', 'cut', 'drop']);
 
-/** The origin of an action: a command, paste, cut or drop. */
+/** The origin of an action that one undo reverts on its own: a command, paste, cut or drop. */
 const actionOrigin = (root: Transaction): ChangeOrigin | undefined => {
     const event: unknown = root.getMeta('uiEvent');
     if (root.getMeta(COMMAND_META) !== undefined) {
@@ -190,6 +204,10 @@ const actionOrigin = (root: Transaction): ChangeOrigin | undefined => {
 
 /** Where a batch came from: typing is a DOM change after a recorded `beforeinput`, which `commit` marks. */
 const originOf = (root: Transaction): ChangeOrigin => {
+    // Undo and redo report `history` whether a key, a command or the browser ran them.
+    if (isHistoryTransaction(root)) {
+        return 'history';
+    }
     const action = actionOrigin(root);
     if (action !== undefined) {
         return action;
@@ -221,10 +239,11 @@ const DUPLICATE_ENGINE = diagnostic(
     'warning',
 );
 
-/** A batch checked against policy and limits and not installed. */
+/** A batch checked against policy and limits and not installed, with how it maps positions. */
 interface Candidate {
     readonly candidate: EditorState;
     readonly root: Transaction;
+    readonly mapping: Transaction['mapping'];
 }
 /** A candidate, or why a batch cannot be installed. */
 type Prepared =
@@ -234,6 +253,8 @@ type Prepared =
           readonly diagnostic?: Diagnostic;
           readonly fault?: Diagnostic;
       };
+/** Who runs a command: a host call or a queued intent. */
+type Route = 'host' | 'queue';
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
 type Attempt = Prepared | { readonly unchanged: true };
 
@@ -254,6 +275,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         sessionId: generate(),
         generation: 0,
     };
+    const unmanaged = createUnmanagedStatus(options.revision ?? null);
     const breaksPolicy = createPolicyCheck(definition.model);
     // The URL policy of each command whose feature narrows `checkHref`, which its `url` payload fields must pass too.
     const hrefPolicies = new Map<EngineCommand, HrefPolicy>(
@@ -271,13 +293,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let policy = options.policy;
     let phase: EditorSummary['phase'] = 'mounting';
     let mode = options.mode;
-    // The mode the surface shows, which follows `mode` until the view faults.
+    // The mode the surface shows, which follows `mode` once input has settled.
     let shownMode = mode;
     let commitSequence = 0;
     let sequence = 0;
     let typing = false;
     let view: EditorView | undefined;
-    // The state the view threw on.
+    // The state the view threw on, which `getRecoveryCandidate` offers until `dispose`.
     // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovery: EditorState | undefined;
     let readyFrame: number | undefined;
@@ -304,12 +326,31 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             },
         },
     });
+    const settling = createInputSettling(
+        () => view !== undefined && view.composing,
+        () => settleInput(),
+    );
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
-        plugins: [typingRecorder, targetsPlugin, nodeStatePlugin(), ...definition.plugins],
+        plugins: [
+            typingRecorder,
+            settling.plugin,
+            targetsPlugin,
+            groupsPlugin,
+            nodeStatePlugin(),
+            ...definition.plugins,
+        ],
     });
-    // The state whose document `sequence` last published.
+    // The state whose document the snapshot and `sequence` last published, and how later provisional batches map it.
     let published = state;
+    let provisional: Transaction['mapping'] | undefined;
+    let snapshotCache:
+        | {
+              readonly doc: Node;
+              readonly composing: boolean;
+              readonly value: Snapshot;
+          }
+        | undefined;
 
     const busyWith = <T>(work: () => T): T => {
         busy += 1;
@@ -326,6 +367,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
 
+    const saveStatus = (): SaveStatus => {
+        return unmanaged(sequence);
+    };
+
     const settleQueue = (code: RejectedCode) => {
         for (const intent of queue.splice(0)) {
             liveResources.intents -= 1;
@@ -336,9 +381,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const encode = (doc: Node): RichTextDocument =>
         encodeTree(doc.toJSON() as TreeNode, definition.model, capabilities).document;
 
-    // Recomputes `editable` and the surface attributes from the phase and the mode.
+    // Recomputes `editable` and the surface attributes from the phase and the mode, which waits for input to settle.
     const refreshView = () => {
-        if (recovery !== undefined) {
+        if (settling.active() || recovery !== undefined) {
             return;
         }
         shownMode = mode;
@@ -349,12 +394,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const fault = (diagnostic: Diagnostic) => {
         phase = 'faulted';
+        // A composition that settles later publishes nothing.
+        settling.cancel();
+        provisional = undefined;
         refreshView();
         settleQueue('not-ready');
         report(diagnostic);
     };
 
-    /** The view threw while it installed `candidate`: editing stops. */
+    /** The view threw while it installed `candidate`: editing stops and the snapshot stays. */
     const viewFault = (attached: EditorView, candidate: EditorState) => {
         recovery = candidate;
         attached.dom.setAttribute('contenteditable', 'false');
@@ -383,20 +431,35 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         };
     };
 
+    /** A composition batch, and every batch after it until input settles, is checked and published then. */
+    const isProvisional = (root: Transaction) =>
+        settling.active() && (provisional !== undefined || root.getMeta(COMPOSITION_META) !== undefined);
+
     /** The final check of a change from `before` to `doc`: whether the policy refuses it, and the limit it exceeds. */
-    const finalCheck = (before: Node, doc: Node, mapping: Transaction['mapping']) => ({
-        policy: breaksPolicy(policy, before, doc, mapping),
+    const finalCheck = (before: Node, doc: Node, mapping: Transaction['mapping'], history?: boolean) => ({
+        policy: breaksPolicy(policy, before, doc, mapping, history),
         limit: exceedsLimits(doc, limits, before),
     });
 
-    /** Applies a root transaction and every transaction plugins append to it, then the final policy and limit check. */
-    const prepare = (root: Transaction, ids: () => string): Prepared => {
+    /**
+     * Applies a root transaction and every transaction plugins append to it, then the final policy and limit check,
+     * which a provisional batch from the view takes once input has settled.
+     */
+    const prepare = (root: Transaction, ids: () => string, fromView: boolean): Prepared => {
         const batch: AppendBatch = {
             limit: limits.maxAppendedTransactions,
             now: () => Date.now(),
             generateId: ids,
             chain: [],
         };
+        // A composition batch's repair waits for input to settle, so it never changes composing text.
+        if (isProvisional(root)) {
+            root.setMeta(NORMALIZE_META, 'later');
+        }
+        const started = Date.now();
+        // History groups by this time, never by the `Date.now()` a transaction takes when created.
+        root.setTime(started);
+        groupRoot(state, root, actionOrigin(root) !== undefined);
         let applied: ReturnType<EditorState['applyTransaction']>;
         try {
             applied = state.applyTransaction(root.setMeta(APPEND_BATCH_META, batch));
@@ -425,13 +488,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         for (const transaction of applied.transactions.slice(1)) {
             mapping.appendMapping(transaction.mapping);
         }
-        if (doc !== state.doc) {
-            const { policy: refused, limit } = finalCheck(state.doc, doc, mapping);
+        // The settle repair is judged with the composition it repairs, from the published document.
+        if (doc !== state.doc && !(fromView && isProvisional(root)) && root.getMeta(NORMALIZE_META) !== 'now') {
+            const { policy: refused, limit } = finalCheck(state.doc, doc, mapping, isHistoryTransaction(root));
             if (refused || limit !== undefined) {
+                if (firedRule(applied.transactions)) {
+                    return prepare(withoutRules(root), ids, fromView);
+                }
                 return { code: 'not-allowed' };
             }
         }
-        return { candidate: applied.state, root };
+        return { candidate: applied.state, root, mapping };
     };
 
     /** Publishes a checked batch, then commits the roots that plugin views dispatched while it was installed. */
@@ -517,9 +584,18 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return true;
     };
 
-    /** Installs a batch in the view and counts it, then publishes it. */
-    const publish = ({ candidate, root }: Candidate): boolean => {
+    /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
+    const publish = ({ candidate, root, mapping }: Candidate): boolean => {
         if (!installState(candidate)) {
+            return false;
+        }
+        if (isProvisional(root)) {
+            if (provisional === undefined) {
+                provisional = mapping;
+            } else {
+                provisional.appendMapping(mapping);
+            }
+            notify();
             return false;
         }
         const origin = originOf(root);
@@ -529,6 +605,60 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             commandId = command;
         }
         return announce(origin, commandId);
+    };
+
+    /** Repairs the provisional batches, then checks them as one change from the published document; `false` on a fault. */
+    const settleProvisional = (mapping: Transaction['mapping']): boolean => {
+        // The repair runs inside the append limit before the settled batch publishes, and the check below judges it.
+        const repaired = prepare(state.tr.setMeta(NORMALIZE_META, 'now'), installedId, false);
+        if ('fault' in repaired && repaired.fault !== undefined) {
+            fault(repaired.fault);
+            return false;
+        }
+        if ('diagnostic' in repaired && repaired.diagnostic !== undefined) {
+            report(repaired.diagnostic);
+        }
+        if ('candidate' in repaired && repaired.candidate.doc !== state.doc) {
+            if (!installState(repaired.candidate)) {
+                return false;
+            }
+            mapping.appendMapping(repaired.mapping);
+        }
+        if (
+            !breaksPolicy(policy, published.doc, state.doc, mapping) &&
+            exceedsLimits(state.doc, limits, published.doc) === undefined
+        ) {
+            announce('input', null);
+            return true;
+        }
+        // Targets released during the composition stay released, and those captured during it stay.
+        const restore = restoreTargets(published, state, mapping);
+        let restored = published;
+        if (restore !== undefined) {
+            restored = published.apply(restore);
+        }
+        if (!installState(restored)) {
+            return false;
+        }
+        notify();
+        return true;
+    };
+
+    /**
+     * Once input has settled, checks the provisional batches as one change from the published document and publishes
+     * them, or restores the state from before the composition, then runs the
+     * deferred `contenteditable` change and the queued intents.
+     */
+    const settleInput = () => {
+        const mapping = provisional;
+        provisional = undefined;
+        busyWith(() => {
+            // Roots that plugin views dispatch while the settled state installs commit after its check.
+            if (mapping !== undefined && !guarded(() => settleProvisional(mapping))) {
+                return;
+            }
+            refreshView();
+        });
     };
 
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view. */
@@ -549,11 +679,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             report(diagnostic('runtime.stale-transaction', undefined, undefined, 'error'));
             return;
         }
+        // Input rules fire only on typed text, never on a paste or a command after a `beforeinput` that changed nothing.
         if (typed && actionOrigin(root) === undefined) {
             root.setMeta(ORIGIN_META, 'input');
         }
         busyWith(() => {
-            const prepared = prepare(root, installedId);
+            const prepared = prepare(root, installedId, true);
             if ('candidate' in prepared) {
                 install(prepared);
             } else if (prepared.fault !== undefined) {
@@ -647,6 +778,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         checked: { readonly payload: unknown } | undefined,
         base: EditorState | RejectedCode,
         ids: () => string,
+        route: Route,
         effects?: (() => void)[],
     ): Attempt => {
         if (command === undefined) {
@@ -716,7 +848,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (mode === 'readonly' && root.docChanged) {
             return { code: 'readonly' };
         }
-        const prepared = prepare(root, ids);
+        // Work that runs later through a target maps the user's selection through its change instead of moving it there.
+        if (route !== 'host' && base !== state) {
+            root.setSelection(state.selection.map(root.doc, root.mapping));
+        }
+        const prepared = prepare(root, ids, false);
+        // A host call never changes content during a composition, which queued intents wait out.
+        if ('candidate' in prepared && prepared.candidate.doc !== state.doc && settling.active()) {
+            return { code: 'composition-active' };
+        }
         return prepared;
     };
 
@@ -729,7 +869,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (command !== undefined && checked !== undefined && typeof base !== 'string') {
             active = command.active(base, checked.payload, { defer: () => undefined, session: commandSession });
         }
-        const attempted = attempt(command, checked, base, queriedIds());
+        const attempted = attempt(command, checked, base, queriedIds(), 'host');
         if ('code' in attempted) {
             return { enabled: false, active, disabledReason: attempted.code };
         }
@@ -743,13 +883,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         command: EngineCommand | undefined,
         checked: { readonly payload: unknown } | undefined,
         base: () => EditorState | RejectedCode,
+        route: Route,
     ): CommandResult => {
         if (busy > 0) {
             return rejected('busy');
         }
         const effects: (() => void)[] = [];
         const result = busyWith((): CommandResult => {
-            const attempted = attempt(command, checked, base(), installedId, effects);
+            const attempted = attempt(command, checked, base(), installedId, route, effects);
             if ('unchanged' in attempted) {
                 return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
             }
@@ -778,10 +919,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         return result;
     };
-    const run = (id: string, given: unknown, options: unknown): CommandResult =>
-        runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options));
+    const run = (id: string, given: unknown, options: unknown, route: Route): CommandResult =>
+        runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options), route);
     const execute = (id: string, given?: unknown, commandOptions?: unknown): CommandResult => {
-        const result = run(id, given, commandOptions);
+        const result = run(id, given, commandOptions, 'host');
         // Without `focus: 'editor'` a command leaves focus where it is.
         if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
             focus();
@@ -811,9 +952,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     /** The handle of target `id` in this session. */
     const handleOf = (id: string) => Object.freeze({ id, session }) as unknown as SelectionHandle;
 
-    /** Runs queued intents in call order once no commit or notification is in progress. */
+    /**
+     * Runs queued intents in call order once no commit or notification is in progress
+     * and input has settled.
+     */
     const drain = () => {
-        if (draining || busy > 0 || phase !== 'ready') {
+        if (draining || busy > 0 || phase !== 'ready' || settling.active()) {
             return;
         }
         draining = true;
@@ -825,7 +969,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 // The intent's depth holds while it runs or is reported, so what its listeners enqueue sits deeper.
                 depth = intent.depth;
                 if (intent.depth <= MAX_ENQUEUE_DEPTH) {
-                    intent.resolve(run(intent.id, intent.payload, intent.options));
+                    intent.resolve(run(intent.id, intent.payload, intent.options, 'queue'));
                 } else {
                     if (!warned) {
                         warned = true;
@@ -883,6 +1027,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // Set first, so `disposed` listeners read the final phase and what they enqueue settles at once.
         phase = 'disposed';
+        settling.cancel();
         settleQueue('not-ready');
         deferred.length = 0;
         const release = releaseTargets(state);
@@ -928,9 +1073,34 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 mode,
                 commitSequence,
                 sequence,
-                compositionActive: view !== undefined && view.composing,
+                compositionActive: settling.active(),
                 selection: summarize(state.selection),
             };
+        },
+        // The same frozen object until the published document or the composition state changes.
+        getSnapshot: () => {
+            const composing = settling.active();
+            const acknowledged = saveStatus().revision;
+            if (
+                snapshotCache === undefined ||
+                snapshotCache.doc !== published.doc ||
+                snapshotCache.composing !== composing
+            ) {
+                const value: Snapshot = snapshot({
+                    stamp: { ...session, sequence },
+                    document: encode(published.doc),
+                    acknowledgedRevision: acknowledged,
+                    compositionActive: composing,
+                });
+                snapshotCache = { doc: published.doc, composing, value };
+            }
+            return snapshotCache.value;
+        },
+        getRecoveryCandidate: () => {
+            if (phase !== 'faulted' || recovery === undefined) {
+                return null;
+            }
+            return encode(recovery.doc);
         },
         query,
         execute,
@@ -1043,7 +1213,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             return undefined;
         },
-        perform: (command, performOptions) => runOn(command, { payload: undefined }, () => baseOf(performOptions)),
+        perform: (command, performOptions) =>
+            runOn(command, { payload: undefined }, () => baseOf(performOptions), 'host'),
         select: (target) => {
             let transaction = state.tr;
             if ('node' in target) {

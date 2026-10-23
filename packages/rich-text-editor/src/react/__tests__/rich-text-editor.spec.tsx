@@ -20,7 +20,7 @@ import {
 } from '#/model';
 import * as model from '#/model';
 import { type LoadedDocument } from '#/persistence/types';
-import { liveResources } from '#/runtime/runtime';
+import { liveResources, type RuntimeHandle } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
@@ -103,6 +103,11 @@ const mount = (props: Props = {}, strict = false) => {
 };
 
 const surface = () => screen.getByRole('textbox', { name: 'Notes' });
+/** Undoes once, and reads whether another undo step is left. */
+const undoOnce = (handle: EditorHandle<object>) => {
+    const commands = handle as unknown as Pick<RuntimeHandle, 'execute' | 'query'>;
+    return [commands.execute('history.undo').status, commands.query('history.undo').enabled];
+};
 const viewOf = () => {
     const [view] = liveResources.views;
     if (view === undefined) {
@@ -138,6 +143,8 @@ describe('RichTextEditor', () => {
         expect(probeRuntimes().views).toEqual([view]);
         expect(view.state.plugins).toBe(plugins);
         expect(view.state.selection.eq(selection)).toBe(true);
+        // The typed step is still the one undo step.
+        expect(undoOnce(handle())).toEqual(['applied', false]);
         unmount();
     });
 
@@ -231,6 +238,7 @@ describe('RichTextEditor', () => {
         rerender({ definition: otherDefinition });
         expect(viewOf()).toBe(view);
         expect(viewOf().state.schema).toBe(schema);
+        expect(undoOnce(handle())).toEqual(['applied', false]);
 
         unmount();
         const remounted = mount({ definition: otherDefinition });

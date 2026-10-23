@@ -120,6 +120,13 @@ export interface DocumentApi {
         execute(id: string, payload?: unknown, options?: CommandOptions): CommandOutcome;
         query(id: string, payload?: unknown, options?: CommandOptions): CommandState;
     };
+    /** The session's undo history. */
+    readonly history: {
+        undo(): boolean;
+        redo(): boolean;
+        canUndo(): boolean;
+        canRedo(): boolean;
+    };
 }
 
 /** Whether two ranges, or two absent ones, cover the same stretch. */

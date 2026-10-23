@@ -13,6 +13,7 @@ import {
     type ModelRef,
     type PresentationStyle,
     type ResourceLimits,
+    type RichTextDocument,
     type RichTextLocale,
 } from '#/model';
 import { type LoadedDocument } from '#/persistence/types';
@@ -34,6 +35,7 @@ import {
     type SelectionSummary,
     type SessionToken,
     type ShippedCommands,
+    type Snapshot,
     type Unsubscribe,
 } from '#/runtime/types';
 
@@ -102,6 +104,8 @@ export interface EditorEventMap {
 /** The session of a mounted editor. */
 export interface EditorHandle<C extends object = ShippedCommands> {
     getSummary(): EditorSummary;
+    getSnapshot(): Snapshot;
+    getRecoveryCandidate(): RichTextDocument | null;
     query<K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>): CommandState;
     /** Synchronous event-handler API. Do not call from React render or effects. */
     execute<K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>): CommandResult;

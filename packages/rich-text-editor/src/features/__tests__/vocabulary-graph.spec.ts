@@ -23,6 +23,7 @@ vi.mock('react-dom', recorded('react-dom'));
 vi.mock('react-dom/server', recorded('react-dom/server'));
 vi.mock('prosemirror-commands', recorded('prosemirror-commands'));
 vi.mock('prosemirror-gapcursor', recorded('prosemirror-gapcursor'));
+vi.mock('prosemirror-history', recorded('prosemirror-history'));
 vi.mock('prosemirror-keymap', recorded('prosemirror-keymap'));
 vi.mock('prosemirror-model', recorded('prosemirror-model'));
 vi.mock('prosemirror-schema-list', recorded('prosemirror-schema-list'));

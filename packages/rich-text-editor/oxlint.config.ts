@@ -242,6 +242,19 @@ const frameworkRestriction: ImportRestriction = {
     message: FRAMEWORK_MESSAGE,
 };
 
+const historyRestriction: ImportRestriction = {
+    group: ['prosemirror-history'],
+    message: 'Only `src/runtime/history/` imports `prosemirror-history`.',
+};
+
+const SOURCE_RESTRICTIONS = [frameworkRestriction, historyRestriction];
+
+// Later overrides replace rule options, so each override repeats the base paths and patterns.
+const importRule = (patterns: ImportRestriction[], paths: readonly ImportNameRestriction[] = []) =>
+    ['error', { paths: [...paths], patterns: [...SOURCE_RESTRICTIONS, ...patterns] }] as const;
+
+const VIEW_INTERNALS_MESSAGE = 'The input state and DOM observer of the editor view are ProseMirror internals.';
+
 // Later overrides replace rule options, so each layer repeats the bans that still apply.
 // oxlint 1.67 accepts excludeFiles, but the published override type omits it.
 type LayerOverride = OxlintOverride & { excludeFiles?: string[] };
@@ -255,7 +268,7 @@ const layerOverride = (
     files: typeof files === 'string' ? [files] : [...files],
     excludeFiles: ['**/__tests__/**', '**/*.stories.tsx', ...excludeFiles],
     rules: {
-        'no-restricted-imports': ['error', { paths: [...paths], patterns: [frameworkRestriction, ...restrictions] }],
+        'no-restricted-imports': importRule(restrictions, paths),
     },
 });
 
@@ -391,7 +404,7 @@ export default defineConfig({
             rules: {
                 'import/no-cycle': 'error',
                 'no-nested-ternary': 'error',
-                'no-restricted-imports': ['error', { patterns: [frameworkRestriction] }],
+                'no-restricted-imports': importRule([]),
             },
         },
         {
@@ -400,6 +413,11 @@ export default defineConfig({
             plugins: ['react'],
             rules: {
                 'react/no-danger': 'error',
+                'no-restricted-properties': [
+                    'error',
+                    { property: 'input', message: VIEW_INTERNALS_MESSAGE },
+                    { property: 'domObserver', message: VIEW_INTERNALS_MESSAGE },
+                ],
             },
         } satisfies LayerOverride,
         layerOverride('src/model/**/*.{ts,tsx}', [
@@ -535,6 +553,18 @@ export default defineConfig({
             },
         ]),
         layerOverride('src/runtime/**/*.{ts,tsx}', [runtimeRestriction]),
+        {
+            files: ['src/runtime/history/**/*.{ts,tsx}'],
+            excludeFiles: ['**/__tests__/**'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [frameworkRestriction, runtimeRestriction],
+                    },
+                ],
+            },
+        } satisfies LayerOverride,
         layerOverride('src/bridge/**/*.{ts,tsx}', [
             {
                 group: [...aliasPatterns(bridgeFolders), ...relativePatterns(bridgeFolders), ...bridgeEnginePatterns],

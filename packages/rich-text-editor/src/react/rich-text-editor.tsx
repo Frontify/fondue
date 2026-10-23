@@ -179,6 +179,7 @@ const SessionComponent = ({ children, ...props }: SessionProps, ref: ForwardedRe
             policy: definition.authoring,
             limits: definition.limits,
             generateId: ids,
+            revision: loaded.revision,
             commandHost: hosts,
         });
         // Each event calls the newest callback the host passed.

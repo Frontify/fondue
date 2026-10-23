@@ -15,7 +15,7 @@ import {
     type EditorPluginParts,
     RichTextEditor,
 } from '#/index';
-import { compileContentModel, type ContentNodeJSON, type RichTextDocument } from '#/model';
+import { compileContentModel, type ContentNodeJSON, type RichTextDocument, textRule } from '#/model';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, setSelection, typeText } from '#/testing';
 
@@ -147,6 +147,26 @@ describe('the keys of an editor part', () => {
         return event.defaultPrevented;
     };
 
+    it('runs a key handler as the input it replaces: no command ID, and one undo step with the typing before it', () => {
+        const plugin = defineEditorPlugin(spotlight, { keys: { 'Alt-j': (api) => api.insert.text('!') } });
+        const { handle, container, changes } = mount([para(text('one'))], [plugin]);
+        setSelection(handle, { text: 'one', from: 3, to: 3 });
+
+        typeText(handle, 'x');
+        const prevented = press(container, 'j');
+        const reported = changes.map(({ origin, commandId }) => [origin, commandId]);
+        const typed = handle.getSnapshot().document;
+        handle.execute('history.undo');
+
+        expect(prevented).toBe(true);
+        expect(JSON.stringify(typed)).toContain('onex!');
+        expect(reported).toEqual([
+            ['input', null],
+            ['unknown', null],
+        ]);
+        expect(JSON.stringify(handle.getSnapshot().document)).toContain('"one"');
+    });
+
     it('hands the key on and changes nothing when a key handler returns false', () => {
         const ran: string[] = [];
         const plugin = defineEditorPlugin(spotlight, {
@@ -178,6 +198,21 @@ describe('the keys of an editor part', () => {
         expect(changes.map(({ origin, commandId }) => [origin, commandId])).toEqual([
             ['command', 'fixture.spotlight.toggle'],
         ]);
+    });
+});
+
+describe('the input rules of an editor part', () => {
+    it('refuses two rules of one ID', () => {
+        const plugin = defineEditorPlugin(spotlight, {
+            inputRules: [
+                textRule({ id: 'fixture.twice', match: /aa$/u, replace: 'b' }),
+                textRule({ id: 'fixture.twice', match: /cc$/u, replace: 'd' }),
+            ],
+        });
+
+        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: [plugin] })).toThrow(
+            'definition.duplicate-id {"kind":"input-rule","id":"fixture.twice","features":["fixture.spotlight","fixture.spotlight"]}',
+        );
     });
 });
 

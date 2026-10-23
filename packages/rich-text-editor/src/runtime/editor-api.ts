@@ -35,6 +35,7 @@ import {
     type WriteOutcome,
     type WriteTarget,
 } from './document-api';
+import { canRedo, canUndo } from './history';
 import { inCodeTextblock, nearest as nearestNode, positionOf } from './positions';
 import { type EditorRuntime, summarize } from './runtime';
 import { appendSteps, carrySelection } from './transactions';
@@ -536,6 +537,12 @@ const documentApi = (source: ApiSource): DocumentApi => {
         commands: {
             execute: (id, payload, options) => source.execute(id, payload, options),
             query: (id, payload, options) => source.query(id, payload, options),
+        },
+        history: {
+            undo: () => edit(capability(EDITS.history, { action: 'undo' })),
+            redo: () => edit(capability(EDITS.history, { action: 'redo' })),
+            canUndo: () => canUndo(source.state()),
+            canRedo: () => canRedo(source.state()),
         },
     };
 };

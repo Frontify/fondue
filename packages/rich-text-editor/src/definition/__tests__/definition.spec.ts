@@ -2,13 +2,20 @@
 
 // @vitest-environment node
 
-import { type Plugin } from 'prosemirror-state';
+import { EditorState, type Plugin } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
 import { defineEditorPlugin, type EditorPlugin, type EditorPluginParts } from '#/bridge/plugin';
-import { fixtureEditorsOf, fixtureHeadingEditor } from '#/features/__tests__/fixtures/editors';
+import { fixtureEditorsOf, fixtureHeadingEditor, fixtureHistoryEditor } from '#/features/__tests__/fixtures/editors';
 import { fixtureExtensionsOf } from '#/features/__tests__/fixtures/extensions';
-import { fixtureBold, fixtureColor, fixtureHeading, fixtureItalic } from '#/features/__tests__/fixtures/features';
+import {
+    fixtureBold,
+    fixtureColor,
+    fixtureHeading,
+    fixtureHistory,
+    fixtureItalic,
+    fixtureRedo,
+} from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
 import {
     compileContentModel,
@@ -41,6 +48,15 @@ const failureOf = (run: () => unknown) => {
 };
 
 describe('compileDefinition', () => {
+    it('gives a plugin two features contribute one instance, so EditorState.create does not throw', () => {
+        const model = compileContentModel([core(), fixtureHistory(), fixtureRedo()], { id: 'test', version: 1 });
+        const { plugins, schema } = engineOf(model);
+
+        expect(plugins.map(keyOf).filter((key) => key.startsWith('history$'))).toHaveLength(1);
+        expect(new Set(plugins.map(keyOf)).size).toBe(plugins.length);
+        expect(() => EditorState.create({ schema, plugins: [...plugins] })).not.toThrow();
+    });
+
     it('builds the keymap in plugin order, in both input orders', () => {
         for (const features of [
             [core(), fixtureBold(), fixtureHeading()],
@@ -238,6 +254,31 @@ describe('compileDefinition of editor parts', () => {
             'last-mark',
         ]);
         expect(forward.fingerprint).not.toBe(reverse.fingerprint);
+    });
+
+    it('orders by phase before list order, and one keyed plugin sits at its first contributor', () => {
+        const model = compileContentModel([core(), fixtureBold(), fixtureRedo(), fixtureHistory()], options);
+        expect(pluginIdsOf(model)).toEqual([
+            'clipboard',
+            'history',
+            'container-keys',
+            'keymap:fixture.bold',
+            'keymap:fixture.redo',
+            'keymap:fixture.history',
+            'drop-cursor',
+            'gap-cursor',
+            'base-keys',
+            'last-mark',
+        ]);
+    });
+
+    it('rejects two features that register one command', () => {
+        const again = defineFeature({ id: 'a.history', version: 1 });
+        const part = defineEditorPlugin(again, { commands: { 'fixture.undo': { run: (api) => api.history.undo() } } });
+        expect(failureOfParts([fixtureHistory(), again()], [fixtureHistoryEditor, part])).toEqual({
+            code: 'definition.duplicate-id',
+            details: { kind: 'command', id: 'fixture.undo', features: ['fixture.history', 'a.history'] },
+        });
     });
 
     it.each([

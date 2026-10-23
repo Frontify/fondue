@@ -15,10 +15,17 @@ import {
     type CompiledDefinition,
     countAppends,
     type EngineCommand,
+    NORMALIZE_META,
     ORIGIN_META,
 } from '#/definition';
 import { fixtureEditorsOf, type fixtureHeadingSetEditor } from '#/features/__tests__/fixtures/editors';
-import { fixtureHeadingSet, fixtureMention, fixtureTable } from '#/features/__tests__/fixtures/features';
+import {
+    fixtureHeadingSet,
+    fixtureInputRules,
+    fixtureItalic,
+    fixtureMention,
+    fixtureTable,
+} from '#/features/__tests__/fixtures/features';
 import { countingIds, notesModel } from '#/features/__tests__/fixtures/notes';
 import { vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
@@ -40,9 +47,11 @@ import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
 import { RUNTIME_PLUGINS } from '../capabilities';
+import { canUndo } from '../history';
 import { createLimitCheck } from '../limits';
 import { authoringOf } from '../policy';
 import { createEditorRuntime, type EditorRuntime } from '../runtime';
+import { SETTLE_MS } from '../settle';
 import { countTargets } from '../targets';
 import {
     type AuthoringPolicy,
@@ -137,6 +146,14 @@ const start = (input: unknown, options: Start = {}) => {
 };
 
 const contentOf = (change: DocumentChange | undefined) => change?.readDocument().content;
+/** Runs `history.undo` until it no longer applies, and returns how many steps it undid. */
+const undoSteps = (handle: EditorRuntime['handle']) => {
+    let steps = 0;
+    while (handle.execute('history.undo').status === 'applied') {
+        steps += 1;
+    }
+    return steps;
+};
 
 describe('the commit path', () => {
     it('publishes a root transaction and its appended one as one change', () => {
@@ -587,6 +604,23 @@ describe('the authoring policy and limits', () => {
         toJSON.mockRestore();
     });
 
+    it('refuses typing and accepts a delete in a document within maxDocumentBytes that the count of every installed capability puts over it', () => {
+        const input = stored(para(words('abc')));
+        const { document } = start(input, { model: policyModel }).handle.getSnapshot();
+        const size = new TextEncoder().encode(JSON.stringify(document)).byteLength;
+        const { handle, view } = start(input, { model: policyModel, limits: { maxDocumentBytes: size + 1 } });
+        setSelection(handle, { text: 'abc', from: 3, to: 3 });
+        const loaded = view.state.doc;
+
+        typeText(handle, 'y');
+        const typed = view.state.doc;
+        view.dispatch(view.state.tr.delete(3, 4));
+
+        expect(document.requiredCapabilities).toEqual([{ id: 'core', version: 1 }]);
+        expect(typed).toBe(loaded);
+        expect(textOf(view.state.doc)).toBe('ab');
+    });
+
     it('reads every step kind, empty step maps and an unknown step class included', () => {
         // Positions: `ab` 1-3 and a break 3-4; bold `cd` 6-8; `e` 10-11 and a bold break 11-12.
         const input = stored(
@@ -786,6 +820,7 @@ describe('the authoring policy and limits', () => {
         expect(view.isDestroyed).toBe(false);
         expect(runtime.view?.state.schema).toBe(schema);
         expect(view.state.plugins).toBe(plugins);
+        expect(undoSteps(handle)).toBe(1);
     });
 
     it('notifies a command state selector of a new policy before updatePolicy returns, with no commit', () => {
@@ -1065,12 +1100,15 @@ describe('commands, events and the commit path', () => {
             plugins: [appendForever('fixture.a', 'insertNode'), appendForever('fixture.b', 'setBlock')],
         });
         const before = view.state;
+        const snapshot = handle.getSnapshot();
 
         typeText(handle, 'x');
 
         expect(view.state).toBe(before);
+        expect(handle.getSnapshot()).toBe(snapshot);
         expect(changes).toEqual([]);
         expect(handle.getSummary()).toMatchObject({ phase: 'faulted', commitSequence: 0, sequence: 0 });
+        expect(handle.getRecoveryCandidate()).toBeNull();
         expect(view.editable).toBe(false);
         expect(diagnostics).toEqual([
             {
@@ -1453,6 +1491,7 @@ describe('commands, events and the commit path', () => {
         expect(diagnostics).toEqual([
             { code: 'runtime.stale-transaction', severity: 'error', messageKey: 'runtime.stale-transaction' },
         ]);
+        expect(undoSteps(handle)).toBe(1);
     });
 });
 
@@ -1641,6 +1680,17 @@ describe('origins with an appended normalization', () => {
             expect(session.view.state.doc.textContent.endsWith('!')).toBe(true);
         });
     }
+
+    it("reports the root's origin history for an undo with an appended normalization", () => {
+        const { handle, changes, view } = start(stored(para(words('ab'))), { plugins: [repair] });
+        typeText(handle, 'c');
+
+        handle.execute('history.undo');
+
+        expect(changes.map((change) => change.origin)).toEqual(['input', 'history']);
+        expect(changes.map((change) => change.commandId)).toEqual([null, null]);
+        expect(view.state.doc.textContent).toBe('ab!');
+    });
 });
 
 /** An inline atom of another type that carries a `nodeId`, as a mention does. */
@@ -1704,6 +1754,19 @@ describe('targets', () => {
         expect(handle.query('text.insert', { text: 'q' }).enabled).toBe(true);
         view.dispatch(view.state.tr.insertText('r', 1).setMeta('rejected', true));
         expect([textOf(view.state.doc), covered()]).toEqual(['xyzabcd', 'bc']);
+    });
+
+    it('maps a target through an undo', () => {
+        const { handle, view } = start(stored(para(words('abcd'))), { model: targetModel });
+        setSelection(handle, { text: 'bc' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        setSelection(handle, { text: 'abcd', from: 0, to: 0 });
+        typeText(handle, 'x');
+
+        handle.execute('history.undo');
+        handle.execute('mark.bold.toggle', undefined, { target });
+
+        expect([textOf(view.state.doc), markedText(view.state.doc, 'bold')]).toEqual(['abcd', 'bc']);
     });
 
     it('rejects every later command through an invalidate target that an edit crossed', () => {
@@ -1999,6 +2062,9 @@ describe('node IDs', () => {
                 expect(transaction.getMeta('addToHistory')).toBeUndefined();
             }
             expect(session.changes[0]?.origin).not.toBe('normalization');
+            // One undo step reverts the change with its repair.
+            expect(undoSteps(session.handle)).toBe(1);
+            expect(session.view.state.doc.eq(original)).toBe(true);
         });
     }
 
@@ -2282,6 +2348,23 @@ describe('disposal', () => {
     });
 });
 
+/** Starts a composition as the browser does, so ProseMirror's own handler sets `view.composing`, and composes `text`. */
+const compose = ({ view }: ReturnType<typeof start>, text: string) => {
+    view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+    // ProseMirror marks the composed text it reads from the DOM with its composition ID.
+    view.dispatch(view.state.tr.insertText(text).setMeta('composition', 1));
+};
+const endComposition = ({ view }: ReturnType<typeof start>) =>
+    view.dom.dispatchEvent(new CompositionEvent('compositionend'));
+/** Runs the microtask, then the 20 ms timer after which input has settled. */
+const settleInput = async () => {
+    await vi.advanceTimersByTimeAsync(0);
+    await vi.advanceTimersByTimeAsync(20);
+};
+const NOT_EDITABLE_CORE: Partial<AuthoringPolicy> = {
+    features: { core: { create: true, edit: false, remove: true } },
+};
+
 describe('the focus and the replacement of a session', () => {
     it('puts the selection at the start or at the end of the document when it takes focus there', () => {
         const { handle, runtime } = start(stored(para(words('ab'))));
@@ -2304,6 +2387,309 @@ describe('the published snapshot and composition', () => {
         expect(handle.getSummary().sequence).toBe(0);
         typeText(handle, 'c');
         expect(handle.getSummary().sequence).toBe(1);
+    });
+
+    it('returns one frozen snapshot until a commit, then the new one to every selector', () => {
+        const { handle, runtime } = start(stored(para(words('ab'))));
+        const first = handle.getSnapshot();
+        const seen: unknown[] = [];
+        runtime.watch(
+            () => handle.getSnapshot(),
+            Object.is,
+            (value) => seen.push(value),
+        );
+        runtime.watch(
+            () => handle.getSnapshot(),
+            Object.is,
+            (value) => seen.push(value),
+        );
+
+        expect(handle.getSnapshot()).toBe(first);
+        expect(() => {
+            (first.stamp as { sequence: number }).sequence = 9;
+        }).toThrow(TypeError);
+        expect(() => {
+            (first.document as { formatVersion: number }).formatVersion = 2;
+        }).toThrow(TypeError);
+        typeText(handle, 'c');
+
+        const next = handle.getSnapshot();
+        expect(next).not.toBe(first);
+        expect(seen).toEqual([next, next]);
+        expect(seen.every((value) => value === next)).toBe(true);
+        expect(next).toMatchObject({
+            stamp: { sequence: 1 },
+            acknowledgedRevision: null,
+            compositionActive: false,
+            document: stored(para(words('cab'))),
+        });
+    });
+
+    it('returns the snapshot of a document whose attribute holds a Date with that Date as given', () => {
+        const { handle, view } = start(stored(para(words('ab'))));
+        const value = new Date(0);
+        view.dispatch(view.state.tr.setNodeAttribute(0, 'lang', value));
+
+        const { document } = handle.getSnapshot();
+
+        const first = document.content.content?.[0];
+        const attrs = first?.attrs as { readonly lang?: unknown } | undefined;
+        expect(attrs?.lang).toBe(value);
+    });
+
+    it('counts a composition commit and notifies selectors while the snapshot holds', () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, runtime } = session;
+        const before = handle.getSnapshot();
+        const seen: number[] = [];
+        runtime.watch(
+            () => handle.getSummary().commitSequence,
+            Object.is,
+            (value) => seen.push(value),
+        );
+        const { commitSequence } = handle.getSummary();
+
+        compose(session, 'x');
+
+        expect(seen).toEqual([commitSequence + 1]);
+        expect(handle.getSummary()).toMatchObject({ commitSequence: commitSequence + 1, sequence: 0 });
+        expect(handle.getSnapshot()).toMatchObject({
+            stamp: { sequence: 0 },
+            compositionActive: true,
+            document: before.document,
+        });
+    });
+
+    it('publishes a composition and runs a queued intent once compositionend, a microtask and 20 ms passed', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view, changes } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        const before = handle.getSnapshot();
+        const waiting = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
+
+        compose(session, 'c');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        endComposition(session);
+        // ProseMirror reads the last composed characters in its flush after compositionend.
+        view.dispatch(view.state.tr.insertText('d').setMeta('composition', 1));
+        await vi.advanceTimersByTimeAsync(0);
+        await vi.advanceTimersByTimeAsync(19);
+
+        expect(await waiting(queued)).toBe('pending');
+        expect(changes).toEqual([]);
+        expect(handle.getSummary()).toMatchObject({ sequence: 0, compositionActive: true });
+        expect(handle.getSnapshot()).toMatchObject({ document: before.document, compositionActive: true });
+
+        await vi.advanceTimersByTimeAsync(1);
+
+        expect(await waiting(queued)).toMatchObject({ status: 'applied', contentChanged: true });
+        expect(changes.map(contentOf)).toEqual([
+            stored(para(words('abcd'))).content,
+            stored(para(words('abcd!'))).content,
+        ]);
+        expect(changes.map(({ origin }) => origin)).toEqual(['input', 'command']);
+        expect(handle.getSummary()).toMatchObject({ sequence: 2, compositionActive: false });
+    });
+
+    it('checks a composition once input settled and restores the state from before it', async () => {
+        const session = start(stored(para(words('ab'))), { policy: NOT_EDITABLE_CORE });
+        const { handle, view, changes } = session;
+        const before = view.state;
+
+        compose(session, 'x');
+        expect(view.state.doc.textContent).toBe('xab');
+        endComposition(session);
+        await settleInput();
+
+        expect(view.state).toBe(before);
+        expect(changes).toEqual([]);
+        expect(handle.getSummary()).toMatchObject({ sequence: 0, compositionActive: false });
+    });
+
+    it('rejects a host execute and keeps the surface editable until input settled', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view } = session;
+        const surface = () => view.dom.getAttribute('contenteditable');
+
+        compose(session, 'x');
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual({
+            status: 'rejected',
+            code: 'composition-active',
+        });
+        handle.setMode('readonly');
+        const queued = handle.enqueue('text.insert', { text: 'z' });
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual({ status: 'rejected', code: 'readonly' });
+        compose(session, 'w');
+        expect([surface(), view.state.doc.textContent]).toEqual(['true', 'xwab']);
+        endComposition(session);
+        await settleInput();
+
+        expect(await queued).toEqual({ status: 'rejected', code: 'readonly' });
+        expect([surface(), view.state.doc.textContent]).toEqual(['false', 'xwab']);
+    });
+
+    it('keeps a composition active through a host stored-mark toggle until compositionend', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view, changes } = session;
+        const waiting = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+
+        compose(session, 'x');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        // Bold at a caret sets stored marks, and ProseMirror ends its own record of a composition for a state with them.
+        expect(handle.execute('mark.bold.toggle').status).toBe('applied');
+        expect(view.state.storedMarks).not.toBeNull();
+
+        expect(handle.getSummary().compositionActive).toBe(true);
+        expect(await waiting(queued)).toBe('pending');
+        expect(changes).toEqual([]);
+        endComposition(session);
+        await settleInput();
+
+        expect(await waiting(queued)).toMatchObject({ status: 'applied' });
+        expect(changes.map(({ origin }) => origin)).toEqual(['input', 'command']);
+        expect(view.state.doc.textContent).toBe('abx!');
+    });
+
+    it('waits as long as ProseMirror does after compositionend', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view, changes } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        compose(session, 'x');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        const timers = vi.spyOn(globalThis, 'setTimeout');
+
+        // The last composed character reaches the DOM right before compositionend, so ProseMirror reads it in its flush.
+        (view.dom.firstChild?.firstChild as Text).appendData('y');
+        endComposition(session);
+        const delays = timers.mock.calls.map(([, delay]) => delay);
+        timers.mockRestore();
+        await vi.advanceTimersByTimeAsync(0);
+        await vi.advanceTimersByTimeAsync(SETTLE_MS);
+
+        // ProseMirror ends a composition in its own timer of this delay, which the settle timer copies.
+        expect(delays).toContain(SETTLE_MS);
+        expect(await queued).toMatchObject({ status: 'applied' });
+        expect(changes.map(contentOf)).toEqual([
+            stored(para(words('abxy'))).content,
+            stored(para(words('abxy!'))).content,
+        ]);
+    });
+
+    it('answers query as a host execute during a composition', () => {
+        const states = [{}, NOT_EDITABLE_CORE].map((policy) => {
+            const session = start(stored(para(words('ab'))), { policy });
+            compose(session, 'x');
+            const { disabledReason } = session.handle.query('text.insert', { text: 'y' });
+            return [disabledReason, session.handle.execute('text.insert', { text: 'y' })];
+        });
+
+        expect(states).toEqual([
+            ['composition-active', { status: 'rejected', code: 'composition-active' }],
+            ['not-allowed', { status: 'rejected', code: 'not-allowed' }],
+        ]);
+    });
+
+    it('repairs a nodeId that a composition repeats only once input settled', async () => {
+        const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
+        const session = start(stored(heading(2, words('abcd'))), { model });
+        const { view, changes } = session;
+        const ids = () => view.state.doc.children.map((node): unknown => node.attrs.nodeId);
+
+        compose(session, 'x');
+        // An Enter during a composition, as Android sends it, splits the heading under the composition's meta.
+        view.dispatch(view.state.tr.split(3).setMeta('composition', 1));
+        expect(ids()).toEqual(['h-1', 'h-1']);
+        endComposition(session);
+        await settleInput();
+
+        const settled = ids();
+        expect([settled[0], new Set(settled).size]).toEqual(['h-1', 2]);
+        expect(changes).toHaveLength(1);
+        expect(JSON.stringify(contentOf(changes[0])).split('"h-1"')).toHaveLength(2);
+        expect(textOf(view.state.doc)).toBe('xabcd');
+    });
+
+    it('judges the settle repair with its composition, so a heading with remove false still gets unique IDs', async () => {
+        const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
+        const policy = {
+            features: { 'fixture.heading-set': { create: true, edit: true, remove: false } },
+        };
+        const session = start(stored(heading(2, words('abcd'))), { model, policy });
+        const { view, changes } = session;
+
+        compose(session, 'x');
+        view.dispatch(view.state.tr.split(3).setMeta('composition', 1));
+        endComposition(session);
+        await settleInput();
+
+        const ids = view.state.doc.children.map((node): unknown => node.attrs.nodeId);
+        expect([ids[0], new Set(ids).size, changes.length]).toEqual(['h-1', 2, 1]);
+    });
+
+    it('ends a composition when the view detaches, so held work settles', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, runtime } = session;
+
+        compose(session, 'x');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        runtime.detach();
+        await settleInput();
+
+        expect(handle.getSummary().compositionActive).toBe(false);
+        expect(await queued).toMatchObject({ status: 'applied' });
+        expect(handle.execute('text.insert', { text: '?' }).status).toBe('applied');
+    });
+
+    it('defers a root a plugin view dispatches while the settled state installs, so the check still judges the composition', async () => {
+        const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
+        const policy = {
+            features: { 'fixture.heading-set': { create: true, edit: false, remove: true } },
+        };
+        let dispatched = false;
+        // Dispatches once it sees the repaired headings, as a plugin view that reacts to a new state does.
+        const late = new Plugin({
+            view: () => ({
+                update: (view) => {
+                    const ids = view.state.doc.children
+                        .filter((node) => node.type.name === 'heading')
+                        .map((node): unknown => node.attrs.nodeId);
+                    if (!dispatched && ids.length === 2 && ids[0] !== ids[1]) {
+                        dispatched = true;
+                        view.dispatch(view.state.tr.insertText('z', view.state.doc.content.size - 1));
+                    }
+                },
+            }),
+        });
+        const session = start(stored(heading(2, words('abcd')), para(words('p'))), { model, policy, plugins: [late] });
+        const { view, changes } = session;
+
+        compose(session, 'x');
+        view.dispatch(view.state.tr.split(3).setMeta('composition', 1));
+        endComposition(session);
+        await settleInput();
+
+        expect(dispatched).toBe(true);
+        expect(textOf(view.state.doc)).toBe('abcdp');
+        expect(changes.filter((change) => JSON.stringify(contentOf(change)).includes('x'))).toEqual([]);
+    });
+
+    it('resolves intents queued during composition as not-ready on dispose and drops the settle timer', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle } = session;
+
+        compose(session, 'x');
+        const queued = [handle.enqueue('text.insert', { text: 'y' }), handle.enqueue('mark.bold.toggle')];
+        endComposition(session);
+        await vi.advanceTimersByTimeAsync(0);
+        expect(probeRuntimes()).toMatchObject({ intents: 2, timers: 1 });
+        handle.dispose();
+
+        expect(await Promise.all(queued)).toEqual([
+            { status: 'rejected', code: 'not-ready' },
+            { status: 'rejected', code: 'not-ready' },
+        ]);
+        expect(probeRuntimes()).toMatchObject({ intents: 0, timers: 0 });
     });
 });
 
@@ -2329,6 +2715,22 @@ describe('targets on release and dispose', () => {
             status: 'rejected',
             code: 'wrong-session',
         });
+    });
+
+    it('keeps a target released during a composition released when the settled check restores the state', async () => {
+        const session = start(stored(para(words('ab'))), { model: targetModel, policy: NOT_EDITABLE_CORE });
+        const { handle } = session;
+        setSelection(handle, { text: 'ab' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+
+        compose(session, 'x');
+        handle.releaseTarget(target);
+        endComposition(session);
+        await settleInput();
+
+        expect(session.view.state.doc.textContent).toBe('ab');
+        expect(probeRuntimes().targets).toBe(0);
+        expect(handle.query('mark.bold.toggle', undefined, { target }).disabledReason).toBe('target-invalid');
     });
 
     it('refuses a capture while mounting, faulted or disposed and creates no target', () => {
@@ -2368,9 +2770,174 @@ describe('targets on release and dispose', () => {
     });
 });
 
+describe('history', () => {
+    /** Types each character at the caret, `gap` ms after the one before. */
+    const typeApart = ({ handle }: ReturnType<typeof start>, characters: string, gap: number) => {
+        for (const character of characters) {
+            vi.advanceTimersByTime(gap);
+            typeText(handle, character);
+        }
+    };
+
+    it('keeps 120 separated edits as 120 undo steps and 100 after the 121st', () => {
+        const kept = start(stored(para()));
+        typeApart(kept, 'a'.repeat(120), 600);
+        const trimmed = start(stored(para()));
+        typeApart(trimmed, 'a'.repeat(121), 600);
+
+        expect([undoSteps(kept.handle), undoSteps(trimmed.handle)]).toEqual([120, 100]);
+    });
+
+    // A repair the compiler wraps, so it takes the current time; it puts `!` before the first edit.
+    const normalization = countAppends(
+        new Plugin({
+            appendTransaction: (transactions, _old, state) => {
+                if (!transactions.some(({ docChanged }) => docChanged) || state.doc.textContent.includes('!')) {
+                    return null;
+                }
+                return state.tr.insertText('!', 1);
+            },
+        }),
+        { featureId: 'fixture.repair', capability: 'normalization' },
+    );
+    const groupings: readonly (readonly [string, readonly Plugin[]])[] = [
+        ['', []],
+        [' with an appended normalization between them', [normalization]],
+    ];
+    for (const [name, plugins] of groupings) {
+        it(`groups adjacent edits 400 ms apart and not 600 ms apart${name}`, () => {
+            const near = start(stored(para()), { plugins });
+            typeApart(near, 'ab', 400);
+            const far = start(stored(para()), { plugins });
+            typeApart(far, 'ab', 600);
+
+            expect([undoSteps(near.handle), undoSteps(far.handle)]).toEqual([1, 2]);
+        });
+    }
+
+    it('closes the undo group around a command and a paste: typing, bold and typing, typing, an insert and typing, and typing, a paste and typing, are three steps each', () => {
+        const bolded = start(stored(para()));
+        typeText(bolded.handle, 'ab');
+        setSelection(bolded.handle, { text: 'ab' });
+        bolded.handle.execute('mark.bold.toggle');
+        setSelection(bolded.handle, { text: 'ab', from: 2, to: 2 });
+        typeText(bolded.handle, 'cd');
+        const inserted = start(stored(para()));
+        typeText(inserted.handle, 'a');
+        inserted.handle.execute('text.insert', { text: 'b' });
+        typeText(inserted.handle, 'c');
+        const pasted = start(stored(para()));
+        typeText(pasted.handle, 'a');
+        pasted.view.pasteText('b');
+        typeText(pasted.handle, 'c');
+
+        expect([undoSteps(bolded.handle), undoSteps(inserted.handle), undoSteps(pasted.handle)]).toEqual([3, 3, 3]);
+    });
+
+    it('adds no undo step for a selection move or a stored mark', () => {
+        const { handle } = start(stored(para(words('ab'))));
+
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        handle.execute('mark.bold.toggle');
+
+        expect(handle.getSummary().commitSequence).toBe(2);
+        expect(handle.query('history.undo').enabled).toBe(false);
+    });
+
+    it('reverts an edit and its repair with one undo, and repairs nothing after it', () => {
+        let repairs = 0;
+        // Turns a typed `x` into `X`.
+        const upper = countAppends(
+            new Plugin({
+                appendTransaction: (transactions, _old, state) => {
+                    const at = state.doc.textContent.indexOf('x');
+                    if (!transactions.some(({ docChanged }) => docChanged) || at < 0) {
+                        return null;
+                    }
+                    repairs += 1;
+                    return state.tr.insertText('X', at + 1, at + 2);
+                },
+            }),
+            { featureId: 'fixture.repair', capability: 'normalization' },
+        );
+        const { handle, view } = start(stored(para(words('ab'))), { plugins: [upper] });
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        typeText(handle, 'x');
+        expect([textOf(view.state.doc), repairs]).toEqual(['abX', 1]);
+
+        handle.execute('history.undo');
+
+        expect([textOf(view.state.doc), repairs]).toEqual(['ab', 1]);
+        expect(handle.query('history.undo').enabled).toBe(false);
+    });
+
+    it('returns the selection to where the undone change happened', () => {
+        const { handle, view } = start(stored(para(words('ab cd'))));
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        typeText(handle, 'x');
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        typeText(handle, 'y');
+        setSelection(handle, { text: 'abx', from: 0, to: 0 });
+
+        handle.execute('history.undo');
+
+        expect(textOf(view.state.doc)).toBe('abx cd');
+        expect([view.state.selection.from, view.state.selection.empty]).toEqual([7, true]);
+    });
+
+    it('adds no undo step for a command that fails or does not apply', async () => {
+        const session = start(stored(para(words('ab'))), { policy: forbid('marks.bold', 'create') });
+        const { handle, runtime } = session;
+        const results: CommandResult[] = [];
+        const unsubscribe = handle.subscribe('documentChange', () => {
+            results.push(handle.execute('text.insert', { text: 'y' }));
+        });
+        typeText(handle, 'x');
+        unsubscribe();
+        setSelection(handle, { text: 'xab' });
+        const other = { id: 'target-1', session: { documentId: 'document-1', sessionId: 'other', generation: 0 } };
+
+        results.push(
+            handle.execute('fixture.missing'),
+            handle.execute('text.insert', { text: 1 }),
+            handle.execute('history.redo'),
+            handle.execute('mark.bold.toggle'),
+            handle.execute('text.insert', { text: 'y' }, { target: {} }),
+            handle.execute('text.insert', { text: 'y' }, { target: other }),
+        );
+        handle.setMode('readonly');
+        results.push(handle.execute('text.insert', { text: 'y' }));
+        handle.setMode('editable');
+        setSelection(handle, { text: 'xab', from: 3, to: 3 });
+        compose(session, 'c');
+        results.push(handle.execute('text.insert', { text: 'y' }));
+        endComposition(session);
+        await settleInput();
+        // The typed and the composed text are the only steps.
+        const steps = undoSteps(handle);
+        handle.dispose();
+        results.push(handle.execute('text.insert', { text: 'y' }));
+
+        expect(results.map((result) => (result.status === 'rejected' ? result.code : result.status))).toEqual([
+            'busy',
+            'unknown-command',
+            'invalid-payload',
+            'not-applicable',
+            'not-allowed',
+            'target-invalid',
+            'wrong-session',
+            'readonly',
+            'composition-active',
+            'not-ready',
+        ]);
+        expect([steps, canUndo(runtime.state)]).toEqual([2, false]);
+    });
+});
+
 describe('faults', () => {
     const pluginError = { code: 'runtime.plugin-error', severity: 'error', messageKey: 'runtime.plugin-error' };
     const viewFault = { code: 'runtime.view-fault', severity: 'error', messageKey: 'runtime.view-fault' };
+    const NOT_READY: CommandResult = { status: 'rejected', code: 'not-ready' };
 
     it('drops a batch whose plugin throws with a plugin-error diagnostic and stays ready, so typing still works', () => {
         let throws = 0;
@@ -2385,10 +2952,11 @@ describe('faults', () => {
         });
         const { handle, view, diagnostics, changes } = start(stored(para(words('ab'))), { plugins: [failing] });
         const before = view.state;
+        const snapshot = handle.getSnapshot();
 
         throws = 1;
         typeText(handle, 'x');
-        expect([view.state]).toEqual([before]);
+        expect([view.state, handle.getSnapshot()]).toEqual([before, snapshot]);
         throws = 1;
         expect(handle.execute('text.insert', { text: 'y' })).toEqual({ status: 'rejected', code: 'not-applicable' });
         typeText(handle, 'z');
@@ -2420,6 +2988,68 @@ describe('faults', () => {
         },
     });
 
+    it('faults once a node view update throws, keeps the snapshot and offers the faulting edit until dispose', () => {
+        const { handle, element, diagnostics } = start(stored(para(words('ab'))), { plugins: [updateFails] });
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        const snapshot = handle.getSnapshot();
+        expect(handle.getRecoveryCandidate()).toBeNull();
+
+        typeText(handle, '!');
+
+        expect(handle.getSummary().phase).toBe('faulted');
+        expect(diagnostics).toEqual([viewFault]);
+        expect(element.getAttribute('contenteditable')).toBe('false');
+        expect(handle.getSnapshot()).toBe(snapshot);
+        expect(snapshot.stamp).toEqual({ ...handle.getSummary().session, sequence: 0 });
+        expect(JSON.stringify(handle.getRecoveryCandidate())).toContain('"ab!"');
+        expect(JSON.stringify(snapshot.document)).not.toContain('!');
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual(NOT_READY);
+        expect(() => handle.dispose()).not.toThrow();
+        expect(handle.getRecoveryCandidate()).toBeNull();
+    });
+
+    it('faults when a node view constructor throws while mounting, keeps the decoded document and settles queued intents as not-ready', async () => {
+        const { result, tree } = decodeToTree(stored(para(words('ab'))), boldModel);
+        if (result.status !== 'editable' || tree === undefined) {
+            throw new Error('expected an editable document');
+        }
+        const constructorFails = new Plugin({
+            props: {
+                nodeViews: {
+                    paragraph: () => {
+                        throw new Error('node view constructor failure');
+                    },
+                },
+            },
+        });
+        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel));
+        const runtime = createEditorRuntime({
+            definition: { ...compiled, plugins: [...compiled.plugins, constructorFails] },
+            documentId: 'document-1',
+            tree,
+            capabilities: result.document.requiredCapabilities,
+            generateId: countingIds(),
+            mode: 'editable',
+            policy: authoringOf(boldModel),
+            limits: limitsOf({}),
+        });
+        started.push(runtime);
+        const { handle } = runtime;
+        const diagnostics: Diagnostic[] = [];
+        handle.subscribe('diagnostic', (diagnostic: Diagnostic) => diagnostics.push(diagnostic));
+        const queued = handle.enqueue('text.insert', { text: 'x' });
+
+        runtime.attach(document.body.appendChild(document.createElement('div')));
+
+        expect(handle.getSummary().phase).toBe('faulted');
+        expect(diagnostics).toEqual([viewFault]);
+        expect(handle.getSnapshot().stamp).toEqual({ ...handle.getSummary().session, sequence: 0 });
+        expect(textOf(runtime.state.doc)).toBe('ab');
+        expect(JSON.stringify(handle.getSnapshot().document)).toContain('"ab"');
+        expect(await queued).toEqual(NOT_READY);
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual(NOT_READY);
+    });
+
     /** Faults the session through a node view whose `update` throws once its paragraph holds `!`. */
     const faultView = (session: ReturnType<typeof start>) => {
         setSelection(session.handle, { text: 'ab', from: 2, to: 2 });
@@ -2438,6 +3068,75 @@ describe('faults', () => {
 
         expect(handle.getSummary().commitSequence).toBe(commitSequence);
         expect(diagnostics).toEqual([viewFault]);
+        expect(JSON.stringify(handle.getRecoveryCandidate())).toContain('"ab!"');
+    });
+
+    it('installs nothing once faulted when the view dispatches', () => {
+        const session = start(stored(para(words('ab'))), { plugins: [updateFails] });
+        const { handle, runtime, diagnostics } = session;
+        faultView(session);
+        const { commitSequence } = handle.getSummary();
+
+        runtime.select({ anchor: 1, head: 2 });
+
+        expect(handle.getSummary().commitSequence).toBe(commitSequence);
+        expect(diagnostics).toEqual([viewFault]);
+        expect(JSON.stringify(handle.getRecoveryCandidate())).toContain('"ab!"');
+    });
+
+    it('publishes nothing from a composition that settles after a fault', async () => {
+        // Two plugins that append to each other in a batch whose root asks for it, past the append limit.
+        const looping = (featureId: string) =>
+            countAppends(
+                new Plugin({
+                    appendTransaction: (transactions, _old, state) => {
+                        const asked = transactions.some((transaction) => transaction.getMeta('loop') === true);
+                        if (
+                            !asked ||
+                            transactions.every((transaction) => transaction.getMeta('appendedBy') === featureId)
+                        ) {
+                            return null;
+                        }
+                        return state.tr.setMeta('appendedBy', featureId).setMeta('loop', true);
+                    },
+                }),
+                { featureId, capability: 'insertText' },
+            );
+        const session = start(stored(para(words('ab'))), { plugins: [looping('fixture.a'), looping('fixture.b')] });
+        const { handle, view, changes } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        const snapshot = handle.getSnapshot();
+        compose(session, 'x');
+
+        view.dispatch(view.state.tr.insertText('y').setMeta('loop', true));
+        endComposition(session);
+        await settleInput();
+
+        expect(handle.getSummary()).toMatchObject({ phase: 'faulted', sequence: 0 });
+        expect(changes).toEqual([]);
+        expect(handle.getSnapshot()).toBe(snapshot);
+    });
+
+    it('reports a plugin that throws in the repair of a settling composition', async () => {
+        const failing = new Plugin({
+            appendTransaction: (transactions) => {
+                if (transactions[0]?.getMeta(NORMALIZE_META) === 'now') {
+                    throw new Error('plugin failure');
+                }
+                return null;
+            },
+        });
+        const session = start(stored(para(words('ab'))), { plugins: [failing] });
+        setSelection(session.handle, { text: 'ab', from: 2, to: 2 });
+        compose(session, 'x');
+
+        endComposition(session);
+        await settleInput();
+
+        expect(session.diagnostics).toEqual([pluginError]);
+        expect(session.handle.getSummary()).toMatchObject({ phase: 'ready', sequence: 1 });
+        expect(textOf(session.view.state.doc)).toBe('abx');
+        expect(contentOf(session.changes[0])).toEqual(stored(para(words('abx'))).content);
     });
 });
 
@@ -2479,6 +3178,213 @@ describe('key precedence', () => {
 
         expect(changes.map(({ commandId }) => commandId)).toEqual(['fixture.text.insert', 'fixture.paragraph.set']);
         expect([textOf(view.state.doc), view.state.doc.child(1).type.name]).toEqual(['ab¶cd', 'paragraph']);
+    });
+});
+
+describe('input rules', () => {
+    const ruleModel = compileContentModel([core(), bold(), fixtureItalic(), fixtureHeadingSet(), fixtureInputRules()], {
+        id: 'test.bold',
+        version: 1,
+    });
+    /** The first block's type, then each text run with its marks, such as `paragraph x[bold]`. */
+    const shapeOf = (doc: Node) => {
+        const block = doc.child(0);
+        const runs: string[] = [block.type.name];
+        for (const node of block.children) {
+            runs.push(`${node.text ?? ''}${node.marks.map((mark) => `[${mark.type.name}]`).join('')}`);
+        }
+        return runs.join(' ');
+    };
+    // Each rule of the stand-in, what is typed, and the first block once it fired.
+    const rules: readonly (readonly [string, string, string])[] = [
+        ['heading.hashes', '## ', 'heading'],
+        ['bold.stars', '**x**', 'paragraph x[bold]'],
+        ['bold.underscores', '__x__', 'paragraph x[bold]'],
+        ['italic.star', '*x*', 'paragraph x[italic]'],
+        ['italic.underscore', '_x_', 'paragraph x[italic]'],
+        ['strike.tildes', '~~x~~', 'paragraph x[strike]'],
+        ['code.backtick', '`x`', 'paragraph x[code]'],
+    ];
+    const typedIn = (input: unknown, typed: string) => {
+        const session = start(input, { model: ruleModel });
+        typeText(session.handle, typed);
+        return session;
+    };
+
+    for (const [id, typed, fired] of rules) {
+        it(`restores ${typed} as typed with one undo and removes it with a second, for ${id}`, () => {
+            const { handle, view } = typedIn(stored(para()), typed);
+            const shapes = [shapeOf(view.state.doc)];
+            for (const _undo of [1, 2]) {
+                expect(handle.execute('history.undo').status).toBe('applied');
+                shapes.push(shapeOf(view.state.doc));
+            }
+
+            expect(shapes).toEqual([fired, `paragraph ${typed}`, 'paragraph']);
+        });
+
+        it(`undoes ${id} with Backspace right after it fired, restoring ${typed}`, () => {
+            const { handle, view } = typedIn(stored(para()), typed);
+
+            pressKey(handle, 'Backspace');
+            const restored = shapeOf(view.state.doc);
+            // Backspace undoes nothing more once the rule is undone.
+            pressKey(handle, 'Backspace');
+
+            expect([restored, shapeOf(view.state.doc)]).toEqual([`paragraph ${typed}`, `paragraph ${typed}`]);
+        });
+
+        it(`fires no ${id} in a code block or inline code`, () => {
+            const block = typedIn(stored({ type: 'code_block' }), typed);
+            const inline = start(stored(para({ type: 'text', text: '..', marks: [{ type: 'code' }] })), {
+                model: ruleModel,
+            });
+            setSelection(inline.handle, { text: '..', from: 1, to: 1 });
+            typeText(inline.handle, typed);
+
+            expect([shapeOf(block.view.state.doc), shapeOf(inline.view.state.doc)]).toEqual([
+                `code_block ${typed}`,
+                `paragraph .${typed}.[code]`,
+            ]);
+        });
+    }
+
+    const refusals: readonly (readonly [string, string])[] = [
+        ['marks.bold', '**x**'],
+        ['fixture.heading-set', '## '],
+    ];
+    for (const [featureId, typed] of refusals) {
+        it(`keeps ${typed} as typed when the policy forbids creating what ${featureId} adds`, () => {
+            const { handle, view } = start(stored(para()), { model: ruleModel, policy: forbid(featureId, 'create') });
+
+            typeText(handle, typed);
+
+            expect(shapeOf(view.state.doc)).toBe(`paragraph ${typed}`);
+        });
+    }
+
+    it('fires no rule for composed text, which stays one undo step', async () => {
+        const session = start(stored(para(words('ab.'))), { model: ruleModel });
+        const { handle, view } = session;
+        setSelection(handle, { text: 'ab.', from: 3, to: 3 });
+        view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+        for (const character of '**x**') {
+            const event = new InputEvent('beforeinput', { inputType: 'insertCompositionText', data: character });
+            view.dom.dispatchEvent(event);
+            view.dispatch(view.state.tr.insertText(character).setMeta('composition', 1));
+        }
+        const composing = shapeOf(view.state.doc);
+        endComposition(session);
+        await settleInput();
+        const settled = shapeOf(view.state.doc);
+
+        handle.execute('history.undo');
+
+        expect([composing, settled, shapeOf(view.state.doc)]).toEqual([
+            'paragraph ab.**x**',
+            'paragraph ab.**x**',
+            'paragraph ab.',
+        ]);
+    });
+
+    it('undoes no rule with Backspace once a stored mark changed after it', () => {
+        const { handle, view } = typedIn(stored(para()), '**x**');
+
+        pressKey(handle, 'Mod-b');
+        pressKey(handle, 'Backspace');
+
+        expect(shapeOf(view.state.doc)).toBe('paragraph x[bold]');
+    });
+
+    it('undoes no rule with Backspace once the caret moved or a character was typed after it', () => {
+        const moved = typedIn(stored(para()), '**x**');
+        setSelection(moved.handle, { text: 'x', from: 0, to: 0 });
+        pressKey(moved.handle, 'Backspace');
+        const typed = typedIn(stored(para()), '**x**y');
+        pressKey(typed.handle, 'Backspace');
+
+        expect([shapeOf(moved.view.state.doc), shapeOf(typed.view.state.doc)]).toEqual([
+            'paragraph x[bold]',
+            'paragraph x[bold] y',
+        ]);
+    });
+
+    it('runs the rule undo before a feature that binds Backspace, which then gets the next one', () => {
+        const backspaceMark = defineFeature({
+            id: 'fixture.backspace-mark',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+        });
+        const part = defineEditorPlugin(backspaceMark, {
+            commands: { 'fixture.text.insert': TEXT_INSERT },
+            keys: { Backspace: { command: 'fixture.text.insert', payload: { text: '!' } } },
+        });
+        const model = compileContentModel(
+            [core(), bold(), fixtureItalic(), fixtureHeadingSet(), fixtureInputRules(), backspaceMark()],
+            { id: 'test.bold', version: 1 },
+        );
+        const { handle, view } = start(stored(para()), { model, parts: [part] });
+        typeText(handle, '**x**');
+
+        pressKey(handle, 'Backspace');
+        const undone = shapeOf(view.state.doc);
+        pressKey(handle, 'Backspace');
+
+        expect([undone, shapeOf(view.state.doc)]).toEqual(['paragraph **x**', 'paragraph **x**!']);
+    });
+
+    it('undoes a rule with Mod-z and redoes it with Mod-Shift-z', () => {
+        const { handle, view } = typedIn(stored(para()), '**x**');
+
+        pressKey(handle, 'Mod-z');
+        const undone = shapeOf(view.state.doc);
+        pressKey(handle, 'Mod-Shift-z');
+
+        expect([undone, shapeOf(view.state.doc)]).toEqual(['paragraph **x**', 'paragraph x[bold]']);
+    });
+
+    it('fires no rule whose match starts inside inline code', () => {
+        const session = start(stored(para({ type: 'text', text: '**a', marks: [{ type: 'code' }] })), {
+            model: ruleModel,
+        });
+        setSelection(session.handle, { text: '**a', from: 3, to: 3 });
+
+        typeText(session.handle, '**');
+
+        expect(shapeOf(session.view.state.doc)).toBe('paragraph **a[code] **');
+    });
+
+    it('fires no rule for a paste after a beforeinput that changed nothing', () => {
+        const { view } = start(stored(para()), { model: ruleModel });
+        view.dom.dispatchEvent(new InputEvent('beforeinput', { inputType: 'historyUndo', cancelable: true }));
+
+        view.pasteText('**x**');
+
+        expect(shapeOf(view.state.doc)).toBe('paragraph **x**');
+    });
+
+    it('undoes only a character typed right after a rule fired', () => {
+        const { handle, view } = typedIn(stored(para()), '**x**y');
+        expect(shapeOf(view.state.doc)).toBe('paragraph x[bold] y');
+
+        handle.execute('history.undo');
+
+        expect(shapeOf(view.state.doc)).toBe('paragraph x[bold]');
+    });
+
+    it('fires no mark rule after a word character, before one, or around text with an edge space', () => {
+        const cases: readonly (readonly [string, JsonValue, string])[] = [
+            ['re**ver**', para(), 're**ver**'],
+            ['a~~b~~', para(), 'a~~b~~'],
+            ['x`y`', para(), 'x`y`'],
+            ['** x**', para(), '** x**'],
+            ['**x **', para(), '**x **'],
+            ['_x_', para(words('y')), '_x_y'],
+        ];
+
+        const shapes = cases.map(([typed, block]) => shapeOf(typedIn(stored(block), typed).view.state.doc));
+
+        expect(shapes).toEqual(cases.map(([, , text]) => `paragraph ${text}`));
     });
 });
 
