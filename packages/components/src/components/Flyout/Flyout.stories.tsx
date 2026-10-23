@@ -1,12 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '../Button/Button';
 import { TextInput } from '../TextInput/TextInput';
 import { Tooltip } from '../Tooltip/Tooltip';
 
-import { Flyout, FlyoutBody, FlyoutContent, FlyoutFooter, FlyoutHeader, FlyoutRoot, FlyoutTrigger } from './Flyout';
+import {
+    Flyout,
+    FlyoutBody,
+    FlyoutContent,
+    FlyoutFooter,
+    FlyoutHeader,
+    FlyoutRoot,
+    FlyoutTrigger,
+    type FlyoutVirtualAnchor,
+} from './Flyout';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof FlyoutContent> = {
@@ -499,6 +509,71 @@ export const PreventCloseOnEscape: Story = {
                     </Flyout.Body>
                 </Flyout.Content>
             </Flyout.Root>
+        );
+    },
+};
+
+export const WithCustomContainer: Story = {
+    args: {
+        children: 'I am rendered inside the custom container',
+    },
+    render: ({ ...args }) => {
+        const [container, setContainer] = useState<HTMLDivElement | null>(null);
+        return (
+            <>
+                <Flyout.Root>
+                    <Flyout.Trigger>
+                        <Button>Open flyout</Button>
+                    </Flyout.Trigger>
+                    <Flyout.Content {...args} container={container}>
+                        <Flyout.Body {...args} />
+                    </Flyout.Content>
+                </Flyout.Root>
+                <div ref={setContainer} data-test-id="flyout-custom-container" />
+            </>
+        );
+    },
+};
+
+export const WithVirtualAnchor: Story = {
+    render: ({ ...args }) => {
+        const paragraphRef = useRef<HTMLParagraphElement>(null);
+        const [virtualAnchor, setVirtualAnchor] = useState<FlyoutVirtualAnchor>();
+
+        useEffect(() => {
+            const handleSelectionChange = () => {
+                const selection = window.getSelection();
+                if (!selection || selection.isCollapsed || !paragraphRef.current?.contains(selection.anchorNode)) {
+                    setVirtualAnchor(undefined);
+                    return;
+                }
+                const rect = selection.getRangeAt(0).getBoundingClientRect();
+                setVirtualAnchor({ getBoundingClientRect: () => rect });
+            };
+
+            document.addEventListener('selectionchange', handleSelectionChange);
+            return () => document.removeEventListener('selectionchange', handleSelectionChange);
+        }, []);
+
+        const handleOpenChange = (open: boolean) => {
+            if (!open) {
+                setVirtualAnchor(undefined);
+            }
+        };
+
+        return (
+            <>
+                <p ref={paragraphRef}>Select some text in this paragraph to open the flyout at the selection.</p>
+                <Flyout.Root
+                    open={virtualAnchor !== undefined}
+                    onOpenChange={handleOpenChange}
+                    virtualAnchor={virtualAnchor}
+                >
+                    <Flyout.Content {...args} side="top" onOpenAutoFocus={(event) => event.preventDefault()}>
+                        <Flyout.Body>Anchored to the selection</Flyout.Body>
+                    </Flyout.Content>
+                </Flyout.Root>
+            </>
         );
     },
 };

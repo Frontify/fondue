@@ -173,7 +173,8 @@
     }
 
     // 2 slots without any name should be implicitly ordered
-    &:not([data-name='right']) ~ :not([data-name='left']) {
+    // Scoped to .slot: a universal sibling subject makes every DOM insertion restyle its following siblings
+    &:not([data-name='right']) ~ .slot:not([data-name='left']) {
         order: 0;
         margin-inline: 0px;
     }

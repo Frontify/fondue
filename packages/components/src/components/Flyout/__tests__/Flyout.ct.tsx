@@ -9,6 +9,11 @@ import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 
 import { Flyout } from '../Flyout';
 
+import { FlyoutWithContextMenu } from './FlyoutWithContextMenu';
+import { FlyoutWithCustomContainer } from './FlyoutWithCustomContainer';
+import { FlyoutWithScrollingAnchor } from './FlyoutWithScrollingAnchor';
+import { FlyoutWithVirtualAnchor } from './FlyoutWithVirtualAnchor';
+
 const FLYOUT_TRIGGER_TEST_ID = 'fondue-flyout-trigger';
 const FLYOUT_CONTENT_TEST_ID = 'fondue-flyout-content';
 const FLYOUT_TRIGGER_TEXT = 'Flyout Trigger';
@@ -548,4 +553,78 @@ test('should prevent flyout close when onEscapeKeyDown calls preventDefault', as
     expect(onEscapeKeyDown.callCount).toBe(1);
     // Flyout should still be visible because we prevented the default behavior
     await expect(contentElement).toBeVisible();
+});
+
+test('should portal into document.body by default', async ({ mount, page }) => {
+    await mount(
+        <Flyout.Root open>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+
+    await expect(page.getByTestId(FLYOUT_CONTENT_TEST_ID)).toBeVisible();
+    await expect(page.locator('#root').getByTestId(FLYOUT_CONTENT_TEST_ID)).toHaveCount(0);
+});
+
+test('should render inside the given container', async ({ mount, page }) => {
+    await mount(
+        <FlyoutWithCustomContainer containerTestId="custom-container" contentTestId={FLYOUT_CONTENT_TEST_ID} />,
+    );
+
+    const flyoutContent = page.getByTestId('custom-container').getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent).toBeVisible();
+    await expect(flyoutContent).toContainText(FLYOUT_BODY_TEXT);
+});
+
+test('should position at the virtual anchor and follow it', async ({ mount, page }) => {
+    const component = await mount(<FlyoutWithVirtualAnchor left={100} top={100} width={40} height={20} />);
+
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(flyoutContent).toBeVisible();
+    await expect.poll(() => flyoutContent.boundingBox()).toMatchObject({ x: 100, y: 128 });
+
+    await component.update(<FlyoutWithVirtualAnchor left={300} top={200} width={40} height={20} />);
+    await expect.poll(() => flyoutContent.boundingBox()).toMatchObject({ x: 300, y: 228 });
+});
+
+test('should return focus to the element focused before opening at a virtual anchor', async ({ mount, page }) => {
+    await mount(<FlyoutWithContextMenu inputTestId="focus-origin" />);
+
+    const input = page.getByTestId('focus-origin');
+    await input.focus();
+    await input.dispatchEvent('contextmenu');
+    await expect(page.getByTestId(FLYOUT_CONTENT_TEST_ID)).toBeVisible();
+    await expect(input).not.toBeFocused();
+
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId(FLYOUT_CONTENT_TEST_ID)).not.toBeVisible();
+    await expect(input).toBeFocused();
+});
+
+test('should follow a stable virtual anchor when its scroll container scrolls', async ({ mount, page }) => {
+    await mount(<FlyoutWithScrollingAnchor scrollContainerTestId="scroll-container" anchorTestId="anchor" />);
+
+    const content = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    const anchor = page.getByTestId('anchor');
+    const gapBelowAnchor = async () => {
+        const contentBox = await content.boundingBox();
+        const anchorBox = await anchor.boundingBox();
+        if (!contentBox || !anchorBox) {
+            return null;
+        }
+        return { x: contentBox.x - anchorBox.x, y: contentBox.y - anchorBox.y - anchorBox.height };
+    };
+    await expect(content).toBeVisible();
+    await expect.poll(gapBelowAnchor).toEqual({ x: 0, y: 8 });
+
+    await page.getByTestId('scroll-container').evaluate((element) => {
+        element.scrollTop = 50;
+    });
+    await expect.poll(() => anchor.boundingBox().then((box) => box?.y)).toBeLessThan(100);
+    await expect.poll(gapBelowAnchor).toEqual({ x: 0, y: 8 });
 });
