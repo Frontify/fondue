@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ComponentType, type RefCallback } from 'react';
+import { type ComponentType, createContext, type RefCallback, useContext } from 'react';
 
 import {
     type CodecContext,
@@ -17,10 +17,12 @@ import {
     type PresentationStyle,
 } from '#/model';
 import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/declarations';
-import { type DocumentApi } from '#/runtime/document-api';
+import { type DocumentApi, type EditorRange } from '#/runtime/document-api';
 import { type AuthoringPolicy } from '#/runtime/types';
 
 import { type NodeViewDeclaration } from './define';
+import { editorApiOf } from './live-api';
+import { SessionContext, useSessionValue } from './session';
 
 export {
     type AncestorValue,
@@ -32,7 +34,31 @@ export {
     type WriteOutcome,
     type WriteTarget,
 } from '#/runtime/document-api';
+export { type Announcer, createAnnouncer } from './announcer';
 export { useClientLayoutEffect } from './client-layout-effect';
+export { OverlayBody, passEscape, useEditorOverlay, useOverlayContainer, useScopedFocus } from './overlays';
+
+/** A rectangle an overlay anchors to, as Fondue's `virtualAnchor` takes it. */
+export interface OverlayAnchor {
+    getBoundingClientRect(): DOMRect;
+}
+
+/** What an overlay anchors to: the selection, a range, an element, or the range a function reads each frame. */
+export type AnchorTarget = 'selection' | EditorRange | Element | (() => EditorRange | undefined);
+
+/** What an overlay that a command opened renders with. */
+export interface OverlayProps {
+    readonly close: () => void;
+    readonly anchor: OverlayAnchor;
+}
+
+/** What an overlay that a plugin keeps mounted renders with, such as a bubble that shows itself near the caret. */
+export interface StandingOverlayProps {
+    /** Takes its toolbar while it shows, which Alt+F10 reaches before any other. */
+    readonly toolbarRef: RefCallback<HTMLElement>;
+    /** Whether an overlay that a command opened shows, which it gives way to. */
+    readonly covered: boolean;
+}
 
 /** The presentation as plugins read it. */
 export interface PluginPresentation {
@@ -45,17 +71,28 @@ export interface PluginServices {
     readonly presentation: () => PluginPresentation;
 }
 
-/** What the editor around a plugin hosts for it: strings, services and focus. */
+/** What the editor around a plugin hosts for it: strings, services, overlays, the live region and focus. */
 export interface EditorHosts {
     /** The package's own chrome strings in the editor's locale; a plugin brings its own strings, by `locale`. */
     readonly t: CodecContext['t'];
     /** The language tag of the chrome's strings, such as `de-CH`. */
     readonly locale: () => string;
     readonly services: PluginServices;
+    readonly overlays: {
+        /** Opens `component` with `props`, anchored to `anchor`, in place of any overlay a command opened before. */
+        open<P extends object>(component: ComponentType<P & OverlayProps>, props: P, anchor?: AnchorTarget): void;
+        close(): void;
+        isOpen(): boolean;
+    };
+    /** Says `message` in the editor's live region, or with `key` once no other message with that key followed it; a modal dialog hides that region, so one there uses `createAnnouncer`. A value between U+2068 and U+2069 is written in a `bdi`. */
+    readonly announce: (message: string, key?: string) => void;
     /** Moves focus to the surface at its selection. */
     readonly focus: () => void;
+    /** A virtual anchor for an overlay the plugin renders itself. */
+    readonly anchor: (target: AnchorTarget) => OverlayAnchor;
     /**
-     * The editable surface, to listen to its events; never to change it. `undefined` until the session starts.
+     * The editable surface, to listen to its events; never to change it. `undefined` until the session starts, so a
+     * standing overlay reads it in an effect that reruns when the API appears, and a command reads it when it runs.
      */
     readonly surface: () => HTMLElement | undefined;
     /** The editor's `data-test-id`, which a plugin's UI prefixes its own with. */
@@ -132,8 +169,6 @@ interface PluginToolbarEntryBase {
     readonly bubble?: boolean;
     /** Its command opens an overlay, which returns focus to the item that opened it. */
     readonly opensOverlay?: boolean;
-    /** The panel whose toggle this is, which shows pressed while that panel is open. */
-    readonly panel?: string;
     /** Renders in place of the standard button; a row of the More menu still runs the command. */
     readonly control?: ComponentType<ToolbarControlProps>;
     /**
@@ -193,6 +228,8 @@ export interface EditorPluginParts {
     readonly keys?: Readonly<Record<KeyBinding, CommandRef | KeyHandler>>;
     readonly inputRules?: readonly InputRule[];
     readonly toolbar?: readonly PluginToolbarEntry[];
+    /** Overlays the editor keeps mounted, which decide themselves when to show. */
+    readonly overlays?: readonly ComponentType<StandingOverlayProps>[];
     /** Decorations over textblocks, which the editor derives again only for a block a change touched. */
     readonly decorations?: readonly BlockDecorationSource[];
     /** Lists that typing a trigger opens, whose options the part's own search finds. */
@@ -272,4 +309,34 @@ export const pluginWithOptions = (plugin: EditorPlugin, options: JsonObject): Ed
         return plugin;
     }
     return Object.freeze({ ...partsOf(options), feature: plugin.feature });
+};
+
+export const EditorHostsContext = createContext<EditorHosts | null>(null);
+EditorHostsContext.displayName = 'RichTextEditorHostsContext';
+
+/**
+ * The API of the editor around the caller, or `undefined` until its session is ready. Plugin UI acts through it;
+ * `useEditorHandle` is the host's own handle, which a plugin does not use.
+ */
+export const useEditorApi = (): EditorApi | undefined => {
+    const runtime = useContext(SessionContext);
+    const hosts = useContext(EditorHostsContext);
+    if (runtime === undefined || hosts === null) {
+        return undefined;
+    }
+    return editorApiOf(runtime, hosts);
+};
+
+/** A value read through the editor API, which rerenders the caller only when `isEqual` finds it changed. */
+export const useEditorValue = <T>(
+    read: (api: EditorApi | undefined) => T,
+    isEqual: (previous: T, next: T) => boolean = Object.is,
+): T => {
+    const hosts = useContext(EditorHostsContext);
+    return useSessionValue((runtime) => {
+        if (runtime === undefined || hosts === null) {
+            return read(undefined);
+        }
+        return read(editorApiOf(runtime, hosts));
+    }, isEqual);
 };

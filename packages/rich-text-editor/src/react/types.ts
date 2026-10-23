@@ -6,6 +6,7 @@ import { type CommandsOfPlugin, type EditorPlugin } from '#/bridge/plugin';
 import {
     type CapabilityRef,
     type ColorToken,
+    type CommandRef,
     type ContentModel,
     type Diagnostic,
     type Feature,
@@ -135,12 +136,16 @@ export interface EditorHandle<C extends object = ShippedCommands> {
     /** Never changes the document schema. Throws `DefinitionError` for an unknown feature ID. */
     updatePolicy(policy: AuthoringPolicy): void;
     focus(where?: 'current' | 'start' | 'end'): void;
+    /** Registers a host modal root with the interaction scope. */
+    registerInteractionRoot(element: HTMLElement): Unsubscribe;
     subscribe<K extends keyof EditorEventMap>(event: K, listener: (value: EditorEventMap[K]) => void): Unsubscribe;
     /** Synchronous invalidation. Does not promise that remote saves were cancelled. */
     dispose(): void;
 }
 
-/** The reader presentation's resolvers and its other fields. */
+/** Where the toolbar shows: fixed above the content or as a bubble at the selection. */
+export type ToolbarMode = 'fixed' | 'bubble';
+/** The reader presentation's resolvers, its other fields, and the editor's toolbar and controls. */
 export interface ReactPresentation extends ReaderPresentation {
     readonly styles: readonly PresentationStyle[];
     readonly colorTokens: readonly ColorToken[];
@@ -153,6 +158,11 @@ export interface ReactPresentation extends ReaderPresentation {
      */
     readonly columnGap?: string;
     readonly contentClassName?: string;
+    /** Groups of command IDs and `{ command, payload }` items, in order. */
+    readonly toolbar: readonly (readonly CommandRef[])[];
+    readonly controls?: Readonly<Record<string, { readonly labelKey?: string; readonly icon?: string }>>;
+    /** Package key syntax; default `Alt-F10`. */
+    readonly toolbarShortcut?: string;
 }
 
 /** The props the editor takes. */
@@ -172,7 +182,9 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     readonly locale?: RichTextLocale;
     readonly services?: EditorServices;
     readonly persistenceOptions?: PersistenceOptions;
+    readonly portalContainer?: HTMLElement | null;
     readonly spellCheck?: boolean;
+    readonly defaultToolbarMode?: ToolbarMode;
     /** For the session id and the `nodeId`s the editor creates. Default: `crypto.randomUUID()`, or a version 4 UUID where that is missing. */
     readonly generateId?: () => string;
     /** The surface element `id`. */
@@ -185,9 +197,11 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     /**
      * Native focus events of the surface, including moves into the editor's own overlays.
      * Pointer and focus events bubble out of the editor root. There is no further focus callback.
+     * The bubble toolbar hides when the editor loses focus, and the selection stays.
      */
     readonly onFocus?: (event: FocusEvent<HTMLElement>) => void;
     readonly onBlur?: (event: FocusEvent<HTMLElement>) => void;
+    readonly onToolbarModeChange?: (mode: ToolbarMode) => void;
     /** `null` until the session exists. */
     readonly ref?: Ref<EditorHandle<C>>;
 }

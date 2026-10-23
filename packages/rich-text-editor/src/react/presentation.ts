@@ -2,9 +2,10 @@
 
 import { type ReactPresentation } from './types';
 
-/** A presentation with no styles or colour tokens, and the values given. */
+/** A presentation with no toolbar, styles or colour tokens, and the values given. */
 export const defineReactPresentation = (input: Partial<ReactPresentation>): ReactPresentation => ({
     styles: [],
     colorTokens: [],
+    toolbar: [],
     ...input,
 });

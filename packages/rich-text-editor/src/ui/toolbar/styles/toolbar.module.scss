@@ -1,0 +1,91 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../styles/focus-outline';
+
+// The toolbar sticks to the top of its scrolling container.
+.root {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+    display: flex;
+    gap: var(--spacing-xx-small);
+    // The padding holds the focus outline of the first and last item inside the clipped box.
+    padding: var(--spacing-x-small);
+    // Items that do not fit move into More, so the toolbar never scrolls sideways.
+    overflow: hidden;
+    min-inline-size: 0;
+    background-color: var(--color-surface-default);
+}
+
+// On a touch device with the on-screen keyboard open, the toolbar docks right above it.
+.docked {
+    position: fixed;
+    inset-inline: 0;
+}
+
+.control {
+    flex-shrink: 0;
+    display: inline-flex;
+
+    &[data-group-start] {
+        margin-inline-start: var(--spacing-small);
+    }
+}
+
+.item {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: 32px;
+    block-size: 32px;
+    padding: 0 0 2px;
+    border: none;
+    border-radius: var(--border-radius-small);
+    background-color: transparent;
+    color: var(--color-primary-default);
+    cursor: pointer;
+
+    &[data-group-start] {
+        margin-inline-start: var(--spacing-small);
+    }
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    &[aria-pressed='true'],
+    &[aria-pressed='mixed'] {
+        padding-block-end: 0;
+    }
+
+    &[aria-disabled='true'],
+    &:disabled {
+        color: var(--color-secondary-default);
+        cursor: default;
+    }
+
+    @include focus-outline.focus-outline;
+
+    // A coarse pointer gets 44 by 44 CSS pixel targets.
+    @media (pointer: coarse) {
+        inline-size: 44px;
+        block-size: 44px;
+    }
+}
+
+.tooltip {
+    display: inline-flex;
+    gap: var(--spacing-x-small);
+}
+
+.reason {
+    display: block;
+}
+
+@media print {
+    .root {
+        display: none;
+    }
+}

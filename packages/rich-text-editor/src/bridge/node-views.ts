@@ -23,11 +23,36 @@ const DRAG_SOURCE_EVENTS: ReadonlySet<string> = new Set(['dragstart', 'drag', 'd
 const TEXTLESS_CONTROLS = 'input[type="checkbox"], input[type="radio"], button';
 const CLIPBOARD_SOURCE_EVENTS: ReadonlySet<string> = new Set(['copy', 'cut']);
 
-// One counter keeps content ids distinct across every editor on a page.
+const viewIndexes = new WeakMap<HTMLElement, number>();
+// One counter keeps label and content ids distinct across every editor on a page.
 let ids = 0;
 const nextId = (): number => {
     ids += 1;
     return ids;
+};
+/**
+ * The `id` that the chrome view's decoration gives the first block of the node `nodeId`, which names a node that
+ * holds blocks, as a task item's text does without its child tasks; unique per surface, since a page may show a document twice.
+ */
+export const firstBlockId = (surface: HTMLElement, nodeId: string): string => {
+    let index = viewIndexes.get(surface);
+    if (index === undefined) {
+        index = nextId();
+        viewIndexes.set(surface, index);
+    }
+    return `rte-node-label-${index}-${encodeURIComponent(nodeId)}`;
+};
+
+/** The first block that carries `node`'s label id: a block container with a `nodeId`, not a textblock. */
+export const labelsFirstBlock = (
+    node: ProseMirrorNode,
+): { readonly nodeId: string; readonly block: ProseMirrorNode } | undefined => {
+    const block = node.firstChild;
+    const { nodeId } = node.attrs;
+    if (node.isAtom || node.isTextblock || block === null || !block.isBlock || typeof nodeId !== 'string') {
+        return undefined;
+    }
+    return { nodeId, block };
 };
 
 /** Whether `target` sits in an interactive control of the chrome, which keeps its own events. */
@@ -174,8 +199,13 @@ export const createNodeViews = (
             for (const [name, value] of Object.entries(contentAttributes)) {
                 contentDOM.setAttribute(name, value);
             }
-            contentId = `rte-node-content-${nextId()}`;
-            contentDOM.id = contentId;
+            const labeled = labelsFirstBlock(node);
+            if (labeled !== undefined) {
+                contentId = firstBlockId(view.dom, labeled.nodeId);
+            } else {
+                contentId = `rte-node-content-${nextId()}`;
+                contentDOM.id = contentId;
+            }
         }
         const parent = contentDOM?.parentElement;
         const home = parent ?? null;

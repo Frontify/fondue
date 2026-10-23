@@ -1,0 +1,26 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// Overlays stack above the sticky and docked toolbar, whose `z-index` is 1.
+.root {
+    position: relative;
+    z-index: 2;
+
+    // In the top layer, the browser's popover box is undone, so the root draws nothing of its own.
+    &[popover] {
+        position: fixed;
+        inset: 0 auto auto 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        overflow: visible;
+        color: inherit;
+        background: transparent;
+    }
+}
+
+// A printed page drops every open overlay, as it drops the toolbars.
+@media print {
+    .root {
+        display: none;
+    }
+}

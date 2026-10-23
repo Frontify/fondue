@@ -10,9 +10,11 @@ export const plPL = {
         RichTextEditor_blockedVersion:
             'Edycja jest niedostępna, ponieważ ta treść używa nieznanego formatu lub modelu.',
         RichTextEditor_bold: 'Pogrubienie',
+        RichTextEditor_bubbleToolbar: 'Formatowanie zaznaczenia',
         RichTextEditor_copyContent: 'Kopiuj treść',
         RichTextEditor_copyFailed: 'Kopiowanie nie powiodło się. Zaznacz treść i skopiuj ją za pomocą klawiatury.',
         RichTextEditor_copyOriginal: 'Kopiuj oryginał',
+        RichTextEditor_more: 'Więcej',
         RichTextEditor_nodeViewError: 'Nie można wyświetlić tej części treści',
         RichTextEditor_normalText: 'Zwykły tekst',
         RichTextEditor_readerBlockedInvalid: 'Ta treść nie może być wyświetlona',
@@ -22,5 +24,11 @@ export const plPL = {
         RichTextEditor_readerIslandNotice: 'Część treści nie jest tutaj obsługiwana.',
         RichTextEditor_recoveryMessage: 'Edytor przestał działać. Twoje ostatnie zmiany są widoczne poniżej.',
         RichTextEditor_retry: 'Spróbuj ponownie',
+        RichTextEditor_toolbar: 'Formatowanie tekstu',
+        RichTextEditor_toolbarAlways: 'Zawsze pokazuj pasek narzędzi',
+        RichTextEditor_toolbarOnSelection: 'Pokazuj pasek narzędzi tylko po zaznaczeniu',
+        RichTextEditor_unavailable: 'Niedostępne dla bieżącego zaznaczenia',
+        RichTextEditor_unavailableNotAllowed: 'Niedozwolone w tym edytorze',
+        RichTextEditor_unavailableReadOnly: 'Treść jest tylko do odczytu',
     },
 };

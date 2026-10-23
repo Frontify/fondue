@@ -1,6 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export {
+    type EditorOverlay,
+    NodeChromeButton,
+    NodeChromeToolbar,
     NodeViewContent,
     type NodeViewContext,
     type NodeViewDeclaration,
@@ -9,8 +12,11 @@ export {
 } from '#/bridge/define';
 export {
     type AncestorValue,
+    type Announcer,
+    type AnchorTarget,
     type CommandOutcome,
     type CommandsOfPlugin,
+    createAnnouncer,
     defineEditorPlugin,
     type EditorApi,
     type EditorCommand,
@@ -20,13 +26,23 @@ export {
     type EditorRange,
     type KeyHandler,
     type NodeValue,
+    type OverlayAnchor,
+    OverlayBody,
+    type OverlayProps,
+    passEscape,
     type PluginPresentation,
     type PluginServices,
     type PluginToolbarEntry,
     sameRange,
     type SelectionValue,
+    type StandingOverlayProps,
     type ToolbarControlProps,
     useClientLayoutEffect,
+    useEditorApi,
+    useEditorOverlay,
+    useEditorValue,
+    useOverlayContainer,
+    useScopedFocus,
     type WriteOutcome,
     type WriteTarget,
 } from '#/bridge/plugin';
@@ -52,6 +68,7 @@ export {
     type Snapshot,
 } from '#/persistence/types';
 export { defineEditor, defineReactPresentation } from '#/react/define';
+export { useEditorHandle } from '#/react/hooks';
 export { RichTextEditor } from '#/react/rich-text-editor';
 export {
     type ColorToken,
@@ -68,6 +85,7 @@ export {
     type ReactPresentation,
     type RichTextEditorBaseProps,
     type RichTextEditorProps,
+    type ToolbarMode,
 } from '#/react/types';
 export {
     type Alignment,

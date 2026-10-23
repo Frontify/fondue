@@ -38,7 +38,10 @@ const INERT: EditorHosts = {
     services: {
         presentation: () => ({ styles: [], colorTokens: [] }),
     },
+    overlays: { open: () => undefined, close: () => undefined, isOpen: () => false },
+    announce: () => undefined,
     focus: () => undefined,
+    anchor: () => ({ getBoundingClientRect: () => new DOMRect() }),
     surface: () => undefined,
     testId: () => 'fondue-rich-text-editor',
     report: () => undefined,
@@ -61,6 +64,12 @@ export const commandApiOf = (
     };
     return {
         ...withHosts(document, hosts),
+        overlays: {
+            open: (component, props, anchor) => later(() => hosts.overlays.open(component, props, anchor)),
+            close: () => later(() => hosts.overlays.close()),
+            isOpen: () => hosts.overlays.isOpen(),
+        },
+        announce: (message, key) => later(() => hosts.announce(message, key)),
         focus: () => later(() => hosts.focus()),
     };
 };

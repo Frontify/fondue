@@ -9,6 +9,7 @@ import { Step, StepResult } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { isApplePlatform } from '#/bridge/platform';
 import { defineEditorPlugin, type EditorApi, type EditorPlugin } from '#/bridge/plugin';
 import {
     compileDefinition,
@@ -45,6 +46,7 @@ import { decodeToTree, limitsOf } from '#/model/decode';
 import { extensionsOf } from '#/react/engine';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 import { STORAGE, stubStorage } from '#/testing/__tests__/fixtures/storage';
+import { bindingHere } from '#/ui/shortcuts';
 
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
 import { RUNTIME_PLUGINS } from '../capabilities';
@@ -3439,6 +3441,9 @@ describe('platform key bindings', () => {
         version: 1,
     });
     const firstType = ({ view }: ReturnType<typeof start>) => view.state.doc.child(0).type.name;
+    // `Mod` is Meta on the platform the keymap takes for Apple's, else Ctrl.
+    const modAltQ = (apple: boolean) =>
+        new KeyboardEvent('keydown', { key: 'q', altKey: true, metaKey: apple, ctrlKey: !apple, bubbles: true });
     afterEach(() => vi.restoreAllMocks());
 
     it('compiles the mac: and other: keys of a feature and runs each on its platform only', () => {
@@ -3473,6 +3478,23 @@ describe('platform key bindings', () => {
         platform.mockReturnValue('Win32');
         pressKey(session.handle, 'Mod-Alt-q');
         expect(firstType(session)).toBe('paragraph');
+    });
+
+    it('picks the mac: binding for the keydown and the tooltip alike when only userAgentData names macOS', () => {
+        vi.spyOn(navigator, 'platform', 'get').mockReturnValue('');
+        Object.defineProperty(navigator, 'userAgentData', { configurable: true, get: () => ({ platform: 'macOS' }) });
+        try {
+            const session = start(stored(para(words('ab'))), { model, parts: [part] });
+            setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+
+            expect(bindingHere(['mac:Mod-Alt-q', 'other:Ctrl-Shift-q'], isApplePlatform())).toBe('mac:Mod-Alt-q');
+            pressKey(session.handle, 'Ctrl-Shift-q');
+            expect(firstType(session)).toBe('paragraph');
+            session.view.dom.dispatchEvent(modAltQ(true));
+            expect(firstType(session)).toBe('acme_pull_quote');
+        } finally {
+            Reflect.deleteProperty(navigator, 'userAgentData');
+        }
     });
 
     it('runs a mac:Mod binding on the Meta key when only userAgentData names macOS', () => {

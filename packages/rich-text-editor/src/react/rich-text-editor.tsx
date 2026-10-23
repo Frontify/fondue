@@ -5,12 +5,16 @@ import {
     Component,
     type ComponentType,
     createContext,
+    type CSSProperties,
     forwardRef,
     type ForwardedRef,
+    type KeyboardEvent,
+    type MutableRefObject,
     type ReactNode,
     useCallback,
     useContext,
     useEffect,
+    useId,
     useImperativeHandle,
     useMemo,
     useRef,
@@ -18,11 +22,14 @@ import {
 } from 'react';
 
 import '#/styles/content.css';
+import { createAnnouncer } from '#/bridge/announcer';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
 import { createNodeViews, resyncSelection } from '#/bridge/node-views';
-import { type PluginPresentation } from '#/bridge/plugin';
+import { useOverlayRoot } from '#/bridge/overlay-root';
+import { OverlayBody, OverlayContext, useScopedFocus } from '#/bridge/overlays';
+import { EditorHostsContext, type PluginPresentation } from '#/bridge/plugin';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
 import { SessionContext, useSessionValue } from '#/bridge/session';
@@ -44,15 +51,21 @@ import {
     type RuntimeHandle,
 } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
+import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
+import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
-import { engineOf, readersOf, viewsOf } from './compile-editor';
-import { usePluginHosts } from './plugin-hosts';
+import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
+import { engineOf, pluginsOf, readersOf, viewsOf } from './compile-editor';
+import { useKeyboardInset } from './keyboard-inset';
+import { usePluginHosts, useRenderedHosts } from './plugin-hosts';
 import { BlockedShell, RecoveryShell } from './shells';
+import { menuItems, toolbarItems } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
     type EditorHandle,
     type EditorServices,
     type RichTextEditorProps,
+    type ToolbarMode,
 } from './types';
 
 type Props = RichTextEditorProps<object>;
@@ -61,6 +74,30 @@ type Defined = Props & { readonly definition: CompiledEditorDefinition<object> }
 const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
 const SERVICE_MEMBERS = ['persistence', 'recovery'] as const;
+const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
+// Read by screen readers and never seen.
+const VISUALLY_HIDDEN: CSSProperties = {
+    position: 'absolute',
+    inlineSize: 1,
+    blockSize: 1,
+    overflow: 'hidden',
+    clipPath: 'inset(50%)',
+    whiteSpace: 'nowrap',
+};
+
+/** Why a toolbar item's command cannot run, by its `disabledReason`. */
+const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
+    'not-allowed': 'RichTextEditor_unavailableNotAllowed',
+    readonly: 'RichTextEditor_unavailableReadOnly',
+};
+
+/** The key that moves focus to the toolbars, Alt+F10 unless the presentation sets another. */
+const toolbarShortcutOf = ({ presentation }: Props) => {
+    if (presentation === undefined || presentation.toolbarShortcut === undefined) {
+        return DEFAULT_TOOLBAR_SHORTCUT;
+    }
+    return presentation.toolbarShortcut;
+};
 
 const memberOf = <K extends (typeof SERVICE_MEMBERS)[number]>(
     services: EditorServices | undefined,
@@ -120,10 +157,29 @@ const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
     return { definition, decoded, blocked: undefined, lang, dir };
 };
 
-/** What the parts share of the chrome. */
+/** What the parts share for the toolbars and focus moves between the surface and the chrome. */
 interface Chrome {
-    /** The surface element `id`. */
+    readonly items: readonly ToolbarItem[];
+    /** The rows that only the More menus hold. */
+    readonly menu: readonly ToolbarItem[];
+    readonly strings: ToolbarStrings;
+    /** The bubble toolbar's name and the More rows that switch the toolbar mode. */
+    readonly labels: {
+        readonly bubble: string;
+        readonly toBubble: string;
+        readonly toFixed: string;
+    };
+    /** The surface element `id`, generated when a toolbar's `aria-controls` needs one and the host set none. */
     readonly surfaceId: string | undefined;
+    readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
+    readonly bubbleRef: MutableRefObject<HTMLDivElement | null>;
+    /** Opens the bubble toolbar of bubble mode at the selection and focuses it. */
+    readonly showBubbleRef: MutableRefObject<(() => void) | null>;
+    readonly mode: ToolbarMode;
+    /** Switches the toolbar and reports the new mode to the host. */
+    readonly setMode: (mode: ToolbarMode) => void;
+    /** The height the on-screen keyboard of a touch device covers, which a focused editor docks its toolbar above. */
+    readonly keyboard: number;
     /** The language of the chrome's strings, which the root, node chrome and plugin labels take (WCAG 2.2 SC 3.1.2). */
     readonly lang: string;
 }
@@ -220,25 +276,48 @@ const SessionComponent = (
         }
         return createReactWork();
     });
+    const [announcer] = useState(createAnnouncer);
+    useEffect(() => () => announcer.dispose(), [announcer]);
+    const generatedId = useId();
+    const toolbarRef = useRef<HTMLDivElement | null>(null);
     // The session once it is ready, which the parts and hooks read.
     const [live, setLive] = useState<EditorRuntime>();
     const latestRef = useRef(props);
     // The shown locale's language, which plugins read when they run.
     const langRef = useRef<string>(enUS.lang);
     const handleRef = useRef<EditorHandle<object> | null>(null);
-    // The chrome's strings, which plugins read when they run.
+    const bubbleRef = useRef<HTMLDivElement | null>(null);
+    const showBubbleRef = useRef<(() => void) | null>(null);
+    const {
+        rootRef,
+        overlayRoot,
+        overlayRootRef,
+        scope,
+        element: overlayRootElement,
+    } = useOverlayRoot(coordinator, props.portalContainer);
+    const [toolbarMode, setToolbarMode] = useState<ToolbarMode>(() => props.defaultToolbarMode ?? 'fixed');
+    // The toolbars of the plugins' standing overlays, and the chrome's strings, which plugins read when they run.
+    const overlayToolbarsRef = useRef<(HTMLElement | null)[]>([]);
     const tRef = useRef(codecContext(enUS, enUS).t);
-    const { hosts } = usePluginHosts({
+    const { hosts, pluginOverlay } = usePluginHosts({
         coordinator,
+        announcer,
         t: () => tRef.current,
         lang: () => langRef.current,
         presentation: () => pluginPresentationOf(latestRef.current.presentation),
         testId: () => latestRef.current['data-test-id'] ?? DEFAULT_TEST_ID,
     });
+    const switchToolbar = useCallback((next: ToolbarMode) => {
+        setToolbarMode(next);
+        latestRef.current.onToolbarModeChange?.(next);
+    }, []);
+    const keyboard = useKeyboardInset(rootRef, coordinator);
 
     useClientLayoutEffect(() => {
         latestRef.current = props;
     });
+
+    useEscapeToSurface(rootRef, toolbarRef, overlayRootRef, coordinator);
 
     // The view attaches in a layout effect, so the first frame painted after hydration shows the content.
     useClientLayoutEffect(() => {
@@ -317,7 +396,7 @@ const SessionComponent = (
             coordinator.stop();
             runtime.handle.dispose();
         };
-    }, [mounted, loaded, coordinator, portals, work, onSession, hosts]);
+    }, [mounted, loaded, coordinator, portals, work, onSession, scope, hosts]);
 
     // A blocked document gets no session and so no handle.
     useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
@@ -326,6 +405,10 @@ const SessionComponent = (
     useClientLayoutEffect(() => {
         handleRef.current?.setMode(mode);
     }, [mode]);
+    const disabled = props.disabled === true;
+    useClientLayoutEffect(() => {
+        coordinator.runtime?.setDisabled(disabled);
+    }, [coordinator, disabled]);
 
     // A changed `services` member aborts the operations it started, with no rebuild.
     const { services } = props;
@@ -361,6 +444,26 @@ const SessionComponent = (
 
     const onFlush = useCallback(() => resyncSelection(coordinator.runtime?.view), [coordinator]);
 
+    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        // A disabled editor's toolbar takes no focus.
+        let toolbar = toolbarRef.current;
+        if (props.disabled === true) {
+            toolbar = null;
+        }
+        let showBubble: (() => void) | null = null;
+        if (toolbarMode === 'bubble') {
+            showBubble = showBubbleRef.current;
+        }
+        moveChromeFocus(event, {
+            runtime: coordinator.runtime,
+            toolbar,
+            overlayToolbar: overlayToolbarsRef.current.find((element) => element?.isConnected === true) ?? null,
+            bubble: bubbleRef.current,
+            showBubble,
+            shortcut: toolbarShortcutOf(props),
+        });
+    };
+
     const shell = shellPropsOf(props);
     const { locale, presentation, testId } = shell;
     const theme = useFondueTheme();
@@ -378,13 +481,79 @@ const SessionComponent = (
     useClientLayoutEffect(() => {
         tRef.current = chromeContext.t;
     });
+    // The session keeps `hosts`, whose identity must hold; plugin UI reads this one, which follows the locale.
+    const renderedHosts = useRenderedHosts(hosts, chromeContext.t, shownLang);
+    const plugins = pluginsOf(mounted.definition);
+    const items = useMemo(
+        () =>
+            toolbarItems(
+                engineOf(mounted.definition),
+                mounted.definition.authoring,
+                props.presentation,
+                chromeContext.t,
+                lang,
+                pluginsOf(mounted.definition),
+            ),
+        [mounted.definition, props.presentation, chromeContext, lang],
+    );
+    const menu = useMemo(
+        () =>
+            menuItems(
+                engineOf(mounted.definition),
+                mounted.definition.authoring,
+                items,
+                chromeContext.t,
+                lang,
+                pluginsOf(mounted.definition),
+            ),
+        [mounted.definition, items, chromeContext, lang],
+    );
+    // The plugins' standing overlays, each with a stable key and a stable ref for its toolbar.
+    const standing = useMemo(() => {
+        const overlays = plugins.flatMap((plugin) =>
+            (plugin.overlays ?? []).map((component, index) => ({ key: `${plugin.feature} ${index}`, component })),
+        );
+        return overlays.map(({ key, component }, index) => ({
+            key,
+            component,
+            toolbarRef: (element: HTMLElement | null) => {
+                overlayToolbarsRef.current[index] = element;
+            },
+        }));
+    }, [plugins]);
     const chrome = useMemo(() => {
-        const surfaceId = props.id;
+        const { t } = chromeContext;
+        let surfaceId = props.id;
+        if (surfaceId === undefined && items.length > 0) {
+            surfaceId = generatedId;
+        }
+        const strings = {
+            label: t('RichTextEditor_toolbar'),
+            more: t('RichTextEditor_more'),
+            reason: (code: string) => t(REASON_KEYS[code] ?? 'RichTextEditor_unavailable'),
+        };
+        const labels = {
+            bubble: t('RichTextEditor_bubbleToolbar'),
+            toBubble: t('RichTextEditor_toolbarOnSelection'),
+            toFixed: t('RichTextEditor_toolbarAlways'),
+        };
         return {
+            items,
+            menu,
+            strings,
+            labels,
             surfaceId,
+            toolbarRef,
+            bubbleRef,
+            showBubbleRef,
+            mode: toolbarMode,
+            setMode: switchToolbar,
+            keyboard,
             lang,
         };
-    }, [props.id, lang]);
+    }, [items, menu, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard, lang]);
+
+    const overlays = useMemo(() => ({ container: overlayRoot, scope }), [overlayRoot, scope]);
 
     const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
     if (mounted.blocked !== undefined) {
@@ -395,16 +564,55 @@ const SessionComponent = (
     }
     return (
         <RootContext.Provider value={context}>
-            <SessionContext.Provider value={live}>
-                <ReactWorkContext.Provider value={work}>
-                    <div lang={lang} data-test-id={testId} aria-busy={live === undefined ? true : undefined}>
-                        {work !== undefined && <Phase work={work} open />}
-                        {children}
-                        <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
-                        {work !== undefined && <Phase work={work} open={false} />}
-                    </div>
-                </ReactWorkContext.Provider>
-            </SessionContext.Provider>
+            <EditorHostsContext.Provider value={renderedHosts}>
+                <SessionContext.Provider value={live}>
+                    <ReactWorkContext.Provider value={work}>
+                        <OverlayContext.Provider value={overlays}>
+                            {/* Focus in the chrome keeps the selection visible until it returns. */}
+                            {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- the root only hears keys and focus that bubble from the surface and chrome. */}
+                            <div
+                                ref={rootRef}
+                                lang={lang}
+                                data-test-id={testId}
+                                aria-busy={live === undefined ? true : undefined}
+                                onKeyDown={onKeyDown}
+                                onFocus={(event) =>
+                                    coordinator.chrome.showSelection(
+                                        event.target.getAttribute('data-rte-surface') === null,
+                                    )
+                                }
+                                onBlur={() => coordinator.chrome.showSelection(false)}
+                            >
+                                {work !== undefined && <Phase work={work} open />}
+                                {children}
+                                {toolbarMode === 'bubble' && <Bubble />}
+                                <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
+                                {standing.map(({ key, component: Standing, toolbarRef: ref }) => (
+                                    <Standing key={key} toolbarRef={ref} covered={pluginOverlay !== undefined} />
+                                ))}
+                                {pluginOverlay !== undefined && (
+                                    <OverlayBody>
+                                        <pluginOverlay.component
+                                            key={pluginOverlay.id}
+                                            {...pluginOverlay.props}
+                                            close={hosts.overlays.close}
+                                            anchor={pluginOverlay.anchor}
+                                        />
+                                    </OverlayBody>
+                                )}
+                                <div
+                                    ref={announcer.setRegion}
+                                    aria-live="polite"
+                                    style={VISUALLY_HIDDEN}
+                                    data-test-id={`${testId}-announcer`}
+                                />
+                                {overlayRootElement}
+                                {work !== undefined && <Phase work={work} open={false} />}
+                            </div>
+                        </OverlayContext.Provider>
+                    </ReactWorkContext.Provider>
+                </SessionContext.Provider>
+            </EditorHostsContext.Provider>
         </RootContext.Provider>
     );
 };
@@ -599,8 +807,113 @@ const Surface = () => {
 };
 Surface.displayName = 'RichTextEditor.Surface';
 
+/** The fixed toolbar the presentation configures; with no item, or in bubble mode, it renders nothing. */
+const Toolbar = () => {
+    const { props, coordinator, chrome } = useRoot('Toolbar');
+    const { disabled = false, 'data-test-id': testId = DEFAULT_TEST_ID } = props;
+    const { items, menu, strings, labels, surfaceId, toolbarRef, mode, setMode, keyboard } = chrome;
+    const focus = useScopedFocus();
+    // A focused editor on a touch device docks its toolbar above the on-screen keyboard.
+    let docked: number | undefined;
+    if (keyboard > 0 && focus !== null && !disabled) {
+        docked = keyboard;
+    }
+    // The caret scrolls clear of the sticky or docked toolbar's measured height.
+    const shown = items.length > 0 && mode === 'fixed';
+    useEffect(() => {
+        const element = toolbarRef.current;
+        if (element === null) {
+            return undefined;
+        }
+        const observer = new ResizeObserver(() => {
+            const { height } = element.getBoundingClientRect();
+            if (docked === undefined) {
+                coordinator.chrome.setTopInset(height);
+                coordinator.chrome.setDockedInset(0);
+                return;
+            }
+            coordinator.chrome.setTopInset(0);
+            coordinator.chrome.setDockedInset(height);
+        });
+        observer.observe(element);
+        return () => {
+            observer.disconnect();
+            coordinator.chrome.setTopInset(0);
+            coordinator.chrome.setDockedInset(0);
+        };
+    }, [toolbarRef, coordinator, shown, docked]);
+    if (!shown || surfaceId === undefined) {
+        return null;
+    }
+    return (
+        <FixedToolbar
+            items={items}
+            menu={menu}
+            strings={strings}
+            disabled={disabled}
+            surfaceId={surfaceId}
+            shortcut={toolbarShortcutOf(props)}
+            testId={testId}
+            toolbarRef={toolbarRef}
+            modeSwitch={{ label: labels.toBubble, onSelect: () => setMode('bubble') }}
+            docked={docked}
+        />
+    );
+};
+Toolbar.displayName = 'RichTextEditor.Toolbar';
+
+/** The bubble toolbar, with the rest of the toolbar in its More menu in bubble mode. */
+const Bubble = () => {
+    const { props, chrome } = useRoot('BubbleToolbar');
+    const { 'data-test-id': testId = DEFAULT_TEST_ID } = props;
+    const { items, menu, strings, labels, bubbleRef, showBubbleRef, mode, setMode } = chrome;
+    const bubbleItems = useMemo(
+        () =>
+            items
+                .filter((item) => item.bubble)
+                .map((item, index) => ({ ...item, groupStart: index > 0 && item.groupStart })),
+        [items],
+    );
+    let more: BubbleMore | undefined;
+    let showRef: typeof showBubbleRef | undefined;
+    if (mode === 'bubble') {
+        more = {
+            items: [...items.filter((item) => !item.bubble), ...menu],
+            modeSwitch: { label: labels.toFixed, onSelect: () => setMode('fixed') },
+        };
+        showRef = showBubbleRef;
+    }
+    if (bubbleItems.length === 0 && more === undefined) {
+        return null;
+    }
+    return (
+        <BubbleToolbar
+            items={bubbleItems}
+            more={more}
+            label={labels.bubble}
+            strings={strings}
+            shortcut={toolbarShortcutOf(props)}
+            testId={testId}
+            toolbarRef={bubbleRef}
+            showRef={showRef}
+        />
+    );
+};
+Bubble.displayName = 'RichTextEditor.Bubble';
+
+/** The bubble toolbar of a fixed toolbar mode, near a text selection; bubble mode shows its own. */
+const BubbleToolbarPart = () => {
+    const { chrome } = useRoot('BubbleToolbar');
+    if (chrome.mode === 'bubble') {
+        return null;
+    }
+    return <Bubble />;
+};
+BubbleToolbarPart.displayName = 'RichTextEditor.BubbleToolbar';
+
 const Editor = forwardRef((props: Props, ref: ForwardedRef<EditorHandle<object>>) => (
     <Root {...props} ref={ref}>
+        <Toolbar />
         <Surface />
     </Root>
 ));
@@ -610,10 +923,14 @@ Editor.displayName = 'RichTextEditor';
 export const RichTextEditor = Object.assign(Editor, {
     Root,
     Surface,
+    Toolbar,
+    BubbleToolbar: BubbleToolbarPart,
 }) as unknown as (<C extends object = ShippedCommands>(props: RichTextEditorProps<C>) => ReactNode) & {
     /** Takes the editor props and renders its own layout from the parts; `RichTextEditor` is Root with the default parts. */
     readonly Root: <C extends object = ShippedCommands>(
         props: RichTextEditorProps<C> & { readonly children: ReactNode },
     ) => ReactNode;
     readonly Surface: ComponentType<object>;
+    readonly Toolbar: ComponentType<object>;
+    readonly BubbleToolbar: ComponentType<object>;
 };

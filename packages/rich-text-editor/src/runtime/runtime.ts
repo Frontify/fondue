@@ -11,7 +11,7 @@ import {
     TextSelection,
     type Transaction,
 } from 'prosemirror-state';
-import { EditorView, type NodeViewConstructor } from 'prosemirror-view';
+import { type DirectEditorProps, EditorView, type NodeViewConstructor } from 'prosemirror-view';
 
 import {
     APPEND_BATCH_META,
@@ -104,6 +104,7 @@ export interface RuntimeHandle {
     setMode(mode: Mode): void;
     updatePolicy(policy: AuthoringPolicy): void;
     focus(where?: 'current' | 'start' | 'end'): void;
+    registerInteractionRoot(element: HTMLElement): Unsubscribe;
     subscribe(event: string, listener: Listener): Unsubscribe;
     dispose(): void;
 }
@@ -130,12 +131,16 @@ export interface EditorRuntime {
     readonly definition: CompiledDefinition;
     /** The view on the attached surface, for the `src/testing` helpers. */
     readonly view: EditorView | undefined;
+    /** The host roots whose focus and pointer moves stay inside the editor. */
+    readonly interactionRoots: ReadonlySet<HTMLElement>;
     /** The session's current state, which stays readable after `dispose`, for tests. */
     readonly state: EditorState;
     /** The session's resource limits. */
     readonly limits: ResourceLimits;
-    /** Shows the document in `element`, which becomes the editable surface. */
-    attach(element: HTMLElement): void;
+    /** The node views the session's views take, by node name. */
+    readonly nodeViews: Readonly<Record<string, NodeViewConstructor>>;
+    /** Shows the document in `element`, which becomes the editable surface, drawn with `props` beside the runtime's own. */
+    attach(element: HTMLElement, props?: Partial<DirectEditorProps>): void;
     /** Destroys the view synchronously; the session and its state stay. */
     detach(): void;
     report(diagnostic: Diagnostic): void;
@@ -158,6 +163,8 @@ export interface EditorRuntime {
     changeServices(members: readonly string[]): void;
     /** The bridge caught a throw from a node view's constructor, `update` or `destroy`. */
     faultView(): void;
+    /** The host's `disabled`, which runs in mode `readonly` and takes the surface out of the Tab order. */
+    setDisabled(disabled: boolean): void;
     nodeActions(target: NodeTarget): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
@@ -363,6 +370,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let mode = options.mode;
     // The mode the surface shows, which follows `mode` once input has settled.
     let shownMode = mode;
+    let disabled = false;
     let commitSequence = 0;
     let sequence = 0;
     let saves: SaveCoordinator | undefined;
@@ -1510,6 +1518,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return installNext(request, tree, result.document.requiredCapabilities, focused);
     };
 
+    const interactionRoots = new Set<HTMLElement>();
     const handle: RuntimeHandle = {
         getSummary: () => {
             return {
@@ -1593,6 +1602,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             busyWith(notify);
         },
         focus,
+        registerInteractionRoot: (element) => {
+            interactionRoots.add(element);
+            return () => {
+                interactionRoots.delete(element);
+            };
+        },
         subscribe,
         dispose,
     };
@@ -1603,11 +1618,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         get view() {
             return view;
         },
+        interactionRoots,
         get state() {
             return state;
         },
+        get nodeViews() {
+            return nodeViews;
+        },
         limits,
-        attach: (element) => {
+        attach: (element, props) => {
             if (phase === 'disposed') {
                 return;
             }
@@ -1617,13 +1636,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                     new EditorView(
                         { mount: element },
                         {
+                            ...props,
                             state,
                             editable: () => phase === 'ready' && shownMode === 'editable',
                             attributes: (current) => {
                                 const attributes: Record<string, string> = {};
                                 if (shownMode === 'readonly') {
-                                    // A surface that is not contenteditable takes no focus by itself.
-                                    attributes.tabindex = '0';
+                                    // A surface that is not contenteditable takes no focus by itself,
+                                    // unless it is disabled, which leaves the Tab order.
+                                    if (!disabled) {
+                                        attributes.tabindex = '0';
+                                    }
                                     attributes['aria-readonly'] = 'true';
                                 }
                                 if (isEmpty(current)) {
@@ -1709,6 +1732,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (members.includes('persistence')) {
                 saves?.serviceChanged();
             }
+        },
+        setDisabled: (next) => {
+            disabled = next;
+            view?.setProps({});
         },
         faultView: () => {
             if (viewCall) {

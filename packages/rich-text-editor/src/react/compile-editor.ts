@@ -42,6 +42,7 @@ export type ShippedParts = Readonly<Record<string, EditorPlugin>>;
 // Kept off the definition, so no engine value is reachable from what a host holds.
 const engines = new WeakMap<object, CompiledDefinition>();
 const nodeViews = new WeakMap<object, ReadonlyMap<string, NodeViewDeclaration>>();
+const editorPlugins = new WeakMap<object, readonly EditorPlugin[]>();
 const readers = new WeakMap<object, ReaderOverrides>();
 
 /** The engine a definition compiled once, which every editor mounted with it shares. */
@@ -57,6 +58,10 @@ export const engineOf = (definition: CompiledEditorDefinition<object>): Compiled
 export const viewsOf = (definition: CompiledEditorDefinition<object>): ReadonlyMap<string, NodeViewDeclaration> =>
     nodeViews.get(definition) ?? new Map();
 
+/** The editor parts a definition installs, in feature order. */
+export const pluginsOf = (definition: CompiledEditorDefinition<object>): readonly EditorPlugin[] =>
+    editorPlugins.get(definition) ?? [];
+
 /** The reader overrides of the shipped features a definition renders its blocked and recovery shells with. */
 export const readersOf = (definition: CompiledEditorDefinition<object>): ReaderOverrides =>
     readers.get(definition) ?? {};
@@ -68,10 +73,12 @@ const byKey = <T>(base: readonly T[] = [], added: readonly T[] = [], key: keyof 
 ];
 
 /**
- * The shipped part extended by the host's, never replaced whole: commands and keys by ID, and each keyed list by its
- * entry key.
+ * The shipped part extended by the host's, never replaced whole: commands and keys by ID, each keyed list by its
+ * entry key, and standing overlays added.
  */
 const extend = (shipped: EditorPlugin, host: EditorPlugin): EditorPlugin => {
+    const shippedOverlays = shipped.overlays ?? [];
+    const hostOverlays = host.overlays ?? [];
     const merged = Object.assign({ ...shipped }, host);
     return Object.freeze({
         ...merged,
@@ -82,6 +89,7 @@ const extend = (shipped: EditorPlugin, host: EditorPlugin): EditorPlugin => {
         views: byKey(shipped.views, host.views, 'node'),
         decorations: byKey(shipped.decorations, host.decorations, 'id'),
         suggestions: byKey(shipped.suggestions, host.suggestions, 'trigger'),
+        overlays: [...shippedOverlays, ...hostOverlays],
     });
 };
 
@@ -343,6 +351,7 @@ export const compileEditor = <Model extends ContentModel, const Plugins extends 
     });
     engines.set(definition, engine);
     nodeViews.set(definition, views);
+    editorPlugins.set(definition, plugins);
     readers.set(definition, overrides);
     return definition as unknown as CompiledEditorDefinition<CommandsOfModel<Model> & CommandsOfPlugins<Plugins>>;
 };

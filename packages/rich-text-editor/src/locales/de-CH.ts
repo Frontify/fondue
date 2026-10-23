@@ -11,10 +11,12 @@ export const deCH = {
         RichTextEditor_blockedVersion:
             'Bearbeiten ist nicht möglich, weil dieser Inhalt ein unbekanntes Format oder Modell verwendet.',
         RichTextEditor_bold: 'Fett',
+        RichTextEditor_bubbleToolbar: 'Formatierung der Auswahl',
         RichTextEditor_copyContent: 'Inhalt kopieren',
         RichTextEditor_copyFailed:
             'Kopieren fehlgeschlagen. Wählen Sie den Inhalt aus und kopieren Sie ihn mit der Tastatur.',
         RichTextEditor_copyOriginal: 'Original kopieren',
+        RichTextEditor_more: 'Mehr',
         RichTextEditor_nodeViewError: 'Dieser Teil des Inhalts kann nicht angezeigt werden',
         RichTextEditor_normalText: 'Normaler Text',
         RichTextEditor_readerBlockedInvalid: 'Dieser Inhalt kann nicht angezeigt werden',
@@ -25,5 +27,11 @@ export const deCH = {
         RichTextEditor_recoveryMessage:
             'Der Editor funktioniert nicht mehr. Ihre letzten Änderungen werden unten angezeigt.',
         RichTextEditor_retry: 'Erneut versuchen',
+        RichTextEditor_toolbar: 'Textformatierung',
+        RichTextEditor_toolbarAlways: 'Symbolleiste immer anzeigen',
+        RichTextEditor_toolbarOnSelection: 'Symbolleiste nur bei Auswahl anzeigen',
+        RichTextEditor_unavailable: 'An der aktuellen Auswahl nicht verfügbar',
+        RichTextEditor_unavailableNotAllowed: 'In diesem Editor nicht erlaubt',
+        RichTextEditor_unavailableReadOnly: 'Der Inhalt ist schreibgeschützt',
     },
 };

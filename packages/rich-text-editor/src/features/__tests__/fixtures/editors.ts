@@ -10,6 +10,7 @@ import {
     fixtureHistory,
     fixtureInputRules,
     fixtureRedo,
+    fixtureToolbar,
 } from './features';
 
 const LEVEL = { fields: { level: { type: 'integer', min: 1, max: 6 } } } as const;
@@ -75,6 +76,71 @@ export const fixtureInputRulesEditor = defineEditorPlugin(fixtureInputRules, {
     ],
 });
 
+/**
+ * Stands in for the toolbar entries of `marks.italic`, a list toggle, the heading levels and history:
+ * an italic toggle, a block toggle over a `toggled_block`, six heading items with payloads and undo and redo
+ * buttons, with keys for italic and the block.
+ */
+export const fixtureToolbarEditor = defineEditorPlugin(fixtureToolbar, {
+    commands: {
+        'fixture.italic.toggle': {
+            run: (api) => api.marks.toggle('italic'),
+            active: (api) => api.marks.active('italic'),
+        },
+        'fixture.list.toggle': {
+            run: (api) => api.blocks.set('toggled_block', undefined, { toggle: true }),
+            active: (api) => api.blocks.active('toggled_block'),
+        },
+        'fixture.heading.set': {
+            payload: LEVEL,
+            run: (api, { level }: { readonly level: number }) =>
+                api.blocks.set('toggled_heading', { level }, { toggle: true }),
+            active: (api, { level }) => api.blocks.active('toggled_heading', { level }),
+        },
+        'fixture.history.undo': { run: (api) => api.history.undo() },
+        'fixture.history.redo': { run: (api) => api.history.redo() },
+    },
+    keys: { 'Mod-i': 'fixture.italic.toggle', 'Mod-Shift-8': 'fixture.list.toggle' },
+    toolbar: [
+        {
+            id: 'italic',
+            kind: 'toggle',
+            command: 'fixture.italic.toggle',
+            labelKey: 'RichTextEditor_fixtureItalic',
+            icon: 'IconTextFormatItalic',
+        },
+        {
+            id: 'list',
+            kind: 'toggle',
+            command: 'fixture.list.toggle',
+            labelKey: 'RichTextEditor_fixtureList',
+            icon: 'IconListBullet',
+        },
+        ...LEVELS.map((level) => ({
+            id: `heading-${level}`,
+            kind: 'toggle' as const,
+            command: 'fixture.heading.set',
+            payload: { level },
+            labelKey: `RichTextEditor_fixtureHeading${level}`,
+            icon: 'IconTextFormatBold',
+        })),
+        {
+            id: 'undo',
+            kind: 'button',
+            command: 'fixture.history.undo',
+            labelKey: 'RichTextEditor_fixtureUndo',
+            icon: 'IconArrowRoundAntiClockwise',
+        },
+        {
+            id: 'redo',
+            kind: 'button',
+            command: 'fixture.history.redo',
+            labelKey: 'RichTextEditor_fixtureRedo',
+            icon: 'IconArrowRoundClockwise',
+        },
+    ],
+});
+
 /** The fixture features' editor parts that hold no React, so a worker with no style loader takes them. */
 export const FIXTURE_EDITORS = [
     fixtureBoldEditor,
@@ -83,6 +149,7 @@ export const FIXTURE_EDITORS = [
     fixtureHeadingEditor,
     fixtureHeadingSetEditor,
     fixtureInputRulesEditor,
+    fixtureToolbarEditor,
 ] as const;
 
 /** The ones of `parts` for the features `model` installs, in feature order, as a host passes `defineEditor` its own. */
