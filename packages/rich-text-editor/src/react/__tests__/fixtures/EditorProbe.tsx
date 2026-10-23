@@ -5,15 +5,22 @@ import { useEffect, useRef } from 'react';
 import { bold, core } from '#/features';
 import { type CompiledEditorDefinition, defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
+import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel([core(), bold()], {
     id: 'test.ct',
     version: 1,
 });
-/** The component-test model's definition. */
+const ALLOW = { create: true, edit: true, remove: true };
+/** The component-test model's definitions: every feature allowed, and paragraphs that may not change. */
 const definitions = {
     open: defineEditor({ id: 'test.ct', model }),
+    guarded: defineEditor({
+        id: 'test.ct',
+        model,
+        policy: { features: { core: { ...ALLOW, edit: false } } },
+    }),
 };
 
 /** A text, or a link around the text inside `[` and `]`, as `Read the [guide]`. */
@@ -58,6 +65,8 @@ declare global {
         rte?: {
             readonly handle: EditorHandle;
             readonly setSelection: typeof setSelection;
+            /** The text of the runtime's document. */
+            readonly text: () => string | undefined;
         };
     }
 }
@@ -66,21 +75,29 @@ declare global {
 export const EditorProbe = ({
     texts = ['ab'],
     readOnly = false,
+    guarded = false,
     onChange,
 }: {
     readonly texts?: readonly string[];
     readonly readOnly?: boolean;
+    /** Mounts the definition whose policy keeps every paragraph as it is. */
+    readonly guarded?: boolean;
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const defaultValue = storedOf(...texts);
-    const definition: CompiledEditorDefinition<object> = definitions.open;
+    let definition: CompiledEditorDefinition<object> = definitions.open;
+    if (guarded) {
+        definition = definitions.guarded;
+    }
     useEffect(() => {
         if (ref.current !== null) {
             const handle = ref.current as EditorHandle;
+            const runtime = runtimeOf(handle);
             window.rte = {
                 handle,
                 setSelection,
+                text: () => runtime?.view?.state.doc.textContent,
             };
         }
     }, []);

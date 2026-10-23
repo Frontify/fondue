@@ -54,6 +54,9 @@ const DEFINITION_MESSAGE = '`definition` builds the engine definition from `mode
 const SCHEMA_MESSAGE =
     '`schema` imports only `model` and `prosemirror-model`, because `./html` and `clipboard/import` load the schema without the engine.';
 
+const CLIPBOARD_IMPORT_MESSAGE =
+    '`clipboard/import` imports only `model` and `prosemirror-model`, because `./html` loads it without the engine.';
+
 const FEATURE_FILE_MESSAGE =
     "A feature file imports only `#/model`, its own `./migration` and a declared dependency's `#/features/<id>/feature`, as an outside feature must, and never its editor part, which the reader, codecs and server do not load.";
 
@@ -270,10 +273,14 @@ const codecsFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !=
 
 const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
 
+const clipboardImportFolders = FOLDERS.filter((folder) => folder !== 'model');
+
+const CLIPBOARD_IMPORT_PATHS = ['clipboard/import', 'clipboard/import/**'];
+
 const TESTING_MESSAGE =
     '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, and from `features` only conformance and fixtures.';
 
-const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition` and ProseMirror.';
+const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition`, `clipboard/import` and ProseMirror.';
 
 const BRIDGE_MESSAGE =
     '`bridge` imports `model`, `runtime`, `persistence`, `prosemirror-view`, `prosemirror-model` and React.';
@@ -301,7 +308,12 @@ const runtimeAllowed = new Set(['model', 'definition', 'runtime']);
 const runtimeFolders = FOLDERS.filter((folder) => !runtimeAllowed.has(folder));
 
 const runtimeRestriction: ImportRestriction = {
-    group: [...aliasPatterns(runtimeFolders), ...relativePatterns(runtimeFolders), ...REACT_PATTERNS],
+    group: [
+        ...aliasPatterns(runtimeFolders),
+        ...relativePatterns(runtimeFolders),
+        ...REACT_PATTERNS,
+        ...exceptPatterns(CLIPBOARD_IMPORT_PATHS),
+    ],
     message: RUNTIME_MESSAGE,
 };
 
@@ -408,6 +420,19 @@ export default defineConfig({
                     ...PROSEMIRROR_EXCEPT_MODEL,
                 ],
                 message: SCHEMA_MESSAGE,
+            },
+        ]),
+        layerOverride('src/clipboard/import/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(clipboardImportFolders),
+                    ...relativePatterns(clipboardImportFolders),
+                    '../*',
+                    ...PROSEMIRROR_EXCEPT_MODEL,
+                    ...REACT_PATTERNS,
+                    ...exceptPatterns(CLIPBOARD_IMPORT_PATHS),
+                ],
+                message: CLIPBOARD_IMPORT_MESSAGE,
             },
         ]),
         layerOverride(

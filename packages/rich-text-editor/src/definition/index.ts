@@ -33,9 +33,11 @@ import { pointer } from '#/model/errors';
 import { isApple, isPlatformBinding, keyOn, modOn } from '#/model/platform';
 import { findInvalidPayload } from '#/model/values';
 
+import { NORMALIZE_META, NORMALIZERS } from './normalizers';
 import { buildSchema } from './schema';
 
 export { carriesNodeId, withNodeIds } from './schema';
+export { NodeIdsStep, NORMALIZE_META, type Normalizer, NORMALIZERS } from './normalizers';
 
 /** The transaction meta that names the command a transaction runs, so the runtime reports it. */
 export const COMMAND_META = 'rte.command';
@@ -424,6 +426,30 @@ export const compileDefinition = (
         const built = implementations.plugins?.[id];
         if (built !== undefined) {
             return built({ suggestions, decorations });
+        }
+        const normalizer = NORMALIZERS[id];
+        if (normalizer !== undefined) {
+            return new Plugin({
+                key: normalizer.key,
+                state: normalizer.field,
+                appendTransaction: (transactions, _old, state) => {
+                    const batch = batchOf(transactions);
+                    const timing: unknown = rootOf(transactions)?.getMeta(NORMALIZE_META);
+                    // Outside a commit no id function is on the batch, and a composition batch is repaired once input settles.
+                    if (batch === undefined || timing === 'later') {
+                        return null;
+                    }
+                    // A batch that kept the document has nothing to repair, unless it settles a composition.
+                    if (timing !== 'now' && !transactions.some(({ docChanged }) => docChanged)) {
+                        return null;
+                    }
+                    const repair = normalizer.normalize(state, batch.generateId);
+                    if (repair === null) {
+                        return null;
+                    }
+                    return repair.setMeta(ORIGIN_META, 'normalization');
+                },
+            });
         }
         // A binding that starts with `mac:` or `other:` runs only on that platform.
         const apple: Record<string, Command> = {};

@@ -5,7 +5,7 @@ import { Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 import { AttrStep, StepMap } from 'prosemirror-transform';
 import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
 
-import { type PluginImplementation } from '#/definition';
+import { NodeIdsStep, type PluginImplementation } from '#/definition';
 import { BLOCK_DECORATIONS_PLUGIN } from '#/model/capabilities';
 import { type BlockDecoration, type BlockDecorationSource, type JsonObject } from '#/model/declarations';
 import { OBJECT_REPLACEMENT, snapshot } from '#/model/values';
@@ -27,6 +27,11 @@ const touchedRanges = (transaction: Transaction): { readonly from: number; reado
         const step = transaction.steps[index];
         if (step instanceof AttrStep) {
             ranges.push({ from: rest.map(step.pos, -1), to: rest.map(step.pos + 1, 1) });
+        }
+        if (step instanceof NodeIdsStep) {
+            for (const [pos] of step.ids) {
+                ranges.push({ from: rest.map(pos, -1), to: rest.map(pos + 1, 1) });
+            }
         }
     }
     return ranges;

@@ -25,6 +25,7 @@ import { ownValue } from '#/model/values';
 import { type ReaderOverrides } from '#/reader/plan';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { pluginCommand } from '#/runtime/editor-api';
+import { authoringOf } from '#/runtime/policy';
 import { runtimeOfView } from '#/runtime/runtime';
 
 import {
@@ -289,14 +290,14 @@ export const extensionsOf = (
 
 /**
  * Compiles an editor definition once with the editor parts of `shipped` and the reader overrides of `overrides`: the
- * model's engine and the limits.
+ * model's engine, the authoring policy and the limits.
  */
 export const compileEditor = <Model extends ContentModel, const Plugins extends readonly EditorPlugin[] = readonly []>(
     options: EditorDefinitionOptions<Model> & { readonly plugins?: Plugins },
     shipped: ShippedParts,
     overrides: ReaderOverrides,
 ): CompiledEditorDefinition<CommandsOfModel<Model> & CommandsOfPlugins<Plugins>> => {
-    const { id, model } = options;
+    const { id, model, policy } = options;
     const { engine } = editorEngine(model, options.plugins, shipped);
     const limits = limitsWithin(options.limits, options.limitOverrides);
     checkLimits(model, limits, options.limits);
@@ -304,6 +305,7 @@ export const compileEditor = <Model extends ContentModel, const Plugins extends 
         id,
         model: model.ref,
         capabilities: model.capabilities,
+        authoring: authoringOf(model, policy),
         limits,
     });
     engines.set(definition, engine);

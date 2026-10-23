@@ -19,6 +19,9 @@ import { type LoadedDocument } from '#/persistence/types';
 import { type ShippedPluginCommands } from '#/react/plugins';
 import { type ReaderPresentation } from '#/reader/reader';
 import {
+    type AuthoringPolicy,
+    type CaptureResult,
+    type CaptureTargetOptions,
     type CommandArgs,
     type CommandKey,
     type CommandResult,
@@ -27,6 +30,7 @@ import {
     type EditorSummary,
     type OperationMetric,
     type SaveStatus,
+    type SelectionHandle,
     type SelectionSummary,
     type SessionToken,
     type ShippedCommands,
@@ -43,6 +47,7 @@ export interface EditorDefinitionOptions<Model extends ContentModel = ContentMod
     readonly model: Model;
     /** Editor parts of the model's features; one extends the shipped part of its feature. */
     readonly plugins?: readonly EditorPlugin[];
+    readonly policy?: Partial<AuthoringPolicy>;
     /** May only make limits stricter. */
     readonly limits?: Partial<ResourceLimits>;
     /** The only way to loosen a limit, set by a host per consumer. */
@@ -53,6 +58,7 @@ export interface EditorDefinitionInfo {
     readonly id: string;
     readonly model: ModelRef;
     readonly capabilities: readonly CapabilityRef[];
+    readonly authoring: AuthoringPolicy;
     readonly limits: ResourceLimits;
 }
 declare const editorDefinitionBrand: unique symbol;
@@ -99,7 +105,13 @@ export interface EditorHandle<C extends object = ShippedCommands> {
     query<K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>): CommandState;
     /** Synchronous event-handler API. Do not call from React render or effects. */
     execute<K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>): CommandResult;
+    /** Queues an intent, not a transaction. Without a target, uses the selection at execution. */
+    enqueue<K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>): Promise<CommandResult>;
+    captureTarget(options: CaptureTargetOptions): CaptureResult;
+    releaseTarget(target: SelectionHandle): void;
     setMode(mode: 'editable' | 'readonly'): void;
+    /** Never changes the document schema. Throws `DefinitionError` for an unknown feature ID. */
+    updatePolicy(policy: AuthoringPolicy): void;
     focus(where?: 'current' | 'start' | 'end'): void;
     subscribe<K extends keyof EditorEventMap>(event: K, listener: (value: EditorEventMap[K]) => void): Unsubscribe;
     /** Synchronous invalidation. Does not promise that remote saves were cancelled. */

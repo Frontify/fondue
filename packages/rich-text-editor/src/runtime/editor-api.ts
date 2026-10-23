@@ -4,6 +4,7 @@ import { Fragment, type MarkType, type Node, type Schema } from 'prosemirror-mod
 import { type EditorState, type Transaction } from 'prosemirror-state';
 import { Mapping } from 'prosemirror-transform';
 
+import { exceededWrite } from '#/clipboard/import/limits';
 import { COMMAND_META, type CommandContext, type CommandLookup, type EngineCommand, withNodeIds } from '#/definition';
 import {
     type AttributeDeclaration,
@@ -78,6 +79,8 @@ interface ApiSource {
     resolve(range: EditorRange): Positions | undefined;
     /** Runs `command` with `payload` as one edit. */
     edit(command: EngineCommand, payload?: unknown): CommandOutcome;
+    /** Why the session's policy or limits refuse `transaction` from `before`, a write checked before it runs. */
+    refusal(before: Node, transaction: Transaction): 'policy' | 'limit' | undefined;
     /** Notes a write refused as not allowed, which makes a running command that then fails report `not-allowed`. */
     refused(): void;
     execute(id: string, payload: unknown, options: CommandOptions | undefined): CommandOutcome;
@@ -359,7 +362,19 @@ const documentApi = (source: ApiSource): DocumentApi => {
         return found;
     };
     /** Commits `transaction`, whose write covers `written`. */
-    const commit = (transaction: Transaction, written: Positions): WriteOutcome => {
+    const commit = (
+        state: EditorState,
+        transaction: Transaction,
+        written: Positions,
+        content: Fragment,
+    ): WriteOutcome => {
+        if (exceededWrite(transaction.doc, written.from, content, limits) !== undefined) {
+            return rejectedWrite('limit');
+        }
+        const refused = source.refusal(state.doc, transaction);
+        if (refused !== undefined) {
+            return rejectedWrite(refused);
+        }
         const outcome = source.edit({
             run: (_state, dispatch) => {
                 dispatch?.(transaction);
@@ -405,7 +420,7 @@ const documentApi = (source: ApiSource): DocumentApi => {
             return { status: 'no-op' };
         }
         const transaction = state.tr.replaceWith(span.from, span.to, content);
-        return commit(transaction, { from: span.from, to: span.from + content.size });
+        return commit(state, transaction, { from: span.from, to: span.from + content.size }, content);
     };
     const markType = (mark: string): MarkType | undefined => schema.marks[mark];
     const selectionOf = (state: EditorState): SelectionValue => {
@@ -556,6 +571,7 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
                     active: () => false,
                 }),
             ),
+        refusal: (before, transaction) => runtime.writeRefusal(before, transaction),
         refused: () => undefined,
         execute: (id, payload, options) => runtime.handle.execute(id, payload, options),
         query: (id, payload, options) => runtime.handle.query(id, payload, options),
@@ -745,6 +761,7 @@ const commandDocumentApi = (
             }
             return NOT_APPLICABLE;
         },
+        refusal: (before, transaction) => session?.runtime.writeRefusal(before, transaction),
         refused: () => context?.refuse?.(),
         execute: (id, given) => {
             const command = lookup(id);

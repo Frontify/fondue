@@ -176,6 +176,7 @@ const SessionComponent = ({ children, ...props }: SessionProps, ref: ForwardedRe
             tree: decoded.tree,
             capabilities: decoded.capabilities,
             mode: modeOf(latestRef.current),
+            policy: definition.authoring,
             limits: definition.limits,
             generateId: ids,
             commandHost: hosts,

@@ -355,7 +355,7 @@ describe('RichTextEditor', () => {
     });
 
     it('keeps the engine out of the definition a host holds', () => {
-        expect(Object.keys(definition)).toEqual(['id', 'model', 'capabilities', 'limits']);
+        expect(Object.keys(definition)).toEqual(['id', 'model', 'capabilities', 'authoring', 'limits']);
         expect(Object.getOwnPropertySymbols(definition)).toEqual([]);
     });
 
