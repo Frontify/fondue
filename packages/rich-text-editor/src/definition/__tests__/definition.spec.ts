@@ -30,8 +30,17 @@ describe('compileDefinition', () => {
         const features = [core(), fixtureItalic(), fixtureBold(), fixtureColor(), fixtureHeading()];
         const { schema } = compileDefinition(compileContentModel(features, { id: 'test', version: 1 }));
 
-        expect(Object.keys(schema.nodes)).toEqual(['doc', 'paragraph', 'text', 'hard_break', 'heading', 'rule']);
-        expect(Object.keys(schema.marks)).toEqual(['font_color', 'italic', 'bold']);
+        expect(Object.keys(schema.nodes)).toEqual([
+            'doc',
+            'paragraph',
+            'text',
+            'hard_break',
+            'heading',
+            'rule',
+            'unsupported_block',
+            'unsupported_inline',
+        ]);
+        expect(Object.keys(schema.marks)).toEqual(['font_color', 'italic', 'bold', 'unsupported_mark']);
         expect(schema.topNodeType.name).toBe('doc');
         expect(schema.nodes.heading?.spec.group).toBe('block section');
     });

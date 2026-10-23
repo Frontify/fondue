@@ -51,6 +51,7 @@ export {
     type ValueDeclaration,
     type ValueOf,
 } from './declarations';
+export { createEmptyDocument, decodeDocument } from './decode';
 export { DefinitionError, type DefinitionErrorCode } from './errors';
 export { defineFeature } from './feature';
 export {
@@ -70,4 +71,6 @@ export {
 } from './format';
 export { hashDocument } from './hash';
 export { checkHref, type HrefPolicy, type HrefResult } from './href';
+export { toJsonSchema } from './json-schema';
+export { type MigrationManifest, type MigrationResult, migrateDocument } from './migrate';
 export { findInvalidPayload, isRecord } from './values';

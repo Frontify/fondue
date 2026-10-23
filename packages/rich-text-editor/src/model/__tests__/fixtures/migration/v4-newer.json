@@ -1,0 +1,27 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "fixture.notes", "version": 4 },
+    "requiredCapabilities": [
+        { "id": "core", "version": 1 },
+        { "id": "fixture.note", "version": 4 },
+        { "id": "fixture.rule", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "note",
+                "attrs": { "nodeId": "note-9", "level": "info", "collapsed": false, "pinned": true },
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": { "lang": null },
+                        "content": [{ "type": "text", "text": "Pinned by a newer writer" }]
+                    }
+                ]
+            }
+        ]
+    }
+}

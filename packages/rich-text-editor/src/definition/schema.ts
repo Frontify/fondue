@@ -22,6 +22,7 @@ import {
 } from '#/model';
 import { hasNodeId } from '#/model/capabilities';
 import { attributesOf, compiledModel, type SharedAttribute } from '#/model/compile';
+import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
 import { ownValue, parsedAttributes } from '#/model/values';
 
 const GROUPS = { block: 'block section', section: 'section', inline: 'inline' } as const;
@@ -178,6 +179,29 @@ const tagRule = (
     return engine;
 };
 
+/** Opaque islands keep stored content the model cannot hold as one non-editable atom. */
+const ISLAND_NODES: Readonly<Record<string, NodeSpec>> = {
+    [ISLAND_BLOCK]: {
+        group: GROUPS.block,
+        atom: true,
+        attrs: { original: {}, feature: { default: null }, unknownAttributes: { default: null } },
+        toDOM: () => ['div'],
+    },
+    [ISLAND_INLINE]: {
+        group: GROUPS.inline,
+        inline: true,
+        atom: true,
+        attrs: { original: {}, feature: { default: null }, unknownAttributes: { default: null } },
+        toDOM: () => ['span'],
+    },
+};
+/** Excludes nothing, not even itself, so two different unknown marks share one text. */
+const ISLAND_MARK_SPEC: MarkSpec = {
+    attrs: { original: {}, unknownAttributes: { default: null } },
+    excludes: '',
+    toDOM: () => ['span', 0],
+};
+
 /** Builds the engine schema of a content model: nodes in declared order, marks by rank; an engine error becomes a `DefinitionError`. */
 export const buildSchema = (model: ContentModel): Schema => {
     const compiled = compiledModel(model);
@@ -216,6 +240,9 @@ export const buildSchema = (model: ContentModel): Schema => {
         }
         nodes[node.name] = spec;
     }
+    for (const [name, spec] of Object.entries(ISLAND_NODES)) {
+        nodes[name] = spec;
+    }
     const marks: Record<string, MarkSpec> = {};
     for (const { name, declaration } of compiled.marks) {
         const specs = attributeSpecs(declaration.attrs);
@@ -240,6 +267,7 @@ export const buildSchema = (model: ContentModel): Schema => {
         }
         marks[name] = spec;
     }
+    marks[ISLAND_MARK] = ISLAND_MARK_SPEC;
     // The leaves the engine reports it cannot create in a required position get null defaults, and only those.
     const leaves = new Map(
         compiled.nodes

@@ -1,0 +1,30 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "fixture.notes", "version": 1 },
+    "requiredCapabilities": [
+        { "id": "core", "version": 1 },
+        { "id": "fixture.note", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "note",
+                "attrs": { "tone": "alert" },
+                "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Outage window tonight" }] }]
+            },
+            {
+                "type": "note",
+                "attrs": { "tone": "info" },
+                "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Docs moved to the wiki" }] }]
+            },
+            {
+                "type": "note",
+                "attrs": { "tone": "alert" },
+                "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Rollback needs approval" }] }]
+            }
+        ]
+    }
+}
