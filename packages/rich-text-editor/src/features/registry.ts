@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { align } from '#/features/blocks-align/feature';
+import { codeBlock } from '#/features/blocks-code/feature';
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
+import { emoji } from '#/features/emoji/feature';
 import { inputRules } from '#/features/input-rules/feature';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
@@ -21,6 +23,7 @@ import { DefinitionError, type Feature } from '#/model';
 /** Every shipped feature factory by feature ID. */
 export const registry: Readonly<Record<string, () => Feature>> = {
     core,
+    emoji,
     'marks.bold': bold,
     'marks.italic': italic,
     'marks.underline': underline,
@@ -30,6 +33,7 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'marks.superscript': superscript,
     'blocks.heading': heading,
     'blocks.quote': quote,
+    'blocks.code': codeBlock,
     'blocks.align': align,
     'lists.item': listItem,
     'lists.bullet': bulletList,
@@ -52,6 +56,7 @@ const NO_DEPENDENCIES: FeatureRecord = { owner: OWNER, dependencies: {} };
 /** The owner and the dependency and license record of every shipped feature, by feature ID. */
 export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     core: NO_DEPENDENCIES,
+    emoji: { owner: OWNER, dependencies: { 'emojibase-data': 'MIT' } },
     'marks.bold': NO_DEPENDENCIES,
     'marks.italic': NO_DEPENDENCIES,
     'marks.underline': NO_DEPENDENCIES,
@@ -61,6 +66,7 @@ export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     'marks.superscript': NO_DEPENDENCIES,
     'blocks.heading': NO_DEPENDENCIES,
     'blocks.quote': NO_DEPENDENCIES,
+    'blocks.code': { owner: OWNER, dependencies: { lowlight: 'MIT' } },
     'blocks.align': NO_DEPENDENCIES,
     'lists.item': NO_DEPENDENCIES,
     'lists.bullet': NO_DEPENDENCIES,

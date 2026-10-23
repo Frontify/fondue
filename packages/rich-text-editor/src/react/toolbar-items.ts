@@ -17,8 +17,8 @@ type ButtonEntry = Omit<PluginToolbarEntry, 'labelKey' | 'label'> & {
 
 /** The control ID of the text style picker in a presentation's toolbar. */
 const TEXT_STYLE = 'text-style';
-// The picker's rows, in order: Normal text, the heading levels, then Quote.
-const TEXT_STYLE_COMMANDS = ['paragraph.set', 'heading.set', 'quote.toggle'];
+// The picker's rows, in order: Normal text, the heading levels, then Quote, then Code block.
+const TEXT_STYLE_COMMANDS = ['paragraph.set', 'heading.set', 'quote.toggle', 'code-block.toggle'];
 
 /**
  * The plugin label for `lang` by RFC 4647 lookup, without subtags from the end until a tag matches, else `en-US`,

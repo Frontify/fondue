@@ -1434,7 +1434,7 @@ describe('pasted HTML', () => {
     });
 
     it('lets the parse rules of shipped features read only the listed attributes and styles', () => {
-        const attributes = new Set(['start', 'lang', 'data-checked', 'data-marker']);
+        const attributes = new Set(['start', 'lang', 'data-checked', 'data-language', 'data-marker']);
         const styles = new Set(['text-align', 'font-weight', 'font-style', 'text-decoration', 'vertical-align']);
         const shipped = compiledModel(
             compileContentModel(

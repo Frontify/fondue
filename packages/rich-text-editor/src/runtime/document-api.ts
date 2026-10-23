@@ -102,6 +102,8 @@ export interface DocumentApi {
         wrap(node: string, attrs?: JsonObject): boolean;
         /** Swaps the blocks the selection spans, or the container they fill, with the block before or after them. */
         move(direction: 'up' | 'down'): boolean;
+        /** Indents or outdents the lines the selection touches in a textblock that keeps white space, as code does. */
+        indentLines(direction: 'indent' | 'outdent'): boolean;
     };
     readonly attributes: {
         /**
@@ -113,6 +115,12 @@ export interface DocumentApi {
             attrs: JsonObject,
             options?: { readonly nodeId?: string; readonly toggle?: boolean },
         ): boolean;
+        /** Whether all of the nodes `set` would change with `attrs` have them already, part of them, or none. */
+        active(
+            nodes: string | readonly string[],
+            attrs: JsonObject,
+            options?: { readonly nodeId?: string },
+        ): boolean | 'mixed';
     };
     readonly insert: {
         /** Inserts the inline `node` at the selection, as typing would; a block type is rejected as `invalid`. */
@@ -162,6 +170,14 @@ export interface DocumentApi {
      * the node itself or the nearest ancestor of `node` around the node with that ID.
      */
     nearest(node: string, nodeId?: string): NodeValue | undefined;
+    /**
+     * Moves the selection to `target`: the text a range covers, a caret in its empty textblock included, or the start
+     * of the node with `nodeId`, or that node with `at: 'node'`.
+     */
+    select(
+        target: EditorRange | { readonly nodeId: string; readonly at?: 'start' | 'node' },
+        options?: { readonly scroll?: boolean },
+    ): boolean;
     readonly commands: {
         /** Runs another installed command with a payload, as the host's `execute` does. */
         execute(id: string, payload?: unknown, options?: CommandOptions): CommandOutcome;

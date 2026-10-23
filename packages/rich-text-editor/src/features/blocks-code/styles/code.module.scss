@@ -1,0 +1,46 @@
+.bar {
+    display: flex;
+    gap: var(--spacing-x-small);
+    align-items: center;
+}
+
+// `pre` keeps spaces, and the chrome sits inside it, so the picker uses normal wrapping.
+:where(:global(.fondue-rte-content) pre > :global([data-rte-chrome])) {
+    white-space: normal;
+}
+
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-keyword)) {
+    color: var(--color-highlight-default);
+}
+
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-string)),
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-literal)),
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-addition)) {
+    color: var(--color-success-default);
+}
+
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-number)),
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-attr)),
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-attribute)) {
+    color: var(--color-warning-default);
+}
+
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-comment)),
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-meta)) {
+    color: var(--color-secondary-default);
+}
+
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-title)),
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-function)),
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-variable)) {
+    color: var(--color-primary-default);
+}
+
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-type)),
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-built_in)) {
+    color: var(--color-highlight-default);
+}
+
+:where(:global(.fondue-rte-content) :is(pre, code) :global(.hljs-deletion)) {
+    color: var(--color-error-default);
+}

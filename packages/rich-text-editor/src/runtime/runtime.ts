@@ -43,6 +43,7 @@ import { hrefPolicyOf } from '#/model/href';
 import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
+import { createAsyncCoordinator } from './async';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
@@ -54,7 +55,11 @@ import { nodeStatePlugin } from './node-state';
 import { authoringOf, createPolicyCheck } from './policy';
 import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
+import { scrollSelectionIntoView } from './scroll';
 import { createInputSettling } from './settle';
+import { type SuggestionHost, suggestionHosts } from './suggestions/host';
+import { suggestionOptionId } from './suggestions/option-id';
+import { activeSuggestion } from './suggestions/plugin';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
@@ -133,6 +138,8 @@ export interface EditorRuntime {
     readonly handle: RuntimeHandle;
     /** The compiled definition the session runs. */
     readonly definition: CompiledDefinition;
+    /** The `id` of the session's suggestion list, which the surface's `aria-controls` names while the list shows options. */
+    readonly suggestionListId: string;
     /** The view on the attached surface, for the `src/testing` helpers. */
     readonly view: EditorView | undefined;
     /** The host roots whose focus and pointer moves stay inside the editor. */
@@ -158,8 +165,13 @@ export interface EditorRuntime {
     report(diagnostic: Diagnostic): void;
     /**
      * Selects the text between two positions, or the node at one, as the `src/testing` helpers name it.
+     * With `scroll`, the view scrolls that selection into view, wherever focus is.
      */
-    select(target: { readonly anchor: number; readonly head: number } | { readonly node: number }): void;
+    select(
+        target:
+            | { readonly anchor: number; readonly head: number; readonly scroll?: boolean }
+            | { readonly node: number; readonly scroll?: boolean },
+    ): void;
     /** Why the session refuses `command` with `payload` on `state` before it runs, as `execute` checks it. */
     refusal(command: EngineCommand, state: EditorState, payload: unknown): RejectedCode | undefined;
     /** Why the policy or the limits refuse the change of `transaction` from `before`, as a commit's final check would. */
@@ -346,7 +358,7 @@ type Prepared =
           readonly fault?: Diagnostic;
           readonly limit?: ExceededLimit | undefined;
       };
-/** Who runs a command: a host call or a queued intent. */
+/** Who runs a command: a host call, a queued intent, or a node. */
 type Route = 'host' | 'queue' | 'node';
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
 type Attempt = Prepared | { readonly unchanged: true };
@@ -369,6 +381,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         sessionId: generate(),
         generation: 0,
     };
+    const suggestionListId = `rte-suggestions-${session.sessionId}`;
     const createdAt = Date.now();
     let unmanaged = createUnmanagedStatus(options.revision ?? null);
     const breaksPolicy = createPolicyCheck(definition.model);
@@ -551,6 +564,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         refreshView();
         settleQueue('not-ready');
         report(diagnostic);
+        // Results held for that settle are discarded now, as the faulted session takes none.
+        coordinator.settle();
     };
 
     /** Stores the candidate of a view fault with the host's recovery service. */
@@ -845,7 +860,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     /**
      * Once input has settled, checks the provisional batches as one change from the published document and publishes
      * them, or restores the state from before the composition, then runs the
-     * deferred `contenteditable` change and the queued intents.
+     * deferred `contenteditable` change, the queued intents and the held async results.
      */
     const settleInput = () => {
         const mapping = provisional;
@@ -857,6 +872,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             refreshView();
         });
+        coordinator.settle();
         saves?.settled();
         for (const settled of [...afterInput]) {
             settled('settled');
@@ -1083,7 +1099,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             root.setSelection(state.selection.map(root.doc, root.mapping));
         }
         const prepared = prepare(root, ids, false);
-        // A host call never changes content during a composition, which queued intents wait out.
+        // A host call never changes content during a composition, which queued intents and async results wait out.
         if ('candidate' in prepared && prepared.candidate.doc !== state.doc && settling.active()) {
             return { code: 'composition-active' };
         }
@@ -1151,6 +1167,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
     const run = (id: string, given: unknown, options: unknown, route: Route): CommandResult =>
         runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options), route);
+    /** The state with exactly `from` to `to` selected as text, which an accepted suggestion replaces. */
+    const rangeBase = (from: number, to: number): EditorState | RejectedCode => {
+        if (from < 0 || to > state.doc.content.size || from > to) {
+            return 'target-invalid';
+        }
+        const selection = TextSelection.between(state.doc.resolve(from), state.doc.resolve(to));
+        if (selection.from !== from || selection.to !== to) {
+            return 'target-invalid';
+        }
+        return state.apply(state.tr.setSelection(selection));
+    };
+    const acceptSuggestion = (range: { readonly from: number; readonly to: number }, id: string, payload: JsonObject) =>
+        runOn(definition.commands.get(id), checkedPayload(payload), () => rangeBase(range.from, range.to), 'host');
     const execute = (id: string, given?: unknown, commandOptions?: unknown): CommandResult => {
         // Commands belong in event handlers; a call inside a notification is already `busy`.
         if (busy === 0 && options.inRender?.() === true) {
@@ -1270,6 +1299,33 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     /** The handle of target `id` in this session. */
     const handleOf = (id: string) => Object.freeze({ id, session }) as unknown as SelectionHandle;
 
+    const coordinator = createAsyncCoordinator({
+        generateId: generate,
+        session: () => session,
+        isDisposed: () => phase === 'disposed',
+        isFaulted: () => phase === 'faulted',
+        // A result waits out a replacement, which applies it if it fails and discards it in the next generation.
+        holding: () => settling.active() || phase === 'transitioning',
+        report,
+    });
+
+    /** One search of a suggestion list, as one operation of the coordinator that the list's newer search supersedes. */
+    const searchSuggestions: SuggestionHost['search'] = ({ key, featureId, run }, receive) => {
+        const operation = coordinator.start({
+            key,
+            // No host service exists yet, so no changed `services` member aborts a search.
+            service: 'references',
+            featureId,
+            action: 'create',
+            run: ({ signal }) => run(signal),
+            deliver: (result) => {
+                receive(result as Awaited<ReturnType<typeof run>>);
+                return undefined;
+            },
+        });
+        return () => coordinator.abortWhere((other) => other === operation);
+    };
+
     /**
      * Runs queued intents in call order once no commit or notification is in progress
      * and input has settled.
@@ -1355,6 +1411,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         for (const settled of [...afterInput]) {
             settled('disposed');
         }
+        coordinator.dispose();
         settleQueue('not-ready');
         deferred.length = 0;
         const release = releaseTargets(state);
@@ -1457,6 +1514,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const resume = (code: ReplaceCode, focused: boolean): ReplaceResult => {
         phase = 'ready';
         refreshView();
+        coordinator.settle();
         saves?.settled();
         drain();
         refocus(focused);
@@ -1517,6 +1575,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (!installed) {
             return refused('faulted');
         }
+        // What the old generation started or queued ends now and changes nothing here.
+        coordinator.abortWhere(() => true);
+        coordinator.settle();
         busyWith(notify);
         emitSelection();
         emitSaveStatus();
@@ -1658,6 +1719,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // Applies to the next query and commit; the schema, view and plugins stay.
         updatePolicy: (next) => {
             policy = authoringOf(definition.model, next);
+            // An operation whose result the new policy forbids ends now.
+            coordinator.abortWhere((operation) => {
+                const rules = policy.features[operation.featureId];
+                return rules === undefined || !rules[operation.action];
+            });
             busyWith(notify);
         },
         focus,
@@ -1674,6 +1740,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const runtime: EditorRuntime = {
         handle,
         definition,
+        suggestionListId,
         get view() {
             return view;
         },
@@ -1743,6 +1810,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 if (phase === 'transitioning') {
                                     attributes['aria-busy'] = 'true';
                                 }
+                                // The surface keeps focus while a suggestion list shows options, and names the active one.
+                                const suggestion = activeSuggestion(current);
+                                if (suggestion !== null) {
+                                    const option = suggestion.items[suggestion.index];
+                                    if (option !== undefined) {
+                                        attributes['aria-autocomplete'] = 'list';
+                                        attributes['aria-controls'] = suggestionListId;
+                                        attributes['aria-activedescendant'] = suggestionOptionId(
+                                            suggestionListId,
+                                            option.key,
+                                        );
+                                    }
+                                }
                                 return attributes;
                             },
                             nodeViews,
@@ -1768,6 +1848,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             view = attached;
             liveResources.views.add(attached);
             viewRuntimes.set(attached, runtime);
+            suggestionHosts.set(attached, {
+                creates: (featureId) => policy.features[featureId]?.create !== false,
+                accept: acceptSuggestion,
+                commandHost: options.commandHost,
+                search: searchSuggestions,
+            });
             if (secondCopyAtMount(state)) {
                 report(DUPLICATE_ENGINE);
             }
@@ -1813,9 +1899,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 transaction = transaction.setSelection(TextSelection.create(state.doc, target.anchor, target.head));
             }
             commit(transaction);
+            if (target.scroll !== true || view === undefined) {
+                return;
+            }
+            // ProseMirror scrolls to the selection only while the browser's selection is in the surface, which a
+            // caller that asks for this may not have.
+            scrollSelectionIntoView(view, state.selection);
         },
         watch,
         changeServices: (members) => {
+            coordinator.abortWhere((operation) => members.includes(operation.service));
             if (members.includes('persistence')) {
                 saves?.serviceChanged();
             }

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Fragment, type MarkType, type Node, type Schema } from 'prosemirror-model';
-import { type EditorState, type Transaction } from 'prosemirror-state';
+import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { Mapping } from 'prosemirror-transform';
 
 import { exceededWrite } from '#/clipboard/import/limits';
@@ -88,6 +88,7 @@ interface ApiSource {
     refused(): void;
     execute(id: string, payload: unknown, options: CommandOptions | undefined): CommandOutcome;
     query(id: string, payload: unknown, options: CommandOptions | undefined): CommandState;
+    select(transaction: Transaction, scroll: boolean): boolean;
     policy(): AuthoringPolicy;
     editable(): boolean;
 }
@@ -572,6 +573,7 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 }
                 return edit(capability(EDITS.block, { action }));
             },
+            indentLines: (direction) => edit(capability(EDITS.indentLines, { direction })),
         },
         attributes: {
             set: (nodes, attrs, options) => {
@@ -585,6 +587,17 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 const nodeId = options?.nodeId === undefined ? {} : { nodeId: options.nodeId };
                 const args = { node, toggle: options?.toggle === true };
                 return editWith(EDITS.setAttributes, args, types, attrs, false, nodeId);
+            },
+            active: (nodes, attrs, options) => {
+                let node: string | string[] = nodes as string;
+                if (typeof nodes !== 'string') {
+                    node = [...nodes];
+                }
+                const payload: Record<string, unknown> = { ...attrs };
+                if (options?.nodeId !== undefined) {
+                    payload.nodeId = options.nodeId;
+                }
+                return capability(EDITS.setAttributes, { node }).active(source.state(), payload);
             },
         },
         insert: {
@@ -666,6 +679,32 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 range: rangeOf(state.doc, found.pos, found.pos + found.node.nodeSize),
             };
         },
+        select: (target, options) => {
+            const state = source.state();
+            const { doc } = state;
+            let transaction: Transaction | undefined;
+            if ('nodeId' in target) {
+                const pos = positionOf(doc, target.nodeId);
+                const node = pos === undefined ? null : doc.nodeAt(pos);
+                if (pos === undefined || node === null) {
+                    return false;
+                }
+                if (target.at === 'node') {
+                    transaction = state.tr.setSelection(NodeSelection.create(doc, pos));
+                } else {
+                    transaction = state.tr.setSelection(TextSelection.near(doc.resolve(pos + 1)));
+                }
+            } else {
+                const range = source.resolve(target);
+                if (range === undefined) {
+                    return false;
+                }
+                transaction = state.tr.setSelection(
+                    TextSelection.between(doc.resolve(range.from), doc.resolve(range.to)),
+                );
+            }
+            return source.select(transaction, options?.scroll === true);
+        },
         commands: {
             execute: (id, payload, options) => source.execute(id, payload, options),
             query: (id, payload, options) => source.query(id, payload, options),
@@ -714,6 +753,19 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
         refused: () => undefined,
         execute: (id, payload, options) => runtime.handle.execute(id, payload, options),
         query: (id, payload, options) => runtime.handle.query(id, payload, options),
+        select: (transaction, scroll) => {
+            const { selection } = transaction;
+            if (selection instanceof NodeSelection) {
+                runtime.select({ node: selection.from, scroll });
+            } else {
+                runtime.select({
+                    anchor: selection.anchor,
+                    head: selection.head,
+                    scroll,
+                });
+            }
+            return true;
+        },
         policy: () => runtime.policy,
         editable: () => {
             const { phase, mode } = runtime.handle.getSummary();
@@ -776,6 +828,7 @@ const composer = (base: EditorState) => {
             }
             return applied;
         },
+        select: (transaction: Transaction) => take(transaction),
         finish: (): Transaction | undefined => {
             if (outer === undefined) {
                 return first;
@@ -960,6 +1013,10 @@ const commandDocumentApi = (
                 active,
                 disabledReason: enabled ? null : 'not-applicable',
             };
+        },
+        select: (transaction) => {
+            compose.select(transaction);
+            return true;
         },
         policy: () =>
             session?.runtime.policy ?? {

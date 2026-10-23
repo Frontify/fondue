@@ -25,7 +25,7 @@ import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { createFakePersistenceService, setSelection } from '#/testing';
 
-const model = compileContentModel([core(), bold(), fixtureChrome()], {
+const model = compileContentModel([core(), bold(), fixtureHeadingSet(), fixtureChrome()], {
     id: 'test.ct',
     version: 1,
 });

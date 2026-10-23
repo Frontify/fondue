@@ -1,0 +1,12 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+    padding: var(--spacing-x-small) var(--spacing-small);
+    color: var(--color-secondary-default);
+    font-family: var(--text-body-medium-default-font-family);
+    font-size: var(--text-body-medium-default-font-size);
+    line-height: var(--text-body-medium-default-line-height);
+}

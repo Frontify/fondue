@@ -16,7 +16,13 @@ export const coreEditor = defineEditorPlugin(core, {
             run: (api, payload: { readonly text: string }) => api.insert.text(payload.text),
         },
         'hard-break.insert': {
-            run: (api) => api.insert.node('hard_break').status === 'applied',
+            run: (api) => {
+                // A code block keeps a line break as text, as ProseMirror's `newlineInCode` does.
+                if (api.selection().verbatim) {
+                    return api.insert.text('\n');
+                }
+                return api.insert.node('hard_break').status === 'applied';
+            },
         },
         'history.undo': { run: (api) => api.history.undo(), enabled: (api) => api.history.canUndo() },
         'history.redo': { run: (api) => api.history.redo(), enabled: (api) => api.history.canRedo() },

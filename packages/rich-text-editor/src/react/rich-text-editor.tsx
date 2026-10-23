@@ -53,6 +53,7 @@ import {
 } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
+import { referenceListStrings, SuggestionList } from '#/ui/suggestions/suggestion-list';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
@@ -63,7 +64,7 @@ import { useEditorLocale } from './locale';
 import { usePluginHosts, useRenderedHosts } from './plugin-hosts';
 import { BlockedShell, RecoveryShell } from './shells';
 import { registerSaveCauses, SaveStatusText } from './status';
-import { menuItems, toolbarItems } from './toolbar-items';
+import { menuItems, toolbarItems, translatedLabel } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
     type EditorHandle,
@@ -292,7 +293,7 @@ const SessionComponent = (
     // The session once it is ready, which the parts and hooks read.
     const [live, setLive] = useState<EditorRuntime>();
     const latestRef = useRef(props);
-    // The shown locale's language, which plugins read when they run.
+    // The shown locale's language, which the session's suggestion lists read when they search.
     const langRef = useRef<string>(enUS.lang);
     const handleRef = useRef<EditorHandle<object> | null>(null);
     const bubbleRef = useRef<HTMLDivElement | null>(null);
@@ -607,6 +608,7 @@ const SessionComponent = (
     }, [items, menu, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard, lang]);
 
     const overlays = useMemo(() => ({ container: overlayRoot, scope }), [overlayRoot, scope]);
+    const referenceStrings = useMemo(() => referenceListStrings(chromeContext.t), [chromeContext]);
 
     const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
     if (mounted.blocked !== undefined) {
@@ -641,6 +643,16 @@ const SessionComponent = (
                                     {children}
                                     {toolbarMode === 'bubble' && <Bubble />}
                                     <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
+                                    <SuggestionList
+                                        nameOf={(name) => {
+                                            if (typeof name === 'string') {
+                                                return chromeContext.t(name as `RichTextEditor_${string}`);
+                                            }
+                                            return translatedLabel(name, lang);
+                                        }}
+                                        strings={referenceStrings}
+                                        testId={testId}
+                                    />
                                     {standing.map(({ key, component: Standing, toolbarRef: ref }) => (
                                         <Standing key={key} toolbarRef={ref} covered={pluginOverlay !== undefined} />
                                     ))}

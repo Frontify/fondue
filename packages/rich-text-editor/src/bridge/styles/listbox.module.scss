@@ -1,0 +1,63 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// About seven options show; the rest scroll inside the list.
+.listbox {
+    max-block-size: 240px;
+    min-inline-size: 200px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+    padding: var(--spacing-x-small) var(--spacing-small);
+    border-radius: var(--border-radius-small);
+    color: var(--color-primary-default);
+    font-family: var(--text-body-medium-default-font-family);
+    font-size: var(--text-body-medium-default-font-size);
+    line-height: var(--text-body-medium-default-line-height);
+    cursor: pointer;
+
+    &[aria-selected='true'] {
+        background-color: var(--color-surface-hover);
+    }
+}
+
+.glyph {
+    flex-shrink: 0;
+    font-size: var(--text-body-large-default-font-size);
+    line-height: var(--text-body-large-default-line-height);
+}
+
+.label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.image,
+.icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    inline-size: 20px;
+    block-size: 20px;
+    border-radius: 50%;
+}
+
+.image {
+    object-fit: cover;
+}
+
+.icon {
+    background-color: var(--color-container-secondary-default);
+}
+
+.detail {
+    margin-inline-start: auto;
+    color: var(--color-secondary-default);
+    white-space: nowrap;
+}

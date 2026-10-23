@@ -2,6 +2,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { codeBlock } from '#/features';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { orderedList } from '#/features/lists-ordered/feature';
@@ -177,6 +178,28 @@ describe('list Enter', () => {
 });
 
 describe('list Enter in code, in a language, and over a selection', () => {
+    const codeModel = listModel([codeBlock()]);
+    const code = (value: string): ContentNodeJSON => ({
+        type: 'code_block',
+        attrs: { languageId: null },
+        content: [text(value)],
+    });
+
+    const CODE_CASES = [
+        ['bullet', { ul: [['a', { code_block: ['x\n'] }]] }],
+        ['task', { tasks: [['[ ]', 'a', { code_block: ['x\n'] }]] }],
+    ] as const;
+    for (const [kind, expected] of CODE_CASES) {
+        it(`adds a line to a code block at the end of a ${kind} item instead of splitting the item`, () => {
+            const mounted = mountText({ model: codeModel, blocks: [list(kind, [item(kind, 'a', code('x'))])] });
+            setSelection(mounted.handle, { text: 'x', from: 1, to: 1 });
+
+            pressKey(mounted.handle, 'Enter');
+
+            expect(outlineOf(mounted.handle)).toEqual([expected]);
+        });
+    }
+
     it('keeps the language of an item paragraph when Enter splits it at its end, as in its middle', () => {
         const arabic = (kind: 'bullet' | 'task'): ContentNodeJSON => {
             const paragraph = { type: 'paragraph', attrs: { lang: 'ar' }, content: [text('abc')] };

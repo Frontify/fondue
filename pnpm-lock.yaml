@@ -747,6 +747,12 @@ importers:
       csstype:
         specifier: ^3.2.3
         version: 3.2.3
+      emojibase-data:
+        specifier: ^17.0.0
+        version: 17.0.0(emojibase@18.0.0)
+      lowlight:
+        specifier: ^3.3.0
+        version: 3.3.0
       markdown-it:
         specifier: ^15.0.2
         version: 15.0.3
@@ -7129,6 +7135,15 @@ packages:
   emoji-regex@9.2.2:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
 
+  emojibase-data@17.0.0:
+    resolution: {integrity: sha512-Yvgb5AWoHViHV/gq1qr5ZAarcBip+B27/ZLRsUJkbgAEaLlZ/fof9g882LTpmEpyhBNEC0m2SEmItljHsTygjA==}
+    peerDependencies:
+      emojibase: '*'
+
+  emojibase@18.0.0:
+    resolution: {integrity: sha512-5PG+EEt5zQ9qvqdHZw61+T9iz96g+r621QS/w8jEzPg+3mjzAdjl8LPLc+e9ABv/yboNfMwEair7aK9qKnwAbQ==}
+    engines: {node: '>=20.0.0'}
+
   empathic@2.0.1:
     resolution: {integrity: sha512-YGRs8knHhKHVShLkFET/rWAU8kmHbOV5LwN938RHI0pljAJ1Gf6SzXsSmRaEzcXTtOOmVqJ5+WtQPL5uigY50Q==}
     engines: {node: '>=14'}
@@ -7778,6 +7793,10 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
 
+  highlight.js@11.11.2:
+    resolution: {integrity: sha512-oaXMACAU0kzOMXBjWpNcX+vlwSBCIAiZ9BHa7gA15NOTtT2L/l8OSZDuqS2XppOhZBPJ7hm4o8ep2kyuip2uEQ==}
+    engines: {node: '>=12.0.0'}
+
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
@@ -8285,6 +8304,9 @@ packages:
 
   loupe@3.2.1:
     resolution: {integrity: sha512-CdzqowRJCeLU72bHvWqwRBBlLcMEtIvGrlvef74kMnV2AolS9Y8xUv1I0U/MNAWMhBlKIoyuEgoJ0t/bbwHbLQ==}
+
+  lowlight@3.3.0:
+    resolution: {integrity: sha512-0JNhgFoPvP6U6lE/UdVsSq99tn6DhjjpAj5MxG49ewd2mOBVtwWYIT8ClyABhq198aXXODMU6Ox8DrGy/CpTZQ==}
 
   lru-cache@11.2.4:
     resolution: {integrity: sha512-B5Y16Jr9LB9dHVkh6ZevG+vAbOsNOYCX+sXvFWFu7B3Iz5mijW3zdbMyhsh8ANd2mSWBYdJgnqi+mL7/LrOPYg==}
@@ -16769,6 +16791,12 @@ snapshots:
 
   emoji-regex@9.2.2: {}
 
+  emojibase-data@17.0.0(emojibase@18.0.0):
+    dependencies:
+      emojibase: 18.0.0
+
+  emojibase@18.0.0: {}
+
   empathic@2.0.1: {}
 
   end-of-stream@1.4.5:
@@ -17719,6 +17747,8 @@ snapshots:
 
   he@1.2.0: {}
 
+  highlight.js@11.11.2: {}
+
   hoist-non-react-statics@3.3.2:
     dependencies:
       react-is: 16.13.1
@@ -18198,6 +18228,12 @@ snapshots:
       js-tokens: 4.0.0
 
   loupe@3.2.1: {}
+
+  lowlight@3.3.0:
+    dependencies:
+      '@types/hast': 3.0.4
+      devlop: 1.1.0
+      highlight.js: 11.11.2
 
   lru-cache@11.2.4: {}
 

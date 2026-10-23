@@ -2,12 +2,15 @@
 
 export {
     type EditorOverlay,
+    Listbox,
+    type ListboxOption,
     NodeChromeButton,
     NodeChromeToolbar,
     NodeViewContent,
     type NodeViewContext,
     type NodeViewDeclaration,
     type NodeViewState,
+    suggestionOptionId,
     useRichTextNodeView,
 } from '#/bridge/define';
 export {
@@ -24,6 +27,7 @@ export {
     type EditorPlugin,
     type EditorPluginParts,
     type EditorRange,
+    type EditorSuggestion,
     type KeyHandler,
     type NodeValue,
     type OverlayAnchor,
@@ -37,6 +41,7 @@ export {
     sameRange,
     type SelectionValue,
     type StandingOverlayProps,
+    type SuggestionSearchContext,
     type ToolbarControlProps,
     useClientLayoutEffect,
     useEditorApi,
@@ -48,7 +53,14 @@ export {
     type WriteTarget,
 } from '#/bridge/plugin';
 export { useCommandState, useEditorSelection } from '#/bridge/hooks';
-export type { BlockDecoration, BlockDecorationSource, DecoratedBlock } from '#/model/declarations';
+export type {
+    BlockDecoration,
+    BlockDecorationSource,
+    DecoratedBlock,
+    SuggestionPage,
+    SuggestionResult,
+    SuggestionRules,
+} from '#/model/declarations';
 export {
     type CommitOptions,
     type CommitResult,

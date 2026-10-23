@@ -44,6 +44,34 @@ describe('hard-break.insert', () => {
         expect(firstOf(mounted)).toEqual(para(text('ab')));
     });
 
+    it('runs hard-break.insert through execute, and inserts a newline in a code block', () => {
+        const mounted = mountText({
+            model,
+            blocks: [
+                para(text('ab')),
+                {
+                    type: 'chrome_block',
+                    attrs: { nodeId: 'code-1', language: 'plain', checked: false },
+                    content: [text('cd')],
+                },
+            ],
+        });
+        setSelection(mounted.handle, { text: 'ab', from: 2, to: 2 });
+        const result = mounted.handle.execute('hard-break.insert');
+        setSelection(mounted.handle, { text: 'cd', from: 1, to: 1 });
+        pressKey(mounted.handle, 'Shift-Enter');
+
+        expect(result.status).toBe('applied');
+        expect(mounted.handle.getSnapshot().document.content.content).toEqual([
+            para(text('ab'), { type: 'hard_break' }),
+            {
+                type: 'chrome_block',
+                attrs: { nodeId: 'code-1', language: 'plain', checked: false },
+                content: [text('c\nd')],
+            },
+        ]);
+    });
+
     it('inserts no hard_break with Shift+Enter in a read-only editor', () => {
         const mounted = mountText({ model, blocks: [para(text('ab'))] });
         setSelection(mounted.handle, { text: 'ab', from: 1, to: 1 });

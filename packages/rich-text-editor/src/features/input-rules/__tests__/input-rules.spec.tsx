@@ -2,6 +2,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { codeBlock } from '#/features';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
@@ -23,8 +24,8 @@ const ALL_TYPOGRAPHY = [
     'typography.numeric',
 ] as const;
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
-// The table's model: the text pair and its typography rules.
-const tableFeatures = () => [...textFeatures(ALL_TYPOGRAPHY)];
+// The table's model: the text pair, its typography rules, and the code block the `code.fence` row needs.
+const tableFeatures = () => [...textFeatures(ALL_TYPOGRAPHY), codeBlock()];
 
 type Mounted = ReturnType<typeof mountText>;
 
@@ -52,6 +53,7 @@ const typedIn = (typed: string, options: Parameters<typeof mountText>[0] = {}) =
 const RULES: readonly (readonly [string, string, string, string])[] = [
     ['heading.hashes', 'blocks.heading', '## ', 'heading'],
     ['quote.angle', 'blocks.quote', '> ', 'blockquote paragraph'],
+    ['code.fence', 'blocks.code', '``` ', 'code_block'],
     ['bold.stars', 'marks.bold', '**x**', 'paragraph x[bold]'],
     ['bold.underscores', 'marks.bold', '__x__', 'paragraph x[bold]'],
     ['italic.star', 'marks.italic', '*x*', 'paragraph x[italic]'],

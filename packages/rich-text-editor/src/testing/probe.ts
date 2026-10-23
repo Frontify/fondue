@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { liveOperations } from '#/runtime/async';
 import { busResources } from '#/runtime/events';
 import { liveResources } from '#/runtime/runtime';
 import { settleResources } from '#/runtime/settle';
 
 /**
  * What every live runtime owns now: its views, node views and their portals, the installed feature IDs of each
- * session, its event subscriptions, selector subscriptions, queued intents, pending frames, settle timers and targets.
+ * session, its event subscriptions, selector subscriptions, queued intents, pending frames, settle timers, targets
+ * and async operations.
  */
 export const probeRuntimes = () => ({
     views: Array.from<object>(liveResources.views),
@@ -19,4 +21,5 @@ export const probeRuntimes = () => ({
     frames: liveResources.frames,
     timers: settleResources.timers,
     targets: liveResources.targets,
+    operations: [...liveOperations],
 });

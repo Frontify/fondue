@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CommandsOfPlugin, type EditorPlugin } from '#/bridge/plugin';
+import { codeBlockEditor } from '#/features/blocks-code/editor';
 import { headingEditor } from '#/features/blocks-heading/editor';
 import { quoteEditor } from '#/features/blocks-quote/editor';
 import { coreEditor } from '#/features/core/editor';
+import { emojiEditor } from '#/features/emoji/editor';
 import { inputRulesEditor } from '#/features/input-rules/editor';
 import { bulletListEditor } from '#/features/lists-bullet/editor';
 import { listItemEditor } from '#/features/lists-item/editor';
@@ -26,6 +28,7 @@ const SHIPPED = [
     codeEditor,
     subscriptEditor,
     superscriptEditor,
+    codeBlockEditor,
     listItemEditor,
     bulletListEditor,
     orderedListEditor,
@@ -33,6 +36,7 @@ const SHIPPED = [
     headingEditor,
     quoteEditor,
     inputRulesEditor,
+    emojiEditor,
 ] as const;
 
 /** The editor parts of the shipped features by feature ID; a host's own plugin for a feature extends its entry. */

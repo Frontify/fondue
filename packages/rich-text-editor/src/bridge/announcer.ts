@@ -8,6 +8,9 @@ const NO_BREAK_SPACE = ' ';
 // A quoted value between U+2068 and U+2069, which the region writes into a `bdi` of its own.
 const ISOLATED = /\u2068([^\u2069]*)\u2069/;
 
+/** `value` between the first strong isolate and the pop directional isolate, as a message quotes it. */
+export const isolate = (value: string): string => `\u2068${value}\u2069`;
+
 /** `text` as one node, with each isolated value in a `bdi`, so its direction cannot reorder the text around it. */
 const contentOf = (owner: Document, text: string): Node => {
     const parts = text.split(ISOLATED);

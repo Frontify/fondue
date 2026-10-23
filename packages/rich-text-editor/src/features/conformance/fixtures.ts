@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import aligned from '#/features/blocks-align/fixtures/aligned.json';
+import code from '#/features/blocks-code/fixtures/code.json';
 import headings from '#/features/blocks-heading/fixtures/headings.json';
 import quote from '#/features/blocks-quote/fixtures/quote.json';
 import paragraphs from '#/features/core/fixtures/paragraphs.json';
+import emoji from '#/features/emoji/fixtures/emoji.json';
 import typography from '#/features/input-rules/fixtures/typography.json';
 import bullets from '#/features/lists-bullet/fixtures/bullets.json';
 import items from '#/features/lists-item/fixtures/items.json';
@@ -21,11 +23,13 @@ import { type RichTextDocument } from '#/model';
 /** The stored documents each shipped feature brings, by feature ID and fixture name. */
 export const featureFixtures = {
     core: { paragraphs },
+    emoji: { emoji },
     'marks.bold': { bold },
     'marks.italic': { italic },
     'marks.underline': { underline },
     'marks.strike': { strike },
     'marks.code': { code: inlineCode },
+    'blocks.code': { code },
     'blocks.align': { aligned },
     'marks.subscript': { subscript },
     'marks.superscript': { superscript },
