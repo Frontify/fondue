@@ -12,6 +12,7 @@ import { useSessionValue } from '#/bridge/session';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { type SelectionSummary } from '#/runtime/types';
 import { ariaShortcut } from '#/ui/shortcuts';
+import { TextStyle } from '#/ui/toolbar/text-style';
 import { Item, More, type ModeSwitch, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import styles from './styles/bubble-toolbar.module.scss';
@@ -150,6 +151,9 @@ export const BubbleToolbar = ({
                     onPointerLeave={() => setHovered(false)}
                 >
                     {items.map((item) => {
+                        if (item.options !== undefined) {
+                            return <TextStyle key={item.key} item={item} disabled={false} keepsFocus outOfTabOrder />;
+                        }
                         return (
                             <Item
                                 key={item.key}

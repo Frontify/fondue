@@ -158,7 +158,7 @@ export interface ReactPresentation extends ReaderPresentation {
      */
     readonly columnGap?: string;
     readonly contentClassName?: string;
-    /** Groups of command IDs and `{ command, payload }` items, in order. */
+    /** Groups of command IDs, `{ command, payload }` items and the `text-style` control ID, in order. */
     readonly toolbar: readonly (readonly CommandRef[])[];
     readonly controls?: Readonly<Record<string, { readonly labelKey?: string; readonly icon?: string }>>;
     /** Package key syntax; default `Alt-F10`. */
@@ -184,6 +184,7 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     readonly persistenceOptions?: PersistenceOptions;
     readonly portalContainer?: HTMLElement | null;
     readonly spellCheck?: boolean;
+    readonly inputRules?: false | { readonly exclude: readonly string[] };
     readonly defaultToolbarMode?: ToolbarMode;
     /** For the session id and the `nodeId`s the editor creates. Default: `crypto.randomUUID()`, or a version 4 UUID where that is missing. */
     readonly generateId?: () => string;

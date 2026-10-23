@@ -34,6 +34,7 @@ export {
     type WriteOutcome,
     type WriteTarget,
 } from '#/runtime/document-api';
+export { passesToBrowser } from '#/runtime/browser-keys';
 export { type Announcer, createAnnouncer } from './announcer';
 export { useClientLayoutEffect } from './client-layout-effect';
 export { OverlayBody, passEscape, useEditorOverlay, useOverlayContainer, useScopedFocus } from './overlays';

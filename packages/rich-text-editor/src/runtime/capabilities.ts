@@ -1,18 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { toggleMark as toggleEngineMark } from 'prosemirror-commands';
-import { type MarkType, type Node, type NodeType, type Schema } from 'prosemirror-model';
-import { type EditorState } from 'prosemirror-state';
+import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
+import { type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos, type Schema } from 'prosemirror-model';
+import { type EditorState, type Transaction } from 'prosemirror-state';
+import { liftTarget } from 'prosemirror-transform';
 
 import { type CommandLookup, type EngineCommand, type EngineImplementations } from '#/definition';
 import { type JsonObject } from '#/model';
-import { BASE_KEYS_PLUGIN, BLOCK_DECORATIONS_PLUGIN, HISTORY_PLUGIN, INPUT_RULES_PLUGIN } from '#/model/capabilities';
+import {
+    BASE_KEYS_PLUGIN,
+    BLOCK_DECORATIONS_PLUGIN,
+    CONTAINER_KEYS_PLUGIN,
+    HISTORY_PLUGIN,
+    INPUT_RULES_PLUGIN,
+} from '#/model/capabilities';
 import { isRecord } from '#/model/values';
 
 import { blockDecorationsPlugin } from './decorations';
 import { historyPlugin, redo, undo } from './history';
 import { enterRules, inputRulesPlugin, undoInputRule } from './input-rules';
-import { baseKeysPlugin } from './keys';
+import { baseKeysPlugin, containerKeysPlugin } from './keys';
 
 /** Builds the engine command of one edit from its arguments. */
 export type CapabilityImplementation = (args: JsonObject, schema: Schema, command: CommandLookup) => EngineCommand;
@@ -200,6 +207,162 @@ const insertText: CapabilityImplementation = () => ({
     active: () => false,
 });
 
+/** The blocks the selection spans inside the nearest ancestor of `type`, or `undefined` outside one. */
+const rangeIn = ($from: ResolvedPos, $to: ResolvedPos, type: NodeType): NodeRange | undefined =>
+    $from.blockRange($to, (node) => node.type === type) ?? undefined;
+
+const wrapIn: CapabilityImplementation = (args, schema) => {
+    // Compilation checked that the model declares the node.
+    const type = schema.nodes[args.node as string] as NodeType;
+    return {
+        run: (state, dispatch, payload) => {
+            const { $from, $to } = state.selection;
+            const range = rangeIn($from, $to, type);
+            if (range === undefined) {
+                // The payload holds the attributes of the new container.
+                let attrs: Readonly<Record<string, unknown>> | undefined;
+                if (isRecord(payload)) {
+                    attrs = payload;
+                }
+                return wrapInEngine(type, attrs)(state, dispatch);
+            }
+            const target = liftTarget(range);
+            if (target === null) {
+                return false;
+            }
+            dispatch?.(state.tr.lift(range, target).scrollIntoView());
+            return true;
+        },
+        active: (state, payload) => {
+            let attrs: Readonly<Record<string, unknown>> = {};
+            if (isRecord(payload)) {
+                attrs = payload;
+            }
+            const blocks = selectedTextblocks(state);
+            const within = blocks.filter(({ pos }) => {
+                const $pos = state.doc.resolve(pos);
+                for (let depth = $pos.depth; depth > 0; depth -= 1) {
+                    const node = $pos.node(depth);
+                    if (
+                        node.type === type &&
+                        Object.entries(attrs).every(([name, value]) => node.attrs[name] === value)
+                    ) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            return tristate(within.length, blocks.length);
+        },
+    };
+};
+
+/** Swaps the blocks the selection spans with their previous or next sibling, so the selection moves with them. */
+const block: CapabilityImplementation = (args) => ({
+    run: (state, dispatch) => {
+        const { $from, $to } = state.selection;
+        let range = $from.blockRange($to);
+        // Blocks that fill their container, as the only paragraph of a quote does, move with it.
+        while (
+            range !== null &&
+            range.depth > 0 &&
+            range.startIndex === 0 &&
+            range.endIndex === range.parent.childCount
+        ) {
+            const { depth } = range;
+            range = new NodeRange(
+                state.doc.resolve($from.before(depth)),
+                state.doc.resolve($from.after(depth)),
+                depth - 1,
+            );
+        }
+        if (range === null) {
+            return false;
+        }
+        const { parent, start, end, startIndex, endIndex } = range;
+        if (args.action === 'move-up') {
+            if (startIndex === 0) {
+                return false;
+            }
+            const previous = parent.child(startIndex - 1);
+            dispatch?.(
+                state.tr
+                    .insert(end, previous)
+                    .delete(start - previous.nodeSize, start)
+                    .scrollIntoView(),
+            );
+            return true;
+        }
+        if (endIndex === parent.childCount) {
+            return false;
+        }
+        const next = parent.child(endIndex);
+        dispatch?.(
+            state.tr
+                .delete(end, end + next.nodeSize)
+                .insert(start, next)
+                .scrollIntoView(),
+        );
+        return true;
+    },
+    active: () => false,
+});
+
+/** Removes every mark of `types` from the selected text, or from the stored marks at a caret. */
+const clearMarks = (
+    state: EditorState,
+    dispatch: ((transaction: Transaction) => void) | undefined,
+    types: readonly MarkType[],
+): boolean => {
+    if (state.selection.empty) {
+        const stored = state.storedMarks ?? state.selection.$from.marks();
+        const held = types.flatMap((type) => {
+            if (type.isInSet(stored) === undefined) {
+                return [];
+            }
+            return [{ type }];
+        });
+        if (held.length === 0) {
+            return false;
+        }
+        if (dispatch !== undefined) {
+            const transaction = state.tr;
+            for (const { type } of held) {
+                transaction.removeStoredMark(type);
+            }
+            dispatch(transaction.scrollIntoView());
+        }
+        return true;
+    }
+    const ranges = types.flatMap((type) => {
+        return markableText(state, type)
+            .filter((text) => text.marked)
+            .map((text) => ({ ...text, type }));
+    });
+    if (ranges.length === 0) {
+        return false;
+    }
+    if (dispatch !== undefined) {
+        const transaction = state.tr;
+        for (const { from, to, type } of ranges) {
+            transaction.removeMark(from, to, type);
+        }
+        dispatch(transaction.scrollIntoView());
+    }
+    return true;
+};
+
+const markTypesOf = (marks: unknown, schema: Schema): MarkType[] => {
+    const names = Array.isArray(marks) ? (marks as readonly unknown[]) : [marks];
+    return names.flatMap((name) => {
+        const type = typeof name === 'string' ? schema.marks[name] : undefined;
+        if (type === undefined) {
+            return [];
+        }
+        return [type];
+    });
+};
+
 const history: CapabilityImplementation = (args) => {
     let command = undo;
     if (args.action === 'redo') {
@@ -208,12 +371,26 @@ const history: CapabilityImplementation = (args) => {
     return { run: (state, dispatch) => command(state, dispatch), active: () => false };
 };
 
+/** Removes the listed marks the model installs as one undo step. */
+const removeMark: CapabilityImplementation = (args, schema) => {
+    const types = markTypesOf(args.installed, schema);
+    return {
+        run: (state, dispatch) => {
+            return clearMarks(state, dispatch, types);
+        },
+        active: () => false,
+    };
+};
+
 /** The editor API's edits, each built from its arguments for a model's schema. */
 export const EDITS = {
+    block,
     history,
     insertText,
+    removeMark,
     setBlock,
     toggleMark,
+    wrapIn,
 } as const;
 
 /** The package plugins the runtime builds, by plugin ID. */
@@ -223,6 +400,7 @@ export const RUNTIME_PLUGINS: EngineImplementations = {
         [HISTORY_PLUGIN.id]: ({ inputRules }) =>
             historyPlugin({ Backspace: undoInputRule, Enter: enterRules(inputRules) }),
         [INPUT_RULES_PLUGIN.id]: inputRulesPlugin,
+        [CONTAINER_KEYS_PLUGIN.id]: containerKeysPlugin,
         [BASE_KEYS_PLUGIN.id]: baseKeysPlugin,
         [BLOCK_DECORATIONS_PLUGIN.id]: blockDecorationsPlugin,
     },

@@ -98,6 +98,19 @@ const idOf = (node: Node): string | null => {
     return null;
 };
 
+/** The stretch that `transaction`'s first step wrote, mapped through its later steps. */
+const firstWrite = (transaction: Transaction): Positions => {
+    let from = 0;
+    let to = 0;
+    // oxlint-disable-next-line unicorn/no-array-for-each -- a step map gives its ranges only through `forEach`.
+    transaction.mapping.maps[0]?.forEach((_oldStart, _oldEnd, start, end) => {
+        from = start;
+        to = end;
+    });
+    const rest = transaction.mapping.slice(1);
+    return { from: rest.map(from, 1), to: rest.map(to, -1) };
+};
+
 /** The URL policy of the feature that installs a node or mark. */
 const policyOf = (model: ContentModel, featureId: string) => {
     const options = compiledModel(model).features.find(({ id }) => id === featureId)?.options;
@@ -480,6 +493,26 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 }
                 return capability(EDITS.toggleMark, { mark }).active(source.state());
             },
+            allowed: (mark) => {
+                const type = markType(mark);
+                if (type === undefined) {
+                    return false;
+                }
+                const { selection, doc } = source.state();
+                let text = false;
+                let takes = false;
+                doc.nodesBetween(selection.from, selection.to, (node, _pos, parent) => {
+                    if (node.isText) {
+                        text = true;
+                        takes ||= parent !== null && parent.type.allowsMarkType(type);
+                    }
+                });
+                if (text) {
+                    return takes;
+                }
+                const { parent } = selection.$from;
+                return parent.inlineContent && parent.type.allowsMarkType(type);
+            },
             toggle: (mark, attrs) => {
                 if (markType(mark) === undefined) {
                     return false;
@@ -490,6 +523,19 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 const checked = checkedAttrs(model, [mark], attrs, maxAttributeLength, true);
                 return checked !== undefined && edit(capability(EDITS.toggleMark, { mark, attrs: checked }));
             },
+            remove: (marks) => {
+                const installed = (typeof marks === 'string' ? [marks] : [...marks]).filter(
+                    (mark) => markType(mark) !== undefined,
+                );
+                if (installed.length === 0) {
+                    return false;
+                }
+                return edit(
+                    capability(EDITS.removeMark, {
+                        installed,
+                    }),
+                );
+            },
         },
         blocks: {
             active: (node, attrs) => {
@@ -497,13 +543,44 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 if (type === undefined) {
                     return false;
                 }
+                if (!type.isTextblock) {
+                    return capability(EDITS.wrapIn, { node }).active(source.state(), attrs);
+                }
                 return capability(EDITS.setBlock, { node }).active(source.state(), attrs);
             },
             set: (node, attrs, options) =>
                 schema.nodes[node] !== undefined &&
                 editWith(EDITS.setBlock, { node, toggle: options?.toggle === true }, [node], attrs, true),
+            wrap: (node, attrs) =>
+                schema.nodes[node] !== undefined && editWith(EDITS.wrapIn, { node }, [node], attrs, true),
+            move: (direction) => {
+                let action = 'move-down';
+                if (direction === 'up') {
+                    action = 'move-up';
+                }
+                return edit(capability(EDITS.block, { action }));
+            },
         },
         insert: {
+            node: (node, attrs) => {
+                const type = schema.nodes[node];
+                if (type === undefined || type.isBlock) {
+                    return { status: 'rejected', code: 'invalid' };
+                }
+                const state = source.state();
+                const checked = checkedAttrs(model, [node], attrs ?? {}, maxAttributeLength, true);
+                const { $from } = state.selection;
+                if (checked === undefined) {
+                    return { status: 'rejected', code: 'invalid' };
+                }
+                if (!$from.parent.canReplaceWith($from.index(), $from.index(), type)) {
+                    return { status: 'rejected', code: 'not-applicable' };
+                }
+                const inline = type.create(checked);
+                // A node whose `marks` declaration is empty, such as a mention, takes no mark from the text around it.
+                const transaction = state.tr.replaceSelectionWith(inline, type.spec.marks !== '').scrollIntoView();
+                return commit(state, transaction, firstWrite(transaction), Fragment.from(inline));
+            },
             text: (text) => edit(capability(EDITS.insertText, {}), { text }),
         },
         content: {

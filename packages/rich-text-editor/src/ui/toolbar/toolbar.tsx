@@ -16,6 +16,7 @@ import { ariaShortcut } from '#/ui/shortcuts';
 import { Icon, pressItem, runItem, tabStop, type ToolbarItem, type ToolbarStrings, useShortcut } from './item';
 import { More, type ModeSwitch } from './more';
 import styles from './styles/toolbar.module.scss';
+import { TextStyle } from './text-style';
 import { useFitting } from './use-fitting';
 
 export { type ToolbarItem, type ToolbarStrings } from './item';
@@ -207,6 +208,17 @@ export const FixedToolbar = ({
             data-test-id={`${testId}-toolbar`}
         >
             {items.slice(0, shown).map((item) => {
+                if (item.options !== undefined) {
+                    return (
+                        <TextStyle
+                            key={item.key}
+                            item={item}
+                            disabled={disabled}
+                            keepsFocus={docked !== undefined}
+                            outOfTabOrder={false}
+                        />
+                    );
+                }
                 return (
                     <Item
                         key={item.key}

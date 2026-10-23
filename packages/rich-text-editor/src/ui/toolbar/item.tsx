@@ -28,6 +28,8 @@ export interface ToolbarItem {
     readonly groupStart: boolean;
     /** Whether its group toggles a mark, which the bubble toolbar shows. */
     readonly bubble: boolean;
+    /** The rows of the text style picker, which the item is; a row it does not offer only names the active block type. */
+    readonly options?: readonly (ToolbarItem & { readonly offered: boolean })[];
     /** Its command opens an overlay, which a More row runs only once the menu has closed. */
     readonly opensControl?: boolean;
     /** A plugin's own control, which renders in place of the standard button. */

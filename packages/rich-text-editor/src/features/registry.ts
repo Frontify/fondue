@@ -1,15 +1,33 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { align } from '#/features/blocks-align/feature';
+import { heading } from '#/features/blocks-heading/feature';
+import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
+import { inputRules } from '#/features/input-rules/feature';
 import { bold } from '#/features/marks-bold/feature';
+import { code } from '#/features/marks-code/feature';
+import { italic } from '#/features/marks-italic/feature';
+import { strike } from '#/features/marks-strike/feature';
+import { subscript } from '#/features/marks-subscript/feature';
+import { superscript } from '#/features/marks-superscript/feature';
+import { underline } from '#/features/marks-underline/feature';
 import { DefinitionError, type Feature } from '#/model';
 
 /** Every shipped feature factory by feature ID. */
 export const registry: Readonly<Record<string, () => Feature>> = {
     core,
     'marks.bold': bold,
+    'marks.italic': italic,
+    'marks.underline': underline,
+    'marks.strike': strike,
+    'marks.code': code,
+    'marks.subscript': subscript,
+    'marks.superscript': superscript,
+    'blocks.heading': heading,
+    'blocks.quote': quote,
     'blocks.align': align,
+    'input-rules': inputRules,
 };
 
 export interface FeatureRecord {
@@ -27,7 +45,16 @@ const NO_DEPENDENCIES: FeatureRecord = { owner: OWNER, dependencies: {} };
 export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     core: NO_DEPENDENCIES,
     'marks.bold': NO_DEPENDENCIES,
+    'marks.italic': NO_DEPENDENCIES,
+    'marks.underline': NO_DEPENDENCIES,
+    'marks.strike': NO_DEPENDENCIES,
+    'marks.code': NO_DEPENDENCIES,
+    'marks.subscript': NO_DEPENDENCIES,
+    'marks.superscript': NO_DEPENDENCIES,
+    'blocks.heading': NO_DEPENDENCIES,
+    'blocks.quote': NO_DEPENDENCIES,
     'blocks.align': NO_DEPENDENCIES,
+    'input-rules': NO_DEPENDENCIES,
 };
 
 /**

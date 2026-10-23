@@ -6,6 +6,7 @@ import { nodeChromeAt } from '#/bridge/chrome-view';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { type MountCoordinator } from '#/bridge/mount';
 import { escapePassed } from '#/bridge/overlays';
+import { passesToBrowser } from '#/runtime/browser-keys';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { pressesBinding } from '#/ui/shortcuts';
 
@@ -40,7 +41,7 @@ export const moveChromeFocus = (
     }
     // A tooltip or menu that closed on this Escape keeps focus where it is; the bubble toolbar hands it on.
     const taken = event.defaultPrevented && !escapePassed(event.nativeEvent);
-    if (taken || runtime === undefined) {
+    if (taken || passesToBrowser(event.nativeEvent) || runtime === undefined) {
         return;
     }
     const { view } = runtime;
@@ -125,7 +126,11 @@ export const useEscapeToSurface = (
         }
         const onKeyDown = (event: globalThis.KeyboardEvent) => {
             const overlays = overlayRootRef.current;
-            if (event.key !== 'Escape' || (overlays !== null && overlays.childElementCount > 0)) {
+            if (
+                event.key !== 'Escape' ||
+                passesToBrowser(event) ||
+                (overlays !== null && overlays.childElementCount > 0)
+            ) {
                 return;
             }
             if (!leavesToSurface(event.composedPath()[0], toolbarRef.current, root)) {

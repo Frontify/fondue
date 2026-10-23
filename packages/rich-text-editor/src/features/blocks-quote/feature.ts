@@ -1,0 +1,20 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { defineFeature } from '#/model';
+
+/** Quotations as `blockquote`, a container of blocks that Enter in its empty last paragraph leaves. */
+export const quote = defineFeature({
+    id: 'blocks.quote',
+    version: 1,
+    requires: [{ id: 'core', version: 1 }],
+    nodes: {
+        blockquote: {
+            group: 'block',
+            content: 'block+',
+            attrs: {},
+            html: ['blockquote', 0],
+            parse: [{ tag: 'blockquote' }],
+        },
+    },
+    formats: { html: 'lossless', text: 'lossy', markdown: 'lossless' },
+});

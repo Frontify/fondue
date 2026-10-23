@@ -285,7 +285,15 @@ test.describe('at 320 CSS pixels', () => {
 
         expect(visible).toContain('More');
         expect(scrolls).toEqual({ page: false, toolbar: false });
-        expect(reachable).toEqual(['Bold', 'Italic', 'List', ...[1, 2, 3, 4, 5, 6].map((level) => `Heading ${level}`)]);
+        expect(reachable).toEqual([
+            'Bold',
+            'Italic',
+            'List',
+            ...[1, 2, 3, 4, 5, 6].map((level) => `Heading ${level}`),
+            // The labelled key routes of `core` that only More holds.
+            'Move up',
+            'Move down',
+        ]);
     });
 
     test('starts the name of every More row with its visible text', async ({ mount, page }) => {

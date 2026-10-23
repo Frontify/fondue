@@ -50,7 +50,7 @@ describe('the outside fixture feature with no DOM globals', () => {
         expect([typeof window, typeof document, typeof navigator]).toEqual(['undefined', 'undefined', 'undefined']);
         const { features, model: entry, codecs: codecEntry, outside, renderReader } = loaded;
         const { highlight, highlightDocument } = outside;
-        const model = entry.compileContentModel([features.core(), features.align(), highlight()], {
+        const model = entry.compileContentModel([features.core(), features.heading(), features.align(), highlight()], {
             id: 'fixture.highlight',
             version: 1,
         });

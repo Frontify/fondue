@@ -78,20 +78,34 @@ export interface DocumentApi {
     readonly marks: {
         /** Whether all of the selection carries `mark`, part of it, or none; at a caret, what typing gets. */
         active(mark: string): boolean | 'mixed';
+        /** Whether the selection can carry `mark`: its selected text, or the content where it stands, takes it. */
+        allowed(mark: string): boolean;
         toggle(mark: string, attrs?: JsonObject): boolean;
+        remove(marks: string | readonly string[]): boolean;
     };
     /**
-     * `set` acts on textblocks, so `node` is a textblock type such as `heading`.
+     * `set` acts on textblocks, so `node` is a textblock type such as `heading`; `wrap` acts on wrapping, so `node` is
+     * a container such as `blockquote`; `active` reads blocks of any type.
      */
     readonly blocks: {
         /**
-         * Whether all of the selected textblocks are `node` with `attrs`, part of them, or none.
+         * Whether all of the selected textblocks are `node` with `attrs`, part of them, or none; for a type that is no
+         * textblock, such as `blockquote` or `bullet_list`, whether they sit inside one.
          */
         active(node: string, attrs?: JsonObject): boolean | 'mixed';
         /** Turns the selected textblocks into `node`; with `toggle`, back into paragraphs when they already are. */
         set(node: string, attrs?: JsonObject, options?: { readonly toggle?: boolean }): boolean;
+        /**
+         * Wraps the selected blocks in `node` with `attrs`, which a container with a required attribute needs, or lifts
+         * them out when they already are inside one.
+         */
+        wrap(node: string, attrs?: JsonObject): boolean;
+        /** Swaps the blocks the selection spans, or the container they fill, with the block before or after them. */
+        move(direction: 'up' | 'down'): boolean;
     };
     readonly insert: {
+        /** Inserts the inline `node` at the selection, as typing would; a block type is rejected as `invalid`. */
+        node(node: string, attrs?: JsonObject): WriteOutcome;
         text(text: string): boolean;
     };
     /**

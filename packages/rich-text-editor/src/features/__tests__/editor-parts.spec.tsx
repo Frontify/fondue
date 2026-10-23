@@ -4,7 +4,7 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { core } from '#/features';
+import { core, heading } from '#/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
 import {
     type CommandsOfModel,
@@ -13,7 +13,9 @@ import {
     type EditorHandle,
     type EditorPlugin,
     type EditorPluginParts,
+    NodeViewContent,
     RichTextEditor,
+    useRichTextNodeView,
 } from '#/index';
 import { compileContentModel, type ContentNodeJSON, type RichTextDocument, textRule } from '#/model';
 import { type DocumentChange } from '#/runtime/types';
@@ -27,7 +29,7 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
-const model = compileContentModel([core(), spotlight()], { id: 'fixture.parts', version: 1 });
+const model = compileContentModel([core(), heading(), spotlight()], { id: 'fixture.parts', version: 1 });
 
 const para = (...content: ContentNodeJSON[]): ContentNodeJSON => ({
     type: 'paragraph',
@@ -35,7 +37,11 @@ const para = (...content: ContentNodeJSON[]): ContentNodeJSON => ({
     content,
 });
 const text = (value: string): ContentNodeJSON => ({ type: 'text', text: value });
-
+const title: ContentNodeJSON = {
+    type: 'heading',
+    attrs: { nodeId: 'heading-1', level: 2, lang: null },
+    content: [text('Title')],
+};
 const storedOf = (blocks: readonly ContentNodeJSON[]) =>
     ({
         format: 'frontify.rich-text',
@@ -119,6 +125,32 @@ describe('the decorations of an editor part', () => {
         expect(textsOf(container, '.fixture-first')).toEqual(['o', 't', 't']);
     });
 
+    it('derives a block split off a heading again with the nodeId it is given', () => {
+        const plugin = defineEditorPlugin(spotlight, {
+            decorations: [
+                {
+                    id: 'fixture.ids',
+                    nodes: ['heading'],
+                    derive: (block) => [{ from: 0, to: 1, attributes: { 'data-node': block.nodeId ?? 'none' } }],
+                },
+            ],
+        });
+        const { handle, container } = mount([title], [plugin]);
+
+        setSelection(handle, { text: 'Title', from: 2, to: 2 });
+        act(() => {
+            pressKey(handle, 'Enter');
+        });
+
+        const blocks = handle.getSnapshot().document.content.content ?? [];
+        const ids = blocks.map((block) => (block.attrs as { readonly nodeId?: unknown } | undefined)?.nodeId);
+        expect(ids).toHaveLength(2);
+        expect(new Set(ids).size).toBe(2);
+        expect(
+            [...container.querySelectorAll('[data-node]')].map((element) => element.getAttribute('data-node')),
+        ).toEqual(ids);
+    });
+
     it('refuses a source over a node that is no textblock of the model', () => {
         const plugin = defineEditorPlugin(spotlight, {
             decorations: [{ id: 'fixture.none', nodes: ['doc'], derive: () => [] }],
@@ -137,6 +169,45 @@ describe('the decorations of an editor part', () => {
         expect(() => defineEditor({ id: 'fixture.parts', model, plugins: [plugin] })).toThrow(
             /decoration sources cover textblocks/u,
         );
+    });
+});
+
+describe('the node views of an editor part', () => {
+    it('renders its chrome around the content element it places, and rerenders only for its own node', async () => {
+        const renders: unknown[] = [];
+        const Frame = () => {
+            const { attrs, selected } = useRichTextNodeView();
+            renders.push([attrs.level, selected]);
+            return (
+                <div className="fixture-frame">
+                    <span contentEditable={false}>Level {JSON.stringify(attrs.level)}</span>
+                    <NodeViewContent className="fixture-content" />
+                </div>
+            );
+        };
+        const plugin = defineEditorPlugin(spotlight, { views: [{ node: 'heading', component: Frame }] });
+        const { handle, container } = mount([title, para(text('Body'))], [plugin]);
+        await vi.waitFor(() => {
+            expect(container.querySelector('.fixture-content')?.textContent).toBe('Title');
+        });
+        const content = container.querySelector('.fixture-frame .fixture-content');
+        renders.length = 0;
+
+        setSelection(handle, { text: 'Body', from: 1, to: 1 });
+        act(() => {
+            typeText(handle, 'X');
+        });
+        setSelection(handle, { text: 'Title', from: 1, to: 1 });
+        act(() => {
+            typeText(handle, 'Y');
+        });
+
+        expect(content?.textContent).toBe('TYitle');
+        const chrome = content?.closest('[data-rte-chrome]');
+        const first = handle.getSnapshot().document.content.content?.[0];
+        expect(chrome?.hasAttribute('contenteditable')).toBe(false);
+        expect(first?.content).toEqual([text('TYitle')]);
+        expect(renders).toEqual([]);
     });
 });
 
@@ -179,10 +250,26 @@ describe('the keys of an editor part', () => {
         });
         const { handle, container, changes } = mount([para(text('one'))], [plugin]);
         setSelection(handle, { text: 'one', from: 0, to: 3 });
+        const before = handle.getSnapshot().document;
 
         const prevented = press(container, 'j');
 
         expect([ran, prevented, changes]).toEqual([['one'], false, []]);
+        expect(handle.getSnapshot().document).toEqual(before);
+    });
+
+    it('runs a key handler before a key binding of the same key', () => {
+        const binding = defineEditorPlugin(heading, {
+            commands: { 'fixture.heading.mark': { run: (api) => api.insert.text('binding') } },
+            keys: { Enter: 'fixture.heading.mark' },
+        });
+        const handler = defineEditorPlugin(spotlight, { keys: { Enter: (api) => api.insert.text('handler') } });
+        const { handle } = mount([para(text('one'))], [binding, handler]);
+        setSelection(handle, { text: 'one', from: 3, to: 3 });
+
+        pressKey(handle, 'Enter');
+
+        expect(JSON.stringify(handle.getSnapshot().document)).toContain('onehandler');
     });
 
     it('reports the command ID of a key that names a command', () => {
@@ -256,6 +343,7 @@ describe('the orphan checks of an editor part', () => {
             },
             '/suggestions/0/command',
         ],
+        ['node view', { views: [{ node: 'ghost', component: () => null }] }, '/nodeViews/ghost'],
         [
             'decoration source',
             { decorations: [{ id: 'fixture.ghost', nodes: ['ghost'], derive: () => [] }] },

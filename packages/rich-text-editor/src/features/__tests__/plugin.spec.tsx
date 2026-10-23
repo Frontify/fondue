@@ -1,13 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { act, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { featuresById } from '#/features';
+import { commandCases } from '#/features/__tests__/fixtures/contract.cases';
 import { FIXTURE_PLUGINS } from '#/features/__tests__/fixtures/plugins';
 import { spotlight, spotlightDocument } from '#/features/__tests__/fixtures/spotlight/feature';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
+import { registry } from '#/features/registry';
 import {
     type AuthoringPolicy,
     type CommandsOfModel,
@@ -21,7 +24,12 @@ import {
 } from '#/index';
 import { compileContentModel, defineFeature, DefinitionError } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
-import { pressKey, setSelection } from '#/testing';
+import { pressKey, runFeatureContract, setSelection } from '#/testing';
+
+// With every shipped feature, whose fixtures the shipped ones need, as an outside feature joins a profile.
+const features = [...featuresById(Object.keys(registry)), spotlight()];
+runFeatureContract(features, { plugins: FIXTURE_PLUGINS, fixtures: [spotlightDocument] });
+commandCases(features, FIXTURE_PLUGINS);
 
 beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
@@ -230,6 +238,47 @@ describe('a plugin part that reads the policy and its options', () => {
         setSelection(ref.current, { text: 'Body', from: 1, to: 1 });
         return { handle: ref.current, unmount: rendered.unmount };
     };
+
+    it('rejects a payload the policy refuses as not-allowed before applicability, and does not offer its entry', () => {
+        const levels = defineFeature({ id: 'fixture.levels', version: 1, requires: [{ id: 'core', version: 1 }] });
+        const levelsEditor = defineEditorPlugin(levels, {
+            commands: {
+                // The text style picker lists the rows of `heading.set`, which this feature's model does not install.
+                'heading.set': {
+                    payload: { fields: { level: { type: 'integer', min: 1, max: 6 } } },
+                    run: (_api, payload: { readonly level: number }) => payload.level < 0,
+                    refuses: (policy, payload: { readonly level: number }) =>
+                        !policy.creatableHeadingLevels.some((level) => level === payload.level),
+                },
+            },
+            toolbar: [1, 2].map((level) => ({
+                id: `level-${level}`,
+                kind: 'toggle' as const,
+                command: 'heading.set',
+                payload: { level },
+                label: { 'en-US': `Level ${level}` },
+                icon: 'IconHeading',
+            })),
+        });
+        const { handle } = mountWith([core(), levels()], [levelsEditor], [['text-style']], {
+            creatableHeadingLevels: [1],
+        });
+
+        expect(handle.execute('heading.set', { level: 2 })).toMatchObject({ status: 'rejected', code: 'not-allowed' });
+        expect(handle.query('heading.set', { level: 2 }).disabledReason).toBe('not-allowed');
+        expect(handle.execute('heading.set', { level: 1 })).toMatchObject({
+            status: 'rejected',
+            code: 'not-applicable',
+        });
+        act(() => {
+            fireEvent.pointerDown(screen.getByRole('button', { name: 'Normal text' }), {
+                button: 0,
+                ctrlKey: false,
+                pointerType: 'mouse',
+            });
+        });
+        expect(screen.getAllByRole('menuitemradio').map((row) => row.textContent)).toEqual(['Normal text', 'Level 1']);
+    });
 
     it('takes its keys, toolbar entries and payload values from the options of its feature', () => {
         const picks = defineFeature({

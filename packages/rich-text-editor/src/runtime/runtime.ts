@@ -46,7 +46,8 @@ import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } 
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
-import { firedRule, withoutRules } from './input-rules';
+import { firedRule, withoutRules, withRuleSetting } from './input-rules';
+import { createKeyGuard } from './keys';
 import { createLimitCheck } from './limits';
 import { operationMetric } from './metrics';
 import { nodeStatePlugin } from './node-state';
@@ -204,6 +205,8 @@ export interface EditorRuntimeOptions {
     readonly saves?: ((runtime: EditorRuntime) => SaveCoordinator) | undefined;
     /** The host's recovery service, read when a view fault leaves a candidate. */
     readonly recovery?: () => RecoveryService | undefined;
+    /** The host's `inputRules` prop, read on each input. */
+    readonly inputRules?: () => false | { readonly exclude: readonly string[] } | undefined;
     /** What the editor layer hands the plugin commands it runs. */
     readonly commandHost?: unknown;
 }
@@ -427,10 +430,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         () => view !== undefined && view.composing,
         () => settleInput(),
     );
+    const keyGuard = createKeyGuard();
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
         plugins: [
             typingRecorder,
+            keyGuard,
             settling.plugin,
             targetsPlugin,
             groupsPlugin,
@@ -847,6 +852,23 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
     };
 
+    /** Marks a typed root with the rules the host's prop and the policy turn off now. */
+    const markRules = (root: Transaction) => {
+        const setting = options.inputRules?.();
+        if (setting === false) {
+            withoutRules(root);
+            return;
+        }
+        let exclude: readonly string[] = [];
+        if (setting !== undefined) {
+            exclude = setting.exclude;
+        }
+        const refused = Object.entries(policy.features)
+            .filter(([, rules]) => !rules.create)
+            .map(([id]) => id);
+        withRuleSetting(root, { exclude, refused });
+    };
+
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view. */
     const commit = (root: Transaction) => {
         // A plugin view's `update` may dispatch inside `view.updateState`; its root waits for the install to publish.
@@ -868,6 +890,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // Input rules fire only on typed text, never on a paste or a command after a `beforeinput` that changed nothing.
         if (typed && actionOrigin(root) === undefined) {
             root.setMeta(ORIGIN_META, 'input');
+            markRules(root);
         }
         busyWith(() => {
             const prepared = prepare(root, installedId, true);

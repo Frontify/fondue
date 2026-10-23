@@ -15,6 +15,11 @@ type ButtonEntry = Omit<PluginToolbarEntry, 'labelKey' | 'label'> & {
     readonly label?: Readonly<Record<string, string>>;
 };
 
+/** The control ID of the text style picker in a presentation's toolbar. */
+const TEXT_STYLE = 'text-style';
+// The picker's rows, in order: Normal text, the heading levels, then Quote.
+const TEXT_STYLE_COMMANDS = ['paragraph.set', 'heading.set', 'quote.toggle'];
+
 /**
  * The plugin label for `lang` by RFC 4647 lookup, without subtags from the end until a tag matches, else `en-US`,
  * which every plugin label holds.
@@ -88,7 +93,7 @@ const routeOf = (ref: CommandRef) => {
  * the presentation's `controls` replace them.
  * A command the definition does not install, that has no toolbar entry, or whose feature the policy lets the author
  * create nothing with has no item. The bubble toolbar shows the groups that
- * toggle a mark.
+ * toggle a mark and the text style picker.
  */
 export const toolbarItems = (
     engine: CompiledDefinition,
@@ -148,12 +153,37 @@ export const toolbarItems = (
         }
         return { ...item, component: entry.control };
     };
+    // A heading level the policy cannot create only names a stored heading.
+    const offered = ({ command, payload }: ButtonEntry) =>
+        engine.commands.get(command)?.policyRefuses?.(authoring, payload) !== true;
     const items: ToolbarItem[] = [];
     for (const group of presentation.toolbar) {
         let groupStart = items.length > 0;
         const bubble = group.some(marks);
         for (const ref of group) {
             const { command, payload } = routeOf(ref);
+            if (command === TEXT_STYLE) {
+                const options = TEXT_STYLE_COMMANDS.flatMap((id) => entries.filter((entry) => entry.command === id))
+                    .filter((entry) => runnable(entry.command))
+                    .map((entry) => ({ ...itemOf(entry, false, false), offered: offered(entry) }));
+                if (options.some((option) => option.offered) && !items.some((item) => item.key === TEXT_STYLE)) {
+                    const label = t('RichTextEditor_textStyle');
+                    items.push({
+                        key: TEXT_STYLE,
+                        command,
+                        payload,
+                        toggle: false,
+                        label,
+                        icon: '',
+                        bindings: [],
+                        groupStart,
+                        bubble: true,
+                        options,
+                    });
+                    groupStart = false;
+                }
+                continue;
+            }
             const key = `${command} ${payloadKey(payload)}`;
             const entry = entries.find(
                 (candidate) => candidate.command === command && payloadKey(candidate.payload) === payloadKey(payload),
@@ -182,7 +212,7 @@ export const menuItems = (
     plugins: readonly EditorPlugin[] = [],
 ): readonly ToolbarItem[] => {
     const { keymap } = engine;
-    const shown = new Set(items.map(({ key }) => key));
+    const shown = new Set(items.flatMap((item) => [item, ...(item.options ?? [])]).map(({ key }) => key));
     const rows: ToolbarItem[] = [];
     const parts = plugins.map(({ keys, toolbar }) => ({
         keys,

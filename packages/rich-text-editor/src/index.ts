@@ -30,6 +30,7 @@ export {
     OverlayBody,
     type OverlayProps,
     passEscape,
+    passesToBrowser,
     type PluginPresentation,
     type PluginServices,
     type PluginToolbarEntry,

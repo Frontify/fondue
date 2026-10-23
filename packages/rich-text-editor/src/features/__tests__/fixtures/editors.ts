@@ -9,6 +9,7 @@ import {
     fixtureHeadingSet,
     fixtureHistory,
     fixtureInputRules,
+    fixtureMention,
     fixtureRedo,
     fixtureToolbar,
 } from './features';
@@ -44,6 +45,13 @@ export const fixtureHeadingEditor = defineEditorPlugin(fixtureHeading, {
         },
     },
     keys: { 'Mod-Alt-2': { command: 'fixture.heading.set', payload: { level: 2 } } },
+});
+
+/** Inserts a mention at the selection. */
+export const fixtureMentionEditor = defineEditorPlugin(fixtureMention, {
+    commands: {
+        'fixture.mention.insert': { run: (api) => api.insert.node('mention').status === 'applied' },
+    },
 });
 
 /** `heading.set` turns the selected textblocks into headings of the payload's level. */
@@ -147,6 +155,7 @@ export const FIXTURE_EDITORS = [
     fixtureHistoryEditor,
     fixtureRedoEditor,
     fixtureHeadingEditor,
+    fixtureMentionEditor,
     fixtureHeadingSetEditor,
     fixtureInputRulesEditor,
     fixtureToolbarEditor,

@@ -32,6 +32,8 @@ const WORD = /[\p{L}\p{M}\p{N}]/u;
 const firedKey = new PluginKey<boolean>(INPUT_RULES_PLUGIN.id);
 // The root meta that applies a typed root again with no rule, once the batch with its rule was refused.
 const RULES_OFF = 'rte.input-rules-off';
+// The root meta with the rules that one typed root may not fire.
+const RULES_SETTING = 'rte.input-rules-setting';
 /** The meta of the empty root that Enter dispatches, on which the rules that Enter ends fire. */
 export const ENTER_RULES_META = 'rte.enter-rules';
 /** A language's quotation marks, opening and closing, and its apostrophe. */
@@ -73,6 +75,18 @@ export const firedRule = (transactions: readonly Transaction[]): boolean =>
  * typed text lands either way.
  */
 export const withoutRules = (root: Transaction): Transaction => root.setMeta(RULES_OFF, true);
+
+/** What the host's `inputRules` prop and the authoring policy turn off when a typed root arrives. */
+export interface RuleSetting {
+    /** Rule IDs the host's `inputRules` prop excludes. */
+    readonly exclude: readonly string[];
+    /** Features whose policy forbids creating, whose rules never fire. */
+    readonly refused: readonly string[];
+}
+
+/** Marks a typed root with the rules it may not fire, read on each input, so no plugin is rebuilt. */
+export const withRuleSetting = (root: Transaction, setting: RuleSetting): Transaction =>
+    root.setMeta(RULES_SETTING, setting);
 
 /** Where the text a typed root inserted ends, or `undefined` for any other root, an undo from `beforeinput` included. */
 const typedEnd = (root: Transaction): number | undefined => {
@@ -468,7 +482,14 @@ export const inputRulesPlugin: PluginImplementation = ({ inputRules }) =>
             if (end === undefined) {
                 return null;
             }
-            const change = fire(inputRules, state, end, enter);
+            let rules = inputRules;
+            const setting = root.getMeta(RULES_SETTING) as RuleSetting | undefined;
+            if (setting !== undefined) {
+                rules = rules.filter(
+                    ({ id, featureId }) => !setting.exclude.includes(id) && !setting.refused.includes(featureId),
+                );
+            }
+            const change = fire(rules, state, end, enter);
             if (change === null) {
                 return null;
             }

@@ -41,6 +41,7 @@ import {
     type JsonValue,
     migrateDocument,
     type ResourceLimits,
+    type RichTextDocument,
 } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/decode';
 import { extensionsOf } from '#/react/engine';
@@ -62,6 +63,7 @@ import {
     type CommandResult,
     type DocumentChange,
     type FeaturePolicy,
+    type ReplaceDocumentRequest,
 } from '../types';
 
 const boldModel = compileContentModel([core(), bold()], { id: 'test.bold', version: 1 });
@@ -157,6 +159,18 @@ const undoSteps = (handle: EditorRuntime['handle']) => {
     }
     return steps;
 };
+/** A request that replaces the session's document by `document`, discarding unsaved changes unless `unsaved` says otherwise. */
+const replacing = (
+    handle: EditorRuntime['handle'],
+    document: unknown,
+    unsaved: ReplaceDocumentRequest['unsaved'] = { action: 'discard', confirmed: true },
+): ReplaceDocumentRequest => ({
+    expected: handle.getSnapshot().stamp,
+    next: { documentId: 'document-2', revision: null, document: document as RichTextDocument },
+    unsaved,
+    selection: 'start',
+    history: 'reset',
+});
 
 // every browser storage API fails while this suite runs.
 let storage: ReturnType<typeof stubStorage>;
@@ -3269,6 +3283,23 @@ describe('input rules', () => {
             expect([shapeOf(block.view.state.doc), shapeOf(inline.view.state.doc)]).toEqual([
                 `code_block ${typed}`,
                 `paragraph .${typed}.[code]`,
+            ]);
+        });
+
+        it(`fires no ${id} for its pattern pasted as plain text, inserted by a command, loaded or replaced`, async () => {
+            const pasted = start(stored(para()), { model: ruleModel });
+            pasted.view.pasteText(typed);
+            const inserted = start(stored(para()), { model: ruleModel });
+            inserted.handle.execute('text.insert', { text: typed });
+            const loaded = start(stored(para(words(typed))), { model: ruleModel });
+            const replaced = start(stored(para()), { model: ruleModel });
+            await replaced.handle.replaceDocument(replacing(replaced.handle, stored(para(words(typed)))));
+
+            expect([pasted, inserted, loaded, replaced].map(({ view }) => shapeOf(view.state.doc))).toEqual([
+                `paragraph ${typed}`,
+                `paragraph ${typed}`,
+                `paragraph ${typed}`,
+                `paragraph ${typed}`,
             ]);
         });
     }

@@ -76,6 +76,8 @@ const defaultValue = (...blocks: readonly JsonValue[]): LoadedDocument => ({
     },
 });
 
+const ALLOWED = { create: true, edit: true, remove: true, paste: true };
+
 type Props = Partial<RichTextEditorBaseProps<object>>;
 
 beforeEach(() => {
@@ -390,6 +392,21 @@ describe('RichTextEditor', () => {
             para({ type: 'text', text: 'ab', marks: [{ type: 'bold' }, { type: 'italic' }] }),
         ]);
         unmount();
+    });
+
+    it('rejects a policy for a feature the model does not install', () => {
+        let failure: unknown;
+        try {
+            defineEditor({ id: 'test.policy', model: boldModel, policy: { features: { 'marks.italic': ALLOWED } } });
+        } catch (error) {
+            failure = error;
+        }
+
+        expect(failure).toBeInstanceOf(DefinitionError);
+        expect(failure).toMatchObject({
+            code: 'definition.unknown-policy-feature',
+            details: { feature: 'marks.italic' },
+        });
     });
 
     it('keeps the engine out of the definition a host holds', () => {

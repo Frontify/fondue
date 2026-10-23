@@ -369,6 +369,7 @@ const SessionComponent = (
             revision: loaded.revision,
             saves,
             recovery: () => memberOf(latestRef.current.services, 'recovery'),
+            inputRules: () => latestRef.current.inputRules,
             commandHost: hosts,
         });
         // Each event calls the newest callback the host passed.
