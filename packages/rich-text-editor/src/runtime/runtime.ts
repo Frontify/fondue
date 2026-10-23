@@ -59,7 +59,7 @@ import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
 import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
-import { createKeyGuard } from './keys';
+import { createKeyGuard, type EnterKeys } from './keys';
 import { createLimitCheck, type ExceededLimit, storedNodeCount } from './limits';
 import { insertPicked, pickedAsset, refillPicked } from './media';
 import { operationMetric } from './metrics';
@@ -292,6 +292,8 @@ export interface EditorRuntimeOptions {
     readonly inputRules?: () => false | { readonly exclude: readonly string[] } | undefined;
     /** The host's `tabMovesFocus` prop, read on each Tab; default false. */
     readonly tabMovesFocus?: () => boolean | undefined;
+    /** The profile's Enter keys and the host's submit; without them Enter, Shift+Enter and Mod+Enter edit. */
+    readonly enterKeys?: EnterKeys;
     /** The host's `scrollSelectionIntoView` prop, read on each scroll to the selection; default true. */
     readonly scrollSelectionIntoView?: () => boolean | undefined;
     /** What the editor layer hands the plugin commands it runs, such as its overlay and panel hosts. */
@@ -603,7 +605,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         () => view !== undefined && view.composing,
         () => settleInput(),
     );
-    const keyGuard = createKeyGuard(() => options.tabMovesFocus?.() === true);
+    const keyGuard = createKeyGuard(
+        () => options.tabMovesFocus?.() === true,
+        () => options.enterKeys,
+        () => policy.enterBehavior,
+    );
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
         plugins: [

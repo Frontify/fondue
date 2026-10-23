@@ -37,10 +37,12 @@ export interface FeaturePolicy {
     readonly remove: boolean;
     readonly paste: boolean;
 }
-/** What a host lets users do in the editor: the policy per feature and the heading levels. */
+/** What a host lets users do in the editor: the policy per feature, the heading levels and the Enter behavior. */
 export interface AuthoringPolicy {
     readonly features: Readonly<Record<string, FeaturePolicy>>;
     readonly creatableHeadingLevels: readonly HeadingLevel[];
+    /** `paragraph` by default in Comment, Document and Brand document, where Comment may use `submit`; Inline defaults to `submit`, which acts as `none` while the host sets no `onSubmit`. */
+    readonly enterBehavior: 'paragraph' | 'submit' | 'none';
 }
 
 /** A colour stored either as a token id or as a literal value. */

@@ -39,6 +39,8 @@ export interface PasteSettings {
     readonly headingLevels: readonly number[];
     /** The view's window, whose `DOMParser` makes the inert document of pasted HTML. */
     readonly window: Window;
+    /** The Inline profile's field, which keeps one paragraph. */
+    readonly singleLine: boolean;
 }
 
 /** A change that follows the paste as its own undo step: a Markdown conversion or a caret link. */
@@ -167,6 +169,40 @@ const plainSlice = (schema: Schema, text: string, marks: readonly Mark[]) => {
     return Slice.maxOpen(Fragment.from(paragraphs));
 };
 
+/**
+ * The slice's text blocks as one paragraph with a space between blocks, keeping marks; `undefined` for one text block
+ * or none, or when a block leaf such as an island would be dropped (DR-041).
+ */
+const joinedSlice = (schema: Schema, slice: Slice): Slice | undefined => {
+    const blocks: Node[] = [];
+    let textblocks = 0;
+    let leaves = 0;
+    slice.content.descendants((node) => {
+        if (node.isBlock && node.isLeaf) {
+            leaves += 1;
+        }
+        if (!node.isTextblock) {
+            return true;
+        }
+        textblocks += 1;
+        if (node.content.size > 0) {
+            blocks.push(node);
+        }
+        return false;
+    });
+    if (textblocks < 2 || leaves > 0) {
+        return undefined;
+    }
+    const inline: Node[] = [];
+    for (const [index, block] of blocks.entries()) {
+        if (index > 0) {
+            inline.push(schema.text(' '));
+        }
+        inline.push(...block.children);
+    }
+    return Slice.maxOpen(Fragment.from(schema.node('paragraph', null, inline)));
+};
+
 const ABSOLUTE_URL = /^[a-z][\d+.a-z-]*:\S+$/i;
 
 /** The URL that `text` is, when it is one absolute URL that passes `checkHref`. */
@@ -241,9 +277,20 @@ export const pastePayload = (
     const { model, policy } = settings;
     const text = payload.text.replaceAll('\r\n', '\n');
     const $from = tr.doc.resolve(from);
+    // A single-line field joins the pasted blocks into one paragraph, which the announcement reports.
+    let joined = false;
     const prepared = (slice: Slice) => {
         const kept = prepareSlice(slice, schema, model, policy);
-        return kept;
+        if (!settings.singleLine) {
+            return kept;
+        }
+        const one = joinedSlice(schema, kept);
+        if (one === undefined) {
+            // A closed paragraph would land beside the field's one paragraph, so it opens into the paragraph at the caret.
+            return Slice.maxOpen(kept.content);
+        }
+        joined = true;
+        return one;
     };
     const insert = (slice: Slice) => insertAndSelect(tr, from, to, slice);
     // A code block takes the text exactly.
@@ -287,7 +334,7 @@ export const pastePayload = (
         }
         const content = withinLinkPolicy(slice.content, markHrefPolicy(model, 'link'));
         insert(prepared(new Slice(content, slice.openStart, slice.openEnd)));
-        return { droppedMedia };
+        return { droppedMedia, removedFormatting: joined };
     }
     // HTML, which goes no further even when it parses to nothing.
     if (!settings.plain && payload.html !== '') {
@@ -309,7 +356,7 @@ export const pastePayload = (
             },
         );
         insert(prepared(insertable(content)));
-        return { droppedMedia: droppedImages, removedFormatting: removedColors > 0 || removedTables > 0 };
+        return { droppedMedia: droppedImages, removedFormatting: removedColors > 0 || removedTables > 0 || joined };
     }
     // Plain text, which Markdown structure converts in a second step.
     if (text === '') {
@@ -323,7 +370,7 @@ export const pastePayload = (
         converted = markdownSlice(schema, text, settings);
     }
     if (converted === undefined) {
-        return { droppedMedia: 0 };
+        return { droppedMedia: 0, removedFormatting: joined };
     }
     const target = new Transform(before);
     const range = insertSlice(target, from, to, prepared(converted));
@@ -341,5 +388,5 @@ export const pastePayload = (
         }
         return next.setSelection(Selection.near(next.doc.resolve(range.to), -1));
     };
-    return { droppedMedia: 0, followUp };
+    return { droppedMedia: 0, removedFormatting: joined, followUp };
 };

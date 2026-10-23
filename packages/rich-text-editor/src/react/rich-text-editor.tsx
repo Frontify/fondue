@@ -29,6 +29,7 @@ import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
 import { createNodeViews, resyncSelection } from '#/bridge/node-views';
 import { useOverlayRoot } from '#/bridge/overlay-root';
 import { OverlayBody, OverlayContext, useScopedFocus } from '#/bridge/overlays';
+import { useApplePlatform } from '#/bridge/platform';
 import { EditorHostsContext, type PluginPresentation } from '#/bridge/plugin';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
@@ -66,17 +67,19 @@ import { ContextMenu } from '#/ui/context-menu/context-menu';
 import { pickAsset } from '#/ui/media/asset-picker';
 import { uploadMessage } from '#/ui/media/upload-messages';
 import { PanelContext, type PanelController, usePanelController } from '#/ui/panels/context';
+import { shortcutText } from '#/ui/shortcuts';
 import { referenceListStrings, SuggestionList } from '#/ui/suggestions/suggestion-list';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
 import { type ColumnsLayout, showColumns } from './columns';
-import { engineOf, panelsOf, pluginsOf, readersOf, viewsOf } from './compile-editor';
+import { engineOf, panelsOf, pluginsOf, profileOf, readersOf, viewsOf } from './compile-editor';
 import { registerFormField } from './form-field';
 import { useKeyboardInset } from './keyboard-inset';
 import { useEditorLocale } from './locale';
 import { PanelFrame } from './panels';
 import { usePluginHosts, useRenderedHosts } from './plugin-hosts';
+import { useCoarsePointer, useProfile } from './profiles';
 import { BlockedShell, RecoveryShell } from './shells';
 import { registerSaveCauses, SaveStatusText } from './status';
 import { useRecipeSheet } from './style-sheet';
@@ -86,8 +89,10 @@ import {
     type EditorHandle,
     type EditorServices,
     type RichTextEditorProps,
+    type RichTextProfile,
     type ToolbarMode,
 } from './types';
+import { validityOf } from './validity';
 
 type Props = RichTextEditorProps<object>;
 /** The props once `definition` is known to be set. */
@@ -206,9 +211,10 @@ const memberChanged = (previous: object | undefined, next: object | undefined) =
     return [...names].some((name) => Reflect.get(previous, name) !== Reflect.get(next, name));
 };
 
-/** What one mount keeps for its whole life: a changed `definition` needs a new mount. */
+/** What one mount keeps for its whole life: a changed `definition` or `profile` needs a new mount. */
 interface Mounted {
     readonly definition: CompiledEditorDefinition<object>;
+    readonly profile: Props['profile'];
     /** `undefined` for a blocked document, which gets no session. */
     readonly decoded: { readonly tree: TreeNode; readonly capabilities: readonly CapabilityRef[] } | undefined;
     readonly blocked: Extract<DecodeResult, { readonly status: 'blocked' }> | undefined;
@@ -220,7 +226,7 @@ interface Mounted {
 }
 
 const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
-    const { definition } = props;
+    const { definition, profile } = props;
     if (definition === undefined) {
         throw new Error('RichTextEditor needs a `definition`.');
     }
@@ -229,10 +235,10 @@ const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
     const managed = memberOf(props.services, 'persistence') !== undefined;
     const unset = { lang: undefined, dir: undefined, managed };
     if (result.status === 'blocked') {
-        return { definition, decoded: undefined, blocked: result, ...unset };
+        return { definition, profile, decoded: undefined, blocked: result, ...unset };
     }
     if (tree === undefined) {
-        return { definition, decoded: undefined, blocked: undefined, ...unset };
+        return { definition, profile, decoded: undefined, blocked: undefined, ...unset };
     }
     // The surface spellchecks in the document's language when it declares one.
     let lang: string | undefined;
@@ -245,7 +251,7 @@ const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
         dir = tree.attrs.dir;
     }
     const decoded = { tree, capabilities: result.document.requiredCapabilities };
-    return { definition, decoded, blocked: undefined, lang, dir, managed };
+    return { definition, profile, decoded, blocked: undefined, lang, dir, managed };
 };
 
 /** What the parts share for the toolbars and focus moves between the surface and the chrome. */
@@ -450,6 +456,7 @@ const SessionComponent = (
         const { generateId } = latestRef.current;
         const { t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
         const engine = engineOf(definition);
+        const profile = profileOf(definition);
         const ids = generateId ?? randomId;
         /** The host asset picker, else the file chooser, for a new figure or for the image `nodeId`. */
         const openPicker = (session: EditorRuntime, nodeId: string | undefined) => {
@@ -522,6 +529,23 @@ const SessionComponent = (
             recovery: () => memberOf(latestRef.current.services, 'recovery'),
             inputRules: () => latestRef.current.inputRules,
             tabMovesFocus: () => latestRef.current.tabMovesFocus,
+            enterKeys: {
+                singleLine: profile === 'inline',
+                modSubmits: profile === 'comment',
+                submits: () => latestRef.current.onSubmit !== undefined,
+                submit: () => {
+                    const { onSubmit, required } = latestRef.current;
+                    if (onSubmit === undefined) {
+                        return;
+                    }
+                    if (!validityOf(runtime, required).valid) {
+                        const { locale } = shellPropsOf(latestRef.current);
+                        announcer.announce(codecContext(locale, enUS).t('RichTextEditor_submitEmpty'));
+                        return;
+                    }
+                    onSubmit(runtime.handle.getSnapshot());
+                },
+            },
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             commandHost: hosts,
             uploads: () => memberOf(latestRef.current.services, 'uploads'),
@@ -545,6 +569,7 @@ const SessionComponent = (
             },
         });
         connectClipboard(runtime, {
+            singleLine: profile === 'inline',
             sliceContext: () => {
                 const { presentation } = latestRef.current;
                 if (presentation === undefined) {
@@ -652,12 +677,12 @@ const SessionComponent = (
         }
     }, [services, coordinator]);
 
-    const { definition } = props;
+    const { definition, profile } = props;
     useEffect(() => {
         if (process.env.NODE_ENV === 'production') {
             return;
         }
-        if (definition === mounted.definition) {
+        if (definition === mounted.definition && profile === mounted.profile) {
             return;
         }
         const runtime = coordinator.runtime;
@@ -668,7 +693,7 @@ const SessionComponent = (
                 messageKey: 'react.definition-changed',
             });
         }
-    }, [definition, mounted, coordinator]);
+    }, [definition, profile, mounted, coordinator]);
 
     // A changed `defaultValue` replaces nothing, so a development build says so once per change.
     const { defaultValue } = props;
@@ -1079,10 +1104,28 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
 const Root = forwardRef((props: Props & { readonly children: ReactNode }, ref: ForwardedRef<EditorHandle<object>>) => {
     const { definition } = props;
     const locale = useEditorLocale(props.locale);
+    let profile: RichTextProfile | undefined;
+    if (definition === undefined) {
+        profile = props.profile ?? 'document';
+    }
+    const shipped = useProfile(profile);
+    const coarse = useCoarsePointer();
     if (definition !== undefined) {
         return <Recovery props={{ ...props, definition, locale }} editorRef={ref} />;
     }
-    return null;
+    // The profile's module loads through `import()`, and the editor renders once it has.
+    if (shipped === undefined) {
+        return null;
+    }
+    let resolved: Defined & { readonly children: ReactNode } = { ...props, definition: shipped.definition, locale };
+    if (props.presentation === undefined) {
+        let { presentation } = shipped;
+        if (coarse && shipped.touchPresentation !== undefined) {
+            presentation = shipped.touchPresentation;
+        }
+        resolved = { ...resolved, presentation };
+    }
+    return <Recovery props={resolved} editorRef={ref} />;
 });
 Root.displayName = 'RichTextEditor.Root';
 
@@ -1091,6 +1134,25 @@ const hostClassNames = (contentClassName: string) =>
     contentClassName
         .split(/\s+/)
         .filter((name) => name !== '' && contentClasses() !== name && !/^ProseMirror(-|$)/.test(name));
+
+/** The surface's instruction that names the submit key and the new line key, when the editor has a submit key. */
+const submitHint = (props: Props, definition: CompiledEditorDefinition<object>, t: Chrome['t'], apple: boolean) => {
+    if (props.onSubmit === undefined) {
+        return undefined;
+    }
+    const profile = profileOf(definition);
+    const key = (binding: string) => shortcutText(binding, apple);
+    if (definition.authoring.enterBehavior === 'submit' && profile === 'inline') {
+        return t('RichTextEditor_submitHintSingleLine', { submit: key('Enter') });
+    }
+    if (definition.authoring.enterBehavior === 'submit') {
+        return t('RichTextEditor_submitHint', { submit: key('Enter'), newLine: key('Shift-Enter') });
+    }
+    if (profile === 'comment') {
+        return t('RichTextEditor_submitHint', { submit: key('Mod-Enter'), newLine: key('Enter') });
+    }
+    return undefined;
+};
 
 const emptiness = (runtime: EditorRuntime | undefined) => {
     if (runtime === undefined) {
@@ -1115,6 +1177,11 @@ const Surface = () => {
         lang = chrome.lang;
     }
     const dir = mounted.dir ?? theme.dir;
+    const hintId = useId();
+    const hint = submitHint(props, mounted.definition, chrome.t, useApplePlatform());
+    const describedBy = [props['aria-describedby'], hint === undefined ? undefined : hintId].filter(
+        (id) => id !== undefined,
+    );
     // React writes the first classes only: ProseMirror adds its own to this element with `classList`, which a rewritten attribute would drop.
     const [className] = useState(() => contentClasses(contentClassName));
     const surfaceRef = useRef<HTMLElement | null>(null);
@@ -1141,39 +1208,46 @@ const Surface = () => {
         shownPlaceholder = undefined;
     }
     return (
-        <div
-            ref={setSurface}
-            className={className}
-            role="textbox"
-            aria-multiline
-            aria-label={props['aria-label']}
-            aria-labelledby={props['aria-labelledby']}
-            aria-describedby={props['aria-describedby']}
-            aria-invalid={props.status === 'error' ? true : undefined}
-            aria-errormessage={props['aria-errormessage']}
-            aria-required={props.required === true ? true : undefined}
-            aria-disabled={props.disabled === true ? true : undefined}
-            aria-placeholder={shownPlaceholder}
-            data-placeholder={placeholder}
-            id={chrome.surfaceId}
-            lang={lang}
-            dir={dir}
-            spellCheck={spellCheck}
-            data-test-id={`${testId}-surface`}
-            data-rte-surface=""
-            data-rte-strike-checked-tasks={strikeCheckedTasks ? '' : undefined}
-            // Native focus events of the surface itself, so a move into chrome or an overlay blurs it.
-            onFocus={(event) => {
-                if (event.target === event.currentTarget) {
-                    props.onFocus?.(event);
-                }
-            }}
-            onBlur={(event) => {
-                if (event.target === event.currentTarget) {
-                    props.onBlur?.(event);
-                }
-            }}
-        />
+        <>
+            <div
+                ref={setSurface}
+                className={className}
+                role="textbox"
+                aria-multiline={profileOf(mounted.definition) !== 'inline'}
+                aria-label={props['aria-label']}
+                aria-labelledby={props['aria-labelledby']}
+                aria-describedby={describedBy.length > 0 ? describedBy.join(' ') : undefined}
+                aria-invalid={props.status === 'error' ? true : undefined}
+                aria-errormessage={props['aria-errormessage']}
+                aria-required={props.required === true ? true : undefined}
+                aria-disabled={props.disabled === true ? true : undefined}
+                aria-placeholder={shownPlaceholder}
+                data-placeholder={placeholder}
+                id={chrome.surfaceId}
+                lang={lang}
+                dir={dir}
+                spellCheck={spellCheck}
+                data-test-id={`${testId}-surface`}
+                data-rte-surface=""
+                data-rte-strike-checked-tasks={strikeCheckedTasks ? '' : undefined}
+                // Native focus events of the surface itself, so a move into chrome or an overlay blurs it.
+                onFocus={(event) => {
+                    if (event.target === event.currentTarget) {
+                        props.onFocus?.(event);
+                    }
+                }}
+                onBlur={(event) => {
+                    if (event.target === event.currentTarget) {
+                        props.onBlur?.(event);
+                    }
+                }}
+            />
+            {hint !== undefined && (
+                <span id={hintId} hidden>
+                    {hint}
+                </span>
+            )}
+        </>
     );
 };
 Surface.displayName = 'RichTextEditor.Surface';

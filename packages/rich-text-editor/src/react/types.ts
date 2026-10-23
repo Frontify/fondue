@@ -16,6 +16,7 @@ import {
     type ResourceLimits,
     type RichTextDocument,
     type RichTextLocale,
+    type StyleRecipe,
 } from '#/model';
 import {
     type LoadedDocument,
@@ -51,7 +52,7 @@ import {
     type Unsubscribe,
 } from '#/runtime/types';
 
-export type { ColorToken, ListLevels, OperationMetric, PresentationStyle };
+export type { ColorToken, ListLevels, OperationMetric, PresentationStyle, StyleRecipe };
 
 // Host-facing editor types. Some members are typed before their behavior is built.
 
@@ -164,7 +165,10 @@ export interface EditorEventMap {
     readonly replaced: SessionToken;
     readonly disposed: SessionToken;
 }
-/** The session of a mounted editor. */
+/**
+ * The session of a mounted editor. With `profile`, the ref holds `null` until the profile's module has loaded and the
+ * session exists, and no host callback runs before then.
+ */
 export interface EditorHandle<C extends object = ShippedCommands> {
     getSummary(): EditorSummary;
     getSnapshot(): Snapshot;
@@ -213,8 +217,15 @@ export interface ReactPresentation extends ReaderPresentation {
     readonly toolbarShortcut?: string;
 }
 
-/** The props the editor takes. */
+/** The name of a shipped profile: inline, comment, document or brand-document. */
+export type RichTextProfile = 'inline' | 'comment' | 'document' | 'brand-document';
+/** The props the editor takes in every profile. */
 export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
+    /**
+     * Default `document`; ignored when `definition` is set. The profile's module loads on first use: until it has, the
+     * editor renders nothing, `ref` holds `null` and no callback runs. A profile loaded once renders at once.
+     */
+    readonly profile?: RichTextProfile;
     readonly definition?: CompiledEditorDefinition<C>;
     readonly presentation?: ReactPresentation;
     readonly defaultValue: LoadedDocument;
@@ -248,6 +259,12 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     readonly onDocumentChange?: (change: DocumentChange) => void;
     readonly onDiagnostic?: (diagnostic: Diagnostic) => void;
     /**
+     * Runs only when `validate()` passes. Mod+Enter calls it in the Comment profile, and Enter wherever the policy sets
+     * `enterBehavior: 'submit'`, in the Inline profile also Shift+Enter and Mod+Enter; the Document and Brand document
+     * profiles call it only with that policy.
+     */
+    readonly onSubmit?: (snapshot: Snapshot) => void;
+    /**
      * Native focus events of the surface, including moves into the editor's own overlays.
      * Pointer and focus events bubble out of the editor root. There is no further focus callback.
      * The bubble toolbar hides when the editor loses focus, and the selection stays.
@@ -255,7 +272,7 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     readonly onFocus?: (event: FocusEvent<HTMLElement>) => void;
     readonly onBlur?: (event: FocusEvent<HTMLElement>) => void;
     readonly onToolbarModeChange?: (mode: ToolbarMode) => void;
-    /** `null` until the session exists. */
+    /** `null` until the session exists, which with `profile` is once the profile's module has loaded. */
     readonly ref?: Ref<EditorHandle<C>>;
 }
 /** Exactly one accessible name source is required. */

@@ -11,6 +11,7 @@ import { CODE_LANGUAGES, languageChoices } from '#/features/blocks-code/language
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { compileContentModel, type ContentNodeJSON, type Diagnostic } from '#/model';
+import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { mountText, para, storedIn, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { RichTextReader } from '#/reader';
 import { runtimeOf } from '#/runtime/runtime';
@@ -200,6 +201,30 @@ describe('blocks.code', () => {
         expect(blockText(alone.handle)).toBe('code');
         expect(nested.handle.getSnapshot().document.content).toEqual(before);
     });
+
+    it.each(['comment', 'document', 'brand-document'] as const)(
+        'opens a paragraph after a code block that ends the %s profile',
+        async (profile) => {
+            const { handle, view, content } = await mountProfile(profile);
+            act(() => {
+                vi.advanceTimersToNextFrame();
+            });
+            typeText(handle, 'const a = 1');
+            // The shipped profile's handle types no commands, so the call names the command as a string.
+            act(() => {
+                const toggled = (handle.execute as (id: string) => unknown)('code-block.toggle');
+                expect(toggled).toMatchObject({ status: 'applied' });
+            });
+            setSelection(handle, { text: 'const a = 1', from: 11, to: 11 });
+
+            pressKey(handle, 'ArrowDown');
+
+            const types = (content() as readonly ContentNodeJSON[]).map((block) => block.type);
+            expect(types).toEqual(['code_block', 'paragraph']);
+            expect(view.state.selection.$from.parent.type.name).toBe('paragraph');
+            expect(view.state.selection.$from.parent.content.size).toBe(0);
+        },
+    );
 
     it('does not add a paragraph for ArrowDown away from the end, or when a block already follows', () => {
         const middle = mountText({ model, blocks: [code('const a = 1')] });

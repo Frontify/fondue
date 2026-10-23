@@ -7,7 +7,12 @@ import { type ContentNodeJSON } from '#/model';
 import { compiledModel } from '#/model/compile';
 import { keyOn, modOn } from '#/model/platform';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
+import { engineOf } from '#/react/compile-editor';
 import { SHIPPED_PLUGINS } from '#/react/plugins';
+import { shipped as brandDocumentProfile } from '#/react/profiles/brand-document';
+import { shipped as commentProfile } from '#/react/profiles/comment';
+import { shipped as documentProfile } from '#/react/profiles/document';
+import { shipped as inlineProfile } from '#/react/profiles/inline';
 import { setSelection, typeText } from '#/testing';
 
 const ALL_TYPOGRAPHY = [
@@ -227,6 +232,28 @@ describe('core keys', () => {
             ]);
         });
     }
+
+    it('binds no printable key without Ctrl, ⌘ or Alt in the compiled keymap of every profile', () => {
+        const profiles = {
+            inline: inlineProfile,
+            comment: commentProfile,
+            document: documentProfile,
+            'brand-document': brandDocumentProfile,
+        };
+        const bare = Object.entries(profiles).flatMap(([name, profile]) =>
+            engineOf(profile().definition)
+                .keymap.map(({ key }) => key.replace(/^(mac|other):/, ''))
+                .filter((key) => {
+                    const parts = key.split(/-(?!$)/);
+                    const last = parts.at(-1) ?? '';
+                    const printable = Array.from(last).length === 1;
+                    return printable && !parts.slice(0, -1).some((part) => ['Mod', 'Ctrl', 'Alt'].includes(part));
+                })
+                .map((key) => `${name}: ${key}`),
+        );
+
+        expect(bare).toEqual([]);
+    });
 
     it('prevents no key combination that the keymap leaves unbound, on each platform', () => {
         const named: Readonly<Record<string, number>> = {

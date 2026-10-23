@@ -9,6 +9,7 @@ import { type EmojiEntry } from '#/features/emoji/data';
 import { defineEditor, defineEditorPlugin, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import { type ContentNodeJSON } from '#/model';
+import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { mountText, para, storedIn, text, textModel } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
 import { SETTLE_MS } from '#/runtime/settle';
@@ -605,4 +606,30 @@ describe('suggestion plugin', () => {
         expect(textOf(handle)).toBe(':smi');
         expect(JSON.stringify(blocksOf(handle))).not.toContain(chosen);
     });
+});
+
+describe('the emoji list in the shipped profiles', () => {
+    it.each(['comment', 'document', 'brand-document'] as const)(
+        'opens on :smi and inserts the first emoji on Enter, and opens no list for 12:30, in %s',
+        async (profile) => {
+            const time = await mountProfile(profile);
+            const emojiProfile = await mountProfile(profile);
+            act(() => {
+                vi.advanceTimersToNextFrame();
+            });
+            typeText(time.handle, '12:30');
+            typeText(emojiProfile.handle, ':smi');
+
+            expect(activeSuggestion(time.view.state)).toBeNull();
+            expect(JSON.stringify(time.content())).toContain('12:30');
+            const active = await opened(emojiProfile.view);
+            const chosen = active.items[0]?.glyph;
+            pressKey(emojiProfile.handle, 'Enter');
+
+            expect(chosen).toBeTruthy();
+            expect(activeSuggestion(emojiProfile.view.state)).toBeNull();
+            expect(JSON.stringify(emojiProfile.content())).toContain(chosen as string);
+            expect(JSON.stringify(emojiProfile.content())).not.toContain(':smi');
+        },
+    );
 });

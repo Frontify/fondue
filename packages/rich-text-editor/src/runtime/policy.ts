@@ -38,7 +38,8 @@ export const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy
         features[id] = feature;
     }
     const creatableHeadingLevels = policy.creatableHeadingLevels ?? HEADING_LEVELS;
-    return { features, creatableHeadingLevels };
+    const enterBehavior = policy.enterBehavior ?? 'paragraph';
+    return { features, creatableHeadingLevels, enterBehavior };
 };
 
 /** One inline child of a run: a text node or an atom. */

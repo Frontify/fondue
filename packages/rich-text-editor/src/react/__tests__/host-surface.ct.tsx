@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
 import { EditorProbe } from './fixtures/EditorProbe';
+import { ProfileProbe } from './fixtures/ProfileProbe';
 
 const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Notes' });
 const ready = async (page: Page) => {
@@ -83,6 +84,16 @@ test('keeps focus on a host undo button while undo runs', async ({ mount, page }
     await expect(button).toBeFocused();
     expect(await page.evaluate(() => window.rte?.text())).toBe('ab');
 });
+
+for (const profile of ['inline', 'comment', 'document', 'brand-document'] as const) {
+    test(`renders no role application in the ${profile} profile`, async ({ mount, page }) => {
+        await mount(<ProfileProbe profile={profile} />);
+        await expect(page.getByRole('textbox', { name: 'Message' })).toHaveAttribute('contenteditable', 'true');
+
+        await expect(page.locator('[data-test-id="fondue-rich-text-editor"]')).toBeVisible();
+        await expect(page.locator('[data-test-id="fondue-rich-text-editor"] [role="application"]')).toHaveCount(0);
+    });
+}
 
 test('renders no role application around node view chrome', async ({ mount, page }) => {
     const blocks = [

@@ -4,12 +4,15 @@ import { macBaseKeymap, pcBaseKeymap } from 'prosemirror-commands';
 import { keydownHandler } from 'prosemirror-keymap';
 import { type NodeType } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, PluginKey, TextSelection } from 'prosemirror-state';
+import { type EditorView } from 'prosemirror-view';
 
 import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN } from '#/model/capabilities';
 import { isApple, modOn } from '#/model/platform';
 
 import { passesToBrowser } from './browser-keys';
+import { ENTER_RULES_META } from './input-rules';
 import { showsOptions } from './suggestions/plugin';
+import { type AuthoringPolicy } from './types';
 
 /** Whether a keydown holds no Shift, Alt, Ctrl or ⌘. */
 const unmodified = (event: KeyboardEvent): boolean =>
@@ -19,6 +22,98 @@ const unmodified = (event: KeyboardEvent): boolean =>
 const isTab = (event: KeyboardEvent): boolean =>
     event.key === 'Tab' && !event.altKey && !event.ctrlKey && !event.metaKey;
 
+/** How the surface's Enter, Shift+Enter and Mod+Enter act before the structural keys (Key precedence row 4). */
+export interface EnterKeys {
+    /** The Inline profile: Shift+Enter and Mod+Enter act as Enter, and no key adds a block or a line. */
+    readonly singleLine: boolean;
+    /** The Comment profile: Mod+Enter submits. */
+    readonly modSubmits: boolean;
+    /** Whether the host listens for submits. */
+    readonly submits: () => boolean;
+    /** Submits the committed snapshot, or announces why it is not valid. */
+    readonly submit: () => void;
+}
+
+/** Which Enter a keydown is, with no Alt and no modifier but Shift or the platform's Mod. */
+const enterOf = (view: EditorView, event: KeyboardEvent): 'enter' | 'shift' | 'mod' | undefined => {
+    if (event.key !== 'Enter' || event.altKey) {
+        return undefined;
+    }
+    const owner = view.dom.ownerDocument.defaultView;
+    const apple = owner !== null && isApple(owner.navigator);
+    let mod = event.ctrlKey && !event.metaKey;
+    let other = event.metaKey;
+    if (apple) {
+        mod = event.metaKey && !event.ctrlKey;
+        other = event.ctrlKey;
+    }
+    if (other) {
+        return undefined;
+    }
+    if (mod && !event.shiftKey) {
+        return 'mod';
+    }
+    if (mod) {
+        return undefined;
+    }
+    if (event.shiftKey) {
+        return 'shift';
+    }
+    return 'enter';
+};
+
+/** Fires the rules that Enter ends, such as an autolink, before the submit takes the snapshot. */
+const submit = (view: EditorView, keys: EnterKeys) => {
+    view.dispatch(view.state.tr.setMeta(ENTER_RULES_META, true));
+    keys.submit();
+};
+
+/**
+ * Row 4 of Key precedence: whether the guard took an Enter, after composition and an open suggestion list passed it
+ * on. A single-line field leaves an Enter it does not submit unprevented, as a one-line `input` does.
+ */
+const takesEnter = (
+    view: EditorView,
+    event: KeyboardEvent,
+    keys: EnterKeys,
+    behavior: AuthoringPolicy['enterBehavior'],
+): boolean => {
+    const enter = enterOf(view, event);
+    if (enter === undefined) {
+        return false;
+    }
+    const submitting = behavior === 'submit' && keys.submits();
+    if (keys.singleLine) {
+        if (submitting) {
+            event.preventDefault();
+            submit(view, keys);
+        }
+        return true;
+    }
+    // Mod+Enter belongs to submit even with no `onSubmit`, so the base keymap's `exitCode` never runs.
+    if (enter === 'mod' && keys.modSubmits) {
+        if (keys.submits()) {
+            event.preventDefault();
+            submit(view, keys);
+        }
+        return true;
+    }
+    if (enter === 'enter' && submitting) {
+        event.preventDefault();
+        submit(view, keys);
+        return true;
+    }
+    if (enter !== 'shift' || behavior !== 'submit') {
+        return false;
+    }
+    // Shift+Enter runs the structural action of Enter, so a list item still splits.
+    const owner = view.dom.ownerDocument.defaultView ?? window;
+    const plain = new owner.KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, cancelable: true });
+    view.someProp('handleKeyDown', (handle) => handle(view, plain));
+    event.preventDefault();
+    return true;
+};
+
 /**
  * Composition keys and AltGr characters reach the browser before any keymap runs, and so do Tab and Shift+Tab while
  * `tabMovesFocus` holds and no suggestion list shows options, so they move focus and indent nothing. ProseMirror
@@ -26,11 +121,29 @@ const isTab = (event: KeyboardEvent): boolean =>
  * unprevented for the browser and the host; a plain Enter keeps ProseMirror's
  * own handling, which mobile keyboards need.
  */
-export const createKeyGuard = (tabMovesFocus: () => boolean) =>
+export const createKeyGuard = (
+    tabMovesFocus: () => boolean,
+    enterKeys: () => EnterKeys | undefined,
+    behavior: () => AuthoringPolicy['enterBehavior'],
+) =>
     new Plugin({
         key: new PluginKey('rte.key-guard'),
         props: {
+            // The untrusted Enter that ProseMirror sends after a mobile keyboard's `beforeinput` changes nothing either.
+            handleKeyDown: (_, event) => event.key === 'Enter' && enterKeys()?.singleLine === true,
             handleDOMEvents: {
+                // A single-line field takes no new block or line from the keyboard, on mobile ones too.
+                beforeinput: (_, event) => {
+                    const { inputType } = event;
+                    if (enterKeys()?.singleLine !== true) {
+                        return false;
+                    }
+                    if (inputType !== 'insertParagraph' && inputType !== 'insertLineBreak') {
+                        return false;
+                    }
+                    event.preventDefault();
+                    return true;
+                },
                 keydown: (view, event) => {
                     if (passesToBrowser(event)) {
                         return true;
@@ -40,6 +153,10 @@ export const createKeyGuard = (tabMovesFocus: () => boolean) =>
                         return false;
                     }
                     if (isTab(event) && tabMovesFocus() && !showsOptions(view.state)) {
+                        return true;
+                    }
+                    const keys = enterKeys();
+                    if (keys !== undefined && !showsOptions(view.state) && takesEnter(view, event, keys, behavior())) {
                         return true;
                     }
                     if (event.key !== 'Escape' && !(event.key === 'Enter' && !unmodified(event))) {

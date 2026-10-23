@@ -8,6 +8,7 @@ import { useApplePlatform } from '#/bridge/platform';
 import { type ToolbarControlProps } from '#/bridge/plugin';
 import { useSessionValue } from '#/bridge/session';
 import { type JsonValue } from '#/model';
+import { keyOn } from '#/model/platform';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { ariaShortcut, bindingHere, shortcutText } from '#/ui/shortcuts';
 
@@ -159,7 +160,12 @@ export const tabStop = (outOfTabOrder: boolean): { readonly tabIndex?: number } 
 /** The item's shortcut as its tooltip or menu row shows it and as `aria-keyshortcuts`, on the author's platform. */
 export const useShortcut = ({ bindings }: ToolbarItem) => {
     const apple = useApplePlatform();
-    const binding = bindingHere(bindings, apple);
+    const behavior = useSessionValue((runtime) => runtime?.policy.enterBehavior, Object.is);
+    // Shift+Enter runs as Enter while Enter submits, and the policy can change after the keymap compiles (Key precedence row 4).
+    const binding = bindingHere(
+        bindings.filter((candidate) => behavior !== 'submit' || keyOn(candidate, apple) !== 'Shift-Enter'),
+        apple,
+    );
     if (binding === undefined) {
         return { shortcut: undefined, keyshortcuts: undefined };
     }

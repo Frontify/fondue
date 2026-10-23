@@ -122,6 +122,8 @@ export {
     type ReferenceService,
     type RichTextEditorBaseProps,
     type RichTextEditorProps,
+    type RichTextProfile,
+    type StyleRecipe,
     type ToolbarMode,
     type UploadRequest,
     type UploadService,

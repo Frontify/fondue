@@ -1458,6 +1458,7 @@ const commandDocumentApi = (
             session?.runtime.policy ?? {
                 features: {},
                 creatableHeadingLevels: [],
+                enterBehavior: 'none',
             },
         editable: () => session?.runtime.handle.getSummary().mode === 'editable',
         positionAt: () => undefined,

@@ -40,6 +40,8 @@ import { SLICE_TYPE, writeSlice } from './slice';
 
 /** What the host side of a session gives its clipboard handlers. */
 export interface ClipboardSession {
+    /** The Inline profile's field, whose paste keeps one paragraph. */
+    readonly singleLine?: boolean;
     /** The presentation's `sliceContext`, read at each copy and paste. */
     readonly sliceContext: () => string | null;
     /** The locale of the announcements and of the island labels in copied HTML. */
@@ -201,6 +203,7 @@ const settingsOf = (
     plain,
     headingLevels: runtime.policy.creatableHeadingLevels,
     window: view.dom.ownerDocument.defaultView ?? window,
+    singleLine: session.singleLine === true,
 });
 
 /** Runs the paste pipeline, reporting a throw as a rejection. */
@@ -364,7 +367,11 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
     // A copy of an island whose `nodeId` is already here takes the dropped flavors instead, as a paste would.
     if (dragged === undefined || (copying && islandsCannotStay(dragged, tr.doc, false))) {
         // A drop from outside, or an inside copy that falls back, takes the paste order at the drop cursor's block boundary.
-        const position = dropPoint(tr.doc, at.pos, blockSlice(view)) ?? at.pos;
+        let position = at.pos;
+        // A single-line field takes the drop inside its one paragraph, never beside it.
+        if (connected.session.singleLine !== true) {
+            position = dropPoint(tr.doc, at.pos, blockSlice(view)) ?? at.pos;
+        }
         const files = [...data.files];
         if (dragged === undefined && files.length > 0 && offersFiles(model, view, payload, false)) {
             view.focus();
@@ -449,7 +456,8 @@ export const clipboardPlugin =
                     dragstart: (view, event) => dragstart(model, view, event),
                     // The drop cursor snaps only for a drag it sees started here, so any other drag stands in a block.
                     dragover: (view) => {
-                        if (view.dragging === null && view.editable) {
+                        const singleLine = connectedOf(view)?.session.singleLine === true;
+                        if (view.dragging === null && view.editable && !singleLine) {
                             view.dragging = { slice: blockSlice(view), move: false };
                         }
                         return false;

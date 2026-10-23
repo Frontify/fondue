@@ -749,4 +749,21 @@ describe('toolbar theming and localization', () => {
 
         expect([apple, shortcutOf()]).toEqual([null, 'Control+Alt+Q']);
     });
+
+    it('leaves Shift+Enter out of a shown shortcut while the policy makes Enter submit, and follows a policy change', () => {
+        const keys = { 'Shift-Enter': 'acme.pull-quote.set' } as const;
+        const definition = defineEditor({
+            id: 'test.toolbar',
+            model: compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }),
+            plugins: [pullQuotePlugin({ 'en-US': 'Pull quote' }, keys)],
+            policy: { enterBehavior: 'submit' },
+        });
+        const shortcut = () => screen.getByRole('button', { name: 'Pull quote' }).getAttribute('aria-keyshortcuts');
+        const { handle } = mount({ definition }, [['acme.pull-quote.set']]);
+
+        const submitting = shortcut();
+        act(() => handle().updatePolicy({ ...definition.authoring, enterBehavior: 'paragraph' }));
+
+        expect([submitting, shortcut()]).toEqual([null, 'Shift+Enter']);
+    });
 });

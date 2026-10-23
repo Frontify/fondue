@@ -31,4 +31,8 @@ export { mentions } from '#/features/mentions/feature';
 export { outline } from '#/features/nav-outline/feature';
 export { brandStyles } from '#/features/styles-brand/feature';
 
+export { brandDocumentFeatures, brandDocumentModel } from './profiles/brand-document';
+export { commentFeatures, commentModel } from './profiles/comment';
+export { documentFeatures, documentModel } from './profiles/document';
+export { inlineFeatures, inlineModel } from './profiles/inline';
 export { featuresById } from './registry';

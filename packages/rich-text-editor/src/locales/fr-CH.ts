@@ -252,6 +252,10 @@ export const frCH = {
         RichTextEditor_startNumberingField: 'Premier numéro',
         RichTextEditor_startNumberingRange: 'Saisissez un nombre entier entre ${min} et ${max}.',
         RichTextEditor_strike: 'Barré',
+        RichTextEditor_submitEmpty: 'Saisissez du texte avant d’envoyer.',
+        RichTextEditor_submitHint:
+            'Pour envoyer, appuyez sur ${submit}. Pour une nouvelle ligne, appuyez sur ${newLine}.',
+        RichTextEditor_submitHintSingleLine: 'Pour envoyer, appuyez sur ${submit}.',
         RichTextEditor_subscript: 'Indice',
         RichTextEditor_suggestionOption: '${label}, ${position} sur ${total}',
         RichTextEditor_suggestions: 'Suggestions',

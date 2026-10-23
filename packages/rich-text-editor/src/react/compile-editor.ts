@@ -43,6 +43,7 @@ import {
     type CommandsOfPlugins,
     type CompiledEditorDefinition,
     type EditorDefinitionOptions,
+    type RichTextProfile,
 } from './types';
 
 /** Editor parts by feature ID, which a definition installs for the features its model installs. */
@@ -53,6 +54,7 @@ const engines = new WeakMap<object, CompiledDefinition>();
 const nodeViews = new WeakMap<object, ReadonlyMap<string, NodeViewDeclaration>>();
 const editorPanels = new WeakMap<object, ReadonlyMap<string, PanelDeclaration>>();
 const editorPlugins = new WeakMap<object, readonly EditorPlugin[]>();
+const profiles = new WeakMap<object, RichTextProfile>();
 const readers = new WeakMap<object, ReaderOverrides>();
 
 /** The engine a definition compiled once, which every editor mounted with it shares. */
@@ -79,6 +81,10 @@ export const pluginsOf = (definition: CompiledEditorDefinition<object>): readonl
 /** The reader overrides of the shipped features a definition renders its blocked and recovery shells with. */
 export const readersOf = (definition: CompiledEditorDefinition<object>): ReaderOverrides =>
     readers.get(definition) ?? {};
+
+/** The shipped profile a definition was compiled for, whose Enter keys and line mode it keeps. */
+export const profileOf = (definition: CompiledEditorDefinition<object>): RichTextProfile | undefined =>
+    profiles.get(definition);
 
 /** `base` with `added` in place of its entry of the same `key`, and each other entry of `added` after it. */
 const byKey = <T>(base: readonly T[] = [], added: readonly T[] = [], key: keyof T): readonly T[] => [
@@ -388,12 +394,13 @@ export const extensionsOf = (
 
 /**
  * Compiles an editor definition once with the editor parts of `shipped` and the reader overrides of `overrides`: the
- * model's engine, the authoring policy and the limits.
+ * model's engine, the authoring policy and the limits, for the profile when one is given.
  */
 export const compileEditor = <Model extends ContentModel, const Plugins extends readonly EditorPlugin[] = readonly []>(
     options: EditorDefinitionOptions<Model> & { readonly plugins?: Plugins },
     shipped: ShippedParts,
     overrides: ReaderOverrides,
+    profile?: RichTextProfile,
 ): CompiledEditorDefinition<CommandsOfModel<Model> & CommandsOfPlugins<Plugins>> => {
     const { id, model, policy } = options;
     const { engine, plugins } = editorEngine(model, options.plugins, shipped);
@@ -413,5 +420,8 @@ export const compileEditor = <Model extends ContentModel, const Plugins extends 
     editorPanels.set(definition, panels);
     editorPlugins.set(definition, plugins);
     readers.set(definition, overrides);
+    if (profile !== undefined) {
+        profiles.set(definition, profile);
+    }
     return definition as unknown as CompiledEditorDefinition<CommandsOfModel<Model> & CommandsOfPlugins<Plugins>>;
 };
