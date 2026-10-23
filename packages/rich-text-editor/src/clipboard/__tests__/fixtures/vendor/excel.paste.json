@@ -1,0 +1,80 @@
+[
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Region"
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Q1"
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Q2"
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "EMEA"
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "12.5%"
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "14.0%"
+            }
+        ]
+    }
+]

@@ -57,6 +57,9 @@ const SCHEMA_MESSAGE =
 const CLIPBOARD_IMPORT_MESSAGE =
     '`clipboard/import` imports only `model` and `prosemirror-model`, because `./html` loads it without the engine.';
 
+const HTML_MESSAGE =
+    '`html` imports only `model`, `#/definition/schema`, `clipboard/import` and `prosemirror-model`, because `./html` runs on the server without the engine or React.';
+
 const FEATURE_FILE_MESSAGE =
     "A feature file imports only `#/model`, its own `./migration` and a declared dependency's `#/features/<id>/feature`, as an outside feature must, and never its editor part, which the reader, codecs and server do not load.";
 
@@ -298,8 +301,10 @@ const clipboardImportFolders = FOLDERS.filter((folder) => folder !== 'model');
 
 const CLIPBOARD_IMPORT_PATHS = ['clipboard/import', 'clipboard/import/**'];
 
+const htmlFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'html');
+
 const TESTING_MESSAGE =
-    '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, and from `features` only conformance and fixtures.';
+    '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, from `clipboard` only `clipboard/plugin`, and from `features` only conformance and fixtures.';
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition`, `clipboard/import` and ProseMirror.';
 
@@ -461,6 +466,18 @@ export default defineConfig({
                 message: CLIPBOARD_IMPORT_MESSAGE,
             },
         ]),
+        layerOverride('src/html/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(htmlFolders),
+                    ...relativePatterns(htmlFolders),
+                    ...PROSEMIRROR_EXCEPT_MODEL,
+                    ...REACT_PATTERNS,
+                    ...exceptPatterns(['definition/schema', ...CLIPBOARD_IMPORT_PATHS]),
+                ],
+                message: HTML_MESSAGE,
+            },
+        ]),
         layerOverride(
             ['src/features/*/feature.ts', 'src/features/*/migration.ts'],
             [
@@ -556,6 +573,8 @@ export default defineConfig({
                     ...relativePatterns(testingFolders),
                     ...featurePathPatterns(TESTING_FEATURE_TAILS),
                     ...ENGINE_PATTERNS,
+                    // DR-136: the `paste` helper feeds the paste pipeline through its entry.
+                    ...exceptPatterns(['clipboard/plugin']),
                 ],
                 message: TESTING_MESSAGE,
             },

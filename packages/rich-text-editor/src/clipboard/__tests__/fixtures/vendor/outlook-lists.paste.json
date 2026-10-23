@@ -1,0 +1,225 @@
+[
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Hi all,"
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "bullet_list",
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Logos are final"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "bullet_list",
+                        "content": [
+                            {
+                                "type": "list_item",
+                                "content": [
+                                    {
+                                        "type": "paragraph",
+                                        "attrs": {
+                                            "lang": null,
+                                            "align": null
+                                        },
+                                        "content": [
+                                            {
+                                                "type": "text",
+                                                "text": "Dark and light"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "bullet_list",
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Fonts need a licence"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Icons are next"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "bullet_list",
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Ship the kit"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "bullet_list",
+                        "content": [
+                            {
+                                "type": "list_item",
+                                "content": [
+                                    {
+                                        "type": "paragraph",
+                                        "attrs": {
+                                            "lang": null,
+                                            "align": null
+                                        },
+                                        "content": [
+                                            {
+                                                "type": "text",
+                                                "text": "Templates"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "list_item",
+                                "content": [
+                                    {
+                                        "type": "paragraph",
+                                        "attrs": {
+                                            "lang": null,
+                                            "align": null
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Announce it"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Best,"
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Ada"
+            }
+        ]
+    }
+]

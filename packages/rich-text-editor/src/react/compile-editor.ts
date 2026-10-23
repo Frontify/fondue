@@ -3,6 +3,7 @@
 import { type NodeViewDeclaration } from '#/bridge/define';
 import { commandApiOf, editorApiOf } from '#/bridge/live-api';
 import { type EditorHosts, type EditorPlugin, type EditorSuggestion, pluginWithOptions } from '#/bridge/plugin';
+import { clipboardPlugin, dropCursorPlugin } from '#/clipboard/plugin';
 import {
     compileDefinition,
     type CompiledDefinition,
@@ -19,6 +20,7 @@ import {
     type ResourceLimits,
     type ValueDeclaration,
 } from '#/model';
+import { CLIPBOARD_PLUGIN, DROP_CURSOR_PLUGIN } from '#/model/capabilities';
 import { attributesOf, compiledModel } from '#/model/compile';
 import { limitsOf } from '#/model/decode';
 import { pointer } from '#/model/errors';
@@ -301,6 +303,8 @@ export const editorEngine = (
     const plugins = collectPlugins(model, given, shipped);
     const built = {
         ...RUNTIME_PLUGINS.plugins,
+        [CLIPBOARD_PLUGIN.id]: clipboardPlugin(model),
+        [DROP_CURSOR_PLUGIN.id]: dropCursorPlugin,
     };
     const extensions = plugins.map((plugin) => extensionOf(model, plugin));
     const engine = compileDefinition(

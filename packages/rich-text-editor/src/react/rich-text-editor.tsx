@@ -33,6 +33,7 @@ import { EditorHostsContext, type PluginPresentation } from '#/bridge/plugin';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
 import { SessionContext, useSessionValue } from '#/bridge/session';
+import { connectClipboard } from '#/clipboard/plugin';
 import { enUS } from '#/locales/en-US';
 import { type CapabilityRef, type DecodeResult, type Diagnostic, hashDocument, type RichTextDocument } from '#/model';
 import { type TreeNode } from '#/model/content';
@@ -371,6 +372,17 @@ const SessionComponent = (
             recovery: () => memberOf(latestRef.current.services, 'recovery'),
             inputRules: () => latestRef.current.inputRules,
             commandHost: hosts,
+        });
+        connectClipboard(runtime, {
+            sliceContext: () => {
+                const { presentation } = latestRef.current;
+                if (presentation === undefined) {
+                    return null;
+                }
+                return presentation.sliceContext;
+            },
+            locale: () => shellPropsOf(latestRef.current).locale,
+            announce: (message) => announcer.announce(message),
         });
         // Each event calls the newest callback the host passed.
         runtime.handle.subscribe('ready', (session: SessionToken) => {

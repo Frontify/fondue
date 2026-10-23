@@ -48,7 +48,7 @@ import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
 import { firedRule, withoutRules, withRuleSetting } from './input-rules';
 import { createKeyGuard } from './keys';
-import { createLimitCheck } from './limits';
+import { createLimitCheck, type ExceededLimit, storedNodeCount } from './limits';
 import { operationMetric } from './metrics';
 import { nodeStatePlugin } from './node-state';
 import { authoringOf, createPolicyCheck } from './policy';
@@ -139,8 +139,16 @@ export interface EditorRuntime {
     readonly interactionRoots: ReadonlySet<HTMLElement>;
     /** The session's current state, which stays readable after `dispose`, for tests. */
     readonly state: EditorState;
+    /** The authoring policy that the next commit is checked against. */
+    readonly policy: AuthoringPolicy;
     /** The session's resource limits. */
     readonly limits: ResourceLimits;
+    /**
+     * The limit of the final check that the batch of `root` exceeds, its new `nodeId`s drawn as a query draws them, which a
+     * paste reports; a batch within every limit is the one that dispatching `root` next installs. With `followUp`, a plugin
+     * rewrites the root's document within the batch, so only the batch is counted.
+     */
+    exceededLimit(root: Transaction, followUp?: boolean): ExceededLimit | undefined;
     /** The node views the session's views take, by node name. */
     readonly nodeViews: Readonly<Record<string, NodeViewConstructor>>;
     /** Shows the document in `element`, which becomes the editable surface, drawn with `props` beside the runtime's own. */
@@ -336,6 +344,7 @@ type Prepared =
           readonly code: RejectedCode;
           readonly diagnostic?: Diagnostic;
           readonly fault?: Diagnostic;
+          readonly limit?: ExceededLimit | undefined;
       };
 /** Who runs a command: a host call or a queued intent. */
 type Route = 'host' | 'queue' | 'node';
@@ -580,6 +589,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     // IDs a query drew, which the next install hands out first, so `execute` installs what `query` judged.
     const recorded: string[] = [];
+    // The batch the last limit check prepared, from the state it read and with the recorded IDs it drew.
+    let checked: { readonly from: EditorState; readonly drawn: number; readonly prepared: Candidate } | undefined;
     const installedId = (): string => {
         const id = recorded.shift();
         if (id !== undefined) {
@@ -664,7 +675,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 if (firedRule(applied.transactions)) {
                     return prepare(withoutRules(root), ids, fromView);
                 }
-                return { code: 'not-allowed' };
+                return { code: 'not-allowed', limit };
             }
         }
         const { transactions } = applied;
@@ -893,7 +904,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             markRules(root);
         }
         busyWith(() => {
-            const prepared = prepare(root, installedId, true);
+            let prepared: Prepared;
+            if (checked !== undefined && checked.prepared.root === root && checked.from === state) {
+                recorded.splice(0, checked.drawn);
+                prepared = checked.prepared;
+            } else {
+                prepared = prepare(root, installedId, true);
+            }
+            checked = undefined;
             if ('candidate' in prepared) {
                 install(prepared);
             } else if (prepared.fault !== undefined) {
@@ -1663,10 +1681,38 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         get state() {
             return state;
         },
+        get policy() {
+            return policy;
+        },
         get nodeViews() {
             return nodeViews;
         },
         limits,
+        exceededLimit: (root, followUp) => {
+            checked = undefined;
+            // Filling nodeIds keeps the node count, so a root over the node limit is refused before the fill draws one.
+            const nodes = storedNodeCount(root.doc);
+            if (followUp !== true && nodes > limits.maxDocumentNodes && nodes > storedNodeCount(state.doc)) {
+                return 'maxDocumentNodes';
+            }
+            const query = queriedIds();
+            let drawn = 0;
+            const prepared = prepare(
+                root,
+                () => {
+                    drawn += 1;
+                    return query();
+                },
+                true,
+            );
+            if ('candidate' in prepared) {
+                checked = { from: state, drawn, prepared };
+            }
+            if ('limit' in prepared) {
+                return prepared.limit;
+            }
+            return undefined;
+        },
         attach: (element, props) => {
             if (phase === 'disposed') {
                 return;

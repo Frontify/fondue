@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type KeyBinding } from '#/model';
+import { pasteInto } from '#/clipboard/plugin';
+import { type KeyBinding, type RichTextSlice } from '#/model';
 import { OBJECT_REPLACEMENT } from '#/model/values';
 import { positionOf } from '#/runtime/positions';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
@@ -48,6 +49,25 @@ export const pressKey = (handle: object, key: KeyBinding): void => {
         cancelable: true,
     });
     view.dom.dispatchEvent(event);
+};
+
+/** Feeds the paste order what a browser paste hands it after the clipboard read, with no clipboard event. */
+export const paste = (
+    handle: object,
+    input: {
+        readonly html?: string;
+        readonly text?: string;
+        readonly slice?: RichTextSlice;
+    },
+): void => {
+    const { view } = attachedOf(handle);
+    let slice = '';
+    if (input.slice !== undefined) {
+        slice = JSON.stringify(input.slice);
+    }
+    const text = input.text ?? '';
+    const html = input.html ?? '';
+    pasteInto(view, { text, html, slice });
 };
 
 /** Selects the `occurrence`th match of `text` (from its `from` to its `to` offset), or the node with `nodeId`. */

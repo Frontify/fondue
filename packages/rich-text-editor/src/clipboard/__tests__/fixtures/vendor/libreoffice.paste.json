@@ -1,0 +1,121 @@
+[
+    {
+        "type": "heading",
+        "attrs": {
+            "level": 2,
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Release notes"
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "This release is "
+            },
+            {
+                "type": "text",
+                "text": "faster",
+                "marks": [
+                    {
+                        "type": "bold"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " and "
+            },
+            {
+                "type": "text",
+                "text": "simpler",
+                "marks": [
+                    {
+                        "type": "italic"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "."
+            }
+        ]
+    },
+    {
+        "type": "ordered_list",
+        "attrs": {
+            "start": 1
+        },
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Faster export"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Fewer clicks"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Danke",
+                "marks": [
+                    {
+                        "type": "language",
+                        "attrs": {
+                            "lang": "de-CH",
+                            "dir": null
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

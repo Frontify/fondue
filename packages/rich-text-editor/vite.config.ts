@@ -63,6 +63,7 @@ export default defineConfig({
                 'features/index': './src/features/index.ts',
                 'reader/index': './src/reader/index.ts',
                 'codecs/index': './src/codecs/index.ts',
+                'html/index': './src/html/index.ts',
                 'testing/index': './src/testing/index.ts',
             },
             cssFileName: 'style',

@@ -5,6 +5,7 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 import { Mapping } from 'prosemirror-transform';
 
 import { exceededWrite } from '#/clipboard/import/limits';
+import { refusedNames } from '#/clipboard/import/policy';
 import { COMMAND_META, type CommandContext, type CommandLookup, type EngineCommand, withNodeIds } from '#/definition';
 import {
     type AttributeDeclaration,
@@ -86,6 +87,7 @@ interface ApiSource {
     refused(): void;
     execute(id: string, payload: unknown, options: CommandOptions | undefined): CommandOutcome;
     query(id: string, payload: unknown, options: CommandOptions | undefined): CommandState;
+    policy(): AuthoringPolicy;
     editable(): boolean;
 }
 
@@ -351,11 +353,20 @@ const documentApi = (source: ApiSource): DocumentApi => {
             return 'invalid';
         }
         const blocks = tree.content ?? [];
-        // The runtime gives each written node a new `nodeId`.
+        // As in a paste, the runtime gives each written node a new `nodeId`.
         if (inline) {
             return withNodeIds(Fragment.fromJSON(schema, blocks[0]?.content), () => null);
         }
         return withNodeIds(Fragment.fromJSON(schema, blocks), () => null);
+    };
+    /** Whether `content` holds a node or mark of a feature whose policy refuses its paste. */
+    const refusesPaste = (content: Fragment) => {
+        const refused = refusedNames(model, source.policy().features);
+        let found = false;
+        content.descendants((node) => {
+            found ||= refused.nodes.has(node.type.name) || node.marks.some(({ type }) => refused.marks.has(type.name));
+        });
+        return found;
     };
     /** Whether `content` holds a `url` attribute of a node or mark that its feature's policy refuses. */
     const refusesUrl = (content: Fragment) => {
@@ -415,7 +426,7 @@ const documentApi = (source: ApiSource): DocumentApi => {
         if (typeof content === 'string') {
             return rejectedWrite(content);
         }
-        if (refusesUrl(content)) {
+        if (refusesPaste(content) || refusesUrl(content)) {
             return rejectedWrite('policy');
         }
         const state = source.state();
@@ -659,6 +670,7 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
         refused: () => undefined,
         execute: (id, payload, options) => runtime.handle.execute(id, payload, options),
         query: (id, payload, options) => runtime.handle.query(id, payload, options),
+        policy: () => runtime.policy,
         editable: () => {
             const { phase, mode } = runtime.handle.getSummary();
             return phase === 'ready' && mode === 'editable';
@@ -905,6 +917,11 @@ const commandDocumentApi = (
                 disabledReason: enabled ? null : 'not-applicable',
             };
         },
+        policy: () =>
+            session?.runtime.policy ?? {
+                features: {},
+                creatableHeadingLevels: [],
+            },
         editable: () => session?.runtime.handle.getSummary().mode === 'editable',
     });
 };

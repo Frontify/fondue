@@ -1,0 +1,225 @@
+[
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Normal ",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "bold semibold ",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    },
+                    {
+                        "type": "bold"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "medium ",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "extrabold italic",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    },
+                    {
+                        "type": "bold"
+                    },
+                    {
+                        "type": "italic"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "under",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    },
+                    {
+                        "type": "underline"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " ",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "struck",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    },
+                    {
+                        "type": "strike"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " ",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "both",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    },
+                    {
+                        "type": "underline"
+                    },
+                    {
+                        "type": "strike"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "H",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "2",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    },
+                    {
+                        "type": "subscript"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "O and E=mc",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "2",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    },
+                    {
+                        "type": "superscript"
+                    }
+                ]
+            }
+        ]
+    }
+]

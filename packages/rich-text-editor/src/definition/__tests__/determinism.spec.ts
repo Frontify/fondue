@@ -1,0 +1,39 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment node
+
+import { fileURLToPath } from 'node:url';
+import { Worker } from 'node:worker_threads';
+
+import { describe, expect, it } from 'vitest';
+
+import { fixtureProfiles } from '#/features/__tests__/fixtures/profiles';
+
+const compileInWorker = () =>
+    new Promise<unknown>((resolve, reject) => {
+        const worker = new Worker(new URL('./fixtures/compile.worker.ts', import.meta.url), {
+            execArgv: ['--import', 'tsx'],
+            env: {
+                ...process.env,
+                TSX_TSCONFIG_PATH: fileURLToPath(new URL('../../../tsconfig.json', import.meta.url)),
+            },
+        });
+        worker.once('message', (message) => {
+            worker
+                .terminate()
+                .then(() => resolve(message))
+                .catch(reject);
+        });
+        worker.once('error', reject);
+    });
+
+describe('compilation determinism', () => {
+    it('gives the same schema, keymap, plugin order and manifest in two worker threads', async () => {
+        const [first, second] = await Promise.all([compileInWorker(), compileInWorker()]);
+
+        expect(first).toHaveLength(Object.keys(fixtureProfiles()).length);
+        expect(first).toEqual(second);
+        // The editor parts load `prosemirror-history`, whose own key takes the first `history` suffix.
+        expect(JSON.stringify(first)).toContain('"plugins":["clipboard$","history$1","container-keys$","drop-cursor$"');
+    }, 60_000);
+});

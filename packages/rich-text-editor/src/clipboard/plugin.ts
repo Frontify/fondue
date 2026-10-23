@@ -1,0 +1,434 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { dropCursor } from 'prosemirror-dropcursor';
+import { Fragment, Slice } from 'prosemirror-model';
+import { NodeSelection, Plugin, PluginKey, type Selection, type Transaction } from 'prosemirror-state';
+import { dropPoint } from 'prosemirror-transform';
+import { type EditorView } from 'prosemirror-view';
+
+import { planOf } from '#/codecs/plan';
+import { writeHtml } from '#/codecs/to-html';
+import { writeText } from '#/codecs/to-text';
+import { type PluginImplementation } from '#/definition';
+import { type ContentModel, type RichTextLocale, type TranslationStrings } from '#/model';
+import { type TreeNode } from '#/model/content';
+import { diagnostic } from '#/model/format';
+import { codecContext } from '#/model/output';
+import { isApple } from '#/model/platform';
+import { randomId } from '#/model/random-id';
+import { exceedsBytes } from '#/model/read';
+import { closeGroup } from '#/runtime/history';
+import { type EditorRuntime, runtimeOfView } from '#/runtime/runtime';
+
+import { exceededStructure } from './import/limits';
+import {
+    type FollowUp,
+    insertAndSelect,
+    islandsCannotStay,
+    type Pasted,
+    pastePayload,
+    type PasteSettings,
+    type Payload,
+    prepareSlice,
+    withoutIds,
+} from './paste';
+import { SLICE_TYPE, writeSlice } from './slice';
+
+/** What the host side of a session gives its clipboard handlers. */
+export interface ClipboardSession {
+    /** The presentation's `sliceContext`, read at each copy and paste. */
+    readonly sliceContext: () => string | null;
+    /** The locale of the announcements and of the island labels in copied HTML. */
+    readonly locale: () => RichTextLocale;
+    readonly announce: (message: string) => void;
+}
+
+const sessions = new WeakMap<EditorRuntime, ClipboardSession>();
+
+/** Gives the clipboard handlers of `runtime`'s view what they read from the host. */
+export const connectClipboard = (runtime: EditorRuntime, session: ClipboardSession): void => {
+    sessions.set(runtime, session);
+};
+
+const connectedOf = (view: EditorView) => {
+    const runtime = runtimeOfView(view);
+    if (runtime === undefined) {
+        return undefined;
+    }
+    const session = sessions.get(runtime);
+    if (session === undefined) {
+        return undefined;
+    }
+    return { runtime, session };
+};
+type Connected = NonNullable<ReturnType<typeof connectedOf>>;
+
+let pageContext: string | undefined;
+
+/** The presentation's slice context, else the package's value for this page load. */
+const contextOf = (session: ClipboardSession) => {
+    const context = session.sliceContext();
+    if (context !== null) {
+        return context;
+    }
+    if (pageContext === undefined) {
+        pageContext = randomId();
+    }
+    return pageContext;
+};
+
+/** Shift held at the last key, which Shift+Insert, a paste shortcut of its own, does not count. */
+const shiftHeld = new WeakMap<EditorView, boolean>();
+/** The slice a drag that started in the view carries. */
+const drags = new WeakMap<EditorView, Slice>();
+const clipboardKey = new PluginKey('rte.clipboard');
+const ANDROID = /Android \d/;
+
+const announce = (
+    session: ClipboardSession,
+    key: keyof TranslationStrings,
+    vars?: Readonly<Record<string, number>>,
+) => {
+    const locale = session.locale();
+    session.announce(codecContext(locale, locale).t(key, vars));
+};
+
+const reject = ({ runtime }: Connected, reason: string) =>
+    runtime.report(diagnostic('clipboard.paste-rejected', undefined, { reason }));
+
+/** A flavor over `maxPasteBytes` stops the paste before anything parses it. */
+const rejectsSize = (connected: Connected, payload: Payload) => {
+    const { runtime, session } = connected;
+    const max = runtime.limits.maxPasteBytes;
+    if (![payload.text, payload.html, payload.slice].some((flavor) => exceedsBytes(flavor, max))) {
+        return false;
+    }
+    reject(connected, 'maxPasteBytes');
+    announce(session, 'RichTextEditor_pasteTooLarge');
+    return true;
+};
+
+const payloadOf = (data: DataTransfer): Payload => ({
+    text: data.getData('text/plain'),
+    html: data.getData('text/html'),
+    slice: data.getData(SLICE_TYPE),
+});
+
+/** Dispatches a paste or drop, or reports why it was refused with the document and selection unchanged. */
+const commit = (
+    view: EditorView,
+    connected: Connected,
+    tr: Transaction,
+    pasted: Pasted | undefined,
+    event: 'paste' | 'drop',
+) => {
+    if (pasted === undefined) {
+        return;
+    }
+    const { runtime } = connected;
+    // Set before the limit check, whose prepared batch the dispatch installs.
+    tr.setMeta('uiEvent', event);
+    if (pasted.followUp !== undefined) {
+        tr.setMeta(clipboardKey, pasted.followUp);
+    }
+    let exceeded: string | undefined = runtime.exceededLimit(tr, pasted.followUp !== undefined);
+    // A follow-up past a limit leaves the paste as it is.
+    if (exceeded !== undefined && pasted.followUp !== undefined) {
+        tr.setMeta(clipboardKey, undefined);
+        exceeded = runtime.exceededLimit(tr);
+    }
+    if (exceeded === undefined) {
+        exceeded = exceededStructure(tr.doc, runtime.limits);
+    }
+    if (exceeded !== undefined) {
+        reject(connected, exceeded);
+        return;
+    }
+    const before = view.state.doc;
+    view.dispatch(tr);
+    if (tr.docChanged && view.state.doc === before) {
+        reject(connected, 'not-allowed');
+        return;
+    }
+    if (pasted.droppedMedia > 0) {
+        announce(connected.session, 'RichTextEditor_pasteMediaDropped', { count: pasted.droppedMedia });
+    }
+};
+
+const settingsOf = (
+    model: ContentModel,
+    view: EditorView,
+    { runtime, session }: Connected,
+    plain: boolean,
+): PasteSettings => ({
+    model,
+    limits: runtime.limits,
+    policy: runtime.policy.features,
+    context: contextOf(session),
+    plain,
+    headingLevels: runtime.policy.creatableHeadingLevels,
+    window: view.dom.ownerDocument.defaultView ?? window,
+});
+
+/** Runs the paste pipeline, reporting a throw as a rejection. */
+const attempt = (connected: Connected, build: () => Pasted | undefined): Pasted | null | undefined => {
+    try {
+        return build();
+    } catch (error) {
+        // Markup nested past the parser's depth is a structure limit, as it is for `fromHTML`.
+        if (error instanceof RangeError) {
+            reject(connected, 'maxDepth');
+            return null;
+        }
+        reject(connected, 'error');
+        return null;
+    }
+};
+
+/** Writes the three flavors of `slice`. */
+const writeFlavors = (
+    model: ContentModel,
+    view: EditorView,
+    session: ClipboardSession,
+    data: DataTransfer,
+    slice: Slice,
+) => {
+    const locale = session.locale();
+    const context = codecContext(locale, locale);
+    const plan = planOf(model);
+    const tree: TreeNode = {
+        type: 'doc',
+        attrs: view.state.doc.attrs,
+        content: withoutIds(slice.content).toJSON() as TreeNode[],
+    };
+    data.clearData();
+    data.setData('text/html', writeHtml(plan, tree, context).html);
+    data.setData('text/plain', writeText(plan, tree, context).text);
+    data.setData(SLICE_TYPE, JSON.stringify(writeSlice(model, view.state.doc, slice, contextOf(session))));
+};
+
+/** Whether the platform's copy modifier is held, Alt on Apple and Ctrl elsewhere, as ProseMirror reads it. */
+const copies = (view: EditorView, event: DragEvent) => {
+    const owner = view.dom.ownerDocument.defaultView;
+    if (owner !== null && isApple(owner.navigator)) {
+        return event.altKey;
+    }
+    return event.ctrlKey;
+};
+
+/** A closed paragraph, whose drop point is the block boundary nearest the pointer. */
+const blockSlice = (view: EditorView) => new Slice(Fragment.from(view.state.schema.node('paragraph')), 0, 0);
+
+/**
+ * The selection's content, or for a node-selected leaf that only stands inside its parent, such as a figure's image,
+ * that parent whole, so a paste keeps what the parent stores.
+ */
+const selectedSlice = (selection: Selection): Slice => {
+    const { $from } = selection;
+    const parent = $from.parent;
+    if (
+        selection instanceof NodeSelection &&
+        $from.depth > 0 &&
+        parent.childCount === 1 &&
+        !parent.type.contentMatch.validEnd &&
+        !selection.node.type.isInGroup('block')
+    ) {
+        return new Slice(Fragment.from(parent), 0, 0);
+    }
+    return selection.content();
+};
+
+const copy = (model: ContentModel, view: EditorView, event: ClipboardEvent) => {
+    const connected = connectedOf(view);
+    if (connected === undefined) {
+        return false;
+    }
+    const { selection } = view.state;
+    if (selection.empty || event.clipboardData === null) {
+        return true;
+    }
+    event.preventDefault();
+    writeFlavors(model, view, connected.session, event.clipboardData, selectedSlice(selection));
+    // `handleDOMEvents` runs while the view is not editable too.
+    if (event.type === 'cut' && view.editable) {
+        view.dispatch(view.state.tr.deleteSelection().scrollIntoView().setMeta('uiEvent', 'cut'));
+    }
+    return true;
+};
+
+/** Whether a paste is left alone: the view is read-only, or composing outside Android, as ProseMirror leaves it. */
+const pasteBlocked = (view: EditorView) => !view.editable || (view.composing && !ANDROID.test(navigator.userAgent));
+
+/** Runs the paste order on a payload that is already read. */
+const pasteFrom = (model: ContentModel, view: EditorView, connected: Connected, payload: Payload) => {
+    if (rejectsSize(connected, payload)) {
+        return;
+    }
+    const { tr } = view.state;
+    const { from, to } = tr.selection;
+    const plain = shiftHeld.get(view) === true;
+    const settings = settingsOf(model, view, connected, plain);
+    const pasted = attempt(connected, () => pastePayload(tr, from, to, payload, settings));
+    if (pasted !== null) {
+        commit(view, connected, tr.scrollIntoView(), pasted, 'paste');
+    }
+};
+
+const paste = (model: ContentModel, view: EditorView, event: ClipboardEvent) => {
+    const connected = connectedOf(view);
+    if (connected === undefined) {
+        return false;
+    }
+    if (pasteBlocked(view) || event.clipboardData === null) {
+        return true;
+    }
+    event.preventDefault();
+    pasteFrom(model, view, connected, payloadOf(event.clipboardData));
+    return true;
+};
+
+const feeds = new WeakMap<EditorView, (payload: Payload) => void>();
+
+/** Feeds `view`'s paste order a payload as a browser hands it after the clipboard read, with no clipboard event. */
+export const pasteInto = (view: EditorView, payload: Payload): void => {
+    feeds.get(view)?.(payload);
+};
+
+const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
+    const dragged = drags.get(view);
+    drags.delete(view);
+    view.dragging = null;
+    const connected = connectedOf(view);
+    if (connected === undefined) {
+        return false;
+    }
+    const data = event.dataTransfer;
+    const at = view.posAtCoords({ left: event.clientX, top: event.clientY });
+    if (!view.editable || data === null || at === null) {
+        return true;
+    }
+    event.preventDefault();
+    const { tr } = view.state;
+    let pasted: Pasted | null | undefined;
+    const copying = copies(view, event);
+    const payload = payloadOf(data);
+    // A move pastes nothing new, so only a copy or a drop from outside is checked against `maxPasteBytes`.
+    if ((dragged === undefined || copying) && rejectsSize(connected, payload)) {
+        return true;
+    }
+    // A copy of an island whose `nodeId` is already here takes the dropped flavors instead, as a paste would.
+    if (dragged === undefined || (copying && islandsCannotStay(dragged, tr.doc, false))) {
+        // A drop from outside, or an inside copy that falls back, takes the paste order at the drop cursor's block boundary.
+        const position = dropPoint(tr.doc, at.pos, blockSlice(view)) ?? at.pos;
+        const settings = settingsOf(model, view, connected, false);
+        pasted = attempt(connected, () => pastePayload(tr, position, position, payload, settings));
+    } else {
+        // A drag inside moves its content with the same `nodeId`s, or with the copy modifier inserts a copy.
+        let slice = dragged;
+        const point = dropPoint(tr.doc, at.pos, slice) ?? at.pos;
+        // A move pastes nothing new, so the paste policy filters only a copy.
+        if (copying) {
+            slice = prepareSlice(slice, tr.doc.type.schema, model, connected.runtime.policy.features);
+        } else {
+            tr.deleteSelection();
+        }
+        const position = tr.mapping.map(point);
+        insertAndSelect(tr, position, position, slice);
+        pasted = { droppedMedia: 0 };
+    }
+    if (pasted === null) {
+        return true;
+    }
+    view.focus();
+    commit(view, connected, tr, pasted, 'drop');
+    return true;
+};
+
+const dragstart = (model: ContentModel, view: EditorView, event: DragEvent) => {
+    const connected = connectedOf(view);
+    if (connected === undefined) {
+        return false;
+    }
+    const data = event.dataTransfer;
+    const { selection } = view.state;
+    // With nothing selected the browser keeps the drag data of what the pointer took, such as a link.
+    if (data === null || selection.empty) {
+        return true;
+    }
+    const slice = selectedSlice(selection);
+    writeFlavors(model, view, connected.session, data, slice);
+    data.effectAllowed = 'copyMove';
+    drags.set(view, slice);
+    view.dragging = { slice, move: !copies(view, event) };
+    return true;
+};
+
+/** The package's own clipboard and drag handlers, since ProseMirror's parse before any byte check and write no internal slice. */
+export const clipboardPlugin =
+    (model: ContentModel): PluginImplementation =>
+    () =>
+        new Plugin({
+            key: clipboardKey,
+            view: (view) => {
+                feeds.set(view, (payload) => {
+                    const connected = connectedOf(view);
+                    if (connected === undefined || pasteBlocked(view)) {
+                        return;
+                    }
+                    pasteFrom(model, view, connected, payload);
+                });
+                return {};
+            },
+            props: {
+                handleDOMEvents: {
+                    keydown: (view, event) => {
+                        shiftHeld.set(view, (event.key === 'Shift' || event.shiftKey) && event.key !== 'Insert');
+                        return false;
+                    },
+                    keyup: (view, event) => {
+                        if (event.key === 'Shift') {
+                            shiftHeld.set(view, false);
+                        }
+                        return false;
+                    },
+                    copy: (view, event) => copy(model, view, event),
+                    cut: (view, event) => copy(model, view, event),
+                    paste: (view, event) => paste(model, view, event),
+                    dragstart: (view, event) => dragstart(model, view, event),
+                    // The drop cursor snaps only for a drag it sees started here, so any other drag stands in a block.
+                    dragover: (view) => {
+                        if (view.dragging === null && view.editable) {
+                            view.dragging = { slice: blockSlice(view), move: false };
+                        }
+                        return false;
+                    },
+                    dragleave: (view, event) => {
+                        if (!drags.has(view) && !view.dom.contains(event.relatedTarget as Element | null)) {
+                            view.dragging = null;
+                        }
+                        return false;
+                    },
+                    dragend: (view) => {
+                        drags.delete(view);
+                        return false;
+                    },
+                    drop: (view, event) => drop(model, view, event),
+                },
+            },
+            appendTransaction: (transactions, _old, state) => {
+                const [root] = transactions;
+                const followUp = root?.getMeta(clipboardKey) as FollowUp | undefined;
+                if (followUp === undefined || transactions.length !== 1) {
+                    return null;
+                }
+                const next = followUp(state);
+                if (next === null) {
+                    return null;
+                }
+                return closeGroup(next);
+            },
+        });
+
+/** The drop cursor in the focus color. */
+export const dropCursorPlugin: PluginImplementation = () =>
+    dropCursor({ color: 'var(--color-focus-default)', width: 2 });

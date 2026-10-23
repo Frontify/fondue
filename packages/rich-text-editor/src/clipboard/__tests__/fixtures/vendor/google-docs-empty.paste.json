@@ -1,0 +1,138 @@
+[
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Agenda",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "bullet_list",
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Welcome",
+                                "marks": [
+                                    {
+                                        "type": "font_color",
+                                        "attrs": {
+                                            "tokenId": null,
+                                            "value": "#000000"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Questions",
+                                "marks": [
+                                    {
+                                        "type": "font_color",
+                                        "attrs": {
+                                            "tokenId": null,
+                                            "value": "#000000"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Thanks",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

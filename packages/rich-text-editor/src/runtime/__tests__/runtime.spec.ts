@@ -525,7 +525,7 @@ describe('stored content the session keeps', () => {
     });
 });
 
-const ALLOW: FeaturePolicy = { create: true, edit: true, remove: true };
+const ALLOW: FeaturePolicy = { create: true, edit: true, remove: true, paste: true };
 const forbid = (featureId: string, action: 'create' | 'edit' | 'remove'): Partial<AuthoringPolicy> => ({
     features: { [featureId]: { ...ALLOW, [action]: false } },
 });
@@ -1395,6 +1395,7 @@ describe('commands, events and the commit path', () => {
             create: fc.boolean(),
             edit: fc.boolean(),
             remove: fc.boolean(),
+            paste: fc.constant(true),
         });
         const command = fc.oneof(
             fc.record({ id: fc.constant('mark.bold.toggle'), payload: fc.constant(undefined) }),
@@ -2400,7 +2401,7 @@ const settleInput = async () => {
     await vi.advanceTimersByTimeAsync(20);
 };
 const NOT_EDITABLE_CORE: Partial<AuthoringPolicy> = {
-    features: { core: { create: true, edit: false, remove: true } },
+    features: { core: { create: true, edit: false, remove: true, paste: true } },
 };
 
 describe('the focus and the replacement of a session', () => {
@@ -2651,7 +2652,7 @@ describe('the published snapshot and composition', () => {
     it('judges the settle repair with its composition, so a heading with remove false still gets unique IDs', async () => {
         const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
         const policy = {
-            features: { 'fixture.heading-set': { create: true, edit: true, remove: false } },
+            features: { 'fixture.heading-set': { create: true, edit: true, remove: false, paste: true } },
         };
         const session = start(stored(heading(2, words('abcd'))), { model, policy });
         const { view, changes } = session;
@@ -2682,7 +2683,7 @@ describe('the published snapshot and composition', () => {
     it('defers a root a plugin view dispatches while the settled state installs, so the check still judges the composition', async () => {
         const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
         const policy = {
-            features: { 'fixture.heading-set': { create: true, edit: false, remove: true } },
+            features: { 'fixture.heading-set': { create: true, edit: false, remove: true, paste: true } },
         };
         let dispatched = false;
         // Dispatches once it sees the repaired headings, as a plugin view that reacts to a new state does.

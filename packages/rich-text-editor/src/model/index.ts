@@ -68,6 +68,7 @@ export {
     type NodeOf,
     type ResourceLimits,
     type RichTextDocument,
+    type RichTextSlice,
 } from './format';
 export { hashDocument } from './hash';
 export { checkHref, type HrefPolicy, type HrefResult } from './href';

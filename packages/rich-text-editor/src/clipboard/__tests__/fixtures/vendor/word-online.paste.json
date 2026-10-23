@@ -1,0 +1,53 @@
+[
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": "left"
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Quarterly "
+            },
+            {
+                "type": "text",
+                "text": "update",
+                "marks": [
+                    {
+                        "type": "bold"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Numbers",
+                "marks": [
+                    {
+                        "type": "italic"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " follow"
+            },
+            {
+                "type": "hard_break"
+            },
+            {
+                "type": "text",
+                "text": "next week"
+            }
+        ]
+    }
+]

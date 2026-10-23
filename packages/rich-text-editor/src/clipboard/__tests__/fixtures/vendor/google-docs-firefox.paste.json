@@ -1,0 +1,85 @@
+[
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Meeting notes, ",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "Tuesday",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    },
+                    {
+                        "type": "bold"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Attendees",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    },
+                    {
+                        "type": "italic"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": ": Ada, Grace",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

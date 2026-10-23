@@ -111,3 +111,25 @@ test.describe('from 1000 to 100 CSS pixels', () => {
         ).toBeFocused();
     });
 });
+
+test('pastes a `mark` as its mark unless another editor’s search left it there', async ({ mount, page }) => {
+    await mount(<SpotlightProbe />);
+    await ready(page);
+    const surface = page.getByRole('textbox', { name: 'Notes' });
+    await surface.getByText('part.').click();
+    await page.keyboard.press('End');
+    await surface.evaluate(async (element) => {
+        // The view reads the caret on `selectionchange`, which input events can outrun, so a paste sent at once lands at the old caret.
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        const clipboardData = new DataTransfer();
+        clipboardData.setData('text/html', '<mark>kept</mark> <mark data-search-hit="">found</mark>');
+        clipboardData.setData('text/plain', 'kept found');
+        element.dispatchEvent(new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true }));
+    });
+
+    await expect
+        .poll(() => documentOf(page))
+        .toContain(
+            '{"type":"text","text":"kept","marks":[{"type":"fixture_spotlight"}]},{"type":"text","text":" found"}',
+        );
+});

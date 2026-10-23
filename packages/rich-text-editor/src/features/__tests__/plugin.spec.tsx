@@ -24,7 +24,7 @@ import {
 } from '#/index';
 import { compileContentModel, defineFeature, DefinitionError } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
-import { pressKey, runFeatureContract, setSelection } from '#/testing';
+import { paste, pressKey, runFeatureContract, setSelection } from '#/testing';
 
 // With every shipped feature, whose fixtures the shipped ones need, as an outside feature joins a profile.
 const features = [...featuresById(Object.keys(registry)), spotlight()];
@@ -94,6 +94,24 @@ describe('a plugin added only in its own files', () => {
         mount();
 
         expect(screen.getByTestId('fixture-spotlight-control')).toHaveAttribute('aria-keyshortcuts', 'Control+Shift+L');
+    });
+
+    it('pastes a `mark` as its mark unless another editor’s search left it behind', () => {
+        const { handle } = mount();
+        act(() => {
+            setSelection(handle, { text: ' part.', from: 6, to: 6 });
+        });
+        act(() => {
+            paste(handle, { html: '<mark>kept</mark> <mark data-search-hit="">found</mark>', text: 'kept found' });
+        });
+
+        expect(firstBlock(handle)).toEqual([
+            { type: 'text', text: 'Read the ' },
+            { type: 'text', text: 'spotlit', marks: [{ type: 'fixture_spotlight' }] },
+            { type: 'text', text: ' part.' },
+            { type: 'text', text: 'kept', marks: [{ type: 'fixture_spotlight' }] },
+            { type: 'text', text: ' found' },
+        ]);
     });
 
     it('refuses a plugin for a feature the model does not install', () => {

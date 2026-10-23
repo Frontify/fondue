@@ -178,7 +178,7 @@ describe('the fixed toolbar', () => {
             ...authoring,
             features: {
                 ...authoring.features,
-                'marks.bold': { create: false, edit: true, remove: true },
+                'marks.bold': { create: false, edit: true, remove: true, paste: true },
             },
         });
         act(() => setSelection(handle(), { text: 'two' }));

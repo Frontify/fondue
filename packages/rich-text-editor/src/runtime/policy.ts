@@ -10,7 +10,7 @@ import { findUnsafeJson, isRecord, OBJECT_REPLACEMENT } from '#/model/values';
 
 import { type AuthoringPolicy, type FeaturePolicy, type HeadingLevel } from './types';
 
-const EVERYTHING: FeaturePolicy = { create: true, edit: true, remove: true };
+const EVERYTHING: FeaturePolicy = { create: true, edit: true, remove: true, paste: true };
 const HEADING_LEVELS: readonly HeadingLevel[] = [1, 2, 3, 4, 5, 6];
 const HEADING = 'heading';
 

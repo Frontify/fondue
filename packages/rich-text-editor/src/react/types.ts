@@ -161,6 +161,7 @@ export interface ReactPresentation extends ReaderPresentation {
     /** Groups of command IDs, `{ command, payload }` items and the `text-style` control ID, in order. */
     readonly toolbar: readonly (readonly CommandRef[])[];
     readonly controls?: Readonly<Record<string, { readonly labelKey?: string; readonly icon?: string }>>;
+    readonly sliceContext: string | null;
     /** Package key syntax; default `Alt-F10`. */
     readonly toolbarShortcut?: string;
 }

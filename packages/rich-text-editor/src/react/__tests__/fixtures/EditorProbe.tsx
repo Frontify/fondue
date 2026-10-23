@@ -34,7 +34,7 @@ const inputRulesModel = compileContentModel(
     [core(), bold(), fixtureItalic(), fixtureHeadingSet(), fixtureInputRules(), fixtureChrome()],
     { id: 'test.ct', version: 1 },
 );
-const ALLOW = { create: true, edit: true, remove: true };
+const ALLOW = { create: true, edit: true, remove: true, paste: true };
 /** The component-test model's definitions: every feature allowed, and paragraphs that may not change. */
 const definitions = {
     open: defineEditor({ id: 'test.ct', model, plugins: fixturePartsOf(model) }),

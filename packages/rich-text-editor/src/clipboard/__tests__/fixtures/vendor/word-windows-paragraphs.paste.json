@@ -1,0 +1,124 @@
+[
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Brand review"
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "The "
+            },
+            {
+                "type": "text",
+                "text": "new palette",
+                "marks": [
+                    {
+                        "type": "bold"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " is "
+            },
+            {
+                "type": "text",
+                "text": "warmer",
+                "marks": [
+                    {
+                        "type": "italic"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": ", see "
+            },
+            {
+                "type": "text",
+                "text": "the guidelines",
+                "marks": [
+                    {
+                        "type": "link",
+                        "attrs": {
+                            "href": "https://www.frontify.com/brand",
+                            "openInNewWindow": false,
+                            "styleId": null
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "."
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Due ",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#c00000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "Friday",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#c00000"
+                        }
+                    },
+                    {
+                        "type": "underline"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    }
+]

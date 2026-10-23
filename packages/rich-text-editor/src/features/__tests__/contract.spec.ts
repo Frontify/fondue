@@ -23,6 +23,7 @@ import { vocabularyLists } from '#/features/__tests__/fixtures/vocabulary';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
 import { featureRecords, registry } from '#/features/registry';
+import { fromHTML } from '#/html';
 import { defineEditor, defineEditorPlugin, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature, type Diagnostic, type Feature, type RichTextDocument } from '#/model';
 import { RichTextReader } from '#/reader';
@@ -573,6 +574,7 @@ describe('the outside fixture feature', () => {
         const reader = render(createElement(RichTextReader, { document: highlightDocument, model }));
         const codecs = createCodecs(model);
         const { html } = codecs.toHTML(highlightDocument);
+        const imported = fromHTML(html, model, { window });
 
         const editorMark = screen.getByRole('textbox', { name: 'Notes' }).querySelector('mark');
         const readerMark = reader.container.querySelector('mark');
@@ -585,7 +587,15 @@ describe('the outside fixture feature', () => {
             html.includes('<mark>highlighted</mark>'),
             codecs.toPlainText(highlightDocument).text,
             codecs.toMarkdown(highlightDocument).markdown,
-        ]).toEqual(['highlighted', 'highlighted', true, 'Read the highlighted part.', 'Read the highlighted part.']);
+            imported.status === 'editable' && imported.document.content,
+        ]).toEqual([
+            'highlighted',
+            'highlighted',
+            true,
+            'Read the highlighted part.',
+            'Read the highlighted part.',
+            highlightDocument.content,
+        ]);
         expect(vi.mocked(compileContentModel)).toHaveBeenCalledTimes(1);
         editor.unmount();
     });

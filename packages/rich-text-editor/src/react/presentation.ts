@@ -7,5 +7,6 @@ export const defineReactPresentation = (input: Partial<ReactPresentation>): Reac
     styles: [],
     colorTokens: [],
     toolbar: [],
+    sliceContext: null,
     ...input,
 });

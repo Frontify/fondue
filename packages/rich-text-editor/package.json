@@ -39,6 +39,10 @@
             "types": "./dist/codecs/index.d.ts",
             "import": "./dist/codecs/index.js"
         },
+        "./html": {
+            "types": "./dist/html/index.d.ts",
+            "import": "./dist/html/index.js"
+        },
         "./testing": {
             "types": "./dist/testing/index.d.ts",
             "import": "./dist/testing/index.js"
@@ -72,6 +76,7 @@
         "csstype": "^3.2.3",
         "markdown-it": "^15.0.2",
         "prosemirror-commands": "^1.7.2",
+        "prosemirror-dropcursor": "^1.8.4",
         "prosemirror-history": "^1.5.1",
         "prosemirror-keymap": "^1.2.3",
         "prosemirror-model": "^1.25.12",
@@ -116,6 +121,7 @@
         "react-dom": "^18.3.1",
         "sass": "^1.102.0",
         "storybook": "^10.6.0",
+        "tsx": "^4.23.11",
         "typescript": "^5.9.3",
         "vite": "^6.4.3",
         "vite-plugin-dts": "^4.5.4",

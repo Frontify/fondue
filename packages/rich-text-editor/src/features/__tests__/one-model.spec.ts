@@ -2,6 +2,7 @@
 
 // @vitest-environment node
 
+import { JSDOM } from 'jsdom';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
@@ -9,6 +10,7 @@ import { highlight, highlightDocument } from '#/features/__tests__/fixtures/outs
 import { align } from '#/features/blocks-align/feature';
 import { heading } from '#/features/blocks-heading/feature';
 import { core } from '#/features/core/feature';
+import { fromHTML } from '#/html';
 import { compileContentModel } from '#/model';
 import { renderReader } from '#/reader/__tests__/helpers/helpers';
 
@@ -29,9 +31,11 @@ describe('one compiled model with the outside fixture feature on a server', () =
             codecs.toPlainText(highlightDocument).text,
             codecs.toMarkdown(highlightDocument).markdown,
         ];
+        const imported = fromHTML(html, model, { window: new JSDOM('').window as unknown as Window });
 
         // server.spec.ts pins each output; this case proves they all come from the one compiled model.
         expect(outputs.every((output) => output.length > 0)).toBe(true);
+        expect(imported.status === 'editable' && imported.document.content).toEqual(highlightDocument.content);
         expect(vi.mocked(compileContentModel)).toHaveBeenCalledTimes(1);
     });
 });

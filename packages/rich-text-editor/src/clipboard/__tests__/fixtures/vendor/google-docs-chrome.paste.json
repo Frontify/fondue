@@ -1,0 +1,198 @@
+[
+    {
+        "type": "heading",
+        "attrs": {
+            "level": 2,
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Launch plan",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "The ",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "brand refresh",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    },
+                    {
+                        "type": "bold"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " ships in May.",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#000000"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "bullet_list",
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Logo",
+                                "marks": [
+                                    {
+                                        "type": "font_color",
+                                        "attrs": {
+                                            "tokenId": null,
+                                            "value": "#000000"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Colours",
+                                "marks": [
+                                    {
+                                        "type": "font_color",
+                                        "attrs": {
+                                            "tokenId": null,
+                                            "value": "#000000"
+                                        }
+                                    },
+                                    {
+                                        "type": "bold"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "text",
+                                "text": " and type",
+                                "marks": [
+                                    {
+                                        "type": "font_color",
+                                        "attrs": {
+                                            "tokenId": null,
+                                            "value": "#000000"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Frontify",
+                "marks": [
+                    {
+                        "type": "link",
+                        "attrs": {
+                            "href": "https://www.frontify.com/",
+                            "openInNewWindow": false,
+                            "styleId": null
+                        }
+                    },
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#1155cc"
+                        }
+                    },
+                    {
+                        "type": "underline"
+                    }
+                ]
+            }
+        ]
+    }
+]

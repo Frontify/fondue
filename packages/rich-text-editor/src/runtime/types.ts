@@ -30,11 +30,12 @@ export interface ReferenceValue {
     readonly kind?: 'user' | 'group' | 'everyone';
 }
 
-/** What a host lets users do with a feature: create, edit and remove it. */
+/** What a host lets users do with a feature: create, edit, remove and paste it. */
 export interface FeaturePolicy {
     readonly create: boolean;
     readonly edit: boolean;
     readonly remove: boolean;
+    readonly paste: boolean;
 }
 /** What a host lets users do in the editor: the policy per feature and the heading levels. */
 export interface AuthoringPolicy {

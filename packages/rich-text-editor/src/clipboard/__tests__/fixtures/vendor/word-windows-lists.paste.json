@@ -1,0 +1,215 @@
+[
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Launch checklist",
+                "marks": [
+                    {
+                        "type": "bold"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "bullet_list",
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Brief the team"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "bullet_list",
+                        "content": [
+                            {
+                                "type": "list_item",
+                                "content": [
+                                    {
+                                        "type": "paragraph",
+                                        "attrs": {
+                                            "lang": null,
+                                            "align": null
+                                        },
+                                        "content": [
+                                            {
+                                                "type": "text",
+                                                "text": "Share the "
+                                            },
+                                            {
+                                                "type": "text",
+                                                "text": "brand book",
+                                                "marks": [
+                                                    {
+                                                        "type": "italic"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "bullet_list",
+                                        "content": [
+                                            {
+                                                "type": "list_item",
+                                                "content": [
+                                                    {
+                                                        "type": "paragraph",
+                                                        "attrs": {
+                                                            "lang": null,
+                                                            "align": null
+                                                        },
+                                                        "content": [
+                                                            {
+                                                                "type": "text",
+                                                                "text": "Agree on the palette"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Book the room"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        }
+    },
+    {
+        "type": "ordered_list",
+        "attrs": {
+            "start": 1
+        },
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Draft the copy"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Review it with "
+                            },
+                            {
+                                "type": "text",
+                                "text": "Legal",
+                                "marks": [
+                                    {
+                                        "type": "bold"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Legal signs off before anything is published."
+            }
+        ]
+    },
+    {
+        "type": "ordered_list",
+        "attrs": {
+            "start": 3
+        },
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Publish"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

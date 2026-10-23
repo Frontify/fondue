@@ -1,0 +1,302 @@
+[
+    {
+        "type": "heading",
+        "attrs": {
+            "level": 1,
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Release notes"
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": "justify"
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "This release has "
+            },
+            {
+                "type": "text",
+                "text": "bold",
+                "marks": [
+                    {
+                        "type": "bold"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": ", "
+            },
+            {
+                "type": "text",
+                "text": "italic",
+                "marks": [
+                    {
+                        "type": "italic"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": ", "
+            },
+            {
+                "type": "text",
+                "text": "underlined",
+                "marks": [
+                    {
+                        "type": "underline"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": ", "
+            },
+            {
+                "type": "text",
+                "text": "struck",
+                "marks": [
+                    {
+                        "type": "strike"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": ", "
+            },
+            {
+                "type": "text",
+                "text": "code",
+                "marks": [
+                    {
+                        "type": "code"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": ", H"
+            },
+            {
+                "type": "text",
+                "text": "2",
+                "marks": [
+                    {
+                        "type": "subscript"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "O and x"
+            },
+            {
+                "type": "text",
+                "text": "2",
+                "marks": [
+                    {
+                        "type": "superscript"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " text, with a "
+            },
+            {
+                "type": "text",
+                "text": "link that opens a new window",
+                "marks": [
+                    {
+                        "type": "link",
+                        "attrs": {
+                            "href": "https://www.frontify.com/",
+                            "openInNewWindow": true,
+                            "styleId": null
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " and "
+            },
+            {
+                "type": "text",
+                "text": "مرحبا",
+                "marks": [
+                    {
+                        "type": "language",
+                        "attrs": {
+                            "lang": "ar",
+                            "dir": "rtl"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": "."
+            }
+        ]
+    },
+    {
+        "type": "heading",
+        "attrs": {
+            "level": 2,
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Steps"
+            }
+        ]
+    },
+    {
+        "type": "ordered_list",
+        "attrs": {
+            "start": 3
+        },
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Open the guide"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Pick a "
+                            },
+                            {
+                                "type": "text",
+                                "text": "red",
+                                "marks": [
+                                    {
+                                        "type": "font_color",
+                                        "attrs": {
+                                            "tokenId": null,
+                                            "value": "#c0392b"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "text",
+                                "text": " style"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "bullet_list",
+        "content": [
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "One"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "list_item",
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": {
+                            "lang": null,
+                            "align": null
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Two"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "blockquote",
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null,
+                    "align": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "A quote"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": "de",
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "Ein Bild: Frontify logo"
+            }
+        ]
+    }
+]

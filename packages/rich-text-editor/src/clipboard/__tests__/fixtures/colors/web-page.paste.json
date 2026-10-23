@@ -1,0 +1,109 @@
+[
+    {
+        "type": "paragraph",
+        "attrs": {
+            "lang": null,
+            "align": null
+        },
+        "content": [
+            {
+                "type": "text",
+                "text": "red",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#ff0000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " "
+            },
+            {
+                "type": "text",
+                "text": "green",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#008000"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " "
+            },
+            {
+                "type": "text",
+                "text": "blue",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#0000ff"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " "
+            },
+            {
+                "type": "text",
+                "text": "gray",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#aabbcc"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " "
+            },
+            {
+                "type": "text",
+                "text": "orange",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#ff8800"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "text": " marked half plain "
+            },
+            {
+                "type": "text",
+                "text": "both",
+                "marks": [
+                    {
+                        "type": "font_color",
+                        "attrs": {
+                            "tokenId": null,
+                            "value": "#c0392b"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]
