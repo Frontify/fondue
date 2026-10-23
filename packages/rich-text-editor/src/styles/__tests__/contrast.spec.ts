@@ -10,9 +10,13 @@ import postcss from 'postcss';
 import { compile } from 'sass';
 import { describe, expect, it } from 'vitest';
 
+import { composite, contrastOf, parseColor } from '#/model/checks';
+
 import { insideAtRule, literalColorsIn, withoutVars } from '../../__tests__/css';
 
 const packageRoot = fileURLToPath(new URL('../../..', import.meta.url)).replace(/\/$/, '');
+
+type Rgba = NonNullable<ReturnType<typeof parseColor>>;
 
 /** A background, laid over each surface it can sit on when it is translucent, or over the page when it names none. */
 type Backdrop = { readonly background: string; readonly grounds: readonly string[] };
@@ -253,6 +257,62 @@ const NON_TEXT_GROUPS = ELEMENTS.flatMap((element) => {
     return groups;
 });
 
+const THEMES = readFileSync(
+    join(packageRoot, 'node_modules/@frontify/fondue-tokens/dist/themes/themes.module.css'),
+    'utf8',
+);
+
+const blockOf = (name: string): Map<string, string> => {
+    const found = new RegExp(`\\.${name} \\{([^}]*)\\}`).exec(THEMES)?.[1];
+    const body = found ?? '';
+    return new Map(
+        [...body.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(([, property = '', value = '']) => [property, value]),
+    );
+};
+
+const colorsOf = (theme: 'light' | 'dark') => {
+    const values = new Map([...blockOf('base'), ...blockOf(theme)]);
+    return (token: string): Rgba => {
+        let value = values.get(token) ?? '';
+        let reference = /^var\((--[\w-]+)\)$/.exec(value);
+        while (reference !== null) {
+            const referenced = values.get(reference[1] ?? '');
+            value = referenced ?? '';
+            reference = /^var\((--[\w-]+)\)$/.exec(value);
+        }
+        const color = parseColor(value);
+        if (color === undefined) {
+            throw new Error(`${token} has no colour value in the ${theme} theme`);
+        }
+        return color;
+    };
+};
+
+/** The pairs below `minimum` in `theme`, each with its ratio. */
+const belowOf = (groups: readonly Group[], theme: 'light' | 'dark', minimum: number): string[] => {
+    const color = colorsOf(theme);
+    const page = color('--color-surface-default');
+    return groups.flatMap(({ where, opacity, foregrounds, backdrops }) =>
+        [...foregrounds].flatMap((foreground) =>
+            backdrops.flatMap(({ background, grounds }) => {
+                let unders = grounds.map((ground) => composite(color(ground), page));
+                if (unders.length === 0) {
+                    unders = [page];
+                }
+                return unders.flatMap((under) => {
+                    const behind = composite(color(background), under);
+                    const ink = color(foreground);
+                    const ratio = contrastOf(composite({ ...ink, alpha: ink.alpha * opacity }, behind), behind);
+                    if (ratio >= minimum) {
+                        return [];
+                    }
+                    return [`${foreground} on ${background}, ${where}: ${ratio.toFixed(2)}`];
+                });
+            }),
+        ),
+    );
+};
+
 const pairedIn = (groups: readonly Group[], ending: string) =>
     groups.some(
         ({ where, foregrounds, backdrops }) => where.endsWith(ending) && foregrounds.size * backdrops.length > 0,
@@ -269,4 +329,16 @@ describe('token contrast of the package styles', () => {
         expect(pairedIn(NON_TEXT_GROUPS, 'focus')).toBe(true);
         expect(pairedIn(NON_TEXT_GROUPS, 'border')).toBe(true);
     });
+
+    for (const theme of ['light', 'dark'] as const) {
+        // Accessibility AC-008.
+        it(`gives every default text colour 4.5:1 on its backgrounds in the ${theme} theme`, () => {
+            expect(belowOf(TEXT_GROUPS, theme, 4.5)).toEqual([]);
+        });
+
+        // Accessibility AC-012; the editor's table borders arrive with tables in 1.x.
+        it(`gives focus indicators, pressed toggles and control borders 3:1 against adjacent colours in the ${theme} theme`, () => {
+            expect(belowOf(NON_TEXT_GROUPS, theme, 3)).toEqual([]);
+        });
+    }
 });

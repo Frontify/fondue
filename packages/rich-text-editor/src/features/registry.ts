@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { contentChecks } from '#/features/a11y-content-checks/feature';
 import { align } from '#/features/blocks-align/feature';
 import { codeBlock } from '#/features/blocks-code/feature';
 import { heading } from '#/features/blocks-heading/feature';
@@ -27,6 +28,7 @@ import { underline } from '#/features/marks-underline/feature';
 import { mediaImage } from '#/features/media-image/feature';
 import { mediaUpload } from '#/features/media-upload/feature';
 import { mentions } from '#/features/mentions/feature';
+import { outline } from '#/features/nav-outline/feature';
 import { brandStyles } from '#/features/styles-brand/feature';
 import { DefinitionError, type Feature } from '#/model';
 
@@ -58,6 +60,8 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'styles.brand': brandStyles,
     'input-rules': inputRules,
     mentions,
+    'nav.outline': outline,
+    'a11y.content-checks': contentChecks,
     'media.image': mediaImage,
     'media.upload': mediaUpload,
 };
@@ -101,6 +105,8 @@ export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     'styles.brand': NO_DEPENDENCIES,
     'input-rules': NO_DEPENDENCIES,
     mentions: NO_DEPENDENCIES,
+    'nav.outline': NO_DEPENDENCIES,
+    'a11y.content-checks': NO_DEPENDENCIES,
     'media.image': NO_DEPENDENCIES,
     'media.upload': NO_DEPENDENCIES,
 };

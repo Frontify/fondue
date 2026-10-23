@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ComponentType, useMemo, useRef, useState } from 'react';
+import { type ComponentType, type MutableRefObject, useMemo, useRef, useState } from 'react';
 
 import { anchorOf } from '#/bridge/anchor';
 import { type Announcer } from '#/bridge/announcer';
@@ -14,6 +14,7 @@ import {
     type PluginPresentation,
 } from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
+import { contentChecksApi } from '#/runtime/editor-api';
 import { referenceValues } from '#/runtime/suggestions/references';
 
 import { type ReferenceService } from './types';
@@ -32,6 +33,8 @@ interface HostSources {
     readonly coordinator: MountCoordinator;
     readonly scope: InteractionScope;
     readonly announcer: Announcer;
+    readonly panels: MutableRefObject<{ open(id: string): void; close(): void; toggle(id: string): void }>;
+    readonly openPanel: MutableRefObject<string | undefined>;
     readonly t: () => CodecContext['t'];
     readonly lang: () => string;
     readonly presentation: () => PluginPresentation;
@@ -44,7 +47,7 @@ export const usePluginHosts = (sources: HostSources) => {
     const [pluginOverlay, setPluginOverlay] = useState<PluginOverlay>();
     const pluginOverlayRef = useRef<PluginOverlay>(undefined);
     const [hosts] = useState<EditorHosts>(() => {
-        const { coordinator, scope, announcer } = sources;
+        const { coordinator, scope, announcer, panels, openPanel } = sources;
         const view = () => coordinator.runtime?.view;
         const anchor = (target: AnchorTarget) => anchorOf(view, target);
         let opened = 0;
@@ -79,6 +82,13 @@ export const usePluginHosts = (sources: HostSources) => {
                         },
                     };
                 },
+                checks: () => {
+                    const runtime = coordinator.runtime;
+                    if (runtime === undefined) {
+                        return undefined;
+                    }
+                    return contentChecksApi(runtime);
+                },
             },
             overlays: {
                 open: (component, props, target = 'selection') => {
@@ -94,6 +104,12 @@ export const usePluginHosts = (sources: HostSources) => {
                 },
                 close: () => showOverlay(undefined),
                 isOpen: () => pluginOverlayRef.current !== undefined,
+            },
+            panels: {
+                open: (id) => panels.current.open(id),
+                toggle: (id) => panels.current.toggle(id),
+                close: () => panels.current.close(),
+                isOpen: (id) => openPanel.current === id,
             },
             announce: (message, key) => announcer.announce(message, key),
             focus: () => coordinator.runtime?.handle.focus(),

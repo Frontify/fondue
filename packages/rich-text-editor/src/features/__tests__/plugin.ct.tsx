@@ -25,7 +25,7 @@ test('reaches the plugin control with Alt+F10 and the arrow keys, and toggles it
 
     await expect(control).toBeFocused();
     await page.keyboard.press('ArrowRight');
-    await expect(page.getByRole('button', { name: 'Spotlight note' })).toBeFocused();
+    await expect(page.getByRole('button', { name: 'Spotlit passages' })).toBeFocused();
     await page.keyboard.press('ArrowLeft');
     await expect(control).toBeFocused();
     await expect(control).toHaveAttribute('aria-pressed', 'false');
@@ -110,6 +110,27 @@ test.describe('from 1000 to 100 CSS pixels', () => {
             page.getByTestId('fondue-rich-text-editor-toolbar').getByRole('button', { name: 'More' }),
         ).toBeFocused();
     });
+});
+
+test('opens its panel from its toolbar toggle and closes it on Escape, with focus back on the surface', async ({
+    mount,
+    page,
+}) => {
+    await mount(<SpotlightProbe />);
+    await ready(page);
+    const toggle = page
+        .getByTestId('fondue-rich-text-editor-toolbar')
+        .getByRole('button', { name: 'Spotlit passages' });
+
+    await toggle.click();
+    const panel = page.getByRole('region', { name: 'Spotlit passages' });
+    await expect(panel).toContainText('1 spotlit passages');
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+
+    await panel.getByRole('button').focus();
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await expect(page.getByRole('textbox', { name: 'Notes' })).toBeFocused();
 });
 
 test('pastes a `mark` as its mark unless another editor’s search left it there', async ({ mount, page }) => {

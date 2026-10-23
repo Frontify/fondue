@@ -11,6 +11,14 @@ export {
     unavailableOf,
     type UnresolvedAsset,
 } from './assets';
+export {
+    type ContentCheckOptions,
+    type ContentIssue,
+    type ContentRuleId,
+    findContentIssues,
+    ruleHelpKey,
+    ruleNameKey,
+} from './checks';
 export { hexColor } from './colors';
 export { compileContentModel } from './compile';
 export {

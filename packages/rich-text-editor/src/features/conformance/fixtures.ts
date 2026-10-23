@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import checks from '#/features/a11y-content-checks/fixtures/checks.json';
 import aligned from '#/features/blocks-align/fixtures/aligned.json';
 import code from '#/features/blocks-code/fixtures/code.json';
 import headings from '#/features/blocks-heading/fixtures/headings.json';
@@ -27,6 +28,7 @@ import underline from '#/features/marks-underline/fixtures/underline.json';
 import images from '#/features/media-image/fixtures/images.json';
 import uploaded from '#/features/media-upload/fixtures/uploaded.json';
 import mentions from '#/features/mentions/fixtures/mentions.json';
+import outlineDocument from '#/features/nav-outline/fixtures/outline.json';
 import styles from '#/features/styles-brand/fixtures/styles.json';
 import { type RichTextDocument } from '#/model';
 
@@ -58,6 +60,8 @@ export const featureFixtures = {
     'styles.brand': { styles },
     'input-rules': { typography },
     mentions: { mentions },
+    'nav.outline': { outline: outlineDocument },
+    'a11y.content-checks': { checks },
     'media.image': { images },
     'media.upload': { uploaded },
 } as unknown as Readonly<Record<string, Readonly<Record<string, RichTextDocument>>>>;

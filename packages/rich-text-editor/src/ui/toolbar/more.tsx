@@ -9,6 +9,7 @@ import { CheckedSlot, keepFocus } from '#/bridge/chrome-toolbar';
 import { useCommandQuery } from '#/bridge/hooks';
 import { useOverlayContainer } from '#/bridge/overlays';
 import { SessionContext, useSessionValue } from '#/bridge/session';
+import { useOpenPanel } from '#/ui/panels/context';
 
 import {
     Icon,
@@ -33,13 +34,17 @@ export const MoreRow = ({
     readonly onRun: (item: ToolbarItem) => Promise<void>;
 }) => {
     const state = useCommandQuery(item.command, item.payload);
+    const openPanel = useOpenPanel();
     const { shortcut, keyshortcuts } = useShortcut(item);
     const reasonId = useId();
     // Fondue's `Dropdown.Item` types no menu item role or state, which Radix still takes through the spread.
     let semantics: { role: AriaRole } & Pick<AriaAttributes, 'aria-checked' | 'aria-disabled'>;
     // A brand style row is one of the block's styles, as in the text style picker.
     const radio = item.brand !== undefined;
-    const shown = state.active;
+    let shown = state.active;
+    if (item.toggle && item.control !== undefined && item.control === openPanel) {
+        shown = true;
+    }
     const checked = radio ? shown === true : shown !== false;
     if (radio) {
         semantics = { role: 'menuitemradio', 'aria-checked': checked };

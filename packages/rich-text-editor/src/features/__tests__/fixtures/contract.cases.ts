@@ -52,8 +52,10 @@ const SESSION = {
         services: {
             presentation: () => ({ styles: [], colorTokens: [], columns: COLUMNS, columnGap: undefined }),
             references: () => undefined,
+            checks: () => undefined,
         },
         overlays: { open: () => undefined, close: () => undefined, isOpen: () => false },
+        panels: { open: () => undefined, toggle: () => undefined, close: () => undefined, isOpen: () => false },
         announce: () => undefined,
         focus: () => undefined,
         anchor: () => ({ getBoundingClientRect: () => new DOMRect() }),
@@ -70,13 +72,17 @@ const PAYLOADS: Readonly<Record<string, unknown>> = {
     'list.ordered.toggle': { start: 1 },
     'list.ordered.start.set': { start: 2 },
     'task.setChecked': { nodeId: 'task-1', checked: false },
+    'code-block.toggle': { languageId: 'typescript' },
     'code-block.language.set': { languageId: 'javascript' },
+    'code-block.indent': undefined,
+    'code-block.outdent': undefined,
     'mark.font-color.set': { tokenId: 'brand.blue' },
     'block.style.set': { styleId: 'brand.body' },
     'block.align.set': { align: 'center' },
     'mark.language.set': { lang: 'de-CH', dir: null },
     'link.set': { href: 'https://frontify.com/brand', openInNewWindow: false, styleId: null },
     'reference.insert': { resourceType: 'user', resourceId: 'user-1', labelSnapshot: 'Ada' },
+    'image.replace': { nodeId: 'image-1' },
     'image.size.set': { displayWidth: 50 },
     'image.align.set': { align: 'left' },
     'media.upload.cancel': { nodeId: 'slot-1' },
@@ -275,7 +281,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                     if (result === true) {
                         expected = 1;
                     }
-                    // A command that only opens an overlay defers that and dispatches nothing.
+                    // A command that only opens an overlay or a panel defers that and dispatches nothing.
                     if (result === true && dispatched.length === 0 && effects.length > 0) {
                         expected = 0;
                         opened = true;
@@ -381,7 +387,7 @@ export const normalizerCases = (features: readonly Feature[], documents?: readon
             const states = statesOf().map((doc) => EditorState.create({ doc }));
             const ids = countingIds();
             const stubs = stubForbidden(`The ${id} normalizer`);
-            // A normalizer schedules no promise work either.
+            // A normalizer schedules no promise work either, which the command case allows for an upload hand-off.
             const then = vi.spyOn(Promise.prototype, 'then').mockImplementation(() => {
                 throw new Error(`The ${id} normalizer called Promise.prototype.then.`);
             });
@@ -495,7 +501,10 @@ export const nodeViewCases = (
             return capturing;
         };
         const elements: HTMLElement[] = [];
-        const context = readerContext(enUS, {});
+        // Every asset resolves, so an image view renders its image and the controls around it.
+        const context = readerContext(enUS, {
+            resolveAssetUrl: (assetId) => `https://assets.frontify.test/${assetId}`,
+        });
         const hosts = [];
         for (const document of documents) {
             const { result, tree } = decodeToTree({ ...document, model: model.ref }, model);

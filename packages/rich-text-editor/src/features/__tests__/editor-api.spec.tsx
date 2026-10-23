@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { act, render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { Node } from 'prosemirror-model';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -47,6 +47,8 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
+const PANEL = 'fixture.api';
+
 // The probe's commands take any payload, which the shipped command map does not name.
 type Handle = EditorHandle<Record<string, unknown>>;
 
@@ -57,6 +59,8 @@ let held: SelectionHandle | undefined;
 let walked = 0;
 let live: EditorApi | undefined;
 
+const ProbePanel = () => <section aria-label="Probe panel" />;
+
 const Grab = () => {
     live = useEditorApi();
     return null;
@@ -66,9 +70,23 @@ const probe = defineEditorPlugin(spotlight, {
     commands: {
         'fixture.api.run': { run: (api) => script(api) },
         'fixture.api.read-only': { readOnly: true, run: (api) => script(api) },
+        'fixture.api.open': {
+            run: (api) => {
+                api.panels.open(PANEL);
+                return true;
+            },
+        },
+        'fixture.api.enabled': {
+            enabled: (api) => {
+                api.panels.open(PANEL);
+                return true;
+            },
+            run: (api) => api.insert.text('x'),
+        },
     },
     keys: { 'Mod-Alt-8': (api) => script(api) },
     overlays: [Grab],
+    panels: [{ control: PANEL, component: ProbePanel }],
 });
 
 const model = compileContentModel(
@@ -180,6 +198,8 @@ const selectAll = (handle: Handle) => {
         pressKey(handle, 'Mod-a');
     });
 };
+
+const probePanel = () => screen.queryByRole('region', { name: 'Probe panel' });
 
 beforeEach(() => {
     script = () => false;
@@ -313,9 +333,44 @@ describe('a plugin command in an editor that cannot be edited', () => {
         expect(result).toEqual({ status: 'rejected', code: 'readonly' });
         expect(blocksOf(handle)).toEqual([paragraph, title]);
     });
+
+    it('refuses the write of a command it runs, and still opens what only opens', () => {
+        const { handle } = mount({ readOnly: true });
+
+        runIn(
+            handle,
+            'Plain',
+            (api) => {
+                seen = api.commands.execute('text.insert', { text: 'x' });
+                return true;
+            },
+            'fixture.api.read-only',
+        );
+        expect(seen).toEqual({ status: 'rejected', code: 'readonly' });
+        expect(blocksOf(handle)).toEqual([paragraph, title]);
+
+        runIn(
+            handle,
+            'Plain',
+            (api) => {
+                api.panels.open(PANEL);
+                return true;
+            },
+            'fixture.api.read-only',
+        );
+        expect(probePanel()).not.toBeNull();
+    });
 });
 
 describe('a command that a plugin command runs', () => {
+    it('opens its panel as the outer command would', () => {
+        const { handle } = mount();
+
+        runIn(handle, 'Plain', (api) => api.commands.execute('fixture.api.open').status === 'applied');
+
+        expect(probePanel()).not.toBeNull();
+    });
+
     it('passes the heading levels of the policy, as a command the host runs does', () => {
         const { handle } = mount({ policy: { creatableHeadingLevels: [1, 2] } });
 
@@ -375,6 +430,19 @@ describe('a command that a plugin command runs', () => {
 });
 
 describe('what a plugin command defers', () => {
+    it('runs nothing that its `enabled` check asked for', () => {
+        const { handle } = mount();
+        setSelection(handle, { text: 'Plain', from: 0, to: 0 });
+
+        let result: ReturnType<Handle['execute']> | undefined;
+        act(() => {
+            result = handle.execute('fixture.api.enabled');
+        });
+
+        expect(result?.status).toBe('applied');
+        expect(probePanel()).toBeNull();
+    });
+
     it('releases no target when it is only queried', () => {
         const { handle } = mount();
         setSelection(handle, { text: 'Plain', from: 0, to: 0 });

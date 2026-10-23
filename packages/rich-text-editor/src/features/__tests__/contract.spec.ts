@@ -11,7 +11,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type EditorApi, type EditorCommand, type EditorPlugin } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { type Normalizer, NORMALIZERS } from '#/definition';
-import { align as blockAlign, bold, featuresById, heading } from '#/features';
+import {
+    align as blockAlign,
+    bold,
+    bulletList,
+    codeBlock,
+    featuresById,
+    heading,
+    listItem,
+    mentions,
+    quote,
+    taskList,
+} from '#/features';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { chromeEditorWith, fixtureChromeEditor } from '#/features/__tests__/fixtures/chrome/view';
 import { commandCases, nodeViewCases, normalizerCases } from '#/features/__tests__/fixtures/contract.cases';
@@ -23,6 +34,7 @@ import { vocabularyLists } from '#/features/__tests__/fixtures/vocabulary';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
+import { mediaImage } from '#/features/media-image/feature';
 import { featureRecords, registry } from '#/features/registry';
 import { fromHTML } from '#/html';
 import { defineEditor, defineEditorPlugin, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
@@ -113,7 +125,7 @@ const nodeIdDocument = stored([
 ]);
 normalizerCases(nodeIdFeatures(), [nodeIdDocument]);
 
-// The stand-ins, then the outside feature, which attaches a node view.
+// The stand-ins, then each shipped feature that attaches a node view, alone and in one document of every parent.
 const chromeDocument = stored(
     [
         paragraph(text('Hi '), { type: 'chrome_mention', attrs: { nodeId: 'm-1', label: 'Ada' } }),
@@ -123,6 +135,39 @@ const chromeDocument = stored(
     ['core', 'fixture.chrome'],
 );
 nodeViewCases([core(), fixtureChrome()], [chromeDocument], [fixtureChromeEditor]);
+nodeViewCases([core(), mediaImage()], [featureFixtures['media.image']?.images as RichTextDocument]);
+nodeViewCases([core(), codeBlock()], [featureFixtures['blocks.code']?.code as RichTextDocument]);
+nodeViewCases([core(), mentions()], [featureFixtures.mentions?.mentions as RichTextDocument]);
+nodeViewCases([core(), taskList()], [featureFixtures['lists.task']?.tasks as RichTextDocument]);
+const mention = {
+    type: 'mention',
+    attrs: { nodeId: 'm-1', resourceType: 'user', resourceId: 'u-1', labelSnapshot: 'Ada' },
+};
+const codeIn = (id: string) => ({ type: 'code_block', attrs: { languageId: null }, content: [text(id)] });
+const nestedDocument = stored(
+    [
+        paragraph(mention),
+        codeIn('top'),
+        { type: 'blockquote', content: [paragraph(mention), codeIn('quoted')] },
+        {
+            type: 'bullet_list',
+            attrs: { marker: null },
+            content: [{ type: 'list_item', content: [paragraph(mention), codeIn('item')] }],
+        },
+        {
+            type: 'task_list',
+            content: [
+                {
+                    type: 'task_item',
+                    attrs: { nodeId: 'k-1', checked: false },
+                    content: [paragraph(mention), codeIn('task')],
+                },
+            ],
+        },
+    ],
+    ['core', 'blocks.quote', 'lists.item', 'lists.bullet', 'lists.task', 'blocks.code', 'mentions'],
+);
+nodeViewCases([core(), quote(), listItem(), bulletList(), taskList(), codeBlock(), mentions()], [nestedDocument]);
 nodeViewCases([core(), highlight()], [badgeDocument], [highlightEditor]);
 
 const DECODES = (name: string) => `decodes and encodes ${name} to itself`;
@@ -196,6 +241,26 @@ describe('the feature contract suite', () => {
 
         expect(await failingTitles(() => commandCases([core(), heading(), highlight()], [plugin]))).toEqual([
             'runs fixture.highlight.toggle synchronously with no I/O or timer, dispatching at most once',
+        ]);
+    });
+
+    it('fails a plugin command that applies without a change or anything it opens', async () => {
+        const plugin = defineEditorPlugin(spotlight, {
+            commands: {
+                'fixture.spotlight.claim': { run: () => true },
+                'fixture.spotlight.panel': {
+                    readOnly: true,
+                    run: (api) => {
+                        api.panels.open('fixture.spotlight');
+                        return true;
+                    },
+                },
+                'fixture.spotlight.toggle': { run: (api) => api.marks.toggle('fixture_spotlight') },
+            },
+        });
+
+        expect(await failingTitles(() => commandCases([core(), heading(), spotlight()], [plugin]))).toEqual([
+            'runs fixture.spotlight.claim synchronously with no I/O or timer, dispatching at most once',
         ]);
     });
 

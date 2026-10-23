@@ -21,8 +21,81 @@ export const deDE = {
         RichTextEditor_bubbleToolbar: 'Formatierung der Auswahl',
         RichTextEditor_bulletList: 'Aufzählung',
         RichTextEditor_cancel: 'Abbrechen',
+        RichTextEditor_checkColorMeaningReview: 'Bedeutung durch Farbe',
+        RichTextEditor_checkColorMeaningReviewHelp:
+            'Prüfen Sie, ob die Farbe nicht das einzige Mittel ist, mit dem dieser Text eine Bedeutung zeigt, etwa einen Status oder ein Pflichtfeld. Ergänzen Sie Worte.',
+        RichTextEditor_checkContrastLow: 'Geringer Textkontrast',
+        RichTextEditor_checkContrastLowHelp:
+            'Textfarbe und Hintergrund haben für viele Menschen zu wenig Kontrast. Wählen Sie eine Textfarbe, die das Menü für diesen Hintergrund anbietet.',
+        RichTextEditor_checkContrastUnknown: 'Textkontrast, der sich nicht messen lässt',
+        RichTextEditor_checkContrastUnknownHelp:
+            'Der Editor kennt die Farbe dieses Textes oder seines Hintergrunds nicht. Prüfen Sie, ob der Text gut lesbar ist, mit einem Kontrast von mindestens 4,5 zu 1, oder 3 zu 1 für großen Text.',
+        RichTextEditor_checkEmbedMediaReview: 'Eingebettete Medien',
+        RichTextEditor_checkEmbedMediaReviewHelp:
+            'Prüfen Sie, ob das Video Untertitel und Audiodeskription hat und nicht von selbst Ton abspielt.',
+        RichTextEditor_checkEmbedTitleMissing: 'Einbettung ohne Titel',
+        RichTextEditor_checkEmbedTitleMissingHelp:
+            'Ein eingebetteter Player braucht einen Titel, der seinen Inhalt nennt, damit Screenreader ihn ansagen. Bearbeiten Sie die Einbettung und geben Sie ihr einen Titel.',
+        RichTextEditor_checkGenericImageWords:
+            'bild|foto|fotografie|grafik|illustration|symbol|icon|logo|banner|bildschirmfoto|screenshot|platzhalter|ohne titel|vorschaubild|alternativtext',
+        RichTextEditor_checkHeadingDescriptiveReview: 'Überschriftentext',
+        RichTextEditor_checkHeadingDescriptiveReviewHelp:
+            'Prüfen Sie, ob jede Überschrift sagt, worum es im Abschnitt geht, damit man einen Abschnitt allein über die Überschriften findet.',
+        RichTextEditor_checkHeadingEmpty: 'Leere Überschrift',
+        RichTextEditor_checkHeadingEmptyHelp:
+            'Eine Überschrift ohne Text erscheint trotzdem in der Liste der Überschriften, die Screenreader anbieten. Fügen Sie Text hinzu oder machen Sie sie zu normalem Text.',
+        RichTextEditor_checkHeadingSkippedLevel: 'Übersprungene Überschriftenebene',
+        RichTextEditor_checkHeadingSkippedLevelHelp:
+            'Die Überschriftenebenen bilden die Gliederung des Dokuments. Eine Überschrift sollte höchstens eine Ebene tiefer liegen als die vorherige.',
+        RichTextEditor_checkImageAltMissing: 'Bild ohne Alternativtext',
+        RichTextEditor_checkImageAltMissingHelp:
+            'Entscheiden Sie, ob das Bild Informationen enthält. Wenn ja, beschreiben Sie in wenigen Worten, was es zeigt. Wenn es nur schmückt, markieren Sie es als dekorativ.',
+        RichTextEditor_checkImageAltSuspicious: 'Alternativtext, der das Bild vielleicht nicht beschreibt',
+        RichTextEditor_checkImageAltSuspiciousHelp:
+            'Der Alternativtext sieht wie ein Dateiname oder ein allgemeines Wort aus. Wenn er nicht sagt, was das Bild zeigt oder wozu es da ist, schreiben Sie eine kurze Beschreibung.',
+        RichTextEditor_checkImageContentReview: 'Bildinhalt',
+        RichTextEditor_checkImageContentReviewHelp:
+            'Prüfen Sie, ob das Bild Text zeigt, der ins Dokument gehört, ob es sich länger als fünf Sekunden bewegt oder blinkt oder ob es mehr als dreimal pro Sekunde aufblitzt.',
+        RichTextEditor_checkLanguagePartsReview: 'Passagen in einer anderen Sprache',
+        RichTextEditor_checkLanguagePartsReviewHelp:
+            'Prüfen Sie, ob eine Passage in einer anderen Sprache als das Dokument steht. Ist ihre Sprache ausgezeichnet, sprechen Screenreader sie richtig aus.',
+        RichTextEditor_checkLinkPurposeReview: 'Linkzweck',
+        RichTextEditor_checkLinkPurposeReviewHelp:
+            'Prüfen Sie, ob der Linktext mit seinem Satz sagt, wohin der Link führt und was beim Folgen geschieht.',
+        RichTextEditor_checkLinkTextEmpty: 'Link ohne Text',
+        RichTextEditor_checkLinkTextEmptyHelp:
+            'Ein Link braucht Text, den ein Screenreader vorlesen kann. Fügen Sie Text hinzu, der sagt, wohin der Link führt.',
+        RichTextEditor_checkLinkTextVague: 'Linktext, der das Ziel nicht nennt',
+        RichTextEditor_checkLinkTextVagueHelp:
+            'Lesen Sie den Linktext für sich allein, wie ihn eine Liste von Links zeigt. Wenn er nicht sagt, wohin der Link führt, wie bei „hier“ oder „weiterlesen“, nennen Sie stattdessen das Ziel.',
+        RichTextEditor_checkSensoryReview: 'Anweisungen, die auf die Sinne setzen',
+        RichTextEditor_checkSensoryReviewHelp:
+            'Prüfen Sie, ob keine Anweisung nur auf Form, Farbe, Größe, Klang oder die Lage auf der Seite setzt. Nennen Sie das Element auch beim Namen, damit alle der Anweisung folgen können.',
+        RichTextEditor_checkStructureReview: 'Struktur, die nur optisch erkennbar ist',
+        RichTextEditor_checkStructureReviewHelp:
+            'Prüfen Sie, ob eine Struktur nur optisch gezeigt wird, etwa fetter Text als Überschrift, Absätze mit Strich oder Zahl als Liste oder Einzüge als Zitat. Verwenden Sie dafür die Befehle für Überschrift, Liste und Zitat.',
+        RichTextEditor_checkTableNoHeader: 'Tabelle ohne Kopfzellen',
+        RichTextEditor_checkTableNoHeaderHelp:
+            'Kopfzellen sagen Screenreadern, was eine Zeile oder Spalte enthält. Wenn die erste Zeile die Spalten benennt, machen Sie sie zur Kopfzeile.',
+        RichTextEditor_checkVagueLinkTexts:
+            'hier klicken|klicken|hier|link|dieser link|mehr|weiterlesen|mehr erfahren|mehr infos|mehr informationen|infos|details|weiter|los|diese seite|website',
+        RichTextEditor_checks: 'Barrierefreiheitsprüfung',
+        RichTextEditor_checksDismiss: 'Ausblenden',
+        RichTextEditor_checksDismissed: 'Ausgeblendet',
+        RichTextEditor_checksDocument: 'Ganzes Dokument',
+        RichTextEditor_checksErrors: 'Fehler: ${errors}.',
+        RichTextEditor_checksGoTo: 'Gehe zu',
+        RichTextEditor_checksHelp: 'So entscheiden Sie',
+        RichTextEditor_checksRepair: 'Beheben',
+        RichTextEditor_checksReview: 'Zu prüfen: ${review}.',
+        RichTextEditor_checksSeverityError: 'Fehler',
+        RichTextEditor_checksSeverityReview: 'Zu prüfen',
+        RichTextEditor_checksSeverityWarning: 'Warnung',
+        RichTextEditor_checksShowDismissed: 'Ausgeblendete anzeigen',
+        RichTextEditor_checksWarnings: 'Warnungen: ${warnings}.',
         RichTextEditor_clearColor: 'Farbe entfernen',
         RichTextEditor_clearFormatting: 'Formatierung löschen',
+        RichTextEditor_close: 'Schließen',
         RichTextEditor_code: 'Code',
         RichTextEditor_codeBlock: 'Codeblock',
         RichTextEditor_codeLanguage: 'Sprache: ${language}',
@@ -148,6 +221,10 @@ export const deDE = {
         RichTextEditor_nodeViewError: 'Dieser Teil des Inhalts kann nicht angezeigt werden',
         RichTextEditor_normalText: 'Normaler Text',
         RichTextEditor_numberedList: 'Nummerierte Liste',
+        RichTextEditor_outline: 'Gliederung',
+        RichTextEditor_outlineHeadingGone:
+            'Diese Überschrift ist nicht mehr im Dokument. Die Gliederung zeigt die aktuellen Überschriften.',
+        RichTextEditor_panelError: 'Dieses Panel konnte nicht angezeigt werden.',
         RichTextEditor_pasteFormattingRemoved: 'Einige Formatierungen wurden entfernt.',
         RichTextEditor_pasteMediaDropped: 'Medien nicht eingefügt: ${count}',
         RichTextEditor_pasteTooLarge: 'Der eingefügte Inhalt ist zu groß.',

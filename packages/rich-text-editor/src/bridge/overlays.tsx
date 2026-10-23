@@ -36,6 +36,8 @@ export interface Overlays {
     /** `portalContainer`, else the editor's own overlay root inside its interaction scope. */
     readonly container: HTMLElement | null;
     readonly scope: InteractionScope;
+    /** The element that had focus when the open overlay was asked for, before the overlay took focus. */
+    readonly opener?: Element | null;
 }
 
 export const OverlayContext = createContext<Overlays | null>(null);
@@ -136,12 +138,21 @@ const leaveOnTab = (event: KeyboardEvent) => {
  * opened, such as the chrome button that opened a dialog, or, when that is the surface, `null` or gone, to the surface
  * at ProseMirror's selection, which it maps through every change made meanwhile.
  */
-const refocus = (runtime: EditorRuntime, before: Element | null) => {
+const refocus = (runtime: EditorRuntime, before: Element | null, panelControl: Element | null) => {
     const { view } = runtime;
     if (view === undefined) {
         return;
     }
     const { activeElement, body } = view.dom.ownerDocument;
+    // A control a panel opened, such as from an issues panel repair, hands focus back to it after a change too.
+    if (
+        panelControl instanceof HTMLElement &&
+        panelControl.isConnected &&
+        (activeElement === body || activeElement === null || activeElement === view.dom)
+    ) {
+        panelControl.focus();
+        return;
+    }
     if (activeElement !== body && activeElement !== null) {
         return;
     }
@@ -170,9 +181,10 @@ export const useHeldOverlay = (
     setOpen: (open: boolean) => void,
     target?: AnchorTarget,
 ): EditorOverlay & { readonly anchor: SelectionAnchor } => {
-    const { container, scope } = useOverlays();
+    const { container, scope, opener = null } = useOverlays();
     const runtime = useContext(SessionContext);
     const runtimeRef = useRef(runtime);
+    const openerRef = useRef(opener);
     // A caller's inline `setOpen` is new on each render, which must not end and restart the open overlay's effect.
     const setOpenRef = useRef(setOpen);
     const targetRef = useRef(target);
@@ -180,6 +192,7 @@ export const useHeldOverlay = (
         runtimeRef.current = runtime;
         setOpenRef.current = setOpen;
         targetRef.current = target;
+        openerRef.current = opener;
     });
     const elementRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useCallback((element: HTMLDivElement | null) => {
@@ -216,6 +229,13 @@ export const useHeldOverlay = (
             return undefined;
         }
         const before = scope.active();
+        // The control's own opener, read when it opened, since the overlay may move focus before this effect runs.
+        let panelControl: Element | null = null;
+        for (const candidate of [openerRef.current, before]) {
+            if (panelControl === null && candidate !== null && candidate.closest('[data-rte-panel]') !== null) {
+                panelControl = candidate;
+            }
+        }
         const unsubscribe = runtime.handle.subscribe('replaced', () => setOpenRef.current(false));
         // An open overlay keeps the scope listening, whether or not focus is inside, so an outside press still closes it.
         const release = scope.hold();
@@ -228,7 +248,7 @@ export const useHeldOverlay = (
                 target = returnRef.current.target;
             }
             returnRef.current = undefined;
-            queueMicrotask(() => refocus(runtime, target));
+            queueMicrotask(() => refocus(runtime, target, panelControl));
         };
     }, [open, runtime, scope]);
     // Hides the content while its anchor is clipped; Floating UI's `hide` middleware would, but Fondue's `Flyout` and

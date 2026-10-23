@@ -1,0 +1,110 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../styles/focus-outline';
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-x-small);
+    color: var(--color-primary-default);
+    font-family: var(--text-body-medium-default-font-family);
+    font-size: var(--text-body-medium-default-font-size);
+    line-height: var(--text-body-medium-default-line-height);
+}
+
+.summary {
+    margin: 0;
+    font-size: inherit;
+    font-weight: var(--text-body-medium-strong-font-weight);
+
+    &:focus {
+        outline: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-focus-default);
+        outline-offset: 2px;
+    }
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-x-small);
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-x-small);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.issue {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xx-small);
+    padding: var(--spacing-x-small);
+    border: 1px solid var(--color-line-subtle);
+    border-inline-start-width: 4px;
+    border-radius: var(--border-radius-small);
+
+    &[data-severity='error'] {
+        border-inline-start-color: var(--color-error-default);
+    }
+
+    &[data-severity='warning'] {
+        border-inline-start-color: var(--color-warning-default);
+    }
+
+    &[data-severity='review'] {
+        border-inline-start-style: dashed;
+    }
+}
+
+.title,
+.excerpt {
+    margin: 0;
+}
+
+.severity {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xx-small);
+    font-weight: var(--text-body-medium-strong-font-weight);
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+.rule,
+.dismissed,
+.excerpt {
+    color: var(--color-secondary-default);
+}
+
+.excerpt {
+    overflow-wrap: anywhere;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-x-small);
+}
+
+.help {
+    summary {
+        cursor: pointer;
+        border-radius: var(--border-radius-small);
+
+        @include focus-outline.focus-outline;
+    }
+
+    p {
+        margin: var(--spacing-xx-small) 0 0;
+    }
+}

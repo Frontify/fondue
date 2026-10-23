@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineEditorPlugin, type EditorPlugin } from '#/bridge/plugin';
-import { type ContentModel } from '#/model';
+import { type ContentModel, type ContentNodeJSON } from '#/model';
 
 import {
     fixtureBold,
@@ -14,6 +14,8 @@ import {
     fixtureToolbar,
 } from './features';
 import { fixtureHighlight } from './highlight';
+import { fixtureEmbed } from './media/embed';
+import { fixtureTable } from './table/feature';
 
 const LEVEL = { fields: { level: { type: 'integer', min: 1, max: 6 } } } as const;
 const LEVELS = [1, 2, 3, 4, 5, 6] as const;
@@ -186,6 +188,51 @@ export const fixtureHighlightEditor = defineEditorPlugin(fixtureHighlight, {
     },
 });
 
+/** `embed.edit` sets the title of the selected embed. */
+export const fixtureEmbedEditor = defineEditorPlugin(fixtureEmbed, {
+    commands: {
+        'embed.edit': {
+            payload: { fields: { title: { type: 'string' } } },
+            run: (api, payload: { readonly title: string }) => api.attributes.set('embed', payload),
+            active: (api, payload) => api.attributes.active('embed', payload),
+        },
+    },
+});
+
+const CELLS = new Set(['table_cell', 'table_header']);
+
+/**
+ * Stands in for the header row toggle of `tables` until it ships: it makes the first row's cells header cells, and, as
+ * `prosemirror-tables` does, refuses a selection outside a cell.
+ */
+export const fixtureTableEditor = defineEditorPlugin(fixtureTable, {
+    commands: {
+        'table.header.toggle': {
+            payload: { fields: { axis: { type: 'enum', values: ['row', 'column'] } } },
+            run: (api) => {
+                const inCell = api.selection().ancestors.some(({ type }) => CELLS.has(type));
+                const nodeId = api.nearest('table')?.nodeId;
+                if (!inCell || nodeId === undefined || nodeId === null) {
+                    return false;
+                }
+                const [table] = api.content.read({ nodeId }) ?? [];
+                const tableContent = table?.content;
+                const [row, ...rows] = tableContent ?? [];
+                const rowContent = row?.content;
+                const cells = rowContent ?? [];
+                if (table === undefined || row === undefined || cells.every(({ type }) => type === 'table_header')) {
+                    return false;
+                }
+                const header: ContentNodeJSON = {
+                    ...row,
+                    content: cells.map((cell) => ({ ...cell, type: 'table_header' })),
+                };
+                return api.content.replace({ nodeId }, [{ ...table, content: [header, ...rows] }]).status === 'applied';
+            },
+        },
+    },
+});
+
 /** The fixture features' editor parts that hold no React, so a worker with no style loader takes them. */
 export const FIXTURE_EDITORS = [
     fixtureBoldEditor,
@@ -197,6 +244,8 @@ export const FIXTURE_EDITORS = [
     fixtureInputRulesEditor,
     fixtureToolbarEditor,
     fixtureHighlightEditor,
+    fixtureEmbedEditor,
+    fixtureTableEditor,
 ] as const;
 
 /** The ones of `parts` for the features `model` installs, in feature order, as a host passes `defineEditor` its own. */

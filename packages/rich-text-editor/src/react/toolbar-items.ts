@@ -169,6 +169,7 @@ export const toolbarItems = (
             groupStart,
             bubble,
             opensControl: entry.opensOverlay === true,
+            ...(entry.panel === undefined ? {} : { control: entry.panel }),
         };
         if (entry.control === undefined) {
             return item;

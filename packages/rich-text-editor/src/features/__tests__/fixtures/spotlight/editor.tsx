@@ -6,14 +6,42 @@ import { useState } from 'react';
 
 import {
     defineEditorPlugin,
+    type EditorApi,
     type OverlayProps,
+    type PanelComponentProps,
     type ToolbarControlProps,
+    useEditorApi,
     useEditorOverlay,
     useEditorValue,
     useOverlayContainer,
 } from '#/index';
+import { type ContentNodeJSON } from '#/model';
 
 import { spotlight } from './feature';
+
+const PANEL = 'fixture.spotlight';
+
+const STRINGS: Readonly<
+    Record<string, { readonly toggle: string; readonly panel: string; readonly count: (count: number) => string }>
+> = {
+    'en-US': { toggle: 'Spotlight', panel: 'Spotlit passages', count: (count) => `${count} spotlit passages` },
+    'de-DE': {
+        toggle: 'Hervorheben',
+        panel: 'Hervorgehobene Stellen',
+        count: (count) => `${count} hervorgehobene Stellen`,
+    },
+};
+
+const stringsOf = (api: EditorApi | undefined) => STRINGS[api?.locale() ?? 'en-US'] ?? STRINGS['en-US'];
+
+/** How many text runs of the stored document carry the mark. */
+const spotlitIn = (node: ContentNodeJSON | undefined): number => {
+    if (node === undefined) {
+        return 0;
+    }
+    const own = node.marks?.some(({ type }) => type === 'fixture_spotlight') === true ? 1 : 0;
+    return own + (node.content ?? []).reduce((sum, child) => sum + spotlitIn(child), 0);
+};
 
 /** The plugin's own toolbar control: a toggle that reads its state through the API, with its shortcut in its tooltip. */
 const SpotlightButton = ({
@@ -67,7 +95,7 @@ const NoteButton = ({ label, disabled, outOfTabOrder, controlRef, run }: Toolbar
 );
 
 /** The plugin's own overlay, which returns focus to the control that opened it when it is dismissed. */
-const SpotlightNote = ({ close, anchor }: OverlayProps) => {
+const SpotlightNote = ({ close, anchor, opener }: OverlayProps) => {
     const [open, setOpen] = useState(true);
     const overlay = useEditorOverlay(open, (next) => {
         if (!next) {
@@ -76,7 +104,16 @@ const SpotlightNote = ({ close, anchor }: OverlayProps) => {
         }
     });
     return (
-        <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={anchor}>
+        <Flyout.Root
+            open={open}
+            onOpenChange={(next) => {
+                if (!next) {
+                    overlay.returnFocusTo(opener);
+                }
+                overlay.onOpenChange(next);
+            }}
+            virtualAnchor={anchor}
+        >
             <Flyout.Content ref={overlay.contentRef} aria-label="Spotlight note" container={overlay.container}>
                 <Flyout.Body>
                     <button type="button">Noted</button>
@@ -86,9 +123,26 @@ const SpotlightNote = ({ close, anchor }: OverlayProps) => {
     );
 };
 
+/** The plugin's own panel: the number of spotlit passages, read from the stored document when it opens. */
+const SpotlightPanel = ({ close }: PanelComponentProps) => {
+    const api = useEditorApi();
+    const strings = stringsOf(api);
+    const count = spotlitIn(api?.document().content);
+    const panel = strings?.panel;
+    const counted = strings?.count(count);
+    return (
+        <section aria-label={panel}>
+            <p>{counted}</p>
+            <button type="button" onClick={close}>
+                {panel}
+            </button>
+        </section>
+    );
+};
+
 /**
  * The editor part of `spotlight`, written only against the public API: a toggle command and its own toolbar control,
- * and a command that opens an overlay from its own control.
+ * a command that opens an overlay from its own control, and a panel and its command.
  */
 export const spotlightEditor = defineEditorPlugin(spotlight, {
     commands: {
@@ -99,6 +153,13 @@ export const spotlightEditor = defineEditorPlugin(spotlight, {
         'fixture.spotlight.note': {
             run: (api) => {
                 api.overlays.open(SpotlightNote, {});
+                return true;
+            },
+        },
+        'fixture.spotlight.panel': {
+            readOnly: true,
+            run: (api) => {
+                api.panels.toggle(PANEL);
                 return true;
             },
         },
@@ -123,5 +184,14 @@ export const spotlightEditor = defineEditorPlugin(spotlight, {
             opensOverlay: true,
             control: NoteButton,
         },
+        {
+            id: 'panel',
+            kind: 'toggle',
+            command: 'fixture.spotlight.panel',
+            label: { 'en-US': 'Spotlit passages', 'de-DE': 'Hervorgehobene Stellen' },
+            icon: 'IconListIndented',
+            panel: PANEL,
+        },
     ],
+    panels: [{ control: PANEL, component: SpotlightPanel }],
 });

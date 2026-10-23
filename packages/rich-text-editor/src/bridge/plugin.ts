@@ -17,13 +17,15 @@ import {
     type PresentationStyle,
 } from '#/model';
 import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/declarations';
+import { type ContentChecksApi } from '#/runtime/content-checks-api';
 import { type DocumentApi, type EditorRange } from '#/runtime/document-api';
 import { type AuthoringPolicy, type ReferenceValue } from '#/runtime/types';
 
-import { type NodeViewDeclaration } from './define';
+import { type NodeViewDeclaration, type PanelDeclaration } from './define';
 import { editorApiOf } from './live-api';
 import { SessionContext, useSessionValue } from './session';
 
+export { type CheckedIssue, type ContentChecksApi, type ContentChecksResult } from '#/runtime/content-checks-api';
 export {
     type AncestorValue,
     type BlockValue,
@@ -93,9 +95,11 @@ export interface PluginServices {
     readonly presentation: () => PluginPresentation;
     /** The host's reference search, or `undefined` without one. */
     readonly references: () => ReferenceSearch | undefined;
+    /** The session's content checks, or `undefined` when the model does not install `a11y.content-checks`. */
+    readonly checks: () => ContentChecksApi | undefined;
 }
 
-/** What the editor around a plugin hosts for it: strings, services, overlays, the live region and focus. */
+/** What the editor around a plugin hosts for it: strings, services, overlays, panels, the live region and focus. */
 export interface EditorHosts {
     /** The package's own chrome strings in the editor's locale; a plugin brings its own strings, by `locale`. */
     readonly t: CodecContext['t'];
@@ -112,6 +116,13 @@ export interface EditorHosts {
         open<P extends object>(component: ComponentType<P & OverlayProps>, props: P, anchor?: AnchorTarget): void;
         close(): void;
         isOpen(): boolean;
+    };
+    readonly panels: {
+        open(id: string): void;
+        /** Closes `id` when it is the open panel, else opens it. */
+        toggle(id: string): void;
+        close(): void;
+        isOpen(id: string): boolean;
     };
     /** Says `message` in the editor's live region, or with `key` once no other message with that key followed it; a modal dialog hides that region, so one there uses `createAnnouncer`. A value between U+2068 and U+2069 is written in a `bdi`. */
     readonly announce: (message: string, key?: string) => void;
@@ -198,6 +209,8 @@ interface PluginToolbarEntryBase {
     readonly bubble?: boolean;
     /** Its command opens an overlay, which returns focus to the item that opened it. */
     readonly opensOverlay?: boolean;
+    /** The panel whose toggle this is, which shows pressed while that panel is open. */
+    readonly panel?: string;
     /** Renders in place of the standard button; a row of the More menu still runs the command. */
     readonly control?: ComponentType<ToolbarControlProps>;
     /**
@@ -259,6 +272,7 @@ export interface EditorPluginParts {
     readonly toolbar?: readonly PluginToolbarEntry[];
     /** Overlays the editor keeps mounted, which decide themselves when to show; `EditorHosts.overlays.open` has the recipe for one a click on a mark opens. */
     readonly overlays?: readonly ComponentType<StandingOverlayProps>[];
+    readonly panels?: readonly PanelDeclaration[];
     /** Decorations over textblocks, which the editor derives again only for a block a change touched. */
     readonly decorations?: readonly BlockDecorationSource[];
     /** Lists that typing a trigger opens, whose options the part's own search finds. */

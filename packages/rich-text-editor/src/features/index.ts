@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+export { contentChecks } from '#/features/a11y-content-checks/feature';
 export { align } from '#/features/blocks-align/feature';
 export { codeBlock } from '#/features/blocks-code/feature';
 export { quote } from '#/features/blocks-quote/feature';
@@ -27,6 +28,7 @@ export { underline } from '#/features/marks-underline/feature';
 export { mediaImage } from '#/features/media-image/feature';
 export { mediaUpload } from '#/features/media-upload/feature';
 export { mentions } from '#/features/mentions/feature';
+export { outline } from '#/features/nav-outline/feature';
 export { brandStyles } from '#/features/styles-brand/feature';
 
 export { featuresById } from './registry';

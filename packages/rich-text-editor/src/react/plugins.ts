@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CommandsOfPlugin, type EditorPlugin } from '#/bridge/plugin';
+import { contentChecksEditor } from '#/features/a11y-content-checks/editor';
 import { alignEditor } from '#/features/blocks-align/editor';
 import { codeBlockEditor } from '#/features/blocks-code/editor';
 import { headingEditor } from '#/features/blocks-heading/editor';
@@ -28,6 +29,7 @@ import { underlineEditor } from '#/features/marks-underline/editor';
 import { mediaImageEditor } from '#/features/media-image/editor';
 import { mediaUploadEditor } from '#/features/media-upload/editor';
 import { mentionsEditor } from '#/features/mentions/editor';
+import { outlineEditor } from '#/features/nav-outline/editor';
 import { brandEditor } from '#/features/styles-brand/editor';
 
 const SHIPPED = [
@@ -40,6 +42,7 @@ const SHIPPED = [
     subscriptEditor,
     superscriptEditor,
     linksEditor,
+    outlineEditor,
     codeBlockEditor,
     ruleEditor,
     listItemEditor,
@@ -57,6 +60,7 @@ const SHIPPED = [
     mentionsEditor,
     fontColorEditor,
     languageEditor,
+    contentChecksEditor,
     mediaImageEditor,
     mediaUploadEditor,
 ] as const;

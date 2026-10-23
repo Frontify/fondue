@@ -33,6 +33,7 @@ import {
 import {
     type CapabilityRef,
     checkHref,
+    type ContentCheckOptions,
     type Diagnostic,
     hashDocument,
     type HrefPolicy,
@@ -53,6 +54,7 @@ import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } 
 
 import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
 import { type ColumnState, columnsPlugin, ONE_COLUMN, sameColumns } from './columns';
+import { createContentChecks } from './content-issues';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
@@ -255,6 +257,11 @@ export interface EditorRuntime {
     clearHistory(): void;
     /** Emits the `operationMetric` of an operation that started at `started`. */
     measure(kind: OperationMetric['kind'], started: number, failureCode: string | null): void;
+    /**
+     * Runs the content checks now and keeps their results in plugin state, as the issues panel asks when it opens;
+     * `false` when the editor installs none, or input is composing.
+     */
+    runChecks(): boolean;
 }
 
 export interface EditorRuntimeOptions {
@@ -287,7 +294,7 @@ export interface EditorRuntimeOptions {
     readonly tabMovesFocus?: () => boolean | undefined;
     /** The host's `scrollSelectionIntoView` prop, read on each scroll to the selection; default true. */
     readonly scrollSelectionIntoView?: () => boolean | undefined;
-    /** What the editor layer hands the plugin commands it runs. */
+    /** What the editor layer hands the plugin commands it runs, such as its overlay and panel hosts. */
     readonly commandHost?: unknown;
     /** The host's `services.uploads`, read when an upload starts; without one, no file uploads. */
     readonly uploads?: () => UploadServiceLike | undefined;
@@ -299,6 +306,8 @@ export interface EditorRuntimeOptions {
     readonly styles?: () => readonly PresentationStyle[];
     /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
     readonly columns?: ColumnState;
+    /** The locale and colour options the content checks read when they run; default no locale strings and no colours. */
+    readonly contentChecks?: () => Pick<ContentCheckOptions, 'locale' | 'colorTokens' | 'background'>;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -692,6 +701,21 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const encode = (doc: Node): RichTextDocument =>
         encodeTree(doc.toJSON() as TreeNode, definition.model, capabilities).document;
 
+    // The checks read the stored document, so their issues and IDs are those `findContentIssues` gives a host.
+    const checks = createContentChecks({
+        state: () => state,
+        sequence: () => sequence,
+        encode: () => encode(state.doc),
+        composing: () => settling.active(),
+        ready: () => phase !== 'faulted' && phase !== 'disposed',
+        commit: (transaction) => commit(transaction),
+        options: () => {
+            const given = options.contentChecks?.();
+            const shown = given ?? { locale: { translationStrings: {} } };
+            return { ...shown, model: definition.model, creatableHeadingLevels: policy.creatableHeadingLevels };
+        },
+    });
+
     // Recomputes `editable`, the surface attributes and the break decorations from the phase, the mode and the
     // columns, which waits for input to settle.
     const refreshView = () => {
@@ -909,6 +933,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         emitSelection();
         if (changed) {
             saves?.changed();
+            checks.changed();
         }
         emitSaveStatus();
         return changed;
@@ -1625,6 +1650,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         phase = 'disposed';
         ended.abort();
         settling.cancel();
+        checks.dispose();
         for (const settled of [...afterInput]) {
             settled('disposed');
         }
@@ -2139,8 +2165,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (target.scroll !== true || view === undefined) {
                 return;
             }
-            // ProseMirror scrolls to the selection only while the browser's selection is in the surface, which a
-            // caller that asks for this may not have.
+            // ProseMirror scrolls to the selection only while the browser's selection is in the surface, and a
+            // panel that asks for this keeps focus.
             scrollSelectionIntoView(view, state.selection);
         },
         watch,
@@ -2207,6 +2233,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             afterInput.add(waiter);
         },
         measure: (kind, started, failureCode) => measure(kind, started, failureCode),
+        runChecks: () => checks.run(),
     };
     if (options.nodeViews !== undefined) {
         nodeViews = options.nodeViews(runtime);

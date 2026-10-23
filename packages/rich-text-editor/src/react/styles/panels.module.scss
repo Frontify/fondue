@@ -1,0 +1,31 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.slot {
+    max-block-size: 16rem;
+    overflow: auto;
+    padding: var(--spacing-x-small);
+    border-block-end: 1px solid var(--color-line-subtle);
+    background-color: var(--color-surface-default);
+}
+
+.fallback {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-small);
+    margin: 0;
+    color: var(--color-primary-default);
+    font-family: var(--text-body-medium-default-font-family);
+    font-size: var(--text-body-medium-default-font-size);
+    line-height: var(--text-body-medium-default-line-height);
+}
+
+.fallback p {
+    margin: 0;
+}
+
+@media print {
+    .slot {
+        display: none;
+    }
+}

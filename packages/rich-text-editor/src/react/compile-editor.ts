@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type NodeViewDeclaration } from '#/bridge/define';
+import { type NodeViewDeclaration, type PanelDeclaration } from '#/bridge/define';
 import { commandApiOf, editorApiOf } from '#/bridge/live-api';
 import {
     type EditorApi,
@@ -27,6 +27,7 @@ import {
     type ValueDeclaration,
 } from '#/model';
 import { CLIPBOARD_PLUGIN, DROP_CURSOR_PLUGIN } from '#/model/capabilities';
+import { CONTENT_REPAIRS } from '#/model/checks';
 import { attributesOf, compiledModel } from '#/model/compile';
 import { limitsOf } from '#/model/decode';
 import { pointer } from '#/model/errors';
@@ -50,6 +51,7 @@ export type ShippedParts = Readonly<Record<string, EditorPlugin>>;
 // Kept off the definition, so no engine value is reachable from what a host holds.
 const engines = new WeakMap<object, CompiledDefinition>();
 const nodeViews = new WeakMap<object, ReadonlyMap<string, NodeViewDeclaration>>();
+const editorPanels = new WeakMap<object, ReadonlyMap<string, PanelDeclaration>>();
 const editorPlugins = new WeakMap<object, readonly EditorPlugin[]>();
 const readers = new WeakMap<object, ReaderOverrides>();
 
@@ -65,6 +67,10 @@ export const engineOf = (definition: CompiledEditorDefinition<object>): Compiled
 /** The node view chrome of a definition by node name; a later feature's view of a node replaces an earlier one's. */
 export const viewsOf = (definition: CompiledEditorDefinition<object>): ReadonlyMap<string, NodeViewDeclaration> =>
     nodeViews.get(definition) ?? new Map();
+
+/** The panels of a definition by control id; a later feature's panel of a control replaces an earlier one's. */
+export const panelsOf = (definition: CompiledEditorDefinition<object>): ReadonlyMap<string, PanelDeclaration> =>
+    editorPanels.get(definition) ?? new Map();
 
 /** The editor parts a definition installs, in feature order. */
 export const pluginsOf = (definition: CompiledEditorDefinition<object>): readonly EditorPlugin[] =>
@@ -93,6 +99,7 @@ const extend = (shipped: EditorPlugin, host: EditorPlugin): EditorPlugin => {
         commands: Object.assign({ ...shipped.commands }, host.commands),
         keys: Object.assign({ ...shipped.keys }, host.keys),
         inputRules: byKey(shipped.inputRules, host.inputRules, 'id'),
+        panels: byKey(shipped.panels, host.panels, 'control'),
         toolbar: byKey(shipped.toolbar, host.toolbar, 'id'),
         views: byKey(shipped.views, host.views, 'node'),
         decorations: byKey(shipped.decorations, host.decorations, 'id'),
@@ -250,6 +257,17 @@ const collectViews = (model: ContentModel, plugins: readonly EditorPlugin[]) => 
     return views;
 };
 
+/** The panels the model's editor parts attach, keyed by the id the slot opens. */
+const collectPanels = (plugins: readonly EditorPlugin[]) => {
+    const panels = new Map<string, PanelDeclaration>();
+    for (const plugin of plugins) {
+        for (const panel of plugin.panels ?? []) {
+            panels.set(panel.control, panel);
+        }
+    }
+    return panels;
+};
+
 /** The defaults with `limitOverrides`, then each of `limits` that is stricter; invalid values are ignored. */
 const limitsWithin = (limits: Partial<ResourceLimits> | undefined, overrides: Partial<ResourceLimits> | undefined) => {
     const loosened = limitsOf(overrides);
@@ -348,6 +366,16 @@ export const editorEngine = (
             }
         }
     }
+    // The server offers a repair when the model installs its feature, so the editor must have its command.
+    const { features } = compiledModel(model);
+    for (const { command, feature } of CONTENT_REPAIRS) {
+        if (features.some(({ id }) => id === feature) && !engine.commands.has(command)) {
+            throw new DefinitionError('definition.orphan-behavior', {
+                feature,
+                path: pointer('repairs', command),
+            });
+        }
+    }
     return { engine, plugins };
 };
 
@@ -370,6 +398,7 @@ export const compileEditor = <Model extends ContentModel, const Plugins extends 
     const { id, model, policy } = options;
     const { engine, plugins } = editorEngine(model, options.plugins, shipped);
     const views = collectViews(model, plugins);
+    const panels = collectPanels(plugins);
     const limits = limitsWithin(options.limits, options.limitOverrides);
     checkLimits(model, limits, options.limits);
     const definition = Object.freeze({
@@ -381,6 +410,7 @@ export const compileEditor = <Model extends ContentModel, const Plugins extends 
     });
     engines.set(definition, engine);
     nodeViews.set(definition, views);
+    editorPanels.set(definition, panels);
     editorPlugins.set(definition, plugins);
     readers.set(definition, overrides);
     return definition as unknown as CompiledEditorDefinition<CommandsOfModel<Model> & CommandsOfPlugins<Plugins>>;

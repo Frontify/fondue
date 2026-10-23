@@ -21,6 +21,7 @@ import { type JsonObject } from '#/model';
 import {
     BASE_KEYS_PLUGIN,
     BLOCK_DECORATIONS_PLUGIN,
+    CONTENT_ISSUES_PLUGIN,
     CONTAINER_KEYS_PLUGIN,
     GAP_CURSOR_PLUGIN,
     HISTORY_PLUGIN,
@@ -31,6 +32,7 @@ import {
 import { appliesToOf } from '#/model/styles';
 import { isRecord, OBJECT_REPLACEMENT } from '#/model/values';
 
+import { contentIssuesPlugin } from './content-issues';
 import { blockDecorationsPlugin } from './decorations';
 import { historyPlugin, redo, undo } from './history';
 import { enterRules, inputRulesPlugin, undoInputRule } from './input-rules';
@@ -1295,6 +1297,7 @@ export const RUNTIME_PLUGINS: EngineImplementations = {
         [CONTAINER_KEYS_PLUGIN.id]: containerKeysPlugin,
         [BASE_KEYS_PLUGIN.id]: baseKeysPlugin,
         [BLOCK_DECORATIONS_PLUGIN.id]: blockDecorationsPlugin,
+        [CONTENT_ISSUES_PLUGIN.id]: contentIssuesPlugin,
         // Keyed by its plugin ID, as every package plugin is; `gapCursor()` itself carries no key.
         [GAP_CURSOR_PLUGIN.id]: () =>
             new Plugin({ key: new PluginKey(GAP_CURSOR_PLUGIN.id), props: gapCursor().props }),

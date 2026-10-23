@@ -9,7 +9,7 @@ import { type EditorHandle } from './types';
 
 /**
  * The handle of the editor around the caller once its session is ready, else `null`. It is the host's: a plugin's
- * UI uses `useEditorApi`, which adds the editor's hosts: strings, services, overlays, the live region and focus.
+ * UI uses `useEditorApi`, which adds the editor's hosts: overlays, panels and the live region.
  */
 export const useEditorHandle = <C extends object = ShippedCommands>(): EditorHandle<C> | null => {
     const runtime = useContext(SessionContext);

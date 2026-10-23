@@ -38,8 +38,10 @@ const INERT: EditorHosts = {
     services: {
         presentation: () => ({ styles: [], colorTokens: [], columns: 1, columnGap: undefined }),
         references: () => undefined,
+        checks: () => undefined,
     },
     overlays: { open: () => undefined, close: () => undefined, isOpen: () => false },
+    panels: { open: () => undefined, toggle: () => undefined, close: () => undefined, isOpen: () => false },
     announce: () => undefined,
     focus: () => undefined,
     anchor: () => ({ getBoundingClientRect: () => new DOMRect() }),
@@ -69,6 +71,12 @@ export const commandApiOf = (
             open: (component, props, anchor) => later(() => hosts.overlays.open(component, props, anchor)),
             close: () => later(() => hosts.overlays.close()),
             isOpen: () => hosts.overlays.isOpen(),
+        },
+        panels: {
+            open: (id) => later(() => hosts.panels.open(id)),
+            toggle: (id) => later(() => hosts.panels.toggle(id)),
+            close: () => later(() => hosts.panels.close()),
+            isOpen: (id) => hosts.panels.isOpen(id),
         },
         announce: (message, key) => later(() => hosts.announce(message, key)),
         focus: () => later(() => hosts.focus()),

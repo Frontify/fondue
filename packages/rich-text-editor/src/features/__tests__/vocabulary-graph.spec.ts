@@ -40,6 +40,8 @@ vi.mock('#/features/marks-bold/editor', recorded('#/features/marks-bold/editor')
 vi.mock('#/features/links/editor', recorded('#/features/links/editor'));
 vi.mock('#/features/links/link-popover', recorded('#/features/links/link-popover'));
 vi.mock('#/features/links/link-bubble', recorded('#/features/links/link-bubble'));
+vi.mock('#/features/nav-outline/editor', recorded('#/features/nav-outline/editor'));
+vi.mock('#/features/nav-outline/outline-panel', recorded('#/features/nav-outline/outline-panel'));
 
 type Entries = Awaited<ReturnType<typeof loadVocabulary>>;
 

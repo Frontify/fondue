@@ -49,7 +49,7 @@ const mount = (readOnly = false) => {
             aria-label="Notes"
             definition={definition}
             presentation={defineReactPresentation({
-                toolbar: [['fixture.spotlight.toggle']],
+                toolbar: [['fixture.spotlight.toggle', 'fixture.spotlight.panel']],
             })}
             defaultValue={{ documentId: 'document-1', revision: null, document: spotlightDocument }}
             readOnly={readOnly}
@@ -96,6 +96,20 @@ describe('a plugin added only in its own files', () => {
         expect(screen.getByTestId('fixture-spotlight-control')).toHaveAttribute('aria-keyshortcuts', 'Control+Shift+L');
     });
 
+    it('moves focus into its panel when the panel opens, and closes the panel on Escape', () => {
+        const { view } = mount();
+
+        act(() => {
+            screen.getByRole('button', { name: 'Spotlit passages' }).click();
+        });
+        const panel = screen.getByRole('region', { name: 'Spotlit passages' });
+        expect(within(panel).getByRole('button')).toHaveFocus();
+
+        fireEvent.keyDown(within(panel).getByRole('button'), { key: 'Escape' });
+        expect(screen.queryByRole('region', { name: 'Spotlit passages' })).toBeNull();
+        expect(view.dom).toHaveFocus();
+    });
+
     it('pastes a `mark` as its mark unless another editor’s search left it behind', () => {
         const { handle } = mount();
         act(() => {
@@ -112,6 +126,22 @@ describe('a plugin added only in its own files', () => {
             { type: 'text', text: 'kept', marks: [{ type: 'fixture_spotlight' }] },
             { type: 'text', text: ' found' },
         ]);
+    });
+
+    it('opens and closes its panel from its toolbar toggle, in a read-only editor too', () => {
+        mount(true);
+        const toggle = screen.getByRole('button', { name: 'Spotlit passages' });
+
+        act(() => {
+            toggle.click();
+        });
+        expect(screen.getByRole('region', { name: 'Spotlit passages' })).toHaveTextContent('1 spotlit passages');
+        expect(toggle).toHaveAttribute('aria-pressed', 'true');
+
+        act(() => {
+            toggle.click();
+        });
+        expect(screen.queryByRole('region', { name: 'Spotlit passages' })).toBeNull();
     });
 
     it('refuses a plugin for a feature the model does not install', () => {

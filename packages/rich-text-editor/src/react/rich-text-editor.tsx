@@ -65,15 +65,17 @@ import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolb
 import { ContextMenu } from '#/ui/context-menu/context-menu';
 import { pickAsset } from '#/ui/media/asset-picker';
 import { uploadMessage } from '#/ui/media/upload-messages';
+import { PanelContext, type PanelController, usePanelController } from '#/ui/panels/context';
 import { referenceListStrings, SuggestionList } from '#/ui/suggestions/suggestion-list';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
 import { type ColumnsLayout, showColumns } from './columns';
-import { engineOf, pluginsOf, readersOf, viewsOf } from './compile-editor';
+import { engineOf, panelsOf, pluginsOf, readersOf, viewsOf } from './compile-editor';
 import { registerFormField } from './form-field';
 import { useKeyboardInset } from './keyboard-inset';
 import { useEditorLocale } from './locale';
+import { PanelFrame } from './panels';
 import { usePluginHosts, useRenderedHosts } from './plugin-hosts';
 import { BlockedShell, RecoveryShell } from './shells';
 import { registerSaveCauses, SaveStatusText } from './status';
@@ -177,6 +179,22 @@ const surfaceOf = (runtime: EditorRuntime | undefined): HTMLElement | undefined 
         return undefined;
     }
     return runtime.view.dom;
+};
+
+/** The first colour behind the surface that is not fully transparent, which the content checks measure text against. */
+const backgroundOf = (runtime: EditorRuntime | undefined): string | undefined => {
+    const surface = surfaceOf(runtime);
+    const owner = surface?.ownerDocument.defaultView;
+    if (surface === undefined || owner === null || owner === undefined) {
+        return undefined;
+    }
+    for (let element: Element | null = surface; element !== null; element = element.parentElement) {
+        const color = owner.getComputedStyle(element).backgroundColor;
+        if (color !== '' && color !== 'transparent' && !/^rgba\(.*,\s*0\)$/.test(color)) {
+            return color;
+        }
+    }
+    return undefined;
 };
 
 /** Whether a services member changed: added, removed, or holding another function under some name. */
@@ -361,6 +379,38 @@ const SessionComponent = (
         element: overlayRootElement,
     } = useOverlayRoot(coordinator, props.portalContainer);
     const [toolbarMode, setToolbarMode] = useState<ToolbarMode>(() => props.defaultToolbarMode ?? 'fixed');
+    // At most one panel. A panel that toggles closes on its own command; any other panel command replaces the open one.
+    const [openPanel, setOpenPanel] = useState<string>();
+    // The runs of the open panel's own command, which a panel that stays open hears.
+    const [panelRequests, setPanelRequests] = useState(0);
+    const openPanelRef = useRef<string>(undefined);
+    const panelActionsRef = useRef({
+        open: (id: string) => {
+            if (openPanelRef.current === id) {
+                setPanelRequests((count) => count + 1);
+                return;
+            }
+            openPanelRef.current = id;
+            setOpenPanel(id);
+        },
+        // Focus in the editor goes to the surface before the panel that may hold it unmounts; focus the author
+        // moved elsewhere stays there.
+        close: () => {
+            const root = rootRef.current;
+            if (openPanelRef.current !== undefined && root?.contains(root.ownerDocument.activeElement) === true) {
+                coordinator.runtime?.handle.focus();
+            }
+            openPanelRef.current = undefined;
+            setOpenPanel(undefined);
+        },
+        toggle: (id: string) => {
+            if (openPanelRef.current === id) {
+                panelActionsRef.current.close();
+                return;
+            }
+            panelActionsRef.current.open(id);
+        },
+    });
     // The toolbars of the plugins' standing overlays, and the chrome's strings, which plugins read when they run.
     const overlayToolbarsRef = useRef<(HTMLElement | null)[]>([]);
     const tRef = useRef(codecContext(enUS, enUS).t);
@@ -368,6 +418,8 @@ const SessionComponent = (
         coordinator,
         scope,
         announcer,
+        panels: panelActionsRef,
+        openPanel: openPanelRef,
         t: () => tRef.current,
         lang: () => langRef.current,
         presentation: () => pluginPresentationOf(latestRef.current.presentation),
@@ -482,6 +534,15 @@ const SessionComponent = (
             },
             styles: () => latestRef.current.presentation?.styles ?? [],
             columns: columnsAtMount(latestRef.current.presentation, t),
+            contentChecks: () => {
+                const background = backgroundOf(runtime);
+                const tokens = latestRef.current.presentation?.colorTokens;
+                return {
+                    locale: shellPropsOf(latestRef.current).locale,
+                    colorTokens: tokens ?? [],
+                    ...(background === undefined ? {} : { background }),
+                };
+            },
         });
         connectClipboard(runtime, {
             sliceContext: () => {
@@ -671,8 +732,10 @@ const SessionComponent = (
     useClientLayoutEffect(() => {
         tRef.current = chromeContext.t;
     });
+    // A host that renders a new presentation object on each change must not hand plugin UI a new API each time.
+    const hostsT = useMemo(() => codecContext(locale, enUS).t, [locale]);
     // The session keeps `hosts`, whose identity must hold; plugin UI reads this one, which follows the locale.
-    const renderedHosts = useRenderedHosts(hosts, chromeContext.t, shownLang);
+    const renderedHosts = useRenderedHosts(hosts, hostsT, shownLang);
     const plugins = pluginsOf(mounted.definition);
     const items = useMemo(
         () =>
@@ -792,13 +855,26 @@ const SessionComponent = (
         columnsLayoutRef.current?.update(columnCount, columnGap);
     }, [live, columnCount, columnGap]);
 
-    const overlays = useMemo(() => ({ container: overlayRoot, scope }), [overlayRoot, scope]);
+    // The opener of the plugin overlay shown reaches every overlay it renders, such as a menu's follow-up draft.
+    let opener: Element | null = null;
+    if (pluginOverlay !== undefined) {
+        opener = pluginOverlay.opener;
+    }
+    const overlays = useMemo(() => ({ container: overlayRoot, scope, opener }), [overlayRoot, scope, opener]);
     // The file chooser exists where `media.image` takes files that `services.uploads` sends.
     const choosesFiles =
         engineOf(mounted.definition).model.capabilities.some(({ id }) => id === UPLOAD_FEATURE) &&
         memberOf(props.services, 'uploads') !== undefined;
     const referenceStrings = useMemo(() => referenceListStrings(chromeContext.t), [chromeContext]);
 
+    const panelState = useMemo<PanelController>(
+        () => ({
+            id: openPanel,
+            requested: panelRequests,
+            close: () => panelActionsRef.current.close(),
+        }),
+        [openPanel, panelRequests],
+    );
     const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
     if (mounted.blocked !== undefined) {
         return <BlockedShell result={mounted.blocked} {...shell} />;
@@ -829,14 +905,16 @@ const SessionComponent = (
                                     onBlur={() => coordinator.chrome.showSelection(false)}
                                 >
                                     {work !== undefined && <Phase work={work} open />}
-                                    {children}
-                                    {toolbarMode === 'bubble' && <Bubble />}
-                                    <ContextMenu
-                                        items={chrome.menu}
-                                        label={chrome.labels.contextMenu}
-                                        strings={chrome.strings}
-                                        disabled={props.disabled === true}
-                                    />
+                                    <PanelContext.Provider value={panelState}>
+                                        {children}
+                                        {toolbarMode === 'bubble' && <Bubble />}
+                                        <ContextMenu
+                                            items={chrome.menu}
+                                            label={chrome.labels.contextMenu}
+                                            strings={chrome.strings}
+                                            disabled={props.disabled === true}
+                                        />
+                                    </PanelContext.Provider>
                                     <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
                                     <SuggestionList
                                         nameOf={(name) => {
@@ -1216,9 +1294,34 @@ const Status = () => {
 };
 Status.displayName = 'RichTextEditor.Status';
 
+/** The open panel, between the toolbar and the surface unless a host places this part elsewhere. */
+const Panels = () => {
+    const { props, mounted, chrome } = useRoot('Panels');
+    const panels = usePanelController();
+    const id = panels?.id;
+    const declaration = id === undefined ? undefined : panelsOf(mounted.definition).get(id);
+    const Panel = declaration?.component;
+    const { 'data-test-id': testId = DEFAULT_TEST_ID } = props;
+    if (panels === null || id === undefined || Panel === undefined) {
+        return null;
+    }
+    return (
+        <PanelFrame
+            id={id}
+            panel={Panel}
+            t={chrome.t}
+            requested={panels.requested}
+            testId={testId}
+            onClose={() => panels.close()}
+        />
+    );
+};
+Panels.displayName = 'RichTextEditor.Panels';
+
 const Editor = forwardRef((props: Props, ref: ForwardedRef<EditorHandle<object>>) => (
     <Root {...props} ref={ref}>
         <Toolbar />
+        <Panels />
         <Surface />
         <Status />
     </Root>
@@ -1232,6 +1335,7 @@ export const RichTextEditor = Object.assign(Editor, {
     Toolbar,
     BubbleToolbar: BubbleToolbarPart,
     Status,
+    Panels,
 }) as unknown as (<C extends object = ShippedCommands>(props: RichTextEditorProps<C>) => ReactNode) & {
     /** Takes the editor props and renders its own layout from the parts; `RichTextEditor` is Root with the default parts. */
     readonly Root: <C extends object = ShippedCommands>(
@@ -1241,4 +1345,5 @@ export const RichTextEditor = Object.assign(Editor, {
     readonly Toolbar: ComponentType<object>;
     readonly BubbleToolbar: ComponentType<object>;
     readonly Status: ComponentType<object>;
+    readonly Panels: ComponentType<object>;
 };

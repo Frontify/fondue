@@ -20,8 +20,81 @@ export const ptPT = {
         RichTextEditor_bubbleToolbar: 'Formatação da seleção',
         RichTextEditor_bulletList: 'Lista com marcadores',
         RichTextEditor_cancel: 'Cancelar',
+        RichTextEditor_checkColorMeaningReview: 'Significado transmitido pela cor',
+        RichTextEditor_checkColorMeaningReviewHelp:
+            'Verifique se a cor não é a única forma de este texto transmitir significado, como um estado ou um item obrigatório. Acrescente também palavras.',
+        RichTextEditor_checkContrastLow: 'Contraste de texto baixo',
+        RichTextEditor_checkContrastLowHelp:
+            'A cor do texto e o fundo têm pouco contraste para muitas pessoas. Escolha uma cor de texto que o menu ofereça para este fundo.',
+        RichTextEditor_checkContrastUnknown: 'Contraste de texto impossível de medir',
+        RichTextEditor_checkContrastUnknownHelp:
+            'O editor não conhece a cor deste texto ou do seu fundo. Verifique se o texto se lê com facilidade, com um contraste de pelo menos 4,5 para 1, ou 3 para 1 em texto grande.',
+        RichTextEditor_checkEmbedMediaReview: 'Multimédia incorporado',
+        RichTextEditor_checkEmbedMediaReviewHelp:
+            'Verifique se o vídeo tem legendas e audiodescrição e se não reproduz som sozinho.',
+        RichTextEditor_checkEmbedTitleMissing: 'Conteúdo incorporado sem título',
+        RichTextEditor_checkEmbedTitleMissingHelp:
+            'Um leitor incorporado precisa de um título que nomeie o seu conteúdo, para que os leitores de ecrã o anunciem. Edite o conteúdo incorporado e dê-lhe um título.',
+        RichTextEditor_checkGenericImageWords:
+            'imagem|foto|fotografia|gráfico|ilustração|ícone|logótipo|logo|banner|captura de ecrã|texto alternativo|marcador de posição|sem título|miniatura',
+        RichTextEditor_checkHeadingDescriptiveReview: 'Texto do título',
+        RichTextEditor_checkHeadingDescriptiveReviewHelp:
+            'Verifique se cada título diz de que trata a sua secção, para que se encontre uma secção só pelos títulos.',
+        RichTextEditor_checkHeadingEmpty: 'Título vazio',
+        RichTextEditor_checkHeadingEmptyHelp:
+            'Um título sem texto aparece mesmo assim na lista de títulos que os leitores de ecrã oferecem. Adicione o texto ou transforme-o em texto normal.',
+        RichTextEditor_checkHeadingSkippedLevel: 'Nível de título saltado',
+        RichTextEditor_checkHeadingSkippedLevelHelp:
+            'Os níveis de título formam a estrutura do documento. Um título deve estar no máximo um nível abaixo do título anterior.',
+        RichTextEditor_checkImageAltMissing: 'Imagem sem texto alternativo',
+        RichTextEditor_checkImageAltMissingHelp:
+            'Decida se a imagem acrescenta informação. Se sim, descreva em poucas palavras o que mostra. Se for apenas decorativa, marque-a como decorativa.',
+        RichTextEditor_checkImageAltSuspicious: 'Texto alternativo que pode não descrever a imagem',
+        RichTextEditor_checkImageAltSuspiciousHelp:
+            'O texto alternativo parece um nome de ficheiro ou uma palavra genérica. Se não diz o que a imagem mostra nem porque está ali, escreva antes uma descrição curta.',
+        RichTextEditor_checkImageContentReview: 'Conteúdo da imagem',
+        RichTextEditor_checkImageContentReviewHelp:
+            'Verifique se a imagem mostra texto que devia estar no documento, se mexe ou pisca durante mais de cinco segundos ou cintila mais de três vezes por segundo.',
+        RichTextEditor_checkLanguagePartsReview: 'Passagens noutra língua',
+        RichTextEditor_checkLanguagePartsReviewHelp:
+            'Verifique se alguma passagem está numa língua diferente da do documento. Marcar a sua língua permite aos leitores de ecrã pronunciá-la bem.',
+        RichTextEditor_checkLinkPurposeReview: 'Finalidade da ligação',
+        RichTextEditor_checkLinkPurposeReviewHelp:
+            'Verifique se o texto da ligação, com a sua frase, diz para onde vai a ligação e o que acontece ao segui-la.',
+        RichTextEditor_checkLinkTextEmpty: 'Ligação sem texto',
+        RichTextEditor_checkLinkTextEmptyHelp:
+            'Uma ligação precisa de texto que um leitor de ecrã possa ler. Adicione texto que diga para onde vai a ligação.',
+        RichTextEditor_checkLinkTextVague: 'Texto de ligação que não diz para onde vai',
+        RichTextEditor_checkLinkTextVagueHelp:
+            'Leia o texto da ligação sozinho, como uma lista de ligações o mostra. Se não diz para onde vai, como «aqui» ou «ler mais», indique antes o destino.',
+        RichTextEditor_checkSensoryReview: 'Instruções que dependem dos sentidos',
+        RichTextEditor_checkSensoryReviewHelp:
+            'Verifique se nenhuma instrução depende só da forma, cor, tamanho, som ou posição na página. Indique também o nome do elemento, para que todos possam segui-la.',
+        RichTextEditor_checkStructureReview: 'Estrutura apenas visual',
+        RichTextEditor_checkStructureReviewHelp:
+            'Verifique se alguma estrutura é mostrada apenas visualmente, como texto a negrito usado como título, parágrafos que começam com um travessão ou um número usados como lista, ou um avanço que marca uma citação. Use antes os comandos de título, lista e citação.',
+        RichTextEditor_checkTableNoHeader: 'Tabela sem células de cabeçalho',
+        RichTextEditor_checkTableNoHeaderHelp:
+            'As células de cabeçalho dizem aos leitores de ecrã o que cada linha ou coluna contém. Se a primeira linha nomeia as colunas, torne-a uma linha de cabeçalho.',
+        RichTextEditor_checkVagueLinkTexts:
+            'clique aqui|clique|aqui|ligação|esta ligação|link|mais|ler mais|saber mais|mais informações|info|detalhes|continuar|ir|esta página|site',
+        RichTextEditor_checks: 'Verificações de acessibilidade',
+        RichTextEditor_checksDismiss: 'Ignorar',
+        RichTextEditor_checksDismissed: 'Ignorado',
+        RichTextEditor_checksDocument: 'Documento inteiro',
+        RichTextEditor_checksErrors: 'Erros: ${errors}.',
+        RichTextEditor_checksGoTo: 'Ir para',
+        RichTextEditor_checksHelp: 'Como decidir',
+        RichTextEditor_checksRepair: 'Corrigir',
+        RichTextEditor_checksReview: 'A rever: ${review}.',
+        RichTextEditor_checksSeverityError: 'Erro',
+        RichTextEditor_checksSeverityReview: 'A rever',
+        RichTextEditor_checksSeverityWarning: 'Aviso',
+        RichTextEditor_checksShowDismissed: 'Mostrar ignorados',
+        RichTextEditor_checksWarnings: 'Avisos: ${warnings}.',
         RichTextEditor_clearColor: 'Remover cor',
         RichTextEditor_clearFormatting: 'Limpar formatação',
+        RichTextEditor_close: 'Fechar',
         RichTextEditor_code: 'Código',
         RichTextEditor_codeBlock: 'Bloco de código',
         RichTextEditor_codeLanguage: 'Linguagem: ${language}',
@@ -144,6 +217,10 @@ export const ptPT = {
         RichTextEditor_nodeViewError: 'Esta parte do conteúdo não pode ser apresentada',
         RichTextEditor_normalText: 'Texto normal',
         RichTextEditor_numberedList: 'Lista numerada',
+        RichTextEditor_outline: 'Estrutura',
+        RichTextEditor_outlineHeadingGone:
+            'Esse título já não está no documento. A estrutura mostra os títulos atuais.',
+        RichTextEditor_panelError: 'Não foi possível mostrar este painel.',
         RichTextEditor_pasteFormattingRemoved: 'Parte da formatação foi removida.',
         RichTextEditor_pasteMediaDropped: 'Multimédia não colado: ${count}',
         RichTextEditor_pasteTooLarge: 'O conteúdo colado é demasiado grande.',

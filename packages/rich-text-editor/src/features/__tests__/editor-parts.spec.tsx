@@ -1,15 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { act, render } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { core, heading } from '#/features';
+import { core, heading, outline } from '#/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
 import {
     type CommandsOfModel,
     defineEditor,
     defineEditorPlugin,
+    defineReactPresentation,
     type EditorHandle,
     type EditorPlugin,
     type EditorPluginParts,
@@ -208,6 +209,47 @@ describe('the node views of an editor part', () => {
         expect(chrome?.hasAttribute('contenteditable')).toBe(false);
         expect(first?.content).toEqual([text('TYitle')]);
         expect(renders).toEqual([]);
+    });
+});
+
+describe('a host part over a shipped part', () => {
+    const hostModel = compileContentModel([core(), heading(), outline()], {
+        id: 'fixture.host',
+        version: 1,
+    });
+    const mountHost = (blocks: readonly ContentNodeJSON[], plugins: readonly EditorPlugin[]) =>
+        render(
+            <RichTextEditor
+                aria-label="Notes"
+                definition={defineEditor({ id: 'fixture.host', model: hostModel, plugins })}
+                presentation={defineReactPresentation({ toolbar: [['outline.toggle']] })}
+                defaultValue={{
+                    documentId: 'document-1',
+                    revision: null,
+                    document: {
+                        ...storedOf(blocks),
+                        model: hostModel.ref,
+                        requiredCapabilities: hostModel.capabilities,
+                    } as RichTextDocument,
+                }}
+            />,
+        );
+
+    it('opens its panel in place of the shipped panel of the same id', () => {
+        const Panel = () => <p>Host outline</p>;
+        const plugin = defineEditorPlugin(outline, {
+            panels: [{ control: 'outline', component: Panel }],
+        });
+        const { unmount } = mountHost([title], [plugin]);
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: 'Outline' }));
+
+        expect(screen.getByText('Host outline')).toBeInTheDocument();
+        expect(screen.queryByRole('navigation', { name: 'Outline' })).toBeNull();
+        unmount();
     });
 });
 

@@ -21,7 +21,7 @@ declare global {
     }
 }
 
-/** An editor with only `core` and the fixture plugin, whose controls sit in the toolbar. */
+/** An editor with only `core` and the fixture plugin, whose control and panel sit in the toolbar. */
 export const SpotlightProbe = () => {
     const ref = useRef<EditorHandle>(null);
     useEffect(() => {
@@ -36,7 +36,7 @@ export const SpotlightProbe = () => {
             aria-label="Notes"
             definition={definition}
             presentation={defineReactPresentation({
-                toolbar: [['fixture.spotlight.toggle', 'fixture.spotlight.note']],
+                toolbar: [['fixture.spotlight.toggle', 'fixture.spotlight.panel', 'fixture.spotlight.note']],
             })}
             defaultValue={{ documentId: 'document-1', revision: null, document: spotlightDocument }}
         />

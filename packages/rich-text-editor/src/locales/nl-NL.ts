@@ -20,8 +20,81 @@ export const nlNL = {
         RichTextEditor_bubbleToolbar: 'Opmaak van de selectie',
         RichTextEditor_bulletList: 'Lijst met opsommingstekens',
         RichTextEditor_cancel: 'Annuleren',
+        RichTextEditor_checkColorMeaningReview: 'Betekenis via kleur',
+        RichTextEditor_checkColorMeaningReviewHelp:
+            'Controleer of kleur niet de enige manier is waarop deze tekst betekenis toont, zoals een status of een verplicht item. Voeg ook woorden toe.',
+        RichTextEditor_checkContrastLow: 'Laag tekstcontrast',
+        RichTextEditor_checkContrastLowHelp:
+            'De tekstkleur en de achtergrond hebben te weinig contrast voor veel mensen. Kies een tekstkleur die het menu voor deze achtergrond aanbiedt.',
+        RichTextEditor_checkContrastUnknown: 'Tekstcontrast dat niet te meten is',
+        RichTextEditor_checkContrastUnknownHelp:
+            'De editor kent de kleur van deze tekst of van de achtergrond niet. Controleer of de tekst goed leesbaar is, met een contrast van minstens 4,5 op 1, of 3 op 1 voor grote tekst.',
+        RichTextEditor_checkEmbedMediaReview: 'Ingesloten media',
+        RichTextEditor_checkEmbedMediaReviewHelp:
+            'Controleer of de video ondertitels en audiodescriptie heeft en niet uit zichzelf geluid afspeelt.',
+        RichTextEditor_checkEmbedTitleMissing: 'Insluiting zonder titel',
+        RichTextEditor_checkEmbedTitleMissingHelp:
+            'Een ingesloten speler heeft een titel nodig die de inhoud noemt, zodat schermlezers hem aankondigen. Bewerk de insluiting en geef haar een titel.',
+        RichTextEditor_checkGenericImageWords:
+            'afbeelding|plaatje|foto|fotografie|grafiek|illustratie|pictogram|icoon|logo|banner|schermafbeelding|screenshot|alternatieve tekst|tijdelijke aanduiding|zonder titel|miniatuur',
+        RichTextEditor_checkHeadingDescriptiveReview: 'Koptekst',
+        RichTextEditor_checkHeadingDescriptiveReviewHelp:
+            'Controleer of elke kop zegt waar de sectie over gaat, zodat je een sectie alleen aan de koppen vindt.',
+        RichTextEditor_checkHeadingEmpty: 'Lege kop',
+        RichTextEditor_checkHeadingEmptyHelp:
+            'Een kop zonder tekst staat toch in de lijst met koppen die schermlezers aanbieden. Voeg tekst toe of maak er gewone tekst van.',
+        RichTextEditor_checkHeadingSkippedLevel: 'Overgeslagen kopniveau',
+        RichTextEditor_checkHeadingSkippedLevelHelp:
+            'Kopniveaus vormen het overzicht van het document. Een kop hoort hoogstens één niveau dieper te liggen dan de kop ervoor.',
+        RichTextEditor_checkImageAltMissing: 'Afbeelding zonder alternatieve tekst',
+        RichTextEditor_checkImageAltMissingHelp:
+            'Beslis of de afbeelding informatie toevoegt. Zo ja, beschrijf in een paar woorden wat ze toont. Is ze alleen decoratie, markeer haar dan als decoratief.',
+        RichTextEditor_checkImageAltSuspicious: 'Alternatieve tekst die de afbeelding misschien niet beschrijft',
+        RichTextEditor_checkImageAltSuspiciousHelp:
+            'De alternatieve tekst lijkt op een bestandsnaam of een algemeen woord. Zegt hij niet wat de afbeelding toont of waarom ze er staat, schrijf dan een korte beschrijving.',
+        RichTextEditor_checkImageContentReview: 'Inhoud van de afbeelding',
+        RichTextEditor_checkImageContentReviewHelp:
+            'Controleer of de afbeelding tekst toont die in het document hoort, langer dan vijf seconden beweegt of knippert, of meer dan drie keer per seconde flitst.',
+        RichTextEditor_checkLanguagePartsReview: 'Passages in een andere taal',
+        RichTextEditor_checkLanguagePartsReviewHelp:
+            'Controleer of een passage in een andere taal staat dan het document. Als de taal is aangegeven, spreken schermlezers de passage goed uit.',
+        RichTextEditor_checkLinkPurposeReview: 'Doel van de link',
+        RichTextEditor_checkLinkPurposeReviewHelp:
+            'Controleer of de linktekst, met zijn zin, zegt waar de link naartoe gaat en wat er gebeurt als je hem volgt.',
+        RichTextEditor_checkLinkTextEmpty: 'Link zonder tekst',
+        RichTextEditor_checkLinkTextEmptyHelp:
+            'Een link heeft tekst nodig die een schermlezer kan voorlezen. Voeg tekst toe die zegt waar de link naartoe gaat.',
+        RichTextEditor_checkLinkTextVague: 'Linktekst die niet zegt waar hij naartoe gaat',
+        RichTextEditor_checkLinkTextVagueHelp:
+            'Lees de linktekst los, zoals een lijst met links hem toont. Zegt hij niet waar de link naartoe gaat, zoals ‘hier’ of ‘lees meer’, noem dan de bestemming.',
+        RichTextEditor_checkSensoryReview: 'Instructies die op de zintuigen steunen',
+        RichTextEditor_checkSensoryReviewHelp:
+            'Controleer of geen instructie alleen steunt op vorm, kleur, grootte, geluid of de plek op de pagina. Noem het item ook bij naam, zodat iedereen de instructie kan volgen.',
+        RichTextEditor_checkStructureReview: 'Structuur die alleen zichtbaar is',
+        RichTextEditor_checkStructureReviewHelp:
+            'Controleer of een structuur alleen visueel wordt getoond, zoals vette tekst als kop, alinea’s die met een streepje of een cijfer beginnen als lijst, of inspringen als citaat. Gebruik daarvoor de opdrachten voor kop, lijst en citaat.',
+        RichTextEditor_checkTableNoHeader: 'Tabel zonder kopcellen',
+        RichTextEditor_checkTableNoHeaderHelp:
+            'Kopcellen vertellen schermlezers wat een rij of kolom bevat. Benoemt de eerste rij de kolommen, maak er dan een koprij van.',
+        RichTextEditor_checkVagueLinkTexts:
+            'klik hier|klik|hier|link|deze link|meer|lees meer|meer weten|meer info|meer informatie|info|details|verder|ga|deze pagina|website',
+        RichTextEditor_checks: 'Toegankelijkheidscontroles',
+        RichTextEditor_checksDismiss: 'Negeren',
+        RichTextEditor_checksDismissed: 'Genegeerd',
+        RichTextEditor_checksDocument: 'Hele document',
+        RichTextEditor_checksErrors: 'Fouten: ${errors}.',
+        RichTextEditor_checksGoTo: 'Ga naar',
+        RichTextEditor_checksHelp: 'Zo beslis je',
+        RichTextEditor_checksRepair: 'Oplossen',
+        RichTextEditor_checksReview: 'Te controleren: ${review}.',
+        RichTextEditor_checksSeverityError: 'Fout',
+        RichTextEditor_checksSeverityReview: 'Te controleren',
+        RichTextEditor_checksSeverityWarning: 'Waarschuwing',
+        RichTextEditor_checksShowDismissed: 'Genegeerde tonen',
+        RichTextEditor_checksWarnings: 'Waarschuwingen: ${warnings}.',
         RichTextEditor_clearColor: 'Kleur verwijderen',
         RichTextEditor_clearFormatting: 'Opmaak wissen',
+        RichTextEditor_close: 'Sluiten',
         RichTextEditor_code: 'Code',
         RichTextEditor_codeBlock: 'Codeblok',
         RichTextEditor_codeLanguage: 'Taal: ${language}',
@@ -146,6 +219,10 @@ export const nlNL = {
         RichTextEditor_nodeViewError: 'Dit deel van de inhoud kan niet worden weergegeven',
         RichTextEditor_normalText: 'Normale tekst',
         RichTextEditor_numberedList: 'Genummerde lijst',
+        RichTextEditor_outline: 'Overzicht',
+        RichTextEditor_outlineHeadingGone:
+            'Die kop staat niet meer in het document. Het overzicht toont de huidige koppen.',
+        RichTextEditor_panelError: 'Dit paneel kan niet worden weergegeven.',
         RichTextEditor_pasteFormattingRemoved: 'Een deel van de opmaak is verwijderd.',
         RichTextEditor_pasteMediaDropped: 'Media niet geplakt: ${count}',
         RichTextEditor_pasteTooLarge: 'De geplakte inhoud is te groot.',

@@ -19,8 +19,81 @@ export const enUS = {
         RichTextEditor_bubbleToolbar: 'Selection formatting',
         RichTextEditor_bulletList: 'Bulleted list',
         RichTextEditor_cancel: 'Cancel',
+        RichTextEditor_checkColorMeaningReview: 'Meaning shown by color',
+        RichTextEditor_checkColorMeaningReviewHelp:
+            'Check that color is not the only way this text shows meaning, such as a status or a required item. Add words as well.',
+        RichTextEditor_checkContrastLow: 'Low text contrast',
+        RichTextEditor_checkContrastLowHelp:
+            'The text color and its background have too little contrast for many people to read. Choose a text color that the menu offers for this background.',
+        RichTextEditor_checkContrastUnknown: 'Text contrast that cannot be measured',
+        RichTextEditor_checkContrastUnknownHelp:
+            'The editor cannot tell the color of this text or of its background. Check that the text is easy to read, with a contrast of at least 4.5 to 1, or 3 to 1 for large text.',
+        RichTextEditor_checkEmbedMediaReview: 'Embedded media',
+        RichTextEditor_checkEmbedMediaReviewHelp:
+            'Check whether the video has captions and audio description, and that it does not play sound by itself.',
+        RichTextEditor_checkEmbedTitleMissing: 'Embed without a title',
+        RichTextEditor_checkEmbedTitleMissingHelp:
+            'An embedded player needs a title that names its content, so screen readers can announce it. Edit the embed and give it a title.',
+        RichTextEditor_checkGenericImageWords:
+            'image|picture|photo|photograph|pic|img|graphic|illustration|icon|logo|banner|screenshot|screen shot|alt|alt text|placeholder|untitled|thumbnail',
+        RichTextEditor_checkHeadingDescriptiveReview: 'Heading text',
+        RichTextEditor_checkHeadingDescriptiveReviewHelp:
+            'Check that each heading says what its section is about, so readers can find a section from the headings alone.',
+        RichTextEditor_checkHeadingEmpty: 'Empty heading',
+        RichTextEditor_checkHeadingEmptyHelp:
+            'A heading with no text still appears in the list of headings that screen readers offer. Add its text, or turn it into normal text.',
+        RichTextEditor_checkHeadingSkippedLevel: 'Skipped heading level',
+        RichTextEditor_checkHeadingSkippedLevelHelp:
+            'Heading levels form the outline of the document. A heading should be at most one level deeper than the heading before it.',
+        RichTextEditor_checkImageAltMissing: 'Image without alternative text',
+        RichTextEditor_checkImageAltMissingHelp:
+            'Decide whether the image adds information. If it does, describe what it shows in a short phrase. If it is only decoration, mark it as decorative.',
+        RichTextEditor_checkImageAltSuspicious: 'Alternative text that may not describe the image',
+        RichTextEditor_checkImageAltSuspiciousHelp:
+            'The alternative text looks like a file name or a generic word. If it does not say what the image shows or why it is there, write a short description instead.',
+        RichTextEditor_checkImageContentReview: 'Image content',
+        RichTextEditor_checkImageContentReviewHelp:
+            'Check whether the image shows text that belongs in the document, moves or blinks for more than five seconds, or flashes more than three times a second.',
+        RichTextEditor_checkLanguagePartsReview: 'Passages in another language',
+        RichTextEditor_checkLanguagePartsReviewHelp:
+            'Check whether any passage is in another language than the document. Marking its language lets screen readers pronounce it correctly.',
+        RichTextEditor_checkLinkPurposeReview: 'Link purpose',
+        RichTextEditor_checkLinkPurposeReviewHelp:
+            'Check that the link text, with its sentence, tells readers where the link goes and what happens when they follow it.',
+        RichTextEditor_checkLinkTextEmpty: 'Link without text',
+        RichTextEditor_checkLinkTextEmptyHelp:
+            'A link needs text that a screen reader can read. Add text that says where the link goes.',
+        RichTextEditor_checkLinkTextVague: 'Link text that does not say where it goes',
+        RichTextEditor_checkLinkTextVagueHelp:
+            'Read the link text alone, as a list of links shows it. If it does not say where the link goes, as with “here” or “read more”, name the destination instead.',
+        RichTextEditor_checkSensoryReview: 'Instructions that rely on the senses',
+        RichTextEditor_checkSensoryReviewHelp:
+            'Check that no instruction relies only on shape, color, size, sound or where something sits on the page. Name the item as well, so everyone can follow it.',
+        RichTextEditor_checkStructureReview: 'Structure shown only by look',
+        RichTextEditor_checkStructureReviewHelp:
+            'Check whether any structure is shown only by look, such as bold text used as a heading, paragraphs that start with a dash or a number used as a list, or indentation that marks a quote. Use the heading, list and quote commands for these instead.',
+        RichTextEditor_checkTableNoHeader: 'Table without header cells',
+        RichTextEditor_checkTableNoHeaderHelp:
+            'Header cells tell screen readers what each row or column holds. If the first row names the columns, make it a header row.',
+        RichTextEditor_checkVagueLinkTexts:
+            'click here|click|here|link|this link|more|read more|learn more|more info|more information|info|details|go|continue|this|this page|website',
+        RichTextEditor_checks: 'Accessibility checks',
+        RichTextEditor_checksDismiss: 'Dismiss',
+        RichTextEditor_checksDismissed: 'Dismissed',
+        RichTextEditor_checksDocument: 'Whole document',
+        RichTextEditor_checksErrors: 'Errors: ${errors}.',
+        RichTextEditor_checksGoTo: 'Go to',
+        RichTextEditor_checksHelp: 'How to decide',
+        RichTextEditor_checksRepair: 'Fix',
+        RichTextEditor_checksReview: 'To review: ${review}.',
+        RichTextEditor_checksSeverityError: 'Error',
+        RichTextEditor_checksSeverityReview: 'To review',
+        RichTextEditor_checksSeverityWarning: 'Warning',
+        RichTextEditor_checksShowDismissed: 'Show dismissed',
+        RichTextEditor_checksWarnings: 'Warnings: ${warnings}.',
         RichTextEditor_clearColor: 'Clear color',
         RichTextEditor_clearFormatting: 'Clear formatting',
+        RichTextEditor_close: 'Close',
         RichTextEditor_code: 'Code',
         RichTextEditor_codeBlock: 'Code block',
         RichTextEditor_codeLanguage: 'Language: ${language}',
@@ -143,6 +216,10 @@ export const enUS = {
         RichTextEditor_nodeViewError: 'This part of the content cannot be shown',
         RichTextEditor_normalText: 'Normal text',
         RichTextEditor_numberedList: 'Numbered list',
+        RichTextEditor_outline: 'Outline',
+        RichTextEditor_outlineHeadingGone:
+            'That heading is no longer in the document. The outline shows the current headings.',
+        RichTextEditor_panelError: 'This panel could not be shown.',
         RichTextEditor_pasteFormattingRemoved: 'Some formatting was removed.',
         RichTextEditor_pasteMediaDropped: 'Media not pasted: ${count}',
         RichTextEditor_pasteTooLarge: 'The pasted content is too large.',

@@ -32,6 +32,8 @@ export interface ToolbarItem {
     readonly options?: readonly (ToolbarItem & { readonly offered: boolean })[];
     /** Its command opens an overlay, which a More row runs only once the menu has closed. */
     readonly opensControl?: boolean;
+    /** The id of the panel the item toggles, so it shows pressed while that panel is open. */
+    readonly control?: string;
     /** A plugin's own control, which renders in place of the standard button. */
     readonly component?: ComponentType<ToolbarControlProps>;
     /** The heading of the text style picker's brand style rows. */

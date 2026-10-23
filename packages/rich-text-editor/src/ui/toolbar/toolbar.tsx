@@ -11,6 +11,7 @@ import { useOverlayContainer } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
 import { type ToolbarControlProps } from '#/bridge/plugin';
 import { SessionContext } from '#/bridge/session';
+import { useOpenPanel } from '#/ui/panels/context';
 import { ariaShortcut } from '#/ui/shortcuts';
 
 import { Icon, pressItem, runItem, tabStop, type ToolbarItem, type ToolbarStrings, useShortcut } from './item';
@@ -88,10 +89,14 @@ const PluginControl = ({
 const Button = ({ item, disabled, strings, keepsFocus, outOfTabOrder }: ItemProps) => {
     const runtime = useContext(SessionContext);
     const container = useOverlayContainer();
+    const openPanel = useOpenPanel();
     const state = useCommandQuery(item.command, item.payload);
     let pressed: boolean | 'mixed' | undefined;
     if (item.toggle) {
         pressed = state.active;
+        if (item.control !== undefined && item.control === openPanel) {
+            pressed = true;
+        }
     }
     // A command the editor cannot run now keeps its item focusable, with the reason in the tooltip.
     let unavailable: true | undefined;

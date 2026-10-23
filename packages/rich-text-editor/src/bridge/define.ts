@@ -2,7 +2,7 @@
 
 import { type ComponentType, createContext, useContext } from 'react';
 
-import { type JsonObject } from '#/model';
+import { type CodecContext, type JsonObject } from '#/model';
 import { type ReaderContext } from '#/model/declarations';
 import {
     type CommandArgs,
@@ -72,6 +72,21 @@ export interface NodeViewDeclaration {
     readonly component: ComponentType<object>;
     /** Attributes only the editor gives the content element, such as `spellcheck`, which the stored HTML never holds. */
     readonly contentAttributes?: Readonly<Record<string, string>>;
+}
+
+/** What a panel renders with: close it, read package strings, and hear its command run again while it is open. */
+export interface PanelComponentProps {
+    readonly close: () => void;
+    readonly t: CodecContext['t'];
+    /** Counts the runs of its command while it is open, for a panel that does not toggle; each change asks it to move focus. */
+    readonly requested: number;
+}
+
+/** A panel a plugin opens by its control id, and the React component that draws it. */
+export interface PanelDeclaration {
+    /** The id a plugin opens this panel by, such as `checks`. */
+    readonly control: string;
+    readonly component: ComponentType<PanelComponentProps>;
 }
 
 /** The state of the node view whose chrome renders, which the portal host provides. */

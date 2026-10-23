@@ -19,8 +19,81 @@ export const esES = {
         RichTextEditor_bubbleToolbar: 'Formato de la selección',
         RichTextEditor_bulletList: 'Lista con viñetas',
         RichTextEditor_cancel: 'Cancelar',
+        RichTextEditor_checkColorMeaningReview: 'Significado transmitido por el color',
+        RichTextEditor_checkColorMeaningReviewHelp:
+            'Comprueba que el color no es la única forma en que este texto transmite un significado, como un estado o un elemento obligatorio. Añade también palabras.',
+        RichTextEditor_checkContrastLow: 'Contraste de texto bajo',
+        RichTextEditor_checkContrastLowHelp:
+            'El color del texto y su fondo tienen poco contraste para muchas personas. Elige un color de texto que el menú ofrezca para este fondo.',
+        RichTextEditor_checkContrastUnknown: 'Contraste de texto que no se puede medir',
+        RichTextEditor_checkContrastUnknownHelp:
+            'El editor no conoce el color de este texto o de su fondo. Comprueba que el texto se lee con facilidad, con un contraste de al menos 4,5 a 1, o 3 a 1 para texto grande.',
+        RichTextEditor_checkEmbedMediaReview: 'Contenido multimedia insertado',
+        RichTextEditor_checkEmbedMediaReviewHelp:
+            'Comprueba si el vídeo tiene subtítulos y audiodescripción, y que no reproduce sonido por sí solo.',
+        RichTextEditor_checkEmbedTitleMissing: 'Contenido insertado sin título',
+        RichTextEditor_checkEmbedTitleMissingHelp:
+            'Un reproductor insertado necesita un título que nombre su contenido, para que los lectores de pantalla lo anuncien. Edita el contenido insertado y dale un título.',
+        RichTextEditor_checkGenericImageWords:
+            'imagen|foto|fotografía|gráfico|ilustración|icono|logo|logotipo|banner|captura|captura de pantalla|texto alternativo|marcador|sin título|miniatura',
+        RichTextEditor_checkHeadingDescriptiveReview: 'Texto del encabezado',
+        RichTextEditor_checkHeadingDescriptiveReviewHelp:
+            'Comprueba que cada encabezado dice de qué trata su sección, para encontrar una sección solo con los encabezados.',
+        RichTextEditor_checkHeadingEmpty: 'Encabezado vacío',
+        RichTextEditor_checkHeadingEmptyHelp:
+            'Un encabezado sin texto aparece igualmente en la lista de encabezados que ofrecen los lectores de pantalla. Añade su texto o conviértelo en texto normal.',
+        RichTextEditor_checkHeadingSkippedLevel: 'Nivel de encabezado omitido',
+        RichTextEditor_checkHeadingSkippedLevelHelp:
+            'Los niveles de encabezado forman el esquema del documento. Un encabezado debería estar como mucho un nivel por debajo del anterior.',
+        RichTextEditor_checkImageAltMissing: 'Imagen sin texto alternativo',
+        RichTextEditor_checkImageAltMissingHelp:
+            'Decide si la imagen aporta información. Si es así, describe en pocas palabras lo que muestra. Si solo es decorativa, márcala como decorativa.',
+        RichTextEditor_checkImageAltSuspicious: 'Texto alternativo que quizá no describe la imagen',
+        RichTextEditor_checkImageAltSuspiciousHelp:
+            'El texto alternativo parece un nombre de archivo o una palabra genérica. Si no dice qué muestra la imagen ni por qué está ahí, escribe una breve descripción.',
+        RichTextEditor_checkImageContentReview: 'Contenido de la imagen',
+        RichTextEditor_checkImageContentReviewHelp:
+            'Comprueba si la imagen muestra texto que debería estar en el documento, se mueve o parpadea durante más de cinco segundos o destella más de tres veces por segundo.',
+        RichTextEditor_checkLanguagePartsReview: 'Fragmentos en otro idioma',
+        RichTextEditor_checkLanguagePartsReviewHelp:
+            'Comprueba si algún fragmento está en un idioma distinto del documento. Marcar su idioma permite a los lectores de pantalla pronunciarlo bien.',
+        RichTextEditor_checkLinkPurposeReview: 'Propósito del enlace',
+        RichTextEditor_checkLinkPurposeReviewHelp:
+            'Comprueba que el texto del enlace, con su frase, dice adónde lleva el enlace y qué ocurre al seguirlo.',
+        RichTextEditor_checkLinkTextEmpty: 'Enlace sin texto',
+        RichTextEditor_checkLinkTextEmptyHelp:
+            'Un enlace necesita un texto que un lector de pantalla pueda leer. Añade un texto que diga adónde lleva el enlace.',
+        RichTextEditor_checkLinkTextVague: 'Texto de enlace que no dice adónde lleva',
+        RichTextEditor_checkLinkTextVagueHelp:
+            'Lee el texto del enlace por sí solo, como lo muestra una lista de enlaces. Si no dice adónde lleva, como «aquí» o «leer más», nombra el destino.',
+        RichTextEditor_checkSensoryReview: 'Instrucciones que dependen de los sentidos',
+        RichTextEditor_checkSensoryReviewHelp:
+            'Comprueba que ninguna instrucción depende solo de la forma, el color, el tamaño, el sonido o la posición en la página. Nombra también el elemento, para que todos puedan seguirla.',
+        RichTextEditor_checkStructureReview: 'Estructura solo visual',
+        RichTextEditor_checkStructureReviewHelp:
+            'Comprueba si alguna estructura se muestra solo visualmente, como texto en negrita usado como encabezado, párrafos que empiezan con un guion o un número usados como lista, o una sangría que marca una cita. Usa en su lugar los comandos de encabezado, lista y cita.',
+        RichTextEditor_checkTableNoHeader: 'Tabla sin celdas de encabezado',
+        RichTextEditor_checkTableNoHeaderHelp:
+            'Las celdas de encabezado indican a los lectores de pantalla qué contiene cada fila o columna. Si la primera fila nombra las columnas, conviértela en fila de encabezado.',
+        RichTextEditor_checkVagueLinkTexts:
+            'haz clic aquí|clic aquí|haga clic aquí|clic|aquí|enlace|este enlace|más|leer más|saber más|más información|info|detalles|continuar|esta página|sitio web',
+        RichTextEditor_checks: 'Comprobaciones de accesibilidad',
+        RichTextEditor_checksDismiss: 'Descartar',
+        RichTextEditor_checksDismissed: 'Descartado',
+        RichTextEditor_checksDocument: 'Documento completo',
+        RichTextEditor_checksErrors: 'Errores: ${errors}.',
+        RichTextEditor_checksGoTo: 'Ir a',
+        RichTextEditor_checksHelp: 'Cómo decidir',
+        RichTextEditor_checksRepair: 'Corregir',
+        RichTextEditor_checksReview: 'Por revisar: ${review}.',
+        RichTextEditor_checksSeverityError: 'Error',
+        RichTextEditor_checksSeverityReview: 'Por revisar',
+        RichTextEditor_checksSeverityWarning: 'Advertencia',
+        RichTextEditor_checksShowDismissed: 'Mostrar descartados',
+        RichTextEditor_checksWarnings: 'Advertencias: ${warnings}.',
         RichTextEditor_clearColor: 'Quitar color',
         RichTextEditor_clearFormatting: 'Borrar formato',
+        RichTextEditor_close: 'Cerrar',
         RichTextEditor_code: 'Código',
         RichTextEditor_codeBlock: 'Bloque de código',
         RichTextEditor_codeLanguage: 'Lenguaje: ${language}',
@@ -144,6 +217,10 @@ export const esES = {
         RichTextEditor_nodeViewError: 'Esta parte del contenido no se puede mostrar',
         RichTextEditor_normalText: 'Texto normal',
         RichTextEditor_numberedList: 'Lista numerada',
+        RichTextEditor_outline: 'Esquema',
+        RichTextEditor_outlineHeadingGone:
+            'Ese encabezado ya no está en el documento. El esquema muestra los encabezados actuales.',
+        RichTextEditor_panelError: 'No se ha podido mostrar este panel.',
         RichTextEditor_pasteFormattingRemoved: 'Se ha quitado parte del formato.',
         RichTextEditor_pasteMediaDropped: 'Contenido multimedia no pegado: ${count}',
         RichTextEditor_pasteTooLarge: 'El contenido pegado es demasiado grande.',

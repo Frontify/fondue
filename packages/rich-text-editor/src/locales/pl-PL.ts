@@ -20,8 +20,81 @@ export const plPL = {
         RichTextEditor_bubbleToolbar: 'Formatowanie zaznaczenia',
         RichTextEditor_bulletList: 'Lista punktowana',
         RichTextEditor_cancel: 'Anuluj',
+        RichTextEditor_checkColorMeaningReview: 'Znaczenie przekazane kolorem',
+        RichTextEditor_checkColorMeaningReviewHelp:
+            'Sprawdź, czy kolor nie jest jedynym sposobem, w jaki ten tekst przekazuje znaczenie, na przykład status lub wymagany element. Dodaj też słowa.',
+        RichTextEditor_checkContrastLow: 'Niski kontrast tekstu',
+        RichTextEditor_checkContrastLowHelp:
+            'Kolor tekstu i tło mają zbyt mały kontrast dla wielu osób. Wybierz kolor tekstu, który menu oferuje dla tego tła.',
+        RichTextEditor_checkContrastUnknown: 'Kontrast tekstu, którego nie da się zmierzyć',
+        RichTextEditor_checkContrastUnknownHelp:
+            'Edytor nie zna koloru tego tekstu lub jego tła. Sprawdź, czy tekst łatwo się czyta, z kontrastem co najmniej 4,5 do 1 lub 3 do 1 dla dużego tekstu.',
+        RichTextEditor_checkEmbedMediaReview: 'Osadzone multimedia',
+        RichTextEditor_checkEmbedMediaReviewHelp:
+            'Sprawdź, czy wideo ma napisy i audiodeskrypcję oraz czy nie odtwarza dźwięku samo.',
+        RichTextEditor_checkEmbedTitleMissing: 'Osadzenie bez tytułu',
+        RichTextEditor_checkEmbedTitleMissingHelp:
+            'Osadzony odtwarzacz potrzebuje tytułu, który nazywa jego zawartość, aby czytniki ekranu mogły go ogłosić. Edytuj osadzenie i nadaj mu tytuł.',
+        RichTextEditor_checkGenericImageWords:
+            'obraz|obrazek|zdjęcie|fotografia|grafika|ilustracja|ikona|logo|baner|zrzut ekranu|tekst alternatywny|symbol zastępczy|bez tytułu|miniatura',
+        RichTextEditor_checkHeadingDescriptiveReview: 'Tekst nagłówka',
+        RichTextEditor_checkHeadingDescriptiveReviewHelp:
+            'Sprawdź, czy każdy nagłówek mówi, czego dotyczy jego sekcja, aby można było znaleźć sekcję po samych nagłówkach.',
+        RichTextEditor_checkHeadingEmpty: 'Pusty nagłówek',
+        RichTextEditor_checkHeadingEmptyHelp:
+            'Nagłówek bez tekstu i tak pojawia się na liście nagłówków, którą oferują czytniki ekranu. Dodaj tekst albo zamień go w zwykły tekst.',
+        RichTextEditor_checkHeadingSkippedLevel: 'Pominięty poziom nagłówka',
+        RichTextEditor_checkHeadingSkippedLevelHelp:
+            'Poziomy nagłówków tworzą konspekt dokumentu. Nagłówek powinien być co najwyżej o jeden poziom głębiej niż poprzedni.',
+        RichTextEditor_checkImageAltMissing: 'Obraz bez tekstu alternatywnego',
+        RichTextEditor_checkImageAltMissingHelp:
+            'Zdecyduj, czy obraz wnosi informacje. Jeśli tak, opisz krótko, co przedstawia. Jeśli jest tylko ozdobą, oznacz go jako dekoracyjny.',
+        RichTextEditor_checkImageAltSuspicious: 'Tekst alternatywny, który może nie opisywać obrazu',
+        RichTextEditor_checkImageAltSuspiciousHelp:
+            'Tekst alternatywny wygląda jak nazwa pliku lub ogólne słowo. Jeśli nie mówi, co przedstawia obraz ani po co jest, napisz zamiast tego krótki opis.',
+        RichTextEditor_checkImageContentReview: 'Treść obrazu',
+        RichTextEditor_checkImageContentReviewHelp:
+            'Sprawdź, czy obraz pokazuje tekst, który powinien być w dokumencie, porusza się lub miga dłużej niż pięć sekund albo błyska częściej niż trzy razy na sekundę.',
+        RichTextEditor_checkLanguagePartsReview: 'Fragmenty w innym języku',
+        RichTextEditor_checkLanguagePartsReviewHelp:
+            'Sprawdź, czy jakiś fragment jest w innym języku niż dokument. Oznaczenie jego języka pozwala czytnikom ekranu poprawnie go wymówić.',
+        RichTextEditor_checkLinkPurposeReview: 'Cel linku',
+        RichTextEditor_checkLinkPurposeReviewHelp:
+            'Sprawdź, czy tekst linku wraz ze zdaniem mówi, dokąd prowadzi link i co się stanie po jego otwarciu.',
+        RichTextEditor_checkLinkTextEmpty: 'Link bez tekstu',
+        RichTextEditor_checkLinkTextEmptyHelp:
+            'Link potrzebuje tekstu, który czytnik ekranu może odczytać. Dodaj tekst mówiący, dokąd prowadzi link.',
+        RichTextEditor_checkLinkTextVague: 'Tekst linku, który nie mówi, dokąd prowadzi',
+        RichTextEditor_checkLinkTextVagueHelp:
+            'Przeczytaj sam tekst linku, tak jak pokazuje go lista linków. Jeśli nie mówi, dokąd prowadzi, jak „tutaj” czy „czytaj więcej”, podaj zamiast tego cel.',
+        RichTextEditor_checkSensoryReview: 'Instrukcje oparte na zmysłach',
+        RichTextEditor_checkSensoryReviewHelp:
+            'Sprawdź, czy żadna instrukcja nie opiera się tylko na kształcie, kolorze, rozmiarze, dźwięku lub położeniu na stronie. Podaj też nazwę elementu, aby każdy mógł wykonać instrukcję.',
+        RichTextEditor_checkStructureReview: 'Struktura widoczna tylko wizualnie',
+        RichTextEditor_checkStructureReviewHelp:
+            'Sprawdź, czy jakaś struktura jest pokazana tylko wizualnie, na przykład pogrubiony tekst jako nagłówek, akapity zaczynające się od myślnika lub liczby jako lista albo wcięcie jako cytat. Użyj zamiast tego poleceń nagłówka, listy i cytatu.',
+        RichTextEditor_checkTableNoHeader: 'Tabela bez komórek nagłówka',
+        RichTextEditor_checkTableNoHeaderHelp:
+            'Komórki nagłówka mówią czytnikom ekranu, co zawiera każdy wiersz lub kolumna. Jeśli pierwszy wiersz nazywa kolumny, zrób z niego wiersz nagłówka.',
+        RichTextEditor_checkVagueLinkTexts:
+            'kliknij tutaj|kliknij|tutaj|tu|link|ten link|więcej|czytaj więcej|dowiedz się więcej|więcej informacji|informacje|szczegóły|dalej|przejdź|ta strona|strona internetowa',
+        RichTextEditor_checks: 'Kontrola dostępności',
+        RichTextEditor_checksDismiss: 'Pomiń',
+        RichTextEditor_checksDismissed: 'Pominięte',
+        RichTextEditor_checksDocument: 'Cały dokument',
+        RichTextEditor_checksErrors: 'Błędy: ${errors}.',
+        RichTextEditor_checksGoTo: 'Przejdź',
+        RichTextEditor_checksHelp: 'Jak zdecydować',
+        RichTextEditor_checksRepair: 'Popraw',
+        RichTextEditor_checksReview: 'Do sprawdzenia: ${review}.',
+        RichTextEditor_checksSeverityError: 'Błąd',
+        RichTextEditor_checksSeverityReview: 'Do sprawdzenia',
+        RichTextEditor_checksSeverityWarning: 'Ostrzeżenie',
+        RichTextEditor_checksShowDismissed: 'Pokaż pominięte',
+        RichTextEditor_checksWarnings: 'Ostrzeżenia: ${warnings}.',
         RichTextEditor_clearColor: 'Usuń kolor',
         RichTextEditor_clearFormatting: 'Wyczyść formatowanie',
+        RichTextEditor_close: 'Zamknij',
         RichTextEditor_code: 'Kod',
         RichTextEditor_codeBlock: 'Blok kodu',
         RichTextEditor_codeLanguage: 'Język: ${language}',
@@ -144,6 +217,9 @@ export const plPL = {
         RichTextEditor_nodeViewError: 'Nie można wyświetlić tej części treści',
         RichTextEditor_normalText: 'Zwykły tekst',
         RichTextEditor_numberedList: 'Lista numerowana',
+        RichTextEditor_outline: 'Konspekt',
+        RichTextEditor_outlineHeadingGone: 'Tego nagłówka nie ma już w dokumencie. Konspekt pokazuje bieżące nagłówki.',
+        RichTextEditor_panelError: 'Nie można wyświetlić tego panelu.',
         RichTextEditor_pasteFormattingRemoved: 'Część formatowania została usunięta.',
         RichTextEditor_pasteMediaDropped: 'Niewklejone multimedia: ${count}',
         RichTextEditor_pasteTooLarge: 'Wklejona zawartość jest za duża.',
