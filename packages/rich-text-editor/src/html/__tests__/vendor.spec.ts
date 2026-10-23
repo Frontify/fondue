@@ -79,16 +79,36 @@ afterEach(() => {
 describe('vendor cleanups', () => {
     it.each([
         [
-            'the mso-list paragraphs, headings and items of Word and Outlook',
-            ['word-windows-lists.html', 'outlook-lists.html'],
+            'the Google Docs wrapper, and its id on the first block of a Firefox capture',
+            ['google-docs-chrome.html', 'google-docs-firefox.html'],
         ],
-        ['the conditional comments, o:p, Mso classes and mso- properties of Office', ['excel.html']],
-        ['the meta, style, script, link, comments and empty spans of any source', ['word-online.html']],
+        ['the styled runs of Google Docs', ['google-docs-runs.html']],
+        [
+            'the mso-list paragraphs, headings and items of Word and Outlook',
+            ['word-windows-lists.html', 'word-mac-headings.html', 'outlook-lists.html'],
+        ],
+        ['the breaks between Google Docs blocks and in its empty items', ['google-docs-empty.html']],
+        [
+            'the conditional comments, o:p, Mso classes and mso- properties of Office',
+            ['word-windows-paragraphs.html', 'excel.html'],
+        ],
+        [
+            'the meta, style, script, link, comments and empty spans of any source',
+            ['libreoffice.html', 'word-online.html'],
+        ],
         ['the images of any source', ['word-windows-image.html']],
     ] as const)('cleans %s', (_row, names) => {
         for (const name of names) {
             expect(contentOf(readFixture(name))).toMatchSnapshot(name);
         }
+    });
+
+    it('unwraps the Google Docs wrapper without making its text bold, and keeps its bold runs bold', () => {
+        const content = JSON.stringify(contentOf(readFixture('google-docs-chrome.html')));
+
+        expect(content).toContain('{"type":"text","text":"The "}');
+        expect(content).toContain('{"type":"text","text":"brand refresh","marks":[{"type":"bold"}]}');
+        expect(content).toContain('{"type":"text","text":" and type"}');
     });
 
     it('keeps a normal weight inside a bold element of a Google Docs capture normal', () => {

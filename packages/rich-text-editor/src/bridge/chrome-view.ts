@@ -11,6 +11,7 @@ import {
 } from 'prosemirror-view';
 
 import { checkHref, type ColorToken, type JsonObject, type ListLevels, type PresentationStyle } from '#/model';
+import { type DirectedRun, passageDirection } from '#/model/html-spec';
 import { COLOR_PROPERTIES, listDepths, listLevelStyle, styleOfNode } from '#/model/output';
 import { colorOf } from '#/model/styles';
 import { ownValue } from '#/model/values';
@@ -67,10 +68,25 @@ const writeChromeMargin = (view: EditorView | undefined, height: number) => {
     view.dom.style.setProperty(CHROME_SCROLL_MARGIN, `${height + MARGIN}px`);
 };
 
+/** The text runs of a textblock, which `passageDirection` reads. */
+const runsOf = (block: ProseMirrorNode): DirectedRun[] => {
+    const runs: DirectedRun[] = [];
+    for (let index = 0; index < block.childCount; index += 1) {
+        const child = block.child(index);
+        if (child.isText) {
+            const language = child.marks.find((mark) => mark.type.name === 'language');
+            const dir: unknown = language?.attrs.dir;
+            runs.push({ text: child.text ?? '', dir });
+        }
+    }
+    return runs;
+};
+
 /**
  * A node decoration with its list level style on each list whose `marker` is null, as the reader writes it, one
- * with the `firstBlockId` on the first block of each node `labelsFirstBlock` names, and the recipe class of each
- * styled node.
+ * with the `firstBlockId` on the first block of each node `labelsFirstBlock` names, the recipe class of each
+ * styled node, and the `dir` of a textblock whose first letter sits in a `language` passage with one, as the reader
+ * writes it.
  */
 const contentDecorations = (
     surface: HTMLElement,
@@ -113,6 +129,10 @@ const contentDecorations = (
             }
             if (child.isTextblock) {
                 inline(child, path);
+                const direction = passageDirection(runsOf(child));
+                if (direction !== undefined && typeof child.attrs.dir !== 'string') {
+                    found.push(Decoration.node(pos, pos + child.nodeSize, { dir: direction }));
+                }
             }
             const viewed = Object.hasOwn(nodeViews, child.type.name);
             const labeled = labelsFirstBlock(child);

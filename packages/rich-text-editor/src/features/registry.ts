@@ -7,6 +7,7 @@ import { quote } from '#/features/blocks-quote/feature';
 import { rule } from '#/features/blocks-rule/feature';
 import { core } from '#/features/core/feature';
 import { emoji } from '#/features/emoji/feature';
+import { formatClear } from '#/features/format-clear/feature';
 import { inputRules } from '#/features/input-rules/feature';
 import { columns } from '#/features/layout-columns/feature';
 import { bulletList } from '#/features/lists-bullet/feature';
@@ -17,6 +18,7 @@ import { bold } from '#/features/marks-bold/feature';
 import { code } from '#/features/marks-code/feature';
 import { fontColor } from '#/features/marks-font-color/feature';
 import { italic } from '#/features/marks-italic/feature';
+import { language } from '#/features/marks-language/feature';
 import { strike } from '#/features/marks-strike/feature';
 import { subscript } from '#/features/marks-subscript/feature';
 import { superscript } from '#/features/marks-superscript/feature';
@@ -30,6 +32,7 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     emoji,
     'marks.bold': bold,
     'marks.italic': italic,
+    'marks.language': language,
     'marks.underline': underline,
     'marks.strike': strike,
     'marks.code': code,
@@ -40,6 +43,7 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'blocks.quote': quote,
     'blocks.code': codeBlock,
     'blocks.align': align,
+    'format.clear': formatClear,
     'blocks.rule': rule,
     'layout.columns': columns,
     'lists.item': listItem,
@@ -67,6 +71,7 @@ export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     emoji: { owner: OWNER, dependencies: { 'emojibase-data': 'MIT' } },
     'marks.bold': NO_DEPENDENCIES,
     'marks.italic': NO_DEPENDENCIES,
+    'marks.language': NO_DEPENDENCIES,
     'marks.underline': NO_DEPENDENCIES,
     'marks.strike': NO_DEPENDENCIES,
     'marks.code': NO_DEPENDENCIES,
@@ -77,6 +82,7 @@ export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     'blocks.quote': NO_DEPENDENCIES,
     'blocks.code': { owner: OWNER, dependencies: { lowlight: 'MIT' } },
     'blocks.align': NO_DEPENDENCIES,
+    'format.clear': NO_DEPENDENCIES,
     'blocks.rule': NO_DEPENDENCIES,
     'layout.columns': NO_DEPENDENCIES,
     'lists.item': NO_DEPENDENCIES,

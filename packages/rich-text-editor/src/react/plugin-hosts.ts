@@ -4,6 +4,7 @@ import { type ComponentType, useMemo, useRef, useState } from 'react';
 
 import { anchorOf } from '#/bridge/anchor';
 import { type Announcer } from '#/bridge/announcer';
+import { type InteractionScope } from '#/bridge/interaction-scope';
 import { type MountCoordinator } from '#/bridge/mount';
 import {
     type AnchorTarget,
@@ -20,11 +21,13 @@ export interface PluginOverlay {
     readonly component: ComponentType<OverlayProps>;
     readonly props: object;
     readonly anchor: OverlayAnchor;
+    readonly opener: Element | null;
 }
 
 /** What the hosts read when a plugin calls them: the session's parts, and the newest props, strings and language. */
 interface HostSources {
     readonly coordinator: MountCoordinator;
+    readonly scope: InteractionScope;
     readonly announcer: Announcer;
     readonly t: () => CodecContext['t'];
     readonly lang: () => string;
@@ -37,7 +40,7 @@ export const usePluginHosts = (sources: HostSources) => {
     const [pluginOverlay, setPluginOverlay] = useState<PluginOverlay>();
     const pluginOverlayRef = useRef<PluginOverlay>(undefined);
     const [hosts] = useState<EditorHosts>(() => {
-        const { coordinator, announcer } = sources;
+        const { coordinator, scope, announcer } = sources;
         const view = () => coordinator.runtime?.view;
         const anchor = (target: AnchorTarget) => anchorOf(view, target);
         let opened = 0;
@@ -58,6 +61,7 @@ export const usePluginHosts = (sources: HostSources) => {
                         component: shown,
                         props,
                         anchor: anchor(target),
+                        opener: scope.active(),
                     });
                 },
                 close: () => showOverlay(undefined),

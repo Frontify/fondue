@@ -361,6 +361,7 @@ const SessionComponent = (
     const tRef = useRef(codecContext(enUS, enUS).t);
     const { hosts, pluginOverlay } = usePluginHosts({
         coordinator,
+        scope,
         announcer,
         t: () => tRef.current,
         lang: () => langRef.current,
@@ -792,6 +793,7 @@ const SessionComponent = (
                                                 {...pluginOverlay.props}
                                                 close={hosts.overlays.close}
                                                 anchor={pluginOverlay.anchor}
+                                                opener={pluginOverlay.opener}
                                             />
                                         </OverlayBody>
                                     )}

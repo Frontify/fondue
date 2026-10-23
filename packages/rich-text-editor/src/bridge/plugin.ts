@@ -53,6 +53,8 @@ export type AnchorTarget = 'selection' | EditorRange | Element | (() => EditorRa
 export interface OverlayProps {
     readonly close: () => void;
     readonly anchor: OverlayAnchor;
+    /** The element that had focus when it opened, such as the toolbar button, which a dismissal returns focus to. */
+    readonly opener: Element | null;
 }
 
 /** What an overlay that a plugin keeps mounted renders with, such as a bubble that shows itself near the caret. */

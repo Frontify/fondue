@@ -50,6 +50,7 @@ import {
 } from '#/features/__tests__/fixtures/vocabulary';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
+import { language } from '#/features/marks-language/feature';
 import { registry } from '#/features/registry';
 import { fromHTML } from '#/html';
 import {
@@ -1437,6 +1438,7 @@ describe('pasted HTML', () => {
     it('lets the parse rules of shipped features read only the listed attributes and styles', () => {
         const attributes = new Set([
             'start',
+            'dir',
             'lang',
             'data-checked',
             'data-language',
@@ -1732,11 +1734,12 @@ describe('pasted HTML', () => {
         const mounted = mountHtml();
 
         pasteInto(mounted, {
-            'text/html': `<ol start="-1"><li>a</li></ol><p lang="${long}">c</p><p><a href="https://x.io/${'a'.repeat(9000)}">d</a></p>`,
+            'text/html': `<ol start="-1"><li>a</li></ol><p><span lang="fr" dir="x">b</span></p><p lang="${long}">c</p><p><a href="https://x.io/${'a'.repeat(9000)}">d</a></p>`,
         });
 
         expect(mounted.content()).toEqual([
             node('ordered_list', { start: 1 }, node('list_item', undefined, block(text('a')))),
+            block(text('b', mark('language', { lang: 'fr', dir: null }))),
             block(text('c')),
             block(text('d')),
         ]);
@@ -1745,7 +1748,7 @@ describe('pasted HTML', () => {
     });
 
     it('applies maxAttributeLength of the editor limits, keeps a value exactly at it, and the default limit when none is given', () => {
-        const html = '<p lang="en-x-abc">at</p><p lang="en-x-abcd">over</p>';
+        const html = '<p lang="en-x-abc">at</p><p lang="en-x-abcd">over</p><p><span lang="en-x-abcd">mark</span></p>';
         const limited = mountHtml({ limits: { maxAttributeLength: 8 } });
         const unlimited = mountHtml();
 
@@ -1755,10 +1758,12 @@ describe('pasted HTML', () => {
         expect(limited.content()).toEqual([
             node('paragraph', { lang: 'en-x-abc', align: null }, text('at')),
             block(text('over')),
+            block(text('mark')),
         ]);
         expect(unlimited.content()).toEqual([
             node('paragraph', { lang: 'en-x-abc', align: null }, text('at')),
             node('paragraph', { lang: 'en-x-abcd', align: null }, text('over')),
+            block(text('mark', mark('language', { lang: 'en-x-abcd', dir: null }))),
         ]);
         limited.unmount();
         unlimited.unmount();
@@ -1811,10 +1816,24 @@ describe('pasted HTML', () => {
         requires: [{ id: 'core', version: 1 }],
         marks: { plain_link: { attrs: {}, html: ['a', 0], parse: [{ tag: 'a' }], rank: -2 } },
     });
+    const bareSpan = defineFeature({
+        id: 'fixture.bare-span',
+        version: 1,
+        requires: [{ id: 'core', version: 1 }],
+        marks: { plain_span: { attrs: {}, html: ['span', 0], parse: [{ tag: 'span' }] } },
+    });
     it.each([
         ['a[href] after a bare a', [core(), bareLink(), htmlLink()], '<a href="https://x.io">x</a>', 'link'],
         ['a[href] before a bare a', [core(), htmlLink(), bareLink()], '<a href="https://x.io">x</a>', 'link'],
+        ['span[lang] after a bare span', [core(), bareSpan(), language()], '<span lang="fr">x</span>', 'language'],
+        ['span[lang] before a bare span', [core(), language(), bareSpan()], '<span lang="fr">x</span>', 'language'],
         ['a bare a after a[href], with no href', [core(), htmlLink(), bareLink()], '<a>x</a>', 'plain_link'],
+        [
+            'a bare span after span[lang], with no lang',
+            [core(), language(), bareSpan()],
+            '<span>x</span>',
+            'plain_span',
+        ],
     ] as const)(
         'takes a mark rule with an attribute selector over a bare tag in either model order, with %s',
         (_name, installed, html, type) => {

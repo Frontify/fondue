@@ -39,7 +39,7 @@ import { liftItems, listAround, repeatWhile } from './lists';
 import { inCodeTextblock, nearest, positionOf } from './positions';
 import { stylesOf } from './styles';
 import { suggestionsPlugin } from './suggestions/plugin';
-import { carrySelection } from './transactions';
+import { appendSteps, carrySelection, take, transactionOf } from './transactions';
 
 /** Builds the engine command of one edit from its arguments. */
 export type CapabilityImplementation = (args: JsonObject, schema: Schema, command: CommandLookup) => EngineCommand;
@@ -787,6 +787,90 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
     };
 };
 
+/** Lifts the item of the selected textblock at `pos` one level out of its list, or returns `undefined` outside a list. */
+const liftItemAt = (state: EditorState, pos: number): Transaction | undefined => {
+    const $inside = state.doc.resolve(pos + 1);
+    const around = listAround($inside);
+    if (around === undefined) {
+        return undefined;
+    }
+    const item = $inside.node(around.depth + 1).type;
+    // `liftListItem` lifts the items of the selection's block range, which a selection that leaves the list lacks.
+    const caret = state.apply(state.tr.setSelection(TextSelection.create(state.doc, pos + 1)));
+    return transactionOf(caret, liftListItem(item));
+};
+
+/** Lifts every selected item, nested ones included, one level at a time until no selected textblock sits in a list. */
+const liftLists = (state: EditorState): Transaction | undefined => {
+    const transaction = state.tr;
+    let current = state;
+    for (;;) {
+        let next: Transaction | undefined;
+        for (const { pos } of selectedTextblocks(current)) {
+            next = liftItemAt(current, pos);
+            if (next !== undefined) {
+                break;
+            }
+        }
+        if (next === undefined) {
+            break;
+        }
+        appendSteps(transaction, next);
+        const selection = current.selection.map(next.doc, next.mapping);
+        current = current.apply(next);
+        current = current.apply(current.tr.setSelection(selection));
+    }
+    if (!transaction.docChanged) {
+        return undefined;
+    }
+    return transaction.setSelection(carrySelection(transaction.doc, current.selection));
+};
+
+/** Turns the selected textblocks into paragraphs and restores the named attributes to their defaults. */
+const plainParagraphs = (state: EditorState, names: readonly string[]): Transaction | undefined => {
+    const paragraph = state.schema.nodes.paragraph;
+    if (paragraph === undefined) {
+        return undefined;
+    }
+    const cleared = names.filter((name) => Object.hasOwn(paragraph.spec.attrs ?? {}, name));
+    const blocks = selectedTextblocks(state);
+    const needs = blocks.some(
+        ({ node }) =>
+            node.type !== paragraph || cleared.some((name) => node.attrs[name] !== defaultOf(paragraph, name)),
+    );
+    if (!needs) {
+        return undefined;
+    }
+    const { $from, $to } = state.selection;
+    const transaction = state.tr.setBlockType($from.pos, $to.pos, paragraph, (node) => {
+        const attrs = carried(node, paragraph, {});
+        for (const name of cleared) {
+            attrs[name] = defaultOf(paragraph, name);
+        }
+        return attrs;
+    });
+    if (!transaction.docChanged) {
+        return undefined;
+    }
+    return transaction;
+};
+
+/** Lifts the selection out of lists, turns its textblocks into paragraphs and restores `attributes` to their defaults, as one undo step. */
+export const clearBlocks = (attributes: readonly string[]): EngineCommand => ({
+    run: (state, dispatch) => {
+        const transaction = state.tr;
+        let current = take(transaction, state, liftLists(state));
+        current = take(transaction, current, plainParagraphs(current, attributes));
+        if (!transaction.docChanged) {
+            return false;
+        }
+        transaction.setSelection(carrySelection(transaction.doc, current.selection));
+        dispatch?.(transaction.scrollIntoView());
+        return true;
+    },
+    active: () => false,
+});
+
 /** The transaction meta that carries the mark a `setMark` command set, which the last-mark plugin keeps. */
 export const LAST_MARK_META = 'rte.last-mark';
 const lastMarkKey = new PluginKey<readonly Mark[]>('rte.last-mark');
@@ -808,15 +892,79 @@ const lastMarkPlugin = () =>
     });
 
 /**
+ * The range of the run of text with one mark of `type`, equal attributes included, that holds the caret or starts at
+ * it, so a neighbouring passage with other attributes stays outside.
+ */
+const markRangeAt = (
+    state: EditorState,
+    type: MarkType,
+): { readonly from: number; readonly to: number } | undefined => {
+    const { $from } = state.selection;
+    const { parent } = $from;
+    const index = $from.index();
+    if (index >= parent.childCount) {
+        return undefined;
+    }
+    const mark = type.isInSet(parent.child(index).marks);
+    if (mark === undefined) {
+        return undefined;
+    }
+    const holds = (at: number) => at >= 0 && at < parent.childCount && mark.isInSet(parent.child(at).marks);
+    let first = index;
+    while (holds(first - 1)) {
+        first -= 1;
+    }
+    let last = index;
+    while (holds(last + 1)) {
+        last += 1;
+    }
+    let from = $from.start();
+    for (let child = 0; child < first; child += 1) {
+        from += parent.child(child).nodeSize;
+    }
+    let to = from;
+    for (let child = first; child <= last; child += 1) {
+        to += parent.child(child).nodeSize;
+    }
+    return { from, to };
+};
+
+/**
+ * The whole run of `type` that the selection lies in, a caret or a range inside it, or `undefined` when the selection
+ * leaves that run or holds no such mark.
+ */
+const enclosingRange = (
+    state: EditorState,
+    type: MarkType,
+): { readonly from: number; readonly to: number } | undefined => {
+    const range = markRangeAt(state, type);
+    const { from, to } = state.selection;
+    if (range === undefined || from < range.from || to > range.to) {
+        return undefined;
+    }
+    return range;
+};
+
+/**
  * Adds `mark` to the selected text, or to the stored marks at a caret, as one transaction that records it as the last
- * mark.
+ * mark. With `extend`, a selection inside one run of the mark acts on the whole run.
  */
 const applyMark = (
     state: EditorState,
     dispatch: ((transaction: Transaction) => void) | undefined,
     mark: Mark,
+    extend: boolean,
 ): boolean => {
     const { type } = mark;
+    const range = extend === false ? undefined : enclosingRange(state, type);
+    if (range !== undefined) {
+        if (dispatch !== undefined) {
+            const transaction = state.tr;
+            transaction.addMark(range.from, range.to, mark);
+            dispatch(transaction.setMeta(LAST_MARK_META, mark).scrollIntoView());
+        }
+        return true;
+    }
     if (state.selection.empty) {
         const { $from } = state.selection;
         if (!$from.parent.type.allowsMarkType(type)) {
@@ -844,33 +992,88 @@ const applyMark = (
     return true;
 };
 
+/** The selected range, or at a caret the whole textblocks around it. */
+const blockRanges = (state: EditorState): { readonly from: number; readonly to: number }[] => {
+    if (!state.selection.empty) {
+        return [{ from: state.selection.from, to: state.selection.to }];
+    }
+    const blocks = selectedTextblocks(state);
+    if (blocks.length > 0) {
+        return blocks.map(({ node, pos }) => ({ from: pos + 1, to: pos + 1 + node.content.size }));
+    }
+    const { $from } = state.selection;
+    if ($from.parent.isTextblock) {
+        return [{ from: $from.start(), to: $from.end() }];
+    }
+    return [{ from: state.selection.from, to: state.selection.to }];
+};
+
+/** Removes every mark of `types` from the selected range, or at a caret from the whole textblock and the stored marks. */
+const clearBlockMarks = (
+    state: EditorState,
+    dispatch: ((transaction: Transaction) => void) | undefined,
+    types: readonly MarkType[],
+): boolean => {
+    const transaction = state.tr;
+    for (const { from, to } of blockRanges(state)) {
+        if (from === to) {
+            continue;
+        }
+        for (const type of types) {
+            transaction.removeMark(from, to, type);
+        }
+    }
+    if (state.selection.empty) {
+        const stored = state.storedMarks ?? state.selection.$from.marks();
+        const kept = stored.filter((mark) => !types.includes(mark.type));
+        if (kept.length !== stored.length) {
+            transaction.setStoredMarks(kept);
+        }
+    }
+    if (!transaction.docChanged && !transaction.storedMarksSet) {
+        return false;
+    }
+    dispatch?.(transaction.scrollIntoView());
+    return true;
+};
+
 /** Removes every mark of `types` from the selected text, or from the stored marks at a caret. */
 const clearMarks = (
     state: EditorState,
     dispatch: ((transaction: Transaction) => void) | undefined,
     types: readonly MarkType[],
+    extend: boolean,
 ): boolean => {
     if (state.selection.empty) {
         const stored = state.storedMarks ?? state.selection.$from.marks();
         const held = types.flatMap((type) => {
-            if (type.isInSet(stored) === undefined) {
+            const range = extend === false ? undefined : enclosingRange(state, type);
+            if (range === undefined && type.isInSet(stored) === undefined) {
                 return [];
             }
-            return [{ type }];
+            return [{ type, range }];
         });
         if (held.length === 0) {
             return false;
         }
         if (dispatch !== undefined) {
             const transaction = state.tr;
-            for (const { type } of held) {
-                transaction.removeStoredMark(type);
+            for (const { type, range } of held) {
+                if (range === undefined) {
+                    transaction.removeStoredMark(type);
+                } else {
+                    transaction.removeMark(range.from, range.to, type);
+                }
             }
             dispatch(transaction.scrollIntoView());
         }
         return true;
     }
     const ranges = types.flatMap((type) => {
+        const run = extend === false ? undefined : enclosingRange(state, type);
+        if (run !== undefined) {
+            return [{ ...run, type }];
+        }
         return markableText(state, type)
             .filter((text) => text.marked)
             .map((text) => ({ ...text, type }));
@@ -911,15 +1114,16 @@ const markWithAttrs = (state: EditorState, type: MarkType, attrs: Readonly<Recor
 /** Sets the mark with the payload's fields as attributes, or removes it for a null payload. */
 const setMark: CapabilityImplementation = (args, schema) => {
     const type = schema.marks[args.mark as string] as MarkType;
+    const extend = args.extendToMarkRange === true;
     return {
         run: (state, dispatch, payload) => {
             if (payload === null) {
-                return clearMarks(state, dispatch, [type]);
+                return clearMarks(state, dispatch, [type], extend);
             }
             if (!isRecord(payload)) {
                 return false;
             }
-            return applyMark(state, dispatch, type.create(payload));
+            return applyMark(state, dispatch, type.create(payload), extend);
         },
         active: (state, payload) => {
             if (!isRecord(payload)) {
@@ -950,7 +1154,7 @@ const reapplyMark: CapabilityImplementation = (args, schema) => {
             if (last === undefined) {
                 return false;
             }
-            return applyMark(state, dispatch, last);
+            return applyMark(state, dispatch, last, false);
         },
         active: () => false,
     };
@@ -967,9 +1171,13 @@ const history: CapabilityImplementation = (args) => {
 /** Removes the listed marks the model installs as one undo step. */
 const removeMark: CapabilityImplementation = (args, schema) => {
     const types = markTypesOf(args.installed, schema);
+    const extend = args.extendToMarkRange === true;
     return {
         run: (state, dispatch) => {
-            return clearMarks(state, dispatch, types);
+            if (args.wholeBlocks === true) {
+                return clearBlockMarks(state, dispatch, types);
+            }
+            return clearMarks(state, dispatch, types, extend);
         },
         active: () => false,
     };

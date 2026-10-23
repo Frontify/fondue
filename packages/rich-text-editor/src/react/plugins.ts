@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CommandsOfPlugin, type EditorPlugin } from '#/bridge/plugin';
+import { alignEditor } from '#/features/blocks-align/editor';
 import { codeBlockEditor } from '#/features/blocks-code/editor';
 import { headingEditor } from '#/features/blocks-heading/editor';
 import { quoteEditor } from '#/features/blocks-quote/editor';
 import { ruleEditor } from '#/features/blocks-rule/editor';
 import { coreEditor } from '#/features/core/editor';
 import { emojiEditor } from '#/features/emoji/editor';
+import { formatClearEditor } from '#/features/format-clear/editor';
 import { inputRulesEditor } from '#/features/input-rules/editor';
 import { columnsEditor } from '#/features/layout-columns/editor';
 import { bulletListEditor } from '#/features/lists-bullet/editor';
@@ -17,6 +19,7 @@ import { boldEditor } from '#/features/marks-bold/editor';
 import { codeEditor } from '#/features/marks-code/editor';
 import { fontColorEditor } from '#/features/marks-font-color/editor';
 import { italicEditor } from '#/features/marks-italic/editor';
+import { languageEditor } from '#/features/marks-language/editor';
 import { strikeEditor } from '#/features/marks-strike/editor';
 import { subscriptEditor } from '#/features/marks-subscript/editor';
 import { superscriptEditor } from '#/features/marks-superscript/editor';
@@ -40,11 +43,14 @@ const SHIPPED = [
     taskListEditor,
     headingEditor,
     quoteEditor,
+    alignEditor,
+    formatClearEditor,
     brandEditor,
     inputRulesEditor,
     columnsEditor,
     emojiEditor,
     fontColorEditor,
+    languageEditor,
 ] as const;
 
 /** The editor parts of the shipped features by feature ID; a host's own plugin for a feature extends its entry. */

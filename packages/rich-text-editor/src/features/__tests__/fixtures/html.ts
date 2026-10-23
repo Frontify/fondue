@@ -8,6 +8,7 @@ import { bold } from '#/features/marks-bold/feature';
 import { code } from '#/features/marks-code/feature';
 import { fontColor } from '#/features/marks-font-color/feature';
 import { italic } from '#/features/marks-italic/feature';
+import { language } from '#/features/marks-language/feature';
 import { strike } from '#/features/marks-strike/feature';
 import { subscript } from '#/features/marks-subscript/feature';
 import { superscript } from '#/features/marks-superscript/feature';
@@ -78,6 +79,7 @@ export const htmlFeatures = () =>
         superscript(),
         align(),
         htmlLists(),
+        language(),
         fontColor({ literalColors: true }),
         htmlLink(),
     ] as const;

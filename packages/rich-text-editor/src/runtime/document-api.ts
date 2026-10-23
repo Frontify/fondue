@@ -94,8 +94,15 @@ export interface DocumentApi {
         allowed(mark: string): boolean;
         toggle(mark: string, attrs?: JsonObject): boolean;
         /** Sets `mark` with `attrs`. */
-        set(mark: string, attrs: JsonObject): boolean;
-        remove(marks: string | readonly string[]): boolean;
+        set(mark: string, attrs: JsonObject, options?: { readonly extendToMarkRange?: boolean }): boolean;
+        /**
+         * With `extendToMarkRange`, the whole run around the selection. With `wholeBlocks`, a caret clears them from its
+         * whole textblock.
+         */
+        remove(
+            marks: string | readonly string[],
+            options?: { readonly extendToMarkRange?: boolean; readonly wholeBlocks?: boolean },
+        ): boolean;
         /** Sets again the last of the marks `names` that a command set in this session, `false` when none did. */
         reapply(names: readonly string[]): boolean;
     };
@@ -118,6 +125,8 @@ export interface DocumentApi {
          * them out when they already are inside one.
          */
         wrap(node: string, attrs?: JsonObject): boolean;
+        /** Turns the selected blocks into paragraphs, lifting them out of lists, and sets the named attributes back to their declared defaults. */
+        clear(attributes: readonly string[]): boolean;
         /** Swaps the blocks the selection spans, or the container they fill, with the block before or after them. */
         move(direction: 'up' | 'down'): boolean;
         /** Indents or outdents the lines the selection touches in a textblock that keeps white space, as code does. */

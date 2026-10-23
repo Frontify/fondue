@@ -26,7 +26,14 @@ import { hrefPolicyOf } from '#/model/href';
 import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
-import { type CapabilityImplementation, EDITS, LAST_MARK_META, placeBlock, placesBlock } from './capabilities';
+import {
+    type CapabilityImplementation,
+    clearBlocks,
+    EDITS,
+    LAST_MARK_META,
+    placeBlock,
+    placesBlock,
+} from './capabilities';
 import {
     type AncestorValue,
     type BlockValue,
@@ -578,22 +585,29 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 const checked = checkedAttrs(model, [mark], attrs, maxAttributeLength, true);
                 return checked !== undefined && edit(capability(EDITS.toggleMark, { mark, attrs: checked }));
             },
-            set: (mark, attrs) => {
+            set: (mark, attrs, options) => {
                 if (markType(mark) === undefined) {
                     return false;
                 }
-                return editWith(EDITS.setMark, { mark }, [mark], attrs, true);
+                const requested = options?.extendToMarkRange;
+                const extendToMarkRange = requested ?? false;
+                return editWith(EDITS.setMark, { mark, extendToMarkRange }, [mark], attrs, true);
             },
-            remove: (marks) => {
+            remove: (marks, options) => {
                 const installed = (typeof marks === 'string' ? [marks] : [...marks]).filter(
                     (mark) => markType(mark) !== undefined,
                 );
                 if (installed.length === 0) {
                     return false;
                 }
+                const requested = options?.extendToMarkRange;
+                const extendToMarkRange = requested ?? false;
+                const wholeBlocks = options?.wholeBlocks === true;
                 return edit(
                     capability(EDITS.removeMark, {
                         installed,
+                        extendToMarkRange,
+                        wholeBlocks,
                     }),
                 );
             },
@@ -624,6 +638,12 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 return edit(capability(EDITS.block, { action }));
             },
             indentLines: (direction) => edit(capability(EDITS.indentLines, { direction })),
+            clear: (attributes) => {
+                if (attributes.includes('nodeId')) {
+                    return false;
+                }
+                return edit(clearBlocks(attributes));
+            },
         },
         attributes: {
             set: (nodes, attrs, options) => {
