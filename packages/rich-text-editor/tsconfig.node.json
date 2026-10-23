@@ -11,5 +11,11 @@
         "resolveJsonModule": true,
         "target": "ESNext"
     },
-    "include": ["vite.config.ts", "package.json", "oxlint.config.ts"]
+    "include": [
+        "vite.config.ts",
+        "playwright.config.ts",
+        "playwright.flaky.config.ts",
+        "package.json",
+        "oxlint.config.ts"
+    ]
 }

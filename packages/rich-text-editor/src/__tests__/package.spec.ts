@@ -25,7 +25,7 @@ const LAYOUT_ENTRIES = new Set([
     './styles',
 ]);
 
-const EXPORTED_NOW = ['./model'];
+const EXPORTED_NOW = ['./model', './reader'];
 
 const PROSEMIRROR_FLOORS: Record<string, string> = {
     'prosemirror-commands': '1.7.2',
@@ -50,6 +50,7 @@ type Manifest = {
     publishConfig?: { access?: string };
     exports?: Record<string, string | ExportTarget>;
     dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
     peerDependencies?: Record<string, string>;
 };
 
@@ -159,6 +160,13 @@ describe('package manifest and built output', () => {
         expect(peers.react ?? '^18.2.0').toBe('^18.2.0');
         expect(peers['react-dom'] ?? '^18.2.0').toBe('^18.2.0');
         expect(Object.keys(peers).filter((name) => name.startsWith('prosemirror-'))).toEqual([]);
+    });
+
+    it('holds the Fondue packages as workspace:^ peer dependencies and dev dependencies', () => {
+        for (const name of ['@frontify/fondue-components', '@frontify/fondue-icons', '@frontify/fondue-tokens']) {
+            expect(manifest.peerDependencies?.[name]).toBe('workspace:^');
+            expect(manifest.devDependencies?.[name]).toBe('workspace:^');
+        }
     });
 
     it('gives each ProseMirror dependency a caret range that meets its floor', () => {

@@ -64,6 +64,14 @@ const MODEL_ENTRY_MESSAGE =
 const FEATURE_WIRING_MESSAGE =
     'The feature index, registry and profiles wire shipped features from `model`, and do not load views, readers or the editor.';
 
+const READER_MESSAGE =
+    '`reader` imports `model`, `locales` and `#/features/*/reader`, because the reader never loads editor code.';
+
+const CLIENT_REACT_MESSAGE =
+    'The reader renders on the server too, so it uses no client hook, context or class component.';
+
+const LOCALES_MESSAGE = '`locales` holds plain string tables and imports nothing in the package.';
+
 const PROSEMIRROR_EXCEPT_MODEL = DECLARED_PACKAGES.filter(
     (name) => name.startsWith('prosemirror-') && name !== 'prosemirror-model',
 );
@@ -116,10 +124,61 @@ const WIRING_FEATURE_TAILS = [
     '/__tests__/**',
 ] as const;
 
+const READER_FEATURE_TAILS = [
+    '',
+    '/index',
+    '/registry',
+    '/profiles',
+    '/profiles/**',
+    '/*/feature',
+    '/*/view',
+    '/*/migration',
+    '/*/fixtures',
+    '/*/fixtures/**',
+    '/conformance',
+    '/conformance/**',
+    '/__tests__',
+    '/__tests__/**',
+] as const;
+
 type ImportRestriction = {
     group?: string[];
     regex?: string;
     message: string;
+};
+
+type ImportNameRestriction = {
+    name: string;
+    importNames: string[];
+    message: string;
+};
+
+// `default` is listed too, since `React.useState` reaches a hook with no named import.
+const CLIENT_REACT: ImportNameRestriction = {
+    name: 'react',
+    importNames: [
+        'default',
+        'useState',
+        'useReducer',
+        'useEffect',
+        'useLayoutEffect',
+        'useInsertionEffect',
+        'useMemo',
+        'useCallback',
+        'useRef',
+        'useContext',
+        'useId',
+        'useImperativeHandle',
+        'useDebugValue',
+        'useDeferredValue',
+        'useTransition',
+        'useSyncExternalStore',
+        'use',
+        'createContext',
+        'Component',
+        'PureComponent',
+    ],
+    message: CLIENT_REACT_MESSAGE,
 };
 
 const frameworkRestriction: ImportRestriction = {
@@ -135,11 +194,12 @@ const layerOverride = (
     files: string | readonly string[],
     restrictions: ImportRestriction[],
     excludeFiles: readonly string[] = [],
+    paths: readonly ImportNameRestriction[] = [],
 ): LayerOverride => ({
     files: typeof files === 'string' ? [files] : [...files],
     excludeFiles: ['**/__tests__/**', '**/*.stories.tsx', ...excludeFiles],
     rules: {
-        'no-restricted-imports': ['error', { patterns: [frameworkRestriction, ...restrictions] }],
+        'no-restricted-imports': ['error', { paths: [...paths], patterns: [frameworkRestriction, ...restrictions] }],
     },
 });
 
@@ -148,6 +208,12 @@ const modelFolders = FOLDERS.filter((folder) => folder !== 'model');
 const definitionFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'definition');
 
 const outsideFeatureFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'features');
+
+const readerFolders = FOLDERS.filter(
+    (folder) => folder !== 'model' && folder !== 'locales' && folder !== 'reader' && folder !== 'features',
+);
+
+const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
 
 const definitionPatterns = [
     ...aliasPatterns(definitionFolders),
@@ -160,7 +226,7 @@ export default defineConfig({
     options: {
         typeAware: true,
     },
-    ignorePatterns: ['dist/', 'coverage/'],
+    ignorePatterns: ['dist/', 'coverage/', '.storybook/', 'storybook-static/'],
     overrides: [
         {
             files: ['**/*.{js,jsx,ts,tsx,mts,cts,cjs}'],
@@ -198,6 +264,14 @@ export default defineConfig({
                 'no-restricted-imports': ['error', { patterns: [frameworkRestriction] }],
             },
         },
+        {
+            files: ['src/**/*.{ts,tsx}'],
+            excludeFiles: ['**/__tests__/**', '**/*.stories.tsx'],
+            plugins: ['react'],
+            rules: {
+                'react/no-danger': 'error',
+            },
+        } satisfies LayerOverride,
         layerOverride('src/model/**/*.{ts,tsx}', [
             {
                 group: [...aliasPatterns(modelFolders), ...relativePatterns(modelFolders), ...ENGINE_PATTERNS],
@@ -252,6 +326,28 @@ export default defineConfig({
         ),
         layerOverride('src/features/*/fixtures/**/*.{ts,tsx}', [
             { group: ['#/model/**', ...relativePatterns(['model'])], message: MODEL_ENTRY_MESSAGE },
+        ]),
+        layerOverride(
+            'src/reader/**/*.{ts,tsx}',
+            [
+                {
+                    group: [
+                        ...aliasPatterns(readerFolders),
+                        ...relativePatterns(readerFolders),
+                        ...featurePathPatterns(READER_FEATURE_TAILS),
+                        ...PROSEMIRROR_PATTERNS,
+                    ],
+                    message: READER_MESSAGE,
+                },
+            ],
+            [],
+            [CLIENT_REACT],
+        ),
+        layerOverride('src/locales/**/*.{ts,tsx}', [
+            {
+                group: [...aliasPatterns(localesFolders), ...relativePatterns(localesFolders), ...ENGINE_PATTERNS],
+                message: LOCALES_MESSAGE,
+            },
         ]),
     ],
 });

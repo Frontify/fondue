@@ -73,4 +73,5 @@ export { hashDocument } from './hash';
 export { checkHref, type HrefPolicy, type HrefResult } from './href';
 export { toJsonSchema } from './json-schema';
 export { type MigrationManifest, type MigrationResult, migrateDocument } from './migrate';
+export { type ColorToken, type PresentationStyle } from './styles';
 export { findInvalidPayload, isRecord } from './values';

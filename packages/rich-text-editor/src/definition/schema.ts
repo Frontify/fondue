@@ -2,6 +2,7 @@
 
 import {
     type AttributeSpec,
+    type DOMOutputSpec,
     Fragment,
     type MarkSpec,
     type Node,
@@ -17,15 +18,38 @@ import {
     checkHref,
     type ContentModel,
     DefinitionError,
+    type HtmlSpec,
+    type JsonObject,
     type ParseAttributeSource,
     type ParseRule,
 } from '#/model';
 import { hasNodeId } from '#/model/capabilities';
 import { attributesOf, compiledModel, type SharedAttribute } from '#/model/compile';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
+import { resolveHtmlSpec } from '#/model/html-spec';
 import { ownValue, parsedAttributes } from '#/model/values';
 
+type Values = Readonly<Record<string, unknown>>;
+
 const GROUPS = { block: 'block section', section: 'section', inline: 'inline' } as const;
+
+/** The engine's DOM output for one `HtmlSpec`, from the layers the reader and codecs resolve too. */
+const render = (
+    spec: HtmlSpec,
+    values: Values,
+    options: JsonObject,
+    shared: readonly SharedAttribute[],
+): DOMOutputSpec => {
+    const { layers, content } = resolveHtmlSpec(spec, values, options, shared);
+    let inner: readonly DOMOutputSpec[] = [];
+    if (content) {
+        inner = [0 as unknown as DOMOutputSpec];
+    }
+    for (const { tag, attrs } of [...layers].reverse()) {
+        inner = [[tag, attrs, ...inner]];
+    }
+    return inner[0] as DOMOutputSpec;
+};
 
 /** Whether a node's type carries an occurrence `nodeId`, which the schema gives a null default below. */
 export const carriesNodeId = (node: Node): boolean => hasNodeId(node.type.spec.attrs ?? {});
@@ -205,9 +229,11 @@ const ISLAND_MARK_SPEC: MarkSpec = {
 /** Builds the engine schema of a content model: nodes in declared order, marks by rank; an engine error becomes a `DefinitionError`. */
 export const buildSchema = (model: ContentModel): Schema => {
     const compiled = compiledModel(model);
+    const optionsOf = new Map(compiled.features.map(({ id, options }) => [id, options]));
     const nodes: Record<string, NodeSpec> = {};
     for (const node of compiled.nodes) {
         const { declaration, shared } = node;
+        const options = optionsOf.get(node.featureId) ?? {};
         const attributes = attributesOf(node);
         let specs: Record<string, AttributeSpec> = {};
         // A text node takes no attribute.
@@ -216,6 +242,7 @@ export const buildSchema = (model: ContentModel): Schema => {
         }
         const spec: NodeSpec = {
             attrs: specs,
+            toDOM: (instance) => render(declaration.html, instance.attrs, options, shared),
             // The engine reads style rules only for marks.
             parseDOM: declaration.parse.flatMap((rule) =>
                 'tag' in rule ? [tagRule(rule, attributes, shared, declaration.exactlyOne)] : [],
@@ -244,10 +271,12 @@ export const buildSchema = (model: ContentModel): Schema => {
         nodes[name] = spec;
     }
     const marks: Record<string, MarkSpec> = {};
-    for (const { name, declaration } of compiled.marks) {
+    for (const { name, featureId, declaration } of compiled.marks) {
+        const options = optionsOf.get(featureId) ?? {};
         const specs = attributeSpecs(declaration.attrs);
         const spec: MarkSpec = {
             attrs: specs,
+            toDOM: (instance) => render(declaration.html, instance.attrs, options, []),
             parseDOM: declaration.parse.map(
                 (rule): EngineParseRule =>
                     'tag' in rule

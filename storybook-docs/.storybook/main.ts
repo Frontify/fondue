@@ -33,6 +33,8 @@ const config: StorybookConfig = {
         '../../packages/icons/src/**/*.stories.@(ts|tsx)',
         '../../packages/components/src/**/*.stories.@(ts|tsx)',
         '../../packages/charts/src/**/*.stories.@(ts|tsx)',
+        '../../packages/rich-text-editor/src/**/*.mdx',
+        '../../packages/rich-text-editor/src/**/*.stories.@(ts|tsx)',
     ],
     addons: [
         '@storybook/addon-links',
@@ -113,7 +115,7 @@ const config: StorybookConfig = {
                 // Resolves each package's own aliases (`#/`, `#storybook/`, `@components/`).
                 tsConfigPaths({
                     root: packagesRoot,
-                    projects: ['components/tsconfig.json', 'charts/tsconfig.json'],
+                    projects: ['components/tsconfig.json', 'charts/tsconfig.json', 'rich-text-editor/tsconfig.json'],
                 }),
                 {
                     name: 'fix-mdx-file-imports',

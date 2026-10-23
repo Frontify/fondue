@@ -3,33 +3,11 @@
 import '@frontify/fondue-tokens/styles';
 import './tailwind.css';
 import '../../packages/charts/src/index.scss';
-import { Flex, availableLocales, type LocaleIdentifier } from '@frontify/fondue-components';
-import { type Decorator, type Preview, type StoryContext } from '@storybook/react-vite';
-import { type ComponentType } from 'react';
+import { availableLocales } from '@frontify/fondue-components';
+import { type Preview } from '@storybook/react-vite';
 
-import { withTheme } from './components/StoryWithTheme';
+import { ThemeProviderWrapper } from './components/StoryWithTheme';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
-
-type Globals = {
-    direction?: 'ltr' | 'rtl';
-    theme?: 'light' | 'dark' | 'both';
-    locale?: LocaleIdentifier;
-};
-
-const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
-    const { direction = 'ltr', theme = 'light', locale = 'en-US' } = context.globals as Globals;
-
-    if (theme === 'both') {
-        return (
-            <Flex direction="column">
-                {withTheme(Story, { label: 'Light theme', theme: 'light', direction, locale })}
-                {withTheme(Story, { label: 'Dark theme', theme: 'dark', direction, locale })}
-            </Flex>
-        );
-    }
-
-    return withTheme(Story, { theme, direction, locale });
-};
 
 const preview: Preview = {
     globalTypes: {

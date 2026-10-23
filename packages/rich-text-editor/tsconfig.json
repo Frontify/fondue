@@ -12,7 +12,8 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "paths": {
-            "#/*": ["./src/*"]
+            "#/*": ["./src/*"],
+            "#storybook/*": ["../../storybook-docs/.storybook/*"]
         },
         "resolveJsonModule": true,
         "skipLibCheck": true,
@@ -21,6 +22,6 @@
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": ["src"],
+    "include": ["src", "playwright/**/*"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

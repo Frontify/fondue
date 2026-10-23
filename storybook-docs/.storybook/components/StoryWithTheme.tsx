@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type LocaleConfig, type LocaleIdentifier, ThemeProvider } from '@frontify/fondue-components';
+import { Flex, type LocaleConfig, type LocaleIdentifier, ThemeProvider } from '@frontify/fondue-components';
 import { deCH, deDE, enUS, esES, frCH, frFR, itCH, itIT, nlNL, plPL, ptPT } from '@frontify/fondue-components/locales';
+import { type StoryContext } from '@storybook/react-vite';
 import { type ComponentProps, type ComponentType } from 'react';
 
 type WithThemeOptions = {
     label?: string;
-    theme: ComponentProps<typeof ThemeProvider>['theme'];
-    direction: ComponentProps<typeof ThemeProvider>['dir'];
+    theme: NonNullable<ComponentProps<typeof ThemeProvider>['theme']>;
+    direction: NonNullable<ComponentProps<typeof ThemeProvider>['dir']>;
     locale: LocaleIdentifier;
 };
 
@@ -67,4 +68,25 @@ export const withTheme = (Story: ComponentType, options: WithThemeOptions) => {
             </div>
         </ThemeProvider>
     );
+};
+
+type Globals = {
+    direction?: 'ltr' | 'rtl';
+    theme?: 'light' | 'dark' | 'both';
+    locale?: LocaleIdentifier;
+};
+
+export const ThemeProviderWrapper = (Story: ComponentType, { globals }: Pick<StoryContext, 'globals'>) => {
+    const { direction = 'ltr', theme = 'light', locale = 'en-US' } = globals as Globals;
+
+    if (theme === 'both') {
+        return (
+            <Flex direction="column">
+                {withTheme(Story, { label: 'Light theme', theme: 'light', direction, locale })}
+                {withTheme(Story, { label: 'Dark theme', theme: 'dark', direction, locale })}
+            </Flex>
+        );
+    }
+
+    return withTheme(Story, { theme, direction, locale });
 };

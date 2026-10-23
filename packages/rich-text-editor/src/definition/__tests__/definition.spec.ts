@@ -91,6 +91,51 @@ describe('compileDefinition', () => {
         expect(figure?.firstChild).toMatchObject({ type: { name: 'asset_image' } });
     });
 
+    it('writes a shared attribute bound to a style property only for a plain CSS value', () => {
+        const tone = defineFeature({
+            id: 'a.tone',
+            version: 1,
+            attributes: {
+                tone: {
+                    on: ['paragraph'],
+                    value: { type: 'string', nullable: true, default: null },
+                    html: { style: 'color' },
+                },
+            },
+        })();
+        const { schema } = compileDefinition(compileContentModel([core(), tone], options));
+        const styleOf = (value: string) => {
+            const paragraph = schema.node('paragraph', { tone: value });
+            const [, attributes] = paragraph.type.spec.toDOM?.(paragraph) as [string, Record<string, string>];
+            return attributes.style;
+        };
+
+        expect(styleOf('red')).toBe('color: red;');
+        for (const value of ['red;background:url(//x)', 'url(//x)', 'red"', "red'", 'red\\9', 'red}', '<x', 'red/*x']) {
+            expect(styleOf(value)).toBeUndefined();
+        }
+    });
+
+    it('keeps a literal STYLE of any case together with a shared style declaration', () => {
+        const banner = defineFeature({
+            id: 'a.banner',
+            version: 1,
+            nodes: { banner: { group: 'block', attrs: {}, html: ['div', { STYLE: 'margin: 0' }, 0], parse: [] } },
+            attributes: {
+                tone: {
+                    on: ['banner'],
+                    value: { type: 'string', nullable: true, default: null },
+                    html: { style: 'color' },
+                },
+            },
+        })();
+        const { schema } = compileDefinition(compileContentModel([core(), banner], options));
+        const node = schema.node('banner', { tone: 'red' });
+        const [, attributes] = node.type.spec.toDOM?.(node) as [string, Record<string, string>];
+
+        expect(attributes).toEqual({ style: 'margin: 0;color: red;' });
+    });
+
     it.each(['inline{1,64}', '(inline{1,8}){1,8}', '((inline{1,4}){1,4}){1,4}'])(
         'compiles %j and builds its schema in under 200 ms',
         (content) => {
