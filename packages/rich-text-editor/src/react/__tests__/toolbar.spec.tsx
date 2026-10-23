@@ -2,9 +2,10 @@
 
 import { ThemeProvider } from '@frontify/fondue-components';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { createRef, type ReactNode } from 'react';
+import { createRef, type ReactNode, useContext } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { AnnouncerContext } from '#/bridge/announcer';
 import { defineEditorPlugin } from '#/bridge/plugin';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { fixtureCodeBlockEditor } from '#/features/__tests__/fixtures/code-block/view';
@@ -304,6 +305,151 @@ describe('the fixed toolbar', () => {
         expect(executed).toEqual({ status: 'rejected', code: 'not-allowed' });
         expect(afterRoutes).toBe(before);
         expect(content()).not.toContain('"bold"');
+    });
+});
+
+describe('the announcer', () => {
+    const Announce = ({ message, coalesce }: { readonly message: string; readonly coalesce?: string }) => {
+        const announcer = useContext(AnnouncerContext);
+        return (
+            <button type="button" onClick={() => announcer?.announce(message, coalesce)}>
+                {message}
+            </button>
+        );
+    };
+    const region = () => screen.getByTestId('fondue-rich-text-editor-announcer');
+
+    it('renders one polite region at mount, off the surface, that a save message reaches', () => {
+        mount({ children: <Announce message="Saved" /> });
+        const before = region().textContent;
+
+        fireEvent.click(button('Saved'));
+
+        expect(document.querySelectorAll('[aria-live]')).toHaveLength(1);
+        expect(region()).toHaveAttribute('aria-live', 'polite');
+        expect(screen.getByRole('textbox', { name: 'Notes' })).not.toHaveAttribute('aria-live');
+        expect(document.querySelectorAll('[role="alert"], [aria-live="assertive"]')).toHaveLength(0);
+        expect([before, region().textContent]).toEqual(['', 'Saved']);
+    });
+
+    it('clears the region before each message and changes a repeat with a no-break space', () => {
+        mount({ children: <Announce message="Saved" /> });
+        const observer = new MutationObserver(() => undefined);
+        observer.observe(region(), { childList: true });
+
+        fireEvent.click(button('Saved'));
+        fireEvent.click(button('Saved'));
+        fireEvent.click(button('Saved'));
+        const records = observer
+            .takeRecords()
+            .flatMap((mutation) => [
+                ...[...mutation.removedNodes].map(() => 'cleared'),
+                ...[...mutation.addedNodes].map((node) => node.textContent),
+            ]);
+        observer.disconnect();
+
+        expect(records).toEqual(['Saved', 'cleared', 'Saved\u00A0', 'cleared', 'Saved']);
+    });
+
+    it('announces only the latest of five find counts that arrive within 500 ms', () => {
+        const counts = ['Results: 5', 'Results: 4', 'Results: 3', 'Results: 2', 'Results: 1'];
+        mount({
+            children: (
+                <>
+                    {counts.map((count) => (
+                        <Announce key={count} message={count} coalesce="find" />
+                    ))}
+                </>
+            ),
+        });
+
+        for (const count of counts) {
+            fireEvent.click(button(count));
+            act(() => {
+                vi.advanceTimersByTime(100);
+            });
+        }
+        const early = region().textContent;
+        act(() => {
+            vi.advanceTimersByTime(500);
+        });
+
+        expect(early).toBe('');
+        expect(region().textContent).toBe('Results: 1');
+    });
+
+    /** The messages the region received, in order, whatever it shows now. */
+    const spoken = () => {
+        const seen: string[] = [];
+        new MutationObserver((records) => {
+            for (const record of records) {
+                for (const node of record.addedNodes) {
+                    seen.push(node.textContent ?? '');
+                }
+            }
+        }).observe(region(), { childList: true });
+        return seen;
+    };
+
+    it('coalesces two messages 499 ms apart and announces both 501 ms apart', async () => {
+        mount({
+            children: (
+                <>
+                    <Announce message="First" coalesce="find" />
+                    <Announce message="Second" coalesce="find" />
+                </>
+            ),
+        });
+        const seen = spoken();
+
+        fireEvent.click(button('First'));
+        act(() => {
+            vi.advanceTimersByTime(499);
+        });
+        fireEvent.click(button('Second'));
+        act(() => {
+            vi.advanceTimersByTime(499);
+        });
+        const coalesced = region().textContent;
+        act(() => {
+            vi.advanceTimersByTime(1);
+        });
+        await Promise.resolve();
+        const afterClose = [...seen];
+        fireEvent.click(button('First'));
+        act(() => {
+            vi.advanceTimersByTime(501);
+        });
+        fireEvent.click(button('Second'));
+        act(() => {
+            vi.advanceTimersByTime(501);
+        });
+        await Promise.resolve();
+
+        expect(coalesced).toBe('');
+        expect(afterClose).toEqual(['Second']);
+        expect(seen).toEqual(['Second', 'First', 'Second']);
+    });
+
+    it('coalesces per key, so a message with another key is not swallowed', async () => {
+        mount({
+            children: (
+                <>
+                    <Announce message="Find 3" coalesce="find" />
+                    <Announce message="Saved" coalesce="save" />
+                </>
+            ),
+        });
+        const seen = spoken();
+
+        fireEvent.click(button('Find 3'));
+        fireEvent.click(button('Saved'));
+        act(() => {
+            vi.advanceTimersByTime(500);
+        });
+        await Promise.resolve();
+
+        expect(seen.filter((text) => text !== '').sort()).toEqual(['Find 3', 'Saved']);
     });
 });
 

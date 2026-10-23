@@ -22,7 +22,7 @@ import {
 } from 'react';
 
 import '#/styles/content.css';
-import { createAnnouncer } from '#/bridge/announcer';
+import { AnnouncerContext, createAnnouncer } from '#/bridge/announcer';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
@@ -34,7 +34,7 @@ import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { enUS } from '#/locales/en-US';
-import { type CapabilityRef, type DecodeResult, type Diagnostic, type RichTextDocument } from '#/model';
+import { type CapabilityRef, type DecodeResult, type Diagnostic, hashDocument, type RichTextDocument } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { codecContext, contentClasses } from '#/model/output';
@@ -56,9 +56,12 @@ import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolba
 
 import { moveChromeFocus, useEscapeToSurface } from './chrome-focus';
 import { engineOf, pluginsOf, readersOf, viewsOf } from './compile-editor';
+import { registerFormField } from './form-field';
 import { useKeyboardInset } from './keyboard-inset';
+import { useEditorLocale } from './locale';
 import { usePluginHosts, useRenderedHosts } from './plugin-hosts';
 import { BlockedShell, RecoveryShell } from './shells';
+import { registerSaveCauses, SaveStatusText } from './status';
 import { menuItems, toolbarItems } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
@@ -127,6 +130,8 @@ interface Mounted {
     /** The document's own language and direction, which win over the theme's. */
     readonly lang: string | undefined;
     readonly dir: 'ltr' | 'rtl' | undefined;
+    /** Mounted with `services.persistence`, which keeps the session managed for its whole life. */
+    readonly managed: boolean;
 }
 
 const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
@@ -136,7 +141,8 @@ const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
     }
     const engine = engineOf(definition);
     const { result, tree } = decodeToTree(loaded.document, engine.model, { limits: definition.limits });
-    const unset = { lang: undefined, dir: undefined };
+    const managed = memberOf(props.services, 'persistence') !== undefined;
+    const unset = { lang: undefined, dir: undefined, managed };
     if (result.status === 'blocked') {
         return { definition, decoded: undefined, blocked: result, ...unset };
     }
@@ -154,7 +160,7 @@ const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
         dir = tree.attrs.dir;
     }
     const decoded = { tree, capabilities: result.document.requiredCapabilities };
-    return { definition, decoded, blocked: undefined, lang, dir };
+    return { definition, decoded, blocked: undefined, lang, dir, managed };
 };
 
 /** What the parts share for the toolbars and focus moves between the surface and the chrome. */
@@ -182,6 +188,8 @@ interface Chrome {
     readonly keyboard: number;
     /** The language of the chrome's strings, which the root, node chrome and plugin labels take (WCAG 2.2 SC 3.1.2). */
     readonly lang: string;
+    /** The chrome's strings in the shown locale. */
+    readonly t: ReturnType<typeof readerContext>['t'];
 }
 
 interface RootContextValue {
@@ -390,6 +398,10 @@ const SessionComponent = (
             }
         });
         handleRef.current = runtime.handle;
+        if (created !== undefined) {
+            registerSaveCauses(runtime.handle, created);
+        }
+        registerFormField(runtime.handle, () => latestRef.current);
         onSession({ handle: runtime.handle, unresolved: () => created?.unresolved() });
         coordinator.start(runtime);
         return () => {
@@ -441,6 +453,29 @@ const SessionComponent = (
             });
         }
     }, [definition, mounted, coordinator]);
+
+    // A changed `defaultValue` replaces nothing, so a development build says so once per change.
+    const { defaultValue } = props;
+    const defaultValueRef = useRef(defaultValue);
+    useEffect(() => {
+        const previous = defaultValueRef.current;
+        defaultValueRef.current = defaultValue;
+        if (process.env.NODE_ENV === 'production' || previous === defaultValue) {
+            return;
+        }
+        // A host that builds an equal record on each render changes nothing.
+        if (
+            previous.documentId === defaultValue.documentId &&
+            hashDocument(previous.document) === hashDocument(defaultValue.document)
+        ) {
+            return;
+        }
+        coordinator.runtime?.report({
+            code: 'react.default-value-changed',
+            severity: 'warning',
+            messageKey: 'react.default-value-changed',
+        });
+    }, [defaultValue, coordinator]);
 
     const onFlush = useCallback(() => resyncSelection(coordinator.runtime?.view), [coordinator]);
 
@@ -550,6 +585,7 @@ const SessionComponent = (
             setMode: switchToolbar,
             keyboard,
             lang,
+            t,
         };
     }, [items, menu, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard, lang]);
 
@@ -567,49 +603,51 @@ const SessionComponent = (
             <EditorHostsContext.Provider value={renderedHosts}>
                 <SessionContext.Provider value={live}>
                     <ReactWorkContext.Provider value={work}>
-                        <OverlayContext.Provider value={overlays}>
-                            {/* Focus in the chrome keeps the selection visible until it returns. */}
-                            {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- the root only hears keys and focus that bubble from the surface and chrome. */}
-                            <div
-                                ref={rootRef}
-                                lang={lang}
-                                data-test-id={testId}
-                                aria-busy={live === undefined ? true : undefined}
-                                onKeyDown={onKeyDown}
-                                onFocus={(event) =>
-                                    coordinator.chrome.showSelection(
-                                        event.target.getAttribute('data-rte-surface') === null,
-                                    )
-                                }
-                                onBlur={() => coordinator.chrome.showSelection(false)}
-                            >
-                                {work !== undefined && <Phase work={work} open />}
-                                {children}
-                                {toolbarMode === 'bubble' && <Bubble />}
-                                <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
-                                {standing.map(({ key, component: Standing, toolbarRef: ref }) => (
-                                    <Standing key={key} toolbarRef={ref} covered={pluginOverlay !== undefined} />
-                                ))}
-                                {pluginOverlay !== undefined && (
-                                    <OverlayBody>
-                                        <pluginOverlay.component
-                                            key={pluginOverlay.id}
-                                            {...pluginOverlay.props}
-                                            close={hosts.overlays.close}
-                                            anchor={pluginOverlay.anchor}
-                                        />
-                                    </OverlayBody>
-                                )}
+                        <AnnouncerContext.Provider value={announcer}>
+                            <OverlayContext.Provider value={overlays}>
+                                {/* Focus in the chrome keeps the selection visible until it returns. */}
+                                {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- the root only hears keys and focus that bubble from the surface and chrome. */}
                                 <div
-                                    ref={announcer.setRegion}
-                                    aria-live="polite"
-                                    style={VISUALLY_HIDDEN}
-                                    data-test-id={`${testId}-announcer`}
-                                />
-                                {overlayRootElement}
-                                {work !== undefined && <Phase work={work} open={false} />}
-                            </div>
-                        </OverlayContext.Provider>
+                                    ref={rootRef}
+                                    lang={lang}
+                                    data-test-id={testId}
+                                    aria-busy={live === undefined ? true : undefined}
+                                    onKeyDown={onKeyDown}
+                                    onFocus={(event) =>
+                                        coordinator.chrome.showSelection(
+                                            event.target.getAttribute('data-rte-surface') === null,
+                                        )
+                                    }
+                                    onBlur={() => coordinator.chrome.showSelection(false)}
+                                >
+                                    {work !== undefined && <Phase work={work} open />}
+                                    {children}
+                                    {toolbarMode === 'bubble' && <Bubble />}
+                                    <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
+                                    {standing.map(({ key, component: Standing, toolbarRef: ref }) => (
+                                        <Standing key={key} toolbarRef={ref} covered={pluginOverlay !== undefined} />
+                                    ))}
+                                    {pluginOverlay !== undefined && (
+                                        <OverlayBody>
+                                            <pluginOverlay.component
+                                                key={pluginOverlay.id}
+                                                {...pluginOverlay.props}
+                                                close={hosts.overlays.close}
+                                                anchor={pluginOverlay.anchor}
+                                            />
+                                        </OverlayBody>
+                                    )}
+                                    <div
+                                        ref={announcer.setRegion}
+                                        aria-live="polite"
+                                        style={VISUALLY_HIDDEN}
+                                        data-test-id={`${testId}-announcer`}
+                                    />
+                                    {overlayRootElement}
+                                    {work !== undefined && <Phase work={work} open={false} />}
+                                </div>
+                            </OverlayContext.Provider>
+                        </AnnouncerContext.Provider>
                     </ReactWorkContext.Provider>
                 </SessionContext.Provider>
             </EditorHostsContext.Provider>
@@ -710,8 +748,9 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
 
 const Root = forwardRef((props: Props & { readonly children: ReactNode }, ref: ForwardedRef<EditorHandle<object>>) => {
     const { definition } = props;
+    const locale = useEditorLocale(props.locale);
     if (definition !== undefined) {
-        return <Recovery props={{ ...props, definition }} editorRef={ref} />;
+        return <Recovery props={{ ...props, definition, locale }} editorRef={ref} />;
     }
     return null;
 });
@@ -911,10 +950,23 @@ const BubbleToolbarPart = () => {
 };
 BubbleToolbarPart.displayName = 'RichTextEditor.BubbleToolbar';
 
+/** The session's save state. */
+const Status = () => {
+    const { props, mounted, chrome } = useRoot('Status');
+    const { 'data-test-id': testId = DEFAULT_TEST_ID } = props;
+    // An unmanaged session has no save state to show.
+    if (!mounted.managed) {
+        return null;
+    }
+    return <SaveStatusText t={chrome.t} testId={testId} />;
+};
+Status.displayName = 'RichTextEditor.Status';
+
 const Editor = forwardRef((props: Props, ref: ForwardedRef<EditorHandle<object>>) => (
     <Root {...props} ref={ref}>
         <Toolbar />
         <Surface />
+        <Status />
     </Root>
 ));
 Editor.displayName = 'RichTextEditor';
@@ -925,6 +977,7 @@ export const RichTextEditor = Object.assign(Editor, {
     Surface,
     Toolbar,
     BubbleToolbar: BubbleToolbarPart,
+    Status,
 }) as unknown as (<C extends object = ShippedCommands>(props: RichTextEditorProps<C>) => ReactNode) & {
     /** Takes the editor props and renders its own layout from the parts; `RichTextEditor` is Root with the default parts. */
     readonly Root: <C extends object = ShippedCommands>(
@@ -933,4 +986,5 @@ export const RichTextEditor = Object.assign(Editor, {
     readonly Surface: ComponentType<object>;
     readonly Toolbar: ComponentType<object>;
     readonly BubbleToolbar: ComponentType<object>;
+    readonly Status: ComponentType<object>;
 };

@@ -1,15 +1,115 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it } from 'vitest';
+import { act, render, screen, within } from '@testing-library/react';
+import { createRef } from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { FIXTURE_PLUGINS } from '#/features/__tests__/fixtures/plugins';
+import { spotlight, spotlightDocument } from '#/features/__tests__/fixtures/spotlight/feature';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
-import { defineEditor, defineEditorPlugin } from '#/index';
-import { compileContentModel, DefinitionError } from '#/model';
+import {
+    type AuthoringPolicy,
+    type CommandsOfModel,
+    type CommandsOfPlugin,
+    defineEditor,
+    defineEditorPlugin,
+    defineReactPresentation,
+    type EditorHandle,
+    type EditorPlugin,
+    RichTextEditor,
+} from '#/index';
+import { compileContentModel, defineFeature, DefinitionError } from '#/model';
+import { runtimeOf } from '#/runtime/runtime';
+import { pressKey, setSelection } from '#/testing';
+
+beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+});
+
+afterEach(() => {
+    vi.useRealTimers();
+});
+
+const model = compileContentModel([core(), spotlight()], { id: 'fixture.spotlight', version: 1 });
+
+const mount = (readOnly = false) => {
+    const definition = defineEditor({ id: 'fixture.spotlight', model, plugins: FIXTURE_PLUGINS });
+    const ref = createRef<EditorHandle>();
+    render(
+        <RichTextEditor
+            aria-label="Notes"
+            definition={definition}
+            presentation={defineReactPresentation({
+                toolbar: [['fixture.spotlight.toggle']],
+            })}
+            defaultValue={{ documentId: 'document-1', revision: null, document: spotlightDocument }}
+            readOnly={readOnly}
+            ref={ref}
+        />,
+    );
+    act(() => {
+        vi.advanceTimersToNextFrame();
+    });
+    const handle = ref.current;
+    const view = handle === null ? undefined : runtimeOf(handle)?.view;
+    if (handle === null || view === undefined) {
+        throw new Error('The editor did not mount.');
+    }
+    return { handle, view };
+};
+
+const firstBlock = (handle: EditorHandle) => handle.getSnapshot().document.content.content?.[0]?.content;
+
+describe('a plugin added only in its own files', () => {
+    it('renders its own toolbar control, whose command toggles its mark as one undo step', () => {
+        const { handle } = mount();
+        act(() => {
+            setSelection(handle, { text: 'Read' });
+        });
+        const control = screen.getByTestId('fixture-spotlight-control');
+
+        expect(control).toHaveAttribute('aria-pressed', 'false');
+        act(() => {
+            control.click();
+        });
+
+        expect(firstBlock(handle)?.[0]).toEqual({ type: 'text', text: 'Read', marks: [{ type: 'fixture_spotlight' }] });
+        expect(control).toHaveAttribute('aria-pressed', 'true');
+        act(() => {
+            handle.execute('history.undo');
+        });
+        expect(firstBlock(handle)?.[0]).toEqual({ type: 'text', text: 'Read the ' });
+    });
+
+    it('gives its own control the key binding of its command', () => {
+        mount();
+
+        expect(screen.getByTestId('fixture-spotlight-control')).toHaveAttribute('aria-keyshortcuts', 'Control+Shift+L');
+    });
+
+    it('refuses a plugin for a feature the model does not install', () => {
+        const bare = compileContentModel([core()], { id: 'fixture.bare', version: 1 });
+
+        expect(() => defineEditor({ id: 'fixture.bare', model: bare, plugins: FIXTURE_PLUGINS })).toThrow(
+            DefinitionError,
+        );
+    });
+});
 
 describe('a host part for a feature the package ships', () => {
     const boldModel = compileContentModel([core(), bold()], { id: 'fixture.bold', version: 1 });
-
+    const boldDocument = {
+        format: 'frontify.rich-text' as const,
+        formatVersion: 1 as const,
+        model: { id: 'fixture.bold', version: 1 },
+        requiredCapabilities: [{ id: 'core', version: 1 }],
+        content: {
+            type: 'doc',
+            attrs: { lang: null, dir: 'auto' },
+            content: [{ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: 'one two' }] }],
+        },
+    };
     const strong = defineEditorPlugin(bold, {
         commands: { 'mark.bold.count': { run: () => true } },
         toolbar: [
@@ -23,9 +123,174 @@ describe('a host part for a feature the package ships', () => {
         ],
     });
 
+    it('keeps the shipped commands, adds its own, and replaces a toolbar entry of the same id', () => {
+        const definition = defineEditor({ id: 'fixture.bold', model: boldModel, plugins: [strong] });
+        const ref = createRef<EditorHandle<CommandsOfModel<typeof boldModel> & CommandsOfPlugin<typeof strong>>>();
+        render(
+            <RichTextEditor
+                aria-label="Notes"
+                definition={definition}
+                presentation={defineReactPresentation({ toolbar: [['mark.bold.toggle']] })}
+                defaultValue={{ documentId: 'document-1', revision: null, document: boldDocument }}
+                ref={ref}
+            />,
+        );
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        expect(ref.current?.query('mark.bold.toggle').enabled).toBe(true);
+        expect(ref.current?.execute('mark.bold.count').status).not.toBe('rejected');
+        const toolbar = screen.getByRole('toolbar');
+        expect(within(toolbar).getByRole('button', { name: 'Strong' })).toBeDefined();
+        expect(within(toolbar).queryByRole('button', { name: 'Bold' })).toBeNull();
+    });
+
+    it('shows pressed only the toolbar entry whose payload its command answers active for', () => {
+        const weights = defineEditorPlugin(bold, {
+            commands: {
+                'mark.bold.weight': {
+                    payload: { fields: { weight: { type: 'integer', min: 1, max: 2 } } },
+                    run: (_api, payload: { readonly weight: number }) => payload.weight > 0,
+                    active: (_api, payload: { readonly weight: number }) => payload.weight === 1,
+                },
+            },
+            toolbar: [1, 2].map((weight) => ({
+                id: `weight-${weight}`,
+                kind: 'toggle' as const,
+                command: 'mark.bold.weight',
+                payload: { weight },
+                label: { 'en-US': `Weight ${weight}` },
+                icon: 'IconTextFormatBold',
+            })),
+        });
+        const definition = defineEditor({ id: 'fixture.bold', model: boldModel, plugins: [weights] });
+        render(
+            <RichTextEditor
+                aria-label="Notes"
+                definition={definition}
+                presentation={defineReactPresentation({
+                    toolbar: [[1, 2].map((weight) => ({ command: 'mark.bold.weight', payload: { weight } }))],
+                })}
+                defaultValue={{ documentId: 'document-1', revision: null, document: boldDocument }}
+            />,
+        );
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        const toolbar = screen.getByRole('toolbar');
+
+        expect(within(toolbar).getByRole('button', { name: 'Weight 1' })).toHaveAttribute('aria-pressed', 'true');
+        expect(within(toolbar).getByRole('button', { name: 'Weight 2' })).toHaveAttribute('aria-pressed', 'false');
+    });
+
     it('refuses two host parts for one feature', () => {
         expect(() => defineEditor({ id: 'fixture.bold', model: boldModel, plugins: [strong, strong] })).toThrow(
             DefinitionError,
         );
+    });
+});
+
+describe('a plugin part that reads the policy and its options', () => {
+    /** An editor of `features` with its parts, a paragraph `Body`, and `toolbar`. */
+    const mountWith = (
+        features: Parameters<typeof compileContentModel>[0],
+        plugins: readonly EditorPlugin[],
+        toolbar: ReturnType<typeof defineReactPresentation>['toolbar'],
+        policy: Partial<AuthoringPolicy> = {},
+    ) => {
+        const fixtureModel = compileContentModel(features, { id: 'fixture.parts', version: 1 });
+        const definition = defineEditor({ id: 'fixture.parts', model: fixtureModel, plugins, policy });
+        const ref = createRef<EditorHandle<Record<string, unknown>>>();
+        const document = {
+            format: 'frontify.rich-text' as const,
+            formatVersion: 1 as const,
+            model: fixtureModel.ref,
+            requiredCapabilities: fixtureModel.capabilities,
+            content: {
+                type: 'doc',
+                attrs: { lang: null, dir: 'auto' },
+                content: [{ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: 'Body' }] }],
+            },
+        };
+        const rendered = render(
+            <RichTextEditor
+                aria-label="Notes"
+                definition={definition}
+                presentation={defineReactPresentation({ toolbar })}
+                defaultValue={{ documentId: 'document-1', revision: null, document }}
+                ref={ref}
+            />,
+        );
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        if (ref.current === null) {
+            throw new Error('The editor did not mount.');
+        }
+        setSelection(ref.current, { text: 'Body', from: 1, to: 1 });
+        return { handle: ref.current, unmount: rendered.unmount };
+    };
+
+    it('takes its keys, toolbar entries and payload values from the options of its feature', () => {
+        const picks = defineFeature({
+            id: 'fixture.picks',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            options: { third: { type: 'boolean', default: true } },
+        });
+        const picksEditor = defineEditorPlugin(picks, (options) => {
+            const values = ['first', 'second'];
+            if (options.third === true) {
+                values.push('third');
+            }
+            return {
+                commands: {
+                    'fixture.pick': {
+                        payload: { fields: { value: { type: 'enum', values } } },
+                        run: (api, payload: { readonly value: string }) => api.insert.text(payload.value),
+                    },
+                },
+                keys: Object.fromEntries(
+                    values.map((value, index) => [
+                        `Mod-Shift-${index + 1}`,
+                        { command: 'fixture.pick', payload: { value } },
+                    ]),
+                ),
+                toolbar: values.map((value) => ({
+                    id: value,
+                    kind: 'button' as const,
+                    command: 'fixture.pick',
+                    payload: { value },
+                    label: { 'en-US': `Pick ${value}` },
+                    icon: 'IconHeading',
+                })),
+            };
+        });
+        const toolbar = [
+            ['first', 'second', 'third'].map((value) => ({ command: 'fixture.pick', payload: { value } })),
+        ];
+        const shown = () =>
+            ['first', 'second', 'third'].filter(
+                (value) =>
+                    within(screen.getByRole('toolbar')).queryByRole('button', { name: `Pick ${value}` }) !== null,
+            );
+
+        const wide = mountWith([core(), picks()], [picksEditor], toolbar);
+        const all = shown();
+        wide.unmount();
+        const { handle } = mountWith([core(), picks({ third: false })], [picksEditor], toolbar);
+        act(() => {
+            pressKey(handle, 'Mod-Shift-3');
+            pressKey(handle, 'Mod-Shift-2');
+        });
+
+        expect(all).toEqual(['first', 'second', 'third']);
+        expect(shown()).toEqual(['first', 'second']);
+        const first = handle.getSnapshot().document.content.content?.[0];
+        expect(first?.content).toEqual([{ type: 'text', text: 'Bsecondody' }]);
+        expect(handle.execute('fixture.pick', { value: 'third' })).toEqual({
+            status: 'rejected',
+            code: 'invalid-payload',
+        });
     });
 });

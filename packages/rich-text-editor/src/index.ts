@@ -68,6 +68,7 @@ export {
     type Snapshot,
 } from '#/persistence/types';
 export { defineEditor, defineReactPresentation } from '#/react/define';
+export { type RichTextFormField, useRichTextFormField } from '#/react/form-field';
 export { useEditorHandle } from '#/react/hooks';
 export { RichTextEditor } from '#/react/rich-text-editor';
 export {

@@ -542,6 +542,49 @@ describe('overlay accessibility', () => {
         expect(html).toContain('aria-label="Text formatting"');
     });
 
+    it('renders at once in English, then takes the German strings of the ThemeProvider locale on the same view', async () => {
+        const ref = createRef<EditorHandle<object>>();
+        render(
+            <ThemeProvider locale={fondueDeDE}>
+                <RichTextEditor
+                    aria-label="Notes"
+                    definition={definition}
+                    presentation={presentation}
+                    defaultValue={loaded(para('one'), image)}
+                    ref={ref}
+                />
+            </ThemeProvider>,
+        );
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        const handle = ref.current;
+        if (handle === null) {
+            throw new Error('no handle');
+        }
+        const view = runtimeOf(handle)?.view;
+
+        expect(screen.getByRole('toolbar', { name: 'Text formatting' })).toBeInTheDocument();
+        expect(view).toBeDefined();
+        const toolbar = await screen.findByRole('toolbar', { name: 'Textformatierung' });
+        await act(async () => {
+            await new Promise((resolve) => {
+                queueMicrotask(() => {
+                    resolve(undefined);
+                });
+            });
+        });
+        expect(within(toolbar).getByRole('button', { name: 'Fett' })).toBeInTheDocument();
+        expect(within(toolbar).getByRole('button', { name: 'Mehr' })).toBeInTheDocument();
+        expect(ref.current).toBe(handle);
+        expect(runtimeOf(handle)?.view).toBe(view);
+        // The stand-in's own labels are in no package locale, so the chrome button shows its key.
+        act(() => {
+            fireEvent.click(screen.getByRole('button', { name: 'RichTextEditor_fixtureAltText' }));
+        });
+        expect(within(screen.getByRole('dialog')).getByRole('button', { name: 'Schließen' })).toBeInTheDocument();
+    });
+
     it('leaves every overlay open for 10 minutes', async () => {
         // Frames stay real, since Floating UI repositions an open overlay in each one.
         vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });

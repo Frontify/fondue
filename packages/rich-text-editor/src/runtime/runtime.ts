@@ -88,6 +88,9 @@ const MAX_ENQUEUE_DEPTH = 32;
 // ProseMirror marks each DOM change it reads during a composition with this meta.
 const COMPOSITION_META = 'composition';
 
+/** How a wait for input to settle ended. */
+export type InputOutcome = 'settled' | 'timeout' | 'disposed';
+
 /** What the host calls. */
 export interface RuntimeHandle {
     getSummary(): EditorSummary;
@@ -168,6 +171,13 @@ export interface EditorRuntime {
     nodeActions(target: NodeTarget): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
+    /**
+     * Calls `settled` once input settles after the composition that runs now, or when `timeoutMs` passes first, or
+     * when the session is disposed first.
+     */
+    afterInput(settled: (outcome: InputOutcome) => void, timeoutMs: number): void;
+    /** Empties the history and keeps the document and selection, as a form reset to the current record does. */
+    clearHistory(): void;
     /** Emits the `operationMetric` of an operation that started at `started`. */
     measure(kind: OperationMetric['kind'], started: number, failureCode: string | null): void;
 }
@@ -398,6 +408,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // Roots that plugin views dispatch while an install runs, committed once its selectors and events are done.
     const deferred: Transaction[] = [];
     const queue: Intent[] = [];
+    // What waits for input to settle outside the queue, such as a form's settled value.
+    const afterInput = new Set<(outcome: InputOutcome) => void>();
 
     // Records typing before any other handler sees the event, so the view itself gets no event handler.
     const typingRecorder = new Plugin({
@@ -830,6 +842,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             refreshView();
         });
         saves?.settled();
+        for (const settled of [...afterInput]) {
+            settled('settled');
+        }
     };
 
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view. */
@@ -1296,6 +1311,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         phase = 'disposed';
         ended.abort();
         settling.cancel();
+        for (const settled of [...afterInput]) {
+            settled('disposed');
+        }
         settleQueue('not-ready');
         deferred.length = 0;
         const release = releaseTargets(state);
@@ -1748,6 +1766,27 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         nodeActions,
         saveStatusChanged: emitSaveStatus,
+        clearHistory: () => {
+            if (phase !== 'ready' || settling.active()) {
+                return;
+            }
+            const fresh = reset(state);
+            if (installState(fresh)) {
+                published = state;
+                busyWith(notify);
+            }
+        },
+        afterInput: (settled, timeoutMs) => {
+            // Whichever comes first, the settle, the timeout or `dispose`, answers; the others find nothing.
+            const waiter = (outcome: InputOutcome) => {
+                if (afterInput.delete(waiter)) {
+                    clearTimeout(timer);
+                    settled(outcome);
+                }
+            };
+            const timer = setTimeout(() => waiter('timeout'), timeoutMs);
+            afterInput.add(waiter);
+        },
         measure: (kind, started, failureCode) => measure(kind, started, failureCode),
     };
     if (options.nodeViews !== undefined) {

@@ -160,6 +160,60 @@ test('shows the bubble toolbar for a mouse selection and leaves focus in the sur
     await expectFocus(page, 'After');
 });
 
+test('keeps the bubble toolbar focus ring and pressed bar visible in forced colours', async ({
+    mount,
+    page,
+}, testInfo) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+    await mount(<OverlayProbe />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    await expect(bubbleOf(page)).toBeVisible();
+    const bold = bubbleOf(page).getByRole('button', { name: 'Bold' });
+    const around = async () => {
+        const box = await boxOf(bold);
+        return page.screenshot({
+            clip: {
+                x: box.left - 6,
+                y: box.top - 6,
+                width: box.right - box.left + 12,
+                height: box.bottom - box.top + 12,
+            },
+        });
+    };
+    const bar = async () => {
+        const box = await boxOf(bold);
+        return page.screenshot({
+            clip: { x: box.left, y: box.bottom - 3, width: box.right - box.left, height: 3 },
+        });
+    };
+    const unfocused = await around();
+    const unpressed = await bar();
+
+    await page.keyboard.press('Alt+F10');
+    await expectFocus(page, 'Bold');
+    await page.mouse.move(0, 0);
+    const focused = await around();
+    const ring = await bold.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return { style: style.outlineStyle, width: Number.parseFloat(style.outlineWidth) };
+    });
+    await testInfo.attach('focused bubble toolbar item in forced colours', { body: focused, contentType: 'image/png' });
+    await page.evaluate(() => window.overlayProbe?.handle.execute('mark.bold.toggle'));
+    await expect(bold).toHaveAttribute('aria-pressed', 'true');
+    await page.keyboard.press('Escape');
+    await frames(page);
+    await select(page, 'two');
+    await expect(bubbleOf(page)).toBeVisible();
+    const pressed = await bar();
+
+    // Forced colours drops a box-shadow, so only a real outline is a ring that stays.
+    expect(ring, 'focus ring outline').toMatchObject({ style: 'solid', width: 2 });
+    expect(focused.equals(unfocused), 'focus ring').toBe(false);
+    expect(pressed.equals(unpressed), 'pressed bar').toBe(false);
+});
+
 for (const theme of ['light', 'dark'] as const) {
     test(`draws the bubble toolbar on the Fondue overlay surface in the ${theme} theme`, async ({ mount, page }) => {
         await mount(<OverlayProbe theme={theme} />);

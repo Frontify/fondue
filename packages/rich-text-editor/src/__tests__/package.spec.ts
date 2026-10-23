@@ -25,7 +25,7 @@ const LAYOUT_ENTRIES = new Set([
     './styles',
 ]);
 
-const EXPORTED_NOW = ['.', './codecs', './features', './model', './reader', './styles', './testing'];
+const EXPORTED_NOW = ['.', './codecs', './features', './locales/*', './model', './reader', './styles', './testing'];
 
 const PROSEMIRROR_FLOORS: Record<string, string> = {
     'prosemirror-commands': '1.7.2',
@@ -73,6 +73,18 @@ const listFiles = (root: string, dir = root): string[] =>
 const packageNameOf = (specifier: string): string =>
     specifier.startsWith('@') ? specifier.split('/').slice(0, 2).join('/') : (specifier.split('/')[0] ?? specifier);
 
+const LOCALES = readdirSync(join(packageRoot, 'src/locales'))
+    .filter((name) => /^[a-z]{2}-[A-Z]{2}\.ts$/.test(name))
+    .map((name) => name.slice(0, -3));
+
+/** The built files a published path names: one per source locale for the `./locales/*` pattern. */
+const filesOf = (path: string): string[] => {
+    if (!path.includes('*')) {
+        return [path];
+    }
+    return LOCALES.map((locale) => path.replace('*', locale));
+};
+
 const outDir = mkdtempSync(join(tmpdir(), 'fondue-rte-'));
 let builtFiles: string[] = [];
 
@@ -111,9 +123,20 @@ describe('package manifest and built output', () => {
             for (const published of [target.types, target.import]) {
                 const path = published ?? '';
                 expect(path.startsWith('./dist/') && !path.includes('..')).toBe(true);
-                const file = path.slice('./dist/'.length);
-                expect(built.has(file)).toBe(true);
-                expect(readFileSync(join(outDir, file), 'utf8')).toMatch(/\bexport\b/);
+                for (const file of filesOf(path.slice('./dist/'.length))) {
+                    expect(built.has(file)).toBe(true);
+                    expect(readFileSync(join(outDir, file), 'utf8')).toMatch(/\bexport\b/);
+                }
+            }
+        }
+    });
+
+    it('builds each shipped locale as its own module with its named export', () => {
+        expect(LOCALES).toContain('en-US');
+        for (const locale of LOCALES) {
+            const name = locale.replace('-', '');
+            for (const file of [`locales/${locale}.js`, `locales/${locale}.d.ts`]) {
+                expect(readFileSync(join(outDir, file), 'utf8')).toMatch(new RegExp(`\\bexport\\b[^;]*\\b${name}\\b`));
             }
         }
     });

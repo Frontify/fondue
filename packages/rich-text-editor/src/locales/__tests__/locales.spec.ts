@@ -6,6 +6,9 @@ import { readdirSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
+import { LOADERS } from '#/react/locale';
+
+import { COUNT_PLACEHOLDERS } from '../countPlaceholders';
 import { enUS } from '../en-US';
 
 const files = readdirSync(new URL('..', import.meta.url))
@@ -21,6 +24,17 @@ const localeOf = async (file: string) => {
     }
     return locale;
 };
+/** The count placeholders of `value` that stand anywhere but after a colon, an optional space or no-break space, and before the end or a period. */
+const misplacedCounts = (value: string) =>
+    COUNT_PLACEHOLDERS.filter((name) => {
+        const all = value.split(`\${${name}}`).length - 1;
+        const placed = value.match(new RegExp(`:[ \u00A0]?\\$\\{${name}\\}(?=\\.?$)`, 'g')) ?? [];
+        return all !== placed.length;
+    });
+
+// The keys of the save states that show a message and of the rejections.
+const SAVE_STATES = ['clean', 'dirty', 'saving', 'uncertain', 'offline', 'conflict', 'error'] as const;
+const SAVE_REJECTIONS = ['forbidden', 'invalid', 'incompatible-writer'] as const;
 
 describe('package locales', () => {
     it('ships the eleven locales of Fondue', () => {
@@ -38,6 +52,66 @@ describe('package locales', () => {
             const translated = locale.translationStrings[key as keyof typeof enUS.translationStrings];
             expect(placeholders(translated)).toEqual(placeholders(value));
         }
+    });
+
+    it.each(files)('gives each save state of %s its own message', async (file) => {
+        const locale = await localeOf(file);
+        const strings = Object.entries(locale.translationStrings).filter(([key]) =>
+            key.startsWith('RichTextEditor_save'),
+        );
+
+        expect(strings).toHaveLength(SAVE_STATES.length + SAVE_REJECTIONS.length);
+        expect(new Set(strings.map(([, value]) => value)).size).toBe(strings.length);
+        expect(Object.fromEntries(strings)).toMatchSnapshot();
+    });
+
+    it('loads every shipped locale but enUS through its own import()', () => {
+        expect(Object.keys(LOADERS).sort()).toEqual(files.filter((file) => file !== 'en-US'));
+    });
+
+    it.each(Object.keys(LOADERS))('loads the locale of its own id for %s', async (id) => {
+        const loader = LOADERS[id];
+        if (loader === undefined) {
+            throw new Error(`${id} has no loader`);
+        }
+
+        const locale = await loader();
+
+        expect(locale.lang).toBe(id);
+    });
+
+    it('accepts a count after a colon only, at the end or before a period', () => {
+        expect(
+            [
+                'Results: ${count}',
+                'Errors: ${errors}.',
+                'Avertissements\u00A0:\u00A0${warnings}',
+                'Review:${review}',
+            ].map(misplacedCounts),
+        ).toEqual([[], [], [], []]);
+        expect(
+            ['${count} results', 'Results ${count}', 'Errors: ${errors} found', 'Review: ${review}!'].map(
+                misplacedCounts,
+            ),
+        ).toEqual([['count'], ['count'], ['errors'], ['review']]);
+    });
+
+    it('names every enUS placeholder as a count or as one that holds no count', () => {
+        const notCounts = ['feature'];
+        const unnamed = Object.values(enUS.translationStrings)
+            .flatMap(placeholders)
+            .map((placeholder) => placeholder.slice(2, -1))
+            .filter((name) => !COUNT_PLACEHOLDERS.includes(name) && !notCounts.includes(name));
+
+        expect(unnamed).toEqual([]);
+    });
+
+    it.each(files)('puts every count of %s after a colon as a standalone value', async (file) => {
+        const locale = await localeOf(file);
+
+        expect(
+            Object.entries(locale.translationStrings).filter(([, value]) => misplacedCounts(value).length > 0),
+        ).toEqual([]);
     });
 
     it('words no enUS help, instruction or error by shape, colour, size or position alone', () => {

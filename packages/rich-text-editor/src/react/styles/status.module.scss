@@ -1,0 +1,15 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// The save state shows as text, never by colour alone.
+.status {
+    min-block-size: 1lh;
+    padding-block: var(--spacing-xx-small);
+    color: var(--color-secondary-default);
+}
+
+// A printed page drops the save status.
+@media print {
+    .status {
+        display: none;
+    }
+}

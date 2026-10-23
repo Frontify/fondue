@@ -466,6 +466,51 @@ test('names every item as its tooltip label, from the one registry label', async
     }
 });
 
+test('shows a pressed toggle by shape, which a grayscale screenshot still tells apart', async ({
+    mount,
+    page,
+}, testInfo) => {
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    await page.addStyleTag({ content: 'html { filter: grayscale(1); }' });
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    const before = await itemOf(page, 'Bold').screenshot();
+    const shapeBefore = await itemOf(page, 'Bold').evaluate((item) => getComputedStyle(item).borderBlockEndWidth);
+    await page.evaluate(() => window.toolbarEditor?.handle.execute('mark.bold.toggle'));
+    await expect(itemOf(page, 'Bold')).toHaveAttribute('aria-pressed', 'true');
+    await page.mouse.move(0, 0);
+    const pressed = await itemOf(page, 'Bold').screenshot();
+    const shapePressed = await itemOf(page, 'Bold').evaluate((item) => getComputedStyle(item).borderBlockEndWidth);
+    await testInfo.attach('pressed bold in grayscale', { body: pressed, contentType: 'image/png' });
+
+    expect(Number.parseFloat(shapeBefore)).toBe(0);
+    expect(Number.parseFloat(shapePressed)).toBeGreaterThan(0);
+    expect(pressed.equals(before)).toBe(false);
+});
+
+test('shows half bold text as mixed with a dashed bar, not the solid one of pressed', async ({ mount, page }) => {
+    const halfBold = {
+        type: 'paragraph',
+        attrs: { lang: null },
+        content: [
+            { type: 'text', text: 'half ' },
+            { type: 'text', text: 'bold', marks: [{ type: 'bold', attrs: {} }] },
+        ],
+    };
+    await mount(<ToolbarProbe blocks={[halfBold as never]} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'half bold');
+    const barStyle = () => itemOf(page, 'Bold').evaluate((item) => getComputedStyle(item).borderBlockEndStyle);
+
+    await expect(itemOf(page, 'Bold')).toHaveAttribute('aria-pressed', 'mixed');
+    expect(await barStyle()).toBe('dashed');
+    await select(page, 'bold');
+    await expect(itemOf(page, 'Bold')).toHaveAttribute('aria-pressed', 'true');
+    expect(await barStyle()).toBe('solid');
+});
+
 test('does not run Bold when the pointer leaves it before release', async ({ mount, page }) => {
     await mount(<ToolbarProbe />);
     await ready(page);
@@ -669,6 +714,38 @@ test.describe('on a phone with a sticky toolbar', () => {
 
         expect([first, await caretClear()]).toEqual([true, true]);
     });
+});
+
+test('clears the live region in one record and adds each message in the next', async ({ mount, page }) => {
+    await mount(<ToolbarProbe announce="Saved" />);
+    await ready(page);
+    const region = page.getByTestId('fondue-rich-text-editor-announcer');
+    await page.evaluate(() => {
+        const target = document.querySelector('[data-test-id="fondue-rich-text-editor-announcer"]');
+        const seen: { removed: number; added: (string | null)[] }[] = [];
+        new MutationObserver((records) => {
+            for (const record of records) {
+                seen.push({
+                    removed: record.removedNodes.length,
+                    added: [...record.addedNodes].map((node) => node.textContent),
+                });
+            }
+        }).observe(target as Element, { childList: true });
+        (window as unknown as { announced: typeof seen }).announced = seen;
+    });
+
+    for (let press = 0; press < 3; press += 1) {
+        await page.locator('[data-announce]').click();
+    }
+
+    await expect(region).toHaveText('Saved');
+    expect(await page.evaluate(() => (window as unknown as { announced: unknown }).announced)).toEqual([
+        { removed: 0, added: ['Saved'] },
+        { removed: 1, added: [] },
+        { removed: 0, added: ['Saved\u00A0'] },
+        { removed: 1, added: [] },
+        { removed: 0, added: ['Saved'] },
+    ]);
 });
 
 test('walks node chrome and the toolbar with the presentation toolbarShortcut', async ({ mount, page }) => {
@@ -1112,6 +1189,11 @@ const shotAround = async (page: Page, locator: Locator) => {
     const box = await boxOf(locator);
     return page.screenshot({ clip: { x: box.x - 6, y: box.y - 6, width: box.width + 12, height: box.height + 12 } });
 };
+/** The bottom strip of `locator`, where a pressed item draws its bar. */
+const barOf = async (page: Page, locator: Locator) => {
+    const box = await boxOf(locator);
+    return page.screenshot({ clip: { x: box.x, y: box.y + box.height - 3, width: box.width, height: 3 } });
+};
 /** What `value` computes to as a colour beside the surface, read from an element styled with it. */
 const computedColor = (page: Page, value: string) =>
     surfaceOf(page).evaluate((surface, given) => {
@@ -1134,6 +1216,40 @@ const session = (page: Page) =>
     });
 const frames = (page: Page) =>
     page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
+test('keeps focus rings, text selection and pressed toggles visible in forced colours', async ({
+    mount,
+    page,
+}, testInfo) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    const shots: Record<string, readonly [Buffer, Buffer]> = {};
+
+    await page.getByRole('button', { name: 'Before' }).focus();
+    const unfocused = await shotAround(page, itemOf(page, 'Bold'));
+    await page.keyboard.press('Tab');
+    await expectFocus(page, 'Bold');
+    shots['focus ring'] = [unfocused, await shotAround(page, itemOf(page, 'Bold'))];
+    // Forced colours drops a box-shadow, so only a real outline is a ring that stays.
+    expect(await outlineOf(itemOf(page, 'Bold'))).toMatchObject({ style: 'solid', width: 2 });
+
+    await surfaceOf(page).focus();
+    await select(page, 'one');
+    await page.mouse.move(0, 0);
+    const plain = await surfaceOf(page).screenshot();
+    const unpressed = await barOf(page, itemOf(page, 'Bold'));
+    await select(page, 'two');
+    shots['text selection'] = [plain, await surfaceOf(page).screenshot()];
+    await page.evaluate(() => window.toolbarEditor?.handle.execute('mark.bold.toggle'));
+    await expect(itemOf(page, 'Bold')).toHaveAttribute('aria-pressed', 'true');
+    shots['pressed toggle'] = [unpressed, await barOf(page, itemOf(page, 'Bold'))];
+
+    for (const [part, [before, after]] of Object.entries(shots)) {
+        await testInfo.attach(`${part} in forced colours`, { body: after, contentType: 'image/png' });
+        expect(after.equals(before), part).toBe(false);
+    }
+});
 
 test('draws the surface focus ring in forced colours', async ({ mount, page }, testInfo) => {
     await page.emulateMedia({ forcedColors: 'active' });
@@ -1274,3 +1390,31 @@ test('mirrors a nested list and a quote under rtl, the selected item frame inclu
     expect(rtl.insets).toEqual({ left: ltr.insets.right, right: ltr.insets.left });
     await expect(surfaceOf(page).locator('blockquote')).toHaveCSS('direction', 'rtl');
 });
+
+for (const forcedColors of ['none', 'active'] as const) {
+    test(`shows a pressed node chrome button with the toolbar's bar, forced colours ${forcedColors}`, async ({
+        mount,
+        page,
+    }, testInfo) => {
+        await page.emulateMedia({ forcedColors });
+        await mount(<ToolbarProbe blocks={[codeBlock('let a')]} />);
+        await ready(page);
+        const button = surfaceOf(page).locator('[data-rte-chrome] button');
+        await expect(button).toHaveAttribute('aria-pressed', 'false');
+        const unpressed = await barOf(page, button);
+
+        await button.click();
+        await expect(button).toHaveAttribute('aria-pressed', 'true');
+        await page.mouse.move(0, 0);
+        await surfaceOf(page).focus();
+        const pressed = await barOf(page, button);
+        await testInfo.attach(`pressed node chrome button, forced colours ${forcedColors}`, {
+            body: pressed,
+            contentType: 'image/png',
+        });
+
+        await expect(button).toHaveCSS('border-block-end-style', 'solid');
+        await expect(button).toHaveCSS('border-block-end-width', '2px');
+        expect(pressed.equals(unpressed)).toBe(false);
+    });
+}
