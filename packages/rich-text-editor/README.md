@@ -28,5 +28,7 @@ Run these from `packages/rich-text-editor`.
 | Entry | What it exports |
 | --- | --- |
 | `./model` | The content model and documents |
+| `./features` | The shipped features |
 | `./reader` | `RichTextReader` and `defineReaderFeature` |
 | `./codecs` | `createCodecs` |
+| `./testing` | The input helpers and the runtime probe |

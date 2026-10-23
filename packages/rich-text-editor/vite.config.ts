@@ -59,8 +59,10 @@ export default defineConfig({
         lib: {
             entry: {
                 'model/index': './src/model/index.ts',
+                'features/index': './src/features/index.ts',
                 'reader/index': './src/reader/index.ts',
                 'codecs/index': './src/codecs/index.ts',
+                'testing/index': './src/testing/index.ts',
             },
             formats: ['es'],
         },

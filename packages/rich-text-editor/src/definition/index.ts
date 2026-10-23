@@ -39,6 +39,8 @@ export { carriesNodeId, withNodeIds } from './schema';
 
 /** The transaction meta that names the command a transaction runs, so the runtime reports it. */
 export const COMMAND_META = 'rte.command';
+/** The transaction meta that names a change's origin where no UI event or command does. */
+export const ORIGIN_META = 'rte.origin';
 /** The transaction meta that carries a root batch's `AppendBatch`, which the wrapped `appendTransaction` counts in. */
 export const APPEND_BATCH_META = 'rte.append-batch';
 

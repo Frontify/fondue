@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { core } from '#/features/core/feature';
+import { bold } from '#/features/marks-bold/feature';
 import { DefinitionError, type Feature } from '#/model';
 
 /** Every shipped feature factory by feature ID. */
 export const registry: Readonly<Record<string, () => Feature>> = {
     core,
+    'marks.bold': bold,
 };
 
 export interface FeatureRecord {
@@ -22,6 +24,7 @@ const NO_DEPENDENCIES: FeatureRecord = { owner: OWNER, dependencies: {} };
 /** The owner and the dependency and license record of every shipped feature, by feature ID. */
 export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     core: NO_DEPENDENCIES,
+    'marks.bold': NO_DEPENDENCIES,
 };
 
 /**

@@ -20,6 +20,10 @@
             "types": "./dist/model/index.d.ts",
             "import": "./dist/model/index.js"
         },
+        "./features": {
+            "types": "./dist/features/index.d.ts",
+            "import": "./dist/features/index.js"
+        },
         "./reader": {
             "types": "./dist/reader/index.d.ts",
             "import": "./dist/reader/index.js"
@@ -27,6 +31,10 @@
         "./codecs": {
             "types": "./dist/codecs/index.d.ts",
             "import": "./dist/codecs/index.js"
+        },
+        "./testing": {
+            "types": "./dist/testing/index.d.ts",
+            "import": "./dist/testing/index.js"
         }
     },
     "publishConfig": {
@@ -50,9 +58,11 @@
     "dependencies": {
         "csstype": "^3.2.3",
         "markdown-it": "^15.0.2",
+        "prosemirror-commands": "^1.7.2",
         "prosemirror-keymap": "^1.2.3",
         "prosemirror-model": "^1.25.12",
         "prosemirror-state": "^1.4.4",
+        "prosemirror-transform": "^1.12.2",
         "prosemirror-view": "^1.42.6"
     },
     "devDependencies": {

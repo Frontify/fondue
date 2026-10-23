@@ -220,6 +220,54 @@ const codecsFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !=
 
 const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
 
+const TESTING_MESSAGE =
+    '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, and from `features` only conformance and fixtures.';
+
+const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition` and ProseMirror.';
+
+const PERSISTENCE_MESSAGE = '`persistence` imports `model` and `runtime`.';
+
+const testingAllowed = new Set([
+    'model',
+    'runtime',
+    'persistence',
+    'definition',
+    'reader',
+    'codecs',
+    'locales',
+    'testing',
+    'features',
+]);
+
+const testingFolders = FOLDERS.filter((folder) => !testingAllowed.has(folder));
+
+const runtimeAllowed = new Set(['model', 'definition', 'runtime']);
+
+const runtimeFolders = FOLDERS.filter((folder) => !runtimeAllowed.has(folder));
+
+const runtimeRestriction: ImportRestriction = {
+    group: [...aliasPatterns(runtimeFolders), ...relativePatterns(runtimeFolders), ...REACT_PATTERNS],
+    message: RUNTIME_MESSAGE,
+};
+
+const persistenceFolders = FOLDERS.filter(
+    (folder) => folder !== 'model' && folder !== 'runtime' && folder !== 'persistence',
+);
+
+const TESTING_FEATURE_TAILS = [
+    '',
+    '/index',
+    '/registry',
+    '/profiles',
+    '/profiles/**',
+    '/*/feature',
+    '/*/view',
+    '/*/reader',
+    '/*/migration',
+    '/*/styles',
+    '/*/styles/**',
+] as const;
+
 const definitionPatterns = [
     ...aliasPatterns(definitionFolders),
     ...relativePatterns(definitionFolders),
@@ -363,6 +411,28 @@ export default defineConfig({
             {
                 group: [...aliasPatterns(localesFolders), ...relativePatterns(localesFolders), ...ENGINE_PATTERNS],
                 message: LOCALES_MESSAGE,
+            },
+        ]),
+        layerOverride('src/testing/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(testingFolders),
+                    ...relativePatterns(testingFolders),
+                    ...featurePathPatterns(TESTING_FEATURE_TAILS),
+                    ...ENGINE_PATTERNS,
+                ],
+                message: TESTING_MESSAGE,
+            },
+        ]),
+        layerOverride('src/runtime/**/*.{ts,tsx}', [runtimeRestriction]),
+        layerOverride('src/persistence/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(persistenceFolders),
+                    ...relativePatterns(persistenceFolders),
+                    ...ENGINE_PATTERNS,
+                ],
+                message: PERSISTENCE_MESSAGE,
             },
         ]),
     ],
