@@ -9,6 +9,9 @@ import {
     type NodeViewConstructor,
 } from 'prosemirror-view';
 
+import { type ListLevels } from '#/model';
+import { listDepths, listLevelStyle } from '#/model/output';
+
 import { firstBlockId, labelsFirstBlock } from './node-views';
 
 // ProseMirror's own default margin, kept beyond the space the chrome covers.
@@ -28,6 +31,8 @@ export interface ChromeView {
     setKeyboardInset(height: number): void;
     /** The height a toolbar docked right above the on-screen keyboard adds to it, or 0. */
     setDockedInset(height: number): void;
+    /** The presentation's list markers by depth, which the view shows with no rebuild. */
+    setListLevels(levels: ListLevels | undefined): void;
 }
 
 // Node chrome controls keep the caret's top margin clear of the sticky toolbar when they scroll into view.
@@ -46,14 +51,17 @@ const writeChromeMargin = (view: EditorView | undefined, height: number) => {
 };
 
 /**
- * A node decoration with the `firstBlockId` on the first block of each node `labelsFirstBlock` names.
+ * A node decoration with its list level style on each list whose `marker` is null, as the reader writes it, and one
+ * with the `firstBlockId` on the first block of each node `labelsFirstBlock` names.
  */
 const contentDecorations = (
     surface: HTMLElement,
     nodeViews: Readonly<Record<string, NodeViewConstructor>>,
     doc: ProseMirrorNode,
+    levels: ListLevels | undefined,
 ): Decoration[] => {
     const found: Decoration[] = [];
+    const depths = listDepths();
     const visit = (parent: ProseMirrorNode, start: number) => {
         let pos = start;
         for (let index = 0; index < parent.childCount; index += 1) {
@@ -67,9 +75,17 @@ const contentDecorations = (
                     }),
                 );
             }
-            if (!child.isTextblock) {
-                visit(child, pos + 1);
-            }
+            depths.within(child.type.name, (entered) => {
+                if (entered !== undefined) {
+                    const style = listLevelStyle(entered.kind, entered.depth, levels);
+                    if (style !== undefined && child.attrs.marker === null) {
+                        found.push(Decoration.node(pos, pos + child.nodeSize, { style }));
+                    }
+                }
+                if (!child.isTextblock) {
+                    visit(child, pos + 1);
+                }
+            });
             pos += child.nodeSize;
         }
     };
@@ -91,6 +107,7 @@ export const createChromeView = (): ChromeView => {
         threshold.bottom = bottom.keyboard + bottom.docked;
         margin.bottom = threshold.bottom + MARGIN;
     };
+    let levels: ListLevels | undefined;
     // A selection change keeps the document, so it draws no content decoration again.
     let markers = new WeakMap<ProseMirrorNode, DecorationSet>();
     const listsOf = (doc: ProseMirrorNode) => {
@@ -99,7 +116,7 @@ export const createChromeView = (): ChromeView => {
         }
         let lists = markers.get(doc);
         if (lists === undefined) {
-            lists = DecorationSet.create(doc, contentDecorations(surface, nodeViews, doc));
+            lists = DecorationSet.create(doc, contentDecorations(surface, nodeViews, doc, levels));
             markers.set(doc, lists);
         }
         return lists;
@@ -143,6 +160,14 @@ export const createChromeView = (): ChromeView => {
         setDockedInset: (height) => {
             bottom.docked = height;
             writeBottom();
+        },
+        setListLevels: (next) => {
+            if (levels === next) {
+                return;
+            }
+            levels = next;
+            markers = new WeakMap();
+            view?.setProps({});
         },
     };
 };

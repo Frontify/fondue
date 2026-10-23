@@ -8,6 +8,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { bold, core, heading, quote } from '#/features';
 import { fixtureCallout } from '#/features/__tests__/fixtures/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
+import { bulletList } from '#/features/lists-bullet/feature';
+import { listItem } from '#/features/lists-item/feature';
+import { taskList } from '#/features/lists-task/feature';
 import {
     type AuthoringPolicy,
     type CommandOutcome,
@@ -164,6 +167,31 @@ describe('the blocks a plugin wraps through the editor API', () => {
         runIn(handle, 'Plain', (api) => api.blocks.wrap('callout', { tone: 'info' }));
 
         expect(blocksOf(handle)).toEqual([{ type: 'callout', attrs: { tone: 'info' }, content: [paragraph] }, title]);
+    });
+});
+
+describe('the attributes a plugin writes through the editor API', () => {
+    it('changes nothing when no selected node of the listed types declares the attribute', () => {
+        const { handle } = mount();
+
+        const result = runIn(handle, 'Plain', (api) => api.attributes.set(['paragraph', 'heading'], { level: 3 }));
+
+        expect(result?.status).toBe('rejected');
+        expect(blocksOf(handle)).toEqual([paragraph, title]);
+    });
+
+    it('refuses a heading level that the policy does not offer, by every write that makes one', () => {
+        const { handle } = mount({ policy: { creatableHeadingLevels: [1, 2] } });
+
+        const results = [
+            runIn(handle, 'Plain', (api) => api.blocks.set('heading', { level: 3 })),
+            runIn(handle, 'Title', (api) => api.attributes.set('heading', { level: 3 })),
+            runIn(handle, 'Plain', (api) => api.insert.node('heading', { level: 3 }).status === 'applied'),
+        ];
+
+        expect(results.map((result) => result?.status)).toEqual(['rejected', 'rejected', 'rejected']);
+        expect(blocksOf(handle)).toEqual([paragraph, title]);
+        expect(runIn(handle, 'Plain', (api) => api.blocks.set('heading', { level: 2 }))?.status).toBe('applied');
     });
 });
 
@@ -478,6 +506,125 @@ describe('the marks of the editor API at a caret', () => {
 
         expect(scrolls()).toBe(before + 1);
         expect(blocksOf(handle)).toEqual([paragraph, title]);
+    });
+});
+
+describe('the lists of the editor API', () => {
+    const listed = compileContentModel([core(), listItem(), bulletList(), taskList(), spotlight()], {
+        id: 'fixture.api-lists',
+        version: 1,
+    });
+    const line = (value: string): ContentNodeJSON => ({
+        type: 'paragraph',
+        attrs: { lang: null },
+        content: value === '' ? [] : [{ type: 'text', text: value }],
+    });
+    const entry = (value: string, ...nested: ContentNodeJSON[]): ContentNodeJSON => ({
+        type: 'list_item',
+        content: [line(value), ...nested],
+    });
+    const bullets = (...items: ContentNodeJSON[]): ContentNodeJSON => ({
+        type: 'bullet_list',
+        attrs: { marker: null },
+        content: items,
+    });
+    const mountLists = (...content: ContentNodeJSON[]) =>
+        mount({
+            model: listed,
+            document: {
+                ...stored,
+                model: listed.ref,
+                requiredCapabilities: listed.capabilities,
+                content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content },
+            } as unknown as RichTextDocument,
+        });
+    /** Each top-level block as the text of its paragraphs, a list as the list of its items. */
+    const shape = (handle: Handle): unknown => {
+        const of = (node: ContentNodeJSON): unknown => {
+            if (node.type === 'paragraph') {
+                return (node.content ?? []).map((child) => child.text).join('');
+            }
+            if (node.type === 'list_item' || node.type === 'task_item') {
+                return (node.content ?? []).map(of);
+            }
+            return { [node.type]: (node.content ?? []).map(of) };
+        };
+        return (blocksOf(handle) ?? []).map(of);
+    };
+
+    it('reads whether the selection sits in a list of a type, with its attributes', () => {
+        const { handle } = mountLists(line('zero'), bullets(entry('one')));
+
+        setSelection(handle, { text: 'one' });
+        const inList = live?.blocks.active('bullet_list');
+        const inCircleList = live?.blocks.active('bullet_list', { marker: 'circle' });
+        const inside = [inList, inCircleList];
+        setSelection(handle, { text: 'zero' });
+
+        expect([...inside, live?.blocks.active('bullet_list')]).toEqual([true, false, false]);
+    });
+
+    it('toggles, reads, indents and outdents lists, with the attributes of the item at the caret', () => {
+        const { handle } = mountLists(line('zero'), bullets(entry('one'), entry('two')));
+        const tasks: (boolean | undefined)[] = [];
+
+        const wrapped = runIn(handle, 'zero', (api) => api.lists.toggle('bullet_list', 'list_item'))?.status;
+        runIn(handle, 'one', (api) => {
+            seen = { status: api.lists.active('bullet_list') && !api.lists.active('task_list') ? 'applied' : 'no-op' };
+            return false;
+        });
+        const indentedOne = runIn(handle, 'one', (api) => api.lists.indent('list_item'))?.status;
+        const indentedTwo = runIn(handle, 'two', (api) => api.lists.indent('list_item'))?.status;
+        const indented = [indentedOne, indentedTwo];
+        const nested = shape(handle);
+        runIn(handle, 'two', (api) => api.lists.outdent('list_item'));
+        const refused = runIn(handle, 'zero', (api) => api.lists.toggle('task_list', 'task_item', { done: true }));
+        runIn(handle, 'one', (api) => api.lists.toggle('task_list', 'task_item', { checked: true }));
+        for (const block of blocksOf(handle) ?? []) {
+            for (const child of block.content ?? []) {
+                tasks.push(child.attrs?.checked as boolean | undefined);
+            }
+        }
+
+        expect(wrapped).toBe('applied');
+        expect(seen).toEqual({ status: 'applied' });
+        expect(indented).toEqual(['rejected', 'applied']);
+        expect(nested).toEqual([{ bullet_list: [['zero']] }, { bullet_list: [['one', { bullet_list: [['two']] }]] }]);
+        expect(refused?.status).toBe('rejected');
+        expect(tasks).toEqual([undefined, true, false]);
+    });
+
+    it('splits an item, moves an empty one out, and outdents an item from its start only with `atStart`', () => {
+        const { handle } = mountLists(bullets(entry('one'), entry('two')));
+        const at = (text: string, offset: number, run: (api: EditorApi) => boolean) => {
+            setSelection(handle, { text, from: offset, to: offset });
+            script = run;
+            let result: ReturnType<Handle['execute']> | undefined;
+            act(() => {
+                result = handle.execute('fixture.api.run');
+            });
+            return result?.status;
+        };
+
+        const split = at('one', 1, (api) => api.lists.split('list_item'));
+        const splitShape = shape(handle);
+        // The first split leaves the caret in a new, empty item, which the second moves out of the list.
+        const left = at('ne', 2, (api) => api.lists.split('list_item') && api.lists.split('list_item'));
+        const leftShape = shape(handle);
+        const midText = at('two', 1, (api) => api.lists.outdent('list_item', { atStart: true }));
+        const atStart = at('two', 0, (api) => api.lists.outdent('list_item', { atStart: true }));
+        const outside = at('two', 1, (api) => api.lists.split('list_item'));
+
+        expect([split, left, midText, atStart, outside]).toEqual([
+            'applied',
+            'applied',
+            'rejected',
+            'applied',
+            'rejected',
+        ]);
+        expect(splitShape).toEqual([{ bullet_list: [['o'], ['ne'], ['two']] }]);
+        expect(leftShape).toEqual([{ bullet_list: [['o'], ['ne']] }, '', { bullet_list: [['two']] }]);
+        expect(shape(handle)).toEqual([{ bullet_list: [['o'], ['ne']] }, '', 'two']);
     });
 });
 

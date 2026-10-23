@@ -3,7 +3,7 @@
 import { macBaseKeymap, pcBaseKeymap } from 'prosemirror-commands';
 import { keydownHandler } from 'prosemirror-keymap';
 import { type NodeType } from 'prosemirror-model';
-import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
+import { type EditorState, Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 
 import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN } from '#/model/capabilities';
 import { isApple, modOn } from '#/model/platform';
@@ -44,6 +44,37 @@ export const createKeyGuard = () =>
             },
         },
     });
+
+/**
+ * The leaf right before a caret at the start of a top-level block, or before a gap cursor between top-level blocks,
+ * when only the document takes it, as a column break, which sits only between top-level blocks.
+ */
+export const breakBefore = (state: EditorState): { readonly from: number; readonly to: number } | undefined => {
+    const { selection } = state;
+    const { $from } = selection;
+    if (!selection.empty) {
+        return undefined;
+    }
+    let at = $from.pos;
+    if ($from.parent.inlineContent) {
+        if ($from.parentOffset > 0) {
+            return undefined;
+        }
+        for (let depth = $from.depth; depth > 1; depth -= 1) {
+            if ($from.index(depth - 1) > 0) {
+                return undefined;
+            }
+        }
+        at = $from.before(1);
+    } else if ($from.depth > 0) {
+        return undefined;
+    }
+    const before = state.doc.resolve(at).nodeBefore;
+    if (before === null || !before.isLeaf || before.type.isInGroup('block')) {
+        return undefined;
+    }
+    return { from: at - before.nodeSize, to: at };
+};
 
 /**
  * Whether `type` is a container: a block whose content takes only blocks, such as a quote, and not a list item,

@@ -73,6 +73,7 @@ export {
 export { hashDocument } from './hash';
 export { checkHref, type HrefPolicy, type HrefResult } from './href';
 export { decorationLines, inheritedAnswer } from './inherited-style';
+export { isTaskListElement } from './task-list-markup';
 export { toJsonSchema } from './json-schema';
 export { type MigrationManifest, type MigrationResult, migrateDocument } from './migrate';
 export { type ColorToken, type PresentationStyle } from './styles';

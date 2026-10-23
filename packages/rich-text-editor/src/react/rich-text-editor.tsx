@@ -434,6 +434,10 @@ const SessionComponent = (
     useClientLayoutEffect(() => {
         coordinator.runtime?.setDisabled(disabled);
     }, [coordinator, disabled]);
+    const listLevels = props.presentation?.listLevels;
+    useClientLayoutEffect(() => {
+        coordinator.chrome.setListLevels(listLevels);
+    }, [coordinator, listLevels]);
 
     // A changed `services` member aborts the operations it started, with no rebuild.
     const { services } = props;
@@ -790,6 +794,7 @@ const Surface = () => {
     const { props, mounted, coordinator, chrome } = useRoot('Surface');
     const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
     const contentClassName = presentation?.contentClassName;
+    const strikeCheckedTasks = presentation?.strikeCheckedTasks === true;
     const theme = useFondueTheme();
     // The document's language and direction, else the theme's, while the chrome keeps its own.
     let lang = mounted.lang ?? theme.lang;
@@ -843,6 +848,7 @@ const Surface = () => {
             spellCheck={spellCheck}
             data-test-id={`${testId}-surface`}
             data-rte-surface=""
+            data-rte-strike-checked-tasks={strikeCheckedTasks ? '' : undefined}
             // Native focus events of the surface itself, so a move into chrome or an overlay blurs it.
             onFocus={(event) => {
                 if (event.target === event.currentTarget) {

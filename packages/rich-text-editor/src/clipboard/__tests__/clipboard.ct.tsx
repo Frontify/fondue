@@ -72,6 +72,15 @@ const flavorsOf = async (page: Page) => {
     await page.waitForFunction(() => window.flavors !== undefined);
     return page.evaluate(() => window.flavors as Flavors);
 };
+/** Disabled and checked, in document order, for each checkbox `html` writes. */
+const checkboxStates = (html: string) => {
+    const states: { readonly disabled: boolean; readonly checked: boolean }[] = [];
+    for (const match of html.matchAll(/<input type="checkbox"[^>]*>/g)) {
+        const tag = match[0];
+        states.push({ disabled: tag.includes('disabled'), checked: tag.includes('checked') });
+    }
+    return states;
+};
 const copied = async (page: Page) => {
     await recordFlavors(page, 'copy');
     await page.keyboard.press('ControlOrMeta+c');
@@ -268,6 +277,44 @@ test('writes text/plain, text/html and the internal slice on copy and dragstart 
     });
     expect(JSON.parse(block.slice)).toMatchObject({ openStart: 0, openEnd: 0, content: [paragraph('a   b')] });
     expect(dragged).toEqual(block);
+});
+
+test('writes a disabled checkbox for a checked task item and an unchecked one on copy and dragstart @engine', async ({
+    mount,
+    page,
+}) => {
+    await mount(
+        <ClipboardProbe
+            tasks={[
+                { nodeId: 'task-1', text: 'Done', checked: true },
+                { nodeId: 'task-2', text: 'Open', checked: false },
+            ]}
+        />,
+    );
+    await ready(page);
+    await surfaceOf(page).focus();
+    await selectBlock(page, 0);
+    const copiedTasks = await copied(page);
+
+    await selectBlock(page, 0);
+    await recordFlavors(page, 'dragstart');
+    // The checkbox sits in the item, so the drag starts on the selected list rather than on that control.
+    await page.evaluate(() => {
+        const selected = document.querySelector('.ProseMirror-selectednode');
+        if (selected === null) {
+            throw new Error('no selected task list');
+        }
+        const dataTransfer = new DataTransfer();
+        selected.dispatchEvent(new DragEvent('dragstart', { dataTransfer, bubbles: true, cancelable: true }));
+    });
+    const dragged = await flavorsOf(page);
+    const boxes = [
+        { disabled: true, checked: true },
+        { disabled: true, checked: false },
+    ];
+
+    expect(checkboxStates(copiedTasks.html)).toEqual(boxes);
+    expect(checkboxStates(dragged.html)).toEqual(boxes);
 });
 
 test('deletes a cut selection once, as one undo step @engine', async ({ mount, page }) => {

@@ -37,6 +37,7 @@ import {
     type WriteTarget,
 } from './document-api';
 import { canRedo, canUndo } from './history';
+import { enterItem, listAround, outdentAtStart } from './lists';
 import { inCodeTextblock, nearest as nearestNode, positionOf } from './positions';
 import { type EditorRuntime, summarize } from './runtime';
 import { appendSteps, carrySelection } from './transactions';
@@ -572,6 +573,20 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 return edit(capability(EDITS.block, { action }));
             },
         },
+        attributes: {
+            set: (nodes, attrs, options) => {
+                const node = typeof nodes === 'string' ? nodes : [...nodes];
+                let types = typeof nodes === 'string' ? [nodes] : [...nodes];
+                if (nodes === 'textblocks') {
+                    types = Object.values(schema.nodes)
+                        .filter((type) => type.isTextblock)
+                        .map(({ name }) => name);
+                }
+                const nodeId = options?.nodeId === undefined ? {} : { nodeId: options.nodeId };
+                const args = { node, toggle: options?.toggle === true };
+                return editWith(EDITS.setAttributes, args, types, attrs, false, nodeId);
+            },
+        },
         insert: {
             node: (node, attrs) => {
                 const type = schema.nodes[node];
@@ -593,6 +608,35 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 return commit(state, transaction, firstWrite(transaction), Fragment.from(inline));
             },
             text: (text) => edit(capability(EDITS.insertText, {}), { text }),
+        },
+        lists: {
+            active: (list) => listAround(source.state().selection.$from)?.list.type.name === list,
+            toggle: (list, item, attrs) =>
+                schema.nodes[list] !== undefined &&
+                schema.nodes[item] !== undefined &&
+                editWith(EDITS.toggleList, { list, item }, [list, item], attrs, false),
+            indent: (item) => schema.nodes[item] !== undefined && edit(capability(EDITS.indentItem, { item })),
+            outdent: (item, options) => {
+                const type = schema.nodes[item];
+                if (type === undefined) {
+                    return false;
+                }
+                if (options?.atStart === true && !outdentAtStart(type, source.state())) {
+                    return false;
+                }
+                return edit(capability(EDITS.outdentItem, { item }));
+            },
+            split: (item) => {
+                const type = schema.nodes[item];
+                if (type === undefined) {
+                    return false;
+                }
+                const enter = enterItem(type);
+                return edit({
+                    run: (state, dispatch) => enter(state, dispatch),
+                    active: () => false,
+                });
+            },
         },
         content: {
             read: (range) => {

@@ -5,6 +5,10 @@ import { headingEditor } from '#/features/blocks-heading/editor';
 import { quoteEditor } from '#/features/blocks-quote/editor';
 import { coreEditor } from '#/features/core/editor';
 import { inputRulesEditor } from '#/features/input-rules/editor';
+import { bulletListEditor } from '#/features/lists-bullet/editor';
+import { listItemEditor } from '#/features/lists-item/editor';
+import { orderedListEditor } from '#/features/lists-ordered/editor';
+import { taskListEditor } from '#/features/lists-task/editor';
 import { boldEditor } from '#/features/marks-bold/editor';
 import { codeEditor } from '#/features/marks-code/editor';
 import { italicEditor } from '#/features/marks-italic/editor';
@@ -22,6 +26,10 @@ const SHIPPED = [
     codeEditor,
     subscriptEditor,
     superscriptEditor,
+    listItemEditor,
+    bulletListEditor,
+    orderedListEditor,
+    taskListEditor,
     headingEditor,
     quoteEditor,
     inputRulesEditor,

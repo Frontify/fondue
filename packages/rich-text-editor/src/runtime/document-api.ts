@@ -103,10 +103,43 @@ export interface DocumentApi {
         /** Swaps the blocks the selection spans, or the container they fill, with the block before or after them. */
         move(direction: 'up' | 'down'): boolean;
     };
+    readonly attributes: {
+        /**
+         * Sets `attrs` on the node `nodeId` names, else on the selected nodes of `nodes`, else on the nearest one;
+         * `textblocks` names every textblock type. With `toggle`, restores the defaults when every target has them.
+         */
+        set(
+            nodes: string | readonly string[],
+            attrs: JsonObject,
+            options?: { readonly nodeId?: string; readonly toggle?: boolean },
+        ): boolean;
+    };
     readonly insert: {
         /** Inserts the inline `node` at the selection, as typing would; a block type is rejected as `invalid`. */
         node(node: string, attrs?: JsonObject): WriteOutcome;
         text(text: string): boolean;
+    };
+    /** List edits, where `list` is a list type such as `bullet_list` and `item` its item type such as `list_item`. */
+    readonly lists: {
+        /** Whether the innermost list at the selection is a `list`. */
+        active(list: string): boolean;
+        /**
+         * Wraps the selected blocks in a `list` of `item`s, turns the innermost list at the selection into one, or turns
+         * its selected items into paragraphs when it already is one; `attrs` go to the list and to the item at the caret.
+         */
+        toggle(list: string, item: string, attrs?: JsonObject): boolean;
+        /** Nests the selected `item`s under their previous sibling, keeping their children. */
+        indent(item: string): boolean;
+        /**
+         * Moves the selected `item`s one level out, or out of the list as paragraphs at the top level; with `atStart`,
+         * only from a caret at the start of its own first block, and never right after a column break.
+         */
+        outdent(item: string, options?: { readonly atStart?: boolean }): boolean;
+        /**
+         * Splits the `item` whose own block holds the selection, with a new task item unchecked; an empty one that holds
+         * only that block moves one level out instead.
+         */
+        split(item: string): boolean;
     };
     /**
      * Writes stored JSON nodes, checked as decode checks them but refused rather than cleaned: a write that breaks the

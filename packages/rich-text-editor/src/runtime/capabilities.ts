@@ -1,7 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
-import { type MarkType, type Node, NodeRange, type NodeType, type ResolvedPos, type Schema } from 'prosemirror-model';
+import {
+    Fragment,
+    type MarkType,
+    type Node,
+    NodeRange,
+    type NodeType,
+    type ResolvedPos,
+    type Schema,
+} from 'prosemirror-model';
+import { liftListItem, sinkListItem, wrapRangeInList } from 'prosemirror-schema-list';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
@@ -20,6 +29,9 @@ import { blockDecorationsPlugin } from './decorations';
 import { historyPlugin, redo, undo } from './history';
 import { enterRules, inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin } from './keys';
+import { liftItems, listAround, repeatWhile } from './lists';
+import { inCodeTextblock, nearest, positionOf } from './positions';
+import { carrySelection } from './transactions';
 
 /** Builds the engine command of one edit from its arguments. */
 export type CapabilityImplementation = (args: JsonObject, schema: Schema, command: CommandLookup) => EngineCommand;
@@ -308,6 +320,286 @@ const block: CapabilityImplementation = (args) => ({
     active: () => false,
 });
 
+/** The payload's fields that `type` declares as attributes, such as `start` for `ordered_list`. */
+const declaredIn = (type: NodeType, payload: unknown) => {
+    const attrs: Record<string, unknown> = {};
+    if (isRecord(payload)) {
+        for (const [name, value] of Object.entries(payload)) {
+            if (Object.hasOwn(type.spec.attrs ?? {}, name)) {
+                attrs[name] = value;
+            }
+        }
+    }
+    return attrs;
+};
+
+/** Whether the innermost list at the selection holds items of `item`, so a key of another list's items passes on. */
+const inListOf = (state: EditorState, item: NodeType) => {
+    const around = listAround(state.selection.$from);
+    return around !== undefined && around.list.firstChild?.type === item;
+};
+
+/**
+ * Wraps the selected blocks in the list, with headings and other textblocks first turned into paragraphs, which keeps
+ * their inline content and references.
+ */
+const wrapInList = (state: EditorState, list: NodeType, item: NodeType, payload: unknown) => {
+    const paragraph = state.schema.nodes.paragraph as NodeType;
+    const { $from, $to } = state.selection;
+    const transaction = state.tr.setBlockType($from.pos, $to.pos, paragraph, (node) => carried(node, paragraph, {}));
+    const range = transaction.doc
+        .resolve(transaction.mapping.map($from.pos))
+        .blockRange(transaction.doc.resolve(transaction.mapping.map($to.pos)));
+    if (range === null || !wrapRangeInList(transaction, range, list, declaredIn(list, payload))) {
+        return undefined;
+    }
+    // A rule's payload, such as `checked` from `[x] `, applies to the new items.
+    const itemAttrs = Object.entries(declaredIn(item, payload));
+    const { start, end } = range;
+    transaction.doc.nodesBetween(transaction.mapping.map(start), transaction.mapping.map(end), (node, pos) => {
+        if (node.type === item) {
+            for (const [name, value] of itemAttrs) {
+                transaction.setNodeAttribute(pos, name, value);
+            }
+        }
+        return node.type !== item;
+    });
+    return transaction.scrollIntoView();
+};
+
+/**
+ * Turns the list at the selection's depth into `list`, keeping items, nesting and children: an ordered list takes the
+ * payload's `start`, new task items are unchecked unless a rule's `checked` names the item at the caret, and items that
+ * leave a task list drop `checked`.
+ */
+const convertList = (
+    state: EditorState,
+    around: NonNullable<ReturnType<typeof listAround>>,
+    list: NodeType,
+    item: NodeType,
+    payload: unknown,
+) => {
+    const caret = state.selection.$from.index(around.depth);
+    const content = Fragment.from(
+        around.list.children.map((child, index) => {
+            let attrs = {};
+            if (index === caret) {
+                attrs = declaredIn(item, payload);
+            }
+            return item.create(attrs, child.content, child.marks);
+        }),
+    );
+    if (!list.validContent(content)) {
+        return undefined;
+    }
+    const pos = state.selection.$from.before(around.depth);
+    const transaction = state.tr.replaceWith(
+        pos,
+        pos + around.list.nodeSize,
+        list.create(declaredIn(list, payload), content),
+    );
+    // Items and lists keep their sizes, so every position, and the selection with them, stays the same.
+    return transaction.setSelection(carrySelection(transaction.doc, state.selection)).scrollIntoView();
+};
+
+const toggleList: CapabilityImplementation = (args, schema) => {
+    // Compilation checked that the model declares both nodes.
+    const list = schema.nodes[args.list as string] as NodeType;
+    const item = schema.nodes[args.item as string] as NodeType;
+    const isList = (state: EditorState) => listAround(state.selection.$from)?.list.type === list;
+    return {
+        run: (state, dispatch, payload) => {
+            let transaction: Transaction | undefined;
+            const around = listAround(state.selection.$from);
+            if (around === undefined) {
+                transaction = wrapInList(state, list, item, payload);
+            } else if (isList(state)) {
+                // The selected items leave every level of this list type and become paragraphs.
+                transaction = repeatWhile(state, liftItems(item), isList);
+            } else {
+                transaction = convertList(state, around, list, item, payload);
+            }
+            if (transaction === undefined) {
+                return false;
+            }
+            dispatch?.(transaction);
+            return true;
+        },
+        active: (state) => isList(state),
+    };
+};
+
+const indentItem: CapabilityImplementation = (args, schema) => {
+    const item = schema.nodes[args.item as string] as NodeType;
+    const sink = sinkListItem(item);
+    return {
+        run: (state, dispatch) =>
+            !inCodeTextblock(state.selection.$from) && inListOf(state, item) && sink(state, dispatch),
+        active: () => false,
+    };
+};
+
+const outdentItem: CapabilityImplementation = (args, schema) => {
+    const item = schema.nodes[args.item as string] as NodeType;
+    const lift = liftListItem(item);
+    return {
+        run: (state, dispatch) =>
+            !inCodeTextblock(state.selection.$from) && inListOf(state, item) && lift(state, dispatch),
+        active: () => false,
+    };
+};
+
+/** The node types a `setAttributes` command names: one, a list, or every textblock type. */
+const typesOf = (node: unknown, schema: Schema): readonly NodeType[] => {
+    if (node === 'textblocks') {
+        return Object.values(schema.nodes).filter((type) => type.isTextblock);
+    }
+    const names = Array.isArray(node) ? (node as readonly unknown[]) : [node];
+    return names.flatMap((name) => {
+        const type = typeof name === 'string' ? schema.nodes[name] : undefined;
+        if (type === undefined) {
+            return [];
+        }
+        return [type];
+    });
+};
+
+type Located = { readonly node: Node; readonly pos: number };
+
+/** The default of a node type's attribute, which a toggle that removes a value restores. */
+const defaultOf = (type: NodeType, name: string): unknown => {
+    const specs = type.spec.attrs;
+    if (specs === undefined) {
+        return null;
+    }
+    const spec = specs[name];
+    if (spec === undefined) {
+        return null;
+    }
+    return spec.default;
+};
+
+/** The innermost node of `types` that holds the textblock at `pos`, or that textblock itself. */
+const holderOf = (doc: Node, pos: number, types: readonly NodeType[]): Located | undefined => {
+    const $inside = doc.resolve(pos + 1);
+    for (let depth = $inside.depth; depth > 0; depth -= 1) {
+        const node = $inside.node(depth);
+        if (types.includes(node.type)) {
+            return { node, pos: $inside.before(depth) };
+        }
+    }
+    return undefined;
+};
+
+/**
+ * The nodes of `types` the selection touches, in document order: each selected atom of a type, and for each selected
+ * textblock the innermost node of a type that holds it, so a caret in a nested list names that list only.
+ */
+const selectedOf = (state: EditorState, types: readonly NodeType[]): Located[] => {
+    const found = new Map<number, Located>();
+    for (const { $from, $to } of state.selection.ranges) {
+        state.doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
+            if (node.isTextblock) {
+                const holder = holderOf(state.doc, pos, types);
+                if (holder !== undefined) {
+                    found.set(holder.pos, holder);
+                }
+            } else if (node.isAtom && types.includes(node.type)) {
+                found.set(pos, { node, pos });
+            }
+        });
+    }
+    return [...found.values()].sort((a, b) => a.pos - b.pos);
+};
+
+/** The nodes a `setAttributes` command changes: the one `nodeId` names, else the selected nodes of `types`, else the nearest node of `types`. */
+const attributeTargets = (state: EditorState, types: readonly NodeType[], nodeId: unknown): Located[] => {
+    if (typeof nodeId === 'string') {
+        const pos = positionOf(state.doc, nodeId);
+        if (pos === undefined) {
+            return [];
+        }
+        const node = state.doc.nodeAt(pos);
+        if (node === null || !types.includes(node.type)) {
+            return [];
+        }
+        return [{ node, pos }];
+    }
+    const selected = selectedOf(state, types);
+    if (selected.length > 0) {
+        return selected;
+    }
+    for (const type of types) {
+        const found = nearest(state, type);
+        if (found !== undefined) {
+            return [found];
+        }
+    }
+    return [];
+};
+
+/** The targets that declare at least one of `attrs`, which the others skip. */
+const declaring = (targets: Located[], attrs: Readonly<Record<string, unknown>>): Located[] =>
+    targets.filter(({ node }) => Object.keys(attrs).some((name) => node.type.spec.attrs?.[name] !== undefined));
+
+/**
+ * Sets the payload's other fields on the node its `nodeId` names, else on the selected nodes of the listed types,
+ * else on the nearest node of one; with `toggle`, removes the values when every target already has them.
+ */
+const setAttributes: CapabilityImplementation = (args, schema) => {
+    const types = typesOf(args.node, schema);
+    const has = (node: Node, attrs: Readonly<Record<string, unknown>>) =>
+        Object.entries(attrs).every(([name, value]) => node.attrs[name] === value);
+    const split = (payload: unknown) => {
+        if (!isRecord(payload)) {
+            return undefined;
+        }
+        const { nodeId, ...attrs } = payload;
+        return { nodeId, attrs };
+    };
+    return {
+        run: (state, dispatch, payload) => {
+            const parts = split(payload);
+            if (parts === undefined) {
+                return false;
+            }
+            const targets = declaring(attributeTargets(state, types, parts.nodeId), parts.attrs);
+            const removes =
+                args.toggle === true && targets.length > 0 && targets.every(({ node }) => has(node, parts.attrs));
+            const changes = targets.flatMap(({ node, pos }) =>
+                Object.entries(parts.attrs)
+                    .filter(([name]) => node.type.spec.attrs?.[name] !== undefined)
+                    .map(([name, value]) => {
+                        if (removes) {
+                            return { pos, name, value: defaultOf(node.type, name) };
+                        }
+                        return { pos, name, value };
+                    })
+                    .filter(({ name, value }) => node.attrs[name] !== value),
+            );
+            if (changes.length === 0) {
+                return false;
+            }
+            if (dispatch !== undefined) {
+                const transaction = state.tr;
+                for (const { pos, name, value } of changes) {
+                    transaction.setNodeAttribute(pos, name, value);
+                }
+                dispatch(transaction);
+            }
+            return true;
+        },
+        active: (state, payload) => {
+            const parts = split(payload);
+            if (parts === undefined) {
+                return false;
+            }
+            const targets = declaring(attributeTargets(state, types, parts.nodeId), parts.attrs);
+            return tristate(targets.filter(({ node }) => has(node, parts.attrs)).length, targets.length);
+        },
+    };
+};
+
 /** Removes every mark of `types` from the selected text, or from the stored marks at a caret. */
 const clearMarks = (
     state: EditorState,
@@ -386,9 +678,13 @@ const removeMark: CapabilityImplementation = (args, schema) => {
 export const EDITS = {
     block,
     history,
+    indentItem,
     insertText,
+    outdentItem,
     removeMark,
+    setAttributes,
     setBlock,
+    toggleList,
     toggleMark,
     wrapIn,
 } as const;

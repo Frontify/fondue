@@ -1,0 +1,148 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "feature-contract",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "core",
+            "version": 1
+        },
+        {
+            "id": "lists.item",
+            "version": 1
+        },
+        {
+            "id": "lists.ordered",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": {
+            "lang": null,
+            "dir": "auto"
+        },
+        "content": [
+            {
+                "type": "ordered_list",
+                "attrs": {
+                    "start": 5,
+                    "marker": null
+                },
+                "content": [
+                    {
+                        "type": "list_item",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "attrs": {
+                                    "lang": null,
+                                    "align": null
+                                },
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Download the kit"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ordered_list",
+                                "attrs": {
+                                    "start": 1,
+                                    "marker": null
+                                },
+                                "content": [
+                                    {
+                                        "type": "list_item",
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "attrs": {
+                                                    "lang": null,
+                                                    "align": null
+                                                },
+                                                "content": [
+                                                    {
+                                                        "type": "text",
+                                                        "text": "Unzip it"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "list_item",
+                                        "content": [
+                                            {
+                                                "type": "paragraph",
+                                                "attrs": {
+                                                    "lang": null,
+                                                    "align": null
+                                                },
+                                                "content": [
+                                                    {
+                                                        "type": "text",
+                                                        "text": "Open the guide"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "list_item",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "attrs": {
+                                    "lang": null,
+                                    "align": null
+                                },
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Pick a template"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "ordered_list",
+                "attrs": {
+                    "start": 1,
+                    "marker": "lower-roman"
+                },
+                "content": [
+                    {
+                        "type": "list_item",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "attrs": {
+                                    "lang": null,
+                                    "align": null
+                                },
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Roman step"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

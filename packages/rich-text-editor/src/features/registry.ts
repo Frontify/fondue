@@ -5,6 +5,10 @@ import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
 import { inputRules } from '#/features/input-rules/feature';
+import { bulletList } from '#/features/lists-bullet/feature';
+import { listItem } from '#/features/lists-item/feature';
+import { orderedList } from '#/features/lists-ordered/feature';
+import { taskList } from '#/features/lists-task/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { code } from '#/features/marks-code/feature';
 import { italic } from '#/features/marks-italic/feature';
@@ -27,6 +31,10 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'blocks.heading': heading,
     'blocks.quote': quote,
     'blocks.align': align,
+    'lists.item': listItem,
+    'lists.bullet': bulletList,
+    'lists.ordered': orderedList,
+    'lists.task': taskList,
     'input-rules': inputRules,
 };
 
@@ -54,6 +62,10 @@ export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     'blocks.heading': NO_DEPENDENCIES,
     'blocks.quote': NO_DEPENDENCIES,
     'blocks.align': NO_DEPENDENCIES,
+    'lists.item': NO_DEPENDENCIES,
+    'lists.bullet': NO_DEPENDENCIES,
+    'lists.ordered': NO_DEPENDENCIES,
+    'lists.task': NO_DEPENDENCIES,
     'input-rules': NO_DEPENDENCIES,
 };
 

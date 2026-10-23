@@ -1,0 +1,25 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../styles/focus-outline';
+
+.checkbox {
+    @include focus-outline.focus-outline;
+
+    margin: 0.25em 0 0;
+
+    // A coarse pointer gets a target of at least 44 by 44 CSS pixels.
+    @media (pointer: coarse) {
+        min-inline-size: 44px;
+        min-block-size: 44px;
+    }
+}
+
+:where(:global(.fondue-rte-content) li:has(> [data-rte-chrome] > .checkbox)) {
+    list-style: none;
+}
+
+// The checkbox sits beside the item's text, not above it.
+:where(:global(.fondue-rte-content) [data-rte-chrome]:has(> .checkbox)) {
+    display: flex;
+    gap: 0.5em;
+}

@@ -63,6 +63,9 @@ const SESSION = {
 const PAYLOADS: Readonly<Record<string, unknown>> = {
     'text.insert': { text: 'a' },
     'heading.set': { level: 2 },
+    'list.ordered.toggle': { start: 1 },
+    'list.ordered.start.set': { start: 2 },
+    'task.setChecked': { nodeId: 'task-1', checked: false },
 };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [
