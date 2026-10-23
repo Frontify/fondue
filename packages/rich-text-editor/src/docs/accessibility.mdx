@@ -1,0 +1,93 @@
+{/* (c) Copyright Frontify Ltd., all rights reserved. */}
+
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Rich Text Editor/Guides/Accessibility" />
+
+# Accessibility
+
+This page explains how the editor works for authors who use a keyboard or a screen reader, and how it helps authors write accessible content. It describes behavior. It claims no conformance.
+
+The surface needs an accessible name: pass exactly one of `aria-label` or `aria-labelledby`.
+
+## Keyboard model
+
+`Mod` is Command on Apple platforms and Ctrl on the others.
+
+- **One text box.** The editing surface is one `role="textbox"`. It is multi-line in every profile but Inline. `status="error"` sets `aria-invalid`, `required` sets `aria-required`, `disabled` sets `aria-disabled`, and `aria-describedby`, `aria-errormessage` and `placeholder` reach the surface.
+- **Tab leaves the editor.** Tab and Shift+Tab move focus out of the surface, so a keyboard user is never trapped. There are two exceptions. In an open suggestion list, Tab accepts the active option. In a list or task item that can move, Tab indents and Shift+Tab outdents. An item that cannot nest, such as the first one, lets Tab leave. A code block lets Tab leave too, and Mod+] and Mod+[ indent and outdent its lines. Set `tabMovesFocus` and Tab and Shift+Tab always move focus, apart from accepting a suggestion.
+- **Escape closes.** Escape closes an open suggestion list and keeps the typed text. It closes an open popover, dialog or panel, and returns focus to the surface or to the control that opened it. It closes the bubble toolbar and the link bubble without moving focus. An Escape that nothing takes is left to the host.
+- **Enter.** In the Document profiles Enter starts a new block. In the Comment profile Mod+Enter submits through `onSubmit` and Enter starts a paragraph. The editor describes the submit key through `aria-describedby`. The policy `enterBehavior: 'submit'` makes Enter submit. In the multi-line profiles Shift+Enter then does what Enter does otherwise, such as starting a paragraph or splitting a list item. The Inline profile submits on Enter, Shift+Enter and Mod+Enter. The Document and Brand document profiles call `onSubmit` only with that policy, since their default policy has no submit key.
+- **No bare character shortcuts.** No shortcut of any profile binds a printable key without Ctrl, Command or Alt, so typing an ordinary character never runs a command.
+- **Composition.** No key handler, keymap or toolbar shortcut runs while an input method composes text.
+- **Read-only.** A read-only surface takes keyboard focus with Tab, so its content can be read and selected. A disabled one leaves the Tab order.
+- **Shortcuts are findable.** Each toolbar button names its shortcut through `aria-keyshortcuts` and in its tooltip. The feature stories list every shortcut by area, for Apple and for other platforms.
+
+## Toolbar
+
+- **One Tab stop.** The toolbar is `role="toolbar"`, labelled "Text formatting", with `aria-controls` pointing at the surface. Tab enters it once. Arrow keys move between items, Home and End jump to the first and the last, and the arrows follow the visual order, also for right-to-left text.
+- **Alt+F10.** From the surface, Alt+F10 moves focus to the toolbars: first the chrome of a selected node such as an image or a code block, then the bubble toolbar, then the fixed toolbar, which takes focus on its first item, and on later presses on the item that last had focus. It also works in a read-only editor. A host sets another key with the presentation's `toolbarShortcut`.
+- **Escape.** The first Escape closes an open tooltip. The next one returns focus to the surface and keeps the selection.
+- **The bubble toolbar.** In bubble mode, the toolbar "Selection formatting" opens at the selection and stays out of the Tab order. Alt+F10 enters it. It closes on Escape without moving focus, and stays open while the pointer or focus is on it. The More menu holds a switch between "Always show toolbar" and "Show toolbar on selection only".
+- **Node chrome.** The controls around an image, a code block or a task item stay out of the Tab order, so Tab leaves the editor. Alt+F10 reaches them.
+- **Names.** An icon-only control has an accessible name that equals its tooltip, in the editor's locale. A toggle sets `aria-pressed`.
+- **Unavailable commands.** A command that cannot run now keeps its item focusable with `aria-disabled`, and the tooltip says why: "Not available at the current selection", "Not allowed in this editor" or "The content is read-only".
+- **Overflow.** Items that do not fit move into the More menu, which has the same keyboard model.
+
+## Messages
+
+A polite live region announces the active suggestion with its place, an upload starting, finishing or failing, a task checked or unchecked from the keyboard, formatting or media that a paste removed, why an empty required field does not submit, and the summary of the accessibility checks.
+
+## Content checks
+
+The `a11y.content-checks` feature is in the Document and Brand document profiles. The Accessibility checks button in the toolbar opens the issues panel. Its summary heading takes focus and counts the errors, the warnings and the items to review. Each issue shows its severity as text, the rule's name and ID, and up to 60 characters of the text it concerns.
+
+- **Go to** selects what the issue names, scrolls it into view and focuses the surface. The panel stays open.
+- **Fix** runs the repair: a command such as `paragraph.set` or `heading.set`, or a dialog, popover or menu that returns focus to Fix when it closes.
+- **How to decide** explains each rule.
+- A warning or a review can be dismissed until its content changes. An error cannot, because each has a repair.
+- While the panel is open, the surface outlines each automatic issue and marks it with an icon. Escape closes the panel and returns focus to the surface.
+
+The checks run 750 ms after the last change and when the panel opens, never while text is being composed. They store nothing in the document and never block a save. `findContentIssues(document, options)` from `@frontify/rich-text-editor/model` finds the same issues with the same IDs on a server, given the same `model`, `colorTokens` and `background` options as the editor. Its `locale` option is required and supplies the word lists of the image and link checks. Its `enclosingHeadingLevel` option is the host page's heading level around the editor, which the first heading is checked against; without it, the content checks feature's own `enclosingHeadingLevel` option in `model` applies, and with neither the first heading is exempt.
+
+An automatic rule decides from the document. A manual rule lists what only a person can decide, and shows instructions.
+
+| Rule ID                      | Kind      | Severity | Finds                                                                                                      |
+| ---------------------------- | --------- | -------- | ---------------------------------------------------------------------------------------------------------- |
+| `image.alt-missing`          | automatic | error    | An image whose alternative text is missing                                                                 |
+| `image.alt-suspicious`       | automatic | warning  | Meaningful alternative text equal to the image label, ending in an image file extension, or a generic word |
+| `image.content-review`       | manual    | review   | Any image                                                                                                  |
+| `link.text-empty`            | automatic | error    | A link whose text is empty after trimming                                                                  |
+| `link.text-vague`            | automatic | warning  | Link text on the locale's vague list, such as "click here"                                                 |
+| `link.purpose-review`        | manual    | review   | Any link                                                                                                   |
+| `heading.empty`              | automatic | error    | A heading with no text                                                                                     |
+| `heading.skipped-level`      | automatic | warning  | A heading more than one level below the previous one                                                       |
+| `heading.descriptive-review` | manual    | review   | Any heading                                                                                                |
+| `table.no-header`            | automatic | warning  | A table with no header cell                                                                                |
+| `contrast.low`               | automatic | error    | Coloured text below 4.5:1, or 3:1 for large text, against a known opaque background                        |
+| `contrast.unknown`           | automatic | review   | Coloured text whose colour or background cannot be resolved                                                |
+| `color.meaning-review`       | manual    | review   | Any text or highlight colour                                                                               |
+| `language.parts-review`      | manual    | review   | Once per document                                                                                          |
+| `sensory.review`             | manual    | review   | Once per document                                                                                          |
+| `embed.title-missing`        | automatic | error    | An embed with no title                                                                                     |
+| `embed.media-review`         | manual    | review   | Any embed                                                                                                  |
+| `structure.review`           | manual    | review   | Once per document                                                                                          |
+
+The table and embed rules read documents that hold those nodes. No shipped profile installs tables or embeds yet. See the Limitations guide.
+
+## Alternative text
+
+The `media.image` feature stores each image with an `altIntent` of `missing`, `decorative` or `meaningful`, and an `altText`.
+
+- A new image starts as `missing`. The image chrome shows "Add alternative text" until the author decides, and the rule `image.alt-missing` reports it as an error.
+- The alternative text dialog asks first whether the image is Meaningful or Decorative. Meaningful needs text, which describes what the image shows. Decorative says the image adds no information, so screen readers skip it. The field holds the image's text and never its file name.
+- Another image of the same asset with meaningful text is offered as a suggestion.
+- Replacing an image keeps its alternative text and asks the author to review it. After an upload, the live region says that the image has no alternative text yet.
+- The reader and `toHTML` write `alt=""` for a decorative image and the text for a meaningful one. They write no `alt` while it is missing.
+
+## Language marking
+
+- **The document.** The document root holds `lang` and `dir`, and a paragraph or heading holds its own `lang`. The editing surface takes the document's language and direction. The reader and `toHTML` write them as `lang` and `dir` attributes.
+- **A passage.** The `marks.language` feature marks a passage as a `span` with a `lang` and an optional `dir`. The Language button opens a picker. The picker lists the `languages` option, labelled in the editor's language, and takes a typed tag that `Intl.getCanonicalLocales` accepts. A tag it rejects changes nothing, and the dialog says "Enter a valid language tag." Text typed at the end of a passage stays outside it.
+- **The check.** The manual rule `language.parts-review` asks once per document whether a passage is in another language, so screen readers can pronounce it correctly. Its repair opens the language picker when the feature is installed.
+- **The interface.** The `locale` prop sets the language of the editor's own text. The package ships `de-CH`, `de-DE`, `en-US`, `es-ES`, `fr-CH`, `fr-FR`, `it-CH`, `it-IT`, `nl-NL`, `pl-PL` and `pt-PT`. A host imports one from its own entry, for example `import { deDE } from '@frontify/rich-text-editor/locales/de-DE';`, and passes it as `locale`.

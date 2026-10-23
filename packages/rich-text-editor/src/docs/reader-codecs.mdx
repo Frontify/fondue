@@ -1,0 +1,117 @@
+{/* (c) Copyright Frontify Ltd., all rights reserved. */}
+
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Rich Text Editor/Guides/Reader and codecs" />
+
+# Reader and codecs
+
+Published content never needs the editing engine. Two entries turn a stored document into output without it:
+
+- `@frontify/rich-text-editor/reader` renders a document as React elements. It has no engine, hook, context or DOM access, so it renders on the server and in the browser.
+- `@frontify/rich-text-editor/codecs` turns a document into HTML, plain text or Markdown, and turns Markdown into a document.
+
+Both take the same compiled model as the editor. Both decode the document first, so both report the same decode problems.
+
+## The reader
+
+`RichTextReader` takes these props:
+
+| Prop           | What it is                                                                                                     |
+| -------------- | -------------------------------------------------------------------------------------------------------------- |
+| `document`     | The stored document, as JSON text or as a parsed value.                                                        |
+| `model`        | The compiled content model, such as `commentModel` from `@frontify/rich-text-editor/features`.                 |
+| `presentation` | What the host decides about the output. See below.                                                             |
+| `locale`       | A `RichTextLocale`, such as `deDE` from `@frontify/rich-text-editor/locales/de-DE`. The default is `enUS`.     |
+| `limits`       | The resource limits the writing editor used, when a host loosened them. The default limits apply when omitted. |
+| `onDiagnostic` | Called with each diagnostic of the document while the reader renders.                                          |
+
+```tsx
+import { commentModel } from '@frontify/rich-text-editor/features';
+import { RichTextReader } from '@frontify/rich-text-editor/reader';
+
+const presentation = { styles: [], colorTokens: [] };
+
+export const Published = ({ stored }: { stored: unknown }) => (
+    <RichTextReader document={stored} model={commentModel} presentation={presentation} />
+);
+```
+
+What the reader shows depends on what the decode finds:
+
+- A readable document renders in full. A node that the model does not know renders as a labelled fallback that keeps its text, and the reader shows one notice for the document. A mark that the model does not know renders as plain text.
+- A document it cannot read shows only a message. "This content cannot be shown here" is for another model or format version. "This content cannot be shown" is for invalid content and for content over a limit.
+
+The reader keeps its output for a document, model, presentation, locale and limits. Keep `model`, `presentation` and `locale` the same objects between renders, so a rerender builds nothing again. Keep `onDiagnostic` the same function too: the reader calls it once per diagnostic, and a new function receives every diagnostic of the document again.
+
+### Presentation
+
+`presentation` holds the host's decisions. The editor's `ReactPresentation` takes these fields plus `sliceContext` and its toolbar fields; build it with `defineReactPresentation`.
+
+| Field                | What it does                                                                                              |
+| -------------------- | --------------------------------------------------------------------------------------------------------- |
+| `styles`             | Brand style recipes by ID, which a block's `styleId` names. Required.                                     |
+| `colorTokens`        | The colours a `tokenId` of `font_color` or `highlight` names. Required.                                   |
+| `resolveAssetUrl`    | Turns a stored `assetId` into a URL at render time.                                                       |
+| `resolveReference`   | Gives the current label of a mention. It is synchronous, so the reader renders in one pass on the server. |
+| `contentClassName`   | A class on the content root beside `fondue-rte-content`, for host rules.                                  |
+| `listLevels`         | List markers by depth.                                                                                    |
+| `strikeCheckedTasks` | Strikes through checked task items. The default is `false`.                                               |
+| `columns`            | The column count, from 1 to 6.                                                                            |
+| `columnGap`          | `normal`, or a length in `px` or `rem`.                                                                   |
+
+The reader writes the recipes it is given into a `style` element beside the content, so brand styles need no host stylesheet. A style ID that is missing from `styles`, or marked deprecated, renders with the entry of `styles` whose ID is `paragraph` on a paragraph or `link` on a link, when `styles` has one that is not deprecated. Without that entry it renders with the node type's own look. It reports `styles.unknown-style` once per ID.
+
+## The codecs
+
+`createCodecs(model)` checks the model once and returns four functions bound to it. Pass `{ limits, generateId }` as the second argument to match the writing editor's limits, or to set the IDs that `fromMarkdown` creates.
+
+| Function                        | Returns                                                                           |
+| ------------------------------- | --------------------------------------------------------------------------------- |
+| `toHTML(document, options)`     | `{ html, css, diagnostics }`                                                      |
+| `toPlainText(document)`         | `{ text, losses, diagnostics }`                                                   |
+| `toMarkdown(document, options)` | `{ markdown, losses, diagnostics }`                                               |
+| `fromMarkdown(markdown)`        | A `DecodeResult`: an editable document, or a blocked result with its diagnostics. |
+
+```ts
+import { commentModel } from '@frontify/rich-text-editor/features';
+import { createCodecs } from '@frontify/rich-text-editor/codecs';
+
+const codecs = createCodecs(commentModel);
+const { text, losses } = codecs.toPlainText(stored);
+```
+
+No codec throws on input. A document that cannot be read gives empty output and the decode diagnostics. `losses` lists one entry per feature whose content the format cannot keep, with a count. Markdown is CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks.
+
+`fromHTML` from `@frontify/rich-text-editor/html` turns HTML into a document through the paste pipeline, with no editor mounted. It needs a DOM implementation, passed as `window`.
+
+## `toHTML` output outside the editor
+
+`toHTML` output needs the package stylesheet and the host's style recipes for `data-rte-style`, unless the `inlineStyles` option is set. Email or export use without either loses brand styles.
+
+- Without `inlineStyles`, a styled block carries `data-rte-style="<id>"` and nothing else. The look comes from the package stylesheet, `@frontify/rich-text-editor/styles`, which styles the `fondue-rte-content` root, and from the host's own recipes for each `data-rte-style` ID.
+- With `inlineStyles` set to the presentation's `styles`, each used recipe is written inline on its element, beside a class. `css` holds the generated stylesheet of those classes, including `hover`.
+- `colorTokens` writes a token colour inline. `contentClassName`, `listLevels`, `columns` and `columnGap` do the same as in the reader's presentation.
+
+```ts
+const { html, css } = codecs.toHTML(stored, {
+    inlineStyles: presentation.styles,
+    colorTokens: presentation.colorTokens,
+});
+```
+
+## Caching reader and codec output
+
+Reader and codec output depends only on its inputs. A host that caches it keys the cache by all of these:
+
+1. The document's server revision, or its `hashDocument` result. `hashDocument` comes from `@frontify/rich-text-editor/model`. It is the SHA-256 of the document's canonical JSON, computed the same way on a server.
+2. The package version.
+3. The whole presentation: the styles, the colour tokens, the list levels, the columns and `strikeCheckedTasks`. Add `columnGap` and `contentClassName`, which change the output too.
+4. The locale.
+5. When a resolver depends on the viewer, or its results change, the viewer's authorization context and the resolver results. This covers `resolveAssetUrl` and `resolveReference`.
+
+Also key by the compiled model's `fingerprint` and by the `limits` you pass. Both change what decodes.
+
+## Diagnostics
+
+The reader reports through `onDiagnostic`. The codecs return `diagnostics` beside their output. Decode diagnostics come first, then the codec's own, such as `reader.override-failed`, which the reader reports through `onDiagnostic`, and `codecs.override-failed`, which the codecs return. A diagnostic carries codes, feature IDs, counts and paths, never document text. The Observability guide shows how to count them.

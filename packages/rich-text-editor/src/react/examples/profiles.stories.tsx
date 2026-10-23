@@ -108,7 +108,7 @@ A shipped profile is a definition and a default toolbar that \`profile\` loads o
 
 A key runs only where the profile's authoring policy allows the change, so in a profile that lets no author create a feature, such as alignment outside Brand document, its key changes only content that already has it.
 
-In Comment, Mod+Enter submits, so no shortcut binds it; Shift+Enter breaks the line until the policy's \`enterBehavior\` is \`submit\`, when it runs as Enter.
+In Comment, Mod+Enter submits, so no shortcut binds it; Shift+Enter breaks the line until the policy's \`enterBehavior\` is \`submit\`, when it runs as Enter. A form that submits a comment is the [submit example](?path=/story/rich-text-editor-examples--submit-snapshot).
 `,
             },
         },

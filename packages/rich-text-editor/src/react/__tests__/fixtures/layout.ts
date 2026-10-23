@@ -1,10 +1,40 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { globSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+import { expect } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
 import { type SelectionTarget } from '#/testing';
 
 export const PROFILES = ['inline', 'comment', 'document', 'brand-document'] as const;
+// The package's `src`, whose feature stories each name their feature in their title.
+const SRC = join(import.meta.dirname, '..', '..', '..');
+
+/** Each feature story's file under `src` and the feature its title names, so a new feature story is never left out. */
+export const FEATURE_STORIES: readonly { readonly feature: string; readonly file: string }[] = globSync(
+    'features/*/*.stories.tsx',
+    { cwd: SRC },
+)
+    .map((path) => path.replaceAll('\\', '/'))
+    .sort()
+    .map((file) => {
+        const feature = /title: 'Rich Text Editor\/Features\/([^']+)'/.exec(readFileSync(join(SRC, file), 'utf8'))?.[1];
+        if (feature === undefined) {
+            throw new Error(`${file} names no feature in its title.`);
+        }
+        return { feature, file };
+    });
+
+/** The story file of `feature`. */
+export const storyOf = (feature: string): string => {
+    const story = FEATURE_STORIES.find((candidate) => candidate.feature === feature);
+    if (story === undefined) {
+        throw new Error(`No feature story for ${feature}.`);
+    }
+    return story.file;
+};
 
 export { ready } from './ready';
 export const surfaceOf = (page: Page) => page.getByRole('textbox');
@@ -41,6 +71,53 @@ export const clipped = (page: Page) =>
                     `${element.tagName.toLowerCase()}.${element.className} ${element.textContent?.slice(0, 40)}`,
             ),
     );
+
+/** Whether the page scrolls horizontally. */
+export const scrollsAcross = (page: Page) =>
+    page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+
+/** The name a focused control shows: its `aria-label`, else its label `span`, as a menu row holds it, else its text. */
+export const focusedName = (page: Page) =>
+    page.evaluate(() => {
+        const active = document.activeElement;
+        const label = active?.getAttribute('aria-label');
+        const inner = active?.querySelector(':scope > span');
+        const source = inner ?? active;
+        const content = source?.textContent;
+        const text = content?.trim();
+        const named = label ?? text;
+        return named ?? '';
+    });
+
+// Radix moves focus in a timeout after the key, so the next read waits for it.
+export const press = async (page: Page, key: string) => {
+    await page.keyboard.press(key);
+    await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
+};
+
+/** How a mounted story's play function ended: `pending` until it has, `none` without one, else `passed` or its error. */
+export const played = (page: Page) => page.evaluate(() => window.storyProbe?.played);
+
+/** Waits until a mounted story's play function has run, so a spec acts on the state it leaves. */
+export const afterPlay = (page: Page) => expect.poll(() => played(page), { timeout: 15_000 }).not.toBe('pending');
+
+/** Presses `key` until the focused control is named `name`, and fails once 60 presses never reached it. */
+export const pressUntil = async (page: Page, key: string, name: string | RegExp) => {
+    const seen = new Set<string>();
+    for (let step = 0; step < 60; step += 1) {
+        const focused = await focusedName(page);
+        let reached = focused === name;
+        if (name instanceof RegExp) {
+            reached = name.test(focused);
+        }
+        if (reached) {
+            return;
+        }
+        seen.add(focused);
+        await press(page, key);
+    }
+    throw new Error(`${key} never reached ${String(name)}, only ${[...seen].join(', ')}.`);
+};
 
 /** Runs `command` with `payload` through the profile probe's handle, to set up a state. */
 export const execute = (page: Page, command: string, payload?: unknown) =>

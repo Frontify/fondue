@@ -1,0 +1,552 @@
+{/* (c) Copyright Frontify Ltd., all rights reserved. */}
+
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Rich Text Editor/Guides/Authoring" />
+
+# Feature authoring
+
+A feature has up to three parts. The vocabulary part says what a feature stores and how that content becomes HTML, Markdown and text. The editor part says what the editor does with it: commands, keys, input rules, toolbar entries, overlays, panels, decorations, suggestion lists, node views and file drops. The reader part renders a node or mark with your own component.
+
+The reader, the codecs and a server load only the vocabulary part. They never load editor code. Keep a feature's vocabulary in its own module, and import editor code only in the module that calls `defineEditorPlugin`.
+
+Every example on this page is an excerpt of a shipped feature or of an example module under `src/docs/authoring`, and the `Source` line names its file. A test checks that each excerpt is still in that file. The `Rich Text Editor/Authoring` stories mount three of them as a host does: the `marks.strike` editor part, a host block with a node view, and a host part that replaces a shipped toolbar entry.
+
+## The vocabulary part: `defineFeature`
+
+`defineFeature` comes from `@frontify/rich-text-editor/model`. It returns a factory. Call the factory, even with no options, and pass the result to `compileContentModel` with `core()` and every feature it requires.
+
+```ts
+import { core, strike } from '@frontify/rich-text-editor/features';
+import { compileContentModel, defineFeature } from '@frontify/rich-text-editor/model';
+
+const model = compileContentModel([core(), strike()], { id: 'acme.notes', version: 1 });
+```
+
+A feature declares:
+
+- `id` and `version`. A document records both in `requiredCapabilities`. Raise `version` when the stored shape of the feature's content changes.
+- `requires`: the capabilities that must be installed at exactly these versions. A feature that builds on the document and the paragraph requires `core`.
+- `nodes`, `marks`, `attributes`, `options`, `formats` and `parseRules`, as the examples below show.
+- `codecs` and `migrations`. No shipped feature uses them yet, so this page has no excerpt for them. Their types are `CodecOverrides` and `CapabilityMigration`.
+
+### Nodes
+
+A node names its group, its content, its attributes, how it becomes HTML (`html`) and which HTML becomes it (`parse`). `formats` says whether each output is `lossless` or `lossy`, so a codec can report what it drops.
+
+Source: `src/features/blocks-heading/feature.ts`
+
+```ts
+const LEVELS = [1, 2, 3, 4, 5, 6] as const;
+
+/** Headings `h1` to `h6`, whose level only the `level` attribute sets. */
+export const heading = defineFeature({
+    id: 'blocks.heading',
+    version: 1,
+    requires: [{ id: 'core', version: 1 }],
+    nodes: {
+        heading: {
+            group: 'block',
+            content: 'inline*',
+            attrs: {
+                nodeId: { type: 'string', required: true },
+                level: { type: 'integer', min: 1, max: 6, required: true },
+                lang: { type: 'language', nullable: true, default: null },
+            },
+            html: [
+                { attr: 'level', tags: { 1: 'h1', 2: 'h2', 3: 'h3', 4: 'h4', 5: 'h5', 6: 'h6' } },
+                { lang: { attr: 'lang' } },
+                0,
+            ],
+            parse: LEVELS.map((level) => ({
+                tag: `h${level}`,
+                attrs: { level: { value: level }, lang: { from: 'lang' } },
+            })),
+        },
+    },
+    formats: { html: 'lossless', text: 'lossy', markdown: 'lossless' },
+});
+```
+
+### Marks and options
+
+A mark has attributes, an HTML spec and parse rules. `inclusive: false` keeps text typed at the end of the mark outside it. An option is serializable data with a default. A host passes it to the factory, as in `language({ languages: ['en', 'de'] })`, and the editor part reads it from the compiled model.
+
+Source: `src/features/marks-language/feature.ts`
+
+```ts
+const DIRECTIONS = ['ltr', 'rtl', 'auto'] as const;
+
+/** A passage's language and direction; text typed at a passage's end stays outside it. */
+export const language = defineFeature({
+    id: 'marks.language',
+    version: 1,
+    requires: [{ id: 'core', version: 1 }],
+    options: {
+        languages: { type: 'list', items: { type: 'language' }, default: [] },
+    },
+    marks: {
+        language: {
+            attrs: {
+                lang: { type: 'language', required: true },
+                dir: { type: 'enum', values: DIRECTIONS, nullable: true, default: null },
+            },
+            html: ['span', { lang: { attr: 'lang' }, dir: { attr: 'dir' } }, 0],
+            parse: [{ tag: 'span[lang]', attrs: { lang: { from: 'lang' }, dir: { from: 'dir' } } }],
+            inclusive: false,
+        },
+    },
+    formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
+});
+```
+
+### Attributes on other features' nodes
+
+`attributes` adds an attribute to nodes that other features declare. Its `html` and `parse` entries name the HTML attribute that carries it.
+
+Source: `src/features/styles-brand/feature.ts`
+
+```ts
+attributes: {
+    styleId: {
+        on: ['paragraph', 'heading', 'blockquote'],
+        value: { type: 'id', nullable: true, default: null },
+        html: { attr: 'data-rte-style' },
+        parse: { attr: 'data-rte-style' },
+    },
+},
+```
+
+### Parse rules that need code
+
+`parse` on a node or mark takes data. `parseRules` takes a function for input the data forms cannot match, such as `text-decoration: underline line-through`, which no single style rule reads.
+
+Source: `src/features/marks-strike/feature.ts`
+
+```ts
+parseRules: [
+    {
+        tag: 'span[style*="text-decoration"]',
+        mark: 'strike',
+        value: (element) => {
+            if (readsStrike(element)) {
+                return {};
+            }
+            return null;
+        },
+    },
+],
+```
+
+## The editor part: `defineEditorPlugin`
+
+`defineEditorPlugin` comes from `@frontify/rich-text-editor`. It takes a feature, or a factory, and the parts of its editor side. `parts` may also be a function of the feature's resolved options.
+
+`defineEditor` takes the shipped editor part of every feature in a model by feature ID, so a model made of shipped features needs no `plugins`. A host part for a feature extends the shipped part: a command, key, node view or toolbar entry with the same ID replaces the shipped one whole, with no field merged, and the others are added.
+
+```tsx
+import { defineEditor } from '@frontify/rich-text-editor';
+
+const definition = defineEditor({ id: 'acme.notes', model });
+```
+
+An editor part acts only through `EditorApi`, which its commands, key handlers and overlays receive. It never touches ProseMirror types.
+
+### Commands, keys, input rules and toolbar entries
+
+A command is `run(api, payload)`. One call is one undo step. `active` and `enabled` answer queries, so the toolbar shows state. A key names a command or a handler. An input rule is data. A toolbar entry names its command, its label and its icon. A part inside this package gives a `labelKey`, one of the package strings. A host part cannot add to those, so its entry gives `label`: its translations by language tag, which must include `en-US`. An entry with `node`, such as `node: 'asset_image'`, is a command of that node's chrome: it gets no toolbar item, and the More menu, the bubble toolbar's More menu and the context menu offer it only while such a node is selected or holds the caret.
+
+The `Strike plugin` story mounts this part with `marks.strike`.
+
+Source: `src/features/marks-strike/editor.ts`
+
+```ts
+export const strikeEditor = defineEditorPlugin(strike, {
+    commands: {
+        'mark.strike.toggle': {
+            run: (api) => api.marks.toggle('strike'),
+            active: (api) => api.marks.active('strike'),
+        },
+    },
+    keys: { 'Mod-Shift-x': 'mark.strike.toggle' },
+    inputRules: [{ id: 'strike.tildes', kind: 'mark-delimiter', open: '~~', close: '~~', mark: 'strike' }],
+    toolbar: [
+        {
+            id: 'strike',
+            kind: 'toggle',
+            command: 'mark.strike.toggle',
+            labelKey: 'RichTextEditor_strike',
+            icon: 'IconTextFormatStrikethrough',
+        },
+    ],
+});
+```
+
+A host entry gives `label` in place of `labelKey`:
+
+Source: `src/docs/authoring/strong.ts`
+
+```ts
+label: { 'en-US': 'Strong' },
+```
+
+### Commands with a payload
+
+A command declares its payload as data. The package derives the payload's type and checks every call against it. `refuses` rejects a call that the authoring policy forbids, before applicability, and keeps that payload out of the toolbar.
+
+Source: `src/features/blocks-heading/editor.ts`
+
+```ts
+'heading.set': {
+    payload: { fields: { level: { type: 'integer', min: 1, max: 6 } } },
+    run: (api, { level }: { readonly level: number }) => api.blocks.set('heading', { level }),
+    active: (api, { level }) => api.blocks.active('heading', { level }),
+    // A level the policy does not offer is refused before applicability, even in a heading of that level.
+    refuses: (policy, { level }) => !policy.creatableHeadingLevels.some((offered) => offered === level),
+},
+```
+
+### Regular-expression input rules
+
+`blockRule`, `markRule` and `textRule` come from `@frontify/rich-text-editor/model`. Named capture groups fill same-named payload fields or mark attributes.
+
+Source: `src/features/lists-task/editor.ts`
+
+```ts
+blockRule({ id: 'list.task.brackets', match: /^\[(?:(?<checked>x)| )?\] $/, command: 'list.task.toggle' }),
+```
+
+### Opening an overlay
+
+`api.overlays.open` opens a component next to the selection, or next to another anchor, such as a link. A command opens a dialog or popover this way, and the toolbar entry sets `opensOverlay: true`.
+
+Source: `src/features/mentions/editor.ts`
+
+```ts
+'mention.search.open': {
+    // The selection's start sits in text that is not code.
+    enabled: (api) => {
+        const { blockType, verbatim } = api.selection();
+        return blockType !== null && !verbatim;
+    },
+    run: (api) => {
+        api.overlays.open(MentionSearchDialog, { resourceTypes }, 'selection');
+        return true;
+    },
+},
+```
+
+### Standing overlays
+
+`overlays` lists components that the editor keeps mounted and that decide for themselves when to show, such as the bubble over a link at the caret.
+
+Source: `src/features/links/editor.tsx`
+
+```tsx
+overlays: [LinkBubble],
+```
+
+### Panels
+
+A panel is a component that a toolbar entry opens by its `control` ID. `api.panels.open` opens it. The content checks use one for their issues list.
+
+Source: `src/features/a11y-content-checks/editor.ts`
+
+```ts
+const PANEL = 'checks';
+
+/** `checks.open` opens the issues panel, or, while it is open, moves focus to the issue last acted on. */
+export const contentChecksEditor = defineEditorPlugin(contentChecks, {
+    commands: {
+        'checks.open': {
+            readOnly: true,
+            run: (api) => {
+                api.panels.open(PANEL);
+                return true;
+            },
+        },
+    },
+    toolbar: [
+        {
+            id: 'checks',
+            kind: 'button',
+            command: 'checks.open',
+            labelKey: 'RichTextEditor_checks',
+            icon: 'IconListCheck',
+            opensOverlay: true,
+        },
+    ],
+    panels: [{ control: PANEL, component: IssuesPanel }],
+});
+```
+
+### Decorations
+
+A decoration source draws classes over the text of the blocks of the nodes it names. `derive` returns the ranges of one block, or a promise of them while what it reads still loads. The editor derives again only for a block that a change touched.
+
+Source: `src/features/blocks-code/editor.ts`
+
+```ts
+decorations: [
+    {
+        id: 'code-syntax',
+        nodes: ['code_block'],
+        derive: ({ attrs, text }) => {
+            const { languageId } = attrs;
+            if (typeof languageId !== 'string') {
+                return [];
+            }
+            if (highlighter === undefined) {
+                return loadHighlighter().then((loaded) => tokensOf(loaded, languageId, text));
+            }
+            return tokensOf(highlighter, languageId, text);
+        },
+    },
+],
+```
+
+### Suggestion lists
+
+A suggestion list opens when the author types its `trigger` at the start of a word. `rules` say how long the query may be. `search` returns options, a page at a time, and the list runs `command` with the chosen option's payload.
+
+Source: `src/features/mentions/editor.ts`
+
+```ts
+suggestions: [
+    {
+        trigger: options.trigger as string,
+        labelKey: 'RichTextEditor_mentionSuggestions',
+        // Names hold spaces, and a mention often follows an opening bracket or quote.
+        rules: { afterPunctuation: true, maxQuery: 50, spaces: true, leadingLetters: 0 },
+        available: (api) => api.services.references() !== undefined,
+        search: async (query, { api, signal, cursor }) => {
+            const service = api.services.references();
+            if (service === undefined) {
+                throw new Error('The host gives no reference search.');
+            }
+            const page = await service.search(query, resourceTypes, signal, cursor);
+            return { items: page.items.map(resultOf), nextCursor: page.nextCursor };
+        },
+        command: 'reference.insert',
+    },
+],
+```
+
+This part is a function of the feature's resolved options, so it reads the `trigger` option, which the vocabulary part declares.
+
+### Node views
+
+A node view is a React component around the editable content of a node. It reads its node through `useRichTextNodeView` and renders `NodeViewContent` where the content goes. The editor renders it again only when its node or the selection changes.
+
+Source: `src/features/lists-task/view.tsx`
+
+```tsx
+const { attrs, nodeId, contentId, context, execute } = useRichTextNodeView<TaskCommands>();
+const checked = attrs.checked === true;
+```
+
+Source: `src/features/lists-task/view.tsx`
+
+```tsx
+let labelledBy: string | undefined;
+if (contentId !== null) {
+    labelledBy = contentId;
+}
+return (
+    <>
+        <input
+            ref={checkboxRef}
+            type="checkbox"
+            className={styles.checkbox}
+            contentEditable={false}
+            tabIndex={OUT_OF_TAB_ORDER}
+            checked={checked}
+            aria-labelledby={labelledBy}
+            onChange={() => {
+                // The runtime gives every task item a `nodeId` before a commit publishes.
+                if (nodeId !== null) {
+                    execute('task.setChecked', { nodeId, checked: !checked });
+                }
+            }}
+        />
+        <NodeViewContent />
+    </>
+);
+```
+
+Source: `src/features/lists-task/view.tsx`
+
+```tsx
+export const taskItemView: NodeViewDeclaration = { node: 'task_item', component: TaskCheckbox };
+```
+
+The editor part attaches the view:
+
+Source: `src/features/lists-task/editor.ts`
+
+```ts
+views: [taskItemView],
+```
+
+Node chrome stays out of the Tab order, so Tab leaves the editor. Alt+F10 reaches it.
+
+### A host block with a node view
+
+A host declares its own block with `defineFeature` in a vocabulary module, which imports no editor code, and its editor part in a second module attaches a node view to it. The `Custom block with a node view` story mounts this example: the Callout button wraps the selection, and the button in the chrome switches the tone through `update`.
+
+Source: `src/docs/authoring/callout-feature.ts`
+
+```ts
+/** A host block: a box of paragraphs with a tone, stored as `callout`. */
+export const callout = defineFeature({
+    id: 'acme.callout',
+    version: 1,
+    requires: [{ id: 'core', version: 1 }],
+    nodes: {
+        callout: {
+            group: 'block',
+            content: 'paragraph+',
+            attrs: {
+                tone: { type: 'enum', values: ['note', 'warning'], default: 'note' },
+            },
+            html: ['aside', { 'data-tone': { attr: 'tone' } }, 0],
+            parse: [{ tag: 'aside[data-tone]', attrs: { tone: { from: 'data-tone' } } }],
+        },
+    },
+    formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
+});
+```
+
+Source: `src/docs/authoring/callout-view.tsx`
+
+```tsx
+/** The callout's chrome: its tone, a button that switches it, and the editable paragraphs. */
+const CalloutView = () => {
+    const { attrs, update } = useRichTextNodeView();
+    let tone = 'Note';
+    let next = 'warning';
+    if (attrs.tone === 'warning') {
+        tone = 'Warning';
+        next = 'note';
+    }
+    return (
+        <>
+            <div contentEditable={false}>
+                <NodeChromeToolbar aria-label={`${tone} callout`}>
+                    <NodeChromeButton label={`Switch to ${next}`} onClick={() => update({ tone: next })} />
+                </NodeChromeToolbar>
+                <strong>{tone}</strong>
+            </div>
+            <NodeViewContent />
+        </>
+    );
+};
+
+export const calloutView: NodeViewDeclaration = { node: 'callout', component: CalloutView };
+```
+
+Source: `src/docs/authoring/callout-editor.ts`
+
+```ts
+/** Wraps the selected blocks in a callout, or lifts them out of one, from the toolbar. */
+export const calloutEditor = defineEditorPlugin(callout, {
+    commands: {
+        'callout.toggle': {
+            run: (api) => api.blocks.wrap('callout'),
+            active: (api) => api.blocks.active('callout'),
+        },
+    },
+    toolbar: [
+        {
+            id: 'callout',
+            kind: 'toggle',
+            command: 'callout.toggle',
+            label: { 'en-US': 'Callout' },
+            icon: 'IconInfo',
+        },
+    ],
+    views: [calloutView],
+});
+```
+
+A model that installs a host feature passes its part in `plugins`:
+
+```tsx
+const model = compileContentModel([core(), callout()], { id: 'acme.notes', version: 1 });
+const definition = defineEditor({ id: 'acme.notes', model, plugins: [calloutEditor] });
+```
+
+### Replacing a shipped toolbar entry
+
+A host part for a shipped feature replaces any entry with the same ID whole. Here the toolbar entry `bold` keeps its command and reads Strong. The `Host part replacing a toolbar entry` story mounts it.
+
+Source: `src/docs/authoring/strong.ts`
+
+```ts
+/** A host part for `marks.bold`: its toolbar entry `bold` replaces the shipped one, so the button reads Strong. */
+export const strongEditor = defineEditorPlugin(bold, {
+    toolbar: [
+        {
+            id: 'bold',
+            kind: 'toggle',
+            command: 'mark.bold.toggle',
+            label: { 'en-US': 'Strong' },
+            icon: 'IconTextFormatBold',
+            bubble: true,
+        },
+    ],
+});
+```
+
+### Files dropped or pasted from outside
+
+`files` takes the files of a paste or a drop. Return `true` to take them, or `false` to hand them to the next part.
+
+Source: `src/features/media-image/editor.ts`
+
+```ts
+// Text that keeps white space, as code does, takes no image.
+files: (api, files, at) => !api.selection().verbatim && api.uploads.begin(files, at),
+```
+
+## The reader part: `defineReaderFeature`
+
+`defineReaderFeature` comes from `@frontify/rich-text-editor/reader`. It attaches a component to a node or mark that the feature declares. The reader calls it as a function, so pass a function component, not a `memo` or `forwardRef` object. A component that throws renders as a labelled fallback, reports `reader.override-failed` and does not stop the rest of the document.
+
+Source: `src/features/mentions/reader.tsx`
+
+```tsx
+const Mention = ({ attrs, context }: ReaderNodeProps) => {
+    const shown = mentionLabel(attrs, context);
+    const note = unavailableNote(shown, context.t);
+    return (
+        <span data-mention="">
+            @<bdi>{shown.label}</bdi>
+            {note !== '' && note}
+        </span>
+    );
+};
+
+export const mentionReader: ReaderRenderers = { mention: Mention };
+```
+
+`defineReaderFeature(feature, renderers)` returns the feature with the renderers attached. Compile that returned feature: the one you passed in carries none.
+
+```tsx
+import { defineReaderFeature } from '@frontify/rich-text-editor/reader';
+
+const model = compileContentModel([core(), defineReaderFeature(mentions(), mentionReader)], {
+    id: 'acme.notes',
+    version: 1,
+});
+```
+
+## Checking a feature
+
+`runFeatureContract` comes from `@frontify/rich-text-editor/testing`. It registers the contract cases through the global `describe`, `it` and `expect` of your test runner: the vocabulary, the schema, the commands and toolbar labels, and the codecs and the reader over each stored document you pass in `fixtures`. It needs `axe-core` installed and a DOM test environment, such as happy-dom or jsdom. Pass fixtures. A feature with no fixtures checks no stored content.
+
+```ts
+import { runFeatureContract } from '@frontify/rich-text-editor/testing';
+
+runFeatureContract([core(), myFeature()], { fixtures: [storedDocument], plugins: [myFeatureEditor] });
+```

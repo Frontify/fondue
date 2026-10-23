@@ -1,0 +1,61 @@
+{/* (c) Copyright Frontify Ltd., all rights reserved. */}
+
+import { Meta, Source } from '@storybook/addon-docs/blocks';
+
+import importFailures from './observability/import-failures.ts?raw';
+import operationMetrics from './observability/operation-metrics.ts?raw';
+import rendererFailures from './observability/renderer-failures.ts?raw';
+import saveConflicts from './observability/save-conflicts.ts?raw';
+
+export const shown = (code) =>
+    code
+        .replace(/^\/\*[^]*?\*\/\s*/, '')
+        .replaceAll("'#/index'", "'@frontify/rich-text-editor'")
+        .replaceAll("'#/", "'@frontify/rich-text-editor/");
+
+<Meta title="Rich Text Editor/Guides/Observability" />
+
+# Observability
+
+The editor, the reader and the codecs report what happened through diagnostics and events. The host counts them and sends the counts to its own telemetry.
+
+Each section below counts one row of the counter table from the code that reports it. A test runs each example and checks the count it reads.
+
+| Counter                               | Source                                                                                                                                   |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Import failures, unknown capabilities | `decodeDocument` diagnostics (`format.*`)                                                                                                |
+| Renderer failures                     | Reader `onDiagnostic` (`reader.override-failed`), codec `diagnostics` (`codecs.override-failed`) and the `runtime.view-fault` diagnostic |
+| Save conflicts                        | `saveStatusChange` with state `conflict`                                                                                                 |
+| Latency and normalization counts      | `operationMetric`                                                                                                                        |
+
+A diagnostic has a `code`, a `severity` and a `messageKey`. It may have a `path`, a `featureId` and `details`. It holds codes, feature IDs, counts and hashes, never document text.
+
+## Import failures and unknown capabilities
+
+`decodeDocument(input, model)` from `@frontify/rich-text-editor/model` returns a `DecodeResult`. Its `diagnostics` hold the `format.*` codes. A result with `status: 'blocked'` is an import failure, for example input that is not JSON, has another model or format version, or is over a limit. A document that requires a capability the model does not install reports `format.unknown-capability`.
+
+<Source code={shown(importFailures)} language="ts" />
+
+## Renderer failures
+
+Three places report a renderer failure, and one counter takes all three:
+
+- The reader calls its `onDiagnostic` prop with `reader.override-failed` when a reader override throws. It calls the same function once per diagnostic, so keep `onDiagnostic` the same function between renders: a new function receives every diagnostic of the document again.
+- `toHTML`, `toPlainText` and `toMarkdown` return `codecs.override-failed` in their `diagnostics` when a codec override throws.
+- The editor emits `runtime.view-fault` on its `diagnostic` event, and on its `onDiagnostic` prop, when its editing view throws while it mounts, installs a state or loads a replacement document, or when a node view constructor, `update` or `destroy` throws. The editor stops taking edits and shows its recovery shell with the last snapshot.
+
+Three failures emit no diagnostic. A React node view that throws is replaced by a localized message in its chrome, and the content stays editable. A panel that throws is replaced by its own error message and a Close button. A React render error elsewhere in the editor shows the recovery shell. An error boundary above the editor does not see any of them, because the editor catches them first. To count failures of your own node view, overlay or panel components, wrap them in your own error boundary.
+
+<Source code={shown(rendererFailures)} language="ts" />
+
+## Save conflicts
+
+An editor with a persistence service moves its save status to `conflict` when the server answers that a newer revision exists. Writes stop and the local content stays editable. `saveStatusChange` fires with the new `SaveStatus` each time the status changes, so count the change into `conflict`, not every event that carries it.
+
+<Source code={shown(saveConflicts)} language="ts" />
+
+## Latency and normalization counts
+
+The `operationMetric` event fires after each `mount`, `commit`, `paste`, `save` and `replace`. An `OperationMetric` has the `kind`, the `durationMs`, the `normalizationTransactions` that the operation appended, a `failureCode` (`null` on success), the `packageVersion`, the model and the capability IDs. It has no document content.
+
+<Source code={shown(operationMetrics)} language="ts" />

@@ -1,0 +1,189 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "frontify.document",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "blocks.heading",
+            "version": 1
+        },
+        {
+            "id": "core",
+            "version": 1
+        },
+        {
+            "id": "links",
+            "version": 1
+        },
+        {
+            "id": "marks.language",
+            "version": 1
+        },
+        {
+            "id": "media.image",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": {
+            "lang": "en",
+            "dir": "ltr"
+        },
+        "content": [
+            {
+                "type": "heading",
+                "attrs": {
+                    "nodeId": "heading-1",
+                    "level": 2,
+                    "lang": null,
+                    "align": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Brand guidelines"
+                    }
+                ]
+            },
+            {
+                "type": "heading",
+                "attrs": {
+                    "nodeId": "heading-2",
+                    "level": 3,
+                    "lang": null,
+                    "align": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Colours"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": "de",
+                    "align": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Willkommen"
+                    }
+                ]
+            },
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null,
+                    "align": null
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Read the "
+                    },
+                    {
+                        "type": "text",
+                        "text": "colour guide",
+                        "marks": [
+                            {
+                                "type": "link",
+                                "attrs": {
+                                    "href": "https://frontify.com/guide",
+                                    "openInNewWindow": false,
+                                    "styleId": null
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "text",
+                        "text": ", say "
+                    },
+                    {
+                        "type": "text",
+                        "text": "bonjour",
+                        "marks": [
+                            {
+                                "type": "language",
+                                "attrs": {
+                                    "lang": "fr",
+                                    "dir": "ltr"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "text",
+                        "text": " and "
+                    },
+                    {
+                        "type": "text",
+                        "text": "שלום",
+                        "marks": [
+                            {
+                                "type": "language",
+                                "attrs": {
+                                    "lang": "he",
+                                    "dir": "rtl"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "figure",
+                "attrs": {
+                    "nodeId": "figure-1",
+                    "align": "center"
+                },
+                "content": [
+                    {
+                        "type": "asset_image",
+                        "attrs": {
+                            "nodeId": "image-1",
+                            "assetId": "asset-palette",
+                            "labelSnapshot": "palette.png",
+                            "altIntent": "meaningful",
+                            "altText": "Five swatches from deep blue to sand",
+                            "width": 1200,
+                            "height": 600,
+                            "displayWidth": null,
+                            "mediaType": "image/png"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "figure",
+                "attrs": {
+                    "nodeId": "figure-2",
+                    "align": "center"
+                },
+                "content": [
+                    {
+                        "type": "asset_image",
+                        "attrs": {
+                            "nodeId": "image-2",
+                            "assetId": "asset-divider",
+                            "labelSnapshot": "divider.svg",
+                            "altIntent": "decorative",
+                            "altText": "",
+                            "width": null,
+                            "height": null,
+                            "displayWidth": null,
+                            "mediaType": null
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
