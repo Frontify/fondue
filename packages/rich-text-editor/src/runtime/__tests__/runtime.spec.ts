@@ -7,7 +7,7 @@ import { type EditorState, Plugin, TextSelection, type Transaction } from 'prose
 import { tableEditing, tableNodes } from 'prosemirror-tables';
 import { Step, StepResult } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPlugin, type EditorApi, type EditorPlugin } from '#/bridge/plugin';
 import {
@@ -44,6 +44,7 @@ import {
 import { decodeToTree, limitsOf } from '#/model/decode';
 import { extensionsOf } from '#/react/engine';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
+import { STORAGE, stubStorage } from '#/testing/__tests__/fixtures/storage';
 
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
 import { RUNTIME_PLUGINS } from '../capabilities';
@@ -154,6 +155,27 @@ const undoSteps = (handle: EditorRuntime['handle']) => {
     }
     return steps;
 };
+
+// every browser storage API fails while this suite runs.
+let storage: ReturnType<typeof stubStorage>;
+beforeAll(() => {
+    storage = stubStorage();
+});
+afterAll(() => {
+    const { accessed } = storage;
+    storage.restore();
+    expect(accessed).toEqual([]);
+});
+
+it('runs the runtime suite with every browser storage API failing', () => {
+    for (const name of STORAGE) {
+        expect(() => {
+            Reflect.get(Reflect.get(globalThis, name) as object, 'open');
+        }).toThrow(name);
+    }
+    // The probe above is the only access this suite may make.
+    expect(storage.accessed.splice(0)).toEqual([...STORAGE]);
+});
 
 describe('the commit path', () => {
     it('publishes a root transaction and its appended one as one change', () => {

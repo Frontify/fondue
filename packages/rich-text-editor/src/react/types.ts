@@ -16,7 +16,14 @@ import {
     type RichTextDocument,
     type RichTextLocale,
 } from '#/model';
-import { type LoadedDocument } from '#/persistence/types';
+import {
+    type LoadedDocument,
+    type PersistenceOptions,
+    type PersistenceService,
+    type RecoveryService,
+    type ReplaceDocumentRequest,
+    type ReplaceResult,
+} from '#/persistence/types';
 import { type ShippedPluginCommands } from '#/react/plugins';
 import { type ReaderPresentation } from '#/reader/reader';
 import {
@@ -27,6 +34,8 @@ import {
     type CommandKey,
     type CommandResult,
     type CommandState,
+    type CommitOptions,
+    type CommitResult,
     type DocumentChange,
     type EditorSummary,
     type OperationMetric,
@@ -90,6 +99,12 @@ export type CommandsOfPlugins<Plugins extends readonly EditorPlugin[]> = UnionTo
     CommandsOfPlugin<Plugins[number]>
 >;
 
+/** The services a host gives the editor, such as persistence. */
+export interface EditorServices {
+    readonly persistence?: PersistenceService;
+    readonly recovery?: RecoveryService;
+}
+
 /** The events the editor emits, each with the value its listeners get. */
 export interface EditorEventMap {
     readonly ready: SessionToken;
@@ -105,6 +120,7 @@ export interface EditorEventMap {
 export interface EditorHandle<C extends object = ShippedCommands> {
     getSummary(): EditorSummary;
     getSnapshot(): Snapshot;
+    getSaveStatus(): SaveStatus;
     getRecoveryCandidate(): RichTextDocument | null;
     query<K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>): CommandState;
     /** Synchronous event-handler API. Do not call from React render or effects. */
@@ -113,6 +129,8 @@ export interface EditorHandle<C extends object = ShippedCommands> {
     enqueue<K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>): Promise<CommandResult>;
     captureTarget(options: CaptureTargetOptions): CaptureResult;
     releaseTarget(target: SelectionHandle): void;
+    requestCommit(options: CommitOptions): Promise<CommitResult>;
+    replaceDocument(request: ReplaceDocumentRequest): Promise<ReplaceResult>;
     setMode(mode: 'editable' | 'readonly'): void;
     /** Never changes the document schema. Throws `DefinitionError` for an unknown feature ID. */
     updatePolicy(policy: AuthoringPolicy): void;
@@ -152,6 +170,8 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     readonly placeholder?: string;
     /** Default: the `ThemeProvider` locale when the package ships it, else `enUS`. */
     readonly locale?: RichTextLocale;
+    readonly services?: EditorServices;
+    readonly persistenceOptions?: PersistenceOptions;
     readonly spellCheck?: boolean;
     /** For the session id and the `nodeId`s the editor creates. Default: `crypto.randomUUID()`, or a version 4 UUID where that is missing. */
     readonly generateId?: () => string;

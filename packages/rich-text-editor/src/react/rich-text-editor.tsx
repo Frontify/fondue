@@ -32,22 +32,54 @@ import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { codecContext, contentClasses } from '#/model/output';
 import { randomId } from '#/model/random-id';
-import { type LoadedDocument } from '#/persistence/types';
+import { createSaveCoordinator } from '#/persistence/coordinator';
+import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
-import { createEditorRuntime, type EditorRuntime, isEmpty, type RuntimeHandle } from '#/runtime/runtime';
+import {
+    createEditorRuntime,
+    type EditorRuntime,
+    type EditorRuntimeOptions,
+    isEmpty,
+    type RuntimeHandle,
+} from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 
 import { engineOf, readersOf, viewsOf } from './compile-editor';
 import { usePluginHosts } from './plugin-hosts';
 import { BlockedShell, RecoveryShell } from './shells';
-import { type CompiledEditorDefinition, type EditorHandle, type RichTextEditorProps } from './types';
+import {
+    type CompiledEditorDefinition,
+    type EditorHandle,
+    type EditorServices,
+    type RichTextEditorProps,
+} from './types';
 
 type Props = RichTextEditorProps<object>;
 /** The props once `definition` is known to be set. */
 type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };
 const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
+const SERVICE_MEMBERS = ['persistence', 'recovery'] as const;
+
+const memberOf = <K extends (typeof SERVICE_MEMBERS)[number]>(
+    services: EditorServices | undefined,
+    member: K,
+): EditorServices[K] | undefined => {
+    if (services === undefined) {
+        return undefined;
+    }
+    return services[member];
+};
+
+/** Whether a services member changed: added, removed, or holding another function under some name. */
+const memberChanged = (previous: object | undefined, next: object | undefined) => {
+    if (previous === undefined || next === undefined) {
+        return previous !== next;
+    }
+    const names = new Set([...Object.keys(previous), ...Object.keys(next)]);
+    return [...names].some((name) => Reflect.get(previous, name) !== Reflect.get(next, name));
+};
 
 /** What one mount keeps for its whole life: a changed `definition` needs a new mount. */
 interface Mounted {
@@ -149,9 +181,10 @@ const shellPropsOf = (props: Defined) => {
     };
 };
 
-/** A running session, whose snapshot Retry hands on. */
+/** A running session and the write its coordinator left with an unknown outcome, which Retry hands on. */
 interface RecoverySession {
     readonly handle: RuntimeHandle;
+    readonly unresolved: () => SaveRequest | undefined;
 }
 
 type SessionProps = Defined & {
@@ -160,6 +193,10 @@ type SessionProps = Defined & {
     readonly retried: LoadedDocument | undefined;
     /** Receives the handle of each session it runs, whose snapshot the recovery shell reads. */
     readonly onSession: (session: RecoverySession) => void;
+    /** The document holds changes the failed session before Retry never saved. */
+    readonly unsavedOnMount: boolean;
+    /** The write the failed session left unresolved, which this one replays first. */
+    readonly carried: SaveRequest | undefined;
     /** Mounts the editor again from this session's snapshot. */
     readonly onRetry: () => void;
 };
@@ -212,6 +249,25 @@ const SessionComponent = (
         const { generateId } = latestRef.current;
         const engine = engineOf(definition);
         const ids = generateId ?? randomId;
+        // A session is managed for its whole life when it mounts with `services.persistence`.
+        const persistence = memberOf(latestRef.current.services, 'persistence');
+        let saves: EditorRuntimeOptions['saves'];
+        let created: ReturnType<typeof createSaveCoordinator> | undefined;
+        if (persistence !== undefined) {
+            saves = (session) => {
+                created = createSaveCoordinator(session, {
+                    // A host that drops the member later keeps the service the session mounted with.
+                    service: () => memberOf(latestRef.current.services, 'persistence') ?? persistence,
+                    options: () => latestRef.current.persistenceOptions,
+                    revision: loaded.revision,
+                    unsavedOnMount: latestRef.current.unsavedOnMount,
+                    carried: latestRef.current.carried,
+                    model: engine.model,
+                    generateId: ids,
+                });
+                return created;
+            };
+        }
         const runtime = createEditorRuntime({
             definition: engine,
             documentId: loaded.documentId,
@@ -224,6 +280,8 @@ const SessionComponent = (
             nodeViews: (session) => createNodeViews(viewsOf(definition), { portals, runtime: session }),
             inRender: () => inReactWork(work),
             revision: loaded.revision,
+            saves,
+            recovery: () => memberOf(latestRef.current.services, 'recovery'),
             commandHost: hosts,
         });
         // Each event calls the newest callback the host passed.
@@ -253,7 +311,7 @@ const SessionComponent = (
             }
         });
         handleRef.current = runtime.handle;
-        onSession({ handle: runtime.handle });
+        onSession({ handle: runtime.handle, unresolved: () => created?.unresolved() });
         coordinator.start(runtime);
         return () => {
             coordinator.stop();
@@ -268,6 +326,20 @@ const SessionComponent = (
     useClientLayoutEffect(() => {
         handleRef.current?.setMode(mode);
     }, [mode]);
+
+    // A changed `services` member aborts the operations it started, with no rebuild.
+    const { services } = props;
+    const servicesRef = useRef(services);
+    useEffect(() => {
+        const previous = servicesRef.current;
+        servicesRef.current = services;
+        const changed = SERVICE_MEMBERS.filter((member) =>
+            memberChanged(memberOf(previous, member), memberOf(services, member)),
+        );
+        if (changed.length > 0) {
+            coordinator.runtime?.changeServices(changed);
+        }
+    }, [services, coordinator]);
 
     const { definition } = props;
     useEffect(() => {
@@ -347,6 +419,10 @@ interface RecoveryState {
     readonly failed: boolean;
     /** The snapshot that Retry mounts the editor from, under the ID and revision it was loaded with. */
     readonly retried: LoadedDocument | undefined;
+    /** Whether that snapshot holds changes the failed session never saved, which the remount then saves. */
+    readonly unsavedOnMount: boolean;
+    /** The write the failed session left with an unknown outcome, which the remount replays first. */
+    readonly carried: SaveRequest | undefined;
     /** Counts Retries, so each mounts a new session even when no render error unmounted the last. */
     readonly retries: number;
 }
@@ -356,7 +432,7 @@ interface RecoveryState {
  * published snapshot.
  */
 class Recovery extends Component<RecoveryProps, RecoveryState> {
-    state: RecoveryState = { failed: false, retried: undefined, retries: 0 };
+    state: RecoveryState = { failed: false, retried: undefined, unsavedOnMount: false, carried: undefined, retries: 0 };
     // The last session, whose snapshot stays readable after it is disposed.
     private session: RecoverySession | undefined;
 
@@ -375,11 +451,15 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
         return this.props.props.defaultValue;
     }
 
-    /** What the last session left: its snapshot under its own document ID and acknowledged revision. */
+    /** What the last session left: its snapshot under its own document ID and acknowledged revision, and what it never saved. */
     private left(): {
         readonly retried: LoadedDocument;
+        readonly unsavedOnMount: boolean;
+        readonly carried: SaveRequest | undefined;
     } {
         let { documentId, document, revision } = this.defaultValue();
+        let unsavedOnMount = false;
+        let carried: SaveRequest | undefined;
         if (this.session !== undefined) {
             const snapshot = this.session.handle.getSnapshot();
             // The session's own document ID, which neither a host rerender nor a replacement leaves behind.
@@ -387,8 +467,12 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
             document = snapshot.document;
             // The acknowledged revision is the base of the next write, so a session that saved does not conflict with itself.
             revision = snapshot.acknowledgedRevision;
+            const status = this.session.handle.getSaveStatus();
+            // Every managed state but `clean` holds changes the server has not acknowledged, a carried edit included.
+            unsavedOnMount = status.state !== 'clean' && status.state !== 'unmanaged';
+            carried = this.session.unresolved();
         }
-        return { retried: { documentId, revision, document } };
+        return { retried: { documentId, revision, document }, unsavedOnMount, carried };
     }
 
     private readonly onRetry = () =>
@@ -402,6 +486,8 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
                     key={this.state.retries}
                     {...props}
                     retried={this.state.retried}
+                    unsavedOnMount={this.state.unsavedOnMount}
+                    carried={this.state.carried}
                     onSession={this.onSession}
                     onRetry={this.onRetry}
                     ref={editorRef}

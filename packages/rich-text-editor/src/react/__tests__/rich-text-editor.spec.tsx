@@ -1,5 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { readdirSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { act, render, screen } from '@testing-library/react';
 import { createRef, Profiler, StrictMode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
@@ -7,6 +11,20 @@ import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'v
 import { useEditorSelection } from '#/bridge/hooks';
 import * as schemaModule from '#/definition/schema';
 import { fixtureItalic } from '#/features/__tests__/fixtures/features';
+import { notesModel } from '#/features/__tests__/fixtures/notes';
+import {
+    vocabularyAlign,
+    vocabularyBlocks,
+    vocabularyColors,
+    vocabularyIndent,
+    vocabularyLink,
+    vocabularyLists,
+    vocabularyMarks,
+    vocabularyMedia,
+    vocabularyMention,
+    vocabularyStyles,
+    vocabularyTables,
+} from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { deDE } from '#/locales/de-DE';
@@ -20,7 +38,8 @@ import {
     type JsonValue,
 } from '#/model';
 import * as model from '#/model';
-import { type LoadedDocument } from '#/persistence/types';
+import { type LoadedDocument, type PersistenceService } from '#/persistence/types';
+import { fixturesIn } from '#/reader/__tests__/helpers/helpers';
 import { liveResources, type RuntimeHandle } from '#/runtime/runtime';
 import { type CommandResult, type DocumentChange } from '#/runtime/types';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
@@ -797,5 +816,66 @@ describe('RichTextEditor host surface', () => {
         expect(onDiagnostic).not.toHaveBeenCalled();
         unmount();
         vi.unstubAllEnvs();
+    });
+});
+
+describe('RichTextEditor documents', () => {
+    // A path, not a `URL`: happy-dom replaces the global `URL`, which rejects a `file:` URL.
+    const fixtures = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'model', '__tests__', 'fixtures');
+    const load = (...path: readonly string[]) => JSON.parse(readFileSync(join(fixtures, ...path), 'utf8')) as unknown;
+    const vocabulary = defineEditor({
+        id: 'test.vocabulary',
+        model: compileContentModel(
+            [
+                core(),
+                vocabularyStyles(),
+                vocabularyAlign(),
+                vocabularyIndent(),
+                vocabularyBlocks(),
+                vocabularyLists(),
+                vocabularyTables(),
+                vocabularyMedia(),
+                vocabularyMention(),
+                vocabularyMarks(),
+                vocabularyLink(),
+                vocabularyColors(),
+            ],
+            { id: 'fixture.vocabulary', version: 1 },
+        ),
+    });
+    const notes = defineEditor({ id: 'test.notes', model: notesModel(3) });
+    const opened = [
+        ...fixturesIn('valid').map(([name, document]) => [`model/valid/${name}`, document, vocabulary] as const),
+        ...readdirSync(join(fixtures, 'migration'), { recursive: true, encoding: 'utf8' })
+            .filter((name) => name.endsWith('.json'))
+            .sort()
+            .map((name) => [`migration/${name}`, load('migration', name), notes] as const)
+            .filter(([, document]) => (document as { readonly model: { readonly version: number } }).model.version < 3),
+    ];
+
+    it.each(opened)('opens %s with no document change or save for 2 seconds', (_name, document, used) => {
+        const save = vi.fn();
+        const onDocumentChange = vi.fn();
+        const ref = createRef<EditorHandle<object>>();
+        const { unmount } = render(
+            <RichTextEditor
+                aria-label="Notes"
+                definition={used}
+                defaultValue={{ documentId: 'document-1', revision: null, document } as LoadedDocument}
+                services={{ persistence: { save, read: vi.fn() } as unknown as PersistenceService }}
+                onDocumentChange={onDocumentChange}
+                ref={ref}
+            />,
+        );
+        act(() => {
+            vi.advanceTimersToNextFrame();
+            vi.advanceTimersByTime(2000);
+            vi.advanceTimersToNextFrame();
+        });
+
+        expect(ref.current?.getSummary().phase).toBe('ready');
+        expect(onDocumentChange).not.toHaveBeenCalled();
+        expect(save).not.toHaveBeenCalled();
+        unmount();
     });
 });

@@ -61,6 +61,7 @@ export {
     type EditorDefinitionOptions,
     type EditorEventMap,
     type EditorHandle,
+    type EditorServices,
     type ListLevels,
     type OperationMetric,
     type PresentationStyle,

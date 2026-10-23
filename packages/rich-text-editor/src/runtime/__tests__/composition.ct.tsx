@@ -180,6 +180,46 @@ test('answers a host execute with composition-active and runs a queued intent af
     await expect(surfaceOf(page)).toHaveText('abxy!');
 });
 
+test('keeps the composed text, refuses replaceDocument and changes contenteditable only after compositionend @engine', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['ab']} />);
+    await ready(page);
+    await caretAfter(page, 'ab');
+    const ime = await imeOf(page);
+
+    await ime.compose('x');
+    await page.evaluate(() => (window.rte as Rte).handle.setMode('readonly'));
+    const replaced = await page.evaluate(() => {
+        const { handle } = window.rte as Rte;
+        const { stamp, document } = handle.getSnapshot();
+        // The next record keeps the envelope and holds one paragraph.
+        const paragraph = { type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: 'cd' }] };
+        const next = {
+            documentId: 'document-2',
+            revision: null,
+            document: { ...document, content: { ...document.content, content: [paragraph] } as never },
+        };
+        return handle.replaceDocument({
+            expected: stamp,
+            next,
+            unsaved: { action: 'discard', confirmed: true },
+            selection: 'start',
+            history: 'reset',
+        });
+    });
+    await ime.compose('xy');
+    const during = await surfaceOf(page).getAttribute('contenteditable');
+    await ime.commit('xy');
+
+    expect(replaced).toEqual({ status: 'rejected', code: 'composition-active' });
+    expect(during).toBe('true');
+    await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'false');
+    await expect(surfaceOf(page)).toHaveText('abxy');
+    expect(await page.evaluate(() => (window.rte as Rte).text())).toBe('abxy');
+});
+
 test('keeps the surface editable when the mode returns to editable within a composition @engine', async ({
     mount,
     page,
