@@ -17,6 +17,7 @@ import { codecContext } from '#/model/output';
 import { isApple } from '#/model/platform';
 import { randomId } from '#/model/random-id';
 import { exceedsBytes } from '#/model/read';
+import { type ResolveReference } from '#/model/references';
 import { closeGroup } from '#/runtime/history';
 import { type EditorRuntime, runtimeOfView } from '#/runtime/runtime';
 
@@ -41,6 +42,8 @@ export interface ClipboardSession {
     /** The locale of the announcements and of the island labels in copied HTML. */
     readonly locale: () => RichTextLocale;
     readonly announce: (message: string) => void;
+    /** The presentation's `resolveReference`, read at each copy, so copied mentions name whom the chip shows. */
+    readonly resolveReference?: () => ResolveReference | undefined;
 }
 
 const sessions = new WeakMap<EditorRuntime, ClipboardSession>();
@@ -205,8 +208,9 @@ const writeFlavors = (
         content: withoutIds(slice.content).toJSON() as TreeNode[],
     };
     data.clearData();
-    data.setData('text/html', writeHtml(plan, tree, context).html);
-    data.setData('text/plain', writeText(plan, tree, context).text);
+    const resolveReference = session.resolveReference?.();
+    data.setData('text/html', writeHtml(plan, tree, context, { resolveReference }).html);
+    data.setData('text/plain', writeText(plan, tree, context, { resolveReference }).text);
     data.setData(SLICE_TYPE, JSON.stringify(writeSlice(model, view.state.doc, slice, contextOf(session))));
 };
 

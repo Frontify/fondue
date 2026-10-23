@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ContentNodeJSON, type JsonObject } from '#/model';
+import { type ContentNodeJSON, type JsonObject, type JsonValue } from '#/model';
 
 import { positionsOf } from './editor-api';
 import {
@@ -253,6 +253,12 @@ export interface DocumentApi {
         /** Captures `range`, else the selection; `undefined` inside a command or while the editor is busy. */
         capture(range?: EditorRange, options?: CaptureTargetOptions): SelectionHandle | undefined;
         release(target: SelectionHandle): void;
+    };
+    /** Flags a plugin keeps on the node `nodeId` for this session, outside the document and its history. */
+    readonly nodeState: {
+        get(nodeId: string, key: string): JsonValue | undefined;
+        /** Sets the flag `key`, or removes it with `null`; never an undo step. */
+        set(nodeId: string, key: string, value: JsonValue | null): void;
     };
 }
 

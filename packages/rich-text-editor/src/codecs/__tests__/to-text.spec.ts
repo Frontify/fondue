@@ -13,6 +13,7 @@ import {
     link,
     listItem,
     mark,
+    mention,
     node,
     paragraph,
     row,
@@ -81,6 +82,7 @@ describe('toPlainText rules', () => {
             [heading('h-1', text('Plan')), paragraph(text('see plan', link('#h-1')))],
             'Plan\n\nsee plan',
         ],
+        ['mention: @ and the label', [paragraph(text('Hi '), mention('m-1'))], 'Hi @Ada'],
         ['embed: its title, then the URL', [embed('Talk')], 'Talk (https://www.youtube.com/watch?v=x)'],
         ['embed with no title: the URL alone', [embed(null)], 'https://www.youtube.com/watch?v=x'],
         [

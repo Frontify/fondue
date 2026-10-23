@@ -5,6 +5,7 @@ import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { pointer } from '#/model/errors';
 import { islandText } from '#/model/html-spec';
 import { attrsOf, groupRun, type Item, itemsOf, markPath, textOf } from '#/model/output';
+import { mentionLabel, type ResolveReference, unavailableNote } from '#/model/references';
 
 import { type CodecPlan, Losses } from './plan';
 import { type CodecLoss } from './types';
@@ -24,6 +25,7 @@ const linkTarget = (state: WalkState, attrs: TreeMark['attrs']): string | undefi
 };
 
 const INDENT = '  ';
+const NO_OPTIONS: { readonly resolveReference?: ResolveReference | undefined } = Object.freeze({});
 const LISTS = new Set(['bullet_list', 'ordered_list', 'task_list']);
 
 const renderInline = (state: WalkState, node: TreeNode, path: string): string => {
@@ -160,6 +162,11 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
         case 'hard_break':
             text = '\n';
             break;
+        case 'mention': {
+            const shown = mentionLabel(attrs, { t: state.context.t, resolveReference: state.resolveReference });
+            text = `@${shown.label}${unavailableNote(shown, state.context.t)}`;
+            break;
+        }
         case 'embed':
             text = embedText(attrs);
             break;
@@ -226,6 +233,7 @@ export const writeText = (
     plan: CodecPlan,
     root: TreeNode,
     context: CodecContext,
+    { resolveReference }: { readonly resolveReference?: ResolveReference | undefined } = NO_OPTIONS,
 ): { readonly text: string; readonly losses: readonly CodecLoss[]; readonly diagnostics: readonly Diagnostic[] } => {
     const state: WalkState = {
         plan,
@@ -233,6 +241,7 @@ export const writeText = (
         losses: new Losses(),
         diagnostics: [],
         headings: headingIds(root),
+        resolveReference,
     };
     const text = joinBlocks(
         (root.content ?? []).map((child, index) =>

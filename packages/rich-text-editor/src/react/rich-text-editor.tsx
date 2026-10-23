@@ -442,6 +442,7 @@ const SessionComponent = (
             },
             locale: () => shellPropsOf(latestRef.current).locale,
             announce: (message) => announcer.announce(message),
+            resolveReference: () => latestRef.current.presentation?.resolveReference,
         });
         // A gap cursor shows no caret to a screen reader, so moving onto one is announced.
         let atGap = false;

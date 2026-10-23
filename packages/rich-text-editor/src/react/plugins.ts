@@ -25,6 +25,7 @@ import { strikeEditor } from '#/features/marks-strike/editor';
 import { subscriptEditor } from '#/features/marks-subscript/editor';
 import { superscriptEditor } from '#/features/marks-superscript/editor';
 import { underlineEditor } from '#/features/marks-underline/editor';
+import { mentionsEditor } from '#/features/mentions/editor';
 import { brandEditor } from '#/features/styles-brand/editor';
 
 const SHIPPED = [
@@ -51,6 +52,7 @@ const SHIPPED = [
     inputRulesEditor,
     columnsEditor,
     emojiEditor,
+    mentionsEditor,
     fontColorEditor,
     languageEditor,
 ] as const;

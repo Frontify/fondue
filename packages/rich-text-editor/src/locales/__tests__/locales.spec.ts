@@ -105,6 +105,7 @@ describe('package locales', () => {
             'label',
             'position',
             'total',
+            'resourceType',
             'type',
             'first',
             'second',

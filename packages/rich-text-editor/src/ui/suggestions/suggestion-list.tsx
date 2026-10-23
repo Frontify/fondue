@@ -27,6 +27,7 @@ export const SPINNER_DELAY_MS = 300;
 
 /** What a list says about its search, in the UI locale. */
 export interface ReferenceListStrings {
+    readonly label: string;
     readonly loading: string;
     readonly noResults: string;
     readonly failed: string;
@@ -41,6 +42,7 @@ export interface ReferenceListStrings {
 
 /** The mention list's and the mention search dialog's list strings from the chrome's `t`. */
 export const referenceListStrings = (t: CodecContext['t']): ReferenceListStrings => ({
+    label: t('RichTextEditor_mentionSuggestions'),
     loading: t('RichTextEditor_mentionLoading'),
     noResults: t('RichTextEditor_mentionNoResults'),
     failed: t('RichTextEditor_mentionFailed'),

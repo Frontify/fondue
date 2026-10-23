@@ -1,0 +1,47 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// The border keeps the chip apart from the text around it in forced colours too, where backgrounds are replaced.
+.mention {
+    padding: 0 0.2em;
+    border: var(--border-width-default) solid var(--color-line-mid);
+    border-radius: var(--border-radius-small);
+    background-color: var(--color-container-secondary-default);
+    color: var(--color-primary-default);
+    white-space: nowrap;
+
+    // The dashed border and the note mark it, so its text keeps the contrast of an available one.
+    &[data-unavailable] {
+        border-style: dashed;
+    }
+}
+
+.note {
+    font-size: 0.875em;
+}
+
+.picker {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-x-small);
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+    padding: var(--spacing-x-small) var(--spacing-small);
+    color: var(--color-secondary-default);
+    font-family: var(--text-body-medium-default-font-family);
+    font-size: var(--text-body-medium-default-font-size);
+    line-height: var(--text-body-medium-default-line-height);
+}
+
+// Read by screen readers and never seen.
+.announcer {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}

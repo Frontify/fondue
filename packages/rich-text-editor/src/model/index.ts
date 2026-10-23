@@ -77,6 +77,7 @@ export { decorationLines, inheritedAnswer } from './inherited-style';
 export { isTaskListElement } from './task-list-markup';
 export { toJsonSchema } from './json-schema';
 export { type MigrationManifest, type MigrationResult, migrateDocument } from './migrate';
+export { diffReferences, type MentionLabel, mentionLabel, type ReferenceDiff, unavailableNote } from './references';
 export {
     type ColorToken,
     isPresentationStyle,

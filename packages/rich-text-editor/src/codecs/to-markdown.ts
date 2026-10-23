@@ -7,6 +7,7 @@ import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { pointer } from '#/model/errors';
 import { islandText } from '#/model/html-spec';
 import { attrsOf, groupRun, type Item, markPath, textOf } from '#/model/output';
+import { mentionLabel, unavailableNote } from '#/model/references';
 
 import {
     codeSpan,
@@ -325,6 +326,13 @@ const leafPieces = (state: MarkdownState, { node, path, code }: MarkdownItem, li
         return [{ kind: 'break' }];
     }
     state.losses.add(plan.featureId);
+    if (node.type === 'mention') {
+        const shown = mentionLabel(attrs, { t: state.context.t });
+        return [
+            { kind: 'literal', text: '@' },
+            { kind: 'text', text: `${shown.label}${unavailableNote(shown, state.context.t)}` },
+        ];
+    }
     return [{ kind: 'text', text: textOf(node) }];
 };
 

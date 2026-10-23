@@ -28,7 +28,7 @@ import {
     withStyleId,
     writesAttribute,
 } from '#/model/output';
-import { type ResolveReference } from '#/model/references';
+import { mentionLabel, type ResolveReference, unavailableNote } from '#/model/references';
 import { isStyleAttribute } from '#/model/values';
 
 import { type CodecPlan, Losses } from './plan';
@@ -44,6 +44,7 @@ interface HtmlState extends Spacing {
     readonly depths: ListDepths;
     readonly styles: OutputStyles;
     readonly columns: ColumnLayout | undefined;
+    readonly resolveReference: ResolveReference | undefined;
     /** The column breaks written so far, whose first `count - 1` are active. */
     breaks: number;
 }
@@ -217,6 +218,8 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         let content: string;
         if (node.type === 'task_item' && plan.featureId === 'lists.task') {
             content = taskItemInner(state, node, path, plan.pre);
+        } else if (isMention(node, plan.featureId)) {
+            content = mentionInner(state, node);
         } else {
             content = renderChildren(state, node, path, plan.pre);
         }
@@ -244,6 +247,9 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     }
     if (!plan.inline) {
         template = withAutoDirection(template, passageDirection(treeRuns(node.content)));
+    }
+    if (isMention(node, plan.featureId)) {
+        template = { ...template, content: true };
     }
     template = withStyle(template, styleOfNode(state.styles.styles, node.type, attrs).style, state.styles.inline);
     if (node.type === COLUMN_BREAK) {
@@ -276,6 +282,17 @@ const taskItemInner = (state: HtmlState, node: TreeNode, path: string, pre: bool
     }
     const checkbox = `<input type="checkbox" disabled="" aria-labelledby="${label}"${checked}/>`;
     return `${checkbox}<div id="${label}">${first}</div>${rest.join('')}`;
+};
+
+const isMention = (node: TreeNode, featureId: string) => node.type === 'mention' && featureId === 'mentions';
+
+/**
+ * A mention's `@` and its label isolated for bidirectional text, then its unavailable note, as the `mentions` reader
+ * override renders it, which no `HtmlSpec` can express: the label is text, never a resource ID.
+ */
+const mentionInner = (state: HtmlState, node: TreeNode): string => {
+    const shown = mentionLabel(attrsOf(node.attrs), { t: state.context.t, resolveReference: state.resolveReference });
+    return `@<bdi>${escapeHtml(shown.label)}</bdi>${escapeHtml(unavailableNote(shown, state.context.t))}`;
 };
 
 const renderRun = (state: HtmlState, items: readonly Item[], depth: number, pre: boolean): string =>
@@ -311,7 +328,7 @@ export const writeHtml = (
     plan: CodecPlan,
     root: TreeNode,
     context: CodecContext,
-    { contentClassName, listLevels, columns, styles = NO_STYLES }: HtmlWriteOptions = NO_OPTIONS,
+    { contentClassName, listLevels, columns, styles = NO_STYLES, resolveReference }: HtmlWriteOptions = NO_OPTIONS,
 ): { readonly html: string; readonly diagnostics: readonly Diagnostic[] } => {
     const state: HtmlState = {
         plan,
@@ -324,6 +341,7 @@ export const writeHtml = (
         depths: listDepths(),
         styles,
         columns,
+        resolveReference,
         breaks: 0,
     };
     if (isEmptyDocument(plan, root)) {

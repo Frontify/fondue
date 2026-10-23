@@ -47,6 +47,7 @@ import {
 import { canRedo, canUndo } from './history';
 import { enterItem, listAround, outdentAtStart } from './lists';
 import { markRunAt, markRunAtPos } from './mark-runs';
+import { nodeStateChanges, nodeStateOf, withNodeState } from './node-state';
 import { inCodeTextblock, nearest as nearestNode, positionOf } from './positions';
 import { type EditorRuntime, summarize } from './runtime';
 import { appendSteps, carrySelection } from './transactions';
@@ -867,6 +868,18 @@ const documentApi = (source: ApiSource): DocumentApi => {
             capture: (range, options) => source.capture(range, options ?? NO_OPTIONS),
             release: (target) => source.release(target),
         },
+        nodeState: {
+            get: (nodeId, key) => nodeStateOf(source.state(), nodeId, key),
+            set: (nodeId, key, value) => {
+                source.edit({
+                    run: (state, dispatch) => {
+                        dispatch?.(withNodeState(state.tr, [{ nodeId, key, value }]));
+                        return true;
+                    },
+                    active: () => false,
+                });
+            },
+        },
     };
 };
 
@@ -1021,6 +1034,10 @@ const carryState = (outer: Transaction, next: Transaction) => {
     const mark: unknown = next.getMeta(LAST_MARK_META);
     if (mark !== undefined) {
         outer.setMeta(LAST_MARK_META, mark);
+    }
+    const flags = nodeStateChanges(next);
+    if (flags.length > 0) {
+        withNodeState(outer, flags);
     }
 };
 
