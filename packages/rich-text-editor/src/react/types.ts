@@ -118,22 +118,38 @@ export interface ReferencePage {
 export interface ReferenceService {
     search(request: ReferenceSearchRequest, context: ServiceContext): Promise<ReferencePage>;
 }
-/** An asset a host picked, as a document stores it. */
+/** An asset a host uploaded or picked, as a document stores it. */
 export interface AssetValue {
     readonly assetId: string;
     readonly mediaType: string;
     readonly labelSnapshot: string;
 }
-/** A host asset library; `image.insert` opens it with its purpose when set. */
+/** What the editor sends to the upload service: the file and the operation it belongs to. */
+export interface UploadRequest {
+    readonly operationId: string;
+    readonly blob: Blob;
+    readonly filename: string;
+}
+/** The host service that uploads a file and returns its asset. */
+export interface UploadService {
+    upload(
+        request: UploadRequest,
+        context: ServiceContext & { readonly reportProgress: (fraction: number) => void },
+    ): Promise<AssetValue>;
+    /** Server-managed cleanup; never deletes an asset still referenced elsewhere. */
+    releaseUnused(operationId: string, context: ServiceContext): Promise<void>;
+}
+/** A host asset library; `image.insert` opens it with its purpose when set, else the file chooser. */
 export interface AssetPickerService {
     /** `purpose` is `image` for the shipped features; a later feature may pass its own purpose, so implementations handle any string. */
     pick(request: { readonly purpose: string }, context: ServiceContext): Promise<AssetValue | null>;
 }
-/** The services a host gives the editor, such as persistence. */
+/** The services a host gives the editor, such as persistence, recovery, references and uploads. */
 export interface EditorServices {
     readonly persistence?: PersistenceService;
     readonly recovery?: RecoveryService;
     readonly references?: ReferenceService;
+    readonly uploads?: UploadService;
     readonly assets?: AssetPickerService;
 }
 

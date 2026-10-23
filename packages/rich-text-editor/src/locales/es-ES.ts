@@ -189,5 +189,29 @@ export const esES = {
         RichTextEditor_unavailableReadOnly: 'El contenido es de solo lectura',
         RichTextEditor_underline: 'Subrayado',
         RichTextEditor_undo: 'Deshacer',
+        RichTextEditor_uploadCancel: 'Cancelar subida',
+        RichTextEditor_uploadCancelled: 'Subida cancelada: ${name}',
+        RichTextEditor_uploadCompleted: 'Subido: ${name}',
+        RichTextEditor_uploadCompletedNoAlt: 'Subido: ${name}. Aún no tiene texto alternativo.',
+        RichTextEditor_uploadError: 'La subida ha fallado. Vuelve a intentarlo o quita la imagen.',
+        RichTextEditor_uploadFailed: 'Subida fallida: ${name}',
+        RichTextEditor_uploadPercent: '${percent}\u00A0% subido',
+        RichTextEditor_uploadRemove: 'Quitar imagen',
+        RichTextEditor_uploadRetry: 'Reintentar subida',
+        RichTextEditor_uploadRunning: 'Subiendo…',
+        RichTextEditor_uploadStarted: 'Subiendo: ${name}',
+        RichTextEditor_uploadStartedCount: 'Subiendo archivos: ${count}',
+        RichTextEditor_uploadStopped: 'La subida se ha detenido. Vuelve a intentarlo o quita la imagen.',
+        RichTextEditor_uploadTooLarge:
+            '${name} no se ha subido porque es demasiado grande. Elige un archivo de tipo ${types} de hasta ${size}.',
+        RichTextEditor_uploadTooManyPixels:
+            '${name} no se ha subido porque la imagen tiene demasiados píxeles. Elige una imagen de ${megapixels} megapíxeles como máximo y ${side} píxeles por lado.',
+        RichTextEditor_uploadUnreadable:
+            '${name} no se ha subido porque no se puede leer el tamaño de la imagen. Elige un archivo de tipo ${types} de hasta ${size}.',
+        RichTextEditor_uploadUnsafe:
+            '${name} no se ha subido porque el SVG contiene un script. Elige un archivo de tipo ${types} de hasta ${size}.',
+        RichTextEditor_uploadWaiting: 'Esperando para subir',
+        RichTextEditor_uploadWrongType:
+            '${name} no se ha subido porque no se acepta este tipo de archivo. Elige un archivo de tipo ${types} de hasta ${size}.',
     },
 };

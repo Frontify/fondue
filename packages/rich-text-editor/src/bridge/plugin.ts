@@ -38,7 +38,7 @@ export {
     type WriteTarget,
 } from '#/runtime/document-api';
 export { passesToBrowser } from '#/runtime/browser-keys';
-export { type ReferenceValue, type SelectionHandle } from '#/runtime/types';
+export { type ReferenceValue, type SelectionHandle, type UploadStatus } from '#/runtime/types';
 export { type Announcer, createAnnouncer } from './announcer';
 export { useClientLayoutEffect } from './client-layout-effect';
 export { OverlayBody, passEscape, useEditorOverlay, useOverlayContainer, useScopedFocus } from './overlays';
@@ -265,6 +265,15 @@ export interface EditorPluginParts {
     readonly suggestions?: readonly EditorSuggestion[];
     /** Chrome around the editable content of a node, which renders again only when its node or selection changes. */
     readonly views?: readonly NodeViewDeclaration[];
+    /**
+     * Takes files pasted or dropped from outside at `at.range`, which the paste then leaves alone; `false` hands them to
+     * the next part, then to the paste of their text.
+     */
+    readonly files?: (
+        api: EditorApi,
+        files: readonly File[],
+        at: { readonly origin: 'paste' | 'drop'; readonly range: EditorRange },
+    ) => boolean;
 }
 
 declare const pluginBrand: unique symbol;

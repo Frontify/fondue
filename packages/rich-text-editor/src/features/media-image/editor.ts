@@ -36,8 +36,8 @@ const targetOf = (api: EditorApi, payload: { readonly nodeId?: string } | undefi
 };
 
 /**
- * Inserts an image from the toolbar through the host asset picker, replaces one the same way, opens its alternative
- * text dialog, and sets its size and side.
+ * Inserts an image from the toolbar through the host asset picker, else the file chooser, replaces one the same way,
+ * opens its alternative text dialog, and sets its size and side; pasted and dropped files upload as new images.
  */
 export const mediaImageEditor = defineEditorPlugin(mediaImage, {
     commands: {
@@ -161,4 +161,6 @@ export const mediaImageEditor = defineEditorPlugin(mediaImage, {
         ].map((entry) => ({ ...entry, kind: 'button' as const, icon: 'IconImage', opensOverlay: true, node: IMAGE })),
     ],
     views: [imageView],
+    // Text that keeps white space, as code does, takes no image.
+    files: (api, files, at) => !api.selection().verbatim && api.uploads.begin(files, at),
 });

@@ -58,9 +58,13 @@ export const isAssetLocator = (assetId: string): boolean => {
 
 /**
  * A host's answer as untrusted input: an `AssetValue` whose `assetId` is no URL or token and no longer than
- * `maxLength`, and whose `labelSnapshot` is cut to `maxLength` characters, else `undefined`.
+ * `maxLength`, whose `mediaType` is one of `mediaTypes` when given, and whose `labelSnapshot` is cut to `maxLength`
+ * characters, else `undefined`.
  */
-export const pickedAsset = (value: unknown, options: { readonly maxLength: number }): PickedAsset | undefined => {
+export const pickedAsset = (
+    value: unknown,
+    options: { readonly mediaTypes?: readonly string[]; readonly maxLength: number },
+): PickedAsset | undefined => {
     if (!isRecord(value)) {
         return undefined;
     }
@@ -72,6 +76,9 @@ export const pickedAsset = (value: unknown, options: { readonly maxLength: numbe
         return undefined;
     }
     if (mediaType.length > options.maxLength) {
+        return undefined;
+    }
+    if (options.mediaTypes !== undefined && !options.mediaTypes.includes(mediaType)) {
         return undefined;
     }
     // No more code units than twice the characters kept can hold them, so a huge label is cut before it is split.

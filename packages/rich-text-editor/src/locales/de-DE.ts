@@ -195,5 +195,29 @@ export const deDE = {
         RichTextEditor_unavailableReadOnly: 'Der Inhalt ist schreibgeschützt',
         RichTextEditor_underline: 'Unterstrichen',
         RichTextEditor_undo: 'Rückgängig',
+        RichTextEditor_uploadCancel: 'Upload abbrechen',
+        RichTextEditor_uploadCancelled: 'Upload abgebrochen: ${name}',
+        RichTextEditor_uploadCompleted: 'Hochgeladen: ${name}',
+        RichTextEditor_uploadCompletedNoAlt: 'Hochgeladen: ${name}. Das Bild hat noch keinen Alternativtext.',
+        RichTextEditor_uploadError: 'Der Upload ist fehlgeschlagen. Wiederholen Sie ihn oder entfernen Sie das Bild.',
+        RichTextEditor_uploadFailed: 'Upload fehlgeschlagen: ${name}',
+        RichTextEditor_uploadPercent: '${percent}\u00A0% hochgeladen',
+        RichTextEditor_uploadRemove: 'Bild entfernen',
+        RichTextEditor_uploadRetry: 'Upload wiederholen',
+        RichTextEditor_uploadRunning: 'Wird hochgeladen…',
+        RichTextEditor_uploadStarted: 'Wird hochgeladen: ${name}',
+        RichTextEditor_uploadStartedCount: 'Dateien werden hochgeladen: ${count}',
+        RichTextEditor_uploadStopped: 'Der Upload wurde angehalten. Wiederholen Sie ihn oder entfernen Sie das Bild.',
+        RichTextEditor_uploadTooLarge:
+            '${name} wurde nicht hochgeladen, weil die Datei zu groß ist. Wählen Sie eine Datei vom Typ ${types} mit höchstens ${size}.',
+        RichTextEditor_uploadTooManyPixels:
+            '${name} wurde nicht hochgeladen, weil das Bild zu viele Pixel hat. Wählen Sie ein Bild mit höchstens ${megapixels} Megapixeln und ${side} Pixeln pro Seite.',
+        RichTextEditor_uploadUnreadable:
+            '${name} wurde nicht hochgeladen, weil die Bildgröße nicht gelesen werden kann. Wählen Sie eine Datei vom Typ ${types} mit höchstens ${size}.',
+        RichTextEditor_uploadUnsafe:
+            '${name} wurde nicht hochgeladen, weil das SVG Skript enthält. Wählen Sie eine Datei vom Typ ${types} mit höchstens ${size}.',
+        RichTextEditor_uploadWaiting: 'Wartet auf den Upload',
+        RichTextEditor_uploadWrongType:
+            '${name} wurde nicht hochgeladen, weil dieser Dateityp nicht akzeptiert wird. Wählen Sie eine Datei vom Typ ${types} mit höchstens ${size}.',
     },
 };

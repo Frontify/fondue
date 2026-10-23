@@ -268,9 +268,9 @@ const gapCursorValid = ($pos: ResolvedPos): boolean =>
  * Puts `node` at `spot`, adds an empty paragraph after it when it ends up last, and puts the selection after it: a
  * caret in a textblock that follows, else a gap cursor, so typing never replaces a selected leaf such as a column break.
  */
-const insertBlock = (state: EditorState, spot: BlockSpot, node: Node): Transaction => {
+const insertBlock = (state: EditorState, spot: BlockSpot, node: Node | Fragment): Transaction => {
     const transaction = state.tr.replaceWith(spot.from, spot.to, node);
-    const after = spot.from + node.nodeSize;
+    const after = spot.from + (node instanceof Fragment ? node.size : node.nodeSize);
     const $after = transaction.doc.resolve(after);
     if ($after.nodeAfter !== null) {
         if (!$after.nodeAfter.isTextblock && gapCursorValid($after)) {
@@ -291,11 +291,14 @@ export const placesBlock = (state: EditorState, type: NodeType, topLevel = false
     blockSpots(state, topLevel).some((spot) => takes(state.doc, spot, type));
 
 /**
- * Puts block `node` where `insertNode` puts a block, or `undefined` where no spot at the selection takes it; with
- * `topLevel`, only after the top-level block.
+ * Puts block `node`, or blocks of one type, where `insertNode` puts a block, or `undefined` where no spot at the
+ * selection takes it; with `topLevel`, only after the top-level block.
  */
-export const placeBlock = (state: EditorState, node: Node, topLevel = false): Transaction | undefined => {
-    const spot = blockSpots(state, topLevel).find((candidate) => takes(state.doc, candidate, node.type));
+export const placeBlock = (state: EditorState, node: Node | Fragment, topLevel = false): Transaction | undefined => {
+    const type = node instanceof Fragment ? node.firstChild?.type : node.type;
+    const spot = blockSpots(state, topLevel).find(
+        (candidate) => type !== undefined && takes(state.doc, candidate, type),
+    );
     if (spot === undefined) {
         return undefined;
     }

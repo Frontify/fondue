@@ -11,6 +11,7 @@ import { writeHtml } from '#/codecs/to-html';
 import { writeText } from '#/codecs/to-text';
 import { type PluginImplementation } from '#/definition';
 import { type ContentModel, type RichTextLocale, type TranslationStrings } from '#/model';
+import { markHrefPolicy } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { type ResolveAssetUrl } from '#/model/declarations';
 import { diagnostic } from '#/model/format';
@@ -25,6 +26,7 @@ import { type EditorRuntime, runtimeOfView } from '#/runtime/runtime';
 import { exceededStructure } from './import/limits';
 import {
     type FollowUp,
+    hrefOf,
     insertAndSelect,
     islandsCannotStay,
     type Pasted,
@@ -112,6 +114,28 @@ const rejectsSize = (connected: Connected, payload: Payload) => {
     reject(connected, 'maxPasteBytes');
     announce(session, 'RichTextEditor_pasteTooLarge');
     return true;
+};
+
+/** Hands pasted or dropped files at `from` to `to` to the editor parts; `false` when none took them. */
+export type FileIntake = (
+    view: EditorView,
+    files: readonly File[],
+    origin: 'paste' | 'drop',
+    from: number,
+    to: number,
+) => boolean;
+
+/**
+ * Whether the files of a paste or an outside drop go to the editor parts, as step 4 of the paste order: neither plain
+ * text nor a pasted URL comes first.
+ */
+const offersFiles = (model: ContentModel, view: EditorView, payload: Payload, plain: boolean) => {
+    if (plain) {
+        return false;
+    }
+    return (
+        view.state.schema.marks.link === undefined || hrefOf(payload.text, markHrefPolicy(model, 'link')) === undefined
+    );
 };
 
 const payloadOf = (data: DataTransfer): Payload => ({
@@ -270,13 +294,24 @@ const copy = (model: ContentModel, view: EditorView, event: ClipboardEvent) => {
 const pasteBlocked = (view: EditorView) => !view.editable || (view.composing && !ANDROID.test(navigator.userAgent));
 
 /** Runs the paste order on a payload that is already read. */
-const pasteFrom = (model: ContentModel, view: EditorView, connected: Connected, payload: Payload) => {
+const pasteFrom = (
+    model: ContentModel,
+    intake: FileIntake,
+    view: EditorView,
+    connected: Connected,
+    payload: Payload,
+    files: readonly File[],
+) => {
     if (rejectsSize(connected, payload)) {
         return;
     }
     const { tr } = view.state;
     const { from, to } = tr.selection;
     const plain = shiftHeld.get(view) === true;
+    // The text flavors that come with files are left unread.
+    if (files.length > 0 && offersFiles(model, view, payload, plain) && intake(view, files, 'paste', from, to)) {
+        return;
+    }
     const settings = settingsOf(model, view, connected, plain);
     const pasted = attempt(connected, () => pastePayload(tr, from, to, payload, settings));
     if (pasted !== null) {
@@ -284,7 +319,7 @@ const pasteFrom = (model: ContentModel, view: EditorView, connected: Connected, 
     }
 };
 
-const paste = (model: ContentModel, view: EditorView, event: ClipboardEvent) => {
+const paste = (model: ContentModel, intake: FileIntake, view: EditorView, event: ClipboardEvent) => {
     const connected = connectedOf(view);
     if (connected === undefined) {
         return false;
@@ -293,18 +328,18 @@ const paste = (model: ContentModel, view: EditorView, event: ClipboardEvent) => 
         return true;
     }
     event.preventDefault();
-    pasteFrom(model, view, connected, payloadOf(event.clipboardData));
+    pasteFrom(model, intake, view, connected, payloadOf(event.clipboardData), [...event.clipboardData.files]);
     return true;
 };
 
-const feeds = new WeakMap<EditorView, (payload: Payload) => void>();
+const feeds = new WeakMap<EditorView, (payload: Payload, files: readonly File[]) => void>();
 
 /** Feeds `view`'s paste order a payload as a browser hands it after the clipboard read, with no clipboard event. */
-export const pasteInto = (view: EditorView, payload: Payload): void => {
-    feeds.get(view)?.(payload);
+export const pasteInto = (view: EditorView, payload: Payload, files: readonly File[]): void => {
+    feeds.get(view)?.(payload, files);
 };
 
-const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
+const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: DragEvent) => {
     const dragged = drags.get(view);
     drags.delete(view);
     view.dragging = null;
@@ -330,6 +365,13 @@ const drop = (model: ContentModel, view: EditorView, event: DragEvent) => {
     if (dragged === undefined || (copying && islandsCannotStay(dragged, tr.doc, false))) {
         // A drop from outside, or an inside copy that falls back, takes the paste order at the drop cursor's block boundary.
         const position = dropPoint(tr.doc, at.pos, blockSlice(view)) ?? at.pos;
+        const files = [...data.files];
+        if (dragged === undefined && files.length > 0 && offersFiles(model, view, payload, false)) {
+            view.focus();
+            if (intake(view, files, 'drop', position, position)) {
+                return true;
+            }
+        }
         const settings = settingsOf(model, view, connected, false);
         pasted = attempt(connected, () => pastePayload(tr, position, position, payload, settings));
     } else {
@@ -375,17 +417,17 @@ const dragstart = (model: ContentModel, view: EditorView, event: DragEvent) => {
 
 /** The package's own clipboard and drag handlers, since ProseMirror's parse before any byte check and write no internal slice. */
 export const clipboardPlugin =
-    (model: ContentModel): PluginImplementation =>
+    (model: ContentModel, intake: FileIntake): PluginImplementation =>
     () =>
         new Plugin({
             key: clipboardKey,
             view: (view) => {
-                feeds.set(view, (payload) => {
+                feeds.set(view, (payload, files) => {
                     const connected = connectedOf(view);
                     if (connected === undefined || pasteBlocked(view)) {
                         return;
                     }
-                    pasteFrom(model, view, connected, payload);
+                    pasteFrom(model, intake, view, connected, payload, files);
                 });
                 return {};
             },
@@ -403,7 +445,7 @@ export const clipboardPlugin =
                     },
                     copy: (view, event) => copy(model, view, event),
                     cut: (view, event) => copy(model, view, event),
-                    paste: (view, event) => paste(model, view, event),
+                    paste: (view, event) => paste(model, intake, view, event),
                     dragstart: (view, event) => dragstart(model, view, event),
                     // The drop cursor snaps only for a drag it sees started here, so any other drag stands in a block.
                     dragover: (view) => {
@@ -422,7 +464,7 @@ export const clipboardPlugin =
                         drags.delete(view);
                         return false;
                     },
-                    drop: (view, event) => drop(model, view, event),
+                    drop: (view, event) => drop(model, intake, view, event),
                 },
             },
             appendTransaction: (transactions, _old, state) => {

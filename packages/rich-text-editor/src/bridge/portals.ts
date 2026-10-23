@@ -11,7 +11,7 @@ export interface PortalEntry {
     readonly key: string;
     readonly slot: HTMLElement;
     readonly component: ComponentType<object>;
-    readonly state: Omit<NodeViewState<object>, 'context'>;
+    readonly state: Omit<NodeViewState<object>, 'context' | 'pending'>;
     /** Moves the node's editable content into the element the chrome renders for it, or back on `null`. */
     readonly place: (element: HTMLElement | null) => void;
 }

@@ -41,6 +41,7 @@ import {
     type ResourceLimits,
     type RichTextDocument,
 } from '#/model';
+import { REPLACED_ASSET } from '#/model/assets';
 import { attributesOf, compiledModel } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
@@ -60,7 +61,7 @@ import { createKeyGuard } from './keys';
 import { createLimitCheck, type ExceededLimit, storedNodeCount } from './limits';
 import { insertPicked, pickedAsset, refillPicked } from './media';
 import { operationMetric } from './metrics';
-import { nodeStatePlugin } from './node-state';
+import { nodeStatePlugin, withNodeState } from './node-state';
 import { authoringOf, createPolicyCheck } from './policy';
 import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
@@ -93,7 +94,17 @@ import {
     type SessionToken,
     type Snapshot,
     type Unsubscribe,
+    type UploadStatus,
 } from './types';
+import { carrySlots, uploadSlotsPlugin } from './upload-slots';
+import {
+    createUploads,
+    DEFAULT_ACCEPT_TYPES,
+    UPLOAD_FEATURE,
+    type UploadEvent,
+    type UploadPlace,
+    type UploadServiceLike,
+} from './uploads';
 
 type Mode = EditorSummary['mode'];
 type RejectedCode = Extract<CommandResult, { readonly status: 'rejected' }>['code'];
@@ -103,6 +114,8 @@ type ReplaceCode = Extract<ReplaceResult, { readonly status: 'rejected' }>['code
 const MAX_ENQUEUE_DEPTH = 32;
 // ProseMirror marks each DOM change it reads during a composition with this meta.
 const COMPOSITION_META = 'composition';
+// The target an async operation started with none gets at the selection.
+const ASYNC_TARGET: CaptureTargetOptions = { purpose: 'insert', onIntersectingEdit: 'map' };
 
 /** How a wait for input to settle ended. */
 export type InputOutcome = 'settled' | 'timeout' | 'disposed';
@@ -195,7 +208,7 @@ export interface EditorRuntime {
      * holds between it and the last value.
      */
     watch<T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void): Unsubscribe;
-    /** Starts an async operation through the coordinator, as the asset picker or mention search capability does. */
+    /** Starts an async operation through the coordinator, as an `upload` or mention search capability does. */
     startAsync(request: AsyncRequest): AsyncOperation;
     /** Aborts the operations that the changed `services` members started. */
     changeServices(members: readonly string[]): void;
@@ -214,10 +227,22 @@ export interface EditorRuntime {
         asset: unknown,
         place: { readonly target: SelectionHandle } | { readonly nodeId: string },
     ): CommandResult;
-    /** The session's uploads. */
+    /** The session's uploads: `accepts` holds the media types `media.image` takes, `undefined` without it. */
     readonly uploads: {
-        /** Opens the host asset picker for new images or for the image `nodeId`. */
+        readonly accepts: readonly string[] | undefined;
+        /**
+         * Whether files upload now at `place`: `media.image` is installed, the host has `services.uploads`, the cache
+         * has room and the policy allows it.
+         */
+        available(place: UploadPlace): boolean;
+        /** Checks `files` and starts their uploads at `place`, once their headers are read. */
+        begin(files: readonly File[], place: UploadPlace): Promise<void>;
+        /** Sends the file of the failed or stopped slot `nodeId` again, with no undo step. */
+        retry(nodeId: string): void;
+        /** Opens the host asset picker, else the file chooser, for new images or for the image `nodeId`. */
         pick(nodeId: string | undefined): void;
+        /** What the chrome of slot `nodeId` shows of its upload. */
+        statusOf(nodeId: string): UploadStatus | undefined;
     };
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
@@ -264,8 +289,12 @@ export interface EditorRuntimeOptions {
     readonly scrollSelectionIntoView?: () => boolean | undefined;
     /** What the editor layer hands the plugin commands it runs. */
     readonly commandHost?: unknown;
-    /** Opens the host asset picker for new images or for the image `nodeId`. */
+    /** The host's `services.uploads`, read when an upload starts; without one, no file uploads. */
+    readonly uploads?: () => UploadServiceLike | undefined;
+    /** Opens the host asset picker, else the file chooser, for new images or for the image `nodeId`. */
     readonly pick?: (nodeId: string | undefined) => void;
+    /** Hears each upload start, end, failure and refused file, which the live region announces. */
+    readonly uploadEvent?: (event: UploadEvent) => void;
     /** The presentation's brand styles, read when `block.style.set` runs; default none. */
     readonly styles?: () => readonly PresentationStyle[];
     /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
@@ -350,6 +379,9 @@ const originOf = (root: Transaction): ChangeOrigin => {
     if (isHistoryTransaction(root)) {
         return 'history';
     }
+    if (root.getMeta(ORIGIN_META) === 'async') {
+        return 'async';
+    }
     const action = actionOrigin(root);
     if (action !== undefined) {
         return action;
@@ -386,6 +418,8 @@ const DUPLICATE_ENGINE = diagnostic(
 interface Candidate {
     readonly candidate: EditorState;
     readonly root: Transaction;
+    /** The root and what plugins appended to it. */
+    readonly transactions: readonly Transaction[];
     readonly mapping: Transaction['mapping'];
     /** When the batch started, and how many transactions plugins appended to it. */
     readonly started: number;
@@ -402,8 +436,8 @@ type Prepared =
           readonly fault?: Diagnostic;
           readonly limit?: ExceededLimit | undefined;
       };
-/** Who runs a command: a host call, a queued intent, or a node's own chrome. */
-type Route = 'host' | 'queue' | 'node';
+/** Who runs a command: a host call, a queued intent, or an async result. */
+type Route = 'host' | 'queue' | 'async' | 'node';
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
 type Attempt = Prepared | { readonly unchanged: true };
 
@@ -445,6 +479,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // Aborted by `dispose`, which ends the session's own service calls.
     const ended = new AbortController();
     let policy = options.policy;
+    let policyRevision = 0;
     let phase: EditorSummary['phase'] = 'mounting';
     let mode = options.mode;
     // The mode the surface shows, which follows `mode` once input has settled.
@@ -461,6 +496,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let metric: BatchMetric | undefined;
     let typing = false;
     let view: EditorView | undefined;
+    // The view the last `EditorView` constructor built, which plugin views receive before the constructor returns.
+    let built: EditorView | undefined;
     // The state the view threw on, which `getRecoveryCandidate` offers until `dispose`.
     // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovery: EditorState | undefined;
@@ -480,13 +517,70 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let installing = false;
     // Roots that plugin views dispatch while an install runs, committed once its selectors and events are done.
     const deferred: Transaction[] = [];
+    // Targets the coordinator captures during a commit, such as from a running command, captured once it ends.
+    const deferredCaptures: string[] = [];
     const queue: Intent[] = [];
     // What waits for input to settle outside the queue, such as a form's settled value.
     const afterInput = new Set<(outcome: InputOutcome) => void>();
+    // `media.image` and the media types it accepts, which its `acceptTypes` option sets.
+    const imageFeature = compiledModel(definition.model).features.find(({ id }) => id === UPLOAD_FEATURE);
+    let acceptTypes: readonly string[] | undefined;
+    if (imageFeature !== undefined) {
+        const option: unknown = imageFeature.options.acceptTypes;
+        acceptTypes = Array.isArray(option)
+            ? option.filter((type): type is string => typeof type === 'string')
+            : DEFAULT_ACCEPT_TYPES;
+    }
+    const uploads = createUploads({
+        state: () => state,
+        limits,
+        acceptTypes: acceptTypes ?? [],
+        service: () => (acceptTypes === undefined ? undefined : options.uploads?.()),
+        session: () => session,
+        generateId: () => generate(),
+        allows: (action) => policy.features[UPLOAD_FEATURE]?.[action] !== false,
+        start: (request) => coordinator.start(request),
+        abort: (operations) => coordinator.abortWhere((other) => operations.includes(other)),
+        capture: (range) => {
+            const captured = captureRange({ purpose: 'replace-text', onIntersectingEdit: 'map' }, range);
+            return captured.status === 'captured' ? captured.target : undefined;
+        },
+        release: (target) => handle.releaseTarget(target),
+        run: (command, target) =>
+            runOn(command, { payload: undefined }, () => (target === undefined ? state : baseOf({ target })), 'host')
+                .status === 'applied',
+        fill: (command) => {
+            const result = runOn(command, { payload: undefined }, () => state, 'async');
+            if (result.status === 'rejected') {
+                return result.code;
+            }
+            return result.status === 'applied' ? undefined : 'not-applicable';
+        },
+        // A completed upload's record is session state, no undo step; it completed in the background.
+        replaced: (nodeId, assetId) => {
+            const value = { assetId, focus: false };
+            commit(withNodeState(state.tr, [{ nodeId, key: REPLACED_ASSET, value }]).setMeta('addToHistory', false));
+        },
+        report: (found) => report(found),
+        event: (event) => {
+            if (phase !== 'disposed') {
+                options.uploadEvent?.(event);
+            }
+        },
+        changed: () => {
+            if (phase !== 'disposed') {
+                busyWith(notify);
+            }
+        },
+    });
 
     // Records typing before any other handler sees the event, so the view itself gets no event handler.
     const typingRecorder = new Plugin({
         key: new PluginKey('rte.typing'),
+        view: (editorView) => {
+            built = editorView;
+            return {};
+        },
         props: {
             handleDOMEvents: {
                 beforeinput: () => {
@@ -511,6 +605,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             groupsPlugin,
             columnsPlugin(() => shownColumns),
             stylesPlugin(() => options.styles?.() ?? []),
+            uploadSlotsPlugin(uploads),
             nodeStatePlugin(),
             ...definition.plugins,
         ],
@@ -536,6 +631,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             busy -= 1;
             if (busy === 0) {
                 flushMetric();
+                flushCaptures();
+                uploads.flush();
             }
             drain();
         }
@@ -618,6 +715,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         report(diagnostic);
         // Results held for that settle are discarded now, as the faulted session takes none.
         coordinator.settle();
+        coordinator.abortWhere(() => true);
     };
 
     /** Stores the candidate of a view fault with the host's recovery service. */
@@ -746,7 +844,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
         }
         const { transactions } = applied;
-        return { candidate: applied.state, root, mapping, started, appended: transactions.length - 1 };
+        return { candidate: applied.state, root, transactions, mapping, started, appended: transactions.length - 1 };
     };
 
     /** Publishes a checked batch, then commits the roots that plugin views dispatched while it was installed. */
@@ -776,7 +874,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
      * Publishes the current state's document: counts an effective change, notifies selector stores, then emits the
      * change, the selection and the save status in the Event order.
      */
-    const announce = (origin: ChangeOrigin, commandId: string | null, batch: BatchMetric): boolean => {
+    const announce = (
+        origin: ChangeOrigin,
+        commandId: string | null,
+        batch: BatchMetric,
+        transactions: readonly Transaction[] = [],
+    ): boolean => {
         const previous = published;
         const current = state;
         published = current;
@@ -801,6 +904,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 },
             });
             metric = batch;
+            uploads.committed(transactions, origin === 'history');
         }
         emitSelection();
         if (changed) {
@@ -842,7 +946,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
-    const publish = ({ candidate, root, mapping, started, appended }: Candidate): boolean => {
+    const publish = ({ candidate, root, transactions, mapping, started, appended }: Candidate): boolean => {
         if (!installState(candidate)) {
             return false;
         }
@@ -866,7 +970,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (event === 'paste' || event === 'drop') {
             kind = 'paste';
         }
-        return announce(origin, commandId, { kind, started, appended });
+        return announce(origin, commandId, { kind, started, appended }, transactions);
     };
 
     /** Repairs the provisional batches, then checks them as one change from the published document; `false` on a fault. */
@@ -1152,6 +1256,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (route !== 'host' && base !== state) {
             root.setSelection(state.selection.map(root.doc, root.mapping));
         }
+        // An async completion is no undo step of its own.
+        if (route === 'async') {
+            root.setMeta(ORIGIN_META, 'async').setMeta('addToHistory', false);
+        }
         const prepared = prepare(root, ids, false);
         // A host call never changes content during a composition, which queued intents and async results wait out.
         if ('candidate' in prepared && prepared.candidate.doc !== state.doc && settling.active()) {
@@ -1369,13 +1477,51 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     /** The handle of target `id` in this session. */
     const handleOf = (id: string) => Object.freeze({ id, session }) as unknown as SelectionHandle;
 
+    /**
+     * Captures each deferred target once no commit runs, at the selection the commit left, which ProseMirror maps
+     * through the commit's steps (`Transaction.selection`).
+     */
+    const flushCaptures = () => {
+        for (let id = deferredCaptures.shift(); id !== undefined; id = deferredCaptures.shift()) {
+            if (phase === 'ready') {
+                captureNow(id, ASYNC_TARGET);
+            }
+        }
+    };
+
     const coordinator = createAsyncCoordinator({
         generateId: generate,
         session: () => session,
+        policyRevision: () => policyRevision,
         isDisposed: () => phase === 'disposed',
         isFaulted: () => phase === 'faulted',
         // A result waits out a replacement, which applies it if it fails and discards it in the next generation.
         holding: () => settling.active() || phase === 'transitioning',
+        capture: () => {
+            if (phase !== 'ready') {
+                return undefined;
+            }
+            const id = generate();
+            if (busy > 0) {
+                deferredCaptures.push(id);
+            } else {
+                captureNow(id, ASYNC_TARGET);
+            }
+            return handleOf(id);
+        },
+        release: (target) => handle.releaseTarget(target),
+        // A result runs as its command's payload through `commit` from the current state.
+        apply: (operation, result) => {
+            let options: { readonly target: SelectionHandle } | undefined;
+            if (operation.target !== null) {
+                options = { target: operation.target };
+            }
+            const outcome = run(operation.command, result, options, 'async');
+            if (outcome.status === 'rejected') {
+                return outcome.code;
+            }
+            return undefined;
+        },
         report,
     });
 
@@ -1483,8 +1629,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             settled('disposed');
         }
         coordinator.dispose();
+        uploads.dispose(state.doc);
         settleQueue('not-ready');
         deferred.length = 0;
+        deferredCaptures.length = 0;
         const release = releaseTargets(state);
         if (release !== undefined) {
             liveResources.targets -= countTargets(state);
@@ -1614,6 +1762,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
             return refused('faulted');
         }
+        const outgoing = state.doc;
         // Roots that plugin views dispatch while the state installs commit in the new generation.
         const installed = guarded(() => {
             installingNext = true;
@@ -1648,6 +1797,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // What the old generation started or queued ends now and changes nothing here.
         coordinator.abortWhere(() => true);
+        uploads.reset(outgoing);
         coordinator.settle();
         busyWith(notify);
         emitSelection();
@@ -1758,6 +1908,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (phase === 'disposed' || typeof owned === 'string') {
                 return;
             }
+            const waiting = deferredCaptures.indexOf(owned.id);
+            if (waiting >= 0) {
+                deferredCaptures.splice(waiting, 1);
+            }
             const release = releaseTargets(state, [owned.id]);
             if (release !== undefined) {
                 commit(release);
@@ -1785,11 +1939,18 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return;
             }
             mode = next;
+            // A read-only session takes no upload's result, so none runs or waits.
+            if (next === 'readonly') {
+                coordinator.abortWhere(
+                    (operation) => operation.service === 'uploads' && operation.featureId === UPLOAD_FEATURE,
+                );
+            }
             refreshView();
         },
         // Applies to the next query and commit; the schema, view and plugins stay.
         updatePolicy: (next) => {
             policy = authoringOf(definition.model, next);
+            policyRevision += 1;
             // An operation whose result the new policy forbids ends now.
             coordinator.abortWhere((operation) => {
                 const rules = policy.features[operation.featureId];
@@ -1856,6 +2017,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return;
             }
             detach();
+            built = undefined;
             const { threw, value: attached } = callView(
                 () =>
                     new EditorView(
@@ -1905,9 +2067,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                     ),
             );
             if (attached === undefined || threw) {
-                // A node view that throws leaves the half-built view's DOM observer and input handlers on the element
-                // unless that view is destroyed.
-                const halfBuilt = attached;
+                // ProseMirror starts its DOM observer and input handlers before plugin views, so a plugin view that throws
+                // leaves them on the element unless the half-built view is destroyed.
+                const halfBuilt = attached ?? (built as EditorView | undefined);
                 if (halfBuilt !== undefined) {
                     try {
                         halfBuilt.destroy();
@@ -2012,7 +2174,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         nodeActions,
         placeAsset,
         uploads: {
+            accepts: acceptTypes,
+            available: (place) =>
+                acceptTypes !== undefined && options.uploads?.() !== undefined && uploads.admits(place),
+            begin: (files, place) => uploads.begin(files, place),
+            retry: (nodeId) => uploads.retry(nodeId),
             pick: (nodeId) => options.pick?.(nodeId),
+            statusOf: (nodeId) => uploads.statusOf(nodeId),
         },
         saveStatusChanged: emitSaveStatus,
         clearHistory: () => {
@@ -2020,8 +2188,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return;
             }
             const fresh = reset(state);
-            if (installState(fresh)) {
+            // Uploads that run go on, so their slots keep what Cancel restores.
+            if (installState(fresh.apply(carrySlots(state, fresh)))) {
                 published = state;
+                uploads.reset(state.doc, true);
                 busyWith(notify);
             }
         },

@@ -57,6 +57,7 @@ export const paste = (
     input: {
         readonly html?: string;
         readonly text?: string;
+        readonly files?: readonly File[];
         readonly slice?: RichTextSlice;
     },
 ): void => {
@@ -67,7 +68,7 @@ export const paste = (
     }
     const text = input.text ?? '';
     const html = input.html ?? '';
-    pasteInto(view, { text, html, slice });
+    pasteInto(view, { text, html, slice }, input.files ?? []);
 };
 
 /** Selects the `occurrence`th match of `text` (from its `from` to its `to` offset), or the node with `nodeId`. */

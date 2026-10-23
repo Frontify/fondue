@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ContentNodeJSON, type JsonObject, type JsonValue } from '#/model';
+import { type ContentNodeJSON, type JsonObject, type JsonValue, type RichTextDocument } from '#/model';
 
 import { positionsOf } from './editor-api';
 import {
@@ -9,6 +9,7 @@ import {
     type CommandState,
     type SelectionHandle,
     type SelectionSummary,
+    type UploadStatus,
 } from './types';
 
 declare const rangeBrand: unique symbol;
@@ -81,6 +82,12 @@ export type WriteOutcome =
 /** Where `insert.node` puts a block: at the selection, as typing would, or after the top-level block that holds it. */
 export type InsertPlace = 'selection' | 'after-top-level-block';
 
+/** Where `uploads.begin` puts pasted or dropped files: new images at `range`. */
+export interface UploadTarget {
+    readonly origin: 'paste' | 'drop';
+    readonly range: EditorRange;
+}
+
 /**
  * The document half of `EditorApi`: reads of the selection and content, and writes that each run as one undo step
  * through the commit path, or inside a command as part of its one step.
@@ -92,6 +99,8 @@ export interface DocumentApi {
     selectedText(): string;
     /** The selection as a range, which `sameRange` tells apart from where it was before. */
     selectedRange(): EditorRange;
+    /** The document as stored. */
+    document(): RichTextDocument;
     /** Whether the author can edit now: the editor is ready and neither read-only nor disabled. */
     editable(): boolean;
     /** The options of an installed feature, defaulted, or `undefined` when the model does not install it. */
@@ -254,10 +263,21 @@ export interface DocumentApi {
         capture(range?: EditorRange, options?: CaptureTargetOptions): SelectionHandle | undefined;
         release(target: SelectionHandle): void;
     };
-    /** Images from the host's asset service. Inside a command, what starts later waits until it has run. */
+    /**
+     * Uploads into images over the host's upload and asset services: each file is checked, starts as an image with no
+     * asset, one undo step, and its completion and Retry add none. Inside a command, what starts later waits until it has run.
+     */
     readonly uploads: {
-        /** Opens the host asset picker for new images at the selection, or for the image `nodeId`. */
+        /** Opens the host asset picker, else the file chooser, for new images at the selection, or for the image `nodeId`. */
         pick(nodeId?: string): void;
+        /** Starts the uploads of `files` at `at`, once their checks pass; `false` when files cannot upload now. */
+        begin(files: readonly File[], at: UploadTarget): boolean;
+        /** Ends the running upload of `nodeId` and restores what its start replaced, as one undo step. */
+        cancel(nodeId: string): boolean;
+        /** Sends the file of the failed or stopped upload of `nodeId` again, with no undo step. */
+        retry(nodeId: string): boolean;
+        /** How the upload of `nodeId` stands, or `undefined` when none runs, waits, failed or stopped. */
+        status(nodeId: string): UploadStatus | undefined;
     };
     /** Flags a plugin keeps on the node `nodeId` for this session, outside the document and its history. */
     readonly nodeState: {

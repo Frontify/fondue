@@ -10,6 +10,7 @@ export {
     NodeChromeButton,
     NodeChromeMenu,
     NodeChromeToolbar,
+    type NodePending,
     NodeViewContent,
     type NodeViewContext,
     type NodeViewDeclaration,
@@ -53,6 +54,7 @@ export {
     type StandingOverlayProps,
     type SuggestionSearchContext,
     type ToolbarControlProps,
+    type UploadStatus,
     useApplePlatform,
     useClientLayoutEffect,
     useEditorApi,
@@ -116,6 +118,8 @@ export {
     type RichTextEditorBaseProps,
     type RichTextEditorProps,
     type ToolbarMode,
+    type UploadRequest,
+    type UploadService,
 } from '#/react/types';
 export {
     type Alignment,

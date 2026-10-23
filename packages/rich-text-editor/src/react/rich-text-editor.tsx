@@ -60,9 +60,11 @@ import {
     type RuntimeHandle,
 } from '#/runtime/runtime';
 import { type DocumentChange, type SelectionSummary, type SessionToken, type ShippedCommands } from '#/runtime/types';
+import { UPLOAD_FEATURE, type UploadPlace } from '#/runtime/uploads';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { ContextMenu } from '#/ui/context-menu/context-menu';
 import { pickAsset } from '#/ui/media/asset-picker';
+import { uploadMessage } from '#/ui/media/upload-messages';
 import { referenceListStrings, SuggestionList } from '#/ui/suggestions/suggestion-list';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
@@ -90,7 +92,7 @@ type Props = RichTextEditorProps<object>;
 type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };
 const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
-const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'assets'] as const;
+const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'uploads', 'assets'] as const;
 const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
 // A composition that outlasts this wait is measured again, which waits again while it runs.
 const COMPOSITION_WAIT_MS = 1000;
@@ -372,6 +374,9 @@ const SessionComponent = (
         references: () => memberOf(latestRef.current.services, 'references'),
         testId: () => latestRef.current['data-test-id'] ?? DEFAULT_TEST_ID,
     });
+    // The file chooser of hosts with no asset picker, and where the files it gives go.
+    const chooserRef = useRef<HTMLInputElement | null>(null);
+    const choosingRef = useRef<{ readonly place: UploadPlace; readonly session: SessionToken } | undefined>(undefined);
     const switchToolbar = useCallback((next: ToolbarMode) => {
         setToolbarMode(next);
         latestRef.current.onToolbarModeChange?.(next);
@@ -394,10 +399,29 @@ const SessionComponent = (
         const { t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
         const engine = engineOf(definition);
         const ids = generateId ?? randomId;
-        /** The host asset picker for a new figure or for the image `nodeId`. */
+        /** The host asset picker, else the file chooser, for a new figure or for the image `nodeId`. */
         const openPicker = (session: EditorRuntime, nodeId: string | undefined) => {
             const picker = memberOf(latestRef.current.services, 'assets');
+            // Without a host picker the file chooser opens, whose files upload through `services.uploads`.
             if (picker === undefined) {
+                const chooser = chooserRef.current;
+                const accepts = session.uploads.accepts;
+                if (
+                    chooser === null ||
+                    accepts === undefined ||
+                    memberOf(latestRef.current.services, 'uploads') === undefined
+                ) {
+                    return;
+                }
+                let place: UploadPlace = { kind: 'insert', origin: 'command' };
+                if (nodeId !== undefined) {
+                    place = { kind: 'replace', nodeId };
+                }
+                choosingRef.current = { place, session: session.handle.getSummary().session };
+                chooser.accept = accepts.join(',');
+                chooser.multiple = nodeId === undefined;
+                chooser.value = '';
+                chooser.click();
                 return;
             }
             pickAsset(session, picker, {
@@ -448,7 +472,14 @@ const SessionComponent = (
             tabMovesFocus: () => latestRef.current.tabMovesFocus,
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             commandHost: hosts,
+            uploads: () => memberOf(latestRef.current.services, 'uploads'),
             pick: (nodeId) => openPicker(runtime, nodeId),
+            uploadEvent: (event) => {
+                const { locale, limits } = shellPropsOf(latestRef.current);
+                const { t } = codecContext(locale, enUS);
+                const lang = locale.lang ?? enUS.lang;
+                announcer.announce(uploadMessage(event, t, lang, limits, runtime.uploads.accepts ?? []));
+            },
             styles: () => latestRef.current.presentation?.styles ?? [],
             columns: columnsAtMount(latestRef.current.presentation, t),
         });
@@ -762,6 +793,10 @@ const SessionComponent = (
     }, [live, columnCount, columnGap]);
 
     const overlays = useMemo(() => ({ container: overlayRoot, scope }), [overlayRoot, scope]);
+    // The file chooser exists where `media.image` takes files that `services.uploads` sends.
+    const choosesFiles =
+        engineOf(mounted.definition).model.capabilities.some(({ id }) => id === UPLOAD_FEATURE) &&
+        memberOf(props.services, 'uploads') !== undefined;
     const referenceStrings = useMemo(() => referenceListStrings(chromeContext.t), [chromeContext]);
 
     const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
@@ -826,6 +861,33 @@ const SessionComponent = (
                                                 opener={pluginOverlay.opener}
                                             />
                                         </OverlayBody>
+                                    )}
+                                    {choosesFiles && (
+                                        <input
+                                            ref={chooserRef}
+                                            type="file"
+                                            hidden
+                                            tabIndex={-1}
+                                            aria-hidden="true"
+                                            data-test-id={`${testId}-file-chooser`}
+                                            onChange={(event) => {
+                                                const files = [...(event.currentTarget.files ?? [])];
+                                                const choosing = choosingRef.current;
+                                                choosingRef.current = undefined;
+                                                event.currentTarget.value = '';
+                                                const { runtime } = coordinator;
+                                                const current = runtime?.handle.getSummary().session;
+                                                // Files chosen for a document that was replaced since go nowhere.
+                                                if (
+                                                    choosing !== undefined &&
+                                                    runtime !== undefined &&
+                                                    current?.sessionId === choosing.session.sessionId &&
+                                                    current.generation === choosing.session.generation
+                                                ) {
+                                                    runtime.uploads.begin(files, choosing.place).catch(() => undefined);
+                                                }
+                                            }}
+                                        />
                                     )}
                                     <div
                                         ref={announcer.setRegion}

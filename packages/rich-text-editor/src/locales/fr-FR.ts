@@ -193,5 +193,29 @@ export const frFR = {
         RichTextEditor_unavailableReadOnly: 'Le contenu est en lecture seule',
         RichTextEditor_underline: 'Souligné',
         RichTextEditor_undo: 'Annuler',
+        RichTextEditor_uploadCancel: 'Annuler le téléversement',
+        RichTextEditor_uploadCancelled: 'Téléversement annulé\u00A0: ${name}',
+        RichTextEditor_uploadCompleted: 'Téléversé\u00A0: ${name}',
+        RichTextEditor_uploadCompletedNoAlt: 'Téléversé\u00A0: ${name}. L’image n’a pas encore de texte alternatif.',
+        RichTextEditor_uploadError: 'Le téléversement a échoué. Réessayez ou supprimez l’image.',
+        RichTextEditor_uploadFailed: 'Échec du téléversement\u00A0: ${name}',
+        RichTextEditor_uploadPercent: '${percent}\u00A0% téléversés',
+        RichTextEditor_uploadRemove: 'Supprimer l’image',
+        RichTextEditor_uploadRetry: 'Réessayer le téléversement',
+        RichTextEditor_uploadRunning: 'Téléversement…',
+        RichTextEditor_uploadStarted: 'Téléversement\u00A0: ${name}',
+        RichTextEditor_uploadStartedCount: 'Téléversement de fichiers\u00A0: ${count}',
+        RichTextEditor_uploadStopped: 'Le téléversement s’est arrêté. Réessayez ou supprimez l’image.',
+        RichTextEditor_uploadTooLarge:
+            '${name} n’a pas été téléversé, car le fichier est trop volumineux. Choisissez un fichier de type ${types} de ${size} au maximum.',
+        RichTextEditor_uploadTooManyPixels:
+            '${name} n’a pas été téléversé, car l’image a trop de pixels. Choisissez une image de ${megapixels} mégapixels au maximum et de ${side} pixels par côté.',
+        RichTextEditor_uploadUnreadable:
+            '${name} n’a pas été téléversé, car la taille de l’image est illisible. Choisissez un fichier de type ${types} de ${size} au maximum.',
+        RichTextEditor_uploadUnsafe:
+            '${name} n’a pas été téléversé, car le SVG contient un script. Choisissez un fichier de type ${types} de ${size} au maximum.',
+        RichTextEditor_uploadWaiting: 'En attente de téléversement',
+        RichTextEditor_uploadWrongType:
+            '${name} n’a pas été téléversé, car ce type de fichier n’est pas accepté. Choisissez un fichier de type ${types} de ${size} au maximum.',
     },
 };

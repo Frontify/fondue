@@ -170,7 +170,7 @@ const plainSlice = (schema: Schema, text: string, marks: readonly Mark[]) => {
 const ABSOLUTE_URL = /^[a-z][\d+.a-z-]*:\S+$/i;
 
 /** The URL that `text` is, when it is one absolute URL that passes `checkHref`. */
-const hrefOf = (text: string, policy: HrefPolicy | undefined): string | undefined => {
+export const hrefOf = (text: string, policy: HrefPolicy | undefined): string | undefined => {
     const trimmed = text.trim();
     if (!ABSOLUTE_URL.test(trimmed)) {
         return undefined;

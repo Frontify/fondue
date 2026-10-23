@@ -25,6 +25,7 @@ import { subscript } from '#/features/marks-subscript/feature';
 import { superscript } from '#/features/marks-superscript/feature';
 import { underline } from '#/features/marks-underline/feature';
 import { mediaImage } from '#/features/media-image/feature';
+import { mediaUpload } from '#/features/media-upload/feature';
 import { mentions } from '#/features/mentions/feature';
 import { brandStyles } from '#/features/styles-brand/feature';
 import { DefinitionError, type Feature } from '#/model';
@@ -58,6 +59,7 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'input-rules': inputRules,
     mentions,
     'media.image': mediaImage,
+    'media.upload': mediaUpload,
 };
 
 export interface FeatureRecord {
@@ -100,6 +102,7 @@ export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     'input-rules': NO_DEPENDENCIES,
     mentions: NO_DEPENDENCIES,
     'media.image': NO_DEPENDENCIES,
+    'media.upload': NO_DEPENDENCIES,
 };
 
 /**

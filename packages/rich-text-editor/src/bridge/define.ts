@@ -55,6 +55,15 @@ export interface NodeViewState<C extends object = ShippedCommands> {
     /** Selects this node at execution time, then runs or queries the command, so a delayed menu action still reaches this node. */
     readonly execute: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandResult;
     readonly query: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandState;
+    /** The node's running async operation; never a document attribute. */
+    readonly pending: NodePending | null;
+}
+
+/** An upload into the node: running or waiting with its whole percent once known, or failed or stopped. */
+export interface NodePending {
+    readonly kind: 'upload';
+    readonly state: 'running' | 'failed';
+    readonly progress: number | null;
 }
 
 /** A React component that draws a node of a block in the editor, with the attributes only the editor gives its content element. */

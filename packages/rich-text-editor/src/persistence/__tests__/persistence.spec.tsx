@@ -1968,6 +1968,48 @@ describe('replacement', () => {
         unmount();
     });
 
+    it('ignores a late save response and a late mention search from the old generation', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, advance, diagnostics, unmount } = mount({
+            service,
+            persistenceOptions: { timeoutMs: 1000 },
+        });
+        type('x');
+        advance(500);
+        // The first write times out, and its replay is saved, so the session is clean with the first still open.
+        advance(1000);
+        advance(2000);
+        calls[1]?.answer();
+        await settle();
+        expect(handle().getSaveStatus().state).toBe('clean');
+        let found: (result: unknown) => void = () => undefined;
+        runtimeOf(handle())?.startAsync({
+            key: 'mention-search',
+            service: 'references',
+            featureId: 'core',
+            action: 'create',
+            command: 'text.insert',
+            run: () =>
+                new Promise((resolve) => {
+                    found = resolve;
+                }),
+        });
+        await replace(handle());
+        const status = handle().getSaveStatus();
+        const { document } = handle().getSnapshot();
+
+        found({ text: 'late ' });
+        calls[0]?.answer({ status: 'conflict', currentRevision: 'revision-8' });
+        await settle();
+
+        expect(handle().getSaveStatus()).toBe(status);
+        expect(handle().getSnapshot().document).toEqual(document);
+        expect(diagnostics.map(({ code, details }) => [code, details])).toEqual([
+            ['runtime.async-discarded', { reason: 'wrong-session' }],
+        ]);
+        unmount();
+    });
+
     it('hands no conflict read of the old document to onConflict after a replacement', async () => {
         const onConflict = vi.fn();
         const { service, calls } = serviceOf(true);
@@ -2175,6 +2217,37 @@ describe('replacement', () => {
         await settle();
 
         expect(store).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('resolves an intent queued during transitioning as wrong-session when a held async result settles first', async () => {
+        const { service, calls } = serviceOf(true);
+        const { handle, type, flush, unmount } = mount({ service });
+        let found: (result: unknown) => void = () => undefined;
+        const search = new Promise((resolve) => {
+            found = resolve;
+        });
+        runtimeOf(handle())?.startAsync({
+            key: 'mention-search',
+            service: 'references',
+            featureId: 'core',
+            action: 'create',
+            command: 'text.insert',
+            run: () => search,
+        });
+        type('x');
+        const replaced = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
+        await flush();
+        const queued = untyped(handle()).enqueue('text.insert', { text: 'y' });
+        // The result arrives while the replacement waits, so the coordinator holds it.
+        found({ text: 'late ' });
+        await settle();
+
+        calls[0]?.answer();
+
+        expect(await act(() => replaced)).toMatchObject({ status: 'replaced' });
+        expect(await queued).toEqual({ status: 'rejected', code: 'wrong-session' });
+        expect(textIn(handle().getSnapshot().document)).toBe('next');
         unmount();
     });
 

@@ -19,6 +19,8 @@ interface Kept {
     first?: unknown;
     queued?: Promise<CommandResult>;
     published?: unknown[];
+    diagnostics?: string[];
+    finish?: (value: unknown) => void;
 }
 declare global {
     interface Window {
@@ -53,6 +55,43 @@ const imeOf = async (page: Page) => {
     };
 };
 
+/** Starts a stand-in upload through the coordinator whose service call resolves once the page calls `kept.finish`. */
+const startUpload = (page: Page, command: string, targetText?: string) =>
+    page.evaluate(
+        ([id, text]) => {
+            const rte = window.rte as Rte;
+            const kept = window.kept as Kept;
+            if (rte.runtime === undefined) {
+                throw new Error('no runtime');
+            }
+            let target;
+            if (text !== undefined) {
+                rte.setSelection(rte.handle, { text });
+                const captured = rte.handle.captureTarget({ purpose: 'format', onIntersectingEdit: 'map' });
+                if (captured.status === 'captured') {
+                    target = captured.target;
+                }
+            }
+            const diagnostics: string[] = [];
+            kept.diagnostics = diagnostics;
+            rte.handle.subscribe('diagnostic', (diagnostic) => diagnostics.push(diagnostic.code));
+            rte.runtime.startAsync({
+                key: 'upload',
+                service: 'uploads',
+                featureId: 'fixture.heading-set',
+                action: 'create',
+                command: id,
+                ...(target === undefined ? {} : { target }),
+                run: () =>
+                    new Promise((resolve) => {
+                        kept.finish = resolve;
+                    }),
+            });
+        },
+        [command, targetText] as const,
+    );
+const finishUpload = (page: Page, result: unknown) =>
+    page.evaluate((value) => (window.kept as Required<Kept>).finish(value), result);
 /** Queues `text.insert` in the page, whose result `queuedResult` reads. */
 const enqueueInsert = (page: Page, text: string) =>
     page.evaluate((inserted) => {
@@ -254,6 +293,7 @@ test('refuses content changes from setMode readonly on and changes contenteditab
 }) => {
     await mount(<EditorProbe texts={['ab']} />);
     await ready(page);
+    await startUpload(page, 'text.insert');
     await caretAfter(page, 'ab');
     const ime = await imeOf(page);
 
@@ -261,13 +301,43 @@ test('refuses content changes from setMode readonly on and changes contenteditab
     await page.evaluate(() => (window.rte as Rte).handle.setMode('readonly'));
     const executed = await page.evaluate(() => (window.rte as Rte).handle.execute('text.insert', { text: '?' }));
     await enqueueInsert(page, '!');
+    await finishUpload(page, { text: 'up' });
     const during = await surfaceOf(page).getAttribute('contenteditable');
     await ime.commit('x');
 
     expect([executed, during]).toEqual([{ status: 'rejected', code: 'readonly' }, 'true']);
     await expect.poll(() => queuedResult(page)).toEqual({ status: 'rejected', code: 'readonly' });
+    expect(await page.evaluate(() => (window.kept as Kept).diagnostics)).toEqual(['runtime.async-discarded']);
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'false');
     await expect(surfaceOf(page)).toHaveText('abx');
+});
+
+test('applies an async result that resolves mid-composition only after compositionend @engine', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['ab', 'cd']} />);
+    await ready(page);
+    await startUpload(page, 'heading.set', 'cd');
+    await caretAfter(page, 'ab');
+    const ime = await imeOf(page);
+
+    await ime.compose('x');
+    await finishUpload(page, { level: 2 });
+    await ime.compose('xy');
+    const during = await surfaceOf(page).locator('h2').count();
+    await ime.commit('xy');
+
+    expect(during).toBe(0);
+    await expect(surfaceOf(page).locator('h2')).toHaveText('cd');
+    await expect(surfaceOf(page).locator('p')).toHaveText('abxy');
+    expect(await page.evaluate(() => [(window.rte as Rte).text(), (window.kept as Kept).diagnostics])).toEqual([
+        'abxycd',
+        [],
+    ]);
+    // The result maps the author's caret through its change instead of moving it to the target.
+    await page.keyboard.type('z');
+    await expect(surfaceOf(page).locator('p')).toHaveText('abxyz');
 });
 
 test('keeps a forbidden composition in place while it runs and shows the retained state once input settled @engine', async ({
@@ -289,6 +359,24 @@ test('keeps a forbidden composition in place while it runs and shows the retaine
     expect(during).toEqual(['abxy', 'abxy']);
     await expect.poll(texts).toEqual(['ab', 'ab']);
     expect(await page.evaluate(() => (window.rte as Rte).handle.getSummary().sequence)).toBe(0);
+});
+
+test('leaves focus on a host input when an async result applies @engine', async ({ mount, page }) => {
+    await mount(<EditorProbe texts={['ab']} />);
+    await ready(page);
+    await caretAfter(page, 'ab');
+    await startUpload(page, 'text.insert');
+    await page.evaluate(() => {
+        const input = document.createElement('input');
+        input.setAttribute('aria-label', 'Host input');
+        document.body.append(input);
+    });
+    await page.getByRole('textbox', { name: 'Host input' }).focus();
+
+    await finishUpload(page, { text: 'up' });
+
+    await expect(surfaceOf(page)).toHaveText('abup');
+    await expect(page.getByRole('textbox', { name: 'Host input' })).toBeFocused();
 });
 
 test('fires no input rule for composed text, which stays one undo step @engine', async ({ mount, page }) => {

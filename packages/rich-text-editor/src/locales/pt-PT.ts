@@ -190,5 +190,29 @@ export const ptPT = {
         RichTextEditor_unavailableReadOnly: 'O conteúdo é só de leitura',
         RichTextEditor_underline: 'Sublinhado',
         RichTextEditor_undo: 'Anular',
+        RichTextEditor_uploadCancel: 'Cancelar carregamento',
+        RichTextEditor_uploadCancelled: 'Carregamento cancelado: ${name}',
+        RichTextEditor_uploadCompleted: 'Carregado: ${name}',
+        RichTextEditor_uploadCompletedNoAlt: 'Carregado: ${name}. A imagem ainda não tem texto alternativo.',
+        RichTextEditor_uploadError: 'O carregamento falhou. Tente novamente ou remova a imagem.',
+        RichTextEditor_uploadFailed: 'O carregamento falhou: ${name}',
+        RichTextEditor_uploadPercent: '${percent}% carregado',
+        RichTextEditor_uploadRemove: 'Remover imagem',
+        RichTextEditor_uploadRetry: 'Repetir carregamento',
+        RichTextEditor_uploadRunning: 'A carregar…',
+        RichTextEditor_uploadStarted: 'A carregar: ${name}',
+        RichTextEditor_uploadStartedCount: 'A carregar ficheiros: ${count}',
+        RichTextEditor_uploadStopped: 'O carregamento parou. Tente novamente ou remova a imagem.',
+        RichTextEditor_uploadTooLarge:
+            '${name} não foi carregado porque o ficheiro é demasiado grande. Escolha um ficheiro do tipo ${types} com até ${size}.',
+        RichTextEditor_uploadTooManyPixels:
+            '${name} não foi carregado porque a imagem tem demasiados píxeis. Escolha uma imagem com até ${megapixels} megapíxeis e ${side} píxeis por lado.',
+        RichTextEditor_uploadUnreadable:
+            '${name} não foi carregado porque não é possível ler o tamanho da imagem. Escolha um ficheiro do tipo ${types} com até ${size}.',
+        RichTextEditor_uploadUnsafe:
+            '${name} não foi carregado porque o SVG contém um script. Escolha um ficheiro do tipo ${types} com até ${size}.',
+        RichTextEditor_uploadWaiting: 'A aguardar carregamento',
+        RichTextEditor_uploadWrongType:
+            '${name} não foi carregado porque este tipo de ficheiro não é aceite. Escolha um ficheiro do tipo ${types} com até ${size}.',
     },
 };

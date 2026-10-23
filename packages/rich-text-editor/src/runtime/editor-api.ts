@@ -16,6 +16,7 @@ import {
     type JsonObject,
     type PayloadDeclaration,
     type ResourceLimits,
+    type RichTextDocument,
 } from '#/model';
 import { hasNodeId } from '#/model/capabilities';
 import { attributesOf, compiledModel } from '#/model/compile';
@@ -41,6 +42,7 @@ import {
     type DocumentApi,
     type EditorRange,
     type SelectionValue,
+    type UploadTarget,
     type WriteOutcome,
     type WriteTarget,
 } from './document-api';
@@ -59,6 +61,8 @@ import {
     type CommandState,
     type SelectionHandle,
 } from './types';
+import { cancelSlot, slotUploadsOf } from './upload-slots';
+import { type UploadPlace } from './uploads';
 
 export { type CommandContext } from '#/definition';
 
@@ -112,6 +116,7 @@ interface ApiSource {
     editable(): boolean;
     /** The position of a surface element, which only the live session has. */
     positionAt(element: Element): number | undefined;
+    document(state: EditorState): RichTextDocument;
     /** Runs `effect` now, or inside a command once it has run, never for a query. */
     later(effect: () => void): void;
     uploads(): EditorRuntime['uploads'] | undefined;
@@ -284,6 +289,14 @@ const documentApi = (source: ApiSource): DocumentApi => {
             return false;
         }
         return source.edit(command, payload).status !== 'rejected';
+    };
+    /** Where `at` puts uploads, or `undefined` for a range the source cannot map. */
+    const placeOf = (at: UploadTarget): UploadPlace | undefined => {
+        const range = source.resolve(at.range);
+        if (range === undefined) {
+            return undefined;
+        }
+        return { kind: 'insert', origin: at.origin, range };
     };
     /** A rejected write, noted as a refusal when a policy or a limit caused it. */
     const rejectedWrite = (code: string): WriteOutcome => {
@@ -564,6 +577,7 @@ const documentApi = (source: ApiSource): DocumentApi => {
             const { selection, doc } = source.state();
             return rangeOf(doc, selection.from, selection.to);
         },
+        document: () => source.document(source.state()),
         editable: () => source.editable(),
         optionsOf: (featureId) => compiledModel(source.model).features.find(({ id }) => id === featureId)?.options,
         marks: {
@@ -873,6 +887,44 @@ const documentApi = (source: ApiSource): DocumentApi => {
         },
         uploads: {
             pick: (nodeId) => source.later(() => source.uploads()?.pick(nodeId)),
+            begin: (files, at) => {
+                const uploads = source.uploads();
+                const place = placeOf(at);
+                if (uploads === undefined || place === undefined || !uploads.available(place)) {
+                    return false;
+                }
+                source.later(() => {
+                    uploads.begin(files, place).catch(() => undefined);
+                });
+                return true;
+            },
+            cancel: (nodeId) =>
+                edit({
+                    run: (state, dispatch) => {
+                        const cancel = cancelSlot(state, nodeId);
+                        if (cancel === undefined) {
+                            return false;
+                        }
+                        dispatch?.(cancel);
+                        return true;
+                    },
+                    active: () => false,
+                }),
+            retry: (nodeId) => {
+                const state = source.state();
+                const pos = positionOf(state.doc, nodeId);
+                const node = pos === undefined ? null : state.doc.nodeAt(pos);
+                if (node === null || node.attrs.assetId !== null || slotUploadsOf(state)?.retryable(nodeId) !== true) {
+                    return false;
+                }
+                // A read-only session takes no upload's result, so a retry there would only fail.
+                if (!source.editable()) {
+                    return false;
+                }
+                source.later(() => source.uploads()?.retry(nodeId));
+                return true;
+            },
+            status: (nodeId) => source.uploads()?.statusOf(nodeId),
         },
         nodeState: {
             get: (nodeId, key) => nodeStateOf(source.state(), nodeId, key),
@@ -962,6 +1014,7 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
             }
             return view.posAtDOM(element, 0);
         },
+        document: () => runtime.handle.getSnapshot().document,
         later: (effect) => effect(),
         uploads: () => runtime.uploads,
     });
@@ -1229,6 +1282,7 @@ const commandDocumentApi = (
             },
         editable: () => session?.runtime.handle.getSummary().mode === 'editable',
         positionAt: () => undefined,
+        document: (state) => encodeTree(state.doc.toJSON() as TreeNode, model).document,
         later: (effect) => context?.defer(effect),
         uploads: () => session?.runtime.uploads,
     });

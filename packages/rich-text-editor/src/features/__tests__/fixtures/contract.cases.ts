@@ -31,19 +31,20 @@ import { SHIPPED_PLUGINS } from '#/react/plugins';
 import { readerContext } from '#/reader/context';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
+import { SLOT_START_META, uploadSlotsPlugin } from '#/runtime/upload-slots';
 
 import { countingIds } from './notes';
 
 // The most columns a presentation sets, so a column break has room in every fixture.
 const COLUMNS = 6;
-/** The session a command runs in: a presentation of the most columns, no policy and a read-only editor. */
+/** The session a command runs in: a presentation of the most columns, no policy and an editable editor. */
 const SESSION = {
     runtime: {
         limits: defaultLimits,
         policy: { features: {}, creatableHeadingLevels: [], enterBehavior: 'none' },
         writeRefusal: () => undefined,
         refusal: () => undefined,
-        handle: { getSummary: () => ({ mode: 'readonly' }), releaseTarget: () => undefined },
+        handle: { getSummary: () => ({ mode: 'editable' }), releaseTarget: () => undefined },
     },
     host: {
         t: (key) => key,
@@ -78,6 +79,8 @@ const PAYLOADS: Readonly<Record<string, unknown>> = {
     'reference.insert': { resourceType: 'user', resourceId: 'user-1', labelSnapshot: 'Ada' },
     'image.size.set': { displayWidth: 50 },
     'image.align.set': { align: 'left' },
+    'media.upload.cancel': { nodeId: 'slot-1' },
+    'media.upload.retry': { nodeId: 'slot-1' },
 };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [
@@ -116,6 +119,43 @@ const stubForbidden = (label: string) => {
 
 const fixturesOf = (features: readonly Feature[]) =>
     features.flatMap((feature) => Object.values(featureFixtures[feature.id] ?? {}));
+
+// A session whose every slot has an upload that runs and a file to send again, so Cancel and Retry apply.
+const RUNNING_UPLOADS = uploadSlotsPlugin({ active: () => true, kept: () => true, retryable: () => true });
+
+/**
+ * The states with an upload slot `slot-1` after `state`, where the schema holds images: one that an insertion started
+ * and one that a replacement of a stored image started.
+ */
+const slotStates = (state: EditorState): EditorState[] => {
+    const { figure, asset_image: image } = state.schema.nodes;
+    if (figure === undefined || image === undefined) {
+        return [];
+    }
+    const attrs = (assetId: string | null) => ({
+        nodeId: 'slot-1',
+        assetId,
+        labelSnapshot: 'logo.png',
+        width: 40,
+        height: 30,
+    });
+    const end = state.doc.content.size;
+    const inserted = state.apply(
+        state.tr
+            .insert(end, figure.create({ nodeId: 'figure-1' }, image.create(attrs(null))))
+            .setMeta(SLOT_START_META, { kind: 'insert', nodeIds: ['slot-1'] }),
+    );
+    const stored = state.apply(
+        state.tr.insert(end, figure.create({ nodeId: 'figure-1' }, image.create(attrs('asset-1')))),
+    );
+    const pos = end + 1;
+    const replaced = stored.apply(
+        stored.tr
+            .setNodeAttribute(pos, 'assetId', null)
+            .setMeta(SLOT_START_META, { kind: 'replace', nodeId: 'slot-1', previous: attrs('asset-1') }),
+    );
+    return [inserted, replaced];
+};
 
 /**
  * Registers one case per command of `features`, which runs it over every fixture of those features, selected
@@ -181,7 +221,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                 }
                 const state = EditorState.create({
                     doc: engine.schema.nodeFromJSON(tree),
-                    plugins: [...engine.plugins],
+                    plugins: [...engine.plugins, RUNNING_UPLOADS],
                 });
                 const { doc } = state;
                 const whole = TextSelection.between(doc.resolve(0), doc.resolve(doc.content.size));
@@ -189,6 +229,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                     state.apply(state.tr.setSelection(whole)),
                     state.apply(state.tr.setSelection(Selection.atEnd(doc))),
                     state.apply(state.tr.setSelection(Selection.atStart(doc))),
+                    ...slotStates(state),
                 ];
             });
             // An edit, and the same edit undone, so the history commands have a step to undo and one to redo.

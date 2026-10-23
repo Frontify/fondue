@@ -298,6 +298,7 @@ describe('the React bridge', () => {
             | 'select'
             | 'execute'
             | 'query'
+            | 'pending'
         >();
     });
 

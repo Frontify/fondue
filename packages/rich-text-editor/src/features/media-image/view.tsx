@@ -12,16 +12,17 @@ import {
     type NodeViewDeclaration,
     useRichTextNodeView,
 } from '#/bridge/define';
-import { type EditorApi, useEditorApi, useEditorValue } from '#/bridge/plugin';
+import { type EditorApi, type UploadStatus, useEditorApi, useEditorValue } from '#/bridge/plugin';
 import { altOf, figureAlign, imageOutput, isRecord, type JsonObject, REPLACED_ASSET, unavailableOf } from '#/model';
 
 import { AltTextDialog, altTextStrings } from './alt-text-dialog';
 import { mayAnimate } from './animation';
 import { ContentImage } from './image';
+import { figureOf } from './nodes';
 import { alignOptions, EDIT_WIDTH, type SIDES, SIDE_KEYS, sizeOptions } from './options';
 import { ImageUnavailable } from './reader';
 import styles from './styles/image.module.scss';
-import { surfaceFocused } from './upload';
+import { surfaceFocused, UploadControls, UploadSlot, uploadStatusText, useUploadStatus } from './upload';
 import { MAX_WIDTH, MIN_WIDTH, SET_SIZE } from './width-dialog';
 
 // How far a pointer moves before a press on the handle counts as a horizontal resize, or as a scroll.
@@ -35,6 +36,30 @@ const sideOf = (api: EditorApi | undefined, nodeId: string | null) => {
     const figure = api.nearest('figure', nodeId);
     const attrs = figure?.attrs;
     return figureAlign(attrs ?? {});
+};
+
+/** A stored intrinsic size, or `null` where the image has none. */
+const sizeOf = (value: unknown) => (typeof value === 'number' ? value : null);
+
+/**
+ * Removes the figure that holds the image `nodeId`, as one undo step; an empty paragraph takes the place of a figure
+ * that is the only block of its parent.
+ */
+const removeFigure = (api: EditorApi | undefined, nodeId: string) => {
+    if (api === undefined) {
+        return;
+    }
+    const figure = figureOf(api.document().content, nodeId);
+    const attrs = figure?.attrs;
+    const figureId = attrs?.nodeId;
+    if (typeof figureId === 'string') {
+        const removed = api.content.delete({ nodeId: figureId });
+        // A write never leaves its parent without the content its type requires.
+        if (removed.status === 'rejected' && removed.code === 'invalid') {
+            api.content.replace({ nodeId: figureId }, [{ type: 'paragraph' }]);
+        }
+    }
+    api.focus();
 };
 
 /** A drag's width as a whole percent of the content width, within the stored bounds. */
@@ -165,10 +190,23 @@ const useResize = (
     return { shown, handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel } };
 };
 
-/** What a screen reader hears as the image becomes node-selected, since an image with an empty `alt` says nothing. */
-const spokenOf = (attrs: JsonObject, context: Parameters<typeof imageOutput>[1], unavailable: boolean) => {
+/**
+ * What a screen reader hears as the image becomes node-selected, since an image with an empty `alt` says nothing:
+ * for a slot, its upload as it stands, with how to fix a failed one.
+ */
+const spokenOf = (
+    attrs: JsonObject,
+    context: Parameters<typeof imageOutput>[1],
+    unavailable: boolean,
+    upload: UploadStatus | undefined,
+) => {
     const { t } = context;
     if (attrs.assetId === null) {
+        if (upload !== undefined) {
+            // The live region writes a value between U+2068 and U+2069 into a `bdi` of its own.
+            const name = `\u2068${upload.name}\u2069`;
+            return t('RichTextEditor_announceBoth', { first: name, second: uploadStatusText(upload, t) });
+        }
         return t('RichTextEditor_imageUnfinished');
     }
     if (unavailable) {
@@ -248,12 +286,18 @@ const ImageChrome = () => {
         paused = played.paused;
     }
     const unavailable = shown.kind !== 'image' || failed === shown.src;
+    // The upload chrome follows the session's upload of this slot, which no reload keeps.
+    const upload = useUploadStatus(nodeId ?? '');
     const slot = attrs.assetId === null;
-    const spoken = spokenOf(attrs, context, unavailable);
-    const heard = spoken;
+    const spoken = spokenOf(attrs, context, unavailable, slot ? upload : undefined);
+    // A slot's progress is shown, not spoken: only whether it runs, failed or stopped counts as a change.
+    let heard = spoken;
+    if (slot && upload !== undefined) {
+        heard = upload.state === 'failed' || upload.state === 'stopped' ? upload.state : 'running';
+    }
     const heardRef = useRef<{ readonly heard: string; readonly slot: boolean } | undefined>(undefined);
     // A selected image is spoken as it becomes selected, and again when what it says changes, as when it fails to
-    // load; a slot that fills is not.
+    // load; a slot that fills is not, since the upload's completion speaks for it.
     useEffect(() => {
         if (!selected) {
             heardRef.current = undefined;
@@ -307,6 +351,7 @@ const ImageChrome = () => {
         sizeText = t('RichTextEditor_imageSizePercent', { percent: displayWidth });
     }
     const unfinished = attrs.assetId === null;
+    const status = unfinished ? upload : undefined;
     // The chrome keeps mouse events from the editor, so a press on the image selects it here, as on any atom, and
     // keeps the browser from putting the caret in a neighbouring block; on a selected image it starts the node's drag.
     const selectImage = (event: MouseEvent) => {
@@ -320,7 +365,17 @@ const ImageChrome = () => {
         }
     };
     let content;
-    if (unfinished) {
+    if (status !== undefined) {
+        content = (
+            <UploadSlot
+                status={status}
+                width={sizeOf(attrs.width)}
+                height={sizeOf(attrs.height)}
+                t={t}
+                onMouseDown={selectImage}
+            />
+        );
+    } else if (unfinished) {
         content = (
             // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- a press selects the node as on any atom; the keyboard selects it with the arrows.
             <span className={styles.placeholder} onMouseDown={selectImage}>
@@ -373,7 +428,15 @@ const ImageChrome = () => {
             )}
             <div className={styles.controls}>
                 <NodeChromeToolbar aria-label={t('RichTextEditor_image')}>
-                    {unfinished && (
+                    {status !== undefined && (
+                        <UploadControls
+                            nodeId={nodeId}
+                            status={status}
+                            t={t}
+                            onRemove={() => removeFigure(api, nodeId)}
+                        />
+                    )}
+                    {unfinished && status === undefined && (
                         <NodeChromeButton
                             label={t('RichTextEditor_imageChooseAgain')}
                             onClick={() => execute('image.replace', { nodeId })}

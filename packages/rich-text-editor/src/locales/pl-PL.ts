@@ -188,5 +188,29 @@ export const plPL = {
         RichTextEditor_unavailableReadOnly: 'Treść jest tylko do odczytu',
         RichTextEditor_underline: 'Podkreślenie',
         RichTextEditor_undo: 'Cofnij',
+        RichTextEditor_uploadCancel: 'Anuluj przesyłanie',
+        RichTextEditor_uploadCancelled: 'Anulowano przesyłanie: ${name}',
+        RichTextEditor_uploadCompleted: 'Przesłano: ${name}',
+        RichTextEditor_uploadCompletedNoAlt: 'Przesłano: ${name}. Obraz nie ma jeszcze tekstu alternatywnego.',
+        RichTextEditor_uploadError: 'Przesyłanie nie powiodło się. Spróbuj ponownie lub usuń obraz.',
+        RichTextEditor_uploadFailed: 'Przesyłanie nie powiodło się: ${name}',
+        RichTextEditor_uploadPercent: 'Przesłano ${percent}%',
+        RichTextEditor_uploadRemove: 'Usuń obraz',
+        RichTextEditor_uploadRetry: 'Ponów przesyłanie',
+        RichTextEditor_uploadRunning: 'Przesyłanie…',
+        RichTextEditor_uploadStarted: 'Przesyłanie: ${name}',
+        RichTextEditor_uploadStartedCount: 'Przesyłanie plików: ${count}',
+        RichTextEditor_uploadStopped: 'Przesyłanie zostało zatrzymane. Spróbuj ponownie lub usuń obraz.',
+        RichTextEditor_uploadTooLarge:
+            'Nie przesłano pliku ${name}, ponieważ jest za duży. Wybierz plik typu ${types} o rozmiarze do ${size}.',
+        RichTextEditor_uploadTooManyPixels:
+            'Nie przesłano pliku ${name}, ponieważ obraz ma za dużo pikseli. Wybierz obraz o rozmiarze do ${megapixels} megapikseli i do ${side} pikseli na bok.',
+        RichTextEditor_uploadUnreadable:
+            'Nie przesłano pliku ${name}, ponieważ nie można odczytać rozmiaru obrazu. Wybierz plik typu ${types} o rozmiarze do ${size}.',
+        RichTextEditor_uploadUnsafe:
+            'Nie przesłano pliku ${name}, ponieważ plik SVG zawiera skrypt. Wybierz plik typu ${types} o rozmiarze do ${size}.',
+        RichTextEditor_uploadWaiting: 'Oczekiwanie na przesłanie',
+        RichTextEditor_uploadWrongType:
+            'Nie przesłano pliku ${name}, ponieważ ten typ pliku nie jest akceptowany. Wybierz plik typu ${types} o rozmiarze do ${size}.',
     },
 };

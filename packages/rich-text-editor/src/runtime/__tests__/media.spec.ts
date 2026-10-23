@@ -2,7 +2,11 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
+
 import { pickedAsset } from '../media';
+
+failNetworkInThisFile();
 
 const answer = (fields: Record<string, unknown>) => ({
     assetId: 'asset-1',

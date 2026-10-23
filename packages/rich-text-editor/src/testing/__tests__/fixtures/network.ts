@@ -2,6 +2,8 @@
 
 import { afterAll, beforeAll, expect } from 'vitest';
 
+export const NETWORK = ['fetch', 'XMLHttpRequest', 'WebSocket', 'navigator.sendBeacon'] as const;
+
 /**
  * Replaces `fetch`, `XMLHttpRequest`, `WebSocket` and `navigator.sendBeacon` with stubs that throw on any use, for the
  * length of the calling file. `attempts` logs every use, and the file fails if any use is left in it after its tests.

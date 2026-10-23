@@ -192,5 +192,29 @@ export const nlNL = {
         RichTextEditor_unavailableReadOnly: 'De inhoud is alleen-lezen',
         RichTextEditor_underline: 'Onderstrepen',
         RichTextEditor_undo: 'Ongedaan maken',
+        RichTextEditor_uploadCancel: 'Uploaden annuleren',
+        RichTextEditor_uploadCancelled: 'Uploaden geannuleerd: ${name}',
+        RichTextEditor_uploadCompleted: 'Geüpload: ${name}',
+        RichTextEditor_uploadCompletedNoAlt: 'Geüpload: ${name}. De afbeelding heeft nog geen alternatieve tekst.',
+        RichTextEditor_uploadError: 'Het uploaden is mislukt. Probeer het opnieuw of verwijder de afbeelding.',
+        RichTextEditor_uploadFailed: 'Uploaden mislukt: ${name}',
+        RichTextEditor_uploadPercent: '${percent}% geüpload',
+        RichTextEditor_uploadRemove: 'Afbeelding verwijderen',
+        RichTextEditor_uploadRetry: 'Opnieuw uploaden',
+        RichTextEditor_uploadRunning: 'Bezig met uploaden…',
+        RichTextEditor_uploadStarted: 'Bezig met uploaden: ${name}',
+        RichTextEditor_uploadStartedCount: 'Bestanden uploaden: ${count}',
+        RichTextEditor_uploadStopped: 'Het uploaden is gestopt. Probeer het opnieuw of verwijder de afbeelding.',
+        RichTextEditor_uploadTooLarge:
+            '${name} is niet geüpload omdat het bestand te groot is. Kies een bestand van het type ${types} van maximaal ${size}.',
+        RichTextEditor_uploadTooManyPixels:
+            '${name} is niet geüpload omdat de afbeelding te veel pixels heeft. Kies een afbeelding van maximaal ${megapixels} megapixel en ${side} pixels per zijde.',
+        RichTextEditor_uploadUnreadable:
+            '${name} is niet geüpload omdat de afmetingen van de afbeelding niet te lezen zijn. Kies een bestand van het type ${types} van maximaal ${size}.',
+        RichTextEditor_uploadUnsafe:
+            '${name} is niet geüpload omdat de SVG een script bevat. Kies een bestand van het type ${types} van maximaal ${size}.',
+        RichTextEditor_uploadWaiting: 'Wacht op uploaden',
+        RichTextEditor_uploadWrongType:
+            '${name} is niet geüpload omdat dit bestandstype niet wordt geaccepteerd. Kies een bestand van het type ${types} van maximaal ${size}.',
     },
 };

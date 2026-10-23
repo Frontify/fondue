@@ -56,12 +56,15 @@ import { decodeToTree, limitsOf } from '#/model/decode';
 import { createSaveCoordinator } from '#/persistence/coordinator';
 import { extensionsOf } from '#/react/engine';
 import { createFakePersistenceService, pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
+import { failNetworkInThisFile, NETWORK } from '#/testing/__tests__/fixtures/network';
 import { STORAGE, stubStorage } from '#/testing/__tests__/fixtures/storage';
+import { declaredPng } from '#/testing/uploads';
 import { bindingHere } from '#/ui/shortcuts';
 
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
+import { type AsyncRequest } from '../async';
 import { RUNTIME_PLUGINS } from '../capabilities';
-import { canRedo, canUndo, reset } from '../history';
+import { canRedo, canUndo, reset, undoDepth } from '../history';
 import { createLimitCheck } from '../limits';
 import { authoringOf } from '../policy';
 import { createEditorRuntime, type EditorRuntime, type EditorRuntimeOptions } from '../runtime';
@@ -75,6 +78,9 @@ import {
     type FeaturePolicy,
     type ReplaceDocumentRequest,
 } from '../types';
+import { type UploadServiceLike } from '../uploads';
+
+const network = failNetworkInThisFile();
 
 const boldModel = compileContentModel([core(), bold()], { id: 'test.bold', version: 1 });
 const stored = (...blocks: readonly JsonValue[]) => ({
@@ -115,6 +121,7 @@ interface Start {
     readonly policy?: Partial<AuthoringPolicy>;
     readonly limits?: Partial<ResourceLimits>;
     readonly generateId?: () => string;
+    readonly uploads?: UploadServiceLike;
     /** Makes the session managed, as a host's `services.persistence` does. */
     readonly persistence?: PersistenceService;
     /** Editor parts beside the fixture features' own, as a host passes them. */
@@ -162,6 +169,7 @@ const start = (input: unknown, options: Start = {}) => {
         mode,
         policy: authoringOf(model, options.policy),
         limits: limitsOf(options.limits),
+        uploads: () => options.uploads,
         saves: saves(model, options.persistence),
         ...(options.pick === undefined ? {} : { pick: options.pick }),
     });
@@ -182,6 +190,30 @@ const start = (input: unknown, options: Start = {}) => {
 };
 
 const contentOf = (change: DocumentChange | undefined) => change?.readDocument().content;
+
+/** Starts an operation through the coordinator whose service call resolves when the test resolves it. */
+const pending = (runtime: EditorRuntime, request: Partial<AsyncRequest> = {}) => {
+    let settle: (result: unknown) => void = () => undefined;
+    const call = new Promise<unknown>((resolve) => {
+        settle = resolve;
+    });
+    const operation = runtime.startAsync({
+        key: 'upload',
+        service: 'uploads',
+        featureId: 'core',
+        action: 'create',
+        command: 'text.insert',
+        run: () => call,
+        ...request,
+    });
+    return {
+        operation,
+        resolve: async (result: unknown) => {
+            settle(result);
+            await call;
+        },
+    };
+};
 /** Runs `history.undo` until it no longer applies, and returns how many steps it undid. */
 const undoSteps = (handle: EditorRuntime['handle']) => {
     let steps = 0;
@@ -201,6 +233,12 @@ const replacing = (
     unsaved,
     selection: 'start',
     history: 'reset',
+});
+const discarded = (reason: string) => ({
+    code: 'runtime.async-discarded',
+    severity: 'info',
+    messageKey: 'runtime.async-discarded',
+    details: { reason },
 });
 
 // every browser storage API fails while this suite runs.
@@ -222,6 +260,15 @@ it('runs the runtime suite with every browser storage API failing', () => {
     }
     // The probe above is the only access this suite may make.
     expect(storage.accessed.splice(0)).toEqual([...STORAGE]);
+});
+
+it('runs the runtime suite with fetch, XMLHttpRequest, WebSocket and sendBeacon failing', () => {
+    expect(() => fetch('/probe')).toThrow('fetch');
+    expect(() => new XMLHttpRequest()).toThrow('XMLHttpRequest');
+    expect(() => new WebSocket('wss://probe.test')).toThrow('WebSocket');
+    expect(() => navigator.sendBeacon('/probe')).toThrow('navigator.sendBeacon');
+    // The probe above is the only use this suite may make.
+    expect(network.attempts.splice(0)).toEqual([...NETWORK]);
 });
 
 describe('the commit path', () => {
@@ -1184,6 +1231,11 @@ describe('commands, events and the commit path', () => {
         pressKey(handle, 'Mod-b');
         handle.execute('mark.bold.toggle');
         await handle.enqueue('text.insert', { text: 'e' });
+        await pending(runtime).resolve({ text: 'f' });
+        handle.execute('history.undo');
+
+        expect(view.state.doc.textContent).toContain('f');
+        expect(view.state.doc.textContent).not.toContain('e');
         expect(installed).toHaveLength(handle.getSummary().commitSequence);
         expect(installed.at(-1)).toBe(view.state);
         expect([view.props.handleDOMEvents, view.props.handleKeyDown, view.props.handleTextInput]).toEqual([
@@ -1813,6 +1865,7 @@ describe('origins with an appended normalization', () => {
         ],
         ['command', ({ handle }) => handle.execute('text.insert', { text: 'e' })],
         ['unknown', ({ view }) => view.dispatch(view.state.tr.insertText('f'))],
+        ['async', ({ runtime }) => pending(runtime).resolve({ text: 'g' })],
     ];
     for (const [origin, act] of cases) {
         it(`reports the root's origin ${origin} for a batch with an appended normalization`, async () => {
@@ -2894,6 +2947,25 @@ describe('the published snapshot and composition', () => {
         expect(handle.execute('text.insert', { text: '?' }).status).toBe('applied');
     });
 
+    it('keeps a target captured during a rejected composition, so its result applies', async () => {
+        const policy = { features: { 'marks.bold': { create: true, edit: false, remove: true, paste: true } } };
+        const session = start(stored(para(strong('ab'), words('cd'))), { model: targetModel, policy });
+        const { handle, runtime, view } = session;
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+
+        compose(session, 'x');
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        const upload = pending(runtime, { target });
+        endComposition(session);
+        await settleInput();
+        expect(textOf(view.state.doc)).toBe('abcd');
+        await upload.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('abcd!');
+        expect(session.diagnostics).toEqual([]);
+    });
+
     it('defers a root a plugin view dispatches while the settled state installs, so the check still judges the composition', async () => {
         const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
         const policy = {
@@ -3063,6 +3135,308 @@ describe('the async coordinator', () => {
         expect(result).toMatchObject({ status: 'applied', contentChanged: true });
         expect([handle.getSummary().phase, textOf(view.state.doc)]).toEqual(['disposed', 'xab']);
     });
+
+    it('registers each operation with its ID, session, target, policy revision, controller and request sequence', () => {
+        const { handle, runtime } = start(stored(para(words('abcd'))), { model: targetModel });
+        setSelection(handle, { text: 'bc' });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        handle.updatePolicy(authoringOf(targetModel));
+
+        pending(runtime, { key: 'mention-search', service: 'references', target });
+        const search = pending(runtime, { key: 'mention-search', service: 'references', target }).operation;
+        const upload = pending(runtime, { key: 'upload' }).operation;
+
+        const { session } = handle.getSummary();
+        const registry = probeRuntimes().operations;
+        expect(registry).toEqual([search, upload]);
+        expect(search).toMatchObject({ session, target, policyRevision: 1, key: 'mention-search', request: 2 });
+        expect(upload).toMatchObject({ session, policyRevision: 1, key: 'upload', request: 1 });
+        expect(upload.target).toMatchObject({ session });
+        expect(search.id).not.toBe(upload.id);
+        expect(registry.map(({ controller }) => controller instanceof AbortController)).toEqual([true, true]);
+    });
+
+    it('aborts an older request for the same interaction and ignores its result when it resolves last', async () => {
+        const { runtime, view, diagnostics } = start(stored(para(words('ab'))));
+        const older = pending(runtime, { key: 'mention-search' });
+        const newer = pending(runtime, { key: 'mention-search' });
+
+        expect([older.operation.controller.signal.aborted, newer.operation.controller.signal.aborted]).toEqual([
+            true,
+            false,
+        ]);
+        await newer.resolve({ text: 'new ' });
+        await older.resolve({ text: 'old ' });
+
+        expect(view.state.doc.textContent).toBe('new ab');
+        expect(diagnostics).toEqual([discarded('superseded')]);
+    });
+
+    /** Each case starts an operation, makes one check fail, and returns the call that resolves it. */
+    const failures: readonly (readonly [string, string, (session: ReturnType<typeof start>) => () => Promise<void>])[] =
+        [
+            [
+                'a target that an edit invalidated',
+                'target-invalid',
+                ({ handle, runtime, view }) => {
+                    setSelection(handle, { text: 'ab' });
+                    const target = capture(handle, { purpose: 'replace-text', onIntersectingEdit: 'invalidate' });
+                    const operation = pending(runtime, { target });
+                    view.dispatch(view.state.tr.delete(1, 2));
+                    return () => operation.resolve({ text: 'x' });
+                },
+            ],
+            [
+                'a policy that forbids the change',
+                'not-allowed',
+                ({ handle, runtime }) => {
+                    const operation = pending(runtime);
+                    handle.updatePolicy(authoringOf(targetModel, NOT_EDITABLE_CORE));
+                    return () => operation.resolve({ text: 'x' });
+                },
+            ],
+            [
+                'a field of the wrong type',
+                'invalid-payload',
+                ({ runtime }) => {
+                    const operation = pending(runtime);
+                    return () => operation.resolve({ text: 7 });
+                },
+            ],
+            [
+                'a value that is not plain JSON',
+                'invalid-payload',
+                ({ runtime }) => {
+                    const operation = pending(runtime);
+                    return () => operation.resolve({ text: 'x', at: () => 1 });
+                },
+            ],
+            [
+                'a session generation that a replacement ended',
+                'wrong-session',
+                ({ handle, runtime }) => {
+                    const operation = pending(runtime);
+                    const replaced = handle.replaceDocument(replacing(handle, stored(para(words('cd')))));
+                    return async () => {
+                        await replaced;
+                        await operation.resolve({ text: 'x' });
+                    };
+                },
+            ],
+        ];
+    for (const [name, reason, act] of failures) {
+        it(`discards a result with ${name} as ${reason}, with no content change`, async () => {
+            const session = start(stored(para(words('ab'))), { model: targetModel });
+            const resolve = act(session);
+            const { sequence } = session.handle.getSummary();
+            const before = session.view.state.doc;
+
+            await resolve();
+
+            expect(session.view.state.doc).toBe(before);
+            expect(session.handle.getSummary().sequence).toBe(sequence);
+            expect(session.diagnostics).toEqual([discarded(reason)]);
+        });
+    }
+
+    it('applies a result through its target from the current state as async, keeping the caret of an author typing elsewhere', async () => {
+        const { handle, runtime, view, changes } = start(stored(para(words('ab')), para(words('cd'))), {
+            model: targetModel,
+        });
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        const upload = pending(runtime, { target });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        typeText(handle, 'x');
+        const caret = view.state.selection;
+
+        await upload.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('axbcd!');
+        expect(view.state.selection.eq(caret)).toBe(true);
+        expect(changes.at(-1)).toMatchObject({ origin: 'async', commandId: null });
+    });
+
+    it('runs a queued intent through its target without moving the caret of an author typing elsewhere', async () => {
+        const { handle, view } = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        setSelection(handle, { text: 'cd' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        let queued: Promise<CommandResult> | undefined;
+        let caret = view.state.selection;
+        handle.subscribe('documentChange', () => {
+            if (queued === undefined) {
+                caret = view.state.selection;
+                queued = handle.enqueue('mark.bold.toggle', undefined, { target });
+            }
+        });
+
+        typeText(handle, 'x');
+        const result = await queued;
+
+        expect(result?.status).toBe('applied');
+        expect(textOf(view.state.doc)).toBe('axbcd');
+        expect(markedText(view.state.doc, 'bold')).toBe('cd');
+        expect(view.state.selection.eq(caret)).toBe(true);
+    });
+
+    it('applies a result started with no target where the selection was, keeping the caret, and releases the captured target', async () => {
+        const { handle, runtime, view } = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        const upload = pending(runtime);
+        expect(upload.operation.target).not.toBeNull();
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        typeText(handle, 'x');
+        const caret = view.state.selection;
+
+        await upload.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('a!bcdx');
+        // The caret after `cdx` maps one position on through the `!` inserted before it.
+        expect([view.state.selection.empty, view.state.selection.head]).toEqual([true, caret.head + 1]);
+        expect(probeRuntimes().targets).toBe(0);
+    });
+
+    it('registers an operation a running command starts with a target where that command leaves the selection', async () => {
+        let upload: ReturnType<typeof pending> | undefined;
+        let session: ReturnType<typeof start> | undefined;
+        // Stands in for an `upload` capability: it changes the slot synchronously and hands the service call over.
+        const startUpload: EngineCommand = {
+            run: (state, dispatch) => {
+                if (dispatch !== undefined && session !== undefined) {
+                    dispatch(state.tr.insertText('[]'));
+                    upload = pending(session.runtime);
+                }
+                return true;
+            },
+            active: () => false,
+        };
+        session = start(stored(para(words('ab')), para(words('cd'))), {
+            model: targetModel,
+            commands: { 'fixture.upload': startUpload },
+        });
+        const { handle, view } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+
+        expect(handle.execute('fixture.upload').status).toBe('applied');
+        expect(upload?.operation.target).not.toBeNull();
+        expect(probeRuntimes()).toMatchObject({ targets: 1, operations: [upload?.operation] });
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        typeText(handle, 'x');
+        const caret = view.state.selection;
+        await upload?.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('ab[]!cdx');
+        expect([view.state.selection.empty, view.state.selection.head]).toEqual([true, caret.head + 1]);
+        expect(probeRuntimes().targets).toBe(0);
+    });
+
+    it('discards a result holding a revoked proxy as invalid-payload', async () => {
+        const { runtime, view, diagnostics } = start(stored(para(words('ab'))));
+        const upload = pending(runtime);
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+
+        // Promise resolution reads `then` on the result itself, so the revoked proxy sits one level down.
+        await upload.resolve({ text: proxy });
+
+        expect(view.state.doc.textContent).toBe('ab');
+        expect(diagnostics).toEqual([discarded('invalid-payload')]);
+    });
+
+    it('starts nothing after dispose: the operation is aborted and never registered', () => {
+        const { handle, runtime } = start(stored(para(words('ab'))));
+        const run = vi.fn(() => new Promise<unknown>(() => undefined));
+        handle.dispose();
+
+        const operation = runtime.startAsync({
+            key: 'upload',
+            service: 'uploads',
+            featureId: 'core',
+            action: 'create',
+            command: 'text.insert',
+            run,
+        });
+
+        expect(operation.controller.signal.aborted).toBe(true);
+        expect(run).not.toHaveBeenCalled();
+        expect(probeRuntimes().operations).toEqual([]);
+    });
+
+    it('aborts every pending operation on dispose and ignores their results', async () => {
+        const { handle, runtime, diagnostics } = start(stored(para(words('ab'))));
+        const upload = pending(runtime);
+        const search = pending(runtime, { key: 'mention-search', service: 'references' });
+
+        handle.dispose();
+        const { commitSequence } = handle.getSummary();
+        const { document } = handle.getSnapshot();
+        await upload.resolve({ text: 'x' });
+        await search.resolve({ text: 'y' });
+
+        expect(handle.getSummary().commitSequence).toBe(commitSequence);
+        expect(handle.getSnapshot().document).toBe(document);
+
+        expect([upload, search].map(({ operation }) => operation.controller.signal.aborted)).toEqual([true, true]);
+        expect(probeRuntimes().operations).toEqual([]);
+        expect(diagnostics).toEqual([]);
+    });
+
+    it('aborts an upload once the policy disables create for its feature and discards its result', async () => {
+        const { handle, runtime, view } = start(stored(para(words('ab'))));
+        const upload = pending(runtime, { featureId: 'core', action: 'create' });
+
+        handle.updatePolicy(
+            authoringOf(boldModel, { features: { core: { create: false, edit: true, remove: true, paste: true } } }),
+        );
+        await upload.resolve({ text: 'x' });
+
+        expect(upload.operation.controller.signal.aborted).toBe(true);
+        expect(view.state.doc.textContent).toBe('ab');
+    });
+
+    it('aborts only the operation of a changed services member and keeps the view', async () => {
+        const { handle, runtime, view } = start(stored(para(words('ab'))));
+        typeText(handle, 'x');
+        const search = pending(runtime, { key: 'mention-search', service: 'references' });
+        const upload = pending(runtime, { service: 'uploads' });
+
+        runtime.changeServices(['references']);
+        await search.resolve({ text: 'mention ' });
+        await upload.resolve({ text: 'upload ' });
+
+        expect([search, upload].map(({ operation }) => operation.controller.signal.aborted)).toEqual([true, false]);
+        expect(view.state.doc.textContent).toBe('xupload ab');
+        expect(runtime.view).toBe(view);
+        // The completion is no undo step of its own, and the typed one stays.
+        expect(undoSteps(handle)).toBe(1);
+    });
+
+    it('holds a result during composition and checks it again once input settled', async () => {
+        const session = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        const { handle, runtime, view, diagnostics } = session;
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        const applied = pending(runtime, { target });
+        const refused = pending(runtime, { key: 'other', target });
+        setSelection(handle, { text: 'ab', from: 0, to: 0 });
+
+        compose(session, 'x');
+        await applied.resolve({ text: '!' });
+        expect(textOf(view.state.doc)).toBe('xabcd');
+        endComposition(session);
+        await settleInput();
+        expect(textOf(view.state.doc)).toBe('xabcd!');
+
+        compose(session, 'y');
+        handle.setMode('readonly');
+        await refused.resolve({ text: '?' });
+        endComposition(session);
+        await settleInput();
+
+        expect(textOf(view.state.doc)).toBe('xyabcd!');
+        expect(diagnostics).toEqual([discarded('readonly')]);
+    });
 });
 
 describe('history', () => {
@@ -3195,6 +3569,33 @@ describe('history', () => {
     });
 
     const imageModel = compileContentModel([core(), bold(), mediaImage()], { id: 'test.bold', version: 1 });
+    /** An upload service whose one upload answers when `complete` runs. */
+    const oneUpload = () => {
+        let answer: (asset: unknown) => void = () => undefined;
+        const service: UploadServiceLike = {
+            upload: () =>
+                new Promise((resolve) => {
+                    answer = resolve;
+                }),
+            releaseUnused: () => Promise.resolve(),
+        };
+        const complete = async () => {
+            answer({ assetId: 'asset-1', mediaType: 'image/png', labelSnapshot: 'logo.png' });
+            await vi.advanceTimersByTimeAsync(0);
+        };
+        return { service, complete };
+    };
+    /** Starts an upload of `logo.png` from the toolbar into a new slot, which replaces the empty paragraph. */
+    const startUpload = async (session: ReturnType<typeof start>) => {
+        const file = new File([declaredPng(40, 30)], 'logo.png', { type: 'image/png' });
+        await session.runtime.uploads.begin([file], { kind: 'insert', origin: 'command' });
+    };
+    /** The text of the paragraph after the slot, and the slot's asset. */
+    const shown = ({ view }: ReturnType<typeof start>): unknown[] => [
+        view.state.doc.textContent,
+        view.state.doc.child(0).firstChild?.attrs.assetId as unknown,
+    ];
+
     it('opens the asset picker for image.insert and the upload start control of its node for image.replace', () => {
         const opened: unknown[] = [];
         const image = {
@@ -3218,6 +3619,36 @@ describe('history', () => {
         handle.execute('image.replace', { nodeId: 'image-1' });
 
         expect(opened).toEqual([undefined, 'image-1']);
+    });
+
+    it('adds no undo step for an upload completion that sets an assetId', async () => {
+        const upload = oneUpload();
+        const session = start(stored(para()), { model: imageModel, uploads: upload.service });
+        await startUpload(session);
+        typeText(session.handle, 'a');
+        const depth = undoDepth(session.runtime.state);
+
+        await upload.complete();
+
+        expect(shown(session)).toEqual(['a', 'asset-1']);
+        expect(undoDepth(session.runtime.state)).toBe(depth);
+        session.handle.execute('history.undo');
+        expect(shown(session)).toEqual(['', 'asset-1']);
+    });
+
+    it('starts a new undo step for typing right after an upload completion', async () => {
+        const upload = oneUpload();
+        const session = start(stored(para()), { model: imageModel, uploads: upload.service });
+        await startUpload(session);
+        typeText(session.handle, 'a');
+        vi.advanceTimersByTime(50);
+        await upload.complete();
+        vi.advanceTimersByTime(50);
+        typeText(session.handle, 'b');
+
+        session.handle.execute('history.undo');
+
+        expect(shown(session)).toEqual(['a', 'asset-1']);
     });
 
     it('reverts an edit and its repair with one undo, and repairs nothing after it', () => {
@@ -3460,6 +3891,15 @@ describe('faults', () => {
         expect(JSON.stringify(handle.getRecoveryCandidate())).toContain('"ab!"');
     });
 
+    it('discards an async result whose install faults the view as not-ready', async () => {
+        const session = start(stored(para(words('ab'))), { plugins: [updateFails] });
+        setSelection(session.handle, { text: 'ab', from: 2, to: 2 });
+
+        await pending(session.runtime).resolve({ text: '!' });
+
+        expect(session.diagnostics).toEqual([viewFault, discarded('not-ready')]);
+    });
+
     it('publishes nothing from a composition that settles after a fault', async () => {
         // Two plugins that append to each other in a batch whose root asks for it, past the append limit.
         const looping = (featureId: string) =>
@@ -3493,6 +3933,41 @@ describe('faults', () => {
         expect(handle.getSnapshot()).toBe(snapshot);
     });
 
+    it('discards a result held for a composition as not-ready and aborts its call when the session faults before input settles', async () => {
+        // Two plugins that append to each other in a batch whose root asks for it, past the append limit.
+        const looping = (featureId: string) =>
+            countAppends(
+                new Plugin({
+                    appendTransaction: (transactions, _old, state) => {
+                        const asked = transactions.some((transaction) => transaction.getMeta('loop') === true);
+                        if (
+                            !asked ||
+                            transactions.every((transaction) => transaction.getMeta('appendedBy') === featureId)
+                        ) {
+                            return null;
+                        }
+                        return state.tr.setMeta('appendedBy', featureId).setMeta('loop', true);
+                    },
+                }),
+                { featureId, capability: 'insertText' },
+            );
+        const session = start(stored(para(words('ab'))), { plugins: [looping('fixture.a'), looping('fixture.b')] });
+        const { handle, runtime, view, diagnostics } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        const held = pending(runtime);
+        compose(session, 'x');
+        await held.resolve({ text: '!' });
+        endComposition(session);
+
+        view.dispatch(view.state.tr.insertText('y').setMeta('loop', true));
+
+        expect(handle.getSummary().phase).toBe('faulted');
+        expect(diagnostics.map(({ code }) => code)).toEqual(['runtime.append-limit', 'runtime.async-discarded']);
+        expect(diagnostics[1]).toEqual(discarded('not-ready'));
+        expect(held.operation.controller.signal.aborted).toBe(true);
+        expect(probeRuntimes().operations).toEqual([]);
+    });
+
     it('reports a plugin that throws in the repair of a settling composition', async () => {
         const failing = new Plugin({
             appendTransaction: (transactions) => {
@@ -3513,6 +3988,44 @@ describe('faults', () => {
         expect(session.handle.getSummary()).toMatchObject({ phase: 'ready', sequence: 1 });
         expect(textOf(session.view.state.doc)).toBe('abx');
         expect(contentOf(session.changes[0])).toEqual(stored(para(words('abx'))).content);
+    });
+
+    it('leaves nothing on the element that reaches the runtime after a plugin view throws while mounting', () => {
+        const { result, tree } = decodeToTree(stored(para(words('ab'))), boldModel);
+        if (result.status !== 'editable' || tree === undefined) {
+            throw new Error('expected an editable document');
+        }
+        let halfBuilt: { readonly isDestroyed: boolean } | undefined;
+        const viewFails = new Plugin({
+            view: (editorView) => {
+                halfBuilt = editorView;
+                throw new Error('plugin view failure');
+            },
+        });
+        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel));
+        const runtime = createEditorRuntime({
+            definition: { ...compiled, plugins: [...compiled.plugins, viewFails] },
+            documentId: 'document-1',
+            tree,
+            capabilities: result.document.requiredCapabilities,
+            generateId: countingIds(),
+            mode: 'editable',
+            policy: authoringOf(boldModel),
+            limits: limitsOf({}),
+        });
+        started.push(runtime);
+        const element = document.body.appendChild(document.createElement('div'));
+        runtime.attach(element);
+
+        const text = element.querySelector('p')?.firstChild;
+        if (text !== null && text !== undefined) {
+            document.getSelection()?.setBaseAndExtent(text, 0, text, 1);
+        }
+        document.dispatchEvent(new Event('selectionchange'));
+        element.dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: 'x', bubbles: true }));
+
+        expect(runtime.handle.getSummary()).toMatchObject({ phase: 'faulted', commitSequence: 0 });
+        expect(halfBuilt?.isDestroyed).toBe(true);
     });
 });
 

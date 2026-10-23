@@ -1,0 +1,40 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "feature-contract", "version": 1 },
+    "requiredCapabilities": [
+        { "id": "core", "version": 1 },
+        { "id": "media.image", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": { "lang": null, "align": null },
+                "content": [{ "type": "text", "text": "The uploaded logo:" }]
+            },
+            {
+                "type": "figure",
+                "attrs": { "nodeId": "figure-uploaded", "align": "center" },
+                "content": [
+                    {
+                        "type": "asset_image",
+                        "attrs": {
+                            "nodeId": "image-uploaded",
+                            "assetId": "asset-uploaded",
+                            "labelSnapshot": "logo.png",
+                            "altIntent": "meaningful",
+                            "altText": "Frontify logo",
+                            "width": 40,
+                            "height": 30,
+                            "displayWidth": null,
+                            "mediaType": "image/png"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

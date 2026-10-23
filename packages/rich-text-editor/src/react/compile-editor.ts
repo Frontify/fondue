@@ -2,8 +2,14 @@
 
 import { type NodeViewDeclaration } from '#/bridge/define';
 import { commandApiOf, editorApiOf } from '#/bridge/live-api';
-import { type EditorHosts, type EditorPlugin, type EditorSuggestion, pluginWithOptions } from '#/bridge/plugin';
-import { clipboardPlugin, dropCursorPlugin } from '#/clipboard/plugin';
+import {
+    type EditorApi,
+    type EditorHosts,
+    type EditorPlugin,
+    type EditorSuggestion,
+    pluginWithOptions,
+} from '#/bridge/plugin';
+import { clipboardPlugin, dropCursorPlugin, type FileIntake } from '#/clipboard/plugin';
 import {
     compileDefinition,
     type CompiledDefinition,
@@ -27,7 +33,7 @@ import { pointer } from '#/model/errors';
 import { ownValue } from '#/model/values';
 import { type ReaderOverrides } from '#/reader/plan';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
-import { pluginCommand } from '#/runtime/editor-api';
+import { pluginCommand, rangeOf } from '#/runtime/editor-api';
 import { authoringOf } from '#/runtime/policy';
 import { runtimeOfView } from '#/runtime/runtime';
 
@@ -203,6 +209,26 @@ const handleKeyFor: NonNullable<Parameters<typeof compileDefinition>[1]>['handle
     return runtime.perform(handler).status !== 'rejected';
 };
 
+/** Hands pasted or dropped files to the first part whose `files` takes them, each run as a command with no ID. */
+const intakeOf =
+    (model: ContentModel, plugins: readonly EditorPlugin[]): FileIntake =>
+    (view, files, origin, from, to) => {
+        const runtime = runtimeOfView(view);
+        if (runtime === undefined) {
+            return false;
+        }
+        const { schema, commands } = runtime.definition;
+        const range = rangeOf(runtime.state.doc, from, to);
+        return plugins.some(({ files: take }) => {
+            if (take === undefined) {
+                return false;
+            }
+            const run = (api: EditorApi) => take(api, files, { origin, range });
+            const command = pluginCommand({ run }, model, schema, (id) => commands.get(id), commandApiOf);
+            return runtime.perform(command).status !== 'rejected';
+        });
+    };
+
 /** The node views the model's editor parts attach, each for a node the model declares. */
 const collectViews = (model: ContentModel, plugins: readonly EditorPlugin[]) => {
     const { features, nodes } = compiledModel(model);
@@ -303,7 +329,7 @@ export const editorEngine = (
     const plugins = collectPlugins(model, given, shipped);
     const built = {
         ...RUNTIME_PLUGINS.plugins,
-        [CLIPBOARD_PLUGIN.id]: clipboardPlugin(model),
+        [CLIPBOARD_PLUGIN.id]: clipboardPlugin(model, intakeOf(model, plugins)),
         [DROP_CURSOR_PLUGIN.id]: dropCursorPlugin,
     };
     const extensions = plugins.map((plugin) => extensionOf(model, plugin));

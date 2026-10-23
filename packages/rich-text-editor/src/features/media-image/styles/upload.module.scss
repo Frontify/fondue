@@ -1,0 +1,55 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// The slot holds the measured box of the file, so the image takes its place with no shift.
+.slot {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--spacing-xx-small);
+    box-sizing: border-box;
+    max-inline-size: 100%;
+    padding: var(--spacing-small);
+    border: var(--border-width-default) dashed var(--color-line-strong);
+    border-radius: var(--border-radius-small);
+    color: var(--color-secondary-default);
+}
+
+// A slot with no measured size has room for its progress; a measured one keeps the file's box, clipping what overflows.
+.slot:not([style]) {
+    min-inline-size: min(100%, 12rem);
+}
+
+.slot[style] {
+    overflow: hidden;
+}
+
+.bar {
+    display: block;
+}
+
+// An indeterminate bar stops after its time, and never moves under reduced motion; its text stays.
+.bar[data-still] [data-indeterminate='true'] {
+    visibility: hidden;
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bar [data-indeterminate='true'] {
+        visibility: hidden;
+        animation: none;
+    }
+
+    // A determinate bar jumps to each step, with no transition of its width.
+    .bar [role='progressbar'] [data-indeterminate='false'] {
+        transition: none;
+    }
+}
+
+// The upload's buttons sit in the image chrome toolbar as its own items.
+.controls {
+    display: contents;
+}
+
+.text {
+    font-size: var(--text-body-small-default-font-size);
+}

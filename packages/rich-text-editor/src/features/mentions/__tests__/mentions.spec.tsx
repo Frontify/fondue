@@ -322,7 +322,9 @@ describe('mention suggestions', () => {
     });
 
     it('has no notification service, and inserting, deleting and undoing a mention calls only search', async () => {
-        expectTypeOf<keyof EditorServices>().toEqualTypeOf<'persistence' | 'recovery' | 'references' | 'assets'>();
+        expectTypeOf<keyof EditorServices>().toEqualTypeOf<
+            'persistence' | 'recovery' | 'references' | 'uploads' | 'assets'
+        >();
         const { service, pending } = deferredService();
         const read = new Set<PropertyKey>();
         const references = new Proxy(service, {
@@ -394,16 +396,30 @@ describe('mention search through the async coordinator', () => {
 
     it('aborts only the search when services.references changes, with the same view and undo state', async () => {
         const { service, pending } = deferredService();
-        const mounted = mountMentions({ services: { references: service } });
+        const uploads = { upload: vi.fn(), releaseUnused: vi.fn() };
+        const mounted = mountMentions({ services: { references: service, uploads } });
         typeText(mounted.handle, 'x @ad');
         await advance(200);
+        const runtime = runtimeOf(mounted.handle);
+        let upload: ReturnType<NonNullable<typeof runtime>['startAsync']> | undefined;
+        act(() => {
+            upload = runtime?.startAsync({
+                key: 'upload',
+                service: 'uploads',
+                featureId: 'core',
+                action: 'create',
+                command: 'text.insert',
+                run: () => new Promise(() => undefined),
+            });
+        });
         const undo = mounted.handle.query('history.undo');
 
-        mounted.rerenderWith({ services: { references: deferredService().service } });
+        mounted.rerenderWith({ services: { references: deferredService().service, uploads } });
         pending[0]?.resolve(page([ADA]));
         await flush();
 
         expect(pending[0]?.context.signal.aborted).toBe(true);
+        expect(upload?.controller.signal.aborted).toBe(false);
         expect(runtimeOf(mounted.handle)?.view).toBe(mounted.view);
         expect(mounted.handle.query('history.undo')).toEqual(undo);
         expect(mounted.active()?.items.map((item) => item.action)).toEqual(['retry']);
