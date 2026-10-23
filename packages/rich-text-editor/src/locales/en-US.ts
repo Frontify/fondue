@@ -3,6 +3,8 @@
 export const enUS = {
     lang: 'en-US',
     translationStrings: {
+        RichTextEditor_bold: 'Bold',
+        RichTextEditor_normalText: 'Normal text',
         RichTextEditor_readerBlockedInvalid: 'This content cannot be shown',
         RichTextEditor_readerBlockedUnsupported: 'This content cannot be shown here',
         RichTextEditor_readerIslandFeature: 'Unsupported content: ${feature}',

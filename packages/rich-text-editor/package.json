@@ -16,6 +16,10 @@
     ],
     "type": "module",
     "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        },
         "./model": {
             "types": "./dist/model/index.d.ts",
             "import": "./dist/model/index.js"

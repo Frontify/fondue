@@ -27,6 +27,7 @@ Run these from `packages/rich-text-editor`.
 
 | Entry | What it exports |
 | --- | --- |
+| `.` | `RichTextEditor`, `defineEditor` and the host-facing types |
 | `./model` | The content model and documents |
 | `./features` | The shipped features |
 | `./reader` | `RichTextReader` and `defineReaderFeature` |

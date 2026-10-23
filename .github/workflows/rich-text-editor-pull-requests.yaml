@@ -72,6 +72,12 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      - name: Build Fondue Components
+        run: pnpm build:components
+
       - name: Unit tests
         run: pnpm --stream --filter {packages/rich-text-editor} test
 

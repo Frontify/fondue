@@ -3,6 +3,8 @@
 export const nlNL = {
     lang: 'nl-NL',
     translationStrings: {
+        RichTextEditor_bold: 'Vet',
+        RichTextEditor_normalText: 'Normale tekst',
         RichTextEditor_readerBlockedInvalid: 'Deze inhoud kan niet worden getoond',
         RichTextEditor_readerBlockedUnsupported: 'Deze inhoud kan hier niet worden getoond',
         RichTextEditor_readerIslandFeature: 'Niet-ondersteunde inhoud: ${feature}',

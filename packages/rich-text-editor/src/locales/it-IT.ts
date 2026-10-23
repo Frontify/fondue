@@ -3,6 +3,8 @@
 export const itIT = {
     lang: 'it-IT',
     translationStrings: {
+        RichTextEditor_bold: 'Grassetto',
+        RichTextEditor_normalText: 'Testo normale',
         RichTextEditor_readerBlockedInvalid: 'Questo contenuto non può essere mostrato',
         RichTextEditor_readerBlockedUnsupported: 'Questo contenuto non può essere mostrato qui',
         RichTextEditor_readerIslandFeature: 'Contenuto non supportato: ${feature}',

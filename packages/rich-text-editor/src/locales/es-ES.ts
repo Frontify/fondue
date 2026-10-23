@@ -3,6 +3,8 @@
 export const esES = {
     lang: 'es-ES',
     translationStrings: {
+        RichTextEditor_bold: 'Negrita',
+        RichTextEditor_normalText: 'Texto normal',
         RichTextEditor_readerBlockedInvalid: 'Este contenido no se puede mostrar',
         RichTextEditor_readerBlockedUnsupported: 'Este contenido no se puede mostrar aquí',
         RichTextEditor_readerIslandFeature: 'Contenido no compatible: ${feature}',

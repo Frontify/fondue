@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { builtinModules } from 'node:module';
+
 // @ts-expect-error - No types available for oxlint-config-react
 import reactConfig from '@frontify/oxlint-config-react';
 import { defineConfig, type OxlintOverride } from 'oxlint';
@@ -58,6 +60,18 @@ const FEATURE_FILE_MESSAGE =
 // An undeclared package can't be imported, so the declared ones are the whole list.
 const DECLARED_PACKAGES = Object.keys({ ...packageJson.dependencies, ...packageJson.devDependencies });
 
+// The packages that editor parts may import beside the package's own modules.
+const UI_PACKAGES = ['react', '@frontify/fondue-components', '@frontify/fondue-icons'];
+
+const UI_PACKAGES_TEXT = UI_PACKAGES.map((name) => `\`${name}\``).join(', ');
+
+const NODE_BUILTINS = [
+    'node:*',
+    ...builtinModules.filter((name) => !name.startsWith('node:')).flatMap((name) => [name, `${name}/**`]),
+];
+
+const EDITOR_PART_MESSAGE = `An editor part acts only through \`#/bridge/plugin\`: it imports that module, \`#/bridge/define\`, \`#/model\` and its own feature folder, and of other packages only ${UI_PACKAGES_TEXT}, never Node built-ins, the engine, the runtime, the editor layers or another feature.`;
+
 const MODEL_ENTRY_MESSAGE =
     'A feature file imports `model` only through its public entry `#/model`, as an outside feature must, never a subpath.';
 
@@ -81,8 +95,33 @@ const PROSEMIRROR_EXCEPT_MODEL = DECLARED_PACKAGES.filter(
 
 const FEATURE_SIBLINGS = ['./*', './**', '!./migration'];
 
+// Every file of a feature folder but its vocabulary, migration, reader and fixtures is editor side.
+const EDITOR_PART_FILES = ['src/features/*/**/*.{ts,tsx}'];
+
+const NOT_EDITOR_PART_FILES = [
+    'src/features/*/feature.ts',
+    'src/features/*/migration.ts',
+    'src/features/*/reader.tsx',
+    'src/features/*/fixtures/**',
+    'src/features/conformance/**',
+];
+
+const editorPartFolders = FOLDERS.filter(
+    (folder) => folder !== 'model' && folder !== 'features' && folder !== 'locales',
+);
+
 // Alias specifiers start with `#` and relative specifiers start with `.`.
 const EXTERNAL_SPECIFIER = '^[^.#]';
+
+// An undeclared package can't be imported, so banning the declared ones but `allowed` bans every other package.
+// An `allowed` entry ending in `/*` allows every package of that scope or prefix.
+const packagesExcept = (allowed: readonly string[]): string[] =>
+    DECLARED_PACKAGES.filter(
+        (name) =>
+            !allowed.some((entry) => (entry.endsWith('/*') ? name.startsWith(entry.slice(0, -1)) : name === entry)),
+    ).flatMap((name) => [name, `${name}/**`]);
+
+const EDITOR_PART_EXTERNALS = [...packagesExcept(UI_PACKAGES), ...NODE_BUILTINS];
 
 const aliasPatterns = (folders: readonly string[]): string[] =>
     folders.flatMap((folder) => [`#/${folder}`, `#/${folder}/**`]);
@@ -94,10 +133,21 @@ const PARENT_PREFIXES = ['../', '../../', '../../../', '../../../../'];
 const relativePatterns = (folders: readonly string[]): string[] =>
     folders.flatMap((folder) => PARENT_PREFIXES.flatMap((prefix) => [`${prefix}${folder}`, `${prefix}${folder}/**`]));
 
+// A `!` pattern lets paths back in that earlier patterns of the same group ban.
+const exceptPatterns = (paths: readonly string[]): string[] =>
+    ['#/', ...PARENT_PREFIXES].flatMap((root) => paths.map((path) => `!${root}${path}`));
+
 const FEATURE_ROOTS = ['#/features', ...PARENT_PREFIXES.map((prefix) => `${prefix}features`)];
 
 const featurePathPatterns = (tails: readonly string[]): string[] =>
     FEATURE_ROOTS.flatMap((root) => tails.map((tail) => `${root}${tail}`));
+
+// Every feature's editor-side files; they lead a group, so the bans after them still hold.
+const EDITOR_PART_PATTERNS = FEATURE_ROOTS.flatMap((root) => [
+    `${root}/*/*`,
+    `${root}/*/*/**`,
+    ...['/*/feature', '/*/migration', '/*/reader', '/*/fixtures/**'].map((tail) => `!${root}${tail}`),
+]);
 
 const FEATURE_FILE_TAILS = [
     '',
@@ -225,6 +275,11 @@ const TESTING_MESSAGE =
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition` and ProseMirror.';
 
+const BRIDGE_MESSAGE =
+    '`bridge` imports `model`, `runtime`, `persistence`, `prosemirror-view`, `prosemirror-model` and React.';
+
+const REACT_FOLDER_MESSAGE = '`react` imports every folder except `testing`, and neither `react-dom` nor ProseMirror.';
+
 const PERSISTENCE_MESSAGE = '`persistence` imports `model` and `runtime`.';
 
 const testingAllowed = new Set([
@@ -249,6 +304,16 @@ const runtimeRestriction: ImportRestriction = {
     group: [...aliasPatterns(runtimeFolders), ...relativePatterns(runtimeFolders), ...REACT_PATTERNS],
     message: RUNTIME_MESSAGE,
 };
+
+const bridgeAllowed = new Set(['model', 'runtime', 'persistence', 'bridge']);
+
+const bridgeFolders = FOLDERS.filter((folder) => !bridgeAllowed.has(folder));
+
+const bridgeEnginePatterns = DECLARED_PACKAGES.filter(
+    (name) => name.startsWith('prosemirror-') && name !== 'prosemirror-view' && name !== 'prosemirror-model',
+);
+
+const reactFolders = FOLDERS.filter((folder) => folder === 'testing');
 
 const persistenceFolders = FOLDERS.filter(
     (folder) => folder !== 'model' && folder !== 'runtime' && folder !== 'persistence',
@@ -350,6 +415,7 @@ export default defineConfig({
             [
                 {
                     group: [
+                        ...EDITOR_PART_PATTERNS,
                         '#/model/**',
                         ...aliasPatterns(outsideFeatureFolders),
                         ...featurePathPatterns(FEATURE_FILE_TAILS),
@@ -363,10 +429,28 @@ export default defineConfig({
             ['src/features/conformance/**'],
         ),
         layerOverride(
+            EDITOR_PART_FILES,
+            [
+                {
+                    group: [
+                        ...aliasPatterns(editorPartFolders),
+                        '#/model/**',
+                        ...exceptPatterns(['bridge/plugin', 'bridge/define']),
+                        '#/features/**',
+                        '../**',
+                    ],
+                    message: EDITOR_PART_MESSAGE,
+                },
+                { group: EDITOR_PART_EXTERNALS, message: EDITOR_PART_MESSAGE },
+            ],
+            NOT_EDITOR_PART_FILES,
+        ),
+        layerOverride(
             ['src/features/index.ts', 'src/features/registry.ts', 'src/features/profiles/**/*.{ts,tsx}'],
             [
                 {
                     group: [
+                        ...EDITOR_PART_PATTERNS,
                         '#/model/**',
                         ...aliasPatterns(outsideFeatureFolders),
                         ...relativePatterns(outsideFeatureFolders),
@@ -385,6 +469,7 @@ export default defineConfig({
             [
                 {
                     group: [
+                        ...EDITOR_PART_PATTERNS,
                         ...aliasPatterns(readerFolders),
                         ...relativePatterns(readerFolders),
                         ...featurePathPatterns(READER_FEATURE_TAILS),
@@ -425,6 +510,24 @@ export default defineConfig({
             },
         ]),
         layerOverride('src/runtime/**/*.{ts,tsx}', [runtimeRestriction]),
+        layerOverride('src/bridge/**/*.{ts,tsx}', [
+            {
+                group: [...aliasPatterns(bridgeFolders), ...relativePatterns(bridgeFolders), ...bridgeEnginePatterns],
+                message: BRIDGE_MESSAGE,
+            },
+        ]),
+        layerOverride('src/react/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(reactFolders),
+                    ...relativePatterns(reactFolders),
+                    'react-dom',
+                    'react-dom/**',
+                    ...PROSEMIRROR_PATTERNS,
+                ],
+                message: REACT_FOLDER_MESSAGE,
+            },
+        ]),
         layerOverride('src/persistence/**/*.{ts,tsx}', [
             {
                 group: [

@@ -13,19 +13,31 @@ import {
 } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { COMMAND_META, type CompiledDefinition, ORIGIN_META } from '#/definition';
-import { type CapabilityRef, type Diagnostic, type RichTextDocument } from '#/model';
+import { COMMAND_META, type CompiledDefinition, type EngineCommand, ORIGIN_META } from '#/definition';
+import {
+    type CapabilityRef,
+    checkHref,
+    type Diagnostic,
+    type HrefPolicy,
+    type ResourceLimits,
+    type RichTextDocument,
+} from '#/model';
+import { compiledModel } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { encodeTree } from '#/model/encode';
 import { diagnostic } from '#/model/format';
+import { hrefPolicyOf } from '#/model/href';
 import { randomId } from '#/model/random-id';
+import { findInvalidPayload, findUnsafeJson, isRecord, snapshot } from '#/model/values';
 
 import { createEventBus, type Listener } from './events';
 import { nodeStatePlugin } from './node-state';
 import {
     type ChangeOrigin,
     type CommandResult,
+    type CommandState,
     type EditorSummary,
+    type SelectionHandle,
     type SelectionSummary,
     type SessionToken,
     type Unsubscribe,
@@ -37,6 +49,8 @@ type RejectedCode = Extract<CommandResult, { readonly status: 'rejected' }>['cod
 /** What the host calls. */
 export interface RuntimeHandle {
     getSummary(): EditorSummary;
+    query(id: string, ...args: readonly unknown[]): CommandState;
+    execute(id: string, ...args: readonly unknown[]): CommandResult;
     setMode(mode: Mode): void;
     focus(where?: 'current' | 'start' | 'end'): void;
     subscribe(event: string, listener: Listener): Unsubscribe;
@@ -45,8 +59,14 @@ export interface RuntimeHandle {
 
 export interface EditorRuntime {
     readonly handle: RuntimeHandle;
+    /** The compiled definition the session runs. */
+    readonly definition: CompiledDefinition;
     /** The view on the attached surface, for the `src/testing` helpers. */
     readonly view: EditorView | undefined;
+    /** The session's current state, which stays readable after `dispose`, for tests. */
+    readonly state: EditorState;
+    /** The session's resource limits. */
+    readonly limits: ResourceLimits;
     /** Shows the document in `element`, which becomes the editable surface. */
     attach(element: HTMLElement): void;
     /** Destroys the view synchronously; the session and its state stay. */
@@ -56,6 +76,10 @@ export interface EditorRuntime {
      * Selects the text between two positions, or the node at one, as the `src/testing` helpers name it.
      */
     select(target: { readonly anchor: number; readonly head: number } | { readonly node: number }): void;
+    /** Why the session refuses `command` with `payload` on `state` before it runs, as `execute` checks it. */
+    refusal(command: EngineCommand, state: EditorState, payload: unknown): RejectedCode | undefined;
+    /** Runs a command that no feature installs, such as one edit of a plugin's UI, as `execute` runs one: one undo step. */
+    perform(command: EngineCommand, options?: { readonly target?: SelectionHandle }): CommandResult;
 }
 
 export interface EditorRuntimeOptions {
@@ -68,6 +92,9 @@ export interface EditorRuntimeOptions {
     /** For the session id; default `randomId`. */
     readonly generateId?: () => string;
     readonly mode: Mode;
+    readonly limits: ResourceLimits;
+    /** What the editor layer hands the plugin commands it runs. */
+    readonly commandHost?: unknown;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -80,6 +107,11 @@ const runtimes = new WeakMap<object, EditorRuntime>();
 
 /** The runtime behind a handle this module made. */
 export const runtimeOf = (handle: object): EditorRuntime | undefined => runtimes.get(handle);
+
+const viewRuntimes = new WeakMap<EditorView, EditorRuntime>();
+
+/** The runtime whose surface `view` shows, for a plugin that one compiled definition shares between editors. */
+export const runtimeOfView = (view: EditorView): EditorRuntime | undefined => viewRuntimes.get(view);
 
 const kindOf = (selection: Selection): SelectionSummary['kind'] => {
     if (selection instanceof TextSelection) {
@@ -137,6 +169,15 @@ const originOf = (root: Transaction): ChangeOrigin => {
 export const isEmpty = ({ doc }: EditorState) =>
     doc.childCount === 1 && doc.firstChild !== null && doc.firstChild.isTextblock && doc.firstChild.content.size === 0;
 
+const rejected = (code: RejectedCode): CommandResult => ({ status: 'rejected', code });
+/** The payload as one frozen JSON copy, which is what is checked and run; `undefined` for one that is not plain JSON. */
+const checkedPayload = (given: unknown): { readonly payload: unknown } | undefined => {
+    if (given !== undefined && findUnsafeJson(given, '') !== undefined) {
+        return undefined;
+    }
+    return { payload: snapshot(given) };
+};
+
 /** A batch that is applied and not yet installed. */
 interface Candidate {
     readonly candidate: EditorState;
@@ -147,17 +188,31 @@ type Prepared =
     | Candidate
     | {
           readonly code: RejectedCode;
+          readonly diagnostic?: Diagnostic;
       };
+/** What a command would do now: nothing, a prepared batch, or a rejection. */
+type Attempt = Prepared | { readonly unchanged: true };
 
 /** One editing session: its state, its view while a surface is attached, the commit path and its events. */
 export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntime => {
-    const { definition } = options;
+    const { definition, limits } = options;
     const generate = options.generateId ?? randomId;
     const session: SessionToken = {
         documentId: options.documentId,
         sessionId: generate(),
         generation: 0,
     };
+    // The URL policy of each command whose feature narrows `checkHref`, which its `url` payload fields must pass too.
+    const hrefPolicies = new Map<EngineCommand, HrefPolicy>(
+        [...definition.commands.values()].flatMap((command) => {
+            const feature = compiledModel(definition.model).features.find(({ id }) => id === command.featureId);
+            const policy = feature === undefined ? undefined : hrefPolicyOf(feature.options);
+            if (policy === undefined) {
+                return [];
+            }
+            return [[command, policy] as const];
+        }),
+    );
     const { capabilities } = options;
     let phase: EditorSummary['phase'] = 'mounting';
     let mode = options.mode;
@@ -369,6 +424,202 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         });
     };
 
+    /** The state a command runs on: the current one, or with the selection at its target's mapped range. */
+    const baseOf = (options: unknown): EditorState | RejectedCode => {
+        if (!isRecord(options) || options.target === undefined) {
+            return state;
+        }
+        return 'target-invalid';
+    };
+
+    /**
+     * The payload with each `url` field in the form `checkHref` stores, after the policy of the command's feature, or
+     * `undefined` when one fails it.
+     */
+    const withCheckedUrls = (command: EngineCommand, payload: unknown): { readonly payload: unknown } | undefined => {
+        if (command.payload === undefined || !isRecord(payload)) {
+            return { payload };
+        }
+        const policy = hrefPolicies.get(command);
+        const checked: Record<string, unknown> = { ...payload };
+        for (const [name, field] of Object.entries(command.payload.fields)) {
+            const value = payload[name];
+            if (field.type !== 'url' || typeof value !== 'string') {
+                continue;
+            }
+            const result = checkHref(value, policy);
+            if (!result.ok) {
+                return undefined;
+            }
+            checked[name] = result.href;
+        }
+        return { payload: checked };
+    };
+
+    // What a plugin command reads its session from; `runtime` is read when a command runs, after it exists.
+    const commandSession = {
+        get runtime() {
+            return runtime;
+        },
+        host: options.commandHost,
+    };
+
+    const refusesReadOnly = (command: EngineCommand) => mode === 'readonly' && command.readOnly !== true;
+    /** Why the policy refuses `command` with `payload` on `base` before it runs. */
+    const policyRefusal = (command: EngineCommand, base: EditorState, payload: unknown): RejectedCode | undefined => {
+        if (command.refuses?.(base, payload) === true) {
+            return 'not-allowed';
+        }
+        return undefined;
+    };
+
+    /**
+     * Runs a command against the current state with a dispatch that captures its transaction, then prepares it; the
+     * effects it defers go to `effects`, which a query leaves out.
+     */
+    const attempt = (
+        command: EngineCommand | undefined,
+        checked: { readonly payload: unknown } | undefined,
+        base: EditorState | RejectedCode,
+        effects?: (() => void)[],
+    ): Attempt => {
+        if (command === undefined) {
+            return { code: 'unknown-command' };
+        }
+        // One JSON copy is checked and run, so an accessor or proxy cannot change the payload in between.
+        if (checked === undefined) {
+            return { code: 'invalid-payload' };
+        }
+        if (findInvalidPayload(command.payload, checked.payload) !== undefined) {
+            return { code: 'invalid-payload' };
+        }
+        const urls = withCheckedUrls(command, checked.payload);
+        if (urls === undefined) {
+            return { code: 'invalid-payload' };
+        }
+        const { payload } = urls;
+        if (phase !== 'ready') {
+            return { code: 'not-ready' };
+        }
+        if (refusesReadOnly(command)) {
+            return { code: 'readonly' };
+        }
+        if (typeof base === 'string') {
+            return { code: base };
+        }
+        const refused = policyRefusal(command, base, payload);
+        if (refused !== undefined) {
+            return { code: refused };
+        }
+        const dispatched: Transaction[] = [];
+        let refusedWrite = false;
+        const context = {
+            defer: (effect: () => void) => effects?.push(effect),
+            refuse: () => {
+                refusedWrite = true;
+            },
+            session: commandSession,
+        };
+        let applicable: boolean;
+        try {
+            applicable = command.run(base, (transaction) => dispatched.push(transaction), payload, context);
+        } catch {
+            // A plugin that throws while a command's API write applies drops the command, as it drops a batch.
+            return {
+                code: 'not-applicable',
+                diagnostic: diagnostic('runtime.plugin-error', undefined, undefined, 'error'),
+            };
+        }
+        if (dispatched.length > 1) {
+            return {
+                code: 'not-applicable',
+                diagnostic: diagnostic('runtime.multiple-dispatch', undefined, undefined, 'error'),
+            };
+        }
+        const [root] = dispatched;
+        if (!applicable) {
+            if (refusedWrite) {
+                return { code: 'not-allowed' };
+            }
+            return { code: 'not-applicable' };
+        }
+        if (root === undefined) {
+            return { unchanged: true };
+        }
+        // `readOnly` lets a command run in a read-only editor to open something, never to change content.
+        if (mode === 'readonly' && root.docChanged) {
+            return { code: 'readonly' };
+        }
+        const prepared = prepare(root);
+        return prepared;
+    };
+
+    const queryOn = (
+        command: EngineCommand | undefined,
+        checked: { readonly payload: unknown } | undefined,
+        base: EditorState | RejectedCode,
+    ): CommandState => {
+        let active: boolean | 'mixed' = false;
+        if (command !== undefined && checked !== undefined && typeof base !== 'string') {
+            active = command.active(base, checked.payload, { defer: () => undefined, session: commandSession });
+        }
+        const attempted = attempt(command, checked, base);
+        if ('code' in attempted) {
+            return { enabled: false, active, disabledReason: attempted.code };
+        }
+        return { enabled: true, active, disabledReason: null };
+    };
+    const query = (id: string, given?: unknown, options?: unknown): CommandState =>
+        queryOn(definition.commands.get(id), checkedPayload(given), baseOf(options));
+
+    // Installs exactly what `query` checked, so the two agree.
+    const runOn = (
+        command: EngineCommand | undefined,
+        checked: { readonly payload: unknown } | undefined,
+        base: () => EditorState | RejectedCode,
+    ): CommandResult => {
+        if (busy > 0) {
+            return rejected('busy');
+        }
+        const effects: (() => void)[] = [];
+        const result = busyWith((): CommandResult => {
+            const attempted = attempt(command, checked, base(), effects);
+            if ('unchanged' in attempted) {
+                return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
+            }
+            if ('candidate' in attempted) {
+                const before = commitSequence;
+                const contentChanged = install(attempted);
+                // The view faulted while it installed the batch, which a later fault or `dispose` from a listener leaves applied.
+                if (commitSequence === before) {
+                    return rejected('not-ready');
+                }
+                return { status: 'applied', stamp: { ...session, sequence }, contentChanged };
+            }
+            if (attempted.diagnostic !== undefined) {
+                report(attempted.diagnostic);
+            }
+            return rejected(attempted.code);
+        });
+        // Deferred effects, such as an overlay a plugin command opens, run once the command has run and its commit ended.
+        if (result.status !== 'rejected') {
+            for (const effect of effects) {
+                effect();
+            }
+        }
+        return result;
+    };
+    const run = (id: string, given: unknown, options: unknown): CommandResult =>
+        runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options));
+    const execute = (id: string, given?: unknown, commandOptions?: unknown): CommandResult => {
+        const result = run(id, given, commandOptions);
+        // Without `focus: 'editor'` a command leaves focus where it is.
+        if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
+            focus();
+        }
+        return result;
+    };
+
     const cancelReady = () => {
         if (readyFrame !== undefined) {
             cancelAnimationFrame(readyFrame);
@@ -441,6 +692,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 selection: summarize(state.selection),
             };
         },
+        query,
+        execute,
         setMode: (next) => {
             if (phase === 'disposed') {
                 return;
@@ -455,9 +708,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const runtime: EditorRuntime = {
         handle,
+        definition,
         get view() {
             return view;
         },
+        get state() {
+            return state;
+        },
+        limits,
         attach: (element) => {
             if (phase === 'disposed') {
                 return;
@@ -493,6 +751,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             view = attached;
             liveResources.views.add(attached);
+            viewRuntimes.set(attached, runtime);
             if (phase !== 'mounting') {
                 return;
             }
@@ -508,6 +767,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         detach,
         report,
+        refusal: (command, base, payload) => {
+            if (refusesReadOnly(command)) {
+                return 'readonly';
+            }
+            return policyRefusal(command, base, payload);
+        },
+        perform: (command, performOptions) => runOn(command, { payload: undefined }, () => baseOf(performOptions)),
         select: (target) => {
             let transaction = state.tr;
             if ('node' in target) {
