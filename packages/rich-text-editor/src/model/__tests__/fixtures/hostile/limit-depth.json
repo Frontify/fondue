@@ -1,0 +1,78 @@
+{
+    "boundary": "loaded-document",
+    "description": "Quotes nested one level deeper than maxDepth.",
+    "limits": {
+        "maxDepth": 4
+    },
+    "input": {
+        "format": "frontify.rich-text",
+        "formatVersion": 1,
+        "model": {
+            "id": "test.hostile",
+            "version": 1
+        },
+        "requiredCapabilities": [
+            {
+                "id": "core",
+                "version": 1
+            }
+        ],
+        "content": {
+            "type": "doc",
+            "attrs": {
+                "lang": null,
+                "dir": "auto"
+            },
+            "content": [
+                {
+                    "type": "blockquote",
+                    "attrs": {
+                        "nodeId": "CANARY-4f9a2b"
+                    },
+                    "content": [
+                        {
+                            "type": "blockquote",
+                            "attrs": {
+                                "nodeId": "CANARY-4f9a2b"
+                            },
+                            "content": [
+                                {
+                                    "type": "blockquote",
+                                    "attrs": {
+                                        "nodeId": "CANARY-4f9a2b"
+                                    },
+                                    "content": [
+                                        {
+                                            "type": "blockquote",
+                                            "attrs": {
+                                                "nodeId": "CANARY-4f9a2b"
+                                            },
+                                            "content": [
+                                                {
+                                                    "type": "paragraph",
+                                                    "attrs": {
+                                                        "lang": null
+                                                    },
+                                                    "content": [
+                                                        {
+                                                            "type": "text",
+                                                            "text": "CANARY-4f9a2b"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "expected": {
+        "status": "blocked",
+        "reason": "limit-exceeded"
+    }
+}

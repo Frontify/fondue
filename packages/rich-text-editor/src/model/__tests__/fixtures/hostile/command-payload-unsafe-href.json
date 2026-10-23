@@ -1,0 +1,16 @@
+{
+    "boundary": "command-payload",
+    "description": "link.set with a javascript: URL.",
+    "input": {
+        "command": "link.set",
+        "payload": {
+            "href": "javascript:alert(\"CANARY-4f9a2b\")",
+            "openInNewWindow": false,
+            "styleId": null
+        }
+    },
+    "expected": {
+        "status": "rejected",
+        "code": "invalid-payload"
+    }
+}

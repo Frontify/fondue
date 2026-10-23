@@ -1,0 +1,11 @@
+{
+    "boundary": "async-service-result",
+    "description": "A reference search result that is a string.",
+    "input": {
+        "command": "reference.insert",
+        "result": "CANARY-4f9a2b"
+    },
+    "expected": {
+        "discarded": "invalid-payload"
+    }
+}

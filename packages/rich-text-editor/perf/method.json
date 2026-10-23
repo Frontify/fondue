@@ -1,0 +1,14 @@
+{
+    "runner": "ubuntu-24.04",
+    "vcpus": 4,
+    "node": 24,
+    "browser": "chromium",
+    "cpuThrottlingRate": 4,
+    "warmup": 30,
+    "samples": 200,
+    "eventTiming": {
+        "durationThreshold": 16,
+        "granularityMs": 8
+    },
+    "missingKeystrokeMs": 8
+}

@@ -2,13 +2,16 @@
 
 // @vitest-environment node
 
-import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
+import { copyFileSync, cpSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { build } from 'vite';
+import postcss from 'postcss';
+import { build, type Rollup } from 'vite';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+import { insideAtRule, literalColorsIn } from './css';
 
 const packageRoot = fileURLToPath(new URL('../..', import.meta.url)).replace(/\/$/, '');
 
@@ -95,6 +98,15 @@ const filesOf = (path: string): string[] => {
     return LOCALES.map((locale) => path.replace('*', locale));
 };
 
+/** Every literal colour in the declaration values of `css`, outside a `var()` fallback and, for system colours, forced colours. */
+const literalColorsOf = (css: string): string[] => {
+    const colors: string[] = [];
+    postcss.parse(css).walkDecls((declaration) => {
+        colors.push(...literalColorsIn(declaration.value, insideAtRule(declaration, /forced-colors/)));
+    });
+    return colors;
+};
+
 const outDir = mkdtempSync(join(tmpdir(), 'fondue-rte-'));
 let builtFiles: string[] = [];
 
@@ -152,10 +164,9 @@ describe('package manifest and built output', () => {
     });
 
     it('emits ES modules that follow the source tree and leaves dependency JavaScript external', () => {
-        const declared = new Set([
-            ...Object.keys(manifest.dependencies ?? {}),
-            ...Object.keys(manifest.peerDependencies ?? {}),
-        ]);
+        const dependencies = manifest.dependencies ?? {};
+        const peerDependencies = manifest.peerDependencies ?? {};
+        const declared = new Set([...Object.keys(dependencies), ...Object.keys(peerDependencies)]);
         const jsFiles = builtFiles.filter((file) => file.endsWith('.js')).sort();
         const sourceModules = new Set([
             ...listFiles(join(packageRoot, 'src'))
@@ -222,6 +233,26 @@ describe('package manifest and built output', () => {
         }
     });
 
+    // ProseMirror, Slate and Plate stay out of every headless entry. The reader and codecs also stay off a live DOM root.
+    const ENGINE_PACKAGES = /^(?:prosemirror-[\w-]+|slate|slate-[\w-]+|platejs|@platejs\/.+|@udecode\/.+)$/;
+    const DOM_PACKAGES = /^(?:prosemirror-[\w-]+|react-dom\/client)$/;
+    // `./html` runs on a server with a DOM implementation, so it keeps `prosemirror-model` and `prosemirror-transform` but no other ProseMirror package or React.
+    const HTML_FORBIDDEN = /^(?:prosemirror-(?!(?:model|transform)$)[\w-]+|react|react-dom)$/;
+    const HEADLESS_FORBIDDEN: Record<string, readonly RegExp[]> = {
+        './model': [ENGINE_PACKAGES],
+        './features': [ENGINE_PACKAGES],
+        './reader': [ENGINE_PACKAGES, DOM_PACKAGES],
+        './codecs': [ENGINE_PACKAGES, DOM_PACKAGES],
+        './html': [HTML_FORBIDDEN],
+    };
+    const EDITOR_FILES = /^(?:runtime|bridge|react|ui)\//;
+
+    const bareName = (id: string): string =>
+        id
+            .split('/')
+            .slice(0, id.startsWith('@') ? 2 : 1)
+            .join('/');
+
     const reachedImports = (entryFile: string) => {
         const seen = new Set<string>();
         const bare: string[] = [];
@@ -245,6 +276,22 @@ describe('package manifest and built output', () => {
         return { bare, files: [...seen] };
     };
 
+    it('keeps engine packages, a live DOM root and the editor folders out of the headless entries', () => {
+        for (const [entry, rules] of Object.entries(HEADLESS_FORBIDDEN)) {
+            const { bare, files } = reachedImports(`${entry.slice('./'.length)}/index.js`);
+            const forbidden = bare.filter((specifier) =>
+                rules.some((rule) => rule.test(specifier) || rule.test(bareName(specifier))),
+            );
+            expect(forbidden).toEqual([]);
+            expect(files.filter((file) => EDITOR_FILES.test(file))).toEqual([]);
+        }
+    });
+
+    it('lets the editor entry load the engine', () => {
+        const { bare } = reachedImports('index.js');
+        expect(bare.some((specifier) => ENGINE_PACKAGES.test(bareName(specifier)))).toBe(true);
+    });
+
     // A host without the optional `axe-core` peer must still load `./testing` for its other helpers.
     it('loads axe-core in ./testing only through a dynamic import', () => {
         const { files } = reachedImports('testing/index.js');
@@ -257,4 +304,64 @@ describe('package manifest and built output', () => {
     it('lists the stylesheet alone as having side effects', () => {
         expect(manifest.sideEffects).toEqual(['./dist/style.css']);
     });
+
+    // React AC-052: every colour of the built stylesheet comes from a token variable.
+    it('holds no literal colour in the built stylesheet outside a var() fallback', () => {
+        expect(literalColorsOf(readFileSync(join(outDir, 'style.css'), 'utf8'))).toEqual([]);
+    });
+
+    /** A consumer app that imports `entry` from the built package, as a bundler resolves it from `node_modules`. */
+    const buildApp = async (entry: string) => {
+        const app = mkdtempSync(join(tmpdir(), 'fondue-rte-app-'));
+        try {
+            const installed = join(app, 'node_modules', '@frontify', 'rich-text-editor');
+            mkdirSync(installed, { recursive: true });
+            copyFileSync(join(packageRoot, 'package.json'), join(installed, 'package.json'));
+            cpSync(outDir, join(installed, 'dist'), { recursive: true });
+            const main = join(app, 'main.js');
+            copyFileSync(join(packageRoot, 'src', '__tests__', 'fixtures', 'apps', entry), main);
+            const result = await build({
+                configFile: false,
+                root: app,
+                logLevel: 'silent',
+                build: {
+                    write: false,
+                    minify: false,
+                    rollupOptions: {
+                        input: main,
+                        // Other packages are the host's own, so only the editor package is bundled.
+                        external: (id) =>
+                            !id.startsWith('.') && !id.startsWith('/') && !id.startsWith('@frontify/rich-text-editor'),
+                    },
+                },
+            });
+            const files = ((Array.isArray(result) ? result : [result]) as Rollup.RollupOutput[]).flatMap(
+                ({ output }) => output,
+            );
+            return {
+                modules: files.flatMap((file) => (file.type === 'chunk' ? Object.keys(file.modules) : [])),
+                stylesheets: files.filter(
+                    (file): file is Rollup.OutputAsset => file.type === 'asset' && file.fileName.endsWith('.css'),
+                ),
+            };
+        } finally {
+            rmSync(app, { recursive: true, force: true });
+        }
+    };
+
+    it('drops the editor modules and every locale but en-US from an app that imports only ./reader', async () => {
+        const { modules } = await buildApp('reader-only.js');
+        const bundled = modules.map((id) => slash(id.split('/dist/')[1] ?? id));
+
+        expect(bundled.some((id) => id.startsWith('reader/'))).toBe(true);
+        expect(bundled.filter((id) => /^(?:react|runtime|bridge|clipboard|persistence|ui)\//.test(id))).toEqual([]);
+        expect(bundled.filter((id) => id.startsWith('locales/') && id !== 'locales/en-US.js')).toEqual([]);
+    }, 120_000);
+
+    it('keeps dist/style.css in the output of an app that imports ./styles', async () => {
+        const { stylesheets } = await buildApp('styles-only.js');
+
+        expect(stylesheets).toHaveLength(1);
+        expect(String(stylesheets[0]?.source).length).toBeGreaterThan(0);
+    }, 120_000);
 });

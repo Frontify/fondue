@@ -1,0 +1,24 @@
+{
+    "boundary": "paste-and-drop",
+    "description": "HTML with blockquotes nested 200 deep, past maxDepth and within maxPasteBytes.",
+    "input": {
+        "mime": {
+            "text/html": {
+                "text": [
+                    {
+                        "repeat": "<blockquote>",
+                        "times": 200
+                    },
+                    "CANARY-4f9a2b",
+                    {
+                        "repeat": "</blockquote>",
+                        "times": 200
+                    }
+                ]
+            }
+        }
+    },
+    "expected": {
+        "rejected": "maxDepth"
+    }
+}

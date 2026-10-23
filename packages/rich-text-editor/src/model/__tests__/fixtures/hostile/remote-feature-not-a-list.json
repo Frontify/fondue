@@ -1,0 +1,11 @@
+{
+    "boundary": "remote-configuration",
+    "description": "A feature list that is a string.",
+    "input": {
+        "call": "featuresById",
+        "argument": "CANARY-4f9a2b"
+    },
+    "expected": {
+        "throws": "definition.unknown-feature"
+    }
+}

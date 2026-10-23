@@ -2743,6 +2743,23 @@ describe('the published snapshot and composition', () => {
         expect(attrs?.lang).toBe(value);
     });
 
+    it('serializes only the edited top-level block for the snapshot after an edit', () => {
+        const { handle, view } = start(stored(para(words('ab')), para(words('cd')), para(words('ef'))));
+        handle.getSnapshot();
+        typeText(handle, 'x');
+        const toJSON = vi.spyOn(Node.prototype, 'toJSON');
+
+        const { document } = handle.getSnapshot();
+
+        const serialized = toJSON.mock.contexts;
+        toJSON.mockRestore();
+        expect(serialized[0]).toBe(view.state.doc.firstChild);
+        expect(serialized).not.toContain(view.state.doc);
+        expect(serialized).not.toContain(view.state.doc.child(1));
+        expect(serialized).not.toContain(view.state.doc.child(2));
+        expect(document).toMatchObject(stored(para(words('xab')), para(words('cd')), para(words('ef'))));
+    });
+
     it('counts a composition commit and notifies selectors while the snapshot holds', () => {
         const session = start(stored(para(words('ab'))));
         const { handle, runtime } = session;

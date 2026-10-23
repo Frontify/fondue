@@ -1,0 +1,18 @@
+{
+    "boundary": "remote-configuration",
+    "description": "A policy value with a __proto__ key.",
+    "input": {
+        "call": "updatePolicy",
+        "argument": {
+            "features": {
+                "__proto__": {
+                    "create": false
+                }
+            },
+            "enterBehavior": "CANARY-4f9a2b"
+        }
+    },
+    "expected": {
+        "throws": "definition.invalid-option"
+    }
+}

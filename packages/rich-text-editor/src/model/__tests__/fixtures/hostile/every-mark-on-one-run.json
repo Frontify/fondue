@@ -1,0 +1,105 @@
+{
+    "boundary": "loaded-document",
+    "description": "One text run that carries every mark of the model.",
+    "input": {
+        "format": "frontify.rich-text",
+        "formatVersion": 1,
+        "model": {
+            "id": "test.hostile",
+            "version": 1
+        },
+        "requiredCapabilities": [
+            {
+                "id": "core",
+                "version": 1
+            },
+            {
+                "id": "marks.bold",
+                "version": 1
+            },
+            {
+                "id": "marks.italic",
+                "version": 1
+            },
+            {
+                "id": "marks.underline",
+                "version": 1
+            },
+            {
+                "id": "marks.strike",
+                "version": 1
+            },
+            {
+                "id": "marks.code",
+                "version": 1
+            },
+            {
+                "id": "marks.subscript",
+                "version": 1
+            },
+            {
+                "id": "marks.superscript",
+                "version": 1
+            },
+            {
+                "id": "links",
+                "version": 1
+            }
+        ],
+        "content": {
+            "type": "doc",
+            "attrs": {
+                "lang": null,
+                "dir": "auto"
+            },
+            "content": [
+                {
+                    "type": "paragraph",
+                    "attrs": {
+                        "lang": null
+                    },
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "CANARY-4f9a2b every mark",
+                            "marks": [
+                                {
+                                    "type": "bold"
+                                },
+                                {
+                                    "type": "italic"
+                                },
+                                {
+                                    "type": "underline"
+                                },
+                                {
+                                    "type": "strike"
+                                },
+                                {
+                                    "type": "code"
+                                },
+                                {
+                                    "type": "subscript"
+                                },
+                                {
+                                    "type": "superscript"
+                                },
+                                {
+                                    "type": "link",
+                                    "attrs": {
+                                        "href": "https://example.com/CANARY-4f9a2b",
+                                        "openInNewWindow": false,
+                                        "styleId": null
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "expected": {
+        "status": "editable"
+    }
+}

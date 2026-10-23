@@ -1,0 +1,15 @@
+{
+    "boundary": "paste-and-drop",
+    "description": "HTML with script, event handlers, a javascript: link and an inline style.",
+    "input": {
+        "mime": {
+            "text/html": "<p onclick=\"alert('CANARY-4f9a2b')\" style=\"position:fixed\">CANARY-4f9a2b<script>alert(1)</script><a href=\"javascript:alert('CANARY-4f9a2b')\">link</a><img src=\"https://evil.test/x.png\" onerror=\"alert(1)\"></p>"
+        }
+    },
+    "expected": {
+        "inserted": {
+            "text": "CANARY-4f9a2blink",
+            "hrefs": []
+        }
+    }
+}

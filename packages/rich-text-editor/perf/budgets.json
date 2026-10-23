@@ -1,0 +1,158 @@
+{
+    "rows": [
+        {
+            "id": "keystroke-typical-p95",
+            "metric": "Keystroke interaction",
+            "fixture": "typical",
+            "percentile": "p95",
+            "budgetMs": 50
+        },
+        {
+            "id": "keystroke-typical-p99",
+            "metric": "Keystroke interaction",
+            "fixture": "typical",
+            "percentile": "p99",
+            "budgetMs": 100
+        },
+        {
+            "id": "keystroke-large-p95",
+            "metric": "Keystroke interaction",
+            "fixture": "large",
+            "percentile": "p95",
+            "budgetMs": 100
+        },
+        {
+            "id": "keystroke-small-p95",
+            "metric": "Keystroke interaction",
+            "fixture": "small",
+            "percentile": "p95",
+            "budgetMs": 50
+        },
+        {
+            "id": "keystroke-words10k-p99",
+            "metric": "Keystroke interaction",
+            "fixture": "words10k",
+            "percentile": "p99",
+            "budgetMs": 50
+        },
+        {
+            "id": "commit-words10k-p95",
+            "metric": "Commit pipeline",
+            "fixture": "words10k",
+            "percentile": "p95",
+            "budgetMs": 10
+        },
+        {
+            "id": "commit-typical-p95",
+            "metric": "Commit pipeline",
+            "fixture": "typical",
+            "percentile": "p95",
+            "budgetMs": 16
+        },
+        {
+            "id": "commit-large-p95",
+            "metric": "Commit pipeline",
+            "fixture": "large",
+            "percentile": "p95",
+            "budgetMs": 50
+        },
+        {
+            "id": "selector-typical-p95",
+            "metric": "Selector notification to toolbar render",
+            "fixture": "typical",
+            "percentile": "p95",
+            "budgetMs": 16
+        },
+        {
+            "id": "mount-typical-p95",
+            "metric": "Mount to ready",
+            "fixture": "typical",
+            "percentile": "p95",
+            "budgetMs": 150
+        },
+        {
+            "id": "mount-large-p95",
+            "metric": "Mount to ready",
+            "fixture": "large",
+            "percentile": "p95",
+            "budgetMs": 1100
+        },
+        {
+            "id": "paste-100kb-typical-p95",
+            "metric": "Paste of 100 KB HTML to next paint",
+            "fixture": "typical",
+            "percentile": "p95",
+            "budgetMs": 500
+        },
+        {
+            "id": "paste-1mib-typical-p95",
+            "metric": "Paste of 1 MiB HTML to next paint",
+            "fixture": "typical",
+            "percentile": "p95",
+            "budgetMs": 2100
+        },
+        {
+            "id": "snapshot-large-p95",
+            "metric": "getSnapshot() after an edit",
+            "fixture": "large",
+            "percentile": "p95",
+            "budgetMs": 50
+        },
+        {
+            "id": "mount-many-p95",
+            "metric": "Mount of 20 editors",
+            "fixture": "many",
+            "percentile": "p95",
+            "budgetMs": 2000
+        },
+        {
+            "id": "keystroke-many-p95",
+            "metric": "Keystroke in one of 20 editors",
+            "fixture": "many",
+            "percentile": "p95",
+            "budgetMs": 50
+        },
+        {
+            "id": "command-large-p95",
+            "metric": "Command execution to next paint",
+            "fixture": "large",
+            "percentile": "p95",
+            "budgetMs": null
+        },
+        {
+            "id": "dialog-typical-p95",
+            "metric": "Dialog or menu open to focus inside it",
+            "fixture": "typical",
+            "percentile": "p95",
+            "budgetMs": null
+        },
+        {
+            "id": "codecs-large-p95",
+            "metric": "Codecs in Node",
+            "fixture": "large",
+            "percentile": "p95",
+            "budgetMs": 100
+        },
+        {
+            "id": "reader-large-p95",
+            "metric": "RichTextReader renderToString in Node",
+            "fixture": "large",
+            "percentile": "p95",
+            "budgetMs": 100
+        },
+        {
+            "id": "checks-large-p95",
+            "metric": "Content checks",
+            "fixture": "large",
+            "percentile": "p95",
+            "budgetMs": 100
+        },
+        {
+            "id": "decode-large-p95",
+            "metric": "decodeDocument in Node",
+            "fixture": "large",
+            "percentile": "p95",
+            "budgetMs": 100
+        }
+    ]
+}

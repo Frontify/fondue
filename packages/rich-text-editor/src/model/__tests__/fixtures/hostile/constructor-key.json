@@ -1,0 +1,59 @@
+{
+    "boundary": "loaded-document",
+    "description": "A constructor key, with a prototype member, in an attribute object and in a mark.",
+    "input": {
+        "format": "frontify.rich-text",
+        "formatVersion": 1,
+        "model": {
+            "id": "test.hostile",
+            "version": 1
+        },
+        "requiredCapabilities": [
+            {
+                "id": "core",
+                "version": 1
+            }
+        ],
+        "content": {
+            "type": "doc",
+            "attrs": {
+                "lang": null,
+                "dir": "auto"
+            },
+            "content": [
+                {
+                    "type": "paragraph",
+                    "attrs": {
+                        "lang": null,
+                        "constructor": {
+                            "prototype": {
+                                "polluted": "CANARY-4f9a2b"
+                            }
+                        }
+                    },
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "CANARY-4f9a2b",
+                            "marks": [
+                                {
+                                    "type": "bold",
+                                    "attrs": {
+                                        "constructor": {
+                                            "prototype": {
+                                                "polluted": "CANARY-4f9a2b"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "expected": {
+        "status": "editable"
+    }
+}

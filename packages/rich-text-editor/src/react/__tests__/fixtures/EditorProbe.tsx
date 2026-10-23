@@ -107,6 +107,12 @@ declare global {
     }
 }
 
+/** The editor props a test rerenders with, such as during a composition. */
+type Rerendered = Pick<
+    Parameters<typeof RichTextEditor>[0],
+    'status' | 'required' | 'aria-describedby' | 'placeholder'
+>;
+
 /** Mounts the component-test editor after a focusable button, and reports each change's origin and command. */
 export const EditorProbe = ({
     texts = ['ab'],
@@ -119,6 +125,7 @@ export const EditorProbe = ({
     withReader = false,
     inForm = false,
     inFrame = false,
+    rerendered = {},
     persistence = false,
     holdSaves = false,
     onChange,
@@ -139,6 +146,7 @@ export const EditorProbe = ({
     readonly inForm?: boolean;
     /** Renders the editor in the body of a same-origin iframe, after a parent page button named Parent. */
     readonly inFrame?: boolean;
+    readonly rerendered?: Rerendered;
     /** Mounts with the reference fake persistence service, which records each request in `window.rte.saves`. */
     readonly persistence?: boolean;
     /** Holds each save of the fake service until `window.rte.answerSaves()`. */
@@ -226,6 +234,7 @@ export const EditorProbe = ({
                 {...(placeholder === undefined ? {} : { placeholder })}
                 {...(presentation === undefined ? {} : { presentation })}
                 {...(services === undefined ? {} : { services })}
+                {...rerendered}
                 ref={ref}
                 onDocumentChange={({ origin, commandId }) => onChange?.({ origin, commandId })}
             />

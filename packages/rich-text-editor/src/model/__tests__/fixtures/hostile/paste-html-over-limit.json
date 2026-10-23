@@ -1,0 +1,21 @@
+{
+    "boundary": "paste-and-drop",
+    "description": "HTML one byte past maxPasteBytes.",
+    "input": {
+        "mime": {
+            "text/html": {
+                "text": [
+                    "<p>CANARY-4f9a2b",
+                    {
+                        "repeat": "x",
+                        "times": 1048576
+                    },
+                    "</p>"
+                ]
+            }
+        }
+    },
+    "expected": {
+        "rejected": "maxPasteBytes"
+    }
+}

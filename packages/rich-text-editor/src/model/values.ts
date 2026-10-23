@@ -45,6 +45,9 @@ export const addDeclaration = (existing: string | undefined, property: string, v
 export const ownValue = <V>(record: Readonly<Record<string, V>>, name: string): V | undefined =>
     Object.hasOwn(record, name) ? record[name] : undefined;
 
+// The depth of each copy `snapshot` made, which holds only plain JSON, so a later snapshot keeps it as it is.
+const copies = new WeakMap<object, number>();
+
 /** Whether `findUnsafeJson` finds nothing under `value`, read with no path; `ancestors` is a stack it restores. */
 const isSafeJson = (value: unknown, ancestors: object[]): boolean => {
     if (value === null || typeof value === 'string' || typeof value === 'boolean') {
@@ -52,6 +55,10 @@ const isSafeJson = (value: unknown, ancestors: object[]): boolean => {
     }
     if (typeof value === 'number') {
         return Number.isFinite(value);
+    }
+    const depth = copies.get(value as object);
+    if (depth !== undefined) {
+        return ancestors.length + depth <= MAX_DEPTH;
     }
     if (typeof value !== 'object' || Object.getOwnPropertySymbols(value).length > 0) {
         return false;
@@ -125,19 +132,26 @@ const frozenCopy = (value: unknown): unknown => {
         }
         return value;
     }
+    if (copies.has(value)) {
+        return value;
+    }
+    let depth = 0;
+    const copyOf = (item: unknown) => {
+        const copied = frozenCopy(item);
+        depth = Math.max(depth, (copies.get(copied as object) ?? -1) + 1);
+        return copied;
+    };
+    let copy: Record<string, unknown> | unknown[] = {};
     if (Array.isArray(value)) {
-        const copy: unknown[] = [];
-        for (let index = 0; index < value.length; index += 1) {
-            copy.push(frozenCopy(value[index] ?? null));
-        }
-        return Object.freeze(copy);
-    }
-    const copy: Record<string, unknown> = {};
-    for (const [key, item] of Object.entries(value)) {
-        if (item !== undefined) {
-            copy[key] = frozenCopy(item);
+        copy = Array.from(value as unknown[], (item) => copyOf(item ?? null));
+    } else {
+        for (const [key, item] of Object.entries(value)) {
+            if (item !== undefined) {
+                copy[key] = copyOf(item);
+            }
         }
     }
+    copies.set(copy, depth);
     return Object.freeze(copy);
 };
 

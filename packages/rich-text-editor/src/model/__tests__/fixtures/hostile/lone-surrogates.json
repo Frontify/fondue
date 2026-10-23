@@ -1,0 +1,69 @@
+{
+    "boundary": "loaded-document",
+    "description": "Text, a label and an attribute with unpaired surrogates.",
+    "input": {
+        "format": "frontify.rich-text",
+        "formatVersion": 1,
+        "model": {
+            "id": "test.hostile",
+            "version": 1
+        },
+        "requiredCapabilities": [
+            {
+                "id": "core",
+                "version": 1
+            },
+            {
+                "id": "media.image",
+                "version": 1
+            }
+        ],
+        "content": {
+            "type": "doc",
+            "attrs": {
+                "lang": null,
+                "dir": "auto"
+            },
+            "content": [
+                {
+                    "type": "paragraph",
+                    "attrs": {
+                        "lang": null
+                    },
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "CANARY-4f9a2b\ud800 a \udc00 b"
+                        }
+                    ]
+                },
+                {
+                    "type": "figure",
+                    "attrs": {
+                        "nodeId": "f-1",
+                        "align": "center"
+                    },
+                    "content": [
+                        {
+                            "type": "asset_image",
+                            "attrs": {
+                                "nodeId": "i-1",
+                                "assetId": "a-1",
+                                "labelSnapshot": "CANARY-4f9a2b\ud800.png",
+                                "altIntent": "meaningful",
+                                "altText": "CANARY-4f9a2b\udfff",
+                                "width": 10,
+                                "height": 10,
+                                "displayWidth": null,
+                                "mediaType": "image/png"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "expected": {
+        "status": "editable"
+    }
+}

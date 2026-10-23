@@ -1,0 +1,14 @@
+{
+    "boundary": "command-payload",
+    "description": "heading.set with a level that is text.",
+    "input": {
+        "command": "heading.set",
+        "payload": {
+            "level": "CANARY-4f9a2b"
+        }
+    },
+    "expected": {
+        "status": "rejected",
+        "code": "invalid-payload"
+    }
+}

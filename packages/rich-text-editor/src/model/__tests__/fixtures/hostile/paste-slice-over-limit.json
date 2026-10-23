@@ -1,0 +1,21 @@
+{
+    "boundary": "paste-and-drop",
+    "description": "An internal slice one byte past maxPasteBytes.",
+    "input": {
+        "mime": {
+            "application/x-frontify-rich-text+json": {
+                "text": [
+                    "{\"x\": \"CANARY-4f9a2b",
+                    {
+                        "repeat": "x",
+                        "times": 1048576
+                    },
+                    "\"}"
+                ]
+            }
+        }
+    },
+    "expected": {
+        "rejected": "maxPasteBytes"
+    }
+}

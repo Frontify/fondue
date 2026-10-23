@@ -1,0 +1,11 @@
+{
+    "boundary": "remote-configuration",
+    "description": "A feature ID no shipped feature has.",
+    "input": {
+        "call": "featuresById",
+        "argument": ["core", "CANARY-4f9a2b"]
+    },
+    "expected": {
+        "throws": "definition.unknown-feature"
+    }
+}

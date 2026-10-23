@@ -1,0 +1,18 @@
+{
+    "boundary": "command-payload",
+    "description": "heading.set with a __proto__ key and an extra field.",
+    "input": {
+        "command": "heading.set",
+        "payload": {
+            "level": 2,
+            "__proto__": {
+                "polluted": "CANARY-4f9a2b"
+            },
+            "extra": "CANARY-4f9a2b"
+        }
+    },
+    "expected": {
+        "status": "rejected",
+        "code": "invalid-payload"
+    }
+}

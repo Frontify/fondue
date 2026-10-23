@@ -1,0 +1,45 @@
+{
+    "boundary": "paste-and-drop",
+    "description": "An internal slice of another model that holds a node the model lacks.",
+    "input": {
+        "mime": {
+            "application/x-frontify-rich-text+json": {
+                "format": "frontify.rich-text-slice",
+                "formatVersion": 1,
+                "model": {
+                    "id": "other.model",
+                    "version": 1
+                },
+                "requiredCapabilities": [
+                    {
+                        "id": "core",
+                        "version": 1
+                    }
+                ],
+                "context": "a",
+                "openStart": 0,
+                "openEnd": 0,
+                "content": [
+                    {
+                        "type": "script",
+                        "attrs": {
+                            "src": "CANARY-4f9a2b"
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "CANARY-4f9a2b"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    "expected": {
+        "inserted": {
+            "text": "",
+            "hrefs": []
+        }
+    }
+}

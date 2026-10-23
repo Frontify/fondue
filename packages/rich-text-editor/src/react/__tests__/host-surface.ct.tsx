@@ -251,3 +251,52 @@ test('opens no overlay or chrome popup, submits nothing and keeps focus when the
     expect(await submits()).toBe('0');
     expect(await page.evaluate(() => window.rte?.text())).toBe(' ab');
 });
+
+test.describe('during a composition', () => {
+    test.beforeEach(({ browserName }) => {
+        test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only.');
+    });
+
+    test('keeps the composition and its text while the host rerenders with new status, required, aria-describedby and placeholder @engine', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(<EditorProbe texts={['ab']} />);
+        await ready(page);
+        await surfaceOf(page).click();
+        await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { text: 'ab', from: 2, to: 2 }));
+        await page.evaluate(() => {
+            const surface = document.querySelector('[role="textbox"]');
+            surface?.addEventListener('compositionend', () => {
+                document.body.dataset.ends = String(Number(document.body.dataset.ends ?? '0') + 1);
+            });
+        });
+        const cdp = await page.context().newCDPSession(page);
+        const compose = (text: string) =>
+            cdp.send('Input.imeSetComposition', { text, selectionStart: text.length, selectionEnd: text.length });
+
+        await compose('x');
+        await component.update(<EditorProbe texts={['ab']} rerendered={{ status: 'error' }} />);
+        await compose('xy');
+        await component.update(<EditorProbe texts={['ab']} rerendered={{ status: 'error', required: true }} />);
+        await component.update(
+            <EditorProbe texts={['ab']} rerendered={{ status: 'error', required: true, 'aria-describedby': 'hint' }} />,
+        );
+        await compose('xyz');
+        await component.update(
+            <EditorProbe
+                texts={['ab']}
+                rerendered={{ status: 'error', required: true, 'aria-describedby': 'hint', placeholder: 'Write' }}
+            />,
+        );
+        const composing = await page.evaluate(() => window.rte?.handle.getSummary().compositionActive);
+        await cdp.send('Input.insertText', { text: 'xyz' });
+
+        expect(composing).toBe(true);
+        await expect(surfaceOf(page)).toHaveAttribute('aria-invalid', 'true');
+        await expect(surfaceOf(page)).toHaveAttribute('aria-describedby', 'hint');
+        await expect.poll(() => page.evaluate(() => window.rte?.text())).toBe('abxyz');
+        await expect(surfaceOf(page)).toHaveText('abxyz');
+        expect(await page.evaluate(() => document.body.dataset.ends)).toBe('1');
+    });
+});

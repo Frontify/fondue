@@ -1,0 +1,11 @@
+{
+    "boundary": "remote-configuration",
+    "description": "A feature ID that names an inherited property.",
+    "input": {
+        "call": "featuresById",
+        "argument": ["core", "__proto__", "CANARY-4f9a2b"]
+    },
+    "expected": {
+        "throws": "definition.unknown-feature"
+    }
+}

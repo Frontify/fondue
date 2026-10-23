@@ -1,0 +1,20 @@
+{
+    "boundary": "remote-configuration",
+    "description": "A policy for a feature the model does not install.",
+    "input": {
+        "call": "updatePolicy",
+        "argument": {
+            "features": {
+                "CANARY-4f9a2b": {
+                    "create": false,
+                    "edit": false,
+                    "remove": false,
+                    "paste": false
+                }
+            }
+        }
+    },
+    "expected": {
+        "throws": "definition.unknown-policy-feature"
+    }
+}

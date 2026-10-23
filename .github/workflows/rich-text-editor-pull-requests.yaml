@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - packages/rich-text-editor/**
+      # A changed ProseMirror, markdown-it or React version runs the engine qualification group (core AC-037).
+      - pnpm-lock.yaml
       - .github/workflows/rich-text-editor-pull-requests.yaml
 
 # Ensures that only one workflow per branch will run at a time.
@@ -81,6 +83,32 @@ jobs:
       - name: Unit tests
         run: pnpm --stream --filter {packages/rich-text-editor} test
 
+  node-tests:
+    name: Node Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      - name: Build Fondue Components
+        run: pnpm build:components
+
+      - name: Empty the Vite transform cache
+        run: rm -rf node_modules/.vite packages/rich-text-editor/node_modules/.vite
+
+      # Each test file of the `node` environment names it in a docblock (quality AC-036).
+      - name: Node environment tests
+        working-directory: packages/rich-text-editor
+        run: pnpm exec vitest run --coverage.enabled=false $(grep -rl '@vitest-environment node' src)
+
   component-tests:
     name: Component Tests
     runs-on: ubuntu-latest
@@ -105,4 +133,58 @@ jobs:
         run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
 
       - name: Playwright tests
-        run: pnpm --filter {packages/rich-text-editor} exec playwright test
+        run: pnpm --filter {packages/rich-text-editor} exec playwright test --grep-invert @engine
+
+  engine-qualification:
+    name: Engine Qualification
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          playwright-cache: "true"
+
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      - name: Build Fondue Components
+        run: pnpm build:components
+
+      - name: Install Playwright browsers
+        run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
+
+      # The browser editing, IME automation and clipboard tests (core AC-037).
+      - name: Engine qualification tests
+        run: pnpm --filter {packages/rich-text-editor} exec playwright test --grep @engine
+
+  # The pinned runner of the performance budgets (quality AC-016): a config test pins `runs-on` to `perf/method.json`, and the perf script reads every other setting from it.
+  performance:
+    name: Performance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          playwright-cache: "true"
+
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      - name: Build Fondue Components
+        run: pnpm build:components
+
+      - name: Install Playwright browsers
+        run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
+
+      - name: Performance budgets
+        run: pnpm --stream --filter {packages/rich-text-editor} perf

@@ -1,0 +1,128 @@
+{
+    "boundary": "loaded-document",
+    "description": "A document whose every mention and image fails to resolve.",
+    "unresolved": true,
+    "input": {
+        "format": "frontify.rich-text",
+        "formatVersion": 1,
+        "model": {
+            "id": "test.hostile",
+            "version": 1
+        },
+        "requiredCapabilities": [
+            {
+                "id": "core",
+                "version": 1
+            },
+            {
+                "id": "mentions",
+                "version": 1
+            },
+            {
+                "id": "media.image",
+                "version": 1
+            }
+        ],
+        "content": {
+            "type": "doc",
+            "attrs": {
+                "lang": null,
+                "dir": "auto"
+            },
+            "content": [
+                {
+                    "type": "paragraph",
+                    "attrs": {
+                        "lang": null
+                    },
+                    "content": [
+                        {
+                            "type": "mention",
+                            "attrs": {
+                                "nodeId": "m-1",
+                                "resourceType": "user",
+                                "resourceId": "gone-1",
+                                "labelSnapshot": "CANARY-4f9a2b user 1"
+                            }
+                        },
+                        {
+                            "type": "text",
+                            "text": " "
+                        },
+                        {
+                            "type": "mention",
+                            "attrs": {
+                                "nodeId": "m-2",
+                                "resourceType": "user",
+                                "resourceId": "gone-2",
+                                "labelSnapshot": "CANARY-4f9a2b user 2"
+                            }
+                        },
+                        {
+                            "type": "text",
+                            "text": " "
+                        },
+                        {
+                            "type": "mention",
+                            "attrs": {
+                                "nodeId": "m-3",
+                                "resourceType": "user",
+                                "resourceId": "gone-3",
+                                "labelSnapshot": "CANARY-4f9a2b user 3"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "figure",
+                    "attrs": {
+                        "nodeId": "f-1",
+                        "align": "center"
+                    },
+                    "content": [
+                        {
+                            "type": "asset_image",
+                            "attrs": {
+                                "nodeId": "i-1",
+                                "assetId": "gone-1",
+                                "labelSnapshot": "CANARY-4f9a2b-1.png",
+                                "altIntent": "meaningful",
+                                "altText": "CANARY-4f9a2b alt",
+                                "width": 40,
+                                "height": 30,
+                                "displayWidth": null,
+                                "mediaType": "image/png"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "figure",
+                    "attrs": {
+                        "nodeId": "f-2",
+                        "align": "center"
+                    },
+                    "content": [
+                        {
+                            "type": "asset_image",
+                            "attrs": {
+                                "nodeId": "i-2",
+                                "assetId": "gone-2",
+                                "labelSnapshot": "CANARY-4f9a2b-2.png",
+                                "altIntent": "meaningful",
+                                "altText": "CANARY-4f9a2b alt",
+                                "width": 40,
+                                "height": 30,
+                                "displayWidth": null,
+                                "mediaType": "image/png"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "expected": {
+        "status": "editable"
+    }
+}

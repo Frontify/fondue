@@ -1,0 +1,18 @@
+{
+    "boundary": "async-service-result",
+    "description": "A reference search result with a __proto__ key.",
+    "input": {
+        "command": "reference.insert",
+        "result": {
+            "resourceType": "user",
+            "resourceId": "1",
+            "labelSnapshot": "CANARY-4f9a2b",
+            "__proto__": {
+                "polluted": "CANARY-4f9a2b"
+            }
+        }
+    },
+    "expected": {
+        "discarded": "invalid-payload"
+    }
+}

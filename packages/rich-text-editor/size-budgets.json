@@ -1,0 +1,13 @@
+{
+    "./reader": 25000,
+    "./model": 30000,
+    "./codecs": 77000,
+    "./html": 45000,
+    "inline-profile": 277000,
+    "comment-profile": 289000,
+    "document-profile": 303000,
+    "brand-document-profile": 304000,
+    "./features": 15000,
+    "./locales/*": 6000,
+    "package-css": 25000
+}

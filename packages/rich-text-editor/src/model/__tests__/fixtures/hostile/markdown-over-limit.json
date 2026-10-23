@@ -1,0 +1,22 @@
+{
+    "boundary": "markdown-import",
+    "description": "Markdown whose document passes maxDocumentBytes.",
+    "limits": {
+        "maxDocumentBytes": 300
+    },
+    "input": {
+        "markdown": {
+            "text": [
+                "CANARY-4f9a2b ",
+                {
+                    "repeat": "word ",
+                    "times": 200
+                }
+            ]
+        }
+    },
+    "expected": {
+        "status": "blocked",
+        "reason": "limit-exceeded"
+    }
+}

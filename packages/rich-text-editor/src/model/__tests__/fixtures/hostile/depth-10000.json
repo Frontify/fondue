@@ -1,0 +1,23 @@
+{
+    "boundary": "loaded-document",
+    "description": "Quotes nested 10,000 levels deep, as JSON text.",
+    "input": {
+        "text": [
+            "{\"format\": \"frontify.rich-text\", \"formatVersion\": 1, \"model\": {\"id\": \"test.hostile\", \"version\": 1}, \"requiredCapabilities\": [{\"id\": \"core\", \"version\": 1}], \"content\": {\"type\": \"doc\", \"attrs\": {\"lang\": null, \"dir\": \"auto\"}, \"content\": [",
+            {
+                "repeat": "{\"type\": \"blockquote\", \"attrs\": {\"nodeId\": \"CANARY-4f9a2b\"}, \"content\": [",
+                "times": 10000
+            },
+            "{\"type\": \"paragraph\", \"attrs\": {\"lang\": null}, \"content\": [{\"type\": \"text\", \"text\": \"CANARY-4f9a2b\"}]}",
+            {
+                "repeat": "]}",
+                "times": 10000
+            },
+            "]}}"
+        ]
+    },
+    "expected": {
+        "status": "blocked",
+        "reason": "limit-exceeded"
+    }
+}

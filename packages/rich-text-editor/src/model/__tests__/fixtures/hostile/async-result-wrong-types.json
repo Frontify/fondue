@@ -1,0 +1,17 @@
+{
+    "boundary": "async-service-result",
+    "description": "A reference search result whose fields have the wrong types.",
+    "input": {
+        "command": "reference.insert",
+        "result": {
+            "resourceType": 7,
+            "resourceId": null,
+            "labelSnapshot": {
+                "text": "CANARY-4f9a2b"
+            }
+        }
+    },
+    "expected": {
+        "discarded": "invalid-payload"
+    }
+}

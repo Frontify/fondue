@@ -1,0 +1,11 @@
+{
+    "boundary": "markdown-import",
+    "description": "Markdown with raw HTML, a javascript: link, a data: link and an autolink.",
+    "input": {
+        "markdown": "<script>alert(\"CANARY-4f9a2b\")</script>\n\n[x](javascript:alert(\"CANARY-4f9a2b\")) [y](data:text/html;base64,CANARY-4f9a2b) www.example.com/CANARY-4f9a2b\n\n<img src=x onerror=alert(\"CANARY-4f9a2b\")>\n"
+    },
+    "expected": {
+        "status": "editable",
+        "hrefs": ["http://www.example.com/CANARY-4f9a2b"]
+    }
+}
