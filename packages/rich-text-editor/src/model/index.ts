@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export { blockRule, markRule, textRule } from './capabilities';
+export { hexColor } from './colors';
 export { compileContentModel } from './compile';
 export {
     type AttributeDeclaration,
@@ -76,5 +77,14 @@ export { decorationLines, inheritedAnswer } from './inherited-style';
 export { isTaskListElement } from './task-list-markup';
 export { toJsonSchema } from './json-schema';
 export { type MigrationManifest, type MigrationResult, migrateDocument } from './migrate';
-export { type ColorToken, type PresentationStyle } from './styles';
+export {
+    type ColorToken,
+    isPresentationStyle,
+    type PresentationStyle,
+    type ResolvedStyle,
+    resolveStyle,
+    type StyleRecipe,
+    type StyleResolution,
+    styleSheetOf,
+} from './styles';
 export { findInvalidPayload, isRecord } from './values';

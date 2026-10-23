@@ -12,6 +12,7 @@ import {
 import { type ContentModel, type ResourceLimits } from '#/model';
 import { type CompiledParseRule, compiledModel, markHrefPolicy } from '#/model/compile';
 
+import { type ColorReading, colorReadingOf, normalizeColors } from './colors';
 import { descriptorOf } from './dom';
 import { cleanGoogleDocs } from './google-docs';
 import { exceedsMarkupDepth } from './limits';
@@ -28,6 +29,8 @@ export interface HtmlSettings {
     readonly headingLevels: readonly number[] | undefined;
     /** The depth, as `exceededStructure` counts it, at which the imported blocks land. */
     readonly depth: number;
+    /** The pasted colours the model keeps. */
+    readonly colors: ColorReading;
     /** The model's function parse rules, which read an element before the schema's rules do. */
     readonly rules: readonly CompiledParseRule[];
 }
@@ -124,6 +127,10 @@ export interface ImportedHtml {
     readonly content: Fragment;
     /** Images dropped without fetching, for the announcement. */
     readonly droppedImages: number;
+    /** Colours the model does not keep, removed for the announcement. */
+    readonly removedColors: number;
+    /** Tables the schema cannot hold, whose cells became blocks, for the announcement. */
+    readonly removedTables: number;
 }
 
 /**
@@ -192,19 +199,20 @@ const removeObjectChildren = (body: HTMLElement) => {
     }
 };
 
-/** Turns each cell of a table the schema cannot hold into a block, so each cell's text stays a paragraph. */
+/** Turns each cell of a table the schema cannot hold into a block, so each cell's text stays a paragraph; counts the tables. */
 const replaceTables = (body: HTMLElement, schema: Schema) => {
     const holdsCells = SchemaParser.fromSchema(schema).rules.some(
         ({ tag }) => tag !== undefined && /^t[dh]\b/.test(tag),
     );
     if (holdsCells) {
-        return;
+        return 0;
     }
     for (const cell of Array.from(body.querySelectorAll('td, th'))) {
         const block = cell.ownerDocument.createElement('div');
         block.append(...Array.from(cell.childNodes));
         cell.replaceWith(block);
     }
+    return body.querySelectorAll('table').length;
 };
 
 /** Replaces each image with its `alt` text, so nothing fetches it, and counts them. */
@@ -367,7 +375,7 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     // An element named `body` shadows `document.body`.
     const body = (descriptorOf(dom.Document.prototype, 'body').get as () => HTMLElement | null).call(inert);
     if (body === null) {
-        return { content: Fragment.empty, droppedImages: 0 };
+        return { content: Fragment.empty, droppedImages: 0, removedColors: 0, removedTables: 0 };
     }
     // First, since a control of a form shadows what every later step reads.
     replaceForms(dom, inert);
@@ -382,9 +390,10 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     // Before removeOfficeMarkup, which removes the `mso-list` styles and marker spans it reads.
     rebuildOfficeLists(body, settings.limits.maxDepth, settings.depth);
     removeOfficeMarkup(body);
+    const removedColors = normalizeColors(body, settings.colors);
     removeItemBreaks(body);
     const droppedImages = replaceImages(body);
-    replaceTables(body, schema);
+    const removedTables = replaceTables(body, schema);
     // After removeOfficeMarkup, which strips the `Mso` class and `mso-` styles that keep a spacing span from matching.
     restoreSpaces(body);
     removeObjectChildren(body);
@@ -402,11 +411,11 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     const preserveWhitespace = body.querySelector('.fondue-rte-content') !== null;
     let content = withSpaces(parser.parse(body, { preserveWhitespace }).content);
     content = withValidAttributes(schema, content, settings.limits, settings.headingLevels);
-    return { content, droppedImages };
+    return { content, droppedImages, removedColors, removedTables };
 };
 
 /**
- * The import of `html` as the model reads it: its parse rules, then its link policy, the one order that
+ * The import of `html` as the model reads it: its colours and parse rules, then its link policy, the one order that
  * paste and `fromHTML` share.
  */
 export const importModelHtml = (
@@ -418,6 +427,7 @@ export const importModelHtml = (
 ): ImportedHtml => {
     const imported = importHtml(html, schema, window, {
         ...settings,
+        colors: colorReadingOf(model),
         rules: compiledModel(model).parseRules,
     });
     return { ...imported, content: withinLinkPolicy(imported.content, markHrefPolicy(model, 'link')) };

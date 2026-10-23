@@ -5,6 +5,7 @@
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 
+import { NO_COLORS } from '#/clipboard/import/colors';
 import { importHtml } from '#/clipboard/import/html';
 import { buildSchema } from '#/definition/schema';
 import { htmlModel } from '#/features/__tests__/fixtures/html';
@@ -32,6 +33,7 @@ describe('the HTML import of untrusted markup', () => {
             limits: defaultLimits,
             headingLevels: undefined,
             depth: 2,
+            colors: NO_COLORS,
             rules: [],
         });
 
@@ -81,6 +83,7 @@ describe('the HTML import of untrusted markup', () => {
             limits: { ...defaultLimits, maxAttributeLength: 100 },
             headingLevels: undefined,
             depth: 2,
+            colors: NO_COLORS,
             rules: [],
         });
 

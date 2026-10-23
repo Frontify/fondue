@@ -6,6 +6,7 @@ import { JSDOM } from 'jsdom';
 import { type Node } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
+import { NO_COLORS } from '#/clipboard/import/colors';
 import { importHtml } from '#/clipboard/import/html';
 import { buildSchema } from '#/definition/schema';
 import { core } from '#/features/core/feature';
@@ -24,6 +25,7 @@ const runsOf = (features: readonly Feature[], html: string, limits: Partial<Reso
         limits: merged,
         headingLevels: undefined,
         depth: 2,
+        colors: NO_COLORS,
         rules: compiledModel(model).parseRules,
     });
     const runs: string[] = [];

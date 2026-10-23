@@ -84,12 +84,20 @@ export interface DocumentApi {
     /** The options of an installed feature, defaulted, or `undefined` when the model does not install it. */
     optionsOf(featureId: string): JsonObject | undefined;
     readonly marks: {
-        /** Whether all of the selection carries `mark`, part of it, or none; at a caret, what typing gets. */
-        active(mark: string): boolean | 'mixed';
+        /** Whether all of the selection carries `mark`, with `attrs` when given, part of it, or none; at a caret, what typing gets. */
+        active(mark: string, attrs?: JsonObject): boolean | 'mixed';
+        /** The attributes of `mark` at the selection's start, in the stored marks first, else `undefined`. */
+        attrs(mark: string): JsonObject | undefined;
+        /** The names of the marks the model installs. */
+        installed(): readonly string[];
         /** Whether the selection can carry `mark`: its selected text, or the content where it stands, takes it. */
         allowed(mark: string): boolean;
         toggle(mark: string, attrs?: JsonObject): boolean;
+        /** Sets `mark` with `attrs`. */
+        set(mark: string, attrs: JsonObject): boolean;
         remove(marks: string | readonly string[]): boolean;
+        /** Sets again the last of the marks `names` that a command set in this session, `false` when none did. */
+        reapply(names: readonly string[]): boolean;
     };
     /**
      * `set` acts on textblocks, so `node` is a textblock type such as `heading`; `wrap` acts on wrapping, so `node` is

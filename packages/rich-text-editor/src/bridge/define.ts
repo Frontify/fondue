@@ -15,7 +15,14 @@ import {
 import { useRenderMark } from './dev-checks';
 
 export { suggestionOptionId } from '#/runtime/suggestions/option-id';
-export { NodeChromeButton, NodeChromeMenu, NodeChromeToolbar, OptionItem, OptionsMenu } from './chrome-toolbar';
+export {
+    CheckedSlot,
+    NodeChromeButton,
+    NodeChromeMenu,
+    NodeChromeToolbar,
+    OptionItem,
+    OptionsMenu,
+} from './chrome-toolbar';
 export { Listbox, type ListboxOption } from './listbox';
 export { NodeViewContent } from './node-view-content';
 export { type EditorOverlay, OverlayBody, useEditorOverlay } from './overlays';

@@ -9,6 +9,7 @@ import { JSDOM } from 'jsdom';
 import { type Node as EngineNode, DOMParser as SchemaParser } from 'prosemirror-model';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { NO_COLORS } from '#/clipboard/import/colors';
 import { cleanGoogleDocs } from '#/clipboard/import/google-docs';
 import { importHtml } from '#/clipboard/import/html';
 import { removeEmptySpans, removeItemBreaks, removeMarkup } from '#/clipboard/import/markup';
@@ -29,7 +30,11 @@ const { window } = new JSDOM('');
 const host = window as unknown as Window;
 const fixtures = new URL('../../clipboard/__tests__/fixtures/vendor/', import.meta.url);
 const readFixture = (name: string) => readFileSync(new URL(name, fixtures), 'utf8');
-const vendorModel = compileContentModel([...htmlFeatures(), taskList()], { id: 'fixture.vendor', version: 1 });
+// Without literal colours, as `marks.font-color` ships, so the colour every Google Docs run sets stays out.
+const vendorModel = compileContentModel(
+    [...htmlFeatures().filter((feature) => feature.id !== 'marks.font-color'), taskList()],
+    { id: 'fixture.vendor', version: 1 },
+);
 const withoutNodeIds = (value: unknown): unknown =>
     JSON.parse(JSON.stringify(value, (key, item: unknown) => (key === 'nodeId' ? undefined : item)));
 
@@ -112,6 +117,7 @@ describe('vendor cleanups', () => {
             limits: defaultLimits,
             headingLevels: undefined,
             depth: 2,
+            colors: NO_COLORS,
             rules: [],
         });
 
@@ -222,6 +228,7 @@ describe('a model without the feature whose markup a cleanup read', () => {
             limits: defaultLimits,
             headingLevels: undefined,
             depth: 2,
+            colors: NO_COLORS,
             rules: compiledModel(model).parseRules,
         });
         const body = new window.DOMParser().parseFromString(html, 'text/html').body;
@@ -374,6 +381,7 @@ describe('vendor cleanups on HTML from other sources', () => {
                     limits: defaultLimits,
                     headingLevels: undefined,
                     depth: 2,
+                    colors: NO_COLORS,
                     rules: [],
                 });
 

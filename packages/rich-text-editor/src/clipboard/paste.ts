@@ -48,6 +48,8 @@ export interface Pasted {
     readonly followUp?: FollowUp;
     /** Media that a slice from another context dropped. */
     readonly droppedMedia: number;
+    /** Pasted formatting the model does not keep, such as colours without `literalColors`, was removed. */
+    readonly removedFormatting?: boolean;
 }
 
 /** Inserts `slice` between `from` and `to` as ProseMirror's paste does, and returns where it landed. */
@@ -295,13 +297,19 @@ export const pastePayload = (
         if ($from.parent.isTextblock) {
             depth = $from.depth + 1;
         }
-        const { content, droppedImages } = importModelHtml(payload.html, model, schema, settings.window, {
-            limits,
-            headingLevels,
-            depth,
-        });
+        const { content, droppedImages, removedColors, removedTables } = importModelHtml(
+            payload.html,
+            model,
+            schema,
+            settings.window,
+            {
+                limits,
+                headingLevels,
+                depth,
+            },
+        );
         insert(prepared(insertable(content)));
-        return { droppedMedia: droppedImages };
+        return { droppedMedia: droppedImages, removedFormatting: removedColors > 0 || removedTables > 0 };
     }
     // Plain text, which Markdown structure converts in a second step.
     if (text === '') {

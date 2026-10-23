@@ -2,9 +2,10 @@
 
 import { type EditorPlugin, type PluginToolbarEntry } from '#/bridge/plugin';
 import { type CompiledDefinition } from '#/definition';
-import { type CodecContext, type CommandRef, type JsonValue } from '#/model';
+import { type CodecContext, type CommandRef, type JsonValue, type PresentationStyle } from '#/model';
 import { canonicalJson } from '#/model/hash';
 import { isPlatformBinding } from '#/model/platform';
+import { cssValue, isPresentationStyle } from '#/model/styles';
 import { type AuthoringPolicy } from '#/runtime/types';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
@@ -19,6 +20,27 @@ type ButtonEntry = Omit<PluginToolbarEntry, 'labelKey' | 'label'> & {
 const TEXT_STYLE = 'text-style';
 // The picker's rows, in order: Normal text, the heading levels, then Quote, then Code block.
 const TEXT_STYLE_COMMANDS = ['paragraph.set', 'heading.set', 'quote.toggle', 'code-block.toggle'];
+/** The command of the picker's brand style rows, which `styles.brand` installs. */
+export const SET_STYLE = 'block.style.set';
+// The block types a picker row can style, and the font properties its row previews.
+const STYLED_BLOCKS = new Set(['paragraph', 'heading']);
+const PREVIEW = ['fontFamily', 'fontSize', 'fontWeight'] as const;
+
+/**
+ * The font family, size and weight a brand style row previews, never its colour or background, on a unitless line
+ * height, so the row grows to hold a large font.
+ */
+const previewOf = ({ recipe }: PresentationStyle): Readonly<Record<string, string>> => {
+    const preview: Record<string, string> = {};
+    for (const name of PREVIEW) {
+        const value = cssValue(name, recipe[name]);
+        if (value !== undefined) {
+            preview[name] = value;
+        }
+    }
+    preview.lineHeight = '1.25';
+    return preview;
+};
 
 /**
  * The plugin label for `lang` by RFC 4647 lookup, without subtags from the end until a tag matches, else `en-US`,
@@ -156,6 +178,40 @@ export const toolbarItems = (
     // A heading level the policy cannot create only names a stored heading.
     const offered = ({ command, payload }: ButtonEntry) =>
         engine.commands.get(command)?.policyRefuses?.(authoring, payload) !== true;
+    /** The brand style rows: the default style, then each style that is not deprecated and applies to a styled block type. */
+    const brandRows = (defaults: readonly ButtonEntry[]) => {
+        const styles = presentation.styles.filter(
+            (style) =>
+                isPresentationStyle(style) &&
+                style.deprecated !== true &&
+                style.appliesTo.some((type) => STYLED_BLOCKS.has(type)),
+        );
+        if (!runnable(SET_STYLE) || styles.length === 0) {
+            return [];
+        }
+        const rows: (ToolbarItem & { readonly offered: boolean })[] = defaults.map((entry) => ({
+            ...itemOf(entry, false, false),
+            offered: true,
+            brand: { appliesTo: [...STYLED_BLOCKS], preview: {} },
+        }));
+        for (const style of styles) {
+            const payload = { styleId: style.id };
+            rows.push({
+                key: `${SET_STYLE} ${payloadKey(payload)}`,
+                command: SET_STYLE,
+                payload,
+                toggle: true,
+                label: style.label,
+                icon: '',
+                bindings: [],
+                groupStart: false,
+                bubble: false,
+                offered: true,
+                brand: { appliesTo: style.appliesTo, preview: previewOf(style) },
+            });
+        }
+        return rows;
+    };
     const items: ToolbarItem[] = [];
     for (const group of presentation.toolbar) {
         let groupStart = items.length > 0;
@@ -166,6 +222,7 @@ export const toolbarItems = (
                 const options = TEXT_STYLE_COMMANDS.flatMap((id) => entries.filter((entry) => entry.command === id))
                     .filter((entry) => runnable(entry.command))
                     .map((entry) => ({ ...itemOf(entry, false, false), offered: offered(entry) }));
+                options.push(...brandRows(entries.filter((entry) => entry.command === SET_STYLE)));
                 if (options.some((option) => option.offered) && !items.some((item) => item.key === TEXT_STYLE)) {
                     const label = t('RichTextEditor_textStyle');
                     items.push({
@@ -179,6 +236,7 @@ export const toolbarItems = (
                         groupStart,
                         bubble: true,
                         options,
+                        groupLabel: t('RichTextEditor_brandStyles'),
                     });
                     groupStart = false;
                 }

@@ -689,6 +689,26 @@ test('keeps the text of a form whose controls shadow DOM properties and of a pag
     expect(body).toContain('"text":"t"');
 });
 
+test('pastes an rgba colour as a hex value with its alpha pair @engine', async ({ mount, page }) => {
+    await mountHtml(page, mount);
+
+    await pasteHtml(page, '<p><span style="color: rgba(0, 0, 0, 0.5)">half</span></p>');
+
+    expect(JSON.stringify(await htmlContentOf(page))).toContain('"attrs":{"tokenId":null,"value":"#00000080"}');
+});
+
+test('announces removed formatting for a pasted oklch() colour, which it cannot keep as hex @engine', async ({
+    mount,
+    page,
+}) => {
+    await mountHtml(page, mount);
+
+    await pasteHtml(page, '<p><span style="color: oklch(0.6 0.2 30)">tone</span></p>');
+
+    expect(JSON.stringify(await htmlContentOf(page))).not.toContain('"value"');
+    await expect(page.locator('[aria-live="polite"]')).toHaveText('Some formatting was removed.');
+});
+
 for (const name of ['clobbering-create-element.html', 'clobbering-query-selector.html']) {
     test(`keeps the text of a form when an image named by the ${name} fixture shadows a document method @engine`, async ({
         mount,

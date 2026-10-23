@@ -6,6 +6,7 @@ import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { code } from '#/features/marks-code/feature';
+import { fontColor } from '#/features/marks-font-color/feature';
 import { italic } from '#/features/marks-italic/feature';
 import { strike } from '#/features/marks-strike/feature';
 import { subscript } from '#/features/marks-subscript/feature';
@@ -62,7 +63,7 @@ export const htmlLists = defineFeature({
     },
 });
 
-/** The shipped text features, with the stand-ins above. */
+/** The shipped text features and `marks.font-color` with `literalColors` on, with the stand-ins above. */
 export const htmlFeatures = () =>
     [
         core(),
@@ -77,6 +78,7 @@ export const htmlFeatures = () =>
         superscript(),
         align(),
         htmlLists(),
+        fontColor({ literalColors: true }),
         htmlLink(),
     ] as const;
 

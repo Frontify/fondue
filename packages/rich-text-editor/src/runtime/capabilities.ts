@@ -4,6 +4,7 @@ import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemir
 import { GapCursor, gapCursor } from 'prosemirror-gapcursor';
 import {
     Fragment,
+    type Mark,
     type MarkType,
     type Node,
     NodeRange,
@@ -24,8 +25,10 @@ import {
     GAP_CURSOR_PLUGIN,
     HISTORY_PLUGIN,
     INPUT_RULES_PLUGIN,
+    LAST_MARK_PLUGIN,
     SUGGESTIONS_PLUGIN,
 } from '#/model/capabilities';
+import { appliesToOf } from '#/model/styles';
 import { isRecord } from '#/model/values';
 
 import { blockDecorationsPlugin } from './decorations';
@@ -34,6 +37,7 @@ import { enterRules, inputRulesPlugin, undoInputRule } from './input-rules';
 import { baseKeysPlugin, containerKeysPlugin } from './keys';
 import { liftItems, listAround, repeatWhile } from './lists';
 import { inCodeTextblock, nearest, positionOf } from './positions';
+import { stylesOf } from './styles';
 import { suggestionsPlugin } from './suggestions/plugin';
 import { carrySelection } from './transactions';
 
@@ -702,13 +706,26 @@ const attributeTargets = (state: EditorState, types: readonly NodeType[], nodeId
     return [];
 };
 
+/** The targets a brand style lands on: those whose node type its `appliesTo` names, when the session holds the style. */
+const styleTargets = (state: EditorState, targets: Located[], attrs: Readonly<Record<string, unknown>>): Located[] => {
+    if (typeof attrs.styleId !== 'string') {
+        return targets;
+    }
+    const applies = appliesToOf(stylesOf(state), attrs.styleId);
+    if (applies === undefined) {
+        return targets;
+    }
+    return targets.filter(({ node }) => applies.includes(node.type.name));
+};
+
 /** The targets that declare at least one of `attrs`, which the others skip. */
 const declaring = (targets: Located[], attrs: Readonly<Record<string, unknown>>): Located[] =>
     targets.filter(({ node }) => Object.keys(attrs).some((name) => node.type.spec.attrs?.[name] !== undefined));
 
 /**
  * Sets the payload's other fields on the node its `nodeId` names, else on the selected nodes of the listed types,
- * else on the nearest node of one; with `toggle`, removes the values when every target already has them.
+ * else on the nearest node of one; with `toggle`, removes the values when every target already has them. A `styleId`
+ * of a session style lands only on the node types the style applies to.
  */
 const setAttributes: CapabilityImplementation = (args, schema) => {
     const types = typesOf(args.node, schema);
@@ -727,7 +744,10 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
             if (parts === undefined) {
                 return false;
             }
-            const targets = declaring(attributeTargets(state, types, parts.nodeId), parts.attrs);
+            const targets = declaring(
+                styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs),
+                parts.attrs,
+            );
             const removes =
                 args.toggle === true && targets.length > 0 && targets.every(({ node }) => has(node, parts.attrs));
             const changes = targets.flatMap(({ node, pos }) =>
@@ -758,10 +778,70 @@ const setAttributes: CapabilityImplementation = (args, schema) => {
             if (parts === undefined) {
                 return false;
             }
-            const targets = declaring(attributeTargets(state, types, parts.nodeId), parts.attrs);
+            const targets = declaring(
+                styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs),
+                parts.attrs,
+            );
             return tristate(targets.filter(({ node }) => has(node, parts.attrs)).length, targets.length);
         },
     };
+};
+
+/** The transaction meta that carries the mark a `setMark` command set, which the last-mark plugin keeps. */
+export const LAST_MARK_META = 'rte.last-mark';
+const lastMarkKey = new PluginKey<readonly Mark[]>('rte.last-mark');
+
+/** Keeps the last mark of each type that a `setMark` command set in the session, the latest first. */
+const lastMarkPlugin = () =>
+    new Plugin<readonly Mark[]>({
+        key: lastMarkKey,
+        state: {
+            init: () => [],
+            apply: (transaction, marks) => {
+                const mark = transaction.getMeta(LAST_MARK_META) as Mark | undefined;
+                if (mark === undefined) {
+                    return marks;
+                }
+                return [mark, ...marks.filter((other) => other.type !== mark.type)];
+            },
+        },
+    });
+
+/**
+ * Adds `mark` to the selected text, or to the stored marks at a caret, as one transaction that records it as the last
+ * mark.
+ */
+const applyMark = (
+    state: EditorState,
+    dispatch: ((transaction: Transaction) => void) | undefined,
+    mark: Mark,
+): boolean => {
+    const { type } = mark;
+    if (state.selection.empty) {
+        const { $from } = state.selection;
+        if (!$from.parent.type.allowsMarkType(type)) {
+            return false;
+        }
+        dispatch?.(state.tr.addStoredMark(mark).setMeta(LAST_MARK_META, mark));
+        return true;
+    }
+    const texts = markableText(state, type);
+    if (texts.length === 0) {
+        return false;
+    }
+    if (dispatch !== undefined) {
+        const transaction = state.tr;
+        const { from, to, $from, $to } = state.selection;
+        if ($from.sameParent($to)) {
+            transaction.addMark(from, to, mark);
+        } else {
+            for (const range of texts) {
+                transaction.addMark(range.from, range.to, mark);
+            }
+        }
+        dispatch(transaction.setMeta(LAST_MARK_META, mark).scrollIntoView());
+    }
+    return true;
 };
 
 /** Removes every mark of `types` from the selected text, or from the stored marks at a caret. */
@@ -808,6 +888,48 @@ const clearMarks = (
     return true;
 };
 
+/** Whether every selected text carries `type` with `attrs`, some of it, or none; at a caret, the marks the next typed text gets. */
+const markWithAttrs = (state: EditorState, type: MarkType, attrs: Readonly<Record<string, unknown>>) => {
+    const matches = (marks: readonly Mark[]) => {
+        const found = type.isInSet(marks);
+        return found !== undefined && Object.entries(attrs).every(([name, value]) => found.attrs[name] === value);
+    };
+    if (state.selection.empty) {
+        return matches(state.storedMarks ?? state.selection.$from.marks());
+    }
+    const texts: boolean[] = [];
+    for (const { $from, $to } of state.selection.ranges) {
+        state.doc.nodesBetween($from.pos, $to.pos, (node, _pos, parent) => {
+            if (node.isText && parent !== null && parent.type.allowsMarkType(type)) {
+                texts.push(matches(node.marks));
+            }
+        });
+    }
+    return tristate(texts.filter(Boolean).length, texts.length);
+};
+
+/** Sets the mark with the payload's fields as attributes, or removes it for a null payload. */
+const setMark: CapabilityImplementation = (args, schema) => {
+    const type = schema.marks[args.mark as string] as MarkType;
+    return {
+        run: (state, dispatch, payload) => {
+            if (payload === null) {
+                return clearMarks(state, dispatch, [type]);
+            }
+            if (!isRecord(payload)) {
+                return false;
+            }
+            return applyMark(state, dispatch, type.create(payload));
+        },
+        active: (state, payload) => {
+            if (!isRecord(payload)) {
+                return false;
+            }
+            return markWithAttrs(state, type, payload);
+        },
+    };
+};
+
 const markTypesOf = (marks: unknown, schema: Schema): MarkType[] => {
     const names = Array.isArray(marks) ? (marks as readonly unknown[]) : [marks];
     return names.flatMap((name) => {
@@ -817,6 +939,21 @@ const markTypesOf = (marks: unknown, schema: Schema): MarkType[] => {
         }
         return [type];
     });
+};
+
+/** Sets again the last mark of the listed types that a `setMark` command set in this session. */
+const reapplyMark: CapabilityImplementation = (args, schema) => {
+    const types = markTypesOf(args.installed, schema);
+    return {
+        run: (state, dispatch) => {
+            const last = (lastMarkKey.getState(state) ?? []).find((mark) => types.includes(mark.type));
+            if (last === undefined) {
+                return false;
+            }
+            return applyMark(state, dispatch, last);
+        },
+        active: () => false,
+    };
 };
 
 const history: CapabilityImplementation = (args) => {
@@ -846,9 +983,11 @@ export const EDITS = {
     indentLines,
     insertText,
     outdentItem,
+    reapplyMark,
     removeMark,
     setAttributes,
     setBlock,
+    setMark,
     toggleList,
     toggleMark,
     wrapIn,
@@ -857,6 +996,7 @@ export const EDITS = {
 /** The package plugins the runtime builds, by plugin ID. */
 export const RUNTIME_PLUGINS: EngineImplementations = {
     plugins: {
+        [LAST_MARK_PLUGIN.id]: lastMarkPlugin,
         // Backspace right after a rule fired undoes it before any list or block key sees it.
         [HISTORY_PLUGIN.id]: ({ inputRules }) =>
             historyPlugin({ Backspace: undoInputRule, Enter: enterRules(inputRules) }),

@@ -54,6 +54,38 @@ describe('fromHTML', () => {
         },
     );
 
+    it('keeps every heading level, literal colour and justified text with no definition', () => {
+        const levels = [1, 2, 3, 4, 5, 6];
+        const html = levels.map((level) => `<h${level} style="text-align: justify">H${level}</h${level}>`).join('');
+
+        const content = contentOf(`${html}<p><span style="color: rgb(192, 57, 43)">red</span></p>`);
+
+        expect(withoutNodeIds(content)).toEqual([
+            ...levels.map((level) => ({
+                type: 'heading',
+                attrs: { level, lang: null, align: 'justify' },
+                content: [{ type: 'text', text: `H${level}` }],
+            })),
+            paragraph({
+                type: 'text',
+                text: 'red',
+                marks: [{ type: 'font_color', attrs: { tokenId: null, value: '#c0392b' } }],
+            }),
+        ]);
+    });
+
+    it('keeps the alpha of an rgba colour as the last pair of the hex value', () => {
+        const content = contentOf('<p><span style="color: rgba(0, 0, 0, 0.5)">half</span></p>');
+
+        expect(withoutNodeIds(content)).toEqual([
+            paragraph({
+                type: 'text',
+                text: 'half',
+                marks: [{ type: 'font_color', attrs: { tokenId: null, value: '#00000080' } }],
+            }),
+        ]);
+    });
+
     it('applies the creatable heading levels and paste policy of a definition', () => {
         const definition = defineEditor({
             id: 'test.html',
@@ -284,6 +316,8 @@ describe('external HTML', () => {
         'href',
         'openInNewWindow',
         'styleId',
+        'tokenId',
+        'value',
     ]);
     const attributeNames = (value: unknown): string[] => {
         if (Array.isArray(value)) {

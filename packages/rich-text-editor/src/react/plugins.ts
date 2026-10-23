@@ -15,11 +15,13 @@ import { orderedListEditor } from '#/features/lists-ordered/editor';
 import { taskListEditor } from '#/features/lists-task/editor';
 import { boldEditor } from '#/features/marks-bold/editor';
 import { codeEditor } from '#/features/marks-code/editor';
+import { fontColorEditor } from '#/features/marks-font-color/editor';
 import { italicEditor } from '#/features/marks-italic/editor';
 import { strikeEditor } from '#/features/marks-strike/editor';
 import { subscriptEditor } from '#/features/marks-subscript/editor';
 import { superscriptEditor } from '#/features/marks-superscript/editor';
 import { underlineEditor } from '#/features/marks-underline/editor';
+import { brandEditor } from '#/features/styles-brand/editor';
 
 const SHIPPED = [
     coreEditor,
@@ -38,9 +40,11 @@ const SHIPPED = [
     taskListEditor,
     headingEditor,
     quoteEditor,
+    brandEditor,
     inputRulesEditor,
     columnsEditor,
     emojiEditor,
+    fontColorEditor,
 ] as const;
 
 /** The editor parts of the shipped features by feature ID; a host's own plugin for a feature extends its entry. */

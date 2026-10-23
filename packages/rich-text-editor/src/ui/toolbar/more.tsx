@@ -8,7 +8,7 @@ import { type AriaAttributes, type AriaRole, type RefObject, useContext, useId, 
 import { CheckedSlot, keepFocus } from '#/bridge/chrome-toolbar';
 import { useCommandQuery } from '#/bridge/hooks';
 import { useOverlayContainer } from '#/bridge/overlays';
-import { SessionContext } from '#/bridge/session';
+import { SessionContext, useSessionValue } from '#/bridge/session';
 
 import {
     Icon,
@@ -21,6 +21,7 @@ import {
     useShortcut,
 } from './item';
 import styles from './styles/toolbar.module.scss';
+import { blockTypeOf } from './text-style';
 
 export const MoreRow = ({
     item,
@@ -36,17 +37,21 @@ export const MoreRow = ({
     const reasonId = useId();
     // Fondue's `Dropdown.Item` types no menu item role or state, which Radix still takes through the spread.
     let semantics: { role: AriaRole } & Pick<AriaAttributes, 'aria-checked' | 'aria-disabled'>;
+    // A brand style row is one of the block's styles, as in the text style picker.
+    const radio = item.brand !== undefined;
     const shown = state.active;
-    const checked = shown !== false;
-    if (item.toggle) {
+    const checked = radio ? shown === true : shown !== false;
+    if (radio) {
+        semantics = { role: 'menuitemradio', 'aria-checked': checked };
+    } else if (item.toggle) {
         semantics = { role: 'menuitemcheckbox', 'aria-checked': shown };
     } else {
         semantics = { role: 'menuitem' };
     }
-    // An unavailable row stays focusable with its reason, as a toolbar item does.
+    // An unavailable row stays focusable with its reason, as a toolbar item does; a checked style is already set.
     let reason: string | undefined;
     let describedBy: string | undefined;
-    if (!state.enabled) {
+    if (!state.enabled && !(radio && checked)) {
         reason = strings.reason(state.disabledReason ?? '');
         describedBy = reasonId;
         semantics['aria-disabled'] = true;
@@ -158,6 +163,7 @@ export const More = ({
 }) => {
     const runtime = useContext(SessionContext);
     const container = useOverlayContainer();
+    const blockType = useSessionValue(blockTypeOf, Object.is);
     const offered = useOfferedRows(items);
     const contentRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
@@ -257,7 +263,11 @@ export const More = ({
                         if (item.options === undefined) {
                             return [item];
                         }
-                        return item.options.filter(({ offered }) => offered);
+                        // A brand style row applies only to the block types its style names.
+                        return item.options.filter(
+                            ({ offered, brand }) =>
+                                offered && (brand === undefined || brand.appliesTo.includes(blockType)),
+                        );
                     })
                     .map((item) => (
                         <MoreRow key={item.key} item={item} strings={strings} onRun={rows.onRun} />

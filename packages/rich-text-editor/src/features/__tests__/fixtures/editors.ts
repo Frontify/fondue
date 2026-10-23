@@ -13,6 +13,7 @@ import {
     fixtureRedo,
     fixtureToolbar,
 } from './features';
+import { fixtureHighlight } from './highlight';
 
 const LEVEL = { fields: { level: { type: 'integer', min: 1, max: 6 } } } as const;
 const LEVELS = [1, 2, 3, 4, 5, 6] as const;
@@ -149,6 +150,31 @@ export const fixtureToolbarEditor = defineEditorPlugin(fixtureToolbar, {
     ],
 });
 
+/** Sets and removes the highlight of `marks.highlight`, as `mark.font-color.set` does the text colour. */
+export const fixtureHighlightEditor = defineEditorPlugin(fixtureHighlight, {
+    commands: {
+        'mark.highlight.set': {
+            payload: {
+                fields: { tokenId: { type: 'id' }, value: { type: 'color' } },
+                exactlyOne: ['tokenId', 'value'],
+                nullable: true,
+            },
+            run: (api, payload: { readonly tokenId: string } | { readonly value: string } | null) => {
+                if (payload === null) {
+                    return api.marks.remove('highlight');
+                }
+                return api.marks.set('highlight', payload);
+            },
+            active: (api, payload) => {
+                if (payload === null) {
+                    return false;
+                }
+                return api.marks.active('highlight', payload);
+            },
+        },
+    },
+});
+
 /** The fixture features' editor parts that hold no React, so a worker with no style loader takes them. */
 export const FIXTURE_EDITORS = [
     fixtureBoldEditor,
@@ -159,6 +185,7 @@ export const FIXTURE_EDITORS = [
     fixtureHeadingSetEditor,
     fixtureInputRulesEditor,
     fixtureToolbarEditor,
+    fixtureHighlightEditor,
 ] as const;
 
 /** The ones of `parts` for the features `model` installs, in feature order, as a host passes `defineEditor` its own. */

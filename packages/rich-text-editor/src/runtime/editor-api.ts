@@ -26,7 +26,7 @@ import { hrefPolicyOf } from '#/model/href';
 import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
-import { type CapabilityImplementation, EDITS, placeBlock, placesBlock } from './capabilities';
+import { type CapabilityImplementation, EDITS, LAST_MARK_META, placeBlock, placesBlock } from './capabilities';
 import {
     type AncestorValue,
     type BlockValue,
@@ -526,12 +526,28 @@ const documentApi = (source: ApiSource): DocumentApi => {
         editable: () => source.editable(),
         optionsOf: (featureId) => compiledModel(source.model).features.find(({ id }) => id === featureId)?.options,
         marks: {
-            active: (mark) => {
+            active: (mark, attrs) => {
                 if (markType(mark) === undefined) {
                     return false;
                 }
-                return capability(EDITS.toggleMark, { mark }).active(source.state());
+                if (attrs === undefined) {
+                    return capability(EDITS.toggleMark, { mark }).active(source.state());
+                }
+                return capability(EDITS.setMark, { mark }).active(source.state(), attrs);
             },
+            attrs: (mark) => {
+                const type = markType(mark);
+                if (type === undefined) {
+                    return undefined;
+                }
+                const { storedMarks, selection } = source.state();
+                const held = type.isInSet(storedMarks ?? selection.$from.marks());
+                if (held === undefined) {
+                    return undefined;
+                }
+                return valuesOf(held.attrs);
+            },
+            installed: () => compiledModel(model).marks.map(({ name }) => name),
             allowed: (mark) => {
                 const type = markType(mark);
                 if (type === undefined) {
@@ -562,6 +578,12 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 const checked = checkedAttrs(model, [mark], attrs, maxAttributeLength, true);
                 return checked !== undefined && edit(capability(EDITS.toggleMark, { mark, attrs: checked }));
             },
+            set: (mark, attrs) => {
+                if (markType(mark) === undefined) {
+                    return false;
+                }
+                return editWith(EDITS.setMark, { mark }, [mark], attrs, true);
+            },
             remove: (marks) => {
                 const installed = (typeof marks === 'string' ? [marks] : [...marks]).filter(
                     (mark) => markType(mark) !== undefined,
@@ -575,6 +597,7 @@ const documentApi = (source: ApiSource): DocumentApi => {
                     }),
                 );
             },
+            reapply: (names) => edit(capability(EDITS.reapplyMark, { installed: [...names] })),
         },
         blocks: {
             active: (node, attrs) => {
@@ -890,13 +913,17 @@ const composer = (base: EditorState) => {
     };
 };
 
-/** What one edit of a composed command leaves besides its steps: stored marks and scrolling. */
+/** What one edit of a composed command leaves besides its steps: stored marks, scrolling and the last mark it set. */
 const carryState = (outer: Transaction, next: Transaction) => {
     if (next.storedMarksSet) {
         outer.setStoredMarks(next.storedMarks);
     }
     if (next.scrolledIntoView) {
         outer.scrollIntoView();
+    }
+    const mark: unknown = next.getMeta(LAST_MARK_META);
+    if (mark !== undefined) {
+        outer.setMeta(LAST_MARK_META, mark);
     }
 };
 

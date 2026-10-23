@@ -71,6 +71,7 @@ import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { type AuthoringPolicy, type DocumentChange } from '#/runtime/types';
 import { paste, pressKey, setSelection } from '#/testing';
 
+import { NO_COLORS } from '../import/colors';
 import { importHtml } from '../import/html';
 import { SLICE_TYPE } from '../slice';
 
@@ -1434,8 +1435,25 @@ describe('pasted HTML', () => {
     });
 
     it('lets the parse rules of shipped features read only the listed attributes and styles', () => {
-        const attributes = new Set(['start', 'lang', 'data-checked', 'data-language', 'data-marker']);
-        const styles = new Set(['text-align', 'font-weight', 'font-style', 'text-decoration', 'vertical-align']);
+        const attributes = new Set([
+            'start',
+            'lang',
+            'data-checked',
+            'data-language',
+            'data-marker',
+            'color',
+            'data-rte-color',
+            'data-rte-style',
+        ]);
+        const styles = new Set([
+            'text-align',
+            'font-weight',
+            'font-style',
+            'text-decoration',
+            'vertical-align',
+            'color',
+            'background-color',
+        ]);
         const shipped = compiledModel(
             compileContentModel(
                 Object.values(registry).map((factory) => factory()),
@@ -1478,11 +1496,19 @@ describe('pasted HTML', () => {
         const mounted = mountHtml();
 
         pasteInto(mounted, {
-            'text/html': '<p><span style="font-weight: bold; position: fixed">b</span></p>',
+            'text/html':
+                '<p><span style="color:red;background:url(x);position:fixed">x</span> <span style="font-weight: bold; position: fixed">b</span></p>',
         });
 
-        expect(mounted.content()).toEqual([block(text('b', mark('bold')))]);
-        expect(JSON.stringify(mounted.content())).not.toMatch(/fixed|style/);
+        // The model keeps literal colours, so `red` becomes its hex value.
+        expect(mounted.content()).toEqual([
+            block(
+                text('x', mark('font_color', { tokenId: null, value: '#ff0000' })),
+                text(' '),
+                text('b', mark('bold')),
+            ),
+        ]);
+        expect(JSON.stringify(mounted.content())).not.toMatch(/red|url|fixed|style/);
         mounted.unmount();
     });
 
@@ -1637,6 +1663,7 @@ describe('pasted HTML', () => {
                         limits: defaultLimits,
                         headingLevels: undefined,
                         depth: 2,
+                        colors: NO_COLORS,
                         rules: [],
                     }).content,
                 );

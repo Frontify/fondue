@@ -45,7 +45,7 @@ import {
 } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
-import { codecContext, columnLayout, contentClasses } from '#/model/output';
+import { codecContext, columnLayout, contentClasses, styleSheetOf, unknownStyle } from '#/model/output';
 import { randomId } from '#/model/random-id';
 import { createSaveCoordinator } from '#/persistence/coordinator';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
@@ -73,6 +73,7 @@ import { useEditorLocale } from './locale';
 import { usePluginHosts, useRenderedHosts } from './plugin-hosts';
 import { BlockedShell, RecoveryShell } from './shells';
 import { registerSaveCauses, SaveStatusText } from './status';
+import { useRecipeSheet } from './style-sheet';
 import { menuItems, toolbarItems, translatedLabel } from './toolbar-items';
 import {
     type CompiledEditorDefinition,
@@ -417,6 +418,7 @@ const SessionComponent = (
             limits: definition.limits,
             generateId: ids,
             nodeViews: (session) => createNodeViews(viewsOf(definition), { portals, runtime: session }),
+            markViews: () => coordinator.chrome.markViews(engine.schema),
             inRender: () => inReactWork(work),
             revision: loaded.revision,
             saves,
@@ -425,6 +427,7 @@ const SessionComponent = (
             tabMovesFocus: () => latestRef.current.tabMovesFocus,
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             commandHost: hosts,
+            styles: () => latestRef.current.presentation?.styles ?? [],
             columns: columnsAtMount(latestRef.current.presentation, t),
         });
         connectClipboard(runtime, {
@@ -502,6 +505,22 @@ const SessionComponent = (
     useClientLayoutEffect(() => {
         coordinator.chrome.setListLevels(listLevels);
     }, [coordinator, listLevels]);
+    // Without a presentation no style map is given, so no stored style is unknown.
+    const recipes = props.presentation?.styles;
+    const colorTokens = props.presentation?.colorTokens;
+    useClientLayoutEffect(() => {
+        if (recipes === undefined || colorTokens === undefined) {
+            coordinator.chrome.setStyles(undefined);
+            return;
+        }
+        coordinator.chrome.setStyles({
+            styles: recipes,
+            colorTokens,
+            onUnknown: (path) => coordinator.runtime?.report(unknownStyle(path)),
+        });
+    }, [coordinator, recipes, colorTokens]);
+    const styleSheet = useMemo(() => styleSheetOf(recipes ?? []), [recipes]);
+    useRecipeSheet(rootRef, styleSheet);
 
     // A changed `services` member aborts the operations it started, with no rebuild.
     const { services } = props;

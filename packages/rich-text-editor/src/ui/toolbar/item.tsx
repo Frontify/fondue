@@ -34,6 +34,13 @@ export interface ToolbarItem {
     readonly opensControl?: boolean;
     /** A plugin's own control, which renders in place of the standard button. */
     readonly component?: ComponentType<ToolbarControlProps>;
+    /** The heading of the text style picker's brand style rows. */
+    readonly groupLabel?: string;
+    /** A brand style row of the text style picker: the block types it applies to and the font it previews. */
+    readonly brand?: {
+        readonly appliesTo: readonly string[];
+        readonly preview: Readonly<Record<string, string>>;
+    };
     /** The node type a menu row acts on, which it shows only while such a node is selected or holds the caret. */
     readonly node?: string;
 }

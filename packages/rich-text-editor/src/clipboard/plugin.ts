@@ -153,6 +153,9 @@ const commit = (
     if (pasted.droppedMedia > 0) {
         announce(connected.session, 'RichTextEditor_pasteMediaDropped', { count: pasted.droppedMedia });
     }
+    if (pasted.removedFormatting === true) {
+        announce(connected.session, 'RichTextEditor_pasteFormattingRemoved');
+    }
 };
 
 const settingsOf = (

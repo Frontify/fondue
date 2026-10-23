@@ -12,7 +12,12 @@ import {
     TextSelection,
     type Transaction,
 } from 'prosemirror-state';
-import { type DirectEditorProps, EditorView, type NodeViewConstructor } from 'prosemirror-view';
+import {
+    type DirectEditorProps,
+    EditorView,
+    type MarkViewConstructor,
+    type NodeViewConstructor,
+} from 'prosemirror-view';
 
 import {
     APPEND_BATCH_META,
@@ -32,6 +37,7 @@ import {
     hashDocument,
     type HrefPolicy,
     type JsonObject,
+    type PresentationStyle,
     type ResourceLimits,
     type RichTextDocument,
 } from '#/model';
@@ -59,6 +65,7 @@ import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { scrollSelectionIntoView } from './scroll';
 import { createInputSettling } from './settle';
+import { stylesPlugin } from './styles';
 import { type SuggestionHost, suggestionHosts } from './suggestions/host';
 import { suggestionOptionId } from './suggestions/option-id';
 import { activeSuggestion } from './suggestions/plugin';
@@ -221,6 +228,8 @@ export interface EditorRuntimeOptions {
     readonly limits: ResourceLimits;
     /** Builds the bridge's node views by node name for this runtime, which only passes them to the view. */
     readonly nodeViews?: (runtime: EditorRuntime) => Readonly<Record<string, NodeViewConstructor>>;
+    /** The mark views that give styled and coloured marks their presentation, built once per session. */
+    readonly markViews?: (runtime: EditorRuntime) => Readonly<Record<string, MarkViewConstructor>>;
     /** Whether the editor's React tree renders or runs an effect now, which a development build passes. */
     readonly inRender?: () => boolean;
     /** The loaded record's revision, which an unmanaged session reports as acknowledged. */
@@ -237,6 +246,8 @@ export interface EditorRuntimeOptions {
     readonly scrollSelectionIntoView?: () => boolean | undefined;
     /** What the editor layer hands the plugin commands it runs. */
     readonly commandHost?: unknown;
+    /** The presentation's brand styles, read when `block.style.set` runs; default none. */
+    readonly styles?: () => readonly PresentationStyle[];
     /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
     readonly columns?: ColumnState;
 }
@@ -441,6 +452,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let viewThrew = false;
     // Node views come from the bridge once this runtime exists, since they act on it.
     let nodeViews: Readonly<Record<string, NodeViewConstructor>> = {};
+    let markViews: Readonly<Record<string, MarkViewConstructor>> = {};
     // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
     let busy = 0;
     let draining = false;
@@ -478,6 +490,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             targetsPlugin,
             groupsPlugin,
             columnsPlugin(() => shownColumns),
+            stylesPlugin(() => options.styles?.() ?? []),
             nodeStatePlugin(),
             ...definition.plugins,
         ],
@@ -1845,6 +1858,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 return attributes;
                             },
                             nodeViews,
+                            markViews,
                             // Returning true reports the scroll as handled, so the view leaves it out.
                             handleScrollToSelection: () => options.scrollSelectionIntoView?.() === false,
                             dispatchTransaction: commit,
@@ -1981,6 +1995,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
     if (options.nodeViews !== undefined) {
         nodeViews = options.nodeViews(runtime);
+    }
+    if (options.markViews !== undefined) {
+        markViews = options.markViews(runtime);
     }
     if (options.saves !== undefined) {
         saves = options.saves(runtime);

@@ -15,11 +15,13 @@ import { orderedList } from '#/features/lists-ordered/feature';
 import { taskList } from '#/features/lists-task/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { code } from '#/features/marks-code/feature';
+import { fontColor } from '#/features/marks-font-color/feature';
 import { italic } from '#/features/marks-italic/feature';
 import { strike } from '#/features/marks-strike/feature';
 import { subscript } from '#/features/marks-subscript/feature';
 import { superscript } from '#/features/marks-superscript/feature';
 import { underline } from '#/features/marks-underline/feature';
+import { brandStyles } from '#/features/styles-brand/feature';
 import { DefinitionError, type Feature } from '#/model';
 
 /** Every shipped feature factory by feature ID. */
@@ -33,6 +35,7 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'marks.code': code,
     'marks.subscript': subscript,
     'marks.superscript': superscript,
+    'marks.font-color': fontColor,
     'blocks.heading': heading,
     'blocks.quote': quote,
     'blocks.code': codeBlock,
@@ -43,6 +46,7 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'lists.bullet': bulletList,
     'lists.ordered': orderedList,
     'lists.task': taskList,
+    'styles.brand': brandStyles,
     'input-rules': inputRules,
 };
 
@@ -68,6 +72,7 @@ export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     'marks.code': NO_DEPENDENCIES,
     'marks.subscript': NO_DEPENDENCIES,
     'marks.superscript': NO_DEPENDENCIES,
+    'marks.font-color': NO_DEPENDENCIES,
     'blocks.heading': NO_DEPENDENCIES,
     'blocks.quote': NO_DEPENDENCIES,
     'blocks.code': { owner: OWNER, dependencies: { lowlight: 'MIT' } },
@@ -78,6 +83,7 @@ export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     'lists.bullet': NO_DEPENDENCIES,
     'lists.ordered': NO_DEPENDENCIES,
     'lists.task': NO_DEPENDENCIES,
+    'styles.brand': NO_DEPENDENCIES,
     'input-rules': NO_DEPENDENCIES,
 };
 
