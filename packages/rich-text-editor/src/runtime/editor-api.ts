@@ -441,7 +441,7 @@ const documentApi = (source: ApiSource): DocumentApi => {
         });
         return found;
     };
-    /** Commits `transaction`, whose write covers `written`. */
+    /** Commits `transaction`, whose write of `content` covers `written`, unless a limit or the session refuses it. */
     const commit = (
         state: EditorState,
         transaction: Transaction,
@@ -502,13 +502,27 @@ const documentApi = (source: ApiSource): DocumentApi => {
         const transaction = state.tr.replaceWith(span.from, span.to, content);
         return commit(state, transaction, { from: span.from, to: span.from + content.size }, content);
     };
-    /** A new block of `type` with `attrs`, holding the content it requires. */
-    const blockOf = (type: NodeType, attrs: JsonObject): Node | 'invalid' => {
+    /** A new block of `type` with `attrs`, holding the stored JSON `content` as it is, else the content it requires. */
+    const blockOf = (
+        type: NodeType,
+        attrs: JsonObject,
+        content: readonly ContentNodeJSON[] | undefined,
+    ): Node | 'invalid' | 'limit' | 'policy' => {
         const checked = checkedAttrs(model, [type.name], attrs, maxAttributeLength, true);
         if (checked === undefined) {
             return 'invalid';
         }
-        return type.createAndFill(checked) ?? 'invalid';
+        if (content === undefined) {
+            return type.createAndFill(checked) ?? 'invalid';
+        }
+        const built = decoded([{ type: type.name, attrs: checked, content }]);
+        if (typeof built === 'string') {
+            return built;
+        }
+        if (refusesUrl(built)) {
+            return 'policy';
+        }
+        return built.firstChild ?? 'invalid';
     };
     const markType = (mark: string): MarkType | undefined => schema.marks[mark];
     const runValue = (
@@ -589,6 +603,7 @@ const documentApi = (source: ApiSource): DocumentApi => {
             return rangeOf(doc, selection.from, selection.to);
         },
         document: () => source.document(source.state()),
+        policy: () => source.policy(),
         editable: () => source.editable(),
         optionsOf: (featureId) => compiledModel(source.model).features.find(({ id }) => id === featureId)?.options,
         marks: {
@@ -720,6 +735,13 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 return edit(capability(EDITS.block, { action }));
             },
             indentLines: (direction) => edit(capability(EDITS.indentLines, { direction })),
+            lift: (node) => {
+                if (schema.nodes[node] === undefined) {
+                    return false;
+                }
+                const wrap = capability(EDITS.wrapIn, { node });
+                return wrap.active(source.state()) !== false && edit(wrap);
+            },
             clear: (attributes) => {
                 if (attributes.includes('nodeId')) {
                     return false;
@@ -756,7 +778,7 @@ const documentApi = (source: ApiSource): DocumentApi => {
             node: (node, attrs, options) => {
                 const type = schema.nodes[node];
                 const topLevel = options?.place === 'after-top-level-block';
-                if (type === undefined || (!type.isBlock && topLevel)) {
+                if (type === undefined || (!type.isBlock && (topLevel || options?.content !== undefined))) {
                     return { status: 'rejected', code: 'invalid' };
                 }
                 const state = source.state();
@@ -774,7 +796,8 @@ const documentApi = (source: ApiSource): DocumentApi => {
                     const transaction = state.tr.replaceSelectionWith(inline, type.spec.marks !== '').scrollIntoView();
                     return commit(state, transaction, firstWrite(transaction), Fragment.from(inline));
                 }
-                const block = blockOf(type, attrs ?? {});
+                const content = options?.content;
+                const block = blockOf(type, attrs ?? {}, content);
                 if (typeof block === 'string') {
                     return rejectedWrite(block);
                 }

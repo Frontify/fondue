@@ -8,21 +8,32 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { brandDocumentFeatures, commentFeatures, documentFeatures, featuresById, inlineFeatures } from '#/features';
+import {
+    brandDocumentFeatures,
+    brandDocumentModel,
+    commentFeatures,
+    commentModel,
+    documentFeatures,
+    documentModel,
+    featuresById,
+    inlineFeatures,
+    inlineModel,
+} from '#/features';
 import { registry } from '#/features/registry';
 import { UNSHIPPED_FEATURES } from '#/features/stages';
 import { enUS } from '#/locales/en-US';
+import { toJsonSchema } from '#/model';
 import { CONTENT_RULE_IDS } from '#/model/checks';
 
 const PACKAGE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const read = (path: string) => readFileSync(join(PACKAGE, path), 'utf8');
 const page = (name: string) => read(`src/docs/${name}.mdx`);
 
-const PAGES = ['reader-codecs', 'accessibility', 'observability', 'authoring', 'limitations'] as const;
+const PAGES = ['reader-codecs', 'accessibility', 'observability', 'authoring', 'limitations', 'compatibility'] as const;
 
 /** Whether a Markdown table of `source` has a row that starts with `cell` in code, however the formatter padded it. */
 const hasRow = (source: string, cell: string) =>
-    new RegExp(`^\\| \`${cell.replaceAll('.', '\\.')}\`\\s+\\|`, 'm').test(source);
+    new RegExp(`^\\| \`${cell.replaceAll(/[.*]/g, '\\$&')}\`\\s+\\|`, 'm').test(source);
 
 /** The level 2 headings of a page. */
 const headingsOf = (source: string) =>
@@ -47,6 +58,22 @@ describe('the docs pages', () => {
             expect(existsSync(join(PACKAGE, `src/docs/${name}.mdx`)), name).toBe(true);
             expect(page(name)).toMatch(/<Meta title="Rich Text Editor\/Guides\/[^"]+" \/>/);
         }
+    });
+});
+
+describe('the package README', () => {
+    const source = read('README.md');
+
+    it('lists every entry that package.json exports in its entries table', () => {
+        const { exports } = JSON.parse(read('package.json')) as { readonly exports: Readonly<Record<string, unknown>> };
+
+        for (const entry of Object.keys(exports)) {
+            expect(hasRow(source, entry), entry).toBe(true);
+        }
+    });
+
+    it('does not call the published package private or unreleased', () => {
+        expect(source).not.toMatch(/\b(?:private|unreleased)\b/i);
     });
 });
 
@@ -86,6 +113,40 @@ describe('the accessibility guide', () => {
         expect(shipped.length).toBeGreaterThan(0);
         for (const locale of shipped) {
             expect(source, locale).toContain(`\`${locale}\``);
+        }
+    });
+});
+
+describe('the compatibility guide', () => {
+    const source = page('compatibility');
+    const SHIPPED = [inlineModel, commentModel, documentModel, brandDocumentModel];
+
+    it('has a matrix row for each shipped model with the versions it reads, the version it writes and the oldest package version that reads it', () => {
+        for (const { ref } of SHIPPED) {
+            const row = new RegExp(
+                `^\\| \`${ref.id}\`\\s+\\| [^|]*\\b${ref.version}\\b[^|]*\\| ${ref.version}\\s+\\| \\d+\\.\\d+\\.\\d+\\s+\\|`,
+                'm',
+            );
+
+            expect(source, ref.id).toMatch(row);
+        }
+    });
+
+    it('publishes the toJsonSchema output of each shipped model as one file per model ID and version', () => {
+        for (const model of SHIPPED) {
+            const path = `src/docs/schemas/${model.ref.id}/${model.ref.version}.json`;
+
+            expect(existsSync(join(PACKAGE, path)), path).toBe(true);
+            expect(JSON.parse(read(path))).toEqual(toJsonSchema(model));
+        }
+    });
+
+    it('links every schema file at the path Storybook serves it from', () => {
+        const files = filesUnder('src/docs/schemas', ['.json']);
+
+        expect(files.length).toBeGreaterThan(0);
+        for (const file of files) {
+            expect(source).toContain(`(${file.replace('src/docs/', '')})`);
         }
     });
 });

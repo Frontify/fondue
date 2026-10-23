@@ -7,6 +7,7 @@ import { EditorView } from 'prosemirror-view';
 import { describe, expect, it } from 'vitest';
 
 import { compileDefinition } from '#/definition';
+import { fcSettings, seeded } from '#/features/__tests__/fixtures/generated';
 import { type ContentNodeJSON } from '#/model';
 import { type ListKind, listModel } from '#/react/__tests__/fixtures/lists';
 import { extensionsOf } from '#/react/engine';
@@ -122,7 +123,7 @@ const boundaries = (doc: Node): number[] => {
     return found;
 };
 
-describe('list edits', () => {
+describe(seeded('list edits'), () => {
     it('keeps all text and every other item on Backspace and Delete at a list boundary', () => {
         fc.assert(
             fc.property(shape, fc.nat(), fc.constantFrom('Backspace', 'Delete'), (list, pick, key) => {
@@ -139,7 +140,7 @@ describe('list edits', () => {
                 expect(itemsIn(view.state.doc)).toBeGreaterThanOrEqual(itemsIn(before) - 1);
                 view.destroy();
             }),
-            { numRuns: 500 },
+            fcSettings(500),
         );
     });
 
@@ -207,7 +208,7 @@ describe('list edits', () => {
                 expect(view.state.doc.toJSON()).toEqual(original);
                 view.destroy();
             }),
-            { numRuns: 1000 },
+            fcSettings(1000),
         );
         // Most steps change the document, so the property is not met by doing nothing.
         expect(changed).toBeGreaterThan(taken / 2);

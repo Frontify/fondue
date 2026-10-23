@@ -6,7 +6,14 @@ import { useEffect, useRef, useState } from 'react';
 import { bold, core } from '#/features';
 import { fixtureLabelledMention } from '#/features/__tests__/fixtures/features';
 import { taskList as taskListFeature } from '#/features/lists-task/feature';
-import { defineEditor, defineReactPresentation, type DocumentChange, type EditorHandle, RichTextEditor } from '#/index';
+import {
+    defineEditor,
+    defineReactPresentation,
+    type DocumentChange,
+    type EditorHandle,
+    RichTextEditor,
+    type UploadService,
+} from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
 import { type SelectionTarget, setSelection } from '#/testing';
@@ -48,6 +55,8 @@ declare global {
         clip?: {
             readonly handle: EditorHandle;
             readonly changes: readonly DocumentChange[];
+            /** How often the upload service was called. */
+            readonly uploads: () => number;
             /** The stored content of the published document. */
             readonly content: () => unknown;
             readonly select: (target: SelectionTarget) => void;
@@ -93,6 +102,17 @@ export const ClipboardProbe = ({
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const [changes] = useState<DocumentChange[]>([]);
+    const [uploads] = useState(() => {
+        let calls = 0;
+        const service: UploadService = {
+            upload: () => {
+                calls += 1;
+                return Promise.reject(new Error('no upload'));
+            },
+            releaseUnused: () => Promise.resolve(),
+        };
+        return { service, calls: () => calls };
+    });
     useEffect(() => {
         const handle = ref.current as EditorHandle | null;
         const runtime = runtimeOf(handle ?? {});
@@ -102,6 +122,7 @@ export const ClipboardProbe = ({
         window.clip = {
             handle,
             changes,
+            uploads: uploads.calls,
             content: () => handle.getSnapshot().document.content.content,
             select: (target) => {
                 setSelection(handle, target);
@@ -121,7 +142,7 @@ export const ClipboardProbe = ({
             },
             selection: () => [runtime.state.selection.anchor, runtime.state.selection.head],
         };
-    }, [changes]);
+    }, [changes, uploads]);
     let blocks: ContentNodeJSON[] = texts.map(paragraphOf);
     let shown = definition;
     let documentModel: { readonly id: string; readonly version: number } = { id: 'test.clipboard', version: 1 };
@@ -173,6 +194,7 @@ export const ClipboardProbe = ({
             defaultValue={{ documentId: 'document-1', revision: null, document }}
             presentation={presentation}
             readOnly={readOnly}
+            services={{ uploads: uploads.service }}
             ref={ref}
             onDocumentChange={(change) => changes.push(change)}
         />

@@ -17,6 +17,7 @@ import {
     type EditorCommand,
     type EditorHandle,
     type EditorOverlay,
+    type NodePending,
     type NodeViewContext,
     RichTextEditor,
     useCommandState,
@@ -84,12 +85,32 @@ export const useStates = () => {
 };
 
 // The types that public plugin types reference are importable from the package root.
-export type Referenced = [BlockDecoration, BlockDecorationSource, DecoratedBlock, EditorOverlay, NodeViewContext];
+export type Referenced = [
+    BlockDecoration,
+    BlockDecorationSource,
+    DecoratedBlock,
+    EditorOverlay,
+    NodePending,
+    NodeViewContext,
+];
 
-// A command whose `run` takes no payload needs no declaration.
+// A command whose `run` takes a payload declares it.
 export const authored = defineEditorPlugin(core, {
     commands: {
         'acme.plain': { run: (api) => api.marks.toggle('bold') },
+        'acme.level': {
+            payload: { fields: { level: { type: 'integer' } } },
+            run: (api, payload: { readonly level: number }) => api.attributes.set('heading', payload),
+        },
+        'acme.undeclared': {
+            // @ts-expect-error: `run` takes a payload that `payload` does not declare.
+            run: (api, payload: { readonly level: number }) => api.attributes.set('heading', payload),
+        },
+        'acme.wrong': {
+            payload: { fields: { level: { type: 'string' } } },
+            // @ts-expect-error: `run` takes a number where `payload` declares a string.
+            run: (api, payload: { readonly level: number }) => api.attributes.set('heading', payload),
+        },
     },
 });
 

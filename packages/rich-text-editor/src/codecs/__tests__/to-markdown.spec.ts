@@ -16,6 +16,7 @@ import {
     link,
     listItem,
     mark,
+    mention,
     node,
     paragraph,
     row,
@@ -25,6 +26,7 @@ import {
     taskList,
     text,
 } from '#/features/__tests__/fixtures/documents';
+import { fcSettings, seeded } from '#/features/__tests__/fixtures/generated';
 import { type JsonValue, type RichTextDocument } from '#/model';
 import { decodeToTree } from '#/model/decode';
 import { encodeTree } from '#/model/encode';
@@ -40,6 +42,22 @@ const styled = (attrs: object, ...children: readonly JsonValue[]) =>
     node('paragraph', { lang: null, styleId: null, align: null, indent: 0, ...attrs }, ...children);
 const header = (...children: readonly JsonValue[]) =>
     node('table_header', { colspan: 1, rowspan: 1, colwidth: null, scope: 'col' }, ...children);
+const figure = (nodeId: string, assetId: string) =>
+    node(
+        'figure',
+        { nodeId, align: 'center' },
+        node('asset_image', {
+            nodeId: `${nodeId}-image`,
+            assetId,
+            labelSnapshot: 'Photo',
+            altIntent: 'meaningful',
+            altText: 'A cat',
+            width: 640,
+            height: null,
+            displayWidth: null,
+            mediaType: null,
+        }),
+    );
 const resolveAssetUrl = (assetId: string) => {
     if (assetId === 'missing') {
         return null;
@@ -217,6 +235,22 @@ const rows: readonly Row[] = [
         dialect: 'commonmark',
     },
     {
+        name: 'mentions as @label, with a loss',
+        blocks: [paragraph(text('Hi '), mention('m-1'))],
+        markdown: 'Hi @Ada',
+        losses: [{ featureId: 'fixture.mention', count: 1 }],
+        parsed: '<p>Hi @Ada</p>\n',
+        dialect: 'commonmark',
+    },
+    {
+        name: 'images as ![alt](url) through resolveAssetUrl after checkHref, or nothing when unresolved or unsafe, with a loss',
+        blocks: [figure('f-1', 'a-1'), figure('f-2', 'missing'), figure('f-3', 'unsafe')],
+        markdown: '![A cat](https://cdn.example/a-1)',
+        losses: [{ featureId: 'fixture.media', count: 3 }],
+        parsed: '<p><img src="https://cdn.example/a-1" alt="A cat" /></p>\n',
+        dialect: 'commonmark',
+    },
+    {
         name: 'embeds as [title](url) in their own paragraph, or as an autolink when the title is null, with a loss',
         blocks: [
             node('embed', {
@@ -314,7 +348,7 @@ const textOf = (value: unknown): string => {
     return own + content.map(textOf).join('|');
 };
 
-describe('toMarkdown escaping', () => {
+describe(seeded('toMarkdown escaping'), () => {
     it('escapes Markdown and HTML characters so fromMarkdown reads the same text back', () => {
         fc.assert(
             fc.property(fc.array(specialText, { minLength: 1, maxLength: 4 }), (texts) => {
@@ -324,7 +358,7 @@ describe('toMarkdown escaping', () => {
                 expect(result.status).toBe('editable');
                 expect(result.status === 'editable' && textOf(result.document.content)).toBe(textOf(document.content));
             }),
-            { numRuns: 300 },
+            fcSettings(300),
         );
     });
 });
@@ -412,7 +446,7 @@ const documentArb = fc
     .array(block, { minLength: 1, maxLength: 4 })
     .map((blocks) => canonical(stored(...blocks.map(unique))));
 
-describe('Markdown round trip', () => {
+describe(seeded('Markdown round trip'), () => {
     it('returns an equal document, ignoring nodeIds, whenever toMarkdown reports no loss', () => {
         let lossless = 0;
         fc.assert(
@@ -427,7 +461,7 @@ describe('Markdown round trip', () => {
                 expect(result.status).toBe('editable');
                 expect(result.status === 'editable' && withoutIds(result.document)).toEqual(withoutIds(document));
             }),
-            { numRuns: 500 },
+            fcSettings(500),
         );
         // Most generated documents must reach the comparison, or the property would hold by skipping them.
         expect(lossless).toBeGreaterThan(250);
@@ -512,6 +546,12 @@ describe('toMarkdown edge rules', () => {
             'an embed with no title and a relative URL as a link to itself',
             [node('embed', { nodeId: 'e', url: '/talk', provider: 'youtube', title: null })],
             '[/talk](/talk)',
+            [{ featureId: 'fixture.media', count: 1 }],
+        ],
+        [
+            'an image with no resolveAssetUrl as nothing',
+            [paragraph(text('a')), figure('f-1', 'a-1')],
+            'a',
             [{ featureId: 'fixture.media', count: 1 }],
         ],
         [

@@ -90,6 +90,17 @@ for (const readOnly of [false, true]) {
     });
 }
 
+test('shows the placeholder through the surface pseudo-element only while empty', async ({ mount, page }) => {
+    await mount(<EditorProbe texts={['']} placeholder="Write a note" />);
+    await ready(page);
+    const before = () => surfaceOf(page).evaluate((surface) => getComputedStyle(surface, '::before').content);
+
+    expect(await before()).toBe('"Write a note"');
+    await surfaceOf(page).click();
+    await page.keyboard.type('a');
+    expect(await before()).toBe('none');
+});
+
 test('takes keyboard focus on a read-only surface with Tab', async ({ mount, page }) => {
     await mount(<EditorProbe readOnly />);
     await ready(page);

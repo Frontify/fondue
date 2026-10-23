@@ -2,7 +2,7 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core } from '#/features/core/feature';
+import { core } from '#/features';
 import { deDE } from '#/locales/de-DE';
 import { compileContentModel } from '#/model';
 import { RichTextReader } from '#/reader';

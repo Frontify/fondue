@@ -1791,7 +1791,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
      * `contenteditable` turns false.
      */
     const refocus = (focused: boolean) => {
-        if (!focused || view === undefined) {
+        // A disabled surface leaves the Tab order and takes no focus.
+        if (!focused || disabled || view === undefined) {
             return;
         }
         const owner = view.dom.ownerDocument;

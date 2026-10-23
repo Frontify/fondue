@@ -1,0 +1,383 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Qualification record of a @frontify/rich-text-editor release",
+    "description": "The automated evidence of one release (SPEC-rich-text-quality, Qualification record). A result that only a CI job can give names that job in pendingIn until the release pull request fills it in.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["version", "commit", "date", "suites", "performance", "bundle", "findings", "acceptedFailures"],
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+        },
+        "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "suites": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["unit", "chromium", "firefox", "webkit"],
+            "properties": {
+                "unit": {
+                    "$ref": "#/$defs/unitResult"
+                },
+                "chromium": {
+                    "$ref": "#/$defs/browserResult"
+                },
+                "firefox": {
+                    "$ref": "#/$defs/browserResult"
+                },
+                "webkit": {
+                    "$ref": "#/$defs/browserResult"
+                }
+            }
+        },
+        "performance": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "$ref": "#/$defs/pending",
+                    "unevaluatedProperties": false
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["id", "budgetMs", "measuredMs"],
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "budgetMs": {
+                                "type": ["number", "null"]
+                            },
+                            "measuredMs": {
+                                "type": "number",
+                                "minimum": 0
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "bundle": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["build", "budgetBytes", "test", "passed"],
+                "properties": {
+                    "build": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "budgetBytes": {
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "test": {
+                        "type": "string",
+                        "pattern": "^src/.+\\.spec\\.ts$"
+                    },
+                    "passed": {
+                        "const": true
+                    }
+                }
+            }
+        },
+        "findings": {
+            "description": "Open security and accessibility findings. Each needs a decision record, whatever its automated severity label.",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "severity", "summary", "decision"],
+                "properties": {
+                    "kind": {
+                        "enum": ["security", "accessibility"]
+                    },
+                    "severity": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "summary": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "decision": {
+                        "$ref": "#/$defs/decision"
+                    }
+                }
+            }
+        },
+        "acceptedFailures": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["test", "project", "decision"],
+                "properties": {
+                    "test": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "project": {
+                        "enum": ["unit", "chromium", "firefox", "webkit"]
+                    },
+                    "decision": {
+                        "$ref": "#/$defs/decision"
+                    }
+                }
+            }
+        }
+    },
+    "$defs": {
+        "decision": {
+            "type": "string",
+            "pattern": "^DR-\\d{3}$"
+        },
+        "pending": {
+            "type": "object",
+            "required": ["pendingIn"],
+            "properties": {
+                "pendingIn": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "counts": {
+            "type": "object",
+            "required": ["command", "passed", "failed", "skipped"],
+            "properties": {
+                "command": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "passed": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "failed": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "flaky": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "skipped": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "unitResult": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/counts"
+                }
+            ],
+            "unevaluatedProperties": false,
+            "properties": {
+                "vitest": {
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+\\.\\d+$"
+                }
+            },
+            "required": ["vitest"]
+        },
+        "browserResult": {
+            "type": "object",
+            "required": ["browserVersion", "playwright"],
+            "properties": {
+                "browserVersion": {
+                    "type": "string",
+                    "pattern": "^\\d+(\\.\\d+)+$"
+                },
+                "playwright": {
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+\\.\\d+$"
+                }
+            },
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/counts"
+                },
+                {
+                    "$ref": "#/$defs/pending"
+                }
+            ],
+            "unevaluatedProperties": false
+        }
+    },
+    "allOf": [
+        {
+            "if": {
+                "type": "object",
+                "properties": {
+                    "suites": {
+                        "type": "object",
+                        "properties": {
+                            "unit": {
+                                "type": "object",
+                                "required": ["failed"],
+                                "properties": {
+                                    "failed": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "then": {
+                "type": "object",
+                "properties": {
+                    "acceptedFailures": {
+                        "type": "array",
+                        "contains": {
+                            "type": "object",
+                            "required": ["project"],
+                            "properties": {
+                                "project": {
+                                    "const": "unit"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "type": "object",
+                "properties": {
+                    "suites": {
+                        "type": "object",
+                        "properties": {
+                            "chromium": {
+                                "type": "object",
+                                "required": ["failed"],
+                                "properties": {
+                                    "failed": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "then": {
+                "type": "object",
+                "properties": {
+                    "acceptedFailures": {
+                        "type": "array",
+                        "contains": {
+                            "type": "object",
+                            "required": ["project"],
+                            "properties": {
+                                "project": {
+                                    "const": "chromium"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "type": "object",
+                "properties": {
+                    "suites": {
+                        "type": "object",
+                        "properties": {
+                            "firefox": {
+                                "type": "object",
+                                "required": ["failed"],
+                                "properties": {
+                                    "failed": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "then": {
+                "type": "object",
+                "properties": {
+                    "acceptedFailures": {
+                        "type": "array",
+                        "contains": {
+                            "type": "object",
+                            "required": ["project"],
+                            "properties": {
+                                "project": {
+                                    "const": "firefox"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "type": "object",
+                "properties": {
+                    "suites": {
+                        "type": "object",
+                        "properties": {
+                            "webkit": {
+                                "type": "object",
+                                "required": ["failed"],
+                                "properties": {
+                                    "failed": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "then": {
+                "type": "object",
+                "properties": {
+                    "acceptedFailures": {
+                        "type": "array",
+                        "contains": {
+                            "type": "object",
+                            "required": ["project"],
+                            "properties": {
+                                "project": {
+                                    "const": "webkit"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

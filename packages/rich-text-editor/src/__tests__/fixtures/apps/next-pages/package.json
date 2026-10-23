@@ -1,0 +1,13 @@
+{
+    "name": "rich-text-editor-next-pages-fixture",
+    "private": true,
+    "scripts": {
+        "build": "next build",
+        "start": "next start --port 3201"
+    },
+    "dependencies": {
+        "next": "15.5.28",
+        "react": "18.3.1",
+        "react-dom": "18.3.1"
+    }
+}

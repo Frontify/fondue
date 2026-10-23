@@ -5,15 +5,7 @@ import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
 import { configDefaults, defineConfig } from 'vitest/config';
 
-import packageJson from './package.json';
-
-type DependencyManifest = {
-    dependencies?: Record<string, string>;
-    peerDependencies?: Record<string, string>;
-};
-
-const { dependencies: dependenciesMap = {}, peerDependencies: peerDependenciesMap = {} } =
-    packageJson as DependencyManifest;
+import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
 const externalCandidates = [...Object.keys(dependenciesMap), ...Object.keys(peerDependenciesMap)];
 const matchesExternalCandidate = (id: string) =>
@@ -100,6 +92,15 @@ export default defineConfig({
             enabled: true,
             provider: 'v8',
             reporter: ['text', 'lcov', 'html'],
+            thresholds: {
+                lines: 85,
+                branches: 80,
+                'src/model/**': { lines: 95, branches: 90 },
+                'src/runtime/**': { lines: 95, branches: 90 },
+                'src/persistence/**': { lines: 95, branches: 90 },
+                'src/clipboard/**': { lines: 95, branches: 90 },
+                'src/codecs/**': { lines: 95, branches: 90 },
+            },
         },
     },
 });

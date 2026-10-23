@@ -1,0 +1,29 @@
+{/* (c) Copyright Frontify Ltd., all rights reserved. */}
+
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Rich Text Editor/Guides/Compatibility" />
+
+# Compatibility
+
+A stored document names its model and the model's version in `model`, for example `{ id: 'frontify.comment', version: 1 }`. A package version reads the model versions this table lists for it, and writes the version in the Writes column. For a document of an older model version, `decodeDocument` runs the model's registered migrations before the editor loads it.
+
+## Compatibility matrix
+
+| Model                     | Reads | Writes | Oldest package version that reads its output |
+| ------------------------- | ----- | ------ | -------------------------------------------- |
+| `frontify.inline`         | 1     | 1      | 1.0.0                                        |
+| `frontify.comment`        | 1     | 1      | 1.0.0                                        |
+| `frontify.document`       | 1     | 1      | 1.0.0                                        |
+| `frontify.brand-document` | 1     | 1      | 1.0.0                                        |
+
+## JSON Schemas
+
+Each file is the `toJsonSchema` output of a shipped model at one version, so another tool can check stored documents without the editor. The path of a file never changes once a version ships.
+
+- `frontify.inline` version 1: [schemas/frontify.inline/1.json](schemas/frontify.inline/1.json)
+- `frontify.comment` version 1: [schemas/frontify.comment/1.json](schemas/frontify.comment/1.json)
+- `frontify.document` version 1: [schemas/frontify.document/1.json](schemas/frontify.document/1.json)
+- `frontify.brand-document` version 1: [schemas/frontify.brand-document/1.json](schemas/frontify.brand-document/1.json)
+
+A schema describes the model's own vocabulary. A document that keeps foreign content the editor preserved, such as an island, fails it by design, and `decodeDocument` stays the check of record.

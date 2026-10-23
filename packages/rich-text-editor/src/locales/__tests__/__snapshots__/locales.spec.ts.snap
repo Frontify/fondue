@@ -164,3 +164,91 @@ exports[`package locales > gives each save state of pt-PT its own message 1`] = 
   "RichTextEditor_saveUnsaved": "Alterações não guardadas",
 }
 `;
+
+exports[`package locales > labels every code language of de-CH through its own keys 1`] = `
+{
+  "phpTemplate": "PHP-Vorlage",
+  "pythonRepl": "Python-REPL",
+  "shell": "Shell-Sitzung",
+}
+`;
+
+exports[`package locales > labels every code language of de-DE through its own keys 1`] = `
+{
+  "phpTemplate": "PHP-Vorlage",
+  "pythonRepl": "Python-REPL",
+  "shell": "Shell-Sitzung",
+}
+`;
+
+exports[`package locales > labels every code language of en-US through its own keys 1`] = `
+{
+  "phpTemplate": "PHP template",
+  "pythonRepl": "Python REPL",
+  "shell": "Shell session",
+}
+`;
+
+exports[`package locales > labels every code language of es-ES through its own keys 1`] = `
+{
+  "phpTemplate": "Plantilla PHP",
+  "pythonRepl": "REPL de Python",
+  "shell": "Sesión de shell",
+}
+`;
+
+exports[`package locales > labels every code language of fr-CH through its own keys 1`] = `
+{
+  "phpTemplate": "Modèle PHP",
+  "pythonRepl": "REPL Python",
+  "shell": "Session shell",
+}
+`;
+
+exports[`package locales > labels every code language of fr-FR through its own keys 1`] = `
+{
+  "phpTemplate": "Modèle PHP",
+  "pythonRepl": "REPL Python",
+  "shell": "Session shell",
+}
+`;
+
+exports[`package locales > labels every code language of it-CH through its own keys 1`] = `
+{
+  "phpTemplate": "Modello PHP",
+  "pythonRepl": "REPL Python",
+  "shell": "Sessione shell",
+}
+`;
+
+exports[`package locales > labels every code language of it-IT through its own keys 1`] = `
+{
+  "phpTemplate": "Modello PHP",
+  "pythonRepl": "REPL Python",
+  "shell": "Sessione shell",
+}
+`;
+
+exports[`package locales > labels every code language of nl-NL through its own keys 1`] = `
+{
+  "phpTemplate": "PHP-sjabloon",
+  "pythonRepl": "Python-REPL",
+  "shell": "Shellsessie",
+}
+`;
+
+exports[`package locales > labels every code language of pl-PL through its own keys 1`] = `
+{
+  "phpTemplate": "Szablon PHP",
+  "pythonRepl": "Python REPL",
+  "shell": "Sesja powłoki",
+}
+`;
+
+exports[`package locales > labels every code language of pt-PT through its own keys 1`] = `
+{
+  "phpTemplate": "Modelo PHP",
+  "pythonRepl": "REPL de Python",
+  "shell": "Sessão de shell",
+}
+`;

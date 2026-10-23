@@ -8,6 +8,7 @@ import { featuresById } from '#/features';
 import { commandCases } from '#/features/__tests__/fixtures/contract.cases';
 import { FIXTURE_PLUGINS } from '#/features/__tests__/fixtures/plugins';
 import { spotlight, spotlightDocument } from '#/features/__tests__/fixtures/spotlight/feature';
+import { codeBlock } from '#/features/blocks-code/feature';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { registry } from '#/features/registry';
@@ -23,6 +24,7 @@ import {
     RichTextEditor,
 } from '#/index';
 import { compileContentModel, defineFeature, DefinitionError } from '#/model';
+import { extensionsOf } from '#/react/engine';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste, pressKey, runFeatureContract, setSelection } from '#/testing';
 
@@ -243,6 +245,15 @@ describe('a host part for a feature the package ships', () => {
         expect(() => defineEditor({ id: 'fixture.bold', model: boldModel, plugins: [strong, strong] })).toThrow(
             DefinitionError,
         );
+    });
+
+    it('keeps the shipped code highlighting when it adds a decoration source to blocks.code', () => {
+        const codeModel = compileContentModel([core(), codeBlock()], { id: 'fixture.code', version: 1 });
+        const marked = defineEditorPlugin(codeBlock, {
+            decorations: [{ id: 'fixture.marked', nodes: ['code_block'], derive: () => [] }],
+        });
+        const extension = extensionsOf(codeModel, [marked]).find(({ featureId }) => featureId === 'blocks.code');
+        expect(extension?.decorations.map(({ id }) => id)).toEqual(['code-syntax', 'fixture.marked']);
     });
 });
 

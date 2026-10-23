@@ -2,7 +2,7 @@
 
 // @vitest-environment node
 
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -10,6 +10,17 @@ import { describe, expect, it } from 'vitest';
 
 const PACKAGE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const read = (path: string) => readFileSync(join(PACKAGE, path), 'utf8');
+
+/** The items of the accessibility Report section, one level 2 heading each. */
+const SECTIONS = [
+    'Tested configuration',
+    'WCAG 2.2 criteria',
+    'AAA targets',
+    'ATAG 2.0 annex',
+    'Limitations and host-owned criteria',
+    'Editing and published output',
+    'Product targets beyond AA',
+];
 
 const CONFORMANCE_LEVELS = ['Supports', 'Partially Supports', 'Does Not Support', 'Not Applicable', 'Not Evaluated'];
 
@@ -75,6 +86,12 @@ const problemsOf = (source: string): string[] => {
     return problems;
 };
 
+/** The level 2 headings of a page. */
+const headingsOf = (source: string) =>
+    [...source.matchAll(/^## (.+)$/gm)].map(([, heading]) => heading).filter((heading) => heading !== undefined);
+
+const REPORTS = readdirSync(join(PACKAGE, 'src/docs/accessibility')).filter((name) => name.endsWith('.mdx'));
+
 const fixture = (name: string) => read(`src/docs/__tests__/fixtures/accessibility-report/${name}.md`);
 
 describe('the accessibility report check', () => {
@@ -92,5 +109,33 @@ describe('the accessibility report check', () => {
         expect(problemsOf(fixture('supports-4-1-2'))).toEqual([
             '4.1.2 Name, Role, Value (Level A): marked Supports, which only a screen reader or a device can show',
         ]);
+    });
+});
+
+describe('the accessibility reports', () => {
+    it('has a report for each minor or major release that has a qualification record', () => {
+        const releases = readdirSync(join(PACKAGE, 'qualification'))
+            .map((name) => /^(\d+\.\d+\.0)\.json$/.exec(name)?.[1])
+            .filter((version) => version !== undefined);
+
+        expect(releases.length).toBeGreaterThan(0);
+        for (const version of releases) {
+            expect(REPORTS, version).toContain(`${version}.mdx`);
+        }
+    });
+
+    it('gives each report every item of the Report section, as a section', () => {
+        for (const name of REPORTS) {
+            expect(headingsOf(read(`src/docs/accessibility/${name}`)), name).toEqual(expect.arrayContaining(SECTIONS));
+        }
+    });
+
+    it('names the requirement IDs behind each marked criterion, and marks no screen reader or device criterion as met', () => {
+        for (const name of REPORTS) {
+            const source = read(`src/docs/accessibility/${name}`);
+
+            expect(rowsOf(source).length, name).toBeGreaterThan(0);
+            expect(problemsOf(source), name).toEqual([]);
+        }
     });
 });

@@ -38,7 +38,7 @@ export const fixtureRedoEditor = defineEditorPlugin(fixtureRedo, {
     keys: { 'Mod-y': 'fixture.redo' },
 });
 
-/** Sets a heading of a level from a payload. */
+/** Sets a heading of a level from a payload, and inserts a rule. */
 export const fixtureHeadingEditor = defineEditorPlugin(fixtureHeading, {
     commands: {
         'fixture.heading.set': {
@@ -46,6 +46,7 @@ export const fixtureHeadingEditor = defineEditorPlugin(fixtureHeading, {
             run: (api, { level }: { readonly level: number }) => api.blocks.set('heading', { level }),
             active: (api, { level }) => api.blocks.active('heading', { level }),
         },
+        'fixture.rule.insert': { run: (api) => api.insert.node('rule').status === 'applied' },
     },
     keys: { 'Mod-Alt-2': { command: 'fixture.heading.set', payload: { level: 2 } } },
 });

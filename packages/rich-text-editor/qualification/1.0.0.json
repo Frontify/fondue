@@ -1,0 +1,111 @@
+{
+    "$schema": "./schema.json",
+    "version": "1.0.0",
+    "commit": "51a7e5b62ecdba50702dd4128b040b1564fcf195",
+    "date": "2026-10-23",
+    "suites": {
+        "unit": {
+            "vitest": "5.0.0",
+            "command": "vitest run --coverage.enabled=false --exclude src/react/__tests__/performance.spec.tsx --exclude src/react/__tests__/hostile-cost.spec.tsx",
+            "passed": 4798,
+            "failed": 0,
+            "skipped": 6
+        },
+        "chromium": {
+            "browserVersion": "148.0.7778.96",
+            "playwright": "1.60.0",
+            "command": "playwright test --project=chromium --project=webkit",
+            "passed": 789,
+            "failed": 0,
+            "flaky": 0,
+            "skipped": 14
+        },
+        "firefox": {
+            "browserVersion": "150.0.2",
+            "playwright": "1.60.0",
+            "pendingIn": "rich-text-editor-pull-requests.yaml: Component Tests and Engine Qualification"
+        },
+        "webkit": {
+            "browserVersion": "26.4",
+            "playwright": "1.60.0",
+            "command": "playwright test --project=chromium --project=webkit",
+            "passed": 759,
+            "failed": 0,
+            "flaky": 0,
+            "skipped": 44
+        }
+    },
+    "performance": {
+        "pendingIn": "rich-text-editor-pull-requests.yaml: Performance"
+    },
+    "bundle": [
+        {
+            "build": "./reader",
+            "budgetBytes": 25000,
+            "test": "src/reader/__tests__/bundle-size.spec.ts",
+            "passed": true
+        },
+        {
+            "build": "./model",
+            "budgetBytes": 30000,
+            "test": "src/model/__tests__/bundle-size.spec.ts",
+            "passed": true
+        },
+        {
+            "build": "./codecs",
+            "budgetBytes": 77000,
+            "test": "src/codecs/__tests__/bundle-size.spec.ts",
+            "passed": true
+        },
+        {
+            "build": "./html",
+            "budgetBytes": 45000,
+            "test": "src/html/__tests__/bundle-size.spec.ts",
+            "passed": true
+        },
+        {
+            "build": "inline-profile",
+            "budgetBytes": 277000,
+            "test": "src/features/profiles/__tests__/profiles-bundle-size.spec.ts",
+            "passed": true
+        },
+        {
+            "build": "comment-profile",
+            "budgetBytes": 289000,
+            "test": "src/features/profiles/__tests__/profiles-bundle-size.spec.ts",
+            "passed": true
+        },
+        {
+            "build": "document-profile",
+            "budgetBytes": 303000,
+            "test": "src/features/profiles/__tests__/profiles-bundle-size.spec.ts",
+            "passed": true
+        },
+        {
+            "build": "brand-document-profile",
+            "budgetBytes": 304000,
+            "test": "src/features/profiles/__tests__/profiles-bundle-size.spec.ts",
+            "passed": true
+        },
+        {
+            "build": "./features",
+            "budgetBytes": 15000,
+            "test": "src/features/__tests__/bundle-size.spec.ts",
+            "passed": true
+        },
+        {
+            "build": "./locales/*",
+            "budgetBytes": 6000,
+            "test": "src/locales/__tests__/bundle-size.spec.ts",
+            "passed": true
+        },
+        {
+            "build": "package-css",
+            "budgetBytes": 25000,
+            "test": "src/styles/__tests__/bundle-size.spec.ts",
+            "passed": true
+        }
+    ],
+    "findings": [],
+    "acceptedFailures": []
+}

@@ -2,8 +2,6 @@
 
 Rich text editing for the Fondue design system.
 
-This package is private and unreleased.
-
 ## Commands
 
 Run these from `packages/rich-text-editor`.
@@ -32,4 +30,7 @@ Run these from `packages/rich-text-editor`.
 | `./features` | The shipped features |
 | `./reader` | `RichTextReader` and `defineReaderFeature` |
 | `./codecs` | `createCodecs` |
-| `./testing` | The input helpers and the runtime probe |
+| `./html` | `fromHTML` |
+| `./testing` | The feature contract suite, the input helpers and the runtime probe |
+| `./locales/*` | One message catalogue per shipped locale, such as `./locales/de-DE` |
+| `./styles` | The package stylesheet, which styles the editor, the reader and `toHTML` output |

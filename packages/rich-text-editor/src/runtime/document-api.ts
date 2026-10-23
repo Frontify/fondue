@@ -4,6 +4,7 @@ import { type ContentNodeJSON, type JsonObject, type JsonValue, type RichTextDoc
 
 import { positionsOf } from './editor-api';
 import {
+    type AuthoringPolicy,
     type CaptureTargetOptions,
     type CommandOptions,
     type CommandState,
@@ -101,6 +102,7 @@ export interface DocumentApi {
     selectedRange(): EditorRange;
     /** The document as stored. */
     document(): RichTextDocument;
+    policy(): AuthoringPolicy;
     /** Whether the author can edit now: the editor is ready and neither read-only nor disabled. */
     editable(): boolean;
     /** The options of an installed feature, defaulted, or `undefined` when the model does not install it. */
@@ -143,8 +145,8 @@ export interface DocumentApi {
         reapply(names: readonly string[]): boolean;
     };
     /**
-     * `set` acts on textblocks, so `node` is a textblock type such as `heading`; `wrap` acts on wrapping, so `node` is
-     * a container such as `blockquote`; `active` reads blocks of any type.
+     * `set` acts on textblocks, so `node` is a textblock type such as `heading`; `wrap` and `lift` act on wrapping, so
+     * `node` is a container such as `blockquote`; `active` and `list` read blocks of any type.
      */
     readonly blocks: {
         /**
@@ -161,6 +163,8 @@ export interface DocumentApi {
          * them out when they already are inside one.
          */
         wrap(node: string, attrs?: JsonObject): boolean;
+        /** Lifts the selected blocks out of the `node` around them. */
+        lift(node: string): boolean;
         /** Turns the selected blocks into paragraphs, lifting them out of lists, and sets the named attributes back to their declared defaults. */
         clear(attributes: readonly string[]): boolean;
         /** Swaps the blocks the selection spans, or the container they fill, with the block before or after them. */
@@ -187,9 +191,14 @@ export interface DocumentApi {
     };
     readonly insert: {
         /**
-         * Inserts `node` at `place`, in place of an empty textblock at the caret, else after the block that holds it.
+         * Inserts `node` at `place`, in place of an empty textblock at the caret, else after the block that holds it;
+         * a block holds the stored JSON `content` given, else the content its type requires.
          */
-        node(node: string, attrs?: JsonObject, options?: { readonly place?: InsertPlace }): WriteOutcome;
+        node(
+            node: string,
+            attrs?: JsonObject,
+            options?: { readonly place?: InsertPlace; readonly content?: readonly ContentNodeJSON[] },
+        ): WriteOutcome;
         /** Whether `insert.node` finds a spot for `node` at `place`, as an `enabled` check asks. */
         allowed(node: string, options?: { readonly place?: InsertPlace }): boolean;
         text(text: string): boolean;
@@ -217,8 +226,8 @@ export interface DocumentApi {
         split(item: string): boolean;
     };
     /**
-     * Writes stored JSON nodes, checked as decode checks them but refused rather than cleaned: a write that breaks the
-     * vocabulary, the URL policy or a limit changes nothing and is rejected as `invalid`, `policy` or `limit`. Only content
+     * Writes stored JSON nodes, checked as paste checks them but refused rather than cleaned: a write that breaks the
+     * vocabulary, the policy or a limit changes nothing and is rejected as `invalid`, `policy` or `limit`. Only content
      * that fits where it goes as it is is written.
      */
     readonly content: {

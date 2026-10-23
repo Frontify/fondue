@@ -1,0 +1,965 @@
+{
+    "scenarios": [
+        {
+            "id": "AT-01",
+            "title": "Open every valid legacy fixture and save without editing",
+            "requirements": [
+                "SPEC-rich-text-format/AC-023",
+                "SPEC-rich-text-output/AC-026",
+                "SPEC-rich-text-accessibility/AC-045"
+            ]
+        },
+        {
+            "id": "AT-02",
+            "title": "Open malformed or unknown-version content",
+            "requirements": [
+                "SPEC-rich-text-format/AC-004",
+                "SPEC-rich-text-format/AC-007",
+                "SPEC-rich-text-format/AC-020",
+                "SPEC-rich-text-react/AC-087"
+            ]
+        },
+        {
+            "id": "AT-03",
+            "title": "Edit an ordinary paragraph next to an unknown node",
+            "requirements": [
+                "SPEC-rich-text-format/AC-009",
+                "SPEC-rich-text-format/AC-013",
+                "SPEC-rich-text-editing/AC-098"
+            ]
+        },
+        {
+            "id": "AT-04",
+            "title": "Select mixed bold/plain text and activate Bold",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-007",
+                "SPEC-rich-text-react/AC-037",
+                "SPEC-rich-text-runtime/AC-053"
+            ]
+        },
+        {
+            "id": "AT-05",
+            "title": "Type at both boundaries of a link, mention and inline-code span",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-001",
+                "SPEC-rich-text-editing/AC-009",
+                "SPEC-rich-text-editing/AC-010"
+            ]
+        },
+        {
+            "id": "AT-06",
+            "title": "Split, merge, indent and outdent nested ordered lists",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-027",
+                "SPEC-rich-text-editing/AC-028",
+                "SPEC-rich-text-editing/AC-029",
+                "SPEC-rich-text-editing/AC-082",
+                "SPEC-rich-text-editing/AC-083"
+            ]
+        },
+        {
+            "id": "AT-07",
+            "title": "Press Enter while choosing an IME candidate in a comment",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-074",
+                "SPEC-rich-text-persistence/AC-055",
+                "SPEC-rich-text-references/AC-032"
+            ]
+        },
+        {
+            "id": "AT-08",
+            "title": "Paste content exceeding a configured limit",
+            "requirements": [
+                "SPEC-rich-text-clipboard/AC-001",
+                "SPEC-rich-text-clipboard/AC-020",
+                "SPEC-rich-text-clipboard/AC-025"
+            ]
+        },
+        {
+            "id": "AT-09",
+            "title": "Paste marked HTML from browser/office and undo",
+            "requirements": [
+                "SPEC-rich-text-clipboard/AC-012",
+                "SPEC-rich-text-clipboard/AC-014",
+                "SPEC-rich-text-clipboard/AC-016",
+                "SPEC-rich-text-clipboard/AC-024"
+            ]
+        },
+        {
+            "id": "AT-10",
+            "title": "Use emoji families, skin tones, combining marks and RTL text",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-046",
+                "SPEC-rich-text-format/AC-024",
+                "SPEC-rich-text-react/AC-061"
+            ]
+        },
+        {
+            "id": "AT-11",
+            "title": "Open a link popup, alter content around its saved range, then confirm",
+            "requirements": [
+                "SPEC-rich-text-runtime/AC-040",
+                "SPEC-rich-text-runtime/AC-041",
+                "SPEC-rich-text-references/AC-044"
+            ]
+        },
+        {
+            "id": "AT-12",
+            "title": "Move focus from editor to its portalled toolbar/dialog",
+            "requirements": [
+                "SPEC-rich-text-react/AC-045",
+                "SPEC-rich-text-react/AC-047",
+                "SPEC-rich-text-accessibility/AC-067"
+            ]
+        },
+        {
+            "id": "AT-13",
+            "title": "Close popup after origin editor unmounts",
+            "requirements": ["SPEC-rich-text-react/AC-083", "SPEC-rich-text-runtime/AC-060"]
+        },
+        {
+            "id": "AT-14",
+            "title": "Navigate editor, toolbar and popups entirely by keyboard",
+            "requirements": [
+                "SPEC-rich-text-accessibility/AC-015",
+                "SPEC-rich-text-accessibility/AC-016",
+                "SPEC-rich-text-accessibility/AC-022",
+                "SPEC-rich-text-react/AC-032"
+            ]
+        },
+        {
+            "id": "AT-15",
+            "title": "Create a mention using screen reader and slow async results",
+            "requirements": [
+                "SPEC-rich-text-references/AC-025",
+                "SPEC-rich-text-references/AC-026",
+                "SPEC-rich-text-references/AC-030",
+                "SPEC-rich-text-references/AC-033"
+            ]
+        },
+        {
+            "id": "AT-16",
+            "title": "Zoom/reflow with long URL and open toolbar",
+            "requirements": [
+                "SPEC-rich-text-accessibility/AC-009",
+                "SPEC-rich-text-accessibility/AC-011",
+                "SPEC-rich-text-react/AC-040"
+            ]
+        },
+        {
+            "id": "AT-17",
+            "title": "Apply text-spacing overrides and forced colors",
+            "requirements": ["SPEC-rich-text-accessibility/AC-013", "SPEC-rich-text-react/AC-054"]
+        },
+        {
+            "id": "AT-18",
+            "title": "Reorder a block and resize an image without dragging",
+            "requirements": [
+                "SPEC-rich-text-accessibility/AC-025",
+                "SPEC-rich-text-editing/AC-069",
+                "SPEC-rich-text-blocks/AC-026"
+            ]
+        },
+        {
+            "id": "AT-19",
+            "title": "Create image, link and table output",
+            "requirements": [
+                "SPEC-rich-text-blocks/AC-023",
+                "SPEC-rich-text-blocks/AC-024",
+                "SPEC-rich-text-references/AC-018",
+                "SPEC-rich-text-output/AC-003"
+            ]
+        },
+        {
+            "id": "AT-20",
+            "title": "Change document language or personal display preferences",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-025",
+                "SPEC-rich-text-accessibility/AC-044",
+                "SPEC-rich-text-output/AC-005"
+            ]
+        },
+        {
+            "id": "AT-21",
+            "title": "Submit immediately after a keystroke before save debounce",
+            "requirements": ["SPEC-rich-text-persistence/AC-020", "SPEC-rich-text-persistence/AC-023"]
+        },
+        {
+            "id": "AT-22",
+            "title": "Resolve saves out of order",
+            "requirements": [
+                "SPEC-rich-text-persistence/AC-006",
+                "SPEC-rich-text-persistence/AC-010",
+                "SPEC-rich-text-persistence/AC-011"
+            ]
+        },
+        {
+            "id": "AT-23",
+            "title": "Switch document while upload/lookup/save is in flight",
+            "requirements": [
+                "SPEC-rich-text-runtime/AC-031",
+                "SPEC-rich-text-runtime/AC-048",
+                "SPEC-rich-text-persistence/AC-035"
+            ]
+        },
+        {
+            "id": "AT-24",
+            "title": "Undo upload insertion before upload resolves",
+            "requirements": ["SPEC-rich-text-blocks/AC-013", "SPEC-rich-text-runtime/AC-048"]
+        },
+        {
+            "id": "AT-25",
+            "title": "Network/auth/conflict failure during save",
+            "requirements": [
+                "SPEC-rich-text-persistence/AC-012",
+                "SPEC-rich-text-persistence/AC-017",
+                "SPEC-rich-text-persistence/AC-019",
+                "SPEC-rich-text-persistence/AC-062"
+            ]
+        },
+        {
+            "id": "AT-26",
+            "title": "Open and dispose 100 editor instances",
+            "requirements": ["SPEC-rich-text-quality/AC-019", "SPEC-rich-text-runtime/AC-060"]
+        },
+        {
+            "id": "AT-27",
+            "title": "Run small, typical, large and many-editor fixtures",
+            "requirements": ["SPEC-rich-text-quality/AC-015", "SPEC-rich-text-quality/AC-016"]
+        },
+        {
+            "id": "AT-28",
+            "title": "Render canonical fixtures statically without browser globals",
+            "requirements": ["SPEC-rich-text-output/AC-008", "SPEC-rich-text-output/AC-009", "SPEC-rich-text/AC-013"]
+        },
+        {
+            "id": "AT-29",
+            "title": "Compare old/new published output",
+            "outOfScope": {
+                "reason": "Legacy compatibility, parity records, rollout and rollback live in web-app, not in this package.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "DR-037"
+            }
+        },
+        {
+            "id": "AT-30",
+            "title": "Import malicious HTML, URLs, attributes and oversized ASTs",
+            "requirements": [
+                "SPEC-rich-text-clipboard/AC-010",
+                "SPEC-rich-text-references/AC-002",
+                "SPEC-rich-text-format/AC-005",
+                "SPEC-rich-text-quality/AC-023"
+            ]
+        },
+        {
+            "id": "AT-31",
+            "title": "Use old and new clients during a schema cutover",
+            "requirements": [
+                "SPEC-rich-text-format/AC-009",
+                "SPEC-rich-text-format/AC-041",
+                "SPEC-rich-text-persistence/AC-019"
+            ]
+        },
+        {
+            "id": "AT-32",
+            "title": "Roll back after documents contain new-only features",
+            "requirements": ["SPEC-rich-text-format/AC-009", "SPEC-rich-text-format/AC-042"]
+        },
+        {
+            "id": "AT-33",
+            "title": "Exercise legacy adapter callbacks",
+            "outOfScope": {
+                "reason": "Legacy compatibility, parity records, rollout and rollback live in web-app, not in this package.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "DR-037"
+            }
+        },
+        {
+            "id": "AT-34",
+            "title": "Collaborate, undo locally, disconnect and reconnect",
+            "outOfScope": {
+                "reason": "Collaborative editing is a possible future expansion outside v1.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "SPEC-rich-text out of scope"
+            }
+        },
+        {
+            "id": "AT-35",
+            "title": "Move/delete text with comments or suggestions",
+            "outOfScope": {
+                "reason": "Comments and suggestions are a possible future expansion outside v1.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "SPEC-rich-text out of scope"
+            }
+        },
+        {
+            "id": "AT-36",
+            "title": "Accept/cancel/reject an AI proposal",
+            "outOfScope": {
+                "reason": "AI writing assistance is a possible future expansion outside v1.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "SPEC-rich-text out of scope"
+            }
+        },
+        {
+            "id": "T-001",
+            "title": "Missing feature dependency reports the dependency path before mounting",
+            "requirements": ["SPEC-rich-text/AC-019"]
+        },
+        {
+            "id": "T-002",
+            "title": "Duplicate schema/command/plugin IDs reject deterministically",
+            "requirements": ["SPEC-rich-text/AC-018"]
+        },
+        {
+            "id": "T-003",
+            "title": "Compiler order is stable across equivalent input construction",
+            "requirements": ["SPEC-rich-text/AC-027", "SPEC-rich-text/AC-070"]
+        },
+        {
+            "id": "T-004",
+            "title": "Cyclic plugin ordering reports the cycle; no last-wins behavior",
+            "requirements": ["SPEC-rich-text/AC-020"]
+        },
+        {
+            "id": "T-005",
+            "title": "Missing reader/required-codec registration prevents feature release",
+            "requirements": ["SPEC-rich-text/AC-016", "SPEC-rich-text/AC-022", "SPEC-rich-text/AC-024"]
+        },
+        {
+            "id": "T-006",
+            "title": "Unknown stored node retains original and blocks editing",
+            "requirements": ["SPEC-rich-text-format/AC-013", "SPEC-rich-text-editing/AC-098"]
+        },
+        {
+            "id": "T-007",
+            "title": "Unknown mark or attribute on a known node is not silently discarded",
+            "requirements": ["SPEC-rich-text-format/AC-014", "SPEC-rich-text-format/AC-015"]
+        },
+        {
+            "id": "T-008",
+            "title": "Malformed/oversized/deep payload rejects without empty autosave",
+            "requirements": [
+                "SPEC-rich-text-format/AC-004",
+                "SPEC-rich-text-format/AC-005",
+                "SPEC-rich-text-format/AC-020"
+            ]
+        },
+        {
+            "id": "T-009",
+            "title": "Intentionally empty content loads as a valid editable document",
+            "requirements": ["SPEC-rich-text-format/AC-021"]
+        },
+        {
+            "id": "T-010",
+            "title": "Copy regenerates occurrence IDs; move and history preserve them",
+            "requirements": [
+                "SPEC-rich-text-format/AC-031",
+                "SPEC-rich-text-format/AC-032",
+                "SPEC-rich-text-clipboard/AC-021",
+                "SPEC-rich-text-clipboard/AC-030"
+            ]
+        },
+        {
+            "id": "T-011",
+            "title": "Root + appended repairs produce one final content event",
+            "requirements": ["SPEC-rich-text-runtime/AC-002", "SPEC-rich-text-runtime/AC-021"]
+        },
+        {
+            "id": "T-012",
+            "title": "Filtered transaction produces no false save/event; DOM stays coherent",
+            "requirements": ["SPEC-rich-text-runtime/AC-003", "SPEC-rich-text-runtime/AC-005"]
+        },
+        {
+            "id": "T-013",
+            "title": "Selection and stored-mark changes update UI without persistence",
+            "requirements": [
+                "SPEC-rich-text-persistence/AC-008",
+                "SPEC-rich-text-runtime/AC-018",
+                "SPEC-rich-text-runtime/AC-054"
+            ]
+        },
+        {
+            "id": "T-014",
+            "title": "Reentrant execute rejects; queued intent runs against current state",
+            "requirements": ["SPEC-rich-text-runtime/AC-028", "SPEC-rich-text-runtime/AC-029"]
+        },
+        {
+            "id": "T-015",
+            "title": "Normalization cycle reaches bounded failure without freezing indefinitely",
+            "requirements": ["SPEC-rich-text-runtime/AC-012"]
+        },
+        {
+            "id": "T-016",
+            "title": "View-update failure retains committed/candidate recovery values distinctly",
+            "requirements": [
+                "SPEC-rich-text-runtime/AC-014",
+                "SPEC-rich-text-runtime/AC-015",
+                "SPEC-rich-text-runtime/AC-078"
+            ]
+        },
+        {
+            "id": "T-017",
+            "title": "Listener exception cannot suppress other listeners or undo a commit",
+            "requirements": ["SPEC-rich-text-runtime/AC-026", "SPEC-rich-text-runtime/AC-027"]
+        },
+        {
+            "id": "T-018",
+            "title": "Strict Mode replay leaves exactly one active editor and listener set",
+            "requirements": ["SPEC-rich-text-react/AC-005"]
+        },
+        {
+            "id": "T-019",
+            "title": "Parent rerender does not reset selection, history, or active IME",
+            "requirements": ["SPEC-rich-text-react/AC-003", "SPEC-rich-text-react/AC-078"]
+        },
+        {
+            "id": "T-020",
+            "title": "Theme change preserves content and editable DOM identity",
+            "requirements": ["SPEC-rich-text-react/AC-003", "SPEC-rich-text-react/AC-053"]
+        },
+        {
+            "id": "T-021",
+            "title": "Retired attach cleanup cannot destroy a newer native view",
+            "requirements": ["SPEC-rich-text-react/AC-006"]
+        },
+        {
+            "id": "T-022",
+            "title": "React-owned chrome updates do not overwrite contentDOM children",
+            "requirements": ["SPEC-rich-text-react/AC-012", "SPEC-rich-text-react/AC-014"]
+        },
+        {
+            "id": "T-023",
+            "title": "Editable mutations/selection are not suppressed by broad ignoreMutation",
+            "requirements": ["SPEC-rich-text-react/AC-015"]
+        },
+        {
+            "id": "T-024",
+            "title": "Inline/list/table DOM remains valid with custom views",
+            "requirements": ["SPEC-rich-text-react/AC-073", "SPEC-rich-text-react/AC-097"]
+        },
+        {
+            "id": "T-025",
+            "title": "Unchanged selector result does not rerender an unrelated control",
+            "requirements": [
+                "SPEC-rich-text-react/AC-024",
+                "SPEC-rich-text-runtime/AC-025",
+                "SPEC-rich-text-quality/AC-018"
+            ]
+        },
+        {
+            "id": "T-026",
+            "title": "Link dialog maps its target; intersecting edits invalidate safely",
+            "requirements": ["SPEC-rich-text-runtime/AC-041", "SPEC-rich-text-references/AC-044"]
+        },
+        {
+            "id": "T-027",
+            "title": "Async insertion after target deletion never inserts at a nearby location",
+            "requirements": [
+                "SPEC-rich-text-runtime/AC-042",
+                "SPEC-rich-text-runtime/AC-048",
+                "SPEC-rich-text-blocks/AC-054"
+            ]
+        },
+        {
+            "id": "T-028",
+            "title": "Late search response cannot replace newer query results",
+            "requirements": ["SPEC-rich-text-runtime/AC-047", "SPEC-rich-text-references/AC-025"]
+        },
+        {
+            "id": "T-029",
+            "title": "Old-session service response cannot modify a replacement document",
+            "requirements": ["SPEC-rich-text-runtime/AC-048", "SPEC-rich-text-persistence/AC-035"]
+        },
+        {
+            "id": "T-030",
+            "title": "Undo during upload restores replaced text and invalidates insertion",
+            "requirements": ["SPEC-rich-text-blocks/AC-013", "SPEC-rich-text-runtime/AC-042"]
+        },
+        {
+            "id": "T-031",
+            "title": "Completed upload undo/redo restores asset without duplicate upload",
+            "requirements": ["SPEC-rich-text-blocks/AC-013", "SPEC-rich-text-blocks/AC-048"]
+        },
+        {
+            "id": "T-032",
+            "title": "Redo of cancelled unresolved upload requires explicit retry",
+            "requirements": ["SPEC-rich-text-blocks/AC-013"]
+        },
+        {
+            "id": "T-033",
+            "title": "Native typing and formatting undo grouping remains predictable",
+            "requirements": ["SPEC-rich-text-runtime/AC-051", "SPEC-rich-text-runtime/AC-053"]
+        },
+        {
+            "id": "T-034",
+            "title": "Immediate autoformat undo restores literal source characters",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-041",
+                "SPEC-rich-text-editing/AC-087",
+                "SPEC-rich-text-editing/AC-100"
+            ]
+        },
+        {
+            "id": "T-035",
+            "title": "Submit before autosave delay acknowledges exact latest captured content",
+            "requirements": ["SPEC-rich-text-persistence/AC-020", "SPEC-rich-text-persistence/AC-023"]
+        },
+        {
+            "id": "T-036",
+            "title": "Older acknowledgment leaves newer edits dirty",
+            "requirements": ["SPEC-rich-text-persistence/AC-011"]
+        },
+        {
+            "id": "T-037",
+            "title": "Timeout after server commit retries same operation, not a later write",
+            "requirements": ["SPEC-rich-text-persistence/AC-012", "SPEC-rich-text-persistence/AC-013"]
+        },
+        {
+            "id": "T-038",
+            "title": "Revision conflict preserves local draft and stops automatic overwrite",
+            "requirements": ["SPEC-rich-text-persistence/AC-017", "SPEC-rich-text-persistence/AC-018"]
+        },
+        {
+            "id": "T-039",
+            "title": "Explicit pinned checkpoint is not replaced by trailing autosave",
+            "requirements": ["SPEC-rich-text-persistence/AC-021", "SPEC-rich-text-persistence/AC-022"]
+        },
+        {
+            "id": "T-040",
+            "title": "New document creation is conditional and replay-safe",
+            "requirements": [
+                "SPEC-rich-text-persistence/AC-004",
+                "SPEC-rich-text-persistence/AC-012",
+                "SPEC-rich-text-persistence/AC-049"
+            ]
+        },
+        {
+            "id": "T-041",
+            "title": "Invalid replacement leaves current editor untouched",
+            "requirements": ["SPEC-rich-text-persistence/AC-031", "SPEC-rich-text-persistence/AC-032"]
+        },
+        {
+            "id": "T-042",
+            "title": "Replacement with stale expected stamp cannot discard newer edits",
+            "requirements": ["SPEC-rich-text-persistence/AC-031", "SPEC-rich-text-persistence/AC-032"]
+        },
+        {
+            "id": "T-043",
+            "title": "Recovery receipt for a different sequence cannot authorize replacement",
+            "requirements": ["SPEC-rich-text-persistence/AC-045"]
+        },
+        {
+            "id": "T-044",
+            "title": "Unresolved in-flight save blocks a transition rather than assuming abort",
+            "requirements": ["SPEC-rich-text-persistence/AC-031"]
+        },
+        {
+            "id": "T-045",
+            "title": "Same-ID whole replacement resets generation/history and invalidates targets",
+            "requirements": [
+                "SPEC-rich-text-persistence/AC-034",
+                "SPEC-rich-text-runtime/AC-045",
+                "SPEC-rich-text-runtime/AC-057"
+            ]
+        },
+        {
+            "id": "T-046",
+            "title": "Disposal leaves no queued command capable of changing another session",
+            "requirements": [
+                "SPEC-rich-text-runtime/AC-050",
+                "SPEC-rich-text-runtime/AC-060",
+                "SPEC-rich-text-runtime/AC-077"
+            ]
+        },
+        {
+            "id": "T-047",
+            "title": "All enabled authoring tasks are reachable without pointer input",
+            "requirements": ["SPEC-rich-text-accessibility/AC-015"]
+        },
+        {
+            "id": "T-048",
+            "title": "Toolbar/dialog return focus works inside a host modal and with multiple editors",
+            "requirements": [
+                "SPEC-rich-text-react/AC-043",
+                "SPEC-rich-text-react/AC-046",
+                "SPEC-rich-text-react/AC-049"
+            ]
+        },
+        {
+            "id": "T-049",
+            "title": "Suggestion interaction is operable with tested screen readers and picker fallback",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-061",
+                "SPEC-rich-text-references/AC-026",
+                "SPEC-rich-text-references/AC-033"
+            ]
+        },
+        {
+            "id": "T-050",
+            "title": "Enter/submit does not accept or truncate active IME composition",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-074",
+                "SPEC-rich-text-persistence/AC-055",
+                "SPEC-rich-text-references/AC-032"
+            ]
+        },
+        {
+            "id": "T-051",
+            "title": "Japanese, Chinese, Korean mid-paragraph input works across mark boundaries",
+            "requirements": [
+                "SPEC-rich-text-runtime/AC-034",
+                "SPEC-rich-text-runtime/AC-070",
+                "SPEC-rich-text-quality/AC-012"
+            ]
+        },
+        {
+            "id": "T-052",
+            "title": "Android Gboard, SwiftKey, and supported OEM keyboard suggestions/swipe work",
+            "outOfScope": {
+                "reason": "Physical Android keyboards need a real device; qualification uses automated evidence only.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "DR-061"
+            }
+        },
+        {
+            "id": "T-053",
+            "title": "Dictation, emoji clusters, accented dead keys, and RTL mixed text survive editing",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-003",
+                "SPEC-rich-text-editing/AC-046",
+                "SPEC-rich-text-format/AC-024"
+            ]
+        },
+        {
+            "id": "T-054",
+            "title": "Zoom/reflow/forced colors and touch targets remain usable",
+            "requirements": [
+                "SPEC-rich-text-accessibility/AC-011",
+                "SPEC-rich-text-react/AC-041",
+                "SPEC-rich-text-react/AC-054"
+            ]
+        },
+        {
+            "id": "T-055",
+            "title": "Drag actions have keyboard and single-pointer non-drag alternatives",
+            "requirements": [
+                "SPEC-rich-text-accessibility/AC-025",
+                "SPEC-rich-text-editing/AC-069",
+                "SPEC-rich-text-blocks/AC-026"
+            ]
+        },
+        {
+            "id": "T-056",
+            "title": "Reader import graph excludes editor/view/adapter/legacy engines",
+            "requirements": ["SPEC-rich-text/AC-012"]
+        },
+        {
+            "id": "T-057",
+            "title": "Server reader works without browser globals or private delivery URLs in content",
+            "requirements": ["SPEC-rich-text-output/AC-008", "SPEC-rich-text-format/AC-029"]
+        },
+        {
+            "id": "T-058",
+            "title": "HTML/plain text/Markdown exports follow declared semantics/loss diagnostics",
+            "requirements": [
+                "SPEC-rich-text-output/AC-017",
+                "SPEC-rich-text-output/AC-019",
+                "SPEC-rich-text-output/AC-020",
+                "SPEC-rich-text-output/AC-038"
+            ]
+        },
+        {
+            "id": "T-059",
+            "title": "Pasted hostile HTML/URLs cannot execute or trigger disallowed preview fetches",
+            "requirements": [
+                "SPEC-rich-text-clipboard/AC-010",
+                "SPEC-rich-text-clipboard/AC-017",
+                "SPEC-rich-text-references/AC-002"
+            ]
+        },
+        {
+            "id": "T-060",
+            "title": "Internal clipboard rejects invalid depth/capabilities and cross-context references",
+            "requirements": [
+                "SPEC-rich-text-clipboard/AC-006",
+                "SPEC-rich-text-clipboard/AC-007",
+                "SPEC-rich-text-clipboard/AC-022"
+            ]
+        },
+        {
+            "id": "T-061",
+            "title": "List and table transforms preserve all text through indent/merge/paste/undo",
+            "requirements": ["SPEC-rich-text-editing/AC-082", "SPEC-rich-text-editing/AC-083"]
+        },
+        {
+            "id": "T-062",
+            "title": "Legacy styles, columns/breaks, references, and tasks preserve declared meaning",
+            "outOfScope": {
+                "reason": "Legacy compatibility, parity records, rollout and rollback live in web-app, not in this package.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "DR-037"
+            }
+        },
+        {
+            "id": "T-063",
+            "title": "Legacy callback value/timing/blur/replacement contracts match characterization",
+            "outOfScope": {
+                "reason": "Legacy compatibility, parity records, rollout and rollback live in web-app, not in this package.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "DR-037"
+            }
+        },
+        {
+            "id": "T-064",
+            "title": "Reverse codec rejects nonrepresentable content instead of lossy legacy writes",
+            "outOfScope": {
+                "reason": "Legacy compatibility, parity records, rollout and rollback live in web-app, not in this package.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "DR-037"
+            }
+        },
+        {
+            "id": "T-065",
+            "title": "Cached incompatible client is denied a write by the server",
+            "requirements": [
+                "SPEC-rich-text-format/AC-041",
+                "SPEC-rich-text-persistence/AC-019",
+                "SPEC-rich-text-persistence/AC-062"
+            ]
+        },
+        {
+            "id": "T-066",
+            "title": "Rollback after new-only edits still preserves and renders latest content",
+            "outOfScope": {
+                "reason": "Legacy compatibility, parity records, rollout and rollback live in web-app, not in this package.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "DR-037"
+            }
+        },
+        {
+            "id": "T-067",
+            "title": "Migration is deterministic, idempotent, and reports unknown attributes",
+            "requirements": [
+                "SPEC-rich-text-format/AC-015",
+                "SPEC-rich-text-format/AC-035",
+                "SPEC-rich-text-format/AC-036",
+                "SPEC-rich-text-format/AC-037"
+            ]
+        },
+        {
+            "id": "T-068",
+            "title": "100 mount/delete/dispose cycles release resources and avoid retained growth",
+            "requirements": ["SPEC-rich-text-quality/AC-019"]
+        },
+        {
+            "id": "T-069",
+            "title": "Typical/large latency fixtures meet declared measured budgets",
+            "requirements": ["SPEC-rich-text-quality/AC-015", "SPEC-rich-text-quality/AC-016"]
+        },
+        {
+            "id": "T-070",
+            "title": "Telemetry and failures do not contain document content or sensitive lookup data",
+            "requirements": [
+                "SPEC-rich-text-runtime/AC-061",
+                "SPEC-rich-text-runtime/AC-062",
+                "SPEC-rich-text-quality/AC-030"
+            ]
+        },
+        {
+            "id": "Q01",
+            "title": "Parent rerenders for unrelated UI state",
+            "requirements": ["SPEC-rich-text-react/AC-003", "SPEC-rich-text-react/AC-078"]
+        },
+        {
+            "id": "Q02",
+            "title": "Theme changes while a word is selected",
+            "requirements": ["SPEC-rich-text-react/AC-003", "SPEC-rich-text-react/AC-053"]
+        },
+        {
+            "id": "Q03",
+            "title": "Strict Mode mount/cleanup/remount",
+            "requirements": ["SPEC-rich-text-react/AC-005"]
+        },
+        {
+            "id": "Q04",
+            "title": "Rapid policy changes during unmount",
+            "requirements": ["SPEC-rich-text-runtime/AC-011", "SPEC-rich-text-runtime/AC-060"]
+        },
+        {
+            "id": "Q05",
+            "title": "Two editors with identical configuration",
+            "requirements": ["SPEC-rich-text-react/AC-049", "SPEC-rich-text/AC-014"]
+        },
+        {
+            "id": "Q06",
+            "title": "React view receives updated attrs/decorations",
+            "requirements": ["SPEC-rich-text-react/AC-014", "SPEC-rich-text-react/AC-070"]
+        },
+        {
+            "id": "Q07",
+            "title": "A custom control receives focus",
+            "requirements": ["SPEC-rich-text-react/AC-015", "SPEC-rich-text-react/AC-017"]
+        },
+        {
+            "id": "Q08",
+            "title": "Lists/tables/links with custom React views",
+            "requirements": ["SPEC-rich-text-react/AC-073", "SPEC-rich-text-react/AC-097"]
+        },
+        {
+            "id": "Q09",
+            "title": "Selection-only transaction",
+            "requirements": ["SPEC-rich-text-persistence/AC-008", "SPEC-rich-text-runtime/AC-018"]
+        },
+        {
+            "id": "Q10",
+            "title": "Filtered and appended transactions",
+            "requirements": [
+                "SPEC-rich-text-runtime/AC-002",
+                "SPEC-rich-text-runtime/AC-003",
+                "SPEC-rich-text-runtime/AC-021"
+            ]
+        },
+        {
+            "id": "Q11",
+            "title": "Parent echoes an acknowledged document",
+            "requirements": ["SPEC-rich-text-persistence/AC-027", "SPEC-rich-text-persistence/AC-038"]
+        },
+        {
+            "id": "Q12",
+            "title": "Submit before autosave delay expires",
+            "requirements": ["SPEC-rich-text-persistence/AC-020"]
+        },
+        {
+            "id": "Q13",
+            "title": "Late save acknowledgement",
+            "requirements": ["SPEC-rich-text-persistence/AC-011"]
+        },
+        {
+            "id": "Q14",
+            "title": "Upload target moved while request is pending",
+            "requirements": ["SPEC-rich-text-runtime/AC-040", "SPEC-rich-text-runtime/AC-048"]
+        },
+        {
+            "id": "Q15",
+            "title": "Upload target deleted or undone",
+            "requirements": ["SPEC-rich-text-runtime/AC-042", "SPEC-rich-text-runtime/AC-048"]
+        },
+        {
+            "id": "Q16",
+            "title": "Document switched before async completion",
+            "requirements": ["SPEC-rich-text-runtime/AC-048", "SPEC-rich-text-persistence/AC-035"]
+        },
+        {
+            "id": "Q17",
+            "title": "Toolbar hides a supported stored feature",
+            "requirements": ["SPEC-rich-text-format/AC-047", "SPEC-rich-text-runtime/AC-007"]
+        },
+        {
+            "id": "Q18",
+            "title": "Unknown node, mark or semantic attribute",
+            "requirements": [
+                "SPEC-rich-text-format/AC-013",
+                "SPEC-rich-text-format/AC-014",
+                "SPEC-rich-text-format/AC-015"
+            ]
+        },
+        {
+            "id": "Q19",
+            "title": "Missing registered view/model/serializer dependency",
+            "requirements": ["SPEC-rich-text/AC-019", "SPEC-rich-text/AC-021", "SPEC-rich-text/AC-024"]
+        },
+        {
+            "id": "Q20",
+            "title": "Keyboard-only formatting/link/mention flow",
+            "requirements": [
+                "SPEC-rich-text-accessibility/AC-015",
+                "SPEC-rich-text-references/AC-033",
+                "SPEC-rich-text-react/AC-043"
+            ]
+        },
+        {
+            "id": "Q21",
+            "title": "Nested modal/editor/popover integration",
+            "requirements": ["SPEC-rich-text-react/AC-046", "SPEC-rich-text-react/AC-048"]
+        },
+        {
+            "id": "Q22",
+            "title": "NVDA/JAWS/VoiceOver/TalkBack workflows",
+            "outOfScope": {
+                "reason": "Screen reader workflows need a real screen reader; qualification uses automated evidence only.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "DR-061"
+            }
+        },
+        {
+            "id": "Q23",
+            "title": "Physical Android keyboard variants",
+            "outOfScope": {
+                "reason": "Physical Android keyboards need a real device; qualification uses automated evidence only.",
+                "owner": "José Costa",
+                "date": "2026-10-22",
+                "decision": "DR-061"
+            }
+        },
+        {
+            "id": "Q24",
+            "title": "Japanese/Chinese/Korean input, dictation, emoji, RTL",
+            "requirements": [
+                "SPEC-rich-text-editing/AC-046",
+                "SPEC-rich-text-format/AC-024",
+                "SPEC-rich-text-runtime/AC-070",
+                "SPEC-rich-text-quality/AC-012"
+            ]
+        },
+        {
+            "id": "Q25",
+            "title": "Zoom/reflow/forced colors/touch",
+            "requirements": [
+                "SPEC-rich-text-accessibility/AC-011",
+                "SPEC-rich-text-react/AC-041",
+                "SPEC-rich-text-react/AC-054"
+            ]
+        },
+        {
+            "id": "Q26",
+            "title": "Static reader and export fixtures",
+            "requirements": [
+                "SPEC-rich-text-output/AC-015",
+                "SPEC-rich-text-output/AC-026",
+                "SPEC-rich-text-accessibility/AC-045"
+            ]
+        },
+        {
+            "id": "Q27",
+            "title": "Old client writes after schema enablement",
+            "requirements": ["SPEC-rich-text-format/AC-041", "SPEC-rich-text-persistence/AC-019"]
+        },
+        {
+            "id": "Q28",
+            "title": "Rollback after new-only edits",
+            "requirements": ["SPEC-rich-text-format/AC-009", "SPEC-rich-text-format/AC-042"]
+        },
+        {
+            "id": "Q29",
+            "title": "Repeated mount/unmount and node deletion",
+            "requirements": ["SPEC-rich-text-quality/AC-019", "SPEC-rich-text-react/AC-020"]
+        },
+        {
+            "id": "Q30",
+            "title": "Realistic and stress documents",
+            "requirements": ["SPEC-rich-text-quality/AC-015"]
+        }
+    ]
+}

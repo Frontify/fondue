@@ -1,7 +1,6 @@
 {
     "name": "@frontify/rich-text-editor",
     "version": "0.0.0",
-    "private": true,
     "homepage": "https://github.com/Frontify/fondue",
     "bugs": {
         "url": "https://github.com/frontify/fondue/issues"
@@ -57,14 +56,15 @@
         "access": "public"
     },
     "scripts": {
+        "storybook": "pnpm --workspace-root storybook",
         "build": "vite build",
+        "prepack": "vite build",
         "install:playwright": "playwright install --with-deps",
         "format": "oxfmt",
         "format:check": "oxfmt --check",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
         "perf": "tsx perf/run.ts",
-        "storybook": "pnpm --workspace-root storybook",
         "typecheck": "tsgo --noEmit",
         "test": "vitest run --coverage --exclude src/react/__tests__/performance.spec.tsx --exclude src/react/__tests__/hostile-cost.spec.tsx && vitest run src/react/__tests__/performance.spec.tsx src/react/__tests__/hostile-cost.spec.tsx --coverage.enabled=false --no-file-parallelism",
         "test:watch": "vitest",

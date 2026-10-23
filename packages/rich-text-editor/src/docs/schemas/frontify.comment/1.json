@@ -1,0 +1,723 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["format", "formatVersion", "model", "requiredCapabilities", "content"],
+    "properties": {
+        "format": {
+            "const": "frontify.rich-text"
+        },
+        "formatVersion": {
+            "const": 1
+        },
+        "model": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "version"],
+            "properties": {
+                "id": {
+                    "const": "frontify.comment"
+                },
+                "version": {
+                    "const": 1
+                }
+            }
+        },
+        "requiredCapabilities": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "version"],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "content": {
+            "$ref": "#/$defs/n.doc"
+        }
+    },
+    "$defs": {
+        "n.doc": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "content"],
+            "properties": {
+                "type": {
+                    "const": "doc"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "lang": {
+                            "type": ["string", "null"],
+                            "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+                        },
+                        "dir": {
+                            "enum": ["ltr", "rtl", "auto"]
+                        }
+                    }
+                },
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/n.paragraph"
+                            },
+                            {
+                                "$ref": "#/$defs/n.blockquote"
+                            },
+                            {
+                                "$ref": "#/$defs/n.code_block"
+                            },
+                            {
+                                "$ref": "#/$defs/n.bullet_list"
+                            },
+                            {
+                                "$ref": "#/$defs/n.ordered_list"
+                            },
+                            {
+                                "$ref": "#/$defs/n.task_list"
+                            }
+                        ]
+                    },
+                    "minItems": 1
+                }
+            }
+        },
+        "n.paragraph": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "paragraph"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "lang": {
+                            "type": ["string", "null"],
+                            "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+                        },
+                        "align": {
+                            "enum": ["left", "center", "right", "justify", null]
+                        }
+                    }
+                },
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/n.text"
+                            },
+                            {
+                                "$ref": "#/$defs/n.hard_break"
+                            },
+                            {
+                                "$ref": "#/$defs/n.mention%40"
+                            }
+                        ]
+                    }
+                },
+                "marks": {
+                    "type": "array",
+                    "maxItems": 0
+                }
+            }
+        },
+        "n.text": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "text"],
+            "properties": {
+                "type": {
+                    "const": "text"
+                },
+                "text": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "marks": {
+                    "type": "array",
+                    "items": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/m.link"
+                            },
+                            {
+                                "$ref": "#/$defs/m.font_color"
+                            },
+                            {
+                                "$ref": "#/$defs/m.bold"
+                            },
+                            {
+                                "$ref": "#/$defs/m.italic"
+                            },
+                            {
+                                "$ref": "#/$defs/m.underline"
+                            },
+                            {
+                                "$ref": "#/$defs/m.language"
+                            },
+                            {
+                                "$ref": "#/$defs/m.strike"
+                            },
+                            {
+                                "$ref": "#/$defs/m.code"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "m.link": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "attrs"],
+            "properties": {
+                "type": {
+                    "const": "link"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "href": {
+                            "type": "string",
+                            "maxLength": 2048
+                        },
+                        "openInNewWindow": {
+                            "type": "boolean"
+                        },
+                        "styleId": {
+                            "type": ["string", "null"],
+                            "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$"
+                        }
+                    },
+                    "required": ["href"]
+                }
+            }
+        },
+        "m.font_color": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "attrs"],
+            "properties": {
+                "type": {
+                    "const": "font_color"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "tokenId": {
+                            "type": ["string", "null"],
+                            "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$"
+                        },
+                        "value": {
+                            "type": ["string", "null"],
+                            "pattern": "^#[0-9a-f]{6}([0-9a-f]{2})?$"
+                        }
+                    },
+                    "oneOf": [
+                        {
+                            "required": ["tokenId"],
+                            "properties": {
+                                "tokenId": {
+                                    "not": {
+                                        "type": "null"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "required": ["value"],
+                            "properties": {
+                                "value": {
+                                    "not": {
+                                        "type": "null"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "m.bold": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "bold"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {}
+                }
+            }
+        },
+        "m.italic": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "italic"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {}
+                }
+            }
+        },
+        "m.underline": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "underline"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {}
+                }
+            }
+        },
+        "m.language": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "attrs"],
+            "properties": {
+                "type": {
+                    "const": "language"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "lang": {
+                            "type": "string",
+                            "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+                        },
+                        "dir": {
+                            "enum": ["ltr", "rtl", "auto", null]
+                        }
+                    },
+                    "required": ["lang"]
+                }
+            }
+        },
+        "m.strike": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "strike"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {}
+                }
+            }
+        },
+        "m.code": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "code"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {}
+                }
+            }
+        },
+        "n.hard_break": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "hard_break"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {}
+                },
+                "content": {
+                    "type": "array",
+                    "maxItems": 0
+                },
+                "marks": {
+                    "type": "array",
+                    "items": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/m.link"
+                            },
+                            {
+                                "$ref": "#/$defs/m.font_color"
+                            },
+                            {
+                                "$ref": "#/$defs/m.bold"
+                            },
+                            {
+                                "$ref": "#/$defs/m.italic"
+                            },
+                            {
+                                "$ref": "#/$defs/m.underline"
+                            },
+                            {
+                                "$ref": "#/$defs/m.language"
+                            },
+                            {
+                                "$ref": "#/$defs/m.strike"
+                            },
+                            {
+                                "$ref": "#/$defs/m.code"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "n.mention@": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "attrs"],
+            "properties": {
+                "type": {
+                    "const": "mention"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "nodeId": {
+                            "type": "string"
+                        },
+                        "resourceType": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$"
+                        },
+                        "resourceId": {
+                            "type": "string"
+                        },
+                        "labelSnapshot": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["nodeId", "resourceType", "resourceId", "labelSnapshot"]
+                },
+                "content": {
+                    "type": "array",
+                    "maxItems": 0
+                },
+                "marks": {
+                    "type": "array",
+                    "maxItems": 0
+                }
+            }
+        },
+        "n.blockquote": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "blockquote"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {}
+                },
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/n.paragraph"
+                            },
+                            {
+                                "$ref": "#/$defs/n.blockquote"
+                            },
+                            {
+                                "$ref": "#/$defs/n.code_block"
+                            },
+                            {
+                                "$ref": "#/$defs/n.bullet_list"
+                            },
+                            {
+                                "$ref": "#/$defs/n.ordered_list"
+                            },
+                            {
+                                "$ref": "#/$defs/n.task_list"
+                            }
+                        ]
+                    }
+                },
+                "marks": {
+                    "type": "array",
+                    "maxItems": 0
+                }
+            }
+        },
+        "n.code_block": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "code_block"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "languageId": {
+                            "type": ["string", "null"],
+                            "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$"
+                        }
+                    }
+                },
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/n.text%40"
+                    }
+                },
+                "marks": {
+                    "type": "array",
+                    "maxItems": 0
+                }
+            }
+        },
+        "n.text@": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "text"],
+            "properties": {
+                "type": {
+                    "const": "text"
+                },
+                "text": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "marks": {
+                    "type": "array",
+                    "maxItems": 0
+                }
+            }
+        },
+        "n.bullet_list": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "bullet_list"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "marker": {
+                            "enum": ["disc", "circle", "square", null]
+                        }
+                    }
+                },
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/n.list_item"
+                    }
+                },
+                "marks": {
+                    "type": "array",
+                    "maxItems": 0
+                }
+            }
+        },
+        "n.list_item": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "list_item"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {}
+                },
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/n.paragraph"
+                            },
+                            {
+                                "$ref": "#/$defs/n.blockquote"
+                            },
+                            {
+                                "$ref": "#/$defs/n.code_block"
+                            },
+                            {
+                                "$ref": "#/$defs/n.bullet_list"
+                            },
+                            {
+                                "$ref": "#/$defs/n.ordered_list"
+                            },
+                            {
+                                "$ref": "#/$defs/n.task_list"
+                            }
+                        ]
+                    }
+                },
+                "marks": {
+                    "type": "array",
+                    "maxItems": 0
+                }
+            }
+        },
+        "n.ordered_list": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "ordered_list"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "start": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 1000000
+                        },
+                        "marker": {
+                            "enum": ["decimal", "lower-alpha", "upper-alpha", "lower-roman", "upper-roman", null]
+                        }
+                    }
+                },
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/n.list_item"
+                    }
+                },
+                "marks": {
+                    "type": "array",
+                    "maxItems": 0
+                }
+            }
+        },
+        "n.task_list": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+                "type": {
+                    "const": "task_list"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {}
+                },
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/n.task_item"
+                    }
+                },
+                "marks": {
+                    "type": "array",
+                    "maxItems": 0
+                }
+            }
+        },
+        "n.task_item": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "attrs"],
+            "properties": {
+                "type": {
+                    "const": "task_item"
+                },
+                "attrs": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "nodeId": {
+                            "type": "string"
+                        },
+                        "checked": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": ["nodeId"]
+                },
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/$defs/n.paragraph"
+                            },
+                            {
+                                "$ref": "#/$defs/n.blockquote"
+                            },
+                            {
+                                "$ref": "#/$defs/n.code_block"
+                            },
+                            {
+                                "$ref": "#/$defs/n.bullet_list"
+                            },
+                            {
+                                "$ref": "#/$defs/n.ordered_list"
+                            },
+                            {
+                                "$ref": "#/$defs/n.task_list"
+                            }
+                        ]
+                    }
+                },
+                "marks": {
+                    "type": "array",
+                    "maxItems": 0
+                }
+            }
+        }
+    }
+}

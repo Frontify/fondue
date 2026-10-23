@@ -66,7 +66,7 @@ const FEATURE_FILE_MESSAGE =
 // An undeclared package can't be imported, so the declared ones are the whole list.
 const DECLARED_PACKAGES = Object.keys({ ...packageJson.dependencies, ...packageJson.devDependencies });
 
-// The packages that editor parts may import beside the package's own modules.
+// The packages that editor parts and stories may import beside the package's own modules.
 const UI_PACKAGES = ['react', '@frontify/fondue-components', '@frontify/fondue-icons'];
 
 const UI_PACKAGES_TEXT = UI_PACKAGES.map((name) => `\`${name}\``).join(', ');
@@ -77,6 +77,9 @@ const NODE_BUILTINS = [
 ];
 
 const EDITOR_PART_MESSAGE = `An editor part acts only through \`#/bridge/plugin\`: it imports that module, \`#/bridge/define\`, \`#/model\` and its own feature folder, and of other packages only ${UI_PACKAGES_TEXT}, never Node built-ins, the engine, the runtime, the editor layers or another feature.`;
+
+const READER_FILE_MESSAGE =
+    "A feature's reader override imports only `react` (no Node built-ins), `#/model`, `#/reader/define`, its own `./feature` and a declared dependency's `#/features/<id>/feature`, as an outside feature must.";
 
 const MODEL_ENTRY_MESSAGE =
     'A feature file imports `model` only through its public entry `#/model`, as an outside feature must, never a subpath.';
@@ -128,6 +131,23 @@ const packagesExcept = (allowed: readonly string[]): string[] =>
     ).flatMap((name) => [name, `${name}/**`]);
 
 const EDITOR_PART_EXTERNALS = [...packagesExcept(UI_PACKAGES), ...NODE_BUILTINS];
+
+const READER_FILE_EXTERNALS = [...packagesExcept(['react']), ...NODE_BUILTINS];
+
+// Stories also run in Storybook, so its packages are allowed.
+const STORY_EXTERNALS = [...packagesExcept([...UI_PACKAGES, 'storybook', '@storybook/*']), ...NODE_BUILTINS];
+
+// The public entries come from `exports`, the style sheet entry is no module.
+const PUBLIC_ENTRY_MODULES = Object.entries(packageJson.exports)
+    .filter(([, target]) => typeof target === 'object')
+    .map(([entry]) => (entry === '.' ? 'index' : entry.slice(2)));
+
+// The public entries, the modules they re-export to plugins and the shared story folder, through the alias.
+const STORY_MODULES = [...PUBLIC_ENTRY_MODULES, 'bridge/plugin', 'bridge/define', 'reader/define', 'react/examples/**'];
+
+const STORY_MESSAGE = `A story imports only the public entries and the modules they re-export to plugins (${STORY_MODULES.map((path) => `\`#/${path}\``).join(', ')}), files of its own folder, ${UI_PACKAGES_TEXT}, \`storybook/*\` and \`@storybook/*\`, as an outside host must (DR-129).`;
+
+const readerFileFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'features');
 
 const aliasPatterns = (folders: readonly string[]): string[] =>
     folders.flatMap((folder) => [`#/${folder}`, `#/${folder}/**`]);
@@ -203,6 +223,7 @@ const READER_FEATURE_TAILS = [
 type ImportRestriction = {
     group?: string[];
     regex?: string;
+    importNamePattern?: string;
     message: string;
 };
 
@@ -258,7 +279,13 @@ const historyRestriction: ImportRestriction = {
     message: 'Only `src/runtime/history/` imports `prosemirror-history`.',
 };
 
-const SOURCE_RESTRICTIONS = [frameworkRestriction, historyRestriction];
+const tablesInternalsRestriction: ImportRestriction = {
+    group: ['prosemirror-tables'],
+    importNamePattern: '^_',
+    message: 'The underscore exports of `prosemirror-tables` are its internals.',
+};
+
+const SOURCE_RESTRICTIONS = [frameworkRestriction, historyRestriction, tablesInternalsRestriction];
 
 // Later overrides replace rule options, so each override repeats the base paths and patterns.
 const importRule = (patterns: ImportRestriction[], paths: readonly ImportNameRestriction[] = []) =>
@@ -315,6 +342,8 @@ const REACT_FOLDER_MESSAGE = '`react` imports every folder except `testing`, and
 
 const PERSISTENCE_MESSAGE = '`persistence` imports `model` and `runtime`.';
 
+const STYLES_MESSAGE = '`styles` imports nothing in the package and no engine or React.';
+
 const testingAllowed = new Set([
     'model',
     'runtime',
@@ -357,6 +386,8 @@ const persistenceFolders = FOLDERS.filter(
     (folder) => folder !== 'model' && folder !== 'runtime' && folder !== 'persistence',
 );
 
+const stylesFolders = FOLDERS.filter((folder) => folder !== 'styles');
+
 const TESTING_FEATURE_TAILS = [
     '',
     '/index',
@@ -382,7 +413,15 @@ export default defineConfig({
     options: {
         typeAware: true,
     },
-    ignorePatterns: ['dist/', 'coverage/', '.storybook/', 'storybook-static/'],
+    ignorePatterns: [
+        'dist/',
+        'coverage/',
+        '.storybook/',
+        'storybook-static/',
+        'playwright-report/',
+        'test-results/',
+        'playwright/.cache/',
+    ],
     overrides: [
         {
             files: ['**/*.{js,jsx,ts,tsx,mts,cts,cjs}'],
@@ -398,8 +437,6 @@ export default defineConfig({
                         trailingEmptyLines: { minimum: 2 },
                     },
                 ],
-
-                '@eslint-react/dom-no-missing-button-type': 'warn',
 
                 // Unlike the other Fondue packages, the type-aware rules keep the shared config's error severity.
             },
@@ -529,6 +566,23 @@ export default defineConfig({
                 },
             ],
         ),
+        layerOverride('src/features/*/reader.tsx', [
+            {
+                group: [
+                    ...EDITOR_PART_PATTERNS,
+                    '#/model/**',
+                    ...aliasPatterns(readerFileFolders),
+                    '!#/reader/define',
+                    ...featurePathPatterns(FEATURE_FILE_TAILS),
+                    '../**',
+                    './*',
+                    './**',
+                    '!./feature',
+                ],
+                message: READER_FILE_MESSAGE,
+            },
+            { group: READER_FILE_EXTERNALS, message: READER_FILE_MESSAGE },
+        ]),
         layerOverride('src/features/*/fixtures/**/*.{ts,tsx}', [
             { group: ['#/model/**', ...relativePatterns(['model'])], message: MODEL_ENTRY_MESSAGE },
         ]),
@@ -588,7 +642,7 @@ export default defineConfig({
                     'error',
                     {
                         paths: [FLUSH_SYNC],
-                        patterns: [frameworkRestriction, runtimeRestriction],
+                        patterns: [frameworkRestriction, tablesInternalsRestriction, runtimeRestriction],
                     },
                 ],
             },
@@ -619,6 +673,24 @@ export default defineConfig({
                     ...ENGINE_PATTERNS,
                 ],
                 message: PERSISTENCE_MESSAGE,
+            },
+        ]),
+        // Must stay after the `src/**` base override, since a later override replaces the rule options.
+        {
+            files: ['**/*.stories.tsx'],
+            rules: {
+                'no-restricted-imports': importRule([
+                    {
+                        group: ['#/**', ...STORY_MODULES.map((path) => `!#/${path}`), '../**', ...STORY_EXTERNALS],
+                        message: STORY_MESSAGE,
+                    },
+                ]),
+            },
+        },
+        layerOverride('src/styles/**/*.{ts,tsx}', [
+            {
+                group: [...aliasPatterns(stylesFolders), ...relativePatterns(stylesFolders), ...ENGINE_PATTERNS],
+                message: STYLES_MESSAGE,
             },
         ]),
     ],

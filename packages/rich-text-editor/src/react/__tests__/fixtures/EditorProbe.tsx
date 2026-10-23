@@ -8,6 +8,7 @@ import { bold, core } from '#/features';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/features/__tests__/fixtures/features';
 import { fixturePartsOf } from '#/features/__tests__/fixtures/parts';
+import { fixtureProfiles } from '#/features/__tests__/fixtures/profiles';
 import { links } from '#/features/links/feature';
 import {
     type CompiledEditorDefinition,
@@ -122,6 +123,7 @@ export const EditorProbe = ({
     inputRules = false,
     placeholder,
     contentClassName,
+    profile,
     withReader = false,
     inForm = false,
     inFrame = false,
@@ -140,6 +142,8 @@ export const EditorProbe = ({
     readonly inputRules?: boolean;
     readonly placeholder?: string;
     readonly contentClassName?: string;
+    /** Mounts a definition of this fixture profile in place of the component-test model's. */
+    readonly profile?: string;
     /** Renders the reader of the same document after the editor, in a region named Reader. */
     readonly withReader?: boolean;
     /** Puts the editor in a form. */
@@ -188,6 +192,14 @@ export const EditorProbe = ({
     if (blocks !== undefined) {
         defaultValue = documentOf(blocks, ['core', 'fixture.chrome']);
     }
+    const [profileDefinition] = useState(() => {
+        if (profile === undefined) {
+            return undefined;
+        }
+        const features = fixtureProfiles()[profile] ?? [];
+        const profileModel = compileContentModel(features, { id: 'test.ct', version: 1 });
+        return defineEditor({ id: `test.${profile}`, model: profileModel, plugins: fixturePartsOf(profileModel) });
+    });
     const presentation = useMemo(() => {
         if (contentClassName === undefined) {
             return undefined;
@@ -202,6 +214,9 @@ export const EditorProbe = ({
     if (inputRules) {
         definition = definitions.inputRules;
         readerModel = inputRulesModel;
+    }
+    if (profileDefinition !== undefined) {
+        definition = profileDefinition;
     }
     useEffect(() => {
         if (ref.current !== null) {

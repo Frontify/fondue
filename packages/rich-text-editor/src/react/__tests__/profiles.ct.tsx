@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
 import { settled } from './fixtures/layout';
+import { MinimalUsage } from './fixtures/minimal-usage';
 import { ProfileProbe } from './fixtures/ProfileProbe';
 import { ready } from './fixtures/ready';
 
@@ -11,6 +12,17 @@ const surfaceOf = (page: Page, name = 'Message') => page.getByRole('textbox', { 
 const submitted = (page: Page) => page.evaluate(() => window.profileProbe?.submitted ?? []);
 const enterKeys = (page: Page) => page.evaluate(() => window.profileProbe?.enterKeys ?? []);
 const toolbarOf = (page: Page) => page.getByRole('toolbar', { name: 'Text formatting' });
+
+test('renders the minimal usage as a Document editor that types, unmanaged', async ({ mount, page }) => {
+    await mount(<MinimalUsage />);
+    await ready(page);
+    await surfaceOf(page, 'Notes').click();
+    await page.keyboard.type('Hello');
+
+    await expect(surfaceOf(page, 'Notes')).toHaveText('Hello');
+    await expect(toolbarOf(page).getByRole('button', { name: 'Bold', exact: true })).toBeVisible();
+    await expect(page.locator('[data-test-id="fondue-rich-text-editor-status"]')).toHaveCount(0);
+});
 
 for (const key of ['Enter', 'Shift+Enter', 'ControlOrMeta+Enter']) {
     test(`submits an Inline field's valid content with ${key}`, async ({ mount, page }) => {

@@ -1388,6 +1388,8 @@ describe('the inserts of the editor API', () => {
         ...stored,
         content: { ...stored.content, content: [{ type: 'blockquote', attrs: {}, content: [paragraph] }, title] },
     } as unknown as RichTextDocument;
+    const image = { type: 'asset_image', attrs: { assetId: 'asset-1', labelSnapshot: 'Photo' } };
+
     it('puts a block after the top-level block that holds the selection', () => {
         const { handle } = mount({ document: inQuote });
 
@@ -1399,6 +1401,24 @@ describe('the inserts of the editor API', () => {
         expect(seen).toMatchObject({ status: 'applied' });
         expect(blocksOf(handle)?.map(({ type }) => type)).toEqual(['blockquote', 'heading', 'heading']);
         expect(attrsAt(handle, 1)?.level).toBe(3);
+    });
+
+    it('fills a block with the stored content given, and refuses content that does not fit it as it is', () => {
+        const { handle } = mount();
+        const outcomes: string[] = [];
+
+        runIn(handle, 'Plain', (api) => {
+            outcomes.push(
+                api.insert.node('figure', {}, { content: [{ type: 'paragraph', content: [text('x')] }] }).status,
+                api.insert.node('figure', {}, { content: [image] }).status,
+            );
+            return true;
+        });
+
+        const figure = blocksOf(handle)?.find(({ type }) => type === 'figure');
+        expect(outcomes).toEqual(['rejected', 'applied']);
+        const figureContent = figure?.content;
+        expect(figureContent?.[0]).toMatchObject(image);
     });
 
     it('tells an `enabled` check whether a node has a spot at the selection', () => {
@@ -1436,6 +1456,21 @@ describe('the range a write of the editor API wrote', () => {
         });
 
         expect(textsOf(handle)).toEqual(['Plain bold', 'Title', 'x']);
+    });
+
+    it('selects the node a plugin UI inserted', () => {
+        const { handle } = mount();
+        setSelection(handle, { text: 'Plain', from: 0, to: 0 });
+        let outcome: ReturnType<EditorApi['insert']['node']> | undefined;
+
+        act(() => {
+            outcome = live?.insert.node('heading', { level: 3 }, { content: [text('New')] });
+            if (outcome?.status === 'applied') {
+                live?.select(outcome.range);
+            }
+        });
+
+        expect(live?.selectedText()).toBe('New');
     });
 });
 
@@ -1504,6 +1539,7 @@ describe('a name the model does not install, in the editor API', () => {
             answers.blockActive = api.blocks.active('missing');
             answers.blockSet = api.blocks.set('missing');
             answers.blockWrap = api.blocks.wrap('missing');
+            answers.blockLift = api.blocks.lift('missing');
             answers.listToggle = api.lists.toggle('missing', 'missing');
             answers.listIndent = api.lists.indent('missing');
             answers.listOutdent = api.lists.outdent('missing');
@@ -1526,6 +1562,7 @@ describe('a name the model does not install, in the editor API', () => {
             blockActive: false,
             blockSet: false,
             blockWrap: false,
+            blockLift: false,
             listToggle: false,
             listIndent: false,
             listOutdent: false,

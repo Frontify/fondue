@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - packages/rich-text-editor/**
-      - .changeset/rich-text-editor-*.md
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -125,12 +122,49 @@ jobs:
       - name: Playwright tests
         run: pnpm --filter {packages/components} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
+  rte-release-checks:
+    name: Rich Text Editor Release Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          playwright-cache: "true"
+
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      - name: Build Fondue Components
+        run: pnpm build:components
+
+      - name: Build Fondue Tokens
+        run: pnpm build:tokens
+
+      - name: Install Playwright browsers
+        run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
+
+      # Packs the release with its workspace peers, imports each entry from a scratch install, and checks the notes, docs pages and public types.
+      - name: Release checks
+        working-directory: packages/rich-text-editor
+        env:
+          RTE_RELEASE: "true"
+        run: pnpm exec vitest run src/__tests__/release.spec.ts --coverage.enabled=false
+
+      - name: Fixture app smoke
+        working-directory: packages/rich-text-editor
+        run: pnpm exec playwright test --config src/__tests__/fixtures/apps/playwright.config.ts
+
   publish:
     name: Publish
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-    needs: [lint-typecheck, component-unit-tests, component-tests]
+    needs: [lint-typecheck, component-unit-tests, component-tests, rte-release-checks]
 
     permissions:
       contents: write # to create release (changesets/action)

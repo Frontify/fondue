@@ -4,6 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { EditorView } from 'prosemirror-view';
 import { Profiler, StrictMode, createRef } from 'react';
 import * as ReactDOMClient from 'react-dom/client';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
@@ -36,6 +37,10 @@ import {
     type RichTextLocale,
 } from '#/model';
 import { viewsOf } from '#/react/compile-editor';
+import { shipped as brandDocumentProfile } from '#/react/profiles/brand-document';
+import { shipped as commentProfile } from '#/react/profiles/comment';
+import { shipped as documentProfile } from '#/react/profiles/document';
+import { shipped as inlineProfile } from '#/react/profiles/inline';
 import { defineReaderFeature, type ReaderNodeProps, RichTextReader } from '#/reader';
 import { type EditorRuntime, type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { probeRuntimes, setSelection, typeText } from '#/testing';
@@ -481,8 +486,12 @@ describe('the React bridge', () => {
 
     it('registers no node view for native nodes and renders nothing while typing in a list', async () => {
         const native = ['paragraph', 'heading', 'text', 'bullet_list', 'list_item', 'table_row', 'table_cell'];
+        const shippedViews = [inlineProfile, commentProfile, documentProfile, brandDocumentProfile].map((profile) =>
+            viewsOf(profile().definition),
+        );
         const chrome = modelOf([fixtureChrome(), fixtureList()]);
         const registered = [
+            ...shippedViews,
             viewsOf(defineEditor({ id: 'test.profile', model: chrome, plugins: fixturePartsOf(chrome) })),
         ];
         for (const views of registered) {
@@ -744,11 +753,53 @@ describe('node view faults', () => {
 
         expect(handle().getSummary().phase).toBe('faulted');
         expect(onDiagnostic.mock.calls.filter(([{ code }]) => code === 'runtime.view-fault')).toHaveLength(1);
+        // The recovery shell takes the place of a surface that takes no more edits.
+        expect(screen.queryByRole('textbox', { name: 'Notes' })).toBeNull();
+        expect(document.querySelector('[data-rte-shell="recovery"]')).not.toBeNull();
         expect(handle().getSnapshot().stamp).toEqual(stamp);
         expect(updateState.mock.results.map(({ type }) => type)).toEqual(['return']);
         expect(probeRuntimes().portals).toBe(0);
         expect(() => handle().dispose()).not.toThrow();
         updateState.mockRestore();
+        unmount();
+    });
+
+    /** The recovery shell, which shows `document` through the reader. */
+    const recoveryShell = (shown: unknown) => {
+        const shell = document.querySelector('[data-rte-shell="recovery"]');
+        expect(shell?.innerHTML).toContain(
+            renderToStaticMarkup(<RichTextReader document={shown as never} model={model} locale={enUS} />),
+        );
+    };
+
+    it('shows the recovery shell with the snapshot once a node view update faults, and Retry edits it again', async () => {
+        throwingStore((state) => state.attrs.language === 'boom');
+        const { runtime, handle, flush, unmount } = await mount([block('b1', 'code')]);
+        act(() => typeText(handle(), 'x'));
+        const before = handle().getSnapshot();
+
+        act(() => {
+            runtime().nodeActions('b1').update({ language: 'boom' });
+        });
+        await flush();
+
+        recoveryShell(before.document);
+        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+        await flush();
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        expect(surface()).toHaveAttribute('contenteditable', 'true');
+        expect(handle().getSnapshot().document).toEqual(before.document);
+        unmount();
+    });
+
+    it('shows the recovery shell with the decoded document when a node view constructor throws while mounting', async () => {
+        throwingStore(() => true);
+        const { handle, unmount } = await mount([block('b1', 'code')]);
+
+        expect(screen.queryByRole('textbox', { name: 'Notes' })).toBeNull();
+        recoveryShell(handle().getSnapshot().document);
         unmount();
     });
 

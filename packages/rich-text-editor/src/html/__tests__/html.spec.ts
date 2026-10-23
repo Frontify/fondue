@@ -237,7 +237,7 @@ describe('external HTML', () => {
     });
 
     it('applies options.limits maxAttributeLength, keeps a value exactly at it, and the default limit when none is given', () => {
-        const html = '<p lang="en-x-abc">at</p><p lang="en-x-abcd">over</p>';
+        const html = '<p lang="en-x-abc">at</p><p lang="en-x-abcd">over</p><p><span lang="en-x-abcd">mark</span></p>';
         const lang = (value: string | null, ...content: readonly object[]) => ({
             type: 'paragraph',
             attrs: { lang: value, align: null },
@@ -248,8 +248,17 @@ describe('external HTML', () => {
         expect(contentOf(html, { limits: { maxAttributeLength: 8 } })).toEqual([
             lang('en-x-abc', plain('at')),
             lang(null, plain('over')),
+            lang(null, plain('mark')),
         ]);
-        expect(contentOf(html)).toEqual([lang('en-x-abc', plain('at')), lang('en-x-abcd', plain('over'))]);
+        expect(contentOf(html)).toEqual([
+            lang('en-x-abc', plain('at')),
+            lang('en-x-abcd', plain('over')),
+            lang(null, {
+                type: 'text',
+                text: 'mark',
+                marks: [{ type: 'language', attrs: { lang: 'en-x-abcd', dir: null } }],
+            }),
+        ]);
     });
 
     /** A Word list paragraph of list `list` at `level`, its marker in the `mso-list:Ignore` span Word writes. */

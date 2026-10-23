@@ -8,6 +8,7 @@ import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import postcss from 'postcss';
+import ts from 'typescript';
 import { build, type Rollup } from 'vite';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -303,6 +304,65 @@ describe('package manifest and built output', () => {
 
     it('lists the stylesheet alone as having side effects', () => {
         expect(manifest.sideEffects).toEqual(['./dist/style.css']);
+    });
+
+    /** Each `any` and each `prosemirror-*` import in the declaration files that the published `types` reach. */
+    const publicTypeFaults = (): string[] => {
+        const faults: string[] = [];
+        const seen = new Set<string>();
+        const queue = Object.values(manifest.exports ?? {}).flatMap((value) => {
+            if (typeof value !== 'object') {
+                return [];
+            }
+            return filesOf((value.types ?? '').slice('./dist/'.length));
+        });
+        for (let file = queue.pop(); file !== undefined; file = queue.pop()) {
+            if (seen.has(file)) {
+                continue;
+            }
+            seen.add(file);
+            const source = ts.createSourceFile(
+                file,
+                readFileSync(join(outDir, file), 'utf8'),
+                ts.ScriptTarget.Latest,
+                true,
+            );
+            const follow = (specifier: string) => {
+                if (specifier.startsWith('prosemirror-')) {
+                    faults.push(`${file} imports ${specifier}`);
+                } else if (specifier.startsWith('.')) {
+                    const base = slash(join(dirname(file), specifier.replace(/\.js$/, '')));
+                    const found = [`${base}.d.ts`, `${base}/index.d.ts`].find((path) => builtFiles.includes(path));
+                    queue.push(found ?? `${base}.d.ts`);
+                }
+            };
+            const visit = (node: ts.Node) => {
+                if (node.kind === ts.SyntaxKind.AnyKeyword) {
+                    faults.push(`${file} has any: ${node.parent.getText(source)}`);
+                }
+                if (
+                    (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+                    node.moduleSpecifier !== undefined &&
+                    ts.isStringLiteral(node.moduleSpecifier)
+                ) {
+                    follow(node.moduleSpecifier.text);
+                }
+                if (
+                    ts.isImportTypeNode(node) &&
+                    ts.isLiteralTypeNode(node.argument) &&
+                    ts.isStringLiteral(node.argument.literal)
+                ) {
+                    follow(node.argument.literal.text);
+                }
+                ts.forEachChild(node, visit);
+            };
+            visit(source);
+        }
+        return faults;
+    };
+
+    it('holds no any and no prosemirror import in the declaration files of any entry', () => {
+        expect(publicTypeFaults()).toEqual([]);
     });
 
     // React AC-052: every colour of the built stylesheet comes from a token variable.

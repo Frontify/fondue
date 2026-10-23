@@ -4,6 +4,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { ThemeProvider } from '@frontify/fondue-components';
 import { act, render, screen } from '@testing-library/react';
 import { createRef, Profiler, StrictMode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
@@ -42,7 +43,8 @@ import {
 import * as model from '#/model';
 import { type LoadedDocument, type PersistenceService } from '#/persistence/types';
 import { fixturesIn } from '#/reader/__tests__/helpers/helpers';
-import { liveResources, type RuntimeHandle } from '#/runtime/runtime';
+import { type AsyncOperation } from '#/runtime/async';
+import { liveResources, type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { type CommandResult, type DocumentChange } from '#/runtime/types';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
@@ -82,6 +84,8 @@ const ALLOWED = { create: true, edit: true, remove: true, paste: true };
 
 type Props = Partial<RichTextEditorBaseProps<object>>;
 
+type Theme = 'light' | 'dark';
+
 beforeEach(() => {
     vi.useFakeTimers();
 });
@@ -89,8 +93,8 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
-/** Mounts an editor and runs its first frame, so it is `ready`. */
-const mount = (props: Props = {}, strict = false) => {
+/** Mounts an editor, under a Fondue `theme` when given, and runs its first frame, so it is `ready`. */
+const mount = (props: Props = {}, strict = false, theme?: Theme) => {
     const ref = createRef<EditorHandle<object>>();
     const element = (extra: Props) => (
         <RichTextEditor
@@ -102,12 +106,15 @@ const mount = (props: Props = {}, strict = false) => {
             {...extra}
         />
     );
-    const wrap = (extra: Props) => {
+    const wrap = (extra: Props, shown = theme) => {
         let editor = element(extra);
         if (strict) {
             editor = <StrictMode>{editor}</StrictMode>;
         }
-        return editor;
+        if (shown === undefined) {
+            return editor;
+        }
+        return <ThemeProvider theme={shown}>{editor}</ThemeProvider>;
     };
     const view = render(wrap({}));
     act(() => {
@@ -122,7 +129,7 @@ const mount = (props: Props = {}, strict = false) => {
     return {
         ...view,
         handle,
-        rerender: (extra: Props = {}) => view.rerender(wrap(extra)),
+        rerender: (extra: Props = {}, shown?: Theme) => view.rerender(wrap(extra, shown)),
     };
 };
 
@@ -172,6 +179,25 @@ describe('RichTextEditor', () => {
         unmount();
     });
 
+    it('keeps the view, selection, plugins and undo step across 50 rerenders that switch the Fondue theme', () => {
+        const { handle, rerender, unmount } = mount({}, false, 'light');
+        act(() => typeText(handle(), 'c'));
+        setSelection(handle(), { text: 'b' });
+        const view = viewOf();
+        const { plugins, selection } = view.state;
+
+        for (let index = 0; index < 50; index += 1) {
+            rerender({ onDocumentChange: () => index }, index % 2 === 0 ? 'dark' : 'light');
+        }
+
+        expect(document.querySelector('.fondue-theme-provider')?.className).toMatch(/light|dark/);
+        expect(probeRuntimes().views).toEqual([view]);
+        expect(view.state.plugins).toBe(plugins);
+        expect(view.state.selection.eq(selection)).toBe(true);
+        expect(undoOnce(handle())).toEqual(['applied', false]);
+        unmount();
+    });
+
     it('calls the newest onDocumentChange', () => {
         const first = vi.fn();
         const second = vi.fn();
@@ -182,6 +208,35 @@ describe('RichTextEditor', () => {
 
         expect(first).not.toHaveBeenCalled();
         expect(second).toHaveBeenCalledTimes(1);
+        unmount();
+    });
+
+    it('aborts only the operations of the services member a rerender replaces', () => {
+        const uploads = { upload: vi.fn(), releaseUnused: vi.fn() };
+        const { handle, rerender, unmount } = mount({ services: { references: { search: vi.fn() }, uploads } });
+        const view = viewOf();
+        const start = (service: string) => {
+            let started: AsyncOperation | undefined;
+            act(() => {
+                started = runtimeOf(handle())?.startAsync({
+                    key: service,
+                    service,
+                    featureId: 'core',
+                    action: 'create',
+                    command: 'text.insert',
+                    run: () => new Promise(() => undefined),
+                });
+            });
+            return started;
+        };
+        const search = start('references');
+        const upload = start('uploads');
+
+        rerender({ services: { references: { search: vi.fn() }, uploads } });
+
+        expect(search?.controller.signal.aborted).toBe(true);
+        expect(upload?.controller.signal.aborted).toBe(false);
+        expect(viewOf()).toBe(view);
         unmount();
     });
 
@@ -199,7 +254,7 @@ describe('RichTextEditor', () => {
             frames: once.frames,
         });
         strict.unmount();
-        expect(probeRuntimes()).toMatchObject({ views: [], subscriptions: 0, frames: 0 });
+        expect(probeRuntimes()).toMatchObject({ views: [], installedFeatures: [], subscriptions: 0, frames: 0 });
     });
 
     it('destroys the view of a detached surface at once and attaches a new one', () => {
@@ -239,6 +294,7 @@ describe('RichTextEditor', () => {
         expect(textbox.getAttribute('aria-invalid')).toBe('true');
         expect(textbox.getAttribute('aria-errormessage')).toBe('problem');
         expect(textbox.getAttribute('aria-required')).toBe('true');
+        expect(textbox.getAttribute('translate')).toBe('no');
         expect(textbox.getAttribute('contenteditable')).toBe('true');
         unmount();
     });
@@ -288,8 +344,10 @@ describe('RichTextEditor', () => {
         const { rerender, unmount } = mount({ onDiagnostic });
 
         rerender({ onDiagnostic, definition: otherDefinition });
+        rerender({ onDiagnostic, definition, profile: 'comment' });
 
         expect(onDiagnostic.mock.calls.map(([diagnostic]) => diagnostic)).toEqual([
+            { code: 'react.definition-changed', severity: 'warning', messageKey: 'react.definition-changed' },
             { code: 'react.definition-changed', severity: 'warning', messageKey: 'react.definition-changed' },
         ]);
         unmount();
@@ -422,6 +480,24 @@ describe('RichTextEditor', () => {
             para({ type: 'text', text: 'ab', marks: [{ type: 'bold' }, { type: 'italic' }] }),
         ]);
         unmount();
+    });
+
+    it('rejects a function, a regular expression and a component in remote policy values', () => {
+        for (const [value, path] of [
+            [() => true, '/policy/features/core/create'],
+            [/x/, '/policy/features/core/create'],
+            [{ $$typeof: Symbol.for('react.element') }, '/policy/features/core/create/$$typeof'],
+        ] as const) {
+            const policy = { features: { core: { create: value } } } as never;
+            let failure: unknown;
+            try {
+                defineEditor({ id: 'test.remote', model: boldModel, policy });
+            } catch (error) {
+                failure = error;
+            }
+            expect(failure).toBeInstanceOf(DefinitionError);
+            expect(failure).toMatchObject({ code: 'definition.invalid-option', details: { path } });
+        }
     });
 
     it('rejects a policy for a feature the model does not install', () => {

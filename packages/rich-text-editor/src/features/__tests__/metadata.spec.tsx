@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
 import { documentModel } from '#/features';
+import { canonicalOf } from '#/features/__tests__/fixtures/generated';
 import { resolving } from '#/features/media-image/__tests__/fixtures/mount';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { type ContentNodeJSON, createEmptyDocument, type RichTextDocument, type RichTextSlice } from '#/model';
@@ -136,6 +137,10 @@ describe('the accessibility metadata fixture', () => {
     it('holds each kind of metadata', () => {
         expect(metadataOf(metadata.content.content ?? [])).toEqual(EXPECTED);
         expect(metadata.content.attrs).toEqual({ lang: 'en', dir: 'ltr' });
+    });
+
+    it('keeps all of it through decode and encode', () => {
+        expect(canonicalOf(model, metadata)).toEqual(metadata);
     });
 
     it('keeps all of it through internal copy and paste', () => {

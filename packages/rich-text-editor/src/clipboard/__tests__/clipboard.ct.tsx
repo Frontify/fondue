@@ -463,6 +463,7 @@ test('shows the drop cursor at the nearest block boundary for a paragraph, a fil
         paragraph('first'),
         paragraph('third'),
     ]);
+    expect(await page.evaluate(() => (window.clip as Clip).uploads())).toBe(0);
 });
 
 test('copies the same three flavors in readonly as in editable mode @engine', async ({ mount, page }) => {
@@ -543,6 +544,7 @@ test('keeps the document and selection in readonly through paste, cut and drops,
     expect(await contentOf(page)).toEqual(content);
     expect(await page.evaluate(() => (window.clip as Clip).selection())).toEqual(selection);
     expect(await changesOf(page)).toEqual([]);
+    expect(await page.evaluate(() => (window.clip as Clip).uploads())).toBe(0);
     expect(flavors.text).toBe('b');
     expect(flavors.html).toBe('<div class="fondue-rte-content"><p dir="auto">b</p></div>');
     expect(JSON.parse(flavors.slice)).toMatchObject({ content: [paragraph('b')] });

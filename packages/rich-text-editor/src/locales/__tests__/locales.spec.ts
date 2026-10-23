@@ -6,6 +6,7 @@ import { readdirSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
+import { CODE_LANGUAGES } from '#/features/blocks-code/languages';
 import { LOADERS } from '#/react/locale';
 
 import { COUNT_PLACEHOLDERS } from '../countPlaceholders';
@@ -63,6 +64,27 @@ describe('package locales', () => {
         expect(strings).toHaveLength(SAVE_STATES.length + SAVE_REJECTIONS.length);
         expect(new Set(strings.map(([, value]) => value)).size).toBe(strings.length);
         expect(Object.fromEntries(strings)).toMatchSnapshot();
+    });
+
+    it.each(files)('labels every code language of %s through its own keys', async (file) => {
+        const { translationStrings } = await localeOf(file);
+        const labelOf = (key: string) => translationStrings[key as keyof typeof translationStrings];
+
+        const keys = CODE_LANGUAGES.flatMap((language) => {
+            if ('labelKey' in language) {
+                return [language.labelKey];
+            }
+            return [];
+        });
+
+        expect(keys).toHaveLength(3);
+        expect(keys.map(labelOf)).not.toContain(undefined);
+        // The labels that name a kind of session, template or console, which a locale translates.
+        expect({
+            shell: labelOf('RichTextEditor_codeLanguageShell'),
+            phpTemplate: labelOf('RichTextEditor_codeLanguagePhpTemplate'),
+            pythonRepl: labelOf('RichTextEditor_codeLanguagePythonRepl'),
+        }).toMatchSnapshot();
     });
 
     it('loads every shipped locale but enUS through its own import()', () => {

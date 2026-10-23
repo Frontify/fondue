@@ -42,7 +42,8 @@ const config: StorybookConfig = {
         '@etchteam/storybook-addon-status',
         '@storybook/addon-docs',
     ],
-    staticDirs: ['assets', '../static'],
+    // The rich text editor's JSON Schemas at a stable URL per model ID and version.
+    staticDirs: ['assets', '../static', { from: '../../packages/rich-text-editor/src/docs/schemas', to: '/schemas' }],
     framework: {
         name: '@storybook/react-vite',
         options: {},
