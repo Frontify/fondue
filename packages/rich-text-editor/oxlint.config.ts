@@ -70,6 +70,9 @@ const READER_MESSAGE =
 const CLIENT_REACT_MESSAGE =
     'The reader renders on the server too, so it uses no client hook, context or class component.';
 
+const CODECS_MESSAGE =
+    '`codecs` imports only `model` and `locales`, because `./codecs` runs without the engine or React.';
+
 const LOCALES_MESSAGE = '`locales` holds plain string tables and imports nothing in the package.';
 
 const PROSEMIRROR_EXCEPT_MODEL = DECLARED_PACKAGES.filter(
@@ -213,6 +216,8 @@ const readerFolders = FOLDERS.filter(
     (folder) => folder !== 'model' && folder !== 'locales' && folder !== 'reader' && folder !== 'features',
 );
 
+const codecsFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'locales' && folder !== 'codecs');
+
 const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
 
 const definitionPatterns = [
@@ -343,6 +348,17 @@ export default defineConfig({
             [],
             [CLIENT_REACT],
         ),
+        layerOverride('src/codecs/**/*.{ts,tsx}', [
+            {
+                group: [
+                    ...aliasPatterns(codecsFolders),
+                    ...relativePatterns(codecsFolders),
+                    ...featurePathPatterns(['', '/**']),
+                    ...ENGINE_PATTERNS,
+                ],
+                message: CODECS_MESSAGE,
+            },
+        ]),
         layerOverride('src/locales/**/*.{ts,tsx}', [
             {
                 group: [...aliasPatterns(localesFolders), ...relativePatterns(localesFolders), ...ENGINE_PATTERNS],

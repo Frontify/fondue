@@ -60,6 +60,7 @@ export default defineConfig({
             entry: {
                 'model/index': './src/model/index.ts',
                 'reader/index': './src/reader/index.ts',
+                'codecs/index': './src/codecs/index.ts',
             },
             formats: ['es'],
         },

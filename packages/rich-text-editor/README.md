@@ -29,3 +29,4 @@ Run these from `packages/rich-text-editor`.
 | --- | --- |
 | `./model` | The content model and documents |
 | `./reader` | `RichTextReader` and `defineReaderFeature` |
+| `./codecs` | `createCodecs` |
