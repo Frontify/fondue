@@ -14,7 +14,10 @@ const load = async () => {
     vi.resetModules();
     const features = await import('#/features');
     const model = await import('#/model');
-    return { features, model };
+    const codecs = await import('#/codecs');
+    const outside = await import('#/features/__tests__/fixtures/outside-feature');
+    const { renderReader } = await import('#/reader/__tests__/helpers/helpers');
+    return { features, model, codecs, outside, renderReader };
 };
 let loaded: Awaited<ReturnType<typeof load>>;
 
@@ -39,5 +42,32 @@ describe('./features with no DOM globals', () => {
         });
 
         expect(entry.decodeDocument(fixture, model).status).toBe('editable');
+    });
+});
+
+describe('the outside fixture feature with no DOM globals', () => {
+    it('renders in the reader and writes through every codec', () => {
+        expect([typeof window, typeof document, typeof navigator]).toEqual(['undefined', 'undefined', 'undefined']);
+        const { features, model: entry, codecs: codecEntry, outside, renderReader } = loaded;
+        const { highlight, highlightDocument } = outside;
+        const model = entry.compileContentModel([features.core(), features.align(), highlight()], {
+            id: 'fixture.highlight',
+            version: 1,
+        });
+        const codecs = codecEntry.createCodecs(model);
+        const html = '<div class="fondue-rte-content"><p dir="auto">Read the <mark>highlighted</mark> part.</p></div>';
+
+        expect(renderReader(highlightDocument, model)).toBe(html);
+        expect(codecs.toHTML(highlightDocument)).toEqual({ html, css: '', diagnostics: [] });
+        expect(codecs.toPlainText(highlightDocument)).toEqual({
+            text: 'Read the highlighted part.',
+            losses: [{ featureId: 'fixture.highlight', count: 1 }],
+            diagnostics: [],
+        });
+        expect(codecs.toMarkdown(highlightDocument)).toEqual({
+            markdown: 'Read the highlighted part.',
+            losses: [{ featureId: 'fixture.highlight', count: 1 }],
+            diagnostics: [],
+        });
     });
 });

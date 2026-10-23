@@ -82,6 +82,10 @@ export default defineConfig({
     },
     test: {
         environment: 'happy-dom',
+        // `runFeatureContract` registers its cases through the runner globals, as it does in a host's tests.
+        globals: true,
+        // A cold transform cache makes the first import of an entry slow; each test keeps the 5,000 ms default.
+        hookTimeout: 60_000,
         coverage: {
             exclude: [
                 ...configDefaults.exclude,

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type JsonObject } from '#/model';
+import { type ContentNodeJSON, type JsonObject } from '#/model';
 
 import { positionsOf } from './editor-api';
 import { type CommandOptions, type CommandState, type SelectionSummary } from './types';
@@ -9,6 +9,13 @@ declare const rangeBrand: unique symbol;
 /** A stretch of the document as it was when read, such as a whole mark run: an overlay anchors to it, a target captures it. */
 export interface EditorRange {
     readonly [rangeBrand]: true;
+}
+
+/** One node with the stretch it covers. */
+export interface NodeValue {
+    readonly nodeId: string | null;
+    readonly attrs: JsonObject;
+    readonly range: EditorRange;
 }
 
 /** A node around the selection's start. */
@@ -39,9 +46,18 @@ export interface SelectionValue extends SelectionSummary {
     readonly verbatim: boolean;
 }
 
+/** Where a write goes: a range, or the node with `nodeId`, whole or before, after, or at the start or end of its content. */
+export type WriteTarget = EditorRange | { readonly nodeId: string; readonly at?: 'before' | 'after' | 'start' | 'end' };
+
 /** What running another command gave: the whole `CommandResult` from plugin UI, inside a command whether it applied. */
 export type CommandOutcome =
     | { readonly status: 'applied' | 'no-op' }
+    | { readonly status: 'rejected'; readonly code: string };
+
+/** What a content write gave: once applied, the range it wrote, which a command can select inside. */
+export type WriteOutcome =
+    | { readonly status: 'applied'; readonly range: EditorRange }
+    | { readonly status: 'no-op' }
     | { readonly status: 'rejected'; readonly code: string };
 
 /**
@@ -78,6 +94,27 @@ export interface DocumentApi {
     readonly insert: {
         text(text: string): boolean;
     };
+    /**
+     * Writes stored JSON nodes, checked as decode checks them but refused rather than cleaned: a write that breaks the
+     * vocabulary, the URL policy or a limit changes nothing and is rejected as `invalid`, `policy` or `limit`. Only content
+     * that fits where it goes as it is is written.
+     */
+    readonly content: {
+        /**
+         * The stored JSON nodes under `range`, each node it only partly covers cut to it, which `replace` writes back;
+         * attributes left out of written JSON take their declared defaults. `undefined` for a range the writer refuses.
+         */
+        read(range: WriteTarget): readonly ContentNodeJSON[] | undefined;
+        replace(range: WriteTarget, nodes: readonly ContentNodeJSON[]): WriteOutcome;
+        delete(range: WriteTarget): WriteOutcome;
+        /** Inserts `nodes` at the end of a range, or after the node unless `at` says otherwise. */
+        insert(at: WriteTarget, nodes: readonly ContentNodeJSON[]): WriteOutcome;
+    };
+    /**
+     * The selected node of `node`, else the nearest one around the selection; `node` may be a container. With `nodeId`,
+     * the node itself or the nearest ancestor of `node` around the node with that ID.
+     */
+    nearest(node: string, nodeId?: string): NodeValue | undefined;
     readonly commands: {
         /** Runs another installed command with a payload, as the host's `execute` does. */
         execute(id: string, payload?: unknown, options?: CommandOptions): CommandOutcome;

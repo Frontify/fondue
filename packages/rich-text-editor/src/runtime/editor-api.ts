@@ -1,20 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MarkType, type Node, type Schema } from 'prosemirror-model';
+import { Fragment, type MarkType, type Node, type Schema } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
+import { Mapping } from 'prosemirror-transform';
 
-import { COMMAND_META, type CommandContext, type CommandLookup, type EngineCommand } from '#/definition';
+import { COMMAND_META, type CommandContext, type CommandLookup, type EngineCommand, withNodeIds } from '#/definition';
 import {
     type AttributeDeclaration,
     checkHref,
     type ContentModel,
+    type ContentNodeJSON,
     defaultLimits,
     type JsonObject,
     type PayloadDeclaration,
     type ResourceLimits,
 } from '#/model';
+import { hasNodeId } from '#/model/capabilities';
 import { attributesOf, compiledModel } from '#/model/compile';
+import { type TreeNode } from '#/model/content';
+import { decodeToTree } from '#/model/decode';
+import { encodeTree } from '#/model/encode';
 import { hrefPolicyOf } from '#/model/href';
+import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
 import { type CapabilityImplementation, EDITS } from './capabilities';
@@ -24,8 +31,10 @@ import {
     type DocumentApi,
     type EditorRange,
     type SelectionValue,
+    type WriteOutcome,
+    type WriteTarget,
 } from './document-api';
-import { inCodeTextblock } from './positions';
+import { inCodeTextblock, nearest as nearestNode, positionOf } from './positions';
 import { type EditorRuntime, summarize } from './runtime';
 import { appendSteps, carrySelection } from './transactions';
 import { type AuthoringPolicy, type CommandOptions, type CommandResult, type CommandState } from './types';
@@ -49,6 +58,15 @@ export const rangeOf = (doc: Node, from: number, to: number): EditorRange => {
 /** The document positions behind a range this module made, as they were when it was read. */
 export const positionsOf = (range: EditorRange): Positions | undefined => RANGES.get(range);
 
+/** The positions of `range` in `doc`, the document it was read from, else `undefined`. */
+const positionsIn = (range: EditorRange, doc: Node): Positions | undefined => {
+    const read = RANGES.get(range);
+    if (read === undefined || read.doc !== doc) {
+        return undefined;
+    }
+    return read;
+};
+
 /** Where the document API reads and writes: a running command's state, or the live session. */
 interface ApiSource {
     readonly model: ContentModel;
@@ -56,6 +74,8 @@ interface ApiSource {
     readonly lookup: CommandLookup;
     readonly limits: ResourceLimits;
     state(): EditorState;
+    /** The positions of `range` in the current state, or `undefined` for a range it cannot map from. */
+    resolve(range: EditorRange): Positions | undefined;
     /** Runs `command` with `payload` as one edit. */
     edit(command: EngineCommand, payload?: unknown): CommandOutcome;
     /** Notes a write refused as not allowed, which makes a running command that then fails report `not-allowed`. */
@@ -100,6 +120,17 @@ const checkedUrl = (
     }
     return checkHref(value, policyOf(model, featureId));
 };
+
+/** Whether a `url` value of `attrs` fails the policy of `featureId`. */
+const urlRefused = (
+    model: ContentModel,
+    featureId: string,
+    declared: Readonly<Record<string, AttributeDeclaration>>,
+    attrs: Readonly<Record<string, unknown>>,
+): boolean =>
+    Object.entries(declared).some(
+        ([name, declaration]) => checkedUrl(model, featureId, declaration, attrs[name])?.ok === false,
+    );
 
 interface AttributeOwner {
     readonly attrs: Readonly<Record<string, AttributeDeclaration>>;
@@ -204,6 +235,13 @@ const documentApi = (source: ApiSource): DocumentApi => {
         }
         return source.edit(command, payload).status !== 'rejected';
     };
+    /** A rejected write, noted as a refusal when a policy or a limit caused it. */
+    const rejectedWrite = (code: string): WriteOutcome => {
+        if (code === 'policy' || code === 'limit') {
+            source.refused();
+        }
+        return { status: 'rejected', code };
+    };
     const capability = (implementation: CapabilityImplementation, args: JsonObject) =>
         implementation(args, schema, lookup);
     /**
@@ -220,6 +258,154 @@ const documentApi = (source: ApiSource): DocumentApi => {
     ) => {
         const checked = checkedAttrs(model, types, attrs ?? {}, maxAttributeLength, whole);
         return checked !== undefined && edit(capability(implementation, args), Object.assign({ ...checked }, extra));
+    };
+    /** The span of `target` in the current state; with `point`, where an insert goes. */
+    const spanOf = (target: WriteTarget, point: boolean): Positions | undefined => {
+        if (!('nodeId' in target)) {
+            const range = source.resolve(target);
+            if (range === undefined || !point) {
+                return range;
+            }
+            return { from: range.to, to: range.to };
+        }
+        const { doc } = source.state();
+        const pos = positionOf(doc, target.nodeId);
+        const node = pos === undefined ? null : doc.nodeAt(pos);
+        if (pos === undefined || node === null) {
+            return undefined;
+        }
+        const end = pos + node.nodeSize;
+        if (target.at === 'before') {
+            return { from: pos, to: pos };
+        }
+        if (target.at === 'after' || (target.at === undefined && point)) {
+            return { from: end, to: end };
+        }
+        if (target.at === undefined) {
+            return { from: pos, to: end };
+        }
+        if (node.isLeaf) {
+            return undefined;
+        }
+        if (target.at === 'start') {
+            return { from: pos + 1, to: pos + 1 };
+        }
+        return { from: end - 1, to: end - 1 };
+    };
+    /** `value` with an ID on each node whose type carries one and that has none, which decode requires. */
+    const withPlaceholderIds = (value: unknown): unknown => {
+        if (!isRecord(value)) {
+            return value;
+        }
+        const node: Record<string, unknown> = { ...value };
+        if (Array.isArray(value.content)) {
+            node.content = value.content.map(withPlaceholderIds);
+        }
+        const type = typeof value.type === 'string' ? schema.nodes[value.type] : undefined;
+        const attrs = isRecord(value.attrs) ? value.attrs : {};
+        if (type !== undefined && hasNodeId(type.spec.attrs ?? {}) && !Object.hasOwn(attrs, 'nodeId')) {
+            node.attrs = { ...attrs, nodeId: randomId() };
+        }
+        return node;
+    };
+    /** `nodes` as decode reads them, or why it refuses them; inline nodes decode inside a paragraph. */
+    const decoded = (nodes: readonly ContentNodeJSON[]): Fragment | 'invalid' | 'limit' => {
+        if (nodes.length === 0) {
+            return Fragment.empty;
+        }
+        const inline = nodes.every((node) => isRecord(node) && schema.nodes[String(node.type)]?.isInline === true);
+        let content: readonly unknown[] = nodes.map(withPlaceholderIds);
+        if (inline) {
+            content = [withPlaceholderIds({ type: 'paragraph', content: nodes })];
+        }
+        const envelope = {
+            format: 'frontify.rich-text',
+            formatVersion: 1,
+            model: model.ref,
+            requiredCapabilities: model.capabilities,
+            content: { type: 'doc', content },
+        };
+        const { result, tree } = decodeToTree(envelope, model, { limits });
+        if (result.status === 'blocked' && result.reason === 'limit-exceeded') {
+            return 'limit';
+        }
+        // Any diagnostic means decode cleaned the content, which a write refuses.
+        if (result.status !== 'editable' || tree === undefined || result.diagnostics.length > 0) {
+            return 'invalid';
+        }
+        const blocks = tree.content ?? [];
+        // The runtime gives each written node a new `nodeId`.
+        if (inline) {
+            return withNodeIds(Fragment.fromJSON(schema, blocks[0]?.content), () => null);
+        }
+        return withNodeIds(Fragment.fromJSON(schema, blocks), () => null);
+    };
+    /** Whether `content` holds a `url` attribute of a node or mark that its feature's policy refuses. */
+    const refusesUrl = (content: Fragment) => {
+        const { marks, nodes } = compiledModel(model);
+        let found = false;
+        content.descendants((node) => {
+            const owner = nodes.find(({ name }) => name === node.type.name);
+            if (owner !== undefined) {
+                found ||= urlRefused(model, owner.featureId, attributesOf(owner), node.attrs);
+            }
+            for (const mark of node.marks) {
+                const declared = marks.find(({ name }) => name === mark.type.name);
+                if (declared !== undefined) {
+                    found ||= urlRefused(model, declared.featureId, declared.declaration.attrs, mark.attrs);
+                }
+            }
+        });
+        return found;
+    };
+    /** Commits `transaction`, whose write covers `written`. */
+    const commit = (transaction: Transaction, written: Positions): WriteOutcome => {
+        const outcome = source.edit({
+            run: (_state, dispatch) => {
+                dispatch?.(transaction);
+                return true;
+            },
+            active: () => false,
+        });
+        if (outcome.status === 'rejected') {
+            return outcome;
+        }
+        if (outcome.status === 'no-op') {
+            return { status: 'no-op' };
+        }
+        return {
+            status: 'applied',
+            range: rangeOf(source.state().doc, written.from, written.to),
+        };
+    };
+    const write = (span: Positions | undefined, nodes: readonly ContentNodeJSON[]): WriteOutcome => {
+        if (span === undefined) {
+            return { status: 'rejected', code: 'target-invalid' };
+        }
+        const content = decoded(nodes);
+        if (typeof content === 'string') {
+            return rejectedWrite(content);
+        }
+        if (refusesUrl(content)) {
+            return rejectedWrite('policy');
+        }
+        const state = source.state();
+        const $from = state.doc.resolve(span.from);
+        const $to = state.doc.resolve(span.to);
+        const { parent } = $from;
+        // Only a write that fits as given: ProseMirror would close, wrap or drop nodes, or drop marks, to fit it.
+        if (
+            $from.start() !== $to.start() ||
+            !parent.canReplace($from.index(), $to.index(), content) ||
+            !content.content.every((node) => !node.isInline || parent.type.allowsMarks(node.marks))
+        ) {
+            return { status: 'rejected', code: 'invalid' };
+        }
+        if (span.from === span.to && content.size === 0) {
+            return { status: 'no-op' };
+        }
+        const transaction = state.tr.replaceWith(span.from, span.to, content);
+        return commit(transaction, { from: span.from, to: span.from + content.size });
     };
     const markType = (mark: string): MarkType | undefined => schema.marks[mark];
     const selectionOf = (state: EditorState): SelectionValue => {
@@ -304,6 +490,34 @@ const documentApi = (source: ApiSource): DocumentApi => {
         insert: {
             text: (text) => edit(capability(EDITS.insertText, {}), { text }),
         },
+        content: {
+            read: (range) => {
+                const span = spanOf(range, false);
+                if (span === undefined) {
+                    return undefined;
+                }
+                const nodes = source.state().doc.slice(span.from, span.to).content.toJSON() as TreeNode[] | null;
+                const encoded = encodeTree({ type: 'doc', content: nodes ?? [] }, model).document.content.content;
+                return encoded ?? [];
+            },
+            replace: (range, nodes) => write(spanOf(range, false), nodes),
+            delete: (range) => write(spanOf(range, false), []),
+            insert: (at, nodes) => write(spanOf(at, true), nodes),
+        },
+        nearest: (node, within) => {
+            const type = schema.nodes[node];
+            const state = source.state();
+            const found = type === undefined ? undefined : nearestNode(state, type, within);
+            if (found === undefined) {
+                return undefined;
+            }
+            const { nodeId } = found.node.attrs;
+            return {
+                nodeId: typeof nodeId === 'string' ? nodeId : null,
+                attrs: valuesOf(found.node.attrs),
+                range: rangeOf(state.doc, found.pos, found.pos + found.node.nodeSize),
+            };
+        },
         commands: {
             execute: (id, payload, options) => source.execute(id, payload, options),
             query: (id, payload, options) => source.query(id, payload, options),
@@ -328,6 +542,7 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
         lookup: (id) => definition.commands.get(id),
         limits: runtime.limits,
         state: () => runtime.state,
+        resolve: (range) => positionsIn(range, runtime.state.doc),
         // A command origin makes each write its own undo step, apart from the typing before it.
         edit: (command, payload) =>
             outcomeOf(
@@ -356,6 +571,9 @@ const composer = (base: EditorState) => {
     let current = base;
     let first: Transaction | undefined;
     let outer: Transaction | undefined;
+    const mapping = new Mapping();
+    // Each document the command has seen, with the index of the first step made after it.
+    const seen = new Map<Node, number>([[base.doc, 0]]);
     const take = (next: Transaction) => {
         if (first === undefined) {
             first = next;
@@ -368,10 +586,25 @@ const composer = (base: EditorState) => {
             appendSteps(outer, next);
             carryState(outer, next);
         }
+        mapping.appendMapping(next.mapping);
         current = current.apply(next);
+        if (!seen.has(current.doc)) {
+            seen.set(current.doc, mapping.maps.length);
+        }
     };
     return {
         state: () => current,
+        /** `range` mapped through the steps made since it was read, or `undefined` when it was read before the command. */
+        resolve: (range: EditorRange): Positions | undefined => {
+            const read = RANGES.get(range);
+            const start = read === undefined ? undefined : seen.get(read.doc);
+            if (read === undefined || start === undefined) {
+                return undefined;
+            }
+            const since = mapping.slice(start);
+            const from = since.map(read.from, 1);
+            return { from, to: Math.max(from, since.map(read.to, -1)) };
+        },
         apply: (command: EngineCommand, payload?: unknown, context?: CommandContext) => {
             let built: Transaction | undefined;
             const applied = command.run(
@@ -505,6 +738,7 @@ const commandDocumentApi = (
         lookup,
         limits,
         state: compose.state,
+        resolve: compose.resolve,
         edit: (command, payload) => {
             if (compose.apply(command, payload)) {
                 return { status: 'applied' };

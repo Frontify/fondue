@@ -2,14 +2,29 @@
 
 // @vitest-environment node
 
+import { type Plugin } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
+import { defineEditorPlugin, type EditorPlugin, type EditorPluginParts } from '#/bridge/plugin';
+import { fixtureEditorsOf, fixtureHeadingEditor } from '#/features/__tests__/fixtures/editors';
+import { fixtureExtensionsOf } from '#/features/__tests__/fixtures/extensions';
 import { fixtureBold, fixtureColor, fixtureHeading, fixtureItalic } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
-import { compileContentModel, defineFeature, DefinitionError, type FeatureDeclaration } from '#/model';
+import {
+    compileContentModel,
+    type ContentModel,
+    defineFeature,
+    DefinitionError,
+    type Feature,
+    type FeatureDeclaration,
+} from '#/model';
+import { extensionsOf } from '#/react/engine';
 
 import { compileDefinition } from '..';
 
+const keyOf = (plugin: Plugin) => (plugin as unknown as { readonly key: string }).key;
+/** The engine of `model` with the fixture features' editor parts and the shipped ones. */
+const engineOf = (model: ContentModel) => compileDefinition(model, {}, extensionsOf(model, fixtureEditorsOf(model)));
 const options = { id: 'test', version: 1 };
 const box = { group: 'block', attrs: {}, html: ['div', 0], parse: [] } as const;
 
@@ -26,6 +41,29 @@ const failureOf = (run: () => unknown) => {
 };
 
 describe('compileDefinition', () => {
+    it('builds the keymap in plugin order, in both input orders', () => {
+        for (const features of [
+            [core(), fixtureBold(), fixtureHeading()],
+            [core(), fixtureHeading(), fixtureBold()],
+        ]) {
+            const model = compileContentModel(features, { id: 'test', version: 1 });
+            const { plugins, keymap } = engineOf(model);
+            const ids = plugins.map(keyOf).map((key) => key.replace(/\$\d*$/, ''));
+
+            // `history`, the clipboard, the container keys, the drop and gap cursors, the base keys and the last-mark record bind no feature key.
+            const unkeyed = new Set([
+                'clipboard',
+                'history',
+                'container-keys',
+                'drop-cursor',
+                'gap-cursor',
+                'base-keys',
+                'last-mark',
+            ]);
+            expect([...new Set(keymap.map(({ plugin }) => plugin))]).toEqual(ids.filter((id) => !unkeyed.has(id)));
+        }
+    });
+
     it('builds schema nodes in declared order and marks by rank, then declared order', () => {
         const features = [core(), fixtureItalic(), fixtureBold(), fixtureColor(), fixtureHeading()];
         const { schema } = compileDefinition(compileContentModel(features, { id: 'test', version: 1 }));
@@ -162,5 +200,79 @@ describe('compileDefinition', () => {
             const card = compileDefinition(compiled).schema.nodes.card;
             expect(card?.spec.attrs).toEqual({ href: { default: '/x' }, unknownAttributes: { default: null } });
         }
+    });
+});
+
+describe('compileDefinition of editor parts', () => {
+    /** The plugin IDs of `model`'s engine with the fixture parts and `parts`, without the shipped ones. */
+    const pluginIdsOf = (model: ContentModel) =>
+        compileDefinition(model, {}, fixtureExtensionsOf(model)).plugins.map((plugin) =>
+            keyOf(plugin).replace(/\$\d*$/, ''),
+        );
+    const failureOfParts = (features: readonly Feature[], parts: readonly EditorPlugin[]) => {
+        const model = compileContentModel([core(), ...features], options);
+        return failureOf(() => compileDefinition(model, {}, fixtureExtensionsOf(model, parts)));
+    };
+
+    it('orders plugins of one phase by the host list, in both orders', () => {
+        const forward = compileContentModel([core(), fixtureBold(), fixtureHeading()], options);
+        const reverse = compileContentModel([core(), fixtureHeading(), fixtureBold()], options);
+        // The engine's clipboard, history and container keys come first, and the engine's cursors, base keys and last-mark record last.
+        const corePlugins = ['clipboard', 'history', 'container-keys'];
+        expect(pluginIdsOf(forward)).toEqual([
+            ...corePlugins,
+            'keymap:fixture.bold',
+            'keymap:fixture.heading',
+            'drop-cursor',
+            'gap-cursor',
+            'base-keys',
+            'last-mark',
+        ]);
+        expect(pluginIdsOf(reverse)).toEqual([
+            ...corePlugins,
+            'keymap:fixture.heading',
+            'keymap:fixture.bold',
+            'drop-cursor',
+            'gap-cursor',
+            'base-keys',
+            'last-mark',
+        ]);
+        expect(forward.fingerprint).not.toBe(reverse.fingerprint);
+    });
+
+    it.each([
+        ['key', { keys: { 'Mod-q': 'a.missing' } }, '/keys/Mod-q'],
+        [
+            'input rule',
+            { inputRules: [{ id: 'a.stars', kind: 'mark-delimiter', open: '*', close: '*', mark: 'strong' }] },
+            '/inputRules/0/mark',
+        ],
+        [
+            'line-start rule',
+            { inputRules: [{ id: 'a.quote', kind: 'line-start', command: 'fixture.missing', markers: ['>'] }] },
+            '/inputRules/0/command',
+        ],
+        [
+            'block rule',
+            { inputRules: [{ id: 'a.rule', kind: 'block-rule', command: 'fixture.missing', match: /^---$/u }] },
+            '/inputRules/0/command',
+        ],
+    ] as const)('rejects the %s registration for an undeclared mark or command', (_kind, parts, path) => {
+        const x = defineFeature({ id: 'a.x', version: 1 });
+        expect(failureOfParts([x()], [defineEditorPlugin(x, parts as EditorPluginParts)])).toEqual({
+            code: 'definition.orphan-behavior',
+            details: { feature: 'a.x', path },
+        });
+    });
+
+    it('rejects a key payload that fails its command declaration', () => {
+        const keys = defineFeature({ id: 'a.keys', version: 1, requires: [{ id: 'fixture.heading', version: 1 }] });
+        const part = defineEditorPlugin(keys, {
+            keys: { 'Mod-Alt-9': { command: 'fixture.heading.set', payload: { level: 9 } } },
+        });
+        expect(failureOfParts([fixtureHeading(), keys()], [fixtureHeadingEditor, part])).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'a.keys', path: '/keys/Mod-Alt-9/payload/level' },
+        });
     });
 });

@@ -12,11 +12,17 @@ export {
     type EditorPluginParts,
     type EditorRange,
     type KeyHandler,
+    type NodeValue,
+    type PluginPresentation,
+    type PluginServices,
     type PluginToolbarEntry,
     sameRange,
     type SelectionValue,
     type ToolbarControlProps,
+    type WriteOutcome,
+    type WriteTarget,
 } from '#/bridge/plugin';
+export type { BlockDecoration, BlockDecorationSource, DecoratedBlock } from '#/model/declarations';
 export {
     type CommitOptions,
     type CommitResult,

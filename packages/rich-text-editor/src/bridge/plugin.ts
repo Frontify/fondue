@@ -4,6 +4,7 @@ import { type ComponentType, type RefCallback } from 'react';
 
 import {
     type CodecContext,
+    type ColorToken,
     type CommandRef,
     type Diagnostic,
     type Feature,
@@ -13,6 +14,7 @@ import {
     type KeyBinding,
     type PayloadDeclaration,
     type PayloadOf,
+    type PresentationStyle,
 } from '#/model';
 import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/declarations';
 import { type DocumentApi } from '#/runtime/document-api';
@@ -22,16 +24,31 @@ export {
     type AncestorValue,
     type CommandOutcome,
     type EditorRange,
+    type NodeValue,
     sameRange,
     type SelectionValue,
+    type WriteOutcome,
+    type WriteTarget,
 } from '#/runtime/document-api';
 
-/** What the editor around a plugin hosts for it: strings and focus. */
+/** The presentation as plugins read it. */
+export interface PluginPresentation {
+    readonly styles: readonly PresentationStyle[];
+    readonly colorTokens: readonly ColorToken[];
+}
+
+/** Host data that only some plugins use, kept in one member so none of it can shadow a document member. */
+export interface PluginServices {
+    readonly presentation: () => PluginPresentation;
+}
+
+/** What the editor around a plugin hosts for it: strings, services and focus. */
 export interface EditorHosts {
     /** The package's own chrome strings in the editor's locale; a plugin brings its own strings, by `locale`. */
     readonly t: CodecContext['t'];
     /** The language tag of the chrome's strings, such as `de-CH`. */
     readonly locale: () => string;
+    readonly services: PluginServices;
     /** Moves focus to the surface at its selection. */
     readonly focus: () => void;
     /**

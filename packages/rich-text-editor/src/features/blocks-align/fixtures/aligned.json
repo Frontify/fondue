@@ -1,0 +1,20 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "feature-contract", "version": 1 },
+    "requiredCapabilities": [
+        { "id": "blocks.align", "version": 1 },
+        { "id": "core", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": { "lang": null, "align": "center" },
+                "content": [{ "type": "text", "text": "Centered" }]
+            }
+        ]
+    }
+}

@@ -17,6 +17,7 @@ import {
 
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
+import { type PluginPresentation } from '#/bridge/plugin';
 import { enUS } from '#/locales/en-US';
 import { type CapabilityRef, type DecodeResult, type Diagnostic } from '#/model';
 import { type TreeNode } from '#/model/content';
@@ -110,6 +111,17 @@ const modeOf = ({ readOnly, disabled }: Props) => {
     return 'editable';
 };
 
+/** The presentation as plugins read it. */
+const pluginPresentationOf = (presentation: ReaderPresentation | undefined): PluginPresentation => {
+    let styles: PluginPresentation['styles'] = [];
+    let colorTokens: PluginPresentation['colorTokens'] = [];
+    if (presentation !== undefined) {
+        styles = presentation.styles ?? [];
+        colorTokens = presentation.colorTokens ?? [];
+    }
+    return { styles, colorTokens };
+};
+
 /** What the session reads the document with, from the editor props and their defaults. */
 const shellPropsOf = (props: Defined) => {
     const { locale = enUS, presentation = NO_PRESENTATION, 'data-test-id': testId = DEFAULT_TEST_ID } = props;
@@ -141,6 +153,7 @@ const SessionComponent = ({ children, ...props }: SessionProps, ref: ForwardedRe
         coordinator,
         t: () => tRef.current,
         lang: () => langRef.current,
+        presentation: () => pluginPresentationOf(latestRef.current.presentation),
         testId: () => latestRef.current['data-test-id'] ?? DEFAULT_TEST_ID,
     });
 

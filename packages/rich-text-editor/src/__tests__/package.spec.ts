@@ -182,4 +182,36 @@ describe('package manifest and built output', () => {
             expect(floor !== '' && lower.localeCompare(floor, undefined, { numeric: true }) >= 0).toBe(true);
         }
     });
+
+    const reachedImports = (entryFile: string) => {
+        const seen = new Set<string>();
+        const bare: string[] = [];
+        const queue = [entryFile];
+        for (let file = queue.pop(); file !== undefined; file = queue.pop()) {
+            if (seen.has(file)) {
+                continue;
+            }
+            seen.add(file);
+            const code = readFileSync(join(outDir, file), 'utf8');
+            for (const match of code.matchAll(/(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g)) {
+                const specifier = match[1] ?? '';
+                const filePart = specifier.split('?')[0] ?? specifier;
+                if (specifier.startsWith('.')) {
+                    queue.push(slash(relative(outDir, join(outDir, dirname(file), filePart))));
+                } else if (specifier !== '') {
+                    bare.push(specifier);
+                }
+            }
+        }
+        return { bare, files: [...seen] };
+    };
+
+    // A host without the optional `axe-core` peer must still load `./testing` for its other helpers.
+    it('loads axe-core in ./testing only through a dynamic import', () => {
+        const { files } = reachedImports('testing/index.js');
+        const sources = files.map((file) => ({ file, code: readFileSync(join(outDir, file), 'utf8') }));
+        const isStatic = /(?:\bfrom|\bimport)\s*['"]axe-core['"]/;
+        expect(sources.filter(({ code }) => isStatic.test(code)).map(({ file }) => file)).toEqual([]);
+        expect(sources.some(({ code }) => /\bimport\s*\(\s*['"]axe-core['"]\s*\)/.test(code))).toBe(true);
+    });
 });

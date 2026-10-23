@@ -35,6 +35,9 @@ export const editorApiOf = (runtime: EditorRuntime, hosts: EditorHosts): EditorA
 const INERT: EditorHosts = {
     t: (key) => key,
     locale: () => 'en-US',
+    services: {
+        presentation: () => ({ styles: [], colorTokens: [] }),
+    },
     focus: () => undefined,
     surface: () => undefined,
     testId: () => 'fondue-rich-text-editor',

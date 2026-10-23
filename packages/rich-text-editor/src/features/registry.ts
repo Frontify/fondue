@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { align } from '#/features/blocks-align/feature';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { DefinitionError, type Feature } from '#/model';
@@ -8,6 +9,7 @@ import { DefinitionError, type Feature } from '#/model';
 export const registry: Readonly<Record<string, () => Feature>> = {
     core,
     'marks.bold': bold,
+    'blocks.align': align,
 };
 
 export interface FeatureRecord {
@@ -25,6 +27,7 @@ const NO_DEPENDENCIES: FeatureRecord = { owner: OWNER, dependencies: {} };
 export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     core: NO_DEPENDENCIES,
     'marks.bold': NO_DEPENDENCIES,
+    'blocks.align': NO_DEPENDENCIES,
 };
 
 /**

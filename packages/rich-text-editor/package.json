@@ -89,6 +89,7 @@
         "@typescript/native-preview": "7.0.0-dev.20260421.2",
         "@vitest/coverage-v8": "^5.0.0",
         "ajv": "^8.20.0",
+        "axe-core": "^4.13.0",
         "dompurify": "^3.4.16",
         "fast-check": "^4.10.2",
         "happy-dom": "^20.11.2",
@@ -112,7 +113,14 @@
         "@frontify/fondue-components": "workspace:^",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
-        "react": "^18.2.0"
+        "axe-core": "^4.13.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "peerDependenciesMeta": {
+        "axe-core": {
+            "optional": true
+        }
     },
     "engines": {
         "node": ">=18"
