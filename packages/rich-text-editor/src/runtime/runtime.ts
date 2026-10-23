@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { GapCursor } from 'prosemirror-gapcursor';
 import { type Node } from 'prosemirror-model';
 import {
     AllSelection,
@@ -44,6 +45,7 @@ import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
 import { createAsyncCoordinator } from './async';
+import { type ColumnState, columnsPlugin, ONE_COLUMN, sameColumns } from './columns';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
@@ -189,6 +191,8 @@ export interface EditorRuntime {
     faultView(): void;
     /** The host's `disabled`, which runs in mode `readonly` and takes the surface out of the Tab order. */
     setDisabled(disabled: boolean): void;
+    /** The presentation's columns as the surface shows them, which `column.break.insert` and the break decorations read. */
+    setColumns(columns: ColumnState): void;
     nodeActions(target: NodeTarget): NodeActions;
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
@@ -227,8 +231,14 @@ export interface EditorRuntimeOptions {
     readonly recovery?: () => RecoveryService | undefined;
     /** The host's `inputRules` prop, read on each input. */
     readonly inputRules?: () => false | { readonly exclude: readonly string[] } | undefined;
+    /** The host's `tabMovesFocus` prop, read on each Tab; default false. */
+    readonly tabMovesFocus?: () => boolean | undefined;
+    /** The host's `scrollSelectionIntoView` prop, read on each scroll to the selection; default true. */
+    readonly scrollSelectionIntoView?: () => boolean | undefined;
     /** What the editor layer hands the plugin commands it runs. */
     readonly commandHost?: unknown;
+    /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
+    readonly columns?: ColumnState;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -263,6 +273,9 @@ const kindOf = (selection: Selection): SelectionSummary['kind'] => {
     }
     if (selection instanceof AllSelection) {
         return 'all';
+    }
+    if (selection instanceof GapCursor) {
+        return 'gap';
     }
     return 'none';
 };
@@ -406,6 +419,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // The mode the surface shows, which follows `mode` once input has settled.
     let shownMode = mode;
     let disabled = false;
+    let columns = options.columns ?? ONE_COLUMN;
+    // The columns the decorations show, which follow `columns` once input has settled.
+    let shownColumns = columns;
     let commitSequence = 0;
     let sequence = 0;
     let saves: SaveCoordinator | undefined;
@@ -452,7 +468,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         () => view !== undefined && view.composing,
         () => settleInput(),
     );
-    const keyGuard = createKeyGuard();
+    const keyGuard = createKeyGuard(() => options.tabMovesFocus?.() === true);
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
         plugins: [
@@ -461,6 +477,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             settling.plugin,
             targetsPlugin,
             groupsPlugin,
+            columnsPlugin(() => shownColumns),
             nodeStatePlugin(),
             ...definition.plugins,
         ],
@@ -545,12 +562,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const encode = (doc: Node): RichTextDocument =>
         encodeTree(doc.toJSON() as TreeNode, definition.model, capabilities).document;
 
-    // Recomputes `editable` and the surface attributes from the phase and the mode, which waits for input to settle.
+    // Recomputes `editable`, the surface attributes and the break decorations from the phase, the mode and the
+    // columns, which waits for input to settle.
     const refreshView = () => {
         if (settling.active() || recovery !== undefined) {
             return;
         }
         shownMode = mode;
+        shownColumns = columns;
         if (view !== undefined) {
             view.setProps({});
         }
@@ -1826,6 +1845,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 return attributes;
                             },
                             nodeViews,
+                            // Returning true reports the scroll as handled, so the view leaves it out.
+                            handleScrollToSelection: () => options.scrollSelectionIntoView?.() === false,
                             dispatchTransaction: commit,
                         },
                     ),
@@ -1916,6 +1937,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         setDisabled: (next) => {
             disabled = next;
             view?.setProps({});
+        },
+        setColumns: (next) => {
+            if (sameColumns(columns, next)) {
+                return;
+            }
+            columns = next;
+            refreshView();
         },
         faultView: () => {
             if (viewCall) {

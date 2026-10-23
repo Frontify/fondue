@@ -26,8 +26,10 @@ import { SessionContext, useSessionValue } from './session';
 
 export {
     type AncestorValue,
+    type BlockValue,
     type CommandOutcome,
     type EditorRange,
+    type InsertPlace,
     type NodeValue,
     sameRange,
     type SelectionValue,
@@ -65,6 +67,10 @@ export interface StandingOverlayProps {
 export interface PluginPresentation {
     readonly styles: readonly PresentationStyle[];
     readonly colorTokens: readonly ColorToken[];
+    /** How many columns the content flows in, 1 without columns. */
+    readonly columns: number;
+    /** The gap between the columns as a CSS length, `undefined` without columns. */
+    readonly columnGap: string | undefined;
 }
 
 /** Host data that only some plugins use, kept in one member so none of it can shadow a document member. */

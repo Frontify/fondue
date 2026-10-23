@@ -341,6 +341,34 @@ describe('RichTextEditor', () => {
         declared.unmount();
     });
 
+    it('reads tabMovesFocus and scrollSelectionIntoView on each use, with no new view', () => {
+        const { rerender, unmount } = mount();
+        const view = viewOf();
+        const skipsScroll = () => view.someProp('handleScrollToSelection', (handle) => handle(view)) === true;
+        const tab = () => {
+            const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+            view.dom.dispatchEvent(event);
+            return event.defaultPrevented;
+        };
+        const keyDown = vi.fn(() => true);
+        view.setProps({ handleKeyDown: keyDown });
+        expect(skipsScroll()).toBe(false);
+        tab();
+        expect(keyDown).toHaveBeenCalledTimes(1);
+
+        rerender({ scrollSelectionIntoView: false, tabMovesFocus: true });
+        expect(skipsScroll()).toBe(true);
+        expect(tab()).toBe(false);
+        expect(keyDown).toHaveBeenCalledTimes(1);
+
+        rerender({ scrollSelectionIntoView: true, tabMovesFocus: false });
+        expect(skipsScroll()).toBe(false);
+        tab();
+        expect(keyDown).toHaveBeenCalledTimes(2);
+        expect(probeRuntimes().views).toEqual([view]);
+        unmount();
+    });
+
     it('takes no focus callback beyond onFocus and onBlur', () => {
         expectTypeOf<Extract<keyof RichTextEditorProps, `on${string}${'Focus' | 'Blur'}${string}`>>().toEqualTypeOf<
             'onFocus' | 'onBlur'

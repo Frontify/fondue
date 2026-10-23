@@ -3,10 +3,12 @@
 export { align } from '#/features/blocks-align/feature';
 export { codeBlock } from '#/features/blocks-code/feature';
 export { quote } from '#/features/blocks-quote/feature';
+export { rule } from '#/features/blocks-rule/feature';
 export { heading } from '#/features/blocks-heading/feature';
 export { core } from '#/features/core/feature';
 export { emoji } from '#/features/emoji/feature';
 export { inputRules } from '#/features/input-rules/feature';
+export { columns } from '#/features/layout-columns/feature';
 export { bulletList } from '#/features/lists-bullet/feature';
 export { listItem } from '#/features/lists-item/feature';
 export { orderedList } from '#/features/lists-ordered/feature';

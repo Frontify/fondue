@@ -4,9 +4,11 @@ import { type CommandsOfPlugin, type EditorPlugin } from '#/bridge/plugin';
 import { codeBlockEditor } from '#/features/blocks-code/editor';
 import { headingEditor } from '#/features/blocks-heading/editor';
 import { quoteEditor } from '#/features/blocks-quote/editor';
+import { ruleEditor } from '#/features/blocks-rule/editor';
 import { coreEditor } from '#/features/core/editor';
 import { emojiEditor } from '#/features/emoji/editor';
 import { inputRulesEditor } from '#/features/input-rules/editor';
+import { columnsEditor } from '#/features/layout-columns/editor';
 import { bulletListEditor } from '#/features/lists-bullet/editor';
 import { listItemEditor } from '#/features/lists-item/editor';
 import { orderedListEditor } from '#/features/lists-ordered/editor';
@@ -29,6 +31,7 @@ const SHIPPED = [
     subscriptEditor,
     superscriptEditor,
     codeBlockEditor,
+    ruleEditor,
     listItemEditor,
     bulletListEditor,
     orderedListEditor,
@@ -36,6 +39,7 @@ const SHIPPED = [
     headingEditor,
     quoteEditor,
     inputRulesEditor,
+    columnsEditor,
     emojiEditor,
 ] as const;
 

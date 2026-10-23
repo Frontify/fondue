@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`layout.columns > renders the reader as N columns in a container, with the first N - 1 breaks active 1`] = `"<div class="fondue-rte-columns" data-rte-columns="3" style="--rte-columns:3;--rte-column-gap:24px;container:fondue-rte-columns / inline-size;padding-inline-end:calc((var(--rte-columns) - 1) * var(--rte-column-gap))"><div class="fondue-rte-content host-columns"><p dir="auto">Primary</p><div data-rte-column-break="active" dir="auto"></div><div data-rte-column-break="active" dir="auto"></div><div data-rte-column-break="" dir="auto"></div><p dir="auto">Secondary</p></div></div>"`;
+
+exports[`layout.columns > writes a fixed column count and column-gap on the toHTML content root, with the active breaks breaking a column inline 1`] = `"<div class="fondue-rte-content host-columns" style="columns:2;column-gap:2rem"><p dir="auto">Primary</p><div data-rte-column-break="active" dir="auto" style="break-after:column"></div><div data-rte-column-break="" dir="auto"></div><p dir="auto">Secondary</p></div>"`;

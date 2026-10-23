@@ -13,8 +13,10 @@ import { type ContentModel, type ResourceLimits } from '#/model';
 import { type CompiledParseRule, compiledModel, markHrefPolicy } from '#/model/compile';
 
 import { descriptorOf } from './dom';
+import { cleanGoogleDocs } from './google-docs';
 import { exceedsMarkupDepth } from './limits';
-import { removeMarkup } from './markup';
+import { removeEmptySpans, removeItemBreaks, removeMarkup } from './markup';
+import { rebuildOfficeLists, removeOfficeMarkup } from './office';
 import { withinLinkPolicy } from './policy';
 
 /** The host's DOM implementation, whose constructors and prototypes the import reads. */
@@ -24,6 +26,8 @@ export interface HtmlSettings {
     readonly limits: ResourceLimits;
     /** The creatable heading levels of the definition, or `undefined` to keep every level. */
     readonly headingLevels: readonly number[] | undefined;
+    /** The depth, as `exceededStructure` counts it, at which the imported blocks land. */
+    readonly depth: number;
     /** The model's function parse rules, which read an element before the schema's rules do. */
     readonly rules: readonly CompiledParseRule[];
 }
@@ -369,15 +373,23 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     replaceForms(dom, inert);
     // Before any step that queries by class.
     limitClasses(body, settings.limits.maxAttributeLength);
-    // Before the steps below, so they meet content only: a comment or `style` element between blocks would hide their adjacency.
+    // Before the vendor steps, so they meet content only: a comment or `style` element between blocks would hide their adjacency.
     removeNotes(body);
     removeMarkup(body);
     // Before any step that reads `style`, which SVG and MathML elements lack in some DOM implementations.
     replaceForeign(body);
+    cleanGoogleDocs(body);
+    // Before removeOfficeMarkup, which removes the `mso-list` styles and marker spans it reads.
+    rebuildOfficeLists(body, settings.limits.maxDepth, settings.depth);
+    removeOfficeMarkup(body);
+    removeItemBreaks(body);
     const droppedImages = replaceImages(body);
     replaceTables(body, schema);
+    // After removeOfficeMarkup, which strips the `Mso` class and `mso-` styles that keep a spacing span from matching.
     restoreSpaces(body);
     removeObjectChildren(body);
+    // Last, after the steps that empty spans: replaceImages and removeOfficeMarkup.
+    removeEmptySpans(body);
     const { rules } = settings;
     const answers = readAnswers(body, rules);
     const parser = new SchemaParser(schema, [
@@ -402,7 +414,7 @@ export const importModelHtml = (
     model: ContentModel,
     schema: Schema,
     window: Window,
-    settings: Pick<HtmlSettings, 'limits' | 'headingLevels'>,
+    settings: Pick<HtmlSettings, 'limits' | 'headingLevels' | 'depth'>,
 ): ImportedHtml => {
     const imported = importHtml(html, schema, window, {
         ...settings,

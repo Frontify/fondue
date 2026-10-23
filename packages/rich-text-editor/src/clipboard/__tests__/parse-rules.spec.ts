@@ -23,6 +23,7 @@ const runsOf = (features: readonly Feature[], html: string, limits: Partial<Reso
     const { content } = importHtml(html, buildSchema(model), window as unknown as Window, {
         limits: merged,
         headingLevels: undefined,
+        depth: 2,
         rules: compiledModel(model).parseRules,
     });
     const runs: string[] = [];

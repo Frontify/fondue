@@ -201,6 +201,54 @@ describe('external HTML', () => {
         expect(contentOf(html)).toEqual([lang('en-x-abc', plain('at')), lang('en-x-abcd', plain('over'))]);
     });
 
+    /** A Word list paragraph of list `list` at `level`, its marker in the `mso-list:Ignore` span Word writes. */
+    const wordItem = (list: string, level: number, marker: string, value: string) =>
+        `<p class="MsoListParagraph" style="margin-left:.5in;text-indent:-.25in;mso-list:${list} level${level} lfo1"><!--[if !supportLists]--><span style="font-family:Symbol"><span style="mso-list:Ignore">${marker}<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;</span></span></span><!--[endif]-->${value}<o:p></o:p></p>\n`;
+    const item = (...content: readonly object[]) => ({ type: 'list_item', content });
+    const bullets = (...items: readonly object[]) => ({ type: 'bullet_list', content: items });
+    const numbers = (...items: readonly object[]) => ({ type: 'ordered_list', attrs: { start: 1 }, content: items });
+    const plain = (value: string) => paragraph({ type: 'text', text: value });
+
+    it('rebuilds Word list paragraphs as nested lists by list and level, ordered for numbered markers, without their markers', () => {
+        const html = [
+            '<div class="WordSection1">',
+            wordItem('l0', 1, '1.', 'One'),
+            wordItem('l0', 2, 'a.', 'One A'),
+            wordItem('l0', 4, 'i.', 'One A i'),
+            wordItem('l0', 1, '2.', 'Two'),
+            wordItem('l1', 1, '·', 'Dot'),
+            wordItem('l1', 2, 'o', 'Circle'),
+            '<p class="MsoNormal">Between</p>',
+            wordItem('l1', 1, '§', 'After'),
+            '</div>',
+        ].join('');
+
+        expect(withoutNodeIds(contentOf(html))).toEqual([
+            numbers(
+                item(plain('One'), numbers(item(plain('One A'), numbers(item(plain('One A i')))))),
+                item(plain('Two')),
+            ),
+            bullets(item(plain('Dot'), bullets(item(plain('Circle'))))),
+            plain('Between'),
+            bullets(item(plain('After'))),
+        ]);
+    });
+
+    it('clamps the mso-list levels of Word list paragraphs so the nesting fits limits.maxDepth', () => {
+        const html = [1, 2, 3, 4, 5, 2_000_000_000].map((level) => wordItem('l0', level, '·', `L${level}`)).join('');
+        let deepest = 0;
+        const visit = (node: { readonly content?: readonly object[] }, depth: number) => {
+            deepest = Math.max(deepest, depth);
+            for (const child of node.content ?? []) {
+                visit(child, depth + 1);
+            }
+        };
+
+        visit({ content: contentOf(html, { limits: { maxDepth: 9 } }) }, 1);
+
+        expect(deepest).toBe(9);
+    });
+
     it('turns the span of only U+00A0 that Chromium and WebKit write for a copied space back into a space', () => {
         const html =
             '<p>a<span class="Apple-converted-space">&nbsp;</span>b <span>&nbsp;</span>c</p><p>d<span style="color: red">&nbsp;</span>e</p>';

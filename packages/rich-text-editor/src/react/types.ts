@@ -186,6 +186,10 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     readonly portalContainer?: HTMLElement | null;
     readonly spellCheck?: boolean;
     readonly inputRules?: false | { readonly exclude: readonly string[] };
+    /** When true, Tab and Shift+Tab move focus and do not indent or change cells. Default false. */
+    readonly tabMovesFocus?: boolean;
+    /** When false, the view does not scroll the selection into view. Default true. */
+    readonly scrollSelectionIntoView?: boolean;
     readonly defaultToolbarMode?: ToolbarMode;
     /** For the session id and the `nodeId`s the editor creates. Default: `crypto.randomUUID()`, or a version 4 UUID where that is missing. */
     readonly generateId?: () => string;

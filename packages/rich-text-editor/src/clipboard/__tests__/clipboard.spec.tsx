@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { act, render } from '@testing-library/react';
 import MarkdownIt from 'markdown-it';
-import { DOMParser as SchemaParser } from 'prosemirror-model';
+import { type Node as EngineNode, DOMParser as SchemaParser } from 'prosemirror-model';
 import { AllSelection, EditorState, NodeSelection, Selection } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { createRef } from 'react';
@@ -1534,6 +1534,41 @@ describe('pasted HTML', () => {
         mounted.unmount();
     });
 
+    /** A Word list paragraph, its bullet in the `mso-list:Ignore` span Word writes. */
+    const wordItem = (level: number, value: string) =>
+        `<p class="MsoListParagraph" style="margin-left:.5in;text-indent:-.25in;mso-list:l0 level${level} lfo1"><![if !supportLists]><span style="font-family:Symbol"><span style="mso-list:Ignore">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;</span></span></span><![endif]>${value}<o:p></o:p></p>`;
+    /** The depth of the deepest node under `node`, as the resource limits count it. */
+    const deepestOf = (node: EngineNode, depth = 1): number =>
+        Math.max(depth, ...node.children.map((child) => deepestOf(child, depth + 1)));
+
+    it.each([
+        ['a top-level paragraph', [block()], 12],
+        ['a paragraph in a blockquote', [blockquote(block())], 12],
+        ['a top-level paragraph at the default limit', [block()], defaultLimits.maxDepth],
+    ] as const)(
+        'clamps the mso-list levels of pasted Word list paragraphs in %s so the nesting fits maxDepth',
+        (_name, blocks, maxDepth) => {
+            const mounted = mountHtml({ blocks, limits: { maxDepth } });
+            act(() => {
+                mounted.view.dispatch(mounted.view.state.tr.setSelection(Selection.atStart(mounted.view.state.doc)));
+            });
+            const levels = [...Array.from({ length: 40 }, (_, index) => index + 1), 2_000_000_000];
+            const html = levels.map((level) => wordItem(level, `L${level}`)).join('');
+
+            const started = performance.now();
+            pasteInto(mounted, { 'text/html': html });
+            const elapsed = performance.now() - started;
+
+            const { doc } = mounted.view.state;
+            expect(elapsed).toBeLessThan(100);
+            expect(mounted.diagnostics).toEqual([]);
+            expect(doc.textContent).toBe(levels.map((level) => `L${level}`).join(''));
+            expect(deepestOf(doc)).toBeLessThanOrEqual(maxDepth);
+            expect(deepestOf(doc)).toBeGreaterThanOrEqual(maxDepth - 1);
+            mounted.unmount();
+        },
+    );
+
     it('pastes mention markup in HTML as its label text, dropping and announcing the images', () => {
         const mounted = mount({ blocks: [paragraph()] });
 
@@ -1601,6 +1636,7 @@ describe('pasted HTML', () => {
                     importHtml(html, schema, window, {
                         limits: defaultLimits,
                         headingLevels: undefined,
+                        depth: 2,
                         rules: [],
                     }).content,
                 );

@@ -31,6 +31,7 @@ describe('the HTML import of untrusted markup', () => {
         const { content } = importHtml(html, buildSchema(model), dom, {
             limits: defaultLimits,
             headingLevels: undefined,
+            depth: 2,
             rules: [],
         });
 
@@ -79,6 +80,7 @@ describe('the HTML import of untrusted markup', () => {
         const { content } = importHtml(html, buildSchema(model), dom, {
             limits: { ...defaultLimits, maxAttributeLength: 100 },
             headingLevels: undefined,
+            depth: 2,
             rules: [],
         });
 

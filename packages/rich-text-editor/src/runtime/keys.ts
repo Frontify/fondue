@@ -3,24 +3,30 @@
 import { macBaseKeymap, pcBaseKeymap } from 'prosemirror-commands';
 import { keydownHandler } from 'prosemirror-keymap';
 import { type NodeType } from 'prosemirror-model';
-import { type EditorState, Plugin, PluginKey, TextSelection } from 'prosemirror-state';
+import { type Command, type EditorState, Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 
 import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN } from '#/model/capabilities';
 import { isApple, modOn } from '#/model/platform';
 
 import { passesToBrowser } from './browser-keys';
+import { showsOptions } from './suggestions/plugin';
 
 /** Whether a keydown holds no Shift, Alt, Ctrl or ⌘. */
 const unmodified = (event: KeyboardEvent): boolean =>
     !event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey;
 
+/** Whether a keydown is Tab or Shift+Tab, with no Alt, Ctrl or ⌘. */
+const isTab = (event: KeyboardEvent): boolean =>
+    event.key === 'Tab' && !event.altKey && !event.ctrlKey && !event.metaKey;
+
 /**
- * Composition keys and AltGr characters reach the browser before any keymap runs. ProseMirror
+ * Composition keys and AltGr characters reach the browser before any keymap runs, and so do Tab and Shift+Tab while
+ * `tabMovesFocus` holds and no suggestion list shows options, so they move focus and indent nothing. ProseMirror
  * prevents every Escape and Enter keydown, so an Escape, or an Enter with a modifier, that no handler takes stays
  * unprevented for the browser and the host; a plain Enter keeps ProseMirror's
  * own handling, which mobile keyboards need.
  */
-export const createKeyGuard = () =>
+export const createKeyGuard = (tabMovesFocus: () => boolean) =>
     new Plugin({
         key: new PluginKey('rte.key-guard'),
         props: {
@@ -32,6 +38,9 @@ export const createKeyGuard = () =>
                     // ProseMirror runs no key handler on a surface that takes no edits, and neither does this branch.
                     if (!view.editable) {
                         return false;
+                    }
+                    if (isTab(event) && tabMovesFocus() && !showsOptions(view.state)) {
+                        return true;
                     }
                     if (event.key !== 'Escape' && !(event.key === 'Enter' && !unmodified(event))) {
                         return false;
@@ -130,6 +139,17 @@ export const containerKeysPlugin = () =>
         },
     });
 
+/** Backspace right after a column break removes it, where the base keymap would select it from an empty block. */
+const removeBreakBefore: Command = (state, dispatch) => {
+    const found = breakBefore(state);
+    if (found === undefined) {
+        return false;
+    }
+    dispatch?.(state.tr.delete(found.from, found.to).scrollIntoView());
+    return true;
+};
+const BREAK_KEYS = keydownHandler({ Backspace: removeBreakBefore });
+
 /** ProseMirror's base keymap of the platform, with `Mod` bound as the editor's own platform check reads it. */
 const baseKeysOf = (keymap: typeof pcBaseKeymap, apple: boolean) =>
     keydownHandler(Object.fromEntries(Object.entries(keymap).map(([key, command]) => [modOn(key, apple), command])));
@@ -144,6 +164,9 @@ export const baseKeysPlugin = () =>
         key: new PluginKey(BASE_KEYS_PLUGIN.id),
         props: {
             handleKeyDown: (view, event) => {
+                if (BREAK_KEYS(view, event)) {
+                    return true;
+                }
                 const owner = view.dom.ownerDocument.defaultView;
                 if (owner !== null && isApple(owner.navigator)) {
                     return BASE_KEYS.apple(view, event);

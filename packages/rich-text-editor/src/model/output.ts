@@ -166,6 +166,8 @@ export const contentClasses = (contentClassName?: string): string => {
     return `fondue-rte-content ${contentClassName}`;
 };
 
+/** The narrowest column; a content root with no room for every column at this width shows one column. */
+export const MIN_COLUMN_WIDTH = 240;
 const MAX_COLUMNS = 6;
 const COLUMN_GAP = /^(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem)$/;
 

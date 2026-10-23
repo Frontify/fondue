@@ -18,6 +18,7 @@ import {
     type EditorHandle,
     type ReactPresentation,
     RichTextEditor,
+    type RichTextEditorProps,
     type ToolbarMode,
 } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
@@ -111,6 +112,7 @@ export const OverlayProbe = ({
     dir = 'ltr',
     theme = 'light',
     hostButtons = true,
+    scrollSelectionIntoView,
     header = false,
 }: {
     readonly blocks?: readonly ContentNodeJSON[];
@@ -133,9 +135,15 @@ export const OverlayProbe = ({
     readonly theme?: 'light' | 'dark';
     /** Puts host buttons before and after the editor. */
     readonly hostButtons?: boolean;
+    /** Passed to the editor when set, else the editor keeps its default. */
+    readonly scrollSelectionIntoView?: boolean;
     /** Covers the top of the viewport with a fixed host header of `z-index` 10. */
     readonly header?: boolean;
 }) => {
+    let options: Pick<RichTextEditorProps, 'scrollSelectionIntoView'> = {};
+    if (scrollSelectionIntoView !== undefined) {
+        options = { scrollSelectionIntoView };
+    }
     const ref = useRef<EditorHandle<object>>(null);
     const [open, setOpen] = useState<OverlayKind | null>(null);
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
@@ -226,6 +234,7 @@ export const OverlayProbe = ({
             {...(defaultToolbarMode === undefined ? {} : { defaultToolbarMode })}
             {...(hostContainer ? { portalContainer: container } : {})}
             onToolbarModeChange={(mode) => modes.push(mode)}
+            {...options}
             ref={ref}
         >
             <RichTextEditor.Toolbar />

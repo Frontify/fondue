@@ -15,6 +15,7 @@ import {
     type EditorHandle,
     type ListLevels,
     RichTextEditor,
+    type RichTextEditorProps,
 } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { RichTextReader } from '#/reader';
@@ -68,6 +69,7 @@ export const ListProbe = ({
     dir = 'ltr',
     reader = false,
     listLevels,
+    tabMovesFocus,
     strikeCheckedTasks = false,
 }: {
     /** Stored blocks, such as `list-blocks.ts` builds. */
@@ -76,9 +78,15 @@ export const ListProbe = ({
     readonly dir?: 'ltr' | 'rtl';
     readonly reader?: boolean;
     readonly listLevels?: ListLevels;
+    /** Passed to the editor when set, else the editor keeps its default. */
+    readonly tabMovesFocus?: boolean;
     /** Strikethrough and the secondary text colour on a checked task, in the editor and the reader. */
     readonly strikeCheckedTasks?: boolean;
 }) => {
+    let options: Pick<RichTextEditorProps, 'tabMovesFocus'> = {};
+    if (tabMovesFocus !== undefined) {
+        options = { tabMovesFocus };
+    }
     const [shownPresentation] = useState(() => {
         let next = presentation;
         if (listLevels !== undefined) {
@@ -109,6 +117,7 @@ export const ListProbe = ({
                 definition={definition}
                 presentation={shownPresentation}
                 defaultValue={{ documentId: 'document-1', revision: null, document: documentOf(blocks) }}
+                {...options}
                 ref={ref}
                 onDocumentChange={({ origin, commandId, readDocument }) => {
                     const document = readDocument();

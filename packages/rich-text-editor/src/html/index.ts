@@ -49,7 +49,8 @@ export const fromHTML = (html: string, model: ContentModel, options: HtmlImportO
     const headingLevels = definition?.authoring.creatableHeadingLevels;
     let imported: ImportedHtml;
     try {
-        imported = importModelHtml(html, model, schema, options.window, { limits, headingLevels });
+        // The blocks of a new document sit below `doc`, which `exceededStructure` counts as depth 1.
+        imported = importModelHtml(html, model, schema, options.window, { limits, headingLevels, depth: 2 });
     } catch (error) {
         // Markup nested past the call stack is a structure limit; any other throw is unreadable input, never a throw.
         if (error instanceof RangeError) {

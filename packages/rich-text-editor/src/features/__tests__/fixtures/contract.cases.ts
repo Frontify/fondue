@@ -34,7 +34,9 @@ import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 
 import { countingIds } from './notes';
 
-/** The session a command runs in: a presentation of no styles, no policy and a read-only editor. */
+// The most columns a presentation sets, so a column break has room in every fixture.
+const COLUMNS = 6;
+/** The session a command runs in: a presentation of the most columns, no policy and a read-only editor. */
 const SESSION = {
     runtime: {
         limits: defaultLimits,
@@ -47,7 +49,7 @@ const SESSION = {
         t: (key) => key,
         locale: () => 'en-US',
         services: {
-            presentation: () => ({ styles: [], colorTokens: [] }),
+            presentation: () => ({ styles: [], colorTokens: [], columns: COLUMNS, columnGap: undefined }),
         },
         overlays: { open: () => undefined, close: () => undefined, isOpen: () => false },
         announce: () => undefined,

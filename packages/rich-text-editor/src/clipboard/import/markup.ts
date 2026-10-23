@@ -31,3 +31,22 @@ export const removeMarkup = (body: HTMLElement) => {
         comment.remove();
     }
 };
+
+/** Removes the `br` of each `li` whose only child it is, leaving an empty item, so the break never doubles it. */
+export const removeItemBreaks = (body: HTMLElement) => {
+    for (const item of Array.from(body.querySelectorAll('li'))) {
+        const only = item.firstChild;
+        if (only !== null && only === item.lastChild && only.nodeName === 'BR') {
+            only.remove();
+        }
+    }
+};
+
+/** Removes each `span` with no child, innermost first, so a span that only held empty spans goes too. */
+export const removeEmptySpans = (body: HTMLElement) => {
+    for (const span of Array.from(body.querySelectorAll('span')).reverse()) {
+        if (span.firstChild === null) {
+            span.remove();
+        }
+    }
+};

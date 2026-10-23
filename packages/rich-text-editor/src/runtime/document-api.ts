@@ -18,6 +18,11 @@ export interface NodeValue {
     readonly range: EditorRange;
 }
 
+/** One block of a type, in document order. */
+export interface BlockValue extends NodeValue {
+    readonly text: string;
+}
+
 /** A node around the selection's start. */
 export interface AncestorValue {
     readonly type: string;
@@ -60,6 +65,9 @@ export type WriteOutcome =
     | { readonly status: 'no-op' }
     | { readonly status: 'rejected'; readonly code: string };
 
+/** Where `insert.node` puts a block: at the selection, as typing would, or after the top-level block that holds it. */
+export type InsertPlace = 'selection' | 'after-top-level-block';
+
 /**
  * The document half of `EditorApi`: reads of the selection and content, and writes that each run as one undo step
  * through the commit path, or inside a command as part of its one step.
@@ -93,6 +101,8 @@ export interface DocumentApi {
          * textblock, such as `blockquote` or `bullet_list`, whether they sit inside one.
          */
         active(node: string, attrs?: JsonObject): boolean | 'mixed';
+        /** Every block of `node`, in document order, those inside another block of `node` too. */
+        list(node: string): readonly BlockValue[];
         /** Turns the selected textblocks into `node`; with `toggle`, back into paragraphs when they already are. */
         set(node: string, attrs?: JsonObject, options?: { readonly toggle?: boolean }): boolean;
         /**
@@ -123,8 +133,12 @@ export interface DocumentApi {
         ): boolean | 'mixed';
     };
     readonly insert: {
-        /** Inserts the inline `node` at the selection, as typing would; a block type is rejected as `invalid`. */
-        node(node: string, attrs?: JsonObject): WriteOutcome;
+        /**
+         * Inserts `node` at `place`, in place of an empty textblock at the caret, else after the block that holds it.
+         */
+        node(node: string, attrs?: JsonObject, options?: { readonly place?: InsertPlace }): WriteOutcome;
+        /** Whether `insert.node` finds a spot for `node` at `place`, as an `enabled` check asks. */
+        allowed(node: string, options?: { readonly place?: InsertPlace }): boolean;
         text(text: string): boolean;
     };
     /** List edits, where `list` is a list type such as `bullet_list` and `item` its item type such as `list_item`. */

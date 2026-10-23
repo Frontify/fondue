@@ -762,6 +762,9 @@ importers:
       prosemirror-dropcursor:
         specifier: ^1.8.4
         version: 1.8.4
+      prosemirror-gapcursor:
+        specifier: ^1.4.1
+        version: 1.4.1
       prosemirror-history:
         specifier: ^1.5.1
         version: 1.5.1
@@ -9221,6 +9224,9 @@ packages:
 
   prosemirror-dropcursor@1.8.4:
     resolution: {integrity: sha512-VmKxhcA6a+h5oPSYmfF1ZNeQqPbyYaIxqZsKqeYCyTlPtrjUgNaHL3P8vVaO19oqAV0zuaM/axkowZHrB1P3Tg==}
+
+  prosemirror-gapcursor@1.4.1:
+    resolution: {integrity: sha512-pMdYaEnjNMSwl11yjEGtgTmLkR08m/Vl+Jj443167p9eB3HVQKhYCc4gmHVDsLPODfZfjr/MmirsdyZziXbQKw==}
 
   prosemirror-history@1.5.1:
     resolution: {integrity: sha512-onlwnqKvgtFg6srZOmDOAhlAy1FIHQpOExORybX0S+DvJepE5tPALrB9iGet/2sqqqrelSnB10OoiOJqAvu2DA==}
@@ -19534,6 +19540,13 @@ snapshots:
     dependencies:
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.12.2
+      prosemirror-view: 1.42.6
+
+  prosemirror-gapcursor@1.4.1:
+    dependencies:
+      prosemirror-keymap: 1.2.3
+      prosemirror-model: 1.25.12
+      prosemirror-state: 1.4.4
       prosemirror-view: 1.42.6
 
   prosemirror-history@1.5.1:

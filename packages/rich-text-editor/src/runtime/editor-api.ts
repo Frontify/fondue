@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Fragment, type MarkType, type Node, type Schema } from 'prosemirror-model';
+import { Fragment, type MarkType, type Node, type NodeType, type Schema } from 'prosemirror-model';
 import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { Mapping } from 'prosemirror-transform';
 
@@ -26,9 +26,10 @@ import { hrefPolicyOf } from '#/model/href';
 import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
-import { type CapabilityImplementation, EDITS } from './capabilities';
+import { type CapabilityImplementation, EDITS, placeBlock, placesBlock } from './capabilities';
 import {
     type AncestorValue,
+    type BlockValue,
     type CommandOutcome,
     type DocumentApi,
     type EditorRange,
@@ -449,7 +450,32 @@ const documentApi = (source: ApiSource): DocumentApi => {
         const transaction = state.tr.replaceWith(span.from, span.to, content);
         return commit(state, transaction, { from: span.from, to: span.from + content.size }, content);
     };
+    /** A new block of `type` with `attrs`, holding the content it requires. */
+    const blockOf = (type: NodeType, attrs: JsonObject): Node | 'invalid' => {
+        const checked = checkedAttrs(model, [type.name], attrs, maxAttributeLength, true);
+        if (checked === undefined) {
+            return 'invalid';
+        }
+        return type.createAndFill(checked) ?? 'invalid';
+    };
     const markType = (mark: string): MarkType | undefined => schema.marks[mark];
+    const blocksOf = (doc: Node, node: string): BlockValue[] => {
+        const found: BlockValue[] = [];
+        doc.descendants((child, pos) => {
+            if (child.type.name !== node) {
+                return true;
+            }
+            const nodeId = typeof child.attrs.nodeId === 'string' ? child.attrs.nodeId : null;
+            found.push({
+                nodeId,
+                attrs: valuesOf(child.attrs),
+                text: child.textContent,
+                range: rangeOf(doc, pos, pos + child.nodeSize),
+            });
+            return true;
+        });
+        return found;
+    };
     const selectionOf = (state: EditorState): SelectionValue => {
         const { selection } = state;
         const { $from, $to } = selection;
@@ -561,6 +587,7 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 }
                 return capability(EDITS.setBlock, { node }).active(source.state(), attrs);
             },
+            list: (node) => blocksOf(source.state().doc, node),
             set: (node, attrs, options) =>
                 schema.nodes[node] !== undefined &&
                 editWith(EDITS.setBlock, { node, toggle: options?.toggle === true }, [node], attrs, true),
@@ -601,24 +628,49 @@ const documentApi = (source: ApiSource): DocumentApi => {
             },
         },
         insert: {
-            node: (node, attrs) => {
+            node: (node, attrs, options) => {
                 const type = schema.nodes[node];
-                if (type === undefined || type.isBlock) {
+                const topLevel = options?.place === 'after-top-level-block';
+                if (type === undefined || (!type.isBlock && topLevel)) {
                     return { status: 'rejected', code: 'invalid' };
                 }
                 const state = source.state();
-                const checked = checkedAttrs(model, [node], attrs ?? {}, maxAttributeLength, true);
-                const { $from } = state.selection;
-                if (checked === undefined) {
-                    return { status: 'rejected', code: 'invalid' };
+                if (!type.isBlock) {
+                    const checked = checkedAttrs(model, [node], attrs ?? {}, maxAttributeLength, true);
+                    const { $from } = state.selection;
+                    if (checked === undefined) {
+                        return { status: 'rejected', code: 'invalid' };
+                    }
+                    if (!$from.parent.canReplaceWith($from.index(), $from.index(), type)) {
+                        return { status: 'rejected', code: 'not-applicable' };
+                    }
+                    const inline = type.create(checked);
+                    // A node whose `marks` declaration is empty, such as a mention, takes no mark from the text around it.
+                    const transaction = state.tr.replaceSelectionWith(inline, type.spec.marks !== '').scrollIntoView();
+                    return commit(state, transaction, firstWrite(transaction), Fragment.from(inline));
                 }
-                if (!$from.parent.canReplaceWith($from.index(), $from.index(), type)) {
+                const block = blockOf(type, attrs ?? {});
+                if (typeof block === 'string') {
+                    return rejectedWrite(block);
+                }
+                const transaction = placeBlock(state, block, topLevel);
+                if (transaction === undefined) {
                     return { status: 'rejected', code: 'not-applicable' };
                 }
-                const inline = type.create(checked);
-                // A node whose `marks` declaration is empty, such as a mention, takes no mark from the text around it.
-                const transaction = state.tr.replaceSelectionWith(inline, type.spec.marks !== '').scrollIntoView();
-                return commit(state, transaction, firstWrite(transaction), Fragment.from(inline));
+                return commit(state, transaction, firstWrite(transaction), Fragment.from(block));
+            },
+            allowed: (node, options) => {
+                const type = schema.nodes[node];
+                if (type === undefined) {
+                    return false;
+                }
+                const state = source.state();
+                const topLevel = options?.place === 'after-top-level-block';
+                if (type.isBlock) {
+                    return placesBlock(state, type, topLevel);
+                }
+                const { $from } = state.selection;
+                return !topLevel && $from.parent.canReplaceWith($from.index(), $from.index(), type);
             },
             text: (text) => edit(capability(EDITS.insertText, {}), { text }),
         },

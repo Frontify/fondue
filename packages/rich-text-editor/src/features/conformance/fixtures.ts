@@ -4,9 +4,11 @@ import aligned from '#/features/blocks-align/fixtures/aligned.json';
 import code from '#/features/blocks-code/fixtures/code.json';
 import headings from '#/features/blocks-heading/fixtures/headings.json';
 import quote from '#/features/blocks-quote/fixtures/quote.json';
+import rules from '#/features/blocks-rule/fixtures/rules.json';
 import paragraphs from '#/features/core/fixtures/paragraphs.json';
 import emoji from '#/features/emoji/fixtures/emoji.json';
 import typography from '#/features/input-rules/fixtures/typography.json';
+import columns from '#/features/layout-columns/fixtures/columns.json';
 import bullets from '#/features/lists-bullet/fixtures/bullets.json';
 import items from '#/features/lists-item/fixtures/items.json';
 import ordered from '#/features/lists-ordered/fixtures/ordered.json';
@@ -35,6 +37,8 @@ export const featureFixtures = {
     'marks.superscript': { superscript },
     'blocks.heading': { headings },
     'blocks.quote': { quote },
+    'blocks.rule': { rules },
+    'layout.columns': { columns },
     'lists.item': { items },
     'lists.bullet': { bullets },
     'lists.ordered': { ordered },

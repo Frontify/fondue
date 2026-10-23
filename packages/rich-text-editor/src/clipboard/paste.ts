@@ -290,9 +290,15 @@ export const pastePayload = (
     // HTML, which goes no further even when it parses to nothing.
     if (!settings.plain && payload.html !== '') {
         const { limits, headingLevels } = settings;
+        // The pasted blocks land beside the textblock at the paste position, or inside the node between whose children it is.
+        let depth = $from.depth + 2;
+        if ($from.parent.isTextblock) {
+            depth = $from.depth + 1;
+        }
         const { content, droppedImages } = importModelHtml(payload.html, model, schema, settings.window, {
             limits,
             headingLevels,
+            depth,
         });
         insert(prepared(insertable(content)));
         return { droppedMedia: droppedImages };

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { toggleMark as toggleEngineMark, wrapIn as wrapInEngine } from 'prosemirror-commands';
+import { GapCursor, gapCursor } from 'prosemirror-gapcursor';
 import {
     Fragment,
     type MarkType,
@@ -11,7 +12,7 @@ import {
     type Schema,
 } from 'prosemirror-model';
 import { liftListItem, sinkListItem, wrapRangeInList } from 'prosemirror-schema-list';
-import { type EditorState, type Transaction } from 'prosemirror-state';
+import { type EditorState, Plugin, PluginKey, Selection, TextSelection, type Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
 import { type CommandLookup, type EngineCommand, type EngineImplementations } from '#/definition';
@@ -20,6 +21,7 @@ import {
     BASE_KEYS_PLUGIN,
     BLOCK_DECORATIONS_PLUGIN,
     CONTAINER_KEYS_PLUGIN,
+    GAP_CURSOR_PLUGIN,
     HISTORY_PLUGIN,
     INPUT_RULES_PLUGIN,
     SUGGESTIONS_PLUGIN,
@@ -206,6 +208,93 @@ const setBlock: CapabilityImplementation = (args, schema) => {
             return blocks.some(({ node }) => node.type !== target && !target.validContent(node.content));
         },
     };
+};
+
+/** A range `from`–`to` in one parent that a block replaces; an empty range inserts it there. */
+interface BlockSpot {
+    readonly from: number;
+    readonly to: number;
+}
+
+/**
+ * Where a block goes, in order of preference: in place of the empty textblock at a caret, before a textblock with the
+ * caret at its start, then after the block that holds the selection end at the deepest level that takes it; with
+ * `topLevel`, only after the top-level block. A selection between blocks, such as a selected node, is that spot.
+ */
+const blockSpots = (state: EditorState, topLevel: boolean): BlockSpot[] => {
+    const { selection } = state;
+    const $end = selection.$to;
+    const spots: BlockSpot[] = [];
+    if (!$end.parent.inlineContent) {
+        if (topLevel && $end.depth > 0) {
+            return [{ from: $end.after(1), to: $end.after(1) }];
+        }
+        spots.push({ from: $end.pos, to: $end.pos });
+    } else if (!topLevel && selection.empty) {
+        if ($end.parent.content.size === 0) {
+            spots.push({ from: $end.before(), to: $end.after() });
+        } else if ($end.parentOffset === 0) {
+            spots.push({ from: $end.before(), to: $end.before() });
+        }
+    }
+    for (let depth = $end.depth; depth >= 1; depth -= 1) {
+        if (!topLevel || depth === 1) {
+            spots.push({ from: $end.after(depth), to: $end.after(depth) });
+        }
+    }
+    return spots;
+};
+
+/** Whether `type` may replace the range of `spot`. */
+const takes = (doc: Node, spot: BlockSpot, type: NodeType) => {
+    const $from = doc.resolve(spot.from);
+    let end = $from.index();
+    if (spot.to > spot.from) {
+        end += 1;
+    }
+    return $from.parent.canReplaceWith($from.index(), end, type);
+};
+
+// The pinned prosemirror-gapcursor declares `GapCursor.valid` internal, so its types leave it out.
+const gapCursorValid = ($pos: ResolvedPos): boolean =>
+    (GapCursor as unknown as { readonly valid: (at: ResolvedPos) => boolean }).valid($pos);
+
+/**
+ * Puts `node` at `spot`, adds an empty paragraph after it when it ends up last, and puts the selection after it: a
+ * caret in a textblock that follows, else a gap cursor, so typing never replaces a selected leaf such as a column break.
+ */
+const insertBlock = (state: EditorState, spot: BlockSpot, node: Node): Transaction => {
+    const transaction = state.tr.replaceWith(spot.from, spot.to, node);
+    const after = spot.from + node.nodeSize;
+    const $after = transaction.doc.resolve(after);
+    if ($after.nodeAfter !== null) {
+        if (!$after.nodeAfter.isTextblock && gapCursorValid($after)) {
+            return transaction.setSelection(new GapCursor($after)).scrollIntoView();
+        }
+        return transaction.setSelection(Selection.near($after, 1)).scrollIntoView();
+    }
+    const paragraph = $after.parent.contentMatchAt($after.index()).defaultType;
+    if (paragraph === null || !paragraph.isTextblock) {
+        return transaction.setSelection(Selection.near($after, -1)).scrollIntoView();
+    }
+    transaction.insert(after, paragraph.create());
+    return transaction.setSelection(TextSelection.create(transaction.doc, after + 1)).scrollIntoView();
+};
+
+/** Whether a block of `type` has a spot at the selection, as `insertNode` finds one; with `topLevel`, after the top-level block. */
+export const placesBlock = (state: EditorState, type: NodeType, topLevel = false): boolean =>
+    blockSpots(state, topLevel).some((spot) => takes(state.doc, spot, type));
+
+/**
+ * Puts block `node` where `insertNode` puts a block, or `undefined` where no spot at the selection takes it; with
+ * `topLevel`, only after the top-level block.
+ */
+export const placeBlock = (state: EditorState, node: Node, topLevel = false): Transaction | undefined => {
+    const spot = blockSpots(state, topLevel).find((candidate) => takes(state.doc, candidate, node.type));
+    if (spot === undefined) {
+        return undefined;
+    }
+    return insertBlock(state, spot, node);
 };
 
 const insertText: CapabilityImplementation = () => ({
@@ -775,6 +864,9 @@ export const RUNTIME_PLUGINS: EngineImplementations = {
         [CONTAINER_KEYS_PLUGIN.id]: containerKeysPlugin,
         [BASE_KEYS_PLUGIN.id]: baseKeysPlugin,
         [BLOCK_DECORATIONS_PLUGIN.id]: blockDecorationsPlugin,
+        // Keyed by its plugin ID, as every package plugin is; `gapCursor()` itself carries no key.
+        [GAP_CURSOR_PLUGIN.id]: () =>
+            new Plugin({ key: new PluginKey(GAP_CURSOR_PLUGIN.id), props: gapCursor().props }),
         [SUGGESTIONS_PLUGIN.id]: suggestionsPlugin,
     },
 };
