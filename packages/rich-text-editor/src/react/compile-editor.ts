@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type NodeViewDeclaration } from '#/bridge/define';
 import { commandApiOf, editorApiOf } from '#/bridge/live-api';
 import { type EditorHosts, type EditorPlugin, type EditorSuggestion, pluginWithOptions } from '#/bridge/plugin';
 import {
@@ -40,6 +41,7 @@ export type ShippedParts = Readonly<Record<string, EditorPlugin>>;
 
 // Kept off the definition, so no engine value is reachable from what a host holds.
 const engines = new WeakMap<object, CompiledDefinition>();
+const nodeViews = new WeakMap<object, ReadonlyMap<string, NodeViewDeclaration>>();
 const readers = new WeakMap<object, ReaderOverrides>();
 
 /** The engine a definition compiled once, which every editor mounted with it shares. */
@@ -50,6 +52,14 @@ export const engineOf = (definition: CompiledEditorDefinition<object>): Compiled
     }
     return engine;
 };
+
+/** The node view chrome of a definition by node name; a later feature's view of a node replaces an earlier one's. */
+export const viewsOf = (definition: CompiledEditorDefinition<object>): ReadonlyMap<string, NodeViewDeclaration> =>
+    nodeViews.get(definition) ?? new Map();
+
+/** The reader overrides of the shipped features a definition renders its blocked and recovery shells with. */
+export const readersOf = (definition: CompiledEditorDefinition<object>): ReaderOverrides =>
+    readers.get(definition) ?? {};
 
 /** `base` with `added` in place of its entry of the same `key`, and each other entry of `added` after it. */
 const byKey = <T>(base: readonly T[] = [], added: readonly T[] = [], key: keyof T): readonly T[] => [
@@ -69,6 +79,7 @@ const extend = (shipped: EditorPlugin, host: EditorPlugin): EditorPlugin => {
         keys: Object.assign({ ...shipped.keys }, host.keys),
         inputRules: byKey(shipped.inputRules, host.inputRules, 'id'),
         toolbar: byKey(shipped.toolbar, host.toolbar, 'id'),
+        views: byKey(shipped.views, host.views, 'node'),
         decorations: byKey(shipped.decorations, host.decorations, 'id'),
         suggestions: byKey(shipped.suggestions, host.suggestions, 'trigger'),
     });
@@ -180,6 +191,27 @@ const handleKeyFor: NonNullable<Parameters<typeof compileDefinition>[1]>['handle
         return false;
     }
     return runtime.perform(handler).status !== 'rejected';
+};
+
+/** The node views the model's editor parts attach, each for a node the model declares. */
+const collectViews = (model: ContentModel, plugins: readonly EditorPlugin[]) => {
+    const { features, nodes } = compiledModel(model);
+    const views = new Map<string, NodeViewDeclaration>();
+    for (const feature of features) {
+        const plugin = plugins.find((candidate) => candidate.feature === feature.id);
+        const declared = plugin?.views;
+        for (const view of declared ?? []) {
+            const { node } = view;
+            if (!nodes.some(({ name }) => name === node)) {
+                throw new DefinitionError('definition.orphan-behavior', {
+                    feature: feature.id,
+                    path: pointer('nodeViews', node),
+                });
+            }
+            views.set(node, view);
+        }
+    }
+    return views;
 };
 
 /** The defaults with `limitOverrides`, then each of `limits` that is stricter; invalid values are ignored. */
@@ -298,7 +330,8 @@ export const compileEditor = <Model extends ContentModel, const Plugins extends 
     overrides: ReaderOverrides,
 ): CompiledEditorDefinition<CommandsOfModel<Model> & CommandsOfPlugins<Plugins>> => {
     const { id, model, policy } = options;
-    const { engine } = editorEngine(model, options.plugins, shipped);
+    const { engine, plugins } = editorEngine(model, options.plugins, shipped);
+    const views = collectViews(model, plugins);
     const limits = limitsWithin(options.limits, options.limitOverrides);
     checkLimits(model, limits, options.limits);
     const definition = Object.freeze({
@@ -309,6 +342,7 @@ export const compileEditor = <Model extends ContentModel, const Plugins extends 
         limits,
     });
     engines.set(definition, engine);
+    nodeViews.set(definition, views);
     readers.set(definition, overrides);
     return definition as unknown as CompiledEditorDefinition<CommandsOfModel<Model> & CommandsOfPlugins<Plugins>>;
 };

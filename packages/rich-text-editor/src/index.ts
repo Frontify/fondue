@@ -1,6 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export {
+    NodeViewContent,
+    type NodeViewContext,
+    type NodeViewDeclaration,
+    type NodeViewState,
+    useRichTextNodeView,
+} from '#/bridge/define';
+export {
     type AncestorValue,
     type CommandOutcome,
     type CommandsOfPlugin,
@@ -19,9 +26,11 @@ export {
     sameRange,
     type SelectionValue,
     type ToolbarControlProps,
+    useClientLayoutEffect,
     type WriteOutcome,
     type WriteTarget,
 } from '#/bridge/plugin';
+export { useCommandState, useEditorSelection } from '#/bridge/hooks';
 export type { BlockDecoration, BlockDecorationSource, DecoratedBlock } from '#/model/declarations';
 export {
     type CommitOptions,

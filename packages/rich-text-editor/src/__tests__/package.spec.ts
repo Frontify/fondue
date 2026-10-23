@@ -25,7 +25,7 @@ const LAYOUT_ENTRIES = new Set([
     './styles',
 ]);
 
-const EXPORTED_NOW = ['.', './codecs', './features', './model', './reader', './testing'];
+const EXPORTED_NOW = ['.', './codecs', './features', './model', './reader', './styles', './testing'];
 
 const PROSEMIRROR_FLOORS: Record<string, string> = {
     'prosemirror-commands': '1.7.2',
@@ -47,6 +47,7 @@ type ExportTarget = { types?: string; import?: string; require?: string };
 type Manifest = {
     name?: string;
     type?: string;
+    sideEffects?: boolean | string[];
     publishConfig?: { access?: string };
     exports?: Record<string, string | ExportTarget>;
     dependencies?: Record<string, string>;
@@ -213,5 +214,9 @@ describe('package manifest and built output', () => {
         const isStatic = /(?:\bfrom|\bimport)\s*['"]axe-core['"]/;
         expect(sources.filter(({ code }) => isStatic.test(code)).map(({ file }) => file)).toEqual([]);
         expect(sources.some(({ code }) => /\bimport\s*\(\s*['"]axe-core['"]\s*\)/.test(code))).toBe(true);
+    });
+
+    it('lists the stylesheet alone as having side effects', () => {
+        expect(manifest.sideEffects).toEqual(['./dist/style.css']);
     });
 });

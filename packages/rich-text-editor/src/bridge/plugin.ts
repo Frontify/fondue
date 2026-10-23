@@ -20,6 +20,8 @@ import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules }
 import { type DocumentApi } from '#/runtime/document-api';
 import { type AuthoringPolicy } from '#/runtime/types';
 
+import { type NodeViewDeclaration } from './define';
+
 export {
     type AncestorValue,
     type CommandOutcome,
@@ -30,6 +32,7 @@ export {
     type WriteOutcome,
     type WriteTarget,
 } from '#/runtime/document-api';
+export { useClientLayoutEffect } from './client-layout-effect';
 
 /** The presentation as plugins read it. */
 export interface PluginPresentation {
@@ -182,7 +185,7 @@ export type PluginToolbarEntry = PluginToolbarEntryBase &
 
 /**
  * The editor part of a plugin: everything a feature does while it is edited. A host part extends the shipped part of
- * its feature: a command, key or toolbar entry with the same ID replaces the shipped one whole, with no
+ * its feature: a command, key, node view or toolbar entry with the same ID replaces the shipped one whole, with no
  * field merged, and the others are added.
  */
 export interface EditorPluginParts {
@@ -194,6 +197,8 @@ export interface EditorPluginParts {
     readonly decorations?: readonly BlockDecorationSource[];
     /** Lists that typing a trigger opens, whose options the part's own search finds. */
     readonly suggestions?: readonly EditorSuggestion[];
+    /** Chrome around the editable content of a node, which renders again only when its node or selection changes. */
+    readonly views?: readonly NodeViewDeclaration[];
 }
 
 declare const pluginBrand: unique symbol;

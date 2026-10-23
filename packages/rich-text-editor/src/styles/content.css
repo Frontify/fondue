@@ -1,0 +1,422 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/*
+ * Every rule sits in the one `fondue-rte` cascade layer and every selector inside `:where()`, so any host rule, on
+ * `contentClassName` or anywhere else, wins without `!important`. The struck checked-task colour must beat a run's
+ * inline colour, so it is `!important` and hosts change it through its variable.
+ */
+@layer fondue-rte {
+    /* Hosts override these per root, and each default is a Fondue token. */
+    :where(.fondue-rte-content) {
+        --rte-content-text-color: var(--color-primary-default);
+        --rte-content-link-color: var(--color-primary-default);
+        --rte-content-paragraph-spacing: var(--spacing-x-small);
+        --rte-content-surface-background: var(--color-surface-default);
+        /* The field's border holds 3:1 on the surface, which `--color-line-mid` misses in the light theme. */
+        --rte-content-surface-border: var(--border-width-default) solid var(--color-line-strong);
+        /* A horizontal rule holds 3:1 on the surface for the same reason. */
+        --rte-content-rule-color: var(--color-line-strong);
+        --rte-content-surface-padding: var(--spacing-x-small) var(--spacing-small);
+        --rte-content-secondary-text-color: var(--color-secondary-default);
+        --rte-content-placeholder-color: var(--color-secondary-default);
+        --rte-content-placeholder-opacity: 1;
+        --rte-content-selected-node-color: var(--color-focus-default);
+        --rte-content-focus-color: var(--color-focus-default);
+        --rte-content-selection-color: var(--color-container-secondary-default);
+        color: var(--rte-content-text-color);
+        /* The inherited rules of the installed prosemirror-view/style/prosemirror.css, on every content root so the reader wraps text as the editor does. */
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        white-space: break-spaces;
+        -webkit-font-variant-ligatures: none;
+        font-variant-ligatures: none;
+        font-feature-settings: 'liga' 0;
+    }
+
+    :where(.fondue-rte-content p) {
+        margin-block: 0 var(--rte-content-paragraph-spacing);
+    }
+
+    /* A link stays underlined, a cue other than colour; a link style that draws a box replaces the underline. */
+    :where(.fondue-rte-content a) {
+        color: var(--rte-content-link-color);
+        text-decoration-line: underline;
+    }
+
+    /* A list level's marker colour and size, which a nested list does not inherit. */
+    :where(.fondue-rte-content :is(ol, ul)) {
+        --rte-list-marker-color: initial;
+        --rte-list-marker-size: initial;
+    }
+
+    :where(.fondue-rte-content li)::marker {
+        color: var(--rte-list-marker-color);
+        font-size: var(--rte-list-marker-size);
+    }
+
+    /* A task item shows its checkbox and no list marker, whatever marker its list inherits. */
+    :where(.fondue-rte-content ul[data-task-list] > li) {
+        list-style: none;
+    }
+
+    /*
+     * Checked tasks keep their text unless the presentation asks for the struck secondary look, which takes each of the
+     * item's own blocks, never a nested list: the reader's blocks after the checkbox, the editor's content blocks beside it.
+     */
+    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > :not(input, ul, ol)),
+    :where(
+        .fondue-rte-content[data-rte-strike-checked-tasks]
+            li:has(> [data-rte-chrome] > input:checked)
+            > [data-rte-chrome]
+            > [data-rte-content]
+            > *
+            > :not(ul, ol)
+    ) {
+        text-decoration-line: line-through;
+    }
+
+    /* A run's own colour, inline or from a link or brand style, gives way only to `!important`. */
+    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > :not(input, ul, ol)),
+    :where(.fondue-rte-content[data-rte-strike-checked-tasks] li[data-checked='true'] > :not(input, ul, ol) *),
+    :where(
+        .fondue-rte-content[data-rte-strike-checked-tasks]
+            li:has(> [data-rte-chrome] > input:checked)
+            > [data-rte-chrome]
+            > [data-rte-content]
+            > *
+            > :not(ul, ol)
+    ),
+    :where(
+        .fondue-rte-content[data-rte-strike-checked-tasks]
+            li:has(> [data-rte-chrome] > input:checked)
+            > [data-rte-chrome]
+            > [data-rte-content]
+            > *
+            > :not(ul, ol)
+            *
+    ) {
+        color: var(--rte-content-secondary-text-color) !important;
+    }
+
+    :where(.fondue-rte-content pre) {
+        white-space: pre-wrap;
+    }
+
+    /* A figure is block-level and text never wraps around its image, which shrinks to the content width. */
+    :where(.fondue-rte-content figure) {
+        margin-block: 0 var(--rte-content-paragraph-spacing);
+        margin-inline: 0;
+    }
+
+    /* The block size stays within the viewport, so no stored size reserves a box taller than the screen. */
+    :where(.fondue-rte-content figure img) {
+        max-inline-size: 100%;
+        max-block-size: 100vh;
+        block-size: auto;
+        object-fit: contain;
+        vertical-align: middle;
+    }
+
+    :where(.fondue-rte-content [data-rte-image-unavailable]) {
+        color: var(--rte-content-secondary-text-color);
+    }
+
+    /* A reader image that failed to load gives way to the placeholder beside it. */
+    :where(.fondue-rte-content figure[data-rte-image-failed] img) {
+        display: none;
+    }
+
+    :where(.fondue-rte-content figure[data-rte-image-failed] [data-rte-image-unavailable][hidden]) {
+        display: inline;
+    }
+
+    :where(.fondue-rte-content hr) {
+        margin-block: var(--rte-content-paragraph-spacing);
+        border: none;
+        border-block-start: var(--border-width-default) solid var(--rte-content-rule-color);
+    }
+
+    /* The editing-only rules of the same stylesheet, on the surface. */
+    :where(.fondue-rte-content[data-rte-surface]) {
+        position: relative;
+        padding: var(--rte-content-surface-padding);
+        border: var(--rte-content-surface-border);
+        background-color: var(--rte-content-surface-background);
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] li) {
+        position: relative;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface].ProseMirror-hideselection *)::selection {
+        background: transparent;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface].ProseMirror-hideselection *)::-moz-selection {
+        background: transparent;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface].ProseMirror-hideselection) {
+        caret-color: transparent;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] [draggable][contenteditable='false']) {
+        -webkit-user-select: text;
+        user-select: text;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] .ProseMirror-selectednode) {
+        outline: 2px solid var(--rte-content-selected-node-color);
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] li.ProseMirror-selectednode) {
+        outline: none;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] li.ProseMirror-selectednode)::after {
+        content: '';
+        position: absolute;
+        inset-inline-start: -32px;
+        inset-inline-end: -2px;
+        inset-block-start: -2px;
+        inset-block-end: -2px;
+        border: 2px solid var(--rte-content-selected-node-color);
+        pointer-events: none;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] img.ProseMirror-separator) {
+        display: inline !important;
+        border: none !important;
+        margin: 0 !important;
+    }
+
+    /* A 2 px outline around the whole focused surface. */
+    :where(.fondue-rte-content[data-rte-surface]:focus-visible) {
+        outline: 2px solid var(--rte-content-focus-color);
+        outline-offset: 2px;
+    }
+
+    /* Node chrome that takes focus scrolls clear of the sticky toolbar. */
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-chrome] *) {
+        scroll-margin-block-start: var(--rte-chrome-scroll-margin, 0);
+    }
+
+    /* The selection stays visible while focus is in the editor chrome. */
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-selection]) {
+        background-color: var(--rte-content-selection-color);
+    }
+
+    /* Forced colours replace the fill, so an outline in the text colour marks the selection. */
+    @media (forced-colors: active) {
+        :where(.fondue-rte-content[data-rte-surface] [data-rte-selection]) {
+            outline: 1px solid;
+        }
+    }
+
+    /* The placeholder shows only on an empty document and is never document text. */
+    :where(.fondue-rte-content[data-rte-surface][data-rte-empty][data-placeholder])::before {
+        content: attr(data-placeholder);
+        position: absolute;
+        color: var(--rte-content-placeholder-color);
+        opacity: var(--rte-content-placeholder-opacity);
+        pointer-events: none;
+    }
+
+    /* Forced colours draw the placeholder apart from the text. */
+    @media (forced-colors: active) {
+        :where(.fondue-rte-content[data-rte-surface][data-rte-empty][data-placeholder])::before {
+            color: GrayText;
+        }
+    }
+
+    /* Printed content keeps its text, atoms and images and drops the node chrome toolbars. */
+    @media print {
+        :where(.fondue-rte-content [data-rte-node-chrome]) {
+            display: none;
+        }
+    }
+
+    /* An issue the content checks found, while the issues panel is open: an outline by severity, and its icon. */
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-issue]) {
+        outline: 2px solid var(--color-error-default);
+        outline-offset: 1px;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-issue='warning']) {
+        outline-color: var(--color-warning-default);
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-issue='review']) {
+        outline-style: dashed;
+        outline-color: var(--color-line-strong);
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-issue-icon]) {
+        display: inline-flex;
+        vertical-align: middle;
+        margin-inline-end: var(--spacing-xx-small);
+        color: var(--color-error-default);
+        user-select: none;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-issue-icon='warning']) {
+        color: var(--color-warning-default);
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-issue-icon='review']) {
+        color: var(--color-secondary-default);
+    }
+
+    /* Forced colours keep the outline and the icon in the system colours, apart from the text. */
+    @media (forced-colors: active) {
+        :where(.fondue-rte-content[data-rte-surface] [data-rte-issue]) {
+            outline-color: Highlight;
+        }
+
+        :where(.fondue-rte-content[data-rte-surface] [data-rte-issue-icon]) {
+            color: Highlight;
+        }
+    }
+
+    @media print {
+        :where(.fondue-rte-content [data-rte-issue-icon]) {
+            display: none;
+        }
+
+        :where(.fondue-rte-content [data-rte-issue]) {
+            outline: none;
+        }
+    }
+
+    /* The gap cursor of the installed prosemirror-gapcursor/style/gapcursor.css, scoped to the surface. */
+    :where(.fondue-rte-content[data-rte-surface] .ProseMirror-gapcursor) {
+        display: none;
+        pointer-events: none;
+        position: absolute;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] .ProseMirror-gapcursor)::after {
+        content: '';
+        display: block;
+        position: absolute;
+        inset-block-start: -2px;
+        inline-size: 20px;
+        border-block-start: 1px solid var(--rte-content-text-color);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        :where(.fondue-rte-content[data-rte-surface] .ProseMirror-gapcursor)::after {
+            animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
+        }
+    }
+
+    @keyframes ProseMirror-cursor-blink {
+        to {
+            visibility: hidden;
+        }
+    }
+
+    :where(.fondue-rte-content[data-rte-surface].ProseMirror-focused .ProseMirror-gapcursor) {
+        display: block;
+    }
+
+    /* Columns: the surface shows them while the editor measured room for each at the narrowest column width. */
+    :where(.fondue-rte-content[data-rte-columns]) {
+        column-gap: var(--rte-column-gap);
+    }
+
+    :where(.fondue-rte-content[data-rte-columns][data-rte-columns-fit]) {
+        column-count: var(--rte-columns);
+    }
+
+    :where(.fondue-rte-content[data-rte-columns][data-rte-columns-fit] > [data-rte-column-break='active']) {
+        break-after: column;
+    }
+
+    /* A column break in the editor: a dashed rule with its label, dotted while it forces no break. */
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-column-break]) {
+        margin-block: var(--spacing-x-small);
+        border-block-start: var(--border-width-default) dashed var(--color-line-strong);
+        color: var(--color-secondary-default);
+        font-size: var(--text-body-small-default-font-size);
+        text-align: center;
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-column-break])::after {
+        content: attr(aria-label);
+    }
+
+    :where(.fondue-rte-content[data-rte-surface] [data-rte-column-break='inactive']) {
+        border-block-start-style: dotted;
+    }
+
+    /*
+     * The reader's columns: the container's width, less the gaps, is what the columns share, so each query below holds
+     * when every column gets the narrowest column width, 240 px, and otherwise the content shows as one column. The
+     * container itself is styled inline by the reader, so every rule here stays under the content root.
+     */
+    :where(.fondue-rte-content:is(.fondue-rte-columns > *)) {
+        margin-inline-end: calc((1 - var(--rte-columns)) * var(--rte-column-gap));
+        column-gap: var(--rte-column-gap);
+    }
+
+    @container fondue-rte-columns (min-width: 480px) {
+        :where(.fondue-rte-content:is(.fondue-rte-columns[data-rte-columns='2'] > *)) {
+            column-count: 2;
+        }
+
+        :where(
+            .fondue-rte-content:is(.fondue-rte-columns[data-rte-columns='2'] > *) > [data-rte-column-break='active']
+        ) {
+            break-after: column;
+        }
+    }
+
+    @container fondue-rte-columns (min-width: 720px) {
+        :where(.fondue-rte-content:is(.fondue-rte-columns[data-rte-columns='3'] > *)) {
+            column-count: 3;
+        }
+
+        :where(
+            .fondue-rte-content:is(.fondue-rte-columns[data-rte-columns='3'] > *) > [data-rte-column-break='active']
+        ) {
+            break-after: column;
+        }
+    }
+
+    @container fondue-rte-columns (min-width: 960px) {
+        :where(.fondue-rte-content:is(.fondue-rte-columns[data-rte-columns='4'] > *)) {
+            column-count: 4;
+        }
+
+        :where(
+            .fondue-rte-content:is(.fondue-rte-columns[data-rte-columns='4'] > *) > [data-rte-column-break='active']
+        ) {
+            break-after: column;
+        }
+    }
+
+    @container fondue-rte-columns (min-width: 1200px) {
+        :where(.fondue-rte-content:is(.fondue-rte-columns[data-rte-columns='5'] > *)) {
+            column-count: 5;
+        }
+
+        :where(
+            .fondue-rte-content:is(.fondue-rte-columns[data-rte-columns='5'] > *) > [data-rte-column-break='active']
+        ) {
+            break-after: column;
+        }
+    }
+
+    @container fondue-rte-columns (min-width: 1440px) {
+        :where(.fondue-rte-content:is(.fondue-rte-columns[data-rte-columns='6'] > *)) {
+            column-count: 6;
+        }
+
+        :where(
+            .fondue-rte-content:is(.fondue-rte-columns[data-rte-columns='6'] > *) > [data-rte-column-break='active']
+        ) {
+            break-after: column;
+        }
+    }
+}

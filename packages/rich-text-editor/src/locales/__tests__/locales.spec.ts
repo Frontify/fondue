@@ -42,7 +42,10 @@ describe('package locales', () => {
 
     it('words no enUS help, instruction or error by shape, colour, size or position alone', () => {
         // Each allowed use, with why the string holds without seeing the layout.
-        const allowed = new Set<string>([]);
+        const allowed = new Set([
+            // The changes follow the message in reading order too, so a screen reader reaches them next.
+            'RichTextEditor_recoveryMessage below',
+        ]);
         const sensory = ['click the', 'red', 'green', 'on the left', 'on the right', 'above', 'below'];
         const found = Object.entries(enUS.translationStrings).flatMap(([key, value]) =>
             sensory.filter((words) => new RegExp(`\\b${words}\\b`, 'i').test(value)).map((words) => `${key} ${words}`),

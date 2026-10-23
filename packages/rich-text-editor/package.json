@@ -15,6 +15,9 @@
         "dist"
     ],
     "type": "module",
+    "sideEffects": [
+        "./dist/style.css"
+    ],
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -39,7 +42,8 @@
         "./testing": {
             "types": "./dist/testing/index.d.ts",
             "import": "./dist/testing/index.js"
-        }
+        },
+        "./styles": "./dist/style.css"
     },
     "publishConfig": {
         "access": "public"
@@ -81,6 +85,7 @@
         "@playwright/test": "^1.60.0",
         "@storybook/addon-docs": "^10.6.0",
         "@storybook/react-vite": "^10.6.0",
+        "@testing-library/jest-dom": "^7.0.0",
         "@testing-library/react": "^16.3.2",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/jsdom": "^30.0.0",

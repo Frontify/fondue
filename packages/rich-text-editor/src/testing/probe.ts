@@ -5,11 +5,13 @@ import { liveResources } from '#/runtime/runtime';
 import { settleResources } from '#/runtime/settle';
 
 /**
- * What every live runtime owns now: its views, the installed feature IDs of each session, its event subscriptions,
- * selector subscriptions, queued intents, pending frames, settle timers and targets.
+ * What every live runtime owns now: its views, node views and their portals, the installed feature IDs of each
+ * session, its event subscriptions, selector subscriptions, queued intents, pending frames, settle timers and targets.
  */
 export const probeRuntimes = () => ({
     views: Array.from<object>(liveResources.views),
+    nodeViews: liveResources.nodeViews,
+    portals: liveResources.portals,
     installedFeatures: [...liveResources.installedFeatures.values()],
     subscriptions: busResources.subscriptions,
     selectors: busResources.selectors,

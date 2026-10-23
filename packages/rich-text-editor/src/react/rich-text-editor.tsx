@@ -2,11 +2,13 @@
 
 import { useFondueTheme } from '@frontify/fondue-components';
 import {
+    Component,
     type ComponentType,
     createContext,
     forwardRef,
     type ForwardedRef,
     type ReactNode,
+    useCallback,
     useContext,
     useEffect,
     useImperativeHandle,
@@ -15,23 +17,30 @@ import {
     useState,
 } from 'react';
 
+import '#/styles/content.css';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
+import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
+import { createNodeViews, resyncSelection } from '#/bridge/node-views';
 import { type PluginPresentation } from '#/bridge/plugin';
+import { PortalHost } from '#/bridge/portal-host';
+import { createPortalStore } from '#/bridge/portals';
+import { SessionContext, useSessionValue } from '#/bridge/session';
 import { enUS } from '#/locales/en-US';
-import { type CapabilityRef, type DecodeResult, type Diagnostic } from '#/model';
+import { type CapabilityRef, type DecodeResult, type Diagnostic, type RichTextDocument } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
-import { codecContext } from '#/model/output';
+import { codecContext, contentClasses } from '#/model/output';
 import { randomId } from '#/model/random-id';
 import { type LoadedDocument } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
-import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
+import { createEditorRuntime, type EditorRuntime, isEmpty, type RuntimeHandle } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 
-import { engineOf } from './compile-editor';
+import { engineOf, readersOf, viewsOf } from './compile-editor';
 import { usePluginHosts } from './plugin-hosts';
+import { BlockedShell, RecoveryShell } from './shells';
 import { type CompiledEditorDefinition, type EditorHandle, type RichTextEditorProps } from './types';
 
 type Props = RichTextEditorProps<object>;
@@ -122,25 +131,58 @@ const pluginPresentationOf = (presentation: ReaderPresentation | undefined): Plu
     return { styles, colorTokens };
 };
 
-/** What the session reads the document with, from the editor props and their defaults. */
+/** What both shells read the document with, from the editor props and their defaults. */
 const shellPropsOf = (props: Defined) => {
-    const { locale = enUS, presentation = NO_PRESENTATION, 'data-test-id': testId = DEFAULT_TEST_ID } = props;
+    const {
+        definition,
+        locale = enUS,
+        presentation = NO_PRESENTATION,
+        'data-test-id': testId = DEFAULT_TEST_ID,
+    } = props;
     return {
+        model: engineOf(definition).model,
+        readers: readersOf(definition),
+        limits: definition.limits,
         presentation,
         locale,
         testId,
     };
 };
 
+/** A running session, whose snapshot Retry hands on. */
+interface RecoverySession {
+    readonly handle: RuntimeHandle;
+}
+
 type SessionProps = Defined & {
     readonly children: ReactNode;
+    /** The snapshot Retry mounts this session from, in place of `defaultValue`. */
+    readonly retried: LoadedDocument | undefined;
+    /** Receives the handle of each session it runs, whose snapshot the recovery shell reads. */
+    readonly onSession: (session: RecoverySession) => void;
+    /** Mounts the editor again from this session's snapshot. */
+    readonly onRetry: () => void;
 };
 
-const SessionComponent = ({ children, ...props }: SessionProps, ref: ForwardedRef<EditorHandle<object>>) => {
+const SessionComponent = (
+    { children, onSession, onRetry, retried, ...props }: SessionProps,
+    ref: ForwardedRef<EditorHandle<object>>,
+) => {
     // The record this session loads, which a later `defaultValue` never replaces.
-    const [loaded] = useState(() => props.defaultValue);
+    const [loaded] = useState(() => retried ?? props.defaultValue);
     const [mounted] = useState(() => mountOf(props, loaded));
+    // The snapshot of a session that entered `faulted`, which the recovery shell shows.
+    const [faulted, setFaulted] = useState<RichTextDocument>();
     const [coordinator] = useState(createMountCoordinator);
+    // One portal store per mount, so no session shares chrome state with another.
+    const [portals] = useState(createPortalStore);
+    // A production build marks no React work, so `execute` never asks.
+    const [work] = useState(() => {
+        if (process.env.NODE_ENV === 'production') {
+            return undefined;
+        }
+        return createReactWork();
+    });
     // The session once it is ready, which the parts and hooks read.
     const [live, setLive] = useState<EditorRuntime>();
     const latestRef = useRef(props);
@@ -179,12 +221,22 @@ const SessionComponent = ({ children, ...props }: SessionProps, ref: ForwardedRe
             policy: definition.authoring,
             limits: definition.limits,
             generateId: ids,
+            nodeViews: (session) => createNodeViews(viewsOf(definition), { portals, runtime: session }),
+            inRender: () => inReactWork(work),
             revision: loaded.revision,
             commandHost: hosts,
         });
         // Each event calls the newest callback the host passed.
         runtime.handle.subscribe('ready', (session: SessionToken) => {
             setLive(runtime);
+            const { view } = runtime;
+            if (process.env.NODE_ENV !== 'production' && view !== undefined && sharesName(view.dom)) {
+                runtime.report({
+                    code: 'react.duplicate-accessible-name',
+                    severity: 'warning',
+                    messageKey: 'react.duplicate-accessible-name',
+                });
+            }
             latestRef.current.onReady?.(session);
         });
         runtime.handle.subscribe('documentChange', (change: DocumentChange) =>
@@ -193,13 +245,21 @@ const SessionComponent = ({ children, ...props }: SessionProps, ref: ForwardedRe
         runtime.handle.subscribe('diagnostic', (diagnostic: Diagnostic) =>
             latestRef.current.onDiagnostic?.(diagnostic),
         );
+        // A fault reports a diagnostic, so the shell shows once the host heard why. The session stays mounted, so its
+        // handle still reads and saves the last snapshot.
+        runtime.handle.subscribe('diagnostic', () => {
+            if (runtime.handle.getSummary().phase === 'faulted') {
+                setFaulted(runtime.handle.getSnapshot().document);
+            }
+        });
         handleRef.current = runtime.handle;
+        onSession({ handle: runtime.handle });
         coordinator.start(runtime);
         return () => {
             coordinator.stop();
             runtime.handle.dispose();
         };
-    }, [mounted, loaded, coordinator, hosts]);
+    }, [mounted, loaded, coordinator, portals, work, onSession, hosts]);
 
     // A blocked document gets no session and so no handle.
     useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
@@ -226,6 +286,8 @@ const SessionComponent = ({ children, ...props }: SessionProps, ref: ForwardedRe
             });
         }
     }, [definition, mounted, coordinator]);
+
+    const onFlush = useCallback(() => resyncSelection(coordinator.runtime?.view), [coordinator]);
 
     const shell = shellPropsOf(props);
     const { locale, presentation, testId } = shell;
@@ -254,27 +316,125 @@ const SessionComponent = ({ children, ...props }: SessionProps, ref: ForwardedRe
 
     const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
     if (mounted.blocked !== undefined) {
-        return null;
+        return <BlockedShell result={mounted.blocked} {...shell} />;
+    }
+    if (faulted !== undefined) {
+        return <RecoveryShell document={faulted} {...shell} onRetry={onRetry} />;
     }
     return (
         <RootContext.Provider value={context}>
-            <div lang={lang} data-test-id={testId} aria-busy={live === undefined ? true : undefined}>
-                {children}
-            </div>
+            <SessionContext.Provider value={live}>
+                <ReactWorkContext.Provider value={work}>
+                    <div lang={lang} data-test-id={testId} aria-busy={live === undefined ? true : undefined}>
+                        {work !== undefined && <Phase work={work} open />}
+                        {children}
+                        <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
+                        {work !== undefined && <Phase work={work} open={false} />}
+                    </div>
+                </ReactWorkContext.Provider>
+            </SessionContext.Provider>
         </RootContext.Provider>
     );
 };
 const Session = forwardRef(SessionComponent);
 Session.displayName = 'RichTextEditor.Session';
 
+interface RecoveryProps {
+    readonly props: Defined & { readonly children: ReactNode };
+    readonly editorRef: ForwardedRef<EditorHandle<object>>;
+}
+interface RecoveryState {
+    readonly failed: boolean;
+    /** The snapshot that Retry mounts the editor from, under the ID and revision it was loaded with. */
+    readonly retried: LoadedDocument | undefined;
+    /** Counts Retries, so each mounts a new session even when no render error unmounted the last. */
+    readonly retries: number;
+}
+
+/**
+ * The outer boundary: a render error, or a session that enters `faulted`, shows the recovery shell with the last
+ * published snapshot.
+ */
+class Recovery extends Component<RecoveryProps, RecoveryState> {
+    state: RecoveryState = { failed: false, retried: undefined, retries: 0 };
+    // The last session, whose snapshot stays readable after it is disposed.
+    private session: RecoverySession | undefined;
+
+    static getDerivedStateFromError() {
+        return { failed: true };
+    }
+
+    private readonly onSession = (session: RecoverySession) => {
+        this.session = session;
+    };
+
+    private defaultValue(): LoadedDocument {
+        if (this.state.retried !== undefined) {
+            return this.state.retried;
+        }
+        return this.props.props.defaultValue;
+    }
+
+    /** What the last session left: its snapshot under its own document ID and acknowledged revision. */
+    private left(): {
+        readonly retried: LoadedDocument;
+    } {
+        let { documentId, document, revision } = this.defaultValue();
+        if (this.session !== undefined) {
+            const snapshot = this.session.handle.getSnapshot();
+            // The session's own document ID, which neither a host rerender nor a replacement leaves behind.
+            documentId = snapshot.stamp.documentId;
+            document = snapshot.document;
+            // The acknowledged revision is the base of the next write, so a session that saved does not conflict with itself.
+            revision = snapshot.acknowledgedRevision;
+        }
+        return { retried: { documentId, revision, document } };
+    }
+
+    private readonly onRetry = () =>
+        this.setState(({ retries }) => ({ ...this.left(), failed: false, retries: retries + 1 }));
+
+    render() {
+        const { props, editorRef } = this.props;
+        if (!this.state.failed) {
+            return (
+                <Session
+                    key={this.state.retries}
+                    {...props}
+                    retried={this.state.retried}
+                    onSession={this.onSession}
+                    onRetry={this.onRetry}
+                    ref={editorRef}
+                />
+            );
+        }
+        return (
+            <RecoveryShell document={this.left().retried.document} {...shellPropsOf(props)} onRetry={this.onRetry} />
+        );
+    }
+}
+
 const Root = forwardRef((props: Props & { readonly children: ReactNode }, ref: ForwardedRef<EditorHandle<object>>) => {
     const { definition } = props;
     if (definition !== undefined) {
-        return <Session {...props} definition={definition} ref={ref} />;
+        return <Recovery props={{ ...props, definition }} editorRef={ref} />;
     }
     return null;
 });
 Root.displayName = 'RichTextEditor.Root';
+
+/** The host's class tokens the surface may add and remove: never the package's root class nor one of ProseMirror's own. */
+const hostClassNames = (contentClassName: string) =>
+    contentClassName
+        .split(/\s+/)
+        .filter((name) => name !== '' && contentClasses() !== name && !/^ProseMirror(-|$)/.test(name));
+
+const emptiness = (runtime: EditorRuntime | undefined) => {
+    if (runtime === undefined) {
+        return undefined;
+    }
+    return isEmpty(runtime.state);
+};
 
 /**
  * The editable surface: an empty container on the server and in the first client render, which the engine fills
@@ -282,7 +442,8 @@ Root.displayName = 'RichTextEditor.Root';
  */
 const Surface = () => {
     const { props, mounted, coordinator, chrome } = useRoot('Surface');
-    const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true } = props;
+    const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
+    const contentClassName = presentation?.contentClassName;
     const theme = useFondueTheme();
     // The document's language and direction, else the theme's, while the chrome keeps its own.
     let lang = mounted.lang ?? theme.lang;
@@ -290,9 +451,35 @@ const Surface = () => {
         lang = chrome.lang;
     }
     const dir = mounted.dir ?? theme.dir;
+    // React writes the first classes only: ProseMirror adds its own to this element with `classList`, which a rewritten attribute would drop.
+    const [className] = useState(() => contentClasses(contentClassName));
+    const surfaceRef = useRef<HTMLElement | null>(null);
+    const setSurface = useCallback(
+        (element: HTMLElement | null) => {
+            surfaceRef.current = element;
+            coordinator.setSurface(element);
+        },
+        [coordinator],
+    );
+    // A later host class swaps in with `classList`, as ProseMirror's own class changes do.
+    useClientLayoutEffect(() => {
+        const surface = surfaceRef.current;
+        if (surface === null || contentClassName === undefined) {
+            return undefined;
+        }
+        const names = hostClassNames(contentClassName);
+        surface.classList.add(...names);
+        return () => surface.classList.remove(...names);
+    }, [contentClassName]);
+    // A document that is not empty shows no placeholder; before the session is ready the container is empty, as on the server.
+    let shownPlaceholder = placeholder;
+    if (useSessionValue(emptiness, Object.is) === false) {
+        shownPlaceholder = undefined;
+    }
     return (
         <div
-            ref={coordinator.setSurface}
+            ref={setSurface}
+            className={className}
             role="textbox"
             aria-multiline
             aria-label={props['aria-label']}
@@ -302,6 +489,8 @@ const Surface = () => {
             aria-errormessage={props['aria-errormessage']}
             aria-required={props.required === true ? true : undefined}
             aria-disabled={props.disabled === true ? true : undefined}
+            aria-placeholder={shownPlaceholder}
+            data-placeholder={placeholder}
             id={chrome.surfaceId}
             lang={lang}
             dir={dir}

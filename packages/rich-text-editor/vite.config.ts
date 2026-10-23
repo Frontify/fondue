@@ -51,7 +51,7 @@ export default defineConfig({
         dts({
             entryRoot: 'src',
             include: ['src'],
-            exclude: ['**/__tests__/**', '**/*.{spec,test,stories}.{ts,tsx}'],
+            exclude: ['**/__tests__/**', '**/*.{spec,test,stories}.{ts,tsx}', 'src/setupTests.ts'],
         }),
         externalizeJsDeps(),
     ],
@@ -65,6 +65,7 @@ export default defineConfig({
                 'codecs/index': './src/codecs/index.ts',
                 'testing/index': './src/testing/index.ts',
             },
+            cssFileName: 'style',
             formats: ['es'],
         },
         sourcemap: true,
@@ -82,6 +83,7 @@ export default defineConfig({
     },
     test: {
         environment: 'happy-dom',
+        setupFiles: ['./src/setupTests.ts'],
         // `runFeatureContract` registers its cases through the runner globals, as it does in a host's tests.
         globals: true,
         // A cold transform cache makes the first import of an entry slow; each test keeps the 5,000 ms default.
@@ -92,6 +94,7 @@ export default defineConfig({
                 '**.config.{ts,cjs}',
                 '**/**/*.{ct,spec,test,stories}.{ts,tsx}',
                 '**/__tests__/**',
+                'src/setupTests.ts',
             ],
             enabled: true,
             provider: 'v8',

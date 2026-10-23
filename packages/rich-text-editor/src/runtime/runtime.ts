@@ -11,7 +11,7 @@ import {
     TextSelection,
     type Transaction,
 } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { EditorView, type NodeViewConstructor } from 'prosemirror-view';
 
 import {
     APPEND_BATCH_META,
@@ -29,16 +29,17 @@ import {
     checkHref,
     type Diagnostic,
     type HrefPolicy,
+    type JsonObject,
     type ResourceLimits,
     type RichTextDocument,
 } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { attributesOf, compiledModel } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { encodeTree } from '#/model/encode';
 import { diagnostic } from '#/model/format';
 import { hrefPolicyOf } from '#/model/href';
 import { randomId } from '#/model/random-id';
-import { findInvalidPayload, findUnsafeJson, isRecord, snapshot } from '#/model/values';
+import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
@@ -47,6 +48,7 @@ import { firedRule, withoutRules } from './input-rules';
 import { createLimitCheck } from './limits';
 import { nodeStatePlugin } from './node-state';
 import { authoringOf, createPolicyCheck } from './policy';
+import { positionOf } from './positions';
 import { createUnmanagedStatus } from './saves';
 import { createInputSettling } from './settle';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
@@ -92,6 +94,22 @@ export interface RuntimeHandle {
     dispose(): void;
 }
 
+/**
+ * The node an action changes: its `nodeId`, or, for a node that carries none, such as a code block, the node view's
+ * live position reader, which reads the position when the action runs.
+ */
+export type NodeTarget = string | (() => number | undefined);
+
+/** The actions of one node view, which find their node when they run, never by a position held from before. */
+export interface NodeActions {
+    update(attrs: JsonObject): CommandResult;
+    remove(): CommandResult;
+    select(): void;
+    /** Runs a command with the node selected at execution time. */
+    execute(id: string, ...args: readonly unknown[]): CommandResult;
+    query(id: string, ...args: readonly unknown[]): CommandState;
+}
+
 export interface EditorRuntime {
     readonly handle: RuntimeHandle;
     /** The compiled definition the session runs. */
@@ -122,6 +140,9 @@ export interface EditorRuntime {
      * holds between it and the last value.
      */
     watch<T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void): Unsubscribe;
+    /** The bridge caught a throw from a node view's constructor, `update` or `destroy`. */
+    faultView(): void;
+    nodeActions(target: NodeTarget): NodeActions;
 }
 
 export interface EditorRuntimeOptions {
@@ -136,6 +157,10 @@ export interface EditorRuntimeOptions {
     readonly mode: Mode;
     readonly policy: AuthoringPolicy;
     readonly limits: ResourceLimits;
+    /** Builds the bridge's node views by node name for this runtime, which only passes them to the view. */
+    readonly nodeViews?: (runtime: EditorRuntime) => Readonly<Record<string, NodeViewConstructor>>;
+    /** Whether the editor's React tree renders or runs an effect now, which a development build passes. */
+    readonly inRender?: () => boolean;
     /** The loaded record's revision, which an unmanaged session reports as acknowledged. */
     readonly revision?: ServerRevision | null;
     /** What the editor layer hands the plugin commands it runs. */
@@ -145,6 +170,9 @@ export interface EditorRuntimeOptions {
 /** What every live runtime owns, which the `src/testing` probe reads. */
 export const liveResources = {
     views: new Set<EditorView>(),
+    /** Node views and their portal entries, which the bridge counts. */
+    nodeViews: 0,
+    portals: 0,
     /** The installed feature IDs of each session not yet disposed, by handle. */
     installedFeatures: new Map<object, readonly string[]>(),
     intents: 0,
@@ -254,7 +282,7 @@ type Prepared =
           readonly fault?: Diagnostic;
       };
 /** Who runs a command: a host call or a queued intent. */
-type Route = 'host' | 'queue';
+type Route = 'host' | 'queue' | 'node';
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
 type Attempt = Prepared | { readonly unchanged: true };
 
@@ -303,8 +331,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovery: EditorState | undefined;
     let readyFrame: number | undefined;
-    // Set when a view call threw.
+    // Set while the view builds or installs a state, so a node view throw the bridge caught faults that call.
+    let viewCall = false;
     let viewThrew = false;
+    // Node views come from the bridge once this runtime exists, since they act on it.
+    let nodeViews: Readonly<Record<string, NodeViewConstructor>> = {};
     // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
     let busy = 0;
     let draining = false;
@@ -556,13 +587,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return changed;
     };
 
-    /** Runs a view call; `threw` when it threw. */
+    /** Runs a view call; `threw` when it threw or a node view inside it threw, which the bridge reports through `faultView`. */
     const callView = <T>(work: () => T): { readonly threw: boolean; readonly value: T | undefined } => {
         let value: T | undefined;
+        viewCall = true;
         try {
             value = work();
         } catch {
             viewThrew = true;
+        } finally {
+            viewCall = false;
         }
         const threw = viewThrew;
         viewThrew = false;
@@ -922,6 +956,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const run = (id: string, given: unknown, options: unknown, route: Route): CommandResult =>
         runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options), route);
     const execute = (id: string, given?: unknown, commandOptions?: unknown): CommandResult => {
+        // Commands belong in event handlers; a call inside a notification is already `busy`.
+        if (busy === 0 && options.inRender?.() === true) {
+            report(diagnostic('react.execute-in-render', undefined, undefined, 'error'));
+            return rejected('busy');
+        }
         const result = run(id, given, commandOptions, 'host');
         // Without `focus: 'editor'` a command leaves focus where it is.
         if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
@@ -929,6 +968,89 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         return result;
     };
+
+    /** The state with the node `nodeId` selected, as a node view action runs on it. */
+    /** The position of `target` in `doc` when it holds a node there, read when it is needed. */
+    const targetIn = (doc: Node, target: NodeTarget): number | undefined => {
+        if (typeof target === 'string') {
+            return positionOf(doc, target);
+        }
+        const pos = target();
+        if (pos === undefined || pos < 0 || pos >= doc.content.size || doc.nodeAt(pos) === null) {
+            return undefined;
+        }
+        return pos;
+    };
+    const nodeBase = (target: NodeTarget): EditorState | RejectedCode => {
+        const pos = targetIn(state.doc, target);
+        if (pos === undefined) {
+            return 'target-invalid';
+        }
+        return state.apply(state.tr.setSelection(NodeSelection.create(state.doc, pos)));
+    };
+    /** A command that changes the node `target` wherever it is when it runs. */
+    const nodeCommand = (
+        target: NodeTarget,
+        change: (tr: Transaction, pos: number, node: Node) => boolean,
+    ): EngineCommand => ({
+        run: (base, dispatch) => {
+            const pos = targetIn(base.doc, target);
+            if (pos === undefined) {
+                return false;
+            }
+            const node = base.doc.nodeAt(pos);
+            const { tr } = base;
+            if (node === null || !change(tr, pos, node)) {
+                return false;
+            }
+            dispatch?.(tr);
+            return true;
+        },
+        active: () => false,
+    });
+    const nodeActions = (target: NodeTarget): NodeActions => ({
+        update: (attrs) => {
+            const checked = checkedPayload(attrs);
+            if (checked === undefined || !isRecord(checked.payload)) {
+                return rejected('invalid-payload');
+            }
+            const values = checked.payload;
+            const update = nodeCommand(target, (tr, pos, node) => {
+                const declared = compiledModel(definition.model).nodes.find(({ name }) => name === node.type.name);
+                if (declared === undefined) {
+                    return false;
+                }
+                const attributes = attributesOf(declared);
+                for (const [name, value] of Object.entries(values)) {
+                    const attribute = attributes[name];
+                    // An action never changes the ID it finds its node by.
+                    if (name === 'nodeId' || attribute === undefined || !isValidValue(attribute, value)) {
+                        return false;
+                    }
+                    tr.setNodeAttribute(pos, name, value);
+                }
+                return true;
+            });
+            return runOn(update, { payload: undefined }, () => state, 'host');
+        },
+        remove: () => {
+            const remove = nodeCommand(target, (tr, pos, node) => {
+                tr.delete(pos, pos + node.nodeSize);
+                return true;
+            });
+            return runOn(remove, { payload: undefined }, () => state, 'host');
+        },
+        select: () => {
+            const pos = targetIn(state.doc, target);
+            if (pos !== undefined) {
+                commit(state.tr.setSelection(NodeSelection.create(state.doc, pos)));
+            }
+        },
+        // The author's selection stays, so typing after a press on chrome, such as a task checkbox, keeps the node.
+        execute: (id, payload) =>
+            runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(target), 'node'),
+        query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(target)),
+    });
 
     /** Commits a capture of the selection, or of `range`, as target `id`. */
     const captureNow = (
@@ -1167,12 +1289,23 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 }
                                 return attributes;
                             },
+                            nodeViews,
                             dispatchTransaction: commit,
                         },
                     ),
             );
             if (attached === undefined || threw) {
-                // A view constructor that throws faults the session, which keeps the decoded document.
+                // A node view that throws leaves the half-built view's DOM observer and input handlers on the element
+                // unless that view is destroyed.
+                const halfBuilt = attached;
+                if (halfBuilt !== undefined) {
+                    try {
+                        halfBuilt.destroy();
+                    } catch {
+                        // Its node views may throw again while it is destroyed.
+                    }
+                }
+                // A view or node view constructor that throws keeps the decoded document as the snapshot.
                 fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
                 return;
             }
@@ -1185,7 +1318,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (phase !== 'mounting') {
                 return;
             }
-            // The first frame stands in for the first portal flush, which node views join.
+            // Frames run after microtasks, so the first portal flush of the initial document precedes `ready`.
             readyFrame = requestAnimationFrame(() => {
                 readyFrame = undefined;
                 liveResources.frames -= 1;
@@ -1225,7 +1358,20 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             commit(transaction);
         },
         watch,
+        faultView: () => {
+            if (viewCall) {
+                viewThrew = true;
+                return;
+            }
+            if ((phase === 'mounting' || phase === 'ready') && view !== undefined) {
+                viewFault(view, state);
+            }
+        },
+        nodeActions,
     };
+    if (options.nodeViews !== undefined) {
+        nodeViews = options.nodeViews(runtime);
+    }
     runtimes.set(handle, runtime);
     liveResources.installedFeatures.set(
         handle,

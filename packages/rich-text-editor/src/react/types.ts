@@ -149,6 +149,7 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     readonly required?: boolean;
     readonly disabled?: boolean;
     readonly readOnly?: boolean;
+    readonly placeholder?: string;
     /** Default: the `ThemeProvider` locale when the package ships it, else `enUS`. */
     readonly locale?: RichTextLocale;
     readonly spellCheck?: boolean;

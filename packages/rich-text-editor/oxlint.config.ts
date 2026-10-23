@@ -237,6 +237,14 @@ const CLIENT_REACT: ImportNameRestriction = {
     message: CLIENT_REACT_MESSAGE,
 };
 
+// `default` is listed too, since `ReactDOM.flushSync` reaches it with no named import.
+const FLUSH_SYNC: ImportNameRestriction = {
+    name: 'react-dom',
+    importNames: ['default', 'flushSync'],
+    message:
+        'The package never calls `flushSync`, since a flush per node view hit "Maximum update depth exceeded" in Tiptap.',
+};
+
 const frameworkRestriction: ImportRestriction = {
     group: FRAMEWORK_PATTERNS,
     message: FRAMEWORK_MESSAGE,
@@ -251,7 +259,7 @@ const SOURCE_RESTRICTIONS = [frameworkRestriction, historyRestriction];
 
 // Later overrides replace rule options, so each override repeats the base paths and patterns.
 const importRule = (patterns: ImportRestriction[], paths: readonly ImportNameRestriction[] = []) =>
-    ['error', { paths: [...paths], patterns: [...SOURCE_RESTRICTIONS, ...patterns] }] as const;
+    ['error', { paths: [FLUSH_SYNC, ...paths], patterns: [...SOURCE_RESTRICTIONS, ...patterns] }] as const;
 
 const VIEW_INTERNALS_MESSAGE = 'The input state and DOM observer of the editor view are ProseMirror internals.';
 
@@ -560,6 +568,7 @@ export default defineConfig({
                 'no-restricted-imports': [
                     'error',
                     {
+                        paths: [FLUSH_SYNC],
                         patterns: [frameworkRestriction, runtimeRestriction],
                     },
                 ],

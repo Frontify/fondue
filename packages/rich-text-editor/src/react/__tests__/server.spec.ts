@@ -52,7 +52,7 @@ describe('RichTextEditor on the server', () => {
         );
 
         expect(html).toBe(
-            '<div lang="en-US" data-test-id="fondue-rich-text-editor" aria-busy="true"><div role="textbox" aria-multiline="true" aria-label="Notes" lang="en-US" dir="ltr" spellcheck="true" data-test-id="fondue-rich-text-editor-surface" data-rte-surface=""></div></div>',
+            '<div lang="en-US" data-test-id="fondue-rich-text-editor" aria-busy="true"><div class="fondue-rte-content" role="textbox" aria-multiline="true" aria-label="Notes" lang="en-US" dir="ltr" spellcheck="true" data-test-id="fondue-rich-text-editor-surface" data-rte-surface=""></div></div>',
         );
         expect(testing.probeRuntimes().views).toEqual([]);
     });
