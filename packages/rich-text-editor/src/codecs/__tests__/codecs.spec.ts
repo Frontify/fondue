@@ -862,6 +862,38 @@ describe('toHTML style, overrides and locale', () => {
     });
 });
 
+describe('codec context', () => {
+    const figure = (assetId: string) =>
+        node(
+            'figure',
+            { nodeId: `f-${assetId}`, align: 'center' },
+            node('asset_image', {
+                nodeId: `i-${assetId}`,
+                assetId,
+                labelSnapshot: 'Photo',
+                altIntent: 'decorative',
+                altText: '',
+                width: null,
+                height: null,
+                displayWidth: null,
+                mediaType: null,
+            }),
+        );
+
+    it('writes no image when resolveAssetUrl throws, and the rest of the document', () => {
+        const output = semanticCodecs().toMarkdown(stored(figure('a-1'), paragraph(text('after')), figure('a-2')), {
+            resolveAssetUrl: (assetId) => {
+                if (assetId === 'a-1') {
+                    throw new Error('resolver failed');
+                }
+                return `https://cdn.example/${assetId}`;
+            },
+        });
+
+        expect(output.markdown).toBe('after\n\n![](https://cdn.example/a-2)');
+    });
+});
+
 describe('codec context translations', () => {
     const labelled = defineFeature({
         id: 'test.labelled',

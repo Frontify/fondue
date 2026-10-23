@@ -61,6 +61,8 @@ import {
 } from '#/runtime/runtime';
 import { type DocumentChange, type SelectionSummary, type SessionToken, type ShippedCommands } from '#/runtime/types';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
+import { ContextMenu } from '#/ui/context-menu/context-menu';
+import { pickAsset } from '#/ui/media/asset-picker';
 import { referenceListStrings, SuggestionList } from '#/ui/suggestions/suggestion-list';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
@@ -88,7 +90,7 @@ type Props = RichTextEditorProps<object>;
 type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };
 const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
-const SERVICE_MEMBERS = ['persistence', 'recovery', 'references'] as const;
+const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'assets'] as const;
 const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
 // A composition that outlasts this wait is measured again, which waits again while it runs.
 const COMPOSITION_WAIT_MS = 1000;
@@ -232,11 +234,12 @@ interface Chrome {
     /** The rows that only the More menus hold. */
     readonly menu: readonly ToolbarItem[];
     readonly strings: ToolbarStrings;
-    /** The bubble toolbar's name and the More rows that switch the toolbar mode. */
+    /** The bubble toolbar's and the context menu's names, and the More rows that switch the toolbar mode. */
     readonly labels: {
         readonly bubble: string;
         readonly toBubble: string;
         readonly toFixed: string;
+        readonly contextMenu: string;
     };
     /** The surface element `id`, generated when a toolbar's `aria-controls` needs one and the host set none. */
     readonly surfaceId: string | undefined;
@@ -391,6 +394,22 @@ const SessionComponent = (
         const { t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
         const engine = engineOf(definition);
         const ids = generateId ?? randomId;
+        /** The host asset picker for a new figure or for the image `nodeId`. */
+        const openPicker = (session: EditorRuntime, nodeId: string | undefined) => {
+            const picker = memberOf(latestRef.current.services, 'assets');
+            if (picker === undefined) {
+                return;
+            }
+            pickAsset(session, picker, {
+                ...(nodeId === undefined ? {} : { nodeId }),
+                removed: (kind) => {
+                    const { locale } = shellPropsOf(latestRef.current);
+                    const key =
+                        kind === 'target' ? 'RichTextEditor_imageTargetRemoved' : 'RichTextEditor_imageReplaceRemoved';
+                    announcer.announce(codecContext(locale, enUS).t(key));
+                },
+            });
+        };
         // A session is managed for its whole life when it mounts with `services.persistence`.
         const persistence = memberOf(latestRef.current.services, 'persistence');
         let saves: EditorRuntimeOptions['saves'];
@@ -429,6 +448,7 @@ const SessionComponent = (
             tabMovesFocus: () => latestRef.current.tabMovesFocus,
             scrollSelectionIntoView: () => latestRef.current.scrollSelectionIntoView,
             commandHost: hosts,
+            pick: (nodeId) => openPicker(runtime, nodeId),
             styles: () => latestRef.current.presentation?.styles ?? [],
             columns: columnsAtMount(latestRef.current.presentation, t),
         });
@@ -443,6 +463,7 @@ const SessionComponent = (
             locale: () => shellPropsOf(latestRef.current).locale,
             announce: (message) => announcer.announce(message),
             resolveReference: () => latestRef.current.presentation?.resolveReference,
+            resolveAssetUrl: () => latestRef.current.presentation?.resolveAssetUrl,
         });
         // A gap cursor shows no caret to a screen reader, so moving onto one is announced.
         let atGap = false;
@@ -674,6 +695,7 @@ const SessionComponent = (
             bubble: t('RichTextEditor_bubbleToolbar'),
             toBubble: t('RichTextEditor_toolbarOnSelection'),
             toFixed: t('RichTextEditor_toolbarAlways'),
+            contextMenu: t('RichTextEditor_contextMenu'),
         };
         return {
             items,
@@ -774,6 +796,12 @@ const SessionComponent = (
                                     {work !== undefined && <Phase work={work} open />}
                                     {children}
                                     {toolbarMode === 'bubble' && <Bubble />}
+                                    <ContextMenu
+                                        items={chrome.menu}
+                                        label={chrome.labels.contextMenu}
+                                        strings={chrome.strings}
+                                        disabled={props.disabled === true}
+                                    />
                                     <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
                                     <SuggestionList
                                         nameOf={(name) => {

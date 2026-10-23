@@ -254,6 +254,11 @@ export interface DocumentApi {
         capture(range?: EditorRange, options?: CaptureTargetOptions): SelectionHandle | undefined;
         release(target: SelectionHandle): void;
     };
+    /** Images from the host's asset service. Inside a command, what starts later waits until it has run. */
+    readonly uploads: {
+        /** Opens the host asset picker for new images at the selection, or for the image `nodeId`. */
+        pick(nodeId?: string): void;
+    };
     /** Flags a plugin keeps on the node `nodeId` for this session, outside the document and its history. */
     readonly nodeState: {
         get(nodeId: string, key: string): JsonValue | undefined;

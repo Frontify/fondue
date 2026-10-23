@@ -1,6 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export { blockRule, markRule, textRule } from './capabilities';
+export {
+    altOf,
+    figureAlign,
+    findUnresolvedAssets,
+    imageOutput,
+    REPLACED_ASSET,
+    type Unavailable,
+    unavailableOf,
+    type UnresolvedAsset,
+} from './assets';
 export { hexColor } from './colors';
 export { compileContentModel } from './compile';
 export {

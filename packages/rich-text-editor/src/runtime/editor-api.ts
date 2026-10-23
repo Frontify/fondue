@@ -112,6 +112,9 @@ interface ApiSource {
     editable(): boolean;
     /** The position of a surface element, which only the live session has. */
     positionAt(element: Element): number | undefined;
+    /** Runs `effect` now, or inside a command once it has run, never for a query. */
+    later(effect: () => void): void;
+    uploads(): EditorRuntime['uploads'] | undefined;
 }
 
 const NO_OPTIONS: CaptureTargetOptions = {
@@ -868,6 +871,9 @@ const documentApi = (source: ApiSource): DocumentApi => {
             capture: (range, options) => source.capture(range, options ?? NO_OPTIONS),
             release: (target) => source.release(target),
         },
+        uploads: {
+            pick: (nodeId) => source.later(() => source.uploads()?.pick(nodeId)),
+        },
         nodeState: {
             get: (nodeId, key) => nodeStateOf(source.state(), nodeId, key),
             set: (nodeId, key, value) => {
@@ -956,6 +962,8 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
             }
             return view.posAtDOM(element, 0);
         },
+        later: (effect) => effect(),
+        uploads: () => runtime.uploads,
     });
 };
 
@@ -1221,6 +1229,8 @@ const commandDocumentApi = (
             },
         editable: () => session?.runtime.handle.getSummary().mode === 'editable',
         positionAt: () => undefined,
+        later: (effect) => context?.defer(effect),
+        uploads: () => session?.runtime.uploads,
     });
 };
 

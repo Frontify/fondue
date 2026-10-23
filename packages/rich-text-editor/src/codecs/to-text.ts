@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { checkHref, type CodecContext, type Diagnostic, type JsonObject } from '#/model';
+import { leavesOutUnresolved } from '#/model/assets';
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { pointer } from '#/model/errors';
 import { islandText } from '#/model/html-spec';
@@ -155,6 +156,9 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
     if (plan === undefined) {
         return null;
     }
+    if (leavesOutUnresolved(state, plan.featureId, node, path)) {
+        return null;
+    }
     noteNode(state, node, 'text');
     const attrs = attrsOf(node.attrs);
     let text: string | null;
@@ -167,6 +171,12 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
             text = `@${shown.label}${unavailableNote(shown, state.context.t)}`;
             break;
         }
+        case 'asset_image':
+            text = null;
+            if (attrs.altIntent === 'meaningful' && typeof attrs.altText === 'string' && attrs.altText !== '') {
+                text = attrs.altText;
+            }
+            break;
         case 'embed':
             text = embedText(attrs);
             break;

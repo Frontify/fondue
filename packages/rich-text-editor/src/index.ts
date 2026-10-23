@@ -1,16 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export {
+    CheckedSlot,
     type EditorOverlay,
     keepFocus,
     Listbox,
     type ListboxOption,
+    type MenuOption,
     NodeChromeButton,
+    NodeChromeMenu,
     NodeChromeToolbar,
     NodeViewContent,
     type NodeViewContext,
     type NodeViewDeclaration,
     type NodeViewState,
+    OptionItem,
+    OptionsMenu,
     suggestionOptionId,
     useRichTextNodeView,
 } from '#/bridge/define';
@@ -91,6 +96,8 @@ export { type RichTextFormField, useRichTextFormField } from '#/react/form-field
 export { useEditorHandle } from '#/react/hooks';
 export { RichTextEditor } from '#/react/rich-text-editor';
 export {
+    type AssetPickerService,
+    type AssetValue,
     type ColorToken,
     type CommandsOfModel,
     type CompiledEditorDefinition,

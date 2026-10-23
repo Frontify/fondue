@@ -24,15 +24,23 @@ import {
     fixtureHeadingSet,
     fixtureInputRules,
     fixtureItalic,
+    fixtureMedia,
     fixtureMention,
     fixtureTable,
 } from '#/features/__tests__/fixtures/features';
 import { countingIds, notesModel } from '#/features/__tests__/fixtures/notes';
-import { vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
+import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
-import { type CommandsOfModel, type CommandsOfPlugin, defineEditor, type EditorHandle } from '#/index';
+import { mediaImage } from '#/features/media-image/feature';
+import {
+    type CommandsOfModel,
+    type CommandsOfPlugin,
+    defineEditor,
+    type EditorHandle,
+    type PersistenceService,
+} from '#/index';
 import {
     compileContentModel,
     type ContentModel,
@@ -45,17 +53,18 @@ import {
     type RichTextDocument,
 } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/decode';
+import { createSaveCoordinator } from '#/persistence/coordinator';
 import { extensionsOf } from '#/react/engine';
-import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
+import { createFakePersistenceService, pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 import { STORAGE, stubStorage } from '#/testing/__tests__/fixtures/storage';
 import { bindingHere } from '#/ui/shortcuts';
 
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
 import { RUNTIME_PLUGINS } from '../capabilities';
-import { canUndo } from '../history';
+import { canRedo, canUndo, reset } from '../history';
 import { createLimitCheck } from '../limits';
 import { authoringOf } from '../policy';
-import { createEditorRuntime, type EditorRuntime } from '../runtime';
+import { createEditorRuntime, type EditorRuntime, type EditorRuntimeOptions } from '../runtime';
 import { SETTLE_MS } from '../settle';
 import { countTargets } from '../targets';
 import {
@@ -106,9 +115,28 @@ interface Start {
     readonly policy?: Partial<AuthoringPolicy>;
     readonly limits?: Partial<ResourceLimits>;
     readonly generateId?: () => string;
+    /** Makes the session managed, as a host's `services.persistence` does. */
+    readonly persistence?: PersistenceService;
     /** Editor parts beside the fixture features' own, as a host passes them. */
     readonly parts?: readonly EditorPlugin[];
+    readonly pick?: (nodeId: string | undefined) => void;
 }
+
+/** The save coordinator of a session that mounts with `service`, none without one. */
+const saves = (model: ContentModel, service: PersistenceService | undefined): EditorRuntimeOptions['saves'] => {
+    if (service === undefined) {
+        return undefined;
+    }
+    return (runtime) =>
+        createSaveCoordinator(runtime, {
+            service: () => service,
+            options: () => undefined,
+            revision: null,
+            unsavedOnMount: false,
+            model,
+            generateId: countingIds(),
+        });
+};
 
 /** A runtime on an attached surface, `ready` after the first frame. */
 const start = (input: unknown, options: Start = {}) => {
@@ -134,6 +162,8 @@ const start = (input: unknown, options: Start = {}) => {
         mode,
         policy: authoringOf(model, options.policy),
         limits: limitsOf(options.limits),
+        saves: saves(model, options.persistence),
+        ...(options.pick === undefined ? {} : { pick: options.pick }),
     });
     started.push(runtime);
     const changes: DocumentChange[] = [];
@@ -449,6 +479,32 @@ describe('the session lifecycle', () => {
         expect(ready).toHaveBeenCalledTimes(1);
         expect(ready).toHaveBeenCalledWith(runtime.handle.getSummary().session);
         expect(runtime.handle.getSummary().phase).toBe('ready');
+    });
+
+    it('emits no ready after a replacement', async () => {
+        const { handle } = start(stored(para(words('ab'))));
+        const ready = vi.fn();
+        handle.subscribe('ready', ready);
+
+        const result = await handle.replaceDocument(replacing(handle, stored(para(words('cd')))));
+        vi.runAllTimers();
+
+        expect(result).toEqual({ status: 'replaced', session: handle.getSummary().session });
+        expect(ready).not.toHaveBeenCalled();
+    });
+
+    it('resolves intents queued during transitioning as not-ready on dispose', async () => {
+        const { handle } = start(stored(para(words('ab'))));
+        typeText(handle, 'x');
+        // An unmanaged session refuses the `save` policy, but only once the step 5 call resolves.
+        const replaced = handle.replaceDocument(replacing(handle, stored(para()), { action: 'save' }));
+        expect(handle.getSummary().phase).toBe('transitioning');
+        const queued = handle.enqueue('text.insert', { text: 'y' });
+
+        handle.dispose();
+
+        expect(await queued).toEqual({ status: 'rejected', code: 'not-ready' });
+        expect(await replaced).toEqual({ status: 'rejected', code: 'not-ready' });
     });
 
     it('emits disposed with the final token, then holds no subscription, view or frame', () => {
@@ -1128,7 +1184,6 @@ describe('commands, events and the commit path', () => {
         pressKey(handle, 'Mod-b');
         handle.execute('mark.bold.toggle');
         await handle.enqueue('text.insert', { text: 'e' });
-
         expect(installed).toHaveLength(handle.getSummary().commitSequence);
         expect(installed.at(-1)).toBe(view.state);
         expect([view.props.handleDOMEvents, view.props.handleKeyDown, view.props.handleTextInput]).toEqual([
@@ -2052,15 +2107,37 @@ describe('targets', () => {
 });
 
 describe('node IDs', () => {
-    const idModel = compileContentModel([core(), bold(), fixtureHeadingSet(), vocabularyMention()], {
-        id: 'test.bold',
-        version: 1,
-    });
+    const idModel = compileContentModel(
+        [core(), bold(), fixtureHeadingSet(), vocabularyLists(), fixtureMedia(), vocabularyMention()],
+        {
+            id: 'test.bold',
+            version: 1,
+        },
+    );
+    /** Inserts a copy of the top-level block at the selection after it, as `block.duplicate` does. */
+    const duplicate: EngineCommand = {
+        run: (state, dispatch) => {
+            const { $from } = state.selection;
+            const index = $from.index(0);
+            if (dispatch !== undefined) {
+                dispatch(state.tr.insert($from.posAtIndex(index + 1, 0), state.doc.child(index)));
+            }
+            return true;
+        },
+        active: () => false,
+    };
     const titled = (nodeId: string, value: string) => ({
         type: 'heading',
         attrs: { nodeId, level: 2 },
         content: [words(value)],
     });
+    const task = (nodeId: string, value: string) => ({
+        type: 'task_item',
+        attrs: { nodeId, checked: false },
+        content: [para(words(value))],
+    });
+    const figure = { type: 'figure', attrs: { nodeId: 'f-1' }, content: [para(words('Logo'))] };
+    const embed = { type: 'embed', attrs: { nodeId: 'e-1', url: 'https://www.youtube.com/watch?v=1' } };
     const person = (nodeId: string) => ({
         type: 'mention',
         attrs: { nodeId, resourceType: 'user', resourceId: 'u-1', labelSnapshot: 'Ada' },
@@ -2083,7 +2160,7 @@ describe('node IDs', () => {
         }
         return [...own, ...idsIn(content)];
     };
-    /** Splits the node `depth` levels around the caret. */
+    /** Splits the node `depth` levels around the caret, as Enter in a list item does. */
     const splitAt =
         (depth: number) =>
         ({ view }: ReturnType<typeof start>) =>
@@ -2126,6 +2203,42 @@ describe('node IDs', () => {
             ['node-2', 'h-1'],
         ],
         [
+            'splits a task item in the middle',
+            { type: 'task_list', content: [task('t-1', 'gh')] },
+            (session) => {
+                setSelection(session.handle, { text: 'gh', from: 1, to: 1 });
+                splitAt(2)(session);
+            },
+            ['t-1', 'node-2'],
+        ],
+        [
+            'splits a task item at the start, which leaves the ID on the part with the content',
+            { type: 'task_list', content: [task('t-1', 'gh')] },
+            (session) => {
+                setSelection(session.handle, { text: 'gh', from: 0, to: 0 });
+                splitAt(2)(session);
+            },
+            ['node-2', 't-1'],
+        ],
+        [
+            'duplicates a figure',
+            figure,
+            ({ handle }) => {
+                setSelection(handle, { nodeId: 'f-1' });
+                handle.execute('block.duplicate');
+            },
+            ['f-1', 'node-2'],
+        ],
+        [
+            'duplicates an embed',
+            embed,
+            ({ handle }) => {
+                setSelection(handle, { nodeId: 'e-1' });
+                handle.execute('block.duplicate');
+            },
+            ['e-1', 'node-2'],
+        ],
+        [
             'pastes a copy of a mention before its original, which keeps the ID',
             para(words('a'), person('m-1')),
             ({ view }) => view.dispatch(view.state.tr.insert(1, view.state.doc.firstChild?.child(1) as Node)),
@@ -2155,6 +2268,7 @@ describe('node IDs', () => {
             const session = start(stored(block), {
                 model: idModel,
                 plugins: [seen],
+                commands: { 'block.duplicate': duplicate },
             });
             const original = session.view.state.doc;
             const before = idsIn(original.toJSON());
@@ -2485,6 +2599,34 @@ describe('the focus and the replacement of a session', () => {
         handle.focus('start');
 
         expect([atEnd, runtime.state.selection.from]).toEqual([3, 1]);
+    });
+
+    it('rejects a command as busy and disables its query while a replacement waits for the save', async () => {
+        const server = createFakePersistenceService();
+        let settleSave: () => void = () => undefined;
+        const persistence: PersistenceService = {
+            read: (documentId, context) => server.read(documentId, context),
+            save: (request, context) =>
+                new Promise((resolve) => {
+                    settleSave = () => resolve(server.save(request, context));
+                }),
+        };
+        const { handle } = start(stored(para(words('ab'))), { persistence });
+        typeText(handle, 'x');
+        const replaced = handle.replaceDocument(replacing(handle, stored(para()), { action: 'save' }));
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect([
+            handle.getSummary().phase,
+            handle.execute('text.insert', { text: 'y' }),
+            handle.query('text.insert', { text: 'y' }).disabledReason,
+        ]).toEqual(['transitioning', { status: 'rejected', code: 'busy' }, 'busy']);
+        settleSave();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(await replaced).toEqual({ status: 'replaced', session: handle.getSummary().session });
+        expect(handle.getSummary().phase).toBe('ready');
+        expect(handle.getSnapshot().document.content.content).toEqual([{ type: 'paragraph', attrs: { lang: null } }]);
     });
 });
 
@@ -2844,6 +2986,36 @@ describe('targets on release and dispose', () => {
         expect(handle.query('mark.bold.toggle', undefined, { target }).disabledReason).toBe('target-invalid');
     });
 
+    it('removes every target from plugin state on replaceDocument, and later use is wrong-session', async () => {
+        const { handle, runtime } = start(stored(para(words('abcd'))), { model: targetModel });
+        setSelection(handle, { text: 'bc' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        expect(probeRuntimes().targets).toBe(2);
+
+        await handle.replaceDocument(replacing(handle, stored(para(words('cd')))));
+
+        expect(countTargets(runtime.state)).toBe(0);
+        expect(probeRuntimes().targets).toBe(0);
+        expect(handle.execute('mark.bold.toggle', undefined, { target })).toEqual({
+            status: 'rejected',
+            code: 'wrong-session',
+        });
+    });
+
+    it('refuses a capture while transitioning and creates no target', async () => {
+        const { handle } = start(stored(para(words('ab'))), { model: targetModel });
+        typeText(handle, 'x');
+        const replaced = handle.replaceDocument(replacing(handle, stored(para()), { action: 'save' }));
+
+        expect([
+            handle.getSummary().phase,
+            handle.captureTarget({ purpose: 'format', onIntersectingEdit: 'map' }),
+        ]).toEqual(['transitioning', { status: 'rejected', code: 'not-ready' }]);
+        expect(probeRuntimes().targets).toBe(0);
+        expect(await replaced).toEqual({ status: 'rejected', code: 'unsaved' });
+    });
+
     it('refuses a capture while mounting, faulted or disposed and creates no target', () => {
         const { tree } = decodeToTree(stored(para(words('ab'))), boldModel);
         const mounting = createEditorRuntime({
@@ -2878,6 +3050,18 @@ describe('targets on release and dispose', () => {
             ['disposed', { status: 'rejected', code: 'not-ready' }],
         ]);
         expect(probeRuntimes().targets).toBe(0);
+    });
+});
+
+describe('the async coordinator', () => {
+    it('returns applied for a command whose change a documentChange listener answers with dispose', () => {
+        const { handle, view } = start(stored(para(words('ab'))));
+        handle.subscribe('documentChange', () => handle.dispose());
+
+        const result = handle.execute('text.insert', { text: 'x' });
+
+        expect(result).toMatchObject({ status: 'applied', contentChanged: true });
+        expect([handle.getSummary().phase, textOf(view.state.doc)]).toEqual(['disposed', 'xab']);
     });
 });
 
@@ -2926,6 +3110,61 @@ describe('history', () => {
         });
     }
 
+    it('resets history to nothing to undo or redo with the same plugin instances', () => {
+        const { handle, runtime } = start(stored(para()));
+        typeText(handle, 'a');
+        vi.advanceTimersByTime(600);
+        typeText(handle, 'b');
+        handle.execute('history.undo');
+        const { state } = runtime;
+
+        const next = reset(state);
+
+        expect([canUndo(state), canRedo(state)]).toEqual([true, true]);
+        expect([canUndo(next), canRedo(next)]).toEqual([false, false]);
+        expect(next.plugins).toHaveLength(state.plugins.length);
+        expect(next.plugins.every((plugin, index) => plugin === state.plugins[index])).toBe(true);
+    });
+
+    it('resolves faulted when building the fresh state for the next document throws', async () => {
+        // A plugin whose state cannot start on the next document, as a broken feature's would.
+        const picky = new Plugin({
+            state: {
+                init: (_config, { doc }) => {
+                    if (doc.textContent === 'boom') {
+                        throw new Error('plugin state failed');
+                    }
+                    return null;
+                },
+                apply: (_tr, value: null) => value,
+            },
+        });
+        const { handle, diagnostics } = start(stored(para(words('ab'))), { plugins: [picky] });
+        const replaced = vi.fn();
+        handle.subscribe('replaced', replaced);
+
+        const result = await handle.replaceDocument(replacing(handle, stored(para(words('boom')))));
+
+        expect(result).toEqual({ status: 'rejected', code: 'faulted' });
+        expect(handle.getSummary().phase).toBe('faulted');
+        expect(diagnostics.map(({ code }) => code)).toEqual(['runtime.view-fault']);
+        expect(replaced).not.toHaveBeenCalled();
+    });
+
+    it('leaves nothing to undo or redo after replaceDocument', async () => {
+        const { handle, runtime } = start(stored(para()));
+        typeText(handle, 'a');
+        vi.advanceTimersByTime(600);
+        typeText(handle, 'b');
+        handle.execute('history.undo');
+        expect([canUndo(runtime.state), canRedo(runtime.state)]).toEqual([true, true]);
+
+        await handle.replaceDocument(replacing(handle, stored(para(words('cd')))));
+
+        expect([canUndo(runtime.state), canRedo(runtime.state)]).toEqual([false, false]);
+        expect(handle.execute('history.undo')).toEqual({ status: 'rejected', code: 'not-applicable' });
+    });
+
     it('closes the undo group around a command and a paste: typing, bold and typing, typing, an insert and typing, and typing, a paste and typing, are three steps each', () => {
         const bolded = start(stored(para()));
         typeText(bolded.handle, 'ab');
@@ -2953,6 +3192,32 @@ describe('history', () => {
 
         expect(handle.getSummary().commitSequence).toBe(2);
         expect(handle.query('history.undo').enabled).toBe(false);
+    });
+
+    const imageModel = compileContentModel([core(), bold(), mediaImage()], { id: 'test.bold', version: 1 });
+    it('opens the asset picker for image.insert and the upload start control of its node for image.replace', () => {
+        const opened: unknown[] = [];
+        const image = {
+            type: 'figure',
+            attrs: { nodeId: 'figure-1', align: 'center' },
+            content: [
+                {
+                    type: 'asset_image',
+                    attrs: { nodeId: 'image-1', assetId: 'asset-1', labelSnapshot: 'logo.png', width: 40, height: 30 },
+                },
+            ],
+        };
+        const document = { ...stored(para(words('ab')), image), requiredCapabilities: imageModel.capabilities };
+        const { handle } = start(document, {
+            model: imageModel,
+            pick: (nodeId) => opened.push(nodeId),
+        });
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+
+        handle.execute('image.insert');
+        handle.execute('image.replace', { nodeId: 'image-1' });
+
+        expect(opened).toEqual([undefined, 'image-1']);
     });
 
     it('reverts an edit and its repair with one undo, and repairs nothing after it', () => {

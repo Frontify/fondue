@@ -76,6 +76,8 @@ const PAYLOADS: Readonly<Record<string, unknown>> = {
     'mark.language.set': { lang: 'de-CH', dir: null },
     'link.set': { href: 'https://frontify.com/brand', openInNewWindow: false, styleId: null },
     'reference.insert': { resourceType: 'user', resourceId: 'user-1', labelSnapshot: 'Ada' },
+    'image.size.set': { displayWidth: 50 },
+    'image.align.set': { align: 'left' },
 };
 // The globals through which a capability would reach the network or schedule work.
 const FORBIDDEN = [

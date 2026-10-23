@@ -5,7 +5,7 @@ import { Node } from 'prosemirror-model';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { align, bold, codeBlock, core, fontColor, heading, links, quote } from '#/features';
+import { align, bold, codeBlock, core, fontColor, heading, links, mediaImage, quote } from '#/features';
 import { fixtureCallout } from '#/features/__tests__/fixtures/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
 import { bulletList } from '#/features/lists-bullet/feature';
@@ -72,7 +72,7 @@ const probe = defineEditorPlugin(spotlight, {
 });
 
 const model = compileContentModel(
-    [core(), bold(), heading(), links(), fontColor(), codeBlock(), quote(), spotlight()],
+    [core(), bold(), heading(), links(), fontColor(), codeBlock(), mediaImage(), quote(), spotlight()],
     { id: 'fixture.api', version: 1 },
 );
 
@@ -189,10 +189,13 @@ beforeEach(() => {
 });
 
 describe('the blocks a plugin wraps through the editor API', () => {
-    const callouts = compileContentModel([core(), bold(), heading(), links(), fixtureCallout(), spotlight()], {
-        id: 'fixture.api',
-        version: 1,
-    });
+    const callouts = compileContentModel(
+        [core(), bold(), heading(), links(), mediaImage(), fixtureCallout(), spotlight()],
+        {
+            id: 'fixture.api',
+            version: 1,
+        },
+    );
 
     it('wraps in a container whose required attribute it gives', () => {
         const { handle } = mount({ model: callouts });
@@ -206,7 +209,7 @@ describe('the blocks a plugin wraps through the editor API', () => {
 describe('the attributes a plugin writes through the editor API', () => {
     it('sets an attribute only on the listed types that declare it, and refuses one that none declares', () => {
         const aligned = compileContentModel(
-            [core(), bold(), heading(), align(), links(), fontColor(), codeBlock(), spotlight()],
+            [core(), bold(), heading(), align(), links(), fontColor(), codeBlock(), mediaImage(), spotlight()],
             { id: 'fixture.api', version: 1 },
         );
         const { handle } = mount({ model: aligned });
@@ -355,6 +358,19 @@ describe('a command that a plugin command runs', () => {
         expect(result).toEqual({ status: 'rejected', code: 'not-allowed' });
         expect(handle.query('fixture.api.run')).toMatchObject({ enabled: false, disabledReason: 'not-allowed' });
         expect(blocksOf(handle)).toEqual([paragraph, title]);
+    });
+
+    it('is not enabled where it would open the picker for content the policy refuses', () => {
+        const { handle } = mount({
+            policy: { features: { 'media.image': { create: false, edit: true, remove: true, paste: true } } },
+        });
+
+        runIn(handle, 'Plain', (api) => {
+            seen = api.commands.query('image.insert');
+            return true;
+        });
+
+        expect(seen).toMatchObject({ enabled: false, disabledReason: 'not-allowed' });
     });
 });
 
@@ -585,6 +601,7 @@ describe('the writer of the editor API', () => {
                 links({ allowedHosts: ['frontify.com'] }),
                 fontColor(),
                 codeBlock(),
+                mediaImage(),
                 spotlight(),
             ],
             { id: 'fixture.api', version: 1 },
@@ -610,7 +627,7 @@ describe('the writer of the editor API', () => {
             formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
         });
         const identified = compileContentModel(
-            [core(), bold(), heading(), links(), fontColor(), codeBlock(), spotlight(), paragraphIds()],
+            [core(), bold(), heading(), links(), fontColor(), codeBlock(), mediaImage(), spotlight(), paragraphIds()],
             { id: 'fixture.api', version: 1 },
         );
         const content = [{ ...paragraph, attrs: { nodeId: 'paragraph-1', lang: null } }, title];
@@ -861,7 +878,7 @@ describe('the active state of the editor API', () => {
 
     it('reads the attributes of the selected nodes of the listed types as all, some or none', () => {
         const aligned = compileContentModel(
-            [core(), bold(), heading(), align(), links(), fontColor(), codeBlock(), spotlight()],
+            [core(), bold(), heading(), align(), links(), fontColor(), codeBlock(), mediaImage(), spotlight()],
             { id: 'fixture.api', version: 1 },
         );
         const { handle } = mount({ model: aligned });
@@ -885,7 +902,7 @@ describe('the active state of the editor API', () => {
 describe('the key handlers of a plugin', () => {
     it('scrolls the selection into view when a handler takes its key', () => {
         const aligned = compileContentModel(
-            [core(), bold(), heading(), align(), links(), fontColor(), codeBlock(), spotlight()],
+            [core(), bold(), heading(), align(), links(), fontColor(), codeBlock(), mediaImage(), spotlight()],
             { id: 'fixture.api', version: 1 },
         );
         const { handle } = mount({ model: aligned });
@@ -994,6 +1011,50 @@ describe('the nearest node of the editor API', () => {
         });
 
         expect(seen).toEqual({ status: 'applied' });
+    });
+
+    it('reads the node with `nodeId`, or its nearest ancestor of the type, whatever the selection', () => {
+        const image = (nodeId: string): ContentNodeJSON =>
+            ({
+                type: 'asset_image',
+                attrs: {
+                    nodeId,
+                    assetId: 'asset-logo',
+                    labelSnapshot: 'logo.png',
+                    altIntent: 'meaningful',
+                    altText: 'Logo',
+                    width: 40,
+                    height: 30,
+                    displayWidth: null,
+                    mediaType: 'image/png',
+                },
+            }) as unknown as ContentNodeJSON;
+        const figures = (['left', 'right'] as const).map((side, index) => ({
+            type: 'figure',
+            attrs: { nodeId: `figure-${index}`, align: side },
+            content: [image(`image-${index}`)],
+        })) as unknown as ContentNodeJSON[];
+        const { handle } = mount({
+            document: {
+                ...stored,
+                content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: [paragraph, title, ...figures] },
+            } as unknown as RichTextDocument,
+        });
+        let found: unknown[] = [];
+
+        runIn(handle, 'Title', (api) => {
+            const rightAlign = api.nearest('figure', 'image-1')?.attrs.align;
+            const figureId = api.nearest('figure', 'image-1')?.nodeId;
+            const imageId = api.nearest('asset_image', 'image-1')?.nodeId;
+            const leftAlign = api.nearest('figure', 'figure-0')?.attrs.align;
+            const headingFigure = api.nearest('figure', 'heading-1');
+            const missing = api.nearest('figure', 'missing');
+            const headingId = api.nearest('heading')?.nodeId;
+            found = [rightAlign, figureId, imageId, leftAlign, headingFigure, missing, headingId];
+            return true;
+        });
+
+        expect(found).toEqual(['right', 'figure-1', 'image-1', 'left', undefined, undefined, 'heading-1']);
     });
 });
 
@@ -1259,7 +1320,6 @@ describe('the inserts of the editor API', () => {
         ...stored,
         content: { ...stored.content, content: [{ type: 'blockquote', attrs: {}, content: [paragraph] }, title] },
     } as unknown as RichTextDocument;
-
     it('puts a block after the top-level block that holds the selection', () => {
         const { handle } = mount({ document: inQuote });
 
@@ -1271,6 +1331,22 @@ describe('the inserts of the editor API', () => {
         expect(seen).toMatchObject({ status: 'applied' });
         expect(blocksOf(handle)?.map(({ type }) => type)).toEqual(['blockquote', 'heading', 'heading']);
         expect(attrsAt(handle, 1)?.level).toBe(3);
+    });
+
+    it('tells an `enabled` check whether a node has a spot at the selection', () => {
+        const { handle } = mount({ document: inQuote });
+        let answers: boolean[] = [];
+
+        runIn(handle, 'Plain', (api) => {
+            answers = [
+                api.insert.allowed('figure'),
+                api.insert.allowed('figure', { place: 'after-top-level-block' }),
+                api.insert.allowed('asset_image'),
+            ];
+            return false;
+        });
+
+        expect(answers).toEqual([true, true, false]);
     });
 });
 
@@ -1440,6 +1516,37 @@ describe('a command that a plugin command runs, given a name or payload it canno
 });
 
 describe('the content writes of the editor API that change nothing or go too far', () => {
+    const withImage = {
+        ...stored,
+        content: {
+            ...stored.content,
+            content: [
+                paragraph,
+                title,
+                {
+                    type: 'figure',
+                    attrs: { nodeId: 'figure-1', align: 'left' },
+                    content: [
+                        {
+                            type: 'asset_image',
+                            attrs: {
+                                nodeId: 'image-1',
+                                assetId: 'asset-logo',
+                                labelSnapshot: 'logo.png',
+                                altIntent: 'meaningful',
+                                altText: 'Logo',
+                                width: 40,
+                                height: 30,
+                                displayWidth: null,
+                                mediaType: 'image/png',
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+    } as unknown as RichTextDocument;
+
     it('reports no-op for an empty insert and an empty replacement at a caret', () => {
         const { handle, changes } = mount();
         const outcomes: unknown[] = [];
@@ -1467,6 +1574,22 @@ describe('the content writes of the editor API that change nothing or go too far
 
         expect(seen).toEqual({ status: 'rejected', code: 'limit' });
         expect(changes).toEqual([]);
+    });
+
+    it('writes at the start of a node that holds content, and refuses it in a node that holds none', () => {
+        const { handle } = mount({ document: withImage });
+
+        runIn(handle, 'Plain', (api) => {
+            seen = api.content.insert({ nodeId: 'heading-1', at: 'start' }, [text('>> ')]);
+            return true;
+        });
+        expect(textsOf(handle)?.slice(0, 2)).toEqual(['Plain bold', '>> Title']);
+
+        runIn(handle, 'Plain', (api) => {
+            seen = api.content.insert({ nodeId: 'image-1', at: 'start' }, [text('x')]);
+            return true;
+        });
+        expect(seen).toEqual({ status: 'rejected', code: 'target-invalid' });
     });
 
     it('refuses a write from plugin UI in an editor that cannot be edited, with the rejection of the session', () => {
@@ -1499,5 +1622,25 @@ describe('the attribute writes of the editor API that cannot be checked', () => 
 
         expect(answers).toEqual([false, false, false]);
         expect(blocksOf(handle)).toEqual([paragraph, title]);
+    });
+});
+
+describe('an inline node inserted through the editor API', () => {
+    it('is refused as invalid without its required attributes, and as not applicable where the paragraph cannot hold it', () => {
+        const { handle } = mount();
+        const answers: unknown[] = [];
+
+        runIn(handle, 'Plain', (api) => {
+            answers.push(
+                api.insert.node('asset_image'),
+                api.insert.node('asset_image', { assetId: 'asset-1', labelSnapshot: 'Photo' }),
+            );
+            return false;
+        });
+
+        expect(answers).toEqual([
+            { status: 'rejected', code: 'invalid' },
+            { status: 'rejected', code: 'not-applicable' },
+        ]);
     });
 });

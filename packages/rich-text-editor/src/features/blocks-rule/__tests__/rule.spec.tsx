@@ -8,7 +8,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
 import { columns, core, quote } from '#/features';
-import { columnBreak, horizontalRule, layoutModel, mountLayout, press } from '#/features/__tests__/fixtures/layout';
+import {
+    columnBreak,
+    horizontalRule,
+    image,
+    layoutModel,
+    mountLayout,
+    press,
+} from '#/features/__tests__/fixtures/layout';
 import { type ContentNodeJSON } from '#/model';
 import { para, storedIn, text } from '#/react/__tests__/fixtures/text';
 import { RichTextReader } from '#/reader';
@@ -50,26 +57,26 @@ describe('blocks.rule', () => {
         expect(mounted.view.state.selection.$from.parent.textContent).toBe('Colour');
     });
 
-    it.each([['a column break', columnBreak()]])(
-        'puts a gap cursor after a rule inserted before %s, so typing adds a paragraph and keeps it',
-        (_name, leaf) => {
-            const mounted = mountLayout({ columns: 2, blocks: [para(text('Logo')), leaf, para(text('Colour'))] });
-            setSelection(mounted.handle, { text: 'Logo', from: 4, to: 4 });
+    it.each([
+        ['a column break', columnBreak()],
+        ['an image', image('asset-1')],
+    ])('puts a gap cursor after a rule inserted before %s, so typing adds a paragraph and keeps it', (_name, leaf) => {
+        const mounted = mountLayout({ columns: 2, blocks: [para(text('Logo')), leaf, para(text('Colour'))] });
+        setSelection(mounted.handle, { text: 'Logo', from: 4, to: 4 });
 
-            mounted.handle.execute('rule.insert');
-            const kind = mounted.handle.getSummary().selection.kind;
-            typeText(mounted.handle, 'x');
+        mounted.handle.execute('rule.insert');
+        const kind = mounted.handle.getSummary().selection.kind;
+        typeText(mounted.handle, 'x');
 
-            expect(kind).toBe('gap');
-            expect(mounted.blocks()).toEqual([
-                para(text('Logo')),
-                horizontalRule(),
-                para(text('x')),
-                leaf,
-                para(text('Colour')),
-            ]);
-        },
-    );
+        expect(kind).toBe('gap');
+        expect(mounted.blocks()).toEqual([
+            para(text('Logo')),
+            horizontalRule(),
+            para(text('x')),
+            leaf,
+            para(text('Colour')),
+        ]);
+    });
 
     it('adds an empty paragraph after a rule that ends up last, with the caret in it', () => {
         const mounted = mountLayout({ blocks: [para(text('Logo'))] });
@@ -164,8 +171,10 @@ describe('blocks.rule', () => {
 });
 
 describe('leaf blocks', () => {
+    // An image is selected inside its figure, which goes with it.
     it.each([
         ['a horizontal rule', horizontalRule(), 0],
+        ['an image', image('asset-1'), 1],
         ['a column break', columnBreak(), 0],
     ])(
         'removes %s that is node-selected with Backspace and with Delete, each as one undo step',

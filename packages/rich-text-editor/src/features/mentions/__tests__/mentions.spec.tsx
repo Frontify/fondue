@@ -322,7 +322,7 @@ describe('mention suggestions', () => {
     });
 
     it('has no notification service, and inserting, deleting and undoing a mention calls only search', async () => {
-        expectTypeOf<keyof EditorServices>().toEqualTypeOf<'persistence' | 'recovery' | 'references'>();
+        expectTypeOf<keyof EditorServices>().toEqualTypeOf<'persistence' | 'recovery' | 'references' | 'assets'>();
         const { service, pending } = deferredService();
         const read = new Set<PropertyKey>();
         const references = new Proxy(service, {

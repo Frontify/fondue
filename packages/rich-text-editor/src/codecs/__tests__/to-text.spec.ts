@@ -29,6 +29,22 @@ import { semanticCodecs, stored } from './helpers/helpers';
 
 const codecs = semanticCodecs();
 const plain = (...blocks: readonly JsonValue[]) => codecs.toPlainText(stored(...blocks)).text;
+const image = (altIntent: string, altText: string) =>
+    node(
+        'figure',
+        { nodeId: 'f-1', align: 'center' },
+        node('asset_image', {
+            nodeId: 'i-1',
+            assetId: 'a-1',
+            labelSnapshot: 'Photo',
+            altIntent,
+            altText,
+            width: null,
+            height: null,
+            displayWidth: null,
+            mediaType: null,
+        }),
+    );
 const embed = (title: string | null) =>
     node('embed', { nodeId: 'e-1', url: 'https://www.youtube.com/watch?v=x', provider: 'youtube', title });
 const ordered = (start: number, ...items: readonly JsonValue[]) =>
@@ -83,6 +99,12 @@ describe('toPlainText rules', () => {
             'Plan\n\nsee plan',
         ],
         ['mention: @ and the label', [paragraph(text('Hi '), mention('m-1'))], 'Hi @Ada'],
+        ['image with a meaningful alt text: the alt text', [image('meaningful', 'A cat')], 'A cat'],
+        [
+            'decorative image: nothing',
+            [paragraph(text('a')), image('decorative', 'ignored'), paragraph(text('b'))],
+            'a\n\nb',
+        ],
         ['embed: its title, then the URL', [embed('Talk')], 'Talk (https://www.youtube.com/watch?v=x)'],
         ['embed with no title: the URL alone', [embed(null)], 'https://www.youtube.com/watch?v=x'],
         [

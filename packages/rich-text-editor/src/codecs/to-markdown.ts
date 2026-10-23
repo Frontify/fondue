@@ -3,6 +3,7 @@
 import { type MarkdownIt as Parser } from 'markdown-it';
 
 import { checkHref, type CodecContext, type Diagnostic, type JsonObject } from '#/model';
+import { altOf, imageSource, leavesOutUnresolved } from '#/model/assets';
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { pointer } from '#/model/errors';
 import { islandText } from '#/model/html-spec';
@@ -465,6 +466,18 @@ const renderTable = (state: MarkdownState, table: TreeNode, plan: NodePlan, path
     return [head, `|${' --- |'.repeat(columns)}`, ...body].join('\n');
 };
 
+/** The `![alt](url)` of an image through `resolveAssetUrl` after `checkHref`, or `null` when unresolved or unsafe. */
+const imageOf = (state: MarkdownState, node: TreeNode): string | null => {
+    const attrs = attrsOf(node.attrs);
+    const src = imageSource(attrs, state.context);
+    if (src === undefined) {
+        return null;
+    }
+    const alt = altOf(attrs) ?? '';
+    const lost = (featureId: string) => state.losses.add(featureId);
+    return `![${serialize([{ kind: 'text', text: alt }], lost)}](${destination(src)})`;
+};
+
 /** `[title](url)`, or `<url>` when the title is null. */
 const embedOf = (state: MarkdownState, attrs: JsonObject): string | null => {
     if (typeof attrs.url !== 'string') {
@@ -564,6 +577,18 @@ const ruleOf = (
             return '---';
         case 'table':
             return renderTable(state, node, plan, path);
+        case 'figure':
+            state.losses.add(plan.featureId);
+            for (const child of node.content ?? []) {
+                const image = imageOf(state, child);
+                if (image !== null) {
+                    return image;
+                }
+            }
+            return null;
+        case 'asset_image':
+            state.losses.add(plan.featureId);
+            return imageOf(state, node);
         case 'embed':
             state.losses.add(plan.featureId);
             return embedOf(state, attrs);
@@ -599,6 +624,9 @@ const renderBlock = (state: MarkdownState, node: TreeNode, path: string, alterna
     }
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
+        return null;
+    }
+    if (leavesOutUnresolved(state, plan.featureId, node, path)) {
         return null;
     }
     noteShared(state, plan, node);

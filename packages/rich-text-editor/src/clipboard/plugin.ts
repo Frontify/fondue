@@ -12,6 +12,7 @@ import { writeText } from '#/codecs/to-text';
 import { type PluginImplementation } from '#/definition';
 import { type ContentModel, type RichTextLocale, type TranslationStrings } from '#/model';
 import { type TreeNode } from '#/model/content';
+import { type ResolveAssetUrl } from '#/model/declarations';
 import { diagnostic } from '#/model/format';
 import { codecContext } from '#/model/output';
 import { isApple } from '#/model/platform';
@@ -44,6 +45,8 @@ export interface ClipboardSession {
     readonly announce: (message: string) => void;
     /** The presentation's `resolveReference`, read at each copy, so copied mentions name whom the chip shows. */
     readonly resolveReference?: () => ResolveReference | undefined;
+    /** The presentation's `resolveAssetUrl`, read at each copy, so a copied image keeps the URL the editor shows. */
+    readonly resolveAssetUrl?: () => ResolveAssetUrl | undefined;
 }
 
 const sessions = new WeakMap<EditorRuntime, ClipboardSession>();
@@ -200,7 +203,7 @@ const writeFlavors = (
     slice: Slice,
 ) => {
     const locale = session.locale();
-    const context = codecContext(locale, locale);
+    const context = codecContext(locale, locale, session.resolveAssetUrl?.());
     const plan = planOf(model);
     const tree: TreeNode = {
         type: 'doc',

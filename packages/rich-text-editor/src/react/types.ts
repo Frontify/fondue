@@ -118,11 +118,23 @@ export interface ReferencePage {
 export interface ReferenceService {
     search(request: ReferenceSearchRequest, context: ServiceContext): Promise<ReferencePage>;
 }
+/** An asset a host picked, as a document stores it. */
+export interface AssetValue {
+    readonly assetId: string;
+    readonly mediaType: string;
+    readonly labelSnapshot: string;
+}
+/** A host asset library; `image.insert` opens it with its purpose when set. */
+export interface AssetPickerService {
+    /** `purpose` is `image` for the shipped features; a later feature may pass its own purpose, so implementations handle any string. */
+    pick(request: { readonly purpose: string }, context: ServiceContext): Promise<AssetValue | null>;
+}
 /** The services a host gives the editor, such as persistence. */
 export interface EditorServices {
     readonly persistence?: PersistenceService;
     readonly recovery?: RecoveryService;
     readonly references?: ReferenceService;
+    readonly assets?: AssetPickerService;
 }
 
 /** The events the editor emits, each with the value its listeners get. */

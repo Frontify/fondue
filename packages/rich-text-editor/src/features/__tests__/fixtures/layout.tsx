@@ -4,7 +4,7 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { vi } from 'vitest';
 
-import { columns, core, inputRules, quote, rule } from '#/features';
+import { columns, core, inputRules, mediaImage, quote, rule } from '#/features';
 import {
     type AuthoringPolicy,
     type CommandsOfModel,
@@ -19,8 +19,8 @@ import { storedIn } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 
-/** The layout features and a quote to nest blocks in. */
-export const layoutFeatures = () => [core(), quote(), rule(), columns(), inputRules()] as const;
+/** The layout features, a quote to nest blocks in, and `media.image`, whose figure holds a leaf image. */
+export const layoutFeatures = () => [core(), quote(), rule(), columns(), mediaImage(), inputRules()] as const;
 
 export const layoutModel = <const Features extends readonly Feature[] = ReturnType<typeof layoutFeatures>>(
     features: Features = layoutFeatures() as unknown as Features,
@@ -28,6 +28,28 @@ export const layoutModel = <const Features extends readonly Feature[] = ReturnTy
 
 export const columnBreak = (): ContentNodeJSON => ({ type: 'column_break' });
 export const horizontalRule = (): ContentNodeJSON => ({ type: 'horizontal_rule' });
+/** A figure that holds one decorative image of `assetId`. */
+export const image = (assetId: string): ContentNodeJSON => ({
+    type: 'figure',
+    attrs: { nodeId: `figure-${assetId}`, align: 'center' },
+    content: [
+        {
+            type: 'asset_image',
+            attrs: {
+                nodeId: `image-${assetId}`,
+                assetId,
+                labelSnapshot: `${assetId}.png`,
+                altIntent: 'decorative',
+                altText: '',
+                width: null,
+                height: null,
+                displayWidth: null,
+                mediaType: null,
+            },
+        },
+    ],
+});
+
 interface LayoutMount {
     readonly model?: ContentModel;
     readonly blocks: readonly ContentNodeJSON[];

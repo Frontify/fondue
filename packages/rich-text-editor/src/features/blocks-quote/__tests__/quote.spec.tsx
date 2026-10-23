@@ -3,7 +3,9 @@
 import { TextSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { defineFeature } from '#/model';
+import { vocabularyLists, vocabularyTables } from '#/features/__tests__/fixtures/vocabulary';
+import { mediaImage } from '#/features/media-image/feature';
+import { type ContentNodeJSON, defineFeature } from '#/model';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { pressKey, setSelection, typeText } from '#/testing';
 
@@ -25,7 +27,7 @@ const acmeBox = defineFeature({
     },
     formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
 });
-const model = textModel([...textFeatures(), acmeBox()]);
+const model = textModel([...textFeatures(), acmeBox(), vocabularyLists(), vocabularyTables(), mediaImage()]);
 
 type Mounted = ReturnType<typeof mountText>;
 
@@ -46,6 +48,12 @@ const pressEnter = ({ view }: Mounted, modifiers: KeyboardEventInit = {}) => {
     return event.defaultPrevented;
 };
 const blocksOf = ({ handle }: Mounted) => handle.getSnapshot().document.content.content;
+const cell = (...content: readonly ContentNodeJSON[]) => ({
+    type: 'table_cell',
+    attrs: { colspan: 1, rowspan: 1, colwidth: null },
+    content: [...content],
+});
+
 describe('blocks.quote', () => {
     for (const container of ['blockquote', 'acme_box']) {
         it(`leaves a ${container} on Enter in its empty last paragraph, with a new paragraph after it`, () => {
@@ -171,6 +179,48 @@ describe('blocks.quote', () => {
         }
 
         expect(row.props.handleKeyDown?.call(row, view, new KeyboardEvent('keydown', { key: 'Enter' }))).toBe(false);
+    });
+
+    it('does not reach a list item, a table cell or a figure, which are no containers', () => {
+        const list = {
+            type: 'bullet_list',
+            attrs: { marker: null },
+            content: [{ type: 'list_item', content: [para(text('Item')), para()] }],
+        };
+        const table = {
+            type: 'table',
+            attrs: { nodeId: 'table-1' },
+            content: [{ type: 'table_row', content: [cell(para(text('Cell')), para())] }],
+        };
+        const figure = {
+            type: 'figure',
+            attrs: { nodeId: 'figure-1', align: 'center' },
+            content: [
+                { type: 'asset_image', attrs: { nodeId: 'image-1', assetId: 'asset-1', labelSnapshot: 'logo.png' } },
+            ],
+        };
+        const quote = { type: 'blockquote', content: [para(text('Quoted')), para()] };
+        // Whether the container row takes Enter, apart from the base keys of later rows.
+        const reached = [list, table, figure, quote].map((block) => {
+            const mounted = mountText({ model, blocks: [block, para(text('After'))] });
+            if (block === figure) {
+                setSelection(mounted.handle, { nodeId: 'image-1' });
+            } else {
+                caretInEmptyParagraph(mounted);
+            }
+            const { view } = mounted;
+            const row = view.state.plugins.find((plugin) =>
+                (plugin as unknown as { key: string }).key.startsWith('container-keys$'),
+            );
+            if (row === undefined) {
+                throw new Error('The model has no container keys.');
+            }
+            const result = row.props.handleKeyDown?.call(row, view, new KeyboardEvent('keydown', { key: 'Enter' }));
+            mounted.unmount();
+            return result;
+        });
+
+        expect(reached).toEqual([false, false, false, true]);
     });
 
     it('keeps > and a space typed inside a quote as text, never lifting the quote', () => {

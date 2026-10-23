@@ -5,9 +5,9 @@ import { diagnostic } from '#/model/format';
 
 import { type FeaturePolicy, type SessionToken } from './types';
 
-/** What a capability hands the coordinator: the service call and the function that takes its result. */
+/** What a capability hands the coordinator: the service call and the command that applies its result. */
 export interface AsyncRequest {
-    /** The interaction whose newer request supersedes an older one, such as one suggestion search. */
+    /** The interaction whose newer request supersedes an older one, such as one mention search. */
     readonly key: string;
     /** The `services` member the call uses, so a changed member aborts it. */
     readonly service: string;
@@ -15,7 +15,9 @@ export interface AsyncRequest {
     readonly featureId: string;
     readonly action: keyof FeaturePolicy;
     readonly run: (context: { readonly signal: AbortSignal; readonly session: SessionToken }) => Promise<unknown>;
-    /** Takes a result that changes no content, such as the options of a search, and returns why it cannot. */
+    /** The command the result stands for, which the `src/testing` probe shows. */
+    readonly command: string;
+    /** Takes the result, such as the options of a search or a picked asset, and returns why it cannot. */
     readonly deliver: (result: unknown) => string | undefined;
 }
 
@@ -30,6 +32,7 @@ export interface AsyncOperation {
     readonly service: string;
     readonly featureId: string;
     readonly action: keyof FeaturePolicy;
+    readonly command: string;
     readonly deliver: (result: unknown) => string | undefined;
 }
 
@@ -128,6 +131,7 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
             service: request.service,
             featureId: request.featureId,
             action: request.action,
+            command: request.command,
             deliver: request.deliver,
         });
         // A session that is not ready starts nothing: the operation is aborted and unregistered.

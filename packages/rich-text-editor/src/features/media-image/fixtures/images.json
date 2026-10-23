@@ -1,0 +1,80 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "feature-contract", "version": 1 },
+    "requiredCapabilities": [
+        { "id": "core", "version": 1 },
+        { "id": "media.image", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": { "lang": null, "align": null },
+                "content": [{ "type": "text", "text": "The brand colours in use:" }]
+            },
+            {
+                "type": "figure",
+                "attrs": { "nodeId": "figure-1", "align": "center" },
+                "content": [
+                    {
+                        "type": "asset_image",
+                        "attrs": {
+                            "nodeId": "image-1",
+                            "assetId": "asset-palette",
+                            "labelSnapshot": "palette.png",
+                            "altIntent": "meaningful",
+                            "altText": "Five swatches from deep blue to sand",
+                            "width": 1200,
+                            "height": 600,
+                            "displayWidth": 75,
+                            "mediaType": "image/png"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "figure",
+                "attrs": { "nodeId": "figure-2", "align": "left" },
+                "content": [
+                    {
+                        "type": "asset_image",
+                        "attrs": {
+                            "nodeId": "image-2",
+                            "assetId": "asset-divider",
+                            "labelSnapshot": "divider.svg",
+                            "altIntent": "decorative",
+                            "altText": "",
+                            "width": null,
+                            "height": null,
+                            "displayWidth": null,
+                            "mediaType": null
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "figure",
+                "attrs": { "nodeId": "figure-3", "align": "right" },
+                "content": [
+                    {
+                        "type": "asset_image",
+                        "attrs": {
+                            "nodeId": "image-3",
+                            "assetId": "asset-logo",
+                            "labelSnapshot": "logo.png",
+                            "altIntent": "missing",
+                            "altText": "",
+                            "width": 40,
+                            "height": 30,
+                            "displayWidth": null,
+                            "mediaType": "image/png"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

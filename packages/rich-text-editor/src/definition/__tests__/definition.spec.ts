@@ -16,8 +16,11 @@ import {
     fixtureItalic,
     fixtureRedo,
 } from '#/features/__tests__/fixtures/features';
+import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
+import { mediaImage } from '#/features/media-image/feature';
+import { mentions } from '#/features/mentions/feature';
 import {
     compileContentModel,
     type ContentModel,
@@ -144,6 +147,29 @@ describe('compileDefinition', () => {
         const figure = schema.nodes.figure?.createAndFill();
         expect(list?.firstChild).toMatchObject({ attrs: { nodeId: null } });
         expect(figure?.firstChild).toMatchObject({ type: { name: 'asset_image' } });
+    });
+
+    it('gives null engine defaults only to the leaf the engine must create, never to a mention', () => {
+        const { schema } = compileDefinition(compileContentModel([core(), mediaImage(), mentions()], options));
+
+        const imageAttrs = schema.nodes.asset_image?.spec.attrs;
+        const mentionAttrs = schema.nodes.mention?.spec.attrs;
+        expect(imageAttrs?.labelSnapshot).toEqual({ default: null });
+        expect(mentionAttrs?.labelSnapshot).toEqual({});
+        expect(schema.nodes.mention?.hasRequiredAttrs()).toBe(true);
+    });
+
+    it('builds the figure of media.image and of the vocabulary, whose image has required attributes with no default', () => {
+        const shipped = compileDefinition(compileContentModel([core(), mediaImage()], options)).schema;
+        const generated = shipped.nodes.figure?.createAndFill();
+
+        const image = generated?.firstChild;
+        expect(image?.attrs).toMatchObject({
+            assetId: null,
+            labelSnapshot: null,
+            altIntent: 'missing',
+        });
+        expect(() => compileDefinition(vocabularyModel())).not.toThrow();
     });
 
     it('writes a shared attribute bound to a style property only for a plain CSS value', () => {

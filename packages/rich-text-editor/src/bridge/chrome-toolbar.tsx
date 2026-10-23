@@ -89,10 +89,16 @@ NodeChromeButton.displayName = 'NodeChromeButton';
 export const NodeChromeMenu = ({
     label,
     text,
+    command,
+    onCloseAutoFocus,
     children,
 }: {
     readonly label: string;
     readonly text: string;
+    /** The command its items run, which the button names in `data-rte-command`, as a drag's alternative does. */
+    readonly command?: string;
+    /** Runs as the closed menu returns focus, which `event.preventDefault()` keeps where an item sent it. */
+    readonly onCloseAutoFocus?: (event: Event) => void;
     readonly children: ReactNode;
 }) => {
     const container = useOverlayContainer();
@@ -124,6 +130,7 @@ export const NodeChromeMenu = ({
                     className={styles.button}
                     aria-label={label}
                     tabIndex={OUT_OF_TAB_ORDER}
+                    data-rte-command={command}
                     onPointerDown={(event) => {
                         touchRef.current = event.pointerType !== 'mouse';
                         openAtPressRef.current = open;
@@ -147,7 +154,11 @@ export const NodeChromeMenu = ({
                     {text}
                 </Toolbar.Button>
             </Dropdown.Trigger>
-            <Dropdown.Content ref={focusChecked} container={container}>
+            <Dropdown.Content
+                ref={focusChecked}
+                container={container}
+                {...(onCloseAutoFocus === undefined ? {} : { onCloseAutoFocus })}
+            >
                 {children}
             </Dropdown.Content>
         </Dropdown.Root>

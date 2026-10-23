@@ -1,0 +1,130 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// The figure's side places the image and its chrome on that physical side, as `text-align` places the reader's image.
+.root {
+    text-align: var(--rte-image-side, center);
+}
+
+:where(:global(.fondue-rte-content) figure[data-align='left'] .root) {
+    --rte-image-side: left;
+}
+
+:where(:global(.fondue-rte-content) figure[data-align='right'] .root) {
+    --rte-image-side: right;
+}
+
+.frame {
+    position: relative;
+    display: inline-block;
+    max-inline-size: 100%;
+    line-height: 0;
+    vertical-align: top;
+}
+
+// The block size stays within the viewport, so no stored size reserves a box taller than the screen.
+.picture {
+    max-inline-size: 100%;
+    max-block-size: 100vh;
+    block-size: auto;
+    object-fit: contain;
+}
+
+// At a set width the frame takes it, and the image fills the frame.
+.frame[style] > .picture {
+    inline-size: 100%;
+}
+
+.still {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+}
+
+// The resize handle on the inline end of a selected image, half over the edge; a vertical drag still scrolls.
+.handle {
+    --rte-image-handle-size: var(--spacing-small);
+
+    display: none;
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-end: calc(var(--rte-image-handle-size) / -2);
+    inline-size: var(--rte-image-handle-size);
+    block-size: var(--spacing-x-large);
+    border: var(--border-width-default) solid var(--color-surface-default);
+    border-radius: var(--border-radius-small);
+    background-color: var(--color-focus-default);
+    cursor: ew-resize;
+    touch-action: pan-y;
+    transform: translateY(-50%);
+
+    // A coarse pointer gets a 44 by 44 CSS pixel target.
+    @media (pointer: coarse) {
+        --rte-image-handle-size: 44px;
+
+        block-size: 44px;
+    }
+}
+
+:where(:global(.ProseMirror-selectednode)) .handle {
+    display: block;
+}
+
+.placeholder {
+    display: inline-block;
+    padding: var(--spacing-small);
+    border: var(--border-width-default) dashed var(--color-line-strong);
+    border-radius: var(--border-radius-small);
+    color: var(--color-secondary-default);
+}
+
+.review {
+    margin: 0;
+    color: var(--color-secondary-default);
+    font-size: var(--text-body-small-default-font-size);
+}
+
+// The chrome row has the toolbar's spacing, and its controls the toolbar items' size, colour and hover.
+.controls {
+    margin-block-start: var(--spacing-xx-small);
+
+    :global([data-rte-node-chrome]) {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-xx-small);
+    }
+
+    :global([data-rte-node-chrome]) button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-inline-size: 32px;
+        block-size: 32px;
+        padding-inline: var(--spacing-x-small);
+        border: none;
+        border-radius: var(--border-radius-small);
+        background-color: transparent;
+        color: var(--color-primary-default);
+        font: inherit;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+        }
+
+        @media (pointer: coarse) {
+            min-inline-size: 44px;
+            block-size: 44px;
+        }
+    }
+}
+
+// A printed page keeps the image and drops its controls.
+@media print {
+    .controls,
+    .review,
+    .handle {
+        display: none;
+    }
+}

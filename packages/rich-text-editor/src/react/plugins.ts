@@ -25,6 +25,7 @@ import { strikeEditor } from '#/features/marks-strike/editor';
 import { subscriptEditor } from '#/features/marks-subscript/editor';
 import { superscriptEditor } from '#/features/marks-superscript/editor';
 import { underlineEditor } from '#/features/marks-underline/editor';
+import { mediaImageEditor } from '#/features/media-image/editor';
 import { mentionsEditor } from '#/features/mentions/editor';
 import { brandEditor } from '#/features/styles-brand/editor';
 
@@ -55,6 +56,7 @@ const SHIPPED = [
     mentionsEditor,
     fontColorEditor,
     languageEditor,
+    mediaImageEditor,
 ] as const;
 
 /** The editor parts of the shipped features by feature ID; a host's own plugin for a feature extends its entry. */

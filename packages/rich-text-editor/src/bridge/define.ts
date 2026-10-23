@@ -18,6 +18,7 @@ export { suggestionOptionId } from '#/runtime/suggestions/option-id';
 export {
     CheckedSlot,
     keepFocus,
+    type MenuOption,
     NodeChromeButton,
     NodeChromeMenu,
     NodeChromeToolbar,

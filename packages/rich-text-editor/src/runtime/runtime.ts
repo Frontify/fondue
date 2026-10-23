@@ -50,7 +50,7 @@ import { hrefPolicyOf } from '#/model/href';
 import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
-import { createAsyncCoordinator } from './async';
+import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
 import { type ColumnState, columnsPlugin, ONE_COLUMN, sameColumns } from './columns';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
@@ -58,6 +58,7 @@ import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history'
 import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
 import { createKeyGuard } from './keys';
 import { createLimitCheck, type ExceededLimit, storedNodeCount } from './limits';
+import { insertPicked, pickedAsset, refillPicked } from './media';
 import { operationMetric } from './metrics';
 import { nodeStatePlugin } from './node-state';
 import { authoringOf, createPolicyCheck } from './policy';
@@ -194,6 +195,8 @@ export interface EditorRuntime {
      * holds between it and the last value.
      */
     watch<T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void): Unsubscribe;
+    /** Starts an async operation through the coordinator, as the asset picker or mention search capability does. */
+    startAsync(request: AsyncRequest): AsyncOperation;
     /** Aborts the operations that the changed `services` members started. */
     changeServices(members: readonly string[]): void;
     /** The bridge caught a throw from a node view's constructor, `update` or `destroy`. */
@@ -203,6 +206,19 @@ export interface EditorRuntime {
     /** The presentation's columns as the surface shows them, which `column.break.insert` and the break decorations read. */
     setColumns(columns: ColumnState): void;
     nodeActions(target: NodeTarget): NodeActions;
+    /**
+     * Applies a host asset picker's result, checked as untrusted input, as one undo step: a figure at the insert
+     * `target`, or the image `nodeId` refilled, which then asks the author to review its alternative text.
+     */
+    placeAsset(
+        asset: unknown,
+        place: { readonly target: SelectionHandle } | { readonly nodeId: string },
+    ): CommandResult;
+    /** The session's uploads. */
+    readonly uploads: {
+        /** Opens the host asset picker for new images or for the image `nodeId`. */
+        pick(nodeId: string | undefined): void;
+    };
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
     /**
@@ -248,6 +264,8 @@ export interface EditorRuntimeOptions {
     readonly scrollSelectionIntoView?: () => boolean | undefined;
     /** What the editor layer hands the plugin commands it runs. */
     readonly commandHost?: unknown;
+    /** Opens the host asset picker for new images or for the image `nodeId`. */
+    readonly pick?: (nodeId: string | undefined) => void;
     /** The presentation's brand styles, read when `block.style.set` runs; default none. */
     readonly styles?: () => readonly PresentationStyle[];
     /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
@@ -384,7 +402,7 @@ type Prepared =
           readonly fault?: Diagnostic;
           readonly limit?: ExceededLimit | undefined;
       };
-/** Who runs a command: a host call, a queued intent, or a node. */
+/** Who runs a command: a host call, a queued intent, or a node's own chrome. */
 type Route = 'host' | 'queue' | 'node';
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
 type Attempt = Prepared | { readonly unchanged: true };
@@ -1313,6 +1331,22 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(target)),
     });
 
+    const placeAsset: EditorRuntime['placeAsset'] = (value, place) => {
+        const asset = pickedAsset(value, { maxLength: limits.maxAttributeLength });
+        if (asset === undefined) {
+            return rejected('invalid-payload');
+        }
+        if ('target' in place) {
+            const insert = insertPicked(definition.schema, asset);
+            return runOn(insert, { payload: undefined }, () => baseOf({ target: place.target }), 'host');
+        }
+        const { nodeId } = place;
+        if (positionOf(state.doc, nodeId) === undefined) {
+            return rejected('target-invalid');
+        }
+        return runOn(refillPicked(nodeId, asset), { payload: undefined }, () => state, 'host');
+    };
+
     /** Commits a capture of the selection, or of `range`, as target `id`. */
     const captureNow = (
         id: string,
@@ -1346,13 +1380,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     });
 
     /** One search of a suggestion list, as one operation of the coordinator that the list's newer search supersedes. */
-    const searchSuggestions: SuggestionHost['search'] = ({ key, featureId, run }, receive) => {
+    const searchSuggestions: SuggestionHost['search'] = ({ key, featureId, command, run }, receive) => {
         const operation = coordinator.start({
             key,
-            // No host service exists yet, so no changed `services` member aborts a search.
+            // The only host service a search reaches through the editor API.
             service: 'references',
             featureId,
             action: 'create',
+            command,
             run: ({ signal }) => run(signal),
             deliver: (result) => {
                 receive(result as Awaited<ReturnType<typeof run>>);
@@ -1947,6 +1982,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             scrollSelectionIntoView(view, state.selection);
         },
         watch,
+        startAsync: coordinator.start,
         changeServices: (members) => {
             coordinator.abortWhere((operation) => members.includes(operation.service));
             if (members.includes('persistence')) {
@@ -1974,6 +2010,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
         },
         nodeActions,
+        placeAsset,
+        uploads: {
+            pick: (nodeId) => options.pick?.(nodeId),
+        },
         saveStatusChanged: emitSaveStatus,
         clearHistory: () => {
             if (phase !== 'ready' || settling.active()) {
