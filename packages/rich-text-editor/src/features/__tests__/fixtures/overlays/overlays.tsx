@@ -4,7 +4,7 @@ import { Dropdown, Flyout } from '@frontify/fondue-components';
 import { type ComponentType, useEffect, useId, useState } from 'react';
 
 import { OverlayBody, useEditorOverlay } from '#/bridge/define';
-import { useEditorHandle } from '#/index';
+import { useEditorApi, useEditorHandle } from '#/index';
 
 /** The commands the stand-ins run: the link stand-in's and `core`'s text insertion. */
 interface FixtureCommands {
@@ -164,4 +164,20 @@ export const FixtureMenu = ({ open, onOpenChange }: FixtureOverlayProps) => {
             </Dropdown.Content>
         </Dropdown.Root>
     );
+};
+
+/** An overlay anchored to the bold run in the surface, which reports the rectangle of its anchor. */
+export const FixtureRunAnchored = ({ onRect }: { readonly onRect: (rect: DOMRect) => void }) => {
+    const api = useEditorApi();
+    const surface = api?.surface();
+    const bold = surface?.querySelector('strong');
+    let run;
+    if (api !== undefined && bold !== null && bold !== undefined) {
+        run = api.marks.run('bold', { at: bold });
+    }
+    const overlay = useEditorOverlay(true, () => undefined, run?.range);
+    useEffect(() => {
+        onRect(overlay.anchor.getBoundingClientRect());
+    });
+    return null;
 };

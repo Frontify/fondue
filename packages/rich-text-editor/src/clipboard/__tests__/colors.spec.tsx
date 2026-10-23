@@ -143,6 +143,13 @@ describe('pasted colours', () => {
         expect(pasteHtml(styleModel(), html).announced).toBe('');
     });
 
+    it('keeps the recipe paint of a link with data-rte-style out of the colour marks', () => {
+        const html =
+            '<p><a href="https://frontify.com/" data-rte-style="brand.button" style="color:#ffffff;background-color:#1d4ed8">start</a></p>';
+
+        expect(pasteHtml(styleModel(true), html).colors).toEqual([]);
+    });
+
     it.each(Object.keys(SOURCES) as (keyof typeof SOURCES)[])(
         'keeps the colours of a %s paste as lowercase #rrggbb or #rrggbbaa with literalColors',
         (source) => {

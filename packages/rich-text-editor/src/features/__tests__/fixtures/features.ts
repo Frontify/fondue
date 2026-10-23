@@ -210,7 +210,10 @@ export const fixtureList = defineFeature({
 export const fixtureToolbar = defineFeature({
     id: 'fixture.toolbar',
     version: 1,
-    requires: [{ id: 'fixture.italic', version: 1 }],
+    requires: [
+        { id: 'fixture.italic', version: 1 },
+        { id: 'links', version: 1 },
+    ],
     nodes: {
         toggled_block: { group: 'block', content: 'inline*', attrs: {}, html: ['blockquote', 0], parse: [] },
         toggled_heading: {

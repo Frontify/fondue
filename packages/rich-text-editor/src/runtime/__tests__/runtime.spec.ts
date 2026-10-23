@@ -30,6 +30,7 @@ import {
 import { countingIds, notesModel } from '#/features/__tests__/fixtures/notes';
 import { vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { type CommandsOfModel, type CommandsOfPlugin, defineEditor, type EditorHandle } from '#/index';
 import {
@@ -381,7 +382,6 @@ describe('marks.bold', () => {
             stored(para({ type: 'text', text: 'a' }, { type: 'hard_break' }, { type: 'text', text: 'b' })).content,
         );
     });
-
     it('finds nothing to toggle in a selection that holds only a hard break', () => {
         const { handle, changes, runtime } = start(
             stored(para({ type: 'text', text: 'a' }, { type: 'hard_break' }, { type: 'text', text: 'b' })),
@@ -467,6 +467,29 @@ describe('the session lifecycle', () => {
 });
 
 describe('stored content the session keeps', () => {
+    const linked = compileContentModel([core(), bold(), links()], { id: 'test.bold', version: 1 });
+    const link = {
+        type: 'link',
+        attrs: { href: 'https://frontify.com', openInNewWindow: false, styleId: null, rel: 'x' },
+    };
+
+    it('writes undeclared attributes back under their own names after an unrelated edit', () => {
+        const plain = { type: 'paragraph', attrs: { lang: null, tone: 'warm', unknownAttributes: 5 }, content: [] };
+        const marked = para({ type: 'text', text: 'a', marks: [link] });
+        const input = stored(plain, marked);
+        const root = { ...input.content, attrs: { lang: null, dir: 'auto', unknownAttributes: { a: 1 } } };
+        const { handle, changes } = start({ ...input, content: root }, { model: linked });
+
+        setSelection(handle, { text: 'a', from: 1, to: 1 });
+        typeText(handle, 'b');
+
+        const { content: _plainContent, ...withoutContent } = plain;
+        expect(contentOf(changes[0])).toEqual({
+            ...root,
+            content: [withoutContent, para({ type: 'text', text: 'a', marks: [link] }, { type: 'text', text: 'b' })],
+        });
+    });
+
     it('applies the declared default of an invalid doc attribute and writes the stored value back', () => {
         const input = stored(para());
         const root = { ...input.content, attrs: { lang: 'en_US', dir: 'auto' } };
@@ -930,10 +953,12 @@ const appendForever = (featureId: string, capability: string) =>
     );
 
 describe('occurrences the policy pairs across a batch', () => {
-    const model = compileContentModel([core(), bold(), fixtureMention()], {
+    const model = compileContentModel([core(), bold(), links(), fixtureMention()], {
         id: 'test.bold',
         version: 1,
     });
+    const link = (href: string) => ({ type: 'link', attrs: { href, openInNewWindow: false, styleId: null } });
+    const linked = { type: 'text', text: 'go', marks: [link('https://frontify.com/a')] };
     const atoms = stored(para(words('a'), mention('m-1'), words('b')));
     const cases: readonly (readonly [
         string,
@@ -968,6 +993,20 @@ describe('occurrences the policy pairs across a batch', () => {
             true,
         ],
         [
+            'link href',
+            stored(para(linked)),
+            { features: { links: { ...ALLOW, create: false, remove: false } } },
+            (state) => state.tr.addMark(1, 3, state.schema.mark('link', link('https://frontify.com/b').attrs)),
+            true,
+        ],
+        [
+            'link href, edit: false',
+            stored(para(linked)),
+            forbid('links', 'edit'),
+            (state) => state.tr.addMark(1, 3, state.schema.mark('link', link('https://frontify.com/b').attrs)),
+            false,
+        ],
+        [
             'mention replaced',
             atoms,
             { features: { 'fixture.mention': { ...ALLOW, create: false, remove: false } } },
@@ -987,6 +1026,17 @@ describe('occurrences the policy pairs across a batch', () => {
             forbid('fixture.mention', 'edit'),
             (state) => state.tr.addMark(1, 4, state.schema.mark('bold')),
             true,
+        ],
+        [
+            'text with another link inserted at the end of a link',
+            stored(para(linked)),
+            forbid('links', 'create'),
+            (state) =>
+                state.tr.insert(
+                    3,
+                    state.schema.text('zz', [state.schema.mark('link', link('https://frontify.com/b').attrs)]),
+                ),
+            false,
         ],
         [
             'a pasted copy of a mention before the untouched one',
@@ -1747,7 +1797,10 @@ const chip = defineFeature({
         },
     },
 });
-const targetModel = compileContentModel([core(), bold(), fixtureMention(), chip()], { id: 'test.bold', version: 1 });
+const targetModel = compileContentModel([core(), bold(), links(), fixtureMention(), chip()], {
+    id: 'test.bold',
+    version: 1,
+});
 const capture = (handle: EditorRuntime['handle'], options: CaptureTargetOptions) => {
     const result = handle.captureTarget(options);
     if (result.status !== 'captured') {
@@ -1893,6 +1946,25 @@ describe('targets', () => {
 
         expect(textOf(view.state.doc)).toBe('abxYcd');
     });
+
+    for (const purpose of ['format', 'replace-text'] as const) {
+        for (const onIntersectingEdit of ['map', 'invalidate'] as const) {
+            it(`keeps text typed at both ends out of a ${purpose} target that ${onIntersectingEdit}s`, () => {
+                const { handle, view } = start(stored(para(words('abcdef'))), { model: targetModel });
+                setSelection(handle, { text: 'cd' });
+                const target = capture(handle, { purpose, onIntersectingEdit });
+
+                setSelection(handle, { text: 'cd', from: 0, to: 0 });
+                typeText(handle, 'X');
+                setSelection(handle, { text: 'cd', from: 2, to: 2 });
+                typeText(handle, 'Y');
+                const value = { href: 'https://frontify.com', openInNewWindow: false, styleId: null };
+                expect(handle.execute('link.set', value, { target }).status).toBe('applied');
+
+                expect([textOf(view.state.doc), markedText(view.state.doc, 'link')]).toEqual(['abXcdYef', 'cd']);
+            });
+        }
+    }
 
     it('keeps a format target captured at a caret empty after text typed there', () => {
         const { handle, view } = start(stored(para(words('abcd'))), { model: targetModel });

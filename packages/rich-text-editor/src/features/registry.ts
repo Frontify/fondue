@@ -10,6 +10,7 @@ import { emoji } from '#/features/emoji/feature';
 import { formatClear } from '#/features/format-clear/feature';
 import { inputRules } from '#/features/input-rules/feature';
 import { columns } from '#/features/layout-columns/feature';
+import { links } from '#/features/links/feature';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { orderedList } from '#/features/lists-ordered/feature';
@@ -39,6 +40,7 @@ export const registry: Readonly<Record<string, () => Feature>> = {
     'marks.subscript': subscript,
     'marks.superscript': superscript,
     'marks.font-color': fontColor,
+    links,
     'blocks.heading': heading,
     'blocks.quote': quote,
     'blocks.code': codeBlock,
@@ -78,6 +80,7 @@ export const featureRecords: Readonly<Record<string, FeatureRecord>> = {
     'marks.subscript': NO_DEPENDENCIES,
     'marks.superscript': NO_DEPENDENCIES,
     'marks.font-color': NO_DEPENDENCIES,
+    links: NO_DEPENDENCIES,
     'blocks.heading': NO_DEPENDENCIES,
     'blocks.quote': NO_DEPENDENCIES,
     'blocks.code': { owner: OWNER, dependencies: { lowlight: 'MIT' } },

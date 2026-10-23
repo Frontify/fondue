@@ -37,6 +37,9 @@ vi.mock('#/react/define', recorded('#/react/define'));
 vi.mock('#/runtime/runtime', recorded('#/runtime/runtime'));
 vi.mock('#/runtime/editor-api', recorded('#/runtime/editor-api'));
 vi.mock('#/features/marks-bold/editor', recorded('#/features/marks-bold/editor'));
+vi.mock('#/features/links/editor', recorded('#/features/links/editor'));
+vi.mock('#/features/links/link-popover', recorded('#/features/links/link-popover'));
+vi.mock('#/features/links/link-bubble', recorded('#/features/links/link-bubble'));
 
 type Entries = Awaited<ReturnType<typeof loadVocabulary>>;
 

@@ -93,6 +93,16 @@ describe('checkHref', () => {
         expect(checkHref('/brand', { allowedHosts: ['good.com'] })).toEqual({ ok: true, href: '/brand' });
     });
 
+    it.each(['https:&bsol;&bsol;evil.com/', 'https:&bsol;&bsol;evil.com&sol;', 'https:&bsol;&bsol;u&commat;evil.com/'])(
+        'refuses %j, whose scheme no // follows as written',
+        (input) => {
+            expect(checkHref(input, { allowedSchemes: ['https'], allowedHosts: ['good.com', '*.good.com'] })).toEqual({
+                ok: false,
+                code: 'unparsable',
+            });
+        },
+    );
+
     it.each([
         'https://evil.com&quest;.good.com/',
         'https://evil.com&num;.good.com/',
@@ -106,13 +116,16 @@ describe('checkHref', () => {
         ).toEqual({ ok: false, code: 'host-not-allowed' });
     });
 
-    it.each(['https://u&commat;evil.com/'])('finds the credentials hidden in %j', (input) => {
-        expect(checkHref(input)).toEqual({ ok: false, code: 'credentials' });
-        expect(checkHref(input, { allowedSchemes: ['https'], allowedHosts: ['evil.com'] })).toEqual({
-            ok: false,
-            code: 'credentials',
-        });
-    });
+    it.each(['https://u&commat;evil.com/', 'https:\\\\u&commat;evil.com/'])(
+        'finds the credentials hidden in %j',
+        (input) => {
+            expect(checkHref(input)).toEqual({ ok: false, code: 'credentials' });
+            expect(checkHref(input, { allowedSchemes: ['https'], allowedHosts: ['evil.com'] })).toEqual({
+                ok: false,
+                code: 'credentials',
+            });
+        },
+    );
 
     it.each(['java&Tab;script:alert(1)', 'java&NewLine;script:alert(1)', 'javascript&colon;alert(1)'])(
         'rejects the scheme hidden in %j',
@@ -185,5 +198,37 @@ describe('checkHref', () => {
         const controls = '\u0001'.repeat(200_000);
         expect(checkHref(`/a${controls}b`)).toEqual({ ok: false, code: 'unparsable' });
         expect(checkHref(`${controls}/brand${controls}`)).toEqual({ ok: true, href: '/brand' });
+    });
+});
+
+describe('checkHref with a host policy', () => {
+    it('refuses an http or https URL with no // before its host, which a browser on an http page would resolve to that host', () => {
+        for (const input of ['https:evil.com', 'http:evil.com/a', 'https:/evil.com', 'https:\\evil.com']) {
+            expect(checkHref(input)).toEqual({ ok: false, code: 'unparsable' });
+            expect(checkHref(input, { allowedHosts: ['*.frontify.com'] })).toEqual({ ok: false, code: 'unparsable' });
+        }
+        expect(checkHref('https:\\\\evil.com', { allowedHosts: ['*.frontify.com'] })).toEqual({
+            ok: false,
+            code: 'host-not-allowed',
+        });
+    });
+
+    it('checks an explicit base.invalid host like any other, while a relative reference takes no host check', () => {
+        for (const input of ['https://base.invalid/phish', '//base.invalid/phish', 'https://BASE.invalid/a']) {
+            expect(checkHref(input, { allowedHosts: ['good.com'] })).toEqual({ ok: false, code: 'host-not-allowed' });
+        }
+        for (const input of ['/guides', 'guide.html', '#top', '?q=a']) {
+            expect(checkHref(input, { allowedHosts: ['good.com'] })).toEqual({ ok: true, href: input });
+        }
+    });
+
+    it('matches a Unicode host entry, with or without the *. prefix, against the ASCII hostname', () => {
+        expect(checkHref('https://münchen.example/a', { allowedHosts: ['münchen.example'] }).ok).toBe(true);
+        expect(checkHref('https://xn--mnchen-3ya.example/a', { allowedHosts: ['münchen.example'] }).ok).toBe(true);
+        expect(checkHref('https://www.münchen.example/a', { allowedHosts: ['*.münchen.example'] }).ok).toBe(true);
+        expect(checkHref('https://muenchen.example/a', { allowedHosts: ['münchen.example'] })).toEqual({
+            ok: false,
+            code: 'host-not-allowed',
+        });
     });
 });

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { fixtureEditorsOf } from '#/features/__tests__/fixtures/editors';
 import {
     COLOR_TOKENS,
+    linked,
     plain,
     STYLE_MAP,
     styled,
@@ -28,6 +29,7 @@ const document = styledDocument(model, [
     styledHeading('brand.caption', 3, plain('Caption heading')),
     styled('brand.legacy', plain('Legacy style')),
     styled('brand.unknown', plain('Unknown style')),
+    styled(null, plain('A '), linked('default link', null), plain(' and a '), linked('button link', 'brand.button')),
 ]);
 
 export interface StyleChange {

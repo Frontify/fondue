@@ -88,7 +88,7 @@ type Props = RichTextEditorProps<object>;
 type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };
 const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
-const SERVICE_MEMBERS = ['persistence', 'recovery'] as const;
+const SERVICE_MEMBERS = ['persistence', 'recovery', 'references'] as const;
 const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
 // A composition that outlasts this wait is measured again, which waits again while it runs.
 const COMPOSITION_WAIT_MS = 1000;
@@ -366,6 +366,7 @@ const SessionComponent = (
         t: () => tRef.current,
         lang: () => langRef.current,
         presentation: () => pluginPresentationOf(latestRef.current.presentation),
+        references: () => memberOf(latestRef.current.services, 'references'),
         testId: () => latestRef.current['data-test-id'] ?? DEFAULT_TEST_ID,
     });
     const switchToolbar = useCallback((next: ToolbarMode) => {

@@ -22,3 +22,69 @@ exports[`compileContentModel manifest > emits the manifest of the core profile s
   ],
 }
 `;
+
+exports[`compileContentModel manifest > emits the manifest of the document profile stand-in 1`] = `
+{
+  "features": [
+    {
+      "id": "core",
+      "options": {},
+      "version": 1,
+    },
+    {
+      "id": "fixture.history",
+      "options": {},
+      "version": 1,
+    },
+    {
+      "id": "fixture.bold",
+      "options": {},
+      "version": 1,
+    },
+    {
+      "id": "fixture.italic",
+      "options": {},
+      "version": 1,
+    },
+    {
+      "id": "links",
+      "options": {
+        "allowedHosts": null,
+        "allowedSchemes": null,
+        "resourceTypes": [],
+      },
+      "version": 1,
+    },
+    {
+      "id": "fixture.color",
+      "options": {},
+      "version": 1,
+    },
+    {
+      "id": "fixture.heading",
+      "options": {
+        "defaultLevel": 3,
+      },
+      "version": 1,
+    },
+  ],
+  "marks": [
+    "link",
+    "font_color",
+    "bold",
+    "italic",
+  ],
+  "model": {
+    "id": "test.model",
+    "version": 1,
+  },
+  "nodes": [
+    "doc",
+    "paragraph",
+    "text",
+    "hard_break",
+    "heading",
+    "rule",
+  ],
+}
+`;

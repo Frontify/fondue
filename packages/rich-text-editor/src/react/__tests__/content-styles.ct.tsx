@@ -14,6 +14,7 @@ const ready = async (page: Page) => {
 };
 const para = (...content: readonly object[]) => ({ type: 'paragraph', attrs: { lang: null }, content });
 const text = (value: string) => ({ type: 'text', text: value });
+const link = { type: 'link', attrs: { href: 'https://example.com/followed', openInNewWindow: false, styleId: null } };
 const blocks = (...nodes: readonly object[]) => nodes as readonly ContentNodeJSON[];
 
 /** Adds a host stylesheet before every other one, so the package rules come later in the cascade. */
@@ -113,6 +114,19 @@ test('reads the surface padding, surface border and placeholder opacity a host s
     expect(await placeholderOpacity()).toBe('0.5');
 });
 
+test('draws links in the computed primary token through the link colour variable', async ({ mount, page }) => {
+    await mount(<EditorProbe texts={['Read the [guide]']} />);
+    await ready(page);
+
+    const link = surfaceOf(page).getByRole('link', { name: 'guide' });
+    await expect(link).toHaveCSS('color', await computedColor(page, 'var(--color-primary-default)'));
+
+    // The default matches the text colour, so a variable the link rule reads is what sets it.
+    await surfaceOf(page).evaluate((surface) => surface.style.setProperty('--rte-content-link-color', 'rgb(1, 2, 3)'));
+
+    await expect(link).toHaveCSS('color', 'rgb(1, 2, 3)');
+});
+
 test('draws the placeholder in the computed secondary token', async ({ mount, page }) => {
     await mount(<EditorProbe texts={['']} placeholder="Write a note" />);
     await ready(page);
@@ -133,7 +147,7 @@ test('puts the root class and the presentation content class on the surface', as
 test('gives the reader root the same classes and content styles as the editor surface', async ({ mount, page }) => {
     // Every block type of the CT stand-ins, until `fixtures/perf/typical` lands.
     const document = blocks(
-        para(text('Read the ')),
+        para(text('Read the '), { type: 'text', text: 'guide', marks: [link] }),
         para(text('b')),
         { type: 'heading', attrs: { nodeId: 'h1', level: 2, lang: null }, content: [text('Title')] },
         { type: 'code_block', attrs: {}, content: [text('a b')] },
@@ -297,6 +311,16 @@ test('prints the text of the editor and the chrome that renders content, such as
     await expect(surfaceOf(page).getByText('Read the')).toBeVisible();
     await expect(surfaceOf(page).getByText('code')).toBeVisible();
     await expect(surfaceOf(page).getByRole('button', { name: 'Ada' })).toBeVisible();
+});
+
+test('prints a link in the editor and the reader', async ({ mount, page }) => {
+    await mount(<EditorProbe texts={['Read the [guide]']} withReader />);
+    await ready(page);
+
+    await page.emulateMedia({ media: 'print' });
+
+    await expect(surfaceOf(page).getByRole('link', { name: 'guide' })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Reader' }).getByRole('link', { name: 'guide' })).toBeVisible();
 });
 
 test('keeps the typed space of ## so the heading rule fires, with the engine white space rules', async ({

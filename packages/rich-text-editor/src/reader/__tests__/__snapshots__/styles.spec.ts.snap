@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`the reader with brand styles > renders the generated stylesheet once before its root, and the link underline the resolver adds 1`] = `
+"<style data-rte-styles="">.rte-style-*{font-family:Georgia, serif;font-size:32px;font-weight:700;color:#1d4ed8}
+.rte-style-*{font-family:Georgia, serif;font-size:32px;font-weight:700;color:#1d4ed8;text-decoration-line:underline}
+.rte-style-*{font-family:Arial, sans-serif;font-size:20px;font-weight:300;line-height:1.5}
+.rte-style-*{font-family:Arial, sans-serif;font-size:20px;font-weight:300;line-height:1.5;text-decoration-line:underline}
+.rte-style-*{font-size:12px;font-weight:600;text-transform:uppercase}
+.rte-style-*{font-size:12px;font-weight:600;text-transform:uppercase;text-decoration-line:underline}
+.rte-style-*{text-decoration:none}
+.rte-style-*{text-decoration:none;text-decoration-line:underline}
+.rte-style-*{text-decoration:none;color:#ffffff;background-color:#1d4ed8;padding:2px 8px;border-radius:4px;font-weight:700}.rte-style-*:hover{background-color:#1e3a8a}</style><div class="fondue-rte-content"><p dir="auto"><a href="https://frontify.com/" rel="noopener" class="rte-style-*">basics</a></p></div>"
+`;

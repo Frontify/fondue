@@ -1,0 +1,83 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../styles/focus-outline';
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-x-small);
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-x-small);
+}
+
+.error {
+    margin: 0;
+    color: var(--color-error-default);
+    font-family: var(--text-body-small-default-font-family);
+    font-size: var(--text-body-small-default-font-size);
+    line-height: var(--text-body-small-default-line-height);
+}
+
+.removed {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-x-small);
+}
+
+.bubble :global([data-rte-node-chrome]) {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xx-small);
+}
+
+// Sized to its one button, so the tooltip anchors where the button is.
+.control {
+    display: flex;
+}
+
+// As a toolbar item shows, with the 2 px below the icon that a pressed item's bar takes.
+.control > button {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    inline-size: 32px;
+    block-size: 32px;
+    padding: 0 0 2px;
+    border: none;
+    border-radius: var(--border-radius-small);
+    background-color: transparent;
+    color: var(--color-primary-default);
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    @include focus-outline.focus-outline;
+
+    // A coarse pointer gets 44 by 44 CSS pixel targets.
+    @media (pointer: coarse) {
+        inline-size: 44px;
+        block-size: 44px;
+    }
+}
+
+// A long URL shortens to one line; the bubble's buttons stay in view.
+.url {
+    max-inline-size: 240px;
+    padding-inline: var(--spacing-x-small);
+    overflow: hidden;
+    color: var(--color-secondary-default);
+    font-family: var(--text-body-small-default-font-family);
+    font-size: var(--text-body-small-default-font-size);
+    line-height: var(--text-body-small-default-line-height);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

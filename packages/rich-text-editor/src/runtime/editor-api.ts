@@ -46,10 +46,18 @@ import {
 } from './document-api';
 import { canRedo, canUndo } from './history';
 import { enterItem, listAround, outdentAtStart } from './lists';
+import { markRunAt, markRunAtPos } from './mark-runs';
 import { inCodeTextblock, nearest as nearestNode, positionOf } from './positions';
 import { type EditorRuntime, summarize } from './runtime';
 import { appendSteps, carrySelection } from './transactions';
-import { type AuthoringPolicy, type CommandOptions, type CommandResult, type CommandState } from './types';
+import {
+    type AuthoringPolicy,
+    type CaptureTargetOptions,
+    type CommandOptions,
+    type CommandResult,
+    type CommandState,
+    type SelectionHandle,
+} from './types';
 
 export { type CommandContext } from '#/definition';
 
@@ -96,10 +104,19 @@ interface ApiSource {
     refused(): void;
     execute(id: string, payload: unknown, options: CommandOptions | undefined): CommandOutcome;
     query(id: string, payload: unknown, options: CommandOptions | undefined): CommandState;
+    capture(range: EditorRange | undefined, options: CaptureTargetOptions): SelectionHandle | undefined;
+    release(target: SelectionHandle): void;
     select(transaction: Transaction, scroll: boolean): boolean;
     policy(): AuthoringPolicy;
     editable(): boolean;
+    /** The position of a surface element, which only the live session has. */
+    positionAt(element: Element): number | undefined;
 }
+
+const NO_OPTIONS: CaptureTargetOptions = {
+    purpose: 'format',
+    onIntersectingEdit: 'map',
+};
 
 const valuesOf = (attrs: Readonly<Record<string, unknown>>): JsonObject => snapshot({ ...attrs }) as JsonObject;
 
@@ -466,6 +483,19 @@ const documentApi = (source: ApiSource): DocumentApi => {
         return type.createAndFill(checked) ?? 'invalid';
     };
     const markType = (mark: string): MarkType | undefined => schema.marks[mark];
+    const runValue = (
+        doc: Node,
+        run: {
+            from: number;
+            to: number;
+            text: string;
+            attrs: Readonly<Record<string, unknown>>;
+        },
+    ) => ({
+        attrs: valuesOf(run.attrs),
+        text: run.text,
+        range: rangeOf(doc, run.from, run.to),
+    });
     const blocksOf = (doc: Node, node: string): BlockValue[] => {
         const found: BlockValue[] = [];
         doc.descendants((child, pos) => {
@@ -575,6 +605,28 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 const { parent } = selection.$from;
                 return parent.inlineContent && parent.type.allowsMarkType(type);
             },
+            run: (mark, options) => {
+                const type = markType(mark);
+                if (type === undefined) {
+                    return undefined;
+                }
+                const state = source.state();
+                if (options?.at !== undefined) {
+                    const pos = source.positionAt(options.at);
+                    const run = pos === undefined ? undefined : markRunAtPos(state, pos, type);
+                    return run === undefined ? undefined : runValue(state.doc, run);
+                }
+                const run = markRunAt(state, type);
+                if (run === undefined) {
+                    return undefined;
+                }
+                // Without `'touching'`, a caret at the run's trailing edge is outside it, as typing there is.
+                const { selection } = state;
+                if (options?.extendToMarkRange !== 'touching' && selection.empty && selection.from === run.to) {
+                    return undefined;
+                }
+                return runValue(state.doc, run);
+            },
             toggle: (mark, attrs) => {
                 if (markType(mark) === undefined) {
                     return false;
@@ -591,7 +643,8 @@ const documentApi = (source: ApiSource): DocumentApi => {
                 }
                 const requested = options?.extendToMarkRange;
                 const extendToMarkRange = requested ?? false;
-                return editWith(EDITS.setMark, { mark, extendToMarkRange }, [mark], attrs, true);
+                const text = options?.text === undefined ? {} : { text: options.text };
+                return editWith(EDITS.setMark, { mark, extendToMarkRange }, [mark], attrs, true, text);
             },
             remove: (marks, options) => {
                 const installed = (typeof marks === 'string' ? [marks] : [...marks]).filter(
@@ -810,6 +863,10 @@ const documentApi = (source: ApiSource): DocumentApi => {
             canUndo: () => canUndo(source.state()),
             canRedo: () => canRedo(source.state()),
         },
+        targets: {
+            capture: (range, options) => source.capture(range, options ?? NO_OPTIONS),
+            release: (target) => source.release(target),
+        },
     };
 };
 
@@ -848,6 +905,19 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
         refused: () => undefined,
         execute: (id, payload, options) => runtime.handle.execute(id, payload, options),
         query: (id, payload, options) => runtime.handle.query(id, payload, options),
+        capture: (range, options) => {
+            if (range === undefined) {
+                const captured = runtime.handle.captureTarget(options);
+                return captured.status === 'captured' ? captured.target : undefined;
+            }
+            const positions = positionsIn(range, runtime.state.doc);
+            if (positions === undefined) {
+                return undefined;
+            }
+            const captured = runtime.captureRange(positions, options);
+            return captured.status === 'captured' ? captured.target : undefined;
+        },
+        release: (target) => runtime.handle.releaseTarget(target),
         select: (transaction, scroll) => {
             const { selection } = transaction;
             if (selection instanceof NodeSelection) {
@@ -865,6 +935,13 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
         editable: () => {
             const { phase, mode } = runtime.handle.getSummary();
             return phase === 'ready' && mode === 'editable';
+        },
+        positionAt: (element) => {
+            const { view } = runtime;
+            if (view === undefined || !view.dom.contains(element)) {
+                return undefined;
+            }
+            return view.posAtDOM(element, 0);
         },
     });
 };
@@ -1113,6 +1190,9 @@ const commandDocumentApi = (
                 disabledReason: enabled ? null : 'not-applicable',
             };
         },
+        // A capture commits on its own, which a running command cannot.
+        capture: () => undefined,
+        release: (target) => context?.defer(() => session?.runtime.handle.releaseTarget(target)),
         select: (transaction) => {
             compose.select(transaction);
             return true;
@@ -1123,6 +1203,7 @@ const commandDocumentApi = (
                 creatableHeadingLevels: [],
             },
         editable: () => session?.runtime.handle.getSummary().mode === 'editable',
+        positionAt: () => undefined,
     });
 };
 

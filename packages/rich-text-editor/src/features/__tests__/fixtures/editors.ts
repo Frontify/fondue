@@ -86,15 +86,19 @@ export const fixtureInputRulesEditor = defineEditorPlugin(fixtureInputRules, {
 });
 
 /**
- * Stands in for the toolbar entries of `marks.italic`, a list toggle, the heading levels and history:
- * an italic toggle, a block toggle over a `toggled_block`, six heading items with payloads and undo and redo
- * buttons, with keys for italic and the block.
+ * Stands in for the toolbar entries of `marks.italic`, a mark button, a list toggle, the heading levels and history:
+ * an italic toggle, a button that toggles the shipped `link` mark, a block toggle over a `toggled_block`, six heading
+ * items with payloads and undo and redo buttons, with keys for italic and the block.
  */
 export const fixtureToolbarEditor = defineEditorPlugin(fixtureToolbar, {
     commands: {
         'fixture.italic.toggle': {
             run: (api) => api.marks.toggle('italic'),
             active: (api) => api.marks.active('italic'),
+        },
+        'fixture.link.edit': {
+            run: (api) => api.marks.toggle('link', { href: 'https://example.com/fixture' }),
+            active: (api) => api.marks.active('link'),
         },
         'fixture.list.toggle': {
             run: (api) => api.blocks.set('toggled_block', undefined, { toggle: true }),
@@ -117,6 +121,13 @@ export const fixtureToolbarEditor = defineEditorPlugin(fixtureToolbar, {
             command: 'fixture.italic.toggle',
             labelKey: 'RichTextEditor_fixtureItalic',
             icon: 'IconTextFormatItalic',
+        },
+        {
+            id: 'link',
+            kind: 'button',
+            command: 'fixture.link.edit',
+            labelKey: 'RichTextEditor_fixtureLink',
+            icon: 'IconLink',
         },
         {
             id: 'list',

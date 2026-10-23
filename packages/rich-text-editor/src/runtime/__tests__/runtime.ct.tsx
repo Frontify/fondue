@@ -78,3 +78,43 @@ test('keeps the same typed and pasted change where the policy allows it', async 
     expect(dom).toContain('xyz');
     expect(dom).toContain('pasted');
 });
+
+test('keeps selection, copy and link activation working once readonly in the same task', async ({ mount, page }) => {
+    await page.route('https://example.com/**', (route) =>
+        route.fulfill({ contentType: 'text/html', body: 'followed' }),
+    );
+    await mount(<EditorProbe texts={['Read the [guide]']} />);
+    await ready(page);
+
+    const editable = await page.evaluate(() => {
+        const surface = document.querySelector('[role="textbox"]');
+        const before = surface?.getAttribute('contenteditable');
+        window.rte?.handle.setMode('readonly');
+        return [before, surface?.getAttribute('contenteditable')];
+    });
+    expect(editable).toEqual(['true', 'false']);
+
+    // A double click on the first word selects it, as on any page text.
+    const paragraph = surfaceOf(page).locator('p');
+    const box = await paragraph.boundingBox();
+    if (box === null) {
+        throw new Error('The paragraph is not visible.');
+    }
+    await paragraph.dblclick({ position: { x: 4, y: box.height / 2 } });
+    expect(await page.evaluate(() => window.getSelection()?.toString())).toBe('Read');
+    // ProseMirror takes the DOM selection on `selectionchange`, after the click, and copies only its own selection.
+    await expect.poll(() => page.evaluate(() => window.rte?.handle.getSummary().selection.collapsed)).toBe(false);
+    const copied = page.evaluate(
+        () =>
+            new Promise<string | undefined>((resolve) => {
+                document.addEventListener('copy', (event) => resolve(event.clipboardData?.getData('text/plain')), {
+                    once: true,
+                });
+            }),
+    );
+    await page.keyboard.press('ControlOrMeta+c');
+    expect(await copied).toBe('Read');
+
+    await surfaceOf(page).getByRole('link', { name: 'guide' }).click();
+    await page.waitForURL('https://example.com/followed');
+});

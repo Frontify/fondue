@@ -5,7 +5,7 @@ import { TextSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mountStyled } from '#/features/__tests__/fixtures/style-editor';
-import { plain, STYLE_MAP, styled, styledHeading, styleFeatures } from '#/features/__tests__/fixtures/styles';
+import { linked, plain, STYLE_MAP, styled, styledHeading, styleFeatures } from '#/features/__tests__/fixtures/styles';
 import { vocabularyAlign } from '#/features/__tests__/fixtures/vocabulary';
 import { codeBlock } from '#/features/blocks-code/feature';
 import { compileContentModel, resolveStyle } from '#/model';
@@ -154,6 +154,33 @@ describe('styles.brand', () => {
             ['Caption', 'false', false],
         ]);
         expect(blocksOf(mounted)).toEqual([styled('brand.caption', plain('Body text'))]);
+    });
+
+    it('keeps a styled link through the restyle of its mount, reading no document change from the mark element', async () => {
+        const mounted = mountStyled({
+            blocks: [styled(null, linked('plain', null), plain(' and '), linked('button', 'brand.button'))],
+        });
+        // ProseMirror reads observed DOM mutations 20 ms after the update that held them back.
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        });
+
+        expect(mounted.changes).toEqual([]);
+        expect(blocksOf(mounted)).toEqual([
+            styled(null, linked('plain', null), plain(' and '), linked('button', 'brand.button')),
+        ]);
+        expect(mounted.view.dom.querySelector('a[data-rte-style="brand.button"]')?.textContent).toBe('button');
+    });
+
+    it('names a styled link mark by data-rte-style in the editor', () => {
+        const mounted = mountStyled({
+            blocks: [styled(null, linked('button', 'brand.button'), linked('plain', null))],
+        });
+
+        expect([...mounted.view.dom.querySelectorAll('a')].map((link) => link.dataset.rteStyle)).toEqual([
+            'brand.button',
+            undefined,
+        ]);
     });
 
     it('changes only the styleId of a heading with block.style.set, never its type, level, nodeId or text, and null resets it', () => {

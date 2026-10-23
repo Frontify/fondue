@@ -1437,6 +1437,8 @@ describe('pasted HTML', () => {
 
     it('lets the parse rules of shipped features read only the listed attributes and styles', () => {
         const attributes = new Set([
+            'href',
+            'target',
             'start',
             'dir',
             'lang',

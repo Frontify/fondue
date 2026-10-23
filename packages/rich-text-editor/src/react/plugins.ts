@@ -11,6 +11,7 @@ import { emojiEditor } from '#/features/emoji/editor';
 import { formatClearEditor } from '#/features/format-clear/editor';
 import { inputRulesEditor } from '#/features/input-rules/editor';
 import { columnsEditor } from '#/features/layout-columns/editor';
+import { linksEditor } from '#/features/links/editor';
 import { bulletListEditor } from '#/features/lists-bullet/editor';
 import { listItemEditor } from '#/features/lists-item/editor';
 import { orderedListEditor } from '#/features/lists-ordered/editor';
@@ -35,6 +36,7 @@ const SHIPPED = [
     codeEditor,
     subscriptEditor,
     superscriptEditor,
+    linksEditor,
     codeBlockEditor,
     ruleEditor,
     listItemEditor,

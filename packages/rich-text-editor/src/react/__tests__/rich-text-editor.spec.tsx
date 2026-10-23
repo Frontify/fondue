@@ -10,7 +10,8 @@ import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'v
 
 import { useEditorSelection } from '#/bridge/hooks';
 import * as schemaModule from '#/definition/schema';
-import { fixtureItalic } from '#/features/__tests__/fixtures/features';
+import { doc, envelope, link, node, text } from '#/features/__tests__/fixtures/documents';
+import { fixtureItalic, fixtureMedia } from '#/features/__tests__/fixtures/features';
 import { notesModel } from '#/features/__tests__/fixtures/notes';
 import {
     vocabularyAlign,
@@ -26,6 +27,7 @@ import {
     vocabularyTables,
 } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
@@ -501,7 +503,7 @@ describe('RichTextEditor host surface', () => {
     it('gives a host mount effect the handle on the first commit, with a shipped editor part installed', () => {
         const linked = defineEditor({
             id: 'test.linked',
-            model: compileContentModel([core()], { id: 'test.editor', version: 1 }),
+            model: compileContentModel([core(), links()], { id: 'test.editor', version: 1 }),
         });
         const seen: (EditorHandle<object> | null)[] = [];
         const Host = () => {
@@ -921,6 +923,53 @@ describe('RichTextEditor documents', () => {
         expect(ref.current?.getSummary().phase).toBe('ready');
         expect(onDocumentChange).not.toHaveBeenCalled();
         expect(save).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    const urls = load('urls.json') as readonly { readonly input: string; readonly ok: boolean }[];
+    const linked = defineEditor({
+        id: 'test.urls',
+        model: compileContentModel([core(), links(), fixtureMedia()], { id: 'fixture.vocabulary', version: 1 }),
+    });
+    const withUrl = (url: string) =>
+        envelope(doc(para(text('Go', link(url))), node('embed', { nodeId: 'e-1', url })), [
+            'core',
+            'links',
+            'fixture.media',
+        ]);
+    const surfaceOf = (url: string) => {
+        const view = render(
+            <RichTextEditor
+                aria-label="Notes"
+                definition={linked}
+                defaultValue={
+                    { documentId: 'document-1', revision: null, document: withUrl(url) } as unknown as LoadedDocument
+                }
+            />,
+        );
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        return view;
+    };
+
+    // oxlint-disable-next-line rte-style/no-view-internals -- `input` is a field of the URL fixture, not of an editor view.
+    it.each(urls.filter(({ ok }) => !ok).map(({ input }) => input))(
+        'renders no href from the unsafe input %j in the editor, as a link or an embed',
+        (input) => {
+            const { unmount } = surfaceOf(input);
+
+            expect(surface().innerHTML).not.toContain('href=');
+            expect(surface().innerHTML).not.toContain('alert(1)');
+            expect(surface()).toHaveTextContent('Go');
+            unmount();
+        },
+    );
+
+    it('renders the link of a checked href in the editor', () => {
+        const { unmount } = surfaceOf('https://example.com/');
+
+        expect(surface().querySelector('a')).toHaveAttribute('href', 'https://example.com/');
         unmount();
     });
 });

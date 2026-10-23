@@ -2,7 +2,7 @@
 
 import { ThemeProvider } from '@frontify/fondue-components';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { createRef, type ReactNode, useContext } from 'react';
+import { createRef, Profiler, type ReactNode, useContext } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnnouncerContext } from '#/bridge/announcer';
@@ -120,6 +120,43 @@ describe('the fixed toolbar', () => {
         );
     });
 
+    it('renders none of the bold, italic and link buttons while 100 characters are typed', () => {
+        let renders = 0;
+        const ref = createRef<EditorHandle<object>>();
+        render(
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={toolbarDefinitions.open}
+                presentation={defineReactPresentation({ toolbar: [TOOLBAR[0] ?? []] })}
+                defaultValue={loaded(para(text('one two three')))}
+                locale={fixtureLocale}
+                ref={ref}
+            >
+                <Profiler id="toolbar" onRender={() => (renders += 1)}>
+                    <RichTextEditor.Toolbar />
+                </Profiler>
+                <RichTextEditor.Surface />
+            </RichTextEditor.Root>,
+        );
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        const handle = ref.current as EditorHandle<object>;
+        act(() => setSelection(handle, { text: 'three', from: 5 }));
+        renders = 0;
+
+        act(() => typeText(handle, 'x'.repeat(100)));
+
+        expect(screen.getAllByRole('button').map((item) => item.getAttribute('aria-label'))).toEqual([
+            'Bold',
+            'Italic',
+            'Link',
+            'More',
+        ]);
+        expect(renders).toBe(0);
+        expect(JSON.stringify(handle.getSnapshot().document.content)).toContain(`three${'x'.repeat(100)}`);
+    });
+
     it('reports mixed for half bold text and pressed for the block toggle the caret sits in', () => {
         const { handle } = mount({
             defaultValue: loaded(para(text('half '), text('bold', [strong])), {
@@ -136,6 +173,7 @@ describe('the fixed toolbar', () => {
         expect(halfBold).toBe('mixed');
         expect(button('List')).toHaveAttribute('aria-pressed', 'true');
         expect(button('Bold')).toHaveAttribute('aria-pressed', 'false');
+        expect(button('Link')).not.toHaveAttribute('aria-pressed');
     });
 
     it('keeps an item that cannot run at the selection focusable, with the reason in its tooltip', async () => {
@@ -221,7 +259,7 @@ describe('the fixed toolbar', () => {
         const { handle } = mount({ defaultValue: loaded(codeBlock('let code = 1')) });
         act(() => setSelection(handle(), { text: 'code' }));
 
-        expect(refused).toEqual(['Italic', 'List', 'More']);
+        expect(refused).toEqual(['Italic', 'Link', 'List', 'More']);
         expect(button('Bold')).toHaveAttribute('aria-disabled', 'true');
     });
 
@@ -543,7 +581,7 @@ describe('toolbar theming and localization', () => {
         });
         const [first, second] = names();
 
-        expect(first).toEqual(['Bold', 'Italic', 'List', 'More']);
+        expect(first).toEqual(['Bold', 'Italic', 'Link', 'List', 'More']);
         expect(second).toEqual(first);
         unmount();
     });

@@ -100,6 +100,7 @@ test('is one tab stop with a label, aria-controls and arrow, Home and End keys',
     await expectFocus(page, 'Bold');
     for (const [key, name] of [
         ['ArrowRight', 'Italic'],
+        ['ArrowRight', 'Link'],
         ['End', 'More'],
         ['Home', 'Bold'],
         ['ArrowLeft', 'More'],
@@ -176,6 +177,24 @@ test('closes an open tooltip first, then returns to the surface with the selecti
     expect(await domSelection(page)).toEqual({ text: 'two', inSurface: true });
 });
 
+test('returns focus to the surface with the resulting selection after bold, link and list items', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ToolbarProbe />);
+    await ready(page);
+    for (const name of ['Bold', 'Link', 'List']) {
+        await surfaceOf(page).focus();
+        await select(page, 'two');
+        await itemOf(page, name).click();
+        await expect.poll(() => domSelection(page)).toEqual({ text: 'two', inSurface: true });
+    }
+
+    expect(await documentHtml(page)).toBe(
+        '<blockquote>one <a href="https://example.com/fixture" rel="noopener"><strong>two</strong></a> three</blockquote>',
+    );
+});
+
 test('disables every item and keeps the toolbar out of the Tab order, with typing, paste and execute refused', async ({
     mount,
     page,
@@ -186,7 +205,7 @@ test('disables every item and keeps the toolbar out of the Tab order, with typin
 
     await expect(surfaceOf(page)).toHaveAttribute('aria-disabled', 'true');
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'false');
-    for (const name of ['Bold', 'Italic', 'List']) {
+    for (const name of ['Bold', 'Italic', 'Link', 'List']) {
         await expect(itemOf(page, name)).toBeDisabled();
         await expect(itemOf(page, name)).toHaveAttribute('tabindex', '-1');
     }
@@ -288,11 +307,14 @@ test.describe('at 320 CSS pixels', () => {
         expect(reachable).toEqual([
             'Bold',
             'Italic',
+            'Link',
             'List',
             ...[1, 2, 3, 4, 5, 6].map((level) => `Heading ${level}`),
             // The labelled key routes of `core` that only More holds.
             'Move up',
             'Move down',
+            // The shipped `link.edit`, which opens the link popover; the probe's toolbar shows the link stand-in instead.
+            'Link',
         ]);
     });
 
@@ -467,7 +489,7 @@ test('names every item as its tooltip label, from the one registry label', async
     await ready(page);
     await surfaceOf(page).click();
     await page.keyboard.press('Alt+F10');
-    for (const name of ['Bold', 'Italic', 'List']) {
+    for (const name of ['Bold', 'Italic', 'Link', 'List']) {
         await expectFocus(page, name);
         await expect(page.locator('[data-rte-tooltip-label]').first()).toHaveText(name);
         await page.keyboard.press('ArrowRight');
@@ -543,7 +565,7 @@ for (const theme of ['light', 'dark'] as const) {
         const changed: boolean[] = [];
 
         await page.keyboard.press('Tab');
-        for (const name of ['Bold', 'Italic', 'List']) {
+        for (const name of ['Bold', 'Italic', 'Link', 'List']) {
             const unfocused = await itemOf(page, name).evaluate((item) => getComputedStyle(item).outlineStyle);
             if (name !== 'Bold') {
                 await page.keyboard.press('ArrowRight');
@@ -850,7 +872,7 @@ test('shows each command with the same registry label and icon in the toolbar an
     await ready(page);
     const inMore = await namesAndIcons(page, true);
 
-    expect(inToolbar.map(({ name }) => name)).toEqual(['Bold', 'Italic', 'List']);
+    expect(inToolbar.map(({ name }) => name)).toEqual(['Bold', 'Italic', 'Link', 'List']);
     // The rows that only More holds follow the items that did not fit.
     expect(inMore.slice(0, inToolbar.length)).toEqual(inToolbar);
 });
@@ -1149,6 +1171,32 @@ test('outlines a focused node chrome button by 2 px at 3:1', async ({ mount, pag
     expect(contrast(outline.color, outline.background)).toBeGreaterThanOrEqual(3);
 });
 
+test('shows no check on a More row of a command that is no toggle, even while it is active', async ({
+    mount,
+    page,
+}) => {
+    const link = {
+        type: 'link',
+        attrs: { href: 'https://example.com/fixture', openInNewWindow: false, styleId: null },
+    };
+    const paragraph = {
+        type: 'paragraph',
+        attrs: { lang: null },
+        content: [{ type: 'text', text: 'linked', marks: [link] }],
+    };
+    await mount(<ToolbarProbe width={60} blocks={[paragraph as never]} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'linked');
+    await itemOf(page, 'More').click();
+
+    // The active link stand-in's row, then the row of the shipped `link.edit`, which the probe's toolbar does not show.
+    const rows = page.getByRole('menuitem', { name: 'Link' });
+    await expect(rows).toHaveCount(2);
+    await expect(rows.first()).toBeVisible();
+    await expect(rows.locator('[data-test-id^="fondue-icons-check"]')).toHaveCount(0);
+});
+
 test('opens More on a click with no pointer or key press before it, as browse mode and voice control send', async ({
     mount,
     page,
@@ -1212,6 +1260,18 @@ const computedColor = (page: Page, value: string) =>
         probe.remove();
         return color;
     }, value);
+const linked = {
+    type: 'paragraph',
+    attrs: { lang: null },
+    content: [
+        { type: 'text', text: 'one two ' },
+        {
+            type: 'text',
+            text: 'guide',
+            marks: [{ type: 'link', attrs: { href: 'https://example.com/a', openInNewWindow: false, styleId: null } }],
+        },
+    ],
+} as never;
 /** The commit count and whether the view is the one the editor mounted with. */
 const session = (page: Page) =>
     page.evaluate(() => {
@@ -1230,7 +1290,7 @@ test('keeps focus rings, text selection and pressed toggles visible in forced co
     page,
 }, testInfo) => {
     await page.emulateMedia({ forcedColors: 'active' });
-    await mount(<ToolbarProbe />);
+    await mount(<ToolbarProbe blocks={[linked]} />);
     await ready(page);
     const shots: Record<string, readonly [Buffer, Buffer]> = {};
 
@@ -1274,6 +1334,25 @@ test('draws the surface focus ring in forced colours', async ({ mount, page }, t
 
     expect(await outlineOf(surfaceOf(page))).toMatchObject({ style: 'solid', width: 2 });
     expect(focused.equals(unfocused)).toBe(false);
+});
+
+test('draws links in the LinkText system colour in forced colours', async ({ mount, page, browserName }, testInfo) => {
+    test.skip(
+        browserName === 'webkit',
+        'WebKit has no forced colours mode: its emulation matches the query and keeps author colours',
+    );
+    await page.emulateMedia({ forcedColors: 'active' });
+    await mount(<ToolbarProbe blocks={[linked]} />);
+    await ready(page);
+    const link = surfaceOf(page).getByRole('link', { name: 'guide' });
+    await testInfo.attach('link in forced colours', {
+        body: await surfaceOf(page).screenshot(),
+        contentType: 'image/png',
+    });
+
+    const color = await link.evaluate((element) => getComputedStyle(element).color);
+    expect(color).toBe(await computedColor(page, 'LinkText'));
+    expect(color).not.toBe(await surfaceOf(page).evaluate((surface) => getComputedStyle(surface).color));
 });
 
 test('keeps the document through zoom, text size, theme, forced colours and reduced motion changes', async ({

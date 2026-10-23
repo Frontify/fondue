@@ -9,7 +9,9 @@ import { NO_COLORS } from '#/clipboard/import/colors';
 import { importHtml } from '#/clipboard/import/html';
 import { buildSchema } from '#/definition/schema';
 import { htmlModel } from '#/features/__tests__/fixtures/html';
-import { defaultLimits } from '#/model';
+import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
+import { compileContentModel, defaultLimits } from '#/model';
 
 import { fromHTML } from '../index';
 
@@ -20,6 +22,22 @@ const model = htmlModel();
 const textOf = (value: unknown): string => JSON.stringify(value);
 
 describe('the HTML import of untrusted markup', () => {
+    it.each([
+        ['allowedHosts', links({ allowedHosts: ['frontify.com'] }), '<a href="https://evil.example">t</a>'],
+        ['allowedSchemes', links({ allowedSchemes: ['https'] }), '<a href="http://frontify.com">t</a>'],
+    ])('keeps the text and drops the link that %s refuses', (_name, feature, html) => {
+        const narrowed = compileContentModel([core(), feature], { id: 'test.links', version: 1 });
+
+        const result = fromHTML(html, narrowed, { window: dom });
+
+        expect(result.status).toBe('editable');
+        if (result.status !== 'editable') {
+            return;
+        }
+        expect(textOf(result.document.content)).toContain('"text":"t"');
+        expect(textOf(result.document.content)).not.toContain('"type":"link"');
+    });
+
     it.each([
         ['a paragraph', '<ul><li style="mso-list:l0 level1 lfo1">A</li><p>LOST</p></ul>', 'LOST'],
         ['text', '<ul><li style="mso-list:l0 level1 lfo1">B</li>TEXT</ul>', 'TEXT'],

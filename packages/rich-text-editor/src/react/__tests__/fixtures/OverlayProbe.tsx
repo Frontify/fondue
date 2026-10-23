@@ -11,6 +11,7 @@ import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
 import { FixtureLinkPopover, FixtureMenu, FixtureSuggestions } from '#/features/__tests__/fixtures/overlays/overlays';
 import { fixturePartsOf } from '#/features/__tests__/fixtures/parts';
 import { fixtureTableBlock } from '#/features/__tests__/fixtures/table/feature';
+import { links } from '#/features/links/feature';
 import {
     type CommandsOfModel,
     defineEditor,
@@ -28,7 +29,16 @@ import { setSelection } from '#/testing';
 import { fixtureLocale, TOOLBAR } from './ToolbarProbe';
 
 const model = compileContentModel(
-    [core(), bold(), fixtureItalic(), fixtureToolbar(), fixtureCodeBlock(), fixtureMediaImage(), fixtureTableBlock()],
+    [
+        core(),
+        bold(),
+        fixtureItalic(),
+        links(),
+        fixtureToolbar(),
+        fixtureCodeBlock(),
+        fixtureMediaImage(),
+        fixtureTableBlock(),
+    ],
     { id: 'test.overlays', version: 1 },
 );
 const definition = defineEditor({ id: 'test.overlays', model, plugins: fixturePartsOf(model) });

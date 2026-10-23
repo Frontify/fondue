@@ -17,6 +17,7 @@ import {
     fixtureRedo,
 } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import {
     compileContentModel,
     type ContentModel,
@@ -81,7 +82,7 @@ describe('compileDefinition', () => {
     });
 
     it('builds schema nodes in declared order and marks by rank, then declared order', () => {
-        const features = [core(), fixtureItalic(), fixtureBold(), fixtureColor(), fixtureHeading()];
+        const features = [core(), fixtureItalic(), fixtureBold(), fixtureColor(), links(), fixtureHeading()];
         const { schema } = compileDefinition(compileContentModel(features, { id: 'test', version: 1 }));
 
         expect(Object.keys(schema.nodes)).toEqual([
@@ -94,7 +95,7 @@ describe('compileDefinition', () => {
             'unsupported_block',
             'unsupported_inline',
         ]);
-        expect(Object.keys(schema.marks)).toEqual(['font_color', 'italic', 'bold', 'unsupported_mark']);
+        expect(Object.keys(schema.marks)).toEqual(['link', 'font_color', 'italic', 'bold', 'unsupported_mark']);
         expect(schema.topNodeType.name).toBe('doc');
         expect(schema.nodes.heading?.spec.group).toBe('block section');
     });

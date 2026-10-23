@@ -18,7 +18,7 @@ import {
 } from '#/model';
 import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/declarations';
 import { type DocumentApi, type EditorRange } from '#/runtime/document-api';
-import { type AuthoringPolicy } from '#/runtime/types';
+import { type AuthoringPolicy, type ReferenceValue } from '#/runtime/types';
 
 import { type NodeViewDeclaration } from './define';
 import { editorApiOf } from './live-api';
@@ -30,6 +30,7 @@ export {
     type CommandOutcome,
     type EditorRange,
     type InsertPlace,
+    type MarkRunValue,
     type NodeValue,
     sameRange,
     type SelectionValue,
@@ -37,9 +38,11 @@ export {
     type WriteTarget,
 } from '#/runtime/document-api';
 export { passesToBrowser } from '#/runtime/browser-keys';
+export { type ReferenceValue, type SelectionHandle } from '#/runtime/types';
 export { type Announcer, createAnnouncer } from './announcer';
 export { useClientLayoutEffect } from './client-layout-effect';
 export { OverlayBody, passEscape, useEditorOverlay, useOverlayContainer, useScopedFocus } from './overlays';
+export { useApplePlatform } from './platform';
 
 /** A rectangle an overlay anchors to, as Fondue's `virtualAnchor` takes it. */
 export interface OverlayAnchor {
@@ -65,6 +68,16 @@ export interface StandingOverlayProps {
     readonly covered: boolean;
 }
 
+/** One page of the host's reference search, of the values the session keeps, and the cursor of the next page. */
+export interface ReferenceSearch {
+    search(
+        query: string,
+        resourceTypes: readonly string[],
+        signal: AbortSignal,
+        cursor: string | null,
+    ): Promise<{ readonly items: readonly ReferenceValue[]; readonly nextCursor: string | null }>;
+}
+
 /** The presentation as plugins read it. */
 export interface PluginPresentation {
     readonly styles: readonly PresentationStyle[];
@@ -78,6 +91,8 @@ export interface PluginPresentation {
 /** Host data that only some plugins use, kept in one member so none of it can shadow a document member. */
 export interface PluginServices {
     readonly presentation: () => PluginPresentation;
+    /** The host's reference search, or `undefined` without one. */
+    readonly references: () => ReferenceSearch | undefined;
 }
 
 /** What the editor around a plugin hosts for it: strings, services, overlays, the live region and focus. */
@@ -88,7 +103,12 @@ export interface EditorHosts {
     readonly locale: () => string;
     readonly services: PluginServices;
     readonly overlays: {
-        /** Opens `component` with `props`, anchored to `anchor`, in place of any overlay a command opened before. */
+        /**
+         * Opens `component` with `props`, anchored to `anchor`, in place of any overlay a command opened before. To open
+         * one from a click on a mark, keep a standing overlay (`overlays` of the editor part) or have the part listen to
+         * `api.surface()`, then, in the click handler, read `run = api.marks.run(mark, { at: event.target })` and call
+         * `overlays.open(Component, props, run.range)`.
+         */
         open<P extends object>(component: ComponentType<P & OverlayProps>, props: P, anchor?: AnchorTarget): void;
         close(): void;
         isOpen(): boolean;
@@ -114,7 +134,7 @@ export interface EditorHosts {
 
 /**
  * What plugin commands and plugin UI act through, with no engine type: reads of the selection and content, writes that
- * each run as one undo step, and the editor's hosts. Inside a command, writes join the command's one
+ * each run as one undo step, mapped targets, and the editor's hosts. Inside a command, writes join the command's one
  * undo step and host actions wait until the command has run.
  */
 export type EditorApi = DocumentApi & EditorHosts;
@@ -237,7 +257,7 @@ export interface EditorPluginParts {
     readonly keys?: Readonly<Record<KeyBinding, CommandRef | KeyHandler>>;
     readonly inputRules?: readonly InputRule[];
     readonly toolbar?: readonly PluginToolbarEntry[];
-    /** Overlays the editor keeps mounted, which decide themselves when to show. */
+    /** Overlays the editor keeps mounted, which decide themselves when to show; `EditorHosts.overlays.open` has the recipe for one a click on a mark opens. */
     readonly overlays?: readonly ComponentType<StandingOverlayProps>[];
     /** Decorations over textblocks, which the editor derives again only for a block a change touched. */
     readonly decorations?: readonly BlockDecorationSource[];

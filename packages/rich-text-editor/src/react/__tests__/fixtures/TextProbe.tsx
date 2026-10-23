@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import { bold, code, core, heading, italic, quote, strike, subscript, superscript, underline } from '#/features';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { fixtureChromeEditor } from '#/features/__tests__/fixtures/chrome/view';
+import { links } from '#/features/links/feature';
 import { defineEditor, defineEditorPlugin, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON, defineFeature } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
@@ -36,6 +37,7 @@ const model = compileContentModel(
         superscript(),
         heading(),
         quote(),
+        links(),
         fixtureChrome(),
         altGraphKeys(),
     ],
@@ -65,6 +67,31 @@ const documentOf = (
     },
 });
 
+/** A paragraph of `text`, with each run inside `*` and `*` italic, `_` and `_` bold and `[` and `]` a link. */
+const markedParagraph = (text: string): ContentNodeJSON => ({
+    type: 'paragraph',
+    attrs: { lang: null },
+    content: text
+        .split(/(\*[^*]*\*|_[^_]*_|\[[^\]]*\])/)
+        .filter((part) => part !== '')
+        .map((part) => {
+            const inner = part.slice(1, -1);
+            if (part.startsWith('*')) {
+                return { type: 'text', text: inner, marks: [{ type: 'italic' }] };
+            }
+            if (part.startsWith('_')) {
+                return { type: 'text', text: inner, marks: [{ type: 'bold' }, { type: 'underline' }] };
+            }
+            if (part.startsWith('[')) {
+                const link = {
+                    type: 'link',
+                    attrs: { href: 'https://example.com', openInNewWindow: false, styleId: null },
+                };
+                return { type: 'text', text: inner, marks: [link] };
+            }
+            return { type: 'text', text: part };
+        }),
+});
 const plainParagraph = (text: string): ContentNodeJSON => ({
     type: 'paragraph',
     attrs: { lang: null },
@@ -73,6 +100,8 @@ const plainParagraph = (text: string): ContentNodeJSON => ({
 
 declare global {
     interface Window {
+        /** The handles of the two editors of `MarkedAndPlainProbe`, by name, and the selection helper. */
+        markedAndPlain?: { readonly Marked: EditorHandle; readonly setSelection: typeof setSelection };
         /** The text probe's handle, the selection helper, and each change as `origin commandId`. */
         textRte?: {
             readonly handle: EditorHandle;
@@ -139,5 +168,41 @@ export const TextProbe = ({
                 onDocumentChange={({ origin, commandId }) => changesRef.current.push(`${origin} ${commandId ?? ''}`)}
             />
         </ThemeProvider>
+    );
+};
+
+/**
+ * The same lines twice: with marks and links in the editor named Marked, and as plain text in a bare `contenteditable`
+ * named Plain, with the surface's content styles, so the browser alone edits it.
+ */
+export const MarkedAndPlainProbe = ({ lines }: { readonly lines: readonly string[] }) => {
+    const markedRef = useRef<EditorHandle>(null);
+    useEffect(() => {
+        if (markedRef.current !== null) {
+            window.markedAndPlain = { Marked: markedRef.current, setSelection };
+        }
+    }, []);
+    return (
+        <>
+            <RichTextEditor
+                aria-label="Marked"
+                definition={definition}
+                defaultValue={documentOf(lines.map(markedParagraph), model.capabilities)}
+                ref={markedRef}
+            />
+            <div
+                role="textbox"
+                aria-label="Plain"
+                aria-multiline
+                contentEditable
+                suppressContentEditableWarning
+                className="fondue-rte-content"
+                data-rte-surface=""
+            >
+                {lines.map((line) => (
+                    <p key={line}>{line.replaceAll(/[*_[\]]/g, '')}</p>
+                ))}
+            </div>
+        </>
     );
 };

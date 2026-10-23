@@ -5,12 +5,15 @@ import { describe, expect, it } from 'vitest';
 
 import { fixtureHeading } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel } from '#/model';
 
 import { buildSchema } from '../schema';
 
-const schema = buildSchema(compileContentModel([core(), bold(), fixtureHeading()], { id: 'test.parse', version: 1 }));
+const schema = buildSchema(
+    compileContentModel([core(), bold(), links(), fixtureHeading()], { id: 'test.parse', version: 1 }),
+);
 const parse = (html: string) => {
     const host = document.createElement('div');
     host.innerHTML = html;
@@ -38,6 +41,12 @@ describe('compiled parse rules', () => {
                 attrs: { level: 2, unknownAttributes: null },
                 content: [{ type: 'text', text: 'd' }],
             }),
+        );
+    });
+
+    it('keeps the default for a value its declaration rejects and drops a rule it cannot fill', () => {
+        expect(parse('<p lang="en_US">a</p><p><a href="javascript:alert(1)">b</a></p>')).toEqual(
+            doc(paragraph({}, { type: 'text', text: 'a' }), paragraph({}, { type: 'text', text: 'b' })),
         );
     });
 });

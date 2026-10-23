@@ -3,12 +3,25 @@
 import { type ContentNodeJSON, type JsonObject } from '#/model';
 
 import { positionsOf } from './editor-api';
-import { type CommandOptions, type CommandState, type SelectionSummary } from './types';
+import {
+    type CaptureTargetOptions,
+    type CommandOptions,
+    type CommandState,
+    type SelectionHandle,
+    type SelectionSummary,
+} from './types';
 
 declare const rangeBrand: unique symbol;
 /** A stretch of the document as it was when read, such as a whole mark run: an overlay anchors to it, a target captures it. */
 export interface EditorRange {
     readonly [rangeBrand]: true;
+}
+
+/** The whole run of one mark around the selection or an element. */
+export interface MarkRunValue {
+    readonly attrs: JsonObject;
+    readonly text: string;
+    readonly range: EditorRange;
 }
 
 /** One node with the stretch it covers. */
@@ -92,16 +105,30 @@ export interface DocumentApi {
         installed(): readonly string[];
         /** Whether the selection can carry `mark`: its selected text, or the content where it stands, takes it. */
         allowed(mark: string): boolean;
-        toggle(mark: string, attrs?: JsonObject): boolean;
-        /** Sets `mark` with `attrs`. */
-        set(mark: string, attrs: JsonObject, options?: { readonly extendToMarkRange?: boolean }): boolean;
         /**
-         * With `extendToMarkRange`, the whole run around the selection. With `wholeBlocks`, a caret clears them from its
-         * whole textblock.
+         * The whole run of `mark` around the selection, or the run that holds `at`, an element of the surface; with
+         * `extendToMarkRange: 'touching'`, a caret at its trailing edge finds it too. Its `range` is what
+         * `overlays.open(component, props, run.range)` anchors to, as the handler of a click on the mark does with
+         * `at: event.target`.
+         */
+        run(
+            mark: string,
+            options?: { readonly extendToMarkRange?: boolean | 'touching'; readonly at?: Element },
+        ): MarkRunValue | undefined;
+        toggle(mark: string, attrs?: JsonObject): boolean;
+        /** Sets `mark` with `attrs`; `text` at a caret outside the mark inserts it, and replaces the run's text when it differs. */
+        set(
+            mark: string,
+            attrs: JsonObject,
+            options?: { readonly extendToMarkRange?: boolean | 'touching'; readonly text?: string },
+        ): boolean;
+        /**
+         * With `extendToMarkRange`, the whole run around the selection; with `'touching'`, a run a caret ends too. With
+         * `wholeBlocks`, a caret clears them from its whole textblock.
          */
         remove(
             marks: string | readonly string[],
-            options?: { readonly extendToMarkRange?: boolean; readonly wholeBlocks?: boolean },
+            options?: { readonly extendToMarkRange?: boolean | 'touching'; readonly wholeBlocks?: boolean },
         ): boolean;
         /** Sets again the last of the marks `names` that a command set in this session, `false` when none did. */
         reapply(names: readonly string[]): boolean;
@@ -220,6 +247,12 @@ export interface DocumentApi {
         redo(): boolean;
         canUndo(): boolean;
         canRedo(): boolean;
+    };
+    /** Targets for work that completes later, which map through every change made meanwhile. */
+    readonly targets: {
+        /** Captures `range`, else the selection; `undefined` inside a command or while the editor is busy. */
+        capture(range?: EditorRange, options?: CaptureTargetOptions): SelectionHandle | undefined;
+        release(target: SelectionHandle): void;
     };
 }
 

@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
-import { TextProbe } from '#/react/__tests__/fixtures/TextProbe';
+import { MarkedAndPlainProbe, TextProbe } from '#/react/__tests__/fixtures/TextProbe';
 
 import { cspViolationsOf } from '../../../../playwright/csp';
 
@@ -36,6 +36,87 @@ const select = (page: Page, text: string, from = 0, to = text.length) =>
         },
         [text, from, to] as const,
     );
+
+test('moves, selects and deletes across marks, links and blocks as in the same plain text @engine', async ({
+    mount,
+    page,
+}) => {
+    const lines = ['Read *the* whole _guide_ before [you] start.', 'A *second* line with [more] text.'];
+    const apple = await isApple(page);
+    let word = 'Control';
+    let line = 'Home';
+    if (apple) {
+        word = 'Alt';
+        line = 'Control+a';
+    }
+    // Each case: the block and offset the caret starts at, then the keys pressed.
+    const cases: readonly (readonly [number, number, readonly string[]])[] = [
+        [0, 3, ['ArrowRight', 'ArrowRight', 'ArrowRight', 'ArrowLeft']],
+        [0, 3, ['Shift+ArrowRight', 'Shift+ArrowRight', 'Shift+ArrowRight', 'Shift+ArrowRight']],
+        [0, 0, [`${word}+ArrowRight`, `${word}+ArrowRight`, `${word}+ArrowRight`, `${word}+ArrowRight`]],
+        [0, 30, [`Shift+${word}+ArrowLeft`, `Shift+${word}+ArrowLeft`]],
+        [0, 12, [line]],
+        [0, 12, ['ArrowDown']],
+        [1, 0, ['ArrowLeft', 'ArrowLeft']],
+        [1, 0, ['Backspace']],
+        [0, 38, ['Delete']],
+        [0, 21, [`${word}+Backspace`]],
+        [0, 17, ['Backspace', 'Backspace', 'Delete', 'Delete']],
+        [1, 2, ['Shift+ArrowDown', 'Shift+End']],
+        [1, 2, ['Shift+ControlOrMeta+ArrowUp']],
+        [1, 2, ['Shift+ControlOrMeta+ArrowDown']],
+    ];
+    /** The DOM selection in the editor named `name` as block and offset, then the text of each block. */
+    const stateOf = (name: string) =>
+        page.evaluate((label) => {
+            const surface = document.querySelector(`[aria-label="${label}"][contenteditable]`) as HTMLElement;
+            const pointOf = (node: Node | null, offset: number) => {
+                const block = [...surface.children].findIndex((child) => node !== null && child.contains(node));
+                const range = document.createRange();
+                range.setStart(surface.children[block] as Node, 0);
+                range.setEnd(node as Node, offset);
+                return [block, range.toString().length];
+            };
+            const selection = window.getSelection() as Selection;
+            return {
+                anchor: pointOf(selection.anchorNode, selection.anchorOffset),
+                focus: pointOf(selection.focusNode, selection.focusOffset),
+                blocks: [...surface.children].map((child) => child.textContent),
+            };
+        }, name);
+    /** Focuses the editor named `name` and puts the caret at `offset` characters into its block `block`. */
+    const caretAt = (name: 'Marked' | 'Plain', block: number, offset: number) =>
+        page.evaluate(
+            ([label, index, at, text]) => {
+                const surface = document.querySelector(`[aria-label="${label}"][contenteditable]`) as HTMLElement;
+                surface.focus();
+                if (label === 'Marked') {
+                    const probe = window.markedAndPlain as NonNullable<Window['markedAndPlain']>;
+                    probe.setSelection(probe.Marked, { text, from: at, to: at });
+                    return;
+                }
+                const line = surface.children[index]?.firstChild as Node;
+                window.getSelection()?.collapse(line, at);
+            },
+            [name, block, offset, (lines[block] ?? '').replaceAll(/[*_[\]]/g, '')] as const,
+        );
+    const results: Record<string, unknown[]> = { Marked: [], Plain: [] };
+    for (const [block, offset, keys] of cases) {
+        for (const name of ['Marked', 'Plain'] as const) {
+            const component = await mount(<MarkedAndPlainProbe lines={lines} />);
+            await ready(page);
+            await caretAt(name, block, offset);
+            await settleFocus(page);
+            for (const key of keys) {
+                await page.keyboard.press(key);
+            }
+            results[name]?.push(await stateOf(name));
+            await component.unmount();
+        }
+    }
+
+    expect(results.Marked).toEqual(results.Plain);
+});
 
 test('selects the whole document with Mod+A when it starts with a node view @engine', async ({ mount, page }) => {
     await mount(<TextProbe texts={['After the code']} nodeViewFirst />);

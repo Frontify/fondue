@@ -54,6 +54,25 @@ describe('fromHTML', () => {
         },
     );
 
+    it('keeps the headings, marks, lists, link target, lang, dir and alt text of the Chromium capture', () => {
+        const content = JSON.stringify(contentOf(readUrl(new URL('chromium-article.html', clipboardFixtures))));
+        // Chromium writes each block's computed colour, which the model keeps as a literal colour of its text.
+        for (const kept of [
+            '"type":"heading","attrs":{"nodeId":',
+            '"level":2',
+            '"marks":[{"type":"bold"}]',
+            '"marks":[{"type":"subscript"}]',
+            '"type":"ordered_list","attrs":{"start":3}',
+            '"type":"bullet_list"',
+            '"type":"blockquote"',
+            '"href":"https://www.frontify.com/","openInNewWindow":true',
+            '{"type":"language","attrs":{"lang":"ar","dir":"rtl"}}',
+            '"attrs":{"lang":"de","align":null},"content":[{"type":"text","text":"Ein Bild: Frontify logo"}]',
+        ]) {
+            expect(content).toContain(kept);
+        }
+    });
+
     it('keeps every heading level, literal colour and justified text with no definition', () => {
         const levels = [1, 2, 3, 4, 5, 6];
         const html = levels.map((level) => `<h${level} style="text-align: justify">H${level}</h${level}>`).join('');

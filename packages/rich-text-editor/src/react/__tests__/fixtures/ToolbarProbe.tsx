@@ -8,6 +8,7 @@ import { bold, core } from '#/features';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { fixtureItalic, fixtureList, fixtureToolbar } from '#/features/__tests__/fixtures/features';
 import { fixturePartsOf } from '#/features/__tests__/fixtures/parts';
+import { links } from '#/features/links/feature';
 import {
     type CommandsOfModel,
     defineEditor,
@@ -22,7 +23,7 @@ import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel(
-    [core(), bold(), fixtureItalic(), fixtureList(), fixtureToolbar(), fixtureCodeBlock()],
+    [core(), bold(), fixtureItalic(), links(), fixtureList(), fixtureToolbar(), fixtureCodeBlock()],
     { id: 'test.toolbar', version: 1 },
 );
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
@@ -43,6 +44,7 @@ export const fixtureLocale = {
     translationStrings: {
         ...enUS.translationStrings,
         RichTextEditor_fixtureItalic: 'Italic',
+        RichTextEditor_fixtureLink: 'Link',
         RichTextEditor_fixtureList: 'List',
         RichTextEditor_fixtureStrong: 'Strong',
         RichTextEditor_fixtureHeading1: 'Heading 1',
@@ -62,9 +64,9 @@ export const fixtureLocale = {
     },
 };
 
-/** Bold and italic, then the list stand-in, as two presentation groups. */
+/** Bold, italic and link, then the list stand-in, as two presentation groups. */
 export const TOOLBAR: ReactPresentation['toolbar'] = [
-    ['mark.bold.toggle', 'fixture.italic.toggle'],
+    ['mark.bold.toggle', 'fixture.italic.toggle', 'fixture.link.edit'],
     ['fixture.list.toggle'],
 ];
 /** The same with a group of six heading levels, too wide for 320 CSS pixels. */

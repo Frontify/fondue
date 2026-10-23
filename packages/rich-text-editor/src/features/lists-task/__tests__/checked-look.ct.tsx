@@ -6,6 +6,8 @@ import { type Page } from '@playwright/test';
 import { paragraph, taskItem, tasks } from '#/react/__tests__/fixtures/list-blocks';
 import { ListProbe } from '#/react/__tests__/fixtures/ListProbe';
 
+import { StruckProbe } from './fixtures/StruckProbe';
+
 const blocks = [tasks(taskItem('task-1', 'Open', false), taskItem('task-2', 'Done', true))];
 
 type Surface = 'editor' | 'reader';
@@ -123,5 +125,26 @@ test('strikes and greys every own block of a checked task, not the unchecked tas
         expect(also.color).toBe(done.color);
         expect(open.struck).toBe(false);
         expect(open.color).not.toBe(done.color);
+    }
+});
+
+test('greys every run of a struck checked task, over its inline colour, a link and a brand style colour', async ({
+    mount,
+    page,
+}) => {
+    await mount(<StruckProbe />);
+    await ready(page);
+
+    for (const surface of ['editor', 'reader'] as const) {
+        const red = await strikeOf(page, surface, 'Red');
+        const button = await strikeOf(page, surface, 'Button');
+        const nested = await strikeOf(page, surface, 'Nested');
+        expect(red.struck).toBe(true);
+        expect(red.color).toBe(red.block);
+        expect(button.color).toBe(red.block);
+        expect(red.color).not.toBe('rgb(255, 0, 0)');
+        expect(button.color).not.toBe('rgb(255, 255, 255)');
+        expect(nested.struck).toBe(false);
+        expect(nested.color).not.toBe(red.block);
     }
 });

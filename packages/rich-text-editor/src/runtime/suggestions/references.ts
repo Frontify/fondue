@@ -1,18 +1,32 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { checkHref } from '#/model';
+import { holdsControls, withoutBidiControls } from '#/model/references';
+import { isRecord, isValidValue } from '#/model/values';
+
+import { type ReferenceValue } from '../types';
 
 import { type SuggestionItem } from './plugin';
 
-// The most options a reference list shows, however many pages it loads.
+// A person picker shows a page of this many, and stops paging at the total.
+export const MAX_PAGE_ITEMS = 50;
 export const MAX_ITEMS = 200;
+// A longer cursor is no page token; the list offers no further page.
+const MAX_CURSOR = 1024;
+// A label longer than a name is no name a list shows.
+const MAX_LABEL = 256;
+// C0 and C1 control characters, which no shown label holds.
+const CONTROL = /[\u0000-\u001F\u007F-\u009F]/u;
 export const KINDS: ReadonlySet<string> = new Set(['user', 'group', 'everyone']);
+const STORED_ID = { type: 'id' } as const;
 
 /** One page of a reference search as the list shows it: the items it keeps, and the cursor of the next page. */
 export interface ReferenceResults {
     readonly items: readonly SuggestionItem[];
     readonly nextCursor: string | null;
 }
+
+const nonEmpty = (value: unknown): value is string => typeof value === 'string' && value !== '';
 
 /** Whether `value` passes `checkHref` as an absolute `https:` URL, the only avatar the list loads. */
 export const isHttpsUrl = (value: string): boolean => {
@@ -25,6 +39,88 @@ export const isHttpsUrl = (value: string): boolean => {
     } catch {
         // A relative reference parses against no base.
         return false;
+    }
+};
+
+/** A host result as the session keeps it, or `undefined` when its type, IDs or label cannot be stored or shown. */
+const valueOf = (
+    value: unknown,
+    resourceTypes: readonly string[],
+    maxAttributeLength: number,
+): ReferenceValue | undefined => {
+    if (!isRecord(value)) {
+        return undefined;
+    }
+    const { resourceType, resourceId, imageUrl, kind } = value;
+    if (!nonEmpty(resourceType) || !isValidValue(STORED_ID, resourceType) || holdsControls(resourceType)) {
+        return undefined;
+    }
+    if (resourceTypes.length > 0 && !resourceTypes.includes(resourceType)) {
+        return undefined;
+    }
+    if (!nonEmpty(resourceId) || resourceId.length > maxAttributeLength || holdsControls(resourceId)) {
+        return undefined;
+    }
+    let labelSnapshot: unknown = value.labelSnapshot;
+    if (typeof labelSnapshot === 'string') {
+        labelSnapshot = withoutBidiControls(labelSnapshot);
+    }
+    if (!nonEmpty(labelSnapshot) || labelSnapshot.length > MAX_LABEL || CONTROL.test(labelSnapshot)) {
+        return undefined;
+    }
+    let kept: ReferenceValue = { resourceType, resourceId, labelSnapshot };
+    if (typeof value.href === 'string') {
+        kept = { ...kept, href: value.href };
+    }
+    if (typeof imageUrl === 'string' && isHttpsUrl(imageUrl)) {
+        kept = { ...kept, imageUrl };
+    }
+    if (typeof kind === 'string' && KINDS.has(kind)) {
+        kept = { ...kept, kind: kind as NonNullable<ReferenceValue['kind']> };
+    }
+    return kept;
+};
+
+const pageOf = (page: unknown, resourceTypes: readonly string[], maxAttributeLength: number) => {
+    if (!isRecord(page) || !Array.isArray(page.items)) {
+        return undefined;
+    }
+    const items: ReferenceValue[] = [];
+    const keys = new Set<string>();
+    for (const value of (page.items as readonly unknown[]).slice(0, MAX_PAGE_ITEMS)) {
+        const kept = valueOf(value, resourceTypes, maxAttributeLength);
+        if (kept === undefined) {
+            continue;
+        }
+        const resource = `${kept.resourceType}:${kept.resourceId}`;
+        if (!keys.has(resource)) {
+            keys.add(resource);
+            items.push(kept);
+        }
+    }
+    let nextCursor: string | null = null;
+    if (nonEmpty(page.nextCursor) && page.nextCursor.length <= MAX_CURSOR) {
+        nextCursor = page.nextCursor;
+    }
+    return { items, nextCursor };
+};
+
+/**
+ * The values of a search page the session keeps: of its first 50 items, each whose `resourceType` is a `StoredId` the
+ * request asked for (any type for an empty list), whose IDs and label are not empty, whose `resourceId` fits
+ * `maxAttributeLength` and whose label, without bidirectional controls, is at most 256 characters with no control
+ * character, once per resource, with an avatar only over `https:`; `undefined` for a page of another shape or one
+ * that throws while it is read.
+ */
+export const referenceValues = (
+    page: unknown,
+    resourceTypes: readonly string[],
+    maxAttributeLength: number,
+): { readonly items: readonly ReferenceValue[]; readonly nextCursor: string | null } | undefined => {
+    try {
+        return pageOf(page, resourceTypes, maxAttributeLength);
+    } catch {
+        return undefined;
     }
 };
 

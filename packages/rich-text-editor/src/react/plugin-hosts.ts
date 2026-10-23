@@ -14,6 +14,9 @@ import {
     type PluginPresentation,
 } from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
+import { referenceValues } from '#/runtime/suggestions/references';
+
+import { type ReferenceService } from './types';
 
 /** The overlay a plugin command opened, with what it renders with; `id` remounts it when it opens again. */
 export interface PluginOverlay {
@@ -32,6 +35,7 @@ interface HostSources {
     readonly t: () => CodecContext['t'];
     readonly lang: () => string;
     readonly presentation: () => PluginPresentation;
+    readonly references: () => ReferenceService | undefined;
     readonly testId: () => string;
 }
 
@@ -51,7 +55,31 @@ export const usePluginHosts = (sources: HostSources) => {
         return {
             t: (key, values) => sources.t()(key, values),
             locale: sources.lang,
-            services: { presentation: sources.presentation },
+            services: {
+                presentation: sources.presentation,
+                references: () => {
+                    const service = sources.references();
+                    const runtime = coordinator.runtime;
+                    if (service === undefined || runtime === undefined) {
+                        return undefined;
+                    }
+                    return {
+                        search: async (query, resourceTypes, signal, cursor) => {
+                            const session = runtime.handle.getSummary().session;
+                            const page = await service.search(
+                                { query, resourceTypes: [...resourceTypes], cursor },
+                                { signal, session },
+                            );
+                            // The session checks the host's page as untrusted input.
+                            const kept = referenceValues(page, resourceTypes, runtime.limits.maxAttributeLength);
+                            if (kept === undefined) {
+                                throw new TypeError('The reference service answered no page.');
+                            }
+                            return kept;
+                        },
+                    };
+                },
+            },
             overlays: {
                 open: (component, props, target = 'selection') => {
                     opened += 1;

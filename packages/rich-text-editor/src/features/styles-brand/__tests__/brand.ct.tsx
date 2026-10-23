@@ -48,6 +48,8 @@ const STYLED = [
     ['h3', 'Caption heading'],
     ['p', 'Legacy style'],
     ['p', 'Unknown style'],
+    ['a', 'default link'],
+    ['a', 'button link'],
 ] as const;
 
 test('renders every style of the fixture map with the same computed typography in the editor and the reader', async ({
@@ -63,6 +65,11 @@ test('renders every style of the fixture map with the same computed typography i
         expect([text, await typographyOf(editor)]).toEqual([text, await typographyOf(reader)]);
     }
     await expect(surfaceOf(page).locator('h2', { hasText: 'Title style' })).toHaveCSS('font-size', '32px');
+    await expect(surfaceOf(page).locator('a', { hasText: 'default link' })).toHaveCSS(
+        'text-decoration-line',
+        'underline',
+    );
+    await expect(surfaceOf(page).locator('a', { hasText: 'button link' })).toHaveCSS('text-decoration-line', 'none');
     await expect(surfaceOf(page).locator('p', { hasText: 'Legacy style' })).toHaveAttribute(
         'data-rte-style',
         'brand.legacy',

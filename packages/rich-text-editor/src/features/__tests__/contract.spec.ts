@@ -22,6 +22,7 @@ import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
 import { vocabularyLists } from '#/features/__tests__/fixtures/vocabulary';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { featureRecords, registry } from '#/features/registry';
 import { fromHTML } from '#/html';
 import { defineEditor, defineEditorPlugin, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
@@ -467,6 +468,58 @@ describe('the feature contract suite', () => {
             }
 
             expect(failing).toEqual([[], [RENDERS('fixture 1')], [RENDERS('fixture 1')], [RENDERS('fixture 1')]]);
+        } finally {
+            vi.mocked(createCodecs).mockRestore();
+        }
+    });
+
+    it('passes a new-window link whose reader text is visually hidden, and fails any other difference from toHTML', async () => {
+        const opened = stored(
+            [
+                paragraph(text('Read '), {
+                    type: 'text',
+                    text: 'the guide',
+                    marks: [
+                        { type: 'link', attrs: { href: 'https://frontify.com', openInNewWindow: true, styleId: null } },
+                    ],
+                }),
+            ],
+            ['core', 'links'],
+        );
+        const features = [core(), heading(), blockAlign(), links()];
+        const { createCodecs: actual } = await vi.importActual<{ createCodecs: typeof createCodecs }>('#/codecs');
+        const breaking = (from: string, to: string) =>
+            vi.mocked(createCodecs).mockImplementation((model, options) => {
+                const codecs = actual(model, options);
+                return {
+                    ...codecs,
+                    toHTML: (document, htmlOptions) => {
+                        const output = codecs.toHTML(document, htmlOptions);
+                        return { ...output, html: output.html.replace(from, to) };
+                    },
+                };
+            });
+        // The shipped fixtures need features this list leaves out, so only the cases of the given document count.
+        const failingOfDocument = async () => {
+            const failing = await failingCases(features, [opened]);
+            return failing.filter((title) => title.endsWith('fixture 1') || title.includes('fixture 1 '));
+        };
+        try {
+            breaking('', '');
+            const intact = await failingOfDocument();
+            breaking(' rel="noopener noreferrer"', '');
+            const attribute = await failingOfDocument();
+            breaking('the guide', 'the guide (opens in a new window)');
+            const shown = await failingOfDocument();
+            breaking('the guide', 'the guide<span data-rte-hidden-text=""> (opens in a new window)</span>');
+            const hidden = await failingOfDocument();
+
+            expect([intact, attribute, shown, hidden]).toEqual([
+                [],
+                [RENDERS('fixture 1')],
+                [RENDERS('fixture 1')],
+                [RENDERS('fixture 1')],
+            ]);
         } finally {
             vi.mocked(createCodecs).mockRestore();
         }

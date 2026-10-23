@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { compileDefinition } from '#/definition';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, defaultLimits } from '#/model';
 import { type TreeNode } from '#/model/content';
@@ -17,7 +18,8 @@ import { createLimitCheck } from '../limits';
 
 failNetworkInThisFile();
 
-const model = compileContentModel([core(), bold()], { id: 'test.limits', version: 1 });
+const model = compileContentModel([core(), bold(), links()], { id: 'test.limits', version: 1 });
+const link = { type: 'link', attrs: { href: 'https://frontify.com', openInNewWindow: false, styleId: null } };
 const stored = {
     format: 'frontify.rich-text',
     formatVersion: 1,
@@ -25,6 +27,7 @@ const stored = {
     requiredCapabilities: [
         { id: 'acme.callout', version: 1 },
         { id: 'core', version: 1 },
+        { id: 'links', version: 1 },
         { id: 'marks.bold', version: 1 },
     ],
     content: {
@@ -36,7 +39,7 @@ const stored = {
                 attrs: { lang: 'de', tone: 'warm' },
                 content: [
                     { type: 'text', text: 'Grüße ', marks: [{ type: 'bold' }] },
-                    { type: 'text', text: 'link', marks: [{ type: 'acme_glow', attrs: { level: 2 } }] },
+                    { type: 'text', text: 'link', marks: [link, { type: 'acme_glow', attrs: { level: 2 } }] },
                     { type: 'hard_break' },
                 ],
             },

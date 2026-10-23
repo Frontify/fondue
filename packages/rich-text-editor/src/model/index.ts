@@ -72,7 +72,7 @@ export {
     type RichTextSlice,
 } from './format';
 export { hashDocument } from './hash';
-export { checkHref, type HrefPolicy, type HrefResult } from './href';
+export { checkHref, type HrefPolicy, type HrefResult, hrefPolicyOf } from './href';
 export { decorationLines, inheritedAnswer } from './inherited-style';
 export { isTaskListElement } from './task-list-markup';
 export { toJsonSchema } from './json-schema';

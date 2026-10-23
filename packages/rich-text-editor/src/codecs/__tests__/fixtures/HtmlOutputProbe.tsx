@@ -3,6 +3,7 @@
 import { createCodecs } from '#/codecs';
 import {
     COLOR_TOKENS,
+    linked,
     marked,
     plain,
     STYLE_MAP,
@@ -17,6 +18,11 @@ const document = styledDocument(model, [
     styledHeading('brand.title', 1, plain('Brand guide')),
     styled(
         'brand.lead',
+        plain('See the '),
+        linked('basics', null),
+        plain(' or '),
+        linked('start', 'brand.button'),
+        plain(' in '),
         marked('teal', 'font_color', { tokenId: null, value: '#0f766e' }),
         plain(', '),
         marked('red', 'font_color', { tokenId: 'brand.red', value: null }),
@@ -28,7 +34,7 @@ const document = styledDocument(model, [
 ]);
 
 /**
- * The `toHTML` output of brand styles and colours with `inlineStyles` and `colorTokens`, as a page renders stored
+ * The `toHTML` output of brand styles, links and colours with `inlineStyles` and `colorTokens`, as a page renders stored
  * HTML that loads neither the package stylesheet nor the generated recipe stylesheet. It imports no editor module, so
  * no package stylesheet loads.
  */

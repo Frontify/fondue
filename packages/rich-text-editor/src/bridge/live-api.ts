@@ -37,6 +37,7 @@ const INERT: EditorHosts = {
     locale: () => 'en-US',
     services: {
         presentation: () => ({ styles: [], colorTokens: [], columns: 1, columnGap: undefined }),
+        references: () => undefined,
     },
     overlays: { open: () => undefined, close: () => undefined, isOpen: () => false },
     announce: () => undefined,

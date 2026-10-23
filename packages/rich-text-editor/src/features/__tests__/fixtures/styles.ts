@@ -3,6 +3,7 @@
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { fontColor } from '#/features/marks-font-color/feature';
 import { brandStyles } from '#/features/styles-brand/feature';
 import {
@@ -70,7 +71,7 @@ export const COLOR_TOKENS: readonly ColorToken[] = [
     { id: 'brand.sun', label: 'Sun', value: '#fde68a', usage: ['highlight'] },
 ];
 
-/** Brand styles and colours with their block types and the highlight stand-in. */
+/** Brand styles and colours with their block types, links and the highlight stand-in. */
 export const styleFeatures = (literalColors = false) =>
     [
         core(),
@@ -79,6 +80,7 @@ export const styleFeatures = (literalColors = false) =>
         brandStyles(),
         fontColor({ literalColors }),
         fixtureHighlight({ literalColors }),
+        links(),
     ] as const;
 
 export const styleModel = (literalColors = false): ContentModel<ReturnType<typeof styleFeatures>> =>
@@ -101,6 +103,8 @@ export const styledHeading = (
 export const plain = (text: string): ContentNodeJSON => ({ type: 'text', text });
 export const marked = (text: string, type: string, attrs: Readonly<Record<string, unknown>>): ContentNodeJSON =>
     ({ type: 'text', text, marks: [{ type, attrs }] }) as ContentNodeJSON;
+export const linked = (text: string, styleId: string | null, openInNewWindow = false): ContentNodeJSON =>
+    marked(text, 'link', { href: 'https://frontify.com/', openInNewWindow, styleId });
 
 /** A stored document of `blocks` in `model`. */
 export const styledDocument = (model: ContentModel, blocks: readonly ContentNodeJSON[]): RichTextDocument =>

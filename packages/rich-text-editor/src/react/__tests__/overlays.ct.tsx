@@ -431,7 +431,9 @@ test('keeps the link popover and the mention list usable inside a host dialog', 
 
     await expect(suggestionsOf(page)).toBeHidden();
     await expect(host).toBeVisible();
-    expect(await documentHtml(page)).toBe('<p>one two three</p><p>Hi @GraceLinus</p>');
+    expect(await documentHtml(page)).toBe(
+        '<p>one <a href="https://example.com/fixture" rel="noopener">two</a> three</p><p>Hi @GraceLinus</p>',
+    );
 });
 
 /** Whether every corner and the center of `locator` is in the viewport and shows the overlay, not what clips it. */
@@ -496,7 +498,7 @@ test('shows the link popover and the mention list whole and usable at the bottom
     await expect(host).toBeVisible();
     expect(await page.evaluate(() => window.overlayProbe?.hostDialogChanges)).toEqual([]);
     expect(await documentHtml(page)).toBe(
-        '<p>Line 1</p><p>Line 2</p><p>Line 3</p><p>Line 4</p><p>Hi @GraceLinus</p><p>one two three</p>',
+        '<p>Line 1</p><p>Line 2</p><p>Line 3</p><p>Line 4</p><p>Hi @GraceLinus</p><p>one <a href="https://example.com/fixture" rel="noopener">two</a> three</p>',
     );
 });
 
@@ -584,7 +586,9 @@ test('keeps the link popover open while the host dialog moves focus to its conta
     await page.mouse.up();
 
     await expect(popoverOf(page)).toBeHidden();
-    expect(await documentHtml(page)).toBe('<p>one two three</p>');
+    expect(await documentHtml(page)).toBe(
+        '<p>one <a href="https://example.com/fixture" rel="noopener">two</a> three</p>',
+    );
 });
 
 test('leaves the host dialog open when Escape or a click outside closes an editor overlay inside it', async ({
@@ -1371,6 +1375,24 @@ test('opens the bubble toolbar at the caret in bubble mode and moves focus to it
 
     await expect(bubbleOf(page)).toBeVisible();
     await expectFocus(page, 'Bold');
+});
+
+test('returns focus to the surface with the link applied from the link popover', async ({ mount, page }) => {
+    await mount(<OverlayProbe bubble={false} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+    await open(page, 'link');
+    await expectFocus(page, 'URL');
+
+    await popoverOf(page).getByRole('button', { name: 'Apply' }).click();
+
+    await expect(popoverOf(page)).toBeHidden();
+    await expectFocus(page, 'Notes');
+    expect(await page.evaluate(() => window.getSelection()?.toString())).toBe('two');
+    expect(await documentHtml(page)).toBe(
+        '<p>one <a href="https://example.com/fixture" rel="noopener">two</a> three</p>',
+    );
 });
 
 test('closes the bubble toolbar on Escape without moving focus, and keeps it while hovered or focused until both leave', async ({

@@ -55,7 +55,7 @@ import { type ColumnState, columnsPlugin, ONE_COLUMN, sameColumns } from './colu
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
-import { firedRule, withoutRules, withRuleSetting } from './input-rules';
+import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
 import { createKeyGuard } from './keys';
 import { createLimitCheck, type ExceededLimit, storedNodeCount } from './limits';
 import { operationMetric } from './metrics';
@@ -181,6 +181,8 @@ export interface EditorRuntime {
             | { readonly anchor: number; readonly head: number; readonly scroll?: boolean }
             | { readonly node: number; readonly scroll?: boolean },
     ): void;
+    /** Captures `range` as a target, as `captureTarget` captures the selection, such as a whole mark run at a caret in it. */
+    captureRange(range: { readonly from: number; readonly to: number }, options: CaptureTargetOptions): CaptureResult;
     /** Why the session refuses `command` with `payload` on `state` before it runs, as `execute` checks it. */
     refusal(command: EngineCommand, state: EditorState, payload: unknown): RejectedCode | undefined;
     /** Why the policy or the limits refuse the change of `transaction` from `before`, as a commit's final check would. */
@@ -949,6 +951,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // Input rules fire only on typed text, never on a paste or a command after a `beforeinput` that changed nothing.
         if (typed && actionOrigin(root) === undefined) {
             root.setMeta(ORIGIN_META, 'input');
+            markRules(root);
+        } else if (root.getMeta(ENTER_RULES_META) === true) {
             markRules(root);
         }
         busyWith(() => {
@@ -1908,6 +1912,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         detach,
         report,
+        captureRange: (range, captureOptions) => captureRange(captureOptions, range),
         refusal: (command, base, payload) => {
             if (refusesReadOnly(command)) {
                 return 'readonly';

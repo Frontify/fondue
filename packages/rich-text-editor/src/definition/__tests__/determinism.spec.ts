@@ -34,6 +34,8 @@ describe('compilation determinism', () => {
         expect(first).toHaveLength(Object.keys(fixtureProfiles()).length);
         expect(first).toEqual(second);
         // The editor parts load `prosemirror-history`, whose own key takes the first `history` suffix.
-        expect(JSON.stringify(first)).toContain('"plugins":["clipboard$","history$1","container-keys$","drop-cursor$"');
+        expect(JSON.stringify(first)).toContain(
+            '"plugins":["clipboard$1","history$2","container-keys$1","keymap:fixture.history$"',
+        );
     }, 60_000);
 });

@@ -10,6 +10,7 @@ export { emoji } from '#/features/emoji/feature';
 export { formatClear } from '#/features/format-clear/feature';
 export { inputRules } from '#/features/input-rules/feature';
 export { columns } from '#/features/layout-columns/feature';
+export { links } from '#/features/links/feature';
 export { bulletList } from '#/features/lists-bullet/feature';
 export { listItem } from '#/features/lists-item/feature';
 export { orderedList } from '#/features/lists-ordered/feature';

@@ -15,11 +15,13 @@ import {
     type FixtureOverlayProps,
     FixtureLinkPopover,
     FixtureMenu,
+    FixtureRunAnchored,
     FixtureSuggestions,
     LinkForm,
 } from '#/features/__tests__/fixtures/overlays/overlays';
 import { fixturePartsOf } from '#/features/__tests__/fixtures/parts';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
@@ -33,7 +35,7 @@ import { type CommandsOfModel, type EditorHandle, type RichTextEditorBaseProps }
 import { fixtureLocale, TOOLBAR } from './fixtures/ToolbarProbe';
 
 const model = compileContentModel(
-    [core(), bold(), fixtureItalic(), fixtureToolbar(), fixtureCodeBlock(), fixtureMediaImage()],
+    [core(), bold(), fixtureItalic(), links(), fixtureToolbar(), fixtureCodeBlock(), fixtureMediaImage()],
     { id: 'test.overlays', version: 1 },
 );
 const definition = defineEditor({ id: 'test.overlays', model, plugins: fixturePartsOf(model) });
@@ -811,5 +813,30 @@ describe('overlay focus and loading', () => {
         });
 
         expect(bubble()).toBeNull();
+    });
+
+    it('anchors an overlay to the range of a mark run, not to the selection', () => {
+        // jsdom has no layout: a range measures as wide as its text.
+        const measured = vi.fn(function (this: Range) {
+            return new DOMRect(0, 0, this.toString().length, 0);
+        });
+        Object.defineProperty(Range.prototype, 'getBoundingClientRect', { configurable: true, value: measured });
+        const rects: DOMRect[] = [];
+        const bolded = loaded({
+            type: 'paragraph',
+            attrs: { lang: null },
+            content: [text('one '), { type: 'text', text: 'two', marks: [{ type: 'bold' }] }, text(' three')],
+        });
+        const { handle } = mount({
+            defaultValue: bolded,
+            children: <FixtureRunAnchored onRect={(rect) => rects.push(rect)} />,
+        });
+        act(() => setSelection(handle(), { text: 'three' }));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+
+        expect(rects.at(-1)?.width).toBe('two'.length);
+        Reflect.deleteProperty(Range.prototype, 'getBoundingClientRect');
     });
 });

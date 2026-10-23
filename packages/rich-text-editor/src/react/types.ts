@@ -24,6 +24,7 @@ import {
     type RecoveryService,
     type ReplaceDocumentRequest,
     type ReplaceResult,
+    type ServiceContext,
 } from '#/persistence/types';
 import { type ShippedPluginCommands } from '#/react/plugins';
 import { type ReaderPresentation } from '#/reader/reader';
@@ -40,6 +41,7 @@ import {
     type DocumentChange,
     type EditorSummary,
     type OperationMetric,
+    type ReferenceValue,
     type SaveStatus,
     type SelectionHandle,
     type SelectionSummary,
@@ -100,10 +102,27 @@ export type CommandsOfPlugins<Plugins extends readonly EditorPlugin[]> = UnionTo
     CommandsOfPlugin<Plugins[number]>
 >;
 
+/** A search a host answers when the user looks for something to mention or link. */
+export interface ReferenceSearchRequest {
+    readonly query: string;
+    /** Empty means any type. */
+    readonly resourceTypes: readonly string[];
+    readonly cursor: string | null;
+}
+/** One page of results for a reference search, with the cursor for the next page. */
+export interface ReferencePage {
+    readonly items: readonly ReferenceValue[];
+    readonly nextCursor: string | null;
+}
+/** The host service that searches for the things a document can mention. */
+export interface ReferenceService {
+    search(request: ReferenceSearchRequest, context: ServiceContext): Promise<ReferencePage>;
+}
 /** The services a host gives the editor, such as persistence. */
 export interface EditorServices {
     readonly persistence?: PersistenceService;
     readonly recovery?: RecoveryService;
+    readonly references?: ReferenceService;
 }
 
 /** The events the editor emits, each with the value its listeners get. */

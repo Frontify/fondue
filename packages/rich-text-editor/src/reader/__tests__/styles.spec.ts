@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { fixtureHighlight } from '#/features/__tests__/fixtures/highlight';
 import {
     COLOR_TOKENS,
+    linked,
     marked,
     plain,
     STYLE_MAP,
@@ -19,6 +20,7 @@ import {
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
+import { links } from '#/features/links/feature';
 import { fontColor } from '#/features/marks-font-color/feature';
 import { brandStyles } from '#/features/styles-brand/feature';
 import { compileContentModel, type Diagnostic, resolveStyle } from '#/model';
@@ -76,6 +78,26 @@ describe('the reader with brand styles', () => {
         expect(silent).toContain('Three');
     });
 
+    it('renders the generated stylesheet once before its root, and the link underline the resolver adds', () => {
+        const document = styledDocument(model, [styled(null, linked('basics', null))]);
+
+        const html = renderReader(document, model, { presentation });
+
+        expect(html.replaceAll(/rte-style-[0-9a-f]{12}/g, 'rte-style-*')).toMatchSnapshot();
+        expect(html.match(/<style/g)).toHaveLength(1);
+        expect(html).toContain(`.${classOf(null, 'link')}{text-decoration:none;text-decoration-line:underline}`);
+    });
+
+    it('writes data-rte-style on a link with a styleId beside its recipe class', () => {
+        const document = styledDocument(model, [styled(null, linked('start', 'brand.button'))]);
+
+        const html = renderReader(document, model, { presentation });
+
+        expect(html).toContain(
+            `<a href="https://frontify.com/" rel="noopener" data-rte-style="brand.button" class="${classOf('brand.button', 'link')}">start</a>`,
+        );
+    });
+
     it('applies the recipe, the colour and data-rte-style around a reader override, as toHTML does', () => {
         const overridden = compileContentModel(
             [
@@ -90,16 +112,26 @@ describe('the reader with brand styles', () => {
                     font_color: ({ children }) => createElement(Fragment, null, children),
                 }),
                 fixtureHighlight(),
+                defineReaderFeature(links(), {
+                    link: ({ attrs, children }) => createElement('a', { href: attrs.href }, children),
+                }),
             ],
             { id: 'test.styles', version: 1 },
         );
         const document = styledDocument(overridden, [
-            styled('brand.lead', marked('red', 'font_color', { tokenId: 'brand.red', value: null })),
+            styled(
+                'brand.lead',
+                linked('start', 'brand.button'),
+                marked('red', 'font_color', { tokenId: 'brand.red', value: null }),
+            ),
         ]);
 
         const html = renderReader(document, overridden, { presentation });
 
         expect(html).toContain(`<p class="own ${classOf('brand.lead')}" style="margin:0" data-rte-style="brand.lead">`);
+        expect(html).toContain(
+            `<a href="https://frontify.com/" data-rte-style="brand.button" class="${classOf('brand.button', 'link')}">start</a>`,
+        );
         expect(html).toContain('<span style="color:#c0392b">red</span>');
     });
 
