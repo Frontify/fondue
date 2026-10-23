@@ -1,0 +1,24 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`compileContentModel manifest > emits the manifest of the core profile stand-in 1`] = `
+{
+  "features": [
+    {
+      "id": "core",
+      "options": {},
+      "version": 1,
+    },
+  ],
+  "marks": [],
+  "model": {
+    "id": "test.model",
+    "version": 1,
+  },
+  "nodes": [
+    "doc",
+    "paragraph",
+    "text",
+    "hard_break",
+  ],
+}
+`;
