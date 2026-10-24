@@ -60,10 +60,9 @@ import { createEventBus, type Listener, nameOf } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
 import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
 import { createKeyGuard, type EnterKeys } from './keys';
-import { createLimitCheck, type ExceededLimit, storedNodeCount } from './limits';
+import { type ExceededLimit, storedNodeCount } from './limits';
 import { insertPicked, pickedAsset, refillPicked } from './media';
 import { nodeStatePlugin, withNodeState } from './node-state';
-import { authoringOf, createPolicyCheck } from './policy';
 import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { scrollSelectionIntoView } from './scroll';
@@ -72,6 +71,7 @@ import { createEncoder } from './session/encode';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
 import { createMetrics } from './session/metrics';
+import { createPolicy } from './session/policy';
 import { createStore } from './session/store';
 import {
     type Attempt,
@@ -455,7 +455,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const suggestionListId = `rte-suggestions-${identity.session().sessionId}`;
     const createdAt = Date.now();
     let unmanaged = createUnmanagedStatus(options.revision ?? null);
-    const breaksPolicy = createPolicyCheck(definition.model);
     // The URL policy of each command whose feature narrows `checkHref`, which its `url` payload fields must pass too.
     const hrefPolicies = new Map<EngineCommand, HrefPolicy>(
         [...definition.commands.values()].flatMap((command) => {
@@ -469,10 +468,21 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     );
     const encoder = createEncoder(definition.model, options.capabilities);
     const { encode, encodeByBlock } = encoder;
-    let exceedsLimits = createLimitCheck(definition.model, encoder.capabilities);
     const lifecycle = createLifecycle();
-    let policy = options.policy;
-    let policyRevision = 0;
+    const policy = createPolicy({
+        model: definition.model,
+        limits,
+        initial: options.policy,
+        capabilities: encoder.capabilities,
+        onUpdate: (next) => {
+            // An operation whose result the new policy forbids ends now.
+            coordinator.abortWhere((operation) => {
+                const rules = next.features[operation.featureId];
+                return rules === undefined || !rules[operation.action];
+            });
+            busy.run(notify);
+        },
+    });
     let mode = options.mode;
     // The mode the surface shows, which follows `mode` once input has settled.
     let shownMode = mode;
@@ -524,7 +534,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         service: () => (acceptTypes === undefined ? undefined : options.uploads?.()),
         session: identity.session,
         generateId: () => generate(),
-        allows: (action) => policy.features[UPLOAD_FEATURE]?.[action] !== false,
+        allows: (action) => policy.current().features[UPLOAD_FEATURE]?.[action] !== false,
         start: (request) => coordinator.start(request),
         abort: (operations) => coordinator.abortWhere((other) => operations.includes(other)),
         capture: (range) => {
@@ -589,7 +599,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const keyGuard = createKeyGuard(
         () => options.tabMovesFocus?.() === true,
         () => options.enterKeys,
-        () => policy.enterBehavior,
+        () => policy.current().enterBehavior,
     );
     const store = createStore(
         EditorState.create({
@@ -677,7 +687,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         options: () => {
             const given = options.contentChecks?.();
             const shown = given ?? { locale: { translationStrings: {} } };
-            return { ...shown, model: definition.model, creatableHeadingLevels: policy.creatableHeadingLevels };
+            return {
+                ...shown,
+                model: definition.model,
+                creatableHeadingLevels: policy.current().creatableHeadingLevels,
+            };
         },
     });
 
@@ -774,12 +788,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const isProvisional = (root: Transaction) =>
         settling.active() && (provisional !== undefined || root.getMeta(COMPOSITION_META) !== undefined);
 
-    /** The final check of a change from `before` to `doc`: whether the policy refuses it, and the limit it exceeds. */
-    const finalCheck = (before: Node, doc: Node, mapping: Transaction['mapping'], history?: boolean) => ({
-        policy: breaksPolicy(policy, before, doc, mapping, history),
-        limit: exceedsLimits(doc, limits, before),
-    });
-
     /**
      * Applies a root transaction and every transaction plugins append to it, then the final policy and limit check,
      * which a provisional batch from the view takes once input has settled.
@@ -829,7 +837,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // The settle repair is judged with the composition it repairs, from the published document.
         if (doc !== store.state.doc && !(fromView && isProvisional(root)) && root.getMeta(NORMALIZE_META) !== 'now') {
-            const { policy: refused, limit } = finalCheck(store.state.doc, doc, mapping, isHistoryTransaction(root));
+            const { policy: refused, limit } = policy.finalCheck(
+                store.state.doc,
+                doc,
+                mapping,
+                isHistoryTransaction(root),
+            );
             if (refused || limit !== undefined) {
                 if (firedRule(applied.transactions)) {
                     return prepare(withoutRules(root), ids, fromView);
@@ -989,8 +1002,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             appended = repaired.appended;
         }
         if (
-            !breaksPolicy(policy, published.doc, store.state.doc, mapping) &&
-            exceedsLimits(store.state.doc, limits, published.doc) === undefined
+            !policy.breaks(published.doc, store.state.doc, mapping) &&
+            policy.exceeds(store.state.doc, published.doc) === undefined
         ) {
             announce('input', null, { kind: 'commit', started, appended });
             return true;
@@ -1041,7 +1054,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (setting !== undefined) {
             exclude = setting.exclude;
         }
-        const refused = Object.entries(policy.features)
+        const refused = Object.entries(policy.current().features)
             .filter(([, rules]) => !rules.create)
             .map(([id]) => id);
         withRuleSetting(root, { exclude, refused });
@@ -1157,16 +1170,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     const refusesReadOnly = (command: EngineCommand) => mode === 'readonly' && command.readOnly !== true;
-    /** Why the policy refuses `command` with `payload` on `base` before it runs. */
-    const policyRefusal = (command: EngineCommand, base: EditorState, payload: unknown): RejectedCode | undefined => {
-        if (command.policyRefuses?.(policy, payload) === true) {
-            return 'not-allowed';
-        }
-        if (command.refuses?.(base, payload) === true) {
-            return 'not-allowed';
-        }
-        return undefined;
-    };
 
     /**
      * Runs a command against the current state with a dispatch that captures its transaction, then prepares it; the
@@ -1207,7 +1210,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (typeof base === 'string') {
             return { code: base };
         }
-        const refused = policyRefusal(command, base, payload);
+        const refused = policy.refusal(command, base, payload);
         if (refused !== undefined) {
             return { code: refused };
         }
@@ -1490,7 +1493,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const coordinator = createAsyncCoordinator({
         generateId: generate,
         session: identity.session,
-        policyRevision: () => policyRevision,
+        policyRevision: policy.revision,
         isDisposed,
         isFaulted: () => lifecycle.is('faulted'),
         // A result waits out a replacement, which applies it if it fails and discards it in the next generation.
@@ -1778,7 +1781,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             const previous = identity.nextGeneration(request.next.documentId);
             published = store.state;
             encoder.capabilities = stored;
-            exceedsLimits = createLimitCheck(definition.model, encoder.capabilities);
+            policy.setCapabilities(encoder.capabilities);
             if (saves === undefined) {
                 unmanaged = createUnmanagedStatus(request.next.revision);
             } else {
@@ -1948,14 +1951,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         // Applies to the next query and commit; the schema, view and plugins stay.
         updatePolicy: (next) => {
-            policy = authoringOf(definition.model, next);
-            policyRevision += 1;
-            // An operation whose result the new policy forbids ends now.
-            coordinator.abortWhere((operation) => {
-                const rules = policy.features[operation.featureId];
-                return rules === undefined || !rules[operation.action];
-            });
-            busy.run(notify);
+            policy.update(next);
         },
         focus,
         registerInteractionRoot: (element) => {
@@ -1981,7 +1977,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return store.state;
         },
         get policy() {
-            return policy;
+            return policy.current();
         },
         get nodeViews() {
             return nodeViews;
@@ -2085,7 +2081,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             liveResources.views.add(attached);
             viewRuntimes.set(attached, runtime);
             suggestionHosts.set(attached, {
-                creates: (featureId) => policy.features[featureId]?.create !== false,
+                creates: (featureId) => policy.current().features[featureId]?.create !== false,
                 accept: acceptSuggestion,
                 commandHost: options.commandHost,
                 search: searchSuggestions,
@@ -2114,18 +2110,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (refusesReadOnly(command)) {
                 return 'readonly';
             }
-            return policyRefusal(command, base, payload);
+            return policy.refusal(command, base, payload);
         },
-        writeRefusal: (before, transaction) => {
-            const checked = finalCheck(before, transaction.doc, transaction.mapping);
-            if (checked.policy) {
-                return 'policy';
-            }
-            if (checked.limit !== undefined) {
-                return 'limit';
-            }
-            return undefined;
-        },
+        writeRefusal: policy.writeRefusal,
         perform: (command, performOptions) =>
             runOn(command, { payload: undefined }, () => baseOf(performOptions), 'host'),
         select: (target) => {
