@@ -8,6 +8,7 @@ import { type AriaAttributes, type AriaRole, type RefObject, useContext, useId, 
 import { CheckedSlot, keepFocus } from '#/bridge/chrome-toolbar';
 import { useCommandQuery } from '#/bridge/hooks';
 import { useOverlayContainer } from '#/bridge/overlays';
+import { ChromeBoundary, NO_ATTRS } from '#/bridge/portal-host';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { useOpenPanel } from '#/ui/panels/context';
 
@@ -275,7 +276,10 @@ export const More = ({
                         );
                     })
                     .map((item) => (
-                        <MoreRow key={item.key} item={item} strings={strings} onRun={rows.onRun} />
+                        // A row that throws leaves only its own place empty.
+                        <ChromeBoundary key={item.key} message="" attrs={NO_ATTRS}>
+                            <MoreRow item={item} strings={strings} onRun={rows.onRun} />
+                        </ChromeBoundary>
                     ))}
                 <Dropdown.Item
                     onSelect={() => {

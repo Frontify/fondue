@@ -9,6 +9,7 @@ import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { useEditorSelection } from '#/bridge/hooks';
 import { passEscape, useHeldOverlay, useScopedFocus } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
+import { ChromeBoundary, NO_ATTRS } from '#/bridge/portal-host';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { type SelectionSummary } from '#/runtime/types';
@@ -171,18 +172,15 @@ export const BubbleToolbar = ({
                     onPointerLeave={() => setHovered(false)}
                 >
                     {items.map((item) => {
+                        let content = <Item item={item} disabled={false} strings={strings} keepsFocus outOfTabOrder />;
                         if (item.options !== undefined) {
-                            return <TextStyle key={item.key} item={item} disabled={false} keepsFocus outOfTabOrder />;
+                            content = <TextStyle item={item} disabled={false} keepsFocus outOfTabOrder />;
                         }
+                        // An item that throws leaves only its own place empty, with no message to read between the items.
                         return (
-                            <Item
-                                key={item.key}
-                                item={item}
-                                disabled={false}
-                                strings={strings}
-                                keepsFocus
-                                outOfTabOrder
-                            />
+                            <ChromeBoundary key={item.key} message="" attrs={NO_ATTRS}>
+                                {content}
+                            </ChromeBoundary>
                         );
                     })}
                     {more !== undefined && (

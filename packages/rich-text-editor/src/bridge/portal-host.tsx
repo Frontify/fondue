@@ -25,6 +25,9 @@ interface BoundaryState {
     readonly attrs: JsonObject;
 }
 
+/** The attributes of a boundary around a toolbar item, which has none to change. */
+export const NO_ATTRS = {};
+
 /** Replaces only the chrome that threw with a localized message, while `contentDOM` and editing go on. */
 export class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
     static contextType = ReactWorkContext;

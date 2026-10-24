@@ -574,6 +574,77 @@ describe('a toolbar item that throws while rendering', () => {
         });
         expect(button('More')).toHaveFocus();
     });
+
+    it('replaces only that item in the bubble toolbar, so the other items stay', () => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const { handle } = mount({ definition: brokenDefinition, children: <RichTextEditor.BubbleToolbar /> }, [
+            ['mark.bold.toggle', 'acme.pull-quote.set'],
+        ]);
+        act(() => screen.getByRole('textbox', { name: 'Notes' }).focus());
+        act(() => setSelection(handle(), { text: 'two' }));
+
+        const bubble = screen.getByRole('toolbar', { name: 'Selection formatting' });
+
+        expect(document.querySelector('[data-rte-shell="recovery"]')).toBeNull();
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toBeInTheDocument();
+        expect(
+            within(bubble)
+                .getAllByRole('button')
+                .map((item) => item.getAttribute('aria-label')),
+        ).toEqual(['Bold']);
+    });
+
+    it('replaces only that row in More, so the other rows stay', () => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const model = compileContentModel([core(), bold(), pullQuote()], { id: 'test.toolbar', version: 1 });
+        const entry = (id: string, command: string) =>
+            ({
+                id,
+                kind: 'button',
+                command,
+                label: { 'en-US': id },
+                icon: 'IconSpeechBubbleQuote',
+            }) as const;
+        const definition = defineEditor({
+            id: 'test.toolbar',
+            model,
+            plugins: [
+                boldEditor,
+                defineEditorPlugin(pullQuote(), {
+                    commands: {
+                        'acme.broken.set': {
+                            run: () => true,
+                            active: (): never => {
+                                throw new Error('row query failed');
+                            },
+                        },
+                        'acme.fine.set': { run: () => true },
+                    },
+                    toolbar: [entry('Broken row', 'acme.broken.set'), entry('Fine row', 'acme.fine.set')],
+                }),
+            ],
+        });
+        const { handle } = mount(
+            { definition, defaultToolbarMode: 'bubble', children: <RichTextEditor.BubbleToolbar /> },
+            [['mark.bold.toggle'], ['acme.broken.set', 'acme.fine.set']],
+        );
+        act(() => screen.getByRole('textbox', { name: 'Notes' }).focus());
+        act(() => setSelection(handle(), { text: 'two' }));
+        act(() => {
+            fireEvent.keyDown(
+                within(screen.getByRole('toolbar', { name: 'Selection formatting' })).getByRole('button', {
+                    name: 'More',
+                }),
+                { key: 'Enter' },
+            );
+        });
+
+        expect(document.querySelector('[data-rte-shell="recovery"]')).toBeNull();
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toBeInTheDocument();
+        expect(screen.queryByRole('menuitem', { name: 'Broken row' })).toBeNull();
+        expect(screen.getByRole('menuitem', { name: 'Fine row' })).toBeInTheDocument();
+        expect(screen.getByRole('menuitem', { name: 'Always show toolbar' })).toBeInTheDocument();
+    });
 });
 
 describe('toolbar theming and localization', () => {
