@@ -7,7 +7,7 @@ export const FILES_OVER_600_LINES: Record<string, number> = {
     'src/model/checks.ts': 679,
     'src/model/compile.ts': 659,
     'src/react/rich-text-editor.tsx': 1492,
-    'src/runtime/runtime.ts': 2187,
+    'src/runtime/runtime.ts': 2152,
     'src/runtime/suggestions/plugin.ts': 616,
 };
 
@@ -36,7 +36,7 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/react/compile-editor.ts': 427,
     'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/input-rules.ts': 515,
-    'src/runtime/runtime.ts': 2187,
+    'src/runtime/runtime.ts': 2152,
     'src/runtime/suggestions/plugin.ts': 616,
 };
 
@@ -57,7 +57,7 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/react/rich-text-editor.tsx#anonymous#11': 184,
     'src/react/rich-text-editor.tsx#SessionComponent': 669,
     'src/runtime/async.ts#createAsyncCoordinator': 217,
-    'src/runtime/runtime.ts#createEditorRuntime': 1736,
+    'src/runtime/runtime.ts#createEditorRuntime': 1732,
     'src/testing/uploads.ts#runUploadConformance': 158,
 };
 

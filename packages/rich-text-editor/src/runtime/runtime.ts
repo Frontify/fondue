@@ -57,7 +57,7 @@ import { createContentChecks } from './content-issues';
 import { createDomIds } from './dom-ids';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener, nameOf } from './events';
-import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
+import { groupsPlugin, isHistoryTransaction } from './history';
 import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
 import { createKeyGuard, type EnterKeys } from './keys';
 import { type ExceededLimit, storedNodeCount } from './limits';
@@ -70,6 +70,7 @@ import { createBusy } from './session/busy';
 import { createColumns } from './session/columns';
 import { createComposition } from './session/composition';
 import { createEncoder } from './session/encode';
+import { actionOrigin, createHistory, originOf } from './session/history';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
 import { createMetrics } from './session/metrics';
@@ -116,7 +117,7 @@ import {
     type Unsubscribe,
     type UploadStatus,
 } from './types';
-import { carrySlots, uploadSlotsPlugin } from './upload-slots';
+import { uploadSlotsPlugin } from './upload-slots';
 import {
     createUploads,
     DEFAULT_ACCEPT_TYPES,
@@ -386,20 +387,6 @@ const sameSelection = (a: SelectionSummary, b: SelectionSummary) =>
     a.blockType === b.blockType &&
     a.selectedNodeId === b.selectedNodeId;
 
-const UI_ORIGINS: ReadonlySet<string> = new Set(['paste', 'cut', 'drop']);
-
-/** The origin of an action that one undo reverts on its own: a command, paste, cut or drop. */
-const actionOrigin = (root: Transaction): ChangeOrigin | undefined => {
-    const event: unknown = root.getMeta('uiEvent');
-    if (root.getMeta(COMMAND_META) !== undefined) {
-        return 'command';
-    }
-    if (typeof event === 'string' && UI_ORIGINS.has(event)) {
-        return event as ChangeOrigin;
-    }
-    return undefined;
-};
-
 /** A plugin-error diagnostic with the failing feature and the error's name, never its message. */
 const pluginError = (error: unknown, featureId: string | undefined) => {
     const name = nameOf(error);
@@ -407,25 +394,6 @@ const pluginError = (error: unknown, featureId: string | undefined) => {
         return diagnostic('runtime.plugin-error', undefined, { name }, 'error');
     }
     return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
-};
-
-/** Where a batch came from: typing is a DOM change after a recorded `beforeinput`, which `commit` marks. */
-const originOf = (root: Transaction): ChangeOrigin => {
-    // Undo and redo report `history` whether a key, a command or the browser ran them.
-    if (isHistoryTransaction(root)) {
-        return 'history';
-    }
-    if (root.getMeta(ORIGIN_META) === 'async') {
-        return 'async';
-    }
-    const action = actionOrigin(root);
-    if (action !== undefined) {
-        return action;
-    }
-    if (root.getMeta(ORIGIN_META) === 'input') {
-        return 'input';
-    }
-    return 'unknown';
 };
 
 /** One empty paragraph is an empty document, which shows the placeholder. */
@@ -654,6 +622,18 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const { isDisposed } = lifecycle;
     const { emit, notify, subscribe, watch, clear } = createEventBus({ isDisposed, around: busy.run });
 
+    const history = createHistory({
+        store,
+        lifecycle,
+        composition: settling,
+        notify: () => busy.run(notify),
+        install: (next) => installState(next),
+        publish: () => {
+            published = store.state;
+        },
+        uploads: (d, k) => uploads.reset(d, k),
+    });
+
     const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
 
     const metrics = createMetrics({ model: definition.model, session: identity.session, emit });
@@ -813,7 +793,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const started = Date.now();
         // History groups by this time, never by the `Date.now()` a transaction takes when created.
         root.setTime(started);
-        groupRoot(store.state, root, actionOrigin(root) !== undefined);
+        history.group(root);
         let applied: ReturnType<EditorState['applyTransaction']>;
         try {
             applied = store.state.applyTransaction(root.setMeta(APPEND_BATCH_META, batch));
@@ -1748,7 +1728,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (request.selection === 'end') {
                 selection = Selection.atEnd(doc);
             }
-            fresh = reset(store.state, doc, selection);
+            fresh = history.fresh(doc, selection);
         } catch {
             fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
             return refused('faulted');
@@ -2127,18 +2107,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             statusOf: (nodeId) => uploads.statusOf(nodeId),
         },
         saveStatusChanged: emitSaveStatus,
-        clearHistory: () => {
-            if (!lifecycle.is('ready') || settling.active()) {
-                return;
-            }
-            const fresh = reset(store.state);
-            // Uploads that run go on, so their slots keep what Cancel restores.
-            if (installState(fresh.apply(carrySlots(store.state, fresh)))) {
-                published = store.state;
-                uploads.reset(store.state.doc, true);
-                busy.run(notify);
-            }
-        },
+        clearHistory: () => history.clear(),
         afterInput: (settled, timeoutMs) => settling.wait(settled, timeoutMs),
         measure: (kind, started, failureCode) => measure(kind, started, failureCode),
         runChecks: () => checks.run(),
