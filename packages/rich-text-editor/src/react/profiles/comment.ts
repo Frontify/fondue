@@ -1,57 +1,52 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorPlugin } from '#/bridge/plugin';
-import { codeBlockEditor } from '#/features/blocks-code/editor';
-import { quoteEditor } from '#/features/blocks-quote/editor';
-import { coreEditor } from '#/features/core/editor';
-import { emojiEditor } from '#/features/emoji/editor';
-import { bulletListEditor } from '#/features/lists-bullet/editor';
-import { listItemEditor } from '#/features/lists-item/editor';
-import { orderedListEditor } from '#/features/lists-ordered/editor';
-import { taskListEditor } from '#/features/lists-task/editor';
-import { taskReader } from '#/features/lists-task/reader';
-import { codeEditor } from '#/features/marks-code/editor';
-import { strikeEditor } from '#/features/marks-strike/editor';
-import { mentionsEditor } from '#/features/mentions/editor';
-import { mentionReader } from '#/features/mentions/reader';
+import { extendPlugin, type RichTextPlugin } from '#/bridge/define-plugin';
+import { codeBlockPlugin } from '#/features/blocks-code';
+import { quotePlugin } from '#/features/blocks-quote';
+import { corePlugin } from '#/features/core';
+import { emojiPlugin } from '#/features/emoji';
+import { bulletListPlugin } from '#/features/lists-bullet';
+import { listItemPlugin } from '#/features/lists-item';
+import { orderedListPlugin } from '#/features/lists-ordered';
+import { taskListPlugin } from '#/features/lists-task';
+import { codePlugin } from '#/features/marks-code';
+import { strikePlugin } from '#/features/marks-strike';
+import { mentionsPlugin } from '#/features/mentions';
 import { commentModel } from '#/features/profiles/comment';
 import { type CommandRef } from '#/model';
 
 import { compileEditor } from '../compile-editor';
 import { defineReactPresentation } from '../presentation';
 
-import { inlineParts, inlineReaders } from './inline';
-import { NOT_CREATABLE, partsOf, type ShippedProfile } from './parts';
+import { inlinePlugins } from './inline';
+import { NOT_CREATABLE, type ShippedProfile } from './parts';
 
-// Mod+Enter submits in a comment, so no part binds it (Key precedence row 4).
-const withoutModEnter = (part: EditorPlugin): EditorPlugin => {
-    if (part.keys?.['Mod-Enter'] === undefined) {
-        return part;
+// Mod+Enter submits in a comment, so no unit binds it.
+const withoutModEnter = (unit: RichTextPlugin): RichTextPlugin => {
+    const { keys } = unit.editor;
+    if (keys?.['Mod-Enter'] === undefined) {
+        return unit;
     }
-    return Object.freeze({
-        ...part,
-        keys: Object.fromEntries(Object.entries(part.keys).filter(([key]) => key !== 'Mod-Enter')),
+    return extendPlugin(unit, {
+        keys: Object.fromEntries(Object.entries(keys).filter(([key]) => key !== 'Mod-Enter')),
     });
 };
 
-/** The editor parts of the Comment profile's features, which Document extends; Comment drops their Mod+Enter keys. */
-export const commentParts: readonly EditorPlugin[] = [
-    coreEditor,
-    ...inlineParts.slice(1),
-    strikeEditor,
-    codeEditor,
-    quoteEditor,
-    codeBlockEditor,
-    listItemEditor,
-    bulletListEditor,
-    orderedListEditor,
-    taskListEditor,
-    mentionsEditor,
-    emojiEditor,
+/** The units of the Comment profile's features, which Document extends; Comment drops their Mod+Enter keys. */
+export const commentPlugins: readonly RichTextPlugin[] = [
+    corePlugin(),
+    ...inlinePlugins.slice(1),
+    strikePlugin(),
+    codePlugin(),
+    quotePlugin(),
+    codeBlockPlugin(),
+    listItemPlugin(),
+    bulletListPlugin(),
+    orderedListPlugin(),
+    taskListPlugin(),
+    mentionsPlugin(),
+    emojiPlugin(),
 ] as const;
-
-/** The reader overrides of the Comment profile's features. */
-export const commentReaders = { ...inlineReaders, 'lists.task': taskReader, mentions: mentionReader };
 
 const GROUPS: readonly (readonly CommandRef[])[] = [
     ['mark.bold.toggle', 'mark.italic.toggle', 'mark.strike.toggle', 'mark.code.toggle'],
@@ -79,8 +74,7 @@ export const shipped = (): ShippedProfile => ({
                 enterBehavior: 'paragraph',
             },
         },
-        partsOf(commentParts.map(withoutModEnter)),
-        commentReaders,
+        commentPlugins.map(withoutModEnter),
         'comment',
     ),
     presentation: PRESENTATION,

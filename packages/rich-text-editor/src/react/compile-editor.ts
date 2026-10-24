@@ -45,6 +45,7 @@ import {
     type EditorDefinitionOptions,
     type RichTextProfile,
 } from './types';
+import { type CompileRest, type CompileSource, sourcesOf } from './units';
 
 /** Editor parts by feature ID, which a definition installs for the features its model installs. */
 export type ShippedParts = Readonly<Record<string, EditorPlugin>>;
@@ -392,17 +393,14 @@ export const extensionsOf = (
     shipped: ShippedParts,
 ): readonly EngineExtension[] => collectPlugins(model, given, shipped).map((plugin) => extensionOf(model, plugin));
 
-/**
- * Compiles an editor definition once with the editor parts of `shipped` and the reader overrides of `overrides`: the
- * model's engine, the authoring policy and the limits, for the profile when one is given.
- */
+/** Compiles an editor definition once, from units that cover the model exactly or from given parts and overrides. */
 export const compileEditor = <Model extends ContentModel, const Plugins extends readonly EditorPlugin[] = readonly []>(
     options: EditorDefinitionOptions<Model> & { readonly plugins?: Plugins },
-    shipped: ShippedParts,
-    overrides: ReaderOverrides,
-    profile?: RichTextProfile,
+    source: CompileSource,
+    ...rest: CompileRest
 ): CompiledEditorDefinition<CommandsOfModel<Model> & CommandsOfPlugins<Plugins>> => {
     const { id, model, policy } = options;
+    const { shipped, overrides, profile } = sourcesOf(model, source, rest);
     const { engine, plugins } = editorEngine(model, options.plugins, shipped);
     const views = collectViews(model, plugins);
     const panels = collectPanels(plugins);

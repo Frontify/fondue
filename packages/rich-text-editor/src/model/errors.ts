@@ -18,6 +18,7 @@ export type DefinitionErrorCode =
     | 'definition.unknown-feature'
     | 'definition.unsafe-url-binding'
     | 'definition.plugin-mismatch'
+    | 'definition.missing-plugin'
     | 'definition.invalid-declaration';
 
 /** Thrown by compilation, `featuresById`, `defineReaderFeature` and `definePlugin`. */

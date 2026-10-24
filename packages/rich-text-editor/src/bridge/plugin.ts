@@ -334,10 +334,10 @@ type CheckedParts<Parts extends EditorPluginParts> = Parts & {
     readonly commands?: PayloadMatched<NoInfer<NonNullable<Parts['commands']>>>;
 };
 
-type OptionParts = (options: JsonObject) => EditorPluginParts;
+export type OptionParts = (options: JsonObject) => EditorPluginParts;
 
 // An own enumerable symbol property, so a spread copy of the plugin keeps its option-dependent parts.
-const OPTION_PARTS = Symbol('optionParts');
+export const OPTION_PARTS = Symbol('optionParts');
 
 /**
  * The editor part of `feature`, a factory or a feature it made, which may load apart from the feature itself. `parts`

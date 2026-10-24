@@ -1,41 +1,37 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorPlugin } from '#/bridge/plugin';
-import { contentChecksEditor } from '#/features/a11y-content-checks/editor';
-import { headingEditor } from '#/features/blocks-heading/editor';
-import { ruleEditor } from '#/features/blocks-rule/editor';
-import { formatClearEditor } from '#/features/format-clear/editor';
-import { subscriptEditor } from '#/features/marks-subscript/editor';
-import { superscriptEditor } from '#/features/marks-superscript/editor';
-import { mediaImageEditor } from '#/features/media-image/editor';
-import { imageReader } from '#/features/media-image/reader';
-import { mediaUploadEditor } from '#/features/media-upload/editor';
-import { outlineEditor } from '#/features/nav-outline/editor';
+import { type RichTextPlugin } from '#/bridge/define-plugin';
+import { contentChecksPlugin } from '#/features/a11y-content-checks';
+import { headingPlugin } from '#/features/blocks-heading';
+import { rulePlugin } from '#/features/blocks-rule';
+import { formatClearPlugin } from '#/features/format-clear';
+import { subscriptPlugin } from '#/features/marks-subscript';
+import { superscriptPlugin } from '#/features/marks-superscript';
+import { mediaImagePlugin } from '#/features/media-image';
+import { mediaUploadPlugin } from '#/features/media-upload';
+import { outlinePlugin } from '#/features/nav-outline';
 import { documentModel } from '#/features/profiles/document';
 import { type CommandRef } from '#/model';
 
 import { compileEditor } from '../compile-editor';
 import { defineReactPresentation } from '../presentation';
 
-import { commentParts, commentReaders } from './comment';
-import { NOT_CREATABLE, partsOf, type ShippedProfile } from './parts';
+import { commentPlugins } from './comment';
+import { NOT_CREATABLE, type ShippedProfile } from './parts';
 
-/** The editor parts of the Document profile's features. */
-export const documentParts: readonly EditorPlugin[] = [
-    ...commentParts,
-    subscriptEditor,
-    superscriptEditor,
-    headingEditor,
-    ruleEditor,
-    mediaImageEditor,
-    mediaUploadEditor,
-    outlineEditor,
-    formatClearEditor,
-    contentChecksEditor,
+/** The units of the Document profile's features. */
+export const documentPlugins: readonly RichTextPlugin[] = [
+    ...commentPlugins,
+    subscriptPlugin(),
+    superscriptPlugin(),
+    headingPlugin(),
+    rulePlugin(),
+    mediaImagePlugin(),
+    mediaUploadPlugin(),
+    outlinePlugin(),
+    formatClearPlugin(),
+    contentChecksPlugin(),
 ] as const;
-
-/** The reader overrides of the Document profile's features. */
-export const documentReaders = { ...commentReaders, 'media.image': imageReader };
 
 /** The Default toolbars groups of the Document profile; a group keeps only the commands the definition installs. */
 export const documentToolbar = (lists: readonly (readonly CommandRef[])[]): readonly (readonly CommandRef[])[] => [
@@ -71,8 +67,7 @@ export const shipped = (): ShippedProfile => ({
                 enterBehavior: 'paragraph',
             },
         },
-        partsOf(documentParts),
-        documentReaders,
+        documentPlugins,
         'document',
     ),
     presentation: PRESENTATION,

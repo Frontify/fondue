@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { columnsEditor } from '#/features/layout-columns/editor';
+import { columnsPlugin } from '#/features/layout-columns';
 import { brandDocumentModel } from '#/features/profiles/brand-document';
-import { brandEditor } from '#/features/styles-brand/editor';
+import { brandStylesPlugin } from '#/features/styles-brand';
 
 import { compileEditor } from '../compile-editor';
 import { defineReactPresentation } from '../presentation';
 
-import { documentParts, documentReaders, documentToolbar } from './document';
-import { NOT_CREATABLE, partsOf, type ShippedProfile } from './parts';
+import { documentPlugins, documentToolbar } from './document';
+import { NOT_CREATABLE, type ShippedProfile } from './parts';
 
 const ALIGNMENTS = ['left', 'center', 'right', 'justify'] as const;
 
@@ -25,8 +25,7 @@ export const shipped = (): ShippedProfile => ({
             model: brandDocumentModel,
             policy: { features: { 'input-rules': NOT_CREATABLE }, enterBehavior: 'paragraph' },
         },
-        partsOf([...documentParts, brandEditor, columnsEditor]),
-        documentReaders,
+        [...documentPlugins, brandStylesPlugin(), columnsPlugin()],
         'brand-document',
     ),
     presentation: PRESENTATION,
