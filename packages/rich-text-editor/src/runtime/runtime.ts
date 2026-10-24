@@ -71,6 +71,7 @@ import { createEncoder } from './session/encode';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
 import { createMetrics } from './session/metrics';
+import { createMode } from './session/mode';
 import { createPolicy } from './session/policy';
 import { createSaving } from './session/saving';
 import { createStore } from './session/store';
@@ -483,10 +484,22 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             busy.run(notify);
         },
     });
-    let mode = options.mode;
+    const mode = createMode({
+        initial: options.mode,
+        isDisposed: lifecycle.isDisposed,
+        onModeChange: (next) => {
+            // A read-only session takes no upload's result, so none runs or waits.
+            if (next === 'readonly') {
+                coordinator.abortWhere(
+                    (operation) => operation.service === 'uploads' && operation.featureId === UPLOAD_FEATURE,
+                );
+            }
+            refreshView();
+        },
+        onDisabledChange: () => view?.setProps({}),
+    });
     // The mode the surface shows, which follows `mode` once input has settled.
-    let shownMode = mode;
-    let disabled = false;
+    let shownMode = mode.mode();
     let columns = options.columns ?? ONE_COLUMN;
     // The columns the decorations show, which follow `columns` once input has settled.
     let shownColumns = columns;
@@ -696,7 +709,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (settling.active() || recovery !== undefined) {
             return;
         }
-        shownMode = mode;
+        shownMode = mode.mode();
         shownColumns = columns;
         if (view !== undefined) {
             view.setProps({});
@@ -1164,8 +1177,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         host: options.commandHost,
     };
 
-    const refusesReadOnly = (command: EngineCommand) => mode === 'readonly' && command.readOnly !== true;
-
     /**
      * Runs a command against the current state with a dispatch that captures its transaction, then prepares it; the
      * effects it defers go to `effects`, which a query leaves out.
@@ -1199,7 +1210,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (!lifecycle.is('ready')) {
             return { code: 'not-ready' };
         }
-        if (refusesReadOnly(command)) {
+        if (mode.refusesReadOnly(command)) {
             return { code: 'readonly' };
         }
         if (typeof base === 'string') {
@@ -1245,7 +1256,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return { unchanged: true };
         }
         // `readOnly` lets a command run in a read-only editor to open something, never to change content.
-        if (mode === 'readonly' && root.docChanged) {
+        if (mode.mode() === 'readonly' && root.docChanged) {
             return { code: 'readonly' };
         }
         // Work that runs later through a target maps the user's selection through its change instead of moving it there.
@@ -1701,7 +1712,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
      */
     const refocus = (focused: boolean) => {
         // A disabled surface leaves the Tab order and takes no focus.
-        if (!focused || disabled || view === undefined) {
+        if (!focused || mode.disabled() || view === undefined) {
             return;
         }
         const owner = view.dom.ownerDocument;
@@ -1843,7 +1854,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return {
                 session: identity.session(),
                 phase: lifecycle.phase(),
-                mode,
+                mode: mode.mode(),
                 commitSequence: identity.commitSequence(),
                 sequence: identity.sequence(),
                 compositionActive: settling.active(),
@@ -1906,19 +1917,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             measure('replace', started, failureCode);
             return result;
         },
-        setMode: (next) => {
-            if (lifecycle.is('disposed')) {
-                return;
-            }
-            mode = next;
-            // A read-only session takes no upload's result, so none runs or waits.
-            if (next === 'readonly') {
-                coordinator.abortWhere(
-                    (operation) => operation.service === 'uploads' && operation.featureId === UPLOAD_FEATURE,
-                );
-            }
-            refreshView();
-        },
+        setMode: mode.set,
         // Applies to the next query and commit; the schema, view and plugins stay.
         updatePolicy: (next) => {
             policy.update(next);
@@ -1997,7 +1996,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 if (shownMode === 'readonly') {
                                     // A surface that is not contenteditable takes no focus by itself,
                                     // unless it is disabled, which leaves the Tab order.
-                                    if (!disabled) {
+                                    if (!mode.disabled()) {
                                         attributes.tabindex = '0';
                                     }
                                     attributes['aria-readonly'] = 'true';
@@ -2077,7 +2076,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         report,
         captureRange: (range, captureOptions) => captureRange(captureOptions, range),
         refusal: (command, base, payload) => {
-            if (refusesReadOnly(command)) {
+            if (mode.refusesReadOnly(command)) {
                 return 'readonly';
             }
             return policy.refusal(command, base, payload);
@@ -2110,10 +2109,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 saving.serviceChanged();
             }
         },
-        setDisabled: (next) => {
-            disabled = next;
-            view?.setProps({});
-        },
+        setDisabled: mode.setDisabled,
         setColumns: (next) => {
             if (sameColumns(columns, next)) {
                 return;
