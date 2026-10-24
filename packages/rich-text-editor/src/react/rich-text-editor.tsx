@@ -80,7 +80,7 @@ import { useEditorLocale } from './locale';
 import { PanelFrame } from './panels';
 import { usePluginHosts, useRenderedHosts } from './plugin-hosts';
 import { useCoarsePointer, useProfile } from './profiles';
-import { BlockedShell, RecoveryShell } from './shells';
+import { BlockedShell, LoadingShell, RecoveryShell } from './shells';
 import { registerSaveCauses, SaveStatusText } from './status';
 import { useRecipeSheet } from './style-sheet';
 import { menuItems, toolbarItems, translatedLabel } from './toolbar-items';
@@ -1173,7 +1173,17 @@ const Root = forwardRef(
         }
         // The profile's module loads through `import()`, and the editor renders once it has.
         if (shipped === undefined) {
-            return null;
+            return (
+                <LoadingShell
+                    locale={locale}
+                    testId={props['data-test-id'] ?? DEFAULT_TEST_ID}
+                    contentClassName={props.presentation?.contentClassName}
+                    multiline={profile !== 'inline'}
+                    label={props['aria-label']}
+                    labelledBy={props['aria-labelledby']}
+                    spellCheck={props.spellCheck ?? true}
+                />
+            );
         }
         let resolved: Defined & { readonly children: ReactNode } = { ...props, definition: shipped.definition, locale };
         if (props.presentation === undefined) {

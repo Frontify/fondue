@@ -34,7 +34,7 @@ class Boundary extends Component<{ readonly children: ReactNode }, { readonly fa
 }
 
 describe('an editor whose profile module has not loaded', () => {
-    it('renders nothing, holds no handle and calls no host callback until the module loads', async () => {
+    it('renders the busy textbox shell, holds no handle and calls no host callback until the module loads', async () => {
         const callbacks = {
             onReady: vi.fn(),
             onDocumentChange: vi.fn(),
@@ -56,11 +56,18 @@ describe('an editor whose profile module has not loaded', () => {
         );
         const calls = () => Object.entries(callbacks).filter(([, callback]) => callback.mock.calls.length > 0);
 
-        expect([container.childElementCount, ref.current, calls()]).toEqual([0, null, []]);
+        const shells = container.querySelectorAll('[role="textbox"]');
+        expect([shells.length, ref.current, calls()]).toEqual([1, null, []]);
+        expect(shells[0]).toHaveAttribute('aria-label', 'Message');
+        expect(container.firstElementChild).toHaveAttribute('aria-busy', 'true');
 
         await act(async () => {
             await loadProfile('comment');
         });
+
+        expect(container.querySelectorAll('[role="textbox"]')).toHaveLength(1);
+        expect(container.querySelector('[role="textbox"]')).not.toBe(shells[0]);
+        expect(container.firstElementChild).not.toHaveAttribute('aria-busy');
 
         expect(ref.current).not.toBeNull();
         expect(calls().map(([name]) => name)).toEqual(['onReady']);
