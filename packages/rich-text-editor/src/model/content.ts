@@ -114,7 +114,8 @@ const attributeFault = (declaration: AttributeDeclaration, value: unknown): Form
 
 /**
  * Undeclared names go to `unknownAttributes`, then each declared attribute in declared order, then
- * `exactlyOne`. On the root a failing value also goes to `unknownAttributes` and the checks go on.
+ * `exactlyOne`. On the root a failing value also goes to `unknownAttributes` and the checks go on; on a node
+ * so does a failing value of an attribute with a default, which takes the default.
  */
 const checkAttributes = (
     context: Context,
@@ -122,7 +123,7 @@ const checkAttributes = (
     exactlyOne: readonly string[] | undefined,
     stored: Attrs | undefined,
     path: string,
-    root = false,
+    mode: 'mark' | 'node' | 'root' = 'mark',
 ): Attrs | undefined => {
     const attrs = stored === undefined ? {} : stored;
     const unknown: Record<string, unknown> = {};
@@ -147,7 +148,7 @@ const checkAttributes = (
             continue;
         }
         warn(context, fault, `${path}${pointer('attrs', name)}`);
-        if (!root) {
+        if (mode === 'mark' || (mode === 'node' && !('default' in declaration))) {
             return undefined;
         }
         unknown[name] = attrs[name];
@@ -397,7 +398,7 @@ const checkNode = (context: Context, value: unknown, path: string, parent: Compi
     }
     const attrs = text
         ? undefined
-        : checkAttributes(context, attributesOf(node), node.declaration.exactlyOne, value.attrs as Attrs, path);
+        : checkAttributes(context, attributesOf(node), node.declaration.exactlyOne, value.attrs as Attrs, path, 'node');
     if (!text && attrs === undefined) {
         return FAILED;
     }
@@ -455,7 +456,7 @@ const checkRoot = (context: Context, root: Attrs): TreeNode | undefined => {
         node.declaration.exactlyOne,
         root.attrs as Attrs,
         '/content',
-        true,
+        'root',
     );
     const content = checkChildren(context, node, root.content as readonly unknown[], '/content');
     if (attrs === undefined || content === undefined) {

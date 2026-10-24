@@ -32,7 +32,7 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/features/media-image/view.tsx': 517,
     'src/model/checks.ts': 717,
     'src/model/compile.ts': 659,
-    'src/model/content.ts': 538,
+    'src/model/content.ts': 539,
     'src/model/declarations.ts': 483,
     'src/model/output.ts': 548,
     'src/model/read.ts': 422,

@@ -66,6 +66,23 @@ const islandAt = (tree: TreeNode, ...indices: readonly number[]): TreeNode => {
     }
     return current;
 };
+type Shaped = {
+    readonly type?: unknown;
+    readonly attrs?: Record<string, unknown>;
+    readonly content?: readonly Shaped[];
+};
+const firstOfType = (value: Shaped, type: string): Shaped | undefined => {
+    if (value.type === type) {
+        return value;
+    }
+    for (const child of value.content ?? []) {
+        const found = firstOfType(child, type);
+        if (found !== undefined) {
+            return found;
+        }
+    }
+    return undefined;
+};
 const attrsAt = (tree: TreeNode, ...indices: readonly number[]) => islandAt(tree, ...indices).attrs ?? {};
 const marksAt = (tree: TreeNode, ...indices: readonly number[]) => islandAt(tree, ...indices).marks ?? [];
 /** Nodes and marks with the given attributes laid over a valid base, so a case names only the one that is out of range. */
@@ -81,7 +98,22 @@ const header = (attrs: JsonObject): Json =>
 const embed = (attrs: JsonObject): Json =>
     node('embed', { nodeId: 'e', url: 'https://x.test', provider: 'youtube', title: null, ...attrs });
 const image = (attrs: JsonObject, figure: JsonObject = { nodeId: 'f', align: 'center' }): Json =>
-    node('figure', figure, node('asset_image', { nodeId: 'i', assetId: 'a', labelSnapshot: 'l', ...attrs }));
+    node(
+        'figure',
+        figure,
+        node('asset_image', {
+            nodeId: 'i',
+            assetId: 'a',
+            labelSnapshot: 'l',
+            altIntent: 'missing',
+            altText: '',
+            width: null,
+            height: null,
+            displayWidth: null,
+            mediaType: null,
+            ...attrs,
+        }),
+    );
 const markDefaults: Readonly<Record<string, JsonObject>> = {
     link: { href: '/a', openInNewWindow: false, styleId: null },
     font_color: { tokenId: null, value: null },
@@ -198,55 +230,26 @@ describe('unknown marks and attributes', () => {
     });
 });
 
-/** Each vocabulary attribute with one value outside its declaration, and the node or mark that carries it. */
+/** Each vocabulary attribute without a default, or on a mark, with one value outside its declaration, and the node or mark that carries it. */
 const outOfRange: readonly (readonly [string, Json])[] = [
-    ['paragraph.lang', para({ lang: 'en_US' })],
-    ['paragraph.styleId', para({ styleId: 'Has Space' })],
-    ['paragraph.align', para({ align: 'middle' })],
-    ['paragraph.indent', para({ indent: 7 })],
     ['heading.nodeId', head({ nodeId: 5 })],
     ['heading.level', head({ level: 7 })],
-    ['heading.lang', head({ lang: 'x_y' })],
-    ['heading.styleId', head({ styleId: 'Has Space' })],
-    ['heading.align', head({ align: 'middle' })],
-    ['heading.indent', head({ indent: 7 })],
-    ['table_header.colspan', header({ colspan: 1.5 })],
-    ['blockquote.styleId', node('blockquote', { styleId: '"q"' }, paragraph())],
-    ['bullet_list.marker', node('bullet_list', { marker: 'star' }, listItem(paragraph()))],
-    ['ordered_list.start', node('ordered_list', { start: 1_000_001, marker: null }, listItem(paragraph()))],
-    ['ordered_list.marker', node('ordered_list', { start: 1, marker: 'greek' }, listItem(paragraph()))],
     ['task_item.nodeId', taskList(node('task_item', { checked: false }, paragraph()))],
-    ['task_item.checked', taskList(node('task_item', { nodeId: 't', checked: 'yes' }, paragraph()))],
-    ['code_block.languageId', node('code_block', { languageId: '<js>' })],
     ['embed.nodeId', embed({ nodeId: null })],
     ['embed.url', embed({ url: 5 })],
     ['embed.provider', embed({ provider: 'You Tube' })],
-    ['embed.title', embed({ title: 3 })],
     [
         'figure.nodeId',
         node('figure', { align: 'center' }, node('asset_image', { nodeId: 'i', assetId: 'a', labelSnapshot: 'l' })),
     ],
-    ['figure.align', image({}, { nodeId: 'f', align: 'justify' })],
     ...(
         [
             ['nodeId', { nodeId: 1 }],
             ['assetId', { assetId: 1 }],
             ['labelSnapshot', { labelSnapshot: null }],
-            ['altIntent', { altIntent: 'unknown' }],
-            ['altText', { altText: null }],
-            ['width', { width: 0 }],
-            ['height', { height: 65_536 }],
-            ['displayWidth', { displayWidth: 9 }],
-            ['mediaType', { mediaType: 4 }],
         ] as const
     ).map(([name, value]): readonly [string, Json] => [`asset_image.${name}`, image(value)]),
     ['table.nodeId', node('table', { nodeId: [] }, row(cell({}, paragraph())))],
-    ['table_cell.colspan', table('t', row(cell({ colspan: 51 }, paragraph())))],
-    ['table_cell.rowspan', table('t', row(cell({ rowspan: 0 }, paragraph())))],
-    ['table_cell.colwidth', table('t', row(cell({ colwidth: [0] }, paragraph())))],
-    ['table_header.rowspan', header({ rowspan: 51 })],
-    ['table_header.colwidth', header({ colwidth: [0] })],
-    ['table_header.scope', header({ scope: 'all' })],
     ['mention.nodeId', paragraph(mention('m', { nodeId: 2 }))],
     ['mention.resourceType', paragraph(mention('m', { resourceType: 'User' }))],
     ['mention.resourceId', paragraph(mention('m', { resourceId: null }))],
@@ -260,6 +263,43 @@ const outOfRange: readonly (readonly [string, Json])[] = [
     ['highlight.value', markCase('highlight', { value: 'red' })],
     ['language.lang', markCase('language', { lang: 'en_US' })],
     ['language.dir', markCase('language', { dir: 'up' })],
+];
+
+/** Each vocabulary attribute with a default and one value outside its declaration: the node stays editable. */
+const repairable: readonly (readonly [string, Json])[] = [
+    ['paragraph.lang', para({ lang: 'en_US' })],
+    ['paragraph.styleId', para({ styleId: 'Has Space' })],
+    ['paragraph.align', para({ align: 'middle' })],
+    ['paragraph.indent', para({ indent: 7 })],
+    ['heading.lang', head({ lang: 'x_y' })],
+    ['heading.styleId', head({ styleId: 'Has Space' })],
+    ['heading.align', head({ align: 'middle' })],
+    ['heading.indent', head({ indent: 7 })],
+    ['table_header.colspan', header({ colspan: 1.5 })],
+    ['blockquote.styleId', node('blockquote', { styleId: '"q"' }, paragraph())],
+    ['bullet_list.marker', node('bullet_list', { marker: 'star' }, listItem(paragraph()))],
+    ['ordered_list.start', node('ordered_list', { start: 1_000_001, marker: null }, listItem(paragraph()))],
+    ['ordered_list.marker', node('ordered_list', { start: 1, marker: 'greek' }, listItem(paragraph()))],
+    ['task_item.checked', taskList(node('task_item', { nodeId: 't', checked: 'yes' }, paragraph()))],
+    ['code_block.languageId', node('code_block', { languageId: '<js>' })],
+    ['embed.title', embed({ title: 3 })],
+    ['figure.align', image({}, { nodeId: 'f', align: 'justify' })],
+    ['table_cell.colspan', table('t', row(cell({ colspan: 51 }, paragraph())))],
+    ['table_cell.rowspan', table('t', row(cell({ rowspan: 0 }, paragraph())))],
+    ['table_cell.colwidth', table('t', row(cell({ colwidth: [0] }, paragraph())))],
+    ['table_header.rowspan', header({ rowspan: 51 })],
+    ['table_header.colwidth', header({ colwidth: [0] })],
+    ['table_header.scope', header({ scope: 'all' })],
+    ...(
+        [
+            ['altIntent', { altIntent: 'unknown' }],
+            ['altText', { altText: null }],
+            ['width', { width: 0 }],
+            ['height', { height: 65_536 }],
+            ['displayWidth', { displayWidth: 9 }],
+            ['mediaType', { mediaType: 4 }],
+        ] as const
+    ).map(([name, value]): readonly [string, Json] => [`asset_image.${name}`, image(value)]),
 ];
 
 describe('invalid attributes', () => {
@@ -287,6 +327,41 @@ describe('invalid attributes', () => {
             expect(attrsAt(tree).unknownAttributes).toEqual({ [key]: value });
             expect(codes).toEqual([`format.invalid-attribute /content/attrs/${name}`]);
         }
+    });
+
+    it.each(repairable)(
+        'keeps %s out of range on an editable node, at its default, and writes it back',
+        (name, value) => {
+            const [type = '', attr = ''] = name.split('.');
+            const { tree, codes } = roundTrip(doc(value));
+            const kept = firstOfType(tree, type)?.attrs;
+            const stored = firstOfType(value as unknown as Shaped, type)?.attrs;
+            expect(JSON.stringify(tree)).not.toContain('unsupported_');
+            expect(kept?.unknownAttributes).toEqual({ [attr]: stored?.[attr] });
+            expect(kept?.[attr]).not.toEqual(stored?.[attr]);
+            expect(codes).toHaveLength(1);
+            expect(codes[0]).toMatch(new RegExp(`^format\\.invalid-attribute .*/attrs/${attr}$`));
+        },
+    );
+
+    it('keeps a paragraph with an unknown align as a paragraph with the default and the value in unknownAttributes', () => {
+        const { tree, codes } = roundTrip(doc(para({ align: 'bogus' })));
+        expect(islandAt(tree, 0).type).toBe('paragraph');
+        expect(attrsAt(tree, 0)).toMatchObject({ align: null, unknownAttributes: { align: 'bogus' } });
+        expect(codes).toEqual(['format.invalid-attribute /content/content/0/attrs/align']);
+    });
+
+    it('gives a node a missing required attribute that has a default', () => {
+        const { tree, codes } = decode(doc(node('paragraph', {})));
+        expect(islandAt(tree, 0).type).toBe('paragraph');
+        expect(attrsAt(tree, 0)).toEqual({
+            lang: null,
+            styleId: null,
+            align: null,
+            indent: 0,
+            unknownAttributes: null,
+        });
+        expect(codes).toEqual([]);
     });
 
     it('makes a node with a missing required attribute an island', () => {
@@ -449,7 +524,8 @@ describe('stored IDs and colours', () => {
         ['129 characters', `a${'b'.repeat(128)}`],
     ])('rejects a styleId with %s', (_, value) => {
         const { tree, codes } = roundTrip(doc(para({ styleId: value })));
-        expect(islandAt(tree, 0).type).toBe('unsupported_block');
+        expect(islandAt(tree, 0).type).toBe('paragraph');
+        expect(attrsAt(tree, 0)).toMatchObject({ styleId: null, unknownAttributes: { styleId: value } });
         expect(codes).toEqual(['format.invalid-attribute /content/content/0/attrs/styleId']);
     });
 

@@ -82,3 +82,54 @@ test('shows islands as labelled fallbacks with their text, edits around them, mo
         .poll(() => stored(page))
         .toEqual([para(text('before one')), para(text('ac'), emoji, text('b')), para(text('after')), callout]);
 });
+
+test('copies an island original as text and converts a block and an inline island to text, each as one undo step', async ({
+    mount,
+    page,
+}) => {
+    const blocks = [para(text('before')), callout, para(text('a'), emoji, text('b'))];
+    await mount(<EditorProbe blocks={blocks as unknown as readonly ContentNodeJSON[]} />);
+    await ready(page);
+    await page.evaluate(() => {
+        const copied: string[] = [];
+        Object.defineProperty(window, '__copied', { value: copied });
+        Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
+            value: {
+                writeText: (value: string) => {
+                    copied.push(value);
+                    return Promise.resolve();
+                },
+            },
+        });
+    });
+    const liveRegion = page.getByTestId('fondue-rich-text-editor').locator('[aria-live="polite"]');
+    const actionOf = (name: string, action: string) =>
+        surfaceOf(page)
+            .locator('[data-rte-chrome]')
+            .filter({ has: page.getByRole('group', { name, exact: true }) })
+            .getByRole('button', { name: action });
+
+    await actionOf('Unsupported content: callout', 'Copy original').click();
+    await expect
+        .poll(() => page.evaluate(() => (window as unknown as { __copied: string[] }).__copied))
+        .toEqual([JSON.stringify(callout)]);
+    await expect(liveRegion).toHaveText('Original copied');
+
+    await actionOf('Unsupported content: callout', 'Convert to text').click();
+    await expect(liveRegion).toHaveText('Converted to text');
+    await expect.poll(() => stored(page)).toEqual([para(text('before')), para(text('Kept text')), blocks[2]]);
+    await page.keyboard.press('ControlOrMeta+z');
+    await expect.poll(() => stored(page)).toEqual(blocks);
+
+    await actionOf('Unsupported content: emoji', 'Convert to text').click();
+    await expect.poll(() => stored(page)).toEqual([blocks[0], blocks[1], para(text('ab'))]);
+    await page.keyboard.press('ControlOrMeta+z');
+    await expect.poll(() => stored(page)).toEqual(blocks);
+
+    await page.evaluate(() => {
+        Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined });
+    });
+    await actionOf('Unsupported content: callout', 'Copy original').click();
+    await expect(liveRegion).toHaveText('Copying failed. Select the content and copy it with the keyboard.');
+});

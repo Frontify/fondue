@@ -109,6 +109,9 @@ export const deCH = {
         RichTextEditor_columnBreak: 'Spaltenumbruch',
         RichTextEditor_columnBreakInactive: 'Spaltenumbruch, inaktiv',
         RichTextEditor_contextMenu: 'Aktionen für die Auswahl',
+        RichTextEditor_convertToText: 'In Text umwandeln',
+        RichTextEditor_convertedToText: 'In Text umgewandelt',
+        RichTextEditor_originalCopied: 'Original kopiert',
         RichTextEditor_copyCode: 'Code kopieren',
         RichTextEditor_copyContent: 'Inhalt kopieren',
         RichTextEditor_copyFailed:

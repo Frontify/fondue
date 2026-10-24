@@ -79,7 +79,6 @@ const linked = (href: string, openInNewWindow: boolean) => mark('link', { href, 
 
 const hostileDocuments: readonly (readonly [string, RichTextDocument])[] = [
     ['hostile text', wrap(paragraph(text(HOSTILE)))],
-    ['hostile attribute values', wrap(node('note', { label: HOSTILE, source: 'javascript:alert(1)' }, text('a')))],
     ['an openInNewWindow link', wrap(paragraph(text('open', linked('https://frontify.com', true))))],
     ...urls.map(
         (url) => [`a link to ${JSON.stringify(url)}`, wrap(paragraph(text(HOSTILE, linked(url, false))))] as const,
@@ -115,8 +114,29 @@ describe('toHTML hostile fixtures', () => {
         expect(html).not.toContain('<script');
     });
 
+    it('writes a bad attribute value as the default and escapes a markup label that DOMPurify then removes', () => {
+        const { html } = codecs.toHTML(
+            wrap(node('note', { label: HOSTILE, source: 'javascript:alert(1)' }, text('a'))),
+        );
+
+        expect(html).not.toBe('');
+        expect(html).toContain('<aside');
+        expect(html.toLowerCase()).not.toContain('javascript:');
+        expect(html).not.toContain('<script');
+        expect(html).not.toContain('alert(1)</script');
+        expect(html).toMatch(/title="[^"]*&lt;[^"]*&gt;/);
+        expect(html).toMatch(/data-label="[^"]*&lt;[^"]*&gt;/);
+
+        const template = window.document.createElement('template');
+        template.innerHTML = serialized(html);
+        const note = template.content.querySelector('aside');
+        note?.removeAttribute('title');
+        note?.removeAttribute('data-label');
+        expect(DOMPurify.sanitize(html, { ADD_ATTR: ['target'] })).toBe(template.innerHTML);
+    });
+
     it('keeps target on a new-window link, which DOMPurify drops without ADD_ATTR', () => {
-        const { html } = codecs.toHTML(hostileDocuments[2]?.[1] as RichTextDocument);
+        const { html } = codecs.toHTML(hostileDocuments[1]?.[1] as RichTextDocument);
 
         expect(html).toContain('target="_blank"');
         expect(DOMPurify.sanitize(html)).not.toContain('target=');
