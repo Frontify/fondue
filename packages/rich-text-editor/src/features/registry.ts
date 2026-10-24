@@ -1,70 +1,31 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { contentChecks } from '#/features/a11y-content-checks/feature';
-import { align } from '#/features/blocks-align/feature';
-import { codeBlock } from '#/features/blocks-code/feature';
-import { heading } from '#/features/blocks-heading/feature';
-import { quote } from '#/features/blocks-quote/feature';
-import { rule } from '#/features/blocks-rule/feature';
-import { core } from '#/features/core/feature';
-import { emoji } from '#/features/emoji/feature';
-import { formatClear } from '#/features/format-clear/feature';
-import { inputRules } from '#/features/input-rules/feature';
-import { columns } from '#/features/layout-columns/feature';
-import { links } from '#/features/links/feature';
-import { bulletList } from '#/features/lists-bullet/feature';
-import { listItem } from '#/features/lists-item/feature';
-import { orderedList } from '#/features/lists-ordered/feature';
-import { taskList } from '#/features/lists-task/feature';
-import { bold } from '#/features/marks-bold/feature';
-import { code } from '#/features/marks-code/feature';
-import { fontColor } from '#/features/marks-font-color/feature';
-import { italic } from '#/features/marks-italic/feature';
-import { language } from '#/features/marks-language/feature';
-import { strike } from '#/features/marks-strike/feature';
-import { subscript } from '#/features/marks-subscript/feature';
-import { superscript } from '#/features/marks-superscript/feature';
-import { underline } from '#/features/marks-underline/feature';
-import { mediaImage } from '#/features/media-image/feature';
-import { mediaUpload } from '#/features/media-upload/feature';
-import { mentions } from '#/features/mentions/feature';
-import { outline } from '#/features/nav-outline/feature';
-import { brandStyles } from '#/features/styles-brand/feature';
 import { DefinitionError, type Feature } from '#/model';
 
-/** Every shipped feature factory by feature ID. */
-export const registry: Readonly<Record<string, () => Feature>> = {
-    core,
-    emoji,
-    'marks.bold': bold,
-    'marks.italic': italic,
-    'marks.language': language,
-    'marks.underline': underline,
-    'marks.strike': strike,
-    'marks.code': code,
-    'marks.subscript': subscript,
-    'marks.superscript': superscript,
-    'marks.font-color': fontColor,
-    links,
-    'blocks.heading': heading,
-    'blocks.quote': quote,
-    'blocks.code': codeBlock,
-    'blocks.align': align,
-    'format.clear': formatClear,
-    'blocks.rule': rule,
-    'layout.columns': columns,
-    'lists.item': listItem,
-    'lists.bullet': bulletList,
-    'lists.ordered': orderedList,
-    'lists.task': taskList,
-    'styles.brand': brandStyles,
-    'input-rules': inputRules,
-    mentions,
-    'nav.outline': outline,
-    'a11y.content-checks': contentChecks,
-    'media.image': mediaImage,
-    'media.upload': mediaUpload,
+// Typed here because vite/client would change the type of migrate.ts's own glob call.
+type ViteImportMeta = ImportMeta & {
+    readonly glob: (pattern: string, options: { readonly eager: true }) => Record<string, Record<string, unknown>>;
 };
+
+const modules = (import.meta as ViteImportMeta).glob('./*/feature.ts', { eager: true });
+
+// A feature module exports its factory next to types only, so the one exported function is the factory.
+const factoryOf = (path: string, exports: Record<string, unknown>): (() => Feature) => {
+    const factories = Object.values(exports).filter((value): value is () => Feature => typeof value === 'function');
+    const factory = factories.length === 1 ? factories.at(0) : undefined;
+    if (factory === undefined) {
+        throw new Error(`${path} must export exactly one feature factory`);
+    }
+    return factory;
+};
+
+/** Every shipped feature factory by feature ID, found in the `feature.ts` of each feature folder. */
+export const registry: Readonly<Record<string, () => Feature>> = Object.fromEntries(
+    Object.entries(modules).map(([path, exports]) => {
+        const factory = factoryOf(path, exports);
+        return [factory().id, factory];
+    }),
+);
 
 export interface FeatureRecord {
     /** The team that reviews and maintains the feature. */
