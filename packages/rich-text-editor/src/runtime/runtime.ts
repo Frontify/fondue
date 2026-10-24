@@ -52,7 +52,7 @@ import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
 import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
-import { type ColumnState, columnsPlugin, ONE_COLUMN, sameColumns } from './columns';
+import { type ColumnState, columnsPlugin, ONE_COLUMN } from './columns';
 import { createContentChecks } from './content-issues';
 import { createDomIds } from './dom-ids';
 import { secondCopyAtMount, secondCopyInView } from './engines';
@@ -67,6 +67,7 @@ import { positionOf } from './positions';
 import { sameStamp, type SaveCoordinator } from './saves';
 import { scrollSelectionIntoView } from './scroll';
 import { createBusy } from './session/busy';
+import { createColumns } from './session/columns';
 import { createEncoder } from './session/encode';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
@@ -500,9 +501,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     });
     // The mode the surface shows, which follows `mode` once input has settled.
     let shownMode = mode.mode();
-    let columns = options.columns ?? ONE_COLUMN;
+    const columns = createColumns({ initial: options.columns ?? ONE_COLUMN, onChange: () => refreshView() });
     // The columns the decorations show, which follow `columns` once input has settled.
-    let shownColumns = columns;
+    let shownColumns = columns.current();
     let shownStatus: SaveStatus | undefined;
     let typing = false;
     let view: EditorView | undefined;
@@ -710,7 +711,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return;
         }
         shownMode = mode.mode();
-        shownColumns = columns;
+        shownColumns = columns.current();
         if (view !== undefined) {
             view.setProps({});
         }
@@ -2110,13 +2111,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
         },
         setDisabled: mode.setDisabled,
-        setColumns: (next) => {
-            if (sameColumns(columns, next)) {
-                return;
-            }
-            columns = next;
-            refreshView();
-        },
+        setColumns: columns.set,
         faultView: () => {
             if (viewCall) {
                 viewThrew = true;
