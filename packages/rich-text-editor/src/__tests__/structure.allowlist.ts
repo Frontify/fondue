@@ -6,7 +6,6 @@ export const FILES_OVER_600_LINES: Record<string, number> = {
     'src/codecs/to-markdown.ts': 702,
     'src/model/checks.ts': 717,
     'src/model/compile.ts': 659,
-    'src/persistence/coordinator.ts': 717,
     'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/runtime.ts': 2314,
     'src/runtime/suggestions/plugin.ts': 616,
@@ -35,7 +34,6 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/model/output.ts': 548,
     'src/model/read.ts': 422,
     'src/model/styles.ts': 421,
-    'src/persistence/coordinator.ts': 717,
     'src/react/compile-editor.ts': 427,
     'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/input-rules.ts': 515,
@@ -58,7 +56,6 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/features/media-image/view.tsx#ImageChrome': 276,
     'src/features/mentions/mention-dialog.tsx#SearchDialog': 284,
     'src/model/compile.ts#compileContentModel': 210,
-    'src/persistence/coordinator.ts#createSaveCoordinator': 629,
     'src/react/rich-text-editor.tsx#anonymous#11': 184,
     'src/react/rich-text-editor.tsx#SessionComponent': 669,
     'src/runtime/async.ts#createAsyncCoordinator': 217,
@@ -72,7 +69,6 @@ export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {
     'src/bridge/node-views.ts#build': 8,
     'src/features/links/link-popover.tsx#LinkPopover': 7,
     'src/features/marks-language/language-dialog.tsx#LanguageDialog': 8,
-    'src/persistence/coordinator.ts#createSaveCoordinator': 19,
     'src/runtime/runtime.ts#createEditorRuntime': 40,
 };
 
