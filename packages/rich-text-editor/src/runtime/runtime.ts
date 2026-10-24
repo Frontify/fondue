@@ -17,14 +17,12 @@ import {
     type NodeViewConstructor,
 } from 'prosemirror-view';
 
-import { type CompiledDefinition, type EngineCommand, ORIGIN_META } from '#/definition';
+import { type CompiledDefinition, type EngineCommand } from '#/definition';
 import {
     type CapabilityRef,
-    checkHref,
     type ContentCheckOptions,
     type Diagnostic,
     hashDocument,
-    type HrefPolicy,
     type JsonObject,
     type PresentationStyle,
     type ResourceLimits,
@@ -35,9 +33,8 @@ import { attributesOf, compiledModel } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { diagnostic } from '#/model/format';
-import { hrefPolicyOf } from '#/model/href';
 import { randomId } from '#/model/random-id';
-import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
+import { isRecord, isValidValue } from '#/model/values';
 
 import { type AsyncOperation, type AsyncRequest } from './async';
 import { createContentChecks } from './capabilities/checks/content-issues';
@@ -64,6 +61,7 @@ import { positionOf } from './positions';
 import { sameStamp, type SaveCoordinator } from './saves';
 import { createBusy } from './session/busy';
 import { createColumns } from './session/columns';
+import { checkedPayload, createCommands, rejected } from './session/commands';
 import { createCommit } from './session/commit';
 import { createComposition } from './session/composition';
 import { createEncoder } from './session/encode';
@@ -73,20 +71,12 @@ import { createLifecycle } from './session/lifecycle';
 import { createMetrics } from './session/metrics';
 import { createMode } from './session/mode';
 import { createPolicy } from './session/policy';
-import { createPrepare, DUPLICATE_ENGINE, pluginError } from './session/prepare';
+import { createPrepare, DUPLICATE_ENGINE } from './session/prepare';
 import { createSaving } from './session/saving';
 import { createShown, summarize } from './session/shown';
 import { createStore } from './session/store';
 import { createTargetsService } from './session/targets';
-import {
-    type Attempt,
-    type InputOutcome,
-    type Intent,
-    type Mode,
-    type RejectedCode,
-    type ReplaceCode,
-    type Route,
-} from './session/types';
+import { type InputOutcome, type Intent, type Mode, type RejectedCode, type ReplaceCode } from './session/types';
 import { createView, isEmpty } from './session/view';
 import { stylesPlugin } from './styles';
 import { countTargets, releaseTargets, targetsPlugin } from './targets';
@@ -334,15 +324,7 @@ export const runtimeOfView = (view: EditorView): EditorRuntime | undefined => vi
 
 export { isEmpty, summarize };
 
-const rejected = (code: RejectedCode): CommandResult => ({ status: 'rejected', code });
 const refused = (code: ReplaceCode): ReplaceResult => ({ status: 'rejected', code });
-/** The payload as one frozen JSON copy, which is what is checked and run; `undefined` for one that is not plain JSON. */
-const checkedPayload = (given: unknown): { readonly payload: unknown } | undefined => {
-    if (given !== undefined && findUnsafeJson(given, '') !== undefined) {
-        return undefined;
-    }
-    return { payload: snapshot(given) };
-};
 /** One editing session: its state, its view while a surface is attached, the commit path and its events. */
 export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntime => {
     const { definition, limits } = options;
@@ -350,17 +332,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const identity = createIdentity({ documentId: options.documentId, generate });
     const suggestionListId = `rte-suggestions-${identity.session().sessionId}`;
     const createdAt = Date.now();
-    // The URL policy of each command whose feature narrows `checkHref`, which its `url` payload fields must pass too.
-    const hrefPolicies = new Map<EngineCommand, HrefPolicy>(
-        [...definition.commands.values()].flatMap((command) => {
-            const feature = compiledModel(definition.model).features.find(({ id }) => id === command.featureId);
-            const policy = feature === undefined ? undefined : hrefPolicyOf(feature.options);
-            if (policy === undefined) {
-                return [];
-            }
-            return [[command, policy] as const];
-        }),
-    );
     const encoder = createEncoder(definition.model, options.capabilities);
     const { encode, encodeByBlock } = encoder;
     const lifecycle = createLifecycle();
@@ -426,14 +397,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         release: (target) => handle.releaseTarget(target),
         run: (command, target) =>
-            runOn(
+            commands.runOn(
                 command,
                 { payload: undefined },
                 () => (target === undefined ? store.state : baseOf({ target })),
                 'host',
             ).status === 'applied',
         fill: (command) => {
-            const result = runOn(command, { payload: undefined }, () => store.state, 'async');
+            const result = commands.runOn(command, { payload: undefined }, () => store.state, 'async');
             if (result.status === 'rejected') {
                 return result.code;
             }
@@ -709,197 +680,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         settling.resolve('settled');
     };
 
-    /**
-     * The payload with each `url` field in the form `checkHref` stores, after the policy of the command's feature, or
-     * `undefined` when one fails it.
-     */
-    const withCheckedUrls = (command: EngineCommand, payload: unknown): { readonly payload: unknown } | undefined => {
-        if (command.payload === undefined || !isRecord(payload)) {
-            return { payload };
-        }
-        const policy = hrefPolicies.get(command);
-        const checked: Record<string, unknown> = { ...payload };
-        for (const [name, field] of Object.entries(command.payload.fields)) {
-            const value = payload[name];
-            if (field.type !== 'url' || typeof value !== 'string') {
-                continue;
-            }
-            const result = checkHref(value, policy);
-            if (!result.ok) {
-                return undefined;
-            }
-            checked[name] = result.href;
-        }
-        return { payload: checked };
-    };
-
-    // What a plugin command reads its session from; `runtime` is read when a command runs, after it exists.
-    const commandSession = {
-        get runtime() {
-            return runtime;
-        },
-        host: options.commandHost,
-    };
-
-    /**
-     * Runs a command against the current state with a dispatch that captures its transaction, then prepares it; the
-     * effects it defers go to `effects`, which a query leaves out.
-     */
-    const attempt = (
-        command: EngineCommand | undefined,
-        checked: { readonly payload: unknown } | undefined,
-        base: EditorState | RejectedCode,
-        ids: () => string,
-        route: Route,
-        effects?: (() => void)[],
-    ): Attempt => {
-        if (command === undefined) {
-            return { code: 'unknown-command' };
-        }
-        // One JSON copy is checked and run, so an accessor or proxy cannot change the payload in between.
-        if (checked === undefined) {
-            return { code: 'invalid-payload' };
-        }
-        if (findInvalidPayload(command.payload, checked.payload) !== undefined) {
-            return { code: 'invalid-payload' };
-        }
-        const urls = withCheckedUrls(command, checked.payload);
-        if (urls === undefined) {
-            return { code: 'invalid-payload' };
-        }
-        const { payload } = urls;
-        if (lifecycle.is('transitioning')) {
-            return { code: 'busy' };
-        }
-        if (!lifecycle.is('ready')) {
-            return { code: 'not-ready' };
-        }
-        if (mode.refusesReadOnly(command)) {
-            return { code: 'readonly' };
-        }
-        if (typeof base === 'string') {
-            return { code: base };
-        }
-        const refused = policy.refusal(command, base, payload);
-        if (refused !== undefined) {
-            return { code: refused };
-        }
-        const dispatched: Transaction[] = [];
-        let refusedWrite = false;
-        const context = {
-            defer: (effect: () => void) => effects?.push(effect),
-            refuse: () => {
-                refusedWrite = true;
-            },
-            session: commandSession,
-        };
-        let applicable: boolean;
-        try {
-            applicable = command.run(base, (transaction) => dispatched.push(transaction), payload, context);
-        } catch (error) {
-            // A plugin that throws while a command's API write applies drops the command, as it drops a batch.
-            return {
-                code: 'not-applicable',
-                diagnostic: pluginError(error, command.featureId),
-            };
-        }
-        if (dispatched.length > 1) {
-            return {
-                code: 'not-applicable',
-                diagnostic: diagnostic('runtime.multiple-dispatch', undefined, undefined, 'error'),
-            };
-        }
-        const [root] = dispatched;
-        if (!applicable) {
-            if (refusedWrite) {
-                return { code: 'not-allowed' };
-            }
-            return { code: 'not-applicable' };
-        }
-        if (root === undefined) {
-            return { unchanged: true };
-        }
-        // `readOnly` lets a command run in a read-only editor to open something, never to change content.
-        if (mode.mode() === 'readonly' && root.docChanged) {
-            return { code: 'readonly' };
-        }
-        // Work that runs later through a target maps the user's selection through its change instead of moving it there.
-        if (route !== 'host' && base !== store.state) {
-            root.setSelection(store.state.selection.map(root.doc, root.mapping));
-        }
-        // An async completion is no undo step of its own.
-        if (route === 'async') {
-            root.setMeta(ORIGIN_META, 'async').setMeta('addToHistory', false);
-        }
-        const prepared = prepare(root, ids, false);
-        // A host call never changes content during a composition, which queued intents and async results wait out.
-        if ('candidate' in prepared && prepared.candidate.doc !== store.state.doc && settling.active()) {
-            return { code: 'composition-active' };
-        }
-        return prepared;
-    };
-
-    const queryOn = (
-        command: EngineCommand | undefined,
-        checked: { readonly payload: unknown } | undefined,
-        base: EditorState | RejectedCode,
-    ): CommandState => {
-        let active: boolean | 'mixed' = false;
-        if (command !== undefined && checked !== undefined && typeof base !== 'string') {
-            active = command.active(base, checked.payload, { defer: () => undefined, session: commandSession });
-        }
-        const attempted = attempt(command, checked, base, queriedIds(), 'host');
-        if ('code' in attempted) {
-            return { enabled: false, active, disabledReason: attempted.code };
-        }
-        return { enabled: true, active, disabledReason: null };
-    };
-    const query = (id: string, given?: unknown, options?: unknown): CommandState =>
-        queryOn(definition.commands.get(id), checkedPayload(given), baseOf(options));
-
-    // Installs exactly what `query` checked, so the two agree.
-    const runOn = (
-        command: EngineCommand | undefined,
-        checked: { readonly payload: unknown } | undefined,
-        base: () => EditorState | RejectedCode,
-        route: Route,
-    ): CommandResult => {
-        if (busy.isBusy()) {
-            return rejected('busy');
-        }
-        const effects: (() => void)[] = [];
-        const result = busy.run((): CommandResult => {
-            const attempted = attempt(command, checked, base(), installedId, route, effects);
-            if ('unchanged' in attempted) {
-                return { status: 'no-op', stamp: identity.stamp(), contentChanged: false };
-            }
-            if ('candidate' in attempted) {
-                const before = identity.commitSequence();
-                const contentChanged = install(attempted);
-                // The view faulted while it installed the batch, which a later fault or `dispose` from a listener leaves applied.
-                if (identity.commitSequence() === before) {
-                    return rejected('not-ready');
-                }
-                return { status: 'applied', stamp: identity.stamp(), contentChanged };
-            }
-            if (attempted.diagnostic !== undefined) {
-                report(attempted.diagnostic);
-            }
-            if (attempted.fault !== undefined) {
-                fault(attempted.fault);
-            }
-            return rejected(attempted.code);
-        });
-        // Deferred effects, such as an overlay a plugin command opens, run once the command has run and its commit ended.
-        if (result.status !== 'rejected') {
-            for (const effect of effects) {
-                effect();
-            }
-        }
-        return result;
-    };
-    const run = (id: string, given: unknown, options: unknown, route: Route): CommandResult =>
-        runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options), route);
     /** The state with exactly `from` to `to` selected as text, which an accepted suggestion replaces. */
     const rangeBase = (from: number, to: number): EditorState | RejectedCode => {
         if (from < 0 || to > store.state.doc.content.size || from > to) {
@@ -912,21 +692,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return store.state.apply(store.state.tr.setSelection(selection));
     };
     const acceptSuggestion = (range: { readonly from: number; readonly to: number }, id: string, payload: JsonObject) =>
-        runOn(definition.commands.get(id), checkedPayload(payload), () => rangeBase(range.from, range.to), 'host');
-    const execute = (id: string, given?: unknown, commandOptions?: unknown): CommandResult => {
-        // Commands belong in event handlers; a call inside a notification is already `busy`.
-        if (!busy.isBusy() && options.inRender?.() === true) {
-            report(diagnostic('react.execute-in-render', undefined, undefined, 'error'));
-            return rejected('busy');
-        }
-        const result = run(id, given, commandOptions, 'host');
-        // Without `focus: 'editor'` a command leaves focus where it is.
-        if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
-            focus();
-        }
-        return result;
-    };
-
+        commands.runOn(
+            definition.commands.get(id),
+            checkedPayload(payload),
+            () => rangeBase(range.from, range.to),
+            'host',
+        );
     /** The state with the node `nodeId` selected, as a node view action runs on it. */
     /** The position of `target` in `doc` when it holds a node there, read when it is needed. */
     const targetIn = (doc: Node, target: NodeTarget): number | undefined => {
@@ -989,14 +760,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 }
                 return true;
             });
-            return runOn(update, { payload: undefined }, () => store.state, 'host');
+            return commands.runOn(update, { payload: undefined }, () => store.state, 'host');
         },
         remove: () => {
             const remove = nodeCommand(target, (tr, pos, node) => {
                 tr.delete(pos, pos + node.nodeSize);
                 return true;
             });
-            return runOn(remove, { payload: undefined }, () => store.state, 'host');
+            return commands.runOn(remove, { payload: undefined }, () => store.state, 'host');
         },
         select: () => {
             const pos = targetIn(store.state.doc, target);
@@ -1006,8 +777,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         // The author's selection stays, so typing after a press on chrome, such as a task checkbox, keeps the node.
         execute: (id, payload) =>
-            runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(target), 'node'),
-        query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(target)),
+            commands.runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(target), 'node'),
+        query: (id, payload) =>
+            commands.queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(target)),
     });
 
     const placeAsset: EditorRuntime['placeAsset'] = (value, place) => {
@@ -1017,13 +789,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         if ('target' in place) {
             const insert = insertPicked(definition.schema, asset);
-            return runOn(insert, { payload: undefined }, () => baseOf({ target: place.target }), 'host');
+            return commands.runOn(insert, { payload: undefined }, () => baseOf({ target: place.target }), 'host');
         }
         const { nodeId } = place;
         if (positionOf(store.state.doc, nodeId) === undefined) {
             return rejected('target-invalid');
         }
-        return runOn(refillPicked(nodeId, asset), { payload: undefined }, () => store.state, 'host');
+        return commands.runOn(refillPicked(nodeId, asset), { payload: undefined }, () => store.state, 'host');
     };
 
     const targets = createTargetsService({
@@ -1043,7 +815,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (operation.target !== null) {
                 options = { target: operation.target };
             }
-            const outcome = run(operation.command, result, options, 'async');
+            const outcome = commands.run(operation.command, result, options, 'async');
             if (outcome.status === 'rejected') {
                 return outcome.code;
             }
@@ -1051,6 +823,29 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
     });
     const { coordinator, baseOf, captureRange } = targets;
+    const commands = createCommands({
+        definition,
+        store,
+        identity,
+        lifecycle,
+        mode,
+        policy,
+        busy,
+        composition: settling,
+        commit: {
+            prepare: (root, ids, fromView) => prepare(root, ids, fromView),
+            install: (prepared) => install(prepared),
+            installedId: () => installedId(),
+            queriedIds: () => queriedIds(),
+        },
+        baseOf,
+        focus: () => focus(),
+        report,
+        fault: (found) => fault(found),
+        inRender: () => options.inRender?.(),
+        commandHost: options.commandHost,
+        runtime: () => runtime,
+    });
 
     /** One search of a suggestion list, as one operation of the coordinator that the list's newer search supersedes. */
     const searchSuggestions: SuggestionHost['search'] = ({ key, featureId, command, run }, receive) => {
@@ -1087,7 +882,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 // The intent's depth holds while it runs or is reported, so what its listeners enqueue sits deeper.
                 depth = intent.depth;
                 if (intent.depth <= MAX_ENQUEUE_DEPTH) {
-                    intent.resolve(run(intent.id, intent.payload, intent.options, 'queue'));
+                    intent.resolve(commands.run(intent.id, intent.payload, intent.options, 'queue'));
                 } else {
                     if (!warned) {
                         warned = true;
@@ -1366,8 +1161,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             return encode(recovery.doc);
         },
-        query,
-        execute,
+        query: commands.query,
+        execute: commands.execute,
         enqueue,
         captureTarget: (options) => captureRange(options, undefined),
         releaseTarget: targets.releaseTarget,
@@ -1422,16 +1217,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         detach: views.detach,
         report,
         captureRange: (range, captureOptions) => captureRange(captureOptions, range),
-        refusal: (command, base, payload) => {
-            if (mode.refusesReadOnly(command)) {
-                return 'readonly';
-            }
-            return policy.refusal(command, base, payload);
-        },
-        writeRefusal: policy.writeRefusal,
-        perform: (command, performOptions) =>
-            runOn(command, { payload: undefined }, () => baseOf(performOptions), 'host'),
+        refusal: commands.refusal,
+        perform: commands.perform,
         select,
+        writeRefusal: policy.writeRefusal,
         watch,
         startAsync: coordinator.start,
         changeServices: targets.changeServices,
