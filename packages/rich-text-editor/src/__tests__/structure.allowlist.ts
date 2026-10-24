@@ -43,7 +43,6 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/codecs/from-markdown.ts#readMarkdown': 161,
     'src/definition/index.ts#compileDefinition': 253,
     'src/testing/conformance/contract.ts#runFeatureContract': 214,
-    'src/features/emoji/emoji-picker.tsx#Picker': 155,
     'src/features/links/link-bubble.tsx#LinkBubble': 183,
     'src/features/links/link-popover.tsx#LinkPopover': 402,
     'src/model/compile.ts#compileContentModel': 210,
