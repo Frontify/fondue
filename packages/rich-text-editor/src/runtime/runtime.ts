@@ -69,6 +69,7 @@ import { authoringOf, createPolicyCheck } from './policy';
 import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { scrollSelectionIntoView } from './scroll';
+import { createLifecycle } from './session/lifecycle';
 import { createInputSettling } from './settle';
 import { stylesPlugin } from './styles';
 import { type SuggestionHost, suggestionHosts } from './suggestions/host';
@@ -499,11 +500,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     );
     let { capabilities } = options;
     let exceedsLimits = createLimitCheck(definition.model, capabilities);
-    // Aborted by `dispose`, which ends the session's own service calls.
-    const ended = new AbortController();
+    const lifecycle = createLifecycle();
     let policy = options.policy;
     let policyRevision = 0;
-    let phase: EditorSummary['phase'] = 'mounting';
     let mode = options.mode;
     // The mode the surface shows, which follows `mode` once input has settled.
     let shownMode = mode;
@@ -586,12 +585,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         report: (found) => report(found),
         event: (event) => {
-            if (phase !== 'disposed') {
+            if (!lifecycle.is('disposed')) {
                 options.uploadEvent?.(event);
             }
         },
         changed: () => {
-            if (phase !== 'disposed') {
+            if (!lifecycle.is('disposed')) {
                 busyWith(notify);
             }
         },
@@ -665,7 +664,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
     };
 
-    const isDisposed = () => phase === 'disposed';
+    const { isDisposed } = lifecycle;
     const { emit, notify, subscribe, watch, clear } = createEventBus({ isDisposed, around: busyWith });
 
     const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
@@ -765,7 +764,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         sequence: () => sequence,
         encode: () => encode(state.doc),
         composing: () => settling.active(),
-        ready: () => phase !== 'faulted' && phase !== 'disposed',
+        ready: () => !lifecycle.is('faulted', 'disposed'),
         commit: (transaction) => commit(transaction),
         options: () => {
             const given = options.contentChecks?.();
@@ -788,7 +787,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     const fault = (diagnostic: Diagnostic) => {
-        phase = 'faulted';
+        if (isDisposed()) {
+            return;
+        }
+        lifecycle.to('faulted');
+        // A frame still pending would otherwise move the faulted session to ready.
+        cancelReady();
         // A composition that settles later publishes nothing.
         settling.cancel();
         provisional = undefined;
@@ -813,7 +817,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         };
         let stored: Promise<RecoveryReceipt>;
         try {
-            stored = service.store(checkpoint, { signal: ended.signal, session });
+            stored = service.store(checkpoint, { signal: lifecycle.ended, session });
         } catch {
             return;
         }
@@ -943,7 +947,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         for (let next = deferred.shift(); next !== undefined; next = deferred.shift()) {
             // A listener of this install may have faulted or disposed the session, which then commits nothing more.
-            if (phase !== 'ready') {
+            if (!lifecycle.is('ready')) {
                 deferred.length = 0;
                 break;
             }
@@ -1146,7 +1150,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const typed = typing;
         typing = false;
         // A faulted session installs nothing more, so a broken view never updates again.
-        if (phase === 'faulted' || phase === 'disposed') {
+        if (lifecycle.is('faulted', 'disposed')) {
             return;
         }
         if (root.before !== state.doc) {
@@ -1280,10 +1284,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return { code: 'invalid-payload' };
         }
         const { payload } = urls;
-        if (phase === 'transitioning') {
+        if (lifecycle.is('transitioning')) {
             return { code: 'busy' };
         }
-        if (phase !== 'ready') {
+        if (!lifecycle.is('ready')) {
             return { code: 'not-ready' };
         }
         if (refusesReadOnly(command)) {
@@ -1550,7 +1554,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         range: { readonly from: number; readonly to: number } | undefined,
     ): CaptureResult => {
         // During a commit or notification the capture's root would wait or go stale, so it is refused, as `execute` is.
-        if (phase !== 'ready' || busy > 0) {
+        if (!lifecycle.is('ready') || busy > 0) {
             return { status: 'rejected', code: 'not-ready' };
         }
         const id = generate();
@@ -1566,7 +1570,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
      */
     const flushCaptures = () => {
         for (let id = deferredCaptures.shift(); id !== undefined; id = deferredCaptures.shift()) {
-            if (phase === 'ready') {
+            if (lifecycle.is('ready')) {
                 captureNow(id, ASYNC_TARGET);
             }
         }
@@ -1576,12 +1580,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         generateId: generate,
         session: () => session,
         policyRevision: () => policyRevision,
-        isDisposed: () => phase === 'disposed',
-        isFaulted: () => phase === 'faulted',
+        isDisposed,
+        isFaulted: () => lifecycle.is('faulted'),
         // A result waits out a replacement, which applies it if it fails and discards it in the next generation.
-        holding: () => settling.active() || phase === 'transitioning',
+        holding: () => settling.active() || lifecycle.is('transitioning'),
         capture: () => {
-            if (phase !== 'ready') {
+            if (!lifecycle.is('ready')) {
                 return undefined;
             }
             const id = generate();
@@ -1631,7 +1635,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
      * and input has settled.
      */
     const drain = () => {
-        if (draining || busy > 0 || phase !== 'ready' || settling.active()) {
+        if (draining || busy > 0 || !lifecycle.is('ready') || settling.active()) {
             return;
         }
         draining = true;
@@ -1661,7 +1665,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const enqueue = (id: string, payload?: unknown, options?: unknown): Promise<CommandResult> =>
         new Promise((resolve) => {
-            if (phase === 'faulted' || phase === 'disposed') {
+            if (lifecycle.is('faulted', 'disposed')) {
                 resolve(rejected('not-ready'));
                 return;
             }
@@ -1696,7 +1700,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     const dispose = () => {
-        if (phase === 'disposed') {
+        if (lifecycle.is('disposed')) {
             return;
         }
         saves?.dispose();
@@ -1705,8 +1709,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return;
         }
         // Set first, so `disposed` listeners read the final phase and what they enqueue settles at once.
-        phase = 'disposed';
-        ended.abort();
+        lifecycle.to('disposed');
         settling.cancel();
         checks.dispose();
         for (const settled of [...afterInput]) {
@@ -1729,7 +1732,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     const focus = (where: 'current' | 'start' | 'end' = 'current') => {
-        if (phase !== 'ready' || view === undefined) {
+        if (!lifecycle.is('ready') || view === undefined) {
             return;
         }
         if (where === 'start') {
@@ -1816,7 +1819,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     /** Leaves `transitioning` after a failed step, so what waited runs on the unchanged session. */
     const resume = (code: ReplaceCode, focused: boolean): ReplaceResult => {
-        phase = 'ready';
+        // A listener may have faulted or disposed the session since the step began.
+        if (lifecycle.is('transitioning')) {
+            lifecycle.to('ready');
+        }
         refreshView();
         coordinator.settle();
         saves?.settled();
@@ -1873,7 +1879,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             } else {
                 saves.replaced(request.next.revision, previous);
             }
-            phase = 'ready';
+            // A plugin view may have faulted or disposed the session while the state installed.
+            if (lifecycle.is('transitioning')) {
+                lifecycle.to('ready');
+            }
             refreshView();
             return true;
         });
@@ -1894,7 +1903,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     /** `EditorHandle.replaceDocument`: the Replacement steps in order, stopping at the first that fails. */
     const replace = async (request: ReplaceDocumentRequest): Promise<ReplaceResult> => {
-        if (phase !== 'ready') {
+        if (!lifecycle.is('ready')) {
             return refused('not-ready');
         }
         const { next } = request;
@@ -1922,12 +1931,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return refused('composition-active');
         }
         const focused = view?.hasFocus() === true;
-        phase = 'transitioning';
+        lifecycle.to('transitioning');
         refreshView();
         if (unsavedChanges()) {
             const code = await leaveUnsaved(request.unsaved);
             // The session was disposed, or faulted, while the step 5 write ran.
-            if (phase !== 'transitioning') {
+            if (!lifecycle.is('transitioning')) {
                 return refused('not-ready');
             }
             if (code !== undefined) {
@@ -1949,7 +1958,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         getSummary: () => {
             return {
                 session,
-                phase,
+                phase: lifecycle.phase(),
                 mode,
                 commitSequence,
                 sequence,
@@ -1979,7 +1988,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         getSaveStatus: saveStatus,
         getRecoveryCandidate: () => {
-            if (phase !== 'faulted' || recovery === undefined) {
+            if (!lifecycle.is('faulted') || recovery === undefined) {
                 return null;
             }
             return encode(recovery.doc);
@@ -1990,7 +1999,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         captureTarget: (options) => captureRange(options, undefined),
         releaseTarget: (target) => {
             const owned = ownTarget(target);
-            if (phase === 'disposed' || typeof owned === 'string') {
+            if (lifecycle.is('disposed') || typeof owned === 'string') {
                 return;
             }
             const waiting = deferredCaptures.indexOf(owned.id);
@@ -2004,7 +2013,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         requestCommit: (commitOptions) => {
             // Only the replacement's own `save` writes while the document is replaced.
-            if (saves !== undefined && phase === 'transitioning') {
+            if (saves !== undefined && lifecycle.is('transitioning')) {
                 return Promise.resolve({ status: 'blocked', code: 'not-ready' });
             }
             return commitSnapshot(commitOptions);
@@ -2020,7 +2029,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return result;
         },
         setMode: (next) => {
-            if (phase === 'disposed') {
+            if (lifecycle.is('disposed')) {
                 return;
             }
             mode = next;
@@ -2099,7 +2108,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return undefined;
         },
         attach: (element, props) => {
-            if (phase === 'disposed') {
+            if (lifecycle.is('disposed')) {
                 return;
             }
             detach();
@@ -2111,7 +2120,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                         {
                             ...props,
                             state,
-                            editable: () => phase === 'ready' && shownMode === 'editable',
+                            editable: () => lifecycle.is('ready') && shownMode === 'editable',
                             attributes: (current) => {
                                 const attributes: Record<string, string> = {};
                                 if (shownMode === 'readonly') {
@@ -2126,7 +2135,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                     attributes['data-rte-empty'] = '';
                                 }
                                 // Selection and copy keep working on a surface that takes no edits.
-                                if (phase === 'transitioning') {
+                                if (lifecycle.is('transitioning')) {
                                     attributes['aria-busy'] = 'true';
                                 }
                                 // The surface keeps focus while a suggestion list shows options, and names the active one.
@@ -2179,14 +2188,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (secondCopyAtMount(state)) {
                 report(DUPLICATE_ENGINE);
             }
-            if (phase !== 'mounting') {
+            if (!lifecycle.is('mounting')) {
                 return;
             }
             // Frames run after microtasks, so the first portal flush of the initial document precedes `ready`.
             readyFrame = requestAnimationFrame(() => {
                 readyFrame = undefined;
                 liveResources.frames -= 1;
-                phase = 'ready';
+                lifecycle.to('ready');
                 refreshView();
                 emit('ready', session);
                 measure('mount', createdAt, null);
@@ -2253,7 +2262,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 viewThrew = true;
                 return;
             }
-            if ((phase === 'mounting' || phase === 'ready') && view !== undefined) {
+            if (lifecycle.is('mounting', 'ready') && view !== undefined) {
                 viewFault(view, state);
             }
         },
@@ -2270,7 +2279,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         saveStatusChanged: emitSaveStatus,
         clearHistory: () => {
-            if (phase !== 'ready' || settling.active()) {
+            if (!lifecycle.is('ready') || settling.active()) {
                 return;
             }
             const fresh = reset(state);
