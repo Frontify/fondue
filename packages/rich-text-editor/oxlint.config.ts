@@ -78,6 +78,9 @@ const NODE_BUILTINS = [
 
 const EDITOR_PART_MESSAGE = `An editor part acts only through \`#/bridge/plugin\`: it imports that module, \`#/bridge/define\`, \`#/model\` and its own feature folder, and of other packages only ${UI_PACKAGES_TEXT}, never Node built-ins, the engine, the runtime, the editor layers or another feature.`;
 
+const CLIPBOARD_MESSAGE =
+    '`clipboard` imports `model`, `definition`, `runtime`, `codecs`, `clipboard/import` and ProseMirror, never React or the editor layers.';
+
 const READER_FILE_MESSAGE =
     "A feature's reader override imports only `react` (no Node built-ins), `#/model`, `#/reader/define`, its own `./feature` and a declared dependency's `#/features/<id>/feature`, as an outside feature must.";
 
@@ -146,6 +149,11 @@ const PUBLIC_ENTRY_MODULES = Object.entries(packageJson.exports)
 const STORY_MODULES = [...PUBLIC_ENTRY_MODULES, 'bridge/plugin', 'bridge/define', 'reader/define', 'react/examples/**'];
 
 const STORY_MESSAGE = `A story imports only the public entries and the modules they re-export to plugins (${STORY_MODULES.map((path) => `\`#/${path}\``).join(', ')}), files of its own folder, ${UI_PACKAGES_TEXT}, \`storybook/*\` and \`@storybook/*\`, as an outside host must (DR-129).`;
+
+const UI_MESSAGE =
+    '`ui` takes only types from the runtime module, and imports neither `react`, `persistence`, `clipboard` nor the engine.';
+
+const DOCS_MESSAGE = `A docs example imports only the public entries (${PUBLIC_ENTRY_MODULES.map((path) => `\`#/${path}\``).join(', ')}) and files of its own folder, as an outside host must.`;
 
 const readerFileFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'features');
 
@@ -224,6 +232,7 @@ type ImportRestriction = {
     group?: string[];
     regex?: string;
     importNamePattern?: string;
+    allowTypeImports?: boolean;
     message: string;
 };
 
@@ -323,6 +332,10 @@ const readerFolders = FOLDERS.filter(
 const codecsFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'locales' && folder !== 'codecs');
 
 const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
+
+const clipboardAllowed = new Set(['model', 'definition', 'runtime', 'codecs', 'clipboard']);
+
+const clipboardFolders = FOLDERS.filter((folder) => !clipboardAllowed.has(folder));
 
 const clipboardImportFolders = FOLDERS.filter((folder) => folder !== 'model');
 
@@ -501,6 +514,12 @@ export default defineConfig({
                     ...exceptPatterns(CLIPBOARD_IMPORT_PATHS),
                 ],
                 message: CLIPBOARD_IMPORT_MESSAGE,
+            },
+        ]),
+        layerOverride('src/clipboard/*.ts', [
+            {
+                group: [...aliasPatterns(clipboardFolders), ...relativePatterns(clipboardFolders), ...REACT_PATTERNS],
+                message: CLIPBOARD_MESSAGE,
             },
         ]),
         layerOverride('src/html/**/*.{ts,tsx}', [
@@ -687,6 +706,27 @@ export default defineConfig({
                 ]),
             },
         },
+        layerOverride('src/docs/**/*.{ts,tsx}', [
+            {
+                group: ['#/**', ...PUBLIC_ENTRY_MODULES.map((path) => `!#/${path}`), '../**'],
+                message: DOCS_MESSAGE,
+            },
+        ]),
+        layerOverride('src/ui/**/*.{ts,tsx}', [
+            {
+                group: ['#/runtime/runtime', '**/runtime/runtime'],
+                allowTypeImports: true,
+                message: UI_MESSAGE,
+            },
+            {
+                group: [
+                    ...aliasPatterns(['react', 'persistence', 'clipboard']),
+                    ...relativePatterns(['react', 'persistence', 'clipboard']),
+                    ...PROSEMIRROR_PATTERNS,
+                ],
+                message: UI_MESSAGE,
+            },
+        ]),
         layerOverride('src/styles/**/*.{ts,tsx}', [
             {
                 group: [...aliasPatterns(stylesFolders), ...relativePatterns(stylesFolders), ...ENGINE_PATTERNS],
