@@ -158,6 +158,7 @@ exports[`codec golden files > writes the valid fixture blocks.json as its golden
 
 exports[`codec golden files > writes the valid fixture blocks.json as its golden HTML, plain text and Markdown > markdown 1`] = `
 {
+  "blocked": false,
   "diagnostics": [],
   "losses": [
     {
@@ -208,6 +209,7 @@ const a = 1;
 
 exports[`codec golden files > writes the valid fixture blocks.json as its golden HTML, plain text and Markdown > text 1`] = `
 {
+  "blocked": false,
   "diagnostics": [],
   "losses": [
     {
@@ -290,6 +292,7 @@ exports[`codec golden files > writes the valid fixture marks.json as its golden 
 
 exports[`codec golden files > writes the valid fixture marks.json as its golden HTML, plain text and Markdown > markdown 1`] = `
 {
+  "blocked": false,
   "diagnostics": [],
   "losses": [
     {
@@ -316,6 +319,7 @@ H2O 😀",
 
 exports[`codec golden files > writes the valid fixture marks.json as its golden HTML, plain text and Markdown > text 1`] = `
 {
+  "blocked": false,
   "diagnostics": [],
   "losses": [
     {
@@ -346,6 +350,7 @@ exports[`codec golden files > writes the valid fixture spaces.json as its golden
 
 exports[`codec golden files > writes the valid fixture spaces.json as its golden HTML, plain text and Markdown > markdown 1`] = `
 {
+  "blocked": false,
   "diagnostics": [],
   "losses": [],
   "markdown": "two  spaces and five     spaces",
@@ -354,6 +359,7 @@ exports[`codec golden files > writes the valid fixture spaces.json as its golden
 
 exports[`codec golden files > writes the valid fixture spaces.json as its golden HTML, plain text and Markdown > text 1`] = `
 {
+  "blocked": false,
   "diagnostics": [],
   "losses": [],
   "text": "two  spaces and five     spaces",

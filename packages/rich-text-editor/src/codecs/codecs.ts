@@ -26,20 +26,23 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
     }
     const parser = createParser(markHrefPolicy(model, 'link'));
     /** The decode diagnostics and the island tree, or no tree when the document is blocked. */
-    const decode = (document: unknown): { readonly tree?: TreeNode; readonly diagnostics: readonly Diagnostic[] } => {
+    const decode = (
+        document: unknown,
+    ): { readonly tree?: TreeNode; readonly diagnostics: readonly Diagnostic[]; readonly blocked: boolean } => {
         const { result, tree } = decodeToTree(document, model, decodeOptions);
-        if (result.status === 'blocked' || tree === undefined) {
-            return { diagnostics: result.diagnostics };
+        const blocked = result.status === 'blocked';
+        if (blocked || tree === undefined) {
+            return { diagnostics: result.diagnostics, blocked };
         }
-        return { tree, diagnostics: result.diagnostics };
+        return { tree, diagnostics: result.diagnostics, blocked };
     };
     return {
         toHTML: (document, htmlOptions = {}) => {
             const { inlineStyles = [], colorTokens = [] } = htmlOptions;
             const css = styleSheetOf(inlineStyles);
-            const { tree, diagnostics } = decode(document);
+            const { tree, diagnostics, blocked } = decode(document);
             if (tree === undefined) {
-                return { html: '', css, diagnostics };
+                return { html: '', css, diagnostics, blocked };
             }
             const context = codecContext(htmlOptions.locale, enUS, htmlOptions.resolveAssetUrl);
             const { contentClassName, listLevels, resolveReference } = htmlOptions;
@@ -50,20 +53,25 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
                 columns: columnLayout(htmlOptions.columns, htmlOptions.columnGap),
                 styles: { styles: inlineStyles, colorTokens, inline: true },
             });
-            return { html: output.html, css, diagnostics: [...diagnostics, ...output.diagnostics] };
+            return { html: output.html, css, diagnostics: [...diagnostics, ...output.diagnostics], blocked };
         },
         toPlainText: (document) => {
-            const { tree, diagnostics } = decode(document);
+            const { tree, diagnostics, blocked } = decode(document);
             if (tree === undefined) {
-                return { text: '', losses: [], diagnostics };
+                return { text: '', losses: [], diagnostics, blocked };
             }
             const output = writeText(plan, tree, codecContext(undefined, enUS));
-            return { text: output.text, losses: output.losses, diagnostics: [...diagnostics, ...output.diagnostics] };
+            return {
+                text: output.text,
+                losses: output.losses,
+                diagnostics: [...diagnostics, ...output.diagnostics],
+                blocked,
+            };
         },
         toMarkdown: (document, markdownOptions = {}) => {
-            const { tree, diagnostics } = decode(document);
+            const { tree, diagnostics, blocked } = decode(document);
             if (tree === undefined) {
-                return { markdown: '', losses: [], diagnostics };
+                return { markdown: '', losses: [], diagnostics, blocked };
             }
             const context = codecContext(markdownOptions.locale, enUS, markdownOptions.resolveAssetUrl);
             const output = writeMarkdown(plan, tree, context, parser);
@@ -71,6 +79,7 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
                 markdown: output.markdown,
                 losses: output.losses,
                 diagnostics: [...diagnostics, ...output.diagnostics],
+                blocked,
             };
         },
         fromMarkdown: (markdown) => readMarkdown(parser, markdown, model, generateId, { ...decodeOptions, generateId }),

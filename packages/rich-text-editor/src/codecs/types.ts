@@ -58,11 +58,15 @@ export interface RichTextCodecs {
         /** Generated recipe stylesheet, including `hover`. Empty when no recipes are passed. */
         readonly css: string;
         readonly diagnostics: readonly Diagnostic[];
+        /** True exactly when the decode status was `blocked`; the output is then empty. */
+        readonly blocked: boolean;
     };
     toPlainText(document: RichTextDocument): {
         readonly text: string;
         readonly losses: readonly CodecLoss[];
         readonly diagnostics: readonly Diagnostic[];
+        /** True exactly when the decode status was `blocked`; the output is then empty. */
+        readonly blocked: boolean;
     };
     toMarkdown(
         document: RichTextDocument,
@@ -71,6 +75,8 @@ export interface RichTextCodecs {
         readonly markdown: string;
         readonly losses: readonly CodecLoss[];
         readonly diagnostics: readonly Diagnostic[];
+        /** True exactly when the decode status was `blocked`; the output is then empty. */
+        readonly blocked: boolean;
     };
     fromMarkdown(markdown: string): DecodeResult;
 }

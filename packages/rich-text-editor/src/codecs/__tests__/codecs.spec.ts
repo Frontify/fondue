@@ -390,21 +390,14 @@ describe('codecs over blocked and island documents', () => {
         (_, document, codecs, code) => {
             const input = document as RichTextDocument;
 
-            expect(codecs.toHTML(input)).toEqual({
-                html: '',
-                css: '',
-                diagnostics: [expect.objectContaining({ code })],
-            });
-            expect(codecs.toPlainText(input)).toEqual({
-                text: '',
-                losses: [],
-                diagnostics: [expect.objectContaining({ code })],
-            });
-            expect(codecs.toMarkdown(input)).toEqual({
-                markdown: '',
-                losses: [],
-                diagnostics: [expect.objectContaining({ code })],
-            });
+            const diagnostics = [expect.objectContaining({ code })];
+
+            expect(codecs.toHTML(input)).toEqual({ html: '', css: '', diagnostics, blocked: true });
+            expect(codecs.toPlainText(input)).toEqual({ text: '', losses: [], diagnostics, blocked: true });
+            expect(codecs.toMarkdown(input)).toEqual({ markdown: '', losses: [], diagnostics, blocked: true });
+            expect(unlimited.toHTML(valid).blocked).toBe(false);
+            expect(unlimited.toPlainText(valid).blocked).toBe(false);
+            expect(unlimited.toMarkdown(valid).blocked).toBe(false);
             expect(unlimited.toHTML(valid).html).toBe(
                 '<div class="fondue-rte-content"><p dir="auto">a</p><p dir="auto">b</p><p dir="auto">c</p></div>',
             );
@@ -440,6 +433,7 @@ describe('codecs over blocked and island documents', () => {
         expect(plain.text).toBe('<img src=x onerror=alert(1)>\n\nMood a*b');
         expect(markdown.markdown).toBe('\\<img src=x onerror=alert(1)>\n\nMood a\\*b');
         for (const output of [html, plain, markdown]) {
+            expect(output.blocked).toBe(false);
             expect(output.diagnostics.filter(({ code }) => code === 'format.unknown-node')).toEqual(
                 unknownNodes.map((expected): unknown => expect.objectContaining(expected)),
             );
@@ -744,6 +738,7 @@ describe('Markdown forms, mark and inline overrides', () => {
                 { featureId: 'test.off', count: 2 },
             ],
             diagnostics: failures('markdown'),
+            blocked: false,
         });
     });
 
@@ -752,6 +747,7 @@ describe('Markdown forms, mark and inline overrides', () => {
             text: 'a <k> x p f :"wave":\n\nNote\n\nx^2\n\nin panel',
             losses: [{ featureId: 'test.off', count: 2 }],
             diagnostics: failures('text'),
+            blocked: false,
         });
     });
 
