@@ -34,15 +34,17 @@ export const createPortalStore = (): PortalStore => {
     let snapshot = EMPTY;
     let scheduled = false;
     let closed = false;
-    // However many views a transaction creates, updates or destroys, listeners hear once per microtask.
+    let stale = false;
+    // Marking stale is O(1); the getter copies the map once, so n changes in a tick cost one copy.
     const changed = () => {
+        stale = true;
+        // However many views a transaction creates, updates or destroys, listeners hear once per microtask.
         if (scheduled) {
             return;
         }
         scheduled = true;
         queueMicrotask(() => {
             scheduled = false;
-            snapshot = [...entries.values()];
             for (const listener of [...listeners]) {
                 listener();
             }
@@ -55,7 +57,13 @@ export const createPortalStore = (): PortalStore => {
                 listeners.delete(listener);
             };
         },
-        getSnapshot: () => snapshot,
+        getSnapshot: () => {
+            if (stale) {
+                snapshot = [...entries.values()];
+                stale = false;
+            }
+            return snapshot;
+        },
         set: (entry) => {
             if (closed) {
                 return;
