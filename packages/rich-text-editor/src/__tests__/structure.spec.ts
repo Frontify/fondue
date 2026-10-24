@@ -395,7 +395,8 @@ const featureFolders = () =>
         .map((entry) => entry.name)
         .sort();
 
-describe('package structure ratchet', () => {
+// Each measure parses every product file, which outlasts the default timeout on a loaded machine.
+describe('package structure ratchet', { timeout: 60_000 }, () => {
     it('T-01: product files over 600 lines only shrink, data tables excepted', () => {
         const exempt = Object.keys(DATA_TABLES);
         const missing = exempt.filter((key) => !existsSync(join(packageRoot, key)));
