@@ -55,6 +55,7 @@ import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } 
 import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
 import { type ColumnState, columnsPlugin, ONE_COLUMN, sameColumns } from './columns';
 import { createContentChecks } from './content-issues';
+import { createDomIds } from './dom-ids';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener, nameOf } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
@@ -165,6 +166,8 @@ export interface EditorRuntime {
     readonly definition: CompiledDefinition;
     /** The `id` of the session's suggestion list, which the surface's `aria-controls` names while the list shows options. */
     readonly suggestionListId: string;
+    /** A DOM `id` part unique to this session and call, drawn from its `generateId`, for the chrome the views add. */
+    readonly nextDomId: () => string;
     /** The view on the attached surface, for the `src/testing` helpers. */
     readonly view: EditorView | undefined;
     /** The host roots whose focus and pointer moves stay inside the editor. */
@@ -2055,6 +2058,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         handle,
         definition,
         suggestionListId,
+        nextDomId: createDomIds(session.sessionId),
         get view() {
             return view;
         },

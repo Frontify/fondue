@@ -24,7 +24,11 @@ const MARGIN = 5;
 /** What editor chrome sets on the view: the selection it keeps visible and the space it covers at the viewport edges. */
 export interface ChromeView {
     /** The chrome's props for a view about to be built on `surface` with `nodeViews`, so its first draw carries them. */
-    props(surface: HTMLElement, nodeViews: Readonly<Record<string, NodeViewConstructor>>): Partial<DirectEditorProps>;
+    props(
+        surface: HTMLElement,
+        nodeViews: Readonly<Record<string, NodeViewConstructor>>,
+        domId: () => string,
+    ): Partial<DirectEditorProps>;
     /** Takes the view built with `props`, which later chrome changes redraw. */
     take(view: EditorView): void;
     /** Shows the selection through a decoration while focus is in editor chrome. */
@@ -90,6 +94,7 @@ const runsOf = (block: ProseMirrorNode): DirectedRun[] => {
  */
 const contentDecorations = (
     surface: HTMLElement,
+    domId: () => string,
     nodeViews: Readonly<Record<string, NodeViewConstructor>>,
     doc: ProseMirrorNode,
     levels: ListLevels | undefined,
@@ -139,7 +144,7 @@ const contentDecorations = (
             if (viewed && labeled !== undefined) {
                 found.push(
                     Decoration.node(pos + 1, pos + 1 + labeled.block.nodeSize, {
-                        id: firstBlockId(surface, labeled.nodeId),
+                        id: firstBlockId(surface, labeled.nodeId, domId),
                     }),
                 );
             }
@@ -204,7 +209,7 @@ const unlinked = (mark: Mark): boolean => {
 
 export const createChromeView = (): ChromeView => {
     let view: EditorView | undefined;
-    let surface: HTMLElement | undefined;
+    let mounted: { readonly surface: HTMLElement; readonly domId: () => string } | undefined;
     let nodeViews: Readonly<Record<string, NodeViewConstructor>> = {};
     let shown = false;
     // ProseMirror reads these objects on each scroll, so rewriting their fields needs no new props.
@@ -234,12 +239,16 @@ export const createChromeView = (): ChromeView => {
     // A selection change keeps the document, so it draws no content decoration again.
     let markers = new WeakMap<ProseMirrorNode, DecorationSet>();
     const listsOf = (doc: ProseMirrorNode) => {
-        if (surface === undefined) {
+        if (mounted === undefined) {
             return DecorationSet.empty;
         }
         let lists = markers.get(doc);
         if (lists === undefined) {
-            lists = DecorationSet.create(doc, contentDecorations(surface, nodeViews, doc, levels, styles, unknown));
+            const { surface, domId } = mounted;
+            lists = DecorationSet.create(
+                doc,
+                contentDecorations(surface, domId, nodeViews, doc, levels, styles, unknown),
+            );
             markers.set(doc, lists);
         }
         return lists;
@@ -253,8 +262,8 @@ export const createChromeView = (): ChromeView => {
         return lists.add(doc, [Decoration.inline(selection.from, selection.to, { 'data-rte-selection': '' })]);
     };
     return {
-        props: (next, views) => {
-            surface = next;
+        props: (next, views, ids) => {
+            mounted = { surface: next, domId: ids };
             nodeViews = views;
             markers = new WeakMap();
             reported = new Set();

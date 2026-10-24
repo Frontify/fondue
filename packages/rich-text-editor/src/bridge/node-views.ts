@@ -23,21 +23,15 @@ const DRAG_SOURCE_EVENTS: ReadonlySet<string> = new Set(['dragstart', 'drag', 'd
 const TEXTLESS_CONTROLS = 'input[type="checkbox"], input[type="radio"], button';
 const CLIPBOARD_SOURCE_EVENTS: ReadonlySet<string> = new Set(['copy', 'cut']);
 
-const viewIndexes = new WeakMap<HTMLElement, number>();
-// One counter keeps label and content ids distinct across every editor on a page.
-let ids = 0;
-const nextId = (): number => {
-    ids += 1;
-    return ids;
-};
+const viewIndexes = new WeakMap<HTMLElement, string>();
 /**
  * The `id` that the chrome view's decoration gives the first block of the node `nodeId`, which names a node that
  * holds blocks, as a task item's text does without its child tasks; unique per surface, since a page may show a document twice.
  */
-export const firstBlockId = (surface: HTMLElement, nodeId: string): string => {
+export const firstBlockId = (surface: HTMLElement, nodeId: string, domId: () => string): string => {
     let index = viewIndexes.get(surface);
     if (index === undefined) {
-        index = nextId();
+        index = domId();
         viewIndexes.set(surface, index);
     }
     return `rte-node-label-${index}-${encodeURIComponent(nodeId)}`;
@@ -201,9 +195,9 @@ export const createNodeViews = (
             }
             const labeled = labelsFirstBlock(node);
             if (labeled !== undefined) {
-                contentId = firstBlockId(view.dom, labeled.nodeId);
+                contentId = firstBlockId(view.dom, labeled.nodeId, host.runtime.nextDomId);
             } else {
-                contentId = `rte-node-content-${nextId()}`;
+                contentId = `rte-node-content-${host.runtime.nextDomId()}`;
                 contentDOM.id = contentId;
             }
         }

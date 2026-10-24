@@ -10,7 +10,7 @@ export const FILES_OVER_600_LINES: Record<string, number> = {
     'src/react/rich-text-editor.tsx': 1423,
     'src/runtime/capabilities.ts': 1322,
     'src/runtime/editor-api.ts': 1571,
-    'src/runtime/runtime.ts': 2310,
+    'src/runtime/runtime.ts': 2314,
     'src/runtime/suggestions/plugin.ts': 616,
     'src/runtime/uploads.ts': 777,
 };
@@ -43,7 +43,7 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/runtime/capabilities.ts': 1322,
     'src/runtime/editor-api.ts': 1571,
     'src/runtime/input-rules.ts': 515,
-    'src/runtime/runtime.ts': 2310,
+    'src/runtime/runtime.ts': 2314,
     'src/runtime/suggestions/plugin.ts': 616,
     'src/runtime/uploads.ts': 777,
 };
@@ -67,7 +67,7 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/react/rich-text-editor.tsx#SessionComponent': 663,
     'src/runtime/async.ts#createAsyncCoordinator': 217,
     'src/runtime/editor-api.ts#documentApi': 684,
-    'src/runtime/runtime.ts#createEditorRuntime': 1838,
+    'src/runtime/runtime.ts#createEditorRuntime': 1839,
     'src/runtime/uploads.ts#createUploads': 565,
     'src/testing/uploads.ts#runUploadConformance': 158,
 };

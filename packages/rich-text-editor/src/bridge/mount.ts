@@ -21,7 +21,7 @@ export const createMountCoordinator = (): MountCoordinator => {
     let current: EditorRuntime | undefined;
     const chrome = createChromeView();
     const attach = (runtime: EditorRuntime, element: HTMLElement) => {
-        runtime.attach(element, chrome.props(element, runtime.nodeViews));
+        runtime.attach(element, chrome.props(element, runtime.nodeViews, runtime.nextDomId));
         if (runtime.view !== undefined) {
             chrome.take(runtime.view);
         }

@@ -14,7 +14,10 @@ interface Insets {
 const attach = () => {
     const chrome = createChromeView();
     const dom = { style: { setProperty: vi.fn(), removeProperty: vi.fn() } };
-    const props = chrome.props(dom as unknown as HTMLElement, {}) as { scrollMargin: Insets; scrollThreshold: Insets };
+    const props = chrome.props(dom as unknown as HTMLElement, {}, () => 'dom') as {
+        scrollMargin: Insets;
+        scrollThreshold: Insets;
+    };
     const view = { dom, setProps: vi.fn() } as unknown as EditorView;
     chrome.take(view);
     return { chrome, props };

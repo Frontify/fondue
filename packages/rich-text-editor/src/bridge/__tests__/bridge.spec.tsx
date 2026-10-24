@@ -123,7 +123,11 @@ const lastStore = () => {
 /** Mounts an editor of `blocks`, then runs its portal flush and its first frame, as a browser does. */
 const mount = async (
     blocks: readonly JsonValue[],
-    props: { readonly definition?: typeof definition; readonly locale?: RichTextLocale } = {},
+    props: {
+        readonly definition?: typeof definition;
+        readonly locale?: RichTextLocale;
+        readonly generateId?: () => string;
+    } = {},
 ) => {
     const ref = createRef<EditorHandle<object>>();
     const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>();
@@ -137,6 +141,7 @@ const mount = async (
             locale={shownLocale}
             onDiagnostic={onDiagnostic}
             ref={ref}
+            {...(props.generateId === undefined ? {} : { generateId: props.generateId })}
         />,
     );
     await act(async () => {
@@ -818,5 +823,18 @@ describe('node view faults', () => {
             },
         ]);
         unmount();
+    });
+
+    it("draws the ids of node view chrome from each editor's own generateId, in sequences that do not touch", async () => {
+        const first = await mount([block('b1', 'code')], { generateId: () => 'first' });
+        const second = await mount([block('b1', 'code')], { generateId: () => 'second' });
+
+        const idsIn = (view: EditorView) =>
+            [...view.dom.querySelectorAll('[id^="rte-node-"]')].map((element) => element.id);
+        expect(idsIn(first.editorView())).toEqual(['rte-node-content-first-1']);
+        expect(idsIn(second.editorView())).toEqual(['rte-node-content-second-1']);
+        expect(first.runtime().nextDomId()).toBe('first-2');
+        first.unmount();
+        second.unmount();
     });
 });
