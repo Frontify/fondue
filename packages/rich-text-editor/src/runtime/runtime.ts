@@ -17,17 +17,7 @@ import {
     type NodeViewConstructor,
 } from 'prosemirror-view';
 
-import {
-    APPEND_BATCH_META,
-    type AppendBatch,
-    AppendLimitError,
-    COMMAND_META,
-    type CompiledDefinition,
-    type EngineCommand,
-    NORMALIZE_META,
-    ORIGIN_META,
-    type PluginOrigin,
-} from '#/definition';
+import { type CompiledDefinition, type EngineCommand, ORIGIN_META } from '#/definition';
 import {
     type CapabilityRef,
     checkHref,
@@ -64,50 +54,46 @@ import {
 import { type SuggestionHost, suggestionHosts } from './capabilities/suggestions/host';
 import { type ColumnState, columnsPlugin, ONE_COLUMN } from './columns';
 import { createDomIds } from './dom-ids';
-import { secondCopyAtMount, secondCopyInView } from './engines';
-import { createEventBus, type Listener, nameOf } from './events';
-import { groupsPlugin, isHistoryTransaction } from './history';
-import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
+import { secondCopyAtMount } from './engines';
+import { createEventBus, type Listener } from './events';
+import { groupsPlugin } from './history';
 import { createKeyGuard, type EnterKeys } from './keys';
-import { type ExceededLimit, storedNodeCount } from './limits';
+import { type ExceededLimit } from './limits';
 import { nodeStatePlugin, withNodeState } from './node-state';
 import { positionOf } from './positions';
 import { sameStamp, type SaveCoordinator } from './saves';
-import { scrollSelectionIntoView } from './scroll';
 import { createBusy } from './session/busy';
 import { createColumns } from './session/columns';
+import { createCommit } from './session/commit';
 import { createComposition } from './session/composition';
 import { createEncoder } from './session/encode';
-import { actionOrigin, createHistory, originOf } from './session/history';
+import { createHistory } from './session/history';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
 import { createMetrics } from './session/metrics';
 import { createMode } from './session/mode';
 import { createPolicy } from './session/policy';
+import { createPrepare, DUPLICATE_ENGINE, pluginError } from './session/prepare';
 import { createSaving } from './session/saving';
 import { createShown, summarize } from './session/shown';
 import { createStore } from './session/store';
 import { createTargetsService } from './session/targets';
 import {
     type Attempt,
-    type BatchMetric,
-    type Candidate,
     type InputOutcome,
     type Intent,
     type Mode,
-    type Prepared,
     type RejectedCode,
     type ReplaceCode,
     type Route,
 } from './session/types';
 import { createView, isEmpty } from './session/view';
 import { stylesPlugin } from './styles';
-import { countTargets, releaseTargets, restoreTargets, targetsPlugin } from './targets';
+import { countTargets, releaseTargets, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
     type CaptureResult,
     type CaptureTargetOptions,
-    type ChangeOrigin,
     type CommandResult,
     type CommandState,
     type CommitOptions,
@@ -128,8 +114,6 @@ import {
 
 // Queued intents whose listeners keep enqueuing stop past this depth.
 const MAX_ENQUEUE_DEPTH = 32;
-// ProseMirror marks each DOM change it reads during a composition with this meta.
-const COMPOSITION_META = 'composition';
 
 export type { InputOutcome };
 
@@ -350,18 +334,8 @@ export const runtimeOfView = (view: EditorView): EditorRuntime | undefined => vi
 
 export { isEmpty, summarize };
 
-/** A plugin-error diagnostic with the failing feature and the error's name, never its message. */
-const pluginError = (error: unknown, featureId: string | undefined) => {
-    const name = nameOf(error);
-    if (featureId === undefined) {
-        return diagnostic('runtime.plugin-error', undefined, { name }, 'error');
-    }
-    return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
-};
-
 const rejected = (code: RejectedCode): CommandResult => ({ status: 'rejected', code });
 const refused = (code: ReplaceCode): ReplaceResult => ({ status: 'rejected', code });
-const unique = (values: readonly string[]) => [...new Set(values)];
 /** The payload as one frozen JSON copy, which is what is checked and run; `undefined` for one that is not plain JSON. */
 const checkedPayload = (given: unknown): { readonly payload: unknown } | undefined => {
     if (given !== undefined && findUnsafeJson(given, '') !== undefined) {
@@ -369,14 +343,6 @@ const checkedPayload = (given: unknown): { readonly payload: unknown } | undefin
     }
     return { payload: snapshot(given) };
 };
-// The checks of `./engines` cover a second copy of `prosemirror-model` only.
-const DUPLICATE_ENGINE = diagnostic(
-    'runtime.duplicate-engine',
-    undefined,
-    { packages: ['prosemirror-model'] },
-    'warning',
-);
-
 /** One editing session: its state, its view while a surface is attached, the commit path and its events. */
 export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntime => {
     const { definition, limits } = options;
@@ -427,7 +393,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         onDisabledChange: () => views.repaint(),
     });
     const columns = createColumns({ initial: options.columns ?? ONE_COLUMN, onChange: () => views.refresh() });
-    let typing = false;
     // The state the view threw on, which `getRecoveryCandidate` offers until `dispose`.
     // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovery: EditorState | undefined;
@@ -435,9 +400,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let installingNext = false;
     let draining = false;
     let depth = 0;
-    let installing = false;
-    // Roots that plugin views dispatch while an install runs, committed once its selectors and events are done.
-    const deferred: Transaction[] = [];
     const queue: Intent[] = [];
     // `media.image` and the media types it accepts, which its `acceptTypes` option sets.
     const imageFeature = compiledModel(definition.model).features.find(({ id }) => id === UPLOAD_FEATURE);
@@ -507,7 +469,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         props: {
             handleDOMEvents: {
                 beforeinput: () => {
-                    typing = true;
+                    markTyping();
                     return false;
                 },
             },
@@ -690,246 +652,43 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
     };
 
-    // IDs a query drew, which the next install hands out first, so `execute` installs what `query` judged.
-    const recorded: string[] = [];
-    // The batch the last limit check prepared, from the state it read and with the recorded IDs it drew.
-    let checked: { readonly from: EditorState; readonly drawn: number; readonly prepared: Candidate } | undefined;
-    const installedId = (): string => {
-        const id = recorded.shift();
-        if (id !== undefined) {
-            return id;
-        }
-        return generate();
-    };
-    /** An id function for one query: it replays the recorded ids, then records what it draws past them. */
-    const queriedIds = (): (() => string) => {
-        let at = 0;
-        return () => {
-            if (at === recorded.length) {
-                recorded.push(generate());
-            }
-            const id = recorded[at] as string;
-            at += 1;
-            return id;
-        };
-    };
-
-    /** A composition batch, and every batch after it until input settles, is checked and published then. */
-    const isProvisional = (root: Transaction) =>
-        settling.active() && (display.provisional() !== undefined || root.getMeta(COMPOSITION_META) !== undefined);
-
-    /**
-     * Applies a root transaction and every transaction plugins append to it, then the final policy and limit check,
-     * which a provisional batch from the view takes once input has settled.
-     */
-    const prepare = (root: Transaction, ids: () => string, fromView: boolean): Prepared => {
-        const batch: AppendBatch = {
-            limit: limits.maxAppendedTransactions,
-            now: () => Date.now(),
-            generateId: ids,
-            chain: [],
-        };
-        // A composition batch's repair waits for input to settle, so it never changes composing text.
-        if (isProvisional(root)) {
-            root.setMeta(NORMALIZE_META, 'later');
-        }
-        const started = Date.now();
-        // History groups by this time, never by the `Date.now()` a transaction takes when created.
-        root.setTime(started);
-        history.group(root);
-        let applied: ReturnType<EditorState['applyTransaction']>;
-        try {
-            applied = store.state.applyTransaction(root.setMeta(APPEND_BATCH_META, batch));
-        } catch (error) {
-            // A plugin that throws drops the batch, and the session stays ready.
-            if (!(error instanceof AppendLimitError)) {
-                return {
-                    code: 'not-applicable',
-                    diagnostic: pluginError(error, batch.failed?.featureId),
-                };
-            }
-            const chain: readonly PluginOrigin[] = error.chain;
-            const details = {
-                features: unique(chain.map(({ featureId }) => featureId)),
-                capabilities: unique(chain.map(({ capability }) => capability)),
-                count: chain.length,
-            };
-            return { code: 'not-ready', fault: diagnostic('runtime.append-limit', undefined, details, 'error') };
-        }
-        if (applied.transactions.length === 0) {
-            return { code: 'not-applicable' };
-        }
-        // A batch that keeps the document, such as a selection move, has nothing to check.
-        const { doc } = applied.state;
-        const mapping = root.mapping.slice();
-        for (const transaction of applied.transactions.slice(1)) {
-            mapping.appendMapping(transaction.mapping);
-        }
-        // The settle repair is judged with the composition it repairs, from the published document.
-        if (doc !== store.state.doc && !(fromView && isProvisional(root)) && root.getMeta(NORMALIZE_META) !== 'now') {
-            const { policy: refused, limit } = policy.finalCheck(
-                store.state.doc,
-                doc,
-                mapping,
-                isHistoryTransaction(root),
-            );
-            if (refused || limit !== undefined) {
-                if (firedRule(applied.transactions)) {
-                    return prepare(withoutRules(root), ids, fromView);
-                }
-                return { code: 'not-allowed', limit };
-            }
-        }
-        const { transactions } = applied;
-        return { candidate: applied.state, root, transactions, mapping, started, appended: transactions.length - 1 };
-    };
-
-    /** Publishes a checked batch, then commits the roots that plugin views dispatched while it was installed. */
-    const install = (prepared: Candidate): boolean => guarded(() => publish(prepared));
-
-    /** Runs `work`, which installs states, then commits the roots that plugin views dispatched meanwhile. */
-    const guarded = <T>(work: () => T): T => {
-        installing = true;
-        let result: T;
-        try {
-            result = work();
-        } finally {
-            installing = false;
-        }
-        for (let next = deferred.shift(); next !== undefined; next = deferred.shift()) {
-            // A listener of this install may have faulted or disposed the session, which then commits nothing more.
-            if (!lifecycle.is('ready')) {
-                deferred.length = 0;
-                break;
-            }
-            commit(next);
-        }
-        return result;
-    };
-
-    /**
-     * Publishes the current state's document: counts an effective change, notifies selector stores, then emits the
-     * change, the selection and the save status in the Event order.
-     */
-    const announce = (
-        origin: ChangeOrigin,
-        commandId: string | null,
-        batch: BatchMetric,
-        transactions: readonly Transaction[] = [],
-    ): boolean => {
-        const previous = display.published();
-        const current = store.state;
-        display.setPublished(current);
-        // An effective change compares documents by node equality, never by serializing them.
-        const changed = !current.doc.eq(previous.doc);
-        if (changed) {
-            identity.bumpSequence();
-        }
-        notify();
-        if (changed) {
-            let document: RichTextDocument | undefined;
-            emit('documentChange', {
-                stamp: identity.stamp(),
-                commitSequence: identity.commitSequence(),
-                origin,
-                commandId,
-                readDocument: () => {
-                    if (document === undefined) {
-                        document = encode(current.doc);
-                    }
-                    return document;
+    const batches = createPrepare({
+        store,
+        composition: settling,
+        shown: display,
+        policy,
+        history,
+        limits,
+        generate,
+        inputRules: () => options.inputRules?.(),
+    });
+    const { prepare, installedId, queriedIds, exceededLimit } = batches;
+    const { commit, install, installState, guarded, settleProvisional, select, markTyping, clearDeferred } =
+        createCommit({
+            store,
+            identity,
+            lifecycle,
+            policy,
+            shown: display,
+            views,
+            busy,
+            metrics,
+            prepare: batches,
+            encode,
+            emit,
+            notify,
+            report,
+            resources: liveResources,
+            hooks: {
+                committed: uploads.committed,
+                changed: () => {
+                    saving.changed();
+                    checks.changed();
                 },
-            });
-            metrics.record(batch);
-            uploads.committed(transactions, origin === 'history');
-        }
-        display.emitSelection();
-        if (changed) {
-            saving.changed();
-            checks.changed();
-        }
-        display.emitSaveStatus();
-        return changed;
-    };
-
-    /** Installs a state in the view and counts it as a commit; `false` when the view threw and the session faulted. */
-    const installState = (next: EditorState): boolean => {
-        const previous = store.state;
-        store.set(next);
-        const attached = views.current();
-        if (attached !== undefined && views.call(() => attached.updateState(next)).threw) {
-            store.set(previous);
-            viewFault(attached, next);
-            return false;
-        }
-        identity.bumpCommit();
-        liveResources.targets += countTargets(next) - countTargets(previous);
-        return true;
-    };
-
-    /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
-    const publish = ({ candidate, root, transactions, mapping, started, appended }: Candidate): boolean => {
-        if (!installState(candidate)) {
-            return false;
-        }
-        if (isProvisional(root)) {
-            display.addProvisional(mapping);
-            notify();
-            return false;
-        }
-        const origin = originOf(root);
-        const command: unknown = root.getMeta(COMMAND_META);
-        let commandId: string | null = null;
-        if (origin === 'command' && typeof command === 'string') {
-            commandId = command;
-        }
-        const event: unknown = root.getMeta('uiEvent');
-        let kind: BatchMetric['kind'] = 'commit';
-        if (event === 'paste' || event === 'drop') {
-            kind = 'paste';
-        }
-        return announce(origin, commandId, { kind, started, appended }, transactions);
-    };
-
-    /** Repairs the provisional batches, then checks them as one change from the published document; `false` on a fault. */
-    const settleProvisional = (mapping: Transaction['mapping']): boolean => {
-        const started = Date.now();
-        let appended = 0;
-        // The repair runs inside the append limit before the settled batch publishes, and the check below judges it.
-        const repaired = prepare(store.state.tr.setMeta(NORMALIZE_META, 'now'), installedId, false);
-        if ('fault' in repaired && repaired.fault !== undefined) {
-            fault(repaired.fault);
-            return false;
-        }
-        if ('diagnostic' in repaired && repaired.diagnostic !== undefined) {
-            report(repaired.diagnostic);
-        }
-        if ('candidate' in repaired && repaired.candidate.doc !== store.state.doc) {
-            if (!installState(repaired.candidate)) {
-                return false;
-            }
-            mapping.appendMapping(repaired.mapping);
-            appended = repaired.appended;
-        }
-        if (
-            !policy.breaks(display.published().doc, store.state.doc, mapping) &&
-            policy.exceeds(store.state.doc, display.published().doc) === undefined
-        ) {
-            announce('input', null, { kind: 'commit', started, appended });
-            return true;
-        }
-        // Targets released during the composition stay released, and those captured during it stay.
-        const restore = restoreTargets(display.published(), store.state, mapping);
-        let restored = display.published();
-        if (restore !== undefined) {
-            restored = restored.apply(restore);
-        }
-        if (!installState(restored)) {
-            return false;
-        }
-        notify();
-        return true;
-    };
+            },
+            fault,
+            viewFault,
+        });
 
     /**
      * Once input has settled, checks the provisional batches as one change from the published document and publishes
@@ -948,70 +707,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         coordinator.settle();
         saving.settled();
         settling.resolve('settled');
-    };
-
-    /** Marks a typed root with the rules the host's prop and the policy turn off now. */
-    const markRules = (root: Transaction) => {
-        const setting = options.inputRules?.();
-        if (setting === false) {
-            withoutRules(root);
-            return;
-        }
-        let exclude: readonly string[] = [];
-        if (setting !== undefined) {
-            exclude = setting.exclude;
-        }
-        const refused = Object.entries(policy.current().features)
-            .filter(([, rules]) => !rules.create)
-            .map(([id]) => id);
-        withRuleSetting(root, { exclude, refused });
-    };
-
-    /** The view's `dispatchTransaction`: the one path by which any change reaches the view. */
-    const commit = (root: Transaction) => {
-        // A plugin view's `update` may dispatch inside `view.updateState`; its root waits for the install to publish.
-        if (installing) {
-            deferred.push(root);
-            return;
-        }
-        // A recorded `beforeinput` describes this batch only, accepted or not.
-        const typed = typing;
-        typing = false;
-        // A faulted session installs nothing more, so a broken view never updates again.
-        if (lifecycle.is('faulted', 'disposed')) {
-            return;
-        }
-        if (root.before !== store.state.doc) {
-            report(diagnostic('runtime.stale-transaction', undefined, undefined, 'error'));
-            return;
-        }
-        // Input rules fire only on typed text, never on a paste or a command after a `beforeinput` that changed nothing.
-        if (typed && actionOrigin(root) === undefined) {
-            root.setMeta(ORIGIN_META, 'input');
-            markRules(root);
-        } else if (root.getMeta(ENTER_RULES_META) === true) {
-            markRules(root);
-        }
-        busy.run(() => {
-            let prepared: Prepared;
-            if (checked !== undefined && checked.prepared.root === root && checked.from === store.state) {
-                recorded.splice(0, checked.drawn);
-                prepared = checked.prepared;
-            } else {
-                prepared = prepare(root, installedId, true);
-            }
-            checked = undefined;
-            if ('candidate' in prepared) {
-                install(prepared);
-            } else if (prepared.fault !== undefined) {
-                fault(prepared.fault);
-            } else if (prepared.diagnostic !== undefined) {
-                report(prepared.diagnostic);
-            }
-            if (secondCopyInView(store.state.schema)) {
-                report(DUPLICATE_ENGINE);
-            }
-        });
     };
 
     /**
@@ -1437,7 +1132,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         coordinator.dispose();
         uploads.dispose(store.state.doc);
         settleQueue('not-ready');
-        deferred.length = 0;
+        clearDeferred();
         targets.clearDeferred();
         const release = releaseTargets(store.state);
         if (release !== undefined) {
@@ -1722,31 +1417,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return views.nodeViews;
         },
         limits,
-        exceededLimit: (root, followUp) => {
-            checked = undefined;
-            // Filling nodeIds keeps the node count, so a root over the node limit is refused before the fill draws one.
-            const nodes = storedNodeCount(root.doc);
-            if (followUp !== true && nodes > limits.maxDocumentNodes && nodes > storedNodeCount(store.state.doc)) {
-                return 'maxDocumentNodes';
-            }
-            const query = queriedIds();
-            let drawn = 0;
-            const prepared = prepare(
-                root,
-                () => {
-                    drawn += 1;
-                    return query();
-                },
-                true,
-            );
-            if ('candidate' in prepared) {
-                checked = { from: store.state, drawn, prepared };
-            }
-            if ('limit' in prepared) {
-                return prepared.limit;
-            }
-            return undefined;
-        },
+        exceededLimit,
         attach: views.attach,
         detach: views.detach,
         report,
@@ -1760,24 +1431,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         writeRefusal: policy.writeRefusal,
         perform: (command, performOptions) =>
             runOn(command, { payload: undefined }, () => baseOf(performOptions), 'host'),
-        select: (target) => {
-            let transaction = store.state.tr;
-            if ('node' in target) {
-                transaction = transaction.setSelection(NodeSelection.create(store.state.doc, target.node));
-            } else {
-                transaction = transaction.setSelection(
-                    TextSelection.create(store.state.doc, target.anchor, target.head),
-                );
-            }
-            commit(transaction);
-            const view = views.current();
-            if (target.scroll !== true || view === undefined) {
-                return;
-            }
-            // ProseMirror scrolls to the selection only while the browser's selection is in the surface, and a
-            // panel that asks for this keeps focus.
-            scrollSelectionIntoView(view, store.state.selection);
-        },
+        select,
         watch,
         startAsync: coordinator.start,
         changeServices: targets.changeServices,
