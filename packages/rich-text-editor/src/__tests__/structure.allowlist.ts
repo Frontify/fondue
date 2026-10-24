@@ -23,7 +23,6 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/codecs/to-markdown.ts': 702,
     'src/definition/index.ts': 560,
     'src/testing/conformance/contract.ts': 408,
-    'src/features/links/link-popover.tsx': 590,
     'src/model/compile.ts': 659,
     'src/model/content.ts': 539,
     'src/model/declarations.ts': 483,
@@ -43,8 +42,6 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/codecs/from-markdown.ts#readMarkdown': 161,
     'src/definition/index.ts#compileDefinition': 253,
     'src/testing/conformance/contract.ts#runFeatureContract': 214,
-    'src/features/links/link-bubble.tsx#LinkBubble': 183,
-    'src/features/links/link-popover.tsx#LinkPopover': 402,
     'src/model/compile.ts#compileContentModel': 210,
     'src/react/rich-text-editor.tsx#anonymous#11': 184,
     'src/react/rich-text-editor.tsx#SessionComponent': 669,
@@ -56,7 +53,6 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
 export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {
     'src/bridge/chrome-view.ts#createChromeView': 8,
     'src/bridge/node-views.ts#build': 8,
-    'src/features/links/link-popover.tsx#LinkPopover': 7,
 };
 
 export const SPECS_OVER_1000_LINES: Record<string, number> = {
