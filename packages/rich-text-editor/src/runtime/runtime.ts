@@ -69,7 +69,19 @@ import { authoringOf, createPolicyCheck } from './policy';
 import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { scrollSelectionIntoView } from './scroll';
+import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
+import {
+    type Attempt,
+    type BatchMetric,
+    type Candidate,
+    type Intent,
+    type Mode,
+    type Prepared,
+    type RejectedCode,
+    type ReplaceCode,
+    type Route,
+} from './session/types';
 import { createInputSettling } from './settle';
 import { stylesPlugin } from './styles';
 import { type SuggestionHost, suggestionHosts } from './suggestions/host';
@@ -95,7 +107,6 @@ import {
     type SelectionHandle,
     type SelectionSummary,
     type ServerRevision,
-    type SessionToken,
     type Snapshot,
     type Unsubscribe,
     type UploadStatus,
@@ -109,10 +120,6 @@ import {
     type UploadPlace,
     type UploadServiceLike,
 } from './uploads';
-
-type Mode = EditorSummary['mode'];
-type RejectedCode = Extract<CommandResult, { readonly status: 'rejected' }>['code'];
-type ReplaceCode = Extract<ReplaceResult, { readonly status: 'rejected' }>['code'];
 
 // Queued intents whose listeners keep enqueuing stop past this depth.
 const MAX_ENQUEUE_DEPTH = 32;
@@ -438,52 +445,12 @@ const DUPLICATE_ENGINE = diagnostic(
     'warning',
 );
 
-/** A batch checked against policy and limits and not installed, with how it maps positions. */
-interface Candidate {
-    readonly candidate: EditorState;
-    readonly root: Transaction;
-    /** The root and what plugins appended to it. */
-    readonly transactions: readonly Transaction[];
-    readonly mapping: Transaction['mapping'];
-    /** When the batch started, and how many transactions plugins appended to it. */
-    readonly started: number;
-    readonly appended: number;
-}
-/** What the `operationMetric` of a batch that changed the document reports. */
-type BatchMetric = Pick<Candidate, 'started' | 'appended'> & { readonly kind: 'commit' | 'paste' };
-/** A candidate, or why a batch cannot be installed. */
-type Prepared =
-    | Candidate
-    | {
-          readonly code: RejectedCode;
-          readonly diagnostic?: Diagnostic;
-          readonly fault?: Diagnostic;
-          readonly limit?: ExceededLimit | undefined;
-      };
-/** Who runs a command: a host call, a queued intent, or an async result. */
-type Route = 'host' | 'queue' | 'async' | 'node';
-/** What a command would do now: nothing, a prepared batch, or a rejection. */
-type Attempt = Prepared | { readonly unchanged: true };
-
-interface Intent {
-    readonly id: string;
-    readonly payload: unknown;
-    readonly options: unknown;
-    readonly depth: number;
-    readonly resolve: (result: CommandResult) => void;
-}
-
 /** One editing session: its state, its view while a surface is attached, the commit path and its events. */
 export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntime => {
     const { definition, limits } = options;
     const generate = options.generateId ?? randomId;
-    // A replacement moves the session to the next generation and document.
-    let session: SessionToken = {
-        documentId: options.documentId,
-        sessionId: generate(),
-        generation: 0,
-    };
-    const suggestionListId = `rte-suggestions-${session.sessionId}`;
+    const identity = createIdentity({ documentId: options.documentId, generate });
+    const suggestionListId = `rte-suggestions-${identity.session().sessionId}`;
     const createdAt = Date.now();
     let unmanaged = createUnmanagedStatus(options.revision ?? null);
     const breaksPolicy = createPolicyCheck(definition.model);
@@ -510,8 +477,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let columns = options.columns ?? ONE_COLUMN;
     // The columns the decorations show, which follow `columns` once input has settled.
     let shownColumns = columns;
-    let commitSequence = 0;
-    let sequence = 0;
     let saves: SaveCoordinator | undefined;
     let shownStatus: SaveStatus | undefined;
     // The metric of the batch that changed the document, emitted once the outermost commit ends.
@@ -558,7 +523,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         limits,
         acceptTypes: acceptTypes ?? [],
         service: () => (acceptTypes === undefined ? undefined : options.uploads?.()),
-        session: () => session,
+        session: identity.session,
         generateId: () => generate(),
         allows: (action) => policy.features[UPLOAD_FEATURE]?.[action] !== false,
         start: (request) => coordinator.start(request),
@@ -677,7 +642,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     ) => {
         const durationMs = Date.now() - started;
         const measured = { kind, durationMs, normalizationTransactions, failureCode };
-        emit('operationMetric', operationMetric(definition.model, session, measured));
+        emit('operationMetric', operationMetric(definition.model, identity.session(), measured));
     };
     const flushMetric = () => {
         const batch = metric;
@@ -691,7 +656,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (saves !== undefined) {
             return saves.status();
         }
-        return unmanaged(sequence);
+        return unmanaged(identity.sequence());
     };
     const emitSaveStatus = () => {
         const next = saveStatus();
@@ -761,7 +726,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // The checks read the stored document, so their issues and IDs are those `findContentIssues` gives a host.
     const checks = createContentChecks({
         state: () => state,
-        sequence: () => sequence,
+        sequence: identity.sequence,
         encode: () => encode(state.doc),
         composing: () => settling.active(),
         ready: () => !lifecycle.is('faulted', 'disposed'),
@@ -811,13 +776,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return;
         }
         const checkpoint = {
-            stamp: { ...session, sequence: sequence + 1 },
+            stamp: { ...identity.session(), sequence: identity.sequence() + 1 },
             acknowledgedRevision: saveStatus().revision,
             document: encode(candidate.doc),
         };
         let stored: Promise<RecoveryReceipt>;
         try {
-            stored = service.store(checkpoint, { signal: lifecycle.ended, session });
+            stored = service.store(checkpoint, { signal: lifecycle.ended, session: identity.session() });
         } catch {
             return;
         }
@@ -972,14 +937,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // An effective change compares documents by node equality, never by serializing them.
         const changed = !current.doc.eq(previous.doc);
         if (changed) {
-            sequence += 1;
+            identity.bumpSequence();
         }
         notify();
         if (changed) {
             let document: RichTextDocument | undefined;
             emit('documentChange', {
-                stamp: { ...session, sequence },
-                commitSequence,
+                stamp: identity.stamp(),
+                commitSequence: identity.commitSequence(),
                 origin,
                 commandId,
                 readDocument: () => {
@@ -1027,7 +992,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             viewFault(attached, next);
             return false;
         }
-        commitSequence += 1;
+        identity.bumpCommit();
         liveResources.targets += countTargets(next) - countTargets(previous);
         return true;
     };
@@ -1191,7 +1156,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (!isRecord(target) || typeof target.id !== 'string' || !isRecord(target.session)) {
             return 'target-invalid';
         }
-        if (target.session.sessionId !== session.sessionId || target.session.generation !== session.generation) {
+        if (
+            target.session.sessionId !== identity.session().sessionId ||
+            target.session.generation !== identity.session().generation
+        ) {
             return 'wrong-session';
         }
         return { id: target.id };
@@ -1387,16 +1355,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const result = busyWith((): CommandResult => {
             const attempted = attempt(command, checked, base(), installedId, route, effects);
             if ('unchanged' in attempted) {
-                return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
+                return { status: 'no-op', stamp: identity.stamp(), contentChanged: false };
             }
             if ('candidate' in attempted) {
-                const before = commitSequence;
+                const before = identity.commitSequence();
                 const contentChanged = install(attempted);
                 // The view faulted while it installed the batch, which a later fault or `dispose` from a listener leaves applied.
-                if (commitSequence === before) {
+                if (identity.commitSequence() === before) {
                     return rejected('not-ready');
                 }
-                return { status: 'applied', stamp: { ...session, sequence }, contentChanged };
+                return { status: 'applied', stamp: identity.stamp(), contentChanged };
             }
             if (attempted.diagnostic !== undefined) {
                 report(attempted.diagnostic);
@@ -1562,7 +1530,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return { status: 'captured', target: handleOf(id) };
     };
     /** The handle of target `id` in this session. */
-    const handleOf = (id: string) => Object.freeze({ id, session }) as unknown as SelectionHandle;
+    const handleOf = (id: string) => Object.freeze({ id, session: identity.session() }) as unknown as SelectionHandle;
 
     /**
      * Captures each deferred target once no commit runs, at the selection the commit left, which ProseMirror maps
@@ -1578,7 +1546,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const coordinator = createAsyncCoordinator({
         generateId: generate,
-        session: () => session,
+        session: identity.session,
         policyRevision: () => policyRevision,
         isDisposed,
         isFaulted: () => lifecycle.is('faulted'),
@@ -1725,7 +1693,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             liveResources.targets -= countTargets(state);
             state = state.apply(release);
         }
-        emit('disposed', session);
+        emit('disposed', identity.session());
         clear();
         detach();
         liveResources.installedFeatures.delete(handle);
@@ -1767,7 +1735,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (saves !== undefined) {
             return saves.unsaved();
         }
-        return sequence > 0;
+        return identity.sequence() > 0;
     };
 
     /** Replacement step 5 for a session with unsaved changes: `undefined` when the policy lets the replacement go on. */
@@ -1789,7 +1757,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (!isRecord(unsaved.receipt) || !isRecord(unsaved.receipt.stamp)) {
                 return 'unsaved';
             }
-            if (sameStamp(unsaved.receipt.stamp, { ...session, sequence })) {
+            if (sameStamp(unsaved.receipt.stamp, identity.stamp())) {
                 return undefined;
             }
             return 'checkpoint-invalid';
@@ -1864,13 +1832,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             // Intents of the old generation end before anything can drain them into the next.
             settleQueue('wrong-session');
-            const previous = { ...session, sequence };
-            session = {
-                documentId: request.next.documentId,
-                sessionId: session.sessionId,
-                generation: session.generation + 1,
-            };
-            sequence = 0;
+            const previous = identity.nextGeneration(request.next.documentId);
             published = state;
             capabilities = stored;
             exceedsLimits = createLimitCheck(definition.model, capabilities);
@@ -1896,9 +1858,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         busyWith(notify);
         emitSelection();
         emitSaveStatus();
-        emit('replaced', session);
+        emit('replaced', identity.session());
         refocus(focused);
-        return { status: 'replaced', session };
+        return { status: 'replaced', session: identity.session() };
     };
 
     /** `EditorHandle.replaceDocument`: the Replacement steps in order, stopping at the first that fails. */
@@ -1918,13 +1880,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // A host that echoes its own save gets the current session back with nothing changed; hashing waits for a checked document.
         if (
-            next.documentId === session.documentId &&
+            next.documentId === identity.session().documentId &&
             next.revision === saveStatus().revision &&
             hashDocument(document) === hashDocument(handle.getSnapshot().document)
         ) {
-            return { status: 'replaced', session };
+            return { status: 'replaced', session: identity.session() };
         }
-        if (!sameStamp(request.expected, { ...session, sequence })) {
+        if (!sameStamp(request.expected, identity.stamp())) {
             return refused('changed-since-request');
         }
         if (settling.active()) {
@@ -1947,7 +1909,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return resume('save-unresolved', focused);
         }
         // A keystroke the view read during step 5 is kept, not replaced.
-        if (!sameStamp(request.expected, { ...session, sequence })) {
+        if (!sameStamp(request.expected, identity.stamp())) {
             return resume('changed-since-request', focused);
         }
         return installNext(request, tree, result.document.requiredCapabilities, focused);
@@ -1957,11 +1919,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const handle: RuntimeHandle = {
         getSummary: () => {
             return {
-                session,
+                session: identity.session(),
                 phase: lifecycle.phase(),
                 mode,
-                commitSequence,
-                sequence,
+                commitSequence: identity.commitSequence(),
+                sequence: identity.sequence(),
                 compositionActive: settling.active(),
                 selection: summarize(state.selection),
             };
@@ -1977,7 +1939,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 snapshotCache.revision !== acknowledged
             ) {
                 const value: Snapshot = snapshot({
-                    stamp: { ...session, sequence },
+                    stamp: identity.stamp(),
                     document: encodeByBlock(published.doc),
                     acknowledgedRevision: acknowledged,
                     compositionActive: composing,
@@ -2067,7 +2029,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         handle,
         definition,
         suggestionListId,
-        nextDomId: createDomIds(session.sessionId),
+        nextDomId: createDomIds(identity.session().sessionId),
         get view() {
             return view;
         },
@@ -2197,7 +2159,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 liveResources.frames -= 1;
                 lifecycle.to('ready');
                 refreshView();
-                emit('ready', session);
+                emit('ready', identity.session());
                 measure('mount', createdAt, null);
             });
             liveResources.frames += 1;
