@@ -46,7 +46,6 @@ import { REPLACED_ASSET } from '#/model/assets';
 import { attributesOf, compiledModel } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
-import { encodeTree } from '#/model/encode';
 import { diagnostic } from '#/model/format';
 import { hrefPolicyOf } from '#/model/href';
 import { randomId } from '#/model/random-id';
@@ -69,6 +68,7 @@ import { authoringOf, createPolicyCheck } from './policy';
 import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { scrollSelectionIntoView } from './scroll';
+import { createEncoder } from './session/encode';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
 import { createStore } from './session/store';
@@ -466,8 +466,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return [[command, policy] as const];
         }),
     );
-    let { capabilities } = options;
-    let exceedsLimits = createLimitCheck(definition.model, capabilities);
+    const encoder = createEncoder(definition.model, options.capabilities);
+    const { encode, encodeByBlock } = encoder;
+    let exceedsLimits = createLimitCheck(definition.model, encoder.capabilities);
     const lifecycle = createLifecycle();
     let policy = options.policy;
     let policyRevision = 0;
@@ -687,49 +688,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             liveResources.intents -= 1;
             intent.resolve(rejected(code));
         }
-    };
-
-    const encode = (doc: Node): RichTextDocument =>
-        encodeTree(doc.toJSON() as TreeNode, definition.model, capabilities).document;
-
-    // Each top-level node's frozen stored form under this root, so a snapshot after an edit encodes only changed blocks.
-    let blocks = new WeakMap<Node, RichTextDocument>();
-    let blocksOf: { readonly attrs: Node['attrs']; readonly stored: readonly CapabilityRef[] } | undefined;
-    const encodeByBlock = (doc: Node): RichTextDocument => {
-        if (blocksOf?.attrs !== doc.attrs || blocksOf.stored !== capabilities) {
-            blocks = new WeakMap();
-            blocksOf = { attrs: doc.attrs, stored: capabilities };
-        }
-        // As `toJSON` writes the root: its attributes only when the node type has any.
-        let root: TreeNode = { type: doc.type.name };
-        if (Object.keys(doc.attrs).length > 0) {
-            root = { ...root, attrs: doc.attrs };
-        }
-        let last: RichTextDocument | undefined;
-        const content: unknown[] = [];
-        const versions = new Map<string, number>();
-        for (const child of doc.children) {
-            let block = blocks.get(child);
-            if (block === undefined) {
-                const tree: TreeNode = { ...root, content: [child.toJSON() as TreeNode] };
-                block = snapshot(encodeTree(tree, definition.model, capabilities).document);
-                // A block that is no plain JSON stays unfrozen, so no later snapshot may share it.
-                if (Object.isFrozen(block)) {
-                    blocks.set(child, block);
-                }
-            }
-            last = block;
-            content.push(block.content.content?.[0]);
-            for (const { id, version } of block.requiredCapabilities) {
-                versions.set(id, Math.max(version, versions.get(id) ?? version));
-            }
-        }
-        if (last === undefined) {
-            return encode(doc);
-        }
-        // The union of what each block needs is what the whole document needs, as `encodeTree` sorts it.
-        const requiredCapabilities = [...versions.keys()].sort().map((id) => ({ id, version: versions.get(id) ?? 0 }));
-        return { ...last, requiredCapabilities, content: { ...last.content, content } } as RichTextDocument;
     };
 
     // The checks read the stored document, so their issues and IDs are those `findContentIssues` gives a host.
@@ -1843,8 +1801,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             settleQueue('wrong-session');
             const previous = identity.nextGeneration(request.next.documentId);
             published = store.state;
-            capabilities = stored;
-            exceedsLimits = createLimitCheck(definition.model, capabilities);
+            encoder.capabilities = stored;
+            exceedsLimits = createLimitCheck(definition.model, encoder.capabilities);
             if (saves === undefined) {
                 unmanaged = createUnmanagedStatus(request.next.revision);
             } else {
