@@ -91,6 +91,9 @@ const READER_FILE_MESSAGE =
 const MODEL_ENTRY_MESSAGE =
     'A feature file imports `model` only through its public entry `#/model`, as an outside feature must, never a subpath.';
 
+const FEATURE_PLUGINS_MESSAGE =
+    "The all-units registry imports only `#/model`, `#/bridge/define-plugin` and each feature's `./*/index` through its glob, because it loads every editor part and only `pluginsById` users and `testing` may load it.";
+
 const FEATURE_WIRING_MESSAGE =
     'The feature index, registry and profiles wire shipped features from `model`, and do not load views, readers or the editor.';
 
@@ -337,7 +340,7 @@ const TESTING_MESSAGE =
     '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `features` only conformance and fixtures.';
 
 const CONFORMANCE_MESSAGE =
-    'The contract suite drives editor parts through the engine, so it also imports `prosemirror-state`, `react`, `react-dom/server`, `#/bridge/plugin`, `#/features/registry`, `#/react/engine` and `#/react/plugins`.';
+    'The contract suite drives editor parts through the engine, so it also imports `prosemirror-state`, `react`, `react-dom/server`, `#/bridge/plugin`, `#/features/plugins`, `#/features/registry` and `#/react/engine`.';
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition`, `clipboard/import` and ProseMirror.';
 
@@ -398,6 +401,7 @@ const stylesFolders = FOLDERS.filter((folder) => folder !== 'styles');
 const TESTING_FEATURE_TAILS = [
     '',
     '/index',
+    '/plugins',
     '/registry',
     '/profiles',
     '/profiles/**',
@@ -583,6 +587,22 @@ export default defineConfig({
                 },
             ],
         ),
+        layerOverride('src/features/plugins.ts', [
+            {
+                group: [
+                    ...aliasPatterns(outsideFeatureFolders),
+                    '!#/bridge/define-plugin',
+                    '#/model/**',
+                    '#/features/**',
+                    '../**',
+                    './*',
+                    './**',
+                    '!./*/index',
+                    ...ENGINE_PATTERNS,
+                ],
+                message: FEATURE_PLUGINS_MESSAGE,
+            },
+        ]),
         layerOverride('src/features/*/reader.tsx', [
             {
                 group: [
@@ -696,7 +716,7 @@ export default defineConfig({
                     ...featurePathPatterns(TESTING_FEATURE_TAILS),
                     ...ENGINE_PATTERNS,
                     ...exceptPatterns(['runtime/clipboard/plugin']),
-                    ...exceptPatterns(['bridge/plugin', 'features/registry', 'react/engine', 'react/plugins']),
+                    ...exceptPatterns(['bridge/plugin', 'features/plugins', 'features/registry', 'react/engine']),
                     '!prosemirror-state',
                     '!react',
                     '!react-dom/server',

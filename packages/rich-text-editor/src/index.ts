@@ -71,6 +71,7 @@ export {
     type WriteTarget,
 } from '#/bridge/plugin';
 export { useCommandState, useEditorSelection } from '#/bridge/hooks';
+export { pluginsById } from '#/features/plugins';
 export type {
     BlockDecoration,
     BlockDecorationSource,

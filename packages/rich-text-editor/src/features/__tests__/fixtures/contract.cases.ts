@@ -18,6 +18,7 @@ import {
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore, type PortalStore } from '#/bridge/portals';
 import { compileDefinition, type Normalizer, NORMALIZERS } from '#/definition';
+import { pluginIds, pluginsById } from '#/features/plugins';
 import { enUS } from '#/locales/en-US';
 import { compileContentModel, createEmptyDocument, defaultLimits, type Feature, type RichTextDocument } from '#/model';
 import { compiledModel } from '#/model/compile';
@@ -26,7 +27,6 @@ import { findInvalidPayload } from '#/model/values';
 import { engineOf, viewsOf } from '#/react/compile-editor';
 import { defineEditor } from '#/react/define';
 import { extensionsOf } from '#/react/engine';
-import { SHIPPED_PLUGINS } from '#/react/plugins';
 import { readerContext } from '#/reader/context';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
@@ -175,7 +175,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
     const installed = compiledModel(model).features;
     const given = plugins ?? [];
     // A given part extends the shipped part of its feature, so both parts' commands run.
-    const parts = [...Object.values(SHIPPED_PLUGINS), ...given].flatMap((part) => {
+    const parts = [...pluginsById(pluginIds).map(({ editor }) => editor), ...given].flatMap((part) => {
         const feature = installed.find(({ id }) => id === part.feature);
         if (feature === undefined) {
             return [];

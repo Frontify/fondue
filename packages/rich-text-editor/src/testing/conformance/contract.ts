@@ -8,6 +8,7 @@ import { type EditorPlugin, pluginWithOptions } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { type CompiledDefinition } from '#/definition';
 import { RichTextReader } from '#/entries/reader';
+import { pluginIds, pluginsById } from '#/features/plugins';
 import { registry } from '#/features/registry';
 import { enUS } from '#/locales/en-US';
 import {
@@ -27,9 +28,8 @@ import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { encodeTree } from '#/model/encode';
 import { featureInternals } from '#/model/feature';
-import { isRecord, ownValue } from '#/model/values';
+import { isRecord } from '#/model/values';
 import { editorEngine } from '#/react/engine';
-import { SHIPPED_PLUGINS } from '#/react/plugins';
 
 import { AXE_TAGS } from './axe-tags';
 import { featureFixtures } from './fixtures';
@@ -224,7 +224,7 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
     const partOf = (id: string) => {
         const plugins = options.plugins ?? [];
         const given = [...plugins].reverse().find((plugin) => plugin.feature === id);
-        const part = given ?? ownValue(SHIPPED_PLUGINS, id);
+        const part = given ?? pluginsById(pluginIds).find((unit) => unit.id === id)?.editor;
         const resolved = optionsOf(id);
         if (part === undefined || resolved === undefined) {
             return part;

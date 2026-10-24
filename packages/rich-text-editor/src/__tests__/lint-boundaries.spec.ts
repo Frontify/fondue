@@ -291,6 +291,35 @@ const CASES: readonly Case[] = [
     allowed('feature index: its feature', 'src/features/bold/index.ts', "import { bold } from './feature';"),
     allowed('feature index: its reader', 'src/features/bold/index.ts', "import { boldReader } from './reader';"),
 
+    // feature plugins registry
+    banned('feature plugins: another layer', 'src/features/plugins.ts', "import { run } from '#/runtime/run';"),
+    banned('feature plugins: a model subpath', 'src/features/plugins.ts', "import { node } from '#/model/node';"),
+    banned(
+        'feature plugins: another bridge module',
+        'src/features/plugins.ts',
+        "import { define } from '#/bridge/define';",
+    ),
+    banned('feature plugins: a feature file', 'src/features/plugins.ts', "import { bold } from './bold/feature';"),
+    banned(
+        'feature plugins: a feature editor part',
+        'src/features/plugins.ts',
+        "import { boldEditor } from './bold/editor';",
+    ),
+    banned('feature plugins: the registry', 'src/features/plugins.ts', "import { registry } from './registry';"),
+    banned(
+        'feature plugins: a feature by alias',
+        'src/features/plugins.ts',
+        "import { boldPlugin } from '#/features/bold';",
+    ),
+    banned('feature plugins: react', 'src/features/plugins.ts', "import { memo } from 'react';"),
+    allowed('feature plugins: the model', 'src/features/plugins.ts', "import { DefinitionError } from '#/model';"),
+    allowed(
+        'feature plugins: the plugin definer',
+        'src/features/plugins.ts',
+        "import { type RichTextPlugin } from '#/bridge/define-plugin';",
+    ),
+    allowed('feature plugins: a feature index', 'src/features/plugins.ts', "import { boldIndex } from './bold/index';"),
+
     // feature fixtures
     banned(
         'feature fixtures: a model subpath',
@@ -394,6 +423,21 @@ const CASES: readonly Case[] = [
         'testing: the engine inside conformance',
         'src/testing/conformance/x.ts',
         "import { editorEngine } from '#/react/engine';",
+    ),
+    banned(
+        'testing: the units registry outside conformance',
+        'src/testing/units.ts',
+        "import { pluginsById } from '#/features/plugins';",
+    ),
+    allowed(
+        'testing: the units registry inside conformance',
+        'src/testing/conformance/units.ts',
+        "import { pluginsById } from '#/features/plugins';",
+    ),
+    banned(
+        'testing: the shipped plugins inside conformance',
+        'src/testing/conformance/shipped.ts',
+        "import { SHIPPED_PLUGINS } from '#/react/plugins';",
     ),
     banned(
         'testing: the engine outside conformance',
