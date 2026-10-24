@@ -1,18 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { LoadingBar } from '@frontify/fondue-components';
-import {
-    type CSSProperties,
-    type FocusEvent,
-    type MouseEvent,
-    useEffect,
-    useLayoutEffect,
-    useRef,
-    useState,
-} from 'react';
+import { type CSSProperties, type FocusEvent, type MouseEvent, useEffect, useRef, useState } from 'react';
 
 import { NodeChromeButton } from '#/bridge/define';
-import { type EditorApi, type UploadStatus, useEditorApi, useEditorValue } from '#/bridge/plugin';
+import {
+    type EditorApi,
+    type UploadStatus,
+    useClientLayoutEffect,
+    useEditorApi,
+    useEditorValue,
+} from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
 
 import styles from './styles/upload.module.scss';
@@ -139,7 +137,7 @@ export const UploadControls = ({
     // Whether one of these buttons had focus last, which a button that left the DOM keeps.
     const focusedRef = useRef(false);
     const running = isRunning(status);
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         const wrapper = wrapperRef.current;
         if (!focusedRef.current || wrapper === null || wrapper.contains(wrapper.ownerDocument.activeElement)) {
             return;
@@ -152,7 +150,7 @@ export const UploadControls = ({
         }
         next.focus();
     }, [running, focus]);
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         const wrapper = wrapperRef.current;
         let toolbar: HTMLElement | null = null;
         if (wrapper !== null) {
