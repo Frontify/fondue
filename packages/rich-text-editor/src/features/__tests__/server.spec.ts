@@ -58,16 +58,18 @@ describe('the outside fixture feature with no DOM globals', () => {
         const html = '<div class="fondue-rte-content"><p dir="auto">Read the <mark>highlighted</mark> part.</p></div>';
 
         expect(renderReader(highlightDocument, model)).toBe(html);
-        expect(codecs.toHTML(highlightDocument)).toEqual({ html, css: '', diagnostics: [] });
+        expect(codecs.toHTML(highlightDocument)).toEqual({ html, css: '', diagnostics: [], blocked: false });
         expect(codecs.toPlainText(highlightDocument)).toEqual({
             text: 'Read the highlighted part.',
             losses: [{ featureId: 'fixture.highlight', count: 1 }],
             diagnostics: [],
+            blocked: false,
         });
         expect(codecs.toMarkdown(highlightDocument)).toEqual({
             markdown: 'Read the highlighted part.',
             losses: [{ featureId: 'fixture.highlight', count: 1 }],
             diagnostics: [],
+            blocked: false,
         });
     });
 });
