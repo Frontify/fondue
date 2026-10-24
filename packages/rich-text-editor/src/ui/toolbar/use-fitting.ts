@@ -4,10 +4,14 @@ import { type RefObject, useRef, useState } from 'react';
 
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 
+/** One slot per item, which an item that failed to render holds empty, so slots and items keep their order. */
+const slotsOf = (root: HTMLElement): Element[] =>
+    [...root.children].filter((child) => !child.hasAttribute('data-rte-toolbar-more'));
+
 /** The inline-end edge of each item, measured from the toolbar's inline-start edge while every item shows. */
 const inlineEnds = (root: HTMLElement, rtl: boolean): number[] => {
     const box = root.getBoundingClientRect();
-    return [...root.querySelectorAll('[data-rte-toolbar-item]')].map((item) => {
+    return slotsOf(root).map((item) => {
         const rect = item.getBoundingClientRect();
         if (rtl) {
             return box.right - rect.left;
@@ -64,7 +68,7 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
                 next += 1;
             }
             const { activeElement } = element.ownerDocument;
-            const focused = [...element.querySelectorAll('[data-rte-toolbar-item]')].indexOf(activeElement as Element);
+            const focused = slotsOf(element).findIndex((slot) => slot.contains(activeElement));
             if (focused >= next) {
                 refocusRef.current = 'more';
             }
@@ -102,7 +106,11 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
         refocusRef.current = undefined;
         let control = element.querySelector<HTMLElement>('[data-rte-toolbar-more]');
         if (target !== 'more') {
-            control = element.querySelectorAll<HTMLElement>('[data-rte-toolbar-item]')[target] ?? null;
+            const slot = slotsOf(element)[target];
+            control = slot?.querySelector<HTMLElement>('[data-rte-toolbar-item]') ?? null;
+            if (slot?.matches('[data-rte-toolbar-item]') === true) {
+                control = slot as HTMLElement;
+            }
         }
         if (control !== null) {
             control.focus();

@@ -26,7 +26,7 @@ interface BoundaryState {
 }
 
 /** Replaces only the chrome that threw with a localized message, while `contentDOM` and editing go on. */
-class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
+export class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
     static contextType = ReactWorkContext;
     declare context: ReactWork | undefined;
     state: BoundaryState = { failed: false, attrs: this.props.attrs };

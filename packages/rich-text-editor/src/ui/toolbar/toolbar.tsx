@@ -10,6 +10,7 @@ import { useCommandQuery } from '#/bridge/hooks';
 import { useOverlayContainer } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
 import { type ToolbarControlProps } from '#/bridge/plugin';
+import { ChromeBoundary } from '#/bridge/portal-host';
 import { SessionContext } from '#/bridge/session';
 import { useOpenPanel } from '#/ui/panels/context';
 import { ariaShortcut } from '#/ui/shortcuts';
@@ -32,6 +33,9 @@ interface ItemProps {
     /** The item takes no Tab stop, as in the bubble toolbar. */
     readonly outOfTabOrder: boolean;
 }
+
+/** The attributes of a boundary around a toolbar item, which has none to change. */
+const NO_ATTRS = {};
 
 /** One toolbar item: a plugin's own control, else the standard button. */
 export const Item = (props: ItemProps) => {
@@ -213,10 +217,18 @@ export const FixedToolbar = ({
             data-test-id={`${testId}-toolbar`}
         >
             {items.slice(0, shown).map((item) => {
+                let content = (
+                    <Item
+                        item={item}
+                        disabled={disabled}
+                        strings={strings}
+                        keepsFocus={docked !== undefined}
+                        outOfTabOrder={false}
+                    />
+                );
                 if (item.options !== undefined) {
-                    return (
+                    content = (
                         <TextStyle
-                            key={item.key}
                             item={item}
                             disabled={disabled}
                             keepsFocus={docked !== undefined}
@@ -224,15 +236,11 @@ export const FixedToolbar = ({
                         />
                     );
                 }
+                // An item that throws leaves only its own place empty, with no message to read between the items.
                 return (
-                    <Item
-                        key={item.key}
-                        item={item}
-                        disabled={disabled}
-                        strings={strings}
-                        keepsFocus={docked !== undefined}
-                        outOfTabOrder={false}
-                    />
+                    <ChromeBoundary key={item.key} message="" attrs={NO_ATTRS}>
+                        {content}
+                    </ChromeBoundary>
                 );
             })}
             <More

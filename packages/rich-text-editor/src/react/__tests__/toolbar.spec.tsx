@@ -10,6 +10,7 @@ import { defineEditorPlugin } from '#/bridge/plugin';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { fixtureCodeBlockEditor } from '#/features/__tests__/fixtures/code-block/view';
 import { core } from '#/features/core/feature';
+import { boldEditor } from '#/features/marks-bold/editor';
 import { bold } from '#/features/marks-bold/feature';
 import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
@@ -533,6 +534,47 @@ const pullQuotePlugin = (
             },
         ],
     });
+
+describe('a toolbar item that throws while rendering', () => {
+    const Broken = (): never => {
+        throw new Error('item render failed');
+    };
+    const brokenDefinition = defineEditor({
+        id: 'test.toolbar',
+        model: compileContentModel([core(), bold(), pullQuote()], { id: 'test.toolbar', version: 1 }),
+        plugins: [
+            boldEditor,
+            defineEditorPlugin(pullQuote(), {
+                commands: { 'acme.pull-quote.set': { run: () => true } },
+                toolbar: [
+                    {
+                        id: 'acme.pull-quote',
+                        kind: 'button',
+                        command: 'acme.pull-quote.set',
+                        label: { 'en-US': 'Pull quote' },
+                        icon: 'IconSpeechBubbleQuote',
+                        control: Broken,
+                    },
+                ],
+            }),
+        ],
+    });
+
+    it('replaces only that item, so the textbox and the other items stay and arrows skip nothing that renders', () => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        mount({ definition: brokenDefinition }, [['mark.bold.toggle', 'acme.pull-quote.set']]);
+
+        expect(document.querySelector('[data-rte-shell="recovery"]')).toBeNull();
+        expect(screen.getByRole('textbox', { name: 'Notes' })).toBeInTheDocument();
+        expect(screen.getAllByRole('button').map((item) => item.getAttribute('aria-label'))).toEqual(['Bold', 'More']);
+        act(() => button('Bold').focus());
+        fireEvent.keyDown(button('Bold'), { key: 'ArrowRight' });
+        act(() => {
+            vi.advanceTimersByTime(0);
+        });
+        expect(button('More')).toHaveFocus();
+    });
+});
 
 describe('toolbar theming and localization', () => {
     it('labels a plugin entry in the UI locale by RFC 4647 lookup, else en-US', () => {
