@@ -14,6 +14,7 @@ export {
 export { type ContentCheckOptions, type ContentIssue, findContentIssues, ruleHelpKey, ruleNameKey } from './checks';
 export { hexColor } from './colors';
 export { compileContentModel } from './compile';
+export { composite, contrastOf, parseColor, type Rgba } from './contrast';
 export {
     type AttributeDeclaration,
     type AttributeDeclarations,

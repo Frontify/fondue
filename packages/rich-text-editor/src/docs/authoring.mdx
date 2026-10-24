@@ -32,13 +32,11 @@ A feature declares:
 
 ### Nodes
 
-A node names its group, its content, its attributes, how it becomes HTML (`html`) and which HTML becomes it (`parse`). `formats` says whether each output is `lossless` or `lossy`, so a codec can report what it drops.
+A node names its group, its content, its attributes, how it becomes HTML (`html`) and which HTML becomes it (`parse`). `formats` says whether each output is `lossless` or `lossy`, so a codec can report what it drops. A feature also declares its content check rules in `contentRules`. The excerpt stops before them, and `LEVELS` is `[1, 2, 3, 4, 5, 6]`.
 
 Source: `src/features/blocks-heading/feature.ts`
 
 ```ts
-const LEVELS = [1, 2, 3, 4, 5, 6] as const;
-
 /** Headings `h1` to `h6`, whose level only the `level` attribute sets. */
 export const heading = defineFeature({
     id: 'blocks.heading',
@@ -65,7 +63,6 @@ export const heading = defineFeature({
         },
     },
     formats: { html: 'lossless', text: 'lossy', markdown: 'lossless' },
-});
 ```
 
 ### Marks and options

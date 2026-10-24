@@ -10,7 +10,7 @@ import postcss from 'postcss';
 import { compile } from 'sass';
 import { describe, expect, it } from 'vitest';
 
-import { composite, contrastOf, parseColor } from '#/features/marks-font-color/feature';
+import { composite, contrastOf, parseColor } from '#/model';
 
 import { insideAtRule, literalColorsIn, withoutVars } from '../../__tests__/css';
 

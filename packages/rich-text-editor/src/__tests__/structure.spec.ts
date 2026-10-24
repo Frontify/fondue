@@ -395,8 +395,41 @@ const featureFolders = () =>
         .map((entry) => entry.name)
         .sort();
 
-const isExported = (statement: ts.VariableStatement) =>
+const isExported = (statement: ts.VariableStatement | ts.FunctionDeclaration) =>
     statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) === true;
+
+// The functions a module exports as runtime values, as the registry counts them: types and other values do not count.
+const exportedFunctions = (path: string) => {
+    const names: string[] = [];
+    for (const statement of parse(path).statements) {
+        if (ts.isFunctionDeclaration(statement) && isExported(statement)) {
+            names.push(statement.name?.text ?? 'default');
+        } else if (ts.isVariableStatement(statement) && isExported(statement)) {
+            for (const { name, initializer } of statement.declarationList.declarations) {
+                // `defineFeature(...)` returns the feature factory.
+                if (
+                    initializer !== undefined &&
+                    (ts.isArrowFunction(initializer) ||
+                        ts.isFunctionExpression(initializer) ||
+                        (ts.isCallExpression(initializer) &&
+                            ts.isIdentifier(initializer.expression) &&
+                            initializer.expression.text === 'defineFeature'))
+                ) {
+                    names.push(name.getText());
+                }
+            }
+        } else if (ts.isExportDeclaration(statement) && !statement.isTypeOnly) {
+            // A re-export cannot be classified here, so it counts against the one function.
+            const { exportClause } = statement;
+            if (exportClause !== undefined && ts.isNamedExports(exportClause)) {
+                names.push(...exportClause.elements.filter((item) => !item.isTypeOnly).map((item) => item.name.text));
+            } else {
+                names.push('*');
+            }
+        }
+    }
+    return names;
+};
 
 // The names a feature's index.ts exports as `definePlugin(...)` units.
 const unitExports = (path: string) => {
@@ -488,6 +521,17 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
                 problems.push(`missing: features/${folder}/index.ts`);
             } else if (unitExports(path).length !== 1) {
                 problems.push(`not exactly one definePlugin unit: features/${folder}/index.ts`);
+            }
+        }
+        expect(problems).toEqual([]);
+    });
+
+    it('gives every feature folder a feature.ts that exports exactly one runtime function', () => {
+        const problems: string[] = [];
+        for (const folder of featureFolders()) {
+            const names = exportedFunctions(join(srcRoot, 'features', folder, 'feature.ts'));
+            if (names.length !== 1) {
+                problems.push(`features/${folder}/feature.ts exports ${names.length} functions: ${names.join(', ')}`);
             }
         }
         expect(problems).toEqual([]);
