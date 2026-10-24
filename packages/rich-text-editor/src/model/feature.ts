@@ -32,10 +32,15 @@ export const featureInternals = (feature: Feature): FeatureInternals | undefined
     (feature as unknown as { readonly [FEATURE]?: FeatureInternals })[FEATURE];
 
 // Code a UI layer attaches by kind, such as reader overrides and node views, which one feature may carry together.
-const ATTACHED = new WeakMap<FeatureDeclaration, Readonly<Record<string, unknown>>>();
+// An own enumerable symbol property of the declaration, so a spread copy keeps the attachments.
+const ATTACHED = Symbol('attached');
 
 /** What was attached under `kind` to a compiled feature's declaration. */
-export const attachedTo = (declaration: FeatureDeclaration, kind: string): unknown => ATTACHED.get(declaration)?.[kind];
+export const attachedTo = (declaration: FeatureDeclaration, kind: string): unknown =>
+    attachmentsOf(declaration)?.[kind];
+
+const attachmentsOf = (declaration: FeatureDeclaration): Readonly<Record<string, unknown>> | undefined =>
+    (declaration as FeatureDeclaration & { readonly [ATTACHED]?: Readonly<Record<string, unknown>> })[ATTACHED];
 
 /** A copy of `feature` with `value` attached under `kind`, keeping what was attached under other kinds. */
 export const attachToFeature = <F extends Feature>(feature: F, kind: string, value: unknown): F => {
@@ -44,8 +49,10 @@ export const attachToFeature = <F extends Feature>(feature: F, kind: string, val
         return feature;
     }
     // A fresh declaration copy keys the attachments to this feature, not to every model built from its factory.
-    const declaration = Object.freeze({ ...internals.declaration });
-    ATTACHED.set(declaration, { ...ATTACHED.get(internals.declaration), [kind]: value });
+    const declaration = Object.freeze({
+        ...internals.declaration,
+        [ATTACHED]: Object.freeze({ ...attachmentsOf(internals.declaration), [kind]: value }),
+    });
     return createFeature(declaration, internals.options) as F;
 };
 

@@ -68,4 +68,18 @@ describe('defineReaderFeature', () => {
         expect(readerOverrides(doc)).toEqual({ paragraph: renderer });
         expect(readerOverrides(links())).toBeUndefined();
     });
+
+    it('keeps the overrides on a spread copy of the feature or of its declaration', () => {
+        const link = defineReaderFeature(links(), { link: renderer });
+        const internals = featureInternals(link);
+        expect(internals).toBeDefined();
+        if (internals === undefined) {
+            return;
+        }
+
+        expect(readerOverrides({ ...link })).toEqual({ link: renderer });
+        expect(declaredOverrides({ ...internals.declaration })).toEqual({ link: renderer });
+        expect(Object.isFrozen(internals.declaration)).toBe(true);
+        expect(Object.isFrozen(link)).toBe(true);
+    });
 });

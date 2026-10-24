@@ -334,7 +334,10 @@ type CheckedParts<Parts extends EditorPluginParts> = Parts & {
     readonly commands?: PayloadMatched<NoInfer<NonNullable<Parts['commands']>>>;
 };
 
-const optionParts = new WeakMap<object, (options: JsonObject) => EditorPluginParts>();
+type OptionParts = (options: JsonObject) => EditorPluginParts;
+
+// An own enumerable symbol property, so a spread copy of the plugin keeps its option-dependent parts.
+const OPTION_PARTS = Symbol('optionParts');
 
 /**
  * The editor part of `feature`, a factory or a feature it made, which may load apart from the feature itself. `parts`
@@ -346,8 +349,8 @@ export const defineEditorPlugin = <Id extends string, const Parts extends Editor
 ): EditorPlugin<Id, PayloadsOf<NonNullable<Parts['commands']>>> => {
     const { id } = typeof feature === 'function' ? feature() : feature;
     if (typeof parts === 'function') {
-        const plugin = Object.freeze({ feature: id });
-        optionParts.set(plugin, parts);
+        const optionParts: OptionParts = Object.freeze((options: JsonObject) => parts(options));
+        const plugin: EditorPlugin = Object.freeze({ feature: id, [OPTION_PARTS]: optionParts });
         return plugin as EditorPlugin<Id, PayloadsOf<NonNullable<Parts['commands']>>>;
     }
     const plugin: EditorPluginParts & { readonly feature: string } = { feature: id, ...parts };
@@ -356,7 +359,7 @@ export const defineEditorPlugin = <Id extends string, const Parts extends Editor
 
 /** `plugin` with the parts its function gives for its feature's resolved `options`, else `plugin` itself. */
 export const pluginWithOptions = (plugin: EditorPlugin, options: JsonObject): EditorPlugin => {
-    const partsOf = optionParts.get(plugin);
+    const partsOf = (plugin as EditorPlugin & { readonly [OPTION_PARTS]?: OptionParts })[OPTION_PARTS];
     if (partsOf === undefined) {
         return plugin;
     }
