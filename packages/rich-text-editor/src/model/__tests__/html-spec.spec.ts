@@ -226,6 +226,43 @@ describe('islandText', () => {
         expect(islandText({ type: 'text', text: 'self' })).toBe('self');
     });
 
+    it('separates block children with a newline and joins the inline content of one block', () => {
+        const paragraph = (...content: unknown[]) => ({ type: 'paragraph', content });
+        const callout = {
+            type: 'callout',
+            content: [paragraph({ type: 'text', text: 'Hello' }), paragraph({ type: 'text', text: 'World' })],
+        };
+        const inline = paragraph(
+            { type: 'text', text: 'Hel' },
+            { type: 'emoji', content: [{ type: 'text', text: 'lo' }] },
+        );
+
+        expect(islandText(callout)).toBe('Hello\nWorld');
+        expect(islandText({ type: 'callout', content: [inline, paragraph({ type: 'text', text: 'World' })] })).toBe(
+            'Hello\nWorld',
+        );
+        expect(islandText(inline)).toBe('Hello');
+    });
+
+    it('joins inline atoms without a separator and keeps an empty paragraph between blocks', () => {
+        const paragraph = (...content: unknown[]) => ({ type: 'paragraph', content });
+
+        expect(
+            islandText(paragraph({ type: 'mention', attrs: { id: 'a' } }, { type: 'mention', attrs: { id: 'b' } })),
+        ).toBe('');
+        expect(islandText(paragraph({ type: 'emoji' }, { type: 'emoji' }))).toBe('');
+        expect(
+            islandText({
+                type: 'doc',
+                content: [
+                    paragraph({ type: 'text', text: 'Hello' }),
+                    paragraph(),
+                    paragraph({ type: 'text', text: 'World' }),
+                ],
+            }),
+        ).toBe('Hello\n\nWorld');
+    });
+
     it('reads no text from a value that is no node, an attribute or a non-string text', () => {
         expect(islandText(5)).toBe('');
         expect(islandText(null)).toBe('');

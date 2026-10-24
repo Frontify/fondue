@@ -189,12 +189,18 @@ export const renderSpaces = (text: string, carried = 0): string =>
         return spaces;
     });
 
-/** The `text` of each `text` object at a node position of an island's `original`, in document order. */
+const BLOCK_BREAK = Symbol('blockBreak');
+
+/** The `text` of each `text` object at a node position of an island's `original`, in document order, one block per line. */
 export const islandText = (original: unknown): string => {
     let text = '';
     const pending: unknown[] = [original];
     while (pending.length > 0) {
         const value = pending.pop();
+        if (value === BLOCK_BREAK) {
+            text += '\n';
+            continue;
+        }
         if (!isRecord(value)) {
             continue;
         }
@@ -203,8 +209,15 @@ export const islandText = (original: unknown): string => {
         }
         if (Array.isArray(value.content)) {
             const children = value.content as readonly unknown[];
+            // The original has no schema, so children are blocks when none is text and one has a content array.
+            const blocks =
+                !children.some((child) => isRecord(child) && child.type === 'text') &&
+                children.some((child) => isRecord(child) && Array.isArray(child.content));
             for (let index = children.length - 1; index >= 0; index -= 1) {
                 pending.push(children[index]);
+                if (blocks && index > 0) {
+                    pending.push(BLOCK_BREAK);
+                }
             }
         }
     }
