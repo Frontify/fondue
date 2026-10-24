@@ -11,7 +11,7 @@ const internalPatterns = Object.keys(tsconfig.compilerOptions.paths).map((path) 
 
 export default defineConfig({
     internalPatterns,
-    ignorePatterns: ['src/model/__tests__/fixtures/model-versions.json'],
+    ignorePatterns: ['src/model/__tests__/fixtures/model-versions.json', 'src/__tests__/goldens/**'],
     trailingComma: 'all',
     arrowParens: 'always',
     endOfLine: 'lf',
