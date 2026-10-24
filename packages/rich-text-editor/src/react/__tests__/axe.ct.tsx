@@ -4,7 +4,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
-import { AXE_TAGS } from '#/features/conformance/axe-tags';
+import { AXE_TAGS } from '#/testing/conformance/axe-tags';
 
 import { ImageProbe } from '../../features/media-image/__tests__/fixtures/ImageProbe';
 import { UploadProbe } from '../../features/media-upload/__tests__/fixtures/UploadProbe';

@@ -115,7 +115,6 @@ const NOT_EDITOR_PART_FILES = [
     'src/features/*/migration.ts',
     'src/features/*/reader.tsx',
     'src/features/*/fixtures/**',
-    'src/features/conformance/**',
 ];
 
 const editorPartFolders = FOLDERS.filter(
@@ -194,8 +193,6 @@ const FEATURE_FILE_TAILS = [
     '/*/migration',
     '/*/fixtures',
     '/*/fixtures/**',
-    '/conformance',
-    '/conformance/**',
     '/__tests__',
     '/__tests__/**',
 ] as const;
@@ -205,8 +202,6 @@ const WIRING_FEATURE_TAILS = [
     '/*/reader',
     '/*/fixtures',
     '/*/fixtures/**',
-    '/conformance',
-    '/conformance/**',
     '/__tests__',
     '/__tests__/**',
 ] as const;
@@ -222,8 +217,6 @@ const READER_FEATURE_TAILS = [
     '/*/migration',
     '/*/fixtures',
     '/*/fixtures/**',
-    '/conformance',
-    '/conformance/**',
     '/__tests__',
     '/__tests__/**',
 ] as const;
@@ -345,6 +338,9 @@ const htmlFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 
 
 const TESTING_MESSAGE =
     '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, from `clipboard` only `clipboard/plugin`, and from `features` only conformance and fixtures.';
+
+const CONFORMANCE_MESSAGE =
+    'The contract suite drives editor parts through the engine, so it also imports `prosemirror-state`, `react`, `react-dom/server`, `#/bridge/plugin`, `#/features/registry`, `#/react/engine` and `#/react/plugins`.';
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition`, `clipboard/import` and ProseMirror.';
 
@@ -550,7 +546,6 @@ export default defineConfig({
                 },
                 { regex: EXTERNAL_SPECIFIER, message: FEATURE_FILE_MESSAGE },
             ],
-            ['src/features/conformance/**'],
         ),
         layerOverride(
             EDITOR_PART_FILES,
@@ -639,17 +634,37 @@ export default defineConfig({
                 message: LOCALES_MESSAGE,
             },
         ]),
-        layerOverride('src/testing/**/*.{ts,tsx}', [
+        layerOverride(
+            'src/testing/**/*.{ts,tsx}',
+            [
+                {
+                    group: [
+                        ...aliasPatterns(testingFolders),
+                        ...relativePatterns(testingFolders),
+                        ...featurePathPatterns(TESTING_FEATURE_TAILS),
+                        ...ENGINE_PATTERNS,
+                        // DR-136: the `paste` helper feeds the paste pipeline through its entry.
+                        ...exceptPatterns(['clipboard/plugin']),
+                    ],
+                    message: TESTING_MESSAGE,
+                },
+            ],
+            ['src/testing/conformance/**'],
+        ),
+        layerOverride('src/testing/conformance/**/*.{ts,tsx}', [
             {
                 group: [
                     ...aliasPatterns(testingFolders),
                     ...relativePatterns(testingFolders),
                     ...featurePathPatterns(TESTING_FEATURE_TAILS),
                     ...ENGINE_PATTERNS,
-                    // DR-136: the `paste` helper feeds the paste pipeline through its entry.
                     ...exceptPatterns(['clipboard/plugin']),
+                    ...exceptPatterns(['bridge/plugin', 'features/registry', 'react/engine', 'react/plugins']),
+                    '!prosemirror-state',
+                    '!react',
+                    '!react-dom/server',
                 ],
-                message: TESTING_MESSAGE,
+                message: CONFORMANCE_MESSAGE,
             },
         ]),
         layerOverride('src/runtime/**/*.{ts,tsx}', [runtimeRestriction]),

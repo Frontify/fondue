@@ -18,7 +18,6 @@ import {
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore, type PortalStore } from '#/bridge/portals';
 import { compileDefinition, type Normalizer, NORMALIZERS } from '#/definition';
-import { featureFixtures } from '#/features/conformance/fixtures';
 import { enUS } from '#/locales/en-US';
 import { compileContentModel, createEmptyDocument, defaultLimits, type Feature, type RichTextDocument } from '#/model';
 import { compiledModel } from '#/model/compile';
@@ -32,6 +31,7 @@ import { readerContext } from '#/reader/context';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 import { SLOT_START_META, uploadSlotsPlugin } from '#/runtime/upload-slots';
+import { featureFixtures } from '#/testing/conformance/fixtures';
 
 import { countingIds } from './notes';
 

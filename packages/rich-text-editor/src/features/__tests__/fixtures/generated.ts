@@ -4,10 +4,10 @@ import fc from 'fast-check';
 
 import { buildSchema } from '#/definition/schema';
 import { storedIn } from '#/features/__tests__/fixtures/documents';
-import { featureFixtures } from '#/features/conformance/fixtures';
 import { type ContentModel, type ContentNodeJSON, type JsonValue, type RichTextDocument } from '#/model';
 import { decodeToTree } from '#/model/decode';
 import { encodeTree } from '#/model/encode';
+import { featureFixtures } from '#/testing/conformance/fixtures';
 
 // The browser of a component test has no `process`.
 const environment = (globalThis as { process?: { env: Readonly<Record<string, string | undefined>> } }).process?.env;

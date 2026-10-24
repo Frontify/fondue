@@ -3,7 +3,6 @@
 import { describe, expect, it } from 'vitest';
 
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
-import { featureFixtures } from '#/features/conformance/fixtures';
 import { UNSHIPPED_FEATURES } from '#/features/stages';
 import { type ContentModel, type RichTextDocument } from '#/model';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK, type TreeNode } from '#/model/content';
@@ -16,6 +15,7 @@ import { shipped as document } from '#/react/profiles/document';
 import { shipped as inline } from '#/react/profiles/inline';
 import { type ShippedProfile } from '#/react/profiles/parts';
 import { SHIPPED_OVERRIDES } from '#/reader/registry';
+import { featureFixtures } from '#/testing/conformance/fixtures';
 
 // The Profiles tables of SPEC-rich-text, before the Release stages filter.
 const INLINE = [

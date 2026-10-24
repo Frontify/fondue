@@ -5,11 +5,11 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import { featuresById } from '#/features';
 import { highlightEditor } from '#/features/__tests__/fixtures/outside-editor';
 import { badgeDocument, highlight, highlightDocument } from '#/features/__tests__/fixtures/outside-feature';
-import { featureFixtures } from '#/features/conformance/fixtures';
 import { registry } from '#/features/registry';
 import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { RichTextReader } from '#/reader';
+import { featureFixtures } from '#/testing/conformance/fixtures';
 
 // The model of the feature contract suite: every shipped feature and the outside fixture feature.
 const model = compileContentModel([...featuresById(Object.keys(registry)), highlight()], {

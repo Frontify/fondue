@@ -23,7 +23,7 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/codecs/to-html.ts': 438,
     'src/codecs/to-markdown.ts': 702,
     'src/definition/index.ts': 560,
-    'src/features/conformance/contract.ts': 408,
+    'src/testing/conformance/contract.ts': 408,
     'src/features/links/link-popover.tsx': 590,
     'src/features/media-image/view.tsx': 517,
     'src/model/checks.ts': 679,
@@ -45,7 +45,7 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/bridge/node-views.ts#createNodeViews': 227,
     'src/codecs/from-markdown.ts#readMarkdown': 161,
     'src/definition/index.ts#compileDefinition': 253,
-    'src/features/conformance/contract.ts#runFeatureContract': 214,
+    'src/testing/conformance/contract.ts#runFeatureContract': 214,
     'src/features/emoji/emoji-picker.tsx#Picker': 155,
     'src/features/links/link-bubble.tsx#LinkBubble': 183,
     'src/features/links/link-popover.tsx#LinkPopover': 402,
@@ -82,14 +82,14 @@ export const SPECS_OVER_1000_LINES: Record<string, number> = {
     'src/runtime/__tests__/runtime.spec.ts': 4501,
 };
 
-export const KNOWN_CYCLES: string[] = ['(root) | features | react | reader', 'clipboard | runtime'];
+export const KNOWN_CYCLES: string[] = ['(root) | react', 'clipboard | runtime', 'features | reader'];
 
 export const PROSEMIRROR_NODES: string[] = [
     'bridge',
     'clipboard',
     'clipboard/import',
     'definition',
-    'features/conformance',
+    'testing',
     'html',
     'runtime',
 ];

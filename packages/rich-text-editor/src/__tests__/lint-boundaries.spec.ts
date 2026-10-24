@@ -297,9 +297,19 @@ const CASES: readonly Case[] = [
     allowed(
         'testing: feature conformance',
         'src/testing/conformance.ts',
-        "import { check } from '#/features/conformance/check';",
+        "import { check } from '#/testing/conformance/check';",
     ),
     allowed('testing: model', 'src/testing/model.ts', "import { node } from '#/model';"),
+    allowed(
+        'testing: the engine inside conformance',
+        'src/testing/conformance/x.ts',
+        "import { editorEngine } from '#/react/engine';",
+    ),
+    banned(
+        'testing: the engine outside conformance',
+        'src/testing/x.ts',
+        "import { editorEngine } from '#/react/engine';",
+    ),
 
     // runtime
     banned('runtime: the react layer', 'src/runtime/react-layer.ts', "import { Editor } from '#/react/editor';"),

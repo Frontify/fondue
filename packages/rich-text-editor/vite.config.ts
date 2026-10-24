@@ -43,7 +43,13 @@ export default defineConfig({
         dts({
             entryRoot: 'src',
             include: ['src'],
-            exclude: ['**/__tests__/**', '**/*.{spec,test,stories}.{ts,tsx}', 'src/setupTests.ts'],
+            exclude: [
+                '**/__tests__/**',
+                '**/*.{spec,test,stories}.{ts,tsx}',
+                'src/setupTests.ts',
+                'src/react/examples/**',
+                'src/docs/**',
+            ],
         }),
         externalizeJsDeps(),
     ],

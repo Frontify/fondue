@@ -31,7 +31,6 @@ import { highlightEditor } from '#/features/__tests__/fixtures/outside-editor';
 import { badgeDocument, highlight, highlightDocument } from '#/features/__tests__/fixtures/outside-feature';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
 import { vocabularyLists } from '#/features/__tests__/fixtures/vocabulary';
-import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { mediaImage } from '#/features/media-image/feature';
@@ -42,6 +41,7 @@ import { compileContentModel, defineFeature, type Diagnostic, type Feature, type
 import { RichTextReader } from '#/reader';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, runFeatureContract, setSelection } from '#/testing';
+import { featureFixtures } from '#/testing/conformance/fixtures';
 
 vi.mock('#/codecs', { spy: true });
 vi.mock('#/model/compile', { spy: true });

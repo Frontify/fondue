@@ -4,8 +4,8 @@
 
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { featureFixtures } from '#/features/conformance/fixtures';
 import { type RichTextDocument } from '#/model';
+import { featureFixtures } from '#/testing/conformance/fixtures';
 
 const load = async () => ({
     codecs: await import('#/codecs'),
