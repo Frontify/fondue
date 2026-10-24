@@ -64,6 +64,7 @@ import { bindingHere } from '#/ui/shortcuts';
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
 import { type AsyncRequest } from '../async';
 import { RUNTIME_PLUGINS } from '../capabilities';
+import { type UploadServiceLike } from '../capabilities/media/uploads';
 import { canRedo, canUndo, reset, undoDepth } from '../history';
 import { createLimitCheck } from '../limits';
 import { authoringOf } from '../policy';
@@ -78,7 +79,6 @@ import {
     type FeaturePolicy,
     type ReplaceDocumentRequest,
 } from '../types';
-import { type UploadServiceLike } from '../uploads';
 
 const network = failNetworkInThisFile();
 

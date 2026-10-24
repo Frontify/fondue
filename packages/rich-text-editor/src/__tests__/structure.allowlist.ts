@@ -6,8 +6,8 @@ export const FILES_OVER_600_LINES: Record<string, number> = {
     'src/codecs/to-markdown.ts': 702,
     'src/model/compile.ts': 659,
     'src/react/rich-text-editor.tsx': 1492,
+    'src/runtime/capabilities/suggestions/plugin.ts': 616,
     'src/runtime/runtime.ts': 2081,
-    'src/runtime/suggestions/plugin.ts': 616,
 };
 
 // Data tables exempt from the 600 line limit (T-01); each must still exist.
@@ -33,9 +33,9 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/model/styles.ts': 421,
     'src/react/compile-editor.ts': 427,
     'src/react/rich-text-editor.tsx': 1492,
+    'src/runtime/capabilities/suggestions/plugin.ts': 616,
     'src/runtime/input-rules.ts': 515,
     'src/runtime/runtime.ts': 2081,
-    'src/runtime/suggestions/plugin.ts': 616,
 };
 
 export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {

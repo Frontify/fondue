@@ -16,14 +16,14 @@ import {
     SUGGESTIONS_PLUGIN,
 } from '#/model/capabilities';
 
-import { contentIssuesPlugin } from '../content-issues';
 import { blockDecorationsPlugin } from '../decorations';
 import { historyPlugin } from '../history';
 import { enterRules, inputRulesPlugin, undoInputRule } from '../input-rules';
 import { baseKeysPlugin, containerKeysPlugin } from '../keys';
-import { suggestionsPlugin } from '../suggestions/plugin';
 
+import { contentIssuesPlugin } from './checks/content-issues';
 import { lastMarkPlugin } from './mark-set';
+import { suggestionsPlugin } from './suggestions/plugin';
 
 /** The package plugins the runtime builds, by plugin ID. */
 export const RUNTIME_PLUGINS: EngineImplementations = {

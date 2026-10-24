@@ -17,7 +17,7 @@ import {
     type PresentationStyle,
 } from '#/model';
 import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/declarations';
-import { type ContentChecksApi } from '#/runtime/content-checks-api';
+import { type ContentChecksApi } from '#/runtime/capabilities/checks/api';
 import { type DocumentApi, type EditorRange } from '#/runtime/document-api';
 import { type AuthoringPolicy, type ReferenceValue } from '#/runtime/types';
 
@@ -25,7 +25,7 @@ import { type NodeViewDeclaration, type PanelDeclaration } from './define';
 import { editorApiOf } from './live-api';
 import { SessionContext, useSessionValue } from './session';
 
-export { type CheckedIssue, type ContentChecksApi, type ContentChecksResult } from '#/runtime/content-checks-api';
+export { type CheckedIssue, type ContentChecksApi, type ContentChecksResult } from '#/runtime/capabilities/checks/api';
 export {
     type AncestorValue,
     type BlockValue,

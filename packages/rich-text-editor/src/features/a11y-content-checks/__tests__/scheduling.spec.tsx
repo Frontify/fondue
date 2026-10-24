@@ -9,7 +9,7 @@ import { fixtureEditorsOf } from '#/features/__tests__/fixtures/editors';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { hashDocument } from '#/model';
 import { storedIn } from '#/react/__tests__/fixtures/text';
-import { CHECK_DELAY_MS, contentChecksOf } from '#/runtime/content-issues';
+import { CHECK_DELAY_MS, contentChecksOf } from '#/runtime/capabilities/checks/content-issues';
 import { runtimeOf } from '#/runtime/runtime';
 import { SETTLE_MS } from '#/runtime/settle';
 import { createFakePersistenceService, typeText } from '#/testing';

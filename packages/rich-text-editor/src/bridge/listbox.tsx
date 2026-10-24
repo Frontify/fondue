@@ -3,7 +3,7 @@
 import { IconMegaphone, IconPeople, IconPerson } from '@frontify/fondue-icons';
 import { useRef } from 'react';
 
-import { suggestionOptionId } from '#/runtime/suggestions/option-id';
+import { suggestionOptionId } from '#/runtime/capabilities/suggestions/option-id';
 
 import { keepFocus } from './chrome-toolbar';
 import { useClientLayoutEffect } from './client-layout-effect';

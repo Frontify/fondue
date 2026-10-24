@@ -6,9 +6,9 @@ import { Selection, type Transaction } from 'prosemirror-state';
 import { COMMAND_META, type EngineCommand } from '#/definition';
 import { type JsonObject } from '#/model';
 
-import { placeBlock } from '../capabilities';
+import { placeBlock } from '../..';
+import { positionOf } from '../../../positions';
 import { INSERT_IMAGE, type PickedAsset, REPLACE_IMAGE } from '../media';
-import { positionOf } from '../positions';
 import { SLOT_START_META, type SlotStart } from '../upload-slots';
 
 import { FILL_META } from './constants';

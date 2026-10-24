@@ -2,7 +2,7 @@
 
 import { diagnostic } from '#/model/format';
 
-import { type AsyncOperation } from '../async';
+import { type AsyncOperation } from '../../../async';
 import { INSERT_IMAGE, pickedAsset, type PickedAsset, REPLACE_IMAGE } from '../media';
 
 import { type UploadCache } from './cache';

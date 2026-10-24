@@ -4,7 +4,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type JsonObject } from '#/model';
 
-import { type CommandResult } from '../types';
+import { type CommandResult } from '../../types';
 
 /** One search of a suggestion list: the list's key, whose newer search supersedes it, its feature and command, and the call. */
 export interface SuggestionSearch<T> {

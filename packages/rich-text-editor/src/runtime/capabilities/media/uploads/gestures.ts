@@ -3,8 +3,8 @@
 import { type JsonObject } from '#/model';
 import { diagnostic } from '#/model/format';
 
-import { positionOf } from '../positions';
-import { type SelectionHandle } from '../types';
+import { positionOf } from '../../../positions';
+import { type SelectionHandle } from '../../../types';
 
 import { uploadLimits } from './cache';
 import { checkFiles, nameOf, sortChecked } from './check';

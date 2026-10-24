@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { cancelSlot, slotUploadsOf } from '../capabilities/media/upload-slots';
+import { type UploadPlace } from '../capabilities/media/uploads';
 import { type DocumentApi, type UploadTarget } from '../document-api';
 import { positionOf } from '../positions';
-import { cancelSlot, slotUploadsOf } from '../upload-slots';
-import { type UploadPlace } from '../uploads';
 
 import { type ApiSource, sharedEdits } from './shared';
 

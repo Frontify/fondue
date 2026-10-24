@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defaultLimits } from '#/model';
-import { readImageHeader, svgHoldsScript } from '#/runtime/image-header';
-import { isAssetLocator } from '#/runtime/media';
+import { readImageHeader, svgHoldsScript } from '#/runtime/capabilities/media/image-header';
+import { isAssetLocator } from '#/runtime/capabilities/media/media';
+import { DEFAULT_ACCEPT_TYPES, MAX_IMAGE_SIDE } from '#/runtime/capabilities/media/uploads';
 import { type ServiceContext } from '#/runtime/types';
-import { DEFAULT_ACCEPT_TYPES, MAX_IMAGE_SIDE } from '#/runtime/uploads';
 
 import { type Bytes, decodableImage, pngChunk, SAMPLE_TYPES, sampleImage, SIZED_TYPES } from './images';
 

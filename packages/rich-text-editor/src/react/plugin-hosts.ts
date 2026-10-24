@@ -14,8 +14,8 @@ import {
     type PluginPresentation,
 } from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
+import { referenceValues } from '#/runtime/capabilities/suggestions/references';
 import { contentChecksApi } from '#/runtime/editor-api';
-import { referenceValues } from '#/runtime/suggestions/references';
 
 import { type ReferenceService } from './types';
 

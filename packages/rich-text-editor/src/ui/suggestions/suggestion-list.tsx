@@ -9,8 +9,6 @@ import { Listbox, type ListboxOption } from '#/bridge/listbox';
 import { useEditorOverlay } from '#/bridge/overlays';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { type CodecContext } from '#/model';
-import { rangeOf } from '#/runtime/editor-api';
-import { type EditorRuntime } from '#/runtime/runtime';
 import {
     acceptSuggestion,
     type ActiveSuggestion,
@@ -18,7 +16,9 @@ import {
     dismissSuggestion,
     moveSuggestion,
     type SuggestionItem,
-} from '#/runtime/suggestions/plugin';
+} from '#/runtime/capabilities/suggestions/plugin';
+import { rangeOf } from '#/runtime/editor-api';
+import { type EditorRuntime } from '#/runtime/runtime';
 
 import styles from './styles/suggestions.module.scss';
 

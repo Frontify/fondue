@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { INSERT_IMAGE, REPLACE_IMAGE } from '#/runtime/media';
+import { INSERT_IMAGE, REPLACE_IMAGE } from '#/runtime/capabilities/media/media';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { type SelectionHandle, type SessionToken } from '#/runtime/types';
 

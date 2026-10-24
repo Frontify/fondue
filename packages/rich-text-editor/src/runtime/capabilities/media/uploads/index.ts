@@ -2,7 +2,7 @@
 
 import { type Node } from 'prosemirror-model';
 
-import { type UploadStatus } from '../types';
+import { type UploadStatus } from '../../../types';
 
 import { liveUploadCaches, UploadCache } from './cache';
 import { createGestures } from './gestures';

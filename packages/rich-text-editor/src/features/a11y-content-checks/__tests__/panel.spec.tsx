@@ -7,7 +7,7 @@ import { COALESCE_MS } from '#/bridge/announcer';
 import { contentChecks } from '#/features';
 import { defineEditorPlugin, useEditorApi, useEditorValue } from '#/index';
 import { SHIPPED_PLUGINS } from '#/react/plugins';
-import { CHECK_DELAY_MS } from '#/runtime/content-issues';
+import { CHECK_DELAY_MS } from '#/runtime/capabilities/checks/content-issues';
 import { positionOf } from '#/runtime/positions';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection, typeText } from '#/testing';

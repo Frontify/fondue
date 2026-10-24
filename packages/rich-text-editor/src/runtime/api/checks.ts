@@ -3,7 +3,7 @@
 import { type Node } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
-import { type ContentChecksApi, type ContentChecksResult } from '../content-checks-api';
+import { type ContentChecksApi, type ContentChecksResult } from '../capabilities/checks/api';
 import {
     contentChecksOf,
     type ContentChecksState,
@@ -13,7 +13,7 @@ import {
     setIssueIcons,
     withDismissed,
     withIssuesOpen,
-} from '../content-issues';
+} from '../capabilities/checks/content-issues';
 import { type EditorRuntime } from '../runtime';
 
 // A composition that outlasts this wait leaves the action undone.

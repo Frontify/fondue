@@ -8,7 +8,7 @@ import { type JsonObject } from '#/model';
 import { SUGGESTIONS_PLUGIN } from '#/model/capabilities';
 import { type SuggestionPage, type SuggestionRules } from '#/model/declarations';
 
-import { isHistoryTransaction } from '../history';
+import { isHistoryTransaction } from '../../history';
 
 import { suggestionHosts } from './host';
 import { afterFailure, afterPage, isHttpsUrl, KINDS, type ReferenceResults, resultsOf } from './references';

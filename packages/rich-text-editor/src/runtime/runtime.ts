@@ -50,8 +50,21 @@ import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
 import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
+import { createContentChecks } from './capabilities/checks/content-issues';
+import { insertPicked, pickedAsset, refillPicked } from './capabilities/media/media';
+import { uploadSlotsPlugin } from './capabilities/media/upload-slots';
+import {
+    createUploads,
+    DEFAULT_ACCEPT_TYPES,
+    UPLOAD_FEATURE,
+    type UploadEvent,
+    type UploadPlace,
+    type UploadServiceLike,
+} from './capabilities/media/uploads';
+import { type SuggestionHost, suggestionHosts } from './capabilities/suggestions/host';
+import { suggestionOptionId } from './capabilities/suggestions/option-id';
+import { activeSuggestion } from './capabilities/suggestions/plugin';
 import { type ColumnState, columnsPlugin, ONE_COLUMN } from './columns';
-import { createContentChecks } from './content-issues';
 import { createDomIds } from './dom-ids';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener, nameOf } from './events';
@@ -59,7 +72,6 @@ import { groupsPlugin, isHistoryTransaction } from './history';
 import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
 import { createKeyGuard, type EnterKeys } from './keys';
 import { type ExceededLimit, storedNodeCount } from './limits';
-import { insertPicked, pickedAsset, refillPicked } from './media';
 import { nodeStatePlugin, withNodeState } from './node-state';
 import { positionOf } from './positions';
 import { sameStamp, type SaveCoordinator } from './saves';
@@ -90,9 +102,6 @@ import {
     type Route,
 } from './session/types';
 import { stylesPlugin } from './styles';
-import { type SuggestionHost, suggestionHosts } from './suggestions/host';
-import { suggestionOptionId } from './suggestions/option-id';
-import { activeSuggestion } from './suggestions/plugin';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
@@ -116,15 +125,6 @@ import {
     type Unsubscribe,
     type UploadStatus,
 } from './types';
-import { uploadSlotsPlugin } from './upload-slots';
-import {
-    createUploads,
-    DEFAULT_ACCEPT_TYPES,
-    UPLOAD_FEATURE,
-    type UploadEvent,
-    type UploadPlace,
-    type UploadServiceLike,
-} from './uploads';
 
 // Queued intents whose listeners keep enqueuing stop past this depth.
 const MAX_ENQUEUE_DEPTH = 32;

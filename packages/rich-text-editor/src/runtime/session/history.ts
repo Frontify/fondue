@@ -5,10 +5,10 @@ import { type EditorState, type Selection, type Transaction } from 'prosemirror-
 
 import { COMMAND_META, ORIGIN_META } from '#/definition';
 
+import { carrySlots } from '../capabilities/media/upload-slots';
 import { groupRoot, isHistoryTransaction, reset } from '../history';
 import { type InputSettling } from '../settle';
 import { type ChangeOrigin } from '../types';
-import { carrySlots } from '../upload-slots';
 
 import { type Lifecycle } from './lifecycle';
 import { type Store } from './store';

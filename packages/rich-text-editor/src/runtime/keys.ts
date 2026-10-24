@@ -10,8 +10,8 @@ import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN } from '#/model/capabilities';
 import { isApple, modOn } from '#/model/platform';
 
 import { passesToBrowser } from './browser-keys';
+import { showsOptions } from './capabilities/suggestions/plugin';
 import { ENTER_RULES_META } from './input-rules';
-import { showsOptions } from './suggestions/plugin';
 import { type AuthoringPolicy } from './types';
 
 /** Whether a keydown holds no Shift, Alt, Ctrl or ⌘. */

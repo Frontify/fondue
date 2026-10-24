@@ -5,7 +5,7 @@ import { Mapping, type Step } from 'prosemirror-transform';
 
 import { type JsonObject } from '#/model';
 
-import { positionOf } from './positions';
+import { positionOf } from '../../positions';
 
 /** The transaction meta of a slot's start: the insertion of new slots, or a replacement's previous attributes. */
 export const SLOT_START_META = 'rte.upload-slot';

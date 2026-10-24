@@ -3,7 +3,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { defaultLimits } from '#/model';
-import { readImageHeader, svgHoldsScript } from '#/runtime/image-header';
+import { readImageHeader, svgHoldsScript } from '#/runtime/capabilities/media/image-header';
 import { createFakeUploadService, type FakeUploadService, runUploadConformance } from '#/testing';
 
 const ACCEPT = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'];

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type AsyncOperation } from '../async';
+import { type AsyncOperation } from '../../../async';
+import { type UploadStatus } from '../../../types';
 import { type PickedAsset } from '../media';
-import { type UploadStatus } from '../types';
 
 import { type Checked, type UploadEvent } from './types';
 

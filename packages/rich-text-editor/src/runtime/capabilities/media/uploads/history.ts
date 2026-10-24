@@ -4,7 +4,7 @@ import { type Node } from 'prosemirror-model';
 import { type Transaction } from 'prosemirror-state';
 import { AttrStep } from 'prosemirror-transform';
 
-import { positionOf } from '../positions';
+import { positionOf } from '../../../positions';
 
 import { completion, nodeIn } from './commands';
 import { FILL_META } from './constants';

@@ -15,7 +15,7 @@ import {
     type SlotEvent,
     type SlotState,
     statusOf,
-} from '#/runtime/uploads/machine';
+} from '#/runtime/capabilities/media/uploads/machine';
 
 const OP = { id: 'op-1' } as AsyncOperation;
 const OTHER = { id: 'op-2' } as AsyncOperation;

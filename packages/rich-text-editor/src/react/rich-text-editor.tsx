@@ -51,6 +51,7 @@ import { createSaveCoordinator } from '#/persistence/coordinator';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
+import { UPLOAD_FEATURE, type UploadPlace } from '#/runtime/capabilities/media/uploads';
 import { connectClipboard } from '#/runtime/clipboard/plugin';
 import { type ColumnState } from '#/runtime/columns';
 import {
@@ -61,7 +62,6 @@ import {
     type RuntimeHandle,
 } from '#/runtime/runtime';
 import { type DocumentChange, type SelectionSummary, type SessionToken, type ShippedCommands } from '#/runtime/types';
-import { UPLOAD_FEATURE, type UploadPlace } from '#/runtime/uploads';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { ContextMenu } from '#/ui/context-menu/context-menu';
 import { pickAsset } from '#/ui/media/asset-picker';

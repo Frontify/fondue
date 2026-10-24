@@ -5,8 +5,8 @@ import { type EditorState } from 'prosemirror-state';
 import { type EngineCommand } from '#/definition';
 import { type Diagnostic, type ResourceLimits } from '#/model';
 
-import { type AsyncOperation, type AsyncRequest } from '../async';
-import { type SelectionHandle, type SessionToken } from '../types';
+import { type AsyncOperation, type AsyncRequest } from '../../../async';
+import { type SelectionHandle, type SessionToken } from '../../../types';
 
 /** The `UploadService` shape the session calls, whose answers it checks as untrusted input. */
 export interface UploadServiceLike {

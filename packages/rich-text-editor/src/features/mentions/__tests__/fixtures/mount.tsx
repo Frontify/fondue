@@ -26,8 +26,8 @@ import {
     type RichTextDocument,
     type RichTextLocale,
 } from '#/model';
+import { activeSuggestion } from '#/runtime/capabilities/suggestions/plugin';
 import { runtimeOf } from '#/runtime/runtime';
-import { activeSuggestion } from '#/runtime/suggestions/plugin';
 import { type ReferenceValue } from '#/runtime/types';
 
 export const mentionModel = (features: readonly Feature[] = [core(), mentions()]): ContentModel =>

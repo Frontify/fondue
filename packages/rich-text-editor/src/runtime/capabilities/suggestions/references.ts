@@ -4,7 +4,7 @@ import { checkHref } from '#/model';
 import { holdsControls, withoutBidiControls } from '#/model/references';
 import { isRecord, isValidValue } from '#/model/values';
 
-import { type ReferenceValue } from '../types';
+import { type ReferenceValue } from '../../types';
 
 import { type SuggestionItem } from './plugin';
 

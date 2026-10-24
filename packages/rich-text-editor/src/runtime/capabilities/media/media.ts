@@ -6,9 +6,9 @@ import { COMMAND_META, type EngineCommand } from '#/definition';
 import { REPLACED_ASSET } from '#/model/assets';
 import { isRecord } from '#/model/values';
 
-import { placeBlock } from './capabilities';
-import { withNodeState } from './node-state';
-import { positionOf } from './positions';
+import { placeBlock } from '..';
+import { withNodeState } from '../../node-state';
+import { positionOf } from '../../positions';
 
 export const INSERT_IMAGE = 'image.insert';
 export const REPLACE_IMAGE = 'image.replace';
