@@ -1,0 +1,2036 @@
+{
+    "inline": {
+        "id": "frontify.inline",
+        "installedFeatures": [
+            "core",
+            "marks.bold",
+            "marks.italic",
+            "marks.underline",
+            "links",
+            "marks.font-color",
+            "marks.language",
+            "blocks.align",
+            "input-rules"
+        ],
+        "editorPartFeatures": [
+            "core",
+            "marks.bold",
+            "marks.italic",
+            "marks.underline",
+            "links",
+            "marks.font-color",
+            "marks.language",
+            "blocks.align",
+            "input-rules"
+        ],
+        "commandIds": [
+            "paragraph.set",
+            "text.insert",
+            "hard-break.insert",
+            "history.undo",
+            "history.redo",
+            "block.move.up",
+            "block.move.down",
+            "mark.bold.toggle",
+            "mark.italic.toggle",
+            "mark.underline.toggle",
+            "link.edit",
+            "link.set",
+            "link.remove",
+            "mark.font-color.set",
+            "mark.color.reapply",
+            "mark.color.clear",
+            "mark.color.menu.open",
+            "mark.language.edit",
+            "mark.language.set",
+            "block.align.set"
+        ],
+        "keymap": [
+            {
+                "plugin": "keymap:core",
+                "key": "mac:Mod-Alt-0",
+                "command": "paragraph.set",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "other:Ctrl-Shift-0",
+                "command": "paragraph.set",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-z",
+                "command": "history.undo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-Shift-z",
+                "command": "history.redo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "other:Ctrl-y",
+                "command": "history.redo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.bold",
+                "key": "Mod-b",
+                "command": "mark.bold.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.italic",
+                "key": "Mod-i",
+                "command": "mark.italic.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.underline",
+                "key": "Mod-u",
+                "command": "mark.underline.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:links",
+                "key": "Mod-k",
+                "command": "link.edit",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.font-color",
+                "key": "Mod-Shift-h",
+                "command": "mark.color.reapply",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-l",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "left"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-e",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "center"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-r",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "right"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-j",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "justify"
+                }
+            }
+        ],
+        "keyHandlers": [],
+        "inputRuleIds": [
+            "marks.bold:bold.stars",
+            "marks.bold:bold.underscores",
+            "marks.italic:italic.star",
+            "marks.italic:italic.underscore",
+            "links:link.autolink"
+        ],
+        "toolbars": {
+            "partEntryIds": {
+                "core": [
+                    "paragraph",
+                    "undo",
+                    "redo"
+                ],
+                "marks.bold": [
+                    "bold"
+                ],
+                "marks.italic": [
+                    "italic"
+                ],
+                "marks.underline": [
+                    "underline"
+                ],
+                "links": [
+                    "link"
+                ],
+                "marks.font-color": [
+                    "color-menu"
+                ],
+                "marks.language": [
+                    "language"
+                ],
+                "blocks.align": [
+                    "align-left",
+                    "align-center",
+                    "align-right",
+                    "align-justify"
+                ]
+            },
+            "presentation": [
+                [
+                    "mark.bold.toggle",
+                    "mark.italic.toggle"
+                ],
+                [
+                    "link.edit"
+                ]
+            ],
+            "touchPresentation": [
+                [
+                    "history.undo",
+                    "history.redo"
+                ],
+                [
+                    "mark.bold.toggle",
+                    "mark.italic.toggle"
+                ],
+                [
+                    "link.edit"
+                ]
+            ]
+        },
+        "readerOverrideFeatureIds": [
+            "links"
+        ]
+    },
+    "comment": {
+        "id": "frontify.comment",
+        "installedFeatures": [
+            "core",
+            "marks.bold",
+            "marks.italic",
+            "marks.underline",
+            "links",
+            "marks.font-color",
+            "marks.language",
+            "blocks.align",
+            "input-rules",
+            "marks.strike",
+            "marks.code",
+            "blocks.quote",
+            "blocks.code",
+            "lists.item",
+            "lists.bullet",
+            "lists.ordered",
+            "lists.task",
+            "mentions",
+            "emoji"
+        ],
+        "editorPartFeatures": [
+            "core",
+            "marks.bold",
+            "marks.italic",
+            "marks.underline",
+            "links",
+            "marks.font-color",
+            "marks.language",
+            "blocks.align",
+            "input-rules",
+            "marks.strike",
+            "marks.code",
+            "blocks.quote",
+            "blocks.code",
+            "lists.item",
+            "lists.bullet",
+            "lists.ordered",
+            "lists.task",
+            "mentions",
+            "emoji"
+        ],
+        "commandIds": [
+            "paragraph.set",
+            "text.insert",
+            "hard-break.insert",
+            "history.undo",
+            "history.redo",
+            "block.move.up",
+            "block.move.down",
+            "mark.bold.toggle",
+            "mark.italic.toggle",
+            "mark.underline.toggle",
+            "link.edit",
+            "link.set",
+            "link.remove",
+            "mark.font-color.set",
+            "mark.color.reapply",
+            "mark.color.clear",
+            "mark.color.menu.open",
+            "mark.language.edit",
+            "mark.language.set",
+            "block.align.set",
+            "mark.strike.toggle",
+            "mark.code.toggle",
+            "quote.toggle",
+            "code-block.toggle",
+            "code-block.language.set",
+            "code-block.language.edit",
+            "code-block.indent",
+            "code-block.outdent",
+            "list.indent",
+            "list.outdent",
+            "list.bullet.toggle",
+            "list.ordered.toggle",
+            "list.ordered.start.edit",
+            "list.ordered.start.set",
+            "list.task.toggle",
+            "task.toggle",
+            "task.setChecked",
+            "task.indent",
+            "task.outdent",
+            "reference.insert",
+            "mention.search.open",
+            "emoji.picker.open"
+        ],
+        "keymap": [
+            {
+                "plugin": "keymap:core",
+                "key": "mac:Mod-Alt-0",
+                "command": "paragraph.set",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "other:Ctrl-Shift-0",
+                "command": "paragraph.set",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-z",
+                "command": "history.undo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-Shift-z",
+                "command": "history.redo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "other:Ctrl-y",
+                "command": "history.redo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Shift-Enter",
+                "command": "hard-break.insert",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-Alt-ArrowUp",
+                "command": "block.move.up",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-Alt-ArrowDown",
+                "command": "block.move.down",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.bold",
+                "key": "Mod-b",
+                "command": "mark.bold.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.italic",
+                "key": "Mod-i",
+                "command": "mark.italic.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.underline",
+                "key": "Mod-u",
+                "command": "mark.underline.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:links",
+                "key": "Mod-k",
+                "command": "link.edit",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.font-color",
+                "key": "Mod-Shift-h",
+                "command": "mark.color.reapply",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-l",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "left"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-e",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "center"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-r",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "right"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-j",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "justify"
+                }
+            },
+            {
+                "plugin": "keymap:marks.strike",
+                "key": "Mod-Shift-x",
+                "command": "mark.strike.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.code",
+                "key": "Mod-e",
+                "command": "mark.code.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.code",
+                "key": "Mod-]",
+                "command": "code-block.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.code",
+                "key": "Mod-[",
+                "command": "code-block.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Mod-]",
+                "command": "list.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Tab",
+                "command": "list.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Mod-[",
+                "command": "list.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Shift-Tab",
+                "command": "list.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.bullet",
+                "key": "Mod-Shift-8",
+                "command": "list.bullet.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.ordered",
+                "key": "Mod-Shift-7",
+                "command": "list.ordered.toggle",
+                "payload": {
+                    "start": 1
+                }
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-Shift-9",
+                "command": "list.task.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-]",
+                "command": "task.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Tab",
+                "command": "task.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-[",
+                "command": "task.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Shift-Tab",
+                "command": "task.outdent",
+                "payload": null
+            }
+        ],
+        "keyHandlers": [
+            {
+                "plugin": "blocks.code",
+                "key": "ArrowDown",
+                "handler": true
+            },
+            {
+                "plugin": "lists.item",
+                "key": "Enter",
+                "handler": true
+            },
+            {
+                "plugin": "lists.item",
+                "key": "Backspace",
+                "handler": true
+            },
+            {
+                "plugin": "lists.task",
+                "key": "Enter",
+                "handler": true
+            },
+            {
+                "plugin": "lists.task",
+                "key": "Backspace",
+                "handler": true
+            }
+        ],
+        "inputRuleIds": [
+            "marks.bold:bold.stars",
+            "marks.bold:bold.underscores",
+            "marks.italic:italic.star",
+            "marks.italic:italic.underscore",
+            "links:link.autolink",
+            "marks.strike:strike.tildes",
+            "marks.code:code.backtick",
+            "blocks.quote:quote.angle",
+            "blocks.code:code.fence",
+            "lists.bullet:list.bullet.marker",
+            "lists.ordered:list.ordered.number",
+            "lists.task:list.task.brackets"
+        ],
+        "toolbars": {
+            "partEntryIds": {
+                "core": [
+                    "paragraph",
+                    "undo",
+                    "redo"
+                ],
+                "marks.bold": [
+                    "bold"
+                ],
+                "marks.italic": [
+                    "italic"
+                ],
+                "marks.underline": [
+                    "underline"
+                ],
+                "links": [
+                    "link"
+                ],
+                "marks.font-color": [
+                    "color-menu"
+                ],
+                "marks.language": [
+                    "language"
+                ],
+                "blocks.align": [
+                    "align-left",
+                    "align-center",
+                    "align-right",
+                    "align-justify"
+                ],
+                "marks.strike": [
+                    "strike"
+                ],
+                "marks.code": [
+                    "code"
+                ],
+                "blocks.quote": [
+                    "quote"
+                ],
+                "blocks.code": [
+                    "code-block",
+                    "code-language"
+                ],
+                "lists.bullet": [
+                    "bullet-list"
+                ],
+                "lists.ordered": [
+                    "ordered-list",
+                    "start-numbering"
+                ],
+                "lists.task": [
+                    "task-list"
+                ],
+                "mentions": [
+                    "mention"
+                ],
+                "emoji": [
+                    "emoji"
+                ]
+            },
+            "presentation": [
+                [
+                    "mark.bold.toggle",
+                    "mark.italic.toggle",
+                    "mark.strike.toggle",
+                    "mark.code.toggle"
+                ],
+                [
+                    "link.edit"
+                ],
+                [
+                    "list.bullet.toggle",
+                    {
+                        "command": "list.ordered.toggle",
+                        "payload": {
+                            "start": 1
+                        }
+                    },
+                    "list.task.toggle"
+                ],
+                [
+                    "quote.toggle",
+                    "code-block.toggle"
+                ],
+                [
+                    "mention.search.open",
+                    "emoji.picker.open"
+                ]
+            ],
+            "touchPresentation": [
+                [
+                    "history.undo",
+                    "history.redo"
+                ],
+                [
+                    "mark.bold.toggle",
+                    "mark.italic.toggle",
+                    "mark.strike.toggle",
+                    "mark.code.toggle"
+                ],
+                [
+                    "link.edit"
+                ],
+                [
+                    "list.bullet.toggle",
+                    {
+                        "command": "list.ordered.toggle",
+                        "payload": {
+                            "start": 1
+                        }
+                    },
+                    "list.task.toggle"
+                ],
+                [
+                    "quote.toggle",
+                    "code-block.toggle"
+                ],
+                [
+                    "mention.search.open",
+                    "emoji.picker.open"
+                ]
+            ]
+        },
+        "readerOverrideFeatureIds": [
+            "links",
+            "lists.task",
+            "mentions"
+        ]
+    },
+    "document": {
+        "id": "frontify.document",
+        "installedFeatures": [
+            "core",
+            "marks.bold",
+            "marks.italic",
+            "marks.underline",
+            "links",
+            "marks.font-color",
+            "marks.language",
+            "blocks.align",
+            "input-rules",
+            "marks.strike",
+            "marks.code",
+            "blocks.quote",
+            "blocks.code",
+            "lists.item",
+            "lists.bullet",
+            "lists.ordered",
+            "lists.task",
+            "mentions",
+            "emoji",
+            "marks.subscript",
+            "marks.superscript",
+            "blocks.heading",
+            "blocks.rule",
+            "media.image",
+            "media.upload",
+            "nav.outline",
+            "format.clear",
+            "a11y.content-checks"
+        ],
+        "editorPartFeatures": [
+            "core",
+            "marks.bold",
+            "marks.italic",
+            "marks.underline",
+            "links",
+            "marks.font-color",
+            "marks.language",
+            "blocks.align",
+            "input-rules",
+            "marks.strike",
+            "marks.code",
+            "blocks.quote",
+            "blocks.code",
+            "lists.item",
+            "lists.bullet",
+            "lists.ordered",
+            "lists.task",
+            "mentions",
+            "emoji",
+            "marks.subscript",
+            "marks.superscript",
+            "blocks.heading",
+            "blocks.rule",
+            "media.image",
+            "media.upload",
+            "nav.outline",
+            "format.clear",
+            "a11y.content-checks"
+        ],
+        "commandIds": [
+            "paragraph.set",
+            "text.insert",
+            "hard-break.insert",
+            "history.undo",
+            "history.redo",
+            "block.move.up",
+            "block.move.down",
+            "mark.bold.toggle",
+            "mark.italic.toggle",
+            "mark.underline.toggle",
+            "link.edit",
+            "link.set",
+            "link.remove",
+            "mark.font-color.set",
+            "mark.color.reapply",
+            "mark.color.clear",
+            "mark.color.menu.open",
+            "mark.language.edit",
+            "mark.language.set",
+            "block.align.set",
+            "mark.strike.toggle",
+            "mark.code.toggle",
+            "quote.toggle",
+            "code-block.toggle",
+            "code-block.language.set",
+            "code-block.language.edit",
+            "code-block.indent",
+            "code-block.outdent",
+            "list.indent",
+            "list.outdent",
+            "list.bullet.toggle",
+            "list.ordered.toggle",
+            "list.ordered.start.edit",
+            "list.ordered.start.set",
+            "list.task.toggle",
+            "task.toggle",
+            "task.setChecked",
+            "task.indent",
+            "task.outdent",
+            "reference.insert",
+            "mention.search.open",
+            "emoji.picker.open",
+            "mark.subscript.toggle",
+            "mark.superscript.toggle",
+            "heading.set",
+            "rule.insert",
+            "image.insert",
+            "image.replace",
+            "image.alt.edit",
+            "image.size.menu",
+            "image.width.edit",
+            "image.align.menu",
+            "image.size.set",
+            "image.align.set",
+            "media.upload.cancel",
+            "media.upload.retry",
+            "outline.toggle",
+            "format.clear",
+            "format.inline.clear",
+            "checks.open"
+        ],
+        "keymap": [
+            {
+                "plugin": "keymap:core",
+                "key": "mac:Mod-Alt-0",
+                "command": "paragraph.set",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "other:Ctrl-Shift-0",
+                "command": "paragraph.set",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-z",
+                "command": "history.undo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-Shift-z",
+                "command": "history.redo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "other:Ctrl-y",
+                "command": "history.redo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Shift-Enter",
+                "command": "hard-break.insert",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-Alt-ArrowUp",
+                "command": "block.move.up",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-Alt-ArrowDown",
+                "command": "block.move.down",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.bold",
+                "key": "Mod-b",
+                "command": "mark.bold.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.italic",
+                "key": "Mod-i",
+                "command": "mark.italic.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.underline",
+                "key": "Mod-u",
+                "command": "mark.underline.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:links",
+                "key": "Mod-k",
+                "command": "link.edit",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.font-color",
+                "key": "Mod-Shift-h",
+                "command": "mark.color.reapply",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-l",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "left"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-e",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "center"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-r",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "right"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-j",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "justify"
+                }
+            },
+            {
+                "plugin": "keymap:marks.strike",
+                "key": "Mod-Shift-x",
+                "command": "mark.strike.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.code",
+                "key": "Mod-e",
+                "command": "mark.code.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.code",
+                "key": "Mod-]",
+                "command": "code-block.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.code",
+                "key": "Mod-[",
+                "command": "code-block.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Mod-]",
+                "command": "list.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Tab",
+                "command": "list.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Mod-[",
+                "command": "list.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Shift-Tab",
+                "command": "list.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.bullet",
+                "key": "Mod-Shift-8",
+                "command": "list.bullet.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.ordered",
+                "key": "Mod-Shift-7",
+                "command": "list.ordered.toggle",
+                "payload": {
+                    "start": 1
+                }
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-Shift-9",
+                "command": "list.task.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-Enter",
+                "command": "task.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-]",
+                "command": "task.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Tab",
+                "command": "task.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-[",
+                "command": "task.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Shift-Tab",
+                "command": "task.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.subscript",
+                "key": "Mod-,",
+                "command": "mark.subscript.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.superscript",
+                "key": "Mod-.",
+                "command": "mark.superscript.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-1",
+                "command": "heading.set",
+                "payload": {
+                    "level": 1
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-1",
+                "command": "heading.set",
+                "payload": {
+                    "level": 1
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-2",
+                "command": "heading.set",
+                "payload": {
+                    "level": 2
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-2",
+                "command": "heading.set",
+                "payload": {
+                    "level": 2
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-3",
+                "command": "heading.set",
+                "payload": {
+                    "level": 3
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-3",
+                "command": "heading.set",
+                "payload": {
+                    "level": 3
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-4",
+                "command": "heading.set",
+                "payload": {
+                    "level": 4
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-4",
+                "command": "heading.set",
+                "payload": {
+                    "level": 4
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-5",
+                "command": "heading.set",
+                "payload": {
+                    "level": 5
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-5",
+                "command": "heading.set",
+                "payload": {
+                    "level": 5
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-6",
+                "command": "heading.set",
+                "payload": {
+                    "level": 6
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-6",
+                "command": "heading.set",
+                "payload": {
+                    "level": 6
+                }
+            },
+            {
+                "plugin": "keymap:format.clear",
+                "key": "Mod-\\",
+                "command": "format.inline.clear",
+                "payload": null
+            }
+        ],
+        "keyHandlers": [
+            {
+                "plugin": "blocks.code",
+                "key": "Mod-Enter",
+                "handler": true
+            },
+            {
+                "plugin": "blocks.code",
+                "key": "ArrowDown",
+                "handler": true
+            },
+            {
+                "plugin": "lists.item",
+                "key": "Enter",
+                "handler": true
+            },
+            {
+                "plugin": "lists.item",
+                "key": "Backspace",
+                "handler": true
+            },
+            {
+                "plugin": "lists.task",
+                "key": "Enter",
+                "handler": true
+            },
+            {
+                "plugin": "lists.task",
+                "key": "Backspace",
+                "handler": true
+            }
+        ],
+        "inputRuleIds": [
+            "marks.bold:bold.stars",
+            "marks.bold:bold.underscores",
+            "marks.italic:italic.star",
+            "marks.italic:italic.underscore",
+            "links:link.autolink",
+            "marks.strike:strike.tildes",
+            "marks.code:code.backtick",
+            "blocks.quote:quote.angle",
+            "blocks.code:code.fence",
+            "lists.bullet:list.bullet.marker",
+            "lists.ordered:list.ordered.number",
+            "lists.task:list.task.brackets",
+            "blocks.heading:heading.hashes",
+            "blocks.rule:rule.dashes"
+        ],
+        "toolbars": {
+            "partEntryIds": {
+                "core": [
+                    "paragraph",
+                    "undo",
+                    "redo"
+                ],
+                "marks.bold": [
+                    "bold"
+                ],
+                "marks.italic": [
+                    "italic"
+                ],
+                "marks.underline": [
+                    "underline"
+                ],
+                "links": [
+                    "link"
+                ],
+                "marks.font-color": [
+                    "color-menu"
+                ],
+                "marks.language": [
+                    "language"
+                ],
+                "blocks.align": [
+                    "align-left",
+                    "align-center",
+                    "align-right",
+                    "align-justify"
+                ],
+                "marks.strike": [
+                    "strike"
+                ],
+                "marks.code": [
+                    "code"
+                ],
+                "blocks.quote": [
+                    "quote"
+                ],
+                "blocks.code": [
+                    "code-block",
+                    "code-language"
+                ],
+                "lists.bullet": [
+                    "bullet-list"
+                ],
+                "lists.ordered": [
+                    "ordered-list",
+                    "start-numbering"
+                ],
+                "lists.task": [
+                    "task-list"
+                ],
+                "mentions": [
+                    "mention"
+                ],
+                "emoji": [
+                    "emoji"
+                ],
+                "marks.subscript": [
+                    "subscript"
+                ],
+                "marks.superscript": [
+                    "superscript"
+                ],
+                "blocks.heading": [
+                    "heading-1",
+                    "heading-2",
+                    "heading-3",
+                    "heading-4",
+                    "heading-5",
+                    "heading-6"
+                ],
+                "blocks.rule": [
+                    "rule"
+                ],
+                "media.image": [
+                    "image",
+                    "image-alt",
+                    "image-size",
+                    "image-width",
+                    "image-align",
+                    "image-replace"
+                ],
+                "media.upload": [
+                    "upload-cancel",
+                    "upload-retry"
+                ],
+                "nav.outline": [
+                    "outline"
+                ],
+                "format.clear": [
+                    "clear-formatting"
+                ],
+                "a11y.content-checks": [
+                    "checks"
+                ]
+            },
+            "presentation": [
+                [
+                    "history.undo",
+                    "history.redo"
+                ],
+                [
+                    "text-style"
+                ],
+                [
+                    "mark.bold.toggle",
+                    "mark.italic.toggle",
+                    "mark.underline.toggle",
+                    "mark.strike.toggle",
+                    "mark.code.toggle",
+                    "format.clear"
+                ],
+                [
+                    "mark.color.menu.open"
+                ],
+                [
+                    "link.edit"
+                ],
+                [
+                    "list.bullet.toggle",
+                    {
+                        "command": "list.ordered.toggle",
+                        "payload": {
+                            "start": 1
+                        }
+                    },
+                    "list.task.toggle"
+                ],
+                [
+                    "indent.decrease",
+                    "indent.increase"
+                ],
+                [
+                    {
+                        "command": "table.insert",
+                        "payload": {
+                            "rows": 3,
+                            "columns": 3
+                        }
+                    },
+                    "image.insert",
+                    "embed.insert",
+                    "rule.insert",
+                    "mention.search.open",
+                    "emoji.picker.open"
+                ],
+                [
+                    "checks.open",
+                    "find.open",
+                    "outline.toggle"
+                ]
+            ],
+            "touchPresentation": null
+        },
+        "readerOverrideFeatureIds": [
+            "links",
+            "lists.task",
+            "mentions",
+            "media.image"
+        ]
+    },
+    "brand-document": {
+        "id": "frontify.brand-document",
+        "installedFeatures": [
+            "core",
+            "marks.bold",
+            "marks.italic",
+            "marks.underline",
+            "links",
+            "marks.font-color",
+            "marks.language",
+            "blocks.align",
+            "input-rules",
+            "marks.strike",
+            "marks.code",
+            "blocks.quote",
+            "blocks.code",
+            "lists.item",
+            "lists.bullet",
+            "lists.ordered",
+            "lists.task",
+            "mentions",
+            "emoji",
+            "marks.subscript",
+            "marks.superscript",
+            "blocks.heading",
+            "blocks.rule",
+            "media.image",
+            "media.upload",
+            "nav.outline",
+            "format.clear",
+            "a11y.content-checks",
+            "styles.brand",
+            "layout.columns"
+        ],
+        "editorPartFeatures": [
+            "core",
+            "marks.bold",
+            "marks.italic",
+            "marks.underline",
+            "links",
+            "marks.font-color",
+            "marks.language",
+            "blocks.align",
+            "input-rules",
+            "marks.strike",
+            "marks.code",
+            "blocks.quote",
+            "blocks.code",
+            "lists.item",
+            "lists.bullet",
+            "lists.ordered",
+            "lists.task",
+            "mentions",
+            "emoji",
+            "marks.subscript",
+            "marks.superscript",
+            "blocks.heading",
+            "blocks.rule",
+            "media.image",
+            "media.upload",
+            "nav.outline",
+            "format.clear",
+            "a11y.content-checks",
+            "styles.brand",
+            "layout.columns"
+        ],
+        "commandIds": [
+            "paragraph.set",
+            "text.insert",
+            "hard-break.insert",
+            "history.undo",
+            "history.redo",
+            "block.move.up",
+            "block.move.down",
+            "mark.bold.toggle",
+            "mark.italic.toggle",
+            "mark.underline.toggle",
+            "link.edit",
+            "link.set",
+            "link.remove",
+            "mark.font-color.set",
+            "mark.color.reapply",
+            "mark.color.clear",
+            "mark.color.menu.open",
+            "mark.language.edit",
+            "mark.language.set",
+            "block.align.set",
+            "mark.strike.toggle",
+            "mark.code.toggle",
+            "quote.toggle",
+            "code-block.toggle",
+            "code-block.language.set",
+            "code-block.language.edit",
+            "code-block.indent",
+            "code-block.outdent",
+            "list.indent",
+            "list.outdent",
+            "list.bullet.toggle",
+            "list.ordered.toggle",
+            "list.ordered.start.edit",
+            "list.ordered.start.set",
+            "list.task.toggle",
+            "task.toggle",
+            "task.setChecked",
+            "task.indent",
+            "task.outdent",
+            "reference.insert",
+            "mention.search.open",
+            "emoji.picker.open",
+            "mark.subscript.toggle",
+            "mark.superscript.toggle",
+            "heading.set",
+            "rule.insert",
+            "image.insert",
+            "image.replace",
+            "image.alt.edit",
+            "image.size.menu",
+            "image.width.edit",
+            "image.align.menu",
+            "image.size.set",
+            "image.align.set",
+            "media.upload.cancel",
+            "media.upload.retry",
+            "outline.toggle",
+            "format.clear",
+            "format.inline.clear",
+            "checks.open",
+            "block.style.set",
+            "column.break.insert"
+        ],
+        "keymap": [
+            {
+                "plugin": "keymap:core",
+                "key": "mac:Mod-Alt-0",
+                "command": "paragraph.set",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "other:Ctrl-Shift-0",
+                "command": "paragraph.set",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-z",
+                "command": "history.undo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-Shift-z",
+                "command": "history.redo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "other:Ctrl-y",
+                "command": "history.redo",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Shift-Enter",
+                "command": "hard-break.insert",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-Alt-ArrowUp",
+                "command": "block.move.up",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:core",
+                "key": "Mod-Alt-ArrowDown",
+                "command": "block.move.down",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.bold",
+                "key": "Mod-b",
+                "command": "mark.bold.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.italic",
+                "key": "Mod-i",
+                "command": "mark.italic.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.underline",
+                "key": "Mod-u",
+                "command": "mark.underline.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:links",
+                "key": "Mod-k",
+                "command": "link.edit",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.font-color",
+                "key": "Mod-Shift-h",
+                "command": "mark.color.reapply",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-l",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "left"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-e",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "center"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-r",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "right"
+                }
+            },
+            {
+                "plugin": "keymap:blocks.align",
+                "key": "Mod-Shift-j",
+                "command": "block.align.set",
+                "payload": {
+                    "align": "justify"
+                }
+            },
+            {
+                "plugin": "keymap:marks.strike",
+                "key": "Mod-Shift-x",
+                "command": "mark.strike.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.code",
+                "key": "Mod-e",
+                "command": "mark.code.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.code",
+                "key": "Mod-]",
+                "command": "code-block.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.code",
+                "key": "Mod-[",
+                "command": "code-block.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Mod-]",
+                "command": "list.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Tab",
+                "command": "list.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Mod-[",
+                "command": "list.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.item",
+                "key": "Shift-Tab",
+                "command": "list.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.bullet",
+                "key": "Mod-Shift-8",
+                "command": "list.bullet.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.ordered",
+                "key": "Mod-Shift-7",
+                "command": "list.ordered.toggle",
+                "payload": {
+                    "start": 1
+                }
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-Shift-9",
+                "command": "list.task.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-Enter",
+                "command": "task.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-]",
+                "command": "task.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Tab",
+                "command": "task.indent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Mod-[",
+                "command": "task.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:lists.task",
+                "key": "Shift-Tab",
+                "command": "task.outdent",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.subscript",
+                "key": "Mod-,",
+                "command": "mark.subscript.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:marks.superscript",
+                "key": "Mod-.",
+                "command": "mark.superscript.toggle",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-1",
+                "command": "heading.set",
+                "payload": {
+                    "level": 1
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-1",
+                "command": "heading.set",
+                "payload": {
+                    "level": 1
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-2",
+                "command": "heading.set",
+                "payload": {
+                    "level": 2
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-2",
+                "command": "heading.set",
+                "payload": {
+                    "level": 2
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-3",
+                "command": "heading.set",
+                "payload": {
+                    "level": 3
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-3",
+                "command": "heading.set",
+                "payload": {
+                    "level": 3
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-4",
+                "command": "heading.set",
+                "payload": {
+                    "level": 4
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-4",
+                "command": "heading.set",
+                "payload": {
+                    "level": 4
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-5",
+                "command": "heading.set",
+                "payload": {
+                    "level": 5
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-5",
+                "command": "heading.set",
+                "payload": {
+                    "level": 5
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "mac:Mod-Alt-6",
+                "command": "heading.set",
+                "payload": {
+                    "level": 6
+                }
+            },
+            {
+                "plugin": "keymap:blocks.heading",
+                "key": "other:Ctrl-Shift-6",
+                "command": "heading.set",
+                "payload": {
+                    "level": 6
+                }
+            },
+            {
+                "plugin": "keymap:format.clear",
+                "key": "Mod-\\",
+                "command": "format.inline.clear",
+                "payload": null
+            },
+            {
+                "plugin": "keymap:layout.columns",
+                "key": "Mod-Shift-Enter",
+                "command": "column.break.insert",
+                "payload": null
+            }
+        ],
+        "keyHandlers": [
+            {
+                "plugin": "blocks.code",
+                "key": "Mod-Enter",
+                "handler": true
+            },
+            {
+                "plugin": "blocks.code",
+                "key": "ArrowDown",
+                "handler": true
+            },
+            {
+                "plugin": "lists.item",
+                "key": "Enter",
+                "handler": true
+            },
+            {
+                "plugin": "lists.item",
+                "key": "Backspace",
+                "handler": true
+            },
+            {
+                "plugin": "lists.task",
+                "key": "Enter",
+                "handler": true
+            },
+            {
+                "plugin": "lists.task",
+                "key": "Backspace",
+                "handler": true
+            }
+        ],
+        "inputRuleIds": [
+            "marks.bold:bold.stars",
+            "marks.bold:bold.underscores",
+            "marks.italic:italic.star",
+            "marks.italic:italic.underscore",
+            "links:link.autolink",
+            "marks.strike:strike.tildes",
+            "marks.code:code.backtick",
+            "blocks.quote:quote.angle",
+            "blocks.code:code.fence",
+            "lists.bullet:list.bullet.marker",
+            "lists.ordered:list.ordered.number",
+            "lists.task:list.task.brackets",
+            "blocks.heading:heading.hashes",
+            "blocks.rule:rule.dashes"
+        ],
+        "toolbars": {
+            "partEntryIds": {
+                "core": [
+                    "paragraph",
+                    "undo",
+                    "redo"
+                ],
+                "marks.bold": [
+                    "bold"
+                ],
+                "marks.italic": [
+                    "italic"
+                ],
+                "marks.underline": [
+                    "underline"
+                ],
+                "links": [
+                    "link"
+                ],
+                "marks.font-color": [
+                    "color-menu"
+                ],
+                "marks.language": [
+                    "language"
+                ],
+                "blocks.align": [
+                    "align-left",
+                    "align-center",
+                    "align-right",
+                    "align-justify"
+                ],
+                "marks.strike": [
+                    "strike"
+                ],
+                "marks.code": [
+                    "code"
+                ],
+                "blocks.quote": [
+                    "quote"
+                ],
+                "blocks.code": [
+                    "code-block",
+                    "code-language"
+                ],
+                "lists.bullet": [
+                    "bullet-list"
+                ],
+                "lists.ordered": [
+                    "ordered-list",
+                    "start-numbering"
+                ],
+                "lists.task": [
+                    "task-list"
+                ],
+                "mentions": [
+                    "mention"
+                ],
+                "emoji": [
+                    "emoji"
+                ],
+                "marks.subscript": [
+                    "subscript"
+                ],
+                "marks.superscript": [
+                    "superscript"
+                ],
+                "blocks.heading": [
+                    "heading-1",
+                    "heading-2",
+                    "heading-3",
+                    "heading-4",
+                    "heading-5",
+                    "heading-6"
+                ],
+                "blocks.rule": [
+                    "rule"
+                ],
+                "media.image": [
+                    "image",
+                    "image-alt",
+                    "image-size",
+                    "image-width",
+                    "image-align",
+                    "image-replace"
+                ],
+                "media.upload": [
+                    "upload-cancel",
+                    "upload-retry"
+                ],
+                "nav.outline": [
+                    "outline"
+                ],
+                "format.clear": [
+                    "clear-formatting"
+                ],
+                "a11y.content-checks": [
+                    "checks"
+                ],
+                "styles.brand": [
+                    "default-style"
+                ],
+                "layout.columns": [
+                    "column-break"
+                ]
+            },
+            "presentation": [
+                [
+                    "history.undo",
+                    "history.redo"
+                ],
+                [
+                    "text-style"
+                ],
+                [
+                    "mark.bold.toggle",
+                    "mark.italic.toggle",
+                    "mark.underline.toggle",
+                    "mark.strike.toggle",
+                    "mark.code.toggle",
+                    "format.clear"
+                ],
+                [
+                    "mark.color.menu.open"
+                ],
+                [
+                    "link.edit"
+                ],
+                [
+                    "list.bullet.toggle",
+                    {
+                        "command": "list.ordered.toggle",
+                        "payload": {
+                            "start": 1
+                        }
+                    },
+                    "list.task.toggle"
+                ],
+                [
+                    {
+                        "command": "block.align.set",
+                        "payload": {
+                            "align": "left"
+                        }
+                    },
+                    {
+                        "command": "block.align.set",
+                        "payload": {
+                            "align": "center"
+                        }
+                    },
+                    {
+                        "command": "block.align.set",
+                        "payload": {
+                            "align": "right"
+                        }
+                    },
+                    {
+                        "command": "block.align.set",
+                        "payload": {
+                            "align": "justify"
+                        }
+                    }
+                ],
+                [
+                    "indent.decrease",
+                    "indent.increase"
+                ],
+                [
+                    {
+                        "command": "table.insert",
+                        "payload": {
+                            "rows": 3,
+                            "columns": 3
+                        }
+                    },
+                    "image.insert",
+                    "embed.insert",
+                    "rule.insert",
+                    "mention.search.open",
+                    "emoji.picker.open"
+                ],
+                [
+                    "checks.open",
+                    "find.open",
+                    "outline.toggle"
+                ]
+            ],
+            "touchPresentation": null
+        },
+        "readerOverrideFeatureIds": [
+            "links",
+            "lists.task",
+            "mentions",
+            "media.image"
+        ]
+    }
+}

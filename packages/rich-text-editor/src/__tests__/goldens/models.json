@@ -1,0 +1,547 @@
+{
+    "profiles": {
+        "inline": {
+            "ref": {
+                "id": "frontify.inline",
+                "version": 1
+            },
+            "capabilities": [
+                {
+                    "id": "core",
+                    "version": 1
+                },
+                {
+                    "id": "marks.bold",
+                    "version": 1
+                },
+                {
+                    "id": "marks.italic",
+                    "version": 1
+                },
+                {
+                    "id": "marks.underline",
+                    "version": 1
+                },
+                {
+                    "id": "links",
+                    "version": 1
+                },
+                {
+                    "id": "marks.font-color",
+                    "version": 1
+                },
+                {
+                    "id": "marks.language",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.align",
+                    "version": 1
+                },
+                {
+                    "id": "input-rules",
+                    "version": 1
+                }
+            ],
+            "fingerprint": "81e9a8ceb4eb750c8b9bc1495924dc683d07486f8c44609816ba5cc7287bc884"
+        },
+        "comment": {
+            "ref": {
+                "id": "frontify.comment",
+                "version": 1
+            },
+            "capabilities": [
+                {
+                    "id": "core",
+                    "version": 1
+                },
+                {
+                    "id": "marks.bold",
+                    "version": 1
+                },
+                {
+                    "id": "marks.italic",
+                    "version": 1
+                },
+                {
+                    "id": "marks.underline",
+                    "version": 1
+                },
+                {
+                    "id": "links",
+                    "version": 1
+                },
+                {
+                    "id": "marks.font-color",
+                    "version": 1
+                },
+                {
+                    "id": "marks.language",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.align",
+                    "version": 1
+                },
+                {
+                    "id": "input-rules",
+                    "version": 1
+                },
+                {
+                    "id": "marks.strike",
+                    "version": 1
+                },
+                {
+                    "id": "marks.code",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.quote",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.code",
+                    "version": 1
+                },
+                {
+                    "id": "lists.item",
+                    "version": 1
+                },
+                {
+                    "id": "lists.bullet",
+                    "version": 1
+                },
+                {
+                    "id": "lists.ordered",
+                    "version": 1
+                },
+                {
+                    "id": "lists.task",
+                    "version": 1
+                },
+                {
+                    "id": "mentions",
+                    "version": 1
+                },
+                {
+                    "id": "emoji",
+                    "version": 1
+                }
+            ],
+            "fingerprint": "820426189a2f386d8b835b71a177df3771fca4919cbe1316e14a39fe2634b25a"
+        },
+        "document": {
+            "ref": {
+                "id": "frontify.document",
+                "version": 1
+            },
+            "capabilities": [
+                {
+                    "id": "core",
+                    "version": 1
+                },
+                {
+                    "id": "marks.bold",
+                    "version": 1
+                },
+                {
+                    "id": "marks.italic",
+                    "version": 1
+                },
+                {
+                    "id": "marks.underline",
+                    "version": 1
+                },
+                {
+                    "id": "links",
+                    "version": 1
+                },
+                {
+                    "id": "marks.font-color",
+                    "version": 1
+                },
+                {
+                    "id": "marks.language",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.align",
+                    "version": 1
+                },
+                {
+                    "id": "input-rules",
+                    "version": 1
+                },
+                {
+                    "id": "marks.strike",
+                    "version": 1
+                },
+                {
+                    "id": "marks.code",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.quote",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.code",
+                    "version": 1
+                },
+                {
+                    "id": "lists.item",
+                    "version": 1
+                },
+                {
+                    "id": "lists.bullet",
+                    "version": 1
+                },
+                {
+                    "id": "lists.ordered",
+                    "version": 1
+                },
+                {
+                    "id": "lists.task",
+                    "version": 1
+                },
+                {
+                    "id": "mentions",
+                    "version": 1
+                },
+                {
+                    "id": "emoji",
+                    "version": 1
+                },
+                {
+                    "id": "marks.subscript",
+                    "version": 1
+                },
+                {
+                    "id": "marks.superscript",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.heading",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.rule",
+                    "version": 1
+                },
+                {
+                    "id": "media.image",
+                    "version": 1
+                },
+                {
+                    "id": "media.upload",
+                    "version": 1
+                },
+                {
+                    "id": "nav.outline",
+                    "version": 1
+                },
+                {
+                    "id": "format.clear",
+                    "version": 1
+                },
+                {
+                    "id": "a11y.content-checks",
+                    "version": 1
+                }
+            ],
+            "fingerprint": "46b64b17ca34df7745bb7ea6ec94eba5d944d3c9830aef48864c6d39e5c3f8f5"
+        },
+        "brand-document": {
+            "ref": {
+                "id": "frontify.brand-document",
+                "version": 1
+            },
+            "capabilities": [
+                {
+                    "id": "core",
+                    "version": 1
+                },
+                {
+                    "id": "marks.bold",
+                    "version": 1
+                },
+                {
+                    "id": "marks.italic",
+                    "version": 1
+                },
+                {
+                    "id": "marks.underline",
+                    "version": 1
+                },
+                {
+                    "id": "links",
+                    "version": 1
+                },
+                {
+                    "id": "marks.font-color",
+                    "version": 1
+                },
+                {
+                    "id": "marks.language",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.align",
+                    "version": 1
+                },
+                {
+                    "id": "input-rules",
+                    "version": 1
+                },
+                {
+                    "id": "marks.strike",
+                    "version": 1
+                },
+                {
+                    "id": "marks.code",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.quote",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.code",
+                    "version": 1
+                },
+                {
+                    "id": "lists.item",
+                    "version": 1
+                },
+                {
+                    "id": "lists.bullet",
+                    "version": 1
+                },
+                {
+                    "id": "lists.ordered",
+                    "version": 1
+                },
+                {
+                    "id": "lists.task",
+                    "version": 1
+                },
+                {
+                    "id": "mentions",
+                    "version": 1
+                },
+                {
+                    "id": "emoji",
+                    "version": 1
+                },
+                {
+                    "id": "marks.subscript",
+                    "version": 1
+                },
+                {
+                    "id": "marks.superscript",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.heading",
+                    "version": 1
+                },
+                {
+                    "id": "blocks.rule",
+                    "version": 1
+                },
+                {
+                    "id": "media.image",
+                    "version": 1
+                },
+                {
+                    "id": "media.upload",
+                    "version": 1
+                },
+                {
+                    "id": "nav.outline",
+                    "version": 1
+                },
+                {
+                    "id": "format.clear",
+                    "version": 1
+                },
+                {
+                    "id": "a11y.content-checks",
+                    "version": 1
+                },
+                {
+                    "id": "styles.brand",
+                    "version": 1
+                },
+                {
+                    "id": "layout.columns",
+                    "version": 1
+                }
+            ],
+            "fingerprint": "17259dacc3990d14d07eefb562cd06a4eb5ca04f5317f5d5ff52c71557b1aa15"
+        }
+    },
+    "featuresById": {
+        "shippedIds": [
+            "a11y.content-checks",
+            "blocks.align",
+            "blocks.code",
+            "blocks.heading",
+            "blocks.quote",
+            "blocks.rule",
+            "core",
+            "emoji",
+            "format.clear",
+            "input-rules",
+            "layout.columns",
+            "links",
+            "lists.bullet",
+            "lists.item",
+            "lists.ordered",
+            "lists.task",
+            "marks.bold",
+            "marks.code",
+            "marks.font-color",
+            "marks.italic",
+            "marks.language",
+            "marks.strike",
+            "marks.subscript",
+            "marks.superscript",
+            "marks.underline",
+            "media.image",
+            "media.upload",
+            "mentions",
+            "nav.outline",
+            "styles.brand"
+        ],
+        "shipped": [
+            {
+                "id": "a11y.content-checks",
+                "version": 1
+            },
+            {
+                "id": "blocks.align",
+                "version": 1
+            },
+            {
+                "id": "blocks.code",
+                "version": 1
+            },
+            {
+                "id": "blocks.heading",
+                "version": 1
+            },
+            {
+                "id": "blocks.quote",
+                "version": 1
+            },
+            {
+                "id": "blocks.rule",
+                "version": 1
+            },
+            {
+                "id": "core",
+                "version": 1
+            },
+            {
+                "id": "emoji",
+                "version": 1
+            },
+            {
+                "id": "format.clear",
+                "version": 1
+            },
+            {
+                "id": "input-rules",
+                "version": 1
+            },
+            {
+                "id": "layout.columns",
+                "version": 1
+            },
+            {
+                "id": "links",
+                "version": 1
+            },
+            {
+                "id": "lists.bullet",
+                "version": 1
+            },
+            {
+                "id": "lists.item",
+                "version": 1
+            },
+            {
+                "id": "lists.ordered",
+                "version": 1
+            },
+            {
+                "id": "lists.task",
+                "version": 1
+            },
+            {
+                "id": "marks.bold",
+                "version": 1
+            },
+            {
+                "id": "marks.code",
+                "version": 1
+            },
+            {
+                "id": "marks.font-color",
+                "version": 1
+            },
+            {
+                "id": "marks.italic",
+                "version": 1
+            },
+            {
+                "id": "marks.language",
+                "version": 1
+            },
+            {
+                "id": "marks.strike",
+                "version": 1
+            },
+            {
+                "id": "marks.subscript",
+                "version": 1
+            },
+            {
+                "id": "marks.superscript",
+                "version": 1
+            },
+            {
+                "id": "marks.underline",
+                "version": 1
+            },
+            {
+                "id": "media.image",
+                "version": 1
+            },
+            {
+                "id": "media.upload",
+                "version": 1
+            },
+            {
+                "id": "mentions",
+                "version": 1
+            },
+            {
+                "id": "nav.outline",
+                "version": 1
+            },
+            {
+                "id": "styles.brand",
+                "version": 1
+            }
+        ],
+        "unknownId": {
+            "error": "definition.unknown-feature",
+            "details": {
+                "id": "no.such.feature",
+                "index": 1
+            }
+        }
+    }
+}
