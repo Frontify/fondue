@@ -49,7 +49,6 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/features/links/link-popover.tsx#LinkPopover': 402,
     'src/features/marks-language/language-dialog.tsx#LanguageDialog': 167,
     'src/features/media-image/view.tsx#ImageChrome': 276,
-    'src/features/mentions/mention-dialog.tsx#SearchDialog': 244,
     'src/model/compile.ts#compileContentModel': 210,
     'src/react/rich-text-editor.tsx#anonymous#11': 184,
     'src/react/rich-text-editor.tsx#SessionComponent': 669,
