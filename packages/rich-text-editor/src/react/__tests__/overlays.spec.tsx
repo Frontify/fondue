@@ -3,7 +3,7 @@
 import { ThemeProvider } from '@frontify/fondue-components';
 import { deDE as fondueDeDE } from '@frontify/fondue-components/locales';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { type ComponentType, createRef, lazy, type ReactNode, useEffect, useState } from 'react';
+import { type ComponentType, createRef, lazy, Profiler, type ReactNode, useEffect, useState } from 'react';
 import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -58,10 +58,13 @@ const loaded = (...blocks: readonly JsonValue[]) => ({
     },
 });
 
-type Props = Partial<RichTextEditorBaseProps<object>> & { readonly children?: ReactNode };
+type Props = Partial<RichTextEditorBaseProps<object>> & {
+    readonly children?: ReactNode;
+    readonly onBubbleRender?: () => void;
+};
 
 /** Composes the fixed and bubble toolbars, the surface and `children` in `RichTextEditor.Root`, ready. */
-const mount = ({ children, ...rest }: Props) => {
+const mount = ({ children, onBubbleRender, ...rest }: Props) => {
     const ref = createRef<EditorHandle<object>>();
     const view = render(
         <>
@@ -75,7 +78,9 @@ const mount = ({ children, ...rest }: Props) => {
                 {...rest}
             >
                 <RichTextEditor.Toolbar />
-                <RichTextEditor.BubbleToolbar />
+                <Profiler id="bubble" onRender={() => onBubbleRender?.()}>
+                    <RichTextEditor.BubbleToolbar />
+                </Profiler>
                 <RichTextEditor.Surface />
                 {children}
             </RichTextEditor.Root>
@@ -813,6 +818,73 @@ describe('overlay focus and loading', () => {
         });
 
         expect(bubble()).toBeNull();
+    });
+
+    describe('bubble toolbar renders', () => {
+        // jsdom has no layout: a range measures as the box the test sets.
+        let box = new DOMRect(10, 20, 30, 40);
+        beforeEach(() => {
+            box = new DOMRect(10, 20, 30, 40);
+            Object.defineProperty(Range.prototype, 'getBoundingClientRect', { configurable: true, value: () => box });
+        });
+        afterEach(() => {
+            Reflect.deleteProperty(Range.prototype, 'getBoundingClientRect');
+        });
+
+        const mountCounted = () => {
+            const counted = { renders: 0 };
+            const { handle } = mount({
+                defaultValue: loaded(para('one two three four')),
+                onBubbleRender: () => {
+                    counted.renders += 1;
+                },
+            });
+            return { handle, counted };
+        };
+
+        it('adds none while a collapsed caret moves', () => {
+            const { handle, counted } = mountCounted();
+            act(() => surface().focus());
+            act(() => setSelection(handle(), { text: 'one', from: 1, to: 1 }));
+            const before = counted.renders;
+
+            act(() => setSelection(handle(), { text: 'two', from: 1, to: 1 }));
+            act(() => setSelection(handle(), { text: 'three', from: 2, to: 2 }));
+            act(() => setSelection(handle(), { text: 'four', from: 3, to: 3 }));
+
+            expect(counted.renders).toBe(before);
+            expect(bubble()).toBeNull();
+        });
+
+        it('adds none for a range that moves within one rectangle, one for a range in a new rectangle', () => {
+            const { handle, counted } = mountCounted();
+            selectWithFocus(handle(), 'two');
+            expect(bubble()).not.toBeNull();
+            const before = counted.renders;
+
+            act(() => setSelection(handle(), { text: 'three' }));
+            act(() => setSelection(handle(), { text: 'four' }));
+            expect(counted.renders).toBe(before);
+            expect(bubble()).not.toBeNull();
+
+            box = new DOMRect(10, 20, 50, 40);
+            act(() => setSelection(handle(), { text: 'two' }));
+            expect(counted.renders).toBe(before + 1);
+            expect(bubble()).not.toBeNull();
+        });
+
+        it('shows again for another range with the same rectangle after Escape closed the toolbar', () => {
+            const { handle } = mountCounted();
+            selectWithFocus(handle(), 'two');
+            act(() => {
+                pressKey(handle(), 'Escape');
+            });
+            expect(bubble()).toBeNull();
+
+            act(() => setSelection(handle(), { text: 'three' }));
+
+            expect(bubble()).not.toBeNull();
+        });
     });
 
     it('anchors an overlay to the range of a mark run, not to the selection', () => {

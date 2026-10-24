@@ -55,7 +55,7 @@ const clipped = (surface: HTMLElement, rect: DOMRect): boolean => {
 };
 
 /** The selection's rectangle: the selected node's box, the caret, or the box around every line of a text range. */
-const selectionRect = (view: EditorView): DOMRect => {
+export const selectionRect = (view: EditorView): DOMRect => {
     const { selection } = view.state;
     if ('node' in selection) {
         const dom = view.nodeDOM(selection.from);

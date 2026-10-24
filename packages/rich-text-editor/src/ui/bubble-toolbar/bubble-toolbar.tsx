@@ -2,13 +2,14 @@
 
 import { Flyout, useFondueTheme } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
-import { type MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { type MutableRefObject, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
+import { selectionRect } from '#/bridge/anchor';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { useEditorSelection } from '#/bridge/hooks';
 import { passEscape, useHeldOverlay, useScopedFocus } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
-import { useSessionValue } from '#/bridge/session';
+import { SessionContext, useSessionValue } from '#/bridge/session';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { type SelectionSummary } from '#/runtime/types';
 import { ariaShortcut } from '#/ui/shortcuts';
@@ -27,6 +28,23 @@ const selectionOf = (runtime: EditorRuntime | undefined): string => {
     }
     const { anchor, head } = runtime.state.selection;
     return `${anchor} ${head}`;
+};
+
+// A closed or requested range keys the value too: the store compares to its last notification, not the rendered value.
+const renderKeyOf = (runtime: EditorRuntime | undefined, closedAt: string | null, shownAt: string | null): string => {
+    if (runtime === undefined || runtime.view === undefined) {
+        return 'none';
+    }
+    const key = selectionOf(runtime);
+    let rect = 'none';
+    if (!runtime.state.selection.empty || shownAt === key) {
+        const { left, top, width, height } = selectionRect(runtime.view);
+        rect = `${left} ${top} ${width} ${height}`;
+    }
+    if (closedAt !== null || shownAt !== null) {
+        return `${rect} ${key}`;
+    }
+    return rect;
 };
 
 /** In bubble mode, the commands with no bubble item and the switch back to the fixed toolbar. */
@@ -66,11 +84,13 @@ export const BubbleToolbar = ({
 }) => {
     const apple = useApplePlatform();
     const { dir } = useFondueTheme();
-    const key = useSessionValue(selectionOf, Object.is);
+    const runtime = useContext(SessionContext);
+    const key = selectionOf(runtime);
     const selected = useEditorSelection(holdsText);
     const focus = useScopedFocus();
     const [closedAt, setClosedAt] = useState<string | null>(null);
     const [shownAt, setShownAt] = useState<string | null>(null);
+    useSessionValue((current) => renderKeyOf(current, closedAt, shownAt), Object.is);
     // A move away ends both, so a later return to the same range shows the toolbar for its text again.
     if (closedAt !== null && closedAt !== key) {
         setClosedAt(null);
@@ -79,10 +99,10 @@ export const BubbleToolbar = ({
         setShownAt(null);
     }
     const [hovered, setHovered] = useState(false);
-    const keyRef = useRef(key);
+    const runtimeRef = useRef(runtime);
     const focusOnOpenRef = useRef(false);
     useClientLayoutEffect(() => {
-        keyRef.current = key;
+        runtimeRef.current = runtime;
     });
     const setOpen = useCallback((next: boolean) => {
         if (next) {
@@ -91,7 +111,7 @@ export const BubbleToolbar = ({
         // A toolbar that closes under the pointer hears no pointer leave.
         setHovered(false);
         setShownAt(null);
-        setClosedAt(keyRef.current);
+        setClosedAt(selectionOf(runtimeRef.current));
     }, []);
     const held = hovered || (focus !== null && focus.closest('[data-rte-bubble-toolbar]') !== null);
     const shown = focus !== null && (selected || shownAt === key);
@@ -106,7 +126,7 @@ export const BubbleToolbar = ({
         showRef.current = () => {
             focusOnOpenRef.current = true;
             setClosedAt(null);
-            setShownAt(keyRef.current);
+            setShownAt(selectionOf(runtimeRef.current));
         };
         return () => {
             showRef.current = null;
