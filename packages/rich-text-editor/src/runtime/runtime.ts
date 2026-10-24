@@ -12,7 +12,7 @@ import {
 } from 'prosemirror-state';
 import {
     type DirectEditorProps,
-    EditorView,
+    type EditorView,
     type MarkViewConstructor,
     type NodeViewConstructor,
 } from 'prosemirror-view';
@@ -62,8 +62,6 @@ import {
     type UploadServiceLike,
 } from './capabilities/media/uploads';
 import { type SuggestionHost, suggestionHosts } from './capabilities/suggestions/host';
-import { suggestionOptionId } from './capabilities/suggestions/option-id';
-import { activeSuggestion } from './capabilities/suggestions/plugin';
 import { type ColumnState, columnsPlugin, ONE_COLUMN } from './columns';
 import { createDomIds } from './dom-ids';
 import { secondCopyAtMount, secondCopyInView } from './engines';
@@ -101,6 +99,7 @@ import {
     type ReplaceCode,
     type Route,
 } from './session/types';
+import { createView, isEmpty } from './session/view';
 import { stylesPlugin } from './styles';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
 import {
@@ -350,7 +349,7 @@ const viewRuntimes = new WeakMap<EditorView, EditorRuntime>();
 /** The runtime whose surface `view` shows, for a plugin that one compiled definition shares between editors. */
 export const runtimeOfView = (view: EditorView): EditorRuntime | undefined => viewRuntimes.get(view);
 
-export { summarize };
+export { isEmpty, summarize };
 
 /** A plugin-error diagnostic with the failing feature and the error's name, never its message. */
 const pluginError = (error: unknown, featureId: string | undefined) => {
@@ -360,10 +359,6 @@ const pluginError = (error: unknown, featureId: string | undefined) => {
     }
     return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
 };
-
-/** One empty paragraph is an empty document, which shows the placeholder. */
-export const isEmpty = ({ doc }: EditorState) =>
-    doc.childCount === 1 && doc.firstChild !== null && doc.firstChild.isTextblock && doc.firstChild.content.size === 0;
 
 const rejected = (code: RejectedCode): CommandResult => ({ status: 'rejected', code });
 const refused = (code: ReplaceCode): ReplaceResult => ({ status: 'rejected', code });
@@ -428,27 +423,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                     (operation) => operation.service === 'uploads' && operation.featureId === UPLOAD_FEATURE,
                 );
             }
-            refreshView();
+            views.refresh();
         },
-        onDisabledChange: () => view?.setProps({}),
+        onDisabledChange: () => views.repaint(),
     });
-    const columns = createColumns({ initial: options.columns ?? ONE_COLUMN, onChange: () => refreshView() });
+    const columns = createColumns({ initial: options.columns ?? ONE_COLUMN, onChange: () => views.refresh() });
     let typing = false;
-    let view: EditorView | undefined;
-    // The view the last `EditorView` constructor built, which plugin views receive before the constructor returns.
-    let built: EditorView | undefined;
     // The state the view threw on, which `getRecoveryCandidate` offers until `dispose`.
     // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovery: EditorState | undefined;
-    let readyFrame: number | undefined;
     // Set while replacement step 8 installs the next document.
     let installingNext = false;
-    // Set while the view builds or installs a state, so a node view throw the bridge caught faults that call.
-    let viewCall = false;
-    let viewThrew = false;
-    // Node views come from the bridge once this runtime exists, since they act on it.
-    let nodeViews: Readonly<Record<string, NodeViewConstructor>> = {};
-    let markViews: Readonly<Record<string, MarkViewConstructor>> = {};
     let draining = false;
     let depth = 0;
     let installing = false;
@@ -519,7 +504,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const typingRecorder = new Plugin({
         key: new PluginKey('rte.typing'),
         view: (editorView) => {
-            built = editorView;
+            views.capture(editorView);
             return {};
         },
         props: {
@@ -532,7 +517,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
     });
     const settling = createComposition({
-        composing: () => view !== undefined && view.composing,
+        composing: () => views.current()?.composing === true,
         onSettled: () => settleInput(),
     });
     const keyGuard = createKeyGuard(
@@ -624,17 +609,37 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
     });
 
-    // Recomputes `editable`, the surface attributes and the break decorations from the phase, the mode and the
-    // columns, which waits for input to settle.
-    const refreshView = () => {
-        if (settling.active() || recovery !== undefined) {
-            return;
-        }
-        display.sync(mode.mode(), columns.current());
-        if (view !== undefined) {
-            view.setProps({});
-        }
-    };
+    const views = createView({
+        store,
+        lifecycle,
+        shown: display,
+        mode,
+        columns,
+        metrics,
+        emit,
+        session: identity.session,
+        resources: liveResources,
+        suggestionListId,
+        createdAt,
+        composing: () => settling.active(),
+        hasRecovery: () => recovery !== undefined,
+        dispatch: (transaction) => commit(transaction),
+        fault: () => fault(diagnostic('runtime.view-fault', undefined, undefined, 'error')),
+        viewFault: (attached, candidate) => viewFault(attached, candidate),
+        onAttached: (attached) => {
+            viewRuntimes.set(attached, runtime);
+            suggestionHosts.set(attached, {
+                creates: (featureId) => policy.current().features[featureId]?.create !== false,
+                accept: acceptSuggestion,
+                commandHost: options.commandHost,
+                search: searchSuggestions,
+            });
+            if (secondCopyAtMount(store.state)) {
+                report(DUPLICATE_ENGINE);
+            }
+        },
+        scrollSelectionIntoView: () => options.scrollSelectionIntoView?.(),
+    });
 
     const fault = (diagnostic: Diagnostic) => {
         if (isDisposed()) {
@@ -642,11 +647,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         lifecycle.to('faulted');
         // A frame still pending would otherwise move the faulted session to ready.
-        cancelReady();
+        views.cancelReady();
         // A composition that settles later publishes nothing.
         settling.cancel();
         display.takeProvisional();
-        refreshView();
+        views.refresh();
         settleQueue('not-ready');
         report(diagnostic);
         // Results held for that settle are discarded now, as the faulted session takes none.
@@ -850,28 +855,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return changed;
     };
 
-    /** Runs a view call; `threw` when it threw or a node view inside it threw, which the bridge reports through `faultView`. */
-    const callView = <T>(work: () => T): { readonly threw: boolean; readonly value: T | undefined } => {
-        let value: T | undefined;
-        viewCall = true;
-        try {
-            value = work();
-        } catch {
-            viewThrew = true;
-        } finally {
-            viewCall = false;
-        }
-        const threw = viewThrew;
-        viewThrew = false;
-        return { threw, value };
-    };
-
     /** Installs a state in the view and counts it as a commit; `false` when the view threw and the session faulted. */
     const installState = (next: EditorState): boolean => {
         const previous = store.state;
         store.set(next);
-        const attached = view;
-        if (attached !== undefined && callView(() => attached.updateState(next)).threw) {
+        const attached = views.current();
+        if (attached !== undefined && views.call(() => attached.updateState(next)).threw) {
             store.set(previous);
             viewFault(attached, next);
             return false;
@@ -957,7 +946,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (mapping !== undefined && !guarded(() => settleProvisional(mapping))) {
                 return;
             }
-            refreshView();
+            views.refresh();
         });
         coordinator.settle();
         saving.settled();
@@ -1508,30 +1497,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             drain();
         });
 
-    const cancelReady = () => {
-        if (readyFrame !== undefined) {
-            cancelAnimationFrame(readyFrame);
-            readyFrame = undefined;
-            liveResources.frames -= 1;
-        }
-    };
-
-    const detach = () => {
-        cancelReady();
-        if (view !== undefined) {
-            liveResources.views.delete(view);
-            try {
-                view.destroy();
-            } catch (error) {
-                // A view that threw on an update runs it again while it is destroyed, and `dispose` throws nothing.
-                if (recovery === undefined) {
-                    throw error;
-                }
-            }
-            view = undefined;
-        }
-    };
-
     const dispose = () => {
         if (lifecycle.is('disposed')) {
             return;
@@ -1558,12 +1523,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         emit('disposed', identity.session());
         clear();
-        detach();
+        views.detach();
         liveResources.installedFeatures.delete(handle);
     };
 
     const focus = (where: 'current' | 'start' | 'end' = 'current') => {
-        if (!lifecycle.is('ready') || view === undefined) {
+        if (!lifecycle.is('ready') || views.current() === undefined) {
             return;
         }
         if (where === 'start') {
@@ -1572,6 +1537,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (where === 'end') {
             commit(store.state.tr.setSelection(Selection.atEnd(store.state.doc)));
         }
+        // A listener of those commits may have ended the session, which leaves no view.
+        const view = views.current() as EditorView;
         if (display.mode() === 'editable') {
             view.focus();
             return;
@@ -1623,6 +1590,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
      */
     const refocus = (focused: boolean) => {
         // A disabled surface leaves the Tab order and takes no focus.
+        const view = views.current();
         if (!focused || mode.disabled() || view === undefined) {
             return;
         }
@@ -1639,7 +1607,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (lifecycle.is('transitioning')) {
             lifecycle.to('ready');
         }
-        refreshView();
+        views.refresh();
         coordinator.settle();
         saving.settled();
         drain();
@@ -1689,7 +1657,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (lifecycle.is('transitioning')) {
                 lifecycle.to('ready');
             }
-            refreshView();
+            views.refresh();
             return true;
         });
         if (!installed) {
@@ -1736,9 +1704,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (settling.active()) {
             return refused('composition-active');
         }
-        const focused = view?.hasFocus() === true;
+        const focused = views.current()?.hasFocus() === true;
         lifecycle.to('transitioning');
-        refreshView();
+        views.refresh();
         if (saving.unsaved()) {
             const code = await leaveUnsaved(request.unsaved);
             // The session was disposed, or faulted, while the step 5 write ran.
@@ -1831,7 +1799,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         suggestionListId,
         nextDomId: createDomIds(identity.session().sessionId),
         get view() {
-            return view;
+            return views.current();
         },
         interactionRoots,
         get state() {
@@ -1841,7 +1809,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return policy.current();
         },
         get nodeViews() {
-            return nodeViews;
+            return views.nodeViews;
         },
         limits,
         exceededLimit: (root, followUp) => {
@@ -1869,102 +1837,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             return undefined;
         },
-        attach: (element, props) => {
-            if (lifecycle.is('disposed')) {
-                return;
-            }
-            detach();
-            built = undefined;
-            const { threw, value: attached } = callView(
-                () =>
-                    new EditorView(
-                        { mount: element },
-                        {
-                            ...props,
-                            state: store.state,
-                            editable: () => lifecycle.is('ready') && display.mode() === 'editable',
-                            attributes: (current) => {
-                                const attributes: Record<string, string> = {};
-                                if (display.mode() === 'readonly') {
-                                    // A surface that is not contenteditable takes no focus by itself,
-                                    // unless it is disabled, which leaves the Tab order.
-                                    if (!mode.disabled()) {
-                                        attributes.tabindex = '0';
-                                    }
-                                    attributes['aria-readonly'] = 'true';
-                                }
-                                if (isEmpty(current)) {
-                                    attributes['data-rte-empty'] = '';
-                                }
-                                // Selection and copy keep working on a surface that takes no edits.
-                                if (lifecycle.is('transitioning')) {
-                                    attributes['aria-busy'] = 'true';
-                                }
-                                // The surface keeps focus while a suggestion list shows options, and names the active one.
-                                const suggestion = activeSuggestion(current);
-                                if (suggestion !== null) {
-                                    const option = suggestion.items[suggestion.index];
-                                    if (option !== undefined) {
-                                        attributes['aria-autocomplete'] = 'list';
-                                        attributes['aria-controls'] = suggestionListId;
-                                        attributes['aria-activedescendant'] = suggestionOptionId(
-                                            suggestionListId,
-                                            option.key,
-                                        );
-                                    }
-                                }
-                                return attributes;
-                            },
-                            nodeViews,
-                            markViews,
-                            // Returning true reports the scroll as handled, so the view leaves it out.
-                            handleScrollToSelection: () => options.scrollSelectionIntoView?.() === false,
-                            dispatchTransaction: commit,
-                        },
-                    ),
-            );
-            if (attached === undefined || threw) {
-                // ProseMirror starts its DOM observer and input handlers before plugin views, so a plugin view that throws
-                // leaves them on the element unless the half-built view is destroyed.
-                const halfBuilt = attached ?? (built as EditorView | undefined);
-                if (halfBuilt !== undefined) {
-                    try {
-                        halfBuilt.destroy();
-                    } catch {
-                        // Its node views may throw again while it is destroyed.
-                    }
-                }
-                // A view or node view constructor that throws keeps the decoded document as the snapshot.
-                fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
-                return;
-            }
-            view = attached;
-            liveResources.views.add(attached);
-            viewRuntimes.set(attached, runtime);
-            suggestionHosts.set(attached, {
-                creates: (featureId) => policy.current().features[featureId]?.create !== false,
-                accept: acceptSuggestion,
-                commandHost: options.commandHost,
-                search: searchSuggestions,
-            });
-            if (secondCopyAtMount(store.state)) {
-                report(DUPLICATE_ENGINE);
-            }
-            if (!lifecycle.is('mounting')) {
-                return;
-            }
-            // Frames run after microtasks, so the first portal flush of the initial document precedes `ready`.
-            readyFrame = requestAnimationFrame(() => {
-                readyFrame = undefined;
-                liveResources.frames -= 1;
-                lifecycle.to('ready');
-                refreshView();
-                emit('ready', identity.session());
-                measure('mount', createdAt, null);
-            });
-            liveResources.frames += 1;
-        },
-        detach,
+        attach: views.attach,
+        detach: views.detach,
         report,
         captureRange: (range, captureOptions) => captureRange(captureOptions, range),
         refusal: (command, base, payload) => {
@@ -1986,6 +1860,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 );
             }
             commit(transaction);
+            const view = views.current();
             if (target.scroll !== true || view === undefined) {
                 return;
             }
@@ -2003,15 +1878,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         setDisabled: mode.setDisabled,
         setColumns: columns.set,
-        faultView: () => {
-            if (viewCall) {
-                viewThrew = true;
-                return;
-            }
-            if (lifecycle.is('mounting', 'ready') && view !== undefined) {
-                viewFault(view, store.state);
-            }
-        },
+        faultView: views.faultView,
         nodeActions,
         placeAsset,
         uploads: {
@@ -2030,10 +1897,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         runChecks: () => checks.run(),
     };
     if (options.nodeViews !== undefined) {
-        nodeViews = options.nodeViews(runtime);
+        views.setNodeViews(options.nodeViews(runtime));
     }
     if (options.markViews !== undefined) {
-        markViews = options.markViews(runtime);
+        views.setMarkViews(options.markViews(runtime));
     }
     if (options.saves !== undefined) {
         saving.attach(options.saves(runtime));
