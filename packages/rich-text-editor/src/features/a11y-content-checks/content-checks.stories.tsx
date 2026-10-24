@@ -57,14 +57,11 @@ The checks run 750 ms after the last change and when the panel opens, never whil
 | \`heading.empty\` | automatic | error | A heading with no text | \`paragraph.set\` |
 | \`heading.skipped-level\` | automatic | warning | A heading more than one level below the previous one | \`heading.set\` with the level one below the previous one |
 | \`heading.descriptive-review\` | manual | review | Any heading | None |
-| \`table.no-header\` | automatic | warning | A table with no header cell | \`table.header.toggle\` with \`{ axis: 'row' }\` |
 | \`contrast.low\` | automatic | error | Coloured text below 4.5:1, or 3:1 for large text, against a known opaque background | The colour menu with the passing tokens |
 | \`contrast.unknown\` | automatic | review | Coloured text whose colour or background cannot be resolved | The colour menu |
 | \`color.meaning-review\` | manual | review | Any text or highlight colour | None |
 | \`language.parts-review\` | manual | review | Once per document | The language dialog, with \`marks.language\` |
 | \`sensory.review\` | manual | review | Once per document | None |
-| \`embed.title-missing\` | automatic | error | An embed with no title | \`embed.edit\` |
-| \`embed.media-review\` | manual | review | Any embed | None |
 | \`structure.review\` | manual | review | Once per document | None |
 `,
             },
