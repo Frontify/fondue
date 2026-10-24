@@ -4,15 +4,22 @@ import { Fragment, type Mark, type Node, type Schema, Slice } from 'prosemirror-
 import { type EditorState, Selection, type Transaction } from 'prosemirror-state';
 import { type Step, Transform } from 'prosemirror-transform';
 
+import { importModelHtml } from '#/clipboard/import/html';
+import { exceededStructure } from '#/clipboard/import/limits';
+import {
+    labelText,
+    type PastePolicy,
+    refusedNames,
+    resliced,
+    withinLinkPolicy,
+    withoutRefused,
+} from '#/clipboard/import/policy';
 import { withNodeIds } from '#/definition';
 import { checkHref, type ContentModel, type HrefPolicy, type ResourceLimits } from '#/model';
 import { markHrefPolicy } from '#/model/compile';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
 import { isRecord } from '#/model/values';
 
-import { importModelHtml } from './import/html';
-import { exceededStructure } from './import/limits';
-import { labelText, type PastePolicy, refusedNames, resliced, withinLinkPolicy, withoutRefused } from './import/policy';
 import { markdownFragment } from './markdown';
 import { readSlice, SLICE_TYPE } from './slice';
 

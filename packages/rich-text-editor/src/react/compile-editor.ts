@@ -9,7 +9,6 @@ import {
     type EditorSuggestion,
     pluginWithOptions,
 } from '#/bridge/plugin';
-import { clipboardPlugin, dropCursorPlugin, type FileIntake } from '#/clipboard/plugin';
 import {
     compileDefinition,
     type CompiledDefinition,
@@ -34,6 +33,7 @@ import { pointer } from '#/model/errors';
 import { ownValue } from '#/model/values';
 import { type ReaderOverrides } from '#/reader/plan';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
+import { clipboardPlugin, dropCursorPlugin, type FileIntake } from '#/runtime/clipboard/plugin';
 import { pluginCommand, rangeOf } from '#/runtime/editor-api';
 import { authoringOf } from '#/runtime/policy';
 import { runtimeOfView } from '#/runtime/runtime';

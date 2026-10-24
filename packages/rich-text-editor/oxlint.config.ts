@@ -79,7 +79,7 @@ const NODE_BUILTINS = [
 const EDITOR_PART_MESSAGE = `An editor part acts only through \`#/bridge/plugin\`: it imports that module, \`#/bridge/define\`, \`#/model\` and its own feature folder, and of other packages only ${UI_PACKAGES_TEXT}, never Node built-ins, the engine, the runtime, the editor layers or another feature.`;
 
 const CLIPBOARD_MESSAGE =
-    '`clipboard` imports `model`, `definition`, `runtime`, `codecs`, `clipboard/import` and ProseMirror, never React or the editor layers.';
+    '`runtime/clipboard` imports `model`, `definition`, `runtime`, `codecs`, `clipboard/import` and ProseMirror, never React or the editor layers.';
 
 const FEATURE_INDEX_MESSAGE =
     "A feature's index builds its unit and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/define-plugin`.";
@@ -330,7 +330,7 @@ const codecsFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !=
 
 const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
 
-const clipboardAllowed = new Set(['model', 'definition', 'runtime', 'codecs', 'clipboard']);
+const clipboardAllowed = new Set(['model', 'definition', 'runtime', 'codecs']);
 
 const clipboardFolders = FOLDERS.filter((folder) => !clipboardAllowed.has(folder));
 
@@ -338,10 +338,13 @@ const clipboardImportFolders = FOLDERS.filter((folder) => folder !== 'model');
 
 const CLIPBOARD_IMPORT_PATHS = ['clipboard/import', 'clipboard/import/**'];
 
+// The clipboard engine files sit inside `runtime`, so layers that may import `runtime` still ban them by path.
+const CLIPBOARD_ENGINE_FOLDERS = ['runtime/clipboard'];
+
 const htmlFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'html');
 
 const TESTING_MESSAGE =
-    '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, from `clipboard` only `clipboard/plugin`, and from `features` only conformance and fixtures.';
+    '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `features` only conformance and fixtures.';
 
 const CONFORMANCE_MESSAGE =
     'The contract suite drives editor parts through the engine, so it also imports `prosemirror-state`, `react`, `react-dom/server`, `#/bridge/plugin`, `#/features/registry`, `#/react/engine` and `#/react/plugins`.';
@@ -516,9 +519,14 @@ export default defineConfig({
                 message: CLIPBOARD_IMPORT_MESSAGE,
             },
         ]),
-        layerOverride('src/clipboard/*.ts', [
+        layerOverride('src/runtime/clipboard/**/*.{ts,tsx}', [
             {
-                group: [...aliasPatterns(clipboardFolders), ...relativePatterns(clipboardFolders), ...REACT_PATTERNS],
+                group: [
+                    ...aliasPatterns(clipboardFolders),
+                    ...relativePatterns(clipboardFolders),
+                    ...REACT_PATTERNS,
+                    ...exceptPatterns(CLIPBOARD_IMPORT_PATHS),
+                ],
                 message: CLIPBOARD_MESSAGE,
             },
         ]),
@@ -661,10 +669,12 @@ export default defineConfig({
                     group: [
                         ...aliasPatterns(testingFolders),
                         ...relativePatterns(testingFolders),
+                        ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
+                        ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
                         ...featurePathPatterns(TESTING_FEATURE_TAILS),
                         ...ENGINE_PATTERNS,
                         // DR-136: the `paste` helper feeds the paste pipeline through its entry.
-                        ...exceptPatterns(['clipboard/plugin']),
+                        ...exceptPatterns(['runtime/clipboard/plugin']),
                     ],
                     message: TESTING_MESSAGE,
                 },
@@ -676,9 +686,11 @@ export default defineConfig({
                 group: [
                     ...aliasPatterns(testingFolders),
                     ...relativePatterns(testingFolders),
+                    ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
+                    ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
                     ...featurePathPatterns(TESTING_FEATURE_TAILS),
                     ...ENGINE_PATTERNS,
-                    ...exceptPatterns(['clipboard/plugin']),
+                    ...exceptPatterns(['runtime/clipboard/plugin']),
                     ...exceptPatterns(['bridge/plugin', 'features/registry', 'react/engine', 'react/plugins']),
                     '!prosemirror-state',
                     '!react',
@@ -687,7 +699,7 @@ export default defineConfig({
                 message: CONFORMANCE_MESSAGE,
             },
         ]),
-        layerOverride('src/runtime/**/*.{ts,tsx}', [runtimeRestriction]),
+        layerOverride('src/runtime/**/*.{ts,tsx}', [runtimeRestriction], ['src/runtime/clipboard/**']),
         {
             files: ['src/runtime/history/**/*.{ts,tsx}'],
             excludeFiles: ['**/__tests__/**'],
@@ -703,7 +715,13 @@ export default defineConfig({
         } satisfies LayerOverride,
         layerOverride('src/bridge/**/*.{ts,tsx}', [
             {
-                group: [...aliasPatterns(bridgeFolders), ...relativePatterns(bridgeFolders), ...bridgeEnginePatterns],
+                group: [
+                    ...aliasPatterns(bridgeFolders),
+                    ...relativePatterns(bridgeFolders),
+                    ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
+                    ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
+                    ...bridgeEnginePatterns,
+                ],
                 message: BRIDGE_MESSAGE,
             },
         ]),
@@ -724,6 +742,8 @@ export default defineConfig({
                 group: [
                     ...aliasPatterns(persistenceFolders),
                     ...relativePatterns(persistenceFolders),
+                    ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
+                    ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
                     ...ENGINE_PATTERNS,
                 ],
                 message: PERSISTENCE_MESSAGE,
@@ -757,6 +777,8 @@ export default defineConfig({
                 group: [
                     ...aliasPatterns(['react', 'persistence', 'clipboard']),
                     ...relativePatterns(['react', 'persistence', 'clipboard']),
+                    ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
+                    ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
                     ...PROSEMIRROR_PATTERNS,
                 ],
                 message: UI_MESSAGE,

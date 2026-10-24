@@ -8,7 +8,6 @@ import { act, render } from '@testing-library/react';
 import { type EditorState, type Selection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SLICE_TYPE } from '#/clipboard/slice';
 import { createCodecs } from '#/codecs';
 import { bold, code, core, featuresById, heading, italic, links, mediaImage, mentions, quote } from '#/features';
 import { doc, envelope, paragraph, text } from '#/features/__tests__/fixtures/documents';
@@ -31,6 +30,7 @@ import {
 import { defineEditor, defineReactPresentation } from '#/react/define';
 import { RichTextEditor } from '#/react/rich-text-editor';
 import { type EditorHandle, type OperationMetric } from '#/react/types';
+import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { canRedo, undoDepth } from '#/runtime/history';
 import { runtimeOf } from '#/runtime/runtime';
 import { type AuthoringPolicy } from '#/runtime/types';

@@ -7,7 +7,6 @@ import { fileURLToPath } from 'node:url';
 import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SLICE_TYPE } from '#/clipboard/slice';
 import { createCodecs } from '#/codecs';
 import { featuresById } from '#/features';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
@@ -19,6 +18,7 @@ import {
     type RichTextDocument,
     type RichTextSlice,
 } from '#/model';
+import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste, typeText } from '#/testing';
 

@@ -68,14 +68,14 @@ import { compiledModel } from '#/model/compile';
 import { defineEditor, defineReactPresentation } from '#/react/define';
 import { RichTextEditor } from '#/react/rich-text-editor';
 import { type EditorHandle } from '#/react/types';
+import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
+import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { type AuthoringPolicy, type DocumentChange } from '#/runtime/types';
 import { paste, pressKey, setSelection } from '#/testing';
 
 import { NO_COLORS } from '../import/colors';
 import { importHtml } from '../import/html';
-import { loadMarkdownReader } from '../markdown';
-import { SLICE_TYPE } from '../slice';
 
 import { inputOf, transfer } from './fixtures/transfer';
 

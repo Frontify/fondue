@@ -99,7 +99,7 @@ const CASES: readonly Case[] = [
     banned(
         'clipboard/import: the clipboard plugin',
         'src/clipboard/import/plugin.ts',
-        "import { plugin } from '../plugin';",
+        "import { plugin } from '#/runtime/clipboard/plugin';",
     ),
     banned(
         'clipboard/import: the engine view',
@@ -121,12 +121,35 @@ const CASES: readonly Case[] = [
     ),
 
     // clipboard engine files
-    banned('clipboard: react by alias', 'src/clipboard/react.ts', "import { Editor } from '#/react/editor';"),
-    banned('clipboard: ui by alias', 'src/clipboard/ui.ts', "import { Toolbar } from '#/ui/toolbar';"),
-    banned('clipboard: ui by relative path', 'src/clipboard/relative.ts', "import { Toolbar } from '../ui/toolbar';"),
-    banned('clipboard: react', 'src/clipboard/package.ts', "import { memo } from 'react';"),
-    allowed('clipboard: runtime/history', 'src/clipboard/history.ts', "import { run } from '#/runtime/history';"),
-    allowed('clipboard: model', 'src/clipboard/model.ts', "import { node } from '#/model';"),
+    banned(
+        'runtime/clipboard: react by alias',
+        'src/runtime/clipboard/react.ts',
+        "import { Editor } from '#/react/editor';",
+    ),
+    banned('runtime/clipboard: ui by alias', 'src/runtime/clipboard/ui.ts', "import { Toolbar } from '#/ui/toolbar';"),
+    banned(
+        'runtime/clipboard: ui by relative path',
+        'src/runtime/clipboard/relative.ts',
+        "import { Toolbar } from '../../ui/toolbar';",
+    ),
+    banned('runtime/clipboard: react', 'src/runtime/clipboard/package.ts', "import { memo } from 'react';"),
+    allowed(
+        'runtime/clipboard: runtime/history',
+        'src/runtime/clipboard/history.ts',
+        "import { run } from '#/runtime/history';",
+    ),
+    allowed('runtime/clipboard: model', 'src/runtime/clipboard/model.ts', "import { node } from '#/model';"),
+    allowed('runtime/clipboard: codecs', 'src/runtime/clipboard/codecs.ts', "import { planOf } from '#/codecs/plan';"),
+    allowed(
+        'runtime/clipboard: clipboard/import',
+        'src/runtime/clipboard/import.ts',
+        "import { parse } from '#/clipboard/import';",
+    ),
+    banned(
+        'runtime/clipboard: persistence',
+        'src/runtime/clipboard/persistence.ts',
+        "import { save } from '#/persistence/save';",
+    ),
     banned(
         'clipboard/import: runtime/history, which its parent folder may import',
         'src/clipboard/import/history.ts',
@@ -320,11 +343,19 @@ const CASES: readonly Case[] = [
     // testing
     banned('testing: the react layer', 'src/testing/react.ts', "import { Editor } from '#/react/editor';"),
     banned('testing: a feature view', 'src/testing/view.ts', "import { view } from '#/features/bold/view';"),
-    banned('testing: another clipboard module', 'src/testing/clipboard.ts', "import { copy } from '#/clipboard/copy';"),
+    banned(
+        'testing: another clipboard module',
+        'src/testing/clipboard.ts',
+        "import { copy } from '#/runtime/clipboard/copy';",
+    ),
     banned('testing: react', 'src/testing/engine-react.ts', "import { memo } from 'react';"),
     banned('testing: the engine', 'src/testing/engine.ts', "import { EditorState } from 'prosemirror-state';"),
     allowed('testing: runtime', 'src/testing/runtime.ts', "import { run } from '#/runtime/run';"),
-    allowed('testing: the clipboard plugin', 'src/testing/plugin.ts', "import { plugin } from '#/clipboard/plugin';"),
+    allowed(
+        'testing: the clipboard plugin',
+        'src/testing/plugin.ts',
+        "import { plugin } from '#/runtime/clipboard/plugin';",
+    ),
     allowed(
         'testing: feature conformance',
         'src/testing/conformance.ts',
@@ -400,6 +431,11 @@ const CASES: readonly Case[] = [
         "import { EditorState } from 'prosemirror-state';",
     ),
     allowed('bridge: runtime', 'src/bridge/runtime.ts', "import { run } from '#/runtime/run';"),
+    banned(
+        'bridge: the clipboard plugin',
+        'src/bridge/clipboard.ts',
+        "import { plugin } from '#/runtime/clipboard/plugin';",
+    ),
     allowed('bridge: persistence', 'src/bridge/persistence.ts', "import { save } from '#/persistence/save';"),
     allowed('bridge: prosemirror-view', 'src/bridge/view.ts', "import { EditorView } from 'prosemirror-view';"),
     allowed('bridge: prosemirror-model', 'src/bridge/model.ts', "import { Schema } from 'prosemirror-model';"),
@@ -415,6 +451,11 @@ const CASES: readonly Case[] = [
     // persistence
     banned('persistence: the bridge layer', 'src/persistence/bridge.ts', "import { bridge } from '#/bridge/bridge';"),
     banned('persistence: react', 'src/persistence/react.ts', "import { memo } from 'react';"),
+    banned(
+        'persistence: the clipboard plugin',
+        'src/persistence/clipboard.ts',
+        "import { plugin } from '#/runtime/clipboard/plugin';",
+    ),
     banned('persistence: the engine', 'src/persistence/engine.ts', "import { EditorView } from 'prosemirror-view';"),
     allowed('persistence: runtime', 'src/persistence/runtime.ts', "import { run } from '#/runtime/run';"),
     allowed('persistence: model', 'src/persistence/model.ts', "import { node } from '#/model';"),
@@ -469,7 +510,7 @@ const CASES: readonly Case[] = [
     banned('ui: the engine', 'src/ui/engine.ts', "import { EditorState } from 'prosemirror-state';"),
     banned('ui: the react layer', 'src/ui/react-layer.ts', "import { Editor } from '#/react/editor';"),
     banned('ui: persistence', 'src/ui/persistence.ts', "import { save } from '#/persistence/save';"),
-    banned('ui: the clipboard plugin', 'src/ui/clipboard.ts', "import { plugin } from '#/clipboard/plugin';"),
+    banned('ui: the clipboard plugin', 'src/ui/clipboard.ts', "import { plugin } from '#/runtime/clipboard/plugin';"),
     allowed('ui: the bridge', 'src/ui/bridge.ts', "import { definePlugin } from '#/bridge/plugin';"),
 
     // docs

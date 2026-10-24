@@ -17,7 +17,7 @@ export const DATA_TABLES: Record<string, string> = {
 
 export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/clipboard/import/html.ts': 434,
-    'src/clipboard/plugin.ts': 491,
+    'src/runtime/clipboard/plugin.ts': 491,
     'src/codecs/from-markdown.ts': 523,
     'src/codecs/to-html.ts': 438,
     'src/codecs/to-markdown.ts': 702,
@@ -80,22 +80,14 @@ export const SPECS_OVER_1000_LINES: Record<string, number> = {
     'src/runtime/__tests__/runtime.spec.ts': 4501,
 };
 
-export const KNOWN_CYCLES: string[] = ['(root) | react', 'clipboard | runtime', 'features | reader'];
+export const KNOWN_CYCLES: string[] = ['(root) | react', 'features | reader'];
 
-export const PROSEMIRROR_NODES: string[] = [
-    'bridge',
-    'clipboard',
-    'clipboard/import',
-    'definition',
-    'testing',
-    'html',
-    'runtime',
-];
+export const PROSEMIRROR_NODES: string[] = ['bridge', 'clipboard/import', 'definition', 'testing', 'html', 'runtime'];
 
 export const SPEC_REFERENCES: Record<string, number> = {
     'CONTRIBUTING.md': 6,
     'oxlint.config.ts': 2,
-    'src/clipboard/paste.ts': 1,
+    'src/runtime/clipboard/paste.ts': 1,
     'src/features/stages.ts': 1,
     'src/react/profiles/comment.ts': 2,
     'src/react/profiles/document.ts': 1,

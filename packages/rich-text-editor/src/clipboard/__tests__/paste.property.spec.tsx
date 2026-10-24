@@ -12,9 +12,8 @@ import { type ContentModel, decodeDocument, type RichTextSlice } from '#/model';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { loadProfile } from '#/react/profiles';
 import { type RichTextProfile } from '#/react/types';
+import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { paste } from '#/testing';
-
-import { SLICE_TYPE } from '../slice';
 
 const settings = fcSettings(60);
 

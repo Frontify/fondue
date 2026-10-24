@@ -34,7 +34,6 @@ import { EditorHostsContext, type PluginPresentation } from '#/bridge/plugin';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
 import { SessionContext, useSessionValue } from '#/bridge/session';
-import { connectClipboard } from '#/clipboard/plugin';
 import { enUS } from '#/locales/en-US';
 import {
     type CapabilityRef,
@@ -52,6 +51,7 @@ import { createSaveCoordinator } from '#/persistence/coordinator';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
+import { connectClipboard } from '#/runtime/clipboard/plugin';
 import { type ColumnState } from '#/runtime/columns';
 import {
     createEditorRuntime,

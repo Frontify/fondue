@@ -3,13 +3,13 @@
 import { act, fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SLICE_TYPE } from '#/clipboard/slice';
 import { core, mediaImage, mediaUpload, mentions } from '#/features';
 import { deferredPicker, figure, PALETTE } from '#/features/media-image/__tests__/fixtures/mount';
 import { ADA, advance, deferredService, page } from '#/features/mentions/__tests__/fixtures/mount';
 import { defineEditorPlugin } from '#/index';
 import { defineFeature, type RichTextSlice } from '#/model';
 import { compiledModel } from '#/model/compile';
+import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { paste, pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 import { probeUploads } from '#/testing/probe-uploads';
 

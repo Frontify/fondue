@@ -4,10 +4,10 @@ import { act } from '@testing-library/react';
 import { AllSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import { SLICE_TYPE } from '#/clipboard/slice';
 import { core, mentions } from '#/features';
 import { defineReactPresentation, type EditorServices } from '#/index';
 import { defaultLimits, type RichTextSlice } from '#/model';
+import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste, pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 

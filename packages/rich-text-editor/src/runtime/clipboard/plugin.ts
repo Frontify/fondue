@@ -6,6 +6,7 @@ import { NodeSelection, Plugin, PluginKey, type Selection, type Transaction } fr
 import { dropPoint } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
 
+import { exceededStructure } from '#/clipboard/import/limits';
 import { planOf } from '#/codecs/plan';
 import { writeHtml } from '#/codecs/to-html';
 import { writeText } from '#/codecs/to-text';
@@ -23,7 +24,6 @@ import { type ResolveReference } from '#/model/references';
 import { closeGroup } from '#/runtime/history';
 import { type EditorRuntime, runtimeOfView } from '#/runtime/runtime';
 
-import { exceededStructure } from './import/limits';
 import { loadMarkdownReaderOnIdle } from './markdown';
 import {
     type FollowUp,

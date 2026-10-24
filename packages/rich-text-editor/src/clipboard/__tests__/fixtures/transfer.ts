@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type RichTextSlice } from '#/model';
+import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { type paste } from '#/testing';
-
-import { SLICE_TYPE } from '../../slice';
 
 export const transfer = (data: Readonly<Record<string, string>>, files: readonly File[] = []) => {
     const dataTransfer = new DataTransfer();
