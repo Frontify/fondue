@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { readdirSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
@@ -35,7 +35,7 @@ import { vocabularyLists } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { mediaImage } from '#/features/media-image/feature';
-import { featureRecords, registry } from '#/features/registry';
+import { registry } from '#/features/registry';
 import { fromHTML } from '#/html';
 import { defineEditor, defineEditorPlugin, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature, type Diagnostic, type Feature, type RichTextDocument } from '#/model';
@@ -618,10 +618,11 @@ const packageJson = (path: string) =>
     JSON.parse(readFileSync(join(PACKAGE_FOLDER, path), 'utf8')) as {
         readonly license?: string;
         readonly dependencies?: Readonly<Record<string, string>>;
+        readonly peerDependencies?: Readonly<Record<string, string>>;
     };
 
-/** The packages of the package's dependencies that a feature folder's shipped files import. */
-const dependenciesOf = (folder: string, installed: ReadonlySet<string>): string[] => {
+/** The packages, other than the host's peer packages and Node built-ins, that a feature folder's shipped files import. */
+const dependenciesOf = (folder: string, peers: ReadonlySet<string>): string[] => {
     const root = join(FEATURES_FOLDER, folder);
     const files = readdirSync(root, { recursive: true, encoding: 'utf8' }).filter(
         (file) =>
@@ -639,7 +640,7 @@ const dependenciesOf = (folder: string, installed: ReadonlySet<string>): string[
             if (name.startsWith('@')) {
                 name = `${name}/${parts[1] ?? ''}`;
             }
-            if (installed.has(name)) {
+            if (!peers.has(name) && !name.startsWith('node:')) {
                 found.add(name);
             }
         }
@@ -647,21 +648,86 @@ const dependenciesOf = (folder: string, installed: ReadonlySet<string>): string[
     return [...found].sort();
 };
 
-describe('the core registry', () => {
-    it('records an owner and each dependency with its license for every shipped feature', () => {
-        const installed = new Set(Object.keys(packageJson('package.json').dependencies ?? {}));
-        const records = featureRecords as Readonly<
-            Record<string, { readonly owner: string; readonly dependencies: Readonly<Record<string, string>> }>
-        >;
+// Every installed dependency is MIT today; widen this only after a license review.
+const ALLOWED_LICENSES = ['MIT'];
 
-        expect(Object.keys(records ?? {}).sort()).toEqual(Object.keys(registry).sort());
-        for (const [id, { owner, dependencies }] of Object.entries(records)) {
-            expect(owner.length > 0).toBe(true);
-            expect(Object.keys(dependencies).sort()).toEqual(dependenciesOf(id.replace('.', '-'), installed));
-            for (const [name, license] of Object.entries(dependencies)) {
-                expect(packageJson(`node_modules/${name}/package.json`).license).toBe(license);
-            }
+const patternExpression = (rule: string): RegExp => {
+    const anchored = rule.slice(0, -1).includes('/');
+    const body = rule.replace(/^\//, '').replace(/\/$/, '');
+    const source = body.replaceAll(/\*\*\/|\/\*\*$|\*\*|\*|\?|[.+^${}()|[\]\\]/g, (token) => {
+        if (token === '**/') {
+            return '(?:.*/)?';
         }
+        if (token === '/**') {
+            return '/.+';
+        }
+        if (token === '**') {
+            return '.*';
+        }
+        if (token === '*') {
+            return '[^/]*';
+        }
+        if (token === '?') {
+            return '[^/]';
+        }
+        return `\\${token}`;
+    });
+    return new RegExp(anchored ? `^${source}$` : `(?:^|/)${source}$`);
+};
+
+/** The owners of a directory under gitignore-style CODEOWNERS matching: the last matching rule wins. */
+const ownersOf = (codeowners: string, directory: string): string[] => {
+    const segments = directory.split('/');
+    const folders = segments.map((_, index) => segments.slice(0, index + 1).join('/'));
+    let owners: string[] = [];
+    for (const line of codeowners.split('\n')) {
+        const [rule, ...names] = line.replace(/#.*$/, '').trim().split(/\s+/);
+        if (rule !== undefined && rule !== '' && folders.some((folder) => patternExpression(rule).test(folder))) {
+            owners = names;
+        }
+    }
+    return owners;
+};
+
+describe('the CODEOWNERS matching', () => {
+    const rules = ['* @all', '/packages/a/ @a', 'docs/ @docs', '/packages/**/src/ @src', '/packages/b/* @b', ''].join(
+        '\n',
+    );
+
+    it('lets the last matching rule win, anchors a leading slash and matches a directory rule at any depth', () => {
+        expect(ownersOf(rules, 'packages/a/src/x')).toEqual(['@src']);
+        expect(ownersOf(rules, 'packages/a/lib')).toEqual(['@a']);
+        expect(ownersOf(rules, 'packages/b/lib')).toEqual(['@b']);
+        expect(ownersOf(rules, 'other/docs/x')).toEqual(['@docs']);
+        expect(ownersOf(rules, 'other/x')).toEqual(['@all']);
+        expect(ownersOf('/packages/a/ @a', 'other/packages/a/x')).toEqual([]);
+    });
+});
+
+describe('every feature folder', () => {
+    const manifest = packageJson('package.json');
+    const peers = new Set(Object.keys(manifest.peerDependencies ?? {}));
+    const codeowners = readFileSync(join(PACKAGE_FOLDER, '..', '..', '.github', 'CODEOWNERS'), 'utf8');
+    const featuresPath = relative(join(PACKAGE_FOLDER, '..', '..'), FEATURES_FOLDER)
+        .split(sep)
+        .join('/');
+    const folders = readdirSync(FEATURES_FOLDER, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory() && existsSync(join(FEATURES_FOLDER, entry.name, 'feature.ts')))
+        .map((entry) => entry.name);
+
+    it('is registered as exactly one feature', () => {
+        expect(folders).toHaveLength(Object.keys(registry).length);
+    });
+
+    it.each(folders)('%s lists each imported package in dependencies with an allowed license', (folder) => {
+        for (const name of dependenciesOf(folder, peers)) {
+            expect(Object.keys(manifest.dependencies ?? {})).toContain(name);
+            expect(ALLOWED_LICENSES).toContain(packageJson(`node_modules/${name}/package.json`).license);
+        }
+    });
+
+    it.each(folders)('%s has a CODEOWNERS owner', (folder) => {
+        expect(ownersOf(codeowners, `${featuresPath}/${folder}`).length).toBeGreaterThan(0);
     });
 });
 
