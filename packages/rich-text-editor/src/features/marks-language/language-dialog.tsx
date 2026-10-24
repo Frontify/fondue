@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Dialog, Label, TextInput } from '@frontify/fondue-components';
+import { Button, Label, TextInput } from '@frontify/fondue-components';
 import { type FormEvent, useCallback, useEffect, useId, useRef, useState } from 'react';
 
-import { type EditorApi, type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/plugin';
+import { EditorDialog, useEditorDialog } from '#/bridge/define';
+import { type EditorApi, type OverlayProps, useEditorApi } from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
 
 import styles from './styles/language.module.scss';
@@ -92,7 +93,7 @@ const currentLanguage = (api: EditorApi): { readonly lang: string; readonly dir:
  */
 export const LanguageDialog = ({ opener, close: onClose }: OverlayProps) => {
     const api = useEditorApi();
-    const [open, setOpen] = useState(true);
+    const dialog = useEditorDialog(opener, onClose);
     const [current] = useState(() => {
         if (api === undefined) {
             return { lang: '', dir: '' };
@@ -117,19 +118,6 @@ export const LanguageDialog = ({ opener, close: onClose }: OverlayProps) => {
     const [rejections, setRejections] = useState(0);
     const fieldRef = useRef<HTMLInputElement>(null);
     const groupRef = useRef<HTMLFieldSetElement>(null);
-    const close = (next: boolean) => {
-        if (!next) {
-            setOpen(false);
-            onClose();
-        }
-    };
-    const overlay = useEditorOverlay(open, close);
-    const dismiss = (next: boolean) => {
-        if (!next) {
-            overlay.returnFocusTo(opener);
-        }
-        overlay.onOpenChange(next);
-    };
     // Focus inside the content before Radix autofocuses it keeps Fondue from moving it to the first radio.
     const focusedRef = useRef(false);
     const focusOnce = useCallback((element: HTMLInputElement | null) => {
@@ -142,7 +130,6 @@ export const LanguageDialog = ({ opener, close: onClose }: OverlayProps) => {
     const errorId = useId();
     const legendId = useId();
     const directionId = useId();
-    const formId = useId();
     let offered = languages;
     if (languages.length > 0 && current.lang !== '' && !languages.includes(current.lang)) {
         offered = [current.lang, ...languages];
@@ -170,13 +157,11 @@ export const LanguageDialog = ({ opener, close: onClose }: OverlayProps) => {
             setRejections((count) => count + 1);
             return;
         }
-        overlay.returnFocusTo(null);
-        close(false);
+        dialog.finish('surface');
     };
     const remove = () => {
         api?.commands.execute(SET_LANGUAGE, null);
-        overlay.returnFocusTo(null);
-        close(false);
+        dialog.finish('surface');
     };
     let status: 'error' | 'neutral' = 'neutral';
     if (invalid) {
@@ -201,91 +186,75 @@ export const LanguageDialog = ({ opener, close: onClose }: OverlayProps) => {
         target?.focus();
     }, [rejections]);
     return (
-        <Dialog.Root open={open} onOpenChange={dismiss} modal>
-            <Dialog.Content ref={overlay.contentRef} container={overlay.container} maxWidth="400px">
-                <Dialog.Header>
-                    <Dialog.Title>{strings.title}</Dialog.Title>
-                </Dialog.Header>
-                <Dialog.Body>
-                    <form id={formId} className={styles.form} onSubmit={apply} noValidate>
-                        {offered.length === 0 && (
-                            <>
-                                <Label htmlFor={fieldId}>{strings.tag}</Label>
-                                <TextInput
-                                    ref={fieldRef}
-                                    id={fieldId}
-                                    value={tag}
-                                    status={status}
-                                    aria-errormessage={errorId}
-                                    {...describedBy}
-                                    onChange={(event) => {
-                                        setTag(event.target.value);
+        <EditorDialog
+            dialog={dialog}
+            title={strings.title}
+            cancel={strings.cancel}
+            submit={{ label: strings.apply, onSubmit: apply, formClassName: styles.form }}
+            actions={
+                <Button emphasis="default" onPress={remove}>
+                    {strings.remove}
+                </Button>
+            }
+        >
+            {offered.length === 0 && (
+                <>
+                    <Label htmlFor={fieldId}>{strings.tag}</Label>
+                    <TextInput
+                        ref={fieldRef}
+                        id={fieldId}
+                        value={tag}
+                        status={status}
+                        aria-errormessage={errorId}
+                        {...describedBy}
+                        onChange={(event) => {
+                            setTag(event.target.value);
+                            setInvalid(false);
+                        }}
+                    />
+                    {invalid && <p id={errorId}>{strings.invalid}</p>}
+                </>
+            )}
+            {offered.length > 0 && (
+                <fieldset
+                    ref={groupRef}
+                    role="radiogroup"
+                    className={styles.languages}
+                    aria-labelledby={legendId}
+                    aria-invalid={invalid || undefined}
+                    aria-errormessage={errorMessage}
+                >
+                    <legend id={legendId}>{strings.tag}</legend>
+                    <div className={styles.options}>
+                        {offered.map((option) => (
+                            <label key={option} className={styles.option}>
+                                <input
+                                    ref={option === current.lang ? focusOnce : undefined}
+                                    type="radio"
+                                    name="language"
+                                    value={option}
+                                    checked={tag === option}
+                                    aria-describedby={option === invalidOption ? errorId : undefined}
+                                    onChange={() => {
+                                        setTag(option);
                                         setInvalid(false);
                                     }}
                                 />
-                                {invalid && <p id={errorId}>{strings.invalid}</p>}
-                            </>
-                        )}
-                        {offered.length > 0 && (
-                            <fieldset
-                                ref={groupRef}
-                                role="radiogroup"
-                                className={styles.languages}
-                                aria-labelledby={legendId}
-                                aria-invalid={invalid || undefined}
-                                aria-errormessage={errorMessage}
-                            >
-                                <legend id={legendId}>{strings.tag}</legend>
-                                <div className={styles.options}>
-                                    {offered.map((option) => (
-                                        <label key={option} className={styles.option}>
-                                            <input
-                                                ref={option === current.lang ? focusOnce : undefined}
-                                                type="radio"
-                                                name="language"
-                                                value={option}
-                                                checked={tag === option}
-                                                aria-describedby={option === invalidOption ? errorId : undefined}
-                                                onChange={() => {
-                                                    setTag(option);
-                                                    setInvalid(false);
-                                                }}
-                                            />
-                                            {labelOf(option, locale)}
-                                        </label>
-                                    ))}
-                                </div>
-                                {invalid && <p id={errorId}>{strings.invalid}</p>}
-                            </fieldset>
-                        )}
-                        <Label htmlFor={directionId}>{strings.direction}</Label>
-                        <select id={directionId} value={dir} onChange={(event) => setDir(event.target.value)}>
-                            {directions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {directionLabel(option.value)}
-                                </option>
-                            ))}
-                        </select>
-                    </form>
-                </Dialog.Body>
-                <Dialog.Footer>
-                    <Button
-                        emphasis="default"
-                        onPress={() => {
-                            overlay.returnFocusTo(opener);
-                            close(false);
-                        }}
-                    >
-                        {strings.cancel}
-                    </Button>
-                    <Button emphasis="default" onPress={remove}>
-                        {strings.remove}
-                    </Button>
-                    <Button type="submit" form={formId} emphasis="strong">
-                        {strings.apply}
-                    </Button>
-                </Dialog.Footer>
-            </Dialog.Content>
-        </Dialog.Root>
+                                {labelOf(option, locale)}
+                            </label>
+                        ))}
+                    </div>
+                    {invalid && <p id={errorId}>{strings.invalid}</p>}
+                </fieldset>
+            )}
+            <Label htmlFor={directionId}>{strings.direction}</Label>
+            <select id={directionId} value={dir} onChange={(event) => setDir(event.target.value)}>
+                {directions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                        {directionLabel(option.value)}
+                    </option>
+                ))}
+            </select>
+        </EditorDialog>
     );
 };

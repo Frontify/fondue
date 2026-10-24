@@ -302,7 +302,7 @@ test('names the alternative text and width dialogs by their headings, with no de
     }
 });
 
-test('says a refused width once in the dialog polite region on Enter in the focused field, and not when Apply moves focus to it', async ({
+test('says a refused width once in the editor live region on Enter in the focused field, and not when Apply moves focus to it', async ({
     mount,
     page,
 }) => {
@@ -315,10 +315,13 @@ test('says a refused width once in the dialog polite region on Enter in the focu
     await dialog.getByRole('button', { name: 'Apply' }).focus();
     await page.keyboard.press('Enter');
     await expect(field).toBeFocused();
-    await expect(dialog.getByRole('status')).toHaveText('');
+    const announcer = page.getByTestId('fondue-rich-text-editor-announcer');
+    // A modal dialog hides its siblings from a screen reader, but not a live region.
+    await expect(announcer).not.toHaveAttribute('aria-hidden', 'true');
+    await expect(announcer).toHaveText('');
 
     await page.keyboard.press('Enter');
-    await expect(dialog.getByRole('status')).toHaveText('Enter a whole number from 10 to 100.');
+    await expect(announcer).toHaveText('Enter a whole number from 10 to 100.');
     await expect(field).toBeFocused();
 });
 

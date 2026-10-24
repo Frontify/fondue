@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Dialog, Label, TextInput } from '@frontify/fondue-components';
-import { type FormEvent, useEffect, useId, useRef, useState } from 'react';
+import { Label, TextInput } from '@frontify/fondue-components';
+import { type FormEvent, useId, useRef, useState } from 'react';
 
-import { createAnnouncer, type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/plugin';
+import { EditorDialog, useEditorDialog } from '#/bridge/define';
+import { type OverlayProps, useEditorApi } from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
 
 import styles from './styles/media.module.scss';
@@ -50,29 +51,12 @@ export const WidthDialog = ({
     readonly strings: WidthStrings;
 }) => {
     const api = useEditorApi();
-    const [open, setOpen] = useState(true);
+    const dialog = useEditorDialog(opener, onClose);
     const [value, setValue] = useState(width === null ? '' : String(width));
     const [invalid, setInvalid] = useState(false);
     const fieldRef = useRef<HTMLInputElement>(null);
-    // The dialog's own polite region, since a modal dialog hides the editor's from a screen reader.
-    const [announcer] = useState(createAnnouncer);
-    useEffect(() => announcer.dispose, [announcer]);
-    const close = (next: boolean) => {
-        if (!next) {
-            setOpen(false);
-            onClose();
-        }
-    };
-    const overlay = useEditorOverlay(open, close);
-    const dismiss = (next: boolean) => {
-        if (!next) {
-            overlay.returnFocusTo(opener);
-        }
-        overlay.onOpenChange(next);
-    };
     const fieldId = useId();
     const errorId = useId();
-    const formId = useId();
     const apply = (event: FormEvent) => {
         event.preventDefault();
         const displayWidth = Number(value);
@@ -86,7 +70,7 @@ export const WidthDialog = ({
             const field = fieldRef.current;
             // A field that already has focus hears no focus event, so it would not read its new description.
             if (field !== null && field.ownerDocument.activeElement === field) {
-                announcer.announce(strings.range);
+                dialog.announce(strings.range);
             } else {
                 field?.focus();
             }
@@ -94,58 +78,38 @@ export const WidthDialog = ({
         }
         api?.select({ nodeId, at: 'node' });
         api?.commands.execute(SET_SIZE, { displayWidth });
-        overlay.returnFocusTo(opener);
-        close(false);
+        dialog.finish('opener');
     };
     let describedBy: { readonly 'aria-describedby'?: string } = {};
     if (invalid) {
         describedBy = { 'aria-describedby': errorId };
     }
     return (
-        <Dialog.Root open={open} onOpenChange={dismiss} modal>
-            <Dialog.Content ref={overlay.contentRef} container={overlay.container} maxWidth="400px">
-                <Dialog.Header>
-                    <Dialog.Title>{strings.title}</Dialog.Title>
-                </Dialog.Header>
-                <Dialog.Body>
-                    <form id={formId} onSubmit={apply} noValidate>
-                        <Label htmlFor={fieldId}>{strings.field}</Label>
-                        <TextInput
-                            ref={fieldRef}
-                            id={fieldId}
-                            type="number"
-                            value={value}
-                            status={invalid ? 'error' : 'neutral'}
-                            aria-errormessage={errorId}
-                            {...describedBy}
-                            onChange={(event) => {
-                                setValue(event.target.value);
-                                setInvalid(false);
-                            }}
-                        />
-                        {invalid && (
-                            <p id={errorId} className={styles.error}>
-                                {strings.range}
-                            </p>
-                        )}
-                        <div ref={announcer.setRegion} role="status" className={styles.announcer} />
-                    </form>
-                </Dialog.Body>
-                <Dialog.Footer>
-                    <Button
-                        emphasis="default"
-                        onPress={() => {
-                            overlay.returnFocusTo(opener);
-                            close(false);
-                        }}
-                    >
-                        {strings.cancel}
-                    </Button>
-                    <Button type="submit" form={formId} emphasis="strong">
-                        {strings.apply}
-                    </Button>
-                </Dialog.Footer>
-            </Dialog.Content>
-        </Dialog.Root>
+        <EditorDialog
+            dialog={dialog}
+            title={strings.title}
+            cancel={strings.cancel}
+            submit={{ label: strings.apply, onSubmit: apply }}
+        >
+            <Label htmlFor={fieldId}>{strings.field}</Label>
+            <TextInput
+                ref={fieldRef}
+                id={fieldId}
+                type="number"
+                value={value}
+                status={invalid ? 'error' : 'neutral'}
+                aria-errormessage={errorId}
+                {...describedBy}
+                onChange={(event) => {
+                    setValue(event.target.value);
+                    setInvalid(false);
+                }}
+            />
+            {invalid && (
+                <p id={errorId} className={styles.error}>
+                    {strings.range}
+                </p>
+            )}
+        </EditorDialog>
     );
 };

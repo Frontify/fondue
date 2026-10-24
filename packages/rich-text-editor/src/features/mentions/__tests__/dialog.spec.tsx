@@ -100,9 +100,9 @@ describe('mention search dialog', () => {
         expect(mounted.handle.getSnapshot().document).toEqual(before);
     });
 
-    /** Every text the dialog's status region is given once it exists, without the clears before each message. */
+    /** Every text the editor's live region is given once it exists, without the clears before each message. */
     const statusWrites = () => {
-        const region = within(screen.getByRole('dialog')).getByRole('status');
+        const region = screen.getByTestId('fondue-rich-text-editor-announcer');
         const written: string[] = [];
         const append = region.append.bind(region);
         region.append = (...nodes) => {

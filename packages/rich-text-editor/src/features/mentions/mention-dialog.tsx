@@ -1,18 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Dialog, LoadingCircle, TextInput } from '@frontify/fondue-components';
+import { LoadingCircle, TextInput } from '@frontify/fondue-components';
 import { type CompositionEvent, type KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { Listbox, suggestionOptionId } from '#/bridge/define';
+import { EditorDialog, Listbox, suggestionOptionId, useEditorDialog } from '#/bridge/define';
 import {
-    createAnnouncer,
     type EditorApi,
     type OverlayProps,
     passesToBrowser,
     type SelectionHandle,
     useClientLayoutEffect,
     useEditorApi,
-    useEditorOverlay,
 } from '#/bridge/plugin';
 
 import {
@@ -98,35 +96,20 @@ const SearchDialog = ({
     const strings = mentionSearchStrings(api.t);
     const { targets, services } = api;
     const testId = api.testId();
-    const [open, setOpen] = useState(true);
+    const dialog = useEditorDialog(opener, onClose);
+    const { announce } = dialog;
     const [query, setQuery] = useState('');
     const [ask, setAsk] = useState<Ask>({ query: '', page: null, waits: true });
     const [found, setFound] = useState<Found>({ status: 'loading', items: [], answers: 0 });
     const [slow, setSlow] = useState(false);
     const [index, setIndex] = useState(0);
     const targetRef = useRef<SelectionHandle | null>(null);
-    // The dialog's own polite region, since a modal dialog hides the editor's from a screen reader.
-    const [announcer] = useState(createAnnouncer);
-    useEffect(() => announcer.dispose, [announcer]);
     const composedAtRef = useRef(Number.NEGATIVE_INFINITY);
     const itemsRef = useRef(found.items);
     useClientLayoutEffect(() => {
         itemsRef.current = found.items;
     });
     const listId = useId();
-    const close = (next: boolean) => {
-        if (!next) {
-            setOpen(false);
-            onClose();
-        }
-    };
-    const overlay = useEditorOverlay(open, close);
-    const dismiss = (next: boolean) => {
-        if (!next) {
-            overlay.returnFocusTo(opener);
-        }
-        overlay.onOpenChange(next);
-    };
     // The mention goes where the selection was when the dialog opened, mapped through every change since.
     useEffect(() => {
         const captured = targets.capture(undefined, { purpose: 'insert', onIntersectingEdit: 'map' });
@@ -214,8 +197,7 @@ const SearchDialog = ({
         if (api.commands.execute(INSERT_MENTION, item.payload, commandOptions).status === 'rejected') {
             return;
         }
-        overlay.returnFocusTo(null);
-        close(false);
+        dialog.finish('surface');
     };
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (passesToBrowser(event.nativeEvent)) {
@@ -266,20 +248,20 @@ const SearchDialog = ({
                 last.key !== item?.key
             ) {
                 if (spoken !== undefined) {
-                    announcer.announce(spoken);
+                    announce(spoken);
                 }
             }
             return;
         }
         if (last === null || last.answers !== found.answers) {
             const status = statusOf(found, strings);
-            announcer.announce(spoken === undefined ? status : strings.both(status, spoken));
+            announce(spoken === undefined ? status : strings.both(status, spoken));
             return;
         }
         if (spoken !== undefined && last.key !== item?.key) {
-            announcer.announce(spoken);
+            announce(spoken);
         }
-    }, [announcer, found, shownIndex, strings]);
+    }, [announce, found, shownIndex, strings]);
     let controls: string | undefined;
     let activeId: string | undefined;
     const active = options[shownIndex];
@@ -295,76 +277,52 @@ const SearchDialog = ({
         },
     };
     return (
-        <Dialog.Root open={open} onOpenChange={dismiss} modal>
-            <Dialog.Content
-                ref={overlay.contentRef}
-                container={overlay.container}
-                maxWidth="400px"
-                data-test-id={`${testId}-mention-search`}
-            >
-                <Dialog.Header>
-                    <Dialog.Title>{strings.title}</Dialog.Title>
-                </Dialog.Header>
-                <Dialog.Body>
-                    <div className={styles.picker}>
-                        <TextInput
-                            {...combobox}
-                            type="text"
-                            value={query}
-                            placeholder={strings.search}
-                            aria-label={strings.search}
-                            aria-autocomplete="list"
-                            aria-expanded={options.length > 0}
-                            aria-controls={controls}
-                            aria-activedescendant={activeId}
-                            autoComplete="off"
-                            spellCheck={false}
-                            onChange={(event) => {
-                                const next = event.target.value;
-                                setQuery(next);
-                                setFound({ status: 'loading', items: resultsOf(found.items), answers: found.answers });
-                                setAsk({ query: next, page: null, waits: true });
-                                setIndex(0);
-                            }}
-                            onKeyDown={onKeyDown}
-                        />
-                        {found.status === 'loading' && slow && (
-                            <div className={styles.row}>
-                                <LoadingCircle size="xx-small" />
-                                {strings.loading}
-                            </div>
-                        )}
-                        {options.length > 0 && (
-                            <Listbox
-                                id={listId}
-                                label={strings.label}
-                                options={options}
-                                index={shownIndex}
-                                onPick={choose}
-                                onActivate={setIndex}
-                                testId={`${testId}-mention-options`}
-                            />
-                        )}
-                        {found.status === 'ready' && resultsOf(found.items).length === 0 && (
-                            <div className={styles.row}>{strings.noResults}</div>
-                        )}
-                        {found.status === 'failed' && <div className={styles.row}>{strings.failed}</div>}
-                        <div ref={announcer.setRegion} role="status" className={styles.announcer} />
+        <EditorDialog dialog={dialog} title={strings.title} cancel={strings.cancel} testId={`${testId}-mention-search`}>
+            <div className={styles.picker}>
+                <TextInput
+                    {...combobox}
+                    type="text"
+                    value={query}
+                    placeholder={strings.search}
+                    aria-label={strings.search}
+                    aria-autocomplete="list"
+                    aria-expanded={options.length > 0}
+                    aria-controls={controls}
+                    aria-activedescendant={activeId}
+                    autoComplete="off"
+                    spellCheck={false}
+                    onChange={(event) => {
+                        const next = event.target.value;
+                        setQuery(next);
+                        setFound({ status: 'loading', items: resultsOf(found.items), answers: found.answers });
+                        setAsk({ query: next, page: null, waits: true });
+                        setIndex(0);
+                    }}
+                    onKeyDown={onKeyDown}
+                />
+                {found.status === 'loading' && slow && (
+                    <div className={styles.row}>
+                        <LoadingCircle size="xx-small" />
+                        {strings.loading}
                     </div>
-                </Dialog.Body>
-                <Dialog.Footer>
-                    <Button
-                        emphasis="default"
-                        onPress={() => {
-                            overlay.returnFocusTo(opener);
-                            close(false);
-                        }}
-                    >
-                        {strings.cancel}
-                    </Button>
-                </Dialog.Footer>
-            </Dialog.Content>
-        </Dialog.Root>
+                )}
+                {options.length > 0 && (
+                    <Listbox
+                        id={listId}
+                        label={strings.label}
+                        options={options}
+                        index={shownIndex}
+                        onPick={choose}
+                        onActivate={setIndex}
+                        testId={`${testId}-mention-options`}
+                    />
+                )}
+                {found.status === 'ready' && resultsOf(found.items).length === 0 && (
+                    <div className={styles.row}>{strings.noResults}</div>
+                )}
+                {found.status === 'failed' && <div className={styles.row}>{strings.failed}</div>}
+            </div>
+        </EditorDialog>
     );
 };
 

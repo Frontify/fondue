@@ -124,7 +124,7 @@ export interface EditorHosts {
         close(): void;
         isOpen(id: string): boolean;
     };
-    /** Says `message` in the editor's live region, or with `key` once no other message with that key followed it; a modal dialog hides that region, so one there uses `createAnnouncer`. A value between U+2068 and U+2069 is written in a `bdi`. */
+    /** Says `message` in the editor's live region, which stays audible under a modal dialog, or with `key` once no other message with that key followed it. A value between U+2068 and U+2069 is written in a `bdi`. */
     readonly announce: (message: string, key?: string) => void;
     /** Moves focus to the surface at its selection. */
     readonly focus: () => void;

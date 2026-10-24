@@ -47,10 +47,9 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/features/emoji/emoji-picker.tsx#Picker': 155,
     'src/features/links/link-bubble.tsx#LinkBubble': 183,
     'src/features/links/link-popover.tsx#LinkPopover': 402,
-    'src/features/marks-language/language-dialog.tsx#LanguageDialog': 199,
-    'src/features/media-image/alt-text-dialog.tsx#AltTextDialog': 166,
+    'src/features/marks-language/language-dialog.tsx#LanguageDialog': 167,
     'src/features/media-image/view.tsx#ImageChrome': 276,
-    'src/features/mentions/mention-dialog.tsx#SearchDialog': 284,
+    'src/features/mentions/mention-dialog.tsx#SearchDialog': 244,
     'src/model/compile.ts#compileContentModel': 210,
     'src/react/rich-text-editor.tsx#anonymous#11': 184,
     'src/react/rich-text-editor.tsx#SessionComponent': 669,
@@ -79,7 +78,6 @@ export const SPECS_OVER_1000_LINES: Record<string, number> = {
     'src/react/__tests__/toolbar.ct.tsx': 1507,
     'src/runtime/__tests__/runtime.spec.ts': 4501,
 };
-
 
 export const KNOWN_CYCLES: string[] = ['(root) | react'];
 

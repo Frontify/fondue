@@ -25,6 +25,7 @@ export {
     OptionItem,
     OptionsMenu,
 } from './chrome-toolbar';
+export { EditorDialog, type EditorDialogControl, useEditorDialog } from './editor-dialog';
 export { Listbox, type ListboxOption } from './listbox';
 export { NodeViewContent } from './node-view-content';
 export { type EditorOverlay, OverlayBody, useEditorOverlay } from './overlays';

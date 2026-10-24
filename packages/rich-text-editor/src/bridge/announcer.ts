@@ -41,9 +41,8 @@ export interface Announcer {
 }
 
 /**
- * An announcer of its own, for a modal dialog, which hides the editor's live region from a screen reader: render its
- * `setRegion` on a `role="status"` element inside the dialog. Outside a dialog, `api.announce` speaks in the editor's
- * live region, so it needs none.
+ * An announcer of its own, for a surface that renders outside the editor: render its `setRegion` on an `aria-live`
+ * element. Inside the editor, `api.announce` speaks in the editor's live region, so it needs none.
  */
 export const createAnnouncer = (): Announcer => {
     let region: HTMLElement | null = null;

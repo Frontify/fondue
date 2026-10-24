@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Dialog, Label, RadioList, TextInput } from '@frontify/fondue-components';
+import { Button, Label, RadioList, TextInput } from '@frontify/fondue-components';
 import { type FormEvent, useCallback, useId, useRef, useState } from 'react';
 
-import { type EditorApi, type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/plugin';
+import { EditorDialog, useEditorDialog } from '#/bridge/define';
+import { type EditorApi, type OverlayProps, useEditorApi } from '#/bridge/plugin';
 import { type CodecContext, REPLACED_ASSET } from '#/model';
 
 import styles from './styles/media.module.scss';
@@ -99,24 +100,11 @@ export const AltTextDialog = ({
 }) => {
     const api = useEditorApi();
     const [stored] = useState(() => storedOf(api, nodeId));
-    const [open, setOpen] = useState(true);
+    const dialog = useEditorDialog(opener, onClose);
     const [intent, setIntent] = useState<Intent>(stored.intent);
     const [text, setText] = useState(stored.text);
     const [invalid, setInvalid] = useState(false);
     const fieldRef = useRef<HTMLInputElement>(null);
-    const close = (next: boolean) => {
-        if (!next) {
-            setOpen(false);
-            onClose();
-        }
-    };
-    const overlay = useEditorOverlay(open, close);
-    const dismiss = (next: boolean) => {
-        if (!next) {
-            overlay.returnFocusTo(opener);
-        }
-        overlay.onOpenChange(next);
-    };
     // Focus inside the content before Radix autofocuses it keeps Fondue from moving it to the first control.
     const focusedRef = useRef(false);
     const focusChecked = useCallback((group: HTMLDivElement | null) => {
@@ -129,7 +117,6 @@ export const AltTextDialog = ({
     const radioId = useId();
     const fieldId = useId();
     const errorId = useId();
-    const formId = useId();
     const save = (event: FormEvent) => {
         event.preventDefault();
         if (intent === 'meaningful' && text.trim() === '') {
@@ -143,8 +130,7 @@ export const AltTextDialog = ({
         }
         api?.attributes.set('asset_image', { altIntent: intent, altText }, { nodeId });
         api?.nodeState.set(nodeId, REPLACED_ASSET, null);
-        overlay.returnFocusTo(opener);
-        close(false);
+        dialog.finish('opener');
     };
     const options = [
         { value: 'meaningful', label: strings.meaningful, hint: strings.meaningfulHint },
@@ -156,101 +142,83 @@ export const AltTextDialog = ({
     }
     const { suggestion } = stored;
     return (
-        <Dialog.Root open={open} onOpenChange={dismiss} modal>
-            <Dialog.Content ref={overlay.contentRef} container={overlay.container} maxWidth="400px">
-                <Dialog.Header>
-                    <Dialog.Title>{strings.title}</Dialog.Title>
-                </Dialog.Header>
-                <Dialog.Body>
-                    <form id={formId} className={styles.form} onSubmit={save} noValidate>
-                        <div ref={focusChecked} className={styles.choice}>
-                            <span id={legendId}>{strings.choice}</span>
-                            <RadioList.Root
-                                aria-labelledby={legendId}
-                                value={intent}
-                                onValueChange={(next) => {
-                                    if (next === 'meaningful' || next === 'decorative') {
-                                        setIntent(next);
-                                        setInvalid(false);
-                                    }
+        <EditorDialog
+            dialog={dialog}
+            title={strings.title}
+            cancel={strings.cancel}
+            submit={{ label: strings.save, onSubmit: save, formClassName: styles.form }}
+        >
+            <div ref={focusChecked} className={styles.choice}>
+                <span id={legendId}>{strings.choice}</span>
+                <RadioList.Root
+                    aria-labelledby={legendId}
+                    value={intent}
+                    onValueChange={(next) => {
+                        if (next === 'meaningful' || next === 'decorative') {
+                            setIntent(next);
+                            setInvalid(false);
+                        }
+                    }}
+                >
+                    {options.map((option) => (
+                        <div key={option.value} className={styles.option}>
+                            <RadioList.RadioButton
+                                id={`${radioId}-${option.value}`}
+                                value={option.value}
+                                aria-describedby={`${radioId}-${option.value}-hint`}
+                            />
+                            <span>
+                                <label htmlFor={`${radioId}-${option.value}`}>{option.label}</label>
+                                <span id={`${radioId}-${option.value}-hint`} className={styles.hint}>
+                                    {option.hint}
+                                </span>
+                            </span>
+                        </div>
+                    ))}
+                </RadioList.Root>
+            </div>
+            {intent === 'meaningful' && (
+                <>
+                    <Label htmlFor={fieldId} required>
+                        {strings.field}
+                    </Label>
+                    <TextInput
+                        ref={fieldRef}
+                        id={fieldId}
+                        value={text}
+                        required
+                        status={invalid ? 'error' : 'neutral'}
+                        aria-errormessage={errorId}
+                        {...describedBy}
+                        onChange={(event) => {
+                            setText(event.target.value);
+                            setInvalid(false);
+                        }}
+                    />
+                    {invalid && (
+                        <p id={errorId} className={styles.error}>
+                            {strings.required}
+                        </p>
+                    )}
+                    {suggestion !== undefined && suggestion !== text && (
+                        <p className={styles.suggestion}>
+                            <span>
+                                {strings.suggestion} <bdi>{suggestion}</bdi>
+                            </span>
+                            <Button
+                                emphasis="default"
+                                size="small"
+                                onPress={() => {
+                                    setText(suggestion);
+                                    setInvalid(false);
                                 }}
                             >
-                                {options.map((option) => (
-                                    <div key={option.value} className={styles.option}>
-                                        <RadioList.RadioButton
-                                            id={`${radioId}-${option.value}`}
-                                            value={option.value}
-                                            aria-describedby={`${radioId}-${option.value}-hint`}
-                                        />
-                                        <span>
-                                            <label htmlFor={`${radioId}-${option.value}`}>{option.label}</label>
-                                            <span id={`${radioId}-${option.value}-hint`} className={styles.hint}>
-                                                {option.hint}
-                                            </span>
-                                        </span>
-                                    </div>
-                                ))}
-                            </RadioList.Root>
-                        </div>
-                        {intent === 'meaningful' && (
-                            <>
-                                <Label htmlFor={fieldId} required>
-                                    {strings.field}
-                                </Label>
-                                <TextInput
-                                    ref={fieldRef}
-                                    id={fieldId}
-                                    value={text}
-                                    required
-                                    status={invalid ? 'error' : 'neutral'}
-                                    aria-errormessage={errorId}
-                                    {...describedBy}
-                                    onChange={(event) => {
-                                        setText(event.target.value);
-                                        setInvalid(false);
-                                    }}
-                                />
-                                {invalid && (
-                                    <p id={errorId} className={styles.error}>
-                                        {strings.required}
-                                    </p>
-                                )}
-                                {suggestion !== undefined && suggestion !== text && (
-                                    <p className={styles.suggestion}>
-                                        <span>
-                                            {strings.suggestion} <bdi>{suggestion}</bdi>
-                                        </span>
-                                        <Button
-                                            emphasis="default"
-                                            size="small"
-                                            onPress={() => {
-                                                setText(suggestion);
-                                                setInvalid(false);
-                                            }}
-                                        >
-                                            {strings.useSuggestion}
-                                        </Button>
-                                    </p>
-                                )}
-                            </>
-                        )}
-                    </form>
-                </Dialog.Body>
-                <Dialog.Footer>
-                    <Button
-                        emphasis="default"
-                        onPress={() => {
-                            overlay.returnFocusTo(opener);
-                            close(false);
-                        }}
-                    >
-                        {strings.cancel}
-                    </Button>
-                    <Button type="submit" form={formId} emphasis="strong">
-                        {strings.save}
-                    </Button>
-                </Dialog.Footer>
-            </Dialog.Content>
-        </Dialog.Root>
+                                {strings.useSuggestion}
+                            </Button>
+                        </p>
+                    )}
+                </>
+            )}
+        </EditorDialog>
     );
 };

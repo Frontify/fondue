@@ -1,22 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Dialog, Label, TextInput } from '@frontify/fondue-components';
-import { type CSSProperties, type FormEvent, useEffect, useId, useRef, useState } from 'react';
+import { Label, TextInput } from '@frontify/fondue-components';
+import { type FormEvent, useId, useRef, useState } from 'react';
 
-import { createAnnouncer, type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/plugin';
+import { EditorDialog, useEditorDialog } from '#/bridge/define';
+import { type OverlayProps, useEditorApi } from '#/bridge/plugin';
 import { type CodecContext, findInvalidPayload, type PayloadDeclaration } from '#/model';
 
 /** The command the dialog runs, whose payload declaration bounds the number. */
 export const SET_START = 'list.ordered.start.set';
-
-const VISUALLY_HIDDEN: CSSProperties = {
-    position: 'absolute',
-    inlineSize: 1,
-    blockSize: 1,
-    overflow: 'hidden',
-    clipPath: 'inset(50%)',
-    whiteSpace: 'nowrap',
-};
 
 /** The bounds that `payload` declares for `start`. */
 const boundsOf = ({ fields }: PayloadDeclaration) => {
@@ -36,6 +28,7 @@ const boundsOf = ({ fields }: PayloadDeclaration) => {
 export const NumberingDialog = ({
     payload,
     initial,
+    opener,
     close: onClose,
 }: OverlayProps & {
     /** The payload declaration of `SET_START`. */
@@ -48,23 +41,12 @@ export const NumberingDialog = ({
     if (api !== undefined) {
         t = api.t;
     }
-    const [open, setOpen] = useState(true);
+    const dialog = useEditorDialog(opener, onClose);
     const [value, setValue] = useState(String(initial));
     const [invalid, setInvalid] = useState(false);
     const fieldRef = useRef<HTMLInputElement>(null);
-    // The dialog's own polite region, since a modal dialog hides the editor's from a screen reader.
-    const [announcer] = useState(createAnnouncer);
-    useEffect(() => announcer.dispose, [announcer]);
-    const close = (next: boolean) => {
-        if (!next) {
-            setOpen(false);
-            onClose();
-        }
-    };
-    const overlay = useEditorOverlay(open, close);
     const fieldId = useId();
     const errorId = useId();
-    const formId = useId();
     const { min, max } = boundsOf(payload);
     const range = t('RichTextEditor_startNumberingRange', { min, max });
     let status: 'error' | 'neutral' = 'neutral';
@@ -81,50 +63,37 @@ export const NumberingDialog = ({
             const field = fieldRef.current;
             // A field that already has focus hears no focus event, so it would not read its new description.
             if (field !== null && field.ownerDocument.activeElement === field) {
-                announcer.announce(range);
+                dialog.announce(range);
             } else {
                 field?.focus();
             }
             return;
         }
         api?.commands.execute(SET_START, { start });
-        close(false);
+        dialog.finish('opener');
     };
     return (
-        <Dialog.Root open={open} onOpenChange={overlay.onOpenChange} modal>
-            <Dialog.Content ref={overlay.contentRef} container={overlay.container} maxWidth="400px">
-                <Dialog.Header>
-                    <Dialog.Title>{t('RichTextEditor_startNumbering')}</Dialog.Title>
-                </Dialog.Header>
-                <Dialog.Body>
-                    <form id={formId} onSubmit={apply} noValidate>
-                        <Label htmlFor={fieldId}>{t('RichTextEditor_startNumberingField')}</Label>
-                        <TextInput
-                            ref={fieldRef}
-                            id={fieldId}
-                            type="number"
-                            value={value}
-                            status={status}
-                            aria-errormessage={errorId}
-                            {...describedBy}
-                            onChange={(event) => {
-                                setValue(event.target.value);
-                                setInvalid(false);
-                            }}
-                        />
-                        {invalid && <p id={errorId}>{range}</p>}
-                        <div ref={announcer.setRegion} role="status" style={VISUALLY_HIDDEN} />
-                    </form>
-                </Dialog.Body>
-                <Dialog.Footer>
-                    <Button emphasis="default" onPress={() => close(false)}>
-                        {t('RichTextEditor_cancel')}
-                    </Button>
-                    <Button type="submit" form={formId} emphasis="strong">
-                        {t('RichTextEditor_apply')}
-                    </Button>
-                </Dialog.Footer>
-            </Dialog.Content>
-        </Dialog.Root>
+        <EditorDialog
+            dialog={dialog}
+            title={t('RichTextEditor_startNumbering')}
+            cancel={t('RichTextEditor_cancel')}
+            submit={{ label: t('RichTextEditor_apply'), onSubmit: apply }}
+        >
+            <Label htmlFor={fieldId}>{t('RichTextEditor_startNumberingField')}</Label>
+            <TextInput
+                ref={fieldRef}
+                id={fieldId}
+                type="number"
+                value={value}
+                status={status}
+                aria-errormessage={errorId}
+                {...describedBy}
+                onChange={(event) => {
+                    setValue(event.target.value);
+                    setInvalid(false);
+                }}
+            />
+            {invalid && <p id={errorId}>{range}</p>}
+        </EditorDialog>
     );
 };

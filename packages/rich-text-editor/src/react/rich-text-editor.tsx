@@ -5,7 +5,6 @@ import {
     Component,
     type ComponentType,
     createContext,
-    type CSSProperties,
     forwardRef,
     type ForwardedRef,
     type KeyboardEvent,
@@ -62,6 +61,7 @@ import {
     type RuntimeHandle,
 } from '#/runtime/runtime';
 import { type DocumentChange, type SelectionSummary, type SessionToken, type ShippedCommands } from '#/runtime/types';
+import { VISUALLY_HIDDEN } from '#/styles/visually-hidden';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { ContextMenu } from '#/ui/context-menu/context-menu';
 import { pickAsset } from '#/ui/media/asset-picker';
@@ -103,15 +103,6 @@ const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'uploads', 'as
 const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
 // A composition that outlasts this wait is measured again, which waits again while it runs.
 const COMPOSITION_WAIT_MS = 1000;
-// Read by screen readers and never seen.
-const VISUALLY_HIDDEN: CSSProperties = {
-    position: 'absolute',
-    inlineSize: 1,
-    blockSize: 1,
-    overflow: 'hidden',
-    clipPath: 'inset(50%)',
-    whiteSpace: 'nowrap',
-};
 
 /** Why a toolbar item's command cannot run, by its `disabledReason`. */
 const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
