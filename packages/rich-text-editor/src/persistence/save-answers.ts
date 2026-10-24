@@ -26,7 +26,6 @@ import {
     publish,
     replay,
     send,
-    settle,
     stopTimers,
 } from './save-steps';
 import { type SaveResponse } from './types';
@@ -57,7 +56,7 @@ const saved = (d: Draft, current: Flight, acknowledgment: SaveAcknowledgment) =>
     m.committed = pin !== undefined;
     if (pin !== undefined) {
         m.pinned = m.pinned.slice(1);
-        settle(d, pin, { status: 'acknowledged', acknowledgment });
+        answer(d, pin.calls, { status: 'acknowledged', acknowledgment });
     }
     m.problem = null;
     // A newer change keeps the session dirty, and the next write takes this revision as its base.
@@ -92,7 +91,7 @@ const rejected = (d: Draft, current: Flight, response: Extract<SaveResponse, { r
         if (response.code !== 'forbidden') {
             refused = { status: 'failed', code: response.code, outcome: 'rejected' };
         }
-        settle(d, pin, refused);
+        answer(d, pin.calls, refused);
     }
     m.state = 'error';
     m.rejection = response.code;
@@ -143,7 +142,9 @@ export const failed = (
     d.fx.push({ type: 'abort' });
     const pin = checkpointOf(m, current.request);
     if (pin !== undefined) {
-        settle(d, pin, { status: 'failed', code, outcome: 'unknown' });
+        answer(d, pin.calls, { status: 'failed', code, outcome: 'unknown' });
+        // The pin stays for the write, which answers no call twice.
+        m.pinned = [{ ...pin, calls: [] }, ...m.pinned.slice(1)];
     }
     const measure: Effect = { type: 'measure', started: current.started, code };
     if (parkOffline(d)) {
@@ -202,8 +203,7 @@ export const pinned = (d: Draft, { call, stamp, document }: { readonly call: num
 
 export const callTimedOut = (d: Draft, { call }: { readonly call: number }) => {
     const { m } = d;
-    const held = m.pinned.find((candidate) => candidate.calls.includes(call));
-    leave(m, call);
+    const held = leave(m, call);
     // Past the timeout the call resolves, while its pinned checkpoint stays for the write.
     answer(d, [call], { status: 'failed', code: 'timeout', outcome: outcomeOf(m, held?.stamp) });
 };

@@ -12,7 +12,6 @@ import {
     type Draft,
     type Facts,
     type Mutable,
-    type Pin,
     type SaveMachine,
 } from './save-state';
 import { type SaveRequest } from './types';
@@ -99,24 +98,16 @@ export const answer = (d: Draft, calls: readonly number[], result: CommitResult)
     }
 };
 
-export const settle = (d: Draft, pin: Pin, result: CommitResult) => {
-    answer(d, pin.calls, result);
-    d.m.pinned = d.m.pinned.map((held) => {
-        if (held === pin) {
-            return { ...held, calls: [] };
-        }
-        return held;
-    });
-};
-
-/** Takes a call that got its own answer off its pin, so a later call there is not held by it. */
+/** Takes a call off its pin, so a later call there is not held by it; returns that pin. */
 export const leave = (m: Mutable<SaveMachine>, call: number) => {
-    m.pinned = m.pinned.map((held) => {
-        if (held.calls.includes(call)) {
-            return { ...held, calls: held.calls.filter((other) => other !== call) };
+    const held = m.pinned.find((pin) => pin.calls.includes(call));
+    m.pinned = m.pinned.map((pin) => {
+        if (pin === held) {
+            return { ...pin, calls: pin.calls.filter((other) => other !== call) };
         }
-        return held;
+        return pin;
     });
+    return held;
 };
 
 /** The oldest pin when `request` writes it. */
