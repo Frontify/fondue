@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type FeatureContentDeclaration } from './content-rules';
 import { type Diagnostic, type RichTextDocument } from './format';
 import { type HrefResult } from './href';
 
@@ -278,11 +279,7 @@ export type InputRule =
 /** A command ID, or a command with the payload a route passes, such as `{ command: 'heading.set', payload: { level: 1 } }`. */
 export type CommandRef =
     | string
-    | {
-          readonly command: string;
-          readonly payload?: JsonValue;
-          readonly labelKey?: string;
-      };
+    | { readonly command: string; readonly payload?: JsonValue; readonly labelKey?: string };
 /** One textblock as a decoration source reads it. */
 export interface DecoratedBlock {
     readonly nodeId: string | null;
@@ -385,7 +382,7 @@ export interface SharedAttributeDeclaration {
 }
 
 /** The declaration a feature is made from: its id, version, nodes, marks, commands, options and formats. */
-export interface FeatureDeclaration {
+export interface FeatureDeclaration extends FeatureContentDeclaration {
     /** The capability ID: documents record it in `requiredCapabilities`, and a policy, an editor part and the options are keyed by it, such as `marks.bold`. */
     readonly id: string;
     /** The capability version, raised when the stored shape of the feature's content changes, with a migration from the old one. */

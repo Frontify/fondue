@@ -1,10 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineFeature } from '#/model';
+import { type ContentNodeJSON, type ContentRepair, defineFeature, type JsonObject } from '#/model';
 
 const nodeId = { type: 'string', required: true } as const;
 const SIDES = ['left', 'center', 'right'] as const;
 const size = { type: 'integer', min: 1, max: 65_535, nullable: true, default: null } as const;
+const IMAGE_ALT_REPAIR: ContentRepair = { command: 'image.alt.edit', feature: 'media.image' };
+const IMAGE = { node: 'asset_image' } as const;
+const IMAGE_EXTENSION = /\.(?:apng|avif|bmp|gif|heic|heif|ico|jfif|jpe?g|png|svg|tiff?|webp)$/i;
+
+const attrsOf = (node: ContentNodeJSON): JsonObject => node.attrs ?? {};
+const altIntentOf = (node: ContentNodeJSON) => attrsOf(node).altIntent ?? 'missing';
+const folded = (value: string) => value.trim().toLowerCase();
 
 /**
  * Images as a `figure` that holds one `asset_image`, which stores the host's `assetId`, never a URL: every output asks
@@ -51,4 +58,43 @@ export const mediaImage = defineFeature({
         },
     },
     formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
+    contentRules: [
+        {
+            id: 'image.alt-missing',
+            kind: 'automatic',
+            severity: 'error',
+            subject: IMAGE,
+            repair: IMAGE_ALT_REPAIR,
+            check: ({ node }) => {
+                const intent = altIntentOf(node);
+                const { altText } = attrsOf(node);
+                // A meaningful image with blank text renders an empty `alt`, as a decorative one does.
+                const blank = intent === 'meaningful' && (typeof altText !== 'string' || altText.trim() === '');
+                if (intent !== 'missing' && !blank) {
+                    return undefined;
+                }
+                return { payload: null };
+            },
+        },
+        {
+            id: 'image.alt-suspicious',
+            kind: 'automatic',
+            severity: 'warning',
+            subject: IMAGE,
+            repair: IMAGE_ALT_REPAIR,
+            check: ({ node }, { genericWords }) => {
+                const { altText, labelSnapshot } = attrsOf(node);
+                if (altIntentOf(node) !== 'meaningful' || typeof altText !== 'string' || altText.trim() === '') {
+                    return undefined;
+                }
+                const alt = folded(altText);
+                const suspicious =
+                    (typeof labelSnapshot === 'string' && alt === folded(labelSnapshot)) ||
+                    IMAGE_EXTENSION.test(alt) ||
+                    genericWords.has(alt);
+                return suspicious ? { payload: null } : undefined;
+            },
+        },
+        { id: 'image.content-review', kind: 'manual', severity: 'review', subject: IMAGE, check: () => true },
+    ],
 });

@@ -4,7 +4,8 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { contentChecks, core, fontColor, heading, language, links } from '#/features';
+import { contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/features';
+import { CONTENT_RULE_IDS } from '#/features/__tests__/fixtures/content-rules';
 import { deCH } from '#/locales/de-CH';
 import { enUS } from '#/locales/en-US';
 import {
@@ -15,7 +16,7 @@ import {
     findContentIssues,
     type RichTextDocument,
 } from '#/model';
-import { CONTENT_RULE_IDS, GENERIC_IMAGE_WORDS, VAGUE_LINK_TEXTS } from '#/model/checks';
+import { GENERIC_IMAGE_WORDS, VAGUE_LINK_TEXTS } from '#/model/checks';
 
 const stored = (blocks: readonly ContentNodeJSON[]) =>
     ({
@@ -59,8 +60,15 @@ const link = (value: string, href = 'https://example.com/a') => text(value, [{ t
 const colored = (value: string, attrs: Record<string, unknown>, mark = 'font_color') =>
     text(value, [{ type: mark, attrs: { tokenId: null, value: null, ...attrs } }]);
 
+// Every shipped feature that declares rules, and no language feature, which the language repair needs.
+const shippedModel = compileContentModel([core(), heading(), mediaImage(), links(), fontColor()], {
+    id: 'test.checks',
+    version: 1,
+});
+
 const options: ContentCheckOptions = {
     locale: enUS,
+    model: shippedModel,
     background: '#ffffff',
     colorTokens: [
         { id: 'pale', label: 'Pale', value: '#cccccc', usage: ['font_color', 'highlight'] },

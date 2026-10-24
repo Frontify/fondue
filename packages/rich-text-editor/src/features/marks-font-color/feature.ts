@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineFeature } from '#/model';
+import {
+    type ColorToken,
+    type ContentRepair,
+    type ContentRule,
+    type ContentRuleContext,
+    type ContentRuleInput,
+    defineFeature,
+    type MarkJSON,
+} from '#/model';
 
 const tokenId = { type: 'id', nullable: true, default: null } as const;
 const value = { type: 'color', nullable: true, default: null } as const;
@@ -12,6 +20,180 @@ const LITERAL_RULES = [
     { tag: 'font', attrs: { value: { from: 'color' } } },
 ] as const;
 
+const COLOR_REPAIR: ContentRepair = { command: 'mark.color.menu.open', feature: 'marks.font-color' };
+const COLOR = { marks: ['font_color', 'highlight'] } as const;
+// Browsers draw `h1` to `h3` at 18.72 px bold or larger, which WCAG counts as large text.
+const LARGE_HEADING = 3;
+const SMALL_MARKS = ['subscript', 'superscript'];
+const NORMAL_RATIO = 4.5;
+const LARGE_RATIO = 3;
+
+interface Rgba {
+    readonly red: number;
+    readonly green: number;
+    readonly blue: number;
+    readonly alpha: number;
+}
+
+const channelOf = (part: string, scale: number): number | undefined => {
+    const percent = part.endsWith('%');
+    const value = Number.parseFloat(percent ? part.slice(0, -1) : part);
+    if (!Number.isFinite(value)) {
+        return undefined;
+    }
+    return Math.min(scale, Math.max(0, percent ? (value / 100) * scale : value));
+};
+
+const RGB = /^rgba?\(\s*([\d.]+%?)\s*[,\s]\s*([\d.]+%?)\s*[,\s]\s*([\d.]+%?)\s*(?:[,/]\s*([\d.]+%?)\s*)?\)$/i;
+
+/** A colour as `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`, `rgb()`, `rgba()` or `transparent`; any other is unknown. */
+export const parseColor = (value: unknown): Rgba | undefined => {
+    if (typeof value !== 'string') {
+        return undefined;
+    }
+    const color = value.trim().toLowerCase();
+    if (color === 'transparent') {
+        return { red: 0, green: 0, blue: 0, alpha: 0 };
+    }
+    if (/^#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/.test(color)) {
+        let hex = color.slice(1);
+        if (hex.length <= 4) {
+            hex = [...hex].map((digit) => `${digit}${digit}`).join('');
+        }
+        const byte = (index: number) => Number.parseInt(hex.slice(index, index + 2), 16);
+        const alpha = hex.length === 8 ? byte(6) / 255 : 1;
+        return { red: byte(0), green: byte(2), blue: byte(4), alpha };
+    }
+    const match = RGB.exec(color);
+    if (match === null) {
+        return undefined;
+    }
+    const [, red, green, blue, alpha] = match;
+    const channels = [red, green, blue].map((part) => channelOf(part ?? '', 255));
+    const opacity = alpha === undefined ? 1 : channelOf(alpha, 1);
+    const [r, g, b] = channels;
+    if (r === undefined || g === undefined || b === undefined || opacity === undefined) {
+        return undefined;
+    }
+    return { red: r, green: g, blue: b, alpha: opacity };
+};
+
+/** Blends a translucent `top` colour over the opaque `bottom`, as the contrast checks need. */
+export const composite = (top: Rgba, bottom: Rgba): Rgba => {
+    const mix = (a: number, b: number) => top.alpha * a + (1 - top.alpha) * b;
+    return {
+        red: mix(top.red, bottom.red),
+        green: mix(top.green, bottom.green),
+        blue: mix(top.blue, bottom.blue),
+        alpha: 1,
+    };
+};
+
+const luminance = ({ red, green, blue }: Rgba) => {
+    const linear = (channel: number) => {
+        const value = channel / 255;
+        return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue);
+};
+
+export const contrastOf = (a: Rgba, b: Rgba) => {
+    const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
+    return (light + 0.05) / (dark + 0.05);
+};
+
+/** A colour mark's colour: its literal value, else its token's. */
+const markColor = (mark: MarkJSON | undefined, tokens: readonly ColorToken[]): Rgba | undefined => {
+    const attrs = mark?.attrs;
+    if (attrs === undefined) {
+        return undefined;
+    }
+    if (typeof attrs.value === 'string') {
+        return parseColor(attrs.value);
+    }
+    const token = tokens.find(({ id }) => id === attrs.tokenId);
+    return parseColor(token?.value);
+};
+
+/** The opaque background under a run: its highlight over the known background. */
+const backgroundOf = ({ marks }: ContentRuleInput, { colorTokens, background }: ContentRuleContext) => {
+    const page = parseColor(background);
+    const base = page?.alpha === 1 ? page : undefined;
+    if (marks.highlight === undefined) {
+        return base;
+    }
+    const highlight = markColor(marks.highlight, colorTokens);
+    if (highlight === undefined) {
+        return undefined;
+    }
+    if (highlight.alpha === 1) {
+        return highlight;
+    }
+    return base === undefined ? undefined : composite(highlight, base);
+};
+
+/** The run's text colour and background, both opaque, or `undefined` when either cannot be resolved. */
+const colorsOf = (input: ContentRuleInput, context: ContentRuleContext) => {
+    const background = backgroundOf(input, context);
+    const foreground = markColor(input.marks.font_color, context.colorTokens);
+    if (background === undefined || foreground === undefined) {
+        return undefined;
+    }
+    return { foreground: foreground.alpha === 1 ? foreground : composite(foreground, background), background };
+};
+
+/** Large text sits in a heading of level 3 or higher and is not subscript or superscript, which is smaller. */
+const isLarge = ({ covered, ancestors }: ContentRuleInput) => {
+    let large = false;
+    for (const { type, attrs } of [...ancestors].reverse()) {
+        if (type === 'heading' && typeof attrs?.level === 'number') {
+            large = attrs.level <= LARGE_HEADING;
+            break;
+        }
+    }
+    return large && covered.every(({ marks }) => !marks?.some(({ type }) => SMALL_MARKS.includes(type)));
+};
+
+const passes = (foreground: Rgba, background: Rgba, large: boolean) =>
+    contrastOf(foreground, background) >= (large ? LARGE_RATIO : NORMAL_RATIO);
+
+const CONTENT_RULES: readonly ContentRule[] = [
+    {
+        id: 'contrast.low',
+        kind: 'automatic',
+        severity: 'error',
+        subject: COLOR,
+        repair: COLOR_REPAIR,
+        check: (input, context) => {
+            const colors = colorsOf(input, context);
+            const large = isLarge(input);
+            if (colors === undefined || passes(colors.foreground, colors.background, large)) {
+                return undefined;
+            }
+            const tokenIds = context.colorTokens
+                .filter(({ usage, value }) => {
+                    const color = parseColor(value);
+                    if (!usage.includes('font_color') || color === undefined) {
+                        return false;
+                    }
+                    const shown = color.alpha === 1 ? color : composite(color, colors.background);
+                    return passes(shown, colors.background, large);
+                })
+                .map(({ id }) => id);
+            return { payload: { tokenIds } };
+        },
+    },
+    {
+        id: 'contrast.unknown',
+        kind: 'automatic',
+        severity: 'review',
+        subject: COLOR,
+        repair: COLOR_REPAIR,
+        check: (input, context) => (colorsOf(input, context) === undefined ? { payload: null } : undefined),
+    },
+    { id: 'color.meaning-review', kind: 'manual', severity: 'review', subject: COLOR, check: () => true },
+];
+
 const declaration = {
     id: 'marks.font-color',
     version: 1,
@@ -19,6 +201,7 @@ const declaration = {
     options: { literalColors: { type: 'boolean', default: false } },
     // Markdown and plain text keep the text and drop its colour.
     formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
+    contentRules: CONTENT_RULES,
 } as const;
 
 const fontColorMark = {

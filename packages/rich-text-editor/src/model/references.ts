@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CodecContext, type JsonObject, type ReferenceResolution } from './declarations';
+import { compiledModel } from './compile';
+import { type ReferenceDeclaration } from './content-rules';
+import { type CodecContext, type ContentModel, type JsonObject, type ReferenceResolution } from './declarations';
 import { type RichTextDocument } from './format';
 import { isRecord } from './values';
 
@@ -112,7 +114,12 @@ export interface ReferenceDiff {
 }
 
 /** The mentions of a stored document by `nodeId`, in document order; a repeated `nodeId` counts once. */
-const mentionsOf = (document: RichTextDocument): Map<string, MentionReference> => {
+const mentionsOf = (document: RichTextDocument, model: ContentModel): Map<string, MentionReference> => {
+    const declared = new Map<string, ReferenceDeclaration>(
+        compiledModel(model)
+            .features.flatMap(({ declaration }) => declaration.references ?? [])
+            .map((reference) => [reference.node, reference]),
+    );
     const found = new Map<string, MentionReference>();
     const pending: unknown[] = [document.content];
     // Walked with a stack, so a document nested past the call stack's depth still reads.
@@ -121,8 +128,11 @@ const mentionsOf = (document: RichTextDocument): Map<string, MentionReference> =
             continue;
         }
         const { attrs } = node;
-        if (node.type === 'mention' && isRecord(attrs)) {
-            const { nodeId, resourceType, resourceId } = attrs;
+        const reference = typeof node.type === 'string' ? declared.get(node.type) : undefined;
+        if (reference !== undefined && isRecord(attrs)) {
+            const nodeId = attrs[reference.nodeId];
+            const resourceType = attrs[reference.resourceType];
+            const resourceId = attrs[reference.resourceId];
             if (
                 typeof nodeId === 'string' &&
                 typeof resourceType === 'string' &&
@@ -148,11 +158,16 @@ const sameReference = (a: MentionReference, b: MentionReference) =>
 /**
  * The mentions `after` holds that `before` does not, and the reverse, keyed by `nodeId`: a moved mention keeps its
  * `nodeId` and is neither, a pasted copy has a new one and is added, and a `nodeId` that names another resource is
- * removed and added. A host decides from this whom to notify; the editor notifies no one.
+ * removed and added. A host decides from this whom to notify; the editor notifies no one. The `model`'s features
+ * declare which nodes are references.
  */
-export const diffReferences = (before: RichTextDocument, after: RichTextDocument): ReferenceDiff => {
-    const previous = mentionsOf(before);
-    const next = mentionsOf(after);
+export const diffReferences = (
+    before: RichTextDocument,
+    after: RichTextDocument,
+    model: ContentModel,
+): ReferenceDiff => {
+    const previous = mentionsOf(before, model);
+    const next = mentionsOf(after, model);
     const added = [...next.values()].filter((mention) => {
         const old = previous.get(mention.nodeId);
         return old === undefined || !sameReference(old, mention);

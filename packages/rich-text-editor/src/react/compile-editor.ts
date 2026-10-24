@@ -374,7 +374,7 @@ export const editorEngine = (
     }
     // The server offers a repair when the model installs its feature, so the editor must have its command.
     const { features } = compiledModel(model);
-    for (const { command, feature } of CONTENT_REPAIRS) {
+    for (const { command, feature } of CONTENT_REPAIRS(model)) {
         if (features.some(({ id }) => id === feature) && !engine.commands.has(command)) {
             throw new DefinitionError('definition.orphan-behavior', {
                 feature,

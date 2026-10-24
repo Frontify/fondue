@@ -11,14 +11,7 @@ export {
     unavailableOf,
     type UnresolvedAsset,
 } from './assets';
-export {
-    type ContentCheckOptions,
-    type ContentIssue,
-    type ContentRuleId,
-    findContentIssues,
-    ruleHelpKey,
-    ruleNameKey,
-} from './checks';
+export { type ContentCheckOptions, type ContentIssue, findContentIssues, ruleHelpKey, ruleNameKey } from './checks';
 export { hexColor } from './colors';
 export { compileContentModel } from './compile';
 export {
@@ -70,6 +63,17 @@ export {
     type ValueDeclaration,
     type ValueOf,
 } from './declarations';
+export {
+    type ContentFinding,
+    type ContentRepair,
+    type ContentRule,
+    type ContentRuleContext,
+    type ContentRuleId,
+    type ContentRuleInput,
+    type ContentRuleSubject,
+    type FeatureContentDeclaration,
+    type ReferenceDeclaration,
+} from './content-rules';
 export { createEmptyDocument, decodeDocument } from './decode';
 export { DefinitionError, type DefinitionErrorCode } from './errors';
 export { defineFeature } from './feature';

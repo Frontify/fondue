@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { documentModel } from '#/features';
 import { type RichTextProfile } from '#/index';
 import { enUS } from '#/locales/en-US';
 import { type ContentModel, createEmptyDocument, findContentIssues, type RichTextDocument } from '#/model';
@@ -38,7 +39,8 @@ const automaticIssues = (document: RichTextDocument, model: ContentModel | undef
     const tokens = args.presentation?.colorTokens;
     return findContentIssues(document, {
         locale: enUS,
-        ...(model === undefined ? {} : { model }),
+        // A story with no model of its own is checked against every shipped rule.
+        model: model ?? documentModel,
         colorTokens: tokens ?? [],
         // Stories render on the light theme's white surface.
         background: '#ffffff',

@@ -19,11 +19,11 @@ import {
     inlineFeatures,
     inlineModel,
 } from '#/features';
+import { CONTENT_RULE_IDS } from '#/features/__tests__/fixtures/content-rules';
 import { registry } from '#/features/registry';
 import { UNSHIPPED_FEATURES } from '#/features/stages';
 import { enUS } from '#/locales/en-US';
 import { toJsonSchema } from '#/model';
-import { CONTENT_RULE_IDS } from '#/model/checks';
 
 const PACKAGE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const read = (path: string) => readFileSync(join(PACKAGE, path), 'utf8');

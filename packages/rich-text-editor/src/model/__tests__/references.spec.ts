@@ -4,6 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { commentModel } from '#/features';
 import { diffReferences, type RichTextDocument } from '#/model';
 
 const mention = (nodeId: string, resourceId: string) => ({
@@ -33,7 +34,7 @@ describe('diffReferences', () => {
             paragraph(mention('m-1', 'ada'), words('and '), mention('m-2', 'grace')),
         );
 
-        expect(diffReferences(original, moved)).toEqual({ added: [], removed: [] });
+        expect(diffReferences(original, moved, commentModel)).toEqual({ added: [], removed: [] });
     });
 
     it('reports a pasted copy as added under its new nodeId', () => {
@@ -42,7 +43,7 @@ describe('diffReferences', () => {
             paragraph(words('and '), mention('m-2', 'grace')),
         );
 
-        expect(diffReferences(original, copied)).toEqual({
+        expect(diffReferences(original, copied, commentModel)).toEqual({
             added: [{ nodeId: 'm-3', resourceType: 'user', resourceId: 'ada' }],
             removed: [],
         });
@@ -51,11 +52,11 @@ describe('diffReferences', () => {
     it('reports a deleted mention as removed, and the same mention restored by undo as added back', () => {
         const deleted = stored(paragraph(words('Ask ')), paragraph(words('and '), mention('m-2', 'grace')));
 
-        expect(diffReferences(original, deleted)).toEqual({
+        expect(diffReferences(original, deleted, commentModel)).toEqual({
             added: [],
             removed: [{ nodeId: 'm-1', resourceType: 'user', resourceId: 'ada' }],
         });
-        expect(diffReferences(deleted, original)).toEqual({
+        expect(diffReferences(deleted, original, commentModel)).toEqual({
             added: [{ nodeId: 'm-1', resourceType: 'user', resourceId: 'ada' }],
             removed: [],
         });
@@ -67,7 +68,7 @@ describe('diffReferences', () => {
             paragraph(words('and '), mention('m-2', 'grace')),
         );
 
-        expect(diffReferences(original, changed)).toEqual({
+        expect(diffReferences(original, changed, commentModel)).toEqual({
             added: [{ nodeId: 'm-1', resourceType: 'user', resourceId: 'lin' }],
             removed: [{ nodeId: 'm-1', resourceType: 'user', resourceId: 'ada' }],
         });
@@ -80,7 +81,7 @@ describe('diffReferences', () => {
         }
         const hostile = stored(deep, { type: 'mention', attrs: { nodeId: 7 } }, 'text', null);
 
-        expect(diffReferences(stored(), hostile)).toEqual({
+        expect(diffReferences(stored(), hostile, commentModel)).toEqual({
             added: [{ nodeId: 'm-9', resourceType: 'user', resourceId: 'deep' }],
             removed: [],
         });

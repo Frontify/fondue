@@ -32,4 +32,5 @@ export const mentions = defineFeature({
         },
     },
     formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
+    references: [{ node: 'mention', nodeId: 'nodeId', resourceType: 'resourceType', resourceId: 'resourceId' }],
 });

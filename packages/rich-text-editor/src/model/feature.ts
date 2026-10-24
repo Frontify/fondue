@@ -66,11 +66,11 @@ type FactoryOf<D> = FeatureFactory<
 
 /** Returns the feature's factory; hosts call it, with typed and serializable options or none. */
 export const defineFeature = <const D extends FeatureDeclaration>(declaration: D): FactoryOf<D> => {
-    // Migration steps, codec overrides and function parse rules hold functions, which a JSON snapshot would reject, so
-    // they are copied apart.
-    const { migrations, codecs, parseRules, ...data } = declaration;
+    // Migration steps, codec overrides, function parse rules and content rules hold functions, which a JSON snapshot
+    // would reject, so they are copied apart.
+    const { migrations, codecs, parseRules, contentRules, ...data } = declaration;
     let copy: FeatureDeclaration;
-    if (migrations === undefined && codecs === undefined && parseRules === undefined) {
+    if (migrations === undefined && codecs === undefined && parseRules === undefined && contentRules === undefined) {
         copy = snapshot(declaration);
     } else {
         const parts: Record<string, unknown> = { ...snapshot(data) };
@@ -79,6 +79,9 @@ export const defineFeature = <const D extends FeatureDeclaration>(declaration: D
         }
         if (codecs !== undefined) {
             parts.codecs = codecs;
+        }
+        if (contentRules !== undefined) {
+            parts.contentRules = contentRules;
         }
         if (parseRules !== undefined) {
             parts.parseRules = Object.freeze(parseRules.map((rule) => Object.freeze({ ...rule })));

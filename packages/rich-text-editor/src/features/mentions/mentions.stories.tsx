@@ -45,7 +45,7 @@ const meta: Meta<typeof RichTextEditor> = {
                 component: `
 Mentions of host resources. Type \`@\` at a word start to open suggestions from \`services.references\`, which the editor asks 200 ms after the last keystroke with the query and the feature's \`resourceTypes\`. ArrowUp and ArrowDown move the active option, Enter or Tab inserts it as a mention followed by a space, Escape closes the list and keeps what was typed, and one undo restores the query. A page with a next cursor ends with Load more, and a failed search offers Retry. The Mention toolbar button opens the same search in a dialog, which inserts at the selection it opened from. Without a service, \`@\` stays text.
 
-A mention stores its resource type and ID and the label it was chosen with (\`labelSnapshot\`); the presentation's \`resolveReference\` shows the current label, or an unavailable note, without changing the document. The editor never notifies anyone: \`diffReferences(before, after)\` from \`./model\` tells a host which mentions a change added or removed.
+A mention stores its resource type and ID and the label it was chosen with (\`labelSnapshot\`); the presentation's \`resolveReference\` shows the current label, or an unavailable note, without changing the document. The editor never notifies anyone: \`diffReferences(before, after, model)\` from \`./model\` tells a host which mentions a change added or removed.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|

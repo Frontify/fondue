@@ -4,7 +4,6 @@
 
 export const FILES_OVER_600_LINES: Record<string, number> = {
     'src/codecs/to-markdown.ts': 702,
-    'src/model/checks.ts': 679,
     'src/model/compile.ts': 659,
     'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/runtime.ts': 2152,
@@ -26,7 +25,6 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/testing/conformance/contract.ts': 408,
     'src/features/links/link-popover.tsx': 590,
     'src/features/media-image/view.tsx': 517,
-    'src/model/checks.ts': 679,
     'src/model/compile.ts': 659,
     'src/model/content.ts': 539,
     'src/model/declarations.ts': 483,

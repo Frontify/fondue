@@ -721,7 +721,7 @@ const Playground = ({
                     log(`documentChange ${change.origin} ${change.commandId ?? ''} #${change.stamp.sequence}`);
                     const next = change.readDocument();
                     // What a host would notify about: the mentions the change added or removed.
-                    const { added, removed } = diffReferences(previousRef.current, next);
+                    const { added, removed } = diffReferences(previousRef.current, next, model);
                     if (added.length > 0 || removed.length > 0) {
                         log(`mentions added ${added.length} removed ${removed.length}`);
                     }
