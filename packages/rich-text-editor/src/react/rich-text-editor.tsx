@@ -120,7 +120,7 @@ const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
 };
 
 /** The key that moves focus to the toolbars, Alt+F10 unless the presentation sets another. */
-const toolbarShortcutOf = ({ presentation }: Props) => {
+const toolbarShortcutOf = ({ presentation }: PartProps) => {
     if (presentation === undefined || presentation.toolbarShortcut === undefined) {
         return DEFAULT_TOOLBAR_SHORTCUT;
     }
@@ -284,8 +284,29 @@ interface Chrome {
     readonly t: ReturnType<typeof readerContext>['t'];
 }
 
+/** The props the parts read, so a host rerender with equal props leaves the context alone. */
+const PART_KEYS = [
+    'data-test-id',
+    'spellCheck',
+    'placeholder',
+    'presentation',
+    'aria-describedby',
+    'aria-label',
+    'aria-labelledby',
+    'aria-errormessage',
+    'status',
+    'required',
+    'disabled',
+] as const;
+
+type PartProps = { readonly [K in (typeof PART_KEYS)[number]]?: Props[K] | undefined };
+
 interface RootContextValue {
-    readonly props: Props;
+    readonly props: PartProps;
+    /** Stable, and call the host's latest callback. */
+    readonly onFocus: NonNullable<Props['onFocus']>;
+    readonly onBlur: NonNullable<Props['onBlur']>;
+    readonly submits: boolean;
     readonly mounted: Mounted;
     readonly coordinator: MountCoordinator;
     readonly chrome: Chrome;
@@ -900,7 +921,7 @@ const SessionComponent = (
         }),
         [openPanel, panelRequests],
     );
-    const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
+    const context = useRootContext(props, latestRef, mounted, coordinator, chrome);
     if (mounted.blocked !== undefined) {
         return <BlockedShell result={mounted.blocked} {...shell} />;
     }
@@ -1009,6 +1030,36 @@ const SessionComponent = (
         </RootContext.Provider>
     );
 };
+/** Memoized on the values the parts read, and the callbacks are stable, so inline host callbacks rebuild nothing. */
+const useRootContext = (
+    props: Props,
+    latestRef: MutableRefObject<Props>,
+    mounted: Mounted,
+    coordinator: MountCoordinator,
+    chrome: Chrome,
+) => {
+    const picked: PartProps = Object.fromEntries(PART_KEYS.map((key) => [key, props[key]]));
+    const [held, setHeld] = useState(picked);
+    let partProps = held;
+    if (!PART_KEYS.every((key) => Object.is(held[key], picked[key]))) {
+        partProps = picked;
+        setHeld(picked);
+    }
+    const submits = props.onSubmit !== undefined;
+    return useMemo<RootContextValue>(
+        () => ({
+            props: partProps,
+            onFocus: (event) => latestRef.current.onFocus?.(event),
+            onBlur: (event) => latestRef.current.onBlur?.(event),
+            submits,
+            mounted,
+            coordinator,
+            chrome,
+        }),
+        [partProps, submits, latestRef, mounted, coordinator, chrome],
+    );
+};
+
 const Session = forwardRef(SessionComponent);
 Session.displayName = 'RichTextEditor.Session';
 
@@ -1136,8 +1187,8 @@ const hostClassNames = (contentClassName: string) =>
         .filter((name) => name !== '' && contentClasses() !== name && !/^ProseMirror(-|$)/.test(name));
 
 /** The surface's instruction that names the submit key and the new line key, when the editor has a submit key. */
-const submitHint = (props: Props, definition: CompiledEditorDefinition<object>, t: Chrome['t'], apple: boolean) => {
-    if (props.onSubmit === undefined) {
+const submitHint = (submits: boolean, definition: CompiledEditorDefinition<object>, t: Chrome['t'], apple: boolean) => {
+    if (!submits) {
         return undefined;
     }
     const profile = profileOf(definition);
@@ -1166,7 +1217,7 @@ const emptiness = (runtime: EditorRuntime | undefined) => {
  * after mount.
  */
 const Surface = () => {
-    const { props, mounted, coordinator, chrome } = useRoot('Surface');
+    const { props, onFocus, onBlur, submits, mounted, coordinator, chrome } = useRoot('Surface');
     const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
     const contentClassName = presentation?.contentClassName;
     const strikeCheckedTasks = presentation?.strikeCheckedTasks === true;
@@ -1178,7 +1229,7 @@ const Surface = () => {
     }
     const dir = mounted.dir ?? theme.dir;
     const hintId = useId();
-    const hint = submitHint(props, mounted.definition, chrome.t, useApplePlatform());
+    const hint = submitHint(submits, mounted.definition, chrome.t, useApplePlatform());
     const describedBy = [props['aria-describedby'], hint === undefined ? undefined : hintId].filter(
         (id) => id !== undefined,
     );
@@ -1233,12 +1284,12 @@ const Surface = () => {
                 // Native focus events of the surface itself, so a move into chrome or an overlay blurs it.
                 onFocus={(event) => {
                     if (event.target === event.currentTarget) {
-                        props.onFocus?.(event);
+                        onFocus(event);
                     }
                 }}
                 onBlur={(event) => {
                     if (event.target === event.currentTarget) {
-                        props.onBlur?.(event);
+                        onBlur(event);
                     }
                 }}
             />

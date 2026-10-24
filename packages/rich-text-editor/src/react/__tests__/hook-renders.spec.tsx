@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { act, render } from '@testing-library/react';
-import { createRef, Profiler } from 'react';
+import { createRef, Profiler, useReducer } from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { useCommandQuery, useEditorSelection } from '#/bridge/hooks';
@@ -90,4 +90,70 @@ it('rerenders a component that selects the block type and a command state on no 
     });
     expect(renders).toBe(before + 1);
     expect(seen.at(-1)).toEqual(['heading', false]);
+});
+
+it('rerenders no part when the host rerenders the editor with equal props', () => {
+    const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.hook-renders', version: 1 });
+    const definition = defineEditor({ id: 'test.hook-renders', model });
+    const paragraph = { type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: 'Hello' }] };
+    const document = {
+        ...perfDocument('small', model),
+        content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: [paragraph] },
+    } as unknown as ReturnType<typeof perfDocument>;
+    const defaultValue = { documentId: 'document-1', revision: null, document };
+    const counts = { surface: 0, toolbar: 0, status: 0, panels: 0 };
+    // One element for the whole run, so a part rerenders only when the context it reads changes.
+    const parts = (
+        <>
+            <Profiler id="surface" onRender={() => (counts.surface += 1)}>
+                <RichTextEditor.Surface />
+            </Profiler>
+            <Profiler id="toolbar" onRender={() => (counts.toolbar += 1)}>
+                <RichTextEditor.Toolbar />
+            </Profiler>
+            <Profiler id="status" onRender={() => (counts.status += 1)}>
+                <RichTextEditor.Status />
+            </Profiler>
+            <Profiler id="panels" onRender={() => (counts.panels += 1)}>
+                <RichTextEditor.Panels />
+            </Profiler>
+        </>
+    );
+    const calls: string[] = [];
+    let rerender: () => void = () => undefined;
+    const Host = () => {
+        const [pass, tick] = useReducer((count: number) => count + 1, 0);
+        rerender = tick;
+        return (
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={defaultValue}
+                onFocus={() => calls.push(`focus ${pass}`)}
+                onBlur={() => calls.push(`blur ${pass}`)}
+                onSubmit={() => calls.push(`submit ${pass}`)}
+            >
+                {parts}
+            </RichTextEditor.Root>
+        );
+    };
+    const { container } = render(<Host />);
+    act(() => {
+        vi.advanceTimersToNextFrame();
+    });
+    const before = { ...counts };
+
+    for (let pass = 0; pass < 5; pass += 1) {
+        act(() => rerender());
+    }
+
+    expect(counts).toEqual(before);
+    expect(before.surface).toBeGreaterThan(0);
+
+    const surface = container.querySelector<HTMLElement>('[data-rte-surface]');
+    act(() => {
+        surface?.focus();
+        surface?.blur();
+    });
+    expect(calls).toEqual(['focus 5', 'blur 5']);
 });
