@@ -5,12 +5,15 @@ import { type Page } from '@playwright/test';
 
 import { EditorHydrationProbe, type EditorHydrationResult } from './fixtures/EditorHydrationProbe';
 
+// The browser bundle uses `useLayoutEffect`. `renderToString` in that bundle warns that the effect does not run.
+const LAYOUT_EFFECT_ON_SERVER = 'useLayoutEffect does nothing on the server';
+
 // playwright.config.ts defines process.env.NODE_ENV as development, so React hydration warnings reach these listeners in every run.
 const watch = (page: Page) => {
     const problems: string[] = [];
     page.on('pageerror', (error) => problems.push(`pageerror: ${error.message}`));
     page.on('console', (message) => {
-        if (message.type() === 'error') {
+        if (message.type() === 'error' && !message.text().includes(LAYOUT_EFFECT_ON_SERVER)) {
             problems.push(`console.error: ${message.text()}`);
         }
     });
