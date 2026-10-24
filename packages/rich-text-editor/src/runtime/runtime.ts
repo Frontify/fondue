@@ -64,7 +64,7 @@ import { type ExceededLimit, storedNodeCount } from './limits';
 import { insertPicked, pickedAsset, refillPicked } from './media';
 import { nodeStatePlugin, withNodeState } from './node-state';
 import { positionOf } from './positions';
-import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
+import { sameStamp, type SaveCoordinator } from './saves';
 import { scrollSelectionIntoView } from './scroll';
 import { createBusy } from './session/busy';
 import { createEncoder } from './session/encode';
@@ -72,6 +72,7 @@ import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
 import { createMetrics } from './session/metrics';
 import { createPolicy } from './session/policy';
+import { createSaving } from './session/saving';
 import { createStore } from './session/store';
 import {
     type Attempt,
@@ -454,7 +455,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const identity = createIdentity({ documentId: options.documentId, generate });
     const suggestionListId = `rte-suggestions-${identity.session().sessionId}`;
     const createdAt = Date.now();
-    let unmanaged = createUnmanagedStatus(options.revision ?? null);
     // The URL policy of each command whose feature narrows `checkHref`, which its `url` payload fields must pass too.
     const hrefPolicies = new Map<EngineCommand, HrefPolicy>(
         [...definition.commands.values()].flatMap((command) => {
@@ -490,7 +490,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let columns = options.columns ?? ONE_COLUMN;
     // The columns the decorations show, which follow `columns` once input has settled.
     let shownColumns = columns;
-    let saves: SaveCoordinator | undefined;
     let shownStatus: SaveStatus | undefined;
     let typing = false;
     let view: EditorView | undefined;
@@ -648,12 +647,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const metrics = createMetrics({ model: definition.model, session: identity.session, emit });
     const { measure } = metrics;
 
-    const saveStatus = (): SaveStatus => {
-        if (saves !== undefined) {
-            return saves.status();
-        }
-        return unmanaged(identity.sequence());
-    };
+    const saving = createSaving({ revision: options.revision ?? null, sequence: identity.sequence, lifecycle });
+    const saveStatus = saving.status;
     const emitSaveStatus = () => {
         const next = saveStatus();
         if (next !== shownStatus) {
@@ -915,7 +910,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         emitSelection();
         if (changed) {
-            saves?.changed();
+            saving.changed();
             checks.changed();
         }
         emitSaveStatus();
@@ -1037,7 +1032,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             refreshView();
         });
         coordinator.settle();
-        saves?.settled();
+        saving.settled();
         for (const settled of [...afterInput]) {
             settled('settled');
         }
@@ -1617,7 +1612,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (lifecycle.is('disposed')) {
             return;
         }
-        saves?.dispose();
+        saving.dispose();
         // A listener of what the coordinator reported may have disposed the session already.
         if (isDisposed()) {
             return;
@@ -1669,21 +1664,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
     };
 
-    const commitSnapshot = (commitOptions: CommitOptions): Promise<CommitResult> => {
-        if (saves === undefined) {
-            return Promise.resolve({ status: 'blocked', code: 'unmanaged' });
-        }
-        return saves.commit(commitOptions);
-    };
-
-    /** Whether the session has unsaved changes; an unmanaged one acknowledges only what it loaded. */
-    const unsavedChanges = () => {
-        if (saves !== undefined) {
-            return saves.unsaved();
-        }
-        return identity.sequence() > 0;
-    };
-
     /** Replacement step 5 for a session with unsaved changes: `undefined` when the policy lets the replacement go on. */
     const leaveUnsaved = async (unsaved: ReplaceDocumentRequest['unsaved']): Promise<ReplaceCode | undefined> => {
         // A host in JavaScript may pass no policy at all.
@@ -1691,7 +1671,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return 'unsaved';
         }
         if (unsaved.action === 'save') {
-            const result = await commitSnapshot({ reason: 'navigate' });
+            const result = await saving.commit({ reason: 'navigate' });
             // A write whose outcome is unknown goes on to step 6, which refuses it.
             if (result.status === 'acknowledged' || (result.status === 'failed' && result.outcome === 'unknown')) {
                 return undefined;
@@ -1739,7 +1719,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         refreshView();
         coordinator.settle();
-        saves?.settled();
+        saving.settled();
         drain();
         refocus(focused);
         return refused(code);
@@ -1782,11 +1762,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             published = store.state;
             encoder.capabilities = stored;
             policy.setCapabilities(encoder.capabilities);
-            if (saves === undefined) {
-                unmanaged = createUnmanagedStatus(request.next.revision);
-            } else {
-                saves.replaced(request.next.revision, previous);
-            }
+            saving.replaced(request.next.revision, previous);
             // A plugin view may have faulted or disposed the session while the state installed.
             if (lifecycle.is('transitioning')) {
                 lifecycle.to('ready');
@@ -1841,7 +1817,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const focused = view?.hasFocus() === true;
         lifecycle.to('transitioning');
         refreshView();
-        if (unsavedChanges()) {
+        if (saving.unsaved()) {
             const code = await leaveUnsaved(request.unsaved);
             // The session was disposed, or faulted, while the step 5 write ran.
             if (!lifecycle.is('transitioning')) {
@@ -1851,7 +1827,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return resume(code, focused);
             }
         }
-        if (saves?.outcomeUnknown() === true) {
+        if (saving.outcomeUnknown()) {
             return resume('save-unresolved', focused);
         }
         // A keystroke the view read during step 5 is kept, not replaced.
@@ -1919,13 +1895,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 commit(release);
             }
         },
-        requestCommit: (commitOptions) => {
-            // Only the replacement's own `save` writes while the document is replaced.
-            if (saves !== undefined && lifecycle.is('transitioning')) {
-                return Promise.resolve({ status: 'blocked', code: 'not-ready' });
-            }
-            return commitSnapshot(commitOptions);
-        },
+        requestCommit: saving.request,
         replaceDocument: async (request) => {
             const started = Date.now();
             const result = await replace(request);
@@ -2137,7 +2107,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         changeServices: (members) => {
             coordinator.abortWhere((operation) => members.includes(operation.service));
             if (members.includes('persistence')) {
-                saves?.serviceChanged();
+                saving.serviceChanged();
             }
         },
         setDisabled: (next) => {
@@ -2205,7 +2175,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         markViews = options.markViews(runtime);
     }
     if (options.saves !== undefined) {
-        saves = options.saves(runtime);
+        saving.attach(options.saves(runtime));
     }
     shownStatus = saveStatus();
     runtimes.set(handle, runtime);
