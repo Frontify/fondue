@@ -68,6 +68,7 @@ import { authoringOf, createPolicyCheck } from './policy';
 import { positionOf } from './positions';
 import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { scrollSelectionIntoView } from './scroll';
+import { createBusy } from './session/busy';
 import { createEncoder } from './session/encode';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
@@ -499,8 +500,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // Node views come from the bridge once this runtime exists, since they act on it.
     let nodeViews: Readonly<Record<string, NodeViewConstructor>> = {};
     let markViews: Readonly<Record<string, MarkViewConstructor>> = {};
-    // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
-    let busy = 0;
     let draining = false;
     let depth = 0;
     let installing = false;
@@ -564,7 +563,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         changed: () => {
             if (!lifecycle.is('disposed')) {
-                busyWith(notify);
+                busy.run(notify);
             }
         },
     });
@@ -624,23 +623,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         | undefined;
     let shownSelection = summarize(store.state.selection);
 
-    const busyWith = <T>(work: () => T): T => {
-        busy += 1;
-        try {
-            return work();
-        } finally {
-            busy -= 1;
-            if (busy === 0) {
-                flushMetric();
-                flushCaptures();
-                uploads.flush();
-            }
-            drain();
-        }
-    };
+    // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
+    const busy = createBusy();
+    busy.onIdle(
+        () => flushMetric(),
+        () => flushCaptures(),
+        () => uploads.flush(),
+    );
+    busy.afterEach(() => drain());
 
     const { isDisposed } = lifecycle;
-    const { emit, notify, subscribe, watch, clear } = createEventBus({ isDisposed, around: busyWith });
+    const { emit, notify, subscribe, watch, clear } = createEventBus({ isDisposed, around: busy.run });
 
     const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
 
@@ -1040,7 +1033,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const settleInput = () => {
         const mapping = provisional;
         provisional = undefined;
-        busyWith(() => {
+        busy.run(() => {
             // Roots that plugin views dispatch while the settled state installs commit after its check.
             if (mapping !== undefined && !guarded(() => settleProvisional(mapping))) {
                 return;
@@ -1096,7 +1089,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         } else if (root.getMeta(ENTER_RULES_META) === true) {
             markRules(root);
         }
-        busyWith(() => {
+        busy.run(() => {
             let prepared: Prepared;
             if (checked !== undefined && checked.prepared.root === root && checked.from === store.state) {
                 recorded.splice(0, checked.drawn);
@@ -1315,11 +1308,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         base: () => EditorState | RejectedCode,
         route: Route,
     ): CommandResult => {
-        if (busy > 0) {
+        if (busy.isBusy()) {
             return rejected('busy');
         }
         const effects: (() => void)[] = [];
-        const result = busyWith((): CommandResult => {
+        const result = busy.run((): CommandResult => {
             const attempted = attempt(command, checked, base(), installedId, route, effects);
             if ('unchanged' in attempted) {
                 return { status: 'no-op', stamp: identity.stamp(), contentChanged: false };
@@ -1366,7 +1359,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         runOn(definition.commands.get(id), checkedPayload(payload), () => rangeBase(range.from, range.to), 'host');
     const execute = (id: string, given?: unknown, commandOptions?: unknown): CommandResult => {
         // Commands belong in event handlers; a call inside a notification is already `busy`.
-        if (busy === 0 && options.inRender?.() === true) {
+        if (!busy.isBusy() && options.inRender?.() === true) {
             report(diagnostic('react.execute-in-render', undefined, undefined, 'error'));
             return rejected('busy');
         }
@@ -1489,7 +1482,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         range: { readonly from: number; readonly to: number } | undefined,
     ): CaptureResult => {
         // During a commit or notification the capture's root would wait or go stale, so it is refused, as `execute` is.
-        if (!lifecycle.is('ready') || busy > 0) {
+        if (!lifecycle.is('ready') || busy.isBusy()) {
             return { status: 'rejected', code: 'not-ready' };
         }
         const id = generate();
@@ -1524,7 +1517,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return undefined;
             }
             const id = generate();
-            if (busy > 0) {
+            if (busy.isBusy()) {
                 deferredCaptures.push(id);
             } else {
                 captureNow(id, ASYNC_TARGET);
@@ -1570,7 +1563,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
      * and input has settled.
      */
     const drain = () => {
-        if (draining || busy > 0 || !lifecycle.is('ready') || settling.active()) {
+        if (draining || busy.isBusy() || !lifecycle.is('ready') || settling.active()) {
             return;
         }
         draining = true;
@@ -1822,7 +1815,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         coordinator.abortWhere(() => true);
         uploads.reset(outgoing);
         coordinator.settle();
-        busyWith(notify);
+        busy.run(notify);
         emitSelection();
         emitSaveStatus();
         emit('replaced', identity.session());
@@ -1979,7 +1972,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 const rules = policy.features[operation.featureId];
                 return rules === undefined || !rules[operation.action];
             });
-            busyWith(notify);
+            busy.run(notify);
         },
         focus,
         registerInteractionRoot: (element) => {
@@ -2218,7 +2211,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (installState(fresh.apply(carrySlots(store.state, fresh)))) {
                 published = store.state;
                 uploads.reset(store.state.doc, true);
-                busyWith(notify);
+                busy.run(notify);
             }
         },
         afterInput: (settled, timeoutMs) => {
