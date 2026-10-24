@@ -1,0 +1,15 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.reference {
+    table {
+        border-collapse: collapse;
+        margin-block: var(--spacing-x-small);
+    }
+
+    th,
+    td {
+        padding: var(--spacing-xx-small) var(--spacing-x-small);
+        border: var(--border-width-default) solid var(--color-line-strong);
+        text-align: start;
+    }
+}

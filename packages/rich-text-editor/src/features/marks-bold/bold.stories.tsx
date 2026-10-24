@@ -3,8 +3,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { bold, core } from '#/features';
-import { defineEditor, RichTextEditor } from '#/index';
+import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
 import { compileContentModel } from '#/model';
+import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 const model = compileContentModel([core(), bold()], { id: 'story.bold', version: 1 });
 
@@ -28,6 +29,7 @@ Strong importance as \`strong\`, toggled on the selection or at the caret.
     args: {
         'aria-label': 'Notes',
         definition: defineEditor({ id: 'story.bold', model }),
+        presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-bold',
             revision: null,

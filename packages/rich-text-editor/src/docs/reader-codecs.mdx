@@ -93,6 +93,8 @@ No codec throws on input. A document that cannot be read gives empty output and 
 - With `inlineStyles` set to the presentation's `styles`, each used recipe is written inline on its element, beside a class. `css` holds the generated stylesheet of those classes, including `hover`.
 - `colorTokens` writes a token colour inline. `contentClassName`, `listLevels`, `columns` and `columnGap` do the same as in the reader's presentation.
 
+The content styles of the package stylesheet sit in the CSS layer `fondue-rte`, and they style headings, quotes, code and lists themselves. A host's CSS reset must sit in a lower layer, or it overrides them. With Tailwind, declare `@layer tailwind-base, fondue-rte;` and wrap the reset in `@layer tailwind-base { @tailwind base; }`. A host stylesheet outside any layer, such as a rule on `*`, beats every `fondue-rte` rule, so put those rules in a layer too.
+
 ```ts
 const { html, css } = codecs.toHTML(stored, {
     inlineStyles: presentation.styles,

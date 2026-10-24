@@ -3,8 +3,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { core } from '#/features';
-import { defineEditor, RichTextEditor } from '#/index';
+import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
 import { compileContentModel } from '#/model';
+import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 const model = compileContentModel([core()], { id: 'story.core', version: 1 });
 
@@ -28,6 +29,7 @@ The document, paragraphs, text, hard breaks, undo history and block moves that e
     args: {
         'aria-label': 'Notes',
         definition: defineEditor({ id: 'story.core', model }),
+        presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-core',
             revision: null,

@@ -3,8 +3,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { core, featuresById } from '#/features';
-import { defineEditor, RichTextEditor } from '#/index';
+import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
 import { compileContentModel } from '#/model';
+import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
 const model = compileContentModel([core(), ...featuresById(['lists.item', 'lists.ordered'])], {
@@ -32,6 +33,7 @@ Numbered lists as \`ordered_list\`, with \`start\` from 0 to 1,000,000.
     args: {
         'aria-label': 'Notes',
         definition: defineEditor({ id: 'story.lists-ordered', model }),
+        presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-lists-ordered',
             revision: null,

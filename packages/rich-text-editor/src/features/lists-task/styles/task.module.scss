@@ -5,7 +5,7 @@
 .checkbox {
     @include focus-outline.focus-outline;
 
-    margin: 0.25em 0 0;
+    margin: 0;
 
     // A coarse pointer gets a target of at least 44 by 44 CSS pixels.
     @media (pointer: coarse) {
@@ -22,4 +22,6 @@
 :where(:global(.fondue-rte-content) [data-rte-chrome]:has(> .checkbox)) {
     display: flex;
     gap: 0.5em;
+    // The checkbox sits on the text's first baseline instead of stretching below it.
+    align-items: baseline;
 }

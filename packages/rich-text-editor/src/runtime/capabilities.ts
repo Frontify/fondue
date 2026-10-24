@@ -14,7 +14,7 @@ import {
 } from 'prosemirror-model';
 import { liftListItem, sinkListItem, wrapRangeInList } from 'prosemirror-schema-list';
 import { type EditorState, Plugin, PluginKey, Selection, TextSelection, type Transaction } from 'prosemirror-state';
-import { liftTarget } from 'prosemirror-transform';
+import { canJoin, liftTarget } from 'prosemirror-transform';
 
 import { type CommandLookup, type EngineCommand, type EngineImplementations } from '#/definition';
 import { type JsonObject } from '#/model';
@@ -465,6 +465,22 @@ const wrapInList = (state: EditorState, list: NodeType, item: NodeType, payload:
         }
         return node.type !== item;
     });
+    // A new list beside a list of its own type joins it, as in other editors, so two toggled paragraphs make one list.
+    const before = transaction.mapping.map(start, -1);
+    const wrapped = transaction.doc.resolve(before).nodeAfter;
+    if (wrapped?.type === list) {
+        const after = before + wrapped.nodeSize;
+        const joinsWith = (pos: number) =>
+            transaction.doc.resolve(pos).nodeBefore?.type === list &&
+            transaction.doc.resolve(pos).nodeAfter?.type === list &&
+            canJoin(transaction.doc, pos);
+        if (joinsWith(after)) {
+            transaction.join(after);
+        }
+        if (joinsWith(before)) {
+            transaction.join(before);
+        }
+    }
     return transaction.scrollIntoView();
 };
 

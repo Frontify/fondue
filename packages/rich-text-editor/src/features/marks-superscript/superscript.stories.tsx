@@ -3,8 +3,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { core, superscript } from '#/features';
-import { defineEditor, RichTextEditor } from '#/index';
+import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
 import { compileContentModel } from '#/model';
+import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
 const model = compileContentModel([core(), superscript()], { id: 'story.marks-superscript', version: 1 });
@@ -29,6 +30,7 @@ Superscript as \`sup\`.
     args: {
         'aria-label': 'Notes',
         definition: defineEditor({ id: 'story.marks-superscript', model }),
+        presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-marks-superscript',
             revision: null,

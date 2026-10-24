@@ -18,6 +18,18 @@
         --rte-content-rule-color: var(--color-line-strong);
         --rte-content-surface-padding: var(--spacing-x-small) var(--spacing-small);
         --rte-content-secondary-text-color: var(--color-secondary-default);
+        --rte-content-heading-weight: var(--typography-font-weight-bold);
+        --rte-content-heading-1-size: var(--typography-font-size-xxx-large);
+        --rte-content-heading-2-size: var(--typography-font-size-xx-large);
+        --rte-content-heading-3-size: var(--typography-font-size-x-large);
+        --rte-content-heading-4-size: var(--typography-font-size-large);
+        --rte-content-quote-border: var(--border-width-large) solid var(--color-line-strong);
+        --rte-content-quote-indent: var(--spacing-small);
+        --rte-content-code-font-family: var(--typography-font-family-monospace);
+        --rte-content-code-background: var(--rte-content-surface-background);
+        --rte-content-code-border: var(--border-width-default) solid var(--color-line-strong);
+        --rte-content-code-padding: var(--spacing-x-small);
+        --rte-content-list-indent: var(--spacing-large);
         --rte-content-placeholder-color: var(--color-secondary-default);
         --rte-content-placeholder-opacity: 1;
         --rte-content-selected-node-color: var(--color-focus-default);
@@ -35,6 +47,52 @@
 
     :where(.fondue-rte-content p) {
         margin-block: 0 var(--rte-content-paragraph-spacing);
+    }
+
+    /* A host reset in a lower layer flattens the browser's own heading, quote, code and list styles, so the package sets them. */
+    :where(.fondue-rte-content :is(h1, h2, h3, h4, h5, h6)) {
+        margin-block: 0 var(--rte-content-paragraph-spacing);
+        font-weight: var(--rte-content-heading-weight);
+    }
+
+    :where(.fondue-rte-content h1) {
+        font-size: var(--rte-content-heading-1-size);
+    }
+
+    :where(.fondue-rte-content h2) {
+        font-size: var(--rte-content-heading-2-size);
+    }
+
+    :where(.fondue-rte-content h3) {
+        font-size: var(--rte-content-heading-3-size);
+    }
+
+    :where(.fondue-rte-content :is(h4, h5, h6)) {
+        font-size: var(--rte-content-heading-4-size);
+    }
+
+    :where(.fondue-rte-content blockquote) {
+        margin-block: 0 var(--rte-content-paragraph-spacing);
+        margin-inline: 0;
+        padding-inline-start: var(--rte-content-quote-indent);
+        border-inline-start: var(--rte-content-quote-border);
+    }
+
+    :where(.fondue-rte-content pre) {
+        margin-block: 0 var(--rte-content-paragraph-spacing);
+        padding: var(--rte-content-code-padding);
+        border: var(--rte-content-code-border);
+        background-color: var(--rte-content-code-background);
+    }
+
+    :where(.fondue-rte-content :is(pre, code)) {
+        font-family: var(--rte-content-code-font-family);
+    }
+
+    /* A task list has no marker to indent for. */
+    :where(.fondue-rte-content :is(ul, ol):not([data-task-list])) {
+        margin-block: 0 var(--rte-content-paragraph-spacing);
+        padding-inline-start: var(--rte-content-list-indent);
     }
 
     /* A link stays underlined, a cue other than colour; a link style that draws a box replaces the underline. */
@@ -138,6 +196,7 @@
 
     /* The editing-only rules of the same stylesheet, on the surface. */
     :where(.fondue-rte-content[data-rte-surface]) {
+        box-sizing: border-box;
         position: relative;
         padding: var(--rte-content-surface-padding);
         border: var(--rte-content-surface-border);

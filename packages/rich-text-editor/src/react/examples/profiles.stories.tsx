@@ -6,7 +6,22 @@ import { expect, waitFor, within } from 'storybook/test';
 import { RichTextEditor, type RichTextProfile } from '#/index';
 
 import { AREAS, INPUT_RULE_ROWS, SHORTCUT_ROWS, SURFACE_KEY_ROWS } from './keyboard';
-import { PROFILE_MODELS, recordOf, text } from './records';
+import {
+    blocksRecord,
+    bulletList,
+    codeBlock,
+    heading,
+    mark,
+    mention,
+    orderedList,
+    paragraph,
+    PROFILE_MODELS,
+    quote,
+    recordOf,
+    rule,
+    text,
+} from './records';
+import styles from './styles/keyboard-reference.module.scss';
 
 const shown = (text: string) => {
     if (text === '') {
@@ -19,7 +34,7 @@ const shown = (text: string) => {
 const KeyboardReference = ({ profile }: { readonly profile: RichTextProfile }) => {
     const shortcuts = SHORTCUT_ROWS.filter(({ profiles }) => profiles.includes(profile));
     return (
-        <section aria-label="Keyboard reference">
+        <section aria-label="Keyboard reference" className={styles.reference}>
             <h2>Keyboard shortcuts</h2>
             {AREAS.filter((area) => shortcuts.some((entry) => entry.area === area)).map((area) => (
                 <table key={area}>
@@ -114,7 +129,7 @@ In Comment, Mod+Enter submits, so no shortcut binds it; Shift+Enter breaks the l
         },
     },
     render: (args) => (
-        <div style={{ display: 'grid', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
             <RichTextEditor {...args} />
             <KeyboardReference profile={args.profile ?? 'document'} />
         </div>
@@ -199,7 +214,17 @@ export const Inline: Story = {
         defaultValue: recordOf(
             PROFILE_MODELS.inline,
             'story-profile-inline',
-            text('A single line with bold, italic and links.'),
+            text('A single line with '),
+            mark('bold', 'bold'),
+            text(', '),
+            mark('italic', 'italic'),
+            text(' and '),
+            mark('links', 'link', {
+                href: 'https://frontify.com',
+                openInNewWindow: false,
+                styleId: null,
+            }),
+            text('.'),
         ),
     },
     play: documents(
@@ -215,10 +240,14 @@ export const Comment: Story = {
     args: {
         profile: 'comment',
         'aria-label': 'Comment',
-        defaultValue: recordOf(
+        defaultValue: blocksRecord(
             PROFILE_MODELS.comment,
             'story-profile-comment',
-            text('A comment with lists, quotes, code, mentions and emoji.'),
+            paragraph(text('Thanks '), mention('mention-1', 'user-ada', 'Ada Lovelace'), text(' for the review 🎉')),
+            quote(text('Keep the logo clear of other elements.')),
+            bulletList([text('Fix the spacing')], [text('Update the '), mark('colors', 'bold')]),
+            orderedList([text('Export the files')], [text('Share the link')]),
+            codeBlock("const gap = '16px';", 'typescript'),
         ),
     },
     play: documents(
@@ -238,10 +267,20 @@ export const Document: Story = {
     args: {
         profile: 'document',
         'aria-label': 'Document',
-        defaultValue: recordOf(
+        defaultValue: blocksRecord(
             PROFILE_MODELS.document,
             'story-profile-document',
-            text('A document with headings, images, dividers and the outline.'),
+            heading('heading-1', 1, 'Logo guidelines'),
+            paragraph(
+                text('How to use the logo, with a divider between sections and the outline listing the headings.'),
+            ),
+            heading('heading-2', 2, 'Clear space'),
+            bulletList([text('Keep the logo clear of other elements')], [text('Never stretch it')]),
+            quote(text('The logo is the face of the brand.')),
+            rule,
+            heading('heading-3', 2, 'Usage'),
+            orderedList([text('Pick the version')], [text('Place it on the page')]),
+            codeBlock("<img src='logo.svg' alt='Acme logo' />"),
         ),
     },
     play: documents('Document', MULTILINE_TABLES, [
@@ -256,10 +295,18 @@ export const BrandDocument: Story = {
     args: {
         profile: 'brand-document',
         'aria-label': 'Brand document',
-        defaultValue: recordOf(
+        defaultValue: blocksRecord(
             PROFILE_MODELS['brand-document'],
             'story-profile-brand-document',
-            text('A brand document with brand styles and columns.'),
+            heading('heading-1', 1, 'Brand guidelines'),
+            paragraph(text('A brand document with brand styles, columns and the Document features.')),
+            heading('heading-2', 2, 'Colors'),
+            bulletList([text('Primary blue')], [text('Accent orange')]),
+            quote(text('Colour is the first thing people remember.')),
+            rule,
+            heading('heading-3', 2, 'Typography'),
+            orderedList([text('Headings use the display font')], [text('Body text uses the text font')]),
+            codeBlock("font-family: 'Acme Sans', sans-serif;"),
         ),
     },
     play: documents('Brand document', MULTILINE_TABLES, [

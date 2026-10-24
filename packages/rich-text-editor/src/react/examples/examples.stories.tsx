@@ -110,7 +110,7 @@ const SubmitSnapshotExample = ({
     const send = (snapshot: Snapshot) =>
         setSent((previous) => [...previous, { id: previous.length, text: textOf(snapshot.document.content) }]);
     return (
-        <div style={{ display: 'grid', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
             <RichTextEditor
                 aria-label="Comment"
                 profile={profile}
@@ -173,7 +173,7 @@ const ExternalReplacementExample = ({
     const [services] = useState(() => ({ persistence: createFakePersistenceService() }));
     const [outcome, setOutcome] = useState('');
     return (
-        <div style={{ display: 'grid', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
             <button
                 type="button"
                 onClick={async () => {
@@ -250,7 +250,7 @@ const TwoEditorsExample = ({
     readonly summary: LoadedDocument;
     readonly details: LoadedDocument;
 }) => (
-    <div style={{ display: 'grid', gap: '1rem' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
         <RichTextEditor
             aria-label="Summary"
             definition={definition}
@@ -316,7 +316,7 @@ const FormFieldExample = ({ definition, defaultValue }: EditorArgs) => {
     return (
         <form
             aria-label="Feedback form"
-            style={{ display: 'grid', gap: '1rem' }}
+            style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}
             onSubmit={async (event) => {
                 event.preventDefault();
                 if (!field.validate().valid) {

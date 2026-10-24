@@ -1,6 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /* Utility classes for the stories' own layout; the packages themselves don't use Tailwind. */
-@tailwind base;
+/* The reset sits below `fondue-rte` so it cannot flatten the editor's content styles. */
+@layer tailwind-base, fondue-rte;
+
+@layer tailwind-base {
+    @tailwind base;
+}
 @tailwind components;
 @tailwind utilities;

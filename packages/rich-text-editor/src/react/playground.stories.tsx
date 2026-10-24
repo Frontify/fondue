@@ -309,6 +309,8 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly resolveImages: boolean;
     /** `services.assets`; off, Image opens the file chooser, whose files upload through `services.uploads`. */
     readonly assetPicker: boolean;
+    /** Shows the host test buttons, the selection, save status, event log and JSON snapshot around the editor. */
+    readonly debug: boolean;
 };
 
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
@@ -351,6 +353,7 @@ const Playground = ({
     leadFontSize,
     resolveImages,
     assetPicker,
+    debug,
     ...props
 }: PlaygroundProps) => {
     const [hostContainer, setHostContainer] = useState<HTMLElement | null>(null);
@@ -438,235 +441,249 @@ const Playground = ({
         }
     }, [broken]);
     return (
-        <div style={{ display: 'grid', gap: '1rem' }}>
-            <section aria-label="Commands" style={{ display: 'flex', gap: '0.5rem' }}>
-                <button
-                    type="button"
-                    onClick={() =>
-                        log(`execute history.undo ${resultText(handleRef.current?.execute('history.undo'))}`)
-                    }
-                >
-                    Undo
-                </button>
-                <button
-                    type="button"
-                    onClick={() =>
-                        log(`execute history.redo ${resultText(handleRef.current?.execute('history.redo'))}`)
-                    }
-                >
-                    Redo
-                </button>
-                <button
-                    type="button"
-                    onClick={() =>
-                        log(`execute mark.bold.toggle ${resultText(handleRef.current?.execute('mark.bold.toggle'))}`)
-                    }
-                >
-                    Toggle bold
-                </button>
-                <button
-                    type="button"
-                    onClick={() =>
-                        log(
-                            `execute mark.bold.toggle with focus editor ${resultText(handleRef.current?.execute('mark.bold.toggle', undefined, { focus: 'editor' }))}`,
-                        )
-                    }
-                >
-                    Toggle bold and focus the editor
-                </button>
-                <button
-                    type="button"
-                    onClick={() =>
-                        log(`execute story.callout.set ${resultText(handleRef.current?.execute('story.callout.set'))}`)
-                    }
-                >
-                    Toggle callout
-                </button>
-                <button
-                    type="button"
-                    onClick={() =>
-                        log(
-                            `execute heading.set ${resultText(handleRef.current?.execute('heading.set', { level: 2 }))}`,
-                        )
-                    }
-                >
-                    Heading 2
-                </button>
-                <button
-                    type="button"
-                    onClick={() =>
-                        log(`execute outline.toggle ${resultText(handleRef.current?.execute('outline.toggle'))}`)
-                    }
-                >
-                    Toggle outline
-                </button>
-                <button
-                    type="button"
-                    onClick={() => log(`execute checks.open ${resultText(handleRef.current?.execute('checks.open'))}`)}
-                >
-                    Open the accessibility checks
-                </button>
-                <button
-                    type="button"
-                    onClick={() =>
-                        log(`execute block.move.down ${resultText(handleRef.current?.execute('block.move.down'))}`)
-                    }
-                >
-                    Move the block down
-                </button>
-                <button
-                    type="button"
-                    onClick={() => log(`execute rule.insert ${resultText(handleRef.current?.execute('rule.insert'))}`)}
-                >
-                    Insert a divider
-                </button>
-                <button
-                    type="button"
-                    onClick={() =>
-                        log(
-                            `execute column.break.insert ${resultText(handleRef.current?.execute('column.break.insert'))}`,
-                        )
-                    }
-                >
-                    Insert a column break
-                </button>
-                <button
-                    type="button"
-                    onClick={async () => {
-                        const handle = handleRef.current;
-                        if (handle !== null) {
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
+            {debug && (
+                <section aria-label="Commands" style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            log(`execute history.undo ${resultText(handleRef.current?.execute('history.undo'))}`)
+                        }
+                    >
+                        Undo
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            log(`execute history.redo ${resultText(handleRef.current?.execute('history.redo'))}`)
+                        }
+                    >
+                        Redo
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
                             log(
-                                `enqueue text.insert ${resultText(await handle.enqueue('text.insert', { text: '*' }))}`,
+                                `execute mark.bold.toggle ${resultText(handleRef.current?.execute('mark.bold.toggle'))}`,
+                            )
+                        }
+                    >
+                        Toggle bold
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            log(
+                                `execute mark.bold.toggle with focus editor ${resultText(handleRef.current?.execute('mark.bold.toggle', undefined, { focus: 'editor' }))}`,
+                            )
+                        }
+                    >
+                        Toggle bold and focus the editor
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            log(
+                                `execute story.callout.set ${resultText(handleRef.current?.execute('story.callout.set'))}`,
+                            )
+                        }
+                    >
+                        Toggle callout
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            log(
+                                `execute heading.set ${resultText(handleRef.current?.execute('heading.set', { level: 2 }))}`,
+                            )
+                        }
+                    >
+                        Heading 2
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            log(`execute outline.toggle ${resultText(handleRef.current?.execute('outline.toggle'))}`)
+                        }
+                    >
+                        Toggle outline
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            log(`execute checks.open ${resultText(handleRef.current?.execute('checks.open'))}`)
+                        }
+                    >
+                        Open the accessibility checks
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            log(`execute block.move.down ${resultText(handleRef.current?.execute('block.move.down'))}`)
+                        }
+                    >
+                        Move the block down
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            log(`execute rule.insert ${resultText(handleRef.current?.execute('rule.insert'))}`)
+                        }
+                    >
+                        Insert a divider
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            log(
+                                `execute column.break.insert ${resultText(handleRef.current?.execute('column.break.insert'))}`,
+                            )
+                        }
+                    >
+                        Insert a column break
+                    </button>
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            const handle = handleRef.current;
+                            if (handle !== null) {
+                                log(
+                                    `enqueue text.insert ${resultText(await handle.enqueue('text.insert', { text: '*' }))}`,
+                                );
+                            }
+                        }}
+                    >
+                        Insert a star
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const captured = handleRef.current?.captureTarget({
+                                purpose: 'format',
+                                onIntersectingEdit: 'map',
+                            });
+                            if (captured === undefined) {
+                                log('captureTarget no editor');
+                                return;
+                            }
+                            if (captured.status === 'captured') {
+                                targetRef.current = captured.target;
+                            }
+                            log(`captureTarget ${captured.status}`);
+                        }}
+                    >
+                        Capture the selection
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const target = targetRef.current;
+                            if (target === null) {
+                                log('no captured target');
+                                return;
+                            }
+                            log(
+                                `execute mark.bold.toggle on the target ${resultText(handleRef.current?.execute('mark.bold.toggle', undefined, { target }))}`,
                             );
-                        }
-                    }}
-                >
-                    Insert a star
-                </button>
-                <button
-                    type="button"
-                    onClick={() => {
-                        const captured = handleRef.current?.captureTarget({
-                            purpose: 'format',
-                            onIntersectingEdit: 'map',
-                        });
-                        if (captured === undefined) {
-                            log('captureTarget no editor');
-                            return;
-                        }
-                        if (captured.status === 'captured') {
-                            targetRef.current = captured.target;
-                        }
-                        log(`captureTarget ${captured.status}`);
-                    }}
-                >
-                    Capture the selection
-                </button>
-                <button
-                    type="button"
-                    onClick={() => {
-                        const target = targetRef.current;
-                        if (target === null) {
-                            log('no captured target');
-                            return;
-                        }
-                        log(
-                            `execute mark.bold.toggle on the target ${resultText(handleRef.current?.execute('mark.bold.toggle', undefined, { target }))}`,
-                        );
-                    }}
-                >
-                    Bold the captured text
-                </button>
-                <button
-                    type="button"
-                    onClick={() => {
-                        const target = targetRef.current;
-                        if (target === null) {
-                            log('no captured target');
-                            return;
-                        }
-                        handleRef.current?.releaseTarget(target);
-                        targetRef.current = null;
-                        log('releaseTarget');
-                    }}
-                >
-                    Release the captured target
-                </button>
-                <button
-                    type="button"
-                    onClick={() => {
-                        const snapshot = handleRef.current?.getSnapshot();
-                        if (snapshot === undefined) {
-                            log('getSnapshot no editor');
-                            return;
-                        }
-                        log(`getSnapshot #${snapshot.stamp.sequence} compositionActive ${snapshot.compositionActive}`);
-                    }}
-                >
-                    Read the snapshot
-                </button>
-                <button
-                    type="button"
-                    onClick={async () => {
-                        const handle = handleRef.current;
-                        if (handle === null) {
-                            return;
-                        }
-                        const result = await handle.replaceDocument({
-                            expected: handle.getSnapshot().stamp,
-                            next: {
-                                documentId: 'story-replaced',
-                                revision: null,
-                                document: createEmptyDocument(model),
-                            },
-                            unsaved: { action: 'save' },
-                            selection: 'start',
-                            history: 'reset',
-                        });
-                        if (result.status === 'rejected') {
-                            log(`replaceDocument rejected ${result.code}`);
-                            return;
-                        }
-                        log(`replaceDocument ${result.status}`);
-                    }}
-                >
-                    Replace with an empty document
-                </button>
-                <button type="button" onClick={() => setBroken(true)}>
-                    Throw in render
-                </button>
-                <button
-                    type="button"
-                    onClick={async () => {
-                        const result = await handleRef.current?.requestCommit({ reason: 'manual' });
-                        if (result === undefined) {
-                            log('requestCommit no editor');
-                            return;
-                        }
-                        let code = '';
-                        if (result.status !== 'acknowledged') {
-                            code = result.code;
-                        }
-                        log(`requestCommit ${result.status} ${code}`);
-                    }}
-                >
-                    Save now
-                </button>
-                <button
-                    type="button"
-                    onClick={() => {
-                        const handle = handleRef.current;
-                        const panel = hostPanelRef.current;
-                        if (handle === null || panel === null) {
-                            return;
-                        }
-                        handle.registerInteractionRoot(panel);
-                        log('registerInteractionRoot host panel');
-                    }}
-                >
-                    Register the host panel
-                </button>
-            </section>
+                        }}
+                    >
+                        Bold the captured text
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const target = targetRef.current;
+                            if (target === null) {
+                                log('no captured target');
+                                return;
+                            }
+                            handleRef.current?.releaseTarget(target);
+                            targetRef.current = null;
+                            log('releaseTarget');
+                        }}
+                    >
+                        Release the captured target
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const snapshot = handleRef.current?.getSnapshot();
+                            if (snapshot === undefined) {
+                                log('getSnapshot no editor');
+                                return;
+                            }
+                            log(
+                                `getSnapshot #${snapshot.stamp.sequence} compositionActive ${snapshot.compositionActive}`,
+                            );
+                        }}
+                    >
+                        Read the snapshot
+                    </button>
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            const handle = handleRef.current;
+                            if (handle === null) {
+                                return;
+                            }
+                            const result = await handle.replaceDocument({
+                                expected: handle.getSnapshot().stamp,
+                                next: {
+                                    documentId: 'story-replaced',
+                                    revision: null,
+                                    document: createEmptyDocument(model),
+                                },
+                                unsaved: { action: 'save' },
+                                selection: 'start',
+                                history: 'reset',
+                            });
+                            if (result.status === 'rejected') {
+                                log(`replaceDocument rejected ${result.code}`);
+                                return;
+                            }
+                            log(`replaceDocument ${result.status}`);
+                        }}
+                    >
+                        Replace with an empty document
+                    </button>
+                    <button type="button" onClick={() => setBroken(true)}>
+                        Throw in render
+                    </button>
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            const result = await handleRef.current?.requestCommit({
+                                reason: 'manual',
+                            });
+                            if (result === undefined) {
+                                log('requestCommit no editor');
+                                return;
+                            }
+                            let code = '';
+                            if (result.status !== 'acknowledged') {
+                                code = result.code;
+                            }
+                            log(`requestCommit ${result.status} ${code}`);
+                        }}
+                    >
+                        Save now
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const handle = handleRef.current;
+                            const panel = hostPanelRef.current;
+                            if (handle === null || panel === null) {
+                                return;
+                            }
+                            handle.registerInteractionRoot(panel);
+                            log('registerInteractionRoot host panel');
+                        }}
+                    >
+                        Register the host panel
+                    </button>
+                </section>
+            )}
             <RichTextEditor.Root
                 // The toolbar mode is a default, which a new mount takes.
                 key={props.defaultToolbarMode}
@@ -736,65 +753,73 @@ const Playground = ({
                 <RichTextEditor.Panels />
                 <RichTextEditor.Surface />
                 <RichTextEditor.Status />
-                <SelectionReadout />
-                <p>Save status: {saveStatus}</p>
+                {debug && <SelectionReadout />}
+                {debug && <p>Save status: {saveStatus}</p>}
                 <Breaker armed={broken} />
             </RichTextEditor.Root>
-            <section aria-label="Form field" style={{ display: 'flex', gap: '0.5rem' }}>
-                <button
-                    type="button"
-                    onClick={() => {
-                        const result = field.validate();
-                        if (result.valid) {
-                            log('validate valid');
-                            return;
-                        }
-                        log(`validate ${result.reason}`);
-                    }}
-                >
-                    Validate
-                </button>
-                <button
-                    type="button"
-                    onClick={async () => {
-                        const result = await field.reset();
-                        if (result.status === 'rejected') {
-                            log(`reset rejected ${result.code}`);
-                            return;
-                        }
-                        log(`reset ${result.status}`);
-                    }}
-                >
-                    Reset
-                </button>
-                <button
-                    type="button"
-                    onClick={async () => {
-                        try {
-                            const settled = await field.getSettledValue({ timeoutMs: 1000 });
-                            log(`getSettledValue ${JSON.stringify(settled.content).length} characters of JSON`);
-                        } catch {
-                            log('getSettledValue timeout');
-                        }
-                    }}
-                >
-                    Read the settled value
-                </button>
-            </section>
-            <section ref={hostPanelRef} aria-label="Host panel">
-                <button type="button">A host control</button>
-                <div ref={setHostContainer} />
-            </section>
-            <section aria-label="Event log">
-                <ol>
-                    {events.map(({ id, text }) => (
-                        <li key={id}>{text}</li>
-                    ))}
-                </ol>
-            </section>
-            <section aria-label="Document JSON">
-                <pre>{JSON.stringify(document, null, 2)}</pre>
-            </section>
+            {debug && (
+                <section aria-label="Form field" style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const result = field.validate();
+                            if (result.valid) {
+                                log('validate valid');
+                                return;
+                            }
+                            log(`validate ${result.reason}`);
+                        }}
+                    >
+                        Validate
+                    </button>
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            const result = await field.reset();
+                            if (result.status === 'rejected') {
+                                log(`reset rejected ${result.code}`);
+                                return;
+                            }
+                            log(`reset ${result.status}`);
+                        }}
+                    >
+                        Reset
+                    </button>
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            try {
+                                const settled = await field.getSettledValue({ timeoutMs: 1000 });
+                                log(`getSettledValue ${JSON.stringify(settled.content).length} characters of JSON`);
+                            } catch {
+                                log('getSettledValue timeout');
+                            }
+                        }}
+                    >
+                        Read the settled value
+                    </button>
+                </section>
+            )}
+            {debug && (
+                <section ref={hostPanelRef} aria-label="Host panel">
+                    <button type="button">A host control</button>
+                    <div ref={setHostContainer} />
+                </section>
+            )}
+            {debug && (
+                <section aria-label="Event log">
+                    <ol>
+                        {events.map(({ id, text }) => (
+                            <li key={id}>{text}</li>
+                        ))}
+                    </ol>
+                </section>
+            )}
+            {debug && (
+                <section aria-label="Document JSON">
+                    <pre>{JSON.stringify(document, null, 2)}</pre>
+                </section>
+            )}
         </div>
     );
 };
@@ -957,6 +982,7 @@ Accessibility checks opens the issues panel, which runs the checks and lists wha
         leadFontSize: 20,
         resolveImages: true,
         assetPicker: true,
+        debug: false,
         defaultToolbarMode: 'fixed',
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },
@@ -999,6 +1025,10 @@ export default meta;
 type Story = StoryObj<typeof Playground>;
 
 export const Default: Story = {};
+
+/** The editor with the host test buttons, selection, save status, event log and JSON snapshot around it. */
+// Left out of the docs page, which renders every story inline, so the panels show only here.
+export const Debug: Story = { tags: ['!autodocs'], args: { debug: true } };
 
 /** A document that opens with a node view, whose chrome sits beside the text it holds. */
 export const NodeView: Story = {
@@ -1122,7 +1152,7 @@ const ProfileEditor = ({ profile, required }: { readonly profile: RichTextProfil
         [profile],
     );
     return (
-        <div style={{ display: 'grid', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
             <RichTextEditor
                 key={profile}
                 aria-label="Message"

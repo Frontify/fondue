@@ -3,8 +3,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { core, inputRules } from '#/features';
-import { defineEditor, RichTextEditor } from '#/index';
+import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
 import { compileContentModel } from '#/model';
+import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
 const model = compileContentModel(
@@ -43,6 +44,7 @@ The typography input rules, each off until the \`typography\` option lists its I
     args: {
         'aria-label': 'Notes',
         definition: defineEditor({ id: 'story.input-rules', model }),
+        presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-input-rules',
             revision: null,

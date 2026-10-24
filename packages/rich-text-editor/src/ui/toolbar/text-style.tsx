@@ -95,8 +95,9 @@ export const TextStyle = ({
                 returnFocus(runtime, [contentRef.current]);
             }}
         >
+            {/* An element, since Fondue's `Dropdown.Item` wraps text beside another child in an unkeyed span. */}
             {option.brand === undefined ? (
-                option.label
+                <span>{option.label}</span>
             ) : (
                 <span style={option.brand.preview} data-rte-style-preview="">
                     {option.label}

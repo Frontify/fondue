@@ -70,6 +70,25 @@ describe('blocks.heading', () => {
         ]);
     });
 
+    it('opens the text style picker without a React key warning', () => {
+        const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const { getByRole } = mountText({
+            blocks: [headingOf(1, text('Title'))],
+            toolbar: [['text-style']],
+        });
+        act(() => {
+            fireEvent.pointerDown(getByRole('button', { name: 'Heading 1' }), {
+                button: 0,
+                ctrlKey: false,
+                pointerType: 'mouse',
+            });
+        });
+
+        expect(screen.getAllByRole('menuitemradio').length).toBeGreaterThan(0);
+        expect(errors.mock.calls.filter(([message]) => String(message).includes('unique "key"'))).toEqual([]);
+        errors.mockRestore();
+    });
+
     it('names a stored h3 in the text style picker and checks only its row, and a paragraph as Normal text', () => {
         const checkedRows = () =>
             screen

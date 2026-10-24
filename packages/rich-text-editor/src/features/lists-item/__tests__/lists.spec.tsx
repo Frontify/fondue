@@ -18,7 +18,7 @@ import {
     listOutline,
     outlineOf,
 } from '#/react/__tests__/fixtures/lists';
-import { mountText } from '#/react/__tests__/fixtures/text';
+import { mountText, para, text } from '#/react/__tests__/fixtures/text';
 import { extensionsOf } from '#/react/engine';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { pressKey } from '#/testing';
@@ -335,5 +335,64 @@ describe('the List keys table', () => {
         bare.destroy();
 
         expect(roots.map(({ scrolledIntoView }) => scrolledIntoView)).toEqual([true]);
+    });
+});
+
+describe('toggling a list on a paragraph beside a list of the same type', () => {
+    for (const kind of LIST_KINDS) {
+        const payload = kind === 'ordered' ? { start: 1 } : undefined;
+
+        it(`joins a paragraph after a ${kind} list into it`, () => {
+            const mounted = mountText({
+                model,
+                blocks: [list(kind, [item(kind, 'one')]), para(text('two'))],
+            });
+            caret(mounted, 'two');
+
+            expect(mounted.handle.execute(TOGGLE[kind], payload as never).status).toBe('applied');
+
+            expect(outlineOf(mounted.handle)).toEqual([listOutline(kind, [one(kind), itemOutline(kind, 'two')])]);
+        });
+
+        it(`joins a paragraph before a ${kind} list into it`, () => {
+            const mounted = mountText({
+                model,
+                blocks: [para(text('one')), list(kind, [item(kind, 'two')])],
+            });
+            caret(mounted, 'one');
+
+            expect(mounted.handle.execute(TOGGLE[kind], payload as never).status).toBe('applied');
+
+            expect(outlineOf(mounted.handle)).toEqual([
+                listOutline(kind, [itemOutline(kind, 'one'), itemOutline(kind, 'two')]),
+            ]);
+        });
+
+        it(`makes one ${kind} list of two paragraphs toggled in turn`, () => {
+            const mounted = mountText({ model, blocks: [para(text('one')), para(text('two'))] });
+            caret(mounted, 'one');
+            mounted.handle.execute(TOGGLE[kind], payload as never);
+            caret(mounted, 'two');
+            mounted.handle.execute(TOGGLE[kind], payload as never);
+
+            expect(outlineOf(mounted.handle)).toEqual([
+                listOutline(kind, [itemOutline(kind, 'one'), itemOutline(kind, 'two')]),
+            ]);
+        });
+    }
+
+    it('keeps a list of another type apart from the paragraph it wraps', () => {
+        const mounted = mountText({
+            model,
+            blocks: [list('bullet', [item('bullet', 'one')]), para(text('two'))],
+        });
+        caret(mounted, 'two');
+
+        mounted.handle.execute('list.ordered.toggle', { start: 1 } as never);
+
+        expect(outlineOf(mounted.handle)).toEqual([
+            listOutline('bullet', [one('bullet')]),
+            listOutline('ordered', [itemOutline('ordered', 'two')]),
+        ]);
     });
 });

@@ -2,22 +2,43 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core } from '#/features';
+import { documentModel } from '#/features';
 import { deDE } from '#/locales/de-DE';
-import { compileContentModel } from '#/model';
+import {
+    blocksRecord,
+    bulletList,
+    codeBlock,
+    heading,
+    mark,
+    orderedList,
+    paragraph,
+    quote,
+    text,
+} from '#/react/examples/records';
 import { RichTextReader } from '#/reader';
+import '#/react/examples/content-styles';
 
-const model = compileContentModel([core()], { id: 'story.reader', version: 1 });
-
-const text = (value: string) => ({ type: 'text', text: value });
-const paragraph = (...content: readonly unknown[]) => ({ type: 'paragraph', attrs: { lang: null }, content });
-const stored = (...blocks: readonly unknown[]) => ({
-    format: 'frontify.rich-text',
-    formatVersion: 1,
-    model: { id: 'story.reader', version: 1 },
-    requiredCapabilities: [{ id: 'core', version: 1 }],
-    content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: blocks },
-});
+const model = documentModel;
+const stored = (...blocks: Parameters<typeof blocksRecord>[2][]) =>
+    blocksRecord(model, 'story-reader', ...blocks).document;
+/** The content every reader story shows: headings, lists, a quote, code and a link. */
+const CONTENT = [
+    heading('heading-1', 1, 'Logo guidelines'),
+    paragraph(
+        text('Read the '),
+        mark('brand guide', 'link', {
+            href: 'https://frontify.com',
+            openInNewWindow: false,
+            styleId: null,
+        }),
+        text(' before you use the logo.'),
+    ),
+    heading('heading-2', 2, 'Clear space'),
+    bulletList([text('Keep the logo clear of other elements')], [text('Never stretch it')]),
+    orderedList([text('Pick the version')], [text('Place it on the page')]),
+    quote(text('The logo is the face of the brand.')),
+    codeBlock("<img src='logo.svg' alt='Acme logo' />"),
+];
 
 const meta: Meta<typeof RichTextReader> = {
     title: 'Rich Text Editor/Reader',
@@ -35,8 +56,9 @@ type Story = StoryObj<typeof RichTextReader>;
 export const Default: Story = {
     args: {
         document: stored(
+            ...CONTENT,
             paragraph(text('Published text renders as semantic HTML, on the server and in the browser.')),
-            paragraph(text('A line'), { type: 'hard_break' }, text('break keeps its place.')),
+            paragraph(text('A line'), { type: 'hard_break' } as never, text('break keeps its place.')),
         ),
     },
 };
@@ -45,6 +67,7 @@ export const Default: Story = {
 export const UnsupportedContent: Story = {
     args: {
         document: stored(
+            ...CONTENT,
             paragraph(text('The reader shows what it understands.')),
             {
                 type: 'callout',
@@ -53,7 +76,7 @@ export const UnsupportedContent: Story = {
             },
             paragraph(
                 text('An inline one: '),
-                { type: 'sticker', content: [text('smile')] },
+                { type: 'sticker', content: [text('smile')] } as never,
                 text(' stays in its line.'),
             ),
         ),
@@ -63,7 +86,7 @@ export const UnsupportedContent: Story = {
 /** A document written for another model shows only a message. */
 export const BlockedContent: Story = {
     args: {
-        document: { ...stored(paragraph(text('Hidden'))), model: { id: 'another.model', version: 1 } },
+        document: { ...stored(...CONTENT), model: { id: 'another.model', version: 1 } },
     },
 };
 

@@ -3,8 +3,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { core, heading } from '#/features';
-import { defineEditor, RichTextEditor } from '#/index';
+import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
 import { compileContentModel } from '#/model';
+import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
 const model = compileContentModel([core(), heading()], { id: 'story.blocks-heading', version: 1 });
@@ -29,6 +30,7 @@ Headings \`h1\` to \`h6\`. A stored heading keeps its level, even one the policy
     args: {
         'aria-label': 'Notes',
         definition: defineEditor({ id: 'story.blocks-heading', model }),
+        presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-blocks-heading',
             revision: null,

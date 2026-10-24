@@ -3,8 +3,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { code, core } from '#/features';
-import { defineEditor, RichTextEditor } from '#/index';
+import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
 import { compileContentModel } from '#/model';
+import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
 const model = compileContentModel([core(), code()], { id: 'story.marks-code', version: 1 });
@@ -29,6 +30,7 @@ Inline code as \`code\`, which typing at its end does not extend and inside whic
     args: {
         'aria-label': 'Notes',
         definition: defineEditor({ id: 'story.marks-code', model }),
+        presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-marks-code',
             revision: null,

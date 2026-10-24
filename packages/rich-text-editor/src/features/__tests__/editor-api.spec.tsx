@@ -1335,18 +1335,22 @@ describe('the lists of the editor API', () => {
         runIn(handle, 'two', (api) => api.lists.outdent('list_item'));
         const refused = runIn(handle, 'zero', (api) => api.lists.toggle('task_list', 'task_item', { done: true }));
         runIn(handle, 'one', (api) => api.lists.toggle('task_list', 'task_item', { checked: true }));
-        for (const block of blocksOf(handle) ?? []) {
-            for (const child of block.content ?? []) {
-                tasks.push(child.attrs?.checked as boolean | undefined);
+        const collect = (nodes: readonly ContentNodeJSON[] | undefined) => {
+            for (const node of nodes ?? []) {
+                if (node.type === 'task_item' || node.type === 'list_item') {
+                    tasks.push(node.attrs?.checked as boolean | undefined);
+                }
+                collect(node.content);
             }
-        }
+        };
+        collect(blocksOf(handle));
 
         expect(wrapped).toBe('applied');
         expect(seen).toEqual({ status: 'applied' });
-        expect(indented).toEqual(['rejected', 'applied']);
-        expect(nested).toEqual([{ bullet_list: [['zero']] }, { bullet_list: [['one', { bullet_list: [['two']] }]] }]);
+        expect(indented).toEqual(['applied', 'applied']);
+        expect(nested).toEqual([{ bullet_list: [['zero', { bullet_list: [['one'], ['two']] }]] }]);
         expect(refused?.status).toBe('rejected');
-        expect(tasks).toEqual([undefined, true, false]);
+        expect(tasks).toEqual([undefined, true, undefined]);
     });
 
     it('splits an item, moves an empty one out, and outdents an item from its start only with `atStart`', () => {

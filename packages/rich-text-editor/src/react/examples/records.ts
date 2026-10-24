@@ -37,6 +37,67 @@ export const recordOf = (model: ContentModel, documentId: string, ...content: re
     },
 });
 
+/** A stored block, as the document's `content` holds it. */
+export type Block = Record<string, unknown>;
+
+export const mark = (value: string, type: string, attrs?: Record<string, unknown>): Inline => ({
+    type: 'text',
+    text: value,
+    marks: [{ type, ...(attrs === undefined ? {} : { attrs }) }],
+});
+export const paragraph = (...content: readonly Inline[]): Block => ({
+    type: 'paragraph',
+    attrs: { lang: null },
+    content,
+});
+export const heading = (nodeId: string, level: number, value: string): Block => ({
+    type: 'heading',
+    attrs: { nodeId, level, lang: null },
+    content: [text(value)],
+});
+export const quote = (...content: readonly Inline[]): Block => ({
+    type: 'blockquote',
+    content: [paragraph(...content)],
+});
+export const codeBlock = (value: string, languageId: string | null = null): Block => ({
+    type: 'code_block',
+    attrs: { languageId },
+    content: [text(value)],
+});
+export const mention = (nodeId: string, resourceId: string, labelSnapshot: string): Inline =>
+    ({
+        type: 'mention',
+        attrs: { nodeId, resourceType: 'user', resourceId, labelSnapshot },
+    }) as unknown as Inline;
+const item = (...content: readonly Inline[]): Block => ({
+    type: 'list_item',
+    content: [paragraph(...content)],
+});
+export const bulletList = (...items: readonly (readonly Inline[])[]): Block => ({
+    type: 'bullet_list',
+    attrs: { marker: null },
+    content: items.map((content) => item(...content)),
+});
+export const orderedList = (...items: readonly (readonly Inline[])[]): Block => ({
+    type: 'ordered_list',
+    attrs: { start: 1, marker: null },
+    content: items.map((content) => item(...content)),
+});
+export const rule: Block = { type: 'horizontal_rule' };
+
+/** A stored record of `blocks` in `model`, which requires every capability the model has. */
+export const blocksRecord = (model: ContentModel, documentId: string, ...blocks: readonly Block[]): LoadedDocument => ({
+    documentId,
+    revision: null,
+    document: {
+        format: 'frontify.rich-text',
+        formatVersion: 1,
+        model: model.ref,
+        requiredCapabilities: [...model.capabilities],
+        content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: blocks as never },
+    },
+});
+
 /** The text of stored content, one line per block. */
 export const textOf = (value: unknown): string => {
     if (typeof value !== 'object' || value === null) {

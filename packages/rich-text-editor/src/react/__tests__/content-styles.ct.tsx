@@ -5,6 +5,7 @@ import { type Locator, type Page } from '@playwright/test';
 
 import { type ContentNodeJSON } from '#/model';
 
+import { ContentStylesProbe } from './fixtures/ContentStylesProbe';
 import { EditorProbe, ThemeSwitchProbe } from './fixtures/EditorProbe';
 
 const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Notes' });
@@ -406,4 +407,76 @@ test('draws the placeholder in the GrayText system colour in forced colours', as
     expect(await surfaceOf(page).evaluate((surface) => getComputedStyle(surface, '::before').color)).toBe(
         await computedColor(page, 'GrayText'),
     );
+});
+
+// A host reset in a layer below `fondue-rte`, as the host note asks, which still beats the browser's own styles.
+const RESET = `@layer host-reset, fondue-rte;
+@layer host-reset {
+    h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+    blockquote, p, pre { margin: 0; }
+    ol, ul { list-style: none; margin: 0; padding: 0; }
+    * { border-width: 0; }
+}`;
+
+test('styles headings, quotes, code and lists in the content after a host reset in a lower layer', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ContentStylesProbe />);
+    await ready(page);
+    await hostStylesheet(page, RESET);
+    const surface = surfaceOf(page);
+    const styleOf = (selector: string, property: string) =>
+        surface
+            .locator(selector)
+            .first()
+            .evaluate((element, name) => getComputedStyle(element).getPropertyValue(name), property);
+    const size = async (selector: string) => Number.parseFloat(await styleOf(selector, 'font-size'));
+
+    const paragraph = await size('p');
+    expect(await size('h1')).toBeGreaterThan(await size('h2'));
+    expect(await size('h2')).toBeGreaterThan(await size('h3'));
+    expect(await size('h3')).toBeGreaterThan(paragraph);
+    for (const level of ['h1', 'h2', 'h3']) {
+        expect(Number(await styleOf(level, 'font-weight'))).toBeGreaterThan(Number(await styleOf('p', 'font-weight')));
+    }
+
+    expect(Number.parseFloat(await styleOf('blockquote', 'border-inline-start-width'))).toBeGreaterThan(0);
+    expect(Number.parseFloat(await styleOf('blockquote', 'padding-inline-start'))).toBeGreaterThan(0);
+
+    expect(await styleOf('pre', 'font-family')).toMatch(/monospace|Menlo|Courier/);
+    expect(await styleOf('pre', 'background-color')).not.toBe('rgba(0, 0, 0, 0)');
+    expect(Number.parseFloat(await styleOf('pre', 'padding-block-start'))).toBeGreaterThan(0);
+
+    for (const [list, marker] of [
+        ['ul:not([data-task-list])', 'disc'],
+        ['ol', 'decimal'],
+    ] as const) {
+        expect(await styleOf(list, 'list-style-type')).toBe(marker);
+        expect(Number.parseFloat(await styleOf(list, 'padding-inline-start'))).toBeGreaterThan(0);
+        expect(await styleOf(`${list} > li`, 'display')).toBe('list-item');
+    }
+
+    expect(Number.parseFloat(await styleOf('p', 'margin-block-end'))).toBeGreaterThan(0);
+});
+
+test('keeps the surface inside a fixed-width container whatever the host sets for box sizing', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['a']} />);
+    await ready(page);
+    // The surface fills its container, and a host that gives it a width must not add its padding and border to it.
+    await hostStylesheet(
+        page,
+        `@layer host-reset, fondue-rte;
+        @layer host-reset { [data-rte-surface] { width: 100%; } *, ::before, ::after { box-sizing: content-box; } }
+        body { width: 400px; }`,
+    );
+
+    const edges = await surfaceOf(page).evaluate((surface) => ({
+        surface: surface.getBoundingClientRect().right,
+        container: (surface.parentElement as HTMLElement).getBoundingClientRect().right,
+    }));
+    expect(edges.surface).toBeLessThanOrEqual(edges.container);
 });

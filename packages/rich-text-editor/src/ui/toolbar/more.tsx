@@ -77,7 +77,7 @@ export const MoreRow = ({
             <Dropdown.Slot name="left">
                 <Icon name={item.icon} />
             </Dropdown.Slot>
-            {item.label}
+            <span>{item.label}</span>
             {item.toggle && checked && <CheckedSlot />}
             {shortcut !== undefined && <Dropdown.Shortcut>{shortcut}</Dropdown.Shortcut>}
             {reason !== undefined && (

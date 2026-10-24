@@ -15,8 +15,11 @@
             url('https://cdn.frontify.com/fonts/CrannyVariable.woff') format('woff');
     }
 
-    * {
-        font-family: var(--typography-font-family-primary);
+    /* In the reset's layer, so a package's layered styles, such as the rich text editor's code font, override it. */
+    @layer tailwind-base {
+        * {
+            font-family: var(--typography-font-family-primary);
+        }
     }
 
     .side-by-side {
