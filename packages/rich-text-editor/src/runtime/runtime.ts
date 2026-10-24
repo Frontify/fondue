@@ -62,7 +62,6 @@ import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './in
 import { createKeyGuard, type EnterKeys } from './keys';
 import { createLimitCheck, type ExceededLimit, storedNodeCount } from './limits';
 import { insertPicked, pickedAsset, refillPicked } from './media';
-import { operationMetric } from './metrics';
 import { nodeStatePlugin, withNodeState } from './node-state';
 import { authoringOf, createPolicyCheck } from './policy';
 import { positionOf } from './positions';
@@ -72,6 +71,7 @@ import { createBusy } from './session/busy';
 import { createEncoder } from './session/encode';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
+import { createMetrics } from './session/metrics';
 import { createStore } from './session/store';
 import {
     type Attempt,
@@ -482,8 +482,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let shownColumns = columns;
     let saves: SaveCoordinator | undefined;
     let shownStatus: SaveStatus | undefined;
-    // The metric of the batch that changed the document, emitted once the outermost commit ends.
-    let metric: BatchMetric | undefined;
     let typing = false;
     let view: EditorView | undefined;
     // The view the last `EditorView` constructor built, which plugin views receive before the constructor returns.
@@ -626,7 +624,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
     const busy = createBusy();
     busy.onIdle(
-        () => flushMetric(),
+        () => metrics.flush(),
         () => flushCaptures(),
         () => uploads.flush(),
     );
@@ -637,23 +635,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
 
-    const measure = (
-        kind: OperationMetric['kind'],
-        started: number,
-        failureCode: string | null,
-        normalizationTransactions = 0,
-    ) => {
-        const durationMs = Date.now() - started;
-        const measured = { kind, durationMs, normalizationTransactions, failureCode };
-        emit('operationMetric', operationMetric(definition.model, identity.session(), measured));
-    };
-    const flushMetric = () => {
-        const batch = metric;
-        metric = undefined;
-        if (batch !== undefined) {
-            measure(batch.kind, batch.started, null, batch.appended);
-        }
-    };
+    const metrics = createMetrics({ model: definition.model, session: identity.session, emit });
+    const { measure } = metrics;
 
     const saveStatus = (): SaveStatus => {
         if (saves !== undefined) {
@@ -914,7 +897,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                     return document;
                 },
             });
-            metric = batch;
+            metrics.record(batch);
             uploads.committed(transactions, origin === 'history');
         }
         emitSelection();
