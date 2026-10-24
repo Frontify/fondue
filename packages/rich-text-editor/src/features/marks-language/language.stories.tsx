@@ -2,11 +2,10 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, language } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, languagePlugin, modelOf, RichTextEditor } from '#/index';
 
-const model = compileContentModel([core(), language({ languages: ['en', 'de', 'fr', 'ar'] })], {
+const plugins = [corePlugin(), languagePlugin({ languages: ['en', 'de', 'fr', 'ar'] })] as const;
+const model = modelOf(plugins, {
     id: 'story.language',
     version: 1,
 });
@@ -32,7 +31,7 @@ The picker lists the \`languages\` option, labelled in the UI locale, with a sto
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.language', model }),
+        definition: defineEditor({ id: 'story.language', model, plugins }),
         presentation: defineReactPresentation({ toolbar: [['mark.language.edit']] }),
         defaultValue: {
             documentId: 'story-language',

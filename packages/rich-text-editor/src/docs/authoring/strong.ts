@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { bold } from '#/features';
-import { defineEditorPlugin } from '#/index';
+import { boldPlugin, extendPlugin } from '#/index';
 
-/** A host part for `marks.bold`: its toolbar entry `bold` replaces the shipped one, so the button reads Strong. */
-export const strongEditor = defineEditorPlugin(bold, {
+/** A host unit for `marks.bold`: its toolbar entry `bold` replaces the shipped one, so the button reads Strong. */
+export const strongPlugin = extendPlugin(boldPlugin(), {
     toolbar: [
         {
             id: 'bold',

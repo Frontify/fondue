@@ -4,6 +4,7 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useRef } from 'react';
 
 import { codeBlock, core } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
@@ -14,7 +15,7 @@ const model = compileContentModel([core(), listItem(), bulletList(), codeBlock()
     id: 'test.code-ct',
     version: 1,
 });
-const definition = defineEditor({ id: 'test.code-ct', model });
+const definition = defineEditor({ id: 'test.code-ct', model, plugins: unitsOf(model) });
 
 /** One change as the probe records it: where it came from and the document content after it. */
 export interface CodeChange {

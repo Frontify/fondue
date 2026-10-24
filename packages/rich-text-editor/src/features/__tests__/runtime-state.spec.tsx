@@ -8,10 +8,9 @@ import { pluginWithOptions } from '#/bridge/plugin';
 import { brandDocumentModel } from '#/features';
 import { blocksOf } from '#/features/__tests__/fixtures/generated';
 import { mountUploads, para, pngFile, settle, text } from '#/features/media-upload/__tests__/fixtures/uploads';
+import { pluginsById } from '#/features/plugins';
 import { type ContentNodeJSON } from '#/model';
 import { compiledModel } from '#/model/compile';
-import { ownValue } from '#/model/values';
-import { SHIPPED_PLUGINS } from '#/react/plugins';
 import { type SelectionTarget, setSelection } from '#/testing';
 
 beforeEach(() => {
@@ -43,7 +42,7 @@ const overlayEntries = (): readonly {
     readonly payload?: unknown;
 }[] => [
     ...compiledModel(model).features.flatMap(({ id, options }) => {
-        const part = ownValue(SHIPPED_PLUGINS, id);
+        const part = pluginsById([id])[0]?.editor;
         if (part === undefined) {
             return [];
         }

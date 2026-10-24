@@ -6,26 +6,32 @@ import { useEffect, useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { RichTextReader } from '#/entries/reader';
-import { bold, commentModel, core, italic, links } from '#/features';
+import { commentModel } from '#/features';
 import {
+    boldPlugin,
     type CompiledEditorDefinition,
+    corePlugin,
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
+    italicPlugin,
     type LoadedDocument,
+    linksPlugin,
+    modelOf,
     type PersistenceService,
     RichTextEditor,
     type RichTextProfile,
     type Snapshot,
     useRichTextFormField,
 } from '#/index';
-import { type ContentModel, compileContentModel, createEmptyDocument } from '#/model';
+import { type ContentModel, createEmptyDocument } from '#/model';
 import { createFakePersistenceService } from '#/testing';
 
 import { recordOf, text, textOf } from './records';
 
-const model = compileContentModel([core(), bold(), italic(), links()], { id: 'story.examples', version: 1 });
-const exampleDefinition = defineEditor({ id: 'story.examples', model });
+const plugins = [corePlugin(), boldPlugin(), italicPlugin(), linksPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.examples', version: 1 });
+const exampleDefinition = defineEditor({ id: 'story.examples', model, plugins });
 const presentation = defineReactPresentation({ toolbar: [['mark.bold.toggle', 'mark.italic.toggle', 'link.edit']] });
 
 const NOTE = recordOf(model, 'note-1', text('The note as the server stored it.'));

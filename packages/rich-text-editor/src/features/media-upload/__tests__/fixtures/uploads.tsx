@@ -5,10 +5,10 @@ import { createRef } from 'react';
 import { vi } from 'vitest';
 
 import { core, mediaImage, mediaUpload } from '#/features';
+import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
 import { flush, imageModel, para, resolving, storedIn, text } from '#/features/media-image/__tests__/fixtures/mount';
 import {
     type AssetValue,
-    type CommandsOfModel,
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
@@ -147,30 +147,19 @@ export const mountUploads = async (options?: Mount) => {
         plugins,
         toolbar = [['image.insert']],
     } = given;
-    const ref =
-        createRef<
-            EditorHandle<
-                CommandsOfModel<
-                    ContentModel<
-                        readonly [
-                            ReturnType<typeof core>,
-                            ReturnType<typeof mediaImage>,
-                            ReturnType<typeof mediaUpload>,
-                        ]
-                    >
-                >
-            >
-        >();
+    const ref = createRef<EditorHandle<UnitCommands>>();
     const diagnostics: Diagnostic[] = [];
     const changes: DocumentChange[] = [];
-    const definitionOptions: { limits?: NonNullable<Mount['limits']>; plugins?: NonNullable<Mount['plugins']> } = {};
+    const definitionOptions: { limits?: NonNullable<Mount['limits']> } = {};
     if (limits !== undefined) {
         definitionOptions.limits = limits;
     }
-    if (plugins !== undefined) {
-        definitionOptions.plugins = plugins;
-    }
-    const definition = defineEditor({ id: 'test.uploads', model, ...definitionOptions });
+    const definition = defineEditor({
+        id: 'test.uploads',
+        model,
+        plugins: unitsOf(model, plugins),
+        ...definitionOptions,
+    });
     const presentation = defineReactPresentation({ toolbar, resolveAssetUrl: resolving });
     const props = {
         'aria-label': 'Notes',

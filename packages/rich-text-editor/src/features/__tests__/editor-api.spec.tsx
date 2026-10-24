@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { align, bold, codeBlock, core, fontColor, heading, links, mediaImage, quote } from '#/features';
 import { fixtureCallout } from '#/features/__tests__/fixtures/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { taskList } from '#/features/lists-task/feature';
@@ -136,10 +137,10 @@ const mount = (options?: Mount) => {
         limits = {},
         readOnly = false,
         disabled = false,
-        model: mounted = model,
+        model: own = model,
         document = stored,
     } = given;
-    const definition = defineEditor({ id: 'fixture.api', model: mounted, plugins: [probe], policy, limits });
+    const definition = defineEditor({ id: 'fixture.api', model: own, plugins: unitsOf(own, [probe]), policy, limits });
     const ref = createRef<EditorHandle>();
     const changes: DocumentChange[] = [];
     const shown: { presentation?: ReactPresentation } = {};

@@ -14,6 +14,7 @@ import * as schemaModule from '#/definition/schema';
 import { doc, envelope, link, node, text } from '#/features/__tests__/fixtures/documents';
 import { fixtureItalic, fixtureMedia } from '#/features/__tests__/fixtures/features';
 import { notesModel } from '#/features/__tests__/fixtures/notes';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import {
     vocabularyAlign,
     vocabularyBlocks,
@@ -50,18 +51,24 @@ import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
 import { defineEditor } from '../define';
 import { RichTextEditor } from '../rich-text-editor';
-import { type EditorHandle, type RichTextEditorBaseProps, type RichTextEditorProps } from '../types';
+import {
+    type EditorDefinitionOptions,
+    type EditorHandle,
+    type RichTextEditorBaseProps,
+    type RichTextEditorProps,
+} from '../types';
 
 vi.mock('#/model', { spy: true });
 vi.mock('#/definition/schema', { spy: true });
 
 const features = [core(), bold()];
 const boldModel = compileContentModel(features, { id: 'test.editor', version: 1 });
-const definition = defineEditor({ id: 'test.editor', model: boldModel });
-const otherDefinition = defineEditor({
-    id: 'test.other',
-    model: compileContentModel([core(), bold(), fixtureItalic()], { id: 'test.editor', version: 1 }),
-});
+const boldPlugins = unitsOf(boldModel);
+const boldWith = (id: string, extra: Omit<EditorDefinitionOptions, 'id' | 'model' | 'plugins'> = {}) =>
+    defineEditor({ id, model: boldModel, plugins: boldPlugins, ...extra });
+const definition = boldWith('test.editor');
+const italicModel = compileContentModel([core(), bold(), fixtureItalic()], { id: 'test.editor', version: 1 });
+const otherDefinition = defineEditor({ id: 'test.other', model: italicModel, plugins: unitsOf(italicModel) });
 
 const para = (...content: readonly JsonValue[]) => ({ type: 'paragraph', attrs: { lang: null }, content });
 const defaultValue = (...blocks: readonly JsonValue[]): LoadedDocument => ({
@@ -440,10 +447,8 @@ describe('RichTextEditor', () => {
         const build = vi.mocked(schemaModule.buildSchema);
         compile.mockClear();
         build.mockClear();
-        const once = defineEditor({
-            id: 'test.once',
-            model: compileContentModel(features, { id: 'test.editor', version: 1 }),
-        });
+        const onceModel = compileContentModel(features, { id: 'test.editor', version: 1 });
+        const once = defineEditor({ id: 'test.once', model: onceModel, plugins: unitsOf(onceModel) });
 
         const { rerender, unmount } = mount({ definition: once }, true);
         for (let index = 0; index < 10; index += 1) {
@@ -456,10 +461,7 @@ describe('RichTextEditor', () => {
     });
 
     it('runs a custom model with an outside feature in place of a profile', () => {
-        const custom = defineEditor({
-            id: 'test.custom',
-            model: compileContentModel([core(), bold(), fixtureItalic()], { id: 'test.editor', version: 1 }),
-        });
+        const custom = defineEditor({ id: 'test.custom', model: italicModel, plugins: unitsOf(italicModel) });
         const changes: DocumentChange[] = [];
         const italic = { type: 'text', text: 'ab', marks: [{ type: 'italic' }] };
         const { handle, unmount } = mount({
@@ -491,7 +493,7 @@ describe('RichTextEditor', () => {
             const policy = { features: { core: { create: value } } } as never;
             let failure: unknown;
             try {
-                defineEditor({ id: 'test.remote', model: boldModel, policy });
+                boldWith('test.remote', { policy });
             } catch (error) {
                 failure = error;
             }
@@ -503,7 +505,7 @@ describe('RichTextEditor', () => {
     it('rejects a policy for a feature the model does not install', () => {
         let failure: unknown;
         try {
-            defineEditor({ id: 'test.policy', model: boldModel, policy: { features: { 'marks.italic': ALLOWED } } });
+            boldWith('test.policy', { policy: { features: { 'marks.italic': ALLOWED } } });
         } catch (error) {
             failure = error;
         }
@@ -521,9 +523,7 @@ describe('RichTextEditor', () => {
     });
 
     it('keeps negative or non-finite limits out of the definition', () => {
-        const limited = defineEditor({
-            id: 'test.limits',
-            model: boldModel,
+        const limited = boldWith('test.limits', {
             limits: { maxDepth: -1, maxTextLength: 10 },
             limitOverrides: { maxDocumentNodes: -5, maxPasteBytes: Number.NaN },
         });
@@ -539,7 +539,7 @@ describe('RichTextEditor', () => {
     ] as const)('rejects a %s of %d, below what the installed features need', (name, value, details) => {
         let failure: unknown;
         try {
-            defineEditor({ id: 'test.limits', model: boldModel, limits: { [name]: value } });
+            boldWith('test.limits', { limits: { [name]: value } });
         } catch (error) {
             failure = error;
         }
@@ -557,7 +557,7 @@ describe('RichTextEditor', () => {
     ] as const)('names limitOverrides when an override sets a %s of %d', (name, value) => {
         let failure: unknown;
         try {
-            defineEditor({ id: 'test.limits', model: boldModel, limitOverrides: { [name]: value } });
+            boldWith('test.limits', { limitOverrides: { [name]: value } });
         } catch (error) {
             failure = error;
         }
@@ -569,7 +569,7 @@ describe('RichTextEditor', () => {
     });
 
     it('accepts a maxAttributeLength equal to the longest default or enum value of the installed attributes', () => {
-        const limited = defineEditor({ id: 'test.limits', model: boldModel, limits: { maxAttributeLength: 4 } });
+        const limited = boldWith('test.limits', { limits: { maxAttributeLength: 4 } });
 
         expect(limited.limits.maxAttributeLength).toBe(4);
     });
@@ -577,10 +577,8 @@ describe('RichTextEditor', () => {
 
 describe('RichTextEditor host surface', () => {
     it('gives a host mount effect the handle on the first commit, with a shipped editor part installed', () => {
-        const linked = defineEditor({
-            id: 'test.linked',
-            model: compileContentModel([core(), links()], { id: 'test.editor', version: 1 }),
-        });
+        const linkedModel = compileContentModel([core(), links()], { id: 'test.editor', version: 1 });
+        const linked = defineEditor({ id: 'test.linked', model: linkedModel, plugins: unitsOf(linkedModel) });
         const seen: (EditorHandle<object> | null)[] = [];
         const Host = () => {
             const ref = useRef<EditorHandle<object>>(null);
@@ -946,27 +944,30 @@ describe('RichTextEditor documents', () => {
     // A path, not a `URL`: happy-dom replaces the global `URL`, which rejects a `file:` URL.
     const fixtures = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'model', '__tests__', 'fixtures');
     const load = (...path: readonly string[]) => JSON.parse(readFileSync(join(fixtures, ...path), 'utf8')) as unknown;
+    const vocabularyModel = compileContentModel(
+        [
+            core(),
+            vocabularyStyles(),
+            vocabularyAlign(),
+            vocabularyIndent(),
+            vocabularyBlocks(),
+            vocabularyLists(),
+            vocabularyTables(),
+            vocabularyMedia(),
+            vocabularyMention(),
+            vocabularyMarks(),
+            vocabularyLink(),
+            vocabularyColors(),
+        ],
+        { id: 'fixture.vocabulary', version: 1 },
+    );
     const vocabulary = defineEditor({
         id: 'test.vocabulary',
-        model: compileContentModel(
-            [
-                core(),
-                vocabularyStyles(),
-                vocabularyAlign(),
-                vocabularyIndent(),
-                vocabularyBlocks(),
-                vocabularyLists(),
-                vocabularyTables(),
-                vocabularyMedia(),
-                vocabularyMention(),
-                vocabularyMarks(),
-                vocabularyLink(),
-                vocabularyColors(),
-            ],
-            { id: 'fixture.vocabulary', version: 1 },
-        ),
+        model: vocabularyModel,
+        plugins: unitsOf(vocabularyModel),
     });
-    const notes = defineEditor({ id: 'test.notes', model: notesModel(3) });
+    const notesOf3 = notesModel(3);
+    const notes = defineEditor({ id: 'test.notes', model: notesOf3, plugins: unitsOf(notesOf3) });
     const opened = [
         ...fixturesIn('valid').map(([name, document]) => [`model/valid/${name}`, document, vocabulary] as const),
         ...readdirSync(join(fixtures, 'migration'), { recursive: true, encoding: 'utf8' })
@@ -1003,10 +1004,8 @@ describe('RichTextEditor documents', () => {
     });
 
     const urls = load('urls.json') as readonly { readonly input: string; readonly ok: boolean }[];
-    const linked = defineEditor({
-        id: 'test.urls',
-        model: compileContentModel([core(), links(), fixtureMedia()], { id: 'fixture.vocabulary', version: 1 }),
-    });
+    const urlModel = compileContentModel([core(), links(), fixtureMedia()], { id: 'fixture.vocabulary', version: 1 });
+    const linked = defineEditor({ id: 'test.urls', model: urlModel, plugins: unitsOf(urlModel) });
     const withUrl = (url: string) =>
         envelope(doc(para(text('Go', link(url))), node('embed', { nodeId: 'e-1', url })), [
             'core',

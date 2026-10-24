@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 
 import { RichTextReader } from '#/entries/reader';
 import { bold, code, core, italic, mediaImage, mentions, strike, underline } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { setSelection } from '#/testing';
@@ -13,7 +14,7 @@ const model = compileContentModel([core(), bold(), italic(), underline(), strike
     id: 'test.images-ct',
     version: 1,
 });
-const definition = defineEditor({ id: 'test.images-ct', model });
+const definition = defineEditor({ id: 'test.images-ct', model, plugins: unitsOf(model) });
 /** Every asset at a same-origin URL, which the CT page CSP allows, answered through `page.route`. */
 const resolveAssetUrl = (assetId: string) => `${window.location.origin}/test-assets/${assetId}`;
 const presentation = defineReactPresentation({

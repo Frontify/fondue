@@ -17,6 +17,7 @@ import {
     onPlatform,
     press,
 } from '#/features/__tests__/fixtures/layout';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { orderedList } from '#/features/lists-ordered/feature';
@@ -231,7 +232,7 @@ describe('layout.columns', () => {
             <RichTextEditor
                 aria-label="Notizen"
                 locale={deDE}
-                definition={defineEditor({ id: 'test.layout', model })}
+                definition={defineEditor({ id: 'test.layout', model, plugins: unitsOf(model) })}
                 presentation={defineReactPresentation({ columns: 3, toolbar: [] })}
                 defaultValue={{ documentId: 'document-1', revision: null, document: storedIn(model, pageWith(1)) }}
                 ref={ref}

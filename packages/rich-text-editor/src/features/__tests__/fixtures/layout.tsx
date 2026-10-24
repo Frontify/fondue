@@ -5,9 +5,9 @@ import { createRef } from 'react';
 import { vi } from 'vitest';
 
 import { columns, core, inputRules, mediaImage, quote, rule } from '#/features';
+import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import {
     type AuthoringPolicy,
-    type CommandsOfModel,
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
@@ -72,9 +72,9 @@ export const mountLayout = ({
     excludeRules = [],
 }: LayoutMount) => {
     // A given model keeps the layout features, so the handle takes their commands.
-    const ref = createRef<EditorHandle<CommandsOfModel<ContentModel<ReturnType<typeof layoutFeatures>>>>>();
+    const ref = createRef<EditorHandle<UnitCommands>>();
     const changes: DocumentChange[] = [];
-    const definition = defineEditor({ id: 'test.layout', model, policy });
+    const definition = defineEditor({ id: 'test.layout', model, policy, plugins: unitsOf(model) });
     const document = storedIn(model, blocks);
     const element = (shown: number) => (
         <RichTextEditor

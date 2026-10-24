@@ -5,15 +5,14 @@ import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 
 import { bold, core } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
 
 import { storedOf } from './EditorProbe';
 
-const definition = defineEditor({
-    id: 'test.ct',
-    model: compileContentModel([core(), bold()], { id: 'test.ct', version: 1 }),
-});
+const model = compileContentModel([core(), bold()], { id: 'test.ct', version: 1 });
+const definition = defineEditor({ id: 'test.ct', model, plugins: unitsOf(model) });
 
 export interface EditorHydrationResult {
     /** `process.env.NODE_ENV` as the bundle was built; `development` keeps React's mismatch warnings. */

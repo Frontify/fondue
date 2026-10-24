@@ -2,13 +2,12 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, strike } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor, strikePlugin } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), strike()], { id: 'story.marks-strike', version: 1 });
+const plugins = [corePlugin(), strikePlugin()] as const;
+const model = modelOf(plugins, { id: 'story.marks-strike', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/marks.strike',
@@ -29,7 +28,7 @@ Struck-through text as \`s\`, toggled on the selection or at the caret.
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.marks-strike', model }),
+        definition: defineEditor({ id: 'story.marks-strike', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-marks-strike',

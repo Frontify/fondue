@@ -10,7 +10,7 @@ A feature has up to three parts. The vocabulary part says what a feature stores 
 
 The reader, the codecs and a server load only the vocabulary part. They never load editor code. Keep a feature's vocabulary in its own module, and import editor code only in the module that calls `defineEditorPlugin`.
 
-Every example on this page is an excerpt of a shipped feature or of an example module under `src/docs/authoring`, and the `Source` line names its file. A test checks that each excerpt is still in that file. The `Rich Text Editor/Authoring` stories mount three of them as a host does: the `marks.strike` editor part, a host block with a node view, and a host part that replaces a shipped toolbar entry.
+Every example on this page is an excerpt of a shipped feature or of an example module under `src/docs/authoring`, and the `Source` line names its file. A test checks that each excerpt is still in that file. The `Rich Text Editor/Authoring` stories mount three of them as a host does: the `marks.strike` unit, a host block with a node view, and a host unit that replaces a shipped toolbar entry.
 
 ## The vocabulary part: `defineFeature`
 
@@ -139,13 +139,17 @@ parseRules: [
 
 `defineEditorPlugin` comes from `@frontify/rich-text-editor`. It takes a feature, or a factory, and the parts of its editor side. `parts` may also be a function of the feature's resolved options.
 
-`defineEditor` takes the shipped editor part of every feature in a model by feature ID, so a model made of shipped features needs no `plugins`. A host part for a feature extends the shipped part: a command, key, node view or toolbar entry with the same ID replaces the shipped one whole, with no field merged, and the others are added.
+`defineEditor` takes one unit per feature of its model in `plugins`. A unit holds a feature, its editor part and its reader overrides. Each shipped feature has one, such as `boldPlugin`. `modelOf` compiles the model from the same list, so the model and the units cannot differ. `defineEditor` throws `definition.missing-plugin`, `definition.orphan-behavior`, `definition.duplicate-id` or `definition.version-mismatch` when the units do not cover the model exactly: one unit per feature, of the same ID and version.
 
 ```tsx
-import { defineEditor } from '@frontify/rich-text-editor';
+import { boldPlugin, corePlugin, defineEditor, linksPlugin, modelOf } from '@frontify/rich-text-editor';
 
-const definition = defineEditor({ id: 'acme.notes', model });
+const plugins = [corePlugin(), boldPlugin(), linksPlugin()] as const;
+const model = modelOf(plugins, { id: 'acme.notes', version: 1 });
+const definition = defineEditor({ id: 'acme.notes', model, plugins });
 ```
+
+A host unit for a feature comes from `definePlugin` for a feature of the host, or from `extendPlugin` for a shipped one: `extendPlugin(unit, parts)` puts `parts` over the unit's editor part, and the list you give, such as `toolbar`, replaces the unit's list whole.
 
 An editor part acts only through `EditorApi`, which its commands, key handlers and overlays receive. It never touches ProseMirror types.
 
@@ -466,22 +470,24 @@ export const calloutEditor = defineEditorPlugin(callout, {
 });
 ```
 
-A model that installs a host feature passes its part in `plugins`:
+`definePlugin` joins the feature and its editor part into a unit. A model that installs a host feature lists that unit in `plugins`:
 
 ```tsx
-const model = compileContentModel([core(), callout()], { id: 'acme.notes', version: 1 });
-const definition = defineEditor({ id: 'acme.notes', model, plugins: [calloutEditor] });
+const calloutPlugin = definePlugin({ feature: callout, editor: calloutEditor });
+const plugins = [corePlugin(), calloutPlugin()] as const;
+const model = modelOf(plugins, { id: 'acme.notes', version: 1 });
+const definition = defineEditor({ id: 'acme.notes', model, plugins });
 ```
 
 ### Replacing a shipped toolbar entry
 
-A host part for a shipped feature replaces any entry with the same ID whole. Here the toolbar entry `bold` keeps its command and reads Strong. The `Host part replacing a toolbar entry` story mounts it.
+`extendPlugin` puts a host's parts over a shipped unit. Its `toolbar` replaces the unit's toolbar whole. Here the toolbar entry `bold` keeps its command and reads Strong. The `Host part replacing a toolbar entry` story mounts it.
 
 Source: `src/docs/authoring/strong.ts`
 
 ```ts
-/** A host part for `marks.bold`: its toolbar entry `bold` replaces the shipped one, so the button reads Strong. */
-export const strongEditor = defineEditorPlugin(bold, {
+/** A host unit for `marks.bold`: its toolbar entry `bold` replaces the shipped one, so the button reads Strong. */
+export const strongPlugin = extendPlugin(boldPlugin(), {
     toolbar: [
         {
             id: 'bold',

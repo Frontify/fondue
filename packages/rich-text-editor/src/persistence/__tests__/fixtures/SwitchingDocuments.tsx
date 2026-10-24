@@ -3,14 +3,15 @@
 import { useRef, useState } from 'react';
 
 import { core } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, type LoadedDocument, type PersistenceService, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
 import { createFakePersistenceService } from '#/testing';
 
 const model = compileContentModel([core()], { id: 'story.switching', version: 1 });
 const definitions = {
-    note: defineEditor({ id: 'story.switching.note', model }),
-    comment: defineEditor({ id: 'story.switching.comment', model }),
+    note: defineEditor({ id: 'story.switching.note', model, plugins: unitsOf(model) }),
+    comment: defineEditor({ id: 'story.switching.comment', model, plugins: unitsOf(model) }),
 };
 
 const recordOf = (documentId: string, text: string): LoadedDocument => ({

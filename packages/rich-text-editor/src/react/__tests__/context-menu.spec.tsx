@@ -5,6 +5,7 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPlugin } from '#/bridge/plugin';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import {
     figure,
@@ -151,7 +152,7 @@ describe('the context menu', () => {
         const view = render(
             <RichTextEditor
                 aria-label="Notes"
-                definition={defineEditor({ id: 'test.images', model, plugins })}
+                definition={defineEditor({ id: 'test.images', model, plugins: unitsOf(model, plugins) })}
                 presentation={defineReactPresentation({ toolbar, resolveAssetUrl: resolving })}
                 readOnly={readOnly}
                 defaultValue={{
@@ -199,7 +200,7 @@ describe('the context menu', () => {
         const view = render(
             <RichTextEditor
                 aria-label="Notes"
-                definition={defineEditor({ id: 'test.images', model, plugins: [hostNote] })}
+                definition={defineEditor({ id: 'test.images', model, plugins: unitsOf(model, [hostNote]) })}
                 presentation={defineReactPresentation({ toolbar: [['image.insert']], resolveAssetUrl: resolving })}
                 locale={{ ...enUS, lang: 'de-DE' }}
                 defaultValue={{

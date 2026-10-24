@@ -2,12 +2,11 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, rule } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor, rulePlugin } from '#/index';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), rule()], { id: 'story.blocks-rule', version: 1 });
+const plugins = [corePlugin(), rulePlugin()] as const;
+const model = modelOf(plugins, { id: 'story.blocks-rule', version: 1 });
 
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 
@@ -36,7 +35,7 @@ A selected rule, as every leaf block, is removed by Backspace or Delete as one u
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.blocks-rule', model }),
+        definition: defineEditor({ id: 'story.blocks-rule', model, plugins }),
         presentation: defineReactPresentation({ toolbar: [['rule.insert']] }),
         defaultValue: {
             documentId: 'story-blocks-rule',

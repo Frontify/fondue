@@ -6,6 +6,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { useCommandQuery, useEditorSelection } from '#/bridge/hooks';
 import { featuresById } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
@@ -23,7 +24,7 @@ const CARET_MOVES = 50;
 
 it('rerenders a component that selects the block type and a command state on no caret move that leaves them equal', () => {
     const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.hook-renders', version: 1 });
-    const definition = defineEditor({ id: 'test.hook-renders', model });
+    const definition = defineEditor({ id: 'test.hook-renders', model, plugins: unitsOf(model) });
     // One plain paragraph long enough for every move, then a heading, so a move out of the paragraph changes the value.
     const plain = {
         type: 'paragraph',
@@ -94,7 +95,7 @@ it('rerenders a component that selects the block type and a command state on no 
 
 it('rerenders no part when the host rerenders the editor with equal props', () => {
     const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.hook-renders', version: 1 });
-    const definition = defineEditor({ id: 'test.hook-renders', model });
+    const definition = defineEditor({ id: 'test.hook-renders', model, plugins: unitsOf(model) });
     const paragraph = { type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: 'Hello' }] };
     const document = {
         ...perfDocument('small', model),

@@ -4,12 +4,13 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useRef } from 'react';
 
 import { bold, core, mentions } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { createFakeReferenceService, setSelection } from '#/testing';
 
 const model = compileContentModel([core(), bold(), mentions()], { id: 'test.mentions-ct', version: 1 });
-const definition = defineEditor({ id: 'test.mentions-ct', model });
+const definition = defineEditor({ id: 'test.mentions-ct', model, plugins: unitsOf(model) });
 const presentation = defineReactPresentation({ toolbar: [['mention.search.open', 'mark.bold.toggle']] });
 const service = createFakeReferenceService([
     { resourceType: 'user', resourceId: 'user-1', labelSnapshot: 'Ada Lovelace' },

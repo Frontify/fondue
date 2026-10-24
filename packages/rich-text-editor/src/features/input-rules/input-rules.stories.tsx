@@ -2,27 +2,23 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, inputRules } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, inputRulesPlugin, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel(
-    [
-        core(),
-        inputRules({
-            typography: [
-                'typography.quotes',
-                'typography.ellipsis',
-                'typography.dashes',
-                'typography.symbols',
-                'typography.numeric',
-            ],
-        }),
-    ],
-    { id: 'story.input-rules', version: 1 },
-);
+const plugins = [
+    corePlugin(),
+    inputRulesPlugin({
+        typography: [
+            'typography.quotes',
+            'typography.ellipsis',
+            'typography.dashes',
+            'typography.symbols',
+            'typography.numeric',
+        ],
+    }),
+] as const;
+const model = modelOf(plugins, { id: 'story.input-rules', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/input-rules',
@@ -43,7 +39,7 @@ The typography input rules, each off until the \`typography\` option lists its I
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.input-rules', model }),
+        definition: defineEditor({ id: 'story.input-rules', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-input-rules',

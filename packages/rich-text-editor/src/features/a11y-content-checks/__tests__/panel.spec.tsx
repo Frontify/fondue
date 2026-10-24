@@ -5,8 +5,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { COALESCE_MS } from '#/bridge/announcer';
 import { contentChecks } from '#/features';
+import { pluginsById } from '#/features/plugins';
 import { defineEditorPlugin, useEditorApi, useEditorValue } from '#/index';
-import { SHIPPED_PLUGINS } from '#/react/plugins';
 import { CHECK_DELAY_MS } from '#/runtime/capabilities/checks/content-issues';
 import { positionOf } from '#/runtime/positions';
 import { runtimeOf } from '#/runtime/runtime';
@@ -53,7 +53,7 @@ describe('the issues panel', () => {
     });
 
     it('comes from the editor part with checks.open and its toolbar entry, and reads the checks through the editor API', () => {
-        const part = SHIPPED_PLUGINS['a11y.content-checks'];
+        const part = pluginsById(['a11y.content-checks'])[0]?.editor;
         const panels = part?.panels;
         const toolbar = part?.toolbar;
         expect(panels?.map(({ control }) => control)).toEqual(['checks']);

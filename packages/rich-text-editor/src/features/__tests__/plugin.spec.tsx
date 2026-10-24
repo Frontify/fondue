@@ -4,23 +4,28 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { definePlugin } from '#/bridge/define-plugin';
 import { featuresById } from '#/features';
 import { commandCases } from '#/features/__tests__/fixtures/contract.cases';
 import { FIXTURE_PLUGINS } from '#/features/__tests__/fixtures/plugins';
 import { spotlight, spotlightDocument } from '#/features/__tests__/fixtures/spotlight/feature';
+import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
+import { codeBlockPlugin } from '#/features/blocks-code';
 import { codeBlock } from '#/features/blocks-code/feature';
+import { corePlugin } from '#/features/core';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { registry } from '#/features/registry';
 import {
     type AuthoringPolicy,
-    type CommandsOfModel,
     type CommandsOfPlugin,
     defineEditor,
     defineEditorPlugin,
     defineReactPresentation,
     type EditorHandle,
     type EditorPlugin,
+    extendPlugin,
+    type RichTextPlugin,
     RichTextEditor,
 } from '#/index';
 import { compileContentModel, defineFeature, DefinitionError } from '#/model';
@@ -44,7 +49,7 @@ afterEach(() => {
 const model = compileContentModel([core(), spotlight()], { id: 'fixture.spotlight', version: 1 });
 
 const mount = (readOnly = false) => {
-    const definition = defineEditor({ id: 'fixture.spotlight', model, plugins: FIXTURE_PLUGINS });
+    const definition = defineEditor({ id: 'fixture.spotlight', model, plugins: unitsOf(model, FIXTURE_PLUGINS) });
     const ref = createRef<EditorHandle>();
     render(
         <RichTextEditor
@@ -148,10 +153,12 @@ describe('a plugin added only in its own files', () => {
 
     it('refuses a plugin for a feature the model does not install', () => {
         const bare = compileContentModel([core()], { id: 'fixture.bare', version: 1 });
+        const [editor] = FIXTURE_PLUGINS;
+        const orphan = definePlugin({ feature: spotlight, editor })();
 
-        expect(() => defineEditor({ id: 'fixture.bare', model: bare, plugins: FIXTURE_PLUGINS })).toThrow(
-            DefinitionError,
-        );
+        const plugins: readonly RichTextPlugin[] = [...unitsOf(bare), orphan];
+
+        expect(() => defineEditor({ id: 'fixture.bare', model: bare, plugins })).toThrow(DefinitionError);
     });
 });
 
@@ -182,8 +189,12 @@ describe('a host part for a feature the package ships', () => {
     });
 
     it('keeps the shipped commands, adds its own, and replaces a toolbar entry of the same id', () => {
-        const definition = defineEditor({ id: 'fixture.bold', model: boldModel, plugins: [strong] });
-        const ref = createRef<EditorHandle<CommandsOfModel<typeof boldModel> & CommandsOfPlugin<typeof strong>>>();
+        const definition = defineEditor({
+            id: 'fixture.bold',
+            model: boldModel,
+            plugins: unitsOf(boldModel, [strong]),
+        });
+        const ref = createRef<EditorHandle<UnitCommands & CommandsOfPlugin<typeof strong>>>();
         render(
             <RichTextEditor
                 aria-label="Notes"
@@ -221,7 +232,11 @@ describe('a host part for a feature the package ships', () => {
                 icon: 'IconTextFormatBold',
             })),
         });
-        const definition = defineEditor({ id: 'fixture.bold', model: boldModel, plugins: [weights] });
+        const definition = defineEditor({
+            id: 'fixture.bold',
+            model: boldModel,
+            plugins: unitsOf(boldModel, [weights]),
+        });
         render(
             <RichTextEditor
                 aria-label="Notes"
@@ -241,18 +256,26 @@ describe('a host part for a feature the package ships', () => {
         expect(within(toolbar).getByRole('button', { name: 'Weight 2' })).toHaveAttribute('aria-pressed', 'false');
     });
 
-    it('refuses two host parts for one feature', () => {
-        expect(() => defineEditor({ id: 'fixture.bold', model: boldModel, plugins: [strong, strong] })).toThrow(
+    it('refuses two units for one feature', () => {
+        const units = unitsOf(boldModel, [strong]);
+
+        expect(() => defineEditor({ id: 'fixture.bold', model: boldModel, plugins: [...units, ...units] })).toThrow(
             DefinitionError,
         );
     });
 
     it('keeps the shipped code highlighting when it adds a decoration source to blocks.code', () => {
         const codeModel = compileContentModel([core(), codeBlock()], { id: 'fixture.code', version: 1 });
-        const marked = defineEditorPlugin(codeBlock, {
-            decorations: [{ id: 'fixture.marked', nodes: ['code_block'], derive: () => [] }],
+        const shipped = codeBlockPlugin();
+        const marked = extendPlugin(shipped, {
+            decorations: [
+                ...(shipped.editor.decorations ?? []),
+                { id: 'fixture.marked', nodes: ['code_block'], derive: () => [] },
+            ],
         });
-        const extension = extensionsOf(codeModel, [marked]).find(({ featureId }) => featureId === 'blocks.code');
+        const extension = extensionsOf(codeModel, [corePlugin(), marked]).find(
+            ({ featureId }) => featureId === 'blocks.code',
+        );
         expect(extension?.decorations.map(({ id }) => id)).toEqual(['code-syntax', 'fixture.marked']);
     });
 });
@@ -266,7 +289,12 @@ describe('a plugin part that reads the policy and its options', () => {
         policy: Partial<AuthoringPolicy> = {},
     ) => {
         const fixtureModel = compileContentModel(features, { id: 'fixture.parts', version: 1 });
-        const definition = defineEditor({ id: 'fixture.parts', model: fixtureModel, plugins, policy });
+        const definition = defineEditor({
+            id: 'fixture.parts',
+            model: fixtureModel,
+            plugins: unitsOf(fixtureModel, plugins),
+            policy,
+        });
         const ref = createRef<EditorHandle<Record<string, unknown>>>();
         const document = {
             format: 'frontify.rich-text' as const,

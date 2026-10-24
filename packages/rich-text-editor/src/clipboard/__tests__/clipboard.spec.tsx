@@ -35,8 +35,8 @@ import {
 import { fixtureMedia } from '#/features/__tests__/fixtures/features';
 import { htmlFeatures, htmlLink } from '#/features/__tests__/fixtures/html';
 import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
-import { fixturePartsOf } from '#/features/__tests__/fixtures/parts';
 import { fixtureTableBlock } from '#/features/__tests__/fixtures/table/feature';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import {
     vocabularyAlign,
     vocabularyBlocks,
@@ -127,7 +127,7 @@ const mount = (options?: Options) => {
         model: editorModel,
         policy,
         limits,
-        plugins: fixturePartsOf(editorModel),
+        plugins: unitsOf(editorModel),
     });
     const ref = createRef<EditorHandle<object>>();
     const ids: { generateId?: () => string } = {};

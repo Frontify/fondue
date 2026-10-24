@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { type RichTextPlugin } from '#/bridge/define-plugin';
+import * as root from '#/index';
 
 type Unit = (options?: object) => RichTextPlugin;
 
@@ -35,6 +36,13 @@ describe('feature units', () => {
         expect(unit?.id).toBe(unit?.feature.id);
         expect(unit?.id).toBe(unit?.editor.feature);
         expect('reader' in (unit ?? {})).toBe(READER_FOLDERS.includes(folder));
+    });
+
+    it.each(FOLDERS)('%s has its unit on the root entry', async (folder) => {
+        const [exported] = Object.entries((await import(`../${folder}/index.ts`)) as Record<string, Unit>);
+
+        expect(exported).toBeDefined();
+        expect((root as Record<string, unknown>)[exported?.[0] ?? '']).toBe(exported?.[1]);
     });
 
     it.each(READER_FOLDERS)('%s names its own feature in its reader', async (folder) => {

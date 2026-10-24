@@ -5,6 +5,7 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { code, codeBlock, core, emoji } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { type EmojiEntry } from '#/features/emoji/data';
 import { defineEditor, defineEditorPlugin, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
@@ -145,7 +146,7 @@ const mountGerman = () => {
     const rendered = render(
         <RichTextEditor
             aria-label="Notes"
-            definition={defineEditor({ id: 'test.emoji-de', model })}
+            definition={defineEditor({ id: 'test.emoji-de', model, plugins: unitsOf(model) })}
             locale={deDE}
             defaultValue={{
                 documentId: 'document-1',
@@ -544,7 +545,7 @@ describe('suggestion plugin', () => {
         const { handle, view } = mountText({ model, blocks: [para()] });
         typeText(handle, ':smi');
         await opened(view);
-        const { authoring } = defineEditor({ id: 'test.text', model });
+        const { authoring } = defineEditor({ id: 'test.text', model, plugins: unitsOf(model) });
         handle.updatePolicy({
             ...authoring,
             features: {

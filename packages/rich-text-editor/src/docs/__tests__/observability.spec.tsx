@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPortalStore } from '#/bridge/portals';
 import { defineReaderFeature } from '#/entries/reader';
 import { commentModel, documentModel, inlineModel } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { defineEditor, type EditorHandle, type EditorServices, type PersistenceService, RichTextEditor } from '#/index';
 import {
@@ -51,7 +52,7 @@ const mount = async (model: ContentModel, services: EditorServices = {}) => {
     render(
         <RichTextEditor
             aria-label="Notes"
-            definition={defineEditor({ id: 'docs.observability', model })}
+            definition={defineEditor({ id: 'docs.observability', model, plugins: unitsOf(model) })}
             defaultValue={{ documentId: 'docs-observability', revision: 'revision-1', document }}
             services={services}
             ref={ref}

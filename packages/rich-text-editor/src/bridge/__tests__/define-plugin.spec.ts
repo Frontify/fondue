@@ -2,15 +2,17 @@
 
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
+import { corePlugin } from '#/features/core';
+import { core } from '#/features/core/feature';
 import { boldEditor } from '#/features/marks-bold/editor';
 import { bold } from '#/features/marks-bold/feature';
 import { mediaImageEditor } from '#/features/media-image/editor';
 import { mediaImage } from '#/features/media-image/feature';
-import { DefinitionError, type Feature } from '#/model';
+import { compileContentModel, DefinitionError, type Feature } from '#/model';
 import { featureInternals } from '#/model/feature';
 import { type ReaderRenderers } from '#/reader/define';
 
-import { definePlugin, extendPlugin, type ReaderOverrides } from '../define-plugin';
+import { definePlugin, extendPlugin, modelOf, type ReaderOverrides } from '../define-plugin';
 import { defineEditorPlugin, pluginWithOptions } from '../plugin';
 
 describe('definePlugin', () => {
@@ -117,5 +119,23 @@ describe('extendPlugin', () => {
         expect(resolved.inputRules).toEqual([]);
         expect(resolved.feature).toBe('marks.bold');
         expect(pluginWithOptions(extended.editor, {}).inputRules).toBe(boldEditor.inputRules);
+    });
+});
+
+describe('modelOf', () => {
+    it('compiles the model that the same features give compileContentModel', () => {
+        const ref = { id: 'fixture.model', version: 1 };
+        const plugins = [corePlugin(), definePlugin({ feature: bold, editor: boldEditor })()] as const;
+
+        const model = modelOf(plugins, ref);
+
+        expect(model.fingerprint).toBe(compileContentModel([core(), bold()], ref).fingerprint);
+        expect(model.ref).toEqual(ref);
+    });
+
+    it('throws what compileContentModel throws for units whose features do not fit', () => {
+        const plugins = [definePlugin({ feature: bold, editor: boldEditor })()];
+
+        expect(() => modelOf(plugins, { id: 'fixture.model', version: 1 })).toThrow(DefinitionError);
     });
 });

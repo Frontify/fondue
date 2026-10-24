@@ -4,12 +4,13 @@ import { AllSelection } from 'prosemirror-state';
 import { useEffect, useRef } from 'react';
 
 import { documentModel } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { createEmptyDocument, type RichTextDocument } from '#/model';
 import metadata from '#/model/__tests__/fixtures/a11y/metadata.json';
 import { runtimeOf } from '#/runtime/runtime';
 
-const definition = defineEditor({ id: 'test.metadata', model: documentModel });
+const definition = defineEditor({ id: 'test.metadata', model: documentModel, plugins: unitsOf(documentModel) });
 /** Every asset at a same-origin URL, which the CT page CSP allows, answered through `page.route`. */
 const presentation = defineReactPresentation({
     resolveAssetUrl: (assetId: string) => `${window.location.origin}/test-assets/${assetId}`,

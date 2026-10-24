@@ -5,8 +5,8 @@ import { createRef } from 'react';
 import { vi } from 'vitest';
 
 import { bold, contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/features';
-import { fixtureEditorsOf } from '#/features/__tests__/fixtures/editors';
 import { fixtureHighlight } from '#/features/__tests__/fixtures/highlight';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import {
     type AuthoringPolicy,
     defineEditor,
@@ -101,7 +101,7 @@ export const mountChecks = ({
 }: Mount) => {
     const ref = createRef<EditorHandle>();
     const changes: DocumentChange[] = [];
-    const parts = [...fixtureEditorsOf(model), ...plugins];
+    const parts = unitsOf(model, plugins);
     let definition = defineEditor({ id: 'test.checks', model, plugins: parts });
     if (policy !== undefined) {
         definition = defineEditor({ id: 'test.checks', model, policy, plugins: parts });

@@ -435,9 +435,9 @@ const CASES: readonly Case[] = [
         "import { pluginsById } from '#/features/plugins';",
     ),
     banned(
-        'testing: the shipped plugins inside conformance',
+        'testing: the unit cover check inside conformance',
         'src/testing/conformance/shipped.ts',
-        "import { SHIPPED_PLUGINS } from '#/react/plugins';",
+        "import { checkCover } from '#/react/units';",
     ),
     banned(
         'testing: the engine outside conformance',

@@ -2,13 +2,12 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, featuresById } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor, taskListPlugin } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), ...featuresById(['lists.task'])], { id: 'story.lists-task', version: 1 });
+const plugins = [corePlugin(), taskListPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.lists-task', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/lists.task',
@@ -29,7 +28,7 @@ Task lists as \`task_list\` and \`task_item\`. Each item shows a native checkbox
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.lists-task', model }),
+        definition: defineEditor({ id: 'story.lists-task', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-lists-task',

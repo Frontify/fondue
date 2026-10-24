@@ -2,13 +2,14 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, fontColor } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel, type RichTextDocument } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, fontColorPlugin, modelOf, RichTextEditor } from '#/index';
+import { type RichTextDocument } from '#/model';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), fontColor()], { id: 'story.marks-font-color', version: 1 });
-const literalModel = compileContentModel([core(), fontColor({ literalColors: true })], {
+const plugins = [corePlugin(), fontColorPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.marks-font-color', version: 1 });
+const literalPlugins = [corePlugin(), fontColorPlugin({ literalColors: true })] as const;
+const literalModel = modelOf(literalPlugins, {
     id: 'story.marks-font-color',
     version: 1,
 });
@@ -78,7 +79,7 @@ With the option \`literalColors\` off, the default, the menu offers only tokens,
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.marks-font-color', model }),
+        definition: defineEditor({ id: 'story.marks-font-color', model, plugins }),
         presentation,
         defaultValue: { documentId: 'story-marks-font-color', revision: null, document },
     },
@@ -94,5 +95,5 @@ export const Default: StoryObj<typeof RichTextEditor> = {};
 
 /** With `literalColors: true`, the menu also opens the Fondue `ColorPicker` for any colour. */
 export const LiteralColors: StoryObj<typeof RichTextEditor> = {
-    args: { definition: defineEditor({ id: 'story.marks-font-color', model: literalModel }) },
+    args: { definition: defineEditor({ id: 'story.marks-font-color', model: literalModel, plugins: literalPlugins }) },
 };

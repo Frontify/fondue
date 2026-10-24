@@ -4,8 +4,8 @@ import { Plugin } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { compileDefinition } from '#/definition';
-import { fixtureEditorsOf } from '#/features/__tests__/fixtures/editors';
 import { countingIds } from '#/features/__tests__/fixtures/notes';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, type Diagnostic, type JsonValue } from '#/model';
@@ -70,7 +70,7 @@ const create = (...plugins: readonly Plugin[]) => {
     if (result.status !== 'editable' || tree === undefined) {
         throw new Error('expected an editable document');
     }
-    const compiled = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, fixtureEditorsOf(model)));
+    const compiled = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model)));
     const runtime = createEditorRuntime({
         definition: { ...compiled, plugins: [...compiled.plugins, ...plugins] },
         documentId: 'document-1',

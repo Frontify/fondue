@@ -19,7 +19,7 @@ import {
     NORMALIZE_META,
     ORIGIN_META,
 } from '#/definition';
-import { fixtureEditorsOf, type fixtureHeadingSetEditor } from '#/features/__tests__/fixtures/editors';
+import { type fixtureHeadingSetEditor } from '#/features/__tests__/fixtures/editors';
 import {
     fixtureHeadingSet,
     fixtureInputRules,
@@ -29,18 +29,13 @@ import {
     fixtureTable,
 } from '#/features/__tests__/fixtures/features';
 import { countingIds, notesModel } from '#/features/__tests__/fixtures/notes';
+import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
 import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { mediaImage } from '#/features/media-image/feature';
-import {
-    type CommandsOfModel,
-    type CommandsOfPlugin,
-    defineEditor,
-    type EditorHandle,
-    type PersistenceService,
-} from '#/index';
+import { type CommandsOfPlugin, defineEditor, type EditorHandle, type PersistenceService } from '#/index';
 import {
     compileContentModel,
     type ContentModel,
@@ -152,7 +147,7 @@ const start = (input: unknown, options: Start = {}) => {
     if (result.status !== 'editable' || tree === undefined) {
         throw new Error('expected an editable document');
     }
-    const parts = [...fixtureEditorsOf(model), ...(options.parts ?? [])];
+    const parts = unitsOf(model, options.parts);
     const compiled = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, parts));
     const definition: CompiledDefinition = {
         ...compiled,
@@ -504,7 +499,7 @@ describe('the session lifecycle', () => {
     it('emits ready once with the session token after the first frame', () => {
         const { tree } = decodeToTree(stored(para()), boldModel);
         const runtime = createEditorRuntime({
-            definition: compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel)),
+            definition: compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel))),
             documentId: 'document-1',
             tree: tree as NonNullable<typeof tree>,
             capabilities: [],
@@ -1021,7 +1016,9 @@ describe('the authoring policy and limits', () => {
             return undefined;
         };
 
-        expect(codeOf(() => defineEditor({ id: 'x', model: boldModel, policy: unknown }))).toMatchObject({
+        expect(
+            codeOf(() => defineEditor({ id: 'x', model: boldModel, policy: unknown, plugins: unitsOf(boldModel) })),
+        ).toMatchObject({
             code: 'definition.unknown-policy-feature',
         });
         expect(
@@ -1363,7 +1360,7 @@ describe('commands, events and the commit path', () => {
             const repair = countAppends(tableEditing(), { featureId: 'fixture.table', capability: 'table' });
             const runtime = createEditorRuntime({
                 definition: {
-                    ...compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel)),
+                    ...compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel))),
                     schema,
                     plugins: [repair, recorder],
                 },
@@ -1844,7 +1841,7 @@ describe('command payloads', () => {
     it('rejects a wrong payload before the command runs, for a typed and an untyped command', async () => {
         const { handle, view } = start(stored(para(words('ab'))), { model, parts });
         const typed = handle as unknown as EditorHandle<
-            CommandsOfModel<typeof model> & CommandsOfPlugin<typeof fixtureHeadingSetEditor>
+            UnitCommands & CommandsOfPlugin<typeof fixtureHeadingSetEditor>
         >;
         setSelection(handle, { text: 'ab', from: 1, to: 1 });
         const before = view.state;
@@ -2607,7 +2604,7 @@ describe('disposal', () => {
             },
         });
         const { tree } = decodeToTree(stored(para()), boldModel);
-        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel));
+        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel)));
         const pending: Promise<CommandResult>[] = [];
         const owned: ReturnType<typeof probeRuntimes>[] = [];
         for (let cycle = 0; cycle < 10; cycle += 1) {
@@ -3139,7 +3136,7 @@ describe('targets on release and dispose', () => {
     it('refuses a capture while mounting, faulted or disposed and creates no target', () => {
         const { tree } = decodeToTree(stored(para(words('ab'))), boldModel);
         const mounting = createEditorRuntime({
-            definition: compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel)),
+            definition: compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel))),
             documentId: 'document-1',
             tree: tree as NonNullable<typeof tree>,
             capabilities: [],
@@ -3928,7 +3925,7 @@ describe('faults', () => {
                 },
             },
         });
-        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel));
+        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel)));
         const runtime = createEditorRuntime({
             definition: { ...compiled, plugins: [...compiled.plugins, constructorFails] },
             documentId: 'document-1',
@@ -4104,7 +4101,7 @@ describe('faults', () => {
                 throw new Error('plugin view failure');
             },
         });
-        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel));
+        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel)));
         const runtime = createEditorRuntime({
             definition: { ...compiled, plugins: [...compiled.plugins, viewFails] },
             documentId: 'document-1',

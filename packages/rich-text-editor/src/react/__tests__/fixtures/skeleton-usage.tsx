@@ -2,14 +2,17 @@
 
 import { createRef } from 'react';
 
-import { bold, core } from '#/features';
+import { definePlugin } from '#/bridge/define-plugin';
+import { core } from '#/features';
 import { fixtureItalic } from '#/features/__tests__/fixtures/features';
 import { type spotlightEditor } from '#/features/__tests__/fixtures/spotlight/editor';
 import {
     type BlockDecoration,
     type BlockDecorationSource,
-    type CommandsOfModel,
+    boldPlugin,
     type CommandsOfPlugin,
+    type CommandsOfPlugins,
+    corePlugin,
     type DecoratedBlock,
     defineEditor,
     defineEditorPlugin,
@@ -17,19 +20,23 @@ import {
     type EditorCommand,
     type EditorHandle,
     type EditorOverlay,
+    modelOf,
     type NodePending,
     type NodeViewContext,
     RichTextEditor,
     useCommandState,
 } from '#/index';
-import { compileContentModel, createEmptyDocument } from '#/model';
+import { createEmptyDocument } from '#/model';
 
 // A custom model from shipped features and an outside one without commands.
-const model = compileContentModel([core(), bold(), fixtureItalic()], { id: 'acme.notes', version: 1 });
-const definition = defineEditor({ id: 'acme.notes', model });
+const italicPlugin = definePlugin({ feature: fixtureItalic, editor: defineEditorPlugin(fixtureItalic, {}) });
+const plugins = [corePlugin(), boldPlugin(), italicPlugin()] as const;
+const model = modelOf(plugins, { id: 'acme.notes', version: 1 });
+const definition = defineEditor({ id: 'acme.notes', model, plugins });
+type Commands = CommandsOfPlugins<typeof plugins>;
 const presentation = defineReactPresentation({ toolbar: [['mark.bold.toggle']] });
 const defaultValue = { documentId: 'document-1', revision: null, document: createEmptyDocument(model) };
-const ref = createRef<EditorHandle<CommandsOfModel<typeof model>>>();
+const ref = createRef<EditorHandle<Commands>>();
 
 export const usage = (
     <RichTextEditor
@@ -45,7 +52,7 @@ export const usage = (
 export const unnamed = <RichTextEditor definition={definition} defaultValue={defaultValue} />;
 
 // Command ids and payloads come from the compiled definition, so `any` or `never` would fail here.
-declare const derived: EditorHandle<CommandsOfModel<typeof model>>;
+declare const derived: EditorHandle<Commands>;
 declare const shipped: EditorHandle;
 declare const plugged: EditorHandle<CommandsOfPlugin<typeof spotlightEditor>>;
 export const commands = () => {
@@ -69,7 +76,6 @@ export const commands = () => {
 };
 
 // `useCommandState` takes the same typed IDs and payloads.
-type Commands = CommandsOfModel<typeof model>;
 export const useStates = () => {
     useCommandState<Commands, 'mark.bold.toggle'>('mark.bold.toggle');
     // @ts-expect-error: the model installs no italic command.

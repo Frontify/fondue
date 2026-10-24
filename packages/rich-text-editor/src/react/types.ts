@@ -2,14 +2,14 @@
 
 import { type FocusEvent, type Ref } from 'react';
 
-import { type CommandsOfPlugin, type EditorPlugin } from '#/bridge/plugin';
+import { type RichTextPlugin } from '#/bridge/define-plugin';
+import { type CommandsOfPlugin } from '#/bridge/plugin';
 import {
     type CapabilityRef,
     type ColorToken,
     type CommandRef,
     type ContentModel,
     type Diagnostic,
-    type Feature,
     type ListLevels,
     type ModelRef,
     type PresentationStyle,
@@ -27,7 +27,6 @@ import {
     type ReplaceResult,
     type ServiceContext,
 } from '#/persistence/types';
-import { type ShippedPluginCommands } from '#/react/plugins';
 import { type ReaderPresentation } from '#/reader/reader';
 import {
     type AuthoringPolicy,
@@ -60,8 +59,8 @@ export type { ColorToken, ListLevels, OperationMetric, PresentationStyle, StyleR
 export interface EditorDefinitionOptions<Model extends ContentModel = ContentModel> {
     readonly id: string;
     readonly model: Model;
-    /** Editor parts of the model's features; one extends the shipped part of its feature. */
-    readonly plugins?: readonly EditorPlugin[];
+    /** One unit per feature of the model, of the same ID and version. */
+    readonly plugins: readonly RichTextPlugin[];
     readonly policy?: Partial<AuthoringPolicy>;
     /** May only make limits stricter. */
     readonly limits?: Partial<ResourceLimits>;
@@ -84,24 +83,11 @@ export interface CompiledEditorDefinition<Commands extends object = ShippedComma
 type UnionToIntersection<U> = (U extends unknown ? (value: U) => void : never) extends (value: infer I) => void
     ? I
     : never;
-/**
- * Distributes over the feature union, so one feature without commands keeps the others' commands; a shipped feature
- * adds the commands of its shipped editor part.
- */
-export type CommandsOfModel<Model> =
-    Model extends ContentModel<infer Features>
-        ? UnionToIntersection<
-              Features[number] extends infer F
-                  ? F extends Feature<infer C, object, object, infer Id>
-                      ? C & ShippedPluginCommands<Id>
-                      : never
-                  : never
-          >
-        : never;
-/** The commands of the editor parts a host passes `defineEditor`. */
-export type CommandsOfPlugins<Plugins extends readonly EditorPlugin[]> = UnionToIntersection<
-    CommandsOfPlugin<Plugins[number]>
->;
+/** The commands of the units a host passes `defineEditor`. */
+export type CommandsOfPlugins<Plugins extends readonly RichTextPlugin[]> = UnionToIntersection<
+    CommandsOfPlugin<Plugins[number]['editor']>
+> &
+    object;
 
 /** A search a host answers when the user looks for something to mention or link. */
 export interface ReferenceSearchRequest {

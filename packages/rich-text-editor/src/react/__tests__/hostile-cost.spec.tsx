@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
 import { featuresById } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import {
     compileContentModel,
@@ -104,7 +105,7 @@ const stored = (document: unknown): RichTextDocument =>
     (typeof document === 'string' ? JSON.parse(document) : document) as RichTextDocument;
 
 const mountWith = async (document: unknown, limits: Partial<ResourceLimits> = {}) => {
-    const limited = defineEditor({ id: 'test.hostile', model, limits });
+    const limited = defineEditor({ id: 'test.hostile', model, limits, plugins: unitsOf(model) });
     const ref = { current: null as EditorHandle<object> | null };
     const rendered = render(
         <RichTextEditor

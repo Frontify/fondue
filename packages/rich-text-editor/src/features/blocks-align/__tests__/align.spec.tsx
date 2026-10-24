@@ -6,6 +6,7 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { brandDocumentModel } from '#/features/__tests__/fixtures/brand-document';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { align } from '#/features/blocks-align/feature';
 import { heading } from '#/features/blocks-heading/feature';
 import { core } from '#/features/core/feature';
@@ -114,7 +115,7 @@ describe('alignment', () => {
         const model = modelOf(true);
         const stored = storedIn(model, [{ ...para(text('Note')), attrs: { lang: null, align: 'left' } }]);
         const document = { ...stored, content: { ...stored.content, attrs: { lang: 'en', dir: 'rtl' } } };
-        const definition = defineEditor({ id: 'test.align', model });
+        const definition = defineEditor({ id: 'test.align', model, plugins: unitsOf(model) });
         const ref = createRef<EditorHandle>();
         const element = (dir: 'ltr' | 'rtl') => {
             const locale = dir === 'rtl' ? { locale: deDE } : {};

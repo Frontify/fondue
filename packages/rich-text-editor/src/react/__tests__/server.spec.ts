@@ -42,9 +42,10 @@ afterAll(() => {
 
 describe('RichTextEditor on the server', () => {
     it('renders an empty surface container, attaches no view and reads no DOM global', () => {
-        const { features, index, model: entry, testing } = loaded;
-        const model = entry.compileContentModel([features.core(), features.bold()], { id: 'test.server', version: 1 });
-        const definition = index.defineEditor({ id: 'test.server', model });
+        const { index, model: entry, testing } = loaded;
+        const plugins = [index.corePlugin(), index.boldPlugin()] as const;
+        const model = index.modelOf(plugins, { id: 'test.server', version: 1 });
+        const definition = index.defineEditor({ id: 'test.server', model, plugins });
         const defaultValue = { documentId: 'document-1', revision: null, document: entry.createEmptyDocument(model) };
 
         const html = renderToString(

@@ -2,11 +2,30 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { align, bold, bulletList, core, formatClear, heading, listItem } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import {
+    alignPlugin,
+    boldPlugin,
+    bulletListPlugin,
+    corePlugin,
+    defineEditor,
+    defineReactPresentation,
+    formatClearPlugin,
+    headingPlugin,
+    listItemPlugin,
+    modelOf,
+    RichTextEditor,
+} from '#/index';
 
-const model = compileContentModel([core(), heading(), bold(), align(), listItem(), bulletList(), formatClear()], {
+const plugins = [
+    corePlugin(),
+    headingPlugin(),
+    boldPlugin(),
+    alignPlugin(),
+    listItemPlugin(),
+    bulletListPlugin(),
+    formatClearPlugin(),
+] as const;
+const model = modelOf(plugins, {
     id: 'story.clear',
     version: 1,
 });
@@ -30,7 +49,7 @@ Clears formatting. The toolbar button runs \`format.clear\`. Mod+\\ runs \`forma
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.clear', model }),
+        definition: defineEditor({ id: 'story.clear', model, plugins }),
         presentation: defineReactPresentation({
             toolbar: [
                 ['mark.bold.toggle'],

@@ -9,11 +9,10 @@ import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/featu
 import { fixtureItalic, fixtureToolbar } from '#/features/__tests__/fixtures/features';
 import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
 import { FixtureLinkPopover, FixtureMenu, FixtureSuggestions } from '#/features/__tests__/fixtures/overlays/overlays';
-import { fixturePartsOf } from '#/features/__tests__/fixtures/parts';
 import { fixtureTableBlock } from '#/features/__tests__/fixtures/table/feature';
+import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import { links } from '#/features/links/feature';
 import {
-    type CommandsOfModel,
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
@@ -41,7 +40,7 @@ const model = compileContentModel(
     ],
     { id: 'test.overlays', version: 1 },
 );
-const definition = defineEditor({ id: 'test.overlays', model, plugins: fixturePartsOf(model) });
+const definition = defineEditor({ id: 'test.overlays', model, plugins: unitsOf(model) });
 /** Each `onOpenChange` of the host dialog, which no test expects. */
 const hostDialogChanges: boolean[] = [];
 
@@ -51,7 +50,7 @@ declare global {
     interface Window {
         /** The mounted overlay editor, for tests that drive it from the page. */
         overlayProbe?: {
-            readonly handle: EditorHandle<CommandsOfModel<typeof model>>;
+            readonly handle: EditorHandle<UnitCommands>;
             readonly select: (target: Parameters<typeof setSelection>[1]) => void;
             readonly open: (kind: OverlayKind) => void;
             /** Removes the node with `nodeId`, as another author's change would. */
@@ -181,7 +180,7 @@ export const OverlayProbe = ({
     }));
     useEffect(() => {
         const timer = setInterval(() => {
-            const handle = ref.current as EditorHandle<CommandsOfModel<typeof model>> | null;
+            const handle = ref.current as EditorHandle<UnitCommands> | null;
             if (handle === null) {
                 return;
             }

@@ -2,7 +2,14 @@
 
 import { type ComponentType, type ReactNode } from 'react';
 
-import { DefinitionError, type Feature, type JsonObject } from '#/model';
+import {
+    compileContentModel,
+    type ContentModel,
+    type ContentModelOptions,
+    DefinitionError,
+    type Feature,
+    type JsonObject,
+} from '#/model';
 import { type ReaderContext } from '#/model/declarations';
 
 import { type EditorPlugin, type EditorPluginParts, OPTION_PARTS, type OptionParts } from './plugin';
@@ -66,3 +73,14 @@ export const extendPlugin = <Id extends string, Commands extends object>(
     unit: RichTextPlugin<Id, Commands>,
     parts: Omit<EditorPluginParts, 'commands'>,
 ): RichTextPlugin<Id, Commands> => Object.freeze({ ...unit, editor: extendEditor(unit.editor, parts) });
+
+type FeaturesOf<Plugins extends readonly RichTextPlugin[]> = {
+    readonly [Index in keyof Plugins]: Plugins[Index]['feature'];
+};
+
+/** The content model that `plugins`' features compile to, which `defineEditor` takes with the same units. */
+export const modelOf = <const Plugins extends readonly RichTextPlugin[]>(
+    plugins: Plugins,
+    ref: ContentModelOptions,
+): ContentModel<FeaturesOf<Plugins>> =>
+    compileContentModel(plugins.map(({ feature }) => feature) as FeaturesOf<Plugins>, ref);

@@ -11,7 +11,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 
 import { createPortalStore, type PortalEntry } from '#/bridge/portals';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
-import { fixtureChromeEditor } from '#/features/__tests__/fixtures/chrome/view';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import {
@@ -74,7 +74,7 @@ const stampedEditor = defineEditorPlugin(stampedBlock, {
 });
 const features: readonly Feature[] = [core(), bold(), fixtureChrome(), stampedBlock()];
 const model = compileContentModel(features, { id: 'test.persistence', version: 1 });
-const definition = defineEditor({ id: 'test.persistence', model, plugins: [fixtureChromeEditor, stampedEditor] });
+const definition = defineEditor({ id: 'test.persistence', model, plugins: unitsOf(model, [stampedEditor]) });
 const packageFile = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'package.json');
 const { version: PACKAGE_VERSION } = JSON.parse(readFileSync(packageFile, 'utf8')) as { readonly version: string };
 const WRITER: SaveRequest['writer'] = {

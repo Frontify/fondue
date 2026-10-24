@@ -7,10 +7,9 @@ import { AnnouncerContext } from '#/bridge/announcer';
 import { bold, core } from '#/features';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { fixtureItalic, fixtureList, fixtureToolbar } from '#/features/__tests__/fixtures/features';
-import { fixturePartsOf } from '#/features/__tests__/fixtures/parts';
+import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import { links } from '#/features/links/feature';
 import {
-    type CommandsOfModel,
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
@@ -28,13 +27,13 @@ const model = compileContentModel(
 );
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
 export const toolbarDefinitions = {
-    open: defineEditor({ id: 'test.toolbar', model, plugins: fixturePartsOf(model) }),
+    open: defineEditor({ id: 'test.toolbar', model, plugins: unitsOf(model) }),
     // Bold may not be added, which the toolbar shows as an unavailable item.
     boldBlocked: defineEditor({
         id: 'test.toolbar',
         model,
         policy: { features: { 'marks.bold': { ...ALLOW, create: false } } },
-        plugins: fixturePartsOf(model),
+        plugins: unitsOf(model),
     }),
 };
 
@@ -82,7 +81,7 @@ declare global {
     interface Window {
         /** The mounted toolbar editor's handle, for tests that drive it from the page. */
         toolbarEditor?: {
-            readonly handle: EditorHandle<CommandsOfModel<typeof model>>;
+            readonly handle: EditorHandle<UnitCommands>;
             readonly setSelection: typeof setSelection;
             /** The HTML of the runtime's document, as the surface shows it. */
             readonly html: () => string;
@@ -172,7 +171,7 @@ export const ToolbarProbe = ({
         };
     });
     useEffect(() => {
-        const handle = ref.current as EditorHandle<CommandsOfModel<typeof model>> | null;
+        const handle = ref.current as EditorHandle<UnitCommands> | null;
         if (handle === null) {
             return;
         }

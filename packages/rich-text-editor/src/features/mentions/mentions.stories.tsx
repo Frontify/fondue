@@ -3,13 +3,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { core, mentions } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel, type ReferenceResolution } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, mentionsPlugin, modelOf, RichTextEditor } from '#/index';
+import { type ReferenceResolution } from '#/model';
 import { createFakeReferenceService } from '#/testing';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), mentions()], { id: 'story.mentions', version: 1 });
+const plugins = [corePlugin(), mentionsPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.mentions', version: 1 });
 
 const people = createFakeReferenceService([
     { resourceType: 'user', resourceId: 'user-ada', labelSnapshot: 'Ada Lovelace', kind: 'user' },
@@ -56,7 +56,7 @@ A mention stores its resource type and ID and the label it was chosen with (\`la
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.mentions', model }),
+        definition: defineEditor({ id: 'story.mentions', model, plugins }),
         presentation: defineReactPresentation({ toolbar: [['mention.search.open']], resolveReference }),
         services: { references: people },
         defaultValue: {

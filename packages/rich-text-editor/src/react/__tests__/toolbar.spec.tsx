@@ -9,6 +9,7 @@ import { AnnouncerContext } from '#/bridge/announcer';
 import { defineEditorPlugin } from '#/bridge/plugin';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { fixtureCodeBlockEditor } from '#/features/__tests__/fixtures/code-block/view';
+import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { boldEditor } from '#/features/marks-bold/editor';
 import { bold } from '#/features/marks-bold/feature';
@@ -26,12 +27,7 @@ import { pressKey, setSelection, typeText } from '#/testing';
 
 import { defineEditor, defineReactPresentation } from '../define';
 import { RichTextEditor } from '../rich-text-editor';
-import {
-    type CommandsOfModel,
-    type EditorHandle,
-    type ReactPresentation,
-    type RichTextEditorBaseProps,
-} from '../types';
+import { type EditorHandle, type ReactPresentation, type RichTextEditorBaseProps } from '../types';
 
 import { fixtureLocale, toolbarDefinitions, TOOLBAR } from './fixtures/ToolbarProbe';
 
@@ -207,7 +203,7 @@ describe('the fixed toolbar', () => {
 
     it('gives the reason not allowed for a command the policy refuses after mount', async () => {
         const model = compileContentModel([core(), bold()], { id: 'test.toolbar', version: 1 });
-        const definition = defineEditor({ id: 'test.toolbar', model });
+        const definition = defineEditor({ id: 'test.toolbar', model, plugins: unitsOf(model) });
         const { handle } = mount({
             definition,
             presentation: defineReactPresentation({ toolbar: [['mark.bold.toggle']] }),
@@ -318,7 +314,7 @@ describe('the fixed toolbar', () => {
     it('leaves the document unchanged by the button, Mod-b and **x** when the policy refuses bold', async () => {
         const model = compileContentModel([core(), bold()], { id: 'test.toolbar', version: 1 });
         const ALLOW = { create: true, edit: true, remove: true, paste: true };
-        const definition = defineEditor({ id: 'test.toolbar', model });
+        const definition = defineEditor({ id: 'test.toolbar', model, plugins: unitsOf(model) });
         const { handle } = mount({
             definition,
             presentation: defineReactPresentation({ toolbar: [['mark.bold.toggle']] }),
@@ -333,7 +329,7 @@ describe('the fixed toolbar', () => {
         act(() => setSelection(handle(), { text: 'two' }));
         const before = content();
         // The mount helper takes any definition, so its handle knows none of this model's commands.
-        const executed = (handle() as EditorHandle<CommandsOfModel<typeof model>>).execute('mark.bold.toggle');
+        const executed = (handle() as EditorHandle<UnitCommands>).execute('mark.bold.toggle');
 
         await act(() => fireEvent.click(button('Bold')));
         act(() => pressKey(handle(), 'Mod-b'));
@@ -542,7 +538,7 @@ describe('a toolbar item that throws while rendering', () => {
     const brokenDefinition = defineEditor({
         id: 'test.toolbar',
         model: compileContentModel([core(), bold(), pullQuote()], { id: 'test.toolbar', version: 1 }),
-        plugins: [
+        plugins: unitsOf(compileContentModel([core(), bold(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
             boldEditor,
             defineEditorPlugin(pullQuote(), {
                 commands: { 'acme.pull-quote.set': { run: () => true } },
@@ -557,7 +553,7 @@ describe('a toolbar item that throws while rendering', () => {
                     },
                 ],
             }),
-        ],
+        ]),
     });
 
     it('replaces only that item, so the textbox and the other items stay and arrows skip nothing that renders', () => {
@@ -608,7 +604,7 @@ describe('a toolbar item that throws while rendering', () => {
         const definition = defineEditor({
             id: 'test.toolbar',
             model,
-            plugins: [
+            plugins: unitsOf(model, [
                 boldEditor,
                 defineEditorPlugin(pullQuote(), {
                     commands: {
@@ -622,7 +618,7 @@ describe('a toolbar item that throws while rendering', () => {
                     },
                     toolbar: [entry('Broken row', 'acme.broken.set'), entry('Fine row', 'acme.fine.set')],
                 }),
-            ],
+            ]),
         });
         const { handle } = mount(
             { definition, defaultToolbarMode: 'bubble', children: <RichTextEditor.BubbleToolbar /> },
@@ -652,7 +648,7 @@ describe('toolbar theming and localization', () => {
         const definition = defineEditor({
             id: 'test.toolbar',
             model: compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }),
-            plugins: [
+            plugins: unitsOf(compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
                 pullQuotePlugin({
                     'en-US': 'Pull quote',
                     de: 'Zitat',
@@ -660,7 +656,7 @@ describe('toolbar theming and localization', () => {
                     'zh-Hant': '引言',
                     'zh-hant-tw': '引言 TW',
                 }),
-            ],
+            ]),
         });
         const labels = ['de-CH', 'DE-ch', 'de-AT', 'de', 'zh-Hant-TW', 'zh-Hant-HK', 'fr-FR'].map((lang) => {
             const { unmount } = mount({ definition, locale: { ...enUS, lang } }, [['acme.pull-quote.set']]);
@@ -816,7 +812,13 @@ describe('toolbar theming and localization', () => {
                 id: 'test.toolbar',
                 version: 1,
             }),
-            plugins: [pullQuotePlugin({ 'en-US': 'Pull quote', fr: 'Citation' }), fixtureCodeBlockEditor],
+            plugins: unitsOf(
+                compileContentModel([core(), pullQuote(), fixtureCodeBlock()], {
+                    id: 'test.toolbar',
+                    version: 1,
+                }),
+                [pullQuotePlugin({ 'en-US': 'Pull quote', fr: 'Citation' }), fixtureCodeBlockEditor],
+            ),
         });
         const { unmount } = mount(
             {
@@ -848,7 +850,9 @@ describe('toolbar theming and localization', () => {
         const definition = defineEditor({
             id: 'test.toolbar',
             model: compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }),
-            plugins: [pullQuotePlugin({ 'en-US': 'Pull quote' }, keys)],
+            plugins: unitsOf(compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
+                pullQuotePlugin({ 'en-US': 'Pull quote' }, keys),
+            ]),
         });
         const shortcutOf = () => {
             const { unmount } = mount({ definition }, [['acme.pull-quote.set']]);
@@ -868,7 +872,9 @@ describe('toolbar theming and localization', () => {
         const definition = defineEditor({
             id: 'test.toolbar',
             model: compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }),
-            plugins: [pullQuotePlugin({ 'en-US': 'Pull quote' }, keys)],
+            plugins: unitsOf(compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
+                pullQuotePlugin({ 'en-US': 'Pull quote' }, keys),
+            ]),
             policy: { enterBehavior: 'submit' },
         });
         const shortcut = () => screen.getByRole('button', { name: 'Pull quote' }).getAttribute('aria-keyshortcuts');

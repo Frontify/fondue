@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { core, mediaImage, mediaUpload } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import {
     type AssetValue,
     defineEditor,
@@ -16,7 +17,7 @@ import { compileContentModel } from '#/model';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel([core(), mediaImage(), mediaUpload()], { id: 'test.uploads-ct', version: 1 });
-const definition = defineEditor({ id: 'test.uploads-ct', model });
+const definition = defineEditor({ id: 'test.uploads-ct', model, plugins: unitsOf(model) });
 /** Every asset at a same-origin URL, which the CT page CSP allows, answered through `page.route`. */
 const resolveAssetUrl = (assetId: string) => `${window.location.origin}/test-assets/${assetId}`;
 const presentation = defineReactPresentation({ toolbar: [['image.insert']], resolveAssetUrl });

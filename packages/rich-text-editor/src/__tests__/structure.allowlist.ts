@@ -29,7 +29,6 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/model/output.ts': 548,
     'src/model/read.ts': 422,
     'src/model/styles.ts': 421,
-    'src/react/compile-editor.ts': 425,
     'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/capabilities/suggestions/plugin.ts': 616,
     'src/runtime/input-rules.ts': 515,
@@ -58,7 +57,7 @@ export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {
 export const SPECS_OVER_1000_LINES: Record<string, number> = {
     'src/clipboard/__tests__/clipboard.spec.tsx': 1918,
     'src/codecs/__tests__/codecs.spec.ts': 1150,
-    'src/features/__tests__/editor-api.spec.tsx': 1755,
+    'src/features/__tests__/editor-api.spec.tsx': 1756,
     'src/features/media-upload/__tests__/uploads.spec.tsx': 1251,
     'src/model/__tests__/compile.spec.ts': 1017,
     'src/persistence/__tests__/persistence.spec.tsx': 3277,

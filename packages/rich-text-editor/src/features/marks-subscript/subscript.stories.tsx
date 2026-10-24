@@ -2,13 +2,12 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, subscript } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor, subscriptPlugin } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), subscript()], { id: 'story.marks-subscript', version: 1 });
+const plugins = [corePlugin(), subscriptPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.marks-subscript', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/marks.subscript',
@@ -29,7 +28,7 @@ Subscript as \`sub\`.
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.marks-subscript', model }),
+        definition: defineEditor({ id: 'story.marks-subscript', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-marks-subscript',

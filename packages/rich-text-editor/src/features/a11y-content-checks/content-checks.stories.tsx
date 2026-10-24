@@ -2,13 +2,31 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { contentChecks, core, fontColor, heading, links, mediaImage } from '#/features';
-import { type ColorToken, defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import {
+    type ColorToken,
+    contentChecksPlugin,
+    corePlugin,
+    defineEditor,
+    defineReactPresentation,
+    fontColorPlugin,
+    headingPlugin,
+    linksPlugin,
+    mediaImagePlugin,
+    modelOf,
+    RichTextEditor,
+} from '#/index';
 import demoImage from '#/react/examples/demo-image.svg?no-inline';
 
 // A feature story installs its feature and what it requires, plus the features whose content it checks, which its `feature:` tags name.
-const model = compileContentModel([core(), heading(), links(), mediaImage(), fontColor(), contentChecks()], {
+const plugins = [
+    corePlugin(),
+    headingPlugin(),
+    linksPlugin(),
+    mediaImagePlugin(),
+    fontColorPlugin(),
+    contentChecksPlugin(),
+] as const;
+const model = modelOf(plugins, {
     id: 'story.a11y-content-checks',
     version: 1,
 });
@@ -69,7 +87,7 @@ The checks run 750 ms after the last change and when the panel opens, never whil
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.a11y-content-checks', model }),
+        definition: defineEditor({ id: 'story.a11y-content-checks', model, plugins }),
         presentation: defineReactPresentation({
             toolbar: [['checks.open', 'link.edit', 'mark.color.menu.open', 'image.insert']],
             colorTokens,

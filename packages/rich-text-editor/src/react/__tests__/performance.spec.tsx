@@ -6,6 +6,7 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { featuresById } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { registry } from '#/features/registry';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
@@ -72,7 +73,7 @@ const mountLarge = () => {
         id: 'test.performance',
         version: 1,
     });
-    const definition = defineEditor({ id: 'test.performance', model });
+    const definition = defineEditor({ id: 'test.performance', model, plugins: unitsOf(model) });
     const presentation = defineReactPresentation({
         toolbar: [['mark.bold.toggle', 'mark.italic.toggle'], ['link.edit'], ['outline.toggle', 'checks.open']],
     });
@@ -174,7 +175,7 @@ it('types a character in a highlighted 2,000-line code block within the keystrok
         id: 'test.performance',
         version: 1,
     });
-    const definition = defineEditor({ id: 'test.performance', model });
+    const definition = defineEditor({ id: 'test.performance', model, plugins: unitsOf(model) });
     const lines = Array.from({ length: 2000 }, (_, index) => `const value${index} = "line ${index}";`);
     const block = {
         type: 'code_block',

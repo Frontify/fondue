@@ -19,7 +19,7 @@ import {
     FixtureSuggestions,
     LinkForm,
 } from '#/features/__tests__/fixtures/overlays/overlays';
-import { fixturePartsOf } from '#/features/__tests__/fixtures/parts';
+import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
@@ -30,7 +30,7 @@ import { pressKey, setSelection, typeText } from '#/testing';
 import { defineEditor, defineReactPresentation } from '../define';
 import { useEditorHandle } from '../hooks';
 import { RichTextEditor } from '../rich-text-editor';
-import { type CommandsOfModel, type EditorHandle, type RichTextEditorBaseProps } from '../types';
+import { type EditorHandle, type RichTextEditorBaseProps } from '../types';
 
 import { fixtureLocale, TOOLBAR } from './fixtures/ToolbarProbe';
 
@@ -38,7 +38,7 @@ const model = compileContentModel(
     [core(), bold(), fixtureItalic(), links(), fixtureToolbar(), fixtureCodeBlock(), fixtureMediaImage()],
     { id: 'test.overlays', version: 1 },
 );
-const definition = defineEditor({ id: 'test.overlays', model, plugins: fixturePartsOf(model) });
+const definition = defineEditor({ id: 'test.overlays', model, plugins: unitsOf(model) });
 const presentation = defineReactPresentation({ toolbar: TOOLBAR });
 const text = (value: string) => ({ type: 'text', text: value, marks: [] });
 const para = (value: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [text(value)] });
@@ -770,7 +770,11 @@ describe('overlay focus and loading', () => {
         render(
             <RichTextEditor.Root
                 aria-label="Notes"
-                definition={defineEditor({ id: 'test.overlays', model: lazyModel, plugins: [lazyChrome] })}
+                definition={defineEditor({
+                    id: 'test.overlays',
+                    model: lazyModel,
+                    plugins: unitsOf(lazyModel, [lazyChrome]),
+                })}
                 defaultValue={loaded(para('one'), image)}
                 locale={fixtureLocale}
                 ref={ref}
@@ -814,7 +818,7 @@ describe('overlay focus and loading', () => {
         expect(bubble()).toBeNull();
 
         act(() => {
-            (handle() as unknown as EditorHandle<CommandsOfModel<typeof model>>).execute('mark.bold.toggle');
+            (handle() as unknown as EditorHandle<UnitCommands>).execute('mark.bold.toggle');
         });
 
         expect(bubble()).toBeNull();

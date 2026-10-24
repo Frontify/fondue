@@ -3,7 +3,6 @@
 import { useState } from 'react';
 
 import { RichTextReader } from '#/entries/reader';
-import { fixtureEditorsOf } from '#/features/__tests__/fixtures/editors';
 import {
     COLOR_TOKENS,
     linked,
@@ -14,12 +13,13 @@ import {
     styledDocument,
     styleFeatures,
 } from '#/features/__tests__/fixtures/styles';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { taskList } from '#/features/lists-task/feature';
 import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 
 const model = compileContentModel([...styleFeatures(true), taskList()], { id: 'test.struck-tasks', version: 1 });
-const definition = defineEditor({ id: 'test.struck-tasks', model, plugins: fixtureEditorsOf(model) });
+const definition = defineEditor({ id: 'test.struck-tasks', model, plugins: unitsOf(model) });
 
 const task = (nodeId: string, checked: boolean, ...content: readonly ContentNodeJSON[]): ContentNodeJSON =>
     ({ type: 'task_item', attrs: { nodeId, checked }, content: [...content] }) as ContentNodeJSON;

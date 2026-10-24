@@ -5,6 +5,7 @@ import { createRef, type FormEvent, type RefObject } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
@@ -50,7 +51,7 @@ const model = compileContentModel(
     [core(), bold(), vocabularyLists(), vocabularyMention(), fixtureMediaImage(), badge()],
     { id: 'test.forms', version: 1 },
 );
-const definition = defineEditor({ id: 'test.forms', model });
+const definition = defineEditor({ id: 'test.forms', model, plugins: unitsOf(model) });
 const CAPABILITIES = ['core', 'fixture.lists', 'fixture.mention', 'fixture.media-image', 'acme.badge'];
 
 const text = (value: string) => ({ type: 'text', text: value });

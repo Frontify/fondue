@@ -3,11 +3,12 @@
 import '#/styles/content.css';
 import { RichTextReader } from '#/entries/reader';
 import { columns as layoutColumns, core } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 
 const model = compileContentModel([core(), layoutColumns()], { id: 'test.columns', version: 1 });
-const definition = defineEditor({ id: 'test.columns', model });
+const definition = defineEditor({ id: 'test.columns', model, plugins: unitsOf(model) });
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 
 /** `One`, then each further paragraph after a column break: `One`, break, `Two`, break, `Three`, and so on. */

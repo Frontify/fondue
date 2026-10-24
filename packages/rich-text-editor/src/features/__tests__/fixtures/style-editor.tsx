@@ -6,7 +6,6 @@ import { vi } from 'vitest';
 
 import {
     type AuthoringPolicy,
-    type CommandsOfModel,
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
@@ -18,8 +17,8 @@ import { type ContentModel, type ContentNodeJSON, type Diagnostic } from '#/mode
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 
-import { fixtureEditorsOf } from './editors';
 import { COLOR_TOKENS, STYLE_MAP, styledDocument, styleModel } from './styles';
+import { unitsOf, type UnitCommands } from './units';
 
 interface Mount {
     readonly model?: ContentModel;
@@ -37,12 +36,12 @@ export const mountStyled = ({
     policy,
     toolbarMode = 'fixed',
 }: Mount) => {
-    const ref = createRef<EditorHandle<CommandsOfModel<ReturnType<typeof styleModel>>>>();
+    const ref = createRef<EditorHandle<UnitCommands>>();
     const changes: DocumentChange[] = [];
     const diagnostics: Diagnostic[] = [];
-    let definition = defineEditor({ id: 'test.styles', model, plugins: fixtureEditorsOf(model) });
+    let definition = defineEditor({ id: 'test.styles', model, plugins: unitsOf(model) });
     if (policy !== undefined) {
-        definition = defineEditor({ id: 'test.styles', model, policy, plugins: fixtureEditorsOf(model) });
+        definition = defineEditor({ id: 'test.styles', model, policy, plugins: unitsOf(model) });
     }
     const document = styledDocument(model, blocks);
     const element = (shown: ReactPresentation) => (

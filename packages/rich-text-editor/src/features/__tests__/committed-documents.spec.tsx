@@ -9,11 +9,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { pluginWithOptions } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { documentArb, fcSettings, nodeIdsIn, plainTextArb, seeded } from '#/features/__tests__/fixtures/generated';
+import { pluginsById } from '#/features/plugins';
 import { decodeDocument, type JsonValue, type RichTextDocument } from '#/model';
 import { compiledModel } from '#/model/compile';
-import { ownValue } from '#/model/values';
 import { PROFILE_MODELS } from '#/react/examples/records';
-import { SHIPPED_PLUGINS } from '#/react/plugins';
 import { loadProfile } from '#/react/profiles';
 import { RichTextEditor } from '#/react/rich-text-editor';
 import { type EditorHandle, type RichTextProfile } from '#/react/types';
@@ -37,7 +36,7 @@ type Action =
 /** The commands of the profile with a payload each: none, then each payload a toolbar entry runs it with. */
 const commandsOf = (profile: RichTextProfile, ids: readonly string[]) => {
     const payloads = compiledModel(PROFILE_MODELS[profile]).features.flatMap(({ id, options }) => {
-        const part = ownValue(SHIPPED_PLUGINS, id);
+        const part = pluginsById([id])[0]?.editor;
         if (part === undefined) {
             return [];
         }

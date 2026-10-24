@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { fixtureEditorsOf } from '#/features/__tests__/fixtures/editors';
 import { COLOR_TOKENS, plain, styled, styledDocument, styleModel } from '#/features/__tests__/fixtures/styles';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { setSelection } from '#/testing';
 
@@ -33,7 +33,7 @@ export const ColorProbe = ({ literal = false }: { readonly literal?: boolean }) 
     const [mounted] = useState(() => {
         const model = styleModel(literal);
         return {
-            definition: defineEditor({ id: 'test.colors', model, plugins: fixtureEditorsOf(model) }),
+            definition: defineEditor({ id: 'test.colors', model, plugins: unitsOf(model) }),
             document: styledDocument(model, [styled(null, plain('one two three'))]),
         };
     });

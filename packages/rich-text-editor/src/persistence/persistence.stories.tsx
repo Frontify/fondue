@@ -3,15 +3,22 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 
-import { core } from '#/features';
-import { defineEditor, type EditorHandle, type LoadedDocument, type PersistenceService, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import {
+    corePlugin,
+    defineEditor,
+    type EditorHandle,
+    type LoadedDocument,
+    modelOf,
+    type PersistenceService,
+    RichTextEditor,
+} from '#/index';
 import { createFakePersistenceService } from '#/testing';
 
-const model = compileContentModel([core()], { id: 'story.switching', version: 1 });
+const plugins = [corePlugin()] as const;
+const model = modelOf(plugins, { id: 'story.switching', version: 1 });
 const definitions = {
-    note: defineEditor({ id: 'story.switching.note', model }),
-    comment: defineEditor({ id: 'story.switching.comment', model }),
+    note: defineEditor({ id: 'story.switching.note', model, plugins }),
+    comment: defineEditor({ id: 'story.switching.comment', model, plugins }),
 };
 
 const recordOf = (documentId: string, text: string): LoadedDocument => ({

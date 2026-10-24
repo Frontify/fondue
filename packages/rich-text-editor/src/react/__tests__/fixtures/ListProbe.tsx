@@ -5,12 +5,12 @@ import { useEffect, useRef, useState } from 'react';
 
 import { RichTextReader } from '#/entries/reader';
 import { bold, core, inputRules } from '#/features';
+import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { orderedList } from '#/features/lists-ordered/feature';
 import { taskList } from '#/features/lists-task/feature';
 import {
-    type CommandsOfModel,
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
@@ -25,7 +25,7 @@ const model = compileContentModel([core(), bold(), listItem(), bulletList(), ord
     id: 'test.list-ct',
     version: 1,
 });
-const definition = defineEditor({ id: 'test.list-ct', model });
+const definition = defineEditor({ id: 'test.list-ct', model, plugins: unitsOf(model) });
 const presentation = defineReactPresentation({
     toolbar: [
         ['mark.bold.toggle'],
@@ -44,7 +44,7 @@ declare global {
     interface Window {
         /** The list probe's handle, the selection helper and each change. */
         listRte?: {
-            readonly handle: EditorHandle<CommandsOfModel<typeof model>>;
+            readonly handle: EditorHandle<UnitCommands>;
             readonly setSelection: typeof setSelection;
             readonly changes: ListChange[];
         };
@@ -97,7 +97,7 @@ export const ListProbe = ({
         }
         return next;
     });
-    const ref = useRef<EditorHandle<CommandsOfModel<typeof model>>>(null);
+    const ref = useRef<EditorHandle<UnitCommands>>(null);
     const changesRef = useRef<ListChange[]>([]);
     const [shown, setShown] = useState(() => documentOf(blocks));
     useEffect(() => {

@@ -4,9 +4,9 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import { links } from '#/features/links/feature';
 import {
-    type CommandsOfModel,
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
@@ -54,11 +54,11 @@ interface Mount {
 
 const mount = ({ blocks, options, styles = [], references }: Mount) => {
     const model = textModel([...textFeatures(), links(options)]);
-    const ref = createRef<EditorHandle<CommandsOfModel<typeof model>>>();
+    const ref = createRef<EditorHandle<UnitCommands>>();
     const rendered = render(
         <RichTextEditor
             aria-label="Notes"
-            definition={defineEditor({ id: 'test.links', model })}
+            definition={defineEditor({ id: 'test.links', model, plugins: unitsOf(model) })}
             presentation={defineReactPresentation({ styles: [...styles] })}
             defaultValue={{ documentId: 'document-1', revision: null, document: storedIn(model, blocks) }}
             {...(references === undefined ? {} : { services: { references } })}

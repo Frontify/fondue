@@ -2,17 +2,18 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { bold, core, strike } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel, type ContentModel, type ContentNodeJSON } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor, strikePlugin } from '#/index';
+import { type ContentModel, type ContentNodeJSON } from '#/model';
 
-import { calloutEditor } from './callout-editor';
-import { callout } from './callout-feature';
-import { strongEditor } from './strong';
+import { calloutPlugin } from './callout-editor';
+import { strongPlugin } from './strong';
 
-const strikeModel = compileContentModel([core(), strike()], { id: 'story.authoring-strike', version: 1 });
-const calloutModel = compileContentModel([core(), callout()], { id: 'story.authoring-callout', version: 1 });
-const strongModel = compileContentModel([core(), bold()], { id: 'story.authoring-strong', version: 1 });
+const strikePlugins = [corePlugin(), strikePlugin()] as const;
+const strikeModel = modelOf(strikePlugins, { id: 'story.authoring-strike', version: 1 });
+const calloutPlugins = [corePlugin(), calloutPlugin()] as const;
+const calloutModel = modelOf(calloutPlugins, { id: 'story.authoring-callout', version: 1 });
+const strongPlugins = [corePlugin(), strongPlugin] as const;
+const strongModel = modelOf(strongPlugins, { id: 'story.authoring-strong', version: 1 });
 
 const paragraph = (text: string): ContentNodeJSON => ({
     type: 'paragraph',
@@ -41,7 +42,7 @@ const meta: Meta<typeof RichTextEditor> = {
         docs: {
             description: {
                 component:
-                    'The examples of the Authoring guide, each mounted as a host mounts it: a shipped editor part, a host block with a node view, and a host part that replaces a shipped toolbar entry.',
+                    'The examples of the Authoring guide, each mounted as a host mounts it: a shipped unit, a host block with a node view, and a host unit that replaces a shipped toolbar entry.',
             },
         },
     },
@@ -66,7 +67,7 @@ export const StrikePlugin: Story = {
         },
     },
     args: {
-        definition: defineEditor({ id: 'story.authoring-strike', model: strikeModel }),
+        definition: defineEditor({ id: 'story.authoring-strike', model: strikeModel, plugins: strikePlugins }),
         presentation: defineReactPresentation({ toolbar: [['mark.strike.toggle']] }),
         defaultValue: valueOf(strikeModel, ['core'], [paragraph('Select this text and press Mod+Shift+X.')]),
     },
@@ -82,7 +83,7 @@ export const CustomBlock: Story = {
         },
     },
     args: {
-        definition: defineEditor({ id: 'story.authoring-callout', model: calloutModel, plugins: [calloutEditor] }),
+        definition: defineEditor({ id: 'story.authoring-callout', model: calloutModel, plugins: calloutPlugins }),
         presentation: defineReactPresentation({ toolbar: [['callout.toggle']] }),
         defaultValue: valueOf(
             calloutModel,
@@ -100,12 +101,12 @@ export const ReplacedToolbarEntry: Story = {
     parameters: {
         docs: {
             description: {
-                story: 'A host part for `marks.bold` whose toolbar entry `bold` replaces the shipped one, so the button reads Strong.',
+                story: 'A host unit for `marks.bold` whose toolbar entry `bold` replaces the shipped one, so the button reads Strong.',
             },
         },
     },
     args: {
-        definition: defineEditor({ id: 'story.authoring-strong', model: strongModel, plugins: [strongEditor] }),
+        definition: defineEditor({ id: 'story.authoring-strong', model: strongModel, plugins: strongPlugins }),
         presentation: defineReactPresentation({ toolbar: [['mark.bold.toggle']] }),
         defaultValue: valueOf(strongModel, ['core'], [paragraph('Select this text and press Strong.')]),
     },

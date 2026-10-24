@@ -2,13 +2,12 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { codeBlock, core } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import { codeBlockPlugin, corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), codeBlock()], { id: 'story.blocks-code', version: 1 });
+const plugins = [corePlugin(), codeBlockPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.blocks-code', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/blocks.code',
@@ -31,7 +30,7 @@ Code blocks as \`code_block\`. The text keeps spaces, tabs and newlines. A null 
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.blocks-code', model }),
+        definition: defineEditor({ id: 'story.blocks-code', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-blocks-code',

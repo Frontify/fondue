@@ -4,6 +4,7 @@ import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { core } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel, createEmptyDocument } from '#/model';
 import { probeRuntimes } from '#/testing';
@@ -14,7 +15,7 @@ describe('probeRuntimes', () => {
         const { unmount } = render(
             <RichTextEditor
                 aria-label="Notes"
-                definition={defineEditor({ id: 'story.core', model })}
+                definition={defineEditor({ id: 'story.core', model, plugins: unitsOf(model) })}
                 defaultValue={{ documentId: 'document-1', revision: null, document: createEmptyDocument(model) }}
             />,
         );

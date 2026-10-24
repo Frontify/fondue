@@ -2,13 +2,12 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, italic } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, italicPlugin, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), italic()], { id: 'story.marks-italic', version: 1 });
+const plugins = [corePlugin(), italicPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.marks-italic', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/marks.italic',
@@ -29,7 +28,7 @@ Emphasis as \`em\`, toggled on the selection or at the caret.
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.marks-italic', model }),
+        definition: defineEditor({ id: 'story.marks-italic', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-marks-italic',

@@ -11,6 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCodecs } from '#/codecs';
 import { bold, code, core, featuresById, heading, italic, links, mediaImage, mentions, quote } from '#/features';
 import { doc, envelope, paragraph, text } from '#/features/__tests__/fixtures/documents';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { strike } from '#/features/marks-strike/feature';
@@ -147,7 +148,12 @@ interface Outcome {
 
 /** A ready editor of the shipped parts over `document`, with every diagnostic, metric and save status it publishes. */
 const mount = async (fixture: Fixture, document: unknown) => {
-    const definition = defineEditor({ id: 'test.hostile', model, limits: fixture.limits ?? {} });
+    const definition = defineEditor({
+        id: 'test.hostile',
+        model,
+        limits: fixture.limits ?? {},
+        plugins: unitsOf(model),
+    });
     const published: Published = { diagnostics: [], metrics: [], statuses: [] };
     let current: EditorHandle<object> | null = null;
     const seen = new WeakSet<object>();
@@ -290,7 +296,7 @@ const runRemoteConfiguration = async (fixture: Fixture): Promise<Outcome> => {
     const before = heldBy(mounted);
     const policy = argument as AuthoringPolicy;
     const throws = throwsOf(() => mounted.handle.updatePolicy(policy));
-    expect(throwsOf(() => defineEditor({ id: 'test.hostile', model, policy }))).toBe(throws);
+    expect(throwsOf(() => defineEditor({ id: 'test.hostile', model, policy, plugins: unitsOf(model) }))).toBe(throws);
     const states = { before, after: heldBy(mounted) };
     mounted.unmount();
     return { answer: { throws }, refused: throws !== 'nothing', states, published: mounted.published, returned: [] };

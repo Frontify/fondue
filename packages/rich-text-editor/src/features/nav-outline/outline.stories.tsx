@@ -2,12 +2,19 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, heading, outline } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import {
+    corePlugin,
+    defineEditor,
+    defineReactPresentation,
+    headingPlugin,
+    modelOf,
+    outlinePlugin,
+    RichTextEditor,
+} from '#/index';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), heading(), outline()], { id: 'story.nav-outline', version: 1 });
+const plugins = [corePlugin(), headingPlugin(), outlinePlugin()] as const;
+const model = modelOf(plugins, { id: 'story.nav-outline', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/nav.outline',
@@ -28,7 +35,7 @@ The outline lists the document's headings in order, each with its stored level, 
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.nav-outline', model }),
+        definition: defineEditor({ id: 'story.nav-outline', model, plugins }),
         presentation: defineReactPresentation({ toolbar: [['outline.toggle']] }),
         defaultValue: {
             documentId: 'story-nav-outline',

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { SHIPPED_OVERRIDES } from '#/entries/shipped-readers';
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { UNSHIPPED_FEATURES } from '#/features/stages';
 import { type ContentModel, type RichTextDocument } from '#/model';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK, type TreeNode } from '#/model/content';
@@ -163,7 +164,7 @@ describe('the shipped profiles', () => {
 
     it.each(ROWS)('registers the commands of every $name feature', ({ profile, model }) => {
         const commands = [...engineOf(profile().definition).commands.keys()].sort();
-        const expected = [...editorEngine(model).engine.commands.keys()];
+        const expected = [...editorEngine(model, unitsOf(model)).engine.commands.keys()];
 
         expect(commands).toEqual(expected.sort());
     });

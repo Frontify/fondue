@@ -2,12 +2,11 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
-const model = compileContentModel([core()], { id: 'story.core', version: 1 });
+const plugins = [corePlugin()] as const;
+const model = modelOf(plugins, { id: 'story.core', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/core',
@@ -28,7 +27,7 @@ The document, paragraphs, text, hard breaks, undo history and block moves that e
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.core', model }),
+        definition: defineEditor({ id: 'story.core', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-core',

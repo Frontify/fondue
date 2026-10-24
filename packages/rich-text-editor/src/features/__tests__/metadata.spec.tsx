@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCodecs } from '#/codecs';
 import { documentModel } from '#/features';
 import { canonicalOf } from '#/features/__tests__/fixtures/generated';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { resolving } from '#/features/media-image/__tests__/fixtures/mount';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { type ContentNodeJSON, createEmptyDocument, type RichTextDocument, type RichTextSlice } from '#/model';
@@ -18,7 +19,7 @@ import { paste } from '#/testing';
 const metadata = fixture as unknown as RichTextDocument;
 const SLICE_TYPE = 'application/x-frontify-rich-text+json';
 const model = documentModel;
-const definition = defineEditor({ id: 'test.metadata', model });
+const definition = defineEditor({ id: 'test.metadata', model, plugins: unitsOf(model) });
 const presentation = defineReactPresentation({ resolveAssetUrl: resolving });
 
 beforeEach(() => {

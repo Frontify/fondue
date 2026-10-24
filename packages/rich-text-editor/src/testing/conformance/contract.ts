@@ -8,7 +8,6 @@ import { type EditorPlugin, pluginWithOptions } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { type CompiledDefinition } from '#/definition';
 import { RichTextReader } from '#/entries/reader';
-import { pluginIds, pluginsById } from '#/features/plugins';
 import { registry } from '#/features/registry';
 import { enUS } from '#/locales/en-US';
 import {
@@ -33,6 +32,7 @@ import { editorEngine } from '#/react/engine';
 
 import { AXE_TAGS } from './axe-tags';
 import { featureFixtures } from './fixtures';
+import { contractUnits } from './units';
 
 /** The ambient `describe`, `it` and `expect` of the host's test runner, which the suite registers its cases with. */
 interface TestRunner {
@@ -207,7 +207,7 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
     };
     const builtOf = () => {
         if (built === undefined) {
-            built = editorEngine(compiled(), options.plugins);
+            built = editorEngine(compiled(), contractUnits(features, options.plugins ?? []));
         }
         return built;
     };
@@ -222,9 +222,7 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
     };
     /** The given editor part of a feature, else its shipped one, with the parts it gives for the feature's options. */
     const partOf = (id: string) => {
-        const plugins = options.plugins ?? [];
-        const given = [...plugins].reverse().find((plugin) => plugin.feature === id);
-        const part = given ?? pluginsById(pluginIds).find((unit) => unit.id === id)?.editor;
+        const part = contractUnits(features, options.plugins ?? []).find((unit) => unit.id === id)?.editor;
         const resolved = optionsOf(id);
         if (part === undefined || resolved === undefined) {
             return part;

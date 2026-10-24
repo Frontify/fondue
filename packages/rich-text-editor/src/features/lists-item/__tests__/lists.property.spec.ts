@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 
 import { compileDefinition } from '#/definition';
 import { fcSettings, seeded } from '#/features/__tests__/fixtures/generated';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { type ContentNodeJSON } from '#/model';
 import { type ListKind, listModel } from '#/react/__tests__/fixtures/lists';
 import { extensionsOf } from '#/react/engine';
@@ -15,7 +16,7 @@ import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { canUndo } from '#/runtime/history';
 
 const model = listModel();
-const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model));
+const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model)));
 const KINDS: readonly ListKind[] = ['bullet', 'ordered', 'task'];
 const ITEMS = new Set(['list_item', 'task_item']);
 

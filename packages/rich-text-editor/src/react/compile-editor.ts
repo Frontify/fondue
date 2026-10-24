@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type NodeViewDeclaration, type PanelDeclaration } from '#/bridge/define';
+import { type RichTextPlugin } from '#/bridge/define-plugin';
 import { commandApiOf, editorApiOf } from '#/bridge/live-api';
 import {
     type EditorApi,
@@ -30,7 +31,6 @@ import { CONTENT_REPAIRS } from '#/model/checks';
 import { attributesOf, compiledModel } from '#/model/compile';
 import { limitsOf } from '#/model/decode';
 import { pointer } from '#/model/errors';
-import { ownValue } from '#/model/values';
 import { type ReaderOverrides } from '#/reader/plan';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { clipboardPlugin, dropCursorPlugin, type FileIntake } from '#/runtime/clipboard/plugin';
@@ -39,16 +39,12 @@ import { authoringOf } from '#/runtime/policy';
 import { runtimeOfView } from '#/runtime/runtime';
 
 import {
-    type CommandsOfModel,
     type CommandsOfPlugins,
     type CompiledEditorDefinition,
     type EditorDefinitionOptions,
     type RichTextProfile,
 } from './types';
-import { type CompileRest, type CompileSource, sourcesOf } from './units';
-
-/** Editor parts by feature ID, which a definition installs for the features its model installs. */
-export type ShippedParts = Readonly<Record<string, EditorPlugin>>;
+import { checkCover, readersOfUnits } from './units';
 
 // Kept off the definition, so no engine value is reachable from what a host holds.
 const engines = new WeakMap<object, CompiledDefinition>();
@@ -87,66 +83,16 @@ export const readersOf = (definition: CompiledEditorDefinition<object>): ReaderO
 export const profileOf = (definition: CompiledEditorDefinition<object>): RichTextProfile | undefined =>
     profiles.get(definition);
 
-/** `base` with `added` in place of its entry of the same `key`, and each other entry of `added` after it. */
-const byKey = <T>(base: readonly T[] = [], added: readonly T[] = [], key: keyof T): readonly T[] => [
-    ...base.map((entry) => added.find((other) => other[key] === entry[key]) ?? entry),
-    ...added.filter((other) => !base.some((entry) => entry[key] === other[key])),
-];
-
-/**
- * The shipped part extended by the host's, never replaced whole: commands and keys by ID, each keyed list by its
- * entry key, and standing overlays added.
- */
-const extend = (shipped: EditorPlugin, host: EditorPlugin): EditorPlugin => {
-    const shippedOverlays = shipped.overlays ?? [];
-    const hostOverlays = host.overlays ?? [];
-    const merged = Object.assign({ ...shipped }, host);
-    return Object.freeze({
-        ...merged,
-        commands: Object.assign({ ...shipped.commands }, host.commands),
-        keys: Object.assign({ ...shipped.keys }, host.keys),
-        inputRules: byKey(shipped.inputRules, host.inputRules, 'id'),
-        panels: byKey(shipped.panels, host.panels, 'control'),
-        toolbar: byKey(shipped.toolbar, host.toolbar, 'id'),
-        views: byKey(shipped.views, host.views, 'node'),
-        decorations: byKey(shipped.decorations, host.decorations, 'id'),
-        suggestions: byKey(shipped.suggestions, host.suggestions, 'trigger'),
-        overlays: [...shippedOverlays, ...hostOverlays],
-    });
-};
-
-/**
- * The editor part of each installed feature: the shipped one extended by the host's. A host plugin for a feature the
- * model does not install is an orphan, and a second host plugin for one feature a duplicate.
- */
-const collectPlugins = (
-    model: ContentModel,
-    given: readonly EditorPlugin[] = [],
-    shipped: ShippedParts,
-): readonly EditorPlugin[] => {
+/** The editor part of each installed feature, in feature order, from units that cover the model exactly. */
+const collectPlugins = (model: ContentModel, units: readonly RichTextPlugin[]): readonly EditorPlugin[] => {
+    checkCover(model, units);
     const { features } = compiledModel(model);
-    for (const [index, plugin] of given.entries()) {
-        if (!features.some(({ id }) => id === plugin.feature)) {
-            throw new DefinitionError('definition.orphan-behavior', {
-                feature: plugin.feature,
-                path: pointer('plugins', index),
-            });
-        }
-        if (given.findIndex(({ feature }) => feature === plugin.feature) !== index) {
-            throw new DefinitionError('definition.duplicate-id', {
-                feature: plugin.feature,
-                path: pointer('plugins', index),
-            });
-        }
-    }
     return features.flatMap(({ id, options }) => {
-        const host = given.find((candidate) => candidate.feature === id);
-        const part = ownValue(shipped, id);
-        if (host !== undefined && part !== undefined) {
-            return [extend(pluginWithOptions(part, options), pluginWithOptions(host, options))];
+        const unit = units.find((candidate) => candidate.id === id);
+        if (unit === undefined) {
+            return [];
         }
-        const plugin = host ?? part;
-        return plugin === undefined ? [] : [pluginWithOptions(plugin, options)];
+        return [pluginWithOptions(unit.editor, options)];
     });
 };
 
@@ -342,16 +288,15 @@ const checkLimits = (model: ContentModel, limits: ResourceLimits, given: Partial
     }
 };
 
-/** The engine of `model` with the editor part of each installed feature: the given one, else the one of `shipped`. */
+/** The engine of `model` with the editor part of each installed feature, from units that cover the model exactly. */
 export const editorEngine = (
     model: ContentModel,
-    given: readonly EditorPlugin[] | undefined,
-    shipped: ShippedParts,
+    units: readonly RichTextPlugin[],
 ): {
     readonly engine: CompiledDefinition;
     readonly plugins: readonly EditorPlugin[];
 } => {
-    const plugins = collectPlugins(model, given, shipped);
+    const plugins = collectPlugins(model, units);
     const built = {
         ...RUNTIME_PLUGINS.plugins,
         [CLIPBOARD_PLUGIN.id]: clipboardPlugin(model, intakeOf(model, plugins)),
@@ -387,21 +332,16 @@ export const editorEngine = (
 };
 
 /** What the editor parts of `model`'s features add to its engine, for a definition compiled without React. */
-export const extensionsOf = (
-    model: ContentModel,
-    given: readonly EditorPlugin[] | undefined,
-    shipped: ShippedParts,
-): readonly EngineExtension[] => collectPlugins(model, given, shipped).map((plugin) => extensionOf(model, plugin));
+export const extensionsOf = (model: ContentModel, units: readonly RichTextPlugin[]): readonly EngineExtension[] =>
+    collectPlugins(model, units).map((plugin) => extensionOf(model, plugin));
 
-/** Compiles an editor definition once, from units that cover the model exactly or from given parts and overrides. */
-export const compileEditor = <Model extends ContentModel, const Plugins extends readonly EditorPlugin[] = readonly []>(
-    options: EditorDefinitionOptions<Model> & { readonly plugins?: Plugins },
-    source: CompileSource,
-    ...rest: CompileRest
-): CompiledEditorDefinition<CommandsOfModel<Model> & CommandsOfPlugins<Plugins>> => {
+/** Compiles an editor definition once, from units that cover the model exactly. */
+export const compileEditor = <Model extends ContentModel, Plugins extends readonly RichTextPlugin[]>(
+    options: EditorDefinitionOptions<Model> & { readonly plugins: Plugins },
+    profile?: RichTextProfile,
+): CompiledEditorDefinition<CommandsOfPlugins<Plugins>> => {
     const { id, model, policy } = options;
-    const { shipped, overrides, profile } = sourcesOf(model, source, rest);
-    const { engine, plugins } = editorEngine(model, options.plugins, shipped);
+    const { engine, plugins } = editorEngine(model, options.plugins);
     const views = collectViews(model, plugins);
     const panels = collectPanels(plugins);
     const limits = limitsWithin(options.limits, options.limitOverrides);
@@ -417,9 +357,9 @@ export const compileEditor = <Model extends ContentModel, const Plugins extends 
     nodeViews.set(definition, views);
     editorPanels.set(definition, panels);
     editorPlugins.set(definition, plugins);
-    readers.set(definition, overrides);
+    readers.set(definition, readersOfUnits(options.plugins));
     if (profile !== undefined) {
         profiles.set(definition, profile);
     }
-    return definition as unknown as CompiledEditorDefinition<CommandsOfModel<Model> & CommandsOfPlugins<Plugins>>;
+    return definition as unknown as CompiledEditorDefinition<CommandsOfPlugins<Plugins>>;
 };

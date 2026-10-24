@@ -5,7 +5,7 @@ import { createRef, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { CONTENT_RULE_IDS, CONTENT_RULES } from '#/features/__tests__/fixtures/content-rules';
-import { fixtureEditorsOf } from '#/features/__tests__/fixtures/editors';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { hashDocument } from '#/model';
 import { storedIn } from '#/react/__tests__/fixtures/text';
@@ -121,7 +121,7 @@ describe('when the content checks run', () => {
 
     it('keeps focus in the surface and the delay while the panel is open in a host that renders a new presentation on each change', () => {
         const model = checksModel();
-        const definition = defineEditor({ id: 'test.checks', model, plugins: fixtureEditorsOf(model) });
+        const definition = defineEditor({ id: 'test.checks', model, plugins: unitsOf(model) });
         const ref = createRef<EditorHandle>();
         const Host = () => {
             const [changes, setChanges] = useState(0);

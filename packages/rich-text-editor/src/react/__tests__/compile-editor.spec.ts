@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import { definePlugin, type RichTextPlugin } from '#/bridge/define-plugin';
+import { definePlugin, modelOf, type RichTextPlugin } from '#/bridge/define-plugin';
 import { core } from '#/features';
 import { corePlugin } from '#/features/core';
 import { boldPlugin } from '#/features/marks-bold';
@@ -12,14 +12,15 @@ import { italicPlugin } from '#/features/marks-italic';
 import { italic } from '#/features/marks-italic/feature';
 import { compileContentModel, defineFeature, DefinitionError } from '#/model';
 
-import { compileEditor, pluginsOf, readersOf } from '../compile-editor';
+import { pluginsOf, readersOf } from '../compile-editor';
+import { defineEditor } from '../define';
+import { type CommandsOfPlugins, type CompiledEditorDefinition } from '../types';
 
 const model = compileContentModel([core(), bold(), italic()], { id: 'fixture.cover', version: 1 });
-const options = { id: 'fixture.cover', model };
 
 const failureOf = (units: readonly RichTextPlugin[]) => {
     try {
-        compileEditor(options, units);
+        defineEditor({ id: 'fixture.cover', model, plugins: units });
     } catch (error) {
         if (error instanceof DefinitionError) {
             return { code: error.code, details: error.details };
@@ -29,12 +30,12 @@ const failureOf = (units: readonly RichTextPlugin[]) => {
     return undefined;
 };
 
-describe('compileEditor with units', () => {
+describe('defineEditor with units', () => {
     it('installs the editor part of each unit and the reader overrides of the units that have them', () => {
         const reader = { bold: () => null };
         const units = [corePlugin(), definePlugin({ feature: bold, editor: boldEditor, reader })(), italicPlugin()];
 
-        const definition = compileEditor(options, units);
+        const definition = defineEditor({ id: 'fixture.cover', model, plugins: units });
 
         expect(pluginsOf(definition).map(({ feature }) => feature)).toEqual(['core', 'marks.bold', 'marks.italic']);
         expect(readersOf(definition)).toEqual({ 'marks.bold': reader });
@@ -50,7 +51,9 @@ describe('compileEditor with units', () => {
     it('throws definition.orphan-behavior for a unit whose feature the model does not install', () => {
         const small = compileContentModel([core()], { id: 'fixture.cover', version: 1 });
 
-        expect(() => compileEditor({ id: 'fixture.cover', model: small }, [corePlugin(), boldPlugin()])).toThrow(
+        expect(() =>
+            defineEditor({ id: 'fixture.cover', model: small, plugins: [corePlugin(), boldPlugin()] }),
+        ).toThrow(
             expect.objectContaining({
                 code: 'definition.orphan-behavior',
                 details: { feature: 'marks.bold', path: '/plugins/1' },
@@ -75,5 +78,29 @@ describe('compileEditor with units', () => {
             code: 'definition.version-mismatch',
             details: { feature: 'marks.bold', required: 1, installed: 2, path: '/plugins/1' },
         });
+    });
+});
+
+describe('defineEditor types', () => {
+    it('requires the plugins, so a model alone is a compile error', () => {
+        // @ts-expect-error: `plugins` is required.
+        const alone = () => defineEditor({ id: 'fixture.cover', model });
+
+        expect(alone).toThrow();
+    });
+
+    it('types the commands from the units alone', () => {
+        const plugins = [corePlugin(), boldPlugin()] as const;
+        const definition = defineEditor({
+            id: 'fixture.cover',
+            model: modelOf(plugins, { id: 'fixture.cover', version: 1 }),
+            plugins,
+        });
+
+        expectTypeOf(definition).toEqualTypeOf<CompiledEditorDefinition<CommandsOfPlugins<typeof plugins>>>();
+        expectTypeOf<CommandsOfPlugins<typeof plugins>>().toHaveProperty('mark.bold.toggle');
+        expectTypeOf<CommandsOfPlugins<typeof plugins>>().toHaveProperty('history.undo');
+        expectTypeOf<CommandsOfPlugins<typeof plugins>>().not.toHaveProperty('mark.italic.toggle');
+        expectTypeOf<CommandsOfPlugins<typeof plugins>['mark.bold.toggle']>().toEqualTypeOf<undefined>();
     });
 });

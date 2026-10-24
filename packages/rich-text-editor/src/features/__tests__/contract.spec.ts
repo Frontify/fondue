@@ -31,6 +31,7 @@ import { fixtureHeadingSet, fixtureMedia, fixtureMention, fixtureTable } from '#
 import { highlightEditor } from '#/features/__tests__/fixtures/outside-editor';
 import { badgeDocument, highlight, highlightDocument } from '#/features/__tests__/fixtures/outside-feature';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { vocabularyLists } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
@@ -748,7 +749,11 @@ describe('the outside fixture feature', () => {
         const editor = render(
             createElement(RichTextEditor, {
                 'aria-label': 'Notes',
-                definition: defineEditor({ id: 'fixture.highlight', model, plugins: [highlightEditor] }),
+                definition: defineEditor({
+                    id: 'fixture.highlight',
+                    model,
+                    plugins: unitsOf(model, [highlightEditor]),
+                }),
                 defaultValue: { documentId: 'document-1', revision: null, document: highlightDocument },
             }),
         );
@@ -794,7 +799,11 @@ describe('the outside fixture feature', () => {
         render(
             createElement(RichTextEditor, {
                 'aria-label': 'Notes',
-                definition: defineEditor({ id: 'fixture.highlight', model, plugins: [highlightEditor] }),
+                definition: defineEditor({
+                    id: 'fixture.highlight',
+                    model,
+                    plugins: unitsOf(model, [highlightEditor]),
+                }),
                 presentation: defineReactPresentation({ toolbar: [['fixture.highlight.toggle']] }),
                 defaultValue: { documentId: 'document-1', revision: null, document: highlightDocument },
                 onDocumentChange: (change: DocumentChange) => changes.push(change),
@@ -844,7 +853,11 @@ describe('the outside fixture feature', () => {
         render(
             createElement(RichTextEditor, {
                 'aria-label': 'Notes',
-                definition: defineEditor({ id: 'fixture.highlight', model, plugins: [highlightEditor] }),
+                definition: defineEditor({
+                    id: 'fixture.highlight',
+                    model,
+                    plugins: unitsOf(model, [highlightEditor]),
+                }),
                 defaultValue: { documentId: 'document-1', revision: null, document: highlightDocument },
                 onDocumentChange: (change: DocumentChange) => changes.push(change),
                 ref,

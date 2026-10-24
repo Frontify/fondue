@@ -18,6 +18,7 @@ import {
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore, type PortalStore } from '#/bridge/portals';
 import { compileDefinition, type Normalizer, NORMALIZERS } from '#/definition';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { pluginIds, pluginsById } from '#/features/plugins';
 import { enUS } from '#/locales/en-US';
 import { compileContentModel, createEmptyDocument, defaultLimits, type Feature, type RichTextDocument } from '#/model';
@@ -213,7 +214,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                 }
                 return Object.freeze({ feature, commands: { ...commands, [id]: watched(spec) } });
             });
-            const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, watching));
+            const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model, watching)));
             const command = engine.commands.get(id);
             if (command === undefined) {
                 throw new Error(`${id} is not installed.`);
@@ -468,7 +469,7 @@ export const nodeViewCases = (
 ): void => {
     const { it } = globalThis as unknown as { readonly it: typeof runnerIt };
     const model = compileContentModel(features, { id: 'feature-contract', version: 1 });
-    const definition = defineEditor({ id: 'feature-contract', model, plugins });
+    const definition = defineEditor({ id: 'feature-contract', model, plugins: unitsOf(model, plugins) });
     const views = viewsOf(definition);
 
     /** Mounts every document with the bridge's views, then runs `check` on the views built, and unmounts. */

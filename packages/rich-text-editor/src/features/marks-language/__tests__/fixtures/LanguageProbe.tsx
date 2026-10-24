@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { bold, core } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { language } from '#/features/marks-language/feature';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
@@ -18,7 +19,7 @@ const model = compileContentModel([core(), bold(), language({ languages: LANGUAG
     id: 'test.language-ct',
     version: 1,
 });
-const definition = defineEditor({ id: 'test.language-ct', model });
+const definition = defineEditor({ id: 'test.language-ct', model, plugins: unitsOf(model) });
 
 const document = {
     format: 'frontify.rich-text',

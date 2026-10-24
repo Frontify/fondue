@@ -19,12 +19,11 @@ import {
     underline,
 } from '#/features';
 import { storedIn } from '#/features/__tests__/fixtures/documents';
-import { fixturePartsOf } from '#/features/__tests__/fixtures/parts';
+import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
 import {
     type AuthoringPolicy,
     defineEditor,
     defineReactPresentation,
-    type CommandsOfModel,
     type EditorHandle,
     type ReactPresentation,
     RichTextEditor,
@@ -113,15 +112,17 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
         readOnly,
         plugins,
     } = given;
-    const ref = createRef<EditorHandle<CommandsOfModel<Model>>>();
+    const ref = createRef<EditorHandle<UnitCommands>>();
     const changes: DocumentChange[] = [];
-    const parts = fixturePartsOf(model);
-    let definition = defineEditor({ id: 'test.text', model, plugins: parts });
+    const units = unitsOf(model, plugins);
+    let definition = defineEditor({ id: 'test.text', model, plugins: units });
     if (policy !== undefined) {
-        definition = defineEditor({ id: 'test.text', model, policy, plugins: parts });
-    }
-    if (plugins !== undefined) {
-        definition = defineEditor({ id: 'test.text', model, plugins: [...parts, ...plugins] });
+        definition = defineEditor({
+            id: 'test.text',
+            model,
+            policy,
+            plugins: units,
+        });
     }
     let shown: { readonly presentation?: ReactPresentation } = {};
     if (toolbar !== undefined) {

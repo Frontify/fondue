@@ -4,6 +4,7 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import { type ProfilerOnRenderCallback, Profiler, useRef, useState } from 'react';
 
 import { RichTextReader } from '#/entries/reader';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import {
     defineEditor,
     defineReactPresentation,
@@ -16,7 +17,7 @@ import { perfDocument, type PerfFixtureName, perfModel } from '../../../model/__
 
 import pixel from './pixel.png?no-inline';
 
-export const perfDefinition = defineEditor({ id: 'test.perf', model: perfModel });
+export const perfDefinition = defineEditor({ id: 'test.perf', model: perfModel, plugins: unitsOf(perfModel) });
 
 export const perfPresentation = defineReactPresentation({
     // The page's own origin, since `data:` URLs fail the href check and the test page's CSP allows only `self`.

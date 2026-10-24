@@ -5,8 +5,8 @@ import { createRef } from 'react';
 import { vi } from 'vitest';
 
 import { core, mentions } from '#/features';
+import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import {
-    type CommandsOfModel,
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
@@ -125,12 +125,9 @@ export const mountMentions = (options?: Mount) => {
         toolbar,
         id = 'test.mentions',
     } = given;
-    const ref =
-        createRef<
-            EditorHandle<CommandsOfModel<ContentModel<readonly [ReturnType<typeof core>, ReturnType<typeof mentions>]>>>
-        >();
+    const ref = createRef<EditorHandle<UnitCommands>>();
     const diagnostics: Diagnostic[] = [];
-    const definition = defineEditor({ id, model });
+    const definition = defineEditor({ id, model, plugins: unitsOf(model) });
     let shown = presentation;
     if (shown === undefined && toolbar !== undefined) {
         shown = defineReactPresentation({ toolbar });

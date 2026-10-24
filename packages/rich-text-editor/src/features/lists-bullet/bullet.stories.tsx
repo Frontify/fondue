@@ -2,13 +2,20 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, featuresById } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import {
+    bulletListPlugin,
+    corePlugin,
+    defineEditor,
+    defineReactPresentation,
+    listItemPlugin,
+    modelOf,
+    RichTextEditor,
+} from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), ...featuresById(['lists.item', 'lists.bullet'])], {
+const plugins = [corePlugin(), listItemPlugin(), bulletListPlugin()] as const;
+const model = modelOf(plugins, {
     id: 'story.lists-bullet',
     version: 1,
 });
@@ -32,7 +39,7 @@ Bulleted lists as \`bullet_list\`.
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.lists-bullet', model }),
+        definition: defineEditor({ id: 'story.lists-bullet', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-lists-bullet',

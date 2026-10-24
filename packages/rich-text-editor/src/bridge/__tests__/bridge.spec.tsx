@@ -16,7 +16,7 @@ import {
     popupListeners,
 } from '#/features/__tests__/fixtures/chrome/view';
 import { fixtureList } from '#/features/__tests__/fixtures/features';
-import { fixturePartsOf } from '#/features/__tests__/fixtures/parts';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import {
     defineEditor,
@@ -57,7 +57,7 @@ const { createPortalStore: actualStore } = await vi.importActual<{
 const modelOf = (features: readonly Feature[]) =>
     compileContentModel([core(), ...features], { id: 'test.bridge', version: 1 });
 const model = modelOf([fixtureChrome(), fixtureList()]);
-const definition = defineEditor({ id: 'test.bridge', model, plugins: [fixtureChromeEditor] });
+const definition = defineEditor({ id: 'test.bridge', model, plugins: unitsOf(model, [fixtureChromeEditor]) });
 
 const text = (value: string) => ({ type: 'text', text: value });
 const para = (...content: readonly JsonValue[]) => ({ type: 'paragraph', attrs: { lang: null }, content });
@@ -258,7 +258,9 @@ describe('the React bridge', () => {
         const capturing = defineEditor({
             id: 'test.bridge',
             model: modelOf([fixtureChrome()]),
-            plugins: [chromeEditorWith([{ node: 'chrome_block', component: Capture }])],
+            plugins: unitsOf(modelOf([fixtureChrome()]), [
+                chromeEditorWith([{ node: 'chrome_block', component: Capture }]),
+            ]),
         });
         const { editorView, handle, unmount } = await mount(
             [para(text('first')), block('b1', 'code'), block('b2', 'two'), para(text('after'))],
@@ -342,7 +344,9 @@ describe('the React bridge', () => {
         const throwing = defineEditor({
             id: 'test.bridge',
             model: modelOf([fixtureChrome()]),
-            plugins: [chromeEditorWith(chromeViewsWith({ node: 'chrome_block', component: Throwing }))],
+            plugins: unitsOf(modelOf([fixtureChrome()]), [
+                chromeEditorWith(chromeViewsWith({ node: 'chrome_block', component: Throwing })),
+            ]),
         });
         const { handle, unmount } = await mount([block('b1', 'code'), para(mention('m1'))], { definition: throwing });
 
@@ -398,7 +402,9 @@ describe('the React bridge', () => {
         const booming = defineEditor({
             id: 'test.bridge',
             model: modelOf([fixtureChrome()]),
-            plugins: [chromeEditorWith(chromeViewsWith({ node: 'chrome_mention', component: BoomMention }))],
+            plugins: unitsOf(modelOf([fixtureChrome()]), [
+                chromeEditorWith(chromeViewsWith({ node: 'chrome_mention', component: BoomMention })),
+            ]),
         });
         const { handle, runtime, flush, onDiagnostic, unmount } = await mount([para(text('ab'), mention('m1'))], {
             definition: booming,
@@ -430,7 +436,9 @@ describe('the React bridge', () => {
         const strict = defineEditor({
             id: 'test.bridge',
             model: modelOf([fixtureChrome()]),
-            plugins: [chromeEditorWith([{ node: 'chrome_block', component: Strict }])],
+            plugins: unitsOf(modelOf([fixtureChrome()]), [
+                chromeEditorWith([{ node: 'chrome_block', component: Strict }]),
+            ]),
         });
         const { runtime, handle, flush, unmount } = await mount([block('b1', 'code', 'boom')], {
             definition: strict,
@@ -469,7 +477,9 @@ describe('the React bridge', () => {
         const strict = defineEditor({
             id: 'test.bridge',
             model: modelOf([fixtureChrome()]),
-            plugins: [chromeEditorWith([{ node: 'chrome_block', component: Strict }])],
+            plugins: unitsOf(modelOf([fixtureChrome()]), [
+                chromeEditorWith([{ node: 'chrome_block', component: Strict }]),
+            ]),
         });
         const { runtime, flush, unmount } = await mount([block('b1', 'code', 'boom')], { definition: strict });
         const fallback = enUS.translationStrings.RichTextEditor_nodeViewError;
@@ -497,7 +507,7 @@ describe('the React bridge', () => {
         const chrome = modelOf([fixtureChrome(), fixtureList()]);
         const registered = [
             ...shippedViews,
-            viewsOf(defineEditor({ id: 'test.profile', model: chrome, plugins: fixturePartsOf(chrome) })),
+            viewsOf(defineEditor({ id: 'test.profile', model: chrome, plugins: unitsOf(chrome) })),
         ];
         for (const views of registered) {
             expect(native.filter((name) => views.has(name))).toEqual([]);
@@ -589,7 +599,7 @@ describe('the React bridge', () => {
         const document = stored(para(mention('m1'))).document;
         const plugins = [chromeEditorWith([{ node: 'chrome_mention', component: Chrome }])];
         const editor = await mount([para(mention('m1'))], {
-            definition: defineEditor({ id: 'test.bridge', model: both, plugins }),
+            definition: defineEditor({ id: 'test.bridge', model: both, plugins: unitsOf(both, plugins) }),
         });
         expect(surface().querySelector('[data-test-chrome]')).not.toBeNull();
         editor.unmount();
@@ -606,7 +616,7 @@ describe('the React bridge', () => {
             defineEditor({
                 id: 'test.orphan',
                 model: compileContentModel([core()], { id: 'test.orphan', version: 1 }),
-                plugins: [orphan],
+                plugins: unitsOf(compileContentModel([core()], { id: 'test.orphan', version: 1 }), [orphan]),
             });
         } catch (error) {
             failure = error;

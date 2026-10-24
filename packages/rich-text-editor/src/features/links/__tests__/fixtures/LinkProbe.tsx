@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { bold, core } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { links } from '#/features/links/feature';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
@@ -10,7 +11,7 @@ import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel([core(), bold(), links()], { id: 'test.links-ct', version: 1 });
-const definition = defineEditor({ id: 'test.links-ct', model });
+const definition = defineEditor({ id: 'test.links-ct', model, plugins: unitsOf(model) });
 
 const linkMark = (href: string, openInNewWindow: boolean) => ({
     type: 'link',

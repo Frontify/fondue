@@ -6,7 +6,7 @@ import { EditorState, type Plugin } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
 import { defineEditorPlugin, type EditorPlugin, type EditorPluginParts } from '#/bridge/plugin';
-import { fixtureEditorsOf, fixtureHeadingEditor, fixtureHistoryEditor } from '#/features/__tests__/fixtures/editors';
+import { fixtureHeadingEditor, fixtureHistoryEditor } from '#/features/__tests__/fixtures/editors';
 import { fixtureExtensionsOf } from '#/features/__tests__/fixtures/extensions';
 import {
     fixtureBold,
@@ -16,6 +16,7 @@ import {
     fixtureItalic,
     fixtureRedo,
 } from '#/features/__tests__/fixtures/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
@@ -35,7 +36,7 @@ import { compileDefinition } from '..';
 
 const keyOf = (plugin: Plugin) => (plugin as unknown as { readonly key: string }).key;
 /** The engine of `model` with the fixture features' editor parts and the shipped ones. */
-const engineOf = (model: ContentModel) => compileDefinition(model, {}, extensionsOf(model, fixtureEditorsOf(model)));
+const engineOf = (model: ContentModel) => compileDefinition(model, {}, extensionsOf(model, unitsOf(model)));
 const options = { id: 'test', version: 1 };
 const box = { group: 'block', attrs: {}, html: ['div', 0], parse: [] } as const;
 

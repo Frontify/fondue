@@ -2,11 +2,18 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, links } from '#/features';
-import { defineEditor, defineReactPresentation, type ReferenceService, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import {
+    corePlugin,
+    defineEditor,
+    defineReactPresentation,
+    linksPlugin,
+    modelOf,
+    type ReferenceService,
+    RichTextEditor,
+} from '#/index';
 
-const model = compileContentModel([core(), links({ resourceTypes: ['guideline-page'] })], {
+const plugins = [corePlugin(), linksPlugin({ resourceTypes: ['guideline-page'] })] as const;
+const model = modelOf(plugins, {
     id: 'story.links',
     version: 1,
 });
@@ -56,7 +63,7 @@ The reader writes \`target="_blank"\` and \`rel="noopener noreferrer"\` on a new
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.links', model }),
+        definition: defineEditor({ id: 'story.links', model, plugins }),
         presentation: defineReactPresentation({ toolbar: [['link.edit']] }),
         services: { references },
         defaultValue: {

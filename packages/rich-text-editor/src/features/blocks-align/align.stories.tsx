@@ -2,11 +2,10 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { align, core } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import { alignPlugin, corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor } from '#/index';
 
-const model = compileContentModel([core(), align()], { id: 'story.align', version: 1 });
+const plugins = [corePlugin(), alignPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.align', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/blocks.align',
@@ -29,7 +28,7 @@ Physical alignment on paragraphs and headings, written as an inline \`text-align
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.align', model }),
+        definition: defineEditor({ id: 'story.align', model, plugins }),
         presentation: defineReactPresentation({
             toolbar: [
                 [

@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import { bold, code, core, heading, italic, quote, strike, subscript, superscript, underline } from '#/features';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { fixtureChromeEditor } from '#/features/__tests__/fixtures/chrome/view';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { links } from '#/features/links/feature';
 import { defineEditor, defineEditorPlugin, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON, defineFeature } from '#/model';
@@ -43,7 +44,11 @@ const model = compileContentModel(
     ],
     { id: 'test.text-ct', version: 1 },
 );
-const definition = defineEditor({ id: 'test.text-ct', model, plugins: [fixtureChromeEditor, altGraphEditor] });
+const definition = defineEditor({
+    id: 'test.text-ct',
+    model,
+    plugins: unitsOf(model, [fixtureChromeEditor, altGraphEditor]),
+});
 const presentation = defineReactPresentation({
     toolbar: [
         ['history.undo', 'history.redo'],

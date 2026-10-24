@@ -3,13 +3,21 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { core, mediaImage, mediaUpload } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor, type UploadService } from '#/index';
-import { compileContentModel } from '#/model';
+import {
+    corePlugin,
+    defineEditor,
+    defineReactPresentation,
+    mediaImagePlugin,
+    mediaUploadPlugin,
+    modelOf,
+    RichTextEditor,
+    type UploadService,
+} from '#/index';
 import demoImage from '#/react/examples/demo-image.svg?no-inline';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), mediaImage(), mediaUpload()], { id: 'story.uploads', version: 1 });
+const plugins = [corePlugin(), mediaImagePlugin(), mediaUploadPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.uploads', version: 1 });
 
 // The host's asset library, whose URLs the presentation resolves at render time.
 const resolveAssetUrl = () => demoImage;
@@ -69,7 +77,7 @@ Here the service takes three seconds, and refuses any file whose name holds \`fa
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.uploads', model }),
+        definition: defineEditor({ id: 'story.uploads', model, plugins }),
         presentation: defineReactPresentation({ toolbar: [['image.insert']], resolveAssetUrl }),
         services: { uploads },
         defaultValue: {

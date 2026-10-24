@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/index';
+import { defineEditorPlugin, definePlugin } from '#/index';
 
 import { callout } from './callout-feature';
 import { calloutView } from './callout-view';
@@ -24,3 +24,6 @@ export const calloutEditor = defineEditorPlugin(callout, {
     ],
     views: [calloutView],
 });
+
+/** The unit of the host block: its feature and its editor part. */
+export const calloutPlugin = definePlugin({ feature: callout, editor: calloutEditor });

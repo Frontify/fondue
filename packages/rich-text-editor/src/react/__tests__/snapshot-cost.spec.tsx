@@ -5,6 +5,7 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { featuresById } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
 import { type pointer as RealPointer } from '#/model/errors';
@@ -31,7 +32,7 @@ let handle: EditorHandle | null = null;
 beforeEach(async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.snapshot-cost', version: 1 });
-    const definition = defineEditor({ id: 'test.snapshot-cost', model });
+    const definition = defineEditor({ id: 'test.snapshot-cost', model, plugins: unitsOf(model) });
     const ref = createRef<EditorHandle>();
     render(
         <RichTextEditor

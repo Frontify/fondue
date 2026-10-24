@@ -2,13 +2,12 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, emoji } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, emojiPlugin, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), emoji()], { id: 'story.emoji', version: 1 });
+const plugins = [corePlugin(), emojiPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.emoji', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/emoji',
@@ -29,7 +28,7 @@ Emoji stored as Unicode text. Type \`:\` at a word start, then at least two lett
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.emoji', model }),
+        definition: defineEditor({ id: 'story.emoji', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-emoji',

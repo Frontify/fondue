@@ -3,12 +3,12 @@
 import { macBaseKeymap, pcBaseKeymap } from 'prosemirror-commands';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { pluginIds, pluginsById } from '#/features/plugins';
 import { type ContentNodeJSON } from '#/model';
 import { compiledModel } from '#/model/compile';
 import { keyOn, modOn } from '#/model/platform';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { engineOf } from '#/react/compile-editor';
-import { SHIPPED_PLUGINS } from '#/react/plugins';
 import { shipped as brandDocumentProfile } from '#/react/profiles/brand-document';
 import { shipped as commentProfile } from '#/react/profiles/comment';
 import { shipped as documentProfile } from '#/react/profiles/document';
@@ -304,7 +304,7 @@ describe('core keys', () => {
             onPlatform(apple);
             const bound = new Set<string>();
             // The keys of the editor parts of the installed features.
-            for (const plugin of Object.values(SHIPPED_PLUGINS)) {
+            for (const { editor: plugin } of pluginsById(pluginIds)) {
                 if (!installed.has(plugin.feature)) {
                     continue;
                 }

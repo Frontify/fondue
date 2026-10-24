@@ -3,13 +3,14 @@
 import { useEffect, useRef } from 'react';
 
 import { bold, core, heading, outline } from '#/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { positionOf } from '#/runtime/positions';
 import { runtimeOf } from '#/runtime/runtime';
 
 const model = compileContentModel([core(), heading(), bold(), outline()], { id: 'test.outline', version: 1 });
-const definition = defineEditor({ id: 'test.outline', model });
+const definition = defineEditor({ id: 'test.outline', model, plugins: unitsOf(model) });
 
 const paragraph = (value: string): ContentNodeJSON => ({
     type: 'paragraph',

@@ -2,12 +2,11 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { columns, core } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import { columnsPlugin, corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor } from '#/index';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), columns()], { id: 'story.layout-columns', version: 1 });
+const plugins = [corePlugin(), columnsPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.layout-columns', version: 1 });
 
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 
@@ -37,7 +36,7 @@ Column breaks as \`column_break\`, which sit only between top-level blocks. The 
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.layout-columns', model }),
+        definition: defineEditor({ id: 'story.layout-columns', model, plugins }),
         presentation: defineReactPresentation({ columns: 2, columnGap: '2rem', toolbar: [['column.break.insert']] }),
         defaultValue: {
             documentId: 'story-layout-columns',

@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs/codecs';
 import { RichTextReader } from '#/entries/reader';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, type ContentModel, type JsonValue } from '#/model';
@@ -28,7 +29,7 @@ const model = compileContentModel([core(), bold()], { id: 'test.editor', version
 beforeEach(() => {
     vi.useFakeTimers();
 });
-const definition = defineEditor({ id: 'test.editor', model });
+const definition = defineEditor({ id: 'test.editor', model, plugins: unitsOf(model) });
 
 const para = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 const stored = (document: unknown): LoadedDocument => ({
@@ -585,7 +586,7 @@ const refusesWithFormatCode = compileContentModel([core(), bold()], {
         },
     ],
 });
-const limited = defineEditor({ id: 'test.editor', model, limits: { maxTextLength: 3 } });
+const limited = defineEditor({ id: 'test.editor', model, limits: { maxTextLength: 3 }, plugins: unitsOf(model) });
 
 const BLOCKED: readonly (readonly [string, unknown, CompiledEditorDefinition<object>, ContentModel, string])[] = [
     [
@@ -605,14 +606,14 @@ const BLOCKED: readonly (readonly [string, unknown, CompiledEditorDefinition<obj
     [
         'a migration that cannot upgrade it',
         envelope([para('ab')]),
-        defineEditor({ id: 'test.editor', model: cannotUpgrade }),
+        defineEditor({ id: 'test.editor', model: cannotUpgrade, plugins: unitsOf(cannotUpgrade) }),
         cannotUpgrade,
         'Editing is unavailable because this content cannot be upgraded to the current version.',
     ],
     [
         'a migration that refuses with a format diagnostic',
         envelope([para('ab')]),
-        defineEditor({ id: 'test.editor', model: refusesWithFormatCode }),
+        defineEditor({ id: 'test.editor', model: refusesWithFormatCode, plugins: unitsOf(refusesWithFormatCode) }),
         refusesWithFormatCode,
         'Editing is unavailable because this content cannot be upgraded to the current version.',
     ],

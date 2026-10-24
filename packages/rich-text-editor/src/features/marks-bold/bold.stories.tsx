@@ -2,12 +2,11 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { bold, core } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import { boldPlugin, corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
-const model = compileContentModel([core(), bold()], { id: 'story.bold', version: 1 });
+const plugins = [corePlugin(), boldPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.bold', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/marks.bold',
@@ -28,7 +27,7 @@ Strong importance as \`strong\`, toggled on the selection or at the caret.
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.bold', model }),
+        definition: defineEditor({ id: 'story.bold', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-bold',

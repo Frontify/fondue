@@ -5,6 +5,7 @@ import { type ReactNode, useMemo, useRef } from 'react';
 
 import { brandDocumentFeatures, commentFeatures, documentFeatures } from '#/features';
 import { storedIn } from '#/features/__tests__/fixtures/documents';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { heard, recordSubmit } from '#/react/__tests__/fixtures/host';
@@ -62,7 +63,7 @@ export const KeyProbe = ({
         }
         const model = compileContentModel(list, { id: 'test.keys', version: 1 });
         return {
-            definition: defineEditor({ id: 'test.keys', model, policy: { enterBehavior } }),
+            definition: defineEditor({ id: 'test.keys', model, policy: { enterBehavior }, plugins: unitsOf(model) }),
             document: storedIn(model, blocks),
         };
     }, [features, reversed, blocks, enterBehavior]);

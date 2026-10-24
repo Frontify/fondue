@@ -2,13 +2,12 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, heading } from '#/features';
-import { defineEditor, RichTextEditor, defineReactPresentation } from '#/index';
-import { compileContentModel } from '#/model';
+import { corePlugin, defineEditor, defineReactPresentation, headingPlugin, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), heading()], { id: 'story.blocks-heading', version: 1 });
+const plugins = [corePlugin(), headingPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.blocks-heading', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/blocks.heading',
@@ -29,7 +28,7 @@ Headings \`h1\` to \`h6\`. A stored heading keeps its level, even one the policy
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.blocks-heading', model }),
+        definition: defineEditor({ id: 'story.blocks-heading', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
             documentId: 'story-blocks-heading',

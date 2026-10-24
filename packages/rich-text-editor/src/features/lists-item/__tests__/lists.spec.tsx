@@ -6,6 +6,7 @@ import { EditorView } from 'prosemirror-view';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { compileDefinition } from '#/definition';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { type ContentNodeJSON } from '#/model';
 import {
     done,
@@ -275,7 +276,7 @@ describe('the List keys table', () => {
         const { view, handle } = mounted;
         caret(mounted, 'Approve', 3);
         // The same document in a bare engine view, which hands Enter's root transaction to `dispatchTransaction`.
-        const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model));
+        const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model)));
         const doc = Node.fromJSON(engine.schema, view.state.doc.toJSON());
         const roots: Transaction[] = [];
         const bare = new EditorView(document.createElement('div'), {
@@ -320,7 +321,7 @@ describe('the List keys table', () => {
         const mounted = mountList(list('bullet', [item('bullet', 'one')]));
         const { view } = mounted;
         caret(mounted, 'one', 3);
-        const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model));
+        const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model)));
         const doc = Node.fromJSON(engine.schema, view.state.doc.toJSON());
         const roots: Transaction[] = [];
         const bare = new EditorView(document.createElement('div'), {

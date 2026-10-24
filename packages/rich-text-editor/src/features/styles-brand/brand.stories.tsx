@@ -2,12 +2,20 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, featuresById } from '#/features';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import {
+    brandStylesPlugin,
+    corePlugin,
+    defineEditor,
+    defineReactPresentation,
+    headingPlugin,
+    modelOf,
+    quotePlugin,
+    RichTextEditor,
+} from '#/index';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), ...featuresById(['blocks.heading', 'blocks.quote', 'styles.brand'])], {
+const plugins = [corePlugin(), headingPlugin(), quotePlugin(), brandStylesPlugin()] as const;
+const model = modelOf(plugins, {
     id: 'story.styles-brand',
     version: 1,
 });
@@ -33,7 +41,7 @@ The text style picker lists the styles that are not deprecated and apply to the 
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.styles-brand', model }),
+        definition: defineEditor({ id: 'story.styles-brand', model, plugins }),
         presentation: defineReactPresentation({
             toolbar: [['text-style']],
             styles: [

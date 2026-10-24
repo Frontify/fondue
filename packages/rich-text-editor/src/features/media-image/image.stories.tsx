@@ -2,13 +2,20 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { core, mediaImage } from '#/features';
-import { type AssetPickerService, defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import {
+    type AssetPickerService,
+    corePlugin,
+    defineEditor,
+    defineReactPresentation,
+    mediaImagePlugin,
+    modelOf,
+    RichTextEditor,
+} from '#/index';
 import demoImage from '#/react/examples/demo-image.svg?no-inline';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const model = compileContentModel([core(), mediaImage()], { id: 'story.images', version: 1 });
+const plugins = [corePlugin(), mediaImagePlugin()] as const;
+const model = modelOf(plugins, { id: 'story.images', version: 1 });
 
 // A host's asset library: every asset ID has a URL, which the presentation resolves at render time.
 const resolveAssetUrl = () => demoImage;
@@ -75,7 +82,7 @@ The reader writes \`alt=""\` for a decorative image, the text for a meaningful o
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.images', model }),
+        definition: defineEditor({ id: 'story.images', model, plugins }),
         presentation: defineReactPresentation({ toolbar: [['image.insert']], resolveAssetUrl }),
         services: { assets },
         defaultValue: {

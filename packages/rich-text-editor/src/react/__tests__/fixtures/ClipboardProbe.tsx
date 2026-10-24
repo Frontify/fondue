@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { bold, core } from '#/features';
 import { fixtureLabelledMention } from '#/features/__tests__/fixtures/features';
+import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { taskList as taskListFeature } from '#/features/lists-task/feature';
 import {
     defineEditor,
@@ -19,18 +20,23 @@ import { runtimeOf } from '#/runtime/runtime';
 import { type SelectionTarget, setSelection } from '#/testing';
 
 const model = compileContentModel([core(), bold(), fixtureLabelledMention()], { id: 'test.clipboard', version: 1 });
-const definition = defineEditor({ id: 'test.clipboard', model });
+const definition = defineEditor({ id: 'test.clipboard', model, plugins: unitsOf(model) });
 const taskEditorModel = compileContentModel([core(), bold(), fixtureLabelledMention(), taskListFeature()], {
     id: 'test.clipboard',
     version: 1,
 });
-const taskDefinition = defineEditor({ id: 'test.clipboard', model: taskEditorModel });
+const taskDefinition = defineEditor({
+    id: 'test.clipboard',
+    model: taskEditorModel,
+    plugins: unitsOf(taskEditorModel),
+});
 const ALLOW = { create: true, edit: true, remove: true };
 // The mentions may move and be created, but no paste or drop brings one in.
 const unpastedMentions = defineEditor({
     id: 'test.clipboard',
     model,
     policy: { features: { 'fixture.labelled-mention': { ...ALLOW, paste: false } } },
+    plugins: unitsOf(model),
 });
 const presentation = defineReactPresentation({ sliceContext: 'ct' });
 

@@ -4,11 +4,13 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { definePlugin } from '#/bridge/define-plugin';
 import { createCodecs } from '#/codecs';
 import { codeBlock, core, heading, language, mentions, outline } from '#/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
+import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
+import { corePlugin } from '#/features/core';
 import {
-    type CommandsOfModel,
     defineEditor,
     defineEditorPlugin,
     defineReactPresentation,
@@ -23,7 +25,6 @@ import {
     useRichTextNodeView,
 } from '#/index';
 import { compileContentModel, type ContentNodeJSON, type RichTextDocument, textRule } from '#/model';
-import { compileEditor } from '#/react/compile-editor';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, setSelection, typeText } from '#/testing';
 
@@ -64,9 +65,9 @@ const storedOf = (blocks: readonly ContentNodeJSON[]) =>
     }) as unknown as RichTextDocument;
 
 const mount = (blocks: readonly ContentNodeJSON[], plugins: readonly EditorPlugin[]) => {
-    const definition = defineEditor({ id: 'fixture.parts', model, plugins });
+    const definition = defineEditor({ id: 'fixture.parts', model, plugins: unitsOf(model, plugins) });
     const document = storedOf(blocks);
-    const ref = createRef<EditorHandle<CommandsOfModel<typeof model>>>();
+    const ref = createRef<EditorHandle<UnitCommands>>();
     const changes: DocumentChange[] = [];
     const { container } = render(
         <RichTextEditor
@@ -168,7 +169,7 @@ describe('the decorations of an editor part', () => {
             decorations: [{ id: 'fixture.none', nodes: ['doc'], derive: () => [] }],
         });
 
-        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: [plugin] })).toThrow(
+        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: unitsOf(model, [plugin]) })).toThrow(
             expect.objectContaining({
                 code: 'definition.orphan-behavior',
                 details: {
@@ -178,7 +179,7 @@ describe('the decorations of an editor part', () => {
                 },
             }),
         );
-        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: [plugin] })).toThrow(
+        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: unitsOf(model, [plugin]) })).toThrow(
             /decoration sources cover textblocks/u,
         );
     });
@@ -292,7 +293,11 @@ describe('a host part over a shipped part', () => {
         render(
             <RichTextEditor
                 aria-label="Notes"
-                definition={defineEditor({ id: 'fixture.host', model: hostModel, plugins })}
+                definition={defineEditor({
+                    id: 'fixture.host',
+                    model: hostModel,
+                    plugins: unitsOf(hostModel, plugins),
+                })}
                 presentation={defineReactPresentation({ toolbar: [['outline.toggle']] })}
                 defaultValue={{
                     documentId: 'document-1',
@@ -426,7 +431,7 @@ describe('the input rules of an editor part', () => {
             ],
         });
 
-        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: [plugin] })).toThrow(
+        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: unitsOf(model, [plugin]) })).toThrow(
             'definition.duplicate-id {"kind":"input-rule","id":"fixture.twice","features":["fixture.spotlight","fixture.spotlight"]}',
         );
     });
@@ -613,7 +618,7 @@ describe('the suggestions of an editor part', () => {
     ])('refuses a %s of %j', (field, rules) => {
         const plugin = tagPart(() => Promise.resolve({ items: [], nextCursor: null }), rules);
 
-        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: [plugin] })).toThrow(
+        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: unitsOf(model, [plugin]) })).toThrow(
             expect.objectContaining({
                 code: 'definition.invalid-declaration',
                 details: { feature: 'fixture.spotlight', path: `/suggestions/0/rules/${field}` },
@@ -739,7 +744,7 @@ describe('the orphan checks of an editor part', () => {
     ] as const)('refuses a %s that names what no part or feature of the definition has', (_kind, parts, path) => {
         const plugin = defineEditorPlugin(spotlight, parts as unknown as EditorPluginParts);
 
-        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: [plugin] })).toThrow(
+        expect(() => defineEditor({ id: 'fixture.parts', model, plugins: unitsOf(model, [plugin]) })).toThrow(
             expect.objectContaining({
                 code: 'definition.orphan-behavior',
                 details: expect.objectContaining({ feature: 'fixture.spotlight', path }) as unknown,
@@ -751,8 +756,9 @@ describe('the orphan checks of an editor part', () => {
         const languages = compileContentModel([core(), language()], { id: 'fixture.parts', version: 1 });
         const plugin = defineEditorPlugin(language, {});
 
-        // The shipped parts register the language command, so compile without them.
-        expect(() => compileEditor({ id: 'fixture.parts', model: languages, plugins: [plugin] }, {}, {})).toThrow(
+        const bare = definePlugin({ feature: language, editor: plugin })();
+
+        expect(() => defineEditor({ id: 'fixture.parts', model: languages, plugins: [corePlugin(), bare] })).toThrow(
             expect.objectContaining({
                 code: 'definition.orphan-behavior',
                 details: { feature: 'marks.language', path: '/repairs/mark.language.edit' },
