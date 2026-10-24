@@ -29,12 +29,6 @@ export const frFR = {
         RichTextEditor_checkContrastUnknown: 'Contraste du texte impossible à mesurer',
         RichTextEditor_checkContrastUnknownHelp:
             'L’éditeur ne connaît pas la couleur de ce texte ou de son arrière-plan. Vérifiez que le texte se lit facilement, avec un contraste d’au moins 4,5 pour 1, ou 3 pour 1 pour un grand texte.',
-        RichTextEditor_checkEmbedMediaReview: 'Média intégré',
-        RichTextEditor_checkEmbedMediaReviewHelp:
-            'Vérifiez si la vidéo a des sous-titres et une audiodescription, et qu’elle ne lance pas de son toute seule.',
-        RichTextEditor_checkEmbedTitleMissing: 'Contenu intégré sans titre',
-        RichTextEditor_checkEmbedTitleMissingHelp:
-            'Un lecteur intégré a besoin d’un titre qui nomme son contenu, pour que les lecteurs d’écran l’annoncent. Modifiez le contenu intégré et donnez-lui un titre.',
         RichTextEditor_checkGenericImageWords:
             'image|photo|photographie|illustration|graphique|icône|logo|bannière|capture d’écran|capture|texte alternatif|espace réservé|sans titre|vignette',
         RichTextEditor_checkHeadingDescriptiveReview: 'Texte du titre',
@@ -73,9 +67,6 @@ export const frFR = {
         RichTextEditor_checkStructureReview: 'Structure seulement visuelle',
         RichTextEditor_checkStructureReviewHelp:
             'Vérifiez si une structure n’est montrée que visuellement, comme du texte en gras utilisé comme titre, des paragraphes commençant par un tiret ou un chiffre utilisés comme liste, ou un retrait qui marque une citation. Utilisez plutôt les commandes de titre, de liste et de citation.',
-        RichTextEditor_checkTableNoHeader: 'Tableau sans cellules d’en-tête',
-        RichTextEditor_checkTableNoHeaderHelp:
-            'Les cellules d’en-tête indiquent aux lecteurs d’écran ce que contient chaque ligne ou colonne. Si la première ligne nomme les colonnes, faites-en une ligne d’en-tête.',
         RichTextEditor_checkVagueLinkTexts:
             'cliquez ici|cliquer ici|cliquez|ici|lien|ce lien|plus|lire la suite|en savoir plus|plus d’infos|plus d’informations|infos|détails|continuer|cette page|site web',
         RichTextEditor_checks: 'Vérifications d’accessibilité',

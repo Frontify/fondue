@@ -5,13 +5,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { COALESCE_MS } from '#/bridge/announcer';
 import { core, emoji, fontColor } from '#/features';
-import { fixtureTableEditor } from '#/features/__tests__/fixtures/editors';
 import { fixturePickerPanel, openFind } from '#/features/__tests__/fixtures/panels';
 import { mountText, textModel } from '#/react/__tests__/fixtures/text';
 import { CHECK_DELAY_MS, contentChecksOf } from '#/runtime/content-issues';
 import { positionOf } from '#/runtime/positions';
 import { SETTLE_MS } from '#/runtime/settle';
-import { setSelection, typeText } from '#/testing';
+import { setSelection } from '#/testing';
 
 import {
     checksFeatures,
@@ -22,7 +21,6 @@ import {
     link,
     mountChecks,
     para,
-    table,
     text,
 } from './fixtures/checks';
 
@@ -348,29 +346,6 @@ describe('an issues panel repair', () => {
         mounted.unmount();
     });
 
-    it('runs no repair command against the selection on a keystroke for issues on a node', () => {
-        const command = fixtureTableEditor.commands?.['table.header.toggle'];
-        if (command === undefined) {
-            throw new Error('The fixture table editor has no header toggle.');
-        }
-        const run = vi.spyOn(command, 'run');
-        const mounted = mountChecks({
-            blocks: [para(text('Intro')), table('one'), table('two'), table('three'), table('four')],
-        });
-        openPanel();
-        expect(listed().filter((id) => id?.startsWith('table.no-header') === true)).toHaveLength(4);
-        run.mockClear();
-
-        act(() => {
-            setSelection(mounted.handle, { text: 'Intro', from: 5, to: 5 });
-            typeText(mounted.handle, '!');
-        });
-
-        expect(run).not.toHaveBeenCalled();
-        run.mockRestore();
-        mounted.unmount();
-    });
-
     it('offers no Fix in a read-only editor, where no repair can run, and still offers Go to', () => {
         const mounted = mountChecks({ blocks: [headingBlock('empty', 2), image('photo')], readOnly: true });
         openPanel();
@@ -556,25 +531,6 @@ describe('a repair after edits since its run', () => {
         const { selection, doc } = mounted.view.state;
         expect(selection.from).toBe(doc.child(0).nodeSize);
         expect(selection.$from.parent.type.name).toBe('doc');
-        mounted.unmount();
-    });
-
-    it('turns the first row of a table into header cells from a caret in its first cell, as one undo step', () => {
-        const mounted = mountChecks({ blocks: [para(text('Intro')), table('grid')] });
-        const cells = () =>
-            (mounted.handle.getSnapshot().document.content.content?.[1]?.content?.[0]?.content ?? []).map(
-                (cell) => cell.type,
-            );
-        openPanel();
-
-        fix('table.no-header:grid');
-
-        expect(cells()).toEqual(['table_header']);
-        expect(mounted.changes.map(({ origin, commandId }) => [origin, commandId])).toEqual([
-            ['command', 'table.header.toggle'],
-        ]);
-        undo(mounted);
-        expect(cells()).toEqual(['table_cell']);
         mounted.unmount();
     });
 });

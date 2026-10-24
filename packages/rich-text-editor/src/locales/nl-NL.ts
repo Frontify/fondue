@@ -29,12 +29,6 @@ export const nlNL = {
         RichTextEditor_checkContrastUnknown: 'Tekstcontrast dat niet te meten is',
         RichTextEditor_checkContrastUnknownHelp:
             'De editor kent de kleur van deze tekst of van de achtergrond niet. Controleer of de tekst goed leesbaar is, met een contrast van minstens 4,5 op 1, of 3 op 1 voor grote tekst.',
-        RichTextEditor_checkEmbedMediaReview: 'Ingesloten media',
-        RichTextEditor_checkEmbedMediaReviewHelp:
-            'Controleer of de video ondertitels en audiodescriptie heeft en niet uit zichzelf geluid afspeelt.',
-        RichTextEditor_checkEmbedTitleMissing: 'Insluiting zonder titel',
-        RichTextEditor_checkEmbedTitleMissingHelp:
-            'Een ingesloten speler heeft een titel nodig die de inhoud noemt, zodat schermlezers hem aankondigen. Bewerk de insluiting en geef haar een titel.',
         RichTextEditor_checkGenericImageWords:
             'afbeelding|plaatje|foto|fotografie|grafiek|illustratie|pictogram|icoon|logo|banner|schermafbeelding|screenshot|alternatieve tekst|tijdelijke aanduiding|zonder titel|miniatuur',
         RichTextEditor_checkHeadingDescriptiveReview: 'Koptekst',
@@ -73,9 +67,6 @@ export const nlNL = {
         RichTextEditor_checkStructureReview: 'Structuur die alleen zichtbaar is',
         RichTextEditor_checkStructureReviewHelp:
             'Controleer of een structuur alleen visueel wordt getoond, zoals vette tekst als kop, alinea’s die met een streepje of een cijfer beginnen als lijst, of inspringen als citaat. Gebruik daarvoor de opdrachten voor kop, lijst en citaat.',
-        RichTextEditor_checkTableNoHeader: 'Tabel zonder kopcellen',
-        RichTextEditor_checkTableNoHeaderHelp:
-            'Kopcellen vertellen schermlezers wat een rij of kolom bevat. Benoemt de eerste rij de kolommen, maak er dan een koprij van.',
         RichTextEditor_checkVagueLinkTexts:
             'klik hier|klik|hier|link|deze link|meer|lees meer|meer weten|meer info|meer informatie|info|details|verder|ga|deze pagina|website',
         RichTextEditor_checks: 'Toegankelijkheidscontroles',

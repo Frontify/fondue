@@ -28,12 +28,6 @@ export const enUS = {
         RichTextEditor_checkContrastUnknown: 'Text contrast that cannot be measured',
         RichTextEditor_checkContrastUnknownHelp:
             'The editor cannot tell the color of this text or of its background. Check that the text is easy to read, with a contrast of at least 4.5 to 1, or 3 to 1 for large text.',
-        RichTextEditor_checkEmbedMediaReview: 'Embedded media',
-        RichTextEditor_checkEmbedMediaReviewHelp:
-            'Check whether the video has captions and audio description, and that it does not play sound by itself.',
-        RichTextEditor_checkEmbedTitleMissing: 'Embed without a title',
-        RichTextEditor_checkEmbedTitleMissingHelp:
-            'An embedded player needs a title that names its content, so screen readers can announce it. Edit the embed and give it a title.',
         RichTextEditor_checkGenericImageWords:
             'image|picture|photo|photograph|pic|img|graphic|illustration|icon|logo|banner|screenshot|screen shot|alt|alt text|placeholder|untitled|thumbnail',
         RichTextEditor_checkHeadingDescriptiveReview: 'Heading text',
@@ -72,9 +66,6 @@ export const enUS = {
         RichTextEditor_checkStructureReview: 'Structure shown only by look',
         RichTextEditor_checkStructureReviewHelp:
             'Check whether any structure is shown only by look, such as bold text used as a heading, paragraphs that start with a dash or a number used as a list, or indentation that marks a quote. Use the heading, list and quote commands for these instead.',
-        RichTextEditor_checkTableNoHeader: 'Table without header cells',
-        RichTextEditor_checkTableNoHeaderHelp:
-            'Header cells tell screen readers what each row or column holds. If the first row names the columns, make it a header row.',
         RichTextEditor_checkVagueLinkTexts:
             'click here|click|here|link|this link|more|read more|learn more|more info|more information|info|details|go|continue|this|this page|website',
         RichTextEditor_checks: 'Accessibility checks',

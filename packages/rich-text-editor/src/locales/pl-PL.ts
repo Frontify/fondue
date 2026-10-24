@@ -29,12 +29,6 @@ export const plPL = {
         RichTextEditor_checkContrastUnknown: 'Kontrast tekstu, którego nie da się zmierzyć',
         RichTextEditor_checkContrastUnknownHelp:
             'Edytor nie zna koloru tego tekstu lub jego tła. Sprawdź, czy tekst łatwo się czyta, z kontrastem co najmniej 4,5 do 1 lub 3 do 1 dla dużego tekstu.',
-        RichTextEditor_checkEmbedMediaReview: 'Osadzone multimedia',
-        RichTextEditor_checkEmbedMediaReviewHelp:
-            'Sprawdź, czy wideo ma napisy i audiodeskrypcję oraz czy nie odtwarza dźwięku samo.',
-        RichTextEditor_checkEmbedTitleMissing: 'Osadzenie bez tytułu',
-        RichTextEditor_checkEmbedTitleMissingHelp:
-            'Osadzony odtwarzacz potrzebuje tytułu, który nazywa jego zawartość, aby czytniki ekranu mogły go ogłosić. Edytuj osadzenie i nadaj mu tytuł.',
         RichTextEditor_checkGenericImageWords:
             'obraz|obrazek|zdjęcie|fotografia|grafika|ilustracja|ikona|logo|baner|zrzut ekranu|tekst alternatywny|symbol zastępczy|bez tytułu|miniatura',
         RichTextEditor_checkHeadingDescriptiveReview: 'Tekst nagłówka',
@@ -73,9 +67,6 @@ export const plPL = {
         RichTextEditor_checkStructureReview: 'Struktura widoczna tylko wizualnie',
         RichTextEditor_checkStructureReviewHelp:
             'Sprawdź, czy jakaś struktura jest pokazana tylko wizualnie, na przykład pogrubiony tekst jako nagłówek, akapity zaczynające się od myślnika lub liczby jako lista albo wcięcie jako cytat. Użyj zamiast tego poleceń nagłówka, listy i cytatu.',
-        RichTextEditor_checkTableNoHeader: 'Tabela bez komórek nagłówka',
-        RichTextEditor_checkTableNoHeaderHelp:
-            'Komórki nagłówka mówią czytnikom ekranu, co zawiera każdy wiersz lub kolumna. Jeśli pierwszy wiersz nazywa kolumny, zrób z niego wiersz nagłówka.',
         RichTextEditor_checkVagueLinkTexts:
             'kliknij tutaj|kliknij|tutaj|tu|link|ten link|więcej|czytaj więcej|dowiedz się więcej|więcej informacji|informacje|szczegóły|dalej|przejdź|ta strona|strona internetowa',
         RichTextEditor_checks: 'Kontrola dostępności',

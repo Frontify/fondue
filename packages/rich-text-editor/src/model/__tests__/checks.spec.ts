@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/features';
+import { contentChecks, core, fontColor, heading, language, links } from '#/features';
 import { deCH } from '#/locales/de-CH';
 import { enUS } from '#/locales/en-US';
 import {
@@ -58,15 +58,6 @@ const image = (nodeId: string, attrs: Record<string, unknown>): ContentNodeJSON 
 const link = (value: string, href = 'https://example.com/a') => text(value, [{ type: 'link', attrs: { href } }]);
 const colored = (value: string, attrs: Record<string, unknown>, mark = 'font_color') =>
     text(value, [{ type: mark, attrs: { tokenId: null, value: null, ...attrs } }]);
-const table = (nodeId: string, cell: 'table_cell' | 'table_header'): ContentNodeJSON => ({
-    type: 'table',
-    attrs: { nodeId },
-    content: [{ type: 'table_row', content: [{ type: cell, content: [para(text('Cell'))] }] }],
-});
-const embed = (nodeId: string, title: string | null): ContentNodeJSON => ({
-    type: 'embed',
-    attrs: { nodeId, url: 'https://www.youtube.com/watch?v=1', title },
-});
 
 const options: ContentCheckOptions = {
     locale: enUS,
@@ -107,7 +98,6 @@ const CASES: readonly {
         negative: [headingBlock('first', 3, 'First'), headingBlock('next', 4, 'Next')],
     },
     { ruleId: 'heading.descriptive-review', positive: [headingBlock('h', 1, 'Title')], negative: [para(text('x'))] },
-    { ruleId: 'table.no-header', positive: [table('t', 'table_cell')], negative: [table('t', 'table_header')] },
     {
         ruleId: 'contrast.low',
         positive: [para(colored('Pale', { tokenId: 'pale' }))],
@@ -123,8 +113,6 @@ const CASES: readonly {
         positive: [para(colored('Marked', { tokenId: 'pale' }, 'highlight'))],
         negative: [para(text('Plain'))],
     },
-    { ruleId: 'embed.title-missing', positive: [embed('e', null)], negative: [embed('e', 'Launch video')] },
-    { ruleId: 'embed.media-review', positive: [embed('e', 'Launch video')], negative: [para()] },
 ];
 
 describe('the content check rules', () => {
@@ -288,20 +276,20 @@ describe('the content check rules', () => {
     });
 
     it('offers a repair only for a feature the model installs, and the language repair only with a model', () => {
-        const model = compileContentModel([core(), heading(), links(), mediaImage(), fontColor()], {
+        const model = compileContentModel([core(), heading(), links(), fontColor()], {
             id: 'test.checks',
             version: 1,
         });
         const withLanguage = compileContentModel([core(), language()], { id: 'test.checks', version: 1 });
-        const document = stored([headingBlock('h', 2), embed('e', null)]);
+        const document = stored([headingBlock('h', 2), image('a', {})]);
         const repairOf = (given: ContentCheckOptions, ruleId: ContentRuleId) =>
             findContentIssues(document, given).find((issue) => issue.ruleId === ruleId)?.repairCommand;
 
         expect(repairOf(options, 'heading.empty')).toBe('paragraph.set');
         expect(repairOf({ ...options, model }, 'heading.empty')).toBe('paragraph.set');
-        expect(repairOf(options, 'embed.title-missing')).toBe('embed.edit');
+        expect(repairOf(options, 'image.alt-missing')).toBe('image.alt.edit');
         expect(findContentIssues(document, { ...options, model }).map(({ ruleId }) => ruleId)).not.toContain(
-            'embed.title-missing',
+            'image.alt-missing',
         );
         expect(repairOf(options, 'language.parts-review')).toBeNull();
         expect(repairOf({ ...options, model }, 'language.parts-review')).toBeNull();
@@ -359,18 +347,6 @@ describe('the content check rules after review', () => {
         expect(idsOf([headingWith([])], 'contrast.low')).toEqual([]);
         expect(idsOf([headingWith(['subscript'])], 'contrast.low')).toHaveLength(1);
         expect(idsOf([headingWith(['superscript'])], 'contrast.low')).toHaveLength(1);
-    });
-
-    it('does not count a header cell of a nested table as a header of the table around it', () => {
-        const nested: ContentNodeJSON = {
-            type: 'table',
-            attrs: { nodeId: 'outer' },
-            content: [
-                { type: 'table_row', content: [{ type: 'table_cell', content: [table('inner', 'table_header')] }] },
-            ],
-        };
-
-        expect(idsOf([nested], 'table.no-header')).toEqual(['table.no-header:outer']);
     });
 
     it('finds a meaningful image whose alternative text is blank as missing, not as suspicious', () => {

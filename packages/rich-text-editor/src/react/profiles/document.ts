@@ -54,15 +54,8 @@ export const documentToolbar = (lists: readonly (readonly CommandRef[])[]): read
     ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
     ...lists,
     ['indent.decrease', 'indent.increase'],
-    [
-        { command: 'table.insert', payload: { rows: 3, columns: 3 } },
-        'image.insert',
-        'embed.insert',
-        'rule.insert',
-        'mention.search.open',
-        'emoji.picker.open',
-    ],
-    ['checks.open', 'find.open', 'outline.toggle'],
+    ['image.insert', 'rule.insert', 'mention.search.open', 'emoji.picker.open'],
+    ['checks.open', 'outline.toggle'],
 ];
 
 const PRESENTATION = defineReactPresentation({ toolbar: documentToolbar([]) });

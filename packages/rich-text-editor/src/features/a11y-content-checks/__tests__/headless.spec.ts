@@ -7,8 +7,6 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { compileDefinition } from '#/definition';
 import { bold, contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/features';
 import { fixtureHighlight } from '#/features/__tests__/fixtures/highlight';
-import { fixtureEmbed } from '#/features/__tests__/fixtures/media/embed';
-import { fixtureTable } from '#/features/__tests__/fixtures/table/feature';
 import { deCH } from '#/locales/de-CH';
 import {
     type ColorToken,
@@ -34,8 +32,6 @@ const model = compileContentModel(
         fontColor(),
         fixtureHighlight(),
         mediaImage(),
-        fixtureTable(),
-        fixtureEmbed(),
         contentChecks({ enclosingHeadingLevel: 1 }),
     ],
     { id: 'test.checks', version: 1 },
@@ -76,12 +72,6 @@ const blocks: readonly ContentNodeJSON[] = [
             },
         ],
     },
-    {
-        type: 'table',
-        attrs: { nodeId: 'grid' },
-        content: [{ type: 'table_row', content: [{ type: 'table_cell', content: [para(text('Zelle'))] }] }],
-    },
-    { type: 'embed', attrs: { nodeId: 'clip', url: 'https://www.youtube.com/watch?v=1', title: null } },
 ];
 
 const document = {
@@ -151,8 +141,6 @@ describe('findContentIssues on a server', () => {
                 'contrast.low',
                 'contrast.unknown',
                 'image.alt-suspicious',
-                'table.no-header',
-                'embed.title-missing',
                 'language.parts-review',
             ]),
         );

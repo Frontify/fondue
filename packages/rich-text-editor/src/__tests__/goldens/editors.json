@@ -1301,22 +1301,13 @@
                     "indent.increase"
                 ],
                 [
-                    {
-                        "command": "table.insert",
-                        "payload": {
-                            "rows": 3,
-                            "columns": 3
-                        }
-                    },
                     "image.insert",
-                    "embed.insert",
                     "rule.insert",
                     "mention.search.open",
                     "emoji.picker.open"
                 ],
                 [
                     "checks.open",
-                    "find.open",
                     "outline.toggle"
                 ]
             ],
@@ -2005,22 +1996,13 @@
                     "indent.increase"
                 ],
                 [
-                    {
-                        "command": "table.insert",
-                        "payload": {
-                            "rows": 3,
-                            "columns": 3
-                        }
-                    },
                     "image.insert",
-                    "embed.insert",
                     "rule.insert",
                     "mention.search.open",
                     "emoji.picker.open"
                 ],
                 [
                     "checks.open",
-                    "find.open",
                     "outline.toggle"
                 ]
             ],

@@ -7,8 +7,6 @@ import { vi } from 'vitest';
 import { bold, contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/features';
 import { fixtureEditorsOf } from '#/features/__tests__/fixtures/editors';
 import { fixtureHighlight } from '#/features/__tests__/fixtures/highlight';
-import { fixtureEmbed } from '#/features/__tests__/fixtures/media/embed';
-import { fixtureTable } from '#/features/__tests__/fixtures/table/feature';
 import {
     type AuthoringPolicy,
     defineEditor,
@@ -37,8 +35,6 @@ export const checksFeatures = (options?: Parameters<typeof contentChecks>[0]): r
     fontColor(),
     fixtureHighlight(),
     mediaImage(),
-    fixtureTable(),
-    fixtureEmbed(),
     contentChecks(options),
 ];
 
@@ -81,15 +77,6 @@ export const image = (nodeId: string, attrs: Readonly<Record<string, unknown>> =
             },
         },
     ],
-});
-export const table = (nodeId: string, cell: 'table_cell' | 'table_header' = 'table_cell'): ContentNodeJSON => ({
-    type: 'table',
-    attrs: { nodeId },
-    content: [{ type: 'table_row', content: [{ type: cell, content: [para(text('Cell'))] }] }],
-});
-export const embed = (nodeId: string, title: string | null): ContentNodeJSON => ({
-    type: 'embed',
-    attrs: { nodeId, url: 'https://www.youtube.com/watch?v=1', title },
 });
 
 interface Mount {

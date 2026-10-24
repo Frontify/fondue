@@ -19,15 +19,12 @@ export type ContentRuleId =
     | 'heading.empty'
     | 'heading.skipped-level'
     | 'heading.descriptive-review'
-    | 'table.no-header'
     | 'contrast.low'
     | 'contrast.unknown'
     | 'color.meaning-review'
     | 'language.parts-review'
     | 'sensory.review'
-    | 'structure.review'
-    | 'embed.title-missing'
-    | 'embed.media-review';
+    | 'structure.review';
 
 /** One finding of the content checks: which rule found it, where, and the repair on offer if any. */
 export interface ContentIssue {
@@ -134,7 +131,7 @@ interface Context {
     readonly creatableLevels: readonly number[];
 }
 
-type SubjectKind = 'document' | 'image' | 'link' | 'heading' | 'table' | 'color' | 'embed';
+type SubjectKind = 'document' | 'image' | 'link' | 'heading' | 'color';
 
 /** A finding: the repair to offer, with the feature whose editor part provides its command, or `true` for a rule with none. */
 type Finding =
@@ -147,9 +144,7 @@ interface SubjectOf {
     image: Subject;
     link: Subject;
     heading: HeadingSubject;
-    table: Subject;
     color: ColorSubject;
-    embed: Subject;
 }
 
 interface Rule<K extends SubjectKind> {
@@ -294,9 +289,7 @@ const IMAGE_ALT_REPAIR = { command: 'image.alt.edit', feature: 'media.image' };
 const PARAGRAPH_REPAIR = { command: 'paragraph.set', feature: 'core' };
 const HEADING_REPAIR = { command: 'heading.set', feature: 'blocks.heading' };
 const LINK_REPAIR = { command: 'link.edit', feature: 'links' };
-const TABLE_HEADER_REPAIR = { command: 'table.header.toggle', feature: 'tables' };
 const COLOR_REPAIR = { command: 'mark.color.menu.open', feature: 'marks.font-color' };
-const EMBED_REPAIR = { command: 'embed.edit', feature: 'media.embed' };
 
 /** Each repair command a rule offers with the feature whose editor part must register it. */
 export const CONTENT_REPAIRS: readonly { readonly command: string; readonly feature: string }[] = [
@@ -305,9 +298,7 @@ export const CONTENT_REPAIRS: readonly { readonly command: string; readonly feat
     PARAGRAPH_REPAIR,
     HEADING_REPAIR,
     LINK_REPAIR,
-    TABLE_HEADER_REPAIR,
     COLOR_REPAIR,
-    EMBED_REPAIR,
 ];
 
 /** Every rule, in the order the issues panel lists the rules of one node. */
@@ -394,21 +385,6 @@ export const CONTENT_RULES = {
             vagueTexts.has(folded(text)) ? { ...LINK_REPAIR, payload: null } : undefined,
     }),
     'link.purpose-review': rule({ kind: 'manual', severity: 'review', subject: 'link', check: () => true }),
-    'table.no-header': rule({
-        kind: 'automatic',
-        severity: 'warning',
-        subject: 'table',
-        check: ({ node }) => {
-            // A nested table's header cells head that table only.
-            const hasHeader = (current: ContentNodeJSON): boolean =>
-                current.type === 'table_header' ||
-                (current.content ?? []).some((child) => child.type !== 'table' && hasHeader(child));
-            if (hasHeader(node)) {
-                return undefined;
-            }
-            return { ...TABLE_HEADER_REPAIR, payload: { axis: 'row' } };
-        },
-    }),
     'contrast.low': rule({
         kind: 'automatic',
         severity: 'error',
@@ -439,16 +415,6 @@ export const CONTENT_RULES = {
             colorsOf(subject, context) === undefined ? { ...COLOR_REPAIR, payload: null } : undefined,
     }),
     'color.meaning-review': rule({ kind: 'manual', severity: 'review', subject: 'color', check: () => true }),
-    'embed.title-missing': rule({
-        kind: 'automatic',
-        severity: 'error',
-        subject: 'embed',
-        check: ({ node }) => {
-            const title = attrsOf(node).title;
-            return title === null || title === undefined ? { ...EMBED_REPAIR, payload: null } : undefined;
-        },
-    }),
-    'embed.media-review': rule({ kind: 'manual', severity: 'review', subject: 'embed', check: () => true }),
 };
 
 /** Every rule ID, document-level rules first. */
@@ -560,10 +526,6 @@ const subjectsOf = (
         let inLarge = large;
         if (node.type === 'asset_image') {
             own('image');
-        } else if (node.type === 'embed') {
-            own('embed');
-        } else if (node.type === 'table') {
-            own('table');
         } else if (node.type === 'heading') {
             const level = attrsOf(node).level;
             if (typeof level === 'number') {

@@ -14,7 +14,7 @@ import { runtimeOf } from '#/runtime/runtime';
 import { SETTLE_MS } from '#/runtime/settle';
 import { createFakePersistenceService, typeText } from '#/testing';
 
-import { checksModel, colored, embed, headingBlock, image, link, mountChecks, para, text } from './fixtures/checks';
+import { checksModel, colored, headingBlock, image, link, mountChecks, para, text } from './fixtures/checks';
 
 let spies: MockInstance[] = [];
 
@@ -197,7 +197,6 @@ describe('a draft save', () => {
                 para(text('Go '), link('  ')),
                 image('photo'),
                 para(colored('Pale', 'pale')),
-                embed('clip', null),
             ],
             services: { persistence: createFakePersistenceService() },
         });
@@ -208,7 +207,7 @@ describe('a draft save', () => {
                 .map(({ issue }) => issue.ruleId),
         );
         expect([...errors].sort()).toEqual(
-            ['contrast.low', 'embed.title-missing', 'heading.empty', 'image.alt-missing', 'link.text-empty'].sort(),
+            ['contrast.low', 'heading.empty', 'image.alt-missing', 'link.text-empty'].sort(),
         );
         act(() => {
             typeText(handle, 'x');

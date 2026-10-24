@@ -5,9 +5,8 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { codeBlock, core, heading, mentions, outline } from '#/features';
+import { codeBlock, core, heading, language, mentions, outline } from '#/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
-import { fixtureTable } from '#/features/__tests__/fixtures/table/feature';
 import {
     type CommandsOfModel,
     defineEditor,
@@ -24,6 +23,7 @@ import {
     useRichTextNodeView,
 } from '#/index';
 import { compileContentModel, type ContentNodeJSON, type RichTextDocument, textRule } from '#/model';
+import { compileEditor } from '#/react/compile-editor';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, setSelection, typeText } from '#/testing';
 
@@ -748,13 +748,14 @@ describe('the orphan checks of an editor part', () => {
     });
 
     it('refuses a model that installs the feature of a content check repair when no part registers its command', () => {
-        const tables = compileContentModel([core(), fixtureTable()], { id: 'fixture.parts', version: 1 });
-        const plugin = defineEditorPlugin(fixtureTable, {});
+        const languages = compileContentModel([core(), language()], { id: 'fixture.parts', version: 1 });
+        const plugin = defineEditorPlugin(language, {});
 
-        expect(() => defineEditor({ id: 'fixture.parts', model: tables, plugins: [plugin] })).toThrow(
+        // The shipped parts register the language command, so compile without them.
+        expect(() => compileEditor({ id: 'fixture.parts', model: languages, plugins: [plugin] }, {}, {})).toThrow(
             expect.objectContaining({
                 code: 'definition.orphan-behavior',
-                details: { feature: 'tables', path: '/repairs/table.header.toggle' },
+                details: { feature: 'marks.language', path: '/repairs/mark.language.edit' },
             }),
         );
     });

@@ -29,12 +29,6 @@ export const ptPT = {
         RichTextEditor_checkContrastUnknown: 'Contraste de texto impossível de medir',
         RichTextEditor_checkContrastUnknownHelp:
             'O editor não conhece a cor deste texto ou do seu fundo. Verifique se o texto se lê com facilidade, com um contraste de pelo menos 4,5 para 1, ou 3 para 1 em texto grande.',
-        RichTextEditor_checkEmbedMediaReview: 'Multimédia incorporado',
-        RichTextEditor_checkEmbedMediaReviewHelp:
-            'Verifique se o vídeo tem legendas e audiodescrição e se não reproduz som sozinho.',
-        RichTextEditor_checkEmbedTitleMissing: 'Conteúdo incorporado sem título',
-        RichTextEditor_checkEmbedTitleMissingHelp:
-            'Um leitor incorporado precisa de um título que nomeie o seu conteúdo, para que os leitores de ecrã o anunciem. Edite o conteúdo incorporado e dê-lhe um título.',
         RichTextEditor_checkGenericImageWords:
             'imagem|foto|fotografia|gráfico|ilustração|ícone|logótipo|logo|banner|captura de ecrã|texto alternativo|marcador de posição|sem título|miniatura',
         RichTextEditor_checkHeadingDescriptiveReview: 'Texto do título',
@@ -73,9 +67,6 @@ export const ptPT = {
         RichTextEditor_checkStructureReview: 'Estrutura apenas visual',
         RichTextEditor_checkStructureReviewHelp:
             'Verifique se alguma estrutura é mostrada apenas visualmente, como texto a negrito usado como título, parágrafos que começam com um travessão ou um número usados como lista, ou um avanço que marca uma citação. Use antes os comandos de título, lista e citação.',
-        RichTextEditor_checkTableNoHeader: 'Tabela sem células de cabeçalho',
-        RichTextEditor_checkTableNoHeaderHelp:
-            'As células de cabeçalho dizem aos leitores de ecrã o que cada linha ou coluna contém. Se a primeira linha nomeia as colunas, torne-a uma linha de cabeçalho.',
         RichTextEditor_checkVagueLinkTexts:
             'clique aqui|clique|aqui|ligação|esta ligação|link|mais|ler mais|saber mais|mais informações|info|detalhes|continuar|ir|esta página|site',
         RichTextEditor_checks: 'Verificações de acessibilidade',

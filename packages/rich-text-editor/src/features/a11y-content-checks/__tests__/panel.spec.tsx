@@ -12,19 +12,7 @@ import { positionOf } from '#/runtime/positions';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection, typeText } from '#/testing';
 
-import {
-    checksFeatures,
-    checksModel,
-    colored,
-    embed,
-    headingBlock,
-    image,
-    link,
-    mountChecks,
-    para,
-    table,
-    text,
-} from './fixtures/checks';
+import { colored, headingBlock, image, link, mountChecks, para, text } from './fixtures/checks';
 
 beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
@@ -226,7 +214,7 @@ describe('the issues panel', () => {
 
     it('marks each automatic issue in the surface with an outline and an icon only while it is open', () => {
         const { view, unmount } = mountChecks({
-            blocks: [headingBlock('empty', 2), para(link('here')), image('photo'), table('grid'), embed('clip', null)],
+            blocks: [headingBlock('empty', 2), para(link('here')), image('photo')],
         });
         const marked = () =>
             [...view.dom.querySelectorAll('[data-rte-issue]')].map((element) => element.getAttribute('data-rte-issue'));
@@ -234,21 +222,14 @@ describe('the issues panel', () => {
         expect(marked()).toEqual([]);
         openPanel();
 
-        expect(marked()).toEqual(['error', 'warning', 'error', 'warning', 'error']);
+        expect(marked()).toEqual(['error', 'warning', 'error']);
         const icons = [...view.dom.querySelectorAll('[data-rte-issue-icon]')];
-        expect(icons.map((icon) => icon.getAttribute('data-rte-issue-icon'))).toEqual([
-            'error',
-            'warning',
-            'error',
-            'warning',
-            'error',
-        ]);
+        expect(icons.map((icon) => icon.getAttribute('data-rte-issue-icon'))).toEqual(['error', 'warning', 'error']);
         for (const icon of icons) {
             expect(icon).toHaveAttribute('aria-hidden', 'true');
             expect(icon.querySelector('svg')).not.toBeNull();
         }
         expect(view.dom.querySelector('h2[data-rte-issue="error"]')).not.toBeNull();
-        expect(view.dom.querySelector('table[data-rte-issue="warning"]')).not.toBeNull();
 
         fireEvent.keyDown(screen.getByRole('region', { name: 'Accessibility checks' }), { key: 'Escape' });
 
@@ -355,20 +336,6 @@ describe('the issues panel', () => {
 
         expect(descriptions[0]).toHaveAccessibleDescription(/Link text that does not say where it goes.*here$/);
         expect(descriptions[1]).toHaveAccessibleDescription(/Link text that does not say where it goes.*more$/);
-        unmount();
-    });
-
-    it('lists no issue on a stored table or embed that the model does not declare, which loads as an island', () => {
-        const model = checksModel(checksFeatures().filter(({ id }) => id !== 'tables' && id !== 'media.embed'));
-        const { unmount } = mountChecks({
-            model,
-            blocks: [headingBlock('title', 1, 'Report'), table('grid'), embed('clip', null)],
-        });
-        const panel = openPanel();
-
-        const ids = issueItems(panel).map((item) => item.getAttribute('data-rte-issue-id'));
-        expect(ids.filter((id) => id?.startsWith('table.') === true || id?.startsWith('embed.') === true)).toEqual([]);
-        expect(ids).toContain('heading.descriptive-review:title');
         unmount();
     });
 

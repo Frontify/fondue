@@ -30,12 +30,6 @@ export const deDE = {
         RichTextEditor_checkContrastUnknown: 'Textkontrast, der sich nicht messen lässt',
         RichTextEditor_checkContrastUnknownHelp:
             'Der Editor kennt die Farbe dieses Textes oder seines Hintergrunds nicht. Prüfen Sie, ob der Text gut lesbar ist, mit einem Kontrast von mindestens 4,5 zu 1, oder 3 zu 1 für großen Text.',
-        RichTextEditor_checkEmbedMediaReview: 'Eingebettete Medien',
-        RichTextEditor_checkEmbedMediaReviewHelp:
-            'Prüfen Sie, ob das Video Untertitel und Audiodeskription hat und nicht von selbst Ton abspielt.',
-        RichTextEditor_checkEmbedTitleMissing: 'Einbettung ohne Titel',
-        RichTextEditor_checkEmbedTitleMissingHelp:
-            'Ein eingebetteter Player braucht einen Titel, der seinen Inhalt nennt, damit Screenreader ihn ansagen. Bearbeiten Sie die Einbettung und geben Sie ihr einen Titel.',
         RichTextEditor_checkGenericImageWords:
             'bild|foto|fotografie|grafik|illustration|symbol|icon|logo|banner|bildschirmfoto|screenshot|platzhalter|ohne titel|vorschaubild|alternativtext',
         RichTextEditor_checkHeadingDescriptiveReview: 'Überschriftentext',
@@ -74,9 +68,6 @@ export const deDE = {
         RichTextEditor_checkStructureReview: 'Struktur, die nur optisch erkennbar ist',
         RichTextEditor_checkStructureReviewHelp:
             'Prüfen Sie, ob eine Struktur nur optisch gezeigt wird, etwa fetter Text als Überschrift, Absätze mit Strich oder Zahl als Liste oder Einzüge als Zitat. Verwenden Sie dafür die Befehle für Überschrift, Liste und Zitat.',
-        RichTextEditor_checkTableNoHeader: 'Tabelle ohne Kopfzellen',
-        RichTextEditor_checkTableNoHeaderHelp:
-            'Kopfzellen sagen Screenreadern, was eine Zeile oder Spalte enthält. Wenn die erste Zeile die Spalten benennt, machen Sie sie zur Kopfzeile.',
         RichTextEditor_checkVagueLinkTexts:
             'hier klicken|klicken|hier|link|dieser link|mehr|weiterlesen|mehr erfahren|mehr infos|mehr informationen|infos|details|weiter|los|diese seite|website',
         RichTextEditor_checks: 'Barrierefreiheitsprüfung',

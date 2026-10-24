@@ -30,12 +30,6 @@ export const itCH = {
         RichTextEditor_checkContrastUnknown: 'Contrasto del testo non misurabile',
         RichTextEditor_checkContrastUnknownHelp:
             'L’editor non conosce il colore di questo testo o del suo sfondo. Verifica che il testo sia facile da leggere, con un contrasto di almeno 4,5 a 1, o 3 a 1 per il testo grande.',
-        RichTextEditor_checkEmbedMediaReview: 'Contenuto multimediale incorporato',
-        RichTextEditor_checkEmbedMediaReviewHelp:
-            'Verifica se il video ha sottotitoli e audiodescrizione e che non riproduca suoni da solo.',
-        RichTextEditor_checkEmbedTitleMissing: 'Contenuto incorporato senza titolo',
-        RichTextEditor_checkEmbedTitleMissingHelp:
-            'Un player incorporato ha bisogno di un titolo che ne nomini il contenuto, così che gli screen reader lo annuncino. Modifica il contenuto incorporato e dagli un titolo.',
         RichTextEditor_checkGenericImageWords:
             'immagine|foto|fotografia|grafica|illustrazione|icona|logo|banner|screenshot|schermata|testo alternativo|segnaposto|senza titolo|miniatura',
         RichTextEditor_checkHeadingDescriptiveReview: 'Testo del titolo',
@@ -74,9 +68,6 @@ export const itCH = {
         RichTextEditor_checkStructureReview: 'Struttura solo visiva',
         RichTextEditor_checkStructureReviewHelp:
             'Verifica se una struttura è mostrata solo visivamente, come testo in grassetto usato come titolo, paragrafi che iniziano con un trattino o un numero usati come elenco, o un rientro che indica una citazione. Usa invece i comandi per titolo, elenco e citazione.',
-        RichTextEditor_checkTableNoHeader: 'Tabella senza celle di intestazione',
-        RichTextEditor_checkTableNoHeaderHelp:
-            'Le celle di intestazione dicono agli screen reader cosa contiene ogni riga o colonna. Se la prima riga nomina le colonne, rendila una riga di intestazione.',
         RichTextEditor_checkVagueLinkTexts:
             'clicca qui|clicca|qui|link|questo link|altro|di più|leggi di più|scopri di più|maggiori informazioni|info|dettagli|continua|vai|questa pagina|sito web',
         RichTextEditor_checks: 'Verifiche di accessibilità',

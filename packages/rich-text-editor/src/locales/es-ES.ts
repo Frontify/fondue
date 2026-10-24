@@ -28,12 +28,6 @@ export const esES = {
         RichTextEditor_checkContrastUnknown: 'Contraste de texto que no se puede medir',
         RichTextEditor_checkContrastUnknownHelp:
             'El editor no conoce el color de este texto o de su fondo. Comprueba que el texto se lee con facilidad, con un contraste de al menos 4,5 a 1, o 3 a 1 para texto grande.',
-        RichTextEditor_checkEmbedMediaReview: 'Contenido multimedia insertado',
-        RichTextEditor_checkEmbedMediaReviewHelp:
-            'Comprueba si el vídeo tiene subtítulos y audiodescripción, y que no reproduce sonido por sí solo.',
-        RichTextEditor_checkEmbedTitleMissing: 'Contenido insertado sin título',
-        RichTextEditor_checkEmbedTitleMissingHelp:
-            'Un reproductor insertado necesita un título que nombre su contenido, para que los lectores de pantalla lo anuncien. Edita el contenido insertado y dale un título.',
         RichTextEditor_checkGenericImageWords:
             'imagen|foto|fotografía|gráfico|ilustración|icono|logo|logotipo|banner|captura|captura de pantalla|texto alternativo|marcador|sin título|miniatura',
         RichTextEditor_checkHeadingDescriptiveReview: 'Texto del encabezado',
@@ -72,9 +66,6 @@ export const esES = {
         RichTextEditor_checkStructureReview: 'Estructura solo visual',
         RichTextEditor_checkStructureReviewHelp:
             'Comprueba si alguna estructura se muestra solo visualmente, como texto en negrita usado como encabezado, párrafos que empiezan con un guion o un número usados como lista, o una sangría que marca una cita. Usa en su lugar los comandos de encabezado, lista y cita.',
-        RichTextEditor_checkTableNoHeader: 'Tabla sin celdas de encabezado',
-        RichTextEditor_checkTableNoHeaderHelp:
-            'Las celdas de encabezado indican a los lectores de pantalla qué contiene cada fila o columna. Si la primera fila nombra las columnas, conviértela en fila de encabezado.',
         RichTextEditor_checkVagueLinkTexts:
             'haz clic aquí|clic aquí|haga clic aquí|clic|aquí|enlace|este enlace|más|leer más|saber más|más información|info|detalles|continuar|esta página|sitio web',
         RichTextEditor_checks: 'Comprobaciones de accesibilidad',
