@@ -32,3 +32,6 @@ const TaskItem = ({ attrs, children }: ReaderNodeProps) => {
 };
 
 export const taskReader: ReaderRenderers = { task_item: TaskItem };
+
+/** The feature these renderers belong to. */
+export const readerFeature = 'lists.task';

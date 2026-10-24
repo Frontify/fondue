@@ -92,3 +92,6 @@ const Image = ({ attrs, context }: ReaderNodeProps) => {
 };
 
 export const imageReader: ReaderRenderers = { figure: Figure, asset_image: Image };
+
+/** The feature these renderers belong to. */
+export const readerFeature = 'media.image';

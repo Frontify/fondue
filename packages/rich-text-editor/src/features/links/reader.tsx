@@ -41,3 +41,6 @@ const Link = ({ attrs, children, context }: ReaderNodeProps) => {
 };
 
 export const linkReader: ReaderRenderers = { link: Link };
+
+/** The feature these renderers belong to. */
+export const readerFeature = 'links';

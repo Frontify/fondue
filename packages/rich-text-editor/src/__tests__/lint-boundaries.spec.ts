@@ -237,6 +237,37 @@ const CASES: readonly Case[] = [
         "import { feature } from '#/features/link/feature';",
     ),
 
+    // feature index.ts
+    banned('feature index: another layer', 'src/features/bold/index.ts', "import { run } from '#/runtime/run';"),
+    banned('feature index: the model', 'src/features/bold/index.ts', "import { node } from '#/model';"),
+    banned(
+        'feature index: another bridge module',
+        'src/features/bold/index.ts',
+        "import { define } from '#/bridge/define';",
+    ),
+    banned('feature index: its migration', 'src/features/bold/index.ts', "import { migrate } from './migration';"),
+    banned('feature index: its view', 'src/features/bold/index.ts', "import { view } from './view';"),
+    banned(
+        'feature index: another feature',
+        'src/features/bold/index.ts',
+        "import { italic } from '../italic/feature';",
+    ),
+    banned(
+        'feature index: another feature by alias',
+        'src/features/bold/index.ts',
+        "import { italicPlugin } from '#/features/italic';",
+    ),
+    banned('feature index: react', 'src/features/bold/index.ts', "import { memo } from 'react';"),
+    banned('feature index: a Node built-in', 'src/features/bold/index.ts', "import { readFile } from 'node:fs';"),
+    allowed(
+        'feature index: the plugin definer',
+        'src/features/bold/index.ts',
+        "import { definePlugin } from '#/bridge/define-plugin';",
+    ),
+    allowed('feature index: its editor part', 'src/features/bold/index.ts', "import { boldEditor } from './editor';"),
+    allowed('feature index: its feature', 'src/features/bold/index.ts', "import { bold } from './feature';"),
+    allowed('feature index: its reader', 'src/features/bold/index.ts', "import { boldReader } from './reader';"),
+
     // feature fixtures
     banned(
         'feature fixtures: a model subpath',

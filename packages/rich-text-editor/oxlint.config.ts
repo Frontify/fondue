@@ -81,6 +81,9 @@ const EDITOR_PART_MESSAGE = `An editor part acts only through \`#/bridge/plugin\
 const CLIPBOARD_MESSAGE =
     '`clipboard` imports `model`, `definition`, `runtime`, `codecs`, `clipboard/import` and ProseMirror, never React or the editor layers.';
 
+const FEATURE_INDEX_MESSAGE =
+    "A feature's index builds its unit and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/define-plugin`.";
+
 const READER_FILE_MESSAGE =
     "A feature's reader override imports only `react` (no Node built-ins), `#/model`, `#/reader/define`, its own `./feature` and a declared dependency's `#/features/<id>/feature`, as an outside feature must.";
 
@@ -107,13 +110,14 @@ const PROSEMIRROR_EXCEPT_MODEL = DECLARED_PACKAGES.filter(
 
 const FEATURE_SIBLINGS = ['./*', './**', '!./migration'];
 
-// Every file of a feature folder but its vocabulary, migration, reader and fixtures is editor side.
+// Every file of a feature folder but its vocabulary, migration, reader, index and fixtures is editor side.
 const EDITOR_PART_FILES = ['src/features/*/**/*.{ts,tsx}'];
 
 const NOT_EDITOR_PART_FILES = [
     'src/features/*/feature.ts',
     'src/features/*/migration.ts',
     'src/features/*/reader.tsx',
+    'src/features/*/index.ts',
     'src/features/*/fixtures/**',
 ];
 
@@ -596,6 +600,22 @@ export default defineConfig({
                 message: READER_FILE_MESSAGE,
             },
             { group: READER_FILE_EXTERNALS, message: READER_FILE_MESSAGE },
+        ]),
+        layerOverride('src/features/*/index.ts', [
+            {
+                group: [
+                    ...aliasPatterns(FOLDERS),
+                    '!#/bridge/define-plugin',
+                    '../**',
+                    './*',
+                    './**',
+                    '!./feature',
+                    '!./editor',
+                    '!./reader',
+                ],
+                message: FEATURE_INDEX_MESSAGE,
+            },
+            { group: [...packagesExcept([]), ...NODE_BUILTINS], message: FEATURE_INDEX_MESSAGE },
         ]),
         layerOverride('src/features/*/fixtures/**/*.{ts,tsx}', [
             { group: ['#/model/**', ...relativePatterns(['model'])], message: MODEL_ENTRY_MESSAGE },

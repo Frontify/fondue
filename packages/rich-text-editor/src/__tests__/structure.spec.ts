@@ -395,6 +395,29 @@ const featureFolders = () =>
         .map((entry) => entry.name)
         .sort();
 
+const isExported = (statement: ts.VariableStatement) =>
+    statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) === true;
+
+// The names a feature's index.ts exports as `definePlugin(...)` units.
+const unitExports = (path: string) => {
+    const names: string[] = [];
+    for (const statement of parse(path).statements) {
+        if (ts.isVariableStatement(statement) && isExported(statement)) {
+            for (const { name, initializer } of statement.declarationList.declarations) {
+                if (
+                    initializer !== undefined &&
+                    ts.isCallExpression(initializer) &&
+                    ts.isIdentifier(initializer.expression) &&
+                    initializer.expression.text === 'definePlugin'
+                ) {
+                    names.push(name.getText());
+                }
+            }
+        }
+    }
+    return names;
+};
+
 // Each measure parses every product file, which outlasts the default timeout on a loaded machine.
 describe('package structure ratchet', { timeout: 60_000 }, () => {
     it('T-01: product files over 600 lines only shrink, data tables excepted', () => {
@@ -455,5 +478,18 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
 
     it('lists the feature folders', () => {
         expect(featureFolders()).toEqual([...FEATURE_FOLDERS].sort());
+    });
+
+    it('gives every feature folder an index.ts that exports exactly one definePlugin unit', () => {
+        const problems: string[] = [];
+        for (const folder of featureFolders()) {
+            const path = join(srcRoot, 'features', folder, 'index.ts');
+            if (!existsSync(path)) {
+                problems.push(`missing: features/${folder}/index.ts`);
+            } else if (unitExports(path).length !== 1) {
+                problems.push(`not exactly one definePlugin unit: features/${folder}/index.ts`);
+            }
+        }
+        expect(problems).toEqual([]);
     });
 });

@@ -16,3 +16,6 @@ const Mention = ({ attrs, context }: ReaderNodeProps) => {
 };
 
 export const mentionReader: ReaderRenderers = { mention: Mention };
+
+/** The feature these renderers belong to. */
+export const readerFeature = 'mentions';
