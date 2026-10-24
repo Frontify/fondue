@@ -7,6 +7,8 @@ import { type Diagnostic } from '#/model';
 import { type ExceededLimit } from '../limits';
 import { type CommandResult, type EditorSummary, type ReplaceResult } from '../types';
 
+/** How a wait for input to settle ended. */
+export type InputOutcome = 'settled' | 'timeout' | 'disposed';
 export type Mode = EditorSummary['mode'];
 export type RejectedCode = Extract<CommandResult, { readonly status: 'rejected' }>['code'];
 export type ReplaceCode = Extract<ReplaceResult, { readonly status: 'rejected' }>['code'];

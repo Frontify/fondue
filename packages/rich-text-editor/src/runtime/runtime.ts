@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { GapCursor } from 'prosemirror-gapcursor';
 import { type Node } from 'prosemirror-model';
 import {
-    AllSelection,
     EditorState,
     NodeSelection,
     Plugin,
@@ -77,11 +75,13 @@ import { createMetrics } from './session/metrics';
 import { createMode } from './session/mode';
 import { createPolicy } from './session/policy';
 import { createSaving } from './session/saving';
+import { createShown, summarize } from './session/shown';
 import { createStore } from './session/store';
 import {
     type Attempt,
     type BatchMetric,
     type Candidate,
+    type InputOutcome,
     type Intent,
     type Mode,
     type Prepared,
@@ -111,7 +111,6 @@ import {
     type ReplaceResult,
     type SaveStatus,
     type SelectionHandle,
-    type SelectionSummary,
     type ServerRevision,
     type Snapshot,
     type Unsubscribe,
@@ -134,8 +133,7 @@ const COMPOSITION_META = 'composition';
 // The target an async operation started with none gets at the selection.
 const ASYNC_TARGET: CaptureTargetOptions = { purpose: 'insert', onIntersectingEdit: 'map' };
 
-/** How a wait for input to settle ended. */
-export type InputOutcome = 'settled' | 'timeout' | 'disposed';
+export type { InputOutcome };
 
 /** What the host calls. */
 export interface RuntimeHandle {
@@ -352,40 +350,7 @@ const viewRuntimes = new WeakMap<EditorView, EditorRuntime>();
 /** The runtime whose surface `view` shows, for a plugin that one compiled definition shares between editors. */
 export const runtimeOfView = (view: EditorView): EditorRuntime | undefined => viewRuntimes.get(view);
 
-const kindOf = (selection: Selection): SelectionSummary['kind'] => {
-    if (selection instanceof TextSelection) {
-        return 'text';
-    }
-    if (selection instanceof NodeSelection) {
-        return 'node';
-    }
-    if (selection instanceof AllSelection) {
-        return 'all';
-    }
-    if (selection instanceof GapCursor) {
-        return 'gap';
-    }
-    return 'none';
-};
-
-export const summarize = (selection: Selection): SelectionSummary => {
-    let selectedNodeId: string | null = null;
-    if (selection instanceof NodeSelection && typeof selection.node.attrs.nodeId === 'string') {
-        selectedNodeId = selection.node.attrs.nodeId;
-    }
-    const { parent } = selection.$from;
-    let blockType: string | null = null;
-    if (parent.isTextblock) {
-        blockType = parent.type.name;
-    }
-    return { kind: kindOf(selection), collapsed: selection.empty, blockType, selectedNodeId };
-};
-
-const sameSelection = (a: SelectionSummary, b: SelectionSummary) =>
-    a.kind === b.kind &&
-    a.collapsed === b.collapsed &&
-    a.blockType === b.blockType &&
-    a.selectedNodeId === b.selectedNodeId;
+export { summarize };
 
 /** A plugin-error diagnostic with the failing feature and the error's name, never its message. */
 const pluginError = (error: unknown, featureId: string | undefined) => {
@@ -467,12 +432,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         onDisabledChange: () => view?.setProps({}),
     });
-    // The mode the surface shows, which follows `mode` once input has settled.
-    let shownMode = mode.mode();
     const columns = createColumns({ initial: options.columns ?? ONE_COLUMN, onChange: () => refreshView() });
-    // The columns the decorations show, which follow `columns` once input has settled.
-    let shownColumns = columns.current();
-    let shownStatus: SaveStatus | undefined;
     let typing = false;
     let view: EditorView | undefined;
     // The view the last `EditorView` constructor built, which plugin views receive before the constructor returns.
@@ -589,7 +549,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 settling.plugin,
                 targetsPlugin,
                 groupsPlugin,
-                columnsPlugin(() => shownColumns),
+                columnsPlugin(() => display.columns()),
                 stylesPlugin(() => options.styles?.() ?? []),
                 uploadSlotsPlugin(uploads),
                 nodeStatePlugin(),
@@ -597,18 +557,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             ],
         }),
     );
-    // The state whose document the snapshot and `sequence` last published, and how later provisional batches map it.
-    let published = store.state;
-    let provisional: Transaction['mapping'] | undefined;
-    let snapshotCache:
-        | {
-              readonly doc: Node;
-              readonly composing: boolean;
-              readonly revision: ServerRevision | null;
-              readonly value: Snapshot;
-          }
-        | undefined;
-    let shownSelection = summarize(store.state.selection);
 
     // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
     const busy = createBusy();
@@ -628,9 +576,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         composition: settling,
         notify: () => busy.run(notify),
         install: (next) => installState(next),
-        publish: () => {
-            published = store.state;
-        },
+        publish: () => display.setPublished(store.state),
         uploads: (d, k) => uploads.reset(d, k),
     });
 
@@ -641,20 +587,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const saving = createSaving({ revision: options.revision ?? null, sequence: identity.sequence, lifecycle });
     const saveStatus = saving.status;
-    const emitSaveStatus = () => {
-        const next = saveStatus();
-        if (next !== shownStatus) {
-            shownStatus = next;
-            emit('saveStatusChange', next);
-        }
-    };
-    const emitSelection = () => {
-        const next = summarize(store.state.selection);
-        if (!sameSelection(shownSelection, next)) {
-            shownSelection = next;
-            emit('selectionChange', next);
-        }
-    };
+    const display = createShown({
+        store,
+        mode: mode.mode(),
+        columns: columns.current(),
+        emit,
+        saveStatus,
+        composing: () => settling.active(),
+        stamp: identity.stamp,
+        encodeByBlock,
+    });
 
     const settleQueue = (code: RejectedCode) => {
         for (const intent of queue.splice(0)) {
@@ -688,8 +630,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (settling.active() || recovery !== undefined) {
             return;
         }
-        shownMode = mode.mode();
-        shownColumns = columns.current();
+        display.sync(mode.mode(), columns.current());
         if (view !== undefined) {
             view.setProps({});
         }
@@ -704,7 +645,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         cancelReady();
         // A composition that settles later publishes nothing.
         settling.cancel();
-        provisional = undefined;
+        display.takeProvisional();
         refreshView();
         settleQueue('not-ready');
         report(diagnostic);
@@ -773,7 +714,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     /** A composition batch, and every batch after it until input settles, is checked and published then. */
     const isProvisional = (root: Transaction) =>
-        settling.active() && (provisional !== undefined || root.getMeta(COMPOSITION_META) !== undefined);
+        settling.active() && (display.provisional() !== undefined || root.getMeta(COMPOSITION_META) !== undefined);
 
     /**
      * Applies a root transaction and every transaction plugins append to it, then the final policy and limit check,
@@ -874,9 +815,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         batch: BatchMetric,
         transactions: readonly Transaction[] = [],
     ): boolean => {
-        const previous = published;
+        const previous = display.published();
         const current = store.state;
-        published = current;
+        display.setPublished(current);
         // An effective change compares documents by node equality, never by serializing them.
         const changed = !current.doc.eq(previous.doc);
         if (changed) {
@@ -900,12 +841,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             metrics.record(batch);
             uploads.committed(transactions, origin === 'history');
         }
-        emitSelection();
+        display.emitSelection();
         if (changed) {
             saving.changed();
             checks.changed();
         }
-        emitSaveStatus();
+        display.emitSaveStatus();
         return changed;
     };
 
@@ -946,11 +887,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return false;
         }
         if (isProvisional(root)) {
-            if (provisional === undefined) {
-                provisional = mapping;
-            } else {
-                provisional.appendMapping(mapping);
-            }
+            display.addProvisional(mapping);
             notify();
             return false;
         }
@@ -989,17 +926,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             appended = repaired.appended;
         }
         if (
-            !policy.breaks(published.doc, store.state.doc, mapping) &&
-            policy.exceeds(store.state.doc, published.doc) === undefined
+            !policy.breaks(display.published().doc, store.state.doc, mapping) &&
+            policy.exceeds(store.state.doc, display.published().doc) === undefined
         ) {
             announce('input', null, { kind: 'commit', started, appended });
             return true;
         }
         // Targets released during the composition stay released, and those captured during it stay.
-        const restore = restoreTargets(published, store.state, mapping);
-        let restored = published;
+        const restore = restoreTargets(display.published(), store.state, mapping);
+        let restored = display.published();
         if (restore !== undefined) {
-            restored = published.apply(restore);
+            restored = restored.apply(restore);
         }
         if (!installState(restored)) {
             return false;
@@ -1014,8 +951,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
      * deferred `contenteditable` change, the queued intents and the held async results.
      */
     const settleInput = () => {
-        const mapping = provisional;
-        provisional = undefined;
+        const mapping = display.takeProvisional();
         busy.run(() => {
             // Roots that plugin views dispatch while the settled state installs commit after its check.
             if (mapping !== undefined && !guarded(() => settleProvisional(mapping))) {
@@ -1636,7 +1572,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (where === 'end') {
             commit(store.state.tr.setSelection(Selection.atEnd(store.state.doc)));
         }
-        if (shownMode === 'editable') {
+        if (display.mode() === 'editable') {
             view.focus();
             return;
         }
@@ -1745,7 +1681,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             // Intents of the old generation end before anything can drain them into the next.
             settleQueue('wrong-session');
             const previous = identity.nextGeneration(request.next.documentId);
-            published = store.state;
+            display.setPublished(store.state);
             encoder.capabilities = stored;
             policy.setCapabilities(encoder.capabilities);
             saving.replaced(request.next.revision, previous);
@@ -1764,8 +1700,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         uploads.reset(outgoing);
         coordinator.settle();
         busy.run(notify);
-        emitSelection();
-        emitSaveStatus();
+        display.emitSelection();
+        display.emitSaveStatus();
         emit('replaced', identity.session());
         refocus(focused);
         return { status: 'replaced', session: identity.session() };
@@ -1836,26 +1772,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 selection: summarize(store.state.selection),
             };
         },
-        // The same frozen object until the published document or the composition state changes.
-        getSnapshot: () => {
-            const composing = settling.active();
-            const acknowledged = saveStatus().revision;
-            if (
-                snapshotCache === undefined ||
-                snapshotCache.doc !== published.doc ||
-                snapshotCache.composing !== composing ||
-                snapshotCache.revision !== acknowledged
-            ) {
-                const value: Snapshot = snapshot({
-                    stamp: identity.stamp(),
-                    document: encodeByBlock(published.doc),
-                    acknowledgedRevision: acknowledged,
-                    compositionActive: composing,
-                });
-                snapshotCache = { doc: published.doc, composing, revision: acknowledged, value };
-            }
-            return snapshotCache.value;
-        },
+        getSnapshot: display.snapshot,
         getSaveStatus: saveStatus,
         getRecoveryCandidate: () => {
             if (!lifecycle.is('faulted') || recovery === undefined) {
@@ -1965,10 +1882,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                         {
                             ...props,
                             state: store.state,
-                            editable: () => lifecycle.is('ready') && shownMode === 'editable',
+                            editable: () => lifecycle.is('ready') && display.mode() === 'editable',
                             attributes: (current) => {
                                 const attributes: Record<string, string> = {};
-                                if (shownMode === 'readonly') {
+                                if (display.mode() === 'readonly') {
                                     // A surface that is not contenteditable takes no focus by itself,
                                     // unless it is disabled, which leaves the Tab order.
                                     if (!mode.disabled()) {
@@ -2106,7 +2023,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             pick: (nodeId) => options.pick?.(nodeId),
             statusOf: (nodeId) => uploads.statusOf(nodeId),
         },
-        saveStatusChanged: emitSaveStatus,
+        saveStatusChanged: display.emitSaveStatus,
         clearHistory: () => history.clear(),
         afterInput: (settled, timeoutMs) => settling.wait(settled, timeoutMs),
         measure: (kind, started, failureCode) => measure(kind, started, failureCode),
@@ -2121,7 +2038,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     if (options.saves !== undefined) {
         saving.attach(options.saves(runtime));
     }
-    shownStatus = saveStatus();
+    display.primeStatus();
     runtimes.set(handle, runtime);
     liveResources.installedFeatures.set(
         handle,

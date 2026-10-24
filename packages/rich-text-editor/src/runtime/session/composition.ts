@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type InputOutcome } from '../runtime';
 import { createInputSettling, type InputSettling } from '../settle';
+
+import { type InputOutcome } from './types';
 
 export interface Composition extends InputSettling {
     /** Calls `settled` once input settles after the composition that runs now, or with `timeout` after `timeoutMs`. */
