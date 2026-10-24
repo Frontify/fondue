@@ -7,6 +7,7 @@ import * as ReactDOMClient from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
+import { defineReaderFeature, type ReaderNodeProps, RichTextReader } from '#/entries/reader';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import {
     chromeEditorWith,
@@ -41,7 +42,6 @@ import { shipped as brandDocumentProfile } from '#/react/profiles/brand-document
 import { shipped as commentProfile } from '#/react/profiles/comment';
 import { shipped as documentProfile } from '#/react/profiles/document';
 import { shipped as inlineProfile } from '#/react/profiles/inline';
-import { defineReaderFeature, type ReaderNodeProps, RichTextReader } from '#/reader';
 import { type EditorRuntime, type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { probeRuntimes, setSelection, typeText } from '#/testing';
 

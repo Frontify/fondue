@@ -22,7 +22,6 @@ import { columnLayout, listDepths, styleSheetOf } from '#/model/output';
 
 import { readerContext } from './context';
 import { planOf, type ReaderOverrides } from './plan';
-import { SHIPPED_OVERRIDES } from './registry';
 import { message, renderDocument, type RenderState } from './render';
 
 /** What the host decides about one reader output: its styles, colours and the resolvers it renders with. */
@@ -196,7 +195,3 @@ export const ReaderWith = (props: ReaderProps): ReactElement => {
     }
     return output.element;
 };
-
-/** Renders a document as semantic HTML with no engine, hook, context or DOM access, on the server or in the browser. */
-export const RichTextReader = (props: RichTextReaderProps): ReactElement =>
-    ReaderWith({ ...props, overrides: SHIPPED_OVERRIDES });

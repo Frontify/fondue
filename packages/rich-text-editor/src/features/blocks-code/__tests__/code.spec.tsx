@@ -5,6 +5,7 @@ import { Decoration } from 'prosemirror-view';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
+import { RichTextReader } from '#/entries/reader';
 import { codeBlock, core } from '#/features';
 import { fixtureMention } from '#/features/__tests__/fixtures/features';
 import { CODE_LANGUAGES, languageChoices } from '#/features/blocks-code/languages';
@@ -13,7 +14,6 @@ import { listItem } from '#/features/lists-item/feature';
 import { compileContentModel, type ContentNodeJSON, type Diagnostic } from '#/model';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { mountText, para, storedIn, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
-import { RichTextReader } from '#/reader';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste, pressKey, setSelection, typeText } from '#/testing';
 

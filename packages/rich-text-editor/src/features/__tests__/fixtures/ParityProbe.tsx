@@ -2,13 +2,13 @@
 
 import { ThemeProvider } from '@frontify/fondue-components';
 
+import { RichTextReader } from '#/entries/reader';
 import { featuresById } from '#/features';
 import { highlightEditor } from '#/features/__tests__/fixtures/outside-editor';
 import { badgeDocument, highlight, highlightDocument } from '#/features/__tests__/fixtures/outside-feature';
 import { registry } from '#/features/registry';
 import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
-import { RichTextReader } from '#/reader';
 import { featureFixtures } from '#/testing/conformance/fixtures';
 
 // The model of the feature contract suite: every shipped feature and the outside fixture feature.

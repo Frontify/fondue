@@ -31,8 +31,8 @@
             "import": "./dist/features/index.js"
         },
         "./reader": {
-            "types": "./dist/reader/index.d.ts",
-            "import": "./dist/reader/index.js"
+            "types": "./dist/entries/reader.d.ts",
+            "import": "./dist/entries/reader.js"
         },
         "./codecs": {
             "types": "./dist/codecs/index.d.ts",

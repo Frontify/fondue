@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import '#/styles/content.css';
+import { RichTextReader } from '#/entries/reader';
 import { columns as layoutColumns, core } from '#/features';
 import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
-import { RichTextReader } from '#/reader';
 
 const model = compileContentModel([core(), layoutColumns()], { id: 'test.columns', version: 1 });
 const definition = defineEditor({ id: 'test.columns', model });

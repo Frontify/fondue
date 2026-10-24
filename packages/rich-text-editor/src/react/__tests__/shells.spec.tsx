@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs/codecs';
+import { RichTextReader } from '#/entries/reader';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, type ContentModel, type JsonValue } from '#/model';
@@ -16,7 +17,6 @@ import {
     type SaveResponse,
     type ServiceContext,
 } from '#/persistence/types';
-import { RichTextReader } from '#/reader/reader';
 import { createFakePersistenceService, typeText } from '#/testing';
 
 import { defineEditor } from '../define';

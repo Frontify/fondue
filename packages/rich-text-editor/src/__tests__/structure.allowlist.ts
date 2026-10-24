@@ -80,7 +80,8 @@ export const SPECS_OVER_1000_LINES: Record<string, number> = {
     'src/runtime/__tests__/runtime.spec.ts': 4501,
 };
 
-export const KNOWN_CYCLES: string[] = ['(root) | react', 'features | reader'];
+
+export const KNOWN_CYCLES: string[] = ['(root) | react'];
 
 export const PROSEMIRROR_NODES: string[] = ['bridge', 'clipboard/import', 'definition', 'testing', 'html', 'runtime'];
 

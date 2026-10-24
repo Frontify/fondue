@@ -7,8 +7,8 @@ import { fileURLToPath } from 'node:url';
 import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 
+import { RichTextReader, type RichTextReaderProps } from '#/entries/reader';
 import { type ContentModel } from '#/model';
-import { RichTextReader, type RichTextReaderProps } from '#/reader';
 
 // A path, not a `URL`: happy-dom replaces the global `URL`, which rejects a `file:` URL.
 const models = join(

@@ -7,6 +7,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { type EditorPlugin, pluginWithOptions } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { type CompiledDefinition } from '#/definition';
+import { RichTextReader } from '#/entries/reader';
 import { registry } from '#/features/registry';
 import { enUS } from '#/locales/en-US';
 import {
@@ -29,7 +30,6 @@ import { featureInternals } from '#/model/feature';
 import { isRecord, ownValue } from '#/model/values';
 import { editorEngine } from '#/react/engine';
 import { SHIPPED_PLUGINS } from '#/react/plugins';
-import { RichTextReader } from '#/reader';
 
 import { AXE_TAGS } from './axe-tags';
 import { featureFixtures } from './fixtures';

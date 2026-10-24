@@ -2,6 +2,7 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
+import { RichTextReader } from '#/entries/reader';
 import { documentModel } from '#/features';
 import { deDE } from '#/locales/de-DE';
 import {
@@ -15,7 +16,6 @@ import {
     quote,
     text,
 } from '#/react/examples/records';
-import { RichTextReader } from '#/reader';
 import '#/react/examples/content-styles';
 
 const model = documentModel;

@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createPortalStore } from '#/bridge/portals';
+import { defineReaderFeature } from '#/entries/reader';
 import { commentModel, documentModel, inlineModel } from '#/features';
 import { core } from '#/features/core/feature';
 import { defineEditor, type EditorHandle, type EditorServices, type PersistenceService, RichTextEditor } from '#/index';
@@ -16,7 +17,6 @@ import {
     defineFeature,
     type RichTextDocument,
 } from '#/model';
-import { defineReaderFeature } from '#/reader';
 import { typeText } from '#/testing';
 
 import { countImportFailures } from '../observability/import-failures';

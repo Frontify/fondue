@@ -3,9 +3,9 @@
 import { createElement } from 'react';
 
 import { createCodecs } from '#/codecs';
+import { RichTextReader } from '#/entries/reader';
 import { type EditorHandle } from '#/index';
 import { type ContentModel, type Diagnostic, type RichTextDocument } from '#/model';
-import { RichTextReader } from '#/reader';
 
 const RENDERER_FAILURES = ['reader.override-failed', 'codecs.override-failed', 'runtime.view-fault'];
 

@@ -5,6 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { RichTextReader } from '#/entries/reader';
 import { bold, commentModel, core, italic, links } from '#/features';
 import {
     type CompiledEditorDefinition,
@@ -19,7 +20,6 @@ import {
     useRichTextFormField,
 } from '#/index';
 import { type ContentModel, compileContentModel, createEmptyDocument } from '#/model';
-import { RichTextReader } from '#/reader';
 import { createFakePersistenceService } from '#/testing';
 
 import { recordOf, text, textOf } from './records';

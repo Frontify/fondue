@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { RichTextReader } from '#/entries/reader';
 import { fixtureEditorsOf } from '#/features/__tests__/fixtures/editors';
 import {
     COLOR_TOKENS,
@@ -15,7 +16,6 @@ import {
 } from '#/features/__tests__/fixtures/styles';
 import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { type RichTextDocument } from '#/model';
-import { RichTextReader } from '#/reader';
 import { setSelection } from '#/testing';
 
 const model = styleModel();

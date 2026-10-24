@@ -246,6 +246,8 @@ describe('package manifest and built output', () => {
         './codecs': [ENGINE_PACKAGES, DOM_PACKAGES],
         './html': [HTML_FORBIDDEN],
     };
+    // `./reader` is built from the module that wires the shipped feature readers, outside `reader/` and `features/`.
+    const HEADLESS_FILES: Record<string, string> = { './reader': 'entries/reader.js' };
     const EDITOR_FILES = /^(?:runtime|bridge|react|ui)\//;
 
     const bareName = (id: string): string =>
@@ -279,7 +281,7 @@ describe('package manifest and built output', () => {
 
     it('keeps engine packages, a live DOM root and the editor folders out of the headless entries', () => {
         for (const [entry, rules] of Object.entries(HEADLESS_FORBIDDEN)) {
-            const { bare, files } = reachedImports(`${entry.slice('./'.length)}/index.js`);
+            const { bare, files } = reachedImports(HEADLESS_FILES[entry] ?? `${entry.slice('./'.length)}/index.js`);
             const forbidden = bare.filter((specifier) =>
                 rules.some((rule) => rule.test(specifier) || rule.test(bareName(specifier))),
             );

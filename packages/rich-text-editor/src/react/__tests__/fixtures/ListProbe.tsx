@@ -3,6 +3,7 @@
 import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useRef, useState } from 'react';
 
+import { RichTextReader } from '#/entries/reader';
 import { bold, core, inputRules } from '#/features';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
@@ -18,7 +19,6 @@ import {
     type RichTextEditorProps,
 } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
-import { RichTextReader } from '#/reader';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel([core(), bold(), listItem(), bulletList(), orderedList(), taskList(), inputRules()], {

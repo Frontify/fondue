@@ -4,6 +4,7 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { RichTextReader } from '#/entries/reader';
 import { bold, core } from '#/features';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/features/__tests__/fixtures/features';
@@ -22,7 +23,6 @@ import {
     useRichTextFormField,
 } from '#/index';
 import { compileContentModel, type ContentModel, type ContentNodeJSON } from '#/model';
-import { RichTextReader } from '#/reader';
 import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { createFakePersistenceService, setSelection } from '#/testing';

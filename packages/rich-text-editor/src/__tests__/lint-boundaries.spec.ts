@@ -319,12 +319,39 @@ const CASES: readonly Case[] = [
     allowed('reader: a server safe react export', 'src/reader/server.tsx', "import { Fragment } from 'react';"),
     allowed('reader: model', 'src/reader/model.ts', "import { node } from '#/model';"),
     allowed('reader: locales', 'src/reader/locales.ts', "import { en } from '#/locales/en';"),
-    allowed(
+    banned(
         'reader: a feature reader',
         'src/reader/feature-reader.ts',
         "import { reader } from '#/features/bold/reader';",
     ),
+    banned(
+        'reader: a feature reader by a relative path',
+        'src/reader/feature-reader-relative.ts',
+        "import { reader } from '../features/bold/reader';",
+    ),
+    banned('reader: an entry module', 'src/reader/entry.ts', "import { RichTextReader } from '#/entries/reader';"),
     allowed('reader: a sibling file', 'src/reader/sibling.ts', "import { render } from './render';"),
+
+    // entries
+    banned('entries: another layer', 'src/entries/layer.ts', "import { run } from '#/runtime/run';"),
+    banned('entries: model', 'src/entries/model.ts', "import { node } from '#/model';"),
+    banned('entries: the engine', 'src/entries/engine.ts', "import { Schema } from 'prosemirror-model';"),
+    banned('entries: a feature file', 'src/entries/feature.ts', "import { feature } from '#/features/bold/feature';"),
+    banned('entries: a feature view', 'src/entries/view.ts', "import { view } from '#/features/bold/view';"),
+    banned(
+        'entries: the feature registry',
+        'src/entries/registry.ts',
+        "import { registry } from '#/features/registry';",
+    ),
+    banned('entries: a client hook', 'src/entries/hook.tsx', "import { useState } from 'react';"),
+    allowed('entries: a server safe react export', 'src/entries/server.tsx', "import { Fragment } from 'react';"),
+    allowed('entries: a reader module', 'src/entries/reader-module.ts', "import { render } from '#/reader/render';"),
+    allowed(
+        'entries: a feature reader',
+        'src/entries/feature-reader.ts',
+        "import { reader } from '#/features/bold/reader';",
+    ),
+    allowed('entries: a sibling file', 'src/entries/sibling.ts', "import { overrides } from './shipped-readers';"),
 
     // codecs
     banned('codecs: another layer', 'src/codecs/layer.ts', "import { run } from '#/runtime/run';"),
@@ -362,6 +389,7 @@ const CASES: readonly Case[] = [
         "import { check } from '#/testing/conformance/check';",
     ),
     allowed('testing: model', 'src/testing/model.ts', "import { node } from '#/model';"),
+    allowed('testing: an entry module', 'src/testing/entry.ts', "import { RichTextReader } from '#/entries/reader';"),
     allowed(
         'testing: the engine inside conformance',
         'src/testing/conformance/x.ts',
@@ -518,6 +546,12 @@ const CASES: readonly Case[] = [
     banned('docs: a model subpath', 'src/docs/subpath.tsx', "import { node } from '#/model/node';"),
     banned('docs: a parent folder', 'src/docs/parent.tsx', "import { example } from '../examples/basic';"),
     allowed('docs: a public entry', 'src/docs/entry.tsx', "import { node } from '#/model';"),
+    allowed(
+        'docs: the reader entry',
+        'src/docs/reader-entry.tsx',
+        "import { RichTextReader } from '#/entries/reader';",
+    ),
+    banned('docs: the reader folder', 'src/docs/reader-folder.tsx', "import { render } from '#/reader/render';"),
     allowed('docs: its own folder', 'src/docs/folder.tsx', "import { example } from './example';"),
 
     // styles

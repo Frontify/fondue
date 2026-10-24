@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { RichTextReader } from '#/reader';
+import { RichTextReader } from '#/entries/reader';
 
 import { semanticModel } from './semantic';
 

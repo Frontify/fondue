@@ -11,6 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type EditorApi, type EditorCommand, type EditorPlugin } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { type Normalizer, NORMALIZERS } from '#/definition';
+import { RichTextReader } from '#/entries/reader';
 import {
     align as blockAlign,
     bold,
@@ -38,7 +39,6 @@ import { featureRecords, registry } from '#/features/registry';
 import { fromHTML } from '#/html';
 import { defineEditor, defineEditorPlugin, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature, type Diagnostic, type Feature, type RichTextDocument } from '#/model';
-import { RichTextReader } from '#/reader';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, runFeatureContract, setSelection } from '#/testing';
 import { featureFixtures } from '#/testing/conformance/fixtures';

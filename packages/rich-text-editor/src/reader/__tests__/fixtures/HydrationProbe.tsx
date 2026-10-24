@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 
-import { RichTextReader } from '#/reader';
+import { RichTextReader } from '#/entries/reader';
 
 import { semanticModel } from './semantic';
 

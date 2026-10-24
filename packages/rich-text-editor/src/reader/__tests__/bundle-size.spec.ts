@@ -8,7 +8,7 @@ import { budgets, measure } from '../../__tests__/fixtures/size/bundle';
 
 describe('reader bundle', () => {
     it('stays within its Brotli budget with zero engine bytes', async () => {
-        const { bytes, modules } = await measure("export * from '#/reader';");
+        const { bytes, modules } = await measure("export * from '#/entries/reader';");
 
         expect(modules.filter((id) => /[/\\](?:prosemirror-[\w-]+|rope-sequence|orderedmap)[/\\]/.test(id))).toEqual(
             [],

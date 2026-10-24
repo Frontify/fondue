@@ -6,10 +6,10 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { RichTextReader } from '#/entries/reader';
 import { defineReactPresentation } from '#/index';
 import { REPLACED_ASSET } from '#/model/assets';
 import { liveRegionFaults } from '#/react/__tests__/fixtures/live-region';
-import { RichTextReader } from '#/reader';
 import { nodeStateOf } from '#/runtime/node-state';
 import { pressKey, setSelection, typeText } from '#/testing';
 

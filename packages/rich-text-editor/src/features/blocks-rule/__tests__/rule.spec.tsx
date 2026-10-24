@@ -7,6 +7,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
+import { RichTextReader } from '#/entries/reader';
 import { columns, core, quote } from '#/features';
 import {
     columnBreak,
@@ -18,7 +19,6 @@ import {
 } from '#/features/__tests__/fixtures/layout';
 import { type ContentNodeJSON } from '#/model';
 import { para, storedIn, text } from '#/react/__tests__/fixtures/text';
-import { RichTextReader } from '#/reader';
 import { setSelection, typeText } from '#/testing';
 
 beforeEach(() => {

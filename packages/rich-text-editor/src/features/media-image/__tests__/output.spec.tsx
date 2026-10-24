@@ -5,8 +5,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
+import { RichTextReader } from '#/entries/reader';
 import { decodeDocument, type Diagnostic, type ReferenceResolution } from '#/model';
-import { RichTextReader } from '#/reader';
 
 import { figure, imageModel, para, resolving, storedIn, text } from './fixtures/mount';
 

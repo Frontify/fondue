@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { RichTextReader } from '#/entries/reader';
 import { fixtureEditorsOf } from '#/features/__tests__/fixtures/editors';
 import {
     COLOR_TOKENS,
@@ -16,7 +17,6 @@ import {
 import { taskList } from '#/features/lists-task/feature';
 import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
-import { RichTextReader } from '#/reader';
 
 const model = compileContentModel([...styleFeatures(true), taskList()], { id: 'test.struck-tasks', version: 1 });
 const definition = defineEditor({ id: 'test.struck-tasks', model, plugins: fixtureEditorsOf(model) });

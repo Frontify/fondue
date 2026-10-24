@@ -5,12 +5,12 @@ import { AllSelection, NodeSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
+import { RichTextReader } from '#/entries/reader';
 import { fixtureItalic } from '#/features/__tests__/fixtures/features';
 import { featuresById } from '#/features/registry';
 import { compileContentModel, type ContentNodeJSON, defineFeature } from '#/model';
 import { done, item, list, listModel, outline, outlineOf } from '#/react/__tests__/fixtures/lists';
 import { mountText, para, storedIn, text } from '#/react/__tests__/fixtures/text';
-import { RichTextReader } from '#/reader';
 import { paste, pressKey, setSelection, typeText } from '#/testing';
 
 /** The node view checkbox lands in its chrome slot once the portal store's microtask renders. */

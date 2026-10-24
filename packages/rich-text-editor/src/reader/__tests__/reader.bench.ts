@@ -6,7 +6,7 @@ import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { expect, test } from 'vitest';
 
-import { RichTextReader } from '#/reader';
+import { RichTextReader } from '#/entries/reader';
 
 import { measureNode } from '../../../perf/node';
 import { perfDocument, perfModel } from '../../model/__tests__/fixtures/perf/documents';

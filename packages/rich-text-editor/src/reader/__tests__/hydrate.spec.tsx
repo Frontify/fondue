@@ -5,7 +5,7 @@ import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { RichTextReader } from '../reader';
+import { RichTextReader } from '#/entries/reader';
 
 import { semanticModel } from './fixtures/semantic';
 import { fixturesIn } from './helpers/helpers';

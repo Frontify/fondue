@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { SHIPPED_OVERRIDES } from '#/entries/shipped-readers';
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
 import { UNSHIPPED_FEATURES } from '#/features/stages';
 import { type ContentModel, type RichTextDocument } from '#/model';
@@ -14,7 +15,6 @@ import { shipped as comment } from '#/react/profiles/comment';
 import { shipped as document } from '#/react/profiles/document';
 import { shipped as inline } from '#/react/profiles/inline';
 import { type ShippedProfile } from '#/react/profiles/parts';
-import { SHIPPED_OVERRIDES } from '#/reader/registry';
 import { featureFixtures } from '#/testing/conformance/fixtures';
 
 // The Profiles tables of SPEC-rich-text, before the Release stages filter.

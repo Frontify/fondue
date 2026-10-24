@@ -3,6 +3,7 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { RichTextReader } from '#/entries/reader';
 import { blockquote, doc, envelope, mention, paragraph, text } from '#/features/__tests__/fixtures/documents';
 import { vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
@@ -11,7 +12,6 @@ import { decodeToTree } from '#/model/decode';
 import type * as DecodeModule from '#/model/decode';
 
 import { defineReaderFeature } from '../define';
-import { RichTextReader } from '../reader';
 
 import { semanticModel } from './fixtures/semantic';
 

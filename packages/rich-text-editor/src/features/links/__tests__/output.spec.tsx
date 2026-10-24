@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs/codecs';
+import { RichTextReader } from '#/entries/reader';
 import { heading } from '#/features/blocks-heading/feature';
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
@@ -23,7 +24,6 @@ import {
 } from '#/model';
 import urls from '#/model/__tests__/fixtures/urls.json';
 import { mountText, para, storedIn, text } from '#/react/__tests__/fixtures/text';
-import { RichTextReader } from '#/reader';
 import { paste, setSelection } from '#/testing';
 
 beforeEach(() => {

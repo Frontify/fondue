@@ -19,6 +19,7 @@ const FOLDERS = [
     'ui',
     'react',
     'reader',
+    'entries',
     'codecs',
     'features',
     'locales',
@@ -94,7 +95,10 @@ const FEATURE_WIRING_MESSAGE =
     'The feature index, registry and profiles wire shipped features from `model`, and do not load views, readers or the editor.';
 
 const READER_MESSAGE =
-    '`reader` imports `model`, `locales` and `#/features/*/reader`, because the reader never loads editor code.';
+    '`reader` imports `model` and `locales`, never a feature, because a feature reader imports `#/reader/define`.';
+
+const ENTRIES_MESSAGE =
+    '`entries` imports `#/reader/*` and `#/features/*/reader` only, because an entry wires the shipped feature readers and loads no editor code.';
 
 const CLIENT_REACT_MESSAGE =
     'The reader renders on the server too, so it uses no client hook, context or class component.';
@@ -146,7 +150,8 @@ const STORY_EXTERNALS = [...packagesExcept([...UI_PACKAGES, 'storybook', '@story
 // The public entries come from `exports`, the style sheet entry is no module.
 const PUBLIC_ENTRY_MODULES = Object.entries(packageJson.exports)
     .filter(([, target]) => typeof target === 'object')
-    .map(([entry]) => (entry === '.' ? 'index' : entry.slice(2)));
+    .map(([entry]) => (entry === '.' ? 'index' : entry.slice(2)))
+    .map((path) => (path === 'reader' ? 'entries/reader' : path));
 
 // The public entries, the modules they re-export to plugins and the shared story folder, through the alias.
 const STORY_MODULES = [...PUBLIC_ENTRY_MODULES, 'bridge/plugin', 'bridge/define', 'reader/define', 'react/examples/**'];
@@ -204,21 +209,6 @@ const FEATURE_FILE_TAILS = [
 const WIRING_FEATURE_TAILS = [
     '/*/view',
     '/*/reader',
-    '/*/fixtures',
-    '/*/fixtures/**',
-    '/__tests__',
-    '/__tests__/**',
-] as const;
-
-const READER_FEATURE_TAILS = [
-    '',
-    '/index',
-    '/registry',
-    '/profiles',
-    '/profiles/**',
-    '/*/feature',
-    '/*/view',
-    '/*/migration',
     '/*/fixtures',
     '/*/fixtures/**',
     '/__tests__',
@@ -322,9 +312,9 @@ const definitionFolders = FOLDERS.filter((folder) => folder !== 'model' && folde
 
 const outsideFeatureFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'features');
 
-const readerFolders = FOLDERS.filter(
-    (folder) => folder !== 'model' && folder !== 'locales' && folder !== 'reader' && folder !== 'features',
-);
+const readerFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'locales' && folder !== 'reader');
+
+const entriesFolders = FOLDERS.filter((folder) => folder !== 'reader');
 
 const codecsFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'locales' && folder !== 'codecs');
 
@@ -366,6 +356,7 @@ const testingAllowed = new Set([
     'persistence',
     'definition',
     'reader',
+    'entries',
     'codecs',
     'locales',
     'testing',
@@ -633,13 +624,27 @@ export default defineConfig({
             [
                 {
                     group: [
-                        ...EDITOR_PART_PATTERNS,
                         ...aliasPatterns(readerFolders),
                         ...relativePatterns(readerFolders),
-                        ...featurePathPatterns(READER_FEATURE_TAILS),
                         ...PROSEMIRROR_PATTERNS,
                     ],
                     message: READER_MESSAGE,
+                },
+            ],
+            [],
+            [CLIENT_REACT],
+        ),
+        layerOverride(
+            'src/entries/**/*.{ts,tsx}',
+            [
+                {
+                    group: [
+                        ...aliasPatterns(entriesFolders),
+                        ...relativePatterns(entriesFolders),
+                        ...exceptPatterns(['features/*/reader']),
+                        ...PROSEMIRROR_PATTERNS,
+                    ],
+                    message: ENTRIES_MESSAGE,
                 },
             ],
             [],

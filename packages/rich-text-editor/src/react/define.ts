@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type EditorPlugin } from '#/bridge/plugin';
+import { SHIPPED_OVERRIDES } from '#/entries/shipped-readers';
 import { type ContentModel } from '#/model';
-import { SHIPPED_OVERRIDES } from '#/reader/registry';
 
 import { compileEditor } from './compile-editor';
 import { SHIPPED_PLUGINS } from './plugins';

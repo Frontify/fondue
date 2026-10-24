@@ -3,6 +3,7 @@
 import { ThemeProvider } from '@frontify/fondue-components';
 import { type ProfilerOnRenderCallback, Profiler, useRef, useState } from 'react';
 
+import { RichTextReader } from '#/entries/reader';
 import {
     defineEditor,
     defineReactPresentation,
@@ -10,7 +11,6 @@ import {
     RichTextEditor,
     type RichTextEditorProps,
 } from '#/index';
-import { RichTextReader } from '#/reader';
 
 import { perfDocument, type PerfFixtureName, perfModel } from '../../../model/__tests__/fixtures/perf/documents';
 

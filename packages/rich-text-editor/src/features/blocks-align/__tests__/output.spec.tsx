@@ -5,12 +5,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import { createCodecs } from '#/codecs';
+import { RichTextReader } from '#/entries/reader';
 import { align } from '#/features/blocks-align/feature';
 import { heading } from '#/features/blocks-heading/feature';
 import { core } from '#/features/core/feature';
 import { language } from '#/features/marks-language/feature';
 import { compileContentModel, type RichTextDocument } from '#/model';
-import { RichTextReader } from '#/reader';
 
 const model = compileContentModel([core(), heading(), align(), language()], { id: 'test.output', version: 1 });
 

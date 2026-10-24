@@ -17,7 +17,7 @@ const load = async () => {
     const { renderToString } = await import('react-dom/server');
     const { createElement } = await import('react');
     const model = await import('#/model');
-    const reader = await import('#/reader');
+    const reader = await import('#/entries/reader');
     return { semanticModel, renderToString, createElement, model, reader };
 };
 let loaded: Awaited<ReturnType<typeof load>>;

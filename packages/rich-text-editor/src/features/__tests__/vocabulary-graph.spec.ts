@@ -79,7 +79,7 @@ describe('the vocabulary graph', () => {
         let entries: Entries;
         beforeEach(async () => {
             entries = await loadVocabulary();
-            await import('#/reader');
+            await import('#/entries/reader');
         });
 
         it('loads React for ./reader, which renders with it, and still no engine, DOM renderer or editor part', () => {

@@ -8,6 +8,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
+import { RichTextReader } from '#/entries/reader';
 import {
     columnBreak,
     layoutFeatures,
@@ -24,7 +25,6 @@ import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEdito
 import { deDE } from '#/locales/de-DE';
 import { type ContentNodeJSON } from '#/model';
 import { para, storedIn, text } from '#/react/__tests__/fixtures/text';
-import { RichTextReader } from '#/reader';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
