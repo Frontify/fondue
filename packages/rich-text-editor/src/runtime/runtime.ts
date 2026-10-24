@@ -49,7 +49,7 @@ import { hrefPolicyOf } from '#/model/href';
 import { randomId } from '#/model/random-id';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
-import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
+import { type AsyncOperation, type AsyncRequest } from './async';
 import { createContentChecks } from './capabilities/checks/content-issues';
 import { insertPicked, pickedAsset, refillPicked } from './capabilities/media/media';
 import { uploadSlotsPlugin } from './capabilities/media/upload-slots';
@@ -87,6 +87,7 @@ import { createPolicy } from './session/policy';
 import { createSaving } from './session/saving';
 import { createShown, summarize } from './session/shown';
 import { createStore } from './session/store';
+import { createTargetsService } from './session/targets';
 import {
     type Attempt,
     type BatchMetric,
@@ -101,7 +102,7 @@ import {
 } from './session/types';
 import { createView, isEmpty } from './session/view';
 import { stylesPlugin } from './styles';
-import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
+import { countTargets, releaseTargets, restoreTargets, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
     type CaptureResult,
@@ -129,8 +130,6 @@ import {
 const MAX_ENQUEUE_DEPTH = 32;
 // ProseMirror marks each DOM change it reads during a composition with this meta.
 const COMPOSITION_META = 'composition';
-// The target an async operation started with none gets at the selection.
-const ASYNC_TARGET: CaptureTargetOptions = { purpose: 'insert', onIntersectingEdit: 'map' };
 
 export type { InputOutcome };
 
@@ -439,8 +438,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let installing = false;
     // Roots that plugin views dispatch while an install runs, committed once its selectors and events are done.
     const deferred: Transaction[] = [];
-    // Targets the coordinator captures during a commit, such as from a running command, captured once it ends.
-    const deferredCaptures: string[] = [];
     const queue: Intent[] = [];
     // `media.image` and the media types it accepts, which its `acceptTypes` option sets.
     const imageFeature = compiledModel(definition.model).features.find(({ id }) => id === UPLOAD_FEATURE);
@@ -547,7 +544,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const busy = createBusy();
     busy.onIdle(
         () => metrics.flush(),
-        () => flushCaptures(),
+        () => targets.flushCaptures(),
         () => uploads.flush(),
     );
     busy.afterEach(() => drain());
@@ -1017,36 +1014,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         });
     };
 
-    /** The ID of a target this session captured, or why it is not one. */
-    const ownTarget = (target: unknown): { readonly id: string } | RejectedCode => {
-        if (!isRecord(target) || typeof target.id !== 'string' || !isRecord(target.session)) {
-            return 'target-invalid';
-        }
-        if (
-            target.session.sessionId !== identity.session().sessionId ||
-            target.session.generation !== identity.session().generation
-        ) {
-            return 'wrong-session';
-        }
-        return { id: target.id };
-    };
-
-    /** The state a command runs on: the current one, or with the selection at its target's mapped range. */
-    const baseOf = (options: unknown): EditorState | RejectedCode => {
-        if (!isRecord(options) || options.target === undefined) {
-            return store.state;
-        }
-        const target = ownTarget(options.target);
-        if (typeof target === 'string') {
-            return target;
-        }
-        const selection = targetSelection(store.state, target.id);
-        if (selection === undefined) {
-            return 'target-invalid';
-        }
-        return store.state.apply(store.state.tr.setSelection(selection));
-    };
-
     /**
      * The payload with each `url` field in the form `checkHref` stores, after the policy of the command's feature, or
      * `undefined` when one fails it.
@@ -1364,61 +1331,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return runOn(refillPicked(nodeId, asset), { payload: undefined }, () => store.state, 'host');
     };
 
-    /** Commits a capture of the selection, or of `range`, as target `id`. */
-    const captureNow = (
-        id: string,
-        options: CaptureTargetOptions,
-        range?: { readonly from: number; readonly to: number },
-    ) => commit(captureTarget(store.state, id, options, range));
-    /** Captures the selection, or `range`, as a new target, unless a commit or notification runs. */
-    const captureRange = (
-        options: CaptureTargetOptions,
-        range: { readonly from: number; readonly to: number } | undefined,
-    ): CaptureResult => {
-        // During a commit or notification the capture's root would wait or go stale, so it is refused, as `execute` is.
-        if (!lifecycle.is('ready') || busy.isBusy()) {
-            return { status: 'rejected', code: 'not-ready' };
-        }
-        const id = generate();
-        captureNow(id, options, range);
-        return { status: 'captured', target: handleOf(id) };
-    };
-    /** The handle of target `id` in this session. */
-    const handleOf = (id: string) => Object.freeze({ id, session: identity.session() }) as unknown as SelectionHandle;
-
-    /**
-     * Captures each deferred target once no commit runs, at the selection the commit left, which ProseMirror maps
-     * through the commit's steps (`Transaction.selection`).
-     */
-    const flushCaptures = () => {
-        for (let id = deferredCaptures.shift(); id !== undefined; id = deferredCaptures.shift()) {
-            if (lifecycle.is('ready')) {
-                captureNow(id, ASYNC_TARGET);
-            }
-        }
-    };
-
-    const coordinator = createAsyncCoordinator({
-        generateId: generate,
-        session: identity.session,
-        policyRevision: policy.revision,
-        isDisposed,
-        isFaulted: () => lifecycle.is('faulted'),
-        // A result waits out a replacement, which applies it if it fails and discards it in the next generation.
-        holding: () => settling.active() || lifecycle.is('transitioning'),
-        capture: () => {
-            if (!lifecycle.is('ready')) {
-                return undefined;
-            }
-            const id = generate();
-            if (busy.isBusy()) {
-                deferredCaptures.push(id);
-            } else {
-                captureNow(id, ASYNC_TARGET);
-            }
-            return handleOf(id);
-        },
-        release: (target) => handle.releaseTarget(target),
+    const targets = createTargetsService({
+        store,
+        identity,
+        lifecycle,
+        busy,
+        policy,
+        composition: settling,
+        commit,
+        generate,
+        report,
+        serviceChanged: saving.serviceChanged,
         // A result runs as its command's payload through `commit` from the current state.
         apply: (operation, result) => {
             let options: { readonly target: SelectionHandle } | undefined;
@@ -1431,8 +1354,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             return undefined;
         },
-        report,
     });
+    const { coordinator, baseOf, captureRange } = targets;
 
     /** One search of a suggestion list, as one operation of the coordinator that the list's newer search supersedes. */
     const searchSuggestions: SuggestionHost['search'] = ({ key, featureId, command, run }, receive) => {
@@ -1515,7 +1438,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         uploads.dispose(store.state.doc);
         settleQueue('not-ready');
         deferred.length = 0;
-        deferredCaptures.length = 0;
+        targets.clearDeferred();
         const release = releaseTargets(store.state);
         if (release !== undefined) {
             liveResources.targets -= countTargets(store.state);
@@ -1752,20 +1675,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         execute,
         enqueue,
         captureTarget: (options) => captureRange(options, undefined),
-        releaseTarget: (target) => {
-            const owned = ownTarget(target);
-            if (lifecycle.is('disposed') || typeof owned === 'string') {
-                return;
-            }
-            const waiting = deferredCaptures.indexOf(owned.id);
-            if (waiting >= 0) {
-                deferredCaptures.splice(waiting, 1);
-            }
-            const release = releaseTargets(store.state, [owned.id]);
-            if (release !== undefined) {
-                commit(release);
-            }
-        },
+        releaseTarget: targets.releaseTarget,
         requestCommit: saving.request,
         replaceDocument: async (request) => {
             const started = Date.now();
@@ -1870,12 +1780,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         watch,
         startAsync: coordinator.start,
-        changeServices: (members) => {
-            coordinator.abortWhere((operation) => members.includes(operation.service));
-            if (members.includes('persistence')) {
-                saving.serviceChanged();
-            }
-        },
+        changeServices: targets.changeServices,
         setDisabled: mode.setDisabled,
         setColumns: columns.set,
         faultView: views.faultView,
