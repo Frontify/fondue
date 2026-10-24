@@ -68,6 +68,7 @@ import { sameStamp, type SaveCoordinator } from './saves';
 import { scrollSelectionIntoView } from './scroll';
 import { createBusy } from './session/busy';
 import { createColumns } from './session/columns';
+import { createComposition } from './session/composition';
 import { createEncoder } from './session/encode';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
@@ -87,7 +88,6 @@ import {
     type ReplaceCode,
     type Route,
 } from './session/types';
-import { createInputSettling } from './settle';
 import { stylesPlugin } from './styles';
 import { type SuggestionHost, suggestionHosts } from './suggestions/host';
 import { suggestionOptionId } from './suggestions/option-id';
@@ -529,8 +529,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // Targets the coordinator captures during a commit, such as from a running command, captured once it ends.
     const deferredCaptures: string[] = [];
     const queue: Intent[] = [];
-    // What waits for input to settle outside the queue, such as a form's settled value.
-    const afterInput = new Set<(outcome: InputOutcome) => void>();
     // `media.image` and the media types it accepts, which its `acceptTypes` option sets.
     const imageFeature = compiledModel(definition.model).features.find(({ id }) => id === UPLOAD_FEATURE);
     let acceptTypes: readonly string[] | undefined;
@@ -605,10 +603,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             },
         },
     });
-    const settling = createInputSettling(
-        () => view !== undefined && view.composing,
-        () => settleInput(),
-    );
+    const settling = createComposition({
+        composing: () => view !== undefined && view.composing,
+        onSettled: () => settleInput(),
+    });
     const keyGuard = createKeyGuard(
         () => options.tabMovesFocus?.() === true,
         () => options.enterKeys,
@@ -1047,9 +1045,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         });
         coordinator.settle();
         saving.settled();
-        for (const settled of [...afterInput]) {
-            settled('settled');
-        }
+        settling.resolve('settled');
     };
 
     /** Marks a typed root with the rules the host's prop and the policy turn off now. */
@@ -1633,9 +1629,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         lifecycle.to('disposed');
         settling.cancel();
         checks.dispose();
-        for (const settled of [...afterInput]) {
-            settled('disposed');
-        }
+        settling.resolve('disposed');
         coordinator.dispose();
         uploads.dispose(store.state.doc);
         settleQueue('not-ready');
@@ -2145,17 +2139,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 busy.run(notify);
             }
         },
-        afterInput: (settled, timeoutMs) => {
-            // Whichever comes first, the settle, the timeout or `dispose`, answers; the others find nothing.
-            const waiter = (outcome: InputOutcome) => {
-                if (afterInput.delete(waiter)) {
-                    clearTimeout(timer);
-                    settled(outcome);
-                }
-            };
-            const timer = setTimeout(() => waiter('timeout'), timeoutMs);
-            afterInput.add(waiter);
-        },
+        afterInput: (settled, timeoutMs) => settling.wait(settled, timeoutMs),
         measure: (kind, started, failureCode) => measure(kind, started, failureCode),
         runChecks: () => checks.run(),
     };
