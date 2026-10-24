@@ -200,6 +200,46 @@ describe('the recovery shell', () => {
         unmount();
     });
 
+    it('clears the host ref while the shell shows and fills it again on Retry', () => {
+        const { ref, unmount } = breakAfterTyping();
+        expect(ref.current).toBeNull();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+
+        expect(ref.current).not.toBeNull();
+        unmount();
+    });
+
+    it('holds a new handle after a remount by key and null after unmount', () => {
+        const ref = createRef<EditorHandle<object>>();
+        const tree = (key: string) => (
+            <RichTextEditor
+                key={key}
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={stored(envelope([para('ab')]))}
+                ref={ref}
+            />
+        );
+        const { rerender, unmount } = render(tree('a'));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        const first = handleOf(ref);
+
+        rerender(tree('b'));
+        act(() => {
+            vi.advanceTimersToNextFrame();
+        });
+        expect(handleOf(ref)).not.toBe(first);
+
+        unmount();
+        expect(ref.current).toBeNull();
+    });
+
     it('mounts the snapshot on Retry under the document ID it was loaded with, not a newer prop', () => {
         const { before, ref, rerender, tree, unmount } = breakAfterTyping();
         rerender(tree(false, 'b'));

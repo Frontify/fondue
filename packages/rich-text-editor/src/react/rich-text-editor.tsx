@@ -369,7 +369,7 @@ type SessionProps = Defined & {
 
 const SessionComponent = (
     { children, onSession, onRetry, retried, ...props }: SessionProps,
-    ref: ForwardedRef<EditorHandle<object>>,
+    ref: ForwardedRef<EditorHandle<object> | null>,
 ) => {
     // The record this session loads, which a later `defaultValue` never replaces.
     const [loaded] = useState(() => retried ?? props.defaultValue);
@@ -649,11 +649,17 @@ const SessionComponent = (
         return () => {
             coordinator.stop();
             runtime.handle.dispose();
+            handleRef.current = null;
+            setLive(undefined);
         };
     }, [mounted, loaded, coordinator, portals, work, onSession, scope, hosts]);
 
-    // A blocked document gets no session and so no handle.
-    useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
+    // A blocked document gets no session and so no handle. The ref is the fallback because `live` lags the layout effect.
+    useImperativeHandle<EditorHandle<object> | null, EditorHandle<object> | null>(
+        ref,
+        () => live?.handle ?? handleRef.current,
+        [live],
+    );
 
     const mode = modeOf(props);
     useClientLayoutEffect(() => {
@@ -1065,7 +1071,7 @@ Session.displayName = 'RichTextEditor.Session';
 
 interface RecoveryProps {
     readonly props: Defined & { readonly children: ReactNode };
-    readonly editorRef: ForwardedRef<EditorHandle<object>>;
+    readonly editorRef: ForwardedRef<EditorHandle<object> | null>;
 }
 interface RecoveryState {
     readonly failed: boolean;
@@ -1152,32 +1158,34 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
     }
 }
 
-const Root = forwardRef((props: Props & { readonly children: ReactNode }, ref: ForwardedRef<EditorHandle<object>>) => {
-    const { definition } = props;
-    const locale = useEditorLocale(props.locale);
-    let profile: RichTextProfile | undefined;
-    if (definition === undefined) {
-        profile = props.profile ?? 'document';
-    }
-    const shipped = useProfile(profile);
-    const coarse = useCoarsePointer();
-    if (definition !== undefined) {
-        return <Recovery props={{ ...props, definition, locale }} editorRef={ref} />;
-    }
-    // The profile's module loads through `import()`, and the editor renders once it has.
-    if (shipped === undefined) {
-        return null;
-    }
-    let resolved: Defined & { readonly children: ReactNode } = { ...props, definition: shipped.definition, locale };
-    if (props.presentation === undefined) {
-        let { presentation } = shipped;
-        if (coarse && shipped.touchPresentation !== undefined) {
-            presentation = shipped.touchPresentation;
+const Root = forwardRef(
+    (props: Props & { readonly children: ReactNode }, ref: ForwardedRef<EditorHandle<object> | null>) => {
+        const { definition } = props;
+        const locale = useEditorLocale(props.locale);
+        let profile: RichTextProfile | undefined;
+        if (definition === undefined) {
+            profile = props.profile ?? 'document';
         }
-        resolved = { ...resolved, presentation };
-    }
-    return <Recovery props={resolved} editorRef={ref} />;
-});
+        const shipped = useProfile(profile);
+        const coarse = useCoarsePointer();
+        if (definition !== undefined) {
+            return <Recovery props={{ ...props, definition, locale }} editorRef={ref} />;
+        }
+        // The profile's module loads through `import()`, and the editor renders once it has.
+        if (shipped === undefined) {
+            return null;
+        }
+        let resolved: Defined & { readonly children: ReactNode } = { ...props, definition: shipped.definition, locale };
+        if (props.presentation === undefined) {
+            let { presentation } = shipped;
+            if (coarse && shipped.touchPresentation !== undefined) {
+                presentation = shipped.touchPresentation;
+            }
+            resolved = { ...resolved, presentation };
+        }
+        return <Recovery props={resolved} editorRef={ref} />;
+    },
+);
 Root.displayName = 'RichTextEditor.Root';
 
 /** The host's class tokens the surface may add and remove: never the package's root class nor one of ProseMirror's own. */
@@ -1443,7 +1451,7 @@ const Panels = () => {
 };
 Panels.displayName = 'RichTextEditor.Panels';
 
-const Editor = forwardRef((props: Props, ref: ForwardedRef<EditorHandle<object>>) => (
+const Editor = forwardRef((props: Props, ref: ForwardedRef<EditorHandle<object> | null>) => (
     <Root {...props} ref={ref}>
         <Toolbar />
         <Panels />
