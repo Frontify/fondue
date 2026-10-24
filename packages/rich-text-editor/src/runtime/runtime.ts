@@ -71,6 +71,7 @@ import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves'
 import { scrollSelectionIntoView } from './scroll';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
+import { createStore } from './session/store';
 import {
     type Attempt,
     type BatchMetric,
@@ -519,7 +520,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             : DEFAULT_ACCEPT_TYPES;
     }
     const uploads = createUploads({
-        state: () => state,
+        state: () => store.state,
         limits,
         acceptTypes: acceptTypes ?? [],
         service: () => (acceptTypes === undefined ? undefined : options.uploads?.()),
@@ -534,10 +535,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         release: (target) => handle.releaseTarget(target),
         run: (command, target) =>
-            runOn(command, { payload: undefined }, () => (target === undefined ? state : baseOf({ target })), 'host')
-                .status === 'applied',
+            runOn(
+                command,
+                { payload: undefined },
+                () => (target === undefined ? store.state : baseOf({ target })),
+                'host',
+            ).status === 'applied',
         fill: (command) => {
-            const result = runOn(command, { payload: undefined }, () => state, 'async');
+            const result = runOn(command, { payload: undefined }, () => store.state, 'async');
             if (result.status === 'rejected') {
                 return result.code;
             }
@@ -546,7 +551,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // A completed upload's record is session state, no undo step; it completed in the background.
         replaced: (nodeId, assetId) => {
             const value = { assetId, focus: false };
-            commit(withNodeState(state.tr, [{ nodeId, key: REPLACED_ASSET, value }]).setMeta('addToHistory', false));
+            commit(
+                withNodeState(store.state.tr, [{ nodeId, key: REPLACED_ASSET, value }]).setMeta('addToHistory', false),
+            );
         },
         report: (found) => report(found),
         event: (event) => {
@@ -586,23 +593,25 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         () => options.enterKeys,
         () => policy.enterBehavior,
     );
-    let state = EditorState.create({
-        doc: definition.schema.nodeFromJSON(options.tree),
-        plugins: [
-            typingRecorder,
-            keyGuard,
-            settling.plugin,
-            targetsPlugin,
-            groupsPlugin,
-            columnsPlugin(() => shownColumns),
-            stylesPlugin(() => options.styles?.() ?? []),
-            uploadSlotsPlugin(uploads),
-            nodeStatePlugin(),
-            ...definition.plugins,
-        ],
-    });
+    const store = createStore(
+        EditorState.create({
+            doc: definition.schema.nodeFromJSON(options.tree),
+            plugins: [
+                typingRecorder,
+                keyGuard,
+                settling.plugin,
+                targetsPlugin,
+                groupsPlugin,
+                columnsPlugin(() => shownColumns),
+                stylesPlugin(() => options.styles?.() ?? []),
+                uploadSlotsPlugin(uploads),
+                nodeStatePlugin(),
+                ...definition.plugins,
+            ],
+        }),
+    );
     // The state whose document the snapshot and `sequence` last published, and how later provisional batches map it.
-    let published = state;
+    let published = store.state;
     let provisional: Transaction['mapping'] | undefined;
     let snapshotCache:
         | {
@@ -612,7 +621,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
               readonly value: Snapshot;
           }
         | undefined;
-    let shownSelection = summarize(state.selection);
+    let shownSelection = summarize(store.state.selection);
 
     const busyWith = <T>(work: () => T): T => {
         busy += 1;
@@ -666,7 +675,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
     };
     const emitSelection = () => {
-        const next = summarize(state.selection);
+        const next = summarize(store.state.selection);
         if (!sameSelection(shownSelection, next)) {
             shownSelection = next;
             emit('selectionChange', next);
@@ -725,9 +734,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     // The checks read the stored document, so their issues and IDs are those `findContentIssues` gives a host.
     const checks = createContentChecks({
-        state: () => state,
+        state: () => store.state,
         sequence: identity.sequence,
-        encode: () => encode(state.doc),
+        encode: () => encode(store.state.doc),
         composing: () => settling.active(),
         ready: () => !lifecycle.is('faulted', 'disposed'),
         commit: (transaction) => commit(transaction),
@@ -855,10 +864,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const started = Date.now();
         // History groups by this time, never by the `Date.now()` a transaction takes when created.
         root.setTime(started);
-        groupRoot(state, root, actionOrigin(root) !== undefined);
+        groupRoot(store.state, root, actionOrigin(root) !== undefined);
         let applied: ReturnType<EditorState['applyTransaction']>;
         try {
-            applied = state.applyTransaction(root.setMeta(APPEND_BATCH_META, batch));
+            applied = store.state.applyTransaction(root.setMeta(APPEND_BATCH_META, batch));
         } catch (error) {
             // A plugin that throws drops the batch, and the session stays ready.
             if (!(error instanceof AppendLimitError)) {
@@ -885,8 +894,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             mapping.appendMapping(transaction.mapping);
         }
         // The settle repair is judged with the composition it repairs, from the published document.
-        if (doc !== state.doc && !(fromView && isProvisional(root)) && root.getMeta(NORMALIZE_META) !== 'now') {
-            const { policy: refused, limit } = finalCheck(state.doc, doc, mapping, isHistoryTransaction(root));
+        if (doc !== store.state.doc && !(fromView && isProvisional(root)) && root.getMeta(NORMALIZE_META) !== 'now') {
+            const { policy: refused, limit } = finalCheck(store.state.doc, doc, mapping, isHistoryTransaction(root));
             if (refused || limit !== undefined) {
                 if (firedRule(applied.transactions)) {
                     return prepare(withoutRules(root), ids, fromView);
@@ -932,7 +941,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         transactions: readonly Transaction[] = [],
     ): boolean => {
         const previous = published;
-        const current = state;
+        const current = store.state;
         published = current;
         // An effective change compares documents by node equality, never by serializing them.
         const changed = !current.doc.eq(previous.doc);
@@ -984,11 +993,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     /** Installs a state in the view and counts it as a commit; `false` when the view threw and the session faulted. */
     const installState = (next: EditorState): boolean => {
-        const previous = state;
-        state = next;
+        const previous = store.state;
+        store.set(next);
         const attached = view;
         if (attached !== undefined && callView(() => attached.updateState(next)).threw) {
-            state = previous;
+            store.set(previous);
             viewFault(attached, next);
             return false;
         }
@@ -1030,7 +1039,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const started = Date.now();
         let appended = 0;
         // The repair runs inside the append limit before the settled batch publishes, and the check below judges it.
-        const repaired = prepare(state.tr.setMeta(NORMALIZE_META, 'now'), installedId, false);
+        const repaired = prepare(store.state.tr.setMeta(NORMALIZE_META, 'now'), installedId, false);
         if ('fault' in repaired && repaired.fault !== undefined) {
             fault(repaired.fault);
             return false;
@@ -1038,7 +1047,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if ('diagnostic' in repaired && repaired.diagnostic !== undefined) {
             report(repaired.diagnostic);
         }
-        if ('candidate' in repaired && repaired.candidate.doc !== state.doc) {
+        if ('candidate' in repaired && repaired.candidate.doc !== store.state.doc) {
             if (!installState(repaired.candidate)) {
                 return false;
             }
@@ -1046,14 +1055,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             appended = repaired.appended;
         }
         if (
-            !breaksPolicy(policy, published.doc, state.doc, mapping) &&
-            exceedsLimits(state.doc, limits, published.doc) === undefined
+            !breaksPolicy(policy, published.doc, store.state.doc, mapping) &&
+            exceedsLimits(store.state.doc, limits, published.doc) === undefined
         ) {
             announce('input', null, { kind: 'commit', started, appended });
             return true;
         }
         // Targets released during the composition stay released, and those captured during it stay.
-        const restore = restoreTargets(published, state, mapping);
+        const restore = restoreTargets(published, store.state, mapping);
         let restored = published;
         if (restore !== undefined) {
             restored = published.apply(restore);
@@ -1118,7 +1127,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (lifecycle.is('faulted', 'disposed')) {
             return;
         }
-        if (root.before !== state.doc) {
+        if (root.before !== store.state.doc) {
             report(diagnostic('runtime.stale-transaction', undefined, undefined, 'error'));
             return;
         }
@@ -1131,7 +1140,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         busyWith(() => {
             let prepared: Prepared;
-            if (checked !== undefined && checked.prepared.root === root && checked.from === state) {
+            if (checked !== undefined && checked.prepared.root === root && checked.from === store.state) {
                 recorded.splice(0, checked.drawn);
                 prepared = checked.prepared;
             } else {
@@ -1145,7 +1154,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             } else if (prepared.diagnostic !== undefined) {
                 report(prepared.diagnostic);
             }
-            if (secondCopyInView(state.schema)) {
+            if (secondCopyInView(store.state.schema)) {
                 report(DUPLICATE_ENGINE);
             }
         });
@@ -1168,17 +1177,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     /** The state a command runs on: the current one, or with the selection at its target's mapped range. */
     const baseOf = (options: unknown): EditorState | RejectedCode => {
         if (!isRecord(options) || options.target === undefined) {
-            return state;
+            return store.state;
         }
         const target = ownTarget(options.target);
         if (typeof target === 'string') {
             return target;
         }
-        const selection = targetSelection(state, target.id);
+        const selection = targetSelection(store.state, target.id);
         if (selection === undefined) {
             return 'target-invalid';
         }
-        return state.apply(state.tr.setSelection(selection));
+        return store.state.apply(store.state.tr.setSelection(selection));
     };
 
     /**
@@ -1308,8 +1317,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return { code: 'readonly' };
         }
         // Work that runs later through a target maps the user's selection through its change instead of moving it there.
-        if (route !== 'host' && base !== state) {
-            root.setSelection(state.selection.map(root.doc, root.mapping));
+        if (route !== 'host' && base !== store.state) {
+            root.setSelection(store.state.selection.map(root.doc, root.mapping));
         }
         // An async completion is no undo step of its own.
         if (route === 'async') {
@@ -1317,7 +1326,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         const prepared = prepare(root, ids, false);
         // A host call never changes content during a composition, which queued intents and async results wait out.
-        if ('candidate' in prepared && prepared.candidate.doc !== state.doc && settling.active()) {
+        if ('candidate' in prepared && prepared.candidate.doc !== store.state.doc && settling.active()) {
             return { code: 'composition-active' };
         }
         return prepared;
@@ -1386,14 +1395,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options), route);
     /** The state with exactly `from` to `to` selected as text, which an accepted suggestion replaces. */
     const rangeBase = (from: number, to: number): EditorState | RejectedCode => {
-        if (from < 0 || to > state.doc.content.size || from > to) {
+        if (from < 0 || to > store.state.doc.content.size || from > to) {
             return 'target-invalid';
         }
-        const selection = TextSelection.between(state.doc.resolve(from), state.doc.resolve(to));
+        const selection = TextSelection.between(store.state.doc.resolve(from), store.state.doc.resolve(to));
         if (selection.from !== from || selection.to !== to) {
             return 'target-invalid';
         }
-        return state.apply(state.tr.setSelection(selection));
+        return store.state.apply(store.state.tr.setSelection(selection));
     };
     const acceptSuggestion = (range: { readonly from: number; readonly to: number }, id: string, payload: JsonObject) =>
         runOn(definition.commands.get(id), checkedPayload(payload), () => rangeBase(range.from, range.to), 'host');
@@ -1424,11 +1433,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return pos;
     };
     const nodeBase = (target: NodeTarget): EditorState | RejectedCode => {
-        const pos = targetIn(state.doc, target);
+        const pos = targetIn(store.state.doc, target);
         if (pos === undefined) {
             return 'target-invalid';
         }
-        return state.apply(state.tr.setSelection(NodeSelection.create(state.doc, pos)));
+        return store.state.apply(store.state.tr.setSelection(NodeSelection.create(store.state.doc, pos)));
     };
     /** A command that changes the node `target` wherever it is when it runs. */
     const nodeCommand = (
@@ -1473,19 +1482,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 }
                 return true;
             });
-            return runOn(update, { payload: undefined }, () => state, 'host');
+            return runOn(update, { payload: undefined }, () => store.state, 'host');
         },
         remove: () => {
             const remove = nodeCommand(target, (tr, pos, node) => {
                 tr.delete(pos, pos + node.nodeSize);
                 return true;
             });
-            return runOn(remove, { payload: undefined }, () => state, 'host');
+            return runOn(remove, { payload: undefined }, () => store.state, 'host');
         },
         select: () => {
-            const pos = targetIn(state.doc, target);
+            const pos = targetIn(store.state.doc, target);
             if (pos !== undefined) {
-                commit(state.tr.setSelection(NodeSelection.create(state.doc, pos)));
+                commit(store.state.tr.setSelection(NodeSelection.create(store.state.doc, pos)));
             }
         },
         // The author's selection stays, so typing after a press on chrome, such as a task checkbox, keeps the node.
@@ -1504,10 +1513,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return runOn(insert, { payload: undefined }, () => baseOf({ target: place.target }), 'host');
         }
         const { nodeId } = place;
-        if (positionOf(state.doc, nodeId) === undefined) {
+        if (positionOf(store.state.doc, nodeId) === undefined) {
             return rejected('target-invalid');
         }
-        return runOn(refillPicked(nodeId, asset), { payload: undefined }, () => state, 'host');
+        return runOn(refillPicked(nodeId, asset), { payload: undefined }, () => store.state, 'host');
     };
 
     /** Commits a capture of the selection, or of `range`, as target `id`. */
@@ -1515,7 +1524,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         id: string,
         options: CaptureTargetOptions,
         range?: { readonly from: number; readonly to: number },
-    ) => commit(captureTarget(state, id, options, range));
+    ) => commit(captureTarget(store.state, id, options, range));
     /** Captures the selection, or `range`, as a new target, unless a commit or notification runs. */
     const captureRange = (
         options: CaptureTargetOptions,
@@ -1684,14 +1693,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             settled('disposed');
         }
         coordinator.dispose();
-        uploads.dispose(state.doc);
+        uploads.dispose(store.state.doc);
         settleQueue('not-ready');
         deferred.length = 0;
         deferredCaptures.length = 0;
-        const release = releaseTargets(state);
+        const release = releaseTargets(store.state);
         if (release !== undefined) {
-            liveResources.targets -= countTargets(state);
-            state = state.apply(release);
+            liveResources.targets -= countTargets(store.state);
+            store.set(store.state.apply(release));
         }
         emit('disposed', identity.session());
         clear();
@@ -1704,10 +1713,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return;
         }
         if (where === 'start') {
-            commit(state.tr.setSelection(Selection.atStart(state.doc)));
+            commit(store.state.tr.setSelection(Selection.atStart(store.state.doc)));
         }
         if (where === 'end') {
-            commit(state.tr.setSelection(Selection.atEnd(state.doc)));
+            commit(store.state.tr.setSelection(Selection.atEnd(store.state.doc)));
         }
         if (shownMode === 'editable') {
             view.focus();
@@ -1715,8 +1724,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // ProseMirror's `focus()` does nothing while the view is not editable, and it syncs no DOM selection there.
         view.dom.focus();
-        const anchor = view.domAtPos(state.selection.anchor);
-        const head = view.domAtPos(state.selection.head);
+        const anchor = view.domAtPos(store.state.selection.anchor);
+        const head = view.domAtPos(store.state.selection.head);
         const selection = view.dom.ownerDocument.getSelection();
         if (selection !== null) {
             selection.setBaseAndExtent(anchor.node, anchor.offset, head.node, head.offset);
@@ -1816,12 +1825,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (request.selection === 'end') {
                 selection = Selection.atEnd(doc);
             }
-            fresh = reset(state, doc, selection);
+            fresh = reset(store.state, doc, selection);
         } catch {
             fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
             return refused('faulted');
         }
-        const outgoing = state.doc;
+        const outgoing = store.state.doc;
         // Roots that plugin views dispatch while the state installs commit in the new generation.
         const installed = guarded(() => {
             installingNext = true;
@@ -1833,7 +1842,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             // Intents of the old generation end before anything can drain them into the next.
             settleQueue('wrong-session');
             const previous = identity.nextGeneration(request.next.documentId);
-            published = state;
+            published = store.state;
             capabilities = stored;
             exceedsLimits = createLimitCheck(definition.model, capabilities);
             if (saves === undefined) {
@@ -1925,7 +1934,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 commitSequence: identity.commitSequence(),
                 sequence: identity.sequence(),
                 compositionActive: settling.active(),
-                selection: summarize(state.selection),
+                selection: summarize(store.state.selection),
             };
         },
         // The same frozen object until the published document or the composition state changes.
@@ -1968,7 +1977,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (waiting >= 0) {
                 deferredCaptures.splice(waiting, 1);
             }
-            const release = releaseTargets(state, [owned.id]);
+            const release = releaseTargets(store.state, [owned.id]);
             if (release !== undefined) {
                 commit(release);
             }
@@ -2035,7 +2044,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         interactionRoots,
         get state() {
-            return state;
+            return store.state;
         },
         get policy() {
             return policy;
@@ -2048,7 +2057,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             checked = undefined;
             // Filling nodeIds keeps the node count, so a root over the node limit is refused before the fill draws one.
             const nodes = storedNodeCount(root.doc);
-            if (followUp !== true && nodes > limits.maxDocumentNodes && nodes > storedNodeCount(state.doc)) {
+            if (followUp !== true && nodes > limits.maxDocumentNodes && nodes > storedNodeCount(store.state.doc)) {
                 return 'maxDocumentNodes';
             }
             const query = queriedIds();
@@ -2062,7 +2071,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 true,
             );
             if ('candidate' in prepared) {
-                checked = { from: state, drawn, prepared };
+                checked = { from: store.state, drawn, prepared };
             }
             if ('limit' in prepared) {
                 return prepared.limit;
@@ -2081,7 +2090,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                         { mount: element },
                         {
                             ...props,
-                            state,
+                            state: store.state,
                             editable: () => lifecycle.is('ready') && shownMode === 'editable',
                             attributes: (current) => {
                                 const attributes: Record<string, string> = {};
@@ -2147,7 +2156,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 commandHost: options.commandHost,
                 search: searchSuggestions,
             });
-            if (secondCopyAtMount(state)) {
+            if (secondCopyAtMount(store.state)) {
                 report(DUPLICATE_ENGINE);
             }
             if (!lifecycle.is('mounting')) {
@@ -2186,11 +2195,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         perform: (command, performOptions) =>
             runOn(command, { payload: undefined }, () => baseOf(performOptions), 'host'),
         select: (target) => {
-            let transaction = state.tr;
+            let transaction = store.state.tr;
             if ('node' in target) {
-                transaction = transaction.setSelection(NodeSelection.create(state.doc, target.node));
+                transaction = transaction.setSelection(NodeSelection.create(store.state.doc, target.node));
             } else {
-                transaction = transaction.setSelection(TextSelection.create(state.doc, target.anchor, target.head));
+                transaction = transaction.setSelection(
+                    TextSelection.create(store.state.doc, target.anchor, target.head),
+                );
             }
             commit(transaction);
             if (target.scroll !== true || view === undefined) {
@@ -2198,7 +2209,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             // ProseMirror scrolls to the selection only while the browser's selection is in the surface, and a
             // panel that asks for this keeps focus.
-            scrollSelectionIntoView(view, state.selection);
+            scrollSelectionIntoView(view, store.state.selection);
         },
         watch,
         startAsync: coordinator.start,
@@ -2225,7 +2236,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return;
             }
             if (lifecycle.is('mounting', 'ready') && view !== undefined) {
-                viewFault(view, state);
+                viewFault(view, store.state);
             }
         },
         nodeActions,
@@ -2244,11 +2255,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (!lifecycle.is('ready') || settling.active()) {
                 return;
             }
-            const fresh = reset(state);
+            const fresh = reset(store.state);
             // Uploads that run go on, so their slots keep what Cancel restores.
-            if (installState(fresh.apply(carrySlots(state, fresh)))) {
-                published = state;
-                uploads.reset(state.doc, true);
+            if (installState(fresh.apply(carrySlots(store.state, fresh)))) {
+                published = store.state;
+                uploads.reset(store.state.doc, true);
                 busyWith(notify);
             }
         },
