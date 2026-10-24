@@ -176,6 +176,8 @@ export interface AppendBatch {
     readonly now: () => number;
     readonly generateId: () => string;
     readonly chain: PluginOrigin[];
+    /** The origin of the plugin whose `appendTransaction` threw, which `commit` reports. */
+    failed?: PluginOrigin;
 }
 /** Thrown past the append limit, so `commit` tells it apart from a plugin error. */
 export class AppendLimitError extends Error {
@@ -211,8 +213,16 @@ export const countAppends = (plugin: Plugin, origin: PluginOrigin): Plugin => {
     const counted: Plugin = new Plugin({
         ...plugin.spec,
         appendTransaction: (transactions, oldState, newState) => {
-            const appended = append.call(counted, transactions, oldState, newState);
             const batch = batchOf(transactions);
+            let appended: ReturnType<typeof append>;
+            try {
+                appended = append.call(counted, transactions, oldState, newState);
+            } catch (error) {
+                if (batch !== undefined) {
+                    batch.failed = origin;
+                }
+                throw error;
+            }
             if (appended === null || appended === undefined || batch === undefined) {
                 return appended;
             }

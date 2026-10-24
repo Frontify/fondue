@@ -56,7 +56,7 @@ import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from '
 import { type ColumnState, columnsPlugin, ONE_COLUMN, sameColumns } from './columns';
 import { createContentChecks } from './content-issues';
 import { secondCopyAtMount, secondCopyInView } from './engines';
-import { createEventBus, type Listener } from './events';
+import { createEventBus, type Listener, nameOf } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
 import { ENTER_RULES_META, firedRule, withoutRules, withRuleSetting } from './input-rules';
 import { createKeyGuard, type EnterKeys } from './keys';
@@ -382,6 +382,15 @@ const actionOrigin = (root: Transaction): ChangeOrigin | undefined => {
         return event as ChangeOrigin;
     }
     return undefined;
+};
+
+/** A plugin-error diagnostic with the failing feature and the error's name, never its message. */
+const pluginError = (error: unknown, featureId: string | undefined) => {
+    const name = nameOf(error);
+    if (featureId === undefined) {
+        return diagnostic('runtime.plugin-error', undefined, { name }, 'error');
+    }
+    return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
 };
 
 /** Where a batch came from: typing is a DOM change after a recorded `beforeinput`, which `commit` marks. */
@@ -883,7 +892,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (!(error instanceof AppendLimitError)) {
                 return {
                     code: 'not-applicable',
-                    diagnostic: diagnostic('runtime.plugin-error', undefined, undefined, 'error'),
+                    diagnostic: pluginError(error, batch.failed?.featureId),
                 };
             }
             const chain: readonly PluginOrigin[] = error.chain;
@@ -1296,11 +1305,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         let applicable: boolean;
         try {
             applicable = command.run(base, (transaction) => dispatched.push(transaction), payload, context);
-        } catch {
+        } catch (error) {
             // A plugin that throws while a command's API write applies drops the command, as it drops a batch.
             return {
                 code: 'not-applicable',
-                diagnostic: diagnostic('runtime.plugin-error', undefined, undefined, 'error'),
+                diagnostic: pluginError(error, command.featureId),
             };
         }
         if (dispatched.length > 1) {

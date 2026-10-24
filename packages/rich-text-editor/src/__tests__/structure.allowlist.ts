@@ -10,7 +10,7 @@ export const FILES_OVER_600_LINES: Record<string, number> = {
     'src/react/rich-text-editor.tsx': 1423,
     'src/runtime/capabilities.ts': 1322,
     'src/runtime/editor-api.ts': 1571,
-    'src/runtime/runtime.ts': 2301,
+    'src/runtime/runtime.ts': 2310,
     'src/runtime/suggestions/plugin.ts': 616,
     'src/runtime/uploads.ts': 777,
 };
@@ -26,7 +26,7 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/codecs/from-markdown.ts': 523,
     'src/codecs/to-html.ts': 438,
     'src/codecs/to-markdown.ts': 702,
-    'src/definition/index.ts': 550,
+    'src/definition/index.ts': 560,
     'src/features/conformance/contract.ts': 408,
     'src/features/links/link-popover.tsx': 590,
     'src/features/media-image/view.tsx': 517,
@@ -43,7 +43,7 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/runtime/capabilities.ts': 1322,
     'src/runtime/editor-api.ts': 1571,
     'src/runtime/input-rules.ts': 515,
-    'src/runtime/runtime.ts': 2301,
+    'src/runtime/runtime.ts': 2310,
     'src/runtime/suggestions/plugin.ts': 616,
     'src/runtime/uploads.ts': 777,
 };
@@ -91,7 +91,7 @@ export const SPECS_OVER_1000_LINES: Record<string, number> = {
     'src/react/__tests__/overlays.ct.tsx': 1644,
     'src/react/__tests__/rich-text-editor.spec.tsx': 1051,
     'src/react/__tests__/toolbar.ct.tsx': 1507,
-    'src/runtime/__tests__/runtime.spec.ts': 4416,
+    'src/runtime/__tests__/runtime.spec.ts': 4501,
 };
 
 export const KNOWN_CYCLES: string[] = ['(root) | features | react | reader', 'clipboard | runtime'];

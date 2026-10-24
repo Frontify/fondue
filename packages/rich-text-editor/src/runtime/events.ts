@@ -28,6 +28,16 @@ export type Listener = (value: never) => void;
 /** The event and selector subscriptions of every live runtime, which the `src/testing` probe reads. */
 export const busResources = { subscriptions: 0, selectors: 0 };
 
+/** A listener that threw, with the event it was called for and the name of the error. */
+interface Thrower {
+    readonly listener: Listener;
+    readonly event: string;
+    readonly name: string;
+}
+
+/** The error's name, never its message, which may hold document text. */
+export const nameOf = (error: unknown) => (error instanceof Error ? error.name : 'unknown');
+
 interface Watcher {
     readonly read: () => unknown;
     readonly isEqual: (previous: unknown, next: unknown) => boolean;
@@ -47,23 +57,29 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
     const listeners = new Map<string, Set<Listener>>();
     const watchers = new Set<Watcher>();
 
-    /** Calls one listener and tells whether it returned without a throw. */
+    /** Calls one listener and returns the name of what it threw, or `undefined` when it returned. */
     const call = (listener: Listener, value: unknown) => {
         try {
             (listener as (value: unknown) => void)(value);
-            return true;
-        } catch {
-            return false;
+            return undefined;
+        } catch (error) {
+            return nameOf(error);
         }
     };
 
     /** Reports each listener that threw once, to every diagnostic listener but that one. */
-    const reportThrows = (throwers: readonly Listener[]) => {
-        const listenerError = diagnostic('runtime.listener-error', undefined, undefined, 'error');
+    const reportThrows = (throwers: readonly Thrower[]) => {
         for (const thrower of throwers) {
+            // The bus knows no feature ID of a subscriber, so the report names the event and the error name.
+            const listenerError = diagnostic(
+                'runtime.listener-error',
+                undefined,
+                { event: thrower.event, name: thrower.name },
+                'error',
+            );
             for (const listener of [...(listeners.get('diagnostic') ?? [])]) {
                 // A diagnostic listener that throws on this report gets no report of it, so reporting never recurses.
-                if (listener !== thrower) {
+                if (listener !== thrower.listener) {
                     call(listener, listenerError);
                 }
             }
@@ -72,14 +88,15 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
 
     const emit = <K extends keyof RuntimeEvents>(event: K, value: RuntimeEvents[K]) =>
         around(() => {
-            const throwers: Listener[] = [];
+            const throwers: Thrower[] = [];
             for (const listener of [...(listeners.get(event) ?? [])]) {
                 // A listener that disposed the session ends every notification but the `disposed` one itself.
                 if (isDisposed() && event !== 'disposed') {
                     break;
                 }
-                if (!call(listener, value)) {
-                    throwers.push(listener);
+                const name = call(listener, value);
+                if (name !== undefined) {
+                    throwers.push({ listener, event, name });
                 }
             }
             reportThrows(throwers);
@@ -87,7 +104,7 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
 
     /** Gives each selector store whose value changed under its equality function the new value. */
     const notify = () => {
-        const throwers: Listener[] = [];
+        const throwers: Thrower[] = [];
         for (const watcher of [...watchers]) {
             if (isDisposed()) {
                 break;
@@ -95,15 +112,16 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
             let next: unknown;
             try {
                 next = watcher.read();
-            } catch {
+            } catch (error) {
                 // A selector that throws is reported as its listener, and the commit goes on.
-                throwers.push(watcher.listener as Listener);
+                throwers.push({ listener: watcher.listener as Listener, event: 'selector', name: nameOf(error) });
                 continue;
             }
             if (!watcher.isEqual(watcher.value, next)) {
                 watcher.value = next;
-                if (!call(watcher.listener as Listener, next)) {
-                    throwers.push(watcher.listener as Listener);
+                const name = call(watcher.listener as Listener, next);
+                if (name !== undefined) {
+                    throwers.push({ listener: watcher.listener as Listener, event: 'selector', name });
                 }
             }
         }

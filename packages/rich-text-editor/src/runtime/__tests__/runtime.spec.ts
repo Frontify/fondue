@@ -1287,7 +1287,14 @@ describe('commands, events and the commit path', () => {
 
         expect(other.mock.calls).toEqual([['a']]);
         expect(changes).toHaveLength(1);
-        expect(diagnostics.map(({ code }) => code)).toEqual(['runtime.listener-error']);
+        expect(diagnostics).toEqual([
+            {
+                code: 'runtime.listener-error',
+                severity: 'error',
+                messageKey: 'runtime.listener-error',
+                details: { event: 'selector', name: 'Error' },
+            },
+        ]);
     });
 
     it('aborts a batch past the append limit, names the chain and faults', () => {
@@ -1458,6 +1465,27 @@ describe('commands, events and the commit path', () => {
             'runtime.stale-transaction',
             'runtime.listener-error',
         ]);
+        expect(other.mock.calls[1]?.[0].details).toEqual({ event: 'diagnostic', name: 'Error' });
+    });
+
+    it('reports the event and the error name of a throwing listener, never its message', () => {
+        const { handle, diagnostics } = start(stored(para()));
+        handle.subscribe('documentChange', () => {
+            throw new RangeError('secret document text');
+        });
+        handle.subscribe('documentChange', () => {
+            const notAnError: unknown = 'not an error';
+            throw notAnError;
+        });
+
+        typeText(handle, 'a');
+
+        const faults = diagnostics.filter(({ code }) => code === 'runtime.listener-error');
+        expect(faults.map(({ details }) => details)).toEqual([
+            { event: 'documentChange', name: 'RangeError' },
+            { event: 'documentChange', name: 'unknown' },
+        ]);
+        expect(JSON.stringify(faults)).not.toContain('secret document text');
     });
 
     it('rejects execute as busy from a documentChange listener and a plugin view update', () => {
@@ -2514,7 +2542,10 @@ describe('disposal', () => {
         typeText(handle, 'x');
 
         expect(other).toHaveBeenCalledWith('x');
-        expect(diagnostics.map(({ code }) => code)).toEqual(['runtime.listener-error']);
+        expect(diagnostics.map(({ code, details }) => [code, details])).toEqual([
+            ['runtime.listener-error', { event: 'selector', name: 'Error' }],
+        ]);
+        expect(JSON.stringify(diagnostics)).not.toContain('listener failed');
     });
 
     it('counts nothing twice when a kept unsubscribe runs after dispose', () => {
@@ -3759,21 +3790,29 @@ describe('history', () => {
 });
 
 describe('faults', () => {
-    const pluginError = { code: 'runtime.plugin-error', severity: 'error', messageKey: 'runtime.plugin-error' };
+    const pluginError = {
+        code: 'runtime.plugin-error',
+        severity: 'error',
+        messageKey: 'runtime.plugin-error',
+        details: { featureId: 'fixture.failing', name: 'TypeError' },
+    };
     const viewFault = { code: 'runtime.view-fault', severity: 'error', messageKey: 'runtime.view-fault' };
     const NOT_READY: CommandResult = { status: 'rejected', code: 'not-ready' };
 
     it('drops a batch whose plugin throws with a plugin-error diagnostic and stays ready, so typing still works', () => {
         let throws = 0;
-        const failing = new Plugin({
-            appendTransaction: (transactions) => {
-                if (throws > 0 && transactions.some(({ docChanged }) => docChanged)) {
-                    throws -= 1;
-                    throw new Error('plugin failure');
-                }
-                return null;
-            },
-        });
+        const failing = countAppends(
+            new Plugin({
+                appendTransaction: (transactions) => {
+                    if (throws > 0 && transactions.some(({ docChanged }) => docChanged)) {
+                        throws -= 1;
+                        throw new TypeError('plugin failure');
+                    }
+                    return null;
+                },
+            }),
+            { featureId: 'fixture.failing', capability: 'failing' },
+        );
         const { handle, view, diagnostics, changes } = start(stored(para(words('ab'))), { plugins: [failing] });
         const before = view.state;
         const snapshot = handle.getSnapshot();
@@ -3788,7 +3827,50 @@ describe('faults', () => {
         expect(handle.getSummary().phase).toBe('ready');
         expect(textOf(view.state.doc)).toBe('zab');
         expect(changes).toHaveLength(1);
-        expect(diagnostics).toEqual([pluginError, pluginError]);
+        // The command's own feature is named when the throw comes from its write, not from a plugin's append.
+        expect(diagnostics).toEqual([
+            pluginError,
+            { ...pluginError, details: { featureId: 'core', name: 'TypeError' } },
+        ]);
+        expect(JSON.stringify(diagnostics)).not.toContain('plugin failure');
+    });
+
+    it('names a thrown value that is no Error unknown and leaves its text out of the plugin-error diagnostic', () => {
+        const failing = countAppends(
+            new Plugin({
+                appendTransaction: (transactions) => {
+                    if (transactions.some(({ docChanged }) => docChanged)) {
+                        const notAnError: unknown = 'secret document text';
+                        throw notAnError;
+                    }
+                    return null;
+                },
+            }),
+            { featureId: 'fixture.failing', capability: 'failing' },
+        );
+        const { handle, diagnostics } = start(stored(para(words('ab'))), { plugins: [failing] });
+
+        typeText(handle, 'x');
+
+        expect(diagnostics).toEqual([{ ...pluginError, details: { featureId: 'fixture.failing', name: 'unknown' } }]);
+        expect(JSON.stringify(diagnostics)).not.toContain('secret document text');
+    });
+
+    it('omits the feature of a plugin-error diagnostic when the throwing plugin is no counted append', () => {
+        const failing = new Plugin({
+            filterTransaction: (transaction) => {
+                if (transaction.docChanged) {
+                    throw new RangeError('filter failure');
+                }
+                return true;
+            },
+        });
+        const { handle, diagnostics } = start(stored(para(words('ab'))), { plugins: [failing] });
+
+        typeText(handle, 'x');
+
+        expect(diagnostics).toEqual([{ ...pluginError, details: { name: 'RangeError' } }]);
+        expect(JSON.stringify(diagnostics)).not.toContain('filter failure');
     });
 
     /** A paragraph node view whose `update` throws once its paragraph holds `!`. */
@@ -3986,14 +4068,17 @@ describe('faults', () => {
     });
 
     it('reports a plugin that throws in the repair of a settling composition', async () => {
-        const failing = new Plugin({
-            appendTransaction: (transactions) => {
-                if (transactions[0]?.getMeta(NORMALIZE_META) === 'now') {
-                    throw new Error('plugin failure');
-                }
-                return null;
-            },
-        });
+        const failing = countAppends(
+            new Plugin({
+                appendTransaction: (transactions) => {
+                    if (transactions[0]?.getMeta(NORMALIZE_META) === 'now') {
+                        throw new TypeError('plugin failure');
+                    }
+                    return null;
+                },
+            }),
+            { featureId: 'fixture.failing', capability: 'failing' },
+        );
         const session = start(stored(para(words('ab'))), { plugins: [failing] });
         setSelection(session.handle, { text: 'ab', from: 2, to: 2 });
         compose(session, 'x');
