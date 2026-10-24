@@ -10,7 +10,7 @@ import { type Node as EngineNode, DOMParser as SchemaParser } from 'prosemirror-
 import { AllSelection, EditorState, NodeSelection, Selection } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { createRef } from 'react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
@@ -63,7 +63,6 @@ import {
     type Diagnostic,
     type JsonValue,
     type ResourceLimits,
-    type RichTextSlice,
 } from '#/model';
 import { compiledModel } from '#/model/compile';
 import { defineEditor, defineReactPresentation } from '#/react/define';
@@ -75,7 +74,10 @@ import { paste, pressKey, setSelection } from '#/testing';
 
 import { NO_COLORS } from '../import/colors';
 import { importHtml } from '../import/html';
+import { loadMarkdownReader } from '../markdown';
 import { SLICE_TYPE } from '../slice';
+
+import { inputOf, transfer } from './fixtures/transfer';
 
 // The vocabulary stand-ins the engine can build, with a figure whose caption it can fill.
 const features = [
@@ -172,29 +174,6 @@ const mount = (options?: Options) => {
 };
 type Mounted = ReturnType<typeof mount>;
 
-const transfer = (data: Readonly<Record<string, string>>, files: readonly File[] = []) => {
-    const dataTransfer = new DataTransfer();
-    for (const [type, value] of Object.entries(data)) {
-        dataTransfer.setData(type, value);
-    }
-    for (const file of files) {
-        dataTransfer.items.add(file);
-    }
-    return dataTransfer;
-};
-
-/** What `data` hands the paste order, as the `paste` helper takes it. */
-const inputOf = (data: Readonly<Record<string, string>>, files: readonly File[]): Parameters<typeof paste>[1] => {
-    const html = data['text/html'] ?? '';
-    const text = data['text/plain'] ?? '';
-    const input = { html, text, files };
-    const slice = data[SLICE_TYPE];
-    if (slice === undefined) {
-        return input;
-    }
-    return { ...input, slice: JSON.parse(slice) as RichTextSlice };
-};
-
 const pasteInto = ({ handle }: Mounted, data: Readonly<Record<string, string>>, files: readonly File[] = []) => {
     act(() => {
         paste(handle, inputOf(data, files));
@@ -290,6 +269,9 @@ const nodeIdsOf = (value: unknown): string[] => {
 };
 
 const textOf = (mounted: Mounted) => mounted.view.state.doc.textBetween(0, mounted.view.state.doc.content.size, '|');
+
+// Paste reads Markdown only after an editor's first idle moment, which these synchronous cases do not wait for.
+beforeAll(loadMarkdownReader);
 
 beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });

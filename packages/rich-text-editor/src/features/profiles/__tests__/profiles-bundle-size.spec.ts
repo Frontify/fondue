@@ -20,7 +20,21 @@ const ROWS: readonly (readonly [string, ProfileName, string])[] = [
 const LOCALES = new URL('../../../locales/', import.meta.url);
 const otherLocales = readdirSync(LOCALES).filter((name) => /^[a-z]{2}-[A-Z]{2}\.ts$/.test(name) && name !== 'en-US.ts');
 
+const MARKDOWN_MODULE =
+    /\/node_modules\/(?:markdown-it|entities|linkify-it|mdurl|uc\.micro)\/|\/codecs\/(?:from|to)-markdown\.ts$/;
+
 describe('profile bundles', () => {
+    it.each(ROWS)(
+        'keeps Markdown parsing out of the %s profile initial load',
+        async (_name, profile) => {
+            const { modules } = await profileBytes(profile);
+
+            expect(modules.length).toBeGreaterThan(0);
+            expect(modules.filter((id) => MARKDOWN_MODULE.test(id))).toEqual([]);
+        },
+        120_000,
+    );
+
     it.each(ROWS)(
         'keeps every locale except enUS out of the %s profile initial load',
         async (_name, profile) => {

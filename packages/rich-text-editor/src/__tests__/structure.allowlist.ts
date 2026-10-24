@@ -19,7 +19,7 @@ export const DATA_TABLES: Record<string, string> = {
 
 export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/clipboard/import/html.ts': 434,
-    'src/clipboard/plugin.ts': 494,
+    'src/clipboard/plugin.ts': 491,
     'src/codecs/from-markdown.ts': 523,
     'src/codecs/to-html.ts': 438,
     'src/codecs/to-markdown.ts': 702,
@@ -73,7 +73,7 @@ export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {
 };
 
 export const SPECS_OVER_1000_LINES: Record<string, number> = {
-    'src/clipboard/__tests__/clipboard.spec.tsx': 1936,
+    'src/clipboard/__tests__/clipboard.spec.tsx': 1918,
     'src/codecs/__tests__/codecs.spec.ts': 1150,
     'src/features/__tests__/editor-api.spec.tsx': 1755,
     'src/features/media-upload/__tests__/uploads.spec.tsx': 1251,

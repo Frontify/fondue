@@ -3,7 +3,7 @@
 import { Button, useFondueTheme } from '@frontify/fondue-components';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 
-import { createCodecs } from '#/codecs/codecs';
+import type * as Codecs from '#/codecs/codecs';
 import { enUS } from '#/locales/en-US';
 import {
     type ContentModel,
@@ -184,8 +184,15 @@ export const BlockedShell = ({
 };
 
 /** Copies `document` as plain text and HTML from the codecs, which needs no `RecoveryService`. */
-const copyContent = ({ model, limits, locale }: ShellProps, document: RichTextDocument) => {
-    const codecs = createCodecs(model, { limits });
+const copyContent = async ({ model, limits, locale }: ShellProps, document: RichTextDocument) => {
+    let codecsModule: typeof Codecs;
+    try {
+        codecsModule = await import('#/codecs/codecs');
+    } catch {
+        // A chunk that fails to load is a failed copy, which the button names.
+        return false;
+    }
+    const codecs = codecsModule.createCodecs(model, { limits });
     return writeClipboard(codecs.toPlainText(document).text, codecs.toHTML(document, { locale }).html);
 };
 

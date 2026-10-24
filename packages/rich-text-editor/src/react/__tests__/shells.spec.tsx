@@ -541,7 +541,7 @@ describe('the recovery shell', () => {
 
         fireEvent.click(screen.getByRole('button', { name: 'Copy content' }));
 
-        expect(write).toHaveBeenCalledTimes(1);
+        await vi.waitFor(() => expect(write).toHaveBeenCalledTimes(1));
         const [[item]] = write.mock.calls[0] as unknown as [[ClipboardItem]];
         expect(item.types).toEqual(['text/plain', 'text/html']);
         const typed = async (type: string) => {
@@ -657,11 +657,8 @@ describe('copying without a full clipboard', () => {
         const { rejections } = withoutClipboard();
 
         fireEvent.click(screen.getByRole('button', { name: 'Copy content' }));
-        await act(async () => {
-            await Promise.resolve();
-        });
 
-        expect(screen.getByText(COPY_FAILED)).toBeVisible();
+        await vi.waitFor(() => expect(screen.getByText(COPY_FAILED)).toBeVisible());
         expect(await rejections()).toBe(0);
         unmount();
     });

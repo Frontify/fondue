@@ -24,12 +24,14 @@ import { closeGroup } from '#/runtime/history';
 import { type EditorRuntime, runtimeOfView } from '#/runtime/runtime';
 
 import { exceededStructure } from './import/limits';
+import { loadMarkdownReaderOnIdle } from './markdown';
 import {
     type FollowUp,
     hrefOf,
     insertAndSelect,
     islandsCannotStay,
     type Pasted,
+    payloadOf,
     pastePayload,
     type PasteSettings,
     type Payload,
@@ -139,12 +141,6 @@ const offersFiles = (model: ContentModel, view: EditorView, payload: Payload, pl
         view.state.schema.marks.link === undefined || hrefOf(payload.text, markHrefPolicy(model, 'link')) === undefined
     );
 };
-
-const payloadOf = (data: DataTransfer): Payload => ({
-    text: data.getData('text/plain'),
-    html: data.getData('text/html'),
-    slice: data.getData(SLICE_TYPE),
-});
 
 /** Dispatches a paste or drop, or reports why it was refused with the document and selection unchanged. */
 const commit = (
@@ -436,7 +432,8 @@ export const clipboardPlugin =
                     }
                     pasteFrom(model, intake, view, connected, payload, files);
                 });
-                return {};
+                // The Markdown reader loads once the editor is idle, and a dispose before then cancels it.
+                return { destroy: loadMarkdownReaderOnIdle() };
             },
             props: {
                 handleDOMEvents: {

@@ -4,19 +4,17 @@ import { Fragment, type Mark, type Node, type Schema, Slice } from 'prosemirror-
 import { type EditorState, Selection, type Transaction } from 'prosemirror-state';
 import { type Step, Transform } from 'prosemirror-transform';
 
-import { createParser, readMarkdown } from '#/codecs/from-markdown';
 import { withNodeIds } from '#/definition';
 import { checkHref, type ContentModel, type HrefPolicy, type ResourceLimits } from '#/model';
 import { markHrefPolicy } from '#/model/compile';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
-import { decodeToTree } from '#/model/decode';
-import { randomId } from '#/model/random-id';
 import { isRecord } from '#/model/values';
 
 import { importModelHtml } from './import/html';
 import { exceededStructure } from './import/limits';
 import { labelText, type PastePolicy, refusedNames, resliced, withinLinkPolicy, withoutRefused } from './import/policy';
-import { readSlice } from './slice';
+import { markdownFragment } from './markdown';
+import { readSlice, SLICE_TYPE } from './slice';
 
 /** What a paste or a drop from outside hands the pipeline after the clipboard read. */
 export interface Payload {
@@ -24,6 +22,13 @@ export interface Payload {
     readonly html: string;
     readonly slice: string;
 }
+
+/** The three flavors of a clipboard or drag transfer. */
+export const payloadOf = (data: DataTransfer): Payload => ({
+    text: data.getData('text/plain'),
+    html: data.getData('text/html'),
+    slice: data.getData(SLICE_TYPE),
+});
 
 /** What the pipeline reads of the session. */
 export interface PasteSettings {
@@ -218,48 +223,12 @@ export const hrefOf = (text: string, policy: HrefPolicy | undefined): string | u
     return checked.href;
 };
 
-const PLAIN_BLOCKS = new Set(['paragraph_open', 'paragraph_close', 'inline']);
-const PLAIN_INLINE = new Set(['text', 'softbreak']);
-const parsers = new WeakMap<ContentModel, ReturnType<typeof createParser>>();
-/** The Markdown parser of `model`, whose links pass the policy of its `link` mark. */
-const markdownParser = (model: ContentModel) => {
-    let parser = parsers.get(model);
-    if (parser === undefined) {
-        parser = createParser(markHrefPolicy(model, 'link'));
-        parsers.set(model, parser);
-    }
-    return parser;
-};
-
-/** Whether `text` has Markdown block or inline structure; a bare URL that linkify finds is no structure. */
-const isMarkdown = (text: string, model: ContentModel) =>
-    markdownParser(model)
-        .parse(text, {})
-        .some(
-            ({ type, children }) =>
-                !PLAIN_BLOCKS.has(type) ||
-                (children ?? []).some((child) => !PLAIN_INLINE.has(child.type) && child.markup !== 'linkify'),
-        );
-
 /** One paragraph stays open to join the text around it; other content is inserted closed. */
 const insertable = (content: Fragment) => {
     if (content.childCount === 1 && content.firstChild?.type.name === 'paragraph') {
         return Slice.maxOpen(content);
     }
     return new Slice(content, 0, 0);
-};
-
-/** `text` converted with `fromMarkdown`. */
-const markdownSlice = (schema: Schema, text: string, { model, limits }: PasteSettings): Slice | undefined => {
-    const result = readMarkdown(markdownParser(model), text, model, randomId, { limits });
-    if (result.status !== 'editable') {
-        return undefined;
-    }
-    const { tree } = decodeToTree(result.document, model, { limits });
-    if (tree === undefined) {
-        return undefined;
-    }
-    return insertable(Fragment.fromJSON(schema, tree.content));
 };
 
 /**
@@ -366,8 +335,11 @@ export const pastePayload = (
     const start = tr.steps.length;
     insert(prepared(plainSlice(schema, text, $from.marks())));
     let converted: Slice | undefined;
-    if (!settings.plain && isMarkdown(text, model)) {
-        converted = markdownSlice(schema, text, settings);
+    if (!settings.plain) {
+        const fragment = markdownFragment(schema, text, settings);
+        if (fragment !== undefined) {
+            converted = insertable(fragment);
+        }
     }
     if (converted === undefined) {
         return { droppedMedia: 0, removedFormatting: joined };
