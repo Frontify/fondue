@@ -17,9 +17,10 @@ export type DefinitionErrorCode =
     | 'definition.unknown-policy-feature'
     | 'definition.unknown-feature'
     | 'definition.unsafe-url-binding'
+    | 'definition.plugin-mismatch'
     | 'definition.invalid-declaration';
 
-/** Thrown by compilation, `featuresById` and `defineReaderFeature`. */
+/** Thrown by compilation, `featuresById`, `defineReaderFeature` and `definePlugin`. */
 export class DefinitionError extends Error {
     readonly code: DefinitionErrorCode;
     /** For example the two feature IDs, the dependency path, the cycle or the option path. */
