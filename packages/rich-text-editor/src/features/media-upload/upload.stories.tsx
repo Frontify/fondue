@@ -130,7 +130,9 @@ export const Default: StoryObj<typeof RichTextEditor> = {
         const canvas = within(canvasElement);
         // The upload takes 3 s, so only the wait for its progress bar to go gets the longer timeout.
         const timeout = { timeout: 10_000 };
-        const surface = await canvas.findByRole('textbox', { name: 'Notes' });
+        // The loading shell's textbox is replaced on mount, so the surface is looked up again at each use.
+        const surface = () => canvas.getByRole('textbox', { name: 'Notes' });
+        await waitFor(() => expect(surface()).toHaveAttribute('contenteditable'));
         // The surface shows before the session is ready, and a click on Image while it is unavailable opens nothing.
         await waitFor(() => expect(canvas.getByRole('button', { name: 'Image' })).not.toHaveAttribute('aria-disabled'));
         await userEvent.click(canvas.getByRole('button', { name: 'Image' }));
@@ -140,11 +142,11 @@ export const Default: StoryObj<typeof RichTextEditor> = {
         }
         await userEvent.upload(chooser, new File([pngHeader()], 'logo.png', { type: 'image/png' }));
 
-        await expect(await within(surface).findByRole('progressbar', { name: 'logo.png' })).toBeVisible();
+        await expect(await within(surface()).findByRole('progressbar', { name: 'logo.png' })).toBeVisible();
         await waitFor(
-            () => expect(within(surface).queryByRole('progressbar', { name: 'logo.png' })).toBeNull(),
+            () => expect(within(surface()).queryByRole('progressbar', { name: 'logo.png' })).toBeNull(),
             timeout,
         );
-        await expect(within(surface).queryByRole('button', { name: 'Retry upload' })).toBeNull();
+        await expect(within(surface()).queryByRole('button', { name: 'Retry upload' })).toBeNull();
     },
 };

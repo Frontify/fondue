@@ -177,8 +177,11 @@ const documents =
     async ({ canvasElement }) => {
         const canvas = within(canvasElement);
         const reference = await canvas.findByRole('region', { name: 'Keyboard reference' }, LOAD);
-        const editor = await canvas.findByRole('textbox', { name: surface }, LOAD);
-        await waitFor(() => expect(editor).toHaveAttribute('contenteditable', 'true'), LOAD);
+        await waitFor(async () => {
+            const live = canvas.getByRole('textbox', { name: surface });
+            await expect(live).toHaveAttribute('contenteditable', 'true');
+            return live;
+        }, LOAD);
         await expect([...reference.querySelectorAll('caption')].map(({ textContent }) => textContent)).toEqual(tables);
         for (const cells of rows) {
             // The first and last cell tell apart the rows that share a command, such as the two Redo keys.

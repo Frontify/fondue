@@ -50,13 +50,21 @@ interface EditorArgs {
 
 // The editor's profile or the host's delays settle before a play function reads the surface.
 const LOAD = { timeout: 10_000 };
-const surfaceOf = (root: HTMLElement, name: string) => within(root).findByRole('textbox', { name }, LOAD);
+// The surface is queried inside the wait because the loading shell's textbox is replaced when the editor mounts.
+const surfaceOf = (root: HTMLElement, name: string) =>
+    waitFor(async () => {
+        const live = within(root).getByRole('textbox', { name });
+        // The shell has no `contenteditable`; the mounted surface has it, `false` while read-only.
+        await expect(live).toHaveAttribute('contenteditable');
+        return live;
+    }, LOAD);
 /** The surface once its editor is ready: until then it shows the content but takes no focus, so typing is lost. */
-const editableSurfaceOf = async (root: HTMLElement, name: string) => {
-    const surface = await surfaceOf(root, name);
-    await waitFor(() => expect(surface).toHaveAttribute('contenteditable', 'true'), LOAD);
-    return surface;
-};
+const editableSurfaceOf = (root: HTMLElement, name: string) =>
+    waitFor(async () => {
+        const live = within(root).getByRole('textbox', { name });
+        await expect(live).toHaveAttribute('contenteditable', 'true');
+        return live;
+    }, LOAD);
 
 /** The key a platform's `Mod` is, as a user-event key name; prosemirror-keymap reads `Mod` from `navigator.platform`. */
 const modKey = () => {

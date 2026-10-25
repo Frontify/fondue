@@ -104,9 +104,12 @@ export const Default: StoryObj<typeof RichTextEditor> = {
     play: async ({ canvasElement }) => {
         const timeout = { timeout: 10_000 };
         const page = within(canvasElement.ownerDocument.body);
-        const surface = await within(canvasElement).findByRole('textbox', { name: 'Notes' }, timeout);
         // The surface takes focus only once the editor is ready, so typing before that is lost.
-        await waitFor(() => expect(surface).toHaveAttribute('contenteditable', 'true'), timeout);
+        const surface = await waitFor(async () => {
+            const live = within(canvasElement).getByRole('textbox', { name: 'Notes' });
+            await expect(live).toHaveAttribute('contenteditable', 'true');
+            return live;
+        }, timeout);
         await userEvent.type(surface, ' @Gra');
         await expect(await page.findByRole('option', { name: /Grace Hopper/ }, timeout)).toBeVisible();
         await userEvent.keyboard('{Enter}');
