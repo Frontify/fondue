@@ -51,6 +51,7 @@ import { createCommands } from './session/commands';
 import { createCommit } from './session/commit';
 import { createComposition } from './session/composition';
 import { createEncoder } from './session/encode';
+import { createFaults } from './session/faults';
 import { createFocus } from './session/focus';
 import { createHistory } from './session/history';
 import { createIdentity } from './session/identity';
@@ -61,6 +62,7 @@ import { createPolicy } from './session/policy';
 import { createPrepare, DUPLICATE_ENGINE } from './session/prepare';
 import { createQueue } from './session/queue';
 import { createSaving } from './session/saving';
+import { createSettle } from './session/settle';
 import { createShown, summarize } from './session/shown';
 import { createStore } from './session/store';
 import { createTargetsService } from './session/targets';
@@ -79,7 +81,6 @@ import {
     type CommitResult,
     type EditorSummary,
     type OperationMetric,
-    type RecoveryReceipt,
     type RecoveryService,
     type ReplaceDocumentRequest,
     type ReplaceResult,
@@ -334,11 +335,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         onDisabledChange: () => views.repaint(),
     });
     const columns = createColumns({ initial: options.columns ?? ONE_COLUMN, onChange: () => views.refresh() });
-    // The state the view threw on, which `getRecoveryCandidate` offers until `dispose`.
-    // ProseMirror runs that throwing update again on `setProps` and `destroy`.
-    let recovery: EditorState | undefined;
-    // Set while replacement step 8 installs the next document.
-    let installingNext = false;
     const uploads = createUploadService({
         definition,
         limits,
@@ -469,10 +465,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         suggestionListId,
         createdAt,
         composing: () => settling.active(),
-        hasRecovery: () => recovery !== undefined,
+        hasRecovery: () => faults.hasRecovery(),
         dispatch: (transaction) => commit(transaction),
-        fault: () => fault(diagnostic('runtime.view-fault', undefined, undefined, 'error')),
-        viewFault: (attached, candidate) => viewFault(attached, candidate),
+        fault: () => faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error')),
+        viewFault: (attached, candidate) => faults.viewFault(attached, candidate),
         onAttached: (attached) => {
             viewRuntimes.set(attached, runtime);
             suggestionHosts.set(attached, {
@@ -488,57 +484,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         scrollSelectionIntoView: () => options.scrollSelectionIntoView?.(),
     });
 
-    const fault = (diagnostic: Diagnostic) => {
-        if (isDisposed()) {
-            return;
-        }
-        lifecycle.to('faulted');
-        // A frame still pending would otherwise move the faulted session to ready.
-        views.cancelReady();
-        // A composition that settles later publishes nothing.
-        settling.cancel();
-        display.takeProvisional();
-        views.refresh();
-        queue.settle('not-ready');
-        report(diagnostic);
-        // Results held for that settle are discarded now, as the faulted session takes none.
-        coordinator.settle();
-        coordinator.abortWhere(() => true);
-    };
-
-    /** Stores the candidate of a view fault with the host's recovery service. */
-    const storeRecovery = (candidate: EditorState) => {
-        const service = options.recovery?.();
-        if (service === undefined || isDisposed()) {
-            return;
-        }
-        const checkpoint = {
-            stamp: { ...identity.session(), sequence: identity.sequence() + 1 },
-            acknowledgedRevision: saveStatus().revision,
-            document: encode(candidate.doc),
-        };
-        let stored: Promise<RecoveryReceipt>;
-        try {
-            stored = service.store(checkpoint, { signal: lifecycle.ended, session: identity.session() });
-        } catch {
-            return;
-        }
-        stored
-            .then(({ receiptId }) => report(diagnostic('runtime.recovery-stored', undefined, { receiptId }, 'info')))
-            // A store that fails leaves the candidate with `getRecoveryCandidate` only.
-            .catch(() => undefined);
-    };
-
-    /** The view threw while it installed `candidate`: editing stops and the snapshot stays. */
-    const viewFault = (attached: EditorView, candidate: EditorState) => {
-        recovery = candidate;
-        attached.dom.setAttribute('contenteditable', 'false');
-        fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
-        // The next document of a replacement holds none of this session's work, and the host has it.
-        if (!installingNext) {
-            storeRecovery(candidate);
-        }
-    };
+    const faults = createFaults({
+        lifecycle,
+        identity,
+        encode,
+        saving,
+        composition: settling,
+        shown: display,
+        view: views,
+        queue: () => queue,
+        targets: () => targets,
+        report,
+        recovery: () => options.recovery?.(),
+    });
 
     const batches = createPrepare({
         store,
@@ -574,28 +532,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                     checks.changed();
                 },
             },
-            fault,
-            viewFault,
+            fault: faults.fault,
+            viewFault: faults.viewFault,
         });
 
-    /**
-     * Once input has settled, checks the provisional batches as one change from the published document and publishes
-     * them, or restores the state from before the composition, then runs the
-     * deferred `contenteditable` change, the queued intents and the held async results.
-     */
-    const settleInput = () => {
-        const mapping = display.takeProvisional();
-        busy.run(() => {
-            // Roots that plugin views dispatch while the settled state installs commit after its check.
-            if (mapping !== undefined && !guarded(() => settleProvisional(mapping))) {
-                return;
-            }
-            views.refresh();
-        });
-        coordinator.settle();
-        saving.settled();
-        settling.resolve('settled');
-    };
+    const settleInput = createSettle({
+        busy,
+        commit: { guarded, settleProvisional },
+        shown: display,
+        view: views,
+        targets: () => targets,
+        saving,
+        composition: settling,
+    });
 
     const targets = createTargetsService({
         store,
@@ -641,7 +590,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         baseOf,
         focus: focus.focus,
         report,
-        fault: (found) => fault(found),
+        fault: (found) => faults.fault(found),
         inRender: () => options.inRender?.(),
         commandHost: options.commandHost,
         runtime: () => runtime,
@@ -751,15 +700,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             fresh = history.fresh(doc, selection);
         } catch {
-            fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
+            faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
             return refused('faulted');
         }
         const outgoing = store.state.doc;
         // Roots that plugin views dispatch while the state installs commit in the new generation.
         const installed = guarded(() => {
-            installingNext = true;
-            const shown = installState(fresh);
-            installingNext = false;
+            const shown = faults.withoutRecovery(() => installState(fresh));
             if (!shown) {
                 return false;
             }
@@ -859,12 +806,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         getSnapshot: display.snapshot,
         getSaveStatus: saveStatus,
-        getRecoveryCandidate: () => {
-            if (!lifecycle.is('faulted') || recovery === undefined) {
-                return null;
-            }
-            return encode(recovery.doc);
-        },
+        getRecoveryCandidate: faults.candidate,
         query: commands.query,
         execute: commands.execute,
         enqueue: queue.enqueue,
