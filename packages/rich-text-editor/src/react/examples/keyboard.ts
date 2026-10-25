@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RichTextProfile } from '#/index';
 import { type JsonValue, type KeyBinding } from '#/model';
+import { type RichTextProfile } from '#/react/types';
 
 /** The areas the keyboard reference groups its shortcuts by, in the order it shows them. */
 export const AREAS = ['History', 'Text formatting', 'Links', 'Blocks', 'Alignment', 'Lists', 'Code blocks'] as const;

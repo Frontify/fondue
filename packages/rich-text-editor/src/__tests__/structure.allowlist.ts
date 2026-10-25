@@ -17,7 +17,7 @@ export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {};
 
 export const SPECS_OVER_1000_LINES: Record<string, number> = {};
 
-export const KNOWN_CYCLES: string[] = ['(root) | react'];
+export const KNOWN_CYCLES: string[] = [];
 
 export const PROSEMIRROR_NODES: string[] = ['clipboard/import', 'definition', 'testing', 'html', 'runtime'];
 
