@@ -17,7 +17,6 @@ export const DATA_TABLES: Record<string, string> = {
 export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/clipboard/import/html.ts': 434,
     'src/runtime/clipboard/plugin.ts': 491,
-    'src/codecs/from-markdown.ts': 523,
     'src/codecs/to-html.ts': 438,
     'src/codecs/to-markdown.ts': 702,
     'src/model/content.ts': 539,
@@ -32,9 +31,6 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
 };
 
 export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
-    'src/bridge/node-views.ts#build': 174,
-    'src/bridge/node-views.ts#createNodeViews': 227,
-    'src/codecs/from-markdown.ts#readMarkdown': 161,
     'src/react/rich-text-editor.tsx#anonymous#11': 184,
     'src/react/rich-text-editor.tsx#SessionComponent': 669,
     'src/runtime/async.ts#createAsyncCoordinator': 217,
@@ -43,7 +39,6 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
 
 export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {
     'src/bridge/chrome-view.ts#createChromeView': 8,
-    'src/bridge/node-views.ts#build': 8,
 };
 
 export const SPECS_OVER_1000_LINES: Record<string, number> = {
