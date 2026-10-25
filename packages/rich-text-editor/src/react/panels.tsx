@@ -13,12 +13,12 @@ import { passesToBrowser } from '#/runtime/port';
 
 import styles from './styles/panels.module.scss';
 
-interface BoundaryProps {
+export type BoundaryProps = {
     readonly message: string;
     readonly closeLabel: string;
     readonly onClose: () => void;
     readonly children: ReactNode;
-}
+};
 
 interface BoundaryState {
     readonly failed: boolean;

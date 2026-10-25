@@ -21,7 +21,7 @@ import { type ReaderPresentation, ReaderWith } from '#/reader/reader';
 type Blocked = Extract<DecodeResult, { readonly status: 'blocked' }>;
 
 /** What both shells read the document with, in place of the editor. */
-interface ShellProps {
+export type ShellProps = {
     readonly model: ContentModel;
     /** The definition's reader overrides, so the shells load no reader of a feature the definition does not install. */
     readonly readers: ReaderOverrides;
@@ -30,7 +30,7 @@ interface ShellProps {
     readonly presentation: ReaderPresentation;
     readonly locale: RichTextLocale;
     readonly testId: string;
-}
+};
 
 const ENVELOPE_CODES: ReadonlySet<DiagnosticCode> = new Set(['format.unknown-format-version', 'format.wrong-model']);
 
@@ -108,7 +108,7 @@ const CopyButton = ({
 };
 
 /** What the loading shell names: the host's accessible name and test id, and the profile's line mode. */
-interface LoadingShellProps {
+export type LoadingShellProps = {
     readonly locale: RichTextLocale;
     readonly testId: string;
     readonly contentClassName: string | undefined;
@@ -116,7 +116,7 @@ interface LoadingShellProps {
     readonly label: string | undefined;
     readonly labelledBy: string | undefined;
     readonly spellCheck: boolean;
-}
+};
 
 /** The markup the server renders before hydration, shown while a profile's module loads, so the page and a screen reader find the textbox. */
 export const LoadingShell = ({

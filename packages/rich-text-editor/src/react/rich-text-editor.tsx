@@ -15,10 +15,10 @@ import { DEFAULT_TEST_ID, type Defined, type Props, type RecoverySession } from 
 import { LoadingShell, RecoveryShell } from './shells';
 import { type EditorHandle, type RichTextEditorProps, type RichTextProfile } from './types';
 
-interface RecoveryProps {
+export type RecoveryProps = {
     readonly props: Defined & { readonly children: ReactNode };
     readonly editorRef: ForwardedRef<EditorHandle<object> | null>;
-}
+};
 interface RecoveryState {
     readonly failed: boolean;
     /** The snapshot that Retry mounts the editor from, under the ID and revision it was loaded with. */

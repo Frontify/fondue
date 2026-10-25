@@ -125,7 +125,7 @@ const PluginOverlays = ({
     </>
 );
 
-export interface FrameProps {
+export type FrameProps = {
     readonly rootRef: MutableRefObject<HTMLDivElement | null>;
     readonly lang: string;
     readonly testId: string;
@@ -150,7 +150,7 @@ export interface FrameProps {
     readonly choosingRef: MutableRefObject<Choosing | undefined>;
     readonly overlayRootElement: ReactNode;
     readonly children: ReactNode;
-}
+};
 
 /** The root element of a session: the host's parts, then the chrome that every session renders. */
 export const SessionFrame = ({

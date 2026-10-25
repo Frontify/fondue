@@ -49,7 +49,7 @@ export interface ReaderPresentation {
 }
 
 /** The props of the reader: the document to show, its content model and how to present it. */
-export interface RichTextReaderProps {
+export type RichTextReaderProps = {
     /** JSON text or a parsed value; the reader decodes it. */
     readonly document: unknown;
     readonly model: ContentModel;
@@ -58,10 +58,10 @@ export interface RichTextReaderProps {
     /** The limits the writing definition used, when a host loosened them through `limitOverrides`. Omitted means the default limits. */
     readonly limits?: Partial<ResourceLimits>;
     readonly onDiagnostic?: (diagnostic: Diagnostic) => void;
-}
+};
 
 /** The reader's props with the overrides of the shipped features it renders with. */
-type ReaderProps = RichTextReaderProps & { readonly overrides: ReaderOverrides };
+export type ReaderProps = RichTextReaderProps & { readonly overrides: ReaderOverrides };
 
 interface Output {
     readonly element: ReactElement;

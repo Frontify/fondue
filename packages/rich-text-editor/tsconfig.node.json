@@ -9,6 +9,7 @@
         "moduleResolution": "Bundler",
         "outDir": "./dist/tsconfig-node",
         "resolveJsonModule": true,
+        "strict": true,
         "target": "ESNext"
     },
     "include": [

@@ -14,12 +14,12 @@ import { NodeViewContentContext } from './node-view-content';
 import { type PortalEntry, type PortalStore } from './portals';
 import { useSessionValue } from './session';
 
-interface BoundaryProps {
+export type BoundaryProps = {
     readonly message: string;
     /** The node's attributes; new ones try the chrome again. */
     readonly attrs: JsonObject;
     readonly children: ReactNode;
-}
+};
 interface BoundaryState {
     readonly failed: boolean;
     readonly attrs: JsonObject;

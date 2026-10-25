@@ -24,7 +24,7 @@ import { useFitting } from './use-fitting';
 export { type ToolbarItem, type ToolbarStrings } from './item';
 export { More, type ModeSwitch } from './more';
 
-interface ItemProps {
+export type ItemProps = {
     readonly item: ToolbarItem;
     readonly disabled: boolean;
     readonly strings: ToolbarStrings;
@@ -32,7 +32,7 @@ interface ItemProps {
     readonly keepsFocus: boolean;
     /** The item takes no Tab stop, as in the bubble toolbar. */
     readonly outOfTabOrder: boolean;
-}
+};
 
 /** One toolbar item: a plugin's own control, else the standard button. */
 export const Item = (props: ItemProps) => {
