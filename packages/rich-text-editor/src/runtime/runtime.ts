@@ -1,15 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Node } from 'prosemirror-model';
-import {
-    EditorState,
-    NodeSelection,
-    Plugin,
-    PluginKey,
-    Selection,
-    TextSelection,
-    type Transaction,
-} from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey, Selection, type Transaction } from 'prosemirror-state';
 import {
     type DirectEditorProps,
     type EditorView,
@@ -23,32 +15,26 @@ import {
     type ContentCheckOptions,
     type Diagnostic,
     hashDocument,
-    type JsonObject,
     type PresentationStyle,
     type ResourceLimits,
     type RichTextDocument,
 } from '#/model';
-import { REPLACED_ASSET } from '#/model/assets';
-import { attributesOf, compiledModel } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { diagnostic } from '#/model/format';
 import { randomId } from '#/model/random-id';
-import { isRecord, isValidValue } from '#/model/values';
+import { isRecord } from '#/model/values';
 
 import { type AsyncOperation, type AsyncRequest } from './async';
 import { createContentChecks } from './capabilities/checks/content-issues';
-import { insertPicked, pickedAsset, refillPicked } from './capabilities/media/media';
 import { uploadSlotsPlugin } from './capabilities/media/upload-slots';
 import {
-    createUploads,
-    DEFAULT_ACCEPT_TYPES,
     UPLOAD_FEATURE,
     type UploadEvent,
     type UploadPlace,
     type UploadServiceLike,
 } from './capabilities/media/uploads';
-import { type SuggestionHost, suggestionHosts } from './capabilities/suggestions/host';
+import { suggestionHosts } from './capabilities/suggestions/host';
 import { type ColumnState, columnsPlugin, ONE_COLUMN } from './columns';
 import { createDomIds } from './dom-ids';
 import { secondCopyAtMount } from './engines';
@@ -56,12 +42,12 @@ import { createEventBus, type Listener } from './events';
 import { groupsPlugin } from './history';
 import { createKeyGuard, type EnterKeys } from './keys';
 import { type ExceededLimit } from './limits';
-import { nodeStatePlugin, withNodeState } from './node-state';
-import { positionOf } from './positions';
+import { nodeStatePlugin } from './node-state';
 import { sameStamp, type SaveCoordinator } from './saves';
+import { createActions, type NodeActions, type NodeTarget } from './session/actions';
 import { createBusy } from './session/busy';
 import { createColumns } from './session/columns';
-import { checkedPayload, createCommands, rejected } from './session/commands';
+import { createCommands } from './session/commands';
 import { createCommit } from './session/commit';
 import { createComposition } from './session/composition';
 import { createEncoder } from './session/encode';
@@ -79,6 +65,7 @@ import { createShown, summarize } from './session/shown';
 import { createStore } from './session/store';
 import { createTargetsService } from './session/targets';
 import { type InputOutcome, type Mode, type RejectedCode, type ReplaceCode } from './session/types';
+import { createUploadService } from './session/uploads-wiring';
 import { createView, isEmpty } from './session/view';
 import { stylesPlugin } from './styles';
 import { countTargets, releaseTargets, targetsPlugin } from './targets';
@@ -104,7 +91,7 @@ import {
     type UploadStatus,
 } from './types';
 
-export type { InputOutcome };
+export type { InputOutcome, NodeActions, NodeTarget };
 
 /** What the host calls. */
 export interface RuntimeHandle {
@@ -125,22 +112,6 @@ export interface RuntimeHandle {
     registerInteractionRoot(element: HTMLElement): Unsubscribe;
     subscribe(event: string, listener: Listener): Unsubscribe;
     dispose(): void;
-}
-
-/**
- * The node an action changes: its `nodeId`, or, for a node that carries none, such as a code block, the node view's
- * live position reader, which reads the position when the action runs.
- */
-export type NodeTarget = string | (() => number | undefined);
-
-/** The actions of one node view, which find their node when they run, never by a position held from before. */
-export interface NodeActions {
-    update(attrs: JsonObject): CommandResult;
-    remove(): CommandResult;
-    select(): void;
-    /** Runs a command with the node selected at execution time. */
-    execute(id: string, ...args: readonly unknown[]): CommandResult;
-    query(id: string, ...args: readonly unknown[]): CommandState;
 }
 
 export interface EditorRuntime {
@@ -368,62 +339,20 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let recovery: EditorState | undefined;
     // Set while replacement step 8 installs the next document.
     let installingNext = false;
-    // `media.image` and the media types it accepts, which its `acceptTypes` option sets.
-    const imageFeature = compiledModel(definition.model).features.find(({ id }) => id === UPLOAD_FEATURE);
-    let acceptTypes: readonly string[] | undefined;
-    if (imageFeature !== undefined) {
-        const option: unknown = imageFeature.options.acceptTypes;
-        acceptTypes = Array.isArray(option)
-            ? option.filter((type): type is string => typeof type === 'string')
-            : DEFAULT_ACCEPT_TYPES;
-    }
-    const uploads = createUploads({
-        state: () => store.state,
+    const uploads = createUploadService({
+        definition,
         limits,
-        acceptTypes: acceptTypes ?? [],
-        service: () => (acceptTypes === undefined ? undefined : options.uploads?.()),
-        session: identity.session,
-        generateId: () => generate(),
-        allows: (action) => policy.current().features[UPLOAD_FEATURE]?.[action] !== false,
-        start: (request) => coordinator.start(request),
-        abort: (operations) => coordinator.abortWhere((other) => operations.includes(other)),
-        capture: (range) => {
-            const captured = captureRange({ purpose: 'replace-text', onIntersectingEdit: 'map' }, range);
-            return captured.status === 'captured' ? captured.target : undefined;
-        },
-        release: (target) => handle.releaseTarget(target),
-        run: (command, target) =>
-            commands.runOn(
-                command,
-                { payload: undefined },
-                () => (target === undefined ? store.state : baseOf({ target })),
-                'host',
-            ).status === 'applied',
-        fill: (command) => {
-            const result = commands.runOn(command, { payload: undefined }, () => store.state, 'async');
-            if (result.status === 'rejected') {
-                return result.code;
-            }
-            return result.status === 'applied' ? undefined : 'not-applicable';
-        },
-        // A completed upload's record is session state, no undo step; it completed in the background.
-        replaced: (nodeId, assetId) => {
-            const value = { assetId, focus: false };
-            commit(
-                withNodeState(store.state.tr, [{ nodeId, key: REPLACED_ASSET, value }]).setMeta('addToHistory', false),
-            );
-        },
+        identity,
+        lifecycle,
+        policy,
+        generate,
+        host: options,
+        state: () => store.state,
+        commit: () => commit,
+        commands: () => commands,
+        targets: () => targets,
         report: (found) => report(found),
-        event: (event) => {
-            if (!lifecycle.is('disposed')) {
-                options.uploadEvent?.(event);
-            }
-        },
-        changed: () => {
-            if (!lifecycle.is('disposed')) {
-                busy.run(notify);
-            }
-        },
+        changed: () => busy.run(notify),
     });
 
     // Records typing before any other handler sees the event, so the view itself gets no event handler.
@@ -462,7 +391,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 groupsPlugin,
                 columnsPlugin(() => display.columns()),
                 stylesPlugin(() => options.styles?.() ?? []),
-                uploadSlotsPlugin(uploads),
+                uploadSlotsPlugin(uploads.raw),
                 nodeStatePlugin(),
                 ...definition.plugins,
             ],
@@ -474,7 +403,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     busy.onIdle(
         () => metrics.flush(),
         () => targets.flushCaptures(),
-        () => uploads.flush(),
+        () => uploads.raw.flush(),
     );
 
     const { isDisposed } = lifecycle;
@@ -487,7 +416,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         notify: () => busy.run(notify),
         install: (next) => installState(next),
         publish: () => display.setPublished(store.state),
-        uploads: (d, k) => uploads.reset(d, k),
+        uploads: (d, k) => uploads.raw.reset(d, k),
     });
 
     const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
@@ -548,9 +477,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             viewRuntimes.set(attached, runtime);
             suggestionHosts.set(attached, {
                 creates: (featureId) => policy.current().features[featureId]?.create !== false,
-                accept: acceptSuggestion,
+                accept: actions.acceptSuggestion,
                 commandHost: options.commandHost,
-                search: searchSuggestions,
+                search: actions.searchSuggestions,
             });
             if (secondCopyAtMount(store.state)) {
                 report(DUPLICATE_ENGINE);
@@ -639,7 +568,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             report,
             resources: liveResources,
             hooks: {
-                committed: uploads.committed,
+                committed: uploads.raw.committed,
                 changed: () => {
                     saving.changed();
                     checks.changed();
@@ -666,124 +595,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         coordinator.settle();
         saving.settled();
         settling.resolve('settled');
-    };
-
-    /** The state with exactly `from` to `to` selected as text, which an accepted suggestion replaces. */
-    const rangeBase = (from: number, to: number): EditorState | RejectedCode => {
-        if (from < 0 || to > store.state.doc.content.size || from > to) {
-            return 'target-invalid';
-        }
-        const selection = TextSelection.between(store.state.doc.resolve(from), store.state.doc.resolve(to));
-        if (selection.from !== from || selection.to !== to) {
-            return 'target-invalid';
-        }
-        return store.state.apply(store.state.tr.setSelection(selection));
-    };
-    const acceptSuggestion = (range: { readonly from: number; readonly to: number }, id: string, payload: JsonObject) =>
-        commands.runOn(
-            definition.commands.get(id),
-            checkedPayload(payload),
-            () => rangeBase(range.from, range.to),
-            'host',
-        );
-    /** The state with the node `nodeId` selected, as a node view action runs on it. */
-    /** The position of `target` in `doc` when it holds a node there, read when it is needed. */
-    const targetIn = (doc: Node, target: NodeTarget): number | undefined => {
-        if (typeof target === 'string') {
-            return positionOf(doc, target);
-        }
-        const pos = target();
-        if (pos === undefined || pos < 0 || pos >= doc.content.size || doc.nodeAt(pos) === null) {
-            return undefined;
-        }
-        return pos;
-    };
-    const nodeBase = (target: NodeTarget): EditorState | RejectedCode => {
-        const pos = targetIn(store.state.doc, target);
-        if (pos === undefined) {
-            return 'target-invalid';
-        }
-        return store.state.apply(store.state.tr.setSelection(NodeSelection.create(store.state.doc, pos)));
-    };
-    /** A command that changes the node `target` wherever it is when it runs. */
-    const nodeCommand = (
-        target: NodeTarget,
-        change: (tr: Transaction, pos: number, node: Node) => boolean,
-    ): EngineCommand => ({
-        run: (base, dispatch) => {
-            const pos = targetIn(base.doc, target);
-            if (pos === undefined) {
-                return false;
-            }
-            const node = base.doc.nodeAt(pos);
-            const { tr } = base;
-            if (node === null || !change(tr, pos, node)) {
-                return false;
-            }
-            dispatch?.(tr);
-            return true;
-        },
-        active: () => false,
-    });
-    const nodeActions = (target: NodeTarget): NodeActions => ({
-        update: (attrs) => {
-            const checked = checkedPayload(attrs);
-            if (checked === undefined || !isRecord(checked.payload)) {
-                return rejected('invalid-payload');
-            }
-            const values = checked.payload;
-            const update = nodeCommand(target, (tr, pos, node) => {
-                const declared = compiledModel(definition.model).nodes.find(({ name }) => name === node.type.name);
-                if (declared === undefined) {
-                    return false;
-                }
-                const attributes = attributesOf(declared);
-                for (const [name, value] of Object.entries(values)) {
-                    const attribute = attributes[name];
-                    // An action never changes the ID it finds its node by.
-                    if (name === 'nodeId' || attribute === undefined || !isValidValue(attribute, value)) {
-                        return false;
-                    }
-                    tr.setNodeAttribute(pos, name, value);
-                }
-                return true;
-            });
-            return commands.runOn(update, { payload: undefined }, () => store.state, 'host');
-        },
-        remove: () => {
-            const remove = nodeCommand(target, (tr, pos, node) => {
-                tr.delete(pos, pos + node.nodeSize);
-                return true;
-            });
-            return commands.runOn(remove, { payload: undefined }, () => store.state, 'host');
-        },
-        select: () => {
-            const pos = targetIn(store.state.doc, target);
-            if (pos !== undefined) {
-                commit(store.state.tr.setSelection(NodeSelection.create(store.state.doc, pos)));
-            }
-        },
-        // The author's selection stays, so typing after a press on chrome, such as a task checkbox, keeps the node.
-        execute: (id, payload) =>
-            commands.runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(target), 'node'),
-        query: (id, payload) =>
-            commands.queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(target)),
-    });
-
-    const placeAsset: EditorRuntime['placeAsset'] = (value, place) => {
-        const asset = pickedAsset(value, { maxLength: limits.maxAttributeLength });
-        if (asset === undefined) {
-            return rejected('invalid-payload');
-        }
-        if ('target' in place) {
-            const insert = insertPicked(definition.schema, asset);
-            return commands.runOn(insert, { payload: undefined }, () => baseOf({ target: place.target }), 'host');
-        }
-        const { nodeId } = place;
-        if (positionOf(store.state.doc, nodeId) === undefined) {
-            return rejected('target-invalid');
-        }
-        return commands.runOn(refillPicked(nodeId, asset), { payload: undefined }, () => store.state, 'host');
     };
 
     const targets = createTargetsService({
@@ -845,23 +656,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     });
     busy.afterEach(queue.drain);
 
-    /** One search of a suggestion list, as one operation of the coordinator that the list's newer search supersedes. */
-    const searchSuggestions: SuggestionHost['search'] = ({ key, featureId, command, run }, receive) => {
-        const operation = coordinator.start({
-            key,
-            // The only host service a search reaches through the editor API.
-            service: 'references',
-            featureId,
-            action: 'create',
-            command,
-            run: ({ signal }) => run(signal),
-            deliver: (result) => {
-                receive(result as Awaited<ReturnType<typeof run>>);
-                return undefined;
-            },
-        });
-        return () => coordinator.abortWhere((other) => other === operation);
-    };
+    const actions = createActions({ definition, limits, store, commit: { commit }, commands, targets });
 
     const dispose = () => {
         if (lifecycle.is('disposed')) {
@@ -878,7 +673,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         checks.dispose();
         settling.resolve('disposed');
         coordinator.dispose();
-        uploads.dispose(store.state.doc);
+        uploads.raw.dispose(store.state.doc);
         queue.settle('not-ready');
         clearDeferred();
         targets.clearDeferred();
@@ -987,7 +782,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // What the old generation started or queued ends now and changes nothing here.
         coordinator.abortWhere(() => true);
-        uploads.reset(outgoing);
+        uploads.raw.reset(outgoing);
         coordinator.settle();
         busy.run(notify);
         display.emitSelection();
@@ -1136,16 +931,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         setDisabled: mode.setDisabled,
         setColumns: columns.set,
         faultView: views.faultView,
-        nodeActions,
-        placeAsset,
+        nodeActions: actions.nodeActions,
+        placeAsset: actions.placeAsset,
         uploads: {
-            accepts: acceptTypes,
-            available: (place) =>
-                acceptTypes !== undefined && options.uploads?.() !== undefined && uploads.admits(place),
-            begin: (files, place) => uploads.begin(files, place),
-            retry: (nodeId) => uploads.retry(nodeId),
-            pick: (nodeId) => options.pick?.(nodeId),
-            statusOf: (nodeId) => uploads.statusOf(nodeId),
+            accepts: uploads.accepts,
+            available: uploads.available,
+            begin: uploads.begin,
+            retry: uploads.retry,
+            pick: uploads.pick,
+            statusOf: uploads.statusOf,
         },
         saveStatusChanged: display.emitSaveStatus,
         clearHistory: () => history.clear(),
