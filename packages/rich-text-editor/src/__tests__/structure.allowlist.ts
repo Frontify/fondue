@@ -3,7 +3,6 @@
 // Ratchet tables for structure.spec.ts. Entries record today's value and only shrink.
 
 export const FILES_OVER_600_LINES: Record<string, number> = {
-    'src/codecs/to-markdown.ts': 702,
     'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/capabilities/suggestions/plugin.ts': 616,
     'src/runtime/runtime.ts': 908,
@@ -17,8 +16,6 @@ export const DATA_TABLES: Record<string, string> = {
 export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/clipboard/import/html.ts': 434,
     'src/runtime/clipboard/plugin.ts': 491,
-    'src/codecs/to-html.ts': 438,
-    'src/codecs/to-markdown.ts': 702,
     'src/model/content.ts': 539,
     'src/model/declarations.ts': 483,
     'src/model/output.ts': 548,
