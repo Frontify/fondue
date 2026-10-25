@@ -14,7 +14,7 @@ import {
     useEditorOverlay,
     useEditorValue,
     useOverlayContainer,
-} from '#/index';
+} from '#/entries/authoring';
 import { type ContentNodeJSON } from '#/model';
 
 import { spotlight } from './feature';

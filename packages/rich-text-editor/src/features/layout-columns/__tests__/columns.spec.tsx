@@ -8,6 +8,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import {
     columnBreak,
@@ -22,7 +23,7 @@ import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { orderedList } from '#/features/lists-ordered/feature';
 import { taskList } from '#/features/lists-task/feature';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import { type ContentNodeJSON } from '#/model';
 import { para, storedIn, text } from '#/react/__tests__/fixtures/text';

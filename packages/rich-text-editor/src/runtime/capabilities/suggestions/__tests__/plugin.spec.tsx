@@ -4,10 +4,11 @@ import { act, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { defineEditorPart } from '#/entries/authoring';
 import { code, codeBlock, core, emoji } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { type EmojiEntry } from '#/features/emoji/data';
-import { defineEditor, defineEditorPart, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import { type ContentNodeJSON } from '#/model';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';

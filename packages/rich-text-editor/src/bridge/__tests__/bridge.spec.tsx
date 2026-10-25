@@ -7,6 +7,12 @@ import * as ReactDOMClient from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
+import {
+    defineEditorPart,
+    defineReactPresentation,
+    type NodeViewState,
+    useRichTextNodeView,
+} from '#/entries/authoring';
 import { defineReaderFeature, type ReaderNodeProps, RichTextReader } from '#/entries/reader';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import {
@@ -18,15 +24,7 @@ import {
 import { fixtureList } from '#/features/__tests__/fixtures/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
-import {
-    defineEditor,
-    defineEditorPart,
-    defineReactPresentation,
-    type EditorHandle,
-    type NodeViewState,
-    RichTextEditor,
-    useRichTextNodeView,
-} from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
 import {

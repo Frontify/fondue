@@ -170,7 +170,7 @@ parseRules: [
 
 ## The editor part: `defineEditorPart`
 
-`defineEditorPart` comes from `@frontify/rich-text-editor`. It takes a feature, or a factory, and the parts of its editor side. `parts` may also be a function of the feature's resolved options.
+`defineEditorPart` comes from `@frontify/rich-text-editor/authoring`. It takes a feature, or a factory, and the parts of its editor side. `parts` may also be a function of the feature's resolved options.
 
 `defineEditor` takes one plugin per feature of its model in `plugins`. A plugin holds a feature, its editor part and its reader overrides. Each shipped feature has one, such as `boldPlugin`. `modelOf` compiles the model from the same list, so the model and the plugins cannot differ. `defineEditor` throws `definition.missing-plugin`, `definition.orphan-behavior`, `definition.duplicate-id` or `definition.version-mismatch` when the plugins do not cover the model exactly: one plugin per feature, of the same ID and version.
 
@@ -508,7 +508,7 @@ export const calloutEditor = defineEditorPart(callout, {
 });
 ```
 
-`definePlugin` joins the feature and its editor part into a plugin, in the `index.ts` of the folder. A model that installs a host feature lists that plugin in `plugins`:
+`definePlugin`, from `@frontify/rich-text-editor/authoring`, joins the feature and its editor part into a plugin, in the `index.ts` of the folder. A model that installs a host feature lists that plugin in `plugins`:
 
 ```tsx
 const calloutPlugin = definePlugin({ feature: callout, editor: calloutEditor });
@@ -519,7 +519,7 @@ const definition = defineEditor({ id: 'acme.notes', model, plugins });
 
 ### Replacing a shipped toolbar entry
 
-`extendPlugin` puts a host's parts over a shipped plugin. Its `toolbar` replaces the plugin's toolbar whole. Here the toolbar entry `bold` keeps its command and reads Strong. The `Host part replacing a toolbar entry` story mounts it.
+`extendPlugin`, also from `@frontify/rich-text-editor/authoring`, puts a host's parts over a shipped plugin. Its `toolbar` replaces the plugin's toolbar whole. Here the toolbar entry `bold` keeps its command and reads Strong. The `Host part replacing a toolbar entry` story mounts it.
 
 Source: `src/docs/authoring/strong.ts`
 
@@ -552,7 +552,7 @@ files: (api, files, at) => !api.selection().verbatim && api.uploads.begin(files,
 
 ## The reader part: `defineReaderFeature`
 
-`defineReaderFeature` comes from `@frontify/rich-text-editor/reader`. It attaches a component to a node or mark that the feature declares. The reader calls it as a function, so pass a function component, not a `memo` or `forwardRef` object. A component that throws renders as a labelled fallback, reports `reader.override-failed` and does not stop the rest of the document.
+`defineReaderFeature` comes from `@frontify/rich-text-editor/authoring`. It attaches a component to a node or mark that the feature declares. The reader calls it as a function, so pass a function component, not a `memo` or `forwardRef` object. A component that throws renders as a labelled fallback, reports `reader.override-failed` and does not stop the rest of the document.
 
 Source: `src/features/mentions/reader.tsx`
 
@@ -574,7 +574,7 @@ export const mentionReader: ReaderRenderers = { mention: Mention };
 `defineReaderFeature(feature, renderers)` returns the feature with the renderers attached. Compile that returned feature: the one you passed in carries none. A folder that has a `reader.tsx` also passes the same renderers as `reader` to `definePlugin`, so the reading views of the editor use the same components.
 
 ```tsx
-import { defineReaderFeature } from '@frontify/rich-text-editor/reader';
+import { defineReaderFeature } from '@frontify/rich-text-editor/authoring';
 
 const model = compileContentModel([core(), defineReaderFeature(mentions(), mentionReader)], {
     id: 'acme.notes',

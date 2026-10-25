@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin } from '#/index';
+import { definePlugin } from '#/entries/authoring';
 
 import { calloutEditor } from './callout-editor';
 import { callout } from './callout-feature';

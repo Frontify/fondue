@@ -2,7 +2,8 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { alignPlugin, corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor } from '#/index';
+import { defineReactPresentation } from '#/entries/authoring';
+import { alignPlugin, corePlugin, defineEditor, modelOf, RichTextEditor } from '#/index';
 
 const plugins = [corePlugin(), alignPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.align', version: 1 });

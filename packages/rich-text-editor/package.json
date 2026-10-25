@@ -34,6 +34,10 @@
             "types": "./dist/entries/reader.d.ts",
             "import": "./dist/entries/reader.js"
         },
+        "./authoring": {
+            "types": "./dist/entries/authoring.d.ts",
+            "import": "./dist/entries/authoring.js"
+        },
         "./codecs": {
             "types": "./dist/codecs/index.d.ts",
             "import": "./dist/codecs/index.js"

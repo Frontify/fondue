@@ -9,12 +9,13 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPart } from '#/bridge/plugin';
 import { compileDefinition, countAppends, type EngineCommand } from '#/definition';
+import { type CommandsOfPart } from '#/entries/authoring';
 import { type fixtureHeadingSetEditor } from '#/features/__tests__/fixtures/editors';
 import { fixtureHeadingSet } from '#/features/__tests__/fixtures/features';
 import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
-import { type CommandsOfPart, type EditorHandle } from '#/index';
+import { type EditorHandle } from '#/index';
 import { compileContentModel, defineFeature, type Diagnostic } from '#/model';
 import { limitsOf } from '#/model/decode';
 import { extensionsOf } from '#/react/engine';

@@ -60,6 +60,7 @@ export default defineConfig({
                 'model/index': './src/model/index.ts',
                 'features/index': './src/features/index.ts',
                 'entries/reader': './src/entries/reader.ts',
+                'entries/authoring': './src/entries/authoring.ts',
                 'codecs/index': './src/codecs/index.ts',
                 'html/index': './src/html/index.ts',
                 'testing/index': './src/testing/index.ts',

@@ -4,18 +4,13 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AnnouncerContext } from '#/bridge/announcer';
+import { defineReactPresentation } from '#/entries/authoring';
 import { bold, core } from '#/features';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { fixtureItalic, fixtureList, fixtureToolbar } from '#/features/__tests__/fixtures/features';
 import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import { links } from '#/features/links/feature';
-import {
-    defineEditor,
-    defineReactPresentation,
-    type EditorHandle,
-    type ReactPresentation,
-    RichTextEditor,
-} from '#/index';
+import { defineEditor, type EditorHandle, type ReactPresentation, RichTextEditor } from '#/index';
 import { enUS } from '#/locales/en-US';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';

@@ -3,6 +3,7 @@
 import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useRef, useState } from 'react';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { bold, core, inputRules } from '#/features';
 import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
@@ -10,14 +11,7 @@ import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { orderedList } from '#/features/lists-ordered/feature';
 import { taskList } from '#/features/lists-task/feature';
-import {
-    defineEditor,
-    defineReactPresentation,
-    type EditorHandle,
-    type ListLevels,
-    RichTextEditor,
-    type RichTextEditorProps,
-} from '#/index';
+import { defineEditor, type EditorHandle, type ListLevels, RichTextEditor, type RichTextEditorProps } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { setSelection } from '#/testing';
 

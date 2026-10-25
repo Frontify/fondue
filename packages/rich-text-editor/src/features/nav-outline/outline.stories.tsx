@@ -2,15 +2,8 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import {
-    corePlugin,
-    defineEditor,
-    defineReactPresentation,
-    headingPlugin,
-    modelOf,
-    outlinePlugin,
-    RichTextEditor,
-} from '#/index';
+import { defineReactPresentation } from '#/entries/authoring';
+import { corePlugin, defineEditor, headingPlugin, modelOf, outlinePlugin, RichTextEditor } from '#/index';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
 const plugins = [corePlugin(), headingPlugin(), outlinePlugin()] as const;

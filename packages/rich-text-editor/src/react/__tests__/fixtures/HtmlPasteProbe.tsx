@@ -3,9 +3,10 @@
 import { AllSelection } from 'prosemirror-state';
 import { useEffect, useRef } from 'react';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { htmlModel } from '#/features/__tests__/fixtures/html';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { createEmptyDocument } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
 

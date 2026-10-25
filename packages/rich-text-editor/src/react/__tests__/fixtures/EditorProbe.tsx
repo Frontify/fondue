@@ -4,6 +4,7 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { bold, core } from '#/features';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
@@ -14,7 +15,6 @@ import { links } from '#/features/links/feature';
 import {
     type CompiledEditorDefinition,
     defineEditor,
-    defineReactPresentation,
     type EditorHandle,
     type PersistenceService,
     RichTextEditor,

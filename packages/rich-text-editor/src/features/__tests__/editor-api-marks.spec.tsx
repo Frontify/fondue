@@ -3,8 +3,8 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type EditorApi } from '#/entries/authoring';
 import {} from '#/features';
-import { type EditorApi } from '#/index';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 

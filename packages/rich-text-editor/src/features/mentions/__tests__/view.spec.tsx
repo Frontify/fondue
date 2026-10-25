@@ -7,8 +7,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
-import { defineReactPresentation } from '#/index';
 import { type ReferenceResolution } from '#/model';
 
 import { mention, mentionModel, mountMentions, para, storedIn, text } from './fixtures/mount';

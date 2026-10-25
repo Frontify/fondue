@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import '#/styles/content.css';
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { columns as layoutColumns, core } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
+import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 
 const model = compileContentModel([core(), layoutColumns()], { id: 'test.columns', version: 1 });

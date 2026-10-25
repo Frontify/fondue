@@ -2,7 +2,8 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { boldPlugin, corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor } from '#/index';
+import { defineReactPresentation } from '#/entries/authoring';
+import { boldPlugin, corePlugin, defineEditor, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 const plugins = [corePlugin(), boldPlugin()] as const;

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { boldPlugin, extendPlugin } from '#/index';
+import { extendPlugin } from '#/entries/authoring';
+import { boldPlugin } from '#/index';
 
 /** A host plugin for `marks.bold`: its toolbar entry `bold` replaces the shipped one, so the button reads Strong. */
 export const strongPlugin = extendPlugin(boldPlugin(), {

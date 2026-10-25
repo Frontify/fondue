@@ -4,11 +4,11 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { vi } from 'vitest';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { core, mentions } from '#/features';
 import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import {
     defineEditor,
-    defineReactPresentation,
     type EditorHandle,
     type EditorServices,
     type ReactPresentation,

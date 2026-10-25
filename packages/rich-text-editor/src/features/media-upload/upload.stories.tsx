@@ -3,10 +3,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import {
     corePlugin,
     defineEditor,
-    defineReactPresentation,
     mediaImagePlugin,
     mediaUploadPlugin,
     modelOf,

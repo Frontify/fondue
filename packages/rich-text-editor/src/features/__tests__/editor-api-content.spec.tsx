@@ -4,11 +4,12 @@ import { act } from '@testing-library/react';
 import { Node } from 'prosemirror-model';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type CommandOutcome, type EditorApi, type WriteOutcome } from '#/entries/authoring';
 import { bold, codeBlock, core, fontColor, heading, links, mediaImage } from '#/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
-import { type AuthoringPolicy, type CommandOutcome, type EditorApi, type WriteOutcome } from '#/index';
+import { type AuthoringPolicy } from '#/index';
 import { compileContentModel, type ContentNodeJSON, defineFeature, type RichTextDocument } from '#/model';
 import { type CommandState } from '#/runtime/types';
 import { setSelection, typeText } from '#/testing';

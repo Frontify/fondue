@@ -3,10 +3,11 @@
 import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useRef } from 'react';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { bold, code, core, italic, mediaImage, mentions, strike, underline } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { setSelection } from '#/testing';
 

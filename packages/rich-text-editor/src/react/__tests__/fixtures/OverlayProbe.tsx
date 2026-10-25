@@ -4,6 +4,7 @@ import { Dialog, ThemeProvider } from '@frontify/fondue-components';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { bold, core } from '#/features';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { fixtureItalic, fixtureToolbar } from '#/features/__tests__/fixtures/features';
@@ -14,7 +15,6 @@ import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units'
 import { links } from '#/features/links/feature';
 import {
     defineEditor,
-    defineReactPresentation,
     type EditorHandle,
     type ReactPresentation,
     RichTextEditor,

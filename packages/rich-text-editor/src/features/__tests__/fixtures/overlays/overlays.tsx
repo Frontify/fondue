@@ -4,7 +4,8 @@ import { Dropdown, Flyout } from '@frontify/fondue-components';
 import { type ComponentType, useEffect, useId, useState } from 'react';
 
 import { OverlayBody, useEditorOverlay } from '#/bridge/define';
-import { useEditorApi, useEditorHandle } from '#/index';
+import { useEditorApi } from '#/entries/authoring';
+import { useEditorHandle } from '#/index';
 
 /** The commands the stand-ins run: the link stand-in's and `core`'s text insertion. */
 interface FixtureCommands {

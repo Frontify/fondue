@@ -2,11 +2,11 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import {
     brandStylesPlugin,
     corePlugin,
     defineEditor,
-    defineReactPresentation,
     headingPlugin,
     modelOf,
     quotePlugin,

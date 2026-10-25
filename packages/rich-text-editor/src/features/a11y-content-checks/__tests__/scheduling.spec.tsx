@@ -4,9 +4,10 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createRef, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { CONTENT_RULE_IDS, CONTENT_RULES } from '#/features/__tests__/fixtures/content-rules';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { hashDocument } from '#/model';
 import { storedIn } from '#/react/__tests__/fixtures/text';
 import { CHECK_DELAY_MS, contentChecksOf } from '#/runtime/capabilities/checks/content-issues';

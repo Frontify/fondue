@@ -4,6 +4,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { createRef, type FormEvent, type RefObject } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
@@ -12,7 +13,6 @@ import { bold } from '#/features/marks-bold/feature';
 import {
     type CommitResult,
     defineEditor,
-    defineReactPresentation,
     type EditorHandle,
     type PersistenceOptions,
     type PersistenceService,

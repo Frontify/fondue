@@ -4,19 +4,11 @@ import { act, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { vi } from 'vitest';
 
+import { defineEditorPart, type EditorApi, useEditorApi } from '#/entries/authoring';
 import { bold, codeBlock, core, fontColor, heading, links, mediaImage, quote } from '#/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import {
-    type AuthoringPolicy,
-    defineEditor,
-    defineEditorPart,
-    type EditorApi,
-    type EditorHandle,
-    type ReactPresentation,
-    RichTextEditor,
-    useEditorApi,
-} from '#/index';
+import { type AuthoringPolicy, defineEditor, type EditorHandle, type ReactPresentation, RichTextEditor } from '#/index';
 import {
     compileContentModel,
     type ContentModel,

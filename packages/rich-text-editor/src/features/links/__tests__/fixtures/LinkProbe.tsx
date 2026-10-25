@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { bold, core } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { links } from '#/features/links/feature';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';

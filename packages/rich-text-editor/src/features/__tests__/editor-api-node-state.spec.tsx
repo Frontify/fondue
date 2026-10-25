@@ -3,9 +3,10 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type CommandOutcome, defineReactPresentation, type EditorApi } from '#/entries/authoring';
 import { align, bold, codeBlock, core, fontColor, heading, links, mediaImage } from '#/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
-import { type CommandOutcome, defineReactPresentation, type EditorApi, type SelectionHandle } from '#/index';
+import { type SelectionHandle } from '#/index';
 import { type ColorToken, compileContentModel } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
 import { type CommandState } from '#/runtime/types';

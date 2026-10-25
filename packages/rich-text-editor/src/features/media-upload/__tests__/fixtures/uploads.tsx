@@ -4,15 +4,14 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { vi } from 'vitest';
 
+import { defineReactPresentation, type EditorPart } from '#/entries/authoring';
 import { core, mediaImage, mediaUpload } from '#/features';
 import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
 import { flush, imageModel, para, resolving, storedIn, text } from '#/features/media-image/__tests__/fixtures/mount';
 import {
     type AssetValue,
     defineEditor,
-    defineReactPresentation,
     type EditorHandle,
-    type EditorPart,
     type EditorServices,
     type ReactPresentation,
     RichTextEditor,

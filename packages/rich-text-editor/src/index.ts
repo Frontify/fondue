@@ -1,79 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export {
-    CheckedSlot,
-    type EditorOverlay,
-    keepFocus,
-    Listbox,
-    type ListboxOption,
-    type MenuOption,
-    NodeChromeButton,
-    NodeChromeMenu,
-    NodeChromeToolbar,
-    type NodePending,
-    NodeViewContent,
-    type NodeViewContext,
-    type NodeViewDeclaration,
-    type NodeViewState,
-    type PanelComponentProps,
-    OptionItem,
-    OptionsMenu,
-    type PanelDeclaration,
-    suggestionOptionId,
-    useRichTextNodeView,
-} from '#/bridge/define';
-export { definePlugin, extendPlugin, modelOf, type RichTextPlugin } from '#/bridge/define-plugin';
-export {
-    type AncestorValue,
-    type Announcer,
-    type AnchorTarget,
-    type BlockValue,
-    type CheckedIssue,
-    type CommandOutcome,
-    type CommandsOfPart,
-    type ContentChecksApi,
-    createAnnouncer,
-    type ContentChecksResult,
-    defineEditorPart,
-    type EditorApi,
-    type EditorCommand,
-    type EditorControlApi,
-    type EditorFacet,
-    type EditorFacets,
-    type EditorHosts,
-    type EditorPart,
-    type EditorPartSpec,
-    type EditorRange,
-    type EditorSuggestion,
-    type InsertPlace,
-    type KeyHandler,
-    type MarkRunValue,
-    type NodeValue,
-    type OverlayAnchor,
-    OverlayBody,
-    type OverlayProps,
-    passEscape,
-    passesToBrowser,
-    type PluginPresentation,
-    type PluginServices,
-    type PluginToolbarEntry,
-    type ReferenceSearch,
-    sameRange,
-    type SelectionValue,
-    type StandingOverlayProps,
-    type SuggestionSearchContext,
-    type ToolbarControlProps,
-    type UploadStatus,
-    useApplePlatform,
-    useClientLayoutEffect,
-    useEditorApi,
-    useEditorOverlay,
-    useEditorValue,
-    useOverlayContainer,
-    useScopedFocus,
-    type WriteOutcome,
-    type WriteTarget,
-} from '#/bridge/plugin';
+export { modelOf, type RichTextPlugin } from '#/bridge/define-plugin';
 export { useCommandState, useEditorSelection } from '#/bridge/hooks';
 export { contentChecksPlugin } from '#/features/a11y-content-checks';
 export { alignPlugin } from '#/features/blocks-align';
@@ -106,14 +33,6 @@ export { mentionsPlugin } from '#/features/mentions';
 export { outlinePlugin } from '#/features/nav-outline';
 export { brandStylesPlugin } from '#/features/styles-brand';
 export { pluginsById } from '#/features/plugins';
-export type {
-    BlockDecoration,
-    BlockDecorationSource,
-    DecoratedBlock,
-    SuggestionPage,
-    SuggestionResult,
-    SuggestionRules,
-} from '#/model/declarations';
 export {
     type CommitOptions,
     type CommitResult,
@@ -133,7 +52,7 @@ export {
     type ServiceContext,
     type Snapshot,
 } from '#/persistence/types';
-export { defineEditor, defineReactPresentation } from '#/react/define';
+export { defineEditor } from '#/react/define';
 export { type RichTextFormField, useRichTextFormField } from '#/react/form-field';
 export { useEditorHandle } from '#/react/hooks';
 export { RichTextEditor } from '#/react/rich-text-editor';

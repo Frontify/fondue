@@ -5,6 +5,7 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPart } from '#/bridge/plugin';
+import { defineReactPresentation } from '#/entries/authoring';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import {
@@ -18,7 +19,7 @@ import {
     text,
 } from '#/features/media-image/__tests__/fixtures/mount';
 import { mediaImage } from '#/features/media-image/feature';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { enUS } from '#/locales/en-US';
 import { setSelection } from '#/testing';
 

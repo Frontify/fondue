@@ -4,9 +4,9 @@ import { act, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { COALESCE_MS } from '#/bridge/announcer';
+import { defineEditorPart, useEditorApi, useEditorValue } from '#/entries/authoring';
 import { contentChecks } from '#/features';
 import { pluginsById } from '#/features/plugins';
-import { defineEditorPart, useEditorApi, useEditorValue } from '#/index';
 import { CHECK_DELAY_MS } from '#/runtime/capabilities/checks/content-issues';
 import { positionOf } from '#/runtime/positions';
 import { runtimeOf } from '#/runtime/runtime';

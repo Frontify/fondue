@@ -3,26 +3,28 @@
 import { createRef } from 'react';
 
 import { definePlugin } from '#/bridge/define-plugin';
+import {
+    type BlockDecoration,
+    type BlockDecorationSource,
+    type CommandsOfPart,
+    type DecoratedBlock,
+    defineEditorPart,
+    defineReactPresentation,
+    type EditorCommand,
+    type EditorOverlay,
+    type NodePending,
+    type NodeViewContext,
+} from '#/entries/authoring';
 import { core } from '#/features';
 import { fixtureItalic } from '#/features/__tests__/fixtures/features';
 import { type spotlightEditor } from '#/features/__tests__/fixtures/spotlight/editor';
 import {
-    type BlockDecoration,
-    type BlockDecorationSource,
     boldPlugin,
-    type CommandsOfPart,
     type CommandsOfPlugins,
     corePlugin,
-    type DecoratedBlock,
     defineEditor,
-    defineEditorPart,
-    defineReactPresentation,
-    type EditorCommand,
     type EditorHandle,
-    type EditorOverlay,
     modelOf,
-    type NodePending,
-    type NodeViewContext,
     RichTextEditor,
     useCommandState,
 } from '#/index';

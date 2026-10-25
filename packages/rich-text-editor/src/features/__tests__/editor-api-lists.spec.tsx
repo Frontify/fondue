@@ -3,12 +3,12 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type CommandOutcome, type EditorApi } from '#/entries/authoring';
 import { core } from '#/features';
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
 import { taskList } from '#/features/lists-task/feature';
-import { type CommandOutcome, type EditorApi } from '#/index';
 import { compileContentModel, type ContentNodeJSON, type RichTextDocument } from '#/model';
 import { type CommandState } from '#/runtime/types';
 import { setSelection } from '#/testing';

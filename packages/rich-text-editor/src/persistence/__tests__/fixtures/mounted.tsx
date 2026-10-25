@@ -8,13 +8,13 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterAll, afterEach, beforeAll, beforeEach, expect, vi } from 'vitest';
 
+import { defineEditorPart } from '#/entries/authoring';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import {
     defineEditor,
-    defineEditorPart,
     type EditorHandle,
     type OperationMetric,
     type PersistenceOptions,

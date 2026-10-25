@@ -4,18 +4,11 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { vi } from 'vitest';
 
+import { defineReactPresentation, type EditorPart } from '#/entries/authoring';
 import { bold, contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/features';
 import { fixtureHighlight } from '#/features/__tests__/fixtures/highlight';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import {
-    type AuthoringPolicy,
-    defineEditor,
-    defineReactPresentation,
-    type EditorHandle,
-    type EditorPart,
-    type EditorServices,
-    RichTextEditor,
-} from '#/index';
+import { type AuthoringPolicy, defineEditor, type EditorHandle, type EditorServices, RichTextEditor } from '#/index';
 import { type ColorToken, compileContentModel, type ContentModel, type ContentNodeJSON, type Feature } from '#/model';
 import { storedIn } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';

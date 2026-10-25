@@ -2,7 +2,7 @@
 
 import { createElement } from 'react';
 
-import { defineEditorPart, useRichTextNodeView } from '#/index';
+import { defineEditorPart, useRichTextNodeView } from '#/entries/authoring';
 
 import { badgeLabel, highlight } from './outside-feature';
 

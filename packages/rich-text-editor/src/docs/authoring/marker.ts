@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPart, definePlugin } from '#/index';
+import { defineEditorPart, definePlugin } from '#/entries/authoring';
 import { defineFeature } from '#/model';
 
 const marker = defineFeature({

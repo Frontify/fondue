@@ -3,9 +3,9 @@
 import { act, fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { defineEditorPart } from '#/entries/authoring';
 import { core, mediaImage, mediaUpload } from '#/features';
 import { deferredPicker, figure, PALETTE } from '#/features/media-image/__tests__/fixtures/mount';
-import { defineEditorPart } from '#/index';
 import { defineFeature } from '#/model';
 
 import { caretAfterBefore, slot, started, cancel } from './fixtures/steps';

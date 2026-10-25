@@ -6,11 +6,12 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
+import { defineReactPresentation } from '#/entries/authoring';
 import { documentModel } from '#/features';
 import { canonicalOf } from '#/features/__tests__/fixtures/generated';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { resolving } from '#/features/media-image/__tests__/fixtures/mount';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { type ContentNodeJSON, createEmptyDocument, type RichTextDocument, type RichTextSlice } from '#/model';
 import fixture from '#/model/__tests__/fixtures/a11y/metadata.json';
 import { runtimeOf } from '#/runtime/runtime';

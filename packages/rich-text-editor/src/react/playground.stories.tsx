@@ -4,6 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { expect, within } from 'storybook/test';
 
+import { defineEditorPart, definePlugin, defineReactPresentation, useRichTextNodeView } from '#/entries/authoring';
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
 import {
     alignPlugin,
@@ -20,9 +21,6 @@ import {
     contentChecksPlugin,
     corePlugin,
     defineEditor,
-    defineEditorPart,
-    definePlugin,
-    defineReactPresentation,
     type EditorHandle,
     emojiPlugin,
     fontColorPlugin,
@@ -57,7 +55,6 @@ import {
     underlinePlugin,
     useEditorSelection,
     useRichTextFormField,
-    useRichTextNodeView,
 } from '#/index';
 import { enUS } from '#/locales/en-US';
 import {

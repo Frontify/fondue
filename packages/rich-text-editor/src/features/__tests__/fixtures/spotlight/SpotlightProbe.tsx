@@ -2,9 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
 
 import { FIXTURE_PLUGINS } from '../plugins';

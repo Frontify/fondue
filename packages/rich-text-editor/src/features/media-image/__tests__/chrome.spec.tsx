@@ -10,8 +10,8 @@ import { NodeSelection } from 'prosemirror-state';
 import { createElement } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
-import { defineReactPresentation } from '#/index';
 import { REPLACED_ASSET } from '#/model/assets';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { nodeStateOf } from '#/runtime/node-state';

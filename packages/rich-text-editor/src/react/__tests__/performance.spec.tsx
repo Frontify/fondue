@@ -5,10 +5,11 @@ import { Node } from 'prosemirror-model';
 import { createRef } from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { featuresById } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { registry } from '#/features/registry';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import * as hash from '#/model/hash';
 import { runtimeOf } from '#/runtime/runtime';

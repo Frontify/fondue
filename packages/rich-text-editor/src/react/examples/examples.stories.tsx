@@ -5,6 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { commentModel } from '#/features';
 import {
@@ -12,7 +13,6 @@ import {
     type CompiledEditorDefinition,
     corePlugin,
     defineEditor,
-    defineReactPresentation,
     type EditorHandle,
     italicPlugin,
     type LoadedDocument,

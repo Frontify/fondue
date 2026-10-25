@@ -2,7 +2,8 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { corePlugin, defineEditor, defineReactPresentation, languagePlugin, modelOf, RichTextEditor } from '#/index';
+import { defineReactPresentation } from '#/entries/authoring';
+import { corePlugin, defineEditor, languagePlugin, modelOf, RichTextEditor } from '#/index';
 
 const plugins = [corePlugin(), languagePlugin({ languages: ['en', 'de', 'fr', 'ar'] })] as const;
 const model = modelOf(plugins, {

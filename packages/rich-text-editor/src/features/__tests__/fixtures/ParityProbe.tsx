@@ -2,13 +2,14 @@
 
 import { ThemeProvider } from '@frontify/fondue-components';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { featuresById } from '#/features';
 import { highlightEditor } from '#/features/__tests__/fixtures/outside-editor';
 import { badgeDocument, highlight, highlightDocument } from '#/features/__tests__/fixtures/outside-feature';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { registry } from '#/features/registry';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
+import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { featureFixtures } from '#/testing/conformance/fixtures';
 

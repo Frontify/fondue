@@ -5,6 +5,13 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { definePlugin } from '#/bridge/define-plugin';
+import {
+    type CommandsOfPart,
+    defineEditorPart,
+    defineReactPresentation,
+    type EditorPart,
+    extendPlugin,
+} from '#/entries/authoring';
 import { featuresById } from '#/features';
 import { commandCases } from '#/features/__tests__/fixtures/contract.cases';
 import { FIXTURE_PLUGINS } from '#/features/__tests__/fixtures/plugins';
@@ -16,18 +23,7 @@ import { corePlugin } from '#/features/core';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { registry } from '#/features/registry';
-import {
-    type AuthoringPolicy,
-    type CommandsOfPart,
-    defineEditor,
-    defineEditorPart,
-    defineReactPresentation,
-    type EditorHandle,
-    type EditorPart,
-    extendPlugin,
-    type RichTextPlugin,
-    RichTextEditor,
-} from '#/index';
+import { type AuthoringPolicy, defineEditor, type EditorHandle, type RichTextPlugin, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature, DefinitionError, type JsonObject } from '#/model';
 import { extensionsOf } from '#/react/engine';
 import { runtimeOf } from '#/runtime/runtime';

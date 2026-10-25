@@ -3,18 +3,12 @@
 import { NodeSelection } from 'prosemirror-state';
 import { useEffect, useRef, useState } from 'react';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { bold, core } from '#/features';
 import { fixtureLabelledMention } from '#/features/__tests__/fixtures/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { taskList as taskListFeature } from '#/features/lists-task/feature';
-import {
-    defineEditor,
-    defineReactPresentation,
-    type DocumentChange,
-    type EditorHandle,
-    RichTextEditor,
-    type UploadService,
-} from '#/index';
+import { defineEditor, type DocumentChange, type EditorHandle, RichTextEditor, type UploadService } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
 import { type SelectionTarget, setSelection } from '#/testing';

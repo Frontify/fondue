@@ -6,8 +6,8 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
-import { defineReactPresentation } from '#/index';
 import { REPLACED_ASSET } from '#/model/assets';
 import { liveRegionFaults } from '#/react/__tests__/fixtures/live-region';
 import { nodeStateOf } from '#/runtime/node-state';

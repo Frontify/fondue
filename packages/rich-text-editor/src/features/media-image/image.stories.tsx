@@ -2,15 +2,8 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import {
-    type AssetPickerService,
-    corePlugin,
-    defineEditor,
-    defineReactPresentation,
-    mediaImagePlugin,
-    modelOf,
-    RichTextEditor,
-} from '#/index';
+import { defineReactPresentation } from '#/entries/authoring';
+import { type AssetPickerService, corePlugin, defineEditor, mediaImagePlugin, modelOf, RichTextEditor } from '#/index';
 import demoImage from '#/react/examples/demo-image.svg?no-inline';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.

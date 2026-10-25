@@ -6,7 +6,7 @@ import {
     NodeViewContent,
     type NodeViewDeclaration,
     useRichTextNodeView,
-} from '#/index';
+} from '#/entries/authoring';
 
 /** The callout's chrome: its tone, a button that switches it, and the editable paragraphs. */
 const CalloutView = () => {

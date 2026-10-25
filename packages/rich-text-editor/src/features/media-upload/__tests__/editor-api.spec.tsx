@@ -3,9 +3,9 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { defineEditorPart, type EditorApi, useEditorApi } from '#/entries/authoring';
 import { mediaUpload } from '#/features';
 import { figure } from '#/features/media-image/__tests__/fixtures/mount';
-import { defineEditorPart, type EditorApi, useEditorApi } from '#/index';
 import { paste, setSelection } from '#/testing';
 
 import { type MountedUploads, mountUploads, para, pngFile, settle, text } from './fixtures/uploads';

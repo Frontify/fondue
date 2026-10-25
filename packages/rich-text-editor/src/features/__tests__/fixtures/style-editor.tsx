@@ -4,10 +4,10 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { vi } from 'vitest';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import {
     type AuthoringPolicy,
     defineEditor,
-    defineReactPresentation,
     type EditorHandle,
     type ReactPresentation,
     RichTextEditor,

@@ -160,7 +160,7 @@ const STORY_EXTERNALS = [...packagesExcept([...UI_PACKAGES, 'storybook', '@story
 const PUBLIC_ENTRY_MODULES = Object.entries(packageJson.exports)
     .filter(([, target]) => typeof target === 'object')
     .map(([entry]) => (entry === '.' ? 'index' : entry.slice(2)))
-    .map((path) => (path === 'reader' ? 'entries/reader' : path));
+    .map((path) => (path === 'reader' || path === 'authoring' ? `entries/${path}` : path));
 
 // The public entries, the modules they re-export to plugins and the shared story folder, through the alias.
 const STORY_MODULES = [...PUBLIC_ENTRY_MODULES, 'bridge/plugin', 'bridge/define', 'reader/define', 'react/examples/**'];
@@ -700,7 +700,8 @@ export default defineConfig({
                     message: ENTRIES_MESSAGE,
                 },
             ],
-            [],
+            // `authoring` re-exports the editor part kit, so only the headless entries keep this boundary.
+            ['src/entries/authoring.ts'],
             [CLIENT_REACT],
         ),
         layerOverride('src/codecs/**/*.{ts,tsx}', [

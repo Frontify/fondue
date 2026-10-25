@@ -2,7 +2,8 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor, strikePlugin } from '#/index';
+import { defineReactPresentation } from '#/entries/authoring';
+import { corePlugin, defineEditor, modelOf, RichTextEditor, strikePlugin } from '#/index';
 import { type ContentModel, type ContentNodeJSON } from '#/model';
 
 import { calloutPlugin } from './callout-plugin';

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import {
     COLOR_TOKENS,
@@ -14,7 +15,7 @@ import {
     styleModel,
 } from '#/features/__tests__/fixtures/styles';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { defineEditor, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { type RichTextDocument } from '#/model';
 import { setSelection } from '#/testing';
 

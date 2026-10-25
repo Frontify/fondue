@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import {
     COLOR_TOKENS,
@@ -15,7 +16,7 @@ import {
 } from '#/features/__tests__/fixtures/styles';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { taskList } from '#/features/lists-task/feature';
-import { defineEditor, defineReactPresentation, RichTextEditor } from '#/index';
+import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 
 const model = compileContentModel([...styleFeatures(true), taskList()], { id: 'test.struck-tasks', version: 1 });

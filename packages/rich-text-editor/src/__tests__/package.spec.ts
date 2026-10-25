@@ -23,6 +23,7 @@ const LAYOUT_ENTRIES = new Set([
     './model',
     './features',
     './reader',
+    './authoring',
     './codecs',
     './html',
     './testing',
@@ -31,6 +32,7 @@ const LAYOUT_ENTRIES = new Set([
 
 const EXPORTED_NOW = [
     '.',
+    './authoring',
     './codecs',
     './features',
     './html',

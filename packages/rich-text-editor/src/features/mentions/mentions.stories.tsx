@@ -3,7 +3,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { corePlugin, defineEditor, defineReactPresentation, mentionsPlugin, modelOf, RichTextEditor } from '#/index';
+import { defineReactPresentation } from '#/entries/authoring';
+import { corePlugin, defineEditor, mentionsPlugin, modelOf, RichTextEditor } from '#/index';
 import { type ReferenceResolution } from '#/model';
 import { createFakeReferenceService } from '#/testing';
 

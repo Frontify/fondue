@@ -29,6 +29,7 @@ Run these from `packages/rich-text-editor`.
 | `./model` | The content model and documents |
 | `./features` | The shipped features |
 | `./reader` | `RichTextReader` and `defineReaderFeature` |
+| `./authoring` | `definePlugin`, `extendPlugin`, `defineEditorPart`, `defineReactPresentation`, `defineReaderFeature` and the types and components an editor part uses |
 | `./codecs` | `createCodecs` |
 | `./html` | `fromHTML` |
 | `./testing` | The feature contract suite, the input helpers and the runtime probe |

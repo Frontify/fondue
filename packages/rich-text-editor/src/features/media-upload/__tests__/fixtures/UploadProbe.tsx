@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { defineReactPresentation } from '#/entries/authoring';
 import { core, mediaImage, mediaUpload } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import {
     type AssetValue,
     defineEditor,
-    defineReactPresentation,
     type DocumentChange,
     type EditorHandle,
     RichTextEditor,

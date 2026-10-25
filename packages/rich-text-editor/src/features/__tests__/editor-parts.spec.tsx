@@ -6,24 +6,22 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { definePlugin } from '#/bridge/define-plugin';
 import { createCodecs } from '#/codecs';
-import { codeBlock, core, heading, language, mentions, outline } from '#/features';
-import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
-import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
-import { corePlugin } from '#/features/core';
 import {
-    defineEditor,
     defineEditorPart,
     defineReactPresentation,
-    type EditorHandle,
     type EditorPart,
     type EditorPartSpec,
     type EditorSuggestion,
     NodeViewContent,
-    RichTextEditor,
     type SuggestionPage,
     type SuggestionRules,
     useRichTextNodeView,
-} from '#/index';
+} from '#/entries/authoring';
+import { codeBlock, core, heading, language, mentions, outline } from '#/features';
+import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
+import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
+import { corePlugin } from '#/features/core';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON, type RichTextDocument, textRule } from '#/model';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, setSelection, typeText } from '#/testing';

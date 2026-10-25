@@ -5,6 +5,7 @@ import { createRef } from 'react';
 import { vi } from 'vitest';
 
 import { type EditorPart } from '#/bridge/plugin';
+import { defineReactPresentation } from '#/entries/authoring';
 import {
     bold,
     code,
@@ -23,7 +24,6 @@ import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units'
 import {
     type AuthoringPolicy,
     defineEditor,
-    defineReactPresentation,
     type EditorHandle,
     type ReactPresentation,
     RichTextEditor,

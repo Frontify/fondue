@@ -2,15 +2,8 @@
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import {
-    corePlugin,
-    defineEditor,
-    defineReactPresentation,
-    listItemPlugin,
-    modelOf,
-    orderedListPlugin,
-    RichTextEditor,
-} from '#/index';
+import { defineReactPresentation } from '#/entries/authoring';
+import { corePlugin, defineEditor, listItemPlugin, modelOf, orderedListPlugin, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.

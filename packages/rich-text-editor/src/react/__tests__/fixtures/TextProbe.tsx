@@ -3,12 +3,13 @@
 import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useRef } from 'react';
 
+import { defineEditorPart, defineReactPresentation } from '#/entries/authoring';
 import { bold, code, core, heading, italic, quote, strike, subscript, superscript, underline } from '#/features';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { fixtureChromeEditor } from '#/features/__tests__/fixtures/chrome/view';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { links } from '#/features/links/feature';
-import { defineEditor, defineEditorPart, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON, defineFeature } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
