@@ -126,7 +126,7 @@ export interface DocumentStamp extends SessionToken {
 }
 /** A short description of the current selection: its kind and whether it is collapsed. */
 export interface SelectionSummary {
-    /** `gap` is the gap cursor of `prosemirror-gapcursor`. */
+    /** `gap` is a caret between two blocks where no text can go, such as before a leading image or between two rules. */
     readonly kind: 'text' | 'node' | 'cells' | 'gap' | 'all' | 'none';
     readonly collapsed: boolean;
     readonly blockType: string | null;
