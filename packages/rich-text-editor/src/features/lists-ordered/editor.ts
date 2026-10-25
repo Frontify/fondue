@@ -13,6 +13,7 @@ const START = { fields: { start: { type: 'integer', min: 0, max: 1_000_000 } } }
  * dialog on the nearest ordered list, whose Apply sets its `start`.
  */
 export const orderedListEditor = defineEditorPart(orderedList, {
+    needs: ['attributes', 'lists', 'overlays'],
     commands: {
         'list.ordered.toggle': {
             payload: START,

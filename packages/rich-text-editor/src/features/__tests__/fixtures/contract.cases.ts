@@ -11,6 +11,7 @@ import { createNodeViews } from '#/bridge/node-views';
 import {
     type EditorApi,
     type EditorCommand,
+    type EditorFacet,
     type EditorHosts,
     type EditorPart,
     partWithOptions,
@@ -202,17 +203,20 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
             };
             // One part per feature, over the commands of its shipped and given parts, with this command watched.
             const commandsOf = new Map<string, Record<string, EditorCommand<never>>>();
+            const needsOf = new Map<string, readonly EditorFacet[]>();
             for (const part of parts) {
                 const merged = { ...commandsOf.get(part.feature) };
                 Object.assign(merged, part.commands);
                 commandsOf.set(part.feature, merged);
+                needsOf.set(part.feature, [...(needsOf.get(part.feature) ?? []), ...(part.needs ?? [])]);
             }
             const watching = [...commandsOf].map(([feature, commands]): EditorPart => {
+                const needs = needsOf.get(feature) ?? [];
                 const spec = commands[id];
                 if (spec === undefined) {
-                    return Object.freeze({ feature, commands });
+                    return Object.freeze({ feature, needs, commands });
                 }
-                return Object.freeze({ feature, commands: { ...commands, [id]: watched(spec) } });
+                return Object.freeze({ feature, needs, commands: { ...commands, [id]: watched(spec) } });
             });
             const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model, watching)));
             const command = engine.commands.get(id);

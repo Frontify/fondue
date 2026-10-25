@@ -184,7 +184,9 @@ const definition = defineEditor({ id: 'acme.notes', model, plugins });
 
 A host plugin for a feature comes from `definePlugin` for a feature of the host, or from `extendPlugin` for a shipped one: `extendPlugin(plugin, parts)` puts `parts` over the plugin's editor part, and the list you give, such as `toolbar`, replaces the plugin's list whole.
 
-An editor part acts only through `EditorApi`, which its commands, key handlers and overlays receive. It never touches ProseMirror types.
+An editor part acts only through `EditorApi`, which its commands, key handlers, suggestion lists and file intake receive. It never touches ProseMirror types.
+
+The API has facets, the members that are objects of functions: `marks`, `blocks`, `attributes`, `insert`, `lists`, `content`, `commands`, `history`, `targets`, `uploads`, `nodeState`, `services`, `overlays` and `panels`. A part names the facets its functions read in `needs`, and the API its functions receive holds those facets and the plain members, such as `selection()` and `select`. A facet missing from `needs` is a type error, and in development it throws an error that names the feature and the facet. Pass `needs` first in the part, and annotate `options` as `JsonObject` when `parts` is a function, so the facets reach the functions below it. Overlay and panel components read the whole API with `useEditorApi`.
 
 ### Commands, keys, input rules and toolbar entries
 
@@ -196,6 +198,7 @@ Source: `src/features/marks-strike/editor.ts`
 
 ```ts
 export const strikeEditor = defineEditorPart(strike, {
+    needs: ['marks'],
     commands: {
         'mark.strike.toggle': {
             run: (api) => api.marks.toggle('strike'),
@@ -291,6 +294,7 @@ const PANEL = 'checks';
 
 /** `checks.open` opens the issues panel, or, while it is open, moves focus to the issue last acted on. */
 export const contentChecksEditor = defineEditorPart(contentChecks, {
+    needs: ['panels'],
     commands: {
         'checks.open': {
             readOnly: true,
@@ -484,6 +488,7 @@ Source: `src/docs/authoring/callout-editor.ts`
 ```ts
 /** Wraps the selected blocks in a callout, or lifts them out of one, from the toolbar. */
 export const calloutEditor = defineEditorPart(callout, {
+    needs: ['blocks'],
     commands: {
         'callout.toggle': {
             run: (api) => api.blocks.wrap('callout'),

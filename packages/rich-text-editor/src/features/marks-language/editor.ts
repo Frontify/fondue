@@ -12,6 +12,7 @@ const DIRECTIONS = ['ltr', 'rtl', 'auto'] as const;
  * inside a passage changes or removes the whole passage; text typed at a passage's end stays outside it.
  */
 export const languageEditor = defineEditorPart(language, {
+    needs: ['marks', 'overlays'],
     commands: {
         'mark.language.edit': {
             // The selection's start sits in text that is not code.

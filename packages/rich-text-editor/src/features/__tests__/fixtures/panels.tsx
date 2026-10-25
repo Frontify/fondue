@@ -46,6 +46,7 @@ const ThrowingFindPanel = (): ReactNode => {
 const findPanel = (id: string, component: ComponentType<PanelComponentProps>) => {
     const feature = defineFeature({ id, version: 1, requires: [{ id: 'core', version: 1 }] });
     const plugin = defineEditorPart(feature, {
+        needs: ['panels'],
         commands: {
             'find.open': {
                 readOnly: true,

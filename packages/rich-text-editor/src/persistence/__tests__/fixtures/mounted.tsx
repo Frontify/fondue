@@ -99,6 +99,7 @@ export const stampedBlock = defineFeature({
     },
 });
 export const stampedEditor = defineEditorPart(stampedBlock, {
+    needs: ['blocks'],
     commands: { 'test.stamped.set': { run: (api) => api.blocks.set('stamped', undefined, { toggle: true }) } },
 });
 export const features: readonly Feature[] = [core(), bold(), fixtureChrome(), stampedBlock()];

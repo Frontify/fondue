@@ -43,6 +43,7 @@ describe('the controls an image insert and an upload start open', () => {
         ],
     });
     const acmePicker = defineEditorPart(acmePick, {
+        needs: ['uploads'],
         commands: {
             'acme.image.pick': {
                 payload: { fields: { nodeId: { type: 'string' } } },

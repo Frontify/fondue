@@ -29,10 +29,12 @@ describe('key precedence', () => {
         });
         const parts = [
             defineEditorPart(leaveHeading, {
+                needs: ['blocks'],
                 commands: { 'fixture.paragraph.set': { run: (api) => api.blocks.set('paragraph') } },
                 keys: { Enter: 'fixture.paragraph.set' },
             }),
             defineEditorPart(markLine, {
+                needs: ['insert'],
                 commands: { 'fixture.text.insert': TEXT_INSERT },
                 keys: { Enter: { command: 'fixture.text.insert', payload: { text: '¶' } } },
             }),
@@ -74,9 +76,10 @@ describe('platform key bindings', () => {
     } as const satisfies FeatureDeclaration;
     const pullQuote = defineFeature(pullQuoteDeclaration);
     const pullQuoteSet = {
-        run: (api: EditorApi) => api.blocks.set('acme_pull_quote', undefined, { toggle: true }),
+        run: (api: EditorApi<'blocks'>) => api.blocks.set('acme_pull_quote', undefined, { toggle: true }),
     };
     const part = defineEditorPart(pullQuote, {
+        needs: ['blocks'],
         commands: { 'acme.pull-quote.set': pullQuoteSet },
         keys: { 'mac:Mod-Alt-q': 'acme.pull-quote.set', 'other:Ctrl-Shift-q': 'acme.pull-quote.set' },
     });
@@ -107,6 +110,7 @@ describe('platform key bindings', () => {
 
     it('runs the mac: binding over a plain binding of the same key on an Apple platform', () => {
         const both = defineEditorPart(pullQuote, {
+            needs: ['blocks'],
             commands: {
                 'acme.pull-quote.set': pullQuoteSet,
                 'acme.pull-quote.unset': { run: (api) => api.blocks.set('paragraph') },
@@ -146,6 +150,7 @@ describe('platform key bindings', () => {
         Object.defineProperty(navigator, 'userAgentData', { configurable: true, get: () => ({ platform: 'macOS' }) });
         try {
             const bound = defineEditorPart(pullQuote, {
+                needs: ['blocks'],
                 commands: { 'acme.pull-quote.set': pullQuoteSet },
                 keys: { 'mac:Mod-b': 'acme.pull-quote.set' },
             });

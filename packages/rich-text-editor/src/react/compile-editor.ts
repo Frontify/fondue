@@ -2,7 +2,7 @@
 
 import { type NodeViewDeclaration, type PanelDeclaration } from '#/bridge/define';
 import { type RichTextPlugin } from '#/bridge/define-plugin';
-import { commandApiOf, editorApiOf } from '#/bridge/live-api';
+import { editorApiOf, facetsOf, partCommandApiOf } from '#/bridge/live-api';
 import {
     type EditorApi,
     type EditorHosts,
@@ -104,7 +104,10 @@ const collectPlugins = (model: ContentModel, units: readonly RichTextPlugin[]): 
 };
 
 /** A part's list as the engine runs it, whose search reads the API of the session that shows the list's view. */
-const engineSuggestion = ({ search, available, ...list }: EditorSuggestion): Omit<EngineSuggestion, 'featureId'> => ({
+const engineSuggestion = (
+    { feature, needs }: EditorPart,
+    { search, available, ...list }: EditorSuggestion,
+): Omit<EngineSuggestion, 'featureId'> => ({
     ...list,
     available: ({ view, host }) => {
         const runtime = portOfView(view);
@@ -114,7 +117,7 @@ const engineSuggestion = ({ search, available, ...list }: EditorSuggestion): Omi
         if (available === undefined) {
             return true;
         }
-        return available(editorApiOf(runtime, host as EditorHosts));
+        return available(facetsOf(editorApiOf(runtime, host as EditorHosts), needs, feature));
     },
     search: async (query, { view, host, signal, cursor }) => {
         const runtime = portOfView(view);
@@ -122,7 +125,7 @@ const engineSuggestion = ({ search, available, ...list }: EditorSuggestion): Omi
             throw new Error('The list has no session.');
         }
         return search(query, {
-            api: editorApiOf(runtime, host as EditorHosts),
+            api: facetsOf(editorApiOf(runtime, host as EditorHosts), needs, feature),
             signal,
             cursor,
         });
@@ -141,18 +144,18 @@ const extensionOf = (model: ContentModel, plugin: EditorPart): EngineExtension =
         const handlers: Record<string, EngineCommand> = {};
         for (const [key, handler] of Object.entries(plugin.keys ?? {})) {
             if (typeof handler === 'function') {
-                handlers[key] = pluginCommand({ run: handler }, model, schema, lookup, commandApiOf);
+                handlers[key] = pluginCommand({ run: handler }, model, schema, lookup, partCommandApiOf(plugin));
             }
         }
         return handlers;
     },
     inputRules: plugin.inputRules ?? [],
     decorations: plugin.decorations ?? [],
-    suggestions: (plugin.suggestions ?? []).map(engineSuggestion),
+    suggestions: (plugin.suggestions ?? []).map((list) => engineSuggestion(plugin, list)),
     commands: (schema, lookup) => {
         const commands: Record<string, EngineCommand> = {};
         for (const [id, spec] of Object.entries(plugin.commands ?? {})) {
-            commands[id] = pluginCommand(spec, model, schema, lookup, commandApiOf);
+            commands[id] = pluginCommand(spec, model, schema, lookup, partCommandApiOf(plugin));
         }
         return commands;
     },
@@ -185,12 +188,13 @@ const intakeOf =
             return false;
         }
         const range = rangeOfPort(runtime, from, to);
-        return plugins.some(({ files: take }) => {
+        return plugins.some((plugin) => {
+            const { files: take } = plugin;
             if (take === undefined) {
                 return false;
             }
             const run = (api: EditorApi) => take(api, files, { origin, range });
-            return performIn(runtime, sessionCommand(runtime, run, model, commandApiOf));
+            return performIn(runtime, sessionCommand(runtime, run, model, partCommandApiOf(plugin)));
         });
     };
 

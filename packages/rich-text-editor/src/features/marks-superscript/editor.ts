@@ -6,6 +6,7 @@ import { superscript } from './feature';
 
 /** Toggles superscript on the selection or at the caret, from Mod+Period or the toolbar; adding it removes subscript. */
 export const superscriptEditor = defineEditorPart(superscript, {
+    needs: ['marks'],
     commands: {
         'mark.superscript.toggle': {
             run: (api) => {

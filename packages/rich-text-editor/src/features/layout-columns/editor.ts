@@ -7,10 +7,12 @@ import { columns } from './feature';
 const PLACE = { place: 'after-top-level-block' } as const;
 
 // A break past the first `columns - 1` would force no break, so none is added.
-const room = (api: EditorApi) => api.blocks.list('column_break').length < api.services.presentation().columns - 1;
+const room = (api: EditorApi<'blocks' | 'services'>) =>
+    api.blocks.list('column_break').length < api.services.presentation().columns - 1;
 
 /** Ends a column with a break after the top-level block that holds the selection, from Mod+Shift+Enter or the toolbar. */
 export const columnsEditor = defineEditorPart(columns, {
+    needs: ['blocks', 'insert', 'services'],
     commands: {
         'column.break.insert': {
             run: (api) => room(api) && api.insert.node('column_break', {}, PLACE).status === 'applied',

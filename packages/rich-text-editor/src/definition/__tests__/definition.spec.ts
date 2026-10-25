@@ -302,7 +302,10 @@ describe('compileDefinition of editor parts', () => {
 
     it('rejects two features that register one command', () => {
         const again = defineFeature({ id: 'a.history', version: 1 });
-        const part = defineEditorPart(again, { commands: { 'fixture.undo': { run: (api) => api.history.undo() } } });
+        const part = defineEditorPart(again, {
+            needs: ['history'],
+            commands: { 'fixture.undo': { run: (api) => api.history.undo() } },
+        });
         expect(failureOfParts([fixtureHistory(), again()], [fixtureHistoryEditor, part])).toEqual({
             code: 'definition.duplicate-id',
             details: { kind: 'command', id: 'fixture.undo', features: ['fixture.history', 'a.history'] },

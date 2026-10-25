@@ -257,6 +257,7 @@ describe('concurrent uploads', () => {
             ],
         });
         const acmeRetrier = defineEditorPart(acmeRetry, {
+            needs: ['uploads'],
             commands: {
                 'acme.upload.retry': {
                     payload: { fields: { nodeId: { type: 'string' } } },

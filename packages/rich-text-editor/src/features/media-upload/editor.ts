@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
+import { defineEditorPart, type EditorControlApi } from '#/bridge/plugin';
 
 import { mediaUpload } from './feature';
 
 const NODE = { fields: { nodeId: { type: 'string', minLength: 1, optional: true } } } as const;
 
 /** The image `payload` names, else the selected image, as a More row runs the command with no payload. */
-const imageOf = (api: EditorApi, payload: { readonly nodeId?: string } | undefined) =>
+const imageOf = (api: EditorControlApi, payload: { readonly nodeId?: string } | undefined) =>
     payload?.nodeId ?? api.nearest('asset_image')?.nodeId ?? undefined;
 
 /**
@@ -15,6 +15,7 @@ const imageOf = (api: EditorApi, payload: { readonly nodeId?: string } | undefin
  * More and the context menu offer for the selected image while they apply.
  */
 export const mediaUploadEditor = defineEditorPart(mediaUpload, {
+    needs: ['uploads'],
     commands: {
         'media.upload.cancel': {
             payload: NODE,

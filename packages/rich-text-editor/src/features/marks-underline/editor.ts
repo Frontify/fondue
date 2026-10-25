@@ -6,6 +6,7 @@ import { underline } from './feature';
 
 /** Toggles underline on the selection or at the caret, from Mod+U or the toolbar. */
 export const underlineEditor = defineEditorPart(underline, {
+    needs: ['marks'],
     commands: {
         'mark.underline.toggle': {
             run: (api) => api.marks.toggle('underline'),

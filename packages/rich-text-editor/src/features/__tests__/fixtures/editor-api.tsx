@@ -125,6 +125,22 @@ export const probeHarness = (hooks: ProbeHooks) => {
     };
 
     const probe = defineEditorPart(spotlight, {
+        needs: [
+            'attributes',
+            'blocks',
+            'commands',
+            'content',
+            'history',
+            'insert',
+            'lists',
+            'marks',
+            'nodeState',
+            'overlays',
+            'panels',
+            'services',
+            'targets',
+            'uploads',
+        ],
         commands: {
             'fixture.api.run': { run: (api) => script(api) },
             'fixture.api.read-only': { readOnly: true, run: (api) => script(api) },

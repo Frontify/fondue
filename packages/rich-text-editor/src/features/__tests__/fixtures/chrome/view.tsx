@@ -98,6 +98,7 @@ export const CHROME_VIEWS: readonly NodeViewDeclaration[] = [
 /** The stand-in feature's editor part with `views`, and block commands to and from `chrome_block`. */
 export const chromeEditorWith = (views: readonly NodeViewDeclaration[]) =>
     defineEditorPart(fixtureChrome, {
+        needs: ['blocks'],
         commands: {
             'fixture.chrome-block.set': {
                 run: (api) => api.blocks.set('chrome_block'),

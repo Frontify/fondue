@@ -113,6 +113,7 @@ const callout = defineFeature({
     },
 });
 const calloutEditor = defineEditorPart(callout, {
+    needs: ['blocks'],
     commands: { 'story.callout.set': { run: (api) => api.blocks.set('callout', undefined, { toggle: true }) } },
     views: [{ node: 'callout', component: CalloutChrome }],
 });

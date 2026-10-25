@@ -190,7 +190,7 @@ describe('the feature contract suite', () => {
         ]);
     });
 
-    type Run = (api: EditorApi) => boolean;
+    type Run = (api: EditorApi<'marks'>) => boolean;
     it.each([
         [
             'setTimeout',
@@ -218,6 +218,7 @@ describe('the feature contract suite', () => {
         ],
     ])('fails a command that runs %s', async (_name, wrap) => {
         const plugin = defineEditorPart(highlight, {
+            needs: ['marks'],
             commands: { 'fixture.highlight.toggle': { run: wrap((api) => api.marks.toggle('fixture_highlight')) } },
         });
 
@@ -237,7 +238,8 @@ describe('the feature contract suite', () => {
         ],
     ])('fails a command whose %s returns a promise', async (_name, spec) => {
         const plugin = defineEditorPart(highlight, {
-            commands: { 'fixture.highlight.toggle': spec as unknown as EditorCommand<undefined> },
+            needs: ['marks'],
+            commands: { 'fixture.highlight.toggle': spec as unknown as EditorCommand<undefined, 'marks'> },
         });
 
         expect(await failingTitles(() => commandCases([core(), heading(), highlight()], [plugin]))).toEqual([
@@ -247,6 +249,7 @@ describe('the feature contract suite', () => {
 
     it('fails a plugin command that applies without a change or anything it opens', async () => {
         const plugin = defineEditorPart(spotlight, {
+            needs: ['marks', 'panels'],
             commands: {
                 'fixture.spotlight.claim': { run: () => true },
                 'fixture.spotlight.panel': {

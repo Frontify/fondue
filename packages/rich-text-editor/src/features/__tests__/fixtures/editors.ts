@@ -22,24 +22,28 @@ const LEVELS = [1, 2, 3, 4, 5, 6] as const;
 
 /** Binds Mod+B to a paragraph command, so a model has a feature key. */
 export const fixtureBoldEditor = defineEditorPart(fixtureBold, {
+    needs: ['blocks'],
     commands: { 'fixture.paragraph.set': { run: (api) => api.blocks.set('paragraph') } },
     keys: { 'Mod-b': 'fixture.paragraph.set' },
 });
 
 /** Contributes the keyed history plugin, as `core` does. */
 export const fixtureHistoryEditor = defineEditorPart(fixtureHistory, {
+    needs: ['history'],
     commands: { 'fixture.undo': { run: (api) => api.history.undo() } },
     keys: { 'Mod-z': 'fixture.undo' },
 });
 
 /** Contributes the history plugin a second time. */
 export const fixtureRedoEditor = defineEditorPart(fixtureRedo, {
+    needs: ['history'],
     commands: { 'fixture.redo': { run: (api) => api.history.redo() } },
     keys: { 'Mod-y': 'fixture.redo' },
 });
 
 /** Sets a heading of a level from a payload, and inserts a rule. */
 export const fixtureHeadingEditor = defineEditorPart(fixtureHeading, {
+    needs: ['blocks', 'insert'],
     commands: {
         'fixture.heading.set': {
             payload: LEVEL,
@@ -53,6 +57,7 @@ export const fixtureHeadingEditor = defineEditorPart(fixtureHeading, {
 
 /** Inserts a mention at the selection. */
 export const fixtureMentionEditor = defineEditorPart(fixtureMention, {
+    needs: ['insert'],
     commands: {
         'fixture.mention.insert': { run: (api) => api.insert.node('mention').status === 'applied' },
     },
@@ -60,6 +65,7 @@ export const fixtureMentionEditor = defineEditorPart(fixtureMention, {
 
 /** `heading.set` turns the selected textblocks into headings of the payload's level. */
 export const fixtureHeadingSetEditor = defineEditorPart(fixtureHeadingSet, {
+    needs: ['blocks'],
     commands: {
         'heading.set': {
             payload: LEVEL,
@@ -94,6 +100,7 @@ export const fixtureInputRulesEditor = defineEditorPart(fixtureInputRules, {
  * items with payloads and undo and redo buttons, with keys for italic and the block.
  */
 export const fixtureToolbarEditor = defineEditorPart(fixtureToolbar, {
+    needs: ['blocks', 'history', 'marks'],
     commands: {
         'fixture.italic.toggle': {
             run: (api) => api.marks.toggle('italic'),
@@ -166,6 +173,7 @@ export const fixtureToolbarEditor = defineEditorPart(fixtureToolbar, {
 
 /** Sets and removes the highlight of `marks.highlight`, as `mark.font-color.set` does the text colour. */
 export const fixtureHighlightEditor = defineEditorPart(fixtureHighlight, {
+    needs: ['marks'],
     commands: {
         'mark.highlight.set': {
             payload: {
@@ -191,6 +199,7 @@ export const fixtureHighlightEditor = defineEditorPart(fixtureHighlight, {
 
 /** `embed.edit` sets the title of the selected embed. */
 export const fixtureEmbedEditor = defineEditorPart(fixtureEmbed, {
+    needs: ['attributes'],
     commands: {
         'embed.edit': {
             payload: { fields: { title: { type: 'string' } } },
@@ -207,6 +216,7 @@ const CELLS = new Set(['table_cell', 'table_header']);
  * `prosemirror-tables` does, refuses a selection outside a cell.
  */
 export const fixtureTableEditor = defineEditorPart(fixtureTable, {
+    needs: ['content'],
     commands: {
         'table.header.toggle': {
             payload: { fields: { axis: { type: 'enum', values: ['row', 'column'] } } },

@@ -6,6 +6,7 @@ import { code } from './feature';
 
 /** Toggles inline code on the selection or at the caret, from Mod+E, backticks, or the toolbar. */
 export const codeEditor = defineEditorPart(code, {
+    needs: ['marks'],
     commands: {
         'mark.code.toggle': {
             run: (api) => api.marks.toggle('code'),

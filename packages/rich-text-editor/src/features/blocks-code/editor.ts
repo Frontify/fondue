@@ -91,7 +91,7 @@ const attrsOf = (payload: { readonly languageId?: string | null } | undefined): 
 };
 
 /** Opens a paragraph after the code block around the selection and moves the caret into it; an empty block stays. */
-const openParagraphAfter = (api: EditorApi): boolean => {
+const openParagraphAfter = (api: EditorApi<'content'>): boolean => {
     const block = api.nearest('code_block');
     if (block === undefined) {
         return false;
@@ -110,6 +110,7 @@ const openParagraphAfter = (api: EditorApi): boolean => {
  * Highlights each code block whose `languageId` lowlight has registered; an unknown ID stays plain.
  */
 export const codeBlockEditor = defineEditorPart(codeBlock, {
+    needs: ['attributes', 'blocks', 'content', 'overlays'],
     commands: {
         'code-block.toggle': {
             payload: { fields: { languageId: { type: 'id', nullable: true, optional: true } } },

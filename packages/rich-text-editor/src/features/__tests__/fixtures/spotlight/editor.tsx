@@ -145,6 +145,7 @@ const SpotlightPanel = ({ close }: PanelComponentProps) => {
  * a command that opens an overlay from its own control, and a panel and its command.
  */
 export const spotlightEditor = defineEditorPart(spotlight, {
+    needs: ['marks', 'overlays', 'panels'],
     commands: {
         'fixture.spotlight.toggle': {
             run: (api) => api.marks.toggle('fixture_spotlight'),

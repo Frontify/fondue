@@ -9,6 +9,7 @@ const PANEL = 'checks';
 
 /** `checks.open` opens the issues panel, or, while it is open, moves focus to the issue last acted on. */
 export const contentChecksEditor = defineEditorPart(contentChecks, {
+    needs: ['panels'],
     commands: {
         'checks.open': {
             readOnly: true,

@@ -9,6 +9,7 @@ import { listItem } from './feature';
  * item or outdents an empty one, and Backspace at an item's start outdents it.
  */
 export const listItemEditor = defineEditorPart(listItem, {
+    needs: ['lists'],
     commands: {
         'list.indent': { run: (api) => api.lists.indent('list_item') },
         'list.outdent': { run: (api) => api.lists.outdent('list_item') },

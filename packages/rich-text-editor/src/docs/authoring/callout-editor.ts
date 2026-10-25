@@ -7,6 +7,7 @@ import { calloutView } from './callout-view';
 
 /** Wraps the selected blocks in a callout, or lifts them out of one, from the toolbar. */
 export const calloutEditor = defineEditorPart(callout, {
+    needs: ['blocks'],
     commands: {
         'callout.toggle': {
             run: (api) => api.blocks.wrap('callout'),

@@ -96,7 +96,7 @@ export const words = (value: string) => ({ type: 'text', text: value });
 /** Inserts the payload's text, as `text.insert` does. */
 export const TEXT_INSERT = {
     payload: { fields: { text: { type: 'string' } } },
-    run: (api: EditorApi, { text }: { readonly text: string }) => api.insert.text(text),
+    run: (api: EditorApi<'insert'>, { text }: { readonly text: string }) => api.insert.text(text),
 } as const;
 export interface Start {
     readonly model?: ContentModel;

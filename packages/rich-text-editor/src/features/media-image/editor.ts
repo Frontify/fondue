@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { OptionsMenu } from '#/bridge/define';
-import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
+import { defineEditorPart, type EditorApi, type EditorControlApi } from '#/bridge/plugin';
 import { figureAlign } from '#/model';
 
 import { AltTextDialog, altTextStrings } from './alt-text-dialog';
@@ -15,10 +15,10 @@ const FEATURE = 'media.image';
 const IMAGE = 'asset_image';
 
 /** Whether the node `nodeId` is an image. */
-const isImage = (api: EditorApi, nodeId: string) => api.content.read({ nodeId })?.[0]?.type === IMAGE;
+const isImage = (api: EditorApi<'content'>, nodeId: string) => api.content.read({ nodeId })?.[0]?.type === IMAGE;
 
 /** The selected image, with its `nodeId`, else `undefined`. */
-const selectedImage = (api: EditorApi) => {
+const selectedImage = (api: EditorControlApi) => {
     const image = api.nearest(IMAGE);
     if (image === undefined || image.nodeId === null) {
         return undefined;
@@ -27,7 +27,7 @@ const selectedImage = (api: EditorApi) => {
 };
 
 /** The image a command acts on: the one `payload` names, else the selected one. */
-const targetOf = (api: EditorApi, payload: { readonly nodeId?: string } | undefined) => {
+const targetOf = (api: EditorControlApi, payload: { readonly nodeId?: string } | undefined) => {
     const given = payload?.nodeId;
     if (given !== undefined) {
         return given;
@@ -40,6 +40,7 @@ const targetOf = (api: EditorApi, payload: { readonly nodeId?: string } | undefi
  * opens its alternative text dialog, and sets its size and side; pasted and dropped files upload as new images.
  */
 export const mediaImageEditor = defineEditorPart(mediaImage, {
+    needs: ['attributes', 'content', 'insert', 'overlays', 'uploads'],
     commands: {
         'image.insert': {
             enabled: (api) => api.insert.allowed('figure'),

@@ -11,6 +11,7 @@ import { taskItemView } from './view';
  * checkbox or Mod+Enter; its items nest, outdent and split as list items do.
  */
 export const taskListEditor = defineEditorPart(taskList, {
+    needs: ['attributes', 'commands', 'lists'],
     commands: {
         'list.task.toggle': {
             payload: { fields: { checked: { type: 'boolean', optional: true } } },

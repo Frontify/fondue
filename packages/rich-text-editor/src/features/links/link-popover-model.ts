@@ -83,7 +83,7 @@ export const searchOf = (api: EditorApi | undefined) => {
 };
 
 /** The link at the selection, or the selected text of one block for a new link. */
-export const linkInitialOf = (api: EditorApi): LinkInitial => {
+export const linkInitialOf = (api: EditorApi<'marks'>): LinkInitial => {
     const empty: LinkInitial = {
         href: '',
         text: '',

@@ -17,6 +17,7 @@ const marker = defineFeature({
 export const markerPlugin = definePlugin({
     feature: marker,
     editor: defineEditorPart(marker, {
+        needs: ['marks'],
         commands: {
             'mark.marker.toggle': {
                 run: (api) => api.marks.toggle('marker'),

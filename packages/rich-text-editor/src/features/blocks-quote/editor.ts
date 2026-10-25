@@ -6,6 +6,7 @@ import { quote } from './feature';
 
 /** Toggles a quote from `>` at a line start or the toolbar. */
 export const quoteEditor = defineEditorPart(quote, {
+    needs: ['blocks'],
     commands: {
         'quote.toggle': {
             run: (api) => api.blocks.wrap('blockquote'),

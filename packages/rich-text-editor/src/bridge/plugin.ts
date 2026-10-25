@@ -18,9 +18,10 @@ import {
 } from '#/model';
 import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/declarations';
 import { type ContentChecksApi } from '#/runtime/capabilities/checks/api';
-import { type DocumentApi, type EditorRange } from '#/runtime/document-api';
+import { type EditorRange } from '#/runtime/document-api';
 import { type AuthoringPolicy, type ReferenceValue } from '#/runtime/types';
 
+import { type EditorApi, type EditorFacet } from './api-facets';
 import { type NodeViewDeclaration, type PanelDeclaration } from './define';
 import { editorApiOf } from './live-api';
 import { SessionContext, useSessionValue } from './session';
@@ -42,6 +43,7 @@ export {
 export { passesToBrowser } from '#/runtime/browser-keys';
 export { type ReferenceValue, type SelectionHandle, type UploadStatus } from '#/runtime/types';
 export { type Announcer, createAnnouncer } from './announcer';
+export { type EditorApi, type EditorControlApi, type EditorFacet, type EditorFacets } from './api-facets';
 export { useClientLayoutEffect } from './client-layout-effect';
 export { OverlayBody, passEscape, useEditorOverlay, useOverlayContainer, useScopedFocus } from './overlays';
 export { useApplePlatform } from './platform';
@@ -143,18 +145,11 @@ export interface EditorHosts {
     readonly generation: () => number | undefined;
 }
 
-/**
- * What plugin commands and plugin UI act through, with no engine type: reads of the selection and content, writes that
- * each run as one undo step, mapped targets, and the editor's hosts. Inside a command, writes join the command's one
- * undo step and host actions wait until the command has run.
- */
-export type EditorApi = DocumentApi & EditorHosts;
-
-interface EditorCommandBase<P> {
+interface EditorCommandBase<P, N extends EditorFacet> {
     /** Changes the document only through `api`: a query without `enabled` runs it against a draft, where any other effect would happen. */
-    run(api: EditorApi, payload: P): boolean;
-    enabled?(api: EditorApi, payload: P): boolean;
-    active?(api: EditorApi, payload: P): boolean | 'mixed';
+    readonly run: (api: EditorApi<N>, payload: P) => boolean;
+    readonly enabled?: (api: EditorApi<N>, payload: P) => boolean;
+    readonly active?: (api: EditorApi<N>, payload: P) => boolean | 'mixed';
     /** Whether `policy` refuses the call, as a heading level it does not offer: rejected as `not-allowed`, and not offered in the toolbar. */
     refuses?(policy: AuthoringPolicy, payload: P): boolean;
     /** Runs in a read-only editor too, as a command that only opens a panel does. */
@@ -165,14 +160,14 @@ interface EditorCommandBase<P> {
  * A plugin command: `run` returns whether it applied; `enabled` and `active` answer a query. A command whose `run`
  * takes a payload declares it in `payload`, which `defineEditorPart` checks against `run`'s payload type.
  */
-export type EditorCommand<P = undefined> = EditorCommandBase<P> &
+export type EditorCommand<P = undefined, N extends EditorFacet = EditorFacet> = EditorCommandBase<P, N> &
     ([P] extends [undefined] ? { readonly payload?: PayloadDeclaration } : { readonly payload: PayloadDeclaration });
 
 /**
  * A key's own handler, which runs as the input it replaces: its change reports no command and groups with typing in
  * one undo step; `false` hands the key on.
  */
-export type KeyHandler = (api: EditorApi) => boolean;
+export type KeyHandler<N extends EditorFacet = EditorFacet> = (api: EditorApi<N>) => boolean;
 
 /** What a plugin-owned toolbar control renders with, in place of the standard button. */
 export interface ToolbarControlProps {
@@ -221,8 +216,8 @@ interface PluginToolbarEntryBase {
 }
 
 /** What a search reads besides its query: the session's API, a signal that aborts when a newer query or a closed list replaces it, and the page's cursor, `null` for the first. */
-export interface SuggestionSearchContext {
-    readonly api: EditorApi;
+export interface SuggestionSearchContext<N extends EditorFacet = EditorFacet> {
+    readonly api: EditorApi<N>;
     readonly signal: AbortSignal;
     readonly cursor: string | null;
 }
@@ -232,13 +227,13 @@ export interface SuggestionSearchContext {
  * options `search` finds; the accepted option replaces the trigger and the query by running `command` with its payload.
  * Its accessible name is `labelKey` or `label`, as a toolbar entry's is.
  */
-export type EditorSuggestion = {
+export type EditorSuggestion<N extends EditorFacet = EditorFacet> = {
     readonly trigger: string;
     readonly rules: SuggestionRules;
     /** Whether the list can open now, such as while the host gives a reference search. */
-    available?(api: EditorApi): boolean;
+    readonly available?: (api: EditorApi<N>) => boolean;
     /** A page of options. */
-    search(query: string, context: SuggestionSearchContext): Promise<SuggestionPage>;
+    readonly search: (query: string, context: SuggestionSearchContext<N>) => Promise<SuggestionPage>;
     readonly command: string;
 } & (
     | { readonly labelKey: string; readonly label?: never }
@@ -265,9 +260,11 @@ export type PluginToolbarEntry = PluginToolbarEntryBase &
  * its feature: a command, key, node view or toolbar entry with the same ID replaces the shipped one whole, with no
  * field merged, and the others are added.
  */
-export interface EditorPartSpec {
-    readonly commands?: Readonly<Record<string, EditorCommand<never>>>;
-    readonly keys?: Readonly<Partial<Record<KeyBinding, CommandRef | KeyHandler>>>;
+export interface EditorPartSpec<N extends EditorFacet = EditorFacet> {
+    /** The API facets its functions read; the API they get holds these and the control members only. */
+    readonly needs?: readonly N[];
+    readonly commands?: Readonly<Record<string, EditorCommand<never, N>>>;
+    readonly keys?: Readonly<Partial<Record<KeyBinding, CommandRef | KeyHandler<N>>>>;
     readonly inputRules?: readonly InputRule[];
     readonly toolbar?: readonly PluginToolbarEntry[];
     /** Overlays the editor keeps mounted, which decide themselves when to show; `EditorHosts.overlays.open` has the recipe for one a click on a mark opens. */
@@ -276,7 +273,7 @@ export interface EditorPartSpec {
     /** Decorations over textblocks, which the editor derives again only for a block a change touched. */
     readonly decorations?: readonly BlockDecorationSource[];
     /** Lists that typing a trigger opens, whose options the part's own search finds. */
-    readonly suggestions?: readonly EditorSuggestion[];
+    readonly suggestions?: readonly EditorSuggestion<N>[];
     /** Chrome around the editable content of a node, which renders again only when its node or selection changes. */
     readonly views?: readonly NodeViewDeclaration[];
     /**
@@ -284,7 +281,7 @@ export interface EditorPartSpec {
      * the next part, then to the paste of their text.
      */
     readonly files?: (
-        api: EditorApi,
+        api: EditorApi<N>,
         files: readonly File[],
         at: { readonly origin: 'paste' | 'drop'; readonly range: EditorRange },
     ) => boolean;
@@ -301,7 +298,7 @@ export interface EditorPart<Id extends string = string, Commands extends object 
 
 /** The payload types of a plugin's commands by command ID; a command whose `run` takes none takes `undefined`. */
 type PayloadsOf<C> = {
-    readonly [K in keyof C]: C[K] extends { run(api: EditorApi, payload: infer P): boolean }
+    readonly [K in keyof C]: C[K] extends { readonly run: (api: never, payload: infer P) => boolean }
         ? unknown extends P
             ? undefined
             : P
@@ -312,7 +309,7 @@ type PayloadsOf<C> = {
 type PayloadMatched<C> = {
     readonly [K in keyof C]: C[K] extends {
         readonly payload?: infer D;
-        run(api: EditorApi, payload: infer P): boolean;
+        readonly run: (api: never, payload: infer P) => boolean;
     }
         ? unknown extends D
             ? [undefined] extends [P]
@@ -330,7 +327,8 @@ type PayloadMatched<C> = {
 /** The command payloads of a plugin, by command ID. */
 export type CommandsOfPart<P> = P extends EditorPart<string, infer C> ? C : never;
 
-type CheckedParts<Parts extends EditorPartSpec> = Parts & {
+type CheckedParts<Parts extends EditorPartSpec<N>, N extends EditorFacet> = Parts & {
+    readonly needs?: readonly N[];
     readonly commands?: PayloadMatched<NoInfer<NonNullable<Parts['commands']>>>;
 };
 
@@ -343,9 +341,13 @@ export const OPTION_PARTS = Symbol('optionParts');
  * The editor part of `feature`, a factory or a feature it made, which may load apart from the feature itself. `parts`
  * may be a function of the feature's resolved options, which each editor definition calls once.
  */
-export const defineEditorPart = <Id extends string, const Parts extends EditorPartSpec>(
+export const defineEditorPart = <
+    Id extends string,
+    const N extends EditorFacet = never,
+    const Parts extends EditorPartSpec<N> = EditorPartSpec<N>,
+>(
     feature: Feature<object, object, object, Id> | ((options?: never) => Feature<object, object, object, Id>),
-    parts: CheckedParts<Parts> | ((options: JsonObject) => CheckedParts<Parts>),
+    parts: CheckedParts<Parts, N> | ((options: JsonObject) => CheckedParts<Parts, N>),
 ): EditorPart<Id, PayloadsOf<NonNullable<Parts['commands']>>> => {
     const { id } = typeof feature === 'function' ? feature() : feature;
     if (typeof parts === 'function') {

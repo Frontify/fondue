@@ -6,6 +6,7 @@ import { strike } from './feature';
 
 /** Toggles strikethrough on the selection or at the caret, from Mod+Shift+X, `~~`, or the toolbar. */
 export const strikeEditor = defineEditorPart(strike, {
+    needs: ['marks'],
     commands: {
         'mark.strike.toggle': {
             run: (api) => api.marks.toggle('strike'),

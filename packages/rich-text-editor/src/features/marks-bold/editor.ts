@@ -6,6 +6,7 @@ import { bold } from './feature';
 
 /** Toggles bold on the selection or at the caret, from Mod+B, `**` and `__`, or the toolbar. */
 export const boldEditor = defineEditorPart(bold, {
+    needs: ['marks'],
     commands: {
         'mark.bold.toggle': {
             run: (api) => api.marks.toggle('bold'),

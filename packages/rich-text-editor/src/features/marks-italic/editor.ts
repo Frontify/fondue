@@ -6,6 +6,7 @@ import { italic } from './feature';
 
 /** Toggles italic on the selection or at the caret, from Mod+I, `*` and `_`, or the toolbar. */
 export const italicEditor = defineEditorPart(italic, {
+    needs: ['marks'],
     commands: {
         'mark.italic.toggle': {
             run: (api) => api.marks.toggle('italic'),

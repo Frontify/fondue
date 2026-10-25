@@ -5,10 +5,39 @@ import { type CommandContext, type CommandSession, liveDocumentApi } from '#/run
 import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/port-engine';
 
-import { type EditorApi, type EditorHosts } from './plugin';
+import { type EditorApi, type EditorFacet, type EditorHosts, type EditorPart } from './plugin';
 
 const apis = new WeakMap<EditorPort, WeakMap<EditorHosts, EditorApi>>();
 const documents = new WeakMap<EditorPort, DocumentApi>();
+
+const views = new WeakMap<EditorApi, Map<string, EditorApi>>();
+
+/** What a part's functions get of `api`: its control members and the facets in `needs`, one object per part, which in development throws on a facet left out. */
+export const facetsOf = (api: EditorApi, needs: readonly EditorFacet[] | undefined, featureId: string): EditorApi => {
+    let byFeature = views.get(api);
+    if (byFeature === undefined) {
+        byFeature = new Map();
+        views.set(api, byFeature);
+    }
+    let view = byFeature.get(featureId);
+    if (view === undefined) {
+        view = {} as EditorApi;
+        for (const [name, value] of Object.entries(api)) {
+            // A facet is the one kind of member that is an object, as `EditorFacet` defines it.
+            if (typeof value !== 'object' || needs?.some((need) => need === name) === true) {
+                Reflect.set(view, name, value);
+            } else if (process.env.NODE_ENV !== 'production') {
+                Object.defineProperty(view, name, {
+                    get: () => {
+                        throw new Error(`${featureId} reads api.${name} without declaring it in needs.`);
+                    },
+                });
+            }
+        }
+        byFeature.set(featureId, view);
+    }
+    return view;
+};
 
 const withHosts = (document: DocumentApi, hosts: EditorHosts): EditorApi => Object.assign({ ...document }, hosts);
 
@@ -83,3 +112,9 @@ export const commandApiOf = (
         focus: () => later(() => hosts.focus()),
     };
 };
+
+/** `commandApiOf` as a part's functions get it: only the facets the part declares. */
+export const partCommandApiOf =
+    ({ feature, needs }: Pick<EditorPart, 'feature' | 'needs'>): typeof commandApiOf =>
+    (document, context, session) =>
+        facetsOf(commandApiOf(document, context, session), needs, feature);

@@ -6,6 +6,7 @@ import { rule } from './feature';
 
 /** Inserts a horizontal rule where the selection is, from `---`, `***` or `___` at a line start, or the toolbar. */
 export const ruleEditor = defineEditorPart(rule, {
+    needs: ['insert'],
     commands: {
         'rule.insert': { run: (api) => api.insert.node('horizontal_rule').status === 'applied' },
     },

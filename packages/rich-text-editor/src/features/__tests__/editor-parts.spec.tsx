@@ -353,7 +353,10 @@ describe('the keys of an editor part', () => {
     };
 
     it('runs a key handler as the input it replaces: no command ID, and one undo step with the typing before it', () => {
-        const plugin = defineEditorPart(spotlight, { keys: { 'Alt-j': (api) => api.insert.text('!') } });
+        const plugin = defineEditorPart(spotlight, {
+            needs: ['insert'],
+            keys: { 'Alt-j': (api) => api.insert.text('!') },
+        });
         const { handle, container, changes } = mount([para(text('one'))], [plugin]);
         setSelection(handle, { text: 'one', from: 3, to: 3 });
 
@@ -394,10 +397,14 @@ describe('the keys of an editor part', () => {
 
     it('runs a key handler before a key binding of the same key', () => {
         const binding = defineEditorPart(heading, {
+            needs: ['insert'],
             commands: { 'fixture.heading.mark': { run: (api) => api.insert.text('binding') } },
             keys: { Enter: 'fixture.heading.mark' },
         });
-        const handler = defineEditorPart(spotlight, { keys: { Enter: (api) => api.insert.text('handler') } });
+        const handler = defineEditorPart(spotlight, {
+            needs: ['insert'],
+            keys: { Enter: (api) => api.insert.text('handler') },
+        });
         const { handle } = mount([para(text('one'))], [binding, handler]);
         setSelection(handle, { text: 'one', from: 3, to: 3 });
 
@@ -408,6 +415,7 @@ describe('the keys of an editor part', () => {
 
     it('reports the command ID of a key that names a command', () => {
         const plugin = defineEditorPart(spotlight, {
+            needs: ['marks'],
             commands: { 'fixture.spotlight.toggle': { run: (api) => api.marks.toggle('fixture_spotlight') } },
             keys: { 'Alt-j': 'fixture.spotlight.toggle' },
         });
@@ -439,7 +447,7 @@ describe('the input rules of an editor part', () => {
 
 const RULES = { afterPunctuation: false, maxQuery: 20, spaces: false, leadingLetters: 1 };
 const tag = (key: string, label = `Tag ${key}`) => ({ key, label, glyph: null, payload: { text: key } });
-const tagPart = (search: EditorSuggestion['search'], rules: SuggestionRules = RULES) =>
+const tagPart = (search: EditorSuggestion<never>['search'], rules: SuggestionRules = RULES) =>
     defineEditorPart(spotlight, {
         suggestions: [{ trigger: '#', labelKey: 'RichTextEditor_suggestions', rules, search, command: 'text.insert' }],
     });
@@ -546,6 +554,7 @@ describe('the suggestions of an editor part', () => {
     it('opens no list and asks no search while it is not available, and leaves Escape to the host', async () => {
         const search = vi.fn(() => Promise.resolve({ items: [tag('a')], nextCursor: null }));
         const plugin = defineEditorPart(spotlight, {
+            needs: ['services'],
             suggestions: [
                 {
                     trigger: '#',

@@ -2,7 +2,7 @@
 
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import { type CommandsOfPart, defineEditorPart, type EditorApi } from '#/bridge/plugin';
+import { type CommandsOfPart, defineEditorPart, type EditorApi, type EditorControlApi } from '#/bridge/plugin';
 import { bold } from '#/features/marks-bold/feature';
 
 import { type CommandOutcome } from '../document-api';
@@ -34,7 +34,7 @@ describe('the payload type of a plugin command', () => {
             commands: {
                 'fixture.say': {
                     payload: { fields: { text: { type: 'string' } } },
-                    run: (_api: EditorApi, payload: { readonly text: string }) => payload.text !== '',
+                    run: (_api: EditorControlApi, payload: { readonly text: string }) => payload.text !== '',
                 },
             },
         });

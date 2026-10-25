@@ -28,7 +28,7 @@ import {
     type RichTextPlugin,
     RichTextEditor,
 } from '#/index';
-import { compileContentModel, defineFeature, DefinitionError } from '#/model';
+import { compileContentModel, defineFeature, DefinitionError, type JsonObject } from '#/model';
 import { extensionsOf } from '#/react/engine';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste, pressKey, runFeatureContract, setSelection } from '#/testing';
@@ -374,12 +374,13 @@ describe('a plugin part that reads the policy and its options', () => {
             requires: [{ id: 'core', version: 1 }],
             options: { third: { type: 'boolean', default: true } },
         });
-        const picksEditor = defineEditorPart(picks, (options) => {
+        const picksEditor = defineEditorPart(picks, (options: JsonObject) => {
             const values = ['first', 'second'];
             if (options.third === true) {
                 values.push('third');
             }
             return {
+                needs: ['insert'],
                 commands: {
                     'fixture.pick': {
                         payload: { fields: { value: { type: 'enum', values } } },

@@ -12,7 +12,7 @@ import {
 } from '#/model';
 import { type ReaderContext } from '#/model/declarations';
 
-import { type EditorPart, type EditorPartSpec, OPTION_PARTS, type OptionParts } from './plugin';
+import { type EditorFacet, type EditorPart, type EditorPartSpec, OPTION_PARTS, type OptionParts } from './plugin';
 
 /** The shape of `ReaderRenderers` from `#/reader/define`, which a bridge module cannot import without a folder cycle. */
 export type ReaderOverrides = Readonly<
@@ -55,6 +55,12 @@ export const definePlugin = <Id extends string, Options extends object, Commands
     };
 };
 
+/** The facets of both, since the functions of either run over the one part's API. */
+const needsOf = (own: Pick<EditorPartSpec, 'needs'>, added: Pick<EditorPartSpec, 'needs'>): readonly EditorFacet[] => [
+    ...(own.needs ?? []),
+    ...(added.needs ?? []),
+];
+
 /** The editor part with `parts` over its own, and over the parts its function gives for the resolved options. */
 const extendEditor = <Id extends string, Commands extends object>(
     editor: EditorPart<Id, Commands>,
@@ -62,16 +68,23 @@ const extendEditor = <Id extends string, Commands extends object>(
 ): EditorPart<Id, Commands> => {
     const optionParts = (editor as EditorPart & { readonly [OPTION_PARTS]?: OptionParts })[OPTION_PARTS];
     if (optionParts === undefined) {
-        return Object.freeze({ ...editor, ...parts });
+        return Object.freeze({
+            ...editor,
+            ...parts,
+            needs: needsOf(editor, parts),
+        });
     }
-    const extended: OptionParts = Object.freeze((options: JsonObject) => ({ ...optionParts(options), ...parts }));
+    const extended: OptionParts = Object.freeze((options: JsonObject) => {
+        const own = optionParts(options);
+        return { ...own, ...parts, needs: needsOf(own, parts) };
+    });
     return Object.freeze({ ...editor, [OPTION_PARTS]: extended });
 };
 
 /** `unit` with `parts` merged over its editor part, such as another key set; its feature and readers stay. */
-export const extendPlugin = <Id extends string, Commands extends object>(
+export const extendPlugin = <Id extends string, Commands extends object, const N extends EditorFacet = never>(
     unit: RichTextPlugin<Id, Commands>,
-    parts: Omit<EditorPartSpec, 'commands'>,
+    parts: Omit<EditorPartSpec<N>, 'commands'>,
 ): RichTextPlugin<Id, Commands> => Object.freeze({ ...unit, editor: extendEditor(unit.editor, parts) });
 
 type FeaturesOf<Plugins extends readonly RichTextPlugin[]> = {

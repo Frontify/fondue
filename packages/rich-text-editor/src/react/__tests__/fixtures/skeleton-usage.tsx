@@ -102,6 +102,7 @@ export type Referenced = [
 
 // A command whose `run` takes a payload declares it.
 export const authored = defineEditorPart(core, {
+    needs: ['attributes', 'marks'],
     commands: {
         'acme.plain': { run: (api) => api.marks.toggle('bold') },
         'acme.level': {

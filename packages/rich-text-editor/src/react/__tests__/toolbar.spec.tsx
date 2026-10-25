@@ -509,6 +509,7 @@ const pullQuotePlugin = (
     keys: Readonly<Partial<Record<KeyBinding, CommandRef>>> = {},
 ) =>
     defineEditorPart(pullQuote(), {
+        needs: ['blocks'],
         commands: {
             'acme.pull-quote.set': {
                 run: (api) => api.blocks.set('acme_pull_quote', undefined, { toggle: true }),

@@ -24,6 +24,7 @@ const CLEARED_ATTRIBUTES = ['align', 'indent'];
  * lifts the selected blocks out of lists, turns them into paragraphs and clears alignment and indent.
  */
 export const formatClearEditor = defineEditorPart(formatClear, {
+    needs: ['blocks', 'marks'],
     commands: {
         'format.clear': {
             run: (api) => {

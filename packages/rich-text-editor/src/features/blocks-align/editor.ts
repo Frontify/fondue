@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineEditorPart } from '#/bridge/plugin';
+import { type JsonObject } from '#/model';
 
 import { align } from './feature';
 
@@ -15,9 +16,10 @@ const SIDES = [
  * Aligns the selected paragraphs and headings from Mod+Shift+L, E, R and J or the toolbar; pressing the value every
  * selected block already has removes it. Justify is there only while the feature's `justify` option is on.
  */
-export const alignEditor = defineEditorPart(align, (options) => {
+export const alignEditor = defineEditorPart(align, (options: JsonObject) => {
     const sides = SIDES.filter(({ align: value }) => value !== 'justify' || options.justify !== false);
     return {
+        needs: ['attributes'],
         commands: {
             'block.align.set': {
                 payload: { fields: { align: { type: 'enum', values: sides.map(({ align: value }) => value) } } },

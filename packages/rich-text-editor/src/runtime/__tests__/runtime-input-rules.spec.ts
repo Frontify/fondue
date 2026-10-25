@@ -177,6 +177,7 @@ describe('input rules', () => {
             requires: [{ id: 'core', version: 1 }],
         });
         const part = defineEditorPart(backspaceMark, {
+            needs: ['insert'],
             commands: { 'fixture.text.insert': TEXT_INSERT },
             keys: { Backspace: { command: 'fixture.text.insert', payload: { text: '!' } } },
         });

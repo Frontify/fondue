@@ -6,6 +6,7 @@ import { core } from './feature';
 
 /** Sets a paragraph, inserts text and hard breaks, undoes and redoes, and moves blocks. */
 export const coreEditor = defineEditorPart(core, {
+    needs: ['blocks', 'history', 'insert'],
     commands: {
         'paragraph.set': {
             run: (api) => api.blocks.set('paragraph'),

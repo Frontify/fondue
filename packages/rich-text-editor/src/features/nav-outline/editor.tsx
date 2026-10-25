@@ -9,6 +9,7 @@ const PANEL = 'outline';
 
 /** `outline.toggle` shows or hides the outline panel; choosing a heading moves the selection and changes nothing. */
 export const outlineEditor = defineEditorPart(outline, {
+    needs: ['panels'],
     commands: {
         'outline.toggle': {
             readOnly: true,

@@ -574,6 +574,7 @@ describe('command payloads', () => {
         formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
     });
     const pullQuoteEditor = defineEditorPart(pullQuote, {
+        needs: ['blocks'],
         commands: {
             'acme.pull-quote.set': {
                 run: (api) => api.blocks.set('acme_pull_quote', undefined, { toggle: true }),

@@ -20,6 +20,7 @@ const altGraphKeys = defineFeature({
     requires: [{ id: 'marks.bold', version: 1 }],
 });
 const altGraphEditor = defineEditorPart(altGraphKeys, {
+    needs: ['marks'],
     commands: { 'fixture.alt-graph.run': { run: (api) => api.marks.toggle('bold') } },
     keys: Object.fromEntries(
         ['7', '8', '9', '0', '2', '3', 'a', 'l', '\\'].map((key) => [`Ctrl-Alt-${key}`, 'fixture.alt-graph.run']),

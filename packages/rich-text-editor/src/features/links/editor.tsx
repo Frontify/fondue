@@ -18,7 +18,7 @@ export interface LinkValue {
     readonly styleId: string | null;
 }
 
-const setLink: EditorCommand<LinkValue> = {
+const setLink: EditorCommand<LinkValue, 'marks'> = {
     payload: {
         fields: {
             href: { type: 'url' },
@@ -35,7 +35,7 @@ const setLink: EditorCommand<LinkValue> = {
 };
 
 /** Opens the link popover on the link at the selection, or on the selection for a new link. */
-const editLink = (api: EditorApi): boolean => {
+const editLink = (api: EditorApi<'marks' | 'overlays'>): boolean => {
     const initial = linkInitialOf(api);
     api.overlays.open(LinkPopover, { initial }, initial.link ?? 'selection');
     return true;
@@ -47,6 +47,7 @@ const editLink = (api: EditorApi): boolean => {
  * bubble on the link at the caret opens, edits, copies and removes it.
  */
 export const linksEditor = defineEditorPart(links, {
+    needs: ['marks', 'overlays'],
     commands: {
         [EDIT_LINK]: {
             enabled: (api) => api.marks.allowed('link'),

@@ -8,6 +8,7 @@ const LEVELS = [1, 2, 3, 4, 5, 6] as const;
 
 /** Sets a heading level from Mod+Alt+1 to 6 (Ctrl+Shift on other platforms), `#` to `######` at a line start, or the toolbar. */
 export const headingEditor = defineEditorPart(heading, {
+    needs: ['blocks'],
     commands: {
         'heading.set': {
             payload: { fields: { level: { type: 'integer', min: 1, max: 6 } } },

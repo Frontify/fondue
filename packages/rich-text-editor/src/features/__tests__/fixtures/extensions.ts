@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { commandApiOf } from '#/bridge/live-api';
+import { partCommandApiOf } from '#/bridge/live-api';
 import { type EditorPart } from '#/bridge/plugin';
 import { type EngineCommand, type EngineExtension } from '#/definition';
 import { type CommandRef, type ContentModel } from '#/model';
@@ -29,7 +29,7 @@ export const fixtureExtensionsOf = (
         commands: (schema, lookup) => {
             const commands: Record<string, EngineCommand> = {};
             for (const [id, spec] of Object.entries(plugin.commands ?? {})) {
-                commands[id] = pluginCommand(spec, model, schema, lookup, commandApiOf);
+                commands[id] = pluginCommand(spec, model, schema, lookup, partCommandApiOf(plugin));
             }
             return commands;
         },
