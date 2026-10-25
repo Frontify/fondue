@@ -1,4 +1,4 @@
-# @frontify/rich-text-editor
+# @frontify/fondue-rich-text-editor
 
 Rich text editing for the Fondue design system.
 

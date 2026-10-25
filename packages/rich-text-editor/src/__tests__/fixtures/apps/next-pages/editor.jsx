@@ -2,7 +2,7 @@
 
 /* oxlint-disable typescript/no-unsafe-assignment, typescript/no-unsafe-call, typescript/no-unsafe-member-access -- the app's packages and shared document exist only in its scratch install */
 
-import { RichTextEditor } from '@frontify/rich-text-editor';
+import { RichTextEditor } from '@frontify/fondue-rich-text-editor';
 
 import { defaultValue } from './document';
 

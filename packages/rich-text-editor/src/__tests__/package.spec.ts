@@ -127,7 +127,7 @@ describe('package manifest and built output', () => {
     afterAll(() => rmSync(outDir, { recursive: true, force: true }));
 
     it('declares the package name, an ES module type, public publish access, and the entries that export code', () => {
-        expect(manifest.name).toBe('@frontify/rich-text-editor');
+        expect(manifest.name).toBe('@frontify/fondue-rich-text-editor');
         expect(manifest.type).toBe('module');
         expect(manifest.publishConfig?.access).toBe('public');
         const exportsMap = manifest.exports ?? {};
@@ -378,7 +378,7 @@ describe('package manifest and built output', () => {
     const buildApp = async (entry: string) => {
         const app = mkdtempSync(join(tmpdir(), 'fondue-rte-app-'));
         try {
-            const installed = join(app, 'node_modules', '@frontify', 'rich-text-editor');
+            const installed = join(app, 'node_modules', '@frontify', 'fondue-rich-text-editor');
             mkdirSync(installed, { recursive: true });
             copyFileSync(join(packageRoot, 'package.json'), join(installed, 'package.json'));
             cpSync(outDir, join(installed, 'dist'), { recursive: true });
@@ -395,7 +395,9 @@ describe('package manifest and built output', () => {
                         input: main,
                         // Other packages are the host's own, so only the editor package is bundled.
                         external: (id) =>
-                            !id.startsWith('.') && !id.startsWith('/') && !id.startsWith('@frontify/rich-text-editor'),
+                            !id.startsWith('.') &&
+                            !id.startsWith('/') &&
+                            !id.startsWith('@frontify/fondue-rich-text-editor'),
                     },
                 },
             });

@@ -23,7 +23,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { installInto, PACKAGE_ROOT, packRelease } from './fixtures/apps/consumer';
 import { pendingResults } from './fixtures/qualification';
 
-const NAME = '@frontify/rich-text-editor';
+const NAME = '@frontify/fondue-rich-text-editor';
 const REPOSITORY = join(PACKAGE_ROOT, '..', '..');
 
 type Exports = Readonly<Record<string, string | { readonly types?: string; readonly import?: string }>>;

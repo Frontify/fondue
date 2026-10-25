@@ -4,8 +4,8 @@
 
 import { readFileSync, writeFileSync } from 'node:fs';
 
-import { commentModel } from '@frontify/rich-text-editor/features';
-import { RichTextReader } from '@frontify/rich-text-editor/reader';
+import { commentModel } from '@frontify/fondue-rich-text-editor/features';
+import { RichTextReader } from '@frontify/fondue-rich-text-editor/reader';
 import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 

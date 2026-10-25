@@ -164,7 +164,7 @@ describe('the reader and codecs guide', () => {
         const { exports } = JSON.parse(read('package.json')) as { readonly exports: Readonly<Record<string, unknown>> };
 
         expect(exports['./styles']).toBeDefined();
-        expect(outside).toContain('@frontify/rich-text-editor/styles');
+        expect(outside).toContain('@frontify/fondue-rich-text-editor/styles');
     });
 });
 
@@ -220,7 +220,7 @@ describe('the authoring guide', () => {
 
 describe('the imports the guides show', () => {
     const { exports } = JSON.parse(read('package.json')) as { readonly exports: Readonly<Record<string, unknown>> };
-    const PREFIX = '@frontify/rich-text-editor';
+    const PREFIX = '@frontify/fondue-rich-text-editor';
 
     const check = (label: string, source: string) => {
         for (const [, specifier] of source.matchAll(/from '([^']+)'/g)) {

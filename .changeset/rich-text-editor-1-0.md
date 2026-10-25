@@ -1,12 +1,12 @@
 ---
-"@frontify/rich-text-editor": major
+"@frontify/fondue-rich-text-editor": major
 ---
 
 feat(RichTextEditor): release 1.0, the first published version of the rich text editor
 
 ### API
 
-- `@frontify/rich-text-editor`: `RichTextEditor`, `defineEditor`, `defineReactPresentation`, `defineEditorPlugin`, the editor handle and the node view, overlay and panel parts.
+- `@frontify/fondue-rich-text-editor`: `RichTextEditor`, `defineEditor`, `defineReactPresentation`, `defineEditorPlugin`, the editor handle and the node view, overlay and panel parts.
 - `./model`: `defineFeature`, `compileContentModel`, `decodeDocument`, `migrateDocument`, `toJsonSchema`, the content checks and the reference and asset helpers.
 - `./features`: the shipped features and the inline, comment, document and brand document profiles.
 - `./reader`: `RichTextReader` and `defineReaderFeature`. `./codecs`: `createCodecs` for HTML, Markdown and plain text. `./html`: `fromHTML`.

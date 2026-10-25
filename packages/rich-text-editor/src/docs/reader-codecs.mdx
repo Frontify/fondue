@@ -8,8 +8,8 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 Published content never needs the editing engine. Two entries turn a stored document into output without it:
 
-- `@frontify/rich-text-editor/reader` renders a document as React elements. It has no engine, hook, context or DOM access, so it renders on the server and in the browser.
-- `@frontify/rich-text-editor/codecs` turns a document into HTML, plain text or Markdown, and turns Markdown into a document.
+- `@frontify/fondue-rich-text-editor/reader` renders a document as React elements. It has no engine, hook, context or DOM access, so it renders on the server and in the browser.
+- `@frontify/fondue-rich-text-editor/codecs` turns a document into HTML, plain text or Markdown, and turns Markdown into a document.
 
 Both take the same compiled model as the editor. Both decode the document first, so both report the same decode problems.
 
@@ -17,18 +17,18 @@ Both take the same compiled model as the editor. Both decode the document first,
 
 `RichTextReader` takes these props:
 
-| Prop           | What it is                                                                                                     |
-| -------------- | -------------------------------------------------------------------------------------------------------------- |
-| `document`     | The stored document, as JSON text or as a parsed value.                                                        |
-| `model`        | The compiled content model, such as `commentModel` from `@frontify/rich-text-editor/features`.                 |
-| `presentation` | What the host decides about the output. See below.                                                             |
-| `locale`       | A `RichTextLocale`, such as `deDE` from `@frontify/rich-text-editor/locales/de-DE`. The default is `enUS`.     |
-| `limits`       | The resource limits the writing editor used, when a host loosened them. The default limits apply when omitted. |
-| `onDiagnostic` | Called with each diagnostic of the document while the reader renders.                                          |
+| Prop           | What it is                                                                                                        |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `document`     | The stored document, as JSON text or as a parsed value.                                                           |
+| `model`        | The compiled content model, such as `commentModel` from `@frontify/fondue-rich-text-editor/features`.             |
+| `presentation` | What the host decides about the output. See below.                                                                |
+| `locale`       | A `RichTextLocale`, such as `deDE` from `@frontify/fondue-rich-text-editor/locales/de-DE`. The default is `enUS`. |
+| `limits`       | The resource limits the writing editor used, when a host loosened them. The default limits apply when omitted.    |
+| `onDiagnostic` | Called with each diagnostic of the document while the reader renders.                                             |
 
 ```tsx
-import { commentModel } from '@frontify/rich-text-editor/features';
-import { RichTextReader } from '@frontify/rich-text-editor/reader';
+import { commentModel } from '@frontify/fondue-rich-text-editor/features';
+import { RichTextReader } from '@frontify/fondue-rich-text-editor/reader';
 
 const presentation = { styles: [], colorTokens: [] };
 
@@ -74,8 +74,8 @@ The reader writes the recipes it is given into a `style` element beside the cont
 | `fromMarkdown(markdown)`        | A `DecodeResult`: an editable document, or a blocked result with its diagnostics. |
 
 ```ts
-import { commentModel } from '@frontify/rich-text-editor/features';
-import { createCodecs } from '@frontify/rich-text-editor/codecs';
+import { commentModel } from '@frontify/fondue-rich-text-editor/features';
+import { createCodecs } from '@frontify/fondue-rich-text-editor/codecs';
 
 const codecs = createCodecs(commentModel);
 const { text, losses } = codecs.toPlainText(stored);
@@ -83,13 +83,13 @@ const { text, losses } = codecs.toPlainText(stored);
 
 No codec throws on input. A document that cannot be read gives empty output and the decode diagnostics. `losses` lists one entry per feature whose content the format cannot keep, with a count. Markdown is CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks.
 
-`fromHTML` from `@frontify/rich-text-editor/html` turns HTML into a document through the paste pipeline, with no editor mounted. It needs a DOM implementation, passed as `window`.
+`fromHTML` from `@frontify/fondue-rich-text-editor/html` turns HTML into a document through the paste pipeline, with no editor mounted. It needs a DOM implementation, passed as `window`.
 
 ## `toHTML` output outside the editor
 
 `toHTML` output needs the package stylesheet and the host's style recipes for `data-rte-style`, unless the `inlineStyles` option is set. Email or export use without either loses brand styles.
 
-- Without `inlineStyles`, a styled block carries `data-rte-style="<id>"` and nothing else. The look comes from the package stylesheet, `@frontify/rich-text-editor/styles`, which styles the `fondue-rte-content` root, and from the host's own recipes for each `data-rte-style` ID.
+- Without `inlineStyles`, a styled block carries `data-rte-style="<id>"` and nothing else. The look comes from the package stylesheet, `@frontify/fondue-rich-text-editor/styles`, which styles the `fondue-rte-content` root, and from the host's own recipes for each `data-rte-style` ID.
 - With `inlineStyles` set to the presentation's `styles`, each used recipe is written inline on its element, beside a class. `css` holds the generated stylesheet of those classes, including `hover`.
 - `colorTokens` writes a token colour inline. `contentClassName`, `listLevels`, `columns` and `columnGap` do the same as in the reader's presentation.
 
@@ -106,7 +106,7 @@ const { html, css } = codecs.toHTML(stored, {
 
 Reader and codec output depends only on its inputs. A host that caches it keys the cache by all of these:
 
-1. The document's server revision, or its `hashDocument` result. `hashDocument` comes from `@frontify/rich-text-editor/model`. It is the SHA-256 of the document's canonical JSON, computed the same way on a server.
+1. The document's server revision, or its `hashDocument` result. `hashDocument` comes from `@frontify/fondue-rich-text-editor/model`. It is the SHA-256 of the document's canonical JSON, computed the same way on a server.
 2. The package version.
 3. The whole presentation: the styles, the colour tokens, the list levels, the columns and `strikeCheckedTasks`. Add `columnGap` and `contentClassName`, which change the output too.
 4. The locale.
