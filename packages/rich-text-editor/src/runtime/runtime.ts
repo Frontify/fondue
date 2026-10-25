@@ -65,6 +65,7 @@ import { checkedPayload, createCommands, rejected } from './session/commands';
 import { createCommit } from './session/commit';
 import { createComposition } from './session/composition';
 import { createEncoder } from './session/encode';
+import { createFocus } from './session/focus';
 import { createHistory } from './session/history';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
@@ -72,11 +73,12 @@ import { createMetrics } from './session/metrics';
 import { createMode } from './session/mode';
 import { createPolicy } from './session/policy';
 import { createPrepare, DUPLICATE_ENGINE } from './session/prepare';
+import { createQueue } from './session/queue';
 import { createSaving } from './session/saving';
 import { createShown, summarize } from './session/shown';
 import { createStore } from './session/store';
 import { createTargetsService } from './session/targets';
-import { type InputOutcome, type Intent, type Mode, type RejectedCode, type ReplaceCode } from './session/types';
+import { type InputOutcome, type Mode, type RejectedCode, type ReplaceCode } from './session/types';
 import { createView, isEmpty } from './session/view';
 import { stylesPlugin } from './styles';
 import { countTargets, releaseTargets, targetsPlugin } from './targets';
@@ -101,9 +103,6 @@ import {
     type Unsubscribe,
     type UploadStatus,
 } from './types';
-
-// Queued intents whose listeners keep enqueuing stop past this depth.
-const MAX_ENQUEUE_DEPTH = 32;
 
 export type { InputOutcome };
 
@@ -369,9 +368,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let recovery: EditorState | undefined;
     // Set while replacement step 8 installs the next document.
     let installingNext = false;
-    let draining = false;
-    let depth = 0;
-    const queue: Intent[] = [];
     // `media.image` and the media types it accepts, which its `acceptTypes` option sets.
     const imageFeature = compiledModel(definition.model).features.find(({ id }) => id === UPLOAD_FEATURE);
     let acceptTypes: readonly string[] | undefined;
@@ -480,7 +476,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         () => targets.flushCaptures(),
         () => uploads.flush(),
     );
-    busy.afterEach(() => drain());
 
     const { isDisposed } = lifecycle;
     const { emit, notify, subscribe, watch, clear } = createEventBus({ isDisposed, around: busy.run });
@@ -512,13 +507,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         stamp: identity.stamp,
         encodeByBlock,
     });
-
-    const settleQueue = (code: RejectedCode) => {
-        for (const intent of queue.splice(0)) {
-            liveResources.intents -= 1;
-            intent.resolve(rejected(code));
-        }
-    };
 
     // The checks read the stored document, so their issues and IDs are those `findContentIssues` gives a host.
     const checks = createContentChecks({
@@ -582,7 +570,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         settling.cancel();
         display.takeProvisional();
         views.refresh();
-        settleQueue('not-ready');
+        queue.settle('not-ready');
         report(diagnostic);
         // Results held for that settle are discarded now, as the faulted session takes none.
         coordinator.settle();
@@ -823,6 +811,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
     });
     const { coordinator, baseOf, captureRange } = targets;
+    const focus = createFocus({ lifecycle, view: views, store, commit: { commit }, shown: display, mode });
     const commands = createCommands({
         definition,
         store,
@@ -839,13 +828,22 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             queriedIds: () => queriedIds(),
         },
         baseOf,
-        focus: () => focus(),
+        focus: focus.focus,
         report,
         fault: (found) => fault(found),
         inRender: () => options.inRender?.(),
         commandHost: options.commandHost,
         runtime: () => runtime,
     });
+    const queue = createQueue({
+        lifecycle,
+        busy,
+        composition: settling,
+        run: commands.run,
+        report,
+        resources: liveResources,
+    });
+    busy.afterEach(queue.drain);
 
     /** One search of a suggestion list, as one operation of the coordinator that the list's newer search supersedes. */
     const searchSuggestions: SuggestionHost['search'] = ({ key, featureId, command, run }, receive) => {
@@ -865,51 +863,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return () => coordinator.abortWhere((other) => other === operation);
     };
 
-    /**
-     * Runs queued intents in call order once no commit or notification is in progress
-     * and input has settled.
-     */
-    const drain = () => {
-        if (draining || busy.isBusy() || !lifecycle.is('ready') || settling.active()) {
-            return;
-        }
-        draining = true;
-        let warned = false;
-        try {
-            let intent = queue.shift();
-            while (intent !== undefined) {
-                liveResources.intents -= 1;
-                // The intent's depth holds while it runs or is reported, so what its listeners enqueue sits deeper.
-                depth = intent.depth;
-                if (intent.depth <= MAX_ENQUEUE_DEPTH) {
-                    intent.resolve(commands.run(intent.id, intent.payload, intent.options, 'queue'));
-                } else {
-                    if (!warned) {
-                        warned = true;
-                        report(diagnostic('runtime.enqueue-loop', undefined, undefined, 'warning'));
-                    }
-                    intent.resolve(rejected('busy'));
-                }
-                depth = 0;
-                intent = queue.shift();
-            }
-        } finally {
-            draining = false;
-        }
-    };
-
-    const enqueue = (id: string, payload?: unknown, options?: unknown): Promise<CommandResult> =>
-        new Promise((resolve) => {
-            if (lifecycle.is('faulted', 'disposed')) {
-                resolve(rejected('not-ready'));
-                return;
-            }
-            // An intent that a queued intent's events enqueue sits one level deeper.
-            queue.push({ id, payload, options, depth: depth + 1, resolve });
-            liveResources.intents += 1;
-            drain();
-        });
-
     const dispose = () => {
         if (lifecycle.is('disposed')) {
             return;
@@ -926,7 +879,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         settling.resolve('disposed');
         coordinator.dispose();
         uploads.dispose(store.state.doc);
-        settleQueue('not-ready');
+        queue.settle('not-ready');
         clearDeferred();
         targets.clearDeferred();
         const release = releaseTargets(store.state);
@@ -938,32 +891,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         clear();
         views.detach();
         liveResources.installedFeatures.delete(handle);
-    };
-
-    const focus = (where: 'current' | 'start' | 'end' = 'current') => {
-        if (!lifecycle.is('ready') || views.current() === undefined) {
-            return;
-        }
-        if (where === 'start') {
-            commit(store.state.tr.setSelection(Selection.atStart(store.state.doc)));
-        }
-        if (where === 'end') {
-            commit(store.state.tr.setSelection(Selection.atEnd(store.state.doc)));
-        }
-        // A listener of those commits may have ended the session, which leaves no view.
-        const view = views.current() as EditorView;
-        if (display.mode() === 'editable') {
-            view.focus();
-            return;
-        }
-        // ProseMirror's `focus()` does nothing while the view is not editable, and it syncs no DOM selection there.
-        view.dom.focus();
-        const anchor = view.domAtPos(store.state.selection.anchor);
-        const head = view.domAtPos(store.state.selection.head);
-        const selection = view.dom.ownerDocument.getSelection();
-        if (selection !== null) {
-            selection.setBaseAndExtent(anchor.node, anchor.offset, head.node, head.offset);
-        }
     };
 
     /** Replacement step 5 for a session with unsaved changes: `undefined` when the policy lets the replacement go on. */
@@ -996,24 +923,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return 'unsaved';
     };
 
-    /**
-     * Gives focus back to a surface that had it when the replacement started, editable or readonly, unless focus moved
-     * on meanwhile, in its own document or out of it to a parent page; Chromium blurs a focused surface whose
-     * `contenteditable` turns false.
-     */
-    const refocus = (focused: boolean) => {
-        // A disabled surface leaves the Tab order and takes no focus.
-        const view = views.current();
-        if (!focused || mode.disabled() || view === undefined) {
-            return;
-        }
-        const owner = view.dom.ownerDocument;
-        const { activeElement, body } = owner;
-        if (owner.hasFocus() && (activeElement === null || activeElement === body)) {
-            focus();
-        }
-    };
-
     /** Leaves `transitioning` after a failed step, so what waited runs on the unchanged session. */
     const resume = (code: ReplaceCode, focused: boolean): ReplaceResult => {
         // A listener may have faulted or disposed the session since the step began.
@@ -1023,8 +932,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         views.refresh();
         coordinator.settle();
         saving.settled();
-        drain();
-        refocus(focused);
+        queue.drain();
+        focus.refocus(focused);
         return refused(code);
     };
 
@@ -1060,7 +969,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return false;
             }
             // Intents of the old generation end before anything can drain them into the next.
-            settleQueue('wrong-session');
+            queue.settle('wrong-session');
             const previous = identity.nextGeneration(request.next.documentId);
             display.setPublished(store.state);
             encoder.capabilities = stored;
@@ -1084,7 +993,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         display.emitSelection();
         display.emitSaveStatus();
         emit('replaced', identity.session());
-        refocus(focused);
+        focus.refocus(focused);
         return { status: 'replaced', session: identity.session() };
     };
 
@@ -1163,7 +1072,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         query: commands.query,
         execute: commands.execute,
-        enqueue,
+        enqueue: queue.enqueue,
         captureTarget: (options) => captureRange(options, undefined),
         releaseTarget: targets.releaseTarget,
         requestCommit: saving.request,
@@ -1182,7 +1091,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         updatePolicy: (next) => {
             policy.update(next);
         },
-        focus,
+        focus: focus.focus,
         registerInteractionRoot: (element) => {
             interactionRoots.add(element);
             return () => {

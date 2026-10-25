@@ -7,7 +7,7 @@ export const FILES_OVER_600_LINES: Record<string, number> = {
     'src/model/compile.ts': 659,
     'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/capabilities/suggestions/plugin.ts': 616,
-    'src/runtime/runtime.ts': 1569,
+    'src/runtime/runtime.ts': 1172,
 };
 
 // Data tables exempt from the 600 line limit (T-01); each must still exist.
@@ -32,7 +32,7 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/capabilities/suggestions/plugin.ts': 616,
     'src/runtime/input-rules.ts': 515,
-    'src/runtime/runtime.ts': 1569,
+    'src/runtime/runtime.ts': 1172,
 };
 
 export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
@@ -45,7 +45,7 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/react/rich-text-editor.tsx#anonymous#11': 184,
     'src/react/rich-text-editor.tsx#SessionComponent': 669,
     'src/runtime/async.ts#createAsyncCoordinator': 217,
-    'src/runtime/runtime.ts#createEditorRuntime': 935,
+    'src/runtime/runtime.ts#createEditorRuntime': 845,
     'src/testing/uploads.ts#runUploadConformance': 158,
 };
 
