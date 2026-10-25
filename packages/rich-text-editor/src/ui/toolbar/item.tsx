@@ -3,13 +3,13 @@
 import { icons } from '@frontify/fondue-icons';
 import { type ComponentType } from 'react';
 
-import { endComposition } from '#/bridge/chrome-view';
 import { useApplePlatform } from '#/bridge/platform';
 import { type ToolbarControlProps } from '#/bridge/plugin';
 import { useSessionValue } from '#/bridge/session';
 import { type JsonValue } from '#/model';
 import { keyOn } from '#/model/platform';
 import { type EditorRuntime } from '#/runtime/runtime';
+import { endComposition } from '#/runtime/view-bridge';
 import { ariaShortcut, bindingHere, shortcutText } from '#/ui/shortcuts';
 
 /** One command of the presentation's toolbar, with the registry's label and icon unless `controls` replaced them. */

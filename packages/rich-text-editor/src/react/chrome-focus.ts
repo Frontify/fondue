@@ -2,12 +2,12 @@
 
 import { type KeyboardEvent, type RefObject } from 'react';
 
-import { nodeChromeAt } from '#/bridge/chrome-view';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { type MountCoordinator } from '#/bridge/mount';
 import { escapePassed } from '#/bridge/overlays';
 import { passesToBrowser } from '#/runtime/browser-keys';
 import { type EditorRuntime } from '#/runtime/runtime';
+import { nodeChromeAt } from '#/runtime/view-bridge';
 import { pressesBinding } from '#/ui/shortcuts';
 
 interface ChromeFocus {

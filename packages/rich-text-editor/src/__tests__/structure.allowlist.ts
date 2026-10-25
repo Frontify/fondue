@@ -36,9 +36,7 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/runtime/runtime.ts#createEditorRuntime': 845,
 };
 
-export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {
-    'src/bridge/chrome-view.ts#createChromeView': 8,
-};
+export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {};
 
 export const SPECS_OVER_1000_LINES: Record<string, number> = {
     'src/clipboard/__tests__/clipboard.spec.tsx': 1918,
@@ -55,7 +53,7 @@ export const SPECS_OVER_1000_LINES: Record<string, number> = {
 
 export const KNOWN_CYCLES: string[] = ['(root) | react'];
 
-export const PROSEMIRROR_NODES: string[] = ['bridge', 'clipboard/import', 'definition', 'testing', 'html', 'runtime'];
+export const PROSEMIRROR_NODES: string[] = ['clipboard/import', 'definition', 'testing', 'html', 'runtime'];
 
 export const SPEC_REFERENCES: Record<string, number> = {
     'CONTRIBUTING.md': 6,

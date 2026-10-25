@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorView } from 'prosemirror-view';
-
 import { type EditorRange } from '#/runtime/document-api';
 import { positionsOf } from '#/runtime/editor-api';
+import { caretRect, rangeRect, selectionRect, type SurfaceView } from '#/runtime/view-bridge';
 
 import { type SelectionAnchor } from './overlays';
 import { type AnchorTarget, type OverlayAnchor } from './plugin';
@@ -54,52 +53,14 @@ const clipped = (surface: HTMLElement, rect: DOMRect): boolean => {
     return false;
 };
 
-/** The selection's rectangle: the selected node's box, the caret, or the box around every line of a text range. */
-export const selectionRect = (view: EditorView): DOMRect => {
-    const { selection } = view.state;
-    if ('node' in selection) {
-        const dom = view.nodeDOM(selection.from);
-        if (dom instanceof Element) {
-            return dom.getBoundingClientRect();
-        }
-    }
-    if (selection.empty) {
-        const caret = view.coordsAtPos(selection.head);
-        return new DOMRect(caret.left, caret.top, 0, caret.bottom - caret.top);
-    }
-    const start = view.domAtPos(selection.from);
-    const end = view.domAtPos(selection.to);
-    const range = view.dom.ownerDocument.createRange();
-    range.setStart(start.node, start.offset);
-    range.setEnd(end.node, end.offset);
-    return range.getBoundingClientRect();
-};
-
-/** The caret rectangle at `pos`, as a zero-width box on its line. */
-const positionRect = (view: EditorView, pos: number): DOMRect => {
-    const caret = view.coordsAtPos(pos, 1);
-    return new DOMRect(caret.left, caret.top, 0, caret.bottom - caret.top);
-};
-
 /** A rectangle an overlay anchors to, as Fondue's `virtualAnchor` takes it. */
 export interface RangeAnchor {
     getBoundingClientRect(): DOMRect;
 }
 
-/** The box around the document range `from` to `to`, clamped to the document. */
-const rangeRect = (current: EditorView, from: number, to: number): DOMRect => {
-    const size = current.state.doc.content.size;
-    const start = current.domAtPos(Math.min(from, size));
-    const end = current.domAtPos(Math.min(Math.max(to, from), size));
-    const box = current.dom.ownerDocument.createRange();
-    box.setStart(start.node, start.offset);
-    box.setEnd(end.node, end.offset);
-    return box.getBoundingClientRect();
-};
-
 /** The box around the document range that `range` returns when read, such as a whole link, which Floating UI reads each frame. */
 export const createRangeAnchor = (
-    view: () => EditorView | undefined,
+    view: () => SurfaceView | undefined,
     range: () => { readonly from: number; readonly to: number } | undefined,
 ): RangeAnchor => ({
     getBoundingClientRect: () => {
@@ -113,7 +74,7 @@ export const createRangeAnchor = (
 });
 
 /** The rectangle of `target`, or `undefined` where the selection stands in for it: no target, or a range that is gone or out of the document. */
-const targetRect = (current: EditorView, target: AnchorTarget | undefined): DOMRect | undefined => {
+const targetRect = (current: SurfaceView, target: AnchorTarget | undefined): DOMRect | undefined => {
     if (target === undefined || target === 'selection') {
         return undefined;
     }
@@ -132,10 +93,7 @@ const targetRect = (current: EditorView, target: AnchorTarget | undefined): DOMR
         return (read as Element).getBoundingClientRect();
     }
     if (positions.from === positions.to) {
-        if (positions.from < 0 || positions.from > current.state.doc.content.size) {
-            return undefined;
-        }
-        return positionRect(current, positions.from);
+        return caretRect(current, positions.from);
     }
     return rangeRect(current, positions.from, positions.to);
 };
@@ -145,17 +103,17 @@ const targetRect = (current: EditorView, target: AnchorTarget | undefined): DOMR
  * `target` returns when read, a collapsed range at its caret, and to the selection while it returns `undefined`.
  */
 export const createSelectionAnchor = (
-    view: () => EditorView | undefined,
+    view: () => SurfaceView | undefined,
     target?: () => AnchorTarget | undefined,
 ): SelectionAnchor => {
     // The held rectangle's offset from the surface, which scrolls and resizes with it.
     let held: { readonly x: number; readonly y: number; readonly width: number; readonly height: number } | undefined;
     let read = false;
-    const anchorRect = (current: EditorView): DOMRect => {
+    const anchorRect = (current: SurfaceView): DOMRect => {
         const targeted = targetRect(current, target?.());
         return targeted ?? selectionRect(current);
     };
-    const rectOf = (current: EditorView): DOMRect => {
+    const rectOf = (current: SurfaceView): DOMRect => {
         if (held === undefined) {
             return anchorRect(current);
         }
@@ -192,7 +150,7 @@ export const createSelectionAnchor = (
 };
 
 /** The virtual anchor of `target` on the surface `view` returns. */
-export const anchorOf = (view: () => EditorView | undefined, target: AnchorTarget): OverlayAnchor => {
+export const anchorOf = (view: () => SurfaceView | undefined, target: AnchorTarget): OverlayAnchor => {
     if (target === 'selection') {
         return createSelectionAnchor(view);
     }

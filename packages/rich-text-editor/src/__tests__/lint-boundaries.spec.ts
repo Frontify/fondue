@@ -599,11 +599,7 @@ const CASES: readonly Case[] = [
     // bridge
     banned('bridge: the react layer', 'src/bridge/react-layer.ts', "import { Editor } from '#/react/editor';"),
     banned('bridge: the ui layer', 'src/bridge/ui.ts', "import { Toolbar } from '#/ui/toolbar';"),
-    banned(
-        'bridge: an engine package beside view and model',
-        'src/bridge/engine.ts',
-        "import { EditorState } from 'prosemirror-state';",
-    ),
+    banned('bridge: prosemirror-state', 'src/bridge/engine.ts', "import { EditorState } from 'prosemirror-state';"),
     allowed('bridge: runtime', 'src/bridge/runtime.ts', "import { run } from '#/runtime/run';"),
     banned(
         'bridge: the clipboard plugin',
@@ -611,8 +607,8 @@ const CASES: readonly Case[] = [
         "import { plugin } from '#/runtime/clipboard/plugin';",
     ),
     allowed('bridge: persistence', 'src/bridge/persistence.ts', "import { save } from '#/persistence/save';"),
-    allowed('bridge: prosemirror-view', 'src/bridge/view.ts', "import { EditorView } from 'prosemirror-view';"),
-    allowed('bridge: prosemirror-model', 'src/bridge/model.ts', "import { Schema } from 'prosemirror-model';"),
+    banned('bridge: prosemirror-view', 'src/bridge/view.ts', "import { EditorView } from 'prosemirror-view';"),
+    banned('bridge: prosemirror-model', 'src/bridge/model.ts', "import { Schema } from 'prosemirror-model';"),
     allowed('bridge: react', 'src/bridge/react.ts', "import { memo } from 'react';"),
 
     // react

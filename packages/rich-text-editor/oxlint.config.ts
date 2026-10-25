@@ -369,8 +369,7 @@ const CONFORMANCE_MESSAGE =
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition`, `clipboard/import` and ProseMirror.';
 
-const BRIDGE_MESSAGE =
-    '`bridge` imports `model`, `runtime`, `persistence`, `prosemirror-view`, `prosemirror-model` and React.';
+const BRIDGE_MESSAGE = '`bridge` imports `model`, `runtime`, `persistence` and React, never ProseMirror.';
 
 const REACT_FOLDER_MESSAGE = '`react` imports every folder except `testing`, and neither `react-dom` nor ProseMirror.';
 
@@ -410,10 +409,6 @@ const runtimeRestriction: ImportRestriction = {
 const bridgeAllowed = new Set(['model', 'runtime', 'persistence', 'bridge']);
 
 const bridgeFolders = FOLDERS.filter((folder) => !bridgeAllowed.has(folder));
-
-const bridgeEnginePatterns = DECLARED_PACKAGES.filter(
-    (name) => name.startsWith('prosemirror-') && name !== 'prosemirror-view' && name !== 'prosemirror-model',
-);
 
 const reactFolders = FOLDERS.filter((folder) => folder === 'testing');
 
@@ -778,7 +773,7 @@ export default defineConfig({
                     ...relativePatterns(bridgeFolders),
                     ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
                     ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
-                    ...bridgeEnginePatterns,
+                    ...PROSEMIRROR_PATTERNS,
                 ],
                 message: BRIDGE_MESSAGE,
             },

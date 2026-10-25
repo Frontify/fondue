@@ -1,14 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Node as ProseMirrorNode } from 'prosemirror-model';
-import { type EditorView, type NodeView, type NodeViewConstructor } from 'prosemirror-view';
-
 import { snapshot } from '#/model/values';
 import { type EditorRuntime, liveResources, type NodeTarget } from '#/runtime/runtime';
+import {
+    firstBlockId,
+    labelsFirstBlock,
+    layersOf,
+    type SurfaceView,
+    tagOf,
+    type ViewNode,
+    type ViewNodeConstructor,
+    type ViewNodeView,
+} from '#/runtime/view-bridge';
 
 import { type NodeViewDeclaration } from './define';
 import { ISLAND_VIEWS } from './island';
-import { createPlacement, ignoresMutation, layersOf, sameTags, stopsEvent, syncLayers, tagOf } from './node-view-parts';
+import { createPlacement, ignoresMutation, sameTags, stopsEvent, syncLayers } from './node-view-parts';
 import { type PortalEntry, type PortalStore } from './portals';
 
 /** What the node views of one editor share: its portals and the session they act on. */
@@ -16,32 +23,6 @@ export interface NodeViewHost {
     readonly portals: PortalStore;
     readonly runtime: EditorRuntime;
 }
-
-const viewIndexes = new WeakMap<HTMLElement, string>();
-/**
- * The `id` that the chrome view's decoration gives the first block of the node `nodeId`, which names a node that
- * holds blocks, as a task item's text does without its child tasks; unique per surface, since a page may show a document twice.
- */
-export const firstBlockId = (surface: HTMLElement, nodeId: string, domId: () => string): string => {
-    let index = viewIndexes.get(surface);
-    if (index === undefined) {
-        index = domId();
-        viewIndexes.set(surface, index);
-    }
-    return `rte-node-label-${index}-${encodeURIComponent(nodeId)}`;
-};
-
-/** The first block that carries `node`'s label id: a block container with a `nodeId`, not a textblock. */
-export const labelsFirstBlock = (
-    node: ProseMirrorNode,
-): { readonly nodeId: string; readonly block: ProseMirrorNode } | undefined => {
-    const block = node.firstChild;
-    const { nodeId } = node.attrs;
-    if (node.isAtom || node.isTextblock || block === null || !block.isBlock || typeof nodeId !== 'string') {
-        return undefined;
-    }
-    return { nodeId, block };
-};
 
 // A throw never reaches ProseMirror: the portals close and the session faults, which stops editing.
 const faultOnThrow = <T>(host: NodeViewHost, fallback: () => T, work: () => T): T => {
@@ -56,7 +37,7 @@ const faultOnThrow = <T>(host: NodeViewHost, fallback: () => T, work: () => T): 
 
 const stateOf = (
     host: NodeViewHost,
-    node: ProseMirrorNode,
+    node: ViewNode,
     selected: boolean,
     contentId: string | null,
     getPos: () => number | undefined,
@@ -79,8 +60,8 @@ const stateOf = (
 /** The elements of one node view: `dom`, its chrome slot, its `contentDOM`, and the spec layers it keeps in sync. */
 const createElements = (
     { contentAttributes = {} }: NodeViewDeclaration,
-    node: ProseMirrorNode,
-    view: EditorView,
+    node: ViewNode,
+    view: SurfaceView,
     host: NodeViewHost,
 ) => {
     const document = view.dom.ownerDocument;
@@ -131,10 +112,10 @@ const buildNodeView = (
     host: NodeViewHost,
     key: string,
     declaration: NodeViewDeclaration,
-    node: ProseMirrorNode,
-    view: EditorView,
+    node: ViewNode,
+    view: SurfaceView,
     getPos: () => number | undefined,
-): NodeView => {
+): ViewNodeView => {
     const { component } = declaration;
     const document = view.dom.ownerDocument;
     const {
@@ -223,9 +204,9 @@ const buildNodeView = (
 export const createNodeViews = (
     views: ReadonlyMap<string, NodeViewDeclaration>,
     host: NodeViewHost,
-): Record<string, NodeViewConstructor> => {
+): Record<string, ViewNodeConstructor> => {
     let created = 0;
-    const constructors: Record<string, NodeViewConstructor> = {};
+    const constructors: Record<string, ViewNodeConstructor> = {};
     const islands = [...ISLAND_VIEWS].map(([node, component]): [string, NodeViewDeclaration] => [
         node,
         { node, component },
@@ -242,12 +223,4 @@ export const createNodeViews = (
             );
     }
     return constructors;
-};
-
-/** Writes the editor selection to the DOM again after a portal flush, while the surface has focus. */
-export const resyncSelection = (view: EditorView | undefined): void => {
-    // A composition keeps its own DOM selection until it ends.
-    if (view !== undefined && view.hasFocus() && !view.composing) {
-        view.focus();
-    }
 };

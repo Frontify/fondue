@@ -1,8 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DOMSerializer, type Node as ProseMirrorNode } from 'prosemirror-model';
-import { type ViewMutationRecord } from 'prosemirror-view';
-
 const CONTROLS = 'input, textarea, select, button';
 // Drop-target events over chrome stay stopped, so ProseMirror never accepts a drop it would then not receive.
 const DRAG_SOURCE_EVENTS: ReadonlySet<string> = new Set(['dragstart', 'drag', 'dragend']);
@@ -20,31 +17,8 @@ const inControl = (chrome: HTMLElement, target: Node) => {
     return control !== null && control !== undefined && chrome.contains(control);
 };
 
-export const tagOf = (node: ProseMirrorNode) => {
-    if (node.isInline) {
-        return 'span';
-    }
-    return 'div';
-};
-
-/** The elements of `node`'s HTML spec from its outer element to its content hole; none for a spec with no hole. */
-export const layersOf = (node: ProseMirrorNode, document: Document): readonly HTMLElement[] => {
-    const spec = node.type.spec.toDOM?.(node);
-    if (spec === undefined) {
-        return [];
-    }
-    const { dom, contentDOM } = DOMSerializer.renderSpec(document, spec);
-    const layers: HTMLElement[] = [];
-    let at = contentDOM as HTMLElement | null | undefined;
-    while (at !== null && at !== undefined) {
-        layers.unshift(at);
-        if (at === dom) {
-            break;
-        }
-        at = at.parentElement;
-    }
-    return layers;
-};
+/** A change the view's mutation observer reports, or a selection change it reports in the same shape. */
+type ViewMutation = MutationRecord | { readonly type: 'selection'; readonly target: Node };
 
 export const sameTags = (a: readonly HTMLElement[], b: readonly HTMLElement[]) =>
     a.length === b.length && a.every((layer, index) => layer.tagName === b[index]?.tagName);
@@ -100,7 +74,7 @@ export const createPlacement = (chrome: HTMLElement, contentDOM: HTMLElement | n
         }
         target.append(contentDOM);
     };
-    const movedContent = (mutation: ViewMutationRecord) => {
+    const movedContent = (mutation: ViewMutation) => {
         if (moves === 0 || contentDOM === null || mutation.type !== 'childList') {
             return false;
         }
@@ -124,8 +98,8 @@ export interface ViewDom {
 // Chrome mutations are React's; ProseMirror reads the rest, a removed `contentDOM` included.
 export const ignoresMutation = (
     { chrome, contentDOM, layers }: ViewDom,
-    mutation: ViewMutationRecord,
-    movedContent: (mutation: ViewMutationRecord) => boolean,
+    mutation: ViewMutation,
+    movedContent: (mutation: ViewMutation) => boolean,
 ): boolean => {
     if (mutation.type === 'selection') {
         return false;

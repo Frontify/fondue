@@ -4,7 +4,6 @@ import { Flyout, useFondueTheme } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type MutableRefObject, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { selectionRect } from '#/bridge/anchor';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { useEditorSelection } from '#/bridge/hooks';
 import { passEscape, useHeldOverlay, useScopedFocus } from '#/bridge/overlays';
@@ -13,6 +12,7 @@ import { ChromeBoundary, NO_ATTRS } from '#/bridge/portal-host';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { type SelectionSummary } from '#/runtime/types';
+import { selectionRect } from '#/runtime/view-bridge';
 import { ariaShortcut } from '#/ui/shortcuts';
 import { TextStyle } from '#/ui/toolbar/text-style';
 import { Item, More, type ModeSwitch, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';

@@ -25,7 +25,7 @@ import { AnnouncerContext, createAnnouncer } from '#/bridge/announcer';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
-import { createNodeViews, resyncSelection } from '#/bridge/node-views';
+import { createNodeViews } from '#/bridge/node-views';
 import { useOverlayRoot } from '#/bridge/overlay-root';
 import { OverlayBody, OverlayContext, useScopedFocus } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
@@ -61,6 +61,7 @@ import {
     type RuntimeHandle,
 } from '#/runtime/runtime';
 import { type DocumentChange, type SelectionSummary, type SessionToken, type ShippedCommands } from '#/runtime/types';
+import { resyncSelection } from '#/runtime/view-bridge';
 import { VISUALLY_HIDDEN } from '#/styles/visually-hidden';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { ContextMenu } from '#/ui/context-menu/context-menu';
