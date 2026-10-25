@@ -4,7 +4,6 @@
 
 export const FILES_OVER_600_LINES: Record<string, number> = {
     'src/codecs/to-markdown.ts': 702,
-    'src/model/compile.ts': 659,
     'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/capabilities/suggestions/plugin.ts': 616,
     'src/runtime/runtime.ts': 1172,
@@ -21,9 +20,7 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
     'src/codecs/from-markdown.ts': 523,
     'src/codecs/to-html.ts': 438,
     'src/codecs/to-markdown.ts': 702,
-    'src/definition/index.ts': 560,
     'src/testing/conformance/contract.ts': 408,
-    'src/model/compile.ts': 659,
     'src/model/content.ts': 539,
     'src/model/declarations.ts': 483,
     'src/model/output.ts': 548,
@@ -39,9 +36,7 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/bridge/node-views.ts#build': 174,
     'src/bridge/node-views.ts#createNodeViews': 227,
     'src/codecs/from-markdown.ts#readMarkdown': 161,
-    'src/definition/index.ts#compileDefinition': 253,
     'src/testing/conformance/contract.ts#runFeatureContract': 214,
-    'src/model/compile.ts#compileContentModel': 210,
     'src/react/rich-text-editor.tsx#anonymous#11': 184,
     'src/react/rich-text-editor.tsx#SessionComponent': 669,
     'src/runtime/async.ts#createAsyncCoordinator': 217,
