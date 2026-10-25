@@ -19,7 +19,7 @@ import {
     type SaveMachine,
     type SaveState,
     type Step,
-} from '#/persistence/save-machine';
+} from '#/persistence/saveMachine';
 import { type SaveRequest, type SaveResponse } from '#/persistence/types';
 import { type DocumentStamp } from '#/runtime/types';
 

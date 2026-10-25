@@ -16,7 +16,7 @@ import {
     type Facts,
     type SaveMachine,
     type Timer,
-} from './save-machine';
+} from './saveMachine';
 import {
     type LoadedDocument,
     type PersistenceOptions,

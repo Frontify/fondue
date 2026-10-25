@@ -2,8 +2,8 @@
 
 import { type ServerRevision, type SessionToken } from '#/runtime/types';
 
-import { answered, callTimedOut, capture, failed, pinned } from './save-answers';
-import { type Draft, type Mutable, type SaveEvent, type SaveMachine, type Step } from './save-state';
+import { answered, callTimedOut, capture, failed, pinned } from './saveAnswers';
+import { type Draft, type Mutable, type SaveEvent, type SaveMachine, type Step } from './saveState';
 import {
     dispose,
     load,
@@ -15,7 +15,7 @@ import {
     serviceChanged,
     stopTimers,
     write,
-} from './save-steps';
+} from './saveSteps';
 import { type SaveRequest } from './types';
 
 export {
@@ -36,7 +36,7 @@ export {
     type SaveState,
     type Step,
     type Timer,
-} from './save-state';
+} from './saveState';
 
 /**
  * The save states and the transitions between them as one pure function: `next(machine, event)` returns the machine

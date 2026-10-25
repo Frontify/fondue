@@ -14,7 +14,7 @@ import {
     type Mutable,
     type Pinned,
     type SaveMachine,
-} from './save-state';
+} from './saveState';
 import {
     answer,
     checkpointOf,
@@ -27,7 +27,7 @@ import {
     replay,
     send,
     stopTimers,
-} from './save-steps';
+} from './saveSteps';
 import { type SaveResponse } from './types';
 
 const saved = (d: Draft, current: Flight, acknowledgment: SaveAcknowledgment) => {
