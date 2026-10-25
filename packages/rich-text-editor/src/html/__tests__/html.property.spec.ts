@@ -26,7 +26,7 @@ import { shipped as inlineProfile } from '#/react/profiles/inline';
 
 import { fromHTML } from '../index';
 
-import { htmlArb, policyFaults, unsafeHtml, unsafeParts } from './helpers/hostile-html';
+import { htmlArb, policyFaults, unsafeHtml, unsafeParts } from './helpers/hostileHtml';
 
 const { window } = new JSDOM('');
 const domWindow = window as unknown as Window;

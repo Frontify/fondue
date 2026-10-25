@@ -60,7 +60,7 @@
         {
             "build": "./html",
             "budgetBytes": 45000,
-            "test": "src/html/__tests__/bundle-size.spec.ts",
+            "test": "src/html/__tests__/bundleSize.spec.ts",
             "passed": true
         },
         {
