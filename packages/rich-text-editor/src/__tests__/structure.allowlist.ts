@@ -3,7 +3,6 @@
 // Ratchet tables for structure.spec.ts. Entries record today's value and only shrink.
 
 export const FILES_OVER_600_LINES: Record<string, number> = {
-    'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/runtime.ts': 908,
 };
 
@@ -13,13 +12,10 @@ export const DATA_TABLES: Record<string, string> = {
 };
 
 export const FILES_OVER_400_LINES: Record<string, number> = {
-    'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/runtime.ts': 908,
 };
 
 export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
-    'src/react/rich-text-editor.tsx#anonymous#11': 184,
-    'src/react/rich-text-editor.tsx#SessionComponent': 669,
     'src/runtime/runtime.ts#createEditorRuntime': 411,
 };
 
