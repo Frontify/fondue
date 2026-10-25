@@ -13,15 +13,15 @@ import { readerContext } from '#/reader/context';
 import { UPLOAD_FEATURE } from '#/runtime/port';
 import { referenceListStrings } from '#/ui/suggestions/SuggestionList';
 
-import { moveChromeFocus } from '../chrome-focus';
-import { engineOf, pluginsOf } from '../compile-editor';
-import { type PluginOverlay, useRenderedHosts } from '../plugin-hosts';
-import { menuItems, toolbarItems } from '../toolbar-items';
+import { moveChromeFocus } from '../chromeFocus';
+import { engineOf, pluginsOf } from '../compileEditor';
+import { type PluginOverlay, useRenderedHosts } from '../pluginHosts';
+import { menuItems, toolbarItems } from '../toolbarItems';
 import { type EditorHandle, type ToolbarMode } from '../types';
 
 import { memberOf, type shellPropsOf, toolbarShortcutOf } from './helpers';
 import { type Mounted, type Props, type SessionRest } from './types';
-import { type Choosing } from './use-runtime';
+import { type Choosing } from './useSessionRuntime';
 
 /** Why a toolbar item's command cannot run, by its `disabledReason`. */
 const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {

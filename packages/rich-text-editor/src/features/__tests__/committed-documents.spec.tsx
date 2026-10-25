@@ -14,7 +14,7 @@ import { decodeDocument, type JsonValue, type KeyBinding, type RichTextDocument 
 import { compiledModel } from '#/model/internal';
 import { PROFILE_MODELS } from '#/react/examples/records';
 import { loadProfile } from '#/react/profiles';
-import { RichTextEditor } from '#/react/rich-text-editor';
+import { RichTextEditor } from '#/react/RichTextEditor';
 import { type EditorHandle, type RichTextProfile } from '#/react/types';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';

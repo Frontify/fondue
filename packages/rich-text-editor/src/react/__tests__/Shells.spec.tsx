@@ -21,7 +21,7 @@ import {
 import { createFakePersistenceService, typeText } from '#/testing';
 
 import { defineEditor } from '../define';
-import { RichTextEditor } from '../rich-text-editor';
+import { RichTextEditor } from '../RichTextEditor';
 import { type CompiledEditorDefinition, type EditorHandle } from '../types';
 
 const model = compileContentModel([core(), bold()], { id: 'test.editor', version: 1 });

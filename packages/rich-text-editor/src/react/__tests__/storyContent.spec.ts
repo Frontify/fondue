@@ -6,11 +6,11 @@ import { documentModel } from '#/features';
 import { type RichTextProfile } from '#/index';
 import { enUS } from '#/locales/en-US';
 import { type ContentModel, createEmptyDocument, findContentIssues, type RichTextDocument } from '#/model';
-import { engineOf } from '#/react/compile-editor';
+import { engineOf } from '#/react/compileEditor';
 import { PROFILE_MODELS } from '#/react/examples/records';
 import { type CompiledEditorDefinition, type ReactPresentation } from '#/react/types';
 
-import { COMPOSED_STORIES } from './fixtures/composed-stories';
+import { COMPOSED_STORIES } from './fixtures/composedStories';
 
 interface StoryArgs {
     readonly definition?: CompiledEditorDefinition<object>;

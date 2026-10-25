@@ -14,10 +14,10 @@ import { type CommandResult } from '#/runtime/types';
 import { setSelection, typeText } from '#/testing';
 
 import { defineEditor } from '../define';
-import { RichTextEditor } from '../rich-text-editor';
+import { RichTextEditor } from '../RichTextEditor';
 import { type EditorHandle } from '../types';
 
-import { definition, para, defaultValue, type Props } from './fixtures/editor-harness';
+import { definition, para, defaultValue, type Props } from './fixtures/editorHarness';
 
 vi.mock('#/model', { spy: true });
 vi.mock('#/definition/schema', { spy: true });

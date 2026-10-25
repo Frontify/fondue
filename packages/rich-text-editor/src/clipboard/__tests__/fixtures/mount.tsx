@@ -22,7 +22,7 @@ import {
 import { core } from '#/features/core/feature';
 import { compileContentModel, type ContentModel, type Diagnostic, type JsonValue, type ResourceLimits } from '#/model';
 import { defineEditor, defineReactPresentation } from '#/react/define';
-import { RichTextEditor } from '#/react/rich-text-editor';
+import { RichTextEditor } from '#/react/RichTextEditor';
 import { type EditorHandle } from '#/react/types';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';

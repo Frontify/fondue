@@ -7,8 +7,8 @@ import { type MountCoordinator } from '#/bridge/mount';
 import { sameDocument, styleSheetOf } from '#/model';
 import { unknownStyle } from '#/model/internal';
 
-import { useRecipeSheet } from '../style-sheet';
 import { type EditorHandle } from '../types';
+import { useRecipeSheet } from '../useRecipeSheet';
 
 import { memberChanged, memberOf, modeOf } from './helpers';
 import { type Defined, type Mounted, SERVICE_MEMBERS } from './types';

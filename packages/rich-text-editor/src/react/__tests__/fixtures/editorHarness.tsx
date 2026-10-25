@@ -14,7 +14,7 @@ import { type LoadedDocument } from '#/persistence/types';
 import { liveResources, type RuntimeHandle } from '#/runtime/runtime';
 
 import { defineEditor } from '../../define';
-import { RichTextEditor } from '../../rich-text-editor';
+import { RichTextEditor } from '../../RichTextEditor';
 import { type EditorDefinitionOptions, type EditorHandle, type RichTextEditorBaseProps } from '../../types';
 
 export const features = [core(), bold()];

@@ -40,7 +40,7 @@ import { type DocumentChange } from '#/runtime/types';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
 import { defineEditor } from '../define';
-import { RichTextEditor } from '../rich-text-editor';
+import { RichTextEditor } from '../RichTextEditor';
 import { type EditorHandle, type RichTextEditorProps } from '../types';
 
 import {
@@ -56,7 +56,7 @@ import {
     surface,
     undoOnce,
     viewOf,
-} from './fixtures/editor-harness';
+} from './fixtures/editorHarness';
 
 vi.mock('#/model', { spy: true });
 vi.mock('#/definition/schema', { spy: true });

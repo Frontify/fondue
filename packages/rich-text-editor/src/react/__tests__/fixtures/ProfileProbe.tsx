@@ -4,7 +4,7 @@ import { useMemo, useRef } from 'react';
 
 import { createEmptyDocument } from '#/model';
 import { PROFILE_MODELS } from '#/react/examples/records';
-import { RichTextEditor } from '#/react/rich-text-editor';
+import { RichTextEditor } from '#/react/RichTextEditor';
 import { type EditorHandle, type RichTextProfile, type ToolbarMode } from '#/react/types';
 import { runtimeOf } from '#/runtime/runtime';
 import { createFakeReferenceService, type SelectionTarget, setSelection } from '#/testing';

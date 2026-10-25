@@ -17,7 +17,7 @@ import {
     contrast,
     boxOf,
     outlineOf,
-} from './fixtures/toolbar-harness';
+} from './fixtures/toolbarHarness';
 import { ToolbarProbe } from './fixtures/ToolbarProbe';
 
 test('is one tab stop with a label, aria-controls and arrow, Home and End keys', async ({ mount, page }) => {

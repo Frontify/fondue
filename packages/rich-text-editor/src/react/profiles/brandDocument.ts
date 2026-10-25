@@ -4,7 +4,7 @@ import { columnsPlugin } from '#/features/layout-columns';
 import { brandDocumentModel } from '#/features/profiles/brand-document';
 import { brandStylesPlugin } from '#/features/styles-brand';
 
-import { compileEditor } from '../compile-editor';
+import { compileEditor } from '../compileEditor';
 import { defineReactPresentation } from '../presentation';
 
 import { documentPlugins, documentToolbar } from './document';

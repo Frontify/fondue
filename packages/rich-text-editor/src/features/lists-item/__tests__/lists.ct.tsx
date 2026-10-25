@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator, type Page } from '@playwright/test';
 
-import { bullets, listItem, numbered, paragraph } from '#/react/__tests__/fixtures/list-blocks';
+import { bullets, listItem, numbered, paragraph } from '#/react/__tests__/fixtures/listBlocks';
 import { ListProbe } from '#/react/__tests__/fixtures/ListProbe';
 
 type ListRte = NonNullable<Window['listRte']>;

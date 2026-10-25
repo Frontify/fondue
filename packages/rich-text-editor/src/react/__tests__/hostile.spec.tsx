@@ -29,7 +29,7 @@ import {
     type RichTextSlice,
 } from '#/model';
 import { defineEditor, defineReactPresentation } from '#/react/define';
-import { RichTextEditor } from '#/react/rich-text-editor';
+import { RichTextEditor } from '#/react/RichTextEditor';
 import { type EditorHandle, type OperationMetric } from '#/react/types';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { canRedo, undoDepth } from '#/runtime/history';

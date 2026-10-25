@@ -28,9 +28,9 @@ import { runtimeOf } from '#/runtime/runtime';
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import { defineEditor, defineReactPresentation } from '../define';
-import { useEditorHandle } from '../hooks';
-import { RichTextEditor } from '../rich-text-editor';
+import { RichTextEditor } from '../RichTextEditor';
 import { type EditorHandle, type RichTextEditorBaseProps } from '../types';
+import { useEditorHandle } from '../useEditorHandle';
 
 import { fixtureLocale, TOOLBAR } from './fixtures/ToolbarProbe';
 

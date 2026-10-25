@@ -8,7 +8,7 @@ import { type LoadedDocument } from '#/persistence/types';
 import { type ReaderPresentation } from '#/reader/reader';
 import { type ColumnState, type EditorPort, surfaceElement } from '#/runtime/port';
 
-import { engineOf, readersOf } from '../compile-editor';
+import { engineOf, readersOf } from '../compileEditor';
 import { type EditorServices } from '../types';
 
 import {

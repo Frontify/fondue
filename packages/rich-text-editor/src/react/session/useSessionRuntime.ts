@@ -28,8 +28,8 @@ import {
 import { pickAsset } from '#/ui/media/assetPicker';
 import { uploadMessage } from '#/ui/media/uploadMessages';
 
-import { engineOf, profileOf, viewsOf } from '../compile-editor';
-import { registerFormField } from '../form-field';
+import { engineOf, profileOf, viewsOf } from '../compileEditor';
+import { registerFormField } from '../formField';
 import { registerSaveCauses } from '../status';
 import { type EditorHandle } from '../types';
 import { validityOf } from '../validity';

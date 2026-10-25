@@ -26,7 +26,7 @@ import {
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import { defineEditor, defineReactPresentation } from '../define';
-import { RichTextEditor } from '../rich-text-editor';
+import { RichTextEditor } from '../RichTextEditor';
 import { type EditorHandle, type ReactPresentation, type RichTextEditorBaseProps } from '../types';
 
 import { fixtureLocale, toolbarDefinitions, TOOLBAR } from './fixtures/ToolbarProbe';

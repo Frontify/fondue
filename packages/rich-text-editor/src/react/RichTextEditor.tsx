@@ -9,10 +9,10 @@ import { type ShippedCommands } from '#/runtime/port';
 import { useEditorLocale } from './locale';
 import { useCoarsePointer, useProfile } from './profiles';
 import { shellPropsOf } from './session/helpers';
-import { BubbleToolbarPart, Panels, Status, Surface, Toolbar } from './session/parts';
-import { Session } from './session/session';
+import { BubbleToolbarPart, Panels, Status, Surface, Toolbar } from './session/Parts';
+import { Session } from './session/Session';
 import { DEFAULT_TEST_ID, type Props, type RecoverySession } from './session/types';
-import { LoadingShell, RecoveryShell } from './shells';
+import { LoadingShell, RecoveryShell } from './Shells';
 import { type Defined, type EditorHandle, type RichTextEditorProps, type RichTextProfile } from './types';
 
 export type RecoveryProps = {

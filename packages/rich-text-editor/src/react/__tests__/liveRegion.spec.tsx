@@ -5,7 +5,7 @@ import { render, waitFor } from '@testing-library/react';
 import { type ComponentType } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { liveRegionFaults } from './fixtures/live-region';
+import { liveRegionFaults } from './fixtures/liveRegion';
 
 type StoriesModule = Parameters<typeof composeStories>[0];
 type Glob = (patterns: readonly string[], options: { readonly eager: true }) => Record<string, StoriesModule>;

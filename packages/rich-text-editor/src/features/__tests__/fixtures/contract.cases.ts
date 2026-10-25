@@ -31,7 +31,7 @@ import {
     findInvalidPayload,
 } from '#/model';
 import { compiledModel, decodeToTree } from '#/model/internal';
-import { engineOf, viewsOf } from '#/react/compile-editor';
+import { engineOf, viewsOf } from '#/react/compileEditor';
 import { defineEditor } from '#/react/define';
 import { extensionsOf } from '#/react/engine';
 import { readerContext } from '#/reader/context';

@@ -27,7 +27,7 @@ import {
     lines,
     openAltText,
     shownWhole,
-} from './fixtures/overlay-harness';
+} from './fixtures/overlayHarness';
 import { OverlayProbe } from './fixtures/OverlayProbe';
 
 test.afterEach(async ({ page }) => {

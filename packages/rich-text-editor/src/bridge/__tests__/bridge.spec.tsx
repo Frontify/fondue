@@ -35,8 +35,8 @@ import {
     type JsonValue,
     type RichTextLocale,
 } from '#/model';
-import { viewsOf } from '#/react/compile-editor';
-import { shipped as brandDocumentProfile } from '#/react/profiles/brand-document';
+import { viewsOf } from '#/react/compileEditor';
+import { shipped as brandDocumentProfile } from '#/react/profiles/brandDocument';
 import { shipped as commentProfile } from '#/react/profiles/comment';
 import { shipped as documentProfile } from '#/react/profiles/document';
 import { shipped as inlineProfile } from '#/react/profiles/inline';

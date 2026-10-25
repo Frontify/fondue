@@ -16,7 +16,7 @@ import {
     quote,
     text,
 } from '#/react/examples/records';
-import '#/react/examples/content-styles';
+import '#/react/examples/contentStyles';
 
 const model = documentModel;
 const stored = (...blocks: Parameters<typeof blocksRecord>[2][]) =>

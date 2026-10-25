@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
 import { settled } from './fixtures/layout';
-import { MinimalUsage } from './fixtures/minimal-usage';
+import { MinimalUsage } from './fixtures/MinimalUsage';
 import { ProfileProbe } from './fixtures/ProfileProbe';
 import { ready } from './fixtures/ready';
 

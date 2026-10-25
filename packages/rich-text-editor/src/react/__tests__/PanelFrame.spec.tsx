@@ -14,7 +14,7 @@ import {
 import { contentChecks } from '#/features/a11y-content-checks/feature';
 import { core } from '#/features/core/feature';
 import { type ContentModel, type Feature } from '#/model';
-import { liveRegionFaults } from '#/react/__tests__/fixtures/live-region';
+import { liveRegionFaults } from '#/react/__tests__/fixtures/liveRegion';
 import { mountText, para, text, textModel } from '#/react/__tests__/fixtures/text';
 import { typeText } from '#/testing';
 

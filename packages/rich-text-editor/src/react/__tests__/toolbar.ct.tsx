@@ -22,7 +22,7 @@ import {
     linked,
     session,
     frames,
-} from './fixtures/toolbar-harness';
+} from './fixtures/toolbarHarness';
 import { ToolbarProbe } from './fixtures/ToolbarProbe';
 
 test.describe('at 320 CSS pixels', () => {

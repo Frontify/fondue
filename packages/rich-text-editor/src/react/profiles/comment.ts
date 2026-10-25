@@ -15,7 +15,7 @@ import { mentionsPlugin } from '#/features/mentions';
 import { commentModel } from '#/features/profiles/comment';
 import { type CommandRef } from '#/model';
 
-import { compileEditor } from '../compile-editor';
+import { compileEditor } from '../compileEditor';
 import { defineReactPresentation } from '../presentation';
 
 import { inlinePlugins } from './inline';

@@ -21,7 +21,7 @@ import {
     rule,
     text,
 } from './records';
-import styles from './styles/keyboard-reference.module.scss';
+import styles from './styles/keyboardReference.module.scss';
 
 const shown = (text: string) => {
     if (text === '') {

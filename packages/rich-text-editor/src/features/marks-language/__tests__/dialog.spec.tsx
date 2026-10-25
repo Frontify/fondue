@@ -7,7 +7,7 @@ import { codeBlock } from '#/features/blocks-code/feature';
 import { language } from '#/features/marks-language/feature';
 import { type ReactPresentation } from '#/index';
 import { type ContentNodeJSON } from '#/model';
-import { liveRegionFaults } from '#/react/__tests__/fixtures/live-region';
+import { liveRegionFaults } from '#/react/__tests__/fixtures/liveRegion';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';

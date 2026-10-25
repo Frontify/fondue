@@ -11,7 +11,7 @@ import {
     quote,
     text,
 } from '#/react/examples/records';
-import { RichTextEditor } from '#/react/rich-text-editor';
+import { RichTextEditor } from '#/react/RichTextEditor';
 
 const document = blocksRecord(
     PROFILE_MODELS.document,

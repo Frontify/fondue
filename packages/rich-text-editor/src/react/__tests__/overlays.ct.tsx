@@ -29,7 +29,7 @@ import {
     lines,
     openAltText,
     shownWhole,
-} from './fixtures/overlay-harness';
+} from './fixtures/overlayHarness';
 import { OverlayProbe, ReorderProbe } from './fixtures/OverlayProbe';
 
 test.afterEach(async ({ page }) => {

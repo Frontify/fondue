@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
-import { bullets, listItem, taskItem, tasks } from './fixtures/list-blocks';
+import { bullets, listItem, taskItem, tasks } from './fixtures/listBlocks';
 import { ListProbe } from './fixtures/ListProbe';
 import { OverlayProbe } from './fixtures/OverlayProbe';
 

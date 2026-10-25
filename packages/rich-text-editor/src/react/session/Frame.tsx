@@ -17,14 +17,14 @@ import { ContextMenu } from '#/ui/contextMenu/ContextMenu';
 import { PanelContext, type PanelController } from '#/ui/panels/context';
 import { type referenceListStrings, SuggestionList } from '#/ui/suggestions/SuggestionList';
 
-import { type PluginOverlay } from '../plugin-hosts';
-import { translatedLabel } from '../toolbar-items';
+import { type PluginOverlay } from '../pluginHosts';
+import { translatedLabel } from '../toolbarItems';
 import { type ToolbarMode } from '../types';
 
-import { Bubble } from './parts';
-import { RootContext } from './root-context';
+import { Bubble } from './Parts';
+import { RootContext } from './rootContext';
 import { type Chrome, type RootContextValue } from './types';
-import { type Choosing } from './use-runtime';
+import { type Choosing } from './useSessionRuntime';
 
 type ChromeContext = ReturnType<typeof readerContext>;
 

@@ -16,7 +16,7 @@ import {
     menuRows,
     documentHtml,
     boxOf,
-} from './fixtures/toolbar-harness';
+} from './fixtures/toolbarHarness';
 import { ToolbarProbe } from './fixtures/ToolbarProbe';
 
 /** Each item's name and icon, from the toolbar, or from the More menu when `inMore`. */

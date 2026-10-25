@@ -5,7 +5,7 @@ import { type EditorPart } from '#/bridge/plugin';
 import { type CompiledDefinition, type EngineExtension } from '#/definition';
 import { type ContentModel } from '#/model';
 
-import { editorEngine as engineWith, extensionsOf as extensionsWith } from './compile-editor';
+import { editorEngine as engineWith, extensionsOf as extensionsWith } from './compileEditor';
 
 /** The engine of `model` with the editor part of each unit, which must cover the model's features exactly. */
 export const editorEngine = (

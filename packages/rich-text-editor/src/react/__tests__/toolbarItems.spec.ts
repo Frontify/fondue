@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest';
 import { enUS } from '#/locales/en-US';
 import { codecContext } from '#/model/internal';
 
-import { engineOf, pluginsOf } from '../compile-editor';
+import { engineOf, pluginsOf } from '../compileEditor';
 import { shipped as document } from '../profiles/document';
-import { menuItems, toolbarItems } from '../toolbar-items';
+import { menuItems, toolbarItems } from '../toolbarItems';
 
 const { t } = codecContext(enUS, enUS);
 

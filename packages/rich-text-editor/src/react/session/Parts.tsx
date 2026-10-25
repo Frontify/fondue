@@ -14,13 +14,13 @@ import { usePanelController } from '#/ui/panels/context';
 import { shortcutText } from '#/ui/shortcuts';
 import { FixedToolbar } from '#/ui/toolbar/Toolbar';
 
-import { panelsOf, profileOf } from '../compile-editor';
-import { PanelFrame } from '../panels';
+import { panelsOf, profileOf } from '../compileEditor';
+import { PanelFrame } from '../PanelFrame';
 import { SaveStatusText } from '../status';
 import { type CompiledEditorDefinition } from '../types';
 
 import { toolbarShortcutOf } from './helpers';
-import { useRoot } from './root-context';
+import { useRoot } from './rootContext';
 import { type Chrome, DEFAULT_TEST_ID } from './types';
 
 /** The host's class tokens the surface may add and remove: never the package's root class nor one of ProseMirror's own. */

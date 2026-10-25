@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 
 import { toolbarOf } from './fixtures/layout';
-import { codeBlock, surfaceOf, itemOf, ready, select, boxOf } from './fixtures/toolbar-harness';
+import { codeBlock, surfaceOf, itemOf, ready, select, boxOf } from './fixtures/toolbarHarness';
 import { ToolbarProbe } from './fixtures/ToolbarProbe';
 
 test.describe('with a coarse pointer', () => {

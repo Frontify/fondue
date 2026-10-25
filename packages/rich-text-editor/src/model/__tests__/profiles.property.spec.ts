@@ -18,7 +18,7 @@ import {
     type ResourceLimits,
 } from '#/model';
 import { compiledModel } from '#/model/compile';
-import { longestAttributeValue } from '#/react/compile-editor';
+import { longestAttributeValue } from '#/react/compileEditor';
 
 import { decodeToTree } from '../decode';
 import { encodeTree } from '../encode';

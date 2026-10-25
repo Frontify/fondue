@@ -6,7 +6,7 @@ import { createElement, useEffect, useRef } from 'react';
 
 import { liveResources, runtimeOfView } from '#/runtime/runtime';
 
-import { COMPOSED_STORIES } from './composed-stories';
+import { COMPOSED_STORIES } from './composedStories';
 
 /** The error reports a story throws on purpose, as its `reports` parameter allows them: each message bounded by count. */
 interface Reports {

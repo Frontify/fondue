@@ -639,7 +639,7 @@ const CASES: readonly Case[] = [
     banned('react: the runtime assembly', 'src/react/foo.ts', "import { createPort } from '#/runtime/assembly';"),
     allowed(
         'react: the runtime assembly in the engine compiler',
-        'src/react/compile-editor.ts',
+        'src/react/compileEditor.ts',
         "import { createPort } from '#/runtime/assembly';",
     ),
     allowed('react: react', 'src/react/react.tsx', "import { memo } from 'react';"),

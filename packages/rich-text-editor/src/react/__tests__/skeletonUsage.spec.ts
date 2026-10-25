@@ -24,7 +24,7 @@ describe('the skeleton usage fixture', () => {
                 compilerOptions: { typeRoots: [join(packageRoot, 'node_modules/@types')], types: ['node'] },
                 include: [],
                 files: [
-                    join(packageRoot, 'src/react/__tests__/fixtures/skeleton-usage.tsx'),
+                    join(packageRoot, 'src/react/__tests__/fixtures/skeletonUsage.tsx'),
                     join(packageRoot, 'src/styles/css.d.ts'),
                 ],
             }),

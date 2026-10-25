@@ -6,7 +6,7 @@
     "suites": {
         "unit": {
             "vitest": "5.0.0",
-            "command": "vitest run --coverage.enabled=false --exclude src/react/__tests__/performance.spec.tsx --exclude src/react/__tests__/hostile-cost.spec.tsx",
+            "command": "vitest run --coverage.enabled=false --exclude src/react/__tests__/performance.spec.tsx --exclude src/react/__tests__/hostileCost.spec.tsx",
             "passed": 4798,
             "failed": 0,
             "skipped": 6

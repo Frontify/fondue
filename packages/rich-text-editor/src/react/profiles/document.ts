@@ -13,7 +13,7 @@ import { outlinePlugin } from '#/features/nav-outline';
 import { documentModel } from '#/features/profiles/document';
 import { type CommandRef } from '#/model';
 
-import { compileEditor } from '../compile-editor';
+import { compileEditor } from '../compileEditor';
 import { defineReactPresentation } from '../presentation';
 
 import { commentPlugins } from './comment';

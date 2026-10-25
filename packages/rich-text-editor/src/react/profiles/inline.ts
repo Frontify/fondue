@@ -12,7 +12,7 @@ import { languagePlugin } from '#/features/marks-language';
 import { underlinePlugin } from '#/features/marks-underline';
 import { inlineModel } from '#/features/profiles/inline';
 
-import { compileEditor } from '../compile-editor';
+import { compileEditor } from '../compileEditor';
 import { defineReactPresentation } from '../presentation';
 
 import { NOT_CREATABLE, type ShippedProfile } from './parts';

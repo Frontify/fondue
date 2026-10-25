@@ -7,7 +7,7 @@ import { type InteractionScope } from '#/bridge/interactionScope';
 import { type MountCoordinator } from '#/bridge/mount';
 import { type readerContext } from '#/reader/context';
 
-import { usePluginHosts } from '../plugin-hosts';
+import { usePluginHosts } from '../pluginHosts';
 
 import { memberOf, pluginPresentationOf } from './helpers';
 import { DEFAULT_TEST_ID, type SessionRest } from './types';

@@ -12,7 +12,7 @@ import { italicPlugin } from '#/features/marks-italic';
 import { italic } from '#/features/marks-italic/feature';
 import { compileContentModel, defineFeature, DefinitionError } from '#/model';
 
-import { pluginsOf, readersOf } from '../compile-editor';
+import { pluginsOf, readersOf } from '../compileEditor';
 import { defineEditor } from '../define';
 import { type CommandsOfPlugins, type CompiledEditorDefinition } from '../types';
 

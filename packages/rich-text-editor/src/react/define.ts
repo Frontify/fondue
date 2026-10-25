@@ -3,7 +3,7 @@
 import { type RichTextPlugin } from '#/bridge/definePlugin';
 import { type ContentModel } from '#/model';
 
-import { compileEditor } from './compile-editor';
+import { compileEditor } from './compileEditor';
 import { type CommandsOfPlugins, type CompiledEditorDefinition, type EditorDefinitionOptions } from './types';
 
 export { defineReactPresentation } from './presentation';

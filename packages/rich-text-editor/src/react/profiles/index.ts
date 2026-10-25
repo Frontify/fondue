@@ -11,7 +11,7 @@ const LOADERS: Readonly<Record<RichTextProfile, () => Promise<{ readonly shipped
     inline: () => import('./inline'),
     comment: () => import('./comment'),
     document: () => import('./document'),
-    'brand-document': () => import('./brand-document'),
+    'brand-document': () => import('./brandDocument'),
 };
 
 const loaded = new Map<RichTextProfile, ShippedProfile>();

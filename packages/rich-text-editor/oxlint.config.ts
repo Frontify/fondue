@@ -439,7 +439,7 @@ const portOnlyPatterns = [
 ];
 
 // The two react files that build the engine also import the assembly, which holds the engine-typed values.
-const REACT_ASSEMBLY_FILES = ['src/react/compile-editor.ts', 'src/react/session/use-runtime.ts'];
+const REACT_ASSEMBLY_FILES = ['src/react/compileEditor.ts', 'src/react/session/useSessionRuntime.ts'];
 
 const portAndAssemblyPatterns = [
     ...aliasPatterns(['runtime']),

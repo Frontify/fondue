@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { COMPOSED_STORIES } from './fixtures/composed-stories';
+import { COMPOSED_STORIES } from './fixtures/composedStories';
 
 // Storybook links: `?path=/story/<id>` and `?path=/docs/<id>--documentation`, or `#<slug>` for a heading of the same description.
 const LINK = /\[[^\]]*\]\(([^)\s]+)\)|href="([^"]+)"/g;

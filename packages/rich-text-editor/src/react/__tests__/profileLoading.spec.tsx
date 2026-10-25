@@ -9,7 +9,7 @@ import { createEmptyDocument } from '#/model';
 
 import { loadProfile } from '../profiles';
 import * as inlineProfile from '../profiles/inline';
-import { RichTextEditor } from '../rich-text-editor';
+import { RichTextEditor } from '../RichTextEditor';
 import { type EditorHandle } from '../types';
 
 vi.mock('../profiles/inline', async (importOriginal) => {

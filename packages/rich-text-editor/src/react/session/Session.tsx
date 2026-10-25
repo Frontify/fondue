@@ -6,22 +6,22 @@ import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 import { useOverlayRoot } from '#/bridge/useOverlayRoot';
 import { type EditorPort, resyncSelectionOf } from '#/runtime/port';
 
-import { useEscapeToSurface } from '../chrome-focus';
-import { useKeyboardInset } from '../keyboard-inset';
-import { BlockedShell, RecoveryShell } from '../shells';
+import { useEscapeToSurface } from '../chromeFocus';
+import { BlockedShell, RecoveryShell } from '../Shells';
 import { type EditorHandle } from '../types';
+import { useKeyboardInset } from '../useKeyboardInset';
 
-import { SessionFrame, SessionProviders } from './frame';
+import { SessionFrame, SessionProviders } from './Frame';
 import { shellPropsOf } from './helpers';
-import { useRootContext } from './root-context';
+import { useRootContext } from './rootContext';
 import { type SessionProps } from './types';
-import { chromeKeyDownOf, useChrome, useOverlayValues, useSessionRefs, useToolbarMode } from './use-chrome';
-import { useColumns } from './use-columns';
-import { useSessionHosts } from './use-hosts';
-import { useMountState } from './use-mount-state';
-import { usePanels } from './use-panels';
-import { useSessionRuntime } from './use-runtime';
-import { useChangeWatch, usePresentationSync } from './use-sync';
+import { chromeKeyDownOf, useChrome, useOverlayValues, useSessionRefs, useToolbarMode } from './useChrome';
+import { useColumns } from './useColumns';
+import { useMountState } from './useMountState';
+import { usePanels } from './usePanels';
+import { useSessionHosts } from './useSessionHosts';
+import { useSessionRuntime } from './useSessionRuntime';
+import { useChangeWatch, usePresentationSync } from './useSync';
 
 const SessionComponent = (
     { children, onSession, onRetry, retried, ...props }: SessionProps,
