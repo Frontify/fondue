@@ -3,6 +3,7 @@
 import { type Diagnostic } from '#/model';
 import { diagnostic } from '#/model/format';
 
+import { initial, next, type AsyncEffect, type AsyncEventInput, type AsyncFacts } from './async-machine';
 import { type FeaturePolicy, type SelectionHandle, type SessionToken } from './types';
 
 /** What a capability hands the coordinator: the service call and the command that applies its result. */
@@ -71,221 +72,156 @@ export interface AsyncCoordinatorOptions {
     readonly report: (diagnostic: Diagnostic) => void;
 }
 
+type Of<T extends AsyncEffect['type']> = Extract<AsyncEffect, { readonly type: T }>;
+
 /** Registers each async operation, aborts the ones a newer request, a policy, a service or `dispose` ends, and checks each result. */
 export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
     const { generateId, session, policyRevision, isDisposed, isFaulted, holding, capture, release, apply, report } =
         options;
-    const operations = new Map<string, AsyncOperation>();
-    const requests = new Map<string, number>();
-    const held: { readonly operation: AsyncOperation; readonly result: unknown }[] = [];
-    // Operations whose target the coordinator captured, and so releases once they end.
-    const captured = new Set<AsyncOperation>();
-    // The pooled operations whose service call runs, and those that wait for room, by pool name.
-    const running = new Map<string, Set<AsyncOperation>>();
-    const waiting = new Map<string, { readonly operation: AsyncOperation; readonly request: AsyncRequest }[]>();
-    const pools = new Map<AsyncOperation, AsyncRequest['pool']>();
-
-    const forget = (operation: AsyncOperation) => {
-        operations.delete(operation.id);
-        liveOperations.delete(operation);
-    };
-
-    const end = (operation: AsyncOperation) => {
-        forget(operation);
-        if (captured.delete(operation) && operation.target !== null) {
-            release(operation.target);
-        }
-        const pool = pools.get(operation);
-        if (pool === undefined) {
-            return;
-        }
-        pools.delete(operation);
-        const queued = waiting.get(pool.name) ?? [];
-        const at = queued.findIndex((entry) => entry.operation === operation);
-        if (at >= 0) {
-            queued.splice(at, 1);
-        }
-        if (running.get(pool.name)?.delete(operation) === true) {
-            next(pool.name);
-        }
-    };
-
+    let machine = initial();
     // While an abort runs, a pool starts no waiting operation that the same abort may end next.
     let aborting = 0;
-    const abortWhere = (aborts: (operation: AsyncOperation) => boolean) => {
+
+    const readFacts = (): AsyncFacts => ({
+        disposed: isDisposed(),
+        faulted: isFaulted(),
+        holding: holding(),
+        session: session(),
+        aborting: aborting > 0,
+    });
+
+    /** Applies a result through its `deliver`, or `apply`; a result that throws while it is read fails its check. */
+    const deliverResult = (operation: AsyncOperation, result: unknown): string | undefined => {
+        try {
+            if (operation.deliver === undefined) {
+                return apply(operation, result);
+            }
+            return operation.deliver(result);
+        } catch {
+            return 'invalid-payload';
+        }
+    };
+
+    /** What each effect does outside the machine. */
+    const EFFECTS: { readonly [T in AsyncEffect['type']]: (effect: Of<T>) => void } = {
+        build: ({ request, reply, target, capture: captures, sequence }) => {
+            let chosen = target;
+            if (captures) {
+                chosen = capture() ?? null;
+            }
+            const { deliver } = request;
+            let delivered: Pick<AsyncOperation, 'deliver'> = {};
+            if (deliver !== undefined) {
+                delivered = { deliver };
+            }
+            const operation: AsyncOperation = Object.freeze({
+                id: generateId(),
+                session: session(),
+                target: chosen,
+                policyRevision: policyRevision(),
+                controller: new AbortController(),
+                key: request.key,
+                request: sequence,
+                service: request.service,
+                featureId: request.featureId,
+                action: request.action,
+                command: request.command,
+                ...delivered,
+            });
+            reply(operation);
+            dispatch({ type: 'built', operation, request, owned: captures && chosen !== null });
+        },
+        abort: ({ operation }) => {
+            operation.controller.abort();
+        },
+        supersede: ({ operation, request, owned }) => {
+            sweep({ type: 'abortWhere', aborts: (other) => other.key === operation.key });
+            dispatch({ type: 'admit', operation, request, owned });
+        },
+        register: ({ operation }) => {
+            liveOperations.add(operation);
+        },
+        unregister: ({ operation }) => {
+            liveOperations.delete(operation);
+        },
+        release: ({ target }) => {
+            release(target);
+        },
+        pump: ({ name }) => {
+            dispatch({ type: 'pump', name });
+        },
+        call: ({ operation, request }) => {
+            const { signal } = operation.controller;
+            request
+                .run({ signal, session: operation.session, operationId: operation.id })
+                .then((result) => dispatch({ type: 'arrive', operation, result }))
+                // A failed service call leaves the document as it is.
+                .catch((error: unknown) =>
+                    dispatch({ type: 'rejected', operation, request, error, aborted: signal.aborted }),
+                );
+        },
+        deliver: ({ operation, result }) => {
+            dispatch({ type: 'delivered', operation, code: deliverResult(operation, result) });
+        },
+        replay: ({ operation, result }) => {
+            dispatch({ type: 'arrive', operation, result });
+        },
+        fail: ({ request, error }) => {
+            request.fail?.(error);
+        },
+        discard: ({ reason }) => {
+            report(diagnostic('runtime.async-discarded', undefined, { reason }, 'info'));
+        },
+    };
+
+    const run = <T extends AsyncEffect['type']>(effect: Of<T>) => {
+        EFFECTS[effect.type](effect);
+    };
+
+    /** Feeds an event to the machine, keeps its next state and runs the effects in order. */
+    const dispatch = (input: AsyncEventInput) => {
+        const step = next(machine, { ...input, facts: readFacts() });
+        machine = step.state;
+        for (const effect of step.effects) {
+            run(effect);
+        }
+    };
+
+    /** Runs an event that ends operations, then lets every pool start what the abort held back. */
+    const sweep = (input: AsyncEventInput) => {
         aborting += 1;
         try {
-            for (const operation of [...operations.values()]) {
-                if (aborts(operation)) {
-                    end(operation);
-                    operation.controller.abort();
-                }
-            }
+            dispatch(input);
         } finally {
             aborting -= 1;
         }
-        for (const name of [...waiting.keys()]) {
-            next(name);
-        }
-    };
-
-    const discard = (reason: string) => report(diagnostic('runtime.async-discarded', undefined, { reason }, 'info'));
-
-    const arrive = (operation: AsyncOperation, result: unknown) => {
-        if (isDisposed()) {
-            return;
-        }
-        // Checked first, since a replacement also aborts and unregisters what the old generation started.
-        const current = session();
-        if (operation.session.sessionId !== current.sessionId || operation.session.generation !== current.generation) {
-            end(operation);
-            discard('wrong-session');
-            return;
-        }
-        // A newer request on its key aborts and unregisters an older one, whose result is then ignored.
-        if (operations.get(operation.id) !== operation) {
-            discard('superseded');
-            return;
-        }
-        if (isFaulted()) {
-            end(operation);
-            operation.controller.abort();
-            discard('not-ready');
-            return;
-        }
-        if (holding()) {
-            held.push({ operation, result });
-            return;
-        }
-        forget(operation);
-        let code: string | undefined;
-        try {
-            if (operation.deliver === undefined) {
-                code = apply(operation, result);
-            } else {
-                code = operation.deliver(result);
-            }
-        } catch {
-            // A result whose accessor or proxy throws while it is read is untrusted input that fails its check.
-            code = 'invalid-payload';
-        }
-        // The captured target stays until the result has applied through it.
-        end(operation);
-        if (code !== undefined) {
-            discard(code);
-        }
-    };
-
-    const call = (operation: AsyncOperation, request: AsyncRequest) => {
-        const { signal } = operation.controller;
-        request
-            .run({ signal, session: operation.session, operationId: operation.id })
-            .then((result) => arrive(operation, result))
-            // A failed service call leaves the document as it is.
-            .catch((error: unknown) => {
-                const live = operations.get(operation.id) === operation && !signal.aborted;
-                end(operation);
-                if (live) {
-                    request.fail?.(error);
-                }
-            });
-    };
-
-    /** Starts the next waiting operation of pool `name` while it has room. */
-    const next = (name: string) => {
-        if (aborting > 0 || isDisposed()) {
-            return;
-        }
-        const queued = waiting.get(name) ?? [];
-        const busy = running.get(name) ?? new Set<AsyncOperation>();
-        running.set(name, busy);
-        while (queued.length > 0) {
-            const entry = queued[0];
-            if (entry === undefined) {
-                return;
-            }
-            const { pool } = entry.request;
-            let limit = 0;
-            if (pool !== undefined) {
-                limit = pool.limit;
-            }
-            if (busy.size >= limit) {
-                return;
-            }
-            queued.shift();
-            busy.add(entry.operation);
-            call(entry.operation, entry.request);
-        }
+        dispatch({ type: 'resume' });
     };
 
     const start = (request: AsyncRequest): AsyncOperation => {
-        const { key } = request;
-        const { deliver } = request;
-        let target: SelectionHandle | null = null;
-        let owned = false;
-        let ready = false;
-        if (!isDisposed()) {
-            target = request.target ?? null;
-            if (target === null && deliver === undefined) {
-                target = capture() ?? null;
-                owned = target !== null;
-            }
-            ready = target !== null || deliver !== undefined;
-        }
-        let delivered: Pick<AsyncOperation, 'deliver'> = {};
-        if (deliver !== undefined) {
-            delivered = { deliver };
-        }
-        const operation: AsyncOperation = Object.freeze({
-            id: generateId(),
-            session: session(),
-            target,
-            policyRevision: policyRevision(),
-            controller: new AbortController(),
-            key,
-            request: (requests.get(key) ?? 0) + 1,
-            service: request.service,
-            featureId: request.featureId,
-            action: request.action,
-            command: request.command,
-            ...delivered,
+        let started: AsyncOperation | undefined;
+        dispatch({
+            type: 'start',
+            request,
+            reply: (operation) => {
+                started = operation;
+            },
         });
-        // A session that is not ready starts nothing: the operation is aborted and unregistered.
-        if (!ready) {
-            operation.controller.abort();
-            return operation;
-        }
-        requests.set(key, operation.request);
-        abortWhere((other) => other.key === key);
-        if (owned) {
-            captured.add(operation);
-        }
-        operations.set(operation.id, operation);
-        liveOperations.add(operation);
-        const { pool } = request;
-        if (pool === undefined) {
-            call(operation, request);
-            return operation;
-        }
-        pools.set(operation, pool);
-        const queued = waiting.get(pool.name) ?? [];
-        queued.push({ operation, request });
-        waiting.set(pool.name, queued);
-        next(pool.name);
-        return operation;
+        // The build effect always replies before `dispatch` returns.
+        return started as AsyncOperation;
     };
 
-    /** Checks and applies the results held during composition again, now that input has settled. */
-    const settle = () => {
-        for (const { operation, result } of held.splice(0)) {
-            arrive(operation, result);
-        }
+    return {
+        start,
+        abortWhere: (aborts: (operation: AsyncOperation) => boolean) => {
+            sweep({ type: 'abortWhere', aborts });
+        },
+        // Checks and applies the results held during composition again, now that input has settled.
+        settle: () => {
+            dispatch({ type: 'settle' });
+        },
+        dispose: () => {
+            sweep({ type: 'dispose' });
+        },
     };
-
-    const dispose = () => {
-        held.length = 0;
-        abortWhere(() => true);
-    };
-
-    return { start, abortWhere, settle, dispose };
 };
