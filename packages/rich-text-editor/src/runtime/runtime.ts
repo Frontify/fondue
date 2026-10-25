@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Node } from 'prosemirror-model';
-import { EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
+import { type EditorState, type Transaction } from 'prosemirror-state';
 import {
     type DirectEditorProps,
     type EditorView,
@@ -19,58 +19,25 @@ import {
     type RichTextDocument,
 } from '#/model';
 import { type TreeNode } from '#/model/content';
-import { diagnostic } from '#/model/format';
-import { randomId } from '#/model/random-id';
 
 import { type AsyncOperation, type AsyncRequest } from './async';
-import { createContentChecks } from './capabilities/checks/content-issues';
-import { uploadSlotsPlugin } from './capabilities/media/upload-slots';
-import {
-    UPLOAD_FEATURE,
-    type UploadEvent,
-    type UploadPlace,
-    type UploadServiceLike,
-} from './capabilities/media/uploads';
-import { suggestionHosts } from './capabilities/suggestions/host';
-import { type ColumnState, columnsPlugin, ONE_COLUMN } from './columns';
-import { secondCopyAtMount } from './engines';
-import { createEventBus, type Listener } from './events';
-import { groupsPlugin } from './history';
-import { createKeyGuard, type EnterKeys } from './keys';
+import { type UploadEvent, type UploadPlace, type UploadServiceLike } from './capabilities/media/uploads';
+import { type ColumnState } from './columns';
+import { type Listener } from './events';
+import { type EnterKeys } from './keys';
 import { type ExceededLimit } from './limits';
-import { nodeStatePlugin } from './node-state';
 import { type SaveCoordinator } from './saves';
-import { createActions, type NodeActions, type NodeTarget } from './session/actions';
-import { createBusy } from './session/busy';
-import { createColumns } from './session/columns';
-import { createCommands } from './session/commands';
-import { createCommit } from './session/commit';
-import { createComposition } from './session/composition';
-import { createDispose } from './session/dispose';
-import { createEncoder } from './session/encode';
-import { createFacade } from './session/facade';
-import { createFaults } from './session/faults';
-import { createFocus } from './session/focus';
-import { createHandle } from './session/handle';
-import { createHistory } from './session/history';
-import { createIdentity } from './session/identity';
-import { createLifecycle } from './session/lifecycle';
-import { createMetrics } from './session/metrics';
-import { createMode } from './session/mode';
-import { createPolicy } from './session/policy';
-import { createPrepare, DUPLICATE_ENGINE } from './session/prepare';
-import { createQueue } from './session/queue';
-import { createReplace } from './session/replace';
-import { createSaving } from './session/saving';
-import { createSettle } from './session/settle';
-import { createShown, summarize } from './session/shown';
-import { createStore } from './session/store';
-import { createTargetsService } from './session/targets';
+import { type NodeActions, type NodeTarget } from './session/actions';
+import { assembleCore } from './session/assemble-core';
+import { assembleEditing } from './session/assemble-editing';
+import { assembleOperations } from './session/assemble-operations';
+import { assembleSession } from './session/assemble-session';
+import { assembleState } from './session/assemble-state';
+import { type Late } from './session/late';
+import { liveResources, viewRuntimes } from './session/registry';
+import { summarize } from './session/shown';
 import { type InputOutcome, type Mode, type RejectedCode } from './session/types';
-import { createUploadService } from './session/uploads-wiring';
-import { createView, isEmpty } from './session/view';
-import { stylesPlugin } from './styles';
-import { targetsPlugin } from './targets';
+import { isEmpty } from './session/view';
 import {
     type AuthoringPolicy,
     type CaptureResult,
@@ -270,25 +237,12 @@ export interface EditorRuntimeOptions {
     readonly contentChecks?: () => Pick<ContentCheckOptions, 'locale' | 'colorTokens' | 'background'>;
 }
 
-/** What every live runtime owns, which the `src/testing` probe reads. */
-export const liveResources = {
-    views: new Set<EditorView>(),
-    /** Node views and their portal entries, which the bridge counts. */
-    nodeViews: 0,
-    portals: 0,
-    /** The installed feature IDs of each session not yet disposed, by handle. */
-    installedFeatures: new Map<object, readonly string[]>(),
-    intents: 0,
-    frames: 0,
-    targets: 0,
-};
+export { liveResources };
 
 const runtimes = new WeakMap<object, EditorRuntime>();
 
 /** The runtime behind a handle this module made. */
 export const runtimeOf = (handle: object): EditorRuntime | undefined => runtimes.get(handle);
-
-const viewRuntimes = new WeakMap<EditorView, EditorRuntime>();
 
 /** The runtime whose surface `view` shows, for a plugin that one compiled definition shares between editors. */
 export const runtimeOfView = (view: EditorView): EditorRuntime | undefined => viewRuntimes.get(view);
@@ -297,399 +251,23 @@ export { isEmpty, summarize };
 
 /** One editing session: its state, its view while a surface is attached, the commit path and its events. */
 export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntime => {
-    const { definition, limits } = options;
-    const generate = options.generateId ?? randomId;
-    const identity = createIdentity({ documentId: options.documentId, generate });
-    const suggestionListId = `rte-suggestions-${identity.session().sessionId}`;
-    const createdAt = Date.now();
-    const encoder = createEncoder(definition.model, options.capabilities);
-    const { encode, encodeByBlock } = encoder;
-    const lifecycle = createLifecycle();
-    const policy = createPolicy({
-        model: definition.model,
-        limits,
-        initial: options.policy,
-        capabilities: encoder.capabilities,
-        onUpdate: (next) => {
-            // An operation whose result the new policy forbids ends now.
-            coordinator.abortWhere((operation) => {
-                const rules = next.features[operation.featureId];
-                return rules === undefined || !rules[operation.action];
-            });
-            busy.run(notify);
-        },
-    });
-    const mode = createMode({
-        initial: options.mode,
-        isDisposed: lifecycle.isDisposed,
-        onModeChange: (next) => {
-            // A read-only session takes no upload's result, so none runs or waits.
-            if (next === 'readonly') {
-                coordinator.abortWhere(
-                    (operation) => operation.service === 'uploads' && operation.featureId === UPLOAD_FEATURE,
-                );
-            }
-            views.refresh();
-        },
-        onDisabledChange: () => views.repaint(),
-    });
-    const columns = createColumns({ initial: options.columns ?? ONE_COLUMN, onChange: () => views.refresh() });
-    const uploads = createUploadService({
-        definition,
-        limits,
-        identity,
-        lifecycle,
-        policy,
-        generate,
-        host: options,
-        state: () => store.state,
-        commit: () => commit,
-        commands: () => commands,
-        targets: () => targets,
-        report: (found) => report(found),
-        changed: () => busy.run(notify),
-    });
-
-    // Records typing before any other handler sees the event, so the view itself gets no event handler.
-    const typingRecorder = new Plugin({
-        key: new PluginKey('rte.typing'),
-        view: (editorView) => {
-            views.capture(editorView);
-            return {};
-        },
-        props: {
-            handleDOMEvents: {
-                beforeinput: () => {
-                    markTyping();
-                    return false;
-                },
-            },
-        },
-    });
-    const settling = createComposition({
-        composing: () => views.current()?.composing === true,
-        onSettled: () => settleInput(),
-    });
-    const keyGuard = createKeyGuard(
-        () => options.tabMovesFocus?.() === true,
-        () => options.enterKeys,
-        () => policy.current().enterBehavior,
-    );
-    const store = createStore(
-        EditorState.create({
-            doc: definition.schema.nodeFromJSON(options.tree),
-            plugins: [
-                typingRecorder,
-                keyGuard,
-                settling.plugin,
-                targetsPlugin,
-                groupsPlugin,
-                columnsPlugin(() => display.columns()),
-                stylesPlugin(() => options.styles?.() ?? []),
-                uploadSlotsPlugin(uploads.raw),
-                nodeStatePlugin(),
-                ...definition.plugins,
-            ],
-        }),
-    );
-
-    // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
-    const busy = createBusy();
-    busy.onIdle(
-        () => metrics.flush(),
-        () => targets.flushCaptures(),
-        () => uploads.raw.flush(),
-    );
-
-    const { isDisposed } = lifecycle;
-    const { emit, notify, subscribe, watch, clear } = createEventBus({ isDisposed, around: busy.run });
-
-    const history = createHistory({
-        store,
-        lifecycle,
-        composition: settling,
-        notify: () => busy.run(notify),
-        install: (next) => installState(next),
-        publish: () => display.setPublished(store.state),
-        uploads: (d, k) => uploads.raw.reset(d, k),
-    });
-
-    const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
-
-    const metrics = createMetrics({ model: definition.model, session: identity.session, emit });
-
-    const saving = createSaving({ revision: options.revision ?? null, sequence: identity.sequence, lifecycle });
-    const saveStatus = saving.status;
-    const display = createShown({
-        store,
-        mode: mode.mode(),
-        columns: columns.current(),
-        emit,
-        saveStatus,
-        composing: () => settling.active(),
-        stamp: identity.stamp,
-        encodeByBlock,
-    });
-
-    // The checks read the stored document, so their issues and IDs are those `findContentIssues` gives a host.
-    const checks = createContentChecks({
-        state: () => store.state,
-        sequence: identity.sequence,
-        encode: () => encode(store.state.doc),
-        composing: () => settling.active(),
-        ready: () => !lifecycle.is('faulted', 'disposed'),
-        commit: (transaction) => commit(transaction),
-        options: () => {
-            const given = options.contentChecks?.();
-            const shown = given ?? { locale: { translationStrings: {} } };
-            return {
-                ...shown,
-                model: definition.model,
-                creatableHeadingLevels: policy.current().creatableHeadingLevels,
-            };
-        },
-    });
-
-    const views = createView({
-        store,
-        lifecycle,
-        shown: display,
-        mode,
-        columns,
-        metrics,
-        emit,
-        session: identity.session,
-        resources: liveResources,
-        suggestionListId,
-        createdAt,
-        composing: () => settling.active(),
-        hasRecovery: () => faults.hasRecovery(),
-        dispatch: (transaction) => commit(transaction),
-        fault: () => faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error')),
-        viewFault: (attached, candidate) => faults.viewFault(attached, candidate),
-        onAttached: (attached) => {
-            viewRuntimes.set(attached, runtime);
-            suggestionHosts.set(attached, {
-                creates: (featureId) => policy.current().features[featureId]?.create !== false,
-                accept: actions.acceptSuggestion,
-                commandHost: options.commandHost,
-                search: actions.searchSuggestions,
-            });
-            if (secondCopyAtMount(store.state)) {
-                report(DUPLICATE_ENGINE);
-            }
-        },
-        scrollSelectionIntoView: () => options.scrollSelectionIntoView?.(),
-    });
-
-    const faults = createFaults({
-        lifecycle,
-        identity,
-        encode,
-        saving,
-        composition: settling,
-        shown: display,
-        view: views,
-        queue: () => queue,
-        targets: () => targets,
-        report,
-        recovery: () => options.recovery?.(),
-    });
-
-    const batches = createPrepare({
-        store,
-        composition: settling,
-        shown: display,
-        policy,
-        history,
-        limits,
-        generate,
-        inputRules: () => options.inputRules?.(),
-    });
-    const { prepare, installedId, queriedIds } = batches;
-    const { commit, install, installState, guarded, settleProvisional, select, markTyping, clearDeferred } =
-        createCommit({
-            store,
-            identity,
-            lifecycle,
-            policy,
-            shown: display,
-            views,
-            busy,
-            metrics,
-            prepare: batches,
-            encode,
-            emit,
-            notify,
-            report,
-            resources: liveResources,
-            hooks: {
-                committed: uploads.raw.committed,
-                changed: () => {
-                    saving.changed();
-                    checks.changed();
-                },
-            },
-            fault: faults.fault,
-            viewFault: faults.viewFault,
-        });
-
-    const settleInput = createSettle({
-        busy,
-        commit: { guarded, settleProvisional },
-        shown: display,
-        view: views,
-        targets: () => targets,
-        saving,
-        composition: settling,
-    });
-
-    const targets = createTargetsService({
-        store,
-        identity,
-        lifecycle,
-        busy,
-        policy,
-        composition: settling,
-        commit,
-        generate,
-        report,
-        serviceChanged: saving.serviceChanged,
-        // A result runs as its command's payload through `commit` from the current state.
-        apply: (operation, result) => {
-            let options: { readonly target: SelectionHandle } | undefined;
-            if (operation.target !== null) {
-                options = { target: operation.target };
-            }
-            const outcome = commands.run(operation.command, result, options, 'async');
-            if (outcome.status === 'rejected') {
-                return outcome.code;
-            }
-            return undefined;
-        },
-    });
-    const { coordinator, baseOf } = targets;
-    const focus = createFocus({ lifecycle, view: views, store, commit: { commit }, shown: display, mode });
-    const commands = createCommands({
-        definition,
-        store,
-        identity,
-        lifecycle,
-        mode,
-        policy,
-        busy,
-        composition: settling,
-        commit: {
-            prepare: (root, ids, fromView) => prepare(root, ids, fromView),
-            install: (prepared) => install(prepared),
-            installedId: () => installedId(),
-            queriedIds: () => queriedIds(),
-        },
-        baseOf,
-        focus: focus.focus,
-        report,
-        fault: (found) => faults.fault(found),
-        inRender: () => options.inRender?.(),
-        commandHost: options.commandHost,
-        runtime: () => runtime,
-    });
-    const queue = createQueue({
-        lifecycle,
-        busy,
-        composition: settling,
-        run: commands.run,
-        report,
-        resources: liveResources,
-    });
-    busy.afterEach(queue.drain);
-
-    const actions = createActions({ definition, limits, store, commit: { commit }, commands, targets });
-
-    const interactionRoots = new Set<HTMLElement>();
-    const dispose = createDispose({
-        lifecycle,
-        saving,
-        composition: settling,
-        checks,
-        targets,
-        uploads: uploads.raw,
-        queue,
-        commit: { clearDeferred },
-        store,
-        view: views,
-        events: { emit, clear },
-        identity,
-        resources: liveResources,
-        handle: () => handle,
-    });
-    const replace = createReplace({
-        definition,
-        limits,
-        lifecycle,
-        identity,
-        store,
-        encoder,
-        policy,
-        saving,
-        composition: settling,
-        shown: display,
-        view: views,
-        commit: { guarded, installState },
-        focus,
-        targets,
-        queue,
-        uploads: uploads.raw,
-        faults,
-        busy,
-        events: { notify, emit },
-        metrics,
-        history,
-    });
-    const handle = createHandle({
-        identity,
-        lifecycle,
-        mode,
-        composition: settling,
-        store,
-        shown: display,
-        saving,
-        faults,
-        commands,
-        queue,
-        targets,
-        replace,
-        policy,
-        focus,
-        interactionRoots,
-        subscribe,
-        dispose,
-    });
-    const runtime: EditorRuntime = createFacade({
-        handle,
-        definition,
-        limits,
-        suggestionListId,
-        interactionRoots,
-        identity,
-        store,
-        policy,
-        view: views,
-        commit: { select },
-        prepare: batches,
-        report,
-        watch,
-        targets,
-        commands,
-        mode,
-        columns,
-        actions,
-        uploads,
-        shown: display,
-        history,
-        composition: settling,
-        metrics,
-        checks,
-    });
+    const late = {} as Late;
+    const core = assembleCore(options, late);
+    const state = assembleState(core, options, late);
+    const editing = assembleEditing(state, options, late);
+    const operations = assembleOperations(editing, options, late);
+    const { handle, runtime } = assembleSession(operations, options);
+    Object.assign(late, {
+        views: editing.views,
+        commit: editing.commit,
+        settleInput: editing.settleInput,
+        targets: operations.targets,
+        commands: operations.commands,
+        queue: operations.queue,
+        actions: operations.actions,
+        runtime,
+    } satisfies Late);
+    const { views, saving, display } = operations;
     if (options.nodeViews !== undefined) {
         views.setNodeViews(options.nodeViews(runtime));
     }
@@ -703,7 +281,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     runtimes.set(handle, runtime);
     liveResources.installedFeatures.set(
         handle,
-        definition.model.capabilities.map(({ id }) => id),
+        options.definition.model.capabilities.map(({ id }) => id),
     );
     return runtime;
 };
