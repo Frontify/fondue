@@ -34,7 +34,7 @@ export const typeText = (handle: object, text: string): void => {
 };
 
 /** Presses one key binding in the package key syntax, such as `Mod-b`, at the surface. */
-export const pressKey = (handle: object, key: KeyBinding): void => {
+export const pressKey = (handle: object, key: KeyBinding | 'Shift'): void => {
     const view = viewOf(handle);
     const parts = key.split('-');
     const has = (modifier: string) => parts.slice(0, -1).includes(modifier);

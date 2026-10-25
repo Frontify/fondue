@@ -267,7 +267,7 @@ export type PluginToolbarEntry = PluginToolbarEntryBase &
  */
 export interface EditorPartSpec {
     readonly commands?: Readonly<Record<string, EditorCommand<never>>>;
-    readonly keys?: Readonly<Record<KeyBinding, CommandRef | KeyHandler>>;
+    readonly keys?: Readonly<Partial<Record<KeyBinding, CommandRef | KeyHandler>>>;
     readonly inputRules?: readonly InputRule[];
     readonly toolbar?: readonly PluginToolbarEntry[];
     /** Overlays the editor keeps mounted, which decide themselves when to show; `EditorHosts.overlays.open` has the recipe for one a click on a mark opens. */

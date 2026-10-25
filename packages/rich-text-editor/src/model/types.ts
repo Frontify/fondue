@@ -16,7 +16,7 @@ export interface CapabilityRef {
     readonly version: number;
 }
 
-type Letter =
+export type Letter =
     | 'a'
     | 'b'
     | 'c'
@@ -43,7 +43,7 @@ type Letter =
     | 'x'
     | 'y'
     | 'z';
-type Digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+export type Digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 /** A BCP 47 tag that passes `Intl.getCanonicalLocales`: it starts with a two-letter or longer language subtag. */
 export type LanguageTag = `${Letter | Uppercase<Letter>}${Letter | Uppercase<Letter>}${string}`;
 /** Stored IDs (`styleId`, `tokenId`, `languageId`, `resourceType`) match `^[a-z0-9][a-z0-9._:-]{0,127}$`. */

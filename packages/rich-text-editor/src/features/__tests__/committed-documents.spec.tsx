@@ -10,7 +10,7 @@ import { partWithOptions } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { documentArb, fcSettings, nodeIdsIn, plainTextArb, seeded } from '#/features/__tests__/fixtures/generated';
 import { pluginsById } from '#/features/plugins';
-import { decodeDocument, type JsonValue, type RichTextDocument } from '#/model';
+import { decodeDocument, type JsonValue, type KeyBinding, type RichTextDocument } from '#/model';
 import { compiledModel } from '#/model/compile';
 import { PROFILE_MODELS } from '#/react/examples/records';
 import { loadProfile } from '#/react/profiles';
@@ -22,13 +22,23 @@ import { paste, pressKey, typeText } from '#/testing';
 
 // What a user types to fire the input rules of every shipped feature, with plain words between them.
 const TYPED = ['# ', '## ', '> ', '- ', '* ', '1. ', '[ ] ', '``` ', '**b** ', '*i* ', '~~s~~ ', '`c` ', '--', '(c)'];
-const KEYS = ['Enter', 'Shift-Enter', 'Mod-Enter', 'Backspace', 'Delete', 'Tab', 'Shift-Tab', 'Escape', 'ArrowUp'];
+const KEYS: readonly KeyBinding[] = [
+    'Enter',
+    'Shift-Enter',
+    'Mod-Enter',
+    'Backspace',
+    'Delete',
+    'Tab',
+    'Shift-Tab',
+    'Escape',
+    'ArrowUp',
+];
 
 type Action =
     | { readonly kind: 'select'; readonly anchor: number; readonly head: number }
     | { readonly kind: 'command'; readonly index: number }
     | { readonly kind: 'type'; readonly text: string }
-    | { readonly kind: 'key'; readonly key: string }
+    | { readonly kind: 'key'; readonly key: KeyBinding }
     | { readonly kind: 'paste'; readonly input: { readonly html?: string; readonly text?: string } }
     | { readonly kind: 'drop'; readonly at: number; readonly data: Readonly<Record<string, string>> }
     | { readonly kind: 'history'; readonly command: 'history.undo' | 'history.redo' };

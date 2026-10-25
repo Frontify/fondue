@@ -108,9 +108,9 @@ export interface EngineExtension {
     readonly featureId: string;
     /** Builds the plugin's commands once the schema exists; `lookup` finds any compiled command when one runs. */
     readonly commands: (schema: Schema, lookup: CommandLookup) => Readonly<Record<string, EngineCommand>>;
-    readonly keys: Readonly<Record<KeyBinding, CommandRef>>;
+    readonly keys: Readonly<Partial<Record<KeyBinding, CommandRef>>>;
     /** Builds the plugin's key handlers, which carry no command ID, so their change groups and reports as typing does. */
-    readonly handlers?: (schema: Schema, lookup: CommandLookup) => Readonly<Record<KeyBinding, EngineCommand>>;
+    readonly handlers?: (schema: Schema, lookup: CommandLookup) => Readonly<Partial<Record<KeyBinding, EngineCommand>>>;
     readonly inputRules: readonly InputRule[];
     readonly decorations: readonly BlockDecorationSource[];
     readonly suggestions: readonly Omit<EngineSuggestion, 'featureId'>[];

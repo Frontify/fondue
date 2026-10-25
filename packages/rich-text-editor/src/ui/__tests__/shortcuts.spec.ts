@@ -2,11 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type KeyBinding } from '#/model';
-
 import { ariaShortcut, bindingHere, shortcutText } from '../shortcuts';
 
-const binding = (value: string): KeyBinding => value;
+const binding = (value: string): string => value;
 
 describe('shortcut text', () => {
     it('shows Apple symbols for an Apple platform and names joined by + for the others', () => {

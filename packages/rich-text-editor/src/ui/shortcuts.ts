@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { isApplePlatform } from '#/bridge/platform';
-import { type KeyBinding } from '#/model';
 import { keyOn } from '#/model/platform';
 
 // Apple symbols in the order macOS menus show them.
@@ -22,7 +21,7 @@ interface Parsed {
 }
 
 /** The binding's modifiers and key on this platform, or `undefined` for a binding of the other platform. */
-const parse = (binding: KeyBinding, apple: boolean): Parsed | undefined => {
+const parse = (binding: string, apple: boolean): Parsed | undefined => {
     const rest = keyOn(binding, apple);
     if (rest === undefined) {
         return undefined;
@@ -36,11 +35,11 @@ const parse = (binding: KeyBinding, apple: boolean): Parsed | undefined => {
 };
 
 /** The first of `bindings` that applies on the platform. */
-export const bindingHere = (bindings: readonly KeyBinding[], apple: boolean): KeyBinding | undefined =>
+export const bindingHere = (bindings: readonly string[], apple: boolean): string | undefined =>
     bindings.find((binding) => parse(binding, apple) !== undefined);
 
 /** The shortcut as a toolbar tooltip or menu row shows it, such as `⇧⌘Z` or `Ctrl+Shift+Z`. */
-export const shortcutText = (binding: KeyBinding, apple: boolean): string => {
+export const shortcutText = (binding: string, apple: boolean): string => {
     const parsed = parse(binding, apple);
     if (parsed === undefined) {
         return '';
@@ -67,7 +66,7 @@ export const shortcutText = (binding: KeyBinding, apple: boolean): string => {
 };
 
 /** The binding as an `aria-keyshortcuts` value, such as `Meta+B` or `Control+B`. */
-export const ariaShortcut = (binding: KeyBinding, apple: boolean): string => {
+export const ariaShortcut = (binding: string, apple: boolean): string => {
     const parsed = parse(binding, apple);
     if (parsed === undefined) {
         return '';
@@ -97,7 +96,7 @@ const keyOf = (event: KeyboardEvent): string => {
 };
 
 /** Whether `event` presses `binding`, with exactly its modifiers. */
-export const pressesBinding = (event: KeyboardEvent, binding: KeyBinding): boolean => {
+export const pressesBinding = (event: KeyboardEvent, binding: string): boolean => {
     const apple = isApplePlatform();
     const parsed = parse(binding, apple);
     if (parsed === undefined) {

@@ -506,7 +506,7 @@ const pullQuote = () =>
     })();
 const pullQuotePlugin = (
     label: Readonly<Record<string, string>> & { readonly 'en-US': string },
-    keys: Readonly<Record<KeyBinding, CommandRef>> = {},
+    keys: Readonly<Partial<Record<KeyBinding, CommandRef>>> = {},
 ) =>
     defineEditorPart(pullQuote(), {
         commands: {

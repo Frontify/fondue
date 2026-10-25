@@ -2,12 +2,46 @@
 
 import { type JsonObject, type JsonValue } from './declaration-values';
 import { type Diagnostic, type RichTextDocument } from './format';
+import { type Digit, type Letter } from './types';
 
 /**
  * `Mod`, `Ctrl`, `Alt` and `Shift`, then the key, joined by `-`, such as `Mod-Shift-x`. A binding that starts
  * with `mac:` or `other:` applies only on Apple platforms or only on the others.
  */
-export type KeyBinding = string;
+export type KeyBinding =
+    `${'mac:' | 'other:' | ''}${'Mod-' | ''}${'Ctrl-' | ''}${'Alt-' | ''}${'Shift-' | ''}${BindingKey}`;
+type FunctionKey = 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6' | 'F7' | 'F8' | 'F9' | 'F10' | 'F11' | 'F12';
+type BindingKey =
+    | Letter
+    | Digit
+    | FunctionKey
+    | '['
+    | ']'
+    | '\\'
+    | '.'
+    | ','
+    | '-'
+    | '='
+    | ';'
+    | "'"
+    | '/'
+    | '`'
+    | 'ContextMenu'
+    | 'Space'
+    | 'Enter'
+    | 'Escape'
+    | 'Tab'
+    | 'Backspace'
+    | 'Delete'
+    | 'Insert'
+    | 'Home'
+    | 'End'
+    | 'PageUp'
+    | 'PageDown'
+    | 'ArrowUp'
+    | 'ArrowDown'
+    | 'ArrowLeft'
+    | 'ArrowRight';
 /** A typing rule that turns text such as `# ` or `**x**` into structure as the user types. */
 export type InputRule =
     | {
@@ -30,11 +64,25 @@ export type InputRule =
           readonly replace: string;
           readonly boundary?: 'word';
       }
-    | { readonly id: string; readonly kind: 'quotes'; readonly marker: '"' | "'" }
+    | {
+          readonly id: string;
+          readonly kind: 'quotes';
+          readonly marker: '"' | "'";
+      }
     /** From `textRule`. */
-    | { readonly id: string; readonly kind: 'text-rule'; readonly match: RegExp; readonly replace: string }
+    | {
+          readonly id: string;
+          readonly kind: 'text-rule';
+          readonly match: RegExp;
+          readonly replace: string;
+      }
     /** Code features only, from `blockRule`; named groups fill the command's payload fields. */
-    | { readonly id: string; readonly kind: 'block-rule'; readonly match: RegExp; readonly command: string }
+    | {
+          readonly id: string;
+          readonly kind: 'block-rule';
+          readonly match: RegExp;
+          readonly command: string;
+      }
     /** Code features only, from `markRule`; named groups fill the mark's attributes. */
     | {
           readonly id: string;
@@ -46,7 +94,11 @@ export type InputRule =
 /** A command ID, or a command with the payload a route passes, such as `{ command: 'heading.set', payload: { level: 1 } }`. */
 export type CommandRef =
     | string
-    | { readonly command: string; readonly payload?: JsonValue; readonly labelKey?: string };
+    | {
+          readonly command: string;
+          readonly payload?: JsonValue;
+          readonly labelKey?: string;
+      };
 /** One textblock as a decoration source reads it. */
 export interface DecoratedBlock {
     readonly nodeId: string | null;

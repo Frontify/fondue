@@ -113,7 +113,7 @@ describe('the List keys table', () => {
             });
 
             it(`deletes a selection across items as outside lists with Backspace and Delete in a ${where}`, () => {
-                for (const key of ['Backspace', 'Delete']) {
+                for (const key of ['Backspace', 'Delete'] as const) {
                     const mounted = mountList(atDepth(kind, depth, three3));
                     const { view } = mounted;
                     const from = positionOf(view, 'one', 1);

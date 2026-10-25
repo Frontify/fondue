@@ -6,7 +6,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import { type LanguageTag, type StoredId } from '#/runtime/types';
 
-import { type AttrsOf, defaultLimits, type ResourceLimits } from '..';
+import { type AttrsOf, defaultLimits, type KeyBinding, type ResourceLimits } from '..';
 import { limitsOf } from '../decode';
 
 const declarations = {
@@ -76,5 +76,19 @@ describe('limitsOf', () => {
 
         expect(limitsOf(given)).toEqual({ ...defaultLimits, maxDepth: 3 });
         expect(Object.keys(limitsOf(given))).toEqual(Object.keys(defaultLimits));
+    });
+});
+
+describe('key binding type', () => {
+    it('accepts the documented grammar and rejects misspelled bindings', () => {
+        expectTypeOf<'Mod-Shift-x'>().toExtend<KeyBinding>();
+        expectTypeOf<'mac:Mod-Alt-0'>().toExtend<KeyBinding>();
+        expectTypeOf<'Enter'>().toExtend<KeyBinding>();
+        // @ts-expect-error modifiers have a fixed order
+        expectTypeOf<'Shift-Mod-x'>().toExtend<KeyBinding>();
+        // @ts-expect-error a modifier needs a key
+        expectTypeOf<'Mod-'>().toExtend<KeyBinding>();
+        // @ts-expect-error there is no Cmd modifier
+        expectTypeOf<'Cmd-b'>().toExtend<KeyBinding>();
     });
 });
