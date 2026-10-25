@@ -6,7 +6,7 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { corePlugin, defineEditor, modelOf, RichTextEditor, strikePlugin } from '#/index';
 import { type ContentModel, type ContentNodeJSON } from '#/model';
 
-import { calloutPlugin } from './calloutPlugin';
+import { calloutPlugin } from './callout';
 import { strongPlugin } from './strong';
 
 const strikePlugins = [corePlugin(), strikePlugin()] as const;

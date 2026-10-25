@@ -21,13 +21,7 @@ A custom feature is a folder, as each shipped feature is. It holds these files:
 - `reader.tsx`, optional: the renderers of the feature's nodes and marks. Add it only when the feature needs your own components to read.
 - `index.ts`: `definePlugin({ feature, editor, reader? })`, which builds the plugin. A host lists this plugin and nothing else of the folder.
 
-The example modules under `src/docs/authoring` follow this layout with the folder name in each file name: `callout-feature.ts`, `callout-editor.ts` and `callout-plugin.ts`. The plugin file is the `index.ts` of the folder.
-
-Source: `src/docs/authoring/calloutPlugin.ts`
-
-```ts
-export const calloutPlugin = definePlugin({ feature: callout, editor: calloutEditor });
-```
+A shipped feature keeps three files, `feature.ts` (server-safe), `editor.ts` and `index.ts`, because server code imports its vocabulary without editor code. A host plugin that no server reads can keep everything in one file, as the callout does.
 
 The folder keeps the vocabulary apart from the editor code, so the reader, the codecs and a server import `feature.ts` and never `editor.ts`. A shipped feature with a reader passes it too, as `definePlugin({ feature: links, editor: linksEditor, reader: linkReader })` does in `src/features/links/index.ts`.
 
@@ -430,13 +424,13 @@ Node chrome stays out of the Tab order, so Tab leaves the editor. Alt+F10 reache
 
 ### A host block with a node view
 
-A host declares its own block with `defineFeature` in `feature.ts`, which imports no editor code, and its editor part in `editor.ts` attaches a node view to it. The `Custom block with a node view` story mounts this example: the Callout button wraps the selection, and the button in the chrome switches the tone through `update`.
+A host declares its own block, its node view and its editor part in one file, `callout.tsx`, and joins them with `definePlugin`. The file imports `defineFeature` from `@frontify/fondue-rich-text-editor/model` and the rest from `@frontify/fondue-rich-text-editor/authoring`, as a host does. No server reads the callout, so one file is enough. The `Custom block with a node view` story mounts this example: the Callout button wraps the selection, and the button in the chrome switches the tone through `update`.
 
-Source: `src/docs/authoring/calloutFeature.ts`
+Source: `src/docs/authoring/callout.tsx`
 
-```ts
+```tsx
 /** A host block: a box of paragraphs with a tone, stored as `callout`. */
-export const callout = defineFeature({
+const callout = defineFeature({
     id: 'acme.callout',
     version: 1,
     requires: [{ id: 'core', version: 1 }],
@@ -453,11 +447,7 @@ export const callout = defineFeature({
     },
     formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
 });
-```
 
-Source: `src/docs/authoring/calloutView.tsx`
-
-```tsx
 /** The callout's chrome: its tone, a button that switches it, and the editable paragraphs. */
 const CalloutView = () => {
     const { attrs, update } = useRichTextNodeView();
@@ -480,38 +470,39 @@ const CalloutView = () => {
     );
 };
 
-export const calloutView: NodeViewDeclaration = { node: 'callout', component: CalloutView };
-```
+const calloutView: NodeViewDeclaration = { node: 'callout', component: CalloutView };
 
-Source: `src/docs/authoring/calloutEditor.ts`
-
-```ts
-/** Wraps the selected blocks in a callout, or lifts them out of one, from the toolbar. */
-export const calloutEditor = defineEditorPart(callout, {
-    needs: ['blocks'],
-    commands: {
-        'callout.toggle': {
-            run: (api) => api.blocks.wrap('callout'),
-            active: (api) => api.blocks.active('callout'),
+/** The host block as one plugin: no server reads its content, so the vocabulary and the editor part share this file. */
+export const calloutPlugin = definePlugin({
+    feature: callout,
+    editor: defineEditorPart(callout, {
+        // The commands below read only `blocks`, so only that facet is declared.
+        needs: ['blocks'],
+        commands: {
+            'callout.toggle': {
+                run: (api) => api.blocks.wrap('callout'),
+                active: (api) => api.blocks.active('callout'),
+            },
         },
-    },
-    toolbar: [
-        {
-            id: 'callout',
-            kind: 'toggle',
-            command: 'callout.toggle',
-            label: { 'en-US': 'Callout' },
-            icon: 'IconInfo',
-        },
-    ],
-    views: [calloutView],
+        toolbar: [
+            {
+                id: 'callout',
+                kind: 'toggle',
+                command: 'callout.toggle',
+                label: { 'en-US': 'Callout' },
+                icon: 'IconInfo',
+            },
+        ],
+        views: [calloutView],
+    }),
 });
 ```
 
-`definePlugin`, from `@frontify/fondue-rich-text-editor/authoring`, joins the feature and its editor part into a plugin, in the `index.ts` of the folder. A model that installs a host feature lists that plugin in `plugins`:
+The editor part declares `needs: ['blocks']`, the one facet its commands read. A command that reads a facet it did not declare is a type error and, in development, a runtime error that names the feature.
+
+A model that installs a host feature lists its plugin in `plugins`:
 
 ```tsx
-const calloutPlugin = definePlugin({ feature: callout, editor: calloutEditor });
 const plugins = [corePlugin(), calloutPlugin()] as const;
 const model = modelOf(plugins, { id: 'acme.notes', version: 1 });
 const definition = defineEditor({ id: 'acme.notes', model, plugins });
