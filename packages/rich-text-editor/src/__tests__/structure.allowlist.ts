@@ -22,10 +22,7 @@ export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
 export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {};
 
 export const SPECS_OVER_1000_LINES: Record<string, number> = {
-    'src/clipboard/__tests__/clipboard.spec.tsx': 1918,
     'src/codecs/__tests__/codecs.spec.ts': 1150,
-    'src/features/__tests__/editor-api.spec.tsx': 1756,
-    'src/features/media-upload/__tests__/uploads.spec.tsx': 1251,
     'src/model/__tests__/compile.spec.ts': 1017,
     'src/persistence/__tests__/persistence.spec.tsx': 3277,
     'src/react/__tests__/overlays.ct.tsx': 1644,
