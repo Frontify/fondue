@@ -13,11 +13,6 @@ export const DATA_TABLES: Record<string, string> = {
 };
 
 export const FILES_OVER_400_LINES: Record<string, number> = {
-    'src/model/content.ts': 539,
-    'src/model/declarations.ts': 483,
-    'src/model/output.ts': 548,
-    'src/model/read.ts': 422,
-    'src/model/styles.ts': 421,
     'src/react/rich-text-editor.tsx': 1492,
     'src/runtime/runtime.ts': 908,
 };

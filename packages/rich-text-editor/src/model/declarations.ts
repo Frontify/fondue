@@ -1,119 +1,49 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type FeatureContentDeclaration } from './content-rules';
-import { type Diagnostic, type RichTextDocument } from './format';
+import { type CapabilityMigration, type ModelMigration } from './declaration-editing';
+import {
+    type AttributeDeclaration,
+    type AttributeDeclarations,
+    type AttrsOf,
+    type CapabilityRef,
+    type JsonObject,
+    type JsonValue,
+    type ModelRef,
+    type OptionDeclarations,
+} from './declaration-values';
 import { type HrefResult } from './href';
 
-/** Any value JSON can hold. */
-export type JsonValue = null | boolean | number | string | readonly JsonValue[] | { readonly [key: string]: JsonValue };
-/** A JSON object, such as the attributes of a node or mark. */
-export type JsonObject = { readonly [key: string]: JsonValue };
-
-/** The id and version of a content model. */
-export interface ModelRef {
-    readonly id: string;
-    readonly version: number;
-}
-/** The id and version of a feature, as a document records it in the capabilities it requires. */
-export interface CapabilityRef {
-    readonly id: string;
-    readonly version: number;
-}
-
-/** Value declarations type attributes, command payloads and feature options alike. */
-export type ValueDeclaration = (
-    | {
-          readonly type: 'string';
-          readonly default?: string | null;
-          readonly nullable?: boolean;
-          readonly minLength?: number;
-          readonly maxLength?: number;
-      }
-    | { readonly type: 'url'; readonly default?: string | null; readonly nullable?: boolean }
-    /** Matches the `StoredId` pattern. */
-    | { readonly type: 'id'; readonly default?: string | null; readonly nullable?: boolean }
-    /** Matches `^#[0-9a-f]{6}([0-9a-f]{2})?$`. */
-    | { readonly type: 'color'; readonly default?: string | null; readonly nullable?: boolean }
-    /** A BCP 47 tag that passes `Intl.getCanonicalLocales`. */
-    | { readonly type: 'language'; readonly default?: string | null; readonly nullable?: boolean }
-    | {
-          readonly type: 'integer' | 'number';
-          readonly default?: number | null;
-          readonly nullable?: boolean;
-          readonly min?: number;
-          readonly max?: number;
-      }
-    | { readonly type: 'boolean'; readonly default?: boolean | null; readonly nullable?: boolean }
-    | {
-          readonly type: 'enum';
-          readonly values: readonly string[];
-          readonly default?: string | null;
-          readonly nullable?: boolean;
-      }
-    | {
-          readonly type: 'list';
-          readonly items: ValueDeclaration;
-          readonly default?: readonly JsonValue[] | null;
-          readonly nullable?: boolean;
-          readonly maxItems?: number;
-      }
-    | { readonly type: 'json'; readonly default?: JsonValue; readonly nullable?: boolean }
-) & { readonly required?: true };
-/** An attribute carries a default, or is required with none, such as `heading.level`. */
-export type AttributeDeclaration = ValueDeclaration & ({ readonly default: JsonValue } | { readonly required: true });
-/** The attributes of a node or mark, keyed by name. */
-export type AttributeDeclarations = Readonly<Record<string, AttributeDeclaration>>;
-/** The options of a feature, keyed by name, each with a default. */
-export type OptionDeclarations = Readonly<Record<string, ValueDeclaration & { readonly default: JsonValue }>>;
-/** The shape of the payload a command takes: its fields and whether it may be null. */
-export interface PayloadDeclaration {
-    readonly fields: Readonly<Record<string, ValueDeclaration & { readonly optional?: boolean }>>;
-    /** The whole payload may be `null`, such as "remove the colour". */
-    readonly nullable?: boolean;
-    /** Fields of which exactly one is set, such as `tokenId` and `value`. */
-    readonly exactlyOne?: readonly string[];
-}
-
-/** The TypeScript type a value declaration stands for. */
-export type ValueOf<D> = D extends { readonly type: 'string' | 'url' | 'id' | 'color' | 'language' }
-    ? string
-    : D extends { readonly type: 'integer' | 'number' }
-      ? number
-      : D extends { readonly type: 'boolean' }
-        ? boolean
-        : D extends { readonly type: 'enum'; readonly values: readonly (infer V)[] }
-          ? V
-          : D extends { readonly type: 'list'; readonly items: infer I }
-            ? readonly ValueOf<I>[]
-            : JsonValue;
-type MaybeNull<D> = D extends { readonly nullable: true } ? ValueOf<D> | null : ValueOf<D>;
-type Simplify<T> = { readonly [K in keyof T]: T[K] };
-/** The attribute values a set of attribute declarations allows, all optional. */
-export type AttrsOf<A> = Simplify<{ readonly [K in keyof A]?: MaybeNull<A[K]> }>;
-/** The option values a set of option declarations allows, all optional. */
-export type OptionsOf<O> = Simplify<{ readonly [K in keyof O]?: MaybeNull<O[K]> }>;
-type FieldsOf<F> = Simplify<
-    { readonly [K in keyof F as F[K] extends { readonly optional: true } ? never : K]: MaybeNull<F[K]> } & {
-        readonly [K in keyof F as F[K] extends { readonly optional: true } ? K : never]?: MaybeNull<F[K]>;
-    }
->;
-type ExactlyOneOf<F, K extends string> = {
-    [X in K]: Simplify<{ readonly [P in X & keyof F]: MaybeNull<F[P]> } & FieldsOf<Omit<F, K>>>;
-}[K];
-/**
- * `exactlyOne` becomes a union of one-field objects, so one payload type exists per command; a payload whose fields are
- * all optional may be left out.
- */
-export type PayloadOf<P> = P extends { readonly fields: infer F }
-    ?
-          | (P extends { readonly exactlyOne: readonly (infer K extends string)[] } ? ExactlyOneOf<F, K> : FieldsOf<F>)
-          | (P extends { readonly nullable: true } ? null : never)
-          | (P extends { readonly exactlyOne: readonly string[] }
-                ? never
-                : Partial<FieldsOf<F>> extends FieldsOf<F>
-                  ? undefined
-                  : never)
-    : undefined;
+export type {
+    BlockDecoration,
+    BlockDecorationSource,
+    CapabilityMigration,
+    CommandRef,
+    DecoratedBlock,
+    InputRule,
+    KeyBinding,
+    MigrationContext,
+    MigrationStepResult,
+    ModelMigration,
+    SuggestionPage,
+    SuggestionResult,
+    SuggestionRules,
+} from './declaration-editing';
+export type {
+    AttributeDeclaration,
+    AttributeDeclarations,
+    AttrsOf,
+    CapabilityRef,
+    JsonObject,
+    JsonValue,
+    ModelRef,
+    OptionDeclarations,
+    OptionsOf,
+    PayloadDeclaration,
+    PayloadOf,
+    ValueDeclaration,
+    ValueOf,
+} from './declaration-values';
 
 /** Reads a feature option inside its own declaration, as `{ attr }` reads an attribute. */
 export interface OptionRef {
@@ -236,143 +166,6 @@ export interface CodecOverrides {
     };
 }
 
-/**
- * `Mod`, `Ctrl`, `Alt` and `Shift`, then the key, joined by `-`, such as `Mod-Shift-x`. A binding that starts
- * with `mac:` or `other:` applies only on Apple platforms or only on the others.
- */
-export type KeyBinding = string;
-/** A typing rule that turns text such as `# ` or `**x**` into structure as the user types. */
-export type InputRule =
-    | {
-          readonly id: string;
-          readonly kind: 'line-start';
-          readonly command: string;
-          readonly markers: readonly (string | { readonly marker: string; readonly payload: JsonValue })[];
-      }
-    | {
-          readonly id: string;
-          readonly kind: 'mark-delimiter';
-          readonly open: string;
-          readonly close: string;
-          readonly mark: string;
-      }
-    | {
-          readonly id: string;
-          readonly kind: 'text-replace';
-          readonly find: string;
-          readonly replace: string;
-          readonly boundary?: 'word';
-      }
-    | { readonly id: string; readonly kind: 'quotes'; readonly marker: '"' | "'" }
-    /** From `textRule`. */
-    | { readonly id: string; readonly kind: 'text-rule'; readonly match: RegExp; readonly replace: string }
-    /** Code features only, from `blockRule`; named groups fill the command's payload fields. */
-    | { readonly id: string; readonly kind: 'block-rule'; readonly match: RegExp; readonly command: string }
-    /** Code features only, from `markRule`; named groups fill the mark's attributes. */
-    | {
-          readonly id: string;
-          readonly kind: 'mark-rule';
-          readonly match: RegExp;
-          readonly mark: string;
-          readonly on: readonly ('input' | 'enter')[];
-      };
-/** A command ID, or a command with the payload a route passes, such as `{ command: 'heading.set', payload: { level: 1 } }`. */
-export type CommandRef =
-    | string
-    | { readonly command: string; readonly payload?: JsonValue; readonly labelKey?: string };
-/** One textblock as a decoration source reads it. */
-export interface DecoratedBlock {
-    readonly nodeId: string | null;
-    readonly attrs: JsonObject;
-    /** Its text, in which each inline leaf, such as a hard break or a mention, counts as one U+FFFC. */
-    readonly text: string;
-}
-/** A stretch of a block's text, by character offsets, drawn with a class or attributes. */
-export interface BlockDecoration {
-    readonly from: number;
-    readonly to: number;
-    readonly className?: string;
-    readonly attributes?: Readonly<Record<string, string>>;
-}
-/** Decorations over each textblock of `nodes`, derived again only for a block that a change touched. */
-export interface BlockDecorationSource {
-    readonly id: string;
-    readonly nodes: readonly string[];
-    /** The ranges of `block`, or a promise of them while what the source reads still loads. */
-    derive(block: DecoratedBlock): readonly BlockDecoration[] | Promise<readonly BlockDecoration[]>;
-}
-/** Where a trigger opens a list and what query it takes. */
-export interface SuggestionRules {
-    /** A word starts at the block start, after white space or a hard break, and with this, after punctuation too; a plain list uses `false`. */
-    readonly afterPunctuation: boolean;
-    /** The longest query; a longer one closes the list. A plain list uses `32`. */
-    readonly maxQuery: number;
-    /** Whether the query may hold spaces; a line break always ends it. A plain list uses `false`. */
-    readonly spaces: boolean;
-    /** The letters the query starts with before the list opens, so a time such as `12:30` opens none. A plain list uses `0`. */
-    readonly leadingLetters: number;
-}
-/** One option a suggestion search finds; accepting it runs the list's command with `payload`. */
-export interface SuggestionResult {
-    /** Unique within one result list, and not empty. */
-    readonly key: string;
-    readonly label: string;
-    /** What the option shows before its label, such as the emoji itself; none for an option with no such text. */
-    readonly glyph?: string | null;
-    readonly payload: JsonObject;
-    /** What the option shows after its label, such as a mention's resource type. */
-    readonly detail?: string;
-    /** An avatar, which the list shows only as an absolute `https:` URL that passes `checkHref`. */
-    readonly imageUrl?: string;
-    /** Mention art only: the icon, a person, a group or everyone, that an option with no glyph and no image shows. */
-    readonly kind?: 'user' | 'group' | 'everyone';
-}
-/** One page of a suggestion search: its options, and the cursor of the next page, `null` after the last. */
-export interface SuggestionPage {
-    readonly items: readonly SuggestionResult[];
-    readonly nextCursor: string | null;
-}
-/** New `nodeId`s in a migrated document come from `generateId` only. */
-export interface MigrationContext {
-    readonly generateId: () => string;
-}
-/** What one migration step returns: the migrated document, or a request for review when content cannot be mapped. */
-export type MigrationStepResult =
-    | { readonly status: 'migrated'; readonly document: RichTextDocument }
-    /**
-     * Content the step cannot map without choosing meaning stays as stored, so decode keeps it as
-     * islands, except the root, which blocks; `unsupported` means no document of the target version
-     * exists for this input. One diagnostic per unmapped node, with its path into the step's output, which
-     * names a node position.
-     */
-    | {
-          readonly status: 'requires-review' | 'unsupported';
-          readonly document: RichTextDocument;
-          readonly diagnostics: readonly Diagnostic[];
-      };
-/**
- * A pure, synchronous, DOM-free step that upgrades a document from one model version to the next;
- * `id` appears in `MigrationManifest.steps`. It leaves nodes, marks and attributes its source version
- * does not declare unchanged, so it is a no-op on content a newer version wrote.
- */
-export interface ModelMigration {
-    readonly id: string;
-    readonly from: number;
-    /** Receives unchecked content: a value in a node or mark position may be any JSON value, `null` included. */
-    readonly migrate: (document: RichTextDocument, context: MigrationContext) => MigrationStepResult;
-}
-/**
- * Code features only. The same kind of step for the content one feature owns, from capability version
- * `from` to `from + 1`. `compileContentModel` installs it in every model that installs the feature, so
- * profile and host models register nothing; decode runs it for a document whose `requiredCapabilities`
- * record an older version of that capability.
- */
-export interface CapabilityMigration {
-    readonly id: string;
-    readonly from: number;
-    /** Receives unchecked content: a value in a node or mark position may be any JSON value, `null` included. */
-    readonly migrate: (document: RichTextDocument, context: MigrationContext) => MigrationStepResult;
-}
 /** An attribute one feature adds to other features' nodes, such as `align` on `paragraph` and `heading`. */
 export interface SharedAttributeDeclaration {
     readonly on: readonly string[] | 'textblocks';
