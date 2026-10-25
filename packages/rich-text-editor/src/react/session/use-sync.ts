@@ -4,7 +4,7 @@ import { type MutableRefObject, type RefObject, useEffect, useMemo, useRef } fro
 
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { type MountCoordinator } from '#/bridge/mount';
-import { hashDocument } from '#/model';
+import { sameDocument } from '#/model';
 import { styleSheetOf, unknownStyle } from '#/model/output';
 
 import { useRecipeSheet } from '../style-sheet';
@@ -94,10 +94,7 @@ export const useChangeWatch = (props: Defined, mounted: Mounted, coordinator: Mo
             return;
         }
         // A host that builds an equal record on each render changes nothing.
-        if (
-            previous.documentId === defaultValue.documentId &&
-            hashDocument(previous.document) === hashDocument(defaultValue.document)
-        ) {
+        if (previous.documentId === defaultValue.documentId && sameDocument(previous.document, defaultValue.document)) {
             return;
         }
         coordinator.runtime?.report({

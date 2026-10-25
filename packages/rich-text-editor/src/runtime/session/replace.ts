@@ -3,7 +3,7 @@
 import { type EditorState, Selection } from 'prosemirror-state';
 
 import { type CompiledDefinition } from '#/definition';
-import { type CapabilityRef, hashDocument, type ResourceLimits } from '#/model';
+import { type CapabilityRef, type ResourceLimits, sameDocument } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { diagnostic } from '#/model/format';
@@ -219,7 +219,7 @@ export const createReplace = (a: {
         if (
             next.documentId === identity.session().documentId &&
             next.revision === saving.status().revision &&
-            hashDocument(document) === hashDocument(shown.snapshot().document)
+            sameDocument(document, shown.snapshot().document)
         ) {
             return { status: 'replaced', session: identity.session() };
         }

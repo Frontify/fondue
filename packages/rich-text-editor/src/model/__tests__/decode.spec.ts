@@ -26,6 +26,7 @@ import {
     hashDocument,
     type MarkOf,
     type RichTextDocument,
+    sameDocument,
 } from '#/model';
 
 import { decodeToTree } from '../decode';
@@ -317,6 +318,15 @@ describe('text and hashing', () => {
         expect(hashDocument(document)).toBe(expected);
         expect(hashDocument(permuted)).toBe(expected);
         expect(hashDocument(reversed)).not.toBe(expected);
+    });
+
+    it('compares documents by canonical JSON, so key order is not a difference', () => {
+        const document = envelope(doc(paragraph(text('a')))) as unknown as RichTextDocument;
+        const reordered = Object.fromEntries(Object.entries(document).reverse()) as unknown as RichTextDocument;
+        const changed = envelope(doc(paragraph(text('b')))) as unknown as RichTextDocument;
+        expect(JSON.stringify(reordered)).not.toBe(JSON.stringify(document));
+        expect(sameDocument(document, reordered)).toBe(true);
+        expect(sameDocument(document, changed)).toBe(false);
     });
 });
 

@@ -93,5 +93,9 @@ export const sha256 = (text: string): string => {
 };
 
 /** Lowercase hex SHA-256 over canonical JSON with keys sorted by code point, computed synchronously in JavaScript. */
-export const hashDocument = (document: RichTextDocument): string =>
-    sha256(canonicalJson(document as unknown as JsonValue));
+export const hashDocument = (document: RichTextDocument): string => sha256(documentJson(document));
+
+/** Whether two documents have the same canonical JSON, without hashing either. */
+export const sameDocument = (a: RichTextDocument, b: RichTextDocument): boolean => documentJson(a) === documentJson(b);
+
+const documentJson = (document: RichTextDocument): string => canonicalJson(document as unknown as JsonValue);
