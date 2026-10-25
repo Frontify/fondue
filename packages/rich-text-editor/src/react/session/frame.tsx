@@ -12,7 +12,7 @@ import { type PortalStore } from '#/bridge/portals';
 import { SessionContext } from '#/bridge/session';
 import { type readerContext } from '#/reader/context';
 import { type EditorPort, mediaOf } from '#/runtime/port';
-import { VISUALLY_HIDDEN } from '#/styles/visually-hidden';
+import { VISUALLY_HIDDEN } from '#/styles/visuallyHidden';
 import { ContextMenu } from '#/ui/contextMenu/ContextMenu';
 import { PanelContext, type PanelController } from '#/ui/panels/context';
 import { type referenceListStrings, SuggestionList } from '#/ui/suggestions/SuggestionList';

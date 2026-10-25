@@ -102,7 +102,7 @@
         {
             "build": "package-css",
             "budgetBytes": 25000,
-            "test": "src/styles/__tests__/bundle-size.spec.ts",
+            "test": "src/styles/__tests__/bundleSize.spec.ts",
             "passed": true
         }
     ],
