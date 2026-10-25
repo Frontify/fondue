@@ -48,8 +48,11 @@ export const measure = async (
         readonly external?: (id: string) => boolean;
         /** Replaces the module a specifier names, as `[{ find: '#/features/marksStrike/feature', replacement: path }]`. */
         readonly alias?: readonly { readonly find: string; readonly replacement: string }[];
+        /** Drops a source module no used export reaches, as a host's bundler does under the package's `sideEffects`. */
+        readonly sourceIsPure?: boolean;
     } = {},
 ): Promise<Measured> => {
+    const moduleSideEffects = (id: string) => options.sourceIsPure !== true || !id.startsWith(`${join(root, 'src')}/`);
     const directory = mkdtempSync(join(tmpdir(), 'rte-bundle-'));
     const entry = join(directory, 'entry.ts');
     writeFileSync(entry, `${source}\n`);
@@ -66,6 +69,7 @@ export const measure = async (
                 outDir: directory,
                 lib: { entry, formats: ['es'], fileName: 'size' },
                 rollupOptions: {
+                    treeshake: { moduleSideEffects },
                     external: (id) => HOST_LOADED.test(id) || options.external?.(id) === true,
                 },
             },
