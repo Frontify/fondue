@@ -1,6 +1,53 @@
 # @frontify/fondue-rich-text-editor
 
-Rich text editing for the Fondue design system.
+Rich text editing for the Fondue design system: an editor, a static reader and codecs that share one stored JSON format.
+
+## Mount an editor
+
+```tsx
+import { RichTextEditor } from '@frontify/fondue-rich-text-editor';
+import { documentModel } from '@frontify/fondue-rich-text-editor/features';
+import { createEmptyDocument } from '@frontify/fondue-rich-text-editor/model';
+import '@frontify/fondue-rich-text-editor/styles';
+
+const defaultValue = { documentId: 'note-1', revision: null, document: createEmptyDocument(documentModel) };
+
+export const Notes = () => <RichTextEditor profile="document" aria-label="Notes" defaultValue={defaultValue} />;
+```
+
+The editor is uncontrolled: it takes `defaultValue` once, and the host replaces the document with the handle's `replaceDocument`, saves through `services.persistence`, or reads the snapshot through the form-field hook. The guides in Storybook, under Rich Text Editor, Guides, cover each of these.
+
+## Guides
+
+| Guide | What it covers |
+| --- | --- |
+| Authoring | Writing a plugin: the vocabulary part, the editor part and its `needs`, the reader part, and `definePlugin` |
+| Reader and codecs | Rendering stored documents without the editor, and HTML, Markdown and plain text output |
+| Accessibility | The keyboard model, the toolbar, content checks, alternative text and language marking |
+| Compatibility | The stored format, model versions and migrations |
+| Observability | Diagnostics and the counters a host can collect |
+| Limitations | Features no shipped profile installs, and defaults that may surprise a host |
+
+## Layers
+
+Each folder under `src` is one layer; lint keeps the imports between them in this order.
+
+| Folder | Holds |
+| --- | --- |
+| `model` | The stored format: documents, the content model, validation, migrations, limits and content checks |
+| `features` | One folder per feature: its vocabulary part (`feature.ts`), editor part (`editor.ts`), optional reader part and its plugin unit (`index.ts`) |
+| `definition` | Compiles a content model and editor parts into the editing engine's schema, keymaps and input rules |
+| `runtime` | The editing session: state, commands, the editor API, uploads, suggestions and history; the only layer that holds the engine |
+| `persistence` | The save coordinator |
+| `bridge` | The plugin API and the React adapter for node views, chrome and overlays |
+| `ui` | Toolbar, menus and suggestion lists |
+| `react` | `RichTextEditor`, its parts, hooks and the shipped profiles |
+| `reader`, `codecs`, `html`, `clipboard` | Static rendering, export and import, and the paste pipeline |
+| `testing` | The feature contract suite, fake services and input helpers |
+
+## Codecs and blocked documents
+
+`toHTML`, `toPlainText` and `toMarkdown` return empty output for a document that cannot be read, such as one from another model. Check `blocked` on the result before storing its `html`, `text` or `markdown`, so empty output never replaces real content.
 
 ## Commands
 
