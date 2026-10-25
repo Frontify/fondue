@@ -183,11 +183,17 @@ test('records the dialog and menu open to focus inside it in the typical fixture
     await page.evaluate(() => window.rtePerf?.mount('typical'));
     const durations: number[] = [];
     for (const command of ['link.edit', 'emoji.picker.open']) {
-        const opened = () =>
-            page.evaluate(
+        const opened = async () => {
+            const elapsed = await page.evaluate(
                 (id) => window.rtePerf?.openedWithFocus(id, '[role="dialog"], [role="listbox"], [role="menu"]'),
                 command,
             );
+            // A null sample would be dropped and let the p95 measure only the opens that worked.
+            if (elapsed === null) {
+                throw new Error(`${command} never moved focus into a dialog, listbox or menu within 2000 ms`);
+            }
+            return elapsed;
+        };
         durations.push(...(await sample(page, opened)));
     }
 
