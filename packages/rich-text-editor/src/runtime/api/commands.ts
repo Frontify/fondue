@@ -22,12 +22,14 @@ export interface CommandSession {
     readonly host: unknown;
 }
 
+const isCommandSession = (value: unknown): value is CommandSession => isRecord(value) && 'runtime' in value;
+
 const sessionOf = (context: CommandContext | undefined): CommandSession | undefined => {
     const session = context?.session;
-    if (!isRecord(session) || !('runtime' in session)) {
+    if (!isCommandSession(session)) {
         return undefined;
     }
-    return session as unknown as CommandSession;
+    return session;
 };
 
 const NOT_APPLICABLE: CommandOutcome = {
@@ -204,12 +206,12 @@ const commandDocumentApi = (
 };
 
 /** A plugin command, written over the API it is handed, which runs only through that API. */
-export interface PluginCommandSpec<A> {
+export interface PluginCommandSpec<A, P = never> {
     readonly payload?: PayloadDeclaration;
-    readonly run: (api: A, payload: never) => boolean;
-    readonly enabled?: (api: A, payload: never) => boolean;
-    readonly active?: (api: A, payload: never) => boolean | 'mixed';
-    readonly refuses?: (policy: AuthoringPolicy, payload: never) => boolean;
+    readonly run: (api: A, payload: P) => boolean;
+    readonly enabled?: (api: A, payload: P) => boolean;
+    readonly active?: (api: A, payload: P) => boolean | 'mixed';
+    readonly refuses?: (policy: AuthoringPolicy, payload: P) => boolean;
     readonly readOnly?: boolean;
 }
 
@@ -217,8 +219,8 @@ export interface PluginCommandSpec<A> {
  * The engine command of a plugin command. `extend` adds the session's hosts to the document API, holding their
  * effects until the command has run for real.
  */
-export const pluginCommand = <A>(
-    spec: PluginCommandSpec<A>,
+export const pluginCommand = <A, P = never>(
+    spec: PluginCommandSpec<A, P>,
     model: ContentModel,
     schema: Schema,
     lookup: CommandLookup,
@@ -248,13 +250,13 @@ export const pluginCommand = <A>(
                     quiet,
                     session,
                 );
-                if (!spec.enabled(probe, payload as never)) {
+                if (!spec.enabled(probe, payload as P)) {
                     return false;
                 }
             }
             const compose = composer(state);
             const api = extend(commandDocumentApi(compose, model, schema, lookup, context, session), context, session);
-            if (!spec.run(api, payload as never)) {
+            if (!spec.run(api, payload as P)) {
                 return false;
             }
             const transaction = compose.finish();
@@ -270,13 +272,13 @@ export const pluginCommand = <A>(
             const session = sessionOf(context);
             return spec.active(
                 extend(commandDocumentApi(composer(state), model, schema, lookup, context, session), context, session),
-                payload as never,
+                payload as P,
             );
         },
         policyRefuses: (policy, payload) =>
             spec.refuses !== undefined &&
             findInvalidPayload(spec.payload, payload) === undefined &&
-            spec.refuses(policy as AuthoringPolicy, payload as never),
+            spec.refuses(policy as AuthoringPolicy, payload as P),
         ...declared,
         viaExecute: true,
     };

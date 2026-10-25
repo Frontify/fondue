@@ -41,9 +41,9 @@ const render = (
     shared: readonly SharedAttribute[],
 ): DOMOutputSpec => {
     const { layers, content } = resolveHtmlSpec(spec, values, options, shared);
-    let inner: readonly DOMOutputSpec[] = [];
+    let inner: readonly unknown[] = [];
     if (content) {
-        inner = [0 as unknown as DOMOutputSpec];
+        inner = [0];
     }
     for (const { tag, attrs } of [...layers].reverse()) {
         inner = [[tag, attrs, ...inner]];

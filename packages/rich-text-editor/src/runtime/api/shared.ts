@@ -31,6 +31,7 @@ export const RANGES = new WeakMap<object, Positions & { readonly doc: Node }>();
 export const rangeOf = (doc: Node, from: number, to: number): EditorRange => {
     const range = Object.freeze({});
     RANGES.set(range, { from, to, doc });
+    // The one place a range is minted: `EditorRange` is a brand with no runtime shape.
     return range as unknown as EditorRange;
 };
 

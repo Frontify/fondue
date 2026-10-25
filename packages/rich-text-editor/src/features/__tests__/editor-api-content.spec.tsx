@@ -8,7 +8,7 @@ import { bold, codeBlock, core, fontColor, heading, links, mediaImage } from '#/
 import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
 import { bulletList } from '#/features/lists-bullet/feature';
 import { listItem } from '#/features/lists-item/feature';
-import { type AuthoringPolicy, type CommandOutcome, type EditorApi } from '#/index';
+import { type AuthoringPolicy, type CommandOutcome, type EditorApi, type WriteOutcome } from '#/index';
 import { compileContentModel, type ContentNodeJSON, defineFeature, type RichTextDocument } from '#/model';
 import { type CommandState } from '#/runtime/types';
 import { setSelection, typeText } from '#/testing';
@@ -26,7 +26,7 @@ import {
 } from './fixtures/editor-api';
 
 let script: (api: EditorApi) => boolean = () => false;
-let seen: CommandOutcome | CommandState | undefined;
+let seen: CommandOutcome | CommandState | WriteOutcome | undefined;
 let walked = 0;
 let live: EditorApi | undefined;
 

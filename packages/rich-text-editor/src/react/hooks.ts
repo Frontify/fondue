@@ -16,5 +16,5 @@ export const useEditorHandle = <C extends object = ShippedCommands>(): EditorHan
     if (runtime === undefined) {
         return null;
     }
-    return runtime.handle as unknown as EditorHandle<C>;
+    return runtime.handle as EditorHandle<C>;
 };

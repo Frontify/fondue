@@ -88,6 +88,7 @@ export const checkOverrideSpec = (spec: HtmlSpec): void => {
         }
     }
     if (Array.isArray(content)) {
+        // An override's nested spec is unchecked input, which this check is the first to read as a tuple.
         checkOverrideSpec(content as unknown as HtmlSpec);
     }
 };

@@ -90,7 +90,7 @@ export const createTargetsService = (a: {
         range?: { readonly from: number; readonly to: number },
     ) => commit(captureTarget(store.state, id, options, range));
 
-    /** The handle of target `id` in this session. */
+    /** The handle of target `id` in this session; the one place a `SelectionHandle` brand is minted. */
     const handleOf = (id: string) => Object.freeze({ id, session: identity.session() }) as unknown as SelectionHandle;
 
     const captureRange: TargetsService['captureRange'] = (options, range) => {

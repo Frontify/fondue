@@ -156,7 +156,7 @@ const reportFailure = (state: RenderState, featureId: string, path: string, name
 
 /** Called as a plain function so a throw is caught here; the rest of the output is host elements, which cannot throw. */
 const callOverride = (override: ComponentType<ReaderNodeProps>, props: ReaderNodeProps): ReactNode => {
-    const result = (override as unknown as (props: ReaderNodeProps) => ReactNode)(props);
+    const result = (override as (props: ReaderNodeProps) => ReactNode)(props);
     if (result === undefined) {
         return null;
     }

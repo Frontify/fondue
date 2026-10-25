@@ -162,7 +162,7 @@ export const RichTextEditor = Object.assign(Editor, {
     BubbleToolbar: BubbleToolbarPart,
     Status,
     Panels,
-}) as unknown as (<C extends object = ShippedCommands>(props: RichTextEditorProps<C>) => ReactNode) & {
+}) as (<C extends object = ShippedCommands>(props: RichTextEditorProps<C>) => ReactNode) & {
     /** Takes the editor props and renders its own layout from the parts; `RichTextEditor` is Root with the default parts. */
     readonly Root: <C extends object = ShippedCommands>(
         props: RichTextEditorProps<C> & { readonly children: ReactNode },

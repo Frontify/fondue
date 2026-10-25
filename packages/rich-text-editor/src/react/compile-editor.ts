@@ -224,12 +224,12 @@ const collectPanels = (plugins: readonly EditorPart[]) => {
 /** The defaults with `limitOverrides`, then each of `limits` that is stricter; invalid values are ignored. */
 const limitsWithin = (limits: Partial<ResourceLimits> | undefined, overrides: Partial<ResourceLimits> | undefined) => {
     const loosened = limitsOf(overrides);
-    const values: Readonly<Record<string, number>> = { ...loosened };
-    const result: Record<string, number> = { ...limitsOf(limits, loosened) };
-    for (const [name, value] of Object.entries(values)) {
-        result[name] = Math.min(value, result[name] ?? value);
+    const result = { ...limitsOf(limits, loosened) };
+    // `limitsOf` always gives every key of `ResourceLimits`, which `Object.keys` cannot show.
+    for (const name of Object.keys(loosened) as (keyof ResourceLimits)[]) {
+        result[name] = Math.min(loosened[name], result[name]);
     }
-    return result as unknown as ResourceLimits;
+    return result;
 };
 
 /** The longest string default or enum value of a stored attribute of `model`, which `maxAttributeLength` must admit. */
@@ -361,5 +361,5 @@ export const compileEditor = <Model extends ContentModel, Plugins extends readon
     if (profile !== undefined) {
         profiles.set(definition, profile);
     }
-    return definition as unknown as CompiledEditorDefinition<CommandsOfPlugins<Plugins>>;
+    return definition as CompiledEditorDefinition<CommandsOfPlugins<Plugins>>;
 };

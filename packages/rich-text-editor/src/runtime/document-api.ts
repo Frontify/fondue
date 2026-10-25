@@ -7,6 +7,7 @@ import {
     type AuthoringPolicy,
     type CaptureTargetOptions,
     type CommandOptions,
+    type CommandResult,
     type CommandState,
     type SelectionHandle,
     type SelectionSummary,
@@ -72,7 +73,7 @@ export type WriteTarget = EditorRange | { readonly nodeId: string; readonly at?:
 /** What running another command gave: the whole `CommandResult` from plugin UI, inside a command whether it applied. */
 export type CommandOutcome =
     | { readonly status: 'applied' | 'no-op' }
-    | { readonly status: 'rejected'; readonly code: string };
+    | { readonly status: 'rejected'; readonly code: Extract<CommandResult, { readonly status: 'rejected' }>['code'] };
 
 /** What a content write gave: once applied, the range it wrote, which a command can select inside. */
 export type WriteOutcome =
