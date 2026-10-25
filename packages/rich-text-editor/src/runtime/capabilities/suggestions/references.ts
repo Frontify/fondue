@@ -4,9 +4,8 @@ import { checkHref } from '#/model';
 import { holdsControls, withoutBidiControls } from '#/model/references';
 import { isRecord, isStoredId } from '#/model/values';
 
+import { type SuggestionItem } from '../../port-types';
 import { type ReferenceValue } from '../../types';
-
-import { type SuggestionItem } from './types';
 
 // A person picker shows a page of this many, and stops paging at the total.
 export const MAX_PAGE_ITEMS = 50;

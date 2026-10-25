@@ -627,6 +627,12 @@ const CASES: readonly Case[] = [
         'src/react/port-engine.tsx',
         "import { engineOf } from '#/runtime/port-engine';",
     ),
+    banned('react: the runtime assembly', 'src/react/foo.ts', "import { createPort } from '#/runtime/assembly';"),
+    allowed(
+        'react: the runtime assembly in the engine compiler',
+        'src/react/compile-editor.ts',
+        "import { createPort } from '#/runtime/assembly';",
+    ),
     allowed('react: react', 'src/react/react.tsx', "import { memo } from 'react';"),
 
     // persistence

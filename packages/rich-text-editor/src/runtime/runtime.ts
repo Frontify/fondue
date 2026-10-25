@@ -16,16 +16,15 @@ import {
     type Diagnostic,
     type PresentationStyle,
     type ResourceLimits,
-    type RichTextDocument,
 } from '#/model';
 import { type TreeNode } from '#/model/content';
 
 import { type AsyncOperation, type AsyncRequest } from './async';
 import { type UploadEvent, type UploadServiceLike } from './capabilities/media/uploads';
 import { type ColumnState } from './columns';
-import { type Listener } from './events';
 import { type EnterKeys } from './keys';
 import { type ExceededLimit } from './limits';
+import { type RuntimeHandle } from './port-types';
 import { type SaveCoordinator } from './saves';
 import { type NodeActions, type NodeTarget } from './session/actions';
 import { assembleCore } from './session/assemble-core';
@@ -43,43 +42,14 @@ import {
     type CaptureResult,
     type CaptureTargetOptions,
     type CommandResult,
-    type CommandState,
-    type CommitOptions,
-    type CommitResult,
-    type EditorSummary,
     type OperationMetric,
     type RecoveryService,
-    type ReplaceDocumentRequest,
-    type ReplaceResult,
-    type SaveStatus,
     type SelectionHandle,
     type ServerRevision,
-    type Snapshot,
     type Unsubscribe,
 } from './types';
 
-export type { InputOutcome, NodeActions, NodeTarget };
-
-/** What the host calls. */
-export interface RuntimeHandle {
-    getSummary(): EditorSummary;
-    getSnapshot(): Snapshot;
-    getSaveStatus(): SaveStatus;
-    getRecoveryCandidate(): RichTextDocument | null;
-    query(id: string, ...args: readonly unknown[]): CommandState;
-    execute(id: string, ...args: readonly unknown[]): CommandResult;
-    enqueue(id: string, ...args: readonly unknown[]): Promise<CommandResult>;
-    captureTarget(options: CaptureTargetOptions): CaptureResult;
-    releaseTarget(target: SelectionHandle): void;
-    requestCommit(options: CommitOptions): Promise<CommitResult>;
-    replaceDocument(request: ReplaceDocumentRequest): Promise<ReplaceResult>;
-    setMode(mode: Mode): void;
-    updatePolicy(policy: AuthoringPolicy): void;
-    focus(where?: 'current' | 'start' | 'end'): void;
-    registerInteractionRoot(element: HTMLElement): Unsubscribe;
-    subscribe(event: string, listener: Listener): Unsubscribe;
-    dispose(): void;
-}
+export type { InputOutcome, NodeActions, NodeTarget, RuntimeHandle };
 
 export interface EditorRuntime {
     readonly handle: RuntimeHandle;

@@ -267,3 +267,8 @@ export type RichTextEditorProps<C extends object = ShippedCommands> = RichTextEd
         | { readonly 'aria-label': string; readonly 'aria-labelledby'?: never }
         | { readonly 'aria-labelledby': string; readonly 'aria-label'?: never }
     );
+
+/** The editor props as the session reads them: the `RichTextEditor` props of any command set. */
+export type Props = RichTextEditorProps<object>;
+/** The props once `definition` is known to be set. */
+export type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };

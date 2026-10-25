@@ -6,6 +6,7 @@ import { type EngineCommand } from '#/definition';
 import { type Diagnostic, type ResourceLimits } from '#/model';
 
 import { type AsyncOperation, type AsyncRequest } from '../../../async';
+import { type UploadEvent, type UploadPlace, type UploadRejection } from '../../../port-types';
 import { type SelectionHandle, type SessionToken } from '../../../types';
 
 /** The `UploadService` shape the session calls, whose answers it checks as untrusted input. */
@@ -24,39 +25,7 @@ export interface UploadServiceLike {
     ): Promise<void>;
 }
 
-/**
- * Why a file did not upload, which the editor says with how to fix it: its type, its size, its pixels, a size its
- * header does not tell, or an SVG that holds active content.
- */
-export type UploadRejection = 'type' | 'size' | 'pixels' | 'unreadable' | 'unsafe';
-
-/**
- * What the live region announces: once per gesture of chosen, pasted or dropped files, with each file refused and
- * the uploads it started, then once per upload's later start, end, failure or cancel.
- */
-export type UploadEvent =
-    | { readonly kind: 'started' | 'failed' | 'cancelled'; readonly name: string }
-    | {
-          readonly kind: 'completed';
-          readonly name: string;
-          readonly altMissing: boolean;
-          /** Whether a replacement asks the author to review the alternative text it kept. */
-          readonly review: boolean;
-      }
-    | {
-          readonly kind: 'gesture';
-          readonly refused: readonly { readonly name: string; readonly reason: UploadRejection }[];
-          readonly started: readonly string[];
-      };
-
-/** Where chosen, pasted or dropped files go: new slots at the selection or a range, or the image `nodeId`. */
-export type UploadPlace =
-    | {
-          readonly kind: 'insert';
-          readonly origin: 'command' | 'paste' | 'drop';
-          readonly range?: { readonly from: number; readonly to: number };
-      }
-    | { readonly kind: 'replace'; readonly nodeId: string };
+export type { UploadEvent, UploadPlace, UploadRejection };
 
 /** What the uploads read of the session and run through it. */
 export interface UploadHost {

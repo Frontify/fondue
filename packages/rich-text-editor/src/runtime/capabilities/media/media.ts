@@ -10,8 +10,9 @@ import { placeBlock } from '..';
 import { withNodeState } from '../../node-state';
 import { positionOf } from '../../positions';
 
-export const INSERT_IMAGE = 'image.insert';
-export const REPLACE_IMAGE = 'image.replace';
+import { INSERT_IMAGE, REPLACE_IMAGE } from './uploads/constants';
+
+export { INSERT_IMAGE, REPLACE_IMAGE };
 
 /** The fields of a picked `AssetValue` that an image stores; a picker result never gives it any other. */
 export interface PickedAsset {

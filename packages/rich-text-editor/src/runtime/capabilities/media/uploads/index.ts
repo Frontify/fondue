@@ -11,9 +11,8 @@ import { isActive, isKept, isRetryable, type SlotState, statusOf } from './machi
 import { createTransport } from './transport';
 import { type UploadHost } from './types';
 
-export { DEFAULT_ACCEPT_TYPES, MAX_IMAGE_SIDE, UPLOAD_FEATURE } from './constants';
+export { DEFAULT_ACCEPT_TYPES, MAX_IMAGE_SIDE, megabytes, UPLOAD_FEATURE } from './constants';
 export { liveUploadCaches, UploadCache, uploadLimits, type CompletedUpload } from './cache';
-export { megabytes } from './check';
 export type { UploadEvent, UploadHost, UploadPlace, UploadRejection, UploadServiceLike } from './types';
 
 /**

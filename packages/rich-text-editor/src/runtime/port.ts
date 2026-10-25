@@ -1,52 +1,55 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorView } from 'prosemirror-view';
+import { type Diagnostic, type ResourceLimits } from '#/model';
 
-import { type EngineCommand } from '#/definition';
-import { type ContentModel } from '#/model';
-
+import { type AsyncOperation, type AsyncRequest } from './async';
 import { type MediaSession } from './capabilities/media/session';
 import {
     acceptSuggestion,
-    type ActiveSuggestion,
     activeSuggestion,
     dismissSuggestion,
     moveSuggestion,
-    type SuggestionItem,
 } from './capabilities/suggestions/plugin';
-import { type ClipboardSession, connectClipboard } from './clipboard/session';
-import { contentChecksApi, pluginCommand, rangeOf } from './editor-api';
+import { contentChecksApi, rangeOf } from './editor-api';
 import { engineOf } from './port-engine';
 import {
-    createEditorRuntime,
-    type EditorRuntime,
-    type EditorRuntimeOptions,
-    isEmpty,
-    runtimeOf,
-    runtimeOfView,
-} from './runtime';
+    type ActiveSuggestion,
+    type ColumnState,
+    type InputOutcome,
+    type NodeActions,
+    type NodeTarget,
+    type RuntimeHandle,
+} from './port-types';
+import { isEmpty, runtimeOf } from './runtime';
 import { mediaOf as mediaOfRuntime } from './session/uploads-wiring';
+import {
+    type AuthoringPolicy,
+    type CaptureResult,
+    type CaptureTargetOptions,
+    type OperationMetric,
+    type Unsubscribe,
+} from './types';
 import { endComposition, nodeChromeAt, resyncSelection, selectionRect } from './view-bridge';
 
-export { RUNTIME_PLUGINS } from './capabilities';
-export { INSERT_IMAGE, REPLACE_IMAGE } from './capabilities/media/media';
 export {
+    INSERT_IMAGE,
     MAX_IMAGE_SIDE,
     megabytes,
+    REPLACE_IMAGE,
+    UPLOAD_FEATURE,
+} from './capabilities/media/uploads/constants';
+export { type MediaSession } from './capabilities/media/session';
+export { referenceValues } from './capabilities/suggestions/references';
+export { passesToBrowser } from './browser-keys';
+export {
+    type ActiveSuggestion,
+    type ColumnState,
+    type RuntimeHandle,
+    type SuggestionItem,
     type UploadEvent,
     type UploadPlace,
     type UploadRejection,
-    UPLOAD_FEATURE,
-} from './capabilities/media/uploads';
-export { type MediaSession } from './capabilities/media/session';
-export { referenceValues } from './capabilities/suggestions/references';
-export { type ActiveSuggestion, type SuggestionItem };
-export { passesToBrowser } from './browser-keys';
-export { clipboardPlugin, dropCursorPlugin, type FileIntake } from './clipboard/plugin';
-export { type ColumnState } from './columns';
-export { pluginCommand } from './editor-api';
-export { authoringOf } from './policy';
-export { type EditorRuntimeOptions, type RuntimeHandle } from './runtime';
+} from './port-types';
 export {
     type AuthoringPolicy,
     type CaptureResult,
@@ -72,40 +75,44 @@ export {
     type Unsubscribe,
 } from './types';
 
-/** The members of the runtime that name an engine type, which the React layers never read. */
-type EngineMember =
-    | 'view'
-    | 'state'
-    | 'definition'
-    | 'nodeViews'
-    | 'attach'
-    | 'exceededLimit'
-    | 'refusal'
-    | 'writeRefusal'
-    | 'perform';
-
-/** The runtime as the React layers hold it, with every engine member left out. */
-export type EditorPort = Omit<EditorRuntime, EngineMember>;
+/** The runtime as the React layers hold it: the members that name no engine type. */
+export interface EditorPort {
+    readonly handle: RuntimeHandle;
+    readonly suggestionListId: string;
+    readonly nextDomId: () => string;
+    readonly interactionRoots: ReadonlySet<HTMLElement>;
+    readonly policy: AuthoringPolicy;
+    readonly limits: ResourceLimits;
+    detach(): void;
+    report(diagnostic: Diagnostic): void;
+    select(
+        target:
+            | { readonly anchor: number; readonly head: number; readonly scroll?: boolean }
+            | { readonly node: number; readonly scroll?: boolean },
+    ): void;
+    captureRange(range: { readonly from: number; readonly to: number }, options: CaptureTargetOptions): CaptureResult;
+    watch<T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void): Unsubscribe;
+    startAsync(request: AsyncRequest): AsyncOperation;
+    changeServices(members: readonly string[]): void;
+    faultView(): void;
+    setDisabled(disabled: boolean): void;
+    setColumns(columns: ColumnState): void;
+    nodeActions(target: NodeTarget): NodeActions;
+    saveStatusChanged(): void;
+    afterInput(settled: (outcome: InputOutcome) => void, timeoutMs: number): void;
+    clearHistory(): void;
+    measure(kind: OperationMetric['kind'], started: number, failureCode: string | null): void;
+    runChecks(): boolean;
+}
 
 /** The media session of the session behind `port`, `undefined` when its model does not install `media.image`. */
 export const mediaOf = (port: EditorPort): MediaSession | undefined => mediaOfRuntime(engineOf(port));
-
-/** Starts a session, which the React layers hold as a port. */
-export const createPort = (options: EditorRuntimeOptions): EditorPort => createEditorRuntime(options);
-
-/** Wires the clipboard of the session behind `port`. */
-export const connectClipboardTo = (port: EditorPort, session: ClipboardSession): void => {
-    connectClipboard(engineOf(port), session);
-};
 
 /** The content-checks API of the session behind `port`. */
 export const contentChecksOf = (port: EditorPort) => contentChecksApi(engineOf(port));
 
 /** The port of the session behind a handle the runtime made. */
 export const portOfHandle = (handle: object): EditorPort | undefined => runtimeOf(handle);
-
-/** The port of the session whose surface shows `view`, for a plugin that one definition shares between editors. */
-export const portOfView = (view: EditorView): EditorPort | undefined => runtimeOfView(view);
 
 /** Whether the surface is attached. */
 export const hasSurface = (port: EditorPort | undefined): boolean =>
@@ -267,19 +274,4 @@ export const dismissSuggestionIn = (port: EditorPort): void => {
     if (view !== undefined) {
         dismissSuggestion(view);
     }
-};
-
-/** Runs `command` in the session behind `port`, as an edit that no command ID names; `false` when it was rejected. */
-export const performIn = (port: EditorPort, command: EngineCommand): boolean =>
-    engineOf(port).perform(command).status !== 'rejected';
-
-/** The engine command of a plugin command over the session's own schema and commands, which a file intake runs. */
-export const sessionCommand = <A>(
-    port: EditorPort,
-    run: (api: A) => boolean,
-    model: ContentModel,
-    extend: Parameters<typeof pluginCommand<A>>[4],
-): EngineCommand => {
-    const { schema, commands } = engineOf(port).definition;
-    return pluginCommand({ run }, model, schema, (id) => commands.get(id), extend);
 };

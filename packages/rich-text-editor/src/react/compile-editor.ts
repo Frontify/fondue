@@ -40,10 +40,10 @@ import {
     performIn,
     pluginCommand,
     portOfView,
-    rangeOfPort,
     RUNTIME_PLUGINS,
     sessionCommand,
-} from '#/runtime/port';
+} from '#/runtime/assembly';
+import { rangeOfPort } from '#/runtime/port';
 
 import {
     type CommandsOfPlugins,

@@ -5,11 +5,6 @@ import { readImageHeader, svgHoldsScript } from '../image-header';
 import { MAX_IMAGE_SIDE } from './constants';
 import { type Checked, type UploadHost, type UploadRejection } from './types';
 
-const MIB = 1024 * 1024;
-
-/** The size limit in megabytes, as an upload error names it. */
-export const megabytes = (bytes: number): number => Math.round((bytes / MIB) * 10) / 10;
-
 /** The file name a slot shows, which a pasted image without one takes from its type. */
 export const nameOf = (file: File) => {
     if (file.name !== '') {

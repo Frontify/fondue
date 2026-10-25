@@ -4,14 +4,15 @@ import { type Node } from 'prosemirror-model';
 import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 
 import { type CompiledDefinition, type EngineCommand } from '#/definition';
-import { type JsonObject, type ResourceLimits } from '#/model';
+import { type ResourceLimits } from '#/model';
 import { attributesOf, compiledModel } from '#/model/compile';
 import { isRecord, isValidValue } from '#/model/values';
 
 import { insertPicked, pickedAsset, refillPicked } from '../capabilities/media/media';
 import { type SuggestionHost } from '../capabilities/suggestions/host';
+import { type NodeActions, type NodeTarget } from '../port-types';
 import { positionOf } from '../positions';
-import { type CommandResult, type CommandState, type SelectionHandle } from '../types';
+import { type CommandResult, type SelectionHandle } from '../types';
 
 import { checkedPayload, type Commands, rejected } from './commands';
 import { type Commit } from './commit';
@@ -19,21 +20,7 @@ import { type Store } from './store';
 import { type TargetsService } from './targets';
 import { type RejectedCode } from './types';
 
-/**
- * The node an action changes: its `nodeId`, or, for a node that carries none, such as a code block, the node view's
- * live position reader, which reads the position when the action runs.
- */
-export type NodeTarget = string | (() => number | undefined);
-
-/** The actions of one node view, which find their node when they run, never by a position held from before. */
-export interface NodeActions {
-    update(attrs: JsonObject): CommandResult;
-    remove(): CommandResult;
-    select(): void;
-    /** Runs a command with the node selected at execution time. */
-    execute(id: string, ...args: readonly unknown[]): CommandResult;
-    query(id: string, ...args: readonly unknown[]): CommandState;
-}
+export type { NodeActions, NodeTarget };
 
 export interface Actions {
     nodeActions(target: NodeTarget): NodeActions;

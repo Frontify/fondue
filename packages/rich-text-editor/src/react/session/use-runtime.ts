@@ -16,12 +16,10 @@ import { codecContext } from '#/model/output';
 import { randomId } from '#/model/random-id';
 import { createSaveCoordinator } from '#/persistence/coordinator';
 import { type LoadedDocument } from '#/persistence/types';
+import { connectClipboardTo, createPort, type EditorRuntimeOptions } from '#/runtime/assembly';
 import {
-    connectClipboardTo,
-    createPort,
     type DocumentChange,
     type EditorPort,
-    type EditorRuntimeOptions,
     mediaOf,
     type SelectionSummary,
     type SessionToken,

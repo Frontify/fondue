@@ -15,3 +15,11 @@ export const MAX_IMAGE_SIDE = 65_535;
 /** The transaction meta of an upload's completion, which ends no upload of its slot. */
 export const FILL_META = 'rte.upload-fill';
 export const POOL = 'uploads';
+/** The command meta of an image insert and of an image replace. */
+export const INSERT_IMAGE = 'image.insert';
+export const REPLACE_IMAGE = 'image.replace';
+
+const MIB = 1024 * 1024;
+
+/** The size limit in megabytes, as an upload error names it. */
+export const megabytes = (bytes: number): number => Math.round((bytes / MIB) * 10) / 10;

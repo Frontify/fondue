@@ -372,7 +372,7 @@ const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition`, `clipboard/imp
 const BRIDGE_MESSAGE = '`bridge` imports `model`, `runtime`, `persistence` and React, never ProseMirror.';
 
 const REACT_FOLDER_MESSAGE =
-    '`react` imports every folder except `testing`, the runtime only through `#/runtime/port`, and neither `react-dom` nor ProseMirror.';
+    '`react` imports every folder except `testing`, the runtime only through `#/runtime/port` (only `compile-editor` and `session/use-runtime` also import `#/runtime/assembly`), and neither `react-dom` nor ProseMirror.';
 
 const PERSISTENCE_MESSAGE = '`persistence` imports `model` and `runtime`.';
 
@@ -418,6 +418,30 @@ const portOnlyPatterns = [
     ...aliasPatterns(['runtime']),
     ...relativePatterns(['runtime']),
     ...exceptPatterns(['runtime/port']),
+];
+
+// The two react files that build the engine also import the assembly, which holds the engine-typed values.
+const REACT_ASSEMBLY_FILES = ['src/react/compile-editor.ts', 'src/react/session/use-runtime.ts'];
+
+const portAndAssemblyPatterns = [
+    ...aliasPatterns(['runtime']),
+    ...relativePatterns(['runtime']),
+    ...exceptPatterns(['runtime/port', 'runtime/assembly']),
+];
+
+const reactRestrictions = (runtimePatterns: string[]): ImportRestriction[] => [
+    {
+        group: [
+            ...aliasPatterns(reactFolders),
+            ...relativePatterns(reactFolders),
+            'react-dom',
+            'react-dom/**',
+            ...PROSEMIRROR_PATTERNS,
+        ],
+        message: REACT_FOLDER_MESSAGE,
+    },
+    { group: runtimePatterns, message: REACT_FOLDER_MESSAGE },
+    featureInternalsRestriction,
 ];
 
 const persistenceFolders = FOLDERS.filter(
@@ -787,20 +811,8 @@ export default defineConfig({
                 message: BRIDGE_MESSAGE,
             },
         ]),
-        layerOverride('src/react/**/*.{ts,tsx}', [
-            {
-                group: [
-                    ...aliasPatterns(reactFolders),
-                    ...relativePatterns(reactFolders),
-                    'react-dom',
-                    'react-dom/**',
-                    ...PROSEMIRROR_PATTERNS,
-                ],
-                message: REACT_FOLDER_MESSAGE,
-            },
-            { group: portOnlyPatterns, message: REACT_FOLDER_MESSAGE },
-            featureInternalsRestriction,
-        ]),
+        layerOverride('src/react/**/*.{ts,tsx}', reactRestrictions(portOnlyPatterns), REACT_ASSEMBLY_FILES),
+        layerOverride(REACT_ASSEMBLY_FILES, reactRestrictions(portAndAssemblyPatterns)),
         layerOverride('src/persistence/**/*.{ts,tsx}', [
             {
                 group: [

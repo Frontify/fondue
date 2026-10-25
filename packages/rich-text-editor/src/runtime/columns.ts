@@ -6,14 +6,9 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { COLUMN_BREAK } from '#/model/output';
 
-/** What the editor shows of the presentation's columns: their count, whether the surface has room for them, and the break labels. */
-export interface ColumnState {
-    readonly count: number;
-    readonly fits: boolean;
-    readonly label: string;
-    /** The name of a break that forces no break. */
-    readonly inactiveLabel: string;
-}
+import { type ColumnState } from './port-types';
+
+export type { ColumnState };
 
 export const ONE_COLUMN: ColumnState = {
     count: 1,

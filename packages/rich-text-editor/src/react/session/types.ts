@@ -11,11 +11,9 @@ import { type ReaderPresentation } from '#/reader/reader';
 import { type RuntimeHandle } from '#/runtime/port';
 import { type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
-import { type CompiledEditorDefinition, type RichTextEditorProps, type ToolbarMode } from '../types';
+import { type CompiledEditorDefinition, type Defined, type Props, type ToolbarMode } from '../types';
 
-export type Props = RichTextEditorProps<object>;
-/** The props once `definition` is known to be set. */
-export type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };
+export type { Defined, Props };
 export const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 export const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
 export const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'uploads', 'assets'] as const;

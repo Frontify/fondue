@@ -11,9 +11,9 @@ import { useCoarsePointer, useProfile } from './profiles';
 import { shellPropsOf } from './session/helpers';
 import { BubbleToolbarPart, Panels, Status, Surface, Toolbar } from './session/parts';
 import { Session } from './session/session';
-import { DEFAULT_TEST_ID, type Defined, type Props, type RecoverySession } from './session/types';
+import { DEFAULT_TEST_ID, type Props, type RecoverySession } from './session/types';
 import { LoadingShell, RecoveryShell } from './shells';
-import { type EditorHandle, type RichTextEditorProps, type RichTextProfile } from './types';
+import { type Defined, type EditorHandle, type RichTextEditorProps, type RichTextProfile } from './types';
 
 export type RecoveryProps = {
     readonly props: Defined & { readonly children: ReactNode };
