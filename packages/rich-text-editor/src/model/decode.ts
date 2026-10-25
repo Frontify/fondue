@@ -16,7 +16,7 @@ import {
     type RichTextDocument,
 } from './format';
 import { runMigrations } from './migrate';
-import { randomId } from './random-id';
+import { randomId } from './randomId';
 import { exceedsBytes, readInput } from './read';
 
 /** `Given` with every key that is not a limit name turned into `never`, so a misspelt limit fails to compile. */

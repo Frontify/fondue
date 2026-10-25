@@ -13,7 +13,7 @@ import {
     type ValueDeclaration,
 } from '#/model';
 import { attributesOf, type CompiledMark, compiledModel, type CompiledNode } from '#/model/compile';
-import { advanceMatch, type ContentMatch, matchEnds, startMatch } from '#/model/content-expression';
+import { advanceMatch, type ContentMatch, matchEnds, startMatch } from '#/model/contentExpression';
 import { canonicalJson } from '#/model/hash';
 import { isValidValue } from '#/model/values';
 

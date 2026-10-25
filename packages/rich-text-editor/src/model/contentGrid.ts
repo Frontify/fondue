@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type TreeNode } from './content-tree';
+import { type TreeNode } from './contentTree';
 
 /** The cells of a `table` form a rectangular grid with consistent column widths, as `TableMap` needs. */
 export const isGrid = (rows: readonly TreeNode[]): boolean => {

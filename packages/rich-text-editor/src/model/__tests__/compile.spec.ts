@@ -19,7 +19,7 @@ import { compileContentModel, defineFeature, type FeatureDeclaration } from '#/m
 import { orderPlugins, type PluginDescriptor } from '../capabilities';
 import { compiledModel } from '../compile';
 
-import { compile, requiresCore, feature, failureOf, block } from './fixtures/compile-features';
+import { compile, requiresCore, feature, failureOf, block } from './fixtures/compileFeatures';
 
 describe('compileContentModel duplicates', () => {
     it('rejects a feature listed twice', () => {

@@ -3,7 +3,7 @@
 import { type Properties as CssProperties } from 'csstype';
 
 import { sha256 } from './hash';
-import { drawsBox } from './styles-box';
+import { drawsBox } from './stylesBox';
 import { isRecord, ownValue } from './values';
 
 /** Resting declarations are csstype's `Properties<string | number>`. `hover` is optional and is not a CSS property. */

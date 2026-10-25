@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type SharedAttribute } from '../compile';
 import { type HtmlSpec } from '../declarations';
-import { islandText, renderSpaces, resolveHtmlSpec, withAutoDirection } from '../html-spec';
+import { islandText, renderSpaces, resolveHtmlSpec, withAutoDirection } from '../htmlSpec';
 
 const heading: HtmlSpec = [
     { attr: 'level', tags: { 1: 'h1', 2: 'h2' } },

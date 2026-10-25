@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { checkDependencies, checkMigrations, isVersion, readFeatures } from './compile-checks';
+import { checkDependencies, checkMigrations, isVersion, readFeatures } from './compileChecks';
 import {
     attachSharedAttributes,
     checkMembers,
@@ -8,15 +8,15 @@ import {
     collectMembers,
     compileParseRules,
     orderedPlugins,
-} from './compile-phases';
-import { type CompiledFeature, type CompiledMark, type CompiledModel } from './compile-types';
+} from './compilePhases';
+import { type CompiledFeature, type CompiledMark, type CompiledModel } from './compileTypes';
 import { type ContentModel, type ContentModelOptions, type Feature, type JsonObject } from './declarations';
 import { DefinitionError, pointer } from './errors';
 import { canonicalJson, sha256 } from './hash';
 import { type HrefPolicy, hrefPolicyOf } from './href';
 import { snapshot } from './values';
 
-export { attributesOf, URL_ATTRIBUTES } from './compile-checks';
+export { attributesOf, URL_ATTRIBUTES } from './compileChecks';
 export {
     type CompiledFeature,
     type CompiledMark,
@@ -24,7 +24,7 @@ export {
     type CompiledNode,
     type CompiledParseRule,
     type SharedAttribute,
-} from './compile-types';
+} from './compileTypes';
 
 const COMPILED = Symbol('compiled-model');
 

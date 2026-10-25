@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { attributesOf, compiledModel } from './compile';
-import { contentNames } from './content-expression';
+import { contentNames } from './contentExpression';
 import {
     type AttributeDeclarations,
     type ContentModel,

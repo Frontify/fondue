@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type FeatureContentDeclaration } from './content-rules';
-import { type CapabilityMigration, type ModelMigration } from './declaration-editing';
+import { type FeatureContentDeclaration } from './contentRules';
+import { type CapabilityMigration, type ModelMigration } from './declarationEditing';
 import {
     type AttributeDeclaration,
     type AttributeDeclarations,
@@ -11,7 +11,7 @@ import {
     type JsonValue,
     type ModelRef,
     type OptionDeclarations,
-} from './declaration-values';
+} from './declarationValues';
 import { type HrefResult } from './href';
 import { type Feature } from './types';
 
@@ -30,7 +30,7 @@ export type {
     SuggestionPage,
     SuggestionResult,
     SuggestionRules,
-} from './declaration-editing';
+} from './declarationEditing';
 export type {
     AttributeDeclaration,
     AttributeDeclarations,
@@ -45,7 +45,7 @@ export type {
     PayloadOf,
     ValueDeclaration,
     ValueOf,
-} from './declaration-values';
+} from './declarationValues';
 
 /** Reads a feature option inside its own declaration, as `{ attr }` reads an attribute. */
 export interface OptionRef {

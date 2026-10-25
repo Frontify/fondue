@@ -2,7 +2,7 @@
 
 import { type JsonObject } from './declarations';
 import { type Diagnostic } from './format';
-import { type HtmlTemplate } from './html-spec';
+import { type HtmlTemplate } from './htmlSpec';
 import {
     colorOf,
     type ColorToken,

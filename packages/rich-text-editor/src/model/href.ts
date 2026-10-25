@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type JsonObject } from './declarations';
-import { isWellFormed } from './well-formed';
+import { isWellFormed } from './wellFormed';
 
 /** The rules for which link targets are allowed: schemes, hosts and relative links. */
 export interface HrefPolicy {

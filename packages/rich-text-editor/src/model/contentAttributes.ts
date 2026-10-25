@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Attrs, type Context, warn } from './content-tree';
+import { type Attrs, type Context, warn } from './contentTree';
 import { type AttributeDeclaration } from './declarations';
 import { pointer } from './errors';
 import { type FormatDiagnosticCode } from './format';

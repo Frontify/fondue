@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { attributesOf, type CompiledMark, type CompiledNode } from './compile';
-import { checkAttributes } from './content-attributes';
-import { matchEnds, startMatch } from './content-expression';
-import { isGrid } from './content-grid';
+import { checkAttributes } from './contentAttributes';
+import { matchEnds, startMatch } from './contentExpression';
+import { isGrid } from './contentGrid';
 import {
     advance,
     type Attrs,
@@ -15,7 +15,7 @@ import {
     type TreeNode,
     vocabularyOf,
     warn,
-} from './content-tree';
+} from './contentTree';
 import { type ContentModel, type JsonValue } from './declarations';
 import { pointer } from './errors';
 import { type Diagnostic } from './format';
@@ -31,7 +31,7 @@ export {
     type TreeNode,
     type Vocabulary,
     vocabularyOf,
-} from './content-tree';
+} from './contentTree';
 
 const hasKeys = (record: Attrs, keys: ReadonlySet<string>) => Object.keys(record).every((key) => keys.has(key));
 const MARK_KEYS = new Set(['type', 'attrs']);

@@ -48,7 +48,7 @@
         {
             "build": "./model",
             "budgetBytes": 30000,
-            "test": "src/model/__tests__/bundle-size.spec.ts",
+            "test": "src/model/__tests__/bundleSize.spec.ts",
             "passed": true
         },
         {

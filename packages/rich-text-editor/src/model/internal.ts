@@ -66,7 +66,7 @@ export {
     resolveHtmlSpec,
     treeRuns,
     withAutoDirection,
-} from './html-spec';
+} from './htmlSpec';
 export { packageVersionOf } from './migrate';
 export {
     COLOR_PROPERTIES,
@@ -106,7 +106,7 @@ export {
     writesAttribute,
 } from './output';
 export { isApple, isPlatformBinding, keyOn, modOn } from './platform';
-export { randomId } from './random-id';
+export { randomId } from './randomId';
 export { exceedsBytes } from './read';
 export { type ResolveReference, holdsControls, resolvingSafely, shownLabel, withoutBidiControls } from './references';
 export { appliesToOf, colorOf, cssValue } from './styles';

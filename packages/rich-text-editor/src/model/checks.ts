@@ -9,7 +9,7 @@ import {
     type ContentRuleContext,
     type ContentRuleId,
     type ContentRuleInput,
-} from './content-rules';
+} from './contentRules';
 import { type ContentModel, type JsonObject, type JsonValue, type RichTextLocale } from './declarations';
 import { type ContentNodeJSON, type MarkJSON, type RichTextDocument } from './format';
 import { canonicalJson } from './hash';

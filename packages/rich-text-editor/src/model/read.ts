@@ -2,7 +2,7 @@
 
 import { pointer } from './errors';
 import { type Diagnostic, diagnostic, type ResourceLimits } from './format';
-import { exceedsBytes, repeatsKey, stringTokenBytes } from './read-bytes';
+import { exceedsBytes, repeatsKey, stringTokenBytes } from './readBytes';
 
 export { exceedsBytes };
 

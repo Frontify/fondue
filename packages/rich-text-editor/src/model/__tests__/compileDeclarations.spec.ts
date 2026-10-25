@@ -17,7 +17,7 @@ import {
 
 import { pointer } from '../errors';
 
-import { compile, requiresCore, feature, failureOf, block } from './fixtures/compile-features';
+import { compile, requiresCore, feature, failureOf, block } from './fixtures/compileFeatures';
 
 describe('compileContentModel declarations', () => {
     it('rejects a doc attribute without a default and a doc exactlyOne', () => {

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { compiledModel } from './compile';
-import { type ReferenceDeclaration } from './content-rules';
+import { type ReferenceDeclaration } from './contentRules';
 import { type CodecContext, type ContentModel, type JsonObject, type ReferenceResolution } from './declarations';
 import { type RichTextDocument } from './format';
 import { isRecord } from './values';

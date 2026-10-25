@@ -15,7 +15,7 @@ import {
     type ModelSnapshot,
     shippedModels,
     snapshotsOf,
-} from './helpers/model-versions';
+} from './helpers/modelVersions';
 
 // This must run before `toMatchFileSnapshot` so `vitest -u` cannot record a change that breaks stored documents.
 const committed = JSON.parse(

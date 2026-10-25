@@ -74,7 +74,7 @@ export {
     type ContentRuleSubject,
     type FeatureContentDeclaration,
     type ReferenceDeclaration,
-} from './content-rules';
+} from './contentRules';
 export { createEmptyDocument, decodeDocument } from './decode';
 export { DefinitionError, type DefinitionErrorCode } from './errors';
 export { defineFeature } from './feature';
@@ -96,9 +96,9 @@ export {
 } from './format';
 export { hashDocument, sameDocument } from './hash';
 export { checkHref, type HrefPolicy, type HrefResult, hrefPolicyOf } from './href';
-export { decorationLines, inheritedAnswer } from './inherited-style';
-export { isTaskListElement } from './task-list-markup';
-export { toJsonSchema } from './json-schema';
+export { decorationLines, inheritedAnswer } from './inheritedStyle';
+export { isTaskListElement } from './taskListMarkup';
+export { toJsonSchema } from './jsonSchema';
 export { type MigrationManifest, type MigrationResult, migrateDocument } from './migrate';
 export { diffReferences, type MentionLabel, mentionLabel, type ReferenceDiff, unavailableNote } from './references';
 export {

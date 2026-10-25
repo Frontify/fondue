@@ -15,7 +15,7 @@ import {
     type RichTextLocale,
 } from './declarations';
 import { checkHref } from './href';
-import { type HtmlTemplate } from './html-spec';
+import { type HtmlTemplate } from './htmlSpec';
 import { addDeclaration, ownValue } from './values';
 
 /** The context a reader or codec override reads, in `locale`, else `fallback`, whose strings fill any key `locale` lacks; a resolver that throws gives `null` for that call only. */
@@ -287,7 +287,7 @@ export {
     withStyle,
     withColor,
     unknownStyle,
-} from './output-style';
+} from './outputStyle';
 export { STYLES_FEATURE, styleSheetOf } from './styles';
 export {
     VOID_TAGS,
@@ -303,4 +303,4 @@ export {
     markPath,
     itemsOf,
     groupRun,
-} from './output-runs';
+} from './outputRuns';

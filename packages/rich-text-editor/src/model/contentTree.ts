@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CompiledMark, compiledModel, type CompiledNode } from './compile';
-import { advanceMatch, type ContentMatch } from './content-expression';
+import { advanceMatch, type ContentMatch } from './contentExpression';
 import { type ContentModel } from './declarations';
 import { type Diagnostic, diagnostic, type FormatDiagnosticCode } from './format';
 import { isRecord } from './values';

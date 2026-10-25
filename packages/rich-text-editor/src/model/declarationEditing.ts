@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type JsonObject, type JsonValue } from './declaration-values';
+import { type JsonObject, type JsonValue } from './declarationValues';
 import { type Diagnostic, type RichTextDocument } from './format';
 import { type Digit, type Letter } from './types';
 

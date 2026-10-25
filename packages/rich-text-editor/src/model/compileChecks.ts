@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { findCycle } from './capabilities';
-import { type CompiledFeature, type CompiledNode, type CompiledParseRule } from './compile-types';
+import { type CompiledFeature, type CompiledNode, type CompiledParseRule } from './compileTypes';
 import {
     type AttributeDeclaration,
     type AttributeDeclarations,

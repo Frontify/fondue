@@ -12,7 +12,7 @@ import {
 import { checkEnvelope, findMisshapenCapabilities, isRoot } from './envelope';
 import { defaultLimits, type Diagnostic, diagnostic, type ResourceLimits, type RichTextDocument } from './format';
 import { canonicalJson, hashDocument, sha256 } from './hash';
-import { randomId } from './random-id';
+import { randomId } from './randomId';
 import { readInput } from './read';
 
 /** A record of a migration run: the hashes before and after, and the steps that ran. */

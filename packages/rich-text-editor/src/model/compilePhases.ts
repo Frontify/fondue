@@ -21,15 +21,15 @@ import {
     failure,
     isUrlAttribute,
     OWN_PARSE_MEMBERS,
-} from './compile-checks';
+} from './compileChecks';
 import {
     type CompiledFeature,
     type CompiledMark,
     type CompiledNode,
     type CompiledParseRule,
     type SharedAttribute,
-} from './compile-types';
-import { contentNames } from './content-expression';
+} from './compileTypes';
+import { contentNames } from './contentExpression';
 import { type MarkDeclaration, type NodeDeclaration } from './declarations';
 import { DefinitionError, pointer } from './errors';
 import { isSrcdocAttribute, isStyleAttribute } from './values';

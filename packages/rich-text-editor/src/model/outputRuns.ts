@@ -4,7 +4,7 @@ import { isIsland, ISLAND_INLINE, type TreeMark, type TreeNode } from './content
 import { type CodecContext, type JsonObject, type JsonValue } from './declarations';
 import { pointer } from './errors';
 import { canonicalJson } from './hash';
-import { islandText, renderSpaces } from './html-spec';
+import { islandText, renderSpaces } from './htmlSpec';
 import { type NodePlan } from './output';
 
 export const VOID_TAGS = new Set('area base br col embed hr img input link meta source track wbr'.split(' '));
