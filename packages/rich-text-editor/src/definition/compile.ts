@@ -6,9 +6,9 @@ import { orderPlugins, compiledModel } from '#/model/internal';
 import { countAppends } from './appends';
 import { compileCommands, extensionKeymap } from './commands';
 import { collectContributions, keyHandlersOf, withInputRules } from './contributions';
-import { compileInputRules } from './input-rules';
+import { compileInputRules } from './inputRules';
 import { NORMALIZERS } from './normalizers';
-import { keyPlugin, normalizerPlugin, originOf } from './plugin-builders';
+import { keyPlugin, normalizerPlugin, originOf } from './pluginBuilders';
 import { buildSchema } from './schema';
 import { type CompiledDefinition, type EngineImplementations, type EngineExtension } from './types';
 

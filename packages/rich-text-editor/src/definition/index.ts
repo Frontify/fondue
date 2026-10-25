@@ -10,7 +10,7 @@ export {
     type MarkRule,
     type QuotesRule,
     type TextReplaceRule,
-} from './input-rules';
+} from './inputRules';
 export { carriesNodeId, withNodeIds } from './schema';
 export { NodeIdsStep, NORMALIZE_META, type Normalizer, NORMALIZERS } from './normalizers';
 export {

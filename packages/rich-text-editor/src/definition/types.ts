@@ -14,7 +14,7 @@ import {
 } from '#/model';
 import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/internal';
 
-import { type CompiledInputRule } from './input-rules';
+import { type CompiledInputRule } from './inputRules';
 
 /** The transaction meta that names the command a transaction runs, so the runtime reports it. */
 export const COMMAND_META = 'rte.command';
