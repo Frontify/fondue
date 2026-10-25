@@ -245,6 +245,8 @@ export const itCH = {
         RichTextEditor_saveSaved: 'Tutte le modifiche salvate',
         RichTextEditor_saveSaving: 'Salvataggio…',
         RichTextEditor_saveUnsaved: 'Modifiche non salvate',
+        RichTextEditor_slashInsert: 'Inserisci',
+        RichTextEditor_slashTurnInto: 'Trasforma in',
         RichTextEditor_startNumbering: 'Inizia la numerazione da',
         RichTextEditor_startNumberingField: 'Primo numero',
         RichTextEditor_startNumberingRange: 'Inserisci un numero intero da ${min} a ${max}.',

@@ -15,7 +15,7 @@ import { type ActiveSuggestion, type SuggestionItem, type SuggestionsMeta } from
 /** The options of a search's page: each result's own fields, without an empty key, which Load more and Retry take, and with only a safe avatar and a known icon. */
 const optionsOf = (page: SuggestionPage): ReferenceResults => {
     const items: SuggestionItem[] = [];
-    for (const { key: itemKey, label, glyph, payload, detail, imageUrl, kind } of page.items) {
+    for (const { key: itemKey, label, glyph, payload, detail, imageUrl, kind, group } of page.items) {
         if (itemKey === '') {
             continue;
         }
@@ -28,6 +28,9 @@ const optionsOf = (page: SuggestionPage): ReferenceResults => {
         }
         if (kind !== undefined && KINDS.has(kind)) {
             item = { ...item, kind };
+        }
+        if (group !== undefined) {
+            item = { ...item, group };
         }
         items.push(item);
     }

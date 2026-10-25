@@ -8,6 +8,14 @@
     overscroll-behavior: contain;
 }
 
+.heading {
+    padding: var(--spacing-x-small) var(--spacing-small);
+    color: var(--color-secondary-default);
+    font-family: var(--text-body-medium-default-font-family);
+    font-size: var(--text-body-small-default-font-size);
+    line-height: var(--text-body-small-default-line-height);
+}
+
 .option {
     display: flex;
     align-items: center;

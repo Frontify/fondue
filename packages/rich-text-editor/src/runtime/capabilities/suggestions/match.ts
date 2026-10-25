@@ -64,10 +64,17 @@ export const matchAt = (state: EditorState, suggestions: readonly EngineSuggesti
                 break;
             }
             const preceding = before.slice(0, at);
-            const startsWord =
+            let startsWord =
                 (at === 0 && windowStart === 0) ||
                 (at > 0 &&
                     (BREAK_BEFORE.test(preceding) || (rules.afterPunctuation && PUNCTUATION_BEFORE.test(preceding))));
+            if (rules.emptyBlock === true) {
+                startsWord =
+                    at === 0 &&
+                    windowStart === 0 &&
+                    parent.type.name === 'paragraph' &&
+                    parent.content.size === $cursor.parentOffset;
+            }
             const query = before.slice(at + trigger.length);
             if (startsWord && takesQuery(rules, query)) {
                 best = { suggestion, from, to: $cursor.pos, query };

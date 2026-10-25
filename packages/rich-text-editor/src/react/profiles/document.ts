@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RichTextPlugin } from '#/bridge/definePlugin';
+import { extendPlugin, type RichTextPlugin } from '#/bridge/definePlugin';
 import { contentChecksPlugin } from '#/features/a11yContentChecks';
 import { headingPlugin } from '#/features/blocksHeading';
 import { rulePlugin } from '#/features/blocksRule';
@@ -18,6 +18,7 @@ import { defineReactPresentation } from '../presentation';
 
 import { commentPlugins } from './comment';
 import { NOT_CREATABLE, type ShippedProfile } from './parts';
+import { slashMenu } from './slashMenu';
 
 /** The units of the Document profile's features. */
 export const documentPlugins: readonly RichTextPlugin[] = [
@@ -32,6 +33,15 @@ export const documentPlugins: readonly RichTextPlugin[] = [
     formatClearPlugin(),
     contentChecksPlugin(),
 ] as const;
+
+/** `plugins` with the core unit extended by the `/` list of the block conversions and inserts the other units offer, which the stored model does not see. */
+export const withSlashMenu = (plugins: readonly RichTextPlugin[]): readonly RichTextPlugin[] =>
+    plugins.map((unit) => {
+        if (unit.id !== 'core') {
+            return unit;
+        }
+        return extendPlugin(unit, slashMenu(plugins));
+    });
 
 /** The default toolbar groups of the Document profile; a group keeps only the commands the definition installs. */
 export const documentToolbar = (lists: readonly (readonly CommandRef[])[]): readonly (readonly CommandRef[])[] => [
@@ -66,7 +76,7 @@ export const shipped = (): ShippedProfile => ({
                 features: { 'blocks.align': NOT_CREATABLE, 'input-rules': NOT_CREATABLE },
                 enterBehavior: 'paragraph',
             },
-            plugins: documentPlugins,
+            plugins: withSlashMenu(documentPlugins),
         },
         'document',
     ),

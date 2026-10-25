@@ -75,6 +75,7 @@ const SESSION = {
 /** A valid payload for each shipped command that declares one, so the case runs it for real. */
 const PAYLOADS: Readonly<Record<string, unknown>> = {
     'text.insert': { text: 'a' },
+    'slash.run': { command: 'text.insert', payload: { text: 'a' } },
     'heading.set': { level: 2 },
     'list.ordered.toggle': { start: 1 },
     'list.ordered.start.set': { start: 2 },

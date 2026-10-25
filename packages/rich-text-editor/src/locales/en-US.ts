@@ -237,6 +237,8 @@ export const enUS = {
         RichTextEditor_saveSaved: 'All changes saved',
         RichTextEditor_saveSaving: 'Saving…',
         RichTextEditor_saveUnsaved: 'Unsaved changes',
+        RichTextEditor_slashInsert: 'Insert',
+        RichTextEditor_slashTurnInto: 'Turn into',
         RichTextEditor_startNumbering: 'Start numbering at',
         RichTextEditor_startNumberingField: 'First number',
         RichTextEditor_startNumberingRange: 'Enter a whole number from ${min} to ${max}.',

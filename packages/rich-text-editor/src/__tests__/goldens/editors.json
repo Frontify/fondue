@@ -26,6 +26,7 @@
         "commandIds": [
             "paragraph.set",
             "text.insert",
+            "slash.run",
             "hard-break.insert",
             "history.undo",
             "history.redo",
@@ -253,6 +254,7 @@
         "commandIds": [
             "paragraph.set",
             "text.insert",
+            "slash.run",
             "hard-break.insert",
             "history.undo",
             "history.redo",
@@ -734,6 +736,7 @@
         "commandIds": [
             "paragraph.set",
             "text.insert",
+            "slash.run",
             "hard-break.insert",
             "history.undo",
             "history.redo",
@@ -1389,6 +1392,7 @@
         "commandIds": [
             "paragraph.set",
             "text.insert",
+            "slash.run",
             "hard-break.insert",
             "history.undo",
             "history.redo",

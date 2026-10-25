@@ -240,6 +240,8 @@ export const esES = {
         RichTextEditor_saveSaved: 'Todos los cambios guardados',
         RichTextEditor_saveSaving: 'Guardando…',
         RichTextEditor_saveUnsaved: 'Cambios sin guardar',
+        RichTextEditor_slashInsert: 'Insertar',
+        RichTextEditor_slashTurnInto: 'Convertir en',
         RichTextEditor_startNumbering: 'Empezar la numeración en',
         RichTextEditor_startNumberingField: 'Primer número',
         RichTextEditor_startNumberingRange: 'Introduce un número entero entre ${min} y ${max}.',

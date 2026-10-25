@@ -4,6 +4,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator, type Page } from '@playwright/test';
 
+import { Listbox } from '#/bridge/Listbox';
+
 import { SuggestionProbe } from './fixtures/SuggestionProbe';
 
 // The tags the accessibility suite checks.
@@ -231,4 +233,46 @@ test('announces the result count with the active option and its place on open, a
     const second = await activeOf(page).locator(':scope > span:last-child').textContent();
 
     await expect(announcer).toHaveText(`${second}, 2 of ${total}`);
+});
+
+const plainOption = (key: string, group?: string) => {
+    if (group === undefined) {
+        return { key, label: key, glyph: null };
+    }
+    return { key, label: key, glyph: null, group };
+};
+
+test('shows options with a group under a named group, and options with none as direct children of the list', async ({
+    mount,
+    page,
+}) => {
+    await mount(
+        <div>
+            <Listbox
+                id="grouped"
+                label="Grouped"
+                options={[plainOption('a', 'First'), plainOption('b', 'First'), plainOption('c', 'Second')]}
+                index={0}
+                onPick={() => undefined}
+                onActivate={() => undefined}
+                testId="grouped"
+            />
+            <Listbox
+                id="flat"
+                label="Flat"
+                options={[plainOption('d'), plainOption('e')]}
+                index={0}
+                onPick={() => undefined}
+                onActivate={() => undefined}
+                testId="flat"
+            />
+        </div>,
+    );
+
+    const grouped = page.getByRole('listbox', { name: 'Grouped' });
+    await expect(grouped.getByRole('group')).toHaveCount(2);
+    await expect(grouped.getByRole('group', { name: 'First' }).getByRole('option')).toHaveText(['a', 'b']);
+    await expect(grouped.getByRole('group', { name: 'Second' }).getByRole('option')).toHaveText(['c']);
+    await expect(page.getByRole('listbox', { name: 'Flat' }).getByRole('group')).toHaveCount(0);
+    await expect(page.getByRole('listbox', { name: 'Flat' }).locator(':scope > [role="option"]')).toHaveCount(2);
 });

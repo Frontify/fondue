@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconMegaphone, IconPeople, IconPerson } from '@frontify/fondue-icons';
-import { useRef } from 'react';
+import { type ReactNode, useRef } from 'react';
 
 import { suggestionOptionId } from '#/runtime/capabilities/suggestions/optionId';
 
@@ -20,6 +20,8 @@ export interface ListboxOption {
     readonly imageUrl?: string;
     /** The icon an option with no glyph and no image shows. */
     readonly kind?: 'user' | 'group' | 'everyone';
+    /** The heading of the group the option sits under; neighbours with the same one share a group, and options with none sit outside any. */
+    readonly group?: string;
 }
 
 const KIND_ICONS = { user: IconPerson, group: IconPeople, everyone: IconMegaphone } as const;
@@ -72,40 +74,67 @@ export const Listbox = ({
 }) => {
     const listRef = useRef<HTMLDivElement | null>(null);
     useClientLayoutEffect(() => {
-        const option = listRef.current?.children[index];
+        // Groups wrap their options, so the options are not the list's own children.
+        const option = listRef.current?.querySelectorAll('[role="option"]')[index];
         if (option !== undefined) {
             option.scrollIntoView({ block: 'nearest' });
         }
     }, [index, options]);
+    const render = (option: ListboxOption, position: number) => (
+        // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus -- the element that keeps focus owns the keys and names the active option.
+        <div
+            key={option.key}
+            id={suggestionOptionId(id, option.key)}
+            role="option"
+            aria-selected={position === index}
+            className={styles.option}
+            onMouseDown={keepFocus}
+            onClick={() => onPick(position)}
+            onPointerMove={() => {
+                if (position !== index) {
+                    onActivate(position);
+                }
+            }}
+        >
+            <Lead option={option} />
+            <span className={styles.label}>
+                <bdi>{option.label}</bdi>
+            </span>
+            {option.detail !== undefined && (
+                <span className={styles.detail}>
+                    <bdi>{option.detail}</bdi>
+                </span>
+            )}
+        </div>
+    );
+    const children: ReactNode[] = [];
+    for (let position = 0; position < options.length; position += 1) {
+        const option = options[position] as ListboxOption;
+        const { group } = option;
+        if (group === undefined) {
+            children.push(render(option, position));
+            continue;
+        }
+        // The heading is decoration: the group's own name is what a screen reader hears.
+        const run: ReactNode[] = [];
+        let end = position;
+        while (end < options.length && options[end]?.group === group) {
+            run.push(render(options[end] as ListboxOption, end));
+            end += 1;
+        }
+        children.push(
+            <div key={`group-${position}`} role="group" aria-label={group}>
+                <div className={styles.heading} aria-hidden>
+                    <bdi>{group}</bdi>
+                </div>
+                {run}
+            </div>,
+        );
+        position = end - 1;
+    }
     return (
         <div ref={listRef} id={id} role="listbox" aria-label={label} className={styles.listbox} data-test-id={testId}>
-            {options.map((option, position) => (
-                // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus -- the element that keeps focus owns the keys and names the active option.
-                <div
-                    key={option.key}
-                    id={suggestionOptionId(id, option.key)}
-                    role="option"
-                    aria-selected={position === index}
-                    className={styles.option}
-                    onMouseDown={keepFocus}
-                    onClick={() => onPick(position)}
-                    onPointerMove={() => {
-                        if (position !== index) {
-                            onActivate(position);
-                        }
-                    }}
-                >
-                    <Lead option={option} />
-                    <span className={styles.label}>
-                        <bdi>{option.label}</bdi>
-                    </span>
-                    {option.detail !== undefined && (
-                        <span className={styles.detail}>
-                            <bdi>{option.detail}</bdi>
-                        </span>
-                    )}
-                </div>
-            ))}
+            {children}
         </div>
     );
 };

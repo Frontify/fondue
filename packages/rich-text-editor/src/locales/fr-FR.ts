@@ -243,6 +243,8 @@ export const frFR = {
         RichTextEditor_saveSaved: 'Toutes les modifications sont enregistrées',
         RichTextEditor_saveSaving: 'Enregistrement…',
         RichTextEditor_saveUnsaved: 'Modifications non enregistrées',
+        RichTextEditor_slashInsert: 'Insérer',
+        RichTextEditor_slashTurnInto: 'Transformer en',
         RichTextEditor_startNumbering: 'Commencer la numérotation à',
         RichTextEditor_startNumberingField: 'Premier numéro',
         RichTextEditor_startNumberingRange: 'Saisissez un nombre entier entre ${min} et ${max}.',

@@ -241,6 +241,8 @@ export const ptPT = {
         RichTextEditor_saveSaved: 'Todas as alterações guardadas',
         RichTextEditor_saveSaving: 'A guardar…',
         RichTextEditor_saveUnsaved: 'Alterações não guardadas',
+        RichTextEditor_slashInsert: 'Inserir',
+        RichTextEditor_slashTurnInto: 'Converter em',
         RichTextEditor_startNumbering: 'Iniciar a numeração em',
         RichTextEditor_startNumberingField: 'Primeiro número',
         RichTextEditor_startNumberingRange: 'Introduza um número inteiro entre ${min} e ${max}.',

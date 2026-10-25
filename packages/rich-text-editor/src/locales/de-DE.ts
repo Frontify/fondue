@@ -246,6 +246,8 @@ export const deDE = {
         RichTextEditor_saveSaved: 'Alle Änderungen gespeichert',
         RichTextEditor_saveSaving: 'Wird gespeichert…',
         RichTextEditor_saveUnsaved: 'Nicht gespeicherte Änderungen',
+        RichTextEditor_slashInsert: 'Einfügen',
+        RichTextEditor_slashTurnInto: 'Umwandeln in',
         RichTextEditor_startNumbering: 'Nummerierung beginnen bei',
         RichTextEditor_startNumberingField: 'Erste Nummer',
         RichTextEditor_startNumberingRange: 'Geben Sie eine ganze Zahl von ${min} bis ${max} ein.',

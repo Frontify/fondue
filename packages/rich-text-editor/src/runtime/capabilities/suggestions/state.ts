@@ -196,7 +196,14 @@ export const nextState = (
                 requests: requests + 1,
             };
         }
-        return { active: keptList(previous, match, meta), dismissed, requests };
+        const list = keptList(previous, match, meta);
+        // A list that asks for the block start, such as the slash menu, gives up on a spaced query with no match, as Escape does.
+        if (match.suggestion.rules.emptyBlock === true && /\s/u.test(list.query)) {
+            if (list.status === 'ready' && resultsOf(list.items).length === 0) {
+                return { active: null, dismissed: list.from, requests };
+            }
+        }
+        return { active: list, dismissed, requests };
     }
     let mappedPrevious: ActiveSuggestion | null = null;
     if (kept) {

@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defineEditorPart } from '#/bridge/plugin';
+import { type JsonValue } from '#/model';
 
 import { core } from './feature';
 
-/** Sets a paragraph, inserts text and hard breaks, undoes and redoes, and moves blocks. */
+/** Sets a paragraph, inserts text and hard breaks, undoes and redoes, moves blocks, and runs the slash menu's chosen command. */
 export const coreEditor = defineEditorPart(core, {
-    needs: ['blocks', 'history', 'insert'],
+    needs: ['blocks', 'commands', 'history', 'insert'],
     commands: {
         'paragraph.set': {
             run: (api) => api.blocks.set('paragraph'),
@@ -15,6 +16,12 @@ export const coreEditor = defineEditorPart(core, {
         'text.insert': {
             payload: { fields: { text: { type: 'string' } } },
             run: (api, payload: { readonly text: string }) => api.insert.text(payload.text),
+        },
+        'slash.run': {
+            payload: { fields: { command: { type: 'string' }, payload: { type: 'json', optional: true } } },
+            // The selection is the typed `/` and query, which the chosen command replaces in the same undo step.
+            run: (api, { command, payload }: { readonly command: string; readonly payload?: JsonValue }) =>
+                api.insert.text('') && api.commands.execute(command, payload).status === 'applied',
         },
         'hard-break.insert': {
             run: (api) => {

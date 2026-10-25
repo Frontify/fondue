@@ -130,6 +130,8 @@ export interface SuggestionRules {
     readonly spaces: boolean;
     /** The letters the query starts with before the list opens, so a time such as `12:30` opens none. A plain list uses `0`. */
     readonly leadingLetters: number;
+    /** The trigger opens only at the start of an empty paragraph, and a query with a space that finds no option closes the list, keeping the text, as the slash menu needs. A plain list omits it. */
+    readonly emptyBlock?: boolean;
 }
 /** One option a suggestion search finds; accepting it runs the list's command with `payload`. */
 export interface SuggestionResult {
@@ -145,6 +147,8 @@ export interface SuggestionResult {
     readonly imageUrl?: string;
     /** Mention art only: the icon, a person, a group or everyone, that an option with no glyph and no image shows. */
     readonly kind?: 'user' | 'group' | 'everyone';
+    /** The heading of the group the option sits under; a list shows the options with one `group` in a run, and none for a list with no groups. */
+    readonly group?: string;
 }
 /** One page of a suggestion search: its options, and the cursor of the next page, `null` after the last. */
 export interface SuggestionPage {

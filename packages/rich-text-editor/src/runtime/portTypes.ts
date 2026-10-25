@@ -119,6 +119,8 @@ export interface SuggestionItem {
     readonly imageUrl?: string;
     /** The icon an option shows without an image. */
     readonly kind?: 'user' | 'group' | 'everyone';
+    /** The heading of the group the option sits under. */
+    readonly group?: string;
     /** An option that asks again instead of running the command: the next page, or the failed page once more. */
     readonly action?: 'more' | 'retry';
     /** The cursor of the page a `more` option asks for. */

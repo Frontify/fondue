@@ -7,7 +7,7 @@ import { brandStylesPlugin } from '#/features/stylesBrand';
 import { compileEditor } from '../compileEditor';
 import { defineReactPresentation } from '../presentation';
 
-import { documentPlugins, documentToolbar } from './document';
+import { documentPlugins, documentToolbar, withSlashMenu } from './document';
 import { NOT_CREATABLE, type ShippedProfile } from './parts';
 
 const ALIGNMENTS = ['left', 'center', 'right', 'justify'] as const;
@@ -24,7 +24,7 @@ export const shipped = (): ShippedProfile => ({
             id: 'frontify.brand-document',
             model: brandDocumentModel,
             policy: { features: { 'input-rules': NOT_CREATABLE }, enterBehavior: 'paragraph' },
-            plugins: [...documentPlugins, brandStylesPlugin(), columnsPlugin()],
+            plugins: withSlashMenu([...documentPlugins, brandStylesPlugin(), columnsPlugin()]),
         },
         'brand-document',
     ),

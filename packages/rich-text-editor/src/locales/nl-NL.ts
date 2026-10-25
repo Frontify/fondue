@@ -243,6 +243,8 @@ export const nlNL = {
         RichTextEditor_saveSaved: 'Alle wijzigingen opgeslagen',
         RichTextEditor_saveSaving: 'Opslaan…',
         RichTextEditor_saveUnsaved: 'Niet-opgeslagen wijzigingen',
+        RichTextEditor_slashInsert: 'Invoegen',
+        RichTextEditor_slashTurnInto: 'Omzetten naar',
         RichTextEditor_startNumbering: 'Nummering beginnen bij',
         RichTextEditor_startNumberingField: 'Eerste nummer',
         RichTextEditor_startNumberingRange: 'Voer een geheel getal in van ${min} tot ${max}.',

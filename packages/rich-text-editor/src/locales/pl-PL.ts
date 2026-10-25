@@ -238,6 +238,8 @@ export const plPL = {
         RichTextEditor_saveSaved: 'Wszystkie zmiany zapisane',
         RichTextEditor_saveSaving: 'Zapisywanie…',
         RichTextEditor_saveUnsaved: 'Niezapisane zmiany',
+        RichTextEditor_slashInsert: 'Wstaw',
+        RichTextEditor_slashTurnInto: 'Zamień na',
         RichTextEditor_startNumbering: 'Rozpocznij numerowanie od',
         RichTextEditor_startNumberingField: 'Pierwszy numer',
         RichTextEditor_startNumberingRange: 'Wpisz liczbę całkowitą od ${min} do ${max}.',
