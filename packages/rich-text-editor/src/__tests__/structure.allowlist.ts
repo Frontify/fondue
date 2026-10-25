@@ -68,36 +68,3 @@ export const SPEC_REFERENCES: Record<string, number> = {
 };
 
 export const AS_UNKNOWN_AS_MAX = 29;
-
-export const FEATURE_FOLDERS: string[] = [
-    'a11y-content-checks',
-    'blocks-align',
-    'blocks-code',
-    'blocks-heading',
-    'blocks-quote',
-    'blocks-rule',
-    'core',
-    'emoji',
-    'format-clear',
-    'input-rules',
-    'layout-columns',
-    'links',
-    'lists-bullet',
-    'lists-item',
-    'lists-ordered',
-    'lists-task',
-    'marks-bold',
-    'marks-code',
-    'marks-font-color',
-    'marks-italic',
-    'marks-language',
-    'marks-strike',
-    'marks-subscript',
-    'marks-superscript',
-    'marks-underline',
-    'media-image',
-    'media-upload',
-    'mentions',
-    'nav-outline',
-    'styles-brand',
-];

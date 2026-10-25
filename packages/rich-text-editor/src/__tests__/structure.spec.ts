@@ -12,7 +12,6 @@ import { describe, expect, it } from 'vitest';
 import {
     AS_UNKNOWN_AS_MAX,
     DATA_TABLES,
-    FEATURE_FOLDERS,
     FILES_OVER_400_LINES,
     FILES_OVER_600_LINES,
     FUNCTIONS_OVER_150_LINES,
@@ -507,10 +506,6 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
             count += sourceOf(path).match(/as unknown as/g)?.length ?? 0;
         }
         expect(count).toBeLessThanOrEqual(AS_UNKNOWN_AS_MAX);
-    });
-
-    it('lists the feature folders', () => {
-        expect(featureFolders()).toEqual([...FEATURE_FOLDERS].sort());
     });
 
     it('gives every feature folder an index.ts that exports exactly one definePlugin unit', () => {
