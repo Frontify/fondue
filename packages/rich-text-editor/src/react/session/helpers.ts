@@ -7,8 +7,7 @@ import { decodeToTree } from '#/model/decode';
 import { columnLayout } from '#/model/output';
 import { type LoadedDocument } from '#/persistence/types';
 import { type ReaderPresentation } from '#/reader/reader';
-import { type ColumnState } from '#/runtime/columns';
-import { type EditorRuntime } from '#/runtime/runtime';
+import { type ColumnState, type EditorPort, surfaceElement } from '#/runtime/port';
 
 import { engineOf, readersOf } from '../compile-editor';
 import { type EditorServices } from '../types';
@@ -84,15 +83,10 @@ export const pluginPresentationOf = (presentation: ReaderPresentation | undefine
 };
 
 /** The surface element of a session whose view is attached. */
-export const surfaceOf = (runtime: EditorRuntime | undefined): HTMLElement | undefined => {
-    if (runtime === undefined || runtime.view === undefined) {
-        return undefined;
-    }
-    return runtime.view.dom;
-};
+export const surfaceOf = (runtime: EditorPort | undefined): HTMLElement | undefined => surfaceElement(runtime);
 
 /** The first colour behind the surface that is not fully transparent, which the content checks measure text against. */
-export const backgroundOf = (runtime: EditorRuntime | undefined): string | undefined => {
+export const backgroundOf = (runtime: EditorPort | undefined): string | undefined => {
     const surface = surfaceOf(runtime);
     const owner = surface?.ownerDocument.defaultView;
     if (surface === undefined || owner === null || owner === undefined) {

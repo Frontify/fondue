@@ -168,7 +168,7 @@ const STORY_MODULES = [...PUBLIC_ENTRY_MODULES, 'bridge/plugin', 'bridge/define'
 const STORY_MESSAGE = `A story imports only the public entries and the modules they re-export to plugins (${STORY_MODULES.map((path) => `\`#/${path}\``).join(', ')}), files of its own folder, ${UI_PACKAGES_TEXT}, \`storybook/*\` and \`@storybook/*\`, as an outside host must.`;
 
 const UI_MESSAGE =
-    '`ui` takes only types from the runtime module, and imports neither `react`, `persistence`, `clipboard` nor the engine.';
+    '`ui` imports the runtime only through `#/runtime/port`, and imports neither `react`, `persistence`, `clipboard` nor the engine.';
 
 const DOCS_MESSAGE = `A docs example imports only the public entries (${PUBLIC_ENTRY_MODULES.map((path) => `\`#/${path}\``).join(', ')}) and files of its own folder, as an outside host must.`;
 
@@ -371,7 +371,8 @@ const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition`, `clipboard/imp
 
 const BRIDGE_MESSAGE = '`bridge` imports `model`, `runtime`, `persistence` and React, never ProseMirror.';
 
-const REACT_FOLDER_MESSAGE = '`react` imports every folder except `testing`, and neither `react-dom` nor ProseMirror.';
+const REACT_FOLDER_MESSAGE =
+    '`react` imports every folder except `testing`, the runtime only through `#/runtime/port`, and neither `react-dom` nor ProseMirror.';
 
 const PERSISTENCE_MESSAGE = '`persistence` imports `model` and `runtime`.';
 
@@ -411,6 +412,13 @@ const bridgeAllowed = new Set(['model', 'runtime', 'persistence', 'bridge']);
 const bridgeFolders = FOLDERS.filter((folder) => !bridgeAllowed.has(folder));
 
 const reactFolders = FOLDERS.filter((folder) => folder === 'testing');
+
+// The port is the one runtime module the React layers import, so no engine value or type reaches them.
+const portOnlyPatterns = [
+    ...aliasPatterns(['runtime']),
+    ...relativePatterns(['runtime']),
+    ...exceptPatterns(['runtime/port']),
+];
 
 const persistenceFolders = FOLDERS.filter(
     (folder) => folder !== 'model' && folder !== 'runtime' && folder !== 'persistence',
@@ -789,6 +797,7 @@ export default defineConfig({
                 ],
                 message: REACT_FOLDER_MESSAGE,
             },
+            { group: portOnlyPatterns, message: REACT_FOLDER_MESSAGE },
             featureInternalsRestriction,
         ]),
         layerOverride('src/persistence/**/*.{ts,tsx}', [
@@ -822,11 +831,7 @@ export default defineConfig({
             },
         ]),
         layerOverride('src/ui/**/*.{ts,tsx}', [
-            {
-                group: ['#/runtime/runtime', '**/runtime/runtime'],
-                allowTypeImports: true,
-                message: UI_MESSAGE,
-            },
+            { group: portOnlyPatterns, message: UI_MESSAGE },
             {
                 group: [
                     ...aliasPatterns(['react', 'persistence', 'clipboard']),

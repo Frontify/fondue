@@ -2,6 +2,8 @@
 
 import { type EditorRange } from '#/runtime/document-api';
 import { positionsOf } from '#/runtime/editor-api';
+import { type EditorPort } from '#/runtime/port';
+import { engineOf } from '#/runtime/port-engine';
 import { caretRect, rangeRect, selectionRect, type SurfaceView } from '#/runtime/view-bridge';
 
 import { type SelectionAnchor } from './overlays';
@@ -149,8 +151,15 @@ export const createSelectionAnchor = (
     };
 };
 
-/** The virtual anchor of `target` on the surface `view` returns. */
-export const anchorOf = (view: () => SurfaceView | undefined, target: AnchorTarget): OverlayAnchor => {
+/** The virtual anchor of `target` on the surface of the session `port` returns. */
+export const anchorOf = (port: () => EditorPort | undefined, target: AnchorTarget): OverlayAnchor => {
+    const view = () => {
+        const live = port();
+        if (live === undefined) {
+            return undefined;
+        }
+        return engineOf(live).view;
+    };
     if (target === 'selection') {
         return createSelectionAnchor(view);
     }

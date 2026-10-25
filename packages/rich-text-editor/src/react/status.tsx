@@ -7,7 +7,7 @@ import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { SessionContext } from '#/bridge/session';
 import { type CodecContext } from '#/model';
 import { type createSaveCoordinator, type Rejection } from '#/persistence/coordinator';
-import { type SaveStatus } from '#/runtime/types';
+import { type SaveStatus } from '#/runtime/port';
 
 import styles from './styles/status.module.scss';
 

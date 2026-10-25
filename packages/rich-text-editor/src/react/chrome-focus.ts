@@ -5,13 +5,11 @@ import { type KeyboardEvent, type RefObject } from 'react';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { type MountCoordinator } from '#/bridge/mount';
 import { escapePassed } from '#/bridge/overlays';
-import { passesToBrowser } from '#/runtime/browser-keys';
-import { type EditorRuntime } from '#/runtime/runtime';
-import { nodeChromeAt } from '#/runtime/view-bridge';
+import { type EditorPort, hasSurface, nodeChromeOf, passesToBrowser } from '#/runtime/port';
 import { pressesBinding } from '#/ui/shortcuts';
 
 interface ChromeFocus {
-    readonly runtime: EditorRuntime | undefined;
+    readonly runtime: EditorPort | undefined;
     /** The fixed toolbar, unless none renders or the editor is disabled. */
     readonly toolbar: HTMLElement | null;
     /** The toolbar of a plugin's standing overlay while it shows, such as a bubble at the caret. */
@@ -44,15 +42,14 @@ export const moveChromeFocus = (
     if (taken || passesToBrowser(event.nativeEvent) || runtime === undefined) {
         return;
     }
-    const { view } = runtime;
-    if (view === undefined) {
+    if (!hasSurface(runtime)) {
         return;
     }
     const stops: Stop[] = [];
     if (overlayToolbar !== null) {
         stops.push(overlayToolbar);
     }
-    const nodeChrome = nodeChromeAt(view);
+    const nodeChrome = nodeChromeOf(runtime);
     if (nodeChrome !== null) {
         stops.push(nodeChrome);
     }

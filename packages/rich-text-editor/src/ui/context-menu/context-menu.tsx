@@ -6,24 +6,10 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useEditorOverlay } from '#/bridge/overlays';
 import { type OverlayAnchor } from '#/bridge/plugin';
 import { SessionContext } from '#/bridge/session';
-import { type EditorRuntime } from '#/runtime/runtime';
+import { atomPositionAt, selectedNodePosition, surfaceElement } from '#/runtime/port';
 import { pressesBinding } from '#/ui/shortcuts';
 import { offeredRows, type ToolbarItem, type ToolbarStrings, useOfferedRows } from '#/ui/toolbar/item';
 import { MoreRow, useRowRuns } from '#/ui/toolbar/more';
-
-/** The position of the atom node, such as an image, whose view holds `target`, else `undefined`. */
-const atomAt = (view: NonNullable<EditorRuntime['view']>, target: Node): number | undefined => {
-    // A leaf view maps a node inside it to the position before or after its node.
-    const pos = view.posAtDOM(target, 0);
-    const { nodeBefore, nodeAfter } = view.state.doc.resolve(pos);
-    const candidates = [{ node: nodeAfter, at: pos }];
-    if (nodeBefore !== null) {
-        candidates.push({ node: nodeBefore, at: pos - nodeBefore.nodeSize });
-    }
-    return candidates.find(
-        ({ node, at }) => node !== null && node.isAtom && !node.isText && view.nodeDOM(at)?.contains(target) === true,
-    )?.at;
-};
 
 const preventDefault = (event: Event) => event.preventDefault();
 
@@ -69,19 +55,12 @@ export const ContextMenu = ({
     );
     // A row's control opens from the surface, which it then returns focus to.
     const runs = useRowRuns(contentRef, () => runtime?.handle.focus());
-    const view = runtime?.view;
+    const surface = surfaceElement(runtime);
     useEffect(() => {
-        if (runtime === undefined || view === undefined || disabled) {
+        if (runtime === undefined || surface === undefined || disabled) {
             return undefined;
         }
-        const surface = view.dom;
-        const selectedNode = () => {
-            const { selection } = runtime.state;
-            if ('node' in selection) {
-                return selection.from;
-            }
-            return undefined;
-        };
+        const selectedNode = () => selectedNodePosition(runtime);
         // With no row to run, the browser's own menu is the better one.
         const runnable = () =>
             offeredRows(items, runtime).some(({ command, payload }) => runtime.handle.query(command, payload).enabled);
@@ -94,7 +73,7 @@ export const ContextMenu = ({
             const target = event.target as Node | null;
             let atom: number | undefined;
             if (target !== null) {
-                atom = atomAt(view, target);
+                atom = atomPositionAt(runtime, target);
             }
             if (atom === undefined && selectedNode() === undefined) {
                 return;
@@ -124,7 +103,7 @@ export const ContextMenu = ({
             surface.removeEventListener('contextmenu', onContextMenu);
             surface.removeEventListener('keydown', onKeyDown);
         };
-    }, [runtime, view, disabled, open, items]);
+    }, [runtime, surface, disabled, open, items]);
     // Radix focuses the first item only for a menu a key opened, and the content for one a pointer opened.
     useEffect(() => {
         if (!open) {

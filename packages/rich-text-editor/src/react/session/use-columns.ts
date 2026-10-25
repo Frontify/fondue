@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { type readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
-import { type EditorRuntime } from '#/runtime/runtime';
+import { type EditorPort, isComposing } from '#/runtime/port';
 
 import { type ColumnsLayout, showColumns } from '../columns';
 
@@ -16,7 +16,7 @@ const COMPOSITION_WAIT_MS = 1000;
 
 /** The surface shows the presentation's columns while it has room for them, and the session reads both. */
 export const useColumns = (
-    live: EditorRuntime | undefined,
+    live: EditorPort | undefined,
     presentation: ReaderPresentation | undefined,
     t: ReturnType<typeof readerContext>['t'],
 ) => {
@@ -45,7 +45,7 @@ export const useColumns = (
             return undefined;
         }
         const holds = (write: () => void) => {
-            if (live.view?.composing !== true) {
+            if (!isComposing(live)) {
                 return false;
             }
             live.afterInput((outcome) => {

@@ -49,7 +49,7 @@ import {
     type ShippedCommands,
     type Snapshot,
     type Unsubscribe,
-} from '#/runtime/types';
+} from '#/runtime/port';
 
 export type { ColorToken, ListLevels, OperationMetric, PresentationStyle, StyleRecipe };
 

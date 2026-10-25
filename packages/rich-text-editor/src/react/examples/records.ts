@@ -3,7 +3,7 @@
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
 import { type ContentModel } from '#/model';
 import { type RichTextProfile } from '#/react/types';
-import { type LoadedDocument } from '#/runtime/types';
+import { type LoadedDocument } from '#/runtime/port';
 
 /** The content model of each shipped profile. */
 export const PROFILE_MODELS: Readonly<Record<RichTextProfile, ContentModel>> = {

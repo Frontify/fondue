@@ -14,8 +14,7 @@ import {
     type PluginPresentation,
 } from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
-import { referenceValues } from '#/runtime/capabilities/suggestions/references';
-import { contentChecksApi } from '#/runtime/editor-api';
+import { contentChecksOf, referenceValues, surfaceElement } from '#/runtime/port';
 
 import { type ReferenceService } from './types';
 
@@ -48,8 +47,8 @@ export const usePluginHosts = (sources: HostSources) => {
     const pluginOverlayRef = useRef<PluginOverlay>(undefined);
     const [hosts] = useState<EditorHosts>(() => {
         const { coordinator, scope, announcer, panels, openPanel } = sources;
-        const view = () => coordinator.runtime?.view;
-        const anchor = (target: AnchorTarget) => anchorOf(view, target);
+        const port = () => coordinator.runtime;
+        const anchor = (target: AnchorTarget) => anchorOf(port, target);
         let opened = 0;
         const showOverlay = (next: PluginOverlay | undefined) => {
             pluginOverlayRef.current = next;
@@ -87,7 +86,7 @@ export const usePluginHosts = (sources: HostSources) => {
                     if (runtime === undefined) {
                         return undefined;
                     }
-                    return contentChecksApi(runtime);
+                    return contentChecksOf(runtime);
                 },
             },
             overlays: {
@@ -114,7 +113,7 @@ export const usePluginHosts = (sources: HostSources) => {
             announce: (message, key) => announcer.announce(message, key),
             focus: () => coordinator.runtime?.handle.focus(),
             anchor,
-            surface: () => view()?.dom,
+            surface: () => surfaceElement(port()),
             testId: sources.testId,
             report: (diagnostic) => coordinator.runtime?.report(diagnostic),
             generation: () => coordinator.runtime?.handle.getSummary().session.generation,

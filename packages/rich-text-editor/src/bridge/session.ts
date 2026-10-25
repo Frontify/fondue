@@ -2,13 +2,13 @@
 
 import { createContext, useCallback, useContext, useRef, useSyncExternalStore } from 'react';
 
-import { type EditorRuntime } from '#/runtime/runtime';
+import { type EditorPort } from '#/runtime/port';
 
 import { useClientLayoutEffect } from './client-layout-effect';
 import { useRenderMark } from './dev-checks';
 
 /** The session of the editor around a hook once it is ready. */
-export const SessionContext = createContext<EditorRuntime | undefined>(undefined);
+export const SessionContext = createContext<EditorPort | undefined>(undefined);
 SessionContext.displayName = 'RichTextEditorSessionContext';
 
 /**
@@ -16,7 +16,7 @@ SessionContext.displayName = 'RichTextEditorSessionContext';
  * `read` gets `undefined` until the session is ready.
  */
 export const useSessionValue = <T>(
-    read: (runtime: EditorRuntime | undefined) => T,
+    read: (runtime: EditorPort | undefined) => T,
     isEqual: (previous: T, next: T) => boolean,
 ): T => {
     useRenderMark();

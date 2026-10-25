@@ -4,7 +4,7 @@ import { Component, type ComponentType, type ForwardedRef, forwardRef, type Reac
 
 import '#/styles/content.css';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
-import { type ShippedCommands } from '#/runtime/types';
+import { type ShippedCommands } from '#/runtime/port';
 
 import { useEditorLocale } from './locale';
 import { useCoarsePointer, useProfile } from './profiles';

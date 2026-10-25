@@ -8,8 +8,7 @@ import { type ToolbarControlProps } from '#/bridge/plugin';
 import { useSessionValue } from '#/bridge/session';
 import { type JsonValue } from '#/model';
 import { keyOn } from '#/model/platform';
-import { type EditorRuntime } from '#/runtime/runtime';
-import { endComposition } from '#/runtime/view-bridge';
+import { type EditorPort, endCompositionOf, selectedNodeNames } from '#/runtime/port';
 import { ariaShortcut, bindingHere, shortcutText } from '#/ui/shortcuts';
 
 /** One command of the presentation's toolbar, with the registry's label and icon unless `controls` replaced them. */
@@ -48,29 +47,9 @@ export interface ToolbarItem {
     readonly node?: string;
 }
 
-/** The types of the selected node and of every node around the selection, innermost first. */
-const selectedNodesOf = (session: EditorRuntime | undefined): readonly string[] => {
-    const sessionView = session?.view;
-    const selection = sessionView?.state.selection;
-    if (selection === undefined) {
-        return [];
-    }
-    const names: string[] = [];
-    if ('node' in selection) {
-        names.push((selection.node as { readonly type: { readonly name: string } }).type.name);
-    }
-    for (let depth = selection.$from.depth; depth >= 0; depth -= 1) {
-        names.push(selection.$from.node(depth).type.name);
-    }
-    return names;
-};
-
 /** The rows of `items` the selection offers: a node row only while its node type is selected and its command runs. */
-export const offeredRows = (
-    items: readonly ToolbarItem[],
-    session: EditorRuntime | undefined,
-): readonly ToolbarItem[] => {
-    const types = selectedNodesOf(session);
+export const offeredRows = (items: readonly ToolbarItem[], session: EditorPort | undefined): readonly ToolbarItem[] => {
+    const types = selectedNodeNames(session);
     return items.filter(
         ({ node, command, payload }) =>
             node === undefined || (types.includes(node) && session?.handle.query(command, payload).enabled === true),
@@ -109,13 +88,13 @@ export const Icon = ({ name }: { readonly name: string }) => {
  * input has settled.
  */
 export const runItem = async (
-    runtime: EditorRuntime,
+    runtime: EditorPort,
     { command, payload }: ToolbarItem,
     keptFocus: boolean,
 ): Promise<void> => {
     if (runtime.handle.getSnapshot().compositionActive) {
         if (keptFocus) {
-            endComposition(runtime.view);
+            endCompositionOf(runtime);
         }
         await runtime.handle.enqueue(command, payload);
         return;
@@ -127,7 +106,7 @@ export const runItem = async (
  * Returns focus to the surface unless the author moved it elsewhere meanwhile: it may still sit on the control, on the
  * body where Firefox and Safari on macOS leave a click's focus, or inside one of `within`.
  */
-export const returnFocus = (runtime: EditorRuntime, within: readonly (Element | null)[]): void => {
+export const returnFocus = (runtime: EditorPort, within: readonly (Element | null)[]): void => {
     const { activeElement, body } = document;
     if (activeElement === body || within.some((element) => element !== null && element.contains(activeElement))) {
         runtime.handle.focus();
@@ -136,7 +115,7 @@ export const returnFocus = (runtime: EditorRuntime, within: readonly (Element | 
 
 /** Runs `item` from its toolbar `control`, then returns focus to the surface unless the command moved it elsewhere. */
 export const pressItem = async (
-    runtime: EditorRuntime,
+    runtime: EditorPort,
     item: ToolbarItem,
     control: HTMLElement,
     keepsFocus: boolean,

@@ -1,20 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorRuntime } from '#/runtime/runtime';
 import {
     type CommandArgs,
     type CommandKey,
     type CommandState,
+    type EditorPort,
     type SelectionSummary,
     type ShippedCommands,
-} from '#/runtime/types';
+} from '#/runtime/port';
 
 import { useSessionValue } from './session';
 
 // What the selection reads before the session is ready, as during `mounting`.
 const NO_SELECTION: SelectionSummary = { kind: 'none', collapsed: true, blockType: null, selectedNodeId: null };
 
-const selectionOf = (runtime: EditorRuntime | undefined): SelectionSummary => {
+const selectionOf = (runtime: EditorPort | undefined): SelectionSummary => {
     if (runtime === undefined) {
         return NO_SELECTION;
     }

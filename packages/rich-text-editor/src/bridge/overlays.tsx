@@ -13,7 +13,8 @@ import {
     useSyncExternalStore,
 } from 'react';
 
-import { type EditorRuntime } from '#/runtime/runtime';
+import { type EditorPort } from '#/runtime/port';
+import { engineOf } from '#/runtime/port-engine';
 
 import { createSelectionAnchor } from './anchor';
 import { useClientLayoutEffect } from './client-layout-effect';
@@ -138,7 +139,8 @@ const leaveOnTab = (event: KeyboardEvent) => {
  * opened, such as the chrome button that opened a dialog, or, when that is the surface, `null` or gone, to the surface
  * at ProseMirror's selection, which it maps through every change made meanwhile.
  */
-const refocus = (runtime: EditorRuntime, before: Element | null, panelControl: Element | null) => {
+const refocus = (port: EditorPort, before: Element | null, panelControl: Element | null) => {
+    const runtime = engineOf(port);
     const { view } = runtime;
     if (view === undefined) {
         return;
@@ -202,7 +204,13 @@ export const useHeldOverlay = (
     }, []);
     const [anchor] = useState(() =>
         createSelectionAnchor(
-            () => runtimeRef.current?.view,
+            () => {
+                const live = runtimeRef.current;
+                if (live === undefined) {
+                    return undefined;
+                }
+                return engineOf(live).view;
+            },
             () => targetRef.current,
         ),
     );

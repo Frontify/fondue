@@ -1,8 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { INSERT_IMAGE, REPLACE_IMAGE } from '#/runtime/capabilities/media/media';
-import { type EditorRuntime } from '#/runtime/runtime';
-import { type SelectionHandle, type SessionToken } from '#/runtime/types';
+import { type EditorPort, INSERT_IMAGE, REPLACE_IMAGE, type SelectionHandle, type SessionToken } from '#/runtime/port';
 
 /** The feature whose images the picker inserts and refills. */
 export const IMAGE_FEATURE = 'media.image';
@@ -23,7 +21,7 @@ export interface AssetPicker {
  * then, nothing changes and `removed` hears why. Focus returns to the surface once the picker answers.
  */
 export const pickAsset = (
-    runtime: EditorRuntime,
+    runtime: EditorPort,
     picker: AssetPicker,
     options: { readonly nodeId?: string; readonly removed: (kind: 'target' | 'image') => void },
 ): void => {

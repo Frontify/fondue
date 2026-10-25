@@ -2,12 +2,7 @@
 
 import { isolate } from '#/bridge/announcer';
 import { type CodecContext, type ResourceLimits } from '#/model';
-import {
-    MAX_IMAGE_SIDE,
-    megabytes,
-    type UploadEvent,
-    type UploadRejection,
-} from '#/runtime/capabilities/media/uploads';
+import { MAX_IMAGE_SIDE, megabytes, type UploadEvent, type UploadRejection } from '#/runtime/port';
 
 // The names authors know the accepted media types by.
 const TYPE_NAMES: Readonly<Record<string, string>> = {

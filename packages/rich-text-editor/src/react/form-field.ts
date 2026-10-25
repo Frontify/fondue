@@ -4,8 +4,7 @@ import { type Ref, useMemo } from 'react';
 
 import { type RichTextDocument } from '#/model';
 import { type LoadedDocument, type ReplaceResult } from '#/persistence/types';
-import { runtimeOf } from '#/runtime/runtime';
-import { type ShippedCommands } from '#/runtime/types';
+import { portOfHandle, type ShippedCommands } from '#/runtime/port';
 
 import { type EditorHandle } from './types';
 import { validityOf } from './validity';
@@ -48,7 +47,7 @@ export const useRichTextFormField = <C extends object = ShippedCommands>(
                 throw new Error(NOT_MOUNTED);
             }
             const handle = ref.current;
-            const runtime = runtimeOf(handle);
+            const runtime = portOfHandle(handle);
             const read = fieldProps.get(handle);
             if (runtime === undefined || read === undefined) {
                 throw new Error(NOT_MOUNTED);

@@ -9,7 +9,7 @@ import { type PanelComponentProps } from '#/bridge/define';
 import { type ReactWork, ReactWorkContext } from '#/bridge/dev-checks';
 import { TABBABLE } from '#/bridge/overlays';
 import { type CodecContext } from '#/model';
-import { passesToBrowser } from '#/runtime/browser-keys';
+import { passesToBrowser } from '#/runtime/port';
 
 import styles from './styles/panels.module.scss';
 

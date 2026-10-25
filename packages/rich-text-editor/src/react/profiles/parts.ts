@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type FeaturePolicy } from '#/runtime/types';
+import { type FeaturePolicy } from '#/runtime/port';
 
 import { type CompiledEditorDefinition, type ReactPresentation } from '../types';
 

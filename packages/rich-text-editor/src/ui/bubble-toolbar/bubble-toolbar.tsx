@@ -10,9 +10,7 @@ import { passEscape, useHeldOverlay, useScopedFocus } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
 import { ChromeBoundary, NO_ATTRS } from '#/bridge/portal-host';
 import { SessionContext, useSessionValue } from '#/bridge/session';
-import { type EditorRuntime } from '#/runtime/runtime';
-import { type SelectionSummary } from '#/runtime/types';
-import { selectionRect } from '#/runtime/view-bridge';
+import { type EditorPort, hasSurface, type SelectionSummary, selectionRectOf, selectionSpan } from '#/runtime/port';
 import { ariaShortcut } from '#/ui/shortcuts';
 import { TextStyle } from '#/ui/toolbar/text-style';
 import { Item, More, type ModeSwitch, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
@@ -23,24 +21,26 @@ import styles from './styles/bubble-toolbar.module.scss';
 const OUT_OF_TAB_ORDER = -1;
 
 /** Where the selection is, so a command that only maps it, as Mod+B does, leaves the toolbar as it was. */
-const selectionOf = (runtime: EditorRuntime | undefined): string => {
+const selectionOf = (runtime: EditorPort | undefined): string => {
     if (runtime === undefined) {
         return '';
     }
-    const { anchor, head } = runtime.state.selection;
+    const { anchor, head } = selectionSpan(runtime);
     return `${anchor} ${head}`;
 };
 
 // A closed or requested range keys the value too: the store compares to its last notification, not the rendered value.
-const renderKeyOf = (runtime: EditorRuntime | undefined, closedAt: string | null, shownAt: string | null): string => {
-    if (runtime === undefined || runtime.view === undefined) {
+const renderKeyOf = (runtime: EditorPort | undefined, closedAt: string | null, shownAt: string | null): string => {
+    if (runtime === undefined || !hasSurface(runtime)) {
         return 'none';
     }
     const key = selectionOf(runtime);
     let rect = 'none';
-    if (!runtime.state.selection.empty || shownAt === key) {
-        const { left, top, width, height } = selectionRect(runtime.view);
-        rect = `${left} ${top} ${width} ${height}`;
+    if (!selectionSpan(runtime).empty || shownAt === key) {
+        const box = selectionRectOf(runtime);
+        if (box !== undefined) {
+            rect = `${box.left} ${box.top} ${box.width} ${box.height}`;
+        }
     }
     if (closedAt !== null || shownAt !== null) {
         return `${rect} ${key}`;

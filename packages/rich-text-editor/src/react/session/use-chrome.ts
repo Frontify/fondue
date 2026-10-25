@@ -10,7 +10,7 @@ import { type EditorHosts } from '#/bridge/plugin';
 import { enUS } from '#/locales/en-US';
 import { codecContext } from '#/model/output';
 import { readerContext } from '#/reader/context';
-import { UPLOAD_FEATURE } from '#/runtime/capabilities/media/uploads';
+import { UPLOAD_FEATURE } from '#/runtime/port';
 import { referenceListStrings } from '#/ui/suggestions/suggestion-list';
 
 import { moveChromeFocus } from '../chrome-focus';

@@ -615,7 +615,18 @@ const CASES: readonly Case[] = [
     banned('react: the testing layer', 'src/react/testing.tsx', "import { render } from '#/testing/render';"),
     banned('react: react-dom', 'src/react/dom.tsx', "import { createRoot } from 'react-dom/client';"),
     banned('react: the engine', 'src/react/engine.tsx', "import { EditorView } from 'prosemirror-view';"),
-    allowed('react: runtime', 'src/react/runtime.tsx', "import { run } from '#/runtime/run';"),
+    allowed('react: the runtime port', 'src/react/port.tsx', "import { type EditorPort } from '#/runtime/port';"),
+    banned('react: another runtime module', 'src/react/runtime.tsx', "import { run } from '#/runtime/run';"),
+    banned(
+        'react: another runtime module by relative path',
+        'src/react/runtime-relative.tsx',
+        "import { run } from '../runtime/run';",
+    ),
+    banned(
+        'react: the port engine file',
+        'src/react/port-engine.tsx',
+        "import { engineOf } from '#/runtime/port-engine';",
+    ),
     allowed('react: react', 'src/react/react.tsx', "import { memo } from 'react';"),
 
     // persistence
@@ -667,15 +678,17 @@ const CASES: readonly Case[] = [
         'src/ui/runtime-relative.ts',
         "import { createRuntime } from '../runtime/runtime';",
     ),
-    allowed(
-        'ui: an inline type import of the runtime module',
-        'src/ui/runtime-inline-type.ts',
-        "import { type EditorRuntime } from '#/runtime/runtime';",
-    ),
-    allowed(
+    banned(
         'ui: a type import of the runtime module',
         'src/ui/runtime-type.ts',
         "import type { EditorRuntime } from '#/runtime/runtime';",
+    ),
+    banned('ui: the port engine file', 'src/ui/port-engine.ts', "import { engineOf } from '#/runtime/port-engine';"),
+    allowed('ui: the runtime port', 'src/ui/port.ts', "import { type EditorPort } from '#/runtime/port';"),
+    allowed(
+        'ui: the runtime port by relative path',
+        'src/ui/port-relative.ts',
+        "import { type EditorPort } from '../runtime/port';",
     ),
     banned('ui: the engine', 'src/ui/engine.ts', "import { EditorState } from 'prosemirror-state';"),
     banned('ui: the react layer', 'src/ui/react-layer.ts', "import { Editor } from '#/react/editor';"),

@@ -8,7 +8,7 @@ import { useScopedFocus } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
 import { useSessionValue } from '#/bridge/session';
 import { contentClasses } from '#/model/output';
-import { type EditorRuntime, isEmpty } from '#/runtime/runtime';
+import { type EditorPort, isEmptyDocument } from '#/runtime/port';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { usePanelController } from '#/ui/panels/context';
 import { shortcutText } from '#/ui/shortcuts';
@@ -48,11 +48,11 @@ const submitHint = (submits: boolean, definition: CompiledEditorDefinition<objec
     return undefined;
 };
 
-const emptiness = (runtime: EditorRuntime | undefined) => {
+const emptiness = (runtime: EditorPort | undefined) => {
     if (runtime === undefined) {
         return undefined;
     }
-    return isEmpty(runtime.state);
+    return isEmptyDocument(runtime);
 };
 
 /**

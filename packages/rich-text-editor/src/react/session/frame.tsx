@@ -11,7 +11,7 @@ import { PortalHost } from '#/bridge/portal-host';
 import { type PortalStore } from '#/bridge/portals';
 import { SessionContext } from '#/bridge/session';
 import { type readerContext } from '#/reader/context';
-import { type EditorRuntime } from '#/runtime/runtime';
+import { type EditorPort } from '#/runtime/port';
 import { VISUALLY_HIDDEN } from '#/styles/visually-hidden';
 import { ContextMenu } from '#/ui/context-menu/context-menu';
 import { PanelContext, type PanelController } from '#/ui/panels/context';
@@ -31,7 +31,7 @@ type ChromeContext = ReturnType<typeof readerContext>;
 interface ProviderValues {
     readonly root: RootContextValue;
     readonly hosts: EditorHosts;
-    readonly live: EditorRuntime | undefined;
+    readonly live: EditorPort | undefined;
     readonly work: ReactWork | undefined;
     readonly announcer: Announcer;
     readonly overlays: Overlays;
@@ -129,7 +129,7 @@ export interface FrameProps {
     readonly rootRef: MutableRefObject<HTMLDivElement | null>;
     readonly lang: string;
     readonly testId: string;
-    readonly live: EditorRuntime | undefined;
+    readonly live: EditorPort | undefined;
     readonly coordinator: MountCoordinator;
     readonly onKeyDown: KeyboardEventHandler<HTMLDivElement>;
     readonly work: ReactWork | undefined;

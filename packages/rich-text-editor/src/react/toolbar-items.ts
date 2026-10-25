@@ -6,7 +6,7 @@ import { type CodecContext, type CommandRef, type JsonValue, type PresentationSt
 import { canonicalJson } from '#/model/hash';
 import { isPlatformBinding } from '#/model/platform';
 import { cssValue, isPresentationStyle } from '#/model/styles';
-import { type AuthoringPolicy } from '#/runtime/types';
+import { type AuthoringPolicy } from '#/runtime/port';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 
 import { type ReactPresentation } from './types';

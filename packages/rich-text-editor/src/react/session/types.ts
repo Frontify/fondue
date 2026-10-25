@@ -8,7 +8,7 @@ import { type TreeNode } from '#/model/content';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { type readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
-import { type RuntimeHandle } from '#/runtime/runtime';
+import { type RuntimeHandle } from '#/runtime/port';
 import { type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
 import { type CompiledEditorDefinition, type RichTextEditorProps, type ToolbarMode } from '../types';

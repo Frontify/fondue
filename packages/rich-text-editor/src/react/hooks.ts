@@ -3,7 +3,7 @@
 import { useContext } from 'react';
 
 import { SessionContext } from '#/bridge/session';
-import { type ShippedCommands } from '#/runtime/types';
+import { type ShippedCommands } from '#/runtime/port';
 
 import { type EditorHandle } from './types';
 

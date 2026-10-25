@@ -1,26 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorRuntime } from '#/runtime/runtime';
+import { type EditorPort } from '#/runtime/port';
+import { engineOf } from '#/runtime/port-engine';
 
 import { type ChromeView, createChromeView } from './chrome-view';
 import { markReady } from './dev-checks';
 
 export interface MountCoordinator {
-    readonly runtime: EditorRuntime | undefined;
+    readonly runtime: EditorPort | undefined;
     /** What chrome sets on the view, which each view this coordinator attaches takes. */
     readonly chrome: ChromeView;
     /** The surface element's ref: attaching shows the runtime's view in it, detaching destroys that view at once. */
     readonly setSurface: (element: HTMLElement | null) => void;
-    start(runtime: EditorRuntime): void;
+    start(runtime: EditorPort): void;
     stop(): void;
 }
 
 /** Attaches the running session's view to whichever surface element is mounted, so neither waits for the other. */
 export const createMountCoordinator = (): MountCoordinator => {
     let surface: HTMLElement | null = null;
-    let current: EditorRuntime | undefined;
+    let current: EditorPort | undefined;
     const chrome = createChromeView();
-    const attach = (runtime: EditorRuntime, element: HTMLElement) => {
+    const attach = (port: EditorPort, element: HTMLElement) => {
+        const runtime = engineOf(port);
         runtime.attach(element, chrome.props(element, runtime.nodeViews, runtime.nextDomId));
         if (runtime.view !== undefined) {
             chrome.take(runtime.view);

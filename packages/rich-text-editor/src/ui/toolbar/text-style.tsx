@@ -8,7 +8,7 @@ import { CheckedSlot, keepFocus } from '#/bridge/chrome-toolbar';
 import { useOverlayContainer } from '#/bridge/overlays';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { isRecord } from '#/model/values';
-import { type EditorRuntime } from '#/runtime/runtime';
+import { type EditorPort, selectionBlockName } from '#/runtime/port';
 
 import { returnFocus, runItem, tabStop, type ToolbarItem } from './item';
 import styles from './styles/toolbar.module.scss';
@@ -16,16 +16,10 @@ import styles from './styles/toolbar.module.scss';
 type Row = NonNullable<ToolbarItem['options']>[number];
 
 /** The type of the block that holds the selection's start, which the brand style rows apply to. */
-export const blockTypeOf = (session: EditorRuntime | undefined): string => {
-    const view = session?.view;
-    if (view === undefined) {
-        return '';
-    }
-    return view.state.selection.$from.parent.type.name;
-};
+export const blockTypeOf = (session: EditorPort | undefined): string => selectionBlockName(session);
 
 /** The index in `rows` of the row whose command is active, preferring one other than `fallback`, or -1. */
-const activeIn = (session: EditorRuntime | undefined, rows: readonly Row[], fallback: (row: Row) => boolean) => {
+const activeIn = (session: EditorPort | undefined, rows: readonly Row[], fallback: (row: Row) => boolean) => {
     if (session === undefined) {
         return -1;
     }

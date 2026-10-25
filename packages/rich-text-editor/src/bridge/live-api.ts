@@ -2,17 +2,18 @@
 
 import { type DocumentApi } from '#/runtime/document-api';
 import { type CommandContext, type CommandSession, liveDocumentApi } from '#/runtime/editor-api';
-import { type EditorRuntime } from '#/runtime/runtime';
+import { type EditorPort } from '#/runtime/port';
+import { engineOf } from '#/runtime/port-engine';
 
 import { type EditorApi, type EditorHosts } from './plugin';
 
-const apis = new WeakMap<EditorRuntime, WeakMap<EditorHosts, EditorApi>>();
-const documents = new WeakMap<EditorRuntime, DocumentApi>();
+const apis = new WeakMap<EditorPort, WeakMap<EditorHosts, EditorApi>>();
+const documents = new WeakMap<EditorPort, DocumentApi>();
 
 const withHosts = (document: DocumentApi, hosts: EditorHosts): EditorApi => Object.assign({ ...document }, hosts);
 
 /** The live API of `runtime` with `hosts`, one per pair. */
-export const editorApiOf = (runtime: EditorRuntime, hosts: EditorHosts): EditorApi => {
+export const editorApiOf = (runtime: EditorPort, hosts: EditorHosts): EditorApi => {
     let byHosts = apis.get(runtime);
     if (byHosts === undefined) {
         byHosts = new WeakMap();
@@ -23,7 +24,7 @@ export const editorApiOf = (runtime: EditorRuntime, hosts: EditorHosts): EditorA
         // One document API per session, so its members keep their identity when the hosts change with the locale.
         let document = documents.get(runtime);
         if (document === undefined) {
-            document = liveDocumentApi(runtime);
+            document = liveDocumentApi(engineOf(runtime));
             documents.set(runtime, document);
         }
         api = withHosts(document, hosts);

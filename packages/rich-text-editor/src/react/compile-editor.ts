@@ -32,11 +32,18 @@ import { attributesOf, compiledModel } from '#/model/compile';
 import { limitsOf } from '#/model/decode';
 import { pointer } from '#/model/errors';
 import { type ReaderOverrides } from '#/reader/plan';
-import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
-import { clipboardPlugin, dropCursorPlugin, type FileIntake } from '#/runtime/clipboard/plugin';
-import { pluginCommand, rangeOf } from '#/runtime/editor-api';
-import { authoringOf } from '#/runtime/policy';
-import { runtimeOfView } from '#/runtime/runtime';
+import {
+    authoringOf,
+    clipboardPlugin,
+    dropCursorPlugin,
+    type FileIntake,
+    performIn,
+    pluginCommand,
+    portOfView,
+    rangeOfPort,
+    RUNTIME_PLUGINS,
+    sessionCommand,
+} from '#/runtime/port';
 
 import {
     type CommandsOfPlugins,
@@ -100,7 +107,7 @@ const collectPlugins = (model: ContentModel, units: readonly RichTextPlugin[]): 
 const engineSuggestion = ({ search, available, ...list }: EditorSuggestion): Omit<EngineSuggestion, 'featureId'> => ({
     ...list,
     available: ({ view, host }) => {
-        const runtime = runtimeOfView(view);
+        const runtime = portOfView(view);
         if (runtime === undefined) {
             return false;
         }
@@ -110,7 +117,7 @@ const engineSuggestion = ({ search, available, ...list }: EditorSuggestion): Omi
         return available(editorApiOf(runtime, host as EditorHosts));
     },
     search: async (query, { view, host, signal, cursor }) => {
-        const runtime = runtimeOfView(view);
+        const runtime = portOfView(view);
         if (runtime === undefined) {
             throw new Error('The list has no session.');
         }
@@ -153,7 +160,7 @@ const extensionOf = (model: ContentModel, plugin: EditorPart): EngineExtension =
 
 /** Runs a key's plugin command through the `execute` of the session the key reached. */
 const executeFor: NonNullable<Parameters<typeof compileDefinition>[1]>['execute'] = (view, id, payload) => {
-    const runtime = runtimeOfView(view);
+    const runtime = portOfView(view);
     if (runtime === undefined) {
         return false;
     }
@@ -162,30 +169,28 @@ const executeFor: NonNullable<Parameters<typeof compileDefinition>[1]>['execute'
 
 /** Runs a key handler through the commit path of the session the key reached, as one edit with no command ID. */
 const handleKeyFor: NonNullable<Parameters<typeof compileDefinition>[1]>['handleKey'] = (view, handler) => {
-    const runtime = runtimeOfView(view);
+    const runtime = portOfView(view);
     if (runtime === undefined) {
         return false;
     }
-    return runtime.perform(handler).status !== 'rejected';
+    return performIn(runtime, handler);
 };
 
 /** Hands pasted or dropped files to the first part whose `files` takes them, each run as a command with no ID. */
 const intakeOf =
     (model: ContentModel, plugins: readonly EditorPart[]): FileIntake =>
     (view, files, origin, from, to) => {
-        const runtime = runtimeOfView(view);
+        const runtime = portOfView(view);
         if (runtime === undefined) {
             return false;
         }
-        const { schema, commands } = runtime.definition;
-        const range = rangeOf(runtime.state.doc, from, to);
+        const range = rangeOfPort(runtime, from, to);
         return plugins.some(({ files: take }) => {
             if (take === undefined) {
                 return false;
             }
             const run = (api: EditorApi) => take(api, files, { origin, range });
-            const command = pluginCommand({ run }, model, schema, (id) => commands.get(id), commandApiOf);
-            return runtime.perform(command).status !== 'rejected';
+            return performIn(runtime, sessionCommand(runtime, run, model, commandApiOf));
         });
     };
 

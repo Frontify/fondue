@@ -16,10 +16,17 @@ import { codecContext } from '#/model/output';
 import { randomId } from '#/model/random-id';
 import { createSaveCoordinator } from '#/persistence/coordinator';
 import { type LoadedDocument } from '#/persistence/types';
-import { type UploadPlace } from '#/runtime/capabilities/media/uploads';
-import { connectClipboard } from '#/runtime/clipboard/plugin';
-import { createEditorRuntime, type EditorRuntime, type EditorRuntimeOptions } from '#/runtime/runtime';
-import { type DocumentChange, type SelectionSummary, type SessionToken } from '#/runtime/types';
+import {
+    connectClipboardTo,
+    createPort,
+    type DocumentChange,
+    type EditorPort,
+    type EditorRuntimeOptions,
+    type SelectionSummary,
+    type SessionToken,
+    surfaceElement,
+    type UploadPlace,
+} from '#/runtime/port';
 import { pickAsset } from '#/ui/media/asset-picker';
 import { uploadMessage } from '#/ui/media/upload-messages';
 
@@ -51,7 +58,7 @@ interface SessionWiring {
     readonly chooserRef: MutableRefObject<HTMLInputElement | null>;
     readonly choosingRef: MutableRefObject<Choosing | undefined>;
     readonly handleRef: MutableRefObject<EditorHandle<object> | null>;
-    readonly setLive: (runtime: EditorRuntime | undefined) => void;
+    readonly setLive: (runtime: EditorPort | undefined) => void;
     readonly setFaulted: (document: RichTextDocument) => void;
     readonly onSession: (session: RecoverySession) => void;
 }
@@ -62,7 +69,7 @@ type SaveCoordinator = ReturnType<typeof createSaveCoordinator>;
 /** The host asset picker, else the file chooser, for a new figure or for the image `nodeId`. */
 const pickerOf =
     ({ latestRef, chooserRef, choosingRef, announcer }: SessionWiring) =>
-    (session: EditorRuntime, nodeId: string | undefined) => {
+    (session: EditorPort, nodeId: string | undefined) => {
         const picker = memberOf(latestRef.current.services, 'assets');
         // Without a host picker the file chooser opens, whose files upload through `services.uploads`.
         if (picker === undefined) {
@@ -131,14 +138,14 @@ const buildRuntime = (
     decoded: Decoded,
     saves: EditorRuntimeOptions['saves'],
     ids: NonNullable<EditorRuntimeOptions['generateId']>,
-): EditorRuntime => {
+): EditorPort => {
     const { mounted, loaded, coordinator, portals, work, announcer, hosts, latestRef } = wiring;
     const { definition } = mounted;
     const { t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
     const engine = engineOf(definition);
     const profile = profileOf(definition);
     const openPicker = pickerOf(wiring);
-    const runtime: EditorRuntime = createEditorRuntime({
+    const runtime: EditorPort = createPort({
         definition: engine,
         documentId: loaded.documentId,
         tree: decoded.tree,
@@ -198,7 +205,7 @@ const buildRuntime = (
 };
 
 /** Each event calls the newest callback the host passed. */
-const subscribeSession = (runtime: EditorRuntime, { latestRef, announcer, setLive, setFaulted }: SessionWiring) => {
+const subscribeSession = (runtime: EditorPort, { latestRef, announcer, setLive, setFaulted }: SessionWiring) => {
     // A gap cursor shows no caret to a screen reader, so moving onto one is announced.
     let atGap = false;
     runtime.handle.subscribe('selectionChange', (selection: SelectionSummary) => {
@@ -211,8 +218,8 @@ const subscribeSession = (runtime: EditorRuntime, { latestRef, announcer, setLiv
     });
     runtime.handle.subscribe('ready', (session: SessionToken) => {
         setLive(runtime);
-        const { view } = runtime;
-        if (process.env.NODE_ENV !== 'production' && view !== undefined && sharesName(view.dom)) {
+        const surface = surfaceElement(runtime);
+        if (process.env.NODE_ENV !== 'production' && surface !== undefined && sharesName(surface)) {
             runtime.report({
                 code: 'react.duplicate-accessible-name',
                 severity: 'warning',
@@ -240,7 +247,7 @@ const startSession = (wiring: SessionWiring, decoded: Decoded) => {
     const ids = latestRef.current.generateId ?? randomId;
     const saving = savesOf(wiring, engine, ids);
     const runtime = buildRuntime(wiring, decoded, saving.saves, ids);
-    connectClipboard(runtime, {
+    connectClipboardTo(runtime, {
         singleLine: profileOf(mounted.definition) === 'inline',
         sliceContext: () => {
             const { presentation } = latestRef.current;

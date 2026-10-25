@@ -4,8 +4,7 @@ import { type ForwardedRef, forwardRef, useCallback, useImperativeHandle, useRef
 
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { useOverlayRoot } from '#/bridge/overlay-root';
-import { type EditorRuntime } from '#/runtime/runtime';
-import { resyncSelection } from '#/runtime/view-bridge';
+import { type EditorPort, resyncSelectionOf } from '#/runtime/port';
 
 import { useEscapeToSurface } from '../chrome-focus';
 import { useKeyboardInset } from '../keyboard-inset';
@@ -36,7 +35,7 @@ const SessionComponent = (
     const { generatedId, toolbarRef, langRef, handleRef, bubbleRef, showBubbleRef } = refs;
     const { overlayToolbarsRef, tRef, chooserRef, choosingRef } = refs;
     // The session once it is ready, which the parts and hooks read.
-    const [live, setLive] = useState<EditorRuntime>();
+    const [live, setLive] = useState<EditorPort>();
     const latestRef = useRef(props);
     const {
         rootRef,
@@ -93,7 +92,7 @@ const SessionComponent = (
     usePresentationSync(props, coordinator, handleRef, rootRef);
     useChangeWatch(props, mounted, coordinator);
 
-    const onFlush = useCallback(() => resyncSelection(coordinator.runtime?.view), [coordinator]);
+    const onFlush = useCallback(() => resyncSelectionOf(coordinator.runtime), [coordinator]);
 
     const onKeyDown = chromeKeyDownOf({
         props,

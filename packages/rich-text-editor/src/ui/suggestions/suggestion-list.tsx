@@ -10,15 +10,16 @@ import { useEditorOverlay } from '#/bridge/overlays';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { type CodecContext } from '#/model';
 import {
-    acceptSuggestion,
+    acceptSuggestionIn,
     type ActiveSuggestion,
-    activeSuggestion,
-    dismissSuggestion,
-    moveSuggestion,
+    activeSuggestionOf,
+    dismissSuggestionIn,
+    type EditorPort,
+    hasSurface,
+    moveSuggestionIn,
     type SuggestionItem,
-} from '#/runtime/capabilities/suggestions/plugin';
-import { rangeOf } from '#/runtime/editor-api';
-import { type EditorRuntime } from '#/runtime/runtime';
+    suggestionAnchorRange,
+} from '#/runtime/port';
 
 import styles from './styles/suggestions.module.scss';
 
@@ -58,11 +59,11 @@ export const referenceListStrings = (t: CodecContext['t']): ReferenceListStrings
     both: (first, second) => t('RichTextEditor_announceBoth', { first, second }),
 });
 
-const activeOf = (runtime: EditorRuntime | undefined): ActiveSuggestion | null => {
+const activeOf = (runtime: EditorPort | undefined): ActiveSuggestion | null => {
     if (runtime === undefined) {
         return null;
     }
-    return activeSuggestion(runtime.state);
+    return activeSuggestionOf(runtime);
 };
 
 /** What the list shows, so a commit that only maps the range leaves it as it was. */
@@ -252,17 +253,8 @@ export const SuggestionList = ({
         open = active.items.length > 0 || active.status !== 'loading' || slow;
     }
     // The list sits below its trigger, and hides while a scrolling ancestor clips it, as other overlays do.
-    const overlay = useEditorOverlay(open, IGNORE_CLOSE, () => {
-        const current = activeOf(runtimeRef.current);
-        const surface = runtimeRef.current?.view;
-        const doc = surface?.state.doc;
-        if (current === null || doc === undefined) {
-            return undefined;
-        }
-        return rangeOf(doc, current.from, current.from);
-    });
-    const view = runtime?.view;
-    if (runtime === undefined || view === undefined || active === null) {
+    const overlay = useEditorOverlay(open, IGNORE_CLOSE, () => suggestionAnchorRange(runtimeRef.current));
+    if (runtime === undefined || !hasSurface(runtime) || active === null) {
         return null;
     }
     const listLabel = nameOf(active.name);
@@ -277,7 +269,7 @@ export const SuggestionList = ({
                 padding="tight"
                 onOpenAutoFocus={(event) => event.preventDefault()}
                 // Radix hears Escape on the document before the surface does and prevents it, so it closes the list here.
-                onEscapeKeyDown={() => dismissSuggestion(view)}
+                onEscapeKeyDown={() => dismissSuggestionIn(runtime)}
             >
                 <StatusRow active={active} slow={slow} strings={strings} />
                 {options.length > 0 && (
@@ -286,8 +278,8 @@ export const SuggestionList = ({
                         label={listLabel}
                         options={options}
                         index={active.index}
-                        onPick={(index) => acceptSuggestion(view, index)}
-                        onActivate={(index) => moveSuggestion(view, index)}
+                        onPick={(index) => acceptSuggestionIn(runtime, index)}
+                        onActivate={(index) => moveSuggestionIn(runtime, index)}
                         testId={`${testId}-suggestions`}
                     />
                 )}
