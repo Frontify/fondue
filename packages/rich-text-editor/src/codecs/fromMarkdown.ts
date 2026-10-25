@@ -13,10 +13,10 @@ import {
 } from '#/model';
 import { attributesOf, encodeTree, isValidValue } from '#/model/internal';
 
-import { Builder, type Frame } from './markdown-builder';
-import { inlineNodes, TASK } from './markdown-inline';
+import { Builder, type Frame } from './markdownBuilder';
+import { inlineNodes, TASK } from './markdownInline';
 
-export { inlineToken } from './markdown-inline';
+export { inlineToken } from './markdownInline';
 
 /** One dialect: CommonMark with GFM tables and strikethrough, raw HTML off, `http`, `https` and email literals linked. */
 // markdown-it's own link check refuses this scheme, so the destination stays literal text.

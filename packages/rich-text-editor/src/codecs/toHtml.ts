@@ -47,7 +47,7 @@ import {
     type ResolveReference,
 } from '#/model/internal';
 
-import { build, checkOverrideSpec, checkOverrideTags, escapeHtml } from './html-markup';
+import { build, checkOverrideSpec, checkOverrideTags, escapeHtml } from './htmlMarkup';
 import { type CodecPlan, Losses } from './plan';
 import { keepMark, noteNode, reportFailure } from './walk';
 

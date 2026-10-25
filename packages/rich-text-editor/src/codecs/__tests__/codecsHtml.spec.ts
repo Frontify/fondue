@@ -12,7 +12,7 @@ import { compileContentModel, defineFeature, type JsonValue, type RichTextDocume
 import { fixturesIn, renderReader } from '../../reader/__tests__/helpers/helpers';
 import { createCodecs } from '../codecs';
 
-import { requires, testDocument, codesOf } from './fixtures/codec-documents';
+import { requires, testDocument, codesOf } from './fixtures/codecDocuments';
 import { semanticCodecs, stored } from './helpers/helpers';
 
 describe('toHTML', () => {

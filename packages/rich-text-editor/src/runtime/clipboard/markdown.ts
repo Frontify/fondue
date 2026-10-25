@@ -2,7 +2,7 @@
 
 import { Fragment, type Schema } from 'prosemirror-model';
 
-import type * as FromMarkdown from '#/codecs/from-markdown';
+import type * as FromMarkdown from '#/codecs/fromMarkdown';
 import { type ContentModel, type ResourceLimits } from '#/model';
 import { markHrefPolicy, decodeToTree, randomId } from '#/model/internal';
 
@@ -17,7 +17,7 @@ let reader: MarkdownReader | undefined;
 
 /** Loads the Markdown reader, which keeps `markdown-it` out of the editor's initial load. */
 export const loadMarkdownReader = async (): Promise<void> => {
-    reader ??= await import('#/codecs/from-markdown');
+    reader ??= await import('#/codecs/fromMarkdown');
 };
 
 /** Starts `loadMarkdownReader` when the page is idle; the returned function cancels a start that has not run. */

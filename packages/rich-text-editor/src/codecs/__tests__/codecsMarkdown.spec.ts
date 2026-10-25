@@ -20,7 +20,7 @@ import { compileContentModel, defineFeature, type JsonValue } from '#/model';
 
 import { createCodecs } from '../codecs';
 
-import { requires, testDocument, codesOf } from './fixtures/codec-documents';
+import { requires, testDocument, codesOf } from './fixtures/codecDocuments';
 import { semanticCodecs, stored } from './helpers/helpers';
 
 describe('fromMarkdown structures the model cannot hold', () => {

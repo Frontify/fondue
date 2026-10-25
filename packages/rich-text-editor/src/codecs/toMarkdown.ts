@@ -14,11 +14,11 @@ import {
     textOf,
 } from '#/model/internal';
 
-import { destination, longestRun, serialize } from './markdown-escape';
+import { destination, longestRun, serialize } from './markdownEscape';
 import { type CodecPlan, Losses, MARKDOWN_NODES, type NodePlan } from './plan';
 import { type CodecLoss } from './types';
 import { headingIds, itemMarker, prefixLines } from './walk';
-import { featureOf, type MarkdownState, noteShared, overrideFailed, writeInline } from './write-inline';
+import { featureOf, type MarkdownState, noteShared, overrideFailed, writeInline } from './writeInline';
 
 const LISTS = new Set(['bullet_list', 'ordered_list', 'task_list']);
 

@@ -24,7 +24,7 @@ import { semanticModel } from '../../reader/__tests__/fixtures/semantic';
 import { fixturesIn } from '../../reader/__tests__/helpers/helpers';
 import { createCodecs } from '../codecs';
 
-import { requires, failureOf, compile, testDocument, codesOf } from './fixtures/codec-documents';
+import { requires, failureOf, compile, testDocument, codesOf } from './fixtures/codecDocuments';
 import { semanticCodecs, stored } from './helpers/helpers';
 
 describe('createCodecs model check', () => {

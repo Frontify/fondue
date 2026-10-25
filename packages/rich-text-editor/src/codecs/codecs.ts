@@ -4,11 +4,11 @@ import { enUS } from '#/locales/en-US';
 import { type ContentModel, type DecodeOptions, type Diagnostic, styleSheetOf } from '#/model';
 import { markHrefPolicy, type TreeNode, decodeToTree, codecContext, columnLayout, randomId } from '#/model/internal';
 
-import { createParser, readMarkdown } from './from-markdown';
+import { createParser, readMarkdown } from './fromMarkdown';
 import { checkCodecs, planOf } from './plan';
-import { writeHtml } from './to-html';
-import { writeMarkdown } from './to-markdown';
-import { writeText } from './to-text';
+import { writeHtml } from './toHtml';
+import { writeMarkdown } from './toMarkdown';
+import { writeText } from './toText';
 import { type CodecsOptions, type RichTextCodecs } from './types';
 
 /** Checks the model once, then returns `toHTML`, `toPlainText`, `toMarkdown` and `fromMarkdown` bound to it. */

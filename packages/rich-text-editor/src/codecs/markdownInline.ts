@@ -5,7 +5,7 @@ import { type Token as MarkdownToken } from 'markdown-it';
 import { checkHref } from '#/model';
 import { type TreeMark, type TreeNode } from '#/model/internal';
 
-import { type Builder } from './markdown-builder';
+import { type Builder } from './markdownBuilder';
 
 const MARKS_OF: Readonly<Record<string, string>> = { em: 'italic', strong: 'bold', s: 'strike' };
 export const TASK = /^\[([ xX])\](?:[ \t]|$)/;

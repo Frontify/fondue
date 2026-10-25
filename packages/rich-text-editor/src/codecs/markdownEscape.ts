@@ -2,7 +2,7 @@
 
 import { type MarkdownIt as Parser, type Token as MarkdownToken } from 'markdown-it';
 
-import { inlineToken } from './from-markdown';
+import { inlineToken } from './fromMarkdown';
 
 /**
  * Inline output before escaping: text to escape, literal syntax, an emphasis delimiter run, or a hard break.

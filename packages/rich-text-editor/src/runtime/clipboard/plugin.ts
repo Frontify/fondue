@@ -7,8 +7,8 @@ import { dropPoint } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
 
 import { planOf } from '#/codecs/plan';
-import { writeHtml } from '#/codecs/to-html';
-import { writeText } from '#/codecs/to-text';
+import { writeHtml } from '#/codecs/toHtml';
+import { writeText } from '#/codecs/toText';
 import { type PluginImplementation } from '#/definition';
 import { type ContentModel } from '#/model';
 import { markHrefPolicy, type TreeNode, codecContext, isApple } from '#/model/internal';

@@ -16,7 +16,7 @@ import {
     textOf,
 } from '#/model/internal';
 
-import { codeSpan, destination, joinRuns, type Piece, readInline, type Run, serialize } from './markdown-escape';
+import { codeSpan, destination, joinRuns, type Piece, readInline, type Run, serialize } from './markdownEscape';
 import { Losses, type MarkPlan, type NodePlan, setShared } from './plan';
 import { reportFailure, type WalkState } from './walk';
 

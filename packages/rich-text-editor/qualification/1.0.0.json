@@ -54,7 +54,7 @@
         {
             "build": "./codecs",
             "budgetBytes": 77000,
-            "test": "src/codecs/__tests__/bundle-size.spec.ts",
+            "test": "src/codecs/__tests__/bundleSize.spec.ts",
             "passed": true
         },
         {
