@@ -6,7 +6,7 @@ import { isRecord, isValidValue } from '#/model/values';
 
 import { type ReferenceValue } from '../../types';
 
-import { type SuggestionItem } from './plugin';
+import { type SuggestionItem } from './types';
 
 // A person picker shows a page of this many, and stops paging at the total.
 export const MAX_PAGE_ITEMS = 50;

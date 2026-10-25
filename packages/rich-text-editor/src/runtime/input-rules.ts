@@ -1,32 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ResolvedPos } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, PluginKey, TextSelection, type Transaction } from 'prosemirror-state';
 import { ReplaceStep } from 'prosemirror-transform';
 
 import {
-    type BlockRule,
     COMMAND_META,
     type CompiledInputRule,
-    type LineStartRule,
-    type MarkDelimiterRule,
-    type MarkRule,
     NORMALIZE_META,
     ORIGIN_META,
     type PluginImplementation,
-    type QuotesRule,
-    type TextReplaceRule,
 } from '#/definition';
-import { checkHref } from '#/model';
 import { INPUT_RULES_PLUGIN } from '#/model/capabilities';
-import { findInvalidPayload, isValidValue, OBJECT_REPLACEMENT } from '#/model/values';
+import { OBJECT_REPLACEMENT } from '#/model/values';
 
 import { closeGroup, isHistoryTransaction, undo } from './history';
-import { appendSteps, carrySelection } from './transactions';
+import { blockStart, lineStart } from './input-rules-block';
+import { markDelimiter, markPattern } from './input-rules-marks';
+import { quotes, textReplace } from './input-rules-text';
 
 // As `prosemirror-inputrules`, a rule reads at most this much text before the caret.
 const MAX_MATCH = 500;
-const WORD = /[\p{L}\p{M}\p{N}]/u;
 
 /** Whether the last batch fired a rule and nothing moved or changed since, which Backspace then undoes. */
 const firedKey = new PluginKey<boolean>(INPUT_RULES_PLUGIN.id);
@@ -36,36 +29,6 @@ const RULES_OFF = 'rte.input-rules-off';
 const RULES_SETTING = 'rte.input-rules-setting';
 /** The meta of the empty root that Enter dispatches, on which the rules that Enter ends fire. */
 export const ENTER_RULES_META = 'rte.enter-rules';
-/** A language's quotation marks, opening and closing, and its apostrophe. */
-interface Quotes {
-    readonly primary: readonly [string, string];
-    readonly secondary: readonly [string, string];
-    readonly apostrophe: string;
-}
-const quotesOf = (primary: string, secondary: string): Quotes => ({
-    primary: [primary.charAt(0), primary.charAt(1)],
-    secondary: [secondary.charAt(0), secondary.charAt(1)],
-    apostrophe: '’',
-});
-// The quotation marks of CLDR 48's delimiters data by language tag; a regional tag with the same marks as its language
-// has no row.
-const ENGLISH = quotesOf('“”', '‘’');
-const QUOTES: Readonly<Record<string, Quotes>> = {
-    en: ENGLISH,
-    de: quotesOf('„“', '‚‘'),
-    es: quotesOf('“”', '‘’'),
-    fr: quotesOf('«»', '«»'),
-    'fr-CH': quotesOf('«»', '‹›'),
-    it: quotesOf('«»', '“”'),
-    ja: quotesOf('「」', '『』'),
-    nl: quotesOf('‘’', '‘’'),
-    pl: quotesOf('„”', '«»'),
-    pt: quotesOf('“”', '‘’'),
-    'pt-PT': quotesOf('«»', '“”'),
-};
-// Before these, as after a space, a line break or at the block start, a typed quote opens (Tiptap's Typography rules).
-const OPENS_AFTER = new RegExp(`[\\s([{<'"${OBJECT_REPLACEMENT}]`, 'u');
-
 /** Whether a rule fired in a batch. */
 export const firedRule = (transactions: readonly Transaction[]): boolean =>
     transactions.some((transaction) => transaction.getMeta(firedKey) === true);
@@ -102,275 +65,6 @@ const typedEnd = (root: Transaction): number | undefined => {
         return undefined;
     }
     return step.from + step.slice.size;
-};
-
-/** Whether text between `from` and `to` carries a code mark, so a match there never fires. */
-const holdsCode = (state: EditorState, from: number, to: number) => {
-    let code = false;
-    state.doc.nodesBetween(from, to, (node) => {
-        code ||= node.marks.some((mark) => mark.type.spec.code === true);
-    });
-    return code;
-};
-
-/**
- * Removes the marker from the block start to the caret, then runs the rule's command on the block, as one transaction.
- * A command that rebuilds the block, as a list conversion rebuilds the whole list, would map a later removal to nothing.
- */
-const withoutMarker = (
-    command: BlockRule['command'],
-    state: EditorState,
-    $cursor: ResolvedPos,
-    payload: unknown,
-): Transaction | null => {
-    const transaction = state.tr.delete($cursor.start(), $cursor.pos);
-    const without = state.apply(transaction);
-    const dispatched: Transaction[] = [];
-    if (
-        command.refuses?.(without, payload) === true ||
-        !command.run(without, (built) => dispatched.push(built), payload)
-    ) {
-        return null;
-    }
-    const [built] = dispatched;
-    if (built === undefined) {
-        return null;
-    }
-    appendSteps(transaction, built);
-    transaction.setSelection(carrySelection(transaction.doc, built.selection));
-    if (built.scrolledIntoView) {
-        transaction.scrollIntoView();
-    }
-    return transaction;
-};
-
-/** Runs the rule's command without its marker, so the block keeps the text after the caret. */
-const lineStart = (rule: LineStartRule, state: EditorState, $cursor: ResolvedPos, before: string) => {
-    if (before !== `${rule.marker} ` || before.length !== $cursor.parentOffset) {
-        return null;
-    }
-    // A block that already is the rule's target keeps the marker as text, so `> ` in a quote never lifts it out.
-    if (holdsCode(state, $cursor.start(), $cursor.pos) || rule.command.active(state, rule.payload) === true) {
-        return null;
-    }
-    return withoutMarker(rule.command, state, $cursor, rule.payload);
-};
-
-/** The payload that a block rule's named groups fill, each converted by its field's declaration. */
-const payloadOf = (rule: BlockRule, groups: Readonly<Record<string, string | undefined>>) => {
-    const payload: Record<string, unknown> = {};
-    const declaration = rule.command.payload;
-    if (declaration === undefined) {
-        return payload;
-    }
-    for (const [name, field] of Object.entries(declaration.fields)) {
-        const value = groups[name];
-        if (field.type === 'boolean') {
-            payload[name] = value !== undefined;
-        } else if (value !== undefined && (field.type === 'integer' || field.type === 'number')) {
-            payload[name] = Number(value);
-        } else if (value !== undefined && value !== '') {
-            // An empty capture fills no field, so a fence with no language sets none.
-            payload[name] = value;
-        }
-    }
-    return payload;
-};
-
-/** Runs the rule's command when the text from the block start matches, unless the payload fails its declaration. */
-const blockStart = (rule: BlockRule, state: EditorState, $cursor: ResolvedPos, before: string) => {
-    const found = rule.match.exec(before);
-    if (found === null || before.length !== $cursor.parentOffset || holdsCode(state, $cursor.start(), $cursor.pos)) {
-        return null;
-    }
-    const payload = payloadOf(rule, found.groups ?? {});
-    if (
-        findInvalidPayload(rule.command.payload, payload) !== undefined ||
-        rule.command.active(state, payload) === true
-    ) {
-        return null;
-    }
-    return withoutMarker(rule.command, state, $cursor, payload);
-};
-
-/** The attributes a mark rule's named groups fill, each converted by its declaration, or `undefined` when one fails it. */
-const ruleAttrs = (rule: MarkRule, groups: Readonly<Record<string, string | undefined>>) => {
-    const attrs: Record<string, unknown> = {};
-    for (const [name, declaration] of Object.entries(rule.attrs)) {
-        const value = groups[name];
-        if (value === undefined) {
-            continue;
-        }
-        let converted: unknown = value;
-        if (declaration.type === 'boolean') {
-            converted = true;
-        } else if (declaration.type === 'integer' || declaration.type === 'number') {
-            converted = Number(value);
-        } else if (declaration.type === 'url') {
-            const checked = checkHref(value, rule.policy);
-            if (!checked.ok) {
-                return undefined;
-            }
-            converted = checked.href;
-        }
-        if (!isValidValue(declaration, converted)) {
-            return undefined;
-        }
-        attrs[name] = converted;
-    }
-    return attrs;
-};
-
-/** Puts the rule's mark on its match before the caret, without the whitespace that ends it, unless any of it is marked already. */
-const markPattern = (rule: MarkRule, state: EditorState, $cursor: ResolvedPos, before: string, ending = '') => {
-    const tested = `${before}${ending}`;
-    const found = rule.match.exec(tested);
-    if (found === null || found.index + found[0].length !== tested.length) {
-        return null;
-    }
-    const text = found[0].trimEnd();
-    if (text === '' || !$cursor.parent.type.allowsMarkType(rule.mark)) {
-        return null;
-    }
-    const from = $cursor.pos - before.length + found.index;
-    const to = from + text.length;
-    if (holdsCode(state, from, to) || state.doc.rangeHasMark(from, to, rule.mark)) {
-        return null;
-    }
-    const attrs = ruleAttrs(rule, found.groups ?? {});
-    if (attrs === undefined) {
-        return null;
-    }
-    return state.tr.addMark(from, to, rule.mark.create(attrs));
-};
-
-/**
- * Marks the text between the delimiters and removes them, when the opening one follows a space, punctuation other
- * than a delimiter character or the block start, no word character follows the caret, and the text neither starts
- * nor ends with a space.
- */
-const markDelimiter = (
-    rule: MarkDelimiterRule,
-    state: EditorState,
-    $cursor: ResolvedPos,
-    before: string,
-    after: string,
-) => {
-    const { open, close, mark } = rule;
-    if (!before.endsWith(close) || WORD.test(after) || !$cursor.parent.type.allowsMarkType(mark)) {
-        return null;
-    }
-    const closeAt = before.length - close.length;
-    const openAt = before.lastIndexOf(open, closeAt - open.length - 1);
-    const text = before.slice(openAt + open.length, closeAt);
-    // A longer run, such as ```, is not a pair of this delimiter.
-    if (close.includes(before.charAt(closeAt - 1))) {
-        return null;
-    }
-    const previous = before.charAt(openAt - 1);
-    if (
-        openAt < 0 ||
-        text === '' ||
-        text.trim() !== text ||
-        WORD.test(previous) ||
-        (previous !== '' && open.includes(previous))
-    ) {
-        return null;
-    }
-    const start = $cursor.pos - before.length;
-    const from = start + openAt;
-    if (holdsCode(state, from, $cursor.pos)) {
-        return null;
-    }
-    return state.tr
-        .delete(start + closeAt, $cursor.pos)
-        .addMark(from + open.length, start + closeAt, mark.create())
-        .delete(from, from + open.length)
-        .removeStoredMark(mark);
-};
-
-/**
- * Replaces the text that `match` finds before the caret; a `boundary` rule matches before the typed character, which
- * must be no word character and stays, so `--brand` keeps its hyphens.
- */
-const textReplace = (rule: TextReplaceRule, state: EditorState, $cursor: ResolvedPos, before: string) => {
-    let text = before;
-    let kept = '';
-    if (rule.boundary) {
-        kept = Array.from(before).at(-1) ?? '';
-        // A longer dash run or an arrow such as `-->` stays as typed.
-        if (kept === '' || WORD.test(kept) || kept === '-' || kept === '>') {
-            return null;
-        }
-        text = before.slice(0, -kept.length);
-    }
-    const found = rule.match.exec(text);
-    if (found === null) {
-        return null;
-    }
-    // A boundary rule replaces a whole run, so `a --- b` keeps its three hyphens, and `<!-- ` and `<-- ` stay as typed.
-    const lead = text.charAt(found.index - 1);
-    if (rule.boundary && (lead === found[0].charAt(0) || lead === '<' || lead === '!')) {
-        return null;
-    }
-    const from = $cursor.pos - before.length + found.index;
-    if (holdsCode(state, from, $cursor.pos)) {
-        return null;
-    }
-    const replacement = text.replace(rule.match, rule.replace).slice(found.index);
-    return state.tr.insertText(replacement, from, $cursor.pos - kept.length);
-};
-
-/** The language at the caret: a passage's `language` mark, else the nearest block or the document `lang`. */
-const langAt = ($cursor: ResolvedPos): string => {
-    for (const mark of $cursor.marks()) {
-        if (typeof mark.attrs.lang === 'string') {
-            return mark.attrs.lang;
-        }
-    }
-    for (let depth = $cursor.depth; depth >= 0; depth -= 1) {
-        const { lang } = $cursor.node(depth).attrs;
-        if (typeof lang === 'string') {
-            return lang;
-        }
-    }
-    return 'en';
-};
-
-/** Turns a typed quote into the opening or closing quote of the language at the caret, and `'` after a letter into its apostrophe. */
-const quotes = (rule: QuotesRule, state: EditorState, $cursor: ResolvedPos, before: string) => {
-    if (!before.endsWith(rule.marker)) {
-        return null;
-    }
-    const lang = langAt($cursor);
-    let marks = QUOTES[lang];
-    if (marks === undefined) {
-        marks = QUOTES[lang.split('-')[0] ?? ''];
-    }
-    if (marks === undefined) {
-        marks = ENGLISH;
-    }
-    let [open, close] = marks.primary;
-    if (rule.marker === "'") {
-        [open, close] = marks.secondary;
-    }
-    const typed = before.slice(0, -1);
-    const previous = Array.from(typed).at(-1) ?? '';
-    // An inner quote that the text before opened and did not close closes after a letter; otherwise that is an apostrophe.
-    const [innerOpen, innerClose] = marks.secondary;
-    const depth = typed.split(innerOpen).length - typed.split(innerClose).length;
-    // French nests « » in « », so an inner quote is open only inside an open outer one.
-    let innerOpened = depth > 0;
-    if (innerOpen === marks.primary[0]) {
-        innerOpened = depth > 1;
-    }
-    let quote = close;
-    if (previous === '' || OPENS_AFTER.test(previous) || previous === marks.primary[0] || previous === innerOpen) {
-        quote = open;
-    } else if (rule.marker === "'" && WORD.test(previous) && !innerOpened) {
-        quote = marks.apostrophe;
-    }
-    return state.tr.insertText(quote, $cursor.pos - 1, $cursor.pos);
 };
 
 /**

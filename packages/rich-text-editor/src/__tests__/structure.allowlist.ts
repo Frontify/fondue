@@ -4,7 +4,6 @@
 
 export const FILES_OVER_600_LINES: Record<string, number> = {
     'src/react/rich-text-editor.tsx': 1492,
-    'src/runtime/capabilities/suggestions/plugin.ts': 616,
     'src/runtime/runtime.ts': 908,
 };
 
@@ -14,16 +13,12 @@ export const DATA_TABLES: Record<string, string> = {
 };
 
 export const FILES_OVER_400_LINES: Record<string, number> = {
-    'src/clipboard/import/html.ts': 434,
-    'src/runtime/clipboard/plugin.ts': 491,
     'src/model/content.ts': 539,
     'src/model/declarations.ts': 483,
     'src/model/output.ts': 548,
     'src/model/read.ts': 422,
     'src/model/styles.ts': 421,
     'src/react/rich-text-editor.tsx': 1492,
-    'src/runtime/capabilities/suggestions/plugin.ts': 616,
-    'src/runtime/input-rules.ts': 515,
     'src/runtime/runtime.ts': 908,
 };
 

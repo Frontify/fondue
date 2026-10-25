@@ -2,28 +2,22 @@
 
 import { dropCursor } from 'prosemirror-dropcursor';
 import { Fragment, Slice } from 'prosemirror-model';
-import { NodeSelection, Plugin, PluginKey, type Selection, type Transaction } from 'prosemirror-state';
+import { NodeSelection, Plugin, type Selection } from 'prosemirror-state';
 import { dropPoint } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
 
-import { exceededStructure } from '#/clipboard/import/limits';
 import { planOf } from '#/codecs/plan';
 import { writeHtml } from '#/codecs/to-html';
 import { writeText } from '#/codecs/to-text';
 import { type PluginImplementation } from '#/definition';
-import { type ContentModel, type RichTextLocale, type TranslationStrings } from '#/model';
+import { type ContentModel } from '#/model';
 import { markHrefPolicy } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
-import { type ResolveAssetUrl } from '#/model/declarations';
-import { diagnostic } from '#/model/format';
 import { codecContext } from '#/model/output';
 import { isApple } from '#/model/platform';
-import { randomId } from '#/model/random-id';
-import { exceedsBytes } from '#/model/read';
-import { type ResolveReference } from '#/model/references';
 import { closeGroup } from '#/runtime/history';
-import { type EditorRuntime, runtimeOfView } from '#/runtime/runtime';
 
+import { clipboardKey, commit } from './commit';
 import { loadMarkdownReaderOnIdle } from './markdown';
 import {
     type FollowUp,
@@ -33,92 +27,28 @@ import {
     type Pasted,
     payloadOf,
     pastePayload,
-    type PasteSettings,
     type Payload,
     prepareSlice,
     withoutIds,
 } from './paste';
+import {
+    type ClipboardSession,
+    type Connected,
+    connectedOf,
+    contextOf,
+    reject,
+    rejectsSize,
+    settingsOf,
+} from './session';
 import { SLICE_TYPE, writeSlice } from './slice';
 
-/** What the host side of a session gives its clipboard handlers. */
-export interface ClipboardSession {
-    /** The Inline profile's field, whose paste keeps one paragraph. */
-    readonly singleLine?: boolean;
-    /** The presentation's `sliceContext`, read at each copy and paste. */
-    readonly sliceContext: () => string | null;
-    /** The locale of the announcements and of the island labels in copied HTML. */
-    readonly locale: () => RichTextLocale;
-    readonly announce: (message: string) => void;
-    /** The presentation's `resolveReference`, read at each copy, so copied mentions name whom the chip shows. */
-    readonly resolveReference?: () => ResolveReference | undefined;
-    /** The presentation's `resolveAssetUrl`, read at each copy, so a copied image keeps the URL the editor shows. */
-    readonly resolveAssetUrl?: () => ResolveAssetUrl | undefined;
-}
-
-const sessions = new WeakMap<EditorRuntime, ClipboardSession>();
-
-/** Gives the clipboard handlers of `runtime`'s view what they read from the host. */
-export const connectClipboard = (runtime: EditorRuntime, session: ClipboardSession): void => {
-    sessions.set(runtime, session);
-};
-
-const connectedOf = (view: EditorView) => {
-    const runtime = runtimeOfView(view);
-    if (runtime === undefined) {
-        return undefined;
-    }
-    const session = sessions.get(runtime);
-    if (session === undefined) {
-        return undefined;
-    }
-    return { runtime, session };
-};
-type Connected = NonNullable<ReturnType<typeof connectedOf>>;
-
-let pageContext: string | undefined;
-
-/** The presentation's slice context, else the package's value for this page load. */
-const contextOf = (session: ClipboardSession) => {
-    const context = session.sliceContext();
-    if (context !== null) {
-        return context;
-    }
-    if (pageContext === undefined) {
-        pageContext = randomId();
-    }
-    return pageContext;
-};
+export { type ClipboardSession, connectClipboard } from './session';
 
 /** Shift held at the last key, which Shift+Insert, a paste shortcut of its own, does not count. */
 const shiftHeld = new WeakMap<EditorView, boolean>();
 /** The slice a drag that started in the view carries. */
 const drags = new WeakMap<EditorView, Slice>();
-const clipboardKey = new PluginKey('rte.clipboard');
 const ANDROID = /Android \d/;
-
-const announce = (
-    session: ClipboardSession,
-    key: keyof TranslationStrings,
-    vars?: Readonly<Record<string, number>>,
-) => {
-    const locale = session.locale();
-    session.announce(codecContext(locale, locale).t(key, vars));
-};
-
-const reject = ({ runtime }: Connected, reason: string) =>
-    runtime.report(diagnostic('clipboard.paste-rejected', undefined, { reason }));
-
-/** A flavor over `maxPasteBytes` stops the paste before anything parses it. */
-const rejectsSize = (connected: Connected, payload: Payload) => {
-    const { runtime, session } = connected;
-    const max = runtime.limits.maxPasteBytes;
-    if (![payload.text, payload.html, payload.slice].some((flavor) => exceedsBytes(flavor, max))) {
-        return false;
-    }
-    reject(connected, 'maxPasteBytes');
-    announce(session, 'RichTextEditor_pasteTooLarge');
-    return true;
-};
 
 /** Hands pasted or dropped files at `from` to `to` to the editor parts; `false` when none took them. */
 export type FileIntake = (
@@ -141,66 +71,6 @@ const offersFiles = (model: ContentModel, view: EditorView, payload: Payload, pl
         view.state.schema.marks.link === undefined || hrefOf(payload.text, markHrefPolicy(model, 'link')) === undefined
     );
 };
-
-/** Dispatches a paste or drop, or reports why it was refused with the document and selection unchanged. */
-const commit = (
-    view: EditorView,
-    connected: Connected,
-    tr: Transaction,
-    pasted: Pasted | undefined,
-    event: 'paste' | 'drop',
-) => {
-    if (pasted === undefined) {
-        return;
-    }
-    const { runtime } = connected;
-    // Set before the limit check, whose prepared batch the dispatch installs.
-    tr.setMeta('uiEvent', event);
-    if (pasted.followUp !== undefined) {
-        tr.setMeta(clipboardKey, pasted.followUp);
-    }
-    let exceeded: string | undefined = runtime.exceededLimit(tr, pasted.followUp !== undefined);
-    // A follow-up past a limit leaves the paste as it is.
-    if (exceeded !== undefined && pasted.followUp !== undefined) {
-        tr.setMeta(clipboardKey, undefined);
-        exceeded = runtime.exceededLimit(tr);
-    }
-    if (exceeded === undefined) {
-        exceeded = exceededStructure(tr.doc, runtime.limits);
-    }
-    if (exceeded !== undefined) {
-        reject(connected, exceeded);
-        return;
-    }
-    const before = view.state.doc;
-    view.dispatch(tr);
-    if (tr.docChanged && view.state.doc === before) {
-        reject(connected, 'not-allowed');
-        return;
-    }
-    if (pasted.droppedMedia > 0) {
-        announce(connected.session, 'RichTextEditor_pasteMediaDropped', { count: pasted.droppedMedia });
-    }
-    if (pasted.removedFormatting === true) {
-        announce(connected.session, 'RichTextEditor_pasteFormattingRemoved');
-    }
-};
-
-const settingsOf = (
-    model: ContentModel,
-    view: EditorView,
-    { runtime, session }: Connected,
-    plain: boolean,
-): PasteSettings => ({
-    model,
-    limits: runtime.limits,
-    policy: runtime.policy.features,
-    context: contextOf(session),
-    plain,
-    headingLevels: runtime.policy.creatableHeadingLevels,
-    window: view.dom.ownerDocument.defaultView ?? window,
-    singleLine: session.singleLine === true,
-});
 
 /** Runs the paste pipeline, reporting a throw as a rejection. */
 const attempt = (connected: Connected, build: () => Pasted | undefined): Pasted | null | undefined => {
