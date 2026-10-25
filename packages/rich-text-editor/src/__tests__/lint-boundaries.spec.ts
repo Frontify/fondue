@@ -337,6 +337,108 @@ const CASES: readonly Case[] = [
         "import { node } from '#/model';",
     ),
 
+    // feature internals outside the feature folder
+    banned(
+        'internals: an editor part',
+        'src/react/editor-part.ts',
+        "import { boldEditor } from '#/features/bold/editor';",
+    ),
+    banned('internals: a reader', 'src/react/reader-part.ts', "import { boldReader } from '#/features/bold/reader';"),
+    banned(
+        'internals: a view by relative path',
+        'src/react/view-part.ts',
+        "import { view } from '../features/bold/view';",
+    ),
+    banned('internals: a dialog', 'src/ui/dialog-part.ts', "import { dialog } from '#/features/link/link-dialog';"),
+    banned(
+        'internals: a migration',
+        'src/ui/migration-part.ts',
+        "import { migrate } from '#/features/bold/migration';",
+    ),
+    banned(
+        'internals: a nested file',
+        'src/testing/nested.ts',
+        "import { toolbar } from '#/features/bold/parts/toolbar';",
+    ),
+    banned(
+        'internals: an editor part inside conformance',
+        'src/testing/conformance/editor-part.ts',
+        "import { boldEditor } from '#/features/bold/editor';",
+    ),
+    banned(
+        'internals: a file beside the entry',
+        'src/internals.ts',
+        "import { boldEditor } from '#/features/bold/editor';",
+    ),
+    allowed(
+        'internals: a feature file',
+        'src/react/feature-file.ts',
+        "import { bold } from '#/features/bold/feature';",
+    ),
+    allowed(
+        'internals: a feature index',
+        'src/react/feature-index.ts',
+        "import { boldPlugin } from '#/features/bold/index';",
+    ),
+    allowed(
+        'internals: a feature folder',
+        'src/react/feature-folder.ts',
+        "import { boldPlugin } from '#/features/bold';",
+    ),
+    allowed(
+        'internals: a shipped profile',
+        'src/react/profile.ts',
+        "import { commentModel } from '#/features/profiles/comment';",
+    ),
+    allowed(
+        'internals: a feature fixture',
+        'src/testing/fixture.ts',
+        "import bold from '#/features/bold/fixtures/bold.json';",
+    ),
+    allowed('internals: the feature registry', 'src/index.ts', "import { registry } from '#/features/registry';"),
+    allowed(
+        'internals: a test',
+        'src/react/__tests__/editor-part.ts',
+        "import { boldEditor } from '#/features/bold/editor';",
+    ),
+    allowed(
+        'internals: the units registry glob',
+        'src/features/plugins.ts',
+        "const unitModules = import.meta.glob('./*/index.ts', { eager: true });",
+    ),
+    allowed(
+        'internals: the feature registry glob',
+        'src/features/registry.ts',
+        "const featureModules = import.meta.glob('./*/feature.ts', { eager: true });",
+    ),
+    allowed(
+        'internals: the shipped readers glob',
+        'src/entries/shipped-readers.ts',
+        "const readerModules = import.meta.glob('../features/*/reader.tsx', { eager: true });",
+    ),
+
+    // feature units in the server side layers
+    banned('units: model', 'src/model/unit.ts', "import { boldPlugin } from '#/features/bold/index';"),
+    banned('units: html', 'src/html/unit.ts', "import { boldPlugin } from '#/features/bold/index';"),
+    banned('units: reader', 'src/reader/unit.ts', "import { boldPlugin } from '#/features/bold/index';"),
+    banned(
+        'units: reader by relative path',
+        'src/reader/unit-relative.ts',
+        "import { boldPlugin } from '../features/bold/index';",
+    ),
+    banned('units: codecs', 'src/codecs/unit.ts', "import { boldPlugin } from '#/features/bold/index';"),
+    banned('units: the features entry', 'src/features/index.ts', "import { boldPlugin } from '#/features/bold/index';"),
+    banned(
+        'units: another features file',
+        'src/features/stages.ts',
+        "import { boldPlugin } from '#/features/bold/index';",
+    ),
+    allowed(
+        'units: a feature file in another features file',
+        'src/features/stages.ts',
+        "import { bold } from '#/features/bold/feature';",
+    ),
+
     // reader
     banned('reader: another layer', 'src/reader/layer.ts', "import { run } from '#/runtime/run';"),
     banned('reader: the engine', 'src/reader/engine.ts', "import { Schema } from 'prosemirror-model';"),

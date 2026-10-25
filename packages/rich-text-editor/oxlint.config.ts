@@ -97,6 +97,12 @@ const FEATURE_PLUGINS_MESSAGE =
 const FEATURE_WIRING_MESSAGE =
     'The feature index, registry and profiles wire shipped features from `model`, and do not load views, readers or the editor.';
 
+const FEATURE_INTERNALS_MESSAGE =
+    'Outside its folder, a feature is imported only through its `feature` and `index`, never its editor, reader, view or dialog files, because those carry editor code and only the glob registries load them.';
+
+const FEATURE_UNIT_MESSAGE =
+    '`./features`, `reader`, `codecs`, `model` and `html` never import `#/features/*/index`, because a unit carries editor code.';
+
 const READER_MESSAGE =
     '`reader` imports `model` and `locales`, never a feature, because a feature reader imports `#/reader/define`.';
 
@@ -194,6 +200,15 @@ const EDITOR_PART_PATTERNS = FEATURE_ROOTS.flatMap((root) => [
     ...['/*/feature', '/*/migration', '/*/reader', '/*/fixtures/**'].map((tail) => `!${root}${tail}`),
 ]);
 
+// A shipped profile is no feature folder, and the feature's fixtures are data.
+const FEATURE_INTERNALS_PATTERNS = FEATURE_ROOTS.flatMap((root) => [
+    `${root}/*/*`,
+    `${root}/*/*/**`,
+    ...['/*/feature', '/*/index', '/profiles/**', '/*/fixtures/**'].map((tail) => `!${root}${tail}`),
+]);
+
+const FEATURE_UNIT_PATTERNS = featurePathPatterns(['/*/index']);
+
 const FEATURE_FILE_TAILS = [
     '',
     '/index',
@@ -282,6 +297,16 @@ const tablesInternalsRestriction: ImportRestriction = {
     group: ['prosemirror-tables'],
     importNamePattern: '^_',
     message: 'The underscore exports of `prosemirror-tables` are its internals.',
+};
+
+const featureInternalsRestriction: ImportRestriction = {
+    group: FEATURE_INTERNALS_PATTERNS,
+    message: FEATURE_INTERNALS_MESSAGE,
+};
+
+const featureUnitRestriction: ImportRestriction = {
+    group: FEATURE_UNIT_PATTERNS,
+    message: FEATURE_UNIT_MESSAGE,
 };
 
 const SOURCE_RESTRICTIONS = [frameworkRestriction, historyRestriction, tablesInternalsRestriction];
@@ -486,6 +511,7 @@ export default defineConfig({
                 group: [...aliasPatterns(modelFolders), ...relativePatterns(modelFolders), ...ENGINE_PATTERNS],
                 message: MODEL_MESSAGE,
             },
+            featureUnitRestriction,
         ]),
         layerOverride('src/definition/**/*.{ts,tsx}', [{ group: definitionPatterns, message: DEFINITION_MESSAGE }]),
         layerOverride('src/definition/schema.ts', [
@@ -536,7 +562,9 @@ export default defineConfig({
                 ],
                 message: HTML_MESSAGE,
             },
+            featureUnitRestriction,
         ]),
+        layerOverride('src/*.{ts,tsx}', [featureInternalsRestriction]),
         layerOverride(
             ['src/features/*/feature.ts', 'src/features/*/migration.ts'],
             [
@@ -572,7 +600,7 @@ export default defineConfig({
             NOT_EDITOR_PART_FILES,
         ),
         layerOverride(
-            ['src/features/index.ts', 'src/features/registry.ts', 'src/features/profiles/**/*.{ts,tsx}'],
+            ['src/features/*.ts', 'src/features/profiles/**/*.{ts,tsx}'],
             [
                 {
                     group: [
@@ -585,6 +613,7 @@ export default defineConfig({
                     ],
                     message: FEATURE_WIRING_MESSAGE,
                 },
+                featureUnitRestriction,
             ],
         ),
         layerOverride('src/features/plugins.ts', [
@@ -650,6 +679,7 @@ export default defineConfig({
                     ],
                     message: READER_MESSAGE,
                 },
+                featureUnitRestriction,
             ],
             [],
             [CLIENT_REACT],
@@ -680,6 +710,7 @@ export default defineConfig({
                 ],
                 message: CODECS_MESSAGE,
             },
+            featureUnitRestriction,
         ]),
         layerOverride('src/locales/**/*.{ts,tsx}', [
             {
@@ -703,6 +734,7 @@ export default defineConfig({
                     ],
                     message: TESTING_MESSAGE,
                 },
+                featureInternalsRestriction,
             ],
             ['src/testing/conformance/**'],
         ),
@@ -723,6 +755,7 @@ export default defineConfig({
                 ],
                 message: CONFORMANCE_MESSAGE,
             },
+            featureInternalsRestriction,
         ]),
         layerOverride('src/runtime/**/*.{ts,tsx}', [runtimeRestriction], ['src/runtime/clipboard/**']),
         {
@@ -761,6 +794,7 @@ export default defineConfig({
                 ],
                 message: REACT_FOLDER_MESSAGE,
             },
+            featureInternalsRestriction,
         ]),
         layerOverride('src/persistence/**/*.{ts,tsx}', [
             {
@@ -808,6 +842,7 @@ export default defineConfig({
                 ],
                 message: UI_MESSAGE,
             },
+            featureInternalsRestriction,
         ]),
         layerOverride('src/styles/**/*.{ts,tsx}', [
             {
