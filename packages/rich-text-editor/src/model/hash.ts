@@ -98,4 +98,5 @@ export const hashDocument = (document: RichTextDocument): string => sha256(docum
 /** Whether two documents have the same canonical JSON, without hashing either. */
 export const sameDocument = (a: RichTextDocument, b: RichTextDocument): boolean => documentJson(a) === documentJson(b);
 
+// A document is plain JSON by construction, but its readonly types do not satisfy JsonValue.
 const documentJson = (document: RichTextDocument): string => canonicalJson(document as unknown as JsonValue);

@@ -84,6 +84,7 @@ export const createFakeServer = (): Pick<PersistenceServerHarness, 'service' | '
             return Promise.resolve(rejected('forbidden'));
         }
         const { stamp, baseRevision, document, writer } = request;
+        // The stamped copy is a plain JSON object, but the readonly document types do not satisfy JsonValue.
         const payload = canonicalJson({ stamp, baseRevision, document, writer } as unknown as JsonValue);
         const first = outcomes.get(request.operationId);
         if (first !== undefined) {

@@ -94,6 +94,7 @@ export const withSharedDefaults = (
     if (node.content !== undefined) {
         copy.content = node.content.map((child) => withSharedDefaults(child, shared, isTextblock));
     }
+    // The copy is built by spreading fixture JSON, which the node type cannot express.
     return copy as unknown as ContentNodeJSON;
 };
 

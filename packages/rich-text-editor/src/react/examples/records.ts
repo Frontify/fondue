@@ -65,6 +65,7 @@ export const codeBlock = (value: string, languageId: string | null = null): Bloc
     attrs: { languageId },
     content: [text(value)],
 });
+// The mention node carries no text field, which the Inline type demands, so the builder mints it past the type.
 export const mention = (nodeId: string, resourceId: string, labelSnapshot: string): Inline =>
     ({
         type: 'mention',

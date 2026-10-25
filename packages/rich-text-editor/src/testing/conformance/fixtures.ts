@@ -33,6 +33,7 @@ import styles from '#/features/styles-brand/fixtures/styles.json';
 import { type RichTextDocument } from '#/model';
 
 /** The stored documents each shipped feature brings, by feature ID and fixture name. */
+// Per-feature fixture groups are written loosely and read back as documents at this one boundary.
 export const featureFixtures = {
     core: { paragraphs },
     emoji: { emoji },

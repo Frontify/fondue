@@ -10,7 +10,6 @@ import { enUS } from '#/locales/en-US';
 import {
     compileContentModel,
     type ContentModel,
-    type ContentNodeJSON,
     createEmptyDocument,
     type Diagnostic,
     type Feature,
@@ -133,6 +132,7 @@ const contractOf = (features: readonly Feature[], options: FeatureContractOption
         if (!isRecord(fixture)) {
             return fixture as RichTextDocument;
         }
+        // A fixture with the model ref swapped in is still a stored document; the spread loses the brand.
         return { ...fixture, model: compiled().ref } as unknown as RichTextDocument;
     };
     const sharedDefaults: SharedDefault[] = features.flatMap((feature) =>
@@ -172,7 +172,7 @@ const fixtureCases = (c: Contract, name: string, fixture: unknown) => {
         const node = schema.nodeFromJSON(tree);
         const encoded = encodeTree(node.toJSON() as TreeNode, compiled(), stored.requiredCapabilities);
         const isTextblock = (type: string) => schema.nodes[type]?.isTextblock === true;
-        const content = withSharedDefaults(stored.content as unknown as ContentNodeJSON, c.sharedDefaults, isTextblock);
+        const content = withSharedDefaults(stored.content, c.sharedDefaults, isTextblock);
         expect(encoded.document).toEqual({ ...stored, content });
     });
 
