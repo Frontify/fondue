@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { core, mediaImage } from '#/features';
 import { paste, pressKey, setSelection } from '#/testing';
-import { probeUploads } from '#/testing/probe-uploads';
+import { probeUploads } from '#/testing/probeUploads';
 
 import { type MountedUploads, mountUploads, para, pngFile, settle, text, uploadModel } from './fixtures/uploads';
 

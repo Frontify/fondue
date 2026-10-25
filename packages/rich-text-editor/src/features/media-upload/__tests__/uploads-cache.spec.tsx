@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { core, mediaImage, mediaUpload, mentions } from '#/features';
 import { ADA, advance, deferredService, page } from '#/features/mentions/__tests__/fixtures/mount';
 import { pressKey, setSelection, typeText } from '#/testing';
-import { probeUploads } from '#/testing/probe-uploads';
+import { probeUploads } from '#/testing/probeUploads';
 
 import { caretAfterBefore, slot, started, cancel } from './fixtures/steps';
 import { deferredUploads, mountUploads, para, pngFile, settle, text, uploadModel } from './fixtures/uploads';

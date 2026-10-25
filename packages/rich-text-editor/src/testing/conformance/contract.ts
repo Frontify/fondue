@@ -21,7 +21,7 @@ import { compiledModel, type TreeNode, decodeToTree, encodeTree, featureInternal
 import { editorEngine } from '#/react/engine';
 import { type ConformanceState, stateFromTree, withWholeDocumentSelected } from '#/runtime/conformance-state';
 
-import { AXE_TAGS } from './axe-tags';
+import { AXE_TAGS } from './axeTags';
 import {
     normalized,
     readerOutput,
@@ -30,7 +30,7 @@ import {
     typesIn,
     withSharedDefaults,
     withoutHiddenText,
-} from './contract-support';
+} from './contractSupport';
 import { featureFixtures } from './fixtures';
 import { contractUnits } from './units';
 
