@@ -57,6 +57,8 @@ export interface PersistenceService {
 /** Options for autosave: when it runs and the delays and limits of its retries. */
 export interface PersistenceOptions {
     readonly autosave?: 'debounced' | 'off';
+    /** Default `true`; a host with its own leave guard sets it to `false`. */
+    readonly unloadGuard?: boolean;
     /** Defaults: 500, 5000, 30000, 5 and 1000. */
     readonly delayMs?: number;
     readonly maxWaitMs?: number;

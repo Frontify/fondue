@@ -433,16 +433,134 @@ describe('the defaultValue prop in a production build', () => {
 });
 
 describe('leaving the editor', () => {
-    it('registers no beforeunload, unload or pagehide listener', () => {
+    /** The listeners of each event type that this window holds from now on, counted from its add and remove calls. */
+    const watchWindow = () => {
         const added = vi.spyOn(window, 'addEventListener');
+        const removed = vi.spyOn(window, 'removeEventListener');
+        const count = (name: string) =>
+            added.mock.calls.filter(([type]) => type === name).length -
+            removed.mock.calls.filter(([type]) => type === name).length;
+        const everAdded = () => added.mock.calls.map(([type]) => type);
+        return { count, everAdded };
+    };
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it('holds one beforeunload and one pagehide listener while the session is dirty', () => {
         const { service } = serviceOf();
+        const watch = watchWindow();
+        const { type } = mount({ services: { persistence: service } });
+
+        expect([watch.count('beforeunload'), watch.count('pagehide')]).toEqual([0, 0]);
+        type('c');
+        type('d');
+
+        expect([watch.count('beforeunload'), watch.count('pagehide')]).toEqual([1, 1]);
+    });
+
+    it('asks the browser to confirm leaving while dirty', () => {
+        const { service } = serviceOf();
+        const { type } = mount({ services: { persistence: service } });
+        type('c');
+
+        const event = new Event('beforeunload', { cancelable: true });
+        window.dispatchEvent(event);
+
+        expect(event.defaultPrevented).toBe(true);
+        expect((event as BeforeUnloadEvent).returnValue).toBe('');
+    });
+
+    it('removes both listeners once the session is clean', async () => {
+        const watch = watchWindow();
+        const { calls, advance } = mountSaving();
+        expect(watch.count('beforeunload')).toBe(1);
+
+        advance(0);
+        lastCall(calls).answer();
+        await settle();
+
+        expect(statusText()).toBe(MESSAGES.saved);
+        expect([watch.count('beforeunload'), watch.count('pagehide')]).toEqual([0, 0]);
+    });
+
+    it('removes both listeners when it unmounts while dirty', () => {
+        const { service } = serviceOf();
+        const watch = watchWindow();
         const { type, unmount } = mount({ services: { persistence: service } });
         type('c');
+        expect(watch.count('beforeunload')).toBe(1);
+
         unmount();
 
-        const types = added.mock.calls.map(([name]) => name);
-        expect(types.filter((name) => ['beforeunload', 'unload', 'pagehide'].includes(name))).toEqual([]);
-        added.mockRestore();
+        expect([watch.count('beforeunload'), watch.count('pagehide')]).toEqual([0, 0]);
+    });
+
+    it('registers no listener when the host turns the guard off', () => {
+        const { service } = serviceOf();
+        const watch = watchWindow();
+        const { type } = mount({ services: { persistence: service }, persistenceOptions: { unloadGuard: false } });
+        type('c');
+
+        expect(watch.everAdded().filter((name) => name === 'beforeunload' || name === 'pagehide')).toEqual([]);
+    });
+
+    it('removes the listeners when the host turns the guard off while dirty', () => {
+        const { service } = serviceOf();
+        const watch = watchWindow();
+        const { type, rerender } = mount({ services: { persistence: service } });
+        type('c');
+        expect(watch.count('beforeunload')).toBe(1);
+
+        rerender({ services: { persistence: service }, persistenceOptions: { unloadGuard: false } });
+
+        expect([watch.count('beforeunload'), watch.count('pagehide')]).toEqual([0, 0]);
+    });
+
+    it('registers no listener without a persistence service', () => {
+        const watch = watchWindow();
+        const { type } = mount();
+        type('c');
+
+        expect(watch.everAdded().filter((name) => name === 'beforeunload' || name === 'pagehide')).toEqual([]);
+    });
+
+    it('never registers an unload listener', async () => {
+        const watch = watchWindow();
+        const { calls, advance, unmount } = mountSaving();
+        advance(0);
+        lastCall(calls).answer();
+        await settle();
+        unmount();
+
+        expect(watch.everAdded()).not.toContain('unload');
+    });
+
+    it('starts a save on pagehide while dirty with no save running', async () => {
+        const { service } = serviceOf();
+        const { type } = mount({ services: { persistence: service } });
+        type('c');
+        expect(service.save).not.toHaveBeenCalled();
+
+        act(() => {
+            window.dispatchEvent(new Event('pagehide'));
+        });
+        await settle();
+
+        expect(service.save).toHaveBeenCalledTimes(1);
+    });
+
+    it('starts no second save on pagehide while one is running', async () => {
+        const { service, calls, advance } = mountSaving();
+        advance(0);
+        expect(calls).toHaveLength(1);
+
+        act(() => {
+            window.dispatchEvent(new Event('pagehide'));
+        });
+        await settle();
+
+        expect(service.save).toHaveBeenCalledTimes(1);
     });
 
     it('starts no save when it unmounts while dirty', async () => {

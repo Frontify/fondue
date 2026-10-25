@@ -22,6 +22,7 @@ import { usePanels } from './usePanels';
 import { useSessionHosts } from './useSessionHosts';
 import { useSessionRuntime } from './useSessionRuntime';
 import { useChangeWatch, usePresentationSync } from './useSync';
+import { useUnloadGuard } from './useUnloadGuard';
 
 const SessionComponent = (
     { children, onSession, onRetry, retried, ...props }: SessionProps,
@@ -91,6 +92,7 @@ const SessionComponent = (
 
     usePresentationSync(props, coordinator, handleRef, rootRef);
     useChangeWatch(props, mounted, coordinator);
+    useUnloadGuard(live, props);
 
     const onFlush = useCallback(() => resyncSelectionOf(coordinator.runtime), [coordinator]);
 

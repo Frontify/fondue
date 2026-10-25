@@ -18,7 +18,7 @@ export type SaveState = Exclude<SaveStatus['state'], 'unmanaged'>;
 export type Rejection = Extract<SaveResponse, { readonly status: 'rejected' }>['code'];
 export type Timer = 'delay' | 'longest' | 'retry' | 'timeout';
 
-type Timing = Required<Omit<PersistenceOptions, 'onConflict'>>;
+type Timing = Required<Omit<PersistenceOptions, 'onConflict' | 'unloadGuard'>>;
 const DEFAULTS: Timing = {
     autosave: 'debounced',
     delayMs: 500,
