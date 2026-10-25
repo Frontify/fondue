@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../../../styles/focus-outline';
+@use '../../../styles/focusOutline';
 
 .swatch {
     display: flex;
@@ -42,7 +42,7 @@
 
 // react-colorful sets `outline: none` on its sliders, so the editor's focus outline marks them.
 .draft :global(.react-colorful__interactive) {
-    @include focus-outline.focus-outline;
+    @include focusOutline.focus-outline;
 
     @media (forced-colors: active) {
         &:focus-visible {

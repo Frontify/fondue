@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../../../styles/focus-outline';
+@use '../../../styles/focusOutline';
 
 .nav {
-    @include focus-outline.focus-outline;
+    @include focusOutline.focus-outline;
 }
 
 .list {
@@ -29,7 +29,7 @@
     text-align: start;
     cursor: pointer;
 
-    @include focus-outline.focus-outline;
+    @include focusOutline.focus-outline;
 
     &:hover {
         background-color: var(--color-surface-hover);

@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../../../styles/focus-outline';
+@use '../../../styles/focusOutline';
 
 .checkbox {
-    @include focus-outline.focus-outline;
+    @include focusOutline.focus-outline;
 
     margin: 0;
 
