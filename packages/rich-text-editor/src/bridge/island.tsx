@@ -64,18 +64,24 @@ const IslandFallback = ({ inline }: { readonly inline: boolean }) => {
         }
         api.focus();
     };
+    let Container: 'span' | 'div' = 'div';
+    let layout = styles.block;
+    if (inline) {
+        Container = 'span';
+        layout = styles.inline;
+    }
     return (
         <>
             <span role="group" aria-label={label} data-rte-island="">
                 {islandText(attrs.original)}
             </span>
             {editable && (
-                <span className={styles.bar}>
+                <Container className={`${styles.bar} ${layout}`}>
                     <NodeChromeToolbar aria-label={label}>
                         <NodeChromeButton label={context.t('RichTextEditor_copyOriginal')} onClick={copy} />
                         <NodeChromeButton label={context.t('RichTextEditor_convertToText')} onClick={convert} />
                     </NodeChromeToolbar>
-                </span>
+                </Container>
             )}
         </>
     );

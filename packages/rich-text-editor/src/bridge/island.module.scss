@@ -1,6 +1,19 @@
-.bar {
-    display: inline-flex;
+// The toolbar is a block `div`, so the row is laid out on it, not on the bar.
+.bar :global([data-rte-node-chrome]) {
+    display: flex;
     gap: var(--spacing-x-small);
     align-items: center;
+    font-family: var(--text-body-small-default-font-family);
+    font-size: var(--text-body-small-default-font-size);
+    line-height: var(--text-body-small-default-line-height);
+}
+
+.block {
+    display: block;
+    margin-block-start: var(--spacing-x-small);
+}
+
+.inline {
+    display: inline-flex;
     margin-inline-start: var(--spacing-x-small);
 }

@@ -83,6 +83,31 @@ test('shows islands as labelled fallbacks with their text, edits around them, mo
         .toEqual([para(text('before one')), para(text('ac'), emoji, text('b')), para(text('after')), callout]);
 });
 
+test('lays the island actions out apart, and below the text of a block island', async ({ mount, page }) => {
+    const blocks = [para(text('before')), callout, para(text('a'), emoji, text('b'))];
+    await mount(<EditorProbe blocks={blocks as unknown as readonly ContentNodeJSON[]} />);
+    await ready(page);
+    for (const name of ['Unsupported content: callout', 'Unsupported content: emoji']) {
+        const toolbar = surfaceOf(page).getByRole('toolbar', { name, exact: true });
+        const copy = await toolbar.getByRole('button', { name: 'Copy original' }).boundingBox();
+        const convert = await toolbar.getByRole('button', { name: 'Convert to text' }).boundingBox();
+        if (copy === null || convert === null) {
+            throw new Error('An island action has no box.');
+        }
+        expect(convert.x - (copy.x + copy.width)).toBeGreaterThan(0);
+    }
+    const fallback = await surfaceOf(page)
+        .getByRole('group', { name: 'Unsupported content: callout', exact: true })
+        .boundingBox();
+    const bar = await surfaceOf(page)
+        .getByRole('toolbar', { name: 'Unsupported content: callout', exact: true })
+        .boundingBox();
+    if (fallback === null || bar === null) {
+        throw new Error('The island text or its actions have no box.');
+    }
+    expect(bar.y).toBeGreaterThanOrEqual(fallback.y + fallback.height);
+});
+
 test('copies an island original as text and converts a block and an inline island to text, each as one undo step', async ({
     mount,
     page,
