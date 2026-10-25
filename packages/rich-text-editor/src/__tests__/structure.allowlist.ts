@@ -21,16 +21,6 @@ export const KNOWN_CYCLES: string[] = [];
 
 export const PROSEMIRROR_NODES: string[] = ['clipboard/import', 'definition', 'testing', 'html', 'runtime'];
 
-export const SPEC_REFERENCES: Record<string, number> = {
-    'CONTRIBUTING.md': 6,
-    'oxlint.config.ts': 2,
-    'src/runtime/clipboard/paste.ts': 1,
-    'src/features/stages.ts': 1,
-    'src/react/profiles/document.ts': 1,
-    'src/reader/render.tsx': 1,
-    'src/runtime/keys.ts': 4,
-    'src/ui/context-menu/context-menu.tsx': 1,
-    'src/ui/toolbar/item.tsx': 2,
-};
+export const SPEC_REFERENCES: Record<string, number> = {};
 
 export const AS_UNKNOWN_AS_MAX = 29;

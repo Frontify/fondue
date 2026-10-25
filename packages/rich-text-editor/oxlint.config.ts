@@ -165,7 +165,7 @@ const PUBLIC_ENTRY_MODULES = Object.entries(packageJson.exports)
 // The public entries, the modules they re-export to plugins and the shared story folder, through the alias.
 const STORY_MODULES = [...PUBLIC_ENTRY_MODULES, 'bridge/plugin', 'bridge/define', 'reader/define', 'react/examples/**'];
 
-const STORY_MESSAGE = `A story imports only the public entries and the modules they re-export to plugins (${STORY_MODULES.map((path) => `\`#/${path}\``).join(', ')}), files of its own folder, ${UI_PACKAGES_TEXT}, \`storybook/*\` and \`@storybook/*\`, as an outside host must (DR-129).`;
+const STORY_MESSAGE = `A story imports only the public entries and the modules they re-export to plugins (${STORY_MODULES.map((path) => `\`#/${path}\``).join(', ')}), files of its own folder, ${UI_PACKAGES_TEXT}, \`storybook/*\` and \`@storybook/*\`, as an outside host must.`;
 
 const UI_MESSAGE =
     '`ui` takes only types from the runtime module, and imports neither `react`, `persistence`, `clipboard` nor the engine.';
@@ -724,7 +724,7 @@ export default defineConfig({
                         ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
                         ...featurePathPatterns(TESTING_FEATURE_TAILS),
                         ...ENGINE_PATTERNS,
-                        // DR-136: the `paste` helper feeds the paste pipeline through its entry.
+                        // The `paste` helper feeds the paste pipeline through its entry.
                         ...exceptPatterns(['runtime/clipboard/plugin']),
                     ],
                     message: TESTING_MESSAGE,

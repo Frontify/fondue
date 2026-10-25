@@ -161,7 +161,7 @@ export const tabStop = (outOfTabOrder: boolean): { readonly tabIndex?: number } 
 export const useShortcut = ({ bindings }: ToolbarItem) => {
     const apple = useApplePlatform();
     const behavior = useSessionValue((runtime) => runtime?.policy.enterBehavior, Object.is);
-    // Shift+Enter runs as Enter while Enter submits, and the policy can change after the keymap compiles (Key precedence row 4).
+    // Shift+Enter runs as Enter while Enter submits, and the policy can change after the keymap compiles.
     const binding = bindingHere(
         bindings.filter((candidate) => behavior !== 'submit' || keyOn(candidate, apple) !== 'Shift-Enter'),
         apple,

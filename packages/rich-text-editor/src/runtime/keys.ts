@@ -22,7 +22,7 @@ const unmodified = (event: KeyboardEvent): boolean =>
 const isTab = (event: KeyboardEvent): boolean =>
     event.key === 'Tab' && !event.altKey && !event.ctrlKey && !event.metaKey;
 
-/** How the surface's Enter, Shift+Enter and Mod+Enter act before the structural keys (Key precedence row 4). */
+/** How the surface's Enter, Shift+Enter and Mod+Enter act before the structural keys. */
 export interface EnterKeys {
     /** The Inline profile: Shift+Enter and Mod+Enter act as Enter, and no key adds a block or a line. */
     readonly singleLine: boolean;
@@ -69,7 +69,7 @@ const submit = (view: EditorView, keys: EnterKeys) => {
 };
 
 /**
- * Row 4 of Key precedence: whether the guard took an Enter, after composition and an open suggestion list passed it
+ * Whether the guard took an Enter, after composition and an open suggestion list passed it
  * on. A single-line field leaves an Enter it does not submit unprevented, as a one-line `input` does.
  */
 const takesEnter = (

@@ -33,7 +33,7 @@ export const documentPlugins: readonly RichTextPlugin[] = [
     contentChecksPlugin(),
 ] as const;
 
-/** The Default toolbars groups of the Document profile; a group keeps only the commands the definition installs. */
+/** The default toolbar groups of the Document profile; a group keeps only the commands the definition installs. */
 export const documentToolbar = (lists: readonly (readonly CommandRef[])[]): readonly (readonly CommandRef[])[] => [
     ['history.undo', 'history.redo'],
     ['text-style'],

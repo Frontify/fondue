@@ -30,7 +30,7 @@ const preventDefault = (event: Event) => event.preventDefault();
 /**
  * The package context menu: a Fondue `Dropdown` for a node selection or a right click inside an atom node view, at the
  * pointer, or at the selected node when Shift+F10 or the context-menu key opens it. Its rows are the More rows below
- * the toolbar items. Anywhere else the browser's own menu opens (DR-022).
+ * the toolbar items. Anywhere else the browser's own menu opens.
  */
 export const ContextMenu = ({
     items,

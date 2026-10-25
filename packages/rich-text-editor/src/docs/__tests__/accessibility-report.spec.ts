@@ -2,7 +2,7 @@
 
 // @vitest-environment node
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -27,7 +27,14 @@ const CONFORMANCE_LEVELS = ['Supports', 'Partially Supports', 'Does Not Support'
 /** The criteria whose outcome only a screen reader or a real device can show. */
 const SCREEN_READER_AND_DEVICE = ['1.3.1', '2.4.11', '4.1.2', '4.1.3', 'A.2.2.2'];
 
-const REQUIREMENT_ID = /(?:^|[\s(,])(?:[a-z]+\/)?AC-\d{3}\b/;
+const WCAG_CRITERION = /\b[1-4]\.\d{1,2}\.\d{1,2}\b/;
+
+const EVIDENCE_PATH = /`(src\/[^`]+)`/g;
+
+const NO_AUTOMATED_TEST = 'no automated test';
+
+/** The rows of each report that read "no automated test", so a row cannot silently lose its evidence. */
+const NO_AUTOMATED_TEST_ROWS: Record<string, number> = { '1.0.0.mdx': 2 };
 
 const CRITERIA_HEADER = /^\| Criterion\s+\| Conformance level\s+\| Remarks and explanations\s+\|$/;
 
@@ -70,8 +77,17 @@ const problemsOf = (source: string): string[] => {
         if (!CONFORMANCE_LEVELS.includes(level)) {
             problems.push(`${criterion}: "${level}" is no conformance level`);
         }
-        if (level !== 'Not Applicable' && !REQUIREMENT_ID.test(remarks)) {
-            problems.push(`${criterion}: names no requirement ID`);
+        if (level !== 'Not Applicable') {
+            const paths = [...remarks.matchAll(EVIDENCE_PATH)].map(([, path]) => path ?? '');
+            if (!WCAG_CRITERION.test(criterion)) {
+                problems.push(`${criterion}: names no WCAG criterion`);
+            }
+            if (paths.length === 0 && !remarks.includes(NO_AUTOMATED_TEST)) {
+                problems.push(`${criterion}: names no evidence`);
+            }
+            for (const path of paths.filter((path) => !existsSync(join(PACKAGE, path)))) {
+                problems.push(`${criterion}: evidence ${path} does not exist`);
+            }
         }
         const number = criterion.split(' ')[0] ?? '';
         if (SCREEN_READER_AND_DEVICE.includes(number) && level !== 'Not Evaluated' && level !== 'Does Not Support') {
@@ -86,6 +102,11 @@ const problemsOf = (source: string): string[] => {
     return problems;
 };
 
+/** How many marked rows of a report read "no automated test". */
+const noAutomatedTestRowsOf = (source: string) =>
+    rowsOf(source).filter(({ level, remarks }) => level !== 'Not Applicable' && remarks.includes(NO_AUTOMATED_TEST))
+        .length;
+
 /** The level 2 headings of a page. */
 const headingsOf = (source: string) =>
     [...source.matchAll(/^## (.+)$/gm)].map(([, heading]) => heading).filter((heading) => heading !== undefined);
@@ -99,9 +120,19 @@ describe('the accessibility report check', () => {
         expect(problemsOf(fixture('complete'))).toEqual([]);
     });
 
-    it('fails a fixture with a row that names no requirement ID', () => {
-        expect(problemsOf(fixture('row-without-id'))).toEqual([
-            '1.4.4 Resize Text (Level AA): names no requirement ID',
+    it('counts the rows of the complete fixture that read no automated test', () => {
+        expect(noAutomatedTestRowsOf(fixture('complete'))).toBe(1);
+    });
+
+    it('fails a fixture with a row that names no evidence', () => {
+        expect(problemsOf(fixture('row-without-evidence'))).toEqual([
+            '1.4.4 Resize Text (Level AA): names no evidence',
+        ]);
+    });
+
+    it('fails a fixture with a row whose evidence file does not exist', () => {
+        expect(problemsOf(fixture('missing-evidence-file'))).toEqual([
+            '1.4.4 Resize Text (Level AA): evidence src/react/__tests__/gone.ct.tsx does not exist',
         ]);
     });
 
@@ -130,12 +161,20 @@ describe('the accessibility reports', () => {
         }
     });
 
-    it('names the requirement IDs behind each marked criterion, and marks no screen reader or device criterion as met', () => {
+    it('names a WCAG criterion and the specs that verify each marked row, and marks no screen reader or device criterion as met', () => {
         for (const name of REPORTS) {
             const source = read(`src/docs/accessibility/${name}`);
 
             expect(rowsOf(source).length, name).toBeGreaterThan(0);
             expect(problemsOf(source), name).toEqual([]);
+        }
+    });
+
+    it('reads no automated test in exactly the rows it did before', () => {
+        for (const name of REPORTS) {
+            expect(noAutomatedTestRowsOf(read(`src/docs/accessibility/${name}`)), name).toBe(
+                NO_AUTOMATED_TEST_ROWS[name],
+            );
         }
     });
 });

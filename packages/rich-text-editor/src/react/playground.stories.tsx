@@ -1072,7 +1072,7 @@ export const Recovery: Story = {
     args: { brokenAtMount: true },
     parameters: {
         noSurface: true,
-        // DR-124: React's one report of the render error, and its development rethrow, which reaches the page twice.
+        // React's one report of the render error, and its development rethrow, which reaches the page twice.
         reports: {
             console: { message: /^The above error occurred in the <Breaker> component:/, max: 1 },
             page: { message: /^The playground broke the editor on purpose\./, max: 2 },

@@ -369,7 +369,7 @@ export const renderDocument = (
         return laidOut;
     }
     // The stylesheet holds only checked declarations, so it can never close its element.
-    // oxlint-disable-next-line react/no-danger -- DR-128: React 18 escapes a text child of `<style>` on the server.
+    // oxlint-disable-next-line react/no-danger -- React 18 escapes a text child of `<style>` on the server.
     const sheet = createElement('style', { 'data-rte-styles': '', dangerouslySetInnerHTML: { __html: styleSheet } });
     return createElement(Fragment, null, sheet, laidOut);
 };

@@ -183,7 +183,7 @@ const plainSlice = (schema: Schema, text: string, marks: readonly Mark[]) => {
 
 /**
  * The slice's text blocks as one paragraph with a space between blocks, keeping marks; `undefined` for one text block
- * or none, or when a block leaf such as an island would be dropped (DR-041).
+ * or none, or when a block leaf such as an island would be dropped.
  */
 const joinedSlice = (schema: Schema, slice: Slice): Slice | undefined => {
     const blocks: Node[] = [];
