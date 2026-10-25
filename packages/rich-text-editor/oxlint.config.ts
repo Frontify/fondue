@@ -390,7 +390,7 @@ const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition`, `clipboard/imp
 const BRIDGE_MESSAGE = '`bridge` imports `model`, `runtime`, `persistence` and React, never ProseMirror.';
 
 const REACT_FOLDER_MESSAGE =
-    '`react` imports every folder except `testing`, the runtime only through `#/runtime/port` (only `compile-editor` and `session/use-runtime` also import `#/runtime/assembly`), and neither `react-dom` nor ProseMirror.';
+    '`react` imports every folder except `testing`, the runtime only through `#/runtime/port` (only `compileEditor` and `session/useSessionRuntime` also import `#/runtime/assembly`), and neither `react-dom` nor ProseMirror.';
 
 const PERSISTENCE_MESSAGE = '`persistence` imports `model` and `runtime`.';
 

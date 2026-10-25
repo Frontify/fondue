@@ -21,7 +21,7 @@ const LOCALES = new URL('../../../locales', import.meta.url);
 const otherLocales = readdirSync(LOCALES).filter((name) => /^[a-z]{2}-[A-Z]{2}\.ts$/.test(name) && name !== 'en-US.ts');
 
 const MARKDOWN_MODULE =
-    /\/node_modules\/(?:markdown-it|entities|linkify-it|mdurl|uc\.micro)\/|\/codecs\/(?:from|to)-markdown\.ts$/;
+    /\/node_modules\/(?:markdown-it|entities|linkify-it|mdurl|uc\.micro)\/|\/codecs\/(?:from|to)Markdown\.ts$/;
 
 describe('profile bundles', () => {
     it.each(ROWS)(
