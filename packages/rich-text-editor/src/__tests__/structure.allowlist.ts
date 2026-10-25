@@ -23,4 +23,4 @@ export const PROSEMIRROR_NODES: string[] = ['clipboard/import', 'definition', 't
 
 export const SPEC_REFERENCES: Record<string, number> = {};
 
-export const AS_UNKNOWN_AS_MAX = 19;
+export const AS_UNKNOWN_AS_MAX = 11;
