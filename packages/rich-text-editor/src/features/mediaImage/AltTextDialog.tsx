@@ -4,41 +4,10 @@ import { Button, Label, RadioList, TextInput } from '@frontify/fondue-components
 
 import { EditorDialog } from '#/bridge/define';
 import { type OverlayProps } from '#/bridge/plugin';
-import { type CodecContext } from '#/model';
 
+import { type AltTextStrings } from './dialogStrings';
 import styles from './styles/media.module.scss';
 import { type AltTextState, useAltTextDialogState } from './useAltTextDialogState';
-
-/** The alternative text dialog's strings, in the UI locale. */
-export interface AltTextStrings {
-    readonly title: string;
-    readonly choice: string;
-    readonly meaningful: string;
-    readonly meaningfulHint: string;
-    readonly decorative: string;
-    readonly decorativeHint: string;
-    readonly field: string;
-    readonly required: string;
-    readonly suggestion: string;
-    readonly useSuggestion: string;
-    readonly save: string;
-    readonly cancel: string;
-}
-
-export const altTextStrings = (t: CodecContext['t']): AltTextStrings => ({
-    title: t('RichTextEditor_imageAltTitle'),
-    choice: t('RichTextEditor_imageAltChoice'),
-    meaningful: t('RichTextEditor_imageAltMeaningful'),
-    meaningfulHint: t('RichTextEditor_imageAltMeaningfulHint'),
-    decorative: t('RichTextEditor_imageAltDecorative'),
-    decorativeHint: t('RichTextEditor_imageAltDecorativeHint'),
-    field: t('RichTextEditor_imageAltField'),
-    required: t('RichTextEditor_imageAltRequired'),
-    suggestion: t('RichTextEditor_imageAltSuggestion'),
-    useSuggestion: t('RichTextEditor_imageAltUseSuggestion'),
-    save: t('RichTextEditor_imageAltSave'),
-    cancel: t('RichTextEditor_cancel'),
-});
 
 const options = (strings: AltTextStrings) =>
     [

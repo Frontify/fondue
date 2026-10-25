@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { lazyPart } from '#/bridge/define';
 import { defineEditorPart } from '#/bridge/plugin';
 
 import { language } from './feature';
-import { LanguageDialog } from './LanguageDialog';
+
+const LanguageDialog = lazyPart(() => import('./LanguageDialog').then((loaded) => loaded.LanguageDialog));
 
 const DIRECTIONS = ['ltr', 'rtl', 'auto'] as const;
 

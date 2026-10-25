@@ -1,11 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { lazyPart } from '#/bridge/define';
 import { defineEditorPart, type EditorApi, type EditorCommand } from '#/bridge/plugin';
 import { markRule } from '#/model';
 
 import { links } from './feature';
-import { EDIT_LINK, LinkBubble, REMOVE_LINK } from './LinkBubble';
-import { LinkPopover, linkInitialOf, SET_LINK } from './LinkPopover';
+import { EDIT_LINK, REMOVE_LINK } from './linkBubbleModel';
+import { linkInitialOf, SET_LINK } from './linkPopoverModel';
+
+const LinkBubble = lazyPart(() => import('./LinkBubble').then((loaded) => loaded.LinkBubble));
+const LinkPopover = lazyPart(() => import('./LinkPopover').then((loaded) => loaded.LinkPopover));
 
 // An absolute URL after a space, a bracket, a quote or the block start, without the punctuation that ends a sentence.
 const AUTOLINK = /(?<=^|[\s([{<"'])(?<href>(?:https?:\/\/|mailto:|tel:)[^\s<>]*[^\s<>.,;:!?'")\]}])\s$/u;

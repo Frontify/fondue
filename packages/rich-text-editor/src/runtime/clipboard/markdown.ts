@@ -5,6 +5,7 @@ import { Fragment, type Schema } from 'prosemirror-model';
 import type * as FromMarkdown from '#/codecs/fromMarkdown';
 import { type ContentModel, type ResourceLimits } from '#/model';
 import { markHrefPolicy, decodeToTree, randomId } from '#/model/internal';
+import { whenIdle } from '#/runtime/idle';
 
 type MarkdownReader = typeof FromMarkdown;
 type MarkdownParser = ReturnType<MarkdownReader['createParser']>;
@@ -25,16 +26,10 @@ export const loadMarkdownReaderOnIdle = (): (() => void) => {
     if (reader !== undefined) {
         return () => {};
     }
-    const start = () => {
+    return whenIdle(() => {
         // A failed load leaves paste as plain text.
         loadMarkdownReader().catch(() => undefined);
-    };
-    if (typeof requestIdleCallback === 'function') {
-        const id = requestIdleCallback(start);
-        return () => cancelIdleCallback(id);
-    }
-    const id = setTimeout(start, 0);
-    return () => clearTimeout(id);
+    });
 };
 
 const parsers = new WeakMap<ContentModel, MarkdownParser>();

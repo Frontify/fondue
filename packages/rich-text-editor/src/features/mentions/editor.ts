@@ -1,12 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { lazyPart } from '#/bridge/define';
 import { defineEditorPart } from '#/bridge/plugin';
 import { type JsonObject } from '#/model';
 
 import { mentions } from './feature';
-import { MentionSearchDialog } from './MentionSearchDialog';
 import { resultOf } from './results';
 import { mentionView } from './view';
+
+const MentionSearchDialog = lazyPart(() =>
+    import('./MentionSearchDialog').then((loaded) => loaded.MentionSearchDialog),
+);
 
 // No shown name is longer, as the suggestion list drops longer labels.
 const MAX_LABEL = 256;

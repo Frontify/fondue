@@ -3,7 +3,7 @@
 import { type MenuOption } from '#/bridge/define';
 import { type CodecContext } from '#/model';
 
-import { SET_SIZE } from './WidthDialog';
+import { SET_SIZE } from './dialogStrings';
 
 export const PRESETS = [25, 50, 75, 100] as const;
 export const SIDES = ['left', 'center', 'right'] as const;

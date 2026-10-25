@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { lazyPart } from '#/bridge/define';
 import { defineEditorPart } from '#/bridge/plugin';
 
 import { outline } from './feature';
-import { OutlinePanel } from './OutlinePanel';
+
+const OutlinePanel = lazyPart(() => import('./OutlinePanel').then((loaded) => loaded.OutlinePanel));
 
 const PANEL = 'outline';
 

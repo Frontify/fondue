@@ -247,6 +247,29 @@ test('opens the alternative text dialog from the image chrome by keyboard, with 
     expect(await page.evaluate(() => window.imageRte?.changes)).toBe(0);
 });
 
+test('moves focus into the alternative text dialog the first time it opens, before any idle prefetch ran', async ({
+    mount,
+    page,
+}) => {
+    // An idle callback that never runs leaves the dialog's code unloaded until it opens.
+    await page.addInitScript(() => {
+        window.requestIdleCallback = () => 0;
+    });
+    await mount(<ImageProbe content="still" />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await page.evaluate(() => {
+        const rte = window.imageRte;
+        rte?.setSelection(rte.handle, { nodeId: 'image-1' });
+    });
+
+    await page.keyboard.press('Alt+F10');
+    await page.keyboard.press('Enter');
+    const dialog = page.getByRole('dialog', { name: 'Alternative text' });
+
+    await expect(dialog.getByRole('radio', { name: /Meaningful/ })).toBeFocused();
+});
+
 /** The focusable elements inside the element `aria-describedby` names on `dialog`, none when it names none. */
 const describedControls = (dialog: Locator) =>
     dialog.evaluate((element) => {

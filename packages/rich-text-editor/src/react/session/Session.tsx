@@ -7,7 +7,7 @@ import { useOverlayRoot } from '#/bridge/useOverlayRoot';
 import { type EditorPort, resyncSelectionOf } from '#/runtime/port';
 
 import { useEscapeToSurface } from '../chromeFocus';
-import { BlockedShell, RecoveryShell } from '../Shells';
+import { BlockedShell, RecoveryShell } from '../LazyShells';
 import { type EditorHandle } from '../types';
 import { useKeyboardInset } from '../useKeyboardInset';
 

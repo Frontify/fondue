@@ -4,6 +4,7 @@ export {
     CheckedSlot,
     type EditorOverlay,
     keepFocus,
+    lazyPart,
     Listbox,
     type ListboxOption,
     type MenuOption,

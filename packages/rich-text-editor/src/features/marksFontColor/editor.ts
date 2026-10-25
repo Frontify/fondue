@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { lazyPart } from '#/bridge/define';
 import { defineEditorPart } from '#/bridge/plugin';
 import { type JsonObject } from '#/model';
 
-import { ColorMenu } from './ColorMenu';
 import { fontColor } from './feature';
 
 const COLOR_MARKS = ['font_color', 'highlight'] as const;
+
+const ColorMenu = lazyPart(() => import('./ColorMenu').then((loaded) => loaded.ColorMenu));
 
 /**
  * Sets and removes the text colour, opens the "A" colour menu from the toolbar, and sets the last colour again from

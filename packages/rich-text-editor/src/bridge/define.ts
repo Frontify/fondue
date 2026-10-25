@@ -26,6 +26,7 @@ export {
     OptionsMenu,
 } from './chromeToolbar';
 export { EditorDialog, type EditorDialogControl, useEditorDialog } from './EditorDialog';
+export { lazyPart } from './lazyPart';
 export { Listbox, type ListboxOption } from './Listbox';
 export { NodeViewContent } from './NodeViewContent';
 export { NodeChromeTurnInto, type TurnIntoCommands } from './turnInto';

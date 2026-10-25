@@ -7,10 +7,10 @@ import { type EditorApi, type UploadStatus, useEditorApi, useEditorValue } from 
 import { altOf, figureAlign, imageOutput, isRecord, type JsonObject, REPLACED_ASSET, unavailableOf } from '#/model';
 
 import { mayAnimate } from './animation';
+import { SET_SIZE } from './dialogStrings';
 import { type SIDES } from './options';
 import { surfaceFocused, uploadStatusText, useUploadStatus } from './upload';
 import { useResize } from './useResize';
-import { SET_SIZE } from './WidthDialog';
 
 /** The side of the figure that holds the image `nodeId`, which its chrome's alignment menu shows. */
 const sideOf = (api: EditorApi | undefined, nodeId: string | null) => {

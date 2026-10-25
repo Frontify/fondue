@@ -5,33 +5,9 @@ import { type FormEvent, useId, useRef, useState } from 'react';
 
 import { EditorDialog, useEditorDialog } from '#/bridge/define';
 import { type OverlayProps, useEditorApi } from '#/bridge/plugin';
-import { type CodecContext } from '#/model';
 
+import { MAX_WIDTH, MIN_WIDTH, SET_SIZE, type WidthStrings } from './dialogStrings';
 import styles from './styles/media.module.scss';
-
-/** The command that sets an image's width, whose payload declares it in percent. */
-export const SET_SIZE = 'image.size.set';
-export const MIN_WIDTH = 10;
-export const MAX_WIDTH = 100;
-
-/** The width dialog's strings, in the UI locale. */
-export interface WidthStrings {
-    readonly title: string;
-    readonly field: string;
-    /** The error for a value outside the allowed percentages. */
-    readonly range: string;
-    readonly apply: string;
-    readonly cancel: string;
-}
-
-/** The width dialog's strings in the UI locale of `t`. */
-export const widthStrings = (t: CodecContext['t']): WidthStrings => ({
-    title: t('RichTextEditor_imageWidthTitle'),
-    field: t('RichTextEditor_imageWidthField'),
-    range: t('RichTextEditor_imageWidthRange', { min: MIN_WIDTH, max: MAX_WIDTH }),
-    apply: t('RichTextEditor_apply'),
-    cancel: t('RichTextEditor_cancel'),
-});
 
 /**
  * The image menu's numeric field: a width in percent of the content width, from 10 to 100, whose Apply runs `apply`

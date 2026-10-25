@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { lazyPart } from '#/bridge/define';
 import { defineEditorPart } from '#/bridge/plugin';
 
 import { contentChecks } from './feature';
-import { IssuesPanel } from './IssuesPanel';
+
+const IssuesPanel = lazyPart(() => import('./IssuesPanel').then((loaded) => loaded.IssuesPanel));
 
 const PANEL = 'checks';
 

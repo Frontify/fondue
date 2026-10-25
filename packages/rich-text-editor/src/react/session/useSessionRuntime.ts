@@ -6,6 +6,7 @@ import { type Announcer } from '#/bridge/announcer';
 import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 import { inReactWork, type ReactWork, sharesName } from '#/bridge/devChecks';
 import { type InteractionScope } from '#/bridge/interactionScope';
+import { prefetchPartsOnIdle } from '#/bridge/lazyPart';
 import { type MountCoordinator } from '#/bridge/mount';
 import { createNodeViews } from '#/bridge/nodeViews';
 import { type EditorHosts } from '#/bridge/plugin';
@@ -203,7 +204,11 @@ const buildRuntime = (
 };
 
 /** Each event calls the newest callback the host passed. */
-const subscribeSession = (runtime: EditorPort, { latestRef, announcer, setLive, setFaulted }: SessionWiring) => {
+const subscribeSession = (
+    runtime: EditorPort,
+    { latestRef, announcer, setLive, setFaulted }: SessionWiring,
+): (() => void) => {
+    let cancelPrefetch: (() => void) | undefined;
     // A gap cursor shows no caret to a screen reader, so moving onto one is announced.
     let atGap = false;
     runtime.handle.subscribe('selectionChange', (selection: SelectionSummary) => {
@@ -216,6 +221,9 @@ const subscribeSession = (runtime: EditorPort, { latestRef, announcer, setLive, 
     });
     runtime.handle.subscribe('ready', (session: SessionToken) => {
         setLive(runtime);
+        // Parts that load on first use are fetched while the page is idle, so a first open is instant.
+        cancelPrefetch?.();
+        cancelPrefetch = prefetchPartsOnIdle();
         const surface = surfaceElement(runtime);
         if (process.env.NODE_ENV !== 'production' && surface !== undefined && sharesName(surface)) {
             runtime.report({
@@ -237,6 +245,7 @@ const subscribeSession = (runtime: EditorPort, { latestRef, announcer, setLive, 
             setFaulted(runtime.handle.getSnapshot().document);
         }
     });
+    return () => cancelPrefetch?.();
 };
 
 const startSession = (wiring: SessionWiring, decoded: Decoded) => {
@@ -259,7 +268,7 @@ const startSession = (wiring: SessionWiring, decoded: Decoded) => {
         resolveReference: () => latestRef.current.presentation?.resolveReference,
         resolveAssetUrl: () => latestRef.current.presentation?.resolveAssetUrl,
     });
-    subscribeSession(runtime, wiring);
+    const cancelPrefetch = subscribeSession(runtime, wiring);
     handleRef.current = runtime.handle;
     if (saving.created !== undefined) {
         registerSaveCauses(runtime.handle, saving.created);
@@ -268,6 +277,7 @@ const startSession = (wiring: SessionWiring, decoded: Decoded) => {
     onSession({ handle: runtime.handle, unresolved: () => saving.created?.unresolved() });
     coordinator.start(runtime);
     return () => {
+        cancelPrefetch();
         coordinator.stop();
         runtime.handle.dispose();
         handleRef.current = null;
