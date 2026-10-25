@@ -114,28 +114,35 @@ const ACTIVE_SVGS: readonly (readonly [string, string])[] = [
 ];
 const svgOf = (body: string) => `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">${body}</svg>`;
 
-/**
- * Registers one case or more for each Service obligation of `UploadService`, each calling a fresh service directly,
- * so no editor check runs first. Every refusal case pairs a probe that the service must refuse with a control, the
- * same kind of decodable file within the limit, that it must accept, so a refusal for another reason fails the case.
- * Obligation 1: a decodable file of `maxAssetBytes` + 1 bytes; an HTML file named `photo.png`; the smallest square
- * over `maxImagePixels` with each side at most 65,535 pixels, and 20,000 by 20,000 when that is over it too; a
- * 70,000 by 10 pixel PNG; and, when `acceptTypes` holds `image/svg+xml`, SVG files with active content. Obligation 2:
- * an accepted image whose answer must hold an asset ID that is no URL or access token. The probes are PNG, GIF or
- * JPEG, whichever the host accepts first, since only those carry any size in a few bytes.
- */
-export const runUploadConformance = (
+interface ConformanceOptions {
+    readonly maxAssetBytes: number;
+    readonly acceptTypes: readonly string[];
+    readonly maxImagePixels?: number;
+}
+
+/** The runner globals and the probes that every case group shares. */
+interface Conformance extends TestRunner {
+    readonly maxAssetBytes: number;
+    readonly acceptTypes: readonly string[];
+    readonly maxImagePixels: number;
+    readonly send: (bytes: Bytes | string, type: string, filename: string) => ReturnType<FakeUploadService['upload']>;
+    readonly refuses: (bytes: Bytes | string, type: string, filename: string) => Promise<boolean>;
+    readonly accepts: (bytes: Bytes | string, type: string, filename: string) => Promise<boolean>;
+    readonly probeType: (typeof SIZED_TYPES)[number] | undefined;
+    readonly sampleType: string | undefined;
+    readonly nameOf: (type: string | undefined) => string;
+    readonly extension: string;
+    /** The probe type, which the cases that need one register only when the host accepts it. */
+    readonly probing: () => (typeof SIZED_TYPES)[number];
+    /** A sample of the first type the host accepts that the kit has one of, with `padding` more bytes. */
+    readonly sample: (padding?: number) => Promise<{ bytes: Bytes; name: string; type: string }>;
+}
+
+const conformanceOf = (
     createService: () => FakeUploadService,
-    options: {
-        readonly maxAssetBytes: number;
-        readonly acceptTypes: readonly string[];
-        readonly maxImagePixels?: number;
-    },
-): void => {
-    const { describe, it, expect } = globalThis as Partial<TestRunner>;
-    if (describe === undefined || it === undefined || expect === undefined) {
-        throw new Error('runUploadConformance registers its cases through the global describe, it and expect.');
-    }
+    options: ConformanceOptions,
+    runner: TestRunner,
+): Conformance => {
     const { maxAssetBytes, acceptTypes } = options;
     const maxImagePixels = options.maxImagePixels ?? defaultLimits.maxImagePixels;
     let operations = 0;
@@ -161,12 +168,9 @@ export const runUploadConformance = (
     const probeType = SIZED_TYPES.find((type) => acceptTypes.includes(type));
     const sampleType = SAMPLE_TYPES.find((type) => acceptTypes.includes(type));
     const nameOf = (type: string | undefined) => type?.split('/')[1]?.split('+')[0]?.toUpperCase() ?? 'image';
-    const probeName = nameOf(probeType);
     const probeSubtype = probeType?.split('/')[1];
     const extension = probeType === 'image/jpeg' ? 'jpg' : (probeSubtype ?? 'bin');
-    /** The probe type, which the cases that need one register only when the host accepts it. */
     const probing = () => probeType as NonNullable<typeof probeType>;
-    /** A sample of the first type the host accepts that the kit has one of, with `padding` more bytes. */
     const sample = async (padding = 0) => {
         const found = sampleType === undefined ? undefined : await sampleImage(sampleType, padding);
         if (sampleType === undefined || found === undefined) {
@@ -174,111 +178,163 @@ export const runUploadConformance = (
         }
         return { ...found, type: sampleType };
     };
-    const shown = (value: number) => value.toLocaleString('en-US');
+    return {
+        ...runner,
+        maxAssetBytes,
+        acceptTypes,
+        maxImagePixels,
+        send,
+        refuses,
+        accepts,
+        probeType,
+        sampleType,
+        nameOf,
+        extension,
+        probing,
+        sample,
+    };
+};
+
+const shown = (value: number) => value.toLocaleString('en-US');
+
+const sizeCase = ({ it, expect, maxAssetBytes, refuses, accepts, sample, nameOf, sampleType }: Conformance) => {
+    it(
+        `Service obligation 1 refuses a decodable ${nameOf(sampleType)} of maxAssetBytes + 1 bytes and accepts it within maxAssetBytes`,
+        async () => {
+            const smallest = await sample();
+            if (smallest.bytes.length > maxAssetBytes) {
+                // No image fits the limit, so the smallest one shows the refusal alone.
+                expect(await refuses(smallest.bytes, smallest.type, smallest.name)).toBe(true);
+                return;
+            }
+            const over = await sample(maxAssetBytes + 1 - smallest.bytes.length);
+            expect(over.bytes.length > maxAssetBytes).toBe(true);
+            expect(await refuses(over.bytes, over.type, over.name)).toBe(true);
+            expect(await accepts(smallest.bytes, smallest.type, smallest.name)).toBe(true);
+        },
+        CASE_MS,
+    );
+};
+
+const contentTypeCase = ({ it, expect, refuses, accepts, sample, nameOf, sampleType }: Conformance) => {
+    it(
+        `Service obligation 1 reads the type from the content: it refuses an HTML file named photo.png and accepts a ${nameOf(sampleType)} under that name`,
+        async () => {
+            const html = '<!DOCTYPE html><html><body><script>alert(1)</script></body></html>';
+            expect(await refuses(html, 'image/png', 'photo.png')).toBe(true);
+            const { bytes } = await sample();
+            expect(await accepts(bytes, 'image/png', 'photo.png')).toBe(true);
+        },
+        CASE_MS,
+    );
+};
+
+const pixelCase = (c: Conformance) => {
+    const { it, expect, refuses, accepts, probeType, probing, extension, maxImagePixels } = c;
     // The smallest square over the pixel limit, which exists only while its side is within 65,535 pixels.
     const square = Math.ceil(Math.sqrt(maxImagePixels + 1));
-
-    describe('UploadService Service obligations', () => {
+    // A host that takes no PNG, GIF or JPEG gets no pixel probe, since the kit builds no larger WebP or AVIF.
+    if (probeType !== undefined && square <= MAX_IMAGE_SIDE) {
+        const probeName = c.nameOf(probeType);
+        const larger = square < 20_000 && 20_000 * 20_000 > maxImagePixels;
+        const also = larger ? ' and a 20,000 by 20,000 one' : '';
         it(
-            `Service obligation 1 refuses a decodable ${nameOf(sampleType)} of maxAssetBytes + 1 bytes and accepts it within maxAssetBytes`,
+            `Service obligation 1 refuses a decodable ${shown(square)} by ${shown(square)} pixel ${probeName} over maxImagePixels${also}, and accepts ${shown(square - 1)} by ${shown(square - 1)}`,
             async () => {
-                const smallest = await sample();
-                if (smallest.bytes.length > maxAssetBytes) {
-                    // No image fits the limit, so the smallest one shows the refusal alone.
-                    expect(await refuses(smallest.bytes, smallest.type, smallest.name)).toBe(true);
-                    return;
+                const type = probing();
+                const name = `square.${extension}`;
+                expect(await refuses(await decodableImage(type, square, square), type, name)).toBe(true);
+                if (larger) {
+                    expect(await refuses(await decodableImage(type, 20_000, 20_000), type, name)).toBe(true);
                 }
-                const over = await sample(maxAssetBytes + 1 - smallest.bytes.length);
-                expect(over.bytes.length > maxAssetBytes).toBe(true);
-                expect(await refuses(over.bytes, over.type, over.name)).toBe(true);
-                expect(await accepts(smallest.bytes, smallest.type, smallest.name)).toBe(true);
+                expect(await accepts(await decodableImage(type, square - 1, square - 1), type, name)).toBe(true);
             },
             CASE_MS,
         );
-
+    } else if (probeType !== undefined) {
         it(
-            `Service obligation 1 reads the type from the content: it refuses an HTML file named photo.png and accepts a ${nameOf(sampleType)} under that name`,
+            'Service obligation 1 accepts a decodable 65,535 by 2 pixel image, since no image within 65,535 pixels a side is over maxImagePixels',
             async () => {
-                const html = '<!DOCTYPE html><html><body><script>alert(1)</script></body></html>';
-                expect(await refuses(html, 'image/png', 'photo.png')).toBe(true);
-                const { bytes } = await sample();
-                expect(await accepts(bytes, 'image/png', 'photo.png')).toBe(true);
+                const type = probing();
+                expect(await accepts(await decodableImage(type, MAX_IMAGE_SIDE, 2), type, `strip.${extension}`)).toBe(
+                    true,
+                );
             },
             CASE_MS,
         );
+    }
+};
 
-        // A host that takes no PNG, GIF or JPEG gets no pixel probe, since the kit builds no larger WebP or AVIF.
-        if (probeType !== undefined && square <= MAX_IMAGE_SIDE) {
-            const larger = square < 20_000 && 20_000 * 20_000 > maxImagePixels;
-            const also = larger ? ' and a 20,000 by 20,000 one' : '';
-            it(
-                `Service obligation 1 refuses a decodable ${shown(square)} by ${shown(square)} pixel ${probeName} over maxImagePixels${also}, and accepts ${shown(square - 1)} by ${shown(square - 1)}`,
-                async () => {
-                    const type = probing();
-                    const name = `square.${extension}`;
-                    expect(await refuses(await decodableImage(type, square, square), type, name)).toBe(true);
-                    if (larger) {
-                        expect(await refuses(await decodableImage(type, 20_000, 20_000), type, name)).toBe(true);
-                    }
-                    expect(await accepts(await decodableImage(type, square - 1, square - 1), type, name)).toBe(true);
-                },
-                CASE_MS,
-            );
-        } else if (probeType !== undefined) {
-            it(
-                'Service obligation 1 accepts a decodable 65,535 by 2 pixel image, since no image within 65,535 pixels a side is over maxImagePixels',
-                async () => {
-                    const type = probing();
-                    expect(
-                        await accepts(await decodableImage(type, MAX_IMAGE_SIDE, 2), type, `strip.${extension}`),
-                    ).toBe(true);
-                },
-                CASE_MS,
-            );
-        }
-
-        // Only a PNG has room in its header for more than 65,535 pixels on a side.
-        if (acceptTypes.includes('image/png')) {
-            it(
-                'Service obligation 1 refuses a decodable 70,000 by 10 pixel PNG over 65,535 pixels on a side, and accepts 65,535 by 10',
-                async () => {
-                    expect(await refuses(await decodableImage('image/png', 70_000, 10), 'image/png', 'strip.png')).toBe(
-                        true,
-                    );
-                    expect(
-                        await accepts(await decodableImage('image/png', MAX_IMAGE_SIDE, 10), 'image/png', 'strip.png'),
-                    ).toBe(true);
-                },
-                CASE_MS,
-            );
-        }
-
-        if (acceptTypes.includes('image/svg+xml')) {
-            it(
-                'Service obligation 1 refuses an accepted SVG that holds active content, also behind character references, and accepts one with none',
-                async () => {
-                    for (const [, body] of ACTIVE_SVGS) {
-                        expect(await refuses(svgOf(body), 'image/svg+xml', 'logo.svg')).toBe(true);
-                    }
-                    expect(await accepts(svgOf('<rect width="10" height="10"/>'), 'image/svg+xml', 'logo.svg')).toBe(
-                        true,
-                    );
-                },
-                CASE_MS,
-            );
-        }
-
+const sideCase = ({ it, expect, acceptTypes, refuses, accepts }: Conformance) => {
+    // Only a PNG has room in its header for more than 65,535 pixels on a side.
+    if (acceptTypes.includes('image/png')) {
         it(
-            'Service obligation 2 answers an accepted image with an asset ID that is no URL or access token',
+            'Service obligation 1 refuses a decodable 70,000 by 10 pixel PNG over 65,535 pixels on a side, and accepts 65,535 by 10',
             async () => {
-                const accepted = await sample();
-                const asset = await send(accepted.bytes, accepted.type, accepted.name);
+                expect(await refuses(await decodableImage('image/png', 70_000, 10), 'image/png', 'strip.png')).toBe(
+                    true,
+                );
                 expect(
-                    typeof asset.assetId === 'string' && asset.assetId !== '' && !isAssetLocator(asset.assetId),
+                    await accepts(await decodableImage('image/png', MAX_IMAGE_SIDE, 10), 'image/png', 'strip.png'),
                 ).toBe(true);
-                expect(typeof asset.mediaType === 'string' && typeof asset.labelSnapshot === 'string').toBe(true);
             },
             CASE_MS,
         );
+    }
+};
+
+const svgCase = ({ it, expect, acceptTypes, refuses, accepts }: Conformance) => {
+    if (acceptTypes.includes('image/svg+xml')) {
+        it(
+            'Service obligation 1 refuses an accepted SVG that holds active content, also behind character references, and accepts one with none',
+            async () => {
+                for (const [, body] of ACTIVE_SVGS) {
+                    expect(await refuses(svgOf(body), 'image/svg+xml', 'logo.svg')).toBe(true);
+                }
+                expect(await accepts(svgOf('<rect width="10" height="10"/>'), 'image/svg+xml', 'logo.svg')).toBe(true);
+            },
+            CASE_MS,
+        );
+    }
+};
+
+const assetIdCase = ({ it, expect, sample, send }: Conformance) => {
+    it(
+        'Service obligation 2 answers an accepted image with an asset ID that is no URL or access token',
+        async () => {
+            const accepted = await sample();
+            const asset = await send(accepted.bytes, accepted.type, accepted.name);
+            expect(typeof asset.assetId === 'string' && asset.assetId !== '' && !isAssetLocator(asset.assetId)).toBe(
+                true,
+            );
+            expect(typeof asset.mediaType === 'string' && typeof asset.labelSnapshot === 'string').toBe(true);
+        },
+        CASE_MS,
+    );
+};
+
+/**
+ * Registers one case or more for each Service obligation of `UploadService`, each calling a fresh service directly,
+ * so no editor check runs first. Every refusal case pairs a probe that the service must refuse with a control, the
+ * same kind of decodable file within the limit, that it must accept, so a refusal for another reason fails the case.
+ * Obligation 1: a decodable file of `maxAssetBytes` + 1 bytes; an HTML file named `photo.png`; the smallest square
+ * over `maxImagePixels` with each side at most 65,535 pixels, and 20,000 by 20,000 when that is over it too; a
+ * 70,000 by 10 pixel PNG; and, when `acceptTypes` holds `image/svg+xml`, SVG files with active content. Obligation 2:
+ * an accepted image whose answer must hold an asset ID that is no URL or access token. The probes are PNG, GIF or
+ * JPEG, whichever the host accepts first, since only those carry any size in a few bytes.
+ */
+export const runUploadConformance = (createService: () => FakeUploadService, options: ConformanceOptions): void => {
+    const { describe, it, expect } = globalThis as Partial<TestRunner>;
+    if (describe === undefined || it === undefined || expect === undefined) {
+        throw new Error('runUploadConformance registers its cases through the global describe, it and expect.');
+    }
+    const conformance = conformanceOf(createService, options, { describe, it, expect });
+    describe('UploadService Service obligations', () => {
+        sizeCase(conformance);
+        contentTypeCase(conformance);
+        pixelCase(conformance);
+        sideCase(conformance);
+        svgCase(conformance);
+        assetIdCase(conformance);
     });
 };
