@@ -20,7 +20,7 @@ export const FILES_OVER_400_LINES: Record<string, number> = {
 export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {
     'src/react/rich-text-editor.tsx#anonymous#11': 184,
     'src/react/rich-text-editor.tsx#SessionComponent': 669,
-    'src/runtime/runtime.ts#createEditorRuntime': 609,
+    'src/runtime/runtime.ts#createEditorRuntime': 411,
 };
 
 export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {};

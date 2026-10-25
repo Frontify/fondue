@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Node } from 'prosemirror-model';
-import { EditorState, Plugin, PluginKey, Selection, type Transaction } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 import {
     type DirectEditorProps,
     type EditorView,
@@ -14,16 +14,13 @@ import {
     type CapabilityRef,
     type ContentCheckOptions,
     type Diagnostic,
-    hashDocument,
     type PresentationStyle,
     type ResourceLimits,
     type RichTextDocument,
 } from '#/model';
 import { type TreeNode } from '#/model/content';
-import { decodeToTree } from '#/model/decode';
 import { diagnostic } from '#/model/format';
 import { randomId } from '#/model/random-id';
-import { isRecord } from '#/model/values';
 
 import { type AsyncOperation, type AsyncRequest } from './async';
 import { createContentChecks } from './capabilities/checks/content-issues';
@@ -36,23 +33,25 @@ import {
 } from './capabilities/media/uploads';
 import { suggestionHosts } from './capabilities/suggestions/host';
 import { type ColumnState, columnsPlugin, ONE_COLUMN } from './columns';
-import { createDomIds } from './dom-ids';
 import { secondCopyAtMount } from './engines';
 import { createEventBus, type Listener } from './events';
 import { groupsPlugin } from './history';
 import { createKeyGuard, type EnterKeys } from './keys';
 import { type ExceededLimit } from './limits';
 import { nodeStatePlugin } from './node-state';
-import { sameStamp, type SaveCoordinator } from './saves';
+import { type SaveCoordinator } from './saves';
 import { createActions, type NodeActions, type NodeTarget } from './session/actions';
 import { createBusy } from './session/busy';
 import { createColumns } from './session/columns';
 import { createCommands } from './session/commands';
 import { createCommit } from './session/commit';
 import { createComposition } from './session/composition';
+import { createDispose } from './session/dispose';
 import { createEncoder } from './session/encode';
+import { createFacade } from './session/facade';
 import { createFaults } from './session/faults';
 import { createFocus } from './session/focus';
+import { createHandle } from './session/handle';
 import { createHistory } from './session/history';
 import { createIdentity } from './session/identity';
 import { createLifecycle } from './session/lifecycle';
@@ -61,16 +60,17 @@ import { createMode } from './session/mode';
 import { createPolicy } from './session/policy';
 import { createPrepare, DUPLICATE_ENGINE } from './session/prepare';
 import { createQueue } from './session/queue';
+import { createReplace } from './session/replace';
 import { createSaving } from './session/saving';
 import { createSettle } from './session/settle';
 import { createShown, summarize } from './session/shown';
 import { createStore } from './session/store';
 import { createTargetsService } from './session/targets';
-import { type InputOutcome, type Mode, type RejectedCode, type ReplaceCode } from './session/types';
+import { type InputOutcome, type Mode, type RejectedCode } from './session/types';
 import { createUploadService } from './session/uploads-wiring';
 import { createView, isEmpty } from './session/view';
 import { stylesPlugin } from './styles';
-import { countTargets, releaseTargets, targetsPlugin } from './targets';
+import { targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
     type CaptureResult,
@@ -295,7 +295,6 @@ export const runtimeOfView = (view: EditorView): EditorRuntime | undefined => vi
 
 export { isEmpty, summarize };
 
-const refused = (code: ReplaceCode): ReplaceResult => ({ status: 'rejected', code });
 /** One editing session: its state, its view while a surface is attached, the commit path and its events. */
 export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntime => {
     const { definition, limits } = options;
@@ -418,7 +417,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
 
     const metrics = createMetrics({ model: definition.model, session: identity.session, emit });
-    const { measure } = metrics;
 
     const saving = createSaving({ revision: options.revision ?? null, sequence: identity.sequence, lifecycle });
     const saveStatus = saving.status;
@@ -508,7 +506,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         generate,
         inputRules: () => options.inputRules?.(),
     });
-    const { prepare, installedId, queriedIds, exceededLimit } = batches;
+    const { prepare, installedId, queriedIds } = batches;
     const { commit, install, installState, guarded, settleProvisional, select, markTyping, clearDeferred } =
         createCommit({
             store,
@@ -570,7 +568,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return undefined;
         },
     });
-    const { coordinator, baseOf, captureRange } = targets;
+    const { coordinator, baseOf } = targets;
     const focus = createFocus({ lifecycle, view: views, store, commit: { commit }, shown: display, mode });
     const commands = createCommands({
         definition,
@@ -607,288 +605,91 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const actions = createActions({ definition, limits, store, commit: { commit }, commands, targets });
 
-    const dispose = () => {
-        if (lifecycle.is('disposed')) {
-            return;
-        }
-        saving.dispose();
-        // A listener of what the coordinator reported may have disposed the session already.
-        if (isDisposed()) {
-            return;
-        }
-        // Set first, so `disposed` listeners read the final phase and what they enqueue settles at once.
-        lifecycle.to('disposed');
-        settling.cancel();
-        checks.dispose();
-        settling.resolve('disposed');
-        coordinator.dispose();
-        uploads.raw.dispose(store.state.doc);
-        queue.settle('not-ready');
-        clearDeferred();
-        targets.clearDeferred();
-        const release = releaseTargets(store.state);
-        if (release !== undefined) {
-            liveResources.targets -= countTargets(store.state);
-            store.set(store.state.apply(release));
-        }
-        emit('disposed', identity.session());
-        clear();
-        views.detach();
-        liveResources.installedFeatures.delete(handle);
-    };
-
-    /** Replacement step 5 for a session with unsaved changes: `undefined` when the policy lets the replacement go on. */
-    const leaveUnsaved = async (unsaved: ReplaceDocumentRequest['unsaved']): Promise<ReplaceCode | undefined> => {
-        // A host in JavaScript may pass no policy at all.
-        if (!isRecord(unsaved)) {
-            return 'unsaved';
-        }
-        if (unsaved.action === 'save') {
-            const result = await saving.commit({ reason: 'navigate' });
-            // A write whose outcome is unknown goes on to step 6, which refuses it.
-            if (result.status === 'acknowledged' || (result.status === 'failed' && result.outcome === 'unknown')) {
-                return undefined;
-            }
-            return 'unsaved';
-        }
-        if (unsaved.action === 'checkpoint') {
-            // A checkpoint with no receipt cannot hold the current stamp.
-            if (!isRecord(unsaved.receipt) || !isRecord(unsaved.receipt.stamp)) {
-                return 'unsaved';
-            }
-            if (sameStamp(unsaved.receipt.stamp, identity.stamp())) {
-                return undefined;
-            }
-            return 'checkpoint-invalid';
-        }
-        if (unsaved.action === 'discard' && unsaved.confirmed === true) {
-            return undefined;
-        }
-        return 'unsaved';
-    };
-
-    /** Leaves `transitioning` after a failed step, so what waited runs on the unchanged session. */
-    const resume = (code: ReplaceCode, focused: boolean): ReplaceResult => {
-        // A listener may have faulted or disposed the session since the step began.
-        if (lifecycle.is('transitioning')) {
-            lifecycle.to('ready');
-        }
-        views.refresh();
-        coordinator.settle();
-        saving.settled();
-        queue.drain();
-        focus.refocus(focused);
-        return refused(code);
-    };
-
-    /**
-     * Replacement step 8: the decoded document in a fresh state with empty history, in the next generation of the
-     * session; a view that throws while it installs the state faults the session.
-     */
-    const installNext = (
-        request: ReplaceDocumentRequest,
-        tree: TreeNode,
-        stored: readonly CapabilityRef[],
-        focused: boolean,
-    ): ReplaceResult => {
-        let fresh: EditorState;
-        try {
-            const doc = definition.schema.nodeFromJSON(tree);
-            let selection = Selection.atStart(doc);
-            if (request.selection === 'end') {
-                selection = Selection.atEnd(doc);
-            }
-            fresh = history.fresh(doc, selection);
-        } catch {
-            faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
-            return refused('faulted');
-        }
-        const outgoing = store.state.doc;
-        // Roots that plugin views dispatch while the state installs commit in the new generation.
-        const installed = guarded(() => {
-            const shown = faults.withoutRecovery(() => installState(fresh));
-            if (!shown) {
-                return false;
-            }
-            // Intents of the old generation end before anything can drain them into the next.
-            queue.settle('wrong-session');
-            const previous = identity.nextGeneration(request.next.documentId);
-            display.setPublished(store.state);
-            encoder.capabilities = stored;
-            policy.setCapabilities(encoder.capabilities);
-            saving.replaced(request.next.revision, previous);
-            // A plugin view may have faulted or disposed the session while the state installed.
-            if (lifecycle.is('transitioning')) {
-                lifecycle.to('ready');
-            }
-            views.refresh();
-            return true;
-        });
-        if (!installed) {
-            return refused('faulted');
-        }
-        // What the old generation started or queued ends now and changes nothing here.
-        coordinator.abortWhere(() => true);
-        uploads.raw.reset(outgoing);
-        coordinator.settle();
-        busy.run(notify);
-        display.emitSelection();
-        display.emitSaveStatus();
-        emit('replaced', identity.session());
-        focus.refocus(focused);
-        return { status: 'replaced', session: identity.session() };
-    };
-
-    /** `EditorHandle.replaceDocument`: the Replacement steps in order, stopping at the first that fails. */
-    const replace = async (request: ReplaceDocumentRequest): Promise<ReplaceResult> => {
-        if (!lifecycle.is('ready')) {
-            return refused('not-ready');
-        }
-        const { next } = request;
-        const { document } = next;
-        // The input is untrusted: only a record names a model, and `decodeToTree` judges any other input.
-        if (isRecord(document) && isRecord(document.model) && document.model.id !== definition.model.ref.id) {
-            return refused('wrong-model');
-        }
-        const { result, tree } = decodeToTree(document, definition.model, { limits });
-        if (result.status !== 'editable' || tree === undefined) {
-            return refused('invalid-document');
-        }
-        // A host that echoes its own save gets the current session back with nothing changed; hashing waits for a checked document.
-        if (
-            next.documentId === identity.session().documentId &&
-            next.revision === saveStatus().revision &&
-            hashDocument(document) === hashDocument(handle.getSnapshot().document)
-        ) {
-            return { status: 'replaced', session: identity.session() };
-        }
-        if (!sameStamp(request.expected, identity.stamp())) {
-            return refused('changed-since-request');
-        }
-        if (settling.active()) {
-            return refused('composition-active');
-        }
-        const focused = views.current()?.hasFocus() === true;
-        lifecycle.to('transitioning');
-        views.refresh();
-        if (saving.unsaved()) {
-            const code = await leaveUnsaved(request.unsaved);
-            // The session was disposed, or faulted, while the step 5 write ran.
-            if (!lifecycle.is('transitioning')) {
-                return refused('not-ready');
-            }
-            if (code !== undefined) {
-                return resume(code, focused);
-            }
-        }
-        if (saving.outcomeUnknown()) {
-            return resume('save-unresolved', focused);
-        }
-        // A keystroke the view read during step 5 is kept, not replaced.
-        if (!sameStamp(request.expected, identity.stamp())) {
-            return resume('changed-since-request', focused);
-        }
-        return installNext(request, tree, result.document.requiredCapabilities, focused);
-    };
-
     const interactionRoots = new Set<HTMLElement>();
-    const handle: RuntimeHandle = {
-        getSummary: () => {
-            return {
-                session: identity.session(),
-                phase: lifecycle.phase(),
-                mode: mode.mode(),
-                commitSequence: identity.commitSequence(),
-                sequence: identity.sequence(),
-                compositionActive: settling.active(),
-                selection: summarize(store.state.selection),
-            };
-        },
-        getSnapshot: display.snapshot,
-        getSaveStatus: saveStatus,
-        getRecoveryCandidate: faults.candidate,
-        query: commands.query,
-        execute: commands.execute,
-        enqueue: queue.enqueue,
-        captureTarget: (options) => captureRange(options, undefined),
-        releaseTarget: targets.releaseTarget,
-        requestCommit: saving.request,
-        replaceDocument: async (request) => {
-            const started = Date.now();
-            const result = await replace(request);
-            let failureCode: string | null = null;
-            if (result.status === 'rejected') {
-                failureCode = result.code;
-            }
-            measure('replace', started, failureCode);
-            return result;
-        },
-        setMode: mode.set,
-        // Applies to the next query and commit; the schema, view and plugins stay.
-        updatePolicy: (next) => {
-            policy.update(next);
-        },
-        focus: focus.focus,
-        registerInteractionRoot: (element) => {
-            interactionRoots.add(element);
-            return () => {
-                interactionRoots.delete(element);
-            };
-        },
+    const dispose = createDispose({
+        lifecycle,
+        saving,
+        composition: settling,
+        checks,
+        targets,
+        uploads: uploads.raw,
+        queue,
+        commit: { clearDeferred },
+        store,
+        view: views,
+        events: { emit, clear },
+        identity,
+        resources: liveResources,
+        handle: () => handle,
+    });
+    const replace = createReplace({
+        definition,
+        limits,
+        lifecycle,
+        identity,
+        store,
+        encoder,
+        policy,
+        saving,
+        composition: settling,
+        shown: display,
+        view: views,
+        commit: { guarded, installState },
+        focus,
+        targets,
+        queue,
+        uploads: uploads.raw,
+        faults,
+        busy,
+        events: { notify, emit },
+        metrics,
+        history,
+    });
+    const handle = createHandle({
+        identity,
+        lifecycle,
+        mode,
+        composition: settling,
+        store,
+        shown: display,
+        saving,
+        faults,
+        commands,
+        queue,
+        targets,
+        replace,
+        policy,
+        focus,
+        interactionRoots,
         subscribe,
         dispose,
-    };
-
-    const runtime: EditorRuntime = {
+    });
+    const runtime: EditorRuntime = createFacade({
         handle,
         definition,
-        suggestionListId,
-        nextDomId: createDomIds(identity.session().sessionId),
-        get view() {
-            return views.current();
-        },
-        interactionRoots,
-        get state() {
-            return store.state;
-        },
-        get policy() {
-            return policy.current();
-        },
-        get nodeViews() {
-            return views.nodeViews;
-        },
         limits,
-        exceededLimit,
-        attach: views.attach,
-        detach: views.detach,
+        suggestionListId,
+        interactionRoots,
+        identity,
+        store,
+        policy,
+        view: views,
+        commit: { select },
+        prepare: batches,
         report,
-        captureRange: (range, captureOptions) => captureRange(captureOptions, range),
-        refusal: commands.refusal,
-        perform: commands.perform,
-        select,
-        writeRefusal: policy.writeRefusal,
         watch,
-        startAsync: coordinator.start,
-        changeServices: targets.changeServices,
-        setDisabled: mode.setDisabled,
-        setColumns: columns.set,
-        faultView: views.faultView,
-        nodeActions: actions.nodeActions,
-        placeAsset: actions.placeAsset,
-        uploads: {
-            accepts: uploads.accepts,
-            available: uploads.available,
-            begin: uploads.begin,
-            retry: uploads.retry,
-            pick: uploads.pick,
-            statusOf: uploads.statusOf,
-        },
-        saveStatusChanged: display.emitSaveStatus,
-        clearHistory: () => history.clear(),
-        afterInput: (settled, timeoutMs) => settling.wait(settled, timeoutMs),
-        measure: (kind, started, failureCode) => measure(kind, started, failureCode),
-        runChecks: () => checks.run(),
-    };
+        targets,
+        commands,
+        mode,
+        columns,
+        actions,
+        uploads,
+        shown: display,
+        history,
+        composition: settling,
+        metrics,
+        checks,
+    });
     if (options.nodeViews !== undefined) {
         views.setNodeViews(options.nodeViews(runtime));
     }
