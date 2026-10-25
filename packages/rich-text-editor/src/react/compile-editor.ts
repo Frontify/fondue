@@ -26,11 +26,15 @@ import {
     type ResourceLimits,
     type ValueDeclaration,
 } from '#/model';
-import { CLIPBOARD_PLUGIN, DROP_CURSOR_PLUGIN } from '#/model/capabilities';
-import { CONTENT_REPAIRS } from '#/model/checks';
-import { attributesOf, compiledModel } from '#/model/compile';
-import { limitsOf } from '#/model/decode';
-import { pointer } from '#/model/errors';
+import {
+    CLIPBOARD_PLUGIN,
+    DROP_CURSOR_PLUGIN,
+    CONTENT_REPAIRS,
+    attributesOf,
+    compiledModel,
+    limitsOf,
+    pointer,
+} from '#/model/internal';
 import { type ReaderOverrides } from '#/reader/plan';
 import {
     authoringOf,

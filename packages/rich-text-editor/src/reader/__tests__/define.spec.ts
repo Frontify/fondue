@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { DefinitionError, type Feature } from '#/model';
-import { featureInternals } from '#/model/feature';
+import { featureInternals } from '#/model/internal';
 
 import { declaredOverrides, defineReaderFeature } from '../define';
 

@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 
 import { ORIGIN_META } from '#/definition';
 import { type Diagnostic, type ResourceLimits } from '#/model';
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 
 import { ENTER_RULES_META } from '../../input-rules';
 import { createCommit } from '../../session/commit';

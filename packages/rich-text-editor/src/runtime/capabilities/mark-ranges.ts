@@ -3,7 +3,7 @@
 import { type Mark, type MarkType, type Node } from 'prosemirror-model';
 import { type EditorState, TextSelection, type Transaction } from 'prosemirror-state';
 
-import { OBJECT_REPLACEMENT } from '#/model/values';
+import { OBJECT_REPLACEMENT } from '#/model/internal';
 
 import { markRunAt } from '../mark-runs';
 

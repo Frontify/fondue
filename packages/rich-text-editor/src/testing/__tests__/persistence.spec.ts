@@ -3,7 +3,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { type JsonValue, type RichTextDocument } from '#/model';
-import { canonicalJson } from '#/model/hash';
+import { canonicalJson } from '#/model/internal';
 import { type PersistenceService, type SaveRequest, type SaveResponse, type ServiceContext } from '#/persistence/types';
 import { createFakeServer, type PersistenceServerHarness, runPersistenceConformance } from '#/testing/persistence';
 

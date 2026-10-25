@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type ContentModel } from '#/model';
-import { packageVersionOf } from '#/model/migrate';
+import { packageVersionOf } from '#/model/internal';
 
 import { type OperationMetric, type SessionToken } from './types';
 

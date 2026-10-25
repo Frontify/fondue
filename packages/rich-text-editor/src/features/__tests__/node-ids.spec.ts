@@ -14,9 +14,7 @@ import { documentArb, fcSettings, nodeIdsIn, nodesIn, seeded } from '#/features/
 import { registry } from '#/features/registry';
 import { fromHTML } from '#/html';
 import { compileContentModel, type ContentModel, type ContentNodeJSON, type RichTextDocument } from '#/model';
-import { compiledModel } from '#/model/compile';
-import { type TreeNode } from '#/model/content';
-import { decodeToTree } from '#/model/decode';
+import { compiledModel, type TreeNode, decodeToTree } from '#/model/internal';
 import { PROFILE_MODELS } from '#/react/examples/records';
 
 const ADDRESSED = ['heading', 'task_item', 'mention', 'figure', 'asset_image', 'embed', 'table'];

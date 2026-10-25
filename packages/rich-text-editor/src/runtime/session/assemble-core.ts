@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Diagnostic } from '#/model';
-import { randomId } from '#/model/random-id';
+import { randomId } from '#/model/internal';
 
 import { UPLOAD_FEATURE } from '../capabilities/media/uploads';
 import { ONE_COLUMN } from '../columns';

@@ -10,8 +10,7 @@ import {
     ORIGIN_META,
     type PluginImplementation,
 } from '#/definition';
-import { INPUT_RULES_PLUGIN } from '#/model/capabilities';
-import { OBJECT_REPLACEMENT } from '#/model/values';
+import { INPUT_RULES_PLUGIN, OBJECT_REPLACEMENT } from '#/model/internal';
 
 import { closeGroup, isHistoryTransaction, undo } from './history';
 import { blockStart, lineStart } from './input-rules-block';

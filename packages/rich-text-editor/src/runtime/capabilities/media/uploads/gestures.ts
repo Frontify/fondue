@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type JsonObject } from '#/model';
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 
 import { positionOf } from '../../../positions';
 import { type SelectionHandle } from '../../../types';

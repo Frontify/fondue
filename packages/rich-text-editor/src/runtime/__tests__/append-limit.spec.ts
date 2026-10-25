@@ -6,7 +6,7 @@ import { compileDefinition } from '#/definition';
 import { fixtureHistory } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
 import { compileContentModel, type Diagnostic } from '#/model';
-import { decodeToTree, limitsOf } from '#/model/decode';
+import { decodeToTree, limitsOf } from '#/model/internal';
 import { typeText } from '#/testing';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 

@@ -10,11 +10,16 @@ import {
     type ReactNode,
 } from 'react';
 
-import { checkHref, type Diagnostic, type JsonObject, type ListLevels } from '#/model';
-import { leavesOutUnresolved } from '#/model/assets';
-import { isIsland, type TreeNode } from '#/model/content';
-import { type HtmlTemplate, passageDirection, resolveHtmlSpec, treeRuns, withAutoDirection } from '#/model/html-spec';
+import { checkHref, type Diagnostic, type JsonObject, type ListLevels, isRecord } from '#/model';
 import {
+    leavesOutUnresolved,
+    isIsland,
+    type TreeNode,
+    type HtmlTemplate,
+    passageDirection,
+    resolveHtmlSpec,
+    treeRuns,
+    withAutoDirection,
     attrsOf,
     COLUMN_BREAK,
     type ColumnLayout,
@@ -39,8 +44,7 @@ import {
     withStyle,
     withStyleId,
     writesAttribute,
-} from '#/model/output';
-import { isRecord } from '#/model/values';
+} from '#/model/internal';
 
 import { type ReaderContext, type ReaderNodeProps } from './define';
 import { type Plan } from './plan';

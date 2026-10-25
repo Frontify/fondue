@@ -11,7 +11,7 @@ import { createCodecs } from '#/codecs';
 import { documentArb, fcSettings, nodeIdsIn, plainTextArb, seeded } from '#/features/__tests__/fixtures/generated';
 import { pluginsById } from '#/features/plugins';
 import { decodeDocument, type JsonValue, type KeyBinding, type RichTextDocument } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 import { PROFILE_MODELS } from '#/react/examples/records';
 import { loadProfile } from '#/react/profiles';
 import { RichTextEditor } from '#/react/rich-text-editor';

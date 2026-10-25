@@ -28,8 +28,7 @@ import {
 } from '#/features/__tests__/fixtures/documents';
 import { fcSettings, seeded } from '#/features/__tests__/fixtures/generated';
 import { type JsonValue, type RichTextDocument } from '#/model';
-import { decodeToTree } from '#/model/decode';
-import { encodeTree } from '#/model/encode';
+import { decodeToTree, encodeTree } from '#/model/internal';
 
 import { semanticModel } from '../../reader/__tests__/fixtures/semantic';
 

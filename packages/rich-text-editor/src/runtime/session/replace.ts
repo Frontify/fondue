@@ -3,11 +3,8 @@
 import { type EditorState, Selection } from 'prosemirror-state';
 
 import { type CompiledDefinition } from '#/definition';
-import { type CapabilityRef, type ResourceLimits, sameDocument } from '#/model';
-import { type TreeNode } from '#/model/content';
-import { decodeToTree } from '#/model/decode';
-import { diagnostic } from '#/model/format';
-import { isRecord } from '#/model/values';
+import { type CapabilityRef, type ResourceLimits, sameDocument, isRecord } from '#/model';
+import { type TreeNode, decodeToTree, diagnostic } from '#/model/internal';
 
 import { sameStamp } from '../saves';
 import { type ReplaceDocumentRequest, type ReplaceResult, type SessionToken } from '../types';

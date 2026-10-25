@@ -9,9 +9,7 @@ import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, defaultLimits } from '#/model';
-import { type TreeNode } from '#/model/content';
-import { decodeToTree } from '#/model/decode';
-import { encodeTree } from '#/model/encode';
+import { type TreeNode, decodeToTree, encodeTree } from '#/model/internal';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 
 import { createLimitCheck } from '../limits';

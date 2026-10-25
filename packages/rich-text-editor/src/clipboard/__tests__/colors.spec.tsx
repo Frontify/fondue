@@ -12,8 +12,7 @@ import { mountStyled } from '#/features/__tests__/fixtures/style-editor';
 import { styleModel } from '#/features/__tests__/fixtures/styles';
 import { fontColor } from '#/features/marks-font-color/feature';
 import { brandStyles } from '#/features/styles-brand/feature';
-import { compileContentModel, type ContentModel, type ContentNodeJSON } from '#/model';
-import { hexColor } from '#/model/colors';
+import { compileContentModel, type ContentModel, type ContentNodeJSON, hexColor } from '#/model';
 import { paste } from '#/testing';
 
 // A path, not a `URL`: happy-dom replaces the global `URL`, which rejects a `file:` URL.

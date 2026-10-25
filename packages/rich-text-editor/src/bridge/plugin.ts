@@ -16,7 +16,7 @@ import {
     type PayloadOf,
     type PresentationStyle,
 } from '#/model';
-import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/declarations';
+import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/internal';
 import { type ContentChecksApi } from '#/runtime/capabilities/checks/api';
 import { type EditorRange } from '#/runtime/document-api';
 import { type AuthoringPolicy, type ReferenceValue } from '#/runtime/types';

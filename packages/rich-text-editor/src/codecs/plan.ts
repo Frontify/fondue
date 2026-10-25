@@ -9,13 +9,18 @@ import {
     type JsonObject,
     type JsonValue,
 } from '#/model';
-import { type SharedAttribute } from '#/model/compile';
-import { type TreeNode } from '#/model/content';
-import { pointer } from '#/model/errors';
-import { canonicalJson } from '#/model/hash';
-import { resolveHtmlSpec } from '#/model/html-spec';
-import { buildPlan, type MarkPlan as BaseMarkPlan, type NodePlan as BaseNodePlan, type Plan } from '#/model/output';
-import { ownValue } from '#/model/values';
+import {
+    type SharedAttribute,
+    type TreeNode,
+    pointer,
+    canonicalJson,
+    resolveHtmlSpec,
+    buildPlan,
+    type MarkPlan as BaseMarkPlan,
+    type NodePlan as BaseNodePlan,
+    type Plan,
+    ownValue,
+} from '#/model/internal';
 
 import { type CodecLoss } from './types';
 

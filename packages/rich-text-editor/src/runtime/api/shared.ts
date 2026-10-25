@@ -5,7 +5,7 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 
 import { type CommandLookup, type EngineCommand } from '#/definition';
 import { type ContentModel, type JsonObject, type ResourceLimits, type RichTextDocument } from '#/model';
-import { snapshot } from '#/model/values';
+import { snapshot } from '#/model/internal';
 
 import { type CapabilityImplementation } from '../capabilities';
 import { type MediaSession } from '../capabilities/media/session';

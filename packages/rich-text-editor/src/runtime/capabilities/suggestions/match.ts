@@ -3,7 +3,7 @@
 import { type EditorState, TextSelection } from 'prosemirror-state';
 
 import { type EngineSuggestion } from '#/definition';
-import { type SuggestionRules } from '#/model/declarations';
+import { type SuggestionRules } from '#/model/internal';
 
 import { type Match } from './types';
 

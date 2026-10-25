@@ -6,7 +6,7 @@ import { NodeSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { image, layoutModel, mountLayout, press } from '#/features/__tests__/fixtures/layout';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 import { para, text } from '#/react/__tests__/fixtures/text';
 import { typeText } from '#/testing';
 

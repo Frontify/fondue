@@ -3,7 +3,7 @@
 import { Fragment, DOMParser as SchemaParser, type Schema } from 'prosemirror-model';
 
 import { type ContentModel, type ResourceLimits } from '#/model';
-import { type CompiledParseRule, compiledModel, markHrefPolicy } from '#/model/compile';
+import { type CompiledParseRule, compiledModel, markHrefPolicy } from '#/model/internal';
 
 import {
     type DomWindow,

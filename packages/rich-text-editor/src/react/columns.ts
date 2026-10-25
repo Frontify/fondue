@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MIN_COLUMN_WIDTH } from '#/model/output';
+import { MIN_COLUMN_WIDTH } from '#/model/internal';
 
 /** A length in CSS pixels from a computed style, or 0 for `normal` and other keywords. */
 const pixels = (value: string): number => {

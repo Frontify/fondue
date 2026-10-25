@@ -2,8 +2,7 @@
 
 import { registry } from '#/features/registry';
 import { type ContentRule, type ContentRuleId } from '#/model';
-import { DOCUMENT_RULES } from '#/model/checks';
-import { featureInternals } from '#/model/feature';
+import { DOCUMENT_RULES, featureInternals } from '#/model/internal';
 
 type ShippedRule = ContentRule | (typeof DOCUMENT_RULES)[number];
 

@@ -9,9 +9,9 @@ import {
     type HrefPolicy,
     type InputRule,
     type PayloadDeclaration,
+    hrefPolicyOf,
 } from '#/model';
-import { type CompiledFeature } from '#/model/compile';
-import { hrefPolicyOf } from '#/model/href';
+import { type CompiledFeature } from '#/model/internal';
 
 /** A command as a line-start rule runs it, with the payload of its marker, and whether its target is active there. */
 interface RuleCommand {

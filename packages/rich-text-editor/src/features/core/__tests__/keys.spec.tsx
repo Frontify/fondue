@@ -5,8 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { pluginIds, pluginsById } from '#/features/plugins';
 import { type ContentNodeJSON } from '#/model';
-import { compiledModel } from '#/model/compile';
-import { keyOn, modOn } from '#/model/platform';
+import { compiledModel, keyOn, modOn } from '#/model/internal';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { engineOf } from '#/react/compile-editor';
 import { shipped as brandDocumentProfile } from '#/react/profiles/brand-document';

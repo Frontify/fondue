@@ -8,8 +8,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { featuresById } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
-import { compileContentModel, hashDocument } from '#/model';
-import { type hashDocument as RealHash } from '#/model/hash';
+import { compileContentModel, hashDocument, type hashDocument as RealHash } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
 import { typeText } from '#/testing';
 

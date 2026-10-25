@@ -2,8 +2,7 @@
 
 import { enUS } from '#/locales/en-US';
 import { type RichTextLocale } from '#/model';
-import { codecContext } from '#/model/output';
-import { resolvingSafely } from '#/model/references';
+import { codecContext, resolvingSafely } from '#/model/internal';
 
 import { type ReaderContext } from './define';
 

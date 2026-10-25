@@ -4,9 +4,8 @@ import { type Mark, type Node } from 'prosemirror-model';
 import { type Transaction } from 'prosemirror-state';
 
 import { carriesNodeId } from '#/definition';
-import { type ContentModel, DefinitionError } from '#/model';
-import { compiledModel } from '#/model/compile';
-import { findUnsafeJson, isRecord, OBJECT_REPLACEMENT } from '#/model/values';
+import { type ContentModel, DefinitionError, isRecord } from '#/model';
+import { compiledModel, findUnsafeJson, OBJECT_REPLACEMENT } from '#/model/internal';
 
 import { type AuthoringPolicy, type FeaturePolicy, type HeadingLevel } from './types';
 

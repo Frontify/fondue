@@ -18,7 +18,7 @@ import {
     type RichTextDocument,
 } from '#/model';
 import { canonicalize, type JsonNode, modelDocumentArb, TEXT_UNITS } from '#/model/__tests__/helpers/documents';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 import { shipped as brandDocumentProfile } from '#/react/profiles/brand-document';
 import { shipped as commentProfile } from '#/react/profiles/comment';
 import { shipped as documentProfile } from '#/react/profiles/document';

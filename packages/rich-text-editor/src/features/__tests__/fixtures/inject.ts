@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type TreeNode } from '#/model/content';
+import { type TreeNode } from '#/model/internal';
 
 /**
  * A decoded tree with every `href` of a `link` mark set to `href`, as a value that reached the model past every check

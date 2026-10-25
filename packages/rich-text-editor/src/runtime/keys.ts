@@ -6,8 +6,7 @@ import { type NodeType } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN } from '#/model/capabilities';
-import { isApple, modOn } from '#/model/platform';
+import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN, isApple, modOn } from '#/model/internal';
 
 import { passesToBrowser } from './browser-keys';
 import { showsOptions } from './capabilities/suggestions/plugin';

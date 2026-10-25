@@ -12,7 +12,7 @@ import {
     type KeyBinding,
     type PayloadDeclaration,
 } from '#/model';
-import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/declarations';
+import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/internal';
 
 import { type CompiledInputRule } from './input-rules';
 

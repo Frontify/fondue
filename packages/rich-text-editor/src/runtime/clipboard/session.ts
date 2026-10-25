@@ -3,12 +3,14 @@
 import { type EditorView } from 'prosemirror-view';
 
 import { type ContentModel, type RichTextLocale, type TranslationStrings } from '#/model';
-import { type ResolveAssetUrl } from '#/model/declarations';
-import { diagnostic } from '#/model/format';
-import { codecContext } from '#/model/output';
-import { randomId } from '#/model/random-id';
-import { exceedsBytes } from '#/model/read';
-import { type ResolveReference } from '#/model/references';
+import {
+    type ResolveAssetUrl,
+    diagnostic,
+    codecContext,
+    randomId,
+    exceedsBytes,
+    type ResolveReference,
+} from '#/model/internal';
 import { type EditorRuntime, runtimeOfView } from '#/runtime/runtime';
 
 import { type PasteSettings, type Payload } from './paste';

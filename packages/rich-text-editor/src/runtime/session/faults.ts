@@ -4,7 +4,7 @@ import { type EditorState } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type Diagnostic, type RichTextDocument } from '#/model';
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 
 import { type RecoveryReceipt, type RecoveryService } from '../types';
 

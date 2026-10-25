@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
-import { REPLACED_ASSET } from '#/model/assets';
+import { REPLACED_ASSET } from '#/model';
 import { liveRegionFaults } from '#/react/__tests__/fixtures/live-region';
 import { nodeStateOf } from '#/runtime/node-state';
 import { pressKey, setSelection, typeText } from '#/testing';

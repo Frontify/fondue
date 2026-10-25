@@ -13,7 +13,7 @@ import {
     type RichTextDocument,
     type RichTextLocale,
 } from '#/model';
-import { contentClasses } from '#/model/output';
+import { contentClasses } from '#/model/internal';
 import { readerContext } from '#/reader/context';
 import { type ReaderOverrides } from '#/reader/plan';
 import { type ReaderPresentation, ReaderWith } from '#/reader/reader';

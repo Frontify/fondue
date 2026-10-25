@@ -3,8 +3,7 @@
 import { Fragment, type Node, type NodeType, type Schema, Slice } from 'prosemirror-model';
 
 import { checkHref, type ContentModel, type HrefPolicy } from '#/model';
-import { compiledModel } from '#/model/compile';
-import { shownLabel } from '#/model/references';
+import { compiledModel, shownLabel } from '#/model/internal';
 
 /** What the paste filter reads of an `AuthoringPolicy`: whether each feature's content may be pasted. */
 export type PastePolicy = Readonly<Record<string, { readonly paste: boolean }>>;

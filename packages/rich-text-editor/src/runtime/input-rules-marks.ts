@@ -5,7 +5,7 @@ import { type EditorState } from 'prosemirror-state';
 
 import { type MarkDelimiterRule, type MarkRule } from '#/definition';
 import { checkHref } from '#/model';
-import { isValidValue } from '#/model/values';
+import { isValidValue } from '#/model/internal';
 
 import { holdsCode, WORD } from './input-rules-common';
 

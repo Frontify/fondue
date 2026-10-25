@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { compileDefinition } from '#/definition';
 import { core } from '#/features/core/feature';
 import { compileContentModel, type Diagnostic } from '#/model';
-import { decodeToTree, limitsOf } from '#/model/decode';
+import { decodeToTree, limitsOf } from '#/model/internal';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 
 import { RUNTIME_PLUGINS } from '../capabilities';

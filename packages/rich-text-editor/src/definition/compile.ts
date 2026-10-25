@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type ContentModel } from '#/model';
-import { orderPlugins } from '#/model/capabilities';
-import { compiledModel } from '#/model/compile';
+import { orderPlugins, compiledModel } from '#/model/internal';
 
 import { countAppends } from './appends';
 import { compileCommands, extensionKeymap } from './commands';

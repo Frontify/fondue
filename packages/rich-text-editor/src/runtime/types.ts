@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Diagnostic, type ModelRef, type RichTextDocument } from '#/model';
-import { type LanguageTag, type StoredId } from '#/model/types';
+import { type LanguageTag, type StoredId } from '#/model/internal';
 
 export type { LanguageTag, StoredId };
 

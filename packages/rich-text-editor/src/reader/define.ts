@@ -3,9 +3,7 @@
 import { type ComponentType, type ReactNode } from 'react';
 
 import { DefinitionError, type Feature, type FeatureDeclaration, type JsonObject } from '#/model';
-import { type ReaderContext } from '#/model/declarations';
-import { pointer } from '#/model/errors';
-import { attachedTo, attachToFeature, featureInternals } from '#/model/feature';
+import { type ReaderContext, pointer, attachedTo, attachToFeature, featureInternals } from '#/model/internal';
 
 export { type ReaderContext };
 

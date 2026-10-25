@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { isApplePlatform } from '#/bridge/platform';
-import { keyOn } from '#/model/platform';
+import { keyOn } from '#/model/internal';
 
 // Apple symbols in the order macOS menus show them.
 const APPLE_SYMBOLS: readonly (readonly [string, string])[] = [

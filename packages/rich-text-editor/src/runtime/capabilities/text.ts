@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isRecord } from '#/model/values';
+import { isRecord } from '#/model';
 
 import { redo, undo } from '../history';
 

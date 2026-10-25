@@ -25,7 +25,7 @@ import {
     defineFeature,
     type JsonValue,
 } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 import { setSelection } from '#/testing';
 

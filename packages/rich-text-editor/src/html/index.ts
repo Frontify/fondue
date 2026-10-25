@@ -6,12 +6,7 @@ import { type ImportedHtml, importModelHtml } from '#/clipboard/import/html';
 import { withoutRefused } from '#/clipboard/import/policy';
 import { buildSchema, withNodeIds } from '#/definition/schema';
 import { type ContentModel, type DecodeResult, decodeDocument, type ResourceLimits } from '#/model';
-import { type TreeNode } from '#/model/content';
-import { limitsOf } from '#/model/decode';
-import { encodeTree } from '#/model/encode';
-import { diagnostic } from '#/model/format';
-import { randomId } from '#/model/random-id';
-import { exceedsBytes } from '#/model/read';
+import { type TreeNode, limitsOf, encodeTree, diagnostic, randomId, exceedsBytes } from '#/model/internal';
 
 /** What `fromHTML` reads of a `CompiledEditorDefinition`, which `./html` cannot import from the editor layers. */
 interface HtmlImportDefinition {

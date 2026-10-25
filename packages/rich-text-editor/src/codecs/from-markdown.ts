@@ -11,9 +11,7 @@ import {
     decodeDocument,
     type HrefPolicy,
 } from '#/model';
-import { attributesOf } from '#/model/compile';
-import { encodeTree } from '#/model/encode';
-import { isValidValue } from '#/model/values';
+import { attributesOf, encodeTree, isValidValue } from '#/model/internal';
 
 import { Builder, type Frame } from './markdown-builder';
 import { inlineNodes, TASK } from './markdown-inline';

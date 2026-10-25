@@ -3,8 +3,7 @@
 import { type ComponentType } from 'react';
 
 import { type ContentModel, type FeatureDeclaration } from '#/model';
-import { buildPlan, type MarkPlan, type NodePlan, type Plan as BasePlan } from '#/model/output';
-import { ownValue } from '#/model/values';
+import { buildPlan, type MarkPlan, type NodePlan, type Plan as BasePlan, ownValue } from '#/model/internal';
 
 import { declaredOverrides, type ReaderNodeProps, type ReaderRenderers } from './define';
 

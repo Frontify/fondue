@@ -1,12 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { checkHref, type CodecContext, type Diagnostic, type JsonObject } from '#/model';
-import { leavesOutUnresolved } from '#/model/assets';
-import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
-import { pointer } from '#/model/errors';
-import { islandText } from '#/model/html-spec';
-import { attrsOf, groupRun, type Item, itemsOf, markPath, textOf } from '#/model/output';
-import { mentionLabel, type ResolveReference, unavailableNote } from '#/model/references';
+import { checkHref, type CodecContext, type Diagnostic, type JsonObject, mentionLabel, unavailableNote } from '#/model';
+import {
+    leavesOutUnresolved,
+    isIsland,
+    type TreeMark,
+    type TreeNode,
+    pointer,
+    islandText,
+    attrsOf,
+    groupRun,
+    type Item,
+    itemsOf,
+    markPath,
+    textOf,
+    type ResolveReference,
+} from '#/model/internal';
 
 import { type CodecPlan, Losses } from './plan';
 import { type CodecLoss } from './types';

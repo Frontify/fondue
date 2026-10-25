@@ -10,7 +10,7 @@ import { blocksOf } from '#/features/__tests__/fixtures/generated';
 import { mountUploads, para, pngFile, settle, text } from '#/features/media-upload/__tests__/fixtures/uploads';
 import { pluginsById } from '#/features/plugins';
 import { type ContentNodeJSON } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 import { type SelectionTarget, setSelection } from '#/testing';
 
 beforeEach(() => {

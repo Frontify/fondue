@@ -7,8 +7,7 @@ import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { UNSHIPPED_FEATURES } from '#/features/stages';
 import { type ContentModel, type RichTextDocument } from '#/model';
-import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK, type TreeNode } from '#/model/content';
-import { decodeToTree } from '#/model/decode';
+import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK, type TreeNode, decodeToTree } from '#/model/internal';
 import { engineOf, pluginsOf, readersOf } from '#/react/compile-editor';
 import { editorEngine } from '#/react/engine';
 import { shipped as brandDocument } from '#/react/profiles/brand-document';

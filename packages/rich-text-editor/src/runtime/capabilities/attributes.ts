@@ -3,8 +3,8 @@
 import { type Node, type NodeType, type Schema } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
-import { appliesToOf } from '#/model/styles';
-import { isRecord } from '#/model/values';
+import { isRecord } from '#/model';
+import { appliesToOf } from '#/model/internal';
 import { stylesOf } from '#/runtime/styles';
 
 import { nearest, positionOf } from '../positions';

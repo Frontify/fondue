@@ -8,8 +8,7 @@ import { blockquote, doc, envelope, mention, paragraph, text } from '#/features/
 import { vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { compileContentModel } from '#/model';
-import { decodeToTree } from '#/model/decode';
-import type * as DecodeModule from '#/model/decode';
+import { decodeToTree } from '#/model/internal';
 
 import { defineReaderFeature } from '../define';
 
@@ -17,7 +16,7 @@ import { semanticModel } from './fixtures/semantic';
 
 // The spy wraps the real decoder the reader calls, so the output stays real.
 vi.mock('#/model/decode', async (importOriginal) => {
-    const actual = await importOriginal<typeof DecodeModule>();
+    const actual = await importOriginal<{ readonly decodeToTree: typeof decodeToTree }>();
     return { ...actual, decodeToTree: vi.fn(actual.decodeToTree) };
 });
 

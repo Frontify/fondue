@@ -8,7 +8,7 @@ import { type InteractionScope } from '#/bridge/interaction-scope';
 import { type MountCoordinator } from '#/bridge/mount';
 import { type EditorHosts } from '#/bridge/plugin';
 import { enUS } from '#/locales/en-US';
-import { codecContext } from '#/model/output';
+import { codecContext } from '#/model/internal';
 import { readerContext } from '#/reader/context';
 import { UPLOAD_FEATURE } from '#/runtime/port';
 import { referenceListStrings } from '#/ui/suggestions/suggestion-list';

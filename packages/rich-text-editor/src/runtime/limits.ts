@@ -2,10 +2,8 @@
 
 import { type Node } from 'prosemirror-model';
 
-import { type CapabilityRef, type ContentModel, type JsonValue, type ResourceLimits } from '#/model';
-import { ISLAND_BLOCK, ISLAND_INLINE, type TreeNode, vocabularyOf } from '#/model/content';
-import { writeNode } from '#/model/encode';
-import { isRecord } from '#/model/values';
+import { type CapabilityRef, type ContentModel, type JsonValue, type ResourceLimits, isRecord } from '#/model';
+import { ISLAND_BLOCK, ISLAND_INLINE, type TreeNode, vocabularyOf, writeNode } from '#/model/internal';
 
 interface Size {
     readonly bytes: number;

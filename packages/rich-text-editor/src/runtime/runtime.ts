@@ -17,7 +17,7 @@ import {
     type PresentationStyle,
     type ResourceLimits,
 } from '#/model';
-import { type TreeNode } from '#/model/content';
+import { type TreeNode } from '#/model/internal';
 
 import { type AsyncOperation, type AsyncRequest } from './async';
 import { type UploadEvent, type UploadServiceLike } from './capabilities/media/uploads';

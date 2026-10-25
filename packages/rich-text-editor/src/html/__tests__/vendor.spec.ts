@@ -22,7 +22,7 @@ import { listItem } from '#/features/lists-item/feature';
 import { orderedList } from '#/features/lists-ordered/feature';
 import { taskList } from '#/features/lists-task/feature';
 import { compileContentModel, type ContentModel, defaultLimits, defineFeature } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 
 import { fromHTML } from '../index';
 

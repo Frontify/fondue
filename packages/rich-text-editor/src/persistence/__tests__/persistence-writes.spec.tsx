@@ -5,7 +5,7 @@ import fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
 import { type CommitResult, type PersistenceService, type SaveRequest } from '#/index';
-import { encodeTree } from '#/model/encode';
+import { encodeTree } from '#/model/internal';
 import { createFakePersistenceService, setSelection } from '#/testing';
 
 import {

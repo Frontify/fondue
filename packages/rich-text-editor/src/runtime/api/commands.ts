@@ -3,10 +3,15 @@
 import { type Schema } from 'prosemirror-model';
 
 import { type CommandContext, type CommandLookup, type EngineCommand } from '#/definition';
-import { checkHref, type ContentModel, defaultLimits, type PayloadDeclaration } from '#/model';
-import { type TreeNode } from '#/model/content';
-import { encodeTree } from '#/model/encode';
-import { findInvalidPayload, findUnsafeJson, isRecord, snapshot } from '#/model/values';
+import {
+    checkHref,
+    type ContentModel,
+    defaultLimits,
+    type PayloadDeclaration,
+    findInvalidPayload,
+    isRecord,
+} from '#/model';
+import { type TreeNode, encodeTree, findUnsafeJson, snapshot } from '#/model/internal';
 
 import { type CommandOutcome, type DocumentApi } from '../document-api';
 import { type EditorRuntime } from '../runtime';

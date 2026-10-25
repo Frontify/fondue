@@ -3,8 +3,7 @@
 import { Fragment } from 'prosemirror-model';
 import { NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 
-import { type TreeNode } from '#/model/content';
-import { encodeTree } from '#/model/encode';
+import { type TreeNode, encodeTree } from '#/model/internal';
 
 import { EDITS, placeBlock, placesBlock } from '../capabilities';
 import { type DocumentApi } from '../document-api';

@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type AttributeDeclaration, checkHref, type ContentModel, type JsonObject } from '#/model';
-import { attributesOf, compiledModel } from '#/model/compile';
-import { hrefPolicyOf } from '#/model/href';
-import { isValidValue } from '#/model/values';
+import { type AttributeDeclaration, checkHref, type ContentModel, type JsonObject, hrefPolicyOf } from '#/model';
+import { attributesOf, compiledModel, isValidValue } from '#/model/internal';
 
 /** The URL policy of the feature that installs a node or mark. */
 export const policyOf = (model: ContentModel, featureId: string) => {

@@ -7,7 +7,7 @@ import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { useScopedFocus } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
 import { useSessionValue } from '#/bridge/session';
-import { contentClasses } from '#/model/output';
+import { contentClasses } from '#/model/internal';
 import { type EditorPort, isEmptyDocument } from '#/runtime/port';
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { usePanelController } from '#/ui/panels/context';

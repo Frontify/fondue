@@ -4,10 +4,16 @@ import { DOMSerializer, type Mark } from 'prosemirror-model';
 import { Decoration, DecorationSet, type MarkViewConstructor } from 'prosemirror-view';
 
 import { checkHref, type ColorToken, type JsonObject, type ListLevels, type PresentationStyle } from '#/model';
-import { type DirectedRun, passageDirection } from '#/model/html-spec';
-import { COLOR_PROPERTIES, listDepths, listLevelStyle, styleOfNode } from '#/model/output';
-import { colorOf } from '#/model/styles';
-import { ownValue } from '#/model/values';
+import {
+    type DirectedRun,
+    passageDirection,
+    COLOR_PROPERTIES,
+    listDepths,
+    listLevelStyle,
+    styleOfNode,
+    colorOf,
+    ownValue,
+} from '#/model/internal';
 
 import {
     firstBlockId,

@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { checkHref } from '#/model';
-import { holdsControls, withoutBidiControls } from '#/model/references';
-import { isRecord, isStoredId } from '#/model/values';
+import { checkHref, isRecord } from '#/model';
+import { holdsControls, withoutBidiControls, isStoredId } from '#/model/internal';
 
 import { type SuggestionItem } from '../../port-types';
 import { type ReferenceValue } from '../../types';

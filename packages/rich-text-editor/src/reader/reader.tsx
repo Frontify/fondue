@@ -14,11 +14,9 @@ import {
     type ReferenceResolution,
     type ResourceLimits,
     type RichTextLocale,
+    styleSheetOf,
 } from '#/model';
-import { type ResolveAssetUrl } from '#/model/declarations';
-import { decodeToTree } from '#/model/decode';
-import { canonicalJson } from '#/model/hash';
-import { columnLayout, listDepths, styleSheetOf } from '#/model/output';
+import { type ResolveAssetUrl, decodeToTree, canonicalJson, columnLayout, listDepths } from '#/model/internal';
 
 import { readerContext } from './context';
 import { planOf, type ReaderOverrides } from './plan';

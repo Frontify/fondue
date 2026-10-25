@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ContentModel } from '#/model';
-import { hexColor } from '#/model/colors';
-import { compiledModel } from '#/model/compile';
+import { type ContentModel, hexColor } from '#/model';
+import { compiledModel } from '#/model/internal';
 
 import { createElementBeside } from './dom';
 

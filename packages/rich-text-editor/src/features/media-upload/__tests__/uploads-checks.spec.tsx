@@ -7,7 +7,7 @@ import { defineEditorPart } from '#/entries/authoring';
 import { core, mediaImage, mediaUpload } from '#/features';
 import { deferredPicker, PALETTE } from '#/features/media-image/__tests__/fixtures/mount';
 import { defineFeature } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 import { paste, probeRuntimes, setSelection } from '#/testing';
 
 import { caretAfterBefore, slot } from './fixtures/steps';

@@ -3,7 +3,7 @@
 import { type EditorView } from 'prosemirror-view';
 
 import { type EngineSuggestion } from '#/definition';
-import { type SuggestionPage } from '#/model/declarations';
+import { type SuggestionPage } from '#/model/internal';
 
 import { dismissSuggestion } from './actions';
 import { suggestionHosts } from './host';

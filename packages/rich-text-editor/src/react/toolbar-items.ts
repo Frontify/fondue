@@ -2,10 +2,14 @@
 
 import { type EditorPart, type PluginToolbarEntry } from '#/bridge/plugin';
 import { type CompiledDefinition } from '#/definition';
-import { type CodecContext, type CommandRef, type JsonValue, type PresentationStyle } from '#/model';
-import { canonicalJson } from '#/model/hash';
-import { isPlatformBinding } from '#/model/platform';
-import { cssValue, isPresentationStyle } from '#/model/styles';
+import {
+    type CodecContext,
+    type CommandRef,
+    type JsonValue,
+    type PresentationStyle,
+    isPresentationStyle,
+} from '#/model';
+import { canonicalJson, isPlatformBinding, cssValue } from '#/model/internal';
 import { type AuthoringPolicy } from '#/runtime/port';
 import { type ToolbarItem } from '#/ui/toolbar/toolbar';
 

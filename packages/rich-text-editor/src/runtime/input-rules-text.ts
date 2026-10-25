@@ -4,7 +4,7 @@ import { type ResolvedPos } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
 import { type QuotesRule, type TextReplaceRule } from '#/definition';
-import { OBJECT_REPLACEMENT } from '#/model/values';
+import { OBJECT_REPLACEMENT } from '#/model/internal';
 
 import { holdsCode, WORD } from './input-rules-common';
 

@@ -13,7 +13,7 @@ import { bold } from '#/features/marks-bold/feature';
 import { strike } from '#/features/marks-strike/feature';
 import { underline } from '#/features/marks-underline/feature';
 import { compileContentModel, defaultLimits, type Feature } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 
 const { window } = new JSDOM('');
 

@@ -11,9 +11,9 @@ import {
     type PluginContribution,
     type PluginDescriptor,
     SUGGESTIONS_PLUGIN,
-} from '#/model/capabilities';
-import { type CompiledFeature } from '#/model/compile';
-import { pointer } from '#/model/errors';
+    type CompiledFeature,
+    pointer,
+} from '#/model/internal';
 
 import { type CommandLookup, type EngineCommand, type EngineExtension, type EngineSuggestion } from './types';
 

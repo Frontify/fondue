@@ -4,7 +4,7 @@ import { type Node as ProseMirrorNode } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
-import { COLUMN_BREAK } from '#/model/output';
+import { COLUMN_BREAK } from '#/model/internal';
 
 import { type ColumnState } from './port-types';
 

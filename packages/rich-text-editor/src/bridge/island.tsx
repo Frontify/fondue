@@ -3,9 +3,7 @@
 import { type ComponentType } from 'react';
 
 import { type ContentNodeJSON } from '#/model';
-import { ISLAND_BLOCK, ISLAND_INLINE } from '#/model/content';
-import { islandText } from '#/model/html-spec';
-import { islandLabel } from '#/model/output';
+import { ISLAND_BLOCK, ISLAND_INLINE, islandText, islandLabel } from '#/model/internal';
 
 import { NodeChromeButton, NodeChromeToolbar, useRichTextNodeView } from './define';
 import styles from './island.module.scss';

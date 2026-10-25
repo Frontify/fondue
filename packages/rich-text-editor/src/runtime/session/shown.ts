@@ -5,7 +5,7 @@ import { type Node } from 'prosemirror-model';
 import { AllSelection, NodeSelection, type Selection, TextSelection, type Transaction } from 'prosemirror-state';
 
 import { type RichTextDocument } from '#/model';
-import { snapshot } from '#/model/values';
+import { snapshot } from '#/model/internal';
 
 import { type ColumnState } from '../columns';
 import { type RuntimeEvents } from '../events';

@@ -5,7 +5,7 @@ import { type Node, NodeRange, type NodeType, type ResolvedPos } from 'prosemirr
 import { type EditorState } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isRecord } from '#/model/values';
+import { isRecord } from '#/model';
 
 import { type CapabilityImplementation, carried, REJECTED, selectedTextblocks, tristate, typeIn } from './shared';
 

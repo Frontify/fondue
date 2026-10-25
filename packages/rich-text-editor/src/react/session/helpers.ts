@@ -3,8 +3,7 @@
 import { type PluginPresentation } from '#/bridge/plugin';
 import { enUS } from '#/locales/en-US';
 import { type CodecContext } from '#/model';
-import { decodeToTree } from '#/model/decode';
-import { columnLayout } from '#/model/output';
+import { decodeToTree, columnLayout } from '#/model/internal';
 import { type LoadedDocument } from '#/persistence/types';
 import { type ReaderPresentation } from '#/reader/reader';
 import { type ColumnState, type EditorPort, surfaceElement } from '#/runtime/port';

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 import { sameStamp } from '#/runtime/saves';
 import { type CommitResult, type SaveAcknowledgment, type ServerRevision } from '#/runtime/types';
 

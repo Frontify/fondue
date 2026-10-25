@@ -4,7 +4,7 @@ import { toggleMark as toggleEngineMark } from 'prosemirror-commands';
 import { type MarkType } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
-import { isRecord } from '#/model/values';
+import { isRecord } from '#/model';
 
 import { type CapabilityImplementation, REJECTED, tristate, typeIn } from './shared';
 

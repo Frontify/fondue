@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type HtmlSpec } from '#/model';
-import { type HtmlTemplate } from '#/model/html-spec';
-import { VOID_TAGS, writesAttribute } from '#/model/output';
-import { isStyleAttribute } from '#/model/values';
+import { type HtmlTemplate, VOID_TAGS, writesAttribute, isStyleAttribute } from '#/model/internal';
 
 const ESCAPES: Readonly<Record<string, string>> = {
     '&': '&amp;',

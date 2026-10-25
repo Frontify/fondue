@@ -3,9 +3,8 @@
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
 import { type CompiledDefinition } from '#/definition';
-import { type Diagnostic, type ResourceLimits } from '#/model';
-import { REPLACED_ASSET } from '#/model/assets';
-import { compiledModel } from '#/model/compile';
+import { type Diagnostic, type ResourceLimits, REPLACED_ASSET } from '#/model';
+import { compiledModel } from '#/model/internal';
 
 import { type MediaSession } from '../capabilities/media/session';
 import {

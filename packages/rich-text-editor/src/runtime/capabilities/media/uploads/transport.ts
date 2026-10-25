@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 
 import { type AsyncOperation } from '../../../async';
 import { INSERT_IMAGE, pickedAsset, type PickedAsset, REPLACE_IMAGE } from '../media';

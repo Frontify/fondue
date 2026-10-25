@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Diagnostic } from '#/model';
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 
 import {
     type DocumentChange,

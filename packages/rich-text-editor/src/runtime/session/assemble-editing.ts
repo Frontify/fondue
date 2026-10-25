@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 
 import { suggestionHosts } from '../capabilities/suggestions/host';
 import { secondCopyAtMount } from '../engines';

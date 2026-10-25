@@ -6,7 +6,7 @@ import { JSDOM } from 'jsdom';
 import { type PastePolicy, refusedNames } from '#/clipboard/import/policy';
 import { checkHref, type ContentModel } from '#/model';
 import { type JsonNode } from '#/model/__tests__/helpers/documents';
-import { attributesOf, compiledModel, markHrefPolicy } from '#/model/compile';
+import { attributesOf, compiledModel, markHrefPolicy } from '#/model/internal';
 
 const CONTENT_TAGS =
     'p span b strong i em u s del code pre a h1 h2 h3 h4 h5 h6 ul ol li blockquote br hr sub sup'.split(' ');

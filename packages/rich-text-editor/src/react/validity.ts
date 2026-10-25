@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isRecord } from '#/model/values';
+import { isRecord } from '#/model';
 import { type EditorPort, nodeKindOf } from '#/runtime/port';
 
 import { type RichTextFormField } from './form-field';

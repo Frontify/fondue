@@ -4,8 +4,8 @@ import { type MutableRefObject, type RefObject, useEffect, useMemo, useRef } fro
 
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { type MountCoordinator } from '#/bridge/mount';
-import { sameDocument } from '#/model';
-import { styleSheetOf, unknownStyle } from '#/model/output';
+import { sameDocument, styleSheetOf } from '#/model';
+import { unknownStyle } from '#/model/internal';
 
 import { useRecipeSheet } from '../style-sheet';
 import { type EditorHandle } from '../types';

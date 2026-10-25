@@ -1,18 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CodecContext, type Diagnostic, type ListLevels } from '#/model';
+import {
+    type CodecContext,
+    type Diagnostic,
+    type ListLevels,
+    figureAlign,
+    imageOutput,
+    type Unavailable,
+    mentionLabel,
+    unavailableNote,
+} from '#/model';
 import {
     ASSET_IMAGE,
     FIGURE,
-    figureAlign,
     IMAGE_FEATURE,
-    imageOutput,
     leavesOutUnresolved,
-    type Unavailable,
-} from '#/model/assets';
-import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
-import { type HtmlTemplate, passageDirection, resolveHtmlSpec, treeRuns, withAutoDirection } from '#/model/html-spec';
-import {
+    isIsland,
+    type TreeMark,
+    type TreeNode,
+    type HtmlTemplate,
+    passageDirection,
+    resolveHtmlSpec,
+    treeRuns,
+    withAutoDirection,
     attrsOf,
     COLUMN_BREAK,
     type ColumnLayout,
@@ -34,8 +44,8 @@ import {
     withListLevel,
     withStyle,
     withStyleId,
-} from '#/model/output';
-import { mentionLabel, type ResolveReference, unavailableNote } from '#/model/references';
+    type ResolveReference,
+} from '#/model/internal';
 
 import { build, checkOverrideSpec, checkOverrideTags, escapeHtml } from './html-markup';
 import { type CodecPlan, Losses } from './plan';

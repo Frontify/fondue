@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { type RichTextDocument } from '#/model';
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 import {
     gate,
     initial,

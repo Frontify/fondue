@@ -22,10 +22,15 @@ import { compileDefinition, type Normalizer, NORMALIZERS } from '#/definition';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { pluginIds, pluginsById } from '#/features/plugins';
 import { enUS } from '#/locales/en-US';
-import { compileContentModel, createEmptyDocument, defaultLimits, type Feature, type RichTextDocument } from '#/model';
-import { compiledModel } from '#/model/compile';
-import { decodeToTree } from '#/model/decode';
-import { findInvalidPayload } from '#/model/values';
+import {
+    compileContentModel,
+    createEmptyDocument,
+    defaultLimits,
+    type Feature,
+    type RichTextDocument,
+    findInvalidPayload,
+} from '#/model';
+import { compiledModel, decodeToTree } from '#/model/internal';
 import { engineOf, viewsOf } from '#/react/compile-editor';
 import { defineEditor } from '#/react/define';
 import { extensionsOf } from '#/react/engine';

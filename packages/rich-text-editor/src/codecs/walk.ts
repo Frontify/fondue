@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CodecContext, type Diagnostic } from '#/model';
-import { type TreeMark, type TreeNode } from '#/model/content';
-import { type ResolveReference } from '#/model/references';
+import { type TreeMark, type TreeNode, type ResolveReference } from '#/model/internal';
 
 import { type CodecPlan, type Format, type Losses, setShared } from './plan';
 

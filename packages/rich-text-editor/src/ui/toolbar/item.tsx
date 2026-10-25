@@ -7,7 +7,7 @@ import { useApplePlatform } from '#/bridge/platform';
 import { type ToolbarControlProps } from '#/bridge/plugin';
 import { useSessionValue } from '#/bridge/session';
 import { type JsonValue } from '#/model';
-import { keyOn } from '#/model/platform';
+import { keyOn } from '#/model/internal';
 import { type EditorPort, endCompositionOf, selectedNodeNames } from '#/runtime/port';
 import { ariaShortcut, bindingHere, shortcutText } from '#/ui/shortcuts';
 

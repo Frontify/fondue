@@ -18,7 +18,7 @@ import {
     StepResult,
 } from 'prosemirror-transform';
 
-import { NODE_IDS_PLUGIN } from '#/model/capabilities';
+import { NODE_IDS_PLUGIN } from '#/model/internal';
 
 import { carriesNodeId } from './schema';
 

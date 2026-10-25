@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type KeyBinding, type RichTextSlice } from '#/model';
-import { OBJECT_REPLACEMENT } from '#/model/values';
+import { OBJECT_REPLACEMENT } from '#/model/internal';
 import { pasteInto } from '#/runtime/clipboard/plugin';
 import { positionOf } from '#/runtime/positions';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';

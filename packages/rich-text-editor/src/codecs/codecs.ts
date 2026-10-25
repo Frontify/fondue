@@ -1,12 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { enUS } from '#/locales/en-US';
-import { type ContentModel, type DecodeOptions, type Diagnostic } from '#/model';
-import { markHrefPolicy } from '#/model/compile';
-import { type TreeNode } from '#/model/content';
-import { decodeToTree } from '#/model/decode';
-import { codecContext, columnLayout, styleSheetOf } from '#/model/output';
-import { randomId } from '#/model/random-id';
+import { type ContentModel, type DecodeOptions, type Diagnostic, styleSheetOf } from '#/model';
+import { markHrefPolicy, type TreeNode, decodeToTree, codecContext, columnLayout, randomId } from '#/model/internal';
 
 import { createParser, readMarkdown } from './from-markdown';
 import { checkCodecs, planOf } from './plan';

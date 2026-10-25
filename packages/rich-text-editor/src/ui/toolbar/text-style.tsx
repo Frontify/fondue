@@ -7,7 +7,7 @@ import { useContext, useRef } from 'react';
 import { CheckedSlot, keepFocus } from '#/bridge/chrome-toolbar';
 import { useOverlayContainer } from '#/bridge/overlays';
 import { SessionContext, useSessionValue } from '#/bridge/session';
-import { isRecord } from '#/model/values';
+import { isRecord } from '#/model';
 import { type EditorPort, selectionBlockName } from '#/runtime/port';
 
 import { returnFocus, runItem, tabStop, type ToolbarItem } from './item';

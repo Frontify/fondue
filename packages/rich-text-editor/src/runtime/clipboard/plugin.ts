@@ -11,10 +11,7 @@ import { writeHtml } from '#/codecs/to-html';
 import { writeText } from '#/codecs/to-text';
 import { type PluginImplementation } from '#/definition';
 import { type ContentModel } from '#/model';
-import { markHrefPolicy } from '#/model/compile';
-import { type TreeNode } from '#/model/content';
-import { codecContext } from '#/model/output';
-import { isApple } from '#/model/platform';
+import { markHrefPolicy, type TreeNode, codecContext, isApple } from '#/model/internal';
 import { closeGroup } from '#/runtime/history';
 
 import { clipboardKey, commit } from './commit';

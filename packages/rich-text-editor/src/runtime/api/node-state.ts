@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 
 import { EDITS } from '../capabilities';
 import { type DocumentApi } from '../document-api';

@@ -23,11 +23,18 @@ import {
     type ParseAttributeSource,
     type ParseRule,
 } from '#/model';
-import { hasNodeId } from '#/model/capabilities';
-import { attributesOf, compiledModel, type SharedAttribute } from '#/model/compile';
-import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
-import { resolveHtmlSpec } from '#/model/html-spec';
-import { ownValue, parsedAttributes } from '#/model/values';
+import {
+    hasNodeId,
+    attributesOf,
+    compiledModel,
+    type SharedAttribute,
+    ISLAND_BLOCK,
+    ISLAND_INLINE,
+    ISLAND_MARK,
+    resolveHtmlSpec,
+    ownValue,
+    parsedAttributes,
+} from '#/model/internal';
 
 type Values = Readonly<Record<string, unknown>>;
 

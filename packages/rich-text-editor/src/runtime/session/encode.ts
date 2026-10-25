@@ -3,9 +3,7 @@
 import { type Node } from 'prosemirror-model';
 
 import { type CapabilityRef, type ContentModel, type RichTextDocument } from '#/model';
-import { type TreeNode } from '#/model/content';
-import { encodeTree } from '#/model/encode';
-import { snapshot } from '#/model/values';
+import { type TreeNode, encodeTree, snapshot } from '#/model/internal';
 
 export interface Encoder {
     capabilities: readonly CapabilityRef[];

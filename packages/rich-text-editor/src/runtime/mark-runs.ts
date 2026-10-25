@@ -3,7 +3,7 @@
 import { type Mark, type MarkType, type ResolvedPos } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
-import { OBJECT_REPLACEMENT } from '#/model/values';
+import { OBJECT_REPLACEMENT } from '#/model/internal';
 
 /** A whole run of one mark: where it starts and ends, its text and its attributes. */
 export interface MarkRun {

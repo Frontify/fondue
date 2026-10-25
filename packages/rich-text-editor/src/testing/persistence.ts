@@ -1,10 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type JsonValue, type RichTextDocument } from '#/model';
-import { findMisshapenCapabilities, isRoot } from '#/model/envelope';
-import { canonicalJson } from '#/model/hash';
-import { randomId } from '#/model/random-id';
-import { isRecord } from '#/model/values';
+import { type JsonValue, type RichTextDocument, isRecord } from '#/model';
+import { findMisshapenCapabilities, isRoot, canonicalJson, randomId } from '#/model/internal';
 import { type PersistenceService, type SaveRequest, type SaveResponse } from '#/persistence/types';
 import { type DocumentStamp, type ServerRevision } from '#/runtime/types';
 

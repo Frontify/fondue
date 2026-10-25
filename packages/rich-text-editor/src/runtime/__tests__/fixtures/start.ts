@@ -23,7 +23,7 @@ import {
     type ResourceLimits,
     type RichTextDocument,
 } from '#/model';
-import { decodeToTree, limitsOf } from '#/model/decode';
+import { decodeToTree, limitsOf } from '#/model/internal';
 import { createSaveCoordinator } from '#/persistence/coordinator';
 import { extensionsOf } from '#/react/engine';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';

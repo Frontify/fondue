@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { compileDefinition } from '#/definition';
 import { countingIds } from '#/features/__tests__/fixtures/notes';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { decodeToTree, limitsOf } from '#/model/decode';
+import { decodeToTree, limitsOf } from '#/model/internal';
 import { extensionsOf } from '#/react/engine';
 import { probeRuntimes, setSelection, typeText } from '#/testing';
 

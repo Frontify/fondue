@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Diagnostic } from '#/model';
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 
 import { initial, next, type AsyncEffect, type AsyncEventInput, type AsyncFacts } from './async-machine';
 import { type FeaturePolicy, type SelectionHandle, type SessionToken } from './types';

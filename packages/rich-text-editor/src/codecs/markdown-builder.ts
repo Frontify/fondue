@@ -1,10 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type ContentModel, type Diagnostic, type HrefPolicy } from '#/model';
-import { attributesOf, markHrefPolicy } from '#/model/compile';
-import { type TreeMark, type TreeNode, type Vocabulary, vocabularyOf } from '#/model/content';
-import { pointer } from '#/model/errors';
-import { isValidValue, ownValue } from '#/model/values';
+import {
+    attributesOf,
+    markHrefPolicy,
+    type TreeMark,
+    type TreeNode,
+    type Vocabulary,
+    vocabularyOf,
+    pointer,
+    isValidValue,
+    ownValue,
+} from '#/model/internal';
 
 /** The shipped feature that holds each Markdown structure, named when the model lacks it. */
 const FEATURE_OF: Readonly<Record<string, string>> = {

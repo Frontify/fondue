@@ -3,7 +3,7 @@
 import { type Mark, type MarkType } from 'prosemirror-model';
 import { type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 
-import { isRecord } from '#/model/values';
+import { isRecord } from '#/model';
 
 import { clearMarks } from './mark-clear';
 import { enclosingRange, type Extend, extendOf, markRange } from './mark-ranges';

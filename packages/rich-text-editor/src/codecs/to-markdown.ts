@@ -2,12 +2,17 @@
 
 import { type MarkdownIt as Parser } from 'markdown-it';
 
-import { type CodecContext, checkHref, type Diagnostic, type JsonObject } from '#/model';
-import { altOf, imageSource, leavesOutUnresolved } from '#/model/assets';
-import { isIsland, type TreeNode } from '#/model/content';
-import { pointer } from '#/model/errors';
-import { islandText } from '#/model/html-spec';
-import { attrsOf, textOf } from '#/model/output';
+import { type CodecContext, checkHref, type Diagnostic, type JsonObject, altOf } from '#/model';
+import {
+    imageSource,
+    leavesOutUnresolved,
+    isIsland,
+    type TreeNode,
+    pointer,
+    islandText,
+    attrsOf,
+    textOf,
+} from '#/model/internal';
 
 import { destination, longestRun, serialize } from './markdown-escape';
 import { type CodecPlan, Losses, MARKDOWN_NODES, type NodePlan } from './plan';

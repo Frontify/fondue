@@ -6,7 +6,7 @@ import { type EditorView } from 'prosemirror-view';
 import { describe, expect, it, vi } from 'vitest';
 
 import { type Diagnostic } from '#/model';
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 
 import { createFaults } from '../../session/faults';
 import { createLifecycle } from '../../session/lifecycle';

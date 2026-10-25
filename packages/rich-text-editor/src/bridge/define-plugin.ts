@@ -10,7 +10,7 @@ import {
     type Feature,
     type JsonObject,
 } from '#/model';
-import { type ReaderContext } from '#/model/declarations';
+import { type ReaderContext } from '#/model/internal';
 
 import { type EditorFacet, type EditorPart, type EditorPartSpec, OPTION_PARTS, type SpecOfOptions } from './plugin';
 

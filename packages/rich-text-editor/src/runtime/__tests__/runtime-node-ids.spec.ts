@@ -12,7 +12,7 @@ import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixture
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, type JsonValue, type ResourceLimits } from '#/model';
-import { limitsOf } from '#/model/decode';
+import { limitsOf } from '#/model/internal';
 import { setSelection, typeText } from '#/testing';
 
 import { createLimitCheck } from '../limits';

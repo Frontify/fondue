@@ -2,10 +2,8 @@
 
 import { type Schema } from 'prosemirror-model';
 
-import { DefinitionError, type PayloadDeclaration } from '#/model';
-import { keymapPlugin } from '#/model/capabilities';
-import { pointer } from '#/model/errors';
-import { findInvalidPayload } from '#/model/values';
+import { DefinitionError, type PayloadDeclaration, findInvalidPayload } from '#/model';
+import { keymapPlugin, pointer } from '#/model/internal';
 
 import { COMMAND_META, type CommandLookup, type EngineCommand, type EngineExtension, type KeymapEntry } from './types';
 

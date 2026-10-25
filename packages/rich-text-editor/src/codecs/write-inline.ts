@@ -2,12 +2,19 @@
 
 import { type MarkdownIt as Parser } from 'markdown-it';
 
-import { checkHref } from '#/model';
-import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
-import { pointer } from '#/model/errors';
-import { islandText } from '#/model/html-spec';
-import { attrsOf, groupRun, type Item, markPath, textOf } from '#/model/output';
-import { mentionLabel, unavailableNote } from '#/model/references';
+import { checkHref, mentionLabel, unavailableNote } from '#/model';
+import {
+    isIsland,
+    type TreeMark,
+    type TreeNode,
+    pointer,
+    islandText,
+    attrsOf,
+    groupRun,
+    type Item,
+    markPath,
+    textOf,
+} from '#/model/internal';
 
 import { codeSpan, destination, joinRuns, type Piece, readInline, type Run, serialize } from './markdown-escape';
 import { Losses, type MarkPlan, type NodePlan, setShared } from './plan';

@@ -6,12 +6,8 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 import { exceededWrite } from '#/clipboard/import/limits';
 import { refusedNames } from '#/clipboard/import/policy';
 import { withNodeIds } from '#/definition';
-import { type ContentNodeJSON, type JsonObject } from '#/model';
-import { hasNodeId } from '#/model/capabilities';
-import { attributesOf, compiledModel } from '#/model/compile';
-import { decodeToTree } from '#/model/decode';
-import { randomId } from '#/model/random-id';
-import { isRecord } from '#/model/values';
+import { type ContentNodeJSON, type JsonObject, isRecord } from '#/model';
+import { hasNodeId, attributesOf, compiledModel, decodeToTree, randomId } from '#/model/internal';
 
 import { type WriteOutcome, type WriteTarget } from '../document-api';
 import { positionOf } from '../positions';

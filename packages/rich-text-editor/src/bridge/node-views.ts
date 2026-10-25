@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { snapshot } from '#/model/values';
+import { snapshot } from '#/model/internal';
 import { type EditorRuntime, liveResources, type NodeTarget } from '#/runtime/runtime';
 import {
     firstBlockId,

@@ -4,7 +4,7 @@ import { type RichTextPlugin } from '#/bridge/define-plugin';
 import { type EditorPart, OPTION_PARTS, partWithOptions } from '#/bridge/plugin';
 import { pluginsById } from '#/features/plugins';
 import { type ContentModel, type Feature, type JsonObject } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 
 import { fixtureChrome } from './chrome/feature';
 import { fixtureChromeEditor } from './chrome/view';

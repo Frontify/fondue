@@ -11,8 +11,11 @@ import {
     INPUT_RULES_PLUGIN,
     keyHandlersPlugin,
     NODE_IDS_PLUGIN,
-} from '#/model/capabilities';
-import { isApple, isPlatformBinding, keyOn, modOn } from '#/model/platform';
+    isApple,
+    isPlatformBinding,
+    keyOn,
+    modOn,
+} from '#/model/internal';
 
 import { batchOf, rootOf } from './appends';
 import { type KeyHandlerEntry, type withInputRules } from './contributions';

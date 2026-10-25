@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { featuresById, registry } from '#/features/registry';
 import { compileContentModel } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 import { COMPOSED_STORIES } from '#/react/__tests__/fixtures/composed-stories';
 import { type CompiledEditorDefinition } from '#/react/types';
 

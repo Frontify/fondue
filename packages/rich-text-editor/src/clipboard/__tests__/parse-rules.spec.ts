@@ -11,7 +11,7 @@ import { importHtml } from '#/clipboard/import/html';
 import { buildSchema } from '#/definition/schema';
 import { core } from '#/features/core/feature';
 import { compileContentModel, defaultLimits, defineFeature, type Feature, type ResourceLimits } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/internal';
 
 const { window } = new JSDOM('');
 const requires = [{ id: 'core', version: 1 }];

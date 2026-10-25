@@ -5,7 +5,7 @@ import { liftListItem, sinkListItem, wrapRangeInList } from 'prosemirror-schema-
 import { type EditorState, TextSelection, type Transaction } from 'prosemirror-state';
 import { canJoin } from 'prosemirror-transform';
 
-import { isRecord } from '#/model/values';
+import { isRecord } from '#/model';
 
 import { liftItems, listAround, repeatWhile } from '../lists';
 import { inCodeTextblock } from '../positions';

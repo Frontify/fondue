@@ -11,7 +11,7 @@ import {
     type RichTextDocument,
     type RichTextLocale,
 } from '#/model';
-import { type ResolveAssetUrl } from '#/model/declarations';
+import { type ResolveAssetUrl } from '#/model/internal';
 
 /** How many nodes or marks of one feature a codec had to drop or flatten when writing a format. */
 export interface CodecLoss {

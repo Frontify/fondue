@@ -14,7 +14,7 @@ import {
     INPUT_RULES_PLUGIN,
     LAST_MARK_PLUGIN,
     SUGGESTIONS_PLUGIN,
-} from '#/model/capabilities';
+} from '#/model/internal';
 
 import { blockDecorationsPlugin } from '../decorations';
 import { historyPlugin } from '../history';

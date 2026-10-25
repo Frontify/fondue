@@ -2,8 +2,7 @@
 
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { type Diagnostic } from '#/model';
-import { isRecord } from '#/model/values';
+import { type Diagnostic, isRecord } from '#/model';
 
 import { type AsyncOperation, createAsyncCoordinator } from '../async';
 import { captureTarget, releaseTargets, targetSelection } from '../targets';

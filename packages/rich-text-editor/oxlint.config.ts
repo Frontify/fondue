@@ -91,6 +91,8 @@ const READER_FILE_MESSAGE =
 const MODEL_ENTRY_MESSAGE =
     'A feature file imports `model` only through its public entry `#/model`, as an outside feature must, never a subpath.';
 
+const MODEL_FILE_MESSAGE = 'Code outside `model` imports `#/model` or `#/model/internal`, never a model file directly.';
+
 const FEATURE_PLUGINS_MESSAGE =
     "The all-units registry imports only `#/model`, `#/bridge/define-plugin` and each feature's `./*/index` through its glob, because it loads every editor part and only `pluginsById` users and `testing` may load it.";
 
@@ -309,11 +311,26 @@ const featureUnitRestriction: ImportRestriction = {
     message: FEATURE_UNIT_MESSAGE,
 };
 
+// Model files import each other directly, and the model tests import their helpers by alias.
+const modelFileRestriction: ImportRestriction = {
+    group: [
+        '#/model/**',
+        ...PARENT_PREFIXES.map((prefix) => `${prefix}model/**`),
+        ...exceptPatterns(['model/internal', 'model/__tests__/**']),
+    ],
+    message: MODEL_FILE_MESSAGE,
+};
+
 const SOURCE_RESTRICTIONS = [frameworkRestriction, historyRestriction, tablesInternalsRestriction];
 
+const OUTSIDE_MODEL_RESTRICTIONS = [...SOURCE_RESTRICTIONS, modelFileRestriction];
+
 // Later overrides replace rule options, so each override repeats the base paths and patterns.
-const importRule = (patterns: ImportRestriction[], paths: readonly ImportNameRestriction[] = []) =>
-    ['error', { paths: [FLUSH_SYNC, ...paths], patterns: [...SOURCE_RESTRICTIONS, ...patterns] }] as const;
+const importRule = (
+    patterns: ImportRestriction[],
+    paths: readonly ImportNameRestriction[] = [],
+    sourceRestrictions: ImportRestriction[] = OUTSIDE_MODEL_RESTRICTIONS,
+) => ['error', { paths: [FLUSH_SYNC, ...paths], patterns: [...sourceRestrictions, ...patterns] }] as const;
 
 const VIEW_INTERNALS_MESSAGE = 'The input state and DOM observer of the editor view are ProseMirror internals.';
 
@@ -326,11 +343,12 @@ const layerOverride = (
     restrictions: ImportRestriction[],
     excludeFiles: readonly string[] = [],
     paths: readonly ImportNameRestriction[] = [],
+    sourceRestrictions: ImportRestriction[] = OUTSIDE_MODEL_RESTRICTIONS,
 ): LayerOverride => ({
     files: typeof files === 'string' ? [files] : [...files],
     excludeFiles: ['**/__tests__/**', '**/*.stories.tsx', ...excludeFiles],
     rules: {
-        'no-restricted-imports': importRule(restrictions, paths),
+        'no-restricted-imports': importRule(restrictions, paths, sourceRestrictions),
     },
 });
 
@@ -517,9 +535,16 @@ export default defineConfig({
             rules: {
                 'import/no-cycle': 'error',
                 'no-nested-ternary': 'error',
-                'no-restricted-imports': importRule([]),
+                'no-restricted-imports': importRule([], [], SOURCE_RESTRICTIONS),
             },
         },
+        {
+            files: ['src/**/*.{ts,tsx}'],
+            excludeFiles: ['src/model/**'],
+            rules: {
+                'no-restricted-imports': importRule([]),
+            },
+        } satisfies LayerOverride,
         {
             files: ['src/**/*.{ts,tsx}'],
             excludeFiles: ['**/__tests__/**', '**/*.stories.tsx'],
@@ -533,13 +558,19 @@ export default defineConfig({
                 ],
             },
         } satisfies LayerOverride,
-        layerOverride('src/model/**/*.{ts,tsx}', [
-            {
-                group: [...aliasPatterns(modelFolders), ...relativePatterns(modelFolders), ...ENGINE_PATTERNS],
-                message: MODEL_MESSAGE,
-            },
-            featureUnitRestriction,
-        ]),
+        layerOverride(
+            'src/model/**/*.{ts,tsx}',
+            [
+                {
+                    group: [...aliasPatterns(modelFolders), ...relativePatterns(modelFolders), ...ENGINE_PATTERNS],
+                    message: MODEL_MESSAGE,
+                },
+                featureUnitRestriction,
+            ],
+            [],
+            [],
+            SOURCE_RESTRICTIONS,
+        ),
         layerOverride('src/definition/**/*.{ts,tsx}', [{ group: definitionPatterns, message: DEFINITION_MESSAGE }]),
         layerOverride('src/definition/schema.ts', [
             {
@@ -793,7 +824,12 @@ export default defineConfig({
                     'error',
                     {
                         paths: [FLUSH_SYNC],
-                        patterns: [frameworkRestriction, tablesInternalsRestriction, runtimeRestriction],
+                        patterns: [
+                            frameworkRestriction,
+                            tablesInternalsRestriction,
+                            modelFileRestriction,
+                            runtimeRestriction,
+                        ],
                     },
                 ],
             },

@@ -3,7 +3,7 @@
 import { type ComponentType, createContext, useContext } from 'react';
 
 import { type CodecContext, type JsonObject } from '#/model';
-import { type ReaderContext } from '#/model/declarations';
+import { type ReaderContext } from '#/model/internal';
 import {
     type CommandArgs,
     type CommandKey,

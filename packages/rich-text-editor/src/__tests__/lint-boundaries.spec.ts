@@ -76,6 +76,10 @@ const CASES: readonly Case[] = [
     banned('model: react', 'src/model/react.ts', "import { memo } from 'react';"),
     allowed('model: a sibling file', 'src/model/sibling.ts', "import { node } from './node';"),
 
+    // model files outside the model folder
+    banned('model files: a model file', 'src/ui/model-file.ts', "import { node } from '#/model/node';"),
+    allowed('model files: the internal barrel', 'src/ui/model-internal.ts', "import { node } from '#/model/internal';"),
+
     // definition
     banned('definition: a later layer', 'src/definition/layer.ts', "import { run } from '#/runtime/run';"),
     banned('definition: react', 'src/definition/react.ts', "import { memo } from 'react';"),

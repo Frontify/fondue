@@ -2,7 +2,7 @@
 
 import { type Mark, type ParseRule, type Schema } from 'prosemirror-model';
 
-import { type CompiledParseRule } from '#/model/compile';
+import { type CompiledParseRule } from '#/model/internal';
 
 export type Answer = ReturnType<CompiledParseRule['read']>;
 

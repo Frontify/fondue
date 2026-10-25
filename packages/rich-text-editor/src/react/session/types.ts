@@ -4,7 +4,7 @@ import { type MutableRefObject, type ReactNode } from 'react';
 
 import { type MountCoordinator } from '#/bridge/mount';
 import { type CapabilityRef, type DecodeResult } from '#/model';
-import { type TreeNode } from '#/model/content';
+import { type TreeNode } from '#/model/internal';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { type readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';

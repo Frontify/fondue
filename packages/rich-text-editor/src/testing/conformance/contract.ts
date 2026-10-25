@@ -15,13 +15,9 @@ import {
     type FeatureFormats,
     type JsonValue,
     type RichTextDocument,
+    isRecord,
 } from '#/model';
-import { compiledModel } from '#/model/compile';
-import { type TreeNode } from '#/model/content';
-import { decodeToTree } from '#/model/decode';
-import { encodeTree } from '#/model/encode';
-import { featureInternals } from '#/model/feature';
-import { isRecord } from '#/model/values';
+import { compiledModel, type TreeNode, decodeToTree, encodeTree, featureInternals } from '#/model/internal';
 import { editorEngine } from '#/react/engine';
 import { type ConformanceState, stateFromTree, withWholeDocumentSelected } from '#/runtime/conformance-state';
 

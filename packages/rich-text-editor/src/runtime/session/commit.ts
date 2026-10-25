@@ -6,7 +6,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { COMMAND_META, NORMALIZE_META, ORIGIN_META } from '#/definition';
 import { type Diagnostic, type RichTextDocument } from '#/model';
-import { diagnostic } from '#/model/format';
+import { diagnostic } from '#/model/internal';
 
 import { secondCopyInView } from '../engines';
 import { type RuntimeEvents } from '../events';

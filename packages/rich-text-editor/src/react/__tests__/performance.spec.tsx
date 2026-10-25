@@ -11,6 +11,7 @@ import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { registry } from '#/features/registry';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
+// oxlint-disable-next-line no-restricted-imports -- the spies need the hash module's own namespace, not a re-export.
 import * as hash from '#/model/hash';
 import { runtimeOf } from '#/runtime/runtime';
 import { typeText } from '#/testing';

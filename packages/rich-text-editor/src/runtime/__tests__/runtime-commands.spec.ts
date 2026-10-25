@@ -17,7 +17,7 @@ import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { type EditorHandle } from '#/index';
 import { compileContentModel, defineFeature, type Diagnostic } from '#/model';
-import { limitsOf } from '#/model/decode';
+import { limitsOf } from '#/model/internal';
 import { extensionsOf } from '#/react/engine';
 import { pressKey, setSelection, typeText } from '#/testing';
 

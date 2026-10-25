@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type ContentModel } from '#/model';
-import { diagnostic } from '#/model/format';
-import { packageVersionOf } from '#/model/migrate';
+import { diagnostic, packageVersionOf } from '#/model/internal';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { type CommitOptions, type CommitResult, type SaveStatus, type ServerRevision } from '#/runtime/types';
 

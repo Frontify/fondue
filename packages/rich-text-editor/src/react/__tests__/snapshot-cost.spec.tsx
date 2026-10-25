@@ -8,7 +8,7 @@ import { featuresById } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
-import { type pointer as RealPointer } from '#/model/errors';
+import { type pointer as RealPointer } from '#/model/internal';
 import { typeText } from '#/testing';
 
 import { PERF_FEATURES, perfDocument } from '../../model/__tests__/fixtures/perf/documents';

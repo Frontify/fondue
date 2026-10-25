@@ -6,8 +6,8 @@ import { type Mapping } from 'prosemirror-transform';
 import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
 
 import { type PluginImplementation } from '#/definition';
-import { type RichTextDocument } from '#/model';
-import { type ContentCheckOptions, type ContentIssue, type LocatedIssue, locateContentIssues } from '#/model/checks';
+import { type RichTextDocument, type ContentCheckOptions, type ContentIssue } from '#/model';
+import { type LocatedIssue, locateContentIssues } from '#/model/internal';
 
 /** How long after the last change the checks run. */
 export const CHECK_DELAY_MS = 750;
