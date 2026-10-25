@@ -4,7 +4,7 @@ import { type ReactElement } from 'react';
 
 import { ReaderWith, type RichTextReaderProps } from '#/reader/reader';
 
-import { READER_OVERRIDES } from './shipped-readers';
+import { READER_OVERRIDES } from './shippedReaders';
 
 export { defineReaderFeature, type ReaderContext, type ReaderNodeProps, type ReaderRenderers } from '#/reader/define';
 export { type ReaderPresentation, type RichTextReaderProps } from '#/reader/reader';

@@ -417,7 +417,7 @@ const CASES: readonly Case[] = [
     ),
     allowed(
         'internals: the shipped readers glob',
-        'src/entries/shipped-readers.ts',
+        'src/entries/shippedReaders.ts',
         "const readerModules = import.meta.glob('../features/*/reader.tsx', { eager: true });",
     ),
 

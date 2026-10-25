@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { READER_OVERRIDES } from '#/entries/shipped-readers';
+import { READER_OVERRIDES } from '#/entries/shippedReaders';
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { UNSHIPPED_FEATURES } from '#/features/stages';
