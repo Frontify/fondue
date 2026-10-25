@@ -23,7 +23,7 @@ A custom feature is a folder, as each shipped feature is. It holds these files:
 
 The example modules under `src/docs/authoring` follow this layout with the folder name in each file name: `callout-feature.ts`, `callout-editor.ts` and `callout-plugin.ts`. The plugin file is the `index.ts` of the folder.
 
-Source: `src/docs/authoring/callout-plugin.ts`
+Source: `src/docs/authoring/calloutPlugin.ts`
 
 ```ts
 export const calloutPlugin = definePlugin({ feature: callout, editor: calloutEditor });
@@ -432,7 +432,7 @@ Node chrome stays out of the Tab order, so Tab leaves the editor. Alt+F10 reache
 
 A host declares its own block with `defineFeature` in `feature.ts`, which imports no editor code, and its editor part in `editor.ts` attaches a node view to it. The `Custom block with a node view` story mounts this example: the Callout button wraps the selection, and the button in the chrome switches the tone through `update`.
 
-Source: `src/docs/authoring/callout-feature.ts`
+Source: `src/docs/authoring/calloutFeature.ts`
 
 ```ts
 /** A host block: a box of paragraphs with a tone, stored as `callout`. */
@@ -455,7 +455,7 @@ export const callout = defineFeature({
 });
 ```
 
-Source: `src/docs/authoring/callout-view.tsx`
+Source: `src/docs/authoring/calloutView.tsx`
 
 ```tsx
 /** The callout's chrome: its tone, a button that switches it, and the editable paragraphs. */
@@ -483,7 +483,7 @@ const CalloutView = () => {
 export const calloutView: NodeViewDeclaration = { node: 'callout', component: CalloutView };
 ```
 
-Source: `src/docs/authoring/callout-editor.ts`
+Source: `src/docs/authoring/calloutEditor.ts`
 
 ```ts
 /** Wraps the selected blocks in a callout, or lifts them out of one, from the toolbar. */

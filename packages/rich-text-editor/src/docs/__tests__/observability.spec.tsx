@@ -20,15 +20,15 @@ import {
 } from '#/model';
 import { typeText } from '#/testing';
 
-import { countImportFailures } from '../observability/import-failures';
-import { collectOperationMetrics } from '../observability/operation-metrics';
+import { countImportFailures } from '../observability/importFailures';
+import { collectOperationMetrics } from '../observability/operationMetrics';
 import {
     createRendererFailureCounter,
     readerElement,
     recordCodecFailures,
     recordEditorFailures,
-} from '../observability/renderer-failures';
-import { countSaveConflicts } from '../observability/save-conflicts';
+} from '../observability/rendererFailures';
+import { countSaveConflicts } from '../observability/saveConflicts';
 
 vi.mock('#/bridge/portals', { spy: true });
 const { createPortalStore: actualStore } = await vi.importActual<{

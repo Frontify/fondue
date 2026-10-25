@@ -2,8 +2,8 @@
 
 import { defineEditorPart } from '#/entries/authoring';
 
-import { callout } from './callout-feature';
-import { calloutView } from './callout-view';
+import { callout } from './calloutFeature';
+import { calloutView } from './calloutView';
 
 /** Wraps the selected blocks in a callout, or lifts them out of one, from the toolbar. */
 export const calloutEditor = defineEditorPart(callout, {

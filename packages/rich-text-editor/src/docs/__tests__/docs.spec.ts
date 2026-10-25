@@ -171,10 +171,10 @@ describe('the reader and codecs guide', () => {
 describe('the observability guide', () => {
     const source = page('observability');
     const SECTIONS = [
-        ['Import failures and unknown capabilities', 'import-failures', 'importFailures'],
-        ['Renderer failures', 'renderer-failures', 'rendererFailures'],
-        ['Save conflicts', 'save-conflicts', 'saveConflicts'],
-        ['Latency and normalization counts', 'operation-metrics', 'operationMetrics'],
+        ['Import failures and unknown capabilities', 'importFailures', 'importFailures'],
+        ['Renderer failures', 'rendererFailures', 'rendererFailures'],
+        ['Save conflicts', 'saveConflicts', 'saveConflicts'],
+        ['Latency and normalization counts', 'operationMetrics', 'operationMetrics'],
     ] as const;
 
     it('has one section for each row of the counter table (SPEC-rich-text-quality/AC-031)', () => {
