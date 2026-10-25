@@ -35,6 +35,25 @@ test.afterEach(async ({ page }) => {
 });
 
 test.describe('the Overlay focus table', () => {
+    test('bubble toolbar: shows for a selection and Alt+F10 enters it before any idle prefetch ran', async ({
+        mount,
+        page,
+    }) => {
+        // An idle callback that never runs leaves the lazy code unloaded until its first use.
+        await page.addInitScript(() => {
+            window.requestIdleCallback = () => 0;
+        });
+        await mount(<OverlayProbe />);
+        await ready(page);
+        await surfaceOf(page).focus();
+        await select(page, 'two');
+        await expect(bubbleOf(page)).toBeVisible();
+
+        await page.keyboard.press('Alt+F10');
+
+        await expectFocus(page, 'Bold');
+    });
+
     test('bubble toolbar: stays out of focus, Alt+F10 enters, Escape closes with focus in the surface', async ({
         mount,
         page,

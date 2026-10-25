@@ -162,6 +162,22 @@ test('runs Bold on the selection from its More row and leaves focus in the surfa
     expect(selection.inSurface).toBe(true);
 });
 
+test('runs Bold from a More row opened right after mount, before any idle prefetch ran', async ({ mount, page }) => {
+    // An idle callback that never runs leaves the lazy code unloaded until its first use.
+    await page.addInitScript(() => {
+        window.requestIdleCallback = () => 0;
+    });
+    await mount(<ToolbarProbe width={60} />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await select(page, 'two');
+
+    await itemOf(page, 'More').click();
+    await menuRows(page).filter({ hasText: 'Bold' }).click();
+
+    await expect.poll(() => documentHtml(page)).toContain('<strong>two</strong>');
+});
+
 test('opens More with Enter after a pointer opened and Escape closed it', async ({ mount, page }) => {
     await mount(<ToolbarProbe width={60} />);
     await ready(page);

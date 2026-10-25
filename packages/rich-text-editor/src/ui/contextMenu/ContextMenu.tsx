@@ -3,70 +3,18 @@
 import { Dropdown } from '@frontify/fondue-components';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { OptionItem } from '#/bridge/chromeToolbar';
+import { lazyPart } from '#/bridge/lazyPart';
 import { useEditorOverlay } from '#/bridge/overlays';
 import { type OverlayAnchor } from '#/bridge/plugin';
 import { SessionContext } from '#/bridge/session';
-import { TurnIntoContext, turnIntoChoices, type TurnIntoEntry } from '#/bridge/turnInto';
 import { atomPositionAt, selectedNodePosition, surfaceElement } from '#/runtime/port';
 import { pressesBinding } from '#/ui/shortcuts';
 import { offeredRows, type ToolbarItem, type ToolbarStrings, useOfferedRows } from '#/ui/toolbar/item';
-import { MoreRow, useRowRuns } from '#/ui/toolbar/More';
+import { useRowRuns } from '#/ui/toolbar/More';
+
+const ContextMenuContent = lazyPart(() => import('./ContextMenuContent').then((loaded) => loaded.ContextMenuContent));
 
 const preventDefault = (event: Event) => event.preventDefault();
-
-const rowOf = ({ key, command, payload, label }: TurnIntoEntry): ToolbarItem => ({
-    key,
-    command,
-    payload,
-    toggle: false,
-    label,
-    icon: '',
-    bindings: [],
-    groupStart: false,
-    bubble: false,
-});
-
-// Fondue's group heading is a labelled span that axe rejects inside a menu, so the group takes the name instead.
-const labelGroup = (label: string) => (group: HTMLDivElement | null) => {
-    group?.setAttribute('aria-label', label);
-    group?.querySelector('span[aria-label]')?.setAttribute('aria-hidden', 'true');
-};
-
-/** The Turn into group: the conversions the selected node takes, none for a node that takes no other type. */
-const TurnInto = ({ label, runs }: { readonly label: string; readonly runs: ReturnType<typeof useRowRuns> }) => {
-    const runtime = useContext(SessionContext);
-    const entries = useContext(TurnIntoContext);
-    if (runtime === undefined) {
-        return null;
-    }
-    const choices = turnIntoChoices(entries, (command, payload) => runtime.handle.query(command, payload));
-    if (choices.every(({ current }) => current)) {
-        return null;
-    }
-    return (
-        // Fondue's sub-content takes no `container`, so a group keeps the items inside the editor's overlay root.
-        <Dropdown.Group heading={label} ref={labelGroup(label)}>
-            {choices.map(({ entry, current }) => (
-                <OptionItem
-                    key={entry.key}
-                    checked={current}
-                    onSelect={async () => {
-                        // The current type changes nothing, as a toggle command would turn it off.
-                        if (current) {
-                            runs.ran();
-                            runtime.handle.focus();
-                            return;
-                        }
-                        await runs.onRun(rowOf(entry));
-                    }}
-                >
-                    {entry.label}
-                </OptionItem>
-            ))}
-        </Dropdown.Group>
-    );
-};
 
 /**
  * The package context menu: a Fondue `Dropdown` for a node selection or a right click inside an atom node view, at the
@@ -99,6 +47,7 @@ export const ContextMenu = ({
     }, []);
     const overlay = useEditorOverlay(open, setOpen);
     const contentRef = useRef<HTMLDivElement | null>(null);
+    const focusFrameRef = useRef(0);
     const { contentRef: overlayRef } = overlay;
     const setContent = useCallback(
         (element: HTMLDivElement | null) => {
@@ -107,6 +56,14 @@ export const ContextMenu = ({
             contentRef.current = element;
             element?.addEventListener('contextmenu', preventDefault);
             overlayRef(element);
+            // Radix focuses the first item only for a menu a key opened, and the content for one a pointer opened;
+            // the content mounts once it has loaded, so this follows its mount rather than the opening.
+            cancelAnimationFrame(focusFrameRef.current);
+            if (element !== null) {
+                focusFrameRef.current = requestAnimationFrame(() => {
+                    element.querySelector<HTMLElement>('[role^="menuitem"]')?.focus();
+                });
+            }
         },
         [overlayRef],
     );
@@ -161,17 +118,6 @@ export const ContextMenu = ({
             surface.removeEventListener('keydown', onKeyDown);
         };
     }, [runtime, surface, disabled, open, items]);
-    // Radix focuses the first item only for a menu a key opened, and the content for one a pointer opened.
-    useEffect(() => {
-        if (!open) {
-            return undefined;
-        }
-        const frame = requestAnimationFrame(() => {
-            const item = contentRef.current?.querySelector<HTMLElement>('[role^="menuitem"]');
-            item?.focus();
-        });
-        return () => cancelAnimationFrame(frame);
-    }, [open]);
     // A closed menu renders nothing, not even Fondue's virtual trigger, so the server and the surface's markup hold none.
     if (!open || rows.length === 0) {
         return null;
@@ -182,17 +128,15 @@ export const ContextMenu = ({
     }
     return (
         <Dropdown.Root open={open} onOpenChange={setOpen} virtualAnchor={anchor}>
-            <Dropdown.Content
-                ref={setContent}
-                aria-label={label}
+            <ContextMenuContent
+                contentRef={setContent}
+                label={label}
                 container={overlay.container}
-                onCloseAutoFocus={runs.onCloseAutoFocus}
-            >
-                {rows.map((item) => (
-                    <MoreRow key={item.key} item={item} strings={strings} onRun={runs.onRun} />
-                ))}
-                <TurnInto label={turnIntoLabel} runs={runs} />
-            </Dropdown.Content>
+                items={rows}
+                strings={strings}
+                turnIntoLabel={turnIntoLabel}
+                runs={runs}
+            />
         </Dropdown.Root>
     );
 };

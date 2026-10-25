@@ -91,6 +91,22 @@ test('opens on :smi with focus in the surface, moves with the arrows, accepts on
     await expect(surface).toHaveText(`Hi ${glyph} :smi`);
 });
 
+test('opens the first list with its first results before any idle prefetch ran', async ({ mount, page }) => {
+    // An idle callback that never runs leaves the lazy code unloaded until its first use.
+    await page.addInitScript(() => {
+        window.requestIdleCallback = () => 0;
+    });
+    await mount(<SuggestionProbe />);
+    await ready(page);
+    await caretAtEnd(page);
+
+    await page.keyboard.type(' :smi');
+
+    await expect(listOf(page)).toBeVisible();
+    await expect(listOf(page).getByRole('option').first()).toHaveAttribute('aria-selected', 'true');
+    await expect(surfaceOf(page)).toBeFocused();
+});
+
 test('closes on Escape with the text kept, and opens no list for 12:30', async ({ mount, page }) => {
     await mount(<SuggestionProbe />);
     await ready(page);

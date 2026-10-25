@@ -11,7 +11,7 @@ import { enUS } from '#/locales/en-US';
 import { codecContext } from '#/model/internal';
 import { readerContext } from '#/reader/context';
 import { UPLOAD_FEATURE } from '#/runtime/port';
-import { referenceListStrings } from '#/ui/suggestions/SuggestionList';
+import { referenceListStrings } from '#/ui/suggestions/referenceStrings';
 
 import { moveChromeFocus } from '../chromeFocus';
 import { engineOf, pluginsOf } from '../compileEditor';

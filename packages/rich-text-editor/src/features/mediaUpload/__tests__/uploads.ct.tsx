@@ -84,6 +84,20 @@ test('starts an upload of a 40 by 30 pixel logo.png with its file name as labelS
     await expect(surfaceOf(page).getByRole('progressbar', { name: 'logo.png' })).toBeVisible();
 });
 
+test('shows the upload slot of the first upload before any idle prefetch ran', async ({ mount, page }) => {
+    // An idle callback that never runs leaves the lazy code unloaded until its first use.
+    await page.addInitScript(() => {
+        window.requestIdleCallback = () => 0;
+    });
+    await mount(<UploadProbe />);
+    await ready(page);
+
+    await chooseLogo(page);
+
+    await expect(surfaceOf(page).getByRole('progressbar', { name: 'logo.png' })).toBeVisible();
+    await expect(surfaceOf(page).locator('figure [data-rte-upload]')).toBeVisible();
+});
+
 test('keeps the height of the image box when the uploaded image loads', async ({ mount, page }) => {
     let serve: () => void = () => undefined;
     const served = new Promise<void>((resolve) => {

@@ -3,92 +3,18 @@
 import { Button, Dropdown, Tooltip } from '@frontify/fondue-components';
 import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
-import { type AriaAttributes, type AriaRole, type RefObject, useContext, useId, useRef, useState } from 'react';
+import { type RefObject, useContext, useRef, useState } from 'react';
 
-import { CheckedSlot, keepFocus } from '#/bridge/chromeToolbar';
-import { useCommandQuery } from '#/bridge/hooks';
+import { keepFocus } from '#/bridge/chromeToolbar';
+import { lazyPart } from '#/bridge/lazyPart';
 import { useOverlayContainer } from '#/bridge/overlays';
-import { ChromeBoundary, NO_ATTRS } from '#/bridge/PortalHost';
 import { SessionContext, useSessionValue } from '#/bridge/session';
-import { useOpenPanel } from '#/ui/panels/context';
 
-import {
-    Icon,
-    returnFocus,
-    runItem,
-    tabStop,
-    type ToolbarItem,
-    type ToolbarStrings,
-    useOfferedRows,
-    useShortcut,
-} from './item';
+import { returnFocus, runItem, tabStop, type ToolbarItem, type ToolbarStrings, useOfferedRows } from './item';
 import styles from './styles/toolbar.module.scss';
 import { blockTypeOf } from './TextStyle';
 
-export const MoreRow = ({
-    item,
-    strings,
-    onRun,
-}: {
-    readonly item: ToolbarItem;
-    readonly strings: ToolbarStrings;
-    readonly onRun: (item: ToolbarItem) => Promise<void>;
-}) => {
-    const state = useCommandQuery(item.command, item.payload);
-    const openPanel = useOpenPanel();
-    const { shortcut, keyshortcuts } = useShortcut(item);
-    const reasonId = useId();
-    // Fondue's `Dropdown.Item` types no menu item role or state, which Radix still takes through the spread.
-    let semantics: { role: AriaRole } & Pick<AriaAttributes, 'aria-checked' | 'aria-disabled'>;
-    // A brand style row is one of the block's styles, as in the text style picker.
-    const radio = item.brand !== undefined;
-    let shown = state.active;
-    if (item.toggle && item.control !== undefined && item.control === openPanel) {
-        shown = true;
-    }
-    const checked = radio ? shown === true : shown !== false;
-    if (radio) {
-        semantics = { role: 'menuitemradio', 'aria-checked': checked };
-    } else if (item.toggle) {
-        semantics = { role: 'menuitemcheckbox', 'aria-checked': shown };
-    } else {
-        semantics = { role: 'menuitem' };
-    }
-    // An unavailable row stays focusable with its reason, as a toolbar item does; a checked style is already set.
-    let reason: string | undefined;
-    let describedBy: string | undefined;
-    if (!state.enabled && !(radio && checked)) {
-        reason = strings.reason(state.disabledReason ?? '');
-        describedBy = reasonId;
-        semantics['aria-disabled'] = true;
-    }
-    return (
-        <Dropdown.Item
-            {...semantics}
-            aria-describedby={describedBy}
-            aria-keyshortcuts={keyshortcuts}
-            onSelect={async (event) => {
-                if (reason !== undefined) {
-                    event.preventDefault();
-                    return;
-                }
-                await onRun(item);
-            }}
-        >
-            <Dropdown.Slot name="left">
-                <Icon name={item.icon} />
-            </Dropdown.Slot>
-            <span>{item.label}</span>
-            {item.toggle && checked && <CheckedSlot />}
-            {shortcut !== undefined && <Dropdown.Shortcut>{shortcut}</Dropdown.Shortcut>}
-            {reason !== undefined && (
-                <span id={reasonId} aria-hidden className={styles.reason}>
-                    {reason}
-                </span>
-            )}
-        </Dropdown.Item>
-    );
-};
+const MoreContent = lazyPart(() => import('./MoreContent').then((loaded) => loaded.MoreContent));
 
 /**
  * How a menu of More rows runs them: a row runs its command and sends focus to the surface; a row that opens a control
@@ -251,9 +177,14 @@ export const More = ({
                     <span data-rte-tooltip-label="">{strings.more}</span>
                 </Tooltip.Content>
             </Tooltip.Root>
-            <Dropdown.Content
-                ref={contentRef}
+            <MoreContent
+                contentRef={contentRef}
                 container={container}
+                items={offered}
+                strings={strings}
+                blockType={blockType}
+                modeLabel={modeSwitch.label}
+                onRun={rows.onRun}
                 onCloseAutoFocus={(event) => {
                     rows.onCloseAutoFocus(event);
                     if (event.defaultPrevented) {
@@ -264,36 +195,13 @@ export const More = ({
                         event.preventDefault();
                     }
                 }}
-            >
-                {/* The text style picker that does not fit offers its rows here. */}
-                {offered
-                    .flatMap((item) => {
-                        if (item.options === undefined) {
-                            return [item];
-                        }
-                        // A brand style row applies only to the block types its style names.
-                        return item.options.filter(
-                            ({ offered, brand }) =>
-                                offered && (brand === undefined || brand.appliesTo.includes(blockType)),
-                        );
-                    })
-                    .map((item) => (
-                        // A row that throws leaves only its own place empty.
-                        <ChromeBoundary key={item.key} message="" attrs={NO_ATTRS}>
-                            <MoreRow item={item} strings={strings} onRun={rows.onRun} />
-                        </ChromeBoundary>
-                    ))}
-                <Dropdown.Item
-                    onSelect={() => {
-                        // The toolbar that held More unmounts, so focus goes to the surface.
-                        rows.ran();
-                        modeSwitch.onSelect();
-                        runtime?.handle.focus();
-                    }}
-                >
-                    {modeSwitch.label}
-                </Dropdown.Item>
-            </Dropdown.Content>
+                onModeSwitch={() => {
+                    // The toolbar that held More unmounts, so focus goes to the surface.
+                    rows.ran();
+                    modeSwitch.onSelect();
+                    runtime?.handle.focus();
+                }}
+            />
         </Dropdown.Root>
     );
 };

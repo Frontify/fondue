@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { readImageHeader, svgHoldsScript } from '../imageHeader';
-
 import { MAX_IMAGE_SIDE } from './constants';
 import { type Checked, type UploadHost, type UploadRejection } from './types';
 
@@ -22,6 +20,8 @@ export const checkFile = async (
     if (file.size > host.limits.maxAssetBytes) {
         return 'size';
     }
+    // The header reader loads with the first upload, so a document that never uploads does not carry it.
+    const { readImageHeader, svgHoldsScript } = await import('../imageHeader');
     const header = await readImageHeader(file);
     // Only the content names the type, so an HTML file named `photo.png`, or content no reader knows, is refused.
     const type = header.mediaType;

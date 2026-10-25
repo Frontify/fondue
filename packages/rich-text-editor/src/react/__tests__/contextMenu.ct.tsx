@@ -78,6 +78,25 @@ test('opens the menu on Shift+F10 at a selected image with focus on its first it
     await expect(surfaceOf(page)).toBeFocused();
 });
 
+test('opens the menu on Shift+F10 with focus on its first item before any idle prefetch ran', async ({
+    mount,
+    page,
+}) => {
+    // An idle callback that never runs leaves the lazy code unloaded until its first use.
+    await page.addInitScript(() => {
+        window.requestIdleCallback = () => 0;
+    });
+    await mount(<ImageProbe content="still" />);
+    await ready(page);
+    await surfaceOf(page).focus();
+    await selectImage(page);
+
+    await page.keyboard.press('Shift+F10');
+
+    await expect(menuOf(page)).toBeVisible();
+    await expect(menuOf(page).getByRole('menuitem').first()).toBeFocused();
+});
+
 test('runs an item command on the image a right click selected, and returns focus to the surface', async ({
     mount,
     page,

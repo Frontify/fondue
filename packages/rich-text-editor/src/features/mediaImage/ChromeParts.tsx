@@ -13,7 +13,7 @@ import { figureOf } from './nodes';
 import { alignOptions, EDIT_WIDTH, SIDE_KEYS, sizeOptions } from './options';
 import { ImageUnavailable } from './reader';
 import styles from './styles/image.module.scss';
-import { UploadControls, UploadSlot } from './upload';
+import { UploadControls, UploadSlot } from './uploadParts';
 import { type ImageChromeState } from './useImageChromeState';
 
 /** A stored intrinsic size, or `null` where the image has none. */

@@ -16,7 +16,8 @@ import { type EditorPort, mediaOf } from '#/runtime/port';
 import { VISUALLY_HIDDEN } from '#/styles/visuallyHidden';
 import { ContextMenu } from '#/ui/contextMenu/ContextMenu';
 import { PanelContext, type PanelController } from '#/ui/panels/context';
-import { type referenceListStrings, SuggestionList } from '#/ui/suggestions/SuggestionList';
+import { LazySuggestionList } from '#/ui/suggestions/LazySuggestionList';
+import { type referenceListStrings } from '#/ui/suggestions/referenceStrings';
 
 import { type PluginOverlay } from '../pluginHosts';
 import { translatedLabel } from '../toolbarItems';
@@ -212,7 +213,7 @@ export const SessionFrame = ({
                 />
             </PanelContext.Provider>
             <PortalHost store={portals} context={chromeContext} lang={lang} onFlush={onFlush} />
-            <SuggestionList
+            <LazySuggestionList
                 nameOf={(name) => {
                     if (typeof name === 'string') {
                         return chromeContext.t(name as `RichTextEditor_${string}`);

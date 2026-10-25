@@ -4,12 +4,13 @@ import { useFondueTheme } from '@frontify/fondue-components';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
+import { lazyPart } from '#/bridge/lazyPart';
 import { useScopedFocus } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
 import { useSessionValue } from '#/bridge/session';
 import { contentClasses } from '#/model/internal';
 import { type EditorPort, isEmptyDocument } from '#/runtime/port';
-import { type BubbleMore, BubbleToolbar } from '#/ui/bubbleToolbar/BubbleToolbar';
+import { type BubbleMore } from '#/ui/bubbleToolbar/BubbleToolbar';
 import { usePanelController } from '#/ui/panels/context';
 import { shortcutText } from '#/ui/shortcuts';
 import { FixedToolbar } from '#/ui/toolbar/Toolbar';
@@ -22,6 +23,8 @@ import { type CompiledEditorDefinition } from '../types';
 import { toolbarShortcutOf } from './helpers';
 import { useRoot } from './rootContext';
 import { type Chrome, DEFAULT_TEST_ID } from './types';
+
+const BubbleToolbar = lazyPart(() => import('#/ui/bubbleToolbar/BubbleToolbar').then((loaded) => loaded.BubbleToolbar));
 
 /** The host's class tokens the surface may add and remove: never the package's root class nor one of ProseMirror's own. */
 const hostClassNames = (contentClassName: string) =>

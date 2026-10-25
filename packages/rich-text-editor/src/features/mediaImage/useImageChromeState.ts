@@ -9,7 +9,7 @@ import { altOf, figureAlign, imageOutput, isRecord, type JsonObject, REPLACED_AS
 import { mayAnimate } from './animation';
 import { SET_SIZE } from './dialogStrings';
 import { type SIDES } from './options';
-import { surfaceFocused, uploadStatusText, useUploadStatus } from './upload';
+import { surfaceFocused, uploadStatusText, useUploadStatus } from './uploadStatus';
 import { useResize } from './useResize';
 
 /** The side of the figure that holds the image `nodeId`, which its chrome's alignment menu shows. */
