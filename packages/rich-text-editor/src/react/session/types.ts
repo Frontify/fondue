@@ -3,6 +3,7 @@
 import { type MutableRefObject, type ReactNode } from 'react';
 
 import { type MountCoordinator } from '#/bridge/mount';
+import { type TurnIntoEntry } from '#/bridge/turnInto';
 import { type CapabilityRef, type DecodeResult } from '#/model';
 import { type TreeNode } from '#/model/internal';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
@@ -38,6 +39,8 @@ export interface Chrome {
     readonly items: readonly ToolbarItem[];
     /** The rows that only the More menus hold. */
     readonly menu: readonly ToolbarItem[];
+    /** The block conversions the Turn into menus of node chrome and the context menu narrow to their block. */
+    readonly turnInto: readonly TurnIntoEntry[];
     readonly strings: ToolbarStrings;
     /** The bubble toolbar's and the context menu's names, and the More rows that switch the toolbar mode. */
     readonly labels: {
@@ -45,6 +48,7 @@ export interface Chrome {
         readonly toBubble: string;
         readonly toFixed: string;
         readonly contextMenu: string;
+        readonly turnInto: string;
     };
     /** The surface element `id`, generated when a toolbar's `aria-controls` needs one and the host set none. */
     readonly surfaceId: string | undefined;

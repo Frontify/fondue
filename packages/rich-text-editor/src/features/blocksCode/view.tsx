@@ -7,8 +7,10 @@ import {
     NodeChromeButton,
     NodeChromeMenu,
     NodeChromeToolbar,
+    NodeChromeTurnInto,
     OptionItem,
     type NodeViewDeclaration,
+    type TurnIntoCommands,
     useRichTextNodeView,
 } from '#/bridge/define';
 
@@ -20,6 +22,7 @@ type CodeCommands = { readonly 'code-block.language.set': { readonly languageId:
 /** The language menu and Copy button of `code_block`. */
 const CodeChrome = () => {
     const { attrs, contentId, context, execute } = useRichTextNodeView<CodeCommands>();
+    const turnable = useRichTextNodeView<TurnIntoCommands>();
     const barRef = useRef<HTMLDivElement>(null);
     let languageId: string | null = null;
     if (typeof attrs.languageId === 'string') {
@@ -56,6 +59,7 @@ const CodeChrome = () => {
                     icon={<IconClipboard size={16} aria-hidden />}
                     onClick={copy}
                 />
+                <NodeChromeTurnInto current={context.t('RichTextEditor_codeBlock')} node={turnable} />
             </NodeChromeToolbar>
         </div>
     );

@@ -264,6 +264,7 @@ export const nlNL = {
         RichTextEditor_toolbar: 'Tekstopmaak',
         RichTextEditor_toolbarAlways: 'Werkbalk altijd tonen',
         RichTextEditor_toolbarOnSelection: 'Werkbalk alleen bij een selectie tonen',
+        RichTextEditor_turnIntoCurrent: 'Omzetten naar: ${type}',
         RichTextEditor_unavailable: 'Niet beschikbaar voor de huidige selectie',
         RichTextEditor_unavailableNotAllowed: 'Niet toegestaan in deze editor',
         RichTextEditor_unavailableReadOnly: 'De inhoud is alleen-lezen',

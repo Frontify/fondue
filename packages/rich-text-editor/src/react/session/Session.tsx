@@ -141,7 +141,9 @@ const SessionComponent = (
         return <RecoveryShell document={faulted} {...shell} onRetry={onRetry} />;
     }
     return (
-        <SessionProviders values={{ root: context, hosts: renderedHosts, live, work, announcer, overlays }}>
+        <SessionProviders
+            values={{ root: context, hosts: renderedHosts, live, work, announcer, overlays, turnInto: chrome.turnInto }}
+        >
             <SessionFrame
                 rootRef={rootRef}
                 lang={lang}

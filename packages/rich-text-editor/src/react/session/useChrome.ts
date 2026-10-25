@@ -17,6 +17,7 @@ import { moveChromeFocus } from '../chromeFocus';
 import { engineOf, pluginsOf } from '../compileEditor';
 import { type PluginOverlay, useRenderedHosts } from '../pluginHosts';
 import { menuItems, toolbarItems } from '../toolbarItems';
+import { turnIntoChoices } from '../turnInto';
 import { type EditorHandle, type ToolbarMode } from '../types';
 
 import { memberOf, type shellPropsOf, toolbarShortcutOf } from './helpers';
@@ -95,6 +96,10 @@ export const useChrome = (sources: ChromeSources) => {
             ),
         [mounted.definition, items, chromeContext, lang],
     );
+    const turnInto = useMemo(
+        () => turnIntoChoices(pluginsOf(mounted.definition), chromeContext.t, lang),
+        [mounted.definition, chromeContext, lang],
+    );
     // The plugins' standing overlays, each with a stable key and a stable ref for its toolbar.
     const standing = useMemo(() => {
         const overlays = plugins.flatMap((plugin) =>
@@ -124,10 +129,12 @@ export const useChrome = (sources: ChromeSources) => {
             toBubble: t('RichTextEditor_toolbarOnSelection'),
             toFixed: t('RichTextEditor_toolbarAlways'),
             contextMenu: t('RichTextEditor_contextMenu'),
+            turnInto: t('RichTextEditor_slashTurnInto'),
         };
         return {
             items,
             menu,
+            turnInto,
             strings,
             labels,
             surfaceId,
@@ -143,6 +150,7 @@ export const useChrome = (sources: ChromeSources) => {
     }, [
         items,
         menu,
+        turnInto,
         chromeContext,
         props.id,
         generatedId,

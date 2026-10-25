@@ -267,6 +267,7 @@ export const deDE = {
         RichTextEditor_toolbar: 'Textformatierung',
         RichTextEditor_toolbarAlways: 'Symbolleiste immer anzeigen',
         RichTextEditor_toolbarOnSelection: 'Symbolleiste nur bei Auswahl anzeigen',
+        RichTextEditor_turnIntoCurrent: 'Umwandeln in: ${type}',
         RichTextEditor_unavailable: 'An der aktuellen Auswahl nicht verfügbar',
         RichTextEditor_unavailableNotAllowed: 'In diesem Editor nicht erlaubt',
         RichTextEditor_unavailableReadOnly: 'Der Inhalt ist schreibgeschützt',

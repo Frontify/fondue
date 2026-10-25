@@ -259,6 +259,7 @@ export const plPL = {
         RichTextEditor_toolbar: 'Formatowanie tekstu',
         RichTextEditor_toolbarAlways: 'Zawsze pokazuj pasek narzędzi',
         RichTextEditor_toolbarOnSelection: 'Pokazuj pasek narzędzi tylko po zaznaczeniu',
+        RichTextEditor_turnIntoCurrent: 'Zamień na: ${type}',
         RichTextEditor_unavailable: 'Niedostępne dla bieżącego zaznaczenia',
         RichTextEditor_unavailableNotAllowed: 'Niedozwolone w tym edytorze',
         RichTextEditor_unavailableReadOnly: 'Treść jest tylko do odczytu',

@@ -262,6 +262,7 @@ export const ptPT = {
         RichTextEditor_toolbar: 'Formatação de texto',
         RichTextEditor_toolbarAlways: 'Mostrar sempre a barra de ferramentas',
         RichTextEditor_toolbarOnSelection: 'Mostrar a barra de ferramentas apenas ao selecionar',
+        RichTextEditor_turnIntoCurrent: 'Converter em: ${type}',
         RichTextEditor_unavailable: 'Indisponível na seleção atual',
         RichTextEditor_unavailableNotAllowed: 'Não permitido neste editor',
         RichTextEditor_unavailableReadOnly: 'O conteúdo é só de leitura',

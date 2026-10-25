@@ -28,6 +28,7 @@ export {
 export { EditorDialog, type EditorDialogControl, useEditorDialog } from './EditorDialog';
 export { Listbox, type ListboxOption } from './Listbox';
 export { NodeViewContent } from './NodeViewContent';
+export { NodeChromeTurnInto, type TurnIntoCommands } from './turnInto';
 export { type EditorOverlay, OverlayBody, useEditorOverlay } from './overlays';
 
 /** What node chrome reads besides attributes: the reader's `ReaderContext`, which `src/bridge` may not import from the reader. */

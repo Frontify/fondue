@@ -3,16 +3,8 @@
 import { type EditorApi, type EditorPartSpec, type PluginToolbarEntry } from '#/bridge/plugin';
 import { type JsonObject, type TranslationStrings } from '#/model';
 
-// The commands of the text style picker and the list buttons, in the order the Turn into group lists them.
-const TURN_INTO = [
-    'paragraph.set',
-    'heading.set',
-    'quote.toggle',
-    'code-block.toggle',
-    'list.bullet.toggle',
-    'list.ordered.toggle',
-    'list.task.toggle',
-];
+import { turnIntoEntries } from '../turnInto';
+
 const INSERTS = /\.insert$/u;
 
 /** A unit as the list reads it: the toolbar entries of its editor part. */
@@ -45,9 +37,7 @@ const payloadOf = ({ command, payload }: PluginToolbarEntry): JsonObject => {
  */
 export const slashMenu = (plugins: readonly Unit[]): Omit<EditorPartSpec<'commands'>, 'commands'> => {
     const entries = plugins.flatMap(({ editor }) => editor.toolbar ?? []).filter(({ node }) => node === undefined);
-    const turnInto = entries
-        .filter(({ command }) => TURN_INTO.includes(command))
-        .sort((a, b) => TURN_INTO.indexOf(a.command) - TURN_INTO.indexOf(b.command));
+    const turnInto = turnIntoEntries(plugins.map(({ editor }) => editor));
     const inserts = entries.filter(({ kind, command }) => kind === 'button' && INSERTS.test(command));
     const groups: readonly Group[] = [
         { headingKey: 'RichTextEditor_slashTurnInto', entries: turnInto },

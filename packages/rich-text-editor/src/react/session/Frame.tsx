@@ -10,6 +10,7 @@ import { EditorHostsContext, type EditorHosts } from '#/bridge/plugin';
 import { PortalHost } from '#/bridge/PortalHost';
 import { type PortalStore } from '#/bridge/portals';
 import { SessionContext } from '#/bridge/session';
+import { TurnIntoContext, type TurnIntoEntry } from '#/bridge/turnInto';
 import { type readerContext } from '#/reader/context';
 import { type EditorPort, mediaOf } from '#/runtime/port';
 import { VISUALLY_HIDDEN } from '#/styles/visuallyHidden';
@@ -35,6 +36,7 @@ interface ProviderValues {
     readonly work: ReactWork | undefined;
     readonly announcer: Announcer;
     readonly overlays: Overlays;
+    readonly turnInto: readonly TurnIntoEntry[];
 }
 
 /** What the parts, the plugins and the overlays of one session read from context. */
@@ -44,7 +46,9 @@ export const SessionProviders = ({ values, children }: { values: ProviderValues;
             <SessionContext.Provider value={values.live}>
                 <ReactWorkContext.Provider value={values.work}>
                     <AnnouncerContext.Provider value={values.announcer}>
-                        <OverlayContext.Provider value={values.overlays}>{children}</OverlayContext.Provider>
+                        <OverlayContext.Provider value={values.overlays}>
+                            <TurnIntoContext.Provider value={values.turnInto}>{children}</TurnIntoContext.Provider>
+                        </OverlayContext.Provider>
                     </AnnouncerContext.Provider>
                 </ReactWorkContext.Provider>
             </SessionContext.Provider>
@@ -202,6 +206,7 @@ export const SessionFrame = ({
                 <ContextMenu
                     items={chrome.menu}
                     label={chrome.labels.contextMenu}
+                    turnIntoLabel={chrome.labels.turnInto}
                     strings={chrome.strings}
                     disabled={disabled}
                 />

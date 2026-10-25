@@ -265,6 +265,7 @@ export const frFR = {
         RichTextEditor_toolbar: 'Mise en forme du texte',
         RichTextEditor_toolbarAlways: 'Toujours afficher la barre d’outils',
         RichTextEditor_toolbarOnSelection: 'Afficher la barre d’outils uniquement lors d’une sélection',
+        RichTextEditor_turnIntoCurrent: 'Transformer en\u00A0: ${type}',
         RichTextEditor_unavailable: 'Non disponible pour la sélection actuelle',
         RichTextEditor_unavailableNotAllowed: 'Non autorisé dans cet éditeur',
         RichTextEditor_unavailableReadOnly: 'Le contenu est en lecture seule',

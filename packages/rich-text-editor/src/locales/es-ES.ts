@@ -261,6 +261,7 @@ export const esES = {
         RichTextEditor_toolbar: 'Formato de texto',
         RichTextEditor_toolbarAlways: 'Mostrar siempre la barra de herramientas',
         RichTextEditor_toolbarOnSelection: 'Mostrar la barra de herramientas solo al seleccionar',
+        RichTextEditor_turnIntoCurrent: 'Convertir en: ${type}',
         RichTextEditor_unavailable: 'No disponible en la selección actual',
         RichTextEditor_unavailableNotAllowed: 'No permitido en este editor',
         RichTextEditor_unavailableReadOnly: 'El contenido es de solo lectura',

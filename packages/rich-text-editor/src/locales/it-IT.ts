@@ -266,6 +266,7 @@ export const itIT = {
         RichTextEditor_toolbar: 'Formattazione del testo',
         RichTextEditor_toolbarAlways: 'Mostra sempre la barra degli strumenti',
         RichTextEditor_toolbarOnSelection: 'Mostra la barra degli strumenti solo con una selezione',
+        RichTextEditor_turnIntoCurrent: 'Trasforma in: ${type}',
         RichTextEditor_unavailable: 'Non disponibile per la selezione corrente',
         RichTextEditor_unavailableNotAllowed: 'Non consentito in questo editor',
         RichTextEditor_unavailableReadOnly: 'Il contenuto è di sola lettura',

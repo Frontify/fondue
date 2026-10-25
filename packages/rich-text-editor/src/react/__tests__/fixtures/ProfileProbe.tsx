@@ -22,6 +22,8 @@ declare global {
             readonly enterKeys: boolean[];
             handle: EditorHandle<object> | null;
             readonly select: (target: SelectionTarget) => void;
+            /** Selects the first node of type `name` as a node, which a block with no `nodeId` cannot be named by. */
+            readonly selectNode: (name: string) => void;
             readonly execute: (command: string, payload?: unknown) => void;
         };
     }
@@ -37,6 +39,19 @@ const probe: NonNullable<Window['profileProbe']> = {
         if (probe.handle !== null) {
             setSelection(probe.handle, target);
         }
+    },
+    selectNode: (name) => {
+        if (probe.handle === null) {
+            return;
+        }
+        const runtime = runtimeOf(probe.handle);
+        runtime?.view?.state.doc.descendants((node, pos) => {
+            if (node.type.name !== name) {
+                return true;
+            }
+            runtime.select({ node: pos });
+            return false;
+        });
     },
     // A spec names any installed command, which the handle's typed `execute` does not list.
     execute: (command, payload) => {

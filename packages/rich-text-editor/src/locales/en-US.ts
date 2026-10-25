@@ -258,6 +258,7 @@ export const enUS = {
         RichTextEditor_toolbar: 'Text formatting',
         RichTextEditor_toolbarAlways: 'Always show toolbar',
         RichTextEditor_toolbarOnSelection: 'Show toolbar on selection only',
+        RichTextEditor_turnIntoCurrent: 'Turn into, ${type}',
         RichTextEditor_unavailable: 'Not available at the current selection',
         RichTextEditor_unavailableNotAllowed: 'Not allowed in this editor',
         RichTextEditor_unavailableReadOnly: 'The content is read-only',
