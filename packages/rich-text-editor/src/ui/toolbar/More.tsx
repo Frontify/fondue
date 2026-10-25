@@ -23,7 +23,7 @@ import {
     useShortcut,
 } from './item';
 import styles from './styles/toolbar.module.scss';
-import { blockTypeOf } from './text-style';
+import { blockTypeOf } from './TextStyle';
 
 export const MoreRow = ({
     item,

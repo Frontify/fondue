@@ -9,7 +9,7 @@ import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { type readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
 import { type RuntimeHandle } from '#/runtime/port';
-import { type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
+import { type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/Toolbar';
 
 import { type CompiledEditorDefinition, type Defined, type Props, type ToolbarMode } from '../types';
 

@@ -9,10 +9,10 @@ import { useApplePlatform } from '#/bridge/platform';
 import { useSessionValue } from '#/bridge/session';
 import { contentClasses } from '#/model/internal';
 import { type EditorPort, isEmptyDocument } from '#/runtime/port';
-import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
+import { type BubbleMore, BubbleToolbar } from '#/ui/bubbleToolbar/BubbleToolbar';
 import { usePanelController } from '#/ui/panels/context';
 import { shortcutText } from '#/ui/shortcuts';
-import { FixedToolbar } from '#/ui/toolbar/toolbar';
+import { FixedToolbar } from '#/ui/toolbar/Toolbar';
 
 import { panelsOf, profileOf } from '../compile-editor';
 import { PanelFrame } from '../panels';

@@ -16,13 +16,13 @@ import { useOpenPanel } from '#/ui/panels/context';
 import { ariaShortcut } from '#/ui/shortcuts';
 
 import { Icon, pressItem, runItem, tabStop, type ToolbarItem, type ToolbarStrings, useShortcut } from './item';
-import { More, type ModeSwitch } from './more';
+import { More, type ModeSwitch } from './More';
 import styles from './styles/toolbar.module.scss';
-import { TextStyle } from './text-style';
-import { useFitting } from './use-fitting';
+import { TextStyle } from './TextStyle';
+import { useFitting } from './useFitting';
 
 export { type ToolbarItem, type ToolbarStrings } from './item';
-export { More, type ModeSwitch } from './more';
+export { More, type ModeSwitch } from './More';
 
 export type ItemProps = {
     readonly item: ToolbarItem;

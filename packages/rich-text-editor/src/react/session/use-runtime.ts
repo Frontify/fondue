@@ -25,8 +25,8 @@ import {
     surfaceElement,
     type UploadPlace,
 } from '#/runtime/port';
-import { pickAsset } from '#/ui/media/asset-picker';
-import { uploadMessage } from '#/ui/media/upload-messages';
+import { pickAsset } from '#/ui/media/assetPicker';
+import { uploadMessage } from '#/ui/media/uploadMessages';
 
 import { engineOf, profileOf, viewsOf } from '../compile-editor';
 import { registerFormField } from '../form-field';

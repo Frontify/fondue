@@ -11,7 +11,7 @@ import {
 } from '#/model';
 import { canonicalJson, isPlatformBinding, cssValue } from '#/model/internal';
 import { type AuthoringPolicy } from '#/runtime/port';
-import { type ToolbarItem } from '#/ui/toolbar/toolbar';
+import { type ToolbarItem } from '#/ui/toolbar/Toolbar';
 
 import { type ReactPresentation } from './types';
 

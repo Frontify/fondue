@@ -12,10 +12,10 @@ import { ChromeBoundary, NO_ATTRS } from '#/bridge/portal-host';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { type EditorPort, hasSurface, type SelectionSummary, selectionRectOf, selectionSpan } from '#/runtime/port';
 import { ariaShortcut } from '#/ui/shortcuts';
-import { TextStyle } from '#/ui/toolbar/text-style';
-import { Item, More, type ModeSwitch, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
+import { TextStyle } from '#/ui/toolbar/TextStyle';
+import { Item, More, type ModeSwitch, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/Toolbar';
 
-import styles from './styles/bubble-toolbar.module.scss';
+import styles from './styles/bubbleToolbar.module.scss';
 
 // The bubble toolbar stays out of the Tab order; Alt+F10 reaches it.
 const OUT_OF_TAB_ORDER = -1;

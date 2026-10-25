@@ -9,7 +9,7 @@ import { SessionContext } from '#/bridge/session';
 import { atomPositionAt, selectedNodePosition, surfaceElement } from '#/runtime/port';
 import { pressesBinding } from '#/ui/shortcuts';
 import { offeredRows, type ToolbarItem, type ToolbarStrings, useOfferedRows } from '#/ui/toolbar/item';
-import { MoreRow, useRowRuns } from '#/ui/toolbar/more';
+import { MoreRow, useRowRuns } from '#/ui/toolbar/More';
 
 const preventDefault = (event: Event) => event.preventDefault();
 
