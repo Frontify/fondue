@@ -47,7 +47,7 @@
         },
         {
             "build": "./model",
-            "budgetBytes": 30000,
+            "budgetBytes": 26000,
             "test": "src/model/__tests__/bundleSize.spec.ts",
             "passed": true
         },
@@ -59,37 +59,37 @@
         },
         {
             "build": "./html",
-            "budgetBytes": 45000,
+            "budgetBytes": 40000,
             "test": "src/html/__tests__/bundleSize.spec.ts",
             "passed": true
         },
         {
             "build": "inline-profile",
-            "budgetBytes": 277000,
+            "budgetBytes": 243000,
             "test": "src/features/profiles/__tests__/profilesBundleSize.spec.ts",
             "passed": true
         },
         {
             "build": "comment-profile",
-            "budgetBytes": 289000,
+            "budgetBytes": 243000,
             "test": "src/features/profiles/__tests__/profilesBundleSize.spec.ts",
             "passed": true
         },
         {
             "build": "document-profile",
-            "budgetBytes": 303000,
+            "budgetBytes": 245000,
             "test": "src/features/profiles/__tests__/profilesBundleSize.spec.ts",
             "passed": true
         },
         {
             "build": "brand-document-profile",
-            "budgetBytes": 304000,
+            "budgetBytes": 245000,
             "test": "src/features/profiles/__tests__/profilesBundleSize.spec.ts",
             "passed": true
         },
         {
             "build": "./features",
-            "budgetBytes": 15000,
+            "budgetBytes": 7000,
             "test": "src/features/__tests__/bundleSize.spec.ts",
             "passed": true
         },
@@ -101,7 +101,7 @@
         },
         {
             "build": "package-css",
-            "budgetBytes": 25000,
+            "budgetBytes": 5000,
             "test": "src/styles/__tests__/bundleSize.spec.ts",
             "passed": true
         }
