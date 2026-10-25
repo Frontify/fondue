@@ -8,8 +8,8 @@ import { type ContentModel, type JsonObject, type ResourceLimits, type RichTextD
 import { snapshot } from '#/model/values';
 
 import { type CapabilityImplementation } from '../capabilities';
+import { type MediaSession } from '../capabilities/media/session';
 import { type CommandOutcome, type EditorRange } from '../document-api';
-import { type EditorRuntime } from '../runtime';
 import {
     type AuthoringPolicy,
     type CaptureTargetOptions,
@@ -74,7 +74,7 @@ export interface ApiSource {
     document(state: EditorState): RichTextDocument;
     /** Runs `effect` now, or inside a command once it has run, never for a query. */
     later(effect: () => void): void;
-    uploads(): EditorRuntime['uploads'] | undefined;
+    uploads(): MediaSession['uploads'] | undefined;
 }
 
 export const valuesOf = (attrs: Readonly<Record<string, unknown>>): JsonObject => snapshot({ ...attrs }) as JsonObject;

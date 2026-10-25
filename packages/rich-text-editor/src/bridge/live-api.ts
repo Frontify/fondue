@@ -34,12 +34,24 @@ export const facetsOf = (api: EditorApi, needs: readonly EditorFacet[] | undefin
                 });
             }
         }
+        for (const need of needs ?? []) {
+            // `uploads` is the one facet a session may lack, when its model does not install `media.image`.
+            if (!(need in api) && process.env.NODE_ENV !== 'production') {
+                Object.defineProperty(view, need, {
+                    get: () => {
+                        throw new Error(`${featureId} needs api.${need}, which this editor does not install.`);
+                    },
+                });
+            }
+        }
         byFeature.set(featureId, view);
     }
     return view;
 };
 
-const withHosts = (document: DocumentApi, hosts: EditorHosts): EditorApi => Object.assign({ ...document }, hosts);
+// A session without `media.image` has no `uploads`, which only a part that declares it would read.
+const withHosts = (document: DocumentApi, hosts: EditorHosts): EditorApi =>
+    Object.assign({ ...document }, hosts) as EditorApi;
 
 /** The live API of `runtime` with `hosts`, one per pair. */
 export const editorApiOf = (runtime: EditorPort, hosts: EditorHosts): EditorApi => {

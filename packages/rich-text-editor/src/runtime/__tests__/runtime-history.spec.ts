@@ -13,6 +13,7 @@ import { declaredPng } from '#/testing/uploads';
 
 import { type UploadServiceLike } from '../capabilities/media/uploads';
 import { canRedo, canUndo, reset, undoDepth } from '../history';
+import { mediaOf } from '../session/uploads-wiring';
 import { type CommandResult } from '../types';
 
 import {
@@ -181,7 +182,7 @@ describe('history', () => {
     /** Starts an upload of `logo.png` from the toolbar into a new slot, which replaces the empty paragraph. */
     const startUpload = async (session: ReturnType<typeof start>) => {
         const file = new File([declaredPng(40, 30)], 'logo.png', { type: 'image/png' });
-        await session.runtime.uploads.begin([file], { kind: 'insert', origin: 'command' });
+        await mediaOf(session.runtime)?.uploads.begin([file], { kind: 'insert', origin: 'command' });
     };
     /** The text of the paragraph after the slot, and the slot's asset. */
     const shown = ({ view }: ReturnType<typeof start>): unknown[] => [

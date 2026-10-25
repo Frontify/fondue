@@ -21,7 +21,7 @@ import {
 import { type TreeNode } from '#/model/content';
 
 import { type AsyncOperation, type AsyncRequest } from './async';
-import { type UploadEvent, type UploadPlace, type UploadServiceLike } from './capabilities/media/uploads';
+import { type UploadEvent, type UploadServiceLike } from './capabilities/media/uploads';
 import { type ColumnState } from './columns';
 import { type Listener } from './events';
 import { type EnterKeys } from './keys';
@@ -56,7 +56,6 @@ import {
     type ServerRevision,
     type Snapshot,
     type Unsubscribe,
-    type UploadStatus,
 } from './types';
 
 export type { InputOutcome, NodeActions, NodeTarget };
@@ -146,31 +145,6 @@ export interface EditorRuntime {
     /** The presentation's columns as the surface shows them, which `column.break.insert` and the break decorations read. */
     setColumns(columns: ColumnState): void;
     nodeActions(target: NodeTarget): NodeActions;
-    /**
-     * Applies a host asset picker's result, checked as untrusted input, as one undo step: a figure at the insert
-     * `target`, or the image `nodeId` refilled, which then asks the author to review its alternative text.
-     */
-    placeAsset(
-        asset: unknown,
-        place: { readonly target: SelectionHandle } | { readonly nodeId: string },
-    ): CommandResult;
-    /** The session's uploads: `accepts` holds the media types `media.image` takes, `undefined` without it. */
-    readonly uploads: {
-        readonly accepts: readonly string[] | undefined;
-        /**
-         * Whether files upload now at `place`: `media.image` is installed, the host has `services.uploads`, the cache
-         * has room and the policy allows it.
-         */
-        available(place: UploadPlace): boolean;
-        /** Checks `files` and starts their uploads at `place`, once their headers are read. */
-        begin(files: readonly File[], place: UploadPlace): Promise<void>;
-        /** Sends the file of the failed or stopped slot `nodeId` again, with no undo step. */
-        retry(nodeId: string): void;
-        /** Opens the host asset picker, else the file chooser, for new images or for the image `nodeId`. */
-        pick(nodeId: string | undefined): void;
-        /** What the chrome of slot `nodeId` shows of its upload. */
-        statusOf(nodeId: string): UploadStatus | undefined;
-    };
     /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
     saveStatusChanged(): void;
     /**

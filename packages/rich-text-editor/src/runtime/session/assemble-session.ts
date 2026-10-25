@@ -8,6 +8,7 @@ import { createFacade } from './facade';
 import { createHandle } from './handle';
 import { liveResources } from './registry';
 import { createReplace } from './replace';
+import { installMedia } from './uploads-wiring';
 
 /** Replace, dispose, the host's handle and the testing facade over every earlier phase. */
 export const assembleSession = (parts: Operations, options: EditorRuntimeOptions) => {
@@ -93,12 +94,12 @@ export const assembleSession = (parts: Operations, options: EditorRuntimeOptions
         mode,
         columns,
         actions,
-        uploads,
         shown: display,
         history,
         composition: settling,
         metrics,
         checks,
     });
+    installMedia(runtime, uploads, actions.placeAsset);
     return { handle, runtime };
 };

@@ -11,7 +11,7 @@ import { PortalHost } from '#/bridge/portal-host';
 import { type PortalStore } from '#/bridge/portals';
 import { SessionContext } from '#/bridge/session';
 import { type readerContext } from '#/reader/context';
-import { type EditorPort } from '#/runtime/port';
+import { type EditorPort, mediaOf } from '#/runtime/port';
 import { VISUALLY_HIDDEN } from '#/styles/visually-hidden';
 import { ContextMenu } from '#/ui/context-menu/context-menu';
 import { PanelContext, type PanelController } from '#/ui/panels/context';
@@ -85,7 +85,9 @@ const FileChooser = ({
                 current?.sessionId === choosing.session.sessionId &&
                 current.generation === choosing.session.generation
             ) {
-                runtime.uploads.begin(files, choosing.place).catch(() => undefined);
+                mediaOf(runtime)
+                    ?.uploads.begin(files, choosing.place)
+                    .catch(() => undefined);
             }
         }}
     />

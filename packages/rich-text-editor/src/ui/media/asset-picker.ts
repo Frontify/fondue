@@ -1,6 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorPort, INSERT_IMAGE, REPLACE_IMAGE, type SelectionHandle, type SessionToken } from '#/runtime/port';
+import {
+    type EditorPort,
+    INSERT_IMAGE,
+    mediaOf,
+    REPLACE_IMAGE,
+    type SelectionHandle,
+    type SessionToken,
+} from '#/runtime/port';
 
 /** The feature whose images the picker inserts and refills. */
 export const IMAGE_FEATURE = 'media.image';
@@ -62,7 +69,11 @@ export const pickAsset = (
                 if (result === null) {
                     return undefined;
                 }
-                const outcome = runtime.placeAsset(result, place);
+                const media = mediaOf(runtime);
+                if (media === undefined) {
+                    return 'not-applicable';
+                }
+                const outcome = media.placeAsset(result, place);
                 if (outcome.status !== 'rejected') {
                     return undefined;
                 }

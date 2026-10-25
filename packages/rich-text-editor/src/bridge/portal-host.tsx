@@ -5,7 +5,7 @@ import { Component, memo, type ReactNode, Suspense, useMemo, useSyncExternalStor
 import { createPortal } from 'react-dom';
 
 import { type JsonObject } from '#/model';
-import { type EditorPort } from '#/runtime/port';
+import { type EditorPort, mediaOf } from '#/runtime/port';
 
 import { useClientLayoutEffect } from './client-layout-effect';
 import { type NodePending, type NodeViewContext, NodeViewStateContext } from './define';
@@ -63,7 +63,10 @@ export class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
 
 /** The upload of node `nodeId`, as its chrome reads it. */
 const pendingOf = (runtime: EditorPort | undefined, nodeId: string | null): NodePending | null => {
-    const status = nodeId === null ? undefined : runtime?.uploads.statusOf(nodeId);
+    if (runtime === undefined || nodeId === null) {
+        return null;
+    }
+    const status = mediaOf(runtime)?.uploads.statusOf(nodeId);
     if (status === undefined) {
         return null;
     }

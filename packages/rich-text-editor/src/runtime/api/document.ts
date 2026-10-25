@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { compiledModel } from '#/model/compile';
+
+import { UPLOAD_FEATURE } from '../capabilities/media/uploads/constants';
 import { type DocumentApi } from '../document-api';
 
 import { blocksApi } from './blocks';
@@ -11,11 +14,17 @@ import { type ApiSource } from './shared';
 import { uploadsApi } from './uploads';
 
 /** The document API over `source`, composed of its facets. */
-export const documentApi = (source: ApiSource): DocumentApi => ({
-    ...marksApi(source),
-    ...blocksApi(source),
-    ...listsApi(source),
-    ...contentApi(source),
-    ...nodeStateApi(source),
-    ...uploadsApi(source),
-});
+export const documentApi = (source: ApiSource): DocumentApi => {
+    const api = {
+        ...marksApi(source),
+        ...blocksApi(source),
+        ...listsApi(source),
+        ...contentApi(source),
+        ...nodeStateApi(source),
+    };
+    // The facet follows the model, so a command run with no session still cancels a slot in its state.
+    if (!compiledModel(source.model).features.some(({ id }) => id === UPLOAD_FEATURE)) {
+        return api;
+    }
+    return { ...api, ...uploadsApi(source) };
+};

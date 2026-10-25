@@ -277,7 +277,7 @@ export interface DocumentApi {
      * Uploads into images over the host's upload and asset services: each file is checked, starts as an image with no
      * asset, one undo step, and its completion and Retry add none. Inside a command, what starts later waits until it has run.
      */
-    readonly uploads: {
+    readonly uploads?: {
         /** Opens the host asset picker, else the file chooser, for new images at the selection, or for the image `nodeId`. */
         pick(nodeId?: string): void;
         /** Starts the uploads of `files` at `at`, once their checks pass; `false` when files cannot upload now. */

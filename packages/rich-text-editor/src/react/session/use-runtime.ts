@@ -22,6 +22,7 @@ import {
     type DocumentChange,
     type EditorPort,
     type EditorRuntimeOptions,
+    mediaOf,
     type SelectionSummary,
     type SessionToken,
     surfaceElement,
@@ -74,7 +75,7 @@ const pickerOf =
         // Without a host picker the file chooser opens, whose files upload through `services.uploads`.
         if (picker === undefined) {
             const chooser = chooserRef.current;
-            const accepts = session.uploads.accepts;
+            const accepts = mediaOf(session)?.uploads.accepts;
             if (
                 chooser === null ||
                 accepts === undefined ||
@@ -187,7 +188,7 @@ const buildRuntime = (
             const { locale, limits } = shellPropsOf(latestRef.current);
             const { t } = codecContext(locale, enUS);
             const lang = locale.lang ?? enUS.lang;
-            announcer.announce(uploadMessage(event, t, lang, limits, runtime.uploads.accepts ?? []));
+            announcer.announce(uploadMessage(event, t, lang, limits, mediaOf(runtime)?.uploads.accepts ?? []));
         },
         styles: () => latestRef.current.presentation?.styles ?? [],
         columns: columnsAtMount(latestRef.current.presentation, t),

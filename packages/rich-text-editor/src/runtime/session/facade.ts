@@ -21,7 +21,6 @@ import { type Prepare } from './prepare';
 import { type Shown } from './shown';
 import { type Store } from './store';
 import { type TargetsService } from './targets';
-import { type UploadService } from './uploads-wiring';
 import { type ViewService } from './view';
 
 /** What the editor layer and the bridge call: each member is the service that owns it, or one line over it. */
@@ -43,8 +42,7 @@ export const createFacade = (a: {
     commands: Pick<Commands, 'refusal' | 'perform'>;
     mode: Pick<ModeService, 'setDisabled'>;
     columns: Pick<Columns, 'set'>;
-    actions: Pick<Actions, 'nodeActions' | 'placeAsset'>;
-    uploads: UploadService;
+    actions: Pick<Actions, 'nodeActions'>;
     shown: Pick<Shown, 'emitSaveStatus'>;
     history: Pick<HistoryService, 'clear'>;
     composition: Pick<Composition, 'wait'>;
@@ -52,7 +50,7 @@ export const createFacade = (a: {
     checks: Pick<ContentChecks, 'run'>;
 }): EditorRuntime => {
     const { handle, definition, limits, suggestionListId, interactionRoots, identity, store, policy, view } = a;
-    const { commit, prepare, report, watch, targets, commands, mode, columns, actions, uploads, shown } = a;
+    const { commit, prepare, report, watch, targets, commands, mode, columns, actions, shown } = a;
     const { history, composition, metrics, checks } = a;
     return {
         handle,
@@ -89,15 +87,6 @@ export const createFacade = (a: {
         setColumns: columns.set,
         faultView: view.faultView,
         nodeActions: actions.nodeActions,
-        placeAsset: actions.placeAsset,
-        uploads: {
-            accepts: uploads.accepts,
-            available: uploads.available,
-            begin: uploads.begin,
-            retry: uploads.retry,
-            pick: uploads.pick,
-            statusOf: uploads.statusOf,
-        },
         saveStatusChanged: shown.emitSaveStatus,
         clearHistory: () => history.clear(),
         afterInput: (settled, timeoutMs) => composition.wait(settled, timeoutMs),

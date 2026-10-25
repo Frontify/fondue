@@ -8,6 +8,7 @@ import { documentApi } from './api/document';
 import { positionsIn } from './api/shared';
 import { type CommandOutcome, type DocumentApi } from './document-api';
 import { type EditorRuntime } from './runtime';
+import { mediaOf } from './session/uploads-wiring';
 import { type CommandResult } from './types';
 
 export { contentChecksApi } from './api/checks';
@@ -90,6 +91,6 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
         },
         document: () => runtime.handle.getSnapshot().document,
         later: (effect) => effect(),
-        uploads: () => runtime.uploads,
+        uploads: () => mediaOf(runtime)?.uploads,
     });
 };

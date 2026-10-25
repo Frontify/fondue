@@ -5,6 +5,7 @@ import { type EditorView } from 'prosemirror-view';
 import { type EngineCommand } from '#/definition';
 import { type ContentModel } from '#/model';
 
+import { type MediaSession } from './capabilities/media/session';
 import {
     acceptSuggestion,
     type ActiveSuggestion,
@@ -24,6 +25,7 @@ import {
     runtimeOf,
     runtimeOfView,
 } from './runtime';
+import { mediaOf as mediaOfRuntime } from './session/uploads-wiring';
 import { endComposition, nodeChromeAt, resyncSelection, selectionRect } from './view-bridge';
 
 export { RUNTIME_PLUGINS } from './capabilities';
@@ -36,6 +38,7 @@ export {
     type UploadRejection,
     UPLOAD_FEATURE,
 } from './capabilities/media/uploads';
+export { type MediaSession } from './capabilities/media/session';
 export { referenceValues } from './capabilities/suggestions/references';
 export { type ActiveSuggestion, type SuggestionItem };
 export { passesToBrowser } from './browser-keys';
@@ -83,6 +86,9 @@ type EngineMember =
 
 /** The runtime as the React layers hold it, with every engine member left out. */
 export type EditorPort = Omit<EditorRuntime, EngineMember>;
+
+/** The media session of the session behind `port`, `undefined` when its model does not install `media.image`. */
+export const mediaOf = (port: EditorPort): MediaSession | undefined => mediaOfRuntime(engineOf(port));
 
 /** Starts a session, which the React layers hold as a port. */
 export const createPort = (options: EditorRuntimeOptions): EditorPort => createEditorRuntime(options);

@@ -7,6 +7,7 @@ import { type Diagnostic, type ResourceLimits } from '#/model';
 import { REPLACED_ASSET } from '#/model/assets';
 import { compiledModel } from '#/model/compile';
 
+import { type MediaSession } from '../capabilities/media/session';
 import {
     createUploads,
     DEFAULT_ACCEPT_TYPES,
@@ -17,6 +18,7 @@ import {
     type Uploads,
 } from '../capabilities/media/uploads';
 import { withNodeState } from '../node-state';
+import { type EditorRuntime } from '../runtime';
 import { type UploadStatus } from '../types';
 
 import { type Commands } from './commands';
@@ -128,3 +130,30 @@ export const createUploadService = (a: {
         statusOf: (nodeId) => raw.statusOf(nodeId),
     };
 };
+
+const sessions = new WeakMap<EditorRuntime, MediaSession>();
+
+/** Gives `runtime` its media session when the model installs `media.image`, else nothing. */
+export const installMedia = (
+    runtime: EditorRuntime,
+    uploads: UploadService,
+    placeAsset: MediaSession['placeAsset'],
+): void => {
+    if (uploads.accepts === undefined) {
+        return;
+    }
+    sessions.set(runtime, {
+        placeAsset,
+        uploads: {
+            accepts: uploads.accepts,
+            available: uploads.available,
+            begin: uploads.begin,
+            retry: uploads.retry,
+            pick: uploads.pick,
+            statusOf: uploads.statusOf,
+        },
+    });
+};
+
+/** The media session of `runtime`, `undefined` when its model does not install `media.image`. */
+export const mediaOf = (runtime: EditorRuntime): MediaSession | undefined => sessions.get(runtime);

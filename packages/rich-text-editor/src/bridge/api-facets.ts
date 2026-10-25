@@ -11,7 +11,8 @@ import { type EditorHosts } from './plugin';
  */
 export type EditorApi<N extends EditorFacet = EditorFacet> = EditorControlApi & Pick<EditorFacets, N>;
 
-type EveryMember = DocumentApi & EditorHosts;
+// `uploads` is optional in the document API, but a part that declares it reads it as a facet.
+type EveryMember = Required<DocumentApi> & EditorHosts;
 
 type FacetName = {
     [K in keyof EveryMember]: EveryMember[K] extends (...args: never[]) => unknown

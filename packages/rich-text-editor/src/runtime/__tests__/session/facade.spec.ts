@@ -45,15 +45,7 @@ const setup = () => {
         commands: { refusal: vi.fn(), perform: vi.fn() },
         mode: { setDisabled: vi.fn() },
         columns: { set: vi.fn() },
-        actions: { nodeActions: vi.fn(), placeAsset: vi.fn() },
-        uploads: {
-            accepts: ['image/png'],
-            available: vi.fn(),
-            begin: vi.fn(),
-            retry: vi.fn(),
-            pick: vi.fn(),
-            statusOf: vi.fn(),
-        } as never,
+        actions: { nodeActions: vi.fn() },
         shown: { emitSaveStatus: vi.fn() },
         history: { clear },
         composition: { wait },
@@ -99,7 +91,6 @@ describe('createFacade', () => {
         expect(facade.handle).toBe(handle);
         expect(facade.suggestionListId).toBe('list');
         expect(facade.nextDomId()).toContain('abc');
-        expect(facade.uploads.accepts).toEqual(['image/png']);
     });
 
     it('passes the range, the timeouts and the metric on to the service that owns them', () => {

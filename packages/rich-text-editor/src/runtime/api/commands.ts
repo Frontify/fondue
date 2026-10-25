@@ -10,6 +10,7 @@ import { findInvalidPayload, findUnsafeJson, isRecord, snapshot } from '#/model/
 
 import { type CommandOutcome, type DocumentApi } from '../document-api';
 import { type EditorRuntime } from '../runtime';
+import { mediaOf } from '../session/uploads-wiring';
 import { type AuthoringPolicy } from '../types';
 
 import { policyOf } from './checked';
@@ -201,7 +202,12 @@ const commandDocumentApi = (
         positionAt: () => undefined,
         document: (state) => encodeTree(state.doc.toJSON() as TreeNode, model).document,
         later: (effect) => context?.defer(effect),
-        uploads: () => session?.runtime.uploads,
+        uploads: () => {
+            if (session === undefined) {
+                return undefined;
+            }
+            return mediaOf(session.runtime)?.uploads;
+        },
     });
 };
 

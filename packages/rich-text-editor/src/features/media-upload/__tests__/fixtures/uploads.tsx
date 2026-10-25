@@ -29,6 +29,7 @@ import {
 } from '#/model';
 import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
+import { mediaOf } from '#/runtime/session/uploads-wiring';
 import { type AuthoringPolicy, type DocumentChange } from '#/runtime/types';
 import { declaredPng } from '#/testing/uploads';
 
@@ -238,7 +239,7 @@ export const mountUploads = async (options?: Mount) => {
         figureOf: (nodeId: string) =>
             blocksOf().find((block) => block.content?.some(({ attrs }) => attrs?.nodeId === nodeId))?.attrs
                 ?.nodeId as string,
-        status: (nodeId: string) => runtime.uploads.statusOf(nodeId),
+        status: (nodeId: string) => mediaOf(runtime)?.uploads.statusOf(nodeId),
         depth: () => undoDepth(runtime.state),
         undo: async () => {
             act(() => {
