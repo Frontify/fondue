@@ -25,9 +25,12 @@ const contentOf = (page: Page) =>
 const typeAndSelect = async (page: Page, text: string, word: string) => {
     await surfaceOf(page).focus();
     await page.keyboard.insertText(text);
+    // An arrow pressed before the inserted text reaches the document moves from a stale caret.
+    await expect(surfaceOf(page)).toHaveText(text);
     for (let step = 0; step < word.length; step += 1) {
         await press(page, 'Shift+ArrowLeft');
     }
+    await expect.poll(() => page.evaluate(() => window.getSelection()?.toString())).toBe(word);
 };
 
 /** Runs the toolbar item `name` by Alt+F10 and the arrows, or its More row when the toolbar does not show it. */
