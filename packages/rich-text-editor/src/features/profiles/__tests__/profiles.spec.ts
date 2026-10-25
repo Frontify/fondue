@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { SHIPPED_OVERRIDES } from '#/entries/shipped-readers';
+import { READER_OVERRIDES } from '#/entries/shipped-readers';
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { UNSHIPPED_FEATURES } from '#/features/stages';
@@ -180,7 +180,7 @@ describe('the shipped profiles', () => {
         const ids = definition.capabilities.map(({ id }) => id);
 
         expect(Object.keys(readersOf(definition)).sort()).toEqual(
-            Object.keys(SHIPPED_OVERRIDES)
+            Object.keys(READER_OVERRIDES)
                 .filter((id) => ids.includes(id))
                 .sort(),
         );

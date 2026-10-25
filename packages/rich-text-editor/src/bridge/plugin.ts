@@ -327,15 +327,15 @@ type PayloadMatched<C> = {
 /** The command payloads of a plugin, by command ID. */
 export type CommandsOfPart<P> = P extends EditorPart<string, infer C> ? C : never;
 
-type CheckedParts<Parts extends EditorPartSpec<N>, N extends EditorFacet> = Parts & {
+type CheckedSpec<Parts extends EditorPartSpec<N>, N extends EditorFacet> = Parts & {
     readonly needs?: readonly N[];
     readonly commands?: PayloadMatched<NoInfer<NonNullable<Parts['commands']>>>;
 };
 
-export type OptionParts = (options: JsonObject) => EditorPartSpec;
+export type SpecOfOptions = (options: JsonObject) => EditorPartSpec;
 
 // An own enumerable symbol property, so a spread copy of the plugin keeps its option-dependent parts.
-export const OPTION_PARTS = Symbol('optionParts');
+export const OPTION_PARTS = Symbol('specOfOptions');
 
 /**
  * The editor part of `feature`, a factory or a feature it made, which may load apart from the feature itself. `parts`
@@ -347,12 +347,12 @@ export const defineEditorPart = <
     const Parts extends EditorPartSpec<N> = EditorPartSpec<N>,
 >(
     feature: Feature<object, object, object, Id> | ((options?: never) => Feature<object, object, object, Id>),
-    parts: CheckedParts<Parts, N> | ((options: JsonObject) => CheckedParts<Parts, N>),
+    parts: CheckedSpec<Parts, N> | ((options: JsonObject) => CheckedSpec<Parts, N>),
 ): EditorPart<Id, PayloadsOf<NonNullable<Parts['commands']>>> => {
     const { id } = typeof feature === 'function' ? feature() : feature;
     if (typeof parts === 'function') {
-        const optionParts: OptionParts = Object.freeze((options: JsonObject) => parts(options));
-        const plugin: EditorPart = Object.freeze({ feature: id, [OPTION_PARTS]: optionParts });
+        const specOfOptions: SpecOfOptions = Object.freeze((options: JsonObject) => parts(options));
+        const plugin: EditorPart = Object.freeze({ feature: id, [OPTION_PARTS]: specOfOptions });
         return plugin as EditorPart<Id, PayloadsOf<NonNullable<Parts['commands']>>>;
     }
     const plugin: EditorPartSpec & { readonly feature: string } = { feature: id, ...parts };
@@ -361,7 +361,7 @@ export const defineEditorPart = <
 
 /** `plugin` with the parts its function gives for its feature's resolved `options`, else `plugin` itself. */
 export const partWithOptions = (plugin: EditorPart, options: JsonObject): EditorPart => {
-    const partsOf = (plugin as EditorPart & { readonly [OPTION_PARTS]?: OptionParts })[OPTION_PARTS];
+    const partsOf = (plugin as EditorPart & { readonly [OPTION_PARTS]?: SpecOfOptions })[OPTION_PARTS];
     if (partsOf === undefined) {
         return plugin;
     }

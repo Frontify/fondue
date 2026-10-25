@@ -13,7 +13,7 @@ type ViteImportMeta = ImportMeta & {
 const readerModules = (import.meta as ViteImportMeta).glob('../features/*/reader.tsx', { eager: true });
 
 /** The reader overrides of the shipped features by feature ID; a feature's own `defineReaderFeature` replaces them. */
-export const SHIPPED_OVERRIDES = Object.fromEntries(
+export const READER_OVERRIDES = Object.fromEntries(
     Object.values(readerModules).map((exports) => [
         exports.readerFeature,
         Object.values(exports).find((value) => typeof value === 'object' && value !== null),

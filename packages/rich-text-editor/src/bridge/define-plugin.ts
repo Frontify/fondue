@@ -12,7 +12,7 @@ import {
 } from '#/model';
 import { type ReaderContext } from '#/model/declarations';
 
-import { type EditorFacet, type EditorPart, type EditorPartSpec, OPTION_PARTS, type OptionParts } from './plugin';
+import { type EditorFacet, type EditorPart, type EditorPartSpec, OPTION_PARTS, type SpecOfOptions } from './plugin';
 
 /** The shape of `ReaderRenderers` from `#/reader/define`, which a bridge module cannot import without a folder cycle. */
 export type ReaderOverrides = Readonly<
@@ -31,7 +31,7 @@ export interface RichTextPlugin<Id extends string = string, Commands extends obj
 }
 
 /** The inputs of a unit: the feature's factory, its editor part and the reader overrides of its nodes and marks. */
-interface PluginParts<Id extends string, Options extends object, Commands extends object> {
+interface PluginSides<Id extends string, Options extends object, Commands extends object> {
     readonly feature: (options?: Options) => Feature<object, object, object, Id>;
     readonly editor: EditorPart<NoInfer<Id>, Commands>;
     readonly reader?: ReaderOverrides;
@@ -39,7 +39,7 @@ interface PluginParts<Id extends string, Options extends object, Commands extend
 
 /** A factory for the unit, which takes the options of the feature's own factory. */
 export const definePlugin = <Id extends string, Options extends object, Commands extends object>(
-    parts: PluginParts<Id, Options, Commands>,
+    parts: PluginSides<Id, Options, Commands>,
 ): ((options?: Options) => RichTextPlugin<Id, Commands>) => {
     const { feature, editor, reader } = parts;
     if (editor.feature !== feature().id) {
@@ -66,16 +66,16 @@ const extendEditor = <Id extends string, Commands extends object>(
     editor: EditorPart<Id, Commands>,
     parts: Omit<EditorPartSpec, 'commands'>,
 ): EditorPart<Id, Commands> => {
-    const optionParts = (editor as EditorPart & { readonly [OPTION_PARTS]?: OptionParts })[OPTION_PARTS];
-    if (optionParts === undefined) {
+    const specOfOptions = (editor as EditorPart & { readonly [OPTION_PARTS]?: SpecOfOptions })[OPTION_PARTS];
+    if (specOfOptions === undefined) {
         return Object.freeze({
             ...editor,
             ...parts,
             needs: needsOf(editor, parts),
         });
     }
-    const extended: OptionParts = Object.freeze((options: JsonObject) => {
-        const own = optionParts(options);
+    const extended: SpecOfOptions = Object.freeze((options: JsonObject) => {
+        const own = specOfOptions(options);
         return { ...own, ...parts, needs: needsOf(own, parts) };
     });
     return Object.freeze({ ...editor, [OPTION_PARTS]: extended });
