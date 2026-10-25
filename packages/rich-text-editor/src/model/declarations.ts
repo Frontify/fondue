@@ -13,7 +13,9 @@ import {
     type OptionDeclarations,
 } from './declaration-values';
 import { type HrefResult } from './href';
+import { type Feature } from './types';
 
+export type { Feature } from './types';
 export type {
     BlockDecoration,
     BlockDecorationSource,
@@ -197,23 +199,6 @@ export interface FeatureDeclaration extends FeatureContentDeclaration {
     readonly formats?: FeatureFormats;
     readonly codecs?: CodecOverrides;
     readonly parseRules?: readonly FunctionParseRule[];
-}
-declare const featureBrand: unique symbol;
-/** A feature carries its ID, its command payloads and its node and mark attributes as types. */
-export interface Feature<
-    Commands extends object = object,
-    Nodes extends object = object,
-    Marks extends object = object,
-    Id extends string = string,
-> {
-    readonly [featureBrand]: {
-        readonly commands: Commands;
-        readonly nodes: Nodes;
-        readonly marks: Marks;
-        readonly id: Id;
-    };
-    readonly id: string;
-    readonly version: number;
 }
 /** The node attribute types a feature declaration defines, keyed by node name. */
 export type NodesOfDeclaration<D> = D extends { readonly nodes: infer N }

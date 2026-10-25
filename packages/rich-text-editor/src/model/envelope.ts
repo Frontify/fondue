@@ -79,7 +79,8 @@ export const checkEnvelope = (value: unknown, model: ContentModel): EnvelopeResu
     if (misshapen !== undefined) {
         return invalid(misshapen);
     }
-    const document = value as unknown as RichTextDocument;
+    // `findMisshapen` checked the envelope and root shape; deeper content is checked later, per node.
+    const document = value as Readonly<Record<string, unknown>> & RichTextDocument;
     if (document.model.id !== model.ref.id) {
         return {
             ok: false,

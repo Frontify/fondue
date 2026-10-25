@@ -18,18 +18,22 @@ export interface FeatureInternals {
     readonly options: unknown;
 }
 
+/** A feature as built at run time, before its phantom type brand. */
+type FeatureValue = Pick<Feature, 'id' | 'version'> & { readonly [FEATURE]?: FeatureInternals };
+
 export const createFeature = (declaration: FeatureDeclaration, options: unknown): Feature => {
     const internals: FeatureInternals = { declaration, options: snapshot(options) };
-    return Object.freeze({
+    const value: FeatureValue = Object.freeze({
         id: declaration.id,
         version: declaration.version,
         [FEATURE]: internals,
-    }) as unknown as Feature;
+    });
+    // The brand has no run-time value, so TypeScript cannot see the frozen value as a `Feature`.
+    return value as Feature;
 };
 
 /** The declaration behind a feature, or `undefined` for a value that no factory built. */
-export const featureInternals = (feature: Feature): FeatureInternals | undefined =>
-    (feature as unknown as { readonly [FEATURE]?: FeatureInternals })[FEATURE];
+export const featureInternals = (feature: Feature): FeatureInternals | undefined => (feature as FeatureValue)[FEATURE];
 
 // Code a UI layer attaches by kind, such as reader overrides and node views, which one feature may carry together.
 // An own enumerable symbol property of the declaration, so a spread copy keeps the attachments.
@@ -68,12 +72,12 @@ type FactoryOf<D> = FeatureFactory<
 export const defineFeature = <const D extends FeatureDeclaration>(declaration: D): FactoryOf<D> => {
     // Migration steps, codec overrides, function parse rules and content rules hold functions, which a JSON snapshot
     // would reject, so they are copied apart.
-    const { migrations, codecs, parseRules, contentRules, ...data } = declaration;
+    const { migrations, codecs, parseRules, contentRules, ...data }: FeatureDeclaration = declaration;
     let copy: FeatureDeclaration;
     if (migrations === undefined && codecs === undefined && parseRules === undefined && contentRules === undefined) {
         copy = snapshot(declaration);
     } else {
-        const parts: Record<string, unknown> = { ...snapshot(data) };
+        const parts: { -readonly [K in keyof FeatureDeclaration]: FeatureDeclaration[K] } = { ...snapshot(data) };
         if (migrations !== undefined) {
             parts.migrations = Object.freeze(migrations.map((step) => ({ ...step })));
         }
@@ -86,8 +90,8 @@ export const defineFeature = <const D extends FeatureDeclaration>(declaration: D
         if (parseRules !== undefined) {
             parts.parseRules = Object.freeze(parseRules.map((rule) => Object.freeze({ ...rule })));
         }
-        copy = Object.freeze(parts) as unknown as FeatureDeclaration;
+        copy = Object.freeze(parts);
     }
     const factory = (options?: object) => createFeature(copy, options);
-    return factory as unknown as FactoryOf<D>;
+    return factory as FactoryOf<D>;
 };

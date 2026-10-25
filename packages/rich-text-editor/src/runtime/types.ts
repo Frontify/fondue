@@ -1,6 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Diagnostic, type ModelRef, type RichTextDocument } from '#/model';
+import { type LanguageTag, type StoredId } from '#/model/types';
+
+export type { LanguageTag, StoredId };
 
 // Host-facing runtime types.
 
@@ -8,10 +11,6 @@ import { type Diagnostic, type ModelRef, type RichTextDocument } from '#/model';
 export type Unsubscribe = () => void;
 /** The text direction of content. */
 export type Direction = 'ltr' | 'rtl' | 'auto';
-/** A BCP 47 tag that passes `Intl.getCanonicalLocales`. */
-export type LanguageTag = string;
-/** Stored IDs (`styleId`, `tokenId`, `languageId`, `resourceType`) match `^[a-z0-9][a-z0-9._:-]{0,127}$`. */
-export type StoredId = string;
 /** A heading level, from 1 to 6. */
 export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 /** The alignment a block can have. */

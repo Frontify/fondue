@@ -160,14 +160,14 @@ const inlineText = (children: readonly ContentNodeJSON[]): string =>
 
 const markOf = (node: ContentNodeJSON, type: string) => node.marks?.find((mark) => mark.type === type);
 
-const markKey = (mark: MarkJSON | undefined) => (mark === undefined ? '' : canonicalJson(mark as unknown as JsonValue));
+const markKey = (mark: MarkJSON | undefined) => (mark === undefined ? '' : canonicalJson(mark));
 
 const nodeIdOf = (node: ContentNodeJSON) => {
     const { nodeId } = attrsOf(node);
     return typeof nodeId === 'string' ? nodeId : null;
 };
 
-const signatureOf = (nodes: readonly ContentNodeJSON[]) => canonicalJson(nodes as unknown as JsonValue);
+const signatureOf = (nodes: readonly ContentNodeJSON[]) => canonicalJson(nodes);
 
 /** Runs of adjacent inline children whose `key` is equal and not empty. */
 const runsOf = (children: readonly ContentNodeJSON[], key: (child: ContentNodeJSON) => string) => {

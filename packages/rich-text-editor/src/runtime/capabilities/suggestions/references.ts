@@ -2,7 +2,7 @@
 
 import { checkHref } from '#/model';
 import { holdsControls, withoutBidiControls } from '#/model/references';
-import { isRecord, isValidValue } from '#/model/values';
+import { isRecord, isStoredId } from '#/model/values';
 
 import { type ReferenceValue } from '../../types';
 
@@ -18,7 +18,6 @@ const MAX_LABEL = 256;
 // C0 and C1 control characters, which no shown label holds.
 const CONTROL = /[\u0000-\u001F\u007F-\u009F]/u;
 export const KINDS: ReadonlySet<string> = new Set(['user', 'group', 'everyone']);
-const STORED_ID = { type: 'id' } as const;
 
 /** One page of a reference search as the list shows it: the items it keeps, and the cursor of the next page. */
 export interface ReferenceResults {
@@ -52,7 +51,7 @@ const valueOf = (
         return undefined;
     }
     const { resourceType, resourceId, imageUrl, kind } = value;
-    if (!nonEmpty(resourceType) || !isValidValue(STORED_ID, resourceType) || holdsControls(resourceType)) {
+    if (!nonEmpty(resourceType) || !isStoredId(resourceType) || holdsControls(resourceType)) {
         return undefined;
     }
     if (resourceTypes.length > 0 && !resourceTypes.includes(resourceType)) {

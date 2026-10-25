@@ -28,8 +28,14 @@ export {
 
 const COMPILED = Symbol('compiled-model');
 
+/** A model as built at run time, before its phantom type brand. */
+type ModelValue = Pick<ContentModel, 'ref' | 'capabilities' | 'manifest' | 'fingerprint'> & {
+    readonly [COMPILED]?: CompiledModel;
+};
+
+// Only `freezeModel` builds a model, and it always sets the symbol.
 export const compiledModel = (model: ContentModel): CompiledModel =>
-    (model as unknown as { readonly [COMPILED]: CompiledModel })[COMPILED];
+    (model as ContentModel & { readonly [COMPILED]: CompiledModel })[COMPILED];
 
 /** The URL policy of the feature that declares `mark`, from its `allowedSchemes` and `allowedHosts` options. */
 export const markHrefPolicy = (model: ContentModel, mark: string): HrefPolicy | undefined => {
@@ -51,14 +57,15 @@ const freezeModel = <const Features extends readonly Feature[]>(
         nodes: compiled.nodes.map(({ name }) => name),
         marks: compiled.marks.map(({ name }) => name),
     });
-    const model = {
+    const model: ModelValue = {
         ref: { id: options.id, version: options.version },
         capabilities: list.map(({ id, version }) => ({ id, version })),
         manifest,
         fingerprint: sha256(canonicalJson(manifest)),
         [COMPILED]: compiled,
     };
-    return Object.freeze(model) as unknown as ContentModel<Features>;
+    // The brand has no run-time value, so TypeScript cannot see the frozen value as a `ContentModel`.
+    return Object.freeze(model) as ContentModel<Features>;
 };
 
 /**

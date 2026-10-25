@@ -19,18 +19,23 @@ import { runMigrations } from './migrate';
 import { randomId } from './random-id';
 import { exceedsBytes, readInput } from './read';
 
-/** `base` with each given limit that is a finite, non-negative number. */
-export const limitsOf = (
-    given: Partial<ResourceLimits> | undefined,
+/** `Given` with every key that is not a limit name turned into `never`, so a misspelt limit fails to compile. */
+type LimitsOnly<Given> = Given & { readonly [K in Exclude<keyof Given, keyof ResourceLimits>]: never };
+
+const isLimitName = (name: string): name is keyof ResourceLimits => Object.hasOwn(defaultLimits, name);
+
+/** `base` with each given limit that is a finite, non-negative number; a name that is no limit is ignored. */
+export const limitsOf = <Given extends Partial<ResourceLimits>>(
+    given: LimitsOnly<Given> | undefined,
     base: ResourceLimits = defaultLimits,
 ): ResourceLimits => {
-    const limits: Record<string, number> = { ...base };
+    const limits: { -readonly [K in keyof ResourceLimits]: number } = { ...base };
     for (const [name, value] of Object.entries(given === undefined ? {} : given)) {
-        if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+        if (isLimitName(name) && typeof value === 'number' && Number.isFinite(value) && value >= 0) {
             limits[name] = value;
         }
     }
-    return limits as unknown as ResourceLimits;
+    return limits;
 };
 
 /** A capability the model does not install, or installs at a lower version than the document records, warns. */

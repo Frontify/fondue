@@ -8,8 +8,11 @@ import {
 } from './declarations';
 import { pointer } from './errors';
 import { checkHref } from './href';
+import { type StoredId } from './types';
 
 const STORED_ID = /^[a-z0-9][a-z0-9._:-]{0,127}$/;
+/** Whether `value` is a stored ID; the `StoredId` type checks its first character only. */
+export const isStoredId = (value: unknown): value is StoredId => typeof value === 'string' && STORED_ID.test(value);
 const COLOR = /^#[0-9a-f]{6}([0-9a-f]{2})?$/;
 export const PROTOTYPE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
@@ -189,7 +192,7 @@ export const isValidValue = (declaration: ValueDeclaration, value: unknown): boo
         case 'url':
             return typeof value === 'string' && checkHref(value).ok;
         case 'id':
-            return typeof value === 'string' && STORED_ID.test(value);
+            return isStoredId(value);
         case 'color':
             return typeof value === 'string' && COLOR.test(value);
         case 'language':

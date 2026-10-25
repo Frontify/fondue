@@ -1,20 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/** Any value JSON can hold. */
-export type JsonValue = null | boolean | number | string | readonly JsonValue[] | { readonly [key: string]: JsonValue };
-/** A JSON object, such as the attributes of a node or mark. */
-export type JsonObject = { readonly [key: string]: JsonValue };
+import { type JsonValue } from './types';
 
-/** The id and version of a content model. */
-export interface ModelRef {
-    readonly id: string;
-    readonly version: number;
-}
-/** The id and version of a feature, as a document records it in the capabilities it requires. */
-export interface CapabilityRef {
-    readonly id: string;
-    readonly version: number;
-}
+export type { CapabilityRef, JsonObject, JsonValue, ModelRef } from './types';
 
 /** Value declarations type attributes, command payloads and feature options alike. */
 export type ValueDeclaration = (
@@ -70,6 +58,40 @@ export interface PayloadDeclaration {
     readonly exactlyOne?: readonly string[];
 }
 
+/**
+ * The whole numbers from `Min` to `Max` when both are literals, at most 12 values from 0 to 63 apart; `number`
+ * otherwise. Walks a counter tuple, since the type system has no arithmetic.
+ */
+type IntegerRange<
+    Min extends number,
+    Max extends number,
+    Counter extends unknown[] = [],
+    Taken extends number[] = [],
+> = Taken['length'] extends 13
+    ? number
+    : Counter['length'] extends 64
+      ? number
+      : (
+              Taken extends []
+                  ? Counter['length'] extends Min
+                      ? [Counter['length']]
+                      : []
+                  : [...Taken, Counter['length']]
+          ) extends infer Next extends number[]
+        ? Counter['length'] extends Max
+            ? Next extends []
+                ? number
+                : Next['length'] extends 13
+                  ? number
+                  : Next[number]
+            : IntegerRange<Min, Max, [...Counter, unknown], Next>
+        : never;
+type IntegerOf<D> = D extends { readonly min: infer Min extends number; readonly max: infer Max extends number }
+    ? number extends Min | Max
+        ? number
+        : IntegerRange<Min, Max>
+    : number;
+
 /** The TypeScript type a value declaration stands for. */
 export type ValueOf<D> = D extends { readonly type: 'string' | 'url' | 'id' | 'color' | 'language' }
     ? string
@@ -83,9 +105,20 @@ export type ValueOf<D> = D extends { readonly type: 'string' | 'url' | 'id' | 'c
             ? readonly ValueOf<I>[]
             : JsonValue;
 type MaybeNull<D> = D extends { readonly nullable: true } ? ValueOf<D> | null : ValueOf<D>;
+/** An attribute's integer range is a literal union when small, so `level` reads as `1 | 2 | 3 | 4 | 5 | 6`. */
+type AttributeValueOf<D> = D extends { readonly type: 'integer' }
+    ? D extends { readonly nullable: true }
+        ? IntegerOf<D> | null
+        : IntegerOf<D>
+    : MaybeNull<D>;
 type Simplify<T> = { readonly [K in keyof T]: T[K] };
-/** The attribute values a set of attribute declarations allows, all optional. */
-export type AttrsOf<A> = Simplify<{ readonly [K in keyof A]?: MaybeNull<A[K]> }>;
+type RequiredKeys<A> = { [K in keyof A]: A[K] extends { readonly required: true } ? K : never }[keyof A];
+/** The attribute values a set of attribute declarations allows: `required` ones must be present, the rest may be left out. */
+export type AttrsOf<A> = Simplify<
+    { readonly [K in RequiredKeys<A>]: AttributeValueOf<A[K]> } & {
+        readonly [K in Exclude<keyof A, RequiredKeys<A>>]?: AttributeValueOf<A[K]>;
+    }
+>;
 /** The option values a set of option declarations allows, all optional. */
 export type OptionsOf<O> = Simplify<{ readonly [K in keyof O]?: MaybeNull<O[K]> }>;
 type FieldsOf<F> = Simplify<

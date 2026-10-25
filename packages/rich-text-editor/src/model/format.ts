@@ -1,20 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CapabilityRef, type Feature, type JsonObject, type ModelRef } from './declarations';
+import { type CapabilityRef, type Feature, type JsonObject, type ModelRef } from './types';
 
 /** A mark in the stored document: its type and attributes. */
-export interface MarkJSON {
+export type MarkJSON = {
     readonly type: string;
     readonly attrs?: JsonObject;
-}
+};
 /** A node in the stored document: its type, attributes, content and marks. */
-export interface ContentNodeJSON {
+export type ContentNodeJSON = {
     readonly type: string;
     readonly attrs?: JsonObject;
     readonly content?: readonly ContentNodeJSON[];
     readonly marks?: readonly MarkJSON[];
     readonly text?: string;
-}
+};
 /** The stored form of a document: the format envelope, the model it was written with and its content. */
 export interface RichTextDocument {
     readonly format: 'frontify.rich-text';

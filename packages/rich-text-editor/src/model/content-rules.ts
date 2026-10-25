@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type JsonValue } from './declarations';
 import { type ContentNodeJSON, type MarkJSON } from './format';
 import { type ColorToken } from './styles';
+import { type JsonValue } from './types';
 
 /** A minor release may add rules, so handle a rule ID you do not know. */
 export type ContentRuleId =

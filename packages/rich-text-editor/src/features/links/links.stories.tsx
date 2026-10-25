@@ -20,7 +20,7 @@ const model = modelOf(plugins, {
 
 // Guideline pages the popover finds by name, as a host's reference service returns them.
 const PAGES = ['Logo', 'Colors', 'Typography'].map((label) => ({
-    resourceType: 'guideline-page',
+    resourceType: 'guideline-page' as const,
     resourceId: label.toLowerCase(),
     labelSnapshot: label,
     href: `https://brand.example.com/${label.toLowerCase()}`,
