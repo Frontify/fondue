@@ -125,7 +125,7 @@ export const profileBytes = async (
         }
         for (const name of chunk.dynamicImports) {
             const next = byName.get(name);
-            if (next?.modules.some((id) => id.endsWith(`/react/profiles/${profile}.ts`)) === true) {
+            if (next?.modules.some((id) => id.endsWith(`/react/profiles/${entry}.ts`)) === true) {
                 visit(next);
             }
         }
