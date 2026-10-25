@@ -212,6 +212,7 @@ export const plPL = {
         RichTextEditor_normalText: 'Zwykły tekst',
         RichTextEditor_numberedList: 'Lista numerowana',
         RichTextEditor_outline: 'Konspekt',
+        RichTextEditor_outlineEmpty: 'Brak nagłówków. Dodane nagłówki pojawią się tutaj.',
         RichTextEditor_outlineHeadingGone: 'Tego nagłówka nie ma już w dokumencie. Konspekt pokazuje bieżące nagłówki.',
         RichTextEditor_panelError: 'Nie można wyświetlić tego panelu.',
         RichTextEditor_pasteFormattingRemoved: 'Część formatowania została usunięta.',

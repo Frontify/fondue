@@ -214,6 +214,7 @@ export const nlNL = {
         RichTextEditor_normalText: 'Normale tekst',
         RichTextEditor_numberedList: 'Genummerde lijst',
         RichTextEditor_outline: 'Overzicht',
+        RichTextEditor_outlineEmpty: 'Nog geen koppen. Koppen die je toevoegt, verschijnen hier.',
         RichTextEditor_outlineHeadingGone:
             'Die kop staat niet meer in het document. Het overzicht toont de huidige koppen.',
         RichTextEditor_panelError: 'Dit paneel kan niet worden weergegeven.',

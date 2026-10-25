@@ -212,6 +212,7 @@ export const ptPT = {
         RichTextEditor_normalText: 'Texto normal',
         RichTextEditor_numberedList: 'Lista numerada',
         RichTextEditor_outline: 'Estrutura',
+        RichTextEditor_outlineEmpty: 'Ainda não há títulos. Os títulos que adicionar aparecem aqui.',
         RichTextEditor_outlineHeadingGone:
             'Esse título já não está no documento. A estrutura mostra os títulos atuais.',
         RichTextEditor_panelError: 'Não foi possível mostrar este painel.',

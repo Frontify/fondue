@@ -224,6 +224,18 @@ for (const profile of PROFILES) {
     });
 }
 
+test('reports no violation with the Outline open on a document with no headings', async ({ mount, page }) => {
+    await mount(<ProfileProbe profile="document" />);
+    await ready(page);
+    await populate(page);
+    await runItem(page, 'Outline');
+    const outline = page.getByRole('navigation', { name: 'Outline' });
+    await expect(outline).toBeVisible();
+    await expect(outline.getByText('No headings yet. Headings you add appear here.')).toBeVisible();
+
+    expect(await violations(page)).toEqual([]);
+});
+
 for (const { feature, file } of FEATURE_STORIES) {
     test(`reports no axe violation in the populated ${feature} story`, async ({ mount, page }) => {
         await mount(<StoryProbe file={file} name="Default" />);

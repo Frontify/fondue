@@ -12,6 +12,16 @@
     list-style: none;
 }
 
+.empty {
+    margin: 0;
+    padding-block: var(--spacing-xx-small);
+    padding-inline: var(--spacing-x-small);
+    color: var(--color-secondary-default);
+    font-family: var(--text-body-medium-default-font-family);
+    font-size: var(--text-body-medium-default-font-size);
+    line-height: var(--text-body-medium-default-line-height);
+}
+
 .item {
     display: flex;
     align-items: baseline;

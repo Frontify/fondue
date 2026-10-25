@@ -215,6 +215,7 @@ export const itIT = {
         RichTextEditor_normalText: 'Testo normale',
         RichTextEditor_numberedList: 'Elenco numerato',
         RichTextEditor_outline: 'Struttura',
+        RichTextEditor_outlineEmpty: 'Nessun titolo per ora. I titoli che aggiungi compaiono qui.',
         RichTextEditor_outlineHeadingGone:
             'Questo titolo non è più nel documento. La struttura mostra i titoli attuali.',
         RichTextEditor_panelError: 'Impossibile mostrare questo pannello.',

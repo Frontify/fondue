@@ -212,6 +212,7 @@ export const esES = {
         RichTextEditor_normalText: 'Texto normal',
         RichTextEditor_numberedList: 'Lista numerada',
         RichTextEditor_outline: 'Esquema',
+        RichTextEditor_outlineEmpty: 'Aún no hay encabezados. Los encabezados que añada aparecerán aquí.',
         RichTextEditor_outlineHeadingGone:
             'Ese encabezado ya no está en el documento. El esquema muestra los encabezados actuales.',
         RichTextEditor_panelError: 'No se ha podido mostrar este panel.',

@@ -214,6 +214,7 @@ export const frFR = {
         RichTextEditor_normalText: 'Texte normal',
         RichTextEditor_numberedList: 'Liste numérotée',
         RichTextEditor_outline: 'Plan',
+        RichTextEditor_outlineEmpty: 'Aucun titre pour l’instant. Les titres que vous ajoutez apparaissent ici.',
         RichTextEditor_outlineHeadingGone: 'Ce titre n’est plus dans le document. Le plan affiche les titres actuels.',
         RichTextEditor_panelError: 'Ce panneau n’a pas pu s’afficher.',
         RichTextEditor_pasteFormattingRemoved: 'Une partie de la mise en forme a été supprimée.',

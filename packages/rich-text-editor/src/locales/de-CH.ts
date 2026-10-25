@@ -216,6 +216,7 @@ export const deCH = {
         RichTextEditor_normalText: 'Normaler Text',
         RichTextEditor_numberedList: 'Nummerierte Liste',
         RichTextEditor_outline: 'Gliederung',
+        RichTextEditor_outlineEmpty: 'Noch keine Überschriften. Überschriften, die Sie hinzufügen, erscheinen hier.',
         RichTextEditor_outlineHeadingGone:
             'Diese Überschrift ist nicht mehr im Dokument. Die Gliederung zeigt die aktuellen Überschriften.',
         RichTextEditor_panelError: 'Dieses Panel konnte nicht angezeigt werden.',

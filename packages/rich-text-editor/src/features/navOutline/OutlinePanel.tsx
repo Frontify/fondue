@@ -54,33 +54,36 @@ export const OutlinePanel = ({ t }: PanelComponentProps) => {
     }, []);
     return (
         <nav ref={navRef} className={styles.nav} aria-label={t('RichTextEditor_outline')} tabIndex={-1}>
-            <ol className={styles.list}>
-                {entries.map((entry) => (
-                    <li key={entry.nodeId}>
-                        <button
-                            type="button"
-                            className={styles.item}
-                            data-level={entry.level}
-                            data-node-id={entry.nodeId}
-                            onClick={() => {
-                                if (api === undefined) {
-                                    return;
-                                }
-                                if (!api.blocks.list('heading').some(({ nodeId }) => nodeId === entry.nodeId)) {
-                                    navRef.current?.focus();
-                                    setEntries(headingsOf(api));
-                                    api.announce(t('RichTextEditor_outlineHeadingGone'));
-                                    return;
-                                }
-                                api.select({ nodeId: entry.nodeId }, { scroll: true });
-                            }}
-                        >
-                            <span className={styles.level}>{t(HEADING_KEY[entry.level])}</span>
-                            {entry.text !== '' && <span className={styles.text}> {entry.text}</span>}
-                        </button>
-                    </li>
-                ))}
-            </ol>
+            {entries.length === 0 && <p className={styles.empty}>{t('RichTextEditor_outlineEmpty')}</p>}
+            {entries.length > 0 && (
+                <ol className={styles.list}>
+                    {entries.map((entry) => (
+                        <li key={entry.nodeId}>
+                            <button
+                                type="button"
+                                className={styles.item}
+                                data-level={entry.level}
+                                data-node-id={entry.nodeId}
+                                onClick={() => {
+                                    if (api === undefined) {
+                                        return;
+                                    }
+                                    if (!api.blocks.list('heading').some(({ nodeId }) => nodeId === entry.nodeId)) {
+                                        navRef.current?.focus();
+                                        setEntries(headingsOf(api));
+                                        api.announce(t('RichTextEditor_outlineHeadingGone'));
+                                        return;
+                                    }
+                                    api.select({ nodeId: entry.nodeId }, { scroll: true });
+                                }}
+                            >
+                                <span className={styles.level}>{t(HEADING_KEY[entry.level])}</span>
+                                {entry.text !== '' && <span className={styles.text}> {entry.text}</span>}
+                            </button>
+                        </li>
+                    ))}
+                </ol>
+            )}
         </nav>
     );
 };

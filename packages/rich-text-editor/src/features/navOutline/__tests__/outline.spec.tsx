@@ -86,7 +86,9 @@ describe('the outline panel', () => {
         const { view, unmount } = mountOutline();
 
         openOutline();
-        fireEvent.keyDown(screen.getByRole('navigation', { name: 'Outline' }), { key: 'Escape' });
+        fireEvent.keyDown(screen.getByRole('navigation', { name: 'Outline' }), {
+            key: 'Escape',
+        });
 
         expect(screen.queryByRole('navigation', { name: 'Outline' })).not.toBeInTheDocument();
         expect(document.activeElement).toBe(view.dom);
@@ -172,7 +174,12 @@ describe('the outline panel', () => {
     });
 
     it('opens the outline in a readonly editor, since it changes no content', () => {
-        const { handle, unmount } = mountText({ model, blocks, toolbar: [['outline.toggle']], readOnly: true });
+        const { handle, unmount } = mountText({
+            model,
+            blocks,
+            toolbar: [['outline.toggle']],
+            readOnly: true,
+        });
 
         expect(screen.getByRole('button', { name: 'Outline' })).not.toHaveAttribute('aria-disabled', 'true');
         act(() => {
@@ -198,5 +205,19 @@ describe('the outline panel', () => {
         expect(document.activeElement).toBe(host);
         host.remove();
         unmount();
+    });
+
+    it('shows a message in the panel when the document has no headings, and not when it has some', () => {
+        const empty = mountOutline([para(text('Intro'))]);
+        openOutline();
+        const nav = screen.getByRole('navigation', { name: 'Outline' });
+        expect(nav).toHaveTextContent('No headings yet. Headings you add appear here.');
+        expect(within(nav).queryByRole('list')).not.toBeInTheDocument();
+        empty.unmount();
+
+        const full = mountOutline();
+        openOutline();
+        expect(screen.getByRole('navigation', { name: 'Outline' })).not.toHaveTextContent('No headings yet');
+        full.unmount();
     });
 });
