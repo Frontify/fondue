@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { extendPlugin, type RichTextPlugin } from '#/bridge/define-plugin';
+import { extendPlugin, type RichTextPlugin } from '#/bridge/definePlugin';
 import { codeBlockPlugin } from '#/features/blocks-code';
 import { quotePlugin } from '#/features/blocks-quote';
 import { corePlugin } from '#/features/core';

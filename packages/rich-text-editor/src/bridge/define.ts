@@ -12,7 +12,7 @@ import {
     type ShippedCommands,
 } from '#/runtime/types';
 
-import { useRenderMark } from './dev-checks';
+import { useRenderMark } from './devChecks';
 
 export { suggestionOptionId } from '#/runtime/capabilities/suggestions/option-id';
 export {
@@ -24,10 +24,10 @@ export {
     NodeChromeToolbar,
     OptionItem,
     OptionsMenu,
-} from './chrome-toolbar';
-export { EditorDialog, type EditorDialogControl, useEditorDialog } from './editor-dialog';
-export { Listbox, type ListboxOption } from './listbox';
-export { NodeViewContent } from './node-view-content';
+} from './chromeToolbar';
+export { EditorDialog, type EditorDialogControl, useEditorDialog } from './EditorDialog';
+export { Listbox, type ListboxOption } from './Listbox';
+export { NodeViewContent } from './NodeViewContent';
 export { type EditorOverlay, OverlayBody, useEditorOverlay } from './overlays';
 
 /** What node chrome reads besides attributes: the reader's `ReaderContext`, which `src/bridge` may not import from the reader. */

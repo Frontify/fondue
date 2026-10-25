@@ -4,8 +4,8 @@ import { Flyout, LoadingCircle } from '@frontify/fondue-components';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { isolate, useAnnounce } from '#/bridge/announcer';
-import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
-import { Listbox, type ListboxOption } from '#/bridge/listbox';
+import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
+import { Listbox, type ListboxOption } from '#/bridge/Listbox';
 import { useEditorOverlay } from '#/bridge/overlays';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { type CodecContext } from '#/model';

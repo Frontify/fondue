@@ -4,7 +4,7 @@ import { type ComponentType, type MutableRefObject, useMemo, useRef, useState } 
 
 import { anchorOf } from '#/bridge/anchor';
 import { type Announcer } from '#/bridge/announcer';
-import { type InteractionScope } from '#/bridge/interaction-scope';
+import { type InteractionScope } from '#/bridge/interactionScope';
 import { type MountCoordinator } from '#/bridge/mount';
 import {
     type AnchorTarget,

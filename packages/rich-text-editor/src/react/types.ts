@@ -2,7 +2,7 @@
 
 import { type FocusEvent, type Ref } from 'react';
 
-import { type RichTextPlugin } from '#/bridge/define-plugin';
+import { type RichTextPlugin } from '#/bridge/definePlugin';
 import { type CommandsOfPart } from '#/bridge/plugin';
 import {
     type CapabilityRef,

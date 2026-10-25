@@ -3,8 +3,8 @@
 import { useFondueTheme } from '@frontify/fondue-components';
 import { type KeyboardEvent, type MutableRefObject, useCallback, useId, useMemo, useRef, useState } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
-import { type InteractionScope } from '#/bridge/interaction-scope';
+import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
+import { type InteractionScope } from '#/bridge/interactionScope';
 import { type MountCoordinator } from '#/bridge/mount';
 import { type EditorHosts } from '#/bridge/plugin';
 import { enUS } from '#/locales/en-US';

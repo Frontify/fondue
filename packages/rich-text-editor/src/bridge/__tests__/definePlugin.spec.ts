@@ -12,7 +12,7 @@ import { compileContentModel, DefinitionError, type Feature } from '#/model';
 import { featureInternals } from '#/model/internal';
 import { type ReaderRenderers } from '#/reader/define';
 
-import { definePlugin, extendPlugin, modelOf, type ReaderOverrides } from '../define-plugin';
+import { definePlugin, extendPlugin, modelOf, type ReaderOverrides } from '../definePlugin';
 import { defineEditorPart, partWithOptions } from '../plugin';
 
 describe('definePlugin', () => {

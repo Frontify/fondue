@@ -4,9 +4,9 @@ import { Button } from '@frontify/fondue-components';
 import { Component, type ComponentType, type ReactNode, useRef } from 'react';
 
 import { useAnnounce } from '#/bridge/announcer';
-import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
+import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 import { type PanelComponentProps } from '#/bridge/define';
-import { type ReactWork, ReactWorkContext } from '#/bridge/dev-checks';
+import { type ReactWork, ReactWorkContext } from '#/bridge/devChecks';
 import { TABBABLE } from '#/bridge/overlays';
 import { type CodecContext } from '#/model';
 import { passesToBrowser } from '#/runtime/port';

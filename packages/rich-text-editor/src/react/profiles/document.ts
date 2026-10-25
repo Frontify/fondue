@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RichTextPlugin } from '#/bridge/define-plugin';
+import { type RichTextPlugin } from '#/bridge/definePlugin';
 import { contentChecksPlugin } from '#/features/a11y-content-checks';
 import { headingPlugin } from '#/features/blocks-heading';
 import { rulePlugin } from '#/features/blocks-rule';

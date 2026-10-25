@@ -3,11 +3,11 @@
 import { type ReactNode, useCallback, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
-import { createInteractionScope } from '#/bridge/interaction-scope';
+import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
+import { createInteractionScope } from '#/bridge/interactionScope';
 import { type MountCoordinator } from '#/bridge/mount';
 
-import styles from './styles/overlay-root.module.scss';
+import styles from './styles/overlayRoot.module.scss';
 
 // The values that make an element the containing block of its fixed descendants, which then clip with it.
 const CONTAINS = /paint|layout|strict|content/;

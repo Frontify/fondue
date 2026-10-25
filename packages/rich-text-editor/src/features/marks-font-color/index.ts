@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin } from '#/bridge/define-plugin';
+import { definePlugin } from '#/bridge/definePlugin';
 
 import { fontColorEditor } from './editor';
 import { fontColor } from './feature';

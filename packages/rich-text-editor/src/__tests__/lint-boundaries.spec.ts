@@ -289,7 +289,7 @@ const CASES: readonly Case[] = [
     allowed(
         'feature index: the plugin definer',
         'src/features/bold/index.ts',
-        "import { definePlugin } from '#/bridge/define-plugin';",
+        "import { definePlugin } from '#/bridge/definePlugin';",
     ),
     allowed('feature index: its editor part', 'src/features/bold/index.ts', "import { boldEditor } from './editor';"),
     allowed('feature index: its feature', 'src/features/bold/index.ts', "import { bold } from './feature';"),
@@ -320,7 +320,7 @@ const CASES: readonly Case[] = [
     allowed(
         'feature plugins: the plugin definer',
         'src/features/plugins.ts',
-        "import { type RichTextPlugin } from '#/bridge/define-plugin';",
+        "import { type RichTextPlugin } from '#/bridge/definePlugin';",
     ),
     allowed('feature plugins: a feature index', 'src/features/plugins.ts', "import { boldIndex } from './bold/index';"),
 

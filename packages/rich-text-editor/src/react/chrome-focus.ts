@@ -2,7 +2,7 @@
 
 import { type KeyboardEvent, type RefObject } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
+import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 import { type MountCoordinator } from '#/bridge/mount';
 import { escapePassed } from '#/bridge/overlays';
 import { type EditorPort, hasSurface, nodeChromeOf, passesToBrowser } from '#/runtime/port';

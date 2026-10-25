@@ -7,10 +7,10 @@ import { createPortal } from 'react-dom';
 import { type JsonObject } from '#/model';
 import { type EditorPort, mediaOf } from '#/runtime/port';
 
-import { useClientLayoutEffect } from './client-layout-effect';
+import { useClientLayoutEffect } from './clientLayoutEffect';
 import { type NodePending, type NodeViewContext, NodeViewStateContext } from './define';
-import { type ReactWork, ReactWorkContext } from './dev-checks';
-import { NodeViewContentContext } from './node-view-content';
+import { type ReactWork, ReactWorkContext } from './devChecks';
+import { NodeViewContentContext } from './NodeViewContent';
 import { type PortalEntry, type PortalStore } from './portals';
 import { useSessionValue } from './session';
 

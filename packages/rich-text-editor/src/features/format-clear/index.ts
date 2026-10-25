@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin } from '#/bridge/define-plugin';
+import { definePlugin } from '#/bridge/definePlugin';
 
 import { formatClearEditor } from './editor';
 import { formatClear } from './feature';

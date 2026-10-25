@@ -2,7 +2,7 @@
 
 import { createRef } from 'react';
 
-import { definePlugin } from '#/bridge/define-plugin';
+import { definePlugin } from '#/bridge/definePlugin';
 import {
     type BlockDecoration,
     type BlockDecorationSource,

@@ -3,7 +3,7 @@
 import { useFondueTheme } from '@frontify/fondue-components';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
+import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 import { useScopedFocus } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
 import { useSessionValue } from '#/bridge/session';

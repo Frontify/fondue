@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type NodeViewDeclaration, type PanelDeclaration } from '#/bridge/define';
-import { type RichTextPlugin } from '#/bridge/define-plugin';
-import { editorApiOf, facetsOf, partCommandApiOf } from '#/bridge/live-api';
+import { type RichTextPlugin } from '#/bridge/definePlugin';
+import { editorApiOf, facetsOf, partCommandApiOf } from '#/bridge/liveApi';
 import {
     type EditorApi,
     type EditorHosts,

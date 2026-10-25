@@ -3,11 +3,11 @@
 import { type MutableRefObject } from 'react';
 
 import { type Announcer } from '#/bridge/announcer';
-import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
-import { inReactWork, type ReactWork, sharesName } from '#/bridge/dev-checks';
-import { type InteractionScope } from '#/bridge/interaction-scope';
+import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
+import { inReactWork, type ReactWork, sharesName } from '#/bridge/devChecks';
+import { type InteractionScope } from '#/bridge/interactionScope';
 import { type MountCoordinator } from '#/bridge/mount';
-import { createNodeViews } from '#/bridge/node-views';
+import { createNodeViews } from '#/bridge/nodeViews';
 import { type EditorHosts } from '#/bridge/plugin';
 import { type PortalStore } from '#/bridge/portals';
 import { enUS } from '#/locales/en-US';

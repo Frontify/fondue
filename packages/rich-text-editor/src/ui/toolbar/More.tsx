@@ -5,10 +5,10 @@ import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type AriaAttributes, type AriaRole, type RefObject, useContext, useId, useRef, useState } from 'react';
 
-import { CheckedSlot, keepFocus } from '#/bridge/chrome-toolbar';
+import { CheckedSlot, keepFocus } from '#/bridge/chromeToolbar';
 import { useCommandQuery } from '#/bridge/hooks';
 import { useOverlayContainer } from '#/bridge/overlays';
-import { ChromeBoundary, NO_ATTRS } from '#/bridge/portal-host';
+import { ChromeBoundary, NO_ATTRS } from '#/bridge/PortalHost';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { useOpenPanel } from '#/ui/panels/context';
 

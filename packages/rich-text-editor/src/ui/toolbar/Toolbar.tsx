@@ -4,13 +4,13 @@ import { Button as FondueButton, Tooltip, useFondueTheme } from '@frontify/fondu
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type ComponentType, type MutableRefObject, useCallback, useContext, useRef } from 'react';
 
-import { keepFocus } from '#/bridge/chrome-toolbar';
-import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
+import { keepFocus } from '#/bridge/chromeToolbar';
+import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 import { useCommandQuery } from '#/bridge/hooks';
 import { useOverlayContainer } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
 import { type ToolbarControlProps } from '#/bridge/plugin';
-import { ChromeBoundary, NO_ATTRS } from '#/bridge/portal-host';
+import { ChromeBoundary, NO_ATTRS } from '#/bridge/PortalHost';
 import { SessionContext } from '#/bridge/session';
 import { useOpenPanel } from '#/ui/panels/context';
 import { ariaShortcut } from '#/ui/shortcuts';

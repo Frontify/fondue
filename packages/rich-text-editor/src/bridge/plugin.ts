@@ -21,9 +21,9 @@ import { type ContentChecksApi } from '#/runtime/capabilities/checks/api';
 import { type EditorRange } from '#/runtime/document-api';
 import { type AuthoringPolicy, type ReferenceValue } from '#/runtime/types';
 
-import { type EditorApi, type EditorFacet } from './api-facets';
+import { type EditorApi, type EditorFacet } from './apiFacets';
 import { type NodeViewDeclaration, type PanelDeclaration } from './define';
-import { editorApiOf } from './live-api';
+import { editorApiOf } from './liveApi';
 import { SessionContext, useSessionValue } from './session';
 
 export { type CheckedIssue, type ContentChecksApi, type ContentChecksResult } from '#/runtime/capabilities/checks/api';
@@ -43,8 +43,8 @@ export {
 export { passesToBrowser } from '#/runtime/browser-keys';
 export { type ReferenceValue, type SelectionHandle, type UploadStatus } from '#/runtime/types';
 export { type Announcer, createAnnouncer } from './announcer';
-export { type EditorApi, type EditorControlApi, type EditorFacet, type EditorFacets } from './api-facets';
-export { useClientLayoutEffect } from './client-layout-effect';
+export { type EditorApi, type EditorControlApi, type EditorFacet, type EditorFacets } from './apiFacets';
+export { useClientLayoutEffect } from './clientLayoutEffect';
 export { OverlayBody, passEscape, useEditorOverlay, useOverlayContainer, useScopedFocus } from './overlays';
 export { useApplePlatform } from './platform';
 

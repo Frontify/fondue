@@ -83,7 +83,7 @@ const CLIPBOARD_MESSAGE =
     '`runtime/clipboard` imports `model`, `definition`, `runtime`, `codecs`, `clipboard/import` and ProseMirror, never React or the editor layers.';
 
 const FEATURE_INDEX_MESSAGE =
-    "A feature's index builds its unit and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/define-plugin`.";
+    "A feature's index builds its unit and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/definePlugin`.";
 
 const READER_FILE_MESSAGE =
     "A feature's reader override imports only `react` (no Node built-ins), `#/model`, `#/reader/define`, its own `./feature` and a declared dependency's `#/features/<id>/feature`, as an outside feature must.";
@@ -94,7 +94,7 @@ const MODEL_ENTRY_MESSAGE =
 const MODEL_FILE_MESSAGE = 'Code outside `model` imports `#/model` or `#/model/internal`, never a model file directly.';
 
 const FEATURE_PLUGINS_MESSAGE =
-    "The all-units registry imports only `#/model`, `#/bridge/define-plugin` and each feature's `./*/index` through its glob, because it loads every editor part and only `pluginsById` users and `testing` may load it.";
+    "The all-units registry imports only `#/model`, `#/bridge/definePlugin` and each feature's `./*/index` through its glob, because it loads every editor part and only `pluginsById` users and `testing` may load it.";
 
 const FEATURE_WIRING_MESSAGE =
     'The feature index, registry and profiles wire shipped features from `model`, and do not load views, readers or the editor.';
@@ -678,7 +678,7 @@ export default defineConfig({
             {
                 group: [
                     ...aliasPatterns(outsideFeatureFolders),
-                    '!#/bridge/define-plugin',
+                    '!#/bridge/definePlugin',
                     '#/model/**',
                     '#/features/**',
                     '../**',
@@ -711,7 +711,7 @@ export default defineConfig({
             {
                 group: [
                     ...aliasPatterns(FOLDERS),
-                    '!#/bridge/define-plugin',
+                    '!#/bridge/definePlugin',
                     '../**',
                     './*',
                     './**',

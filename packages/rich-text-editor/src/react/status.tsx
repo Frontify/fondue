@@ -3,7 +3,7 @@
 import { useCallback, useContext, useEffect, useRef, useSyncExternalStore } from 'react';
 
 import { useAnnounce } from '#/bridge/announcer';
-import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
+import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 import { SessionContext } from '#/bridge/session';
 import { type CodecContext } from '#/model';
 import { type createSaveCoordinator, type Rejection } from '#/persistence/coordinator';

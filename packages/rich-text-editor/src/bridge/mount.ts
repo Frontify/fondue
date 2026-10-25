@@ -3,8 +3,8 @@
 import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/port-engine';
 
-import { type ChromeView, createChromeView } from './chrome-view';
-import { markReady } from './dev-checks';
+import { type ChromeView, createChromeView } from './chromeView';
+import { markReady } from './devChecks';
 
 export interface MountCoordinator {
     readonly runtime: EditorPort | undefined;

@@ -2,7 +2,7 @@
 
 import { type MutableRefObject, type RefObject, useEffect, useMemo, useRef } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
+import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 import { type MountCoordinator } from '#/bridge/mount';
 import { sameDocument, styleSheetOf } from '#/model';
 import { unknownStyle } from '#/model/internal';

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { createAnnouncer } from '#/bridge/announcer';
-import { createReactWork } from '#/bridge/dev-checks';
+import { createReactWork } from '#/bridge/devChecks';
 import { createMountCoordinator } from '#/bridge/mount';
 import { createPortalStore } from '#/bridge/portals';
 import { type RichTextDocument } from '#/model';

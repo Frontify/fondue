@@ -15,7 +15,7 @@ import {
 
 import { type NodeViewDeclaration } from './define';
 import { ISLAND_VIEWS } from './island';
-import { createPlacement, ignoresMutation, sameTags, stopsEvent, syncLayers } from './node-view-parts';
+import { createPlacement, ignoresMutation, sameTags, stopsEvent, syncLayers } from './nodeViewParts';
 import { type PortalEntry, type PortalStore } from './portals';
 
 /** What the node views of one editor share: its portals and the session they act on. */

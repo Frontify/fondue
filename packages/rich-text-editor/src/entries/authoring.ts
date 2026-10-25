@@ -22,7 +22,7 @@ export {
     suggestionOptionId,
     useRichTextNodeView,
 } from '#/bridge/define';
-export { definePlugin, extendPlugin } from '#/bridge/define-plugin';
+export { definePlugin, extendPlugin } from '#/bridge/definePlugin';
 export {
     type AncestorValue,
     type Announcer,

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin } from '#/bridge/define-plugin';
+import { definePlugin } from '#/bridge/definePlugin';
 
 import { alignEditor } from './editor';
 import { align } from './feature';

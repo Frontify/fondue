@@ -17,8 +17,8 @@ import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/port-engine';
 
 import { createSelectionAnchor } from './anchor';
-import { useClientLayoutEffect } from './client-layout-effect';
-import { type InteractionScope } from './interaction-scope';
+import { useClientLayoutEffect } from './clientLayoutEffect';
+import { type InteractionScope } from './interactionScope';
 import { type AnchorTarget, type OverlayAnchor } from './plugin';
 import { SessionContext } from './session';
 
