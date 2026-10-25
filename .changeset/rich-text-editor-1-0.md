@@ -6,10 +6,11 @@ feat(RichTextEditor): release 1.0, the first published version of the rich text 
 
 ### API
 
-- `@frontify/fondue-rich-text-editor`: `RichTextEditor`, `defineEditor`, `defineReactPresentation`, `defineEditorPlugin`, the editor handle and the node view, overlay and panel parts.
+- `@frontify/fondue-rich-text-editor`: `RichTextEditor` and its parts, `defineEditor`, `modelOf`, `pluginsById`, one plugin unit per shipped feature (such as `boldPlugin`), the profiles, the editor handle, and the form and persistence hooks.
+- `./authoring`: `definePlugin`, `defineEditorPart`, `extendPlugin`, `defineReaderFeature`, `defineReactPresentation`, the editor API types, and the dialog, listbox, menu and node chrome building blocks. An editor part declares the API facets its commands use in `needs`.
 - `./model`: `defineFeature`, `compileContentModel`, `decodeDocument`, `migrateDocument`, `toJsonSchema`, the content checks and the reference and asset helpers.
 - `./features`: the shipped features and the inline, comment, document and brand document profiles.
-- `./reader`: `RichTextReader` and `defineReaderFeature`. `./codecs`: `createCodecs` for HTML, Markdown and plain text. `./html`: `fromHTML`.
+- `./reader`: `RichTextReader` and `defineReaderFeature`. `./codecs`: `createCodecs` for HTML, Markdown and plain text, whose results carry `blocked`. `./html`: `fromHTML`.
 - `./testing`: `runFeatureContract`, the persistence, upload and reference service kits, and the keyboard helpers.
 - `./locales/*` and `./styles`.
 
