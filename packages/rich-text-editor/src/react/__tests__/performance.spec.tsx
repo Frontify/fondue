@@ -135,10 +135,11 @@ it('types a character and moves the caret in a 20,000-node document within the k
     expect(percentile(moving, 'p95')).toBeLessThanOrEqual(COMMIT_PIPELINE_BUDGET_P95);
 }, 120_000);
 
-it('neither hashes the document nor calls toJSON on a node over 100 keystrokes in a 20,000-node document', () => {
+it('neither hashes nor compares the document nor calls toJSON on a node over 100 keystrokes in a 20,000-node document', () => {
     const { handle } = mountLarge();
     const toJSON = vi.spyOn(Node.prototype, 'toJSON');
     const hashDocument = vi.spyOn(hash, 'hashDocument');
+    const sameDocument = vi.spyOn(hash, 'sameDocument');
 
     for (let keystroke = 0; keystroke < 100; keystroke += 1) {
         act(() => {
@@ -148,14 +149,15 @@ it('neither hashes the document nor calls toJSON on a node over 100 keystrokes i
 
     expect(toJSON).not.toHaveBeenCalled();
     expect(hashDocument).not.toHaveBeenCalled();
+    expect(sameDocument).not.toHaveBeenCalled();
 }, 120_000);
 
-it('has spies that see a real toJSON call and a real hashDocument call', async () => {
+it('has spies that see a real toJSON call and a real document compare', async () => {
     const { handle } = mountLarge();
     const toJSON = vi.spyOn(Node.prototype, 'toJSON');
-    const hashDocument = vi.spyOn(hash, 'hashDocument');
+    const sameDocument = vi.spyOn(hash, 'sameDocument');
 
-    // Reading the document encodes it, and replacing it with an echo of itself compares hashes.
+    // Reading the document encodes it, and replacing it with an echo of itself compares the two documents.
     const snapshot = handle.getSnapshot();
     expect(toJSON).toHaveBeenCalled();
     const result = await handle.replaceDocument({
@@ -167,7 +169,7 @@ it('has spies that see a real toJSON call and a real hashDocument call', async (
     });
 
     expect(result.status).toBe('replaced');
-    expect(hashDocument).toHaveBeenCalled();
+    expect(sameDocument).toHaveBeenCalled();
 }, 120_000);
 
 it('types a character in a highlighted 2,000-line code block within the keystroke budget', async () => {
