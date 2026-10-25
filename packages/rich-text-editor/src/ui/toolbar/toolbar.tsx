@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Tooltip, useFondueTheme } from '@frontify/fondue-components';
+import { Button as FondueButton, Tooltip, useFondueTheme } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type ComponentType, type MutableRefObject, useCallback, useContext, useRef } from 'react';
 
@@ -115,8 +115,8 @@ const Button = ({ item, disabled, strings, keepsFocus, outOfTabOrder }: ItemProp
         <Tooltip.Root>
             <Tooltip.Trigger asChild>
                 <RadixToolbar.Button
+                    asChild
                     {...tabStop(outOfTabOrder)}
-                    type="button"
                     className={styles.item}
                     aria-label={item.label}
                     aria-pressed={pressed}
@@ -133,7 +133,9 @@ const Button = ({ item, disabled, strings, keepsFocus, outOfTabOrder }: ItemProp
                         await pressItem(runtime, item, event.currentTarget, keepsFocus);
                     }}
                 >
-                    <Icon name={item.icon} />
+                    <FondueButton size="small" aspect="square" emphasis="weak">
+                        <Icon name={item.icon} />
+                    </FondueButton>
                 </RadixToolbar.Button>
             </Tooltip.Trigger>
             <Tooltip.Content padding="compact" container={container}>

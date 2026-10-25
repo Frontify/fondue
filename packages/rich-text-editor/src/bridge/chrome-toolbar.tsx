@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dropdown, Tooltip, useFondueTheme } from '@frontify/fondue-components';
+import { Button, Dropdown, Tooltip, useFondueTheme } from '@frontify/fondue-components';
 import { IconCheckMark } from '@frontify/fondue-icons';
 import * as Toolbar from '@radix-ui/react-toolbar';
 import { type ReactNode, useCallback, useRef, useState } from 'react';
@@ -53,9 +53,13 @@ export const NodeChromeButton = ({
     readonly onClick: () => void;
 }) => {
     const container = useOverlayContainer();
+    let aspect: 'square' | 'default' = 'default';
+    if (icon !== undefined) {
+        aspect = 'square';
+    }
     const button = (
         <Toolbar.Button
-            type="button"
+            asChild
             className={styles.button}
             aria-label={label}
             aria-describedby={describedBy}
@@ -64,7 +68,9 @@ export const NodeChromeButton = ({
             tabIndex={OUT_OF_TAB_ORDER}
             onClick={onClick}
         >
-            {icon ?? label}
+            <Button size="small" aspect={aspect} emphasis="weak">
+                {icon ?? label}
+            </Button>
         </Toolbar.Button>
     );
     if (icon === undefined) {
@@ -126,7 +132,7 @@ export const NodeChromeMenu = ({
         >
             <Dropdown.Trigger asChild>
                 <Toolbar.Button
-                    type="button"
+                    asChild
                     className={styles.button}
                     aria-label={label}
                     tabIndex={OUT_OF_TAB_ORDER}
@@ -151,7 +157,9 @@ export const NodeChromeMenu = ({
                         }
                     }}
                 >
-                    {text}
+                    <Button size="small" emphasis="weak">
+                        {text}
+                    </Button>
                 </Toolbar.Button>
             </Dropdown.Trigger>
             <Dropdown.Content

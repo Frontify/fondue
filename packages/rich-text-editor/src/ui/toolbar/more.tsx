@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dropdown, Tooltip } from '@frontify/fondue-components';
+import { Button, Dropdown, Tooltip } from '@frontify/fondue-components';
 import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type AriaAttributes, type AriaRole, type RefObject, useContext, useId, useRef, useState } from 'react';
@@ -198,9 +198,9 @@ export const More = ({
                 <Tooltip.Trigger asChild>
                     <Dropdown.Trigger asChild>
                         <RadixToolbar.Button
+                            asChild
                             {...tabStop(outOfTabOrder)}
                             ref={triggerRef}
-                            type="button"
                             className={styles.item}
                             aria-label={strings.more}
                             disabled={disabled}
@@ -241,7 +241,9 @@ export const More = ({
                                 openAtPressRef.current = false;
                             }}
                         >
-                            <IconDotsHorizontal size={20} aria-hidden />
+                            <Button size="small" aspect="square" emphasis="weak">
+                                <IconDotsHorizontal size={20} aria-hidden />
+                            </Button>
                         </RadixToolbar.Button>
                     </Dropdown.Trigger>
                 </Tooltip.Trigger>

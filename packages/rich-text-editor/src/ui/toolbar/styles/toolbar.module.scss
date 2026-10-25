@@ -35,61 +35,68 @@
 
 .item {
     flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    inline-size: 32px;
-    block-size: 32px;
-    padding: 0 0 2px;
-    border: none;
-    border-radius: var(--border-radius-small);
-    background-color: transparent;
-    color: var(--color-primary-default);
-    cursor: pointer;
 
     &[data-group-start] {
         margin-inline-start: var(--spacing-small);
     }
 
-    &:hover {
-        background-color: var(--color-surface-hover);
+    // The attributes lift these rules above Fondue's button variants, which set the fill and colours.
+    &[data-variant][data-emphasis][data-size][data-aspect] {
+        // A theme switch repaints the toolbar at once, not through Fondue's colour fade.
+        transition: none;
+
+        // The rule restates Fondue's tokens so the package's contrast check covers the pressed bar.
+        background-color: transparent;
+        color: var(--color-primary-default);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+            color: var(--color-primary-hover);
+        }
+
+        // Fondue's pressed fill gives the text 3.4:1 in the dark theme and its pressed text token is undefined.
+        &:active {
+            background-color: var(--color-container-secondary-hover);
+            color: var(--color-primary-hover);
+        }
+
+        @include pressed-bar.pressed-bar;
+
+        // The bar takes the 2 px the padding holds, so the icon stays put.
+        &[aria-pressed='true'],
+        &[aria-pressed='mixed'] {
+            padding-block-start: 2px;
+        }
+
+        &[aria-disabled='true'] {
+            color: var(--color-secondary-default);
+            cursor: default;
+
+            svg {
+                color: var(--color-secondary-default);
+            }
+        }
+
+        // Fondue's ring is a box-shadow, which forced colours drops and the clipped toolbar box cuts.
+        &:focus-visible,
+        &:focus-visible:hover {
+            box-shadow: none;
+        }
+
+        @include focus-outline.focus-outline;
     }
-
-    @include pressed-bar.pressed-bar;
-
-    // The bar takes the 2 px the padding holds, so the icon stays put.
-    &[aria-pressed='true'],
-    &[aria-pressed='mixed'] {
-        padding-block-end: 0;
-    }
-
-    &[aria-disabled='true'],
-    &:disabled {
-        color: var(--color-secondary-default);
-        cursor: default;
-    }
-
-    @include focus-outline.focus-outline;
 
     // A coarse pointer gets 44 by 44 CSS pixel targets.
     @media (pointer: coarse) {
-        inline-size: 44px;
-        block-size: 44px;
+        min-inline-size: 44px;
+        min-block-size: 44px;
     }
 }
 
 // The text style picker shows the active block type's name, so it takes the width of its text.
 .picker {
-    inline-size: auto;
     min-inline-size: 7rem;
     justify-content: flex-start;
-    padding-inline: var(--spacing-x-small);
-    white-space: nowrap;
-
-    @media (pointer: coarse) {
-        inline-size: auto;
-    }
 }
 
 .tooltip {

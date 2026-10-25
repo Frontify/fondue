@@ -4,8 +4,32 @@
 @use '../../styles/pressed-bar';
 
 .button {
-    @include focus-outline.focus-outline;
-    @include pressed-bar.pressed-bar;
+    // The attributes lift these rules above Fondue's button variants, which set the fill and the focus ring.
+    &[data-variant][data-emphasis][data-size][data-aspect] {
+        // The rule restates Fondue's tokens so the package's contrast check covers the pressed bar.
+        background-color: transparent;
+        color: var(--color-primary-default);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+            color: var(--color-primary-hover);
+        }
+
+        // Fondue's pressed fill gives the text 3.4:1 in the dark theme and its pressed text token is undefined.
+        &:active {
+            background-color: var(--color-container-secondary-hover);
+            color: var(--color-primary-hover);
+        }
+
+        @include pressed-bar.pressed-bar;
+
+        &:focus-visible,
+        &:focus-visible:hover {
+            box-shadow: none;
+        }
+
+        @include focus-outline.focus-outline;
+    }
 
     // A coarse pointer gets targets of at least 44 by 44 CSS pixels; the label sets the width beyond that.
     @media (pointer: coarse) {

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dropdown } from '@frontify/fondue-components';
+import { Button, Dropdown } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { useContext, useRef } from 'react';
 
@@ -104,15 +104,17 @@ export const TextStyle = ({
         <Dropdown.Root>
             <Dropdown.Trigger asChild>
                 <RadixToolbar.Button
+                    asChild
                     {...tabStop(outOfTabOrder)}
-                    type="button"
                     className={`${styles.item} ${styles.picker}`}
                     disabled={disabled}
                     data-rte-toolbar-item=""
                     data-group-start={item.groupStart || undefined}
                     onMouseDown={onMouseDown}
                 >
-                    {label}
+                    <Button size="small" emphasis="weak">
+                        {label}
+                    </Button>
                 </RadixToolbar.Button>
             </Dropdown.Trigger>
             <Dropdown.Content
