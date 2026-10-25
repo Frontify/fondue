@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type DocumentApi } from '#/runtime/document-api';
-import { type CommandContext, type CommandSession, liveDocumentApi } from '#/runtime/editor-api';
+import { type DocumentApi } from '#/runtime/documentApi';
+import { type CommandContext, type CommandSession, liveDocumentApi } from '#/runtime/editorApi';
 import { type EditorPort } from '#/runtime/port';
-import { engineOf } from '#/runtime/port-engine';
+import { engineOf } from '#/runtime/portEngine';
 
 import { type EditorApi, type EditorFacet, type EditorHosts, type EditorPart } from './plugin';
 

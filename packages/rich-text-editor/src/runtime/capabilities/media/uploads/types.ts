@@ -6,7 +6,7 @@ import { type EngineCommand } from '#/definition';
 import { type Diagnostic, type ResourceLimits } from '#/model';
 
 import { type AsyncOperation, type AsyncRequest } from '../../../async';
-import { type UploadEvent, type UploadPlace, type UploadRejection } from '../../../port-types';
+import { type UploadEvent, type UploadPlace, type UploadRejection } from '../../../portTypes';
 import { type SelectionHandle, type SessionToken } from '../../../types';
 
 /** The `UploadService` shape the session calls, whose answers it checks as untrusted input. */

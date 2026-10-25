@@ -9,7 +9,7 @@ import { type JsonObject } from '#/model';
 import { placeBlock } from '../..';
 import { positionOf } from '../../../positions';
 import { INSERT_IMAGE, type PickedAsset, REPLACE_IMAGE } from '../media';
-import { SLOT_START_META, type SlotStart } from '../upload-slots';
+import { SLOT_START_META, type SlotStart } from '../uploadSlots';
 
 import { FILL_META } from './constants';
 import { type Checked } from './types';

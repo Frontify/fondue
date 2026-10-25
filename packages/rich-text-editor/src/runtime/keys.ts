@@ -8,9 +8,9 @@ import { type EditorView } from 'prosemirror-view';
 
 import { BASE_KEYS_PLUGIN, CONTAINER_KEYS_PLUGIN, isApple, modOn } from '#/model/internal';
 
-import { passesToBrowser } from './browser-keys';
+import { passesToBrowser } from './browserKeys';
 import { showsOptions } from './capabilities/suggestions/plugin';
-import { ENTER_RULES_META } from './input-rules';
+import { ENTER_RULES_META } from './inputRules';
 import { type AuthoringPolicy } from './types';
 
 /** Whether a keydown holds no Shift, Alt, Ctrl or ⌘. */

@@ -4,7 +4,7 @@ import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { core, mentions } from '#/features';
-import { suggestionOptionId } from '#/runtime/capabilities/suggestions/option-id';
+import { suggestionOptionId } from '#/runtime/capabilities/suggestions/optionId';
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import {

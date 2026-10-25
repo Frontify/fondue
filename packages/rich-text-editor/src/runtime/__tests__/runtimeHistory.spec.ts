@@ -13,7 +13,7 @@ import { declaredPng } from '#/testing/uploads';
 
 import { type UploadServiceLike } from '../capabilities/media/uploads';
 import { canRedo, canUndo, reset, undoDepth } from '../history';
-import { mediaOf } from '../session/uploads-wiring';
+import { mediaOf } from '../session/uploadsWiring';
 import { type CommandResult } from '../types';
 
 import {

@@ -36,7 +36,7 @@ import { defineEditor } from '#/react/define';
 import { extensionsOf } from '#/react/engine';
 import { readerContext } from '#/reader/context';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
-import { SLOT_START_META, uploadSlotsPlugin } from '#/runtime/capabilities/media/upload-slots';
+import { SLOT_START_META, uploadSlotsPlugin } from '#/runtime/capabilities/media/uploadSlots';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 import { featureFixtures } from '#/testing/conformance/fixtures';
 

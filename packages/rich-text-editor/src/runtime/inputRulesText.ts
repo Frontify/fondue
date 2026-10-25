@@ -6,7 +6,7 @@ import { type EditorState } from 'prosemirror-state';
 import { type QuotesRule, type TextReplaceRule } from '#/definition';
 import { OBJECT_REPLACEMENT } from '#/model/internal';
 
-import { holdsCode, WORD } from './input-rules-common';
+import { holdsCode, WORD } from './inputRulesCommon';
 
 /** A language's quotation marks, opening and closing, and its apostrophe. */
 interface Quotes {

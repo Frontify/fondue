@@ -10,7 +10,7 @@ import { diagnostic } from '#/model/internal';
 
 import { secondCopyInView } from '../engines';
 import { type RuntimeEvents } from '../events';
-import { ENTER_RULES_META } from '../input-rules';
+import { ENTER_RULES_META } from '../inputRules';
 import { scrollSelectionIntoView } from '../scroll';
 import { countTargets, restoreTargets } from '../targets';
 import { type ChangeOrigin } from '../types';

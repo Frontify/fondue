@@ -2,7 +2,7 @@
 
 import { type EngineSuggestion } from '#/definition';
 
-import { type ActiveSuggestion, type SuggestionItem } from '../../port-types';
+import { type ActiveSuggestion, type SuggestionItem } from '../../portTypes';
 
 import { type ReferenceResults } from './references';
 

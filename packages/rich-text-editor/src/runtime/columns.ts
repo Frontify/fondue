@@ -6,7 +6,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { COLUMN_BREAK } from '#/model/internal';
 
-import { type ColumnState } from './port-types';
+import { type ColumnState } from './portTypes';
 
 export type { ColumnState };
 

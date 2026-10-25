@@ -8,7 +8,7 @@ import {
     type NodeViewConstructor,
 } from 'prosemirror-view';
 
-import { suggestionOptionId } from '../capabilities/suggestions/option-id';
+import { suggestionOptionId } from '../capabilities/suggestions/optionId';
 import { activeSuggestion } from '../capabilities/suggestions/plugin';
 import { type SessionToken } from '../types';
 

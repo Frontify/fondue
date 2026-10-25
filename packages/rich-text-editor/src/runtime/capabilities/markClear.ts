@@ -3,8 +3,8 @@
 import { type MarkType } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { enclosingRange, type Extend, extendOf } from './mark-ranges';
-import { markableText } from './mark-toggle';
+import { enclosingRange, type Extend, extendOf } from './markRanges';
+import { markableText } from './markToggle';
 import { type CapabilityImplementation, markTypesOf, selectedTextblocks } from './shared';
 
 /** The selected range, or at a caret the whole textblocks around it. */

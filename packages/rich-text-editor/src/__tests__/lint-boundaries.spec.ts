@@ -634,7 +634,7 @@ const CASES: readonly Case[] = [
     banned(
         'react: the port engine file',
         'src/react/port-engine.tsx',
-        "import { engineOf } from '#/runtime/port-engine';",
+        "import { engineOf } from '#/runtime/portEngine';",
     ),
     banned('react: the runtime assembly', 'src/react/foo.ts', "import { createPort } from '#/runtime/assembly';"),
     allowed(
@@ -698,7 +698,7 @@ const CASES: readonly Case[] = [
         'src/ui/runtime-type.ts',
         "import type { EditorRuntime } from '#/runtime/runtime';",
     ),
-    banned('ui: the port engine file', 'src/ui/port-engine.ts', "import { engineOf } from '#/runtime/port-engine';"),
+    banned('ui: the port engine file', 'src/ui/port-engine.ts', "import { engineOf } from '#/runtime/portEngine';"),
     allowed('ui: the runtime port', 'src/ui/port.ts', "import { type EditorPort } from '#/runtime/port';"),
     allowed(
         'ui: the runtime port by relative path',

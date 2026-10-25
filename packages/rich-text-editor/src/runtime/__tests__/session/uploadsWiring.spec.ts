@@ -10,7 +10,7 @@ import { compileContentModel, type Feature, type ResourceLimits } from '#/model'
 import { DEFAULT_ACCEPT_TYPES, type UploadEvent, type UploadServiceLike } from '../../capabilities/media/uploads';
 import { createIdentity } from '../../session/identity';
 import { createLifecycle } from '../../session/lifecycle';
-import { createUploadService } from '../../session/uploads-wiring';
+import { createUploadService } from '../../session/uploadsWiring';
 import { type AuthoringPolicy, type SelectionHandle } from '../../types';
 
 const build = (features: readonly Feature[]) => {

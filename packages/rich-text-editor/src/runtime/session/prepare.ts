@@ -8,7 +8,7 @@ import { diagnostic } from '#/model/internal';
 
 import { nameOf } from '../events';
 import { isHistoryTransaction } from '../history';
-import { firedRule, withoutRules, withRuleSetting } from '../input-rules';
+import { firedRule, withoutRules, withRuleSetting } from '../inputRules';
 import { type ExceededLimit, storedNodeCount } from '../limits';
 import { type InputSettling } from '../settle';
 

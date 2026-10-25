@@ -13,7 +13,7 @@ import {
     setIssueIcons,
     withDismissed,
     withIssuesOpen,
-} from '../capabilities/checks/content-issues';
+} from '../capabilities/checks/contentIssues';
 import { type EditorRuntime } from '../runtime';
 
 // A composition that outlasts this wait leaves the action undone.

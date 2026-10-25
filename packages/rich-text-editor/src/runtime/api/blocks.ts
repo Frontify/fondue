@@ -4,7 +4,7 @@ import { type Node } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
 import { clearBlocks, EDITS } from '../capabilities';
-import { type AncestorValue, type BlockValue, type DocumentApi, type SelectionValue } from '../document-api';
+import { type AncestorValue, type BlockValue, type DocumentApi, type SelectionValue } from '../documentApi';
 import { inCodeTextblock, nearest as nearestNode } from '../positions';
 import { summarize } from '../runtime';
 

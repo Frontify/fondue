@@ -10,8 +10,8 @@ import {
     dismissSuggestion,
     moveSuggestion,
 } from './capabilities/suggestions/plugin';
-import { contentChecksApi, rangeOf } from './editor-api';
-import { engineOf } from './port-engine';
+import { contentChecksApi, rangeOf } from './editorApi';
+import { engineOf } from './portEngine';
 import {
     type ActiveSuggestion,
     type ColumnState,
@@ -19,9 +19,9 @@ import {
     type NodeActions,
     type NodeTarget,
     type RuntimeHandle,
-} from './port-types';
+} from './portTypes';
 import { isEmpty, runtimeOf } from './runtime';
-import { mediaOf as mediaOfRuntime } from './session/uploads-wiring';
+import { mediaOf as mediaOfRuntime } from './session/uploadsWiring';
 import {
     type AuthoringPolicy,
     type CaptureResult,
@@ -29,7 +29,7 @@ import {
     type OperationMetric,
     type Unsubscribe,
 } from './types';
-import { endComposition, nodeChromeAt, resyncSelection, selectionRect } from './view-bridge';
+import { endComposition, nodeChromeAt, resyncSelection, selectionRect } from './viewBridge';
 
 export {
     INSERT_IMAGE,
@@ -40,7 +40,7 @@ export {
 } from './capabilities/media/uploads/constants';
 export { type MediaSession } from './capabilities/media/session';
 export { referenceValues } from './capabilities/suggestions/references';
-export { passesToBrowser } from './browser-keys';
+export { passesToBrowser } from './browserKeys';
 export {
     type ActiveSuggestion,
     type ColumnState,
@@ -49,7 +49,7 @@ export {
     type UploadEvent,
     type UploadPlace,
     type UploadRejection,
-} from './port-types';
+} from './portTypes';
 export {
     type AuthoringPolicy,
     type CaptureResult,

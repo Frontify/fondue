@@ -14,7 +14,7 @@ import {
 } from 'react';
 
 import { type EditorPort } from '#/runtime/port';
-import { engineOf } from '#/runtime/port-engine';
+import { engineOf } from '#/runtime/portEngine';
 
 import { createSelectionAnchor } from './anchor';
 import { useClientLayoutEffect } from './clientLayoutEffect';

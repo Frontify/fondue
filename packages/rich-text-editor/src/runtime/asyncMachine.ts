@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type AsyncOperation } from './async';
-import { type AsyncEvent, type AsyncMachine, type AsyncStep, type Draft } from './async-state';
+import { type AsyncEvent, type AsyncMachine, type AsyncStep, type Draft } from './asyncState';
 
-export { initial, type AsyncEffect, type AsyncEvent, type AsyncEventInput, type AsyncFacts } from './async-state';
-export type { AsyncMachine, AsyncStep } from './async-state';
+export { initial, type AsyncEffect, type AsyncEvent, type AsyncEventInput, type AsyncFacts } from './asyncState';
+export type { AsyncMachine, AsyncStep } from './asyncState';
 
 const forget = (d: Draft, operation: AsyncOperation) => {
     d.m.operations.delete(operation.id);

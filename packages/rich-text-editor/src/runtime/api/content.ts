@@ -6,7 +6,7 @@ import { NodeSelection, TextSelection, type Transaction } from 'prosemirror-stat
 import { type TreeNode, encodeTree } from '#/model/internal';
 
 import { EDITS, placeBlock, placesBlock } from '../capabilities';
-import { type DocumentApi } from '../document-api';
+import { type DocumentApi } from '../documentApi';
 import { positionOf } from '../positions';
 import { type CaptureTargetOptions } from '../types';
 

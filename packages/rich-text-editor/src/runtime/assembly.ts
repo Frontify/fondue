@@ -6,14 +6,14 @@ import { type EngineCommand } from '#/definition';
 import { type ContentModel } from '#/model';
 
 import { type ClipboardSession, connectClipboard } from './clipboard/session';
-import { pluginCommand } from './editor-api';
+import { pluginCommand } from './editorApi';
 import { type EditorPort } from './port';
-import { engineOf } from './port-engine';
+import { engineOf } from './portEngine';
 import { createEditorRuntime, type EditorRuntimeOptions, runtimeOfView } from './runtime';
 
 export { RUNTIME_PLUGINS } from './capabilities';
 export { clipboardPlugin, dropCursorPlugin, type FileIntake } from './clipboard/plugin';
-export { pluginCommand } from './editor-api';
+export { pluginCommand } from './editorApi';
 export { authoringOf } from './policy';
 export { type EditorRuntimeOptions } from './runtime';
 

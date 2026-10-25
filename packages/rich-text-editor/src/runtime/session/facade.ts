@@ -3,8 +3,8 @@
 import { type CompiledDefinition } from '#/definition';
 import { type Diagnostic, type ResourceLimits } from '#/model';
 
-import { type ContentChecks } from '../capabilities/checks/content-issues';
-import { createDomIds } from '../dom-ids';
+import { type ContentChecks } from '../capabilities/checks/contentIssues';
+import { createDomIds } from '../domIds';
 import { type EditorRuntime, type RuntimeHandle } from '../runtime';
 
 import { type Actions } from './actions';

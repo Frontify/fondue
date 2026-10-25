@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type EditorPort } from '#/runtime/port';
-import { engineOf } from '#/runtime/port-engine';
+import { engineOf } from '#/runtime/portEngine';
 
 import { type ChromeView, createChromeView } from './chromeView';
 import { markReady } from './devChecks';

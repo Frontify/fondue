@@ -5,7 +5,7 @@ import { type EditorState, type Selection, type Transaction } from 'prosemirror-
 
 import { COMMAND_META, ORIGIN_META } from '#/definition';
 
-import { carrySlots } from '../capabilities/media/upload-slots';
+import { carrySlots } from '../capabilities/media/uploadSlots';
 import { groupRoot, isHistoryTransaction, reset } from '../history';
 import { type InputSettling } from '../settle';
 import { type ChangeOrigin } from '../types';

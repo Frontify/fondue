@@ -9,7 +9,7 @@ import { attributesOf, compiledModel, isValidValue } from '#/model/internal';
 
 import { insertPicked, pickedAsset, refillPicked } from '../capabilities/media/media';
 import { type SuggestionHost } from '../capabilities/suggestions/host';
-import { type NodeActions, type NodeTarget } from '../port-types';
+import { type NodeActions, type NodeTarget } from '../portTypes';
 import { positionOf } from '../positions';
 import { type CommandResult, type SelectionHandle } from '../types';
 

@@ -7,7 +7,7 @@ import { COALESCE_MS } from '#/bridge/announcer';
 import { defineEditorPart, useEditorApi, useEditorValue } from '#/entries/authoring';
 import { contentChecks } from '#/features';
 import { pluginsById } from '#/features/plugins';
-import { CHECK_DELAY_MS } from '#/runtime/capabilities/checks/content-issues';
+import { CHECK_DELAY_MS } from '#/runtime/capabilities/checks/contentIssues';
 import { positionOf } from '#/runtime/positions';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection, typeText } from '#/testing';

@@ -5,9 +5,9 @@ import { type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirr
 
 import { isRecord } from '#/model';
 
-import { clearMarks } from './mark-clear';
-import { enclosingRange, type Extend, extendOf, markRange } from './mark-ranges';
-import { markableText } from './mark-toggle';
+import { clearMarks } from './markClear';
+import { enclosingRange, type Extend, extendOf, markRange } from './markRanges';
+import { markableText } from './markToggle';
 import { type CapabilityImplementation, markTypesOf, REJECTED, tristate, typeIn } from './shared';
 
 /** The transaction meta that carries the mark a `setMark` command set, which the last-mark plugin keeps. */

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type UploadPlace } from '../../port-types';
+import { type UploadPlace } from '../../portTypes';
 import { type CommandResult, type SelectionHandle, type UploadStatus } from '../../types';
 
 /** What a session that installs `media.image` adds to its runtime, found with `mediaOf`. */

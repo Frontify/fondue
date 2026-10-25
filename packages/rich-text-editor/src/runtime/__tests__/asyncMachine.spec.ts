@@ -11,10 +11,10 @@ import {
     type AsyncEventInput,
     type AsyncFacts,
     type AsyncMachine,
-} from '../async-machine';
+} from '../asyncMachine';
 import { type SelectionHandle } from '../types';
 
-import { EXPECTED } from './async-machine.table';
+import { EXPECTED } from './asyncMachine.table';
 
 const SESSION = { documentId: 'doc', sessionId: 'session', generation: 1 };
 const FACTS: AsyncFacts = { disposed: false, faulted: false, holding: false, session: SESSION, aborting: false };

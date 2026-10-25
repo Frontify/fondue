@@ -3,7 +3,7 @@
 import { type Diagnostic } from '#/model';
 import { diagnostic } from '#/model/internal';
 
-import { initial, next, type AsyncEffect, type AsyncEventInput, type AsyncFacts } from './async-machine';
+import { initial, next, type AsyncEffect, type AsyncEventInput, type AsyncFacts } from './asyncMachine';
 import { type FeaturePolicy, type SelectionHandle, type SessionToken } from './types';
 
 /** What a capability hands the coordinator: the service call and the command that applies its result. */

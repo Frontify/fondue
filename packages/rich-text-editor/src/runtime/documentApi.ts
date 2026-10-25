@@ -2,7 +2,7 @@
 
 import { type ContentNodeJSON, type JsonObject, type JsonValue, type RichTextDocument } from '#/model';
 
-import { positionsOf } from './editor-api';
+import { positionsOf } from './editorApi';
 import {
     type AuthoringPolicy,
     type CaptureTargetOptions,

@@ -6,7 +6,7 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 import { type BlockRule, type LineStartRule } from '#/definition';
 import { findInvalidPayload } from '#/model';
 
-import { holdsCode } from './input-rules-common';
+import { holdsCode } from './inputRulesCommon';
 import { appendSteps, carrySelection } from './transactions';
 
 /**

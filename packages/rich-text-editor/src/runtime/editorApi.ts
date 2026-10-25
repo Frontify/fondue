@@ -6,9 +6,9 @@ import { COMMAND_META } from '#/definition';
 
 import { documentApi } from './api/document';
 import { positionsIn } from './api/shared';
-import { type CommandOutcome, type DocumentApi } from './document-api';
+import { type CommandOutcome, type DocumentApi } from './documentApi';
 import { type EditorRuntime } from './runtime';
-import { mediaOf } from './session/uploads-wiring';
+import { mediaOf } from './session/uploadsWiring';
 import { type CommandResult } from './types';
 
 export { contentChecksApi } from './api/checks';

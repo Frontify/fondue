@@ -9,7 +9,7 @@ import { withNodeIds } from '#/definition';
 import { type ContentNodeJSON, type JsonObject, isRecord } from '#/model';
 import { hasNodeId, attributesOf, compiledModel, decodeToTree, randomId } from '#/model/internal';
 
-import { type WriteOutcome, type WriteTarget } from '../document-api';
+import { type WriteOutcome, type WriteTarget } from '../documentApi';
 import { positionOf } from '../positions';
 
 import { checkedAttrs, urlRefused } from './checked';

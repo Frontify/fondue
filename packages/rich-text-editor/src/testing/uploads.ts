@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { defaultLimits } from '#/model';
-import { readImageHeader, svgHoldsScript } from '#/runtime/capabilities/media/image-header';
+import { readImageHeader, svgHoldsScript } from '#/runtime/capabilities/media/imageHeader';
 import { isAssetLocator } from '#/runtime/capabilities/media/media';
 import { DEFAULT_ACCEPT_TYPES, MAX_IMAGE_SIDE } from '#/runtime/capabilities/media/uploads';
 import { type ServiceContext } from '#/runtime/types';

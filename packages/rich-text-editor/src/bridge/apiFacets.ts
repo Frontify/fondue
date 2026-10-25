@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type DocumentApi } from '#/runtime/document-api';
+import { type DocumentApi } from '#/runtime/documentApi';
 
 import { type EditorHosts } from './plugin';
 

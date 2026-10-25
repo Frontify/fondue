@@ -5,7 +5,7 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 import { type Diagnostic } from '#/model';
 
 import { type ExceededLimit } from '../limits';
-import { type InputOutcome } from '../port-types';
+import { type InputOutcome } from '../portTypes';
 import { type CommandResult, type EditorSummary, type ReplaceResult } from '../types';
 
 export type { InputOutcome };

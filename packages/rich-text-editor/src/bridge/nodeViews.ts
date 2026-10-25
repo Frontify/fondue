@@ -11,7 +11,7 @@ import {
     type ViewNode,
     type ViewNodeConstructor,
     type ViewNodeView,
-} from '#/runtime/view-bridge';
+} from '#/runtime/viewBridge';
 
 import { type NodeViewDeclaration } from './define';
 import { ISLAND_VIEWS } from './island';

@@ -3,9 +3,9 @@
 import { compiledModel } from '#/model/internal';
 
 import { EDITS } from '../capabilities';
-import { type DocumentApi } from '../document-api';
+import { type DocumentApi } from '../documentApi';
 import { canRedo, canUndo } from '../history';
-import { nodeStateOf, withNodeState } from '../node-state';
+import { nodeStateOf, withNodeState } from '../nodeState';
 
 import { type ApiSource, sharedEdits } from './shared';
 

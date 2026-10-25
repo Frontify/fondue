@@ -13,9 +13,9 @@ import {
 import { INPUT_RULES_PLUGIN, OBJECT_REPLACEMENT } from '#/model/internal';
 
 import { closeGroup, isHistoryTransaction, undo } from './history';
-import { blockStart, lineStart } from './input-rules-block';
-import { markDelimiter, markPattern } from './input-rules-marks';
-import { quotes, textReplace } from './input-rules-text';
+import { blockStart, lineStart } from './inputRulesBlock';
+import { markDelimiter, markPattern } from './inputRulesMarks';
+import { quotes, textReplace } from './inputRulesText';
 
 // As `prosemirror-inputrules`, a rule reads at most this much text before the caret.
 const MAX_MATCH = 500;

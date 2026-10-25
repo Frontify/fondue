@@ -13,9 +13,9 @@ import {
 } from '#/model';
 import { type TreeNode, encodeTree, findUnsafeJson, snapshot } from '#/model/internal';
 
-import { type CommandOutcome, type DocumentApi } from '../document-api';
+import { type CommandOutcome, type DocumentApi } from '../documentApi';
 import { type EditorRuntime } from '../runtime';
-import { mediaOf } from '../session/uploads-wiring';
+import { mediaOf } from '../session/uploadsWiring';
 import { type AuthoringPolicy } from '../types';
 
 import { policyOf } from './checked';

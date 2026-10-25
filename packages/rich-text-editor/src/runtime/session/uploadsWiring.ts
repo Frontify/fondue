@@ -16,7 +16,7 @@ import {
     type UploadServiceLike,
     type Uploads,
 } from '../capabilities/media/uploads';
-import { withNodeState } from '../node-state';
+import { withNodeState } from '../nodeState';
 import { type EditorRuntime } from '../runtime';
 import { type UploadStatus } from '../types';
 

@@ -14,7 +14,7 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { REPLACED_ASSET } from '#/model';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
-import { nodeStateOf } from '#/runtime/node-state';
+import { nodeStateOf } from '#/runtime/nodeState';
 
 import { mayAnimate } from '../animation';
 import { drawStill } from '../image';

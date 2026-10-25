@@ -28,7 +28,7 @@ import {
 } from '#/model';
 import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
-import { mediaOf } from '#/runtime/session/uploads-wiring';
+import { mediaOf } from '#/runtime/session/uploadsWiring';
 import { type AuthoringPolicy, type DocumentChange } from '#/runtime/types';
 import { declaredPng } from '#/testing/uploads';
 

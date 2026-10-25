@@ -4,7 +4,7 @@ import { type EditorRuntimeOptions } from '../runtime';
 import { type SelectionHandle } from '../types';
 
 import { createActions } from './actions';
-import { type Editing } from './assemble-editing';
+import { type Editing } from './assembleEditing';
 import { createCommands } from './commands';
 import { createFocus } from './focus';
 import { type Late } from './late';

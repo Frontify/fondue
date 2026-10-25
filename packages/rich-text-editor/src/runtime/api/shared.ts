@@ -9,7 +9,7 @@ import { snapshot } from '#/model/internal';
 
 import { type CapabilityImplementation } from '../capabilities';
 import { type MediaSession } from '../capabilities/media/session';
-import { type CommandOutcome, type EditorRange } from '../document-api';
+import { type CommandOutcome, type EditorRange } from '../documentApi';
 import {
     type AuthoringPolicy,
     type CaptureTargetOptions,

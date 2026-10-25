@@ -26,7 +26,7 @@ import { type Shown } from './shown';
 import { type Store } from './store';
 import { type TargetsService } from './targets';
 import { type ReplaceCode } from './types';
-import { type UploadService } from './uploads-wiring';
+import { type UploadService } from './uploadsWiring';
 import { type ViewService } from './view';
 
 export interface Replace {

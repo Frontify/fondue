@@ -14,7 +14,7 @@ import {
 
 import { useRenderMark } from './devChecks';
 
-export { suggestionOptionId } from '#/runtime/capabilities/suggestions/option-id';
+export { suggestionOptionId } from '#/runtime/capabilities/suggestions/optionId';
 export {
     CheckedSlot,
     keepFocus,

@@ -2,13 +2,13 @@
 
 import { type EditorRuntime, type EditorRuntimeOptions } from '../runtime';
 
-import { type Operations } from './assemble-operations';
+import { type Operations } from './assembleOperations';
 import { createDispose } from './dispose';
 import { createFacade } from './facade';
 import { createHandle } from './handle';
 import { liveResources } from './registry';
 import { createReplace } from './replace';
-import { installMedia } from './uploads-wiring';
+import { installMedia } from './uploadsWiring';
 
 /** Replace, dispose, the host's handle and the testing facade over every earlier phase. */
 export const assembleSession = (parts: Operations, options: EditorRuntimeOptions) => {

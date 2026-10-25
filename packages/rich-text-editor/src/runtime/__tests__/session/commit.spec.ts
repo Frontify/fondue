@@ -9,7 +9,7 @@ import { ORIGIN_META } from '#/definition';
 import { type Diagnostic, type ResourceLimits } from '#/model';
 import { diagnostic } from '#/model/internal';
 
-import { ENTER_RULES_META } from '../../input-rules';
+import { ENTER_RULES_META } from '../../inputRules';
 import { createCommit } from '../../session/commit';
 import { createIdentity } from '../../session/identity';
 import { createLifecycle } from '../../session/lifecycle';

@@ -22,7 +22,7 @@ import {
     type ViewNode,
     type ViewProps,
     type ViewSchema,
-} from './view-bridge';
+} from './viewBridge';
 
 /** What the view styles content with: the presentation's recipes and colours, and who hears an unknown style ID. */
 export interface ChromeStyles {

@@ -7,7 +7,7 @@ import { COALESCE_MS } from '#/bridge/announcer';
 import { core, emoji, fontColor } from '#/features';
 import { fixturePickerPanel, openFind } from '#/features/__tests__/fixtures/panels';
 import { mountText, textModel } from '#/react/__tests__/fixtures/text';
-import { CHECK_DELAY_MS, contentChecksOf } from '#/runtime/capabilities/checks/content-issues';
+import { CHECK_DELAY_MS, contentChecksOf } from '#/runtime/capabilities/checks/contentIssues';
 import { positionOf } from '#/runtime/positions';
 import { SETTLE_MS } from '#/runtime/settle';
 import { setSelection } from '#/testing';

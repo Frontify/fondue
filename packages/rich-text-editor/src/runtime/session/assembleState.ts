@@ -4,22 +4,22 @@ import { EditorState, Plugin, PluginKey } from 'prosemirror-state';
 
 import { stylesPlugin } from '#/runtime/styles';
 
-import { createContentChecks } from '../capabilities/checks/content-issues';
-import { uploadSlotsPlugin } from '../capabilities/media/upload-slots';
+import { createContentChecks } from '../capabilities/checks/contentIssues';
+import { uploadSlotsPlugin } from '../capabilities/media/uploadSlots';
 import { columnsPlugin } from '../columns';
 import { groupsPlugin } from '../history';
 import { createKeyGuard } from '../keys';
-import { nodeStatePlugin } from '../node-state';
+import { nodeStatePlugin } from '../nodeState';
 import { type EditorRuntimeOptions } from '../runtime';
 import { targetsPlugin } from '../targets';
 
-import { type Core } from './assemble-core';
+import { type Core } from './assembleCore';
 import { createComposition } from './composition';
 import { createHistory } from './history';
 import { type Late } from './late';
 import { createShown } from './shown';
 import { createStore } from './store';
-import { createUploadService } from './uploads-wiring';
+import { createUploadService } from './uploadsWiring';
 
 export type State = ReturnType<typeof assembleState>;
 

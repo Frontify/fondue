@@ -19,7 +19,7 @@ import {
 } from '#/model';
 import { compiledModel, type TreeNode, decodeToTree, encodeTree, featureInternals } from '#/model/internal';
 import { editorEngine } from '#/react/engine';
-import { type ConformanceState, stateFromTree, withWholeDocumentSelected } from '#/runtime/conformance-state';
+import { type ConformanceState, stateFromTree, withWholeDocumentSelected } from '#/runtime/conformanceState';
 
 import { AXE_TAGS } from './axeTags';
 import {

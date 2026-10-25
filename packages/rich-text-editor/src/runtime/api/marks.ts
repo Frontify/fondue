@@ -5,8 +5,8 @@ import { type MarkType, type Node } from 'prosemirror-model';
 import { compiledModel } from '#/model/internal';
 
 import { EDITS } from '../capabilities';
-import { type DocumentApi } from '../document-api';
-import { markRunAt, markRunAtPos } from '../mark-runs';
+import { type DocumentApi } from '../documentApi';
+import { markRunAt, markRunAtPos } from '../markRuns';
 
 import { checkedAttrs } from './checked';
 import { type ApiSource, rangeOf, sharedEdits, valuesOf } from './shared';

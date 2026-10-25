@@ -7,7 +7,7 @@ import { type MarkDelimiterRule, type MarkRule } from '#/definition';
 import { checkHref } from '#/model';
 import { isValidValue } from '#/model/internal';
 
-import { holdsCode, WORD } from './input-rules-common';
+import { holdsCode, WORD } from './inputRulesCommon';
 
 /** The attributes a mark rule's named groups fill, each converted by its declaration, or `undefined` when one fails it. */
 const ruleAttrs = (rule: MarkRule, groups: Readonly<Record<string, string | undefined>>) => {

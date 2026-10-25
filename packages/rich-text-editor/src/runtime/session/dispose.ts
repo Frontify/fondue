@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ContentChecks } from '../capabilities/checks/content-issues';
+import { type ContentChecks } from '../capabilities/checks/contentIssues';
 import { type Uploads } from '../capabilities/media/uploads';
 import { countTargets, releaseTargets } from '../targets';
 import { type SessionToken } from '../types';

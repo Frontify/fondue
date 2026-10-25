@@ -18,7 +18,7 @@ import {
 } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
-import { contentChecksOf } from '#/runtime/capabilities/checks/content-issues';
+import { contentChecksOf } from '#/runtime/capabilities/checks/contentIssues';
 import { authoringOf } from '#/runtime/policy';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 

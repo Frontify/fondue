@@ -18,7 +18,7 @@ import {
 } from '#/model';
 import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/internal';
 import { type ContentChecksApi } from '#/runtime/capabilities/checks/api';
-import { type EditorRange } from '#/runtime/document-api';
+import { type EditorRange } from '#/runtime/documentApi';
 import { type AuthoringPolicy, type ReferenceValue } from '#/runtime/types';
 
 import { type EditorApi, type EditorFacet } from './apiFacets';
@@ -39,8 +39,8 @@ export {
     type SelectionValue,
     type WriteOutcome,
     type WriteTarget,
-} from '#/runtime/document-api';
-export { passesToBrowser } from '#/runtime/browser-keys';
+} from '#/runtime/documentApi';
+export { passesToBrowser } from '#/runtime/browserKeys';
 export { type ReferenceValue, type SelectionHandle, type UploadStatus } from '#/runtime/types';
 export { type Announcer, createAnnouncer } from './announcer';
 export { type EditorApi, type EditorControlApi, type EditorFacet, type EditorFacets } from './apiFacets';

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 import { decodableImage } from '#/testing/images';
 
-import { readImageHeader, svgHoldsScript } from '../image-header';
+import { readImageHeader, svgHoldsScript } from '../imageHeader';
 
 failNetworkInThisFile();
 

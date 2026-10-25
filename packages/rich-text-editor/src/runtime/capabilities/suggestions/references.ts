@@ -3,7 +3,7 @@
 import { checkHref, isRecord } from '#/model';
 import { holdsControls, withoutBidiControls, isStoredId } from '#/model/internal';
 
-import { type SuggestionItem } from '../../port-types';
+import { type SuggestionItem } from '../../portTypes';
 import { type ReferenceValue } from '../../types';
 
 // A person picker shows a page of this many, and stops paging at the total.

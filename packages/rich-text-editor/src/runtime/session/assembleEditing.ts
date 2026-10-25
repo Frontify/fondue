@@ -6,7 +6,7 @@ import { suggestionHosts } from '../capabilities/suggestions/host';
 import { secondCopyAtMount } from '../engines';
 import { type EditorRuntimeOptions } from '../runtime';
 
-import { type State } from './assemble-state';
+import { type State } from './assembleState';
 import { createCommit } from './commit';
 import { createFaults } from './faults';
 import { type Late } from './late';

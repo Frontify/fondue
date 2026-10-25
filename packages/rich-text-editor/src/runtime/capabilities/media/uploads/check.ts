@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { readImageHeader, svgHoldsScript } from '../image-header';
+import { readImageHeader, svgHoldsScript } from '../imageHeader';
 
 import { MAX_IMAGE_SIDE } from './constants';
 import { type Checked, type UploadHost, type UploadRejection } from './types';

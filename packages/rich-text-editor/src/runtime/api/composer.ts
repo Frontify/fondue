@@ -7,8 +7,8 @@ import { Mapping } from 'prosemirror-transform';
 import { type CommandContext, type EngineCommand } from '#/definition';
 
 import { LAST_MARK_META } from '../capabilities';
-import { type EditorRange } from '../document-api';
-import { nodeStateChanges, withNodeState } from '../node-state';
+import { type EditorRange } from '../documentApi';
+import { nodeStateChanges, withNodeState } from '../nodeState';
 import { appendSteps, carrySelection } from '../transactions';
 
 import { type Positions, RANGES } from './shared';

@@ -5,8 +5,8 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import { type CommandsOfPart, defineEditorPart, type EditorApi, type EditorControlApi } from '#/bridge/plugin';
 import { bold } from '#/features/marks-bold/feature';
 
-import { type CommandOutcome } from '../document-api';
-import { pluginCommand, type PluginCommandSpec } from '../editor-api';
+import { type CommandOutcome } from '../documentApi';
+import { pluginCommand, type PluginCommandSpec } from '../editorApi';
 import { type CommandArgs, type CommandOptions, type CommandResult } from '../types';
 
 type Rejected<T extends { readonly status: string }> = Extract<T, { readonly status: 'rejected' }>;

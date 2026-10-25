@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { EDITS } from '../capabilities';
-import { type DocumentApi } from '../document-api';
+import { type DocumentApi } from '../documentApi';
 import { enterItem, listAround, outdentAtStart } from '../lists';
 
 import { type ApiSource, sharedEdits } from './shared';
