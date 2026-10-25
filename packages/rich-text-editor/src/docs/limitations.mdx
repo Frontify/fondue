@@ -19,6 +19,12 @@ The docs, the stories and the locale files mention some features that no shipped
 | `nav.find-replace` | Find and replace                                         | The accessibility checks story, which places its button in the find and replace group.                                                                                                 |
 | `blocks.handle`    | Block handle, drag and drop of blocks and the block menu | Nowhere else.                                                                                                                                                                          |
 
+## Defaults that may surprise a host
+
+- Only the Brand document profile offers alignment. The other profiles install `blocks.align`, so stored alignment is kept and shown, but their authors cannot set it.
+- The typography input rules, such as smart quotes and the arrow `->`, are off: the `input-rules` feature turns a rule group on only when its `typography` option lists it.
+- The Markdown shortcuts of each feature stay on in every profile that installs the feature, such as `**` for bold and `## ` for a heading.
+
 ## What this means for a host
 
 - `featuresById` throws `DefinitionError` with the code `definition.unknown-feature` for each of these IDs. No profile list holds them, and the registry has no factory for them.
