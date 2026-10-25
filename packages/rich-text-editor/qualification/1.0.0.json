@@ -42,7 +42,7 @@
         {
             "build": "./reader",
             "budgetBytes": 25000,
-            "test": "src/reader/__tests__/bundle-size.spec.ts",
+            "test": "src/reader/__tests__/bundleSize.spec.ts",
             "passed": true
         },
         {
