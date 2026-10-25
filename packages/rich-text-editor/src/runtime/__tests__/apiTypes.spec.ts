@@ -3,7 +3,7 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import { type CommandsOfPart, defineEditorPart, type EditorApi, type EditorControlApi } from '#/bridge/plugin';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 
 import { type CommandOutcome } from '../documentApi';
 import { pluginCommand, type PluginCommandSpec } from '../editorApi';

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { countingIds, notesModel } from '#/features/__tests__/fixtures/notes';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, migrateDocument } from '#/model';
 import { setSelection, typeText } from '#/testing';
 

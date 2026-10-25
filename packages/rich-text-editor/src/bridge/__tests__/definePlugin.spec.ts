@@ -4,10 +4,10 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import { corePlugin } from '#/features/core';
 import { core } from '#/features/core/feature';
-import { boldEditor } from '#/features/marks-bold/editor';
-import { bold } from '#/features/marks-bold/feature';
-import { mediaImageEditor } from '#/features/media-image/editor';
-import { mediaImage } from '#/features/media-image/feature';
+import { boldEditor } from '#/features/marksBold/editor';
+import { bold } from '#/features/marksBold/feature';
+import { mediaImageEditor } from '#/features/mediaImage/editor';
+import { mediaImage } from '#/features/mediaImage/feature';
 import { compileContentModel, DefinitionError, type Feature } from '#/model';
 import { featureInternals } from '#/model/internal';
 import { type ReaderRenderers } from '#/reader/define';

@@ -3,7 +3,7 @@
 import { featuresById } from '#/features/registry';
 import { type Feature } from '#/model';
 
-export { fixtureProfiles } from './fixture-profiles';
+export { fixtureProfiles } from './fixtureProfiles';
 
 const MARKS = [
     'marks.bold',

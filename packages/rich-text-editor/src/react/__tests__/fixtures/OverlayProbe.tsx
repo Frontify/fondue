@@ -9,7 +9,7 @@ import { bold, core } from '#/features';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { fixtureItalic, fixtureToolbar } from '#/features/__tests__/fixtures/features';
 import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
-import { FixtureLinkPopover, FixtureMenu, FixtureSuggestions } from '#/features/__tests__/fixtures/overlays/overlays';
+import { FixtureLinkPopover, FixtureMenu, FixtureSuggestions } from '#/features/__tests__/fixtures/overlays/Overlays';
 import { fixtureTableBlock } from '#/features/__tests__/fixtures/table/feature';
 import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import { links } from '#/features/links/feature';

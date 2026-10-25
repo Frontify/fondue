@@ -17,8 +17,8 @@ import {
     resolving,
     storedIn,
     text,
-} from '#/features/media-image/__tests__/fixtures/mount';
-import { mediaImage } from '#/features/media-image/feature';
+} from '#/features/mediaImage/__tests__/fixtures/mount';
+import { mediaImage } from '#/features/mediaImage/feature';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { enUS } from '#/locales/en-US';
 import { setSelection } from '#/testing';

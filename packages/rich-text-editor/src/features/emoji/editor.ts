@@ -3,7 +3,7 @@
 import { defineEditorPart } from '#/bridge/plugin';
 
 import { loadEmoji, searchEmoji } from './data';
-import { EmojiPicker } from './emoji-picker';
+import { EmojiPicker } from './EmojiPicker';
 import { emoji } from './feature';
 
 // Enough for a list that scrolls, few enough to rank well.

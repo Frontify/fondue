@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { fixtureHeadingSet } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel } from '#/model';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 

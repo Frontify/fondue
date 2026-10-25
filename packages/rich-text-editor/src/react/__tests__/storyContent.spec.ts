@@ -20,7 +20,7 @@ interface StoryArgs {
 }
 
 // Stories that show what the content checks find, whose content has issues on purpose.
-const NAMED_FOR_A_CHECK = /a11y-content-checks\//;
+const NAMED_FOR_A_CHECK = /a11yContentChecks\//;
 
 const modelOf = (args: StoryArgs): ContentModel | undefined => {
     if (args.definition !== undefined) {

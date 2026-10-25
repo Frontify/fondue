@@ -15,7 +15,7 @@ const load = async () => {
     const features = await import('#/features');
     const model = await import('#/model');
     const codecs = await import('#/codecs');
-    const outside = await import('#/features/__tests__/fixtures/outside-feature');
+    const outside = await import('#/features/__tests__/fixtures/outsideFeature');
     const { renderReader } = await import('#/reader/__tests__/helpers/helpers');
     return { features, model, codecs, outside, renderReader };
 };

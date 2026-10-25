@@ -18,11 +18,11 @@ import {
     FixtureRunAnchored,
     FixtureSuggestions,
     LinkForm,
-} from '#/features/__tests__/fixtures/overlays/overlays';
+} from '#/features/__tests__/fixtures/overlays/Overlays';
 import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
 import { pressKey, setSelection, typeText } from '#/testing';

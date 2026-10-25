@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type RichTextPlugin } from '#/bridge/definePlugin';
-import { contentChecksPlugin } from '#/features/a11y-content-checks';
-import { headingPlugin } from '#/features/blocks-heading';
-import { rulePlugin } from '#/features/blocks-rule';
-import { formatClearPlugin } from '#/features/format-clear';
-import { subscriptPlugin } from '#/features/marks-subscript';
-import { superscriptPlugin } from '#/features/marks-superscript';
-import { mediaImagePlugin } from '#/features/media-image';
-import { mediaUploadPlugin } from '#/features/media-upload';
-import { outlinePlugin } from '#/features/nav-outline';
+import { contentChecksPlugin } from '#/features/a11yContentChecks';
+import { headingPlugin } from '#/features/blocksHeading';
+import { rulePlugin } from '#/features/blocksRule';
+import { formatClearPlugin } from '#/features/formatClear';
+import { subscriptPlugin } from '#/features/marksSubscript';
+import { superscriptPlugin } from '#/features/marksSuperscript';
+import { mediaImagePlugin } from '#/features/mediaImage';
+import { mediaUploadPlugin } from '#/features/mediaUpload';
+import { outlinePlugin } from '#/features/navOutline';
 import { documentModel } from '#/features/profiles/document';
 import { type CommandRef } from '#/model';
 

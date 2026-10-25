@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { align } from '#/features/blocks-align/feature';
+import { align } from '#/features/blocksAlign/feature';
 import { core } from '#/features/core/feature';
-import { inputRules } from '#/features/input-rules/feature';
+import { inputRules } from '#/features/inputRules/feature';
 import { links } from '#/features/links/feature';
-import { bold } from '#/features/marks-bold/feature';
-import { fontColor } from '#/features/marks-font-color/feature';
-import { italic } from '#/features/marks-italic/feature';
-import { language } from '#/features/marks-language/feature';
-import { underline } from '#/features/marks-underline/feature';
+import { bold } from '#/features/marksBold/feature';
+import { fontColor } from '#/features/marksFontColor/feature';
+import { italic } from '#/features/marksItalic/feature';
+import { language } from '#/features/marksLanguage/feature';
+import { underline } from '#/features/marksUnderline/feature';
 import { compileContentModel } from '#/model';
 
 /** The Inline profile's features: one paragraph of marks and links, and the marks and alignment a richer surface may hold. */

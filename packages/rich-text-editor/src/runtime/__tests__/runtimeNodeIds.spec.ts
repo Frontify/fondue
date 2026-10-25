@@ -10,7 +10,7 @@ import { fixtureHeadingSet, fixtureMedia } from '#/features/__tests__/fixtures/f
 import { countingIds } from '#/features/__tests__/fixtures/notes';
 import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type JsonValue, type ResourceLimits } from '#/model';
 import { limitsOf } from '#/model/internal';
 import { setSelection, typeText } from '#/testing';

@@ -12,9 +12,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { createCodecs } from '#/codecs';
 import { blockquote, mark, node, paragraph, text } from '#/features/__tests__/fixtures/documents';
 import { htmlFeatures, htmlLink } from '#/features/__tests__/fixtures/html';
-import { quote } from '#/features/blocks-quote/feature';
+import { quote } from '#/features/blocksQuote/feature';
 import { core } from '#/features/core/feature';
-import { language } from '#/features/marks-language/feature';
+import { language } from '#/features/marksLanguage/feature';
 import { registry } from '#/features/registry';
 import { fromHTML } from '#/html';
 import {

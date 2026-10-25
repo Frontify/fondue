@@ -10,7 +10,7 @@ import { node, paragraph, text } from '#/features/__tests__/fixtures/documents';
 import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
 import { fixtureTableBlock } from '#/features/__tests__/fixtures/table/feature';
 import { core } from '#/features/core/feature';
-import { mediaImage } from '#/features/media-image/feature';
+import { mediaImage } from '#/features/mediaImage/feature';
 import { compileContentModel, type JsonValue } from '#/model';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 

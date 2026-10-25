@@ -12,12 +12,12 @@ import { createCodecs } from '#/codecs';
 import { bold, code, core, featuresById, heading, italic, links, mediaImage, mentions, quote } from '#/features';
 import { doc, envelope, paragraph, text } from '#/features/__tests__/fixtures/documents';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { bulletList } from '#/features/lists-bullet/feature';
-import { listItem } from '#/features/lists-item/feature';
-import { strike } from '#/features/marks-strike/feature';
-import { subscript } from '#/features/marks-subscript/feature';
-import { superscript } from '#/features/marks-superscript/feature';
-import { underline } from '#/features/marks-underline/feature';
+import { bulletList } from '#/features/listsBullet/feature';
+import { listItem } from '#/features/listsItem/feature';
+import { strike } from '#/features/marksStrike/feature';
+import { subscript } from '#/features/marksSubscript/feature';
+import { superscript } from '#/features/marksSuperscript/feature';
+import { underline } from '#/features/marksUnderline/feature';
 import {
     compileContentModel,
     DefinitionError,

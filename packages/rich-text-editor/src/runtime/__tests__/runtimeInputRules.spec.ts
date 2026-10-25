@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { defineEditorPart } from '#/bridge/plugin';
 import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, defineFeature, type JsonValue } from '#/model';
 import { pressKey, setSelection, typeText } from '#/testing';
 

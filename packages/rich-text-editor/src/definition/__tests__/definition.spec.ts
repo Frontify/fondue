@@ -20,7 +20,7 @@ import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
-import { mediaImage } from '#/features/media-image/feature';
+import { mediaImage } from '#/features/mediaImage/feature';
 import { mentions } from '#/features/mentions/feature';
 import {
     compileContentModel,

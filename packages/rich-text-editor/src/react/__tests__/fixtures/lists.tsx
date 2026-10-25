@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { bulletList } from '#/features/lists-bullet/feature';
-import { listItem } from '#/features/lists-item/feature';
-import { orderedList } from '#/features/lists-ordered/feature';
-import { taskList } from '#/features/lists-task/feature';
+import { bulletList } from '#/features/listsBullet/feature';
+import { listItem } from '#/features/listsItem/feature';
+import { orderedList } from '#/features/listsOrdered/feature';
+import { taskList } from '#/features/listsTask/feature';
 import { type ContentNodeJSON, type Feature } from '#/model';
 
 import { para, text, textFeatures, textModel } from './text';

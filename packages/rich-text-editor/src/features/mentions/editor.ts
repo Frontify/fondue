@@ -4,7 +4,7 @@ import { defineEditorPart } from '#/bridge/plugin';
 import { type JsonObject } from '#/model';
 
 import { mentions } from './feature';
-import { MentionSearchDialog } from './mention-dialog';
+import { MentionSearchDialog } from './MentionSearchDialog';
 import { resultOf } from './results';
 import { mentionView } from './view';
 

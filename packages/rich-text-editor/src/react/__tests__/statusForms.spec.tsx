@@ -9,7 +9,7 @@ import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import {
     type CommitResult,
     defineEditor,

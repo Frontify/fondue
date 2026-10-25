@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { brandDocumentModel } from '#/features/profiles/brand-document';
+import { brandDocumentModel } from '#/features/profiles/brandDocument';
 import { type ContentModel, type ContentNodeJSON, type MarkJSON, type RichTextDocument } from '#/model';
 
 /** The feature IDs a perf fixture needs, which every fixture shares so one model decodes them all. */

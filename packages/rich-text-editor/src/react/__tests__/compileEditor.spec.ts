@@ -5,11 +5,11 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import { definePlugin, modelOf, type RichTextPlugin } from '#/bridge/definePlugin';
 import { core } from '#/features';
 import { corePlugin } from '#/features/core';
-import { boldPlugin } from '#/features/marks-bold';
-import { boldEditor } from '#/features/marks-bold/editor';
-import { bold } from '#/features/marks-bold/feature';
-import { italicPlugin } from '#/features/marks-italic';
-import { italic } from '#/features/marks-italic/feature';
+import { boldPlugin } from '#/features/marksBold';
+import { boldEditor } from '#/features/marksBold/editor';
+import { bold } from '#/features/marksBold/feature';
+import { italicPlugin } from '#/features/marksItalic';
+import { italic } from '#/features/marksItalic/feature';
 import { compileContentModel, defineFeature, DefinitionError } from '#/model';
 
 import { pluginsOf, readersOf } from '../compileEditor';

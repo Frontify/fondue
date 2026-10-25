@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { compileDefinition } from '#/definition';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type JsonValue, type RichTextDocument } from '#/model';
 import { limitsOf } from '#/model/internal';
 import { extensionsOf } from '#/react/engine';

@@ -8,10 +8,10 @@ import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { deliveredProfiles } from '#/features/__tests__/fixtures/profiles';
-import { mountStyled } from '#/features/__tests__/fixtures/style-editor';
+import { mountStyled } from '#/features/__tests__/fixtures/styleEditor';
 import { styleModel } from '#/features/__tests__/fixtures/styles';
-import { fontColor } from '#/features/marks-font-color/feature';
-import { brandStyles } from '#/features/styles-brand/feature';
+import { fontColor } from '#/features/marksFontColor/feature';
+import { brandStyles } from '#/features/stylesBrand/feature';
 import { compileContentModel, type ContentModel, type ContentNodeJSON, hexColor } from '#/model';
 import { paste } from '#/testing';
 

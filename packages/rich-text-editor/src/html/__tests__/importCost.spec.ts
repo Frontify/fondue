@@ -7,10 +7,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { exceedsMarkupDepth } from '#/clipboard/import/limits';
 import { core } from '#/features/core/feature';
-import { bulletList } from '#/features/lists-bullet/feature';
-import { listItem } from '#/features/lists-item/feature';
-import { orderedList } from '#/features/lists-ordered/feature';
-import { taskList } from '#/features/lists-task/feature';
+import { bulletList } from '#/features/listsBullet/feature';
+import { listItem } from '#/features/listsItem/feature';
+import { orderedList } from '#/features/listsOrdered/feature';
+import { taskList } from '#/features/listsTask/feature';
 import { compileContentModel } from '#/model';
 
 import { fromHTML } from '../index';

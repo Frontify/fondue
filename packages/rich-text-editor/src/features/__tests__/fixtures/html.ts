@@ -1,18 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { align } from '#/features/blocks-align/feature';
-import { heading } from '#/features/blocks-heading/feature';
-import { quote } from '#/features/blocks-quote/feature';
+import { align } from '#/features/blocksAlign/feature';
+import { heading } from '#/features/blocksHeading/feature';
+import { quote } from '#/features/blocksQuote/feature';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
-import { code } from '#/features/marks-code/feature';
-import { fontColor } from '#/features/marks-font-color/feature';
-import { italic } from '#/features/marks-italic/feature';
-import { language } from '#/features/marks-language/feature';
-import { strike } from '#/features/marks-strike/feature';
-import { subscript } from '#/features/marks-subscript/feature';
-import { superscript } from '#/features/marks-superscript/feature';
-import { underline } from '#/features/marks-underline/feature';
+import { bold } from '#/features/marksBold/feature';
+import { code } from '#/features/marksCode/feature';
+import { fontColor } from '#/features/marksFontColor/feature';
+import { italic } from '#/features/marksItalic/feature';
+import { language } from '#/features/marksLanguage/feature';
+import { strike } from '#/features/marksStrike/feature';
+import { subscript } from '#/features/marksSubscript/feature';
+import { superscript } from '#/features/marksSuperscript/feature';
+import { underline } from '#/features/marksUnderline/feature';
 import { compileContentModel, defineFeature } from '#/model';
 
 /**

@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { contentChecks } from '#/features/a11y-content-checks/feature';
-import { heading } from '#/features/blocks-heading/feature';
-import { rule } from '#/features/blocks-rule/feature';
-import { formatClear } from '#/features/format-clear/feature';
-import { subscript } from '#/features/marks-subscript/feature';
-import { superscript } from '#/features/marks-superscript/feature';
-import { mediaImage } from '#/features/media-image/feature';
-import { mediaUpload } from '#/features/media-upload/feature';
-import { outline } from '#/features/nav-outline/feature';
+import { contentChecks } from '#/features/a11yContentChecks/feature';
+import { heading } from '#/features/blocksHeading/feature';
+import { rule } from '#/features/blocksRule/feature';
+import { formatClear } from '#/features/formatClear/feature';
+import { subscript } from '#/features/marksSubscript/feature';
+import { superscript } from '#/features/marksSuperscript/feature';
+import { mediaImage } from '#/features/mediaImage/feature';
+import { mediaUpload } from '#/features/mediaUpload/feature';
+import { outline } from '#/features/navOutline/feature';
 import { compileContentModel } from '#/model';
 
 import { commentFeatures } from './comment';

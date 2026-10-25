@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { extendPlugin, type RichTextPlugin } from '#/bridge/definePlugin';
-import { codeBlockPlugin } from '#/features/blocks-code';
-import { quotePlugin } from '#/features/blocks-quote';
+import { codeBlockPlugin } from '#/features/blocksCode';
+import { quotePlugin } from '#/features/blocksQuote';
 import { corePlugin } from '#/features/core';
 import { emojiPlugin } from '#/features/emoji';
-import { bulletListPlugin } from '#/features/lists-bullet';
-import { listItemPlugin } from '#/features/lists-item';
-import { orderedListPlugin } from '#/features/lists-ordered';
-import { taskListPlugin } from '#/features/lists-task';
-import { codePlugin } from '#/features/marks-code';
-import { strikePlugin } from '#/features/marks-strike';
+import { bulletListPlugin } from '#/features/listsBullet';
+import { listItemPlugin } from '#/features/listsItem';
+import { orderedListPlugin } from '#/features/listsOrdered';
+import { taskListPlugin } from '#/features/listsTask';
+import { codePlugin } from '#/features/marksCode';
+import { strikePlugin } from '#/features/marksStrike';
 import { mentionsPlugin } from '#/features/mentions';
 import { commentModel } from '#/features/profiles/comment';
 import { type CommandRef } from '#/model';

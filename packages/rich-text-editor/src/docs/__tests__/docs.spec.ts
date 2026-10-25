@@ -19,7 +19,7 @@ import {
     inlineFeatures,
     inlineModel,
 } from '#/features';
-import { CONTENT_RULE_IDS } from '#/features/__tests__/fixtures/content-rules';
+import { CONTENT_RULE_IDS } from '#/features/__tests__/fixtures/contentRules';
 import { registry } from '#/features/registry';
 import { UNSHIPPED_FEATURES } from '#/features/stages';
 import { enUS } from '#/locales/en-US';
@@ -212,7 +212,7 @@ describe('the authoring guide', () => {
 
     it('takes every excerpt from a feature folder or the authoring examples of the package', () => {
         for (const { path, language } of excerpts) {
-            expect(path).toMatch(/^src\/(?:features\/[a-z0-9-]+|docs\/authoring)\/[A-Za-z-]+\.tsx?$/);
+            expect(path).toMatch(/^src\/(?:features\/[A-Za-z0-9]+|docs\/authoring)\/[A-Za-z-]+\.tsx?$/);
             expect(language).toBe(path.endsWith('.tsx') ? 'tsx' : 'ts');
         }
     });

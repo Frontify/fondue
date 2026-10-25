@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { extendPlugin, type RichTextPlugin } from '#/bridge/definePlugin';
-import { alignPlugin } from '#/features/blocks-align';
+import { alignPlugin } from '#/features/blocksAlign';
 import { corePlugin } from '#/features/core';
-import { inputRulesPlugin } from '#/features/input-rules';
+import { inputRulesPlugin } from '#/features/inputRules';
 import { linksPlugin } from '#/features/links';
-import { boldPlugin } from '#/features/marks-bold';
-import { fontColorPlugin } from '#/features/marks-font-color';
-import { italicPlugin } from '#/features/marks-italic';
-import { languagePlugin } from '#/features/marks-language';
-import { underlinePlugin } from '#/features/marks-underline';
+import { boldPlugin } from '#/features/marksBold';
+import { fontColorPlugin } from '#/features/marksFontColor';
+import { italicPlugin } from '#/features/marksItalic';
+import { languagePlugin } from '#/features/marksLanguage';
+import { underlinePlugin } from '#/features/marksUnderline';
 import { inlineModel } from '#/features/profiles/inline';
 
 import { compileEditor } from '../compileEditor';

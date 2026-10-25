@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { type EditorPart } from '#/bridge/plugin';
-import { brandDocumentModel } from '#/features/profiles/brand-document';
+import { brandDocumentModel } from '#/features/profiles/brandDocument';
 import { commentModel } from '#/features/profiles/comment';
 import { documentModel } from '#/features/profiles/document';
 import { inlineModel } from '#/features/profiles/inline';

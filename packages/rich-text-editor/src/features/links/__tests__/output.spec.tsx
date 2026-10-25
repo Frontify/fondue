@@ -7,12 +7,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs/codecs';
 import { RichTextReader } from '#/entries/reader';
-import { heading } from '#/features/blocks-heading/feature';
-import { quote } from '#/features/blocks-quote/feature';
+import { heading } from '#/features/blocksHeading/feature';
+import { quote } from '#/features/blocksQuote/feature';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
-import { bold } from '#/features/marks-bold/feature';
-import { brandStyles } from '#/features/styles-brand/feature';
+import { bold } from '#/features/marksBold/feature';
+import { brandStyles } from '#/features/stylesBrand/feature';
 import { type PresentationStyle } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import {

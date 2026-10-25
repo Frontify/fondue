@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { featuresById } from '#/features';
-import { fontColor } from '#/features/marks-font-color/feature';
+import { fontColor } from '#/features/marksFontColor/feature';
 import { registry } from '#/features/registry';
 import { compileContentModel } from '#/model';
 

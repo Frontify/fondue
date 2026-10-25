@@ -46,7 +46,7 @@ export const measure = async (
     source: string,
     options: {
         readonly external?: (id: string) => boolean;
-        /** Replaces the module a specifier names, as `[{ find: '#/features/marks-strike/feature', replacement: path }]`. */
+        /** Replaces the module a specifier names, as `[{ find: '#/features/marksStrike/feature', replacement: path }]`. */
         readonly alias?: readonly { readonly find: string; readonly replacement: string }[];
     } = {},
 ): Promise<Measured> => {
@@ -107,7 +107,8 @@ export const profileBytes = async (
     profile: ProfileName,
     alias: readonly { readonly find: string; readonly replacement: string }[] = [],
 ): Promise<{ readonly bytes: number; readonly modules: readonly string[] }> => {
-    const { chunks } = await measure(`import '#/features/profiles/__tests__/fixtures/${profile}.entry';`, { alias });
+    const entry = profile.replaceAll(/-(\w)/g, (_, letter: string) => letter.toUpperCase());
+    const { chunks } = await measure(`import '#/features/profiles/__tests__/fixtures/${entry}.entry';`, { alias });
     const byName = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));
     const loaded = new Set<ChunkInfo>();
     const visit = (chunk: ChunkInfo | undefined) => {

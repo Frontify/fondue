@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { heading } from '#/features/blocks-heading/feature';
-import { quote } from '#/features/blocks-quote/feature';
+import { heading } from '#/features/blocksHeading/feature';
+import { quote } from '#/features/blocksQuote/feature';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
-import { fontColor } from '#/features/marks-font-color/feature';
-import { brandStyles } from '#/features/styles-brand/feature';
+import { fontColor } from '#/features/marksFontColor/feature';
+import { brandStyles } from '#/features/stylesBrand/feature';
 import {
     type ColorToken,
     compileContentModel,

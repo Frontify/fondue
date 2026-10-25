@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { codeBlock } from '#/features/blocks-code/feature';
-import { quote } from '#/features/blocks-quote/feature';
+import { codeBlock } from '#/features/blocksCode/feature';
+import { quote } from '#/features/blocksQuote/feature';
 import { emoji } from '#/features/emoji/feature';
-import { bulletList } from '#/features/lists-bullet/feature';
-import { listItem } from '#/features/lists-item/feature';
-import { orderedList } from '#/features/lists-ordered/feature';
-import { taskList } from '#/features/lists-task/feature';
-import { code } from '#/features/marks-code/feature';
-import { strike } from '#/features/marks-strike/feature';
+import { bulletList } from '#/features/listsBullet/feature';
+import { listItem } from '#/features/listsItem/feature';
+import { orderedList } from '#/features/listsOrdered/feature';
+import { taskList } from '#/features/listsTask/feature';
+import { code } from '#/features/marksCode/feature';
+import { strike } from '#/features/marksStrike/feature';
 import { mentions } from '#/features/mentions/feature';
 import { compileContentModel } from '#/model';
 

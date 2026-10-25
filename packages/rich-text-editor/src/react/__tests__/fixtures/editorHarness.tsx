@@ -8,7 +8,7 @@ import { vi } from 'vitest';
 import { fixtureItalic } from '#/features/__tests__/fixtures/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
 import { type LoadedDocument } from '#/persistence/types';
 import { liveResources, type RuntimeHandle } from '#/runtime/runtime';

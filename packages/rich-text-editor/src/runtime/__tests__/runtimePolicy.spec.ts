@@ -9,7 +9,7 @@ import { fixtureHeadingSet, fixtureMention, fixtureTable } from '#/features/__te
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { defineEditor } from '#/index';
 import { compileContentModel, type JsonValue } from '#/model';
 import { pressKey, setSelection, typeText } from '#/testing';

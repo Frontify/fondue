@@ -7,7 +7,7 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { bold, core } from '#/features';
 import { fixtureLabelledMention } from '#/features/__tests__/fixtures/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { taskList as taskListFeature } from '#/features/lists-task/feature';
+import { taskList as taskListFeature } from '#/features/listsTask/feature';
 import { defineEditor, type DocumentChange, type EditorHandle, RichTextEditor, type UploadService } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';

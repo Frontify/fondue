@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { fixtureHeading } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel } from '#/model';
 
 import { buildSchema } from '../schema';

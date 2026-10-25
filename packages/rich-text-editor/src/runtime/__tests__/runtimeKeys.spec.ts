@@ -6,7 +6,7 @@ import { isApplePlatform } from '#/bridge/platform';
 import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
 import { fixtureHeadingSet } from '#/features/__tests__/fixtures/features';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, defineFeature, type FeatureDeclaration } from '#/model';
 import { pressKey, setSelection } from '#/testing';
 import { bindingHere } from '#/ui/shortcuts';

@@ -9,7 +9,7 @@ import { createCodecs } from '#/codecs/codecs';
 import { RichTextReader } from '#/entries/reader';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type ContentModel, type JsonValue } from '#/model';
 import {
     type LoadedDocument,

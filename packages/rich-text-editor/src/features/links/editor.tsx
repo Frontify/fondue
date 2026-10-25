@@ -4,8 +4,8 @@ import { defineEditorPart, type EditorApi, type EditorCommand } from '#/bridge/p
 import { markRule } from '#/model';
 
 import { links } from './feature';
-import { EDIT_LINK, LinkBubble, REMOVE_LINK } from './link-bubble';
-import { LinkPopover, linkInitialOf, SET_LINK } from './link-popover';
+import { EDIT_LINK, LinkBubble, REMOVE_LINK } from './LinkBubble';
+import { LinkPopover, linkInitialOf, SET_LINK } from './LinkPopover';
 
 // An absolute URL after a space, a bracket, a quote or the block start, without the punctuation that ends a sentence.
 const AUTOLINK = /(?<=^|[\s([{<"'])(?<href>(?:https?:\/\/|mailto:|tel:)[^\s<>]*[^\s<>.,;:!?'")\]}])\s$/u;

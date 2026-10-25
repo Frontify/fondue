@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { columnsPlugin } from '#/features/layout-columns';
-import { brandDocumentModel } from '#/features/profiles/brand-document';
-import { brandStylesPlugin } from '#/features/styles-brand';
+import { columnsPlugin } from '#/features/layoutColumns';
+import { brandDocumentModel } from '#/features/profiles/brandDocument';
+import { brandStylesPlugin } from '#/features/stylesBrand';
 
 import { compileEditor } from '../compileEditor';
 import { defineReactPresentation } from '../presentation';

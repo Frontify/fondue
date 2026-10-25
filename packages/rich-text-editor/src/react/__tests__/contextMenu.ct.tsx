@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
-import { ImageProbe } from '../../features/media-image/__tests__/fixtures/ImageProbe';
+import { ImageProbe } from '../../features/mediaImage/__tests__/fixtures/ImageProbe';
 
 const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Notes' });
 const menuOf = (page: Page) => page.getByRole('menu', { name: 'Selection actions' });

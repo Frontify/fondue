@@ -11,7 +11,7 @@ import {
     fixtureThrowingFindPanel,
     openFind,
 } from '#/features/__tests__/fixtures/panels';
-import { contentChecks } from '#/features/a11y-content-checks/feature';
+import { contentChecks } from '#/features/a11yContentChecks/feature';
 import { core } from '#/features/core/feature';
 import { type ContentModel, type Feature } from '#/model';
 import { liveRegionFaults } from '#/react/__tests__/fixtures/liveRegion';

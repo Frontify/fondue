@@ -21,7 +21,7 @@ const FOLDERS = readdirSync(featuresRoot, { withFileTypes: true })
     .map((entry) => entry.name)
     .sort();
 
-const READER_FOLDERS = ['links', 'lists-task', 'media-image', 'mentions'];
+const READER_FOLDERS = ['links', 'listsTask', 'mediaImage', 'mentions'];
 
 const unitOf = async (folder: string) => {
     const exports = (await import(`../${folder}/index.ts`)) as Record<string, Unit>;

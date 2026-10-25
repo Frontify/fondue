@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/features';
-import { CONTENT_RULE_IDS } from '#/features/__tests__/fixtures/content-rules';
+import { CONTENT_RULE_IDS } from '#/features/__tests__/fixtures/contentRules';
 import { deCH } from '#/locales/de-CH';
 import { enUS } from '#/locales/en-US';
 import {

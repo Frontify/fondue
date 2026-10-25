@@ -5,8 +5,8 @@ import { useEffect, useRef } from 'react';
 
 import { codeBlock, core } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { bulletList } from '#/features/lists-bullet/feature';
-import { listItem } from '#/features/lists-item/feature';
+import { bulletList } from '#/features/listsBullet/feature';
+import { listItem } from '#/features/listsItem/feature';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { setSelection } from '#/testing';

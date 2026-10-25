@@ -14,7 +14,7 @@ import { type fixtureHeadingSetEditor } from '#/features/__tests__/fixtures/edit
 import { fixtureHeadingSet } from '#/features/__tests__/fixtures/features';
 import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { type EditorHandle } from '#/index';
 import { compileContentModel, defineFeature, type Diagnostic } from '#/model';
 import { limitsOf } from '#/model/internal';

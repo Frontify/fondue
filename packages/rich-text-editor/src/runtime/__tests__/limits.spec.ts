@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { compileDefinition } from '#/definition';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, defaultLimits } from '#/model';
 import { type TreeNode, decodeToTree, encodeTree } from '#/model/internal';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';

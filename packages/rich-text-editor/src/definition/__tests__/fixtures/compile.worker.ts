@@ -4,7 +4,7 @@ import { parentPort } from 'node:worker_threads';
 
 import { compileDefinition } from '#/definition';
 import { fixtureExtensionsOf } from '#/features/__tests__/fixtures/extensions';
-import { fixtureProfiles } from '#/features/__tests__/fixtures/fixture-profiles';
+import { fixtureProfiles } from '#/features/__tests__/fixtures/fixtureProfiles';
 import { compileContentModel } from '#/model';
 
 // Compiles every profile stand-in in a fresh module graph and reports the schema, keymap, plugin order and manifest.

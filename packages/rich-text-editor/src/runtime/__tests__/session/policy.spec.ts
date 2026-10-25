@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { compileDefinition } from '#/definition';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, defaultLimits } from '#/model';
 
 import { authoringOf } from '../../policy';

@@ -5,8 +5,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { countAppends } from '#/definition';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
-import { mediaImage } from '#/features/media-image/feature';
+import { bold } from '#/features/marksBold/feature';
+import { mediaImage } from '#/features/mediaImage/feature';
 import { compileContentModel } from '#/model';
 import { setSelection, typeText } from '#/testing';
 import { declaredPng } from '#/testing/uploads';

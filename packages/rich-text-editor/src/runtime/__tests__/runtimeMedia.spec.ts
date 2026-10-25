@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { core } from '#/features/core/feature';
-import { mediaImage } from '#/features/media-image/feature';
+import { mediaImage } from '#/features/mediaImage/feature';
 import { compileContentModel } from '#/model';
 
 import { mediaOf } from '../session/uploadsWiring';

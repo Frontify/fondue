@@ -12,7 +12,7 @@ import { countingIds } from '#/features/__tests__/fixtures/notes';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import { type PersistenceService } from '#/index';
 import {
     compileContentModel,

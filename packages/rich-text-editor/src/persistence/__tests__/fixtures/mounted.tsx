@@ -12,7 +12,7 @@ import { defineEditorPart } from '#/entries/authoring';
 import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
-import { bold } from '#/features/marks-bold/feature';
+import { bold } from '#/features/marksBold/feature';
 import {
     defineEditor,
     type EditorHandle,

@@ -11,8 +11,8 @@ import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/featu
 import { fixtureCodeBlockEditor } from '#/features/__tests__/fixtures/code-block/view';
 import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
-import { boldEditor } from '#/features/marks-bold/editor';
-import { bold } from '#/features/marks-bold/feature';
+import { boldEditor } from '#/features/marksBold/editor';
+import { bold } from '#/features/marksBold/feature';
 import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
 import {
