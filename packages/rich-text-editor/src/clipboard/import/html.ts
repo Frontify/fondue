@@ -19,11 +19,11 @@ import {
 import { type ColorReading, colorReadingOf, normalizeColors } from './colors';
 import { descriptorOf } from './dom';
 import { withSpaces, withValidAttributes } from './fragment';
-import { cleanGoogleDocs } from './google-docs';
+import { cleanGoogleDocs } from './googleDocs';
 import { exceedsMarkupDepth } from './limits';
 import { removeEmptySpans, removeItemBreaks, removeMarkup } from './markup';
 import { rebuildOfficeLists, removeOfficeMarkup } from './office';
-import { clearingRules, functionRules, readAnswers, withRefusals } from './parse-rules';
+import { clearingRules, functionRules, readAnswers, withRefusals } from './parseRules';
 import { withinLinkPolicy } from './policy';
 
 export interface HtmlSettings {

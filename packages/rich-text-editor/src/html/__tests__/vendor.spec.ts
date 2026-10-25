@@ -10,7 +10,7 @@ import { type Node as EngineNode, DOMParser as SchemaParser } from 'prosemirror-
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { NO_COLORS } from '#/clipboard/import/colors';
-import { cleanGoogleDocs } from '#/clipboard/import/google-docs';
+import { cleanGoogleDocs } from '#/clipboard/import/googleDocs';
 import { importHtml } from '#/clipboard/import/html';
 import { removeEmptySpans, removeItemBreaks, removeMarkup } from '#/clipboard/import/markup';
 import { rebuildOfficeLists, removeOfficeMarkup } from '#/clipboard/import/office';
