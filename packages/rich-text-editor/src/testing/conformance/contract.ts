@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EditorState, TextSelection } from 'prosemirror-state';
-
 import { type EditorPart, partWithOptions } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { type CompiledDefinition } from '#/definition';
@@ -25,6 +23,7 @@ import { encodeTree } from '#/model/encode';
 import { featureInternals } from '#/model/feature';
 import { isRecord } from '#/model/values';
 import { editorEngine } from '#/react/engine';
+import { type ConformanceState, stateFromTree, withWholeDocumentSelected } from '#/runtime/conformance-state';
 
 import { AXE_TAGS } from './axe-tags';
 import {
@@ -81,7 +80,7 @@ interface Contract extends TestRunner {
     readonly options: FeatureContractOptions;
     readonly compiled: () => ContentModel;
     readonly engineOf: () => CompiledDefinition;
-    readonly stateOf: (document: RichTextDocument) => EditorState;
+    readonly stateOf: (document: RichTextDocument) => ConformanceState;
     readonly storedIn: (fixture: unknown) => RichTextDocument;
     readonly partOf: (id: string) => EditorPart | undefined;
     readonly sharedDefaults: readonly SharedDefault[];
@@ -125,7 +124,7 @@ const contractOf = (features: readonly Feature[], options: FeatureContractOption
         if (tree === undefined) {
             throw new Error('The document does not decode.');
         }
-        return EditorState.create({ doc: engineOf().schema.nodeFromJSON(tree) });
+        return stateFromTree(engineOf(), tree);
     };
     /** A fixture as a document of the model under test, whatever model it names. */
     const storedIn = (fixture: unknown): RichTextDocument => {
@@ -241,11 +240,8 @@ const commandCases = (
             const given = (options.fixtures ?? []).map(storedIn);
             for (const fixture of [createEmptyDocument(compiled()), ...Object.values(fixtures), ...given]) {
                 const state = stateOf(fixture);
-                const { doc } = state;
                 // A query over a range reaches the code that would build a transaction.
-                const selected = state.apply(
-                    state.tr.setSelection(TextSelection.between(doc.resolve(0), doc.resolve(doc.content.size))),
-                );
+                const selected = withWholeDocumentSelected(state);
                 for (const queried of [state, selected]) {
                     expect(typeof command.run(queried)).toBe('boolean');
                     expect([true, false, 'mixed'].includes(command.active(queried))).toBe(true);

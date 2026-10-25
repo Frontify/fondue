@@ -527,6 +527,11 @@ const CASES: readonly Case[] = [
         "import { editorEngine } from '#/react/engine';",
     ),
     banned(
+        'testing: prosemirror-state inside conformance',
+        'src/testing/conformance/x.ts',
+        "import { EditorState } from 'prosemirror-state';",
+    ),
+    banned(
         'testing: the units registry outside conformance',
         'src/testing/units.ts',
         "import { pluginsById } from '#/features/plugins';",

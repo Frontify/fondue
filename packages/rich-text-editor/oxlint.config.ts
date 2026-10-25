@@ -365,7 +365,7 @@ const TESTING_MESSAGE =
     '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `features` only conformance and fixtures.';
 
 const CONFORMANCE_MESSAGE =
-    'The contract suite drives editor parts through the engine, so it also imports `prosemirror-state`, `react`, `react-dom/server`, `#/bridge/plugin`, `#/features/plugins`, `#/features/registry` and `#/react/engine`.';
+    'The contract suite drives editor parts through the engine, so it also imports `react`, `react-dom/server`, `#/bridge/plugin`, `#/features/plugins`, `#/features/registry` and `#/react/engine`.';
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition`, `clipboard/import` and ProseMirror.';
 
@@ -777,7 +777,6 @@ export default defineConfig({
                     ...ENGINE_PATTERNS,
                     ...exceptPatterns(['runtime/clipboard/plugin']),
                     ...exceptPatterns(['bridge/plugin', 'features/plugins', 'features/registry', 'react/engine']),
-                    '!prosemirror-state',
                     '!react',
                     '!react-dom/server',
                 ],
