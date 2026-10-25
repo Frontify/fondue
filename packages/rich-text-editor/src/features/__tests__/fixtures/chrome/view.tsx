@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { fixtureChrome } from './feature';
 
@@ -97,7 +97,7 @@ export const CHROME_VIEWS: readonly NodeViewDeclaration[] = [
 
 /** The stand-in feature's editor part with `views`, and block commands to and from `chrome_block`. */
 export const chromeEditorWith = (views: readonly NodeViewDeclaration[]) =>
-    defineEditorPlugin(fixtureChrome, {
+    defineEditorPart(fixtureChrome, {
         commands: {
             'fixture.chrome-block.set': {
                 run: (api) => api.blocks.set('chrome_block'),

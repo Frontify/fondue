@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { code } from './feature';
 
 /** Toggles inline code on the selection or at the caret, from Mod+E, backticks, or the toolbar. */
-export const codeEditor = defineEditorPlugin(code, {
+export const codeEditor = defineEditorPart(code, {
     commands: {
         'mark.code.toggle': {
             run: (api) => api.marks.toggle('code'),

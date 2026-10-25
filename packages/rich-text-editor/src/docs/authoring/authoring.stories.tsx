@@ -5,7 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { corePlugin, defineEditor, defineReactPresentation, modelOf, RichTextEditor, strikePlugin } from '#/index';
 import { type ContentModel, type ContentNodeJSON } from '#/model';
 
-import { calloutPlugin } from './callout-editor';
+import { calloutPlugin } from './callout-plugin';
 import { strongPlugin } from './strong';
 
 const strikePlugins = [corePlugin(), strikePlugin()] as const;
@@ -42,7 +42,7 @@ const meta: Meta<typeof RichTextEditor> = {
         docs: {
             description: {
                 component:
-                    'The examples of the Authoring guide, each mounted as a host mounts it: a shipped unit, a host block with a node view, and a host unit that replaces a shipped toolbar entry.',
+                    'The examples of the Authoring guide, each mounted as a host mounts it: a shipped plugin, a host block with a node view, and a host plugin that replaces a shipped toolbar entry.',
             },
         },
     },
@@ -101,7 +101,7 @@ export const ReplacedToolbarEntry: Story = {
     parameters: {
         docs: {
             description: {
-                story: 'A host unit for `marks.bold` whose toolbar entry `bold` replaces the shipped one, so the button reads Strong.',
+                story: 'A host plugin for `marks.bold` whose toolbar entry `bold` replaces the shipped one, so the button reads Strong.',
             },
         },
     },

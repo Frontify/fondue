@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { bold } from './feature';
 
 /** Toggles bold on the selection or at the caret, from Mod+B, `**` and `__`, or the toolbar. */
-export const boldEditor = defineEditorPlugin(bold, {
+export const boldEditor = defineEditorPart(bold, {
     commands: {
         'mark.bold.toggle': {
             run: (api) => api.marks.toggle('bold'),

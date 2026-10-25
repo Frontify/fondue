@@ -8,7 +8,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createElement, createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type EditorApi, type EditorCommand, type EditorPlugin } from '#/bridge/plugin';
+import { type EditorApi, type EditorCommand, type EditorPart } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { type Normalizer, NORMALIZERS } from '#/definition';
 import { RichTextReader } from '#/entries/reader';
@@ -38,7 +38,7 @@ import { links } from '#/features/links/feature';
 import { mediaImage } from '#/features/media-image/feature';
 import { registry } from '#/features/registry';
 import { fromHTML } from '#/html';
-import { defineEditor, defineEditorPlugin, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, defineEditorPart, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature, type Diagnostic, type Feature, type RichTextDocument } from '#/model';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, runFeatureContract, setSelection } from '#/testing';
@@ -77,7 +77,7 @@ const failingTitles = async (register: () => void): Promise<string[]> => {
 const failingCases = (
     features: readonly Feature[],
     fixtures?: readonly unknown[],
-    plugins: readonly EditorPlugin[] = [],
+    plugins: readonly EditorPart[] = [],
 ): Promise<string[]> =>
     failingTitles(() => {
         if (fixtures === undefined) {
@@ -217,7 +217,7 @@ describe('the feature contract suite', () => {
                 },
         ],
     ])('fails a command that runs %s', async (_name, wrap) => {
-        const plugin = defineEditorPlugin(highlight, {
+        const plugin = defineEditorPart(highlight, {
             commands: { 'fixture.highlight.toggle': { run: wrap((api) => api.marks.toggle('fixture_highlight')) } },
         });
 
@@ -236,7 +236,7 @@ describe('the feature contract suite', () => {
             },
         ],
     ])('fails a command whose %s returns a promise', async (_name, spec) => {
-        const plugin = defineEditorPlugin(highlight, {
+        const plugin = defineEditorPart(highlight, {
             commands: { 'fixture.highlight.toggle': spec as unknown as EditorCommand<undefined> },
         });
 
@@ -246,7 +246,7 @@ describe('the feature contract suite', () => {
     });
 
     it('fails a plugin command that applies without a change or anything it opens', async () => {
-        const plugin = defineEditorPlugin(spotlight, {
+        const plugin = defineEditorPart(spotlight, {
             commands: {
                 'fixture.spotlight.claim': { run: () => true },
                 'fixture.spotlight.panel': {
@@ -266,7 +266,7 @@ describe('the feature contract suite', () => {
     });
 
     it('fails a command and a toolbar label of a part given as a function of its feature options', async () => {
-        const plugin = defineEditorPlugin(spotlight, () => ({
+        const plugin = defineEditorPart(spotlight, () => ({
             commands: { 'fixture.spotlight.claim': { run: () => true } },
             toolbar: [
                 {

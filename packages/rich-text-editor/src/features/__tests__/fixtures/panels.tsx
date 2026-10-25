@@ -3,7 +3,7 @@
 import { type ComponentType, type ReactNode, useContext } from 'react';
 
 import { type PanelComponentProps } from '#/bridge/define';
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 import { SessionContext } from '#/bridge/session';
 import { type EditorHandle } from '#/index';
 import { defineFeature } from '#/model';
@@ -45,7 +45,7 @@ const ThrowingFindPanel = (): ReactNode => {
 /** A feature and its editor part, whose `find.open` opens `component` as the `find` panel. */
 const findPanel = (id: string, component: ComponentType<PanelComponentProps>) => {
     const feature = defineFeature({ id, version: 1, requires: [{ id: 'core', version: 1 }] });
-    const plugin = defineEditorPlugin(feature, {
+    const plugin = defineEditorPart(feature, {
         commands: {
             'find.open': {
                 readOnly: true,

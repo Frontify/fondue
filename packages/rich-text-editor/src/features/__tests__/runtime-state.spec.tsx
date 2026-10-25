@@ -4,7 +4,7 @@ import { act, screen } from '@testing-library/react';
 import { AllSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { pluginWithOptions } from '#/bridge/plugin';
+import { partWithOptions } from '#/bridge/plugin';
 import { brandDocumentModel } from '#/features';
 import { blocksOf } from '#/features/__tests__/fixtures/generated';
 import { mountUploads, para, pngFile, settle, text } from '#/features/media-upload/__tests__/fixtures/uploads';
@@ -46,7 +46,7 @@ const overlayEntries = (): readonly {
         if (part === undefined) {
             return [];
         }
-        return (pluginWithOptions(part, options).toolbar ?? []).filter(
+        return (partWithOptions(part, options).toolbar ?? []).filter(
             (entry) => entry.opensOverlay === true || entry.panel !== undefined,
         );
     }),

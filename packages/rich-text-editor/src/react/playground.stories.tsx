@@ -20,7 +20,7 @@ import {
     contentChecksPlugin,
     corePlugin,
     defineEditor,
-    defineEditorPlugin,
+    defineEditorPart,
     definePlugin,
     defineReactPresentation,
     type EditorHandle,
@@ -112,7 +112,7 @@ const callout = defineFeature({
         },
     },
 });
-const calloutEditor = defineEditorPlugin(callout, {
+const calloutEditor = defineEditorPart(callout, {
     commands: { 'story.callout.set': { run: (api) => api.blocks.set('callout', undefined, { toggle: true }) } },
     views: [{ node: 'callout', component: CalloutChrome }],
 });

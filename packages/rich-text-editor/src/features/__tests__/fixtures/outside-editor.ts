@@ -2,7 +2,7 @@
 
 import { createElement } from 'react';
 
-import { defineEditorPlugin, useRichTextNodeView } from '#/index';
+import { defineEditorPart, useRichTextNodeView } from '#/index';
 
 import { badgeLabel, highlight } from './outside-feature';
 
@@ -17,7 +17,7 @@ const BadgeChrome = () => {
 };
 
 /** The editor part of the outside feature: its highlight toggle with its key and toolbar entry, and its badge. */
-export const highlightEditor = defineEditorPlugin(highlight, {
+export const highlightEditor = defineEditorPart(highlight, {
     commands: {
         'fixture.highlight.toggle': {
             run: (api) => api.marks.toggle('fixture_highlight'),

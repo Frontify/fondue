@@ -10,7 +10,7 @@ import {
     useEditorOverlay,
     useRichTextNodeView,
 } from '#/bridge/define';
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { fixtureMediaImage } from './feature';
 
@@ -80,6 +80,6 @@ const ImageChrome = () => {
 };
 
 /** The image stand-in's editor part, with its node chrome and alternative text dialog. */
-export const fixtureMediaImageEditor = defineEditorPlugin(fixtureMediaImage, {
+export const fixtureMediaImageEditor = defineEditorPart(fixtureMediaImage, {
     views: [{ node: 'media_image', component: ImageChrome }],
 });

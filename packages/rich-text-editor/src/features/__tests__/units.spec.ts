@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { type RichTextPlugin } from '#/bridge/define-plugin';
+import * as barrel from '#/features';
 import * as root from '#/index';
 
 type Unit = (options?: object) => RichTextPlugin;
@@ -43,6 +44,14 @@ describe('feature units', () => {
 
         expect(exported).toBeDefined();
         expect((root as Record<string, unknown>)[exported?.[0] ?? '']).toBe(exported?.[1]);
+    });
+
+    it.each(FOLDERS)('%s has its vocabulary factory on the features barrel', async (folder) => {
+        const exports = (await import(`../${folder}/feature.ts`)) as Record<string, unknown>;
+        const factories = Object.entries(exports).filter(([, value]) => typeof value === 'function');
+
+        expect(factories).toHaveLength(1);
+        expect((barrel as Record<string, unknown>)[factories[0]?.[0] ?? '']).toBe(factories[0]?.[1]);
     });
 
     it.each(READER_FOLDERS)('%s names its own feature in its reader', async (folder) => {

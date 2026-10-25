@@ -8,7 +8,7 @@ import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
 import { fixtureChromeEditor } from '#/features/__tests__/fixtures/chrome/view';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { links } from '#/features/links/feature';
-import { defineEditor, defineEditorPlugin, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, defineEditorPart, defineReactPresentation, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON, defineFeature } from '#/model';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
@@ -19,7 +19,7 @@ const altGraphKeys = defineFeature({
     version: 1,
     requires: [{ id: 'marks.bold', version: 1 }],
 });
-const altGraphEditor = defineEditorPlugin(altGraphKeys, {
+const altGraphEditor = defineEditorPart(altGraphKeys, {
     commands: { 'fixture.alt-graph.run': { run: (api) => api.marks.toggle('bold') } },
     keys: Object.fromEntries(
         ['7', '8', '9', '0', '2', '3', 'a', 'l', '\\'].map((key) => [`Ctrl-Alt-${key}`, 'fixture.alt-graph.run']),

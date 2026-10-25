@@ -48,7 +48,7 @@ export interface AuthoringPolicy {
 /** A colour stored either as a token id or as a literal value. */
 export type ColorValue = { readonly tokenId: StoredId } | { readonly value: string };
 /**
- * The core's commands, which every definition has. A feature's commands come from its plugin (`CommandsOfPlugin`) and
+ * The core's commands, which every definition has. A feature's commands come from its plugin (`CommandsOfPart`) and
  * type a definition's own map.
  */
 export interface ShippedCommands {

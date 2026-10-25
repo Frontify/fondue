@@ -12,8 +12,8 @@ import {
     type EditorApi,
     type EditorCommand,
     type EditorHosts,
-    type EditorPlugin,
-    pluginWithOptions,
+    type EditorPart,
+    partWithOptions,
 } from '#/bridge/plugin';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore, type PortalStore } from '#/bridge/portals';
@@ -169,7 +169,7 @@ const slotStates = (state: EditorState): EditorState[] => {
  * whole and at a caret at either end, while the network and timers fail: the command returns a boolean, never a
  * promise, and dispatches at most one transaction before it returns.
  */
-export const commandCases = (features: readonly Feature[], plugins?: readonly EditorPlugin[]): void => {
+export const commandCases = (features: readonly Feature[], plugins?: readonly EditorPart[]): void => {
     // The runner's global `it`, as the contract suite takes it, so a stand-in runner collects these cases too.
     const { it } = globalThis as unknown as { readonly it: typeof runnerIt };
     const model = compileContentModel(features, { id: 'feature-contract', version: 1 });
@@ -181,7 +181,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
         if (feature === undefined) {
             return [];
         }
-        return [pluginWithOptions(part, feature.options)];
+        return [partWithOptions(part, feature.options)];
     });
     for (const id of new Set(parts.flatMap((part) => Object.keys(part.commands ?? {})))) {
         it(`runs ${id} synchronously with no I/O or timer, dispatching at most once`, () => {
@@ -207,7 +207,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                 Object.assign(merged, part.commands);
                 commandsOf.set(part.feature, merged);
             }
-            const watching = [...commandsOf].map(([feature, commands]): EditorPlugin => {
+            const watching = [...commandsOf].map(([feature, commands]): EditorPart => {
                 const spec = commands[id];
                 if (spec === undefined) {
                     return Object.freeze({ feature, commands });
@@ -465,7 +465,7 @@ interface BuiltView {
 export const nodeViewCases = (
     features: readonly Feature[],
     documents: readonly RichTextDocument[],
-    plugins: readonly EditorPlugin[] = [],
+    plugins: readonly EditorPart[] = [],
 ): void => {
     const { it } = globalThis as unknown as { readonly it: typeof runnerIt };
     const model = compileContentModel(features, { id: 'feature-contract', version: 1 });

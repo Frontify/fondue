@@ -13,7 +13,7 @@ import { featureInternals } from '#/model/feature';
 import { type ReaderRenderers } from '#/reader/define';
 
 import { definePlugin, extendPlugin, modelOf, type ReaderOverrides } from '../define-plugin';
-import { defineEditorPlugin, pluginWithOptions } from '../plugin';
+import { defineEditorPart, partWithOptions } from '../plugin';
 
 describe('definePlugin', () => {
     it('bundles a shipped feature with its editor part', () => {
@@ -106,19 +106,19 @@ describe('extendPlugin', () => {
     });
 
     it('merges over the parts an option-dependent editor part gives for the resolved options', () => {
-        const optional = defineEditorPlugin(bold, (options) => ({
+        const optional = defineEditorPart(bold, (options) => ({
             ...boldEditor,
             inputRules: options.compact === true ? [] : (boldEditor.inputRules ?? []),
         }));
         const keys = { 'Mod-Alt-b': 'mark.bold.toggle' } as const;
 
         const extended = extendPlugin(definePlugin({ feature: bold, editor: optional })(), { keys });
-        const resolved = pluginWithOptions(extended.editor, { compact: true });
+        const resolved = partWithOptions(extended.editor, { compact: true });
 
         expect(resolved.keys).toBe(keys);
         expect(resolved.inputRules).toEqual([]);
         expect(resolved.feature).toBe('marks.bold');
-        expect(pluginWithOptions(extended.editor, {}).inputRules).toBe(boldEditor.inputRules);
+        expect(partWithOptions(extended.editor, {}).inputRules).toBe(boldEditor.inputRules);
     });
 });
 

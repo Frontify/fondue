@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { bulletList } from './feature';
 
 /** Toggles a bulleted list from Mod+Shift+8, `-`, `*` or `+` at a line start, or the toolbar. */
-export const bulletListEditor = defineEditorPlugin(bulletList, {
+export const bulletListEditor = defineEditorPart(bulletList, {
     commands: {
         'list.bullet.toggle': {
             run: (api) => api.lists.toggle('bullet_list', 'list_item'),

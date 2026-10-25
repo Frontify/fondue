@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { OptionsMenu } from '#/bridge/define';
-import { defineEditorPlugin, type EditorApi } from '#/bridge/plugin';
+import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
 import { figureAlign } from '#/model';
 
 import { AltTextDialog, altTextStrings } from './alt-text-dialog';
@@ -39,7 +39,7 @@ const targetOf = (api: EditorApi, payload: { readonly nodeId?: string } | undefi
  * Inserts an image from the toolbar through the host asset picker, else the file chooser, replaces one the same way,
  * opens its alternative text dialog, and sets its size and side; pasted and dropped files upload as new images.
  */
-export const mediaImageEditor = defineEditorPlugin(mediaImage, {
+export const mediaImageEditor = defineEditorPart(mediaImage, {
     commands: {
         'image.insert': {
             enabled: (api) => api.insert.allowed('figure'),

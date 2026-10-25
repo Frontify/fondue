@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 import { type InputRule, textRule } from '#/model';
 
 import { inputRules, TYPOGRAPHY, type Typography } from './feature';
@@ -51,7 +51,7 @@ const RULES: Readonly<Record<Typography, readonly InputRule[]>> = {
 };
 
 /** Applies the typography rules that the `typography` option lists; every other rule is in its own feature. */
-export const inputRulesEditor = defineEditorPlugin(inputRules, (options) => {
+export const inputRulesEditor = defineEditorPart(inputRules, (options) => {
     const typography = options.typography as readonly string[];
     return {
         inputRules: TYPOGRAPHY.filter((group) => typography.includes(group)).flatMap((group) => RULES[group]),

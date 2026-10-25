@@ -18,12 +18,12 @@ import { bold } from '#/features/marks-bold/feature';
 import { registry } from '#/features/registry';
 import {
     type AuthoringPolicy,
-    type CommandsOfPlugin,
+    type CommandsOfPart,
     defineEditor,
-    defineEditorPlugin,
+    defineEditorPart,
     defineReactPresentation,
     type EditorHandle,
-    type EditorPlugin,
+    type EditorPart,
     extendPlugin,
     type RichTextPlugin,
     RichTextEditor,
@@ -175,7 +175,7 @@ describe('a host part for a feature the package ships', () => {
             content: [{ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: 'one two' }] }],
         },
     };
-    const strong = defineEditorPlugin(bold, {
+    const strong = defineEditorPart(bold, {
         commands: { 'mark.bold.count': { run: () => true } },
         toolbar: [
             {
@@ -194,7 +194,7 @@ describe('a host part for a feature the package ships', () => {
             model: boldModel,
             plugins: unitsOf(boldModel, [strong]),
         });
-        const ref = createRef<EditorHandle<UnitCommands & CommandsOfPlugin<typeof strong>>>();
+        const ref = createRef<EditorHandle<UnitCommands & CommandsOfPart<typeof strong>>>();
         render(
             <RichTextEditor
                 aria-label="Notes"
@@ -215,7 +215,7 @@ describe('a host part for a feature the package ships', () => {
     });
 
     it('shows pressed only the toolbar entry whose payload its command answers active for', () => {
-        const weights = defineEditorPlugin(bold, {
+        const weights = defineEditorPart(bold, {
             commands: {
                 'mark.bold.weight': {
                     payload: { fields: { weight: { type: 'integer', min: 1, max: 2 } } },
@@ -284,7 +284,7 @@ describe('a plugin part that reads the policy and its options', () => {
     /** An editor of `features` with its parts, a paragraph `Body`, and `toolbar`. */
     const mountWith = (
         features: Parameters<typeof compileContentModel>[0],
-        plugins: readonly EditorPlugin[],
+        plugins: readonly EditorPart[],
         toolbar: ReturnType<typeof defineReactPresentation>['toolbar'],
         policy: Partial<AuthoringPolicy> = {},
     ) => {
@@ -328,7 +328,7 @@ describe('a plugin part that reads the policy and its options', () => {
 
     it('rejects a payload the policy refuses as not-allowed before applicability, and does not offer its entry', () => {
         const levels = defineFeature({ id: 'fixture.levels', version: 1, requires: [{ id: 'core', version: 1 }] });
-        const levelsEditor = defineEditorPlugin(levels, {
+        const levelsEditor = defineEditorPart(levels, {
             commands: {
                 // The text style picker lists the rows of `heading.set`, which this feature's model does not install.
                 'heading.set': {
@@ -374,7 +374,7 @@ describe('a plugin part that reads the policy and its options', () => {
             requires: [{ id: 'core', version: 1 }],
             options: { third: { type: 'boolean', default: true } },
         });
-        const picksEditor = defineEditorPlugin(picks, (options) => {
+        const picksEditor = defineEditorPart(picks, (options) => {
             const values = ['first', 'second'];
             if (options.third === true) {
                 values.push('third');

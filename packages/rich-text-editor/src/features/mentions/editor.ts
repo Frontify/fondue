@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { mentions } from './feature';
 import { MentionSearchDialog } from './mention-dialog';
@@ -24,7 +24,7 @@ interface ReferencePayload {
  * The list the `trigger` option opens and the Mention button's search dialog, over the host's references of the
  * `resourceTypes` option, which insert a mention and a space after it as one undo step.
  */
-export const mentionsEditor = defineEditorPlugin(mentions, (options) => {
+export const mentionsEditor = defineEditorPart(mentions, (options) => {
     let resourceTypes: readonly string[] = [];
     if (Array.isArray(options.resourceTypes)) {
         resourceTypes = options.resourceTypes.filter((type): type is string => typeof type === 'string');

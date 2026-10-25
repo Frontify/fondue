@@ -6,7 +6,7 @@ import { createRef, Profiler, type ReactNode, useContext } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnnouncerContext } from '#/bridge/announcer';
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { fixtureCodeBlockEditor } from '#/features/__tests__/fixtures/code-block/view';
 import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
@@ -508,7 +508,7 @@ const pullQuotePlugin = (
     label: Readonly<Record<string, string>> & { readonly 'en-US': string },
     keys: Readonly<Record<KeyBinding, CommandRef>> = {},
 ) =>
-    defineEditorPlugin(pullQuote(), {
+    defineEditorPart(pullQuote(), {
         commands: {
             'acme.pull-quote.set': {
                 run: (api) => api.blocks.set('acme_pull_quote', undefined, { toggle: true }),
@@ -540,7 +540,7 @@ describe('a toolbar item that throws while rendering', () => {
         model: compileContentModel([core(), bold(), pullQuote()], { id: 'test.toolbar', version: 1 }),
         plugins: unitsOf(compileContentModel([core(), bold(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
             boldEditor,
-            defineEditorPlugin(pullQuote(), {
+            defineEditorPart(pullQuote(), {
                 commands: { 'acme.pull-quote.set': { run: () => true } },
                 toolbar: [
                     {
@@ -606,7 +606,7 @@ describe('a toolbar item that throws while rendering', () => {
             model,
             plugins: unitsOf(model, [
                 boldEditor,
-                defineEditorPlugin(pullQuote(), {
+                defineEditorPart(pullQuote(), {
                     commands: {
                         'acme.broken.set': {
                             run: () => true,

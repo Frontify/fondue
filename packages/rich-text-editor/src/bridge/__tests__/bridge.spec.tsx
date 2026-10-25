@@ -20,7 +20,7 @@ import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import {
     defineEditor,
-    defineEditorPlugin,
+    defineEditorPart,
     defineReactPresentation,
     type EditorHandle,
     type NodeViewState,
@@ -610,7 +610,7 @@ describe('the React bridge', () => {
     });
 
     it('rejects a node view for a node that no installed feature declares', () => {
-        const orphan = defineEditorPlugin(core, { views: [{ node: 'chrome_block', component: () => null }] });
+        const orphan = defineEditorPart(core, { views: [{ node: 'chrome_block', component: () => null }] });
         let failure: unknown;
         try {
             defineEditor({

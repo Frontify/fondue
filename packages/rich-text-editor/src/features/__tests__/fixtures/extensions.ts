@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { commandApiOf } from '#/bridge/live-api';
-import { type EditorPlugin } from '#/bridge/plugin';
+import { type EditorPart } from '#/bridge/plugin';
 import { type EngineCommand, type EngineExtension } from '#/definition';
 import { type CommandRef, type ContentModel } from '#/model';
 import { pluginCommand } from '#/runtime/editor-api';
@@ -14,7 +14,7 @@ import { fixtureEditorsOf } from './editors';
  */
 export const fixtureExtensionsOf = (
     model: ContentModel,
-    parts: readonly EditorPlugin[] = fixtureEditorsOf(model),
+    parts: readonly EditorPart[] = fixtureEditorsOf(model),
 ): readonly EngineExtension[] =>
     parts.map((plugin) => ({
         featureId: plugin.feature,

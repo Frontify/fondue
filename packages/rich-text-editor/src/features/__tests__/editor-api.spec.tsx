@@ -16,7 +16,7 @@ import {
     type AuthoringPolicy,
     type CommandOutcome,
     defineEditor,
-    defineEditorPlugin,
+    defineEditorPart,
     defineReactPresentation,
     type EditorApi,
     type EditorHandle,
@@ -67,7 +67,7 @@ const Grab = () => {
     return null;
 };
 
-const probe = defineEditorPlugin(spotlight, {
+const probe = defineEditorPart(spotlight, {
     commands: {
         'fixture.api.run': { run: (api) => script(api) },
         'fixture.api.read-only': { readOnly: true, run: (api) => script(api) },

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type RichTextPlugin } from '#/bridge/define-plugin';
-import { type EditorPlugin, OPTION_PARTS, pluginWithOptions } from '#/bridge/plugin';
+import { type EditorPart, OPTION_PARTS, partWithOptions } from '#/bridge/plugin';
 import { pluginsById } from '#/features/plugins';
 import { type ContentModel, type Feature, type JsonObject } from '#/model';
 import { compiledModel } from '#/model/compile';
@@ -44,7 +44,7 @@ import { fixtureTableBlockEditor } from './table/view';
 export type UnitCommands = Readonly<Record<string, unknown>>;
 
 /** A unit of the feature `factory` makes and its editor part, as `definePlugin` makes one for a shipped feature. */
-const fixtureUnit = (factory: () => Feature, editor: EditorPlugin): RichTextPlugin => {
+const fixtureUnit = (factory: () => Feature, editor: EditorPart): RichTextPlugin => {
     const feature = factory();
     return Object.freeze({ id: feature.id, feature, editor });
 };
@@ -80,10 +80,10 @@ const baseUnitOf = (id: string, version: number): RichTextPlugin => {
 };
 
 /** `base` with the parts of `host` over its editor part: its commands and keys by ID, every other list whole. */
-const layered = (base: RichTextPlugin, host: EditorPlugin): RichTextPlugin => {
+const layered = (base: RichTextPlugin, host: EditorPart): RichTextPlugin => {
     const resolve = (options: JsonObject) => {
-        const shipped = pluginWithOptions(base.editor, options);
-        const own = pluginWithOptions(host, options);
+        const shipped = partWithOptions(base.editor, options);
+        const own = partWithOptions(host, options);
         return {
             ...shipped,
             ...own,
@@ -101,7 +101,7 @@ const layered = (base: RichTextPlugin, host: EditorPlugin): RichTextPlugin => {
  */
 export const unitsOf = (
     model: ContentModel,
-    hosts: readonly EditorPlugin[] = [],
+    hosts: readonly EditorPart[] = [],
 ): readonly RichTextPlugin<string, UnitCommands>[] =>
     compiledModel(model).features.map(({ id, version }) => {
         const base = baseUnitOf(id, version);

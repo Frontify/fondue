@@ -3,7 +3,7 @@
 import { type FocusEvent, type Ref } from 'react';
 
 import { type RichTextPlugin } from '#/bridge/define-plugin';
-import { type CommandsOfPlugin } from '#/bridge/plugin';
+import { type CommandsOfPart } from '#/bridge/plugin';
 import {
     type CapabilityRef,
     type ColorToken,
@@ -85,7 +85,7 @@ type UnionToIntersection<U> = (U extends unknown ? (value: U) => void : never) e
     : never;
 /** The commands of the units a host passes `defineEditor`. */
 export type CommandsOfPlugins<Plugins extends readonly RichTextPlugin[]> = UnionToIntersection<
-    CommandsOfPlugin<Plugins[number]['editor']>
+    CommandsOfPart<Plugins[number]['editor']>
 > &
     object;
 

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 import { blockRule } from '#/model';
 
 import { taskList } from './feature';
@@ -10,7 +10,7 @@ import { taskItemView } from './view';
  * Toggles a task list from Mod+Shift+9, `[ ] ` or `[x] ` at a line start, or the toolbar, and checks an item from its
  * checkbox or Mod+Enter; its items nest, outdent and split as list items do.
  */
-export const taskListEditor = defineEditorPlugin(taskList, {
+export const taskListEditor = defineEditorPart(taskList, {
     commands: {
         'list.task.toggle': {
             payload: { fields: { checked: { type: 'boolean', optional: true } } },

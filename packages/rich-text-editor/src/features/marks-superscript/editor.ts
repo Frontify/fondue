@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { superscript } from './feature';
 
 /** Toggles superscript on the selection or at the caret, from Mod+Period or the toolbar; adding it removes subscript. */
-export const superscriptEditor = defineEditorPlugin(superscript, {
+export const superscriptEditor = defineEditorPart(superscript, {
     commands: {
         'mark.superscript.toggle': {
             run: (api) => {

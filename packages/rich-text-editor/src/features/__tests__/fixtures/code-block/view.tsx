@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { NodeChromeButton, NodeChromeToolbar, useRichTextNodeView } from '#/bridge/define';
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { fixtureCodeBlock } from './feature';
 
@@ -26,6 +26,6 @@ const CodeBlockChrome = () => {
 };
 
 /** The code block stand-in's editor part, with its node chrome toolbar. */
-export const fixtureCodeBlockEditor = defineEditorPlugin(fixtureCodeBlock, {
+export const fixtureCodeBlockEditor = defineEditorPart(fixtureCodeBlock, {
     views: [{ node: 'chrome_code', component: CodeBlockChrome }],
 });

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorPlugin, type PluginToolbarEntry } from '#/bridge/plugin';
+import { type EditorPart, type PluginToolbarEntry } from '#/bridge/plugin';
 import { type CompiledDefinition } from '#/definition';
 import { type CodecContext, type CommandRef, type JsonValue, type PresentationStyle } from '#/model';
 import { canonicalJson } from '#/model/hash';
@@ -124,7 +124,7 @@ export const toolbarItems = (
     t: CodecContext['t'],
     /** The UI locale's language tag, which picks a plugin's label. */
     lang: string,
-    plugins: readonly EditorPlugin[] = [],
+    plugins: readonly EditorPart[] = [],
 ): readonly ToolbarItem[] => {
     if (presentation === undefined) {
         return [];
@@ -268,7 +268,7 @@ export const menuItems = (
     t: CodecContext['t'],
     /** The UI locale's language tag, which picks a plugin's label. */
     lang: string,
-    plugins: readonly EditorPlugin[] = [],
+    plugins: readonly EditorPart[] = [],
 ): readonly ToolbarItem[] => {
     const { keymap } = engine;
     const shown = new Set(items.flatMap((item) => [item, ...(item.options ?? [])]).map(({ key }) => key));

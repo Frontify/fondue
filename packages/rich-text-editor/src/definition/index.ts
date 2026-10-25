@@ -138,7 +138,7 @@ export interface EngineImplementations {
     readonly handleKey?: (view: EditorView, handler: EngineCommand) => boolean;
 }
 
-/** What an editor plugin adds to the engine for its installed feature: its commands, key bindings and input rules. */
+/** What an editor part adds to the engine for its installed feature: its commands, key bindings and input rules. */
 export interface EngineExtension {
     readonly featureId: string;
     /** Builds the plugin's commands once the schema exists; `lookup` finds any compiled command when one runs. */

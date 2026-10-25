@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { underline } from './feature';
 
 /** Toggles underline on the selection or at the caret, from Mod+U or the toolbar. */
-export const underlineEditor = defineEditorPlugin(underline, {
+export const underlineEditor = defineEditorPart(underline, {
     commands: {
         'mark.underline.toggle': {
             run: (api) => api.marks.toggle('underline'),

@@ -4,7 +4,7 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { vi } from 'vitest';
 
-import { type EditorPlugin } from '#/bridge/plugin';
+import { type EditorPart } from '#/bridge/plugin';
 import {
     bold,
     code,
@@ -91,7 +91,7 @@ interface Mount<Model extends ContentModel> {
     readonly inputRules?: Rules;
     readonly readOnly?: boolean;
     /** Host editor parts, for features a test adds. */
-    readonly plugins?: readonly EditorPlugin[];
+    readonly plugins?: readonly EditorPart[];
 }
 
 /** Mounts `RichTextEditor` and runs the first frame, so the editor is `ready`. */

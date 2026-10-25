@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type RichTextPlugin } from '#/bridge/define-plugin';
-import { type EditorPlugin } from '#/bridge/plugin';
+import { type EditorPart } from '#/bridge/plugin';
 import { type CompiledDefinition, type EngineExtension } from '#/definition';
 import { type ContentModel } from '#/model';
 
@@ -11,7 +11,7 @@ import { editorEngine as engineWith, extensionsOf as extensionsWith } from './co
 export const editorEngine = (
     model: ContentModel,
     units: readonly RichTextPlugin[],
-): { readonly engine: CompiledDefinition; readonly plugins: readonly EditorPlugin[] } => engineWith(model, units);
+): { readonly engine: CompiledDefinition; readonly plugins: readonly EditorPart[] } => engineWith(model, units);
 
 /** What the editor parts of `units` add to the engine of `model`, for a definition compiled without React. */
 export const extensionsOf = (model: ContentModel, units: readonly RichTextPlugin[]): readonly EngineExtension[] =>

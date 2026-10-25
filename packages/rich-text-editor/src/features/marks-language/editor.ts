@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { language } from './feature';
 import { LanguageDialog } from './language-dialog';
@@ -11,7 +11,7 @@ const DIRECTIONS = ['ltr', 'rtl', 'auto'] as const;
  * Opens the language dialog from the toolbar. `mark.language.set` takes `{ lang, dir }` or `null`, and at a caret
  * inside a passage changes or removes the whole passage; text typed at a passage's end stays outside it.
  */
-export const languageEditor = defineEditorPlugin(language, {
+export const languageEditor = defineEditorPart(language, {
     commands: {
         'mark.language.edit': {
             // The selection's start sits in text that is not code.

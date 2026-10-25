@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { NodeChromeButton, NodeChromeToolbar, useRichTextNodeView } from '#/bridge/define';
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { fixtureTableBlock } from './feature';
 
@@ -17,6 +17,6 @@ const TableChrome = () => {
 };
 
 /** The table stand-in's editor part, with its node chrome toolbar. */
-export const fixtureTableBlockEditor = defineEditorPlugin(fixtureTableBlock, {
+export const fixtureTableBlockEditor = defineEditorPart(fixtureTableBlock, {
     views: [{ node: 'table_block', component: TableChrome }],
 });

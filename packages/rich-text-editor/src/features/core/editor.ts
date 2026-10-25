@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { core } from './feature';
 
 /** Sets a paragraph, inserts text and hard breaks, undoes and redoes, and moves blocks. */
-export const coreEditor = defineEditorPlugin(core, {
+export const coreEditor = defineEditorPart(core, {
     commands: {
         'paragraph.set': {
             run: (api) => api.blocks.set('paragraph'),

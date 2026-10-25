@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type EditorPlugin } from '#/bridge/plugin';
+import { type EditorPart } from '#/bridge/plugin';
 import { brandDocumentModel } from '#/features/profiles/brand-document';
 import { commentModel } from '#/features/profiles/comment';
 import { documentModel } from '#/features/profiles/document';
@@ -44,17 +44,17 @@ const featuresOf = (ids: readonly string[]) => {
     }
 };
 
-const inputRuleIds = (plugins: readonly EditorPlugin[]) =>
+const inputRuleIds = (plugins: readonly EditorPart[]) =>
     plugins.flatMap(({ feature, inputRules }) => (inputRules ?? []).map(({ id }) => `${feature}:${id}`));
 
-const toolbarOf = (plugins: readonly EditorPlugin[]) =>
+const toolbarOf = (plugins: readonly EditorPart[]) =>
     Object.fromEntries(
         plugins
             .filter(({ toolbar }) => toolbar !== undefined)
             .map(({ feature, toolbar }) => [feature, (toolbar ?? []).map(({ id }) => id)]),
     );
 
-const handlerKeys = (plugins: readonly EditorPlugin[]) =>
+const handlerKeys = (plugins: readonly EditorPart[]) =>
     plugins.flatMap(({ feature, keys }) =>
         Object.entries(keys ?? {})
             .filter(([, binding]) => typeof binding === 'function')

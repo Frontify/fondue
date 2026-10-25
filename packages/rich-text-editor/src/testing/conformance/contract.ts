@@ -4,7 +4,7 @@ import { EditorState, TextSelection } from 'prosemirror-state';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import { type EditorPlugin, pluginWithOptions } from '#/bridge/plugin';
+import { type EditorPart, partWithOptions } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { type CompiledDefinition } from '#/definition';
 import { RichTextReader } from '#/entries/reader';
@@ -182,7 +182,7 @@ export interface FeatureContractOptions {
     /** Stored documents that use the features under test, each run through decode, encode, the reader and every codec. */
     readonly fixtures?: readonly unknown[];
     /** Editor parts of the features under test, which replace the shipped part of the same feature. */
-    readonly plugins?: readonly EditorPlugin[];
+    readonly plugins?: readonly EditorPart[];
 }
 
 /**
@@ -198,7 +198,7 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
         throw new Error('runFeatureContract registers its cases through the global describe, it and expect.');
     }
     let model: ContentModel | undefined;
-    let built: { readonly engine: CompiledDefinition; readonly plugins: readonly EditorPlugin[] } | undefined;
+    let built: { readonly engine: CompiledDefinition; readonly plugins: readonly EditorPart[] } | undefined;
     const compiled = () => {
         if (model === undefined) {
             model = compileContentModel(features, { id: MODEL_ID, version: 1 });
@@ -227,7 +227,7 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
         if (part === undefined || resolved === undefined) {
             return part;
         }
-        return pluginWithOptions(part, resolved);
+        return partWithOptions(part, resolved);
     };
     const stateOf = (document: RichTextDocument) => {
         const { tree } = decodeToTree(document, compiled());

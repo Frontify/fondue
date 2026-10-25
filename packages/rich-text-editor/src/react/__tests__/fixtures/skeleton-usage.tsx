@@ -10,12 +10,12 @@ import {
     type BlockDecoration,
     type BlockDecorationSource,
     boldPlugin,
-    type CommandsOfPlugin,
+    type CommandsOfPart,
     type CommandsOfPlugins,
     corePlugin,
     type DecoratedBlock,
     defineEditor,
-    defineEditorPlugin,
+    defineEditorPart,
     defineReactPresentation,
     type EditorCommand,
     type EditorHandle,
@@ -29,7 +29,7 @@ import {
 import { createEmptyDocument } from '#/model';
 
 // A custom model from shipped features and an outside one without commands.
-const italicPlugin = definePlugin({ feature: fixtureItalic, editor: defineEditorPlugin(fixtureItalic, {}) });
+const italicPlugin = definePlugin({ feature: fixtureItalic, editor: defineEditorPart(fixtureItalic, {}) });
 const plugins = [corePlugin(), boldPlugin(), italicPlugin()] as const;
 const model = modelOf(plugins, { id: 'acme.notes', version: 1 });
 const definition = defineEditor({ id: 'acme.notes', model, plugins });
@@ -54,7 +54,7 @@ export const unnamed = <RichTextEditor definition={definition} defaultValue={def
 // Command ids and payloads come from the compiled definition, so `any` or `never` would fail here.
 declare const derived: EditorHandle<Commands>;
 declare const shipped: EditorHandle;
-declare const plugged: EditorHandle<CommandsOfPlugin<typeof spotlightEditor>>;
+declare const plugged: EditorHandle<CommandsOfPart<typeof spotlightEditor>>;
 export const commands = () => {
     derived.query('mark.bold.toggle');
     // @ts-expect-error: the model installs no italic command.
@@ -85,9 +85,9 @@ export const useStates = () => {
     useCommandState('block.move.up');
     // @ts-expect-error: the default map names only the core's commands.
     useCommandState('link.set', { href: 'https://frontify.com', openInNewWindow: false, styleId: null });
-    useCommandState<CommandsOfPlugin<typeof spotlightEditor>>('fixture.spotlight.toggle');
+    useCommandState<CommandsOfPart<typeof spotlightEditor>>('fixture.spotlight.toggle');
     // @ts-expect-error: the plugin declares no such command.
-    useCommandState<CommandsOfPlugin<typeof spotlightEditor>>('fixture.spotlight.unknown');
+    useCommandState<CommandsOfPart<typeof spotlightEditor>>('fixture.spotlight.unknown');
 };
 
 // The types that public plugin types reference are importable from the package root.
@@ -101,7 +101,7 @@ export type Referenced = [
 ];
 
 // A command whose `run` takes a payload declares it.
-export const authored = defineEditorPlugin(core, {
+export const authored = defineEditorPart(core, {
     commands: {
         'acme.plain': { run: (api) => api.marks.toggle('bold') },
         'acme.level': {
@@ -124,7 +124,7 @@ export const authored = defineEditorPlugin(core, {
 export const bare: EditorCommand<{ readonly level: number }> = { run: () => true };
 
 // A toolbar entry has an accessible name: `labelKey`, or `label` with an `en-US` entry.
-export const toolbar = defineEditorPlugin(core, {
+export const toolbar = defineEditorPart(core, {
     toolbar: [
         { id: 'keyed', kind: 'button', command: 'acme.plain', labelKey: 'RichTextEditor_bold', icon: 'IconLink' },
         { id: 'named', kind: 'button', command: 'acme.plain', label: { 'en-US': 'Plain' }, icon: 'IconLink' },

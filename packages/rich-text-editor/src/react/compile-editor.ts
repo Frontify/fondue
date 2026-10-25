@@ -6,9 +6,9 @@ import { commandApiOf, editorApiOf } from '#/bridge/live-api';
 import {
     type EditorApi,
     type EditorHosts,
-    type EditorPlugin,
+    type EditorPart,
     type EditorSuggestion,
-    pluginWithOptions,
+    partWithOptions,
 } from '#/bridge/plugin';
 import {
     compileDefinition,
@@ -50,7 +50,7 @@ import { checkCover, readersOfUnits } from './units';
 const engines = new WeakMap<object, CompiledDefinition>();
 const nodeViews = new WeakMap<object, ReadonlyMap<string, NodeViewDeclaration>>();
 const editorPanels = new WeakMap<object, ReadonlyMap<string, PanelDeclaration>>();
-const editorPlugins = new WeakMap<object, readonly EditorPlugin[]>();
+const editorPlugins = new WeakMap<object, readonly EditorPart[]>();
 const profiles = new WeakMap<object, RichTextProfile>();
 const readers = new WeakMap<object, ReaderOverrides>();
 
@@ -72,7 +72,7 @@ export const panelsOf = (definition: CompiledEditorDefinition<object>): Readonly
     editorPanels.get(definition) ?? new Map();
 
 /** The editor parts a definition installs, in feature order. */
-export const pluginsOf = (definition: CompiledEditorDefinition<object>): readonly EditorPlugin[] =>
+export const pluginsOf = (definition: CompiledEditorDefinition<object>): readonly EditorPart[] =>
     editorPlugins.get(definition) ?? [];
 
 /** The reader overrides of the shipped features a definition renders its blocked and recovery shells with. */
@@ -84,7 +84,7 @@ export const profileOf = (definition: CompiledEditorDefinition<object>): RichTex
     profiles.get(definition);
 
 /** The editor part of each installed feature, in feature order, from units that cover the model exactly. */
-const collectPlugins = (model: ContentModel, units: readonly RichTextPlugin[]): readonly EditorPlugin[] => {
+const collectPlugins = (model: ContentModel, units: readonly RichTextPlugin[]): readonly EditorPart[] => {
     checkCover(model, units);
     const { features } = compiledModel(model);
     return features.flatMap(({ id, options }) => {
@@ -92,7 +92,7 @@ const collectPlugins = (model: ContentModel, units: readonly RichTextPlugin[]): 
         if (unit === undefined) {
             return [];
         }
-        return [pluginWithOptions(unit.editor, options)];
+        return [partWithOptions(unit.editor, options)];
     });
 };
 
@@ -123,7 +123,7 @@ const engineSuggestion = ({ search, available, ...list }: EditorSuggestion): Omi
 });
 
 /** What a plugin adds to the engine: its commands over `EditorApi`, its keys and its input rules. */
-const extensionOf = (model: ContentModel, plugin: EditorPlugin): EngineExtension => ({
+const extensionOf = (model: ContentModel, plugin: EditorPart): EngineExtension => ({
     featureId: plugin.feature,
     keys: Object.fromEntries(
         Object.entries(plugin.keys ?? {}).filter(
@@ -171,7 +171,7 @@ const handleKeyFor: NonNullable<Parameters<typeof compileDefinition>[1]>['handle
 
 /** Hands pasted or dropped files to the first part whose `files` takes them, each run as a command with no ID. */
 const intakeOf =
-    (model: ContentModel, plugins: readonly EditorPlugin[]): FileIntake =>
+    (model: ContentModel, plugins: readonly EditorPart[]): FileIntake =>
     (view, files, origin, from, to) => {
         const runtime = runtimeOfView(view);
         if (runtime === undefined) {
@@ -190,7 +190,7 @@ const intakeOf =
     };
 
 /** The node views the model's editor parts attach, each for a node the model declares. */
-const collectViews = (model: ContentModel, plugins: readonly EditorPlugin[]) => {
+const collectViews = (model: ContentModel, plugins: readonly EditorPart[]) => {
     const { features, nodes } = compiledModel(model);
     const views = new Map<string, NodeViewDeclaration>();
     for (const feature of features) {
@@ -211,7 +211,7 @@ const collectViews = (model: ContentModel, plugins: readonly EditorPlugin[]) => 
 };
 
 /** The panels the model's editor parts attach, keyed by the id the slot opens. */
-const collectPanels = (plugins: readonly EditorPlugin[]) => {
+const collectPanels = (plugins: readonly EditorPart[]) => {
     const panels = new Map<string, PanelDeclaration>();
     for (const plugin of plugins) {
         for (const panel of plugin.panels ?? []) {
@@ -294,7 +294,7 @@ export const editorEngine = (
     units: readonly RichTextPlugin[],
 ): {
     readonly engine: CompiledDefinition;
-    readonly plugins: readonly EditorPlugin[];
+    readonly plugins: readonly EditorPart[];
 } => {
     const plugins = collectPlugins(model, units);
     const built = {

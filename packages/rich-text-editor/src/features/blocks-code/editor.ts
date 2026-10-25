@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { OptionsMenu } from '#/bridge/define';
-import { defineEditorPlugin, type EditorApi } from '#/bridge/plugin';
+import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
 import { type BlockDecoration, blockRule, type JsonObject } from '#/model';
 
 import { codeBlock } from './feature';
@@ -109,7 +109,7 @@ const openParagraphAfter = (api: EditorApi): boolean => {
  * line start into one, and leaves one from Mod-Enter, or from ArrowDown at its end when it is its parent's last child.
  * Highlights each code block whose `languageId` lowlight has registered; an unknown ID stays plain.
  */
-export const codeBlockEditor = defineEditorPlugin(codeBlock, {
+export const codeBlockEditor = defineEditorPart(codeBlock, {
     commands: {
         'code-block.toggle': {
             payload: { fields: { languageId: { type: 'id', nullable: true, optional: true } } },

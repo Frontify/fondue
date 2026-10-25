@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { quote } from './feature';
 
 /** Toggles a quote from `>` at a line start or the toolbar. */
-export const quoteEditor = defineEditorPlugin(quote, {
+export const quoteEditor = defineEditorPart(quote, {
     commands: {
         'quote.toggle': {
             run: (api) => api.blocks.wrap('blockquote'),

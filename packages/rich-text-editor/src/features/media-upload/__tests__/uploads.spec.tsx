@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { core, mediaImage, mediaUpload, mentions } from '#/features';
 import { deferredPicker, figure, PALETTE } from '#/features/media-image/__tests__/fixtures/mount';
 import { ADA, advance, deferredService, page } from '#/features/mentions/__tests__/fixtures/mount';
-import { defineEditorPlugin } from '#/index';
+import { defineEditorPart } from '#/index';
 import { defineFeature, type RichTextSlice } from '#/model';
 import { compiledModel } from '#/model/compile';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
@@ -440,7 +440,7 @@ describe('the controls an image insert and an upload start open', () => {
             { id: 'media.image', version: 1 },
         ],
     });
-    const acmePicker = defineEditorPlugin(acmePick, {
+    const acmePicker = defineEditorPart(acmePick, {
         commands: {
             'acme.image.pick': {
                 payload: { fields: { nodeId: { type: 'string' } } },
@@ -1041,7 +1041,7 @@ describe('concurrent uploads', () => {
                 { id: 'media.image', version: 1 },
             ],
         });
-        const acmeRetrier = defineEditorPlugin(acmeRetry, {
+        const acmeRetrier = defineEditorPart(acmeRetry, {
             commands: {
                 'acme.upload.retry': {
                     payload: { fields: { nodeId: { type: 'string' } } },

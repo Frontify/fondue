@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { rule } from './feature';
 
 /** Inserts a horizontal rule where the selection is, from `---`, `***` or `___` at a line start, or the toolbar. */
-export const ruleEditor = defineEditorPlugin(rule, {
+export const ruleEditor = defineEditorPart(rule, {
     commands: {
         'rule.insert': { run: (api) => api.insert.node('horizontal_rule').status === 'applied' },
     },

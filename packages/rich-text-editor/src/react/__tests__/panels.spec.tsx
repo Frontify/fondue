@@ -3,7 +3,7 @@
 import { act, fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type EditorPlugin } from '#/bridge/plugin';
+import { type EditorPart } from '#/bridge/plugin';
 import {
     fixtureFindPanel,
     fixturePickerPanel,
@@ -28,7 +28,7 @@ afterEach(() => {
 
 const modelOf = <const Features extends readonly Feature[]>(features: Features) => textModel(features);
 
-const mountPanels = <Model extends ContentModel>(model: Model, plugins: readonly EditorPlugin[]) =>
+const mountPanels = <Model extends ContentModel>(model: Model, plugins: readonly EditorPart[]) =>
     mountText({ model, plugins, blocks: [para(text('Hello'))] });
 
 describe('editor panels', () => {

@@ -5,7 +5,7 @@
 import { EditorState, type Plugin } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { defineEditorPlugin, type EditorPlugin, type EditorPluginParts } from '#/bridge/plugin';
+import { defineEditorPart, type EditorPart, type EditorPartSpec } from '#/bridge/plugin';
 import { fixtureHeadingEditor, fixtureHistoryEditor } from '#/features/__tests__/fixtures/editors';
 import { fixtureExtensionsOf } from '#/features/__tests__/fixtures/extensions';
 import {
@@ -253,7 +253,7 @@ describe('compileDefinition of editor parts', () => {
         compileDefinition(model, {}, fixtureExtensionsOf(model)).plugins.map((plugin) =>
             keyOf(plugin).replace(/\$\d*$/, ''),
         );
-    const failureOfParts = (features: readonly Feature[], parts: readonly EditorPlugin[]) => {
+    const failureOfParts = (features: readonly Feature[], parts: readonly EditorPart[]) => {
         const model = compileContentModel([core(), ...features], options);
         return failureOf(() => compileDefinition(model, {}, fixtureExtensionsOf(model, parts)));
     };
@@ -302,7 +302,7 @@ describe('compileDefinition of editor parts', () => {
 
     it('rejects two features that register one command', () => {
         const again = defineFeature({ id: 'a.history', version: 1 });
-        const part = defineEditorPlugin(again, { commands: { 'fixture.undo': { run: (api) => api.history.undo() } } });
+        const part = defineEditorPart(again, { commands: { 'fixture.undo': { run: (api) => api.history.undo() } } });
         expect(failureOfParts([fixtureHistory(), again()], [fixtureHistoryEditor, part])).toEqual({
             code: 'definition.duplicate-id',
             details: { kind: 'command', id: 'fixture.undo', features: ['fixture.history', 'a.history'] },
@@ -328,7 +328,7 @@ describe('compileDefinition of editor parts', () => {
         ],
     ] as const)('rejects the %s registration for an undeclared mark or command', (_kind, parts, path) => {
         const x = defineFeature({ id: 'a.x', version: 1 });
-        expect(failureOfParts([x()], [defineEditorPlugin(x, parts as EditorPluginParts)])).toEqual({
+        expect(failureOfParts([x()], [defineEditorPart(x, parts as EditorPartSpec)])).toEqual({
             code: 'definition.orphan-behavior',
             details: { feature: 'a.x', path },
         });
@@ -336,7 +336,7 @@ describe('compileDefinition of editor parts', () => {
 
     it('rejects a key payload that fails its command declaration', () => {
         const keys = defineFeature({ id: 'a.keys', version: 1, requires: [{ id: 'fixture.heading', version: 1 }] });
-        const part = defineEditorPlugin(keys, {
+        const part = defineEditorPart(keys, {
             keys: { 'Mod-Alt-9': { command: 'fixture.heading.set', payload: { level: 9 } } },
         });
         expect(failureOfParts([fixtureHeading(), keys()], [fixtureHeadingEditor, part])).toEqual({

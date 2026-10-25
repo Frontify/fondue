@@ -18,7 +18,7 @@ import {
     type CommandResult,
     type CommitResult,
     defineEditor,
-    defineEditorPlugin,
+    defineEditorPart,
     type EditorHandle,
     type OperationMetric,
     type PersistenceOptions,
@@ -69,7 +69,7 @@ const stampedBlock = defineFeature({
         },
     },
 });
-const stampedEditor = defineEditorPlugin(stampedBlock, {
+const stampedEditor = defineEditorPart(stampedBlock, {
     commands: { 'test.stamped.set': { run: (api) => api.blocks.set('stamped', undefined, { toggle: true }) } },
 });
 const features: readonly Feature[] = [core(), bold(), fixtureChrome(), stampedBlock()];

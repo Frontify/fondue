@@ -12,7 +12,7 @@ import {
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
-    type EditorPlugin,
+    type EditorPart,
     type EditorServices,
     type ReactPresentation,
     RichTextEditor,
@@ -126,7 +126,7 @@ interface Mount {
     readonly limits?: Partial<ResourceLimits>;
     readonly policy?: Partial<AuthoringPolicy>;
     readonly generateId?: () => string;
-    readonly plugins?: readonly EditorPlugin[];
+    readonly plugins?: readonly EditorPart[];
     readonly toolbar?: ReactPresentation['toolbar'];
 }
 

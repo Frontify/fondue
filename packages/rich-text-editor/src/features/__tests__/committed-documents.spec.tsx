@@ -6,7 +6,7 @@ import { TextSelection } from 'prosemirror-state';
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { pluginWithOptions } from '#/bridge/plugin';
+import { partWithOptions } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
 import { documentArb, fcSettings, nodeIdsIn, plainTextArb, seeded } from '#/features/__tests__/fixtures/generated';
 import { pluginsById } from '#/features/plugins';
@@ -40,7 +40,7 @@ const commandsOf = (profile: RichTextProfile, ids: readonly string[]) => {
         if (part === undefined) {
             return [];
         }
-        return (pluginWithOptions(part, options).toolbar ?? []).flatMap(({ command, payload }) => {
+        return (partWithOptions(part, options).toolbar ?? []).flatMap(({ command, payload }) => {
             if (payload === undefined) {
                 return [];
             }

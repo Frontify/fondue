@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin, type EditorApi, type EditorCommand } from '#/bridge/plugin';
+import { defineEditorPart, type EditorApi, type EditorCommand } from '#/bridge/plugin';
 import { markRule } from '#/model';
 
 import { links } from './feature';
@@ -46,7 +46,7 @@ const editLink = (api: EditorApi): boolean => {
  * or inserts its visible text at a caret outside one, and `link.remove` removes the whole link and keeps its text. A
  * bubble on the link at the caret opens, edits, copies and removes it.
  */
-export const linksEditor = defineEditorPlugin(links, {
+export const linksEditor = defineEditorPart(links, {
     commands: {
         [EDIT_LINK]: {
             enabled: (api) => api.marks.allowed('link'),

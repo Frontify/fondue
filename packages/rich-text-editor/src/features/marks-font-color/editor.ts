@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { ColorMenu } from './color-menu';
 import { fontColor } from './feature';
@@ -11,7 +11,7 @@ const COLOR_MARKS = ['font_color', 'highlight'] as const;
  * Sets and removes the text colour, opens the "A" colour menu from the toolbar, and sets the last colour again from
  * Mod+Shift+H; Clear removes text and highlight colours as one undo step.
  */
-export const fontColorEditor = defineEditorPlugin(fontColor, (options) => ({
+export const fontColorEditor = defineEditorPart(fontColor, (options) => ({
     commands: {
         'mark.font-color.set': {
             payload: {

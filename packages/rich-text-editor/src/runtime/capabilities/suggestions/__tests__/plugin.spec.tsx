@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { code, codeBlock, core, emoji } from '#/features';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { type EmojiEntry } from '#/features/emoji/data';
-import { defineEditor, defineEditorPlugin, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, defineEditorPart, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import { type ContentNodeJSON } from '#/model';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
@@ -188,7 +188,7 @@ const settle = async (
 
 describe('suggestion plugin', () => {
     it('shows a result that names no glyph as one with none', async () => {
-        const names = defineEditorPlugin(core(), {
+        const names = defineEditorPart(core(), {
             suggestions: [
                 {
                     trigger: '@',
@@ -212,7 +212,7 @@ describe('suggestion plugin', () => {
     });
 
     it('shows a host result with a glyph and a detail as its glyph and detail, with no person icon', async () => {
-        const party = defineEditorPlugin(core(), {
+        const party = defineEditorPart(core(), {
             suggestions: [
                 {
                     trigger: '@',

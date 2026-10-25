@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { contentChecks } from './feature';
 import { IssuesPanel } from './issues-panel';
@@ -8,7 +8,7 @@ import { IssuesPanel } from './issues-panel';
 const PANEL = 'checks';
 
 /** `checks.open` opens the issues panel, or, while it is open, moves focus to the issue last acted on. */
-export const contentChecksEditor = defineEditorPlugin(contentChecks, {
+export const contentChecksEditor = defineEditorPart(contentChecks, {
     commands: {
         'checks.open': {
             readOnly: true,

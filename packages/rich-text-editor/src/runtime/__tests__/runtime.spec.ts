@@ -10,7 +10,7 @@ import { type EditorView } from 'prosemirror-view';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { isApplePlatform } from '#/bridge/platform';
-import { defineEditorPlugin, type EditorApi, type EditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart, type EditorApi, type EditorPart } from '#/bridge/plugin';
 import {
     compileDefinition,
     type CompiledDefinition,
@@ -35,7 +35,7 @@ import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { mediaImage } from '#/features/media-image/feature';
-import { type CommandsOfPlugin, defineEditor, type EditorHandle, type PersistenceService } from '#/index';
+import { type CommandsOfPart, defineEditor, type EditorHandle, type PersistenceService } from '#/index';
 import {
     compileContentModel,
     type ContentModel,
@@ -120,7 +120,7 @@ interface Start {
     /** Makes the session managed, as a host's `services.persistence` does. */
     readonly persistence?: PersistenceService;
     /** Editor parts beside the fixture features' own, as a host passes them. */
-    readonly parts?: readonly EditorPlugin[];
+    readonly parts?: readonly EditorPart[];
     readonly pick?: (nodeId: string | undefined) => void;
 }
 
@@ -1746,7 +1746,7 @@ describe('command payloads', () => {
         },
         formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
     });
-    const pullQuoteEditor = defineEditorPlugin(pullQuote, {
+    const pullQuoteEditor = defineEditorPart(pullQuote, {
         commands: {
             'acme.pull-quote.set': {
                 run: (api) => api.blocks.set('acme_pull_quote', undefined, { toggle: true }),
@@ -1840,9 +1840,7 @@ describe('command payloads', () => {
 
     it('rejects a wrong payload before the command runs, for a typed and an untyped command', async () => {
         const { handle, view } = start(stored(para(words('ab'))), { model, parts });
-        const typed = handle as unknown as EditorHandle<
-            UnitCommands & CommandsOfPlugin<typeof fixtureHeadingSetEditor>
-        >;
+        const typed = handle as unknown as EditorHandle<UnitCommands & CommandsOfPart<typeof fixtureHeadingSetEditor>>;
         setSelection(handle, { text: 'ab', from: 1, to: 1 });
         const before = view.state;
         const sequence = handle.getSummary().commitSequence;
@@ -4141,11 +4139,11 @@ describe('key precedence', () => {
             requires: [{ id: 'core', version: 1 }],
         });
         const parts = [
-            defineEditorPlugin(leaveHeading, {
+            defineEditorPart(leaveHeading, {
                 commands: { 'fixture.paragraph.set': { run: (api) => api.blocks.set('paragraph') } },
                 keys: { Enter: 'fixture.paragraph.set' },
             }),
-            defineEditorPlugin(markLine, {
+            defineEditorPart(markLine, {
                 commands: { 'fixture.text.insert': TEXT_INSERT },
                 keys: { Enter: { command: 'fixture.text.insert', payload: { text: '¶' } } },
             }),
@@ -4320,7 +4318,7 @@ describe('input rules', () => {
             version: 1,
             requires: [{ id: 'core', version: 1 }],
         });
-        const part = defineEditorPlugin(backspaceMark, {
+        const part = defineEditorPart(backspaceMark, {
             commands: { 'fixture.text.insert': TEXT_INSERT },
             keys: { Backspace: { command: 'fixture.text.insert', payload: { text: '!' } } },
         });
@@ -4413,7 +4411,7 @@ describe('platform key bindings', () => {
     const pullQuoteSet = {
         run: (api: EditorApi) => api.blocks.set('acme_pull_quote', undefined, { toggle: true }),
     };
-    const part = defineEditorPlugin(pullQuote, {
+    const part = defineEditorPart(pullQuote, {
         commands: { 'acme.pull-quote.set': pullQuoteSet },
         keys: { 'mac:Mod-Alt-q': 'acme.pull-quote.set', 'other:Ctrl-Shift-q': 'acme.pull-quote.set' },
     });
@@ -4443,7 +4441,7 @@ describe('platform key bindings', () => {
     });
 
     it('runs the mac: binding over a plain binding of the same key on an Apple platform', () => {
-        const both = defineEditorPlugin(pullQuote, {
+        const both = defineEditorPart(pullQuote, {
             commands: {
                 'acme.pull-quote.set': pullQuoteSet,
                 'acme.pull-quote.unset': { run: (api) => api.blocks.set('paragraph') },
@@ -4482,7 +4480,7 @@ describe('platform key bindings', () => {
         vi.spyOn(navigator, 'platform', 'get').mockReturnValue('');
         Object.defineProperty(navigator, 'userAgentData', { configurable: true, get: () => ({ platform: 'macOS' }) });
         try {
-            const bound = defineEditorPlugin(pullQuote, {
+            const bound = defineEditorPart(pullQuote, {
                 commands: { 'acme.pull-quote.set': pullQuoteSet },
                 keys: { 'mac:Mod-b': 'acme.pull-quote.set' },
             });

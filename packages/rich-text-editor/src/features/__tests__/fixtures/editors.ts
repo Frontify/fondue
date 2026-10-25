@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin, type EditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart, type EditorPart } from '#/bridge/plugin';
 import { type ContentModel, type ContentNodeJSON } from '#/model';
 
 import {
@@ -21,25 +21,25 @@ const LEVEL = { fields: { level: { type: 'integer', min: 1, max: 6 } } } as cons
 const LEVELS = [1, 2, 3, 4, 5, 6] as const;
 
 /** Binds Mod+B to a paragraph command, so a model has a feature key. */
-export const fixtureBoldEditor = defineEditorPlugin(fixtureBold, {
+export const fixtureBoldEditor = defineEditorPart(fixtureBold, {
     commands: { 'fixture.paragraph.set': { run: (api) => api.blocks.set('paragraph') } },
     keys: { 'Mod-b': 'fixture.paragraph.set' },
 });
 
 /** Contributes the keyed history plugin, as `core` does. */
-export const fixtureHistoryEditor = defineEditorPlugin(fixtureHistory, {
+export const fixtureHistoryEditor = defineEditorPart(fixtureHistory, {
     commands: { 'fixture.undo': { run: (api) => api.history.undo() } },
     keys: { 'Mod-z': 'fixture.undo' },
 });
 
 /** Contributes the history plugin a second time. */
-export const fixtureRedoEditor = defineEditorPlugin(fixtureRedo, {
+export const fixtureRedoEditor = defineEditorPart(fixtureRedo, {
     commands: { 'fixture.redo': { run: (api) => api.history.redo() } },
     keys: { 'Mod-y': 'fixture.redo' },
 });
 
 /** Sets a heading of a level from a payload, and inserts a rule. */
-export const fixtureHeadingEditor = defineEditorPlugin(fixtureHeading, {
+export const fixtureHeadingEditor = defineEditorPart(fixtureHeading, {
     commands: {
         'fixture.heading.set': {
             payload: LEVEL,
@@ -52,14 +52,14 @@ export const fixtureHeadingEditor = defineEditorPlugin(fixtureHeading, {
 });
 
 /** Inserts a mention at the selection. */
-export const fixtureMentionEditor = defineEditorPlugin(fixtureMention, {
+export const fixtureMentionEditor = defineEditorPart(fixtureMention, {
     commands: {
         'fixture.mention.insert': { run: (api) => api.insert.node('mention').status === 'applied' },
     },
 });
 
 /** `heading.set` turns the selected textblocks into headings of the payload's level. */
-export const fixtureHeadingSetEditor = defineEditorPlugin(fixtureHeadingSet, {
+export const fixtureHeadingSetEditor = defineEditorPart(fixtureHeadingSet, {
     commands: {
         'heading.set': {
             payload: LEVEL,
@@ -73,7 +73,7 @@ export const fixtureHeadingSetEditor = defineEditorPlugin(fixtureHeadingSet, {
  * The input rules of the text features: `heading.hashes` over `heading.set`, and the mark rules over `italic`, the
  * `strike` mark and the `code` mark; the editor part of `marks.bold` brings the bold rules.
  */
-export const fixtureInputRulesEditor = defineEditorPlugin(fixtureInputRules, {
+export const fixtureInputRulesEditor = defineEditorPart(fixtureInputRules, {
     inputRules: [
         {
             id: 'heading.hashes',
@@ -93,7 +93,7 @@ export const fixtureInputRulesEditor = defineEditorPlugin(fixtureInputRules, {
  * an italic toggle, a button that toggles the shipped `link` mark, a block toggle over a `toggled_block`, six heading
  * items with payloads and undo and redo buttons, with keys for italic and the block.
  */
-export const fixtureToolbarEditor = defineEditorPlugin(fixtureToolbar, {
+export const fixtureToolbarEditor = defineEditorPart(fixtureToolbar, {
     commands: {
         'fixture.italic.toggle': {
             run: (api) => api.marks.toggle('italic'),
@@ -165,7 +165,7 @@ export const fixtureToolbarEditor = defineEditorPlugin(fixtureToolbar, {
 });
 
 /** Sets and removes the highlight of `marks.highlight`, as `mark.font-color.set` does the text colour. */
-export const fixtureHighlightEditor = defineEditorPlugin(fixtureHighlight, {
+export const fixtureHighlightEditor = defineEditorPart(fixtureHighlight, {
     commands: {
         'mark.highlight.set': {
             payload: {
@@ -190,7 +190,7 @@ export const fixtureHighlightEditor = defineEditorPlugin(fixtureHighlight, {
 });
 
 /** `embed.edit` sets the title of the selected embed. */
-export const fixtureEmbedEditor = defineEditorPlugin(fixtureEmbed, {
+export const fixtureEmbedEditor = defineEditorPart(fixtureEmbed, {
     commands: {
         'embed.edit': {
             payload: { fields: { title: { type: 'string' } } },
@@ -206,7 +206,7 @@ const CELLS = new Set(['table_cell', 'table_header']);
  * Stands in for the header row toggle of `tables` until it ships: it makes the first row's cells header cells, and, as
  * `prosemirror-tables` does, refuses a selection outside a cell.
  */
-export const fixtureTableEditor = defineEditorPlugin(fixtureTable, {
+export const fixtureTableEditor = defineEditorPart(fixtureTable, {
     commands: {
         'table.header.toggle': {
             payload: { fields: { axis: { type: 'enum', values: ['row', 'column'] } } },
@@ -250,7 +250,7 @@ export const FIXTURE_EDITORS = [
 ] as const;
 
 /** The ones of `parts` for the features `model` installs, in feature order, as a host passes `defineEditor` its own. */
-export const installedOf = <P extends EditorPlugin>(model: ContentModel, parts: readonly P[]): readonly P[] =>
+export const installedOf = <P extends EditorPart>(model: ContentModel, parts: readonly P[]): readonly P[] =>
     model.capabilities.flatMap(({ id }) => parts.filter(({ feature }) => feature === id));
 
 /** The editor parts of the fixture features `model` installs, with no React. */

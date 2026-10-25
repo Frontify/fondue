@@ -7,7 +7,7 @@ import { type ComponentType, createRef, lazy, Profiler, type ReactNode, useEffec
 import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
 import { fixtureItalic, fixtureToolbar } from '#/features/__tests__/fixtures/features';
 import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
@@ -763,7 +763,7 @@ describe('overlay focus and loading', () => {
             );
         };
         const lazyModel = compileContentModel([core(), fixtureMediaImage()], { id: 'test.overlays', version: 1 });
-        const lazyChrome = defineEditorPlugin(fixtureMediaImage, {
+        const lazyChrome = defineEditorPart(fixtureMediaImage, {
             views: [{ node: 'media_image', component: Chrome }],
         });
         const ref = createRef<EditorHandle<object>>();

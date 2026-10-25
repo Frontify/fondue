@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin, type EditorApi } from '#/bridge/plugin';
+import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
 
 import { mediaUpload } from './feature';
 
@@ -14,7 +14,7 @@ const imageOf = (api: EditorApi, payload: { readonly nodeId?: string } | undefin
  * Cancel and Retry of the upload into an image, which its chrome shows while the upload runs or once it failed, and
  * More and the context menu offer for the selected image while they apply.
  */
-export const mediaUploadEditor = defineEditorPlugin(mediaUpload, {
+export const mediaUploadEditor = defineEditorPart(mediaUpload, {
     commands: {
         'media.upload.cancel': {
             payload: NODE,

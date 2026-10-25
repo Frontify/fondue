@@ -5,7 +5,7 @@ import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { useState } from 'react';
 
 import {
-    defineEditorPlugin,
+    defineEditorPart,
     type EditorApi,
     type OverlayProps,
     type PanelComponentProps,
@@ -144,7 +144,7 @@ const SpotlightPanel = ({ close }: PanelComponentProps) => {
  * The editor part of `spotlight`, written only against the public API: a toggle command and its own toolbar control,
  * a command that opens an overlay from its own control, and a panel and its command.
  */
-export const spotlightEditor = defineEditorPlugin(spotlight, {
+export const spotlightEditor = defineEditorPart(spotlight, {
     commands: {
         'fixture.spotlight.toggle': {
             run: (api) => api.marks.toggle('fixture_spotlight'),

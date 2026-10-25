@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin, definePlugin } from '#/index';
+import { defineEditorPart } from '#/index';
 
 import { callout } from './callout-feature';
 import { calloutView } from './callout-view';
 
 /** Wraps the selected blocks in a callout, or lifts them out of one, from the toolbar. */
-export const calloutEditor = defineEditorPlugin(callout, {
+export const calloutEditor = defineEditorPart(callout, {
     commands: {
         'callout.toggle': {
             run: (api) => api.blocks.wrap('callout'),
@@ -24,6 +24,3 @@ export const calloutEditor = defineEditorPlugin(callout, {
     ],
     views: [calloutView],
 });
-
-/** The unit of the host block: its feature and its editor part. */
-export const calloutPlugin = definePlugin({ feature: callout, editor: calloutEditor });

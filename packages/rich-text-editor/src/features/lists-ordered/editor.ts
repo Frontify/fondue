@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 import { blockRule } from '#/model';
 
 import { orderedList } from './feature';
@@ -12,7 +12,7 @@ const START = { fields: { start: { type: 'integer', min: 0, max: 1_000_000 } } }
  * Toggles a numbered list from Mod+Shift+7, `1. ` at a line start, or the toolbar, and opens the Start numbering at
  * dialog on the nearest ordered list, whose Apply sets its `start`.
  */
-export const orderedListEditor = defineEditorPlugin(orderedList, {
+export const orderedListEditor = defineEditorPart(orderedList, {
     commands: {
         'list.ordered.toggle': {
             payload: START,

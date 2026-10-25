@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { formatClear } from './feature';
 
@@ -23,7 +23,7 @@ const CLEARED_ATTRIBUTES = ['align', 'indent'];
  * Clears formatting: Mod+\ removes the formatting marks only, and the toolbar button also removes every other mark,
  * lifts the selected blocks out of lists, turns them into paragraphs and clears alignment and indent.
  */
-export const formatClearEditor = defineEditorPlugin(formatClear, {
+export const formatClearEditor = defineEditorPart(formatClear, {
     commands: {
         'format.clear': {
             run: (api) => {

@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { COALESCE_MS } from '#/bridge/announcer';
 import { contentChecks } from '#/features';
 import { pluginsById } from '#/features/plugins';
-import { defineEditorPlugin, useEditorApi, useEditorValue } from '#/index';
+import { defineEditorPart, useEditorApi, useEditorValue } from '#/index';
 import { CHECK_DELAY_MS } from '#/runtime/capabilities/checks/content-issues';
 import { positionOf } from '#/runtime/positions';
 import { runtimeOf } from '#/runtime/runtime';
@@ -76,7 +76,7 @@ describe('the issues panel', () => {
                 </div>
             );
         };
-        const host = defineEditorPlugin(contentChecks, { panels: [{ control: 'checks', component: Listed }] });
+        const host = defineEditorPart(contentChecks, { panels: [{ control: 'checks', component: Listed }] });
         const { unmount } = mountChecks({ blocks: [image('photo')], plugins: [host] });
 
         fireEvent.click(screen.getByRole('button', { name: 'Accessibility checks' }));

@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mediaUpload } from '#/features';
 import { figure } from '#/features/media-image/__tests__/fixtures/mount';
-import { defineEditorPlugin, type EditorApi, useEditorApi } from '#/index';
+import { defineEditorPart, type EditorApi, useEditorApi } from '#/index';
 import { paste, setSelection } from '#/testing';
 
 import { type MountedUploads, mountUploads, para, pngFile, settle, text } from './fixtures/uploads';
@@ -33,7 +33,7 @@ beforeEach(() => {
 });
 
 /** A host part of `media.upload` that keeps the live editor API and takes the files no earlier part took. */
-const grabbing = defineEditorPlugin(mediaUpload, {
+const grabbing = defineEditorPart(mediaUpload, {
     overlays: [Grab],
     files: (api, files, at) => {
         taken.push({ names: files.map(({ name }) => name), origin: at.origin, text: api.selectedText() });

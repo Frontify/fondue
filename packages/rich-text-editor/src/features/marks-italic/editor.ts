@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { italic } from './feature';
 
 /** Toggles italic on the selection or at the caret, from Mod+I, `*` and `_`, or the toolbar. */
-export const italicEditor = defineEditorPlugin(italic, {
+export const italicEditor = defineEditorPart(italic, {
     commands: {
         'mark.italic.toggle': {
             run: (api) => api.marks.toggle('italic'),

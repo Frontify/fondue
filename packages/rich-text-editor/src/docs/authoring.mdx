@@ -6,11 +6,44 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Feature authoring
 
-A feature has up to three parts. The vocabulary part says what a feature stores and how that content becomes HTML, Markdown and text. The editor part says what the editor does with it: commands, keys, input rules, toolbar entries, overlays, panels, decorations, suggestion lists, node views and file drops. The reader part renders a node or mark with your own component.
+A feature has up to three parts. The vocabulary part says what a feature stores and how that content becomes HTML, Markdown and text. The editor part says what the editor does with it: commands, keys, input rules, toolbar entries, overlays, panels, decorations, suggestion lists, node views and file drops. The reader part renders a node or mark with your own component. A plugin is the whole unit: the feature, its editor part and its reader part, which a host lists once.
 
-The reader, the codecs and a server load only the vocabulary part. They never load editor code. Keep a feature's vocabulary in its own module, and import editor code only in the module that calls `defineEditorPlugin`.
+The reader, the codecs and a server load only the vocabulary part. They never load editor code. Keep a feature's vocabulary in its own module, and import editor code only in the module that calls `defineEditorPart`.
 
-Every example on this page is an excerpt of a shipped feature or of an example module under `src/docs/authoring`, and the `Source` line names its file. A test checks that each excerpt is still in that file. The `Rich Text Editor/Authoring` stories mount three of them as a host does: the `marks.strike` unit, a host block with a node view, and a host unit that replaces a shipped toolbar entry.
+Every example on this page is an excerpt of a shipped feature or of an example module under `src/docs/authoring`, and the `Source` line names its file. A test checks that each excerpt is still in that file. The `Rich Text Editor/Authoring` stories mount three of them as a host does: the `marks.strike` plugin, a host block with a node view, and a host plugin that replaces a shipped toolbar entry.
+
+## A feature folder
+
+A custom feature is a folder, as each shipped feature is. It holds these files:
+
+- `feature.ts`: the vocabulary part, one `defineFeature` call. Its factory is what the file exports.
+- `editor.ts`: the editor part, one `defineEditorPart` call for that feature.
+- `reader.tsx`, optional: the renderers of the feature's nodes and marks. Add it only when the feature needs your own components to read.
+- `index.ts`: `definePlugin({ feature, editor, reader? })`, which builds the plugin. A host lists this plugin and nothing else of the folder.
+
+The example modules under `src/docs/authoring` follow this layout with the folder name in each file name: `callout-feature.ts`, `callout-editor.ts` and `callout-plugin.ts`. The plugin file is the `index.ts` of the folder.
+
+Source: `src/docs/authoring/callout-plugin.ts`
+
+```ts
+export const calloutPlugin = definePlugin({ feature: callout, editor: calloutEditor });
+```
+
+The folder keeps the vocabulary apart from the editor code, so the reader, the codecs and a server import `feature.ts` and never `editor.ts`. A shipped feature with a reader passes it too, as `definePlugin({ feature: links, editor: linksEditor, reader: linkReader })` does in `src/features/links/index.ts`.
+
+### One file, for a host with no server reading
+
+A host that never reads the content on a server may keep the feature and its editor part in one file, in one call. The `defineFeature` result is a value, so the editor part takes the same one.
+
+Source: `src/docs/authoring/marker.ts`
+
+```ts
+export const markerPlugin = definePlugin({
+    feature: marker,
+    editor: defineEditorPart(marker, {
+```
+
+Anything that reads the content on a server needs the folder form, because the one file loads editor code with the vocabulary.
 
 ## The vocabulary part: `defineFeature`
 
@@ -135,11 +168,11 @@ parseRules: [
 ],
 ```
 
-## The editor part: `defineEditorPlugin`
+## The editor part: `defineEditorPart`
 
-`defineEditorPlugin` comes from `@frontify/rich-text-editor`. It takes a feature, or a factory, and the parts of its editor side. `parts` may also be a function of the feature's resolved options.
+`defineEditorPart` comes from `@frontify/rich-text-editor`. It takes a feature, or a factory, and the parts of its editor side. `parts` may also be a function of the feature's resolved options.
 
-`defineEditor` takes one unit per feature of its model in `plugins`. A unit holds a feature, its editor part and its reader overrides. Each shipped feature has one, such as `boldPlugin`. `modelOf` compiles the model from the same list, so the model and the units cannot differ. `defineEditor` throws `definition.missing-plugin`, `definition.orphan-behavior`, `definition.duplicate-id` or `definition.version-mismatch` when the units do not cover the model exactly: one unit per feature, of the same ID and version.
+`defineEditor` takes one plugin per feature of its model in `plugins`. A plugin holds a feature, its editor part and its reader overrides. Each shipped feature has one, such as `boldPlugin`. `modelOf` compiles the model from the same list, so the model and the plugins cannot differ. `defineEditor` throws `definition.missing-plugin`, `definition.orphan-behavior`, `definition.duplicate-id` or `definition.version-mismatch` when the plugins do not cover the model exactly: one plugin per feature, of the same ID and version.
 
 ```tsx
 import { boldPlugin, corePlugin, defineEditor, linksPlugin, modelOf } from '@frontify/rich-text-editor';
@@ -149,7 +182,7 @@ const model = modelOf(plugins, { id: 'acme.notes', version: 1 });
 const definition = defineEditor({ id: 'acme.notes', model, plugins });
 ```
 
-A host unit for a feature comes from `definePlugin` for a feature of the host, or from `extendPlugin` for a shipped one: `extendPlugin(unit, parts)` puts `parts` over the unit's editor part, and the list you give, such as `toolbar`, replaces the unit's list whole.
+A host plugin for a feature comes from `definePlugin` for a feature of the host, or from `extendPlugin` for a shipped one: `extendPlugin(plugin, parts)` puts `parts` over the plugin's editor part, and the list you give, such as `toolbar`, replaces the plugin's list whole.
 
 An editor part acts only through `EditorApi`, which its commands, key handlers and overlays receive. It never touches ProseMirror types.
 
@@ -162,7 +195,7 @@ The `Strike plugin` story mounts this part with `marks.strike`.
 Source: `src/features/marks-strike/editor.ts`
 
 ```ts
-export const strikeEditor = defineEditorPlugin(strike, {
+export const strikeEditor = defineEditorPart(strike, {
     commands: {
         'mark.strike.toggle': {
             run: (api) => api.marks.toggle('strike'),
@@ -257,7 +290,7 @@ Source: `src/features/a11y-content-checks/editor.ts`
 const PANEL = 'checks';
 
 /** `checks.open` opens the issues panel, or, while it is open, moves focus to the issue last acted on. */
-export const contentChecksEditor = defineEditorPlugin(contentChecks, {
+export const contentChecksEditor = defineEditorPart(contentChecks, {
     commands: {
         'checks.open': {
             readOnly: true,
@@ -393,7 +426,7 @@ Node chrome stays out of the Tab order, so Tab leaves the editor. Alt+F10 reache
 
 ### A host block with a node view
 
-A host declares its own block with `defineFeature` in a vocabulary module, which imports no editor code, and its editor part in a second module attaches a node view to it. The `Custom block with a node view` story mounts this example: the Callout button wraps the selection, and the button in the chrome switches the tone through `update`.
+A host declares its own block with `defineFeature` in `feature.ts`, which imports no editor code, and its editor part in `editor.ts` attaches a node view to it. The `Custom block with a node view` story mounts this example: the Callout button wraps the selection, and the button in the chrome switches the tone through `update`.
 
 Source: `src/docs/authoring/callout-feature.ts`
 
@@ -450,7 +483,7 @@ Source: `src/docs/authoring/callout-editor.ts`
 
 ```ts
 /** Wraps the selected blocks in a callout, or lifts them out of one, from the toolbar. */
-export const calloutEditor = defineEditorPlugin(callout, {
+export const calloutEditor = defineEditorPart(callout, {
     commands: {
         'callout.toggle': {
             run: (api) => api.blocks.wrap('callout'),
@@ -470,7 +503,7 @@ export const calloutEditor = defineEditorPlugin(callout, {
 });
 ```
 
-`definePlugin` joins the feature and its editor part into a unit. A model that installs a host feature lists that unit in `plugins`:
+`definePlugin` joins the feature and its editor part into a plugin, in the `index.ts` of the folder. A model that installs a host feature lists that plugin in `plugins`:
 
 ```tsx
 const calloutPlugin = definePlugin({ feature: callout, editor: calloutEditor });
@@ -481,12 +514,12 @@ const definition = defineEditor({ id: 'acme.notes', model, plugins });
 
 ### Replacing a shipped toolbar entry
 
-`extendPlugin` puts a host's parts over a shipped unit. Its `toolbar` replaces the unit's toolbar whole. Here the toolbar entry `bold` keeps its command and reads Strong. The `Host part replacing a toolbar entry` story mounts it.
+`extendPlugin` puts a host's parts over a shipped plugin. Its `toolbar` replaces the plugin's toolbar whole. Here the toolbar entry `bold` keeps its command and reads Strong. The `Host part replacing a toolbar entry` story mounts it.
 
 Source: `src/docs/authoring/strong.ts`
 
 ```ts
-/** A host unit for `marks.bold`: its toolbar entry `bold` replaces the shipped one, so the button reads Strong. */
+/** A host plugin for `marks.bold`: its toolbar entry `bold` replaces the shipped one, so the button reads Strong. */
 export const strongPlugin = extendPlugin(boldPlugin(), {
     toolbar: [
         {
@@ -533,7 +566,7 @@ const Mention = ({ attrs, context }: ReaderNodeProps) => {
 export const mentionReader: ReaderRenderers = { mention: Mention };
 ```
 
-`defineReaderFeature(feature, renderers)` returns the feature with the renderers attached. Compile that returned feature: the one you passed in carries none.
+`defineReaderFeature(feature, renderers)` returns the feature with the renderers attached. Compile that returned feature: the one you passed in carries none. A folder that has a `reader.tsx` also passes the same renderers as `reader` to `definePlugin`, so the reading views of the editor use the same components.
 
 ```tsx
 import { defineReaderFeature } from '@frontify/rich-text-editor/reader';

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { outline } from './feature';
 import { OutlinePanel } from './outline-panel';
@@ -8,7 +8,7 @@ import { OutlinePanel } from './outline-panel';
 const PANEL = 'outline';
 
 /** `outline.toggle` shows or hides the outline panel; choosing a heading moves the selection and changes nothing. */
-export const outlineEditor = defineEditorPlugin(outline, {
+export const outlineEditor = defineEditorPart(outline, {
     commands: {
         'outline.toggle': {
             readOnly: true,

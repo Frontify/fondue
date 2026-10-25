@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
 import {
@@ -130,7 +130,7 @@ describe('the context menu', () => {
     }) => {
         const model = imageModel([core(), mediaImage()]);
         // A host core part that shows Move up and Move down in the toolbar leaves More no row of its own.
-        const toolbarMoves = defineEditorPlugin(core(), {
+        const toolbarMoves = defineEditorPart(core(), {
             toolbar: [
                 { id: 'up', kind: 'button', command: 'block.move.up', labelKey: 'RichTextEditor_moveUp', icon: '' },
                 {
@@ -183,7 +183,7 @@ describe('the context menu', () => {
 
     it('names a row of a host node entry by its label, in the UI locale of the editor', async () => {
         const model = imageModel([core(), mediaImage()]);
-        const hostNote = defineEditorPlugin(mediaImage(), {
+        const hostNote = defineEditorPart(mediaImage(), {
             commands: { 'host.note': { run: () => true } },
             toolbar: [
                 {

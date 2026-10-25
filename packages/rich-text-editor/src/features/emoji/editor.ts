@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPlugin } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/plugin';
 
 import { loadEmoji, searchEmoji } from './data';
 import { EmojiPicker } from './emoji-picker';
@@ -10,7 +10,7 @@ import { emoji } from './feature';
 const LIMIT = 50;
 
 /** The `:` list of emoji by their CLDR names in the editor's locale and the Emoji button's picker, which insert the chosen one as text. */
-export const emojiEditor = defineEditorPlugin(emoji, {
+export const emojiEditor = defineEditorPart(emoji, {
     commands: {
         'emoji.picker.open': {
             // The selection's start sits in text that is not code.

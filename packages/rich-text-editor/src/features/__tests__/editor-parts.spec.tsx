@@ -12,11 +12,11 @@ import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units'
 import { corePlugin } from '#/features/core';
 import {
     defineEditor,
-    defineEditorPlugin,
+    defineEditorPart,
     defineReactPresentation,
     type EditorHandle,
-    type EditorPlugin,
-    type EditorPluginParts,
+    type EditorPart,
+    type EditorPartSpec,
     type EditorSuggestion,
     NodeViewContent,
     RichTextEditor,
@@ -64,7 +64,7 @@ const storedOf = (blocks: readonly ContentNodeJSON[]) =>
         content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: blocks },
     }) as unknown as RichTextDocument;
 
-const mount = (blocks: readonly ContentNodeJSON[], plugins: readonly EditorPlugin[]) => {
+const mount = (blocks: readonly ContentNodeJSON[], plugins: readonly EditorPart[]) => {
     const definition = defineEditor({ id: 'fixture.parts', model, plugins: unitsOf(model, plugins) });
     const document = storedOf(blocks);
     const ref = createRef<EditorHandle<UnitCommands>>();
@@ -93,7 +93,7 @@ const textsOf = (container: HTMLElement, selector: string) =>
 describe('the decorations of an editor part', () => {
     it('draws its ranges by character, with each inline leaf as one character, with their class and attributes', () => {
         const seen: unknown[] = [];
-        const plugin = defineEditorPlugin(spotlight, {
+        const plugin = defineEditorPart(spotlight, {
             decorations: [
                 {
                     id: 'fixture.hits',
@@ -114,7 +114,7 @@ describe('the decorations of an editor part', () => {
 
     it('derives again only the block a change touched, and keeps the ranges of the others on their text', () => {
         const derived: string[] = [];
-        const plugin = defineEditorPlugin(spotlight, {
+        const plugin = defineEditorPart(spotlight, {
             decorations: [
                 {
                     id: 'fixture.first',
@@ -139,7 +139,7 @@ describe('the decorations of an editor part', () => {
     });
 
     it('derives a block split off a heading again with the nodeId it is given', () => {
-        const plugin = defineEditorPlugin(spotlight, {
+        const plugin = defineEditorPart(spotlight, {
             decorations: [
                 {
                     id: 'fixture.ids',
@@ -165,7 +165,7 @@ describe('the decorations of an editor part', () => {
     });
 
     it('refuses a source over a node that is no textblock of the model', () => {
-        const plugin = defineEditorPlugin(spotlight, {
+        const plugin = defineEditorPart(spotlight, {
             decorations: [{ id: 'fixture.none', nodes: ['doc'], derive: () => [] }],
         });
 
@@ -185,7 +185,7 @@ describe('the decorations of an editor part', () => {
     });
 
     it('keeps the shipped highlighting and view of blocks.code under an empty host part', async () => {
-        const { container } = mount([code('const a = 1;', 'typescript')], [defineEditorPlugin(codeBlock, {})]);
+        const { container } = mount([code('const a = 1;', 'typescript')], [defineEditorPart(codeBlock, {})]);
 
         await vi.waitFor(() => {
             expect(container.querySelector('[class*="hljs-"]')).not.toBeNull();
@@ -195,7 +195,7 @@ describe('the decorations of an editor part', () => {
     });
 
     it('leaves code blocks plain under a host part that replaces the code-syntax source by its id', async () => {
-        const plain = defineEditorPlugin(codeBlock, {
+        const plain = defineEditorPart(codeBlock, {
             decorations: [{ id: 'code-syntax', nodes: ['code_block'], derive: () => [] }],
         });
         const shipped = mount([code('const a = 1;', 'typescript')], []);
@@ -222,7 +222,7 @@ describe('the node views of an editor part', () => {
                 </div>
             );
         };
-        const plugin = defineEditorPlugin(spotlight, { views: [{ node: 'heading', component: Frame }] });
+        const plugin = defineEditorPart(spotlight, { views: [{ node: 'heading', component: Frame }] });
         const { handle, container } = mount([title, para(text('Body'))], [plugin]);
         await vi.waitFor(() => {
             expect(container.querySelector('.fixture-content')?.textContent).toBe('Title');
@@ -249,7 +249,7 @@ describe('the node views of an editor part', () => {
 
     it('puts the content of a view that places none in the hole of its HTML spec, with the attributes the spec writes', async () => {
         const Bar = () => <span>Bar</span>;
-        const plugin = defineEditorPlugin(codeBlock, { views: [{ node: 'code_block', component: Bar }] });
+        const plugin = defineEditorPart(codeBlock, { views: [{ node: 'code_block', component: Bar }] });
         const { handle, container } = mount([code('one', 'typescript')], [plugin]);
         await vi.waitFor(() => {
             expect(container.querySelector('[data-rte-chrome]')?.textContent).toBe('Bar');
@@ -289,7 +289,7 @@ describe('a host part over a shipped part', () => {
         id: 'fixture.host',
         version: 1,
     });
-    const mountHost = (blocks: readonly ContentNodeJSON[], plugins: readonly EditorPlugin[]) =>
+    const mountHost = (blocks: readonly ContentNodeJSON[], plugins: readonly EditorPart[]) =>
         render(
             <RichTextEditor
                 aria-label="Notes"
@@ -317,7 +317,7 @@ describe('a host part over a shipped part', () => {
 
     it('renders its view of the mention in place of the shipped chip', async () => {
         const Chip = () => <span className="fixture-chip">Host chip</span>;
-        const plugin = defineEditorPlugin(mentions, { views: [{ node: 'mention', component: Chip }] });
+        const plugin = defineEditorPart(mentions, { views: [{ node: 'mention', component: Chip }] });
         const { container, unmount } = mountHost([para(text('Hi '), ada)], [plugin]);
 
         await vi.waitFor(() => {
@@ -329,7 +329,7 @@ describe('a host part over a shipped part', () => {
 
     it('opens its panel in place of the shipped panel of the same id', () => {
         const Panel = () => <p>Host outline</p>;
-        const plugin = defineEditorPlugin(outline, {
+        const plugin = defineEditorPart(outline, {
             panels: [{ control: 'outline', component: Panel }],
         });
         const { unmount } = mountHost([title], [plugin]);
@@ -353,7 +353,7 @@ describe('the keys of an editor part', () => {
     };
 
     it('runs a key handler as the input it replaces: no command ID, and one undo step with the typing before it', () => {
-        const plugin = defineEditorPlugin(spotlight, { keys: { 'Alt-j': (api) => api.insert.text('!') } });
+        const plugin = defineEditorPart(spotlight, { keys: { 'Alt-j': (api) => api.insert.text('!') } });
         const { handle, container, changes } = mount([para(text('one'))], [plugin]);
         setSelection(handle, { text: 'one', from: 3, to: 3 });
 
@@ -374,7 +374,7 @@ describe('the keys of an editor part', () => {
 
     it('hands the key on and changes nothing when a key handler returns false', () => {
         const ran: string[] = [];
-        const plugin = defineEditorPlugin(spotlight, {
+        const plugin = defineEditorPart(spotlight, {
             keys: {
                 'Alt-j': (api) => {
                     ran.push(api.selectedText());
@@ -393,11 +393,11 @@ describe('the keys of an editor part', () => {
     });
 
     it('runs a key handler before a key binding of the same key', () => {
-        const binding = defineEditorPlugin(heading, {
+        const binding = defineEditorPart(heading, {
             commands: { 'fixture.heading.mark': { run: (api) => api.insert.text('binding') } },
             keys: { Enter: 'fixture.heading.mark' },
         });
-        const handler = defineEditorPlugin(spotlight, { keys: { Enter: (api) => api.insert.text('handler') } });
+        const handler = defineEditorPart(spotlight, { keys: { Enter: (api) => api.insert.text('handler') } });
         const { handle } = mount([para(text('one'))], [binding, handler]);
         setSelection(handle, { text: 'one', from: 3, to: 3 });
 
@@ -407,7 +407,7 @@ describe('the keys of an editor part', () => {
     });
 
     it('reports the command ID of a key that names a command', () => {
-        const plugin = defineEditorPlugin(spotlight, {
+        const plugin = defineEditorPart(spotlight, {
             commands: { 'fixture.spotlight.toggle': { run: (api) => api.marks.toggle('fixture_spotlight') } },
             keys: { 'Alt-j': 'fixture.spotlight.toggle' },
         });
@@ -424,7 +424,7 @@ describe('the keys of an editor part', () => {
 
 describe('the input rules of an editor part', () => {
     it('refuses two rules of one ID', () => {
-        const plugin = defineEditorPlugin(spotlight, {
+        const plugin = defineEditorPart(spotlight, {
             inputRules: [
                 textRule({ id: 'fixture.twice', match: /aa$/u, replace: 'b' }),
                 textRule({ id: 'fixture.twice', match: /cc$/u, replace: 'd' }),
@@ -440,7 +440,7 @@ describe('the input rules of an editor part', () => {
 const RULES = { afterPunctuation: false, maxQuery: 20, spaces: false, leadingLetters: 1 };
 const tag = (key: string, label = `Tag ${key}`) => ({ key, label, glyph: null, payload: { text: key } });
 const tagPart = (search: EditorSuggestion['search'], rules: SuggestionRules = RULES) =>
-    defineEditorPlugin(spotlight, {
+    defineEditorPart(spotlight, {
         suggestions: [{ trigger: '#', labelKey: 'RichTextEditor_suggestions', rules, search, command: 'text.insert' }],
     });
 const shownOptions = () => screen.queryAllByRole('option').map((option) => option.textContent);
@@ -545,7 +545,7 @@ describe('the suggestions of an editor part', () => {
 
     it('opens no list and asks no search while it is not available, and leaves Escape to the host', async () => {
         const search = vi.fn(() => Promise.resolve({ items: [tag('a')], nextCursor: null }));
-        const plugin = defineEditorPlugin(spotlight, {
+        const plugin = defineEditorPart(spotlight, {
             suggestions: [
                 {
                     trigger: '#',
@@ -742,7 +742,7 @@ describe('the orphan checks of an editor part', () => {
             '/decorations/0/nodes',
         ],
     ] as const)('refuses a %s that names what no part or feature of the definition has', (_kind, parts, path) => {
-        const plugin = defineEditorPlugin(spotlight, parts as unknown as EditorPluginParts);
+        const plugin = defineEditorPart(spotlight, parts as unknown as EditorPartSpec);
 
         expect(() => defineEditor({ id: 'fixture.parts', model, plugins: unitsOf(model, [plugin]) })).toThrow(
             expect.objectContaining({
@@ -754,7 +754,7 @@ describe('the orphan checks of an editor part', () => {
 
     it('refuses a model that installs the feature of a content check repair when no part registers its command', () => {
         const languages = compileContentModel([core(), language()], { id: 'fixture.parts', version: 1 });
-        const plugin = defineEditorPlugin(language, {});
+        const plugin = defineEditorPart(language, {});
 
         const bare = definePlugin({ feature: language, editor: plugin })();
 

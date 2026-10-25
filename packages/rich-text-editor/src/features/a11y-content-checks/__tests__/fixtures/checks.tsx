@@ -12,7 +12,7 @@ import {
     defineEditor,
     defineReactPresentation,
     type EditorHandle,
-    type EditorPlugin,
+    type EditorPart,
     type EditorServices,
     RichTextEditor,
 } from '#/index';
@@ -85,7 +85,7 @@ interface Mount {
     readonly policy?: Partial<AuthoringPolicy>;
     readonly services?: EditorServices;
     readonly toolbar?: readonly (readonly string[])[];
-    readonly plugins?: readonly EditorPlugin[];
+    readonly plugins?: readonly EditorPart[];
     readonly readOnly?: boolean;
 }
 

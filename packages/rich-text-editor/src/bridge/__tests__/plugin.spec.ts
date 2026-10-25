@@ -4,17 +4,17 @@ import { describe, expect, it } from 'vitest';
 
 import { core } from '#/features/core/feature';
 
-import { defineEditorPlugin, pluginWithOptions } from '../plugin';
+import { defineEditorPart, partWithOptions } from '../plugin';
 
-describe('defineEditorPlugin with parts that depend on options', () => {
+describe('defineEditorPart with parts that depend on options', () => {
     it('gives the same parts through a spread copy as through the plugin', () => {
-        const plugin = defineEditorPlugin(core(), (options) => ({
+        const plugin = defineEditorPart(core(), (options) => ({
             commands: { 'core.fixture': { run: () => options.on === true } },
         }));
         const copy = { ...plugin };
 
-        const original = pluginWithOptions(plugin, { on: true });
-        const copied = pluginWithOptions(copy, { on: true });
+        const original = partWithOptions(plugin, { on: true });
+        const copied = partWithOptions(copy, { on: true });
 
         expect(Object.keys(copied.commands ?? {})).toEqual(['core.fixture']);
         expect(Object.keys(copied.commands ?? {})).toEqual(Object.keys(original.commands ?? {}));
