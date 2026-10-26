@@ -5,9 +5,9 @@ import { Button, Label, RadioList, TextInput } from '@frontify/fondue-components
 import { EditorDialog } from '#/bridge/define';
 import { type OverlayProps } from '#/bridge/plugin';
 
-import { type AltTextStrings } from './dialogStrings';
-import styles from './styles/media.module.scss';
-import { type AltTextState, useAltTextDialogState } from './useAltTextDialogState';
+import { type AltTextStrings } from '../helpers/dialogStrings';
+import styles from '../styles/media.module.scss';
+import { type AltTextState, useAltTextDialogState } from '../hooks/useAltTextDialogState';
 
 const options = (strings: AltTextStrings) =>
     [

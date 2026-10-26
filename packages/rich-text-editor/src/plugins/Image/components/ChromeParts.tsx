@@ -6,15 +6,15 @@ import { NodeChromeButton, NodeChromeMenu, NodeChromeToolbar, OptionItem } from 
 import { type EditorApi } from '#/bridge/plugin';
 import { altOf, REPLACED_ASSET, unavailableOf } from '#/model';
 
-import { AltTextDialog } from './dialogs';
-import { altTextStrings, SET_SIZE } from './dialogStrings';
+import { AltTextDialog } from '../helpers/dialogs';
+import { altTextStrings, SET_SIZE } from '../helpers/dialogStrings';
 import { ContentImage } from './image';
-import { figureOf } from './nodes';
-import { alignOptions, EDIT_WIDTH, SIDE_KEYS, sizeOptions } from './options';
-import { ImageUnavailable } from './reader';
-import styles from './styles/image.module.scss';
-import { UploadControls, UploadSlot } from './uploadParts';
-import { type ImageChromeState } from './useImageChromeState';
+import { figureOf } from '../helpers/nodes';
+import { alignOptions, EDIT_WIDTH, SIDE_KEYS, sizeOptions } from '../helpers/options';
+import { ImageUnavailable } from '../reader';
+import styles from '../styles/image.module.scss';
+import { UploadControls, UploadSlot } from '../helpers/uploadParts';
+import { type ImageChromeState } from '../hooks/useImageChromeState';
 
 /** A stored intrinsic size, or `null` where the image has none. */
 const sizeOf = (value: unknown) => (typeof value === 'number' ? value : null);

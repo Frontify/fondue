@@ -7,8 +7,8 @@ import { NodeChromeButton } from '#/bridge/define';
 import { type UploadStatus, useClientLayoutEffect, useEditorApi } from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
 
-import styles from './styles/upload.module.scss';
-import { surfaceFocused, uploadStatusText } from './uploadStatus';
+import styles from '../styles/upload.module.scss';
+import { surfaceFocused, uploadStatusText } from '../hooks/useUploadStatus';
 
 const CANCEL = 'media.upload.cancel';
 const RETRY = 'media.upload.retry';

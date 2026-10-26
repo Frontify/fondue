@@ -4,7 +4,7 @@ import { type PointerEvent, type RefObject, useEffect, useRef, useState } from '
 
 import { type EditorApi } from '#/bridge/plugin';
 
-import { MAX_WIDTH, MIN_WIDTH } from './dialogStrings';
+import { MAX_WIDTH, MIN_WIDTH } from '../helpers/dialogStrings';
 
 // How far a pointer moves before a press on the handle counts as a horizontal resize, or as a scroll.
 const SLOP = 8;

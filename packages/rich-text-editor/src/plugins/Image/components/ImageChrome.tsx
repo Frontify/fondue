@@ -3,8 +3,8 @@
 import { type NodeViewDeclaration } from '#/bridge/define';
 
 import { ImageBody, ImageToolbar } from './ChromeParts';
-import styles from './styles/image.module.scss';
-import { useImageChromeState } from './useImageChromeState';
+import styles from '../styles/image.module.scss';
+import { useImageChromeState } from '../hooks/useImageChromeState';
 
 /**
  * The image as the author edits it, with the `alt` the reader writes, its placeholder when it cannot show, and its

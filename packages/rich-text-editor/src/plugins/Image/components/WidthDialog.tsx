@@ -6,8 +6,8 @@ import { type FormEvent, useId, useRef, useState } from 'react';
 import { EditorDialog, useEditorDialog } from '#/bridge/define';
 import { type OverlayProps, useEditorApi } from '#/bridge/plugin';
 
-import { MAX_WIDTH, MIN_WIDTH, SET_SIZE, type WidthStrings } from './dialogStrings';
-import styles from './styles/media.module.scss';
+import { MAX_WIDTH, MIN_WIDTH, SET_SIZE, type WidthStrings } from '../helpers/dialogStrings';
+import styles from '../styles/media.module.scss';
 
 /**
  * The image menu's numeric field: a width in percent of the content width, from 10 to 100, whose Apply runs `apply`

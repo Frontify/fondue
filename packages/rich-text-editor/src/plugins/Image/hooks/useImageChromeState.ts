@@ -6,10 +6,10 @@ import { type MenuOption, useRichTextNodeView } from '#/bridge/define';
 import { type EditorApi, type UploadStatus, useEditorApi, useEditorValue } from '#/bridge/plugin';
 import { altOf, figureAlign, imageOutput, isRecord, type JsonObject, REPLACED_ASSET, unavailableOf } from '#/model';
 
-import { mayAnimate } from './animation';
-import { SET_SIZE } from './dialogStrings';
-import { type SIDES } from './options';
-import { surfaceFocused, uploadStatusText, useUploadStatus } from './uploadStatus';
+import { mayAnimate } from '../helpers/animation';
+import { SET_SIZE } from '../helpers/dialogStrings';
+import { type SIDES } from '../helpers/options';
+import { surfaceFocused, uploadStatusText, useUploadStatus } from './useUploadStatus';
 import { useResize } from './useResize';
 
 /** The side of the figure that holds the image `nodeId`, which its chrome's alignment menu shows. */

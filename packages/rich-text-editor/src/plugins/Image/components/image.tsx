@@ -10,7 +10,7 @@ import {
     useRef,
 } from 'react';
 
-import styles from './styles/image.module.scss';
+import styles from '../styles/image.module.scss';
 
 // The longest side of a still in device pixels, whatever the image's own size.
 const MAX_STILL = 4096;
