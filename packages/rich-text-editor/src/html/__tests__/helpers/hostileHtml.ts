@@ -115,6 +115,7 @@ export const { html: htmlArb } = fc.letrec<{ html: string }>((tie) => ({
                 if (blank) {
                     target = ' target="_blank"';
                 }
+
                 return `<a href="${escapeAttribute(href)}"${target}>${children.join('')}</a>`;
             }),
         fc
@@ -128,6 +129,7 @@ export const { html: htmlArb } = fc.letrec<{ html: string }>((tie) => ({
             )
             .map(([tag, attributes, children]) => {
                 const written = attributes.map(([name, value]) => ` ${name}="${escapeAttribute(value)}"`).join('');
+
                 return `<${tag}${written}>${children.join('')}</${tag}>`;
             }),
     ),
@@ -142,9 +144,11 @@ export const unsafeParts = (model: ContentModel, content: unknown): string[] => 
     for (const node of nodes) {
         declared.set(node.name, attributesOf(node));
     }
+
     for (const mark of marks) {
         declared.set(mark.name, mark.declaration.attrs);
     }
+
     const policy = markHrefPolicy(model, 'link');
     const found: string[] = [];
     const check = (member: JsonNode, path: string) => {
@@ -153,24 +157,30 @@ export const unsafeParts = (model: ContentModel, content: unknown): string[] => 
             if (/^on/i.test(name) || name === 'style' || name === 'srcdoc' || declarations[name] === undefined) {
                 found.push(`${path}/attrs/${name}`);
             }
+
             if (typeof value === 'string' && UNSAFE_SCHEME.test(value)) {
                 found.push(`${path}/attrs/${name}`);
             }
+
             if (declarations[name]?.type === 'url' && (typeof value !== 'string' || !checkHref(value, policy).ok)) {
                 found.push(`${path}/attrs/${name}`);
             }
         }
     };
+
     const visit = (node: JsonNode, path: string) => {
         check(node, path);
         for (const [index, mark] of ((node.marks ?? []) as JsonNode[]).entries()) {
             check(mark, `${path}/marks/${index}`);
         }
+
         for (const [index, child] of ((node.content ?? []) as JsonNode[]).entries()) {
             visit(child, `${path}/content/${index}`);
         }
     };
+
     visit(content as JsonNode, '');
+
     return found;
 };
 
@@ -186,15 +196,18 @@ export const unsafeHtml = (html: string): string[] => {
         if (SCRIPT_CAPABLE.test(element.localName) && !checkbox) {
             found.push(element.localName);
         }
+
         for (const { name, value } of Array.from(element.attributes)) {
             if (/^on/i.test(name) || /srcdoc$/i.test(name)) {
                 found.push(`${element.localName}[${name}]`);
             }
+
             if (/^(href|src|xlink:href|action|formaction)$/i.test(name) && !checkHref(value).ok) {
                 found.push(`${element.localName}[${name}]`);
             }
         }
     }
+
     return found;
 };
 
@@ -210,21 +223,26 @@ export const policyFaults = (
         if (refused.nodes.has(node.type as string)) {
             found.push(`${path} ${node.type as string}`);
         }
+
         for (const mark of (node.marks ?? []) as JsonNode[]) {
             if (refused.marks.has(mark.type as string)) {
                 found.push(`${path} ${mark.type as string}`);
             }
         }
+
         if (
             node.type === 'heading' &&
             !authoring.creatableHeadingLevels.includes((node.attrs as JsonNode).level as number)
         ) {
             found.push(`${path} heading`);
         }
+
         for (const [index, child] of ((node.content ?? []) as JsonNode[]).entries()) {
             visit(child, `${path}/content/${index}`);
         }
     };
+
     visit(content as JsonNode, '');
+
     return found;
 };

@@ -37,8 +37,10 @@ const contentOf = (html: string, options: Omit<Parameters<typeof fromHTML>[2], '
     if (result.status !== 'editable') {
         throw new Error(`fromHTML returned ${result.status}`);
     }
+
     return result.document.content.content ?? [];
 };
+
 const paragraph = (...content: readonly object[]) => ({
     type: 'paragraph',
     attrs: { lang: null, align: null },
@@ -153,6 +155,7 @@ describe('fromHTML', () => {
         let next = 0;
         const generateId = () => {
             next += 1;
+
             return `id-${next}`;
         };
 
@@ -353,12 +356,16 @@ describe('external HTML', () => {
         if (Array.isArray(value)) {
             return value.flatMap(attributeNames);
         }
+
         if (typeof value !== 'object' || value === null) {
             return [];
         }
+
         const { attrs, content, marks } = value as Record<string, unknown>;
+
         return [...Object.keys(attrs ?? {}), ...attributeNames(content), ...attributeNames(marks)];
     };
+
     const textOf = (content: readonly unknown[]): string =>
         content
             .map((block) => {
@@ -369,6 +376,7 @@ describe('external HTML', () => {
                 if (text !== undefined) {
                     return text;
                 }
+
                 return textOf(children);
             })
             .join('');

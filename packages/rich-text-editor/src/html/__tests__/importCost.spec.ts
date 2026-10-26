@@ -34,20 +34,25 @@ const scanned = (matches: (element: Element) => boolean, run: () => void) => {
             total += original.all.call(receiver, '*').length;
         }
     };
+
     vi.spyOn(proto, 'querySelector').mockImplementation(function (this: Element, selector: string) {
         count(this);
+
         return original.one.call(this, selector);
     });
     vi.spyOn(proto, 'querySelectorAll').mockImplementation(function (this: Element, selector: string) {
         count(this);
+
         return original.all.call(this, selector);
     });
     run();
+
     return total;
 };
 
 const textOf = (html: string, model = listModel) => {
     const result = fromHTML(html, model, { window: dom });
+
     return JSON.stringify(result.status === 'editable' ? result.document.content : result.status);
 };
 
@@ -168,6 +173,7 @@ describe('a class attribute with tens of thousands of tokens', () => {
             for (const element of Array.from(this.querySelectorAll('[class]'))) {
                 longest.push((element.getAttribute('class') ?? '').length);
             }
+
             return original.call(this, names);
         });
 
@@ -195,6 +201,7 @@ describe('the paste policy of a feature that holds the items of a list', () => {
         if (result.status !== 'editable') {
             return;
         }
+
         expect(JSON.stringify(result.document.content)).not.toContain('"type":"bullet_list"');
         expect(JSON.stringify(result.document.content)).toContain('"text":"a"');
     });

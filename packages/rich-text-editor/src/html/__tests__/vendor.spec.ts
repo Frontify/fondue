@@ -48,8 +48,10 @@ const contentOf = (
     if (result.status !== 'editable') {
         throw new Error(`fromHTML returned ${result.status}`);
     }
+
     return withoutNodeIds(result.document.content.content ?? []) as readonly object[];
 };
+
 const paragraph = (...content: readonly object[]) => ({
     type: 'paragraph',
     attrs: { lang: null, align: null },
@@ -69,6 +71,7 @@ const runsOf = (node: EngineNode) => {
             );
         }
     });
+
     return blocks.map((runs) => runs.filter((run) => !run.startsWith('<hard_break>')).join(''));
 };
 
@@ -151,6 +154,7 @@ describe('vendor cleanups', () => {
         const original = SchemaParser.prototype.parse;
         vi.spyOn(SchemaParser.prototype, 'parse').mockImplementation(function (this: SchemaParser, node, options) {
             parsed = { node, html: (node as HTMLElement).outerHTML };
+
             return original.call(this, node, options);
         });
 
@@ -252,11 +256,13 @@ describe('a model without the feature whose markup a cleanup read', () => {
             rules: compiledModel(model).parseRules,
         });
         const body = new window.DOMParser().parseFromString(html, 'text/html').body;
+
         return {
             imported: schema.topNodeType.create(null, imported.content).toJSON() as unknown,
             plain: SchemaParser.fromSchema(schema).parse(body).toJSON() as unknown,
         };
     };
+
     const hostModel = compileContentModel([core(), hostMarks()], { id: 'fixture.host-marks', version: 1 });
 
     it('reads the italic style of a Google Docs run as the plain parse does without marks.italic', () => {
@@ -321,12 +327,15 @@ describe('vendor cleanups on HTML from other sources', () => {
             if (className !== null) {
                 value += ` class="${className}"`;
             }
+
             if (style !== null) {
                 value += ` style="${style}"`;
             }
+
             if (id !== null) {
                 value += ` id="${id}"`;
             }
+
             return value;
         });
     const { inline } = fc.letrec<{ inline: string }>((tie) => ({

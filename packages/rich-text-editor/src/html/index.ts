@@ -38,8 +38,10 @@ export const fromHTML = (html: string, model: ContentModel, options: HtmlImportO
     const limits = limitsOf(options.limits, definition?.limits);
     if (exceedsBytes(html, limits.maxPasteBytes)) {
         const limit = diagnostic('format.limit-exceeded', '', { limit: 'maxPasteBytes' }, 'error');
+
         return { status: 'blocked', reason: 'limit-exceeded', original: html, diagnostics: [limit] };
     }
+
     const schema = buildSchema(model);
     const headingLevels = definition?.authoring.creatableHeadingLevels;
     let imported: ImportedHtml;
@@ -50,18 +52,24 @@ export const fromHTML = (html: string, model: ContentModel, options: HtmlImportO
         // Markup nested past the call stack is a structure limit; any other throw is unreadable input, never a throw.
         if (error instanceof RangeError) {
             const limit = diagnostic('format.limit-exceeded', '', { limit: 'maxDepth' }, 'error');
+
             return { status: 'blocked', reason: 'limit-exceeded', original: html, diagnostics: [limit] };
         }
+
         const unreadable = diagnostic('format.invalid-structure', '', undefined, 'error');
+
         return { status: 'blocked', reason: 'invalid', original: html, diagnostics: [unreadable] };
     }
+
     let { content } = imported;
     if (definition !== undefined) {
         content = withoutRefused(new Slice(content, 0, 0), schema, model, definition.authoring.features).content;
     }
+
     const generateId = options.generateId ?? randomId;
     // The parse fits its content to `doc`, and an empty one gets the paragraph `doc` requires.
     const doc = schema.topNodeType.createAndFill(null, withNodeIds(content, generateId)) as Node;
     const { document } = encodeTree(doc.toJSON() as TreeNode, model);
+
     return decodeDocument(document, model, { limits, generateId });
 };

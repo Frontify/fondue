@@ -43,6 +43,7 @@ const canonical = (value: unknown) =>
         if (key === 'nodeId') {
             return undefined;
         }
+
         return item;
     });
 
@@ -57,10 +58,12 @@ describe.each(PROFILES)(seeded('importing arbitrary HTML into the %s profile'), 
                 if (withDefinition) {
                     options = { window: domWindow, definition };
                 }
+
                 const result = fromHTML(html, model, options);
                 if (result.status !== 'editable') {
                     throw new Error(`fromHTML returned ${result.status} ${JSON.stringify(result.diagnostics)}`);
                 }
+
                 const { document } = result;
                 const decoded = decodeDocument(document, model);
                 expect(decoded).toMatchObject({ status: 'editable', diagnostics: [] });
@@ -93,30 +96,39 @@ const withHtmlSpaces = (stored: RichTextDocument): RichTextDocument => {
         if (node.content === undefined) {
             return node;
         }
+
         const children = (node.content as JsonNode[]).map((child) => visit(child) as JsonNode);
         if (node.type === 'code_block') {
             return { ...node, content: children };
         }
+
         let previous = '';
         const spaced = children.map((child) => {
             if (child.type !== 'text') {
                 previous = '';
+
                 return child;
             }
+
             let text = '';
             for (const char of child.text as string) {
                 let kept = char;
                 if (char === '\u00A0' && previous === ' ') {
                     kept = 'x';
                 }
+
                 text += kept;
                 previous = kept;
             }
+
             return { ...child, text };
         });
+
         return { ...node, content: spaced };
     };
+
     const content = canonicalize(visit(stored.content as unknown as JsonValue)) as unknown as ContentNodeJSON;
+
     return { ...stored, content };
 };
 

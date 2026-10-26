@@ -34,6 +34,7 @@ describe('the HTML import of untrusted markup', () => {
         if (result.status !== 'editable') {
             return;
         }
+
         expect(textOf(result.document.content)).toContain('"text":"t"');
         expect(textOf(result.document.content)).not.toContain('"type":"link"');
     });
@@ -65,6 +66,7 @@ describe('the HTML import of untrusted markup', () => {
         if (result.status !== 'editable') {
             return;
         }
+
         expect(textOf(result.document.content)).toContain('"text":"x"');
     });
 
