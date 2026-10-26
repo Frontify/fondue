@@ -3,7 +3,6 @@
 import { gapCursor } from 'prosemirror-gapcursor';
 import { Plugin, PluginKey } from 'prosemirror-state';
 
-import { type EngineImplementations } from '#/definition';
 import {
     BASE_KEYS_PLUGIN,
     BLOCK_DECORATIONS_PLUGIN,
@@ -15,6 +14,7 @@ import {
     LAST_MARK_PLUGIN,
     SUGGESTIONS_PLUGIN,
 } from '#/model/internal';
+import { type EngineImplementations } from '#/runtime/definition';
 
 import { blockDecorationsPlugin } from '../decorations';
 import { historyPlugin } from '../history';

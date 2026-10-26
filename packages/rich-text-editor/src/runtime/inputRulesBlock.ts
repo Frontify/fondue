@@ -3,8 +3,8 @@
 import { type ResolvedPos } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { type BlockRule, type LineStartRule } from '#/definition';
 import { findInvalidPayload } from '#/model';
+import { type BlockRule, type LineStartRule } from '#/runtime/definition';
 
 import { holdsCode } from './inputRulesCommon';
 import { appendSteps, carrySelection } from './transactions';

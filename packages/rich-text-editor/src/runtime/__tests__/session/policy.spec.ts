@@ -5,10 +5,10 @@
 import { EditorState } from 'prosemirror-state';
 import { describe, expect, it, vi } from 'vitest';
 
-import { compileDefinition } from '#/definition';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, defaultLimits } from '#/model';
+import { compileDefinition } from '#/runtime/definition';
 
 import { authoringOf } from '../../policy';
 import { createPolicy } from '../../session/policy';

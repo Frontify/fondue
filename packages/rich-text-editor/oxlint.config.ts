@@ -10,7 +10,7 @@ import packageJson from './package.json' with { type: 'json' };
 
 const FOLDERS = [
     'model',
-    'definition',
+    'runtime/definition',
     'runtime',
     'persistence',
     'clipboard',
@@ -50,7 +50,7 @@ const FRAMEWORK_MESSAGE = 'The package must work in every host framework.';
 const MODEL_MESSAGE =
     '`model` imports nothing else in the package and no engine or React, because the headless entries are built on it.';
 
-const DEFINITION_MESSAGE = '`definition` builds the engine definition from `model`.';
+const DEFINITION_MESSAGE = '`runtime/definition` builds the engine definition from `model`.';
 
 const SCHEMA_MESSAGE =
     '`schema` imports only `model` and `prosemirror-model`, because `./html` and `clipboard/import` load the schema without the engine.';
@@ -59,7 +59,7 @@ const CLIPBOARD_IMPORT_MESSAGE =
     '`clipboard/import` imports only `model` and `prosemirror-model`, because `./html` loads it without the engine.';
 
 const HTML_MESSAGE =
-    '`html` imports only `model`, `#/definition/schema`, `clipboard/import` and `prosemirror-model`, because `./html` runs on the server without the engine or React.';
+    '`html` imports only `model`, `#/runtime/definition/schema`, `clipboard/import` and `prosemirror-model`, because `./html` runs on the server without the engine or React.';
 
 const FEATURE_FILE_MESSAGE =
     "A feature file imports only `#/model`, its own `./migration` and a declared dependency's `#/features/<id>/feature`, as an outside feature must, and never its editor part, which the reader, codecs and server do not load.";
@@ -80,7 +80,7 @@ const NODE_BUILTINS = [
 const EDITOR_PART_MESSAGE = `An editor part acts only through \`#/bridge/plugin\`: it imports that module, \`#/bridge/define\`, \`#/model\` and its own feature folder, and of other packages only ${UI_PACKAGES_TEXT}, never Node built-ins, the engine, the runtime, the editor layers or another feature.`;
 
 const CLIPBOARD_MESSAGE =
-    '`runtime/clipboard` imports `model`, `definition`, `runtime`, `codecs`, `clipboard/import` and ProseMirror, never React or the editor layers.';
+    '`runtime/clipboard` imports `model`, `runtime/definition`, `runtime`, `codecs`, `clipboard/import` and ProseMirror, never React or the editor layers.';
 
 const FEATURE_INDEX_MESSAGE =
     "A feature's index builds its unit and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/definePlugin`.";
@@ -354,7 +354,7 @@ const layerOverride = (
 
 const modelFolders = FOLDERS.filter((folder) => folder !== 'model');
 
-const definitionFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'definition');
+const definitionFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'runtime/definition');
 
 const outsideFeatureFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'features');
 
@@ -366,7 +366,7 @@ const codecsFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !=
 
 const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
 
-const clipboardAllowed = new Set(['model', 'definition', 'runtime', 'codecs']);
+const clipboardAllowed = new Set(['model', 'runtime/definition', 'runtime', 'codecs']);
 
 const clipboardFolders = FOLDERS.filter((folder) => !clipboardAllowed.has(folder));
 
@@ -377,15 +377,18 @@ const CLIPBOARD_IMPORT_PATHS = ['clipboard/import', 'clipboard/import/**'];
 // The clipboard engine files sit inside `runtime`, so layers that may import `runtime` still ban them by path.
 const CLIPBOARD_ENGINE_FOLDERS = ['runtime/clipboard'];
 
+// `runtime/definition` sits inside `runtime`, so layers that ban the runtime but keep `definition` re-allow it.
+const DEFINITION_PATHS = ['runtime/definition', 'runtime/definition/**'];
+
 const htmlFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'html');
 
 const TESTING_MESSAGE =
-    '`testing` may import `model`, `runtime`, `persistence`, `definition`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `features` only conformance and fixtures.';
+    '`testing` may import `model`, `runtime`, `persistence`, `runtime/definition`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `features` only conformance and fixtures.';
 
 const CONFORMANCE_MESSAGE =
     'The contract suite drives editor parts through the engine, so it also imports `react`, `react-dom/server`, `#/bridge/plugin`, `#/features/plugins`, `#/features/registry` and `#/react/engine`.';
 
-const RUNTIME_MESSAGE = '`runtime` imports `model`, `definition`, `clipboard/import` and ProseMirror.';
+const RUNTIME_MESSAGE = '`runtime` imports `model`, `runtime/definition`, `clipboard/import` and ProseMirror.';
 
 const BRIDGE_MESSAGE = '`bridge` imports `model`, `runtime`, `persistence` and React, never ProseMirror.';
 
@@ -400,7 +403,7 @@ const testingAllowed = new Set([
     'model',
     'runtime',
     'persistence',
-    'definition',
+    'runtime/definition',
     'reader',
     'entries',
     'codecs',
@@ -411,7 +414,7 @@ const testingAllowed = new Set([
 
 const testingFolders = FOLDERS.filter((folder) => !testingAllowed.has(folder));
 
-const runtimeAllowed = new Set(['model', 'definition', 'runtime']);
+const runtimeAllowed = new Set(['model', 'runtime/definition', 'runtime']);
 
 const runtimeFolders = FOLDERS.filter((folder) => !runtimeAllowed.has(folder));
 
@@ -435,7 +438,7 @@ const reactFolders = FOLDERS.filter((folder) => folder === 'testing');
 const portOnlyPatterns = [
     ...aliasPatterns(['runtime']),
     ...relativePatterns(['runtime']),
-    ...exceptPatterns(['runtime/port']),
+    ...exceptPatterns(['runtime/port', ...DEFINITION_PATHS]),
 ];
 
 // The two react files that build the engine also import the assembly, which holds the engine-typed values.
@@ -444,7 +447,7 @@ const REACT_ASSEMBLY_FILES = ['src/react/compileEditor.ts', 'src/react/session/u
 const portAndAssemblyPatterns = [
     ...aliasPatterns(['runtime']),
     ...relativePatterns(['runtime']),
-    ...exceptPatterns(['runtime/port', 'runtime/assembly']),
+    ...exceptPatterns(['runtime/port', 'runtime/assembly', ...DEFINITION_PATHS]),
 ];
 
 const reactRestrictions = (runtimePatterns: string[]): ImportRestriction[] => [
@@ -483,10 +486,13 @@ const TESTING_FEATURE_TAILS = [
     '/*/styles/**',
 ] as const;
 
+// `runtime/definition` imports no other runtime file, and `../**` would reach one, so it is banned as well.
 const definitionPatterns = [
     ...aliasPatterns(definitionFolders),
     ...relativePatterns(definitionFolders),
     ...REACT_PATTERNS,
+    ...exceptPatterns(DEFINITION_PATHS),
+    '../**',
 ];
 
 export default defineConfig({
@@ -577,20 +583,6 @@ export default defineConfig({
             [],
             SOURCE_RESTRICTIONS,
         ),
-        layerOverride('src/definition/**/*.{ts,tsx}', [{ group: definitionPatterns, message: DEFINITION_MESSAGE }]),
-        layerOverride('src/definition/schema.ts', [
-            {
-                group: [
-                    ...definitionPatterns,
-                    '#/definition',
-                    '#/definition/**',
-                    ...relativePatterns(['definition']),
-                    './**',
-                    ...PROSEMIRROR_EXCEPT_MODEL,
-                ],
-                message: SCHEMA_MESSAGE,
-            },
-        ]),
         layerOverride('src/clipboard/import/**/*.{ts,tsx}', [
             {
                 group: [
@@ -622,7 +614,7 @@ export default defineConfig({
                     ...relativePatterns(htmlFolders),
                     ...PROSEMIRROR_EXCEPT_MODEL,
                     ...REACT_PATTERNS,
-                    ...exceptPatterns(['definition/schema', ...CLIPBOARD_IMPORT_PATHS]),
+                    ...exceptPatterns(['runtime/definition/schema', ...CLIPBOARD_IMPORT_PATHS]),
                 ],
                 message: HTML_MESSAGE,
             },
@@ -840,6 +832,23 @@ export default defineConfig({
                 ],
             },
         } satisfies LayerOverride,
+        // After the `src/runtime/**` overrides, so a later override replaces their rule options for `runtime/definition`.
+        layerOverride('src/runtime/definition/**/*.{ts,tsx}', [
+            { group: definitionPatterns, message: DEFINITION_MESSAGE },
+        ]),
+        layerOverride('src/runtime/definition/schema.ts', [
+            {
+                group: [
+                    ...definitionPatterns,
+                    '#/runtime/definition',
+                    '#/runtime/definition/**',
+                    ...relativePatterns(['runtime/definition']),
+                    './**',
+                    ...PROSEMIRROR_EXCEPT_MODEL,
+                ],
+                message: SCHEMA_MESSAGE,
+            },
+        ]),
         layerOverride('src/bridge/**/*.{ts,tsx}', [
             {
                 group: [

@@ -5,10 +5,10 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 
-import { buildSchema } from '#/definition/schema';
 import { canonicalOf, documentArb, fcSettings, seeded } from '#/features/__tests__/fixtures/generated';
 import { type ContentModel, type ContentNodeJSON, type RichTextDocument } from '#/model';
 import { PROFILE_MODELS } from '#/react/examples/records';
+import { buildSchema } from '#/runtime/definition/schema';
 
 /** Leaves out attributes at their default, reverses marks, splits texts and writes empty `content` and `marks`. */
 const denormalized = (model: ContentModel, document: RichTextDocument): RichTextDocument => {

@@ -3,8 +3,8 @@
 import { type MarkType, type Node, type NodeType, type Schema } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
-import { type CommandLookup, type EngineCommand } from '#/definition';
 import { type JsonObject } from '#/model';
+import { type CommandLookup, type EngineCommand } from '#/runtime/definition';
 
 /** Builds the engine command of one edit from its arguments. */
 export type CapabilityImplementation = (args: JsonObject, schema: Schema, command: CommandLookup) => EngineCommand;

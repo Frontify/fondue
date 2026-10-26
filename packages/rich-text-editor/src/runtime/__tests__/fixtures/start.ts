@@ -6,7 +6,6 @@ import { type EditorView } from 'prosemirror-view';
 import { afterAll, afterEach, beforeAll, beforeEach, expect, vi } from 'vitest';
 
 import { type EditorApi, type EditorPart } from '#/bridge/plugin';
-import { compileDefinition, type CompiledDefinition, countAppends, type EngineCommand } from '#/definition';
 import { fixtureMention } from '#/features/__tests__/fixtures/features';
 import { countingIds } from '#/features/__tests__/fixtures/notes';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
@@ -26,6 +25,7 @@ import {
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { createSaveCoordinator } from '#/persistence/coordinator';
 import { extensionsOf } from '#/react/engine';
+import { compileDefinition, type CompiledDefinition, countAppends, type EngineCommand } from '#/runtime/definition';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 import { stubStorage } from '#/testing/__tests__/fixtures/storage';
 

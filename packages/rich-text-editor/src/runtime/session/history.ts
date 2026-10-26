@@ -3,7 +3,7 @@
 import { type Node } from 'prosemirror-model';
 import { type EditorState, type Selection, type Transaction } from 'prosemirror-state';
 
-import { COMMAND_META, ORIGIN_META } from '#/definition';
+import { COMMAND_META, ORIGIN_META } from '#/runtime/definition';
 
 import { carrySlots } from '../capabilities/media/uploadSlots';
 import { groupRoot, isHistoryTransaction, reset } from '../history';

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EngineCommand } from '#/definition';
+import { type EngineCommand } from '#/runtime/definition';
 
 import { type Mode } from './types';
 

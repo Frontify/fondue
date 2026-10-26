@@ -10,7 +10,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type EditorApi, type EditorCommand, type EditorPart } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
-import { type Normalizer, NORMALIZERS } from '#/definition';
 import { defineEditorPart, defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import {
@@ -41,6 +40,7 @@ import { registry } from '#/features/registry';
 import { fromHTML } from '#/html';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature, type Diagnostic, type Feature, type RichTextDocument } from '#/model';
+import { type Normalizer, NORMALIZERS } from '#/runtime/definition';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, runFeatureContract, setSelection } from '#/testing';
 import { featureFixtures } from '#/testing/conformance/fixtures';

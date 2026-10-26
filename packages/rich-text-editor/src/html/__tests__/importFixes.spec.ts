@@ -7,11 +7,11 @@ import { describe, expect, it } from 'vitest';
 
 import { NO_COLORS } from '#/clipboard/import/colors';
 import { importHtml } from '#/clipboard/import/html';
-import { buildSchema } from '#/definition/schema';
 import { htmlModel } from '#/features/__tests__/fixtures/html';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { compileContentModel, defaultLimits } from '#/model';
+import { buildSchema } from '#/runtime/definition/schema';
 
 import { fromHTML } from '../index';
 

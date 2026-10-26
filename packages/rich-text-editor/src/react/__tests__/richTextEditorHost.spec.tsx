@@ -20,7 +20,7 @@ import { type EditorHandle } from '../types';
 import { definition, para, defaultValue, type Props } from './fixtures/editorHarness';
 
 vi.mock('#/model', { spy: true });
-vi.mock('#/definition/schema', { spy: true });
+vi.mock('#/runtime/definition/schema', { spy: true });
 
 beforeEach(() => {
     vi.useFakeTimers();

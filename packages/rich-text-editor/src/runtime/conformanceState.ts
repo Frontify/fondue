@@ -2,7 +2,7 @@
 
 import { EditorState, TextSelection } from 'prosemirror-state';
 
-import { type CompiledDefinition } from '#/definition';
+import { type CompiledDefinition } from '#/runtime/definition';
 
 export type ConformanceState = EditorState;
 

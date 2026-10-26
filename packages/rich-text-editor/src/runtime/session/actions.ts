@@ -3,9 +3,9 @@
 import { type Node } from 'prosemirror-model';
 import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 
-import { type CompiledDefinition, type EngineCommand } from '#/definition';
 import { type ResourceLimits, isRecord } from '#/model';
 import { attributesOf, compiledModel, isValidValue } from '#/model/internal';
+import { type CompiledDefinition, type EngineCommand } from '#/runtime/definition';
 
 import { insertPicked, pickedAsset, refillPicked } from '../capabilities/media/media';
 import { type SuggestionHost } from '../capabilities/suggestions/host';

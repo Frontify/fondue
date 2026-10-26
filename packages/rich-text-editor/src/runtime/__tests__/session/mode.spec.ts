@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type EngineCommand } from '#/definition';
+import { type EngineCommand } from '#/runtime/definition';
 
 import { createMode } from '../../session/mode';
 

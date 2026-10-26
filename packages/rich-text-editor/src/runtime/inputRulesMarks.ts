@@ -3,9 +3,9 @@
 import { type ResolvedPos } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
-import { type MarkDelimiterRule, type MarkRule } from '#/definition';
 import { checkHref } from '#/model';
 import { isValidValue } from '#/model/internal';
+import { type MarkDelimiterRule, type MarkRule } from '#/runtime/definition';
 
 import { holdsCode, WORD } from './inputRulesCommon';
 

@@ -2,8 +2,8 @@
 
 import { type Schema } from 'prosemirror-model';
 
-import { COMMAND_META, type EngineCommand } from '#/definition';
 import { REPLACED_ASSET, isRecord } from '#/model';
+import { COMMAND_META, type EngineCommand } from '#/runtime/definition';
 
 import { placeBlock } from '..';
 import { withNodeState } from '../../nodeState';

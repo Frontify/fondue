@@ -2,8 +2,8 @@
 
 import { type EditorState } from 'prosemirror-state';
 
-import { type EngineCommand } from '#/definition';
 import { type Diagnostic, type ResourceLimits } from '#/model';
+import { type EngineCommand } from '#/runtime/definition';
 
 import { type AsyncOperation, type AsyncRequest } from '../../../async';
 import { type UploadEvent, type UploadPlace, type UploadRejection } from '../../../portTypes';

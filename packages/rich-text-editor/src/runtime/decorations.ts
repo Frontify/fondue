@@ -5,9 +5,9 @@ import { Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 import { AttrStep, StepMap } from 'prosemirror-transform';
 import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
 
-import { NodeIdsStep, type PluginImplementation } from '#/definition';
 import { type BlockDecoration, type JsonObject } from '#/model';
 import { BLOCK_DECORATIONS_PLUGIN, type BlockDecorationSource, OBJECT_REPLACEMENT, snapshot } from '#/model/internal';
+import { NodeIdsStep, type PluginImplementation } from '#/runtime/definition';
 
 const key = new PluginKey<DecorationSet>(BLOCK_DECORATIONS_PLUGIN.id);
 const REFRESH = 'refresh';

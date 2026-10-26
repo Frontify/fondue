@@ -81,22 +81,34 @@ const CASES: readonly Case[] = [
     allowed('model files: the internal barrel', 'src/ui/model-internal.ts', "import { node } from '#/model/internal';"),
 
     // definition
-    banned('definition: a later layer', 'src/definition/layer.ts', "import { run } from '#/runtime/run';"),
-    banned('definition: react', 'src/definition/react.ts', "import { memo } from 'react';"),
-    allowed('definition: model', 'src/definition/model.ts', "import { node } from '#/model';"),
-    allowed('definition: the engine model', 'src/definition/engine.ts', "import { Schema } from 'prosemirror-model';"),
-    allowed('definition: a sibling file', 'src/definition/sibling.ts', "import { schema } from './schema';"),
+    banned('definition: a later layer', 'src/runtime/definition/layer.ts', "import { run } from '#/runtime/run';"),
+    banned('definition: react', 'src/runtime/definition/react.ts', "import { memo } from 'react';"),
+    allowed('definition: model', 'src/runtime/definition/model.ts', "import { node } from '#/model';"),
+    allowed(
+        'definition: the engine model',
+        'src/runtime/definition/engine.ts',
+        "import { Schema } from 'prosemirror-model';",
+    ),
+    allowed('definition: a sibling file', 'src/runtime/definition/sibling.ts', "import { schema } from './schema';"),
 
     // definition/schema
-    banned('schema: a sibling file', 'src/definition/schema.ts', "import { other } from './other';"),
+    banned('schema: a sibling file', 'src/runtime/definition/schema.ts', "import { other } from './other';"),
     banned(
         'schema: the rest of the definition',
-        'src/definition/schema.ts',
-        "import { shared } from '#/definition/shared';",
+        'src/runtime/definition/schema.ts',
+        "import { shared } from '#/runtime/definition/shared';",
     ),
-    allowed('schema: model', 'src/definition/schema.ts', "import { node } from '#/model';"),
-    banned('schema: the engine view', 'src/definition/schema.ts', "import { EditorView } from 'prosemirror-view';"),
-    allowed('schema: prosemirror-model', 'src/definition/schema.ts', "import { Schema } from 'prosemirror-model';"),
+    allowed('schema: model', 'src/runtime/definition/schema.ts', "import { node } from '#/model';"),
+    banned(
+        'schema: the engine view',
+        'src/runtime/definition/schema.ts',
+        "import { EditorView } from 'prosemirror-view';",
+    ),
+    allowed(
+        'schema: prosemirror-model',
+        'src/runtime/definition/schema.ts',
+        "import { Schema } from 'prosemirror-model';",
+    ),
 
     // clipboard/import
     banned('clipboard/import: another layer', 'src/clipboard/import/layer.ts', "import { run } from '#/runtime/run';"),
@@ -163,8 +175,12 @@ const CASES: readonly Case[] = [
     // html
     banned('html: another layer', 'src/html/layer.ts', "import { run } from '#/runtime/run';"),
     banned('html: the engine view', 'src/html/view.ts', "import { EditorView } from 'prosemirror-view';"),
-    banned('html: the rest of the definition', 'src/html/definition.ts', "import { other } from '#/definition/other';"),
-    allowed('html: the schema', 'src/html/schema.ts', "import { schema } from '#/definition/schema';"),
+    banned(
+        'html: the rest of the definition',
+        'src/html/definition.ts',
+        "import { other } from '#/runtime/definition/other';",
+    ),
+    allowed('html: the schema', 'src/html/schema.ts', "import { schema } from '#/runtime/definition/schema';"),
     allowed('html: clipboard/import', 'src/html/import.ts', "import { parse } from '#/clipboard/import';"),
     allowed('html: prosemirror-model', 'src/html/engine.ts', "import { Slice } from 'prosemirror-model';"),
     allowed('html: model', 'src/html/model.ts', "import { node } from '#/model';"),
@@ -571,7 +587,11 @@ const CASES: readonly Case[] = [
         'src/runtime/history.ts',
         "import { history } from 'prosemirror-history';",
     ),
-    allowed('runtime: definition', 'src/runtime/definition.ts', "import { schema } from '#/definition/schema';"),
+    allowed(
+        'runtime: definition',
+        'src/runtime/definition.ts',
+        "import { schema } from '#/runtime/definition/schema';",
+    ),
     allowed('runtime: clipboard/import', 'src/runtime/import.ts', "import { parse } from '#/clipboard/import';"),
     allowed('runtime: the engine', 'src/runtime/engine.ts', "import { EditorState } from 'prosemirror-state';"),
     allowed('runtime: model', 'src/runtime/model.ts', "import { node } from '#/model';"),

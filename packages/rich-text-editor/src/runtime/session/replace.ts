@@ -2,9 +2,9 @@
 
 import { type EditorState, Selection } from 'prosemirror-state';
 
-import { type CompiledDefinition } from '#/definition';
 import { type CapabilityRef, type ResourceLimits, sameDocument, isRecord } from '#/model';
 import { type TreeNode, decodeToTree, diagnostic } from '#/model/internal';
+import { type CompiledDefinition } from '#/runtime/definition';
 
 import { sameStamp } from '../saves';
 import { type ReplaceDocumentRequest, type ReplaceResult, type SessionToken } from '../types';

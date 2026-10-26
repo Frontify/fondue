@@ -4,9 +4,9 @@ import { type Node, Slice } from 'prosemirror-model';
 
 import { type ImportedHtml, importModelHtml } from '#/clipboard/import/html';
 import { withoutRefused } from '#/clipboard/import/policy';
-import { buildSchema, withNodeIds } from '#/definition/schema';
 import { type ContentModel, type DecodeResult, decodeDocument, type ResourceLimits } from '#/model';
 import { type TreeNode, limitsOf, encodeTree, diagnostic, randomId, exceedsBytes } from '#/model/internal';
+import { buildSchema, withNodeIds } from '#/runtime/definition/schema';
 
 /** What `fromHTML` reads of a `CompiledEditorDefinition`, which `./html` cannot import from the editor layers. */
 type HtmlImportDefinition = {

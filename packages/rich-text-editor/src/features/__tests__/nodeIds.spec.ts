@@ -7,7 +7,6 @@ import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { buildSchema } from '#/definition/schema';
 import { featuresById } from '#/features';
 import { storedIn } from '#/features/__tests__/fixtures/documents';
 import { documentArb, fcSettings, nodeIdsIn, nodesIn, seeded } from '#/features/__tests__/fixtures/generated';
@@ -16,6 +15,7 @@ import { fromHTML } from '#/html';
 import { compileContentModel, type ContentModel, type ContentNodeJSON, type RichTextDocument } from '#/model';
 import { compiledModel, type TreeNode, decodeToTree } from '#/model/internal';
 import { PROFILE_MODELS } from '#/react/examples/records';
+import { buildSchema } from '#/runtime/definition/schema';
 
 const ADDRESSED = ['heading', 'task_item', 'mention', 'figure', 'asset_image', 'embed', 'table'];
 const { window } = new JSDOM('');

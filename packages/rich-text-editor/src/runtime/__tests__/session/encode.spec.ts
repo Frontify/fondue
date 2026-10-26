@@ -4,9 +4,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { compileDefinition } from '#/definition';
 import { core } from '#/features/core/feature';
 import { compileContentModel } from '#/model';
+import { compileDefinition } from '#/runtime/definition';
 
 import { createEncoder } from '../../session/encode';
 

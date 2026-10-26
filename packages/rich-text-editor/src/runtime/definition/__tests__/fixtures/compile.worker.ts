@@ -2,10 +2,10 @@
 
 import { parentPort } from 'node:worker_threads';
 
-import { compileDefinition } from '#/definition';
 import { fixtureExtensionsOf } from '#/features/__tests__/fixtures/extensions';
 import { fixtureProfiles } from '#/features/__tests__/fixtures/fixtureProfiles';
 import { compileContentModel } from '#/model';
+import { compileDefinition } from '#/runtime/definition';
 
 // Compiles every profile stand-in in a fresh module graph and reports the schema, keymap, plugin order and manifest.
 const results = Object.entries(fixtureProfiles()).map(([name, features]) => {

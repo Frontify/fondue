@@ -2,7 +2,6 @@
 
 import { type EditorPart, partWithOptions } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
-import { type CompiledDefinition } from '#/definition';
 import { registry } from '#/features/registry';
 import { enUS } from '#/locales/en-US';
 import {
@@ -20,6 +19,7 @@ import {
 import { compiledModel, type TreeNode, decodeToTree, encodeTree, featureInternals } from '#/model/internal';
 import { editorEngine } from '#/react/engine';
 import { type ConformanceState, stateFromTree, withWholeDocumentSelected } from '#/runtime/conformanceState';
+import { type CompiledDefinition } from '#/runtime/definition';
 
 import { AXE_TAGS } from './axeTags';
 import {

@@ -5,7 +5,6 @@ import { Node } from 'prosemirror-model';
 import { Plugin, type Transaction } from 'prosemirror-state';
 import { describe, expect, it, vi } from 'vitest';
 
-import { type EngineCommand, ORIGIN_META } from '#/definition';
 import { fixtureHeadingSet, fixtureMedia } from '#/features/__tests__/fixtures/features';
 import { countingIds } from '#/features/__tests__/fixtures/notes';
 import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
@@ -13,6 +12,7 @@ import { core } from '#/features/core/feature';
 import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type JsonValue, type ResourceLimits } from '#/model';
 import { limitsOf } from '#/model/internal';
+import { type EngineCommand, ORIGIN_META } from '#/runtime/definition';
 import { setSelection, typeText } from '#/testing';
 
 import { createLimitCheck } from '../limits';

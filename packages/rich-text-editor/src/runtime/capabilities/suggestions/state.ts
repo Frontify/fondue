@@ -2,8 +2,8 @@
 
 import { type EditorState, PluginKey, type Transaction } from 'prosemirror-state';
 
-import { COMMAND_META, type EngineSuggestion } from '#/definition';
 import { SUGGESTIONS_PLUGIN } from '#/model/internal';
+import { COMMAND_META, type EngineSuggestion } from '#/runtime/definition';
 
 import { isHistoryTransaction } from '../../history';
 

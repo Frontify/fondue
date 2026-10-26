@@ -2,9 +2,15 @@
 
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { APPEND_BATCH_META, type AppendBatch, AppendLimitError, NORMALIZE_META, type PluginOrigin } from '#/definition';
 import { type ResourceLimits } from '#/model';
 import { diagnostic } from '#/model/internal';
+import {
+    APPEND_BATCH_META,
+    type AppendBatch,
+    AppendLimitError,
+    NORMALIZE_META,
+    type PluginOrigin,
+} from '#/runtime/definition';
 
 import { nameOf } from '../events';
 import { isHistoryTransaction } from '../history';

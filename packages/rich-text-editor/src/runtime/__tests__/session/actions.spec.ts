@@ -3,9 +3,9 @@
 import { EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { compileDefinition, type EngineCommand } from '#/definition';
 import { core } from '#/features/core/feature';
 import { compileContentModel, type ResourceLimits } from '#/model';
+import { compileDefinition, type EngineCommand } from '#/runtime/definition';
 
 import { type AsyncOperation, type AsyncRequest } from '../../async';
 import { createActions, type NodeTarget } from '../../session/actions';

@@ -3,9 +3,9 @@
 import { type Node, type Schema } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { type CommandLookup, type EngineCommand } from '#/definition';
 import { type ContentModel, type JsonObject, type ResourceLimits, type RichTextDocument } from '#/model';
 import { snapshot } from '#/model/internal';
+import { type CommandLookup, type EngineCommand } from '#/runtime/definition';
 
 import { type CapabilityImplementation } from '../capabilities';
 import { type MediaSession } from '../capabilities/media/session';

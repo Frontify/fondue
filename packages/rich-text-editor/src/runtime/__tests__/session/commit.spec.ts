@@ -5,9 +5,9 @@ import { EditorState, NodeSelection, TextSelection, type Transaction } from 'pro
 import { type EditorView } from 'prosemirror-view';
 import { describe, expect, it } from 'vitest';
 
-import { ORIGIN_META } from '#/definition';
 import { type Diagnostic, type ResourceLimits } from '#/model';
 import { diagnostic } from '#/model/internal';
+import { ORIGIN_META } from '#/runtime/definition';
 
 import { ENTER_RULES_META } from '../../inputRules';
 import { createCommit } from '../../session/commit';

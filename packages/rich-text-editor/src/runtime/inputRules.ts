@@ -3,14 +3,14 @@
 import { type Command, type EditorState, Plugin, PluginKey, TextSelection, type Transaction } from 'prosemirror-state';
 import { ReplaceStep } from 'prosemirror-transform';
 
+import { INPUT_RULES_PLUGIN, OBJECT_REPLACEMENT } from '#/model/internal';
 import {
     COMMAND_META,
     type CompiledInputRule,
     NORMALIZE_META,
     ORIGIN_META,
     type PluginImplementation,
-} from '#/definition';
-import { INPUT_RULES_PLUGIN, OBJECT_REPLACEMENT } from '#/model/internal';
+} from '#/runtime/definition';
 
 import { closeGroup, isHistoryTransaction, undo } from './history';
 import { blockStart, lineStart } from './inputRulesBlock';

@@ -3,8 +3,8 @@
 import { Fragment, type Node, Slice } from 'prosemirror-model';
 import { Selection, type Transaction } from 'prosemirror-state';
 
-import { COMMAND_META, type EngineCommand } from '#/definition';
 import { type JsonObject } from '#/model';
+import { COMMAND_META, type EngineCommand } from '#/runtime/definition';
 
 import { placeBlock } from '../..';
 import { positionOf } from '../../../positions';

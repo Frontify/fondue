@@ -11,13 +11,6 @@ import {
     partWithOptions,
 } from '#/bridge/plugin';
 import {
-    compileDefinition,
-    type CompiledDefinition,
-    type EngineCommand,
-    type EngineExtension,
-    type EngineSuggestion,
-} from '#/definition';
-import {
     type CommandRef,
     type ContentModel,
     createEmptyDocument,
@@ -47,6 +40,13 @@ import {
     RUNTIME_PLUGINS,
     sessionCommand,
 } from '#/runtime/assembly';
+import {
+    compileDefinition,
+    type CompiledDefinition,
+    type EngineCommand,
+    type EngineExtension,
+    type EngineSuggestion,
+} from '#/runtime/definition';
 import { rangeOfPort } from '#/runtime/port';
 
 import {

@@ -18,7 +18,6 @@ import {
 } from '#/bridge/plugin';
 import { PortalHost } from '#/bridge/PortalHost';
 import { createPortalStore, type PortalStore } from '#/bridge/portals';
-import { compileDefinition, type Normalizer, NORMALIZERS } from '#/definition';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { pluginIds, pluginsById } from '#/features/plugins';
 import { enUS } from '#/locales/en-US';
@@ -37,6 +36,7 @@ import { extensionsOf } from '#/react/engine';
 import { readerContext } from '#/reader/context';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { SLOT_START_META, uploadSlotsPlugin } from '#/runtime/capabilities/media/uploadSlots';
+import { compileDefinition, type Normalizer, NORMALIZERS } from '#/runtime/definition';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 import { featureFixtures } from '#/testing/conformance/fixtures';
 

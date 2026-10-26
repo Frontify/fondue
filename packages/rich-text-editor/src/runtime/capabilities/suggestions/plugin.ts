@@ -3,7 +3,7 @@
 import { Plugin } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { type PluginImplementation } from '#/definition';
+import { type PluginImplementation } from '#/runtime/definition';
 
 import { dismissSuggestion, acceptSuggestion, moveSuggestion } from './actions';
 import { createFetcher } from './fetcher';

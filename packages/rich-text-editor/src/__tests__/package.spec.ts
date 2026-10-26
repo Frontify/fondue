@@ -256,7 +256,7 @@ describe('package manifest and built output', () => {
     };
     // `./reader` is built from the module that wires the shipped feature readers, outside `reader/` and `features/`.
     const HEADLESS_FILES: Record<string, string> = { './reader': 'entries/reader.js' };
-    const EDITOR_FILES = /^(?:runtime|bridge|react|ui)\//;
+    const EDITOR_FILES = /^(?:runtime(?!\/definition\/)|bridge|react|ui)\//;
 
     const bareName = (id: string): string =>
         id

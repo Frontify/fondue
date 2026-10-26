@@ -14,9 +14,9 @@ import {
     withinLinkPolicy,
     withoutRefused,
 } from '#/clipboard/import/policy';
-import { withNodeIds } from '#/definition';
 import { checkHref, type ContentModel, type HrefPolicy, type ResourceLimits, isRecord } from '#/model';
 import { markHrefPolicy, ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/internal';
+import { withNodeIds } from '#/runtime/definition';
 
 import { markdownFragment } from './markdown';
 import { readSlice, SLICE_TYPE } from './slice';

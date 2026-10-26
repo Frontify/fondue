@@ -2,7 +2,7 @@
 
 import { NodeSelection } from 'prosemirror-state';
 
-import { COMMAND_META } from '#/definition';
+import { COMMAND_META } from '#/runtime/definition';
 
 import { documentApi } from './api/document';
 import { positionsIn } from './api/shared';
@@ -14,7 +14,7 @@ import { type CommandResult } from './types';
 export { contentChecksApi } from './api/checks';
 export { type CommandSession, pluginCommand, type PluginCommandSpec } from './api/commands';
 export { positionsOf, rangeOf } from './api/shared';
-export { type CommandContext } from '#/definition';
+export { type CommandContext } from '#/runtime/definition';
 
 /** What a command's result says to plugin code: its status, and the code of a refusal. */
 const outcomeOf = (result: CommandResult): CommandOutcome => {

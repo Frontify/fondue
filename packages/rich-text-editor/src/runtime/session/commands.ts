@@ -2,9 +2,9 @@
 
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { type CompiledDefinition, type EngineCommand, ORIGIN_META } from '#/definition';
 import { checkHref, type Diagnostic, type HrefPolicy, hrefPolicyOf, findInvalidPayload, isRecord } from '#/model';
 import { compiledModel, diagnostic, findUnsafeJson, snapshot } from '#/model/internal';
+import { type CompiledDefinition, type EngineCommand, ORIGIN_META } from '#/runtime/definition';
 
 import { nameOf } from '../events';
 import { type CommandResult, type CommandState, type SelectionHandle } from '../types';

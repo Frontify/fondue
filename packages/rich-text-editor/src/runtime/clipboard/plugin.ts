@@ -9,9 +9,9 @@ import { type EditorView } from 'prosemirror-view';
 import { planOf } from '#/codecs/plan';
 import { writeHtml } from '#/codecs/toHtml';
 import { writeText } from '#/codecs/toText';
-import { type PluginImplementation } from '#/definition';
 import { type ContentModel } from '#/model';
 import { markHrefPolicy, type TreeNode, codecContext, isApple } from '#/model/internal';
+import { type PluginImplementation } from '#/runtime/definition';
 import { closeGroup } from '#/runtime/history';
 
 import { clipboardKey, commit } from './commit';

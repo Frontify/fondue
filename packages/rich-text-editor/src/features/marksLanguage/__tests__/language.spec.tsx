@@ -6,12 +6,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs/codecs';
-import { buildSchema } from '#/definition/schema';
 import { RichTextReader } from '#/entries/reader';
 import { fontColor } from '#/features/marksFontColor/feature';
 import { language } from '#/features/marksLanguage/feature';
 import { type ContentNodeJSON, type RichTextDocument } from '#/model';
 import { mountText, para, storedIn, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
+import { buildSchema } from '#/runtime/definition/schema';
 import { setSelection, typeText } from '#/testing';
 
 beforeEach(() => {

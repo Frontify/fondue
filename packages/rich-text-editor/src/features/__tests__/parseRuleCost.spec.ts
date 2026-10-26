@@ -7,13 +7,13 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { NO_COLORS } from '#/clipboard/import/colors';
 import { importHtml } from '#/clipboard/import/html';
-import { buildSchema } from '#/definition/schema';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marksBold/feature';
 import { strike } from '#/features/marksStrike/feature';
 import { underline } from '#/features/marksUnderline/feature';
 import { compileContentModel, defaultLimits, type Feature } from '#/model';
 import { compiledModel } from '#/model/internal';
+import { buildSchema } from '#/runtime/definition/schema';
 
 const { window } = new JSDOM('');
 

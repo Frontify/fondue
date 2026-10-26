@@ -10,7 +10,7 @@ import {
     type Transaction,
 } from 'prosemirror-state';
 
-import { carriesNodeId } from '#/definition';
+import { carriesNodeId } from '#/runtime/definition';
 
 import { type CaptureTargetOptions } from './types';
 

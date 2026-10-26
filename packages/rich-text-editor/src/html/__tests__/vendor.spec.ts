@@ -14,7 +14,6 @@ import { cleanGoogleDocs } from '#/clipboard/import/googleDocs';
 import { importHtml } from '#/clipboard/import/html';
 import { removeEmptySpans, removeItemBreaks, removeMarkup } from '#/clipboard/import/markup';
 import { rebuildOfficeLists, removeOfficeMarkup } from '#/clipboard/import/office';
-import { buildSchema } from '#/definition/schema';
 import { htmlFeatures, htmlModel } from '#/features/__tests__/fixtures/html';
 import { core } from '#/features/core/feature';
 import { bulletList } from '#/features/listsBullet/feature';
@@ -23,6 +22,7 @@ import { orderedList } from '#/features/listsOrdered/feature';
 import { taskList } from '#/features/listsTask/feature';
 import { compileContentModel, type ContentModel, defaultLimits, defineFeature } from '#/model';
 import { compiledModel } from '#/model/internal';
+import { buildSchema } from '#/runtime/definition/schema';
 
 import { fromHTML } from '../index';
 

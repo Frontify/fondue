@@ -2,8 +2,8 @@
 
 import { type EditorState, TextSelection } from 'prosemirror-state';
 
-import { type EngineSuggestion } from '#/definition';
 import { type SuggestionRules } from '#/model/internal';
+import { type EngineSuggestion } from '#/runtime/definition';
 
 import { type Match } from './types';
 

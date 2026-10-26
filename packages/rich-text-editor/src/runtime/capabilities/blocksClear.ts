@@ -2,7 +2,7 @@
 
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { type EngineCommand } from '#/definition';
+import { type EngineCommand } from '#/runtime/definition';
 
 import { carrySelection, take } from '../transactions';
 

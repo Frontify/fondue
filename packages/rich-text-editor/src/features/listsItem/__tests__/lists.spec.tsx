@@ -5,7 +5,6 @@ import { EditorState, TextSelection, type Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { compileDefinition } from '#/definition';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { type ContentNodeJSON } from '#/model';
 import {
@@ -22,6 +21,7 @@ import {
 import { mountText, para, text } from '#/react/__tests__/fixtures/text';
 import { extensionsOf } from '#/react/engine';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
+import { compileDefinition } from '#/runtime/definition';
 import { pressKey } from '#/testing';
 
 beforeEach(() => {

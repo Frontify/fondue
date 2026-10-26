@@ -2,7 +2,6 @@
 
 import { type Schema } from 'prosemirror-model';
 
-import { type CommandContext, type CommandLookup, type EngineCommand } from '#/definition';
 import {
     checkHref,
     type ContentModel,
@@ -12,6 +11,7 @@ import {
     isRecord,
 } from '#/model';
 import { type TreeNode, encodeTree, findUnsafeJson, snapshot } from '#/model/internal';
+import { type CommandContext, type CommandLookup, type EngineCommand } from '#/runtime/definition';
 
 import { type CommandOutcome, type DocumentApi } from '../documentApi';
 import { type EditorRuntime } from '../runtime';

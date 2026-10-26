@@ -2,9 +2,9 @@
 
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { type CompiledDefinition } from '#/definition';
 import { type Diagnostic, type ResourceLimits, REPLACED_ASSET } from '#/model';
 import { compiledModel } from '#/model/internal';
+import { type CompiledDefinition } from '#/runtime/definition';
 
 import { type MediaSession } from '../capabilities/media/session';
 import {

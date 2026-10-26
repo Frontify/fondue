@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EngineSuggestion } from '#/definition';
+import { type EngineSuggestion } from '#/runtime/definition';
 
 import { type ActiveSuggestion, type SuggestionItem } from '../../portTypes';
 

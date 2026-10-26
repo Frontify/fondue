@@ -4,7 +4,6 @@
 
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { compileDefinition } from '#/definition';
 import { bold, contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/features';
 import { fixtureHighlight } from '#/features/__tests__/fixtures/highlight';
 import { deCH } from '#/locales/de-CH';
@@ -19,6 +18,7 @@ import {
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { contentChecksOf } from '#/runtime/capabilities/checks/contentIssues';
+import { compileDefinition } from '#/runtime/definition';
 import { authoringOf } from '#/runtime/policy';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 

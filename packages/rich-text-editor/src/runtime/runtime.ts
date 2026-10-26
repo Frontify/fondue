@@ -9,7 +9,6 @@ import {
     type NodeViewConstructor,
 } from 'prosemirror-view';
 
-import { type CompiledDefinition, type EngineCommand } from '#/definition';
 import {
     type CapabilityRef,
     type ContentCheckOptions,
@@ -18,6 +17,7 @@ import {
     type ResourceLimits,
 } from '#/model';
 import { type TreeNode } from '#/model/internal';
+import { type CompiledDefinition, type EngineCommand } from '#/runtime/definition';
 
 import { type AsyncOperation, type AsyncRequest } from './async';
 import { type UploadEvent, type UploadServiceLike } from './capabilities/media/uploads';

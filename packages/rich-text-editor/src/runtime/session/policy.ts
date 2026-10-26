@@ -3,8 +3,8 @@
 import { type Node } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { type EngineCommand } from '#/definition';
 import { type CapabilityRef, type ContentModel, type ResourceLimits } from '#/model';
+import { type EngineCommand } from '#/runtime/definition';
 
 import { createLimitCheck, type ExceededLimit } from '../limits';
 import { authoringOf, createPolicyCheck } from '../policy';

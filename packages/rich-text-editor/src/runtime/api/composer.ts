@@ -4,7 +4,7 @@ import { type Node } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 import { Mapping } from 'prosemirror-transform';
 
-import { type CommandContext, type EngineCommand } from '#/definition';
+import { type CommandContext, type EngineCommand } from '#/runtime/definition';
 
 import { LAST_MARK_META } from '../capabilities';
 import { type EditorRange } from '../documentApi';

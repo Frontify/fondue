@@ -3,9 +3,9 @@
 import { EditorState, TextSelection, type Transaction } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { compileDefinition, type EngineCommand } from '#/definition';
 import { core } from '#/features/core/feature';
 import { compileContentModel, type Diagnostic } from '#/model';
+import { compileDefinition, type EngineCommand } from '#/runtime/definition';
 
 import { createBusy } from '../../session/busy';
 import { createCommands } from '../../session/commands';

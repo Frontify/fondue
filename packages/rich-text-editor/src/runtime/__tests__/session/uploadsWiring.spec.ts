@@ -3,9 +3,9 @@
 import { EditorState } from 'prosemirror-state';
 import { describe, expect, it, vi } from 'vitest';
 
-import { compileDefinition } from '#/definition';
 import { core, mediaImage } from '#/features';
 import { compileContentModel, type Feature, type ResourceLimits } from '#/model';
+import { compileDefinition } from '#/runtime/definition';
 
 import { DEFAULT_ACCEPT_TYPES, type UploadEvent, type UploadServiceLike } from '../../capabilities/media/uploads';
 import { createIdentity } from '../../session/identity';

@@ -8,7 +8,6 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import * as schemaModule from '#/definition/schema';
 import { doc, envelope, link, node, text } from '#/features/__tests__/fixtures/documents';
 import { fixtureMedia } from '#/features/__tests__/fixtures/features';
 import { notesModel } from '#/features/__tests__/fixtures/notes';
@@ -36,6 +35,7 @@ import { type LoadedDocument, type PersistenceService } from '#/persistence/type
 import { fixturesIn } from '#/reader/__tests__/helpers/helpers';
 import { type ReaderPresentation } from '#/reader/reader';
 import { type AsyncOperation } from '#/runtime/async';
+import * as schemaModule from '#/runtime/definition/schema';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
@@ -60,7 +60,7 @@ import {
 } from './fixtures/editorHarness';
 
 vi.mock('#/model', { spy: true });
-vi.mock('#/definition/schema', { spy: true });
+vi.mock('#/runtime/definition/schema', { spy: true });
 
 beforeEach(() => {
     vi.useFakeTimers();

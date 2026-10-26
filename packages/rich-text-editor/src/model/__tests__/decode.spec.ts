@@ -7,7 +7,6 @@ import { createHash } from 'node:crypto';
 import { Node } from 'prosemirror-model';
 import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import { compileDefinition } from '#/definition';
 import { doc, envelope, type Json, mention, node, paragraph, text } from '#/features/__tests__/fixtures/documents';
 import {
     vocabularyLink,
@@ -28,6 +27,7 @@ import {
     type RichTextDocument,
     sameDocument,
 } from '#/model';
+import { compileDefinition } from '#/runtime/definition';
 
 import { decodeToTree } from '../decode';
 import { encodeTree } from '../encode';

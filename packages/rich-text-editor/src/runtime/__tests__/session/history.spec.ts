@@ -4,7 +4,7 @@ import { Schema } from 'prosemirror-model';
 import { EditorState, type Transaction } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { COMMAND_META, ORIGIN_META } from '#/definition';
+import { COMMAND_META, ORIGIN_META } from '#/runtime/definition';
 
 import { historyPlugin, undo } from '../../history';
 import { actionOrigin, createHistory, originOf } from '../../session/history';

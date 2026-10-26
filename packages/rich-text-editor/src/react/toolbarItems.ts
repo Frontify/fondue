@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type EditorPart, type PluginToolbarEntry } from '#/bridge/plugin';
-import { type CompiledDefinition } from '#/definition';
 import {
     type CodecContext,
     type CommandRef,
@@ -10,6 +9,7 @@ import {
     isPresentationStyle,
 } from '#/model';
 import { canonicalJson, isPlatformBinding, cssValue } from '#/model/internal';
+import { type CompiledDefinition } from '#/runtime/definition';
 import { type AuthoringPolicy } from '#/runtime/port';
 import { type ToolbarItem } from '#/ui/toolbar/Toolbar';
 

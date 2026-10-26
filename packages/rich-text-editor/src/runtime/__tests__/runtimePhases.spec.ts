@@ -3,7 +3,6 @@
 import { Plugin } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { compileDefinition } from '#/definition';
 import { countingIds } from '#/features/__tests__/fixtures/notes';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { core } from '#/features/core/feature';
@@ -11,6 +10,7 @@ import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type Diagnostic, type JsonValue } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { extensionsOf } from '#/react/engine';
+import { compileDefinition } from '#/runtime/definition';
 
 import { RUNTIME_PLUGINS } from '../capabilities';
 import { authoringOf } from '../policy';

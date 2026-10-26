@@ -5,9 +5,9 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 
 import { exceededWrite } from '#/clipboard/import/limits';
 import { refusedNames } from '#/clipboard/import/policy';
-import { withNodeIds } from '#/definition';
 import { type ContentNodeJSON, type JsonObject, isRecord } from '#/model';
 import { hasNodeId, attributesOf, compiledModel, decodeToTree, randomId } from '#/model/internal';
+import { withNodeIds } from '#/runtime/definition';
 
 import { type WriteOutcome, type WriteTarget } from '../documentApi';
 import { positionOf } from '../positions';

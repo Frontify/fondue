@@ -2,8 +2,8 @@
 
 import { type RichTextPlugin } from '#/bridge/definePlugin';
 import { type EditorPart } from '#/bridge/plugin';
-import { type CompiledDefinition, type EngineExtension } from '#/definition';
 import { type ContentModel } from '#/model';
+import { type CompiledDefinition, type EngineExtension } from '#/runtime/definition';
 
 import { editorEngine as engineWith, extensionsOf as extensionsWith } from './compileEditor';
 

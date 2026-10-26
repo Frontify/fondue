@@ -15,7 +15,7 @@ const compileInWorker = () =>
             execArgv: ['--import', 'tsx'],
             env: {
                 ...process.env,
-                TSX_TSCONFIG_PATH: fileURLToPath(new URL('../../../tsconfig.json', import.meta.url)),
+                TSX_TSCONFIG_PATH: fileURLToPath(new URL('../../../../tsconfig.json', import.meta.url)),
             },
         });
         worker.once('message', (message) => {

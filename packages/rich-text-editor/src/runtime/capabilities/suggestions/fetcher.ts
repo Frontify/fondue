@@ -2,8 +2,8 @@
 
 import { type EditorView } from 'prosemirror-view';
 
-import { type EngineSuggestion } from '#/definition';
 import { type SuggestionPage } from '#/model/internal';
+import { type EngineSuggestion } from '#/runtime/definition';
 
 import { dismissSuggestion } from './actions';
 import { suggestionHosts } from './host';

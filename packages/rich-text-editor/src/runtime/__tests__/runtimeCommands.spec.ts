@@ -8,7 +8,6 @@ import { tableEditing, tableNodes } from 'prosemirror-tables';
 import { describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPart } from '#/bridge/plugin';
-import { compileDefinition, countAppends, type EngineCommand } from '#/definition';
 import { type CommandsOfPart } from '#/entries/authoring';
 import { type fixtureHeadingSetEditor } from '#/features/__tests__/fixtures/editors';
 import { fixtureHeadingSet } from '#/features/__tests__/fixtures/features';
@@ -19,6 +18,7 @@ import { type EditorHandle } from '#/index';
 import { compileContentModel, defineFeature, type Diagnostic } from '#/model';
 import { limitsOf } from '#/model/internal';
 import { extensionsOf } from '#/react/engine';
+import { compileDefinition, countAppends, type EngineCommand } from '#/runtime/definition';
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import { RUNTIME_PLUGINS } from '../capabilities';

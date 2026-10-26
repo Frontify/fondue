@@ -4,11 +4,11 @@ import { type Node } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { compileDefinition } from '#/definition';
 import { countingIds } from '#/features/__tests__/fixtures/notes';
 import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { extensionsOf } from '#/react/engine';
+import { compileDefinition } from '#/runtime/definition';
 import { probeRuntimes, setSelection, typeText } from '#/testing';
 
 import { RUNTIME_PLUGINS } from '../capabilities';

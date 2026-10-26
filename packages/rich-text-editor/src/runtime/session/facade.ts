@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CompiledDefinition } from '#/definition';
 import { type Diagnostic, type ResourceLimits } from '#/model';
+import { type CompiledDefinition } from '#/runtime/definition';
 
 import { type ContentChecks } from '../capabilities/checks/contentIssues';
 import { createDomIds } from '../domIds';

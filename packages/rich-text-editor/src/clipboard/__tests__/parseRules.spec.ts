@@ -8,10 +8,10 @@ import { describe, expect, it } from 'vitest';
 
 import { NO_COLORS } from '#/clipboard/import/colors';
 import { importHtml } from '#/clipboard/import/html';
-import { buildSchema } from '#/definition/schema';
 import { core } from '#/features/core/feature';
 import { compileContentModel, defaultLimits, defineFeature, type Feature, type ResourceLimits } from '#/model';
 import { compiledModel } from '#/model/internal';
+import { buildSchema } from '#/runtime/definition/schema';
 
 const { window } = new JSDOM('');
 const requires = [{ id: 'core', version: 1 }];

@@ -4,8 +4,8 @@ import { Schema } from 'prosemirror-model';
 import { EditorState, Plugin, type Transaction } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { APPEND_BATCH_META, NORMALIZE_META } from '#/definition';
 import { type ResourceLimits } from '#/model';
+import { APPEND_BATCH_META, NORMALIZE_META } from '#/runtime/definition';
 
 import { createPrepare, DUPLICATE_ENGINE, pluginError } from '../../session/prepare';
 import { createStore } from '../../session/store';

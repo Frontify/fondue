@@ -2,8 +2,8 @@
 
 import { type EditorView } from 'prosemirror-view';
 
-import { type EngineCommand } from '#/definition';
 import { type ContentModel } from '#/model';
+import { type EngineCommand } from '#/runtime/definition';
 
 import { type ClipboardSession, connectClipboard } from './clipboard/session';
 import { pluginCommand } from './editorApi';
