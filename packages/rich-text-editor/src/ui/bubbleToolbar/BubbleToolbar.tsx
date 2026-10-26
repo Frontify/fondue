@@ -25,7 +25,9 @@ const selectionOf = (runtime: EditorPort | undefined): string => {
     if (runtime === undefined) {
         return '';
     }
+
     const { anchor, head } = selectionSpan(runtime);
+
     return `${anchor} ${head}`;
 };
 
@@ -34,6 +36,7 @@ const renderKeyOf = (runtime: EditorPort | undefined, closedAt: string | null, s
     if (runtime === undefined || !hasSurface(runtime)) {
         return 'none';
     }
+
     const key = selectionOf(runtime);
     let rect = 'none';
     if (!selectionSpan(runtime).empty || shownAt === key) {
@@ -42,9 +45,11 @@ const renderKeyOf = (runtime: EditorPort | undefined, closedAt: string | null, s
             rect = `${box.left} ${box.top} ${box.width} ${box.height}`;
         }
     }
+
     if (closedAt !== null || shownAt !== null) {
         return `${rect} ${key}`;
     }
+
     return rect;
 };
 
@@ -96,9 +101,11 @@ export const BubbleToolbar = ({
     if (closedAt !== null && closedAt !== key) {
         setClosedAt(null);
     }
+
     if (shownAt !== null && shownAt !== key) {
         setShownAt(null);
     }
+
     const [hovered, setHovered] = useState(false);
     const runtimeRef = useRef(runtime);
     const focusOnOpenRef = useRef(false);
@@ -109,6 +116,7 @@ export const BubbleToolbar = ({
         if (next) {
             return;
         }
+
         // A toolbar that closes under the pointer hears no pointer leave.
         setHovered(false);
         setShownAt(null);
@@ -124,15 +132,18 @@ export const BubbleToolbar = ({
         if (showRef === undefined) {
             return undefined;
         }
+
         showRef.current = () => {
             focusOnOpenRef.current = true;
             setClosedAt(null);
             setShownAt(selectionOf(runtimeRef.current));
         };
+
         return () => {
             showRef.current = null;
         };
     }, [showRef]);
+
     return (
         <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={anchor}>
             <Flyout.Content
@@ -150,6 +161,7 @@ export const BubbleToolbar = ({
                     if (!focusOnOpenRef.current) {
                         return;
                     }
+
                     focusOnOpenRef.current = false;
                     const first = toolbarRef.current?.querySelector<HTMLElement>('button:not([disabled])');
                     if (first !== null && first !== undefined) {
@@ -176,6 +188,7 @@ export const BubbleToolbar = ({
                         if (item.options !== undefined) {
                             content = <TextStyle item={item} disabled={false} keepsFocus outOfTabOrder />;
                         }
+
                         // An item that throws leaves only its own place empty, with no message to read between the items.
                         return (
                             <ChromeBoundary key={item.key} message="" attrs={NO_ATTRS}>

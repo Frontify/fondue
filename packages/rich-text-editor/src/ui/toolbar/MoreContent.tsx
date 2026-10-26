@@ -32,6 +32,7 @@ export const MoreRow = ({
     if (item.toggle && item.control !== undefined && item.control === openPanel) {
         shown = true;
     }
+
     const checked = radio ? shown === true : shown !== false;
     if (radio) {
         semantics = { role: 'menuitemradio', 'aria-checked': checked };
@@ -40,6 +41,7 @@ export const MoreRow = ({
     } else {
         semantics = { role: 'menuitem' };
     }
+
     // An unavailable row stays focusable with its reason, as a toolbar item does; a checked style is already set.
     let reason: string | undefined;
     let describedBy: string | undefined;
@@ -48,6 +50,7 @@ export const MoreRow = ({
         describedBy = reasonId;
         semantics['aria-disabled'] = true;
     }
+
     return (
         <Dropdown.Item
             {...semantics}
@@ -56,8 +59,10 @@ export const MoreRow = ({
             onSelect={async (event) => {
                 if (reason !== undefined) {
                     event.preventDefault();
+
                     return;
                 }
+
                 await onRun(item);
             }}
         >
@@ -105,6 +110,7 @@ export const MoreContent = ({
                 if (item.options === undefined) {
                     return [item];
                 }
+
                 // A brand style row applies only to the block types its style names.
                 return item.options.filter(
                     ({ offered, brand }) => offered && (brand === undefined || brand.appliesTo.includes(blockType)),

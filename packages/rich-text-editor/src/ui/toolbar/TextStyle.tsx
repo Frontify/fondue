@@ -23,11 +23,13 @@ const activeIn = (session: EditorPort | undefined, rows: readonly Row[], fallbac
     if (session === undefined) {
         return -1;
     }
+
     const held = rows.filter(({ command, payload }) => session.handle.query(command, payload).active === true);
     const named = held.find((row) => !fallback(row)) ?? held[0];
     if (named === undefined) {
         return -1;
     }
+
     return rows.indexOf(named);
 };
 
@@ -71,10 +73,12 @@ export const TextStyle = ({
     if (shown !== undefined) {
         label = shown.label;
     }
+
     let onMouseDown: typeof keepFocus | undefined;
     if (keepsFocus) {
         onMouseDown = keepFocus;
     }
+
     const row = (option: Row, checked: boolean) => (
         <Dropdown.Item
             key={option.key}
@@ -84,6 +88,7 @@ export const TextStyle = ({
                 if (runtime === undefined) {
                     return;
                 }
+
                 ranRef.current = true;
                 await runItem(runtime, option, false);
                 returnFocus(runtime, [contentRef.current]);
@@ -100,6 +105,7 @@ export const TextStyle = ({
             {checked && <CheckedSlot />}
         </Dropdown.Item>
     );
+
     return (
         <Dropdown.Root>
             <Dropdown.Trigger asChild>

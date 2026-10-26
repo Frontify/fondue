@@ -26,11 +26,13 @@ const parse = (binding: string, apple: boolean): Parsed | undefined => {
     if (rest === undefined) {
         return undefined;
     }
+
     const parts = rest.split('-');
     let key = parts.at(-1) ?? '';
     if (key.length === 1) {
         key = key.toUpperCase();
     }
+
     return { modifiers: parts.slice(0, -1), key };
 };
 
@@ -44,24 +46,31 @@ export const shortcutText = (binding: string, apple: boolean): string => {
     if (parsed === undefined) {
         return '';
     }
+
     let { key } = parsed;
     const arrow = ARROWS[key];
     if (apple) {
         if (arrow !== undefined) {
             key = arrow[0];
         }
+
         const symbols = APPLE_SYMBOLS.filter(([name]) => parsed.modifiers.includes(name)).map(([, symbol]) => symbol);
+
         return `${symbols.join('')}${key}`;
     }
+
     if (arrow !== undefined) {
         key = arrow[1];
     }
+
     const names = OTHER_ORDER.filter((name) => parsed.modifiers.includes(name)).map((name) => {
         if (name === 'Mod') {
             return 'Ctrl';
         }
+
         return name;
     });
+
     return [...names, key].join('+');
 };
 
@@ -71,15 +80,19 @@ export const ariaShortcut = (binding: string, apple: boolean): string => {
     if (parsed === undefined) {
         return '';
     }
+
     const names = OTHER_ORDER.filter((name) => parsed.modifiers.includes(name)).map((name) => {
         if (name !== 'Mod') {
             return ARIA_NAMES[name];
         }
+
         if (apple) {
             return 'Meta';
         }
+
         return 'Control';
     });
+
     return [...names, parsed.key].join('+');
 };
 
@@ -89,9 +102,11 @@ const keyOf = (event: KeyboardEvent): string => {
     if (physical !== null && (event.altKey || event.shiftKey)) {
         return physical[1] ?? '';
     }
+
     if (event.key.length === 1) {
         return event.key.toUpperCase();
     }
+
     return event.key;
 };
 
@@ -102,7 +117,9 @@ export const pressesBinding = (event: KeyboardEvent, binding: string): boolean =
     if (parsed === undefined) {
         return false;
     }
+
     const has = (name: string) => parsed.modifiers.includes(name);
+
     return (
         keyOf(event) === parsed.key &&
         event.altKey === has('Alt') &&

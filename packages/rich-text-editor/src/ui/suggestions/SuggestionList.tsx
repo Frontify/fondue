@@ -30,6 +30,7 @@ const activeOf = (runtime: EditorPort | undefined): ActiveSuggestion | null => {
     if (runtime === undefined) {
         return null;
     }
+
     return activeSuggestionOf(runtime);
 };
 
@@ -38,6 +39,7 @@ const sameShown = (previous: ActiveSuggestion | null, next: ActiveSuggestion | n
     if (previous === null || next === null) {
         return previous === next;
     }
+
     return (
         previous.items === next.items &&
         previous.index === next.index &&
@@ -58,17 +60,21 @@ export const listOption = (item: SuggestionItem, strings: ReferenceListStrings):
     if (item.action === 'more') {
         return { key: item.key, label: strings.loadMore, glyph: null };
     }
+
     if (item.action === 'retry') {
         return { key: item.key, label: strings.retry, glyph: null };
     }
+
     if (item.glyph !== null || item.detail === undefined) {
         return item;
     }
+
     // A reference result with no image and no kind shows the person icon.
     let lead: Pick<ListboxOption, 'imageUrl' | 'kind'> = { kind: item.kind ?? 'user' };
     if (item.imageUrl !== undefined) {
         lead = { imageUrl: item.imageUrl };
     }
+
     return { key: item.key, label: item.label, glyph: null, detail: item.detail, ...lead };
 };
 
@@ -81,9 +87,12 @@ const useSlowRequest = (active: ActiveSuggestion | null): boolean => {
         if (!loading || request === undefined) {
             return undefined;
         }
+
         const timer = setTimeout(() => setSlow(request), SPINNER_DELAY_MS);
+
         return () => clearTimeout(timer);
     }, [loading, request]);
+
     return loading && slow === request;
 };
 
@@ -96,6 +105,7 @@ export const placeOf = (items: readonly SuggestionItem[], index: number) => {
     if (items[index]?.action === undefined) {
         total = resultCount(items);
     }
+
     return { position: index + 1, total };
 };
 
@@ -109,7 +119,9 @@ export const spokenOption = (
     if (option === undefined) {
         return undefined;
     }
+
     const { position, total } = placeOf(items, index);
+
     return strings.option(listOption(option, strings), position, total);
 };
 
@@ -127,6 +139,7 @@ const useAnnouncements = (active: ActiveSuggestion | null, strings: ReferenceLis
         if (active === null) {
             return;
         }
+
         const spoken = spokenOption(active.items, active.index, strings);
         const activeKey = active.items[active.index]?.key;
         let moved = false;
@@ -134,22 +147,28 @@ const useAnnouncements = (active: ActiveSuggestion | null, strings: ReferenceLis
             const lastKey = last.items[last.index]?.key;
             moved = lastKey !== activeKey;
         }
+
         const changed = last === null || last.request !== active.request || last.status !== active.status;
         if (active.status === 'loading') {
             if (!changed && moved && spoken !== undefined) {
                 announce(spoken);
             }
+
             return;
         }
+
         if (changed) {
             let status = strings.failed;
             if (active.status === 'ready') {
                 const count = resultCount(active.items);
                 status = count > 0 ? strings.results(count) : strings.noResults;
             }
+
             announce(spoken === undefined ? status : strings.both(status, spoken));
+
             return;
         }
+
         if (moved && spoken !== undefined) {
             announce(spoken);
         }
@@ -174,6 +193,7 @@ const StatusRow = ({
             </div>
         );
     }
+
     if (active.status === 'ready' && resultCount(active.items) === 0) {
         return (
             <div className={styles.row} data-row="empty">
@@ -181,6 +201,7 @@ const StatusRow = ({
             </div>
         );
     }
+
     if (active.status === 'failed') {
         return (
             <div className={styles.row} data-row="failed">
@@ -188,6 +209,7 @@ const StatusRow = ({
             </div>
         );
     }
+
     return null;
 };
 
@@ -219,12 +241,15 @@ export const SuggestionList = ({
     if (active !== null) {
         open = active.items.length > 0 || active.status !== 'loading' || slow;
     }
+
     // The list sits below its trigger, and hides while a scrolling ancestor clips it, as other overlays do.
     const overlay = useEditorOverlay(open, IGNORE_CLOSE, () => suggestionAnchorRange(runtimeRef.current));
     if (runtime === undefined || !hasSurface(runtime) || active === null) {
         return null;
     }
+
     const listLabel = nameOf(active.name);
+
     return (
         <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={overlay.anchor}>
             <Flyout.Content

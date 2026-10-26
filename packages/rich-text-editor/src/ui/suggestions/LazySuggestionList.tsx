@@ -17,5 +17,6 @@ export const LazySuggestionList = (props: ComponentProps<typeof SuggestionList>)
     if (!active) {
         return null;
     }
+
     return <SuggestionList {...props} />;
 };

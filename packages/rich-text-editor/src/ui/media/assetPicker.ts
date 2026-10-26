@@ -39,10 +39,12 @@ export const pickAsset = (
         if (captured.status !== 'captured') {
             return;
         }
+
         place = { target: captured.target };
     } else {
         place = { nodeId };
     }
+
     let held = 'target' in place;
     const release = () => {
         if (held && 'target' in place) {
@@ -50,6 +52,7 @@ export const pickAsset = (
             runtime.handle.releaseTarget(place.target);
         }
     };
+
     const operation = runtime.startAsync({
         key: nodeId === undefined ? 'media-picker' : 'upload-start',
         service: ASSETS_SERVICE,
@@ -58,6 +61,7 @@ export const pickAsset = (
         command: nodeId === undefined ? INSERT_IMAGE : REPLACE_IMAGE,
         run: ({ signal, session }) => {
             signal.addEventListener('abort', release);
+
             return picker.pick({ purpose: 'image' }, { signal, session }).catch((error: unknown) => {
                 release();
                 throw error;
@@ -69,17 +73,21 @@ export const pickAsset = (
                 if (result === null) {
                     return undefined;
                 }
+
                 const media = mediaOf(runtime);
                 if (media === undefined) {
                     return 'not-applicable';
                 }
+
                 const outcome = media.placeAsset(result, place);
                 if (outcome.status !== 'rejected') {
                     return undefined;
                 }
+
                 if (outcome.code === 'target-invalid') {
                     removed('target' in place ? 'target' : 'image');
                 }
+
                 return outcome.code;
             } finally {
                 release();

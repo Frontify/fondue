@@ -18,6 +18,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.suggestionRte !== undefined)).toBe(true);
 };
+
 // Radix places an overlay and the plugin dispatches results in frames after a key.
 const frames = (page: Page) =>
     page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
@@ -28,17 +29,21 @@ const caretAtEnd = async (page: Page) => {
     if (box === null) {
         throw new Error('No paragraph');
     }
+
     await paragraph.click({ position: { x: box.width - 2, y: box.height / 2 } });
     await expect(surfaceOf(page)).toBeFocused();
 };
+
 const glyphOf = (option: Locator) => option.locator('[aria-hidden="true"]').textContent();
 const boxOf = async (locator: Locator) => {
     const box = await locator.boundingBox();
     if (box === null) {
         throw new Error('No box');
     }
+
     return box;
 };
+
 /** The flyout around the list. A clipped trigger sets its transform to a zero scale. */
 const popupTransform = (page: Page) =>
     listOf(page).evaluate((list) => {
@@ -46,6 +51,7 @@ const popupTransform = (page: Page) =>
         if (!(popup instanceof HTMLElement)) {
             return 'missing';
         }
+
         return getComputedStyle(popup).transform;
     });
 
@@ -184,6 +190,7 @@ test('hides the suggestion list while its trigger is scrolled out of view and sh
     if (line === null) {
         throw new Error('No paragraph');
     }
+
     await paragraph.click({ position: { x: line.width - 2, y: line.height / 2 } });
     await expect(surfaceOf(page)).toBeFocused();
     await page.keyboard.type(' :smi');
@@ -195,6 +202,7 @@ test('hides the suggestion list while its trigger is scrolled out of view and sh
         if (paragraph === null) {
             throw new Error('No paragraph');
         }
+
         const line = paragraph.getBoundingClientRect();
         const box = element.getBoundingClientRect();
         element.scrollTop += line.bottom - box.top + 4;
@@ -255,6 +263,7 @@ const plainOption = (key: string, group?: string) => {
     if (group === undefined) {
         return { key, label: key, glyph: null };
     }
+
     return { key, label: key, glyph: null, group };
 };
 

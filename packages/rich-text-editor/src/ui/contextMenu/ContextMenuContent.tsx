@@ -35,10 +35,12 @@ const TurnInto = ({ label, runs }: { readonly label: string; readonly runs: Retu
     if (runtime === undefined) {
         return null;
     }
+
     const choices = turnIntoChoices(entries, (command, payload) => runtime.handle.query(command, payload));
     if (choices.every(({ current }) => current)) {
         return null;
     }
+
     return (
         // Fondue's sub-content takes no `container`, so a group keeps the items inside the editor's overlay root.
         <Dropdown.Group heading={label} ref={labelGroup(label)}>
@@ -51,8 +53,10 @@ const TurnInto = ({ label, runs }: { readonly label: string; readonly runs: Retu
                         if (current) {
                             runs.ran();
                             runtime.handle.focus();
+
                             return;
                         }
+
                         await runs.onRun(rowOf(entry));
                     }}
                 >

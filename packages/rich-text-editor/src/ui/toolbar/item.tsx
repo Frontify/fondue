@@ -50,6 +50,7 @@ export type ToolbarItem = {
 /** The rows of `items` the selection offers: a node row only while its node type is selected and its command runs. */
 export const offeredRows = (items: readonly ToolbarItem[], session: EditorPort | undefined): readonly ToolbarItem[] => {
     const types = selectedNodeNames(session);
+
     return items.filter(
         ({ node, command, payload }) =>
             node === undefined || (types.includes(node) && session?.handle.query(command, payload).enabled === true),
@@ -79,6 +80,7 @@ export const Icon = ({ name }: { readonly name: string }) => {
     if (Found === undefined) {
         return null;
     }
+
     return <Found size={20} aria-hidden />;
 };
 
@@ -96,9 +98,12 @@ export const runItem = async (
         if (keptFocus) {
             endCompositionOf(runtime);
         }
+
         await runtime.handle.enqueue(command, payload);
+
         return;
     }
+
     runtime.handle.execute(command, payload);
 };
 
@@ -124,6 +129,7 @@ export const pressItem = async (
     if (item.opensControl === true && !keepsFocus) {
         control.focus();
     }
+
     await runItem(runtime, item, keepsFocus);
     returnFocus(runtime, [control.closest('[role="toolbar"]')]);
 };
@@ -133,6 +139,7 @@ export const tabStop = (outOfTabOrder: boolean): { readonly tabIndex?: number } 
     if (outOfTabOrder) {
         return { tabIndex: -1 };
     }
+
     return {};
 };
 
@@ -148,5 +155,6 @@ export const useShortcut = ({ bindings }: ToolbarItem) => {
     if (binding === undefined) {
         return { shortcut: undefined, keyshortcuts: undefined };
     }
+
     return { shortcut: shortcutText(binding, apple), keyshortcuts: ariaShortcut(binding, apple) };
 };

@@ -32,6 +32,7 @@ export const referenceListStrings = (t: CodecContext['t']): ReferenceListStrings
         if (detail === undefined) {
             return t('RichTextEditor_suggestionOption', { label: isolate(label), position, total });
         }
+
         return t('RichTextEditor_mentionOption', { label: isolate(label), type: detail, position, total });
     },
     both: (first, second) => t('RichTextEditor_announceBoth', { first, second }),

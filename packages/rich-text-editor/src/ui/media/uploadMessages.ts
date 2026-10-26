@@ -58,10 +58,12 @@ const refusalOf = (
             side: numbers.format(MAX_IMAGE_SIDE),
         });
     }
+
     const size = new Intl.NumberFormat(lang, { style: 'unit', unit: 'megabyte', maximumFractionDigits: 1 }).format(
         megabytes(limits.maxAssetBytes),
     );
     const types = alternatives([...new Set(accepts.map(typeName))], lang);
+
     return t(REFUSAL_KEYS[reason], { name: isolate(name), types, size });
 };
 
@@ -82,11 +84,14 @@ export const uploadMessage = (
         if (!event.review) {
             return completed;
         }
+
         return t('RichTextEditor_announceBoth', { first: completed, second: t('RichTextEditor_imageAltReviewPrompt') });
     }
+
     if (event.kind !== 'gesture') {
         return t(EVENT_KEYS[event.kind], { name: isolate(event.name) });
     }
+
     const parts = event.refused.map((refused) => refusalOf(refused, t, lang, limits, accepts));
     const [first] = event.started;
     if (event.started.length === 1 && first !== undefined) {
@@ -94,5 +99,6 @@ export const uploadMessage = (
     } else if (event.started.length > 1) {
         parts.push(t('RichTextEditor_uploadStartedCount', { count: event.started.length }));
     }
+
     return parts.join(' ');
 };

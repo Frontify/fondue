@@ -29,16 +29,20 @@ export const useRowRuns = (content: RefObject<HTMLDivElement | null>, focusOpene
         if (runtime === undefined) {
             return;
         }
+
         // A row that opens a control runs once the menu has closed, so the control does not open under the menu.
         if (item.opensControl === true) {
             pendingRef.current = item;
+
             return;
         }
+
         ranRef.current = true;
         await runItem(runtime, item, false);
         // The row sits in the menu's portal, outside the toolbar.
         returnFocus(runtime, [content.current]);
     };
+
     const onCloseAutoFocus = (event: Event) => {
         const pending = pendingRef.current;
         if (pending !== undefined) {
@@ -46,17 +50,21 @@ export const useRowRuns = (content: RefObject<HTMLDivElement | null>, focusOpene
             pendingRef.current = undefined;
             focusOpener();
             runtime?.handle.execute(pending.command, pending.payload);
+
             return;
         }
+
         if (ranRef.current) {
             event.preventDefault();
             ranRef.current = false;
         }
     };
+
     /** Marks a row that ran outside `onRun`, as the toolbar mode switch does. */
     const ran = () => {
         ranRef.current = true;
     };
+
     return { onRun, onCloseAutoFocus, ran };
 };
 
@@ -71,8 +79,10 @@ const focusMoved = (trigger: HTMLElement | null) => {
     if (trigger === null) {
         return false;
     }
+
     const root = trigger.getRootNode() as Document | ShadowRoot;
     const { activeElement } = root;
+
     return activeElement !== null && activeElement !== trigger.ownerDocument.body;
 };
 
@@ -107,10 +117,12 @@ export const More = ({
         setOpen(next);
         setTooltipOpen(false);
     };
+
     // Focus is on More when a row's control opens, so the control returns it there.
     const rows = useRowRuns(contentRef, () => triggerRef.current?.focus());
     const pointerRef = useRef(false);
     const openAtPressRef = useRef(false);
+
     return (
         <Dropdown.Root
             open={open}
@@ -144,6 +156,7 @@ export const More = ({
                                 if (disabled || !pressed || event.pointerType === 'mouse' || openAtPressRef.current) {
                                     return;
                                 }
+
                                 const { left, right, top, bottom } = event.currentTarget.getBoundingClientRect();
                                 const { clientX, clientY } = event;
                                 if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
@@ -163,6 +176,7 @@ export const More = ({
                                 if (!openAtPressRef.current) {
                                     setMenu(true);
                                 }
+
                                 pointerRef.current = false;
                                 openAtPressRef.current = false;
                             }}
@@ -190,6 +204,7 @@ export const More = ({
                     if (event.defaultPrevented) {
                         return;
                     }
+
                     // Radix returns focus to More in a timeout, after which focus that already moved on stays there.
                     if (focusMoved(triggerRef.current)) {
                         event.preventDefault();

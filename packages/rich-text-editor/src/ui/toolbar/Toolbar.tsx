@@ -40,6 +40,7 @@ export const Item = (props: ItemProps) => {
     if (item.component !== undefined) {
         return <PluginControl {...props} control={item.component} />;
     }
+
     return <Button {...props} />;
 };
 
@@ -64,12 +65,16 @@ const PluginControl = ({
         if (runtime === undefined) {
             return;
         }
+
         if (element === null) {
             await runItem(runtime, item, keepsFocus);
+
             return;
         }
+
         await pressItem(runtime, item, element, keepsFocus);
     };
+
     return (
         <span className={styles.control} data-group-start={item.groupStart || undefined}>
             <Control
@@ -99,6 +104,7 @@ const Button = ({ item, disabled, strings, keepsFocus, outOfTabOrder }: ItemProp
             pressed = true;
         }
     }
+
     // A command the editor cannot run now keeps its item focusable, with the reason in the tooltip.
     let unavailable: true | undefined;
     let reason: string | undefined;
@@ -106,11 +112,14 @@ const Button = ({ item, disabled, strings, keepsFocus, outOfTabOrder }: ItemProp
         unavailable = true;
         reason = strings.reason(state.disabledReason ?? '');
     }
+
     let onMouseDown: typeof keepFocus | undefined;
     if (keepsFocus) {
         onMouseDown = keepFocus;
     }
+
     const { shortcut, keyshortcuts } = useShortcut(item);
+
     return (
         <Tooltip.Root>
             <Tooltip.Trigger asChild>
@@ -130,6 +139,7 @@ const Button = ({ item, disabled, strings, keepsFocus, outOfTabOrder }: ItemProp
                         if (runtime === undefined || unavailable) {
                             return;
                         }
+
                         await pressItem(runtime, item, event.currentTarget, keepsFocus);
                     }}
                 >
@@ -190,6 +200,7 @@ export const FixedToolbar = ({
     if (docked !== undefined) {
         className = `${styles.root} ${styles.docked}`;
     }
+
     // A transformed ancestor, as a host dialog's, moves the origin of fixed positioning, so it is measured first, as
     // Fondue's `Dropdown` places its virtual trigger.
     useClientLayoutEffect(() => {
@@ -198,13 +209,16 @@ export const FixedToolbar = ({
         if (element === null || view === null || view === undefined || docked === undefined) {
             return undefined;
         }
+
         element.style.insetBlockStart = '0px';
         const { top, height } = element.getBoundingClientRect();
         element.style.insetBlockStart = `${view.innerHeight - docked - height - top}px`;
+
         return () => {
             element.style.insetBlockStart = '';
         };
     }, [toolbarRef, docked]);
+
     return (
         <RadixToolbar.Root
             ref={toolbarRef}
@@ -235,6 +249,7 @@ export const FixedToolbar = ({
                         />
                     );
                 }
+
                 // An item that throws leaves only its own place empty, with no message to read between the items.
                 return (
                     <ChromeBoundary key={item.key} message="" attrs={NO_ATTRS}>

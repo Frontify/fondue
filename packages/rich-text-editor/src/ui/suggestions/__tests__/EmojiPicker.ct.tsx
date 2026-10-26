@@ -16,6 +16,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.suggestionRte !== undefined)).toBe(true);
 };
+
 /** Puts the caret at the end of the paragraph with a click, as an author does. */
 const caretAtEnd = async (page: Page) => {
     const paragraph = surfaceOf(page).locator('p');
@@ -23,9 +24,11 @@ const caretAtEnd = async (page: Page) => {
     if (box === null) {
         throw new Error('No paragraph');
     }
+
     await paragraph.click({ position: { x: box.width - 2, y: box.height / 2 } });
     await expect(surfaceOf(page)).toBeFocused();
 };
+
 /** The requests for emoji data from now on: its JSON files and any chunk named after it. */
 const watchEmojiRequests = (page: Page) => {
     const requested: string[] = [];
@@ -35,8 +38,10 @@ const watchEmojiRequests = (page: Page) => {
             requested.push(url);
         }
     });
+
     return requested;
 };
+
 const openPicker = async (page: Page) => {
     await page.getByRole('button', { name: 'Emoji', exact: true }).click();
     await expect(pickerOf(page)).toBeVisible();
@@ -133,6 +138,7 @@ test('inserts nothing when Enter follows a composition and inserts the active em
     if (glyph === null) {
         throw new Error('The active option has no emoji.');
     }
+
     const before = await surfaceOf(page).textContent();
     if (before === null) {
         throw new Error('The surface has no text.');
@@ -143,6 +149,7 @@ test('inserts nothing when Enter follows a composition and inserts the active em
         if (!(field instanceof HTMLInputElement)) {
             throw new Error('The emoji search field is not focused.');
         }
+
         field.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true }));
     });
     await page.keyboard.press('Enter');

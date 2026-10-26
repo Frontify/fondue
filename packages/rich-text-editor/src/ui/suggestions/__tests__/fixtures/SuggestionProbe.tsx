@@ -46,6 +46,7 @@ const documentOf = (text: string, extraLines: number) => {
     for (let line = 1; line <= extraLines; line += 1) {
         content.push(paragraphOf(`Line ${line}`));
     }
+
     return {
         documentId: 'document-1',
         revision: null,
@@ -88,11 +89,13 @@ export const SuggestionProbe = ({
     if (toolbar) {
         presentation = withToolbar;
     }
+
     // Enough lines that a short scroller can move the first paragraph fully out of view.
     let extraLines = 0;
     if (scrollHeight !== undefined) {
         extraLines = 40;
     }
+
     let editor = (
         <RichTextEditor
             aria-label="Notes"
@@ -111,6 +114,7 @@ export const SuggestionProbe = ({
             </div>
         );
     }
+
     return (
         <ThemeProvider>
             {/* WebKit puts a button in the Tab order only with an explicit `tabIndex`. */}

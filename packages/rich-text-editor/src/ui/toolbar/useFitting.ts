@@ -11,11 +11,13 @@ const slotsOf = (root: HTMLElement): Element[] =>
 /** The inline-end edge of each item, measured from the toolbar's inline-start edge while every item shows. */
 const inlineEnds = (root: HTMLElement, rtl: boolean): number[] => {
     const box = root.getBoundingClientRect();
+
     return slotsOf(root).map((item) => {
         const rect = item.getBoundingClientRect();
         if (rtl) {
             return box.right - rect.left;
         }
+
         return rect.right - box.left;
     });
 };
@@ -39,16 +41,19 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
         shown = count;
         setFitting({ itemsKey, shown });
     }
+
     useClientLayoutEffect(() => {
         const element = root.current;
         if (element === null) {
             return undefined;
         }
+
         const style = getComputedStyle(element);
         const ends = inlineEnds(element, style.direction === 'rtl');
         if (ends.length === count) {
             endsRef.current = ends;
         }
+
         const fit = () => {
             const measured = endsRef.current;
             const gap = Number.parseFloat(style.columnGap) || 0;
@@ -57,6 +62,7 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
             if (more !== null) {
                 moreSizeRef.current = gap + more.getBoundingClientRect().width;
             }
+
             const limit = element.getBoundingClientRect().width - Number.parseFloat(style.paddingInlineEnd);
             let next = 0;
             while (next < measured.length) {
@@ -65,13 +71,16 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
                 if (needed > limit + 0.5) {
                     break;
                 }
+
                 next += 1;
             }
+
             const { activeElement } = element.ownerDocument;
             const focused = slotsOf(element).findIndex((slot) => slot.contains(activeElement));
             if (focused >= next) {
                 refocusRef.current = 'more';
             }
+
             // More stays for the mode switch, but its menu loses every command row once all items fit; the menu is a
             // portal that its trigger names in `aria-controls` while open.
             const menuId = more?.getAttribute('aria-controls');
@@ -79,21 +88,26 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
             if (menuId !== null && menuId !== undefined) {
                 menu = element.ownerDocument.getElementById(menuId);
             }
+
             if (menu !== null && menu.contains(activeElement) && next === measured.length) {
                 refocusRef.current = shownRef.current;
             }
+
             // Only the rendered items tell what fits, so the layout effect measures them before paint.
             // oxlint-disable-next-line @eslint-react/set-state-in-effect -- the state is the measured layout.
             setFitting((previous) => {
                 if (previous.itemsKey === itemsKey && previous.shown === next) {
                     return previous;
                 }
+
                 return { itemsKey, shown: next };
             });
         };
+
         fit();
         const observer = new ResizeObserver(fit);
         observer.observe(element);
+
         return () => observer.disconnect();
     }, [root, count, itemsKey]);
     useClientLayoutEffect(() => {
@@ -103,6 +117,7 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
         if (target === undefined || element === null) {
             return;
         }
+
         refocusRef.current = undefined;
         let control = element.querySelector<HTMLElement>('[data-rte-toolbar-more]');
         if (target !== 'more') {
@@ -112,9 +127,11 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
                 control = slot as HTMLElement;
             }
         }
+
         if (control !== null) {
             control.focus();
         }
     }, [root, shown]);
+
     return shown;
 };

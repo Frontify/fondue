@@ -74,6 +74,7 @@ export const ContextMenu = ({
         if (runtime === undefined || surface === undefined || disabled) {
             return undefined;
         }
+
         const selectedNode = () => selectedNodePosition(runtime);
         // With no row to run, the browser's own menu is the better one.
         const runnable = () =>
@@ -81,38 +82,48 @@ export const ContextMenu = ({
         const onContextMenu = (event: MouseEvent) => {
             if (open) {
                 event.preventDefault();
+
                 return;
             }
+
             // A node of an iframe's document is no `Node` of this window.
             const target = event.target as Node | null;
             let atom: number | undefined;
             if (target !== null) {
                 atom = atomPositionAt(runtime, target);
             }
+
             if (atom === undefined && selectedNode() === undefined) {
                 return;
             }
+
             // The rows act on the selection, so a right click on an atom selects it first, as a press on an image does.
             if (atom !== undefined && selectedNode() !== atom) {
                 runtime.select({ node: atom });
             }
+
             if (!runnable()) {
                 return;
             }
+
             event.preventDefault();
             const { clientX, clientY } = event;
             setOpened({ at: { getBoundingClientRect: () => new DOMRect(clientX, clientY, 0, 0) } });
         };
+
         const onKeyDown = (event: KeyboardEvent) => {
             const key = pressesBinding(event, 'Shift-F10') || pressesBinding(event, 'ContextMenu');
             if (!key || selectedNode() === undefined || !runnable()) {
                 return;
             }
+
             event.preventDefault();
             setOpened({ at: undefined });
         };
+
         surface.addEventListener('contextmenu', onContextMenu);
         surface.addEventListener('keydown', onKeyDown);
+
         return () => {
             surface.removeEventListener('contextmenu', onContextMenu);
             surface.removeEventListener('keydown', onKeyDown);
@@ -122,10 +133,12 @@ export const ContextMenu = ({
     if (!open || rows.length === 0) {
         return null;
     }
+
     let anchor: OverlayAnchor = overlay.anchor;
     if (opened?.at !== undefined) {
         anchor = opened.at;
     }
+
     return (
         <Dropdown.Root open={open} onOpenChange={setOpen} virtualAnchor={anchor}>
             <ContextMenuContent
