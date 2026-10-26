@@ -3,7 +3,7 @@
 import { useFondueTheme } from '@frontify/fondue-components';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { useScopedFocus } from '#/bridge/overlays';
+import { useScopedFocus } from '#/bridge/overlays/hooks/useScopedFocus';
 import { useApplePlatform } from '#/bridge/platform';
 import { useSessionValue } from '#/bridge/session';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';

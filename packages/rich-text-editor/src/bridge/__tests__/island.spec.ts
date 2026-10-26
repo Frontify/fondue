@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { islandReplacement } from '../island';
+import { islandReplacement } from '../nodeViews/IslandFallback/helpers/islandReplacement';
 
 const text = (value: string) => ({ type: 'text', text: value });
 const callout = (...lines: readonly string[]) => ({

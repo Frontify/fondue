@@ -1,10 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useCallback, useContext } from 'react';
+import { useCallback, useContext } from 'react';
 
-/** Where the editable content of the node view whose chrome renders goes, which the portal host provides. */
-export const NodeViewContentContext = createContext<((element: HTMLElement | null) => void) | null>(null);
-NodeViewContentContext.displayName = 'RichTextNodeViewContentContext';
+import { NodeViewContentContext } from '../helpers/nodeViewContentContext';
 
 /** Holds the node's editable content inside chrome, whose own controls then set `contentEditable={false}`. */
 export const NodeViewContent = ({ className }: { className?: string }) => {

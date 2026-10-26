@@ -4,9 +4,9 @@ import { Button as FondueButton, Tooltip } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type ComponentType, useCallback, useContext, useRef } from 'react';
 
-import { keepFocus } from '#/bridge/chromeToolbar';
+import { keepFocus } from '#/bridge/chrome/helpers/keepFocus';
 import { useCommandQuery } from '#/bridge/hooks';
-import { useOverlayContainer } from '#/bridge/overlays';
+import { useOverlayContainer } from '#/bridge/overlays/hooks/useOverlayContainer';
 import { type ToolbarControlProps } from '#/bridge/pluginApi/plugin';
 import { SessionContext } from '#/bridge/session';
 import { pressItem, runItem, tabStop, type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';

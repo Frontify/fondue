@@ -4,8 +4,9 @@ import { useFondueTheme } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type MutableRefObject } from 'react';
 
+import { ChromeBoundary } from '#/bridge/nodeViews/components/ChromeBoundary';
+import { NO_ATTRS } from '#/bridge/nodeViews/helpers/noAttrs';
 import { useApplePlatform } from '#/bridge/platform';
-import { ChromeBoundary, NO_ATTRS } from '#/bridge/PortalHost';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { Item } from '#/ui/components/Item';
 import { More, type ModeSwitch } from '#/ui/components/More';

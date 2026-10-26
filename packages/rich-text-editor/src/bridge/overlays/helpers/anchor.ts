@@ -6,8 +6,9 @@ import { caretRect, rangeRect, selectionRect, type SurfaceView } from '#/runtime
 import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/portEngine';
 
-import { type SelectionAnchor } from '../../overlays';
 import { type AnchorTarget, type OverlayAnchor } from '../../pluginApi/plugin';
+
+import { type SelectionAnchor } from './overlayContext';
 
 /** The parent of a node, from a shadow root to its host. */
 const parentOf = (node: Element): Element | null => {

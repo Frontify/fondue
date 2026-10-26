@@ -3,9 +3,9 @@
 import { type MutableRefObject } from 'react';
 
 import { Phase } from '#/bridge/devChecks';
-import { OverlayBody } from '#/bridge/overlays';
+import { PortalHost } from '#/bridge/nodeViews/components/PortalHost';
+import { OverlayBody } from '#/bridge/overlays/components/OverlayBody';
 import { type EditorHosts } from '#/bridge/pluginApi/plugin';
-import { PortalHost } from '#/bridge/PortalHost';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { mediaOf } from '#/runtime/port';
 import { VISUALLY_HIDDEN } from '#/styles/visuallyHidden';

@@ -5,9 +5,12 @@ import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type MutableRefObject, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { useEditorSelection } from '#/bridge/hooks';
-import { passEscape, useHeldOverlay, useScopedFocus } from '#/bridge/overlays';
+import { ChromeBoundary } from '#/bridge/nodeViews/components/ChromeBoundary';
+import { NO_ATTRS } from '#/bridge/nodeViews/helpers/noAttrs';
+import { passEscape } from '#/bridge/overlays/helpers/escape';
+import { useHeldOverlay } from '#/bridge/overlays/hooks/useHeldOverlay';
+import { useScopedFocus } from '#/bridge/overlays/hooks/useScopedFocus';
 import { useApplePlatform } from '#/bridge/platform';
-import { ChromeBoundary, NO_ATTRS } from '#/bridge/PortalHost';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { type EditorPort, hasSurface, type SelectionSummary, selectionRectOf, selectionSpan } from '#/runtime/port';

@@ -5,7 +5,7 @@ import { Component, type ComponentType, type ReactNode, useRef } from 'react';
 
 import { useAnnounce } from '#/bridge/announcer';
 import { type ReactWork, ReactWorkContext } from '#/bridge/devChecks';
-import { TABBABLE } from '#/bridge/overlays';
+import { TABBABLE } from '#/bridge/overlays/helpers/tabbable';
 import { type PanelComponentProps } from '#/bridge/pluginApi/define';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { type CodecContext } from '#/model';

@@ -3,7 +3,7 @@
 import { act } from '@testing-library/react';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { turnIntoChoices, type TurnIntoEntry } from '#/bridge/turnInto';
+import { turnIntoChoices, type TurnIntoEntry } from '#/bridge/chrome/helpers/turnInto';
 import { enUS } from '#/locales/en-US';
 import { isRecord, type JsonValue } from '#/model';
 import { codecContext } from '#/model/internal';

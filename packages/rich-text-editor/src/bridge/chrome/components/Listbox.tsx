@@ -5,8 +5,8 @@ import { type ReactNode, useRef } from 'react';
 
 import { suggestionOptionId } from '#/runtime/capabilities/suggestions/optionId';
 
-import { keepFocus } from '../../chromeToolbar';
 import { useClientLayoutEffect } from '../../session/hooks/useClientLayoutEffect';
+import { keepFocus } from '../helpers/keepFocus';
 import styles from '../styles/listbox.module.scss';
 
 /** What one option shows: its glyph, such as the emoji itself, or an image or icon, then its label and detail. */

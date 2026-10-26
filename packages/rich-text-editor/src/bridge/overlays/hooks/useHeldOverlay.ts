@@ -1,124 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    createContext,
-    type ReactNode,
-    type RefCallback,
-    Suspense,
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-    useSyncExternalStore,
-} from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/portEngine';
 
-import { createSelectionAnchor } from './overlays/helpers/anchor';
-import { type InteractionScope } from './overlays/helpers/interactionScope';
-import { type AnchorTarget, type OverlayAnchor } from './pluginApi/plugin';
-import { SessionContext } from './session';
-import { useClientLayoutEffect } from './session/hooks/useClientLayoutEffect';
+import { type AnchorTarget } from '../../pluginApi/plugin';
+import { SessionContext } from '../../session';
+import { useClientLayoutEffect } from '../../session/hooks/useClientLayoutEffect';
+import { createSelectionAnchor } from '../helpers/anchor';
+import { type EditorOverlay, type SelectionAnchor } from '../helpers/overlayContext';
+import { TABBABLE } from '../helpers/tabbable';
 
-// Lives here, not beside its factory in anchor.ts, whose declarations reach prosemirror-view.
-/** A rectangle an overlay anchors to, as Fondue's `virtualAnchor` takes it, which Floating UI reads each frame. */
-export type SelectionAnchor = {
-    getBoundingClientRect(): DOMRect;
-    /** Holds the rectangle where it is beside the surface, so content changes next to it leave the overlay in place. */
-    hold(held: boolean): void;
-    /** Whether a scrolling ancestor clips the whole rectangle; never for an anchor no overlay has read yet, as a dialog's. */
-    clipped(): boolean;
-};
-
-/** Where the editor's overlays render, and the interaction scope they share. */
-export type Overlays = {
-    /** `portalContainer`, else the editor's own overlay root inside its interaction scope. */
-    container: HTMLElement | null;
-    scope: InteractionScope;
-    /** The element that had focus when the open overlay was asked for, before the overlay took focus. */
-    opener?: Element | null;
-};
-
-export const OverlayContext = createContext<Overlays | null>(null);
-OverlayContext.displayName = 'RichTextEditorOverlayContext';
-
-/** The portal container of the editor around the caller. */
-export const useOverlayContainer = (): HTMLElement | null => {
-    const overlays = useContext(OverlayContext);
-    if (overlays === null) {
-        return null;
-    }
-
-    return overlays.container;
-};
-
-const useOverlays = (): Overlays => {
-    const overlays = useContext(OverlayContext);
-    if (overlays === null) {
-        throw new Error('An editor overlay must be rendered inside RichTextEditor.Root.');
-    }
-
-    return overlays;
-};
-
-const NO_FOCUS = () => null;
-
-/** The focused element while focus is inside the editor's interaction scope, else `null`; each focus move rerenders. */
-export const useScopedFocus = (): Element | null => {
-    const { scope } = useOverlays();
-    const read = () => {
-        const active = scope.active();
-        if (scope.contains(active)) {
-            return active;
-        }
-
-        return null;
-    };
-
-    return useSyncExternalStore(scope.subscribe, read, NO_FOCUS);
-};
-
-/** What an editor overlay passes to its Fondue `Flyout`, `Dropdown` or `Dialog`. */
-export type EditorOverlay = {
-    container: HTMLElement | null;
-    /** Takes the content element Fondue forwards, which hides while its anchor is clipped. */
-    contentRef: RefCallback<HTMLDivElement>;
-    /**
-     * Takes every close request but one from a focus move or press inside the editor and outside this overlay, or from
-     * a focus move during a press inside this overlay.
-     */
-    onOpenChange: (open: boolean) => void;
-    /**
-     * The virtual anchor for this overlay: the `anchor` target `useEditorOverlay` got, else the selection. Unlike
-     * `OverlayProps.anchor`, which is the target the opener passed to `overlays.open` and which only places an overlay,
-     * this one also hides the content while a scrolling ancestor clips it.
-     */
-    anchor: OverlayAnchor;
-    /**
-     * Where the next close returns focus that it leaves on `body`: `target`, such as the control that opened the
-     * overlay, or the surface for `null`, in place of the element that had focus when the overlay opened.
-     */
-    returnFocusTo: (target: Element | null) => void;
-};
-
-// Escapes that an overlay hands on after closing, so the chrome still moves focus for them.
-const passedEscapes = new WeakSet<Event>();
-
-/** Closes an overlay on Escape and still lets the key return focus from a toolbar to the surface. */
-export const passEscape = (event: KeyboardEvent): void => {
-    passedEscapes.add(event);
-};
-
-/** Whether an overlay handed this Escape on, though it prevented its default. */
-export const escapePassed = (event: Event): boolean => passedEscapes.has(event);
+import { useOverlays } from './useOverlays';
 
 /** Whether `element` holds `node`, or is it. */
 const holds = (element: HTMLElement | null, node: Node | null) => element !== null && element.contains(node);
-
-export const TABBABLE =
-    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 /**
  * Lets Tab on an overlay's last control, or Shift+Tab on its first, move on past it, where the focus loop of a Radix
@@ -177,17 +74,6 @@ const refocus = (port: EditorPort, before: Element | null, panelControl: Element
 
     runtime.handle.focus();
 };
-
-/**
- * An overlay's place and focus rules: it renders into the portal container, stays open for moves inside the editor,
- * closes when the document is replaced, and returns focus that a close leaves on `body`. Its anchor is the selection, or
- * `anchor`, such as the range of a mark run that `marks.run` returned, which a function may read each frame.
- */
-export const useEditorOverlay = (
-    open: boolean,
-    setOpen: (open: boolean) => void,
-    anchor?: AnchorTarget,
-): EditorOverlay => useHeldOverlay(open, setOpen, anchor);
 
 /** `useEditorOverlay` with the anchor's `hold`, which chrome that stays beside the surface while it is hovered uses. */
 export const useHeldOverlay = (
@@ -312,7 +198,3 @@ export const useHeldOverlay = (
 
     return { container, contentRef, onOpenChange, anchor, returnFocusTo };
 };
-
-/** An overlay's body: one whose code loads lazily suspends here, so the surface stays mounted and editable. */
-export const OverlayBody = ({ children }: { children: ReactNode }) => <Suspense fallback={null}>{children}</Suspense>;
-OverlayBody.displayName = 'RichTextEditor.OverlayBody';

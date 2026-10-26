@@ -3,7 +3,7 @@
 import { Dropdown } from '@frontify/fondue-components';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { useEditorOverlay } from '#/bridge/overlays';
+import { useEditorOverlay } from '#/bridge/overlays/hooks/useEditorOverlay';
 import { type OverlayAnchor } from '#/bridge/pluginApi/plugin';
 import { SessionContext } from '#/bridge/session';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';

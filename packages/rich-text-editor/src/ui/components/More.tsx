@@ -5,8 +5,8 @@ import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { useContext, useRef, useState } from 'react';
 
-import { keepFocus } from '#/bridge/chromeToolbar';
-import { useOverlayContainer } from '#/bridge/overlays';
+import { keepFocus } from '#/bridge/chrome/helpers/keepFocus';
+import { useOverlayContainer } from '#/bridge/overlays/hooks/useOverlayContainer';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';
 import { blockTypeOf } from '#/ui/helpers/blockTypeOf';

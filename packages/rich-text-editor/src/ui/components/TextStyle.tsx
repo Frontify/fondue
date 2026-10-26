@@ -4,8 +4,9 @@ import { Button, Dropdown } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { useContext, useRef } from 'react';
 
-import { CheckedSlot, keepFocus } from '#/bridge/chromeToolbar';
-import { useOverlayContainer } from '#/bridge/overlays';
+import { CheckedSlot } from '#/bridge/chrome/components/CheckedSlot';
+import { keepFocus } from '#/bridge/chrome/helpers/keepFocus';
+import { useOverlayContainer } from '#/bridge/overlays/hooks/useOverlayContainer';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { isRecord } from '#/model';
 import { type EditorPort } from '#/runtime/port';

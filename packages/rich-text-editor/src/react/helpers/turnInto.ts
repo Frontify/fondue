@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type TurnIntoEntry } from '#/bridge/chrome/helpers/turnInto';
 import { type EditorPartSpec, type PluginToolbarEntry } from '#/bridge/pluginApi/plugin';
-import { type TurnIntoEntry } from '#/bridge/turnInto';
 import { type CodecContext } from '#/model';
 
 import { translatedLabel } from './toolbarItems';

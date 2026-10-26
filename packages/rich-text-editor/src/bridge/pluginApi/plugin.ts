@@ -46,7 +46,11 @@ export { type ReferenceValue, type SelectionHandle, type UploadStatus } from '#/
 export { type Announcer, createAnnouncer } from '../announcer';
 export { type EditorApi, type EditorControlApi, type EditorFacet, type EditorFacets } from './apiFacets';
 export { useClientLayoutEffect } from '../session/hooks/useClientLayoutEffect';
-export { OverlayBody, passEscape, useEditorOverlay, useOverlayContainer, useScopedFocus } from '../overlays';
+export { OverlayBody } from '../overlays/components/OverlayBody';
+export { passEscape } from '../overlays/helpers/escape';
+export { useEditorOverlay } from '../overlays/hooks/useEditorOverlay';
+export { useOverlayContainer } from '../overlays/hooks/useOverlayContainer';
+export { useScopedFocus } from '../overlays/hooks/useScopedFocus';
 export { useApplePlatform } from '../platform';
 
 /** A rectangle an overlay anchors to, as Fondue's `virtualAnchor` takes it. */

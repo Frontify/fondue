@@ -5,7 +5,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAnnounce } from '#/bridge/announcer';
 import { Listbox } from '#/bridge/chrome/components/Listbox';
-import { useEditorOverlay } from '#/bridge/overlays';
+import { useEditorOverlay } from '#/bridge/overlays/hooks/useEditorOverlay';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import {

@@ -2,7 +2,7 @@
 
 import { type KeyboardEvent } from 'react';
 
-import { escapePassed } from '#/bridge/overlays';
+import { escapePassed } from '#/bridge/overlays/helpers/escape';
 import { hasSurface, nodeChromeOf, passesToBrowser, type EditorPort } from '#/runtime/port';
 import { pressesBinding } from '#/ui/helpers/shortcuts';
 

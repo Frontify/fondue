@@ -13,11 +13,11 @@ import {
 } from '#/runtime/dom/viewBridge';
 import { type EditorRuntime, liveResources, type NodeTarget } from '#/runtime/runtime';
 
-import { ISLAND_VIEWS } from '../island';
 import { type NodeViewDeclaration } from '../pluginApi/define';
 
 import { createPlacement, ignoresMutation, sameTags, stopsEvent, syncLayers } from './helpers/nodeViewParts';
 import { type PortalEntry, type PortalStore } from './helpers/portals';
+import { ISLAND_VIEWS } from './IslandFallback/IslandFallback';
 
 /** What the node views of one editor share: its portals and the session they act on. */
 export type NodeViewHost = {

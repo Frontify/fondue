@@ -3,7 +3,7 @@
 import { Dropdown } from '@frontify/fondue-components';
 import { type AriaAttributes, type AriaRole, useId } from 'react';
 
-import { CheckedSlot } from '#/bridge/chromeToolbar';
+import { CheckedSlot } from '#/bridge/chrome/components/CheckedSlot';
 import { useCommandQuery } from '#/bridge/hooks';
 import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { useOpenPanel } from '#/ui/hooks/useOpenPanel';

@@ -3,7 +3,8 @@
 import { Dropdown } from '@frontify/fondue-components';
 import { type RefObject } from 'react';
 
-import { ChromeBoundary, NO_ATTRS } from '#/bridge/PortalHost';
+import { ChromeBoundary } from '#/bridge/nodeViews/components/ChromeBoundary';
+import { NO_ATTRS } from '#/bridge/nodeViews/helpers/noAttrs';
 import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 
 import { MoreRow } from './MoreRow';

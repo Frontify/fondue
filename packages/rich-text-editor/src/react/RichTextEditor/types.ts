@@ -3,11 +3,11 @@
 import { type ComponentType, type KeyboardEventHandler, type MutableRefObject, type ReactNode } from 'react';
 
 import { type Announcer } from '#/bridge/announcer';
+import { type TurnIntoEntry } from '#/bridge/chrome/helpers/turnInto';
 import { type ReactWork } from '#/bridge/devChecks';
 import { type PortalStore } from '#/bridge/nodeViews/helpers/portals';
 import { type EditorHosts } from '#/bridge/pluginApi/plugin';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
-import { type TurnIntoEntry } from '#/bridge/turnInto';
 import {
     type CapabilityRef,
     type ContentModel,

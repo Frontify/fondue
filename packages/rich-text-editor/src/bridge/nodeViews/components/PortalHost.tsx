@@ -1,67 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFondueTheme } from '@frontify/fondue-components';
-import { Component, memo, type ReactNode, Suspense, useMemo, useSyncExternalStore } from 'react';
+import { memo, Suspense, useMemo, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 
-import { type JsonObject } from '#/model';
 import { type EditorPort, mediaOf } from '#/runtime/port';
 
-import { type ReactWork, ReactWorkContext } from './devChecks';
-import { NodeViewContentContext } from './NodeViewContent';
-import { type PortalEntry, type PortalStore } from './nodeViews/helpers/portals';
-import { type NodePending, type NodeViewContext, NodeViewStateContext } from './pluginApi/define';
-import { useSessionValue } from './session';
-import { useClientLayoutEffect } from './session/hooks/useClientLayoutEffect';
+import { type NodePending, type NodeViewContext, NodeViewStateContext } from '../../pluginApi/define';
+import { useSessionValue } from '../../session';
+import { useClientLayoutEffect } from '../../session/hooks/useClientLayoutEffect';
+import { NodeViewContentContext } from '../helpers/nodeViewContentContext';
+import { type PortalEntry, type PortalStore } from '../helpers/portals';
 
-export type BoundaryProps = {
-    message: string;
-    /** The node's attributes; new ones try the chrome again. */
-    attrs: JsonObject;
-    children: ReactNode;
-};
-type BoundaryState = {
-    failed: boolean;
-    attrs: JsonObject;
-};
-
-/** The attributes of a boundary around a toolbar item, which has none to change. */
-export const NO_ATTRS = {};
-
-/** Replaces only the chrome that threw with a localized message, while `contentDOM` and editing go on. */
-export class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
-    static contextType = ReactWorkContext;
-    declare context: ReactWork | undefined;
-    state: BoundaryState = { failed: false, attrs: this.props.attrs };
-
-    static getDerivedStateFromError() {
-        return { failed: true };
-    }
-
-    // The chrome that threw never committed, so its render mark closes here, in the commit that shows the fallback.
-    componentDidCatch() {
-        if (this.context !== undefined) {
-            this.context.rendering = false;
-        }
-    }
-
-    // Chrome that threw for one attribute value renders again once an update changes the attributes.
-    static getDerivedStateFromProps(props: BoundaryProps, state: BoundaryState) {
-        if (props.attrs !== state.attrs) {
-            return { failed: false, attrs: props.attrs };
-        }
-
-        return null;
-    }
-
-    render() {
-        if (this.state.failed) {
-            return <span>{this.props.message}</span>;
-        }
-
-        return this.props.children;
-    }
-}
+import { ChromeBoundary } from './ChromeBoundary';
 
 /** The upload of node `nodeId`, as its chrome reads it. */
 const pendingOf = (runtime: EditorPort | undefined, nodeId: string | null): NodePending | null => {
