@@ -10,9 +10,9 @@ import { isRecord } from './values';
 type Writable = Record<string, unknown>;
 
 type Encoding = {
-    readonly vocabulary: Vocabulary;
+    vocabulary: Vocabulary;
     /** Feature IDs whose nodes, marks or non-default attributes the content outside islands uses. */
-    readonly used: Set<string>;
+    used: Set<string>;
     /** Whether any island or unknown attribute survives. */
     foreign: boolean;
     /** The longest text node after joining. */
@@ -139,7 +139,7 @@ const encodeNode = (encoding: Encoding, node: TreeNode): unknown => {
     return writeNode(encoding.vocabulary, node, content);
 };
 
-type EncodedText = { readonly type: 'text'; readonly text: string; readonly marks?: unknown };
+type EncodedText = { type: 'text'; text: string; marks?: unknown };
 
 const marksKey = (text: EncodedText) => canonicalJson((text.marks ?? null) as JsonValue);
 
@@ -196,7 +196,7 @@ export const encodeTree = (
     tree: TreeNode,
     model: ContentModel,
     stored: readonly CapabilityRef[] = [],
-): { readonly document: RichTextDocument; readonly longestText: number } => {
+): { document: RichTextDocument; longestText: number } => {
     const encoding: Encoding = { vocabulary: vocabularyOf(model), used: new Set(), foreign: false, longestText: 0 };
     const content = encodeNode(encoding, tree) as ContentNodeJSON;
     const document: RichTextDocument = {

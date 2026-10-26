@@ -484,6 +484,7 @@ describe('compileContentModel declarations', () => {
 
     it('types, defaults and checks code feature options', () => {
         expectTypeOf(core).parameter(0).toEqualTypeOf<object | undefined>();
+        // Stays readonly: `OptionsOf` yields readonly members, and `toEqualTypeOf` compares the modifier.
         expectTypeOf(fixtureHeading).parameter(0).toEqualTypeOf<{ readonly defaultLevel?: number } | undefined>();
         expect(compile([core(), fixtureHeading()]).manifest.features).toEqual([
             { id: 'core', version: 1, options: {} },

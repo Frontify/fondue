@@ -17,32 +17,32 @@ import { readInput } from './read';
 
 /** A record of a migration run: the hashes before and after, and the steps that ran. */
 export type MigrationManifest = {
-    readonly sourceHash: string;
-    readonly targetHash: string | null;
-    readonly steps: readonly string[];
-    readonly model: ModelRef;
-    readonly packageVersion: string;
-    readonly counts: Readonly<Record<string, number>>;
+    sourceHash: string;
+    targetHash: string | null;
+    steps: readonly string[];
+    model: ModelRef;
+    packageVersion: string;
+    counts: Readonly<Record<string, number>>;
 };
 /** The outcome of migrating a document: its status, the resulting document and a manifest. */
 export type MigrationResult = {
-    readonly status: 'current' | 'migrated' | 'requires-review' | 'unsupported';
+    status: 'current' | 'migrated' | 'requires-review' | 'unsupported';
     /** `requires-review`: the last step's output with unmapped content as stored; `unsupported`: null. */
-    readonly document: RichTextDocument | null;
-    readonly diagnostics: readonly Diagnostic[];
-    readonly manifest: MigrationManifest;
+    document: RichTextDocument | null;
+    diagnostics: readonly Diagnostic[];
+    manifest: MigrationManifest;
 };
 
 export type Migrated = {
     /** `null` when a step blocks the document. */
-    readonly document: RichTextDocument | null;
-    readonly diagnostics: readonly Diagnostic[];
-    readonly steps: readonly string[];
+    document: RichTextDocument | null;
+    diagnostics: readonly Diagnostic[];
+    steps: readonly string[];
     /** The node positions a `requires-review` step left as stored, which decode keeps as islands. */
-    readonly review: ReadonlySet<string>;
-    readonly reviewing: boolean;
+    review: ReadonlySet<string>;
+    reviewing: boolean;
     /** Whether the document records a lower model version or an installed capability at a lower version. */
-    readonly older: boolean;
+    older: boolean;
 };
 
 /** A JSON Pointer to a node position below the root. */
@@ -185,10 +185,7 @@ export const runMigrations = (
 };
 
 type ViteImportMeta = ImportMeta & {
-    readonly glob: (
-        pattern: string,
-        options: { readonly eager: true; readonly import: string },
-    ) => Record<string, string>;
+    glob: (pattern: string, options: { eager: true; import: string }) => Record<string, string>;
 };
 
 /** The package's own version, which Vite inlines from `package.json` when it builds or tests the module. */
@@ -208,7 +205,7 @@ export const packageVersionOf = (): string => {
 export const migrateDocument = (
     document: RichTextDocument,
     model: ContentModel,
-    options: { readonly generateId?: () => string } = {},
+    options: { generateId?: () => string } = {},
 ): MigrationResult => {
     const read = readInput(document, defaultLimits);
     const checked = read.ok ? checkEnvelope(read.value, model) : read;

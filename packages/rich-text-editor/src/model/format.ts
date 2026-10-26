@@ -25,14 +25,14 @@ export type RichTextDocument = {
 };
 /** A copied range of content, which a paste reads back with the model and capabilities that wrote it. */
 export type RichTextSlice = {
-    readonly format: 'frontify.rich-text-slice';
-    readonly formatVersion: 1;
-    readonly model: ModelRef;
-    readonly requiredCapabilities: readonly CapabilityRef[];
-    readonly context: string | null;
-    readonly openStart: number;
-    readonly openEnd: number;
-    readonly content: readonly ContentNodeJSON[];
+    format: 'frontify.rich-text-slice';
+    formatVersion: 1;
+    model: ModelRef;
+    requiredCapabilities: readonly CapabilityRef[];
+    context: string | null;
+    openStart: number;
+    openEnd: number;
+    content: readonly ContentNodeJSON[];
 };
 /**
  * The closed document type of a feature list: its nodes, marks and attributes, growing when a host adds a
@@ -120,24 +120,24 @@ export type DiagnosticCode =
 
 /** A finding the package reports about content or use, with a code, a severity and a translation key for its message. */
 export type Diagnostic = {
-    readonly code: DiagnosticCode;
-    readonly severity: 'info' | 'warning' | 'error';
-    readonly messageKey: string;
+    code: DiagnosticCode;
+    severity: 'info' | 'warning' | 'error';
+    messageKey: string;
     /** A JSON Pointer into the input, when the diagnostic has a place. */
-    readonly path?: string;
-    readonly featureId?: string;
+    path?: string;
+    featureId?: string;
     /** Codes, feature IDs, capability names, counts and hashes only: never document text, attribute values, URLs or labels. */
-    readonly details?: JsonObject;
+    details?: JsonObject;
 };
 
 /** The outcome of reading stored content: editable, or not editable with the reason. */
 export type DecodeResult =
     | {
           /** Unknown or invalid content is kept as islands or in `unknownAttributes` inside the runtime. */
-          readonly status: 'editable';
+          status: 'editable';
           /** The input after migrations, exactly as read: a value in a node or mark position may be any JSON value. */
-          readonly document: RichTextDocument;
-          readonly diagnostics: readonly Diagnostic[];
+          document: RichTextDocument;
+          diagnostics: readonly Diagnostic[];
       }
     | {
           /**
@@ -145,10 +145,10 @@ export type DecodeResult =
            * migration step that returns `unsupported`, throws or writes an output that fails the read or root checks,
            * or a `requires-review` step that leaves the root unmapped.
            */
-          readonly status: 'blocked';
-          readonly reason: 'invalid' | 'unsupported' | 'limit-exceeded';
-          readonly original: unknown;
-          readonly diagnostics: readonly Diagnostic[];
+          status: 'blocked';
+          reason: 'invalid' | 'unsupported' | 'limit-exceeded';
+          original: unknown;
+          diagnostics: readonly Diagnostic[];
       };
 
 /** The size limits applied when reading a document, such as bytes, nodes and depth. */
@@ -186,9 +186,9 @@ export const defaultLimits: ResourceLimits = Object.freeze({
 /** Options for reading a stored document: the limits and the id source for migrations. */
 export type DecodeOptions = {
     /** Defaults to `defaultLimits`; a host passes the limits the writing definition used. */
-    readonly limits?: Partial<ResourceLimits>;
+    limits?: Partial<ResourceLimits>;
     /** Creates the `nodeId`s that registered migrations add; `crypto.randomUUID` when omitted. */
-    readonly generateId?: () => string;
+    generateId?: () => string;
 };
 
 export const diagnostic = (

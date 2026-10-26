@@ -75,9 +75,9 @@ const islandAt = (tree: TreeNode, ...indices: readonly number[]): TreeNode => {
 };
 
 type Shaped = {
-    readonly type?: unknown;
-    readonly attrs?: Record<string, unknown>;
-    readonly content?: readonly Shaped[];
+    type?: unknown;
+    attrs?: Record<string, unknown>;
+    content?: readonly Shaped[];
 };
 const firstOfType = (value: Shaped, type: string): Shaped | undefined => {
     if (value.type === type) {
@@ -504,7 +504,7 @@ describe('occurrence IDs', () => {
 });
 
 describe('unsafe URLs', () => {
-    type UrlFixture = { readonly input: string; readonly ok: boolean };
+    type UrlFixture = { input: string; ok: boolean };
     const unsafe = (
         JSON.parse(readFileSync(new URL('./fixtures/urls.json', import.meta.url), 'utf8')) as readonly UrlFixture[]
     ).filter(({ ok }) => !ok);

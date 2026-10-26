@@ -115,10 +115,10 @@ export const failedFallback = (state: Spacing, node: TreeNode, plan: NodePlan, b
 };
 
 export type Item = {
-    readonly node: TreeNode;
-    readonly path: string;
+    node: TreeNode;
+    path: string;
     /** The known marks in rank order, each with its index among the node's marks. */
-    readonly marks: readonly { readonly mark: TreeMark; readonly index: number }[];
+    marks: readonly { mark: TreeMark; index: number }[];
 };
 
 const sameMark = (a: TreeMark, b: TreeMark) =>

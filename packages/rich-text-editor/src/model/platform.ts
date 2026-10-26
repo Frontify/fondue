@@ -2,8 +2,8 @@
 
 /** What the platform check reads of `navigator`. */
 export type PlatformNavigator = {
-    readonly platform: string;
-    readonly userAgentData?: { readonly platform: string };
+    platform: string;
+    userAgentData?: { platform: string };
 };
 
 const PREFIX = /^(mac|other):/;

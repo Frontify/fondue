@@ -21,11 +21,11 @@ export type JsonNode = { [key: string]: JsonValue };
 
 export type DocumentOptions = {
     /** Whether the nodes and marks of a feature may appear; every feature by default. */
-    readonly feature?: (featureId: string) => boolean;
+    feature?: (featureId: string) => boolean;
     /** The text of a text node in inline content that takes marks. */
-    readonly text?: fc.Arbitrary<string>;
+    text?: fc.Arbitrary<string>;
     /** Whether an attribute may hold a value other than its default; every attribute by default. */
-    readonly attribute?: Varies;
+    attribute?: Varies;
 };
 
 /** Letters, digits, HTML and Markdown specials, space runs, U+00A0, control characters, combining marks, emoji and RTL letters. */

@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 
 import { checkHref, type HrefResult } from '#/model';
 
-type UrlFixture = { readonly input: string; readonly ok: boolean; readonly code?: string; readonly href?: string };
+type UrlFixture = { input: string; ok: boolean; code?: string; href?: string };
 
 const fixtures = JSON.parse(
     readFileSync(new URL('./fixtures/urls.json', import.meta.url), 'utf8'),

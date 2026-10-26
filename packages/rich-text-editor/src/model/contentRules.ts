@@ -23,51 +23,51 @@ export type ContentRuleId =
     | 'structure.review';
 /** The repair command a rule offers, which the editor part of `feature` registers. */
 export type ContentRepair = {
-    readonly command: string;
-    readonly feature: string;
+    command: string;
+    feature: string;
 };
 /** What a rule found: `true` for an issue with no repair, the repair command's payload, or `undefined` for none. */
-export type ContentFinding = true | { readonly payload: JsonValue | null } | undefined;
+export type ContentFinding = true | { payload: JsonValue | null } | undefined;
 /**
  * What a rule looks at: each node of a type that passes `where`, or each run of adjacent inline children that carry
  * the same `marks`.
  */
 export type ContentRuleSubject =
-    | { readonly node: string; readonly where?: (node: ContentNodeJSON) => boolean }
-    | { readonly marks: readonly string[] };
+    | { node: string; where?: (node: ContentNodeJSON) => boolean }
+    | { marks: readonly string[] };
 /** The subject a rule checks, as the content check engine finds it. */
 export type ContentRuleInput = {
     /** The node, or the first inline child of a run. */
-    readonly node: ContentNodeJSON;
+    node: ContentNodeJSON;
     /** The nodes the subject covers: the node alone, or the inline children of a run. */
-    readonly covered: readonly ContentNodeJSON[];
+    covered: readonly ContentNodeJSON[];
     /** The nodes around the subject from the document node down; a run's last ancestor is the node that holds it. */
-    readonly ancestors: readonly ContentNodeJSON[];
+    ancestors: readonly ContentNodeJSON[];
     /** The subject of the same rule before this one in reading order; `undefined` for a first one and for a run. */
-    readonly previous?: ContentNodeJSON | undefined;
+    previous?: ContentNodeJSON | undefined;
     /** The run's first child's marks, by the mark names the rule's subject lists; empty for a node. */
-    readonly marks: Readonly<Record<string, MarkJSON | undefined>>;
+    marks: Readonly<Record<string, MarkJSON | undefined>>;
     /** The text a reader meets in the covered nodes. */
-    readonly text: string;
+    text: string;
 };
 /** What every rule may read besides its subject: the locale's word lists and the host's check options. */
 export type ContentRuleContext = {
-    readonly genericWords: ReadonlySet<string>;
-    readonly vagueTexts: ReadonlySet<string>;
-    readonly colorTokens: readonly ColorToken[];
-    readonly background: string | undefined;
+    genericWords: ReadonlySet<string>;
+    vagueTexts: ReadonlySet<string>;
+    colorTokens: readonly ColorToken[];
+    background: string | undefined;
     /** The host page's heading level around the editor, or `undefined` when the first heading is exempt. */
-    readonly enclosingHeadingLevel: number | undefined;
-    readonly creatableHeadingLevels: readonly number[];
+    enclosingHeadingLevel: number | undefined;
+    creatableHeadingLevels: readonly number[];
 };
 /** A content check a feature declares for its own nodes or marks; the engine runs it and lists issues in rule order. */
 export type ContentRule = {
-    readonly id: ContentRuleId;
-    readonly kind: 'automatic' | 'manual';
-    readonly severity: 'error' | 'warning' | 'review';
-    readonly subject: ContentRuleSubject;
+    id: ContentRuleId;
+    kind: 'automatic' | 'manual';
+    severity: 'error' | 'warning' | 'review';
+    subject: ContentRuleSubject;
     /** The command a finding's payload is offered with, when the model installs its feature. */
-    readonly repair?: ContentRepair;
+    repair?: ContentRepair;
     check(input: ContentRuleInput, context: ContentRuleContext): ContentFinding;
 };
 /** Where a feature's node stores a reference to a host resource, as the names of the attributes that hold it. */

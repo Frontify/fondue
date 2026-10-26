@@ -14,8 +14,8 @@ const FEATURE = Symbol('feature');
 
 /** What compilation reads from a feature; options are checked against their declarations then. */
 export type FeatureInternals = {
-    readonly declaration: FeatureDeclaration;
-    readonly options: unknown;
+    declaration: FeatureDeclaration;
+    options: unknown;
 };
 
 /** A feature as built at run time, before its phantom type brand. */
@@ -64,11 +64,11 @@ export const attachToFeature = <F extends Feature>(feature: F, kind: string, val
 };
 
 type FactoryOf<D> = FeatureFactory<
-    D extends { readonly options: infer O } ? OptionsOf<O> : object,
+    D extends { options: infer O } ? OptionsOf<O> : object,
     object,
     NodesOfDeclaration<D>,
     MarksOfDeclaration<D>,
-    D extends { readonly id: infer I extends string } ? I : string
+    D extends { id: infer I extends string } ? I : string
 >;
 
 /** Returns the feature's factory; hosts call it, with typed and serializable options or none. */

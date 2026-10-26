@@ -19,10 +19,10 @@ export type PluginPhase = (typeof PLUGIN_PHASES)[number];
 
 /** A plugin the engine installs: data, with its fixed phase and its `before` and `after` constraints. */
 export type PluginDescriptor = {
-    readonly id: string;
-    readonly phase: PluginPhase;
-    readonly before?: readonly string[];
-    readonly after?: readonly string[];
+    id: string;
+    phase: PluginPhase;
+    before?: readonly string[];
+    after?: readonly string[];
 };
 
 /** The undo history, whose phase puts Backspace right after an input rule before the list keys. */
@@ -81,21 +81,23 @@ export const keyHandlersPlugin = (featureId: string): PluginDescriptor => ({
  * A code feature's rule that replaces the text before the caret matching `match`, which ends where the typed text
  * ends, with `replace`, where `$1` and `$<name>` insert its groups as `String.prototype.replace` does.
  */
-export const textRule = (rule: {
-    readonly id: string;
-    readonly match: RegExp;
-    readonly replace: string;
-}): InputRule => ({ id: rule.id, kind: 'text-rule', match: rule.match, replace: rule.replace });
+export const textRule = (rule: { id: string; match: RegExp; replace: string }): InputRule => ({
+    id: rule.id,
+    kind: 'text-rule',
+    match: rule.match,
+    replace: rule.replace,
+});
 
 /**
  * A code feature's rule that runs `command` when the text from the block start to the caret matches `match`, with the
  * payload its named groups fill, converted by the command's payload declaration, then removes that text.
  */
-export const blockRule = (rule: {
-    readonly id: string;
-    readonly match: RegExp;
-    readonly command: string;
-}): InputRule => ({ id: rule.id, kind: 'block-rule', match: rule.match, command: rule.command });
+export const blockRule = (rule: { id: string; match: RegExp; command: string }): InputRule => ({
+    id: rule.id,
+    kind: 'block-rule',
+    match: rule.match,
+    command: rule.command,
+});
 
 /**
  * A code feature's rule that puts `mark` on the text before the caret matching `match`, without the whitespace that
@@ -103,10 +105,10 @@ export const blockRule = (rule: {
  * `checkHref` and the feature's `allowedSchemes` and `allowedHosts`. With `enter`, Enter also ends a match.
  */
 export const markRule = (rule: {
-    readonly id: string;
-    readonly match: RegExp;
-    readonly mark: string;
-    readonly on?: readonly ('input' | 'enter')[];
+    id: string;
+    match: RegExp;
+    mark: string;
+    on?: readonly ('input' | 'enter')[];
 }): InputRule => ({ id: rule.id, kind: 'mark-rule', match: rule.match, mark: rule.mark, on: rule.on ?? ['input'] });
 
 /** The first cycle that `next` reaches from `starts`, as a path that ends where it starts. */
@@ -148,8 +150,8 @@ export const findCycle = (starts: readonly string[], next: (id: string) => reado
 };
 
 export type PluginContribution = {
-    readonly featureId: string;
-    readonly plugin: PluginDescriptor;
+    featureId: string;
+    plugin: PluginDescriptor;
 };
 
 /** Every plugin key a capability of the package contributes, whether or not a model uses that capability. */

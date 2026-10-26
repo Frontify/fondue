@@ -600,7 +600,7 @@ describe(`repeated migrations (fast-check seed ${seed})`, () => {
 
 describe('registered steps', () => {
     const step = { id: 'step', migrate: (document: RichTextDocument) => ({ status: 'migrated', document }) as const };
-    const invalid: readonly (readonly [string, readonly { readonly from: number }[]])[] = [
+    const invalid: readonly (readonly [string, readonly { from: number }[]])[] = [
         ['a step from the current version', [{ from: 2 }]],
         ['a step from a fractional version', [{ from: 0.5 }]],
         ['two steps from one version', [{ from: 1 }, { from: 1 }]],

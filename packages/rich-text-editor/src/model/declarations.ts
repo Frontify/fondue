@@ -139,32 +139,32 @@ export type FeatureFormats = {
 };
 
 /** The host's URL for an asset at an optional width, or `null` when it has none. */
-export type ResolveAssetUrl = (assetId: string, options: { readonly width?: number }) => string | null;
+export type ResolveAssetUrl = (assetId: string, options: { width?: number }) => string | null;
 /** What a codec override may call: asset URLs from the host, the URL check and the output locale. */
 export type CodecContext = {
-    readonly resolveAssetUrl?: ResolveAssetUrl;
-    readonly checkHref: (input: string) => HrefResult;
+    resolveAssetUrl?: ResolveAssetUrl;
+    checkHref: (input: string) => HrefResult;
     /** The output locale (`enUS` by default) and its `${var}` interpolation, so overrides render localized text with no hook or context. */
-    readonly locale: RichTextLocale;
-    readonly t: (key: keyof TranslationStrings, vars?: Readonly<Record<string, string | number>>) => string;
+    locale: RichTextLocale;
+    t: (key: keyof TranslationStrings, vars?: Readonly<Record<string, string | number>>) => string;
 };
 /** What a reader override and node chrome read: plain data and functions, never a React context. */
 export type ReaderContext = {
-    readonly resolveReference: (resourceType: string, resourceId: string) => ReferenceResolution;
+    resolveReference: (resourceType: string, resourceId: string) => ReferenceResolution;
 } & CodecContext;
 /** Code features only, for structure the data forms cannot express, such as tables, task lists and media. */
 export type CodecOverrides = {
-    readonly markdown?: {
-        readonly marks?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
-        readonly nodes?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
+    markdown?: {
+        marks?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
+        nodes?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
     };
-    readonly text?: {
-        readonly marks?: Readonly<Record<string, (inner: string, attrs: JsonObject) => string>>;
-        readonly nodes?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
+    text?: {
+        marks?: Readonly<Record<string, (inner: string, attrs: JsonObject) => string>>;
+        nodes?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
     };
     /** Node markup that needs a resolved asset URL; the result's URL-valued attributes still pass `checkHref`. */
-    readonly html?: {
-        readonly nodes?: Readonly<Record<string, (attrs: JsonObject, context: CodecContext) => HtmlSpec>>;
+    html?: {
+        nodes?: Readonly<Record<string, (attrs: JsonObject, context: CodecContext) => HtmlSpec>>;
     };
 };
 
@@ -201,12 +201,12 @@ export type FeatureDeclaration = {
     readonly parseRules?: readonly FunctionParseRule[];
 } & FeatureContentDeclaration;
 /** The node attribute types a feature declaration defines, keyed by node name. */
-export type NodesOfDeclaration<D> = D extends { readonly nodes: infer N }
-    ? { readonly [K in keyof N]: N[K] extends { readonly attrs: infer A } ? AttrsOf<A> : never }
+export type NodesOfDeclaration<D> = D extends { nodes: infer N }
+    ? { readonly [K in keyof N]: N[K] extends { attrs: infer A } ? AttrsOf<A> : never }
     : object;
 /** The mark attribute types a feature declaration defines, keyed by mark name. */
-export type MarksOfDeclaration<D> = D extends { readonly marks: infer M }
-    ? { readonly [K in keyof M]: M[K] extends { readonly attrs: infer A } ? AttrsOf<A> : never }
+export type MarksOfDeclaration<D> = D extends { marks: infer M }
+    ? { readonly [K in keyof M]: M[K] extends { attrs: infer A } ? AttrsOf<A> : never }
     : object;
 /** Every feature is a factory, called even with no options. */
 export type FeatureFactory<
@@ -219,9 +219,9 @@ export type FeatureFactory<
 
 /** The id, version and migrations that name and version a content model when it is compiled. */
 export type ContentModelOptions = {
-    readonly id: string;
-    readonly version: number;
-    readonly migrations?: readonly ModelMigration[];
+    id: string;
+    version: number;
+    migrations?: readonly ModelMigration[];
 };
 declare const contentModelBrand: unique symbol;
 /** The compiled model that the editor, the reader and every codec take. */
@@ -236,23 +236,23 @@ export type ContentModel<Features extends readonly Feature[] = readonly Feature[
 
 /** A map of translation keys, each starting with `RichTextEditor_`, to their text. */
 export type TranslationStrings = {
-    readonly [key: `RichTextEditor_${string}`]: string;
+    [key: `RichTextEditor_${string}`]: string;
 };
 /**
  * The package's locale: its strings and language. Not Fondue's `LocaleConfig`, whose `dateLocale` is a
  * date-fns `Locale`: the editor formats no dates. `enUS` is the fallback.
  */
 export type RichTextLocale = {
-    readonly translationStrings: TranslationStrings;
-    readonly lang?: string;
+    translationStrings: TranslationStrings;
+    lang?: string;
 };
 /** List markers by nesting depth, for lists whose `marker` is null; CSS `list-style-type` values. */
 export type ListLevels = {
-    readonly ordered: readonly { readonly counterType: string; readonly color?: string }[];
-    readonly bullet: readonly { readonly shape: string; readonly color?: string; readonly size?: string }[];
+    ordered: readonly { counterType: string; color?: string }[];
+    bullet: readonly { shape: string; color?: string; size?: string }[];
 };
 /** What a host answers for a stored reference: its current label, that it is unavailable, or that it is unknown. */
 export type ReferenceResolution =
-    | { readonly status: 'current'; readonly label: string }
-    | { readonly status: 'unavailable'; readonly code: 'deleted' | 'forbidden' }
-    | { readonly status: 'unknown' };
+    | { status: 'current'; label: string }
+    | { status: 'unavailable'; code: 'deleted' | 'forbidden' }
+    | { status: 'unknown' };

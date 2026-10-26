@@ -30,12 +30,12 @@ const COMPILED = Symbol('compiled-model');
 
 /** A model as built at run time, before its phantom type brand. */
 type ModelValue = Pick<ContentModel, 'ref' | 'capabilities' | 'manifest' | 'fingerprint'> & {
-    readonly [COMPILED]?: CompiledModel;
+    [COMPILED]?: CompiledModel;
 };
 
 // Only `freezeModel` builds a model, and it always sets the symbol.
 export const compiledModel = (model: ContentModel): CompiledModel =>
-    (model as ContentModel & { readonly [COMPILED]: CompiledModel })[COMPILED];
+    (model as ContentModel & { [COMPILED]: CompiledModel })[COMPILED];
 
 /** The URL policy of the feature that declares `mark`, from its `allowedSchemes` and `allowedHosts` options. */
 export const markHrefPolicy = (model: ContentModel, mark: string): HrefPolicy | undefined => {

@@ -84,10 +84,10 @@ const idsOf = (blocks: readonly ContentNodeJSON[], ruleId: ContentRuleId, given:
 
 /** One fixture that the rule must report, and one it must not. */
 const CASES: readonly {
-    readonly ruleId: ContentRuleId;
-    readonly positive: readonly ContentNodeJSON[];
-    readonly negative: readonly ContentNodeJSON[];
-    readonly options?: ContentCheckOptions;
+    ruleId: ContentRuleId;
+    positive: readonly ContentNodeJSON[];
+    negative: readonly ContentNodeJSON[];
+    options?: ContentCheckOptions;
 }[] = [
     { ruleId: 'image.alt-missing', positive: [image('a', {})], negative: [image('a', { altIntent: 'decorative' })] },
     {

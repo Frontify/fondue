@@ -60,10 +60,10 @@ export type Feature<
     Id extends string = string,
 > = {
     readonly [featureBrand]: {
-        readonly commands: Commands;
-        readonly nodes: Nodes;
-        readonly marks: Marks;
-        readonly id: Id;
+        commands: Commands;
+        nodes: Nodes;
+        marks: Marks;
+        id: Id;
     };
     readonly id: string;
     readonly version: number;

@@ -17,10 +17,10 @@ import { ownValue } from './values';
 
 /** The presentation data an HTML output styles with: brand style recipes and colour tokens. */
 export type OutputStyles = {
-    readonly styles: readonly PresentationStyle[];
-    readonly colorTokens: readonly ColorToken[];
+    styles: readonly PresentationStyle[];
+    colorTokens: readonly ColorToken[];
     /** Writes each recipe's resting declarations inline too, as `toHTML` does with `inlineStyles`. */
-    readonly inline: boolean;
+    inline: boolean;
 };
 
 /** The colour property each colour mark writes. */

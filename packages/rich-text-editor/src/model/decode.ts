@@ -64,9 +64,9 @@ const undeclaredWarnings = (document: RichTextDocument, encoded: RichTextDocumen
 };
 
 export type Decoded = {
-    readonly result: DecodeResult;
+    result: DecodeResult;
     /** The island tree of an `editable` result, for the runtime and the encoder. */
-    readonly tree?: TreeNode;
+    tree?: TreeNode;
 };
 
 /** `decodeDocument` with the island tree the runtime builds its document from. */

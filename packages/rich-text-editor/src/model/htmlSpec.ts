@@ -10,13 +10,13 @@ type Values = Readonly<Record<string, unknown>>;
 
 /** One element of a resolved spec: its tag and its attributes as text, URL values already checked. */
 export type HtmlLayer = {
-    readonly tag: string;
-    readonly attrs: Readonly<Record<string, string>>;
+    tag: string;
+    attrs: Readonly<Record<string, string>>;
 };
 /** An `HtmlSpec` read for one node or mark: its elements from the outside in, and whether the innermost holds the content. */
 export type HtmlTemplate = {
-    readonly layers: readonly HtmlLayer[];
-    readonly content: boolean;
+    layers: readonly HtmlLayer[];
+    content: boolean;
 };
 
 /** By local name, as the compiler checks it: `xlink:href` is `href`. */
@@ -162,8 +162,8 @@ const LETTER = /\p{L}/u;
 
 /** One text run of a textblock: its text and the `dir` of the `language` mark over it, if any. */
 export type DirectedRun = {
-    readonly text: string;
-    readonly dir: unknown;
+    text: string;
+    dir: unknown;
 };
 
 /**

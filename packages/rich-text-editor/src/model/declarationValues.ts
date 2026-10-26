@@ -51,11 +51,11 @@ export type AttributeDeclarations = Readonly<Record<string, AttributeDeclaration
 export type OptionDeclarations = Readonly<Record<string, ValueDeclaration & { readonly default: JsonValue }>>;
 /** The shape of the payload a command takes: its fields and whether it may be null. */
 export type PayloadDeclaration = {
-    readonly fields: Readonly<Record<string, ValueDeclaration & { readonly optional?: boolean }>>;
+    fields: Readonly<Record<string, ValueDeclaration & { optional?: boolean }>>;
     /** The whole payload may be `null`, such as "remove the colour". */
-    readonly nullable?: boolean;
+    nullable?: boolean;
     /** Fields of which exactly one is set, such as `tokenId` and `value`. */
-    readonly exactlyOne?: readonly string[];
+    exactlyOne?: readonly string[];
 };
 
 /**
@@ -86,33 +86,33 @@ type IntegerRange<
                   : Next[number]
             : IntegerRange<Min, Max, [...Counter, unknown], Next>
         : never;
-type IntegerOf<D> = D extends { readonly min: infer Min extends number; readonly max: infer Max extends number }
+type IntegerOf<D> = D extends { min: infer Min extends number; max: infer Max extends number }
     ? number extends Min | Max
         ? number
         : IntegerRange<Min, Max>
     : number;
 
 /** The TypeScript type a value declaration stands for. */
-export type ValueOf<D> = D extends { readonly type: 'string' | 'url' | 'id' | 'color' | 'language' }
+export type ValueOf<D> = D extends { type: 'string' | 'url' | 'id' | 'color' | 'language' }
     ? string
-    : D extends { readonly type: 'integer' | 'number' }
+    : D extends { type: 'integer' | 'number' }
       ? number
-      : D extends { readonly type: 'boolean' }
+      : D extends { type: 'boolean' }
         ? boolean
-        : D extends { readonly type: 'enum'; readonly values: readonly (infer V)[] }
+        : D extends { type: 'enum'; values: readonly (infer V)[] }
           ? V
-          : D extends { readonly type: 'list'; readonly items: infer I }
+          : D extends { type: 'list'; items: infer I }
             ? readonly ValueOf<I>[]
             : JsonValue;
-type MaybeNull<D> = D extends { readonly nullable: true } ? ValueOf<D> | null : ValueOf<D>;
+type MaybeNull<D> = D extends { nullable: true } ? ValueOf<D> | null : ValueOf<D>;
 /** An attribute's integer range is a literal union when small, so `level` reads as `1 | 2 | 3 | 4 | 5 | 6`. */
-type AttributeValueOf<D> = D extends { readonly type: 'integer' }
-    ? D extends { readonly nullable: true }
+type AttributeValueOf<D> = D extends { type: 'integer' }
+    ? D extends { nullable: true }
         ? IntegerOf<D> | null
         : IntegerOf<D>
     : MaybeNull<D>;
 type Simplify<T> = { readonly [K in keyof T]: T[K] };
-type RequiredKeys<A> = { [K in keyof A]: A[K] extends { readonly required: true } ? K : never }[keyof A];
+type RequiredKeys<A> = { [K in keyof A]: A[K] extends { required: true } ? K : never }[keyof A];
 /** The attribute values a set of attribute declarations allows: `required` ones must be present, the rest may be left out. */
 export type AttrsOf<A> = Simplify<
     { readonly [K in RequiredKeys<A>]: AttributeValueOf<A[K]> } & {
@@ -122,8 +122,8 @@ export type AttrsOf<A> = Simplify<
 /** The option values a set of option declarations allows, all optional. */
 export type OptionsOf<O> = Simplify<{ readonly [K in keyof O]?: MaybeNull<O[K]> }>;
 type FieldsOf<F> = Simplify<
-    { readonly [K in keyof F as F[K] extends { readonly optional: true } ? never : K]: MaybeNull<F[K]> } & {
-        readonly [K in keyof F as F[K] extends { readonly optional: true } ? K : never]?: MaybeNull<F[K]>;
+    { readonly [K in keyof F as F[K] extends { optional: true } ? never : K]: MaybeNull<F[K]> } & {
+        readonly [K in keyof F as F[K] extends { optional: true } ? K : never]?: MaybeNull<F[K]>;
     }
 >;
 type ExactlyOneOf<F, K extends string> = {
@@ -133,11 +133,11 @@ type ExactlyOneOf<F, K extends string> = {
  * `exactlyOne` becomes a union of one-field objects, so one payload type exists per command; a payload whose fields are
  * all optional may be left out.
  */
-export type PayloadOf<P> = P extends { readonly fields: infer F }
+export type PayloadOf<P> = P extends { fields: infer F }
     ?
-          | (P extends { readonly exactlyOne: readonly (infer K extends string)[] } ? ExactlyOneOf<F, K> : FieldsOf<F>)
-          | (P extends { readonly nullable: true } ? null : never)
-          | (P extends { readonly exactlyOne: readonly string[] }
+          | (P extends { exactlyOne: readonly (infer K extends string)[] } ? ExactlyOneOf<F, K> : FieldsOf<F>)
+          | (P extends { nullable: true } ? null : never)
+          | (P extends { exactlyOne: readonly string[] }
                 ? never
                 : Partial<FieldsOf<F>> extends FieldsOf<F>
                   ? undefined

@@ -14,7 +14,7 @@ const fixtures = readdirSync(root, { recursive: true, encoding: 'utf8' })
     .filter((name) => name.endsWith('.json'))
     .sort();
 const { version } = JSON.parse(readFileSync(new URL('../../../package.json', import.meta.url), 'utf8')) as {
-    readonly version: string;
+    version: string;
 };
 
 /** JSON text with each object or array that fits in 120 columns on one line. */

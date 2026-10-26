@@ -46,8 +46,8 @@ export const resolvingSafely =
  * Public so the shipped features and the core share it.
  */
 export type MentionLabel = {
-    readonly label: string;
-    readonly unavailable: 'deleted' | 'forbidden' | null;
+    label: string;
+    unavailable: 'deleted' | 'forbidden' | null;
 };
 
 const stringOf = (value: unknown): string => {
@@ -66,18 +66,18 @@ const stringOf = (value: unknown): string => {
  */
 export const mentionLabel = (
     attrs: JsonObject,
-    { t, resolveReference }: Pick<CodecContext, 't'> & { readonly resolveReference?: ResolveReference | undefined },
+    { t, resolveReference }: Pick<CodecContext, 't'> & { resolveReference?: ResolveReference | undefined },
 ): MentionLabel => {
     // IDs resolve as stored, so the chip names the resource `diffReferences` reports.
     const resourceType = stringOf(attrs.resourceType);
     const resolution: unknown = resolvingSafely(resolveReference)(resourceType, stringOf(attrs.resourceId));
     let status: unknown;
     if (typeof resolution === 'object' && resolution !== null) {
-        status = (resolution as { readonly status?: unknown }).status;
+        status = (resolution as { status?: unknown }).status;
     }
 
     if (status === 'current') {
-        const current = shownLabel(stringOf((resolution as { readonly label?: unknown }).label));
+        const current = shownLabel(stringOf((resolution as { label?: unknown }).label));
         if (current !== '') {
             return { label: current, unavailable: null };
         }
@@ -89,7 +89,7 @@ export const mentionLabel = (
     }
 
     if (status === 'unavailable') {
-        const { code } = resolution as { readonly code?: unknown };
+        const { code } = resolution as { code?: unknown };
 
         return { label, unavailable: code === 'forbidden' ? 'forbidden' : 'deleted' };
     }
@@ -111,14 +111,14 @@ export const unavailableNote = ({ unavailable }: MentionLabel, t: CodecContext['
 
 /** One mention occurrence: its `nodeId` and the resource it names. */
 export type MentionReference = {
-    readonly nodeId: string;
-    readonly resourceType: string;
-    readonly resourceId: string;
+    nodeId: string;
+    resourceType: string;
+    resourceId: string;
 };
 /** The mentions a change added to a document and removed from it. */
 export type ReferenceDiff = {
-    readonly added: readonly MentionReference[];
-    readonly removed: readonly MentionReference[];
+    added: readonly MentionReference[];
+    removed: readonly MentionReference[];
 };
 
 /** The mentions of a stored document by `nodeId`, in document order; a repeated `nodeId` counts once. */

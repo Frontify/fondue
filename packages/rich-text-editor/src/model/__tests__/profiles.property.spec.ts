@@ -81,7 +81,7 @@ const storedWith = (model: ContentModel, blocks: readonly JsonValue[]) =>
 /** Omits default attributes, empties no key, reverses marks and splits texts: the forms decode accepts and encoding undoes. */
 const denormalize = (model: ContentModel, value: JsonValue): JsonValue => {
     const { nodes, marks } = compiledModel(model);
-    const defaults = (declared: Readonly<Record<string, { readonly default?: JsonValue }>>, attrs: JsonNode) =>
+    const defaults = (declared: Readonly<Record<string, { default?: JsonValue }>>, attrs: JsonNode) =>
         Object.fromEntries(
             Object.entries(attrs).filter(([name, item]) => {
                 const declaration = declared[name];

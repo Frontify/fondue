@@ -6,8 +6,8 @@ import { type Diagnostic, diagnostic, type RichTextDocument } from './format';
 import { isRecord } from './values';
 
 export type EnvelopeResult =
-    | { readonly ok: true; readonly document: RichTextDocument }
-    | { readonly ok: false; readonly reason: 'invalid' | 'unsupported'; readonly diagnostic: Diagnostic };
+    | { ok: true; document: RichTextDocument }
+    | { ok: false; reason: 'invalid' | 'unsupported'; diagnostic: Diagnostic };
 
 const ENVELOPE_KEYS = ['format', 'formatVersion', 'model', 'requiredCapabilities', 'content'];
 const ROOT_KEYS = new Set(['type', 'attrs', 'content']);
@@ -16,7 +16,7 @@ const hasExactly = (record: Readonly<Record<string, unknown>>, keys: readonly st
     Object.keys(record).length === keys.length && keys.every((key) => Object.hasOwn(record, key));
 
 /** A `model` value or a `requiredCapabilities` element: exactly a string `id` and an integer `version`. */
-const isRef = (value: unknown): value is { readonly id: string; readonly version: number } =>
+const isRef = (value: unknown): value is { id: string; version: number } =>
     isRecord(value) &&
     hasExactly(value, ['id', 'version']) &&
     typeof value.id === 'string' &&

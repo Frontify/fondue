@@ -7,10 +7,10 @@ const MAX_REPEAT = 64;
 const MAX_NESTING = 16;
 
 type Expression =
-    | { readonly kind: 'name'; readonly name: string }
-    | { readonly kind: 'sequence'; readonly items: readonly Expression[] }
-    | { readonly kind: 'choice'; readonly options: readonly Expression[] }
-    | { readonly kind: 'repeat'; readonly item: Expression; readonly min: number; readonly max: number };
+    | { kind: 'name'; name: string }
+    | { kind: 'sequence'; items: readonly Expression[] }
+    | { kind: 'choice'; options: readonly Expression[] }
+    | { kind: 'repeat'; item: Expression; min: number; max: number };
 
 /** A quantifier's bounds and how many copies it expands its term to: 1 for `?`, `*` and `+`, the upper bound of `{n,m}`. */
 const quantifierOf = (token: string | undefined) => {
@@ -37,9 +37,9 @@ const quantifierOf = (token: string | undefined) => {
     return max >= min ? { min, max, copies: max } : undefined;
 };
 
-type Parsed = { readonly expression: Expression; readonly widest: number };
+type Parsed = { expression: Expression; widest: number };
 
-const parse = (source: string): { readonly expression: Expression; readonly names: readonly string[] } | undefined => {
+const parse = (source: string): { expression: Expression; names: readonly string[] } | undefined => {
     const tokens = source.match(/\w+|\{[^}]*\}|\S/g);
     if (tokens === null) {
         return { expression: { kind: 'sequence', items: [] }, names: [] };
@@ -137,12 +137,12 @@ export const contentNames = (expression: string): readonly string[] | undefined 
 
 type Edge = {
     /** A node or group name; none for an empty move. */
-    readonly term?: string;
-    readonly to: number;
+    term?: string;
+    to: number;
 };
 type Automaton = {
-    readonly edges: readonly (readonly Edge[])[];
-    readonly accept: number;
+    edges: readonly (readonly Edge[])[];
+    accept: number;
 };
 
 const build = (expression: Expression): Automaton => {
@@ -229,7 +229,7 @@ const closure = (automaton: Automaton, states: readonly number[]): number[] => {
 };
 
 /** Where matching a child sequence against a content expression stands; empty once the expression rejects. */
-export type ContentMatch = { readonly expression: string; readonly states: readonly number[] };
+export type ContentMatch = { expression: string; states: readonly number[] };
 
 /** The match before the first child; a missing expression, a leaf, accepts no child. */
 export const startMatch = (expression = ''): ContentMatch => {

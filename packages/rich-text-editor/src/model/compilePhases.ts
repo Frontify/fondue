@@ -34,7 +34,7 @@ import { type MarkDeclaration, type NodeDeclaration } from './declarations';
 import { DefinitionError, pointer } from './errors';
 import { isSrcdocAttribute, isStyleAttribute } from './values';
 
-export type MutableNode = CompiledNode & { readonly shared: SharedAttribute[] };
+export type MutableNode = CompiledNode & { shared: SharedAttribute[] };
 
 /** Every node and mark the features declare, in feature order, with no name declared twice. */
 export const collectMembers = (list: readonly CompiledFeature[]) => {

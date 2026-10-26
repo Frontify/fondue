@@ -300,7 +300,7 @@ describe('decode limits', () => {
 
     it('reports maxDocumentNodes for the 50,001st node at depth 65', () => {
         const flat = Array.from({ length: 49_936 }, () => paragraph());
-        const chain = (deep(65) as { readonly content: readonly Json[] }).content;
+        const chain = (deep(65) as { content: readonly Json[] }).content;
         const read = readInput(envelope(doc(...flat, ...chain)), defaultLimits);
         expect(read).toMatchObject({ ok: false, diagnostic: { details: { limit: 'maxDocumentNodes' } } });
     });

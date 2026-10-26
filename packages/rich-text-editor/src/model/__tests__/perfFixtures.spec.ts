@@ -21,12 +21,12 @@ const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.perf'
 const segmenter = new Intl.Segmenter();
 
 type Counts = {
-    readonly blocks: number;
-    readonly nodes: number;
-    readonly graphemes: number;
-    readonly words: number;
-    readonly mentions: number;
-    readonly links: number;
+    blocks: number;
+    nodes: number;
+    graphemes: number;
+    words: number;
+    mentions: number;
+    links: number;
 };
 
 const countsOf = (blocks: readonly ContentNodeJSON[]): Counts => {
@@ -38,10 +38,10 @@ const countsOf = (blocks: readonly ContentNodeJSON[]): Counts => {
         }
 
         if (node.type === 'text') {
-            const { text } = node as unknown as { readonly text: string };
+            const { text } = node as unknown as { text: string };
             counts.graphemes += [...segmenter.segment(text)].length;
             counts.words += text.split(/\s+/).filter((word) => word !== '').length;
-            const marks = (node as { readonly marks?: readonly { readonly type: string }[] }).marks ?? [];
+            const marks = (node as { marks?: readonly { type: string }[] }).marks ?? [];
             if (marks.some(({ type }) => type === 'link')) {
                 counts.links += 1;
             }

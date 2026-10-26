@@ -19,18 +19,18 @@ import { isRecord } from './values';
 /** One finding of the content checks: which rule found it, where, and the repair on offer if any. */
 export type ContentIssue = {
     /** `${ruleId}:${nodeId}`, `${ruleId}:${path}` or `${ruleId}`. */
-    readonly id: string;
-    readonly ruleId: ContentRuleId;
-    readonly kind: 'automatic' | 'manual';
-    readonly severity: 'error' | 'warning' | 'review';
+    id: string;
+    ruleId: ContentRuleId;
+    kind: 'automatic' | 'manual';
+    severity: 'error' | 'warning' | 'review';
     /** Child indexes from the doc node; `null` for a document-level rule. */
-    readonly path: readonly number[] | null;
-    readonly nodeId: string | null;
+    path: readonly number[] | null;
+    nodeId: string | null;
     /** Any feature's command, customer features included. */
-    readonly repairCommand: string | null;
+    repairCommand: string | null;
     /** The repair command's payload, such as `{ level: 3 }` for `heading.set`. */
-    readonly repairPayload: JsonValue | null;
-    readonly sequence: number;
+    repairPayload: JsonValue | null;
+    sequence: number;
 };
 
 type Level = 1 | 2 | 3 | 4 | 5 | 6;
@@ -38,17 +38,17 @@ type Level = 1 | 2 | 3 | 4 | 5 | 6;
 /** What the content checks need: the locale for word lists and the installed features whose rules run. */
 export type ContentCheckOptions = {
     /** The word lists come from its `RichTextEditor_checkGenericImageWords` and `RichTextEditor_checkVagueLinkTexts`; the en-US lists are always added. */
-    readonly locale: RichTextLocale;
+    locale: RichTextLocale;
     /** The installed features declare the rules and decide repair availability, such as the language repair, and nodes it does not declare are skipped. */
-    readonly model: ContentModel;
+    model: ContentModel;
     /** Written to `ContentIssue.sequence`; default 0 outside an editor. */
-    readonly sequence?: number;
-    readonly colorTokens?: readonly ColorToken[];
-    readonly background?: string;
+    sequence?: number;
+    colorTokens?: readonly ColorToken[];
+    background?: string;
     /** The host page's heading level around the editor; `heading.skipped-level` checks the first heading against it. */
-    readonly enclosingHeadingLevel?: Level;
+    enclosingHeadingLevel?: Level;
     /** The heading levels the author may create, which the heading level repair stays within; default 1 to 6. */
-    readonly creatableHeadingLevels?: readonly number[];
+    creatableHeadingLevels?: readonly number[];
 };
 
 /** The en-US generic image words, which every check adds to the locale's own list. */
@@ -84,11 +84,11 @@ export const ruleHelpKey = (ruleId: ContentRuleId): `RichTextEditor_${string}` =
 
 /** Where an issue sits and what it covers: one node, or a run of inline children. */
 type Subject = {
-    readonly path: readonly number[];
+    path: readonly number[];
     /** The inline children a run covers from `path`; 1 for a node. */
-    readonly span: number;
-    readonly nodeId: string | null;
-    readonly signature: string;
+    span: number;
+    nodeId: string | null;
+    signature: string;
 };
 
 /** A rule that looks at the whole document and names no feature's node. */
@@ -125,10 +125,10 @@ export const CONTENT_REPAIRS = (model: ContentModel): readonly ContentRepair[] =
 
 /** An issue with the inline children it covers from its path and the stored content it was found on. */
 export type LocatedIssue = {
-    readonly issue: ContentIssue;
-    readonly span: number;
+    issue: ContentIssue;
+    span: number;
     /** The canonical JSON of what the issue names, which changes when its node does. */
-    readonly signature: string;
+    signature: string;
 };
 
 const listOf = (locale: RichTextLocale, key: `RichTextEditor_${string}`, english: string): ReadonlySet<string> => {
@@ -176,7 +176,7 @@ const signatureOf = (nodes: readonly ContentNodeJSON[]) => canonicalJson(nodes);
 
 /** Runs of adjacent inline children whose `key` is equal and not empty. */
 const runsOf = (children: readonly ContentNodeJSON[], key: (child: ContentNodeJSON) => string) => {
-    const runs: { readonly start: number; readonly end: number }[] = [];
+    const runs: { start: number; end: number }[] = [];
     let start = 0;
     while (start < children.length) {
         const first = children[start];
@@ -201,16 +201,16 @@ const isInline = (children: readonly ContentNodeJSON[]) =>
 
 /** A rule with the subject its engine found, in reading order. */
 type Found = {
-    readonly rule: ContentRule;
-    readonly subject: Subject;
-    readonly given: ContentRuleInput;
+    rule: ContentRule;
+    subject: Subject;
+    given: ContentRuleInput;
 };
 
 /** Each subject of the document in reading order, with the rule that looks at it. */
 const subjectsOf = (document: RichTextDocument, declared: ReadonlySet<string>, rules: readonly ContentRule[]) => {
     const found: Found[] = [];
     const nodeRules = new Map<string, ContentRule[]>();
-    const markGroups: { readonly marks: readonly string[]; readonly rules: ContentRule[] }[] = [];
+    const markGroups: { marks: readonly string[]; rules: ContentRule[] }[] = [];
     for (const rule of rules) {
         const { subject } = rule;
         if ('node' in subject) {

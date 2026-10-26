@@ -22,8 +22,8 @@ export const REPLACED_ASSET = 'replaced';
  * you do not know.
  */
 export type UnresolvedAsset = {
-    readonly nodeId: string;
-    readonly type: 'asset_image';
+    nodeId: string;
+    type: 'asset_image';
 };
 
 /**
@@ -80,7 +80,7 @@ export const unresolvedAsset = (path: string): Diagnostic => ({
  * it then reports once, never resolving the image.
  */
 export const leavesOutUnresolved = (
-    state: { readonly diagnostics: Diagnostic[] },
+    state: { diagnostics: Diagnostic[] },
     featureId: string,
     node: TreeNode,
     path: string,
@@ -113,26 +113,26 @@ export const altOf = (attrs: JsonObject): string | undefined => {
 /** How the editor, the reader and `toHTML` show one image: the resolved image, or the unavailable placeholder. */
 export type ImageOutput =
     | {
-          readonly kind: 'image';
-          readonly src: string;
-          readonly alt: string | undefined;
+          kind: 'image';
+          src: string;
+          alt: string | undefined;
           /** The intrinsic size, which keeps the box's aspect ratio before the image loads. */
-          readonly width: number | undefined;
-          readonly height: number | undefined;
+          width: number | undefined;
+          height: number | undefined;
           /** `displayWidth` as a CSS width in percent of the content width, or `undefined` at natural size. */
-          readonly cssWidth: string | undefined;
+          cssWidth: string | undefined;
           /** The placeholder an image that fails to load shows in its place. */
-          readonly unavailable: Unavailable;
+          unavailable: Unavailable;
       }
-    | ({ readonly kind: 'unavailable' } & Unavailable);
+    | ({ kind: 'unavailable' } & Unavailable);
 
 /**
  * The "Image unavailable" placeholder: its localized message and the image's `labelSnapshot`, or empty.
  * Public so the shipped features and the core share it.
  */
 export type Unavailable = {
-    readonly message: string;
-    readonly label: string;
+    message: string;
+    label: string;
 };
 
 // A stored size with a longer side more than this many times the shorter reserves no box, which it could make huge.
@@ -186,7 +186,7 @@ export const unavailableOf = (attrs: JsonObject, context: CodecContext): Unavail
 };
 
 /** The intrinsic size an image's box reserves before it loads, or none for a missing or extreme aspect ratio. */
-const reservedSize = (attrs: JsonObject): { readonly width?: number; readonly height?: number } => {
+const reservedSize = (attrs: JsonObject): { width?: number; height?: number } => {
     const width = sizeOf(attrs.width);
     const height = sizeOf(attrs.height);
     if (width === undefined || height === undefined || Math.max(width, height) > Math.min(width, height) * MAX_ASPECT) {

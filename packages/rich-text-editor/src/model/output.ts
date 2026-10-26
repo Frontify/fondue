@@ -67,32 +67,32 @@ export const codecContext = (
 
 /** What the reader and every codec read about one node type: its specs, Markdown form and its feature's options and declared support. */
 export type NodePlan = {
-    readonly name: string;
-    readonly featureId: string;
-    readonly inline: boolean;
+    name: string;
+    featureId: string;
+    inline: boolean;
     /** `whitespace: 'pre'` keeps every space as written. */
-    readonly pre: boolean;
+    pre: boolean;
     /** Declares no content. */
-    readonly leaf: boolean;
-    readonly spec: HtmlSpec;
-    readonly shared: readonly SharedAttribute[];
-    readonly options: JsonObject;
-    readonly formats: FeatureFormats;
-    readonly form: NodeDeclaration['markdown'];
+    leaf: boolean;
+    spec: HtmlSpec;
+    shared: readonly SharedAttribute[];
+    options: JsonObject;
+    formats: FeatureFormats;
+    form: NodeDeclaration['markdown'];
 };
 export type MarkPlan = {
-    readonly name: string;
-    readonly featureId: string;
-    readonly spec: HtmlSpec;
-    readonly options: JsonObject;
-    readonly formats: FeatureFormats;
-    readonly form: MarkDeclaration['markdown'];
+    name: string;
+    featureId: string;
+    spec: HtmlSpec;
+    options: JsonObject;
+    formats: FeatureFormats;
+    form: MarkDeclaration['markdown'];
 };
 export type Plan<N extends NodePlan, M extends MarkPlan> = {
-    readonly nodes: ReadonlyMap<string, N>;
-    readonly marks: ReadonlyMap<string, M>;
+    nodes: ReadonlyMap<string, N>;
+    marks: ReadonlyMap<string, M>;
     /** Every feature's declared support, by feature ID. */
-    readonly formats: ReadonlyMap<string, FeatureFormats>;
+    formats: ReadonlyMap<string, FeatureFormats>;
 };
 
 /** A feature that declares no formats claims no text or Markdown support, so each use of it is reported. */
@@ -167,9 +167,9 @@ const COLUMN_GAP = /^(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem)$/;
 
 /** The presentation's columns as CSS values: the gap as written, and as a length, since `normal` is `1em` in multi-column layout. */
 export type ColumnLayout = {
-    readonly count: number;
-    readonly gap: string;
-    readonly length: string;
+    count: number;
+    gap: string;
+    length: string;
 };
 
 /** The presentation's column count and gap, or `undefined` for one column; a gap that is no `px` or `rem` length is `normal`. */
@@ -216,8 +216,8 @@ export const LIST_LEVEL_KINDS: Readonly<Record<string, keyof ListLevels>> = {
 
 /** The kind and depth of a list a walk has entered: 1 for the outermost list of that kind. */
 export type EnteredList = {
-    readonly kind: keyof ListLevels;
-    readonly depth: number;
+    kind: keyof ListLevels;
+    depth: number;
 };
 
 /** Counts nested lists of each kind for one walk and gives each list node its depth while `render` runs. */

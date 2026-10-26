@@ -6,8 +6,8 @@ import { exceedsBytes, repeatsKey, stringTokenBytes } from './readBytes';
 
 export { exceedsBytes };
 
-export type ReadFailure = { readonly reason: 'invalid' | 'limit-exceeded'; readonly diagnostic: Diagnostic };
-export type ReadResult = { readonly ok: true; readonly value: unknown } | ({ readonly ok: false } & ReadFailure);
+export type ReadFailure = { reason: 'invalid' | 'limit-exceeded'; diagnostic: Diagnostic };
+export type ReadResult = { ok: true; value: unknown } | ({ ok: false } & ReadFailure);
 
 type Role = 'input' | 'node' | 'content' | 'marks' | 'mark' | 'attrs' | 'attribute' | 'text' | 'other';
 type Counter = {
@@ -112,13 +112,13 @@ const memberPlace = (place: Place, type: unknown, key: string, value: unknown): 
 };
 
 type Walk = {
-    readonly limits: ResourceLimits;
-    readonly countBytes: boolean;
+    limits: ResourceLimits;
+    countBytes: boolean;
     /** Whether the walk builds a plain-data copy from the descriptor values it reads. */
-    readonly copy: boolean;
-    readonly ancestors: Set<object>;
+    copy: boolean;
+    ancestors: Set<object>;
     /** Keys from the input to the value the walk is at; the JSON Pointer is built only for a failure. */
-    readonly keys: string[];
+    keys: string[];
     bytes: number;
     nodes: number;
     /** The copy of the value the last `visit` read. */

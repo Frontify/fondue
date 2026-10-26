@@ -40,7 +40,7 @@ const TEXT_KEYS = new Set(['type', 'text', 'marks']);
 const isOptional = (record: Attrs, key: string, kind: (value: unknown) => boolean) =>
     !Object.hasOwn(record, key) || kind(record[key]);
 
-type CheckedMark = { readonly mark: TreeMark; readonly declaration?: CompiledMark; readonly path: string };
+type CheckedMark = { mark: TreeMark; declaration?: CompiledMark; path: string };
 
 /** One mark: its shape, type, keys and kinds, then its attributes as `checkAttributes` checks them. */
 const checkMark = (context: Context, value: unknown, path: string): CheckedMark => {
@@ -151,7 +151,7 @@ const checkMarks = (
     return [...marks].sort((a, b) => rank(a) - rank(b) || order(a) - order(b)).map(({ mark }) => mark);
 };
 
-type Checked = { readonly ok: true; readonly node: TreeNode } | { readonly ok: false };
+type Checked = { ok: true; node: TreeNode } | { ok: false };
 const FAILED: Checked = { ok: false };
 
 /** Each child through `checkNode`, then the content expression in child order, then a table's grid. */
@@ -392,7 +392,7 @@ export const checkContent = (
     root: unknown,
     model: ContentModel,
     review: ReadonlySet<string> = new Set(),
-): { readonly tree: TreeNode | undefined; readonly diagnostics: readonly Diagnostic[] } => {
+): { tree: TreeNode | undefined; diagnostics: readonly Diagnostic[] } => {
     const context: Context = { vocabulary: vocabularyOf(model), diagnostics: [], sources: new WeakMap(), review };
     const checked = checkRoot(context, root as Attrs);
     const tree = checked === undefined ? undefined : dedupe(context, checked, '/content', new Set());

@@ -8,40 +8,40 @@ import { isRecord, ownValue } from './values';
 
 /** Resting declarations are csstype's `Properties<string | number>`. `hover` is optional and is not a CSS property. */
 export type StyleRecipe = CssProperties<string | number> & {
-    readonly hover?: CssProperties<string | number>;
+    hover?: CssProperties<string | number>;
 };
 /** A named style a host offers for paragraphs, headings or links, with the recipe that draws it. */
 export type PresentationStyle = {
-    readonly id: string;
-    readonly label: string;
-    readonly appliesTo: readonly ('paragraph' | 'heading' | 'link')[];
-    readonly deprecated: boolean;
-    readonly recipe: StyleRecipe;
+    id: string;
+    label: string;
+    appliesTo: readonly ('paragraph' | 'heading' | 'link')[];
+    deprecated: boolean;
+    recipe: StyleRecipe;
 };
 /** A named colour a host offers, stored by id, with its label and the colour it resolves to. */
 export type ColorToken = {
     /** Stored as `tokenId`. */
-    readonly id: string;
+    id: string;
     /** The swatch's accessible name. */
-    readonly label: string;
+    label: string;
     /** CSS colour for rendering and contrast checks. */
-    readonly value: string;
-    readonly usage: readonly ('font_color' | 'highlight')[];
+    value: string;
+    usage: readonly ('font_color' | 'highlight')[];
 };
 
 /** A recipe as the editor, the reader and `toHTML` apply it: its class in the generated stylesheet and its checked declarations. */
 export type ResolvedStyle = {
-    readonly className: string;
+    className: string;
     /** Resting declarations as CSS property and value, in recipe order. */
-    readonly declarations: readonly (readonly [string, string])[];
-    readonly hover: readonly (readonly [string, string])[];
+    declarations: readonly (readonly [string, string])[];
+    hover: readonly (readonly [string, string])[];
 };
 /** The result of looking up a stored style id: the style to apply and whether a default replaced it. */
 export type StyleResolution = {
     /** The recipe to apply, or `undefined` for the node type's own look. */
-    readonly style: ResolvedStyle | undefined;
+    style: ResolvedStyle | undefined;
     /** The stored ID is missing from the styles or deprecated, so the default style applies in its place. */
-    readonly unknown: boolean;
+    unknown: boolean;
 };
 
 /** The feature that adds `styleId`, which the unknown-style diagnostic names. */
@@ -293,7 +293,7 @@ export const styleSheetOf = (styles: readonly PresentationStyle[]): string => {
 /** The colour a `font_color` or `highlight` renders with: its literal `value`, else its token's value; `undefined` when neither resolves to a safe value. */
 export const colorOf = (
     tokens: readonly ColorToken[],
-    attrs: { readonly tokenId?: unknown; readonly value?: unknown },
+    attrs: { tokenId?: unknown; value?: unknown },
 ): string | undefined => {
     if (typeof attrs.value === 'string') {
         return cssValue('color', attrs.value);
