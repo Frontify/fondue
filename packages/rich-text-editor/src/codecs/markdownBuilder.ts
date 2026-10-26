@@ -70,6 +70,7 @@ export class Builder {
         if (node === undefined) {
             return attrs;
         }
+
         for (const [attribute, declaration] of Object.entries(attributesOf(node))) {
             const value = ownValue(given, attribute);
             if (value !== undefined && isValidValue(declaration, value)) {
@@ -82,7 +83,9 @@ export class Builder {
                 attrs[attribute] = null;
             }
         }
+
         attrs.unknownAttributes = null;
+
         return attrs;
     }
 
@@ -99,6 +102,7 @@ export class Builder {
                 attrs[attribute] = null;
             }
         }
+
         return { type: name, attrs };
     }
 
@@ -110,6 +114,7 @@ export class Builder {
                 return frame;
             }
         }
+
         return this.stack[0] as Frame;
     }
 
@@ -120,6 +125,7 @@ export class Builder {
         if (node !== undefined) {
             index = node.content.length;
         }
+
         return `${path}${pointer('content', index)}`;
     }
 
@@ -156,6 +162,7 @@ export class Builder {
         if (node === undefined) {
             return;
         }
+
         const first = node.content[0];
         // Containers whose content starts with or requires a paragraph get an empty one, as the editor makes them.
         if (['list_item', 'task_item'].includes(node.type) && first?.type !== 'paragraph') {

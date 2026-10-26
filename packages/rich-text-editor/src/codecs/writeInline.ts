@@ -51,26 +51,33 @@ const markSyntax = (mark: TreeMark, plan: MarkPlan): MarkSyntax => {
     if (plan.formats.markdown === 'unsupported') {
         return { kind: 'none', lost: true };
     }
+
     if (plan.markdown !== undefined || plan.form !== undefined) {
         return { kind: 'custom', lost: plan.formats.markdown === 'lossy' };
     }
+
     if (Object.hasOwn(DELIMITERS, mark.type)) {
         return { kind: 'delimiter', lost: false };
     }
+
     if (mark.type === 'code') {
         return { kind: 'code', lost: false };
     }
+
     if (mark.type !== 'link') {
         return { kind: 'none', lost: true };
     }
+
     const href = attrsOf(mark.attrs).href;
     if (typeof href !== 'string') {
         return { kind: 'link', lost: true, target: undefined };
     }
+
     const checked = checkHref(href);
     if (!checked.ok) {
         return { kind: 'link', lost: true, target: undefined };
     }
+
     return { kind: 'link', lost: false, target: checked.href };
 };
 
@@ -83,19 +90,24 @@ const markdownItems = (state: MarkdownState, node: TreeNode, path: string): Mark
             if (plan === undefined) {
                 return [];
             }
+
             const { kind, lost } = markSyntax(mark, plan);
             // A link's losses depend on its whole run, so `linkPieces` counts them once per run.
             if (lost && kind !== 'link') {
                 markLost(state, plan);
             }
+
             if (kind === 'code') {
                 code = true;
             }
+
             if (kind === 'none' || kind === 'code') {
                 return [];
             }
+
             return [{ mark, index: markIndex }];
         });
+
         return { node: child, path: `${path}${pointer('content', index)}`, marks, code };
     });
 
@@ -105,6 +117,7 @@ export const featureOf = (state: MarkdownState, type: string): string => {
     if (plan === undefined) {
         return 'core';
     }
+
     return plan.featureId;
 };
 
@@ -121,16 +134,19 @@ const expectedRuns = (state: MarkdownState, node: TreeNode, line: Line): Run[] |
             if (plan === undefined) {
                 continue;
             }
+
             const syntax = markSyntax(mark, plan);
             if (syntax.kind === 'custom') {
                 return undefined;
             }
+
             if (syntax.kind === 'link' && syntax.target !== undefined) {
                 names.push(`link:${syntax.target}`);
             } else if (syntax.kind === 'code' || syntax.kind === 'delimiter') {
                 names.push(mark.type);
             }
         }
+
         const marks = names.sort().join(' ');
         if (child.type === 'text') {
             runs.push({ text: child.text ?? '', marks });
@@ -142,9 +158,11 @@ const expectedRuns = (state: MarkdownState, node: TreeNode, line: Line): Run[] |
             return undefined;
         }
     }
+
     while (runs.at(-1) !== undefined && !('text' in (runs.at(-1) as Run))) {
         runs.pop();
     }
+
     return joinRuns(runs);
 };
 
@@ -156,8 +174,10 @@ export const writeInline = (state: MarkdownState, node: TreeNode, path: string, 
     const attempt = (italic: '*' | '_') => {
         const scratch: MarkdownState = { ...state, italic, losses: new Losses(), diagnostics: [] };
         const text = serialize(inlinePieces(scratch, node, path, line), (featureId) => scratch.losses.add(featureId));
+
         return { scratch, text };
     };
+
     const expected = expectedRuns(state, node, line);
     const readsBack = (text: string) => {
         let markdown = text;
@@ -165,8 +185,10 @@ export const writeInline = (state: MarkdownState, node: TreeNode, path: string, 
             // A table cell drops the backslash of every escaped pipe before it parses the cell.
             markdown = text.replaceAll('\\|', '|');
         }
+
         return JSON.stringify(readInline(state.parser, markdown, line === 'block')) === JSON.stringify(expected);
     };
+
     let chosen = attempt('*');
     if (expected !== undefined && !readsBack(chosen.text)) {
         // Only italic takes the other delimiter, so a block with no italic writes the same text again.
@@ -177,6 +199,7 @@ export const writeInline = (state: MarkdownState, node: TreeNode, path: string, 
         if (holdsItalic) {
             underscore = attempt('_');
         }
+
         if (underscore !== undefined && readsBack(underscore.text)) {
             chosen = underscore;
         } else {
@@ -190,13 +213,16 @@ export const writeInline = (state: MarkdownState, node: TreeNode, path: string, 
                     }
                 }
             }
+
             if (!marked) {
                 chosen.scratch.losses.add(featureOf(state, node.type));
             }
         }
     }
+
     state.losses.merge(chosen.scratch.losses);
     state.diagnostics.push(...chosen.scratch.diagnostics);
+
     return chosen.text;
 };
 
@@ -215,9 +241,11 @@ const inlinePieces = (state: MarkdownState, node: TreeNode, path: string, line: 
                     return [{ kind: 'literal', text: plan.markdown(serialize(inner, lost), attrs, state.context) }];
                 } catch {
                     overrideFailed(state, plan, markPath(group, index), mark.type);
+
                     return inner;
                 }
             }
+
             if (plan.form !== undefined) {
                 return [
                     { kind: 'literal', text: plan.form.open },
@@ -225,19 +253,23 @@ const inlinePieces = (state: MarkdownState, node: TreeNode, path: string, line: 
                     { kind: 'literal', text: plan.form.close },
                 ];
             }
+
             let delimiter = DELIMITERS[mark.type];
             if (mark.type === 'italic') {
                 delimiter = state.italic;
             }
+
             if (delimiter !== undefined) {
                 const { featureId } = plan;
                 pairs += 1;
+
                 return [
                     { kind: 'delimiter', text: delimiter, open: true, featureId, pair: pairs },
                     ...inner,
                     { kind: 'delimiter', text: delimiter, open: false, featureId, pair: pairs },
                 ];
             }
+
             return linkPieces(state, plan, mark, inner, line);
         }).flat();
     const pieces = marked(markdownItems(state, node, path), 0);
@@ -255,6 +287,7 @@ const inlinePieces = (state: MarkdownState, node: TreeNode, path: string, line: 
             break;
         }
     }
+
     return pieces;
 };
 
@@ -263,17 +296,21 @@ const linkPieces = (state: MarkdownState, plan: MarkPlan, mark: TreeMark, inner:
     if (attrs.openInNewWindow === true || (attrs.styleId !== undefined && attrs.styleId !== null)) {
         markLost(state, plan);
     }
+
     const syntax = markSyntax(mark, plan);
     if (syntax.lost) {
         markLost(state, plan);
     }
+
     if (syntax.kind !== 'link' || syntax.target === undefined) {
         return inner;
     }
+
     let target = destination(syntax.target);
     if (line === 'cell') {
         target = target.replaceAll('|', '\\|');
     }
+
     return [{ kind: 'literal', text: '[' }, ...inner, { kind: 'literal', text: `](${target})` }];
 };
 
@@ -283,23 +320,30 @@ const leafPieces = (state: MarkdownState, { node, path, code }: MarkdownItem, li
             // A table row splits at every pipe a backslash does not escape, code spans included.
             return [{ kind: 'literal', text: codeSpan(node.text ?? '').replaceAll('|', '\\|') }];
         }
+
         if (code) {
             return [{ kind: 'literal', text: codeSpan(node.text ?? '') }];
         }
+
         return [{ kind: 'text', text: node.text ?? '' }];
     }
+
     if (isIsland(node)) {
         return [{ kind: 'text', text: islandText(node.attrs?.original) }];
     }
+
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
         return [];
     }
+
     noteShared(state, plan, node);
     if (plan.formats.markdown === 'unsupported') {
         state.losses.add(plan.featureId);
+
         return [{ kind: 'text', text: textOf(node) }];
     }
+
     const attrs = attrsOf(node.attrs);
     if (plan.markdown !== undefined) {
         try {
@@ -308,27 +352,35 @@ const leafPieces = (state: MarkdownState, { node, path, code }: MarkdownItem, li
             if (plan.formats.markdown === 'lossy') {
                 state.losses.add(plan.featureId);
             }
+
             return [{ kind: 'literal', text }];
         } catch {
             overrideFailed(state, plan, path, node.type);
+
             return [{ kind: 'text', text: textOf(node) }];
         }
     }
+
     if (node.type === 'hard_break') {
         if (line !== 'block') {
             state.losses.add(plan.featureId);
+
             return [{ kind: 'text', text: ' ' }];
         }
+
         return [{ kind: 'break' }];
     }
+
     state.losses.add(plan.featureId);
     if (node.type === 'mention') {
         const shown = mentionLabel(attrs, { t: state.context.t });
+
         return [
             { kind: 'literal', text: '@' },
             { kind: 'text', text: `${shown.label}${unavailableNote(shown, state.context.t)}` },
         ];
     }
+
     return [{ kind: 'text', text: textOf(node) }];
 };
 

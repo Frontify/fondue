@@ -40,6 +40,7 @@ const document = styledDocument(model, [
  */
 export const HtmlOutputProbe = () => {
     const { html } = createCodecs(model).toHTML(document, { inlineStyles: STYLE_MAP, colorTokens: COLOR_TOKENS });
+
     // oxlint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml -- the probe renders the codec's escaped output as a page would.
     return <section aria-label="Stored HTML" dangerouslySetInnerHTML={{ __html: html }} />;
 };

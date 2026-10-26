@@ -26,9 +26,11 @@ export const headingIds = (root: TreeNode): ReadonlySet<string> => {
         if (node.type === 'heading' && typeof nodeId === 'string') {
             ids.add(nodeId);
         }
+
         pending.push(...(node.content ?? []));
         node = pending.pop();
     }
+
     return ids;
 };
 
@@ -60,9 +62,11 @@ export const noteNode = (
     if (plan === undefined) {
         return;
     }
+
     if (plan.formats[format] !== 'lossless') {
         state.losses.add(plan.featureId);
     }
+
     for (const shared of setShared(plan, node)) {
         if (state.plan.formats.get(shared.featureId)?.[format] !== 'lossless') {
             state.losses.add(shared.featureId);
@@ -78,9 +82,11 @@ export const keepMark =
         if (plan === undefined) {
             return false;
         }
+
         if (plan.formats[format] !== 'lossless') {
             state.losses.add(plan.featureId);
         }
+
         return true;
     };
 
@@ -98,14 +104,18 @@ export const itemMarker = (
         if (typeof list.attrs?.start === 'number') {
             start = list.attrs.start;
         }
+
         return `${start + index}${delimiter} `;
     }
+
     if (task && item.attrs?.checked === true) {
         return `${bullet} [x] `;
     }
+
     if (task) {
         return `${bullet} [ ] `;
     }
+
     return `${bullet} `;
 };
 
@@ -120,12 +130,15 @@ export const prefixLines = (text: string, first: string, rest: string, trim = fa
             if (index === 0 && (trim || line === '')) {
                 return `${first}${line}`.trimEnd();
             }
+
             if (index === 0) {
                 return `${first}${line}`;
             }
+
             if (line === '') {
                 return blank;
             }
+
             return `${rest}${line}`;
         })
         .join('\n');

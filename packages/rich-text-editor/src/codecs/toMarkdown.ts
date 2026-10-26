@@ -33,25 +33,30 @@ const renderBlocks = (state: MarkdownState, parent: TreeNode, path: string): str
         if (child.type === 'task_list') {
             family = 'bullet_list';
         }
+
         let alternate = false;
         if (LISTS.has(child.type) && previous?.family === family) {
             alternate = !previous.alternate;
         }
+
         const block = renderBlock(state, child, childPath, alternate);
         if (block === null) {
             continue;
         }
+
         if (block === '' && children.length > 1) {
             // An empty block that is not alone in its parent has no Markdown that parses back.
             state.losses.add(featureOf(state, child.type));
             continue;
         }
+
         written.push(block);
         previous = { family, alternate };
         if (!LISTS.has(child.type)) {
             previous = { family: child.type, alternate: false };
         }
     }
+
     return written.join('\n\n');
 };
 
@@ -67,29 +72,34 @@ const renderItem = (
     if (plan !== undefined) {
         noteShared(state, plan, item);
     }
+
     let bullet = '-';
     let delimiter = '.';
     if (alternate) {
         bullet = '+';
         delimiter = ')';
     }
+
     const marker = itemMarker(list, item, index, item.type === 'task_item', bullet, delimiter);
     let indent = 2;
     if (list.type === 'ordered_list') {
         indent = marker.length;
     }
+
     const content = item.content ?? [];
     const [first] = content;
     if (first !== undefined && content.length > 1 && (first.content ?? []).length === 0) {
         // An empty first paragraph followed by more blocks ends the item in Markdown.
         state.losses.add(featureOf(state, item.type));
     }
+
     return prefixLines(renderBlocks(state, item, path), marker, ' '.repeat(indent), true);
 };
 
 const isGfmCell = (cell: TreeNode) => {
     const attrs = cell.attrs ?? {};
     const [paragraph, ...rest] = cell.content ?? [];
+
     return attrs.colspan === 1 && attrs.rowspan === 1 && paragraph?.type === 'paragraph' && rest.length === 0;
 };
 
@@ -99,6 +109,7 @@ const isExactCell = (cell: TreeNode, first: boolean): boolean => {
     const breaks = (cell.content ?? []).some((block) =>
         (block.content ?? []).some((child) => child.type === 'hard_break'),
     );
+
     return cell.attrs?.colwidth === null && !breaks && header === first && (header || cell.type === 'table_cell');
 };
 
@@ -114,14 +125,17 @@ const renderTable = (state: MarkdownState, table: TreeNode, plan: NodePlan, path
                 renderBlocks(state, cell, `${path}${pointer('content', rowIndex, 'content', cellIndex)}`),
             ),
         );
+
         return blocks.filter((block) => block !== '').join('\n\n');
     }
+
     const exact = cells.every(
         (row, rowIndex) => row.length === columns && row.every((cell) => isExactCell(cell, rowIndex === 0)),
     );
     if (!exact) {
         state.losses.add(plan.featureId);
     }
+
     const lines = cells.map((row, rowIndex) => {
         const written = row.map((cell, cellIndex) => {
             const paragraph = cell.content?.[0];
@@ -129,18 +143,22 @@ const renderTable = (state: MarkdownState, table: TreeNode, plan: NodePlan, path
             if (paragraph === undefined) {
                 return '';
             }
+
             const paragraphPlan = state.plan.nodes.get(paragraph.type);
             if (paragraphPlan !== undefined) {
                 noteShared(state, paragraphPlan, paragraph);
             }
+
             return writeInline(state, paragraph, paragraphPath, 'cell');
         });
         while (written.length < columns) {
             written.push('');
         }
+
         return `| ${written.join(' | ')} |`;
     });
     const [head = '', ...body] = lines;
+
     return [head, `|${' --- |'.repeat(columns)}`, ...body].join('\n');
 };
 
@@ -151,8 +169,10 @@ const imageOf = (state: MarkdownState, node: TreeNode): string | null => {
     if (src === undefined) {
         return null;
     }
+
     const alt = altOf(attrs) ?? '';
     const lost = (featureId: string) => state.losses.add(featureId);
+
     return `![${serialize([{ kind: 'text', text: alt }], lost)}](${destination(src)})`;
 };
 
@@ -161,18 +181,22 @@ const embedOf = (state: MarkdownState, attrs: JsonObject): string | null => {
     if (typeof attrs.url !== 'string') {
         return null;
     }
+
     const checked = checkHref(attrs.url);
     if (!checked.ok) {
         return null;
     }
+
     const lost = (featureId: string) => state.losses.add(featureId);
     if (typeof attrs.title !== 'string' && /^[a-z][a-z\d+.-]{1,31}:[^\s<>]*$/i.test(checked.href)) {
         return `<${checked.href}>`;
     }
+
     let title = checked.href;
     if (typeof attrs.title === 'string') {
         title = attrs.title;
     }
+
     return `[${serialize([{ kind: 'text', text: title }], lost)}](${destination(checked.href)})`;
 };
 
@@ -184,6 +208,7 @@ const isTextblock = (state: MarkdownState, node: TreeNode, plan: NodePlan) => {
     if (content.length === 0) {
         return !plan.leaf;
     }
+
     return content.some((child) => child.type === 'text' || state.plan.nodes.get(child.type)?.inline === true);
 };
 
@@ -192,9 +217,11 @@ const fallbackOf = (state: MarkdownState, node: TreeNode, plan: NodePlan, path: 
     if (isTextblock(state, node, plan)) {
         return paragraphOf(state, node, path);
     }
+
     if (plan.leaf) {
         return null;
     }
+
     return renderBlocks(state, node, path);
 };
 
@@ -204,6 +231,7 @@ const dropsOwnAttributes = (node: TreeNode): boolean => {
     if (node.type === 'doc') {
         return typeof attrs.lang === 'string' || (typeof attrs.dir === 'string' && attrs.dir !== 'auto');
     }
+
     return typeof attrs.lang === 'string' || typeof attrs.marker === 'string';
 };
 
@@ -218,6 +246,7 @@ const ruleOf = (
     if (dropsOwnAttributes(node)) {
         state.losses.add(plan.featureId);
     }
+
     switch (node.type) {
         case 'paragraph':
             return paragraphOf(state, node, path);
@@ -226,9 +255,12 @@ const ruleOf = (
             if (typeof attrs.level === 'number') {
                 level = attrs.level;
             }
+
             const text = writeInline(state, node, path, 'heading');
+
             return `${'#'.repeat(level)} ${text}`.trimEnd();
         }
+
         case 'blockquote':
             return prefixLines(renderBlocks(state, node, path), '> ', '> ');
         case 'bullet_list':
@@ -246,11 +278,14 @@ const ruleOf = (
             if (typeof attrs.languageId === 'string') {
                 info = attrs.languageId;
             }
+
             if (text === '') {
                 return `${fence}${info}\n${fence}`;
             }
+
             return `${fence}${info}\n${text}\n${fence}`;
         }
+
         case 'horizontal_rule':
             return '---';
         case 'table':
@@ -263,16 +298,20 @@ const ruleOf = (
                     return image;
                 }
             }
+
             return null;
         case 'asset_image':
             state.losses.add(plan.featureId);
+
             return imageOf(state, node);
         case 'embed':
             state.losses.add(plan.featureId);
+
             return embedOf(state, attrs);
         default:
             // `column_break` and any other named node outside a textblock write nothing.
             state.losses.add(plan.featureId);
+
             return null;
     }
 };
@@ -285,9 +324,12 @@ const fencedOf = (fence: string, text: string): string => {
     const [char = '`'] = fence;
     if (/^(`{3,}|~{3,})$/.test(fence)) {
         const written = char.repeat(Math.max(fence.length, longestRun(text, char) + 1));
+
         return `${written}\n${text}\n${written}`;
     }
+
     const lines = text.split(/\r\n?|\n/).map((line) => serialize([{ kind: 'text', text: line }], () => undefined));
+
     return [fence, ...lines, fence].join('\n');
 };
 
@@ -298,20 +340,26 @@ const renderBlock = (state: MarkdownState, node: TreeNode, path: string, alterna
         if (text === '') {
             return null;
         }
+
         return serialize([{ kind: 'text', text }], () => undefined);
     }
+
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
         return null;
     }
+
     if (leavesOutUnresolved(state, plan.featureId, node, path)) {
         return null;
     }
+
     noteShared(state, plan, node);
     if (plan.formats.markdown === 'unsupported') {
         state.losses.add(plan.featureId);
+
         return fallbackOf(state, node, plan, path);
     }
+
     if (plan.markdown !== undefined) {
         try {
             let inner = '';
@@ -320,10 +368,12 @@ const renderBlock = (state: MarkdownState, node: TreeNode, path: string, alterna
             } else if (!plan.leaf) {
                 inner = renderBlocks(state, node, path);
             }
+
             const text = plan.markdown(inner, attrsOf(node.attrs), state.context);
             if (plan.formats.markdown === 'lossy') {
                 state.losses.add(plan.featureId);
             }
+
             return text;
         } catch {
             overrideFailed(state, plan, path, node.type);
@@ -331,23 +381,30 @@ const renderBlock = (state: MarkdownState, node: TreeNode, path: string, alterna
             if (text === '') {
                 return null;
             }
+
             return serialize([{ kind: 'text', text }], () => undefined);
         }
     }
+
     if (MARKDOWN_NODES.has(node.type)) {
         return ruleOf(state, node, plan, path, alternate);
     }
+
     if (plan.form !== undefined) {
         if (plan.formats.markdown === 'lossy') {
             state.losses.add(plan.featureId);
         }
+
         const inner = fallbackOf(state, node, plan, path) ?? '';
         if ('fence' in plan.form) {
             return fencedOf(plan.form.fence, textOf(node));
         }
+
         return prefixLines(inner, plan.form.prefix, plan.form.prefix, true, '');
     }
+
     state.losses.add(plan.featureId);
+
     return fallbackOf(state, node, plan, path);
 };
 
@@ -375,6 +432,8 @@ export const writeMarkdown = (
     if (rootPlan !== undefined && dropsOwnAttributes(root)) {
         state.losses.add(rootPlan.featureId);
     }
+
     const markdown = renderBlocks(state, root, '/content');
+
     return { markdown, losses: state.losses.list(), diagnostics: state.diagnostics };
 };

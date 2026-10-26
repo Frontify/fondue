@@ -101,6 +101,7 @@ const DOMPurify = createDOMPurify(window);
 const serialized = (html: string) => {
     const template = window.document.createElement('template');
     template.innerHTML = html;
+
     return template.innerHTML;
 };
 

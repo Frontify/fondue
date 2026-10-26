@@ -61,9 +61,11 @@ const resolveAssetUrl = (assetId: string) => {
     if (assetId === 'missing') {
         return null;
     }
+
     if (assetId === 'unsafe') {
         return 'javascript:alert(1)';
     }
+
     return `https://cdn.example/${assetId}`;
 };
 
@@ -317,6 +319,7 @@ describe('toMarkdown rules', () => {
         if (exact === undefined) {
             throw new Error('the exact table row is missing');
         }
+
         const result = codecs.fromMarkdown(exact.markdown);
         const document = stored(...exact.blocks);
 
@@ -337,13 +340,17 @@ const canonical = (document: RichTextDocument): RichTextDocument => {
     if (tree === undefined) {
         throw new Error('the generated document does not decode');
     }
+
     return encodeTree(tree, model).document;
 };
+
 const textOf = (value: unknown): string => {
     if (typeof value !== 'object' || value === null) {
         return '';
     }
+
     const { text: own = '', content = [] } = value as { readonly text?: string; readonly content?: readonly unknown[] };
+
     return own + content.map(textOf).join('|');
 };
 
@@ -368,6 +375,7 @@ const marksArb = fc.subarray(LOSSLESS_MARKS).map((names) =>
         if (name === 'link') {
             return link('https://example.com/a');
         }
+
         return mark(name);
     }),
 );
@@ -423,6 +431,7 @@ const { block } = fc.letrec<{ block: JsonValue }>((tie) => ({
                 if (code === '') {
                     return node('code_block', { languageId });
                 }
+
                 return node('code_block', { languageId }, text(code));
             }),
         fc.constant(rule()),
@@ -437,7 +446,9 @@ const unique = (value: JsonValue): JsonValue =>
             if (key !== 'nodeId') {
                 return child;
             }
+
             nodeIds += 1;
+
             return `n-${nodeIds}`;
         }),
     ) as JsonValue;
@@ -454,6 +465,7 @@ describe(seeded('Markdown round trip'), () => {
                 if (output.losses.length > 0) {
                     return;
                 }
+
                 lossless += 1;
                 const result = codecs.fromMarkdown(output.markdown);
 
@@ -471,8 +483,10 @@ describe(seeded('Markdown round trip'), () => {
 describe('toMarkdown edge rules', () => {
     const markdownOf = (...blocks: readonly JsonValue[]) => {
         const { markdown, losses } = codecs.toMarkdown(stored(...blocks));
+
         return { markdown, losses };
     };
+
     const ordered = (...items: readonly JsonValue[]) => node('ordered_list', { start: 1, marker: null }, ...items);
 
     it.each<readonly [string, readonly JsonValue[], string, readonly { featureId: string; count: number }[]]>([

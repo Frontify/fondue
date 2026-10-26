@@ -30,9 +30,11 @@ const classOf = (char: string | undefined): CharClass => {
     if (char === undefined || WHITESPACE.test(char)) {
         return 'space';
     }
+
     if (PUNCTUATION.test(char)) {
         return 'punctuation';
     }
+
     return 'other';
 };
 
@@ -54,18 +56,23 @@ const neighbour = (token: Token | undefined, side: 'before' | 'after'): CharClas
     if (token === undefined || token.kind === 'break') {
         return 'space';
     }
+
     if (token.kind === 'char') {
         if (token.entity) {
             return 'punctuation';
         }
+
         return classOf(token.char);
     }
+
     if (token.kind === 'delimiter') {
         return 'punctuation';
     }
+
     if (side === 'before') {
         return classOf([...token.text].at(-1));
     }
+
     return classOf([...token.text][0]);
 };
 
@@ -83,10 +90,12 @@ const runsOf = (tokens: readonly Token[]) => {
             index += 1;
             continue;
         }
+
         let end = index;
         while (tokens[end + 1]?.kind === 'delimiter' && (tokens[end + 1] as Delimiter).text[0] === first.text[0]) {
             end += 1;
         }
+
         runs.push({
             run: tokens.slice(index, end + 1) as Delimiter[],
             before: tokens[index - 1],
@@ -94,6 +103,7 @@ const runsOf = (tokens: readonly Token[]) => {
         });
         index = end + 1;
     }
+
     return runs;
 };
 
@@ -112,6 +122,7 @@ const flanks = (run: readonly Delimiter[], before: Token | undefined, after: Tok
         canOpen = leftFlanking && (!rightFlanking || left === 'punctuation');
         canClose = rightFlanking && (!leftFlanking || right === 'punctuation');
     }
+
     return (!opens || canOpen) && (!closes || canClose);
 };
 
@@ -124,10 +135,13 @@ const fixFlanking = (tokens: readonly Token[]): readonly Delimiter[] | undefined
     const encode = (token: Token | undefined): boolean => {
         if (token?.kind === 'char' && !token.entity) {
             token.entity = true;
+
             return true;
         }
+
         return false;
     };
+
     // A reference written for one run changes the neighbour of the next, so this repeats until nothing changes.
     let changed = true;
     while (changed) {
@@ -138,23 +152,29 @@ const fixFlanking = (tokens: readonly Token[]): readonly Delimiter[] | undefined
             if (closes && neighbour(before, 'before') === 'space') {
                 changed = encode(before) || changed;
             }
+
             if (opens && neighbour(after, 'after') === 'space') {
                 changed = encode(after) || changed;
             }
+
             if (closes && neighbour(before, 'before') === 'punctuation' && neighbour(after, 'after') === 'other') {
                 changed = encode(after) || changed;
             }
+
             if (opens && neighbour(after, 'after') === 'punctuation' && neighbour(before, 'before') === 'other') {
                 changed = encode(before) || changed;
             }
+
             if (run[0]?.text.startsWith('_') === true && opens && neighbour(before, 'before') === 'other') {
                 changed = encode(before) || changed;
             }
+
             if (run[0]?.text.startsWith('_') === true && closes && neighbour(after, 'after') === 'other') {
                 changed = encode(after) || changed;
             }
         }
     }
+
     return runsOf(tokens).find(({ run, before, after }) => !flanks(run, before, after))?.run;
 };
 
@@ -170,6 +190,7 @@ export const serialize = (pieces: readonly Piece[], lost: (featureId: string) =>
             tokens.push(piece);
         }
     }
+
     // Leading and trailing whitespace of each line, as `trim` sees it, would be stripped, so it becomes references.
     const isEdgeSpace = (token: Token | undefined) => token?.kind === 'char' && /^\s$/u.test(token.char);
     let lineStart = 0;
@@ -177,14 +198,18 @@ export const serialize = (pieces: readonly Piece[], lost: (featureId: string) =>
         if (index < tokens.length && tokens[index]?.kind !== 'break') {
             continue;
         }
+
         for (let at = lineStart; at < index && isEdgeSpace(tokens[at]); at += 1) {
             (tokens[at] as { entity: boolean }).entity = true;
         }
+
         for (let at = index - 1; at >= lineStart && isEdgeSpace(tokens[at]); at -= 1) {
             (tokens[at] as { entity: boolean }).entity = true;
         }
+
         lineStart = index + 1;
     }
+
     // A pair that cannot open or close writes no delimiters, and its mark is lost.
     let failed = fixFlanking(tokens);
     while (failed !== undefined) {
@@ -192,9 +217,11 @@ export const serialize = (pieces: readonly Piece[], lost: (featureId: string) =>
         for (const { featureId } of failed) {
             lost(featureId);
         }
+
         tokens = tokens.filter((token) => token.kind !== 'delimiter' || !pairs.has(token.pair));
         failed = fixFlanking(tokens);
     }
+
     let written = '';
     let atLineStart = true;
     for (const [index, token] of tokens.entries()) {
@@ -203,14 +230,17 @@ export const serialize = (pieces: readonly Piece[], lost: (featureId: string) =>
             atLineStart = true;
             continue;
         }
+
         if (token.kind !== 'char') {
             written += token.text;
             atLineStart = false;
             continue;
         }
+
         written += writeChar(tokens, index, atLineStart);
         atLineStart = false;
     }
+
     return written;
 };
 
@@ -219,6 +249,7 @@ const charAt = (tokens: readonly Token[], index: number): string | undefined => 
     if (token?.kind === 'char' && !token.entity) {
         return token.char;
     }
+
     return undefined;
 };
 
@@ -229,36 +260,43 @@ const writeChar = (tokens: readonly Token[], index: number, atLineStart: boolean
     if (token.entity) {
         return entity(char);
     }
+
     if (ALWAYS_ESCAPED.has(char) || (atLineStart && LINE_START_ESCAPED.has(char))) {
         return `\\${char}`;
     }
+
     const next = charAt(tokens, index + 1);
     const following = tokens[index + 1];
     // `!` before a link's `[` would make it an image.
     if (char === '!' && following?.kind === 'literal' && following.text.startsWith('[')) {
         return '\\!';
     }
+
     // `scheme://` and `//` would be linked on import.
     if ((char === ':' || char === '/') && next === '/') {
         return `\\${char}`;
     }
+
     if ((char === '.' || char === ')') && /^\d$/.test(charAt(tokens, index - 1) ?? '')) {
         // An ordered list marker: digits at the start of a line, then `.` or `)`.
         let start = index - 1;
         while (start > 0 && /^\d$/.test(charAt(tokens, start - 1) ?? '')) {
             start -= 1;
         }
+
         const previous = tokens[start - 1];
         if (start === 0 || previous?.kind === 'break') {
             return `\\${char}`;
         }
     }
+
     if (
         char === '.' &&
         /www$/i.test(['w', 'w', 'w'].map((_, offset) => charAt(tokens, index - 3 + offset) ?? '').join(''))
     ) {
         return '\\.';
     }
+
     return char;
 };
 
@@ -272,8 +310,10 @@ export const longestRun = (text: string, char: string): number => {
         } else {
             run = 0;
         }
+
         longest = Math.max(longest, run);
     }
+
     return longest;
 };
 
@@ -287,6 +327,7 @@ export const codeSpan = (code: string): string => {
     if (text.startsWith('`') || text.endsWith('`') || spaced) {
         content = ` ${text} `;
     }
+
     return `${fence}${content}${fence}`;
 };
 
@@ -295,6 +336,7 @@ export const destination = (href: string): string => {
     if (/^[^\s()<>\\]*$/.test(href)) {
         return href;
     }
+
     return `<${href.replaceAll(/[<>\\]/g, (char) => `\\${char}`)}>`;
 };
 
@@ -312,6 +354,7 @@ export const joinRuns = (runs: readonly Run[]): Run[] => {
             joined.push(run);
         }
     }
+
     return joined;
 };
 
@@ -329,20 +372,24 @@ export const readInline = (parser: Parser, markdown: string, paragraph: boolean)
         if (blocks.length > 0 && blocks.map(({ type }) => type).join(' ') !== 'paragraph_open inline paragraph_close') {
             return undefined;
         }
+
         tokens = blocks.slice(1, 2);
     } else {
         tokens = parser.parseInline(markdown, {});
     }
+
     const [inline] = tokens;
     let children: readonly MarkdownToken[] = [];
     if (inline?.children) {
         children = inline.children;
     }
+
     for (const token of children) {
         const read = inlineToken(token);
         if (read === undefined) {
             return undefined;
         }
+
         if (read.kind === 'text') {
             runs.push({ text: read.text, marks: key() });
         } else if (read.kind === 'code') {
@@ -357,5 +404,6 @@ export const readInline = (parser: Parser, markdown: string, paragraph: boolean)
             active.pop();
         }
     }
+
     return joinRuns(runs);
 };

@@ -34,6 +34,7 @@ describe('fromMarkdown structures the model cannot hold', () => {
         if (result.status !== 'editable') {
             throw new Error('expected an editable result');
         }
+
         const paragraphs = result.document.content.content?.map((block) =>
             (block.content ?? []).map((child) => child.text ?? '\n').join(''),
         );
@@ -144,6 +145,7 @@ describe('Markdown forms, mark and inline overrides', () => {
     const fail = () => {
         throw new Error('override failed');
     };
+
     const custom = defineFeature({
         id: 'test.custom',
         version: 1,
@@ -210,6 +212,7 @@ describe('Markdown forms, mark and inline overrides', () => {
             if (index === 0) {
                 return [part];
             }
+
             return [{ type: 'text', text: ' ' }, part];
         });
     const document = testDocument(

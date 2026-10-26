@@ -27,10 +27,12 @@ const linkTarget = (state: WalkState, attrs: TreeMark['attrs']): string | undefi
     if (typeof href !== 'string' || (href.startsWith('#') && state.headings.has(href.slice(1)))) {
         return undefined;
     }
+
     const checked = checkHref(href);
     if (!checked.ok) {
         return undefined;
     }
+
     return checked.href;
 };
 
@@ -53,19 +55,24 @@ const renderInline = (state: WalkState, node: TreeNode, path: string): string =>
                         return plan.text(inner, attrs);
                     } catch {
                         reportFailure(state, plan.featureId, markPath(group, index), mark.type, 'text');
+
                         return inner;
                     }
                 }
+
                 if (mark.type !== 'link') {
                     return inner;
                 }
+
                 const href = linkTarget(state, mark.attrs);
                 if (href === undefined || href === inner) {
                     return inner;
                 }
+
                 return `${inner} (${href})`;
             },
         ).join('');
+
     return renderMarked(itemsOf(node, path, keepMark(state, 'text')), 0);
 };
 
@@ -73,6 +80,7 @@ const renderLeaf = (state: WalkState, { node, path }: Item): string => {
     if (node.type === 'text') {
         return node.text ?? '';
     }
+
     return renderBlock(state, node, path, 0) ?? '';
 };
 
@@ -87,11 +95,13 @@ const renderItem = (state: WalkState, item: TreeNode, path: string, marker: stri
         if (text === null) {
             continue;
         }
+
         if (LISTS.has(child.type)) {
             if (!marked) {
                 lines.push(`${indent}${marker}`.trimEnd());
                 marked = true;
             }
+
             lines.push(text);
         } else if (marked) {
             lines.push(prefixLines(text, `${indent}${INDENT}`, `${indent}${INDENT}`));
@@ -100,9 +110,11 @@ const renderItem = (state: WalkState, item: TreeNode, path: string, marker: stri
             marked = true;
         }
     }
+
     if (!marked) {
         lines.push(`${indent}${marker}`.trimEnd());
     }
+
     return lines.join('\n');
 };
 
@@ -115,12 +127,15 @@ const embedText = (attrs: JsonObject): string | null => {
             url = checked.href;
         }
     }
+
     if (typeof attrs.title !== 'string') {
         return url;
     }
+
     if (url === '') {
         return attrs.title;
     }
+
     return `${attrs.title} (${url})`;
 };
 
@@ -129,6 +144,7 @@ const joinBlocks = (blocks: readonly (string | null)[], separator: string): stri
     if (written.length === 0) {
         return null;
     }
+
     return written.join(separator);
 };
 
@@ -139,13 +155,16 @@ const defaultText = (state: WalkState, node: TreeNode, path: string, depth: numb
     if (plan !== undefined && plan.leaf) {
         return null;
     }
+
     const isInline = (child: TreeNode) => child.type === 'text' || state.plan.nodes.get(child.type)?.inline === true;
     if (content.some(isInline)) {
         return renderInline(state, node, path);
     }
+
     if (content.length === 0) {
         return null;
     }
+
     return joinBlocks(
         content.map((child, index) => renderBlock(state, child, `${path}${pointer('content', index)}`, depth)),
         '\n\n',
@@ -159,15 +178,19 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
         if (text === '') {
             return null;
         }
+
         return text;
     }
+
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
         return null;
     }
+
     if (leavesOutUnresolved(state, plan.featureId, node, path)) {
         return null;
     }
+
     noteNode(state, node, 'text');
     const attrs = attrsOf(node.attrs);
     let text: string | null;
@@ -180,11 +203,13 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
             text = `@${shown.label}${unavailableNote(shown, state.context.t)}`;
             break;
         }
+
         case 'asset_image':
             text = null;
             if (attrs.altIntent === 'meaningful' && typeof attrs.altText === 'string' && attrs.altText !== '') {
                 text = attrs.altText;
             }
+
             break;
         case 'embed':
             text = embedText(attrs);
@@ -219,6 +244,7 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
                 (node.content ?? []).map((row, rowIndex) => {
                     const rowPath = `${path}${pointer('content', rowIndex)}`;
                     noteNode(state, row, 'text');
+
                     return (row.content ?? [])
                         .map((cell, cellIndex) => {
                             const cellPath = `${rowPath}${pointer('content', cellIndex)}`;
@@ -226,6 +252,7 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
                             const blocks = (cell.content ?? []).map((block, index) =>
                                 renderBlock(state, block, `${cellPath}${pointer('content', index)}`, depth),
                             );
+
                             return joinBlocks(blocks, ' ') ?? '';
                         })
                         .join('\t');
@@ -236,13 +263,16 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
         default:
             text = defaultText(state, node, path, depth);
     }
+
     if (plan.text === undefined) {
         return text;
     }
+
     try {
         return plan.text(text ?? '', attrs, state.context);
     } catch {
         reportFailure(state, plan.featureId, path, node.type, 'text');
+
         return textOf(node);
     }
 };
@@ -268,5 +298,6 @@ export const writeText = (
         ),
         '\n\n',
     );
+
     return { text: text ?? '', losses: state.losses.list(), diagnostics: state.diagnostics };
 };

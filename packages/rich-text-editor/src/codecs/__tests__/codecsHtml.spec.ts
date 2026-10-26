@@ -108,6 +108,7 @@ describe('toHTML style, overrides and locale', () => {
     const fail = () => {
         throw new Error('override failed');
     };
+
     const styled = defineFeature({
         id: 'test.styled',
         version: 1,

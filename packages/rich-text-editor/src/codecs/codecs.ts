@@ -20,6 +20,7 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
     if (options.limits !== undefined) {
         decodeOptions = { limits: options.limits };
     }
+
     const parser = createParser(markHrefPolicy(model, 'link'));
     /** The decode diagnostics and the island tree, or no tree when the document is blocked. */
     const decode = (
@@ -30,8 +31,10 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
         if (blocked || tree === undefined) {
             return { diagnostics: result.diagnostics, blocked };
         }
+
         return { tree, diagnostics: result.diagnostics, blocked };
     };
+
     return {
         toHTML: (document, htmlOptions = {}) => {
             const { inlineStyles = [], colorTokens = [] } = htmlOptions;
@@ -40,6 +43,7 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
             if (tree === undefined) {
                 return { html: '', css, diagnostics, blocked };
             }
+
             const context = codecContext(htmlOptions.locale, enUS, htmlOptions.resolveAssetUrl);
             const { contentClassName, listLevels, resolveReference } = htmlOptions;
             const output = writeHtml(plan, tree, context, {
@@ -49,6 +53,7 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
                 columns: columnLayout(htmlOptions.columns, htmlOptions.columnGap),
                 styles: { styles: inlineStyles, colorTokens, inline: true },
             });
+
             return { html: output.html, css, diagnostics: [...diagnostics, ...output.diagnostics], blocked };
         },
         toPlainText: (document) => {
@@ -56,7 +61,9 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
             if (tree === undefined) {
                 return { text: '', losses: [], diagnostics, blocked };
             }
+
             const output = writeText(plan, tree, codecContext(undefined, enUS));
+
             return {
                 text: output.text,
                 losses: output.losses,
@@ -69,8 +76,10 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
             if (tree === undefined) {
                 return { markdown: '', losses: [], diagnostics, blocked };
             }
+
             const context = codecContext(markdownOptions.locale, enUS, markdownOptions.resolveAssetUrl);
             const output = writeMarkdown(plan, tree, context, parser);
+
             return {
                 markdown: output.markdown,
                 losses: output.losses,

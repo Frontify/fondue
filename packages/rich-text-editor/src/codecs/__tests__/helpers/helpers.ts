@@ -29,9 +29,11 @@ let next = 0;
 /** Codecs over the semantic stand-ins, with `nodeId`s numbered in creation order. */
 export const semanticCodecs = () => {
     next = 0;
+
     return createCodecs(semanticModel(), {
         generateId: () => {
             next += 1;
+
             return `id-${next}`;
         },
     });
@@ -44,6 +46,7 @@ export const withoutIds = (document: unknown): unknown =>
             if (key === 'nodeId') {
                 return 'id';
             }
+
             return value;
         }),
     );

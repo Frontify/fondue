@@ -84,6 +84,7 @@ export { escapeHtml };
 
 const fallback = (state: HtmlState, tag: 'span' | 'div', feature: string | null, inner: string): string => {
     const label = islandLabel(state.context, feature);
+
     return `<${tag} role="group" aria-label="${escapeHtml(label)}" data-rte-island="">${inner}</${tag}>`;
 };
 
@@ -93,6 +94,7 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
     if (plan === undefined) {
         return inner;
     }
+
     const attrs = attrsOf(mark.attrs);
     const { styles, colorTokens, inline } = state.styles;
     let template = resolveHtmlSpec(plan.spec, attrs, plan.options);
@@ -102,15 +104,18 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
         if (anchor === undefined || anchor.attrs.href === undefined) {
             return inner;
         }
+
         // The reader's out-of-sight "opens in a new window" text would become content when the output is pasted.
         if (attrs.openInNewWindow === true) {
             const opened = { ...anchor.attrs, rel: 'noopener noreferrer', target: '_blank' };
             template = { ...template, layers: [{ ...anchor, attrs: opened }, ...template.layers.slice(1)] };
         }
     }
+
     template = withStyleId(template, attrs);
     template = withStyle(template, styleOfNode(styles, mark.type, attrs).style, inline);
     template = withColor(template, mark.type, attrs, colorTokens);
+
     return build(template, inner);
 };
 
@@ -120,26 +125,36 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         if (pre) {
             return escapeHtml(text);
         }
+
         return escapeHtml(spaced(state, text));
     }
+
     if (isIsland(node)) {
         const { tag, featureId, text } = islandFallback(state, node);
+
         return fallback(state, tag, featureId, escapeHtml(text));
     }
+
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
         state.carried = 0;
+
         return '';
     }
+
     if (leavesOutUnresolved(state, plan.featureId, node, path)) {
         state.carried = 0;
+
         return '';
     }
+
     noteNode(state, node, 'html');
     if (plan.featureId === IMAGE_FEATURE && (node.type === FIGURE || node.type === ASSET_IMAGE)) {
         state.carried = 0;
+
         return imageMarkup(state, node, path);
     }
+
     const before = state.carried;
     const { inner, entered } = state.depths.within(node.type, (level) => {
         let content: string;
@@ -150,6 +165,7 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         } else {
             content = renderChildren(state, node, path, plan.pre);
         }
+
         return { inner: content, entered: level };
     });
     const attrs = attrsOf(node.attrs);
@@ -165,27 +181,34 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         } catch {
             reportFailure(state, plan.featureId, path, node.type, 'html');
             const { tag, text } = failedFallback(state, node, plan, before);
+
             return fallback(state, tag, plan.featureId, escapeHtml(text));
         }
     }
+
     state.carried = 0;
     if (entered !== undefined) {
         template = withListLevel(template, attrs, entered.kind, entered.depth, state.listLevels);
     }
+
     if (!plan.inline) {
         template = withAutoDirection(template, passageDirection(treeRuns(node.content)));
     }
+
     if (isMention(node, plan.featureId)) {
         template = { ...template, content: true };
     }
+
     template = withStyle(template, styleOfNode(state.styles.styles, node.type, attrs).style, state.styles.inline);
     if (node.type === COLUMN_BREAK) {
         // Stored HTML has no package styles, so an active break carries its own.
         if (state.columns !== undefined && state.breaks < state.columns.count - 1) {
             template = withActiveBreak(template, 'break-after: column');
         }
+
         state.breaks += 1;
     }
+
     return build(template, inner);
 };
 
@@ -201,13 +224,16 @@ const taskItemInner = (state: HtmlState, node: TreeNode, path: string, pre: bool
     if (typeof node.attrs?.nodeId === 'string') {
         nodeId = node.attrs.nodeId;
     }
+
     const label = escapeHtml(`rte-task-${encodeURIComponent(nodeId)}`);
     // React writes `checked` last on an input, so the reader's markup does too.
     let checked = '';
     if (node.attrs?.checked === true) {
         checked = ' checked=""';
     }
+
     const checkbox = `<input type="checkbox" disabled="" aria-labelledby="${label}"${checked}/>`;
+
     return `${checkbox}<div id="${label}">${first}</div>${rest.join('')}`;
 };
 
@@ -221,25 +247,32 @@ const imageMarkup = (state: HtmlState, node: TreeNode, path: string): string => 
     const attrs = attrsOf(node.attrs);
     if (node.type === FIGURE) {
         const inner = renderChildren(state, node, path, false);
+
         return `<figure dir="auto" style="text-align:${figureAlign(attrs)}">${inner}</figure>`;
     }
+
     const shown = imageOutput(attrs, state.context);
     if (shown.kind === 'unavailable') {
         return unavailableMarkup(shown, false);
     }
+
     let written = ` src="${escapeHtml(shown.src)}"`;
     if (shown.alt !== undefined) {
         written += ` alt="${escapeHtml(shown.alt)}"`;
     }
+
     if (shown.width !== undefined) {
         written += ` width="${shown.width}"`;
     }
+
     if (shown.height !== undefined) {
         written += ` height="${shown.height}"`;
     }
+
     if (shown.cssWidth !== undefined) {
         written += ` style="width:${shown.cssWidth}"`;
     }
+
     return `<img${written}/>${unavailableMarkup(shown.unavailable, true)}`;
 };
 
@@ -249,6 +282,7 @@ const unavailableMarkup = ({ message, label }: Unavailable, hidden: boolean): st
     if (label !== '') {
         text += ` <bdi>${escapeHtml(label)}</bdi>`;
     }
+
     return `<span data-rte-image-unavailable="" data-rte-message="image-unavailable"${hidden ? ' hidden=""' : ''}>${text}</span>`;
 };
 
@@ -258,6 +292,7 @@ const unavailableMarkup = ({ message, label }: Unavailable, hidden: boolean): st
  */
 const mentionInner = (state: HtmlState, node: TreeNode): string => {
     const shown = mentionLabel(attrsOf(node.attrs), { t: state.context.t, resolveReference: state.resolveReference });
+
     return `@<bdi>${escapeHtml(shown.label)}</bdi>${escapeHtml(unavailableNote(shown, state.context.t))}`;
 };
 
@@ -280,7 +315,9 @@ export const isEmptyDocument = (plan: CodecPlan, root: TreeNode): boolean => {
     if (blocks.length !== 1 || only === undefined || (only.content ?? []).length > 0) {
         return false;
     }
+
     const node = plan.nodes.get(only.type);
+
     return node !== undefined && !node.leaf;
 };
 
@@ -313,6 +350,7 @@ export const writeHtml = (
     if (isEmptyDocument(plan, root)) {
         return { html: '', diagnostics: [] };
     }
+
     let html = renderChildren(state, root, '/content', false);
     let props = ` class="${escapeHtml(contentClasses(contentClassName))}"`;
     const lang = root.attrs?.lang;
@@ -320,16 +358,20 @@ export const writeHtml = (
     if (typeof lang === 'string') {
         props += ` lang="${escapeHtml(lang)}"`;
     }
+
     if (dir === 'ltr' || dir === 'rtl') {
         props += ` dir="${dir}"`;
     }
+
     if (state.islands > 0) {
         let langAttribute = '';
         if (context.locale.lang !== undefined) {
             langAttribute = ` lang="${escapeHtml(context.locale.lang)}"`;
         }
+
         html += `<div role="note" data-rte-message="islands"${langAttribute}>${escapeHtml(context.t('RichTextEditor_readerIslandNotice'))}</div>`;
     }
+
     const lossy = state.losses.list().map(
         ({ featureId, count }): Diagnostic => ({
             code: 'codecs.lossy-output',
@@ -343,6 +385,8 @@ export const writeHtml = (
     if (columns !== undefined) {
         props += ` style="columns:${columns.count};column-gap:${escapeHtml(columns.gap)}"`;
     }
+
     html = `<div${props}>${html}</div>`;
+
     return { html, diagnostics: [...state.diagnostics, ...lossy] };
 };

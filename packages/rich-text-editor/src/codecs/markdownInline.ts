@@ -20,25 +20,32 @@ export const inlineToken = (token: MarkdownToken): InlineToken | undefined => {
     if (token.type === 'text' || token.type === 'text_special') {
         return { kind: 'text', text: token.content };
     }
+
     if (token.type === 'softbreak') {
         return { kind: 'text', text: ' ' };
     }
+
     if (token.type === 'code_inline') {
         return { kind: 'code', text: token.content };
     }
+
     if (token.type === 'hardbreak') {
         return { kind: 'break' };
     }
+
     if (token.type === 'link_open') {
         return { kind: 'open', mark: 'link', href: String(token.attrGet('href') ?? '') };
     }
+
     const mark = MARKS_OF[token.tag];
     if (mark !== undefined && token.nesting === 1) {
         return { kind: 'open', mark, href: '' };
     }
+
     if (token.type === 'link_close' || (mark !== undefined && token.nesting === -1)) {
         return { kind: 'close' };
     }
+
     return undefined;
 };
 
@@ -52,6 +59,7 @@ export const inlineNodes = (builder: Builder, token: MarkdownToken, path: string
         if (text === '') {
             return;
         }
+
         const marks = marksNow(extra);
         if (marks.length === 0) {
             nodes.push({ type: 'text', text });
@@ -59,6 +67,7 @@ export const inlineNodes = (builder: Builder, token: MarkdownToken, path: string
             nodes.push({ type: 'text', text, marks });
         }
     };
+
     let first = stripTask;
     // Closing tokens close the mark their opening pushed, which may be none when the model lacks it.
     const pushed: (TreeMark | undefined)[] = [];
@@ -69,10 +78,12 @@ export const inlineNodes = (builder: Builder, token: MarkdownToken, path: string
             if (first) {
                 text = text.replace(TASK, '');
             }
+
             first = false;
             pushText(text);
             continue;
         }
+
         first = false;
         if (read === undefined) {
             if (child.type === 'image') {
@@ -93,6 +104,7 @@ export const inlineNodes = (builder: Builder, token: MarkdownToken, path: string
             } else {
                 builder.unsupported(read.mark, path);
             }
+
             pushed.push(mark);
             if (mark !== undefined) {
                 active.push(mark);
@@ -116,10 +128,12 @@ export const inlineNodes = (builder: Builder, token: MarkdownToken, path: string
             }
         }
     }
+
     return nodes.map((node) => {
         if (node.type === 'hard_break') {
             return { ...node, attrs: builder.attrsFor('hard_break', {}) };
         }
+
         return node;
     });
 };

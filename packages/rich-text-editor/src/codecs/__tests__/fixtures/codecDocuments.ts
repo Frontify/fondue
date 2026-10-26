@@ -20,10 +20,13 @@ export const failureOf = (run: () => unknown) => {
         if (error instanceof DefinitionError) {
             return { code: error.code, details: error.details };
         }
+
         throw error;
     }
+
     throw new Error('expected a DefinitionError');
 };
+
 export const compile = (...declarations: readonly FeatureDeclaration[]) =>
     compileContentModel([core(), ...declarations.map((declaration) => defineFeature(declaration)())], {
         id: 'test.model',

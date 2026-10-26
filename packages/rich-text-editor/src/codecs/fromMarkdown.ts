@@ -43,11 +43,14 @@ export const createParser = (policy?: HrefPolicy): Parser => {
         if (found === null || !accepts(found.url) || !accepts(candidateAt(text, 0))) {
             return null;
         }
+
         return found;
     };
+
     // A destination that fails the URL check as written stays text, though markdown-it's encoding would repair it.
     const normalizeLink = parser.normalizeLink.bind(parser);
     parser.normalizeLink = (url) => (accepts(url) ? normalizeLink(url) : REFUSED_LINK);
+
     return parser;
 };
 
@@ -60,6 +63,7 @@ const isTaskList = (tokens: readonly MarkdownToken[], index: number): boolean =>
         if (token === undefined || (token.type === 'bullet_list_close' && token.level === level)) {
             break;
         }
+
         if (token.type === 'list_item_open' && level !== undefined && token.level === level + 1) {
             items += 1;
             const paragraph = tokens[at + 1];
@@ -70,6 +74,7 @@ const isTaskList = (tokens: readonly MarkdownToken[], index: number): boolean =>
             }
         }
     }
+
     return items > 0;
 };
 
@@ -79,10 +84,12 @@ const codeLanguage = (builder: Builder, info: string): string | null => {
     if (node !== undefined) {
         declaration = attributesOf(node).languageId;
     }
+
     const [language = ''] = info.trim().split(/\s+/);
     if (declaration !== undefined && language !== '' && isValidValue(declaration, language)) {
         return language;
     }
+
     return null;
 };
 
@@ -117,8 +124,10 @@ const openList = (builder: Builder, tokens: readonly MarkdownToken[], index: num
             builder.unsupported('ordered_list');
             builder.unwrap();
         }
+
         return;
     }
+
     const task = isTaskList(tokens, index) && builder.has('task_list') && builder.has('task_item');
     if (task) {
         builder.open('task_list', {}, true);
@@ -153,24 +162,30 @@ const readCode = (builder: Builder, token: MarkdownToken): void => {
     if (text.endsWith('\n')) {
         text = text.slice(0, -1);
     }
+
     if (builder.has('code_block')) {
         builder.open('code_block', { languageId: codeLanguage(builder, token.info) });
         if (text !== '') {
             builder.append({ type: 'text', text });
         }
+
         builder.close();
+
         return;
     }
+
     builder.unsupported('code_block');
     builder.open('paragraph');
     for (const [line, part] of text.split('\n').entries()) {
         if (line > 0) {
             builder.append({ type: 'hard_break', attrs: builder.attrsFor('hard_break', {}) });
         }
+
         if (part !== '') {
             builder.append({ type: 'text', text: part });
         }
     }
+
     builder.close();
 };
 
@@ -209,6 +224,7 @@ const openCell = (builder: Builder, token: MarkdownToken): void => {
     } else {
         builder.open('table_cell');
     }
+
     // A cell holds one paragraph of its inline content.
     builder.open('paragraph');
 };
@@ -241,9 +257,11 @@ const readToken = (
             if (parent !== undefined) {
                 parent.content.push(...inlineNodes(builder, token, path, reading.taskItem));
             }
+
             reading.taskItem = false;
             break;
         }
+
         case 'fence':
         case 'code_block':
             readCode(builder, token);
@@ -292,10 +310,13 @@ export const readMarkdown = (
     for (const [index, token] of tokens.entries()) {
         readToken(builder, tokens, index, token, reading);
     }
+
     if (builder.root.content.length === 0) {
         builder.root.content.push({ type: 'paragraph', attrs: builder.attrsFor('paragraph', {}) });
     }
+
     const { document } = encodeTree(builder.root, model);
     const result = decodeDocument(document, model, options);
+
     return { ...result, diagnostics: [...result.diagnostics, ...builder.diagnostics] };
 };

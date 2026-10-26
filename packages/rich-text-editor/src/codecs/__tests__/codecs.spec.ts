@@ -174,6 +174,7 @@ describe('codec overrides', () => {
     const fail = () => {
         throw new Error('override failed');
     };
+
     const quoteDocument = (model: ReturnType<typeof quote>) =>
         testDocument(
             model,
@@ -310,6 +311,7 @@ describe('codecs over blocked and island documents', () => {
             expect(JSON.stringify(output)).not.toContain('javascript:');
             expect(JSON.stringify(output)).not.toContain('<script>');
         }
+
         expect(plain.losses).toEqual([]);
         expect(markdown.losses).toEqual([]);
     });
@@ -336,14 +338,17 @@ describe('format attributes', () => {
         if (Array.isArray(value)) {
             return value.map(withStyle);
         }
+
         if (typeof value !== 'object' || value === null) {
             return value;
         }
+
         const record = Object.fromEntries(Object.entries(value).map(([key, child]) => [key, withStyle(child)]));
         // A text node holds no attributes at all, so it gets none.
         if (typeof record.type === 'string' && record.type !== 'text') {
             record.attrs = { ...(record.attrs as object), style: 'color:red', class: 'evil', className: 'evil' };
         }
+
         return record;
     };
 
@@ -396,6 +401,7 @@ describe('codec context', () => {
                 if (assetId === 'a-1') {
                     throw new Error('resolver failed');
                 }
+
                 return `https://cdn.example/${assetId}`;
             },
         });
@@ -441,6 +447,7 @@ describe('carried legs of earlier packets', () => {
         if (attrs !== undefined) {
             content.attrs = attrs;
         }
+
         return { ...stored(), content } as unknown as RichTextDocument;
     };
 
@@ -472,6 +479,7 @@ describe('carried legs of earlier packets', () => {
         if (ok) {
             return [];
         }
+
         return [input];
     });
 

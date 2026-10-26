@@ -28,6 +28,7 @@ const styleText = (text: string): string => {
                     .replaceAll(/([A-Z])/g, '-$1')
                     .toLowerCase();
             }
+
             const value = declaration.slice(colon + 1).trim();
             style.delete(property);
             if (value !== '') {
@@ -35,6 +36,7 @@ const styleText = (text: string): string => {
             }
         }
     }
+
     return [...style].map(([property, value]) => `${property}:${value}`).join(';');
 };
 
@@ -45,6 +47,7 @@ const attributes = (attrs: Readonly<Record<string, string>>): string => {
         if (!writesAttribute(name)) {
             continue;
         }
+
         let text = value;
         if (isStyleAttribute(name)) {
             text = styleText(value);
@@ -52,8 +55,10 @@ const attributes = (attrs: Readonly<Record<string, string>>): string => {
                 continue;
             }
         }
+
         written += ` ${name}="${escapeHtml(text)}"`;
     }
+
     return written;
 };
 
@@ -63,6 +68,7 @@ export const build = (template: HtmlTemplate, inner: string): string => {
     if (template.content) {
         html = inner;
     }
+
     for (const layer of [...template.layers].reverse()) {
         if (VOID_TAGS.has(layer.tag)) {
             html = `<${layer.tag}${attributes(layer.attrs)}/>`;
@@ -70,6 +76,7 @@ export const build = (template: HtmlTemplate, inner: string): string => {
             html = `<${layer.tag}${attributes(layer.attrs)}>${html}</${layer.tag}>`;
         }
     }
+
     return html;
 };
 
@@ -85,6 +92,7 @@ export const checkOverrideSpec = (spec: HtmlSpec): void => {
             }
         }
     }
+
     if (Array.isArray(content)) {
         // An override's nested spec is unchecked input, which this check is the first to read as a tuple.
         checkOverrideSpec(content as unknown as HtmlSpec);

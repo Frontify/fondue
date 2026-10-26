@@ -60,6 +60,7 @@ const overrideOf = <V>(overrides: Readonly<Record<string, V>> | undefined, name:
     if (overrides === undefined) {
         return undefined;
     }
+
     return ownValue(overrides, name);
 };
 
@@ -83,6 +84,7 @@ export const planOf = (model: ContentModel): CodecPlan => {
         );
         plans.set(model, plan);
     }
+
     return plan;
 };
 
@@ -93,6 +95,7 @@ export const checkCodecs = (plan: CodecPlan): void => {
             if (node.formats[format] === 'unsupported' || derives[format](node) || overridden(node, format)) {
                 continue;
             }
+
             throw new DefinitionError('definition.missing-codec', {
                 feature: node.featureId,
                 format,
@@ -129,9 +132,11 @@ export const setShared = (plan: NodePlan, node: TreeNode): readonly SharedAttrib
         if (stored !== undefined) {
             value = stored as JsonValue;
         }
+
         let fallback: JsonValue = null;
         if ('default' in declaration.value && declaration.value.default !== undefined) {
             fallback = declaration.value.default;
         }
+
         return canonicalJson(value) !== canonicalJson(fallback);
     });

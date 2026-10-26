@@ -15,8 +15,10 @@ const load = async () => {
     vi.resetModules();
     const { semanticModel } = await import('../../reader/__tests__/fixtures/semantic');
     const codecs = await import('#/codecs');
+
     return { semanticModel, codecs };
 };
+
 let loaded: Awaited<ReturnType<typeof load>>;
 
 // Node 21 and later define `navigator` as a configurable global, which the tests delete for the length of the file.
