@@ -3,8 +3,9 @@
 import { defineEditorPart } from '#/bridge/plugin';
 import { blockRule } from '#/model';
 
+import { NumberingDialog } from './components/NumberingDialog';
 import { orderedList } from './feature';
-import { NumberingDialog, SET_START } from './components/NumberingDialog';
+import { SET_START } from './helpers/commands';
 
 const START = { fields: { start: { type: 'integer', min: 0, max: 1_000_000 } } } as const;
 

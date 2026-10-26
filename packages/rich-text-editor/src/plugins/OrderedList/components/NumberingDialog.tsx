@@ -7,8 +7,7 @@ import { EditorDialog, useEditorDialog } from '#/bridge/define';
 import { type OverlayProps, useEditorApi } from '#/bridge/plugin';
 import { type CodecContext, findInvalidPayload, type PayloadDeclaration } from '#/model';
 
-/** The command the dialog runs, whose payload declaration bounds the number. */
-export const SET_START = 'list.ordered.start.set';
+import { SET_START } from '../helpers/commands';
 
 /** The bounds that `payload` declares for `start`. */
 const boundsOf = ({ fields }: PayloadDeclaration) => {
