@@ -15,9 +15,9 @@ import { type readerContext } from '#/reader/helpers/context';
 import { type EditorPort, mediaOf } from '#/runtime/port';
 import { VISUALLY_HIDDEN } from '#/styles/visuallyHidden';
 import { ContextMenu } from '#/ui/ContextMenu/ContextMenu';
+import { PanelContext, type PanelController } from '#/ui/helpers/panelContext';
 import { type referenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
 import { LazySuggestionList } from '#/ui/LazySuggestionList/LazySuggestionList';
-import { PanelContext, type PanelController } from '#/ui/panels/context';
 
 import { translatedLabel } from '../helpers/toolbarItems';
 import { Bubble } from '../RichTextEditor/components/Parts';

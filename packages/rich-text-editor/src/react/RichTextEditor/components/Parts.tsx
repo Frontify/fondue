@@ -12,7 +12,7 @@ import { contentClasses } from '#/model/internal';
 import { type EditorPort, isEmptyDocument } from '#/runtime/port';
 import { type BubbleMore } from '#/ui/BubbleToolbar/BubbleToolbar';
 import { shortcutText } from '#/ui/helpers/shortcuts';
-import { usePanelController } from '#/ui/panels/context';
+import { usePanelController } from '#/ui/hooks/usePanelController';
 import { FixedToolbar } from '#/ui/toolbar/Toolbar';
 
 import { panelsOf, profileOf } from '../../compile/compileEditor';

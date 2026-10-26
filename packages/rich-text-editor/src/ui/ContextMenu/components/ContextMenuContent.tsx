@@ -6,9 +6,9 @@ import { type Ref, useContext } from 'react';
 import { OptionItem } from '#/bridge/chromeToolbar';
 import { SessionContext } from '#/bridge/session';
 import { TurnIntoContext, turnIntoChoices, type TurnIntoEntry } from '#/bridge/turnInto';
-import { type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/item';
-import { type useRowRuns } from '#/ui/toolbar/More';
-import { MoreRow } from '#/ui/toolbar/MoreContent';
+import { MoreRow } from '#/ui/components/MoreRow';
+import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
+import { type useRowRuns } from '#/ui/hooks/useRowRuns';
 
 const rowOf = ({ key, command, payload, label }: TurnIntoEntry): ToolbarItem => ({
     key,

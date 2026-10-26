@@ -1,15 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { icons } from '@frontify/fondue-icons';
 import { type ComponentType } from 'react';
 
-import { useApplePlatform } from '#/bridge/platform';
 import { type ToolbarControlProps } from '#/bridge/plugin';
-import { useSessionValue } from '#/bridge/session';
 import { type JsonValue } from '#/model';
-import { keyOn } from '#/model/internal';
 import { type EditorPort, endCompositionOf, selectedNodeNames } from '#/runtime/port';
-import { ariaShortcut, bindingHere, shortcutText } from '#/ui/helpers/shortcuts';
 
 /** One command of the presentation's toolbar, with the registry's label and icon unless `controls` replaced them. */
 export type ToolbarItem = {
@@ -57,29 +52,11 @@ export const offeredRows = (items: readonly ToolbarItem[], session: EditorPort |
     );
 };
 
-const sameRows = (previous: readonly ToolbarItem[], next: readonly ToolbarItem[]) =>
-    previous.length === next.length && previous.every((row, index) => row === next[index]);
-
-/** The rows of `items` the session's selection offers now, kept up to date as it changes. */
-export const useOfferedRows = (items: readonly ToolbarItem[]): readonly ToolbarItem[] =>
-    useSessionValue((session) => offeredRows(items, session), sameRows);
-
 export type ToolbarStrings = {
     label: string;
     more: string;
     /** Why a command cannot run, from its `disabledReason`. */
     reason: (code: string) => string;
-};
-
-const ICONS = icons as Readonly<Record<string, ComponentType<{ size?: 16 | 20; 'aria-hidden'?: boolean }>>>;
-
-export const Icon = ({ name }: { name: string }) => {
-    const Found = ICONS[name];
-    if (Found === undefined) {
-        return null;
-    }
-
-    return <Found size={20} aria-hidden />;
 };
 
 /**
@@ -139,20 +116,4 @@ export const tabStop = (outOfTabOrder: boolean): { tabIndex?: number } => {
     }
 
     return {};
-};
-
-/** The item's shortcut as its tooltip or menu row shows it and as `aria-keyshortcuts`, on the author's platform. */
-export const useShortcut = ({ bindings }: ToolbarItem) => {
-    const apple = useApplePlatform();
-    const behavior = useSessionValue((runtime) => runtime?.policy.enterBehavior, Object.is);
-    // Shift+Enter runs as Enter while Enter submits, and the policy can change after the keymap compiles.
-    const binding = bindingHere(
-        bindings.filter((candidate) => behavior !== 'submit' || keyOn(candidate, apple) !== 'Shift-Enter'),
-        apple,
-    );
-    if (binding === undefined) {
-        return { shortcut: undefined, keyshortcuts: undefined };
-    }
-
-    return { shortcut: shortcutText(binding, apple), keyshortcuts: ariaShortcut(binding, apple) };
 };

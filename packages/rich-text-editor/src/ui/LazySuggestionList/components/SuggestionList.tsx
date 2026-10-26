@@ -4,7 +4,7 @@ import { Flyout, LoadingCircle } from '@frontify/fondue-components';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAnnounce } from '#/bridge/announcer';
-import { Listbox, type ListboxOption } from '#/bridge/chrome/components/Listbox';
+import { Listbox } from '#/bridge/chrome/components/Listbox';
 import { useEditorOverlay } from '#/bridge/overlays';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
@@ -16,16 +16,13 @@ import {
     type EditorPort,
     hasSurface,
     moveSuggestionIn,
-    type SuggestionItem,
     suggestionAnchorRange,
 } from '#/runtime/port';
 
-import { type ReferenceListStrings } from '../LazySuggestionList/helpers/referenceStrings';
-
-import styles from './styles/suggestions.module.scss';
-
-/** A search shows its spinner once it has waited this long. */
-export const SPINNER_DELAY_MS = 300;
+import { SPINNER_DELAY_MS } from '../constants';
+import { type ReferenceListStrings } from '../helpers/referenceStrings';
+import { listOption, resultCount, spokenOption } from '../helpers/suggestionOptions';
+import styles from '../styles/suggestions.module.scss';
 
 const activeOf = (runtime: EditorPort | undefined): ActiveSuggestion | null => {
     if (runtime === undefined) {
@@ -53,32 +50,6 @@ const sameShown = (previous: ActiveSuggestion | null, next: ActiveSuggestion | n
 /** The plugin opens and closes the list, so a close request of the flyout changes nothing. */
 const IGNORE_CLOSE = () => undefined;
 
-/** The options of a list's own results, without Load more and Retry. */
-const resultCount = (items: readonly SuggestionItem[]) => items.filter((item) => item.action === undefined).length;
-
-/** An option as the listbox shows it: Load more and Retry by their localized label, a reference with its icon. */
-export const listOption = (item: SuggestionItem, strings: ReferenceListStrings): ListboxOption => {
-    if (item.action === 'more') {
-        return { key: item.key, label: strings.loadMore, glyph: null };
-    }
-
-    if (item.action === 'retry') {
-        return { key: item.key, label: strings.retry, glyph: null };
-    }
-
-    if (item.glyph !== null || item.detail === undefined) {
-        return item;
-    }
-
-    // A reference result with no image and no kind shows the person icon.
-    let lead: Pick<ListboxOption, 'imageUrl' | 'kind'> = { kind: item.kind ?? 'user' };
-    if (item.imageUrl !== undefined) {
-        lead = { imageUrl: item.imageUrl };
-    }
-
-    return { key: item.key, label: item.label, glyph: null, detail: item.detail, ...lead };
-};
-
 /** Whether a search has waited `SPINNER_DELAY_MS` for request `request`, which shows its spinner row. */
 const useSlowRequest = (active: ActiveSuggestion | null): boolean => {
     const [slow, setSlow] = useState<number | null>(null);
@@ -95,35 +66,6 @@ const useSlowRequest = (active: ActiveSuggestion | null): boolean => {
     }, [loading, request]);
 
     return loading && slow === request;
-};
-
-/**
- * The place of option `index` that a screen reader hears: a result among the results, so Load more adds no place to
- * them, and Load more or Retry among every option.
- */
-export const placeOf = (items: readonly SuggestionItem[], index: number) => {
-    let total = items.length;
-    if (items[index]?.action === undefined) {
-        total = resultCount(items);
-    }
-
-    return { position: index + 1, total };
-};
-
-/** What the active option of `items` says, with its place, or `undefined` with none. */
-export const spokenOption = (
-    items: readonly SuggestionItem[],
-    index: number,
-    strings: ReferenceListStrings,
-): string | undefined => {
-    const option = items[index];
-    if (option === undefined) {
-        return undefined;
-    }
-
-    const { position, total } = placeOf(items, index);
-
-    return strings.option(listOption(option, strings), position, total);
 };
 
 /**

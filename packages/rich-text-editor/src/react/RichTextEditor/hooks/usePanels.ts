@@ -3,7 +3,7 @@
 import { type RefObject, useMemo, useRef, useState } from 'react';
 
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
-import { type PanelController } from '#/ui/panels/context';
+import { type PanelController } from '#/ui/helpers/panelContext';
 
 /** At most one panel. A panel that toggles closes on its own command; any other panel command replaces the open one. */
 export const usePanels = (rootRef: RefObject<HTMLElement | null>, coordinator: MountCoordinator) => {

@@ -10,7 +10,7 @@ import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { type readerContext } from '#/reader/helpers/context';
 import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type RuntimeHandle } from '#/runtime/port';
-import { type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/Toolbar';
+import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 
 import { type CompiledEditorDefinition, type Defined, type Props, type ToolbarMode } from '../types';
 

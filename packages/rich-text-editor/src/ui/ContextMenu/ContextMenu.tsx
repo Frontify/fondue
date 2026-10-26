@@ -8,9 +8,10 @@ import { type OverlayAnchor } from '#/bridge/plugin';
 import { SessionContext } from '#/bridge/session';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';
 import { atomPositionAt, selectedNodePosition, surfaceElement } from '#/runtime/port';
+import { offeredRows, type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { pressesBinding } from '#/ui/helpers/shortcuts';
-import { offeredRows, type ToolbarItem, type ToolbarStrings, useOfferedRows } from '#/ui/toolbar/item';
-import { useRowRuns } from '#/ui/toolbar/More';
+import { useOfferedRows } from '#/ui/hooks/useOfferedRows';
+import { useRowRuns } from '#/ui/hooks/useRowRuns';
 
 const ContextMenuContent = lazyPart(() =>
     import('./components/ContextMenuContent').then((loaded) => loaded.ContextMenuContent),
