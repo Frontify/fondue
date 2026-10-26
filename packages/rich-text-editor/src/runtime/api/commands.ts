@@ -35,6 +35,7 @@ const sessionOf = (context: CommandContext | undefined): CommandSession | undefi
     if (!isCommandSession(session)) {
         return undefined;
     }
+
     return session;
 };
 
@@ -52,13 +53,16 @@ const checkedPayload = (
     if (given !== undefined && findUnsafeJson(given, '') !== undefined) {
         return undefined;
     }
+
     const payload: unknown = snapshot(given);
     if (findInvalidPayload(command.payload, payload) !== undefined) {
         return undefined;
     }
+
     if (command.payload === undefined || !isRecord(payload)) {
         return { payload };
     }
+
     const policy = command.featureId === undefined ? undefined : policyOf(model, command.featureId);
     const checked: Record<string, unknown> = { ...payload };
     for (const [name, field] of Object.entries(command.payload.fields)) {
@@ -68,9 +72,11 @@ const checkedPayload = (
             if (!result.ok) {
                 return undefined;
             }
+
             checked[name] = result.href;
         }
     }
+
     return { payload: checked };
 };
 
@@ -98,6 +104,7 @@ const runNoting = (
     if (!applied && refused) {
         return 'not-allowed';
     }
+
     return applied;
 };
 
@@ -117,6 +124,7 @@ const commandDocumentApi = (
     if (session !== undefined) {
         limits = session.runtime.limits;
     }
+
     return documentApi({
         model,
         schema,
@@ -128,6 +136,7 @@ const commandDocumentApi = (
             if (compose.apply(command, payload)) {
                 return { status: 'applied' };
             }
+
             return NOT_APPLICABLE;
         },
         refusal: (before, transaction) => session?.runtime.writeRefusal(before, transaction),
@@ -141,14 +150,17 @@ const commandDocumentApi = (
                     code: command === undefined ? 'unknown-command' : 'invalid-payload',
                 };
             }
+
             const refused = session?.runtime.refusal(command, compose.state(), checked.payload);
             if (refused !== undefined) {
                 return { status: 'rejected', code: refused };
             }
+
             const applied = runNoting(context, (noted) => compose.apply(command, checked.payload, noted));
             if (applied === 'not-allowed') {
                 return { status: 'rejected', code: 'not-allowed' };
             }
+
             return applied ? { status: 'applied' } : NOT_APPLICABLE;
         },
         query: (id, given) => {
@@ -160,6 +172,7 @@ const commandDocumentApi = (
                     disabledReason: 'unknown-command',
                 };
             }
+
             const checked = checkedPayload(command, given, model);
             if (checked === undefined) {
                 return {
@@ -168,12 +181,14 @@ const commandDocumentApi = (
                     disabledReason: 'invalid-payload',
                 };
             }
+
             const quiet = quietOf(context);
             const active = command.active(compose.state(), checked.payload, quiet);
             const refused = session?.runtime.refusal(command, compose.state(), checked.payload);
             if (refused !== undefined) {
                 return { enabled: false, active, disabledReason: refused };
             }
+
             const enabled = runNoting(quiet, (noted) =>
                 command.run(compose.state(), undefined, checked.payload, noted),
             );
@@ -184,6 +199,7 @@ const commandDocumentApi = (
                     disabledReason: 'not-allowed',
                 };
             }
+
             return {
                 enabled,
                 active,
@@ -195,6 +211,7 @@ const commandDocumentApi = (
         release: (target) => context?.defer(() => session?.runtime.handle.releaseTarget(target)),
         select: (transaction) => {
             compose.select(transaction);
+
             return true;
         },
         policy: () =>
@@ -211,6 +228,7 @@ const commandDocumentApi = (
             if (session === undefined) {
                 return undefined;
             }
+
             return mediaOf(session.runtime)?.uploads;
         },
     });
@@ -242,9 +260,11 @@ export const pluginCommand = <A, P = never>(
     if (spec.payload !== undefined) {
         declared.payload = spec.payload;
     }
+
     if (spec.readOnly === true) {
         declared.readOnly = true;
     }
+
     return {
         run: (state, dispatch, given, context) => {
             // A key binding passes `null` for no payload; a query straight on the engine may pass one `execute` never checked.
@@ -252,6 +272,7 @@ export const pluginCommand = <A, P = never>(
             if (findInvalidPayload(spec.payload, payload) !== undefined) {
                 return false;
             }
+
             const session = sessionOf(context);
             // `enabled` answers a query, so neither its edits nor its effects reach the run.
             if (spec.enabled !== undefined) {
@@ -265,22 +286,27 @@ export const pluginCommand = <A, P = never>(
                     return false;
                 }
             }
+
             const compose = composer(state);
             const api = extend(commandDocumentApi(compose, model, schema, lookup, context, session), context, session);
             if (!spec.run(api, payload as P)) {
                 return false;
             }
+
             const transaction = compose.finish();
             if (transaction !== undefined) {
                 dispatch?.(transaction);
             }
+
             return true;
         },
         active: (state, payload, context) => {
             if (spec.active === undefined || findInvalidPayload(spec.payload, payload) !== undefined) {
                 return false;
             }
+
             const session = sessionOf(context);
+
             return spec.active(
                 extend(commandDocumentApi(composer(state), model, schema, lookup, context, session), context, session),
                 payload as P,

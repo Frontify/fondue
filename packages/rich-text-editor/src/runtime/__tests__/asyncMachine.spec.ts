@@ -148,18 +148,23 @@ const effectLabel = (effect: AsyncEffect) => {
     if (effect.type === 'discard') {
         return `discard:${effect.reason}`;
     }
+
     if (effect.type === 'pump') {
         return `pump:${effect.name}`;
     }
+
     if (effect.type === 'build') {
         return `build:${effect.capture ? 'capture' : String(effect.target !== null)}#${effect.sequence}`;
     }
+
     if (effect.type === 'release') {
         return 'release';
     }
+
     if ('operation' in effect) {
         return `${effect.type}:${effect.operation.id}`;
     }
+
     return effect.type;
 };
 
@@ -177,6 +182,7 @@ const summary = (state: AsyncMachine) =>
 
 const run = (machine: AsyncMachine, name: string) => {
     const { event, facts } = EVENTS[name] ?? { event: { type: 'settle' } as const };
+
     return next(machine, { ...event, facts: { ...FACTS, ...facts } } as AsyncEvent);
 };
 

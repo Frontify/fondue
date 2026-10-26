@@ -11,5 +11,6 @@ export const stateFromTree = (definition: CompiledDefinition, tree: unknown): Co
 
 export const withWholeDocumentSelected = (state: ConformanceState): ConformanceState => {
     const { doc } = state;
+
     return state.apply(state.tr.setSelection(TextSelection.between(doc.resolve(0), doc.resolve(doc.content.size))));
 };

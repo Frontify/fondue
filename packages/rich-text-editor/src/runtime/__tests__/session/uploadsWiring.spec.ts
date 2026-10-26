@@ -16,6 +16,7 @@ import { type AuthoringPolicy, type SelectionHandle } from '../../types';
 const build = (features: readonly Feature[]) => {
     const definition = compileDefinition(compileContentModel(features, { id: 'test.uploads', version: 1 }));
     const doc = definition.schema.node('doc', null, [definition.schema.node('paragraph')]);
+
     return { definition, state: EditorState.create({ doc }) };
 };
 
@@ -67,6 +68,7 @@ const setup = (
         report: () => undefined,
         changed,
     });
+
     return { service, lifecycle, events, picks, released, changed };
 };
 

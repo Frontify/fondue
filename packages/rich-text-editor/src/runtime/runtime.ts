@@ -215,17 +215,21 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     if (options.nodeViews !== undefined) {
         views.setNodeViews(options.nodeViews(runtime));
     }
+
     if (options.markViews !== undefined) {
         views.setMarkViews(options.markViews(runtime));
     }
+
     if (options.saves !== undefined) {
         saving.attach(options.saves(runtime));
     }
+
     display.primeStatus();
     runtimes.set(handle, runtime);
     liveResources.installedFeatures.set(
         handle,
         options.definition.model.capabilities.map(({ id }) => id),
     );
+
     return runtime;
 };

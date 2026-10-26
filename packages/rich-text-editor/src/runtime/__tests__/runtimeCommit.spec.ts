@@ -20,6 +20,7 @@ describe('the commit path', () => {
                 ) {
                     return null;
                 }
+
                 return state.tr.insertText('!', state.doc.content.size - 1);
             },
         });
@@ -157,6 +158,7 @@ describe('origins with an appended normalization', () => {
             if (!transactions.some(({ docChanged }) => docChanged) || state.doc.textContent.endsWith('!')) {
                 return null;
             }
+
             return state.tr.insertText('!', state.doc.content.size - 1);
         },
     });

@@ -21,12 +21,14 @@ const outcomeOf = (result: CommandResult): CommandOutcome => {
     if (result.status === 'rejected') {
         return { status: 'rejected', code: result.code };
     }
+
     return { status: result.status };
 };
 
 /** The document API over the live session, whose writes each commit as one undo step. */
 export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
     const { definition } = runtime;
+
     return documentApi({
         model: definition.model,
         schema: definition.schema,
@@ -54,13 +56,17 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
         capture: (range, options) => {
             if (range === undefined) {
                 const captured = runtime.handle.captureTarget(options);
+
                 return captured.status === 'captured' ? captured.target : undefined;
             }
+
             const positions = positionsIn(range, runtime.state.doc);
             if (positions === undefined) {
                 return undefined;
             }
+
             const captured = runtime.captureRange(positions, options);
+
             return captured.status === 'captured' ? captured.target : undefined;
         },
         release: (target) => runtime.handle.releaseTarget(target),
@@ -75,11 +81,13 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
                     scroll,
                 });
             }
+
             return true;
         },
         policy: () => runtime.policy,
         editable: () => {
             const { phase, mode } = runtime.handle.getSummary();
+
             return phase === 'ready' && mode === 'editable';
         },
         positionAt: (element) => {
@@ -87,6 +95,7 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
             if (view === undefined || !view.dom.contains(element)) {
                 return undefined;
             }
+
             return view.posAtDOM(element, 0);
         },
         document: () => runtime.handle.getSnapshot().document,

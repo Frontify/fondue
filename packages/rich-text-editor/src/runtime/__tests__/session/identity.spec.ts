@@ -21,6 +21,7 @@ describe('createIdentity', () => {
             documentId: 'doc-1',
             generate: () => {
                 calls += 1;
+
                 return `id-${calls}`;
             },
         });

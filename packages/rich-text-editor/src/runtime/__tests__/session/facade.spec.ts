@@ -52,6 +52,7 @@ const setup = () => {
         metrics: { measure },
         checks: { run },
     });
+
     return {
         facade,
         handle,

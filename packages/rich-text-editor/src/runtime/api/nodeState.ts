@@ -14,6 +14,7 @@ export const nodeStateApi = (
     source: ApiSource,
 ): Pick<DocumentApi, 'document' | 'policy' | 'editable' | 'optionsOf' | 'commands' | 'history' | 'nodeState'> => {
     const { edit, capability } = sharedEdits(source);
+
     return {
         document: () => source.document(source.state()),
         policy: () => source.policy(),
@@ -35,6 +36,7 @@ export const nodeStateApi = (
                 source.edit({
                     run: (state, dispatch) => {
                         dispatch?.(withNodeState(state.tr, [{ nodeId, key, value }]));
+
                         return true;
                     },
                     active: () => false,

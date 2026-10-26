@@ -51,22 +51,28 @@ export const textReplace = (rule: TextReplaceRule, state: EditorState, $cursor: 
         if (kept === '' || WORD.test(kept) || kept === '-' || kept === '>') {
             return null;
         }
+
         text = before.slice(0, -kept.length);
     }
+
     const found = rule.match.exec(text);
     if (found === null) {
         return null;
     }
+
     // A boundary rule replaces a whole run, so `a --- b` keeps its three hyphens, and `<!-- ` and `<-- ` stay as typed.
     const lead = text.charAt(found.index - 1);
     if (rule.boundary && (lead === found[0].charAt(0) || lead === '<' || lead === '!')) {
         return null;
     }
+
     const from = $cursor.pos - before.length + found.index;
     if (holdsCode(state, from, $cursor.pos)) {
         return null;
     }
+
     const replacement = text.replace(rule.match, rule.replace).slice(found.index);
+
     return state.tr.insertText(replacement, from, $cursor.pos - kept.length);
 };
 
@@ -77,12 +83,14 @@ const langAt = ($cursor: ResolvedPos): string => {
             return mark.attrs.lang;
         }
     }
+
     for (let depth = $cursor.depth; depth >= 0; depth -= 1) {
         const { lang } = $cursor.node(depth).attrs;
         if (typeof lang === 'string') {
             return lang;
         }
     }
+
     return 'en';
 };
 
@@ -91,18 +99,22 @@ export const quotes = (rule: QuotesRule, state: EditorState, $cursor: ResolvedPo
     if (!before.endsWith(rule.marker)) {
         return null;
     }
+
     const lang = langAt($cursor);
     let marks = QUOTES[lang];
     if (marks === undefined) {
         marks = QUOTES[lang.split('-')[0] ?? ''];
     }
+
     if (marks === undefined) {
         marks = ENGLISH;
     }
+
     let [open, close] = marks.primary;
     if (rule.marker === "'") {
         [open, close] = marks.secondary;
     }
+
     const typed = before.slice(0, -1);
     const previous = Array.from(typed).at(-1) ?? '';
     // An inner quote that the text before opened and did not close closes after a letter; otherwise that is an apostrophe.
@@ -113,11 +125,13 @@ export const quotes = (rule: QuotesRule, state: EditorState, $cursor: ResolvedPo
     if (innerOpen === marks.primary[0]) {
         innerOpened = depth > 1;
     }
+
     let quote = close;
     if (previous === '' || OPENS_AFTER.test(previous) || previous === marks.primary[0] || previous === innerOpen) {
         quote = open;
     } else if (rule.marker === "'" && WORD.test(previous) && !innerOpened) {
         quote = marks.apostrophe;
     }
+
     return state.tr.insertText(quote, $cursor.pos - 1, $cursor.pos);
 };

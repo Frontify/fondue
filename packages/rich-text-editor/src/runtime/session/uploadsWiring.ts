@@ -69,6 +69,7 @@ export const createUploadService = (a: {
             ? option.filter((type): type is string => typeof type === 'string')
             : DEFAULT_ACCEPT_TYPES;
     }
+
     const raw = createUploads({
         state,
         limits,
@@ -81,6 +82,7 @@ export const createUploadService = (a: {
         abort: (operations) => a.targets().coordinator.abortWhere((other) => operations.includes(other)),
         capture: (range) => {
             const captured = a.targets().captureRange({ purpose: 'replace-text', onIntersectingEdit: 'map' }, range);
+
             return captured.status === 'captured' ? captured.target : undefined;
         },
         release: (target) => a.targets().releaseTarget(target),
@@ -98,6 +100,7 @@ export const createUploadService = (a: {
             if (result.status === 'rejected') {
                 return result.code;
             }
+
             return result.status === 'applied' ? undefined : 'not-applicable';
         },
         // A completed upload's record is session state, no undo step; it completed in the background.
@@ -119,6 +122,7 @@ export const createUploadService = (a: {
             }
         },
     });
+
     return {
         raw,
         accepts: acceptTypes,
@@ -141,6 +145,7 @@ export const installMedia = (
     if (uploads.accepts === undefined) {
         return;
     }
+
     sessions.set(runtime, {
         placeAsset,
         uploads: {

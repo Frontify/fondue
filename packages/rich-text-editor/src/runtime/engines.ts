@@ -12,12 +12,14 @@ const engineCopyDisagrees = (state: EditorState): boolean => {
     if (!(NodeSelection.create(state.doc, 0).content() instanceof Slice)) {
         return true;
     }
+
     try {
         // `replaceWith` passes this fragment to the `Fragment.from` of `prosemirror-transform`, which throws for another copy's.
         state.tr.replaceWith(0, 0, Fragment.empty);
     } catch (error) {
         return error instanceof RangeError;
     }
+
     return false;
 };
 
@@ -27,6 +29,7 @@ const viewCopyDisagrees = (schema: Schema): boolean => {
         readonly domParser?: unknown;
         readonly domSerializer?: unknown;
     };
+
     return (
         (domParser !== undefined && !(domParser instanceof DOMParser)) ||
         (domSerializer !== undefined && !(domSerializer instanceof DOMSerializer))
@@ -38,7 +41,9 @@ const firstOnPage = (found: () => boolean): boolean => {
     if (reported || !found()) {
         return false;
     }
+
     reported = true;
+
     return true;
 };
 

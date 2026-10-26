@@ -46,12 +46,14 @@ const mapTarget = (target: Target, mapping: Transaction['mapping']): Target => {
     if (target.purpose === 'insert' || target.from === target.to) {
         endAssoc = 1;
     }
+
     for (const map of mapping.maps) {
         // oxlint-disable-next-line unicorn/no-array-for-each -- `StepMap.forEach` is the public way to read a step's changed ranges.
         map.forEach((start, end, newStart, newEnd) => {
             if (start < to && end > from) {
                 intersected = true;
             }
+
             // A step that removes the whole range, or a span around an empty one, deletes it, though its positions still resolve.
             const removes = (from < to && start <= from && end >= to) || (start < from && end > to);
             // An attribute edit of a leaf replaces it in place, which the `edit-node` check of type and `nodeId` judges.
@@ -63,7 +65,9 @@ const mapTarget = (target: Target, mapping: Transaction['mapping']): Target => {
         from = map.map(from, 1);
         to = map.map(to, endAssoc);
     }
+
     const invalidated = intersected && target.onIntersectingEdit === 'invalidate';
+
     return { ...target, from, to, valid: !deleted && !invalidated };
 };
 
@@ -77,17 +81,21 @@ export const targetsPlugin = new Plugin<Targets>({
             if (!transaction.docChanged && meta === undefined) {
                 return targets;
             }
+
             const next = new Map<string, Target>();
             for (const [id, target] of targets) {
                 let mapped = target;
                 if (target.valid) {
                     mapped = mapTarget(target, transaction.mapping);
                 }
+
                 next.set(id, mapped);
             }
+
             if (meta !== undefined && 'restore' in meta) {
                 return meta.restore;
             }
+
             if (meta !== undefined && 'release' in meta) {
                 for (const id of meta.release) {
                     next.delete(id);
@@ -95,6 +103,7 @@ export const targetsPlugin = new Plugin<Targets>({
             } else if (meta !== undefined) {
                 next.set(meta.id, meta.target);
             }
+
             return next;
         },
     },
@@ -118,6 +127,7 @@ export const captureTarget = (
     if (purpose === 'insert') {
         to = from;
     }
+
     if (purpose === 'edit-node') {
         const after = state.selection.$from.nodeAfter;
         // A node whose type carries a `nodeId` needs one to be edited through a target.
@@ -127,7 +137,9 @@ export const captureTarget = (
             to = from + after.nodeSize;
         }
     }
+
     const target: Target = { purpose, onIntersectingEdit, from, to, node, valid };
+
     return state.tr.setMeta(TARGETS, { id, target });
 };
 
@@ -137,6 +149,7 @@ export const releaseTargets = (state: EditorState, ids?: readonly string[]): Tra
     if (held.length === 0) {
         return undefined;
     }
+
     return state.tr.setMeta(TARGETS, { release: held });
 };
 
@@ -154,6 +167,7 @@ export const restoreTargets = (
     if (earlier.size === later.size && [...later.keys()].every((id) => earlier.has(id))) {
         return undefined;
     }
+
     const back = mapping.invert();
     const restored = new Map<string, Target>();
     for (const [id, target] of later) {
@@ -165,6 +179,7 @@ export const restoreTargets = (
             restored.set(id, { ...target, from, to: Math.max(from, back.map(target.to, -1)) });
         }
     }
+
     return before.tr.setMeta(TARGETS, { restore: restored });
 };
 
@@ -174,10 +189,12 @@ export const targetSelection = (state: EditorState, id: string): Selection | und
     if (target === undefined || !target.valid) {
         return undefined;
     }
+
     const { doc } = state;
     if (target.purpose !== 'edit-node') {
         return TextSelection.between(doc.resolve(target.from), doc.resolve(target.to));
     }
+
     // Valid only while a node of that type and `nodeId` sits at the mapped position.
     const node = doc.nodeAt(target.from);
     if (
@@ -188,5 +205,6 @@ export const targetSelection = (state: EditorState, id: string): Selection | und
     ) {
         return undefined;
     }
+
     return NodeSelection.create(doc, target.from);
 };

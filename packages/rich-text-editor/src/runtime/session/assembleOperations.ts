@@ -36,10 +36,12 @@ export const assembleOperations = (editing: Editing, options: EditorRuntimeOptio
             if (operation.target !== null) {
                 target = { target: operation.target };
             }
+
             const outcome = commands.run(operation.command, result, target, 'async');
             if (outcome.status === 'rejected') {
                 return outcome.code;
             }
+
             return undefined;
         },
     });
@@ -77,5 +79,6 @@ export const assembleOperations = (editing: Editing, options: EditorRuntimeOptio
     });
     busy.afterEach(queue.drain);
     const actions = createActions({ definition, limits, store, commit, commands, targets });
+
     return { ...editing, targets, focus, commands, queue, actions };
 };

@@ -37,6 +37,7 @@ const updateFails = new Plugin({
         nodeViews: {
             paragraph: (node) => {
                 const dom = document.createElement('p');
+
                 return {
                     dom,
                     contentDOM: dom,
@@ -44,6 +45,7 @@ const updateFails = new Plugin({
                         if (next.textContent.includes('!')) {
                             throw new Error('node view update failure');
                         }
+
                         return next.type === node.type;
                     },
                 };
@@ -60,6 +62,7 @@ afterEach(() => {
     for (const runtime of started.splice(0)) {
         runtime.handle.dispose();
     }
+
     document.body.replaceChildren();
     vi.useRealTimers();
 });
@@ -70,6 +73,7 @@ const create = (...plugins: readonly Plugin[]) => {
     if (result.status !== 'editable' || tree === undefined) {
         throw new Error('expected an editable document');
     }
+
     const compiled = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model)));
     const runtime = createEditorRuntime({
         definition: { ...compiled, plugins: [...compiled.plugins, ...plugins] },
@@ -91,6 +95,7 @@ const create = (...plugins: readonly Plugin[]) => {
     runtime.handle.subscribe('operationMetric', (metric: OperationMetric) => metrics.push(metric));
     runtime.handle.subscribe('diagnostic', (diagnostic: Diagnostic) => diagnostics.push(diagnostic));
     const attach = () => runtime.attach(document.body.appendChild(document.createElement('div')));
+
     return { runtime, handle: runtime.handle, ready, disposed, metrics, diagnostics, attach };
 };
 
@@ -111,6 +116,7 @@ describe('the phase of a session', () => {
         if (view === undefined) {
             throw new Error('no view');
         }
+
         view.dispatch(view.state.tr.insertText('!', 3));
         expect(handle.getSummary().phase).toBe('faulted');
         vi.runAllTimers();
@@ -122,6 +128,7 @@ describe('the phase of a session', () => {
 
     it('stays disposed, and reports no fault, when a plugin view disposes the session and throws while it mounts', () => {
         let dispose = () => {};
+
         const disposes = new Plugin({
             view: () => {
                 dispose();

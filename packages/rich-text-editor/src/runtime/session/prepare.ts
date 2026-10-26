@@ -37,6 +37,7 @@ export const pluginError = (error: unknown, featureId: string | undefined) => {
     if (featureId === undefined) {
         return diagnostic('runtime.plugin-error', undefined, { name }, 'error');
     }
+
     return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
 };
 
@@ -87,6 +88,7 @@ const createBatches = (a: PrepareArgs) => {
         if (isProvisional(root)) {
             root.setMeta(NORMALIZE_META, 'later');
         }
+
         const started = Date.now();
         // History groups by this time, never by the `Date.now()` a transaction takes when created.
         root.setTime(started);
@@ -102,23 +104,28 @@ const createBatches = (a: PrepareArgs) => {
                     diagnostic: pluginError(error, batch.failed?.featureId),
                 };
             }
+
             const chain: readonly PluginOrigin[] = error.chain;
             const details = {
                 features: unique(chain.map(({ featureId }) => featureId)),
                 capabilities: unique(chain.map(({ capability }) => capability)),
                 count: chain.length,
             };
+
             return { code: 'not-ready', fault: diagnostic('runtime.append-limit', undefined, details, 'error') };
         }
+
         if (applied.transactions.length === 0) {
             return { code: 'not-applicable' };
         }
+
         // A batch that keeps the document, such as a selection move, has nothing to check.
         const { doc } = applied.state;
         const mapping = root.mapping.slice();
         for (const transaction of applied.transactions.slice(1)) {
             mapping.appendMapping(transaction.mapping);
         }
+
         // The settle repair is judged with the composition it repairs, from the published document.
         if (doc !== store.state.doc && !(fromView && isProvisional(root)) && root.getMeta(NORMALIZE_META) !== 'now') {
             const { policy: refused, limit } = policy.finalCheck(
@@ -131,10 +138,13 @@ const createBatches = (a: PrepareArgs) => {
                 if (firedRule(applied.transactions)) {
                     return prepare(withoutRules(root), ids, fromView);
                 }
+
                 return { code: 'not-allowed', limit };
             }
         }
+
         const { transactions } = applied;
+
         return { candidate: applied.state, root, transactions, mapping, started, appended: transactions.length - 1 };
     };
 
@@ -142,12 +152,15 @@ const createBatches = (a: PrepareArgs) => {
         const setting = a.inputRules();
         if (setting === false) {
             withoutRules(root);
+
             return;
         }
+
         let exclude: readonly string[] = [];
         if (setting !== undefined) {
             exclude = setting.exclude;
         }
+
         const refused = Object.entries(policy.current().features)
             .filter(([, rules]) => !rules.create)
             .map(([id]) => id);
@@ -169,19 +182,25 @@ export const createPrepare = (a: PrepareArgs): Prepare => {
         if (id !== undefined) {
             return id;
         }
+
         return a.generate();
     };
+
     const queriedIds = (): (() => string) => {
         let at = 0;
+
         return () => {
             if (at === recorded.length) {
                 recorded.push(a.generate());
             }
+
             const id = recorded[at] as string;
             at += 1;
+
             return id;
         };
     };
+
     return {
         isProvisional,
         markRules,
@@ -196,7 +215,9 @@ export const createPrepare = (a: PrepareArgs): Prepare => {
             } else {
                 prepared = prepare(root, installedId, true);
             }
+
             checked = undefined;
+
             return prepared;
         },
         exceededLimit: (root, followUp) => {
@@ -206,12 +227,14 @@ export const createPrepare = (a: PrepareArgs): Prepare => {
             if (followUp !== true && nodes > limits.maxDocumentNodes && nodes > storedNodeCount(store.state.doc)) {
                 return 'maxDocumentNodes';
             }
+
             const query = queriedIds();
             let drawn = 0;
             const prepared = prepare(
                 root,
                 () => {
                     drawn += 1;
+
                     return query();
                 },
                 true,
@@ -219,9 +242,11 @@ export const createPrepare = (a: PrepareArgs): Prepare => {
             if ('candidate' in prepared) {
                 checked = { from: store.state, drawn, prepared };
             }
+
             if ('limit' in prepared) {
                 return prepared.limit;
             }
+
             return undefined;
         },
     };

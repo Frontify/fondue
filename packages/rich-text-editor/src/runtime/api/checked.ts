@@ -6,6 +6,7 @@ import { attributesOf, compiledModel, isValidValue } from '#/model/internal';
 /** The URL policy of the feature that installs a node or mark. */
 export const policyOf = (model: ContentModel, featureId: string) => {
     const options = compiledModel(model).features.find(({ id }) => id === featureId)?.options;
+
     return options === undefined ? undefined : hrefPolicyOf(options);
 };
 
@@ -14,6 +15,7 @@ const tooLong = (value: unknown, max: number): boolean => {
     if (typeof value === 'string') {
         return value.length > max;
     }
+
     return Array.isArray(value) && value.some((item) => tooLong(item, max));
 };
 
@@ -27,6 +29,7 @@ const checkedUrl = (
     if (declaration.type !== 'url' || typeof value !== 'string') {
         return undefined;
     }
+
     return checkHref(value, policyOf(model, featureId));
 };
 
@@ -65,6 +68,7 @@ export const checkedAttrs = (
         const mark = marks.find((candidate) => candidate.name === name);
         if (mark !== undefined) {
             const { declaration } = mark;
+
             return [
                 {
                     attrs: declaration.attrs,
@@ -73,10 +77,12 @@ export const checkedAttrs = (
                 },
             ];
         }
+
         const node = nodes.find((candidate) => candidate.name === name);
         if (node === undefined) {
             return [];
         }
+
         return [
             {
                 attrs: attributesOf(node),
@@ -88,6 +94,7 @@ export const checkedAttrs = (
     if (owners.length === 0 || Object.hasOwn(attrs, 'nodeId')) {
         return undefined;
     }
+
     const checked: Record<string, unknown> = {};
     for (const owner of owners) {
         const values: Record<string, unknown> = {};
@@ -97,38 +104,48 @@ export const checkedAttrs = (
             if (declaration === undefined) {
                 continue;
             }
+
             // Decode exempts `href` from the length limit: the URL check bounds it.
             if (!isValidValue(declaration, value) || (name !== 'href' && tooLong(value, maxLength))) {
                 return undefined;
             }
+
             values[name] = value;
             const url = checkedUrl(model, owner.featureId, declaration, value);
             if (url !== undefined) {
                 if (!url.ok) {
                     return undefined;
                 }
+
                 values[name] = url.href;
             }
+
             checked[name] = values[name];
         }
+
         for (const [name, declaration] of Object.entries(owner.attrs)) {
             // The runtime gives a new node its `nodeId` before a commit publishes it.
             if (!whole || name === 'nodeId' || Object.hasOwn(values, name)) {
                 continue;
             }
+
             if (!('default' in declaration)) {
                 return undefined;
             }
+
             values[name] = declaration.default;
         }
+
         const group = owner.exactlyOne ?? [];
         const set = group.filter((name) => values[name] !== null && values[name] !== undefined);
         if (group.some((name) => Object.hasOwn(values, name)) && set.length !== 1) {
             return undefined;
         }
     }
+
     if (Object.keys(attrs).some((name) => !Object.hasOwn(checked, name))) {
         return undefined;
     }
+
     return checked as JsonObject;
 };

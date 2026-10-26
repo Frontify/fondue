@@ -49,6 +49,7 @@ const caretAfter = async (page: Page, text: string) => {
 /** Drives composition as an IME does, through CDP. */
 const imeOf = async (page: Page) => {
     const cdp: CDPSession = await page.context().newCDPSession(page);
+
     return {
         compose: (text: string) =>
             cdp.send('Input.imeSetComposition', { text, selectionStart: text.length, selectionEnd: text.length }),
@@ -65,6 +66,7 @@ const startUpload = (page: Page, command: string, targetText?: string) =>
             if (rte.runtime === undefined) {
                 throw new Error('no runtime');
             }
+
             let target;
             if (text !== undefined) {
                 rte.setSelection(rte.handle, { text });
@@ -73,6 +75,7 @@ const startUpload = (page: Page, command: string, targetText?: string) =>
                     target = captured.target;
                 }
             }
+
             const diagnostics: string[] = [];
             kept.diagnostics = diagnostics;
             rte.handle.subscribe('diagnostic', (diagnostic) => diagnostics.push(diagnostic.code));
@@ -123,6 +126,7 @@ test('keeps sequence and the snapshot across three composition updates, then pub
             if (kept.first === undefined) {
                 kept.first = snapshot;
             }
+
             return {
                 sequence: handle.getSummary().sequence,
                 same: kept.first === snapshot,
@@ -130,6 +134,7 @@ test('keeps sequence and the snapshot across three composition updates, then pub
                 content: snapshot.document.content,
             };
         });
+
         return { ...seen, content: firstText(seen.content) };
     };
 
@@ -138,6 +143,7 @@ test('keeps sequence and the snapshot across three composition updates, then pub
         await ime.compose(text);
         updates.push(await read());
     }
+
     await ime.commit('xyz');
 
     expect(updates).toEqual(
@@ -163,6 +169,7 @@ test('runs a queued intent and publishes the snapshot only once compositionend, 
             published: (window.kept as Required<Kept>).published,
             compositionActive: (window.rte as Rte).handle.getSnapshot().compositionActive,
         }));
+
         return { ...seen, published: seen.published.map(firstText), result: await queuedResult(page) };
     };
 
@@ -241,6 +248,7 @@ test('keeps the composed text, refuses replaceDocument and changes contenteditab
             revision: null,
             document: { ...document, content: { ...document.content, content: [paragraph] } as never },
         };
+
         return handle.replaceDocument({
             expected: stamp,
             next,
@@ -276,6 +284,7 @@ test('keeps the surface editable when the mode returns to editable within a comp
         handle.setMode('readonly');
         const readonly = surface.getAttribute('contenteditable');
         handle.setMode('editable');
+
         return [readonly, surface.getAttribute('contenteditable')];
     });
     await ime.commit('x');
@@ -400,6 +409,7 @@ test('fires no input rule for composed text, which stays one undo step @engine',
     const undone = await page.evaluate(() => {
         const { handle } = window.rte as Rte;
         handle.execute('history.undo');
+
         return handle.query('history.undo').enabled;
     });
     expect([await text(), undone]).toEqual(['ab.', false]);

@@ -31,6 +31,7 @@ export const RANGES = new WeakMap<object, Positions & { readonly doc: Node }>();
 export const rangeOf = (doc: Node, from: number, to: number): EditorRange => {
     const range = Object.freeze({});
     RANGES.set(range, { from, to, doc });
+
     // The one place a range is minted: `EditorRange` is a brand with no runtime shape.
     return range as unknown as EditorRange;
 };
@@ -44,6 +45,7 @@ export const positionsIn = (range: EditorRange, doc: Node): Positions | undefine
     if (read === undefined || read.doc !== doc) {
         return undefined;
     }
+
     return read;
 };
 
@@ -83,6 +85,7 @@ export const idOf = (node: Node): string | null => {
     if (typeof node.attrs.nodeId === 'string') {
         return node.attrs.nodeId;
     }
+
     return null;
 };
 
@@ -94,10 +97,13 @@ export const sharedEdits = (source: ApiSource) => {
     const edit = (command: EngineCommand, payload?: unknown) => {
         if (command.refuses?.(source.state(), payload) === true) {
             source.refused();
+
             return false;
         }
+
         return source.edit(command, payload).status !== 'rejected';
     };
+
     const capability = (implementation: CapabilityImplementation, args: JsonObject) =>
         implementation(args, schema, lookup);
     /**
@@ -113,7 +119,9 @@ export const sharedEdits = (source: ApiSource) => {
         extra: JsonObject = {},
     ) => {
         const checked = checkedAttrs(model, types, attrs ?? {}, maxAttributeLength, whole);
+
         return checked !== undefined && edit(capability(implementation, args), Object.assign({ ...checked }, extra));
     };
+
     return { edit, capability, editWith };
 };

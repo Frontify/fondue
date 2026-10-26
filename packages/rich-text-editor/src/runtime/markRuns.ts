@@ -21,19 +21,24 @@ const runOf = ($pos: ResolvedPos, index: number, mark: Mark): MarkRun => {
     while (holds(first - 1)) {
         first -= 1;
     }
+
     let last = index;
     while (holds(last + 1)) {
         last += 1;
     }
+
     let from = $pos.start();
     for (let child = 0; child < first; child += 1) {
         from += parent.child(child).nodeSize;
     }
+
     let to = from;
     for (let child = first; child <= last; child += 1) {
         to += parent.child(child).nodeSize;
     }
+
     const text = parent.textBetween(from - $pos.start(), to - $pos.start(), undefined, OBJECT_REPLACEMENT);
+
     return { from, to, text, attrs: mark.attrs };
 };
 
@@ -42,6 +47,7 @@ const runAround = ($pos: ResolvedPos, type: MarkType): MarkRun | undefined => {
     if (!$pos.parent.inlineContent) {
         return undefined;
     }
+
     const index = $pos.index();
     const { parent } = $pos;
     for (const at of [index, index - 1]) {
@@ -49,11 +55,13 @@ const runAround = ($pos: ResolvedPos, type: MarkType): MarkRun | undefined => {
         if (at < 0 || at >= parent.childCount || (at === index - 1 && $pos.textOffset > 0)) {
             continue;
         }
+
         const mark = type.isInSet(parent.child(at).marks);
         if (mark !== undefined) {
             return runOf($pos, at, mark);
         }
     }
+
     return undefined;
 };
 
@@ -67,6 +75,7 @@ export const markRunAt = (state: EditorState, type: MarkType): MarkRun | undefin
     if (run === undefined || selection.from < run.from || selection.to > run.to) {
         return undefined;
     }
+
     return run;
 };
 
@@ -75,5 +84,6 @@ export const markRunAtPos = (state: EditorState, pos: number, type: MarkType): M
     if (pos < 0 || pos > state.doc.content.size) {
         return undefined;
     }
+
     return runAround(state.doc.resolve(pos), type);
 };

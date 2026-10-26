@@ -27,16 +27,19 @@ export const contentApi = (
     const { maxAttributeLength } = limits;
     const { edit, capability } = sharedEdits(source);
     const { rejectedWrite, spanOf, commit, write, blockOf } = writesOf(source);
+
     return {
         selectedText: () => {
             const { selection, doc } = source.state();
             if (selection.empty || !selection.$from.sameParent(selection.$to)) {
                 return '';
             }
+
             return doc.textBetween(selection.from, selection.to);
         },
         selectedRange: () => {
             const { selection, doc } = source.state();
+
             return rangeOf(doc, selection.from, selection.to);
         },
         insert: {
@@ -46,6 +49,7 @@ export const contentApi = (
                 if (type === undefined || (!type.isBlock && (topLevel || options?.content !== undefined))) {
                     return { status: 'rejected', code: 'invalid' };
                 }
+
                 const state = source.state();
                 if (!type.isBlock) {
                     const checked = checkedAttrs(model, [node], attrs ?? {}, maxAttributeLength, true);
@@ -53,23 +57,29 @@ export const contentApi = (
                     if (checked === undefined) {
                         return { status: 'rejected', code: 'invalid' };
                     }
+
                     if (!$from.parent.canReplaceWith($from.index(), $from.index(), type)) {
                         return { status: 'rejected', code: 'not-applicable' };
                     }
+
                     const inline = type.create(checked);
                     // A node whose `marks` declaration is empty, such as a mention, takes no mark from the text around it.
                     const transaction = state.tr.replaceSelectionWith(inline, type.spec.marks !== '').scrollIntoView();
+
                     return commit(state, transaction, firstWrite(transaction), Fragment.from(inline));
                 }
+
                 const content = options?.content;
                 const block = blockOf(type, attrs ?? {}, content);
                 if (typeof block === 'string') {
                     return rejectedWrite(block);
                 }
+
                 const transaction = placeBlock(state, block, topLevel);
                 if (transaction === undefined) {
                     return { status: 'rejected', code: 'not-applicable' };
                 }
+
                 return commit(state, transaction, firstWrite(transaction), Fragment.from(block));
             },
             allowed: (node, options) => {
@@ -77,12 +87,15 @@ export const contentApi = (
                 if (type === undefined) {
                     return false;
                 }
+
                 const state = source.state();
                 const topLevel = options?.place === 'after-top-level-block';
                 if (type.isBlock) {
                     return placesBlock(state, type, topLevel);
                 }
+
                 const { $from } = state.selection;
+
                 return !topLevel && $from.parent.canReplaceWith($from.index(), $from.index(), type);
             },
             text: (text) => edit(capability(EDITS.insertText, {}), { text }),
@@ -93,8 +106,10 @@ export const contentApi = (
                 if (span === undefined) {
                     return undefined;
                 }
+
                 const nodes = source.state().doc.slice(span.from, span.to).content.toJSON() as TreeNode[] | null;
                 const encoded = encodeTree({ type: 'doc', content: nodes ?? [] }, model).document.content.content;
+
                 return encoded ?? [];
             },
             replace: (range, nodes) => write(spanOf(range, false), nodes),
@@ -111,6 +126,7 @@ export const contentApi = (
                 if (pos === undefined || node === null) {
                     return false;
                 }
+
                 if (target.at === 'node') {
                     transaction = state.tr.setSelection(NodeSelection.create(doc, pos));
                 } else {
@@ -121,10 +137,12 @@ export const contentApi = (
                 if (range === undefined) {
                     return false;
                 }
+
                 transaction = state.tr.setSelection(
                     TextSelection.between(doc.resolve(range.from), doc.resolve(range.to)),
                 );
             }
+
             return source.select(transaction, options?.scroll === true);
         },
         targets: {

@@ -16,6 +16,7 @@ const marginsOf = (view: EditorView) => {
     if (typeof margin === 'number') {
         return { top: margin, bottom: margin };
     }
+
     return { top: margin.top, bottom: margin.bottom };
 };
 
@@ -32,6 +33,7 @@ const scrollBandIntoView = (view: EditorView, band: Band, from: Element) => {
     if (owner === null) {
         return;
     }
+
     const margin = marginsOf(view);
     const page = from.ownerDocument.scrollingElement;
     let { top, bottom } = band;
@@ -40,6 +42,7 @@ const scrollBandIntoView = (view: EditorView, band: Band, from: Element) => {
         if (!atPage && !scrolls(parent, owner)) {
             continue;
         }
+
         const bounds = atPage ? { top: 0, bottom: owner.innerHeight } : parent.getBoundingClientRect();
         let move = 0;
         if (top < bounds.top + margin.top) {
@@ -47,6 +50,7 @@ const scrollBandIntoView = (view: EditorView, band: Band, from: Element) => {
         } else if (bottom > bounds.bottom - margin.bottom) {
             move = Math.min(bottom - bounds.bottom + margin.bottom, top - bounds.top - margin.top);
         }
+
         if (move !== 0) {
             const before = atPage ? owner.scrollY : parent.scrollTop;
             if (atPage) {
@@ -54,10 +58,12 @@ const scrollBandIntoView = (view: EditorView, band: Band, from: Element) => {
             } else {
                 parent.scrollTop += move;
             }
+
             const moved = (atPage ? owner.scrollY : parent.scrollTop) - before;
             top -= moved;
             bottom -= moved;
         }
+
         if (atPage) {
             return;
         }
@@ -70,11 +76,13 @@ export const keepScroll = (from: Element): (() => void) => {
     for (let parent: Element | null = from; parent !== null; parent = parent.parentElement) {
         kept.push({ element: parent, top: parent.scrollTop, left: parent.scrollLeft });
     }
+
     return () => {
         for (const { element, top, left } of kept) {
             if (element.scrollTop !== top) {
                 element.scrollTop = top;
             }
+
             if (element.scrollLeft !== left) {
                 element.scrollLeft = left;
             }
@@ -89,7 +97,9 @@ export const scrollSelectionIntoView = (view: EditorView, selection: Selection):
         if (node instanceof Element) {
             scrollBandIntoView(view, node.getBoundingClientRect(), node);
         }
+
         return;
     }
+
     scrollBandIntoView(view, view.coordsAtPos(selection.head), view.dom);
 };

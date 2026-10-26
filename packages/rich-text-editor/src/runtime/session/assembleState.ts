@@ -48,12 +48,14 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
         key: new PluginKey('rte.typing'),
         view: (editorView) => {
             late.views.capture(editorView);
+
             return {};
         },
         props: {
             handleDOMEvents: {
                 beforeinput: () => {
                     late.commit.markTyping();
+
                     return false;
                 },
             },
@@ -120,6 +122,7 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
         options: () => {
             const given = options.contentChecks?.();
             const shown = given ?? { locale: { translationStrings: {} } };
+
             return {
                 ...shown,
                 model: definition.model,
@@ -127,5 +130,6 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
             };
         },
     });
+
     return { ...core, uploads, settling, store, history, display, checks };
 };

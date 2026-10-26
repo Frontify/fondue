@@ -64,6 +64,7 @@ const offersFiles = (model: ContentModel, view: EditorView, payload: Payload, pl
     if (plain) {
         return false;
     }
+
     return (
         view.state.schema.marks.link === undefined || hrefOf(payload.text, markHrefPolicy(model, 'link')) === undefined
     );
@@ -77,9 +78,12 @@ const attempt = (connected: Connected, build: () => Pasted | undefined): Pasted 
         // Markup nested past the parser's depth is a structure limit, as it is for `fromHTML`.
         if (error instanceof RangeError) {
             reject(connected, 'maxDepth');
+
             return null;
         }
+
         reject(connected, 'error');
+
         return null;
     }
 };
@@ -113,6 +117,7 @@ const copies = (view: EditorView, event: DragEvent) => {
     if (owner !== null && isApple(owner.navigator)) {
         return event.altKey;
     }
+
     return event.ctrlKey;
 };
 
@@ -135,6 +140,7 @@ const selectedSlice = (selection: Selection): Slice => {
     ) {
         return new Slice(Fragment.from(parent), 0, 0);
     }
+
     return selection.content();
 };
 
@@ -143,16 +149,19 @@ const copy = (model: ContentModel, view: EditorView, event: ClipboardEvent) => {
     if (connected === undefined) {
         return false;
     }
+
     const { selection } = view.state;
     if (selection.empty || event.clipboardData === null) {
         return true;
     }
+
     event.preventDefault();
     writeFlavors(model, view, connected.session, event.clipboardData, selectedSlice(selection));
     // `handleDOMEvents` runs while the view is not editable too.
     if (event.type === 'cut' && view.editable) {
         view.dispatch(view.state.tr.deleteSelection().scrollIntoView().setMeta('uiEvent', 'cut'));
     }
+
     return true;
 };
 
@@ -171,6 +180,7 @@ const pasteFrom = (
     if (rejectsSize(connected, payload)) {
         return;
     }
+
     const { tr } = view.state;
     const { from, to } = tr.selection;
     const plain = shiftHeld.get(view) === true;
@@ -178,6 +188,7 @@ const pasteFrom = (
     if (files.length > 0 && offersFiles(model, view, payload, plain) && intake(view, files, 'paste', from, to)) {
         return;
     }
+
     const settings = settingsOf(model, view, connected, plain);
     const pasted = attempt(connected, () => pastePayload(tr, from, to, payload, settings));
     if (pasted !== null) {
@@ -190,11 +201,14 @@ const paste = (model: ContentModel, intake: FileIntake, view: EditorView, event:
     if (connected === undefined) {
         return false;
     }
+
     if (pasteBlocked(view) || event.clipboardData === null) {
         return true;
     }
+
     event.preventDefault();
     pasteFrom(model, intake, view, connected, payloadOf(event.clipboardData), [...event.clipboardData.files]);
+
     return true;
 };
 
@@ -213,11 +227,13 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
     if (connected === undefined) {
         return false;
     }
+
     const data = event.dataTransfer;
     const at = view.posAtCoords({ left: event.clientX, top: event.clientY });
     if (!view.editable || data === null || at === null) {
         return true;
     }
+
     event.preventDefault();
     const { tr } = view.state;
     let pasted: Pasted | null | undefined;
@@ -227,6 +243,7 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
     if ((dragged === undefined || copying) && rejectsSize(connected, payload)) {
         return true;
     }
+
     // A copy of an island whose `nodeId` is already here takes the dropped flavors instead, as a paste would.
     if (dragged === undefined || (copying && islandsCannotStay(dragged, tr.doc, false))) {
         // A drop from outside, or an inside copy that falls back, takes the paste order at the drop cursor's block boundary.
@@ -235,6 +252,7 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
         if (connected.session.singleLine !== true) {
             position = dropPoint(tr.doc, at.pos, blockSlice(view)) ?? at.pos;
         }
+
         const files = [...data.files];
         if (dragged === undefined && files.length > 0 && offersFiles(model, view, payload, false)) {
             view.focus();
@@ -242,6 +260,7 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
                 return true;
             }
         }
+
         const settings = settingsOf(model, view, connected, false);
         pasted = attempt(connected, () => pastePayload(tr, position, position, payload, settings));
     } else {
@@ -254,15 +273,19 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
         } else {
             tr.deleteSelection();
         }
+
         const position = tr.mapping.map(point);
         insertAndSelect(tr, position, position, slice);
         pasted = { droppedMedia: 0 };
     }
+
     if (pasted === null) {
         return true;
     }
+
     view.focus();
     commit(view, connected, tr, pasted, 'drop');
+
     return true;
 };
 
@@ -271,17 +294,20 @@ const dragstart = (model: ContentModel, view: EditorView, event: DragEvent) => {
     if (connected === undefined) {
         return false;
     }
+
     const data = event.dataTransfer;
     const { selection } = view.state;
     // With nothing selected the browser keeps the drag data of what the pointer took, such as a link.
     if (data === null || selection.empty) {
         return true;
     }
+
     const slice = selectedSlice(selection);
     writeFlavors(model, view, connected.session, data, slice);
     data.effectAllowed = 'copyMove';
     drags.set(view, slice);
     view.dragging = { slice, move: !copies(view, event) };
+
     return true;
 };
 
@@ -297,8 +323,10 @@ export const clipboardPlugin =
                     if (connected === undefined || pasteBlocked(view)) {
                         return;
                     }
+
                     pasteFrom(model, intake, view, connected, payload, files);
                 });
+
                 // The Markdown reader loads once the editor is idle, and a dispose before then cancels it.
                 return { destroy: loadMarkdownReaderOnIdle() };
             },
@@ -306,12 +334,14 @@ export const clipboardPlugin =
                 handleDOMEvents: {
                     keydown: (view, event) => {
                         shiftHeld.set(view, (event.key === 'Shift' || event.shiftKey) && event.key !== 'Insert');
+
                         return false;
                     },
                     keyup: (view, event) => {
                         if (event.key === 'Shift') {
                             shiftHeld.set(view, false);
                         }
+
                         return false;
                     },
                     copy: (view, event) => copy(model, view, event),
@@ -324,16 +354,19 @@ export const clipboardPlugin =
                         if (view.dragging === null && view.editable && !singleLine) {
                             view.dragging = { slice: blockSlice(view), move: false };
                         }
+
                         return false;
                     },
                     dragleave: (view, event) => {
                         if (!drags.has(view) && !view.dom.contains(event.relatedTarget as Element | null)) {
                             view.dragging = null;
                         }
+
                         return false;
                     },
                     dragend: (view) => {
                         drags.delete(view);
+
                         return false;
                     },
                     drop: (view, event) => drop(model, intake, view, event),
@@ -345,10 +378,12 @@ export const clipboardPlugin =
                 if (followUp === undefined || transactions.length !== 1) {
                     return null;
                 }
+
                 const next = followUp(state);
                 if (next === null) {
                     return null;
                 }
+
                 return closeGroup(next);
             },
         });

@@ -58,6 +58,7 @@ export const createPolicy = ({
         policy: breaks(before, doc, mapping, history),
         limit: exceeds(doc, before),
     });
+
     return {
         current: () => policy,
         revision: () => revision,
@@ -76,6 +77,7 @@ export const createPolicy = ({
             if (command.policyRefuses?.(policy, payload) === true || command.refuses?.(base, payload) === true) {
                 return 'not-allowed';
             }
+
             return undefined;
         },
         writeRefusal: (before, transaction) => {
@@ -83,9 +85,11 @@ export const createPolicy = ({
             if (checked.policy) {
                 return 'policy';
             }
+
             if (checked.limit !== undefined) {
                 return 'limit';
             }
+
             return undefined;
         },
     };

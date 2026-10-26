@@ -25,6 +25,7 @@ export type Lifecycle = {
 export const createLifecycle = (): Lifecycle => {
     const end = new AbortController();
     let current: Phase = 'mounting';
+
     return {
         phase: () => current,
         is: (...phases) => phases.includes(current),
@@ -35,8 +36,10 @@ export const createLifecycle = (): Lifecycle => {
                 if (process.env.NODE_ENV !== 'production') {
                     throw new Error(`Illegal session phase move from ${current} to ${next}.`);
                 }
+
                 return;
             }
+
             current = next;
             if (next === 'disposed') {
                 end.abort();

@@ -15,6 +15,7 @@ export const setBlock: CapabilityImplementation = (args, schema) => {
     if (type === undefined || paragraph === undefined) {
         return REJECTED;
     }
+
     // The payload's fields are attributes of the node, such as `level` for `heading.set`.
     const attrsOf = (payload: unknown) => {
         const attrs: Record<string, unknown> = {};
@@ -23,8 +24,10 @@ export const setBlock: CapabilityImplementation = (args, schema) => {
                 attrs[name] = value;
             }
         }
+
         return attrs;
     };
+
     const matches = (block: Node, attrs: Readonly<Record<string, unknown>>) =>
         block.type === type && Object.entries(attrs).every(([name, value]) => block.attrs[name] === value);
     /** The selected textblocks and what they become: the node, or a paragraph when the toggle finds them all set. */
@@ -33,8 +36,10 @@ export const setBlock: CapabilityImplementation = (args, schema) => {
         if (args.toggle === true && blocks.length > 0 && blocks.every(({ node }) => matches(node, attrsOf(payload)))) {
             return { blocks, target: paragraph, over: {} };
         }
+
         return { blocks, target: type, over: attrsOf(payload) };
     };
+
     return {
         run: (state, dispatch, payload) => {
             const { blocks, target, over } = planOf(state, payload);
@@ -42,30 +47,37 @@ export const setBlock: CapabilityImplementation = (args, schema) => {
                 if (node.hasMarkup(target, carried(node, target, over))) {
                     return false;
                 }
+
                 const $pos = state.doc.resolve(pos);
+
                 return node.type === target || $pos.parent.canReplaceWith($pos.index(), $pos.index() + 1, target);
             });
             if (!applicable) {
                 return false;
             }
+
             if (dispatch !== undefined) {
                 // `setBlockType` takes a function of the old node for its attributes, so each block keeps its own.
                 const transaction = state.tr;
                 for (const { $from, $to } of state.selection.ranges) {
                     transaction.setBlockType($from.pos, $to.pos, target, (node) => carried(node, target, over));
                 }
+
                 dispatch(transaction.scrollIntoView());
             }
+
             return true;
         },
         active: (state, payload) => {
             const attrs = attrsOf(payload);
             const blocks = selectedTextblocks(state);
+
             return tristate(blocks.filter(({ node }) => matches(node, attrs)).length, blocks.length);
         },
         // `setBlockType` drops the marks and inline nodes the target refuses, such as a mention turned into code.
         refuses: (state, payload) => {
             const { blocks, target } = planOf(state, payload);
+
             return blocks.some(({ node }) => node.type !== target && !target.validContent(node.content));
         },
     };
@@ -80,6 +92,7 @@ export const wrapIn: CapabilityImplementation = (args, schema) => {
     if (type === undefined) {
         return REJECTED;
     }
+
     return {
         run: (state, dispatch, payload) => {
             const { $from, $to } = state.selection;
@@ -90,13 +103,17 @@ export const wrapIn: CapabilityImplementation = (args, schema) => {
                 if (isRecord(payload)) {
                     attrs = payload;
                 }
+
                 return wrapInEngine(type, attrs)(state, dispatch);
             }
+
             const target = liftTarget(range);
             if (target === null) {
                 return false;
             }
+
             dispatch?.(state.tr.lift(range, target).scrollIntoView());
+
             return true;
         },
         active: (state, payload) => {
@@ -104,6 +121,7 @@ export const wrapIn: CapabilityImplementation = (args, schema) => {
             if (isRecord(payload)) {
                 attrs = payload;
             }
+
             const blocks = selectedTextblocks(state);
             const within = blocks.filter(({ pos }) => {
                 const $pos = state.doc.resolve(pos);
@@ -116,8 +134,10 @@ export const wrapIn: CapabilityImplementation = (args, schema) => {
                         return true;
                     }
                 }
+
                 return false;
             });
+
             return tristate(within.length, blocks.length);
         },
     };
@@ -142,14 +162,17 @@ export const block: CapabilityImplementation = (args) => ({
                 depth - 1,
             );
         }
+
         if (range === null) {
             return false;
         }
+
         const { parent, start, end, startIndex, endIndex } = range;
         if (args.action === 'move-up') {
             if (startIndex === 0) {
                 return false;
             }
+
             const previous = parent.child(startIndex - 1);
             dispatch?.(
                 state.tr
@@ -157,11 +180,14 @@ export const block: CapabilityImplementation = (args) => ({
                     .delete(start - previous.nodeSize, start)
                     .scrollIntoView(),
             );
+
             return true;
         }
+
         if (endIndex === parent.childCount) {
             return false;
         }
+
         const next = parent.child(endIndex);
         dispatch?.(
             state.tr
@@ -169,6 +195,7 @@ export const block: CapabilityImplementation = (args) => ({
                 .insert(start, next)
                 .scrollIntoView(),
         );
+
         return true;
     },
     active: () => false,

@@ -16,12 +16,15 @@ const typesOf = (node: unknown, schema: Schema): readonly NodeType[] => {
     if (node === 'textblocks') {
         return Object.values(schema.nodes).filter((type) => type.isTextblock);
     }
+
     const names = Array.isArray(node) ? (node as readonly unknown[]) : [node];
+
     return names.flatMap((name) => {
         const type = typeof name === 'string' ? schema.nodes[name] : undefined;
         if (type === undefined) {
             return [];
         }
+
         return [type];
     });
 };
@@ -34,10 +37,12 @@ export const defaultOf = (type: NodeType, name: string): unknown => {
     if (specs === undefined) {
         return null;
     }
+
     const spec = specs[name];
     if (spec === undefined) {
         return null;
     }
+
     return spec.default;
 };
 
@@ -50,6 +55,7 @@ const holderOf = (doc: Node, pos: number, types: readonly NodeType[]): Located |
             return { node, pos: $inside.before(depth) };
         }
     }
+
     return undefined;
 };
 
@@ -71,6 +77,7 @@ const selectedOf = (state: EditorState, types: readonly NodeType[]): Located[] =
             }
         });
     }
+
     return [...found.values()].sort((a, b) => a.pos - b.pos);
 };
 
@@ -81,22 +88,27 @@ const attributeTargets = (state: EditorState, types: readonly NodeType[], nodeId
         if (pos === undefined) {
             return [];
         }
+
         const node = state.doc.nodeAt(pos);
         if (node === null || !types.includes(node.type)) {
             return [];
         }
+
         return [{ node, pos }];
     }
+
     const selected = selectedOf(state, types);
     if (selected.length > 0) {
         return selected;
     }
+
     for (const type of types) {
         const found = nearest(state, type);
         if (found !== undefined) {
             return [found];
         }
     }
+
     return [];
 };
 
@@ -105,10 +117,12 @@ const styleTargets = (state: EditorState, targets: Located[], attrs: Readonly<Re
     if (typeof attrs.styleId !== 'string') {
         return targets;
     }
+
     const applies = appliesToOf(stylesOf(state), attrs.styleId);
     if (applies === undefined) {
         return targets;
     }
+
     return targets.filter(({ node }) => applies.includes(node.type.name));
 };
 
@@ -129,15 +143,19 @@ export const setAttributes: CapabilityImplementation = (args, schema) => {
         if (!isRecord(payload)) {
             return undefined;
         }
+
         const { nodeId, ...attrs } = payload;
+
         return { nodeId, attrs };
     };
+
     return {
         run: (state, dispatch, payload) => {
             const parts = split(payload);
             if (parts === undefined) {
                 return false;
             }
+
             const targets = declaring(
                 styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs),
                 parts.attrs,
@@ -151,6 +169,7 @@ export const setAttributes: CapabilityImplementation = (args, schema) => {
                         if (removes) {
                             return { pos, name, value: defaultOf(node.type, name) };
                         }
+
                         return { pos, name, value };
                     })
                     .filter(({ name, value }) => node.attrs[name] !== value),
@@ -158,13 +177,16 @@ export const setAttributes: CapabilityImplementation = (args, schema) => {
             if (changes.length === 0) {
                 return false;
             }
+
             if (dispatch !== undefined) {
                 const transaction = state.tr;
                 for (const { pos, name, value } of changes) {
                     transaction.setNodeAttribute(pos, name, value);
                 }
+
                 dispatch(transaction);
             }
+
             return true;
         },
         active: (state, payload) => {
@@ -172,10 +194,12 @@ export const setAttributes: CapabilityImplementation = (args, schema) => {
             if (parts === undefined) {
                 return false;
             }
+
             const targets = declaring(
                 styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs),
                 parts.attrs,
             );
+
             return tristate(targets.filter(({ node }) => has(node, parts.attrs)).length, targets.length);
         },
     };

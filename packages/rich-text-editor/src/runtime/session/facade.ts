@@ -52,6 +52,7 @@ export const createFacade = (a: {
     const { handle, definition, limits, suggestionListId, interactionRoots, identity, store, policy, view } = a;
     const { commit, prepare, report, watch, targets, commands, mode, columns, actions, shown } = a;
     const { history, composition, metrics, checks } = a;
+
     return {
         handle,
         definition,

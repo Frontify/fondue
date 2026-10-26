@@ -19,6 +19,7 @@ const assetsIn = (doc: Node): Set<string> => {
             assets.add(node.attrs.assetId);
         }
     });
+
     return assets;
 };
 
@@ -56,6 +57,7 @@ export const createHistory = ({ link, feed }: Transport) => {
                 cached: operationId !== undefined && cache.read(operationId) !== undefined,
             });
         }
+
         if (ended.length > 0) {
             host.abort(ended.splice(0));
         }
@@ -83,6 +85,7 @@ export const createHistory = ({ link, feed }: Transport) => {
         for (const cell of [...cells.values()]) {
             feed(cell, { type: 'reset', keeps, present: positionOf(left, cell.slot.nodeId) !== undefined });
         }
+
         host.changed();
     };
 

@@ -20,6 +20,7 @@ const storedNodes = (value: unknown): number => {
     if (!isRecord(value) || !Array.isArray(value.content)) {
         return 1;
     }
+
     return value.content.reduce((total: number, child: unknown) => total + storedNodes(child), 1);
 };
 
@@ -28,10 +29,12 @@ export const storedNodeCount = (node: Node): number => {
     if (node.type.name === ISLAND_BLOCK || node.type.name === ISLAND_INLINE) {
         return storedNodes(node.attrs.original);
     }
+
     let nodes = 1;
     for (const child of node.children) {
         nodes += storedNodeCount(child);
     }
+
     return nodes;
 };
 
@@ -51,6 +54,7 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
     for (const { id, version } of [...stored, ...model.capabilities]) {
         versions.set(id, Math.max(version, versions.get(id) ?? version));
     }
+
     const requiredCapabilities = [...versions.keys()].sort().map((id) => ({ id, version: versions.get(id) }));
     const envelope = {
         format: 'frontify.rich-text',
@@ -66,12 +70,15 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
         const name = node.type.name;
         if (name === ISLAND_BLOCK || name === ISLAND_INLINE) {
             const original = node.attrs.original as JsonValue;
+
             return { bytes: utf8Bytes(JSON.stringify(original)), nodes: storedNodes(original), longest: 0 };
         }
+
         let content: unknown[] | undefined;
         if (node.childCount > 0) {
             content = [];
         }
+
         const tree: { -readonly [K in keyof TreeNode]: TreeNode[K] } = {
             type: name,
             attrs: node.attrs,
@@ -82,6 +89,7 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
             tree.text = node.text;
             longest = node.text.length;
         }
+
         const shell = writeNode(vocabulary, tree, content);
         // The children go between the brackets of the empty `content` array, one comma apart.
         let bytes = utf8Bytes(JSON.stringify(shell)) + Math.max(0, node.childCount - 1);
@@ -92,6 +100,7 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
             nodes += size.nodes;
             longest = Math.max(longest, size.longest);
         }
+
         return { bytes, nodes, longest };
     };
 
@@ -101,6 +110,7 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
             size = measure(node);
             cache.set(node, size);
         }
+
         return size;
     };
 
@@ -111,15 +121,19 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
         if (current !== undefined) {
             before = sizeOf(current);
         }
+
         if (size.nodes > limits.maxDocumentNodes && size.nodes > before.nodes) {
             return 'maxDocumentNodes';
         }
+
         if (envelopeBytes + size.bytes > limits.maxDocumentBytes && size.bytes > before.bytes) {
             return 'maxDocumentBytes';
         }
+
         if (size.longest > limits.maxTextLength && size.longest > before.longest) {
             return 'maxTextLength';
         }
+
         return undefined;
     };
 };

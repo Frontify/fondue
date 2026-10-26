@@ -28,12 +28,14 @@ const setup = (run?: (id: string, payload: unknown, options: unknown, route: Rou
             run ??
             ((id, _payload, _options, route) => {
                 calls.push(`${id}:${route}`);
+
                 return applied;
             }),
         report: (found) => reported.push(found),
         resources,
     });
     busy.afterEach(service.drain);
+
     return { service, calls, reported, state, resources, lifecycle, busy };
 };
 
@@ -99,7 +101,9 @@ describe('createQueue', () => {
             if (id === 'a') {
                 queued = service.enqueue('b');
             }
+
             order.push(`end:${id}`);
+
             return applied;
         });
         await service.enqueue('a');
@@ -111,6 +115,7 @@ describe('createQueue', () => {
         const results: Promise<CommandResult>[] = [];
         const { service, reported } = setup(() => {
             results.push(service.enqueue('loop'));
+
             return applied;
         });
         const first = service.enqueue('loop');

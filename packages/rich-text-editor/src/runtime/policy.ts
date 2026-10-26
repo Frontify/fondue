@@ -26,18 +26,23 @@ export const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy
     if (unsafe !== undefined) {
         throw new DefinitionError('definition.invalid-option', { path: unsafe });
     }
+
     const features: Record<string, FeaturePolicy> = {};
     for (const { id } of model.capabilities) {
         features[id] = EVERYTHING;
     }
+
     for (const [id, feature] of Object.entries(policy.features ?? {})) {
         if (!Object.hasOwn(features, id)) {
             throw new DefinitionError('definition.unknown-policy-feature', { feature: id });
         }
+
         features[id] = feature;
     }
+
     const creatableHeadingLevels = policy.creatableHeadingLevels ?? HEADING_LEVELS;
     const enterBehavior = policy.enterBehavior ?? 'paragraph';
+
     return { features, creatableHeadingLevels, enterBehavior };
 };
 
@@ -74,6 +79,7 @@ const markRuns = (block: Node, start: number): Run[] => {
         if (child.isText) {
             text = child.textContent;
         }
+
         const piece = { from: position, to: position + child.nodeSize };
         open = child.marks.map((mark) => {
             let run = open.find((candidate) => candidate.mark.eq(mark));
@@ -81,12 +87,15 @@ const markRuns = (block: Node, start: number): Run[] => {
                 run = { mark, pieces: [], text: '' };
                 runs.push(run);
             }
+
             run.pieces.push(piece);
             run.text += text;
+
             return run;
         });
         position = piece.to;
     }
+
     return runs;
 };
 
@@ -94,11 +103,14 @@ const add = <T>(map: Map<string, T[]>, featureId: string | undefined, item: T) =
     if (featureId === undefined) {
         return;
     }
+
     const list = map.get(featureId);
     if (list === undefined) {
         map.set(featureId, [item]);
+
         return;
     }
+
     list.push(item);
 };
 
@@ -110,6 +122,7 @@ const take = <T>(items: T[], match: (item: T) => boolean): T | undefined => {
     if (index < 0) {
         return undefined;
     }
+
     return items.splice(index, 1)[0];
 };
 
@@ -137,6 +150,7 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
             if (other === undefined) {
                 other = take(left, sameId);
             }
+
             remove ||= other === undefined;
         } else {
             other = take(left, (candidate) => sameNode(node, candidate));
@@ -144,13 +158,16 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
                 changed.push(node);
             }
         }
+
         edit ||= other !== undefined && !sameNode(node, other);
     }
+
     for (const node of changed) {
         const other = take(left, (candidate) => candidate.type === node.type && !carriesNodeId(candidate));
         remove ||= other === undefined;
         edit ||= other !== undefined;
     }
+
     return { create: left.length > 0, edit, remove };
 };
 
@@ -165,6 +182,7 @@ const counterparts = (run: Run, mapping: BatchMapping, others: readonly Run[], i
         if (other.mark.type !== run.mark.type) {
             return false;
         }
+
         return run.pieces.some((piece) => {
             const from = mapping.map(piece.from, 1);
             const to = mapping.map(piece.to, -1);
@@ -172,6 +190,7 @@ const counterparts = (run: Run, mapping: BatchMapping, others: readonly Run[], i
             if (to <= from) {
                 return inserted && other.mark.eq(run.mark) && first.from <= from && from <= last.to;
             }
+
             return first.from < to && from < last.to;
         });
     });
@@ -199,12 +218,15 @@ const makesRefusedHeading = (policy: AuthoringPolicy, previous: Occurrences, nex
         ) {
             continue;
         }
+
         const fresh = !before.some((old) => old.attrs.nodeId === nodeId);
         if (!fresh || splits === 0 || !before.some((old) => old.attrs.level === level)) {
             return true;
         }
+
         splits -= 1;
     }
+
     return false;
 };
 
@@ -223,9 +245,11 @@ const runChangeOf = (before: readonly Run[], after: readonly Run[], mapping: Bat
     const changed = (runs: readonly Run[], map: BatchMapping, others: readonly Run[], inserted: boolean) =>
         runs.some((run) => {
             const found = counterparts(run, map, others, inserted);
+
             return found.length > 0 && !found.some((other) => sameRun(run, other));
         });
     const edit = changed(after, back, before, true) || changed(before, mapping, after, false);
+
     return { create: created.length > 0, edit, remove: gone.length > 0 };
 };
 
@@ -247,19 +271,24 @@ export const createPolicyCheck = (model: ContentModel) => {
                 add(found.nodes, nodeOwners.get(node.type.name), node);
             }
         };
+
         doc.nodesBetween(from, to, (node, position) => {
             visit(node);
             if (!node.isTextblock) {
                 return true;
             }
+
             for (const child of node.children) {
                 visit(child);
             }
+
             for (const run of markRuns(node, position + 1)) {
                 add(found.runs, markOwners.get(run.mark.type.name), run);
             }
+
             return false;
         });
+
         return found;
     };
 
@@ -279,14 +308,17 @@ export const createPolicyCheck = (model: ContentModel) => {
             previous = collect(before, start, end.a + overlap);
             next = collect(after, start, end.b + overlap);
         }
+
         // The document's content belongs to its children, so only its own attributes make it an occurrence.
         if (!before.hasMarkup(after.type, after.attrs, after.marks)) {
             add(previous.nodes, nodeOwners.get(before.type.name), before);
             add(next.nodes, nodeOwners.get(after.type.name), after);
         }
+
         if (!history && makesRefusedHeading(policy, previous, next)) {
             return true;
         }
+
         const features = new Set([
             ...previous.nodes.keys(),
             ...previous.runs.keys(),
@@ -298,6 +330,7 @@ export const createPolicyCheck = (model: ContentModel) => {
             if (rules === undefined) {
                 continue;
             }
+
             const nodes = nodeChangeOf(listOf(previous.nodes, featureId), listOf(next.nodes, featureId));
             const runs = runChangeOf(listOf(previous.runs, featureId), listOf(next.runs, featureId), mapping);
             for (const action of ['create', 'edit', 'remove'] as const) {
@@ -306,6 +339,7 @@ export const createPolicyCheck = (model: ContentModel) => {
                 }
             }
         }
+
         return false;
     };
 };

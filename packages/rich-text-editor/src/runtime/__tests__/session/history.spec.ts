@@ -24,6 +24,7 @@ const setup = ({ active = false, installs = true, ready = true } = {}) => {
     if (ready) {
         lifecycle.to('ready');
     }
+
     const store = createStore(EditorState.create({ schema }));
     const calls: string[] = [];
     const service = createHistory({
@@ -36,11 +37,13 @@ const setup = ({ active = false, installs = true, ready = true } = {}) => {
             if (installs) {
                 store.set(next);
             }
+
             return installs;
         },
         publish: () => calls.push('publish'),
         uploads: (_doc, keep) => calls.push(`uploads:${String(keep)}`),
     });
+
     return { service, store, calls };
 };
 

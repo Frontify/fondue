@@ -31,7 +31,9 @@ const isTyped = (transaction: Transaction): boolean => {
     ) {
         return false;
     }
+
     const event: unknown = transaction.getMeta('uiEvent');
+
     return typeof event !== 'string' || !NOT_TYPED.has(event);
 };
 
@@ -39,10 +41,12 @@ const mappedDismissal = (transaction: Transaction, dismissed: number | null): nu
     if (dismissed === null) {
         return null;
     }
+
     const mapped = transaction.mapping.mapResult(dismissed, 1);
     if (mapped.deleted) {
         return null;
     }
+
     return mapped.pos;
 };
 
@@ -50,6 +54,7 @@ const wrapped = (index: number, length: number): number => {
     if (length === 0) {
         return 0;
     }
+
     return ((index % length) + length) % length;
 };
 
@@ -62,19 +67,24 @@ const answered = (
         if (active.page === null) {
             return { status: 'ready', items: afterPage([], meta.results), index: 0 };
         }
+
         // A further page keeps what the list showed, with the first new option active where Load more was, or the last.
         const shown = resultsOf(active.items);
         const items = afterPage(shown, meta.results);
+
         return { status: 'ready', items, index: Math.max(0, Math.min(shown.length, items.length - 1)) };
     }
+
     if (meta?.kind === 'failed' && meta.request === active.request) {
         // A failed search offers Retry, after the options of the pages before a failed further page.
         let shown: readonly SuggestionItem[] = [];
         if (active.page !== null) {
             shown = resultsOf(active.items);
         }
+
         return { status: 'failed', items: afterFailure(shown), index: shown.length };
     }
+
     return undefined;
 };
 
@@ -85,9 +95,11 @@ const keptList = (active: ActiveSuggestion, match: Match, meta: SuggestionsMeta 
     if (answer !== undefined) {
         ({ status, items, index } = answer);
     }
+
     if (meta?.kind === 'move') {
         index = wrapped(meta.index, items.length);
     }
+
     return {
         featureId: active.featureId,
         trigger: active.trigger,
@@ -110,11 +122,13 @@ const requestedList = (match: Match, previous: ActiveSuggestion | null, request:
     if (previous !== null && previous.from === match.from) {
         items = resultsOf(previous.items);
     }
+
     const { suggestion } = match;
     let name: ActiveSuggestion['name'] = suggestion.labelKey ?? '';
     if (suggestion.label !== undefined) {
         name = suggestion.label;
     }
+
     return {
         featureId: suggestion.featureId,
         trigger: suggestion.trigger,
@@ -141,6 +155,7 @@ const askedAgain = (active: ActiveSuggestion, match: Match, page: string | null,
         items = resultsOf(items);
         index = Math.max(0, Math.min(index, items.length - 1));
     }
+
     return { ...active, from: match.from, to: match.to, status: 'loading', items, index, request, page };
 };
 
@@ -156,31 +171,39 @@ export const nextState = (
     if (meta?.kind === 'close') {
         return { active: null, dismissed, requests };
     }
+
     if (meta?.kind === 'dismiss') {
         if (value.active === null) {
             return { active: null, dismissed, requests };
         }
+
         return { active: null, dismissed: transaction.mapping.map(value.active.from), requests };
     }
+
     const match = matchAt(state, suggestions);
     if (match === null) {
         // A selection across the trigger keeps an Escape; an edit that ends the match forgets it.
         if (transaction.docChanged) {
             return { active: null, dismissed: null, requests };
         }
+
         return { active: null, dismissed, requests };
     }
+
     if (match.from === dismissed) {
         return { active: null, dismissed, requests };
     }
+
     const previous = value.active;
     let kept = false;
     if (previous !== null && previous.trigger === match.suggestion.trigger) {
         kept = transaction.mapping.map(previous.from) === match.from;
     }
+
     if (!kept && !isTyped(transaction)) {
         return { active: null, dismissed, requests };
     }
+
     if (kept && previous !== null && previous.query === match.query) {
         if (meta?.kind === 'more') {
             return {
@@ -189,6 +212,7 @@ export const nextState = (
                 requests: requests + 1,
             };
         }
+
         if (meta?.kind === 'retry' && previous.status === 'failed') {
             return {
                 active: askedAgain(previous, match, previous.page, requests + 1),
@@ -196,6 +220,7 @@ export const nextState = (
                 requests: requests + 1,
             };
         }
+
         const list = keptList(previous, match, meta);
         // A list that asks for the block start, such as the slash menu, gives up on a spaced query with no match, as Escape does.
         if (match.suggestion.rules.emptyBlock === true && /\s/u.test(list.query)) {
@@ -203,12 +228,15 @@ export const nextState = (
                 return { active: null, dismissed: list.from, requests };
             }
         }
+
         return { active: list, dismissed, requests };
     }
+
     let mappedPrevious: ActiveSuggestion | null = null;
     if (kept) {
         mappedPrevious = previous;
     }
+
     return { active: requestedList(match, mappedPrevious, requests + 1), dismissed, requests: requests + 1 };
 };
 
@@ -218,6 +246,7 @@ export const activeSuggestion = (state: EditorState): ActiveSuggestion | null =>
 /** Whether the open list shows options, which the keys and the surface's ARIA attributes act on. */
 export const showsOptions = (state: EditorState): boolean => {
     const active = activeSuggestion(state);
+
     return active !== null && active.items.length > 0;
 };
 

@@ -118,6 +118,7 @@ export const statusOf = ({ phase, progress, name }: SlotState): UploadStatus | u
     if (phase === 'pending' || phase === 'done') {
         return undefined;
     }
+
     return { state: phase, progress, name };
 };
 
@@ -166,16 +167,19 @@ const TRANSITIONS: { readonly [T in SlotEvent['type']]: (state: SlotState, event
         if (aborted || state.phase !== 'running' || !Number.isFinite(fraction) || percent === state.progress) {
             return stay(state);
         }
+
         return stay({ ...state, progress: percent }, { type: 'changed' });
     },
     answered: (state, { own, value }) => {
         if (own === undefined) {
             return stay(state, { type: 'reply', code: 'superseded' });
         }
+
         // A completion for an operation that another start replaced, or that left the document, sets nothing.
         if (state.operation !== own) {
             return stay(state, { type: 'release' }, { type: 'reply', code: 'superseded' });
         }
+
         return stay(state, { type: 'parse', value });
     },
     parsed: (state, { asset }) =>
@@ -184,9 +188,11 @@ const TRANSITIONS: { readonly [T in SlotEvent['type']]: (state: SlotState, event
         if (code !== undefined) {
             return failedWith(state, true, false, code);
         }
+
         const altMissing = intent !== 'meaningful' && intent !== 'decorative';
         // An image with no alternative text keeps asking for it, which no review replaces.
         const review = state.kind === 'replace' && !altMissing;
+
         return stay(
             { ...stopped(state, 'done'), file: undefined },
             state.operation && { type: 'cache', operationId: state.operation.id, asset },
@@ -212,9 +218,11 @@ const TRANSITIONS: { readonly [T in SlotEvent['type']]: (state: SlotState, event
         if (state.phase === 'pending' || (operation === undefined && !history)) {
             return stay(state);
         }
+
         if (operation !== undefined) {
             return stay(state, (node === null || reset) && { type: 'end', operation });
         }
+
         return stay(
             state,
             operationId !== undefined &&

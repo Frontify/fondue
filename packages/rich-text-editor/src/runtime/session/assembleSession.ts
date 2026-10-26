@@ -101,5 +101,6 @@ export const assembleSession = (parts: Operations, options: EditorRuntimeOptions
         checks,
     });
     installMedia(runtime, uploads, actions.placeAsset);
+
     return { handle, runtime };
 };

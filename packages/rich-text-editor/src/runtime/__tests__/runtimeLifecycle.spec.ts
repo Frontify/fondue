@@ -222,6 +222,7 @@ describe('disposal', () => {
         const counted = new Plugin({
             view: () => {
                 pluginViews += 1;
+
                 return {
                     destroy: () => {
                         pluginViews -= 1;
@@ -255,6 +256,7 @@ describe('disposal', () => {
             if (cycle % 2 === 1) {
                 vi.runAllTimers();
             }
+
             runtime.handle.captureTarget({ purpose: 'format', onIntersectingEdit: 'map' });
             owned.push(probeRuntimes());
 

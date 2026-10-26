@@ -16,6 +16,7 @@ const make = (options: { revision?: ServerRevision | null; transitioning?: boole
         sequence: () => sequence,
         lifecycle: { is: () => transitioning },
     });
+
     return {
         saving,
         setSequence: (next: number) => {
@@ -30,6 +31,7 @@ const make = (options: { revision?: ServerRevision | null; transitioning?: boole
 const coordinator = () => {
     const status = { state: 'saved' } as unknown as SaveStatus;
     const acknowledged: CommitResult = { status: 'blocked', code: 'not-ready' };
+
     return {
         status: vi.fn(() => status),
         changed: vi.fn(),

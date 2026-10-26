@@ -110,5 +110,6 @@ export const assembleEditing = (state: State, options: EditorRuntimeOptions, lat
         saving,
         composition: settling,
     });
+
     return { ...state, views, faults, batches, commit, settleInput };
 };

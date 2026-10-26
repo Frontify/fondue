@@ -21,7 +21,9 @@ export const createGestures = ({ link, send }: Transport) => {
         if (cache.size < uploadLimits.cacheEntries) {
             return false;
         }
+
         host.report(diagnostic('media.cache-full', undefined, { entries: cache.size }, 'warning'));
+
         return true;
     };
 
@@ -30,12 +32,15 @@ export const createGestures = ({ link, send }: Transport) => {
         if (cacheFull()) {
             return false;
         }
+
         if (place.kind === 'replace') {
             return host.allows('edit');
         }
+
         if (place.origin === 'command') {
             return host.allows('create');
         }
+
         return host.allows('create') && host.allows('paste');
     };
 
@@ -49,17 +54,20 @@ export const createGestures = ({ link, send }: Transport) => {
         if (figure === undefined || image === undefined) {
             return [];
         }
+
         const added = accepted.map((checked) => {
             const cell = { slot: fresh(host.generateId(), 'insert', checked) };
             const node = figure.create(
                 { nodeId: host.generateId() },
                 image.create({ nodeId: cell.slot.nodeId, ...slotAttrs(checked) }),
             );
+
             return { cell, node };
         });
         for (const { cell } of added) {
             cells.set(cell.slot.nodeId, cell);
         }
+
         const start = { kind: 'insert', nodeIds: added.map(({ cell }) => cell.slot.nodeId) } as const;
         const applied = host.run(
             insertion(
@@ -76,6 +84,7 @@ export const createGestures = ({ link, send }: Transport) => {
                 cells.delete(cell.slot.nodeId);
             }
         }
+
         return applied ? added.map(({ cell }) => cell.slot.name) : [];
     };
 
@@ -86,6 +95,7 @@ export const createGestures = ({ link, send }: Transport) => {
         if (node === null || node.type.name !== 'asset_image') {
             return [];
         }
+
         const previous: JsonObject = Object.fromEntries(
             Object.keys(slotAttrs(checked)).map((name) => [name, node.attrs[name] as JsonObject[string]]),
         );
@@ -98,9 +108,12 @@ export const createGestures = ({ link, send }: Transport) => {
             } else {
                 cells.set(nodeId, before);
             }
+
             return [];
         }
+
         send(cell, false);
+
         return [cell.slot.name];
     };
 
@@ -109,6 +122,7 @@ export const createGestures = ({ link, send }: Transport) => {
         if (host.service() === undefined || files.length === 0) {
             return;
         }
+
         let target: SelectionHandle | undefined;
         if (place.kind === 'insert') {
             target = host.capture(place.range);
@@ -116,9 +130,11 @@ export const createGestures = ({ link, send }: Transport) => {
                 for (const file of files) {
                     host.event({ kind: 'failed', name: nameOf(file) });
                 }
+
                 return;
             }
         }
+
         const session = host.session();
         try {
             const checked = await checkFiles(host, files);
@@ -126,6 +142,7 @@ export const createGestures = ({ link, send }: Transport) => {
             if (current.sessionId !== session.sessionId || current.generation !== session.generation) {
                 return;
             }
+
             const { accepted, refused } = sortChecked(files, checked);
             let started: readonly string[] = [];
             if (accepted.length > 0 && admits(place)) {
@@ -135,6 +152,7 @@ export const createGestures = ({ link, send }: Transport) => {
                     started = insert(accepted, place, target);
                 }
             }
+
             // One message per gesture, so no refusal or start overwrites another in the polite region.
             if (refused.length > 0 || started.length > 0) {
                 host.event({ kind: 'gesture', refused, started });
@@ -153,12 +171,15 @@ export const createGestures = ({ link, send }: Transport) => {
         if (cell === undefined || !isRetryable(cell.slot) || pos === undefined || cacheFull()) {
             return;
         }
+
         if (host.state().doc.nodeAt(pos)?.attrs.assetId !== null) {
             return;
         }
+
         if (!host.allows(cell.slot.kind === 'insert' ? 'create' : 'edit')) {
             return;
         }
+
         send(cell);
     };
 

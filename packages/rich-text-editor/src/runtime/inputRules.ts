@@ -56,13 +56,16 @@ const typedEnd = (root: Transaction): number | undefined => {
     if (root.getMeta(ORIGIN_META) !== 'input' || isHistoryTransaction(root) || root.steps.length !== 1) {
         return undefined;
     }
+
     if (!(step instanceof ReplaceStep)) {
         return undefined;
     }
+
     const { content } = step.slice;
     if (content.childCount !== 1 || content.firstChild === null || !content.firstChild.isText) {
         return undefined;
     }
+
     return step.from + step.slice.size;
 };
 
@@ -80,11 +83,13 @@ const fire = (
     if (!(selection instanceof TextSelection) || selection.$cursor === null || selection.$cursor.pos !== end) {
         return null;
     }
+
     const { $cursor } = selection;
     const { parent, parentOffset } = $cursor;
     if (parent.type.spec.code === true || $cursor.marks().some((mark) => mark.type.spec.code === true)) {
         return null;
     }
+
     const before = parent.textBetween(
         Math.max(0, parentOffset - MAX_MATCH),
         parentOffset,
@@ -103,12 +108,15 @@ const fire = (
             if (rule.kind === 'mark-rule' && rule.onEnter) {
                 change = markPattern(rule, state, $cursor, before, '\n');
             }
+
             if (change !== null) {
                 return change;
             }
         }
+
         return null;
     }
+
     for (const rule of rules) {
         let change: Transaction | null;
         if (rule.kind === 'line-start') {
@@ -124,10 +132,12 @@ const fire = (
         } else {
             change = quotes(rule, state, $cursor, before);
         }
+
         if (change !== null) {
             return change;
         }
     }
+
     return null;
 };
 
@@ -145,15 +155,18 @@ export const inputRulesPlugin: PluginImplementation = ({ inputRules }) =>
                 if (transaction.getMeta(firedKey) === true) {
                     return true;
                 }
+
                 // A repair appended after the rule, such as a new `nodeId`, leaves the rule the last change.
                 if (transaction.getMeta('appendedTransaction') !== undefined) {
                     return fired;
                 }
+
                 // A stored mark or a command at the caret is another change too.
                 const changes = transaction.docChanged || transaction.selectionSet || transaction.storedMarksSet;
                 if (changes || transaction.getMeta(COMMAND_META) !== undefined) {
                     return false;
                 }
+
                 return fired;
             },
         },
@@ -162,19 +175,23 @@ export const inputRulesPlugin: PluginImplementation = ({ inputRules }) =>
             if (transactions.length !== 1 || root === undefined || root.getMeta('appendedTransaction') !== undefined) {
                 return null;
             }
+
             // Composed text never fires a rule, which would rewrite the composing range.
             const composed = root.getMeta('composition') !== undefined || root.getMeta(NORMALIZE_META) === 'later';
             if (composed || root.getMeta(RULES_OFF) === true) {
                 return null;
             }
+
             const enter = root.getMeta(ENTER_RULES_META) === true;
             let end = typedEnd(root);
             if (enter) {
                 end = state.selection.head;
             }
+
             if (end === undefined) {
                 return null;
             }
+
             let rules = inputRules;
             const setting = root.getMeta(RULES_SETTING) as RuleSetting | undefined;
             if (setting !== undefined) {
@@ -182,10 +199,12 @@ export const inputRulesPlugin: PluginImplementation = ({ inputRules }) =>
                     ({ id, featureId }) => !setting.exclude.includes(id) && !setting.refused.includes(featureId),
                 );
             }
+
             const change = fire(rules, state, end, enter);
             if (change === null) {
                 return null;
             }
+
             return closeGroup(change.setMeta(firedKey, true));
         },
     });
@@ -201,6 +220,7 @@ export const enterRules =
         if (dispatch !== undefined && enders.length > 0 && fire(enders, state, state.selection.head, true) !== null) {
             dispatch(state.tr.setMeta(ENTER_RULES_META, true));
         }
+
         return false;
     };
 

@@ -89,6 +89,7 @@ const createInstaller = (a: CommitArgs) => {
         if (changed) {
             identity.bumpSequence();
         }
+
         notify();
         if (changed) {
             let document: RichTextDocument | undefined;
@@ -101,17 +102,21 @@ const createInstaller = (a: CommitArgs) => {
                     if (document === undefined) {
                         document = encode(current.doc);
                     }
+
                     return document;
                 },
             });
             metrics.record(batch);
             hooks.committed(transactions, origin === 'history');
         }
+
         shown.emitSelection();
         if (changed) {
             hooks.changed();
         }
+
         shown.emitSaveStatus();
+
         return changed;
     };
 
@@ -122,10 +127,13 @@ const createInstaller = (a: CommitArgs) => {
         if (attached !== undefined && views.call(() => attached.updateState(next)).threw) {
             store.set(previous);
             a.viewFault(attached, next);
+
             return false;
         }
+
         identity.bumpCommit();
         a.resources.targets += countTargets(next) - countTargets(previous);
+
         return true;
     };
 
@@ -134,22 +142,27 @@ const createInstaller = (a: CommitArgs) => {
         if (!installState(candidate)) {
             return false;
         }
+
         if (prepare.isProvisional(root)) {
             shown.addProvisional(mapping);
             notify();
+
             return false;
         }
+
         const origin = originOf(root);
         const command: unknown = root.getMeta(COMMAND_META);
         let commandId: string | null = null;
         if (origin === 'command' && typeof command === 'string') {
             commandId = command;
         }
+
         const event: unknown = root.getMeta('uiEvent');
         let kind: BatchMetric['kind'] = 'commit';
         if (event === 'paste' || event === 'drop') {
             kind = 'paste';
         }
+
         return announce(origin, commandId, { kind, started, appended }, transactions);
     };
 
@@ -160,35 +173,45 @@ const createInstaller = (a: CommitArgs) => {
         const repaired = prepare.prepare(store.state.tr.setMeta(NORMALIZE_META, 'now'), prepare.installedId, false);
         if ('fault' in repaired && repaired.fault !== undefined) {
             fault(repaired.fault);
+
             return false;
         }
+
         if ('diagnostic' in repaired && repaired.diagnostic !== undefined) {
             report(repaired.diagnostic);
         }
+
         if ('candidate' in repaired && repaired.candidate.doc !== store.state.doc) {
             if (!installState(repaired.candidate)) {
                 return false;
             }
+
             mapping.appendMapping(repaired.mapping);
             appended = repaired.appended;
         }
+
         if (
             !policy.breaks(shown.published().doc, store.state.doc, mapping) &&
             policy.exceeds(store.state.doc, shown.published().doc) === undefined
         ) {
             announce('input', null, { kind: 'commit', started, appended });
+
             return true;
         }
+
         // Targets released during the composition stay released, and those captured during it stay.
         const restore = restoreTargets(shown.published(), store.state, mapping);
         let restored = shown.published();
         if (restore !== undefined) {
             restored = restored.apply(restore);
         }
+
         if (!installState(restored)) {
             return false;
         }
+
         notify();
+
         return true;
     };
 
@@ -211,14 +234,17 @@ export const createCommit = (a: CommitArgs): Commit => {
         } finally {
             installing = false;
         }
+
         for (let next = deferred.shift(); next !== undefined; next = deferred.shift()) {
             // A listener of this install may have faulted or disposed the session, which then commits nothing more.
             if (!lifecycle.is('ready')) {
                 deferred.length = 0;
                 break;
             }
+
             commit(next);
         }
+
         return result;
     };
 
@@ -226,8 +252,10 @@ export const createCommit = (a: CommitArgs): Commit => {
         // A plugin view's `update` may dispatch inside `view.updateState`; its root waits for the install to publish.
         if (installing) {
             deferred.push(root);
+
             return;
         }
+
         // A recorded `beforeinput` describes this batch only, accepted or not.
         const typed = typing;
         typing = false;
@@ -235,10 +263,13 @@ export const createCommit = (a: CommitArgs): Commit => {
         if (lifecycle.is('faulted', 'disposed')) {
             return;
         }
+
         if (root.before !== store.state.doc) {
             report(diagnostic('runtime.stale-transaction', undefined, undefined, 'error'));
+
             return;
         }
+
         // Input rules fire only on typed text, never on a paste or a command after a `beforeinput` that changed nothing.
         if (typed && actionOrigin(root) === undefined) {
             root.setMeta(ORIGIN_META, 'input');
@@ -246,6 +277,7 @@ export const createCommit = (a: CommitArgs): Commit => {
         } else if (root.getMeta(ENTER_RULES_META) === true) {
             prepare.markRules(root);
         }
+
         busy.run(() => {
             const prepared: Prepared = prepare.take(root);
             if ('candidate' in prepared) {
@@ -255,6 +287,7 @@ export const createCommit = (a: CommitArgs): Commit => {
             } else if (prepared.diagnostic !== undefined) {
                 report(prepared.diagnostic);
             }
+
             if (secondCopyInView(store.state.schema)) {
                 report(DUPLICATE_ENGINE);
             }
@@ -275,11 +308,13 @@ export const createCommit = (a: CommitArgs): Commit => {
             } else {
                 transaction = transaction.setSelection(TextSelection.create(doc, target.anchor, target.head));
             }
+
             commit(transaction);
             const view = views.current();
             if (target.scroll !== true || view === undefined) {
                 return;
             }
+
             // ProseMirror scrolls to the selection only while the browser's selection is in the surface, and a
             // panel that asks for this keeps focus.
             scrollSelectionIntoView(view, store.state.selection);

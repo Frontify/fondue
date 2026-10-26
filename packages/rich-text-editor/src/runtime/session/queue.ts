@@ -39,10 +39,12 @@ export const createQueue = (a: {
             intent.resolve(rejected(code));
         }
     };
+
     const drain = () => {
         if (draining || busy.isBusy() || !lifecycle.is('ready') || composition.active()) {
             return;
         }
+
         draining = true;
         let warned = false;
         try {
@@ -58,8 +60,10 @@ export const createQueue = (a: {
                         warned = true;
                         report(diagnostic('runtime.enqueue-loop', undefined, undefined, 'warning'));
                     }
+
                     intent.resolve(rejected('busy'));
                 }
+
                 depth = 0;
                 intent = queue.shift();
             }
@@ -67,16 +71,20 @@ export const createQueue = (a: {
             draining = false;
         }
     };
+
     const enqueue = (id: string, payload?: unknown, options?: unknown): Promise<CommandResult> =>
         new Promise((resolve) => {
             if (lifecycle.is('faulted', 'disposed')) {
                 resolve(rejected('not-ready'));
+
                 return;
             }
+
             // An intent that a queued intent's events enqueue sits one level deeper.
             queue.push({ id, payload, options, depth: depth + 1, resolve });
             resources.intents += 1;
             drain();
         });
+
     return { enqueue, drain, settle };
 };

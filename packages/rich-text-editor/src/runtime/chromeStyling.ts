@@ -42,6 +42,7 @@ const runsOf = (block: ViewNode): DirectedRun[] => {
             runs.push({ text: child.text ?? '', dir });
         }
     }
+
     return runs;
 };
 
@@ -73,11 +74,14 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
         if (resolution.unknown && typeof attrs.styleId === 'string') {
             unknown(attrs.styleId, path);
         }
+
         if (resolution.style === undefined) {
             return undefined;
         }
+
         return resolution.style.className;
     };
+
     /** Reports the unknown style IDs of the marks on a textblock's inline children, which their mark views style. */
     const inline = (block: ViewNode, path: string) => {
         for (let index = 0; index < block.childCount; index += 1) {
@@ -86,6 +90,7 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
             }
         }
     };
+
     const visit = (parent: ViewNode, start: number, parentPath: string) => {
         let pos = start;
         for (let index = 0; index < parent.childCount; index += 1) {
@@ -95,6 +100,7 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
             if (className !== undefined) {
                 found.push(Decoration.node(pos, pos + child.nodeSize, { class: className }));
             }
+
             if (child.isTextblock) {
                 inline(child, path);
                 const direction = passageDirection(runsOf(child));
@@ -102,6 +108,7 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
                     found.push(Decoration.node(pos, pos + child.nodeSize, { dir: direction }));
                 }
             }
+
             const viewed = hasView(child.type.name);
             const labeled = labelsFirstBlock(child);
             if (viewed && labeled !== undefined) {
@@ -111,6 +118,7 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
                     }),
                 );
             }
+
             depths.within(child.type.name, (entered) => {
                 if (entered !== undefined) {
                     const style = listLevelStyle(entered.kind, entered.depth, levels);
@@ -118,6 +126,7 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
                         found.push(Decoration.node(pos, pos + child.nodeSize, { style }));
                     }
                 }
+
                 if (!child.isTextblock) {
                     visit(child, pos + 1, path);
                 }
@@ -125,7 +134,9 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
             pos += child.nodeSize;
         }
     };
+
     visit(doc, 0, '/content');
+
     return found;
 };
 
@@ -147,13 +158,16 @@ export const createContentDecorations = (
         if (inputs === undefined) {
             return DecorationSet.empty;
         }
+
         let lists = markers.get(doc);
         if (lists === undefined) {
             lists = DecorationSet.create(doc, contentDecorations(doc, inputs));
             markers.set(doc, lists);
         }
+
         return lists;
     };
+
     return {
         decorations: (state) => {
             const { doc, selection } = state;
@@ -161,6 +175,7 @@ export const createContentDecorations = (
             if (!shown() || selection.empty) {
                 return lists;
             }
+
             return lists.add(doc, [Decoration.inline(selection.from, selection.to, { 'data-rte-selection': '' })]);
         },
         reset: () => {
@@ -186,17 +201,21 @@ const styleMark = (element: MarkElement, styles: ChromeStyles | undefined) => {
         className = styleOfNode(styles.styles, mark.type.name, attrs).style?.className;
         color = colorOf(styles.colorTokens, attrs);
     }
+
     if (element.className !== undefined) {
         dom.classList.remove(element.className);
     }
+
     if (className !== undefined) {
         dom.classList.add(className);
     }
+
     element.className = className;
     const property = ownValue(COLOR_PROPERTIES, mark.type.name);
     if (property === undefined) {
         return;
     }
+
     if (color === undefined) {
         dom.style.removeProperty(property);
     } else {
@@ -207,6 +226,7 @@ const styleMark = (element: MarkElement, styles: ChromeStyles | undefined) => {
 /** Whether `mark` is a link whose `href` fails the URL check. */
 const unlinked = (mark: Mark): boolean => {
     const { href } = mark.attrs as JsonObject;
+
     return mark.type.name === 'link' && typeof href === 'string' && !checkHref(href).ok;
 };
 
@@ -220,6 +240,7 @@ export type MarkStyler = {
 export const createMarkStyler = (): MarkStyler => {
     // The elements of the mounted mark views, which a new presentation restyles in place.
     const marks = new Set<MarkElement>();
+
     return {
         views: (schema, styles) => {
             const views: Record<string, MarkViewConstructor> = {};
@@ -227,24 +248,30 @@ export const createMarkStyler = (): MarkStyler => {
                 if (!Object.hasOwn(type.spec.attrs ?? {}, 'styleId') && !Object.hasOwn(COLOR_PROPERTIES, name)) {
                     continue;
                 }
+
                 views[name] = (mark, markView, inline) => {
                     // A link whose `href` fails the check shows its text alone, as the reader and `toHTML` write it.
                     if (unlinked(mark)) {
                         const dom = markView.dom.ownerDocument.createElement('span');
+
                         return { dom, contentDOM: dom };
                     }
+
                     const spec = type.spec.toDOM?.(mark, inline);
                     if (spec === undefined) {
                         throw new Error(`The mark ${name} has no DOM output.`);
                     }
+
                     const { dom, contentDOM } = DOMSerializer.renderSpec(markView.dom.ownerDocument, spec);
                     const { styleId } = mark.attrs as JsonObject;
                     if (typeof styleId === 'string' && !dom.hasAttribute('data-rte-style')) {
                         dom.setAttribute('data-rte-style', styleId);
                     }
+
                     const element: MarkElement = { dom, mark, className: undefined };
                     styleMark(element, styles());
                     marks.add(element);
+
                     return {
                         dom,
                         contentDOM: contentDOM ?? null,
@@ -256,6 +283,7 @@ export const createMarkStyler = (): MarkStyler => {
                     };
                 };
             }
+
             return views;
         },
         restyle: (styles) => {

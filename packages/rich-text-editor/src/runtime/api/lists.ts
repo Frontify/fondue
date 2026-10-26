@@ -10,6 +10,7 @@ import { type ApiSource, sharedEdits } from './shared';
 export const listsApi = (source: ApiSource): Pick<DocumentApi, 'lists'> => {
     const { schema } = source;
     const { edit, capability, editWith } = sharedEdits(source);
+
     return {
         lists: {
             active: (list) => listAround(source.state().selection.$from)?.list.type.name === list,
@@ -23,9 +24,11 @@ export const listsApi = (source: ApiSource): Pick<DocumentApi, 'lists'> => {
                 if (type === undefined) {
                     return false;
                 }
+
                 if (options?.atStart === true && !outdentAtStart(type, source.state())) {
                     return false;
                 }
+
                 return edit(capability(EDITS.outdentItem, { item }));
             },
             split: (item) => {
@@ -33,7 +36,9 @@ export const listsApi = (source: ApiSource): Pick<DocumentApi, 'lists'> => {
                 if (type === undefined) {
                     return false;
                 }
+
                 const enter = enterItem(type);
+
                 return edit({
                     run: (state, dispatch) => enter(state, dispatch),
                     active: () => false,

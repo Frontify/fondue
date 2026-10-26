@@ -45,6 +45,7 @@ export const createInputSettling = (composing: () => boolean, settled: () => voi
             cancel();
             started = true;
         }
+
         return false;
     };
 
@@ -57,6 +58,7 @@ export const createInputSettling = (composing: () => boolean, settled: () => voi
             if (round !== ended) {
                 return;
             }
+
             timer = setTimeout(() => {
                 timer = undefined;
                 settleResources.timers -= 1;
@@ -78,12 +80,14 @@ export const createInputSettling = (composing: () => boolean, settled: () => voi
                 compositionupdate: begin,
                 compositionend: () => {
                     finish();
+
                     return false;
                 },
             },
         },
         view: (view) => {
             let wasComposing = view.composing;
+
             return {
                 update: (current) => {
                     const ends = wasComposing && !current.composing;

@@ -33,6 +33,7 @@ export type ViewMarkViews = Readonly<Record<string, MarkViewConstructor>>;
 /** The caret rectangle at `pos`, as a zero-width box on its line. */
 const positionRect = (view: SurfaceView, pos: number): DOMRect => {
     const caret = view.coordsAtPos(pos, 1);
+
     return new DOMRect(caret.left, caret.top, 0, caret.bottom - caret.top);
 };
 
@@ -41,6 +42,7 @@ export const caretRect = (view: SurfaceView, pos: number): DOMRect | undefined =
     if (pos < 0 || pos > view.state.doc.content.size) {
         return undefined;
     }
+
     return positionRect(view, pos);
 };
 
@@ -52,6 +54,7 @@ export const rangeRect = (view: SurfaceView, from: number, to: number): DOMRect 
     const box = view.dom.ownerDocument.createRange();
     box.setStart(start.node, start.offset);
     box.setEnd(end.node, end.offset);
+
     return box.getBoundingClientRect();
 };
 
@@ -64,15 +67,19 @@ export const selectionRect = (view: SurfaceView): DOMRect => {
             return dom.getBoundingClientRect();
         }
     }
+
     if (selection.empty) {
         const caret = view.coordsAtPos(selection.head);
+
         return new DOMRect(caret.left, caret.top, 0, caret.bottom - caret.top);
     }
+
     const start = view.domAtPos(selection.from);
     const end = view.domAtPos(selection.to);
     const range = view.dom.ownerDocument.createRange();
     range.setStart(start.node, start.offset);
     range.setEnd(end.node, end.offset);
+
     return range.getBoundingClientRect();
 };
 
@@ -89,6 +96,7 @@ export const endComposition = (view: SurfaceView | undefined): void => {
     if (view === undefined) {
         return;
     }
+
     view.dom.blur();
     view.focus();
 };
@@ -105,26 +113,31 @@ export const nodeChromeAt = (view: SurfaceView): HTMLElement | null => {
     if ('node' in selection) {
         node = view.nodeDOM(selection.from);
     }
+
     let element: HTMLElement | null = null;
     if (node instanceof HTMLElement) {
         element = node;
     } else if (node !== null) {
         element = node.parentElement;
     }
+
     for (; element !== null && element !== view.dom; element = element.parentElement) {
         const chrome = element.querySelector(':scope > [data-rte-chrome]');
         if (chrome === null) {
             continue;
         }
+
         // Content a view places inside its chrome holds the chrome of other nodes, never this node's.
         const toolbar = [...chrome.querySelectorAll('[data-rte-node-chrome]')].find((candidate) => {
             const content = candidate.closest('[data-rte-content]');
+
             return content === null || !chrome.contains(content);
         });
         if (toolbar instanceof HTMLElement) {
             return toolbar;
         }
     }
+
     return null;
 };
 
@@ -132,6 +145,7 @@ export const tagOf = (node: ViewNode) => {
     if (node.isInline) {
         return 'span';
     }
+
     return 'div';
 };
 
@@ -141,6 +155,7 @@ export const layersOf = (node: ViewNode, document: Document): readonly HTMLEleme
     if (spec === undefined) {
         return [];
     }
+
     const { dom, contentDOM } = DOMSerializer.renderSpec(document, spec);
     const layers: HTMLElement[] = [];
     let at = contentDOM as HTMLElement | null | undefined;
@@ -149,8 +164,10 @@ export const layersOf = (node: ViewNode, document: Document): readonly HTMLEleme
         if (at === dom) {
             break;
         }
+
         at = at.parentElement;
     }
+
     return layers;
 };
 
@@ -165,6 +182,7 @@ export const firstBlockId = (surface: HTMLElement, nodeId: string, domId: () => 
         index = domId();
         viewIndexes.set(surface, index);
     }
+
     return `rte-node-label-${index}-${encodeURIComponent(nodeId)}`;
 };
 
@@ -175,5 +193,6 @@ export const labelsFirstBlock = (node: ViewNode): { readonly nodeId: string; rea
     if (node.isAtom || node.isTextblock || block === null || !block.isBlock || typeof nodeId !== 'string') {
         return undefined;
     }
+
     return { nodeId, block };
 };

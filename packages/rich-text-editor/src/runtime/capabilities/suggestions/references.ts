@@ -31,6 +31,7 @@ export const isHttpsUrl = (value: string): boolean => {
     if (!checked.ok || checked.href !== value) {
         return false;
     }
+
     try {
         return new URL(value).protocol === 'https:';
     } catch {
@@ -48,33 +49,42 @@ const valueOf = (
     if (!isRecord(value)) {
         return undefined;
     }
+
     const { resourceType, resourceId, imageUrl, kind } = value;
     if (!nonEmpty(resourceType) || !isStoredId(resourceType) || holdsControls(resourceType)) {
         return undefined;
     }
+
     if (resourceTypes.length > 0 && !resourceTypes.includes(resourceType)) {
         return undefined;
     }
+
     if (!nonEmpty(resourceId) || resourceId.length > maxAttributeLength || holdsControls(resourceId)) {
         return undefined;
     }
+
     let labelSnapshot: unknown = value.labelSnapshot;
     if (typeof labelSnapshot === 'string') {
         labelSnapshot = withoutBidiControls(labelSnapshot);
     }
+
     if (!nonEmpty(labelSnapshot) || labelSnapshot.length > MAX_LABEL || CONTROL.test(labelSnapshot)) {
         return undefined;
     }
+
     let kept: ReferenceValue = { resourceType, resourceId, labelSnapshot };
     if (typeof value.href === 'string') {
         kept = { ...kept, href: value.href };
     }
+
     if (typeof imageUrl === 'string' && isHttpsUrl(imageUrl)) {
         kept = { ...kept, imageUrl };
     }
+
     if (typeof kind === 'string' && KINDS.has(kind)) {
         kept = { ...kept, kind: kind as NonNullable<ReferenceValue['kind']> };
     }
+
     return kept;
 };
 
@@ -82,6 +92,7 @@ const pageOf = (page: unknown, resourceTypes: readonly string[], maxAttributeLen
     if (!isRecord(page) || !Array.isArray(page.items)) {
         return undefined;
     }
+
     const items: ReferenceValue[] = [];
     const keys = new Set<string>();
     for (const value of (page.items as readonly unknown[]).slice(0, MAX_PAGE_ITEMS)) {
@@ -89,16 +100,19 @@ const pageOf = (page: unknown, resourceTypes: readonly string[], maxAttributeLen
         if (kept === undefined) {
             continue;
         }
+
         const resource = `${kept.resourceType}:${kept.resourceId}`;
         if (!keys.has(resource)) {
             keys.add(resource);
             items.push(kept);
         }
     }
+
     let nextCursor: string | null = null;
     if (nonEmpty(page.nextCursor) && page.nextCursor.length <= MAX_CURSOR) {
         nextCursor = page.nextCursor;
     }
+
     return { items, nextCursor };
 };
 
@@ -144,6 +158,7 @@ export const afterPage = (shown: readonly SuggestionItem[], results: ReferenceRe
             items.push(item);
         }
     }
+
     items.splice(MAX_ITEMS);
     if (results.nextCursor !== null && items.length < MAX_ITEMS) {
         items.push({
@@ -155,6 +170,7 @@ export const afterPage = (shown: readonly SuggestionItem[], results: ReferenceRe
             cursor: results.nextCursor,
         });
     }
+
     return items;
 };
 

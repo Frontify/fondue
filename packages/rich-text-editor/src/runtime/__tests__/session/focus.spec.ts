@@ -42,6 +42,7 @@ const setup = (options: { mode?: 'editable' | 'readonly'; disabled?: boolean; wi
         shown: { mode: () => options.mode ?? 'editable' },
         mode: { disabled: () => options.disabled ?? false },
     });
+
     return { service, store, lifecycle, view, roots, current, dom };
 };
 

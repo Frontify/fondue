@@ -9,6 +9,7 @@ export type Store = {
 
 export const createStore = (initial: EditorState): Store => {
     let state = initial;
+
     return {
         get state() {
             return state;

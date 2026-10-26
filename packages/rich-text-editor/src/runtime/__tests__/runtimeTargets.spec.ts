@@ -53,6 +53,7 @@ describe('targets', () => {
             handle.execute('mark.bold.toggle', undefined, { target });
             const text = markedText(view.state.doc, 'bold');
             handle.execute('mark.bold.toggle', undefined, { target });
+
             return text;
         };
 

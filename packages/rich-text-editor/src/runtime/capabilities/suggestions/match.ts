@@ -23,6 +23,7 @@ const leadingLetters = (count: number): RegExp => {
         pattern = new RegExp(`^\\p{L}{${count}}`, 'u');
         LEADING_LETTERS.set(count, pattern);
     }
+
     return pattern;
 };
 
@@ -31,9 +32,11 @@ const takesQuery = (rules: SuggestionRules, query: string): boolean => {
     if (query.length > rules.maxQuery) {
         return false;
     }
+
     if ((rules.spaces ? LINE_BREAK_INSIDE : BREAK_INSIDE).test(query)) {
         return false;
     }
+
     return leadingLetters(rules.leadingLetters).test(query);
 };
 
@@ -43,14 +46,17 @@ export const matchAt = (state: EditorState, suggestions: readonly EngineSuggesti
     if (!(selection instanceof TextSelection) || selection.$cursor === null) {
         return null;
     }
+
     const $cursor = selection.$cursor;
     const { parent } = $cursor;
     if (!parent.inlineContent || parent.type.spec.code === true) {
         return null;
     }
+
     if ($cursor.marks().some((mark) => mark.type.spec.code === true)) {
         return null;
     }
+
     let best: Match | null = null;
     for (const suggestion of suggestions) {
         const { trigger, rules } = suggestion;
@@ -63,6 +69,7 @@ export const matchAt = (state: EditorState, suggestions: readonly EngineSuggesti
             if (best !== null && from <= best.from) {
                 break;
             }
+
             const preceding = before.slice(0, at);
             let startsWord =
                 (at === 0 && windowStart === 0) ||
@@ -75,6 +82,7 @@ export const matchAt = (state: EditorState, suggestions: readonly EngineSuggesti
                     parent.type.name === 'paragraph' &&
                     parent.content.size === $cursor.parentOffset;
             }
+
             const query = before.slice(at + trigger.length);
             if (startsWord && takesQuery(rules, query)) {
                 best = { suggestion, from, to: $cursor.pos, query };
@@ -82,5 +90,6 @@ export const matchAt = (state: EditorState, suggestions: readonly EngineSuggesti
             }
         }
     }
+
     return best;
 };

@@ -29,6 +29,7 @@ const reach = (phase: Phase) => {
     for (const step of PATH[phase]) {
         lifecycle.to(step);
     }
+
     return lifecycle;
 };
 
@@ -83,6 +84,7 @@ describe('the session lifecycle machine', () => {
         for (const phase of PHASES) {
             expect(reach(phase).ended.aborted).toBe(phase === 'disposed');
         }
+
         expect(reach('disposed').isDisposed()).toBe(true);
     });
 });

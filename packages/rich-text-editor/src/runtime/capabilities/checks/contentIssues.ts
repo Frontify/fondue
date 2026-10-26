@@ -75,8 +75,10 @@ const mapHeld = (held: HeldIssue, mapping: Mapping): HeldIssue => {
     if (held.from < 0 || held.gone) {
         return held;
     }
+
     const from = mapping.mapResult(held.from, 1);
     const to = mapping.mapResult(held.to, -1);
+
     // A replaced edge, even by content of the same size, is another node or text.
     return { ...held, from: from.pos, to: to.pos, gone: from.deleted || to.deleted || to.pos <= from.pos };
 };
@@ -90,16 +92,20 @@ const samePlace = (candidate: HeldIssue, held: HeldIssue) => {
     if (candidate.issue.ruleId !== ruleId || candidate.gone) {
         return false;
     }
+
     if (nodeId !== null && id === `${ruleId}:${nodeId}`) {
         return candidate.issue.id === id;
     }
+
     if (path === null) {
         return candidate.issue.path === null;
     }
+
     // A replaced node is another node; replaced text at a run's edge still leaves the run where it was.
     if (held.from < 0 || (held.gone && !held.inline)) {
         return false;
     }
+
     return candidate.inline === held.inline && candidate.from === held.from && candidate.to === held.to;
 };
 
@@ -113,12 +119,15 @@ const placeOf = (held: HeldIssue): string | undefined => {
     if (nodeId !== null && id === `${ruleId}:${nodeId}`) {
         return id;
     }
+
     if (path === null) {
         return ruleId;
     }
+
     if (held.from < 0 || (held.gone && !held.inline)) {
         return undefined;
     }
+
     return `${ruleId} ${held.inline ? 'inline' : 'node'} ${held.from} ${held.to}`;
 };
 
@@ -131,13 +140,16 @@ const keyed = (value: ContentChecksState, results: readonly HeldIssue[]): readon
             previous.set(place, held.key);
         }
     }
+
     return results.map((result, index) => {
         const place = placeOf(result);
         const key = place === undefined ? undefined : previous.get(place);
         if (place !== undefined && key !== undefined) {
             previous.delete(place);
+
             return { ...result, key };
         }
+
         return { ...result, key: `${value.runs + 1}:${index}` };
     });
 };
@@ -146,17 +158,20 @@ const mapState = (value: ContentChecksState, mapping: Mapping): ContentChecksSta
     if (value.issues.length === 0 && value.dismissed.length === 0) {
         return value;
     }
+
     const dismissed: Dismissal[] = [];
     for (const dismissal of value.dismissed) {
         if (dismissal.from < 0) {
             dismissed.push(dismissal);
             continue;
         }
+
         const mapped = mapping.mapResult(dismissal.from, 1);
         if (!mapped.deleted) {
             dismissed.push({ ...dismissal, from: mapped.pos });
         }
     }
+
     return { ...value, issues: value.issues.map((held) => mapHeld(held, mapping)), dismissed };
 };
 
@@ -164,16 +179,21 @@ const applyMeta = (value: ContentChecksState, meta: Meta): ContentChecksState =>
     if ('results' in meta) {
         // A dismissal lasts while its issue is found again on unchanged content.
         const dismissed = value.dismissed.filter((dismissal) => meta.results.some((held) => matches(dismissal, held)));
+
         return { ...value, issues: keyed(value, meta.results), runs: value.runs + 1, dismissed };
     }
+
     if ('open' in meta) {
         return { ...value, open: meta.open };
     }
+
     const held = value.issues.find(({ issue }) => issue.id === meta.dismiss);
     if (held === undefined || held.issue.severity === 'error' || isDismissed(value, held)) {
         return value;
     }
+
     const dismissal = { ruleId: held.issue.ruleId, from: held.from, signature: held.signature };
+
     return { ...value, dismissed: [...value.dismissed, dismissal] };
 };
 
@@ -194,6 +214,7 @@ const iconOf = (view: EditorView, severity: Severity) => {
     if (icon !== undefined) {
         element.append(icon.cloneNode(true));
     }
+
     return element;
 };
 
@@ -202,13 +223,16 @@ const iconAt = (doc: Node, held: HeldIssue) => {
     if (held.inline) {
         return held.from;
     }
+
     let found: number | undefined;
     doc.nodesBetween(held.from, held.to, (node, pos) => {
         if (found === undefined && node.inlineContent) {
             found = pos + 1;
         }
+
         return found === undefined;
     });
+
     return found ?? held.from;
 };
 
@@ -219,10 +243,12 @@ const decorationsOf = (state: EditorState): DecorationSet => {
     if (value === undefined || !value.open) {
         return DecorationSet.empty;
     }
+
     const cached = drawn.get(value);
     if (cached !== undefined) {
         return cached;
     }
+
     const { doc } = state;
     // One mark per range, in the strongest severity of the issues on it.
     const marked = new Map<string, HeldIssue>();
@@ -231,12 +257,14 @@ const decorationsOf = (state: EditorState): DecorationSet => {
         if (issue.kind !== 'automatic' || held.gone || from < 0 || to > doc.content.size || isDismissed(value, held)) {
             continue;
         }
+
         const range = `${held.inline ? 'inline' : 'node'} ${from} ${to}`;
         const strongest = marked.get(range);
         if (strongest === undefined || STRENGTH[issue.severity] > STRENGTH[strongest.issue.severity]) {
             marked.set(range, held);
         }
     }
+
     const found: Decoration[] = [];
     for (const [range, held] of marked) {
         const { issue, from, to } = held;
@@ -249,8 +277,10 @@ const decorationsOf = (state: EditorState): DecorationSet => {
             if (node === null || from + node.nodeSize !== to) {
                 continue;
             }
+
             found.push(Decoration.node(from, to, attrs));
         }
+
         found.push(
             Decoration.widget(iconAt(doc, held), (view) => iconOf(view, issue.severity), {
                 key: `${range} ${issue.severity}`,
@@ -260,8 +290,10 @@ const decorationsOf = (state: EditorState): DecorationSet => {
             }),
         );
     }
+
     const set = DecorationSet.create(doc, found);
     drawn.set(value, set);
+
     return set;
 };
 
@@ -276,10 +308,12 @@ export const contentIssuesPlugin: PluginImplementation = () =>
                 if (transaction.docChanged) {
                     next = mapState(next, transaction.mapping);
                 }
+
                 const meta = transaction.getMeta(CONTENT_ISSUES) as Meta | undefined;
                 if (meta !== undefined) {
                     next = applyMeta(next, meta);
                 }
+
                 return next;
             },
         },
@@ -295,21 +329,26 @@ const locate = (doc: Node, path: readonly number[], span: number) => {
         if (index + count > parent.childCount) {
             return undefined;
         }
+
         let pos = start;
         for (let child = 0; child < index; child += 1) {
             pos += parent.child(child).nodeSize;
         }
+
         const node = parent.child(index);
         if (depth === path.length - 1) {
             let end = pos;
             for (let child = index; child < index + count; child += 1) {
                 end += parent.child(child).nodeSize;
             }
+
             return { from: pos, to: end, inline: node.isInline };
         }
+
         parent = node;
         start = pos + 1;
     }
+
     return undefined;
 };
 
@@ -317,10 +356,12 @@ const holdIssue = (doc: Node, { issue, span, signature }: LocatedIssue): HeldIss
     if (issue.path === null) {
         return { issue, from: -1, to: -1, gone: false, inline: false, signature, key: '' };
     }
+
     const range = locate(doc, issue.path, span);
     if (range === undefined) {
         return { issue, from: -1, to: -1, gone: true, inline: false, signature, key: '' };
     }
+
     return { issue, ...range, gone: false, signature, key: '' };
 };
 
@@ -356,16 +397,20 @@ export const createContentChecks = (host: ContentChecksHost): ContentChecks => {
             timer = undefined;
         }
     };
+
     const run = () => {
         if (!installed() || !host.ready() || host.composing()) {
             return false;
         }
+
         const state = host.state();
         const located = locateContentIssues(host.encode(), { ...host.options(), sequence: host.sequence() });
         const results = located.map((issue) => holdIssue(state.doc, issue));
         host.commit(state.tr.setMeta(CONTENT_ISSUES, { results } satisfies Meta).setMeta('addToHistory', false));
+
         return true;
     };
+
     const schedule = () => {
         clear();
         timer = setTimeout(() => {
@@ -376,6 +421,7 @@ export const createContentChecks = (host: ContentChecksHost): ContentChecks => {
             }
         }, CHECK_DELAY_MS);
     };
+
     return {
         changed: () => {
             if (installed()) {

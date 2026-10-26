@@ -26,6 +26,7 @@ export const loadMarkdownReaderOnIdle = (): (() => void) => {
     if (reader !== undefined) {
         return () => {};
     }
+
     return whenIdle(() => {
         // A failed load leaves paste as plain text.
         loadMarkdownReader().catch(() => undefined);
@@ -40,6 +41,7 @@ const markdownParser = ({ createParser }: MarkdownReader, model: ContentModel) =
         parser = createParser(markHrefPolicy(model, 'link'));
         parsers.set(model, parser);
     }
+
     return parser;
 };
 
@@ -63,13 +65,16 @@ export const markdownFragment = (
     if (loaded === undefined || !isMarkdown(loaded, text, model)) {
         return undefined;
     }
+
     const result = loaded.readMarkdown(markdownParser(loaded, model), text, model, randomId, { limits });
     if (result.status !== 'editable') {
         return undefined;
     }
+
     const { tree } = decodeToTree(result.document, model, { limits });
     if (tree === undefined) {
         return undefined;
     }
+
     return Fragment.fromJSON(schema, tree.content);
 };

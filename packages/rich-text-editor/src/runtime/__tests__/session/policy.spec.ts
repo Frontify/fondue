@@ -20,6 +20,7 @@ const make = (initial = authoringOf(model), limits = defaultLimits, onUpdate: (n
     createPolicy({ model, limits, initial, capabilities: [], onUpdate });
 const bolding = () => {
     const state = EditorState.create({ doc: docOf('abc') });
+
     return state.tr.addMark(1, 3, schema.marks.bold!.create());
 };
 

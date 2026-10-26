@@ -23,6 +23,7 @@ const CLOSES_NEXT = 'rte.closes-next';
  */
 export const historyPlugin = (keys: Readonly<Record<string, Command>>): Plugin => {
     const stock = history({ depth: 100, newGroupDelay: 500 });
+
     return new Plugin({ ...stock.spec, props: { ...stock.spec.props, handleKeyDown: keydownHandler(keys) } });
 };
 
@@ -53,6 +54,7 @@ export const groupsPlugin = new Plugin<boolean>({
             if (transaction.getMeta('appendedTransaction') === undefined) {
                 return closing;
             }
+
             return closes || closing;
         },
     },
@@ -63,9 +65,11 @@ export const groupRoot = (state: EditorState, root: Transaction, action: boolean
     if (groupsKey.getState(state) === true) {
         closeHistory(root);
     }
+
     if (action) {
         closeGroup(root);
     }
+
     return root;
 };
 

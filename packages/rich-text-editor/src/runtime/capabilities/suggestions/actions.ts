@@ -27,26 +27,35 @@ export const acceptSuggestion = (view: EditorView, index: number): void => {
     if (active === null || item === undefined || host === undefined) {
         return;
     }
+
     // A policy update since the list opened refuses its feature; the list closes and the text stays.
     if (!host.creates(active.featureId)) {
         dismissSuggestion(view);
+
         return;
     }
+
     if (item.action === 'more' && item.cursor !== undefined) {
         view.dispatch(withMeta(view.state, { kind: 'more', cursor: item.cursor }));
+
         return;
     }
+
     if (item.action === 'retry') {
         view.dispatch(withMeta(view.state, { kind: 'retry' }));
+
         return;
     }
+
     const result = host.accept({ from: active.from, to: active.to }, active.command, item.payload);
     if (result.status !== 'rejected') {
         return;
     }
+
     // Right after a composition ends, or inside another command, the session waits; the list stays for the next press.
     if (result.code === 'composition-active' || result.code === 'busy') {
         return;
     }
+
     dismissSuggestion(view);
 };

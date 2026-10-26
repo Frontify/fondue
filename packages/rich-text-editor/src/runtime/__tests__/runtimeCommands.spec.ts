@@ -56,6 +56,7 @@ describe('commands, events and the commit path', () => {
             if (next !== view.state) {
                 installed.push(next);
             }
+
             original(next);
         });
 
@@ -114,6 +115,7 @@ describe('commands, events and the commit path', () => {
                 if (fail) {
                     throw new Error('selector');
                 }
+
                 return 0;
             },
             Object.is,
@@ -195,6 +197,7 @@ describe('commands, events and the commit path', () => {
                     init: () => null,
                     apply: (transaction) => {
                         seen.push(transaction);
+
                         return null;
                     },
                 },
@@ -220,6 +223,7 @@ describe('commands, events and the commit path', () => {
             vi.runAllTimers();
             const view = runtime.view as NonNullable<EditorRuntime['view']>;
             view.dispatch(view.state.tr.insertText('!', 4));
+
             return { runtime, seen, diagnostics, now: Date.now() };
         };
 
@@ -443,6 +447,7 @@ describe('commands, events and the commit path', () => {
                             if (marked) {
                                 return strong(value);
                             }
+
                             return words(value);
                         }),
                     ),
@@ -476,6 +481,7 @@ describe('commands, events and the commit path', () => {
                 if (!transactions.some(({ docChanged }) => docChanged) || state.doc.childCount > 1) {
                     return null;
                 }
+
                 return state.tr.insert(
                     state.doc.content.size,
                     state.schema.node('paragraph', null, state.schema.text('n')),
@@ -527,6 +533,7 @@ describe('commands, events and the commit path', () => {
             run: (state, dispatch) => {
                 dispatch?.(state.tr.insertText('a'));
                 dispatch?.(state.tr.insertText('b'));
+
                 return true;
             },
             active: () => false,
@@ -628,6 +635,7 @@ describe('command payloads', () => {
                 if (reads === 1) {
                     return 2;
                 }
+
                 return 9;
             },
         };

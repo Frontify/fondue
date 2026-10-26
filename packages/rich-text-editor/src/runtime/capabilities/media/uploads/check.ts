@@ -8,7 +8,9 @@ export const nameOf = (file: File) => {
     if (file.name !== '') {
         return file.name;
     }
+
     const subtype = file.type.split('/')[1] ?? 'image';
+
     return `image.${subtype.split('+')[0] ?? subtype}`;
 };
 
@@ -20,6 +22,7 @@ export const checkFile = async (
     if (file.size > host.limits.maxAssetBytes) {
         return 'size';
     }
+
     // The header reader loads with the first upload, so a document that never uploads does not carry it.
     const { readImageHeader, svgHoldsScript } = await import('../imageHeader');
     const header = await readImageHeader(file);
@@ -28,6 +31,7 @@ export const checkFile = async (
     if (type === null || !host.acceptTypes.includes(type)) {
         return 'type';
     }
+
     const { width, height } = header;
     if (type === 'image/svg+xml') {
         if (svgHoldsScript(await file.text())) {
@@ -38,7 +42,9 @@ export const checkFile = async (
     } else if (width > MAX_IMAGE_SIDE || height > MAX_IMAGE_SIDE || width * height > host.limits.maxImagePixels) {
         return 'pixels';
     }
+
     const measured = (value: number | null) => (value === null || value < 1 ? null : value);
+
     return { file, name: nameOf(file), width: measured(width), height: measured(height) };
 };
 
@@ -57,6 +63,7 @@ export const checkFiles = async (
             )),
         );
     }
+
     return checked;
 };
 
@@ -71,5 +78,6 @@ export const sortChecked = (files: readonly File[], checked: readonly (Checked |
             accepted.push(result);
         }
     }
+
     return { accepted, refused };
 };

@@ -27,6 +27,7 @@ export const pluginError = (error: unknown, featureId: string | undefined) => {
     if (featureId === undefined) {
         return diagnostic('runtime.plugin-error', undefined, { name }, 'error');
     }
+
     return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
 };
 
@@ -37,6 +38,7 @@ export const checkedPayload = (given: unknown): Checked => {
     if (given !== undefined && findUnsafeJson(given, '') !== undefined) {
         return undefined;
     }
+
     return { payload: snapshot(given) };
 };
 
@@ -84,6 +86,7 @@ const createAttempt = (a: Deps, session: object) => {
             if (hrefPolicy === undefined) {
                 return [];
             }
+
             return [[command, hrefPolicy] as const];
         }),
     );
@@ -93,6 +96,7 @@ const createAttempt = (a: Deps, session: object) => {
         if (command.payload === undefined || !isRecord(payload)) {
             return { payload };
         }
+
         const hrefPolicy = hrefPolicies.get(command);
         const checked: Record<string, unknown> = { ...payload };
         for (const [name, field] of Object.entries(command.payload.fields)) {
@@ -100,12 +104,15 @@ const createAttempt = (a: Deps, session: object) => {
             if (field.type !== 'url' || typeof value !== 'string') {
                 continue;
             }
+
             const result = checkHref(value, hrefPolicy);
             if (!result.ok) {
                 return undefined;
             }
+
             checked[name] = result.href;
         }
+
         return { payload: checked };
     };
 
@@ -121,34 +128,43 @@ const createAttempt = (a: Deps, session: object) => {
         if (command === undefined) {
             return { code: 'unknown-command' };
         }
+
         // One JSON copy is checked and run, so an accessor or proxy cannot change the payload in between.
         if (checked === undefined) {
             return { code: 'invalid-payload' };
         }
+
         if (findInvalidPayload(command.payload, checked.payload) !== undefined) {
             return { code: 'invalid-payload' };
         }
+
         const urls = withCheckedUrls(command, checked.payload);
         if (urls === undefined) {
             return { code: 'invalid-payload' };
         }
+
         const { payload } = urls;
         if (lifecycle.is('transitioning')) {
             return { code: 'busy' };
         }
+
         if (!lifecycle.is('ready')) {
             return { code: 'not-ready' };
         }
+
         if (mode.refusesReadOnly(command)) {
             return { code: 'readonly' };
         }
+
         if (typeof base === 'string') {
             return { code: base };
         }
+
         const refused = policy.refusal(command, base, payload);
         if (refused !== undefined) {
             return { code: refused };
         }
+
         const dispatched: Transaction[] = [];
         let refusedWrite = false;
         const context = {
@@ -168,41 +184,51 @@ const createAttempt = (a: Deps, session: object) => {
                 diagnostic: pluginError(error, command.featureId),
             };
         }
+
         if (dispatched.length > 1) {
             return {
                 code: 'not-applicable',
                 diagnostic: diagnostic('runtime.multiple-dispatch', undefined, undefined, 'error'),
             };
         }
+
         const [root] = dispatched;
         if (!applicable) {
             if (refusedWrite) {
                 return { code: 'not-allowed' };
             }
+
             return { code: 'not-applicable' };
         }
+
         if (root === undefined) {
             return { unchanged: true };
         }
+
         // `readOnly` lets a command run in a read-only editor to open something, never to change content.
         if (mode.mode() === 'readonly' && root.docChanged) {
             return { code: 'readonly' };
         }
+
         // Work that runs later through a target maps the user's selection through its change instead of moving it there.
         if (route !== 'host' && base !== store.state) {
             root.setSelection(store.state.selection.map(root.doc, root.mapping));
         }
+
         // An async completion is no undo step of its own.
         if (route === 'async') {
             root.setMeta(ORIGIN_META, 'async').setMeta('addToHistory', false);
         }
+
         const prepared = commit.prepare(root, ids, false);
         // A host call never changes content during a composition, which queued intents and async results wait out.
         if ('candidate' in prepared && prepared.candidate.doc !== store.state.doc && composition.active()) {
             return { code: 'composition-active' };
         }
+
         return prepared;
     };
+
     return attempt;
 };
 
@@ -222,10 +248,12 @@ export const createCommands = (a: Deps): Commands => {
         if (command !== undefined && checked !== undefined && typeof base !== 'string') {
             active = command.active(base, checked.payload, { defer: () => undefined, session: commandSession });
         }
+
         const attempted = attempt(command, checked, base, commit.queriedIds(), 'host');
         if ('code' in attempted) {
             return { enabled: false, active, disabledReason: attempted.code };
         }
+
         return { enabled: true, active, disabledReason: null };
     };
 
@@ -234,12 +262,14 @@ export const createCommands = (a: Deps): Commands => {
         if (busy.isBusy()) {
             return rejected('busy');
         }
+
         const effects: (() => void)[] = [];
         const result = busy.run((): CommandResult => {
             const attempted = attempt(command, checked, base(), commit.installedId, route, effects);
             if ('unchanged' in attempted) {
                 return { status: 'no-op', stamp: identity.stamp(), contentChanged: false };
             }
+
             if ('candidate' in attempted) {
                 const before = identity.commitSequence();
                 const contentChanged = commit.install(attempted);
@@ -247,14 +277,18 @@ export const createCommands = (a: Deps): Commands => {
                 if (identity.commitSequence() === before) {
                     return rejected('not-ready');
                 }
+
                 return { status: 'applied', stamp: identity.stamp(), contentChanged };
             }
+
             if (attempted.diagnostic !== undefined) {
                 a.report(attempted.diagnostic);
             }
+
             if (attempted.fault !== undefined) {
                 a.fault(attempted.fault);
             }
+
             return rejected(attempted.code);
         });
         // Deferred effects, such as an overlay a plugin command opens, run once the command has run and its commit ended.
@@ -263,8 +297,10 @@ export const createCommands = (a: Deps): Commands => {
                 effect();
             }
         }
+
         return result;
     };
+
     const run: Commands['run'] = (id, given, options, route) =>
         runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options), route);
 
@@ -277,19 +313,23 @@ export const createCommands = (a: Deps): Commands => {
             // Commands belong in event handlers; a call inside a notification is already `busy`.
             if (!busy.isBusy() && a.inRender() === true) {
                 a.report(diagnostic('react.execute-in-render', undefined, undefined, 'error'));
+
                 return rejected('busy');
             }
+
             const result = run(id, given, commandOptions, 'host');
             // Without `focus: 'editor'` a command leaves focus where it is.
             if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
                 a.focus();
             }
+
             return result;
         },
         refusal: (command, base, payload) => {
             if (mode.refusesReadOnly(command)) {
                 return 'readonly';
             }
+
             return policy.refusal(command, base, payload);
         },
         perform: (command, options) => runOn(command, { payload: undefined }, () => baseOf(options), 'host'),

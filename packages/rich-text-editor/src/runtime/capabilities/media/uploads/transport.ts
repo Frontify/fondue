@@ -79,6 +79,7 @@ export const createTransport = (host: UploadHost, cache: UploadCache): Transport
             } catch {
                 // An answer whose accessor throws while it is read holds no asset either.
             }
+
             dispatch(context, { type: 'parsed', asset });
         },
         fill: (context, { asset }) => {
@@ -124,6 +125,7 @@ export const createTransport = (host: UploadHost, cache: UploadCache): Transport
         if (service === undefined || file === undefined) {
             return;
         }
+
         const call: Call = { own: undefined, release: undefined, settled: Promise.resolve(), reply: undefined };
         const ctx: Context = { ...context, call };
         const started = host.start({
@@ -144,6 +146,7 @@ export const createTransport = (host: UploadHost, cache: UploadCache): Transport
                         // A service that throws instead of rejecting cleans up nothing either.
                     }
                 };
+
                 dispatch(ctx, { type: 'running', own: call.own });
                 const reportProgress = (fraction: number) =>
                     dispatch(ctx, { type: 'progress', fraction, aborted: signal.aborted });
@@ -155,11 +158,13 @@ export const createTransport = (host: UploadHost, cache: UploadCache): Transport
                     ),
                 );
                 call.settled = upload.then(nothing, nothing);
+
                 return upload;
             },
             deliver: (value) => {
                 call.reply = undefined;
                 dispatch(ctx, { type: 'answered', own: call.own, value });
+
                 return call.reply;
             },
             fail: () => dispatch(ctx, { type: 'failed', own: call.own }),

@@ -46,27 +46,34 @@ const leaveUnsaved = async (
     if (!isRecord(unsaved)) {
         return 'unsaved';
     }
+
     if (unsaved.action === 'save') {
         const result = await saving.commit({ reason: 'navigate' });
         // A write whose outcome is unknown goes on to step 6, which refuses it.
         if (result.status === 'acknowledged' || (result.status === 'failed' && result.outcome === 'unknown')) {
             return undefined;
         }
+
         return 'unsaved';
     }
+
     if (unsaved.action === 'checkpoint') {
         // A checkpoint with no receipt cannot hold the current stamp.
         if (!isRecord(unsaved.receipt) || !isRecord(unsaved.receipt.stamp)) {
             return 'unsaved';
         }
+
         if (sameStamp(unsaved.receipt.stamp, identity.stamp())) {
             return undefined;
         }
+
         return 'checkpoint-invalid';
     }
+
     if (unsaved.action === 'discard' && unsaved.confirmed === true) {
         return undefined;
     }
+
     return 'unsaved';
 };
 
@@ -83,6 +90,7 @@ const freshState = (
         if (request.selection === 'end') {
             selection = Selection.atEnd(doc);
         }
+
         return history.fresh(doc, selection);
     } catch {
         return undefined;
@@ -101,7 +109,9 @@ const measured = (
         if (result.status === 'rejected') {
             failureCode = result.code;
         }
+
         metrics.measure('replace', started, failureCode);
+
         return result;
     },
 });
@@ -139,11 +149,13 @@ export const createReplace = (a: {
         if (lifecycle.is('transitioning')) {
             lifecycle.to('ready');
         }
+
         view.refresh();
         coordinator.settle();
         saving.settled();
         queue.drain();
         focus.refocus(focused);
+
         return refused(code);
     };
 
@@ -160,8 +172,10 @@ export const createReplace = (a: {
         const fresh = freshState(definition, history, request, tree);
         if (fresh === undefined) {
             faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
+
             return refused('faulted');
         }
+
         const outgoing = store.state.doc;
         // Roots that plugin views dispatch while the state installs commit in the new generation.
         const installed = commit.guarded(() => {
@@ -169,6 +183,7 @@ export const createReplace = (a: {
             if (!published) {
                 return false;
             }
+
             // Intents of the old generation end before anything can drain them into the next.
             queue.settle('wrong-session');
             const previous = identity.nextGeneration(request.next.documentId);
@@ -180,12 +195,15 @@ export const createReplace = (a: {
             if (lifecycle.is('transitioning')) {
                 lifecycle.to('ready');
             }
+
             view.refresh();
+
             return true;
         });
         if (!installed) {
             return refused('faulted');
         }
+
         // What the old generation started or queued ends now and changes nothing here.
         coordinator.abortWhere(() => true);
         uploads.reset(outgoing);
@@ -195,6 +213,7 @@ export const createReplace = (a: {
         shown.emitSaveStatus();
         events.emit('replaced', identity.session());
         focus.refocus(focused);
+
         return { status: 'replaced', session: identity.session() };
     };
 
@@ -202,16 +221,19 @@ export const createReplace = (a: {
         if (!lifecycle.is('ready')) {
             return refused('not-ready');
         }
+
         const { next } = request;
         const { document } = next;
         // The input is untrusted: only a record names a model, and `decodeToTree` judges any other input.
         if (isRecord(document) && isRecord(document.model) && document.model.id !== definition.model.ref.id) {
             return refused('wrong-model');
         }
+
         const { result, tree } = decodeToTree(document, definition.model, { limits });
         if (result.status !== 'editable' || tree === undefined) {
             return refused('invalid-document');
         }
+
         // A host that echoes its own save gets the current session back with nothing changed; hashing waits for a checked document.
         if (
             next.documentId === identity.session().documentId &&
@@ -220,12 +242,15 @@ export const createReplace = (a: {
         ) {
             return { status: 'replaced', session: identity.session() };
         }
+
         if (!sameStamp(request.expected, identity.stamp())) {
             return refused('changed-since-request');
         }
+
         if (composition.active()) {
             return refused('composition-active');
         }
+
         const focused = view.current()?.hasFocus() === true;
         lifecycle.to('transitioning');
         view.refresh();
@@ -235,17 +260,21 @@ export const createReplace = (a: {
             if (!lifecycle.is('transitioning')) {
                 return refused('not-ready');
             }
+
             if (code !== undefined) {
                 return resume(code, focused);
             }
         }
+
         if (saving.outcomeUnknown()) {
             return resume('save-unresolved', focused);
         }
+
         // A keystroke the view read during step 5 is kept, not replaced.
         if (!sameStamp(request.expected, identity.stamp())) {
             return resume('changed-since-request', focused);
         }
+
         return installNext(request, tree, result.document.requiredCapabilities, focused);
     };
 

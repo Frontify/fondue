@@ -32,6 +32,7 @@ export const createMetrics = (args: {
             operationMetric(args.model, args.session(), { kind, durationMs, normalizationTransactions, failureCode }),
         );
     };
+
     return {
         measure,
         record: (batch) => {

@@ -255,6 +255,7 @@ describe('the published snapshot and composition', () => {
             const session = start(stored(para(words('ab'))), { policy });
             compose(session, 'x');
             const { disabledReason } = session.handle.query('text.insert', { text: 'y' });
+
             return [disabledReason, session.handle.execute('text.insert', { text: 'y' })];
         });
 

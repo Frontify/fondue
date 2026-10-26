@@ -41,6 +41,7 @@ export const createHandle = (a: {
 }): RuntimeHandle => {
     const { identity, lifecycle, mode, composition, store, shown, saving, faults, commands, queue } = a;
     const { targets, replace, policy, focus, interactionRoots } = a;
+
     return {
         getSummary: () => {
             return {
@@ -71,6 +72,7 @@ export const createHandle = (a: {
         focus: focus.focus,
         registerInteractionRoot: (element) => {
             interactionRoots.add(element);
+
             return () => {
                 interactionRoots.delete(element);
             };

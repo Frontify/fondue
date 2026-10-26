@@ -15,8 +15,10 @@ const uint32 = (value: number) =>
 /** One ISO base media box of `type` around `parts`. */
 const box = (type: string, ...parts: readonly Uint8Array[]) => {
     const size = 8 + parts.reduce((total, part) => total + part.length, 0);
+
     return concat([uint32(size), ascii(type), ...parts]);
 };
+
 const concat = (parts: readonly Uint8Array[]) => {
     const out = new Uint8Array(parts.reduce((total, part) => total + part.length, 0));
     let at = 0;
@@ -24,8 +26,10 @@ const concat = (parts: readonly Uint8Array[]) => {
         out.set(part, at);
         at += part.length;
     }
+
     return out;
 };
+
 const VERSION = new Uint8Array(4);
 
 describe('the image header reader', () => {

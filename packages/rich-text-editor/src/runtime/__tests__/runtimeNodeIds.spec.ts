@@ -37,6 +37,7 @@ describe('node IDs', () => {
             if (dispatch !== undefined) {
                 dispatch(state.tr.insert($from.posAtIndex(index + 1, 0), state.doc.child(index)));
             }
+
             return true;
         },
         active: () => false,
@@ -62,9 +63,11 @@ describe('node IDs', () => {
         if (Array.isArray(value)) {
             return value.flatMap(idsIn);
         }
+
         if (typeof value !== 'object' || value === null) {
             return [];
         }
+
         const { attrs, content } = value as {
             readonly attrs?: { readonly nodeId?: unknown };
             readonly content?: unknown;
@@ -73,8 +76,10 @@ describe('node IDs', () => {
         if (attrs !== undefined && 'nodeId' in attrs) {
             own.push(attrs.nodeId);
         }
+
         return [...own, ...idsIn(content)];
     };
+
     /** Splits the node `depth` levels around the caret, as Enter in a list item does. */
     const splitAt =
         (depth: number) =>
@@ -176,6 +181,7 @@ describe('node IDs', () => {
                         if (transaction.getMeta('appendedTransaction') !== undefined) {
                             appended.push(transaction);
                         }
+
                         return null;
                     },
                 },
@@ -201,6 +207,7 @@ describe('node IDs', () => {
                 expect(transaction.getMeta(ORIGIN_META)).toBe('normalization');
                 expect(transaction.getMeta('addToHistory')).toBeUndefined();
             }
+
             expect(session.changes[0]?.origin).not.toBe('normalization');
             // One undo step reverts the change with its repair.
             expect(undoSteps(session.handle)).toBe(1);
@@ -213,6 +220,7 @@ describe('node IDs', () => {
         for (let index = 0; index < 5000; index += 1) {
             blocks.push(titled(`h-${index}`, 'Title'), para(words('Some text')));
         }
+
         const { handle, changes, view } = start(stored(...blocks), {
             model: idModel,
             policy: forbid('fixture.mention', 'create'),
@@ -229,6 +237,7 @@ describe('node IDs', () => {
                     if (depth > 0) {
                         return nodesBetween.call(this, from, to, visit, at);
                     }
+
                     depth += 1;
                     try {
                         return nodesBetween.call(
@@ -237,6 +246,7 @@ describe('node IDs', () => {
                             to,
                             (...args) => {
                                 visits += 1;
+
                                 return visit(...args);
                             },
                             at,
@@ -250,8 +260,10 @@ describe('node IDs', () => {
             } finally {
                 counted.mockRestore();
             }
+
             return visits;
         };
+
         setSelection(handle, { text: 'Some text', from: 4, to: 4 });
         const heading = view.state.doc.child(0).nodeSize;
 
@@ -275,6 +287,7 @@ describe('node IDs', () => {
         for (let count = 0; count < 3; count += 1) {
             expect(queried.handle.query('heading.set', { level: 2 }).enabled).toBe(true);
         }
+
         expect(queried.handle.execute('heading.set', { level: 2 }).status).toBe('applied');
         expect(contentOf(queried.changes[0])).toMatchObject({ content: [{ attrs: { nodeId: 'node-2' } }] });
 
@@ -285,9 +298,12 @@ describe('node IDs', () => {
             for (let count = 0; count < 7; count += 1) {
                 generateId();
             }
+
             setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+
             return session;
         };
+
         const open = atNine({ maxDocumentBytes: 100_000_000 });
         open.handle.execute('heading.set', { level: 2 });
         const exceeds = createLimitCheck(idModel, [{ id: 'core', version: 1 }]);
@@ -301,6 +317,7 @@ describe('node IDs', () => {
                 high = middle;
             }
         }
+
         const tight = atNine({ maxDocumentBytes: low });
 
         expect(tight.handle.query('heading.set', { level: 2 }).enabled).toBe(true);

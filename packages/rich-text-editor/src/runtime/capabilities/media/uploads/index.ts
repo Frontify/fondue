@@ -37,6 +37,7 @@ export const createUploads = (host: UploadHost) => {
 
     const flag = (pick: (slot: SlotState) => boolean) => (nodeId: string) => {
         const slot = cells.get(nodeId)?.slot;
+
         return slot !== undefined && pick(slot);
     };
 
@@ -46,6 +47,7 @@ export const createUploads = (host: UploadHost) => {
         retry,
         statusOf: (nodeId: string): UploadStatus | undefined => {
             const slot = cells.get(nodeId)?.slot;
+
             return slot === undefined ? undefined : statusOf(slot);
         },
         active: flag(isActive),

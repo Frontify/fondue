@@ -37,6 +37,7 @@ const setup = (service?: RecoveryService) => {
         shown: {
             takeProvisional: () => {
                 calls.push('take');
+
                 return undefined;
             },
         },
@@ -56,6 +57,7 @@ const setup = (service?: RecoveryService) => {
     });
     const attached = { dom: document.createElement('div') } as unknown as EditorView;
     const candidate = EditorState.create({ schema });
+
     return { faults, calls, reported, lifecycle, attached, candidate };
 };
 
@@ -120,6 +122,7 @@ describe('createFaults', () => {
         const { faults, attached, candidate } = setup({ store } as unknown as RecoveryService);
         const result = faults.withoutRecovery(() => {
             faults.viewFault(attached, candidate);
+
             return 7;
         });
         expect(result).toBe(7);

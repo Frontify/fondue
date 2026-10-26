@@ -19,25 +19,32 @@ const optionsOf = (page: SuggestionPage): ReferenceResults => {
         if (itemKey === '') {
             continue;
         }
+
         let item: SuggestionItem = { key: itemKey, label, glyph: glyph ?? null, payload };
         if (detail !== undefined) {
             item = { ...item, detail };
         }
+
         if (imageUrl !== undefined && isHttpsUrl(imageUrl)) {
             item = { ...item, imageUrl };
         }
+
         if (kind !== undefined && KINDS.has(kind)) {
             item = { ...item, kind };
         }
+
         if (group !== undefined) {
             item = { ...item, group };
         }
+
         items.push(item);
     }
+
     let nextCursor: string | null = null;
     if (typeof page.nextCursor === 'string' && page.nextCursor !== '') {
         nextCursor = page.nextCursor;
     }
+
     return { items, nextCursor };
 };
 
@@ -46,6 +53,7 @@ const answer = (view: EditorView, request: number, answered: { readonly page: Su
     if (view.isDestroyed) {
         return;
     }
+
     let meta: SuggestionsMeta = { kind: 'failed', request };
     if (answered !== undefined) {
         try {
@@ -54,6 +62,7 @@ const answer = (view: EditorView, request: number, answered: { readonly page: Su
             // A page of another shape fails as a rejected search does.
         }
     }
+
     view.dispatch(withMeta(view.state, meta));
 };
 
@@ -74,6 +83,7 @@ export const createFetcher = (view: EditorView, suggestions: readonly EngineSugg
         abort?.();
         abort = undefined;
     };
+
     /** Closes a list that cannot search, as Escape does, once the transaction that opened it has applied. */
     const closeLater = (current: EditorView, request: number) => {
         queueMicrotask(() => {
@@ -82,21 +92,26 @@ export const createFetcher = (view: EditorView, suggestions: readonly EngineSugg
             }
         });
     };
+
     const fetchFor = (current: EditorView): void => {
         const active = activeSuggestion(current.state);
         const previous = seen;
         seen = active;
         if (active === null) {
             stop();
+
             return;
         }
+
         if (active.status !== 'loading' || active.request === asked) {
             return;
         }
+
         const host = suggestionHosts.get(current);
         if (host === undefined) {
             return;
         }
+
         asked = active.request;
         stop();
         const suggestion = suggestions.find(({ trigger }) => trigger === active.trigger);
@@ -106,8 +121,10 @@ export const createFetcher = (view: EditorView, suggestions: readonly EngineSugg
             !suggestion.available({ view: current, host: host.commandHost })
         ) {
             closeLater(current, active.request);
+
             return;
         }
+
         const { featureId, command, trigger, query, page, request } = active;
         let stopped = false;
         // A search that throws instead of rejecting fails the same way.
@@ -131,6 +148,7 @@ export const createFetcher = (view: EditorView, suggestions: readonly EngineSugg
                 return undefined;
             }
         };
+
         const start = () => {
             timer = undefined;
             const cancel = host.search({ key: `suggestions:${trigger}`, featureId, command, run }, (answered) =>
@@ -141,19 +159,24 @@ export const createFetcher = (view: EditorView, suggestions: readonly EngineSugg
                 cancel();
             };
         };
+
         // A new request for the query the list already showed is a further page or a retry.
         if (previous !== null && previous.from === active.from && previous.query === query) {
             start();
+
             return;
         }
+
         timer = setTimeout(start, SEARCH_DELAY_MS);
     };
+
     // The view runs this during its constructor, before the runtime registers the view's host, so the first search waits a microtask.
     queueMicrotask(() => {
         if (!view.isDestroyed) {
             fetchFor(view);
         }
     });
+
     return {
         update: fetchFor,
         destroy: stop,

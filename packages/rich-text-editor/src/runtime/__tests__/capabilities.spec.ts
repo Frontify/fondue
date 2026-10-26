@@ -17,6 +17,7 @@ const schemaOf = (docContent: string, withParagraph: boolean) => {
     if (withParagraph) {
         nodes.paragraph = { group: 'block', content: 'text*' };
     }
+
     return new Schema({ nodes });
 };
 

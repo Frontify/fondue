@@ -21,6 +21,7 @@ export const listAround = ($pos: ResolvedPos): { readonly list: Node; readonly d
             return { list, depth };
         }
     }
+
     return undefined;
 };
 
@@ -29,6 +30,7 @@ export const itemAt = ($pos: ResolvedPos): NodeType | undefined => {
     if ($pos.depth < 2 || !holdsItems($pos.node(-2).type, $pos.node(-1).type)) {
         return undefined;
     }
+
     return $pos.node(-1).type;
 };
 
@@ -52,6 +54,7 @@ export const liftItems =
         ) {
             return liftListItem(item)(state, dispatch);
         }
+
         const { parent: list } = range;
         const transaction = state.tr;
         // Merge the selected items into one, so a single step strips them out of the list.
@@ -59,11 +62,13 @@ export const liftItems =
             pos -= list.child(index).nodeSize;
             transaction.delete(pos - 1, pos + 1);
         }
+
         const $start = transaction.doc.resolve(range.start);
         const merged = $start.nodeAfter;
         if (merged === null || transaction.mapping.map(range.end) !== range.start + merged.nodeSize) {
             return false;
         }
+
         const atStart = range.startIndex === 0;
         const atEnd = range.endIndex === list.childCount;
         const outer = $start.node(-1);
@@ -72,16 +77,20 @@ export const liftItems =
         if (!atEnd) {
             rest = Fragment.from(list);
         }
+
         if (!outer.canReplace(indexBefore + Number(!atStart), indexBefore + 1, merged.content.append(rest))) {
             return false;
         }
+
         let closed = Fragment.empty;
         if (!atStart) {
             closed = Fragment.from(list.copy(Fragment.empty));
         }
+
         if (!atEnd) {
             closed = closed.append(Fragment.from(list.copy(Fragment.empty)));
         }
+
         const start = $start.pos;
         const end = start + merged.nodeSize;
         transaction.step(
@@ -95,6 +104,7 @@ export const liftItems =
             ),
         );
         dispatch?.(transaction.scrollIntoView());
+
         return true;
     };
 
@@ -111,11 +121,14 @@ export const repeatWhile = (
         if (next === undefined) {
             break;
         }
+
         current = take(transaction, current, next);
     } while (stillApplies(current));
+
     if (!transaction.docChanged) {
         return undefined;
     }
+
     return transaction.setSelection(carrySelection(transaction.doc, current.selection)).scrollIntoView();
 };
 
@@ -130,15 +143,18 @@ export const splitItem =
     (state, dispatch) => {
         const { $from, $to } = state.selection;
         const before = atItemStart($from) && $to.parentOffset < $to.parent.content.size;
+
         return splitListItem(item)(state, (transaction) => {
             const $at = transaction.selection.$from;
             let at = $at.before(-1);
             if (before) {
                 at = $at.posAtIndex($at.index(-2) - 1, -2);
             }
+
             if (transaction.doc.nodeAt(at)?.attrs.checked === true) {
                 transaction.setNodeAttribute(at, 'checked', false);
             }
+
             const created = $at.parent;
             if (!before && created.type === $from.parent.type) {
                 for (const [name, value] of Object.entries($from.parent.attrs)) {
@@ -147,6 +163,7 @@ export const splitItem =
                     }
                 }
             }
+
             dispatch?.(transaction);
         });
     };
@@ -154,6 +171,7 @@ export const splitItem =
 /** Outdent for an empty caret at the start of an item of `item` that no break precedes, the rule of Backspace there. */
 export const outdentAtStart = (item: NodeType, state: EditorState): boolean => {
     const { $from, empty } = state.selection;
+
     return empty && atItemStart($from) && itemAt($from) === item && breakBefore(state) === undefined;
 };
 
@@ -165,8 +183,10 @@ export const enterItem =
         if (itemAt($from) !== item || inCodeTextblock($from)) {
             return false;
         }
+
         if (empty && $from.parent.content.size === 0 && $from.node(-1).childCount === 1) {
             return liftListItem(item)(state, dispatch);
         }
+
         return splitItem(item)(state, dispatch);
     };

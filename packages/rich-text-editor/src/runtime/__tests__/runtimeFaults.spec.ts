@@ -55,6 +55,7 @@ describe('faults', () => {
                         throws -= 1;
                         throw new TypeError('plugin failure');
                     }
+
                     return null;
                 },
             }),
@@ -90,6 +91,7 @@ describe('faults', () => {
                         const notAnError: unknown = 'secret document text';
                         throw notAnError;
                     }
+
                     return null;
                 },
             }),
@@ -109,6 +111,7 @@ describe('faults', () => {
                 if (transaction.docChanged) {
                     throw new RangeError('filter failure');
                 }
+
                 return true;
             },
         });
@@ -126,6 +129,7 @@ describe('faults', () => {
             nodeViews: {
                 paragraph: (node) => {
                     const dom = document.createElement('p');
+
                     return {
                         dom,
                         contentDOM: dom,
@@ -133,6 +137,7 @@ describe('faults', () => {
                             if (next.textContent.includes('!')) {
                                 throw new Error('node view update failure');
                             }
+
                             return next.type === node.type;
                         },
                     };
@@ -166,6 +171,7 @@ describe('faults', () => {
         if (result.status !== 'editable' || tree === undefined) {
             throw new Error('expected an editable document');
         }
+
         const constructorFails = new Plugin({
             props: {
                 nodeViews: {
@@ -259,6 +265,7 @@ describe('faults', () => {
                         ) {
                             return null;
                         }
+
                         return state.tr.setMeta('appendedBy', featureId).setMeta('loop', true);
                     },
                 }),
@@ -292,6 +299,7 @@ describe('faults', () => {
                         ) {
                             return null;
                         }
+
                         return state.tr.setMeta('appendedBy', featureId).setMeta('loop', true);
                     },
                 }),
@@ -321,6 +329,7 @@ describe('faults', () => {
                     if (transactions[0]?.getMeta(NORMALIZE_META) === 'now') {
                         throw new TypeError('plugin failure');
                     }
+
                     return null;
                 },
             }),
@@ -344,6 +353,7 @@ describe('faults', () => {
         if (result.status !== 'editable' || tree === undefined) {
             throw new Error('expected an editable document');
         }
+
         let halfBuilt: { readonly isDestroyed: boolean } | undefined;
         const viewFails = new Plugin({
             view: (editorView) => {
@@ -370,6 +380,7 @@ describe('faults', () => {
         if (text !== null && text !== undefined) {
             document.getSelection()?.setBaseAndExtent(text, 0, text, 1);
         }
+
         document.dispatchEvent(new Event('selectionchange'));
         element.dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: 'x', bubbles: true }));
 

@@ -17,6 +17,7 @@ import { type Checked } from './types';
 /** The node that has `nodeId` in `doc`, or `null` when none does. */
 export const nodeIn = (doc: Node, nodeId: string): Node | null => {
     const pos = positionOf(doc, nodeId);
+
     return pos === undefined ? null : doc.nodeAt(pos);
 };
 
@@ -34,6 +35,7 @@ export const insertion = (
         if (figure === undefined) {
             return false;
         }
+
         let tr: Transaction | undefined;
         if (origin === 'command') {
             tr = placeBlock(state, Fragment.from(nodes));
@@ -44,13 +46,17 @@ export const insertion = (
             tr.setSelection(Selection.near(tr.doc.resolve(Math.min(end, tr.doc.content.size)), -1));
             tr.setMeta('uiEvent', origin).scrollIntoView();
         }
+
         if (tr === undefined) {
             return false;
         }
+
         if (origin === 'command') {
             tr.setMeta(COMMAND_META, INSERT_IMAGE);
         }
+
         dispatch?.(tr.setMeta(SLOT_START_META, start));
+
         return true;
     },
     active: () => false,
@@ -63,18 +69,22 @@ export const replacement = (nodeId: string, checked: Checked, previous: JsonObje
         if (pos === undefined) {
             return false;
         }
+
         const node = state.doc.nodeAt(pos);
         if (node?.type.name !== 'asset_image') {
             return false;
         }
+
         const tr = state.tr;
         for (const [name, attribute] of Object.entries(slotAttrs(checked))) {
             tr.setNodeAttribute(pos, name, attribute);
         }
+
         // The completion sets `mediaType` with no undo step, so this step keeps the value an undo restores.
         tr.setNodeAttribute(pos, 'mediaType', node.attrs.mediaType);
         const start: SlotStart = { kind: 'replace', nodeId, previous };
         dispatch?.(tr.setMeta(COMMAND_META, REPLACE_IMAGE).setMeta(SLOT_START_META, start));
+
         return true;
     },
     active: () => false,
@@ -88,11 +98,14 @@ export const completion = (nodeId: string, asset: PickedAsset): EngineCommand =>
         if (pos === undefined || node === null || node.attrs.assetId !== null) {
             return false;
         }
+
         const tr = state.tr.setMeta(FILL_META, true);
         for (const [name, attribute] of Object.entries(asset)) {
             tr.setNodeAttribute(pos, name, attribute);
         }
+
         dispatch?.(tr);
+
         return true;
     },
     active: () => false,

@@ -302,7 +302,9 @@ export const sameRange = (a: EditorRange | undefined, b: EditorRange | undefined
     if (a === undefined || b === undefined) {
         return a === b;
     }
+
     const first = positionsOf(a);
     const second = positionsOf(b);
+
     return first !== undefined && second !== undefined && first.from === second.from && first.to === second.to;
 };

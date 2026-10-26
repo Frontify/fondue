@@ -61,6 +61,7 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
     const call = (listener: Listener, value: unknown) => {
         try {
             (listener as (value: unknown) => void)(value);
+
             return undefined;
         } catch (error) {
             return nameOf(error);
@@ -94,11 +95,13 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
                 if (isDisposed() && event !== 'disposed') {
                     break;
                 }
+
                 const name = call(listener, value);
                 if (name !== undefined) {
                     throwers.push({ listener, event, name });
                 }
             }
+
             reportThrows(throwers);
         });
 
@@ -109,6 +112,7 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
             if (isDisposed()) {
                 break;
             }
+
             let next: unknown;
             try {
                 next = watcher.read();
@@ -117,6 +121,7 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
                 throwers.push({ listener: watcher.listener as Listener, event: 'selector', name: nameOf(error) });
                 continue;
             }
+
             if (!watcher.isEqual(watcher.value, next)) {
                 watcher.value = next;
                 const name = call(watcher.listener as Listener, next);
@@ -125,6 +130,7 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
                 }
             }
         }
+
         reportThrows(throwers);
     };
 
@@ -132,14 +138,17 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
         if (isDisposed()) {
             return () => undefined;
         }
+
         let set = listeners.get(event);
         if (set === undefined) {
             set = new Set();
             listeners.set(event, set);
         }
+
         const subscribed = set;
         subscribed.add(listener);
         busResources.subscriptions += 1;
+
         return () => {
             if (subscribed.delete(listener)) {
                 busResources.subscriptions -= 1;
@@ -151,9 +160,11 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
         if (isDisposed()) {
             return () => undefined;
         }
+
         const watcher = { read, isEqual, listener, value: read() } as Watcher;
         watchers.add(watcher);
         busResources.selectors += 1;
+
         return () => {
             if (watchers.delete(watcher)) {
                 busResources.selectors -= 1;
@@ -167,6 +178,7 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
             busResources.subscriptions -= set.size;
             set.clear();
         }
+
         listeners.clear();
         busResources.selectors -= watchers.size;
         watchers.clear();

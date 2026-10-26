@@ -24,11 +24,13 @@ const bytesOf = async (blob: Blob, start: number, length: number): Promise<Uint8
 const windowed = (blob: Blob) => {
     let start = 0;
     let bytes: Uint8Array = new Uint8Array();
+
     return async (at: number, length: number): Promise<Uint8Array> => {
         if (at < start || at + length > start + bytes.length) {
             start = at;
             bytes = await bytesOf(blob, at, Math.max(length, WINDOW_BYTES));
         }
+
         return bytes.subarray(at - start, at - start + length);
     };
 };
@@ -50,6 +52,7 @@ const png = (head: Uint8Array): ImageHeader | undefined => {
     if (!PNG_SIGNATURE.every((byte, index) => head[index] === byte) || ascii(head, 12, 4) !== 'IHDR') {
         return undefined;
     }
+
     return sized('image/png', uint32BE(head, 16), uint32BE(head, 20));
 };
 
@@ -58,6 +61,7 @@ const gif = (head: Uint8Array): ImageHeader | undefined => {
     if (signature !== 'GIF87a' && signature !== 'GIF89a') {
         return undefined;
     }
+
     return sized('image/gif', uint16LE(head, 6), uint16LE(head, 8));
 };
 
@@ -66,17 +70,22 @@ const webp = (head: Uint8Array): ImageHeader | undefined => {
     if (ascii(head, 0, 4) !== 'RIFF' || ascii(head, 8, 4) !== 'WEBP') {
         return undefined;
     }
+
     const chunk = ascii(head, 12, 4);
     if (chunk === 'VP8 ') {
         return sized('image/webp', uint16LE(head, 26) & 0x3f_ff, uint16LE(head, 28) & 0x3f_ff);
     }
+
     if (chunk === 'VP8L') {
         const [b0 = 0, b1 = 0, b2 = 0, b3 = 0] = head.subarray(21, 25);
+
         return sized('image/webp', 1 + (b0 | ((b1 & 0x3f) << 8)), 1 + ((b1 >> 6) | (b2 << 2) | ((b3 & 0x0f) << 10)));
     }
+
     if (chunk === 'VP8X') {
         return sized('image/webp', 1 + uint24LE(head, 24), 1 + uint24LE(head, 27));
     }
+
     return undefined;
 };
 
@@ -93,6 +102,7 @@ const jpeg = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
     if (head[0] !== 0xff || head[1] !== 0xd8 || head[2] !== 0xff) {
         return undefined;
     }
+
     const read = windowed(blob);
     let at = 2;
     for (let step = 0; step < MAX_STEPS && at + 4 <= blob.size; step += 1) {
@@ -100,21 +110,26 @@ const jpeg = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
         if (marker[0] !== 0xff) {
             break;
         }
+
         const code = marker[1] ?? 0;
         // Fill bytes may pad a marker.
         if (code === 0xff) {
             at += 1;
             continue;
         }
+
         if (code === START_OF_SCAN || code === END_OF_IMAGE) {
             return { ...UNKNOWN, mediaType: 'image/jpeg' };
         }
+
         // SOF0 to SOF15, except DHT (C4), JPG (C8) and DAC (CC), which share the range.
         if (code >= 0xc0 && code <= 0xcf && code !== 0xc4 && code !== 0xc8 && code !== 0xcc) {
             return sized('image/jpeg', uint16BE(marker, 7), uint16BE(marker, 5));
         }
+
         at += STANDALONE.has(code) ? 2 : 2 + uint16BE(marker, 2);
     }
+
     return { ...UNKNOWN, mediaType: 'image/jpeg' };
 };
 
@@ -139,12 +154,15 @@ const boxesIn = async (read: ReturnType<typeof windowed>, start: number, end: nu
         } else if (size === 0) {
             size = end - at;
         }
+
         if (size < content - at) {
             break;
         }
+
         boxes.push({ type: ascii(header, 4, 4), content, end: Math.min(end, at + size) });
         at += size;
     }
+
     return boxes;
 };
 
@@ -156,18 +174,23 @@ const avif = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
     if (ascii(head, 4, 4) !== 'ftyp') {
         return undefined;
     }
+
     const brands = ascii(head, 8, Math.min(uint32BE(head, 0), HEAD_BYTES) - 8);
     if (!/avi[fs]/.test(brands)) {
         return undefined;
     }
+
     const read = windowed(blob);
     const child = async (box: Box | undefined, type: string, skip = 0) => {
         if (box === undefined) {
             return undefined;
         }
+
         const children = await boxesIn(read, box.content + skip, box.end);
+
         return children.find((found) => found.type === type);
     };
+
     const top = await boxesIn(read, 0, blob.size);
     const meta = top.find(({ type }) => type === 'meta');
     // `meta` is a full box, whose version and flags come before its children.
@@ -179,6 +202,7 @@ const avif = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
             if (box.type !== 'ispe') {
                 continue;
             }
+
             const values = await read(box.content, 12);
             const [w, h] = [uint32BE(values, 4), uint32BE(values, 8)];
             if (w * h > width * height) {
@@ -187,9 +211,11 @@ const avif = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
             }
         }
     }
+
     if (width === 0) {
         return { ...UNKNOWN, mediaType: 'image/avif' };
     }
+
     return sized('image/avif', width, height);
 };
 
@@ -199,9 +225,11 @@ const markup = (text: string): ImageHeader | undefined => {
     if (start.startsWith('<svg') || (start.startsWith('<!doctype svg') && start.includes('<svg'))) {
         return { ...UNKNOWN, mediaType: 'image/svg+xml' };
     }
+
     if (/^<(!doctype html|html|head|body|script|iframe|div|p)[\s>]/.test(start)) {
         return { ...UNKNOWN, mediaType: 'text/html' };
     }
+
     return undefined;
 };
 
@@ -212,19 +240,25 @@ export const readImageHeader = async (blob: Blob): Promise<ImageHeader> => {
     if (found === undefined) {
         found = gif(head);
     }
+
     if (found === undefined) {
         found = webp(head);
     }
+
     if (found === undefined) {
         found = await jpeg(blob, head);
     }
+
     if (found === undefined) {
         found = await avif(blob, head);
     }
+
     if (found !== undefined) {
         return found;
     }
+
     const text = new TextDecoder().decode(await bytesOf(blob, 0, TEXT_BYTES));
+
     return markup(text) ?? UNKNOWN;
 };
 
@@ -236,8 +270,10 @@ const decodeReferences = (text: string) =>
         if (name !== undefined) {
             return NAMED_REFERENCES[name.toLowerCase()] ?? whole;
         }
+
         const digits = hex ?? decimal;
         const code = Number.parseInt(digits ?? '', hex === undefined ? 10 : 16);
+
         return Number.isInteger(code) && code >= 0 && code <= 0x10_ff_ff ? String.fromCodePoint(code) : whole;
     });
 
@@ -254,22 +290,27 @@ const expandEntities = (decoded: string): string | undefined => {
     if ((mentions ?? 0) !== declarations.length) {
         return undefined;
     }
+
     const values = new Map<string, string>();
     for (const [, name = '', double, single] of declarations) {
         if (values.has(name)) {
             return undefined;
         }
+
         const declared = double ?? single;
         values.set(name, declared ?? '');
     }
+
     if (values.size === 0) {
         return decoded;
     }
+
     const references = [...decoded.matchAll(/&([^\s&;<>]+);/g)];
     const grown = references.reduce((total, [whole, name = '']) => total + (values.get(name) ?? whole).length, 0);
     if (grown > decoded.length * 2) {
         return undefined;
     }
+
     return decoded.replaceAll(/&([^\s&;<>]+);/g, (whole, name: string) => values.get(name) ?? whole);
 };
 
@@ -284,7 +325,9 @@ export const svgHoldsScript = (text: string): boolean => {
     if (decoded === undefined) {
         return true;
     }
+
     const compact = decoded.replaceAll(/[\t\n\r]/g, '');
+
     return (
         /<\s*(?:[^\s"'/:<=>]+:)?(?:script|foreignobject)[\s>/]/i.test(decoded) ||
         /[\s"'/]on[a-z]+\s*=/i.test(decoded) ||

@@ -13,10 +13,12 @@ const setup = ({ mapping, installs = true }: { mapping?: object; installs?: bool
         commit: {
             guarded: (work) => {
                 calls.push('guarded');
+
                 return work();
             },
             settleProvisional: () => {
                 calls.push('settleProvisional');
+
                 return installs;
             },
         },
@@ -26,6 +28,7 @@ const setup = ({ mapping, installs = true }: { mapping?: object; installs?: bool
         saving: { settled: () => calls.push('saving.settled') },
         composition: { resolve: (outcome) => calls.push(`resolve:${outcome}`) },
     });
+
     return { settle, calls };
 };
 

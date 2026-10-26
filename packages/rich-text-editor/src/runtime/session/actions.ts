@@ -47,12 +47,15 @@ export const createActions = (a: {
         if (from < 0 || to > store.state.doc.content.size || from > to) {
             return 'target-invalid';
         }
+
         const selection = TextSelection.between(store.state.doc.resolve(from), store.state.doc.resolve(to));
         if (selection.from !== from || selection.to !== to) {
             return 'target-invalid';
         }
+
         return store.state.apply(store.state.tr.setSelection(selection));
     };
+
     const acceptSuggestion: Actions['acceptSuggestion'] = (range, id, payload) =>
         commands.runOn(
             definition.commands.get(id),
@@ -65,20 +68,25 @@ export const createActions = (a: {
         if (typeof target === 'string') {
             return positionOf(doc, target);
         }
+
         const pos = target();
         if (pos === undefined || pos < 0 || pos >= doc.content.size || doc.nodeAt(pos) === null) {
             return undefined;
         }
+
         return pos;
     };
+
     /** The state with the node `target` selected, as a node view action runs on it. */
     const nodeBase = (target: NodeTarget): EditorState | RejectedCode => {
         const pos = targetIn(store.state.doc, target);
         if (pos === undefined) {
             return 'target-invalid';
         }
+
         return store.state.apply(store.state.tr.setSelection(NodeSelection.create(store.state.doc, pos)));
     };
+
     /** A command that changes the node `target` wherever it is when it runs. */
     const nodeCommand = (
         target: NodeTarget,
@@ -89,12 +97,15 @@ export const createActions = (a: {
             if (pos === undefined) {
                 return false;
             }
+
             const node = base.doc.nodeAt(pos);
             const { tr } = base;
             if (node === null || !change(tr, pos, node)) {
                 return false;
             }
+
             dispatch?.(tr);
+
             return true;
         },
         active: () => false,
@@ -105,12 +116,14 @@ export const createActions = (a: {
             if (checked === undefined || !isRecord(checked.payload)) {
                 return rejected('invalid-payload');
             }
+
             const values = checked.payload;
             const update = nodeCommand(target, (tr, pos, node) => {
                 const declared = compiledModel(definition.model).nodes.find(({ name }) => name === node.type.name);
                 if (declared === undefined) {
                     return false;
                 }
+
                 const attributes = attributesOf(declared);
                 for (const [name, value] of Object.entries(values)) {
                     const attribute = attributes[name];
@@ -118,17 +131,22 @@ export const createActions = (a: {
                     if (name === 'nodeId' || attribute === undefined || !isValidValue(attribute, value)) {
                         return false;
                     }
+
                     tr.setNodeAttribute(pos, name, value);
                 }
+
                 return true;
             });
+
             return commands.runOn(update, { payload: undefined }, () => store.state, 'host');
         },
         remove: () => {
             const remove = nodeCommand(target, (tr, pos, node) => {
                 tr.delete(pos, pos + node.nodeSize);
+
                 return true;
             });
+
             return commands.runOn(remove, { payload: undefined }, () => store.state, 'host');
         },
         select: () => {
@@ -149,14 +167,18 @@ export const createActions = (a: {
         if (asset === undefined) {
             return rejected('invalid-payload');
         }
+
         if ('target' in place) {
             const insert = insertPicked(definition.schema, asset);
+
             return commands.runOn(insert, { payload: undefined }, () => baseOf({ target: place.target }), 'host');
         }
+
         const { nodeId } = place;
         if (positionOf(store.state.doc, nodeId) === undefined) {
             return rejected('target-invalid');
         }
+
         return commands.runOn(refillPicked(nodeId, asset), { payload: undefined }, () => store.state, 'host');
     };
 
@@ -172,9 +194,11 @@ export const createActions = (a: {
             run: ({ signal }) => run(signal),
             deliver: (result) => {
                 receive(result as Awaited<ReturnType<typeof run>>);
+
                 return undefined;
             },
         });
+
         return () => coordinator.abortWhere((other) => other === operation);
     };
 

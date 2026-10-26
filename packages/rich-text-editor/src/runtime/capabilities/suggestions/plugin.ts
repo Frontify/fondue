@@ -21,27 +21,37 @@ const handleKeyDown = (view: EditorView, event: KeyboardEvent): boolean => {
     if (active === null || event.isComposing || hasModifier(event)) {
         return false;
     }
+
     // A list also shows its loading, empty and failed rows, which Escape closes like options.
     if (event.key === 'Escape') {
         dismissSuggestion(view);
+
         return true;
     }
+
     if (active.items.length === 0) {
         return false;
     }
+
     if (event.key === 'ArrowDown') {
         moveSuggestion(view, active.index + 1);
+
         return true;
     }
+
     if (event.key === 'ArrowUp') {
         moveSuggestion(view, active.index - 1);
+
         return true;
     }
+
     // Tab accepts as Enter does; Shift+Tab is left to the browser in `keydown` below.
     if ((event.key === 'Enter' || event.key === 'Tab') && !event.shiftKey) {
         acceptSuggestion(view, active.index);
+
         return true;
     }
+
     return false;
 };
 
@@ -50,7 +60,9 @@ const handleShiftTab = (view: EditorView, event: KeyboardEvent): boolean => {
     if (event.key !== 'Tab' || !event.shiftKey || !showsOptions(view.state)) {
         return false;
     }
+
     dismissSuggestion(view);
+
     return true;
 };
 
@@ -75,6 +87,7 @@ export const suggestionsPlugin: PluginImplementation = ({ suggestions }) =>
                     if (activeSuggestion(view.state) !== null) {
                         view.dispatch(withMeta(view.state, { kind: 'close' }));
                     }
+
                     return false;
                 },
             },

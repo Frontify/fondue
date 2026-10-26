@@ -21,27 +21,33 @@ const markRangeAt = (
     if (index >= parent.childCount) {
         return undefined;
     }
+
     const mark = type.isInSet(parent.child(index).marks);
     if (mark === undefined) {
         return undefined;
     }
+
     const holds = (at: number) => at >= 0 && at < parent.childCount && mark.isInSet(parent.child(at).marks);
     let first = index;
     while (holds(first - 1)) {
         first -= 1;
     }
+
     let last = index;
     while (holds(last + 1)) {
         last += 1;
     }
+
     let from = $from.start();
     for (let child = 0; child < first; child += 1) {
         from += parent.child(child).nodeSize;
     }
+
     let to = from;
     for (let child = first; child <= last; child += 1) {
         to += parent.child(child).nodeSize;
     }
+
     return { from, to };
 };
 
@@ -52,6 +58,7 @@ export const extendOf = (value: unknown): Extend => {
     if (value === 'touching') {
         return value;
     }
+
     return value === true;
 };
 
@@ -70,6 +77,7 @@ export const enclosingRange = (
     if (range === undefined || from < range.from || to > range.to) {
         return undefined;
     }
+
     return range;
 };
 
@@ -82,6 +90,7 @@ const sharedMarks = (doc: Node, from: number, to: number, type: MarkType): reado
             shared = shared === undefined ? own : shared.filter((mark) => mark.isInSet(own));
         }
     });
+
     return shared ?? [];
 };
 
@@ -101,8 +110,10 @@ export const markRange = (transaction: Transaction, from: number, to: number, ma
         doc.textBetween(from, to, undefined, '') !== text;
     if (!replaces) {
         transaction.addMark(from, to, mark);
+
         return;
     }
+
     const marks = mark.addToSet(sharedMarks(doc, from, to, mark.type));
     transaction.replaceWith(from, to, mark.type.schema.text(text, marks));
     transaction.setSelection(TextSelection.create(transaction.doc, from, from + text.length));

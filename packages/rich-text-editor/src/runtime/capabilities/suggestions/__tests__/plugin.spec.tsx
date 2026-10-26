@@ -35,12 +35,14 @@ type EmojiModule = {
 
 vi.mock('#/features/emoji/data', async (importOriginal) => {
     const actual = (await importOriginal()) as EmojiModule;
+
     return {
         ...actual,
         loadEmoji: (locale: string) => {
             if (!gate.hold) {
                 return actual.loadEmoji(locale);
             }
+
             return new Promise<readonly EmojiEntry[]>((resolve) => {
                 gate.pending.push(resolve);
             });
@@ -86,6 +88,7 @@ const opened = async (view: Mounted['view']) => {
     if (active === null) {
         throw new Error('The suggestion list is closed.');
     }
+
     return active;
 };
 
@@ -95,10 +98,12 @@ const backspace = (handle: object) => {
     if (view === undefined || !view.editable) {
         return;
     }
+
     const { from, empty } = view.state.selection;
     if (!empty || from === 0) {
         return;
     }
+
     view.dispatch(view.state.tr.delete(from - 1, from));
 };
 
@@ -109,12 +114,14 @@ const glyphOf = (view: Mounted['view']) => {
     if (glyph === undefined || glyph === null) {
         throw new Error('The active option has no emoji.');
     }
+
     return glyph;
 };
 
 /** The option id `aria-activedescendant` names, from its `-option-` mark to the end. */
 const optionEnding = (id: string) => {
     const at = id.lastIndexOf('-option-');
+
     return id.slice(at);
 };
 
@@ -123,6 +130,7 @@ const namedOption = (view: Mounted['view']) => {
     if (id === null) {
         throw new Error('The surface names no option.');
     }
+
     return id;
 };
 
@@ -136,6 +144,7 @@ const showedOptions = async (view: Mounted['view']) => {
             },
             { timeout: 1000 },
         );
+
         return true;
     } catch {
         return false;
@@ -164,10 +173,12 @@ const mountGerman = () => {
     if (handle === null) {
         throw new Error('The editor did not mount.');
     }
+
     const view = runtimeOf(handle)?.view;
     if (view === undefined) {
         throw new Error('The editor has no view.');
     }
+
     return { ...rendered, handle, view };
 };
 
@@ -178,6 +189,7 @@ const settle = async (
     if (resolve === undefined) {
         throw new Error('No emoji search was waiting.');
     }
+
     await act(async () => {
         resolve(entries);
         await Promise.resolve();
@@ -300,6 +312,7 @@ describe('suggestion plugin', () => {
         for (let index = 0; index < typed.length; index += 1) {
             backspace(handle);
         }
+
         expect(textOf(handle)).toBe('');
 
         typeText(handle, ':smi');
@@ -321,6 +334,7 @@ describe('suggestion plugin', () => {
         for (let step = 0; step < last; step += 1) {
             pressKey(handle, 'ArrowDown');
         }
+
         expect(activeSuggestion(view.state)?.index).toBe(last);
         pressKey(handle, 'ArrowDown');
 
@@ -424,6 +438,7 @@ describe('suggestion plugin', () => {
         for (const resolve of earlier) {
             await settle(resolve, stale);
         }
+
         expect(activeSuggestion(view.state)?.query).toBe('smil');
         expect(activeSuggestion(view.state)?.items.some((item) => item.glyph === '🎉')).toBe(false);
 

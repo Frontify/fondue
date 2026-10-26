@@ -57,6 +57,7 @@ export const installRuntimeHooks = () => {
         if (storage === undefined) {
             return;
         }
+
         const { accessed } = storage;
         storage.restore();
         expect(accessed).toEqual([]);
@@ -68,15 +69,18 @@ export const installRuntimeHooks = () => {
         for (const runtime of started.splice(0)) {
             runtime.handle.dispose();
         }
+
         document.body.replaceChildren();
         vi.useRealTimers();
     });
+
     return {
         network,
         storage: () => {
             if (storage === undefined) {
                 throw new Error('storage is not stubbed');
             }
+
             return storage;
         },
     };
@@ -120,6 +124,7 @@ export const saves = (model: ContentModel, service: PersistenceService | undefin
     if (service === undefined) {
         return undefined;
     }
+
     return (runtime) =>
         createSaveCoordinator(runtime, {
             service: () => service,
@@ -130,6 +135,7 @@ export const saves = (model: ContentModel, service: PersistenceService | undefin
             generateId: countingIds(),
         });
 };
+
 /** A runtime on an attached surface, `ready` after the first frame. */
 export const start = (input: unknown, options: Start = {}) => {
     const { model = boldModel, mode = 'editable', plugins = [], commands = {}, generateId = countingIds() } = options;
@@ -137,6 +143,7 @@ export const start = (input: unknown, options: Start = {}) => {
     if (result.status !== 'editable' || tree === undefined) {
         throw new Error('expected an editable document');
     }
+
     const parts = unitsOf(model, options.parts);
     const compiled = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, parts));
     const definition: CompiledDefinition = {
@@ -171,8 +178,10 @@ export const start = (input: unknown, options: Start = {}) => {
     if (view === undefined) {
         throw new Error('no view');
     }
+
     return { runtime, handle: runtime.handle, changes, diagnostics, element, view };
 };
+
 export const contentOf = (change: DocumentChange | undefined) => change?.readDocument().content;
 /** Starts an operation through the coordinator whose service call resolves when the test resolves it. */
 export const pending = (runtime: EditorRuntime, request: Partial<AsyncRequest> = {}) => {
@@ -189,6 +198,7 @@ export const pending = (runtime: EditorRuntime, request: Partial<AsyncRequest> =
         run: () => call,
         ...request,
     });
+
     return {
         operation,
         resolve: async (result: unknown) => {
@@ -197,14 +207,17 @@ export const pending = (runtime: EditorRuntime, request: Partial<AsyncRequest> =
         },
     };
 };
+
 /** Runs `history.undo` until it no longer applies, and returns how many steps it undid. */
 export const undoSteps = (handle: EditorRuntime['handle']) => {
     let steps = 0;
     while (handle.execute('history.undo').status === 'applied') {
         steps += 1;
     }
+
     return steps;
 };
+
 /** A request that replaces the session's document by `document`, discarding unsaved changes unless `unsaved` says otherwise. */
 export const replacing = (
     handle: EditorRuntime['handle'],
@@ -244,6 +257,7 @@ export const appendForever = (featureId: string, capability: string) =>
                 if (transactions.every((transaction) => transaction.getMeta('appendedBy') === featureId)) {
                     return null;
                 }
+
                 return state.tr.setMeta('appendedBy', featureId);
             },
         }),
@@ -259,6 +273,7 @@ export const dropHTML = (view: EditorView, html: string) => {
     Object.defineProperty(event, 'dataTransfer', { value: dataTransfer });
     view.dom.dispatchEvent(event);
 };
+
 /** An inline atom of another type that carries a `nodeId`, as a mention does. */
 export const chip = defineFeature({
     id: 'fixture.chip',
@@ -283,8 +298,10 @@ export const capture = (handle: EditorRuntime['handle'], options: CaptureTargetO
     if (result.status !== 'captured') {
         throw new Error('expected a captured target');
     }
+
     return result.target;
 };
+
 /** The text of every run that carries `mark`. */
 export const markedText = (doc: Node, mark: string) => {
     let text = '';
@@ -293,14 +310,17 @@ export const markedText = (doc: Node, mark: string) => {
             text += node.text;
         }
     });
+
     return text;
 };
+
 /** Starts a composition as the browser does, so ProseMirror's own handler sets `view.composing`, and composes `text`. */
 export const compose = ({ view }: ReturnType<typeof start>, text: string) => {
     view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
     // ProseMirror marks the composed text it reads from the DOM with its composition ID.
     view.dispatch(view.state.tr.insertText(text).setMeta('composition', 1));
 };
+
 export const endComposition = ({ view }: ReturnType<typeof start>) =>
     view.dom.dispatchEvent(new CompositionEvent('compositionend'));
 /** Runs the microtask, then the 20 ms timer after which input has settled. */
@@ -308,6 +328,7 @@ export const settleInput = async () => {
     await vi.advanceTimersByTimeAsync(0);
     await vi.advanceTimersByTimeAsync(20);
 };
+
 export const NOT_EDITABLE_CORE: Partial<AuthoringPolicy> = {
     features: { core: { create: true, edit: false, remove: true, paste: true } },
 };

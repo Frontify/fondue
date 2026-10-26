@@ -35,12 +35,15 @@ export const createFocus = (a: {
         if (!lifecycle.is('ready') || views.current() === undefined) {
             return;
         }
+
         if (where === 'start') {
             commit.commit(store.state.tr.setSelection(Selection.atStart(store.state.doc)));
         }
+
         if (where === 'end') {
             commit.commit(store.state.tr.setSelection(Selection.atEnd(store.state.doc)));
         }
+
         // A listener of those commits may have ended the session, which leaves no view.
         const view = views.current() as EditorView;
         if (shown.mode() === 'editable') {
@@ -48,8 +51,10 @@ export const createFocus = (a: {
             const restore = keepScroll(view.dom);
             view.focus();
             restore();
+
             return;
         }
+
         // ProseMirror's `focus()` does nothing while the view is not editable, and it syncs no DOM selection there.
         view.dom.focus();
         const anchor = view.domAtPos(store.state.selection.anchor);
@@ -59,17 +64,20 @@ export const createFocus = (a: {
             selection.setBaseAndExtent(anchor.node, anchor.offset, head.node, head.offset);
         }
     };
+
     const refocus = (focused: boolean) => {
         // A disabled surface leaves the Tab order and takes no focus.
         const view = views.current();
         if (!focused || mode.disabled() || view === undefined) {
             return;
         }
+
         const owner = view.dom.ownerDocument;
         const { activeElement, body } = owner;
         if (owner.hasFocus() && (activeElement === null || activeElement === body)) {
             focus();
         }
     };
+
     return { focus, refocus };
 };

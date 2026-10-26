@@ -34,15 +34,18 @@ export const createDispose = (a: {
 }): (() => void) => {
     const { lifecycle, saving, composition, checks, targets, uploads, queue, commit, store, view, events } = a;
     const { identity, resources, handle } = a;
+
     return () => {
         if (lifecycle.is('disposed')) {
             return;
         }
+
         saving.dispose();
         // A listener of what the coordinator reported may have disposed the session already.
         if (lifecycle.isDisposed()) {
             return;
         }
+
         // Set first, so `disposed` listeners read the final phase and what they enqueue settles at once.
         lifecycle.to('disposed');
         composition.cancel();
@@ -58,6 +61,7 @@ export const createDispose = (a: {
             resources.targets -= countTargets(store.state);
             store.set(store.state.apply(release));
         }
+
         events.emit('disposed', identity.session());
         events.clear();
         view.detach();

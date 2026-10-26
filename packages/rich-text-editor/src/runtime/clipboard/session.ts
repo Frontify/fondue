@@ -42,12 +42,15 @@ export const connectedOf = (view: EditorView) => {
     if (runtime === undefined) {
         return undefined;
     }
+
     const session = sessions.get(runtime);
     if (session === undefined) {
         return undefined;
     }
+
     return { runtime, session };
 };
+
 export type Connected = NonNullable<ReturnType<typeof connectedOf>>;
 
 let pageContext: string | undefined;
@@ -58,9 +61,11 @@ export const contextOf = (session: ClipboardSession) => {
     if (context !== null) {
         return context;
     }
+
     if (pageContext === undefined) {
         pageContext = randomId();
     }
+
     return pageContext;
 };
 
@@ -83,8 +88,10 @@ export const rejectsSize = (connected: Connected, payload: Payload) => {
     if (![payload.text, payload.html, payload.slice].some((flavor) => exceedsBytes(flavor, max))) {
         return false;
     }
+
     reject(connected, 'maxPasteBytes');
     announce(session, 'RichTextEditor_pasteTooLarge');
+
     return true;
 };
 

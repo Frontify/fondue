@@ -15,6 +15,7 @@ describe('createComposition', () => {
     const make = (composing = false) => {
         const onSettled = vi.fn();
         const composition = createComposition({ composing: () => composing, onSettled });
+
         return { composition, onSettled };
     };
 

@@ -32,9 +32,11 @@ const asUrlReads = (value: string) => {
     while (start < end && value.charCodeAt(start) <= SPACE) {
         start += 1;
     }
+
     while (end > start && value.charCodeAt(end - 1) <= SPACE) {
         end -= 1;
     }
+
     return value
         .slice(start, end)
         .replaceAll(/[\t\n\r]/g, '')
@@ -49,6 +51,7 @@ const asUrlReads = (value: string) => {
  */
 export const isAssetLocator = (assetId: string): boolean => {
     const read = asUrlReads(assetId);
+
     return (
         /^(?:[a-z][\d+.a-z-]*:)?\/\//i.test(read) ||
         /^(?:https?|data|blob|javascript|vbscript|file|ftp):/i.test(read) ||
@@ -68,23 +71,29 @@ export const pickedAsset = (
     if (!isRecord(value)) {
         return undefined;
     }
+
     const { assetId, mediaType, labelSnapshot } = value;
     if (typeof assetId !== 'string' || assetId === '' || assetId.length > options.maxLength) {
         return undefined;
     }
+
     if (isAssetLocator(assetId) || typeof mediaType !== 'string' || typeof labelSnapshot !== 'string') {
         return undefined;
     }
+
     if (mediaType.length > options.maxLength) {
         return undefined;
     }
+
     if (options.mediaTypes !== undefined && !options.mediaTypes.includes(mediaType)) {
         return undefined;
     }
+
     // No more code units than twice the characters kept can hold them, so a huge label is cut before it is split.
     const head = labelSnapshot.slice(0, options.maxLength * 2);
     const characters = [...head];
     const label = characters.length > options.maxLength ? characters.slice(0, options.maxLength).join('') : head;
+
     return { assetId, mediaType, labelSnapshot: label };
 };
 
@@ -95,11 +104,14 @@ export const insertPicked = (schema: Schema, asset: PickedAsset): EngineCommand 
         if (figure === undefined || image === undefined) {
             return false;
         }
+
         const transaction = placeBlock(state, figure.create(null, image.create({ ...asset })));
         if (transaction === undefined) {
             return false;
         }
+
         dispatch?.(transaction.setMeta(COMMAND_META, INSERT_IMAGE));
+
         return true;
     },
     active: () => false,
@@ -116,10 +128,12 @@ export const refillPicked = (nodeId: string, asset: PickedAsset): EngineCommand 
         if (pos === undefined || node === null || node.type.name !== 'asset_image') {
             return false;
         }
+
         const transaction = state.tr;
         for (const [name, value] of Object.entries({ ...asset, width: null, height: null })) {
             transaction.setNodeAttribute(pos, name, value);
         }
+
         transaction.setMeta(COMMAND_META, REPLACE_IMAGE);
         // An image with no alternative text keeps asking for it, which no review replaces.
         const { altIntent } = node.attrs;
@@ -129,6 +143,7 @@ export const refillPicked = (nodeId: string, asset: PickedAsset): EngineCommand 
         } else {
             dispatch?.(transaction);
         }
+
         return true;
     },
     active: () => false,

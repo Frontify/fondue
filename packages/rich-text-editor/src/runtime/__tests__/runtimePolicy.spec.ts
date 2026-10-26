@@ -131,6 +131,7 @@ describe('the authoring policy and limits', () => {
             if (view.state === before) {
                 continue;
             }
+
             accepted.push(index);
         }
 
@@ -193,6 +194,7 @@ describe('the authoring policy and limits', () => {
                     const first = state.doc.firstChild as Node;
                     const changed = first.type.create({ ...first.attrs, lang: 'de' }, first.content);
                     const next = state.doc.replace(0, first.nodeSize, new Slice(Fragment.from(changed), 0, 0));
+
                     return state.tr.step(new SwapStep(next));
                 },
             ],
@@ -235,6 +237,7 @@ describe('the authoring policy and limits', () => {
             if (node.type.name === 'table') {
                 tables.push(node.attrs.nodeId as string);
             }
+
             return node.isBlock;
         });
         expect(tables).toEqual(['t-1', 't-2']);
@@ -244,24 +247,30 @@ describe('the authoring policy and limits', () => {
         const created = (setup: (session: ReturnType<typeof start>) => void, policy: Partial<AuthoringPolicy>) => {
             const session = start(stored(para(words('ab '), strong('one two three'))), { policy });
             setup(session);
+
             return session.changes.length;
         };
+
         const unboldMiddle = ({ handle }: ReturnType<typeof start>) => {
             setSelection(handle, { text: 'two' });
             pressKey(handle, 'Mod-b');
         };
+
         const typeInside = ({ handle }: ReturnType<typeof start>) => {
             setSelection(handle, { text: 'two', from: 1, to: 1 });
             typeText(handle, 'x');
         };
+
         const boldNew = ({ handle }: ReturnType<typeof start>) => {
             setSelection(handle, { text: 'ab' });
             pressKey(handle, 'Mod-b');
         };
+
         const boldNextToRun = ({ handle }: ReturnType<typeof start>) => {
             setSelection(handle, { text: 'b ' });
             pressKey(handle, 'Mod-b');
         };
+
         const noCreate = forbid('marks.bold', 'create');
 
         // Bolding text next to a run extends that run, which is an edit of it.
@@ -276,6 +285,7 @@ describe('the authoring policy and limits', () => {
             setSelection(session.handle, { text, from: 1, to: 1 });
             typeText(session.handle, 'x');
         };
+
         const cases: readonly (readonly [string, JsonValue, (session: ReturnType<typeof start>) => void])[] = [
             ['core', para(words('ab')), typeInto('ab')],
             ['marks.bold', para(strong('ab')), typeInto('ab')],
@@ -312,6 +322,7 @@ describe('the authoring policy and limits', () => {
             const key = new KeyboardEvent('keydown', { key: 'Backspace', keyCode: 8, bubbles: true, cancelable: true });
             session.view.dom.dispatchEvent(key);
         };
+
         const ways: readonly (readonly [string, (session: ReturnType<typeof start>) => void])[] = [
             ['Backspace', backspace],
             ['range delete', ({ view }) => view.dispatch(view.state.tr.delete(1, 4))],
@@ -389,6 +400,7 @@ describe('the authoring policy and limits', () => {
             } catch (error) {
                 return error;
             }
+
             return undefined;
         };
 
@@ -448,6 +460,7 @@ describe('occurrences the policy pairs across a batch', () => {
             { features: { 'marks.bold': { ...ALLOW, create: false, remove: false } } },
             (state) => {
                 const moved = state.doc.child(1);
+
                 return state.tr.delete(3, 6).insert(0, moved);
             },
             true,

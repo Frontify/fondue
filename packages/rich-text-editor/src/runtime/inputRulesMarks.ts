@@ -17,6 +17,7 @@ const ruleAttrs = (rule: MarkRule, groups: Readonly<Record<string, string | unde
         if (value === undefined) {
             continue;
         }
+
         let converted: unknown = value;
         if (declaration.type === 'boolean') {
             converted = true;
@@ -27,13 +28,17 @@ const ruleAttrs = (rule: MarkRule, groups: Readonly<Record<string, string | unde
             if (!checked.ok) {
                 return undefined;
             }
+
             converted = checked.href;
         }
+
         if (!isValidValue(declaration, converted)) {
             return undefined;
         }
+
         attrs[name] = converted;
     }
+
     return attrs;
 };
 
@@ -44,19 +49,23 @@ export const markPattern = (rule: MarkRule, state: EditorState, $cursor: Resolve
     if (found === null || found.index + found[0].length !== tested.length) {
         return null;
     }
+
     const text = found[0].trimEnd();
     if (text === '' || !$cursor.parent.type.allowsMarkType(rule.mark)) {
         return null;
     }
+
     const from = $cursor.pos - before.length + found.index;
     const to = from + text.length;
     if (holdsCode(state, from, to) || state.doc.rangeHasMark(from, to, rule.mark)) {
         return null;
     }
+
     const attrs = ruleAttrs(rule, found.groups ?? {});
     if (attrs === undefined) {
         return null;
     }
+
     return state.tr.addMark(from, to, rule.mark.create(attrs));
 };
 
@@ -76,6 +85,7 @@ export const markDelimiter = (
     if (!before.endsWith(close) || WORD.test(after) || !$cursor.parent.type.allowsMarkType(mark)) {
         return null;
     }
+
     const closeAt = before.length - close.length;
     const openAt = before.lastIndexOf(open, closeAt - open.length - 1);
     const text = before.slice(openAt + open.length, closeAt);
@@ -83,6 +93,7 @@ export const markDelimiter = (
     if (close.includes(before.charAt(closeAt - 1))) {
         return null;
     }
+
     const previous = before.charAt(openAt - 1);
     if (
         openAt < 0 ||
@@ -93,11 +104,13 @@ export const markDelimiter = (
     ) {
         return null;
     }
+
     const start = $cursor.pos - before.length;
     const from = start + openAt;
     if (holdsCode(state, from, $cursor.pos)) {
         return null;
     }
+
     return state.tr
         .delete(start + closeAt, $cursor.pos)
         .addMark(from + open.length, start + closeAt, mark.create())

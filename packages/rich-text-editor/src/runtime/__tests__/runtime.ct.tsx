@@ -31,6 +31,7 @@ const typeAndPaste = async (page: Page) => {
                 if (record.oldValue !== null) {
                     replaced.push(record.oldValue);
                 }
+
                 for (const node of record.removedNodes) {
                     replaced.push(node.textContent ?? '');
                 }
@@ -46,10 +47,12 @@ const typeAndPaste = async (page: Page) => {
         document.querySelector('[role="textbox"]')?.dispatchEvent(paste);
     });
 };
+
 const texts = (page: Page) =>
     page.evaluate(() => {
         const surface = document.querySelector('[role="textbox"]');
         const runtimeText = window.rte?.text();
+
         return [surface?.textContent, runtimeText];
     });
 
@@ -91,6 +94,7 @@ test('keeps selection, copy and link activation working once readonly in the sam
         const surface = document.querySelector('[role="textbox"]');
         const before = surface?.getAttribute('contenteditable');
         window.rte?.handle.setMode('readonly');
+
         return [before, surface?.getAttribute('contenteditable')];
     });
     expect(editable).toEqual(['true', 'false']);
@@ -101,6 +105,7 @@ test('keeps selection, copy and link activation working once readonly in the sam
     if (box === null) {
         throw new Error('The paragraph is not visible.');
     }
+
     await paragraph.dblclick({ position: { x: 4, y: box.height / 2 } });
     expect(await page.evaluate(() => window.getSelection()?.toString())).toBe('Read');
     // ProseMirror takes the DOM selection on `selectionchange`, after the click, and copies only its own selection.

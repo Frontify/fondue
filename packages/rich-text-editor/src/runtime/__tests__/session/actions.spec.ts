@@ -42,6 +42,7 @@ const setup = (commandsById: Record<string, EngineCommand> = {}) => {
         if (typeof state === 'string') {
             return { status: 'rejected', code: state };
         }
+
         let changed = false;
         const ran = command?.run(state, (tr) => {
             store.set(store.state.apply(tr));
@@ -50,12 +51,16 @@ const setup = (commandsById: Record<string, EngineCommand> = {}) => {
         if (ran !== true) {
             return { status: 'rejected', code: 'not-applicable' };
         }
+
         return changed ? applied : { ...applied, status: 'no-op' };
     };
+
     const queryOn: Commands['queryOn'] = (_command, _checked, base) => {
         routes.push('query');
+
         return { enabled: typeof base !== 'string', active: false } as never;
     };
+
     const actions = createActions({
         definition: { ...compiled, commands: new Map(Object.entries(commandsById)) },
         limits: { maxAttributeLength: 64 } as ResourceLimits,
@@ -65,11 +70,13 @@ const setup = (commandsById: Record<string, EngineCommand> = {}) => {
         targets: {
             baseOf: (options) => {
                 const { target } = options as { target: SelectionHandle | string };
+
                 return target === 'bad' ? 'wrong-session' : store.state;
             },
             coordinator: {
                 start: (request: AsyncRequest) => {
                     started.push(request);
+
                     return operation;
                 },
                 abortWhere: (matches: (other: AsyncOperation) => boolean) => {
@@ -78,6 +85,7 @@ const setup = (commandsById: Record<string, EngineCommand> = {}) => {
             } as never,
         },
     });
+
     return { actions, store, routes, payloads, committed, started, aborted, operation };
 };
 
@@ -128,6 +136,7 @@ describe('createActions', () => {
             const probe: EngineCommand = {
                 run: (state) => {
                     seen.push(state.selection instanceof NodeSelection);
+
                     return true;
                 },
                 active: () => false,
@@ -149,6 +158,7 @@ describe('createActions', () => {
         const replace: EngineCommand = {
             run: (state, dispatch) => {
                 dispatch?.(state.tr.replaceSelectionWith(schema.text('X')));
+
                 return true;
             },
             active: () => false,
@@ -174,6 +184,7 @@ describe('createActions', () => {
                     code: 'target-invalid',
                 });
             }
+
             expect(store.state.doc).toBe(doc);
         });
     });

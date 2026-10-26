@@ -45,7 +45,9 @@ export const createUnmanagedStatus = (revision: ServerRevision | null) => {
     if (revision === null) {
         acknowledgedSequence = -1;
     }
+
     let status: SaveStatus | undefined;
+
     return (sequence: number): SaveStatus => {
         if (status === undefined || status.latestSequence !== sequence) {
             status = Object.freeze({
@@ -57,6 +59,7 @@ export const createUnmanagedStatus = (revision: ServerRevision | null) => {
                 diagnostic: null,
             });
         }
+
         return status;
     };
 };

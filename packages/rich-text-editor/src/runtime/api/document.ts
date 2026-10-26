@@ -26,5 +26,6 @@ export const documentApi = (source: ApiSource): DocumentApi => {
     if (!compiledModel(source.model).features.some(({ id }) => id === UPLOAD_FEATURE)) {
         return api;
     }
+
     return { ...api, ...uploadsApi(source) };
 };

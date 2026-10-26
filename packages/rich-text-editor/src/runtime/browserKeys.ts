@@ -9,18 +9,22 @@ const typesThroughAltGraph = (event: KeyboardEvent): boolean => {
     if (event.metaKey || Array.from(event.key).length !== 1) {
         return false;
     }
+
     if (!event.getModifierState('AltGraph') && !(event.ctrlKey && event.altKey)) {
         return false;
     }
+
     const physical = PHYSICAL.exec(event.code);
     if (physical === null) {
         return !/^[a-z0-9]$/i.test(event.key);
     }
+
     const [, letter, digit] = physical;
     let own = digit;
     if (letter !== undefined) {
         own = letter.toLowerCase();
     }
+
     return event.key.toLowerCase() !== own;
 };
 

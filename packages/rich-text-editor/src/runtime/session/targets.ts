@@ -58,12 +58,14 @@ export const createTargetsService = (a: {
         if (!isRecord(target) || typeof target.id !== 'string' || !isRecord(target.session)) {
             return 'target-invalid';
         }
+
         if (
             target.session.sessionId !== identity.session().sessionId ||
             target.session.generation !== identity.session().generation
         ) {
             return 'wrong-session';
         }
+
         return { id: target.id };
     };
 
@@ -71,14 +73,17 @@ export const createTargetsService = (a: {
         if (!isRecord(options) || options.target === undefined) {
             return store.state;
         }
+
         const target = ownTarget(options.target);
         if (typeof target === 'string') {
             return target;
         }
+
         const selection = targetSelection(store.state, target.id);
         if (selection === undefined) {
             return 'target-invalid';
         }
+
         return store.state.apply(store.state.tr.setSelection(selection));
     };
 
@@ -97,8 +102,10 @@ export const createTargetsService = (a: {
         if (!lifecycle.is('ready') || busy.isBusy()) {
             return { status: 'rejected', code: 'not-ready' };
         }
+
         const id = generate();
         captureNow(id, options, range);
+
         return { status: 'captured', target: handleOf(id) };
     };
 
@@ -119,10 +126,12 @@ export const createTargetsService = (a: {
         if (lifecycle.is('disposed') || typeof owned === 'string') {
             return;
         }
+
         const waiting = deferredCaptures.indexOf(owned.id);
         if (waiting >= 0) {
             deferredCaptures.splice(waiting, 1);
         }
+
         const release = releaseTargets(store.state, [owned.id]);
         if (release !== undefined) {
             commit(release);
@@ -141,12 +150,14 @@ export const createTargetsService = (a: {
             if (!lifecycle.is('ready')) {
                 return undefined;
             }
+
             const id = generate();
             if (busy.isBusy()) {
                 deferredCaptures.push(id);
             } else {
                 captureNow(id, ASYNC_TARGET);
             }
+
             return handleOf(id);
         },
         release: (target) => releaseTarget(target),

@@ -51,9 +51,11 @@ const setup = ({
         inputRules: () => rules,
         generate: () => {
             counter += 1;
+
             return `id${counter}`;
         },
     });
+
     return { service, store, grouped };
 };
 

@@ -23,6 +23,7 @@ const blockSpots = (state: EditorState, topLevel: boolean): BlockSpot[] => {
         if (topLevel && $end.depth > 0) {
             return [{ from: $end.after(1), to: $end.after(1) }];
         }
+
         spots.push({ from: $end.pos, to: $end.pos });
     } else if (!topLevel && selection.empty) {
         if ($end.parent.content.size === 0) {
@@ -31,11 +32,13 @@ const blockSpots = (state: EditorState, topLevel: boolean): BlockSpot[] => {
             spots.push({ from: $end.before(), to: $end.before() });
         }
     }
+
     for (let depth = $end.depth; depth >= 1; depth -= 1) {
         if (!topLevel || depth === 1) {
             spots.push({ from: $end.after(depth), to: $end.after(depth) });
         }
     }
+
     return spots;
 };
 
@@ -46,6 +49,7 @@ const takes = (doc: Node, spot: BlockSpot, type: NodeType) => {
     if (spot.to > spot.from) {
         end += 1;
     }
+
     return $from.parent.canReplaceWith($from.index(), end, type);
 };
 
@@ -65,13 +69,17 @@ const insertBlock = (state: EditorState, spot: BlockSpot, node: Node | Fragment)
         if (!$after.nodeAfter.isTextblock && gapCursorValid($after)) {
             return transaction.setSelection(new GapCursor($after)).scrollIntoView();
         }
+
         return transaction.setSelection(Selection.near($after, 1)).scrollIntoView();
     }
+
     const paragraph = $after.parent.contentMatchAt($after.index()).defaultType;
     if (paragraph === null || !paragraph.isTextblock) {
         return transaction.setSelection(Selection.near($after, -1)).scrollIntoView();
     }
+
     transaction.insert(after, paragraph.create());
+
     return transaction.setSelection(TextSelection.create(transaction.doc, after + 1)).scrollIntoView();
 };
 
@@ -91,5 +99,6 @@ export const placeBlock = (state: EditorState, node: Node | Fragment, topLevel =
     if (spot === undefined) {
         return undefined;
     }
+
     return insertBlock(state, spot, node);
 };

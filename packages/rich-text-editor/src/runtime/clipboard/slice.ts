@@ -28,25 +28,31 @@ const writeSliceNode = (vocabulary: Vocabulary, node: Node): unknown => {
     const type = node.type.name;
     if (isIsland(type)) {
         const { feature, original } = node.attrs as { readonly feature: unknown; readonly original: unknown };
+
         return { type, attrs: { feature, original } };
     }
+
     let content: unknown[] | undefined;
     if (node.childCount > 0) {
         content = node.children.map((child) => writeSliceNode(vocabulary, child));
     }
+
     const tree: { -readonly [K in keyof TreeNode]: TreeNode[K] } = { type, attrs: node.attrs };
     if (node.text !== undefined) {
         tree.text = node.text;
     }
+
     const written = writeNode(vocabulary, tree, content);
     if (node.marks.length > 0) {
         written.marks = node.marks.map(({ type: { name }, attrs }) => {
             if (name === ISLAND_MARK) {
                 return { type: name, attrs: { original: attrs.original as unknown } };
             }
+
             return writeMark(vocabulary, { type: name, attrs });
         });
     }
+
     return written;
 };
 
@@ -54,6 +60,7 @@ const writeSliceNode = (vocabulary: Vocabulary, node: Node): unknown => {
 export const writeSlice = (model: ContentModel, doc: Node, slice: Slice, context: string): RichTextSlice => {
     const vocabulary = vocabularyOf(model);
     const tree: TreeNode = { type: 'doc', attrs: doc.attrs, content: slice.content.toJSON() as TreeNode[] };
+
     return {
         format: 'frontify.rich-text-slice',
         formatVersion: 1,
@@ -78,11 +85,14 @@ const originalOf = (islands: Islands, island: Readonly<Record<string, unknown>>,
     if (isRecord(island.attrs)) {
         original = island.attrs.original;
     }
+
     // Stored JSON never holds an island type, so an original cannot be one.
     if (!isRecord(original) || isIsland(original.type) || original.type === ISLAND_MARK) {
         islands.malformed = true;
+
         return undefined;
     }
+
     return original;
 };
 
@@ -91,23 +101,28 @@ const unwrapIslands = (islands: Islands, value: unknown, path: string): unknown 
     if (!isRecord(value)) {
         return value;
     }
+
     if (isIsland(value.type)) {
         return originalOf(islands, value, path);
     }
+
     const node: Record<string, unknown> = { ...value };
     if (Array.isArray(value.content)) {
         node.content = value.content.map((child: unknown, index) =>
             unwrapIslands(islands, child, `${path}${pointer('content', index)}`),
         );
     }
+
     if (Array.isArray(value.marks)) {
         node.marks = value.marks.map((mark: unknown, index) => {
             if (isRecord(mark) && mark.type === ISLAND_MARK) {
                 return originalOf(islands, mark, `${path}${pointer('marks', index)}`);
             }
+
             return mark;
         });
     }
+
     return node;
 };
 
@@ -119,11 +134,14 @@ const islandAt = (tree: TreeNode, path: string): boolean => {
         const position = Number(segments[index + 1]);
         if (segments[index] === 'marks') {
             const marks = node.marks ?? [];
+
             return index + 2 === segments.length && marks[position]?.type === ISLAND_MARK;
         }
+
         const children: readonly TreeNode[] = node.content ?? [];
         node = children[position];
     }
+
     return node !== undefined && isIsland(node.type);
 };
 
@@ -143,13 +161,16 @@ export const readSlice = (
     } catch {
         return undefined;
     }
+
     if (!isRecord(value) || value.format !== 'frontify.rich-text-slice' || value.formatVersion !== 1) {
         return undefined;
     }
+
     const { context } = value;
     if (!Array.isArray(value.content) || (context !== null && typeof context !== 'string')) {
         return undefined;
     }
+
     const islands: Islands = { paths: [], malformed: false };
     const envelope = {
         format: 'frontify.rich-text',
@@ -161,10 +182,12 @@ export const readSlice = (
     if (islands.malformed) {
         return undefined;
     }
+
     const { result, tree } = decodeToTree(envelope, model, { limits });
     if (result.status !== 'editable' || tree === undefined) {
         return undefined;
     }
+
     // Each carried island must decode as the same island, so a forged wrapper cannot plant known content.
     if (
         !islands.paths.every((path) => islandAt(tree, path)) ||
@@ -172,9 +195,11 @@ export const readSlice = (
     ) {
         return undefined;
     }
+
     const content = Fragment.fromJSON(schema, tree.content);
     if (!isOpening(value.openStart, content, 'start') || !isOpening(value.openEnd, content, 'end')) {
         return undefined;
     }
+
     return { slice: new Slice(content, value.openStart, value.openEnd), context };
 };

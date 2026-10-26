@@ -47,6 +47,7 @@ export const assembleCore = (options: EditorRuntimeOptions, late: Late) => {
             // An operation whose result the new policy forbids ends now.
             late.targets.coordinator.abortWhere((operation) => {
                 const rules = next.features[operation.featureId];
+
                 return rules === undefined || !rules[operation.action];
             });
             busy.run(notify);
@@ -62,6 +63,7 @@ export const assembleCore = (options: EditorRuntimeOptions, late: Late) => {
                     (operation) => operation.service === 'uploads' && operation.featureId === UPLOAD_FEATURE,
                 );
             }
+
             late.views.refresh();
         },
         onDisabledChange: () => late.views.repaint(),
@@ -71,6 +73,7 @@ export const assembleCore = (options: EditorRuntimeOptions, late: Late) => {
         onChange: () => late.views.refresh(),
     });
     const saving = createSaving({ revision: options.revision ?? null, sequence: identity.sequence, lifecycle });
+
     return {
         generate,
         identity,

@@ -16,6 +16,7 @@ const plainParagraphs = (state: EditorState, names: readonly string[]): Transact
     if (paragraph === undefined) {
         return undefined;
     }
+
     const cleared = names.filter((name) => Object.hasOwn(paragraph.spec.attrs ?? {}, name));
     const blocks = selectedTextblocks(state);
     const needs = blocks.some(
@@ -25,17 +26,20 @@ const plainParagraphs = (state: EditorState, names: readonly string[]): Transact
     if (!needs) {
         return undefined;
     }
+
     const { $from, $to } = state.selection;
     const transaction = state.tr.setBlockType($from.pos, $to.pos, paragraph, (node) => {
         const attrs = carried(node, paragraph, {});
         for (const name of cleared) {
             attrs[name] = defaultOf(paragraph, name);
         }
+
         return attrs;
     });
     if (!transaction.docChanged) {
         return undefined;
     }
+
     return transaction;
 };
 
@@ -48,8 +52,10 @@ export const clearBlocks = (attributes: readonly string[]): EngineCommand => ({
         if (!transaction.docChanged) {
             return false;
         }
+
         transaction.setSelection(carrySelection(transaction.doc, current.selection));
         dispatch?.(transaction.scrollIntoView());
+
         return true;
     },
     active: () => false,

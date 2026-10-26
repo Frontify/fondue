@@ -20,6 +20,7 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
             if (child.type.name !== node) {
                 return true;
             }
+
             const nodeId = typeof child.attrs.nodeId === 'string' ? child.attrs.nodeId : null;
             found.push({
                 nodeId,
@@ -27,10 +28,13 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
                 text: child.textContent,
                 range: rangeOf(doc, pos, pos + child.nodeSize),
             });
+
             return true;
         });
+
         return found;
     };
+
     const selectionOf = (state: EditorState): SelectionValue => {
         const { selection } = state;
         const { $from, $to } = selection;
@@ -47,6 +51,7 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
                 empty: node.content.size === 0,
             });
         }
+
         const before = $from.nodeBefore;
         let nodeBefore: SelectionValue['nodeBefore'] = null;
         if (before !== null) {
@@ -56,6 +61,7 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
                 nodeId: idOf(before),
             };
         }
+
         return {
             ...summarize(selection),
             ancestors,
@@ -65,6 +71,7 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
             verbatim: inCodeTextblock($from),
         };
     };
+
     return {
         selection: () => selectionOf(source.state()),
         blocks: {
@@ -73,9 +80,11 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
                 if (type === undefined) {
                     return false;
                 }
+
                 if (!type.isTextblock) {
                     return capability(EDITS.wrapIn, { node }).active(source.state(), attrs);
                 }
+
                 return capability(EDITS.setBlock, { node }).active(source.state(), attrs);
             },
             list: (node) => blocksOf(source.state().doc, node),
@@ -89,6 +98,7 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
                 if (direction === 'up') {
                     action = 'move-up';
                 }
+
                 return edit(capability(EDITS.block, { action }));
             },
             indentLines: (direction) => edit(capability(EDITS.indentLines, { direction })),
@@ -96,13 +106,16 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
                 if (schema.nodes[node] === undefined) {
                     return false;
                 }
+
                 const wrap = capability(EDITS.wrapIn, { node });
+
                 return wrap.active(source.state()) !== false && edit(wrap);
             },
             clear: (attributes) => {
                 if (attributes.includes('nodeId')) {
                     return false;
                 }
+
                 return edit(clearBlocks(attributes));
             },
         },
@@ -115,8 +128,10 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
                         .filter((type) => type.isTextblock)
                         .map(({ name }) => name);
                 }
+
                 const nodeId = options?.nodeId === undefined ? {} : { nodeId: options.nodeId };
                 const args = { node, toggle: options?.toggle === true };
+
                 return editWith(EDITS.setAttributes, args, types, attrs, false, nodeId);
             },
             active: (nodes, attrs, options) => {
@@ -124,10 +139,12 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
                 if (typeof nodes !== 'string') {
                     node = [...nodes];
                 }
+
                 const payload: Record<string, unknown> = { ...attrs };
                 if (options?.nodeId !== undefined) {
                     payload.nodeId = options.nodeId;
                 }
+
                 return capability(EDITS.setAttributes, { node }).active(source.state(), payload);
             },
         },
@@ -138,7 +155,9 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
             if (found === undefined) {
                 return undefined;
             }
+
             const { nodeId } = found.node.attrs;
+
             return {
                 nodeId: typeof nodeId === 'string' ? nodeId : null,
                 attrs: valuesOf(found.node.attrs),

@@ -54,6 +54,7 @@ export const createFaults = (a: {
         if (lifecycle.isDisposed()) {
             return;
         }
+
         lifecycle.to('faulted');
         // A frame still pending would otherwise move the faulted session to ready.
         view.cancelReady();
@@ -68,12 +69,14 @@ export const createFaults = (a: {
         coordinator.settle();
         coordinator.abortWhere(() => true);
     };
+
     /** Stores the candidate of a view fault with the host's recovery service. */
     const storeRecovery = (candidate: EditorState) => {
         const service = recovery();
         if (service === undefined || lifecycle.isDisposed()) {
             return;
         }
+
         const checkpoint = {
             stamp: { ...identity.session(), sequence: identity.sequence() + 1 },
             acknowledgedRevision: saving.status().revision,
@@ -85,11 +88,13 @@ export const createFaults = (a: {
         } catch {
             return;
         }
+
         stored
             .then(({ receiptId }) => report(diagnostic('runtime.recovery-stored', undefined, { receiptId }, 'info')))
             // A store that fails leaves the candidate with `getRecoveryCandidate` only.
             .catch(() => undefined);
     };
+
     return {
         fault,
         viewFault: (attached, candidate) => {
@@ -104,6 +109,7 @@ export const createFaults = (a: {
             if (!lifecycle.is('faulted') || recovered === undefined) {
                 return null;
             }
+
             return encode(recovered.doc);
         },
         hasRecovery: () => recovered !== undefined,
@@ -111,6 +117,7 @@ export const createFaults = (a: {
             installingNext = true;
             const result = work();
             installingNext = false;
+
             return result;
         },
     };

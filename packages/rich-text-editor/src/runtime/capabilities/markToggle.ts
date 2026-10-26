@@ -26,6 +26,7 @@ export const markableText = (state: EditorState, type: MarkType): TextRange[] =>
             }
         });
     }
+
     return texts;
 };
 
@@ -36,9 +37,12 @@ const markState = (state: EditorState, type: MarkType): boolean | 'mixed' => {
         if (marks === null) {
             marks = state.selection.$from.marks();
         }
+
         return type.isInSet(marks) !== undefined;
     }
+
     const texts = markableText(state, type);
+
     return tristate(texts.filter((text) => text.marked).length, texts.length);
 };
 
@@ -47,24 +51,30 @@ export const toggleMark: CapabilityImplementation = (args, schema) => {
     if (type === undefined) {
         return REJECTED;
     }
+
     let attrs = null;
     if (isRecord(args.attrs)) {
         attrs = args.attrs;
     }
+
     // At a caret ProseMirror toggles the stored mark.
     const engineToggle = toggleEngineMark(type, attrs);
+
     return {
         run: (state, dispatch) => {
             if (state.selection.empty) {
                 return engineToggle(state, dispatch);
             }
+
             const texts = markableText(state, type);
             if (texts.length === 0) {
                 return false;
             }
+
             if (dispatch === undefined) {
                 return true;
             }
+
             // Adds unless every selected text has the mark, edge whitespace included.
             const add = texts.some((text) => !text.marked);
             const transaction = state.tr;
@@ -75,7 +85,9 @@ export const toggleMark: CapabilityImplementation = (args, schema) => {
                     transaction.removeMark(from, to, type);
                 }
             }
+
             dispatch(transaction.scrollIntoView());
+
             return true;
         },
         active: (state) => markState(state, type),

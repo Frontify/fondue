@@ -30,15 +30,18 @@ export const composer = (base: EditorState) => {
                 appendSteps(outer, first);
                 carryState(outer, first);
             }
+
             appendSteps(outer, next);
             carryState(outer, next);
         }
+
         mapping.appendMapping(next.mapping);
         current = current.apply(next);
         if (!seen.has(current.doc)) {
             seen.set(current.doc, mapping.maps.length);
         }
     };
+
     return {
         state: () => current,
         /** `range` mapped through the steps made since it was read, or `undefined` when it was read before the command. */
@@ -48,8 +51,10 @@ export const composer = (base: EditorState) => {
             if (read === undefined || start === undefined) {
                 return undefined;
             }
+
             const since = mapping.slice(start);
             const from = since.map(read.from, 1);
+
             return { from, to: Math.max(from, since.map(read.to, -1)) };
         },
         apply: (command: EngineCommand, payload?: unknown, context?: CommandContext) => {
@@ -65,6 +70,7 @@ export const composer = (base: EditorState) => {
             if (applied && built !== undefined) {
                 take(built);
             }
+
             return applied;
         },
         select: (transaction: Transaction) => take(transaction),
@@ -72,6 +78,7 @@ export const composer = (base: EditorState) => {
             if (outer === undefined) {
                 return first;
             }
+
             return outer.setSelection(carrySelection(outer.doc, current.selection));
         },
     };
@@ -82,13 +89,16 @@ const carryState = (outer: Transaction, next: Transaction) => {
     if (next.storedMarksSet) {
         outer.setStoredMarks(next.storedMarks);
     }
+
     if (next.scrolledIntoView) {
         outer.scrollIntoView();
     }
+
     const mark: unknown = next.getMeta(LAST_MARK_META);
     if (mark !== undefined) {
         outer.setMeta(LAST_MARK_META, mark);
     }
+
     const flags = nodeStateChanges(next);
     if (flags.length > 0) {
         withNodeState(outer, flags);

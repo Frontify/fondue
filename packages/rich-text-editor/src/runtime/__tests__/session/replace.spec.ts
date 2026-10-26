@@ -53,6 +53,7 @@ const setup = (options: Options = {}) => {
     if (ready) {
         lifecycle.to('ready');
     }
+
     const identity = createIdentity({ documentId: 'document-1', generate: () => 'session-1' });
     const doc = definition.schema.nodeFromJSON(stored('ab').content);
     const store = createStore(EditorState.create({ doc }));
@@ -70,6 +71,7 @@ const setup = (options: Options = {}) => {
             status: () => ({ revision: null }) as SaveStatus,
             commit: (commitOptions) => {
                 calls.push(`saving.commit:${commitOptions.reason}`);
+
                 return (options.commit?.() ?? Promise.resolve({ status: 'acknowledged' })) as never;
             },
             unsaved: () => unsaved,
@@ -92,6 +94,7 @@ const setup = (options: Options = {}) => {
                 if (installs) {
                     store.set(next);
                 }
+
                 return installs;
             },
         },
@@ -108,6 +111,7 @@ const setup = (options: Options = {}) => {
             fault: () => calls.push('faults.fault'),
             withoutRecovery: (work) => {
                 calls.push('faults.withoutRecovery');
+
                 return work();
             },
         },
@@ -121,6 +125,7 @@ const setup = (options: Options = {}) => {
                 if (options.fresh !== undefined) {
                     return options.fresh();
                 }
+
                 return EditorState.create({ doc: next as Node, ...(selection === undefined ? {} : { selection }) });
             },
         },
@@ -133,6 +138,7 @@ const setup = (options: Options = {}) => {
         history: 'reset' as const,
         ...patch,
     });
+
     return { replace, request, calls, lifecycle, identity, store, encoder, current };
 };
 
@@ -228,6 +234,7 @@ describe('createReplace', () => {
             unsaved: true,
             commit: () => {
                 lifecycle.to('disposed');
+
                 return Promise.resolve({ status: 'acknowledged' });
             },
         });

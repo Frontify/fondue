@@ -48,6 +48,7 @@ const setup = ({ disposedBySaving = false } = {}) => {
         resources,
         handle: () => handle,
     });
+
     return { dispose, calls, lifecycle, resources };
 };
 

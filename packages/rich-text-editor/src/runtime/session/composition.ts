@@ -14,6 +14,7 @@ export type Composition = {
 export const createComposition = (a: { composing: () => boolean; onSettled: () => void }): Composition => {
     // What waits for input to settle outside the queue, such as a form's settled value.
     const waiters = new Set<(outcome: InputOutcome) => void>();
+
     return {
         ...createInputSettling(a.composing, a.onSettled),
         wait: (settled, timeoutMs) => {
@@ -24,6 +25,7 @@ export const createComposition = (a: { composing: () => boolean; onSettled: () =
                     settled(outcome);
                 }
             };
+
             const timer = setTimeout(() => waiter('timeout'), timeoutMs);
             waiters.add(waiter);
         },

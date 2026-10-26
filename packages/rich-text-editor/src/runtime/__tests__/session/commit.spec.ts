@@ -78,6 +78,7 @@ const setup = ({
             if (broken) {
                 throw new Error('view');
             }
+
             onUpdate?.(next, (root) => service.commit(root));
         },
     } as unknown as EditorView;
@@ -112,6 +113,7 @@ const setup = ({
         fault: (found) => faults.push(found),
         viewFault: (_view, candidate) => viewFaults.push(candidate),
     });
+
     return { service, store, identity, lifecycle, log, diagnostics, faults, viewFaults, resources, provisionals };
 };
 

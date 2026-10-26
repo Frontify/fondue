@@ -16,8 +16,10 @@ export const uploadsApi = (source: ApiSource): Pick<DocumentApi, 'uploads'> => {
         if (range === undefined) {
             return undefined;
         }
+
         return { kind: 'insert', origin: at.origin, range };
     };
+
     return {
         uploads: {
             pick: (nodeId) => source.later(() => source.uploads()?.pick(nodeId)),
@@ -27,9 +29,11 @@ export const uploadsApi = (source: ApiSource): Pick<DocumentApi, 'uploads'> => {
                 if (uploads === undefined || place === undefined || !uploads.available(place)) {
                     return false;
                 }
+
                 source.later(() => {
                     uploads.begin(files, place).catch(() => undefined);
                 });
+
                 return true;
             },
             cancel: (nodeId) =>
@@ -39,7 +43,9 @@ export const uploadsApi = (source: ApiSource): Pick<DocumentApi, 'uploads'> => {
                         if (cancel === undefined) {
                             return false;
                         }
+
                         dispatch?.(cancel);
+
                         return true;
                     },
                     active: () => false,
@@ -51,11 +57,14 @@ export const uploadsApi = (source: ApiSource): Pick<DocumentApi, 'uploads'> => {
                 if (node === null || node.attrs.assetId !== null || slotUploadsOf(state)?.retryable(nodeId) !== true) {
                     return false;
                 }
+
                 // A read-only session takes no upload's result, so a retry there would only fail.
                 if (!source.editable()) {
                     return false;
                 }
+
                 source.later(() => source.uploads()?.retry(nodeId));
+
                 return true;
             },
             status: (nodeId) => source.uploads()?.statusOf(nodeId),

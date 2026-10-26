@@ -38,6 +38,7 @@ export const nodeStatePlugin = (): Plugin =>
                 if (changes.length === 0) {
                     return states;
                 }
+
                 const next = new Map(states);
                 for (const { nodeId, key, value } of changes) {
                     const kept = Object.fromEntries(
@@ -46,8 +47,10 @@ export const nodeStatePlugin = (): Plugin =>
                     if (value !== null) {
                         kept[key] = value;
                     }
+
                     next.set(nodeId, kept);
                 }
+
                 return next;
             },
         },

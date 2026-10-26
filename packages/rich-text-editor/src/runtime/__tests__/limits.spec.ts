@@ -52,6 +52,7 @@ describe('the limit check', () => {
         if (result.status !== 'editable' || tree === undefined) {
             throw new Error('expected an editable document');
         }
+
         const doc = compileDefinition(model).schema.nodeFromJSON(tree);
         const encoded = encodeTree(doc.toJSON() as TreeNode, model, result.document.requiredCapabilities).document;
         const bytes = new TextEncoder().encode(JSON.stringify(encoded)).byteLength;

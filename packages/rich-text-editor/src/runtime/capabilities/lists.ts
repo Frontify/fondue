@@ -23,12 +23,14 @@ const declaredIn = (type: NodeType, payload: unknown) => {
             }
         }
     }
+
     return attrs;
 };
 
 /** Whether the innermost list at the selection holds items of `item`, so a key of another list's items passes on. */
 const inListOf = (state: EditorState, item: NodeType) => {
     const around = listAround(state.selection.$from);
+
     return around !== undefined && around.list.firstChild?.type === item;
 };
 
@@ -41,6 +43,7 @@ const wrapInList = (state: EditorState, list: NodeType, item: NodeType, payload:
     if (paragraph === undefined) {
         return undefined;
     }
+
     const { $from, $to } = state.selection;
     const transaction = state.tr.setBlockType($from.pos, $to.pos, paragraph, (node) => carried(node, paragraph, {}));
     const range = transaction.doc
@@ -49,6 +52,7 @@ const wrapInList = (state: EditorState, list: NodeType, item: NodeType, payload:
     if (range === null || !wrapRangeInList(transaction, range, list, declaredIn(list, payload))) {
         return undefined;
     }
+
     // A rule's payload, such as `checked` from `[x] `, applies to the new items.
     const itemAttrs = Object.entries(declaredIn(item, payload));
     const { start, end } = range;
@@ -58,6 +62,7 @@ const wrapInList = (state: EditorState, list: NodeType, item: NodeType, payload:
                 transaction.setNodeAttribute(pos, name, value);
             }
         }
+
         return node.type !== item;
     });
     // A new list beside a list of its own type joins it, as in other editors, so two toggled paragraphs make one list.
@@ -72,10 +77,12 @@ const wrapInList = (state: EditorState, list: NodeType, item: NodeType, payload:
         if (joinsWith(after)) {
             transaction.join(after);
         }
+
         if (joinsWith(before)) {
             transaction.join(before);
         }
     }
+
     return transaction.scrollIntoView();
 };
 
@@ -98,18 +105,21 @@ const convertList = (
             if (index === caret) {
                 attrs = declaredIn(item, payload);
             }
+
             return item.create(attrs, child.content, child.marks);
         }),
     );
     if (!list.validContent(content)) {
         return undefined;
     }
+
     const pos = state.selection.$from.before(around.depth);
     const transaction = state.tr.replaceWith(
         pos,
         pos + around.list.nodeSize,
         list.create(declaredIn(list, payload), content),
     );
+
     // Items and lists keep their sizes, so every position, and the selection with them, stays the same.
     return transaction.setSelection(carrySelection(transaction.doc, state.selection)).scrollIntoView();
 };
@@ -120,7 +130,9 @@ export const toggleList: CapabilityImplementation = (args, schema) => {
     if (list === undefined || item === undefined) {
         return REJECTED;
     }
+
     const isList = (state: EditorState) => listAround(state.selection.$from)?.list.type === list;
+
     return {
         run: (state, dispatch, payload) => {
             let transaction: Transaction | undefined;
@@ -133,10 +145,13 @@ export const toggleList: CapabilityImplementation = (args, schema) => {
             } else {
                 transaction = convertList(state, around, list, item, payload);
             }
+
             if (transaction === undefined) {
                 return false;
             }
+
             dispatch?.(transaction);
+
             return true;
         },
         active: (state) => isList(state),
@@ -148,7 +163,9 @@ export const indentItem: CapabilityImplementation = (args, schema) => {
     if (item === undefined) {
         return REJECTED;
     }
+
     const sink = sinkListItem(item);
+
     return {
         run: (state, dispatch) =>
             !inCodeTextblock(state.selection.$from) && inListOf(state, item) && sink(state, dispatch),
@@ -161,7 +178,9 @@ export const outdentItem: CapabilityImplementation = (args, schema) => {
     if (item === undefined) {
         return REJECTED;
     }
+
     const lift = liftListItem(item);
+
     return {
         run: (state, dispatch) =>
             !inCodeTextblock(state.selection.$from) && inListOf(state, item) && lift(state, dispatch),
@@ -176,9 +195,11 @@ const liftItemAt = (state: EditorState, pos: number): Transaction | undefined =>
     if (around === undefined) {
         return undefined;
     }
+
     const item = $inside.node(around.depth + 1).type;
     // `liftListItem` lifts the items of the selection's block range, which a selection that leaves the list lacks.
     const caret = state.apply(state.tr.setSelection(TextSelection.create(state.doc, pos + 1)));
+
     return transactionOf(caret, liftListItem(item));
 };
 
@@ -194,16 +215,20 @@ export const liftLists = (state: EditorState): Transaction | undefined => {
                 break;
             }
         }
+
         if (next === undefined) {
             break;
         }
+
         appendSteps(transaction, next);
         const selection = current.selection.map(next.doc, next.mapping);
         current = current.apply(next);
         current = current.apply(current.tr.setSelection(selection));
     }
+
     if (!transaction.docChanged) {
         return undefined;
     }
+
     return transaction.setSelection(carrySelection(transaction.doc, current.selection));
 };

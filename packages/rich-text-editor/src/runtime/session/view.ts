@@ -55,17 +55,22 @@ const createCalls = () => {
         } finally {
             viewCall = false;
         }
+
         const threw = viewThrew;
         viewThrew = false;
+
         return { threw, value };
     };
+
     /** `true` when a call is running, which then reports the throw itself. */
     const caught = () => {
         if (viewCall) {
             viewThrew = true;
         }
+
         return viewCall;
     };
+
     return { call, caught };
 };
 
@@ -85,15 +90,19 @@ const surfaceAttributes = (
         if (!a.mode.disabled()) {
             result.tabindex = '0';
         }
+
         result['aria-readonly'] = 'true';
     }
+
     if (isEmpty(current)) {
         result['data-rte-empty'] = '';
     }
+
     // Selection and copy keep working on a surface that takes no edits.
     if (a.lifecycle.is('transitioning')) {
         result['aria-busy'] = 'true';
     }
+
     // The surface keeps focus while a suggestion list shows options, and names the active one.
     const suggestion = activeSuggestion(current);
     if (suggestion !== null) {
@@ -104,6 +113,7 @@ const surfaceAttributes = (
             result['aria-activedescendant'] = suggestionOptionId(a.suggestionListId, option.key);
         }
     }
+
     return result;
 };
 
@@ -146,6 +156,7 @@ export const createView = (a: ViewArgs): ViewService => {
         if (a.composing() || a.hasRecovery()) {
             return;
         }
+
         a.shown.sync(a.mode.mode(), a.columns.current());
         if (view !== undefined) {
             view.setProps({});
@@ -172,6 +183,7 @@ export const createView = (a: ViewArgs): ViewService => {
                     throw error;
                 }
             }
+
             view = undefined;
         }
     };
@@ -180,6 +192,7 @@ export const createView = (a: ViewArgs): ViewService => {
         if (a.lifecycle.is('disposed')) {
             return;
         }
+
         detach();
         built = undefined;
         const { threw, value: attached } = call(
@@ -210,16 +223,20 @@ export const createView = (a: ViewArgs): ViewService => {
                     // Its node views may throw again while it is destroyed.
                 }
             }
+
             // A view or node view constructor that throws keeps the decoded document as the snapshot.
             a.fault();
+
             return;
         }
+
         view = attached;
         a.resources.views.add(attached);
         a.onAttached(attached);
         if (!a.lifecycle.is('mounting')) {
             return;
         }
+
         // Frames run after microtasks, so the first portal flush of the initial document precedes `ready`.
         readyFrame = requestAnimationFrame(() => {
             readyFrame = undefined;
@@ -256,6 +273,7 @@ export const createView = (a: ViewArgs): ViewService => {
             if (caught()) {
                 return;
             }
+
             if (a.lifecycle.is('mounting', 'ready') && view !== undefined) {
                 a.viewFault(view, a.store.state);
             }

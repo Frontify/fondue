@@ -207,6 +207,7 @@ const TABLE: Record<string, Row> = {
 /** A completion of a slot that holds an operation writes the cache first. */
 function doneWithCache(): Partial<Record<Phase, Outcome>> {
     const effects: Outcome[1] = ['cache', 'announce', 'changed', 'reply'];
+
     return { queued: ['done', effects], running: ['done', effects] };
 }
 

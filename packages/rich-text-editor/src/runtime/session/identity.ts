@@ -19,6 +19,7 @@ export const createIdentity = (args: { documentId: string; generate: () => strin
     let commitSequence = 0;
     let sequence = 0;
     const stamp = (): DocumentStamp => ({ ...session, sequence });
+
     return {
         session: () => session,
         sequence: () => sequence,
@@ -34,6 +35,7 @@ export const createIdentity = (args: { documentId: string; generate: () => strin
             const previous = stamp();
             session = { documentId, sessionId: session.sessionId, generation: session.generation + 1 };
             sequence = 0;
+
             return previous;
         },
     };

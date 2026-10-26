@@ -80,6 +80,7 @@ describe('the empty block rule', () => {
             const { handle, view } = mountText({ blocks: [para(text(existing))], plugins: [slash] });
             setSelection(handle, { text: existing, from: caret, to: caret });
             typeText(handle, '/');
+
             return view;
         });
         await afterDelay();

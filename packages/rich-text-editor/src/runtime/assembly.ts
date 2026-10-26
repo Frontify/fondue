@@ -40,5 +40,6 @@ export const sessionCommand = <A>(
     extend: Parameters<typeof pluginCommand<A>>[4],
 ): EngineCommand => {
     const { schema, commands } = engineOf(port).definition;
+
     return pluginCommand({ run }, model, schema, (id) => commands.get(id), extend);
 };

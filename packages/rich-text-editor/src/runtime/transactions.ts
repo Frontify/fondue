@@ -24,6 +24,7 @@ export const transactionOf = (state: EditorState, command: Command): Transaction
     if (next === undefined || !next.docChanged) {
         return undefined;
     }
+
     return next;
 };
 
@@ -32,6 +33,8 @@ export const take = (outer: Transaction, current: EditorState, next: Transaction
     if (next === undefined || !next.docChanged) {
         return current;
     }
+
     appendSteps(outer, next);
+
     return current.apply(next);
 };

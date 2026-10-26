@@ -25,6 +25,7 @@ export const firstWrite = (transaction: Transaction): Positions => {
         to = end;
     });
     const rest = transaction.mapping.slice(1);
+
     return { from: rest.map(from, 1), to: rest.map(to, -1) };
 };
 
@@ -36,27 +37,33 @@ const decodingOf = (source: ApiSource) => {
         if (!isRecord(value)) {
             return value;
         }
+
         const node: Record<string, unknown> = { ...value };
         if (Array.isArray(value.content)) {
             node.content = value.content.map(withPlaceholderIds);
         }
+
         const type = typeof value.type === 'string' ? schema.nodes[value.type] : undefined;
         const attrs = isRecord(value.attrs) ? value.attrs : {};
         if (type !== undefined && hasNodeId(type.spec.attrs ?? {}) && !Object.hasOwn(attrs, 'nodeId')) {
             node.attrs = { ...attrs, nodeId: randomId() };
         }
+
         return node;
     };
+
     /** `nodes` as decode reads them, or why it refuses them; inline nodes decode inside a paragraph. */
     const decoded = (nodes: readonly ContentNodeJSON[]): Fragment | 'invalid' | 'limit' => {
         if (nodes.length === 0) {
             return Fragment.empty;
         }
+
         const inline = nodes.every((node) => isRecord(node) && schema.nodes[String(node.type)]?.isInline === true);
         let content: readonly unknown[] = nodes.map(withPlaceholderIds);
         if (inline) {
             content = [withPlaceholderIds({ type: 'paragraph', content: nodes })];
         }
+
         const envelope = {
             format: 'frontify.rich-text',
             formatVersion: 1,
@@ -68,17 +75,21 @@ const decodingOf = (source: ApiSource) => {
         if (result.status === 'blocked' && result.reason === 'limit-exceeded') {
             return 'limit';
         }
+
         // Any diagnostic means decode cleaned the content, which a write refuses.
         if (result.status !== 'editable' || tree === undefined || result.diagnostics.length > 0) {
             return 'invalid';
         }
+
         const blocks = tree.content ?? [];
         // As in a paste, the runtime gives each written node a new `nodeId`.
         if (inline) {
             return withNodeIds(Fragment.fromJSON(schema, blocks[0]?.content), () => null);
         }
+
         return withNodeIds(Fragment.fromJSON(schema, blocks), () => null);
     };
+
     /** Whether `content` holds a node or mark of a feature whose policy refuses its paste. */
     const refusesPaste = (content: Fragment) => {
         const refused = refusedNames(model, source.policy().features);
@@ -86,8 +97,10 @@ const decodingOf = (source: ApiSource) => {
         content.descendants((node) => {
             found ||= refused.nodes.has(node.type.name) || node.marks.some(({ type }) => refused.marks.has(type.name));
         });
+
         return found;
     };
+
     /** Whether `content` holds a `url` attribute of a node or mark that its feature's policy refuses. */
     const refusesUrl = (content: Fragment) => {
         const { marks, nodes } = compiledModel(model);
@@ -97,6 +110,7 @@ const decodingOf = (source: ApiSource) => {
             if (owner !== undefined) {
                 found ||= urlRefused(model, owner.featureId, attributesOf(owner), node.attrs);
             }
+
             for (const mark of node.marks) {
                 const declared = marks.find(({ name }) => name === mark.type.name);
                 if (declared !== undefined) {
@@ -104,8 +118,10 @@ const decodingOf = (source: ApiSource) => {
                 }
             }
         });
+
         return found;
     };
+
     return { decoded, refusesPaste, refusesUrl };
 };
 
@@ -119,8 +135,10 @@ export const writesOf = (source: ApiSource) => {
         if (code === 'policy' || code === 'limit') {
             source.refused();
         }
+
         return { status: 'rejected', code };
     };
+
     /** The span of `target` in the current state; with `point`, where an insert goes. */
     const spanOf = (target: WriteTarget, point: boolean): Positions | undefined => {
         if (!('nodeId' in target)) {
@@ -128,32 +146,41 @@ export const writesOf = (source: ApiSource) => {
             if (range === undefined || !point) {
                 return range;
             }
+
             return { from: range.to, to: range.to };
         }
+
         const { doc } = source.state();
         const pos = positionOf(doc, target.nodeId);
         const node = pos === undefined ? null : doc.nodeAt(pos);
         if (pos === undefined || node === null) {
             return undefined;
         }
+
         const end = pos + node.nodeSize;
         if (target.at === 'before') {
             return { from: pos, to: pos };
         }
+
         if (target.at === 'after' || (target.at === undefined && point)) {
             return { from: end, to: end };
         }
+
         if (target.at === undefined) {
             return { from: pos, to: end };
         }
+
         if (node.isLeaf) {
             return undefined;
         }
+
         if (target.at === 'start') {
             return { from: pos + 1, to: pos + 1 };
         }
+
         return { from: end - 1, to: end - 1 };
     };
+
     /** Commits `transaction`, whose write of `content` covers `written`, unless a limit or the session refuses it. */
     const commit = (
         state: EditorState,
@@ -164,13 +191,16 @@ export const writesOf = (source: ApiSource) => {
         if (exceededWrite(transaction.doc, written.from, content, limits) !== undefined) {
             return rejectedWrite('limit');
         }
+
         const refused = source.refusal(state.doc, transaction);
         if (refused !== undefined) {
             return rejectedWrite(refused);
         }
+
         const outcome = source.edit({
             run: (_state, dispatch) => {
                 dispatch?.(transaction);
+
                 return true;
             },
             active: () => false,
@@ -178,25 +208,31 @@ export const writesOf = (source: ApiSource) => {
         if (outcome.status === 'rejected') {
             return outcome;
         }
+
         if (outcome.status === 'no-op') {
             return { status: 'no-op' };
         }
+
         return {
             status: 'applied',
             range: rangeOf(source.state().doc, written.from, written.to),
         };
     };
+
     const write = (span: Positions | undefined, nodes: readonly ContentNodeJSON[]): WriteOutcome => {
         if (span === undefined) {
             return { status: 'rejected', code: 'target-invalid' };
         }
+
         const content = decoded(nodes);
         if (typeof content === 'string') {
             return rejectedWrite(content);
         }
+
         if (refusesPaste(content) || refusesUrl(content)) {
             return rejectedWrite('policy');
         }
+
         const state = source.state();
         const $from = state.doc.resolve(span.from);
         const $to = state.doc.resolve(span.to);
@@ -209,12 +245,16 @@ export const writesOf = (source: ApiSource) => {
         ) {
             return { status: 'rejected', code: 'invalid' };
         }
+
         if (span.from === span.to && content.size === 0) {
             return { status: 'no-op' };
         }
+
         const transaction = state.tr.replaceWith(span.from, span.to, content);
+
         return commit(state, transaction, { from: span.from, to: span.from + content.size }, content);
     };
+
     /** A new block of `type` with `attrs`, holding the stored JSON `content` as it is, else the content it requires. */
     const blockOf = (
         type: NodeType,
@@ -225,17 +265,22 @@ export const writesOf = (source: ApiSource) => {
         if (checked === undefined) {
             return 'invalid';
         }
+
         if (content === undefined) {
             return type.createAndFill(checked) ?? 'invalid';
         }
+
         const built = decoded([{ type: type.name, attrs: checked, content }]);
         if (typeof built === 'string') {
             return built;
         }
+
         if (refusesUrl(built)) {
             return 'policy';
         }
+
         return built.firstChild ?? 'invalid';
     };
+
     return { rejectedWrite, spanOf, commit, write, blockOf };
 };

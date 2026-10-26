@@ -89,6 +89,7 @@ describe('the async coordinator', () => {
                     const target = capture(handle, { purpose: 'replace-text', onIntersectingEdit: 'invalidate' });
                     const operation = pending(runtime, { target });
                     view.dispatch(view.state.tr.delete(1, 2));
+
                     return () => operation.resolve({ text: 'x' });
                 },
             ],
@@ -98,6 +99,7 @@ describe('the async coordinator', () => {
                 ({ handle, runtime }) => {
                     const operation = pending(runtime);
                     handle.updatePolicy(authoringOf(targetModel, NOT_EDITABLE_CORE));
+
                     return () => operation.resolve({ text: 'x' });
                 },
             ],
@@ -106,6 +108,7 @@ describe('the async coordinator', () => {
                 'invalid-payload',
                 ({ runtime }) => {
                     const operation = pending(runtime);
+
                     return () => operation.resolve({ text: 7 });
                 },
             ],
@@ -114,6 +117,7 @@ describe('the async coordinator', () => {
                 'invalid-payload',
                 ({ runtime }) => {
                     const operation = pending(runtime);
+
                     return () => operation.resolve({ text: 'x', at: () => 1 });
                 },
             ],
@@ -123,6 +127,7 @@ describe('the async coordinator', () => {
                 ({ handle, runtime }) => {
                     const operation = pending(runtime);
                     const replaced = handle.replaceDocument(replacing(handle, stored(para(words('cd')))));
+
                     return async () => {
                         await replaced;
                         await operation.resolve({ text: 'x' });
@@ -213,6 +218,7 @@ describe('the async coordinator', () => {
                     dispatch(state.tr.insertText('[]'));
                     upload = pending(session.runtime);
                 }
+
                 return true;
             },
             active: () => false,

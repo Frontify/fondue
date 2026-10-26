@@ -96,6 +96,7 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
             if (operation.deliver === undefined) {
                 return apply(operation, result);
             }
+
             return operation.deliver(result);
         } catch {
             return 'invalid-payload';
@@ -109,11 +110,13 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
             if (captures) {
                 chosen = capture() ?? null;
             }
+
             const { deliver } = request;
             let delivered: Pick<AsyncOperation, 'deliver'> = {};
             if (deliver !== undefined) {
                 delivered = { deliver };
             }
+
             const operation: AsyncOperation = Object.freeze({
                 id: generateId(),
                 session: session(),
@@ -195,6 +198,7 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
         } finally {
             aborting -= 1;
         }
+
         dispatch({ type: 'resume' });
     };
 
@@ -207,6 +211,7 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
                 started = operation;
             },
         });
+
         // The build effect always replies before `dispatch` returns.
         return started as AsyncOperation;
     };

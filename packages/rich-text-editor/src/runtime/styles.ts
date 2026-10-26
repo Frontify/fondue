@@ -12,6 +12,7 @@ export const stylesOf = (state: EditorState): readonly PresentationStyle[] => {
     if (read === undefined) {
         return [];
     }
+
     return read();
 };
 

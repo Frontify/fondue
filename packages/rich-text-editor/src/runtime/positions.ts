@@ -20,6 +20,7 @@ export const positionOf = (doc: Node, nodeId: string): number | undefined => {
         positions.set(doc, index);
         found = index;
     }
+
     return found.get(nodeId);
 };
 
@@ -37,25 +38,31 @@ export const nearest = (
         if (pos === undefined) {
             return undefined;
         }
+
         const node = state.doc.nodeAt(pos);
         if (node === null) {
             return undefined;
         }
+
         if (node.type === type) {
             return { node, pos };
         }
+
         const $pos = state.doc.resolve(pos);
         for (let depth = $pos.depth; depth > 0; depth -= 1) {
             if ($pos.node(depth).type === type) {
                 return { node: $pos.node(depth), pos: $pos.before(depth) };
             }
         }
+
         return undefined;
     }
+
     const { selection } = state;
     if (selection instanceof NodeSelection && selection.node.type === type) {
         return { node: selection.node, pos: selection.from };
     }
+
     const { $from } = selection;
     for (let depth = $from.depth; depth > 0; depth -= 1) {
         const node = $from.node(depth);
@@ -63,6 +70,7 @@ export const nearest = (
             return { node, pos: $from.before(depth) };
         }
     }
+
     return undefined;
 };
 

@@ -17,6 +17,7 @@ const setup = (initial: 'editable' | 'readonly' = 'editable', disposed = false) 
         onModeChange: (next) => calls.push(`mode:${next}:${service.mode()}`),
         onDisabledChange: () => calls.push(`disabled:${service.disabled()}`),
     });
+
     return { service, calls, state };
 };
 

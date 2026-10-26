@@ -27,6 +27,7 @@ export const whenIdle = (task: () => void): (() => void) => {
             cancelWait = () => clearTimeout(id);
         }
     }
+
     return () => {
         tasks.delete(task);
         if (tasks.size === 0) {

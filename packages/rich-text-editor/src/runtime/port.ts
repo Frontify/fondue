@@ -123,6 +123,7 @@ export const surfaceElement = (port: EditorPort | undefined): HTMLElement | unde
     if (port === undefined) {
         return undefined;
     }
+
     return engineOf(port).view?.dom;
 };
 
@@ -137,6 +138,7 @@ export const selectionSpan = (
     port: EditorPort,
 ): { readonly anchor: number; readonly head: number; readonly empty: boolean } => {
     const { anchor, head, empty } = engineOf(port).state.selection;
+
     return { anchor, head, empty };
 };
 
@@ -146,6 +148,7 @@ export const selectedNodePosition = (port: EditorPort): number | undefined => {
     if ('node' in selection) {
         return selection.from;
     }
+
     return undefined;
 };
 
@@ -155,13 +158,16 @@ export const selectedNodeNames = (port: EditorPort | undefined): readonly string
     if (selection === undefined) {
         return [];
     }
+
     const names: string[] = [];
     if ('node' in selection) {
         names.push((selection.node as { readonly type: { readonly name: string } }).type.name);
     }
+
     for (let depth = selection.$from.depth; depth >= 0; depth -= 1) {
         names.push(selection.$from.node(depth).type.name);
     }
+
     return names;
 };
 
@@ -171,6 +177,7 @@ export const selectionBlockName = (port: EditorPort | undefined): string => {
     if (view === undefined) {
         return '';
     }
+
     return view.state.selection.$from.parent.type.name;
 };
 
@@ -180,6 +187,7 @@ export const selectionRectOf = (port: EditorPort): DOMRect | undefined => {
     if (view === undefined) {
         return undefined;
     }
+
     return selectionRect(view);
 };
 
@@ -199,6 +207,7 @@ export const nodeChromeOf = (port: EditorPort): HTMLElement | null => {
     if (view === undefined) {
         return null;
     }
+
     return nodeChromeAt(view);
 };
 
@@ -208,6 +217,7 @@ export const atomPositionAt = (port: EditorPort, target: Node): number | undefin
     if (view === undefined) {
         return undefined;
     }
+
     // A leaf view maps a node inside it to the position before or after its node.
     const pos = view.posAtDOM(target, 0);
     const { nodeBefore, nodeAfter } = view.state.doc.resolve(pos);
@@ -215,6 +225,7 @@ export const atomPositionAt = (port: EditorPort, target: Node): number | undefin
     if (nodeBefore !== null) {
         candidates.push({ node: nodeBefore, at: pos - nodeBefore.nodeSize });
     }
+
     return candidates.find(
         ({ node, at }) => node !== null && node.isAtom && !node.isText && view.nodeDOM(at)?.contains(target) === true,
     )?.at;
@@ -226,9 +237,11 @@ export const nodeKindOf = (port: EditorPort, name: string): 'leaf' | 'branch' | 
     if (nodeType === undefined) {
         return undefined;
     }
+
     if (nodeType.isLeaf || nodeType.isAtom) {
         return 'leaf';
     }
+
     return 'branch';
 };
 
@@ -243,12 +256,14 @@ export const suggestionAnchorRange = (port: EditorPort | undefined) => {
     if (port === undefined) {
         return undefined;
     }
+
     const runtime = engineOf(port);
     const doc = runtime.view?.state.doc;
     const current = activeSuggestion(runtime.state);
     if (current === null || doc === undefined) {
         return undefined;
     }
+
     return rangeOf(doc, current.from, current.from);
 };
 

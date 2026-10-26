@@ -28,15 +28,18 @@ const withoutMarker = (
     ) {
         return null;
     }
+
     const [built] = dispatched;
     if (built === undefined) {
         return null;
     }
+
     appendSteps(transaction, built);
     transaction.setSelection(carrySelection(transaction.doc, built.selection));
     if (built.scrolledIntoView) {
         transaction.scrollIntoView();
     }
+
     return transaction;
 };
 
@@ -45,10 +48,12 @@ export const lineStart = (rule: LineStartRule, state: EditorState, $cursor: Reso
     if (before !== `${rule.marker} ` || before.length !== $cursor.parentOffset) {
         return null;
     }
+
     // A block that already is the rule's target keeps the marker as text, so `> ` in a quote never lifts it out.
     if (holdsCode(state, $cursor.start(), $cursor.pos) || rule.command.active(state, rule.payload) === true) {
         return null;
     }
+
     return withoutMarker(rule.command, state, $cursor, rule.payload);
 };
 
@@ -59,6 +64,7 @@ const payloadOf = (rule: BlockRule, groups: Readonly<Record<string, string | und
     if (declaration === undefined) {
         return payload;
     }
+
     for (const [name, field] of Object.entries(declaration.fields)) {
         const value = groups[name];
         if (field.type === 'boolean') {
@@ -70,6 +76,7 @@ const payloadOf = (rule: BlockRule, groups: Readonly<Record<string, string | und
             payload[name] = value;
         }
     }
+
     return payload;
 };
 
@@ -79,6 +86,7 @@ export const blockStart = (rule: BlockRule, state: EditorState, $cursor: Resolve
     if (found === null || before.length !== $cursor.parentOffset || holdsCode(state, $cursor.start(), $cursor.pos)) {
         return null;
     }
+
     const payload = payloadOf(rule, found.groups ?? {});
     if (
         findInvalidPayload(rule.command.payload, payload) !== undefined ||
@@ -86,5 +94,6 @@ export const blockStart = (rule: BlockRule, state: EditorState, $cursor: Resolve
     ) {
         return null;
     }
+
     return withoutMarker(rule.command, state, $cursor, payload);
 };

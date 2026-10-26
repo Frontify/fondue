@@ -58,6 +58,7 @@ describe('history', () => {
                 if (!transactions.some(({ docChanged }) => docChanged) || state.doc.textContent.includes('!')) {
                     return null;
                 }
+
                 return state.tr.insertText('!', 1);
             },
         }),
@@ -102,6 +103,7 @@ describe('history', () => {
                     if (doc.textContent === 'boom') {
                         throw new Error('plugin state failed');
                     }
+
                     return null;
                 },
                 apply: (_tr, value: null) => value,
@@ -177,13 +179,16 @@ describe('history', () => {
             answer({ assetId: 'asset-1', mediaType: 'image/png', labelSnapshot: 'logo.png' });
             await vi.advanceTimersByTimeAsync(0);
         };
+
         return { service, complete };
     };
+
     /** Starts an upload of `logo.png` from the toolbar into a new slot, which replaces the empty paragraph. */
     const startUpload = async (session: ReturnType<typeof start>) => {
         const file = new File([declaredPng(40, 30)], 'logo.png', { type: 'image/png' });
         await mediaOf(session.runtime)?.uploads.begin([file], { kind: 'insert', origin: 'command' });
     };
+
     /** The text of the paragraph after the slot, and the slot's asset. */
     const shown = ({ view }: ReturnType<typeof start>): unknown[] => [
         view.state.doc.textContent,
@@ -255,7 +260,9 @@ describe('history', () => {
                     if (!transactions.some(({ docChanged }) => docChanged) || at < 0) {
                         return null;
                     }
+
                     repairs += 1;
+
                     return state.tr.insertText('X', at + 1, at + 2);
                 },
             }),

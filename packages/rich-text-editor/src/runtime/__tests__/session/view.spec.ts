@@ -54,6 +54,7 @@ const setup = (options: { plugins?: Plugin[]; recovery?: boolean; composing?: bo
         onAttached: () => calls.push('attached'),
         scrollSelectionIntoView: () => undefined,
     });
+
     return { service, store, lifecycle, calls, flags, resources };
 };
 
@@ -164,6 +165,7 @@ describe('createView', () => {
         ).toEqual({ threw: true, value: undefined });
         const nested = service.call(() => {
             service.faultView();
+
             return 2;
         });
         expect(nested).toEqual({ threw: true, value: 2 });

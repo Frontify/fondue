@@ -35,6 +35,7 @@ const setup = () => {
         subscribe: vi.fn(),
         dispose: vi.fn(),
     });
+
     return { handle, interactionRoots, captureRange, update, session };
 };
 

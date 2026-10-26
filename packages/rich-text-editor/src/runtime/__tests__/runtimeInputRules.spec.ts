@@ -37,8 +37,10 @@ describe('input rules', () => {
         for (const node of block.children) {
             runs.push(`${node.text ?? ''}${node.marks.map((mark) => `[${mark.type.name}]`).join('')}`);
         }
+
         return runs.join(' ');
     };
+
     // Each rule of the stand-in, what is typed, and the first block once it fired.
     const rules: readonly (readonly [string, string, string])[] = [
         ['heading.hashes', '## ', 'heading'],
@@ -52,6 +54,7 @@ describe('input rules', () => {
     const typedIn = (input: unknown, typed: string) => {
         const session = start(input, { model: ruleModel });
         typeText(session.handle, typed);
+
         return session;
     };
 
@@ -134,6 +137,7 @@ describe('input rules', () => {
             view.dom.dispatchEvent(event);
             view.dispatch(view.state.tr.insertText(character).setMeta('composition', 1));
         }
+
         const composing = shapeOf(view.state.doc);
         endComposition(session);
         await settleInput();

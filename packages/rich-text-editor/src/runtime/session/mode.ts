@@ -27,6 +27,7 @@ export const createMode = ({
 }): ModeService => {
     let mode = initial;
     let disabled = false;
+
     return {
         mode: () => mode,
         disabled: () => disabled,
@@ -34,6 +35,7 @@ export const createMode = ({
             if (isDisposed()) {
                 return;
             }
+
             mode = next;
             onModeChange(next);
         },

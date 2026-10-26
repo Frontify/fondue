@@ -41,8 +41,10 @@ export const createSaving = (args: {
         if (saves === undefined) {
             return Promise.resolve({ status: 'blocked', code: 'unmanaged' });
         }
+
         return saves.commit(options);
     };
+
     return {
         attach: (coordinator) => {
             saves = coordinator;
@@ -51,12 +53,14 @@ export const createSaving = (args: {
             if (saves !== undefined) {
                 return saves.status();
             }
+
             return unmanaged(args.sequence());
         },
         unsaved: () => {
             if (saves !== undefined) {
                 return saves.unsaved();
             }
+
             return args.sequence() > 0;
         },
         commit,
@@ -65,6 +69,7 @@ export const createSaving = (args: {
             if (saves !== undefined && args.lifecycle.is('transitioning')) {
                 return Promise.resolve({ status: 'blocked', code: 'not-ready' });
             }
+
             return commit(options);
         },
         changed: () => saves?.changed(),

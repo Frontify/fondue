@@ -27,12 +27,14 @@ const touchedRanges = (transaction: Transaction): { readonly from: number; reado
         if (step instanceof AttrStep) {
             ranges.push({ from: rest.map(step.pos, -1), to: rest.map(step.pos + 1, 1) });
         }
+
         if (step instanceof NodeIdsStep) {
             for (const [pos] of step.ids) {
                 ranges.push({ from: rest.map(pos, -1), to: rest.map(pos + 1, 1) });
             }
         }
     }
+
     return ranges;
 };
 
@@ -50,6 +52,7 @@ export const blockDecorationsPlugin: PluginImplementation = ({ decorations: sour
         if (scheduled) {
             return;
         }
+
         scheduled = true;
         queueMicrotask(() => {
             scheduled = false;
@@ -65,24 +68,30 @@ export const blockDecorationsPlugin: PluginImplementation = ({ decorations: sour
         if (known !== undefined) {
             return known;
         }
+
         let nodeId: string | null = null;
         if (typeof node.attrs.nodeId === 'string') {
             nodeId = node.attrs.nodeId;
         }
+
         const text = node.textBetween(0, node.content.size, undefined, OBJECT_REPLACEMENT);
         const result = source.derive({ nodeId, attrs: snapshot(node.attrs) as JsonObject, text });
         if (!('then' in result)) {
             cache?.set(node, result);
+
             return result;
         }
+
         cache?.set(node, []);
         result
             .then((ranges) => {
                 cache?.set(node, ranges);
                 redraw();
+
                 return undefined;
             })
             .catch(() => undefined);
+
         return [];
     };
 
@@ -93,17 +102,21 @@ export const blockDecorationsPlugin: PluginImplementation = ({ decorations: sour
             if (!source.nodes.includes(node.type.name)) {
                 continue;
             }
+
             for (const { from, to, className, attributes } of rangesOf(source, node)) {
                 if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to > size || from >= to) {
                     continue;
                 }
+
                 const attrs: Record<string, string> = { ...attributes };
                 if (className !== undefined) {
                     attrs.class = className;
                 }
+
                 found.push(Decoration.inline(pos + 1 + from, pos + 1 + to, attrs));
             }
         }
+
         return found;
     };
 
@@ -113,14 +126,17 @@ export const blockDecorationsPlugin: PluginImplementation = ({ decorations: sour
             if (!node.isTextblock) {
                 return true;
             }
+
             if (names.has(node.type.name)) {
                 found.push(...decorationsOf(node, pos));
             }
+
             return false;
         });
         if (found.length === 0) {
             return DecorationSet.empty;
         }
+
         return DecorationSet.create(doc, found);
     };
 
@@ -132,9 +148,11 @@ export const blockDecorationsPlugin: PluginImplementation = ({ decorations: sour
                 if (transaction.getMeta(key) === REFRESH) {
                     return build(transaction.doc);
                 }
+
                 if (!transaction.docChanged) {
                     return decorations;
                 }
+
                 const { doc, mapping } = transaction;
                 const touched: { readonly node: ProseMirrorNode; readonly pos: number }[] = [];
                 const redone = new Set<number>();
@@ -143,13 +161,16 @@ export const blockDecorationsPlugin: PluginImplementation = ({ decorations: sour
                         if (!node.isTextblock) {
                             return true;
                         }
+
                         if (names.has(node.type.name) && !redone.has(pos)) {
                             redone.add(pos);
                             touched.push({ node, pos });
                         }
+
                         return false;
                     });
                 }
+
                 // Deleting and reinserting a touched block's text empties its decorations, which `remove` would cost quadratically.
                 const clearing = mapping.slice(0);
                 const added: Decoration[] = [];
@@ -158,6 +179,7 @@ export const blockDecorationsPlugin: PluginImplementation = ({ decorations: sour
                     clearing.appendMap(new StepMap([pos + 1, 0, node.content.size]));
                     added.push(...decorationsOf(node, pos));
                 }
+
                 return decorations.map(clearing, doc).add(doc, added);
             },
         },
@@ -166,6 +188,7 @@ export const blockDecorationsPlugin: PluginImplementation = ({ decorations: sour
         },
         view: (editorView) => {
             views.add(editorView);
+
             return {
                 destroy: () => {
                     views.delete(editorView);

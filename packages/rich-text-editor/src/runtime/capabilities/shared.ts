@@ -14,6 +14,7 @@ export const typeIn = <Type>(types: Readonly<Record<string, Type>>, name: unknow
     if (typeof name !== 'string') {
         return undefined;
     }
+
     return types[name];
 };
 
@@ -25,9 +26,11 @@ export const tristate = (matching: number, total: number): boolean | 'mixed' => 
     if (matching === 0) {
         return false;
     }
+
     if (matching === total) {
         return true;
     }
+
     return 'mixed';
 };
 
@@ -41,6 +44,7 @@ export const selectedTextblocks = (state: EditorState): { readonly node: Node; r
             }
         });
     }
+
     return blocks;
 };
 
@@ -52,19 +56,23 @@ export const carried = (block: Node, target: NodeType, over: Readonly<Record<str
             attrs[name] = block.attrs[name];
         }
     }
+
     for (const [name, value] of Object.entries(over)) {
         attrs[name] = value;
     }
+
     return attrs;
 };
 
 export const markTypesOf = (marks: unknown, schema: Schema): MarkType[] => {
     const names = Array.isArray(marks) ? (marks as readonly unknown[]) : [marks];
+
     return names.flatMap((name) => {
         const type = typeof name === 'string' ? schema.marks[name] : undefined;
         if (type === undefined) {
             return [];
         }
+
         return [type];
     });
 };

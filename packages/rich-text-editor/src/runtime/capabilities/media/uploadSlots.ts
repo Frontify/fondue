@@ -48,33 +48,39 @@ const applySlots = (tr: Transaction, value: SlotState): SlotState => {
     if (carried !== undefined) {
         return { uploads: value.uploads, entries: carried };
     }
+
     const started = tr.getMeta(SLOT_START_META) as SlotStart | undefined;
     if (!tr.docChanged && started === undefined) {
         return value;
     }
+
     const entries = new Map<string, SlotEntry>();
     for (const [nodeId, entry] of value.entries) {
         if (!value.uploads.kept(nodeId)) {
             continue;
         }
+
         if (entry.kind === 'insert') {
             entries.set(nodeId, { ...entry, mapping: new Mapping([...entry.mapping.maps, ...tr.mapping.maps]) });
         } else {
             entries.set(nodeId, entry);
         }
     }
+
     if (started?.kind === 'insert') {
         let inverse: Step[] | undefined;
         // Only the one slot of its insertion restores what the insertion replaced.
         if (started.nodeIds.length === 1) {
             inverse = tr.steps.map((step, index) => step.invert(tr.docs[index] as EditorState['doc'])).reverse();
         }
+
         for (const nodeId of started.nodeIds) {
             entries.set(nodeId, { kind: 'insert', inverse, mapping: new Mapping() });
         }
     } else if (started?.kind === 'replace') {
         entries.set(started.nodeId, { kind: 'replace', previous: started.previous });
     }
+
     return { uploads: value.uploads, entries };
 };
 
@@ -99,6 +105,7 @@ const slotAt = (state: EditorState, nodeId: string) => {
     if (pos === undefined || node === null || node.type.name !== 'asset_image') {
         return undefined;
     }
+
     return { pos, node };
 };
 
@@ -108,6 +115,7 @@ const removeFigure = (state: EditorState, pos: number): Transaction => {
     const from = $pos.depth > 0 ? $pos.before() : pos;
     const to = $pos.depth > 0 ? $pos.after() : pos + 1;
     const tr = state.tr.delete(from, to);
+
     return tr.setSelection(Selection.near(tr.doc.resolve(tr.mapping.map(from)))).scrollIntoView();
 };
 
@@ -122,6 +130,7 @@ export const cancelSlot = (state: EditorState, nodeId: string): Transaction | un
     if (value === undefined || entry === undefined || slot === undefined || !value.uploads.active(nodeId)) {
         return undefined;
     }
+
     if (entry.kind === 'replace') {
         const tr = state.tr;
         for (const [name, attribute] of Object.entries(entry.previous)) {
@@ -129,18 +138,23 @@ export const cancelSlot = (state: EditorState, nodeId: string): Transaction | un
                 tr.setNodeAttribute(slot.pos, name, attribute);
             }
         }
+
         return tr;
     }
+
     if (entry.inverse !== undefined) {
         const tr = state.tr;
         const restored = entry.inverse.every((step) => {
             const mapped = step.map(entry.mapping);
+
             return mapped !== null && tr.maybeStep(mapped).failed === null;
         });
         if (restored && positionOf(tr.doc, nodeId) === undefined) {
             const at = Math.min(tr.mapping.map(slot.pos, -1), tr.doc.content.size);
+
             return tr.setSelection(Selection.near(tr.doc.resolve(at))).scrollIntoView();
         }
     }
+
     return removeFigure(state, slot.pos);
 };

@@ -23,11 +23,13 @@ export const createEncoder = (model: ContentModel, capabilities: readonly Capabi
             blocks = new WeakMap();
             blocksOf = { attrs: doc.attrs, stored };
         }
+
         // As `toJSON` writes the root: its attributes only when the node type has any.
         let root: TreeNode = { type: doc.type.name };
         if (Object.keys(doc.attrs).length > 0) {
             root = { ...root, attrs: doc.attrs };
         }
+
         let last: RichTextDocument | undefined;
         const content: unknown[] = [];
         const versions = new Map<string, number>();
@@ -41,19 +43,25 @@ export const createEncoder = (model: ContentModel, capabilities: readonly Capabi
                     blocks.set(child, block);
                 }
             }
+
             last = block;
             content.push(block.content.content?.[0]);
             for (const { id, version } of block.requiredCapabilities) {
                 versions.set(id, Math.max(version, versions.get(id) ?? version));
             }
         }
+
         if (last === undefined) {
             return encode(doc);
         }
+
         // The union of what each block needs is what the whole document needs, as `encodeTree` sorts it.
         const requiredCapabilities = [...versions.keys()].sort().map((id) => ({ id, version: versions.get(id) ?? 0 }));
+
         return { ...last, requiredCapabilities, content: { ...last.content, content } } as RichTextDocument;
     };
+
     const encoder: Encoder = { capabilities, encode, encodeByBlock };
+
     return encoder;
 };

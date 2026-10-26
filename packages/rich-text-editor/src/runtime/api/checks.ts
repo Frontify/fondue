@@ -24,21 +24,25 @@ const issueText = (doc: Node, held: HeldIssue): string => {
     if (held.gone || held.from < 0 || held.to > doc.content.size) {
         return '';
     }
+
     const text = doc.textBetween(held.from, held.to, ' ', ' ');
     if (text.trim() !== '') {
         return text;
     }
+
     const atHeld = doc.nodeAt(held.from);
     let attrs: Readonly<Record<string, unknown>> = {};
     if (atHeld !== null) {
         attrs = atHeld.attrs;
     }
+
     const named = [attrs.altText, attrs.title, attrs.labelSnapshot].find(
         (value) => typeof value === 'string' && value.trim() !== '',
     );
     if (typeof named === 'string') {
         return named;
     }
+
     return '';
 };
 
@@ -60,6 +64,7 @@ const checkedOf = (state: EditorState, checks: ContentChecksState): ContentCheck
         };
         checkedResults.set(checks, result);
     }
+
     return result;
 };
 
@@ -71,25 +76,32 @@ const selectIssue = (runtime: EditorRuntime, held: HeldIssue) => {
     const { from, to } = held;
     if (held.inline) {
         runtime.select({ anchor: from, head: to, scroll: true });
+
         return;
     }
+
     const { doc } = runtime.state;
     const node = doc.nodeAt(from);
     if (node?.isTextblock === true) {
         runtime.select({ anchor: from + 1, head: to - 1, scroll: true });
+
         return;
     }
+
     let text: number | undefined;
     doc.nodesBetween(from, to, (child, pos) => {
         if (text === undefined && child.inlineContent) {
             text = pos + 1;
         }
+
         return text === undefined;
     });
     if (text !== undefined) {
         runtime.select({ anchor: text, head: text, scroll: true });
+
         return;
     }
+
     runtime.select({ node: from, scroll: true });
 };
 
@@ -100,19 +112,24 @@ const currentIssue = (runtime: EditorRuntime, key: string, recheck: boolean): He
     if (mapped === undefined) {
         return undefined;
     }
+
     if (!recheck && mapped.issue.sequence === runtime.handle.getSummary().sequence) {
         if (mapped.gone || mapped.from < 0) {
             return undefined;
         }
+
         return mapped;
     }
+
     if (!runtime.runChecks()) {
         return undefined;
     }
+
     const checks = contentChecksOf(runtime.state);
     if (checks === undefined) {
         return undefined;
     }
+
     return sameIssueIn(checks, mapped);
 };
 
@@ -121,6 +138,7 @@ export const contentChecksApi = (runtime: EditorRuntime): ContentChecksApi | und
     if (contentChecksOf(runtime.state) === undefined) {
         return undefined;
     }
+
     return {
         current: () => {
             const { state } = runtime;
@@ -128,6 +146,7 @@ export const contentChecksApi = (runtime: EditorRuntime): ContentChecksApi | und
             if (checks === undefined) {
                 return NO_RESULTS;
             }
+
             return checkedOf(state, checks);
         },
         run: () => runtime.runChecks(),
@@ -136,9 +155,11 @@ export const contentChecksApi = (runtime: EditorRuntime): ContentChecksApi | und
             if (current === undefined) {
                 return undefined;
             }
+
             if (current.issue.path !== null) {
                 selectIssue(runtime, current);
             }
+
             return current.issue;
         },
         dismiss: (id) => {
@@ -149,6 +170,7 @@ export const contentChecksApi = (runtime: EditorRuntime): ContentChecksApi | und
             if (view === undefined) {
                 return () => undefined;
             }
+
             setIssueIcons(view.dom.ownerDocument, icons);
             const show = () => {
                 runtime.runChecks();
@@ -156,9 +178,11 @@ export const contentChecksApi = (runtime: EditorRuntime): ContentChecksApi | und
                 opened(runs ?? 0);
                 runtime.view?.dispatch(withIssuesOpen(runtime.state.tr, true));
             };
+
             show();
             // A replaced document starts with fresh check state, which the open checks fill again.
             const unsubscribe = runtime.handle.subscribe('replaced', show);
+
             return () => {
                 unsubscribe();
                 runtime.view?.dispatch(withIssuesOpen(runtime.state.tr, false));
@@ -167,14 +191,17 @@ export const contentChecksApi = (runtime: EditorRuntime): ContentChecksApi | und
         afterInput: (action) => {
             if (!runtime.handle.getSnapshot().compositionActive) {
                 action();
+
                 return;
             }
+
             const { view } = runtime;
             // The browser commits composed text when the surface blurs, and focus stays in the surface.
             if (view?.hasFocus() === true) {
                 view.dom.blur();
                 view.focus();
             }
+
             runtime.afterInput((outcome) => {
                 if (outcome === 'settled') {
                     action();

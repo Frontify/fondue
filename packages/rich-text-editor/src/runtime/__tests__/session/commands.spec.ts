@@ -23,6 +23,7 @@ const insert = (extra: Partial<EngineCommand> = {}): EngineCommand => ({
     run: (state, dispatch, payload) => {
         const text = (payload as { text?: string } | undefined)?.text ?? 'x';
         dispatch?.(state.tr.insertText(text, 1));
+
         return true;
     },
     active: () => false,
@@ -68,6 +69,7 @@ const setup = (commands: Record<string, EngineCommand>, options: { mode?: 'edita
                 state.installs += 1;
                 store.set(prepared.candidate);
                 identity.bumpCommit();
+
                 return true;
             },
             installedId: () => 'installed',
@@ -81,6 +83,7 @@ const setup = (commands: Record<string, EngineCommand>, options: { mode?: 'edita
         commandHost: 'host',
         runtime: () => 'runtime',
     });
+
     return { service, store, lifecycle, busy, mode, calls, reported, state };
 };
 
@@ -103,6 +106,7 @@ describe('createCommands', () => {
             payload: { fields: { href: { type: 'url' } } },
             run: (_state, _dispatch, payload) => {
                 seen.push(payload);
+
                 return true;
             },
         });
@@ -133,6 +137,7 @@ describe('createCommands', () => {
         const refuse = insert({
             run: (_state, _dispatch, _payload, context) => {
                 context?.refuse?.();
+
                 return false;
             },
         });
@@ -140,6 +145,7 @@ describe('createCommands', () => {
             run: (state, dispatch) => {
                 dispatch?.(state.tr);
                 dispatch?.(state.tr);
+
                 return true;
             },
         });
@@ -196,12 +202,14 @@ describe('createCommands', () => {
         const open = insert({
             run: (_state, _dispatch, _payload, context) => {
                 context?.defer(() => effects.push('open'));
+
                 return true;
             },
         });
         const no = insert({
             run: (_s, _d, _p, context) => {
                 context?.defer(() => effects.push('no'));
+
                 return false;
             },
         });
@@ -219,6 +227,7 @@ describe('createCommands', () => {
         const read = insert({
             run: (_s, _d, _p, context) => {
                 sessions.push(context?.session as { runtime: unknown; host: unknown });
+
                 return true;
             },
         });
@@ -233,6 +242,7 @@ describe('createCommands', () => {
             active: () => 'mixed',
             run: (state, dispatch) => {
                 dispatch?.(state.tr.insertText('q', 1));
+
                 return true;
             },
         });

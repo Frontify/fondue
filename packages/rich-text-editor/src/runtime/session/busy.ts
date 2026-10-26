@@ -22,11 +22,13 @@ export const createBusy = (): Busy => {
                     hook();
                 }
             }
+
             for (const hook of after) {
                 hook();
             }
         }
     };
+
     return {
         run,
         isBusy: () => depth > 0,

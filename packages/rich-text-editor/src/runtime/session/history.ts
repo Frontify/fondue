@@ -21,9 +21,11 @@ export const actionOrigin = (root: Transaction): ChangeOrigin | undefined => {
     if (root.getMeta(COMMAND_META) !== undefined) {
         return 'command';
     }
+
     if (typeof event === 'string' && UI_ORIGINS.has(event)) {
         return event as ChangeOrigin;
     }
+
     return undefined;
 };
 
@@ -33,16 +35,20 @@ export const originOf = (root: Transaction): ChangeOrigin => {
     if (isHistoryTransaction(root)) {
         return 'history';
     }
+
     if (root.getMeta(ORIGIN_META) === 'async') {
         return 'async';
     }
+
     const action = actionOrigin(root);
     if (action !== undefined) {
         return action;
     }
+
     if (root.getMeta(ORIGIN_META) === 'input') {
         return 'input';
     }
+
     return 'unknown';
 };
 
@@ -80,6 +86,7 @@ export const createHistory = ({
         if (!lifecycle.is('ready') || composition.active()) {
             return;
         }
+
         const fresh = reset(store.state);
         // Uploads that run go on, so their slots keep what Cancel restores.
         if (install(fresh.apply(carrySlots(store.state, fresh)))) {

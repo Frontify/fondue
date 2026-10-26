@@ -23,6 +23,7 @@ const breakAttrs = (active: boolean, columns: ColumnState): Record<string, strin
     if (active) {
         return { role: 'separator', 'aria-label': columns.label, 'data-rte-column-break': 'active' };
     }
+
     return { role: 'separator', 'aria-label': columns.inactiveLabel, 'data-rte-column-break': 'inactive' };
 };
 
@@ -39,8 +40,10 @@ const breakDecorations = (doc: ProseMirrorNode, columns: ColumnState): Decoratio
             decorations.push(Decoration.node(offset, offset + node.nodeSize, breakAttrs(active, columns)));
             index += 1;
         }
+
         offset += node.nodeSize;
     }
+
     return DecorationSet.create(doc, decorations);
 };
 
@@ -49,6 +52,7 @@ export const columnsPlugin = (read: () => ColumnState): Plugin => {
     let drawn:
         | { readonly doc: ProseMirrorNode; readonly columns: ColumnState; readonly set: DecorationSet }
         | undefined;
+
     return new Plugin({
         key,
         props: {
@@ -57,6 +61,7 @@ export const columnsPlugin = (read: () => ColumnState): Plugin => {
                 if (drawn === undefined || drawn.doc !== state.doc || drawn.columns !== columns) {
                     drawn = { doc: state.doc, columns, set: breakDecorations(state.doc, columns) };
                 }
+
                 return drawn.set;
             },
         },

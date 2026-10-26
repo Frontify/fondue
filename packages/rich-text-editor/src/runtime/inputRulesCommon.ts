@@ -10,5 +10,6 @@ export const holdsCode = (state: EditorState, from: number, to: number) => {
     state.doc.nodesBetween(from, to, (node) => {
         code ||= node.marks.some((mark) => mark.type.spec.code === true);
     });
+
     return code;
 };

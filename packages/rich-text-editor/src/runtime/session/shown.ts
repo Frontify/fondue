@@ -18,15 +18,19 @@ const kindOf = (selection: Selection): SelectionSummary['kind'] => {
     if (selection instanceof TextSelection) {
         return 'text';
     }
+
     if (selection instanceof NodeSelection) {
         return 'node';
     }
+
     if (selection instanceof AllSelection) {
         return 'all';
     }
+
     if (selection instanceof GapCursor) {
         return 'gap';
     }
+
     return 'none';
 };
 
@@ -35,11 +39,13 @@ export const summarize = (selection: Selection): SelectionSummary => {
     if (selection instanceof NodeSelection && typeof selection.node.attrs.nodeId === 'string') {
         selectedNodeId = selection.node.attrs.nodeId;
     }
+
     const { parent } = selection.$from;
     let blockType: string | null = null;
     if (parent.isTextblock) {
         blockType = parent.type.name;
     }
+
     return { kind: kindOf(selection), collapsed: selection.empty, blockType, selectedNodeId };
 };
 
@@ -54,7 +60,9 @@ export const changed = <T>(slot: { value: T }, next: T, same: (a: T, b: T) => bo
     if (same(slot.value, next)) {
         return false;
     }
+
     slot.value = next;
+
     return true;
 };
 
@@ -99,6 +107,7 @@ export const createShown = (a: {
     const status: { value: SaveStatus | undefined } = { value: undefined };
     const selection = { value: summarize(a.store.state.selection) };
     const key: { value: SnapshotKey | undefined } = { value: undefined };
+
     return {
         mode: () => mode,
         columns: () => columns,
@@ -121,6 +130,7 @@ export const createShown = (a: {
         takeProvisional: () => {
             const taken = provisional;
             provisional = undefined;
+
             return taken;
         },
         snapshot: () => {
@@ -140,6 +150,7 @@ export const createShown = (a: {
                     compositionActive: next.composing,
                 });
             }
+
             return cached;
         },
         emitSelection: () => {

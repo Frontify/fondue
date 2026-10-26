@@ -27,11 +27,14 @@ vi.mock('prosemirror-state', async (importOriginal) => {
                 spec.key !== undefined && (spec.key as unknown as { key: string }).key.startsWith('history$');
             if (!history || spec.appendTransaction !== undefined) {
                 super(spec);
+
                 return;
             }
+
             super({ ...spec, appendTransaction: (_transactions, _old, state) => state.tr });
         }
     }
+
     return { ...engine, Plugin };
 });
 

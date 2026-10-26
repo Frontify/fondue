@@ -24,6 +24,7 @@ export const createSettle = (a: {
     composition: Pick<Composition, 'resolve'>;
 }): (() => void) => {
     const { busy, commit, shown, view, targets, saving, composition } = a;
+
     return () => {
         const mapping = shown.takeProvisional();
         busy.run(() => {
@@ -31,6 +32,7 @@ export const createSettle = (a: {
             if (mapping !== undefined && !commit.guarded(() => commit.settleProvisional(mapping))) {
                 return;
             }
+
             view.refresh();
         });
         targets().coordinator.settle();

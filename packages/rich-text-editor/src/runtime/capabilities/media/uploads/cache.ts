@@ -34,6 +34,7 @@ export class UploadCache {
                 entry.release();
             }
         }
+
         this.#entries.clear();
     }
 }

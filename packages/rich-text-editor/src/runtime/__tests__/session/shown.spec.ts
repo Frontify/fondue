@@ -36,9 +36,11 @@ const setup = () => {
         stamp: () => stamp,
         encodeByBlock: () => {
             state.encoded += 1;
+
             return { encoded: state.encoded } as unknown as RichTextDocument;
         },
     });
+
     return { shown, store, events, state };
 };
 
@@ -163,6 +165,7 @@ describe('createShown', () => {
                 if (state.fail) {
                     throw new Error('encode');
                 }
+
                 return {} as RichTextDocument;
             },
         });

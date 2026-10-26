@@ -16,6 +16,7 @@ const token: SessionToken = { documentId: 'doc', sessionId: 'session', generatio
 const setup = () => {
     const emitted: OperationMetric[] = [];
     const metrics = createMetrics({ model, session: () => token, emit: (_name, metric) => emitted.push(metric) });
+
     return { emitted, metrics };
 };
 

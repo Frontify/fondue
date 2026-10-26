@@ -30,6 +30,7 @@ const setup = (phase: 'ready' | 'disposed' = 'ready') => {
     if (phase === 'disposed') {
         lifecycle.to('disposed');
     }
+
     const busy = createBusy();
     const calls: string[] = [];
     const doc = schema.node('doc', null, [schema.node('paragraph', null, [schema.text('hello world')])]);
@@ -49,6 +50,7 @@ const setup = (phase: 'ready' | 'disposed' = 'ready') => {
         serviceChanged: () => calls.push('serviceChanged'),
         apply: () => undefined,
     });
+
     return { service, store, busy, lifecycle, calls };
 };
 
@@ -59,6 +61,7 @@ const capture = (service: ReturnType<typeof setup>['service']): SelectionHandle 
     if (result.status !== 'captured') {
         throw new Error('not captured');
     }
+
     return result.target;
 };
 
@@ -136,6 +139,7 @@ describe('createTargetsService', () => {
         if (operation.target === null) {
             throw new Error('no target');
         }
+
         service.releaseTarget(operation.target);
         service.flushCaptures();
         expect(countTargets(store.state)).toBe(0);
