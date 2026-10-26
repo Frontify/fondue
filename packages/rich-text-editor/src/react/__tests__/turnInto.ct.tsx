@@ -287,5 +287,29 @@ test.describe('the More Turn into row', () => {
             expect(await contentOf(page)).toEqual(before);
             await expect(surfaceOf(page).locator('code')).toHaveCount(1);
         });
+
+        test(`turns a ${profile} code block into a paragraph when Normal text is picked`, async ({ mount, page }) => {
+            await withCodeBlock(mount, page, <ProfileProbe profile={profile} />);
+            await openFromMore(page);
+
+            await page.getByRole('menuitemradio', { name: 'Normal text' }).click();
+
+            await expect(menuOf(page)).toHaveCount(0);
+            await expect(surfaceOf(page).locator('code')).toHaveCount(0);
+            await expect(surfaceOf(page).locator('p')).toHaveText('const a = 1;');
+            expect(await typesOf(page)).toEqual(['paragraph']);
+            await expect(surfaceOf(page)).toBeFocused();
+        });
     }
+
+    test('turns a document code block into a heading when Heading 2 is picked', async ({ mount, page }) => {
+        await withCodeBlock(mount, page, <ProfileProbe profile="document" />);
+        await openFromMore(page);
+
+        await page.getByRole('menuitemradio', { name: 'Heading 2' }).click();
+
+        await expect(menuOf(page)).toHaveCount(0);
+        await expect(surfaceOf(page).locator('h2')).toHaveText('const a = 1;');
+        await expect(surfaceOf(page)).toBeFocused();
+    });
 });

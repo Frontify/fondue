@@ -158,7 +158,11 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
                 if (block === undefined) {
                     return false;
                 }
-                api.overlays.open(TurnIntoMenu, { label: api.t('RichTextEditor_slashTurnInto'), node: block.range });
+                // The caret the menu opened with, as the block's chrome converts from; a whole-block range stops `paragraph.set`.
+                api.overlays.open(TurnIntoMenu, {
+                    label: api.t('RichTextEditor_slashTurnInto'),
+                    node: api.selectedRange(),
+                });
                 return true;
             },
         },
