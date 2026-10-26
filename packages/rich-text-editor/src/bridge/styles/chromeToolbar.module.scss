@@ -4,32 +4,42 @@
 @use '../../styles/pressedBar';
 
 .button {
-    // The attributes lift these rules above Fondue's button variants, which set the fill and the focus ring.
-    &[data-variant][data-emphasis][data-size][data-aspect] {
-        // The rule restates Fondue's tokens so the package's contrast check covers the pressed bar.
-        background-color: transparent;
-        color: var(--color-primary-default);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-inline-size: 32px;
+    block-size: 32px;
+    padding: 0 var(--spacing-x-small);
+    border: none;
+    border-radius: var(--border-radius-small);
+    // The rule restates Fondue's tokens so the package's contrast check covers the pressed bar.
+    background-color: transparent;
+    color: var(--color-primary-default);
+    font: inherit;
+    white-space: nowrap;
+    cursor: pointer;
 
-        &:hover {
-            background-color: var(--color-container-secondary-hover);
-            color: var(--color-primary-hover);
-        }
-
-        // Fondue's pressed fill gives the text 3.4:1 in the dark theme and its pressed text token is undefined.
-        &:active {
-            background-color: var(--color-container-secondary-hover);
-            color: var(--color-primary-hover);
-        }
-
-        @include pressedBar.pressed-bar;
-
-        &:focus-visible,
-        &:focus-visible:hover {
-            box-shadow: none;
-        }
-
-        @include focusOutline.focus-outline;
+    &:hover {
+        background-color: var(--color-container-secondary-hover);
+        color: var(--color-primary-hover);
     }
+
+    // Fondue's pressed fill gives the text 3.4:1 in the dark theme and its pressed text token is undefined.
+    &:active {
+        background-color: var(--color-container-secondary-hover);
+        color: var(--color-primary-hover);
+    }
+
+    @include pressedBar.pressed-bar;
+
+    &:disabled {
+        color: var(--color-secondary-default);
+        cursor: default;
+    }
+
+    @include focusOutline.focus-outline;
 
     // A coarse pointer gets targets of at least 44 by 44 CSS pixels; the label sets the width beyond that.
     @media (pointer: coarse) {
