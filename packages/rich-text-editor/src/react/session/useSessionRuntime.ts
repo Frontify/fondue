@@ -26,8 +26,6 @@ import {
     surfaceElement,
     type UploadPlace,
 } from '#/runtime/port';
-import { pickAsset } from '#/ui/media/assetPicker';
-import { uploadMessage } from '#/ui/media/uploadMessages';
 
 import { engineOf, profileOf, viewsOf } from '../compileEditor';
 import { registerFormField } from '../formField';
@@ -36,6 +34,8 @@ import { type EditorHandle } from '../types';
 import { validityOf } from '../validity';
 
 import { backgroundOf, columnsAtMount, memberOf, modeOf, shellPropsOf } from './helpers';
+import { pickAsset } from './helpers/assetPicker';
+import { uploadMessage } from './helpers/uploadMessages';
 import { type Mounted, type RecoverySession, type SessionRest } from './types';
 
 /** Where the file chooser's files go, once the chooser reports them. */
