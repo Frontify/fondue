@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useCallback, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -81,41 +81,21 @@ export const TreeRoot = ({
         hasFocusWithin,
     });
 
-    // Set by events that reach the container through the React tree, so portalled menus in rows count as inside.
-    const isInsideEventRef = useRef(false);
-    // A focused element removed outside this component's commits (a portalled menu closing) fires no blur either.
-    useEffect(() => {
-        if (!hasFocusWithin) {
+    // A row removed while it held focus takes focus with it and fires no blur, so it asks for the fallback row to take it.
+    const shouldRestoreFocusRef = useRef(false);
+    useLayoutEffect(() => {
+        if (!shouldRestoreFocusRef.current) {
             return;
         }
-        const handleDocumentEvent = () => {
-            // An outside press that moves no focus (a touch pan, a scrollbar drag) leaves the user on their row.
-            if (!isInsideEventRef.current && !tree.getElement()?.contains(document.activeElement)) {
-                setHasFocusWithin(false);
-            }
-            isInsideEventRef.current = false;
-        };
-        document.addEventListener('pointerdown', handleDocumentEvent);
-        document.addEventListener('focusin', handleDocumentEvent);
-        return () => {
-            document.removeEventListener('pointerdown', handleDocumentEvent);
-            document.removeEventListener('focusin', handleDocumentEvent);
-        };
-    }, [hasFocusWithin, tree]);
-    // Where focus last landed; TreeRow's onFocus has already made its row the focused item by then.
-    const lastFocusRef = useRef<{ isPortalled: boolean; rowId: string } | null>(null);
-    // Runs every commit: a removed row can take focus with it while the tab stop stays on another row.
-    useEffect(() => {
-        const lastFocus = lastFocusRef.current;
-        if (!hasFocusWithin || document.activeElement !== document.body || !lastFocus) {
-            return;
-        }
-        // A portalled control (a row's menu or dialog) losing focus is the portal's business unless its row went too.
-        const isRowGone = !tree.getItems().some((item) => item.getId() === lastFocus.rowId);
-        if (!lastFocus.isPortalled || isRowGone) {
+        shouldRestoreFocusRef.current = false;
+        // An emptied tree has no row to take focus.
+        if (tree.getItems().length > 0) {
             tree.getFocusedItem().getElement()?.focus();
         }
     });
+    const handleFocusLost = useCallback(() => {
+        shouldRestoreFocusRef.current = true;
+    }, []);
 
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(
@@ -141,25 +121,9 @@ export const TreeRoot = ({
         <div
             {...tree.getContainerProps()}
             className={styles.tree}
-            onPointerDownCapture={() => {
-                isInsideEventRef.current = true;
-            }}
-            onFocus={(event) => {
-                isInsideEventRef.current = true;
-                lastFocusRef.current = {
-                    isPortalled: !event.currentTarget.contains(event.target),
-                    rowId: tree.getFocusedItem().getId(),
-                };
-                setHasFocusWithin(true);
-            }}
-            onBlur={(event) => {
-                // Switching windows blurs with no target but leaves the row active, and focus returns to it.
-                if (event.relatedTarget === null && !document.hasFocus() && document.activeElement === event.target) {
-                    return;
-                }
-                // Checks where focus went: a render between a row's blur and the next row's focus must not move the tab stop.
-                setHasFocusWithin(event.currentTarget.contains(event.relatedTarget));
-            }}
+            onFocus={() => setHasFocusWithin(true)}
+            // Checks where focus went: a render between a row's blur and the next row's focus must not move the tab stop.
+            onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
         >
             {rowHint && (
                 <span id={rowHintId} className={styles.srOnly}>
@@ -176,6 +140,7 @@ export const TreeRoot = ({
                             multiSelect={multiSelect}
                             reorderable={reorderable}
                             hintId={rowHint ? rowHintId : undefined}
+                            onFocusLost={handleFocusLost}
                             checkedState={checkedStates?.get(item.getId()) ?? false}
                         />
                         {loadingPlaceholder && (
