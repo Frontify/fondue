@@ -6,11 +6,11 @@ import { NodeSelection, TextSelection, type Transaction } from 'prosemirror-stat
 import { type TreeNode, encodeTree } from '#/model/internal';
 
 import { EDITS, placeBlock, placesBlock } from '../capabilities';
-import { type DocumentApi } from '../documentApi';
-import { positionOf } from '../positions';
+import { positionOf } from '../transform/positions';
 import { type CaptureTargetOptions } from '../types';
 
 import { checkedAttrs } from './checked';
+import { type DocumentApi } from './documentApi';
 import { type ApiSource, rangeOf, sharedEdits } from './shared';
 import { firstWrite, writesOf } from './writes';
 

@@ -10,7 +10,7 @@ import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
-import { SETTLE_MS } from '../settle';
+import { SETTLE_MS } from '../dom/settle';
 import { type CommandResult } from '../types';
 
 import {

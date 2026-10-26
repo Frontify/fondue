@@ -2,7 +2,7 @@
 
 import { type JsonObject, type RichTextDocument } from '#/model';
 
-import { type Listener } from './events';
+import { type Listener } from './reporting/events';
 import {
     type AuthoringPolicy,
     type CaptureResult,

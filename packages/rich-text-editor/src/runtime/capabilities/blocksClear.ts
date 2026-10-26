@@ -4,7 +4,7 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 
 import { type EngineCommand } from '#/runtime/definition';
 
-import { carrySelection, take } from '../transactions';
+import { carrySelection, take } from '../transform/transactions';
 
 import { defaultOf } from './attributes';
 import { liftLists } from './lists';

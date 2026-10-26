@@ -5,16 +5,16 @@ import { type EditorView } from 'prosemirror-view';
 import { type ContentModel } from '#/model';
 import { type EngineCommand } from '#/runtime/definition';
 
+import { pluginCommand } from './api/editorApi';
 import { type ClipboardSession, connectClipboard } from './clipboard/session';
-import { pluginCommand } from './editorApi';
 import { type EditorPort } from './port';
 import { engineOf } from './portEngine';
 import { createEditorRuntime, type EditorRuntimeOptions, runtimeOfView } from './runtime';
 
 export { RUNTIME_PLUGINS } from './capabilities';
 export { clipboardPlugin, dropCursorPlugin, type FileIntake } from './clipboard/plugin';
-export { pluginCommand } from './editorApi';
-export { authoringOf } from './policy';
+export { pluginCommand } from './api/editorApi';
+export { authoringOf } from './guards/policy';
 export { type EditorRuntimeOptions } from './runtime';
 
 /** Starts a session, which the React layers hold as a port. */

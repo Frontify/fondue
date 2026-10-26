@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type EngineCommand } from '#/runtime/definition';
 
-import { createMode } from '../../session/mode';
+import { createMode } from '../../session/state/mode';
 
 const command = (readOnly?: boolean) => ({ readOnly }) as unknown as EngineCommand;
 

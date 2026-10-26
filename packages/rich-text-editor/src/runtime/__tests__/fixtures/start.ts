@@ -29,10 +29,10 @@ import { compileDefinition, type CompiledDefinition, countAppends, type EngineCo
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 import { stubStorage } from '#/testing/__tests__/fixtures/storage';
 
-import { type AsyncRequest } from '../../async';
+import { type AsyncRequest } from '../../async/async';
 import { RUNTIME_PLUGINS } from '../../capabilities';
 import { type UploadServiceLike } from '../../capabilities/media/uploads';
-import { authoringOf } from '../../policy';
+import { authoringOf } from '../../guards/policy';
 import { createEditorRuntime, type EditorRuntime, type EditorRuntimeOptions } from '../../runtime';
 import {
     type AuthoringPolicy,

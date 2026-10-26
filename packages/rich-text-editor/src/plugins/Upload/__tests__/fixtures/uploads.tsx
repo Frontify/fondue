@@ -28,7 +28,7 @@ import { type UnitCommands, unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { flush, imageModel, para, resolving, storedIn, text } from '#/plugins/Image/__tests__/fixtures/mount';
 import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
-import { mediaOf } from '#/runtime/session/uploadsWiring';
+import { mediaOf } from '#/runtime/session/lifecycle/uploadsWiring';
 import { type AuthoringPolicy, type DocumentChange } from '#/runtime/types';
 import { declaredPng } from '#/testing/uploads';
 

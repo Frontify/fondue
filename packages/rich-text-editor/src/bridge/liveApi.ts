@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type DocumentApi } from '#/runtime/documentApi';
-import { type CommandContext, type CommandSession, liveDocumentApi } from '#/runtime/editorApi';
+import { type DocumentApi } from '#/runtime/api/documentApi';
+import { type CommandContext, type CommandSession, liveDocumentApi } from '#/runtime/api/editorApi';
 import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/portEngine';
 

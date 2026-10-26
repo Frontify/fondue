@@ -5,7 +5,7 @@ import { Fragment, type Schema } from 'prosemirror-model';
 import type * as FromMarkdown from '#/codecs/fromMarkdown';
 import { type ContentModel, type ResourceLimits } from '#/model';
 import { markHrefPolicy, decodeToTree, randomId } from '#/model/internal';
-import { whenIdle } from '#/runtime/idle';
+import { whenIdle } from '#/runtime/dom/idle';
 
 type MarkdownReader = typeof FromMarkdown;
 type MarkdownParser = ReturnType<MarkdownReader['createParser']>;

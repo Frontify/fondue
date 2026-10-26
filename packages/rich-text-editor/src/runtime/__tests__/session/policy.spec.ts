@@ -10,8 +10,8 @@ import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { compileDefinition } from '#/runtime/definition';
 
-import { authoringOf } from '../../policy';
-import { createPolicy } from '../../session/policy';
+import { authoringOf } from '../../guards/policy';
+import { createPolicy } from '../../session/state/policy';
 
 const model = compileContentModel([core(), bold()], { id: 'test.policy', version: 1 });
 const { schema } = compileDefinition(model);

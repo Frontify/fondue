@@ -10,7 +10,7 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { REPLACED_ASSET } from '#/model';
 import { liveRegionFaults } from '#/react/__tests__/fixtures/liveRegion';
-import { nodeStateOf } from '#/runtime/nodeState';
+import { nodeStateOf } from '#/runtime/statePlugins/nodeState';
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import {

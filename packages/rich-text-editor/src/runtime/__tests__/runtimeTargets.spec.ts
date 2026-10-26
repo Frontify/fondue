@@ -12,9 +12,9 @@ import { compileDefinition } from '#/runtime/definition';
 import { probeRuntimes, setSelection, typeText } from '#/testing';
 
 import { RUNTIME_PLUGINS } from '../capabilities';
-import { authoringOf } from '../policy';
+import { authoringOf } from '../guards/policy';
 import { createEditorRuntime } from '../runtime';
-import { countTargets } from '../targets';
+import { countTargets } from '../statePlugins/targets';
 import { type CommandResult } from '../types';
 
 import {

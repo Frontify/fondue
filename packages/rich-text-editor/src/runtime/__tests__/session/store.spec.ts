@@ -4,7 +4,7 @@ import { Schema } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { createStore } from '../../session/store';
+import { createStore } from '../../session/state/store';
 
 const schema = new Schema({
     nodes: { doc: { content: 'paragraph+' }, paragraph: { content: 'text*' }, text: {} },

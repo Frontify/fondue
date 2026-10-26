@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { EDITS } from '../capabilities';
-import { type DocumentApi } from '../documentApi';
-import { enterItem, listAround, outdentAtStart } from '../lists';
+import { enterItem, listAround, outdentAtStart } from '../transform/lists';
 
+import { type DocumentApi } from './documentApi';
 import { type ApiSource, sharedEdits } from './shared';
 
 /** The list members of the document API. */

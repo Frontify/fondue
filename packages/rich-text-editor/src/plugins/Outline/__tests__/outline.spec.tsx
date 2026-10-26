@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type ContentNodeJSON } from '#/model';
 import { core, heading, outline, quote } from '#/plugins';
 import { mountText, para, text, textModel } from '#/react/__tests__/fixtures/text';
-import { positionOf } from '#/runtime/positions';
+import { positionOf } from '#/runtime/transform/positions';
 
 beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });

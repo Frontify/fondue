@@ -13,7 +13,7 @@ import { extensionsOf } from '#/react/engine';
 import { compileDefinition } from '#/runtime/definition';
 
 import { RUNTIME_PLUGINS } from '../capabilities';
-import { authoringOf } from '../policy';
+import { authoringOf } from '../guards/policy';
 import { createEditorRuntime, type EditorRuntime } from '../runtime';
 import { type OperationMetric, type ReplaceDocumentRequest } from '../types';
 

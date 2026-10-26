@@ -1,8 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type ListLevels } from '#/model';
-import { type ChromeStyles, createContentDecorations, createMarkStyler } from '#/runtime/chromeStyling';
-import { redraw, type SurfaceView, type ViewMarkViews, type ViewProps, type ViewSchema } from '#/runtime/viewBridge';
+import { type ChromeStyles, createContentDecorations, createMarkStyler } from '#/runtime/dom/chromeStyling';
+import {
+    redraw,
+    type SurfaceView,
+    type ViewMarkViews,
+    type ViewProps,
+    type ViewSchema,
+} from '#/runtime/dom/viewBridge';
 
 // ProseMirror's own default margin, kept beyond the space the chrome covers.
 const MARGIN = 5;

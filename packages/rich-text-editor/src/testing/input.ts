@@ -3,8 +3,8 @@
 import { type KeyBinding, type RichTextSlice } from '#/model';
 import { OBJECT_REPLACEMENT } from '#/model/internal';
 import { pasteInto } from '#/runtime/clipboard/plugin';
-import { positionOf } from '#/runtime/positions';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
+import { positionOf } from '#/runtime/transform/positions';
 
 /** Names content, never document positions. */
 export type SelectionTarget = { text: string; occurrence?: number; from?: number; to?: number } | { nodeId: string };

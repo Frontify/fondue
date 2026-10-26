@@ -12,7 +12,7 @@ import { link } from '#/plugins/Link/feature';
 import { compileDefinition } from '#/runtime/definition';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 
-import { createLimitCheck } from '../limits';
+import { createLimitCheck } from '../guards/limits';
 
 failNetworkInThisFile();
 

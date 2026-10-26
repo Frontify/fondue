@@ -7,12 +7,12 @@ import { compileContentModel, type Diagnostic } from '#/model';
 import { core } from '#/plugins/Core/feature';
 import { compileDefinition, type EngineCommand } from '#/runtime/definition';
 
-import { createBusy } from '../../session/busy';
-import { createCommands } from '../../session/commands';
-import { createIdentity } from '../../session/identity';
-import { createLifecycle } from '../../session/lifecycle';
-import { createMode } from '../../session/mode';
-import { createStore } from '../../session/store';
+import { createCommands } from '../../session/editing/commands';
+import { createBusy } from '../../session/state/busy';
+import { createIdentity } from '../../session/state/identity';
+import { createLifecycle } from '../../session/state/lifecycle';
+import { createMode } from '../../session/state/mode';
+import { createStore } from '../../session/state/store';
 
 const model = compileContentModel([core()], { id: 'test.commands', version: 1 });
 const compiled = compileDefinition(model);

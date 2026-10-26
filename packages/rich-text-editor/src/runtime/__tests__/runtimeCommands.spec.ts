@@ -22,7 +22,7 @@ import { compileDefinition, countAppends, type EngineCommand } from '#/runtime/d
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import { RUNTIME_PLUGINS } from '../capabilities';
-import { authoringOf } from '../policy';
+import { authoringOf } from '../guards/policy';
 import { createEditorRuntime, type EditorRuntime } from '../runtime';
 import { type CommandResult } from '../types';
 

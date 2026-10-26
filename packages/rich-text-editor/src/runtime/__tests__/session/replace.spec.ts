@@ -13,11 +13,11 @@ import { extensionsOf } from '#/react/engine';
 import { compileDefinition } from '#/runtime/definition';
 
 import { RUNTIME_PLUGINS } from '../../capabilities';
-import { createBusy } from '../../session/busy';
-import { createIdentity } from '../../session/identity';
-import { createLifecycle } from '../../session/lifecycle';
-import { createReplace } from '../../session/replace';
-import { createStore } from '../../session/store';
+import { createReplace } from '../../session/lifecycle/replace';
+import { createBusy } from '../../session/state/busy';
+import { createIdentity } from '../../session/state/identity';
+import { createLifecycle } from '../../session/state/lifecycle';
+import { createStore } from '../../session/state/store';
 import { type ReplaceDocumentRequest, type SaveStatus } from '../../types';
 
 const model = compileContentModel([core(), bold()], { id: 'test.bold', version: 1 });

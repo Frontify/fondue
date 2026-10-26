@@ -9,13 +9,13 @@ import { type Diagnostic, type ResourceLimits } from '#/model';
 import { diagnostic } from '#/model/internal';
 import { ORIGIN_META } from '#/runtime/definition';
 
-import { ENTER_RULES_META } from '../../inputRules';
-import { createCommit } from '../../session/commit';
-import { createIdentity } from '../../session/identity';
-import { createLifecycle } from '../../session/lifecycle';
-import { createPrepare, type Prepare } from '../../session/prepare';
-import { createStore } from '../../session/store';
-import { type Prepared } from '../../session/types';
+import { ENTER_RULES_META } from '../../inputRules/inputRules';
+import { createCommit } from '../../session/editing/commit';
+import { createPrepare, type Prepare } from '../../session/editing/prepare';
+import { createIdentity } from '../../session/state/identity';
+import { createLifecycle } from '../../session/state/lifecycle';
+import { createStore } from '../../session/state/store';
+import { type Prepared } from '../../session/state/types';
 
 const schema = new Schema({
     nodes: {

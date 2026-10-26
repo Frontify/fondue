@@ -2,8 +2,8 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { ONE_COLUMN } from '../../columns';
-import { createColumns } from '../../session/columns';
+import { createColumns } from '../../session/state/columns';
+import { ONE_COLUMN } from '../../statePlugins/columns';
 
 const TWO_COLUMNS = { ...ONE_COLUMN, count: 2 };
 

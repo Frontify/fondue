@@ -9,10 +9,10 @@ import { withNodeIds } from '#/runtime/definition';
 import { exceededWrite } from '#/runtime/import/limits';
 import { refusedNames } from '#/runtime/import/policy';
 
-import { type WriteOutcome, type WriteTarget } from '../documentApi';
-import { positionOf } from '../positions';
+import { positionOf } from '../transform/positions';
 
 import { checkedAttrs, urlRefused } from './checked';
+import { type WriteOutcome, type WriteTarget } from './documentApi';
 import { type ApiSource, type Positions, rangeOf } from './shared';
 
 /** The stretch that `transaction`'s first step wrote, mapped through its later steps. */

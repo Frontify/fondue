@@ -2,7 +2,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createComposition } from '../../session/composition';
+import { createComposition } from '../../session/state/composition';
 
 describe('createComposition', () => {
     beforeEach(() => {

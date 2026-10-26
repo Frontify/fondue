@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type AsyncOperation, type AsyncRequest } from '../async';
+import { type AsyncOperation, type AsyncRequest } from '../async/async';
 import {
     initial,
     next,
@@ -11,7 +11,7 @@ import {
     type AsyncEventInput,
     type AsyncFacts,
     type AsyncMachine,
-} from '../asyncMachine';
+} from '../async/asyncMachine';
 import { type SelectionHandle } from '../types';
 
 import { EXPECTED } from './asyncMachine.table';

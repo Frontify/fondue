@@ -38,7 +38,7 @@ vi.mock('@frontify/fondue-components', recorded('@frontify/fondue-components'));
 vi.mock('#/bridge/plugin', recorded('#/bridge/plugin'));
 vi.mock('#/react/define', recorded('#/react/define'));
 vi.mock('#/runtime/runtime', recorded('#/runtime/runtime'));
-vi.mock('#/runtime/editorApi', recorded('#/runtime/editorApi'));
+vi.mock('#/runtime/api/editorApi', recorded('#/runtime/api/editorApi'));
 vi.mock('#/plugins/Bold/editor', recorded('#/plugins/Bold/editor'));
 vi.mock('#/plugins/Link/editor', recorded('#/plugins/Link/editor'));
 vi.mock('#/plugins/Link/components/LinkPopover', recorded('#/plugins/Link/components/LinkPopover'));

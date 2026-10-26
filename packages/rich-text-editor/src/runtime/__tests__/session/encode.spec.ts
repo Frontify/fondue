@@ -8,7 +8,7 @@ import { compileContentModel } from '#/model';
 import { core } from '#/plugins/Core/feature';
 import { compileDefinition } from '#/runtime/definition';
 
-import { createEncoder } from '../../session/encode';
+import { createEncoder } from '../../session/state/encode';
 
 const model = compileContentModel([core()], { id: 'test.encode', version: 1 });
 const { schema } = compileDefinition(model);

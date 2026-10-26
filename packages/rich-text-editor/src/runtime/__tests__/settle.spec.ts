@@ -7,7 +7,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 
-import { createInputSettling, SETTLE_MS } from '../settle';
+import { createInputSettling, SETTLE_MS } from '../dom/settle';
 
 failNetworkInThisFile();
 

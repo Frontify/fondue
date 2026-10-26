@@ -7,9 +7,9 @@ import { describe, expect, it } from 'vitest';
 
 import { type RichTextDocument } from '#/model';
 
-import { ONE_COLUMN } from '../../columns';
-import { changed, createShown } from '../../session/shown';
-import { createStore } from '../../session/store';
+import { changed, createShown } from '../../session/state/shown';
+import { createStore } from '../../session/state/store';
+import { ONE_COLUMN } from '../../statePlugins/columns';
 import { type DocumentStamp, type SaveStatus } from '../../types';
 
 const schema = new Schema({

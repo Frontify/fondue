@@ -19,7 +19,7 @@ import { fixtureHighlight } from '#/plugins/__tests__/fixtures/highlight';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { contentChecksOf } from '#/runtime/capabilities/checks/contentIssues';
 import { compileDefinition } from '#/runtime/definition';
-import { authoringOf } from '#/runtime/policy';
+import { authoringOf } from '#/runtime/guards/policy';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
 
 const model = compileContentModel(

@@ -5,7 +5,7 @@ import { type EditorState, TextSelection, type Transaction } from 'prosemirror-s
 
 import { OBJECT_REPLACEMENT } from '#/model/internal';
 
-import { markRunAt } from '../markRuns';
+import { markRunAt } from '../transform/markRuns';
 
 /**
  * The range of the run of text with one mark of `type`, equal attributes included, that holds the caret or starts at

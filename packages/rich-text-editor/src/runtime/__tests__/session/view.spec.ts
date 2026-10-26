@@ -5,9 +5,9 @@ import { EditorState, Plugin } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createLifecycle } from '../../session/lifecycle';
-import { createStore } from '../../session/store';
-import { createView, isEmpty } from '../../session/view';
+import { createView, isEmpty } from '../../session/editing/view';
+import { createLifecycle } from '../../session/state/lifecycle';
+import { createStore } from '../../session/state/store';
 import { type SessionToken } from '../../types';
 
 const schema = new Schema({

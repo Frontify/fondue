@@ -7,9 +7,9 @@ import { describe, expect, it } from 'vitest';
 import { COMMAND_META, ORIGIN_META } from '#/runtime/definition';
 
 import { historyPlugin, undo } from '../../history';
-import { actionOrigin, createHistory, originOf } from '../../session/history';
-import { createLifecycle } from '../../session/lifecycle';
-import { createStore } from '../../session/store';
+import { actionOrigin, createHistory, originOf } from '../../session/editing/history';
+import { createLifecycle } from '../../session/state/lifecycle';
+import { createStore } from '../../session/state/store';
 
 const schema = new Schema({
     nodes: {

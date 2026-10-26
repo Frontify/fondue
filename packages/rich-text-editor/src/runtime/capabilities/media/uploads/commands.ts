@@ -7,7 +7,7 @@ import { type JsonObject } from '#/model';
 import { COMMAND_META, type EngineCommand } from '#/runtime/definition';
 
 import { placeBlock } from '../..';
-import { positionOf } from '../../../positions';
+import { positionOf } from '../../../transform/positions';
 import { INSERT_IMAGE, type PickedAsset, REPLACE_IMAGE } from '../media';
 import { SLOT_START_META, type SlotStart } from '../uploadSlots';
 

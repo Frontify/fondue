@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { createBusy } from '../../session/busy';
+import { createBusy } from '../../session/state/busy';
 
 describe('createBusy', () => {
     it('returns the work result and is busy only while it runs', () => {

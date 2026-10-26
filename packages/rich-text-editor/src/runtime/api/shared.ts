@@ -9,7 +9,6 @@ import { type CommandLookup, type EngineCommand } from '#/runtime/definition';
 
 import { type CapabilityImplementation } from '../capabilities';
 import { type MediaSession } from '../capabilities/media/session';
-import { type CommandOutcome, type EditorRange } from '../documentApi';
 import {
     type AuthoringPolicy,
     type CaptureTargetOptions,
@@ -19,6 +18,7 @@ import {
 } from '../types';
 
 import { checkedAttrs } from './checked';
+import { type CommandOutcome, type EditorRange } from './documentApi';
 
 export type Positions = {
     from: number;

@@ -16,10 +16,10 @@ import {
 } from '#/model/internal';
 import { type EngineImplementations } from '#/runtime/definition';
 
-import { blockDecorationsPlugin } from '../decorations';
 import { historyPlugin } from '../history';
-import { enterRules, inputRulesPlugin, undoInputRule } from '../inputRules';
-import { baseKeysPlugin, containerKeysPlugin } from '../keys';
+import { enterRules, inputRulesPlugin, undoInputRule } from '../inputRules/inputRules';
+import { blockDecorationsPlugin } from '../statePlugins/decorations';
+import { baseKeysPlugin, containerKeysPlugin } from '../statePlugins/keys';
 
 import { contentIssuesPlugin } from './checks/contentIssues';
 import { lastMarkPlugin } from './markSet';

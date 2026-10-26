@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { compileContentModel } from '#/model';
 import { core } from '#/plugins/Core/feature';
 
-import { createMetrics } from '../../session/metrics';
+import { createMetrics } from '../../session/state/metrics';
 import { type OperationMetric, type SessionToken } from '../../types';
 
 const model = compileContentModel([core()], { id: 'test.metrics', version: 1 });

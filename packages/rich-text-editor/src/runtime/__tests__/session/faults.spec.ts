@@ -8,8 +8,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { type Diagnostic } from '#/model';
 import { diagnostic } from '#/model/internal';
 
-import { createFaults } from '../../session/faults';
-import { createLifecycle } from '../../session/lifecycle';
+import { createFaults } from '../../session/lifecycle/faults';
+import { createLifecycle } from '../../session/state/lifecycle';
 import { type RecoveryService } from '../../types';
 
 const schema = new Schema({

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { snapshot } from '#/model/internal';
-import { type EditorRuntime, liveResources, type NodeTarget } from '#/runtime/runtime';
 import {
     firstBlockId,
     labelsFirstBlock,
@@ -11,7 +10,8 @@ import {
     type ViewNode,
     type ViewNodeConstructor,
     type ViewNodeView,
-} from '#/runtime/viewBridge';
+} from '#/runtime/dom/viewBridge';
+import { type EditorRuntime, liveResources, type NodeTarget } from '#/runtime/runtime';
 
 import { type NodeViewDeclaration } from './define';
 import { ISLAND_VIEWS } from './island';

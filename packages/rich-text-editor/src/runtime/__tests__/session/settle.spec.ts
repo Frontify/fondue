@@ -2,8 +2,8 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { createBusy } from '../../session/busy';
-import { createSettle } from '../../session/settle';
+import { createSettle } from '../../session/lifecycle/settle';
+import { createBusy } from '../../session/state/busy';
 
 const setup = ({ mapping, installs = true }: { mapping?: object; installs?: boolean } = {}) => {
     const calls: string[] = [];

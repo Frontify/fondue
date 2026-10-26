@@ -6,8 +6,8 @@ import { REPLACED_ASSET, isRecord } from '#/model';
 import { COMMAND_META, type EngineCommand } from '#/runtime/definition';
 
 import { placeBlock } from '..';
-import { withNodeState } from '../../nodeState';
-import { positionOf } from '../../positions';
+import { withNodeState } from '../../statePlugins/nodeState';
+import { positionOf } from '../../transform/positions';
 
 import { INSERT_IMAGE, REPLACE_IMAGE } from './uploads/constants';
 

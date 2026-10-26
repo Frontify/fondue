@@ -3,8 +3,8 @@
 import { partCommandApiOf } from '#/bridge/liveApi';
 import { type EditorPart } from '#/bridge/plugin';
 import { type CommandRef, type ContentModel } from '#/model';
+import { pluginCommand } from '#/runtime/api/editorApi';
 import { type EngineCommand, type EngineExtension } from '#/runtime/definition';
-import { pluginCommand } from '#/runtime/editorApi';
 
 import { fixtureEditorsOf } from './editors';
 

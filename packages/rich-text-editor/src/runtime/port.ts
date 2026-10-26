@@ -2,7 +2,8 @@
 
 import { type Diagnostic, type ResourceLimits } from '#/model';
 
-import { type AsyncOperation, type AsyncRequest } from './async';
+import { contentChecksApi, rangeOf } from './api/editorApi';
+import { type AsyncOperation, type AsyncRequest } from './async/async';
 import { type MediaSession } from './capabilities/media/session';
 import {
     acceptSuggestion,
@@ -10,7 +11,7 @@ import {
     dismissSuggestion,
     moveSuggestion,
 } from './capabilities/suggestions/plugin';
-import { contentChecksApi, rangeOf } from './editorApi';
+import { endComposition, nodeChromeAt, resyncSelection, selectionRect } from './dom/viewBridge';
 import { engineOf } from './portEngine';
 import {
     type ActiveSuggestion,
@@ -21,7 +22,7 @@ import {
     type RuntimeHandle,
 } from './portTypes';
 import { isEmpty, runtimeOf } from './runtime';
-import { mediaOf as mediaOfRuntime } from './session/uploadsWiring';
+import { mediaOf as mediaOfRuntime } from './session/lifecycle/uploadsWiring';
 import {
     type AuthoringPolicy,
     type CaptureResult,
@@ -29,7 +30,6 @@ import {
     type OperationMetric,
     type Unsubscribe,
 } from './types';
-import { endComposition, nodeChromeAt, resyncSelection, selectionRect } from './viewBridge';
 
 export {
     INSERT_IMAGE,
@@ -40,7 +40,7 @@ export {
 } from './capabilities/media/uploads/constants';
 export { type MediaSession } from './capabilities/media/session';
 export { referenceValues } from './capabilities/suggestions/references';
-export { passesToBrowser } from './browserKeys';
+export { passesToBrowser } from './dom/browserKeys';
 export {
     type ActiveSuggestion,
     type ColumnState,

@@ -19,24 +19,24 @@ import {
 import { type TreeNode } from '#/model/internal';
 import { type CompiledDefinition, type EngineCommand } from '#/runtime/definition';
 
-import { type AsyncOperation, type AsyncRequest } from './async';
+import { type AsyncOperation, type AsyncRequest } from './async/async';
 import { type UploadEvent, type UploadServiceLike } from './capabilities/media/uploads';
-import { type ColumnState } from './columns';
-import { type EnterKeys } from './keys';
-import { type ExceededLimit } from './limits';
+import { type ExceededLimit } from './guards/limits';
 import { type RuntimeHandle } from './portTypes';
-import { type SaveCoordinator } from './saves';
-import { type NodeActions, type NodeTarget } from './session/actions';
-import { assembleCore } from './session/assembleCore';
-import { assembleEditing } from './session/assembleEditing';
-import { assembleOperations } from './session/assembleOperations';
-import { assembleSession } from './session/assembleSession';
-import { assembleState } from './session/assembleState';
-import { type Late } from './session/late';
-import { liveResources, viewRuntimes } from './session/registry';
-import { summarize } from './session/shown';
-import { type InputOutcome, type Mode, type RejectedCode } from './session/types';
-import { isEmpty } from './session/view';
+import { type SaveCoordinator } from './reporting/saves';
+import { assembleCore } from './session/assemble/assembleCore';
+import { assembleEditing } from './session/assemble/assembleEditing';
+import { assembleOperations } from './session/assemble/assembleOperations';
+import { assembleSession } from './session/assemble/assembleSession';
+import { assembleState } from './session/assemble/assembleState';
+import { type Late } from './session/assemble/late';
+import { liveResources, viewRuntimes } from './session/assemble/registry';
+import { type NodeActions, type NodeTarget } from './session/editing/actions';
+import { isEmpty } from './session/editing/view';
+import { summarize } from './session/state/shown';
+import { type InputOutcome, type Mode, type RejectedCode } from './session/state/types';
+import { type ColumnState } from './statePlugins/columns';
+import { type EnterKeys } from './statePlugins/keys';
 import {
     type AuthoringPolicy,
     type CaptureResult,

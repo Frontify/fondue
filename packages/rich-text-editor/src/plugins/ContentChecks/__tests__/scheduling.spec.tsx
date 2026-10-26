@@ -11,8 +11,8 @@ import { CONTENT_RULE_IDS, CONTENT_RULES } from '#/plugins/__tests__/fixtures/co
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { storedIn } from '#/react/__tests__/fixtures/text';
 import { CHECK_DELAY_MS, contentChecksOf } from '#/runtime/capabilities/checks/contentIssues';
+import { SETTLE_MS } from '#/runtime/dom/settle';
 import { runtimeOf } from '#/runtime/runtime';
-import { SETTLE_MS } from '#/runtime/settle';
 import { createFakePersistenceService, typeText } from '#/testing';
 
 import { checksModel, colored, headingBlock, image, link, mountChecks, para, text } from './fixtures/checks';

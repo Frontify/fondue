@@ -2,7 +2,7 @@
 
 import { type ComponentType, useEffect, useState } from 'react';
 
-import { whenIdle } from '#/runtime/idle';
+import { whenIdle } from '#/runtime/dom/idle';
 
 const loaders: (() => Promise<unknown>)[] = [];
 

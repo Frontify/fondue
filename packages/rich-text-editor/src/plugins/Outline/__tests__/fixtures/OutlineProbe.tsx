@@ -7,8 +7,8 @@ import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { bold, core, heading, outline } from '#/plugins';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
-import { positionOf } from '#/runtime/positions';
 import { runtimeOf } from '#/runtime/runtime';
+import { positionOf } from '#/runtime/transform/positions';
 
 const model = compileContentModel([core(), heading(), bold(), outline()], { id: 'test.outline', version: 1 });
 const definition = defineEditor({ id: 'test.outline', model, plugins: unitsOf(model) });

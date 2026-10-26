@@ -6,7 +6,7 @@ import { compileContentModel } from '#/model';
 import { core } from '#/plugins/Core/feature';
 import { image } from '#/plugins/Image/feature';
 
-import { mediaOf } from '../session/uploadsWiring';
+import { mediaOf } from '../session/lifecycle/uploadsWiring';
 
 import { installRuntimeHooks, para, start, stored } from './fixtures/start';
 

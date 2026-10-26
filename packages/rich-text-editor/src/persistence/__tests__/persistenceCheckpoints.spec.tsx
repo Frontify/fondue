@@ -4,7 +4,7 @@ import { act } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { type CommitResult, type EditorHandle, type SaveRequest } from '#/index';
-import { SETTLE_MS } from '#/runtime/settle';
+import { SETTLE_MS } from '#/runtime/dom/settle';
 import { typeText } from '#/testing';
 
 import {

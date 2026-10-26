@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { liveOperations } from '#/runtime/async';
-import { busResources } from '#/runtime/events';
+import { liveOperations } from '#/runtime/async/async';
+import { settleResources } from '#/runtime/dom/settle';
+import { busResources } from '#/runtime/reporting/events';
 import { liveResources } from '#/runtime/runtime';
-import { settleResources } from '#/runtime/settle';
 
 /**
  * What every live runtime owns now: its views, node views and their portals, the installed feature IDs of each

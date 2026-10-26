@@ -2,9 +2,9 @@
 
 import { type UploadPlace } from '../capabilities/media/uploads';
 import { cancelSlot, slotUploadsOf } from '../capabilities/media/uploadSlots';
-import { type DocumentApi, type UploadTarget } from '../documentApi';
-import { positionOf } from '../positions';
+import { positionOf } from '../transform/positions';
 
+import { type DocumentApi, type UploadTarget } from './documentApi';
 import { type ApiSource, sharedEdits } from './shared';
 
 /** The upload members of the document API. */

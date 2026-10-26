@@ -14,7 +14,7 @@ import { core } from '#/plugins/Core/feature';
 import { link } from '#/plugins/Link/feature';
 import { pressKey, setSelection, typeText } from '#/testing';
 
-import { authoringOf } from '../policy';
+import { authoringOf } from '../guards/policy';
 import { type AuthoringPolicy } from '../types';
 
 import {

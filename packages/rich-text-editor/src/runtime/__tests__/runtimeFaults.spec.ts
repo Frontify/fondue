@@ -12,7 +12,7 @@ import { compileDefinition, countAppends, NORMALIZE_META } from '#/runtime/defin
 import { probeRuntimes, setSelection, typeText } from '#/testing';
 
 import { RUNTIME_PLUGINS } from '../capabilities';
-import { authoringOf } from '../policy';
+import { authoringOf } from '../guards/policy';
 import { createEditorRuntime } from '../runtime';
 import { type CommandResult } from '../types';
 

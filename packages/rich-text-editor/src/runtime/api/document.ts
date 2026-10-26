@@ -3,10 +3,10 @@
 import { compiledModel } from '#/model/internal';
 
 import { UPLOAD_FEATURE } from '../capabilities/media/uploads/constants';
-import { type DocumentApi } from '../documentApi';
 
 import { blocksApi } from './blocks';
 import { contentApi } from './content';
+import { type DocumentApi } from './documentApi';
 import { listsApi } from './lists';
 import { marksApi } from './marks';
 import { nodeStateApi } from './nodeState';

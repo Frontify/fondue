@@ -8,8 +8,8 @@ import { core, emoji, fontColor } from '#/plugins';
 import { fixturePickerPanel, openFind } from '#/plugins/__tests__/fixtures/panels';
 import { mountText, textModel } from '#/react/__tests__/fixtures/text';
 import { CHECK_DELAY_MS, contentChecksOf } from '#/runtime/capabilities/checks/contentIssues';
-import { positionOf } from '#/runtime/positions';
-import { SETTLE_MS } from '#/runtime/settle';
+import { SETTLE_MS } from '#/runtime/dom/settle';
+import { positionOf } from '#/runtime/transform/positions';
 import { setSelection } from '#/testing';
 
 import {

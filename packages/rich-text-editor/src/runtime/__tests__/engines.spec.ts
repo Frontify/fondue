@@ -9,7 +9,7 @@ import { compileDefinition } from '#/runtime/definition';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 
 import { RUNTIME_PLUGINS } from '../capabilities';
-import { authoringOf } from '../policy';
+import { authoringOf } from '../guards/policy';
 import { createEditorRuntime } from '../runtime';
 
 failNetworkInThisFile();

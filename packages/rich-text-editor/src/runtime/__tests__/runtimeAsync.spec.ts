@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { type EngineCommand } from '#/runtime/definition';
 import { probeRuntimes, setSelection, typeText } from '#/testing';
 
-import { authoringOf } from '../policy';
+import { authoringOf } from '../guards/policy';
 import { type CommandResult } from '../types';
 
 import {

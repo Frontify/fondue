@@ -2,8 +2,8 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { type SaveCoordinator } from '../../saves';
-import { createSaving } from '../../session/saving';
+import { type SaveCoordinator } from '../../reporting/saves';
+import { createSaving } from '../../session/lifecycle/saving';
 import { type CommitResult, type SaveStatus, type ServerRevision } from '../../types';
 
 const revision = 'rev-1' as unknown as ServerRevision;

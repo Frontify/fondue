@@ -13,14 +13,14 @@ import {
 import { type TreeNode, encodeTree, findUnsafeJson, snapshot } from '#/model/internal';
 import { type CommandContext, type CommandLookup, type EngineCommand } from '#/runtime/definition';
 
-import { type CommandOutcome, type DocumentApi } from '../documentApi';
 import { type EditorRuntime } from '../runtime';
-import { mediaOf } from '../session/uploadsWiring';
+import { mediaOf } from '../session/lifecycle/uploadsWiring';
 import { type AuthoringPolicy } from '../types';
 
 import { policyOf } from './checked';
 import { composer } from './composer';
 import { documentApi } from './document';
+import { type CommandOutcome, type DocumentApi } from './documentApi';
 
 /** The session a plugin command runs in, as the runtime hands it over in `CommandContext.session`. */
 export type CommandSession = {

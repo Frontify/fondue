@@ -81,8 +81,8 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         types: ['src/model/vocabulary/format.ts#ResourceLimits'],
     },
     {
-        site: 'src/runtime/session/shown.ts:146',
-        why: 'The snapshot is a deep-frozen copy, and the stored blocks inside it are frozen by src/runtime/session/encode.ts:40, so a write throws.',
+        site: 'src/runtime/session/state/shown.ts:146',
+        why: 'The snapshot is a deep-frozen copy, and the stored blocks inside it are frozen by src/runtime/session/state/encode.ts:40, so a write throws.',
         deep: [
             'src/runtime/types.ts#Snapshot',
             'src/runtime/types.ts#DocumentStamp',
@@ -95,7 +95,7 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         ],
     },
     {
-        site: 'src/runtime/session/encode.ts:40',
+        site: 'src/runtime/session/state/encode.ts:40',
         why: 'The typed views of the same stored blocks that the snapshot deep-freezes, so a write throws.',
         deep: [
             'src/model/vocabulary/format.ts#DocumentOf',
@@ -105,7 +105,7 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
     },
     {
         site: 'src/bridge/nodeViews.ts:56',
-        why: 'Node and mark attributes reach plugins, decorations and the manifest as deep-frozen JSON (also src/runtime/decorations.ts:78, src/runtime/api/shared.ts:82, src/model/compile/compile.ts:55), so a write throws.',
+        why: 'Node and mark attributes reach plugins, decorations and the manifest as deep-frozen JSON (also src/runtime/statePlugins/decorations.ts:78, src/runtime/api/shared.ts:82, src/model/compile/compile.ts:55), so a write throws.',
         deep: ['src/model/types.ts#JsonObject', 'src/model/types.ts#JsonValue'],
     },
     {
@@ -124,12 +124,12 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         types: ['src/bridge/definePlugin.ts#RichTextPlugin', 'src/bridge/definePlugin.ts#{ [OPTION_PARTS] }'],
     },
     {
-        site: 'src/runtime/metrics.ts:14',
+        site: 'src/runtime/reporting/metrics.ts:14',
         why: 'operationMetric freezes each metric, so a write throws.',
         types: ['src/runtime/types.ts#OperationMetric'],
     },
     {
-        site: 'src/runtime/saves.ts:53',
+        site: 'src/runtime/reporting/saves.ts:53',
         why: 'The save status is frozen (also src/persistence/transport.ts:104 and :342), so a write throws.',
         types: ['src/runtime/types.ts#SaveStatus'],
     },
@@ -139,9 +139,9 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         types: ['src/persistence/types.ts#SaveRequest'],
     },
     {
-        site: 'src/runtime/async.ts:120',
+        site: 'src/runtime/async/async.ts:120',
         why: 'A registered operation is frozen, so a write throws.',
-        types: ['src/runtime/async.ts#AsyncOperation'],
+        types: ['src/runtime/async/async.ts#AsyncOperation'],
     },
     {
         site: 'src/react/compileEditor.ts:388',
@@ -149,14 +149,14 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         types: ['src/react/types.ts#EditorDefinitionInfo', 'src/react/types.ts#CompiledEditorDefinition'],
     },
     {
-        site: 'src/runtime/session/targets.ts:98',
+        site: 'src/runtime/session/lifecycle/targets.ts:98',
         why: 'A selection handle is frozen, so a write throws.',
         types: ['src/runtime/types.ts#SelectionHandle'],
     },
     {
         site: 'src/runtime/api/shared.ts:32',
         why: 'A range is a frozen opaque object, so a write throws.',
-        types: ['src/runtime/documentApi.ts#EditorRange'],
+        types: ['src/runtime/api/documentApi.ts#EditorRange'],
     },
     {
         site: 'src/model/__tests__/compileDeclarations.spec.ts:488',

@@ -7,9 +7,9 @@ import { canJoin } from 'prosemirror-transform';
 
 import { isRecord } from '#/model';
 
-import { liftItems, listAround, repeatWhile } from '../lists';
-import { inCodeTextblock } from '../positions';
-import { appendSteps, carrySelection, transactionOf } from '../transactions';
+import { liftItems, listAround, repeatWhile } from '../transform/lists';
+import { inCodeTextblock } from '../transform/positions';
+import { appendSteps, carrySelection, transactionOf } from '../transform/transactions';
 
 import { type CapabilityImplementation, carried, REJECTED, selectedTextblocks, typeIn } from './shared';
 

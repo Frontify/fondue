@@ -8,9 +8,9 @@ import { core, image } from '#/plugins';
 import { compileDefinition } from '#/runtime/definition';
 
 import { DEFAULT_ACCEPT_TYPES, type UploadEvent, type UploadServiceLike } from '../../capabilities/media/uploads';
-import { createIdentity } from '../../session/identity';
-import { createLifecycle } from '../../session/lifecycle';
-import { createUploadService } from '../../session/uploadsWiring';
+import { createUploadService } from '../../session/lifecycle/uploadsWiring';
+import { createIdentity } from '../../session/state/identity';
+import { createLifecycle } from '../../session/state/lifecycle';
 import { type AuthoringPolicy, type SelectionHandle } from '../../types';
 
 const build = (features: readonly Feature[]) => {

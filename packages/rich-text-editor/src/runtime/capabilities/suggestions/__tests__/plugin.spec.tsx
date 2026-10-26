@@ -13,8 +13,8 @@ import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { type EmojiEntry } from '#/plugins/Emoji/helpers/data';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { mountText, para, storedIn, text, textModel } from '#/react/__tests__/fixtures/text';
+import { SETTLE_MS } from '#/runtime/dom/settle';
 import { runtimeOf } from '#/runtime/runtime';
-import { SETTLE_MS } from '#/runtime/settle';
 import { paste, pressKey, setSelection, typeText } from '#/testing';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 

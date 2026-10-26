@@ -4,9 +4,9 @@ import { Schema } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { createDispose } from '../../session/dispose';
-import { createLifecycle } from '../../session/lifecycle';
-import { createStore } from '../../session/store';
+import { createDispose } from '../../session/lifecycle/dispose';
+import { createLifecycle } from '../../session/state/lifecycle';
+import { createStore } from '../../session/state/store';
 
 const schema = new Schema({
     nodes: { doc: { content: 'paragraph+' }, paragraph: { content: 'text*', group: 'block' }, text: {} },

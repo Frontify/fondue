@@ -7,10 +7,10 @@ import { compileContentModel, type ResourceLimits } from '#/model';
 import { core } from '#/plugins/Core/feature';
 import { compileDefinition, type EngineCommand } from '#/runtime/definition';
 
-import { type AsyncOperation, type AsyncRequest } from '../../async';
-import { createActions, type NodeTarget } from '../../session/actions';
-import { type Commands } from '../../session/commands';
-import { createStore } from '../../session/store';
+import { type AsyncOperation, type AsyncRequest } from '../../async/async';
+import { createActions, type NodeTarget } from '../../session/editing/actions';
+import { type Commands } from '../../session/editing/commands';
+import { createStore } from '../../session/state/store';
 import { type CommandResult, type SelectionHandle } from '../../types';
 
 const model = compileContentModel([core()], { id: 'test.actions', version: 1 });

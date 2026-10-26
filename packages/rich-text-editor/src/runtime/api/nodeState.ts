@@ -3,10 +3,10 @@
 import { compiledModel } from '#/model/internal';
 
 import { EDITS } from '../capabilities';
-import { type DocumentApi } from '../documentApi';
 import { canRedo, canUndo } from '../history';
-import { nodeStateOf, withNodeState } from '../nodeState';
+import { nodeStateOf, withNodeState } from '../statePlugins/nodeState';
 
+import { type DocumentApi } from './documentApi';
 import { type ApiSource, sharedEdits } from './shared';
 
 /** The members of the document API about the session and node state: document, policy, commands, history, node state. */

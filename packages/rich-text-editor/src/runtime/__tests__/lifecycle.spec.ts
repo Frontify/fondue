@@ -2,7 +2,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { createLifecycle } from '../session/lifecycle';
+import { createLifecycle } from '../session/state/lifecycle';
 import { type EditorSummary } from '../types';
 
 type Phase = EditorSummary['phase'];

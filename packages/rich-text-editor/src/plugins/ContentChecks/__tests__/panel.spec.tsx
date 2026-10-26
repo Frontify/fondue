@@ -8,8 +8,8 @@ import { defineEditorPart, useEditorApi, useEditorValue } from '#/entries/author
 import { contentChecks } from '#/plugins';
 import { pluginsById } from '#/plugins/plugins';
 import { CHECK_DELAY_MS } from '#/runtime/capabilities/checks/contentIssues';
-import { positionOf } from '#/runtime/positions';
 import { runtimeOf } from '#/runtime/runtime';
+import { positionOf } from '#/runtime/transform/positions';
 import { setSelection, typeText } from '#/testing';
 
 import { colored, headingBlock, image, link, mountChecks, para, text } from './fixtures/checks';

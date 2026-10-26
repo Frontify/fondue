@@ -5,9 +5,9 @@ import { type EditorState } from 'prosemirror-state';
 
 import { isRecord } from '#/model';
 import { appliesToOf } from '#/model/internal';
-import { stylesOf } from '#/runtime/styles';
+import { stylesOf } from '#/runtime/statePlugins/styles';
 
-import { nearest, positionOf } from '../positions';
+import { nearest, positionOf } from '../transform/positions';
 
 import { type CapabilityImplementation, tristate } from './shared';
 

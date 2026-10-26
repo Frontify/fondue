@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorRange } from '#/runtime/documentApi';
-import { positionsOf } from '#/runtime/editorApi';
+import { type EditorRange } from '#/runtime/api/documentApi';
+import { positionsOf } from '#/runtime/api/editorApi';
+import { caretRect, rangeRect, selectionRect, type SurfaceView } from '#/runtime/dom/viewBridge';
 import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/portEngine';
-import { caretRect, rangeRect, selectionRect, type SurfaceView } from '#/runtime/viewBridge';
 
 import { type SelectionAnchor } from './overlays';
 import { type AnchorTarget, type OverlayAnchor } from './plugin';

@@ -3,7 +3,7 @@
 import { type JsonObject } from '#/model';
 import { diagnostic } from '#/model/internal';
 
-import { positionOf } from '../../../positions';
+import { positionOf } from '../../../transform/positions';
 import { type SelectionHandle } from '../../../types';
 
 import { uploadLimits } from './cache';

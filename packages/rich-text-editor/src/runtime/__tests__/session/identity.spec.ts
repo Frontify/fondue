@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { createIdentity } from '../../session/identity';
+import { createIdentity } from '../../session/state/identity';
 
 const make = () => createIdentity({ documentId: 'doc-1', generate: () => 'session-1' });
 

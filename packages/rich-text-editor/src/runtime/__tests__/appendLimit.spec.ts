@@ -11,7 +11,7 @@ import { typeText } from '#/testing';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 
 import { RUNTIME_PLUGINS } from '../capabilities';
-import { authoringOf } from '../policy';
+import { authoringOf } from '../guards/policy';
 import { createEditorRuntime } from '../runtime';
 
 import type * as Engine from 'prosemirror-state';

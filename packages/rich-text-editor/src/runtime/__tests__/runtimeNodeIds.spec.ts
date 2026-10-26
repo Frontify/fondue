@@ -15,7 +15,7 @@ import { core } from '#/plugins/Core/feature';
 import { type EngineCommand, ORIGIN_META } from '#/runtime/definition';
 import { setSelection, typeText } from '#/testing';
 
-import { createLimitCheck } from '../limits';
+import { createLimitCheck } from '../guards/limits';
 
 import { stored, para, words, start, contentOf, undoSteps, forbid, installRuntimeHooks } from './fixtures/start';
 

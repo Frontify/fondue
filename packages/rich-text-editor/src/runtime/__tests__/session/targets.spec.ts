@@ -4,13 +4,13 @@ import { Schema } from 'prosemirror-model';
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { type AsyncRequest } from '../../async';
-import { createBusy } from '../../session/busy';
-import { createIdentity } from '../../session/identity';
-import { createLifecycle } from '../../session/lifecycle';
-import { createStore } from '../../session/store';
-import { createTargetsService } from '../../session/targets';
-import { countTargets, targetsPlugin } from '../../targets';
+import { type AsyncRequest } from '../../async/async';
+import { createTargetsService } from '../../session/lifecycle/targets';
+import { createBusy } from '../../session/state/busy';
+import { createIdentity } from '../../session/state/identity';
+import { createLifecycle } from '../../session/state/lifecycle';
+import { createStore } from '../../session/state/store';
+import { countTargets, targetsPlugin } from '../../statePlugins/targets';
 import { type SelectionHandle } from '../../types';
 
 const schema = new Schema({

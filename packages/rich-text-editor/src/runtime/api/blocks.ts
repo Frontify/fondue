@@ -4,10 +4,10 @@ import { type Node } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
 import { clearBlocks, EDITS } from '../capabilities';
-import { type AncestorValue, type BlockValue, type DocumentApi, type SelectionValue } from '../documentApi';
-import { inCodeTextblock, nearest as nearestNode } from '../positions';
 import { summarize } from '../runtime';
+import { inCodeTextblock, nearest as nearestNode } from '../transform/positions';
 
+import { type AncestorValue, type BlockValue, type DocumentApi, type SelectionValue } from './documentApi';
 import { type ApiSource, idOf, rangeOf, sharedEdits, valuesOf } from './shared';
 
 /** The block members of the document API: blocks, node attributes, and the selection's surrounding blocks. */

@@ -7,10 +7,10 @@ import { Mapping } from 'prosemirror-transform';
 import { type CommandContext, type EngineCommand } from '#/runtime/definition';
 
 import { LAST_MARK_META } from '../capabilities';
-import { type EditorRange } from '../documentApi';
-import { nodeStateChanges, withNodeState } from '../nodeState';
-import { appendSteps, carrySelection } from '../transactions';
+import { nodeStateChanges, withNodeState } from '../statePlugins/nodeState';
+import { appendSteps, carrySelection } from '../transform/transactions';
 
+import { type EditorRange } from './documentApi';
 import { type Positions, RANGES } from './shared';
 
 /** Builds one transaction from the edits of a command, so the command stays one undo step. */

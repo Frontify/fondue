@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type AsyncOperation } from '#/runtime/async';
+import { type AsyncOperation } from '#/runtime/async/async';
 import {
     type Effect,
     fresh,

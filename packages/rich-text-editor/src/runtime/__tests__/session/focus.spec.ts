@@ -4,9 +4,9 @@ import { Schema } from 'prosemirror-model';
 import { EditorState, Selection, type Transaction } from 'prosemirror-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { createFocus } from '../../session/focus';
-import { createLifecycle } from '../../session/lifecycle';
-import { createStore } from '../../session/store';
+import { createFocus } from '../../session/editing/focus';
+import { createLifecycle } from '../../session/state/lifecycle';
+import { createStore } from '../../session/state/store';
 
 const schema = new Schema({
     nodes: {

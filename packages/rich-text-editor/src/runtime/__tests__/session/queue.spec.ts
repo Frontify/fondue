@@ -4,10 +4,10 @@ import { describe, expect, it } from 'vitest';
 
 import { type Diagnostic } from '#/model';
 
-import { createBusy } from '../../session/busy';
-import { createLifecycle } from '../../session/lifecycle';
-import { createQueue } from '../../session/queue';
-import { type Route } from '../../session/types';
+import { createQueue } from '../../session/lifecycle/queue';
+import { createBusy } from '../../session/state/busy';
+import { createLifecycle } from '../../session/state/lifecycle';
+import { type Route } from '../../session/state/types';
 import { type CommandResult } from '../../types';
 
 const applied = { status: 'applied' } as unknown as CommandResult;
