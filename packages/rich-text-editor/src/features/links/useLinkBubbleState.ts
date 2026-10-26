@@ -1,12 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useId, useMemo, useRef, useState } from 'react';
 
 import {
-    type EditorApi,
     sameRange,
     type StandingOverlayProps,
-    useApplePlatform,
     useClientLayoutEffect,
     useEditorApi,
     useEditorOverlay,
@@ -15,37 +13,7 @@ import {
 } from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
 
-import { caretLink, caretOf, linkBubbleStrings, openLink, returnFocus, sameLink } from './linkBubbleModel';
-
-/** A link in the surface never navigates the page while it is edited. */
-const useSurfaceLinkClicks = (api: EditorApi | undefined) => {
-    const apple = useApplePlatform();
-    useEffect(() => {
-        const surface = api?.surface();
-        if (api === undefined || surface === undefined) {
-            return undefined;
-        }
-        // Mod+click opens it in a new tab, and in a read-only surface a plain click follows it as the reader's link does.
-        const onClick = (event: MouseEvent) => {
-            const element = event.target instanceof Element ? event.target.closest('a[href]') : null;
-            if (element === null || !surface.contains(element) || event.button !== 0) {
-                return;
-            }
-            const clicked = api.marks.run('link', { at: element });
-            const modified = apple ? event.metaKey : event.ctrlKey;
-            const editable = api.editable();
-            if (!editable && !modified && clicked?.attrs.openInNewWindow !== true) {
-                return;
-            }
-            event.preventDefault();
-            if (modified || !editable) {
-                openLink(surface.ownerDocument.defaultView, clicked?.attrs.href);
-            }
-        };
-        surface.addEventListener('click', onClick);
-        return () => surface.removeEventListener('click', onClick);
-    }, [api, apple]);
-};
+import { caretLink, caretOf, linkBubbleStrings, returnFocus, sameLink } from './linkBubbleModel';
 
 /** The link bubble's state, effects and handlers; none while there is no link to show. */
 export const useLinkBubbleState = ({ toolbarRef, covered }: StandingOverlayProps) => {
@@ -105,7 +73,6 @@ export const useLinkBubbleState = ({ toolbarRef, covered }: StandingOverlayProps
     const overlay = useEditorOverlay(open, setOpen);
     // The session arrives after the first render, so the anchor reads the API once it exists.
     const anchor = useMemo(() => api?.anchor(() => caretLink(api)?.range ?? keptRef.current?.range), [api]);
-    useSurfaceLinkClicks(api);
     // The toolbar inside the wrapper is in the DOM by the time React sets the wrapper's ref.
     const bubbleRef = useCallback(
         (element: HTMLDivElement | null) => toolbarRef(element?.querySelector<HTMLElement>('[role="toolbar"]') ?? null),

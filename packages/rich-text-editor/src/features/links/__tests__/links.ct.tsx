@@ -82,6 +82,29 @@ test('opens the checked href in a new tab with no opener on Mod+click and from t
     expect(second.url()).toBe('https://example.com/apart');
 });
 
+test('opens the href in a new tab with no opener on Mod+click before the link bubble has loaded', async ({
+    mount,
+    page,
+}) => {
+    const held: (() => Promise<void>)[] = [];
+    await page.route(/LinkBubble[^/]*\.js/, (route) => {
+        held.push(() => route.continue());
+        return Promise.resolve();
+    });
+    await mount(<LinkProbe />);
+    await ready(page);
+    await expect.poll(() => held.length).toBeGreaterThan(0);
+
+    const clicked = page.waitForEvent('popup');
+    await linkIn(page, 'apart').click({ modifiers: ['ControlOrMeta'] });
+    const popup = await clicked;
+
+    expect(await popup.evaluate(() => window.opener === null)).toBe(true);
+    await expect(bubbleOf(page)).toHaveCount(0);
+    await popup.close();
+    await Promise.all(held.map((release) => release()));
+});
+
 test('follows a link on a plain click when read-only, in the same tab or, for a new-window link, a new tab with no opener', async ({
     mount,
     page,

@@ -7,6 +7,7 @@ import { markRule } from '#/model';
 import { links } from './feature';
 import { EDIT_LINK, REMOVE_LINK } from './linkBubbleModel';
 import { linkInitialOf, SET_LINK } from './linkPopoverModel';
+import { SurfaceLinkClicks } from './SurfaceLinkClicks';
 
 const LinkBubble = lazyPart(() => import('./LinkBubble').then((loaded) => loaded.LinkBubble));
 const LinkPopover = lazyPart(() => import('./LinkPopover').then((loaded) => loaded.LinkPopover));
@@ -72,5 +73,5 @@ export const linksEditor = defineEditorPart(links, {
             opensOverlay: true,
         },
     ],
-    overlays: [LinkBubble],
+    overlays: [SurfaceLinkClicks, LinkBubble],
 });
