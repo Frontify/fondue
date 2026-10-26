@@ -19,21 +19,21 @@ const packageRoot = fileURLToPath(new URL('../../..', import.meta.url)).replace(
 type Rgba = NonNullable<ReturnType<typeof parseColor>>;
 
 /** A background, laid over each surface it can sit on when it is translucent, or over the page when it names none. */
-type Backdrop = { readonly background: string; readonly grounds: readonly string[] };
+type Backdrop = { background: string; grounds: readonly string[] };
 
 /** The foreground tokens of one box, each on each of its backdrops. */
 type Group = {
-    readonly where: string;
-    readonly opacity: number;
-    readonly foregrounds: ReadonlySet<string>;
-    readonly backdrops: readonly Backdrop[];
+    where: string;
+    opacity: number;
+    foregrounds: ReadonlySet<string>;
+    backdrops: readonly Backdrop[];
 };
 
 /** A box a selector names in one stylesheet, with every token its rest and state rules set on it. */
 type Element = {
-    readonly where: string;
-    readonly content: boolean;
-    readonly chrome: boolean;
+    where: string;
+    content: boolean;
+    chrome: boolean;
     texts: Set<string>;
     restBackgrounds: Set<string>;
     stateBackgrounds: Set<string>;
