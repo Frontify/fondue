@@ -16,8 +16,8 @@ test.afterEach(async ({ page }) => {
 });
 
 type Clip = NonNullable<Window['clip']>;
-type Flavors = { readonly html: string; readonly text: string; readonly slice: string };
-type Point = { readonly x: number; readonly y: number };
+type Flavors = { html: string; text: string; slice: string };
+type Point = { x: number; y: number };
 
 declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
@@ -78,7 +78,7 @@ const flavorsOf = async (page: Page) => {
 
 /** Disabled and checked, in document order, for each checkbox `html` writes. */
 const checkboxStates = (html: string) => {
-    const states: { readonly disabled: boolean; readonly checked: boolean }[] = [];
+    const states: { disabled: boolean; checked: boolean }[] = [];
     for (const match of html.matchAll(/<input type="checkbox"[^>]*>/g)) {
         const tag = match[0];
         states.push({ disabled: tag.includes('disabled'), checked: tag.includes('checked') });
@@ -375,7 +375,7 @@ for (const [name, copies] of [
         await dragNode(page, await overText(page, 1, 0.5), copies);
 
         const content = (await contentOf(page)) as {
-            readonly content: { readonly attrs?: { readonly nodeId: string } }[];
+            content: { attrs?: { nodeId: string } }[];
         }[];
         const ids = content.flatMap((block) =>
             block.content.flatMap((child) => (child.attrs === undefined ? [] : [child.attrs.nodeId])),
@@ -404,7 +404,7 @@ test('still moves a mention dragged with the other platform modifier held @engin
 
     await dragNode(page, await overText(page, 1, 0.5), false, true);
 
-    const content = (await contentOf(page)) as { readonly content: unknown[] }[];
+    const content = (await contentOf(page)) as { content: unknown[] }[];
     expect(content.map((block) => block.content.length)).toEqual([1, 3]);
     expect(JSON.stringify(content)).toContain('"nodeId":"m-1"');
     expect(JSON.stringify(content).match(/"type":"mention"/g)).toHaveLength(1);
@@ -446,7 +446,7 @@ test('drops a copy of an island holding a nodeId as its plain text, since the is
 
     await dragNode(page, await overText(page, 0, 0.8), true);
 
-    const content = (await contentOf(page)) as { readonly type: string }[];
+    const content = (await contentOf(page)) as { type: string }[];
     expect(content.map(({ type }) => type)).toEqual(['paragraph', 'paragraph', 'paragraph', 'callout']);
     expect(content[1]).toEqual(paragraph('Kept'));
     expect(await changesOf(page)).toEqual(['drop']);

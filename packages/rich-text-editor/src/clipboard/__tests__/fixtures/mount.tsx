@@ -50,13 +50,13 @@ export const ALLOW = { create: true, edit: true, remove: true, paste: true };
 export const MIB = 1024 * 1024;
 
 export type Options = {
-    readonly blocks?: readonly JsonValue[];
-    readonly sliceContext?: string | null;
-    readonly policy?: Partial<AuthoringPolicy>;
-    readonly limits?: Partial<ResourceLimits>;
-    readonly editorModel?: ContentModel;
-    readonly readOnly?: boolean;
-    readonly generateId?: () => string;
+    blocks?: readonly JsonValue[];
+    sliceContext?: string | null;
+    policy?: Partial<AuthoringPolicy>;
+    limits?: Partial<ResourceLimits>;
+    editorModel?: ContentModel;
+    readOnly?: boolean;
+    generateId?: () => string;
 };
 
 /** Mounts an editor of the vocabulary stand-ins, ready, with its view, diagnostics, changes and live region. */

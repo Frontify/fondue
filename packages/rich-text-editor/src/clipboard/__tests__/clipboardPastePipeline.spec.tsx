@@ -324,7 +324,7 @@ describe('the paste pipeline', () => {
         pasteInto(mounted, { [SLICE_TYPE]: slice });
         pasteInto(mounted, { [SLICE_TYPE]: slice });
 
-        const headings = (mounted.content() as { readonly type: string }[]).filter(({ type }) => type === 'heading');
+        const headings = (mounted.content() as { type: string }[]).filter(({ type }) => type === 'heading');
         const sets = headings.map((block) => nodeIdsOf(block));
         expect(sets.map((set) => set.length)).toEqual([2, 2, 2]);
         expect(new Set(sets.flat()).size).toBe(6);

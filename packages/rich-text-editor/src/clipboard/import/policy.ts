@@ -6,7 +6,7 @@ import { checkHref, type ContentModel, type HrefPolicy } from '#/model';
 import { compiledModel, shownLabel } from '#/model/internal';
 
 /** What the paste filter reads of an `AuthoringPolicy`: whether each feature's content may be pasted. */
-export type PastePolicy = Readonly<Record<string, { readonly paste: boolean }>>;
+export type PastePolicy = Readonly<Record<string, { paste: boolean }>>;
 
 const edgeOf = (fragment: Fragment, side: 'start' | 'end') => {
     if (side === 'start') {
@@ -57,7 +57,7 @@ export const labelText = (schema: Schema, node: Node): Node[] => {
 /** The node and mark names of the features whose policy sets `paste: false`. */
 export const refusedNames = (model: ContentModel, policy: PastePolicy) => {
     const { nodes, marks } = compiledModel(model);
-    const refused = ({ featureId }: { readonly featureId: string }) => policy[featureId]?.paste === false;
+    const refused = ({ featureId }: { featureId: string }) => policy[featureId]?.paste === false;
     // Paragraphs and text hold what the refused content keeps.
     const kept = (name: string) => name !== 'paragraph' && name !== 'text';
 

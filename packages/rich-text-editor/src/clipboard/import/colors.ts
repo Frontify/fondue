@@ -7,8 +7,8 @@ import { createElementBeside } from './dom';
 
 /** Which pasted colours the model keeps: `color` and `<font color>` as `font_color`, `background-color` as `highlight`. */
 export type ColorReading = {
-    readonly color: boolean;
-    readonly background: boolean;
+    color: boolean;
+    background: boolean;
 };
 
 export const NO_COLORS: ColorReading = { color: false, background: false };

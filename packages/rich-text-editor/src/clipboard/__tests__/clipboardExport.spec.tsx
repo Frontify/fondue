@@ -87,7 +87,7 @@ describe('copy', () => {
 
         const flavors = copyFrom(mounted);
 
-        expect((JSON.parse(flavors.slice) as { readonly content: unknown[] }).content).toEqual([
+        expect((JSON.parse(flavors.slice) as { content: unknown[] }).content).toEqual([
             { type: 'unsupported_block', attrs: { feature: 'callout', original } },
         ]);
         expect(flavors.html).toContain('Kept');

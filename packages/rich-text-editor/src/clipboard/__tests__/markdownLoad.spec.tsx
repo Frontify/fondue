@@ -15,8 +15,8 @@ const typesOf = ({ view }: Mounted) => view.state.doc.children.map(({ type }) =>
 
 // A fresh module graph per test, whose Markdown reader has not loaded; the cold imports are a hook's work, which has the longer timeout.
 let modules: {
-    readonly mountProfile: typeof mountProfile;
-    readonly paste: typeof paste;
+    mountProfile: typeof mountProfile;
+    paste: typeof paste;
 };
 
 /** Mounts a Document editor from the fresh module graph once its surface takes input. */

@@ -27,25 +27,25 @@ import { clearingRules, functionRules, readAnswers, withRefusals } from './parse
 import { withinLinkPolicy } from './policy';
 
 export type HtmlSettings = {
-    readonly limits: ResourceLimits;
+    limits: ResourceLimits;
     /** The creatable heading levels of the definition, or `undefined` to keep every level. */
-    readonly headingLevels: readonly number[] | undefined;
+    headingLevels: readonly number[] | undefined;
     /** The depth, as `exceededStructure` counts it, at which the imported blocks land. */
-    readonly depth: number;
+    depth: number;
     /** The pasted colours the model keeps. */
-    readonly colors: ColorReading;
+    colors: ColorReading;
     /** The model's function parse rules, which read an element before the schema's rules do. */
-    readonly rules: readonly CompiledParseRule[];
+    rules: readonly CompiledParseRule[];
 };
 
 export type ImportedHtml = {
-    readonly content: Fragment;
+    content: Fragment;
     /** Images dropped without fetching, for the announcement. */
-    readonly droppedImages: number;
+    droppedImages: number;
     /** Colours the model does not keep, removed for the announcement. */
-    readonly removedColors: number;
+    removedColors: number;
     /** Tables the schema cannot hold, whose cells became blocks, for the announcement. */
-    readonly removedTables: number;
+    removedTables: number;
 };
 
 /**

@@ -8,8 +8,8 @@ export type Answer = ReturnType<CompiledParseRule['read']>;
 
 /** The answers of function rules, each read once before the parse, and the elements refused per mark or node name. */
 export type Answers = {
-    readonly byRule: ReadonlyMap<CompiledParseRule, ReadonlyMap<Element, Answer>>;
-    readonly refused: ReadonlyMap<string, ReadonlySet<Element>>;
+    byRule: ReadonlyMap<CompiledParseRule, ReadonlyMap<Element, Answer>>;
+    refused: ReadonlyMap<string, ReadonlySet<Element>>;
 };
 
 /** The custom property on an element whose rule refuses mark `name`, since the engine clears a mark only by a style rule. */

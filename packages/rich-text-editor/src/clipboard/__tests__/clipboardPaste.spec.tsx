@@ -403,7 +403,7 @@ describe('undo and failures', () => {
         const markdown = '## Title\n\n- one\n- two\n\nSee [guide](https://frontify.com)';
 
         pasteInto(mounted, { 'text/plain': markdown });
-        const converted = mounted.content() as readonly { readonly type: string }[];
+        const converted = mounted.content() as readonly { type: string }[];
         undo(mounted);
         const restored = textOf(mounted);
         undo(mounted);

@@ -112,7 +112,7 @@ describe('internal slices', () => {
 
         pasteInto(target, { [SLICE_TYPE]: flavors.slice, 'text/plain': flavors.text });
 
-        expect((JSON.parse(flavors.slice) as { readonly content: unknown[] }).content[1]).toEqual({
+        expect((JSON.parse(flavors.slice) as { content: unknown[] }).content[1]).toEqual({
             type: 'unsupported_block',
             attrs: { feature: 'callout', original },
         });
@@ -132,7 +132,7 @@ describe('internal slices', () => {
 
         pasteInto(target, { [SLICE_TYPE]: flavors.slice, 'text/plain': 'plain' });
 
-        const written = JSON.stringify((JSON.parse(flavors.slice) as { readonly content: unknown[] }).content);
+        const written = JSON.stringify((JSON.parse(flavors.slice) as { content: unknown[] }).content);
         expect(written).toContain('"type":"unsupported_inline"');
         expect(written).toContain('"type":"unsupported_mark"');
         expect(target.content()).toEqual([block]);

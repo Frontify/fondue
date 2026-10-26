@@ -218,11 +218,11 @@ describe('pasted HTML', () => {
 
             pasteInto(mounted, { 'text/html': html });
 
-            const content = mounted.content() as readonly { readonly type: string; readonly attrs: object }[];
+            const content = mounted.content() as readonly { type: string; attrs: object }[];
             if (levels.length === 0) {
                 expect(content).toEqual([block(text('a'))]);
             } else {
-                expect(content.map(({ type, attrs }) => [type, (attrs as { readonly level: number }).level])).toEqual(
+                expect(content.map(({ type, attrs }) => [type, (attrs as { level: number }).level])).toEqual(
                     levels.map((level) => ['heading', level]),
                 );
             }
@@ -346,7 +346,7 @@ describe('pasted HTML', () => {
         'parses the copied text/html and the toHTML output of %s to equal documents',
         (name) => {
             const stored = JSON.parse(readFileSync(join(valid, name), 'utf8')) as {
-                readonly content: { readonly content: readonly JsonValue[] };
+                content: { content: readonly JsonValue[] };
             };
             const mounted = mount({ blocks: stored.content.content });
             selectAll(mounted);
@@ -387,7 +387,7 @@ describe('pasted HTML', () => {
 
     it('converts the copied text/html of the spaces fixture with fromHTML to the mounted source document', () => {
         const stored = JSON.parse(readFileSync(join(valid, 'spaces.json'), 'utf8')) as {
-            readonly content: { readonly content: readonly JsonValue[] };
+            content: { content: readonly JsonValue[] };
         };
 
         const { imported, source } = roundTrip(model, stored.content.content);
@@ -473,7 +473,7 @@ describe('pasted HTML', () => {
 
             pasteInto(mounted, { 'text/html': readFileSync(join(security, name), 'utf8') });
 
-            const content = mounted.content() as readonly { readonly type: string }[];
+            const content = mounted.content() as readonly { type: string }[];
             expect(content.map(({ type }) => type)).toEqual(['paragraph', 'paragraph', 'paragraph']);
             expect(JSON.stringify(content)).not.toMatch(/"marks"|evil|javascript/);
             mounted.unmount();
@@ -539,7 +539,7 @@ describe('pasted HTML', () => {
             pasteInto(mounted, { 'text/html': `<p>${html}</p>` });
 
             const paragraphs = mounted.content() as readonly {
-                readonly content: readonly { readonly marks: readonly { readonly type: string }[] }[];
+                content: readonly { marks: readonly { type: string }[] }[];
             }[];
             expect(
                 paragraphs.flatMap((child) => child.content.flatMap((run) => run.marks.map((entry) => entry.type))),
@@ -602,7 +602,7 @@ describe('pasted HTML', () => {
 
         pasteInto(mounted, { 'text/html': html });
 
-        expect((mounted.content() as readonly { readonly type: string }[]).map((child) => child.type)).toEqual([type]);
+        expect((mounted.content() as readonly { type: string }[]).map((child) => child.type)).toEqual([type]);
         mounted.unmount();
     });
 });

@@ -25,20 +25,20 @@ const MSO_PROPERTY = /(?:^|;)\s*mso-/i;
 type MarkerFormat = 'decimal' | 'lower-alpha' | 'upper-alpha' | 'lower-roman' | 'upper-roman';
 
 type ListParagraph = {
-    readonly element: Element;
-    readonly list: string;
-    readonly level: number;
-    readonly ordered: boolean;
+    element: Element;
+    list: string;
+    level: number;
+    ordered: boolean;
     /** The format its marker text shows, which its list takes when the item opens it; `null` for a bullet or no marker. */
-    readonly format: MarkerFormat | null;
+    format: MarkerFormat | null;
 };
 
 type OpenList = {
-    readonly element: HTMLElement;
-    readonly list: string;
+    element: HTMLElement;
+    list: string;
     /** The Word level of its items, clamped. */
-    readonly level: number;
-    readonly ordered: boolean;
+    level: number;
+    ordered: boolean;
 };
 
 /** A marker's number or letters before its delimiter, such as `iv` in `iv)`. */
