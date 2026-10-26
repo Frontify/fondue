@@ -19,8 +19,10 @@ const marksOf = ({ handle }: ReturnType<typeof mountText>) => {
     if (block === undefined) {
         return [];
     }
+
     return (block.content ?? []).map((child) => {
         const marks = (child.marks ?? []).map(({ type }) => `[${type}]`).join('');
+
         return `${child.text ?? ''}${marks}`;
     });
 };
@@ -34,6 +36,7 @@ describe('marks.subscript and marks.superscript', () => {
             const result = mounted.handle.execute(`mark.${name}.toggle`);
             const marks = marksOf(mounted);
             mounted.unmount();
+
             return [result.status, marks];
         });
 

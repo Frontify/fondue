@@ -37,11 +37,14 @@ const uploads: UploadService = {
                 if (step < STEPS) {
                     return;
                 }
+
                 clearInterval(timer);
                 if (filename.includes('fail')) {
                     reject(new Error('The service refused the file.'));
+
                     return;
                 }
+
                 resolve({ assetId: `upload-${operationId}`, mediaType: 'image/jpeg', labelSnapshot: filename });
             }, STEP_MS);
             signal.addEventListener('abort', () => {
@@ -121,6 +124,7 @@ const pngHeader = () => {
     view.setUint32(16, 64);
     view.setUint32(20, 32);
     bytes.set([8, 6, 0, 0, 0], 24);
+
     return bytes;
 };
 
@@ -140,6 +144,7 @@ export const Default: StoryObj<typeof RichTextEditor> = {
         if (chooser === null) {
             throw new Error('Image opened no file chooser.');
         }
+
         await userEvent.upload(chooser, new File([pngHeader()], 'logo.png', { type: 'image/png' }));
 
         await expect(await within(surface()).findByRole('progressbar', { name: 'logo.png' })).toBeVisible();

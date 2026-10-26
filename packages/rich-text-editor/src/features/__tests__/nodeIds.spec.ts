@@ -26,6 +26,7 @@ const losslessAddressed = (model: ContentModel, format: 'html' | 'markdown'): st
         if (declaration.formats?.[format] !== 'lossless') {
             return [];
         }
+
         return Object.keys(declaration.nodes ?? {}).filter((name) => ADDRESSED.includes(name));
     });
 
@@ -36,8 +37,10 @@ const countsOf = (node: ContentNodeJSON, types: readonly string[]) =>
 /** A `generateId` that counts, so a test tells its IDs from any other. */
 const counter = () => {
     let next = 0;
+
     return () => {
         next += 1;
+
         return `g${next}`;
     };
 };
@@ -47,6 +50,7 @@ const keptNodes = (node: TreeNode): TreeNode[] => {
     if (node.type === 'unsupported_block' || node.type === 'unsupported_inline') {
         return [];
     }
+
     return [node, ...(node.content ?? []).flatMap((child) => keptNodes(child))];
 };
 
@@ -65,13 +69,17 @@ const withIds = (document: RichTextDocument, ids: readonly (string | null)[]): R
             if (id !== null) {
                 copy.attrs = { ...rest, nodeId: id };
             }
+
             next += 1;
         }
+
         if (node.content !== undefined) {
             copy.content = node.content.map(visit);
         }
+
         return copy as unknown as ContentNodeJSON;
     };
+
     return { ...document, content: visit(document.content) } as RichTextDocument;
 };
 
@@ -121,6 +129,7 @@ describe(seeded('nodeIds of generated documents'), () => {
                         if (tree === undefined) {
                             throw new Error('The document does not decode.');
                         }
+
                         const kept = addressedIn(keptNodes(tree)).map(({ attrs }) => attrs?.nodeId);
                         const repeated = nodeIdsIn(stored.content).length - new Set(nodeIdsIn(stored.content)).size;
                         const missing = nodeIdsIn(generated.content).length - nodeIdsIn(stored.content).length;
@@ -170,6 +179,7 @@ describe(seeded('nodeIds of generated documents'), () => {
                         if (result.status !== 'editable') {
                             throw new Error('The output does not import.');
                         }
+
                         const ids = addressedIn(nodesIn(result.document.content)).map(({ attrs }) => attrs?.nodeId);
                         const kept = losslessAddressed(model, format);
 

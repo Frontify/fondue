@@ -72,6 +72,7 @@ test('keeps the heading in the frame on Go to when the surface holds a stale DOM
         if (text === null || text === undefined || selection === null || selection === undefined) {
             throw new Error('The first paragraph has no text to select.');
         }
+
         selection.setBaseAndExtent(text, 1, text, 3);
         (element.ownerDocument.activeElement as HTMLElement | null)?.blur();
     });
@@ -85,6 +86,7 @@ test('keeps the heading in the frame on Go to when the surface holds a stale DOM
         .poll(async () => {
             const box = await heading.boundingBox();
             const frameBox = await frame.boundingBox();
+
             return (
                 box !== null &&
                 frameBox !== null &&
@@ -112,6 +114,7 @@ for (const forcedColors of ['none', 'active'] as const) {
         await expect(link).toHaveText('here');
         const marked = await link.evaluate((element) => {
             const style = getComputedStyle(element);
+
             return { style: style.outlineStyle, width: Number.parseFloat(style.outlineWidth) };
         });
         expect(marked).toEqual({ style: 'solid', width: 2 });
@@ -185,6 +188,7 @@ test('opens on its summary heading, lets Tab move through its controls and out, 
     if (browserName === 'webkit') {
         tab = 'Alt+Tab';
     }
+
     let presses = 0;
     let inside = true;
     while (inside && presses <= controls) {
@@ -192,6 +196,7 @@ test('opens on its summary heading, lets Tab move through its controls and out, 
         presses += 1;
         inside = await focusInPanel();
     }
+
     expect(inside).toBe(false);
     expect(presses).toBeGreaterThan(1);
     await expect(surface).toBeFocused();

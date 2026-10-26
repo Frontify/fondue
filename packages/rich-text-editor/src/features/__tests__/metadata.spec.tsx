@@ -36,6 +36,7 @@ const show = (value: unknown): string => {
     if (typeof value === 'string' || typeof value === 'number') {
         return String(value);
     }
+
     return JSON.stringify(value);
 };
 
@@ -49,23 +50,28 @@ const metadataOf = (blocks: readonly ContentNodeJSON[]): string[] =>
         if (node.type === 'heading') {
             own.push(`h${show(node.attrs?.level)} ${textOf(node)}`);
         }
+
         if (node.attrs?.lang !== undefined && node.attrs.lang !== null) {
             own.push(`${node.type} lang ${show(node.attrs.lang)}`);
         }
+
         if (node.type === 'asset_image') {
             const intent = show(node.attrs?.altIntent);
             own.push(`image ${intent} "${show(node.attrs?.altText)}"`);
         }
+
         const text = node.text ?? '';
         for (const mark of node.marks ?? []) {
             if (mark.type === 'link') {
                 own.push(`link ${show(mark.attrs?.href)} ${text}`);
             }
+
             if (mark.type === 'language') {
                 const lang = show(mark.attrs?.lang);
                 own.push(`language ${lang} ${show(mark.attrs?.dir)} ${text}`);
             }
         }
+
         return [...own, ...metadataOf(node.content ?? [])];
     });
 
@@ -100,10 +106,12 @@ const mount = (document: RichTextDocument) => {
     if (handle === null || view === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     const selectAll = () =>
         act(() => {
             view.dispatch(view.state.tr.setSelection(new AllSelection(view.state.doc)));
         });
+
     return { handle, view, selectAll, unmount: rendered.unmount };
 };
 
@@ -116,6 +124,7 @@ const copiedFixture = () => {
         source.view.dom.dispatchEvent(new ClipboardEvent('copy', { clipboardData, bubbles: true, cancelable: true }));
     });
     source.unmount();
+
     return clipboardData;
 };
 
@@ -132,6 +141,7 @@ const pasted = (input: Parameters<typeof paste>[1]) => {
     const blocks = target.handle.getSnapshot().document.content.content ?? [];
     const announced = screen.getByTestId('fondue-rich-text-editor-announcer').textContent;
     target.unmount();
+
     return { blocks, announced };
 };
 
@@ -174,20 +184,27 @@ describe('the accessibility metadata fixture', () => {
             if (/^h[1-6]$/.test(name)) {
                 return [`${name} ${text}`];
             }
+
             if (name === 'p' && lang !== null) {
                 return [`paragraph lang ${lang}`];
             }
+
             if (name === 'span' && lang !== null) {
                 const dir = element.getAttribute('dir') ?? '';
+
                 return [`language ${lang} ${dir} ${text}`];
             }
+
             if (name === 'a') {
                 const href = element.getAttribute('href') ?? '';
+
                 return [`link ${href} ${text}`];
             }
+
             if (name === 'img') {
                 return [`image "${element.getAttribute('alt') ?? 'no alt'}"`];
             }
+
             return [];
         });
 
@@ -212,6 +229,7 @@ describe('the accessibility metadata fixture', () => {
         ]) {
             expect(markdown).toContain(part);
         }
+
         expect(losses.map(({ featureId }) => featureId)).toEqual(['core', 'marks.language', 'media.image']);
     });
 });

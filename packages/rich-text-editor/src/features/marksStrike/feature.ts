@@ -11,6 +11,7 @@ const declaresStrike = (element: Element): boolean | undefined => {
     if (STRUCK.has(element.localName) || decorationLines(element).includes('line-through')) {
         return true;
     }
+
     return undefined;
 };
 
@@ -44,6 +45,7 @@ export const strike = defineFeature({
                 if (readsStrike(element)) {
                     return {};
                 }
+
                 return null;
             },
         },

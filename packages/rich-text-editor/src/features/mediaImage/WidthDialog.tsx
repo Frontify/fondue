@@ -50,16 +50,20 @@ export const WidthDialog = ({
             } else {
                 field?.focus();
             }
+
             return;
         }
+
         api?.select({ nodeId, at: 'node' });
         api?.commands.execute(SET_SIZE, { displayWidth });
         dialog.finish('opener');
     };
+
     let describedBy: { readonly 'aria-describedby'?: string } = {};
     if (invalid) {
         describedBy = { 'aria-describedby': errorId };
     }
+
     return (
         <EditorDialog
             dialog={dialog}

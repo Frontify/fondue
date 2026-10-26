@@ -66,6 +66,7 @@ describe('alignment, direction and language output', () => {
             expect(markup).toContain(`text-align:${value}`);
             expect(html).toContain(`text-align:${value}`);
         }
+
         expect(html).toMatchSnapshot();
         expect(markup).toBe(html);
     });

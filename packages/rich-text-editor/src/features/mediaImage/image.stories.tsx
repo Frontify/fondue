@@ -20,6 +20,7 @@ const assets: AssetPickerService = {
     pick: () => {
         const assetId = LIBRARY[picked % LIBRARY.length] ?? 'harbour';
         picked += 1;
+
         return Promise.resolve({ assetId, mediaType: 'image/jpeg', labelSnapshot: `${assetId}.jpg` });
     },
 };

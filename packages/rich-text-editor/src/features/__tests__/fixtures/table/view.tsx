@@ -9,6 +9,7 @@ import { fixtureTableBlock } from './feature';
 const TableChrome = () => {
     const { context, select } = useRichTextNodeView();
     const label = context.t('RichTextEditor_fixtureTable');
+
     return (
         <NodeChromeToolbar aria-label={label}>
             <NodeChromeButton label={label} onClick={select} />

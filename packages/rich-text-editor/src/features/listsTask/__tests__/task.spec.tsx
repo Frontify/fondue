@@ -19,6 +19,7 @@ const mountTasks = async (options: Parameters<typeof mountText>[0]) => {
     await act(async () => {
         await Promise.resolve();
     });
+
     return mounted;
 };
 
@@ -37,6 +38,7 @@ const idsOf = (handle: ReturnType<typeof mountText>['handle']) => {
     if (taskList === undefined) {
         return [];
     }
+
     return (taskList.content ?? []).map((node) => [node.attrs?.nodeId, outline(node)]);
 };
 
@@ -113,8 +115,10 @@ describe('lists.task', () => {
             if (result.status === 'blocked') {
                 throw new Error('The Markdown does not decode.');
             }
+
             return result.document.content.content ?? [];
         };
+
         expect(blocksOf(withTasks).map(outline)).toEqual([
             {
                 tasks: [
@@ -136,13 +140,17 @@ describe('lists.task', () => {
                 for (const child of first.content ?? []) {
                     text += child.text ?? '';
                 }
+
                 found.push({ [text]: node.attrs?.checked === true });
             }
+
             for (const child of node.content ?? []) {
                 visit(child);
             }
         };
+
         visit(handle.getSnapshot().document.content);
+
         return found;
     };
 
@@ -183,6 +191,7 @@ describe('lists.task', () => {
             paste(handle, { html });
         });
     };
+
     /** The `nodeId` of each task item of the snapshot, in document order. */
     const taskIdsOf = (handle: ReturnType<typeof mountText>['handle']) => {
         const ids: unknown[] = [];
@@ -190,11 +199,14 @@ describe('lists.task', () => {
             if (node.type === 'task_item') {
                 ids.push(node.attrs?.nodeId);
             }
+
             for (const child of node.content ?? []) {
                 visit(child);
             }
         };
+
         visit(handle.getSnapshot().document.content);
+
         return ids;
     };
 

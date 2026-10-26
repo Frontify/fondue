@@ -33,6 +33,7 @@ const readerOf = (blocks: Parameters<typeof storedIn>[1], resolvers: Resolvers =
             onDiagnostic: (diagnostic) => diagnostics.push(diagnostic),
         }),
     );
+
     return { markup, diagnostics };
 };
 
@@ -40,6 +41,7 @@ const readerOf = (blocks: Parameters<typeof storedIn>[1], resolvers: Resolvers =
 const outputsOf = (blocks: Parameters<typeof storedIn>[1], resolvers: Resolvers = {}) => {
     const document = storedIn(model, blocks);
     const codecs = createCodecs(model);
+
     return {
         reader: readerOf(blocks, resolvers),
         html: codecs.toHTML(document, resolvers),
@@ -180,12 +182,14 @@ describe('image output', () => {
                 if (assetId === 'asset-broken') {
                     throw new Error('lookup failed');
                 }
+
                 return resolving(assetId, options);
             },
             resolveReference: (_type, resourceId) => {
                 if (resourceId === 'user-1') {
                     throw new Error('lookup failed');
                 }
+
                 return { status: 'current', label: 'Grace Hopper' };
             },
         };
@@ -218,6 +222,7 @@ describe('image output', () => {
             expect(markup).toContain('alt="&lt;img src=x onerror=alert(1)&gt;"');
             expect(markup).toContain('<bdi>&lt;img src=x onerror=alert(1)&gt;</bdi>');
         }
+
         expect(plain.text).toBe(`${hostile}\n\nFrontify logo`);
         // An escaped `<` starts no HTML in CommonMark, so the alt text stays text.
         expect(markdown.markdown).toBe(
@@ -267,6 +272,7 @@ describe('stored host resources', () => {
         for (const output of [reader.markup, html.html, plain.text, markdown.markdown]) {
             expect(output).not.toMatch(/token|signature|sig=|users\/1|avatar/i);
         }
+
         expect(resolveAssetUrl.mock.calls.every(([assetId]) => assetId === 'asset-logo')).toBe(true);
     });
 });

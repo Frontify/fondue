@@ -50,30 +50,38 @@ export const useLanguageState = ({ opener, close }: OverlayProps) => {
         if (api === undefined) {
             return;
         }
+
         const result = api.commands.execute(SET_LANGUAGE, { lang: tag, dir: directionOf(dir) });
         if (result.status === 'rejected') {
             setInvalid(true);
             setRejections((count) => count + 1);
+
             return;
         }
+
         dialog.finish('surface');
     };
+
     const remove = () => {
         api?.commands.execute(SET_LANGUAGE, null);
         dialog.finish('surface');
     };
+
     const chooseTag = (value: string) => {
         setTag(value);
         setInvalid(false);
     };
+
     useEffect(() => {
         if (rejections === 0) {
             return;
         }
+
         const radio = groupRef.current?.querySelector<HTMLElement>('[role="radio"][aria-describedby]');
         const target = radio ?? fieldRef.current;
         target?.focus();
     }, [rejections]);
+
     return {
         dialog,
         strings,

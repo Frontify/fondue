@@ -25,6 +25,7 @@ test('moves the selection to the start of the chosen heading, scrolls it into vi
     const heading = page.locator('h2', { hasText: 'Down here' });
     const before = await page.evaluate(() => {
         const rte = window.outlineRte as OutlineRte;
+
         return { sequence: rte.sequence(), document: rte.document() };
     });
     const hidden = await Promise.all([frame.boundingBox(), heading.boundingBox()]);
@@ -50,6 +51,7 @@ test('moves the selection to the start of the chosen heading, scrolls it into vi
         });
     const after = await page.evaluate(() => {
         const rte = window.outlineRte as OutlineRte;
+
         return { sequence: rte.sequence(), document: rte.document() };
     });
     expect(after).toEqual(before);
@@ -85,6 +87,7 @@ test('scrolls a heading above the visible area clear of the sticky toolbar', asy
                 page.getByTestId('fondue-rich-text-editor-toolbar').boundingBox(),
                 heading.boundingBox(),
             ]);
+
             return shown!.y >= toolbar!.y + toolbar!.height;
         })
         .toBe(true);
@@ -101,6 +104,7 @@ test('scrolls a selected node into view, not the start of the surface', async ({
     await expect
         .poll(async () => {
             const [box, shown] = await Promise.all([frame.boundingBox(), heading.boundingBox()]);
+
             return shown!.y < box!.y + box!.height && shown!.y + shown!.height > box!.y;
         })
         .toBe(true);
@@ -152,6 +156,7 @@ test('scrolls the caret of a heading taller than the frame clear of the sticky t
     await expect
         .poll(async () => {
             const [shown, stuck] = await Promise.all([heading.boundingBox(), toolbar.boundingBox()]);
+
             return shown!.y >= stuck!.y + stuck!.height;
         })
         .toBe(true);

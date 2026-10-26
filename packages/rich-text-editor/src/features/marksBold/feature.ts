@@ -9,16 +9,21 @@ const declaredBold = (element: Element): boolean | undefined => {
     if (style !== undefined) {
         weight = style.getPropertyValue('font-weight').trim().toLowerCase();
     }
+
     if (weight === '' || weight === 'inherit' || weight === 'unset') {
         if (element.localName === 'b' || element.localName === 'strong') {
             return true;
         }
+
         return undefined;
     }
+
     if (weight === 'bold' || weight === 'bolder') {
         return true;
     }
+
     const value = Number(weight);
+
     return Number.isFinite(value) && value >= 600;
 };
 
@@ -60,6 +65,7 @@ export const bold = defineFeature({
                 if (readsBold(element)) {
                     return {};
                 }
+
                 return null;
             },
         },

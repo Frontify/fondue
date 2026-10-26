@@ -24,6 +24,7 @@ let taken: { readonly names: readonly string[]; readonly origin: string; readonl
 
 const Grab = () => {
     live = useEditorApi();
+
     return null;
 };
 
@@ -37,6 +38,7 @@ const grabbing = defineEditorPart(mediaUpload, {
     overlays: [Grab],
     files: (api, files, at) => {
         taken.push({ names: files.map(({ name }) => name), origin: at.origin, text: api.selectedText() });
+
         return true;
     },
 });
@@ -47,6 +49,7 @@ const apiOf = () => {
     if (live === undefined) {
         throw new Error('The editor API did not mount.');
     }
+
     return live;
 };
 

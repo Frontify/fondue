@@ -18,6 +18,7 @@ export const TagField = ({ state }: { readonly state: LanguageState }) => {
         status = 'error';
         describedBy = { 'aria-describedby': ids.error };
     }
+
     return (
         <>
             <Label htmlFor={ids.field}>{strings.tag}</Label>
@@ -46,6 +47,7 @@ export const LanguageRadios = ({ state }: { readonly state: LanguageState }) => 
         errorMessage = ids.error;
         invalidOption = offered.includes(tag) ? tag : offered[0];
     }
+
     return (
         // RadioList.Root takes no invalid or error props, so it renders onto this div, which carries them.
         <RadioList.Root asChild aria-labelledby={ids.legend} value={tag} onValueChange={state.chooseTag}>

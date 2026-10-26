@@ -49,8 +49,10 @@ const press = (
     // ProseMirror reads the legacy `keyCode` of Enter, Escape, Backspace, Delete and the arrows, which no event init sets.
     Object.defineProperty(event, 'keyCode', { get: () => keyCode });
     view.dom.dispatchEvent(event);
+
     return event.defaultPrevented;
 };
+
 const onPlatform = (apple: boolean) =>
     vi.spyOn(navigator, 'platform', 'get').mockReturnValue(apple ? 'MacIntel' : 'Win32');
 
@@ -130,17 +132,21 @@ const started = (start: Row['start']) => {
     if (start === 'heading') {
         blocks = [heading(text('one two'))];
     }
+
     if (start === 'first' || start === 'second') {
         blocks = [para(text('one')), para(text('two'))];
     }
+
     const mounted = mountText({ model, blocks });
     if (start === 'typed' || start === 'undone') {
         setSelection(mounted.handle, { text: 'one two', from: 7, to: 7 });
         typeText(mounted.handle, '!');
     }
+
     if (start === 'undone') {
         mounted.handle.execute('history.undo');
     }
+
     if (start === 'second') {
         setSelection(mounted.handle, { text: 'two', from: 1, to: 1 });
     } else if (start === 'first') {
@@ -148,6 +154,7 @@ const started = (start: Row['start']) => {
     } else if (start !== 'typed' && start !== 'undone') {
         setSelection(mounted.handle, { text: 'two' });
     }
+
     return mounted;
 };
 
@@ -157,17 +164,21 @@ const ran = ({ changes }: Mounted) => {
     if (change === undefined) {
         return 'nothing';
     }
+
     if (change.origin === 'history') {
         return 'history';
     }
+
     if (change.commandId === 'heading.set') {
         const [block] = change.readDocument().content.content ?? [];
         let level: unknown;
         if (block !== undefined && block.attrs !== undefined) {
             level = block.attrs.level;
         }
+
         return `heading.set ${JSON.stringify(level)}`;
     }
+
     return change.commandId;
 };
 
@@ -198,6 +209,7 @@ describe('core keys', () => {
                     press(mounted, keys);
                     const result = [mounted.changes.length - before, ran(mounted)];
                     mounted.unmount();
+
                     return result;
                 });
                 const crossed = foreign.map((keys) => {
@@ -206,6 +218,7 @@ describe('core keys', () => {
                     press(mounted, keys);
                     const count = mounted.changes.length - before;
                     mounted.unmount();
+
                     return count;
                 });
 
@@ -246,6 +259,7 @@ describe('core keys', () => {
                     const parts = key.split(/-(?!$)/);
                     const last = parts.at(-1) ?? '';
                     const printable = Array.from(last).length === 1;
+
                     return printable && !parts.slice(0, -1).some((part) => ['Mod', 'Ctrl', 'Alt'].includes(part));
                 })
                 .map((key) => `${name}: ${key}`),
@@ -281,12 +295,15 @@ describe('core keys', () => {
         for (const [index, key] of [...'abcdefghijklmnopqrstuvwxyz'].entries()) {
             keyCodes[key] = 65 + index;
         }
+
         for (const [index, key] of [...'0123456789'].entries()) {
             keyCodes[key] = 48 + index;
         }
+
         for (const [index, key] of [...punctuation].entries()) {
             keyCodes[key] = codes[index] ?? 0;
         }
+
         const shifted = Object.fromEntries(
             [...`0123456789${punctuation}`].map((key, index) => [key, ')!@#$%^&*(<>?:"{}|_+~'[index]]),
         );
@@ -297,6 +314,7 @@ describe('core keys', () => {
             const parts = modOn(key, apple).split(/-(?!$)/);
             bound.add(canonical(parts.slice(0, -1), parts.at(-1) ?? ''));
         };
+
         const installed = new Set(compiledModel(model).features.map(({ id }) => id));
         const prevented: string[] = [];
         for (const apple of [true, false]) {
@@ -307,6 +325,7 @@ describe('core keys', () => {
                 if (!installed.has(plugin.feature)) {
                     continue;
                 }
+
                 for (const key of Object.keys(plugin.keys ?? {})) {
                     const here = keyOn(key, apple);
                     if (here !== undefined) {
@@ -314,16 +333,19 @@ describe('core keys', () => {
                     }
                 }
             }
+
             // The base keymap: Enter, Backspace, Delete and select-all.
             for (const key of Object.keys(apple ? macBaseKeymap : pcBaseKeymap)) {
                 bind(bound, key, apple);
             }
+
             // ProseMirror prevents the browser's own bold, italic, undo and redo, which would bypass the history, by
             // its own platform check, which read the test environment's platform when it loaded.
             for (const key of ['b', 'i', 'y', 'z']) {
                 bind(bound, `Mod-${key}`, apple);
                 bind(bound, `Ctrl-${key}`, apple);
             }
+
             const mounted = mountText({ model, blocks: [para(text('one two'))] });
             setSelection(mounted.handle, { text: 'one two', from: 3, to: 3 });
             for (const mods of subsets) {
@@ -331,10 +353,12 @@ describe('core keys', () => {
                     if (bound.has(canonical(mods, key))) {
                         continue;
                     }
+
                     let typed = key;
                     if (mods.includes('Shift') && key.length === 1) {
                         typed = shifted[key] ?? key.toUpperCase();
                     }
+
                     const has = (name: string) => mods.includes(name);
                     const pressed = {
                         key: typed,
@@ -348,6 +372,7 @@ describe('core keys', () => {
                     }
                 }
             }
+
             mounted.unmount();
             vi.restoreAllMocks();
         }

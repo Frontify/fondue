@@ -14,8 +14,10 @@ const p = (text?: string): Block => {
     if (text === undefined) {
         return { type: 'paragraph' };
     }
+
     return { type: 'paragraph', content: [{ type: 'text', text }] };
 };
+
 const bullets = (...items: readonly string[]): Block => ({
     type: 'bullet_list',
     content: items.map((text) => ({ type: 'list_item', content: [p(text)] })),
@@ -29,6 +31,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.keyProbe !== undefined)).toBe(true);
 };
+
 /** Focuses the surface with the caret `offset` characters into the first match of `text`. */
 const caretIn = async (page: Page, text: string, offset = text.length) => {
     await surfaceOf(page).focus();
@@ -42,6 +45,7 @@ const caretIn = async (page: Page, text: string, offset = text.length) => {
         [text, offset] as const,
     );
 };
+
 /** Each block as its type with its children, and text as itself: `bullet_list(list_item(paragraph(one)))`. */
 const shapeOf = (page: Page) =>
     page.evaluate(() => {
@@ -54,12 +58,16 @@ const shapeOf = (page: Page) =>
             if (node.type === 'text') {
                 return node.text ?? '';
             }
+
             if (node.content === undefined) {
                 return node.type;
             }
+
             return `${node.type}(${node.content.map(shape).join('|')})`;
         };
+
         const blocks = (window.keyProbe as Probe).handle.getSnapshot().document.content.content ?? [];
+
         return (blocks as readonly Node_[]).map(shape);
     });
 /** The last keydown the host heard: its key and whether it arrived prevented. */
@@ -123,8 +131,10 @@ const leftToComposition =
                 if (by === 'keyCode') {
                     init = { keyCode: 229 };
                 }
+
                 const event = new KeyboardEvent('keydown', { key: name, bubbles: true, cancelable: true, ...init });
                 surface.dispatchEvent(event);
+
                 return event.defaultPrevented;
             },
             [key, signal] as const,
@@ -150,6 +160,7 @@ const boldRuleAfter = async (page: Page, text?: string) => {
         await caretIn(page, text);
         await page.keyboard.type(' **b**');
     }
+
     await expect.poll(() => surfaceOf(page).locator('strong').count()).toBe(1);
 };
 
@@ -418,8 +429,10 @@ const ROWS: readonly Case[] = [
                     await expect
                         .poll(() => shapeOf(page))
                         .toEqual(['blockquote(paragraph(quoted))', 'paragraph(after)']);
+
                     return;
                 }
+
                 expect(await lastKey(page)).toEqual([key, false]);
                 expect(await shapeOf(page)).toEqual(['blockquote(paragraph(quoted)|paragraph)', 'paragraph(after)']);
             },

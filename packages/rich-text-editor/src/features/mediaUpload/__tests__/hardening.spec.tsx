@@ -36,6 +36,7 @@ const started = async (options: Parameters<typeof mountUploads>[0] = {}) => {
     const mounted = await mountUploads(options);
     caretAfterBefore(mounted);
     await mounted.choose([pngFile('logo.png')]);
+
     return { ...mounted, nodeId: mounted.imageIds()[0] ?? '' };
 };
 
@@ -52,6 +53,7 @@ const commentedJpeg = async (name: string, comments: number, frame = true) => {
     const sof = jpeg.findIndex((byte, index) => byte === 0xff && jpeg[index + 1] === 0xc0);
     const segments = Array.from({ length: comments }, () => Uint8Array.from([0xff, 0xfe, 0x00, 0x04, 0x20, 0x20]));
     const rest = frame ? jpeg.subarray(2) : new Uint8Array([...jpeg.subarray(2, sof), ...jpeg.subarray(sof + 19)]);
+
     return new File([jpeg.subarray(0, 2), ...segments, rest], name, { type: 'image/jpeg' });
 };
 
@@ -348,6 +350,7 @@ describe('what a screen reader hears of uploads', () => {
             act(() => mounted.uploads.pending[0]?.context.reportProgress(fraction));
             await settle();
         }
+
         await mounted.uploads.complete(0);
         await record.stop();
 

@@ -62,7 +62,9 @@ const statusOf = (found: Found, strings: MentionSearchStrings): string => {
     if (found.status === 'failed') {
         return strings.failed;
     }
+
     const count = resultsOf(found.items).length;
+
     return count > 0 ? strings.results(count) : strings.noResults;
 };
 
@@ -74,12 +76,15 @@ const useInsertTarget = (targets: EditorApi['targets']) => {
         if (captured === undefined) {
             return undefined;
         }
+
         targetRef.current = captured;
+
         return () => {
             targetRef.current = null;
             targets.release(captured);
         };
     }, [targets]);
+
     return targetRef;
 };
 
@@ -99,14 +104,17 @@ const useSearchResults = (services: EditorApi['services'], resourceTypes: readon
             if (!current) {
                 return;
             }
+
             let shown: readonly ResultItem[] = [];
             if (ask.page !== null) {
                 shown = resultsOf(itemsRef.current);
             }
+
             let items = afterFailure(shown);
             if (results !== undefined) {
                 items = afterPage(shown, results);
             }
+
             // The first new option, or the last one when the page added none, so Enter takes the option announced.
             setIndex(Math.max(0, Math.min(shown.length, items.length - 1)));
             setFound((previous) => ({
@@ -115,24 +123,30 @@ const useSearchResults = (services: EditorApi['services'], resourceTypes: readon
                 answers: previous.answers + 1,
             }));
         };
+
         const load = () => {
             const service = services.references();
             if (service === undefined) {
                 receive(undefined);
+
                 return;
             }
+
             service
                 .search(ask.query, resourceTypes, controller.signal, ask.page)
                 .then((page) => receive({ items: page.items.map(resultOf), nextCursor: page.nextCursor }))
                 .catch(() => receive(undefined));
         };
+
         let timer: ReturnType<typeof setTimeout> | undefined;
         if (ask.waits) {
             timer = setTimeout(load, SEARCH_DELAY_MS);
         } else {
             load();
         }
+
         const spinner = setTimeout(() => setSlow(true), SPINNER_DELAY_MS);
+
         return () => {
             current = false;
             clearTimeout(timer);
@@ -146,11 +160,13 @@ const useSearchResults = (services: EditorApi['services'], resourceTypes: readon
         setFound({ status: 'loading', items: resultsOf(found.items), answers: found.answers });
         setAsk({ query: ask.query, page, waits: false });
     };
+
     const searchFor = (query: string) => {
         setFound({ status: 'loading', items: resultsOf(found.items), answers: found.answers });
         setAsk({ query, page: null, waits: true });
         setIndex(0);
     };
+
     return { ask, found, slow, index, setIndex, askAgain, searchFor };
 };
 
@@ -183,13 +199,17 @@ const useAnnouncements = (
                     announce(spoken);
                 }
             }
+
             return;
         }
+
         if (last === null || last.answers !== found.answers) {
             const status = statusOf(found, strings);
             announce(spoken === undefined ? status : strings.both(status, spoken));
+
             return;
         }
+
         if (spoken !== undefined && last.key !== item?.key) {
             announce(spoken);
         }
@@ -217,51 +237,68 @@ export const useSearchDialogState = (
         if (item === undefined) {
             return;
         }
+
         if (item.action === 'more' && item.cursor !== undefined) {
             askAgain(item.cursor);
+
             return;
         }
+
         if (item.action === 'retry') {
             askAgain(ask.page);
+
             return;
         }
+
         let commandOptions: { readonly focus: 'editor'; readonly target?: SelectionHandle } = { focus: 'editor' };
         if (targetRef.current !== null) {
             commandOptions = { focus: 'editor', target: targetRef.current };
         }
+
         if (api.commands.execute(INSERT_MENTION, item.payload, commandOptions).status === 'rejected') {
             return;
         }
+
         dialog.finish('surface');
     };
+
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (passesToBrowser(event.nativeEvent)) {
             return;
         }
+
         // The Enter that confirms a composition is spent here, with options or none, so it never marks a later Enter.
         if (event.key === 'Enter' && event.timeStamp - composedAtRef.current < COMPOSITION_ENTER_MS) {
             composedAtRef.current = Number.NEGATIVE_INFINITY;
             event.preventDefault();
+
             return;
         }
+
         if (options.length === 0) {
             return;
         }
+
         if (event.key === 'ArrowDown') {
             event.preventDefault();
             setIndex(wrapped(index + 1, options.length));
+
             return;
         }
+
         if (event.key === 'ArrowUp') {
             event.preventDefault();
             setIndex(wrapped(index - 1, options.length));
+
             return;
         }
+
         if (event.key === 'Enter') {
             event.preventDefault();
             choose(index);
         }
     };
+
     const shownIndex = Math.min(index, Math.max(0, options.length - 1));
     useAnnouncements(found, shownIndex, strings, dialog.announce);
     let controls: string | undefined;
@@ -271,6 +308,7 @@ export const useSearchDialogState = (
         controls = listId;
         activeId = suggestionOptionId(listId, active.key);
     }
+
     // Fondue's `TextInput` passes props it does not declare on to its `input`, and declares no `role` or composition events.
     const combobox = {
         role: 'combobox',
@@ -282,6 +320,7 @@ export const useSearchDialogState = (
         setQuery(next);
         searchFor(next);
     };
+
     return {
         strings,
         testId: api.testId(),

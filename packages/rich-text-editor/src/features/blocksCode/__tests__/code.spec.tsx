@@ -36,8 +36,10 @@ const blocksOf = (handle: ReturnType<typeof mountText>['handle']) =>
 const blockText = (handle: ReturnType<typeof mountText>['handle'], index = 0) => {
     const block = blocksOf(handle)[index];
     const children = block?.content;
+
     return (children ?? []).map((node) => node.text ?? '').join('');
 };
+
 /** Presses `key` and reports whether the surface prevented it. */
 const press = (
     view: ReturnType<typeof mountText>['view'],
@@ -51,6 +53,7 @@ const press = (
         shiftKey: modifiers.shift === true,
     });
     view.dom.dispatchEvent(event);
+
     return event.defaultPrevented;
 };
 
@@ -314,6 +317,7 @@ describe('blocks.code', () => {
             for (let index = 0; index < 500; index++) {
                 blocks.push(code(lines(index), 'typescript'), para(text(`Paragraph ${index}`)));
             }
+
             const mounted = mountText({ model, blocks });
             await vi.waitFor(() => {
                 expect(mounted.view.dom.querySelectorAll('[class*="hljs-keyword"]').length).toBeGreaterThanOrEqual(
@@ -321,6 +325,7 @@ describe('blocks.code', () => {
                 );
             });
             await vi.advanceTimersByTimeAsync(0);
+
             return mounted;
         };
 
@@ -471,8 +476,10 @@ describe('blocks.code', () => {
                     pointerType: 'mouse',
                 });
             });
+
             return screen.getAllByRole('menuitemradio').map((row) => row.textContent);
         };
+
         const withCode = mountText({ model, blocks: [para(text('Hello'))], toolbar: [['text-style']] });
         const offered = open('Normal text');
         withCode.unmount();

@@ -28,18 +28,21 @@ const CodeChrome = () => {
     if (typeof attrs.languageId === 'string') {
         languageId = attrs.languageId;
     }
+
     const options = languageChoices(languageId, context.t);
     let current = '';
     const chosen = options.find(({ id }) => id === languageId);
     if (chosen !== undefined) {
         current = chosen.label;
     }
+
     // The chrome may render in an iframe, so the content element is read from the chrome's own document.
     const copy = () => {
         const content = contentId === null ? null : barRef.current?.ownerDocument.getElementById(contentId);
         const text = content?.textContent;
         navigator.clipboard.writeText(text ?? '').catch(() => undefined);
     };
+
     return (
         <div ref={barRef} className={styles.bar}>
             <NodeChromeToolbar aria-label={context.t('RichTextEditor_codeBlock')}>

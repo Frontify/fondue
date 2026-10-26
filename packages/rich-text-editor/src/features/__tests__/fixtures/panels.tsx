@@ -16,6 +16,7 @@ const FindPanel = () => (
 
 const PickerPanel = () => {
     const runtime = useContext(SessionContext);
+
     return (
         <div role="search" aria-label="Find">
             <button
@@ -52,12 +53,14 @@ const findPanel = (id: string, component: ComponentType<PanelComponentProps>) =>
                 readOnly: true,
                 run: (api) => {
                     api.panels.open('find');
+
                     return true;
                 },
             },
         },
         panels: [{ control: 'find', component }],
     });
+
     return { feature: feature(), plugin };
 };
 

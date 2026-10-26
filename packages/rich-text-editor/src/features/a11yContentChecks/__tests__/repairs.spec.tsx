@@ -38,11 +38,13 @@ const openPanel = () => {
     act(() => {
         fireEvent.click(screen.getByRole('button', { name: 'Accessibility checks' }));
     });
+
     return screen.getByRole('region', { name: 'Accessibility checks' });
 };
 
 const itemOf = (id: string) => {
     const panel = screen.getByRole('region', { name: 'Accessibility checks' });
+
     return within(panel)
         .getAllByRole('listitem')
         .find((element) => element.getAttribute('data-rte-issue-id') === id);
@@ -62,11 +64,13 @@ const fix = (id: string) => {
     if (item === undefined) {
         throw new Error(`No issue ${id} is listed.`);
     }
+
     const button = within(item).getByRole('button', { name: 'Fix' });
     act(() => {
         button.focus();
         fireEvent.click(button);
     });
+
     return button;
 };
 
@@ -91,6 +95,7 @@ const insertParagraph = ({ view }: Mounted, value: string) =>
         if (paragraph === undefined) {
             throw new Error('The model has no paragraph.');
         }
+
         view.dispatch(view.state.tr.insert(0, paragraph));
     });
 
@@ -356,8 +361,10 @@ describe('an issues panel repair', () => {
             if (item === undefined) {
                 throw new Error(`No issue ${id} is listed.`);
             }
+
             expect(within(item).queryByRole('button', { name: 'Fix' })).toBeNull();
         }
+
         const heading = itemOf('heading.empty:empty');
         expect(heading === undefined ? null : within(heading).getByRole('button', { name: 'Go to' })).toBeVisible();
         mounted.unmount();
@@ -368,14 +375,17 @@ describe('an issues panel repair', () => {
         openPanel();
         const languageFix = () => {
             const item = itemOf('language.parts-review');
+
             return item === undefined ? null : within(item).queryByRole('button', { name: 'Fix' });
         };
+
         expect(languageFix()).toBeVisible();
 
         const photo = itemOf('image.alt-missing:photo');
         if (photo === undefined) {
             throw new Error('No image issue is listed.');
         }
+
         act(() => {
             fireEvent.click(within(photo).getByRole('button', { name: 'Go to' }));
         });
@@ -430,6 +440,7 @@ describe('an issue from an older sequence', () => {
             if (pos === undefined) {
                 throw new Error('The heading is missing.');
             }
+
             view.dispatch(view.state.tr.insertText('Filled', pos + 1));
         });
         const selection = view.state.selection;
@@ -510,6 +521,7 @@ describe('a repair after edits since its run', () => {
             if (other === undefined) {
                 throw new Error('The model has no heading.');
             }
+
             view.dispatch(view.state.tr.replaceWith(pos, pos + 2, other));
         });
         const changes = mounted.changes.length;
@@ -740,8 +752,10 @@ describe('a control a repair opened, after it applies a change', () => {
                 fireEvent.click(screen.getByRole('menuitemradio', { name: /Custom text color/ }));
             });
             await flush();
+
             return button;
         };
+
         const button = await openDraft();
         const draft = screen.getByRole('dialog', { name: 'Custom text color' });
         act(() => {

@@ -44,6 +44,7 @@ const depthOf = (list: Shape | null): number => {
     if (list === null) {
         return 0;
     }
+
     return 1 + Math.max(...list.items.map(({ children }) => depthOf(children)));
 };
 
@@ -57,20 +58,26 @@ const documentOf = (list: Shape): Node => {
             if (children !== null) {
                 blocks.push(listJson(children));
             }
+
             if (kind === 'task') {
                 return { type: 'task_item', attrs: { nodeId: `t${words}`, checked }, content: blocks };
             }
+
             return { type: 'list_item', content: blocks };
         });
         if (kind === 'bullet') {
             return { type: 'bullet_list', content };
         }
+
         if (kind === 'ordered') {
             return { type: 'ordered_list', attrs: { start }, content };
         }
+
         return { type: 'task_list', content };
     };
+
     const blocks = [{ type: 'paragraph', content: [{ type: 'text', text: 'before.' }] }, listJson(list)];
+
     return engine.schema.nodeFromJSON({ type: 'doc', content: blocks });
 };
 
@@ -85,8 +92,10 @@ const textblocks = (doc: Node): { readonly node: Node; readonly pos: number }[] 
             found.push({ node, pos: pos + 1 });
         }
     });
+
     return found;
 };
+
 const itemsIn = (doc: Node) => {
     let count = 0;
     doc.descendants((node) => {
@@ -94,17 +103,21 @@ const itemsIn = (doc: Node) => {
             count += 1;
         }
     });
+
     return count;
 };
+
 const caretAt = (view: EditorView, pick: number, offset: number) => {
     const blocks = textblocks(view.state.doc);
     const block = blocks[pick % blocks.length];
     if (block === undefined) {
         return;
     }
+
     const at = block.pos + (offset % (block.node.content.size + 1));
     view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, at)));
 };
+
 const press = (view: EditorView, key: string, init: KeyboardEventInit = {}) => {
     view.dom.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
 };
@@ -118,9 +131,11 @@ const boundaries = (doc: Node): number[] => {
             if (node.firstChild !== null) {
                 size = node.firstChild.content.size;
             }
+
             found.push(pos + 2, pos + 2 + size);
         }
     });
+
     return found;
 };
 
@@ -188,24 +203,30 @@ describe(seeded('list edits'), () => {
                     } else {
                         caretAt(view, next.pick, next.offset);
                     }
+
                     if (next.kind === 'key') {
                         press(view, next.key, next.init);
                     }
+
                     if (next.kind === 'paste') {
                         pasted = `P${index}.`;
                         view.pasteHTML(`<ul><li><p>${pasted}</p></li></ul>`);
                     }
+
                     const after = view.state.doc.textContent;
                     taken += 1;
                     if (view.state.doc !== docBefore) {
                         changed += 1;
                     }
+
                     // The pasted words sit in one place, and every other word keeps its order.
                     expect(after.replace(pasted, '')).toBe(before);
                 }
+
                 while (canUndo(view.state)) {
                     engine.commands.get('history.undo')?.run(view.state, view.dispatch);
                 }
+
                 expect(view.state.doc.toJSON()).toEqual(original);
                 view.destroy();
             }),

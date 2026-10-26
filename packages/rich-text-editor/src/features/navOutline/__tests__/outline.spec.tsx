@@ -105,6 +105,7 @@ describe('the outline panel', () => {
             if (type === undefined) {
                 throw new Error('The model has no paragraph.');
             }
+
             const paragraph = type.create(null, view.state.schema.text('Above'));
             view.dispatch(view.state.tr.insert(0, paragraph));
         });
@@ -136,6 +137,7 @@ describe('the outline panel', () => {
             if (pos === undefined || node === null || node === undefined) {
                 throw new Error('The heading is missing.');
             }
+
             view.dispatch(view.state.tr.delete(pos, pos + node.nodeSize));
         });
         const selection = view.state.selection;
@@ -161,6 +163,7 @@ describe('the outline panel', () => {
             if (pos === undefined || node === null || node === undefined) {
                 throw new Error('The heading is missing.');
             }
+
             view.dispatch(view.state.tr.delete(pos, pos + node.nodeSize));
         });
 

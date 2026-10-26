@@ -31,6 +31,7 @@ export const fixtureExtensionsOf = (
             for (const [id, spec] of Object.entries(plugin.commands ?? {})) {
                 commands[id] = pluginCommand(spec, model, schema, lookup, partCommandApiOf(plugin));
             }
+
             return commands;
         },
     }));

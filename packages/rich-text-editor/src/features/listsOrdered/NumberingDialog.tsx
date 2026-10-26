@@ -16,8 +16,10 @@ const boundsOf = ({ fields }: PayloadDeclaration) => {
     if (field !== undefined && (field.type === 'integer' || field.type === 'number')) {
         const min = field.min ?? 0;
         const max = field.max ?? Number.MAX_SAFE_INTEGER;
+
         return { min, max };
     }
+
     return { min: 0, max: Number.MAX_SAFE_INTEGER };
 };
 
@@ -41,6 +43,7 @@ export const NumberingDialog = ({
     if (api !== undefined) {
         t = api.t;
     }
+
     const dialog = useEditorDialog(opener, onClose);
     const [value, setValue] = useState(String(initial));
     const [invalid, setInvalid] = useState(false);
@@ -55,6 +58,7 @@ export const NumberingDialog = ({
         status = 'error';
         describedBy = { 'aria-describedby': errorId };
     }
+
     const apply = (event: FormEvent) => {
         event.preventDefault();
         const start = Number(value);
@@ -67,11 +71,14 @@ export const NumberingDialog = ({
             } else {
                 field?.focus();
             }
+
             return;
         }
+
         api?.commands.execute(SET_START, { start });
         dialog.finish('opener');
     };
+
     return (
         <EditorDialog
             dialog={dialog}

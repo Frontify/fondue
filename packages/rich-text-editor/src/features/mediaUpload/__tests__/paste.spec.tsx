@@ -23,9 +23,11 @@ const transfer = (data: Readonly<Record<string, string>>, files: readonly File[]
     for (const [type, value] of Object.entries(data)) {
         dataTransfer.setData(type, value);
     }
+
     for (const file of files) {
         dataTransfer.items.add(file);
     }
+
     return dataTransfer;
 };
 
@@ -51,6 +53,7 @@ const pasteEventInto = async (
         mounted.view.dom.dispatchEvent(event);
     });
     await settle();
+
     return event;
 };
 
@@ -64,6 +67,7 @@ const dropInto = async (mounted: MountedUploads, files: readonly File[], pos: nu
         mounted.view.dom.dispatchEvent(event);
     });
     await settle();
+
     return event;
 };
 

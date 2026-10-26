@@ -25,6 +25,7 @@ const storedOf = (api: EditorApi | undefined, nodeId: string): Stored => {
     if (api === undefined || attrs === undefined) {
         return { intent: 'meaningful', text: '', suggestion: undefined };
     }
+
     const { assetId, altIntent, altText } = attrs;
     const other = api.blocks
         .list('asset_image')
@@ -40,11 +41,13 @@ const storedOf = (api: EditorApi | undefined, nodeId: string): Stored => {
     if (other !== undefined) {
         suggestion = textOf(other.attrs.altText);
     }
+
     // A decorative image opens as stored; any other opens with Meaningful, the first option, selected.
     let intent: Intent = 'meaningful';
     if (altIntent === 'decorative') {
         intent = 'decorative';
     }
+
     return { intent, text: textOf(altText), suggestion };
 };
 
@@ -74,24 +77,30 @@ export const useAltTextDialogState = (nodeId: string, opener: Element | null, on
         if (intent === 'meaningful' && text.trim() === '') {
             setInvalid(true);
             fieldRef.current?.focus();
+
             return;
         }
+
         let altText = '';
         if (intent === 'meaningful') {
             altText = text;
         }
+
         api?.attributes.set('asset_image', { altIntent: intent, altText }, { nodeId });
         api?.nodeState.set(nodeId, REPLACED_ASSET, null);
         dialog.finish('opener');
     };
+
     const chooseIntent = (next: Intent) => {
         setIntent(next);
         setInvalid(false);
     };
+
     const changeText = (next: string) => {
         setText(next);
         setInvalid(false);
     };
+
     return {
         dialog,
         suggestion: stored.suggestion,

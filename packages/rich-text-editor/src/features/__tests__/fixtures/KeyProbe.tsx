@@ -62,7 +62,9 @@ export const KeyProbe = ({
         if (reversed) {
             list = list.reverse();
         }
+
         const model = compileContentModel(list, { id: 'test.keys', version: 1 });
+
         return {
             definition: defineEditor({ id: 'test.keys', model, policy: { enterBehavior }, plugins: unitsOf(model) }),
             document: storedIn(model, blocks),
@@ -81,10 +83,12 @@ export const KeyProbe = ({
             };
         }
     };
+
     let toolbarMode: 'bubble' | 'fixed' = 'fixed';
     if (bubble) {
         toolbarMode = 'bubble';
     }
+
     const shared = {
         'aria-label': 'Notes',
         services,
@@ -121,5 +125,6 @@ export const KeyProbe = ({
             </Dialog.Root>
         );
     }
+
     return <ThemeProvider>{body}</ThemeProvider>;
 };

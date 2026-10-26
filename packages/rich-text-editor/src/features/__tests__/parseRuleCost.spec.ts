@@ -32,6 +32,7 @@ const readsAt = (feature: Feature, style: string, depth: number) => {
     });
     const { length } = reads.mock.calls;
     reads.mockRestore();
+
     return length;
 };
 

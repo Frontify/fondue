@@ -18,6 +18,7 @@ const SIDES = [
  */
 export const alignEditor = defineEditorPart(align, (options: JsonObject) => {
     const sides = SIDES.filter(({ align: value }) => value !== 'justify' || options.justify !== false);
+
     return {
         needs: ['attributes'],
         commands: {

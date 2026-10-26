@@ -42,6 +42,7 @@ const StyleSelect = ({
     if (chosen !== undefined) {
         label = chosen.label;
     }
+
     return (
         <>
             <Label id={labelId} htmlFor={fieldId}>
@@ -132,6 +133,7 @@ export const LinkPopover = (props: OverlayProps & { readonly initial: LinkInitia
     } else if (problem === 'removed') {
         described = { 'aria-describedby': removedId };
     }
+
     return (
         <Flyout.Root open={open} onOpenChange={dismiss} virtualAnchor={anchor}>
             <Flyout.Content

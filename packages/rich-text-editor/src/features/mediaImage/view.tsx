@@ -18,6 +18,7 @@ const ImageChrome = () => {
     if (nodeId === null) {
         return null;
     }
+
     return (
         <div ref={barRef} className={styles.root} data-rte-image="">
             <ImageBody chrome={chrome} />

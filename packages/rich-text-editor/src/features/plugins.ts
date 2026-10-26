@@ -28,11 +28,13 @@ export const pluginsById = (ids: readonly string[]): readonly RichTextPlugin[] =
     if (!Array.isArray(ids)) {
         throw new DefinitionError('definition.unknown-feature', { path: '' });
     }
+
     return ids.map((id: unknown, index) => {
         const unit = typeof id === 'string' && Object.hasOwn(registry, id) ? registry[id] : undefined;
         if (unit === undefined) {
             throw new DefinitionError('definition.unknown-feature', { id: typeof id === 'string' ? id : null, index });
         }
+
         return unit();
     });
 };

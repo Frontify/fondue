@@ -38,7 +38,9 @@ export const LinkBubble = (props: StandingOverlayProps) => {
     if (state === undefined) {
         return null;
     }
+
     const { api, strings, testId, open, overlay, anchor, bubbleRef, urlId, href, setHovered, back, runOnShown } = state;
+
     return (
         <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={anchor}>
             <Flyout.Content

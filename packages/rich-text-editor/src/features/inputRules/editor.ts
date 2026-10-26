@@ -53,6 +53,7 @@ const RULES: Readonly<Record<Typography, readonly InputRule[]>> = {
 /** Applies the typography rules that the `typography` option lists; every other rule is in its own feature. */
 export const inputRulesEditor = defineEditorPart(inputRules, (options) => {
     const typography = options.typography as readonly string[];
+
     return {
         inputRules: TYPOGRAPHY.filter((group) => typography.includes(group)).flatMap((group) => RULES[group]),
     };

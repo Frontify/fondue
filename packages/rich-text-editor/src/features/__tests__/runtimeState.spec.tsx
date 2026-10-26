@@ -33,6 +33,7 @@ const blockWith = (type: string): ContentNodeJSON => {
     if (found === undefined) {
         throw new Error(`No fixture block holds ${type}.`);
     }
+
     return found;
 };
 
@@ -46,6 +47,7 @@ const overlayEntries = (): readonly {
         if (part === undefined) {
             return [];
         }
+
         return (partWithOptions(part, options).toolbar ?? []).filter(
             (entry) => entry.opensOverlay === true || entry.panel !== undefined,
         );
@@ -81,8 +83,10 @@ describe('session state outside the document', () => {
                     }),
                 );
             });
+
             return clipboardData.getData('text/html');
         };
+
         const before = mounted.handle.getSnapshot().document;
         const html = copied();
         // The slot the upload start inserts holds what the file measured, never its progress or a local URL.
@@ -90,6 +94,7 @@ describe('session state outside the document', () => {
         if (slot === undefined) {
             throw new Error('The upload start inserted no slot.');
         }
+
         const { nodeId: _nodeId, ...stored } = slot;
         const leaks = /blob:|data:|progress|pending|uploading|% uploaded/i;
 
@@ -125,11 +130,13 @@ describe('session state outside the document', () => {
         if (orderedText !== undefined) {
             targets.push({ text: orderedText, from: 0, to: 0 });
         }
+
         const codeRun = blockWith('code_block').content?.[0];
         const codeText = codeRun?.text;
         if (codeText !== undefined) {
             targets.push({ text: codeText, from: 0, to: 0 });
         }
+
         const opened: string[] = [];
 
         for (const entry of overlayEntries()) {
@@ -160,6 +167,7 @@ describe('session state outside the document', () => {
                 }
             }
         }
+
         act(() => mounted.uploads.pending[0]?.context.reportProgress(0.5));
         await settle();
         act(() => {

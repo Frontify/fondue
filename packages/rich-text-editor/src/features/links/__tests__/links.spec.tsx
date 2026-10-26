@@ -43,6 +43,7 @@ const undo = (handle: Handle) =>
 /** The position inside the last block of the document. */
 const lastBlockStart = (handle: Handle) => {
     const doc = runtimeOf(handle)?.state.doc;
+
     return doc === undefined ? 0 : doc.content.size - 1;
 };
 
@@ -270,6 +271,7 @@ describe('link policy', () => {
         for (const input of ['https://brand.frontify.com', '/guides', MAILTO, TEL]) {
             expect(checkHref(input, hosts)).toEqual({ ok: true, href: input });
         }
+
         for (const input of [MAILTO, TEL]) {
             expect(checkHref(input, { allowedSchemes: ['https'] })).toEqual({ ok: false, code: 'unsafe-scheme' });
         }
@@ -293,6 +295,7 @@ describe('link policy', () => {
         if (anchor === null || before === null || before === undefined) {
             throw new Error('The link has no text before it in the surface.');
         }
+
         // Text typed on both sides of the link's start, which the view re-reads by parsing the link's element.
         before.textContent = 'Read X ';
         anchor.textContent = 'guiXde';
@@ -319,6 +322,7 @@ describe('link policy', () => {
                 code: 'invalid-payload',
             });
         }
+
         expect(handle.execute('link.set', value('https://brand.frontify.com')).status).toBe('applied');
 
         setSelection(handle, { text: 'word', from: 4, to: 4 });
@@ -406,9 +410,11 @@ describe('link.autolink', () => {
         if (rules !== undefined) {
             Object.assign(options, { inputRules: rules });
         }
+
         if (policy !== undefined) {
             Object.assign(options, { policy });
         }
+
         const { handle } = mountText(options);
         typeText(handle, 'https://frontify.com ');
 

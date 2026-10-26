@@ -32,6 +32,7 @@ export const caretLink = (api: EditorApi | undefined): MarkRunValue | undefined 
     if (api === undefined || !api.editable() || !api.selection().collapsed) {
         return undefined;
     }
+
     return api.marks.run('link', { extendToMarkRange: 'touching' });
 };
 
@@ -47,6 +48,7 @@ export const caretOf = (api: EditorApi | undefined) => {
     if (caretLink(api) === undefined) {
         return undefined;
     }
+
     return api?.selectedRange();
 };
 

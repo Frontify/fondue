@@ -27,28 +27,36 @@ export const useDestinationField = (
         if (event.key === 'Enter' && event.nativeEvent.isComposing) {
             composedAtRef.current = Number.NEGATIVE_INFINITY;
         }
+
         if (passesToBrowser(event.nativeEvent)) {
             return;
         }
+
         // The Enter that confirms a composition keeps its candidate in the field and submits nothing.
         if (event.key === 'Enter' && event.timeStamp - composedAtRef.current < COMPOSITION_ENTER_MS) {
             composedAtRef.current = Number.NEGATIVE_INFINITY;
             event.preventDefault();
+
             return;
         }
+
         if (!shown) {
             return;
         }
+
         if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
             event.preventDefault();
             setIndex(wrapped(index + (event.key === 'ArrowDown' ? 1 : -1), results.length));
+
             return;
         }
+
         if (event.key === 'Enter') {
             event.preventDefault();
             pick(index);
         }
     };
+
     // Fondue's `TextInput` passes props it does not declare on to its `input`, and declares no `role` or composition events.
     let combobox: Readonly<Record<string, unknown>> = {
         onCompositionEnd: (event: CompositionEvent<HTMLInputElement>) => {
@@ -67,5 +75,6 @@ export const useDestinationField = (
                 activeResult === undefined ? undefined : suggestionOptionId(listId, activeResult.key),
         };
     }
+
     return [onKeyDown, combobox] as const;
 };

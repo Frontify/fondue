@@ -34,6 +34,7 @@ export const mentionsEditor = defineEditorPart(mentions, (options: JsonObject) =
     if (Array.isArray(options.resourceTypes)) {
         resourceTypes = options.resourceTypes.filter((type): type is string => typeof type === 'string');
     }
+
     return {
         needs: ['insert', 'overlays', 'services'],
         commands: {
@@ -53,6 +54,7 @@ export const mentionsEditor = defineEditorPart(mentions, (options: JsonObject) =
                     if (inserted.status !== 'applied') {
                         return false;
                     }
+
                     return api.insert.text(' ');
                 },
             },
@@ -60,10 +62,12 @@ export const mentionsEditor = defineEditorPart(mentions, (options: JsonObject) =
                 // The selection's start sits in text that is not code.
                 enabled: (api) => {
                     const { blockType, verbatim } = api.selection();
+
                     return blockType !== null && !verbatim;
                 },
                 run: (api) => {
                     api.overlays.open(MentionSearchDialog, { resourceTypes }, 'selection');
+
                     return true;
                 },
             },
@@ -91,7 +95,9 @@ export const mentionsEditor = defineEditorPart(mentions, (options: JsonObject) =
                     if (service === undefined) {
                         throw new Error('The host gives no reference search.');
                     }
+
                     const page = await service.search(query, resourceTypes, signal, cursor);
+
                     return { items: page.items.map(resultOf), nextCursor: page.nextCursor };
                 },
                 command: 'reference.insert',

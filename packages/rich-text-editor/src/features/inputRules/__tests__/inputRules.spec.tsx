@@ -35,17 +35,22 @@ const shapeOf = ({ handle }: Mounted) => {
     if (block === undefined) {
         return '';
     }
+
     const runs = (block.content ?? []).map((child) => {
         const marks = (child.marks ?? []).map((mark) => `[${mark.type}]`).join('');
+
         return `${child.text ?? child.type}${marks}`;
     });
+
     return [block.type, ...runs].join(' ');
 };
+
 const typedIn = (typed: string, options: Parameters<typeof mountText>[0] = {}) => {
     const mounted = mountText(options);
     typeText(mounted.handle, typed);
     const shape = shapeOf(mounted);
     mounted.unmount();
+
     return shape;
 };
 
@@ -129,6 +134,7 @@ describe('input rules', () => {
             typeText(mounted.handle, typed);
             const shape = shapeOf(mounted);
             mounted.unmount();
+
             return shape;
         });
         // The caret sits inside a code run, so the typed space is code-marked and a whole token comes before it.

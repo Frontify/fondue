@@ -144,6 +144,7 @@ describe('the mark runs of the editor API', () => {
         script = (api) => {
             reads.push(api.marks.run('bold'), api.marks.run('bold', { extendToMarkRange: 'touching' })?.text);
             reads.push(api.marks.run('bold', { at: document.createElement('span') }));
+
             return false;
         };
 

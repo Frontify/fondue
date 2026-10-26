@@ -113,10 +113,13 @@ describe('mention search dialog', () => {
                     written.push(node.textContent ?? '');
                 }
             }
+
             append(...nodes);
         };
+
         return written;
     };
+
     const type = (value: string) =>
         act(() => {
             fireEvent.change(field(), { target: { value } });

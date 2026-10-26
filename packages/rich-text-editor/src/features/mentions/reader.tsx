@@ -7,6 +7,7 @@ import { type ReaderNodeProps, type ReaderRenderers } from '#/reader/define';
 const Mention = ({ attrs, context }: ReaderNodeProps) => {
     const shown = mentionLabel(attrs, context);
     const note = unavailableNote(shown, context.t);
+
     return (
         <span data-mention="">
             @<bdi>{shown.label}</bdi>

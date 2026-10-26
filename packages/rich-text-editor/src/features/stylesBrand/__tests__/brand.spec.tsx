@@ -34,8 +34,10 @@ const openPicker = (mounted: Mounted, name: string) => {
             pointerType: 'mouse',
         });
     });
+
     return screen.getAllByRole('menuitemradio');
 };
+
 const flush = () =>
     act(async () => {
         await Promise.resolve();
@@ -51,6 +53,7 @@ describe('styles.brand', () => {
             mounted.unmount();
             const type = block?.type;
             const attrs = block?.attrs;
+
             return [result.status, type, attrs];
         });
 
@@ -59,6 +62,7 @@ describe('styles.brand', () => {
                 if (appliesTo.includes('paragraph')) {
                     return ['applied', 'paragraph', { lang: null, styleId: id }];
                 }
+
                 return ['rejected', 'paragraph', { lang: null, styleId: null }];
             }),
         );
@@ -282,8 +286,10 @@ describe('styles.brand', () => {
             });
             const rows = openPicker(mounted, picker).map((row) => row.textContent);
             mounted.unmount();
+
             return rows;
         };
+
         const onParagraph = rowsOn('Body', 'Normal text');
         const onHeading = rowsOn('Title', 'Heading 2');
 
@@ -358,6 +364,7 @@ describe('styles.brand', () => {
             if (style.id !== 'brand.lead') {
                 return style;
             }
+
             return { ...style, recipe: { fontSize: 26 } };
         });
 

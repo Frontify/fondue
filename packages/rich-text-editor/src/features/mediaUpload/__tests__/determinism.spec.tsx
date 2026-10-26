@@ -55,6 +55,7 @@ const uploadRun = async () => {
         now: Date.now(),
     };
     mounted.unmount();
+
     return trace;
 };
 
@@ -80,6 +81,7 @@ const persistenceRun = async () => {
         now: Date.now(),
     };
     mounted.unmount();
+
     return trace;
 };
 

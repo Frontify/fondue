@@ -73,6 +73,7 @@ export const mediaImage = defineFeature({
                 if (intent !== 'missing' && !blank) {
                     return undefined;
                 }
+
                 return { payload: null };
             },
         },
@@ -87,11 +88,13 @@ export const mediaImage = defineFeature({
                 if (altIntentOf(node) !== 'meaningful' || typeof altText !== 'string' || altText.trim() === '') {
                     return undefined;
                 }
+
                 const alt = folded(altText);
                 const suspicious =
                     (typeof labelSnapshot === 'string' && alt === folded(labelSnapshot)) ||
                     IMAGE_EXTENSION.test(alt) ||
                     genericWords.has(alt);
+
                 return suspicious ? { payload: null } : undefined;
             },
         },

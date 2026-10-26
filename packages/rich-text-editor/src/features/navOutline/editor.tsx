@@ -17,6 +17,7 @@ export const outlineEditor = defineEditorPart(outline, {
             readOnly: true,
             run: (api) => {
                 api.panels.toggle(PANEL);
+
                 return true;
             },
         },

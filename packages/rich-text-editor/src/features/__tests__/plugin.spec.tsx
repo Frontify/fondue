@@ -67,6 +67,7 @@ const mount = (readOnly = false) => {
     if (handle === null || view === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     return { handle, view };
 };
 
@@ -318,7 +319,9 @@ describe('a plugin part that reads the policy and its options', () => {
         if (ref.current === null) {
             throw new Error('The editor did not mount.');
         }
+
         setSelection(ref.current, { text: 'Body', from: 1, to: 1 });
+
         return { handle: ref.current, unmount: rendered.unmount };
     };
 
@@ -375,6 +378,7 @@ describe('a plugin part that reads the policy and its options', () => {
             if (options.third === true) {
                 values.push('third');
             }
+
             return {
                 needs: ['insert'],
                 commands: {

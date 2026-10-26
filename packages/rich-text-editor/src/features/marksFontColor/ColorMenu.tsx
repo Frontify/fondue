@@ -64,6 +64,7 @@ export const hexOf = ({ red, green, blue, alpha }: Rgba): string => {
     if (alpha === undefined || alpha >= 1) {
         return hex;
     }
+
     return `${hex}${channel(alpha * 255)}`;
 };
 
@@ -73,6 +74,7 @@ const rgbaOf = (hex: string): Rgba => {
     if (hex.length === 9) {
         color.alpha = Math.round((byte(7) / 255) * 100) / 100;
     }
+
     return color;
 };
 
@@ -88,9 +90,11 @@ const startColor = (api: EditorApi, mark: ColorMark, tokens: readonly ColorToken
         // A token value may be any CSS colour, which the picker takes only as hex.
         hex = token === undefined ? undefined : hexColor(token.value);
     }
+
     if (hex === undefined) {
         return black;
     }
+
     return rgbaOf(hex);
 };
 
@@ -123,6 +127,7 @@ const ColorRow = ({
     if (description !== undefined) {
         describedBy = descriptionId;
     }
+
     return (
         <Dropdown.Item
             // Fondue's `Dropdown.Item` types no menu item role or state, which Radix still takes.
@@ -172,11 +177,13 @@ const ColorDraft = ({
             onClose();
         }
     };
+
     const overlay = useEditorOverlay(open, close);
     let title = strings.customText;
     if (mark === 'highlight') {
         title = strings.customHighlight;
     }
+
     return (
         <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={overlay.anchor}>
             <Flyout.Content
@@ -225,6 +232,7 @@ const nameTrigger = (content: HTMLElement | null, label: string) => {
     if (content === null || triggerId === null || triggerId === undefined) {
         return;
     }
+
     const root = content.getRootNode() as Document | ShadowRoot;
     root.getElementById(triggerId)?.setAttribute('aria-label', label);
 };
@@ -253,6 +261,7 @@ const Swatches = ({
             onClose();
         }
     };
+
     const overlay = useEditorOverlay(open, close);
     useEffect(() => {
         const frame = requestAnimationFrame(() => {
@@ -260,12 +269,15 @@ const Swatches = ({
             if (content === null) {
                 return;
             }
+
             let target = content.querySelector<HTMLElement>('[role="menuitemradio"][aria-checked="true"]');
             if (target === null) {
                 target = content.querySelector<HTMLElement>('[role^="menuitem"]');
             }
+
             target?.focus();
         });
+
         return () => cancelAnimationFrame(frame);
     }, []);
     const run = (command: string, payload?: object) => {
@@ -273,12 +285,14 @@ const Swatches = ({
         close(false);
         api.commands.execute(command, payload, { focus: 'editor' });
     };
+
     const groups: { readonly mark: ColorMark; readonly heading: string; readonly custom: string }[] = [
         { mark: 'font_color', heading: strings.textColors, custom: strings.customText },
     ];
     if (options.highlight) {
         groups.push({ mark: 'highlight', heading: strings.highlightColors, custom: strings.customHighlight });
     }
+
     return (
         <Dropdown.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={overlay.anchor}>
             <Dropdown.Content
@@ -302,6 +316,7 @@ const Swatches = ({
                     ) {
                         literal = value;
                     }
+
                     return (
                         <Dropdown.Group key={mark} heading={heading}>
                             {options.tokens
@@ -356,19 +371,23 @@ export const ColorMenu = ({
     if (api === undefined) {
         return null;
     }
+
     const strings = colorMenuStrings(api.t);
     const testId = api.testId();
     let tokens = api.services.presentation().colorTokens;
     if (tokenIds !== undefined) {
         tokens = tokens.filter(({ id }) => tokenIds.includes(id));
     }
+
     const literal: ColorMark[] = [];
     if (literalText) {
         literal.push('font_color');
     }
+
     if (api.optionsOf('marks.highlight')?.literalColors === true) {
         literal.push('highlight');
     }
+
     const options = { tokens, highlight: api.marks.installed().includes('highlight'), literal };
     if (custom !== undefined) {
         return (
@@ -382,6 +401,7 @@ export const ColorMenu = ({
             />
         );
     }
+
     // A custom row replaces the menu with the picker.
     return (
         <Swatches

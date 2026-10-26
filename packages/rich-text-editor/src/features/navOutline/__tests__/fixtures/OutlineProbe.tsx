@@ -68,11 +68,13 @@ export const OutlineProbe = ({
         if (handle === null || runtime === undefined) {
             return;
         }
+
         window.outlineRte = {
             sequence: () => handle.getSummary().sequence,
             document: () => JSON.stringify(handle.getSnapshot().document),
             selection: () => {
                 const { $from, empty } = runtime.state.selection;
+
                 return {
                     empty,
                     parentOffset: $from.parentOffset,
@@ -88,6 +90,7 @@ export const OutlineProbe = ({
             },
         };
     });
+
     return (
         <div data-test-id="frame" style={{ blockSize: 220, overflow: 'auto' }}>
             <RichTextEditor

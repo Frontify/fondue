@@ -44,24 +44,29 @@ export const useResize = (
         shownRef.current = width;
         setShown(width);
     };
+
     const end = () => {
         dragRef.current?.stop();
         dragRef.current = null;
     };
+
     useEffect(() => end, []);
     const onPointerDown = (event: PointerEvent<HTMLSpanElement>) => {
         const frame = frameRef.current;
         if (frame === null) {
             return;
         }
+
         const figure = frame.closest('figure') ?? frame.parentElement;
         if (figure === null || figure.clientWidth <= 0) {
             return;
         }
+
         // A touch may still scroll, which its `touch-action` leaves to the browser; a mouse drag never selects text.
         if (event.pointerType === 'mouse') {
             event.preventDefault();
         }
+
         const handle = event.currentTarget;
         handle.setPointerCapture?.(event.pointerId);
         const document = frame.ownerDocument;
@@ -71,16 +76,19 @@ export const useResize = (
             if (key.key !== 'Escape') {
                 return;
             }
+
             key.preventDefault();
             key.stopPropagation();
             end();
             show(undefined);
         };
+
         surface.addEventListener('keydown', onKey as EventListener, true);
         let direction = 1;
         if (document.defaultView?.getComputedStyle(frame).direction === 'rtl') {
             direction = -1;
         }
+
         dragRef.current = {
             startX: event.clientX,
             startY: event.clientY,
@@ -97,40 +105,51 @@ export const useResize = (
             },
         };
     };
+
     const onPointerMove = (event: PointerEvent<HTMLSpanElement>) => {
         const drag = dragRef.current;
         if (drag === null) {
             return;
         }
+
         const across = Math.abs(event.clientX - drag.startX);
         const down = Math.abs(event.clientY - drag.startY);
         if (!drag.resizing) {
             if (down > SLOP && down >= across) {
                 end();
+
                 return;
             }
+
             if (across <= SLOP) {
                 return;
             }
+
             drag.resizing = true;
         }
+
         show(percentOf(drag.startWidth + (event.clientX - drag.startX) * drag.direction, drag.total));
     };
+
     const onPointerUp = () => {
         const drag = dragRef.current;
         let dragged: number | undefined;
         if (drag !== null && drag.resizing && drag.generation === api?.generation()) {
             dragged = shownRef.current;
         }
+
         end();
         if (dragged !== undefined) {
             commit(dragged);
         }
+
         show(undefined);
     };
+
     const onPointerCancel = () => {
         end();
         show(undefined);
     };
+
     return { shown, handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel } };
 };

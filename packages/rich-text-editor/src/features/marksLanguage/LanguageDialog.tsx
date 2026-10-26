@@ -19,6 +19,7 @@ export { SET_LANGUAGE } from './languageModel';
 export const LanguageDialog = (props: OverlayProps) => {
     const state = useLanguageState(props);
     const { strings } = state;
+
     return (
         <EditorDialog
             dialog={state.dialog}

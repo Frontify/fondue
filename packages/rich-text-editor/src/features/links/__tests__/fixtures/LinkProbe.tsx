@@ -49,6 +49,7 @@ const injectUnsafe = (handle: EditorHandle, text: string) => {
     if (view === undefined) {
         return;
     }
+
     let from = -1;
     view.state.doc.descendants((node, pos) => {
         const at = node.isText ? (node.text ?? '').indexOf(text) : -1;
@@ -82,6 +83,7 @@ export const LinkProbe = ({ readOnly = false }: { readonly readOnly?: boolean })
             window.linkRte = { handle, setSelection, injectUnsafe: (text) => injectUnsafe(handle, text) };
         }
     }, []);
+
     return (
         <>
             <RichTextEditor

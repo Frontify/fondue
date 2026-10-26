@@ -58,9 +58,11 @@ export const languageChoices = (
             choices.push(language);
         }
     }
+
     // A stored language the menu does not list stays a choice, so the menu never hides the block's value.
     if (languageId !== null && !CODE_LANGUAGES.some(({ id }) => id === languageId)) {
         choices.push({ id: languageId, label: languageId });
     }
+
     return choices;
 };

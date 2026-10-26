@@ -39,7 +39,9 @@ const spotlitIn = (node: ContentNodeJSON | undefined): number => {
     if (node === undefined) {
         return 0;
     }
+
     const own = node.marks?.some(({ type }) => type === 'fixture_spotlight') === true ? 1 : 0;
+
     return own + (node.content ?? []).reduce((sum, child) => sum + spotlitIn(child), 0);
 };
 
@@ -55,6 +57,7 @@ const SpotlightButton = ({
 }: ToolbarControlProps) => {
     const container = useOverlayContainer();
     const active = useEditorValue((current) => current?.marks.active('fixture_spotlight') ?? false);
+
     return (
         <Tooltip.Root>
             <Tooltip.Trigger asChild>
@@ -103,6 +106,7 @@ const SpotlightNote = ({ close, anchor, opener }: OverlayProps) => {
             close();
         }
     });
+
     return (
         <Flyout.Root
             open={open}
@@ -110,6 +114,7 @@ const SpotlightNote = ({ close, anchor, opener }: OverlayProps) => {
                 if (!next) {
                     overlay.returnFocusTo(opener);
                 }
+
                 overlay.onOpenChange(next);
             }}
             virtualAnchor={anchor}
@@ -130,6 +135,7 @@ const SpotlightPanel = ({ close }: PanelComponentProps) => {
     const count = spotlitIn(api?.document().content);
     const panel = strings?.panel;
     const counted = strings?.count(count);
+
     return (
         <section aria-label={panel}>
             <p>{counted}</p>
@@ -154,6 +160,7 @@ export const spotlightEditor = defineEditorPart(spotlight, {
         'fixture.spotlight.note': {
             run: (api) => {
                 api.overlays.open(SpotlightNote, {});
+
                 return true;
             },
         },
@@ -161,6 +168,7 @@ export const spotlightEditor = defineEditorPart(spotlight, {
             readOnly: true,
             run: (api) => {
                 api.panels.toggle(PANEL);
+
                 return true;
             },
         },

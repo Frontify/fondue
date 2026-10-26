@@ -20,10 +20,12 @@ export const languageEditor = defineEditorPart(language, {
             // The selection's start sits in text that is not code.
             enabled: (api) => {
                 const { blockType, verbatim } = api.selection();
+
                 return blockType !== null && !verbatim;
             },
             run: (api) => {
                 api.overlays.open(LanguageDialog, {}, 'selection');
+
                 return true;
             },
         },
@@ -39,6 +41,7 @@ export const languageEditor = defineEditorPart(language, {
                 if (payload === null) {
                     return api.marks.remove('language', { extendToMarkRange: true });
                 }
+
                 return api.marks.set('language', payload, { extendToMarkRange: true });
             },
         },

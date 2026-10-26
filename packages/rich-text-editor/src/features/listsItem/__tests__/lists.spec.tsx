@@ -44,16 +44,20 @@ const atDepth = (kind: ListKind, depth: number, items: readonly ContentNodeJSON[
     for (let level = depth - 1; level >= 1; level -= 1) {
         node = list(kind, [item(kind, `outer${level}`, node)]);
     }
+
     return node;
 };
+
 /** The outline of `atDepth` with these item outlines. */
 const outlineAt = (kind: ListKind, depth: number, items: readonly unknown[]): unknown => {
     let node = listOutline(kind, items);
     for (let level = depth - 1; level >= 1; level -= 1) {
         node = listOutline(kind, [itemOutline(kind, `outer${level}`, node)]);
     }
+
     return node;
 };
+
 const one = (kind: ListKind) => itemOutline(kind, 'one');
 const three = (kind: ListKind) => itemOutline(kind, 'three');
 
@@ -65,30 +69,38 @@ const positionOf = (view: EditorView, value: string, offset = 0): number => {
         if (found === undefined && node.isTextblock && (matches || (value !== '' && node.textContent === value))) {
             found = pos + 1 + offset;
         }
+
         return found === undefined;
     });
     if (found === undefined) {
         throw new Error(`No textblock holds "${value}".`);
     }
+
     return found;
 };
+
 const caret = ({ view }: Mounted, value: string, offset = 0) => {
     const at = positionOf(view, value, offset);
     view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, at)));
 };
+
 /** Presses `key` at the surface and returns whether the editor prevented it. */
 const press = ({ view }: Mounted, key: string, init: KeyboardEventInit = {}) => {
     const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init });
     view.dom.dispatchEvent(event);
+
     return event.defaultPrevented;
 };
+
 const emptyItem = (kind: ListKind): ContentNodeJSON => {
     const content = [{ type: 'paragraph', attrs: { lang: null }, content: [] }];
     if (kind === 'task') {
         return { type: 'task_item', attrs: { nodeId: 'task-empty', checked: false }, content };
     }
+
     return { type: 'list_item', content };
 };
+
 const mountList = (block: ContentNodeJSON) => mountText({ model, blocks: [block] });
 /** The modifier `Mod` stands for on the platform the test environment reports. */
 const MOD: KeyboardEventInit = { ctrlKey: true };
@@ -183,6 +195,7 @@ describe('the List keys table', () => {
                 // The nested item moves one level out, after the item that held its list.
                 const outdented = (moved: unknown) => {
                     const outer = itemOutline(kind, `outer${depth - 1}`, listOutline(kind, [one(kind)]));
+
                     return outlineAt(kind, depth - 1, [outer, moved]);
                 };
 
@@ -259,6 +272,7 @@ describe('the List keys table', () => {
                 if (kind === 'ordered') {
                     payload = { start: 1 };
                 }
+
                 const result = mounted.handle.execute(TOGGLE[kind], payload as never);
 
                 expect(result.status).toBe('applied');
@@ -293,6 +307,7 @@ describe('the List keys table', () => {
         if (root === undefined) {
             throw new Error('Enter dispatched nothing.');
         }
+
         const rootChecked = root.doc.child(0).children.map((node) => node.attrs.checked as unknown);
 
         pressKey(mounted.handle, 'Enter');
@@ -300,6 +315,7 @@ describe('the List keys table', () => {
         if (taskList === undefined) {
             throw new Error('The task list is gone.');
         }
+
         const ids = (taskList.content ?? []).map(({ attrs }) => attrs?.nodeId);
 
         expect(rootChecked).toEqual([true, false, false]);

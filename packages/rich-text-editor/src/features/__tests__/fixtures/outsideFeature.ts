@@ -7,6 +7,7 @@ export const badgeLabel = (label: unknown): string => {
     if (typeof label === 'string') {
         return label;
     }
+
     return '';
 };
 

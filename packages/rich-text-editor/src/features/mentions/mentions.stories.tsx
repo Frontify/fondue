@@ -25,9 +25,11 @@ const resolveReference = (_type: string, id: string): ReferenceResolution => {
     if (id === 'user-ada') {
         return { status: 'current', label: 'Ada King' };
     }
+
     if (id === 'user-lin') {
         return { status: 'unavailable', code: 'deleted' };
     }
+
     return { status: 'unknown' };
 };
 
@@ -109,6 +111,7 @@ export const Default: StoryObj<typeof RichTextEditor> = {
         const surface = await waitFor(async () => {
             const live = within(canvasElement).getByRole('textbox', { name: 'Notes' });
             await expect(live).toHaveAttribute('contenteditable', 'true');
+
             return live;
         }, timeout);
         await userEvent.type(surface, ' @Gra');

@@ -16,6 +16,7 @@ const factoryOf = (path: string, exports: Record<string, unknown>): (() => Featu
     if (factory === undefined) {
         throw new Error(`${path} must export exactly one feature factory`);
     }
+
     return factory;
 };
 
@@ -23,6 +24,7 @@ const factoryOf = (path: string, exports: Record<string, unknown>): (() => Featu
 export const registry: Readonly<Record<string, () => Feature>> = Object.fromEntries(
     Object.entries(modules).map(([path, exports]) => {
         const factory = factoryOf(path, exports);
+
         return [factory().id, factory];
     }),
 );
@@ -35,11 +37,13 @@ export const featuresById = (ids: readonly string[]): readonly Feature[] => {
     if (!Array.isArray(ids)) {
         throw new DefinitionError('definition.unknown-feature', { path: '' });
     }
+
     return ids.map((id: unknown, index) => {
         const factory = typeof id === 'string' && Object.hasOwn(registry, id) ? registry[id] : undefined;
         if (factory === undefined) {
             throw new DefinitionError('definition.unknown-feature', { id: typeof id === 'string' ? id : null, index });
         }
+
         return factory();
     });
 };

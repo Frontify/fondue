@@ -9,6 +9,7 @@ import { badgeLabel, highlight } from './outsideFeature';
 /** The chrome of a badge: a toolbar with a button named by its label. */
 const BadgeChrome = () => {
     const { attrs } = useRichTextNodeView();
+
     return createElement(
         'span',
         { role: 'toolbar', 'aria-label': 'Badge' },

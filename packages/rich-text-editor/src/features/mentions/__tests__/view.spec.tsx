@@ -29,6 +29,7 @@ const chips = async (mounted: ReturnType<typeof mountMentions>) => {
     await act(async () => {
         await Promise.resolve();
     });
+
     return [...mounted.view.dom.querySelectorAll('[data-rte-chrome] > span')];
 };
 
@@ -108,6 +109,7 @@ describe('mention display', () => {
                 if (id === 'user-1') {
                     throw new Error('resolver failed');
                 }
+
                 return { status: 'current', label: 'Grace Hopper' };
             },
         ],
@@ -118,6 +120,7 @@ describe('mention display', () => {
             if (resolve !== undefined) {
                 presentation = resolving(resolve);
             }
+
             const mounted = mountMentions({ blocks: twoMentions, presentation });
             const [first, second] = await chips(mounted);
 
@@ -127,6 +130,7 @@ describe('mention display', () => {
             } else {
                 expect(second?.textContent).toBe('@Grace');
             }
+
             expect(mounted.diagnostics.filter(({ code }) => code === 'reference.unavailable')).toEqual([]);
         },
     );
@@ -163,6 +167,7 @@ describe('mention labels in every output', () => {
                 new ClipboardEvent('copy', { clipboardData, bubbles: true, cancelable: true }),
             );
         });
+
         return { html: clipboardData.getData('text/html'), text: clipboardData.getData('text/plain') };
     };
 
@@ -230,6 +235,7 @@ describe('mention labels in every output', () => {
             blocks: [para(mention('m-1', 'Ada', 'ada\u200E'))],
             presentation: resolving((_type, id) => {
                 asked.push(id);
+
                 return id === 'ada' ? { status: 'current', label: 'Mallory' } : { status: 'unknown' };
             }),
         });

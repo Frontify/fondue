@@ -41,12 +41,15 @@ const caretInEmptyParagraph = ({ view }: Mounted) => {
     });
     view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, at)));
 };
+
 /** Presses Enter at the surface and returns whether the editor prevented it. */
 const pressEnter = ({ view }: Mounted, modifiers: KeyboardEventInit = {}) => {
     const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, ...modifiers });
     view.dom.dispatchEvent(event);
+
     return event.defaultPrevented;
 };
+
 const blocksOf = ({ handle }: Mounted) => handle.getSnapshot().document.content.content;
 const cell = (...content: readonly ContentNodeJSON[]) => ({
     type: 'table_cell',
@@ -137,7 +140,9 @@ describe('blocks.quote', () => {
             if (quote?.content !== undefined) {
                 kept = quote.content.length;
             }
+
             mounted.unmount();
+
             return [prevented, after.length, kept];
         });
 
@@ -208,6 +213,7 @@ describe('blocks.quote', () => {
             } else {
                 caretInEmptyParagraph(mounted);
             }
+
             const { view } = mounted;
             const row = view.state.plugins.find((plugin) =>
                 (plugin as unknown as { key: string }).key.startsWith('container-keys$'),
@@ -215,8 +221,10 @@ describe('blocks.quote', () => {
             if (row === undefined) {
                 throw new Error('The model has no container keys.');
             }
+
             const result = row.props.handleKeyDown?.call(row, view, new KeyboardEvent('keydown', { key: 'Enter' }));
             mounted.unmount();
+
             return result;
         });
 
@@ -255,6 +263,7 @@ describe('blocks.quote', () => {
             const two = view.state.doc.child(1).nodeSize;
             view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, one + 2, one + two + 2)));
         };
+
         const order = () => view.state.doc.children.map((child) => child.textContent);
 
         spanning();

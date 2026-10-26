@@ -52,10 +52,12 @@ const optionsOf = (data: Data, query: string): readonly ListboxOption[] => {
     if (data.status !== 'ready') {
         return [];
     }
+
     let found: readonly EmojiEntry[] = data.entries.slice(0, LIMIT);
     if (query.trim() !== '') {
         found = searchEmoji(data.entries, query, LIMIT);
     }
+
     return found.map((entry) => ({ key: entry.emoji, label: entry.label, glyph: entry.emoji }));
 };
 
@@ -63,12 +65,15 @@ const statusOf = (data: Data, shown: number, strings: EmojiPickerStrings): strin
     if (data.status === 'loading') {
         return strings.loading;
     }
+
     if (data.status === 'failed') {
         return strings.failed;
     }
+
     if (shown === 0) {
         return strings.noResults;
     }
+
     return '';
 };
 
@@ -93,11 +98,13 @@ export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
         if (next) {
             return;
         }
+
         // Focus goes back to the surface, as for a toolbar button that opens no overlay.
         overlay.returnFocusTo(null);
         setOpen(false);
         onClose();
     };
+
     const overlay = useEditorOverlay(open, close);
     useEffect(() => {
         let current = true;
@@ -107,9 +114,11 @@ export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
                 setIndex(0);
             }
         };
+
         loadEmoji(lang)
             .then((entries) => show({ status: 'ready', entries }))
             .catch(() => show({ status: 'failed' }));
+
         return () => {
             current = false;
         };
@@ -129,37 +138,48 @@ export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
         controls = listId;
         activeId = suggestionOptionId(listId, active.key);
     }
+
     const insert = (position: number) => {
         const option = options[position];
         if (option === undefined || option.glyph === null) {
             return;
         }
+
         api.commands.execute(INSERT_EMOJI, { text: option.glyph }, { focus: 'editor' });
         close(false);
     };
+
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (passesToBrowser(event.nativeEvent) || !shown) {
             return;
         }
+
         if (event.key === 'Enter' && event.timeStamp - composedAtRef.current < COMPOSITION_ENTER_MS) {
             composedAtRef.current = Number.NEGATIVE_INFINITY;
+
             return;
         }
+
         if (event.key === 'ArrowDown') {
             event.preventDefault();
             setIndex(wrapped(index + 1, options.length));
+
             return;
         }
+
         if (event.key === 'ArrowUp') {
             event.preventDefault();
             setIndex(wrapped(index - 1, options.length));
+
             return;
         }
+
         if (event.key === 'Enter') {
             event.preventDefault();
             insert(index);
         }
     };
+
     // Fondue's `TextInput` passes props it does not declare on to its `input`, and declares no `role` or composition events.
     const field = {
         role: 'combobox',
@@ -191,5 +211,6 @@ export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
         onActivate: setIndex,
         testId: `${testId}-emoji-options`,
     };
+
     return { open, overlay, title: strings.title, testId, field, list: shown ? list : null, fieldRef, statusRef };
 };

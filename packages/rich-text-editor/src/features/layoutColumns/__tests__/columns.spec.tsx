@@ -76,6 +76,7 @@ const compose = (view: EditorView, typed: string) => {
     // ProseMirror marks the composed text it reads from the DOM with its composition ID.
     view.dispatch(view.state.tr.insertText(typed).setMeta('composition', 1));
 };
+
 /** Runs the microtask, then the 20 ms timer after which input has settled. */
 const settleInput = async () => {
     await vi.advanceTimersByTimeAsync(0);
@@ -90,6 +91,7 @@ const listOf = (type: 'bullet_list' | 'ordered_list' | 'task_list', content: Con
             content: [{ type: 'task_item', attrs: { nodeId: 'task-1', checked: false }, content: [content] }],
         };
     }
+
     return { type, content: [{ type: 'list_item', content: [content] }] };
 };
 

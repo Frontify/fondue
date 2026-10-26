@@ -52,6 +52,7 @@ export const MentionProbe = ({ content = 'text' }: { readonly content?: keyof ty
             window.mentionRte = { handle, setSelection };
         }
     }, []);
+
     return (
         <ThemeProvider>
             {/* WebKit puts a button in the Tab order only with an explicit `tabIndex`. */}

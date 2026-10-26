@@ -17,6 +17,7 @@ const chunk = (type: string, data: Buffer) => {
     out.writeUInt32BE(data.length, 0);
     body.copy(out, 4);
     out.writeUInt32BE(crc32(body), body.length + 4);
+
     return out;
 };
 
@@ -29,6 +30,7 @@ const decodablePng = (width: number, height: number) => {
     // Each row is a filter byte, then one byte per pixel.
     const rows = Buffer.alloc((width + 1) * height);
     const signature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+
     return Buffer.concat([
         signature,
         chunk('IHDR', header),
@@ -46,6 +48,7 @@ const pngBytes = (width: number, height: number) => {
     bytes.writeUInt32BE(width, 16);
     bytes.writeUInt32BE(height, 20);
     bytes.set([8, 6, 0, 0, 0], 24);
+
     return bytes;
 };
 
@@ -54,6 +57,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.uploadRte !== undefined)).toBe(true);
 };
+
 const imagesOf = (page: Page) => page.evaluate(() => window.uploadRte?.images() ?? []);
 
 /** Puts the caret at the end of the paragraph `Before`, then chooses `logo.png` in the file chooser that Image opens. */
@@ -149,6 +153,7 @@ test('shows the drop cursor at the nearest block boundary for a dropped file and
     if (box === null) {
         throw new Error('no paragraph box');
     }
+
     // Over the text of `second`, nearer its start, so the boundary above it is nearest.
     const point = { x: box.x + 8, y: box.y + box.height / 2 };
     const send = (type: string) =>
@@ -249,6 +254,7 @@ test('decodes every image the upload conformance kit builds and samples, at the 
             });
         }
     }
+
     for (const type of ['image/webp', 'image/avif'] as const) {
         for (const padding of [0, 5000]) {
             const sample = await sampleImage(type, padding);
@@ -270,6 +276,7 @@ test('decodes every image the upload conformance kit builds and samples, at the 
                     const bytes = Uint8Array.from(atob(base64), (character) => character.codePointAt(0) ?? 0);
                     try {
                         const bitmap = await createImageBitmap(new Blob([bytes], { type }));
+
                         return [label, bitmap.width, bitmap.height];
                     } catch (error) {
                         return [label, String(error)];

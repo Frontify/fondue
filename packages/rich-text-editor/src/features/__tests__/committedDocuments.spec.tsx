@@ -50,13 +50,16 @@ const commandsOf = (profile: RichTextProfile, ids: readonly string[]) => {
         if (part === undefined) {
             return [];
         }
+
         return (partWithOptions(part, options).toolbar ?? []).flatMap(({ command, payload }) => {
             if (payload === undefined) {
                 return [];
             }
+
             return [{ id: command, payload }];
         });
     });
+
     return [...ids.map((id): { readonly id: string; readonly payload?: JsonValue } => ({ id })), ...payloads];
 };
 
@@ -76,6 +79,7 @@ const actionArb = (profile: RichTextProfile, commandCount: number): fc.Arbitrary
     // A fraction of the document size, so positions spread over every block and land inside marks.
     // Unbiased, since fast-check otherwise draws the bounds most of the time.
     const position = fc.noBias(fc.integer({ min: 0, max: 1000 })).map((thousandths) => thousandths / 1000);
+
     return fc.oneof(
         fc.record({ kind: fc.constant('select' as const), anchor: position, head: position }),
         fc.record({ kind: fc.constant('command' as const), index: fc.nat({ max: commandCount - 1 }) }),
@@ -114,8 +118,10 @@ const mount = async (profile: RichTextProfile, document: RichTextDocument) => {
     if (ref.current === null || runtime === undefined || view === undefined) {
         throw new Error(`The ${profile} profile mounted no editor.`);
     }
+
     return { handle: ref.current, runtime, view, changes, unmount: rendered.unmount };
 };
+
 type Mounted = Awaited<ReturnType<typeof mount>>;
 
 const transfer = (data: Readonly<Record<string, string>>) => {
@@ -123,6 +129,7 @@ const transfer = (data: Readonly<Record<string, string>>) => {
     for (const [type, value] of Object.entries(data)) {
         dataTransfer.setData(type, value);
     }
+
     return dataTransfer;
 };
 
@@ -169,6 +176,7 @@ describe(seeded('documents that a batch commits'), () => {
             if (first === undefined) {
                 throw new Error('No document was generated.');
             }
+
             const probe = await mount(profile, first);
             const commands = commandsOf(profile, [...probe.runtime.definition.commands.keys()]);
             probe.unmount();

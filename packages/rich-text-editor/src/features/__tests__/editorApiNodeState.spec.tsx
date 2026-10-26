@@ -74,6 +74,7 @@ describe('a plugin command in an editor that cannot be edited', () => {
             'Plain',
             (api) => {
                 seen = api.commands.execute('text.insert', { text: 'x' });
+
                 return true;
             },
             'fixture.api.read-only',
@@ -86,6 +87,7 @@ describe('a plugin command in an editor that cannot be edited', () => {
             'Plain',
             (api) => {
                 api.panels.open(PANEL);
+
                 return true;
             },
             'fixture.api.read-only',
@@ -108,12 +110,14 @@ describe('a command that a plugin command runs', () => {
 
         runIn(handle, 'Plain', (api) => {
             seen = api.commands.execute('heading.set', { level: 3 });
+
             return true;
         });
         expect(seen).toEqual({ status: 'rejected', code: 'not-allowed' });
 
         runIn(handle, 'Plain', (api) => {
             seen = api.commands.query('heading.set', { level: 3 });
+
             return true;
         });
         expect(seen).toMatchObject({ enabled: false, disabledReason: 'not-allowed' });
@@ -124,6 +128,7 @@ describe('a command that a plugin command runs', () => {
 
         runIn(handle, 'Plain', (api) => {
             seen = api.commands.execute('code-block.toggle', { languageId: 'typescript' });
+
             return true;
         });
 
@@ -154,6 +159,7 @@ describe('a command that a plugin command runs', () => {
 
         runIn(handle, 'Plain', (api) => {
             seen = api.commands.query('image.insert');
+
             return true;
         });
 
@@ -182,11 +188,13 @@ describe('what a plugin command defers', () => {
         if (captured.status !== 'captured') {
             throw new Error('The target was not captured.');
         }
+
         held = captured.target;
         script = (api) => {
             if (held !== undefined) {
                 api.targets.release(held);
             }
+
             return true;
         };
 
@@ -223,8 +231,10 @@ describe('the history of the editor API', () => {
         const { handle } = mount();
         const canUndo = (): CommandState => {
             script = (api) => api.history.canUndo();
+
             return handle.query('fixture.api.run');
         };
+
         const before = [live?.history.canUndo(), canUndo().enabled];
         setSelection(handle, { text: 'Plain', from: 0, to: 0 });
         typeText(handle, 'x');
@@ -288,6 +298,7 @@ describe('a command that a plugin command runs, given a name or payload it canno
                 api.commands.query('missing.command'),
                 api.commands.query('link.set', { href: 'javascript:alert(1)' }),
             );
+
             return false;
         });
 

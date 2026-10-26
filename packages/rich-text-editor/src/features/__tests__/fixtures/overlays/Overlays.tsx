@@ -22,6 +22,7 @@ export type FixtureOverlayProps = {
 /** The link popover's form: a labelled URL field and Apply, which sets the link on the selection. */
 export const LinkForm = ({ onApply }: { readonly onApply: () => void }) => {
     const fieldId = useId();
+
     return (
         <form
             aria-label="Link"
@@ -55,10 +56,12 @@ export const FixtureLinkPopover = ({
         if (handle === null) {
             return;
         }
+
         handle.execute('fixture.link.edit');
         onOpenChange(false);
         handle.focus();
     };
+
     return (
         <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={overlay.anchor}>
             <Flyout.Content
@@ -91,32 +94,40 @@ export const FixtureSuggestions = ({ open, onOpenChange }: FixtureOverlayProps) 
         if (handle !== null) {
             handle.execute('text.insert', { text: MENTIONS[index] ?? '' });
         }
+
         onOpenChange(false);
     };
+
     const { container } = overlay;
     // The keys reach the list through the surface, which keeps focus, as a suggestion plugin's keymap does.
     useEffect(() => {
         if (!open || container === null) {
             return undefined;
         }
+
         const owner = container.ownerDocument;
         const onKey = (event: KeyboardEvent) => {
             if (event.key === 'ArrowDown') {
                 event.preventDefault();
                 setActive((active + 1) % MENTIONS.length);
             }
+
             if (event.key === 'ArrowUp') {
                 event.preventDefault();
                 setActive((active + MENTIONS.length - 1) % MENTIONS.length);
             }
+
             if (event.key === 'Enter' || event.key === 'Tab') {
                 event.preventDefault();
                 accept(active);
             }
         };
+
         owner.addEventListener('keydown', onKey, true);
+
         return () => owner.removeEventListener('keydown', onKey, true);
     });
+
     return (
         <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={overlay.anchor}>
             <Flyout.Content
@@ -150,6 +161,7 @@ export const FixtureSuggestions = ({ open, onOpenChange }: FixtureOverlayProps) 
 export const FixtureMenu = ({ open, onOpenChange }: FixtureOverlayProps) => {
     const overlay = useEditorOverlay(open, onOpenChange);
     const handle = useEditorHandle<FixtureCommands>();
+
     return (
         <Dropdown.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={overlay.anchor}>
             <Dropdown.Content
@@ -176,9 +188,11 @@ export const FixtureRunAnchored = ({ onRect }: { readonly onRect: (rect: DOMRect
     if (api !== undefined && bold !== null && bold !== undefined) {
         run = api.marks.run('bold', { at: bold });
     }
+
     const overlay = useEditorOverlay(true, () => undefined, run?.range);
     useEffect(() => {
         onRect(overlay.anchor.getBoundingClientRect());
     });
+
     return null;
 };

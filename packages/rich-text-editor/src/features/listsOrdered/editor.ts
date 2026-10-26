@@ -27,7 +27,9 @@ export const orderedListEditor = defineEditorPart(orderedList, {
                 if (found === undefined) {
                     return false;
                 }
+
                 api.overlays.open(NumberingDialog, { payload: START, initial: Number(found.attrs.start) }, 'selection');
+
                 return true;
             },
         },

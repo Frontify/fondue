@@ -579,6 +579,7 @@ describe('the image size', () => {
                     fireEvent.pointerMove(handle as Element, { pointerId: 1, clientX: 100 + step * 10 });
                 });
             }
+
             end();
         };
 

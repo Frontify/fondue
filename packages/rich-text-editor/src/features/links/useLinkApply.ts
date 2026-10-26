@@ -38,6 +38,7 @@ export const useLinkApply = (
     const messageOf = (next: Problem | undefined): string => {
         if (next === 'scheme') {
             const schemes = policy?.allowedSchemes;
+
             return strings.schemesAllowed(
                 listed(
                     (schemes ?? []).map((scheme) => `${scheme}:`),
@@ -45,15 +46,20 @@ export const useLinkApply = (
                 ),
             );
         }
+
         if (next === 'host') {
             const hosts = policy?.allowedHosts;
+
             return strings.hostsAllowed(listed(hosts ?? [], lang));
         }
+
         if (next === 'removed') {
             return strings.removed;
         }
+
         return strings.invalid;
     };
+
     const reject = (next: Problem) => {
         setProblem(next);
         const field = destinationRef.current;
@@ -67,11 +73,13 @@ export const useLinkApply = (
             setRejections((count) => count + 1);
         }
     };
+
     /** Runs `link.set`, at the captured target unless `here`, with `fallback` as the text when none is typed. */
     const run = (destination: string, here: boolean, fallback = '') => {
         if (api === undefined) {
             return;
         }
+
         const visible = text === '' ? fallback : text;
         // Text the author left as it opened sends none, so what was typed in the link meanwhile stays; a new link inserts it.
         const unchanged = !here && initialText !== '' && visible === initialText;
@@ -85,6 +93,7 @@ export const useLinkApply = (
         if (!here && target !== undefined) {
             options = { target };
         }
+
         const result = api.commands.execute(SET_LINK, value, options);
         if (result.status === 'rejected') {
             if (result.code === 'target-invalid') {
@@ -94,11 +103,14 @@ export const useLinkApply = (
             } else {
                 reject('failed');
             }
+
             return;
         }
+
         overlay.returnFocusTo(null);
         close(false);
     };
+
     const checked = () => {
         const destination = withScheme(href);
         const result = checkHref(destination, policy);
@@ -106,6 +118,7 @@ export const useLinkApply = (
         if (result.ok && result.href !== '') {
             return result.href;
         }
+
         const unchecked = checkHref(destination);
         if (result.ok || !unchecked.ok || unchecked.href === '') {
             reject('invalid');
@@ -114,8 +127,10 @@ export const useLinkApply = (
         } else {
             reject('scheme');
         }
+
         return undefined;
     };
+
     const apply = (event: FormEvent) => {
         event.preventDefault();
         const destination = checked();
@@ -123,17 +138,20 @@ export const useLinkApply = (
             run(destination, false);
         }
     };
+
     const insertNew = () => {
         const destination = checked();
         if (destination !== undefined) {
             run(destination, true);
         }
     };
+
     const pick = (position: number) => {
         const result = results[position];
         if (result !== undefined) {
             run(result.href, false, result.label);
         }
     };
+
     return [problem, setProblem, messageOf, apply, insertNew, pick] as const;
 };

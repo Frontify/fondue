@@ -31,6 +31,7 @@ export const started = async (options: Parameters<typeof mountUploads>[0] = {}) 
     if (nodeId === undefined) {
         throw new Error('No slot was inserted.');
     }
+
     return { ...mounted, nodeId };
 };
 

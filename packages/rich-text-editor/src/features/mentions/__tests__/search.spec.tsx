@@ -147,10 +147,12 @@ describe('the mention search session', () => {
             if (more < 0) {
                 break;
             }
+
             const activeIndex = mounted.active()?.index;
             for (let step = activeIndex ?? 0; step < more; step += 1) {
                 pressKey(mounted.handle, 'ArrowDown');
             }
+
             pressKey(mounted.handle, 'Enter');
         }
 

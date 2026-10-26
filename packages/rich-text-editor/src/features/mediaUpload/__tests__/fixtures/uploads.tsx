@@ -46,6 +46,7 @@ export const jpegFile = (name: string, width: number, height: number): File => {
     const app0 = [0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x00, 0x01, 0, 0];
     const sof = [0xff, 0xc0, 0x00, 0x11, 0x08, height >> 8, height & 0xff, width >> 8, width & 0xff, 0x03];
     const bytes = Uint8Array.from([0xff, 0xd8, ...app0, ...sof, ...Array.from({ length: 9 }, () => 0), 0xff, 0xd9]);
+
     return new File([bytes], name, { type: 'image/jpeg' });
 };
 
@@ -78,12 +79,14 @@ export const deferredUploads = () => {
     const releaseUnused = vi.fn((_operationId: string, _context: ServiceContext) => Promise.resolve());
     const asset = (index: number): AssetValue => {
         const filename = pending[index]?.request.filename;
+
         return {
             assetId: `asset-${index}`,
             mediaType: 'image/png',
             labelSnapshot: filename ?? 'image.png',
         };
     };
+
     return {
         service: { upload, releaseUnused },
         upload,
@@ -102,6 +105,7 @@ export const deferredUploads = () => {
                 answered.add(upload);
                 upload.resolve(asset(index));
             }
+
             await settle();
         },
         /** Rejects upload `index` as a service that refused it does. */
@@ -111,11 +115,13 @@ export const deferredUploads = () => {
                 answered.add(upload);
                 upload.reject(new Error('The service refused the file.'));
             }
+
             await settle();
         },
         asset,
     };
 };
+
 export type DeferredUploads = ReturnType<typeof deferredUploads>;
 
 type Mount = {
@@ -136,6 +142,7 @@ export const mountUploads = async (options?: Mount) => {
     if (options !== undefined) {
         given = options;
     }
+
     const {
         blocks = [para(text('Before'))],
         model = uploadModel(),
@@ -154,6 +161,7 @@ export const mountUploads = async (options?: Mount) => {
     if (limits !== undefined) {
         definitionOptions.limits = limits;
     }
+
     const definition = defineEditor({
         id: 'test.uploads',
         model,
@@ -177,6 +185,7 @@ export const mountUploads = async (options?: Mount) => {
         rendered.rerender(<RichTextEditor {...props} services={next} ref={ref} />);
         await settle();
     };
+
     act(() => {
         vi.advanceTimersToNextFrame();
     });
@@ -186,25 +195,31 @@ export const mountUploads = async (options?: Mount) => {
     if (handle === null || runtime === undefined || runtime.view === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     if (policy !== undefined) {
         handle.updatePolicy(Object.assign({ ...runtime.policy }, policy));
     }
+
     const chooser = () => {
         const found = rendered.container.querySelector<HTMLInputElement>('input[type="file"]');
         if (found === null) {
             throw new Error('The editor renders no file chooser.');
         }
+
         return found;
     };
+
     const pick = async (files: readonly File[]) => {
         act(() => {
             fireEvent.change(chooser(), { target: { files } });
         });
         await settle();
     };
+
     const blocksOf = () => handle.getSnapshot().document.content.content ?? [];
     const images = () =>
         blocksOf().flatMap((block) => (block.content ?? []).filter(({ type }) => type === 'asset_image'));
+
     return {
         ...rendered,
         rerenderWith,
@@ -256,6 +271,7 @@ export const mountUploads = async (options?: Mount) => {
         announced: () => screen.getByTestId('fondue-rich-text-editor-announcer').textContent,
     };
 };
+
 export type MountedUploads = Awaited<ReturnType<typeof mountUploads>>;
 
 /** Records each message the live region announces, in order. */
@@ -272,6 +288,7 @@ export const recordAnnouncements = () => {
         }
     });
     observer.observe(region, { childList: true, characterData: true, subtree: true });
+
     return {
         messages,
         stop: async () => {

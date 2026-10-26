@@ -13,6 +13,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.mentionRte !== undefined)).toBe(true);
 };
+
 /** Puts the caret after `text` in the focused surface. */
 const caretAfter = async (page: Page, text: string) => {
     await surfaceOf(page).click();
@@ -21,12 +22,14 @@ const caretAfter = async (page: Page, text: string) => {
         rte.setSelection(rte.handle, { text: after, from: after.length, to: after.length });
     }, text);
 };
+
 /** The node types of the first paragraph, with each text and mention label. */
 const inlineOf = (page: Page) =>
     page.evaluate(() => {
         const rte = window.mentionRte as MentionRte;
         const [first] = rte.handle.getSnapshot().document.content.content ?? [];
         const content = first?.content;
+
         return (content ?? []).map((node) =>
             node.type === 'mention'
                 ? `@${typeof node.attrs?.labelSnapshot === 'string' ? node.attrs.labelSnapshot : ''}`
@@ -121,6 +124,7 @@ const describedControls = (dialog: ReturnType<Page['getByRole']>) =>
     dialog.evaluate((element) => {
         const description = element.ownerDocument.getElementById(element.getAttribute('aria-describedby') ?? '');
         const found = description?.querySelectorAll('button, input, select, textarea, [href], [tabindex]').length;
+
         return found ?? 0;
     });
 
@@ -201,6 +205,7 @@ test('keeps a mention whole while the arrow keys cross it, and deletes it whole 
     for (const key of ['ArrowRight', 'ArrowRight', 'ArrowRight', 'ArrowLeft', 'ArrowLeft', 'ArrowLeft']) {
         await page.keyboard.press(key);
     }
+
     await expect(surfaceOf(page).locator('[data-rte-chrome] > span')).toHaveText('@Ada');
     expect(await inlineOf(page)).toEqual(['Ask ', '@Ada', ' now']);
     await page.evaluate(() => {
@@ -227,6 +232,7 @@ test('keeps the mention chip apart from the text around it by a border in forced
 
     const border = await chip.evaluate((element) => {
         const style = getComputedStyle(element);
+
         return { style: style.borderTopStyle, width: Number.parseFloat(style.borderTopWidth) };
     });
 

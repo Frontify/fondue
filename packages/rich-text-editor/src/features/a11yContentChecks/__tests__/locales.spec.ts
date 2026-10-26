@@ -26,6 +26,7 @@ describe('the content check strings', () => {
                 expect(strings[ruleNameKey(ruleId)], `${locale.lang} ${ruleId}`).toMatch(/\S/);
                 expect(strings[ruleHelpKey(ruleId)], `${locale.lang} ${ruleId} help`).toMatch(/\S/);
             }
+
             expect(strings.RichTextEditor_checkGenericImageWords?.split('|').length).toBeGreaterThan(3);
             expect(strings.RichTextEditor_checkVagueLinkTexts?.split('|').length).toBeGreaterThan(3);
         }

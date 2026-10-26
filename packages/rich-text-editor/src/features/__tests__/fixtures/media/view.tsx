@@ -18,6 +18,7 @@ const textOf = (value: unknown): string => {
     if (typeof value === 'string') {
         return value;
     }
+
     return '';
 };
 
@@ -34,6 +35,7 @@ const AltTextDialog = ({
     const fieldId = useId();
     const [alt, setAlt] = useState(() => textOf(attrs.alt));
     const { t } = context;
+
     return (
         // A modal dialog holds focus, so every close request it makes is the author's.
         <Dialog.Root modal open={open} onOpenChange={onOpenChange}>
@@ -69,6 +71,7 @@ const ImageChrome = () => {
     const { context } = useRichTextNodeView();
     const [open, setOpen] = useState(false);
     const label = context.t('RichTextEditor_fixtureAltText');
+
     return (
         <>
             <NodeChromeToolbar aria-label={context.t('RichTextEditor_fixtureImage')}>

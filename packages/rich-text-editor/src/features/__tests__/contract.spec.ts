@@ -65,6 +65,7 @@ const failingTitles = async (register: () => void): Promise<string[]> => {
     } finally {
         vi.unstubAllGlobals();
     }
+
     const failing: string[] = [];
     for (const [name, body] of cases) {
         try {
@@ -73,8 +74,10 @@ const failingTitles = async (register: () => void): Promise<string[]> => {
             failing.push(name);
         }
     }
+
     return failing;
 };
+
 const failingCases = (
     features: readonly Feature[],
     fixtures?: readonly unknown[],
@@ -83,8 +86,10 @@ const failingCases = (
     failingTitles(() => {
         if (fixtures === undefined) {
             runFeatureContract(features, { plugins });
+
             return;
         }
+
         runFeatureContract(features, { fixtures, plugins });
     });
 
@@ -102,6 +107,7 @@ const text = (value: string, ...marks: readonly string[]) => {
     if (marks.length === 0) {
         return { type: 'text', text: value };
     }
+
     return { type: 'text', text: value, marks: marks.map((type) => ({ type })) };
 };
 
@@ -198,6 +204,7 @@ describe('the feature contract suite', () => {
             (run: Run): Run =>
                 (api) => {
                     setTimeout(() => undefined, 0);
+
                     return run(api);
                 },
         ],
@@ -206,6 +213,7 @@ describe('the feature contract suite', () => {
             (run: Run): Run =>
                 (api) => {
                     setImmediate(() => undefined);
+
                     return run(api);
                 },
         ],
@@ -214,6 +222,7 @@ describe('the feature contract suite', () => {
             (run: Run): Run =>
                 (api) => {
                     fetch('https://frontify.com').catch(() => undefined);
+
                     return run(api);
                 },
         ],
@@ -257,6 +266,7 @@ describe('the feature contract suite', () => {
                     readOnly: true,
                     run: (api) => {
                         api.panels.open('fixture.spotlight');
+
                         return true;
                     },
                 },
@@ -302,15 +312,18 @@ describe('the feature contract suite', () => {
                     if (found === undefined && 'nodeId' in node.attrs) {
                         found = { pos, nodeId: node.attrs.nodeId };
                     }
+
                     return found === undefined;
                 });
                 if (found === undefined) {
                     return null;
                 }
+
                 let next = 'on';
                 if (found.nodeId === 'on') {
                     next = 'off';
                 }
+
                 return state.tr.setNodeAttribute(found.pos, 'nodeId', next);
             },
         ],
@@ -320,6 +333,7 @@ describe('the feature contract suite', () => {
             (original: Normalizer): Normalizer =>
                 (state, ids) => {
                     setTimeout(() => undefined, 0);
+
                     return original(state, ids);
                 },
         ],
@@ -331,6 +345,7 @@ describe('the feature contract suite', () => {
                     Promise.resolve()
                         .then(() => undefined)
                         .catch(() => undefined);
+
                     return original(state, ids);
                 },
         ],
@@ -340,8 +355,10 @@ describe('the feature contract suite', () => {
             (original: Normalizer): Normalizer =>
                 (state) => {
                     let drawn = 0;
+
                     return original(state, () => {
                         drawn += 1;
+
                         return `node-${Date.now()}-${drawn}`;
                     });
                 },
@@ -467,10 +484,12 @@ describe('the feature contract suite', () => {
         const breaking = (from: string, to: string) =>
             vi.mocked(createCodecs).mockImplementation((model, options) => {
                 const codecs = actual(model, options);
+
                 return {
                     ...codecs,
                     toHTML: (document, htmlOptions) => {
                         const output = codecs.toHTML(document, htmlOptions);
+
                         return { ...output, html: output.html.replace(from, to) };
                     },
                 };
@@ -505,6 +524,7 @@ describe('the feature contract suite', () => {
         const adding = (extra: readonly Diagnostic[]) =>
             vi.mocked(createCodecs).mockImplementation((model, options) => {
                 const codecs = actual(model, options);
+
                 return {
                     ...codecs,
                     toHTML: (input, htmlOptions) => {
@@ -512,6 +532,7 @@ describe('the feature contract suite', () => {
                         if (!JSON.stringify(input).includes('fixture_note')) {
                             return output;
                         }
+
                         return { ...output, diagnostics: [...output.diagnostics, ...extra] };
                     },
                 };
@@ -561,10 +582,12 @@ describe('the feature contract suite', () => {
         const breaking = (from: string, to: string) =>
             vi.mocked(createCodecs).mockImplementation((model, options) => {
                 const codecs = actual(model, options);
+
                 return {
                     ...codecs,
                     toHTML: (document, htmlOptions) => {
                         const output = codecs.toHTML(document, htmlOptions);
+
                         return { ...output, html: output.html.replace(from, to) };
                     },
                 };
@@ -572,8 +595,10 @@ describe('the feature contract suite', () => {
         // The shipped fixtures need features this list leaves out, so only the cases of the given document count.
         const failingOfDocument = async () => {
             const failing = await failingCases(features, [opened]);
+
             return failing.filter((title) => title.endsWith('fixture 1') || title.includes('fixture 1 '));
         };
+
         try {
             breaking('', '');
             const intact = await failingOfDocument();
@@ -645,11 +670,13 @@ const dependenciesOf = (folder: string, peers: ReadonlySet<string>): string[] =>
             if (name.startsWith('@')) {
                 name = `${name}/${parts[1] ?? ''}`;
             }
+
             if (!peers.has(name) && !name.startsWith('node:')) {
                 found.add(name);
             }
         }
     }
+
     return [...found].sort();
 };
 
@@ -663,20 +690,26 @@ const patternExpression = (rule: string): RegExp => {
         if (token === '**/') {
             return '(?:.*/)?';
         }
+
         if (token === '/**') {
             return '/.+';
         }
+
         if (token === '**') {
             return '.*';
         }
+
         if (token === '*') {
             return '[^/]*';
         }
+
         if (token === '?') {
             return '[^/]';
         }
+
         return `\\${token}`;
     });
+
     return new RegExp(anchored ? `^${source}$` : `(?:^|/)${source}$`);
 };
 
@@ -691,6 +724,7 @@ const ownersOf = (codeowners: string, directory: string): string[] => {
             owners = names;
         }
     }
+
     return owners;
 };
 
@@ -874,6 +908,7 @@ describe('the outside fixture feature', () => {
         if (handle === null) {
             throw new Error('no handle');
         }
+
         const marked = screen.getByRole('textbox', { name: 'Notes' }).querySelector('mark');
 
         expect(marked?.textContent).toBe('highlighted');

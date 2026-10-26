@@ -30,6 +30,7 @@ export const formatClearEditor = defineEditorPart(formatClear, {
             run: (api) => {
                 const blocks = api.blocks.clear(CLEARED_ATTRIBUTES);
                 const marks = api.marks.remove(api.marks.installed(), { wholeBlocks: true });
+
                 return blocks || marks;
             },
         },

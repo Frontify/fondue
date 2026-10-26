@@ -192,6 +192,7 @@ describe('leaf blocks', () => {
                 mounted.handle.execute('history.undo');
                 const undone = mounted.blocks();
                 mounted.unmount();
+
                 return { after, undone };
             });
 

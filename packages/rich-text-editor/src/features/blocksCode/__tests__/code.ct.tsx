@@ -12,6 +12,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.codeRte !== undefined)).toBe(true);
 };
+
 const text = (value: string) => ({ type: 'text', text: value });
 const code = (value: string, languageId: string | null = null) => ({
     type: 'code_block',

@@ -7,12 +7,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Every module a vocabulary entry must never load: the engine, React's DOM renderer, and the editor parts and layers.
 const { loaded, recorded } = vi.hoisted(() => {
     const names = new Set<string>();
+
     return {
         loaded: names,
         recorded:
             (name: string) =>
             async (importOriginal: () => Promise<unknown>): Promise<unknown> => {
                 names.add(name);
+
                 return importOriginal();
             },
     };
@@ -53,8 +55,10 @@ const loadVocabulary = async () => {
     const { compileContentModel } = await import('#/model');
     const { featuresById } = await import('#/features');
     const { registry } = await import('#/features/registry');
+
     return { compileContentModel, featuresById, registry };
 };
+
 const loadCodecs = () => import('#/codecs');
 const modelOf = ({ compileContentModel, featuresById, registry }: Entries) =>
     compileContentModel(featuresById(Object.keys(registry)), { id: 'test.vocabulary', version: 1 });

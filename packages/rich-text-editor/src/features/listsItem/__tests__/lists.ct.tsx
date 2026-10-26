@@ -13,6 +13,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.listRte !== undefined)).toBe(true);
 };
+
 // ProseMirror writes its selection back to the DOM 20 ms after the surface gains focus, which would undo a key pressed sooner.
 const settleFocus = (page: Page) => page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
 const caretIn = async (page: Page, text: string, from = 1, to = from) => {
@@ -26,6 +27,7 @@ const caretIn = async (page: Page, text: string, from = 1, to = from) => {
         [text, from, to] as const,
     );
 };
+
 const commandsOf = (page: Page) =>
     page.evaluate(() => (window.listRte as ListRte).changes.map(({ commandId }) => commandId));
 const nested = [bullets(listItem('first'), listItem('second', bullets(listItem('inner one'), listItem('inner two'))))];
@@ -103,6 +105,7 @@ test('mirrors a nested bulleted list under rtl', async ({ mount, page }, testInf
             if (rtl) {
                 return box.right - line.right;
             }
+
             return line.left - box.left;
         }, dir === 'rtl');
         await testInfo.attach(`nested list under ${dir}`, {
@@ -110,8 +113,10 @@ test('mirrors a nested bulleted list under rtl', async ({ mount, page }, testInf
             contentType: 'image/png',
         });
         await editor.unmount();
+
         return gap;
     };
+
     const ltr = await startGap('ltr');
     const rtl = await startGap('rtl');
 
@@ -130,6 +135,7 @@ const markersOf = (root: Locator) =>
         [...element.querySelectorAll('li')].map((item) => {
             const marker = getComputedStyle(item, '::marker');
             const own = getComputedStyle(item);
+
             return {
                 text: item.querySelector('p')?.textContent,
                 type: getComputedStyle(item.parentElement as Element).listStyleType,

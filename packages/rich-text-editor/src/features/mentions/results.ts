@@ -52,6 +52,7 @@ export const referenceListStrings = (t: CodecContext['t']): ReferenceListStrings
         if (detail === undefined) {
             return t('RichTextEditor_suggestionOption', { label: quoted, position, total });
         }
+
         return t('RichTextEditor_mentionOption', { label: quoted, type: detail, position, total });
     },
     both: (first, second) => t('RichTextEditor_announceBoth', { first, second }),
@@ -75,9 +76,11 @@ export const resultOf = ({
     if (imageUrl !== undefined) {
         result = { ...result, imageUrl };
     }
+
     if (kind !== undefined) {
         result = { ...result, kind };
     }
+
     return result;
 };
 
@@ -98,6 +101,7 @@ export const afterPage = (shown: readonly ResultItem[], results: ResultPage): re
             items.push(item);
         }
     }
+
     items.splice(MAX_ITEMS);
     if (results.nextCursor !== null && items.length < MAX_ITEMS) {
         items.push({
@@ -109,6 +113,7 @@ export const afterPage = (shown: readonly ResultItem[], results: ResultPage): re
             cursor: results.nextCursor,
         });
     }
+
     return items;
 };
 
@@ -123,17 +128,21 @@ export const listOption = (item: ResultItem, strings: ReferenceListStrings): Lis
     if (item.action === 'more') {
         return { key: item.key, label: strings.loadMore, glyph: null };
     }
+
     if (item.action === 'retry') {
         return { key: item.key, label: strings.retry, glyph: null };
     }
+
     if (item.detail === undefined) {
         return { ...item, glyph: item.glyph ?? null };
     }
+
     // A reference result with no image and no kind shows the person icon.
     let lead: Pick<ListboxOption, 'imageUrl' | 'kind'> = { kind: item.kind ?? 'user' };
     if (item.imageUrl !== undefined) {
         lead = { imageUrl: item.imageUrl };
     }
+
     return { key: item.key, label: item.label, glyph: null, detail: item.detail, ...lead };
 };
 
@@ -150,9 +159,11 @@ export const spokenOption = (
     if (option === undefined) {
         return undefined;
     }
+
     let total = items.length;
     if (option.action === undefined) {
         total = resultsOf(items).length;
     }
+
     return strings.option(listOption(option, strings), index + 1, total);
 };

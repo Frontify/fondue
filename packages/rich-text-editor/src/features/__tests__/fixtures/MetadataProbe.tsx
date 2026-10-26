@@ -29,11 +29,14 @@ const viewOf = (handle: EditorHandle | null) => {
     if (handle === null) {
         throw new Error('The editor did not mount.');
     }
+
     const view = runtimeOf(handle)?.view;
     if (view === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     view.dispatch(view.state.tr.setSelection(new AllSelection(view.state.doc)));
+
     return view;
 };
 
@@ -48,6 +51,7 @@ export const MetadataProbe = () => {
                 viewOf(sourceRef.current).dom.dispatchEvent(
                     new ClipboardEvent('copy', { clipboardData, bubbles: true, cancelable: true }),
                 );
+
                 return clipboardData.getData('text/html');
             },
             paste: (html) => {
@@ -56,10 +60,12 @@ export const MetadataProbe = () => {
                 viewOf(targetRef.current).dom.dispatchEvent(
                     new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true }),
                 );
+
                 return targetRef.current?.getSnapshot().document.content.content;
             },
         };
     }, []);
+
     return (
         <>
             <RichTextEditor

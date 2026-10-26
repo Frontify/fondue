@@ -33,6 +33,7 @@ export const languageStrings = (api: EditorApi | undefined): LanguageStrings => 
     if (api !== undefined) {
         t = api.t;
     }
+
     return stringsOf(t);
 };
 
@@ -55,10 +56,12 @@ export const languageOptions = (api: EditorApi | undefined): readonly string[] =
     if (api === undefined) {
         return [];
     }
+
     const languages = api.optionsOf('marks.language')?.languages;
     if (!Array.isArray(languages)) {
         return [];
     }
+
     return languages.filter((tag): tag is string => typeof tag === 'string');
 };
 
@@ -66,6 +69,7 @@ export const localeOf = (api: EditorApi | undefined): string => {
     if (api === undefined) {
         return 'en-US';
     }
+
     return api.locale();
 };
 
@@ -74,6 +78,7 @@ export const labelOf = (tag: string, locale: string): string => {
     if (name === undefined) {
         return tag;
     }
+
     return name;
 };
 
@@ -81,6 +86,7 @@ export const directionOf = (value: string): 'ltr' | 'rtl' | 'auto' | null => {
     if (value === 'ltr' || value === 'rtl' || value === 'auto') {
         return value;
     }
+
     return null;
 };
 
@@ -89,15 +95,18 @@ export const currentLanguage = (api: EditorApi | undefined): { readonly lang: st
     if (api === undefined) {
         return { lang: '', dir: '' };
     }
+
     const attrs = api.marks.attrs('language');
     let lang = '';
     if (typeof attrs?.lang === 'string') {
         lang = attrs.lang;
     }
+
     let dir = '';
     if (typeof attrs?.dir === 'string') {
         dir = attrs.dir;
     }
+
     return { lang, dir };
 };
 
@@ -106,6 +115,7 @@ export const offeredLanguages = (languages: readonly string[], stored: string): 
     if (languages.length > 0 && stored !== '' && !languages.includes(stored)) {
         return [stored, ...languages];
     }
+
     return languages;
 };
 
@@ -113,11 +123,14 @@ export const directionLabel = (value: string, strings: LanguageStrings): string 
     if (value === 'ltr') {
         return strings.leftToRight;
     }
+
     if (value === 'rtl') {
         return strings.rightToLeft;
     }
+
     if (value === 'auto') {
         return strings.automatic;
     }
+
     return strings.none;
 };

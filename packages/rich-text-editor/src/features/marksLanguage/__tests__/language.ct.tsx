@@ -19,6 +19,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.languageRte !== undefined)).toBe(true);
 };
+
 // ProseMirror writes its selection back to the DOM 20 ms after the surface gains focus, which would undo a key pressed sooner.
 const settleFocus = (page: Page) => page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
 const caretInPassage = async (page: Page) => {
@@ -29,6 +30,7 @@ const caretInPassage = async (page: Page) => {
         rte.setSelection(rte.handle, { text: '你好', from: 1, to: 1 });
     });
 };
+
 const languageOf = (page: Page) =>
     page.evaluate(
         () =>
@@ -87,6 +89,7 @@ const describedControls = (dialog: Locator) =>
     dialog.evaluate((element) => {
         const description = element.ownerDocument.getElementById(element.getAttribute('aria-describedby') ?? '');
         const found = description?.querySelectorAll('button, input, select, textarea, [href], [tabindex]').length;
+
         return found ?? 0;
     });
 
@@ -168,6 +171,7 @@ test('scrolls the language list inside the dialog and keeps the focused radio in
     const list = await dialog.getByRole('radiogroup', { name: 'Language tag' }).evaluate((group) => {
         const options = group.querySelector('div');
         const scrollTop = options?.scrollTop;
+
         return {
             scrolls: options !== null && options.scrollHeight > options.clientHeight,
             scrolled: scrollTop ?? 0,

@@ -23,6 +23,7 @@ const Link = ({ attrs, children, context }: ReaderNodeProps) => {
     if (checked === undefined || !checked.ok) {
         return <>{children}</>;
     }
+
     if (attrs.openInNewWindow !== true) {
         return (
             <a href={checked.href} rel="noopener">
@@ -30,6 +31,7 @@ const Link = ({ attrs, children, context }: ReaderNodeProps) => {
             </a>
         );
     }
+
     return (
         <a href={checked.href} rel="noopener noreferrer" target="_blank">
             {children}

@@ -63,7 +63,9 @@ const linkOptions = (
     if (options === undefined) {
         return { policy: undefined, resourceTypes: [] };
     }
+
     const { resourceTypes } = options;
+
     return {
         policy: hrefPolicyOf(options),
         resourceTypes: Array.isArray(resourceTypes)
@@ -79,6 +81,7 @@ export const searchOf = (api: EditorApi | undefined) => {
     if (service === undefined || resourceTypes.length === 0) {
         return { policy, search: undefined };
     }
+
     return { policy, search: { service, resourceTypes } };
 };
 
@@ -103,9 +106,11 @@ export const linkInitialOf = (api: EditorApi<'marks'>): LinkInitial => {
             link: link.range,
         };
     }
+
     if (api.selection().collapsed) {
         return empty;
     }
+
     return { ...empty, text: api.selectedText(), focus: 'destination' };
 };
 
@@ -117,6 +122,7 @@ export const capture = (api: EditorApi | undefined, link: LinkInitial['link']): 
     if (link === undefined) {
         return api?.targets.capture(undefined, { purpose: 'format', onIntersectingEdit: 'invalidate' });
     }
+
     return api?.targets.capture(link, { purpose: 'format', onIntersectingEdit: 'map' });
 };
 

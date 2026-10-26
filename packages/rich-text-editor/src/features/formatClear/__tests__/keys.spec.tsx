@@ -13,8 +13,10 @@ const onPlatform = (apple: boolean) => {
     if (apple) {
         platform = 'MacIntel';
     }
+
     vi.spyOn(navigator, 'platform', 'get').mockReturnValue(platform);
 };
+
 beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
 });
@@ -30,6 +32,7 @@ describe('clear formatting shortcut', () => {
         if (apple) {
             platform = 'Apple';
         }
+
         it(`runs format.inline.clear with the ${platform} keys, and not with the other platform's`, () => {
             onPlatform(apple);
             const run = (meta: boolean, ctrl: boolean) => {
@@ -50,6 +53,7 @@ describe('clear formatting shortcut', () => {
                 const marks = run?.marks;
                 const ran = mounted.changes.map(({ commandId }) => commandId);
                 mounted.unmount();
+
                 return { marks, ran };
             };
 

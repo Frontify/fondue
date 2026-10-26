@@ -27,6 +27,7 @@ const unitOf = async (folder: string) => {
     const exports = (await import(`../${folder}/index.ts`)) as Record<string, Unit>;
     const factories = Object.values(exports);
     expect(factories).toHaveLength(1);
+
     return factories[0]?.();
 };
 

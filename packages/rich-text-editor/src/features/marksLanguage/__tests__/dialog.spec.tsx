@@ -34,6 +34,7 @@ const mount = (
     if (toolbar === undefined) {
         return mountText({ model, blocks });
     }
+
     return mountText({ model, blocks, toolbar });
 };
 
@@ -44,6 +45,7 @@ const open = (handle: ReturnType<typeof mount>['handle']) => {
         handle.execute('mark.language.edit');
         vi.advanceTimersToNextFrame();
     });
+
     return screen.getByRole('dialog', { name: 'Language' });
 };
 

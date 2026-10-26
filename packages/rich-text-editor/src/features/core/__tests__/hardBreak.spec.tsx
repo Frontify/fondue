@@ -22,10 +22,13 @@ type Mounted = ReturnType<typeof mountText>;
 const pressShiftEnter = ({ view }: Mounted) => {
     const event = new KeyboardEvent('keydown', { key: 'Enter', shiftKey: true, bubbles: true, cancelable: true });
     view.dom.dispatchEvent(event);
+
     return event.defaultPrevented;
 };
+
 const firstOf = ({ handle }: Mounted) => {
     const [block] = handle.getSnapshot().document.content.content ?? [];
+
     return block;
 };
 

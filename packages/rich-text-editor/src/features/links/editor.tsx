@@ -43,6 +43,7 @@ const setLink: EditorCommand<LinkValue, 'marks'> = {
 const editLink = (api: EditorApi<'marks' | 'overlays'>): boolean => {
     const initial = linkInitialOf(api);
     api.overlays.open(LinkPopover, { initial }, initial.link ?? 'selection');
+
     return true;
 };
 

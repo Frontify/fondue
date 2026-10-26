@@ -13,8 +13,10 @@ const onPlatform = (apple: boolean) => {
     if (apple) {
         platform = 'MacIntel';
     }
+
     vi.spyOn(navigator, 'platform', 'get').mockReturnValue(platform);
 };
+
 beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
 });
@@ -38,6 +40,7 @@ describe('alignment shortcuts', () => {
         if (apple) {
             platform = 'Apple';
         }
+
         for (const { value, key, keyCode } of ROWS) {
             it(`runs block.align.set ${value} with the ${platform} keys, and not with the other platform's`, () => {
                 onPlatform(apple);
@@ -60,6 +63,7 @@ describe('alignment shortcuts', () => {
                     const aligned = attrs?.align;
                     const ran = mounted.changes.map(({ commandId }) => commandId);
                     mounted.unmount();
+
                     return { aligned, ran };
                 };
 

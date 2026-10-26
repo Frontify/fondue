@@ -20,8 +20,10 @@ const failureOf = (run: () => unknown) => {
         if (error instanceof DefinitionError) {
             return { code: error.code, details: error.details };
         }
+
         throw error;
     }
+
     throw new Error('expected a DefinitionError');
 };
 
@@ -67,6 +69,7 @@ describe('pluginsById', () => {
             const run = () => pluginsById([value as unknown as string]);
             expect(failureOf(run)).toEqual({ code: 'definition.unknown-feature', details: { id: null, index: 0 } });
         }
+
         expect(failureOf(() => pluginsById('core' as unknown as string[])).code).toBe('definition.unknown-feature');
     });
 });

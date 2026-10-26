@@ -20,8 +20,10 @@ const onPlatform = (apple: boolean) => {
     if (apple) {
         platform = 'MacIntel';
     }
+
     vi.spyOn(navigator, 'platform', 'get').mockReturnValue(platform);
 };
+
 beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
 });
@@ -102,6 +104,7 @@ describe('list shortcuts', () => {
         if (apple) {
             platform = 'Apple';
         }
+
         for (const row of ROWS) {
             it(`runs ${row.command} with the ${platform} keys, and not with the other platform's`, () => {
                 onPlatform(apple);
@@ -111,6 +114,7 @@ describe('list shortcuts', () => {
                     press(mounted, keys);
                     const ran = mounted.changes.map(({ commandId }) => commandId);
                     mounted.unmount();
+
                     return ran;
                 };
 
@@ -144,6 +148,7 @@ describe('list input rules', () => {
                 typeText(mounted.handle, typed);
                 const result = outlineOf(mounted.handle);
                 mounted.unmount();
+
                 return result;
             };
 
@@ -206,8 +211,10 @@ describe('list Enter in code, in a language, and over a selection', () => {
             if (kind === 'task') {
                 return { type: 'task_item', attrs: { nodeId: 'task-abc', checked: false }, content: [paragraph] };
             }
+
             return { type: 'list_item', content: [paragraph] };
         };
+
         const langs = (at: number) => {
             const mounted = mountText({ model, blocks: [list('bullet', [arabic('bullet')])] });
             setSelection(mounted.handle, { text: 'abc', from: at, to: at });
@@ -216,6 +223,7 @@ describe('list Enter in code, in a language, and over a selection', () => {
             const items = bullets?.content;
             const found = (items ?? []).map((node) => node.content?.[0]?.attrs?.lang);
             mounted.unmount();
+
             return found;
         };
 

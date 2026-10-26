@@ -47,6 +47,7 @@ describe('the checks before an upload', () => {
         vi.spyOn(Blob.prototype, 'arrayBuffer').mockImplementation(function (this: Blob) {
             open += 1;
             most = Math.max(most, open);
+
             return read.call(this).finally(() => {
                 open -= 1;
             });

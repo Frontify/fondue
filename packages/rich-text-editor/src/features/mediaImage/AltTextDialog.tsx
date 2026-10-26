@@ -17,6 +17,7 @@ const options = (strings: AltTextStrings) =>
 
 const IntentChoice = ({ state, strings }: { readonly state: AltTextState; readonly strings: AltTextStrings }) => {
     const { intent, legendId, radioId, focusChecked, chooseIntent } = state;
+
     return (
         <div ref={focusChecked} className={styles.choice}>
             <span id={legendId}>{strings.choice}</span>
@@ -55,6 +56,7 @@ const TextField = ({ state, strings }: { readonly state: AltTextState; readonly 
     if (invalid) {
         describedBy = { 'aria-describedby': errorId };
     }
+
     return (
         <>
             <Label htmlFor={fieldId} required>
@@ -106,6 +108,7 @@ export const AltTextDialog = ({
     readonly strings: AltTextStrings;
 }) => {
     const state = useAltTextDialogState(nodeId, opener, onClose);
+
     return (
         <EditorDialog
             dialog={state.dialog}

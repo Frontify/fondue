@@ -13,6 +13,7 @@ const show = (value: unknown): string => {
     if (typeof value === 'string' || typeof value === 'number') {
         return String(value);
     }
+
     return JSON.stringify(value);
 };
 
@@ -25,19 +26,23 @@ const metadataOf = (blocks: readonly ContentNodeJSON[]): string[] =>
         if (node.type === 'heading') {
             own.push(`h${show(node.attrs?.level)} ${textOf(node)}`);
         }
+
         if (node.attrs?.lang !== undefined && node.attrs.lang !== null) {
             own.push(`${node.type} lang ${show(node.attrs.lang)}`);
         }
+
         const text = node.text ?? '';
         for (const mark of node.marks ?? []) {
             if (mark.type === 'link') {
                 own.push(`link ${show(mark.attrs?.href)} ${text}`);
             }
+
             if (mark.type === 'language') {
                 const lang = show(mark.attrs?.lang);
                 own.push(`language ${lang} ${show(mark.attrs?.dir)} ${text}`);
             }
         }
+
         return [...own, ...metadataOf(node.content ?? [])];
     });
 

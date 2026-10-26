@@ -17,6 +17,7 @@ export const contentChecksEditor = defineEditorPart(contentChecks, {
             readOnly: true,
             run: (api) => {
                 api.panels.open(PANEL);
+
                 return true;
             },
         },

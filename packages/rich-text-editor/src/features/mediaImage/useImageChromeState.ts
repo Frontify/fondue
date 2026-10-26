@@ -17,8 +17,10 @@ const sideOf = (api: EditorApi | undefined, nodeId: string | null) => {
     if (api === undefined || nodeId === null) {
         return 'center';
     }
+
     const figure = api.nearest('figure', nodeId);
     const attrs = figure?.attrs;
+
     return figureAlign(attrs ?? {});
 };
 
@@ -39,21 +41,28 @@ const spokenOf = (
         if (upload !== undefined) {
             // The live region writes a value between U+2068 and U+2069 into a `bdi` of its own.
             const name = `\u2068${upload.name}\u2069`;
+
             return t('RichTextEditor_announceBoth', { first: name, second: uploadStatusText(upload, t) });
         }
+
         return t('RichTextEditor_imageUnfinished');
     }
+
     if (unavailable) {
         const { message, label } = unavailableOf(attrs, context);
+
         return label === '' ? message : `${message} ${label}`;
     }
+
     const alt = altOf(attrs);
     if (alt === undefined) {
         return t('RichTextEditor_imageSelectedMissing');
     }
+
     if (alt === '') {
         return t('RichTextEditor_imageSelectedDecorative');
     }
+
     return t('RichTextEditor_imageSelected', { description: alt });
 };
 
@@ -74,15 +83,18 @@ const useAnimation = (src: string | undefined, mediaType: string | null) => {
         if (src === undefined) {
             return undefined;
         }
+
         const controller = new AbortController();
         mayAnimate(src, mediaType, controller.signal)
             .then((may) => {
                 if (!controller.signal.aborted) {
                     setAnimation({ src, may });
                 }
+
                 return may;
             })
             .catch(() => undefined);
+
         return () => controller.abort();
     }, [src, mediaType]);
     const decided = animation !== undefined && animation.src === src;
@@ -91,6 +103,7 @@ const useAnimation = (src: string | undefined, mediaType: string | null) => {
     if (played !== undefined && played.src === src) {
         paused = played.paused;
     }
+
     return { decided, animated, paused, setPlayed };
 };
 
@@ -108,13 +121,16 @@ const useSelectionAnnouncement = (
     useEffect(() => {
         if (!selected) {
             heardRef.current = undefined;
+
             return;
         }
+
         const before = heardRef.current;
         heardRef.current = { heard, slot };
         if (before !== undefined && (before.heard === heard || (before.slot && !slot))) {
             return;
         }
+
         announce?.(spoken);
     }, [selected, spoken, heard, slot, announce]);
 };
@@ -138,6 +154,7 @@ export const useImageChromeState = () => {
         if (editor === undefined || nodeId === null) {
             return undefined;
         }
+
         return editor.nodeState.get(nodeId, REPLACED_ASSET);
     });
     // An undone replacement gives back the old asset, which asks for no review.
@@ -155,6 +172,7 @@ export const useImageChromeState = () => {
     if (slot && upload !== undefined) {
         heard = upload.state === 'failed' || upload.state === 'stopped' ? upload.state : 'running';
     }
+
     // A selected image is spoken as it becomes selected, and again when what it says changes, as when it fails to
     // load; a slot that fills is not, since the upload's completion speaks for it.
     useSelectionAnnouncement(selected, spoken, heard, slot, announce);
@@ -179,22 +197,26 @@ export const useImageChromeState = () => {
         select();
         api?.commands.execute(option.command, option.payload);
     };
+
     const openWidth = () => {
         // The dialog returns focus to the size menu, which has it as the dialog opens.
         const menu = barRef.current?.querySelector<HTMLElement>(`[data-rte-command="${SET_SIZE}"]`);
         menu?.focus();
         execute('image.width.edit');
     };
+
     let altText = t('RichTextEditor_imageAltEdit');
     if (review) {
         altText = t('RichTextEditor_imageAltReview');
     } else if (!kept) {
         altText = t('RichTextEditor_imageAltAdd');
     }
+
     let sizeText = t('RichTextEditor_imageSizeOriginal');
     if (displayWidth !== null) {
         sizeText = t('RichTextEditor_imageSizePercent', { percent: displayWidth });
     }
+
     const unfinished = attrs.assetId === null;
     const status = unfinished ? upload : undefined;
     // The chrome keeps mouse events from the editor, so a press on the image selects it here, as on any atom, and
@@ -203,12 +225,14 @@ export const useImageChromeState = () => {
         if (selected && event.button === 0) {
             return;
         }
+
         event.preventDefault();
         select();
         if (api?.surface() !== undefined && !surfaceFocused(api.surface)) {
             api.focus();
         }
     };
+
     return {
         api,
         t,

@@ -47,6 +47,7 @@ window.parityNames = Object.keys(PARITY_FIXTURES);
 /** The fixture `name` in the editor, named Editor, and in the reader, in a region named Reader. */
 export const ParityProbe = ({ name }: { readonly name: string }) => {
     const document = { ...PARITY_FIXTURES[name], model: model.ref } as RichTextDocument;
+
     return (
         <ThemeProvider key={name}>
             <RichTextEditor

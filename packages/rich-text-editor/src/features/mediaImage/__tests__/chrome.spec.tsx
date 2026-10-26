@@ -123,6 +123,7 @@ describe('the image chrome', () => {
             const walks = walk.mock.contexts.filter((node) => (node as Node).type.name === 'doc').length;
             walk.mockRestore();
             mounted.unmount();
+
             return walks;
         };
 

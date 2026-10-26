@@ -32,22 +32,27 @@ const rewrite = (
     if (!isObject(value)) {
         return value;
     }
+
     const { node, descend } = visit(value, path);
     const { content } = node;
     if (!descend || !Array.isArray(content)) {
         return node;
     }
+
     const children = (content as readonly JsonValue[]).map((child, index) =>
         rewrite(child, `${path}/content/${index}`, visit),
     );
+
     return { ...node, content: children };
 };
 
 /** `generateId` values `node-1`, `node-2` and so on, so migrated documents compare equal. */
 export const countingIds = (): (() => string) => {
     let count = 0;
+
     return () => {
         count += 1;
+
         return `node-${count}`;
     };
 };
@@ -63,18 +68,23 @@ export const toneToLevel: CapabilityMigration = {
             if (node.type !== 'note' || !isObject(attrs)) {
                 return { node, descend: true };
             }
+
             const { tone = 'info', ...rest } = attrs;
             if (tone === 'alert' || 'level' in rest) {
                 const at = { code: 'migration.requires-review', severity: 'warning', path } as const;
                 unmapped.push({ ...at, messageKey: at.code, featureId: 'fixture.note' });
+
                 return { node, descend: false };
             }
+
             if (tone !== 'info') {
                 return { node, descend: true };
             }
+
             return { node: { ...node, attrs: { nodeId: generateId(), level: 'info', ...rest } }, descend: true };
         });
         const migrated = { ...document, content: content as unknown as typeof document.content };
+
         return unmapped.length === 0
             ? { status: 'migrated', document: migrated }
             : { status: 'requires-review', document: migrated, diagnostics: unmapped };
@@ -94,6 +104,7 @@ export const dividerToRule: ModelMigration = {
                 capability.id === 'fixture.divider' ? { id: 'fixture.rule', version: 1 } : capability,
             )
             .sort((a, b) => (a.id < b.id ? -1 : 1));
+
         return {
             status: 'migrated',
             document: { ...document, requiredCapabilities, content: content as unknown as typeof document.content },
@@ -152,6 +163,8 @@ export const notesModel = (version: NotesVersion) => {
     if (version === 1) {
         return compileContentModel([core(), noteV1(), divider()], { id: NOTES_ID, version });
     }
+
     const features = [core(), version === 2 ? noteV2() : noteV3(), rule()];
+
     return compileContentModel(features, { id: NOTES_ID, version, migrations: [dividerToRule] });
 };

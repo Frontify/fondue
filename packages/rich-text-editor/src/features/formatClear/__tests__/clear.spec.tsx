@@ -90,6 +90,7 @@ const marked = (): ContentNodeJSON => ({
             if (type === 'font_color' || type === 'highlight') {
                 return { type, attrs: { value: '#112233' } };
             }
+
             return { type };
         }),
         { type: 'language', attrs: { lang: 'de', dir: null } },
@@ -130,6 +131,7 @@ const model = () =>
 const first = (handle: ReturnType<typeof mountText>['handle']) => handle.getSnapshot().document.content.content?.[0];
 const childAt = (node: ContentNodeJSON | undefined, index: number) => {
     const children = node?.content;
+
     return children?.[index];
 };
 

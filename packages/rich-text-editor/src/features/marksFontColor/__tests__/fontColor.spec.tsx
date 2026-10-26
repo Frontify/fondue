@@ -31,13 +31,16 @@ const openMenu = (mounted: Mounted, payload?: { readonly tokenIds: readonly stri
     act(() => {
         mounted.handle.execute('mark.color.menu.open', payload);
     });
+
     return screen.getByRole('menu', { name: 'Color' });
 };
+
 const pick = (name: string) => {
     act(() => {
         fireEvent.click(screen.getByRole('menuitemradio', { name }));
     });
 };
+
 const press = ({ view }: Mounted, apple: boolean) => {
     const event = new KeyboardEvent('keydown', {
         key: 'h',
@@ -49,6 +52,7 @@ const press = ({ view }: Mounted, apple: boolean) => {
     });
     view.dom.dispatchEvent(event);
 };
+
 const red = { type: 'font_color', attrs: { tokenId: 'brand.red', value: null } };
 const namesOf = (items: readonly HTMLElement[]) =>
     items.map((item) => item.getAttribute('aria-label') ?? item.textContent);
@@ -79,6 +83,7 @@ describe('the HTML support of marks.font-color', () => {
                     ],
                 },
             };
+
             return createCodecs(model)
                 .toHTML(document)
                 .diagnostics.filter(({ code }) => code === 'codecs.lossy-output')
@@ -306,8 +311,10 @@ describe('marks.font-color', () => {
                 fireEvent.click(customRow());
             });
             const picker = screen.getByRole('dialog', { name: 'Custom text color' });
+
             return (within(picker).getAllByRole('textbox')[0] as HTMLInputElement).value.toLowerCase();
         };
+
         const literalMounted = (...content: Parameters<typeof styled>[1][]) =>
             mountStyled({ model: styleModel(true), blocks: [styled(null, ...content)] });
 
@@ -406,6 +413,7 @@ describe('marks.font-color', () => {
                 const reapplied = mounted.changes.filter(({ commandId }) => commandId === 'mark.color.reapply').length;
                 const result = [reapplied, marksOf(mounted).at(-1)];
                 mounted.unmount();
+
                 return result;
             };
 

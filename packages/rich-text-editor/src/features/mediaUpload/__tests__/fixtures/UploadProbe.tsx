@@ -67,6 +67,7 @@ export const UploadProbe = ({ texts = ['Before'] }: { readonly texts?: readonly 
                 }),
             releaseUnused: () => Promise.resolve(),
         };
+
         return { service, held };
     });
     useEffect(() => {
@@ -74,6 +75,7 @@ export const UploadProbe = ({ texts = ['Before'] }: { readonly texts?: readonly 
         if (handle === null) {
             return;
         }
+
         const content = () => handle.getSnapshot().document.content.content ?? [];
         window.uploadRte = {
             handle,
@@ -101,6 +103,7 @@ export const UploadProbe = ({ texts = ['Before'] }: { readonly texts?: readonly 
         requiredCapabilities: model.capabilities,
         content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: texts.map(paragraph) },
     };
+
     return (
         <RichTextEditor
             aria-label="Notes"

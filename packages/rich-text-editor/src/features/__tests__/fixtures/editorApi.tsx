@@ -65,15 +65,20 @@ export type Mount = {
 export const blocksOf = (handle: Handle) => handle.getSnapshot().document.content.content;
 export const blockAt = (handle: Handle, index: number) => {
     const blocks = blocksOf(handle);
+
     return blocks?.[index];
 };
+
 export const attrsAt = (handle: Handle, index: number) => {
     const block = blockAt(handle, index);
+
     return block?.attrs;
 };
+
 export const childAt = (handle: Handle, index: number) => {
     const block = blockAt(handle, index);
     const children = block?.content;
+
     return children?.[0];
 };
 
@@ -113,6 +118,7 @@ export const probeHarness = (hooks: ProbeHooks) => {
         if (hooks.setLive !== undefined) {
             hooks.setLive(api);
         }
+
         return null;
     };
 
@@ -139,12 +145,14 @@ export const probeHarness = (hooks: ProbeHooks) => {
             'fixture.api.open': {
                 run: (api) => {
                     api.panels.open(PANEL);
+
                     return true;
                 },
             },
             'fixture.api.enabled': {
                 enabled: (api) => {
                     api.panels.open(PANEL);
+
                     return true;
                 },
                 run: (api) => api.insert.text('x'),
@@ -160,6 +168,7 @@ export const probeHarness = (hooks: ProbeHooks) => {
         if (options !== undefined) {
             given = options;
         }
+
         const {
             presentation,
             policy = {},
@@ -182,6 +191,7 @@ export const probeHarness = (hooks: ProbeHooks) => {
         if (presentation !== undefined) {
             shown.presentation = presentation;
         }
+
         render(
             <RichTextEditor
                 aria-label="Notes"
@@ -200,6 +210,7 @@ export const probeHarness = (hooks: ProbeHooks) => {
         if (ref.current === null) {
             throw new Error('The editor did not mount.');
         }
+
         return { handle: ref.current as unknown as Handle, changes };
     };
 
@@ -211,6 +222,7 @@ export const probeHarness = (hooks: ProbeHooks) => {
         act(() => {
             result = handle.execute(id);
         });
+
         return result;
     };
 

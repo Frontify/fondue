@@ -22,6 +22,7 @@ export const sizeOptions = (t: CodecContext['t'], displayWidth: number | null): 
         if (preset !== null) {
             label = t('RichTextEditor_imageSizePercent', { percent: preset });
         }
+
         return {
             key: String(preset),
             label,

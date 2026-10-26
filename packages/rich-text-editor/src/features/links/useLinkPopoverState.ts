@@ -34,6 +34,7 @@ export const useLinkPopoverState = ({
         translate = api.t;
         testId = api.testId();
     }
+
     const linkStyles = linkStylesOf(presented);
     const strings = linkPopoverStrings(translate);
     const [open, setOpen] = useState(true);
@@ -52,13 +53,16 @@ export const useLinkPopoverState = ({
             onClose();
         }
     };
+
     const overlay = useEditorOverlay(open, close);
     const dismiss = (next: boolean) => {
         if (!next) {
             overlay.returnFocusTo(opener);
         }
+
         overlay.onOpenChange(next);
     };
+
     const anchor = initial.link === undefined ? overlay.anchor : linkAnchor;
     const targets = api?.targets;
     useEffect(
@@ -95,6 +99,7 @@ export const useLinkPopoverState = ({
             setProblem(undefined);
         }
     };
+
     return {
         initial,
         strings,

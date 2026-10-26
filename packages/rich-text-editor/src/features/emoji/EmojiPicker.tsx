@@ -22,6 +22,7 @@ const Picker = ({
     readonly onClose: () => void;
 }) => {
     const { open, overlay, title, testId, field, list, fieldRef, statusRef } = useEmojiPickerState(api, onClose);
+
     return (
         <Flyout.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={overlay.anchor}>
             <Flyout.Content
@@ -57,5 +58,6 @@ export const EmojiPicker = ({ close }: OverlayProps) => {
     if (api === undefined) {
         return null;
     }
+
     return <Picker api={api} onClose={close} />;
 };

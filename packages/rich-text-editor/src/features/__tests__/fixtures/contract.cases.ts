@@ -120,6 +120,7 @@ const stubForbidden = (label: string) => {
     const stubs = FORBIDDEN.filter((name) => name in globalThis).map((name) => {
         const stub = failing(name);
         vi.stubGlobal(name, stub);
+
         return stub;
     });
     const { navigator: current } = globalThis;
@@ -128,6 +129,7 @@ const stubForbidden = (label: string) => {
         vi.stubGlobal('navigator', Object.create(current, { sendBeacon: { value: sendBeacon } }));
         stubs.push(sendBeacon);
     }
+
     return stubs;
 };
 
@@ -146,6 +148,7 @@ const slotStates = (state: EditorState): EditorState[] => {
     if (figure === undefined || image === undefined) {
         return [];
     }
+
     const attrs = (assetId: string | null) => ({
         nodeId: 'slot-1',
         assetId,
@@ -168,6 +171,7 @@ const slotStates = (state: EditorState): EditorState[] => {
             .setNodeAttribute(pos, 'assetId', null)
             .setMeta(SLOT_START_META, { kind: 'replace', nodeId: 'slot-1', previous: attrs('asset-1') }),
     );
+
     return [inserted, replaced];
 };
 
@@ -188,6 +192,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
         if (feature === undefined) {
             return [];
         }
+
         return [partWithOptions(part, feature.options)];
     });
     for (const id of new Set(parts.flatMap((part) => Object.keys(part.commands ?? {})))) {
@@ -199,14 +204,18 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                     (call: (api: EditorApi, payload: never) => boolean) => (api: EditorApi, payload: never) => {
                         const value: unknown = call(api, payload);
                         returned.push(value);
+
                         return value as boolean;
                     };
+
                 const { enabled } = spec;
                 if (enabled === undefined) {
                     return { ...spec, run: watch(spec.run) };
                 }
+
                 return { ...spec, run: watch(spec.run), enabled: watch(enabled) };
             };
+
             // One part per feature, over the commands of its shipped and given parts, with this command watched.
             const commandsOf = new Map<string, Record<string, EditorCommand<never>>>();
             const needsOf = new Map<string, readonly EditorFacet[]>();
@@ -216,12 +225,14 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                 commandsOf.set(part.feature, merged);
                 needsOf.set(part.feature, [...(needsOf.get(part.feature) ?? []), ...(part.needs ?? [])]);
             }
+
             const watching = [...commandsOf].map(([feature, commands]): EditorPart => {
                 const needs = needsOf.get(feature) ?? [];
                 const spec = commands[id];
                 if (spec === undefined) {
                     return Object.freeze({ feature, needs, commands });
                 }
+
                 return Object.freeze({ feature, needs, commands: { ...commands, [id]: watched(spec) } });
             });
             const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model, watching)));
@@ -229,6 +240,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
             if (command === undefined) {
                 throw new Error(`${id} is not installed.`);
             }
+
             const payload = PAYLOADS[id];
             expect(findInvalidPayload(command.payload, payload)).toBe(undefined);
             const states = [createEmptyDocument(model), ...fixturesOf(features)].flatMap((document) => {
@@ -236,12 +248,14 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                 if (tree === undefined) {
                     throw new Error('A fixture of the features does not decode.');
                 }
+
                 const state = EditorState.create({
                     doc: engine.schema.nodeFromJSON(tree),
                     plugins: [...engine.plugins, RUNNING_UPLOADS],
                 });
                 const { doc } = state;
                 const whole = TextSelection.between(doc.resolve(0), doc.resolve(doc.content.size));
+
                 return [
                     state.apply(state.tr.setSelection(whole)),
                     state.apply(state.tr.setSelection(Selection.atEnd(doc))),
@@ -258,6 +272,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                     .get('history.undo')
                     ?.run(edited, (transaction) => states.push(edited.apply(transaction)));
             }
+
             // A colour set and cleared again, so the reapply command has a last colour to set.
             const setColor = engine.commands.get('mark.font-color.set');
             if (setColor !== undefined) {
@@ -272,6 +287,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                     );
                 }
             }
+
             const stubs = stubForbidden(id);
             let changed = false;
             let opened = false;
@@ -292,17 +308,20 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
                     if (result === true) {
                         expected = 1;
                     }
+
                     // A command that only opens an overlay or a panel defers that and dispatches nothing.
                     if (result === true && dispatched.length === 0 && effects.length > 0) {
                         expected = 0;
                         opened = true;
                     }
+
                     expect(dispatched.length).toBe(expected);
                     changed ||= dispatched.some((transaction) => transaction.doc !== state.doc);
                 }
             } finally {
                 vi.unstubAllGlobals();
             }
+
             expect(stubs.filter((stub) => stub.mock.calls.length > 0)).toEqual([]);
             expect(returned.filter((value) => typeof value !== 'boolean')).toEqual([]);
             // At least one fixture state gives the command a document change to make, unless it only opens something.
@@ -316,12 +335,14 @@ const withDefaults = (node: Node): Node => {
     if (node.isText) {
         return node;
     }
+
     const attrs: Record<string, unknown> = { ...node.attrs };
     for (const [name, spec] of Object.entries(node.type.spec.attrs ?? {})) {
         if ('default' in spec) {
             attrs[name] = spec.default;
         }
     }
+
     return node.type.create(attrs, Fragment.fromArray(node.children.map(withDefaults)), node.marks);
 };
 
@@ -329,6 +350,7 @@ const stepsOf = (transaction: Transaction | null) => {
     if (transaction === null) {
         return null;
     }
+
     return transaction.steps.map((step): unknown => step.toJSON());
 };
 
@@ -344,16 +366,20 @@ export const normalizerCases = (features: readonly Feature[], documents?: readon
     const given = documents ?? fixturesOf(features);
     const statesOf = () => {
         const { schema } = compileDefinition(model);
+
         return given.flatMap((document) => {
             const { tree } = decodeToTree({ ...document, model: model.ref }, model);
             if (tree === undefined) {
                 throw new Error('A fixture of the features does not decode.');
             }
+
             const doc = schema.nodeFromJSON(tree);
             const variants = [doc, doc.copy(doc.content.append(doc.content)), withDefaults(doc)];
+
             return variants.filter((variant) => {
                 try {
                     variant.check();
+
                     return true;
                 } catch {
                     return false;
@@ -361,12 +387,14 @@ export const normalizerCases = (features: readonly Feature[], documents?: readon
             });
         });
     };
+
     // Read at run time, so a case runs the normalizer that is registered then.
     const normalizerOf = (id: string) => (NORMALIZERS[id] as { readonly normalize: Normalizer }).normalize;
     for (const { id } of compiledModel(model).plugins) {
         if (NORMALIZERS[id] === undefined) {
             continue;
         }
+
         it(`runs the ${id} normalizer to equal steps on equal states and to nothing on its output`, () => {
             const normalize = normalizerOf(id);
             let repaired = false;
@@ -384,12 +412,14 @@ export const normalizerCases = (features: readonly Feature[], documents?: readon
                 } finally {
                     vi.useRealTimers();
                 }
+
                 expect(stepsOf(second)).toEqual(stepsOf(first));
                 if (first !== null) {
                     repaired = true;
                     expect(stepsOf(normalize(EditorState.create({ doc: first.doc }), ids))).toBe(null);
                 }
             }
+
             // At least one generated state gives the normalizer something to repair.
             expect(repaired).toBe(true);
         });
@@ -413,6 +443,7 @@ export const normalizerCases = (features: readonly Feature[], documents?: readon
                 then.mockRestore();
                 vi.unstubAllGlobals();
             }
+
             expect(stubs.filter((stub) => stub.mock.calls.length > 0)).toEqual([]);
             expect(scheduled).toBe(0);
         });
@@ -447,15 +478,18 @@ const allowedParents = (type: NodeType): string[] =>
                 if (seen.has(match)) {
                     continue;
                 }
+
                 seen.add(match);
                 for (let index = 0; index < match.edgeCount; index += 1) {
                     const edge = match.edge(index);
                     if (edge.type === type) {
                         return true;
                     }
+
                     queue.push(edge.next);
                 }
             }
+
             return false;
         })
         .map(({ name }) => name);
@@ -506,11 +540,14 @@ export const nodeViewCases = (
                             chrome,
                         });
                     }
+
                     return created;
                 };
             }
+
             return capturing;
         };
+
         const elements: HTMLElement[] = [];
         // Every asset resolves, so an image view renders its image and the controls around it.
         const context = readerContext(enUS, {
@@ -522,6 +559,7 @@ export const nodeViewCases = (
             if (tree === undefined || result.status === 'blocked') {
                 throw new Error('A node view document does not decode.');
             }
+
             const portals = createPortalStore();
             stores.push(portals);
             // The host mounts before the view, so its render does not flush the portal microtask the view queues.
@@ -545,6 +583,7 @@ export const nodeViewCases = (
             elements.push(element);
             runtime.attach(element);
         }
+
         try {
             await check(built, () =>
                 act(async () => {
@@ -555,9 +594,11 @@ export const nodeViewCases = (
             for (const host of hosts) {
                 host.unmount();
             }
+
             for (const runtime of runtimes) {
                 runtime.handle.dispose();
             }
+
             for (const element of elements) {
                 element.remove();
             }
@@ -577,6 +618,7 @@ export const nodeViewCases = (
                         expect(view.contentDOM).toBeInstanceOf(HTMLElement);
                         expect(view.dom.contains(view.contentDOM as HTMLElement)).toBe(true);
                     }
+
                     expect(chrome.childNodes).toHaveLength(0);
                 }
             }));
@@ -632,9 +674,11 @@ export const nodeViewCases = (
                             const listener = (received: Event) => {
                                 stopped = view.stopEvent?.(received);
                             };
+
                             target.addEventListener(event.type, listener);
                             target.dispatchEvent(event);
                             target.removeEventListener(event.type, listener);
+
                             return stopped;
                         });
                     const inChrome = chrome.appendChild(globalThis.document.createElement('span'));
@@ -651,6 +695,7 @@ export const nodeViewCases = (
                 if (first === undefined) {
                     return;
                 }
+
                 expect(new Set(built.map(({ parent }) => parent))).toEqual(new Set(allowedParents(first.node.type)));
                 for (const { node, view } of built) {
                     const elements = [view.dom, ...view.dom.querySelectorAll('*')];
@@ -659,11 +704,13 @@ export const nodeViewCases = (
                             [],
                         );
                     }
+
                     for (const element of elements) {
                         const { parentElement } = element;
                         if (parentElement === null) {
                             continue;
                         }
+
                         const allowed = TABLE_CHILDREN[parentElement.localName];
                         if (allowed !== undefined) {
                             expect(allowed).toContain(element.localName);

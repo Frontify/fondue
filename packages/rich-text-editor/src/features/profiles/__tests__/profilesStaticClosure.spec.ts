@@ -20,12 +20,15 @@ const staticClosure = async (source: string): Promise<readonly string[]> => {
         if (chunk === undefined || loaded.has(chunk)) {
             return;
         }
+
         loaded.add(chunk);
         for (const name of chunk.imports) {
             visit(byName.get(name));
         }
     };
+
     visit(chunks.find((chunk) => chunk.isEntry));
+
     return [...loaded].flatMap((chunk) => chunk.modules);
 };
 

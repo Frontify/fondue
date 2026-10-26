@@ -11,6 +11,7 @@ const textOf = (value: unknown): string => {
     if (typeof value === 'string') {
         return value;
     }
+
     return '';
 };
 
@@ -19,6 +20,7 @@ const BlockChrome = () => {
     const { attrs, selected, update } = useRichTextNodeView();
     const [clicks, setClicks] = useState(0);
     const language = textOf(attrs.language);
+
     return (
         <div data-chrome="block" data-selected={String(selected)}>
             <input
@@ -44,11 +46,13 @@ const Popup = ({ label }: { readonly label: string }) => {
         const listener = () => undefined;
         document.addEventListener('keydown', listener);
         popupListeners.count += 1;
+
         return () => {
             document.removeEventListener('keydown', listener);
             popupListeners.count -= 1;
         };
     }, []);
+
     return <span data-popup="">{label}</span>;
 };
 
@@ -64,6 +68,7 @@ const MentionChrome = () => {
     if (resolved.status === 'current') {
         label = resolved.label;
     }
+
     return (
         <span data-chrome="mention">
             <button type="button" aria-expanded={open} onClick={() => setOpen(!open)}>
@@ -78,6 +83,7 @@ const MentionChrome = () => {
 const ImageChrome = () => {
     const { attrs, selected } = useRichTextNodeView();
     const [clicks, setClicks] = useState(0);
+
     return (
         <div data-chrome="image" data-selected={String(selected)}>
             <button type="button" data-clicks="" onClick={() => setClicks(clicks + 1)}>

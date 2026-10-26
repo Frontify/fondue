@@ -26,6 +26,7 @@ const focusSurface = async (page: Page) => {
     await surfaceOf(page).focus();
     await settleFocus(page);
 };
+
 const changesOf = (page: Page) => page.evaluate(() => [...(window.textRte as TextRte).changes]);
 const textOf = (page: Page) => page.evaluate(() => (window.textRte as TextRte).text());
 const select = (page: Page, text: string, from = 0, to = text.length) =>
@@ -49,6 +50,7 @@ test('moves, selects and deletes across marks, links and blocks as in the same p
         word = 'Alt';
         line = 'Control+a';
     }
+
     // Each case: the block and offset the caret starts at, then the keys pressed.
     const cases: readonly (readonly [number, number, readonly string[]])[] = [
         [0, 3, ['ArrowRight', 'ArrowRight', 'ArrowRight', 'ArrowLeft']],
@@ -75,9 +77,12 @@ test('moves, selects and deletes across marks, links and blocks as in the same p
                 const range = document.createRange();
                 range.setStart(surface.children[block] as Node, 0);
                 range.setEnd(node as Node, offset);
+
                 return [block, range.toString().length];
             };
+
             const selection = window.getSelection() as Selection;
+
             return {
                 anchor: pointOf(selection.anchorNode, selection.anchorOffset),
                 focus: pointOf(selection.focusNode, selection.focusOffset),
@@ -93,8 +98,10 @@ test('moves, selects and deletes across marks, links and blocks as in the same p
                 if (label === 'Marked') {
                     const probe = window.markedAndPlain as NonNullable<Window['markedAndPlain']>;
                     probe.setSelection(probe.Marked, { text, from: at, to: at });
+
                     return;
                 }
+
                 const line = surface.children[index]?.firstChild as Node;
                 window.getSelection()?.collapse(line, at);
             },
@@ -110,6 +117,7 @@ test('moves, selects and deletes across marks, links and blocks as in the same p
             for (const key of keys) {
                 await page.keyboard.press(key);
             }
+
             results[name]?.push(await stateOf(name));
             await component.unmount();
         }
@@ -169,6 +177,7 @@ test('inserts German and Polish AltGr characters with no command running @engine
                             value: (name: string) => name === 'AltGraph' && !ctrlAlt,
                         });
                         surface.dispatchEvent(event);
+
                         return event.defaultPrevented;
                     },
                     [key, code, keyCode, asCtrlAlt] as const,
@@ -206,6 +215,7 @@ const dispatchKey = (
             value: (name: string) => name === 'AltGraph' && pressed.graph,
         });
         surface.dispatchEvent(event);
+
         return event.defaultPrevented;
     }, init);
 
@@ -329,8 +339,10 @@ test('runs no key handler, keymap or toolbar shortcut for a keydown of a composi
                         // An IME's keydown carries `keyCode` 229, which Chromium takes from no event init.
                         Object.defineProperty(event, 'keyCode', { get: () => 229 });
                     }
+
                     surface.dispatchEvent(event);
                 }
+
                 return document.activeElement === surface;
             },
             [keys, signal] as const,
@@ -448,6 +460,7 @@ test('mirrors the shipped quote under rtl', async ({ mount, page }, testInfo) =>
             if (rtl) {
                 return box.right - line.right;
             }
+
             return line.left - box.left;
         }, dir === 'rtl');
         const direction = await surfaceOf(page)
@@ -458,8 +471,10 @@ test('mirrors the shipped quote under rtl', async ({ mount, page }, testInfo) =>
             contentType: 'image/png',
         });
         await editor.unmount();
+
         return { gap, direction };
     };
+
     const ltr = await startGap('ltr');
     const rtl = await startGap('rtl');
 

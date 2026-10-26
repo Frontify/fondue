@@ -26,9 +26,12 @@ const ProgressBar = ({ name, value }: { readonly name: string; readonly value: n
         if (!indeterminate) {
             return undefined;
         }
+
         const timer = setTimeout(() => setStill(true), MOTION_MS);
+
         return () => clearTimeout(timer);
     }, [indeterminate]);
+
     return (
         <span className={styles.bar} data-still={still && indeterminate ? '' : undefined}>
             <LoadingBar value={value} aria-label={name} size="small" />
@@ -61,6 +64,7 @@ export const UploadSlot = ({
     if (width !== null && height !== null) {
         shape = { aspectRatio: `${width} / ${height}`, inlineSize: `min(100%, ${width}px)` };
     }
+
     return (
         // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- a press selects the node as on any atom; the keyboard selects it with the arrows.
         <span className={styles.slot} style={shape} data-rte-upload={status.state} onMouseDown={onMouseDown}>
@@ -107,12 +111,15 @@ export const UploadControls = ({
         if (!focusedRef.current || wrapper === null || wrapper.contains(wrapper.ownerDocument.activeElement)) {
             return;
         }
+
         const next = wrapper.querySelector<HTMLElement>('button');
         if (next === null) {
             focusedRef.current = false;
             focus?.();
+
             return;
         }
+
         next.focus();
     }, [running, focus]);
     useClientLayoutEffect(() => {
@@ -121,10 +128,12 @@ export const UploadControls = ({
         if (wrapper !== null) {
             toolbar = wrapper.closest<HTMLElement>('[data-rte-node-chrome]');
         }
+
         return () => {
             if (!focusedRef.current) {
                 return;
             }
+
             focus?.();
             // A completed upload leaves the image and its toolbar, whose first button then takes focus; a removed
             // image takes its toolbar along, which leaves focus on the surface.
@@ -132,6 +141,7 @@ export const UploadControls = ({
                 if (toolbar === null || !toolbar.isConnected || !surfaceFocused(surface)) {
                     return;
                 }
+
                 const next = toolbar.querySelector<HTMLElement>('button');
                 if (next !== null && !wrapper?.contains(next)) {
                     next.focus();
@@ -148,6 +158,7 @@ export const UploadControls = ({
             }
         });
     };
+
     const installed = (id: string) => api?.commands.query(id, { nodeId }).disabledReason !== 'unknown-command';
     let buttons;
     if (running) {
@@ -175,6 +186,7 @@ export const UploadControls = ({
             </>
         );
     }
+
     return (
         <span
             ref={wrapperRef}

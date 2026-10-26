@@ -99,6 +99,7 @@ const startRuntime = (
     if (result.status === 'blocked' || tree === undefined) {
         throw new Error('The fixture does not decode.');
     }
+
     const runtime = createEditorRuntime({
         definition: compileDefinition(of, RUNTIME_PLUGINS),
         documentId: 'document-1',
@@ -110,6 +111,7 @@ const startRuntime = (
         contentChecks: () => ({ locale: deCH, colorTokens, background: '#ffffff' }),
     });
     started.push(runtime);
+
     return runtime;
 };
 

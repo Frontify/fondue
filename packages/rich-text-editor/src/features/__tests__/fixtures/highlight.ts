@@ -53,5 +53,6 @@ export const fixtureHighlight: typeof tokenHighlight = (options) => {
     if (options?.literalColors === true) {
         return literalHighlight(options);
     }
+
     return tokenHighlight(options);
 };

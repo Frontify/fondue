@@ -38,6 +38,7 @@ const modelOf = (justify: boolean) =>
 const blockAttrs = (handle: EditorHandle) => {
     const block = handle.getSnapshot().document.content.content?.[0];
     const attrs = block?.attrs;
+
     return attrs ?? {};
 };
 
@@ -47,6 +48,7 @@ const selectAll = (handle: EditorHandle) => {
     if (runtime === undefined || view === undefined) {
         throw new Error('The editor has no view.');
     }
+
     runtime.select({ anchor: 1, head: view.state.doc.content.size - 1 });
 };
 
@@ -91,8 +93,10 @@ describe('alignment', () => {
             const { unmount } = mountText({ model, toolbar: [toolbar], blocks: [para(text('Note'))] });
             const names = screen.getAllByRole('button').map((button) => button.getAttribute('aria-label'));
             unmount();
+
             return names;
         };
+
         const brand = offered(brandDocumentModel());
         const plain = offered(modelOf(false));
 
@@ -119,6 +123,7 @@ describe('alignment', () => {
         const ref = createRef<EditorHandle>();
         const element = (dir: 'ltr' | 'rtl') => {
             const locale = dir === 'rtl' ? { locale: deDE } : {};
+
             return (
                 <ThemeProvider dir={dir}>
                     <RichTextEditor
@@ -131,6 +136,7 @@ describe('alignment', () => {
                 </ThemeProvider>
             );
         };
+
         const view = render(element('ltr'));
         act(() => {
             vi.advanceTimersToNextFrame();
@@ -201,6 +207,7 @@ describe('pasted alignment', () => {
         if (result.status !== 'editable') {
             throw new Error(`fromHTML returned ${result.status}`);
         }
+
         return (result.document.content.content ?? []).map((block) => block.attrs?.align ?? null);
     };
 

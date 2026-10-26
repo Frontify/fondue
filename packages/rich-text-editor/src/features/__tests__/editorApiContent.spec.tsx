@@ -88,7 +88,9 @@ describe('the writer of the editor API', () => {
             if (run === undefined) {
                 return false;
             }
+
             seen = api.content.replace(run.range, [heading2('Renamed')]);
+
             return seen.status === 'applied';
         });
         expect(seen).toMatchObject({ status: 'applied' });
@@ -100,18 +102,21 @@ describe('the writer of the editor API', () => {
         const nodeId = renamed();
         runIn(handle, 'Plain', (api) => {
             seen = api.content.insert({ nodeId, at: 'before' }, [heading2('Before')]);
+
             return true;
         });
         expect(textsOf(handle)).toEqual(['Plain bold', 'Before', 'Renamed']);
 
         runIn(handle, 'Plain', (api) => {
             seen = api.content.insert({ nodeId, at: 'end' }, [text('!')]);
+
             return true;
         });
         expect(textsOf(handle)).toEqual(['Plain bold', 'Before', 'Renamed!']);
 
         runIn(handle, 'Plain', (api) => {
             seen = api.content.delete({ nodeId });
+
             return true;
         });
         expect(seen).toMatchObject({ status: 'applied' });
@@ -128,6 +133,7 @@ describe('the writer of the editor API', () => {
 
         runIn(handle, 'Plain', (api) => {
             seen = api.content.insert(api.selectedRange(), nodes);
+
             return true;
         });
 
@@ -142,6 +148,7 @@ describe('the writer of the editor API', () => {
         runIn(handle, 'Title', (api) => {
             api.blocks.set('code_block');
             seen = api.content.insert(api.selectedRange(), [text('x', [{ type: 'bold' }])]);
+
             return true;
         });
 
@@ -165,6 +172,7 @@ describe('the writer of the editor API', () => {
 
         runIn(handle, 'Plain', (api) => {
             seen = api.content.insert({ nodeId: 'heading-1', at: 'after' }, nodes as unknown as ContentNodeJSON[]);
+
             return true;
         });
 
@@ -196,6 +204,7 @@ describe('the writer of the editor API', () => {
 
         runIn(handle, 'Plain', (api) => {
             seen = api.content.insert({ nodeId: 'heading-1', at }, nodes as unknown as ContentNodeJSON[]);
+
             return true;
         });
 
@@ -227,6 +236,7 @@ describe('the writer of the editor API', () => {
             // The spy counts every read of a node's children during the write, which 20,000 nodes would make 20,000.
             walked = children.mock.calls.length;
             children.mockRestore();
+
             return true;
         };
 
@@ -257,6 +267,7 @@ describe('the writer of the editor API', () => {
 
         runIn(handle, 'Plain', (api) => {
             seen = api.content.insert({ nodeId: 'heading-1' }, [{ type: 'paragraph', content: [text('x', link)] }]);
+
             return true;
         });
 
@@ -286,6 +297,7 @@ describe('the writer of the editor API', () => {
 
         runIn(handle, 'Plain', (api) => {
             seen = api.content.insert(api.selectedRange(), [text('x')]);
+
             return true;
         });
 
@@ -312,6 +324,7 @@ describe('the writer of the editor API', () => {
         runIn(handle, 'Plain', (api) => {
             api.content.insert({ nodeId: 'heading-1', at: 'end' }, [text('1')]);
             api.content.insert({ nodeId: 'heading-1', at: 'end' }, [text('2')]);
+
             return true;
         });
         expect(textsOf(handle)?.[1]).toBe('Title12');
@@ -344,8 +357,10 @@ describe('the writer of the editor API', () => {
             if (node.content !== undefined) {
                 copy.content = node.content.map(withoutMarks);
             }
+
             return copy as unknown as ContentNodeJSON;
         };
+
         const nested = list(
             item(
                 para(text('One '), text('bold', [{ type: 'bold' }])),
@@ -367,9 +382,11 @@ describe('the writer of the editor API', () => {
             if (outer === undefined || first === undefined) {
                 return false;
             }
+
             api.content.replace(first.range, [para(text('A longer first paragraph'))]);
             read = api.content.read(outer.range);
             seen = api.content.replace(outer.range, (read ?? []).map(withoutMarks));
+
             return true;
         });
 
@@ -392,8 +409,10 @@ describe('a range of the editor API', () => {
             if (first === undefined || second === undefined) {
                 return false;
             }
+
             api.content.replace(first.range, [{ type: 'paragraph', content: [text('A much longer paragraph')] }]);
             seen = api.content.replace(second.range, [heading2('Second')]);
+
             return true;
         });
 
@@ -433,6 +452,7 @@ describe('a range of the editor API', () => {
         if (target === undefined) {
             throw new Error('The target was not captured.');
         }
+
         setSelection(handle, { text: 'Plain', from: 0, to: 0 });
         act(() => {
             typeText(handle, 'More ');
@@ -455,6 +475,7 @@ describe('the inserts of the editor API', () => {
 
         runIn(handle, 'Plain', (api) => {
             seen = api.insert.node('heading', { level: 3 }, { place: 'after-top-level-block' });
+
             return seen.status === 'applied';
         });
 
@@ -472,6 +493,7 @@ describe('the inserts of the editor API', () => {
                 api.insert.node('figure', {}, { content: [{ type: 'paragraph', content: [text('x')] }] }).status,
                 api.insert.node('figure', {}, { content: [image] }).status,
             );
+
             return true;
         });
 
@@ -491,6 +513,7 @@ describe('the inserts of the editor API', () => {
                 api.insert.allowed('figure', { place: 'after-top-level-block' }),
                 api.insert.allowed('asset_image'),
             ];
+
             return false;
         });
 
@@ -508,7 +531,9 @@ describe('the range a write of the editor API wrote', () => {
             if (code === undefined) {
                 return false;
             }
+
             const written = api.content.insert(code.range, [{ type: 'paragraph' }]);
+
             return written.status === 'applied' && api.select(written.range);
         });
         act(() => {
@@ -573,6 +598,7 @@ describe('the content writes of the editor API that change nothing or go too far
         runIn(handle, 'Plain', (api) => {
             outcomes.push(api.content.insert(api.selectedRange(), []).status);
             outcomes.push(api.content.replace(api.selectedRange(), []).status);
+
             return true;
         });
 
@@ -588,6 +614,7 @@ describe('the content writes of the editor API that change nothing or go too far
                 { type: 'paragraph', content: [text('a')] },
                 { type: 'paragraph', content: [text('b')] },
             ]);
+
             return true;
         });
 
@@ -600,12 +627,14 @@ describe('the content writes of the editor API that change nothing or go too far
 
         runIn(handle, 'Plain', (api) => {
             seen = api.content.insert({ nodeId: 'heading-1', at: 'start' }, [text('>> ')]);
+
             return true;
         });
         expect(textsOf(handle)?.slice(0, 2)).toEqual(['Plain bold', '>> Title']);
 
         runIn(handle, 'Plain', (api) => {
             seen = api.content.insert({ nodeId: 'image-1', at: 'start' }, [text('x')]);
+
             return true;
         });
         expect(seen).toEqual({ status: 'rejected', code: 'target-invalid' });
@@ -635,6 +664,7 @@ describe('an inline node inserted through the editor API', () => {
                 api.insert.node('asset_image'),
                 api.insert.node('asset_image', { assetId: 'asset-1', labelSnapshot: 'Photo' }),
             );
+
             return false;
         });
 

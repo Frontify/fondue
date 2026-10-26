@@ -33,6 +33,7 @@ export const SpotlightProbe = () => {
             window.spotlightRte = { document: () => JSON.stringify(handle.getSnapshot().document.content) };
         }
     });
+
     return (
         <RichTextEditor
             ref={ref}

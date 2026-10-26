@@ -60,6 +60,7 @@ export const LanguageProbe = ({ inToolbar = false }: { readonly inToolbar?: bool
         if (inToolbar) {
             return defineReactPresentation({ toolbar: [['mark.bold.toggle', 'mark.language.edit']] });
         }
+
         return defineReactPresentation({ toolbar: [['mark.bold.toggle']] });
     });
     const ref = useRef<EditorHandle>(null);
@@ -69,6 +70,7 @@ export const LanguageProbe = ({ inToolbar = false }: { readonly inToolbar?: bool
             window.languageRte = { handle, setSelection };
         }
     }, []);
+
     return (
         <RichTextEditor
             aria-label="Notes"

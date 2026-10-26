@@ -30,6 +30,7 @@ let picks = 0;
 const assets = {
     pick: () => {
         picks += 1;
+
         return Promise.resolve({ assetId: 'still.png', mediaType: 'image/png', labelSnapshot: 'picked.png' });
     },
 };
@@ -147,6 +148,7 @@ export const ImageProbe = ({
         }
     }, []);
     const document = stored(content);
+
     return (
         <div dir={dir}>
             <ThemeProvider {...(dir === undefined ? {} : { dir })}>

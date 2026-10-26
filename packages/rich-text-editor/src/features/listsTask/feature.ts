@@ -10,6 +10,7 @@ const ownCheckbox = (item: Element) => {
         if (isCheckbox(child)) {
             return child;
         }
+
         if (child === item.firstElementChild && child.localName === 'p') {
             const inside = Array.from(child.children).find(isCheckbox);
             if (inside !== undefined) {
@@ -17,6 +18,7 @@ const ownCheckbox = (item: Element) => {
             }
         }
     }
+
     return undefined;
 };
 
@@ -28,16 +30,20 @@ const checkedOf = (item: Element): boolean | undefined => {
     if (isList(list) && item.hasAttribute('aria-checked')) {
         return item.getAttribute('aria-checked') === 'true';
     }
+
     if (isList(list) && list?.classList.contains('contains-task-list') === true && item.matches('.task-list-item')) {
         const checkbox = ownCheckbox(item);
         if (checkbox === undefined) {
             return false;
         }
+
         return checkbox.hasAttribute('checked');
     }
+
     if (item.hasAttribute('data-checked')) {
         return item.getAttribute('data-checked') === 'true';
     }
+
     return undefined;
 };
 
@@ -70,6 +76,7 @@ export const taskList = defineFeature({
                 if (isTaskListElement(list)) {
                     return {};
                 }
+
                 return null;
             },
         },
@@ -81,6 +88,7 @@ export const taskList = defineFeature({
                 if (checked === undefined) {
                     return null;
                 }
+
                 return { checked };
             },
         },

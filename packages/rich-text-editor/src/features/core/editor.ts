@@ -29,6 +29,7 @@ export const coreEditor = defineEditorPart(core, {
                 if (api.selection().verbatim) {
                     return api.insert.text('\n');
                 }
+
                 return api.insert.node('hard_break').status === 'applied';
             },
         },

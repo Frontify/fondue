@@ -28,8 +28,10 @@ const announcements = () => {
                 spoken.push(node.textContent ?? '');
             }
         }
+
         append(...nodes);
     };
+
     return spoken;
 };
 
@@ -202,6 +204,7 @@ describe('mention suggestion list', () => {
             expect(isolated).toHaveLength(1);
             expect(isolated[0]?.querySelector('bdi')).toBeNull();
         }
+
         expect(mounted.active()?.items).toHaveLength(3);
     });
 

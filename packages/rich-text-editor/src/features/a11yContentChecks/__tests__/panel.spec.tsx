@@ -24,6 +24,7 @@ afterEach(() => {
 
 const openPanel = () => {
     fireEvent.click(screen.getByRole('button', { name: 'Accessibility checks' }));
+
     return screen.getByRole('region', { name: 'Accessibility checks' });
 };
 
@@ -34,6 +35,7 @@ const itemOf = (panel: HTMLElement, id: string) => {
     if (item === undefined) {
         throw new Error(`No issue ${id} is listed.`);
     }
+
     return item;
 };
 
@@ -67,6 +69,7 @@ describe('the issues panel', () => {
                     .issues.map(({ issue }) => issue.id)
                     .join(' '),
             );
+
             return (
                 <div>
                     <button type="button" onClick={() => api?.services.checks()?.run()}>
@@ -76,6 +79,7 @@ describe('the issues panel', () => {
                 </div>
             );
         };
+
         const host = defineEditorPart(contentChecks, { panels: [{ control: 'checks', component: Listed }] });
         const { unmount } = mountChecks({ blocks: [image('photo')], plugins: [host] });
 
@@ -121,6 +125,7 @@ describe('the issues panel', () => {
             const ruleId = rule ?? '';
             expect(item).toHaveTextContent(`(${ruleId})`);
         }
+
         const vague = itemOf(panel, 'link.text-vague:1,1');
         expect(vague).toHaveTextContent('Warning Link text that does not say where it goes (link.text-vague)');
         expect(within(vague).getByRole('button', { name: 'Go to' })).toBeInTheDocument();
@@ -159,6 +164,7 @@ describe('the issues panel', () => {
             expect(trigger).toHaveAttribute('aria-expanded', 'false');
             expect(itemOf(panel, id).querySelector('details')).toBeNull();
         }
+
         const item = itemOf(panel, 'link.text-vague:0,0');
         const trigger = within(item).getByRole('button', { name: 'How to decide' });
         fireEvent.click(trigger);
@@ -184,6 +190,7 @@ describe('the issues panel', () => {
             expect(badge).toHaveAttribute('data-variant', variant);
             expect(badge?.querySelector('svg')).not.toBeNull();
         }
+
         unmount();
     });
 
@@ -195,6 +202,7 @@ describe('the issues panel', () => {
         for (const id of ['image.alt-missing:photo', 'link.text-empty:1,0']) {
             expect(within(itemOf(panel, id)).queryByRole('button', { name: 'Dismiss' })).toBeNull();
         }
+
         expect(
             within(itemOf(panel, 'image.content-review:photo')).getByRole('button', { name: 'Dismiss' }),
         ).toBeVisible();
@@ -251,6 +259,7 @@ describe('the issues panel', () => {
             expect(icon).toHaveAttribute('aria-hidden', 'true');
             expect(icon.querySelector('svg')).not.toBeNull();
         }
+
         expect(view.dom.querySelector('h2[data-rte-issue="error"]')).not.toBeNull();
 
         fireEvent.keyDown(screen.getByRole('region', { name: 'Accessibility checks' }), { key: 'Escape' });
@@ -327,6 +336,7 @@ describe('the issues panel', () => {
             if (view === undefined || pos === undefined) {
                 throw new Error('The heading is missing.');
             }
+
             view.dispatch(view.state.tr.insertText('Filled', pos + 1));
         });
         settle();
@@ -353,6 +363,7 @@ describe('the issues panel', () => {
             ];
             const [first, ...rest] = controls.map((control) => control.getAttribute('aria-describedby'));
             expect(new Set(rest)).toEqual(new Set([first]));
+
             return within(item).getByRole('button', { name: 'Go to' });
         });
 
@@ -374,6 +385,7 @@ describe('the issues panel', () => {
             if (paragraph === undefined) {
                 throw new Error('The model has no paragraph.');
             }
+
             view.dispatch(view.state.tr.insert(0, paragraph));
         });
         settle();
@@ -464,6 +476,7 @@ describe('the issues panel', () => {
             if (view === undefined || pos === undefined) {
                 throw new Error('The heading is missing.');
             }
+
             view.dispatch(view.state.tr.insertText('Filled', pos + 1));
             region.textContent = 'Upload finished';
         });

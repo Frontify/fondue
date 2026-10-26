@@ -60,6 +60,7 @@ const wordsOf = (value: string): readonly string[] => {
             words.push(word);
         }
     }
+
     return words;
 };
 
@@ -67,12 +68,14 @@ const wordsFromTags = (tags: readonly string[] | undefined): readonly string[] =
     if (tags === undefined) {
         return [];
     }
+
     const words: string[] = [];
     for (const tag of tags) {
         for (const word of wordsOf(tag)) {
             words.push(word);
         }
     }
+
     return words;
 };
 
@@ -84,10 +87,12 @@ const uniqueWords = (groups: readonly (readonly string[])[]): readonly string[] 
             if (seen.has(word)) {
                 continue;
             }
+
             seen.add(word);
             keywords.push(word);
         }
     }
+
     return keywords;
 };
 
@@ -99,6 +104,7 @@ const languageOf = (locale: string): string => {
     if (hyphen === -1) {
         return lowered;
     }
+
     return lowered.slice(0, hyphen);
 };
 
@@ -106,6 +112,7 @@ const isListedEmoji = (entry: CompactEmoji): boolean => {
     if (entry.group === undefined) {
         return false;
     }
+
     return entry.group !== SKIN_TONE_GROUP;
 };
 
@@ -113,6 +120,7 @@ const orderOf = (entry: CompactEmoji): number => {
     if (entry.order === undefined) {
         return LAST_ORDER;
     }
+
     return entry.order;
 };
 
@@ -121,6 +129,7 @@ const keywordsOf = (localized: CompactEmoji, english: CompactEmoji | undefined):
     if (english !== undefined) {
         groups.push(wordsOf(english.label), wordsFromTags(english.tags));
     }
+
     return uniqueWords(groups);
 };
 
@@ -128,9 +137,11 @@ const compareOrder = (left: EmojiEntry, right: EmojiEntry): number => {
     if (left.order === right.order) {
         return 0;
     }
+
     if (left.order < right.order) {
         return -1;
     }
+
     return 1;
 };
 
@@ -139,6 +150,7 @@ const indexByHex = (entries: readonly CompactEmoji[]): ReadonlyMap<string, Compa
     for (const entry of entries) {
         index.set(entry.hexcode, entry);
     }
+
     return index;
 };
 
@@ -159,23 +171,29 @@ const entriesOf = (
     if (english !== undefined) {
         englishByHex = indexByHex(english);
     }
+
     const entries: EmojiEntry[] = [];
     for (const entry of localized) {
         if (!isListedEmoji(entry)) {
             continue;
         }
+
         let match: CompactEmoji | undefined;
         if (englishByHex !== undefined) {
             match = englishByHex.get(entry.hexcode);
         }
+
         entries.push(toEntry(entry, match));
     }
+
     entries.sort(compareOrder);
+
     return entries;
 };
 
 const readCompact = async (locale: EmojiDataLocale): Promise<readonly CompactEmoji[]> => {
     const loaded = await loaders[locale]();
+
     return loaded.default;
 };
 
@@ -183,7 +201,9 @@ const assemble = async (locale: EmojiDataLocale): Promise<readonly EmojiEntry[]>
     if (locale === 'en') {
         return entriesOf(await readCompact('en'), undefined);
     }
+
     const [localized, english] = await Promise.all([readCompact(locale), readCompact('en')]);
+
     return entriesOf(localized, english);
 };
 
@@ -192,13 +212,16 @@ const loadCached = (locale: EmojiDataLocale): Promise<readonly EmojiEntry[]> => 
     if (existing !== undefined) {
         return existing;
     }
+
     const pending = assemble(locale).catch((error: unknown) => {
         if (cached.get(locale) === pending) {
             cached.delete(locale);
         }
+
         throw error;
     });
     cached.set(locale, pending);
+
     return pending;
 };
 
@@ -208,6 +231,7 @@ const startsWithWord = (words: readonly string[], query: string): boolean => {
             return true;
         }
     }
+
     return false;
 };
 
@@ -215,12 +239,15 @@ const rankOf = (entry: EmojiEntry, query: string): number | undefined => {
     if (entry.searchLabel.startsWith(query)) {
         return 0;
     }
+
     if (startsWithWord(entry.labelWords, query)) {
         return 1;
     }
+
     if (startsWithWord(entry.keywords, query)) {
         return 2;
     }
+
     return undefined;
 };
 
@@ -229,8 +256,10 @@ const compareRanked = (left: ScoredEmoji, right: ScoredEmoji): number => {
         if (left.rank < right.rank) {
             return -1;
         }
+
         return 1;
     }
+
     return compareOrder(left.entry, right.entry);
 };
 
@@ -239,6 +268,7 @@ const normalizedQuery = (query: string): string | undefined => {
     if (normalized === '') {
         return undefined;
     }
+
     return normalized;
 };
 
@@ -248,6 +278,7 @@ export const emojiDataLocaleOf = (locale: string): EmojiDataLocale => {
     if (isDataLocale(language)) {
         return language;
     }
+
     return 'en';
 };
 
@@ -259,18 +290,23 @@ export const searchEmoji = (entries: readonly EmojiEntry[], query: string, limit
     if (limit <= 0) {
         return [];
     }
+
     const normalized = normalizedQuery(query);
     if (normalized === undefined) {
         return [];
     }
+
     const scored: ScoredEmoji[] = [];
     for (const entry of entries) {
         const rank = rankOf(entry, normalized);
         if (rank === undefined) {
             continue;
         }
+
         scored.push({ entry, rank });
     }
+
     scored.sort(compareRanked);
+
     return scored.slice(0, limit).map((scoredEntry) => scoredEntry.entry);
 };

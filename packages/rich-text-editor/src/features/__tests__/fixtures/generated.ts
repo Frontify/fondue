@@ -23,7 +23,9 @@ export const canonicalOf = (model: ContentModel, document: unknown): RichTextDoc
     if (tree === undefined || result.diagnostics.length > 0) {
         return undefined;
     }
+
     const stored = (document as RichTextDocument).requiredCapabilities;
+
     return encodeTree(tree, model, stored).document;
 };
 
@@ -34,9 +36,11 @@ const withoutUndeclared = (node: ContentNodeJSON, declared: (type: string) => ob
         const own = declared(node.type);
         copy.attrs = Object.fromEntries(Object.entries(node.attrs).filter(([name]) => Object.hasOwn(own, name)));
     }
+
     if (node.content !== undefined) {
         copy.content = node.content.map((child) => withoutUndeclared(child, declared));
     }
+
     return copy as unknown as ContentNodeJSON;
 };
 
@@ -51,6 +55,7 @@ export const blocksOf = (model: ContentModel): readonly ContentNodeJSON[] => {
     if (cached !== undefined) {
         return cached;
     }
+
     const schema = buildSchema(model);
     const declared = (type: string) => schema.nodes[type]?.spec.attrs ?? {};
     const blocks: ContentNodeJSON[] = [];
@@ -66,7 +71,9 @@ export const blocksOf = (model: ContentModel): readonly ContentNodeJSON[] => {
             }
         }
     }
+
     blockCache.set(model, blocks);
+
     return blocks;
 };
 
@@ -75,6 +82,7 @@ const textCount = (node: ContentNodeJSON): number => {
     if (node.type === 'text') {
         return 1;
     }
+
     return (node.content ?? []).reduce((sum, child) => sum + textCount(child), 0);
 };
 
@@ -88,15 +96,19 @@ const rewritten = (blocks: readonly ContentNodeJSON[], texts: readonly string[])
             copy.text = texts[nextText] ?? 'x';
             nextText += 1;
         }
+
         if (node.attrs !== undefined && Object.hasOwn(node.attrs, 'nodeId')) {
             nextId += 1;
             copy.attrs = { ...node.attrs, nodeId: `n${nextId}` };
         }
+
         if (node.content !== undefined) {
             copy.content = node.content.map(visit);
         }
+
         return copy as unknown as ContentNodeJSON;
     };
+
     return blocks.map(visit);
 };
 
@@ -128,8 +140,10 @@ export const documentArb = (
     filter: (block: ContentNodeJSON) => boolean = () => true,
 ): fc.Arbitrary<RichTextDocument> => {
     const blocks = blocksOf(model).filter(filter);
+
     return fc.array(fc.constantFrom(...blocks), { minLength: 1, maxLength: 5 }).chain((chosen) => {
         const count = chosen.reduce((sum, block) => sum + textCount(block), 0);
+
         return fc
             .array(textArb, { minLength: count, maxLength: count })
             .map((texts) => storedIn(model, rewritten(chosen, texts)));
@@ -148,5 +162,6 @@ export const nodeIdsIn = (node: ContentNodeJSON): JsonValue[] =>
         if (attrs === undefined || !Object.hasOwn(attrs, 'nodeId')) {
             return [];
         }
+
         return [attrs.nodeId as JsonValue];
     });

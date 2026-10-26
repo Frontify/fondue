@@ -41,6 +41,7 @@ const shortened = (text: string) => {
     if ([...line].length <= EXCERPT_LENGTH) {
         return line;
     }
+
     return `${[...line].slice(0, EXCERPT_LENGTH - 1).join('')}…`;
 };
 
@@ -67,10 +68,12 @@ const Issue = ({
         if (read === undefined || issue.repairCommand === null) {
             return false;
         }
+
         // A node's repair runs with that node selected, so the selection now decides only a document-level repair.
         if (issue.path !== null) {
             return read.editable();
         }
+
         return read.commands.query(issue.repairCommand, issue.repairPayload ?? undefined).enabled;
     });
     const Icon = SEVERITY_ICONS[issue.severity];
@@ -78,10 +81,12 @@ const Issue = ({
     if (issue.path !== null) {
         excerpt = shortened(held.text);
     }
+
     const goTo = () => {
         if (api === undefined || checks === undefined) {
             return;
         }
+
         onActive(rowKey);
         checks.afterInput(() => {
             if (checks.select(held.key, false) !== undefined) {
@@ -89,10 +94,12 @@ const Issue = ({
             }
         });
     };
+
     const repair = (button: HTMLButtonElement | undefined) => {
         if (api === undefined || checks === undefined || issue.repairCommand === null) {
             return;
         }
+
         onActive(rowKey);
         // A dialog, popover or menu the repair opens returns focus to the button that had it.
         button?.focus();
@@ -102,6 +109,7 @@ const Issue = ({
             if (current === undefined || current.repairCommand === null) {
                 return;
             }
+
             const outcome = api.commands.execute(current.repairCommand, current.repairPayload ?? undefined);
             // The policy judges a repair's change only once it has run, so its refusal is said rather than dropped.
             if (outcome.status === 'rejected' && outcome.code === 'not-allowed') {
@@ -109,11 +117,13 @@ const Issue = ({
             }
         });
     };
+
     const described = excerpt === '' ? titleId : `${titleId} ${excerptId}`;
     useClientLayoutEffect(() => {
         // Accordion.Header passes no props to its trigger button.
         helpRef.current?.querySelector('button')?.setAttribute('aria-describedby', described);
     }, [described]);
+
     return (
         <li
             className={styles.issue}
@@ -212,6 +222,7 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
         if (service === undefined) {
             return undefined;
         }
+
         const shown: Partial<Record<Severity, Element>> = {};
         for (const severity of SEVERITIES) {
             const icon = iconsRef.current?.querySelector(`[data-severity="${severity}"] svg`);
@@ -219,10 +230,12 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
                 shown[severity] = icon;
             }
         }
+
         const close = service.open(shown, (runs) => {
             openedRunRef.current = runs;
         });
         headingRef.current?.focus();
+
         return close;
     }, [api]);
 
@@ -230,12 +243,14 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
         if (requestedRef.current === requested) {
             return;
         }
+
         requestedRef.current = requested;
         const list = listRef.current;
         let items: Element[] = [];
         if (list !== null) {
             items = [...list.querySelectorAll('[data-rte-row]')];
         }
+
         const item = items.find((element) => element.getAttribute('data-rte-row') === lastActive);
         const button = item?.querySelector('button');
         const target = button ?? headingRef.current;
@@ -254,6 +269,7 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
         if (focused === undefined || listed.some(({ key }) => key === focused)) {
             return;
         }
+
         focusedRef.current = undefined;
         const heading = headingRef.current;
         const active = heading?.ownerDocument.activeElement;
@@ -282,11 +298,13 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
         if (shown === undefined || spoken || runs <= openedRunRef.current || runs === shown.runs) {
             return;
         }
+
         // A key holds the summary back until runs pause, so it never lands in the frame of a message the change set off.
         if (summary !== shown.summary) {
             api?.announce(summary, SUMMARY_KEY);
         }
     }, [runs, summary, api]);
+
     return (
         <div role="region" aria-label={t('RichTextEditor_checks')} className={styles.panel}>
             <h2 ref={headingRef} id={headingId} tabIndex={-1} className={styles.summary}>
@@ -325,6 +343,7 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
             <span ref={iconsRef} hidden>
                 {SEVERITIES.map((severity) => {
                     const Icon = SEVERITY_ICONS[severity];
+
                     return (
                         <span key={severity} data-severity={severity}>
                             <Icon size={16} />

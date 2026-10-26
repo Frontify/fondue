@@ -173,6 +173,7 @@ describe('the completed-upload cache', () => {
         if (cache === undefined) {
             throw new Error('No cache.');
         }
+
         await mounted.replace(mounted.nodeId, pngFile('photo.png'));
         await cancel(mounted, mounted.nodeId);
         const read = vi.spyOn(cache, 'read');

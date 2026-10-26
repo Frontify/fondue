@@ -27,12 +27,14 @@ export const fontColorEditor = defineEditorPart(fontColor, (options: JsonObject)
                 if (payload === null) {
                     return api.marks.remove('font_color');
                 }
+
                 return api.marks.set('font_color', payload);
             },
             active: (api, payload) => {
                 if (payload === null) {
                     return false;
                 }
+
                 return api.marks.active('font_color', payload);
             },
         },
@@ -43,6 +45,7 @@ export const fontColorEditor = defineEditorPart(fontColor, (options: JsonObject)
             // The selection's start sits in text that is not code.
             enabled: (api) => {
                 const { blockType, verbatim } = api.selection();
+
                 return blockType !== null && !verbatim;
             },
             run: (api, payload: { readonly tokenIds?: readonly string[] } | undefined) => {
@@ -51,6 +54,7 @@ export const fontColorEditor = defineEditorPart(fontColor, (options: JsonObject)
                     { tokenIds: payload?.tokenIds, literalText: options.literalColors === true },
                     'selection',
                 );
+
                 return true;
             },
         },

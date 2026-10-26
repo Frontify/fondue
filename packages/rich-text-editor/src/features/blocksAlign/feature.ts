@@ -13,6 +13,7 @@ export const align = (options?: { readonly justify?: boolean }) => {
     if (options?.justify !== false) {
         values.push('justify');
     }
+
     return defineFeature({
         id: 'blocks.align',
         version: 1,

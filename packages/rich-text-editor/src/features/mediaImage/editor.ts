@@ -23,6 +23,7 @@ const selectedImage = (api: EditorControlApi) => {
     if (image === undefined || image.nodeId === null) {
         return undefined;
     }
+
     return { nodeId: image.nodeId, attrs: image.attrs };
 };
 
@@ -32,6 +33,7 @@ const targetOf = (api: EditorControlApi, payload: { readonly nodeId?: string } |
     if (given !== undefined) {
         return given;
     }
+
     return selectedImage(api)?.nodeId;
 };
 
@@ -46,6 +48,7 @@ export const mediaImageEditor = defineEditorPart(mediaImage, {
             enabled: (api) => api.insert.allowed('figure'),
             run: (api) => {
                 api.uploads.pick();
+
                 return true;
             },
             // The picker never opens for content the policy would refuse once it answers.
@@ -55,6 +58,7 @@ export const mediaImageEditor = defineEditorPart(mediaImage, {
             payload: NODE,
             enabled: (api, payload: { readonly nodeId?: string } | undefined) => {
                 const nodeId = targetOf(api, payload);
+
                 return nodeId !== undefined && isImage(api, nodeId);
             },
             // With no `nodeId`, it replaces the selected image.
@@ -63,7 +67,9 @@ export const mediaImageEditor = defineEditorPart(mediaImage, {
                 if (nodeId === undefined || !isImage(api, nodeId)) {
                     return false;
                 }
+
                 api.uploads.pick(nodeId);
+
                 return true;
             },
             refuses: (policy) => policy.features[FEATURE]?.edit === false,
@@ -76,7 +82,9 @@ export const mediaImageEditor = defineEditorPart(mediaImage, {
                 if (image === undefined) {
                     return false;
                 }
+
                 api.overlays.open(AltTextDialog, { nodeId: image.nodeId, strings: altTextStrings(api.t) });
+
                 return true;
             },
         },
@@ -87,16 +95,19 @@ export const mediaImageEditor = defineEditorPart(mediaImage, {
                 if (image === undefined) {
                     return false;
                 }
+
                 let displayWidth: number | null = null;
                 if (typeof image.attrs.displayWidth === 'number') {
                     displayWidth = image.attrs.displayWidth;
                 }
+
                 const options = sizeOptions(api.t, displayWidth);
                 api.overlays.open(OptionsMenu, {
                     label: api.t('RichTextEditor_imageSizeMenu'),
                     options,
                     node: { nodeId: image.nodeId, at: 'node' },
                 });
+
                 return true;
             },
         },
@@ -107,11 +118,14 @@ export const mediaImageEditor = defineEditorPart(mediaImage, {
                 if (image === undefined) {
                     return false;
                 }
+
                 let width: number | null = null;
                 if (typeof image.attrs.displayWidth === 'number') {
                     width = image.attrs.displayWidth;
                 }
+
                 api.overlays.open(WidthDialog, { width, nodeId: image.nodeId, strings: widthStrings(api.t) });
+
                 return true;
             },
         },
@@ -122,6 +136,7 @@ export const mediaImageEditor = defineEditorPart(mediaImage, {
                 if (image === undefined) {
                     return false;
                 }
+
                 const figure = api.nearest('figure', image.nodeId);
                 const attrs = figure?.attrs;
                 const side = figureAlign(attrs ?? {});
@@ -131,6 +146,7 @@ export const mediaImageEditor = defineEditorPart(mediaImage, {
                     options,
                     node: { nodeId: image.nodeId, at: 'node' },
                 });
+
                 return true;
             },
         },

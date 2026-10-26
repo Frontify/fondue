@@ -13,6 +13,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.listRte !== undefined)).toBe(true);
 };
+
 // ProseMirror writes its selection back to the DOM 20 ms after the surface gains focus, which would undo a key pressed sooner.
 const settleFocus = (page: Page) => page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
 const startsOf = (page: Page) =>
@@ -42,6 +43,7 @@ const openNumbering = async (page: Page) => {
     await expect(dialog.getByRole('spinbutton', { name: 'First number' })).toBeFocused();
     // The closing menu hands focus on in a timer, so keys wait for it as for the surface.
     await settleFocus(page);
+
     return dialog;
 };
 
@@ -148,6 +150,7 @@ test('names the numbering dialog by its heading, with no description that holds 
     const controls = await dialog.evaluate((element) => {
         const description = element.ownerDocument.getElementById(element.getAttribute('aria-describedby') ?? '');
         const found = description?.querySelectorAll('button, input, select, textarea, [href], [tabindex]').length;
+
         return found ?? 0;
     });
     expect(controls).toBe(0);

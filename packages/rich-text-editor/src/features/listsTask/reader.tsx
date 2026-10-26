@@ -9,6 +9,7 @@ const blocksOf = (children: ReactNode): ReactNode[] => {
     if (isValidElement<{ readonly children?: ReactNode }>(children)) {
         return Children.toArray(children.props.children);
     }
+
     return Children.toArray(children);
 };
 
@@ -19,9 +20,11 @@ const TaskItem = ({ attrs, children }: ReaderNodeProps) => {
     if (typeof attrs.nodeId === 'string') {
         nodeId = attrs.nodeId;
     }
+
     // An ID holds no space, which would split the `aria-labelledby` reference.
     const label = `rte-task-${encodeURIComponent(nodeId)}`;
     const [first, ...rest] = blocksOf(children);
+
     return (
         <li data-checked={String(checked)} dir="auto">
             <input type="checkbox" disabled checked={checked} aria-labelledby={label} />

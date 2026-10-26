@@ -17,6 +17,7 @@ const injected = vi.hoisted(() => ({ href: undefined as string | undefined }));
 
 vi.mock('#/model/decode', async (importOriginal) => {
     const original = await importOriginal<{ readonly decodeToTree: typeof RealDecode }>();
+
     return {
         ...original,
         decodeToTree: (...args: Parameters<typeof original.decodeToTree>) => {
@@ -24,6 +25,7 @@ vi.mock('#/model/decode', async (importOriginal) => {
             if (injected.href === undefined || decoded.tree === undefined) {
                 return decoded;
             }
+
             return { ...decoded, tree: withInjectedHref(decoded.tree, injected.href) };
         },
     };

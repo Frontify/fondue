@@ -16,10 +16,12 @@ export const withScheme = (typed: string): string => {
     if (text === '' || SCHEME.test(text) || /\s/.test(text) || /^[/.#?]/.test(text)) {
         return text;
     }
+
     const host = text.split(/[/?#]/, 1)[0] ?? '';
     if (!HOST.test(host)) {
         return text;
     }
+
     return `https://${text}`;
 };
 
@@ -36,9 +38,11 @@ export const destinationsOf = (items: readonly ReferenceValue[], policy: HrefPol
         if (typeof item.href !== 'string') {
             return [];
         }
+
         const checked = checkHref(item.href, policy);
         if (!checked.ok) {
             return [];
         }
+
         return [{ key: `${item.resourceType} ${item.resourceId}`, label: item.labelSnapshot, href: checked.href }];
     });

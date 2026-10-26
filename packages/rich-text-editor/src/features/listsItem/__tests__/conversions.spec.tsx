@@ -41,8 +41,10 @@ const firstInline = (handle: Handle): unknown => {
         if (node.type === 'paragraph' || node.type === 'heading') {
             return node.content;
         }
+
         pending.unshift(...(node.content ?? []));
     }
+
     return undefined;
 };
 
@@ -133,8 +135,10 @@ describe('list type toggles', () => {
         if (kind === 'task') {
             first = done('one', nested);
         }
+
         return list(kind, [first, item(kind, 'two')], 5);
     };
+
     const TOGGLES = { bullet: 'list.bullet.toggle', ordered: 'list.ordered.toggle', task: 'list.task.toggle' } as const;
 
     for (const from of LIST_KINDS) {
@@ -148,6 +152,7 @@ describe('list type toggles', () => {
                 if (to === 'ordered') {
                     payload = { start: 3 };
                 }
+
                 const result = run(handle, TOGGLES[to], payload);
                 const toggled = outlineOf(handle);
                 run(handle, 'history.undo');
@@ -219,13 +224,16 @@ const taskBox = (kind: ListKind, blocks: readonly unknown[]) => {
     if (kind === 'task') {
         return ['[ ]', ...blocks];
     }
+
     return [...blocks];
 };
+
 /** The `start` an outline shows for a list of `kind` that starts at `start`. */
 const startOf = (kind: ListKind, start: number) => {
     if (kind === 'ordered') {
         return { start };
     }
+
     return {};
 };
 

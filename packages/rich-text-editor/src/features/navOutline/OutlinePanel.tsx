@@ -34,6 +34,7 @@ const headingsOf = (api: EditorApi | undefined): readonly OutlineHeading[] =>
         if (nodeId === null || !isLevel(level)) {
             return [];
         }
+
         return [{ nodeId, level, text }];
     });
 
@@ -52,6 +53,7 @@ export const OutlinePanel = ({ t }: PanelComponentProps) => {
         const target = button ?? nav;
         target?.focus();
     }, []);
+
     return (
         <nav ref={navRef} className={styles.nav} aria-label={t('RichTextEditor_outline')} tabIndex={-1}>
             {entries.length === 0 && <p className={styles.empty}>{t('RichTextEditor_outlineEmpty')}</p>}
@@ -68,12 +70,15 @@ export const OutlinePanel = ({ t }: PanelComponentProps) => {
                                     if (api === undefined) {
                                         return;
                                     }
+
                                     if (!api.blocks.list('heading').some(({ nodeId }) => nodeId === entry.nodeId)) {
                                         navRef.current?.focus();
                                         setEntries(headingsOf(api));
                                         api.announce(t('RichTextEditor_outlineHeadingGone'));
+
                                         return;
                                     }
+
                                     api.select({ nodeId: entry.nodeId }, { scroll: true });
                                 }}
                             >

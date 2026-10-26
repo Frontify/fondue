@@ -48,6 +48,7 @@ export const ColumnsProbe = ({
 }) => {
     const document = documentOf(breaks);
     const presentation = defineReactPresentation({ columns, columnGap, contentClassName });
+
     return (
         <div style={{ inlineSize: width }}>
             <section aria-label="Editor">

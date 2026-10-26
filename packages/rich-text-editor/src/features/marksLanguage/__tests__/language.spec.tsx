@@ -33,8 +33,10 @@ const documentOf = (lang: string | null, blockLang: string | null, marked?: stri
             marks: [{ type: 'language', attrs: { lang: marked, dir: null } }],
         });
     }
+
     const block = { ...para(...content), attrs: { lang: blockLang, align: null } };
     const document = storedIn(model(), [block]);
+
     return { ...document, content: { ...document.content, attrs: { lang, dir: 'auto' } } };
 };
 
@@ -43,11 +45,13 @@ const typedQuote = (document: RichTextDocument, inPassage = false) => {
     if (inPassage) {
         setSelection(mounted.handle, { text: 'xx', from: 1, to: 1 });
     }
+
     typeText(mounted.handle, '"');
     const block = mounted.handle.getSnapshot().document.content.content?.[0];
     const nodes = block?.content;
     const written = nodes?.map((node) => node.text).join('');
     mounted.unmount();
+
     return written ?? '';
 };
 

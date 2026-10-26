@@ -99,6 +99,7 @@ export const mountChecks = ({
     if (policy !== undefined) {
         definition = defineEditor({ id: 'test.checks', model, policy, plugins: parts });
     }
+
     const rendered = render(
         <div style={{ backgroundColor: '#ffffff' }}>
             <RichTextEditor
@@ -121,5 +122,6 @@ export const mountChecks = ({
     if (handle === null || runtime === undefined || runtime.view === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     return { ...rendered, handle, runtime, view: runtime.view, changes, model };
 };

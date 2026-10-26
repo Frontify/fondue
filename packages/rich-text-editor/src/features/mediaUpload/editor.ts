@@ -21,6 +21,7 @@ export const mediaUploadEditor = defineEditorPart(mediaUpload, {
             payload: NODE,
             run: (api, payload: { readonly nodeId?: string } | undefined) => {
                 const nodeId = imageOf(api, payload);
+
                 return nodeId !== undefined && api.uploads.cancel(nodeId);
             },
         },
@@ -28,6 +29,7 @@ export const mediaUploadEditor = defineEditorPart(mediaUpload, {
             payload: NODE,
             run: (api, payload: { readonly nodeId?: string } | undefined) => {
                 const nodeId = imageOf(api, payload);
+
                 return nodeId !== undefined && api.uploads.retry(nodeId);
             },
         },

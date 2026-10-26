@@ -28,6 +28,7 @@ afterEach(() => {
     for (const spy of spies) {
         spy.mockRestore();
     }
+
     vi.useRealTimers();
 });
 
@@ -126,6 +127,7 @@ describe('when the content checks run', () => {
         const ref = createRef<EditorHandle>();
         const Host = () => {
             const [changes, setChanges] = useState(0);
+
             return (
                 <div data-changes={changes}>
                     <RichTextEditor
@@ -143,6 +145,7 @@ describe('when the content checks run', () => {
                 </div>
             );
         };
+
         const { unmount } = render(<Host />);
         act(() => {
             vi.advanceTimersToNextFrame();
@@ -152,6 +155,7 @@ describe('when the content checks run', () => {
         if (handle === null || view === undefined) {
             throw new Error('The editor did not mount.');
         }
+
         fireEvent.click(screen.getByRole('button', { name: 'Accessibility checks' }));
         const opened = ruleCalls();
         act(() => {

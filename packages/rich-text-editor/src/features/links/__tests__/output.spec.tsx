@@ -38,6 +38,7 @@ afterEach(() => {
 const contentOf = (document: RichTextDocument) => {
     const blocks = document.content.content;
     const first = blocks?.[0];
+
     return first?.content;
 };
 
@@ -132,6 +133,7 @@ describe('the URL check at every boundary', () => {
         for (const output of [markup, html, markdown]) {
             expect(output.toLowerCase()).not.toContain('javascript:');
         }
+
         if (ok) {
             expect(plain).toBe(`go (${href ?? ''})`);
             const escaped = (href ?? '').replaceAll('&', '&amp;');
@@ -168,6 +170,7 @@ describe('the URL check at every boundary', () => {
             if (result.status === 'blocked') {
                 throw new Error('The Markdown did not import.');
             }
+
             const runs = contentOf(result.document) ?? [];
             expect(runs.some((run) => run.text === 'go' && (run.marks ?? []).some(({ type }) => type === 'link'))).toBe(
                 ok,
@@ -225,6 +228,7 @@ describe('the links policy where content enters', () => {
         act(() => {
             paste(handle, input);
         });
+
         return contentOf(handle.getSnapshot().document);
     };
 

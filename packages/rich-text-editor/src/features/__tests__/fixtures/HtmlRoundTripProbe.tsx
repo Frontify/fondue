@@ -36,9 +36,11 @@ const withoutIds = (node: ContentNodeJSON): ContentNodeJSON => {
     if (node.attrs !== undefined && Object.hasOwn(node.attrs, 'nodeId')) {
         copy.attrs = { ...node.attrs, nodeId: null };
     }
+
     if (node.content !== undefined) {
         copy.content = node.content.map(withoutIds);
     }
+
     return copy as unknown as ContentNodeJSON;
 };
 
@@ -50,10 +52,12 @@ export const HtmlRoundTripProbe = () => {
         if (handle === null) {
             return;
         }
+
         const view = runtimeOf(handle)?.view;
         if (view === undefined) {
             return;
         }
+
         const codecs = createCodecs(losslessModel);
         window.htmlRoundTrip = (numRuns, seed) =>
             fc.sample(documentArb(losslessModel, markupTextArb), { numRuns, seed }).flatMap((document) => {
@@ -67,9 +71,11 @@ export const HtmlRoundTripProbe = () => {
                 if (JSON.stringify(pasted) === JSON.stringify(expected)) {
                     return [];
                 }
+
                 return [{ html, expected, pasted }];
             });
     }, []);
+
     return (
         <RichTextEditor
             aria-label="Notes"

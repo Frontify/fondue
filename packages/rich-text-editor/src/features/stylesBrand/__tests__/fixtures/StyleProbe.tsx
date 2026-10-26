@@ -60,8 +60,10 @@ export const StyleProbe = ({ leadSize }: { readonly leadSize?: number }) => {
             if (style.id !== 'brand.lead' || leadSize === undefined) {
                 return style;
             }
+
             return { ...style, recipe: { ...style.recipe, fontSize: leadSize } };
         });
+
         return defineReactPresentation({ styles, colorTokens: COLOR_TOKENS, toolbar: [['text-style']] });
     }, [leadSize]);
     const ref = useRef<EditorHandle>(null);
@@ -73,6 +75,7 @@ export const StyleProbe = ({ leadSize }: { readonly leadSize?: number }) => {
             window.styleRte = { handle, setSelection, changes: changesRef.current };
         }
     }, []);
+
     return (
         <>
             <RichTextEditor

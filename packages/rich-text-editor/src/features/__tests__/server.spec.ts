@@ -17,8 +17,10 @@ const load = async () => {
     const codecs = await import('#/codecs');
     const outside = await import('#/features/__tests__/fixtures/outsideFeature');
     const { renderReader } = await import('#/reader/__tests__/helpers/helpers');
+
     return { features, model, codecs, outside, renderReader };
 };
+
 let loaded: Awaited<ReturnType<typeof load>>;
 
 // Node 21 and later define `navigator` as a configurable global, which the tests delete for the length of the file.

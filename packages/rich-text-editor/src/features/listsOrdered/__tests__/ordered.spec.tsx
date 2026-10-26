@@ -114,8 +114,10 @@ const textAt = (doc: Node, value: string): number => {
         if (found < 0 && node.isText && node.text?.includes(value) === true) {
             found = pos + node.text.indexOf(value);
         }
+
         return found < 0;
     });
+
     return found;
 };
 

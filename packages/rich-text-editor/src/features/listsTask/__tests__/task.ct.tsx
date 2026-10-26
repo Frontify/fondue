@@ -13,6 +13,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.listRte !== undefined)).toBe(true);
 };
+
 const blocks = [tasks(taskItem('task-1', 'Approve the palette'), taskItem('task-2', 'Print'))];
 const liveRegionOf = (page: Page) => page.getByTestId('fondue-rich-text-editor').locator('[aria-live="polite"]');
 
@@ -28,15 +29,18 @@ test('runs one task.setChecked with one undo step for a click, Space on the chec
         if (route === 'click') {
             await box.click();
         }
+
         if (route === 'Space') {
             await box.focus();
             await page.keyboard.press('Space');
         }
+
         if (route === 'command') {
             await page.evaluate(() =>
                 (window.listRte as ListRte).handle.execute('task.setChecked', { nodeId: 'task-1', checked: true }),
             );
         }
+
         await expect(box).toBeChecked();
         const changes = await page.evaluate(() => [...(window.listRte as ListRte).changes]);
         await page.evaluate(() => (window.listRte as ListRte).handle.execute('history.undo'));

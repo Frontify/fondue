@@ -10,6 +10,7 @@ export const nodesOf = (node: ContentNodeJSON): readonly ContentNodeJSON[] => {
         found.push(next);
         pending.push(...[...(next.content ?? [])].reverse());
     }
+
     return found;
 };
 

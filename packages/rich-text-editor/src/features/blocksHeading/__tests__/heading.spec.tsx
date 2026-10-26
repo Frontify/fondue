@@ -104,6 +104,7 @@ describe('blocks.heading', () => {
                 });
             });
         };
+
         const stored = mountText({ blocks: [headingOf(3, text('Title'))], toolbar: [['text-style']] });
         setSelection(stored.handle, { text: 'Title', from: 1, to: 1 });
         open('Heading 3', stored);
@@ -121,6 +122,7 @@ describe('blocks.heading', () => {
         const model = textModel([...textFeatures(), align()]);
         const levels = [1, 2, 3, 4, 5, 6].map((level) => {
             const block = headingOf(level, text(`Level ${level}`));
+
             return storedIn(model, [{ ...block, attrs: { ...block.attrs, align: null } }]);
         });
         const documents = [{ ...headings, model: model.ref } as never, ...levels];
@@ -136,6 +138,7 @@ describe('blocks.heading', () => {
                 (block) => `${block.type.name} ${JSON.stringify(block.attrs.level)}`,
             );
             unmount();
+
             return [changes.length, snapshot.stamp.sequence, snapshot.document.content, shown];
         });
         const stored = (document: { readonly content: { readonly content?: readonly ContentNodeJSON[] } }) =>
@@ -144,6 +147,7 @@ describe('blocks.heading', () => {
                 if (block.attrs !== undefined) {
                     level = block.attrs.level;
                 }
+
                 return `${block.type} ${JSON.stringify(level)}`;
             });
 

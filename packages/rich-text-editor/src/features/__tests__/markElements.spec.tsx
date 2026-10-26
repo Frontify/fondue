@@ -37,6 +37,7 @@ describe('mark elements', () => {
             if (type === undefined) {
                 throw new Error(`${mark} is not in the schema.`);
             }
+
             const rendered = type.spec.toDOM?.(type.create(), false);
             expect(Array.isArray(rendered) ? rendered[0] : rendered).toBe(tag);
             expect(view.dom.querySelector(tag)).not.toBeNull();

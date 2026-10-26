@@ -54,6 +54,7 @@ describe('mention suggestions', () => {
         const opened = ['@', 'Hi @', 'Ask (@', 'Say "@', 'See [@'].map((typed) => {
             const mounted = mountMentions({ services: { references: service } });
             typeText(mounted.handle, typed);
+
             return mounted.active();
         });
         const inWord = mountMentions({ services: { references: service } });
@@ -77,6 +78,7 @@ describe('mention suggestions', () => {
             await advance(50);
             typeText(mounted.handle, character);
         }
+
         await advance(199);
         expect(search).not.toHaveBeenCalled();
 
@@ -331,6 +333,7 @@ describe('mention suggestions', () => {
         const references = new Proxy(service, {
             get: (target, name, receiver) => {
                 read.add(name);
+
                 return Reflect.get(target, name, receiver) as unknown;
             },
         });
@@ -465,6 +468,7 @@ describe('mentions on the clipboard', () => {
                 new ClipboardEvent('copy', { clipboardData, bubbles: true, cancelable: true }),
             );
         });
+
         return { html: clipboardData.getData('text/html'), text: clipboardData.getData('text/plain') };
     };
 

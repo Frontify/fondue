@@ -9,6 +9,7 @@ const declaresUnderline = (element: Element): boolean | undefined => {
     if (element.localName === 'u' || decorationLines(element).includes('underline')) {
         return true;
     }
+
     return undefined;
 };
 
@@ -36,6 +37,7 @@ export const underline = defineFeature({
                 if (readsUnderline(element)) {
                     return {};
                 }
+
                 return null;
             },
         },

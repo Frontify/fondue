@@ -32,6 +32,7 @@ const LoadingRow = ({ state }: { readonly state: SearchDialogState }) => {
     if (state.found.status !== 'loading' || !state.slow) {
         return null;
     }
+
     return (
         <div className={styles.row}>
             <LoadingCircle size="xx-small" />
@@ -45,9 +46,11 @@ const OutcomeRow = ({ state }: { readonly state: SearchDialogState }) => {
     if (found.status === 'ready' && resultsOf(found.items).length === 0) {
         return <div className={styles.row}>{strings.noResults}</div>;
     }
+
     if (found.status === 'failed') {
         return <div className={styles.row}>{strings.failed}</div>;
     }
+
     return null;
 };
 

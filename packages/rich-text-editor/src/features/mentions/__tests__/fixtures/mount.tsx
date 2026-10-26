@@ -79,6 +79,7 @@ export const deferredService = () => {
                 pending.push({ request, context, resolve: resolve as (page: unknown) => void, reject });
             }),
     );
+
     return { service: { search }, search, pending };
 };
 
@@ -101,12 +102,15 @@ const setProps = (next: Pick<Mount, 'services' | 'presentation' | 'locale'>) => 
     if (next.services !== undefined) {
         props.services = next.services;
     }
+
     if (next.presentation !== undefined) {
         props.presentation = next.presentation;
     }
+
     if (next.locale !== undefined) {
         props.locale = next.locale;
     }
+
     return props;
 };
 
@@ -116,6 +120,7 @@ export const mountMentions = (options?: Mount) => {
     if (options !== undefined) {
         given = options;
     }
+
     const {
         model = mentionModel(),
         blocks = [para()],
@@ -132,6 +137,7 @@ export const mountMentions = (options?: Mount) => {
     if (shown === undefined && toolbar !== undefined) {
         shown = defineReactPresentation({ toolbar });
     }
+
     const element = (next: Pick<Mount, 'services' | 'presentation' | 'locale'>) => (
         <RichTextEditor
             aria-label="Notes"
@@ -150,11 +156,14 @@ export const mountMentions = (options?: Mount) => {
     if (handle === null) {
         throw new Error('The editor did not mount.');
     }
+
     const view = runtimeOf(handle)?.view;
     if (view === undefined) {
         throw new Error('The editor has no view.');
     }
+
     const blocksOf = () => handle.getSnapshot().document.content.content ?? [];
+
     return {
         ...rendered,
         handle,
@@ -169,6 +178,7 @@ export const mountMentions = (options?: Mount) => {
                     if (node.type === 'mention') {
                         return `@${typeof node.attrs?.labelSnapshot === 'string' ? node.attrs.labelSnapshot : ''}`;
                     }
+
                     return node.text ?? '';
                 })
                 .join(''),

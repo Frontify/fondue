@@ -22,13 +22,16 @@ const installable = (id: string): ReadonlySet<string> => {
         if (found.has(next)) {
             return;
         }
+
         found.add(next);
         for (const required of requires.get(next) ?? []) {
             visit(required);
         }
     };
+
     visit(id);
     found.add('core');
+
     return found;
 };
 

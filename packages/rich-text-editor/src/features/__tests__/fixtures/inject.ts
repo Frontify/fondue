@@ -14,9 +14,11 @@ export const withInjectedHref = (tree: TreeNode, href: string): TreeNode => {
         );
         Object.assign(injected, { marks });
     }
+
     if (tree.content !== undefined) {
         const content = tree.content.map((child) => withInjectedHref(child, href));
         Object.assign(injected, { content });
     }
+
     return injected;
 };

@@ -27,6 +27,7 @@ const removeFigure = (api: EditorApi | undefined, nodeId: string) => {
     if (api === undefined) {
         return;
     }
+
     const figure = figureOf(api.document().content, nodeId);
     const attrs = figure?.attrs;
     const figureId = attrs?.nodeId;
@@ -37,6 +38,7 @@ const removeFigure = (api: EditorApi | undefined, nodeId: string) => {
             api.content.replace({ nodeId: figureId }, [{ type: 'paragraph' }]);
         }
     }
+
     api.focus();
 };
 
@@ -55,6 +57,7 @@ export const ImageBody = ({ chrome }: { readonly chrome: ImageChromeState }) => 
             />
         );
     }
+
     if (unfinished) {
         return (
             // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- a press selects the node as on any atom; the keyboard selects it with the arrows.
@@ -63,11 +66,13 @@ export const ImageBody = ({ chrome }: { readonly chrome: ImageChromeState }) => 
             </span>
         );
     }
+
     if (shown.kind === 'image' && !unavailable) {
         let width = shown.cssWidth;
         if (resize.shown !== undefined) {
             width = `${resize.shown}%`;
         }
+
         return (
             <ContentImage
                 src={shown.src}
@@ -91,6 +96,7 @@ export const ImageBody = ({ chrome }: { readonly chrome: ImageChromeState }) => 
             </ContentImage>
         );
     }
+
     return (
         <ImageUnavailable
             unavailable={unavailableOf(attrs, context)}
@@ -103,6 +109,7 @@ export const ImageBody = ({ chrome }: { readonly chrome: ImageChromeState }) => 
 /** The size menu, whose Edit width choice opens the width dialog once the menu returned focus. */
 const SizeMenu = ({ chrome }: { readonly chrome: ImageChromeState }) => {
     const { t, sizeText, displayWidth, pendingRef, runOption, openWidth } = chrome;
+
     return (
         <NodeChromeMenu
             label={t('RichTextEditor_imageSize', { size: sizeText })}
@@ -112,6 +119,7 @@ const SizeMenu = ({ chrome }: { readonly chrome: ImageChromeState }) => {
                 if (pendingRef.current === undefined) {
                     return;
                 }
+
                 // The width dialog opens once the menu returned focus, so its field keeps it.
                 pendingRef.current = undefined;
                 event.preventDefault();
@@ -125,8 +133,10 @@ const SizeMenu = ({ chrome }: { readonly chrome: ImageChromeState }) => {
                     onSelect={() => {
                         if (option.command === EDIT_WIDTH) {
                             pendingRef.current = 'width';
+
                             return;
                         }
+
                         runOption(option);
                     }}
                 >
@@ -139,6 +149,7 @@ const SizeMenu = ({ chrome }: { readonly chrome: ImageChromeState }) => {
 
 const AlignMenu = ({ chrome }: { readonly chrome: ImageChromeState }) => {
     const { t, side, runOption } = chrome;
+
     return (
         <NodeChromeMenu label={t('RichTextEditor_imageAlign', { side: t(SIDE_KEYS[side]) })} text={t(SIDE_KEYS[side])}>
             {alignOptions(t, side).map((option) => (
@@ -154,6 +165,7 @@ const AlignMenu = ({ chrome }: { readonly chrome: ImageChromeState }) => {
 export const ImageToolbar = ({ chrome, nodeId }: { readonly chrome: ImageChromeState; readonly nodeId: string }) => {
     const { api, t, execute, shown, unfinished, status, review, reviewId, paused, animated, altText, setPlayed } =
         chrome;
+
     return (
         <NodeChromeToolbar aria-label={t('RichTextEditor_image')}>
             {status !== undefined && (

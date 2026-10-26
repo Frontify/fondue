@@ -27,32 +27,40 @@ const denormalized = (model: ContentModel, document: RichTextDocument): RichText
                     attrs[name] = value;
                 }
             }
+
             copy.attrs = attrs;
         }
+
         if (node.marks !== undefined) {
             copy.marks = [...node.marks].reverse();
         } else if (node.type === 'text') {
             copy.marks = [];
         }
+
         if (node.content === undefined) {
             if (node.type !== 'text') {
                 copy.content = [];
             }
+
             return copy as unknown as ContentNodeJSON;
         }
+
         copy.content = node.content.flatMap((child) => {
             const written = visit(child);
             const characters = [...(child.text ?? '')];
             if (child.type !== 'text' || characters.length < 2) {
                 return [written];
             }
+
             return [
                 { ...written, text: characters[0] ?? '' },
                 { ...written, text: characters.slice(1).join('') },
             ];
         });
+
         return copy as unknown as ContentNodeJSON;
     };
+
     return { ...document, content: visit(document.content) } as RichTextDocument;
 };
 
@@ -64,6 +72,7 @@ const canonicalProblems = (model: ContentModel, document: RichTextDocument | und
     if (document === undefined) {
         return ['the document does not decode'];
     }
+
     const schema = buildSchema(model);
     const problems: string[] = [];
     const visit = (node: ContentNodeJSON, path: string) => {
@@ -76,12 +85,15 @@ const canonicalProblems = (model: ContentModel, document: RichTextDocument | und
                 problems.push(`${path} ${node.type} leaves out ${missing.join(', ')}`);
             }
         }
+
         if (node.content?.length === 0) {
             problems.push(`${path} ${node.type} has an empty content`);
         }
+
         if (node.marks?.length === 0) {
             problems.push(`${path} has empty marks`);
         }
+
         for (const [index, child] of (node.content ?? []).entries()) {
             const previous = node.content?.[index - 1];
             const previousMarks = previous?.marks;
@@ -90,10 +102,13 @@ const canonicalProblems = (model: ContentModel, document: RichTextDocument | und
             if (child.type === 'text' && previous?.type === 'text' && sameMarks) {
                 problems.push(`${path}/${index} joins no adjacent text with equal marks`);
             }
+
             visit(child, `${path}/${index}`);
         }
     };
+
     visit(document.content, '');
+
     return problems;
 };
 

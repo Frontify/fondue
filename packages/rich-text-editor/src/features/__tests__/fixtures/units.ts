@@ -46,6 +46,7 @@ export type UnitCommands = Readonly<Record<string, unknown>>;
 /** A unit of the feature `factory` makes and its editor part, as `definePlugin` makes one for a shipped feature. */
 const fixtureUnit = (factory: () => Feature, editor: EditorPart): RichTextPlugin => {
     const feature = factory();
+
     return Object.freeze({ id: feature.id, feature, editor });
 };
 
@@ -72,6 +73,7 @@ const baseUnitOf = (id: string, version: number): RichTextPlugin => {
     if (fixture !== undefined) {
         return fixture;
     }
+
     try {
         return pluginsById([id])[0] as RichTextPlugin;
     } catch {
@@ -84,6 +86,7 @@ const layered = (base: RichTextPlugin, host: EditorPart): RichTextPlugin => {
     const resolve = (options: JsonObject) => {
         const shipped = partWithOptions(base.editor, options);
         const own = partWithOptions(host, options);
+
         return {
             ...shipped,
             ...own,
@@ -91,7 +94,9 @@ const layered = (base: RichTextPlugin, host: EditorPart): RichTextPlugin => {
             keys: { ...shipped.keys, ...own.keys },
         };
     };
+
     const editor = Object.freeze({ feature: base.id, [OPTION_PARTS]: Object.freeze(resolve) });
+
     return Object.freeze({ ...base, editor });
 };
 
@@ -109,5 +114,6 @@ export const unitsOf = (
         if (host === undefined) {
             return base;
         }
+
         return layered(base, host);
     }) as unknown as readonly RichTextPlugin<string, UnitCommands>[];

@@ -38,10 +38,13 @@ const markColor = (mark: MarkJSON | undefined, tokens: readonly ColorToken[]): R
     if (attrs === undefined) {
         return undefined;
     }
+
     if (typeof attrs.value === 'string') {
         return parseColor(attrs.value);
     }
+
     const token = tokens.find(({ id }) => id === attrs.tokenId);
+
     return parseColor(token?.value);
 };
 
@@ -52,13 +55,16 @@ const backgroundOf = ({ marks }: ContentRuleInput, { colorTokens, background }: 
     if (marks.highlight === undefined) {
         return base;
     }
+
     const highlight = markColor(marks.highlight, colorTokens);
     if (highlight === undefined) {
         return undefined;
     }
+
     if (highlight.alpha === 1) {
         return highlight;
     }
+
     return base === undefined ? undefined : composite(highlight, base);
 };
 
@@ -69,6 +75,7 @@ const colorsOf = (input: ContentRuleInput, context: ContentRuleContext) => {
     if (background === undefined || foreground === undefined) {
         return undefined;
     }
+
     return { foreground: foreground.alpha === 1 ? foreground : composite(foreground, background), background };
 };
 
@@ -81,6 +88,7 @@ const isLarge = ({ covered, ancestors }: ContentRuleInput) => {
             break;
         }
     }
+
     return large && covered.every(({ marks }) => !marks?.some(({ type }) => SMALL_MARKS.includes(type)));
 };
 
@@ -100,16 +108,20 @@ const CONTENT_RULES: readonly ContentRule[] = [
             if (colors === undefined || passes(colors.foreground, colors.background, large)) {
                 return undefined;
             }
+
             const tokenIds = context.colorTokens
                 .filter(({ usage, value }) => {
                     const color = parseColor(value);
                     if (!usage.includes('font_color') || color === undefined) {
                         return false;
                     }
+
                     const shown = color.alpha === 1 ? color : composite(color, colors.background);
+
                     return passes(shown, colors.background, large);
                 })
                 .map(({ id }) => id);
+
             return { payload: { tokenIds } };
         },
     },
@@ -161,5 +173,6 @@ export const fontColor: typeof tokenColors = (options) => {
     if (options?.literalColors === true) {
         return literalColors(options);
     }
+
     return tokenColors(options);
 };

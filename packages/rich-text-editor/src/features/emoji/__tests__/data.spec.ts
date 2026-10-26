@@ -89,6 +89,7 @@ describe('emoji suggestions', () => {
             if (fail) {
                 throw new Error('unavailable');
             }
+
             return {
                 default: [
                     {
@@ -109,9 +110,11 @@ describe('emoji suggestions', () => {
         } catch (error) {
             rejection = error;
         }
+
         if (!(rejection instanceof Error) || !(rejection.cause instanceof Error)) {
             throw new Error('expected the loader to reject');
         }
+
         expect(rejection.cause.message).toBe('unavailable');
         fail = false;
         const loaded = await loadEmoji('pl');

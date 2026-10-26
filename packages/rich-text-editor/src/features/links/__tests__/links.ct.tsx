@@ -16,6 +16,7 @@ const ready = async (page: Page, editable = true) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', String(editable));
     await expect.poll(() => page.evaluate(() => window.linkRte !== undefined)).toBe(true);
 };
+
 // ProseMirror writes its selection back to the DOM 20 ms after the surface gains focus, which would undo a key pressed sooner.
 const settleFocus = (page: Page) => page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
 const select = async (page: Page, text: string, from?: number, to?: number) => {
@@ -31,6 +32,7 @@ const select = async (page: Page, text: string, from?: number, to?: number) => {
         [text, start, end] as const,
     );
 };
+
 const frames = (page: Page) =>
     page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 const blockOf = (page: Page) =>
@@ -54,6 +56,7 @@ test('places the caret and shows the link bubble on a plain click in the editabl
     for (const name of ['Open link in a new tab', 'Edit link', 'Copy link', 'Remove link']) {
         await expect(bubbleOf(page).getByRole('button', { name })).toBeVisible();
     }
+
     await expect(bubbleOf(page).locator('bdi')).toHaveText('#followed');
     await expect(surfaceOf(page)).toBeFocused();
     expect(page.url()).toBe(before);
@@ -72,6 +75,7 @@ test('renders the bubble buttons as Fondue buttons that arrow keys move between'
         await expect(button).toHaveAttribute('data-variant', 'default');
         await expect(button).toHaveAttribute('data-aspect', 'square');
     }
+
     await page.keyboard.press('Alt+F10');
     await expect(buttons.nth(0)).toBeFocused();
     await page.keyboard.press('ArrowRight');
@@ -109,6 +113,7 @@ test('opens the href in a new tab with no opener on Mod+click before the link bu
     const held: (() => Promise<void>)[] = [];
     await page.route(/LinkBubble[^/]*\.js/, (route) => {
         held.push(() => route.continue());
+
         return Promise.resolve();
     });
     await mount(<LinkProbe />);

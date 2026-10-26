@@ -69,10 +69,12 @@ const Image = ({ attrs, context }: ReaderNodeProps) => {
     if (shown.kind === 'unavailable') {
         return <ImageUnavailable unavailable={shown} />;
     }
+
     let style: { readonly width: string } | undefined;
     if (shown.cssWidth !== undefined) {
         style = { width: shown.cssWidth };
     }
+
     return (
         <>
             <img

@@ -23,10 +23,12 @@ export const mayAnimate = async (src: string, mediaType: string | null, signal: 
     if (mediaType !== null && STILL_TYPES.has(mediaType)) {
         return false;
     }
+
     const decoderClass = (globalThis as { readonly ImageDecoder?: DecoderClass }).ImageDecoder;
     if (decoderClass === undefined) {
         return true;
     }
+
     try {
         const response = await fetch(src, { signal, credentials: 'omit' });
         const reported = mediaType ?? response.headers.get('content-type');
@@ -34,16 +36,21 @@ export const mayAnimate = async (src: string, mediaType: string | null, signal: 
         const declared = Number(response.headers.get('content-length') ?? 0);
         if (!response.ok || response.body === null || declared > MAX_PROBE_BYTES) {
             await response.body?.cancel();
+
             return true;
         }
+
         if (!(await decoderClass.isTypeSupported(type))) {
             await response.body.cancel();
+
             return true;
         }
+
         const decoder = new decoderClass({ data: response.body, type });
         try {
             await decoder.tracks.ready;
             const animated = decoder.tracks.selectedTrack?.animated;
+
             return animated ?? true;
         } finally {
             decoder.close();

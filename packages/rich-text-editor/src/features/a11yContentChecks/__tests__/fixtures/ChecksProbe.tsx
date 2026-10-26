@@ -62,11 +62,13 @@ export const ChecksProbe = () => {
         if (handle === null || runtime === undefined) {
             return;
         }
+
         window.checksRte = {
             sequence: () => handle.getSummary().sequence,
             document: () => JSON.stringify(handle.getSnapshot().document),
             selection: () => {
                 const { $from, from, to, empty } = runtime.state.selection;
+
                 return { empty, from, to, nodeId: $from.parent.attrs.nodeId, type: $from.parent.type.name };
             },
             select: (from, to) => runtime.select({ anchor: from, head: to }),
@@ -77,10 +79,12 @@ export const ChecksProbe = () => {
                         range = { from: pos + 1, to: pos + node.nodeSize - 1 };
                     }
                 });
+
                 return range;
             },
         };
     });
+
     return (
         <div data-test-id="frame" style={{ blockSize: 260, overflow: 'auto', backgroundColor: '#ffffff' }}>
             <RichTextEditor

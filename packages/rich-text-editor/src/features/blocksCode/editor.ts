@@ -29,9 +29,11 @@ const loadHighlighter = (): Promise<Highlighter> => {
         loading = import('lowlight').then(({ common, createLowlight }) => {
             const created = createLowlight(common);
             highlighter = created;
+
             return created;
         });
     }
+
     return loading;
 };
 
@@ -40,13 +42,16 @@ const classNameOf = (properties: HastChild['properties']): string | undefined =>
     if (typeof value === 'string') {
         return value === '' ? undefined : value;
     }
+
     if (value === undefined) {
         return undefined;
     }
+
     const names = value.filter((name) => name !== '');
     if (names.length === 0) {
         return undefined;
     }
+
     return names.join(' ');
 };
 
@@ -58,11 +63,14 @@ const walk = (nodes: readonly HastChild[], offset: number, ranges: BlockDecorati
             if (node.value !== undefined) {
                 at += node.value.length;
             }
+
             continue;
         }
+
         if (node.type !== 'element') {
             continue;
         }
+
         const start = at;
         at = walk(node.children ?? [], at, ranges);
         const className = classNameOf(node.properties);
@@ -70,6 +78,7 @@ const walk = (nodes: readonly HastChild[], offset: number, ranges: BlockDecorati
             ranges.push({ from: start, to: at, className });
         }
     }
+
     return at;
 };
 
@@ -77,8 +86,10 @@ const tokensOf = (hl: Highlighter, languageId: string, text: string): readonly B
     if (!hl.registered(languageId)) {
         return [];
     }
+
     const ranges: BlockDecoration[] = [];
     walk(hl.highlight(languageId, text).children, 0, ranges);
+
     return ranges;
 };
 
@@ -87,6 +98,7 @@ const attrsOf = (payload: { readonly languageId?: string | null } | undefined): 
     if (payload?.languageId === undefined) {
         return {};
     }
+
     return { languageId: payload.languageId };
 };
 
@@ -96,11 +108,14 @@ const openParagraphAfter = (api: EditorApi<'content'>): boolean => {
     if (block === undefined) {
         return false;
     }
+
     const outcome = api.content.insert(block.range, [{ type: 'paragraph' }]);
     if (outcome.status !== 'applied') {
         return false;
     }
+
     api.select(outcome.range, { scroll: true });
+
     return true;
 };
 
@@ -131,10 +146,12 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
                 if (block === undefined) {
                     return false;
                 }
+
                 let languageId: string | null = null;
                 if (typeof block.attrs.languageId === 'string') {
                     languageId = block.attrs.languageId;
                 }
+
                 const options = languageChoices(languageId, api.t).map(({ id, label }) => ({
                     key: id ?? '',
                     label,
@@ -148,6 +165,7 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
                     options,
                     node: block.range,
                 });
+
                 return true;
             },
         },
@@ -158,11 +176,13 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
                 if (block === undefined) {
                     return false;
                 }
+
                 // The caret the menu opened with, as the block's chrome converts from; a whole-block range stops `paragraph.set`.
                 api.overlays.open(TurnIntoMenu, {
                     label: api.t('RichTextEditor_slashTurnInto'),
                     node: api.selectedRange(),
                 });
+
                 return true;
             },
         },
@@ -178,6 +198,7 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
             if (selection.blockType !== 'code_block' || !(selection.collapsed || api.selectedText() !== '')) {
                 return false;
             }
+
             return openParagraphAfter(api);
         },
         ArrowDown: (api) => {
@@ -190,6 +211,7 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
             ) {
                 return false;
             }
+
             return openParagraphAfter(api);
         },
     },
@@ -237,9 +259,11 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
                 if (typeof languageId !== 'string') {
                     return [];
                 }
+
                 if (highlighter === undefined) {
                     return loadHighlighter().then((loaded) => tokensOf(loaded, languageId, text));
                 }
+
                 return tokensOf(highlighter, languageId, text);
             },
         },

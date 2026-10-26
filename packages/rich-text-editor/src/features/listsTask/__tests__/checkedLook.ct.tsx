@@ -16,6 +16,7 @@ const rootOf = (page: Page, surface: Surface) => {
     if (surface === 'editor') {
         return page.getByRole('textbox', { name: 'Notes' });
     }
+
     return page.getByRole('region', { name: 'Reader' });
 };
 
@@ -40,6 +41,7 @@ const lookOf = async (page: Page, surface: Surface, text: string) =>
         for (let node: Element | null = element; node !== null && node !== item; node = node.parentElement) {
             decorations.push(getComputedStyle(node).textDecorationLine);
         }
+
         return { decoration: decorations.join(' '), color: getComputedStyle(element).color };
     });
 
@@ -96,6 +98,7 @@ const strikeOf = async (page: Page, surface: Surface, text: string) =>
         ) {
             struck ||= getComputedStyle(node).textDecorationLine.includes('line-through');
         }
+
         return {
             color: getComputedStyle(element).color,
             block: getComputedStyle(element.closest('p') ?? element).color,

@@ -19,6 +19,7 @@ export const taskListEditor = defineEditorPart(taskList, {
                 if (payload?.checked === undefined) {
                     return api.lists.toggle('task_list', 'task_item');
                 }
+
                 return api.lists.toggle('task_list', 'task_item', { checked: payload.checked });
             },
             active: (api) => api.lists.active('task_list'),
@@ -29,7 +30,9 @@ export const taskListEditor = defineEditorPart(taskList, {
                 if (found === undefined || found.nodeId === null) {
                     return false;
                 }
+
                 const checked = found.attrs.checked !== true;
+
                 return api.commands.execute('task.setChecked', { nodeId: found.nodeId, checked }).status !== 'rejected';
             },
         },

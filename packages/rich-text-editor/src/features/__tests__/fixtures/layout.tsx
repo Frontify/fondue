@@ -90,6 +90,7 @@ export const mountLayout = ({
     if (handle === null || runtime === undefined || runtime.view === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     return {
         unmount: rendered.unmount,
         handle,
@@ -127,6 +128,7 @@ export const press = (
     });
     Object.defineProperty(event, 'keyCode', { get: () => codes[key] ?? 0 });
     view.dom.dispatchEvent(event);
+
     return event.defaultPrevented;
 };
 

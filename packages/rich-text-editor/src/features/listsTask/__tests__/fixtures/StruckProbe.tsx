@@ -54,8 +54,10 @@ export const StruckProbe = () => {
             colorTokens: COLOR_TOKENS,
             strikeCheckedTasks: true,
         });
+
         return { document, presentation };
     });
+
     return (
         <>
             <RichTextEditor

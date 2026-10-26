@@ -31,6 +31,7 @@ export const useDestinationSearch = (
         if (search === undefined || !typed || query === '') {
             return undefined;
         }
+
         const controller = new AbortController();
         const lookUp = async () => {
             let items: readonly Destination[] = [];
@@ -40,14 +41,17 @@ export const useDestinationSearch = (
             } catch {
                 items = [];
             }
+
             if (!controller.signal.aborted) {
                 setFound({ query, items });
                 setIndex(0);
             }
         };
+
         const timer = setTimeout(() => {
             lookUp().catch(() => undefined);
         }, SEARCH_DELAY_MS);
+
         return () => {
             clearTimeout(timer);
             controller.abort();
@@ -60,10 +64,12 @@ export const useDestinationSearch = (
     if (activeResult !== undefined) {
         spoken = strings.result(activeResult.label, index + 1, results.length);
     }
+
     useEffect(() => {
         if (spoken !== '') {
             api?.announce(spoken);
         }
     }, [api, spoken]);
+
     return [results, index, setIndex] as const;
 };

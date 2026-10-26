@@ -14,6 +14,7 @@ const CodeBlockChrome = () => {
     if (typeof attrs.language === 'string') {
         language = attrs.language;
     }
+
     return (
         <NodeChromeToolbar aria-label={language}>
             <NodeChromeButton

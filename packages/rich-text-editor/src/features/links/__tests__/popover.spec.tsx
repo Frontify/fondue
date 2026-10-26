@@ -72,8 +72,10 @@ const mount = ({ blocks, options, styles = [], references }: Mount) => {
     if (handle === null) {
         throw new Error('The editor did not mount.');
     }
+
     return { ...rendered, handle };
 };
+
 type Handle = ReturnType<typeof mount>['handle'];
 
 const open = (handle: Handle) => {
@@ -81,8 +83,10 @@ const open = (handle: Handle) => {
         handle.execute('link.edit');
         vi.advanceTimersToNextFrame();
     });
+
     return screen.getByRole('dialog', { name: 'Link' });
 };
+
 const destination = () =>
     screen.queryByRole('combobox', { name: 'URL' }) ?? screen.getByRole('textbox', { name: 'URL' });
 const apply = () =>
@@ -168,6 +172,7 @@ describe('link popover', () => {
         if (!fromField) {
             act(() => screen.getByRole('button', { name: 'Apply' }).focus());
         }
+
         act(() => {
             fireEvent.submit(destination().closest('form') as HTMLFormElement);
         });
@@ -352,8 +357,10 @@ describe('link popover', () => {
 describe('link destination search', () => {
     const service = (items: readonly ReferenceValue[]) => {
         const search = vi.fn<ReferenceService['search']>(() => Promise.resolve({ items, nextCursor: null }));
+
         return { search };
     };
+
     const page = (id: string, label: string, href?: string): ReferenceValue => ({
         resourceType: 'guideline-page',
         resourceId: id,
@@ -383,6 +390,7 @@ describe('link destination search', () => {
                 vi.advanceTimersByTime(50);
             });
         }
+
         expect(references.search).not.toHaveBeenCalled();
         await settle();
 
@@ -449,6 +457,7 @@ describe('link bubble', () => {
             setSelection(mounted.handle, { text: 'the guide', from: 3, to: 3 });
             vi.advanceTimersToNextFrame();
         });
+
         return { ...mounted, bubble: screen.getByRole('toolbar', { name: 'Link' }) };
     };
 
@@ -477,6 +486,7 @@ describe('link bubble', () => {
             const describedBy = document.getElementById(button.getAttribute('aria-describedby') ?? '');
             expect(describedBy?.textContent).toBe('https://frontify.com/a');
         }
+
         expect(url?.hasAttribute('title')).toBe(false);
         expect(url?.getAttribute('data-state')).toBe('closed');
     });

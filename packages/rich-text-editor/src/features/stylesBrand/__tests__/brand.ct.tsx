@@ -13,6 +13,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.styleRte !== undefined)).toBe(true);
 };
+
 // ProseMirror writes its selection back to the DOM 20 ms after the surface gains focus, which would undo a key pressed sooner.
 const settleFocus = (page: Page) => page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
 const placeCaret = async (page: Page, text: string) => {
@@ -37,6 +38,7 @@ const TYPOGRAPHY = [
 const typographyOf = (locator: Locator) =>
     locator.evaluate((element, names) => {
         const style = getComputedStyle(element);
+
         return names.map((name) => style[name]);
     }, TYPOGRAPHY);
 
@@ -64,6 +66,7 @@ test('renders every style of the fixture map with the same computed typography i
         const reader = readerOf(page).locator(tag, { hasText: text });
         expect([text, await typographyOf(editor)]).toEqual([text, await typographyOf(reader)]);
     }
+
     await expect(surfaceOf(page).locator('h2', { hasText: 'Title style' })).toHaveCSS('font-size', '32px');
     await expect(surfaceOf(page).locator('a', { hasText: 'default link' })).toHaveCSS(
         'text-decoration-line',
@@ -86,6 +89,7 @@ test('renders every use of a style with its changed recipe in the editor and the
     await expect(lead).toHaveCSS('font-size', '20px');
     const before = await page.evaluate(() => {
         const snapshot = (window.styleRte as StyleRte).handle.getSnapshot();
+
         return [snapshot.stamp.sequence, JSON.stringify(snapshot.document)];
     });
 
@@ -96,6 +100,7 @@ test('renders every use of a style with its changed recipe in the editor and the
     const after = await page.evaluate(() => {
         const rte = window.styleRte as StyleRte;
         const snapshot = rte.handle.getSnapshot();
+
         return [snapshot.stamp.sequence, JSON.stringify(snapshot.document), rte.changes.length];
     });
     expect(after).toEqual([...before, 0]);
@@ -121,6 +126,7 @@ test('previews each brand style row in its font family, size and weight but not 
             .locator('[data-rte-style-preview]')
             .evaluate((element) => {
                 const style = getComputedStyle(element);
+
                 return [style.fontFamily, style.fontSize, style.fontWeight];
             });
 
@@ -144,6 +150,7 @@ test('grows a brand style row to hold its preview font, so a 32px style shows un
     const title = page.getByRole('menuitemradio', { name: 'Title' });
     const fit = await title.locator('[data-rte-style-preview]').evaluate((element) => {
         const { height } = element.getBoundingClientRect();
+
         return [element.scrollHeight <= element.clientHeight, height >= 32];
     });
     const row = await title.boundingBox();
@@ -184,6 +191,7 @@ test('lists the heading styles in the text style picker on a heading, and sets o
         const block = blocks[3];
         const type = block?.type;
         const attrs = block?.attrs;
+
         return [rte.changes.map(({ commandId }) => commandId), type, attrs];
     });
     expect(changed).toEqual([

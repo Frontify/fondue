@@ -78,11 +78,14 @@ describe('the lists of the editor API', () => {
             if (node.type === 'paragraph') {
                 return (node.content ?? []).map((child) => child.text).join('');
             }
+
             if (node.type === 'list_item' || node.type === 'task_item') {
                 return (node.content ?? []).map(of);
             }
+
             return { [node.type]: (node.content ?? []).map(of) };
         };
+
         return (blocksOf(handle) ?? []).map(of);
     };
 
@@ -105,6 +108,7 @@ describe('the lists of the editor API', () => {
         const wrapped = runIn(handle, 'zero', (api) => api.lists.toggle('bullet_list', 'list_item'))?.status;
         runIn(handle, 'one', (api) => {
             seen = { status: api.lists.active('bullet_list') && !api.lists.active('task_list') ? 'applied' : 'no-op' };
+
             return false;
         });
         const indentedOne = runIn(handle, 'one', (api) => api.lists.indent('list_item'))?.status;
@@ -119,9 +123,11 @@ describe('the lists of the editor API', () => {
                 if (node.type === 'task_item' || node.type === 'list_item') {
                     tasks.push(node.attrs?.checked as boolean | undefined);
                 }
+
                 collect(node.content);
             }
         };
+
         collect(blocksOf(handle));
 
         expect(wrapped).toBe('applied');
@@ -141,6 +147,7 @@ describe('the lists of the editor API', () => {
             act(() => {
                 result = handle.execute('fixture.api.run');
             });
+
             return result?.status;
         };
 

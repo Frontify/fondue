@@ -23,12 +23,14 @@ export const drawStill = (image: HTMLImageElement | null, canvas: HTMLCanvasElem
     if (image === null || canvas === null || !image.complete || image.naturalWidth === 0) {
         return;
     }
+
     const { width, height } = image.getBoundingClientRect();
     const view = image.ownerDocument.defaultView;
     let ratio = 1;
     if (view !== null) {
         ratio = view.devicePixelRatio;
     }
+
     canvas.width = Math.max(1, Math.min(MAX_STILL, Math.round(width * ratio)));
     canvas.height = Math.max(1, Math.min(MAX_STILL, Math.round(height * ratio)));
     canvas.getContext('2d')?.drawImage(image, 0, 0, canvas.width, canvas.height);
@@ -76,6 +78,7 @@ export const ContentImage = ({
     if (shownWidth !== undefined) {
         style = { inlineSize: shownWidth };
     }
+
     return (
         // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- a press selects the node as on any atom; the keyboard selects it with the arrows.
         <span ref={frameRef} className={styles.frame} style={style} onMouseDown={onMouseDown}>

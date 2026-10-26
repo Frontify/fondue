@@ -13,10 +13,12 @@ export const subscriptEditor = defineEditorPart(subscript, {
                 if (!api.marks.allowed('subscript')) {
                     return false;
                 }
+
                 // Adding the mark takes the other one off in the same undo step.
                 if (api.marks.active('subscript') !== true) {
                     api.marks.remove('superscript');
                 }
+
                 return api.marks.toggle('subscript');
             },
             active: (api) => api.marks.active('subscript'),

@@ -27,6 +27,7 @@ const imagesFirst = (selected = SECOND_IMAGE) => {
     const mounted = mountLayout({ blocks: [image('asset-1'), image('asset-2'), para(text('Text'))] });
     const { state } = mounted.view;
     mounted.view.dispatch(state.tr.setSelection(NodeSelection.create(state.doc, selected)));
+
     return mounted;
 };
 

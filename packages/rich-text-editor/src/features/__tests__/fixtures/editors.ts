@@ -185,12 +185,14 @@ export const fixtureHighlightEditor = defineEditorPart(fixtureHighlight, {
                 if (payload === null) {
                     return api.marks.remove('highlight');
                 }
+
                 return api.marks.set('highlight', payload);
             },
             active: (api, payload) => {
                 if (payload === null) {
                     return false;
                 }
+
                 return api.marks.active('highlight', payload);
             },
         },
@@ -226,6 +228,7 @@ export const fixtureTableEditor = defineEditorPart(fixtureTable, {
                 if (!inCell || nodeId === undefined || nodeId === null) {
                     return false;
                 }
+
                 const [table] = api.content.read({ nodeId }) ?? [];
                 const tableContent = table?.content;
                 const [row, ...rows] = tableContent ?? [];
@@ -234,10 +237,12 @@ export const fixtureTableEditor = defineEditorPart(fixtureTable, {
                 if (table === undefined || row === undefined || cells.every(({ type }) => type === 'table_header')) {
                     return false;
                 }
+
                 const header: ContentNodeJSON = {
                     ...row,
                     content: cells.map((cell) => ({ ...cell, type: 'table_header' })),
                 };
+
                 return api.content.replace({ nodeId }, [{ ...table, content: [header, ...rows] }]).status === 'applied';
             },
         },

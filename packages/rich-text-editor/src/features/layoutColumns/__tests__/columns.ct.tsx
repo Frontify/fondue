@@ -20,6 +20,7 @@ const boxOf = async (root: Locator, text: string) => {
     if (box === null) {
         throw new Error(`The paragraph ${text} has no box.`);
     }
+
     return box;
 };
 
@@ -30,6 +31,7 @@ const columnStarts = async (root: Locator, texts: readonly string[]) => {
         const box = await boxOf(root, text);
         starts.push(Math.round(box.x));
     }
+
     return starts;
 };
 
@@ -68,6 +70,7 @@ test('lays the editor and reader out as two columns, the first break active and 
         expect(two).toBeGreaterThanOrEqual(one + width);
         expect([three, four]).toEqual([two, two]);
     }
+
     await expect(readerOf(page).locator('[data-rte-column-break="active"]')).toHaveCount(1);
 });
 
@@ -89,6 +92,7 @@ test('lays the editor and reader out as three columns, the third break inactive'
         expect(three).toBeGreaterThanOrEqual(two + width);
         expect(four).toBe(three);
     }
+
     await expect(readerOf(page).locator('[data-rte-column-break="active"]')).toHaveCount(2);
 });
 
@@ -122,6 +126,7 @@ test('puts the selection in the paragraph of the second column whose text is cli
         const anchor = document.getSelection()?.anchorNode;
         const element = anchor instanceof Element ? anchor : anchor?.parentElement;
         const paragraph = element?.closest('p');
+
         return paragraph?.textContent;
     });
     expect(selected).toBe('Two');
@@ -149,6 +154,7 @@ test('renders one column in document order at 320 px, with every break inactive 
         expect(new Set(starts).size).toBe(1);
         expect([...tops].sort((a, b) => a - b)).toEqual(tops);
     }
+
     await expect(readerOf(page)).toHaveCSS('column-count', 'auto');
     expect(await noSidewaysScroll(page)).toBe(true);
 });

@@ -19,10 +19,12 @@ export const emojiEditor = defineEditorPart(emoji, {
             // The selection's start sits in text that is not code.
             enabled: (api) => {
                 const { blockType, verbatim } = api.selection();
+
                 return blockType !== null && !verbatim;
             },
             run: (api) => {
                 api.overlays.open(EmojiPicker, {}, 'selection');
+
                 return true;
             },
         },
@@ -51,6 +53,7 @@ export const emojiEditor = defineEditorPart(emoji, {
                     glyph: entry.emoji,
                     payload: { text: entry.emoji },
                 }));
+
                 return { items, nextCursor: null };
             },
             command: 'text.insert',

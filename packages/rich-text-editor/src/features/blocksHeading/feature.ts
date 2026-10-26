@@ -14,12 +14,14 @@ const levelOf = (node: ContentNodeJSON | undefined): number | undefined => {
     if (typeof level === 'number') {
         return level;
     }
+
     return undefined;
 };
 
 /** The deepest level from one below `previous` up that the author may create, or none. */
 const repairLevel = (previous: number, creatable: readonly number[]) => {
     const fits = creatable.filter((level) => level <= previous + 1);
+
     return fits.length === 0 ? undefined : Math.max(...fits);
 };
 
@@ -70,10 +72,12 @@ export const heading = defineFeature({
                 if (level === undefined || before === undefined || level <= before + 1) {
                     return undefined;
                 }
+
                 const repair = repairLevel(before, creatableHeadingLevels);
                 if (repair === undefined) {
                     return true;
                 }
+
                 return { payload: { level: repair } };
             },
         },

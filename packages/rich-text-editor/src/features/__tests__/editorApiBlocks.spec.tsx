@@ -281,6 +281,7 @@ describe('the nearest node of the editor API', () => {
         runIn(handle, 'Title', (api) => {
             const found = api.nearest('heading');
             seen = { status: found?.nodeId === 'heading-1' && found.attrs.level === 2 ? 'applied' : 'no-op' };
+
             return api.nearest('paragraph') === undefined;
         });
 
@@ -325,6 +326,7 @@ describe('the nearest node of the editor API', () => {
             const missing = api.nearest('figure', 'missing');
             const headingId = api.nearest('heading')?.nodeId;
             found = [rightAlign, figureId, imageId, leftAlign, headingFigure, missing, headingId];
+
             return true;
         });
 
@@ -372,6 +374,7 @@ describe('the blocks of the editor API in a container', () => {
         runIn(handle, 'Plain', (api) => {
             const found = api.blocks.list('blockquote');
             seen = { status: found.length === 2 && found[1]?.text === 'Plain bold' ? 'applied' : 'no-op' };
+
             return false;
         });
 
@@ -423,6 +426,7 @@ describe('the line indents of the editor API', () => {
             act(() => {
                 result = handle.execute('fixture.api.run');
             });
+
             return result?.status;
         };
 
@@ -466,6 +470,7 @@ describe('a name the model does not install, in the editor API', () => {
             answers.insertNode = api.insert.node('missing');
             answers.nearest = api.nearest('missing');
             answers.select = api.select({ nodeId: 'missing' });
+
             return false;
         });
 
@@ -504,6 +509,7 @@ describe('the attribute writes of the editor API that cannot be checked', () => 
                 api.attributes.set('textblocks', { nodeId: 'other' }),
                 api.marks.set('link', { href: 'javascript:alert(1)' }),
             );
+
             return false;
         });
 

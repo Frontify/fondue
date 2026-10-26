@@ -12,6 +12,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.colorRte !== undefined)).toBe(true);
 };
+
 // ProseMirror writes its selection back to the DOM 20 ms after the surface gains focus, which would undo a key pressed sooner.
 const settleFocus = (page: Page) => page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
 const select = async (page: Page, text: string) => {
@@ -22,6 +23,7 @@ const select = async (page: Page, text: string) => {
         rte.setSelection(rte.handle, { text: target });
     }, text);
 };
+
 const changesOf = (page: Page) =>
     page.evaluate(() => (window.colorRte as ColorRte).changes.map(({ commandId }) => commandId));
 const marksOf = (page: Page) =>
@@ -49,6 +51,7 @@ const draftColor = async (page: Page) => {
     const startY = top ?? 0;
     await page.mouse.move(startX + 60, startY + 40);
     await page.mouse.up();
+
     return picker;
 };
 
@@ -107,6 +110,7 @@ test('draws the focus outline on the focused gradient slider of the colour draft
     const outlineOf = () =>
         slider.evaluate((element) => {
             const style = getComputedStyle(element);
+
             return [style.outlineStyle, style.outlineWidth];
         });
 

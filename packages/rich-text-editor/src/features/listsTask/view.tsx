@@ -28,25 +28,31 @@ const TaskCheckbox = () => {
         if (shownRef.current === checked) {
             return;
         }
+
         shownRef.current = checked;
         const checkbox = checkboxRef.current;
         if (checkbox === null) {
             return;
         }
+
         const active = checkbox.ownerDocument.activeElement;
         if (active === null || active === checkbox || !active.contains(checkbox)) {
             return;
         }
+
         if (checked) {
             api?.announce(context.t('RichTextEditor_taskChecked'));
+
             return;
         }
+
         api?.announce(context.t('RichTextEditor_taskUnchecked'));
     }, [api, checked, context]);
     let labelledBy: string | undefined;
     if (contentId !== null) {
         labelledBy = contentId;
     }
+
     return (
         <>
             <input

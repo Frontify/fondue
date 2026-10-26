@@ -81,6 +81,7 @@ export const resolving = (assetId: string, { width }: { readonly width?: number 
     if (width !== undefined) {
         size = `?w=${width}`;
     }
+
     return `https://cdn.frontify.test/${assetId}.png${size}`;
 };
 
@@ -100,6 +101,7 @@ export const deferredPicker = () => {
                 pending.push({ request, context, resolve });
             }),
     );
+
     return { service: { pick }, pick, pending };
 };
 
@@ -123,6 +125,7 @@ export const mountImages = async (options?: Mount) => {
     if (options !== undefined) {
         given = options;
     }
+
     const {
         model = imageModel(),
         blocks = [para(text('Before')), figure('image-1'), para(text('After'))],
@@ -157,7 +160,9 @@ export const mountImages = async (options?: Mount) => {
     if (handle === null || runtime === undefined || runtime.view === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     const blocksOf = () => handle.getSnapshot().document.content.content ?? [];
+
     return {
         ...rendered,
         handle,
@@ -182,6 +187,7 @@ export const mountImages = async (options?: Mount) => {
             if (found === undefined) {
                 throw new Error(`No image ${nodeId}.`);
             }
+
             const pos = found;
             act(() => runtime.select({ node: pos }));
         },

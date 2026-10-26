@@ -43,6 +43,7 @@ export const mountStyled = ({
     if (policy !== undefined) {
         definition = defineEditor({ id: 'test.styles', model, policy, plugins: unitsOf(model) });
     }
+
     const document = styledDocument(model, blocks);
     const element = (shown: ReactPresentation) => (
         <RichTextEditor
@@ -65,10 +66,12 @@ export const mountStyled = ({
     if (handle === null) {
         throw new Error('The editor did not mount.');
     }
+
     const view = runtimeOf(handle)?.view;
     if (view === undefined) {
         throw new Error('The editor has no view.');
     }
+
     return {
         ...rendered,
         handle,

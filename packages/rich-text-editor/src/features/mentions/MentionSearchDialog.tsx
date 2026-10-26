@@ -26,6 +26,7 @@ const SearchDialog = ({
 }) => {
     const state = useSearchDialogState(api, resourceTypes, opener, onClose);
     const { strings, testId } = state;
+
     return (
         <EditorDialog
             dialog={state.dialog}
@@ -48,5 +49,6 @@ export const MentionSearchDialog = ({
     if (api === undefined) {
         return null;
     }
+
     return <SearchDialog api={api} resourceTypes={resourceTypes} opener={opener} onClose={close} />;
 };

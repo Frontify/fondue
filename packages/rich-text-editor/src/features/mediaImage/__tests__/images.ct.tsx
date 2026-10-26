@@ -16,16 +16,21 @@ const serveAssets = (page: Page) =>
         const url = route.request().url();
         if (url.endsWith('/still.png')) {
             await route.fulfill({ contentType: 'image/png', body: Buffer.from(STILL_PNG, 'base64') });
+
             return;
         }
+
         // An image the test never answers keeps the box its stored size reserves.
         if (url.endsWith('/pending.png')) {
             return;
         }
+
         if (url.endsWith('/moving.gif')) {
             await route.fulfill({ contentType: 'image/gif', body: Buffer.from(MOVING_GIF, 'base64') });
+
             return;
         }
+
         await route.fulfill({ status: 404, body: '' });
     });
 
@@ -35,6 +40,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.imageRte !== undefined)).toBe(true);
 };
+
 /** The `alt` of each image inside `root`, `null` where it has none. */
 const altsIn = (page: Page, root: 'editor' | 'reader') =>
     (root === 'editor' ? surfaceOf(page) : readerOf(page))
@@ -118,6 +124,7 @@ test('lets the browser menu open for a text selection next to an image, not prev
         .evaluate((paragraph) => {
             const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, button: 2 });
             paragraph.dispatchEvent(event);
+
             return event.defaultPrevented;
         });
 
@@ -150,6 +157,7 @@ test.describe('with a coarse pointer', () => {
         const boxes = await controls.evaluateAll((buttons) =>
             buttons.map((button) => {
                 const { width, height } = button.getBoundingClientRect();
+
                 return { width, height };
             }),
         );
@@ -174,6 +182,7 @@ test('writes one undo step at the end of a resize drag, and none when Escape end
     if (box === null) {
         throw new Error('The resize handle has no box.');
     }
+
     const x = box.x + box.width / 2;
     const y = box.y + box.height / 2;
 
@@ -182,6 +191,7 @@ test('writes one undo step at the end of a resize drag, and none when Escape end
     for (let step = 1; step <= 10; step += 1) {
         await page.mouse.move(x + step * 20, y);
     }
+
     await page.mouse.up();
 
     await expect.poll(() => page.evaluate(() => window.imageRte?.changes)).toBe(1);
@@ -191,6 +201,7 @@ test('writes one undo step at the end of a resize drag, and none when Escape end
         const children = figure?.content;
         const first = children?.[0];
         const attrs = first?.attrs;
+
         return attrs?.displayWidth;
     });
     expect(typeof width).toBe('number');
@@ -199,12 +210,14 @@ test('writes one undo step at the end of a resize drag, and none when Escape end
     if (moved === null) {
         throw new Error('The resize handle has no box.');
     }
+
     const start = moved.x + moved.width / 2;
     await page.mouse.move(start, y);
     await page.mouse.down();
     for (let step = 1; step <= 5; step += 1) {
         await page.mouse.move(start - step * 20, y);
     }
+
     await page.keyboard.press('Escape');
     await page.mouse.up();
 
@@ -216,6 +229,7 @@ test('writes one undo step at the end of a resize drag, and none when Escape end
             const children = figure?.content;
             const first = children?.[0];
             const attrs = first?.attrs;
+
             return attrs?.displayWidth;
         }),
     ).toBe(width);
@@ -275,6 +289,7 @@ const describedControls = (dialog: Locator) =>
     dialog.evaluate((element) => {
         const description = element.ownerDocument.getElementById(element.getAttribute('aria-describedby') ?? '');
         const found = description?.querySelectorAll('button, input, select, textarea, [href], [tabindex]').length;
+
         return found ?? 0;
     });
 
@@ -290,6 +305,7 @@ const openAltText = async (page: Page) => {
     await page.keyboard.press('Enter');
     const dialog = page.getByRole('dialog', { name: 'Alternative text' });
     await expect(dialog.getByRole('radio', { name: /Meaningful/ })).toBeFocused();
+
     return dialog;
 };
 
@@ -305,6 +321,7 @@ const openWidth = async (page: Page) => {
     await page.keyboard.press('Enter');
     const dialog = page.getByRole('dialog', { name: 'Image width' });
     await expect(dialog.getByRole('spinbutton', { name: 'Width in percent of the content width' })).toBeFocused();
+
     return dialog;
 };
 
@@ -460,6 +477,7 @@ test('places a left and a right figure on those physical sides in the editor and
                 const imageRight = image?.right;
                 const left = imageLeft ?? 0;
                 const right = imageRight ?? 0;
+
                 return { left: left - outer.left, right: outer.right - right };
             }),
         );
@@ -520,8 +538,10 @@ test('moves a selected image by dragging it, keeping its nodeId, as one undo ste
                     if (block.type !== 'figure') {
                         return block.type;
                     }
+
                     const first = block.content?.[0];
                     const attrs = first?.attrs;
+
                     return `figure:${JSON.stringify(attrs?.nodeId)}`;
                 }),
             ),

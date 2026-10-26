@@ -49,6 +49,7 @@ describe('the controls an image insert and an upload start open', () => {
                 payload: { fields: { nodeId: { type: 'string' } } },
                 run: (api, _payload: { readonly nodeId: string }) => {
                     api.uploads.pick();
+
                     return true;
                 },
             },
@@ -134,6 +135,7 @@ describe('a replacement', () => {
             mounted.runtime.nodeActions(mounted.nodeId).update({ altIntent: 'meaningful', altText: 'Frontify logo' });
         });
         await mounted.replace(mounted.nodeId, pngFile('photo.png', 80, 60));
+
         return mounted;
     };
 
@@ -287,6 +289,7 @@ describe('upload progress', () => {
             expect(bar.getAttribute('aria-valuemax')).toBe('100');
             expect(mounted.view.dom.querySelector('figure')?.textContent).toContain(`${fraction * 100}% uploaded`);
         }
+
         mounted.unmount();
     });
 
@@ -317,6 +320,7 @@ describe('upload progress', () => {
         for (let percent = 1; percent <= 100; percent += 1) {
             act(() => mounted.uploads.pending[0]?.context.reportProgress(percent / 100));
         }
+
         await mounted.uploads.complete(0);
         await mounted.choose([pngFile('broken.png')]);
         await mounted.uploads.fail(1);

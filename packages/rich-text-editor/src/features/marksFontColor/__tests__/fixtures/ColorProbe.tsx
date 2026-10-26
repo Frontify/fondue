@@ -34,6 +34,7 @@ declare global {
 export const ColorProbe = ({ literal = false }: { readonly literal?: boolean }) => {
     const [mounted] = useState(() => {
         const model = styleModel(literal);
+
         return {
             definition: defineEditor({ id: 'test.colors', model, plugins: unitsOf(model) }),
             document: styledDocument(model, [styled(null, plain('one two three'))]),
@@ -47,6 +48,7 @@ export const ColorProbe = ({ literal = false }: { readonly literal?: boolean }) 
             window.colorRte = { handle, setSelection, changes: changesRef.current };
         }
     }, []);
+
     return (
         <RichTextEditor
             aria-label="Notes"

@@ -82,6 +82,7 @@ const mount = (blocks: readonly ContentNodeJSON[], plugins: readonly EditorPart[
     if (ref.current === null) {
         throw new Error('The editor did not mount.');
     }
+
     return { handle: ref.current, container, changes };
 };
 
@@ -98,6 +99,7 @@ describe('the decorations of an editor part', () => {
                     nodes: ['paragraph'],
                     derive: (block) => {
                         seen.push(block);
+
                         return [{ from: 3, to: 5, className: 'fixture-hit', attributes: { 'data-hit': 'yes' } }];
                     },
                 },
@@ -119,6 +121,7 @@ describe('the decorations of an editor part', () => {
                     nodes: ['paragraph'],
                     derive: (block) => {
                         derived.push(block.text);
+
                         return [{ from: 0, to: 1, className: 'fixture-first' }];
                     },
                 },
@@ -213,6 +216,7 @@ describe('the node views of an editor part', () => {
         const Frame = () => {
             const { attrs, selected } = useRichTextNodeView();
             renders.push([attrs.level, selected]);
+
             return (
                 <div className="fixture-frame">
                     <span contentEditable={false}>Level {JSON.stringify(attrs.level)}</span>
@@ -220,6 +224,7 @@ describe('the node views of an editor part', () => {
                 </div>
             );
         };
+
         const plugin = defineEditorPart(spotlight, { views: [{ node: 'heading', component: Frame }] });
         const { handle, container } = mount([title, para(text('Body'))], [plugin]);
         await vi.waitFor(() => {
@@ -347,6 +352,7 @@ describe('the keys of an editor part', () => {
     const press = (container: HTMLElement, key: string) => {
         const event = new KeyboardEvent('keydown', { key, altKey: true, bubbles: true, cancelable: true });
         container.querySelector('[contenteditable="true"]')?.dispatchEvent(event);
+
         return event.defaultPrevented;
     };
 
@@ -379,6 +385,7 @@ describe('the keys of an editor part', () => {
             keys: {
                 'Alt-j': (api) => {
                     ran.push(api.selectedText());
+
                     return false;
                 },
             },
@@ -464,8 +471,10 @@ const announcements = () => {
                 spoken.push(node.textContent ?? '');
             }
         }
+
         append(...nodes);
     };
+
     return spoken;
 };
 
@@ -474,6 +483,7 @@ describe('the suggestions of an editor part', () => {
         const asked: unknown[] = [];
         const plugin = tagPart((query, { api, cursor }) => {
             asked.push({ query, locale: api.locale(), cursor });
+
             return Promise.resolve({ items: [tag('a'), tag('b')], nextCursor: null });
         });
         const { handle } = mount([para()], [plugin]);
@@ -499,6 +509,7 @@ describe('the suggestions of an editor part', () => {
             if (cursor === null) {
                 return Promise.resolve({ items: [tag('a'), tag('b')], nextCursor: 'page-2' });
             }
+
             return Promise.reject(new Error('offline'));
         });
         const { handle } = mount([para()], [plugin]);
@@ -588,6 +599,7 @@ describe('the suggestions of an editor part', () => {
             if (cursor === null) {
                 return Promise.resolve({ items: [tag('a'), tag('b')], nextCursor: 'page-2' });
             }
+
             return Promise.resolve({ items: [tag('a'), tag('b')], nextCursor: null });
         });
         const { handle } = mount([para()], [plugin]);
@@ -641,6 +653,7 @@ describe('the suggestions of an editor part', () => {
             new Proxy(Original, {
                 construct: (target, args: [string, string?]) => {
                     built(args[0]);
+
                     return Reflect.construct(target, args);
                 },
             }),

@@ -37,5 +37,6 @@ export const AlignHtml = () => {
             root.innerHTML = html;
         }
     }, []);
+
     return <div ref={ref} />;
 };

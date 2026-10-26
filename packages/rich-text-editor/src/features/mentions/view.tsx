@@ -16,14 +16,17 @@ const reportOnce = (api: EditorApi | undefined, nodeId: string | null, code: 'de
     if (api === undefined || nodeId === null) {
         return;
     }
+
     let seen = reported.get(api.nodeState);
     if (seen === undefined) {
         seen = new Set();
         reported.set(api.nodeState, seen);
     }
+
     if (seen.has(nodeId)) {
         return;
     }
+
     seen.add(nodeId);
     api.report({
         code: 'reference.unavailable',
@@ -48,6 +51,7 @@ const MentionChip = () => {
             reportOnce(api, nodeId, unavailable);
         }
     }, [api, nodeId, unavailable]);
+
     return (
         <span className={styles.mention} data-unavailable={unavailable === null ? undefined : ''}>
             @<bdi>{shown.label}</bdi>
