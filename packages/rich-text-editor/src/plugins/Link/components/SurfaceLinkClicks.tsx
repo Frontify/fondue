@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import { useApplePlatform, useEditorApi } from '#/bridge/plugin';
 
-import { openLink } from './linkBubbleModel';
+import { openLink } from '../helpers/linkBubbleModel';
 
 /** A link in the surface never navigates the page while it is edited; it loads with the editor, not with the lazy bubble. */
 export const SurfaceLinkClicks = () => {

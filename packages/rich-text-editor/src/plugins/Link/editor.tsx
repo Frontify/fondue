@@ -4,13 +4,13 @@ import { lazyPart } from '#/bridge/define';
 import { defineEditorPart, type EditorApi, type EditorCommand } from '#/bridge/plugin';
 import { markRule } from '#/model';
 
+import { SurfaceLinkClicks } from './components/SurfaceLinkClicks';
 import { link } from './feature';
-import { EDIT_LINK, REMOVE_LINK } from './linkBubbleModel';
-import { linkInitialOf, SET_LINK } from './linkPopoverModel';
-import { SurfaceLinkClicks } from './SurfaceLinkClicks';
+import { EDIT_LINK, REMOVE_LINK } from './helpers/linkBubbleModel';
+import { linkInitialOf, SET_LINK } from './helpers/linkPopoverModel';
 
-const LinkBubble = lazyPart(() => import('./LinkBubble').then((loaded) => loaded.LinkBubble));
-const LinkPopover = lazyPart(() => import('./LinkPopover').then((loaded) => loaded.LinkPopover));
+const LinkBubble = lazyPart(() => import('./components/LinkBubble').then((loaded) => loaded.LinkBubble));
+const LinkPopover = lazyPart(() => import('./components/LinkPopover').then((loaded) => loaded.LinkPopover));
 
 // An absolute URL after a space, a bracket, a quote or the block start, without the punctuation that ends a sentence.
 const AUTOLINK = /(?<=^|[\s([{<"'])(?<href>(?:https?:\/\/|mailto:|tel:)[^\s<>]*[^\s<>.,;:!?'")\]}])\s$/u;

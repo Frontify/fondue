@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { type EditorApi } from '#/bridge/plugin';
 import { type HrefPolicy } from '#/model';
 
-import { type Destination, destinationsOf } from './destination';
-import { type LinkPopoverStrings, type LinkSearch } from './linkPopoverModel';
+import { type Destination, destinationsOf } from '../helpers/destination';
+import { type LinkPopoverStrings, type LinkSearch } from '../helpers/linkPopoverModel';
 
 // As the mention list waits, so one search runs once the author pauses.
 const SEARCH_DELAY_MS = 200;

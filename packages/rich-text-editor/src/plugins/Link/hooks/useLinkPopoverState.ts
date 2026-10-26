@@ -12,7 +12,8 @@ import {
     linkPopoverStrings,
     linkStylesOf,
     searchOf,
-} from './linkPopoverModel';
+} from '../helpers/linkPopoverModel';
+
 import { useDestinationField } from './useDestinationField';
 import { useDestinationSearch } from './useDestinationSearch';
 import { useLinkApply } from './useLinkApply';

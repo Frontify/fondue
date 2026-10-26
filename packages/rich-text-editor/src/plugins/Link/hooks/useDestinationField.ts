@@ -5,8 +5,8 @@ import { type CompositionEvent, type KeyboardEvent, useRef } from 'react';
 import { suggestionOptionId } from '#/bridge/define';
 import { passesToBrowser } from '#/bridge/plugin';
 
-import { type Destination } from './destination';
-import { type LinkSearch, wrapped } from './linkPopoverModel';
+import { type Destination } from '../helpers/destination';
+import { type LinkSearch, wrapped } from '../helpers/linkPopoverModel';
 
 // Safari sends the Enter that confirms a composition after `compositionend`, as ProseMirror's own guard has it.
 const COMPOSITION_ENTER_MS = 500;

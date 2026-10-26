@@ -41,8 +41,8 @@ vi.mock('#/runtime/runtime', recorded('#/runtime/runtime'));
 vi.mock('#/runtime/editorApi', recorded('#/runtime/editorApi'));
 vi.mock('#/plugins/Bold/editor', recorded('#/plugins/Bold/editor'));
 vi.mock('#/plugins/Link/editor', recorded('#/plugins/Link/editor'));
-vi.mock('#/plugins/Link/LinkPopover', recorded('#/plugins/Link/LinkPopover'));
-vi.mock('#/plugins/Link/LinkBubble', recorded('#/plugins/Link/LinkBubble'));
+vi.mock('#/plugins/Link/components/LinkPopover', recorded('#/plugins/Link/components/LinkPopover'));
+vi.mock('#/plugins/Link/components/LinkBubble', recorded('#/plugins/Link/components/LinkBubble'));
 vi.mock('#/plugins/Outline/editor', recorded('#/plugins/Outline/editor'));
 vi.mock('#/plugins/Outline/components/OutlinePanel', recorded('#/plugins/Outline/components/OutlinePanel'));
 

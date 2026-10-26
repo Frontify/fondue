@@ -6,9 +6,9 @@ import { useId } from 'react';
 import { CheckedSlot, Listbox } from '#/bridge/define';
 import { type OverlayProps, type useEditorOverlay } from '#/bridge/plugin';
 
-import { type LinkInitial, type LinkPopoverStrings, type LinkStyleOption } from './linkPopoverModel';
-import styles from './styles/links.module.scss';
-import { useLinkPopoverState } from './useLinkPopoverState';
+import { type LinkInitial, type LinkPopoverStrings, type LinkStyleOption } from '../helpers/linkPopoverModel';
+import { useLinkPopoverState } from '../hooks/useLinkPopoverState';
+import styles from '../styles/links.module.scss';
 
 export {
     type LinkInitial,
@@ -18,7 +18,7 @@ export {
     type LinkStyleOption,
     linkStylesOf,
     SET_LINK,
-} from './linkPopoverModel';
+} from '../helpers/linkPopoverModel';
 
 /** The Style select, with "No style" first. */
 const StyleSelect = ({

@@ -5,8 +5,8 @@ import { type FormEvent, type RefObject, useEffect, useState } from 'react';
 import { type EditorApi, type SelectionHandle, type useEditorOverlay } from '#/bridge/plugin';
 import { checkHref, type HrefPolicy } from '#/model';
 
-import { withScheme, type Destination } from './destination';
-import { type LinkPopoverStrings, listed, type Problem, SET_LINK } from './linkPopoverModel';
+import { withScheme, type Destination } from '../helpers/destination';
+import { type LinkPopoverStrings, listed, type Problem, SET_LINK } from '../helpers/linkPopoverModel';
 
 /** What Apply does: checks the destination, runs `link.set`, and says why it did not link. */
 export const useLinkApply = (

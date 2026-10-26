@@ -13,7 +13,7 @@ import {
 } from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
 
-import { caretLink, caretOf, linkBubbleStrings, returnFocus, sameLink } from './linkBubbleModel';
+import { caretLink, caretOf, linkBubbleStrings, returnFocus, sameLink } from '../helpers/linkBubbleModel';
 
 /** The link bubble's state, effects and handlers; none while there is no link to show. */
 export const useLinkBubbleState = ({ toolbarRef, covered }: StandingOverlayProps) => {

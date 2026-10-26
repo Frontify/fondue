@@ -7,11 +7,17 @@ import { type ReactNode } from 'react';
 import { ChromeToolbarButton, NodeChromeToolbar } from '#/bridge/define';
 import { passEscape, type StandingOverlayProps } from '#/bridge/plugin';
 
-import { EDIT_LINK, openLink, REMOVE_LINK } from './linkBubbleModel';
-import styles from './styles/links.module.scss';
-import { useLinkBubbleState } from './useLinkBubbleState';
+import { EDIT_LINK, openLink, REMOVE_LINK } from '../helpers/linkBubbleModel';
+import { useLinkBubbleState } from '../hooks/useLinkBubbleState';
+import styles from '../styles/links.module.scss';
 
-export { EDIT_LINK, type LinkBubbleStrings, linkBubbleStrings, openLink, REMOVE_LINK } from './linkBubbleModel';
+export {
+    EDIT_LINK,
+    type LinkBubbleStrings,
+    linkBubbleStrings,
+    openLink,
+    REMOVE_LINK,
+} from '../helpers/linkBubbleModel';
 
 const BubbleButton = ({
     label,
