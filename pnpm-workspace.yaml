@@ -1,28 +1,30 @@
 packages:
-    - packages/*
-    - storybook-docs
+  - packages/*
+  - storybook-docs
 
 allowBuilds:
-    "@bundled-es-modules/glob": true
-    "@parcel/watcher": true
-    cypress: true
-    esbuild: true
-    style-dictionary: true
-    unrs-resolver: true
+  "@bundled-es-modules/glob": true
+  "@parcel/watcher": true
+  cypress: true
+  esbuild: true
+  style-dictionary: true
+  unrs-resolver: true
 
 blockExoticSubdeps: true
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
-    - "@frontify/*"
+  - "@frontify/*"
+  # Renovate security update: storybook@10.6.2
+  - storybook@10.6.2
 
 publicHoistPattern:
-    - "*eslint*"
-    - "*prettier*"
-    - "*tailwind*"
-    - "*oxlint*"
-    - "*storybook*"
+  - "*eslint*"
+  - "*prettier*"
+  - "*tailwind*"
+  - "*oxlint*"
+  - "*storybook*"
 
 confirmModulesPurge: false
 
 patchedDependencies:
-    "@radix-ui/react-scroll-area@1.2.18": patches/@radix-ui__react-scroll-area@1.2.18.patch
+  "@radix-ui/react-scroll-area@1.2.18": patches/@radix-ui__react-scroll-area@1.2.18.patch
