@@ -9,6 +9,7 @@ export const probeUploads = () => ({
     limitCache: (entries: number) => {
         const before = uploadLimits.cacheEntries;
         uploadLimits.cacheEntries = entries;
+
         return () => {
             uploadLimits.cacheEntries = before;
         };

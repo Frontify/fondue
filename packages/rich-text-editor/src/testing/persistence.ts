@@ -29,7 +29,9 @@ const represents = (writer: SaveRequest['writer'], document: RichTextDocument) =
     if (writer.model.id !== document.model.id || writer.model.version < document.model.version) {
         return false;
     }
+
     const installed = new Map(writer.capabilities.map(({ id, version }) => [id, version]));
+
     return document.requiredCapabilities.every(({ id, version }) => (installed.get(id) ?? -1) >= version);
 };
 
@@ -53,6 +55,7 @@ export const createFakeServer = (): Pick<PersistenceServerHarness, 'service' | '
         if (!wellFormed(request.document)) {
             return rejected('invalid');
         }
+
         const { documentId } = request.stamp;
         const current = records.get(documentId);
         if (
@@ -61,15 +64,19 @@ export const createFakeServer = (): Pick<PersistenceServerHarness, 'service' | '
         ) {
             return rejected('incompatible-writer');
         }
+
         if (current === undefined && request.baseRevision !== null) {
             return rejected('invalid');
         }
+
         if (current !== undefined && request.baseRevision !== current.revision) {
             return { status: 'conflict', currentRevision: current.revision };
         }
+
         revisions += 1;
         const revision = `revision-${revisions}`;
         records.set(documentId, { revision, document: structuredClone(request.document) });
+
         return {
             status: 'saved',
             acknowledgment: { operationId: request.operationId, stamp: request.stamp, revision },
@@ -80,6 +87,7 @@ export const createFakeServer = (): Pick<PersistenceServerHarness, 'service' | '
         if (!writable) {
             return Promise.resolve(rejected('forbidden'));
         }
+
         const { stamp, baseRevision, document, writer } = request;
         // The stamped copy is a plain JSON object, but the readonly document types do not satisfy JsonValue.
         const payload = canonicalJson({ stamp, baseRevision, document, writer } as unknown as JsonValue);
@@ -88,19 +96,25 @@ export const createFakeServer = (): Pick<PersistenceServerHarness, 'service' | '
             if (first.payload !== payload) {
                 return Promise.resolve(rejected('invalid'));
             }
+
             return Promise.resolve(first.response);
         }
+
         const response = write(request);
         outcomes.set(request.operationId, { payload, response });
+
         return Promise.resolve(response);
     };
+
     const read: PersistenceService['read'] = (documentId) => {
         const record = records.get(documentId);
         if (record === undefined) {
             return Promise.reject(new Error(`The fake server holds no document ${documentId}.`));
         }
+
         return Promise.resolve({ documentId, revision: record.revision, document: structuredClone(record.document) });
     };
+
     return {
         service: { save: (request) => save(request, true), read },
         readOnlyService: { save: (request) => save(request, false), read },
@@ -126,6 +140,7 @@ export const runPersistenceConformance = (createHarness: () => PersistenceServer
     if (describe === undefined || it === undefined || expect === undefined) {
         throw new Error('runPersistenceConformance registers its cases through the global describe, it and expect.');
     }
+
     /** A harness, a new document ID on it, and the requests and documents the cases send. */
     const setup = () => {
         const harness = createHarness();
@@ -134,6 +149,7 @@ export const runPersistenceConformance = (createHarness: () => PersistenceServer
         const request = (base: ServerRevision | null, sequence = 1): SaveRequest => {
             operations += 1;
             const stamp: DocumentStamp = { documentId, sessionId: 'rte-conformance', generation: 0, sequence };
+
             return {
                 operationId: `${documentId}-operation-${operations}`,
                 stamp,
@@ -142,9 +158,12 @@ export const runPersistenceConformance = (createHarness: () => PersistenceServer
                 writer: harness.writer,
             };
         };
+
         const save = (sent: SaveRequest) => harness.service.save(sent, context(sent.stamp));
+
         return { harness, documentId, request, save };
     };
+
     const context = (stamp: DocumentStamp) => ({
         signal: new AbortController().signal,
         session: { documentId: stamp.documentId, sessionId: stamp.sessionId, generation: stamp.generation },
@@ -153,8 +172,10 @@ export const runPersistenceConformance = (createHarness: () => PersistenceServer
         if (response.status !== 'saved') {
             throw new Error(`The server answered ${response.status} where the case needs saved.`);
         }
+
         return response.acknowledgment.revision;
     };
+
     const created = async (save: (sent: SaveRequest) => Promise<SaveResponse>, sent: SaveRequest) =>
         revisionOf(await save(sent));
 

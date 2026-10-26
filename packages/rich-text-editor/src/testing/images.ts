@@ -26,6 +26,7 @@ const concat = (parts: readonly Uint8Array[]): Bytes => {
         out.set(part, at);
         at += part.length;
     }
+
     return out;
 };
 
@@ -39,6 +40,7 @@ const CRC_TABLE = Array.from({ length: 256 }, (_, index) => {
     for (let bit = 0; bit < 8; bit += 1) {
         value = (value & 1) === 1 ? 0xed_b8_83_20 ^ (value >>> 1) : value >>> 1;
     }
+
     return value >>> 0;
 });
 
@@ -49,6 +51,7 @@ export const pngChunk = (type: string, data: Uint8Array): Bytes => {
     for (const byte of body) {
         crc = (CRC_TABLE[(crc ^ byte) & 0xff] ?? 0) ^ (crc >>> 8);
     }
+
     return concat([uint32BE(data.length), body, uint32BE((crc ^ 0xff_ff_ff_ff) >>> 0)]);
 };
 
@@ -63,7 +66,9 @@ const deflatedZeros = async (total: number): Promise<Bytes> => {
     for (let left = total; left > 0; left -= zeros.length) {
         await writer.write(left >= zeros.length ? zeros : zeros.subarray(0, left));
     }
+
     await writer.close();
+
     return new Uint8Array(await reading);
 };
 
@@ -79,7 +84,9 @@ const png = async (width: number, height: number, padding: number): Promise<Byte
         // An ancillary, private, safe-to-copy chunk, which decoders skip.
         parts.push(pngChunk('paDd', new Uint8Array(Math.max(0, padding - 12))));
     }
+
     parts.push(pngChunk('IEND', new Uint8Array()));
+
     return concat(parts);
 };
 
@@ -100,6 +107,7 @@ const lzwZeros = (count: number): Bytes => {
             bits -= 8;
         }
     };
+
     // The code width follows the decoder, which adds an entry for each code after the first since a clear.
     let entries = end + 1;
     let first = true;
@@ -112,6 +120,7 @@ const lzwZeros = (count: number): Bytes => {
         first = true;
         longest = 1;
     };
+
     restart();
     for (let left = count; left > 0; ) {
         const run = Math.min(longest, left);
@@ -122,27 +131,33 @@ const lzwZeros = (count: number): Bytes => {
                 size += 1;
             }
         }
+
         first = false;
         left -= run;
         if (left > 0 && run === longest) {
             longest += 1;
         }
+
         // A full table starts over before its next code would pass 12 bits.
         if (end + longest >= 4094) {
             restart();
         }
     }
+
     emit(end);
     if (bits > 0) {
         bytes.push(buffer & 0xff);
     }
+
     // Data sub-blocks of at most 255 bytes, then the block terminator.
     const blocks: number[] = [];
     for (let at = 0; at < bytes.length; at += 255) {
         const block = bytes.slice(at, at + 255);
         blocks.push(block.length, ...block);
     }
+
     blocks.push(0);
+
     return Uint8Array.from(blocks);
 };
 
@@ -159,9 +174,11 @@ const gif = (width: number, height: number, padding: number): Bytes => {
             const length = Math.min(255, left);
             comment.push(length, ...Array.from({ length }, () => 0x20));
         }
+
         comment.push(0);
         parts.push(Uint8Array.from(comment));
     }
+
     const descriptor = concat([
         Uint8Array.from([0x2c, 0, 0, 0, 0]),
         uint16LE(width),
@@ -169,6 +186,7 @@ const gif = (width: number, height: number, padding: number): Bytes => {
         Uint8Array.from([0]),
     ]);
     parts.push(descriptor, Uint8Array.from([2]), lzwZeros(width * height), Uint8Array.from([0x3b]));
+
     return concat(parts);
 };
 
@@ -188,6 +206,7 @@ const jpeg = (width: number, height: number, padding: number): Bytes => {
         parts.push(segment(0xfe, new Uint8Array(data).fill(0x20)));
         left -= data + 4;
     }
+
     parts.push(
         segment(0xdb, concat([Uint8Array.from([0]), new Uint8Array(64).fill(1)])),
         segment(
@@ -205,7 +224,9 @@ const jpeg = (width: number, height: number, padding: number): Bytes => {
     if (scanBits % 8 !== 0) {
         scan[scan.length - 1] = (1 << (8 - (scanBits % 8))) - 1;
     }
+
     parts.push(scan, Uint8Array.from([0xff, 0xd9]));
+
     return concat(parts);
 };
 
@@ -226,8 +247,10 @@ export const decodableImage = (type: SizedType, width: number, height: number, p
         } else {
             image = Promise.resolve(jpeg(width, height, padding));
         }
+
         built.set(key, image);
     }
+
     return image;
 };
 
@@ -240,6 +263,7 @@ const padded = (type: 'image/webp' | 'image/avif', bytes: Bytes, padding: number
     if (padding <= 0) {
         return bytes;
     }
+
     const length = Math.max(8, padding);
     if (type === 'image/avif') {
         return concat([
@@ -251,10 +275,12 @@ const padded = (type: 'image/webp' | 'image/avif', bytes: Bytes, padding: number
             ]),
         ]);
     }
+
     // A RIFF chunk holds an even number of bytes, and the RIFF size counts it.
     const data = (length - 8) & ~1;
     const out = concat([bytes, new TextEncoder().encode('PAD '), uint32LE(data), new Uint8Array(data)]);
     out.set(uint32LE(out.length - 8), 4);
+
     return out;
 };
 
@@ -276,16 +302,21 @@ export const sampleImage = async (
     if ((SIZED_TYPES as readonly string[]).includes(type)) {
         return { bytes: await decodableImage(type as SizedType, 1, 1, padding), name };
     }
+
     if (type === 'image/webp') {
         return { bytes: padded(type, bytesOf(WEBP_SAMPLE), padding), name };
     }
+
     if (type === 'image/avif') {
         return { bytes: padded(type, bytesOf(AVIF_SAMPLE), padding), name };
     }
+
     if (type === 'image/svg+xml') {
         const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1"/></svg>';
+
         // Trailing white space after the root element is still well-formed XML.
         return { bytes: new TextEncoder().encode(svg + ' '.repeat(Math.max(0, padding))), name };
     }
+
     return undefined;
 };

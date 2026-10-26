@@ -19,10 +19,12 @@ export const stubStorage = (): { readonly accessed: string[]; readonly restore: 
             configurable: true,
             get: () => {
                 accessed.push(name);
+
                 return failing;
             },
         });
     }
+
     const restore = () => {
         for (const [name, descriptor] of originals) {
             if (descriptor === undefined) {
@@ -32,5 +34,6 @@ export const stubStorage = (): { readonly accessed: string[]; readonly restore: 
             }
         }
     };
+
     return { accessed, restore };
 };

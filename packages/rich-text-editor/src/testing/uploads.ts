@@ -33,22 +33,27 @@ export const createFakeUploadService = (
     const acceptTypes = options.acceptTypes ?? DEFAULT_ACCEPT_TYPES;
     const assets = new Map<string, Awaited<ReturnType<FakeUploadService['upload']>>>();
     let stored = 0;
+
     return {
         upload: async ({ operationId, blob, filename }, { signal, reportProgress }) => {
             if (signal.aborted) {
                 throw aborted();
             }
+
             const known = assets.get(operationId);
             if (known !== undefined) {
                 return known;
             }
+
             if (blob.size > maxAssetBytes) {
                 throw refused('size');
             }
+
             const { mediaType, width, height } = await readImageHeader(blob);
             if (mediaType === null || !acceptTypes.includes(mediaType)) {
                 throw refused('type');
             }
+
             if (mediaType === 'image/svg+xml') {
                 if (svgHoldsScript(await blob.text())) {
                     throw refused('script');
@@ -62,17 +67,21 @@ export const createFakeUploadService = (
             ) {
                 throw refused('pixels');
             }
+
             if (signal.aborted) {
                 throw aborted();
             }
+
             reportProgress(1);
             stored += 1;
             const asset = { assetId: `fake-asset-${stored}`, mediaType, labelSnapshot: filename };
             assets.set(operationId, asset);
+
             return asset;
         },
         releaseUnused: (operationId) => {
             assets.delete(operationId);
+
             return Promise.resolve();
         },
     };
@@ -97,6 +106,7 @@ export const declaredPng = (width: number, height: number): Blob => {
     view.setUint32(4, height);
     // Eight-bit greyscale, deflate, adaptive filtering, no interlace.
     header.set([8, 0, 0, 0, 0], 8);
+
     return new Blob([PNG_SIGNATURE, pngChunk('IHDR', header), pngChunk('IEND', new Uint8Array())], {
         type: 'image/png',
     });
@@ -152,16 +162,20 @@ const conformanceOf = (
         const session = { documentId: 'rte-upload-conformance', sessionId: 'rte-upload-conformance', generation: 0 };
         const context = { signal: new AbortController().signal, session, reportProgress: () => undefined };
         const blob = new Blob([bytes], { type });
+
         return createService().upload({ operationId, blob, filename }, context);
     };
+
     const refuses = async (bytes: Bytes | string, type: string, filename: string) => {
         try {
             await send(bytes, type, filename);
+
             return false;
         } catch {
             return true;
         }
     };
+
     const accepts = async (bytes: Bytes | string, type: string, filename: string) =>
         !(await refuses(bytes, type, filename));
     // The pixel probes need a type with any size in a few bytes; the other probes take any type with a sample.
@@ -176,8 +190,10 @@ const conformanceOf = (
         if (sampleType === undefined || found === undefined) {
             throw new Error('runUploadConformance has samples of PNG, GIF, JPEG, WebP, AVIF and SVG only.');
         }
+
         return { ...found, type: sampleType };
     };
+
     return {
         ...runner,
         maxAssetBytes,
@@ -205,8 +221,10 @@ const sizeCase = ({ it, expect, maxAssetBytes, refuses, accepts, sample, nameOf,
             if (smallest.bytes.length > maxAssetBytes) {
                 // No image fits the limit, so the smallest one shows the refusal alone.
                 expect(await refuses(smallest.bytes, smallest.type, smallest.name)).toBe(true);
+
                 return;
             }
+
             const over = await sample(maxAssetBytes + 1 - smallest.bytes.length);
             expect(over.bytes.length > maxAssetBytes).toBe(true);
             expect(await refuses(over.bytes, over.type, over.name)).toBe(true);
@@ -247,6 +265,7 @@ const pixelCase = (c: Conformance) => {
                 if (larger) {
                     expect(await refuses(await decodableImage(type, 20_000, 20_000), type, name)).toBe(true);
                 }
+
                 expect(await accepts(await decodableImage(type, square - 1, square - 1), type, name)).toBe(true);
             },
             CASE_MS,
@@ -291,6 +310,7 @@ const svgCase = ({ it, expect, acceptTypes, refuses, accepts }: Conformance) => 
                 for (const [, body] of ACTIVE_SVGS) {
                     expect(await refuses(svgOf(body), 'image/svg+xml', 'logo.svg')).toBe(true);
                 }
+
                 expect(await accepts(svgOf('<rect width="10" height="10"/>'), 'image/svg+xml', 'logo.svg')).toBe(true);
             },
             CASE_MS,
@@ -328,6 +348,7 @@ export const runUploadConformance = (createService: () => FakeUploadService, opt
     if (describe === undefined || it === undefined || expect === undefined) {
         throw new Error('runUploadConformance registers its cases through the global describe, it and expect.');
     }
+
     const conformance = conformanceOf(createService, options, { describe, it, expect });
     describe('UploadService Service obligations', () => {
         sizeCase(conformance);

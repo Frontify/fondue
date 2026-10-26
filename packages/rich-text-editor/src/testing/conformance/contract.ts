@@ -50,6 +50,7 @@ const declarationOf = (feature: Feature): FeatureDeclaration => {
     if (internals === undefined) {
         throw new Error(`${feature.id} is not a feature that defineFeature made.`);
     }
+
     return internals.declaration;
 };
 
@@ -58,9 +59,11 @@ const labelOf = (entry: object): string | undefined => {
     if ('labelKey' in entry && typeof entry.labelKey === 'string') {
         return translations[entry.labelKey];
     }
+
     if ('label' in entry && typeof entry.label === 'object' && entry.label !== null) {
         return (entry.label as Readonly<Record<string, string>>)['en-US'];
     }
+
     return undefined;
 };
 
@@ -90,14 +93,18 @@ const contractOf = (features: readonly Feature[], options: FeatureContractOption
         if (model === undefined) {
             model = compileContentModel(features, { id: MODEL_ID, version: 1 });
         }
+
         return model;
     };
+
     const engineOf = () => {
         if (built === undefined) {
             built = editorEngine(compiled(), contractUnits(features, options.plugins ?? []));
         }
+
         return built.engine;
     };
+
     /** The resolved options of feature `id`, or none while the set does not compile, which the compile case reports. */
     const optionsOf = (id: string) => {
         try {
@@ -106,6 +113,7 @@ const contractOf = (features: readonly Feature[], options: FeatureContractOption
             return undefined;
         }
     };
+
     /** The given editor part of a feature, else its shipped one, with the parts it gives for the feature's options. */
     const partOf = (id: string) => {
         const part = contractUnits(features, options.plugins ?? []).find((unit) => unit.id === id)?.editor;
@@ -113,28 +121,35 @@ const contractOf = (features: readonly Feature[], options: FeatureContractOption
         if (part === undefined || resolved === undefined) {
             return part;
         }
+
         return partWithOptions(part, resolved);
     };
+
     const stateOf = (document: RichTextDocument) => {
         const { tree } = decodeToTree(document, compiled());
         if (tree === undefined) {
             throw new Error('The document does not decode.');
         }
+
         return stateFromTree(engineOf(), tree);
     };
+
     /** A fixture as a document of the model under test, whatever model it names. */
     const storedIn = (fixture: unknown): RichTextDocument => {
         if (!isRecord(fixture)) {
             return fixture as RichTextDocument;
         }
+
         // A fixture with the model ref swapped in is still a stored document; the spread loses the brand.
         return { ...fixture, model: compiled().ref } as unknown as RichTextDocument;
     };
+
     const sharedDefaults: SharedDefault[] = features.flatMap((feature) =>
         Object.entries(declarationOf(feature).attributes ?? {}).flatMap(([name, { on, value }]) => {
             if (!('default' in value)) {
                 return [];
             }
+
             return [{ name, on, fallback: value.default as JsonValue }];
         }),
     );
@@ -150,6 +165,7 @@ const contractOf = (features: readonly Feature[], options: FeatureContractOption
                 featureId === undefined ||
                 !lossy[format].has(featureId),
         );
+
     return { ...runner, options, compiled, engineOf, stateOf, storedIn, partOf, sharedDefaults, unexpected };
 };
 
@@ -163,6 +179,7 @@ const fixtureCases = (c: Contract, name: string, fixture: unknown) => {
         if (tree === undefined) {
             throw new Error(`${name} does not decode.`);
         }
+
         const { schema } = engineOf();
         const node = schema.nodeFromJSON(tree);
         const encoded = encodeTree(node.toJSON() as TreeNode, compiled(), stored.requiredCapabilities);
@@ -233,6 +250,7 @@ const commandCases = (
             if (command === undefined) {
                 throw new Error(`${id} is not installed.`);
             }
+
             const given = (options.fixtures ?? []).map(storedIn);
             for (const fixture of [createEmptyDocument(compiled()), ...Object.values(fixtures), ...given]) {
                 const state = stateOf(fixture);
@@ -274,6 +292,7 @@ const fixtureCoverageCase = (
             typesIn(fixture.content, types);
             setAttributesIn(fixture.content, declaration, isTextblock, attributes);
         }
+
         expect([...nodes, ...marks].filter((type) => !types.has(type))).toEqual([]);
         expect(Object.keys(declaration.attributes ?? {}).filter((name) => !attributes.has(name))).toEqual([]);
     });
@@ -297,6 +316,7 @@ const featureCases = (c: Contract, feature: Feature) => {
         if (!shipped) {
             return;
         }
+
         fixtureCoverageCase(c, declaration, fixtures);
         for (const [name, fixture] of Object.entries(fixtures)) {
             fixtureCases(c, name, fixture);
@@ -309,6 +329,7 @@ const givenFixtureCases = (c: Contract) => {
     if (given === undefined) {
         return;
     }
+
     c.describe('the given fixtures', () => {
         for (const [index, fixture] of given.entries()) {
             fixtureCases(c, `fixture ${index + 1}`, fixture);
@@ -328,10 +349,12 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
     if (describe === undefined || it === undefined || expect === undefined) {
         throw new Error('runFeatureContract registers its cases through the global describe, it and expect.');
     }
+
     const contract = contractOf(features, options, { describe, it, expect });
     compileCase(contract);
     for (const feature of features) {
         featureCases(contract, feature);
     }
+
     givenFixtureCases(contract);
 };

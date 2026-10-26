@@ -24,11 +24,13 @@ export const createFakeReferenceService = (
     options: { readonly pageSize?: number } = {},
 ): FakeReferenceService => {
     const pageSize = options.pageSize ?? PAGE_SIZE;
+
     return {
         search: ({ query, resourceTypes, cursor }, { signal }) => {
             if (signal.aborted) {
                 return Promise.reject(aborted());
             }
+
             const needle = query.toLocaleLowerCase();
             const matching = items.filter(
                 (item) =>
@@ -39,11 +41,13 @@ export const createFakeReferenceService = (
             if (cursor !== null) {
                 start = Math.max(0, Number.parseInt(cursor, 10) || 0);
             }
+
             const end = start + pageSize;
             let nextCursor: string | null = null;
             if (end < matching.length) {
                 nextCursor = String(end);
             }
+
             return Promise.resolve({ items: matching.slice(start, end), nextCursor });
         },
     };

@@ -16,11 +16,13 @@ export const failNetworkInThisFile = (): { readonly attempts: string[] } => {
             attempts.push(name);
             throw new Error(`The runtime may not call ${name}.`);
         };
+
     const originals = new Map<string, PropertyDescriptor | undefined>();
     const replace = (target: object, name: string, key: string) => {
         originals.set(key, Object.getOwnPropertyDescriptor(target, name));
         Object.defineProperty(target, name, { configurable: true, writable: true, value: failing(key) });
     };
+
     const restore = (target: object, name: string, key: string) => {
         const original = originals.get(key);
         if (original === undefined) {
@@ -29,18 +31,22 @@ export const failNetworkInThisFile = (): { readonly attempts: string[] } => {
             Object.defineProperty(target, name, original);
         }
     };
+
     beforeAll(() => {
         for (const name of ['fetch', 'XMLHttpRequest', 'WebSocket']) {
             replace(globalThis, name, name);
         }
+
         replace(globalThis.navigator, 'sendBeacon', 'navigator.sendBeacon');
     });
     afterAll(() => {
         for (const name of ['fetch', 'XMLHttpRequest', 'WebSocket']) {
             restore(globalThis, name, name);
         }
+
         restore(globalThis.navigator, 'sendBeacon', 'navigator.sendBeacon');
         expect(attempts).toEqual([]);
     });
+
     return { attempts };
 };

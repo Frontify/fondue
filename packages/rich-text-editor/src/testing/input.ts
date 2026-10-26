@@ -16,8 +16,10 @@ const attachedOf = (handle: object) => {
     if (runtime === undefined || runtime.view === undefined) {
         throw new Error('The handle belongs to no editor with an attached surface.');
     }
+
     return { runtime, view: runtime.view };
 };
+
 const viewOf = (handle: object): NonNullable<EditorRuntime['view']> => attachedOf(handle).view;
 
 /** Types `text` one character at a time, as the browser does: a `beforeinput` event, then the change it makes. */
@@ -26,6 +28,7 @@ export const typeText = (handle: object, text: string): void => {
     if (!view.editable) {
         return;
     }
+
     for (const character of text) {
         const event = new InputEvent('beforeinput', { inputType: 'insertText', data: character, cancelable: true });
         view.dom.dispatchEvent(event);
@@ -66,6 +69,7 @@ export const paste = (
     if (input.slice !== undefined) {
         slice = JSON.stringify(input.slice);
     }
+
     const text = input.text ?? '';
     const html = input.html ?? '';
     pasteInto(view, { text, html, slice }, input.files ?? []);
@@ -80,9 +84,12 @@ export const setSelection = (handle: object, target: SelectionTarget): void => {
         if (position === undefined) {
             throw new Error(`No node has the nodeId ${target.nodeId}.`);
         }
+
         runtime.select({ node: position });
+
         return;
     }
+
     const { text, occurrence = 1, from = 0, to = text.length } = target;
     let found = 0;
     let start: number | undefined;
@@ -90,6 +97,7 @@ export const setSelection = (handle: object, target: SelectionTarget): void => {
         if (start !== undefined || !node.isTextblock) {
             return start === undefined;
         }
+
         // One character per position, so an offset in the string is an offset in the block.
         const content = node.textBetween(0, node.content.size, undefined, OBJECT_REPLACEMENT);
         let index = content.indexOf(text);
@@ -98,12 +106,15 @@ export const setSelection = (handle: object, target: SelectionTarget): void => {
             if (found === occurrence) {
                 start = pos + 1 + index;
             }
+
             index = content.indexOf(text, index + 1);
         }
+
         return false;
     });
     if (start === undefined) {
         throw new Error(`The document holds no occurrence ${occurrence} of "${text}".`);
     }
+
     runtime.select({ anchor: start + from, head: start + to });
 };

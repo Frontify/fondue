@@ -39,6 +39,7 @@ const failingTitles = async (createHarness: () => PersistenceServerHarness): Pro
     } finally {
         vi.unstubAllGlobals();
     }
+
     const failing: string[] = [];
     for (const [name, body] of cases) {
         try {
@@ -47,6 +48,7 @@ const failingTitles = async (createHarness: () => PersistenceServerHarness): Pro
             failing.push(name);
         }
     }
+
     return failing;
 };
 
@@ -74,18 +76,22 @@ const flawed =
             if (response.status === 'saved') {
                 revisions.set(request.stamp.documentId, response.acknowledgment.revision);
             }
+
             return response;
         };
+
         const service: PersistenceService = {
             save: (request, context) => {
                 const first = payloads.get(request.operationId);
                 if (first === undefined) {
                     payloads.set(request.operationId, payloadOf(request));
                 }
+
                 return flaw(request, context, { save, first, calls: payloads.size, revisions });
             },
             read: reference.service.read,
         };
+
         return { ...GIVEN, service, readOnlyService: reference.readOnlyService };
     };
 
@@ -103,6 +109,7 @@ const writeAgain = async (
     if (response.status !== 'saved') {
         return response;
     }
+
     return {
         status: 'saved' as const,
         acknowledgment: { ...response.acknowledgment, operationId: request.operationId },
@@ -113,14 +120,17 @@ const trimmed = (value: unknown): unknown => {
     if (Array.isArray(value)) {
         return value.map(trimmed);
     }
+
     if (typeof value !== 'object' || value === null) {
         return value;
     }
+
     return Object.fromEntries(
         Object.entries(value).map(([key, item]) => {
             if (key === 'text' && typeof item === 'string') {
                 return [key, item.trim()];
             }
+
             return [key, trimmed(item)];
         }),
     );
@@ -135,6 +145,7 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
             if (server.first === payloadOf(request)) {
                 return writeAgain(request, context, server);
             }
+
             return server.save(request, context);
         }),
     ],
@@ -145,6 +156,7 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
             if (server.first !== undefined && server.first !== payloadOf(request)) {
                 return writeAgain(request, context, server);
             }
+
             return server.save(request, context);
         }),
     ],
@@ -155,16 +167,19 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
             if (server.first !== undefined) {
                 return server.save(request, context);
             }
+
             const current = server.revisions.get(request.stamp.documentId) ?? null;
             if (current !== null && current !== request.baseRevision) {
                 return { status: 'conflict', currentRevision: current };
             }
+
             await Promise.resolve();
             // The write step takes whatever revision is newest by then, so a save that passed the check overwrites.
             const written = await server.save(request, context);
             if (written.status !== 'conflict') {
                 return written;
             }
+
             return writeAgain(request, context, server, written.currentRevision);
         }),
     ],
@@ -176,6 +191,7 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
             if (server.first === undefined && request.baseRevision === null && current !== undefined) {
                 return server.save({ ...request, baseRevision: current }, context);
             }
+
             return server.save(request, context);
         }),
     ],
@@ -184,6 +200,7 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
         'Server obligation 5 rejects a user who may not write',
         () => {
             const reference = createFakeServer();
+
             return { ...GIVEN, service: reference.service, readOnlyService: reference.service };
         },
     ],
@@ -194,8 +211,10 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
             const { content } = request.document;
             if (content.content === undefined) {
                 const repaired = { ...content, content: [{ type: 'paragraph', attrs: { lang: null } }] };
+
                 return server.save({ ...request, document: { ...request.document, content: repaired } }, context);
             }
+
             return server.save(request, context);
         }),
     ],
@@ -206,6 +225,7 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
             if (request.writer === REJECTED) {
                 return server.save({ ...request, writer: WRITER }, context);
             }
+
             return server.save(request, context);
         }),
     ],
@@ -217,7 +237,9 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
             if (response.status !== 'saved') {
                 return response;
             }
+
             const stamp = { ...response.acknowledgment.stamp, sequence: response.acknowledgment.stamp.sequence + 1 };
+
             return { status: 'saved', acknowledgment: { ...response.acknowledgment, stamp } };
         }),
     ],

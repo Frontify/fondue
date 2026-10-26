@@ -19,9 +19,11 @@ export const typesIn = (node: ContentNodeJSON, types: Set<string>): Set<string> 
     for (const mark of node.marks ?? []) {
         types.add(mark.type);
     }
+
     for (const child of node.content ?? []) {
         typesIn(child, types);
     }
+
     return types;
 };
 
@@ -42,21 +44,26 @@ export const setAttributesIn = (
         } else {
             targeted = shared.on.includes(node.type);
         }
+
         if (!targeted) {
             continue;
         }
+
         let fallback: JsonValue | undefined;
         if ('default' in shared.value) {
             fallback = shared.value.default as JsonValue;
         }
+
         const value = node.attrs?.[name];
         if (value !== undefined && JSON.stringify(value) !== JSON.stringify(fallback)) {
             found.add(name);
         }
     }
+
     for (const child of node.content ?? []) {
         setAttributesIn(child, declaration, isTextblock, found);
     }
+
     return found;
 };
 
@@ -79,6 +86,7 @@ export const withSharedDefaults = (
     for (const [name, value] of Object.entries(node.attrs ?? {})) {
         attrs[name] = value;
     }
+
     let added = false;
     for (const { name, on, fallback } of shared) {
         const targeted = on === 'textblocks' ? isTextblock(node.type) : on.includes(node.type);
@@ -87,13 +95,16 @@ export const withSharedDefaults = (
             added = true;
         }
     }
+
     const copy: Record<string, unknown> = { ...node };
     if (added) {
         copy.attrs = attrs;
     }
+
     if (node.content !== undefined) {
         copy.content = node.content.map((child) => withSharedDefaults(child, shared, isTextblock));
     }
+
     // The copy is built by spreading fixture JSON, which the node type cannot express.
     return copy as unknown as ContentNodeJSON;
 };
@@ -106,6 +117,7 @@ export const normalized = (html: string) =>
             if (index % 2 === 1) {
                 return part;
             }
+
             return part.replaceAll(/\s+/g, ' ');
         })
         .join('')
@@ -125,5 +137,6 @@ export const readerOutput = (document: RichTextDocument, model: ContentModel) =>
         model,
         onDiagnostic: (diagnostic) => diagnostics.push(diagnostic),
     });
+
     return { markup: renderToStaticMarkup(reader), diagnostics };
 };

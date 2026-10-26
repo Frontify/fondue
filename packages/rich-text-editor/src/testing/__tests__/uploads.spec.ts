@@ -22,6 +22,7 @@ const failingTitles = async (
     } finally {
         vi.unstubAllGlobals();
     }
+
     const failing: string[] = [];
     for (const [name, body] of cases) {
         try {
@@ -30,6 +31,7 @@ const failingTitles = async (
             failing.push(name);
         }
     }
+
     return failing;
 };
 
@@ -38,11 +40,13 @@ type Check = 'size' | 'content type' | 'pixels' | 'side' | 'script' | 'asset ID'
 /** A service that checks as the reference fake does, except for `skipped`. */
 const flawed = (skipped: Check) => (): FakeUploadService => {
     let stored = 0;
+
     return {
         upload: async ({ blob, filename }) => {
             if (skipped === 'everything') {
                 throw new Error('refused');
             }
+
             const header = await readImageHeader(blob);
             const mediaType = skipped === 'content type' ? blob.type : header.mediaType;
             const { width, height } = header;
@@ -59,11 +63,13 @@ const flawed = (skipped: Check) => (): FakeUploadService => {
             if (refused) {
                 throw new Error('refused');
             }
+
             stored += 1;
             let assetId = `asset-${stored}`;
             if (skipped === 'asset ID') {
                 assetId = `https://cdn.frontify.test/${assetId}.png?token=secret`;
             }
+
             return { assetId, mediaType, labelSnapshot: filename };
         },
         releaseUnused: () => Promise.resolve(),
@@ -104,6 +110,7 @@ describe('runUploadConformance', () => {
             } finally {
                 vi.unstubAllGlobals();
             }
+
             return names;
         };
 
@@ -121,6 +128,7 @@ describe('runUploadConformance', () => {
             } finally {
                 vi.unstubAllGlobals();
             }
+
             return names.filter((name) => name.includes('pixel') && !name.includes('70,000'));
         };
 
