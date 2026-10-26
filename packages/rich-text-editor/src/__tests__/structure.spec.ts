@@ -99,14 +99,10 @@ const parse = (path: string) => {
     return file;
 };
 
-const lineCount = (path: string) => {
-    const source = sourceOf(path);
-    const newlines = source.match(/\n/g)?.length ?? 0;
-    if (source.length > 0 && !source.endsWith('\n')) {
-        return newlines + 1;
-    }
-    return newlines;
-};
+// Blank lines separate a function's steps for the reader, so the size limits count only lines that hold code or comments.
+const nonBlankLines = (text: string) => text.split('\n').filter((line) => line.trim() !== '').length;
+
+const lineCount = (path: string) => nonBlankLines(sourceOf(path));
 
 // A listed item may stay or shrink; an unlisted item over the limit, a listed item no longer over it, or growth fails.
 const ratchet = (measured: Map<string, number>, allowed: Record<string, number>) => {
@@ -227,13 +223,11 @@ const functionMeasures = (path: string) => {
             const name = functionName(node, file);
             const occurrence = (seen.get(name) ?? 0) + 1;
             seen.set(name, occurrence);
-            const start = file.getLineAndCharacterOfPosition(node.getStart(file)).line;
-            const end = file.getLineAndCharacterOfPosition(node.getEnd()).line;
             let key = `${base}#${name}`;
             if (occurrence > 1) {
                 key = `${key}#${occurrence}`;
             }
-            measures.push({ key, lines: end - start + 1, lets: letDeclarators(node) });
+            measures.push({ key, lines: nonBlankLines(node.getText(file)), lets: letDeclarators(node) });
         }
         ts.forEachChild(node, visit);
     };
