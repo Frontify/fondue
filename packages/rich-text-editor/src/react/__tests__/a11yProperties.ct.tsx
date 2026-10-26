@@ -92,8 +92,11 @@ test.describe('in the Document profile, by keyboard alone', () => {
         await pressUntilFocused(page, 'Tab', dialog.getByRole('textbox', { name: 'Language tag' }));
         await page.keyboard.type('ar');
         await press(page, 'Tab');
-        await expect(dialog.getByRole('combobox', { name: 'Direction' })).toBeFocused();
-        await page.keyboard.type('Right');
+        await expect(dialog.getByRole('radio', { name: 'None' })).toBeFocused();
+        await press(page, 'ArrowRight');
+        await press(page, 'ArrowRight');
+        await expect(dialog.getByRole('radio', { name: 'Right to left' })).toBeFocused();
+        await press(page, 'Space');
         // Enter in the tag field submits the form; WebKit's Tab skips buttons.
         await press(page, 'Shift+Tab');
         await press(page, 'Enter');

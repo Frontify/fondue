@@ -1,11 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator, type Page } from '@playwright/test';
 
 import { LanguageProbe } from './fixtures/LanguageProbe';
 
 type LanguageRte = NonNullable<Window['languageRte']>;
+
+// The tags the accessibility suite checks.
+const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
 const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Notes' });
 const dialogOf = (page: Page) => page.getByRole('dialog', { name: 'Language' });
@@ -139,8 +143,10 @@ test('returns focus to More on Escape, and to the surface on Apply, when More op
 
     await openFromMore(page);
     await expect(dialogOf(page).getByRole('radio', { name: 'Chinese' })).toBeFocused();
-    await page.keyboard.press('ArrowUp');
+    // Radix checks the radio it moves to only while the arrow key is still held, and a press releases it at once.
+    await page.keyboard.down('ArrowUp');
     await expect(dialogOf(page).getByRole('radio', { name: 'Vietnamese' })).toBeChecked();
+    await page.keyboard.up('ArrowUp');
     await page.keyboard.press('Enter');
     await expect(dialogOf(page)).toHaveCount(0);
     await expect(surfaceOf(page)).toBeFocused();
@@ -170,9 +176,59 @@ test('scrolls the language list inside the dialog and keeps the focused radio in
     expect(list.scrolls).toBe(true);
     expect(list.scrolled).toBeGreaterThan(0);
 
-    // Arrow keys between native radios belong to the browser, and WebKit's differ, so focus is moved directly.
     const afrikaans = dialog.getByRole('radio', { name: 'Afrikaans' });
     await afrikaans.focus();
     await expect(afrikaans).toBeFocused();
     await expect(afrikaans).toBeInViewport();
+});
+
+test('shows the direction as a Fondue segmented control and the languages as a Fondue radio list', async ({
+    mount,
+    page,
+}) => {
+    await mount(<LanguageProbe inToolbar />);
+    await ready(page);
+    await caretInPassage(page);
+
+    await toolbarButton(page).click();
+    const dialog = dialogOf(page);
+    const direction = dialog.getByRole('radiogroup', { name: 'Direction' });
+    await expect(direction).toHaveAttribute('data-hug-width', 'false');
+    await expect(direction.getByRole('radio')).toHaveCount(4);
+    await expect(direction.getByRole('radio', { name: 'None' })).toBeChecked();
+    await direction.getByRole('radio', { name: 'Right to left' }).click();
+    await expect(direction.getByRole('radio', { name: 'Right to left' })).toBeChecked();
+    await expect(direction.getByRole('radio', { name: 'None' })).not.toBeChecked();
+
+    const languages = dialog.getByRole('radiogroup', { name: 'Language tag' });
+    await expect(languages.getByRole('radio', { name: 'Chinese' })).toBeChecked();
+    await expect(languages.getByRole('radio', { name: 'German' })).not.toBeChecked();
+    await languages.getByRole('radio', { name: 'German' }).click();
+    await expect(languages.getByRole('radio', { name: 'German' })).toBeChecked();
+    await expect(languages.getByRole('radio', { name: 'Chinese' })).not.toBeChecked();
+
+    await dialog.getByRole('button', { name: 'Apply' }).click();
+    await expect(dialog).toHaveCount(0);
+    expect(await languageOf(page)).toBe('de');
+});
+
+test('reports no axe violation with the language dialog open', async ({ mount, page }) => {
+    await mount(<LanguageProbe inToolbar />);
+    await ready(page);
+    await caretInPassage(page);
+
+    await toolbarButton(page).click();
+    await expect(dialogOf(page).getByRole('radio', { name: 'Chinese' })).toBeFocused();
+    // Overlays fade in, so axe reads the dialog once its finite animations have ended.
+    await page.evaluate(() =>
+        Promise.allSettled(
+            document
+                .getAnimations()
+                .filter((animation) => animation.effect?.getComputedTiming().endTime !== Infinity)
+                .map((animation) => animation.finished),
+        ),
+    );
+
+    const { violations } = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+    expect(violations.map(({ id, nodes }) => `${id}: ${nodes.map(({ html }) => html).join(' | ')}`)).toEqual([]);
 });

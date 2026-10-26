@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Label, TextInput } from '@frontify/fondue-components';
+import { Label, RadioList, SegmentedControl, TextInput } from '@frontify/fondue-components';
 
 import { directionLabel, directions, labelOf } from './languageModel';
 import styles from './styles/language.module.scss';
 import { type LanguageState } from './useLanguageState';
+
+// The segmented control ignores an empty value, so "no direction" gets a name of its own.
+const NO_DIRECTION = 'none';
 
 /** The typed tag field, shown when the option lists no languages. */
 export const TagField = ({ state }: { readonly state: LanguageState }) => {
@@ -44,46 +47,57 @@ export const LanguageRadios = ({ state }: { readonly state: LanguageState }) => 
         invalidOption = offered.includes(tag) ? tag : offered[0];
     }
     return (
-        <fieldset
-            ref={state.groupRef}
-            role="radiogroup"
-            className={styles.languages}
-            aria-labelledby={ids.legend}
-            aria-invalid={invalid || undefined}
-            aria-errormessage={errorMessage}
-        >
-            <legend id={ids.legend}>{strings.tag}</legend>
-            <div className={styles.options}>
-                {offered.map((option) => (
-                    <label key={option} className={styles.option}>
-                        <input
-                            ref={option === state.stored ? state.focusOnce : undefined}
-                            type="radio"
-                            name="language"
-                            value={option}
-                            checked={tag === option}
-                            aria-describedby={option === invalidOption ? ids.error : undefined}
-                            onChange={() => state.chooseTag(option)}
-                        />
-                        {labelOf(option, state.locale)}
-                    </label>
-                ))}
+        // RadioList.Root takes no invalid or error props, so it renders onto this div, which carries them.
+        <RadioList.Root asChild aria-labelledby={ids.legend} value={tag} onValueChange={state.chooseTag}>
+            <div
+                ref={state.focusOnce}
+                className={styles.languages}
+                aria-invalid={invalid || undefined}
+                aria-errormessage={errorMessage}
+            >
+                <span id={ids.legend}>{strings.tag}</span>
+                <div className={styles.options}>
+                    {offered.map((option) => (
+                        <div key={option} className={styles.option}>
+                            <RadioList.RadioButton
+                                id={`${ids.legend}-${option}`}
+                                value={option}
+                                aria-describedby={option === invalidOption ? ids.error : undefined}
+                                // Radix radios swallow Enter, which a native radio lets submit the form.
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                        state.apply(event);
+                                    }
+                                }}
+                            />
+                            <Label htmlFor={`${ids.legend}-${option}`}>{labelOf(option, state.locale)}</Label>
+                        </div>
+                    ))}
+                </div>
+                {invalid && <p id={ids.error}>{strings.invalid}</p>}
             </div>
-            {invalid && <p id={ids.error}>{strings.invalid}</p>}
-        </fieldset>
+        </RadioList.Root>
     );
 };
 
-/** The text direction select. */
+/** The text direction control. */
 export const DirectionSelect = ({ state }: { readonly state: LanguageState }) => (
     <>
-        <Label htmlFor={state.ids.direction}>{state.strings.direction}</Label>
-        <select id={state.ids.direction} value={state.dir} onChange={(event) => state.setDir(event.target.value)}>
+        <Label id={state.ids.directionLabel} htmlFor={state.ids.direction}>
+            {state.strings.direction}
+        </Label>
+        <SegmentedControl.Root
+            id={state.ids.direction}
+            aria-labelledby={state.ids.directionLabel}
+            hugWidth={false}
+            value={state.dir === '' ? NO_DIRECTION : state.dir}
+            onValueChange={(next) => state.setDir(next === NO_DIRECTION ? '' : next)}
+        >
             {directions.map((option) => (
-                <option key={option.value} value={option.value}>
+                <SegmentedControl.Item key={option.value} value={option.value === '' ? NO_DIRECTION : option.value}>
                     {directionLabel(option.value, state.strings)}
-                </option>
+                </SegmentedControl.Item>
             ))}
-        </select>
+        </SegmentedControl.Root>
     </>
 );

@@ -28,19 +28,22 @@ export const useLanguageState = ({ opener, close }: OverlayProps) => {
     // Each rejected Apply, after whose error renders focus moves to the field that holds it.
     const [rejections, setRejections] = useState(0);
     const fieldRef = useRef<HTMLInputElement>(null);
-    const groupRef = useRef<HTMLFieldSetElement>(null);
+    const groupRef = useRef<HTMLDivElement | null>(null);
     // Focus inside the content before Radix autofocuses it keeps Fondue from moving it to the first radio.
     const focusedRef = useRef(false);
-    const focusOnce = useCallback((element: HTMLInputElement | null) => {
-        if (element !== null && !focusedRef.current) {
+    // The group's ref: it keeps the group and focuses its checked radio once, as RadioList takes no ref on a radio.
+    const focusOnce = useCallback((group: HTMLDivElement | null) => {
+        groupRef.current = group;
+        if (group !== null && !focusedRef.current) {
             focusedRef.current = true;
-            element.focus();
+            group.querySelector<HTMLElement>('[role="radio"][data-state="checked"]')?.focus();
         }
     }, []);
     const fieldId = useId();
     const errorId = useId();
     const legendId = useId();
     const directionId = useId();
+    const directionLabelId = useId();
     const offered = offeredLanguages(languages, current.lang);
     const apply = (event: FormEvent) => {
         event.preventDefault();
@@ -67,7 +70,7 @@ export const useLanguageState = ({ opener, close }: OverlayProps) => {
         if (rejections === 0) {
             return;
         }
-        const radio = groupRef.current?.querySelector<HTMLInputElement>('input[aria-describedby]');
+        const radio = groupRef.current?.querySelector<HTMLElement>('[role="radio"][aria-describedby]');
         const target = radio ?? fieldRef.current;
         target?.focus();
     }, [rejections]);
@@ -87,7 +90,13 @@ export const useLanguageState = ({ opener, close }: OverlayProps) => {
         fieldRef,
         groupRef,
         focusOnce,
-        ids: { field: fieldId, error: errorId, legend: legendId, direction: directionId },
+        ids: {
+            field: fieldId,
+            error: errorId,
+            legend: legendId,
+            direction: directionId,
+            directionLabel: directionLabelId,
+        },
     };
 };
 

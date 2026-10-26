@@ -13,9 +13,6 @@
     flex-direction: column;
     min-block-size: 0;
     min-inline-size: 0;
-    margin: 0;
-    padding: 0;
-    border: none;
 }
 
 .options {
@@ -32,5 +29,9 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-x-small);
-    scroll-margin-block: var(--spacing-xx-small);
+
+    button {
+        flex-shrink: 0;
+        scroll-margin-block: var(--spacing-xx-small);
+    }
 }

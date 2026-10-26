@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { codeBlock } from '#/features/blocksCode/feature';
@@ -36,6 +36,8 @@ const mount = (
     }
     return mountText({ model, blocks, toolbar });
 };
+
+const languageRadios = () => within(screen.getByRole('radiogroup', { name: 'Language tag' })).getAllByRole('radio');
 
 const open = (handle: ReturnType<typeof mount>['handle']) => {
     act(() => {
@@ -74,8 +76,8 @@ describe('language dialog', () => {
         setSelection(handle, { text: 'Bonjour tail', from: 3, to: 10 });
         open(handle);
 
-        expect(screen.getAllByRole('radio').map((radio) => radio.getAttribute('value'))).toEqual(['fr', 'de', 'en']);
-        expect(screen.getByRole('radio', { name: 'French' })).toHaveProperty('checked', true);
+        expect(languageRadios().map((radio) => radio.getAttribute('value'))).toEqual(['fr', 'de', 'en']);
+        expect(screen.getByRole('radio', { name: 'French' }).getAttribute('aria-checked')).toBe('true');
         expect(document.activeElement).toBe(screen.getByRole('radio', { name: 'French' }));
     });
 
@@ -99,15 +101,9 @@ describe('language dialog', () => {
         open(handle);
 
         const italian = screen.getByRole('radio', { name: 'Italian' });
-        expect(italian).toHaveProperty('checked', true);
+        expect(italian.getAttribute('aria-checked')).toBe('true');
         expect(document.activeElement).toBe(italian);
-        expect(screen.getAllByRole('radio').map((radio) => radio.getAttribute('value'))).toEqual([
-            'it',
-            'en',
-            'de',
-            'fr',
-            'ar',
-        ]);
+        expect(languageRadios().map((radio) => radio.getAttribute('value'))).toEqual(['it', 'en', 'de', 'fr', 'ar']);
 
         act(() => {
             fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
