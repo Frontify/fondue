@@ -4,7 +4,7 @@ import { OptionsMenu } from '#/bridge/define';
 import { defineEditorPart, type EditorApi, type EditorControlApi } from '#/bridge/plugin';
 import { figureAlign } from '#/model';
 
-import { AltTextDialog, WidthDialog } from './helpers/dialogs';
+import { AltTextDialog, WidthDialog } from './helpers/lazyParts';
 import { altTextStrings, widthStrings } from './helpers/dialogStrings';
 import { image } from './feature';
 import { alignOptions, EDIT_WIDTH, SIDES, sizeOptions } from './helpers/options';

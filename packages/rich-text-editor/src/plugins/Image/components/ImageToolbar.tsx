@@ -6,11 +6,10 @@ import { NodeChromeButton, NodeChromeMenu, NodeChromeToolbar, OptionItem } from 
 import { type EditorApi } from '#/bridge/plugin';
 import { REPLACED_ASSET } from '#/model';
 
-import { AltTextDialog } from '../helpers/dialogs';
+import { AltTextDialog, UploadControls } from '../helpers/lazyParts';
 import { altTextStrings, SET_SIZE } from '../helpers/dialogStrings';
 import { figureOf } from '../helpers/nodes';
 import { alignOptions, EDIT_WIDTH, SIDE_KEYS, sizeOptions } from '../helpers/options';
-import { UploadControls } from '../helpers/uploadParts';
 import { type ImageChromeState } from '../hooks/useImageChromeState';
 
 /**
