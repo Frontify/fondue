@@ -18,46 +18,46 @@ export type Alignment = 'left' | 'center' | 'right' | 'justify';
 
 /** A stored reference to a resource, with the label it had when it was stored. */
 export type ReferenceValue = {
-    readonly resourceType: StoredId;
-    readonly resourceId: string;
-    readonly labelSnapshot: string;
+    resourceType: StoredId;
+    resourceId: string;
+    labelSnapshot: string;
     /** Set on link destination results. */
-    readonly href?: string;
+    href?: string;
     /** Suggestion avatar, shown when it passes `checkHref`. Not stored on the mention. */
-    readonly imageUrl?: string;
+    imageUrl?: string;
     /** Suggestion fallback icon. Not stored on the mention. */
-    readonly kind?: 'user' | 'group' | 'everyone';
+    kind?: 'user' | 'group' | 'everyone';
 };
 
 /** What a host lets users do with a feature: create, edit, remove and paste it. */
 export type FeaturePolicy = {
-    readonly create: boolean;
-    readonly edit: boolean;
-    readonly remove: boolean;
-    readonly paste: boolean;
+    create: boolean;
+    edit: boolean;
+    remove: boolean;
+    paste: boolean;
 };
 /** What a host lets users do in the editor: the policy per feature, the heading levels and the Enter behavior. */
 export type AuthoringPolicy = {
-    readonly features: Readonly<Record<string, FeaturePolicy>>;
-    readonly creatableHeadingLevels: readonly HeadingLevel[];
+    features: Readonly<Record<string, FeaturePolicy>>;
+    creatableHeadingLevels: readonly HeadingLevel[];
     /** `paragraph` by default in Comment, Document and Brand document, where Comment may use `submit`; Inline defaults to `submit`, which acts as `none` while the host sets no `onSubmit`. */
-    readonly enterBehavior: 'paragraph' | 'submit' | 'none';
+    enterBehavior: 'paragraph' | 'submit' | 'none';
 };
 
 /** A colour stored either as a token id or as a literal value. */
-export type ColorValue = { readonly tokenId: StoredId } | { readonly value: string };
+export type ColorValue = { tokenId: StoredId } | { value: string };
 /**
  * The core's commands, which every definition has. A feature's commands come from its plugin (`CommandsOfPart`) and
  * type a definition's own map.
  */
 export type ShippedCommands = {
-    readonly 'history.undo': undefined;
-    readonly 'history.redo': undefined;
-    readonly 'paragraph.set': undefined;
-    readonly 'text.insert': { readonly text: string };
-    readonly 'hard-break.insert': undefined;
-    readonly 'block.move.up': undefined;
-    readonly 'block.move.down': undefined;
+    'history.undo': undefined;
+    'history.redo': undefined;
+    'paragraph.set': undefined;
+    'text.insert': { text: string };
+    'hard-break.insert': undefined;
+    'block.move.up': undefined;
+    'block.move.down': undefined;
 };
 /** The id of a command the editor ships. */
 export type CommandId = Extract<keyof ShippedCommands, string>;
@@ -77,30 +77,28 @@ export type SelectionHandle = {
 };
 /** Options for capturing the selection: what it is for and how an edit that crosses it is handled. */
 export type CaptureTargetOptions = {
-    readonly purpose: 'format' | 'insert' | 'replace-text' | 'edit-node';
-    readonly onIntersectingEdit: 'invalidate' | 'map';
+    purpose: 'format' | 'insert' | 'replace-text' | 'edit-node';
+    onIntersectingEdit: 'invalidate' | 'map';
 };
 /** The outcome of capturing the selection: the target, or why it was rejected. */
-export type CaptureResult =
-    | { readonly status: 'captured'; readonly target: SelectionHandle }
-    | { readonly status: 'rejected'; readonly code: 'not-ready' };
+export type CaptureResult = { status: 'captured'; target: SelectionHandle } | { status: 'rejected'; code: 'not-ready' };
 /** Options for running a command: the selection it targets and where focus goes. */
 export type CommandOptions = {
-    readonly target?: SelectionHandle;
-    readonly focus?: 'preserve' | 'editor';
+    target?: SelectionHandle;
+    focus?: 'preserve' | 'editor';
 };
 /** Whether a command can run now and whether it is active, with the reason if it cannot. */
 export type CommandState = {
-    readonly enabled: boolean;
-    readonly active: boolean | 'mixed';
-    readonly disabledReason: string | null;
+    enabled: boolean;
+    active: boolean | 'mixed';
+    disabledReason: string | null;
 };
 /** A minor release may add rejection codes, so handle a code you do not know. */
 export type CommandResult =
-    | { readonly status: 'applied' | 'no-op'; readonly stamp: DocumentStamp; readonly contentChanged: boolean }
+    | { status: 'applied' | 'no-op'; stamp: DocumentStamp; contentChanged: boolean }
     | {
-          readonly status: 'rejected';
-          readonly code:
+          status: 'rejected';
+          code:
               | 'not-ready'
               | 'busy'
               | 'readonly'
@@ -126,10 +124,10 @@ export type DocumentStamp = {
 /** A short description of the current selection: its kind and whether it is collapsed. */
 export type SelectionSummary = {
     /** `gap` is a caret between two blocks where no text can go, such as before a leading image or between two rules. */
-    readonly kind: 'text' | 'node' | 'cells' | 'gap' | 'all' | 'none';
-    readonly collapsed: boolean;
-    readonly blockType: string | null;
-    readonly selectedNodeId: string | null;
+    kind: 'text' | 'node' | 'cells' | 'gap' | 'all' | 'none';
+    collapsed: boolean;
+    blockType: string | null;
+    selectedNodeId: string | null;
 };
 /** A minor release may add origins, so handle an origin you do not know. */
 export type ChangeOrigin =
@@ -145,23 +143,23 @@ export type ChangeOrigin =
     | 'unknown';
 /** A change the editor reports: its stamp, sequence and what caused it. */
 export type DocumentChange = {
-    readonly stamp: DocumentStamp;
-    readonly commitSequence: number;
-    readonly origin: ChangeOrigin;
-    readonly commandId: string | null;
+    stamp: DocumentStamp;
+    commitSequence: number;
+    origin: ChangeOrigin;
+    commandId: string | null;
     /** Serializes the captured immutable document lazily; not a live read. */
-    readonly readDocument: () => RichTextDocument;
+    readDocument: () => RichTextDocument;
 };
 /** A snapshot of the editor for a host: its session, phase and mode, and a way to read the document. */
 export type EditorSummary = {
-    readonly session: SessionToken;
-    readonly phase: 'mounting' | 'ready' | 'transitioning' | 'faulted' | 'disposed';
-    readonly mode: 'editable' | 'readonly';
-    readonly commitSequence: number;
+    session: SessionToken;
+    phase: 'mounting' | 'ready' | 'transitioning' | 'faulted' | 'disposed';
+    mode: 'editable' | 'readonly';
+    commitSequence: number;
     /** The effective-change counter the glossary calls `sequence`. */
-    readonly sequence: number;
-    readonly compositionActive: boolean;
-    readonly selection: SelectionSummary;
+    sequence: number;
+    compositionActive: boolean;
+    selection: SelectionSummary;
 };
 
 /** Opaque, never parsed or compared numerically. `null` at load or base means create-only. */
@@ -176,9 +174,9 @@ export type Snapshot = {
 /** The server's confirmation that a save took, with the stamp and revision it covers. */
 export type SaveAcknowledgment = {
     /** `null` only in the acknowledgment synthesized for a loaded or replaced record that no save has touched. */
-    readonly operationId: string | null;
-    readonly stamp: DocumentStamp;
-    readonly revision: ServerRevision;
+    operationId: string | null;
+    stamp: DocumentStamp;
+    revision: ServerRevision;
 };
 /** Where saving stands: its state and the newest and last acknowledged sequences. */
 export type SaveStatus = {
@@ -191,46 +189,46 @@ export type SaveStatus = {
 };
 /** Options for forcing a commit: why it is asked and whether to wait for or reject an open composition. */
 export type CommitOptions = {
-    readonly reason: 'submit' | 'navigate' | 'manual';
+    reason: 'submit' | 'navigate' | 'manual';
     /** Default `wait`. */
-    readonly composition?: 'wait' | 'reject';
+    composition?: 'wait' | 'reject';
     /** Default `PersistenceOptions.timeoutMs`. */
-    readonly timeoutMs?: number;
+    timeoutMs?: number;
 };
 /** A minor release may add failure codes, so handle a code you do not know. */
 export type CommitResult =
-    | { readonly status: 'acknowledged'; readonly acknowledgment: SaveAcknowledgment }
+    | { status: 'acknowledged'; acknowledgment: SaveAcknowledgment }
     | {
-          readonly status: 'blocked';
-          readonly code: 'unmanaged' | 'composition-active' | 'conflict' | 'forbidden' | 'not-ready';
+          status: 'blocked';
+          code: 'unmanaged' | 'composition-active' | 'conflict' | 'forbidden' | 'not-ready';
       }
     | {
-          readonly status: 'failed';
-          readonly code: 'timeout' | 'transport' | 'disposed' | 'incompatible-writer' | 'invalid';
-          readonly outcome: 'not-sent' | 'unknown' | 'rejected';
+          status: 'failed';
+          code: 'timeout' | 'transport' | 'disposed' | 'incompatible-writer' | 'invalid';
+          outcome: 'not-sent' | 'unknown' | 'rejected';
       };
 /** A document as a host loaded it: its id, server revision and content. */
 export type LoadedDocument = {
-    readonly documentId: string;
-    readonly revision: ServerRevision | null;
-    readonly document: RichTextDocument;
+    documentId: string;
+    revision: ServerRevision | null;
+    document: RichTextDocument;
 };
 /** What every host service call gets: a signal to cancel it and the session that asked. */
 export type ServiceContext = {
-    readonly signal: AbortSignal;
-    readonly session: SessionToken;
+    signal: AbortSignal;
+    session: SessionToken;
 };
 /** The unsaved document the editor hands to the recovery service, with its stamp and revision. */
 export type RecoveryCheckpoint = {
     /** The snapshot's stamp; at a fault, the last published sequence plus one. */
-    readonly stamp: DocumentStamp;
-    readonly acknowledgedRevision: ServerRevision | null;
-    readonly document: RichTextDocument;
+    stamp: DocumentStamp;
+    acknowledgedRevision: ServerRevision | null;
+    document: RichTextDocument;
 };
 /** Created only by a host recovery service after acknowledgment. */
 export type RecoveryReceipt = {
-    readonly stamp: DocumentStamp;
-    readonly receiptId: string;
+    stamp: DocumentStamp;
+    receiptId: string;
 };
 /** The host service that keeps unsaved content safe when saving cannot finish. */
 export type RecoveryService = {
@@ -238,23 +236,23 @@ export type RecoveryService = {
 };
 /** A request to replace the open document with another, naming the stamp it expects and what to do with unsaved edits. */
 export type ReplaceDocumentRequest = {
-    readonly expected: DocumentStamp;
-    readonly next: LoadedDocument;
-    readonly unsaved:
-        | { readonly action: 'reject' }
-        | { readonly action: 'save' }
-        | { readonly action: 'checkpoint'; readonly receipt: RecoveryReceipt }
-        | { readonly action: 'discard'; readonly confirmed: true };
-    readonly selection: 'start' | 'end';
+    expected: DocumentStamp;
+    next: LoadedDocument;
+    unsaved:
+        | { action: 'reject' }
+        | { action: 'save' }
+        | { action: 'checkpoint'; receipt: RecoveryReceipt }
+        | { action: 'discard'; confirmed: true };
+    selection: 'start' | 'end';
     /** Replacement cannot keep history in v1. */
-    readonly history: 'reset';
+    history: 'reset';
 };
 /** A minor release may add failure codes, so handle a code you do not know. */
 export type ReplaceResult =
-    | { readonly status: 'replaced'; readonly session: SessionToken }
+    | { status: 'replaced'; session: SessionToken }
     | {
-          readonly status: 'rejected';
-          readonly code:
+          status: 'rejected';
+          code:
               | 'changed-since-request'
               | 'invalid-document'
               | 'wrong-model'
@@ -279,8 +277,8 @@ export type OperationMetric = {
 
 /** What the chrome of a slot shows of its upload; never a document attribute. */
 export type UploadStatus = {
-    readonly state: 'queued' | 'running' | 'failed' | 'stopped';
+    state: 'queued' | 'running' | 'failed' | 'stopped';
     /** Whole percent once the service reports progress, else `null`. */
-    readonly progress: number | null;
-    readonly name: string;
+    progress: number | null;
+    name: string;
 };

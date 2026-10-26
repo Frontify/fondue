@@ -10,11 +10,11 @@ export const settleResources = { timers: 0 };
 
 export type InputSettling = {
     /** Records composition events and composition ends, with no handler on the view itself. */
-    readonly plugin: Plugin;
+    plugin: Plugin;
     /** Whether a composition runs, or ended and input has not settled yet. */
-    readonly active: () => boolean;
+    active: () => boolean;
     /** Drops a pending settle, as `dispose` does. */
-    readonly cancel: () => void;
+    cancel: () => void;
 };
 
 /**

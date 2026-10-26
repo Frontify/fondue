@@ -32,7 +32,7 @@ export const nearest = (
     state: EditorState,
     type: NodeType,
     nodeId?: string,
-): { readonly node: Node; readonly pos: number } | undefined => {
+): { node: Node; pos: number } | undefined => {
     if (nodeId !== undefined) {
         const pos = positionOf(state.doc, nodeId);
         if (pos === undefined) {

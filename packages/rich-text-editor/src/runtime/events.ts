@@ -14,14 +14,14 @@ import {
 
 /** The events a runtime emits; the handle accepts the other `EditorEventMap` names, which later layers emit. */
 export type RuntimeEvents = {
-    readonly ready: SessionToken;
-    readonly documentChange: DocumentChange;
-    readonly selectionChange: SelectionSummary;
-    readonly saveStatusChange: SaveStatus;
-    readonly diagnostic: Diagnostic;
-    readonly operationMetric: OperationMetric;
-    readonly replaced: SessionToken;
-    readonly disposed: SessionToken;
+    ready: SessionToken;
+    documentChange: DocumentChange;
+    selectionChange: SelectionSummary;
+    saveStatusChange: SaveStatus;
+    diagnostic: Diagnostic;
+    operationMetric: OperationMetric;
+    replaced: SessionToken;
+    disposed: SessionToken;
 };
 export type Listener = (value: never) => void;
 
@@ -30,26 +30,26 @@ export const busResources = { subscriptions: 0, selectors: 0 };
 
 /** A listener that threw, with the event it was called for and the name of the error. */
 type Thrower = {
-    readonly listener: Listener;
-    readonly event: string;
-    readonly name: string;
+    listener: Listener;
+    event: string;
+    name: string;
 };
 
 /** The error's name, never its message, which may hold document text. */
 export const nameOf = (error: unknown) => (error instanceof Error ? error.name : 'unknown');
 
 type Watcher = {
-    readonly read: () => unknown;
-    readonly isEqual: (previous: unknown, next: unknown) => boolean;
-    readonly listener: (value: unknown) => void;
+    read: () => unknown;
+    isEqual: (previous: unknown, next: unknown) => boolean;
+    listener: (value: unknown) => void;
     value: unknown;
 };
 
 export type EventBusOptions = {
     /** Whether the session is disposed, which ends a notification. */
-    readonly isDisposed: () => boolean;
+    isDisposed: () => boolean;
     /** Runs one notification, so the runtime counts it as busy. */
-    readonly around: (work: () => void) => void;
+    around: (work: () => void) => void;
 };
 
 /** A runtime's event listeners and selector stores, where a throwing listener or selector never stops the others. */

@@ -68,7 +68,7 @@ type PrepareArgs = {
     history: Pick<HistoryService, 'group'>;
     limits: ResourceLimits;
     generate: () => string;
-    inputRules: () => false | { readonly exclude: readonly string[] } | undefined;
+    inputRules: () => false | { exclude: readonly string[] } | undefined;
 };
 
 /** The batch half: whether a root is provisional, its preparation and its input rule marks. */
@@ -176,7 +176,7 @@ export const createPrepare = (a: PrepareArgs): Prepare => {
     // IDs a query drew, which the next install hands out first, so `execute` installs what `query` judged.
     const recorded: string[] = [];
     // The batch the last limit check prepared, from the state it read and with the recorded IDs it drew.
-    let checked: { readonly from: EditorState; readonly drawn: number; readonly prepared: Candidate } | undefined;
+    let checked: { from: EditorState; drawn: number; prepared: Candidate } | undefined;
     const installedId = (): string => {
         const id = recorded.shift();
         if (id !== undefined) {

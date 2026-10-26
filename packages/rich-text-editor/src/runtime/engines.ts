@@ -26,8 +26,8 @@ const engineCopyDisagrees = (state: EditorState): boolean => {
 /** Whether the parser or serializer that `prosemirror-view` caches on the schema comes from another copy. */
 const viewCopyDisagrees = (schema: Schema): boolean => {
     const { domParser, domSerializer } = schema.cached as {
-        readonly domParser?: unknown;
-        readonly domSerializer?: unknown;
+        domParser?: unknown;
+        domSerializer?: unknown;
     };
 
     return (

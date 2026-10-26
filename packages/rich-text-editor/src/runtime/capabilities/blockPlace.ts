@@ -6,8 +6,8 @@ import { type EditorState, Selection, TextSelection, type Transaction } from 'pr
 
 /** A range `from`–`to` in one parent that a block replaces; an empty range inserts it there. */
 type BlockSpot = {
-    readonly from: number;
-    readonly to: number;
+    from: number;
+    to: number;
 };
 
 /**
@@ -55,7 +55,7 @@ const takes = (doc: Node, spot: BlockSpot, type: NodeType) => {
 
 // The pinned prosemirror-gapcursor declares `GapCursor.valid` internal, so its types leave it out.
 const gapCursorValid = ($pos: ResolvedPos): boolean =>
-    (GapCursor as unknown as { readonly valid: (at: ResolvedPos) => boolean }).valid($pos);
+    (GapCursor as unknown as { valid: (at: ResolvedPos) => boolean }).valid($pos);
 
 /**
  * Puts `node` at `spot`, adds an empty paragraph after it when it ends up last, and puts the selection after it: a

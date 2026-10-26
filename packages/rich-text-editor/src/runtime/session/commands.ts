@@ -18,7 +18,7 @@ import { type PolicyService } from './policy';
 import { type Store } from './store';
 import { type Attempt, type Candidate, type Prepared, type RejectedCode, type Route } from './types';
 
-type Checked = { readonly payload: unknown } | undefined;
+type Checked = { payload: unknown } | undefined;
 type Base = EditorState | RejectedCode;
 
 /** A plugin-error diagnostic with the failing feature and the error's name, never its message. */
@@ -49,7 +49,7 @@ export type Commands = {
     runOn(command: EngineCommand | undefined, checked: Checked, base: () => Base, route: Route): CommandResult;
     execute(id: string, given?: unknown, options?: unknown): CommandResult;
     refusal(command: EngineCommand, base: EditorState, payload: unknown): RejectedCode | undefined;
-    perform(command: EngineCommand, options?: { readonly target?: SelectionHandle }): CommandResult;
+    perform(command: EngineCommand, options?: { target?: SelectionHandle }): CommandResult;
 };
 
 type Deps = {

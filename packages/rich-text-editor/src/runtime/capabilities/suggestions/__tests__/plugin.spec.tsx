@@ -29,8 +29,8 @@ const gate = vi.hoisted(() => ({
 }));
 
 type EmojiModule = {
-    readonly loadEmoji: (locale: string) => Promise<readonly EmojiEntry[]>;
-    readonly searchEmoji: (entries: readonly EmojiEntry[], query: string, limit: number) => readonly EmojiEntry[];
+    loadEmoji: (locale: string) => Promise<readonly EmojiEntry[]>;
+    searchEmoji: (entries: readonly EmojiEntry[], query: string, limit: number) => readonly EmojiEntry[];
 };
 
 vi.mock('#/features/emoji/data', async (importOriginal) => {

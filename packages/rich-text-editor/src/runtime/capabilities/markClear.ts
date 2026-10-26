@@ -8,7 +8,7 @@ import { markableText } from './markToggle';
 import { type CapabilityImplementation, markTypesOf, selectedTextblocks } from './shared';
 
 /** The selected range, or at a caret the whole textblocks around it. */
-const blockRanges = (state: EditorState): { readonly from: number; readonly to: number }[] => {
+const blockRanges = (state: EditorState): { from: number; to: number }[] => {
     if (!state.selection.empty) {
         return [{ from: state.selection.from, to: state.selection.to }];
     }

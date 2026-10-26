@@ -49,7 +49,7 @@ const optionsOf = (page: SuggestionPage): ReferenceResults => {
 };
 
 /** Dispatches what search `request` answered: its options, or its failure. */
-const answer = (view: EditorView, request: number, answered: { readonly page: SuggestionPage } | undefined) => {
+const answer = (view: EditorView, request: number, answered: { page: SuggestionPage } | undefined) => {
     if (view.isDestroyed) {
         return;
     }

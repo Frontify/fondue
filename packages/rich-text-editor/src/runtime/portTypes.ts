@@ -23,11 +23,11 @@ import {
 // The declarations that the editor port names, kept apart from every engine type so its declaration file reaches none.
 /** What the editor shows of the presentation's columns: their count, whether the surface has room for them, and the break labels. */
 export type ColumnState = {
-    readonly count: number;
-    readonly fits: boolean;
-    readonly label: string;
+    count: number;
+    fits: boolean;
+    label: string;
     /** The name of a break that forces no break. */
-    readonly inactiveLabel: string;
+    inactiveLabel: string;
 };
 
 /** How a wait for input to settle ended. */
@@ -81,72 +81,72 @@ export type UploadRejection = 'type' | 'size' | 'pixels' | 'unreadable' | 'unsaf
  * the uploads it started, then once per upload's later start, end, failure or cancel.
  */
 export type UploadEvent =
-    | { readonly kind: 'started' | 'failed' | 'cancelled'; readonly name: string }
+    | { kind: 'started' | 'failed' | 'cancelled'; name: string }
     | {
-          readonly kind: 'completed';
-          readonly name: string;
-          readonly altMissing: boolean;
+          kind: 'completed';
+          name: string;
+          altMissing: boolean;
           /** Whether a replacement asks the author to review the alternative text it kept. */
-          readonly review: boolean;
+          review: boolean;
       }
     | {
-          readonly kind: 'gesture';
-          readonly refused: readonly { readonly name: string; readonly reason: UploadRejection }[];
-          readonly started: readonly string[];
+          kind: 'gesture';
+          refused: readonly { name: string; reason: UploadRejection }[];
+          started: readonly string[];
       };
 
 /** Where chosen, pasted or dropped files go: new slots at the selection or a range, or the image `nodeId`. */
 export type UploadPlace =
     | {
-          readonly kind: 'insert';
-          readonly origin: 'command' | 'paste' | 'drop';
-          readonly range?: { readonly from: number; readonly to: number };
+          kind: 'insert';
+          origin: 'command' | 'paste' | 'drop';
+          range?: { from: number; to: number };
       }
-    | { readonly kind: 'replace'; readonly nodeId: string };
+    | { kind: 'replace'; nodeId: string };
 
 /** One option of a suggestion list. */
 export type SuggestionItem = {
     /** Unique within one result list. */
-    readonly key: string;
-    readonly label: string;
+    key: string;
+    label: string;
     /** What the option shows before its label, such as the emoji itself. */
-    readonly glyph: string | null;
+    glyph: string | null;
     /** What the list's command receives when the option is accepted. */
-    readonly payload: JsonObject;
+    payload: JsonObject;
     /** What the option shows after its label, such as a mention's resource type. */
-    readonly detail?: string;
+    detail?: string;
     /** An image that passed `checkHref`, such as an avatar. */
-    readonly imageUrl?: string;
+    imageUrl?: string;
     /** The icon an option shows without an image. */
-    readonly kind?: 'user' | 'group' | 'everyone';
+    kind?: 'user' | 'group' | 'everyone';
     /** The heading of the group the option sits under. */
-    readonly group?: string;
+    group?: string;
     /** An option that asks again instead of running the command: the next page, or the failed page once more. */
-    readonly action?: 'more' | 'retry';
+    action?: 'more' | 'retry';
     /** The cursor of the page a `more` option asks for. */
-    readonly cursor?: string;
+    cursor?: string;
 };
 
 /** The open suggestion list: what was typed, the range an accepted option replaces, and the options so far. */
 export type ActiveSuggestion = {
     /** The feature that declares the list. */
-    readonly featureId: string;
-    readonly trigger: string;
+    featureId: string;
+    trigger: string;
     /** The list's accessible name: a package string key, or translations by language tag. */
-    readonly name: string | Readonly<Record<string, string>>;
-    readonly command: string;
+    name: string | Readonly<Record<string, string>>;
+    command: string;
     /** The trigger's start. */
-    readonly from: number;
+    from: number;
     /** The caret, at the end of the query. */
-    readonly to: number;
-    readonly query: string;
+    to: number;
+    query: string;
     /** `loading` keeps the previous query's options shown until the new ones arrive. */
-    readonly status: 'loading' | 'ready' | 'failed';
-    readonly items: readonly SuggestionItem[];
+    status: 'loading' | 'ready' | 'failed';
+    items: readonly SuggestionItem[];
     /** The active option, which Enter and Tab accept. */
-    readonly index: number;
+    index: number;
     /** The request the current options answer, so a late result for an older query is dropped. */
-    readonly request: number;
+    request: number;
     /** The cursor of the page the request asks for, `null` for a query's first page. */
-    readonly page: string | null;
+    page: string | null;
 };

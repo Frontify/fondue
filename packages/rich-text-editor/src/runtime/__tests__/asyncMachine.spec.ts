@@ -99,7 +99,7 @@ const IN: Record<string, AsyncMachine> = {
 const reply = () => undefined;
 
 /** Every event type, with the facts it is fed under. */
-const EVENTS: Record<string, { readonly event: AsyncEventInput; readonly facts?: Partial<AsyncFacts> }> = {
+const EVENTS: Record<string, { event: AsyncEventInput; facts?: Partial<AsyncFacts> }> = {
     'start with a target': { event: { type: 'start', request: requestOf('k', { target: HANDLE }), reply } },
     'start to capture': { event: { type: 'start', request: REQUEST_A, reply } },
     'start to deliver': { event: { type: 'start', request: requestOf('k', { deliver: () => undefined }), reply } },

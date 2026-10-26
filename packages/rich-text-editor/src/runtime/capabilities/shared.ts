@@ -35,8 +35,8 @@ export const tristate = (matching: number, total: number): boolean | 'mixed' => 
 };
 
 /** The textblocks the selection touches, with their positions. */
-export const selectedTextblocks = (state: EditorState): { readonly node: Node; readonly pos: number }[] => {
-    const blocks: { readonly node: Node; readonly pos: number }[] = [];
+export const selectedTextblocks = (state: EditorState): { node: Node; pos: number }[] => {
+    const blocks: { node: Node; pos: number }[] = [];
     for (const { $from, $to } of state.selection.ranges) {
         state.doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
             if (node.isTextblock) {

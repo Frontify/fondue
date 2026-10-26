@@ -24,8 +24,8 @@ import { documentApi } from './document';
 
 /** The session a plugin command runs in, as the runtime hands it over in `CommandContext.session`. */
 export type CommandSession = {
-    readonly runtime: EditorRuntime;
-    readonly host: unknown;
+    runtime: EditorRuntime;
+    host: unknown;
 };
 
 const isCommandSession = (value: unknown): value is CommandSession => isRecord(value) && 'runtime' in value;
@@ -236,12 +236,12 @@ const commandDocumentApi = (
 
 /** A plugin command, written over the API it is handed, which runs only through that API. */
 export type PluginCommandSpec<A, P = never> = {
-    readonly payload?: PayloadDeclaration;
-    readonly run: (api: A, payload: P) => boolean;
-    readonly enabled?: (api: A, payload: P) => boolean;
-    readonly active?: (api: A, payload: P) => boolean | 'mixed';
-    readonly refuses?: (policy: AuthoringPolicy, payload: P) => boolean;
-    readonly readOnly?: boolean;
+    payload?: PayloadDeclaration;
+    run: (api: A, payload: P) => boolean;
+    enabled?: (api: A, payload: P) => boolean;
+    active?: (api: A, payload: P) => boolean | 'mixed';
+    refuses?: (policy: AuthoringPolicy, payload: P) => boolean;
+    readOnly?: boolean;
 };
 
 /**

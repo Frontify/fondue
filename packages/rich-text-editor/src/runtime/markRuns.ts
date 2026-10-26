@@ -7,10 +7,10 @@ import { OBJECT_REPLACEMENT } from '#/model/internal';
 
 /** A whole run of one mark: where it starts and ends, its text and its attributes. */
 export type MarkRun = {
-    readonly from: number;
-    readonly to: number;
-    readonly text: string;
-    readonly attrs: Readonly<Record<string, unknown>>;
+    from: number;
+    to: number;
+    text: string;
+    attrs: Readonly<Record<string, unknown>>;
 };
 
 /** The run around child `index` of `$pos`'s parent whose text all carries `mark`. */

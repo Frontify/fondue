@@ -24,13 +24,13 @@ const isTab = (event: KeyboardEvent): boolean =>
 /** How the surface's Enter, Shift+Enter and Mod+Enter act before the structural keys. */
 export type EnterKeys = {
     /** The Inline profile: Shift+Enter and Mod+Enter act as Enter, and no key adds a block or a line. */
-    readonly singleLine: boolean;
+    singleLine: boolean;
     /** The Comment profile: Mod+Enter submits. */
-    readonly modSubmits: boolean;
+    modSubmits: boolean;
     /** Whether the host listens for submits. */
-    readonly submits: () => boolean;
+    submits: () => boolean;
     /** Submits the committed snapshot, or announces why it is not valid. */
-    readonly submit: () => void;
+    submit: () => void;
 };
 
 /** Which Enter a keydown is, with no Alt and no modifier but Shift or the platform's Mod. */
@@ -198,7 +198,7 @@ export const createKeyGuard = (
  * The leaf right before a caret at the start of a top-level block, or before a gap cursor between top-level blocks,
  * when only the document takes it, as a column break, which sits only between top-level blocks.
  */
-export const breakBefore = (state: EditorState): { readonly from: number; readonly to: number } | undefined => {
+export const breakBefore = (state: EditorState): { from: number; to: number } | undefined => {
     const { selection } = state;
     const { $from } = selection;
     if (!selection.empty) {

@@ -11,17 +11,17 @@ import { positionOf } from '../../positions';
 export const SLOT_START_META = 'rte.upload-slot';
 
 export type SlotStart =
-    | { readonly kind: 'insert'; readonly nodeIds: readonly string[] }
-    | { readonly kind: 'replace'; readonly nodeId: string; readonly previous: JsonObject };
+    | { kind: 'insert'; nodeIds: readonly string[] }
+    | { kind: 'replace'; nodeId: string; previous: JsonObject };
 
 /** What the session's uploads answer about a slot, read when a command runs. */
 export type SlotUploads = {
     /** Whether the slot's upload runs or waits, which Cancel ends. */
-    readonly active: (nodeId: string) => boolean;
+    active: (nodeId: string) => boolean;
     /** Whether the slot is not done: its upload runs, waits, failed or stopped, and a retry may start it again. */
-    readonly kept: (nodeId: string) => boolean;
+    kept: (nodeId: string) => boolean;
     /** Whether the slot keeps the file of an upload that failed or stopped, which Retry sends again. */
-    readonly retryable: (nodeId: string) => boolean;
+    retryable: (nodeId: string) => boolean;
 };
 
 /**
@@ -30,12 +30,12 @@ export type SlotUploads = {
  * replaced.
  */
 type SlotEntry =
-    | { readonly kind: 'insert'; readonly inverse: readonly Step[] | undefined; readonly mapping: Mapping }
-    | { readonly kind: 'replace'; readonly previous: JsonObject };
+    | { kind: 'insert'; inverse: readonly Step[] | undefined; mapping: Mapping }
+    | { kind: 'replace'; previous: JsonObject };
 
 type SlotState = {
-    readonly uploads: SlotUploads;
-    readonly entries: ReadonlyMap<string, SlotEntry>;
+    uploads: SlotUploads;
+    entries: ReadonlyMap<string, SlotEntry>;
 };
 
 const key = new PluginKey<SlotState>('rte.upload-slots');

@@ -23,10 +23,7 @@ export type { NodeActions, NodeTarget };
 
 export type Actions = {
     nodeActions(target: NodeTarget): NodeActions;
-    placeAsset(
-        asset: unknown,
-        place: { readonly target: SelectionHandle } | { readonly nodeId: string },
-    ): CommandResult;
+    placeAsset(asset: unknown, place: { target: SelectionHandle } | { nodeId: string }): CommandResult;
     acceptSuggestion: SuggestionHost['accept'];
     searchSuggestions: SuggestionHost['search'];
 };

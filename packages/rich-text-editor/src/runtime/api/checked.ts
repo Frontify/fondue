@@ -45,9 +45,9 @@ export const urlRefused = (
     );
 
 type AttributeOwner = {
-    readonly attrs: Readonly<Record<string, AttributeDeclaration>>;
-    readonly exactlyOne: readonly string[] | undefined;
-    readonly featureId: string;
+    attrs: Readonly<Record<string, AttributeDeclaration>>;
+    exactlyOne: readonly string[] | undefined;
+    featureId: string;
 };
 
 /**

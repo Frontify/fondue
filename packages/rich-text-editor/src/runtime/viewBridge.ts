@@ -187,7 +187,7 @@ export const firstBlockId = (surface: HTMLElement, nodeId: string, domId: () => 
 };
 
 /** The first block that carries `node`'s label id: a block container with a `nodeId`, not a textblock. */
-export const labelsFirstBlock = (node: ViewNode): { readonly nodeId: string; readonly block: ViewNode } | undefined => {
+export const labelsFirstBlock = (node: ViewNode): { nodeId: string; block: ViewNode } | undefined => {
     const block = node.firstChild;
     const { nodeId } = node.attrs;
     if (node.isAtom || node.isTextblock || block === null || !block.isBlock || typeof nodeId !== 'string') {

@@ -119,7 +119,7 @@ const arrive = (d: Draft, operation: AsyncOperation, result: unknown) => {
     d.fx.push({ type: 'deliver', operation, result });
 };
 
-type Of<T extends AsyncEvent['type']> = Extract<AsyncEvent, { readonly type: T }>;
+type Of<T extends AsyncEvent['type']> = Extract<AsyncEvent, { type: T }>;
 
 /** The transition table: what each event does to a machine in any state. */
 const TRANSITIONS: { readonly [T in AsyncEvent['type']]: (d: Draft, event: Of<T>) => void } = {

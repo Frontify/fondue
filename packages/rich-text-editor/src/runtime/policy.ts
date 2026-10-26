@@ -48,25 +48,25 @@ export const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy
 
 /** One inline child of a run: a text node or an atom. */
 type Piece = {
-    readonly from: number;
-    readonly to: number;
+    from: number;
+    to: number;
 };
 type Run = {
-    readonly mark: Mark;
-    readonly pieces: Piece[];
+    mark: Mark;
+    pieces: Piece[];
     text: string;
 };
 /** How a batch maps positions of the document before it to the one after it. */
 type BatchMapping = Transaction['mapping'];
 /** A feature's occurrences in part of a document: its nodes, and its marks as runs. */
 type Occurrences = {
-    readonly nodes: Map<string, Node[]>;
-    readonly runs: Map<string, Run[]>;
+    nodes: Map<string, Node[]>;
+    runs: Map<string, Run[]>;
 };
 type Change = {
-    readonly create: boolean;
-    readonly edit: boolean;
-    readonly remove: boolean;
+    create: boolean;
+    edit: boolean;
+    remove: boolean;
 };
 
 /** Each maximal stretch of a textblock's inline content that carries one mark, with its pieces and text. */
@@ -302,7 +302,7 @@ export const createPolicyCheck = (model: ContentModel) => {
         const start = before.content.findDiffStart(after.content);
         if (start !== null) {
             // Two contents that differ from the start differ from the end too.
-            const end = before.content.findDiffEnd(after.content) as { readonly a: number; readonly b: number };
+            const end = before.content.findDiffEnd(after.content) as { a: number; b: number };
             // An ambiguous diff, such as one more `a` in `aa`, can end before it starts.
             const overlap = Math.max(0, start - Math.min(end.a, end.b));
             previous = collect(before, start, end.a + overlap);

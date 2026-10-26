@@ -38,7 +38,7 @@ const setup = ({
     breaks = false,
     take = undefined as ((root: Transaction) => Prepared) | undefined,
     provisional = false,
-    inputRules = (() => undefined) as () => false | { readonly exclude: readonly string[] } | undefined,
+    inputRules = (() => undefined) as () => false | { exclude: readonly string[] } | undefined,
     onUpdate = undefined as ((next: EditorState, commit: (root: Transaction) => void) => void) | undefined,
 } = {}) => {
     const store = createStore(make());

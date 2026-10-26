@@ -21,11 +21,11 @@ import {
 import { checkedAttrs } from './checked';
 
 export type Positions = {
-    readonly from: number;
-    readonly to: number;
+    from: number;
+    to: number;
 };
 
-export const RANGES = new WeakMap<object, Positions & { readonly doc: Node }>();
+export const RANGES = new WeakMap<object, Positions & { doc: Node }>();
 
 /** The range from `from` to `to` in `doc`. */
 export const rangeOf = (doc: Node, from: number, to: number): EditorRange => {
@@ -51,10 +51,10 @@ export const positionsIn = (range: EditorRange, doc: Node): Positions | undefine
 
 /** Where the document API reads and writes: a running command's state, or the live session. */
 export type ApiSource = {
-    readonly model: ContentModel;
-    readonly schema: Schema;
-    readonly lookup: CommandLookup;
-    readonly limits: ResourceLimits;
+    model: ContentModel;
+    schema: Schema;
+    lookup: CommandLookup;
+    limits: ResourceLimits;
     state(): EditorState;
     /** The positions of `range` in the current state, or `undefined` for a range it cannot map from. */
     resolve(range: EditorRange): Positions | undefined;

@@ -4,19 +4,19 @@ import { type ContentIssue } from '#/model';
 
 /** An issue of the last content checks run, as the issues panel lists it. */
 export type CheckedIssue = {
-    readonly issue: ContentIssue;
+    issue: ContentIssue;
     /** Stays the same from run to run while the rule is reported at the same place, unlike `issue.id`. */
-    readonly key: string;
+    key: string;
     /** The text it names in the current document, else an image's alternative text or label; empty when it names none. */
-    readonly text: string;
+    text: string;
     /** The author dismissed it for this session, until what it names changes. */
-    readonly dismissed: boolean;
+    dismissed: boolean;
 };
 
 /** The issues of the last content checks run, in document order, and how many times the checks ran in this session. */
 export type ContentChecksResult = {
-    readonly issues: readonly CheckedIssue[];
-    readonly runs: number;
+    issues: readonly CheckedIssue[];
+    runs: number;
 };
 
 /** The session's content checks, which the issues panel reads and acts through. */

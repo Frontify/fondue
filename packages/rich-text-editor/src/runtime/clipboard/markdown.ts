@@ -59,7 +59,7 @@ const isMarkdown = (loaded: MarkdownReader, text: string, model: ContentModel) =
 export const markdownFragment = (
     schema: Schema,
     text: string,
-    { model, limits }: { readonly model: ContentModel; readonly limits: ResourceLimits },
+    { model, limits }: { model: ContentModel; limits: ResourceLimits },
 ): Fragment | undefined => {
     const loaded = reader;
     if (loaded === undefined || !isMarkdown(loaded, text, model)) {

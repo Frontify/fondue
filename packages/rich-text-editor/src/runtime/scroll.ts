@@ -4,8 +4,8 @@ import { NodeSelection, type Selection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 type Band = {
-    readonly top: number;
-    readonly bottom: number;
+    top: number;
+    bottom: number;
 };
 
 // ProseMirror's own default margin.
@@ -72,7 +72,7 @@ const scrollBandIntoView = (view: EditorView, band: Band, from: Element) => {
 
 /** The scroll offsets of `from` and each ancestor now, put back by the returned function. */
 export const keepScroll = (from: Element): (() => void) => {
-    const kept: { readonly element: Element; readonly top: number; readonly left: number }[] = [];
+    const kept: { element: Element; top: number; left: number }[] = [];
     for (let parent: Element | null = from; parent !== null; parent = parent.parentElement) {
         kept.push({ element: parent, top: parent.scrollTop, left: parent.scrollLeft });
     }

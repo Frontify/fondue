@@ -14,7 +14,7 @@ const holdsItems = (list: NodeType, item: NodeType) =>
     list.isInGroup('block') && !item.isInGroup('block') && list.contentMatch.defaultType === item;
 
 /** The innermost list around `$pos`, at the selection's depth, or `undefined` outside every list. */
-export const listAround = ($pos: ResolvedPos): { readonly list: Node; readonly depth: number } | undefined => {
+export const listAround = ($pos: ResolvedPos): { list: Node; depth: number } | undefined => {
     for (let depth = $pos.depth - 1; depth >= 0; depth -= 1) {
         const list = $pos.node(depth);
         if (holdsItems(list.type, $pos.node(depth + 1).type)) {

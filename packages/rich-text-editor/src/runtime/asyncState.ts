@@ -7,68 +7,68 @@ type Pool = NonNullable<AsyncRequest['pool']>;
 
 /** An operation waiting for room in its pool, with the request that starts it. */
 export type Entry = {
-    readonly operation: AsyncOperation;
-    readonly request: AsyncRequest;
+    operation: AsyncOperation;
+    request: AsyncRequest;
 };
 
 /** A result that waits for input to settle. */
 export type Held = {
-    readonly operation: AsyncOperation;
-    readonly result: unknown;
+    operation: AsyncOperation;
+    result: unknown;
 };
 
 /** What the coordinator remembers between events. */
 export type AsyncMachine = {
-    readonly operations: ReadonlyMap<string, AsyncOperation>;
+    operations: ReadonlyMap<string, AsyncOperation>;
     /** The request sequence of each interaction key. */
-    readonly requests: ReadonlyMap<string, number>;
-    readonly held: readonly Held[];
+    requests: ReadonlyMap<string, number>;
+    held: readonly Held[];
     /** Operations whose target the coordinator captured, and so releases once they end. */
-    readonly captured: ReadonlySet<AsyncOperation>;
+    captured: ReadonlySet<AsyncOperation>;
     /** The pooled operations whose service call runs, and those that wait for room, by pool name. */
-    readonly running: ReadonlyMap<string, ReadonlySet<AsyncOperation>>;
-    readonly waiting: ReadonlyMap<string, readonly Entry[]>;
-    readonly pools: ReadonlyMap<AsyncOperation, Pool>;
+    running: ReadonlyMap<string, ReadonlySet<AsyncOperation>>;
+    waiting: ReadonlyMap<string, readonly Entry[]>;
+    pools: ReadonlyMap<AsyncOperation, Pool>;
 };
 
 /** What the transport observed when it fed the event. */
 export type AsyncFacts = {
-    readonly disposed: boolean;
-    readonly faulted: boolean;
-    readonly holding: boolean;
-    readonly session: SessionToken;
+    disposed: boolean;
+    faulted: boolean;
+    holding: boolean;
+    session: SessionToken;
     /** An abort is running, so a pool starts no waiting operation that the same abort may end next. */
-    readonly aborting: boolean;
+    aborting: boolean;
 };
 
-export type AsyncEvent = { readonly facts: AsyncFacts } & (
-    | { readonly type: 'start'; readonly request: AsyncRequest; readonly reply: (operation: AsyncOperation) => void }
+export type AsyncEvent = { facts: AsyncFacts } & (
+    | { type: 'start'; request: AsyncRequest; reply: (operation: AsyncOperation) => void }
     | {
-          readonly type: 'built';
-          readonly operation: AsyncOperation;
-          readonly request: AsyncRequest;
-          readonly owned: boolean;
+          type: 'built';
+          operation: AsyncOperation;
+          request: AsyncRequest;
+          owned: boolean;
       }
     | {
-          readonly type: 'admit';
-          readonly operation: AsyncOperation;
-          readonly request: AsyncRequest;
-          readonly owned: boolean;
+          type: 'admit';
+          operation: AsyncOperation;
+          request: AsyncRequest;
+          owned: boolean;
       }
-    | { readonly type: 'abortWhere'; readonly aborts: (operation: AsyncOperation) => boolean }
-    | { readonly type: 'dispose' }
-    | { readonly type: 'resume' }
-    | { readonly type: 'pump'; readonly name: string }
-    | { readonly type: 'arrive'; readonly operation: AsyncOperation; readonly result: unknown }
-    | { readonly type: 'delivered'; readonly operation: AsyncOperation; readonly code: string | undefined }
+    | { type: 'abortWhere'; aborts: (operation: AsyncOperation) => boolean }
+    | { type: 'dispose' }
+    | { type: 'resume' }
+    | { type: 'pump'; name: string }
+    | { type: 'arrive'; operation: AsyncOperation; result: unknown }
+    | { type: 'delivered'; operation: AsyncOperation; code: string | undefined }
     | {
-          readonly type: 'rejected';
-          readonly operation: AsyncOperation;
-          readonly request: AsyncRequest;
-          readonly error: unknown;
-          readonly aborted: boolean;
+          type: 'rejected';
+          operation: AsyncOperation;
+          request: AsyncRequest;
+          error: unknown;
+          aborted: boolean;
       }
-    | { readonly type: 'settle' }
+    | { type: 'settle' }
 );
 
 type Distribute<E> = E extends unknown ? Omit<E, 'facts'> : never;
@@ -77,38 +77,38 @@ export type AsyncEventInput = Distribute<AsyncEvent>;
 
 export type AsyncEffect =
     | {
-          readonly type: 'build';
-          readonly request: AsyncRequest;
-          readonly reply: (operation: AsyncOperation) => void;
-          readonly target: SelectionHandle | null;
-          readonly capture: boolean;
-          readonly sequence: number;
+          type: 'build';
+          request: AsyncRequest;
+          reply: (operation: AsyncOperation) => void;
+          target: SelectionHandle | null;
+          capture: boolean;
+          sequence: number;
       }
-    | { readonly type: 'abort'; readonly operation: AsyncOperation }
+    | { type: 'abort'; operation: AsyncOperation }
     | {
-          readonly type: 'supersede';
-          readonly operation: AsyncOperation;
-          readonly request: AsyncRequest;
-          readonly owned: boolean;
+          type: 'supersede';
+          operation: AsyncOperation;
+          request: AsyncRequest;
+          owned: boolean;
       }
-    | { readonly type: 'register'; readonly operation: AsyncOperation }
-    | { readonly type: 'unregister'; readonly operation: AsyncOperation }
-    | { readonly type: 'release'; readonly target: SelectionHandle }
-    | { readonly type: 'pump'; readonly name: string }
-    | { readonly type: 'call'; readonly operation: AsyncOperation; readonly request: AsyncRequest }
-    | { readonly type: 'deliver'; readonly operation: AsyncOperation; readonly result: unknown }
-    | { readonly type: 'replay'; readonly operation: AsyncOperation; readonly result: unknown }
-    | { readonly type: 'fail'; readonly request: AsyncRequest; readonly error: unknown }
-    | { readonly type: 'discard'; readonly reason: string };
+    | { type: 'register'; operation: AsyncOperation }
+    | { type: 'unregister'; operation: AsyncOperation }
+    | { type: 'release'; target: SelectionHandle }
+    | { type: 'pump'; name: string }
+    | { type: 'call'; operation: AsyncOperation; request: AsyncRequest }
+    | { type: 'deliver'; operation: AsyncOperation; result: unknown }
+    | { type: 'replay'; operation: AsyncOperation; result: unknown }
+    | { type: 'fail'; request: AsyncRequest; error: unknown }
+    | { type: 'discard'; reason: string };
 
 export type AsyncStep = {
-    readonly state: AsyncMachine;
-    readonly effects: readonly AsyncEffect[];
+    state: AsyncMachine;
+    effects: readonly AsyncEffect[];
 };
 
 /** A copy of the machine whose collections a handler changes, and the effects it appends, so `next` never changes its input. */
 export type Draft = {
-    readonly m: {
+    m: {
         operations: Map<string, AsyncOperation>;
         requests: Map<string, number>;
         held: Held[];
@@ -117,8 +117,8 @@ export type Draft = {
         waiting: Map<string, Entry[]>;
         pools: Map<AsyncOperation, Pool>;
     };
-    readonly fx: AsyncEffect[];
-    readonly facts: AsyncFacts;
+    fx: AsyncEffect[];
+    facts: AsyncFacts;
 };
 
 export const initial = (): AsyncMachine => ({

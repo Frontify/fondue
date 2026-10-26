@@ -9,23 +9,23 @@ import { type CommandOutcome } from '../documentApi';
 import { pluginCommand, type PluginCommandSpec } from '../editorApi';
 import { type CommandArgs, type CommandOptions, type CommandResult } from '../types';
 
-type Rejected<T extends { readonly status: string }> = Extract<T, { readonly status: 'rejected' }>;
+type Rejected<T extends { status: string }> = Extract<T, { status: 'rejected' }>;
 
 describe('the payload type of a plugin command', () => {
     it('reaches the run, enabled, active and refuses callbacks of the spec', () => {
-        type Spec = PluginCommandSpec<EditorApi, { readonly text: string }>;
+        type Spec = PluginCommandSpec<EditorApi, { text: string }>;
 
-        expectTypeOf<Parameters<Spec['run']>[1]>().toEqualTypeOf<{ readonly text: string }>();
-        expectTypeOf<Parameters<NonNullable<Spec['enabled']>>[1]>().toEqualTypeOf<{ readonly text: string }>();
-        expectTypeOf<Parameters<NonNullable<Spec['active']>>[1]>().toEqualTypeOf<{ readonly text: string }>();
-        expectTypeOf<Parameters<NonNullable<Spec['refuses']>>[1]>().toEqualTypeOf<{ readonly text: string }>();
+        expectTypeOf<Parameters<Spec['run']>[1]>().toEqualTypeOf<{ text: string }>();
+        expectTypeOf<Parameters<NonNullable<Spec['enabled']>>[1]>().toEqualTypeOf<{ text: string }>();
+        expectTypeOf<Parameters<NonNullable<Spec['active']>>[1]>().toEqualTypeOf<{ text: string }>();
+        expectTypeOf<Parameters<NonNullable<Spec['refuses']>>[1]>().toEqualTypeOf<{ text: string }>();
         expectTypeOf<Parameters<PluginCommandSpec<EditorApi>['run']>[1]>().toBeNever();
     });
 
     it('is the one pluginCommand takes from its spec', () => {
-        expectTypeOf(pluginCommand<EditorApi, { readonly text: string }>)
+        expectTypeOf(pluginCommand<EditorApi, { text: string }>)
             .parameter(0)
-            .toEqualTypeOf<PluginCommandSpec<EditorApi, { readonly text: string }>>();
+            .toEqualTypeOf<PluginCommandSpec<EditorApi, { text: string }>>();
         expect(typeof pluginCommand).toBe('function');
     });
 
@@ -34,15 +34,15 @@ describe('the payload type of a plugin command', () => {
             commands: {
                 'fixture.say': {
                     payload: { fields: { text: { type: 'string' } } },
-                    run: (_api: EditorControlApi, payload: { readonly text: string }) => payload.text !== '',
+                    run: (_api: EditorControlApi, payload: { text: string }) => payload.text !== '',
                 },
             },
         });
         type Commands = CommandsOfPart<typeof part>;
 
-        expectTypeOf<Commands['fixture.say']>().toEqualTypeOf<{ readonly text: string }>();
+        expectTypeOf<Commands['fixture.say']>().toEqualTypeOf<{ text: string }>();
         expectTypeOf<CommandArgs<Commands, 'fixture.say'>>().toEqualTypeOf<
-            [payload: { readonly text: string }, options?: CommandOptions]
+            [payload: { text: string }, options?: CommandOptions]
         >();
     });
 });

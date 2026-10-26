@@ -29,7 +29,7 @@ const setup = ({
     provisional = false,
     refuse = undefined as 'policy' | 'limit' | undefined,
     maxDocumentNodes = 100,
-    rules = undefined as false | { readonly exclude: readonly string[] } | undefined,
+    rules = undefined as false | { exclude: readonly string[] } | undefined,
     features = {} as Record<string, { create: boolean }>,
 } = {}) => {
     const store = createStore(make(plugins));

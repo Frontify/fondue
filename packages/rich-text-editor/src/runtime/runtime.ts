@@ -52,23 +52,23 @@ import {
 export type { InputOutcome, NodeActions, NodeTarget, RuntimeHandle };
 
 export type EditorRuntime = {
-    readonly handle: RuntimeHandle;
+    handle: RuntimeHandle;
     /** The compiled definition the session runs. */
-    readonly definition: CompiledDefinition;
+    definition: CompiledDefinition;
     /** The `id` of the session's suggestion list, which the surface's `aria-controls` names while the list shows options. */
-    readonly suggestionListId: string;
+    suggestionListId: string;
     /** A DOM `id` part unique to this session and call, drawn from its `generateId`, for the chrome the views add. */
-    readonly nextDomId: () => string;
+    nextDomId: () => string;
     /** The view on the attached surface, for the `src/testing` helpers. */
-    readonly view: EditorView | undefined;
+    view: EditorView | undefined;
     /** The host roots whose focus and pointer moves stay inside the editor. */
-    readonly interactionRoots: ReadonlySet<HTMLElement>;
+    interactionRoots: ReadonlySet<HTMLElement>;
     /** The session's current state, which stays readable after `dispose`, for tests. */
-    readonly state: EditorState;
+    state: EditorState;
     /** The authoring policy that the next commit is checked against. */
-    readonly policy: AuthoringPolicy;
+    policy: AuthoringPolicy;
     /** The session's resource limits. */
-    readonly limits: ResourceLimits;
+    limits: ResourceLimits;
     /**
      * The limit of the final check that the batch of `root` exceeds, its new `nodeId`s drawn as a query draws them, which a
      * paste reports; a batch within every limit is the one that dispatching `root` next installs. With `followUp`, a plugin
@@ -76,7 +76,7 @@ export type EditorRuntime = {
      */
     exceededLimit(root: Transaction, followUp?: boolean): ExceededLimit | undefined;
     /** The node views the session's views take, by node name. */
-    readonly nodeViews: Readonly<Record<string, NodeViewConstructor>>;
+    nodeViews: Readonly<Record<string, NodeViewConstructor>>;
     /** Shows the document in `element`, which becomes the editable surface, drawn with `props` beside the runtime's own. */
     attach(element: HTMLElement, props?: Partial<DirectEditorProps>): void;
     /** Destroys the view synchronously; the session and its state stay. */
@@ -86,19 +86,15 @@ export type EditorRuntime = {
      * Selects the text between two positions, or the node at one, as the `src/testing` helpers name it.
      * With `scroll`, the view scrolls that selection into view, wherever focus is.
      */
-    select(
-        target:
-            | { readonly anchor: number; readonly head: number; readonly scroll?: boolean }
-            | { readonly node: number; readonly scroll?: boolean },
-    ): void;
+    select(target: { anchor: number; head: number; scroll?: boolean } | { node: number; scroll?: boolean }): void;
     /** Captures `range` as a target, as `captureTarget` captures the selection, such as a whole mark run at a caret in it. */
-    captureRange(range: { readonly from: number; readonly to: number }, options: CaptureTargetOptions): CaptureResult;
+    captureRange(range: { from: number; to: number }, options: CaptureTargetOptions): CaptureResult;
     /** Why the session refuses `command` with `payload` on `state` before it runs, as `execute` checks it. */
     refusal(command: EngineCommand, state: EditorState, payload: unknown): RejectedCode | undefined;
     /** Why the policy or the limits refuse the change of `transaction` from `before`, as a commit's final check would. */
     writeRefusal(before: Node, transaction: Transaction): 'policy' | 'limit' | undefined;
     /** Runs a command that no feature installs, such as one edit of a plugin's UI, as `execute` runs one: one undo step. */
-    perform(command: EngineCommand, options?: { readonly target?: SelectionHandle }): CommandResult;
+    perform(command: EngineCommand, options?: { target?: SelectionHandle }): CommandResult;
     /**
      * A selector store: `listener` gets each new value of `read` after a commit or a policy update, unless `isEqual`
      * holds between it and the last value.
@@ -134,51 +130,51 @@ export type EditorRuntime = {
 };
 
 export type EditorRuntimeOptions = {
-    readonly definition: CompiledDefinition;
-    readonly documentId: string;
+    definition: CompiledDefinition;
+    documentId: string;
     /** The decoded island tree the session's document starts from. */
-    readonly tree: TreeNode;
+    tree: TreeNode;
     /** The stored document's capabilities, kept while islands keep their content. */
-    readonly capabilities: readonly CapabilityRef[];
+    capabilities: readonly CapabilityRef[];
     /** For the session id and the `nodeId`s the runtime creates; default `randomId`. */
-    readonly generateId?: () => string;
-    readonly mode: Mode;
-    readonly policy: AuthoringPolicy;
-    readonly limits: ResourceLimits;
+    generateId?: () => string;
+    mode: Mode;
+    policy: AuthoringPolicy;
+    limits: ResourceLimits;
     /** Builds the bridge's node views by node name for this runtime, which only passes them to the view. */
-    readonly nodeViews?: (runtime: EditorRuntime) => Readonly<Record<string, NodeViewConstructor>>;
+    nodeViews?: (runtime: EditorRuntime) => Readonly<Record<string, NodeViewConstructor>>;
     /** The mark views that give styled and coloured marks their presentation, built once per session. */
-    readonly markViews?: (runtime: EditorRuntime) => Readonly<Record<string, MarkViewConstructor>>;
+    markViews?: (runtime: EditorRuntime) => Readonly<Record<string, MarkViewConstructor>>;
     /** Whether the editor's React tree renders or runs an effect now, which a development build passes. */
-    readonly inRender?: () => boolean;
+    inRender?: () => boolean;
     /** The loaded record's revision, which an unmanaged session reports as acknowledged. */
-    readonly revision?: ServerRevision | null;
+    revision?: ServerRevision | null;
     /** Builds the session's save coordinator; without one the session is `unmanaged`. */
-    readonly saves?: ((runtime: EditorRuntime) => SaveCoordinator) | undefined;
+    saves?: ((runtime: EditorRuntime) => SaveCoordinator) | undefined;
     /** The host's recovery service, read when a view fault leaves a candidate. */
-    readonly recovery?: () => RecoveryService | undefined;
+    recovery?: () => RecoveryService | undefined;
     /** The host's `inputRules` prop, read on each input. */
-    readonly inputRules?: () => false | { readonly exclude: readonly string[] } | undefined;
+    inputRules?: () => false | { exclude: readonly string[] } | undefined;
     /** The host's `tabMovesFocus` prop, read on each Tab; default false. */
-    readonly tabMovesFocus?: () => boolean | undefined;
+    tabMovesFocus?: () => boolean | undefined;
     /** The profile's Enter keys and the host's submit; without them Enter, Shift+Enter and Mod+Enter edit. */
-    readonly enterKeys?: EnterKeys;
+    enterKeys?: EnterKeys;
     /** The host's `scrollSelectionIntoView` prop, read on each scroll to the selection; default true. */
-    readonly scrollSelectionIntoView?: () => boolean | undefined;
+    scrollSelectionIntoView?: () => boolean | undefined;
     /** What the editor layer hands the plugin commands it runs, such as its overlay and panel hosts. */
-    readonly commandHost?: unknown;
+    commandHost?: unknown;
     /** The host's `services.uploads`, read when an upload starts; without one, no file uploads. */
-    readonly uploads?: () => UploadServiceLike | undefined;
+    uploads?: () => UploadServiceLike | undefined;
     /** Opens the host asset picker, else the file chooser, for new images or for the image `nodeId`. */
-    readonly pick?: (nodeId: string | undefined) => void;
+    pick?: (nodeId: string | undefined) => void;
     /** Hears each upload start, end, failure and refused file, which the live region announces. */
-    readonly uploadEvent?: (event: UploadEvent) => void;
+    uploadEvent?: (event: UploadEvent) => void;
     /** The presentation's brand styles, read when `block.style.set` runs; default none. */
-    readonly styles?: () => readonly PresentationStyle[];
+    styles?: () => readonly PresentationStyle[];
     /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
-    readonly columns?: ColumnState;
+    columns?: ColumnState;
     /** The locale and colour options the content checks read when they run; default no locale strings and no colours. */
-    readonly contentChecks?: () => Pick<ContentCheckOptions, 'locale' | 'colorTokens' | 'background'>;
+    contentChecks?: () => Pick<ContentCheckOptions, 'locale' | 'colorTokens' | 'background'>;
 };
 
 export { liveResources };

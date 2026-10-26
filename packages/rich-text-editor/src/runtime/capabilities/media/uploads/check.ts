@@ -70,7 +70,7 @@ export const checkFiles = async (
 /** Splits the checks of `files` into the files that passed and each refusal with its reason. */
 export const sortChecked = (files: readonly File[], checked: readonly (Checked | UploadRejection)[]) => {
     const accepted: Checked[] = [];
-    const refused: { readonly name: string; readonly reason: UploadRejection }[] = [];
+    const refused: { name: string; reason: UploadRejection }[] = [];
     for (const [index, result] of checked.entries()) {
         if (typeof result === 'string') {
             refused.push({ name: nameOf(files[index] as File), reason: result });

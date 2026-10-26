@@ -16,18 +16,15 @@ import { type CaptureTargetOptions } from './types';
 
 /** A captured target as the keyed plugin state holds it. */
 type Target = {
-    readonly from: number;
-    readonly to: number;
+    from: number;
+    to: number;
     /** The type and `nodeId` of the node an `edit-node` target refers to. */
-    readonly node: { readonly type: string; readonly nodeId: unknown } | null;
-    readonly valid: boolean;
+    node: { type: string; nodeId: unknown } | null;
+    valid: boolean;
 } & CaptureTargetOptions;
 type Targets = ReadonlyMap<string, Target>;
 /** What a transaction does to the targets beside mapping them: capture one, release some, or set them all. */
-type TargetsMeta =
-    | { readonly id: string; readonly target: Target }
-    | { readonly release: readonly string[] }
-    | { readonly restore: Targets };
+type TargetsMeta = { id: string; target: Target } | { release: readonly string[] } | { restore: Targets };
 
 const TARGETS = new PluginKey<Targets>('rte.targets');
 
@@ -117,7 +114,7 @@ export const captureTarget = (
     state: EditorState,
     id: string,
     options: CaptureTargetOptions,
-    range: { readonly from: number; readonly to: number } = state.selection,
+    range: { from: number; to: number } = state.selection,
 ): Transaction => {
     const { purpose, onIntersectingEdit } = options;
     const { from } = range;

@@ -3,7 +3,7 @@
 import { type EditorState } from 'prosemirror-state';
 
 export type Store = {
-    readonly state: EditorState;
+    state: EditorState;
     set(next: EditorState): void;
 };
 

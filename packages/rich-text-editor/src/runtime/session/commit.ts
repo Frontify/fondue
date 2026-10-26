@@ -27,9 +27,7 @@ import { type Store } from './store';
 import { type BatchMetric, type Candidate, type Prepared } from './types';
 import { type ViewService } from './view';
 
-type SelectTarget =
-    | { readonly anchor: number; readonly head: number; readonly scroll?: boolean }
-    | { readonly node: number; readonly scroll?: boolean };
+type SelectTarget = { anchor: number; head: number; scroll?: boolean } | { node: number; scroll?: boolean };
 
 export type Commit = {
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view. */

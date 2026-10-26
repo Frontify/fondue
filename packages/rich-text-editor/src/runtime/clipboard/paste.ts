@@ -23,9 +23,9 @@ import { readSlice, SLICE_TYPE } from './slice';
 
 /** What a paste or a drop from outside hands the pipeline after the clipboard read. */
 export type Payload = {
-    readonly text: string;
-    readonly html: string;
-    readonly slice: string;
+    text: string;
+    html: string;
+    slice: string;
 };
 
 /** The three flavors of a clipboard or drag transfer. */
@@ -37,31 +37,31 @@ export const payloadOf = (data: DataTransfer): Payload => ({
 
 /** What the pipeline reads of the session. */
 export type PasteSettings = {
-    readonly model: ContentModel;
-    readonly limits: ResourceLimits;
+    model: ContentModel;
+    limits: ResourceLimits;
     /** Which features' content may be pasted. */
-    readonly policy: PastePolicy;
+    policy: PastePolicy;
     /** The destination's slice context. */
-    readonly context: string;
+    context: string;
     /** Shift was held. */
-    readonly plain: boolean;
+    plain: boolean;
     /** The policy's creatable heading levels, which pasted HTML headings move to. */
-    readonly headingLevels: readonly number[];
+    headingLevels: readonly number[];
     /** The view's window, whose `DOMParser` makes the inert document of pasted HTML. */
-    readonly window: Window;
+    window: Window;
     /** The Inline profile's field, which keeps one paragraph. */
-    readonly singleLine: boolean;
+    singleLine: boolean;
 };
 
 /** A change that follows the paste as its own undo step: a Markdown conversion or a caret link. */
 export type FollowUp = (state: EditorState) => Transaction | null;
 
 export type Pasted = {
-    readonly followUp?: FollowUp;
+    followUp?: FollowUp;
     /** Media that a slice from another context dropped. */
-    readonly droppedMedia: number;
+    droppedMedia: number;
     /** Pasted formatting the model does not keep, such as colours without `literalColors`, was removed. */
-    readonly removedFormatting?: boolean;
+    removedFormatting?: boolean;
 };
 
 /** Inserts `slice` between `from` and `to` as ProseMirror's paste does, and returns where it landed. */

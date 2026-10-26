@@ -18,16 +18,16 @@ import { type PasteSettings, type Payload } from './paste';
 /** What the host side of a session gives its clipboard handlers. */
 export type ClipboardSession = {
     /** The Inline profile's field, whose paste keeps one paragraph. */
-    readonly singleLine?: boolean;
+    singleLine?: boolean;
     /** The presentation's `sliceContext`, read at each copy and paste. */
-    readonly sliceContext: () => string | null;
+    sliceContext: () => string | null;
     /** The locale of the announcements and of the island labels in copied HTML. */
-    readonly locale: () => RichTextLocale;
-    readonly announce: (message: string) => void;
+    locale: () => RichTextLocale;
+    announce: (message: string) => void;
     /** The presentation's `resolveReference`, read at each copy, so copied mentions name whom the chip shows. */
-    readonly resolveReference?: () => ResolveReference | undefined;
+    resolveReference?: () => ResolveReference | undefined;
     /** The presentation's `resolveAssetUrl`, read at each copy, so a copied image keeps the URL the editor shows. */
-    readonly resolveAssetUrl?: () => ResolveAssetUrl | undefined;
+    resolveAssetUrl?: () => ResolveAssetUrl | undefined;
 };
 
 const sessions = new WeakMap<EditorRuntime, ClipboardSession>();

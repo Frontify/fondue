@@ -28,9 +28,9 @@ import { type TargetsService } from './targets';
 
 export type UploadService = {
     /** The session's upload machine, which the slot plugin, the idle hook and the history read. */
-    readonly raw: Uploads;
+    raw: Uploads;
     /** The media types `media.image` takes, `undefined` without it. */
-    readonly accepts: readonly string[] | undefined;
+    accepts: readonly string[] | undefined;
     /** Whether files upload now at `place`: `media.image` is installed, the host has `services.uploads` and the cache and policy allow it. */
     available(place: UploadPlace): boolean;
     begin(files: readonly File[], place: UploadPlace): Promise<void>;
@@ -48,9 +48,9 @@ export const createUploadService = (a: {
     policy: Pick<PolicyService, 'current'>;
     generate: () => string;
     host: {
-        readonly uploads?: () => UploadServiceLike | undefined;
-        readonly pick?: (nodeId: string | undefined) => void;
-        readonly uploadEvent?: (event: UploadEvent) => void;
+        uploads?: () => UploadServiceLike | undefined;
+        pick?: (nodeId: string | undefined) => void;
+        uploadEvent?: (event: UploadEvent) => void;
     };
     state: () => EditorState;
     commit: () => (root: Transaction) => void;

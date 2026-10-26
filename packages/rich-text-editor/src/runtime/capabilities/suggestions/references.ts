@@ -19,8 +19,8 @@ export const KINDS: ReadonlySet<string> = new Set(['user', 'group', 'everyone'])
 
 /** One page of a reference search as the list shows it: the items it keeps, and the cursor of the next page. */
 export type ReferenceResults = {
-    readonly items: readonly SuggestionItem[];
-    readonly nextCursor: string | null;
+    items: readonly SuggestionItem[];
+    nextCursor: string | null;
 };
 
 const nonEmpty = (value: unknown): value is string => typeof value === 'string' && value !== '';
@@ -127,7 +127,7 @@ export const referenceValues = (
     page: unknown,
     resourceTypes: readonly string[],
     maxAttributeLength: number,
-): { readonly items: readonly ReferenceValue[]; readonly nextCursor: string | null } | undefined => {
+): { items: readonly ReferenceValue[]; nextCursor: string | null } | undefined => {
     try {
         return pageOf(page, resourceTypes, maxAttributeLength);
     } catch {

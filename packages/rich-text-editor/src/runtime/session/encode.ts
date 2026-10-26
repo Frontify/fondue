@@ -14,7 +14,7 @@ export type Encoder = {
 export const createEncoder = (model: ContentModel, capabilities: readonly CapabilityRef[]): Encoder => {
     // Each top-level node's frozen stored form under this root, so a snapshot after an edit encodes only changed blocks.
     let blocks = new WeakMap<Node, RichTextDocument>();
-    let blocksOf: { readonly attrs: Node['attrs']; readonly stored: readonly CapabilityRef[] } | undefined;
+    let blocksOf: { attrs: Node['attrs']; stored: readonly CapabilityRef[] } | undefined;
     const encode = (doc: Node): RichTextDocument =>
         encodeTree(doc.toJSON() as TreeNode, model, encoder.capabilities).document;
     const encodeByBlock = (doc: Node): RichTextDocument => {

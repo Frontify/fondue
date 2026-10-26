@@ -32,7 +32,7 @@ export const assembleOperations = (editing: Editing, options: EditorRuntimeOptio
         serviceChanged: saving.serviceChanged,
         // A result runs as its command's payload through `commit` from the current state.
         apply: (operation, result) => {
-            let target: { readonly target: SelectionHandle } | undefined;
+            let target: { target: SelectionHandle } | undefined;
             if (operation.target !== null) {
                 target = { target: operation.target };
             }

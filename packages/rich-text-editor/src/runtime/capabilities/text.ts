@@ -22,8 +22,8 @@ export const insertText: CapabilityImplementation = () => ({
 });
 
 /** The lines of `text` the range `from`–`to` touches. A collapsed range is its own line. */
-const touchedLines = (text: string, from: number, to: number): { readonly start: number; readonly end: number }[] => {
-    const lines: { readonly start: number; readonly end: number }[] = [];
+const touchedLines = (text: string, from: number, to: number): { start: number; end: number }[] => {
+    const lines: { start: number; end: number }[] = [];
     let lineStart = 0;
     const consider = (lineEnd: number) => {
         const touches = from === to ? from >= lineStart && from <= lineEnd : from <= lineEnd && to > lineStart;
@@ -69,7 +69,7 @@ export const indentLines: CapabilityImplementation = (args) => ({
         const lines = touchedLines(text, $from.parentOffset, $to.parentOffset);
         const indent = args.direction !== 'outdent';
         // `remove` of 0 inserts two spaces. Later lines are edited first, so earlier offsets stay valid.
-        const edits: { readonly at: number; readonly remove: number }[] = [];
+        const edits: { at: number; remove: number }[] = [];
         for (const line of lines) {
             if (indent) {
                 edits.push({ at: line.start, remove: 0 });

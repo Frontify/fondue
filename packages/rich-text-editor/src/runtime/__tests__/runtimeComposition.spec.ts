@@ -90,7 +90,7 @@ describe('the published snapshot and composition', () => {
         const { document } = handle.getSnapshot();
 
         const first = document.content.content?.[0];
-        const attrs = first?.attrs as { readonly lang?: unknown } | undefined;
+        const attrs = first?.attrs as { lang?: unknown } | undefined;
         expect(attrs?.lang).toBe(value);
     });
 

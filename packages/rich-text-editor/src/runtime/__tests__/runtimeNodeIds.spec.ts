@@ -69,8 +69,8 @@ describe('node IDs', () => {
         }
 
         const { attrs, content } = value as {
-            readonly attrs?: { readonly nodeId?: unknown };
-            readonly content?: unknown;
+            attrs?: { nodeId?: unknown };
+            content?: unknown;
         };
         const own: unknown[] = [];
         if (attrs !== undefined && 'nodeId' in attrs) {

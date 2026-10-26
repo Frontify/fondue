@@ -29,7 +29,7 @@ const typesOf = (node: unknown, schema: Schema): readonly NodeType[] => {
     });
 };
 
-type Located = { readonly node: Node; readonly pos: number };
+type Located = { node: Node; pos: number };
 
 /** The default of a node type's attribute, which a toggle that removes a value restores. */
 export const defaultOf = (type: NodeType, name: string): unknown => {

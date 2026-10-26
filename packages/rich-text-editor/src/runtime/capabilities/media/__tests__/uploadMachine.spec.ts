@@ -35,9 +35,9 @@ const PHASES = Object.keys(IN) as Phase[];
 
 type Outcome = readonly [Phase, readonly Effect['type'][]];
 type Row = {
-    readonly event: SlotEvent;
-    readonly setup?: Partial<SlotState>;
-    readonly outcomes: Record<Phase, Outcome>;
+    event: SlotEvent;
+    setup?: Partial<SlotState>;
+    outcomes: Record<Phase, Outcome>;
 };
 
 /** Every phase stays as it is and the event gives the same effects. */

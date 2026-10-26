@@ -3,9 +3,9 @@
 /** What a file's first bytes say: its media type by content, and an image's intrinsic size, never decoded. */
 export type ImageHeader = {
     /** `null` when the content matches no type this reader knows. */
-    readonly mediaType: string | null;
-    readonly width: number | null;
-    readonly height: number | null;
+    mediaType: string | null;
+    width: number | null;
+    height: number | null;
 };
 
 const UNKNOWN: ImageHeader = { mediaType: null, width: null, height: null };
@@ -135,9 +135,9 @@ const jpeg = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
 
 /** One ISO base media box: its type, where its content starts and where it ends. */
 type Box = {
-    readonly type: string;
-    readonly content: number;
-    readonly end: number;
+    type: string;
+    content: number;
+    end: number;
 };
 
 /** The boxes between `start` and `end`, read from their headers alone, up to `MAX_STEPS` of them. */

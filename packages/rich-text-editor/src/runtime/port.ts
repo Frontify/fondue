@@ -77,20 +77,16 @@ export {
 
 /** The runtime as the React layers hold it: the members that name no engine type. */
 export type EditorPort = {
-    readonly handle: RuntimeHandle;
-    readonly suggestionListId: string;
-    readonly nextDomId: () => string;
-    readonly interactionRoots: ReadonlySet<HTMLElement>;
-    readonly policy: AuthoringPolicy;
-    readonly limits: ResourceLimits;
+    handle: RuntimeHandle;
+    suggestionListId: string;
+    nextDomId: () => string;
+    interactionRoots: ReadonlySet<HTMLElement>;
+    policy: AuthoringPolicy;
+    limits: ResourceLimits;
     detach(): void;
     report(diagnostic: Diagnostic): void;
-    select(
-        target:
-            | { readonly anchor: number; readonly head: number; readonly scroll?: boolean }
-            | { readonly node: number; readonly scroll?: boolean },
-    ): void;
-    captureRange(range: { readonly from: number; readonly to: number }, options: CaptureTargetOptions): CaptureResult;
+    select(target: { anchor: number; head: number; scroll?: boolean } | { node: number; scroll?: boolean }): void;
+    captureRange(range: { from: number; to: number }, options: CaptureTargetOptions): CaptureResult;
     watch<T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void): Unsubscribe;
     startAsync(request: AsyncRequest): AsyncOperation;
     changeServices(members: readonly string[]): void;
@@ -134,9 +130,7 @@ export const isComposing = (port: EditorPort): boolean => engineOf(port).view?.c
 export const isEmptyDocument = (port: EditorPort): boolean => isEmpty(engineOf(port).state);
 
 /** The selection's two ends and whether it is a caret. */
-export const selectionSpan = (
-    port: EditorPort,
-): { readonly anchor: number; readonly head: number; readonly empty: boolean } => {
+export const selectionSpan = (port: EditorPort): { anchor: number; head: number; empty: boolean } => {
     const { anchor, head, empty } = engineOf(port).state.selection;
 
     return { anchor, head, empty };
@@ -161,7 +155,7 @@ export const selectedNodeNames = (port: EditorPort | undefined): readonly string
 
     const names: string[] = [];
     if ('node' in selection) {
-        names.push((selection.node as { readonly type: { readonly name: string } }).type.name);
+        names.push((selection.node as { type: { name: string } }).type.name);
     }
 
     for (let depth = selection.$from.depth; depth >= 0; depth -= 1) {

@@ -15,9 +15,9 @@ export { INSERT_IMAGE, REPLACE_IMAGE };
 
 /** The fields of a picked `AssetValue` that an image stores; a picker result never gives it any other. */
 export type PickedAsset = {
-    readonly assetId: string;
-    readonly mediaType: string;
-    readonly labelSnapshot: string;
+    assetId: string;
+    mediaType: string;
+    labelSnapshot: string;
 };
 
 const SPACE = 0x20;
@@ -66,7 +66,7 @@ export const isAssetLocator = (assetId: string): boolean => {
  */
 export const pickedAsset = (
     value: unknown,
-    options: { readonly mediaTypes?: readonly string[]; readonly maxLength: number },
+    options: { mediaTypes?: readonly string[]; maxLength: number },
 ): PickedAsset | undefined => {
     if (!isRecord(value)) {
         return undefined;

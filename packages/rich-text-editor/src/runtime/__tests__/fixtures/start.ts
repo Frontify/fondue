@@ -100,24 +100,24 @@ export const words = (value: string) => ({ type: 'text', text: value });
 /** Inserts the payload's text, as `text.insert` does. */
 export const TEXT_INSERT = {
     payload: { fields: { text: { type: 'string' } } },
-    run: (api: EditorApi<'insert'>, { text }: { readonly text: string }) => api.insert.text(text),
+    run: (api: EditorApi<'insert'>, { text }: { text: string }) => api.insert.text(text),
 } as const;
 export type Start = {
-    readonly model?: ContentModel;
-    readonly mode?: 'editable' | 'readonly';
+    model?: ContentModel;
+    mode?: 'editable' | 'readonly';
     /** Adds plugins to the compiled definition, as the engine runs them after the definition's own. */
-    readonly plugins?: readonly Plugin[];
+    plugins?: readonly Plugin[];
     /** Adds commands to the compiled definition's command map. */
-    readonly commands?: Readonly<Record<string, EngineCommand>>;
-    readonly policy?: Partial<AuthoringPolicy>;
-    readonly limits?: Partial<ResourceLimits>;
-    readonly generateId?: () => string;
-    readonly uploads?: UploadServiceLike;
+    commands?: Readonly<Record<string, EngineCommand>>;
+    policy?: Partial<AuthoringPolicy>;
+    limits?: Partial<ResourceLimits>;
+    generateId?: () => string;
+    uploads?: UploadServiceLike;
     /** Makes the session managed, as a host's `services.persistence` does. */
-    readonly persistence?: PersistenceService;
+    persistence?: PersistenceService;
     /** Editor parts beside the fixture features' own, as a host passes them. */
-    readonly parts?: readonly EditorPart[];
-    readonly pick?: (nodeId: string | undefined) => void;
+    parts?: readonly EditorPart[];
+    pick?: (nodeId: string | undefined) => void;
 };
 /** The save coordinator of a session that mounts with `service`, none without one. */
 export const saves = (model: ContentModel, service: PersistenceService | undefined): EditorRuntimeOptions['saves'] => {

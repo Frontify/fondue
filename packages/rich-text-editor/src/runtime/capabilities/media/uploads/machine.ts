@@ -11,85 +11,85 @@ export type Phase = 'pending' | UploadStatus['state'] | 'done';
 
 /** One upload slot: what its start set, and what its upload has done since. */
 export type SlotState = {
-    readonly nodeId: string;
-    readonly kind: 'insert' | 'replace';
-    readonly name: string;
+    nodeId: string;
+    kind: 'insert' | 'replace';
+    name: string;
     /** What the slot's start set, which only the same slot after undo or redo still shows. */
-    readonly label: string;
-    readonly width: number | null;
-    readonly height: number | null;
+    label: string;
+    width: number | null;
+    height: number | null;
     /** Kept until the upload completes, which a retry sends again. */
-    readonly file: File | undefined;
-    readonly phase: Phase;
-    readonly progress: number | null;
-    readonly operation: AsyncOperation | undefined;
+    file: File | undefined;
+    phase: Phase;
+    progress: number | null;
+    operation: AsyncOperation | undefined;
     /** The operation whose completion this slot shows, which the cache is read with. */
-    readonly operationId: string | undefined;
+    operationId: string | undefined;
 };
 
 /** The attributes of the slot's node in the document, as the transport read them. */
 export type NodeFacts = {
-    readonly assetId?: unknown;
-    readonly labelSnapshot?: unknown;
-    readonly width?: unknown;
-    readonly height?: unknown;
+    assetId?: unknown;
+    labelSnapshot?: unknown;
+    width?: unknown;
+    height?: unknown;
 };
 
 /** What the transport observed or got back; `own` is the operation the coordinator returned, once it has. */
 export type SlotEvent =
-    | { readonly type: 'send'; readonly announce: boolean; readonly service: boolean }
+    | { type: 'send'; announce: boolean; service: boolean }
     | {
-          readonly type: 'started';
-          readonly operation: AsyncOperation;
-          readonly aborted: boolean;
-          readonly announce: boolean;
+          type: 'started';
+          operation: AsyncOperation;
+          aborted: boolean;
+          announce: boolean;
       }
-    | { readonly type: 'running'; readonly own: AsyncOperation | undefined }
-    | { readonly type: 'progress'; readonly fraction: number; readonly aborted: boolean }
-    | { readonly type: 'answered'; readonly own: AsyncOperation | undefined; readonly value: unknown }
-    | { readonly type: 'parsed'; readonly asset: PickedAsset | undefined }
+    | { type: 'running'; own: AsyncOperation | undefined }
+    | { type: 'progress'; fraction: number; aborted: boolean }
+    | { type: 'answered'; own: AsyncOperation | undefined; value: unknown }
+    | { type: 'parsed'; asset: PickedAsset | undefined }
     | {
-          readonly type: 'filled';
-          readonly asset: PickedAsset;
-          readonly code: string | undefined;
-          readonly intent: unknown;
+          type: 'filled';
+          asset: PickedAsset;
+          code: string | undefined;
+          intent: unknown;
       }
-    | { readonly type: 'failed'; readonly own: AsyncOperation | undefined }
-    | { readonly type: 'aborted'; readonly operation: AsyncOperation }
+    | { type: 'failed'; own: AsyncOperation | undefined }
+    | { type: 'aborted'; operation: AsyncOperation }
     | {
-          readonly type: 'committed';
-          readonly history: boolean;
-          readonly node: NodeFacts | null;
+          type: 'committed';
+          history: boolean;
+          node: NodeFacts | null;
           /** A published change set the slot's asset itself: an undo, a cancel or another replacement. */
-          readonly reset: boolean;
+          reset: boolean;
           /** The cache holds the completion of the slot's `operationId`. */
-          readonly cached: boolean;
+          cached: boolean;
       }
-    | { readonly type: 'reset'; readonly keeps: boolean; readonly present: boolean };
+    | { type: 'reset'; keeps: boolean; present: boolean };
 
 export type Effect =
-    | { readonly type: 'changed' }
-    | { readonly type: 'release' }
+    | { type: 'changed' }
+    | { type: 'release' }
     /** What the coordinator's `deliver` answers: `undefined` for a result applied. */
-    | { readonly type: 'reply'; readonly code: string | undefined }
-    | { readonly type: 'parse'; readonly value: unknown }
-    | { readonly type: 'fill'; readonly asset: PickedAsset }
-    | { readonly type: 'cache'; readonly operationId: string; readonly asset: PickedAsset }
-    | { readonly type: 'announce'; readonly event: UploadEvent }
-    | { readonly type: 'reportFailure' }
-    | { readonly type: 'replaced'; readonly assetId: string }
-    | { readonly type: 'start'; readonly announce: boolean }
-    | { readonly type: 'watch'; readonly operation: AsyncOperation }
-    | { readonly type: 'end'; readonly operation: AsyncOperation }
-    | { readonly type: 'refill' }
-    | { readonly type: 'drop' };
+    | { type: 'reply'; code: string | undefined }
+    | { type: 'parse'; value: unknown }
+    | { type: 'fill'; asset: PickedAsset }
+    | { type: 'cache'; operationId: string; asset: PickedAsset }
+    | { type: 'announce'; event: UploadEvent }
+    | { type: 'reportFailure' }
+    | { type: 'replaced'; assetId: string }
+    | { type: 'start'; announce: boolean }
+    | { type: 'watch'; operation: AsyncOperation }
+    | { type: 'end'; operation: AsyncOperation }
+    | { type: 'refill' }
+    | { type: 'drop' };
 
 export type Step = {
-    readonly state: SlotState;
-    readonly effects: readonly Effect[];
+    state: SlotState;
+    effects: readonly Effect[];
 };
 
-type Of<T extends SlotEvent['type']> = Extract<SlotEvent, { readonly type: T }>;
+type Of<T extends SlotEvent['type']> = Extract<SlotEvent, { type: T }>;
 
 /** A new slot, before its start is applied to the document. */
 export const fresh = (nodeId: string, kind: SlotState['kind'], checked: Checked): SlotState => ({

@@ -9,13 +9,10 @@ export type MediaSession = {
      * Applies a host asset picker's result, checked as untrusted input, as one undo step: a figure at the insert
      * `target`, or the image `nodeId` refilled, which then asks the author to review its alternative text.
      */
-    placeAsset(
-        asset: unknown,
-        place: { readonly target: SelectionHandle } | { readonly nodeId: string },
-    ): CommandResult;
+    placeAsset(asset: unknown, place: { target: SelectionHandle } | { nodeId: string }): CommandResult;
     /** The session's uploads: `accepts` holds the media types `media.image` takes. */
-    readonly uploads: {
-        readonly accepts: readonly string[] | undefined;
+    uploads: {
+        accepts: readonly string[] | undefined;
         /**
          * Whether files upload now at `place`: `media.image` is installed, the host has `services.uploads`, the cache
          * has room and the policy allows it.

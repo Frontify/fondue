@@ -13,9 +13,9 @@ const key = new PluginKey<DecorationSet>(BLOCK_DECORATIONS_PLUGIN.id);
 const REFRESH = 'refresh';
 
 /** The stretches of the final document that `transaction`'s steps wrote, and the node an attribute step set. */
-const touchedRanges = (transaction: Transaction): { readonly from: number; readonly to: number }[] => {
+const touchedRanges = (transaction: Transaction): { from: number; to: number }[] => {
     const { mapping } = transaction;
-    const ranges: { readonly from: number; readonly to: number }[] = [];
+    const ranges: { from: number; to: number }[] = [];
     for (const [index, map] of mapping.maps.entries()) {
         const rest = mapping.slice(index + 1);
         // oxlint-disable-next-line unicorn/no-array-for-each -- a step map gives its ranges only through `forEach`.
@@ -154,7 +154,7 @@ export const blockDecorationsPlugin: PluginImplementation = ({ decorations: sour
                 }
 
                 const { doc, mapping } = transaction;
-                const touched: { readonly node: ProseMirrorNode; readonly pos: number }[] = [];
+                const touched: { node: ProseMirrorNode; pos: number }[] = [];
                 const redone = new Set<number>();
                 for (const { from, to } of touchedRanges(transaction)) {
                     doc.nodesBetween(from, to, (node, pos) => {

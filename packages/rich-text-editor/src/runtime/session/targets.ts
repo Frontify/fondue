@@ -20,14 +20,11 @@ import { type RejectedCode } from './types';
 const ASYNC_TARGET: CaptureTargetOptions = { purpose: 'insert', onIntersectingEdit: 'map' };
 
 export type TargetsService = {
-    readonly coordinator: ReturnType<typeof createAsyncCoordinator>;
+    coordinator: ReturnType<typeof createAsyncCoordinator>;
     /** The state a command runs on: the current one, or with the selection at its target's mapped range. */
     baseOf(options: unknown): EditorState | RejectedCode;
     /** Captures the selection, or `range`, as a new target, unless a commit or notification runs. */
-    captureRange(
-        options: CaptureTargetOptions,
-        range: { readonly from: number; readonly to: number } | undefined,
-    ): CaptureResult;
+    captureRange(options: CaptureTargetOptions, range: { from: number; to: number } | undefined): CaptureResult;
     releaseTarget(target: SelectionHandle): void;
     /** Captures each target deferred during a commit, once none runs. */
     flushCaptures(): void;
@@ -54,7 +51,7 @@ export const createTargetsService = (a: {
     const deferredCaptures: string[] = [];
 
     /** The ID of a target this session captured, or why it is not one. */
-    const ownTarget = (target: unknown): { readonly id: string } | RejectedCode => {
+    const ownTarget = (target: unknown): { id: string } | RejectedCode => {
         if (!isRecord(target) || typeof target.id !== 'string' || !isRecord(target.session)) {
             return 'target-invalid';
         }
@@ -88,11 +85,8 @@ export const createTargetsService = (a: {
     };
 
     /** Commits a capture of the selection, or of `range`, as target `id`. */
-    const captureNow = (
-        id: string,
-        options: CaptureTargetOptions,
-        range?: { readonly from: number; readonly to: number },
-    ) => commit(captureTarget(store.state, id, options, range));
+    const captureNow = (id: string, options: CaptureTargetOptions, range?: { from: number; to: number }) =>
+        commit(captureTarget(store.state, id, options, range));
 
     /** The handle of target `id` in this session; the one place a `SelectionHandle` brand is minted. */
     const handleOf = (id: string) => Object.freeze({ id, session: identity.session() }) as unknown as SelectionHandle;

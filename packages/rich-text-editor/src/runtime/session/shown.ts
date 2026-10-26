@@ -66,7 +66,7 @@ export const changed = <T>(slot: { value: T }, next: T, same: (a: T, b: T) => bo
     return true;
 };
 
-type SnapshotKey = { readonly doc: Node; readonly composing: boolean; readonly revision: SaveStatus['revision'] };
+type SnapshotKey = { doc: Node; composing: boolean; revision: SaveStatus['revision'] };
 
 export type Shown = {
     /** The mode and columns the surface shows, which follow the session's once input has settled. */

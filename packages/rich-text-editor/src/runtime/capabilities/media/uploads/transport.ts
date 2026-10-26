@@ -18,13 +18,13 @@ export type Cell = {
 
 /** What the effects act on: the host, the cache, the cells and the batches that a commit hands on. */
 export type Link = {
-    readonly host: UploadHost;
-    readonly cache: UploadCache;
-    readonly cells: Map<string, Cell>;
+    host: UploadHost;
+    cache: UploadCache;
+    cells: Map<string, Cell>;
     /** Completions that a history change asks for from the cache, applied once no commit runs. */
-    readonly fills: string[];
+    fills: string[];
     /** Operations a commit ended, aborted together. */
-    readonly ended: AsyncOperation[];
+    ended: AsyncOperation[];
 };
 
 /** One send of a slot's file: the service call's cleanup and what the coordinator's callbacks answer with. */
@@ -38,9 +38,9 @@ type Call = {
 };
 
 type Context = {
-    readonly cell: Cell;
-    readonly call: Call | undefined;
-    readonly service: UploadServiceLike | undefined;
+    cell: Cell;
+    call: Call | undefined;
+    service: UploadServiceLike | undefined;
 };
 
 const nothing = () => undefined;
@@ -53,14 +53,14 @@ const releaseOnce = (call: Call) => {
     }
 };
 
-type Of<T extends Effect['type']> = Extract<Effect, { readonly type: T }>;
+type Of<T extends Effect['type']> = Extract<Effect, { type: T }>;
 
 export type Transport = {
-    readonly link: Link;
+    link: Link;
     /** Sends the slot's file as a new operation, and announces its start unless its gesture announces it. */
-    readonly send: (cell: Cell, announce?: boolean) => void;
+    send: (cell: Cell, announce?: boolean) => void;
     /** Feeds an event that no upload call belongs to. */
-    readonly feed: (cell: Cell, event: SlotEvent) => void;
+    feed: (cell: Cell, event: SlotEvent) => void;
 };
 
 /** Runs the upload machine's effects against the host's coordinator, the service and the cache. */

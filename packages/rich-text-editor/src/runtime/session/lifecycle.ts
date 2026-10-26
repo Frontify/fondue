@@ -17,7 +17,7 @@ export type Lifecycle = {
     is(...phases: readonly Phase[]): boolean;
     isDisposed(): boolean;
     /** Aborts when the session is disposed, which ends its own service calls. */
-    readonly ended: AbortSignal;
+    ended: AbortSignal;
     /** Moves to `next`; an illegal move throws outside production and is ignored in production. */
     to(next: Phase): void;
 };

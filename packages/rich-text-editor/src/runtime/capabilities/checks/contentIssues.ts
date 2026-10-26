@@ -14,38 +14,38 @@ export const CHECK_DELAY_MS = 750;
 
 /** An issue of the last run, at the place it names in the current document. */
 export type HeldIssue = {
-    readonly issue: ContentIssue;
+    issue: ContentIssue;
     /** Mapped through every change since the run; both -1 for a document-level rule. */
-    readonly from: number;
-    readonly to: number;
+    from: number;
+    to: number;
     /** The node or text the issue named was deleted or replaced since the run. */
-    readonly gone: boolean;
+    gone: boolean;
     /** It names a run of inline content, such as a link, rather than one node. */
-    readonly inline: boolean;
+    inline: boolean;
     /** The stored content it was found on, which a dismissal keeps until that content changes. */
-    readonly signature: string;
+    signature: string;
     /** Stays the same from run to run while the rule is reported at the same place, unlike a path-based ID. */
-    readonly key: string;
+    key: string;
 };
 
 type Dismissal = {
-    readonly ruleId: ContentIssue['ruleId'];
-    readonly from: number;
-    readonly signature: string;
+    ruleId: ContentIssue['ruleId'];
+    from: number;
+    signature: string;
 };
 
 export type ContentChecksState = {
-    readonly issues: readonly HeldIssue[];
+    issues: readonly HeldIssue[];
     /** How many times the checks ran in this session. */
-    readonly runs: number;
+    runs: number;
     /** The issues panel is open, which alone shows the surface decorations. */
-    readonly open: boolean;
-    readonly dismissed: readonly Dismissal[];
+    open: boolean;
+    dismissed: readonly Dismissal[];
 };
 
 type Severity = ContentIssue['severity'];
 
-type Meta = { readonly results: readonly HeldIssue[] } | { readonly open: boolean } | { readonly dismiss: string };
+type Meta = { results: readonly HeldIssue[] } | { open: boolean } | { dismiss: string };
 
 const CONTENT_ISSUES = new PluginKey<ContentChecksState>('content-issues');
 
@@ -367,16 +367,16 @@ const holdIssue = (doc: Node, { issue, span, signature }: LocatedIssue): HeldIss
 
 /** What the checks read from the session that runs them. */
 export type ContentChecksHost = {
-    readonly state: () => EditorState;
-    readonly sequence: () => number;
-    readonly encode: () => RichTextDocument;
+    state: () => EditorState;
+    sequence: () => number;
+    encode: () => RichTextDocument;
     /** Input is composing or has not settled yet. */
-    readonly composing: () => boolean;
+    composing: () => boolean;
     /** The session takes commits: neither faulted nor disposed. */
-    readonly ready: () => boolean;
-    readonly commit: (transaction: Transaction) => void;
+    ready: () => boolean;
+    commit: (transaction: Transaction) => void;
     /** The locale, colour options, model, enclosing heading level and creatable heading levels, read when the checks run. */
-    readonly options: () => Omit<ContentCheckOptions, 'sequence'>;
+    options: () => Omit<ContentCheckOptions, 'sequence'>;
 };
 
 export type ContentChecks = {

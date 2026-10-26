@@ -26,9 +26,9 @@ import {
 
 /** What the view styles content with: the presentation's recipes and colours, and who hears an unknown style ID. */
 export type ChromeStyles = {
-    readonly styles: readonly PresentationStyle[];
-    readonly colorTokens: readonly ColorToken[];
-    readonly onUnknown: (path: string) => void;
+    styles: readonly PresentationStyle[];
+    colorTokens: readonly ColorToken[];
+    onUnknown: (path: string) => void;
 };
 
 /** The text runs of a textblock, which `passageDirection` reads. */
@@ -48,13 +48,13 @@ const runsOf = (block: ViewNode): DirectedRun[] => {
 
 /** What the content decorations read, which the chrome view changes between draws. */
 export type DecorationInputs = {
-    readonly surface: HTMLElement;
-    readonly domId: () => string;
+    surface: HTMLElement;
+    domId: () => string;
     /** Whether a node view is registered for the node type `name`. */
-    readonly hasView: (name: string) => boolean;
-    readonly levels: ListLevels | undefined;
-    readonly styles: ChromeStyles | undefined;
-    readonly unknown: (styleId: string, path: string) => void;
+    hasView: (name: string) => boolean;
+    levels: ListLevels | undefined;
+    styles: ChromeStyles | undefined;
+    unknown: (styleId: string, path: string) => void;
 };
 
 /**
@@ -142,7 +142,7 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
 
 /** The view's decoration prop: the content decorations of the current inputs, and the selection while `shown` holds. */
 export type ContentDecorations = {
-    readonly decorations: NonNullable<ViewProps['decorations']>;
+    decorations: NonNullable<ViewProps['decorations']>;
     /** Drops the decorations drawn so far, so the next draw derives them again. */
     reset(): void;
 };
@@ -186,8 +186,8 @@ export const createContentDecorations = (
 
 /** A styled or coloured mark's element, with the recipe class this view last gave it. */
 type MarkElement = {
-    readonly dom: HTMLElement;
-    readonly mark: Mark;
+    dom: HTMLElement;
+    mark: Mark;
     className: string | undefined;
 };
 

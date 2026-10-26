@@ -354,7 +354,7 @@ describe('faults', () => {
             throw new Error('expected an editable document');
         }
 
-        let halfBuilt: { readonly isDestroyed: boolean } | undefined;
+        let halfBuilt: { isDestroyed: boolean } | undefined;
         const viewFails = new Plugin({
             view: (editorView) => {
                 halfBuilt = editorView;

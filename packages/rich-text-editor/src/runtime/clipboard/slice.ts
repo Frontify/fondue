@@ -27,7 +27,7 @@ const isIsland = (type: unknown) => type === ISLAND_BLOCK || type === ISLAND_INL
 const writeSliceNode = (vocabulary: Vocabulary, node: Node): unknown => {
     const type = node.type.name;
     if (isIsland(type)) {
-        const { feature, original } = node.attrs as { readonly feature: unknown; readonly original: unknown };
+        const { feature, original } = node.attrs as { feature: unknown; original: unknown };
 
         return { type, attrs: { feature, original } };
     }
@@ -74,7 +74,7 @@ export const writeSlice = (model: ContentModel, doc: Node, slice: Slice, context
 };
 
 type Islands = {
-    readonly paths: string[];
+    paths: string[];
     malformed: boolean;
 };
 
@@ -154,7 +154,7 @@ export const readSlice = (
     model: ContentModel,
     schema: Schema,
     limits: ResourceLimits,
-): { readonly slice: Slice; readonly context: string | null } | undefined => {
+): { slice: Slice; context: string | null } | undefined => {
     let value: unknown;
     try {
         value = JSON.parse(payload);

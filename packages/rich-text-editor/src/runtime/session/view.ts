@@ -25,13 +25,13 @@ export const isEmpty = ({ doc }: EditorState) =>
 
 export type ViewService = {
     current(): EditorView | undefined;
-    readonly nodeViews: Readonly<Record<string, NodeViewConstructor>>;
+    nodeViews: Readonly<Record<string, NodeViewConstructor>>;
     setNodeViews(next: Readonly<Record<string, NodeViewConstructor>>): void;
     setMarkViews(next: Readonly<Record<string, MarkViewConstructor>>): void;
     /** The plugin view hook: the view the constructor is building, before it returns. */
     capture(built: EditorView): void;
     /** Runs a view call; `threw` when it threw or a node view inside it threw, which the bridge reports through `faultView`. */
-    call<T>(work: () => T): { readonly threw: boolean; readonly value: T | undefined };
+    call<T>(work: () => T): { threw: boolean; value: T | undefined };
     /** Recomputes `editable`, the surface attributes and the break decorations once input has settled. */
     refresh(): void;
     repaint(): void;
@@ -45,7 +45,7 @@ export type ViewService = {
 const createCalls = () => {
     let viewCall = false;
     let viewThrew = false;
-    const call = <T>(work: () => T): { readonly threw: boolean; readonly value: T | undefined } => {
+    const call = <T>(work: () => T): { threw: boolean; value: T | undefined } => {
         let value: T | undefined;
         viewCall = true;
         try {
@@ -127,7 +127,7 @@ type ViewArgs = {
     emit: (event: 'ready', value: SessionToken) => void;
     session: () => SessionToken;
     /** The live registries the `src/testing` probe counts. */
-    resources: { readonly views: Set<EditorView>; frames: number };
+    resources: { views: Set<EditorView>; frames: number };
     suggestionListId: string;
     createdAt: number;
     composing: () => boolean;

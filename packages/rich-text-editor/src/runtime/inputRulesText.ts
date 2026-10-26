@@ -10,9 +10,9 @@ import { holdsCode, WORD } from './inputRulesCommon';
 
 /** A language's quotation marks, opening and closing, and its apostrophe. */
 type Quotes = {
-    readonly primary: readonly [string, string];
-    readonly secondary: readonly [string, string];
-    readonly apostrophe: string;
+    primary: readonly [string, string];
+    secondary: readonly [string, string];
+    apostrophe: string;
 };
 const quotesOf = (primary: string, secondary: string): Quotes => ({
     primary: [primary.charAt(0), primary.charAt(1)],

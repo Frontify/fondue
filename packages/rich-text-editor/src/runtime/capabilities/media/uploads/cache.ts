@@ -7,13 +7,13 @@ export const uploadLimits = { cacheEntries: 10_000 };
 
 /** A completed upload, by its operation ID: the slot it filled and the asset it set. */
 export type CompletedUpload = {
-    readonly nodeId: string;
-    readonly asset: PickedAsset;
+    nodeId: string;
+    asset: PickedAsset;
 };
 
 /** The completed-reference cache of one session, keyed by operation ID; it never evicts an entry. */
 export class UploadCache {
-    readonly #entries = new Map<string, CompletedUpload & { readonly release: () => void }>();
+    readonly #entries = new Map<string, CompletedUpload & { release: () => void }>();
 
     get size(): number {
         return this.#entries.size;
@@ -23,7 +23,7 @@ export class UploadCache {
         return this.#entries.get(operationId);
     }
 
-    write(operationId: string, entry: CompletedUpload & { readonly release: () => void }): void {
+    write(operationId: string, entry: CompletedUpload & { release: () => void }): void {
         this.#entries.set(operationId, entry);
     }
 

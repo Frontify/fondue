@@ -11,10 +11,7 @@ import { markRunAt } from '../markRuns';
  * The range of the run of text with one mark of `type`, equal attributes included, that holds the caret or starts at
  * it, so a neighbouring passage with other attributes stays outside.
  */
-const markRangeAt = (
-    state: EditorState,
-    type: MarkType,
-): { readonly from: number; readonly to: number } | undefined => {
+const markRangeAt = (state: EditorState, type: MarkType): { from: number; to: number } | undefined => {
     const { $from } = state.selection;
     const { parent } = $from;
     const index = $from.index();
@@ -70,7 +67,7 @@ export const enclosingRange = (
     state: EditorState,
     type: MarkType,
     extend: Extend,
-): { readonly from: number; readonly to: number } | undefined => {
+): { from: number; to: number } | undefined => {
     // A caret at the trailing edge of a `touching` run still edits that run, as a bubble on it shows; any other run's end stays outside.
     const range = extend === 'touching' ? markRunAt(state, type) : markRangeAt(state, type);
     const { from, to } = state.selection;
