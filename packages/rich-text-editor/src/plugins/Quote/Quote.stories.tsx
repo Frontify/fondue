@@ -3,56 +3,62 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, modelOf, RichTextEditor, subscriptPlugin } from '#/index';
+import { corePlugin, defineEditor, modelOf, quotePlugin, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), subscriptPlugin()] as const;
-const model = modelOf(plugins, { id: 'story.marks-subscript', version: 1 });
+const plugins = [corePlugin(), quotePlugin()] as const;
+const model = modelOf(plugins, { id: 'story.blocks-quote', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/marks.subscript',
+    title: 'Rich Text Editor/Plugins/Quote',
     component: RichTextEditor,
-    tags: ['autodocs', 'feature:core', 'feature:marks.subscript'],
+    tags: ['autodocs', 'feature:blocks.quote', 'feature:core'],
     parameters: {
         docs: {
             description: {
                 component: `
-Subscript as \`sub\`.
+Quotations as \`blockquote\`, a container of blocks. Enter in its empty last paragraph removes that paragraph and puts a new paragraph after the quote.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|
-| \`marks.subscript\` | \`mark.subscript.toggle\` | \`Mod-,\` | Subscript toggle | none | Adds or removes \`subscript\`, and removes \`superscript\` from the range |
+| \`blocks.quote\` | \`quote.toggle\` | none | Quote in the text style picker; the Quote toggle in the Comment toolbar | \`quote.angle\` | Wraps the selected blocks in \`blockquote\`, or lifts them out when they are already in one |
 `,
             },
         },
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.marks-subscript', model, plugins }),
+        definition: defineEditor({ id: 'story.blocks-quote', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
-            documentId: 'story-marks-subscript',
+            documentId: 'story-blocks-quote',
             revision: null,
             document: {
                 format: 'frontify.rich-text',
                 formatVersion: 1,
                 model: model.ref,
                 requiredCapabilities: [
+                    { id: 'blocks.quote', version: 1 },
                     { id: 'core', version: 1 },
-                    { id: 'marks.subscript', version: 1 },
                 ],
                 content: {
                     type: 'doc',
                     attrs: { lang: null, dir: 'auto' },
                     content: [
                         {
-                            type: 'paragraph',
-                            attrs: { lang: null },
+                            type: 'blockquote',
                             content: [
-                                { type: 'text', text: 'Press Mod+, for subscript, as in H' },
-                                { type: 'text', text: '2', marks: [{ type: 'subscript' }] },
-                                { type: 'text', text: 'O.' },
+                                {
+                                    type: 'paragraph',
+                                    attrs: { lang: null },
+                                    content: [
+                                        {
+                                            type: 'text',
+                                            text: 'Type > and a space at the start of a paragraph for a quote; Enter in its empty last paragraph leaves it.',
+                                        },
+                                    ],
+                                },
                             ],
                         },
                     ],

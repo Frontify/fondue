@@ -6,10 +6,11 @@ import { join } from 'node:path';
 import { expect } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
+import { featureIdsByFolder } from '#/plugins/registry';
 import { type SelectionTarget } from '#/testing';
 
 export const PROFILES = ['inline', 'comment', 'document', 'brand-document'] as const;
-// The package's `src`, whose feature stories each name their feature in their title.
+// The package's `src`, whose plugin stories each name their plugin in their title.
 const SRC = join(import.meta.dirname, '..', '..', '..');
 
 /** Each feature story's file under `src` and the feature its title names, so a new feature story is never left out. */
@@ -19,9 +20,10 @@ export const FEATURE_STORIES: readonly { feature: string; file: string }[] = glo
     .map((path) => path.replaceAll('\\', '/'))
     .sort()
     .map((file) => {
-        const feature = /title: 'Rich Text Editor\/Features\/([^']+)'/.exec(readFileSync(join(SRC, file), 'utf8'))?.[1];
+        const plugin = /title: 'Rich Text Editor\/Plugins\/([^']+)'/.exec(readFileSync(join(SRC, file), 'utf8'))?.[1];
+        const feature = plugin === undefined ? undefined : featureIdsByFolder[plugin];
         if (feature === undefined) {
-            throw new Error(`${file} names no feature in its title.`);
+            throw new Error(`${file} names no plugin of a feature in its title.`);
         }
 
         return { feature, file };

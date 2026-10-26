@@ -9,7 +9,7 @@ const plugins = [corePlugin(), alignPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.align', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/blocks.align',
+    title: 'Rich Text Editor/Plugins/Align',
     component: RichTextEditor,
     tags: ['autodocs'],
     parameters: {

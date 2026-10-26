@@ -3,36 +3,36 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, modelOf, RichTextEditor, strikethroughPlugin } from '#/index';
+import { corePlugin, defineEditor, emojiPlugin, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), strikethroughPlugin()] as const;
-const model = modelOf(plugins, { id: 'story.marks-strike', version: 1 });
+const plugins = [corePlugin(), emojiPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.emoji', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/marks.strike',
+    title: 'Rich Text Editor/Plugins/Emoji',
     component: RichTextEditor,
-    tags: ['autodocs', 'feature:core', 'feature:marks.strike'],
+    tags: ['autodocs', 'feature:emoji', 'feature:core'],
     parameters: {
         docs: {
             description: {
                 component: `
-Struck-through text as \`s\`, toggled on the selection or at the caret.
+Emoji stored as Unicode text. Type \`:\` at a word start, then at least two letters, to open suggestions. Enter or Tab inserts the active emoji. The toolbar button opens the emoji picker.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|
-| \`marks.strike\` | \`mark.strike.toggle\` | \`Mod-Shift-x\` | Strikethrough toggle | \`strike.tildes\` | Adds or removes \`strike\` |
+| \`emoji\` | \`emoji.picker.open\`; an accepted emoji runs core's \`text.insert\` with \`{ text }\` |  | Emoji button | \`:\` suggestions | Inserts the emoji as a text node |
 `,
             },
         },
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.marks-strike', model, plugins }),
+        definition: defineEditor({ id: 'story.emoji', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
-            documentId: 'story-marks-strike',
+            documentId: 'story-emoji',
             revision: null,
             document: {
                 format: 'frontify.rich-text',
@@ -40,7 +40,7 @@ Struck-through text as \`s\`, toggled on the selection or at the caret.
                 model: model.ref,
                 requiredCapabilities: [
                     { id: 'core', version: 1 },
-                    { id: 'marks.strike', version: 1 },
+                    { id: 'emoji', version: 1 },
                 ],
                 content: {
                     type: 'doc',
@@ -49,11 +49,7 @@ Struck-through text as \`s\`, toggled on the selection or at the caret.
                         {
                             type: 'paragraph',
                             attrs: { lang: null },
-                            content: [
-                                { type: 'text', text: 'Select text and press Mod+Shift+X, or type ~~text~~, to ' },
-                                { type: 'text', text: 'strike it through', marks: [{ type: 'strike' }] },
-                                { type: 'text', text: '.' },
-                            ],
+                            content: [{ type: 'text', text: 'Type : and a name, or insert one 🎉.' }],
                         },
                     ],
                 },

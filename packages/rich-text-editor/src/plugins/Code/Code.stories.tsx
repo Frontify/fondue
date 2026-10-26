@@ -3,36 +3,36 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, italicPlugin, modelOf, RichTextEditor } from '#/index';
+import { codePlugin, corePlugin, defineEditor, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), italicPlugin()] as const;
-const model = modelOf(plugins, { id: 'story.marks-italic', version: 1 });
+const plugins = [corePlugin(), codePlugin()] as const;
+const model = modelOf(plugins, { id: 'story.marks-code', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/marks.italic',
+    title: 'Rich Text Editor/Plugins/Code',
     component: RichTextEditor,
-    tags: ['autodocs', 'feature:core', 'feature:marks.italic'],
+    tags: ['autodocs', 'feature:core', 'feature:marks.code'],
     parameters: {
         docs: {
             description: {
                 component: `
-Emphasis as \`em\`, toggled on the selection or at the caret.
+Inline code as \`code\`, which typing at its end does not extend and inside which no input rule fires.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|
-| \`marks.italic\` | \`mark.italic.toggle\` | \`Mod-i\` | Italic toggle | \`italic.star\`, \`italic.underscore\` | Adds or removes \`italic\` |
+| \`marks.code\` | \`mark.code.toggle\` | \`Mod-e\` | Code toggle | \`code.backtick\` | Adds or removes \`code\` |
 `,
             },
         },
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.marks-italic', model, plugins }),
+        definition: defineEditor({ id: 'story.marks-code', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
-            documentId: 'story-marks-italic',
+            documentId: 'story-marks-code',
             revision: null,
             document: {
                 format: 'frontify.rich-text',
@@ -40,7 +40,7 @@ Emphasis as \`em\`, toggled on the selection or at the caret.
                 model: model.ref,
                 requiredCapabilities: [
                     { id: 'core', version: 1 },
-                    { id: 'marks.italic', version: 1 },
+                    { id: 'marks.code', version: 1 },
                 ],
                 content: {
                     type: 'doc',
@@ -50,10 +50,8 @@ Emphasis as \`em\`, toggled on the selection or at the caret.
                             type: 'paragraph',
                             attrs: { lang: null },
                             content: [
-                                { type: 'text', text: 'Select text and press Mod+I, or type ' },
-                                { type: 'text', text: '*text*' },
-                                { type: 'text', text: ', to make it ' },
-                                { type: 'text', text: 'italic', marks: [{ type: 'italic' }] },
+                                { type: 'text', text: 'Press Mod+E, or type `text`, for ' },
+                                { type: 'text', text: 'inline code', marks: [{ type: 'code' }] },
                                 { type: 'text', text: '.' },
                             ],
                         },

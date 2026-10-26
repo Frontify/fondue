@@ -3,39 +3,39 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, listItemPlugin, modelOf, orderedListPlugin, RichTextEditor } from '#/index';
+import { bulletListPlugin, corePlugin, defineEditor, listItemPlugin, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), listItemPlugin(), orderedListPlugin()] as const;
+const plugins = [corePlugin(), listItemPlugin(), bulletListPlugin()] as const;
 const model = modelOf(plugins, {
-    id: 'story.lists-ordered',
+    id: 'story.lists-bullet',
     version: 1,
 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/lists.ordered',
+    title: 'Rich Text Editor/Plugins/BulletList',
     component: RichTextEditor,
-    tags: ['autodocs', 'feature:lists.ordered', 'feature:lists.item', 'feature:core'],
+    tags: ['autodocs', 'feature:lists.bullet', 'feature:lists.item', 'feature:core'],
     parameters: {
         docs: {
             description: {
                 component: `
-Numbered lists as \`ordered_list\`, with \`start\` from 0 to 1,000,000.
+Bulleted lists as \`bullet_list\`.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|
-| \`lists.ordered\` | \`list.ordered.toggle\` with \`{ start }\`, \`list.ordered.start.edit\`, \`list.ordered.start.set\` with \`{ start }\` | \`Mod-Shift-7\` | Numbered list toggle, which passes \`{ start: 1 }\`; Start numbering at in the More menu | \`list.ordered.number\` | As \`lists.bullet\`, with \`ordered_list\` and its \`start\` |
+| \`lists.bullet\` | \`list.bullet.toggle\` | \`Mod-Shift-8\` | Bulleted list toggle | \`list.bullet.marker\` | Wraps the selection in \`bullet_list\`, converts another list, or lifts the items out |
 `,
             },
         },
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.lists-ordered', model, plugins }),
+        definition: defineEditor({ id: 'story.lists-bullet', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
-            documentId: 'story-lists-ordered',
+            documentId: 'story-lists-bullet',
             revision: null,
             document: {
                 format: 'frontify.rich-text',
@@ -43,16 +43,21 @@ Numbered lists as \`ordered_list\`, with \`start\` from 0 to 1,000,000.
                 model: model.ref,
                 requiredCapabilities: [
                     { id: 'core', version: 1 },
+                    { id: 'lists.bullet', version: 1 },
                     { id: 'lists.item', version: 1 },
-                    { id: 'lists.ordered', version: 1 },
                 ],
                 content: {
                     type: 'doc',
                     attrs: { lang: null, dir: 'auto' },
                     content: [
                         {
-                            type: 'ordered_list',
-                            attrs: { start: 5, marker: null },
+                            type: 'paragraph',
+                            attrs: { lang: null },
+                            content: [{ type: 'text', text: 'Brand assets:' }],
+                        },
+                        {
+                            type: 'bullet_list',
+                            attrs: { marker: null },
                             content: [
                                 {
                                     type: 'list_item',
@@ -60,11 +65,11 @@ Numbered lists as \`ordered_list\`, with \`start\` from 0 to 1,000,000.
                                         {
                                             type: 'paragraph',
                                             attrs: { lang: null },
-                                            content: [{ type: 'text', text: 'Download the kit' }],
+                                            content: [{ type: 'text', text: 'Logos' }],
                                         },
                                         {
-                                            type: 'ordered_list',
-                                            attrs: { start: 1, marker: null },
+                                            type: 'bullet_list',
+                                            attrs: { marker: null },
                                             content: [
                                                 {
                                                     type: 'list_item',
@@ -72,7 +77,25 @@ Numbered lists as \`ordered_list\`, with \`start\` from 0 to 1,000,000.
                                                         {
                                                             type: 'paragraph',
                                                             attrs: { lang: null },
-                                                            content: [{ type: 'text', text: 'Unzip it' }],
+                                                            content: [{ type: 'text', text: 'Primary' }],
+                                                        },
+                                                        {
+                                                            type: 'bullet_list',
+                                                            attrs: { marker: 'square' },
+                                                            content: [
+                                                                {
+                                                                    type: 'list_item',
+                                                                    content: [
+                                                                        {
+                                                                            type: 'paragraph',
+                                                                            attrs: { lang: null },
+                                                                            content: [
+                                                                                { type: 'text', text: 'Horizontal' },
+                                                                            ],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
                                                         },
                                                     ],
                                                 },
@@ -82,7 +105,7 @@ Numbered lists as \`ordered_list\`, with \`start\` from 0 to 1,000,000.
                                                         {
                                                             type: 'paragraph',
                                                             attrs: { lang: null },
-                                                            content: [{ type: 'text', text: 'Open the guide' }],
+                                                            content: [{ type: 'text', text: 'Secondary' }],
                                                         },
                                                     ],
                                                 },
@@ -96,23 +119,7 @@ Numbered lists as \`ordered_list\`, with \`start\` from 0 to 1,000,000.
                                         {
                                             type: 'paragraph',
                                             attrs: { lang: null },
-                                            content: [{ type: 'text', text: 'Pick a template' }],
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                        {
-                            type: 'ordered_list',
-                            attrs: { start: 1, marker: 'lower-roman' },
-                            content: [
-                                {
-                                    type: 'list_item',
-                                    content: [
-                                        {
-                                            type: 'paragraph',
-                                            attrs: { lang: null },
-                                            content: [{ type: 'text', text: 'Roman step' }],
+                                            content: [{ type: 'text', text: 'Fonts' }],
                                         },
                                     ],
                                 },

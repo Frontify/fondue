@@ -73,7 +73,7 @@ const documentsOf = (args: StoryArgs): RichTextDocument[] =>
     });
 
 // The playground Profile story ignores its args and renders the empty document of its profile.
-const PROFILE_EDITOR = 'react/playground.stories.tsx Profile';
+const PROFILE_EDITOR = 'react/RichTextEditor/RichTextEditor.stories.tsx Profile';
 
 const stories = COMPOSED_STORIES.filter(({ file }) => !NAMED_FOR_A_CHECK.test(file)).flatMap(({ file, name, args }) => {
     const title = `${file} ${name}`;

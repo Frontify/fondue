@@ -22,7 +22,7 @@ import {
     inlineModel,
 } from '#/plugins';
 import { CONTENT_RULE_IDS } from '#/plugins/__tests__/fixtures/contentRules';
-import { registry } from '#/plugins/registry';
+import { featureIdsByFolder, registry } from '#/plugins/registry';
 import { UNSHIPPED_FEATURES } from '#/plugins/stages';
 
 const PACKAGE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
@@ -276,8 +276,8 @@ describe('the limitations guide', () => {
         const ids = new Set<string>();
         for (const file of filesUnder('src', ['.stories.tsx'])) {
             const story = read(file);
-            for (const [, id] of story.matchAll(/title: 'Rich Text Editor\/Features\/([^']+)'/g)) {
-                ids.add(id ?? '');
+            for (const [, name] of story.matchAll(/title: 'Rich Text Editor\/Plugins\/([^']+)'/g)) {
+                ids.add(featureIdsByFolder[name ?? ''] ?? '');
             }
 
             for (const [, id] of story.matchAll(/'feature:([^']+)'/g)) {

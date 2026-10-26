@@ -41,7 +41,7 @@ const resolveAssetUrl = () => demoImage;
 const text = (value: string) => ({ type: 'text', text: value });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/a11y.content-checks',
+    title: 'Rich Text Editor/Plugins/ContentChecks',
     component: RichTextEditor,
     tags: [
         'autodocs',

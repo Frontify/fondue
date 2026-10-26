@@ -12,7 +12,7 @@ const model = modelOf(plugins, { id: 'story.layout-columns', version: 1 });
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/layout.columns',
+    title: 'Rich Text Editor/Plugins/Columns',
     component: RichTextEditor,
     tags: ['autodocs', 'feature:layout.columns', 'feature:core'],
     parameters: {

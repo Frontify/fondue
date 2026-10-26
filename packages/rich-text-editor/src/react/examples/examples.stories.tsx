@@ -396,7 +396,7 @@ const meta: Meta = {
                 component: `
 How a host wires the editor for common tasks. Every example passes the stored record once, as \`defaultValue\`, and reads changes back from the editor; none passes a new document on each change. To show another document, call \`replaceDocument\`, or mount again with a new \`key\` for another definition.
 
-Async mentions are the [mentions story](?path=/story/rich-text-editor-features-mentions--default), and async uploads the [upload story](?path=/story/rich-text-editor-features-media-upload--default). Each shipped profile has its own story under [Profiles](?path=/docs/rich-text-editor-profiles--documentation).
+Async mentions are the [mentions story](?path=/story/rich-text-editor-plugins-mention--default), and async uploads the [upload story](?path=/story/rich-text-editor-plugins-upload--default). Each shipped profile has its own story under [Profiles](?path=/docs/rich-text-editor-profiles--documentation).
 `,
             },
         },

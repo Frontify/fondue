@@ -10,7 +10,7 @@ const plugins = [corePlugin()] as const;
 const model = modelOf(plugins, { id: 'story.core', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/core',
+    title: 'Rich Text Editor/Plugins/Core',
     component: RichTextEditor,
     tags: ['autodocs'],
     parameters: {

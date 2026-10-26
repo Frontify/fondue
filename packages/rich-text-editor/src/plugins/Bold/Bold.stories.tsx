@@ -3,36 +3,35 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, listItemPlugin, modelOf, RichTextEditor } from '#/index';
+import { boldPlugin, corePlugin, defineEditor, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
-// A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), listItemPlugin()] as const;
-const model = modelOf(plugins, { id: 'story.lists-item', version: 1 });
+const plugins = [corePlugin(), boldPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.bold', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/lists.item',
+    title: 'Rich Text Editor/Plugins/Bold',
     component: RichTextEditor,
-    tags: ['autodocs', 'feature:lists.item', 'feature:core'],
+    tags: ['autodocs'],
     parameters: {
         docs: {
             description: {
                 component: `
-The \`list_item\` of bulleted and numbered lists. Enter splits an item, Enter in an empty item outdents it or, at the top level, turns it into a paragraph after the list, and Backspace at the start of an item's first paragraph does the same. Tab nests an item under its previous sibling and moves focus out of the editor when the item cannot nest.
+Strong importance as \`strong\`, toggled on the selection or at the caret.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|
-| \`lists.item\` | \`list.indent\`, \`list.outdent\` | \`Mod-]\` and \`Tab\`, \`Mod-[\` and \`Shift-Tab\`, in a list item | none | none | Nests or outdents \`list_item\` nodes, keeping children |
+| \`marks.bold\` | \`mark.bold.toggle\` | \`Mod-b\` | Bold toggle | \`bold.stars\`, \`bold.underscores\` | Adds or removes \`bold\` on the selection, or in the stored marks at a caret |
 `,
             },
         },
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.lists-item', model, plugins }),
+        definition: defineEditor({ id: 'story.bold', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
-            documentId: 'story-lists-item',
+            documentId: 'story-bold',
             revision: null,
             document: {
                 format: 'frontify.rich-text',
@@ -40,7 +39,7 @@ The \`list_item\` of bulleted and numbered lists. Enter splits an item, Enter in
                 model: model.ref,
                 requiredCapabilities: [
                     { id: 'core', version: 1 },
-                    { id: 'lists.item', version: 1 },
+                    { id: 'marks.bold', version: 1 },
                 ],
                 content: {
                     type: 'doc',
@@ -50,10 +49,9 @@ The \`list_item\` of bulleted and numbered lists. Enter splits an item, Enter in
                             type: 'paragraph',
                             attrs: { lang: null },
                             content: [
-                                {
-                                    type: 'text',
-                                    text: 'List items come with lists.bullet and lists.ordered, where Tab and Shift+Tab nest and outdent them.',
-                                },
+                                { type: 'text', text: 'Select text and press Mod+B to make it ' },
+                                { type: 'text', text: 'bold', marks: [{ type: 'bold' }] },
+                                { type: 'text', text: '.' },
                             ],
                         },
                     ],

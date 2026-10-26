@@ -11,7 +11,7 @@ const plugins = [corePlugin(), superscriptPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.marks-superscript', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/marks.superscript',
+    title: 'Rich Text Editor/Plugins/Superscript',
     component: RichTextEditor,
     tags: ['autodocs', 'feature:core', 'feature:marks.superscript'],
     parameters: {

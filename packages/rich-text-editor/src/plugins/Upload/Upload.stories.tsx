@@ -56,7 +56,7 @@ const uploads: UploadService = {
 };
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/media.upload',
+    title: 'Rich Text Editor/Plugins/Upload',
     component: RichTextEditor,
     tags: ['autodocs', 'documents-behavior', 'feature:media.upload', 'feature:media.image', 'feature:core'],
     parameters: {

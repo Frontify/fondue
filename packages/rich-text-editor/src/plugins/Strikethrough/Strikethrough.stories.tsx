@@ -3,36 +3,36 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, modelOf, RichTextEditor, underlinePlugin } from '#/index';
+import { corePlugin, defineEditor, modelOf, RichTextEditor, strikethroughPlugin } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), underlinePlugin()] as const;
-const model = modelOf(plugins, { id: 'story.marks-underline', version: 1 });
+const plugins = [corePlugin(), strikethroughPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.marks-strike', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/marks.underline',
+    title: 'Rich Text Editor/Plugins/Strikethrough',
     component: RichTextEditor,
-    tags: ['autodocs', 'feature:core', 'feature:marks.underline'],
+    tags: ['autodocs', 'feature:core', 'feature:marks.strike'],
     parameters: {
         docs: {
             description: {
                 component: `
-Underlined text as \`u\`, which Markdown cannot hold.
+Struck-through text as \`s\`, toggled on the selection or at the caret.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|
-| \`marks.underline\` | \`mark.underline.toggle\` | \`Mod-u\` | Underline toggle | none | Adds or removes \`underline\` |
+| \`marks.strike\` | \`mark.strike.toggle\` | \`Mod-Shift-x\` | Strikethrough toggle | \`strike.tildes\` | Adds or removes \`strike\` |
 `,
             },
         },
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.marks-underline', model, plugins }),
+        definition: defineEditor({ id: 'story.marks-strike', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
-            documentId: 'story-marks-underline',
+            documentId: 'story-marks-strike',
             revision: null,
             document: {
                 format: 'frontify.rich-text',
@@ -40,7 +40,7 @@ Underlined text as \`u\`, which Markdown cannot hold.
                 model: model.ref,
                 requiredCapabilities: [
                     { id: 'core', version: 1 },
-                    { id: 'marks.underline', version: 1 },
+                    { id: 'marks.strike', version: 1 },
                 ],
                 content: {
                     type: 'doc',
@@ -50,9 +50,9 @@ Underlined text as \`u\`, which Markdown cannot hold.
                             type: 'paragraph',
                             attrs: { lang: null },
                             content: [
-                                { type: 'text', text: 'Select text and press Mod+U to ' },
-                                { type: 'text', text: 'underline', marks: [{ type: 'underline' }] },
-                                { type: 'text', text: ' it.' },
+                                { type: 'text', text: 'Select text and press Mod+Shift+X, or type ~~text~~, to ' },
+                                { type: 'text', text: 'strike it through', marks: [{ type: 'strike' }] },
+                                { type: 'text', text: '.' },
                             ],
                         },
                     ],

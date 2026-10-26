@@ -22,7 +22,7 @@ const plugins = [
 const model = modelOf(plugins, { id: 'story.input-rules', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/input-rules',
+    title: 'Rich Text Editor/Plugins/InputRules',
     component: RichTextEditor,
     tags: ['autodocs', 'feature:core', 'feature:input-rules'],
     parameters: {

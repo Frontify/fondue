@@ -3,36 +3,36 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { codePlugin, corePlugin, defineEditor, modelOf, RichTextEditor } from '#/index';
+import { corePlugin, defineEditor, modelOf, RichTextEditor, underlinePlugin } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), codePlugin()] as const;
-const model = modelOf(plugins, { id: 'story.marks-code', version: 1 });
+const plugins = [corePlugin(), underlinePlugin()] as const;
+const model = modelOf(plugins, { id: 'story.marks-underline', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/marks.code',
+    title: 'Rich Text Editor/Plugins/Underline',
     component: RichTextEditor,
-    tags: ['autodocs', 'feature:core', 'feature:marks.code'],
+    tags: ['autodocs', 'feature:core', 'feature:marks.underline'],
     parameters: {
         docs: {
             description: {
                 component: `
-Inline code as \`code\`, which typing at its end does not extend and inside which no input rule fires.
+Underlined text as \`u\`, which Markdown cannot hold.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|
-| \`marks.code\` | \`mark.code.toggle\` | \`Mod-e\` | Code toggle | \`code.backtick\` | Adds or removes \`code\` |
+| \`marks.underline\` | \`mark.underline.toggle\` | \`Mod-u\` | Underline toggle | none | Adds or removes \`underline\` |
 `,
             },
         },
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.marks-code', model, plugins }),
+        definition: defineEditor({ id: 'story.marks-underline', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
-            documentId: 'story-marks-code',
+            documentId: 'story-marks-underline',
             revision: null,
             document: {
                 format: 'frontify.rich-text',
@@ -40,7 +40,7 @@ Inline code as \`code\`, which typing at its end does not extend and inside whic
                 model: model.ref,
                 requiredCapabilities: [
                     { id: 'core', version: 1 },
-                    { id: 'marks.code', version: 1 },
+                    { id: 'marks.underline', version: 1 },
                 ],
                 content: {
                     type: 'doc',
@@ -50,9 +50,9 @@ Inline code as \`code\`, which typing at its end does not extend and inside whic
                             type: 'paragraph',
                             attrs: { lang: null },
                             content: [
-                                { type: 'text', text: 'Press Mod+E, or type `text`, for ' },
-                                { type: 'text', text: 'inline code', marks: [{ type: 'code' }] },
-                                { type: 'text', text: '.' },
+                                { type: 'text', text: 'Select text and press Mod+U to ' },
+                                { type: 'text', text: 'underline', marks: [{ type: 'underline' }] },
+                                { type: 'text', text: ' it.' },
                             ],
                         },
                     ],

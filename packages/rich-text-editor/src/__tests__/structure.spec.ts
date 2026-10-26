@@ -611,6 +611,14 @@ const pluginFolderNames = () =>
         .map((entry) => entry.name)
         .sort();
 
+// The stories of a topic, which name no component.
+const TOPIC_STORIES = new Set([
+    'persistence.stories.tsx',
+    'examples.stories.tsx',
+    'profiles.stories.tsx',
+    'authoring.stories.tsx',
+]);
+
 const PLUGIN_ROOT_FILES = [
     /^(index|feature|migration|reader)\.tsx?$/,
     /^editor\.tsx?$/,
@@ -951,6 +959,34 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
 
     it('names every plugin folder in PascalCase', () => {
         const problems = pluginFolderNames().filter((name) => !PASCAL_CASE.test(name));
+        expect(problems).toEqual([]);
+    });
+
+    it('names each component story after its component and titles plugin stories by plugin', () => {
+        const problems: string[] = [];
+        for (const path of allFiles.filter((file) => file.endsWith('.stories.tsx'))) {
+            const key = toKey(path);
+            const file = basename(path);
+            const plugin = /^src\/plugins\/([^/]+)\/[^/]+\.stories\.tsx$/.exec(key)?.[1];
+            if (plugin === undefined) {
+                const component = file.replace(/\.stories\.tsx$/, '.tsx');
+                if (!TOPIC_STORIES.has(file) && !existsSync(join(dirname(path), component))) {
+                    problems.push(`${key} is no topic story and names no component beside it`);
+                }
+
+                continue;
+            }
+
+            if (file !== `${plugin}.stories.tsx`) {
+                problems.push(`${key} is not named ${plugin}.stories.tsx`);
+            }
+
+            const title = /title:\s*'([^']*)'/.exec(readFileSync(path, 'utf8'))?.[1];
+            if (title !== `Rich Text Editor/Plugins/${plugin}`) {
+                problems.push(`${key} has the title ${title}, not Rich Text Editor/Plugins/${plugin}`);
+            }
+        }
+
         expect(problems).toEqual([]);
     });
 

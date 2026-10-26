@@ -11,7 +11,7 @@ const plugins = [corePlugin(), codeBlockPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.blocks-code', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/blocks.code',
+    title: 'Rich Text Editor/Plugins/CodeBlock',
     component: RichTextEditor,
     tags: ['autodocs', 'feature:blocks.code', 'feature:core'],
     parameters: {

@@ -11,7 +11,7 @@ const plugins = [corePlugin(), checkListPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.lists-task', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/lists.task',
+    title: 'Rich Text Editor/Plugins/CheckList',
     component: RichTextEditor,
     tags: ['autodocs', 'feature:lists.task', 'feature:core'],
     parameters: {

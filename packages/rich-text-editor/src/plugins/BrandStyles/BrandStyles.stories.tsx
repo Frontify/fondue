@@ -21,7 +21,7 @@ const model = modelOf(plugins, {
 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/styles.brand',
+    title: 'Rich Text Editor/Plugins/BrandStyles',
     component: RichTextEditor,
     tags: ['autodocs', 'feature:styles.brand', 'feature:blocks.heading', 'feature:blocks.quote', 'feature:core'],
     parameters: {

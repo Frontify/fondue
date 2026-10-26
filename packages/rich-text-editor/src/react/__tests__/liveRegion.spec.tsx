@@ -35,7 +35,7 @@ describe('the live regions of every story', () => {
     it.each(stories)('renders no assertive or surface live region in $title', async ({ Story, title }) => {
         // A reader story renders content or a blocked notice, every other story an editor or its blocked shell.
         let rendered = '[data-test-id^="fondue-rich-text"]';
-        if (title.includes('/reader.stories.tsx')) {
+        if (title.includes('/RichTextReader.stories.tsx')) {
             rendered = '*';
         }
 

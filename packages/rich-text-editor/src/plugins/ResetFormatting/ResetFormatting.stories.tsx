@@ -31,7 +31,7 @@ const model = modelOf(plugins, {
 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/format.clear',
+    title: 'Rich Text Editor/Plugins/ResetFormatting',
     component: RichTextEditor,
     tags: ['autodocs'],
     parameters: {

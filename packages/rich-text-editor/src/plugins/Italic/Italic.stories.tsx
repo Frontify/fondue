@@ -3,35 +3,36 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { boldPlugin, corePlugin, defineEditor, modelOf, RichTextEditor } from '#/index';
+import { corePlugin, defineEditor, italicPlugin, modelOf, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
-const plugins = [corePlugin(), boldPlugin()] as const;
-const model = modelOf(plugins, { id: 'story.bold', version: 1 });
+// A feature story installs only its feature and what it requires, which its `feature:` tags name.
+const plugins = [corePlugin(), italicPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.marks-italic', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/marks.bold',
+    title: 'Rich Text Editor/Plugins/Italic',
     component: RichTextEditor,
-    tags: ['autodocs'],
+    tags: ['autodocs', 'feature:core', 'feature:marks.italic'],
     parameters: {
         docs: {
             description: {
                 component: `
-Strong importance as \`strong\`, toggled on the selection or at the caret.
+Emphasis as \`em\`, toggled on the selection or at the caret.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|
-| \`marks.bold\` | \`mark.bold.toggle\` | \`Mod-b\` | Bold toggle | \`bold.stars\`, \`bold.underscores\` | Adds or removes \`bold\` on the selection, or in the stored marks at a caret |
+| \`marks.italic\` | \`mark.italic.toggle\` | \`Mod-i\` | Italic toggle | \`italic.star\`, \`italic.underscore\` | Adds or removes \`italic\` |
 `,
             },
         },
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.bold', model, plugins }),
+        definition: defineEditor({ id: 'story.marks-italic', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
-            documentId: 'story-bold',
+            documentId: 'story-marks-italic',
             revision: null,
             document: {
                 format: 'frontify.rich-text',
@@ -39,7 +40,7 @@ Strong importance as \`strong\`, toggled on the selection or at the caret.
                 model: model.ref,
                 requiredCapabilities: [
                     { id: 'core', version: 1 },
-                    { id: 'marks.bold', version: 1 },
+                    { id: 'marks.italic', version: 1 },
                 ],
                 content: {
                     type: 'doc',
@@ -49,8 +50,10 @@ Strong importance as \`strong\`, toggled on the selection or at the caret.
                             type: 'paragraph',
                             attrs: { lang: null },
                             content: [
-                                { type: 'text', text: 'Select text and press Mod+B to make it ' },
-                                { type: 'text', text: 'bold', marks: [{ type: 'bold' }] },
+                                { type: 'text', text: 'Select text and press Mod+I, or type ' },
+                                { type: 'text', text: '*text*' },
+                                { type: 'text', text: ', to make it ' },
+                                { type: 'text', text: 'italic', marks: [{ type: 'italic' }] },
                                 { type: 'text', text: '.' },
                             ],
                         },

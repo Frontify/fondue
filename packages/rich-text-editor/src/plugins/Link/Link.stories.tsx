@@ -32,7 +32,7 @@ const link = (href: string, openInNewWindow: boolean) => ({
 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/links',
+    title: 'Rich Text Editor/Plugins/Link',
     component: RichTextEditor,
     tags: ['autodocs'],
     parameters: {

@@ -3,36 +3,36 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, emojiPlugin, modelOf, RichTextEditor } from '#/index';
+import { corePlugin, defineEditor, modelOf, RichTextEditor, subscriptPlugin } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), emojiPlugin()] as const;
-const model = modelOf(plugins, { id: 'story.emoji', version: 1 });
+const plugins = [corePlugin(), subscriptPlugin()] as const;
+const model = modelOf(plugins, { id: 'story.marks-subscript', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/emoji',
+    title: 'Rich Text Editor/Plugins/Subscript',
     component: RichTextEditor,
-    tags: ['autodocs', 'feature:emoji', 'feature:core'],
+    tags: ['autodocs', 'feature:core', 'feature:marks.subscript'],
     parameters: {
         docs: {
             description: {
                 component: `
-Emoji stored as Unicode text. Type \`:\` at a word start, then at least two letters, to open suggestions. Enter or Tab inserts the active emoji. The toolbar button opens the emoji picker.
+Subscript as \`sub\`.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|
-| \`emoji\` | \`emoji.picker.open\`; an accepted emoji runs core's \`text.insert\` with \`{ text }\` |  | Emoji button | \`:\` suggestions | Inserts the emoji as a text node |
+| \`marks.subscript\` | \`mark.subscript.toggle\` | \`Mod-,\` | Subscript toggle | none | Adds or removes \`subscript\`, and removes \`superscript\` from the range |
 `,
             },
         },
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.emoji', model, plugins }),
+        definition: defineEditor({ id: 'story.marks-subscript', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
-            documentId: 'story-emoji',
+            documentId: 'story-marks-subscript',
             revision: null,
             document: {
                 format: 'frontify.rich-text',
@@ -40,7 +40,7 @@ Emoji stored as Unicode text. Type \`:\` at a word start, then at least two lett
                 model: model.ref,
                 requiredCapabilities: [
                     { id: 'core', version: 1 },
-                    { id: 'emoji', version: 1 },
+                    { id: 'marks.subscript', version: 1 },
                 ],
                 content: {
                     type: 'doc',
@@ -49,7 +49,11 @@ Emoji stored as Unicode text. Type \`:\` at a word start, then at least two lett
                         {
                             type: 'paragraph',
                             attrs: { lang: null },
-                            content: [{ type: 'text', text: 'Type : and a name, or insert one 🎉.' }],
+                            content: [
+                                { type: 'text', text: 'Press Mod+, for subscript, as in H' },
+                                { type: 'text', text: '2', marks: [{ type: 'subscript' }] },
+                                { type: 'text', text: 'O.' },
+                            ],
                         },
                     ],
                 },

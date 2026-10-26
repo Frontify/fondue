@@ -3,39 +3,39 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { bulletListPlugin, corePlugin, defineEditor, listItemPlugin, modelOf, RichTextEditor } from '#/index';
+import { corePlugin, defineEditor, listItemPlugin, modelOf, orderedListPlugin, RichTextEditor } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), listItemPlugin(), bulletListPlugin()] as const;
+const plugins = [corePlugin(), listItemPlugin(), orderedListPlugin()] as const;
 const model = modelOf(plugins, {
-    id: 'story.lists-bullet',
+    id: 'story.lists-ordered',
     version: 1,
 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/lists.bullet',
+    title: 'Rich Text Editor/Plugins/OrderedList',
     component: RichTextEditor,
-    tags: ['autodocs', 'feature:lists.bullet', 'feature:lists.item', 'feature:core'],
+    tags: ['autodocs', 'feature:lists.ordered', 'feature:lists.item', 'feature:core'],
     parameters: {
         docs: {
             description: {
                 component: `
-Bulleted lists as \`bullet_list\`.
+Numbered lists as \`ordered_list\`, with \`start\` from 0 to 1,000,000.
 
 | Feature | Commands and payloads | Keys | Controls | Input rules | Document change |
 |---|---|---|---|---|---|
-| \`lists.bullet\` | \`list.bullet.toggle\` | \`Mod-Shift-8\` | Bulleted list toggle | \`list.bullet.marker\` | Wraps the selection in \`bullet_list\`, converts another list, or lifts the items out |
+| \`lists.ordered\` | \`list.ordered.toggle\` with \`{ start }\`, \`list.ordered.start.edit\`, \`list.ordered.start.set\` with \`{ start }\` | \`Mod-Shift-7\` | Numbered list toggle, which passes \`{ start: 1 }\`; Start numbering at in the More menu | \`list.ordered.number\` | As \`lists.bullet\`, with \`ordered_list\` and its \`start\` |
 `,
             },
         },
     },
     args: {
         'aria-label': 'Notes',
-        definition: defineEditor({ id: 'story.lists-bullet', model, plugins }),
+        definition: defineEditor({ id: 'story.lists-ordered', model, plugins }),
         presentation: defineReactPresentation({ toolbar: FEATURE_TOOLBAR }),
         defaultValue: {
-            documentId: 'story-lists-bullet',
+            documentId: 'story-lists-ordered',
             revision: null,
             document: {
                 format: 'frontify.rich-text',
@@ -43,21 +43,16 @@ Bulleted lists as \`bullet_list\`.
                 model: model.ref,
                 requiredCapabilities: [
                     { id: 'core', version: 1 },
-                    { id: 'lists.bullet', version: 1 },
                     { id: 'lists.item', version: 1 },
+                    { id: 'lists.ordered', version: 1 },
                 ],
                 content: {
                     type: 'doc',
                     attrs: { lang: null, dir: 'auto' },
                     content: [
                         {
-                            type: 'paragraph',
-                            attrs: { lang: null },
-                            content: [{ type: 'text', text: 'Brand assets:' }],
-                        },
-                        {
-                            type: 'bullet_list',
-                            attrs: { marker: null },
+                            type: 'ordered_list',
+                            attrs: { start: 5, marker: null },
                             content: [
                                 {
                                     type: 'list_item',
@@ -65,11 +60,11 @@ Bulleted lists as \`bullet_list\`.
                                         {
                                             type: 'paragraph',
                                             attrs: { lang: null },
-                                            content: [{ type: 'text', text: 'Logos' }],
+                                            content: [{ type: 'text', text: 'Download the kit' }],
                                         },
                                         {
-                                            type: 'bullet_list',
-                                            attrs: { marker: null },
+                                            type: 'ordered_list',
+                                            attrs: { start: 1, marker: null },
                                             content: [
                                                 {
                                                     type: 'list_item',
@@ -77,25 +72,7 @@ Bulleted lists as \`bullet_list\`.
                                                         {
                                                             type: 'paragraph',
                                                             attrs: { lang: null },
-                                                            content: [{ type: 'text', text: 'Primary' }],
-                                                        },
-                                                        {
-                                                            type: 'bullet_list',
-                                                            attrs: { marker: 'square' },
-                                                            content: [
-                                                                {
-                                                                    type: 'list_item',
-                                                                    content: [
-                                                                        {
-                                                                            type: 'paragraph',
-                                                                            attrs: { lang: null },
-                                                                            content: [
-                                                                                { type: 'text', text: 'Horizontal' },
-                                                                            ],
-                                                                        },
-                                                                    ],
-                                                                },
-                                                            ],
+                                                            content: [{ type: 'text', text: 'Unzip it' }],
                                                         },
                                                     ],
                                                 },
@@ -105,7 +82,7 @@ Bulleted lists as \`bullet_list\`.
                                                         {
                                                             type: 'paragraph',
                                                             attrs: { lang: null },
-                                                            content: [{ type: 'text', text: 'Secondary' }],
+                                                            content: [{ type: 'text', text: 'Open the guide' }],
                                                         },
                                                     ],
                                                 },
@@ -119,7 +96,23 @@ Bulleted lists as \`bullet_list\`.
                                         {
                                             type: 'paragraph',
                                             attrs: { lang: null },
-                                            content: [{ type: 'text', text: 'Fonts' }],
+                                            content: [{ type: 'text', text: 'Pick a template' }],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            type: 'ordered_list',
+                            attrs: { start: 1, marker: 'lower-roman' },
+                            content: [
+                                {
+                                    type: 'list_item',
+                                    content: [
+                                        {
+                                            type: 'paragraph',
+                                            attrs: { lang: null },
+                                            content: [{ type: 'text', text: 'Roman step' }],
                                         },
                                     ],
                                 },

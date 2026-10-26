@@ -48,7 +48,7 @@ const image = (nodeId: string, assetId: string, attrs: Readonly<Record<string, u
 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/media.image',
+    title: 'Rich Text Editor/Plugins/Image',
     component: RichTextEditor,
     tags: ['autodocs', 'feature:media.image', 'feature:core'],
     parameters: {

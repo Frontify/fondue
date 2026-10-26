@@ -39,7 +39,7 @@ const mention = (nodeId: string, resourceId: string, labelSnapshot: string) => (
 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/mentions',
+    title: 'Rich Text Editor/Plugins/Mention',
     component: RichTextEditor,
     tags: ['autodocs', 'documents-behavior', 'feature:mentions', 'feature:core'],
     parameters: {

@@ -12,7 +12,7 @@ const model = modelOf(plugins, { id: 'story.blocks-rule', version: 1 });
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/blocks.rule',
+    title: 'Rich Text Editor/Plugins/Rule',
     component: RichTextEditor,
     tags: ['autodocs', 'feature:blocks.rule', 'feature:core'],
     parameters: {

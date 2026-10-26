@@ -12,7 +12,7 @@ const model = modelOf(plugins, {
 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/marks.language',
+    title: 'Rich Text Editor/Plugins/Language',
     component: RichTextEditor,
     tags: ['autodocs'],
     parameters: {

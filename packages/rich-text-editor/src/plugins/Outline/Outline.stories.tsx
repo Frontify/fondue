@@ -10,7 +10,7 @@ const plugins = [corePlugin(), headingPlugin(), outlinePlugin()] as const;
 const model = modelOf(plugins, { id: 'story.nav-outline', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/nav.outline',
+    title: 'Rich Text Editor/Plugins/Outline',
     component: RichTextEditor,
     tags: ['autodocs', 'feature:nav.outline', 'feature:blocks.heading', 'feature:core'],
     parameters: {

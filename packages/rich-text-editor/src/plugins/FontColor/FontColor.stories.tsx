@@ -60,7 +60,7 @@ const document: RichTextDocument = {
 } as unknown as RichTextDocument;
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'Rich Text Editor/Features/marks.font-color',
+    title: 'Rich Text Editor/Plugins/FontColor',
     component: RichTextEditor,
     tags: ['autodocs', 'feature:marks.font-color', 'feature:core'],
     parameters: {

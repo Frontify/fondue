@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { compileContentModel } from '#/model';
 import { compiledModel } from '#/model/internal';
-import { featuresById, registry } from '#/plugins/registry';
+import { featureIdsByFolder, featuresById, registry } from '#/plugins/registry';
 import { COMPOSED_STORIES } from '#/react/__tests__/fixtures/composedStories';
 import { type CompiledEditorDefinition } from '#/react/types';
 
@@ -44,7 +44,8 @@ const ALLOWANCES: Readonly<Record<string, readonly string[]>> = {
 
 describe('the feature stories', () => {
     it.each(Object.keys(registry))('install only core, %s and its requires', (feature) => {
-        const prefix = `rich-text-editor-features-${feature.replaceAll(/[^a-z0-9]+/g, '-')}--`;
+        const folder = Object.keys(featureIdsByFolder).find((name) => featureIdsByFolder[name] === feature) ?? '';
+        const prefix = `rich-text-editor-plugins-${folder.toLowerCase()}--`;
         const stories = COMPOSED_STORIES.filter(({ id }) => id.startsWith(prefix));
 
         expect(stories.length).toBeGreaterThan(0);
