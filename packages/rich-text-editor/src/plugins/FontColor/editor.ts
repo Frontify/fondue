@@ -8,7 +8,7 @@ import { fontColor } from './feature';
 
 const COLOR_MARKS = ['font_color', 'highlight'] as const;
 
-const ColorMenu = lazyPart(() => import('./ColorMenu').then((loaded) => loaded.ColorMenu));
+const ColorMenu = lazyPart(() => import('./components/ColorMenu').then((loaded) => loaded.ColorMenu));
 
 /**
  * Sets and removes the text colour, opens the "A" colour menu from the toolbar, and sets the last colour again from

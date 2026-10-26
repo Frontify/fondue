@@ -7,7 +7,7 @@ import { CheckedSlot } from '#/bridge/define';
 import { type EditorApi, type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/plugin';
 import { type CodecContext, type ColorToken, hexColor } from '#/model';
 
-import styles from './styles/color.module.scss';
+import styles from '../styles/color.module.scss';
 
 /** The command that sets each colour mark, and the one that removes both. */
 const SET_COMMANDS = { font_color: 'mark.font-color.set', highlight: 'mark.highlight.set' } as const;
