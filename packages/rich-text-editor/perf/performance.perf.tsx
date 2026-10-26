@@ -32,6 +32,7 @@ const sample = async (page: Page, run: (page: Page) => Promise<number | null | u
             durations.push(elapsed);
         }
     }
+
     return durations;
 };
 
@@ -51,9 +52,11 @@ const keystrokeDurations = (entries: readonly TimedEvent[], keystrokes: number):
             byInteraction.set(interactionId, duration);
         }
     }
+
     const found = [...byInteraction.values()].slice(-keystrokes);
     // At the threshold no entry is reported below 16 ms, so a keystroke with none was 0 or 8 ms.
     const missing = Array.from({ length: keystrokes - found.length }, () => missingKeystrokeMs);
+
     return [...found, ...missing];
 };
 
@@ -77,6 +80,7 @@ const measureKeystrokes = async (page: Page) => {
     const commits = (await page.evaluate(() => window.rtePerf?.commits())) ?? [];
     // A keystroke with no entry counts as 8 ms, so only its commit shows that the key reached the editor.
     expect(commits.length).toBeGreaterThanOrEqual(samples);
+
     return { keystrokes: keystrokeDurations(entries, samples), commits: [...commits] };
 };
 
@@ -117,6 +121,7 @@ for (const { fixture, ids } of [
         const durations = await sample(page, async () => {
             const elapsed = await page.evaluate((name) => window.rtePerf?.mount(name), fixture);
             await page.evaluate(() => window.rtePerf?.unmount());
+
             return elapsed;
         });
 
@@ -158,6 +163,7 @@ test('measures the mount of 20 editors and a keystroke in one of them', async ({
     const durations = await sample(page, async () => {
         const elapsed = await page.evaluate((count) => window.rtePerf?.mountMany(count), 20);
         await page.evaluate(() => window.rtePerf?.unmount());
+
         return elapsed;
     });
     recordAs(['mount-many-p95'], durations);
@@ -192,8 +198,10 @@ test('records the dialog and menu open to focus inside it in the typical fixture
             if (elapsed === null) {
                 throw new Error(`${command} never moved focus into a dialog, listbox or menu within 2000 ms`);
             }
+
             return elapsed;
         };
+
         durations.push(...(await sample(page, opened)));
     }
 

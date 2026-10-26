@@ -18,10 +18,12 @@ const node = Number(process.versions.node.split('.')[0]);
 if (node !== method.node) {
     throw new Error(`The perf job runs on Node ${method.node}, not ${node}.`);
 }
+
 // Budgets gate only the pinned runner, while a local run on any machine stays a measurement.
 if (process.env.CI === 'true' && availableParallelism() !== method.vcpus) {
     throw new Error(`The perf job runs on ${method.vcpus} vCPUs, not ${availableParallelism()}.`);
 }
+
 rmSync(RESULTS, { recursive: true, force: true });
 let broken = false;
 for (const args of [
@@ -33,6 +35,7 @@ for (const args of [
         broken = true;
     }
 }
+
 const rows = budgets.rows as readonly BudgetRow[];
 const lines = evaluate(rows, readResults(RESULTS, rows));
 process.stdout.write(`${render(lines)}\n`);

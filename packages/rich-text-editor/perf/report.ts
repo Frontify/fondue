@@ -31,6 +31,7 @@ const RANKS = { p95: 0.95, p99: 0.99 } as const;
 export const percentile = (samples: readonly number[], rank: keyof typeof RANKS): number => {
     const sorted = [...samples].sort((a, b) => a - b);
     const index = Math.min(sorted.length - 1, Math.ceil(sorted.length * RANKS[rank]) - 1);
+
     return sorted[index] ?? Number.NaN;
 };
 
@@ -48,15 +49,19 @@ export const evaluate = (rows: readonly BudgetRow[], results: Readonly<Record<st
                 value = measured;
             }
         }
+
         if (row.budgetMs === null) {
             return { row, value, verdict: 'recorded' };
         }
+
         if (value === null) {
             return { row, value, verdict: 'missing' };
         }
+
         if (value > row.budgetMs) {
             return { row, value, verdict: 'over' };
         }
+
         return { row, value, verdict: 'pass' };
     });
 
@@ -68,10 +73,12 @@ export const render = (lines: readonly Line[]): string =>
             if (value !== null) {
                 shown = `${value.toFixed(2)} ms`;
             }
+
             let budget = 'recorded, no budget';
             if (row.budgetMs !== null) {
                 budget = `${row.budgetMs} ms`;
             }
+
             return `${verdict.toUpperCase().padEnd(8)} ${row.metric} | ${row.fixture} | ${row.percentile} | ${shown} | budget ${budget}`;
         })
         .join('\n');
@@ -88,5 +95,6 @@ export const readResults = (directory: string, rows: readonly BudgetRow[]): Reco
             results[id] = JSON.parse(readFileSync(file, 'utf8')) as Measurement;
         }
     }
+
     return results;
 };

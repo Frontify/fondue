@@ -39,8 +39,10 @@ const applyTransaction = EditorState.prototype.applyTransaction;
 EditorState.prototype.applyTransaction = function (this: EditorState, ...args: Parameters<typeof applyTransaction>) {
     performance.mark('rte-dispatch-start');
     dispatchStarted = performance.now();
+
     return applyTransaction.apply(this, args);
 };
+
 const updateState = EditorView.prototype.updateState;
 EditorView.prototype.updateState = function (this: EditorView, ...args: Parameters<typeof updateState>) {
     const result = updateState.apply(this, args);
@@ -49,6 +51,7 @@ EditorView.prototype.updateState = function (this: EditorView, ...args: Paramete
         commits.push(performance.now() - dispatchStarted);
         dispatchStarted = undefined;
     }
+
     return result;
 };
 
@@ -71,6 +74,7 @@ const hostOf = (): HTMLElement => {
     const host = document.createElement('div');
     host.style.width = '800px';
     document.body.append(host);
+
     return host;
 };
 
@@ -80,6 +84,7 @@ const view = () => {
     if (runtime?.view === undefined) {
         throw new Error('No editor is mounted.');
     }
+
     return { handle: handle as EditorHandle, runtime, view: runtime.view };
 };
 
@@ -89,6 +94,7 @@ const markNotifications = (handle: EditorHandle) => {
     if (runtime === undefined) {
         return;
     }
+
     const watch = runtime.watch;
     runtime.watch = (read, isEqual, listener) =>
         watch(read, isEqual, (value) => {
@@ -96,6 +102,7 @@ const markNotifications = (handle: EditorHandle) => {
                 performance.mark('rte-selector-notify');
                 notifiedAt = performance.now();
             }
+
             listener(value);
         });
 };
@@ -111,6 +118,7 @@ const mountAll = async (fixtures: readonly PerfFixtureName[]): Promise<number> =
     });
     const elapsed = performance.now() - started;
     mounted = { root, container, handles };
+
     return elapsed;
 };
 
@@ -134,11 +142,13 @@ const boldPositions = () => {
                 plain = position + 1;
             }
         }
+
         return bold === undefined;
     });
     if (plain === undefined || bold === undefined) {
         throw new Error('The fixture has no plain and bold run.');
     }
+
     return { plain, bold };
 };
 
@@ -153,6 +163,7 @@ const htmlOf = (bytes: number): string => {
     while (html.length < Math.min(bytes, MIB - 1024)) {
         html += block;
     }
+
     return html;
 };
 
@@ -195,6 +206,7 @@ const api: PageApi = {
             runtime.select({ anchor: position, head: position });
             await nextPaint();
         }
+
         return [...notifications];
     },
     snapshotAfterEdit: () => {
@@ -202,6 +214,7 @@ const api: PageApi = {
         surface.dispatch(surface.state.tr.insertText('a'));
         const started = performance.now();
         handle.getSnapshot();
+
         return performance.now() - started;
     },
     paste: async (bytes) => {
@@ -218,7 +231,9 @@ const api: PageApi = {
         if (surface.state.doc.eq(before)) {
             throw new Error('The paste changed nothing.');
         }
+
         handle.execute('history.undo');
+
         return elapsed;
     },
     command: async (id) => {
@@ -230,6 +245,7 @@ const api: PageApi = {
         await nextPaint();
         const elapsed = performance.now() - started;
         handle.execute('history.undo');
+
         return elapsed;
     },
     openedWithFocus: async (id, selectors) => {
@@ -245,9 +261,11 @@ const api: PageApi = {
             if (active !== null && active.closest(selectors) !== null) {
                 const elapsed = performance.now() - started;
                 handle.focus();
+
                 return elapsed;
             }
         }
+
         return null;
     },
 };
@@ -256,9 +274,11 @@ const api: PageApi = {
 export const PerfHarness = () => {
     useEffect(() => {
         window.rtePerf = api;
+
         return () => {
             delete window.rtePerf;
         };
     }, []);
+
     return null;
 };

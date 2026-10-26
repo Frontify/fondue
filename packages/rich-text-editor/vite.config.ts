@@ -24,6 +24,7 @@ const externalizeJsDeps = (): Plugin => ({
         if (!matchesExternalCandidate(id)) {
             return null;
         }
+
         const resolved = await this.resolve(id, importer, {
             ...options,
             skipSelf: true,

@@ -25,7 +25,9 @@ export const measureNode = async (
         if (samples.length !== SETTINGS.samples) {
             throw new Error(`${id} ${name} retained ${samples.length} samples, not ${SETTINGS.samples}.`);
         }
+
         measured[name] = samples;
     }
+
     record(id, measured);
 };
