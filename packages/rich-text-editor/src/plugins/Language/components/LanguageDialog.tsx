@@ -6,10 +6,10 @@ import { EditorDialog } from '#/bridge/define';
 import { type OverlayProps } from '#/bridge/plugin';
 
 import { DirectionSelect, LanguageRadios, TagField } from './LanguageFields';
-import styles from './styles/language.module.scss';
-import { useLanguageState } from './useLanguageState';
+import styles from '../styles/language.module.scss';
+import { useLanguageState } from '../hooks/useLanguageState';
 
-export { SET_LANGUAGE } from './languageModel';
+export { SET_LANGUAGE } from '../helpers/languageModel';
 
 /**
  * Language of a passage: the option's tags, labelled in the UI locale, with a stored tag the option misses first, or

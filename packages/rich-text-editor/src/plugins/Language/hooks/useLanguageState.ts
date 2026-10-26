@@ -13,7 +13,7 @@ import {
     languageStrings,
     localeOf,
     offeredLanguages,
-} from './languageModel';
+} from '../helpers/languageModel';
 
 export const useLanguageState = ({ opener, close }: OverlayProps) => {
     const api = useEditorApi();

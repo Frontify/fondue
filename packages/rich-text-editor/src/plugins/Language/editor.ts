@@ -5,7 +5,7 @@ import { defineEditorPart } from '#/bridge/plugin';
 
 import { language } from './feature';
 
-const LanguageDialog = lazyPart(() => import('./LanguageDialog').then((loaded) => loaded.LanguageDialog));
+const LanguageDialog = lazyPart(() => import('./components/LanguageDialog').then((loaded) => loaded.LanguageDialog));
 
 const DIRECTIONS = ['ltr', 'rtl', 'auto'] as const;
 
