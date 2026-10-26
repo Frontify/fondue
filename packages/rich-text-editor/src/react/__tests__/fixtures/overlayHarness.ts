@@ -81,6 +81,13 @@ export const boxOf = async (locator: Locator) => {
 // Radix listens for Escape and places an overlay in effects and frames after it shows.
 export const frames = (page: Page) =>
     page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+/** Resolves once every stylesheet link is in the cascade: WebKit keeps a lazy chunk's sheet out of it while others load, so an earlier box read is the unstyled one. */
+export const stylesApplied = (page: Page) =>
+    page.waitForFunction(() =>
+        [...document.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]')].every(
+            (link) => link.sheet !== null && [...document.styleSheets].includes(link.sheet),
+        ),
+    );
 export const bottomOf = async (locator: Locator) => {
     const box = await boxOf(locator);
     return box.bottom;

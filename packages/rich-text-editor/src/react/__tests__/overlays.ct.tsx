@@ -20,6 +20,7 @@ import {
     textBox,
     boxOf,
     frames,
+    stylesApplied,
     documentHtml,
     watchFocusOut,
     focusOuts,
@@ -295,6 +296,7 @@ test('moves the held bubble toolbar by the scroll of its container', async ({ mo
     await surfaceOf(page).focus();
     await select(page, 'Line 3');
     await expect(bubbleOf(page)).toBeVisible();
+    await stylesApplied(page);
     await frames(page);
     await bubbleOf(page).hover({ position: { x: 8, y: 4 } });
     const start = await boxOf(bubbleOf(page));
@@ -395,6 +397,7 @@ test('holds the bubble toolbar in place while the content next to its anchor cha
     await surfaceOf(page).focus();
     await select(page, 'two');
     await expect(bubbleOf(page)).toBeVisible();
+    await stylesApplied(page);
     const settle = () =>
         page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     await settle();
@@ -502,6 +505,29 @@ test('opens the bubble toolbar at the caret in bubble mode and moves focus to it
     await expect(bubbleOf(page)).toBeHidden();
 
     await page.keyboard.press('Alt+F10');
+
+    await expect(bubbleOf(page)).toBeVisible();
+    await expectFocus(page, 'Bold');
+});
+
+test('opens the bubble toolbar and moves focus to it when Alt+F10 is pressed before its code has loaded', async ({
+    mount,
+    page,
+}) => {
+    const held: (() => Promise<void>)[] = [];
+    await page.route(/BubbleToolbar[^/]*\.js/, (route) => {
+        held.push(() => route.continue());
+        return Promise.resolve();
+    });
+    await mount(<OverlayProbe defaultToolbarMode="bubble" />);
+    await ready(page);
+    await expect.poll(() => held.length).toBeGreaterThan(0);
+    await surfaceOf(page).focus();
+    await page.keyboard.press('End');
+
+    await page.keyboard.press('Alt+F10');
+    await expect(bubbleOf(page)).toHaveCount(0);
+    await Promise.all(held.map((release) => release()));
 
     await expect(bubbleOf(page)).toBeVisible();
     await expectFocus(page, 'Bold');
