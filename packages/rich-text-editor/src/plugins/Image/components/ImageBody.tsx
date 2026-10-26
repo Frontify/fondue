@@ -3,11 +3,12 @@
 import { altOf, unavailableOf } from '#/model';
 
 import { SET_SIZE } from '../helpers/dialogStrings';
+import { UploadSlot } from '../helpers/lazyParts';
 import { type ImageChromeState } from '../hooks/useImageChromeState';
 import { ImageUnavailable } from '../reader';
 import styles from '../styles/image.module.scss';
+
 import { ContentImage } from './ContentImage';
-import { UploadSlot } from '../helpers/lazyParts';
 
 /** A stored intrinsic size, or `null` where the image has none. */
 const sizeOf = (value: unknown) => (typeof value === 'number' ? value : null);

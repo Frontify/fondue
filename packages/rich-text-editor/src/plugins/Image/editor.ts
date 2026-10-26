@@ -4,11 +4,11 @@ import { OptionsMenu } from '#/bridge/define';
 import { defineEditorPart, type EditorApi, type EditorControlApi } from '#/bridge/plugin';
 import { figureAlign } from '#/model';
 
-import { AltTextDialog, WidthDialog } from './helpers/lazyParts';
-import { altTextStrings, widthStrings } from './helpers/dialogStrings';
-import { image } from './feature';
-import { alignOptions, EDIT_WIDTH, SIDES, sizeOptions } from './helpers/options';
 import { imageView } from './components/ImageChrome';
+import { image } from './feature';
+import { altTextStrings, widthStrings } from './helpers/dialogStrings';
+import { AltTextDialog, WidthDialog } from './helpers/lazyParts';
+import { alignOptions, EDIT_WIDTH, SIDES, sizeOptions } from './helpers/options';
 
 const NODE = { fields: { nodeId: { type: 'string', minLength: 1, optional: true } } } as const;
 const FEATURE = 'media.image';

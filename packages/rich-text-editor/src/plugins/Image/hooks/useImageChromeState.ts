@@ -9,8 +9,9 @@ import { altOf, figureAlign, imageOutput, isRecord, type JsonObject, REPLACED_AS
 import { mayAnimate } from '../helpers/animation';
 import { SET_SIZE } from '../helpers/dialogStrings';
 import { type SIDES } from '../helpers/options';
-import { surfaceFocused, uploadStatusText, useUploadStatus } from './useUploadStatus';
+
 import { useResize } from './useResize';
+import { surfaceFocused, uploadStatusText, useUploadStatus } from './useUploadStatus';
 
 /** The side of the figure that holds the image `nodeId`, which its chrome's alignment menu shows. */
 const sideOf = (api: EditorApi | undefined, nodeId: string | null) => {

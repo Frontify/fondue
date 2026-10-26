@@ -6,8 +6,8 @@ import { NodeChromeButton, NodeChromeMenu, NodeChromeToolbar, OptionItem } from 
 import { type EditorApi } from '#/bridge/plugin';
 import { REPLACED_ASSET } from '#/model';
 
-import { AltTextDialog, UploadControls } from '../helpers/lazyParts';
 import { altTextStrings, SET_SIZE } from '../helpers/dialogStrings';
+import { AltTextDialog, UploadControls } from '../helpers/lazyParts';
 import { figureOf } from '../helpers/nodes';
 import { alignOptions, EDIT_WIDTH, SIDE_KEYS, sizeOptions } from '../helpers/options';
 import { type ImageChromeState } from '../hooks/useImageChromeState';

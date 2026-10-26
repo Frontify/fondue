@@ -6,8 +6,8 @@ import { EditorDialog } from '#/bridge/define';
 import { type OverlayProps } from '#/bridge/plugin';
 
 import { type AltTextStrings } from '../helpers/dialogStrings';
-import styles from '../styles/media.module.scss';
 import { type AltTextState, useAltTextDialogState } from '../hooks/useAltTextDialogState';
+import styles from '../styles/media.module.scss';
 
 const options = (strings: AltTextStrings) =>
     [

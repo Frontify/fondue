@@ -2,10 +2,11 @@
 
 import { type NodeViewDeclaration } from '#/bridge/define';
 
+import { useImageChromeState } from '../hooks/useImageChromeState';
+import styles from '../styles/image.module.scss';
+
 import { ImageBody } from './ImageBody';
 import { ImageToolbar } from './ImageToolbar';
-import styles from '../styles/image.module.scss';
-import { useImageChromeState } from '../hooks/useImageChromeState';
 
 /**
  * The image as the author edits it, with the `alt` the reader writes, its placeholder when it cannot show, and its
