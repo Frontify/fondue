@@ -249,6 +249,133 @@ const CASES: readonly Case[] = [
     ),
     allowed('editor part: its own folder', 'src/plugins/bold/folder.tsx', "import { icon } from './icon';"),
 
+    // feature folders: components, hooks, helpers
+    banned(
+        'component: the plugin index',
+        'src/plugins/Callout/components/Index.tsx',
+        "import { boldPlugin } from '../index';",
+    ),
+    banned(
+        'component: the plugin editor',
+        'src/plugins/Callout/components/Editor.tsx',
+        "import { boldEditor } from '../editor';",
+    ),
+    banned(
+        'component: the plugin reader',
+        'src/plugins/Callout/components/Reader.tsx',
+        "import { boldReader } from '../reader';",
+    ),
+    banned(
+        'component: the plugin feature',
+        'src/plugins/Callout/components/Feature.tsx',
+        "import { bold } from '../feature';",
+    ),
+    banned('component: the plugin folder', 'src/plugins/Callout/components/Folder.tsx', "import { bold } from '..';"),
+    allowed(
+        'component: a hook',
+        'src/plugins/Callout/components/Hook.tsx',
+        "import { useBold } from '../hooks/useBold';",
+    ),
+    allowed(
+        'component: a helper',
+        'src/plugins/Callout/components/Helper.tsx',
+        "import { boldOptions } from '../helpers/options';",
+    ),
+    allowed(
+        'component: a sibling component',
+        'src/plugins/Callout/components/Sibling.tsx',
+        "import { Icon } from './Icon';",
+    ),
+    banned(
+        'component: the editor part rules still hold',
+        'src/plugins/Callout/components/Layer.tsx',
+        "import { run } from '#/runtime/run';",
+    ),
+    banned(
+        'hook: a component',
+        'src/plugins/Callout/hooks/useComponent.ts',
+        "import { Icon } from '../components/Icon';",
+    ),
+    banned(
+        'hook: a component folder',
+        'src/plugins/Callout/hooks/useComponentFolder.ts',
+        "import { Icon } from '../components';",
+    ),
+    banned('hook: the plugin index', 'src/plugins/Callout/hooks/useIndex.ts', "import { boldPlugin } from '../index';"),
+    banned(
+        'hook: the plugin editor',
+        'src/plugins/Callout/hooks/useEditor.ts',
+        "import { boldEditor } from '../editor';",
+    ),
+    banned(
+        'hook: the plugin reader',
+        'src/plugins/Callout/hooks/useReader.ts',
+        "import { boldReader } from '../reader';",
+    ),
+    banned('hook: the plugin feature', 'src/plugins/Callout/hooks/useFeature.ts', "import { bold } from '../feature';"),
+    allowed(
+        'hook: a helper',
+        'src/plugins/Callout/hooks/useHelper.ts',
+        "import { boldOptions } from '../helpers/options';",
+    ),
+    allowed('hook: a sibling hook', 'src/plugins/Callout/hooks/useSibling.ts', "import { useBold } from './useBold';"),
+    banned(
+        'hook: the editor part rules still hold',
+        'src/plugins/Callout/hooks/useLayer.ts',
+        "import { run } from '#/runtime/run';",
+    ),
+    banned('helper: a hook', 'src/plugins/Callout/helpers/hook.ts', "import { useBold } from '../hooks/useBold';"),
+    banned(
+        'helper: a component',
+        'src/plugins/Callout/helpers/component.ts',
+        "import { Icon } from '../components/Icon';",
+    ),
+    banned(
+        'helper: a component folder',
+        'src/plugins/Callout/helpers/component-folder.ts',
+        "import { Icon } from '../components';",
+    ),
+    banned(
+        'helper: the plugin index',
+        'src/plugins/Callout/helpers/index.ts',
+        "import { boldPlugin } from '../index';",
+    ),
+    banned(
+        'helper: the plugin editor',
+        'src/plugins/Callout/helpers/editor.ts',
+        "import { boldEditor } from '../editor';",
+    ),
+    banned(
+        'helper: the plugin reader',
+        'src/plugins/Callout/helpers/reader.ts',
+        "import { boldReader } from '../reader';",
+    ),
+    banned(
+        'helper: the plugin feature',
+        'src/plugins/Callout/helpers/feature.ts',
+        "import { bold } from '../feature';",
+    ),
+    allowed(
+        'helper: a lazy import of a component',
+        'src/plugins/Callout/helpers/lazy.ts',
+        "export const lazyIcon = () => import('../components/Icon');",
+    ),
+    allowed(
+        'helper: a sibling helper',
+        'src/plugins/Callout/helpers/sibling.ts',
+        "import { boldOptions } from './options';",
+    ),
+    banned(
+        'helper: the editor part rules still hold',
+        'src/plugins/Callout/helpers/layer.ts',
+        "import { run } from '#/runtime/run';",
+    ),
+    allowed(
+        'editor: a lazy import of a component',
+        'src/plugins/Callout/editor.ts',
+        "export const lazyIcon = () => import('./components/Icon');",
+    ),
+
     // feature wiring
     banned('wiring: a view', 'src/plugins/registry.ts', "import { view } from '#/plugins/bold/view';"),
     banned('wiring: a reader', 'src/plugins/index.ts', "import { reader } from '#/plugins/bold/reader';"),
@@ -286,6 +413,12 @@ const CASES: readonly Case[] = [
         "import { defineReader } from '#/reader/define';",
     ),
     allowed('feature reader: its feature', 'src/plugins/divider/reader.tsx', "import { feature } from './feature';"),
+    allowed(
+        'feature reader: its component',
+        'src/plugins/divider/reader.tsx',
+        "import { Icon } from './components/Icon';",
+    ),
+    banned('feature reader: its hook', 'src/plugins/divider/reader.tsx', "import { useIcon } from './hooks/useIcon';"),
     allowed(
         'feature reader: a dependency feature',
         'src/plugins/emoji/reader.tsx',

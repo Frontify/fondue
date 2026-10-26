@@ -1,43 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MouseEvent, type SyntheticEvent } from 'react';
+import { type SyntheticEvent } from 'react';
 
-import { figureAlign, imageOutput, type Unavailable } from '#/model';
+import { figureAlign, imageOutput } from '#/model';
 import { type ReaderNodeProps, type ReaderRenderers } from '#/reader/define';
+
+import { ImageUnavailable } from './components/ImageUnavailable';
 
 /** The figure on its side as `text-align`, with the direction of its placeholder text left to the browser. */
 const Figure = ({ attrs, children }: ReaderNodeProps) => (
     <figure dir="auto" style={{ textAlign: figureAlign(attrs) }}>
         {children}
     </figure>
-);
-
-/**
- * The "Image unavailable" placeholder with the label isolated for bidirectional text, as the editor, the reader and
- * `toHTML` show it; `hidden` beside an image until that image fails to load.
- */
-export const ImageUnavailable = ({
-    unavailable: { message, label },
-    hidden = false,
-    className,
-    onMouseDown,
-}: {
-    unavailable: Unavailable;
-    hidden?: boolean;
-    className?: string | undefined;
-    onMouseDown?: (event: MouseEvent) => void;
-}) => (
-    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- in the editor a press selects the node as on any atom; the keyboard selects it with the arrows.
-    <span
-        className={className}
-        data-rte-image-unavailable=""
-        data-rte-message="image-unavailable"
-        hidden={hidden}
-        onMouseDown={onMouseDown}
-    >
-        {label === '' ? message : `${message} `}
-        {label !== '' && <bdi>{label}</bdi>}
-    </span>
 );
 
 // The figure names the URL that failed, so the content stylesheet hides that image and shows the placeholder.

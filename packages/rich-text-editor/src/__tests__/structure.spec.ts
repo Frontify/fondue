@@ -598,6 +598,103 @@ const unitExports = (path: string) => {
     return names;
 };
 
+const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
+
+// The folders of `src/plugins` that are no plugin.
+const NOT_PLUGIN_FOLDERS = new Set(['__tests__', 'profiles']);
+
+const pluginDirectory = (folder: string) => join(srcRoot, 'plugins', folder);
+
+const pluginFolderNames = () =>
+    readdirSync(join(srcRoot, 'plugins'), { withFileTypes: true })
+        .filter((entry) => entry.isDirectory() && !NOT_PLUGIN_FOLDERS.has(entry.name))
+        .map((entry) => entry.name)
+        .sort();
+
+const PLUGIN_ROOT_FILES = [
+    /^(index|feature|migration|reader)\.tsx?$/,
+    /^editor\.tsx?$/,
+    /^[A-Za-z0-9]+\.stories\.tsx$/,
+];
+
+const PLUGIN_ROOT_FOLDERS = new Set(['components', 'hooks', 'helpers', 'styles', 'fixtures', '__tests__']);
+
+// Each subfolder of a plugin holds files of one kind, by name; `components` files also export a component.
+const SUBFOLDER_NAMES = {
+    components: /^[A-Z][A-Za-z0-9]*\.tsx$/,
+    hooks: /^use[A-Z][A-Za-z0-9]*\.tsx?$/,
+    helpers: /^[A-Za-z0-9]+\.ts$/,
+} as const;
+
+type Subfolder = keyof typeof SUBFOLDER_NAMES;
+
+const SUBFOLDERS = Object.keys(SUBFOLDER_NAMES) as Subfolder[];
+
+// A view file declares its component and exports the view declaration that registers it, so the component may stay unexported.
+const exportsComponent = (path: string) => {
+    let declaresComponent = false;
+    let exportsValue = false;
+    for (const statement of parse(path).statements) {
+        if (ts.isFunctionDeclaration(statement) && statement.name !== undefined) {
+            declaresComponent ||= PASCAL_CASE.test(statement.name.text);
+            exportsValue ||= isExported(statement);
+        } else if (ts.isVariableStatement(statement)) {
+            declaresComponent ||= statement.declarationList.declarations.some(
+                ({ name }) => ts.isIdentifier(name) && PASCAL_CASE.test(name.text),
+            );
+            exportsValue ||= isExported(statement);
+        }
+    }
+
+    return declaresComponent && exportsValue;
+};
+
+// Static imports only: a lazy `import()` of a component is a load boundary and may run against the direction.
+const staticSpecifiers = (path: string) =>
+    parse(path)
+        .statements.filter(
+            (statement): statement is ts.ImportDeclaration | ts.ExportDeclaration =>
+                (ts.isImportDeclaration(statement) || ts.isExportDeclaration(statement)) &&
+                statement.moduleSpecifier !== undefined &&
+                ts.isStringLiteral(statement.moduleSpecifier),
+        )
+        .map((statement) => (statement.moduleSpecifier as ts.StringLiteral).text);
+
+// Components import hooks, hooks import helpers, and none of the three imports a root file of its plugin.
+const DIRECTION = { components: 0, hooks: 1, helpers: 2 } as const;
+
+const PLUGIN_ROOT_IMPORTS = new Set(['', 'index', 'editor', 'reader', 'feature']);
+
+const directionProblems = (folder: string) => {
+    const problems: string[] = [];
+    for (const kind of SUBFOLDERS) {
+        const directory = join(pluginDirectory(folder), kind);
+        if (!folderExists(directory)) {
+            continue;
+        }
+
+        for (const path of walk(directory)) {
+            for (const specifier of staticSpecifiers(path)) {
+                const target = resolveInternal(path, specifier);
+                if (target?.[0] !== 'plugins' || target[1] !== folder) {
+                    continue;
+                }
+
+                const [first = '', ...rest] = target.slice(2);
+                const name = first.replace(CODE_FILE, '');
+                const targetKind = SUBFOLDERS.find((candidate) => candidate === first);
+                if (targetKind === undefined && rest.length === 0 && PLUGIN_ROOT_IMPORTS.has(name)) {
+                    problems.push(`${toKey(path)} imports the plugin root file '${specifier}'`);
+                } else if (targetKind !== undefined && DIRECTION[targetKind] < DIRECTION[kind]) {
+                    problems.push(`${toKey(path)} imports ${targetKind} '${specifier}' against the direction`);
+                }
+            }
+        }
+    }
+
+    return problems;
+};
+
 // Each measure parses every product file, which outlasts the default timeout on a loaded machine.
 describe('package structure ratchet', { timeout: 60_000 }, () => {
     it('no product file over 600 lines grows, data tables excepted', () => {
@@ -716,5 +813,53 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
         }
 
         expect(problems).toEqual([]);
+    });
+
+    it('names every plugin folder in PascalCase', () => {
+        const problems = pluginFolderNames().filter((name) => !PASCAL_CASE.test(name));
+        expect(problems).toEqual([]);
+    });
+
+    it('holds only its allowed files and folders in each plugin root', () => {
+        const problems: string[] = [];
+        for (const folder of pluginFolderNames()) {
+            for (const entry of readdirSync(pluginDirectory(folder), { withFileTypes: true })) {
+                const allowed = entry.isDirectory()
+                    ? PLUGIN_ROOT_FOLDERS.has(entry.name)
+                    : PLUGIN_ROOT_FILES.some((pattern) => pattern.test(entry.name));
+                if (!allowed) {
+                    problems.push(`plugins/${folder}/${entry.name}`);
+                }
+            }
+        }
+
+        expect(problems).toEqual([]);
+    });
+
+    it('holds only its own kind of file in each components, hooks and helpers folder', () => {
+        const problems: string[] = [];
+        for (const folder of pluginFolderNames()) {
+            for (const kind of SUBFOLDERS) {
+                const directory = join(pluginDirectory(folder), kind);
+                if (!folderExists(directory)) {
+                    continue;
+                }
+
+                for (const entry of readdirSync(directory, { withFileTypes: true })) {
+                    const where = `plugins/${folder}/${kind}/${entry.name}`;
+                    if (!entry.isFile() || !SUBFOLDER_NAMES[kind].test(entry.name)) {
+                        problems.push(where);
+                    } else if (kind === 'components' && !exportsComponent(join(directory, entry.name))) {
+                        problems.push(`${where} declares or exports no component`);
+                    }
+                }
+            }
+        }
+
+        expect(problems).toEqual([]);
+    });
+
+    it('runs no static import inside a plugin from hooks to components, from helpers to hooks or components, or into a root file', () => {
+        expect(pluginFolderNames().flatMap((folder) => directionProblems(folder))).toEqual([]);
     });
 });

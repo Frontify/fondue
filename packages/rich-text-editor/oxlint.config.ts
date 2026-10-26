@@ -77,6 +77,15 @@ const NODE_BUILTINS = [
 
 const EDITOR_PART_MESSAGE = `An editor part acts only through \`#/bridge/plugin\`: it imports that module, \`#/bridge/define\`, \`#/model\` and its own feature folder, and of other packages only ${UI_PACKAGES_TEXT}, never Node built-ins, the engine, the runtime, the editor layers or another feature.`;
 
+const COMPONENT_DIRECTION_MESSAGE =
+    'A component imports hooks, helpers and its sibling components, never a root file of its plugin (`index`, `editor`, `reader`, `feature`), because static imports run components, hooks, helpers.';
+
+const HOOK_DIRECTION_MESSAGE =
+    'A hook imports helpers and its sibling hooks, never a component or a root file of its plugin (`index`, `editor`, `reader`, `feature`), because static imports run components, hooks, helpers.';
+
+const HELPER_DIRECTION_MESSAGE =
+    'A helper imports its sibling helpers, never a hook, a component or a root file of its plugin (`index`, `editor`, `reader`, `feature`) by a static import, because static imports run components, hooks, helpers; only a lazy `import()` of a component may load one.';
+
 const CLIPBOARD_MESSAGE =
     '`runtime/clipboard` imports `model`, `runtime/definition`, `runtime`, `codecs`, `runtime/import` and ProseMirror, never React or the editor layers.';
 
@@ -84,7 +93,7 @@ const FEATURE_INDEX_MESSAGE =
     "A feature's index builds its unit and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/definePlugin`.";
 
 const READER_FILE_MESSAGE =
-    "A feature's reader override imports only `react` (no Node built-ins), `#/model`, `#/reader/define`, its own `./feature` and a declared dependency's `#/plugins/<id>/feature`, as an outside feature must.";
+    "A feature's reader override imports only `react` (no Node built-ins), `#/model`, `#/reader/define`, its own `./feature`, its own `./components/*` and a declared dependency's `#/plugins/<id>/feature`, as an outside feature must.";
 
 const MODEL_ENTRY_MESSAGE =
     'A feature file imports `model` only through its public entry `#/model`, as an outside feature must, never a subpath.';
@@ -128,6 +137,9 @@ const EDITOR_PART_FILES = ['src/plugins/*/*.{ts,tsx}'];
 
 // Components, hooks and helpers sit one folder down and reach their own plugin's other folders through `../`.
 const EDITOR_PART_SUBFOLDER_FILES = ['src/plugins/*/*/**/*.{ts,tsx}'];
+
+// A folder one level down names its plugin's root files through `../`, and `..` alone resolves to its index.
+const PLUGIN_ROOT_PATTERNS = ['..', '../', ...['index', 'editor', 'reader', 'feature'].map((file) => `../${file}`)];
 
 const NOT_EDITOR_PART_FILES = [
     'src/plugins/*/feature.ts',
@@ -354,6 +366,21 @@ const layerOverride = (
         'no-restricted-imports': importRule(restrictions, paths, sourceRestrictions),
     },
 });
+
+// An editor part, or a folder of one, acts only through the plugin bridge and `outside` is the path above its own folder.
+const editorPartRestrictions = (outside: string): ImportRestriction[] => [
+    {
+        group: [
+            ...aliasPatterns(editorPartFolders),
+            '#/model/**',
+            ...exceptPatterns(['bridge/plugin', 'bridge/define']),
+            '#/plugins/**',
+            outside,
+        ],
+        message: EDITOR_PART_MESSAGE,
+    },
+    { group: EDITOR_PART_EXTERNALS, message: EDITOR_PART_MESSAGE },
+];
 
 const nonModelFolders = FOLDERS.filter((folder) => folder !== 'model');
 
@@ -622,24 +649,25 @@ export default defineConfig({
         ...[
             { files: EDITOR_PART_FILES, outside: '../**' },
             { files: EDITOR_PART_SUBFOLDER_FILES, outside: '../../**' },
-        ].map(({ files, outside }) =>
-            layerOverride(
-                files,
-                [
-                    {
-                        group: [
-                            ...aliasPatterns(editorPartFolders),
-                            '#/model/**',
-                            ...exceptPatterns(['bridge/plugin', 'bridge/define']),
-                            '#/plugins/**',
-                            outside,
-                        ],
-                        message: EDITOR_PART_MESSAGE,
-                    },
-                    { group: EDITOR_PART_EXTERNALS, message: EDITOR_PART_MESSAGE },
-                ],
-                NOT_EDITOR_PART_FILES,
-            ),
+        ].map(({ files, outside }) => layerOverride(files, editorPartRestrictions(outside), NOT_EDITOR_PART_FILES)),
+        // After the editor-part pair, since a later override replaces the rule options, so each repeats its bans.
+        ...[
+            { files: 'components', group: PLUGIN_ROOT_PATTERNS, message: COMPONENT_DIRECTION_MESSAGE },
+            {
+                files: 'hooks',
+                group: ['../components', '../components/**', ...PLUGIN_ROOT_PATTERNS],
+                message: HOOK_DIRECTION_MESSAGE,
+            },
+            {
+                files: 'helpers',
+                group: ['../hooks', '../hooks/**', '../components', '../components/**', ...PLUGIN_ROOT_PATTERNS],
+                message: HELPER_DIRECTION_MESSAGE,
+            },
+        ].map(({ files, group, message }) =>
+            layerOverride(`src/plugins/*/${files}/**/*.{ts,tsx}`, [
+                ...editorPartRestrictions('../../**'),
+                { group, message },
+            ]),
         ),
         layerOverride(
             ['src/plugins/*.ts', 'src/plugins/profiles/**/*.{ts,tsx}'],
@@ -686,6 +714,7 @@ export default defineConfig({
                     './*',
                     './**',
                     '!./feature',
+                    '!./components/*',
                 ],
                 message: READER_FILE_MESSAGE,
             },
