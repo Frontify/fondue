@@ -115,30 +115,46 @@ describe('a lazy part', () => {
         expect(screen.getByText('Hello Ada')).toBeInTheDocument();
     });
 
-    it('prefetches once the editor is ready, and not while its profile loads', async () => {
-        const { lazyPart } = await import('../lazyPart');
-        const { RichTextEditor } = await import('#/react/RichTextEditor');
-        const { loadProfile } = await import('#/react/profiles');
-        const { commentModel } = await import('#/features');
-        const { createEmptyDocument } = await import('#/model');
-        const load = vi.fn(() => Promise.resolve(Greeting));
-        lazyPart(load);
-
-        render(
-            <RichTextEditor
-                aria-label="Message"
-                profile="comment"
-                defaultValue={{ documentId: 'document-1', revision: null, document: createEmptyDocument(commentModel) }}
-            />,
-        );
-        expect([idle.size, load.mock.calls.length]).toEqual([0, 0]);
-
-        await act(async () => {
-            await loadProfile('comment');
+    describe('with the editor', () => {
+        // The cold imports are a hook's work, which has the longer timeout; they share the fresh module graph.
+        const loadModules = async () => ({
+            ...(await import('../lazyPart')),
+            ...(await import('#/react/RichTextEditor')),
+            ...(await import('#/react/profiles')),
+            ...(await import('#/features')),
+            ...(await import('#/model')),
         });
-        expect([idle.size > 0, load.mock.calls.length]).toEqual([true, 0]);
-        await runIdle();
+        let modules: Awaited<ReturnType<typeof loadModules>>;
 
-        expect(load).toHaveBeenCalledTimes(1);
+        beforeEach(async () => {
+            modules = await loadModules();
+        });
+
+        it('prefetches once the editor is ready, and not while its profile loads', async () => {
+            const { lazyPart, RichTextEditor, loadProfile, commentModel, createEmptyDocument } = modules;
+            const load = vi.fn(() => Promise.resolve(Greeting));
+            lazyPart(load);
+
+            render(
+                <RichTextEditor
+                    aria-label="Message"
+                    profile="comment"
+                    defaultValue={{
+                        documentId: 'document-1',
+                        revision: null,
+                        document: createEmptyDocument(commentModel),
+                    }}
+                />,
+            );
+            expect([idle.size, load.mock.calls.length]).toEqual([0, 0]);
+
+            await act(async () => {
+                await loadProfile('comment');
+            });
+            expect([idle.size > 0, load.mock.calls.length]).toEqual([true, 0]);
+            await runIdle();
+
+            expect(load).toHaveBeenCalledTimes(1);
+        });
     });
 });
