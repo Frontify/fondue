@@ -7,7 +7,7 @@ export const NodeViewContentContext = createContext<((element: HTMLElement | nul
 NodeViewContentContext.displayName = 'RichTextNodeViewContentContext';
 
 /** Holds the node's editable content inside chrome, whose own controls then set `contentEditable={false}`. */
-export const NodeViewContent = ({ className }: { readonly className?: string }) => {
+export const NodeViewContent = ({ className }: { className?: string }) => {
     const place = useContext(NodeViewContentContext);
     const ref = useCallback((element: HTMLDivElement | null) => place?.(element), [place]);
 

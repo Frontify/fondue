@@ -39,58 +39,58 @@ export type NodeViewContext = ReaderContext;
 /** What `useRichTextNodeView` returns: plain data and actions that find their node, never a position or a ProseMirror value. */
 export type NodeViewState<C extends object = ShippedCommands> = {
     /** `null` for a node type that carries no `nodeId`, such as `code_block`, whose actions read its live position instead. */
-    readonly nodeId: string | null;
-    readonly attrs: JsonObject;
-    readonly selected: boolean;
+    nodeId: string | null;
+    attrs: JsonObject;
+    selected: boolean;
     /**
      * The `id` of the element that names the node, which chrome takes as its label, as the task checkbox does: the content
      * element, or the first block of a node with a `nodeId` that holds blocks; `null` for a leaf or atom.
      */
-    readonly contentId: string | null;
-    readonly context: NodeViewContext;
+    contentId: string | null;
+    context: NodeViewContext;
     /**
      * Node view actions keyed by the node's ID, or its live position when it has none; never a position held from
      * before. `update` merges: it sets the attributes it names and keeps the others, and changes nothing and is
      * rejected when one is undeclared, is `nodeId`, or has a value its declaration refuses.
      */
-    readonly update: (attrs: JsonObject) => CommandResult;
-    readonly remove: () => CommandResult;
-    readonly select: () => void;
+    update: (attrs: JsonObject) => CommandResult;
+    remove: () => CommandResult;
+    select: () => void;
     /** Selects this node at execution time, then runs or queries the command, so a delayed menu action still reaches this node. */
-    readonly execute: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandResult;
-    readonly query: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandState;
+    execute: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandResult;
+    query: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandState;
     /** The node's running async operation; never a document attribute. */
-    readonly pending: NodePending | null;
+    pending: NodePending | null;
 };
 
 /** An upload into the node: running or waiting with its whole percent once known, or failed or stopped. */
 export type NodePending = {
-    readonly kind: 'upload';
-    readonly state: 'running' | 'failed';
-    readonly progress: number | null;
+    kind: 'upload';
+    state: 'running' | 'failed';
+    progress: number | null;
 };
 
 /** A React component that draws a node of a block in the editor, with the attributes only the editor gives its content element. */
 export type NodeViewDeclaration = {
-    readonly node: string;
-    readonly component: ComponentType<object>;
+    node: string;
+    component: ComponentType<object>;
     /** Attributes only the editor gives the content element, such as `spellcheck`, which the stored HTML never holds. */
-    readonly contentAttributes?: Readonly<Record<string, string>>;
+    contentAttributes?: Readonly<Record<string, string>>;
 };
 
 /** What a panel renders with: close it, read package strings, and hear its command run again while it is open. */
 export type PanelComponentProps = {
-    readonly close: () => void;
-    readonly t: CodecContext['t'];
+    close: () => void;
+    t: CodecContext['t'];
     /** Counts the runs of its command while it is open, for a panel that does not toggle; each change asks it to move focus. */
-    readonly requested: number;
+    requested: number;
 };
 
 /** A panel a plugin opens by its control id, and the React component that draws it. */
 export type PanelDeclaration = {
     /** The id a plugin opens this panel by, such as `checks`. */
-    readonly control: string;
-    readonly component: ComponentType<PanelComponentProps>;
+    control: string;
+    component: ComponentType<PanelComponentProps>;
 };
 
 /** The state of the node view whose chrome renders, which the portal host provides. */

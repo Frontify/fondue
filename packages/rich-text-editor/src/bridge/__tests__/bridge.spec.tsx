@@ -49,7 +49,7 @@ vi.mock('#/bridge/portals', { spy: true });
 vi.mock('react-dom/client', { spy: true });
 
 const { createPortalStore: actualStore } = await vi.importActual<{
-    readonly createPortalStore: typeof createPortalStore;
+    createPortalStore: typeof createPortalStore;
 }>('../portals');
 
 const modelOf = (features: readonly Feature[]) =>
@@ -91,7 +91,7 @@ const stored = (...blocks: readonly JsonValue[]) => ({
 });
 
 /** The portal stores the editors mounted so far created, each with a count of its live subscribers. */
-const stores: { readonly store: PortalStore; readonly subscribers: () => number }[] = [];
+const stores: { store: PortalStore; subscribers: () => number }[] = [];
 beforeEach(() => {
     vi.useFakeTimers();
 });
@@ -127,9 +127,9 @@ const lastStore = () => {
 const mount = async (
     blocks: readonly JsonValue[],
     props: {
-        readonly definition?: typeof definition;
-        readonly locale?: RichTextLocale;
-        readonly generateId?: () => string;
+        definition?: typeof definition;
+        locale?: RichTextLocale;
+        generateId?: () => string;
     } = {},
 ) => {
     const ref = createRef<EditorHandle<object>>();
@@ -256,8 +256,8 @@ describe('the React bridge', () => {
 
     it('runs delayed update, query, execute, select and remove actions on their own nodes after a preceding paragraph is deleted', async () => {
         type ChromeCommands = {
-            readonly 'fixture.chrome-block.set': undefined;
-            readonly 'fixture.chrome-block.unset': undefined;
+            'fixture.chrome-block.set': undefined;
+            'fixture.chrome-block.unset': undefined;
         };
         const captured = new Map<string | null, NodeViewState<ChromeCommands>>();
         const Capture = () => {
@@ -650,7 +650,7 @@ describe('the React bridge', () => {
     });
 
     it('keeps the portals of the view a remounted surface attaches', async () => {
-        const Layout = ({ surfaceKey }: { readonly surfaceKey: string }) => (
+        const Layout = ({ surfaceKey }: { surfaceKey: string }) => (
             <RichTextEditor.Root aria-label="Notes" definition={definition} defaultValue={stored(para(mention('m1')))}>
                 <RichTextEditor.Surface key={surfaceKey} />
             </RichTextEditor.Root>

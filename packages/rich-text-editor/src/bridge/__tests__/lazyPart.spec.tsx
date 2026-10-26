@@ -4,7 +4,7 @@ import { act, cleanup, render, screen } from '@testing-library/react';
 import { type ComponentType } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const Greeting = ({ name }: { readonly name: string }) => <p>Hello {name}</p>;
+const Greeting = ({ name }: { name: string }) => <p>Hello {name}</p>;
 
 describe('a lazy part', () => {
     const idle = new Map<number, () => void>();
@@ -42,10 +42,10 @@ describe('a lazy part', () => {
 
     it('renders nothing until its module loads, then the component with its props', async () => {
         const { lazyPart } = await import('../lazyPart');
-        let release: (component: ComponentType<{ readonly name: string }>) => void = () => undefined;
+        let release: (component: ComponentType<{ name: string }>) => void = () => undefined;
         const Part = lazyPart(
             () =>
-                new Promise<ComponentType<{ readonly name: string }>>((resolve) => {
+                new Promise<ComponentType<{ name: string }>>((resolve) => {
                     release = resolve;
                 }),
         );
@@ -102,7 +102,7 @@ describe('a lazy part', () => {
 
     it('tries a module again on the next use after a load failed', async () => {
         const { lazyPart, prefetchPartsOnIdle } = await import('../lazyPart');
-        const load = vi.fn<() => Promise<ComponentType<{ readonly name: string }>>>();
+        const load = vi.fn<() => Promise<ComponentType<{ name: string }>>>();
         load.mockRejectedValueOnce(new Error('offline')).mockResolvedValue(Greeting);
         const Part = lazyPart(load);
 

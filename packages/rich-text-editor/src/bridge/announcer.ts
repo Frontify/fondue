@@ -35,11 +35,11 @@ const contentOf = (owner: Document, text: string): Node => {
 /** What speaks in one polite live region. */
 export type Announcer = {
     /** The ref of the polite live region it speaks in, which exists before any message. */
-    readonly setRegion: (element: HTMLElement | null) => void;
+    setRegion: (element: HTMLElement | null) => void;
     /** Announces `message` now, or with a `key` once no other message with that key followed it for 500 ms. */
-    readonly announce: (message: string, key?: string) => void;
+    announce: (message: string, key?: string) => void;
     /** Drops the messages that wait for their key's quiet time. */
-    readonly dispose: () => void;
+    dispose: () => void;
 };
 
 /**

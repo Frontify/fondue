@@ -69,7 +69,7 @@ export type RangeAnchor = {
 /** The box around the document range that `range` returns when read, such as a whole link, which Floating UI reads each frame. */
 export const createRangeAnchor = (
     view: () => SurfaceView | undefined,
-    range: () => { readonly from: number; readonly to: number } | undefined,
+    range: () => { from: number; to: number } | undefined,
 ): RangeAnchor => ({
     getBoundingClientRect: () => {
         const current = view();
@@ -121,7 +121,7 @@ export const createSelectionAnchor = (
     target?: () => AnchorTarget | undefined,
 ): SelectionAnchor => {
     // The held rectangle's offset from the surface, which scrolls and resizes with it.
-    let held: { readonly x: number; readonly y: number; readonly width: number; readonly height: number } | undefined;
+    let held: { x: number; y: number; width: number; height: number } | undefined;
     let read = false;
     const anchorRect = (current: SurfaceView): DOMRect => {
         const targeted = targetRect(current, target?.());

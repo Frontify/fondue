@@ -40,7 +40,7 @@ export const useSessionValue = <T>(
         [runtime],
     );
     // An equal value keeps the object React last rendered, which `useSyncExternalStore` then compares by identity.
-    const cacheRef = useRef<{ readonly value: T } | undefined>(undefined);
+    const cacheRef = useRef<{ value: T } | undefined>(undefined);
     const getSnapshot = () => {
         const next = read(runtime);
         if (cacheRef.current !== undefined && isEqual(cacheRef.current.value, next)) {

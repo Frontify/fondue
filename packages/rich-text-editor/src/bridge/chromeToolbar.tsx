@@ -15,13 +15,7 @@ import styles from './styles/chromeToolbar.module.scss';
 const OUT_OF_TAB_ORDER = -1;
 
 /** The node chrome toolbar: one Alt+F10 stop with arrow-key movement between its buttons. */
-export const NodeChromeToolbar = ({
-    'aria-label': label,
-    children,
-}: {
-    readonly 'aria-label': string;
-    readonly children: ReactNode;
-}) => {
+export const NodeChromeToolbar = ({ 'aria-label': label, children }: { 'aria-label': string; children: ReactNode }) => {
     // Radix writes `ltr` unless told, so the arrows follow the theme's visual order.
     const { dir } = useFondueTheme();
 
@@ -46,13 +40,13 @@ export const NodeChromeButton = ({
     describedBy,
     onClick,
 }: {
-    readonly label: string;
-    readonly icon?: ReactNode;
-    readonly pressed?: boolean;
-    readonly disabled?: boolean;
+    label: string;
+    icon?: ReactNode;
+    pressed?: boolean;
+    disabled?: boolean;
     /** The `id` of the text that describes the button, such as a prompt shown beside the chrome. */
-    readonly describedBy?: string;
-    readonly onClick: () => void;
+    describedBy?: string;
+    onClick: () => void;
 }) => {
     const container = useOverlayContainer();
     const button = (
@@ -93,11 +87,11 @@ export const ChromeToolbarButton = ({
     onPress,
 }: {
     /** The accessible name and the tooltip. */
-    readonly label: string;
-    readonly icon: ReactNode;
+    label: string;
+    icon: ReactNode;
     /** The `id` of the text that describes the button. */
-    readonly describedBy?: string;
-    readonly onPress: (control: HTMLElement) => void;
+    describedBy?: string;
+    onPress: (control: HTMLElement) => void;
 }) => {
     const container = useOverlayContainer();
 
@@ -141,13 +135,13 @@ export const NodeChromeMenu = ({
     onCloseAutoFocus,
     children,
 }: {
-    readonly label: string;
-    readonly text: string;
+    label: string;
+    text: string;
     /** The command its items run, which the button names in `data-rte-command`, as a drag's alternative does. */
-    readonly command?: string;
+    command?: string;
     /** Runs as the closed menu returns focus, which `event.preventDefault()` keeps where an item sent it. */
-    readonly onCloseAutoFocus?: (event: Event) => void;
-    readonly children: ReactNode;
+    onCloseAutoFocus?: (event: Event) => void;
+    children: ReactNode;
 }) => {
     const container = useOverlayContainer();
     const [open, setOpen] = useState(false);
@@ -224,9 +218,9 @@ export const OptionItem = ({
     onSelect,
     children,
 }: {
-    readonly checked?: boolean | undefined;
-    readonly onSelect: () => void;
-    readonly children: ReactNode;
+    checked?: boolean | undefined;
+    onSelect: () => void;
+    children: ReactNode;
 }) => {
     let semantics = {};
     if (checked !== undefined) {
@@ -245,14 +239,14 @@ OptionItem.displayName = 'OptionItem';
 
 /** One choice of an options menu: the command it runs, with its payload, on the node the menu opened for. */
 export type MenuOption = {
-    readonly key: string;
-    readonly label: string;
-    readonly command: string;
-    readonly payload?: JsonValue;
+    key: string;
+    label: string;
+    command: string;
+    payload?: JsonValue;
     /** A radio item, checked or not; a plain item without. */
-    readonly checked?: boolean;
+    checked?: boolean;
     /** The option runs nothing and keeps the selection: it only closes the menu and returns focus to the surface. */
-    readonly inert?: boolean;
+    inert?: boolean;
 };
 
 /**
@@ -266,10 +260,10 @@ export const OptionsMenu = ({
     node,
     close: onClose,
 }: OverlayProps & {
-    readonly label: string;
-    readonly options: readonly MenuOption[];
+    label: string;
+    options: readonly MenuOption[];
     /** The node the menu acts on, wherever the selection goes while it is open. */
-    readonly node: Parameters<EditorApi['select']>[0];
+    node: Parameters<EditorApi['select']>[0];
 }) => {
     const api = useEditorApi();
     const [open, setOpen] = useState(true);

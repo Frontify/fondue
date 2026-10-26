@@ -24,10 +24,10 @@ const watchDocumentListeners = () => {
 const EVENT_TYPES = ['focusin', 'focusout', 'keydown', 'pointercancel', 'pointerdown', 'pointerup'];
 
 type Editor = {
-    readonly root: HTMLElement;
-    readonly inside: HTMLButtonElement;
-    readonly scope: InteractionScope;
-    readonly stop: () => void;
+    root: HTMLElement;
+    inside: HTMLButtonElement;
+    scope: InteractionScope;
+    stop: () => void;
 };
 
 const editor = (): Editor => {

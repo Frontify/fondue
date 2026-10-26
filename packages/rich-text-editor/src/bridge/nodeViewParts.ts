@@ -20,7 +20,7 @@ const inControl = (chrome: HTMLElement, target: Node) => {
 };
 
 /** A change the view's mutation observer reports, or a selection change it reports in the same shape. */
-type ViewMutation = MutationRecord | { readonly type: 'selection'; readonly target: Node };
+type ViewMutation = MutationRecord | { type: 'selection'; target: Node };
 
 export const sameTags = (a: readonly HTMLElement[], b: readonly HTMLElement[]) =>
     a.length === b.length && a.every((layer, index) => layer.tagName === b[index]?.tagName);
@@ -102,10 +102,10 @@ export const createPlacement = (chrome: HTMLElement, contentDOM: HTMLElement | n
 
 /** The parts of one node view's DOM that its event and mutation checks read. */
 export type ViewDom = {
-    readonly dom: HTMLElement;
-    readonly chrome: HTMLElement;
-    readonly contentDOM: HTMLElement | null;
-    readonly layers: readonly HTMLElement[];
+    dom: HTMLElement;
+    chrome: HTMLElement;
+    contentDOM: HTMLElement | null;
+    layers: readonly HTMLElement[];
 };
 
 // Chrome mutations are React's; ProseMirror reads the rest, a removed `contentDOM` included.

@@ -55,7 +55,7 @@ export const useRenderMark = (): void => {
  * Marks the render, layout effects and effects of the parts between an opening and a closing `Phase`, which React
  * runs in tree order; a render that never commits closes at the next microtask.
  */
-export const Phase = ({ work, open }: { readonly work: ReactWork; readonly open: boolean }) => {
+export const Phase = ({ work, open }: { work: ReactWork; open: boolean }) => {
     work.phase = open;
     if (open) {
         // oxlint-disable-next-line @eslint-react/purity -- a render that never commits runs no effect to close its mark.

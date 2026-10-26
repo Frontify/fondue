@@ -2,8 +2,8 @@
 
 /** The last focus move, pointer press or key in the editor's document, with its innermost target through shadow roots. */
 export type Interaction = {
-    readonly kind: 'focus' | 'pointer' | 'key';
-    readonly target: Node | null;
+    kind: 'focus' | 'pointer' | 'key';
+    target: Node | null;
 };
 
 /**
@@ -45,8 +45,8 @@ type Handlers = Readonly<Record<EventType, (event: Event) => void>>;
 
 /** The one capture listener per event type that every scope engaged in a document shares. */
 type Hub = {
-    readonly scopes: Set<Handlers>;
-    readonly listeners: ReadonlyMap<EventType, EventListener>;
+    scopes: Set<Handlers>;
+    listeners: ReadonlyMap<EventType, EventListener>;
 };
 const hubs = new WeakMap<Document, Hub>();
 

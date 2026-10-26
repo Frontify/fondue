@@ -35,10 +35,10 @@ export type SelectionAnchor = {
 /** Where the editor's overlays render, and the interaction scope they share. */
 export type Overlays = {
     /** `portalContainer`, else the editor's own overlay root inside its interaction scope. */
-    readonly container: HTMLElement | null;
-    readonly scope: InteractionScope;
+    container: HTMLElement | null;
+    scope: InteractionScope;
     /** The element that had focus when the open overlay was asked for, before the overlay took focus. */
-    readonly opener?: Element | null;
+    opener?: Element | null;
 };
 
 export const OverlayContext = createContext<Overlays | null>(null);
@@ -82,25 +82,25 @@ export const useScopedFocus = (): Element | null => {
 
 /** What an editor overlay passes to its Fondue `Flyout`, `Dropdown` or `Dialog`. */
 export type EditorOverlay = {
-    readonly container: HTMLElement | null;
+    container: HTMLElement | null;
     /** Takes the content element Fondue forwards, which hides while its anchor is clipped. */
-    readonly contentRef: RefCallback<HTMLDivElement>;
+    contentRef: RefCallback<HTMLDivElement>;
     /**
      * Takes every close request but one from a focus move or press inside the editor and outside this overlay, or from
      * a focus move during a press inside this overlay.
      */
-    readonly onOpenChange: (open: boolean) => void;
+    onOpenChange: (open: boolean) => void;
     /**
      * The virtual anchor for this overlay: the `anchor` target `useEditorOverlay` got, else the selection. Unlike
      * `OverlayProps.anchor`, which is the target the opener passed to `overlays.open` and which only places an overlay,
      * this one also hides the content while a scrolling ancestor clips it.
      */
-    readonly anchor: OverlayAnchor;
+    anchor: OverlayAnchor;
     /**
      * Where the next close returns focus that it leaves on `body`: `target`, such as the control that opened the
      * overlay, or the surface for `null`, in place of the element that had focus when the overlay opened.
      */
-    readonly returnFocusTo: (target: Element | null) => void;
+    returnFocusTo: (target: Element | null) => void;
 };
 
 // Escapes that an overlay hands on after closing, so the chrome still moves focus for them.
@@ -194,7 +194,7 @@ export const useHeldOverlay = (
     open: boolean,
     setOpen: (open: boolean) => void,
     target?: AnchorTarget,
-): EditorOverlay & { readonly anchor: SelectionAnchor } => {
+): EditorOverlay & { anchor: SelectionAnchor } => {
     const { container, scope, opener = null } = useOverlays();
     const runtime = useContext(SessionContext);
     const runtimeRef = useRef(runtime);
@@ -243,7 +243,7 @@ export const useHeldOverlay = (
         },
         [scope],
     );
-    const returnRef = useRef<{ readonly target: Element | null } | undefined>(undefined);
+    const returnRef = useRef<{ target: Element | null } | undefined>(undefined);
     const returnFocusTo = useCallback((target: Element | null) => {
         returnRef.current = { target };
     }, []);
@@ -314,7 +314,5 @@ export const useHeldOverlay = (
 };
 
 /** An overlay's body: one whose code loads lazily suspends here, so the surface stays mounted and editable. */
-export const OverlayBody = ({ children }: { readonly children: ReactNode }) => (
-    <Suspense fallback={null}>{children}</Suspense>
-);
+export const OverlayBody = ({ children }: { children: ReactNode }) => <Suspense fallback={null}>{children}</Suspense>;
 OverlayBody.displayName = 'RichTextEditor.OverlayBody';

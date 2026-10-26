@@ -25,7 +25,7 @@ const selectionType = (page: Page) =>
             return undefined;
         }
 
-        return (runtime.state.selection.toJSON() as { readonly type: string }).type;
+        return (runtime.state.selection.toJSON() as { type: string }).type;
     });
 /** The snapshot's top-level blocks as stored, islands as their original JSON. */
 const stored = (page: Page) => page.evaluate(() => window.rte?.handle.getSnapshot().document.content.content);

@@ -55,9 +55,9 @@ export const createChromeView = (): ChromeView => {
     let view: SurfaceView | undefined;
     let mounted:
         | {
-              readonly surface: HTMLElement;
-              readonly domId: () => string;
-              readonly nodeViews: Readonly<Record<string, unknown>>;
+              surface: HTMLElement;
+              domId: () => string;
+              nodeViews: Readonly<Record<string, unknown>>;
           }
         | undefined;
     let shown = false;

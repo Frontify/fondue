@@ -11,10 +11,10 @@ import { SessionContext } from './session';
 
 /** One block conversion of the Turn into menus: the command that makes it, and its label. */
 export type TurnIntoEntry = {
-    readonly key: string;
-    readonly command: string;
-    readonly payload: JsonValue | undefined;
-    readonly label: string;
+    key: string;
+    command: string;
+    payload: JsonValue | undefined;
+    label: string;
 };
 
 /** The conversions the editor offers, which node chrome and the context menu narrow to what their block takes. */
@@ -23,8 +23,8 @@ TurnIntoContext.displayName = 'RichTextEditorTurnIntoContext';
 
 /** One entry the block can take, and whether it is the block's current type. */
 export type TurnIntoChoice = {
-    readonly entry: TurnIntoEntry;
-    readonly current: boolean;
+    entry: TurnIntoEntry;
+    current: boolean;
 };
 
 /**
@@ -53,12 +53,12 @@ export type TurnIntoCommands = Readonly<Record<string, JsonValue | undefined>>;
 
 /** What the Turn into menu reads of its node: `useRichTextNodeView<TurnIntoCommands>()`. */
 export type TurnIntoNode = {
-    readonly context: { readonly t: CodecContext['t'] };
-    readonly execute: (command: string, payload?: JsonValue) => unknown;
-    readonly query: (command: string, payload?: JsonValue) => CommandState;
+    context: { t: CodecContext['t'] };
+    execute: (command: string, payload?: JsonValue) => unknown;
+    query: (command: string, payload?: JsonValue) => CommandState;
 };
 
-const TurnIntoItems = ({ node, onPick }: { readonly node: TurnIntoNode; readonly onPick: () => void }) => {
+const TurnIntoItems = ({ node, onPick }: { node: TurnIntoNode; onPick: () => void }) => {
     const entries = useContext(TurnIntoContext);
     const choices = turnIntoChoices(entries, (command, payload) => node.query(command, payload));
 
@@ -81,7 +81,7 @@ const TurnIntoItems = ({ node, onPick }: { readonly node: TurnIntoNode; readonly
 };
 
 /** The Turn into menu of node chrome: a button named by the block's `current` type, whose items convert the block. */
-export const NodeChromeTurnInto = ({ current, node }: { readonly current: string; readonly node: TurnIntoNode }) => {
+export const NodeChromeTurnInto = ({ current, node }: { current: string; node: TurnIntoNode }) => {
     const api = useEditorApi();
     // A converted block's chrome unmounts with its menu, so a pick returns focus here and Escape in the close handler.
     const toSurface = () => api?.focus();
@@ -109,9 +109,9 @@ export const TurnIntoMenu = ({
     node,
     ...overlay
 }: OverlayProps & {
-    readonly label: string;
+    label: string;
     /** The node the menu acts on, wherever the selection goes while it is open. */
-    readonly node: Parameters<EditorApi['select']>[0];
+    node: Parameters<EditorApi['select']>[0];
 }) => {
     const entries = useContext(TurnIntoContext);
     const runtime = useContext(SessionContext);

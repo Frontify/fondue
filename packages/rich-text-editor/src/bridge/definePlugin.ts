@@ -16,10 +16,7 @@ import { type EditorFacet, type EditorPart, type EditorPartSpec, OPTION_PARTS, t
 
 /** The shape of `ReaderRenderers` from `#/reader/define`, which a bridge module cannot import without a folder cycle. */
 export type ReaderOverrides = Readonly<
-    Record<
-        string,
-        ComponentType<{ readonly attrs: JsonObject; readonly children?: ReactNode; readonly context: ReaderContext }>
-    >
+    Record<string, ComponentType<{ attrs: JsonObject; children?: ReactNode; context: ReaderContext }>>
 >;
 
 /** One feature's unit: its vocabulary, its editor part and its optional reader overrides, which a profile lists once. */
@@ -32,9 +29,9 @@ export type RichTextPlugin<Id extends string = string, Commands extends object =
 
 /** The inputs of a unit: the feature's factory, its editor part and the reader overrides of its nodes and marks. */
 type PluginSides<Id extends string, Options extends object, Commands extends object> = {
-    readonly feature: (options?: Options) => Feature<object, object, object, Id>;
-    readonly editor: EditorPart<NoInfer<Id>, Commands>;
-    readonly reader?: ReaderOverrides;
+    feature: (options?: Options) => Feature<object, object, object, Id>;
+    editor: EditorPart<NoInfer<Id>, Commands>;
+    reader?: ReaderOverrides;
 };
 
 /** A factory for the unit, which takes the options of the feature's own factory. */

@@ -7,11 +7,11 @@ import { type ChromeView, createChromeView } from './chromeView';
 import { markReady } from './devChecks';
 
 export type MountCoordinator = {
-    readonly runtime: EditorPort | undefined;
+    runtime: EditorPort | undefined;
     /** What chrome sets on the view, which each view this coordinator attaches takes. */
-    readonly chrome: ChromeView;
+    chrome: ChromeView;
     /** The surface element's ref: attaching shows the runtime's view in it, detaching destroys that view at once. */
-    readonly setSurface: (element: HTMLElement | null) => void;
+    setSurface: (element: HTMLElement | null) => void;
     start(runtime: EditorPort): void;
     stop(): void;
 };

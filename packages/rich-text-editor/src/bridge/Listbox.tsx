@@ -11,22 +11,22 @@ import styles from './styles/listbox.module.scss';
 
 /** What one option shows: its glyph, such as the emoji itself, or an image or icon, then its label and detail. */
 export type ListboxOption = {
-    readonly key: string;
-    readonly label: string;
-    readonly glyph: string | null;
+    key: string;
+    label: string;
+    glyph: string | null;
     /** Text after the label, such as a mention's resource type. */
-    readonly detail?: string;
+    detail?: string;
     /** An image that passed `checkHref`, which an option with no glyph shows. */
-    readonly imageUrl?: string;
+    imageUrl?: string;
     /** The icon an option with no glyph and no image shows. */
-    readonly kind?: 'user' | 'group' | 'everyone';
+    kind?: 'user' | 'group' | 'everyone';
     /** The heading of the group the option sits under; neighbours with the same one share a group, and options with none sit outside any. */
-    readonly group?: string;
+    group?: string;
 };
 
 const KIND_ICONS = { user: IconPerson, group: IconPeople, everyone: IconMegaphone } as const;
 
-const Lead = ({ option }: { readonly option: ListboxOption }) => {
+const Lead = ({ option }: { option: ListboxOption }) => {
     if (option.glyph !== null) {
         return (
             <span className={styles.glyph} aria-hidden>
@@ -67,14 +67,14 @@ export const Listbox = ({
     onActivate,
     testId,
 }: {
-    readonly id: string;
-    readonly label: string;
-    readonly options: readonly ListboxOption[];
+    id: string;
+    label: string;
+    options: readonly ListboxOption[];
     /** The active option. */
-    readonly index: number;
-    readonly onPick: (index: number) => void;
-    readonly onActivate: (index: number) => void;
-    readonly testId: string;
+    index: number;
+    onPick: (index: number) => void;
+    onActivate: (index: number) => void;
+    testId: string;
 }) => {
     const listRef = useRef<HTMLDivElement | null>(null);
     useClientLayoutEffect(() => {
