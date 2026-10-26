@@ -124,7 +124,10 @@ const PROSEMIRROR_EXCEPT_MODEL = DECLARED_PACKAGES.filter(
 const FEATURE_SIBLINGS = ['./*', './**', '!./migration'];
 
 // Every file of a feature folder but its vocabulary, migration, reader, index and fixtures is editor side.
-const EDITOR_PART_FILES = ['src/plugins/*/**/*.{ts,tsx}'];
+const EDITOR_PART_FILES = ['src/plugins/*/*.{ts,tsx}'];
+
+// Components, hooks and helpers sit one folder down and reach their own plugin's other folders through `../`.
+const EDITOR_PART_SUBFOLDER_FILES = ['src/plugins/*/*/**/*.{ts,tsx}'];
 
 const NOT_EDITOR_PART_FILES = [
     'src/plugins/*/feature.ts',
@@ -616,22 +619,27 @@ export default defineConfig({
                 { regex: EXTERNAL_SPECIFIER, message: FEATURE_FILE_MESSAGE },
             ],
         ),
-        layerOverride(
-            EDITOR_PART_FILES,
-            [
-                {
-                    group: [
-                        ...aliasPatterns(editorPartFolders),
-                        '#/model/**',
-                        ...exceptPatterns(['bridge/plugin', 'bridge/define']),
-                        '#/plugins/**',
-                        '../**',
-                    ],
-                    message: EDITOR_PART_MESSAGE,
-                },
-                { group: EDITOR_PART_EXTERNALS, message: EDITOR_PART_MESSAGE },
-            ],
-            NOT_EDITOR_PART_FILES,
+        ...[
+            { files: EDITOR_PART_FILES, outside: '../**' },
+            { files: EDITOR_PART_SUBFOLDER_FILES, outside: '../../**' },
+        ].map(({ files, outside }) =>
+            layerOverride(
+                files,
+                [
+                    {
+                        group: [
+                            ...aliasPatterns(editorPartFolders),
+                            '#/model/**',
+                            ...exceptPatterns(['bridge/plugin', 'bridge/define']),
+                            '#/plugins/**',
+                            outside,
+                        ],
+                        message: EDITOR_PART_MESSAGE,
+                    },
+                    { group: EDITOR_PART_EXTERNALS, message: EDITOR_PART_MESSAGE },
+                ],
+                NOT_EDITOR_PART_FILES,
+            ),
         ),
         layerOverride(
             ['src/plugins/*.ts', 'src/plugins/profiles/**/*.{ts,tsx}'],

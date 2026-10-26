@@ -212,9 +212,11 @@ describe('the authoring guide', () => {
         }
     });
 
-    it('takes every excerpt from a feature folder or the authoring examples of the package', () => {
+    it('takes every excerpt from a plugin folder, its components, hooks or helpers, or the authoring examples of the package', () => {
         for (const { path, language } of excerpts) {
-            expect(path).toMatch(/^src\/(?:plugins\/[A-Za-z0-9]+|docs\/authoring)\/[A-Za-z-]+\.tsx?$/);
+            expect(path).toMatch(
+                /^src\/(?:plugins\/[A-Za-z0-9]+(?:\/(?:components|hooks|helpers))?|docs\/authoring)\/[A-Za-z-]+\.tsx?$/,
+            );
             expect(language).toBe(path.endsWith('.tsx') ? 'tsx' : 'ts');
         }
     });
