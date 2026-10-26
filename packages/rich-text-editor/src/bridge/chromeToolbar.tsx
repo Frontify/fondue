@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Dropdown, Tooltip, useFondueTheme } from '@frontify/fondue-components';
+import { Button as FondueButton, Dropdown, Tooltip, useFondueTheme } from '@frontify/fondue-components';
 import { IconCheckMark } from '@frontify/fondue-icons';
 import * as Toolbar from '@radix-ui/react-toolbar';
 import { type ReactNode, useCallback, useRef, useState } from 'react';
@@ -80,6 +80,48 @@ export const NodeChromeButton = ({
     );
 };
 NodeChromeButton.displayName = 'NodeChromeButton';
+
+/** The Fondue-button item for chrome toolbars with few buttons; `NodeChromeButton` stays plain for node chrome's mount cost. */
+export const ChromeToolbarButton = ({
+    label,
+    icon,
+    describedBy,
+    onPress,
+}: {
+    /** The accessible name and the tooltip. */
+    readonly label: string;
+    readonly icon: ReactNode;
+    /** The `id` of the text that describes the button. */
+    readonly describedBy?: string;
+    readonly onPress: (control: HTMLElement) => void;
+}) => {
+    const container = useOverlayContainer();
+    return (
+        <Tooltip.Root>
+            <Tooltip.Trigger asChild>
+                <Toolbar.Button
+                    asChild
+                    tabIndex={OUT_OF_TAB_ORDER}
+                    className={styles.fondueButton}
+                    aria-label={label}
+                    aria-describedby={describedBy}
+                    onMouseDown={keepFocus}
+                    onClick={(event) => {
+                        onPress(event.currentTarget);
+                    }}
+                >
+                    <FondueButton size="small" aspect="square" emphasis="weak">
+                        {icon}
+                    </FondueButton>
+                </Toolbar.Button>
+            </Tooltip.Trigger>
+            <Tooltip.Content padding="compact" container={container}>
+                {label}
+            </Tooltip.Content>
+        </Tooltip.Root>
+    );
+};
+ChromeToolbarButton.displayName = 'ChromeToolbarButton';
 
 /**
  * A node chrome button that opens a Fondue `Dropdown` of `children`, its items, with focus on the checked item, else

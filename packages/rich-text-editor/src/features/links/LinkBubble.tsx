@@ -2,9 +2,9 @@
 
 import { Flyout, Tooltip } from '@frontify/fondue-components';
 import { IconArrowOutExternal, IconClipboard, IconPen, IconTrashBin } from '@frontify/fondue-icons';
-import { type ReactNode, useRef } from 'react';
+import { type ReactNode } from 'react';
 
-import { keepFocus, NodeChromeButton, NodeChromeToolbar } from '#/bridge/define';
+import { ChromeToolbarButton, NodeChromeToolbar } from '#/bridge/define';
 import { passEscape, type StandingOverlayProps } from '#/bridge/plugin';
 
 import { EDIT_LINK, openLink, REMOVE_LINK } from './linkBubbleModel';
@@ -24,24 +24,7 @@ const BubbleButton = ({
     /** The URL, so each control says which destination it acts on. */
     readonly describedBy: string;
     readonly onPress: (control: Element) => void;
-}) => {
-    const controlRef = useRef<HTMLSpanElement>(null);
-    // `NodeChromeButton` takes no ref, so the focus-keeping press sits on a wrapper around it; it shows its own tooltip.
-    return (
-        <span ref={controlRef} role="presentation" className={styles.control} onMouseDown={keepFocus}>
-            <NodeChromeButton
-                label={label}
-                icon={icon}
-                describedBy={describedBy}
-                onClick={() => {
-                    if (controlRef.current !== null) {
-                        onPress(controlRef.current);
-                    }
-                }}
-            />
-        </span>
-    );
-};
+}) => <ChromeToolbarButton label={label} icon={icon} describedBy={describedBy} onPress={onPress} />;
 
 /**
  * The link bubble: a `Flyout` on the whole link while the caret is at it or inside it, with the link's URL and Open,

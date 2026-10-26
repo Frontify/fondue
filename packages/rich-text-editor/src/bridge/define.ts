@@ -17,6 +17,7 @@ import { useRenderMark } from './devChecks';
 export { suggestionOptionId } from '#/runtime/capabilities/suggestions/optionId';
 export {
     CheckedSlot,
+    ChromeToolbarButton,
     keepFocus,
     type MenuOption,
     NodeChromeButton,

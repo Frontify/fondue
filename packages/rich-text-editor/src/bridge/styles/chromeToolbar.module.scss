@@ -48,6 +48,15 @@
     }
 }
 
+// The attributes lift this rule above Fondue's button size, which sets the height.
+.fondueButton[data-size][data-aspect] {
+    // A coarse pointer gets 44 by 44 CSS pixel targets.
+    @media (pointer: coarse) {
+        min-inline-size: 44px;
+        min-block-size: 44px;
+    }
+}
+
 // Menu rows in the editor's overlays wrap where Fondue truncates, so text that grows or spaces out stays whole.
 :global([data-rte-overlays]) [role^='menuitem'] > span {
     white-space: normal;

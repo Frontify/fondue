@@ -60,6 +60,26 @@ test('places the caret and shows the link bubble on a plain click in the editabl
     expect(popups).toBe(0);
 });
 
+test('renders the bubble buttons as Fondue buttons that arrow keys move between', async ({ mount, page }) => {
+    await mount(<LinkProbe />);
+    await ready(page);
+    await select(page, 'guide', 2, 2);
+    await expect(bubbleOf(page)).toBeVisible();
+
+    const buttons = bubbleOf(page).getByRole('button');
+    await expect(buttons).toHaveCount(4);
+    for (const button of await buttons.all()) {
+        await expect(button).toHaveAttribute('data-variant', 'default');
+        await expect(button).toHaveAttribute('data-aspect', 'square');
+    }
+    await page.keyboard.press('Alt+F10');
+    await expect(buttons.nth(0)).toBeFocused();
+    await page.keyboard.press('ArrowRight');
+    await expect(buttons.nth(1)).toBeFocused();
+    await page.keyboard.press('ArrowLeft');
+    await expect(buttons.nth(0)).toBeFocused();
+});
+
 test('opens the checked href in a new tab with no opener on Mod+click and from the bubble Open button', async ({
     mount,
     page,
