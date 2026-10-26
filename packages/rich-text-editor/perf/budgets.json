@@ -117,14 +117,14 @@
             "metric": "Command execution to next paint",
             "fixture": "large",
             "percentile": "p95",
-            "budgetMs": null
+            "budgetMs": 80
         },
         {
             "id": "dialog-typical-p95",
             "metric": "Dialog or menu open to focus inside it",
             "fixture": "typical",
             "percentile": "p95",
-            "budgetMs": null
+            "budgetMs": 30
         },
         {
             "id": "codecs-large-p95",
