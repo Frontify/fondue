@@ -3,7 +3,7 @@
 export const STORAGE = ['localStorage', 'sessionStorage', 'indexedDB', 'caches'] as const;
 
 /** Replaces each browser storage API with one that throws on any use; `accessed` logs every use, and `restore` undoes it. */
-export const stubStorage = (): { readonly accessed: string[]; readonly restore: () => void } => {
+export const stubStorage = (): { accessed: string[]; restore: () => void } => {
     const accessed: string[] = [];
     const originals = STORAGE.map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)] as const);
     for (const name of STORAGE) {

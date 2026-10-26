@@ -7,9 +7,7 @@ import { positionOf } from '#/runtime/positions';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 
 /** Names content, never document positions. */
-export type SelectionTarget =
-    | { readonly text: string; readonly occurrence?: number; readonly from?: number; readonly to?: number }
-    | { readonly nodeId: string };
+export type SelectionTarget = { text: string; occurrence?: number; from?: number; to?: number } | { nodeId: string };
 
 const attachedOf = (handle: object) => {
     const runtime = runtimeOf(handle);
@@ -58,10 +56,10 @@ export const pressKey = (handle: object, key: KeyBinding | 'Shift'): void => {
 export const paste = (
     handle: object,
     input: {
-        readonly html?: string;
-        readonly text?: string;
-        readonly files?: readonly File[];
-        readonly slice?: RichTextSlice;
+        html?: string;
+        text?: string;
+        files?: readonly File[];
+        slice?: RichTextSlice;
     },
 ): void => {
     const { view } = attachedOf(handle);

@@ -8,7 +8,7 @@ export const NETWORK = ['fetch', 'XMLHttpRequest', 'WebSocket', 'navigator.sendB
  * Replaces `fetch`, `XMLHttpRequest`, `WebSocket` and `navigator.sendBeacon` with stubs that throw on any use, for the
  * length of the calling file. `attempts` logs every use, and the file fails if any use is left in it after its tests.
  */
-export const failNetworkInThisFile = (): { readonly attempts: string[] } => {
+export const failNetworkInThisFile = (): { attempts: string[] } => {
     const attempts: string[] = [];
     const failing = (name: string) =>
         // A function, not an arrow, since `new XMLHttpRequest()` and `new WebSocket()` construct it.

@@ -55,10 +55,10 @@ const failingTitles = async (createHarness: () => PersistenceServerHarness): Pro
 type Save = (request: SaveRequest, context: ServiceContext) => Promise<SaveResponse>;
 /** What a flawed `save` gets: the reference server's, the payload sent earlier under the same operation ID, and the latest revisions. */
 type Server = {
-    readonly save: Save;
-    readonly first: string | undefined;
-    readonly calls: number;
-    readonly revisions: ReadonlyMap<string, string>;
+    save: Save;
+    first: string | undefined;
+    calls: number;
+    revisions: ReadonlyMap<string, string>;
 };
 
 const payloadOf = ({ stamp, baseRevision, document, writer }: SaveRequest) =>

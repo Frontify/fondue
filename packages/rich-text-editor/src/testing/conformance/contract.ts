@@ -69,26 +69,26 @@ const labelOf = (entry: object): string | undefined => {
 
 export type FeatureContractOptions = {
     /** Stored documents that use the features under test, each run through decode, encode, the reader and every codec. */
-    readonly fixtures?: readonly unknown[];
+    fixtures?: readonly unknown[];
     /** Editor parts of the features under test, which replace the shipped part of the same feature. */
-    readonly plugins?: readonly EditorPart[];
+    plugins?: readonly EditorPart[];
 };
 
 /** The runner globals and the lazily built model, engine and lookups that every check group shares. */
 type Contract = {
-    readonly options: FeatureContractOptions;
-    readonly compiled: () => ContentModel;
-    readonly engineOf: () => CompiledDefinition;
-    readonly stateOf: (document: RichTextDocument) => ConformanceState;
-    readonly storedIn: (fixture: unknown) => RichTextDocument;
-    readonly partOf: (id: string) => EditorPart | undefined;
-    readonly sharedDefaults: readonly SharedDefault[];
-    readonly unexpected: (diagnostics: readonly Diagnostic[], format: keyof FeatureFormats) => Diagnostic[];
+    options: FeatureContractOptions;
+    compiled: () => ContentModel;
+    engineOf: () => CompiledDefinition;
+    stateOf: (document: RichTextDocument) => ConformanceState;
+    storedIn: (fixture: unknown) => RichTextDocument;
+    partOf: (id: string) => EditorPart | undefined;
+    sharedDefaults: readonly SharedDefault[];
+    unexpected: (diagnostics: readonly Diagnostic[], format: keyof FeatureFormats) => Diagnostic[];
 } & TestRunner;
 
 const contractOf = (features: readonly Feature[], options: FeatureContractOptions, runner: TestRunner): Contract => {
     let model: ContentModel | undefined;
-    let built: { readonly engine: CompiledDefinition; readonly plugins: readonly EditorPart[] } | undefined;
+    let built: { engine: CompiledDefinition; plugins: readonly EditorPart[] } | undefined;
     const compiled = () => {
         if (model === undefined) {
             model = compileContentModel(features, { id: MODEL_ID, version: 1 });

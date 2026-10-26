@@ -68,9 +68,9 @@ export const setAttributesIn = (
 };
 
 export type SharedDefault = {
-    readonly name: string;
-    readonly on: readonly string[] | 'textblocks';
-    readonly fallback: JsonValue;
+    name: string;
+    on: readonly string[] | 'textblocks';
+    fallback: JsonValue;
 };
 
 /**

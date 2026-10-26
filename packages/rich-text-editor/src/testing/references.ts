@@ -7,9 +7,9 @@ const PAGE_SIZE = 20;
 /** The `ReferenceService` shape the fake meets: one `search` that pages through its items. */
 export type FakeReferenceService = {
     search(
-        request: { readonly query: string; readonly resourceTypes: readonly string[]; readonly cursor: string | null },
+        request: { query: string; resourceTypes: readonly string[]; cursor: string | null },
         context: ServiceContext,
-    ): Promise<{ readonly items: readonly ReferenceValue[]; readonly nextCursor: string | null }>;
+    ): Promise<{ items: readonly ReferenceValue[]; nextCursor: string | null }>;
 };
 
 const aborted = () => new DOMException('The search was aborted.', 'AbortError');
@@ -21,7 +21,7 @@ const aborted = () => new DOMException('The search was aborted.', 'AbortError');
  */
 export const createFakeReferenceService = (
     items: readonly ReferenceValue[],
-    options: { readonly pageSize?: number } = {},
+    options: { pageSize?: number } = {},
 ): FakeReferenceService => {
     const pageSize = options.pageSize ?? PAGE_SIZE;
 

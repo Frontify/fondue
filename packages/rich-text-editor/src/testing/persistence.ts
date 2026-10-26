@@ -7,15 +7,15 @@ import { type DocumentStamp, type ServerRevision } from '#/runtime/types';
 
 /** The server under test plus what the kit needs for the access and fencing cases of Server obligation 5. */
 export type PersistenceServerHarness = {
-    readonly service: PersistenceService;
+    service: PersistenceService;
     /** The same server for a user who may not write. */
-    readonly readOnlyService: PersistenceService;
+    readOnlyService: PersistenceService;
     /** A writer descriptor the host's fencing refuses. */
-    readonly rejectedWriter: SaveRequest['writer'];
+    rejectedWriter: SaveRequest['writer'];
     /** A writer descriptor the host's fencing accepts, which every other case sends. */
-    readonly writer: SaveRequest['writer'];
+    writer: SaveRequest['writer'];
     /** A stored document in the host's model that the server's `decodeDocument` run accepts. */
-    readonly document: RichTextDocument;
+    document: RichTextDocument;
 };
 
 const rejected = (code: 'forbidden' | 'invalid' | 'incompatible-writer'): SaveResponse => ({
@@ -46,8 +46,8 @@ const wellFormed = (document: unknown) =>
 
 /** The reference server: one in-memory store, with a service for a writer and one for a user who may not write. */
 export const createFakeServer = (): Pick<PersistenceServerHarness, 'service' | 'readOnlyService'> => {
-    const records = new Map<string, { readonly revision: ServerRevision; readonly document: RichTextDocument }>();
-    const outcomes = new Map<string, { readonly payload: string; readonly response: SaveResponse }>();
+    const records = new Map<string, { revision: ServerRevision; document: RichTextDocument }>();
+    const outcomes = new Map<string, { payload: string; response: SaveResponse }>();
     let revisions = 0;
 
     // Checks the base revision and writes in one synchronous step, so no other save runs in between (obligation 3).

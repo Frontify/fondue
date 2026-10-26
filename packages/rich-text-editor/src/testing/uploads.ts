@@ -11,9 +11,9 @@ import { type Bytes, decodableImage, pngChunk, SAMPLE_TYPES, sampleImage, SIZED_
 /** The `UploadService` shape the fake meets and the kit calls. */
 export type FakeUploadService = {
     upload(
-        request: { readonly operationId: string; readonly blob: Blob; readonly filename: string },
-        context: ServiceContext & { readonly reportProgress: (fraction: number) => void },
-    ): Promise<{ readonly assetId: string; readonly mediaType: string; readonly labelSnapshot: string }>;
+        request: { operationId: string; blob: Blob; filename: string },
+        context: ServiceContext & { reportProgress: (fraction: number) => void },
+    ): Promise<{ assetId: string; mediaType: string; labelSnapshot: string }>;
     releaseUnused(operationId: string, context: ServiceContext): Promise<void>;
 };
 
@@ -27,7 +27,7 @@ const refused = (reason: string) => new Error(`The upload was refused: ${reason}
  * answers a repeated operation with its first asset, and rejects with an `AbortError` once its signal aborts.
  */
 export const createFakeUploadService = (
-    options: { readonly maxAssetBytes?: number; readonly acceptTypes?: readonly string[] } = {},
+    options: { maxAssetBytes?: number; acceptTypes?: readonly string[] } = {},
 ): FakeUploadService => {
     const maxAssetBytes = options.maxAssetBytes ?? defaultLimits.maxAssetBytes;
     const acceptTypes = options.acceptTypes ?? DEFAULT_ACCEPT_TYPES;
@@ -125,27 +125,27 @@ const ACTIVE_SVGS: readonly (readonly [string, string])[] = [
 const svgOf = (body: string) => `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">${body}</svg>`;
 
 type ConformanceOptions = {
-    readonly maxAssetBytes: number;
-    readonly acceptTypes: readonly string[];
-    readonly maxImagePixels?: number;
+    maxAssetBytes: number;
+    acceptTypes: readonly string[];
+    maxImagePixels?: number;
 };
 
 /** The runner globals and the probes that every case group shares. */
 type Conformance = {
-    readonly maxAssetBytes: number;
-    readonly acceptTypes: readonly string[];
-    readonly maxImagePixels: number;
-    readonly send: (bytes: Bytes | string, type: string, filename: string) => ReturnType<FakeUploadService['upload']>;
-    readonly refuses: (bytes: Bytes | string, type: string, filename: string) => Promise<boolean>;
-    readonly accepts: (bytes: Bytes | string, type: string, filename: string) => Promise<boolean>;
-    readonly probeType: (typeof SIZED_TYPES)[number] | undefined;
-    readonly sampleType: string | undefined;
-    readonly nameOf: (type: string | undefined) => string;
-    readonly extension: string;
+    maxAssetBytes: number;
+    acceptTypes: readonly string[];
+    maxImagePixels: number;
+    send: (bytes: Bytes | string, type: string, filename: string) => ReturnType<FakeUploadService['upload']>;
+    refuses: (bytes: Bytes | string, type: string, filename: string) => Promise<boolean>;
+    accepts: (bytes: Bytes | string, type: string, filename: string) => Promise<boolean>;
+    probeType: (typeof SIZED_TYPES)[number] | undefined;
+    sampleType: string | undefined;
+    nameOf: (type: string | undefined) => string;
+    extension: string;
     /** The probe type, which the cases that need one register only when the host accepts it. */
-    readonly probing: () => (typeof SIZED_TYPES)[number];
+    probing: () => (typeof SIZED_TYPES)[number];
     /** A sample of the first type the host accepts that the kit has one of, with `padding` more bytes. */
-    readonly sample: (padding?: number) => Promise<{ bytes: Bytes; name: string; type: string }>;
+    sample: (padding?: number) => Promise<{ bytes: Bytes; name: string; type: string }>;
 } & TestRunner;
 
 const conformanceOf = (

@@ -291,10 +291,7 @@ export const SAMPLE_TYPES = [...SIZED_TYPES, 'image/webp', 'image/avif', 'image/
  * A one-pixel image of `type`, valid to decode, with `padding` more bytes in a part that decoders skip, and a file
  * name for it; `undefined` for a type the kit has no sample of.
  */
-export const sampleImage = async (
-    type: string,
-    padding = 0,
-): Promise<{ readonly bytes: Bytes; readonly name: string } | undefined> => {
+export const sampleImage = async (type: string, padding = 0): Promise<{ bytes: Bytes; name: string } | undefined> => {
     const subtype = type.split('/')[1];
     const base = subtype?.split('+')[0];
     const extension = base ?? 'bin';
