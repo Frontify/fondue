@@ -25,8 +25,8 @@ const contentOf = (page: Page) =>
 const typeAndSelect = async (page: Page, text: string, word: string) => {
     await surfaceOf(page).focus();
     await page.keyboard.insertText(text);
-    // An arrow pressed before the inserted text reaches the document moves from a stale caret.
-    await expect(surfaceOf(page)).toHaveText(text);
+    // An arrow pressed before the editor reads the inserted text moves from a stale caret, so wait for its document.
+    await expect.poll(async () => JSON.stringify(await contentOf(page))).toContain(JSON.stringify(text));
     for (let step = 0; step < word.length; step += 1) {
         await press(page, 'Shift+ArrowLeft');
     }
