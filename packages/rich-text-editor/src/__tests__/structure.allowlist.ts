@@ -104,7 +104,7 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         ],
     },
     {
-        site: 'src/bridge/nodeViews.ts:56',
+        site: 'src/bridge/nodeViews/nodeViews.ts:56',
         why: 'Node and mark attributes reach plugins, decorations and the manifest as deep-frozen JSON (also src/runtime/statePlugins/decorations.ts:78, src/runtime/api/shared.ts:82, src/model/compile/compile.ts:55), so a write throws.',
         deep: ['src/model/types.ts#JsonObject', 'src/model/types.ts#JsonValue'],
     },
@@ -119,9 +119,12 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         ],
     },
     {
-        site: 'src/bridge/definePlugin.ts:54',
+        site: 'src/bridge/pluginApi/definePlugin.ts:54',
         why: 'definePlugin and extendPlugin freeze the unit, and extendEditor freezes its editor part, so a write throws.',
-        types: ['src/bridge/definePlugin.ts#RichTextPlugin', 'src/bridge/definePlugin.ts#{ [OPTION_PARTS] }'],
+        types: [
+            'src/bridge/pluginApi/definePlugin.ts#RichTextPlugin',
+            'src/bridge/pluginApi/definePlugin.ts#{ [OPTION_PARTS] }',
+        ],
     },
     {
         site: 'src/runtime/reporting/metrics.ts:14',

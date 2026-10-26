@@ -7,9 +7,9 @@ import { type ReactNode, useCallback, useRef, useState } from 'react';
 
 import { type JsonValue } from '#/model';
 
+import styles from './chrome/styles/chromeToolbar.module.scss';
 import { useEditorOverlay, useOverlayContainer } from './overlays';
 import { type EditorApi, type OverlayProps, useEditorApi } from './plugin';
-import styles from './styles/chromeToolbar.module.scss';
 
 // Node chrome sits inside the surface, so its controls take no Tab stop of their own; Alt+F10 reaches them.
 const OUT_OF_TAB_ORDER = -1;

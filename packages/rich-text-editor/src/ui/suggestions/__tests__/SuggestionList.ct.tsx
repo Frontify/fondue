@@ -4,7 +4,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator, type Page } from '@playwright/test';
 
-import { Listbox } from '#/bridge/Listbox';
+import { Listbox } from '#/bridge/chrome/components/Listbox';
 
 import { SuggestionProbe } from './fixtures/SuggestionProbe';
 

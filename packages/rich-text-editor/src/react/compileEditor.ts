@@ -1,8 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type NodeViewDeclaration, type PanelDeclaration } from '#/bridge/define';
-import { type RichTextPlugin } from '#/bridge/definePlugin';
-import { editorApiOf, facetsOf, partCommandApiOf } from '#/bridge/liveApi';
 import {
     type EditorApi,
     type EditorHosts,
@@ -10,6 +8,8 @@ import {
     type EditorSuggestion,
     partWithOptions,
 } from '#/bridge/plugin';
+import { type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
+import { editorApiOf, facetsOf, partCommandApiOf } from '#/bridge/pluginApi/liveApi';
 import {
     type CommandRef,
     type ContentModel,

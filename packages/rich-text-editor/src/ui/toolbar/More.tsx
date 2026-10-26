@@ -6,9 +6,9 @@ import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type RefObject, useContext, useRef, useState } from 'react';
 
 import { keepFocus } from '#/bridge/chromeToolbar';
-import { lazyPart } from '#/bridge/lazyPart';
 import { useOverlayContainer } from '#/bridge/overlays';
 import { SessionContext, useSessionValue } from '#/bridge/session';
+import { lazyPart } from '#/bridge/session/helpers/lazyPart';
 
 import { returnFocus, runItem, tabStop, type ToolbarItem, type ToolbarStrings, useOfferedRows } from './item';
 import styles from './styles/toolbar.module.scss';

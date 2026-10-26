@@ -3,7 +3,7 @@
 import { act } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createPortalStore, type PortalEntry } from '#/bridge/portals';
+import { createPortalStore, type PortalEntry } from '#/bridge/nodeViews/helpers/portals';
 import {
     type CommandResult,
     type EditorHandle,
@@ -30,10 +30,10 @@ import {
     installPersistenceHooks,
 } from './fixtures/mounted';
 
-vi.mock('#/bridge/portals', { spy: true });
+vi.mock('#/bridge/nodeViews/helpers/portals', { spy: true });
 const { createPortalStore: actualStore } = await vi.importActual<{
     createPortalStore: typeof createPortalStore;
-}>('#/bridge/portals');
+}>('#/bridge/nodeViews/helpers/portals');
 
 installPersistenceHooks();
 

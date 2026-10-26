@@ -2,7 +2,7 @@
 
 import { type RefObject, useEffect, useState } from 'react';
 
-import { type MountCoordinator } from '#/bridge/mount';
+import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 
 /**
  * The height the on-screen keyboard of a touch device covers, which a focused editor docks its toolbar above.

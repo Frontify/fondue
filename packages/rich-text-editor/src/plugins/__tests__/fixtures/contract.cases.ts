@@ -7,7 +7,8 @@ import { type NodeView, type NodeViewConstructor } from 'prosemirror-view';
 import { createElement } from 'react';
 import { expect, type it as runnerIt, vi } from 'vitest';
 
-import { createNodeViews } from '#/bridge/nodeViews';
+import { createPortalStore, type PortalStore } from '#/bridge/nodeViews/helpers/portals';
+import { createNodeViews } from '#/bridge/nodeViews/nodeViews';
 import {
     type EditorApi,
     type EditorCommand,
@@ -17,7 +18,6 @@ import {
     partWithOptions,
 } from '#/bridge/plugin';
 import { PortalHost } from '#/bridge/PortalHost';
-import { createPortalStore, type PortalStore } from '#/bridge/portals';
 import { enUS } from '#/locales/en-US';
 import {
     compileContentModel,

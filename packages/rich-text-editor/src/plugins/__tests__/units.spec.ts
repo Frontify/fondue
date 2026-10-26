@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { type RichTextPlugin } from '#/bridge/definePlugin';
+import { type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
 import * as root from '#/index';
 import * as barrel from '#/plugins';
 

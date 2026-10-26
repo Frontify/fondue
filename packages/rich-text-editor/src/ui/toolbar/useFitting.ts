@@ -2,7 +2,7 @@
 
 import { type RefObject, useRef, useState } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
+import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 
 /** One slot per item, which an item that failed to render holds empty, so slots and items keep their order. */
 const slotsOf = (root: HTMLElement): Element[] =>

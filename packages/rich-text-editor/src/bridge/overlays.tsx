@@ -16,11 +16,11 @@ import {
 import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/portEngine';
 
-import { createSelectionAnchor } from './anchor';
-import { useClientLayoutEffect } from './clientLayoutEffect';
-import { type InteractionScope } from './interactionScope';
+import { createSelectionAnchor } from './overlays/helpers/anchor';
+import { type InteractionScope } from './overlays/helpers/interactionScope';
 import { type AnchorTarget, type OverlayAnchor } from './plugin';
 import { SessionContext } from './session';
+import { useClientLayoutEffect } from './session/hooks/useClientLayoutEffect';
 
 // Lives here, not beside its factory in anchor.ts, whose declarations reach prosemirror-view.
 /** A rectangle an overlay anchors to, as Fondue's `virtualAnchor` takes it, which Floating UI reads each frame. */

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin } from '#/bridge/definePlugin';
+import { definePlugin } from '#/bridge/pluginApi/definePlugin';
 
 import { outlineEditor } from './editor';
 import { outline } from './feature';

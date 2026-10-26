@@ -2,7 +2,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createInteractionScope, type InteractionScope } from '../interactionScope';
+import { createInteractionScope, type InteractionScope } from '../overlays/helpers/interactionScope';
 
 /** The net count of capture listeners on `document` by event type. */
 const watchDocumentListeners = () => {

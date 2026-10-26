@@ -43,14 +43,14 @@ import { shipped as inlineProfile } from '#/react/profiles/inline';
 import { type EditorRuntime, type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { probeRuntimes, setSelection, typeText } from '#/testing';
 
-import { createPortalStore, type PortalEntry, type PortalStore } from '../portals';
+import { createPortalStore, type PortalEntry, type PortalStore } from '../nodeViews/helpers/portals';
 
-vi.mock('#/bridge/portals', { spy: true });
+vi.mock('#/bridge/nodeViews/helpers/portals', { spy: true });
 vi.mock('react-dom/client', { spy: true });
 
 const { createPortalStore: actualStore } = await vi.importActual<{
     createPortalStore: typeof createPortalStore;
-}>('../portals');
+}>('../nodeViews/helpers/portals');
 
 const modelOf = (features: readonly Feature[]) =>
     compileContentModel([core(), ...features], { id: 'test.bridge', version: 1 });

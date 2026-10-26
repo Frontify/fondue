@@ -12,8 +12,8 @@ import { mediaImageEditor } from '#/plugins/Image/editor';
 import { image } from '#/plugins/Image/feature';
 import { type ReaderRenderers } from '#/reader/define';
 
-import { definePlugin, extendPlugin, modelOf, type ReaderOverrides } from '../definePlugin';
 import { defineEditorPart, partWithOptions } from '../plugin';
+import { definePlugin, extendPlugin, modelOf, type ReaderOverrides } from '../pluginApi/definePlugin';
 
 describe('definePlugin', () => {
     it('bundles a shipped feature with its editor part', () => {

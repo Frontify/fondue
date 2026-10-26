@@ -2,7 +2,7 @@
 
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import { definePlugin, modelOf, type RichTextPlugin } from '#/bridge/definePlugin';
+import { definePlugin, modelOf, type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
 import { compileContentModel, defineFeature, DefinitionError } from '#/model';
 import { core } from '#/plugins';
 import { boldPlugin } from '#/plugins/Bold';

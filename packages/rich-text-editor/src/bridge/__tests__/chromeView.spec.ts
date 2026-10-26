@@ -3,7 +3,7 @@
 import { type EditorView } from 'prosemirror-view';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createChromeView } from '../chromeView';
+import { createChromeView } from '../session/helpers/chromeView';
 
 type Insets = {
     top: number;

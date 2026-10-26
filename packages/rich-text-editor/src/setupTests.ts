@@ -5,7 +5,7 @@ import * as matchers from '@testing-library/jest-dom/matchers';
 import { cleanup, configure } from '@testing-library/react';
 import { afterEach, beforeAll, expect } from 'vitest';
 
-import { loadParts } from '#/bridge/lazyPart';
+import { loadParts } from '#/bridge/session/helpers/lazyPart';
 
 // `@testing-library/jest-dom/vitest` would extend the `expect` of whichever `vitest` it resolves.
 expect.extend(matchers);

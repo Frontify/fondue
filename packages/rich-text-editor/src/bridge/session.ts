@@ -4,8 +4,8 @@ import { createContext, useCallback, useContext, useRef, useSyncExternalStore } 
 
 import { type EditorPort } from '#/runtime/port';
 
-import { useClientLayoutEffect } from './clientLayoutEffect';
 import { useRenderMark } from './devChecks';
+import { useClientLayoutEffect } from './session/hooks/useClientLayoutEffect';
 
 /** The session of the editor around a hook once it is ready. */
 export const SessionContext = createContext<EditorPort | undefined>(undefined);

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect } from 'react';
 
-import { useClientLayoutEffect } from './clientLayoutEffect';
+import { useClientLayoutEffect } from './session/hooks/useClientLayoutEffect';
 
 /**
  * Whether the editor's React tree renders or runs effects now, which a development build marks for

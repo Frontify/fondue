@@ -7,12 +7,12 @@ import { createPortal } from 'react-dom';
 import { type JsonObject } from '#/model';
 import { type EditorPort, mediaOf } from '#/runtime/port';
 
-import { useClientLayoutEffect } from './clientLayoutEffect';
 import { type NodePending, type NodeViewContext, NodeViewStateContext } from './define';
 import { type ReactWork, ReactWorkContext } from './devChecks';
 import { NodeViewContentContext } from './NodeViewContent';
-import { type PortalEntry, type PortalStore } from './portals';
+import { type PortalEntry, type PortalStore } from './nodeViews/helpers/portals';
 import { useSessionValue } from './session';
+import { useClientLayoutEffect } from './session/hooks/useClientLayoutEffect';
 
 export type BoundaryProps = {
     message: string;

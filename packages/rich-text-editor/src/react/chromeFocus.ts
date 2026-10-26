@@ -2,9 +2,9 @@
 
 import { type KeyboardEvent, type RefObject } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
-import { type MountCoordinator } from '#/bridge/mount';
 import { escapePassed } from '#/bridge/overlays';
+import { type MountCoordinator } from '#/bridge/session/helpers/mount';
+import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { type EditorPort, hasSurface, nodeChromeOf, passesToBrowser } from '#/runtime/port';
 import { pressesBinding } from '#/ui/shortcuts';
 

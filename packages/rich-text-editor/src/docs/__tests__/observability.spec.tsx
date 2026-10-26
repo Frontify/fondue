@@ -5,7 +5,7 @@ import { createRef } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createPortalStore } from '#/bridge/portals';
+import { createPortalStore } from '#/bridge/nodeViews/helpers/portals';
 import { defineReaderFeature } from '#/entries/reader';
 import { defineEditor, type EditorHandle, type EditorServices, type PersistenceService, RichTextEditor } from '#/index';
 import {
@@ -30,10 +30,10 @@ import {
 } from '../observability/rendererFailures';
 import { countSaveConflicts } from '../observability/saveConflicts';
 
-vi.mock('#/bridge/portals', { spy: true });
+vi.mock('#/bridge/nodeViews/helpers/portals', { spy: true });
 const { createPortalStore: actualStore } = await vi.importActual<{
     createPortalStore: typeof createPortalStore;
-}>('#/bridge/portals');
+}>('#/bridge/nodeViews/helpers/portals');
 
 beforeEach(() => {
     vi.useFakeTimers();

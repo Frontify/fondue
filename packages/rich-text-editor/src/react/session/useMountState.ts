@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 
 import { createAnnouncer } from '#/bridge/announcer';
 import { createReactWork } from '#/bridge/devChecks';
-import { createMountCoordinator } from '#/bridge/mount';
-import { createPortalStore } from '#/bridge/portals';
+import { createPortalStore } from '#/bridge/nodeViews/helpers/portals';
+import { createMountCoordinator } from '#/bridge/session/helpers/mount';
 import { type RichTextDocument } from '#/model';
 import { type LoadedDocument } from '#/persistence/types';
 

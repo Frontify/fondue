@@ -3,14 +3,14 @@
 import { type MutableRefObject } from 'react';
 
 import { type Announcer } from '#/bridge/announcer';
-import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 import { inReactWork, type ReactWork, sharesName } from '#/bridge/devChecks';
-import { type InteractionScope } from '#/bridge/interactionScope';
-import { prefetchPartsOnIdle } from '#/bridge/lazyPart';
-import { type MountCoordinator } from '#/bridge/mount';
-import { createNodeViews } from '#/bridge/nodeViews';
+import { type PortalStore } from '#/bridge/nodeViews/helpers/portals';
+import { createNodeViews } from '#/bridge/nodeViews/nodeViews';
+import { type InteractionScope } from '#/bridge/overlays/helpers/interactionScope';
 import { type EditorHosts } from '#/bridge/plugin';
-import { type PortalStore } from '#/bridge/portals';
+import { prefetchPartsOnIdle } from '#/bridge/session/helpers/lazyPart';
+import { type MountCoordinator } from '#/bridge/session/helpers/mount';
+import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { enUS } from '#/locales/en-US';
 import { type Diagnostic, type RichTextDocument } from '#/model';
 import { codecContext, randomId } from '#/model/internal';

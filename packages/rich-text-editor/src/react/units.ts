@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RichTextPlugin } from '#/bridge/definePlugin';
+import { type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
 import { type ContentModel, DefinitionError } from '#/model';
 import { compiledModel, pointer } from '#/model/internal';
 import { type ReaderOverrides } from '#/reader/helpers/plan';

@@ -2,8 +2,8 @@
 
 import { type MutableRefObject, type RefObject, useEffect, useMemo, useRef } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
-import { type MountCoordinator } from '#/bridge/mount';
+import { type MountCoordinator } from '#/bridge/session/helpers/mount';
+import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { sameDocument, styleSheetOf } from '#/model';
 import { unknownStyle } from '#/model/internal';
 

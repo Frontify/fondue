@@ -90,7 +90,7 @@ const CLIPBOARD_MESSAGE =
     '`runtime/clipboard` imports `model`, `runtime/definition`, `runtime`, `codecs`, `runtime/import` and ProseMirror, never React or the editor layers.';
 
 const FEATURE_INDEX_MESSAGE =
-    "A feature's index builds its unit and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/definePlugin`.";
+    "A feature's index builds its unit and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/pluginApi/definePlugin`.";
 
 const READER_FILE_MESSAGE =
     "A feature's reader override imports only `react` (no Node built-ins), `#/model`, `#/reader/define`, its own `./feature`, its own `./components/*` and a declared dependency's `#/plugins/<id>/feature`, as an outside feature must.";
@@ -101,7 +101,7 @@ const MODEL_ENTRY_MESSAGE =
 const MODEL_FILE_MESSAGE = 'Code outside `model` imports `#/model` or `#/model/internal`, never a model file directly.';
 
 const FEATURE_PLUGINS_MESSAGE =
-    "The all-units registry imports only `#/model`, `#/bridge/definePlugin` and each feature's `./*/index` through its glob, because it loads every editor part and only `pluginsById` users and `testing` may load it.";
+    "The all-units registry imports only `#/model`, `#/bridge/pluginApi/definePlugin` and each feature's `./*/index` through its glob, because it loads every editor part and only `pluginsById` users and `testing` may load it.";
 
 const FEATURE_WIRING_MESSAGE =
     'The feature index, registry and profiles wire shipped features from `model`, and do not load views, readers or the editor.';
@@ -198,8 +198,18 @@ const aliasPatterns = (folders: readonly string[]): string[] =>
 // file can sit below `src`, with one level to spare.
 const PARENT_PREFIXES = ['../', '../../', '../../../', '../../../../'];
 
+// A component's own `styles/*.module.scss` shares the name of the `styles` layer, which holds no CSS modules.
 const relativePatterns = (folders: readonly string[]): string[] =>
-    folders.flatMap((folder) => PARENT_PREFIXES.flatMap((prefix) => [`${prefix}${folder}`, `${prefix}${folder}/**`]));
+    folders.flatMap((folder) =>
+        PARENT_PREFIXES.flatMap((prefix) => {
+            const patterns = [`${prefix}${folder}`, `${prefix}${folder}/**`];
+            if (folder === 'styles') {
+                patterns.push(`!${prefix}styles/*.module.scss`);
+            }
+
+            return patterns;
+        }),
+    );
 
 // A `!` pattern lets paths back in that earlier patterns of the same group ban.
 const exceptPatterns = (paths: readonly string[]): string[] =>
@@ -690,7 +700,7 @@ export default defineConfig({
             {
                 group: [
                     ...aliasPatterns(outsideFeatureFolders),
-                    '!#/bridge/definePlugin',
+                    '!#/bridge/pluginApi/definePlugin',
                     '#/model/**',
                     '#/plugins/**',
                     '../**',
@@ -724,7 +734,7 @@ export default defineConfig({
             {
                 group: [
                     ...aliasPatterns(FOLDERS),
-                    '!#/bridge/definePlugin',
+                    '!#/bridge/pluginApi/definePlugin',
                     '../**',
                     './*',
                     './**',

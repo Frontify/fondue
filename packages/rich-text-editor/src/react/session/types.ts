@@ -2,7 +2,7 @@
 
 import { type MutableRefObject, type ReactNode } from 'react';
 
-import { type MountCoordinator } from '#/bridge/mount';
+import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { type TurnIntoEntry } from '#/bridge/turnInto';
 import { type CapabilityRef, type DecodeResult } from '#/model';
 import { type TreeNode } from '#/model/internal';

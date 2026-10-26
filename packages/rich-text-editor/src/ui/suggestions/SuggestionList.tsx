@@ -4,10 +4,10 @@ import { Flyout, LoadingCircle } from '@frontify/fondue-components';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAnnounce } from '#/bridge/announcer';
-import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
-import { Listbox, type ListboxOption } from '#/bridge/Listbox';
+import { Listbox, type ListboxOption } from '#/bridge/chrome/components/Listbox';
 import { useEditorOverlay } from '#/bridge/overlays';
 import { SessionContext, useSessionValue } from '#/bridge/session';
+import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import {
     acceptSuggestionIn,
     type ActiveSuggestion,

@@ -5,8 +5,8 @@ import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'v
 import { probeHarness } from '#/plugins/__tests__/fixtures/editorApi';
 import { bold } from '#/plugins/Bold/feature';
 
-import { facetsOf } from '../liveApi';
 import { defineEditorPart, type EditorApi } from '../plugin';
+import { facetsOf } from '../pluginApi/liveApi';
 
 let live: EditorApi | undefined;
 

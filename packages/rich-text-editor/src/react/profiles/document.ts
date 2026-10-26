@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { extendPlugin, type RichTextPlugin } from '#/bridge/definePlugin';
+import { extendPlugin, type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
 import { type CommandRef } from '#/model';
 import { contentChecksPlugin } from '#/plugins/ContentChecks';
 import { headingPlugin } from '#/plugins/Heading';

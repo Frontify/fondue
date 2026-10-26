@@ -6,7 +6,7 @@ import { type ContentNodeJSON } from '#/model';
 import { ISLAND_BLOCK, ISLAND_INLINE, islandText, islandLabel } from '#/model/internal';
 
 import { NodeChromeButton, NodeChromeToolbar, useRichTextNodeView } from './define';
-import styles from './island.module.scss';
+import styles from './nodeViews/IslandFallback/styles/island.module.scss';
 import { useEditorApi, useEditorValue } from './plugin';
 
 /** The stored nodes that replace an island with its text: a paragraph per line for a block, else one run of text with spaces for line breaks. */

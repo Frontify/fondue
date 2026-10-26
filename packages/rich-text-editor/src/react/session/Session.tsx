@@ -2,8 +2,8 @@
 
 import { type ForwardedRef, forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
-import { useOverlayRoot } from '#/bridge/useOverlayRoot';
+import { useOverlayRoot } from '#/bridge/overlays/hooks/useOverlayRoot';
+import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { type EditorPort, resyncSelectionOf } from '#/runtime/port';
 
 import { useEscapeToSurface } from '../chromeFocus';

@@ -3,11 +3,11 @@
 import { useFondueTheme } from '@frontify/fondue-components';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
-import { lazyPart } from '#/bridge/lazyPart';
 import { useScopedFocus } from '#/bridge/overlays';
 import { useApplePlatform } from '#/bridge/platform';
 import { useSessionValue } from '#/bridge/session';
+import { lazyPart } from '#/bridge/session/helpers/lazyPart';
+import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { contentClasses } from '#/model/internal';
 import { type EditorPort, isEmptyDocument } from '#/runtime/port';
 import { type BubbleMore } from '#/ui/bubbleToolbar/BubbleToolbar';

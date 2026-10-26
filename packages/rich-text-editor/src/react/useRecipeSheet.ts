@@ -2,7 +2,7 @@
 
 import { type RefObject } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
+import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 
 type Attached = {
     element: HTMLStyleElement;

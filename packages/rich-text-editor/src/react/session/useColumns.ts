@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 
-import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
+import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { type readerContext } from '#/reader/helpers/context';
 import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type EditorPort, isComposing } from '#/runtime/port';

@@ -2,7 +2,7 @@
 
 import { createContext, type MutableRefObject, useContext, useMemo, useState } from 'react';
 
-import { type MountCoordinator } from '#/bridge/mount';
+import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 
 import { type Chrome, type Mounted, PART_KEYS, type PartProps, type Props, type RootContextValue } from './types';
 

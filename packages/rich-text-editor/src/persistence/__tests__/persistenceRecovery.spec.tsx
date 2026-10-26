@@ -7,16 +7,16 @@ import { fileURLToPath } from 'node:url';
 import { act } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createPortalStore, type PortalEntry } from '#/bridge/portals';
+import { createPortalStore, type PortalEntry } from '#/bridge/nodeViews/helpers/portals';
 import { type RecoveryService, type ServiceContext } from '#/index';
 import { runtimeOf } from '#/runtime/runtime';
 
 import { para, chromeBlock, serviceOf, settle, mount, installPersistenceHooks } from './fixtures/mounted';
 
-vi.mock('#/bridge/portals', { spy: true });
+vi.mock('#/bridge/nodeViews/helpers/portals', { spy: true });
 const { createPortalStore: actualStore } = await vi.importActual<{
     createPortalStore: typeof createPortalStore;
-}>('#/bridge/portals');
+}>('#/bridge/nodeViews/helpers/portals');
 
 installPersistenceHooks();
 

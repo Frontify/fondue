@@ -2,10 +2,9 @@
 
 import { type ComponentType, type MutableRefObject, useMemo, useRef, useState } from 'react';
 
-import { anchorOf } from '#/bridge/anchor';
 import { type Announcer } from '#/bridge/announcer';
-import { type InteractionScope } from '#/bridge/interactionScope';
-import { type MountCoordinator } from '#/bridge/mount';
+import { anchorOf } from '#/bridge/overlays/helpers/anchor';
+import { type InteractionScope } from '#/bridge/overlays/helpers/interactionScope';
 import {
     type AnchorTarget,
     type EditorHosts,
@@ -13,6 +12,7 @@ import {
     type OverlayProps,
     type PluginPresentation,
 } from '#/bridge/plugin';
+import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { type CodecContext } from '#/model';
 import { contentChecksOf, referenceValues, surfaceElement } from '#/runtime/port';
 

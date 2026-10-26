@@ -450,7 +450,7 @@ const CASES: readonly Case[] = [
     allowed(
         'feature index: the plugin definer',
         'src/plugins/bold/index.ts',
-        "import { definePlugin } from '#/bridge/definePlugin';",
+        "import { definePlugin } from '#/bridge/pluginApi/definePlugin';",
     ),
     allowed('feature index: its editor part', 'src/plugins/bold/index.ts', "import { boldEditor } from './editor';"),
     allowed('feature index: its feature', 'src/plugins/bold/index.ts', "import { bold } from './feature';"),
@@ -481,7 +481,7 @@ const CASES: readonly Case[] = [
     allowed(
         'feature plugins: the plugin definer',
         'src/plugins/plugins.ts',
-        "import { type RichTextPlugin } from '#/bridge/definePlugin';",
+        "import { type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';",
     ),
     allowed('feature plugins: a feature index', 'src/plugins/plugins.ts', "import { boldIndex } from './bold/index';"),
 
@@ -780,6 +780,16 @@ const CASES: readonly Case[] = [
     banned('bridge: prosemirror-view', 'src/bridge/view.ts', "import { EditorView } from 'prosemirror-view';"),
     banned('bridge: prosemirror-model', 'src/bridge/model.ts', "import { Schema } from 'prosemirror-model';"),
     allowed('bridge: react', 'src/bridge/react.ts', "import { memo } from 'react';"),
+    allowed(
+        "bridge: a component's own stylesheet",
+        'src/bridge/chrome/components/Listbox.tsx',
+        "import styles from '../styles/listbox.module.scss';",
+    ),
+    banned(
+        'bridge: the styles layer',
+        'src/bridge/chrome/Listbox.tsx',
+        "import { visuallyHidden } from '../../styles/visuallyHidden';",
+    ),
 
     // react
     banned('react: the testing layer', 'src/react/testing.tsx', "import { render } from '#/testing/render';"),

@@ -3,8 +3,9 @@
 import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/portEngine';
 
+import { markReady } from '../../devChecks';
+
 import { type ChromeView, createChromeView } from './chromeView';
-import { markReady } from './devChecks';
 
 export type MountCoordinator = {
     runtime: EditorPort | undefined;

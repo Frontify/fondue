@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { modelOf, type RichTextPlugin } from '#/bridge/definePlugin';
+export { modelOf, type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
 export { useCommandState, useEditorSelection } from '#/bridge/hooks';
 export { contentChecksPlugin } from '#/plugins/ContentChecks';
 export { alignPlugin } from '#/plugins/Align';

@@ -4,12 +4,12 @@ import { type ComponentType, type KeyboardEventHandler, type MutableRefObject, t
 
 import { AnnouncerContext, type Announcer } from '#/bridge/announcer';
 import { Phase, ReactWorkContext, type ReactWork } from '#/bridge/devChecks';
-import { type MountCoordinator } from '#/bridge/mount';
+import { type PortalStore } from '#/bridge/nodeViews/helpers/portals';
 import { OverlayBody, OverlayContext, type Overlays } from '#/bridge/overlays';
 import { EditorHostsContext, type EditorHosts } from '#/bridge/plugin';
 import { PortalHost } from '#/bridge/PortalHost';
-import { type PortalStore } from '#/bridge/portals';
 import { SessionContext } from '#/bridge/session';
+import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { TurnIntoContext, type TurnIntoEntry } from '#/bridge/turnInto';
 import { type readerContext } from '#/reader/helpers/context';
 import { type EditorPort, mediaOf } from '#/runtime/port';

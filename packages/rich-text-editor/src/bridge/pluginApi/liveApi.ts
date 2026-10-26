@@ -5,7 +5,7 @@ import { type CommandContext, type CommandSession, liveDocumentApi } from '#/run
 import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/portEngine';
 
-import { type EditorApi, type EditorFacet, type EditorHosts, type EditorPart } from './plugin';
+import { type EditorApi, type EditorFacet, type EditorHosts, type EditorPart } from '../plugin';
 
 const apis = new WeakMap<EditorPort, WeakMap<EditorHosts, EditorApi>>();
 const documents = new WeakMap<EditorPort, DocumentApi>();

@@ -41,7 +41,7 @@ describe('a lazy part', () => {
     };
 
     it('renders nothing until its module loads, then the component with its props', async () => {
-        const { lazyPart } = await import('../lazyPart');
+        const { lazyPart } = await import('../session/helpers/lazyPart');
         let release: (component: ComponentType<{ name: string }>) => void = () => undefined;
         const Part = lazyPart(
             () =>
@@ -62,7 +62,7 @@ describe('a lazy part', () => {
     });
 
     it('loads its module once for the first use and the prefetch together', async () => {
-        const { lazyPart, prefetchPartsOnIdle } = await import('../lazyPart');
+        const { lazyPart, prefetchPartsOnIdle } = await import('../session/helpers/lazyPart');
         const load = vi.fn(() => Promise.resolve(Greeting));
         const Part = lazyPart(load);
 
@@ -78,7 +78,7 @@ describe('a lazy part', () => {
     });
 
     it('prefetches when the page is idle and not before', async () => {
-        const { lazyPart, prefetchPartsOnIdle } = await import('../lazyPart');
+        const { lazyPart, prefetchPartsOnIdle } = await import('../session/helpers/lazyPart');
         const load = vi.fn(() => Promise.resolve(Greeting));
         lazyPart(load);
 
@@ -90,7 +90,7 @@ describe('a lazy part', () => {
     });
 
     it('does not prefetch after the start was cancelled', async () => {
-        const { lazyPart, prefetchPartsOnIdle } = await import('../lazyPart');
+        const { lazyPart, prefetchPartsOnIdle } = await import('../session/helpers/lazyPart');
         const load = vi.fn(() => Promise.resolve(Greeting));
         lazyPart(load);
 
@@ -101,7 +101,7 @@ describe('a lazy part', () => {
     });
 
     it('tries a module again on the next use after a load failed', async () => {
-        const { lazyPart, prefetchPartsOnIdle } = await import('../lazyPart');
+        const { lazyPart, prefetchPartsOnIdle } = await import('../session/helpers/lazyPart');
         const load = vi.fn<() => Promise<ComponentType<{ name: string }>>>();
         load.mockRejectedValueOnce(new Error('offline')).mockResolvedValue(Greeting);
         const Part = lazyPart(load);
@@ -120,7 +120,7 @@ describe('a lazy part', () => {
     describe('with the editor', () => {
         // The cold imports are a hook's work, which has the longer timeout; they share the fresh module graph.
         const loadModules = async () => ({
-            ...(await import('../lazyPart')),
+            ...(await import('../session/helpers/lazyPart')),
             ...(await import('#/react/RichTextEditor')),
             ...(await import('#/react/profiles')),
             ...(await import('#/plugins')),

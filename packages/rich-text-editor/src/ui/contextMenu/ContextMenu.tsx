@@ -3,10 +3,10 @@
 import { Dropdown } from '@frontify/fondue-components';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { lazyPart } from '#/bridge/lazyPart';
 import { useEditorOverlay } from '#/bridge/overlays';
 import { type OverlayAnchor } from '#/bridge/plugin';
 import { SessionContext } from '#/bridge/session';
+import { lazyPart } from '#/bridge/session/helpers/lazyPart';
 import { atomPositionAt, selectedNodePosition, surfaceElement } from '#/runtime/port';
 import { pressesBinding } from '#/ui/shortcuts';
 import { offeredRows, type ToolbarItem, type ToolbarStrings, useOfferedRows } from '#/ui/toolbar/item';

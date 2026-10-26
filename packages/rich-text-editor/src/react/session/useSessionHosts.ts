@@ -3,8 +3,8 @@
 import { type MutableRefObject } from 'react';
 
 import { type Announcer } from '#/bridge/announcer';
-import { type InteractionScope } from '#/bridge/interactionScope';
-import { type MountCoordinator } from '#/bridge/mount';
+import { type InteractionScope } from '#/bridge/overlays/helpers/interactionScope';
+import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { type readerContext } from '#/reader/helpers/context';
 
 import { usePluginHosts } from '../pluginHosts';

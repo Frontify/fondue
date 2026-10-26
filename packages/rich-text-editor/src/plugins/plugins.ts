@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RichTextPlugin } from '#/bridge/definePlugin';
+import { type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
 import { DefinitionError } from '#/model';
 
 type Unit = () => RichTextPlugin;
