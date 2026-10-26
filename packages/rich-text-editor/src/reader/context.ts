@@ -7,8 +7,8 @@ import { codecContext, resolvingSafely } from '#/model/internal';
 import { type ReaderContext } from './define';
 
 export type ReaderResolvers = {
-    readonly resolveAssetUrl?: ReaderContext['resolveAssetUrl'];
-    readonly resolveReference?: ReaderContext['resolveReference'];
+    resolveAssetUrl?: ReaderContext['resolveAssetUrl'];
+    resolveReference?: ReaderContext['resolveReference'];
 };
 
 /** The codec context plus `resolveReference`. A resolver that throws gives `null` or `unknown` for that call only. */

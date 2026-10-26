@@ -641,7 +641,7 @@ describe('RichTextReader determinism', () => {
 describe('RichTextReader urls', () => {
     const entries = JSON.parse(
         readFileSync(new URL('../../model/__tests__/fixtures/urls.json', import.meta.url), 'utf8'),
-    ) as readonly { readonly input: string; readonly ok: boolean; readonly href?: string }[];
+    ) as readonly { input: string; ok: boolean; href?: string }[];
     const withUrl = (input: string) =>
         wrap(
             paragraph(text('Go', link(input))),

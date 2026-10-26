@@ -9,10 +9,10 @@ export { type ReaderContext };
 
 /** What a reader override renders with: the node or mark's own attributes and rendered children, and the reader's context. */
 export type ReaderNodeProps = {
-    readonly attrs: JsonObject;
+    attrs: JsonObject;
     /** The node's or mark's content, already rendered. */
-    readonly children?: ReactNode;
-    readonly context: ReaderContext;
+    children?: ReactNode;
+    context: ReaderContext;
 };
 /** Reader overrides by the name of a node or mark the feature declares, each a function component, not a `memo` or `forwardRef` object. */
 export type ReaderRenderers = Readonly<Record<string, ComponentType<ReaderNodeProps>>>;

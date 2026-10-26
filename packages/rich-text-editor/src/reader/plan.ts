@@ -9,7 +9,7 @@ import { declaredOverrides, type ReaderNodeProps, type ReaderRenderers } from '.
 
 /** What the reader reads about one node or mark type: the shared plan and its override. */
 type Overridden = {
-    readonly override: ComponentType<ReaderNodeProps> | undefined;
+    override: ComponentType<ReaderNodeProps> | undefined;
 };
 export type Plan = BasePlan<NodePlan & Overridden, MarkPlan & Overridden>;
 

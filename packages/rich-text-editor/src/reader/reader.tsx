@@ -25,47 +25,47 @@ import { message, renderDocument, type RenderState } from './render';
 /** What the host decides about one reader output: its styles, colours and the resolvers it renders with. */
 export type ReaderPresentation = {
     /** Brand style recipes by style ID, which `styleId` names. */
-    readonly styles: readonly PresentationStyle[];
+    styles: readonly PresentationStyle[];
     /** The colours a `tokenId` of `font_color` or `highlight` names. */
-    readonly colorTokens: readonly ColorToken[];
-    readonly resolveAssetUrl?: ResolveAssetUrl;
+    colorTokens: readonly ColorToken[];
+    resolveAssetUrl?: ResolveAssetUrl;
     /** Synchronous, so the reader renders on the server in one pass. */
-    readonly resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
+    resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
     /** A class the content root carries beside `fondue-rte-content`, for host rules. */
-    readonly contentClassName?: string;
+    contentClassName?: string;
     /** List markers by depth. */
-    readonly listLevels?: ListLevels;
+    listLevels?: ListLevels;
     /** Strikethrough and secondary colour on checked task items; default false. */
-    readonly strikeCheckedTasks?: boolean;
+    strikeCheckedTasks?: boolean;
     /** 1 to 6. */
-    readonly columns?: number;
+    columns?: number;
     /**
      * `normal`, or a length in `px` or `rem`. With `normal` and a font size on `contentClassName` that differs from the
      * surrounding font, the reader's column thresholds use the surrounding font; a `px` or `rem` gap avoids it.
      */
-    readonly columnGap?: string;
+    columnGap?: string;
 };
 
 /** The props of the reader: the document to show, its content model and how to present it. */
 export type RichTextReaderProps = {
     /** JSON text or a parsed value; the reader decodes it. */
-    readonly document: unknown;
-    readonly model: ContentModel;
-    readonly presentation?: ReaderPresentation;
-    readonly locale?: RichTextLocale;
+    document: unknown;
+    model: ContentModel;
+    presentation?: ReaderPresentation;
+    locale?: RichTextLocale;
     /** The limits the writing definition used, when a host loosened them through `limitOverrides`. Omitted means the default limits. */
-    readonly limits?: Partial<ResourceLimits>;
-    readonly onDiagnostic?: (diagnostic: Diagnostic) => void;
+    limits?: Partial<ResourceLimits>;
+    onDiagnostic?: (diagnostic: Diagnostic) => void;
 };
 
 /** The reader's props with the overrides of the shipped features it renders with. */
-export type ReaderProps = RichTextReaderProps & { readonly overrides: ReaderOverrides };
+export type ReaderProps = RichTextReaderProps & { overrides: ReaderOverrides };
 
 type Output = {
-    readonly element: ReactElement;
-    readonly diagnostics: readonly Diagnostic[];
+    element: ReactElement;
+    diagnostics: readonly Diagnostic[];
     /** The callbacks that already received `diagnostics`, so a rerender reports nothing twice. */
-    readonly notified: WeakSet<object>;
+    notified: WeakSet<object>;
 };
 
 const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
@@ -130,7 +130,7 @@ const build = ({ document, model, presentation, locale = enUS, limits, overrides
 };
 
 type Slot = {
-    readonly objects: WeakMap<object, Output>;
+    objects: WeakMap<object, Output>;
     /** The last JSON text rendered, so a host that passes the same text each render decodes once. */
     text?: string;
     output?: Output;

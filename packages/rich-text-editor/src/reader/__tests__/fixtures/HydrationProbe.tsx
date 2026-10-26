@@ -12,10 +12,10 @@ const model = semanticModel();
 
 export type HydrationResult = {
     /** `process.env.NODE_ENV` as the bundle was built; `development` keeps React's mismatch warnings. */
-    readonly mode: string;
+    mode: string;
     /** Every error React reported through `onRecoverableError`. */
-    readonly recoverable: readonly string[];
-    readonly html: string;
+    recoverable: readonly string[];
+    html: string;
 };
 
 const Done = ({ onDone }: { onDone: () => void }) => {

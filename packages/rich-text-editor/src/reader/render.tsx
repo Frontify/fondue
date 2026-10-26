@@ -51,17 +51,17 @@ import { type Plan } from './plan';
 
 /** The document gets one island notice when `islands` is not zero. */
 export type RenderState = {
-    readonly plan: Plan;
-    readonly context: ReaderContext;
-    readonly diagnostics: Diagnostic[];
-    readonly listLevels: ListLevels | undefined;
-    readonly depths: ListDepths;
-    readonly strikeCheckedTasks: boolean;
-    readonly styles: OutputStyles;
+    plan: Plan;
+    context: ReaderContext;
+    diagnostics: Diagnostic[];
+    listLevels: ListLevels | undefined;
+    depths: ListDepths;
+    strikeCheckedTasks: boolean;
+    styles: OutputStyles;
     /** The stored style IDs reported unknown, once each; `undefined` when the render reports none, with no presentation. */
-    readonly unknownStyles: Set<string> | undefined;
+    unknownStyles: Set<string> | undefined;
     /** The presentation's columns, or `undefined` for one column. */
-    readonly columns: ColumnLayout | undefined;
+    columns: ColumnLayout | undefined;
     /** The column breaks rendered so far, whose first `count - 1` are active. */
     breaks: number;
 } & Spacing;
