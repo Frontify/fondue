@@ -24,6 +24,8 @@ const namesAndIcons = async (page: Page, inMore: boolean) => {
     let items = toolbarOf(page).getByRole('button');
     if (inMore) {
         await itemOf(page, 'More').click();
+        // More loads its rows on first use.
+        await expect(page.getByRole('menu')).toBeVisible();
         items = menuRows(page);
     }
     return items.evaluateAll((elements) =>

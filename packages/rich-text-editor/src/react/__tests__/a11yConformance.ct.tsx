@@ -130,6 +130,8 @@ for (const profile of PROFILES) {
 
         await expectNamedAsTooltips(page, toolbarOf(page));
         await moreOf(page).click();
+        // More loads its rows on first use.
+        await expect(page.getByRole('menu')).toBeVisible();
         const rows = page.getByRole('menu').locator('[role^="menuitem"]');
         expect(await rows.count()).toBeGreaterThan(0);
         for (const row of await rows.all()) {

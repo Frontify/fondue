@@ -19,6 +19,8 @@ for (const profile of PROFILES) {
             await ready(page);
             await populate(page);
             await moreOf(page).click();
+            // More loads its rows on first use.
+            await expect(page.getByRole('menu')).toBeVisible();
             const measured = await page.evaluate(() => {
                 const height = (element: Element | null) => {
                     if (element === null) {
