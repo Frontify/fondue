@@ -23,7 +23,7 @@ export const useLinkPopoverState = ({
     anchor: linkAnchor,
     opener,
     close: onClose,
-}: OverlayProps & { readonly initial: LinkInitial }) => {
+}: OverlayProps & { initial: LinkInitial }) => {
     const api = useEditorApi();
     const [{ policy, search }] = useState(() => searchOf(api));
     let presented: readonly PresentationStyle[] = [];

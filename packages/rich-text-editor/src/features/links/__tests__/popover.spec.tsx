@@ -46,10 +46,10 @@ const BUTTON_STYLES = ['primary', 'secondary', 'tertiary'].map(
 );
 
 type Mount = {
-    readonly blocks: readonly ContentNodeJSON[];
-    readonly options?: Parameters<typeof links>[0];
-    readonly styles?: readonly PresentationStyle[];
-    readonly references?: ReferenceService;
+    blocks: readonly ContentNodeJSON[];
+    options?: Parameters<typeof links>[0];
+    styles?: readonly PresentationStyle[];
+    references?: ReferenceService;
 };
 
 const mount = ({ blocks, options, styles = [], references }: Mount) => {

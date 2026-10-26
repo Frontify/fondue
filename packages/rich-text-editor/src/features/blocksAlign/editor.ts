@@ -24,7 +24,7 @@ export const alignEditor = defineEditorPart(align, (options: JsonObject) => {
         commands: {
             'block.align.set': {
                 payload: { fields: { align: { type: 'enum', values: sides.map(({ align: value }) => value) } } },
-                run: (api, { align: value }: { readonly align: string }) =>
+                run: (api, { align: value }: { align: string }) =>
                     api.attributes.set(['paragraph', 'heading'], { align: value }, { toggle: true }),
                 active: (api, { align: value }) => api.attributes.active(['paragraph', 'heading'], { align: value }),
             },

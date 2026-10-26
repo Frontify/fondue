@@ -157,7 +157,7 @@ describe('the decorations of an editor part', () => {
         });
 
         const blocks = handle.getSnapshot().document.content.content ?? [];
-        const ids = blocks.map((block) => (block.attrs as { readonly nodeId?: unknown } | undefined)?.nodeId);
+        const ids = blocks.map((block) => (block.attrs as { nodeId?: unknown } | undefined)?.nodeId);
         expect(ids).toHaveLength(2);
         expect(new Set(ids).size).toBe(2);
         expect(

@@ -4,7 +4,7 @@ import { DefinitionError, type Feature } from '#/model';
 
 // Typed here because vite/client would change the type of migrate.ts's own glob call.
 type ViteImportMeta = ImportMeta & {
-    readonly glob: (pattern: string, options: { readonly eager: true }) => Record<string, Record<string, unknown>>;
+    glob: (pattern: string, options: { eager: true }) => Record<string, Record<string, unknown>>;
 };
 
 const modules = (import.meta as ViteImportMeta).glob('./*/feature.ts', { eager: true });

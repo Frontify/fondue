@@ -9,12 +9,12 @@ export const MAX_WIDTH = 100;
 
 /** The width dialog's strings, in the UI locale. */
 export type WidthStrings = {
-    readonly title: string;
-    readonly field: string;
+    title: string;
+    field: string;
     /** The error for a value outside the allowed percentages. */
-    readonly range: string;
-    readonly apply: string;
-    readonly cancel: string;
+    range: string;
+    apply: string;
+    cancel: string;
 };
 
 /** The width dialog's strings in the UI locale of `t`. */
@@ -28,18 +28,18 @@ export const widthStrings = (t: CodecContext['t']): WidthStrings => ({
 
 /** The alternative text dialog's strings, in the UI locale. */
 export type AltTextStrings = {
-    readonly title: string;
-    readonly choice: string;
-    readonly meaningful: string;
-    readonly meaningfulHint: string;
-    readonly decorative: string;
-    readonly decorativeHint: string;
-    readonly field: string;
-    readonly required: string;
-    readonly suggestion: string;
-    readonly useSuggestion: string;
-    readonly save: string;
-    readonly cancel: string;
+    title: string;
+    choice: string;
+    meaningful: string;
+    meaningfulHint: string;
+    decorative: string;
+    decorativeHint: string;
+    field: string;
+    required: string;
+    suggestion: string;
+    useSuggestion: string;
+    save: string;
+    cancel: string;
 };
 
 export const altTextStrings = (t: CodecContext['t']): AltTextStrings => ({

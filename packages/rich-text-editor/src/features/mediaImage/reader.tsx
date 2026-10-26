@@ -22,10 +22,10 @@ export const ImageUnavailable = ({
     className,
     onMouseDown,
 }: {
-    readonly unavailable: Unavailable;
-    readonly hidden?: boolean;
-    readonly className?: string | undefined;
-    readonly onMouseDown?: (event: MouseEvent) => void;
+    unavailable: Unavailable;
+    hidden?: boolean;
+    className?: string | undefined;
+    onMouseDown?: (event: MouseEvent) => void;
 }) => (
     // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- in the editor a press selects the node as on any atom; the keyboard selects it with the arrows.
     <span
@@ -70,7 +70,7 @@ const Image = ({ attrs, context }: ReaderNodeProps) => {
         return <ImageUnavailable unavailable={shown} />;
     }
 
-    let style: { readonly width: string } | undefined;
+    let style: { width: string } | undefined;
     if (shown.cssWidth !== undefined) {
         style = { width: shown.cssWidth };
     }

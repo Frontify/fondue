@@ -16,14 +16,14 @@ type ColorMark = keyof typeof SET_COMMANDS;
 
 /** The colour menu's strings, in the UI locale. */
 type ColorMenuStrings = {
-    readonly label: string;
-    readonly textColors: string;
-    readonly highlightColors: string;
-    readonly clear: string;
-    readonly customText: string;
-    readonly customHighlight: string;
-    readonly save: string;
-    readonly cancel: string;
+    label: string;
+    textColors: string;
+    highlightColors: string;
+    clear: string;
+    customText: string;
+    customHighlight: string;
+    save: string;
+    cancel: string;
 };
 
 const colorMenuStrings = (t: CodecContext['t']): ColorMenuStrings => ({
@@ -39,11 +39,11 @@ const colorMenuStrings = (t: CodecContext['t']): ColorMenuStrings => ({
 
 /** What the menu offers: the tokens for each mark, and which marks take any colour through the picker. */
 type ColorMenuOptions = {
-    readonly tokens: readonly ColorToken[];
+    tokens: readonly ColorToken[];
     /** `marks.highlight` is installed, so the menu offers its colours. */
-    readonly highlight: boolean;
+    highlight: boolean;
     /** The marks whose feature has `literalColors` on. */
-    readonly literal: readonly ColorMark[];
+    literal: readonly ColorMark[];
 };
 
 type Rgba = {
@@ -99,7 +99,7 @@ const startColor = (api: EditorApi, mark: ColorMark, tokens: readonly ColorToken
 };
 
 /** A colour as a filled chip with a border, over a checkerboard that shows its translucency. */
-const Chip = ({ color }: { readonly color: string }) => (
+const Chip = ({ color }: { color: string }) => (
     <span
         className={styles.chip}
         style={{ '--rte-chip-color': color } as CSSProperties}
@@ -116,11 +116,11 @@ const ColorRow = ({
     checked,
     onSelect,
 }: {
-    readonly label: string;
-    readonly description: string | undefined;
-    readonly color: string | undefined;
-    readonly checked: boolean;
-    readonly onSelect: (event: Event) => void;
+    label: string;
+    description: string | undefined;
+    color: string | undefined;
+    checked: boolean;
+    onSelect: (event: Event) => void;
 }) => {
     const descriptionId = useId();
     let describedBy: string | undefined;
@@ -162,12 +162,12 @@ const ColorDraft = ({
     testId,
     onClose,
 }: {
-    readonly api: EditorApi;
-    readonly mark: ColorMark;
-    readonly tokens: readonly ColorToken[];
-    readonly strings: ColorMenuStrings;
-    readonly testId: string;
-    readonly onClose: () => void;
+    api: EditorApi;
+    mark: ColorMark;
+    tokens: readonly ColorToken[];
+    strings: ColorMenuStrings;
+    testId: string;
+    onClose: () => void;
 }) => {
     const [open, setOpen] = useState(true);
     const [draft, setDraft] = useState(() => startColor(api, mark, tokens));
@@ -246,12 +246,12 @@ const Swatches = ({
     onCustom,
     onClose,
 }: {
-    readonly api: EditorApi;
-    readonly options: ColorMenuOptions;
-    readonly strings: ColorMenuStrings;
-    readonly testId: string;
-    readonly onCustom: (mark: ColorMark) => void;
-    readonly onClose: () => void;
+    api: EditorApi;
+    options: ColorMenuOptions;
+    strings: ColorMenuStrings;
+    testId: string;
+    onCustom: (mark: ColorMark) => void;
+    onClose: () => void;
 }) => {
     const [open, setOpen] = useState(true);
     const contentRef = useRef<HTMLDivElement | null>(null);
@@ -286,7 +286,7 @@ const Swatches = ({
         api.commands.execute(command, payload, { focus: 'editor' });
     };
 
-    const groups: { readonly mark: ColorMark; readonly heading: string; readonly custom: string }[] = [
+    const groups: { mark: ColorMark; heading: string; custom: string }[] = [
         { mark: 'font_color', heading: strings.textColors, custom: strings.customText },
     ];
     if (options.highlight) {
@@ -362,9 +362,9 @@ export const ColorMenu = ({
     close: onClose,
 }: OverlayProps & {
     /** Limits the menu to the tokens it names. */
-    readonly tokenIds: readonly string[] | undefined;
+    tokenIds: readonly string[] | undefined;
     /** `marks.font-color` takes any colour. */
-    readonly literalText: boolean;
+    literalText: boolean;
 }) => {
     const api = useEditorApi();
     const [custom, setCustom] = useState<ColorMark>();

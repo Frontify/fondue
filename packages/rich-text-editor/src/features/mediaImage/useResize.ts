@@ -14,17 +14,17 @@ const percentOf = (pixels: number, total: number) =>
     Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, Math.round((pixels / total) * 100)));
 
 type Drag = {
-    readonly startX: number;
-    readonly startY: number;
-    readonly startWidth: number;
-    readonly total: number;
+    startX: number;
+    startY: number;
+    startWidth: number;
+    total: number;
     /** -1 where the inline end is on the left. */
-    readonly direction: number;
+    direction: number;
     /** The session generation the drag started in; a replacement since drops the drag. */
-    readonly generation: number | undefined;
+    generation: number | undefined;
     /** Whether the pointer moved past the slop horizontally, so the drag resizes. */
     resizing: boolean;
-    readonly stop: () => void;
+    stop: () => void;
 };
 
 /**

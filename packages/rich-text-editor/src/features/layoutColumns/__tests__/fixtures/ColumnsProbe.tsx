@@ -39,12 +39,12 @@ export const ColumnsProbe = ({
     width = '100%',
     contentClassName = 'host-columns',
 }: {
-    readonly columns: number;
-    readonly columnGap?: string;
-    readonly breaks: number;
+    columns: number;
+    columnGap?: string;
+    breaks: number;
     /** The CSS inline size of the box both sit in. */
-    readonly width?: string;
-    readonly contentClassName?: string;
+    width?: string;
+    contentClassName?: string;
 }) => {
     const document = documentOf(breaks);
     const presentation = defineReactPresentation({ columns, columnGap, contentClassName });

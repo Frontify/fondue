@@ -64,10 +64,10 @@ export const DESIGN: ReferenceValue = {
 
 /** One search the service received and has not answered yet. */
 export type PendingSearch = {
-    readonly request: ReferenceSearchRequest;
-    readonly context: ServiceContext;
-    readonly resolve: (page: unknown) => void;
-    readonly reject: (error: unknown) => void;
+    request: ReferenceSearchRequest;
+    context: ServiceContext;
+    resolve: (page: unknown) => void;
+    reject: (error: unknown) => void;
 };
 
 /** A `ReferenceService` that answers each search only when the test does, in any order. */
@@ -87,13 +87,13 @@ export const deferredService = () => {
 export const page = (items: readonly unknown[], nextCursor: string | null = null) => ({ items, nextCursor });
 
 type Mount = {
-    readonly model?: ContentModel;
-    readonly blocks?: readonly ContentNodeJSON[];
-    readonly services?: EditorServices | undefined;
-    readonly presentation?: ReactPresentation | undefined;
-    readonly locale?: RichTextLocale | undefined;
-    readonly toolbar?: ReactPresentation['toolbar'];
-    readonly id?: string;
+    model?: ContentModel;
+    blocks?: readonly ContentNodeJSON[];
+    services?: EditorServices | undefined;
+    presentation?: ReactPresentation | undefined;
+    locale?: RichTextLocale | undefined;
+    toolbar?: ReactPresentation['toolbar'];
+    id?: string;
 };
 
 /** The optional props that are set, as `exactOptionalPropertyTypes` takes them. */

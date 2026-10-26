@@ -7,7 +7,7 @@ import { mediaUpload } from './feature';
 const NODE = { fields: { nodeId: { type: 'string', minLength: 1, optional: true } } } as const;
 
 /** The image `payload` names, else the selected image, as a More row runs the command with no payload. */
-const imageOf = (api: EditorControlApi, payload: { readonly nodeId?: string } | undefined) =>
+const imageOf = (api: EditorControlApi, payload: { nodeId?: string } | undefined) =>
     payload?.nodeId ?? api.nearest('asset_image')?.nodeId ?? undefined;
 
 /**
@@ -19,7 +19,7 @@ export const mediaUploadEditor = defineEditorPart(mediaUpload, {
     commands: {
         'media.upload.cancel': {
             payload: NODE,
-            run: (api, payload: { readonly nodeId?: string } | undefined) => {
+            run: (api, payload: { nodeId?: string } | undefined) => {
                 const nodeId = imageOf(api, payload);
 
                 return nodeId !== undefined && api.uploads.cancel(nodeId);
@@ -27,7 +27,7 @@ export const mediaUploadEditor = defineEditorPart(mediaUpload, {
         },
         'media.upload.retry': {
             payload: NODE,
-            run: (api, payload: { readonly nodeId?: string } | undefined) => {
+            run: (api, payload: { nodeId?: string } | undefined) => {
                 const nodeId = imageOf(api, payload);
 
                 return nodeId !== undefined && api.uploads.retry(nodeId);

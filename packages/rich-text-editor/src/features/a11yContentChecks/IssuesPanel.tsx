@@ -52,11 +52,11 @@ const Issue = ({
     onFocusIssue,
     onActive,
 }: {
-    readonly held: CheckedIssue;
-    readonly rowKey: string;
-    readonly t: PanelComponentProps['t'];
-    readonly onFocusIssue: (rowKey: string | undefined) => void;
-    readonly onActive: (rowKey: string) => void;
+    held: CheckedIssue;
+    rowKey: string;
+    t: PanelComponentProps['t'];
+    onFocusIssue: (rowKey: string | undefined) => void;
+    onActive: (rowKey: string) => void;
 }) => {
     const api = useEditorApi();
     const checks = api?.services.checks();
@@ -211,7 +211,7 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
     const requestedRef = useRef(requested);
     // The run the panel opened on, whose counts focus reads from the heading, and the summary last shown after a run.
     const openedRunRef = useRef(0);
-    const shownRef = useRef<{ readonly runs: number; readonly summary: string } | undefined>(undefined);
+    const shownRef = useRef<{ runs: number; summary: string } | undefined>(undefined);
     // Focus moved to the summary heading in this commit, which reads the counts already.
     const headingSpokeRef = useRef(false);
     const headingId = useId();

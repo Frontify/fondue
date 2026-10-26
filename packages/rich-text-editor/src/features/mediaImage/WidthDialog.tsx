@@ -21,10 +21,10 @@ export const WidthDialog = ({
     close: onClose,
 }: OverlayProps & {
     /** The image's `displayWidth`, or `null` at natural size. */
-    readonly width: number | null;
+    width: number | null;
     /** The image whose width Apply sets through `image.size.set`, as one undo step. */
-    readonly nodeId: string;
-    readonly strings: WidthStrings;
+    nodeId: string;
+    strings: WidthStrings;
 }) => {
     const api = useEditorApi();
     const dialog = useEditorDialog(opener, onClose);
@@ -59,7 +59,7 @@ export const WidthDialog = ({
         dialog.finish('opener');
     };
 
-    let describedBy: { readonly 'aria-describedby'?: string } = {};
+    let describedBy: { 'aria-describedby'?: string } = {};
     if (invalid) {
         describedBy = { 'aria-describedby': errorId };
     }

@@ -27,11 +27,11 @@ const COMPOSITION_ENTER_MS = 500;
 
 /** The emoji picker's strings, in the UI locale. */
 type EmojiPickerStrings = {
-    readonly title: string;
-    readonly search: string;
-    readonly noResults: string;
-    readonly loading: string;
-    readonly failed: string;
+    title: string;
+    search: string;
+    noResults: string;
+    loading: string;
+    failed: string;
 };
 
 /** The picker's strings from the chrome's `t`. */
@@ -43,10 +43,7 @@ const emojiStrings = (t: CodecContext['t']): EmojiPickerStrings => ({
     failed: t('RichTextEditor_emojiFailed'),
 });
 
-type Data =
-    | { readonly status: 'loading' }
-    | { readonly status: 'failed' }
-    | { readonly status: 'ready'; readonly entries: readonly EmojiEntry[] };
+type Data = { status: 'loading' } | { status: 'failed' } | { status: 'ready'; entries: readonly EmojiEntry[] };
 
 const optionsOf = (data: Data, query: string): readonly ListboxOption[] => {
     if (data.status !== 'ready') {

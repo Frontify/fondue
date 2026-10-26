@@ -15,7 +15,7 @@ export const taskListEditor = defineEditorPart(taskList, {
     commands: {
         'list.task.toggle': {
             payload: { fields: { checked: { type: 'boolean', optional: true } } },
-            run: (api, payload: { readonly checked?: boolean } | undefined) => {
+            run: (api, payload: { checked?: boolean } | undefined) => {
                 if (payload?.checked === undefined) {
                     return api.lists.toggle('task_list', 'task_item');
                 }
@@ -38,7 +38,7 @@ export const taskListEditor = defineEditorPart(taskList, {
         },
         'task.setChecked': {
             payload: { fields: { nodeId: { type: 'string' }, checked: { type: 'boolean' } } },
-            run: (api, { nodeId, checked }: { readonly nodeId: string; readonly checked: boolean }) =>
+            run: (api, { nodeId, checked }: { nodeId: string; checked: boolean }) =>
                 api.attributes.set('task_item', { checked }, { nodeId }),
         },
         'task.indent': { run: (api) => api.lists.indent('task_item') },

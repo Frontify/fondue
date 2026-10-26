@@ -38,17 +38,17 @@ declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         checksRte?: {
-            readonly sequence: () => number;
-            readonly document: () => string;
-            readonly selection: () => {
-                readonly empty: boolean;
-                readonly from: number;
-                readonly to: number;
-                readonly nodeId: unknown;
-                readonly type: string;
+            sequence: () => number;
+            document: () => string;
+            selection: () => {
+                empty: boolean;
+                from: number;
+                to: number;
+                nodeId: unknown;
+                type: string;
             };
-            readonly headingRange: () => { readonly from: number; readonly to: number };
-            readonly select: (from: number, to: number) => void;
+            headingRange: () => { from: number; to: number };
+            select: (from: number, to: number) => void;
         };
     }
 }

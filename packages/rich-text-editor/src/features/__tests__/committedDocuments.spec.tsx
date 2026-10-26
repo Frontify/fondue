@@ -35,13 +35,13 @@ const KEYS: readonly KeyBinding[] = [
 ];
 
 type Action =
-    | { readonly kind: 'select'; readonly anchor: number; readonly head: number }
-    | { readonly kind: 'command'; readonly index: number }
-    | { readonly kind: 'type'; readonly text: string }
-    | { readonly kind: 'key'; readonly key: KeyBinding }
-    | { readonly kind: 'paste'; readonly input: { readonly html?: string; readonly text?: string } }
-    | { readonly kind: 'drop'; readonly at: number; readonly data: Readonly<Record<string, string>> }
-    | { readonly kind: 'history'; readonly command: 'history.undo' | 'history.redo' };
+    | { kind: 'select'; anchor: number; head: number }
+    | { kind: 'command'; index: number }
+    | { kind: 'type'; text: string }
+    | { kind: 'key'; key: KeyBinding }
+    | { kind: 'paste'; input: { html?: string; text?: string } }
+    | { kind: 'drop'; at: number; data: Readonly<Record<string, string>> }
+    | { kind: 'history'; command: 'history.undo' | 'history.redo' };
 
 /** The commands of the profile with a payload each: none, then each payload a toolbar entry runs it with. */
 const commandsOf = (profile: RichTextProfile, ids: readonly string[]) => {
@@ -60,7 +60,7 @@ const commandsOf = (profile: RichTextProfile, ids: readonly string[]) => {
         });
     });
 
-    return [...ids.map((id): { readonly id: string; readonly payload?: JsonValue } => ({ id })), ...payloads];
+    return [...ids.map((id): { id: string; payload?: JsonValue } => ({ id })), ...payloads];
 };
 
 const actionArb = (profile: RichTextProfile, commandCount: number): fc.Arbitrary<Action> => {
@@ -136,7 +136,7 @@ const transfer = (data: Readonly<Record<string, string>>) => {
 const perform = (
     { handle, view }: Mounted,
     action: Action,
-    commands: readonly { readonly id: string; readonly payload?: JsonValue }[],
+    commands: readonly { id: string; payload?: JsonValue }[],
 ) => {
     const size = view.state.doc.content.size;
     const at = (fraction: number) => Math.round(fraction * size);

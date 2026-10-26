@@ -8,7 +8,7 @@ const SIDES = ['left', 'center', 'right'] as const;
  * Physical alignment on paragraphs and headings. `justify: false` leaves justify out of the values, the key and the
  * toolbar. Pressing the value every selected block already has removes it.
  */
-export const align = (options?: { readonly justify?: boolean }) => {
+export const align = (options?: { justify?: boolean }) => {
     const values: string[] = [...SIDES];
     if (options?.justify !== false) {
         values.push('justify');

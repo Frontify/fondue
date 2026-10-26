@@ -9,18 +9,18 @@ import { useEditorHandle } from '#/index';
 
 /** The commands the stand-ins run: the link stand-in's and `core`'s text insertion. */
 type FixtureCommands = {
-    readonly 'fixture.link.edit': undefined;
-    readonly 'text.insert': { readonly text: string };
+    'fixture.link.edit': undefined;
+    'text.insert': { text: string };
 };
 
 /** A fixture overlay, which its probe opens and closes. */
 export type FixtureOverlayProps = {
-    readonly open: boolean;
-    readonly onOpenChange: (open: boolean) => void;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
 };
 
 /** The link popover's form: a labelled URL field and Apply, which sets the link on the selection. */
-export const LinkForm = ({ onApply }: { readonly onApply: () => void }) => {
+export const LinkForm = ({ onApply }: { onApply: () => void }) => {
     const fieldId = useId();
 
     return (
@@ -49,7 +49,7 @@ export const FixtureLinkPopover = ({
     open,
     onOpenChange,
     Body = LinkForm,
-}: FixtureOverlayProps & { readonly Body?: ComponentType<{ readonly onApply: () => void }> }) => {
+}: FixtureOverlayProps & { Body?: ComponentType<{ onApply: () => void }> }) => {
     const overlay = useEditorOverlay(open, onOpenChange);
     const handle = useEditorHandle<FixtureCommands>();
     const apply = () => {
@@ -180,7 +180,7 @@ export const FixtureMenu = ({ open, onOpenChange }: FixtureOverlayProps) => {
 };
 
 /** An overlay anchored to the bold run in the surface, which reports the rectangle of its anchor. */
-export const FixtureRunAnchored = ({ onRect }: { readonly onRect: (rect: DOMRect) => void }) => {
+export const FixtureRunAnchored = ({ onRect }: { onRect: (rect: DOMRect) => void }) => {
     const api = useEditorApi();
     const surface = api?.surface();
     const bold = surface?.querySelector('strong');

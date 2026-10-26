@@ -15,7 +15,7 @@ const options = (strings: AltTextStrings) =>
         { value: 'decorative', label: strings.decorative, hint: strings.decorativeHint },
     ] as const;
 
-const IntentChoice = ({ state, strings }: { readonly state: AltTextState; readonly strings: AltTextStrings }) => {
+const IntentChoice = ({ state, strings }: { state: AltTextState; strings: AltTextStrings }) => {
     const { intent, legendId, radioId, focusChecked, chooseIntent } = state;
 
     return (
@@ -50,9 +50,9 @@ const IntentChoice = ({ state, strings }: { readonly state: AltTextState; readon
     );
 };
 
-const TextField = ({ state, strings }: { readonly state: AltTextState; readonly strings: AltTextStrings }) => {
+const TextField = ({ state, strings }: { state: AltTextState; strings: AltTextStrings }) => {
     const { suggestion, text, invalid, fieldRef, fieldId, errorId, changeText } = state;
-    let describedBy: { readonly 'aria-describedby'?: string } = {};
+    let describedBy: { 'aria-describedby'?: string } = {};
     if (invalid) {
         describedBy = { 'aria-describedby': errorId };
     }
@@ -104,8 +104,8 @@ export const AltTextDialog = ({
     strings,
     close: onClose,
 }: OverlayProps & {
-    readonly nodeId: string;
-    readonly strings: AltTextStrings;
+    nodeId: string;
+    strings: AltTextStrings;
 }) => {
     const state = useAltTextDialogState(nodeId, opener, onClose);
 

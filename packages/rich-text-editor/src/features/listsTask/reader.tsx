@@ -6,7 +6,7 @@ import { type ReaderNodeProps, type ReaderRenderers } from '#/reader/define';
 
 /** The blocks of a task item, which the reader passes as one fragment. */
 const blocksOf = (children: ReactNode): ReactNode[] => {
-    if (isValidElement<{ readonly children?: ReactNode }>(children)) {
+    if (isValidElement<{ children?: ReactNode }>(children)) {
         return Children.toArray(children.props.children);
     }
 

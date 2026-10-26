@@ -43,9 +43,9 @@ const contentOf = (document: RichTextDocument) => {
 };
 
 type UrlFixture = {
-    readonly input: string;
-    readonly ok: boolean;
-    readonly href?: string;
+    input: string;
+    ok: boolean;
+    href?: string;
 };
 const URLS = urls as readonly UrlFixture[];
 

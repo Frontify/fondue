@@ -18,8 +18,8 @@ const mention = (nodeId: string, resourceId: string, labelSnapshot: string) => (
 });
 
 type Resolvers = {
-    readonly resolveAssetUrl?: (assetId: string, options: { readonly width?: number }) => string | null;
-    readonly resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
+    resolveAssetUrl?: (assetId: string, options: { width?: number }) => string | null;
+    resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
 };
 
 /** The reader's static markup of `blocks` with the resolvers, and the diagnostics it reported. */

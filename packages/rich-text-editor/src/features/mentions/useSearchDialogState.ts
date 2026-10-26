@@ -29,23 +29,23 @@ const COMPOSITION_ENTER_MS = 500;
 
 /** The mention search dialog's strings, in the UI locale. */
 type MentionSearchStrings = {
-    readonly title: string;
-    readonly search: string;
-    readonly cancel: string;
+    title: string;
+    search: string;
+    cancel: string;
 } & ReferenceListStrings;
 
 /** One ask of the host: its query and page, and whether it waits for the next keystroke first. */
 type Ask = {
-    readonly query: string;
-    readonly page: string | null;
-    readonly waits: boolean;
+    query: string;
+    page: string | null;
+    waits: boolean;
 };
 
 type Found = {
-    readonly status: 'loading' | 'ready' | 'failed';
-    readonly items: readonly ResultItem[];
+    status: 'loading' | 'ready' | 'failed';
+    items: readonly ResultItem[];
     /** Counts the answered asks, so each answer is announced, a repeated one too. */
-    readonly answers: number;
+    answers: number;
 };
 
 /** The dialog's strings from the chrome's `t`. */
@@ -178,9 +178,9 @@ const useAnnouncements = (
     announce: (message: string) => void,
 ) => {
     const spokenRef = useRef<{
-        readonly answers: number;
-        readonly status: Found['status'];
-        readonly key: string | undefined;
+        answers: number;
+        status: Found['status'];
+        key: string | undefined;
     } | null>(null);
     useEffect(() => {
         const item = found.items[shownIndex];
@@ -250,7 +250,7 @@ export const useSearchDialogState = (
             return;
         }
 
-        let commandOptions: { readonly focus: 'editor'; readonly target?: SelectionHandle } = { focus: 'editor' };
+        let commandOptions: { focus: 'editor'; target?: SelectionHandle } = { focus: 'editor' };
         if (targetRef.current !== null) {
             commandOptions = { focus: 'editor', target: targetRef.current };
         }

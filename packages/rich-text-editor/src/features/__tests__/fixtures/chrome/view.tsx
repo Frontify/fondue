@@ -41,7 +41,7 @@ const BlockChrome = () => {
 export const popupListeners = { count: 0 };
 
 /** A popup that listens on the document while it is open, as an overlay that closes on Escape does. */
-const Popup = ({ label }: { readonly label: string }) => {
+const Popup = ({ label }: { label: string }) => {
     useEffect(() => {
         const listener = () => undefined;
         document.addEventListener('keydown', listener);

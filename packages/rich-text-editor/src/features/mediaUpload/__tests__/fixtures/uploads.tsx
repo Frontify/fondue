@@ -52,10 +52,10 @@ export const jpegFile = (name: string, width: number, height: number): File => {
 
 /** One upload the fake service has not answered yet. */
 export type PendingUpload = {
-    readonly request: UploadRequest;
-    readonly context: ServiceContext & { readonly reportProgress: (fraction: number) => void };
-    readonly resolve: (value: AssetValue) => void;
-    readonly reject: (error: Error) => void;
+    request: UploadRequest;
+    context: ServiceContext & { reportProgress: (fraction: number) => void };
+    resolve: (value: AssetValue) => void;
+    reject: (error: Error) => void;
 };
 
 /** Settles the header reads, the service answers and the portal flushes that an upload step starts. */
@@ -125,15 +125,15 @@ export const deferredUploads = () => {
 export type DeferredUploads = ReturnType<typeof deferredUploads>;
 
 type Mount = {
-    readonly blocks?: readonly ContentNodeJSON[];
-    readonly model?: ContentModel;
-    readonly uploads?: DeferredUploads;
-    readonly services?: EditorServices;
-    readonly limits?: Partial<ResourceLimits>;
-    readonly policy?: Partial<AuthoringPolicy>;
-    readonly generateId?: () => string;
-    readonly plugins?: readonly EditorPart[];
-    readonly toolbar?: ReactPresentation['toolbar'];
+    blocks?: readonly ContentNodeJSON[];
+    model?: ContentModel;
+    uploads?: DeferredUploads;
+    services?: EditorServices;
+    limits?: Partial<ResourceLimits>;
+    policy?: Partial<AuthoringPolicy>;
+    generateId?: () => string;
+    plugins?: readonly EditorPart[];
+    toolbar?: ReactPresentation['toolbar'];
 };
 
 /** Mounts the editor with `media.image`, `media.upload`, an Image toolbar button and a fake upload service. */

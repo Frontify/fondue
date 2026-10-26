@@ -48,9 +48,9 @@ const lastBlockStart = (handle: Handle) => {
 };
 
 type UrlFixture = {
-    readonly input: string;
-    readonly ok: boolean;
-    readonly href?: string;
+    input: string;
+    ok: boolean;
+    href?: string;
 };
 const URLS = urls as readonly UrlFixture[];
 
@@ -300,7 +300,7 @@ describe('link policy', () => {
         before.textContent = 'Read X ';
         anchor.textContent = 'guiXde';
         // The view reads typed DOM through its observer, which the browser would run on the mutation.
-        const observed = view as unknown as { readonly domObserver: { flush(): void } };
+        const observed = view as unknown as { domObserver: { flush(): void } };
         await act(async () => {
             observed.domObserver.flush();
             await Promise.resolve();

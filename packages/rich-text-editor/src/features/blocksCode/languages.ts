@@ -4,8 +4,8 @@ import { type TranslationStrings } from '#/model';
 
 /** Languages lowlight's `common` set registers, except `plaintext`, which a block stores as no `languageId`. A language or product name stays literal; a descriptive label reads through a locale key. */
 export const CODE_LANGUAGES: readonly (
-    | { readonly id: string; readonly label: string }
-    | { readonly id: string; readonly labelKey: keyof TranslationStrings }
+    | { id: string; label: string }
+    | { id: string; labelKey: keyof TranslationStrings }
 )[] = [
     { id: 'arduino', label: 'Arduino' },
     { id: 'bash', label: 'Bash' },
@@ -49,7 +49,7 @@ export const CODE_LANGUAGES: readonly (
 export const languageChoices = (
     languageId: string | null,
     t: (key: keyof TranslationStrings) => string,
-): readonly { readonly id: string | null; readonly label: string }[] => {
+): readonly { id: string | null; label: string }[] => {
     const choices: { id: string | null; label: string }[] = [{ id: null, label: t('RichTextEditor_codePlainText') }];
     for (const language of CODE_LANGUAGES) {
         if ('labelKey' in language) {

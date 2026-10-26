@@ -20,7 +20,7 @@ afterEach(() => {
 });
 
 let live: EditorApi | undefined;
-let taken: { readonly names: readonly string[]; readonly origin: string; readonly text: string }[] = [];
+let taken: { names: readonly string[]; origin: string; text: string }[] = [];
 
 const Grab = () => {
     live = useEditorApi();

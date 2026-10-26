@@ -23,7 +23,7 @@ export const fontColorEditor = defineEditorPart(fontColor, (options: JsonObject)
                 exactlyOne: ['tokenId', 'value'],
                 nullable: true,
             },
-            run: (api, payload: { readonly tokenId: string } | { readonly value: string } | null) => {
+            run: (api, payload: { tokenId: string } | { value: string } | null) => {
                 if (payload === null) {
                     return api.marks.remove('font_color');
                 }
@@ -48,7 +48,7 @@ export const fontColorEditor = defineEditorPart(fontColor, (options: JsonObject)
 
                 return blockType !== null && !verbatim;
             },
-            run: (api, payload: { readonly tokenIds?: readonly string[] } | undefined) => {
+            run: (api, payload: { tokenIds?: readonly string[] } | undefined) => {
                 api.overlays.open(
                     ColorMenu,
                     { tokenIds: payload?.tokenIds, literalText: options.literalColors === true },

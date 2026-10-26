@@ -39,8 +39,8 @@ const blockWith = (type: string): ContentNodeJSON => {
 
 /** The commands that open an overlay or a panel: the toolbar entries of the model's shipped parts and the image chrome's. */
 const overlayEntries = (): readonly {
-    readonly command: string;
-    readonly payload?: unknown;
+    command: string;
+    payload?: unknown;
 }[] => [
     ...compiledModel(model).features.flatMap(({ id, options }) => {
         const part = pluginsById([id])[0]?.editor;

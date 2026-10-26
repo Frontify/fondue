@@ -19,9 +19,9 @@ const HEADING_KEY = {
 type Level = keyof typeof HEADING_KEY;
 
 type OutlineHeading = {
-    readonly nodeId: string;
-    readonly level: Level;
-    readonly text: string;
+    nodeId: string;
+    level: Level;
+    text: string;
 };
 
 const isLevel = (level: unknown): level is Level =>

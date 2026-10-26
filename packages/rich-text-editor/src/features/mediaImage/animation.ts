@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 type Decoder = {
-    readonly tracks: { readonly ready: Promise<void>; readonly selectedTrack: { readonly animated: boolean } | null };
+    tracks: { ready: Promise<void>; selectedTrack: { animated: boolean } | null };
     close(): void;
 };
 type DecoderClass = {
-    new (init: { readonly data: ReadableStream<Uint8Array>; readonly type: string }): Decoder;
+    new (init: { data: ReadableStream<Uint8Array>; type: string }): Decoder;
     isTypeSupported(type: string): Promise<boolean>;
 };
 
@@ -24,7 +24,7 @@ export const mayAnimate = async (src: string, mediaType: string | null, signal: 
         return false;
     }
 
-    const decoderClass = (globalThis as { readonly ImageDecoder?: DecoderClass }).ImageDecoder;
+    const decoderClass = (globalThis as { ImageDecoder?: DecoderClass }).ImageDecoder;
     if (decoderClass === undefined) {
         return true;
     }

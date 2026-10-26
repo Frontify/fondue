@@ -66,15 +66,15 @@ declare global {
     interface Window {
         /** The link probe's handle and helpers. */
         linkRte?: {
-            readonly handle: EditorHandle;
-            readonly setSelection: typeof setSelection;
-            readonly injectUnsafe: (text: string) => void;
+            handle: EditorHandle;
+            setSelection: typeof setSelection;
+            injectUnsafe: (text: string) => void;
         };
     }
 }
 
 /** Mounts `links` over a same-window and a new-window link, with Bold and Link on the toolbar, editable unless `readOnly`. */
-export const LinkProbe = ({ readOnly = false }: { readonly readOnly?: boolean }) => {
+export const LinkProbe = ({ readOnly = false }: { readOnly?: boolean }) => {
     const [presentation] = useState(() => defineReactPresentation({ toolbar: [['mark.bold.toggle', 'link.edit']] }));
     const ref = useRef<EditorHandle>(null);
     useEffect(() => {

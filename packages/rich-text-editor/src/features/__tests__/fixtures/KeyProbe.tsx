@@ -23,12 +23,12 @@ declare global {
     interface Window {
         /** The key order probe's handle, selection helper, submitted texts, host dialog changes and keys. */
         keyProbe?: {
-            readonly handle: EditorHandle;
-            readonly setSelection: typeof setSelection;
-            readonly submitted: string[];
-            readonly hostDialogChanges: boolean[];
+            handle: EditorHandle;
+            setSelection: typeof setSelection;
+            submitted: string[];
+            hostDialogChanges: boolean[];
             /** Each keydown's key and whether it reached the host prevented, in order. */
-            readonly prevented: (readonly [string, boolean])[];
+            prevented: (readonly [string, boolean])[];
         };
     }
 }
@@ -37,14 +37,14 @@ const hostDialogChanges: boolean[] = [];
 const EMPTY: readonly ContentNodeJSON[] = [{ type: 'paragraph' }];
 
 export type KeyProbeProps = {
-    readonly features: keyof typeof FEATURES;
+    features: keyof typeof FEATURES;
     /** Compiles the model from the feature list in reverse, as a host may list its features in any order. */
-    readonly reversed?: boolean;
-    readonly blocks?: readonly ContentNodeJSON[];
-    readonly enterBehavior?: 'paragraph' | 'submit';
-    readonly bubble?: boolean;
+    reversed?: boolean;
+    blocks?: readonly ContentNodeJSON[];
+    enterBehavior?: 'paragraph' | 'submit';
+    bubble?: boolean;
     /** Puts the editor in an open host Fondue `Dialog`. */
-    readonly inDialog?: boolean;
+    inDialog?: boolean;
 };
 
 /** An editor of a profile's feature list between two host buttons, which records each submitted snapshot's text. */

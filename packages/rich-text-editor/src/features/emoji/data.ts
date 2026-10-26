@@ -2,35 +2,35 @@
 
 export type EmojiEntry = {
     /** The emoji as Unicode text, which the editor inserts. */
-    readonly emoji: string;
+    emoji: string;
     /** The CLDR name in the data locale. */
-    readonly label: string;
+    label: string;
     /** Lowercased, diacritics-free search words: the localized label and tags, then the English label and tags. */
-    readonly keywords: readonly string[];
+    keywords: readonly string[];
     /** The label lowercased and diacritics-free, and its words, computed once at load so a search normalizes only its query. */
-    readonly searchLabel: string;
-    readonly labelWords: readonly string[];
-    readonly order: number;
+    searchLabel: string;
+    labelWords: readonly string[];
+    order: number;
 };
 
 export type EmojiDataLocale = 'de' | 'en' | 'es' | 'fr' | 'it' | 'nl' | 'pl' | 'pt';
 
 type CompactEmoji = {
-    readonly hexcode: string;
-    readonly label: string;
-    readonly unicode: string;
-    readonly group?: number;
-    readonly order?: number;
-    readonly tags?: readonly string[];
+    hexcode: string;
+    label: string;
+    unicode: string;
+    group?: number;
+    order?: number;
+    tags?: readonly string[];
 };
 
 type CompactModule = {
-    readonly default: readonly CompactEmoji[];
+    default: readonly CompactEmoji[];
 };
 
 type ScoredEmoji = {
-    readonly entry: EmojiEntry;
-    readonly rank: number;
+    entry: EmojiEntry;
+    rank: number;
 };
 
 // Emojibase group 2 is a skin-tone component. Entries with no group are regional indicators, not emoji.

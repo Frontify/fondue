@@ -9,10 +9,10 @@ import { REPLACED_ASSET } from '#/model';
 export type Intent = 'meaningful' | 'decorative';
 
 type Stored = {
-    readonly intent: Intent;
-    readonly text: string;
+    intent: Intent;
+    text: string;
     /** The meaningful text of another image of the same asset, which the dialog offers and never fills in. */
-    readonly suggestion: string | undefined;
+    suggestion: string | undefined;
 };
 
 const textOf = (value: unknown): string => (typeof value === 'string' ? value : '');

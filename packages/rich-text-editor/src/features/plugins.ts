@@ -7,7 +7,7 @@ type Unit = () => RichTextPlugin;
 
 // The package declares no Vite client types, which would clash with the cast in `model/migrate`.
 type ViteImportMeta = ImportMeta & {
-    readonly glob: (pattern: string, options: { readonly eager: true }) => Record<string, Record<string, Unit>>;
+    glob: (pattern: string, options: { eager: true }) => Record<string, Record<string, Unit>>;
 };
 
 // Each feature folder's index exports exactly one unit factory.

@@ -233,10 +233,10 @@ test('decodes every image the upload conformance kit builds and samples, at the 
     await mount(<UploadProbe />);
     await ready(page);
     const images: {
-        readonly label: string;
-        readonly type: string;
-        readonly base64: string;
-        readonly size: [number, number];
+        label: string;
+        type: string;
+        base64: string;
+        size: [number, number];
     }[] = [];
     const sizes: [number, number][] = [
         [1, 1],

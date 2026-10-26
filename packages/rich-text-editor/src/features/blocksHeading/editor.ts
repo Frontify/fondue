@@ -12,7 +12,7 @@ export const headingEditor = defineEditorPart(heading, {
     commands: {
         'heading.set': {
             payload: { fields: { level: { type: 'integer', min: 1, max: 6 } } },
-            run: (api, { level }: { readonly level: number }) => api.blocks.set('heading', { level }),
+            run: (api, { level }: { level: number }) => api.blocks.set('heading', { level }),
             active: (api, { level }) => api.blocks.active('heading', { level }),
             // A level the policy does not offer is refused before applicability, even in a heading of that level.
             refuses: (policy, { level }) => !policy.creatableHeadingLevels.some((offered) => offered === level),

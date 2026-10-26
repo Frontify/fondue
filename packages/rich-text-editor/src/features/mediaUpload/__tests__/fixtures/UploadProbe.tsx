@@ -27,21 +27,21 @@ declare global {
     interface Window {
         /** The upload probe's handle, its changes, the requests its service holds and how the specs answer them. */
         uploadRte?: {
-            readonly handle: EditorHandle;
-            readonly changes: readonly DocumentChange[];
+            handle: EditorHandle;
+            changes: readonly DocumentChange[];
             /** The file names of the uploads the service was asked for. */
-            readonly requests: () => readonly string[];
+            requests: () => readonly string[];
             /** Answers upload `index` with the asset `assetId`. */
-            readonly complete: (index: number, assetId: string) => void;
+            complete: (index: number, assetId: string) => void;
             /** Rejects upload `index`, as a service that refused the file does. */
-            readonly fail: (index: number) => void;
+            fail: (index: number) => void;
             /** Reports `fraction` of upload `index` as sent. */
-            readonly progress: (index: number, fraction: number) => void;
+            progress: (index: number, fraction: number) => void;
             /** The stored attributes of the document's images. */
-            readonly images: () => readonly Readonly<Record<string, unknown>>[];
+            images: () => readonly Readonly<Record<string, unknown>>[];
             /** The types of the document's top-level blocks. */
-            readonly blocks: () => readonly string[];
-            readonly setSelection: typeof setSelection;
+            blocks: () => readonly string[];
+            setSelection: typeof setSelection;
         };
     }
 }
@@ -49,15 +49,15 @@ declare global {
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 
 /** The editor of `core`, `media.image` and `media.upload` over `texts`, with an upload service the specs answer. */
-export const UploadProbe = ({ texts = ['Before'] }: { readonly texts?: readonly string[] }) => {
+export const UploadProbe = ({ texts = ['Before'] }: { texts?: readonly string[] }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const [changes] = useState<DocumentChange[]>([]);
     const [uploads] = useState(() => {
         const held: {
-            readonly name: string;
-            readonly resolve: (asset: AssetValue) => void;
-            readonly reject: () => void;
-            readonly progress: (fraction: number) => void;
+            name: string;
+            resolve: (asset: AssetValue) => void;
+            reject: () => void;
+            progress: (fraction: number) => void;
         }[] = [];
         const service: UploadService = {
             upload: ({ filename }, { reportProgress }) =>

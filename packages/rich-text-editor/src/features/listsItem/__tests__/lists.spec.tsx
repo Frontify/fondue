@@ -268,7 +268,7 @@ describe('the List keys table', () => {
                 const mounted = mountList(atDepth(kind, depth, three3));
                 caret(mounted, 'two');
 
-                let payload: { readonly start: number } | undefined;
+                let payload: { start: number } | undefined;
                 if (kind === 'ordered') {
                     payload = { start: 1 };
                 }

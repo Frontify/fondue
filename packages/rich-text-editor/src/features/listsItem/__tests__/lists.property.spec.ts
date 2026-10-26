@@ -21,9 +21,9 @@ const KINDS: readonly ListKind[] = ['bullet', 'ordered', 'task'];
 const ITEMS = new Set(['list_item', 'task_item']);
 
 type Shape = {
-    readonly kind: ListKind;
-    readonly start: number;
-    readonly items: readonly { readonly checked: boolean; readonly children: Shape | null }[];
+    kind: ListKind;
+    start: number;
+    items: readonly { checked: boolean; children: Shape | null }[];
 };
 /** Nested bullet, ordered and task lists, mixed, up to three levels deep. */
 const shape = fc
@@ -85,8 +85,8 @@ const viewOf = (doc: Node) =>
     new EditorView(document.createElement('div'), { state: EditorState.create({ doc, plugins: engine.plugins }) });
 
 /** The textblocks of the document, with the position inside each. */
-const textblocks = (doc: Node): { readonly node: Node; readonly pos: number }[] => {
-    const found: { readonly node: Node; readonly pos: number }[] = [];
+const textblocks = (doc: Node): { node: Node; pos: number }[] => {
+    const found: { node: Node; pos: number }[] = [];
     doc.descendants((node, pos) => {
         if (node.isTextblock) {
             found.push({ node, pos: pos + 1 });
@@ -162,14 +162,14 @@ describe(seeded('list edits'), () => {
 
     type Step =
         | {
-              readonly kind: 'key';
-              readonly key: string;
-              readonly init: KeyboardEventInit;
-              readonly pick: number;
-              readonly offset: number;
+              kind: 'key';
+              key: string;
+              init: KeyboardEventInit;
+              pick: number;
+              offset: number;
           }
-        | { readonly kind: 'paste'; readonly pick: number; readonly offset: number }
-        | { readonly kind: 'toggle'; readonly command: string; readonly pick: number };
+        | { kind: 'paste'; pick: number; offset: number }
+        | { kind: 'toggle'; command: string; pick: number };
     const at = { pick: fc.nat(), offset: fc.nat() };
     const step: fc.Arbitrary<Step> = fc.oneof(
         fc.record({

@@ -10,10 +10,10 @@ import { type LanguageState } from './useLanguageState';
 const NO_DIRECTION = 'none';
 
 /** The typed tag field, shown when the option lists no languages. */
-export const TagField = ({ state }: { readonly state: LanguageState }) => {
+export const TagField = ({ state }: { state: LanguageState }) => {
     const { strings, tag, invalid, ids } = state;
     let status: 'error' | 'neutral' = 'neutral';
-    let describedBy: { readonly 'aria-describedby'?: string } = {};
+    let describedBy: { 'aria-describedby'?: string } = {};
     if (invalid) {
         status = 'error';
         describedBy = { 'aria-describedby': ids.error };
@@ -37,7 +37,7 @@ export const TagField = ({ state }: { readonly state: LanguageState }) => {
 };
 
 /** The radio group of offered languages. */
-export const LanguageRadios = ({ state }: { readonly state: LanguageState }) => {
+export const LanguageRadios = ({ state }: { state: LanguageState }) => {
     const { strings, offered, tag, invalid, ids } = state;
     let errorMessage: string | undefined;
     // The radio a rejected Apply focuses, described by the error: the checked one, else the first. The invalid state stays on
@@ -85,7 +85,7 @@ export const LanguageRadios = ({ state }: { readonly state: LanguageState }) => 
 };
 
 /** The text direction control. */
-export const DirectionSelect = ({ state }: { readonly state: LanguageState }) => (
+export const DirectionSelect = ({ state }: { state: LanguageState }) => (
     <>
         {/* A radio group takes no `label for`, so its name is Fondue's group label text, as in RadioList's stories. */}
         <Text id={state.ids.directionLabel} weight="strong" size="small">

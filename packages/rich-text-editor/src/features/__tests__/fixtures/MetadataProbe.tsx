@@ -21,7 +21,7 @@ declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** Copies the whole source editor as HTML, and pastes HTML over the whole target editor, returning its blocks. */
-        metadataClip?: { readonly copy: () => string; readonly paste: (html: string) => unknown };
+        metadataClip?: { copy: () => string; paste: (html: string) => unknown };
     }
 }
 

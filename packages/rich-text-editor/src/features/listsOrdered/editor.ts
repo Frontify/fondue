@@ -17,7 +17,7 @@ export const orderedListEditor = defineEditorPart(orderedList, {
     commands: {
         'list.ordered.toggle': {
             payload: START,
-            run: (api, payload: { readonly start: number }) => api.lists.toggle('ordered_list', 'list_item', payload),
+            run: (api, payload: { start: number }) => api.lists.toggle('ordered_list', 'list_item', payload),
             active: (api) => api.lists.active('ordered_list'),
         },
         'list.ordered.start.edit': {
@@ -35,7 +35,7 @@ export const orderedListEditor = defineEditorPart(orderedList, {
         },
         [SET_START]: {
             payload: START,
-            run: (api, payload: { readonly start: number }) => api.attributes.set('ordered_list', payload),
+            run: (api, payload: { start: number }) => api.attributes.set('ordered_list', payload),
         },
     },
     keys: { 'Mod-Shift-7': { command: 'list.ordered.toggle', payload: { start: 1 } } },

@@ -39,16 +39,16 @@ declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         outlineRte?: {
-            readonly sequence: () => number;
-            readonly document: () => string;
-            readonly selection: () => {
-                readonly empty: boolean;
-                readonly parentOffset: number;
-                readonly nodeId: unknown;
-                readonly type: string;
+            sequence: () => number;
+            document: () => string;
+            selection: () => {
+                empty: boolean;
+                parentOffset: number;
+                nodeId: unknown;
+                type: string;
             } | null;
             /** Selects the node at the start of the heading `nodeId` names, and scrolls it into view. */
-            readonly selectHeadingNode: (nodeId: string) => void;
+            selectHeadingNode: (nodeId: string) => void;
         };
     }
 }
@@ -58,8 +58,8 @@ export const OutlineProbe = ({
     heading: place = 'last',
     defaultToolbarMode,
 }: {
-    readonly heading?: keyof typeof BLOCKS;
-    readonly defaultToolbarMode?: 'fixed' | 'bubble';
+    heading?: keyof typeof BLOCKS;
+    defaultToolbarMode?: 'fixed' | 'bubble';
 }) => {
     const ref = useRef<EditorHandle>(null);
     useEffect(() => {

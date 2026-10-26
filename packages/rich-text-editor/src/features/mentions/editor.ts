@@ -17,12 +17,12 @@ const MAX_LABEL = 256;
 const KINDS = ['user', 'group', 'everyone'] as const;
 
 type ReferencePayload = {
-    readonly resourceType: string;
-    readonly resourceId: string;
-    readonly labelSnapshot: string;
-    readonly href?: string;
-    readonly imageUrl?: string;
-    readonly kind?: (typeof KINDS)[number];
+    resourceType: string;
+    resourceId: string;
+    labelSnapshot: string;
+    href?: string;
+    imageUrl?: string;
+    kind?: (typeof KINDS)[number];
 };
 
 /**

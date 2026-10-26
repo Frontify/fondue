@@ -48,7 +48,7 @@ describe('static closure of an app', () => {
         const { sideEffects } = JSON.parse(
             readFileSync(new URL('../../../../package.json', import.meta.url), 'utf8'),
         ) as {
-            readonly sideEffects?: unknown;
+            sideEffects?: unknown;
         };
 
         expect(sideEffects).toEqual(['./dist/style.css']);

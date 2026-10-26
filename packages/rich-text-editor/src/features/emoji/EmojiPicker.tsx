@@ -17,9 +17,9 @@ const Picker = ({
     api,
     onClose,
 }: {
-    readonly api: EditorApi;
+    api: EditorApi;
     /** Runs once the picker closes, with or without an insertion. */
-    readonly onClose: () => void;
+    onClose: () => void;
 }) => {
     const { open, overlay, title, testId, field, list, fieldRef, statusRef } = useEmojiPickerState(api, onClose);
 

@@ -10,7 +10,7 @@ export const brandEditor = defineEditorPart(brandStyles, {
     commands: {
         'block.style.set': {
             payload: { fields: { styleId: { type: 'id', nullable: true } } },
-            run: (api, { styleId }: { readonly styleId: string | null }) =>
+            run: (api, { styleId }: { styleId: string | null }) =>
                 api.attributes.set(['paragraph', 'heading'], { styleId }),
             active: (api, { styleId }) => api.attributes.active(['paragraph', 'heading'], { styleId }),
         },

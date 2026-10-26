@@ -28,11 +28,11 @@ const StyleSelect = ({
     onChange,
     container,
 }: {
-    readonly strings: LinkPopoverStrings;
-    readonly styles: readonly LinkStyleOption[];
-    readonly value: string;
-    readonly onChange: (styleId: string) => void;
-    readonly container: ReturnType<typeof useEditorOverlay>['container'];
+    strings: LinkPopoverStrings;
+    styles: readonly LinkStyleOption[];
+    value: string;
+    onChange: (styleId: string) => void;
+    container: ReturnType<typeof useEditorOverlay>['container'];
 }) => {
     const fieldId = useId();
     const labelId = useId();
@@ -87,7 +87,7 @@ const StyleSelect = ({
  * meanwhile, Insert as new link inserts the visible text as a linked run at the selection. With `search`, typing in the
  * destination lists matching internal destinations that carry a checked `href`; picking one links to it.
  */
-export const LinkPopover = (props: OverlayProps & { readonly initial: LinkInitial }) => {
+export const LinkPopover = (props: OverlayProps & { initial: LinkInitial }) => {
     const {
         initial,
         strings,
@@ -127,7 +127,7 @@ export const LinkPopover = (props: OverlayProps & { readonly initial: LinkInitia
     const errorId = useId();
     const removedId = useId();
     const formId = useId();
-    let described: { readonly 'aria-describedby'?: string } = {};
+    let described: { 'aria-describedby'?: string } = {};
     if (invalid) {
         described = { 'aria-describedby': errorId };
     } else if (problem === 'removed') {

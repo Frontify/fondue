@@ -10,7 +10,7 @@ import styles from './styles/task.module.scss';
 // Node chrome stays out of the Tab order, so Tab leaves the editor; Mod+Enter toggles the item from the keyboard.
 const OUT_OF_TAB_ORDER = -1;
 
-type TaskCommands = { readonly 'task.setChecked': { readonly nodeId: string; readonly checked: boolean } };
+type TaskCommands = { 'task.setChecked': { nodeId: string; checked: boolean } };
 
 /**
  * The item's native checkbox beside its content, labelled by the item's text, which runs `task.setChecked` on a click

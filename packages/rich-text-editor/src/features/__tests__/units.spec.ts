@@ -56,7 +56,7 @@ describe('feature units', () => {
     });
 
     it.each(READER_FOLDERS)('%s names its own feature in its reader', async (folder) => {
-        const reader = (await import(`../${folder}/reader.tsx`)) as { readonly readerFeature: string };
+        const reader = (await import(`../${folder}/reader.tsx`)) as { readerFeature: string };
         const unit = await unitOf(folder);
         expect(reader.readerFeature).toBe(unit?.id);
     });

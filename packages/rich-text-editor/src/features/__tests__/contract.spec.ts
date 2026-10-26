@@ -307,7 +307,7 @@ describe('the feature contract suite', () => {
             'toggles an attribute',
             'runs the node-ids normalizer to equal steps on equal states and to nothing on its output',
             (): Normalizer => (state) => {
-                let found: { readonly pos: number; readonly nodeId: unknown } | undefined;
+                let found: { pos: number; nodeId: unknown } | undefined;
                 state.doc.descendants((node, pos) => {
                     if (found === undefined && 'nodeId' in node.attrs) {
                         found = { pos, nodeId: node.attrs.nodeId };
@@ -646,9 +646,9 @@ const FEATURES_FOLDER = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PACKAGE_FOLDER = join(FEATURES_FOLDER, '..', '..');
 const packageJson = (path: string) =>
     JSON.parse(readFileSync(join(PACKAGE_FOLDER, path), 'utf8')) as {
-        readonly license?: string;
-        readonly dependencies?: Readonly<Record<string, string>>;
-        readonly peerDependencies?: Readonly<Record<string, string>>;
+        license?: string;
+        dependencies?: Readonly<Record<string, string>>;
+        peerDependencies?: Readonly<Record<string, string>>;
     };
 
 /** The packages, other than the host's peer packages and Node built-ins, that a feature folder's shipped files import. */

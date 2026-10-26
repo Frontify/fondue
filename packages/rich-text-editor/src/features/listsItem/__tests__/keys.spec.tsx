@@ -34,10 +34,10 @@ afterEach(() => {
 });
 
 type Press = {
-    readonly key: string;
-    readonly meta?: boolean;
-    readonly ctrl?: boolean;
-    readonly shift?: boolean;
+    key: string;
+    meta?: boolean;
+    ctrl?: boolean;
+    shift?: boolean;
 };
 const press = ({ view }: Mounted, { key, meta = false, ctrl = false, shift = false }: Press) => {
     const event = new KeyboardEvent('keydown', {
@@ -53,13 +53,13 @@ const press = ({ view }: Mounted, { key, meta = false, ctrl = false, shift = fal
 
 /** A shortcut row of the list features, with the blocks it starts from and the text the caret sits in. */
 type Row = {
-    readonly command: string;
-    readonly key: string;
-    readonly shift: boolean;
-    readonly blocks: readonly ContentNodeJSON[];
-    readonly at: string;
+    command: string;
+    key: string;
+    shift: boolean;
+    blocks: readonly ContentNodeJSON[];
+    at: string;
     /** The command the change reports, when the key's command runs another. */
-    readonly reports?: string;
+    reports?: string;
 };
 const nested = list('bullet', [item('bullet', 'one', list('bullet', [item('bullet', 'two')]))]);
 const ROWS: readonly Row[] = [

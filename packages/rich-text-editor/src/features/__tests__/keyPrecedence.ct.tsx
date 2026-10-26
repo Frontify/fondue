@@ -50,9 +50,9 @@ const caretIn = async (page: Page, text: string, offset = text.length) => {
 const shapeOf = (page: Page) =>
     page.evaluate(() => {
         type Node_ = {
-            readonly type: string;
-            readonly text?: string;
-            readonly content?: readonly Node_[];
+            type: string;
+            text?: string;
+            content?: readonly Node_[];
         };
         const shape = (node: Node_): string => {
             if (node.type === 'text') {
@@ -75,9 +75,9 @@ const lastKey = (page: Page) => page.evaluate(() => (window.keyProbe as Probe).p
 const submitted = (page: Page) => page.evaluate(() => (window.keyProbe as Probe).submitted);
 
 type Case = {
-    readonly name: string;
-    readonly probe: KeyProbeProps;
-    readonly run: (page: Page) => Promise<void>;
+    name: string;
+    probe: KeyProbeProps;
+    run: (page: Page) => Promise<void>;
 };
 
 /** Presses `key` with the caret at the end of `text` and expects the document to become `shape`. */

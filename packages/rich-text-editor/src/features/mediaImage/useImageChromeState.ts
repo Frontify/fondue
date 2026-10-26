@@ -67,18 +67,18 @@ const spokenOf = (
 };
 
 type ImageCommands = {
-    readonly 'image.replace': { readonly nodeId: string };
-    readonly 'image.size.set': { readonly displayWidth: number | null };
-    readonly 'image.align.set': { readonly align: (typeof SIDES)[number] };
-    readonly 'image.width.edit': undefined;
+    'image.replace': { nodeId: string };
+    'image.size.set': { displayWidth: number | null };
+    'image.align.set': { align: (typeof SIDES)[number] };
+    'image.width.edit': undefined;
 };
 
 /** Whether the image at `src` may animate, and whether it shows paused. */
 const useAnimation = (src: string | undefined, mediaType: string | null) => {
     // Whether the image at `src` may animate, once the check for that `src` answered.
-    const [animation, setAnimation] = useState<{ readonly src: string; readonly may: boolean }>();
+    const [animation, setAnimation] = useState<{ src: string; may: boolean }>();
     // The author's own Pause or Play, for one `src` only: a new image starts as reduced motion has it.
-    const [played, setPlayed] = useState<{ readonly src: string; readonly paused: boolean }>();
+    const [played, setPlayed] = useState<{ src: string; paused: boolean }>();
     useEffect(() => {
         if (src === undefined) {
             return undefined;
@@ -115,7 +115,7 @@ const useSelectionAnnouncement = (
     slot: boolean,
     announce: EditorApi['announce'] | undefined,
 ) => {
-    const heardRef = useRef<{ readonly heard: string; readonly slot: boolean } | undefined>(undefined);
+    const heardRef = useRef<{ heard: string; slot: boolean } | undefined>(undefined);
     // A selected image is spoken as it becomes selected, and again when what it says changes, as when it fails to
     // load; a slot that fills is not, since the upload's completion speaks for it.
     useEffect(() => {

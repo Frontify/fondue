@@ -52,19 +52,19 @@ export const ContentImage = ({
     onMouseDown,
     children,
 }: {
-    readonly src: string;
-    readonly alt: string | undefined;
-    readonly width: number | undefined;
-    readonly height: number | undefined;
+    src: string;
+    alt: string | undefined;
+    width: number | undefined;
+    height: number | undefined;
     /** A CSS width of the content width, or `undefined` at natural size. */
-    readonly shownWidth: string | undefined;
-    readonly paused: boolean;
-    readonly frameRef: RefObject<HTMLSpanElement>;
-    readonly onFailed: () => void;
+    shownWidth: string | undefined;
+    paused: boolean;
+    frameRef: RefObject<HTMLSpanElement>;
+    onFailed: () => void;
     /** Selects the image, since node chrome keeps its own mouse events from the editor. */
-    readonly onMouseDown: (event: MouseEvent) => void;
+    onMouseDown: (event: MouseEvent) => void;
     /** The resize handle, drawn over the frame's edge. */
-    readonly children?: ReactNode;
+    children?: ReactNode;
 }) => {
     const imageRef = useRef<HTMLImageElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);

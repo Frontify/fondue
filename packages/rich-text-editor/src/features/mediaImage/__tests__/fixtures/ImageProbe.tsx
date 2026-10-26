@@ -41,10 +41,10 @@ declare global {
     interface Window {
         /** The image probe's handle, its documented changes and the selection helper the specs drive it with. */
         imageRte?: {
-            readonly handle: EditorHandle;
-            readonly changes: number;
-            readonly picks: number;
-            readonly setSelection: typeof setSelection;
+            handle: EditorHandle;
+            changes: number;
+            picks: number;
+            setSelection: typeof setSelection;
         };
     }
 }
@@ -126,9 +126,9 @@ export const ImageProbe = ({
     content = 'still',
     dir,
 }: {
-    readonly content?: keyof typeof DOCUMENTS;
+    content?: keyof typeof DOCUMENTS;
     /** The direction of the page around the editor and the reader. */
-    readonly dir?: 'ltr' | 'rtl';
+    dir?: 'ltr' | 'rtl';
 }) => {
     const ref = useRef<EditorHandle>(null);
     const changesRef = useRef(0);

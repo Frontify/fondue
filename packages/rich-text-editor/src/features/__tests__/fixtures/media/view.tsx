@@ -23,13 +23,7 @@ const textOf = (value: unknown): string => {
 };
 
 /** The alternative text dialog stand-in: a modal Fondue `Dialog` named by its heading, with one short description. */
-const AltTextDialog = ({
-    open,
-    onOpenChange,
-}: {
-    readonly open: boolean;
-    readonly onOpenChange: (open: boolean) => void;
-}) => {
+const AltTextDialog = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
     const { attrs, context, update } = useRichTextNodeView();
     const overlay = useEditorOverlay(open, onOpenChange);
     const fieldId = useId();

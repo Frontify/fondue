@@ -216,8 +216,8 @@ describe('a host part for a feature the package ships', () => {
             commands: {
                 'mark.bold.weight': {
                     payload: { fields: { weight: { type: 'integer', min: 1, max: 2 } } },
-                    run: (_api, payload: { readonly weight: number }) => payload.weight > 0,
-                    active: (_api, payload: { readonly weight: number }) => payload.weight === 1,
+                    run: (_api, payload: { weight: number }) => payload.weight > 0,
+                    active: (_api, payload: { weight: number }) => payload.weight === 1,
                 },
             },
             toolbar: [1, 2].map((weight) => ({
@@ -332,8 +332,8 @@ describe('a plugin part that reads the policy and its options', () => {
                 // The text style picker lists the rows of `heading.set`, which this feature's model does not install.
                 'heading.set': {
                     payload: { fields: { level: { type: 'integer', min: 1, max: 6 } } },
-                    run: (_api, payload: { readonly level: number }) => payload.level < 0,
-                    refuses: (policy, payload: { readonly level: number }) =>
+                    run: (_api, payload: { level: number }) => payload.level < 0,
+                    refuses: (policy, payload: { level: number }) =>
                         !policy.creatableHeadingLevels.some((level) => level === payload.level),
                 },
             },
@@ -384,7 +384,7 @@ describe('a plugin part that reads the policy and its options', () => {
                 commands: {
                     'fixture.pick': {
                         payload: { fields: { value: { type: 'enum', values } } },
-                        run: (api, payload: { readonly value: string }) => api.insert.text(payload.value),
+                        run: (api, payload: { value: string }) => api.insert.text(payload.value),
                     },
                 },
                 keys: Object.fromEntries(

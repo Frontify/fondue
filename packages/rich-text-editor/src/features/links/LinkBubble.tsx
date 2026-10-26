@@ -19,11 +19,11 @@ const BubbleButton = ({
     describedBy,
     onPress,
 }: {
-    readonly label: string;
-    readonly icon: ReactNode;
+    label: string;
+    icon: ReactNode;
     /** The URL, so each control says which destination it acts on. */
-    readonly describedBy: string;
-    readonly onPress: (control: Element) => void;
+    describedBy: string;
+    onPress: (control: Element) => void;
 }) => <ChromeToolbarButton label={label} icon={icon} describedBy={describedBy} onPress={onPress} />;
 
 /**

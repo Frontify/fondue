@@ -9,14 +9,14 @@ import { languageChoices } from './languages';
 import { codeBlockView } from './view';
 
 type HastChild = {
-    readonly type: string;
-    readonly value?: string;
-    readonly children?: readonly HastChild[];
-    readonly properties?: { readonly className?: readonly string[] | string };
+    type: string;
+    value?: string;
+    children?: readonly HastChild[];
+    properties?: { className?: readonly string[] | string };
 };
 
 type Highlighter = {
-    highlight: (language: string, value: string) => { readonly children: readonly HastChild[] };
+    highlight: (language: string, value: string) => { children: readonly HastChild[] };
     registered: (language: string) => boolean;
 };
 
@@ -94,7 +94,7 @@ const tokensOf = (hl: Highlighter, languageId: string, text: string): readonly B
 };
 
 /** The toggle's attributes: a language when the payload names one. */
-const attrsOf = (payload: { readonly languageId?: string | null } | undefined): JsonObject => {
+const attrsOf = (payload: { languageId?: string | null } | undefined): JsonObject => {
     if (payload?.languageId === undefined) {
         return {};
     }
@@ -129,13 +129,13 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
     commands: {
         'code-block.toggle': {
             payload: { fields: { languageId: { type: 'id', nullable: true, optional: true } } },
-            run: (api, payload: { readonly languageId?: string | null } | undefined) =>
+            run: (api, payload: { languageId?: string | null } | undefined) =>
                 api.blocks.set('code_block', attrsOf(payload), { toggle: true }),
             active: (api, payload) => api.blocks.active('code_block', attrsOf(payload)),
         },
         'code-block.language.set': {
             payload: { fields: { languageId: { type: 'id', nullable: true } } },
-            run: (api, { languageId }: { readonly languageId: string | null }) =>
+            run: (api, { languageId }: { languageId: string | null }) =>
                 api.attributes.set('code_block', { languageId }),
             active: (api, { languageId }) => api.attributes.active('code_block', { languageId }),
         },

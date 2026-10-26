@@ -15,12 +15,12 @@ export const coreEditor = defineEditorPart(core, {
         },
         'text.insert': {
             payload: { fields: { text: { type: 'string' } } },
-            run: (api, payload: { readonly text: string }) => api.insert.text(payload.text),
+            run: (api, payload: { text: string }) => api.insert.text(payload.text),
         },
         'slash.run': {
             payload: { fields: { command: { type: 'string' }, payload: { type: 'json', optional: true } } },
             // The selection is the typed `/` and query, which the chosen command replaces in the same undo step.
-            run: (api, { command, payload }: { readonly command: string; readonly payload?: JsonValue }) =>
+            run: (api, { command, payload }: { command: string; payload?: JsonValue }) =>
                 api.insert.text('') && api.commands.execute(command, payload).status === 'applied',
         },
         'hard-break.insert': {

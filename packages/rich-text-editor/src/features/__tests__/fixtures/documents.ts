@@ -10,7 +10,7 @@ import {
 
 /** Stored documents of the vocabulary stand-ins in canonical form: every declared attribute written. */
 export type Json = JsonValue;
-type Node = { readonly [key: string]: JsonValue };
+type Node = { [key: string]: JsonValue };
 
 export const VOCABULARY_ID = 'fixture.vocabulary';
 

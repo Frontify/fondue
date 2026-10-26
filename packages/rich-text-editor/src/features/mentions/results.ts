@@ -11,30 +11,30 @@ const ACTION_KEY = '';
 
 /** An option of the search dialog: a result, or one that asks again for the next page or the failed one. */
 export type ResultItem = {
-    readonly action?: 'more' | 'retry';
+    action?: 'more' | 'retry';
     /** The cursor of the page a `more` option asks for. */
-    readonly cursor?: string;
+    cursor?: string;
 } & SuggestionResult;
 
 /** One page of results, and the cursor of the next page. */
 export type ResultPage = {
-    readonly items: readonly ResultItem[];
-    readonly nextCursor: string | null;
+    items: readonly ResultItem[];
+    nextCursor: string | null;
 };
 
 /** What a list says about its search, in the UI locale. */
 export type ReferenceListStrings = {
-    readonly label: string;
-    readonly loading: string;
-    readonly noResults: string;
-    readonly failed: string;
-    readonly loadMore: string;
-    readonly retry: string;
-    readonly results: (count: number) => string;
+    label: string;
+    loading: string;
+    noResults: string;
+    failed: string;
+    loadMore: string;
+    retry: string;
+    results: (count: number) => string;
     /** The active option with its place, and its type when it has one, so a user and a group of one name differ. */
-    readonly option: (option: ListboxOption, position: number, total: number) => string;
+    option: (option: ListboxOption, position: number, total: number) => string;
     /** Two messages as one announcement, so the second does not cut the first off. */
-    readonly both: (first: string, second: string) => string;
+    both: (first: string, second: string) => string;
 };
 
 /** The list strings from the chrome's `t`, which the mention list says too. */

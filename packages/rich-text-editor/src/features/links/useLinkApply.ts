@@ -89,7 +89,7 @@ export const useLinkApply = (
             openInNewWindow: newWindow,
             styleId: styleId === '' ? null : styleId,
         };
-        let options: { readonly target: SelectionHandle } | undefined;
+        let options: { target: SelectionHandle } | undefined;
         if (!here && target !== undefined) {
             options = { target };
         }

@@ -18,11 +18,11 @@ const SearchDialog = ({
     opener,
     onClose,
 }: {
-    readonly api: EditorApi;
-    readonly resourceTypes: readonly string[];
+    api: EditorApi;
+    resourceTypes: readonly string[];
     /** The element that had focus when the dialog opened, which Cancel and Escape return focus to. */
-    readonly opener: Element | null;
-    readonly onClose: () => void;
+    opener: Element | null;
+    onClose: () => void;
 }) => {
     const state = useSearchDialogState(api, resourceTypes, opener, onClose);
     const { strings, testId } = state;
@@ -44,7 +44,7 @@ export const MentionSearchDialog = ({
     resourceTypes,
     close,
     opener,
-}: OverlayProps & { readonly resourceTypes: readonly string[] }) => {
+}: OverlayProps & { resourceTypes: readonly string[] }) => {
     const api = useEditorApi();
     if (api === undefined) {
         return null;

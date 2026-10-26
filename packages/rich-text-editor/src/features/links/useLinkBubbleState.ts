@@ -30,7 +30,7 @@ export const useLinkBubbleState = ({ toolbarRef, covered }: StandingOverlayProps
     const caret = useEditorValue(caretOf, sameRange);
     const focus = useScopedFocus();
     const urlId = useId();
-    const [closed, setClosed] = useState<{ readonly at: ReturnType<typeof caretOf> }>();
+    const [closed, setClosed] = useState<{ at: ReturnType<typeof caretOf> }>();
     // A caret move ends the close, so moving again within or into the link shows the bubble once more.
     if (closed !== undefined && !sameRange(closed.at, caret)) {
         setClosed(undefined);

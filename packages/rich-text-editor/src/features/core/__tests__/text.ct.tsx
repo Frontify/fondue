@@ -299,11 +299,11 @@ test('runs no key handler, keymap or toolbar shortcut for a keydown of a composi
     // Enter, Backspace, Tab, Escape, the toolbar shortcut and each Shortcuts table row of the delivered features.
     const mod = { meta: apple, ctrl: !apple };
     const keys: readonly {
-        readonly key: string;
-        readonly meta?: boolean;
-        readonly ctrl?: boolean;
-        readonly alt?: boolean;
-        readonly shift?: boolean;
+        key: string;
+        meta?: boolean;
+        ctrl?: boolean;
+        alt?: boolean;
+        shift?: boolean;
     }[] = [
         { key: 'Enter' },
         { key: 'Enter', shift: true },

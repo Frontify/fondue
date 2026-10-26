@@ -234,11 +234,11 @@ describe('the upload slot', () => {
     });
 
     it.each([
-        ['cancel', async (mounted: MountedUploads & { readonly nodeId: string }) => cancel(mounted, mounted.nodeId)],
+        ['cancel', async (mounted: MountedUploads & { nodeId: string }) => cancel(mounted, mounted.nodeId)],
         ['undo', async (mounted: MountedUploads) => mounted.undo()],
         [
             'deletion of the slot',
-            async (mounted: MountedUploads & { readonly nodeId: string }) => {
+            async (mounted: MountedUploads & { nodeId: string }) => {
                 setSelection(mounted.handle, { nodeId: mounted.figureOf(mounted.nodeId) });
                 act(() => pressKey(mounted.handle, 'Backspace'));
                 await settle();
@@ -291,7 +291,7 @@ describe('the upload slot', () => {
         ],
     ] as const)('inserts nothing and releases the upload once when its result arrives after %s', async (_name, end) => {
         const mounted = await started();
-        await end(mounted as MountedUploads & { readonly nodeId: string });
+        await end(mounted as MountedUploads & { nodeId: string });
         const after = structuredClone(mounted.blocksOf());
 
         mounted.uploads.pending[0]?.resolve(mounted.uploads.asset(0));

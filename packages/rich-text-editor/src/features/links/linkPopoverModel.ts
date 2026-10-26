@@ -15,43 +15,43 @@ export const SET_LINK = 'link.set';
 
 /** The link popover's strings, in the UI locale. */
 export type LinkPopoverStrings = {
-    readonly title: string;
-    readonly destination: string;
-    readonly text: string;
-    readonly newWindow: string;
-    readonly style: string;
-    readonly noStyle: string;
-    readonly invalid: string;
+    title: string;
+    destination: string;
+    text: string;
+    newWindow: string;
+    style: string;
+    noStyle: string;
+    invalid: string;
     /** The schemes `allowedSchemes` lists, joined in the UI locale, which a link must start with. */
-    readonly schemesAllowed: (schemes: string) => string;
+    schemesAllowed: (schemes: string) => string;
     /** The hosts `allowedHosts` lists, joined in the UI locale, which a link must go to. */
-    readonly hostsAllowed: (hosts: string) => string;
+    hostsAllowed: (hosts: string) => string;
     /** Apply could not run for another reason, such as a read-only editor. */
-    readonly failed: string;
-    readonly removed: string;
-    readonly insertNew: string;
-    readonly results: string;
+    failed: string;
+    removed: string;
+    insertNew: string;
+    results: string;
     /** What the live region says for the active destination, such as `Brand colors, 1 of 3`. */
-    readonly result: (label: string, position: number, total: number) => string;
-    readonly apply: string;
+    result: (label: string, position: number, total: number) => string;
+    apply: string;
 };
 
 /** A presentation style the Style select offers. */
 export type LinkStyleOption = {
-    readonly id: string;
-    readonly label: string;
+    id: string;
+    label: string;
 };
 
 /** What the popover opens with, read when its command ran. */
 export type LinkInitial = {
-    readonly href: string;
-    readonly text: string;
-    readonly openInNewWindow: boolean;
-    readonly styleId: string;
+    href: string;
+    text: string;
+    openInNewWindow: boolean;
+    styleId: string;
     /** The field that takes focus: the text at a caret outside a link, else the destination. */
-    readonly focus: 'text' | 'destination';
+    focus: 'text' | 'destination';
     /** The whole link the popover edits, which it anchors to. */
-    readonly link: EditorRange | undefined;
+    link: EditorRange | undefined;
 };
 
 const textOf = (value: unknown): string => (typeof value === 'string' ? value : '');
@@ -59,7 +59,7 @@ const textOf = (value: unknown): string => (typeof value === 'string' ? value : 
 /** The options of the `links` feature: its URL policy and the resource types its popover searches. */
 const linkOptions = (
     options: JsonObject | undefined,
-): { readonly policy: HrefPolicy | undefined; readonly resourceTypes: readonly string[] } => {
+): { policy: HrefPolicy | undefined; resourceTypes: readonly string[] } => {
     if (options === undefined) {
         return { policy: undefined, resourceTypes: [] };
     }

@@ -34,9 +34,9 @@ export const NumberingDialog = ({
     close: onClose,
 }: OverlayProps & {
     /** The payload declaration of `SET_START`. */
-    readonly payload: PayloadDeclaration;
+    payload: PayloadDeclaration;
     /** The `start` of the list at the selection when the dialog opened. */
-    readonly initial: number;
+    initial: number;
 }) => {
     const api = useEditorApi();
     let t: CodecContext['t'] = (key) => key;
@@ -53,7 +53,7 @@ export const NumberingDialog = ({
     const { min, max } = boundsOf(payload);
     const range = t('RichTextEditor_startNumberingRange', { min, max });
     let status: 'error' | 'neutral' = 'neutral';
-    let describedBy: { readonly 'aria-describedby'?: string } = {};
+    let describedBy: { 'aria-describedby'?: string } = {};
     if (invalid) {
         status = 'error';
         describedBy = { 'aria-describedby': errorId };

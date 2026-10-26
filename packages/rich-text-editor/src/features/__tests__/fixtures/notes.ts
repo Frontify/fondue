@@ -27,7 +27,7 @@ const isObject = (value: unknown): value is JsonObject =>
 const rewrite = (
     value: JsonValue,
     path: string,
-    visit: (node: JsonObject, path: string) => { readonly node: JsonObject; readonly descend: boolean },
+    visit: (node: JsonObject, path: string) => { node: JsonObject; descend: boolean },
 ): JsonValue => {
     if (!isObject(value)) {
         return value;

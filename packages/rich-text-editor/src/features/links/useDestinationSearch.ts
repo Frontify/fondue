@@ -21,7 +21,7 @@ export const useDestinationSearch = (
     strings: LinkPopoverStrings,
 ) => {
     // The results of the last finished search, with the query they answer, so a changed query shows none of them.
-    const [found, setFound] = useState<{ readonly query: string; readonly items: readonly Destination[] }>({
+    const [found, setFound] = useState<{ query: string; items: readonly Destination[] }>({
         query: '',
         items: [],
     });

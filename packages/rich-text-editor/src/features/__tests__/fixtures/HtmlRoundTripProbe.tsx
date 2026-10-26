@@ -17,9 +17,9 @@ const definition = defineEditor({ id: 'test.lossless', model: losslessModel, plu
 
 /** One generated document whose pasted `toHTML` output differs from it. */
 type Mismatch = {
-    readonly html: string;
-    readonly expected: readonly ContentNodeJSON[];
-    readonly pasted: readonly ContentNodeJSON[];
+    html: string;
+    expected: readonly ContentNodeJSON[];
+    pasted: readonly ContentNodeJSON[];
 };
 
 declare global {

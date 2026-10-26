@@ -21,9 +21,7 @@ import { spotlight } from './feature';
 
 const PANEL = 'fixture.spotlight';
 
-const STRINGS: Readonly<
-    Record<string, { readonly toggle: string; readonly panel: string; readonly count: (count: number) => string }>
-> = {
+const STRINGS: Readonly<Record<string, { toggle: string; panel: string; count: (count: number) => string }>> = {
     'en-US': { toggle: 'Spotlight', panel: 'Spotlit passages', count: (count) => `${count} spotlit passages` },
     'de-DE': {
         toggle: 'Hervorheben',

@@ -8,17 +8,17 @@ export const SET_LANGUAGE = 'mark.language.set';
 
 /** The language dialog's strings, in the UI locale. */
 export type LanguageStrings = {
-    readonly title: string;
-    readonly tag: string;
-    readonly direction: string;
-    readonly none: string;
-    readonly automatic: string;
-    readonly leftToRight: string;
-    readonly rightToLeft: string;
-    readonly invalid: string;
-    readonly remove: string;
-    readonly apply: string;
-    readonly cancel: string;
+    title: string;
+    tag: string;
+    direction: string;
+    none: string;
+    automatic: string;
+    leftToRight: string;
+    rightToLeft: string;
+    invalid: string;
+    remove: string;
+    apply: string;
+    cancel: string;
 };
 
 export const directions = [
@@ -91,7 +91,7 @@ export const directionOf = (value: string): 'ltr' | 'rtl' | 'auto' | null => {
 };
 
 /** The language mark at the selection's start, used to fill the dialog. */
-export const currentLanguage = (api: EditorApi | undefined): { readonly lang: string; readonly dir: string } => {
+export const currentLanguage = (api: EditorApi | undefined): { lang: string; dir: string } => {
     if (api === undefined) {
         return { lang: '', dir: '' };
     }

@@ -45,14 +45,14 @@ export const image = (assetId: string): ContentNodeJSON => ({
 });
 
 type LayoutMount = {
-    readonly model?: ContentModel;
-    readonly blocks: readonly ContentNodeJSON[];
-    readonly columns?: number;
-    readonly columnGap?: string;
-    readonly toolbar?: ReactPresentation['toolbar'];
-    readonly policy?: Partial<AuthoringPolicy>;
+    model?: ContentModel;
+    blocks: readonly ContentNodeJSON[];
+    columns?: number;
+    columnGap?: string;
+    toolbar?: ReactPresentation['toolbar'];
+    policy?: Partial<AuthoringPolicy>;
     /** The input rules the editor leaves out. */
-    readonly excludeRules?: readonly string[];
+    excludeRules?: readonly string[];
 };
 
 /** Mounts `RichTextEditor` with a presentation of `columns` and runs the first frame, so the editor is `ready`. */
@@ -105,9 +105,9 @@ export const mountLayout = ({
 
 /** Presses a key at the surface, with the legacy `keyCode` ProseMirror reads for Enter, Backspace, Delete and arrows. */
 export const press = (
-    { view }: { readonly view: ReturnType<typeof mountLayout>['view'] },
+    { view }: { view: ReturnType<typeof mountLayout>['view'] },
     key: string,
-    modifiers: { readonly meta?: boolean; readonly ctrl?: boolean; readonly shift?: boolean } = {},
+    modifiers: { meta?: boolean; ctrl?: boolean; shift?: boolean } = {},
 ) => {
     const codes: Readonly<Record<string, number>> = {
         Backspace: 8,

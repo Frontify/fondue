@@ -47,7 +47,7 @@ describe('the controls an image insert and an upload start open', () => {
         commands: {
             'acme.image.pick': {
                 payload: { fields: { nodeId: { type: 'string' } } },
-                run: (api, _payload: { readonly nodeId: string }) => {
+                run: (api, _payload: { nodeId: string }) => {
                     api.uploads.pick();
 
                     return true;

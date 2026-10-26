@@ -17,7 +17,7 @@ import {
 import { languageChoices } from './languages';
 import styles from './styles/code.module.scss';
 
-type CodeCommands = { readonly 'code-block.language.set': { readonly languageId: string | null } };
+type CodeCommands = { 'code-block.language.set': { languageId: string | null } };
 
 /** The language menu and Copy button of `code_block`. */
 const CodeChrome = () => {

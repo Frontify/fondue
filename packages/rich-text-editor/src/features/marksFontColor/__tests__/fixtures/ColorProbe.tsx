@@ -11,8 +11,8 @@ import { setSelection } from '#/testing';
 const presentation = defineReactPresentation({ colorTokens: COLOR_TOKENS, toolbar: [['mark.color.menu.open']] });
 
 export type ColorChange = {
-    readonly commandId: string | null;
-    readonly origin: string;
+    commandId: string | null;
+    origin: string;
 };
 
 declare global {
@@ -20,9 +20,9 @@ declare global {
     interface Window {
         /** The colour probe's handle, the selection helper and each change. */
         colorRte?: {
-            readonly handle: EditorHandle;
-            readonly setSelection: typeof setSelection;
-            readonly changes: ColorChange[];
+            handle: EditorHandle;
+            setSelection: typeof setSelection;
+            changes: ColorChange[];
         };
     }
 }
@@ -31,7 +31,7 @@ declare global {
  * Mounts `marks.font-color` and the highlight stand-in through `RichTextEditor` with the colour menu in the toolbar,
  * each with `literalColors` when `literal` is set, over one paragraph.
  */
-export const ColorProbe = ({ literal = false }: { readonly literal?: boolean }) => {
+export const ColorProbe = ({ literal = false }: { literal?: boolean }) => {
     const [mounted] = useState(() => {
         const model = styleModel(literal);
 

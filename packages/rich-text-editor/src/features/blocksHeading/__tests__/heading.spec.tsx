@@ -141,7 +141,7 @@ describe('blocks.heading', () => {
 
             return [changes.length, snapshot.stamp.sequence, snapshot.document.content, shown];
         });
-        const stored = (document: { readonly content: { readonly content?: readonly ContentNodeJSON[] } }) =>
+        const stored = (document: { content: { content?: readonly ContentNodeJSON[] } }) =>
             (document.content.content ?? []).map((block) => {
                 let level: unknown;
                 if (block.attrs !== undefined) {

@@ -182,7 +182,7 @@ const slotStates = (state: EditorState): EditorState[] => {
  */
 export const commandCases = (features: readonly Feature[], plugins?: readonly EditorPart[]): void => {
     // The runner's global `it`, as the contract suite takes it, so a stand-in runner collects these cases too.
-    const { it } = globalThis as unknown as { readonly it: typeof runnerIt };
+    const { it } = globalThis as unknown as { it: typeof runnerIt };
     const model = compileContentModel(features, { id: 'feature-contract', version: 1 });
     const installed = compiledModel(model).features;
     const given = plugins ?? [];
@@ -361,7 +361,7 @@ const stepsOf = (transaction: Transaction | null) => {
  * and runs synchronously with no I/O or timer.
  */
 export const normalizerCases = (features: readonly Feature[], documents?: readonly RichTextDocument[]): void => {
-    const { it } = globalThis as unknown as { readonly it: typeof runnerIt };
+    const { it } = globalThis as unknown as { it: typeof runnerIt };
     const model = compileContentModel(features, { id: 'feature-contract', version: 1 });
     const given = documents ?? fixturesOf(features);
     const statesOf = () => {
@@ -389,7 +389,7 @@ export const normalizerCases = (features: readonly Feature[], documents?: readon
     };
 
     // Read at run time, so a case runs the normalizer that is registered then.
-    const normalizerOf = (id: string) => (NORMALIZERS[id] as { readonly normalize: Normalizer }).normalize;
+    const normalizerOf = (id: string) => (NORMALIZERS[id] as { normalize: Normalizer }).normalize;
     for (const { id } of compiledModel(model).plugins) {
         if (NORMALIZERS[id] === undefined) {
             continue;
@@ -495,10 +495,10 @@ const allowedParents = (type: NodeType): string[] =>
         .map(({ name }) => name);
 
 type BuiltView = {
-    readonly node: Node;
-    readonly parent: string;
-    readonly view: NodeView;
-    readonly chrome: HTMLElement;
+    node: Node;
+    parent: string;
+    view: NodeView;
+    chrome: HTMLElement;
 };
 
 /**
@@ -511,7 +511,7 @@ export const nodeViewCases = (
     documents: readonly RichTextDocument[],
     plugins: readonly EditorPart[] = [],
 ): void => {
-    const { it } = globalThis as unknown as { readonly it: typeof runnerIt };
+    const { it } = globalThis as unknown as { it: typeof runnerIt };
     const model = compileContentModel(features, { id: 'feature-contract', version: 1 });
     const definition = defineEditor({ id: 'feature-contract', model, plugins: unitsOf(model, plugins) });
     const views = viewsOf(definition);

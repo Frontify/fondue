@@ -27,7 +27,7 @@ type Mounted = ReturnType<typeof mountStyled>;
 
 const marksOf = ({ handle }: Mounted) =>
     (handle.getSnapshot().document.content.content?.[0]?.content ?? []).map((node) => [node.text, node.marks ?? []]);
-const openMenu = (mounted: Mounted, payload?: { readonly tokenIds: readonly string[] }) => {
+const openMenu = (mounted: Mounted, payload?: { tokenIds: readonly string[] }) => {
     act(() => {
         mounted.handle.execute('mark.color.menu.open', payload);
     });

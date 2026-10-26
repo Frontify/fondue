@@ -24,7 +24,7 @@ declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The mention probe's handle and the selection helper the specs drive it with. */
-        mentionRte?: { readonly handle: EditorHandle; readonly setSelection: typeof setSelection };
+        mentionRte?: { handle: EditorHandle; setSelection: typeof setSelection };
     }
 }
 
@@ -44,7 +44,7 @@ const DOCUMENTS = {
 };
 
 /** Mounts `mentions` over a fake `ReferenceService` between two focusable buttons, with the mention toolbar button. */
-export const MentionProbe = ({ content = 'text' }: { readonly content?: keyof typeof DOCUMENTS }) => {
+export const MentionProbe = ({ content = 'text' }: { content?: keyof typeof DOCUMENTS }) => {
     const ref = useRef<EditorHandle>(null);
     useEffect(() => {
         const handle = ref.current;

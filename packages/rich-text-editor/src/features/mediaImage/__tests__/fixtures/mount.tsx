@@ -76,7 +76,7 @@ export const storedIn = (model: ContentModel, blocks: readonly ContentNodeJSON[]
     }) as unknown as RichTextDocument;
 
 /** A URL per asset, as a host's `resolveAssetUrl` gives one at render time. */
-export const resolving = (assetId: string, { width }: { readonly width?: number }) => {
+export const resolving = (assetId: string, { width }: { width?: number }) => {
     let size = '';
     if (width !== undefined) {
         size = `?w=${width}`;
@@ -87,16 +87,16 @@ export const resolving = (assetId: string, { width }: { readonly width?: number 
 
 /** One pick the host picker has not answered yet. */
 export type PendingPick = {
-    readonly request: { readonly purpose: string };
-    readonly context: ServiceContext;
-    readonly resolve: (value: AssetValue | null) => void;
+    request: { purpose: string };
+    context: ServiceContext;
+    resolve: (value: AssetValue | null) => void;
 };
 
 /** A host asset picker that answers each pick only when the test does. */
 export const deferredPicker = () => {
     const pending: PendingPick[] = [];
     const pick = vi.fn(
-        (request: { readonly purpose: string }, context: ServiceContext) =>
+        (request: { purpose: string }, context: ServiceContext) =>
             new Promise<AssetValue | null>((resolve) => {
                 pending.push({ request, context, resolve });
             }),
@@ -108,12 +108,12 @@ export const deferredPicker = () => {
 export const PALETTE: AssetValue = { assetId: 'asset-palette', mediaType: 'image/jpeg', labelSnapshot: 'palette.jpg' };
 
 type Mount = {
-    readonly model?: ContentModel;
-    readonly blocks?: readonly ContentNodeJSON[];
-    readonly services?: EditorServices;
-    readonly presentation?: ReactPresentation;
-    readonly toolbar?: ReactPresentation['toolbar'];
-    readonly policy?: Partial<AuthoringPolicy>;
+    model?: ContentModel;
+    blocks?: readonly ContentNodeJSON[];
+    services?: EditorServices;
+    presentation?: ReactPresentation;
+    toolbar?: ReactPresentation['toolbar'];
+    policy?: Partial<AuthoringPolicy>;
 };
 
 /** The commands of the default image model, which a given model keeps. */

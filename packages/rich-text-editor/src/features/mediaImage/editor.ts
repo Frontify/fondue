@@ -28,7 +28,7 @@ const selectedImage = (api: EditorControlApi) => {
 };
 
 /** The image a command acts on: the one `payload` names, else the selected one. */
-const targetOf = (api: EditorControlApi, payload: { readonly nodeId?: string } | undefined) => {
+const targetOf = (api: EditorControlApi, payload: { nodeId?: string } | undefined) => {
     const given = payload?.nodeId;
     if (given !== undefined) {
         return given;
@@ -56,13 +56,13 @@ export const mediaImageEditor = defineEditorPart(mediaImage, {
         },
         'image.replace': {
             payload: NODE,
-            enabled: (api, payload: { readonly nodeId?: string } | undefined) => {
+            enabled: (api, payload: { nodeId?: string } | undefined) => {
                 const nodeId = targetOf(api, payload);
 
                 return nodeId !== undefined && isImage(api, nodeId);
             },
             // With no `nodeId`, it replaces the selected image.
-            run: (api, payload: { readonly nodeId?: string } | undefined) => {
+            run: (api, payload: { nodeId?: string } | undefined) => {
                 const nodeId = targetOf(api, payload);
                 if (nodeId === undefined || !isImage(api, nodeId)) {
                     return false;
@@ -152,11 +152,11 @@ export const mediaImageEditor = defineEditorPart(mediaImage, {
         },
         'image.size.set': {
             payload: { fields: { displayWidth: { type: 'integer', min: 10, max: 100, nullable: true } } },
-            run: (api, payload: { readonly displayWidth: number | null }) => api.attributes.set(IMAGE, payload),
+            run: (api, payload: { displayWidth: number | null }) => api.attributes.set(IMAGE, payload),
         },
         'image.align.set': {
             payload: { fields: { align: { type: 'enum', values: SIDES } } },
-            run: (api, payload: { readonly align: (typeof SIDES)[number] }) => api.attributes.set('figure', payload),
+            run: (api, payload: { align: (typeof SIDES)[number] }) => api.attributes.set('figure', payload),
         },
     },
     toolbar: [

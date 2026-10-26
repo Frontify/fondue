@@ -37,7 +37,7 @@ export const languageEditor = defineEditorPart(language, {
                     dir: { type: 'enum', values: DIRECTIONS, nullable: true },
                 },
             },
-            run: (api, payload: { readonly lang: string; readonly dir: 'ltr' | 'rtl' | 'auto' | null } | null) => {
+            run: (api, payload: { lang: string; dir: 'ltr' | 'rtl' | 'auto' | null } | null) => {
                 if (payload === null) {
                     return api.marks.remove('language', { extendToMarkRange: true });
                 }

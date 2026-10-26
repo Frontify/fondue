@@ -31,7 +31,7 @@ const transfer = (data: Readonly<Record<string, string>>, files: readonly File[]
     return dataTransfer;
 };
 
-const pasteInto = async (mounted: MountedUploads, input: { readonly text?: string }, files: readonly File[]) => {
+const pasteInto = async (mounted: MountedUploads, input: { text?: string }, files: readonly File[]) => {
     act(() => {
         paste(mounted.handle, { ...input, files });
     });

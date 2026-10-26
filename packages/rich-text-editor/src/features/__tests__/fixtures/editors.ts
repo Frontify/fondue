@@ -47,7 +47,7 @@ export const fixtureHeadingEditor = defineEditorPart(fixtureHeading, {
     commands: {
         'fixture.heading.set': {
             payload: LEVEL,
-            run: (api, { level }: { readonly level: number }) => api.blocks.set('heading', { level }),
+            run: (api, { level }: { level: number }) => api.blocks.set('heading', { level }),
             active: (api, { level }) => api.blocks.active('heading', { level }),
         },
         'fixture.rule.insert': { run: (api) => api.insert.node('rule').status === 'applied' },
@@ -69,7 +69,7 @@ export const fixtureHeadingSetEditor = defineEditorPart(fixtureHeadingSet, {
     commands: {
         'heading.set': {
             payload: LEVEL,
-            run: (api, { level }: { readonly level: number }) => api.blocks.set('heading', { level }),
+            run: (api, { level }: { level: number }) => api.blocks.set('heading', { level }),
             active: (api, { level }) => api.blocks.active('heading', { level }),
         },
     },
@@ -116,8 +116,7 @@ export const fixtureToolbarEditor = defineEditorPart(fixtureToolbar, {
         },
         'fixture.heading.set': {
             payload: LEVEL,
-            run: (api, { level }: { readonly level: number }) =>
-                api.blocks.set('toggled_heading', { level }, { toggle: true }),
+            run: (api, { level }: { level: number }) => api.blocks.set('toggled_heading', { level }, { toggle: true }),
             active: (api, { level }) => api.blocks.active('toggled_heading', { level }),
         },
         'fixture.history.undo': { run: (api) => api.history.undo() },
@@ -181,7 +180,7 @@ export const fixtureHighlightEditor = defineEditorPart(fixtureHighlight, {
                 exactlyOne: ['tokenId', 'value'],
                 nullable: true,
             },
-            run: (api, payload: { readonly tokenId: string } | { readonly value: string } | null) => {
+            run: (api, payload: { tokenId: string } | { value: string } | null) => {
                 if (payload === null) {
                     return api.marks.remove('highlight');
                 }
@@ -205,7 +204,7 @@ export const fixtureEmbedEditor = defineEditorPart(fixtureEmbed, {
     commands: {
         'embed.edit': {
             payload: { fields: { title: { type: 'string' } } },
-            run: (api, payload: { readonly title: string }) => api.attributes.set('embed', payload),
+            run: (api, payload: { title: string }) => api.attributes.set('embed', payload),
             active: (api, payload) => api.attributes.active('embed', payload),
         },
     },

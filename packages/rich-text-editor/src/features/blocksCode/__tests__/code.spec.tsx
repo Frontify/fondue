@@ -41,11 +41,7 @@ const blockText = (handle: ReturnType<typeof mountText>['handle'], index = 0) =>
 };
 
 /** Presses `key` and reports whether the surface prevented it. */
-const press = (
-    view: ReturnType<typeof mountText>['view'],
-    key: string,
-    modifiers: { readonly shift?: boolean } = {},
-) => {
+const press = (view: ReturnType<typeof mountText>['view'], key: string, modifiers: { shift?: boolean } = {}) => {
     const event = new KeyboardEvent('keydown', {
         key,
         bubbles: true,

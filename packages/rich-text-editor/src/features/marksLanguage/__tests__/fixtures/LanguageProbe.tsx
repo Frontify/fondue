@@ -47,7 +47,7 @@ declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The language probe's handle and the selection helper. */
-        languageRte?: { readonly handle: EditorHandle; readonly setSelection: typeof setSelection };
+        languageRte?: { handle: EditorHandle; setSelection: typeof setSelection };
     }
 }
 
@@ -55,7 +55,7 @@ declare global {
  * Mounts `marks.language` with a long `languages` option over a Chinese passage, with Language on the toolbar when
  * `inToolbar` is set and otherwise only in More.
  */
-export const LanguageProbe = ({ inToolbar = false }: { readonly inToolbar?: boolean }) => {
+export const LanguageProbe = ({ inToolbar = false }: { inToolbar?: boolean }) => {
     const [presentation] = useState(() => {
         if (inToolbar) {
             return defineReactPresentation({ toolbar: [['mark.bold.toggle', 'mark.language.edit']] });

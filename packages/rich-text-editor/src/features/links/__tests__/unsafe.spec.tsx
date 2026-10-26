@@ -16,7 +16,7 @@ import { mountText, para, storedIn, text } from '#/react/__tests__/fixtures/text
 const injected = vi.hoisted(() => ({ href: undefined as string | undefined }));
 
 vi.mock('#/model/decode', async (importOriginal) => {
-    const original = await importOriginal<{ readonly decodeToTree: typeof RealDecode }>();
+    const original = await importOriginal<{ decodeToTree: typeof RealDecode }>();
 
     return {
         ...original,

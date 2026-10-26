@@ -85,12 +85,12 @@ const COMMENT_RULES = [
 const DOCUMENT_RULES = [...COMMENT_RULES, 'heading.hashes', 'rule.dashes'];
 
 type Row = {
-    readonly name: string;
-    readonly profile: () => ShippedProfile;
-    readonly model: ContentModel;
-    readonly installed: readonly string[];
-    readonly creatable: readonly string[];
-    readonly rules: readonly string[];
+    name: string;
+    profile: () => ShippedProfile;
+    model: ContentModel;
+    installed: readonly string[];
+    creatable: readonly string[];
+    rules: readonly string[];
 };
 const ROWS: readonly Row[] = [
     {

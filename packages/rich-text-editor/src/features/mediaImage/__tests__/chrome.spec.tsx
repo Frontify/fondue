@@ -357,7 +357,7 @@ describe('a replaced image', () => {
             );
         });
         const slice = JSON.parse(clipboardData.getData(SLICE_TYPE) || '{}') as {
-            readonly content?: readonly { readonly type: string; readonly attrs?: Record<string, unknown> }[];
+            content?: readonly { type: string; attrs?: Record<string, unknown> }[];
         };
 
         expect(clipboardData.getData('text/html')).toContain('<figure dir="auto" style="text-align:right"><img');

@@ -43,7 +43,7 @@ const removeFigure = (api: EditorApi | undefined, nodeId: string) => {
 };
 
 /** The image, its upload slot or its placeholder, whichever the node shows. */
-export const ImageBody = ({ chrome }: { readonly chrome: ImageChromeState }) => {
+export const ImageBody = ({ chrome }: { chrome: ImageChromeState }) => {
     const { attrs, context, t, shown, unavailable, unfinished, status, resize, decided, animated, paused } = chrome;
     const { frameRef, setFailed, selectImage } = chrome;
     if (status !== undefined) {
@@ -107,7 +107,7 @@ export const ImageBody = ({ chrome }: { readonly chrome: ImageChromeState }) => 
 };
 
 /** The size menu, whose Edit width choice opens the width dialog once the menu returned focus. */
-const SizeMenu = ({ chrome }: { readonly chrome: ImageChromeState }) => {
+const SizeMenu = ({ chrome }: { chrome: ImageChromeState }) => {
     const { t, sizeText, displayWidth, pendingRef, runOption, openWidth } = chrome;
 
     return (
@@ -147,7 +147,7 @@ const SizeMenu = ({ chrome }: { readonly chrome: ImageChromeState }) => {
     );
 };
 
-const AlignMenu = ({ chrome }: { readonly chrome: ImageChromeState }) => {
+const AlignMenu = ({ chrome }: { chrome: ImageChromeState }) => {
     const { t, side, runOption } = chrome;
 
     return (
@@ -162,7 +162,7 @@ const AlignMenu = ({ chrome }: { readonly chrome: ImageChromeState }) => {
 };
 
 /** The chrome's toolbar: upload controls, alternative text, size, alignment, Replace and Pause. */
-export const ImageToolbar = ({ chrome, nodeId }: { readonly chrome: ImageChromeState; readonly nodeId: string }) => {
+export const ImageToolbar = ({ chrome, nodeId }: { chrome: ImageChromeState; nodeId: string }) => {
     const { api, t, execute, shown, unfinished, status, review, reviewId, paused, animated, altText, setPlayed } =
         chrome;
 

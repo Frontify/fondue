@@ -19,7 +19,7 @@ const MOTION_MS = 5000;
  * The progress bar, named by the file; an indeterminate one, which mounts anew each time it starts, stops moving after
  * its time.
  */
-const ProgressBar = ({ name, value }: { readonly name: string; readonly value: number | null }) => {
+const ProgressBar = ({ name, value }: { name: string; value: number | null }) => {
     const [still, setStill] = useState(false);
     const indeterminate = value === null;
     useEffect(() => {
@@ -53,12 +53,12 @@ export const UploadSlot = ({
     t,
     onMouseDown,
 }: {
-    readonly status: UploadStatus;
-    readonly width: number | null;
-    readonly height: number | null;
-    readonly t: CodecContext['t'];
+    status: UploadStatus;
+    width: number | null;
+    height: number | null;
+    t: CodecContext['t'];
     /** Selects the image, since node chrome keeps its own mouse events from the editor. */
-    readonly onMouseDown: (event: MouseEvent) => void;
+    onMouseDown: (event: MouseEvent) => void;
 }) => {
     let shape: CSSProperties | undefined;
     if (width !== null && height !== null) {
@@ -93,10 +93,10 @@ export const UploadControls = ({
     t,
     onRemove,
 }: {
-    readonly nodeId: string;
-    readonly status: UploadStatus;
-    readonly t: CodecContext['t'];
-    readonly onRemove: () => void;
+    nodeId: string;
+    status: UploadStatus;
+    t: CodecContext['t'];
+    onRemove: () => void;
 }) => {
     const api = useEditorApi();
     // These keep their identity when a locale change gives a new API, which reruns no effect.

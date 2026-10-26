@@ -263,7 +263,7 @@ describe('concurrent uploads', () => {
                 'acme.upload.retry': {
                     payload: { fields: { nodeId: { type: 'string' } } },
                     readOnly: true,
-                    run: (api, payload: { readonly nodeId: string }) => api.uploads.retry(payload.nodeId),
+                    run: (api, payload: { nodeId: string }) => api.uploads.retry(payload.nodeId),
                 },
             },
         });

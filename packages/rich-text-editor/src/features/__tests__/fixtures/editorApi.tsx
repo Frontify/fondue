@@ -53,13 +53,13 @@ export const stored = {
 } as unknown as RichTextDocument;
 
 export type Mount = {
-    readonly presentation?: ReactPresentation;
-    readonly policy?: Partial<AuthoringPolicy>;
-    readonly limits?: Partial<ResourceLimits>;
-    readonly readOnly?: boolean;
-    readonly disabled?: boolean;
-    readonly model?: ContentModel;
-    readonly document?: RichTextDocument;
+    presentation?: ReactPresentation;
+    policy?: Partial<AuthoringPolicy>;
+    limits?: Partial<ResourceLimits>;
+    readOnly?: boolean;
+    disabled?: boolean;
+    model?: ContentModel;
+    document?: RichTextDocument;
 };
 
 export const blocksOf = (handle: Handle) => handle.getSnapshot().document.content.content;
@@ -104,9 +104,9 @@ export const textsOf = (handle: Handle) =>
     blocksOf(handle)?.map((block) => (block.content ?? []).map((child) => child.text ?? '').join(''));
 
 export type ProbeHooks = {
-    readonly script: () => (api: EditorApi) => boolean;
-    readonly setScript: (run: (api: EditorApi) => boolean) => void;
-    readonly setLive?: (api: EditorApi | undefined) => void;
+    script: () => (api: EditorApi) => boolean;
+    setScript: (run: (api: EditorApi) => boolean) => void;
+    setLive?: (api: EditorApi | undefined) => void;
 };
 
 /** The probe plugin and the helpers that run it, bound to the spec's own script and live API. */

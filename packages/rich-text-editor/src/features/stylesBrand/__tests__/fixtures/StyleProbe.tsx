@@ -34,8 +34,8 @@ const document = styledDocument(model, [
 ]);
 
 export type StyleChange = {
-    readonly commandId: string | null;
-    readonly sequence: number;
+    commandId: string | null;
+    sequence: number;
 };
 
 declare global {
@@ -43,9 +43,9 @@ declare global {
     interface Window {
         /** The style probe's handle, the selection helper and each change. */
         styleRte?: {
-            readonly handle: EditorHandle;
-            readonly setSelection: typeof setSelection;
-            readonly changes: StyleChange[];
+            handle: EditorHandle;
+            setSelection: typeof setSelection;
+            changes: StyleChange[];
         };
     }
 }
@@ -54,7 +54,7 @@ declare global {
  * Mounts the brand style features through `RichTextEditor` with the shared style map and the text style picker, and
  * below it the reader of the same document with the same presentation. `leadSize` replaces the Lead recipe's font size.
  */
-export const StyleProbe = ({ leadSize }: { readonly leadSize?: number }) => {
+export const StyleProbe = ({ leadSize }: { leadSize?: number }) => {
     const presentation = useMemo(() => {
         const styles = STYLE_MAP.map((style) => {
             if (style.id !== 'brand.lead' || leadSize === undefined) {
