@@ -7,24 +7,24 @@ import { liveResources } from '#/runtime/runtime';
 import { type NodeViewState } from './define';
 
 /** One node view's chrome: the slot it renders into and the state it reads, whose context the portal host adds. */
-export interface PortalEntry {
+export type PortalEntry = {
     readonly key: string;
     readonly slot: HTMLElement;
     readonly component: ComponentType<object>;
     readonly state: Omit<NodeViewState<object>, 'context' | 'pending'>;
     /** Moves the node's editable content into the element the chrome renders for it, or back on `null`. */
     readonly place: (element: HTMLElement | null) => void;
-}
+};
 
 /** The portals of one editor, which one host component reads. */
-export interface PortalStore {
+export type PortalStore = {
     readonly subscribe: (listener: () => void) => () => void;
     readonly getSnapshot: () => readonly PortalEntry[];
     set(entry: PortalEntry): void;
     remove(key: string): void;
     /** Drops every entry and takes no more, once a node view threw. */
     close(): void;
-}
+};
 
 const EMPTY: readonly PortalEntry[] = [];
 

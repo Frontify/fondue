@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /** What the platform check reads of `navigator`. */
-export interface PlatformNavigator {
+export type PlatformNavigator = {
     readonly platform: string;
     readonly userAgentData?: { readonly platform: string };
-}
+};
 
 const PREFIX = /^(mac|other):/;
 

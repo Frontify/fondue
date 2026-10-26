@@ -20,10 +20,10 @@ import {
 
 import { checkedAttrs } from './checked';
 
-export interface Positions {
+export type Positions = {
     readonly from: number;
     readonly to: number;
-}
+};
 
 export const RANGES = new WeakMap<object, Positions & { readonly doc: Node }>();
 
@@ -48,7 +48,7 @@ export const positionsIn = (range: EditorRange, doc: Node): Positions | undefine
 };
 
 /** Where the document API reads and writes: a running command's state, or the live session. */
-export interface ApiSource {
+export type ApiSource = {
     readonly model: ContentModel;
     readonly schema: Schema;
     readonly lookup: CommandLookup;
@@ -75,7 +75,7 @@ export interface ApiSource {
     /** Runs `effect` now, or inside a command once it has run, never for a query. */
     later(effect: () => void): void;
     uploads(): MediaSession['uploads'] | undefined;
-}
+};
 
 export const valuesOf = (attrs: Readonly<Record<string, unknown>>): JsonObject => snapshot({ ...attrs }) as JsonObject;
 

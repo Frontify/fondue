@@ -15,13 +15,13 @@ import { carriesNodeId } from '#/definition';
 import { type CaptureTargetOptions } from './types';
 
 /** A captured target as the keyed plugin state holds it. */
-interface Target extends CaptureTargetOptions {
+type Target = {
     readonly from: number;
     readonly to: number;
     /** The type and `nodeId` of the node an `edit-node` target refers to. */
     readonly node: { readonly type: string; readonly nodeId: unknown } | null;
     readonly valid: boolean;
-}
+} & CaptureTargetOptions;
 type Targets = ReadonlyMap<string, Target>;
 /** What a transaction does to the targets beside mapping them: capture one, release some, or set them all. */
 type TargetsMeta =

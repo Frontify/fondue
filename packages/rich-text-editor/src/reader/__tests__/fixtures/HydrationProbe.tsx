@@ -10,13 +10,13 @@ import { semanticModel } from './semantic';
 
 const model = semanticModel();
 
-export interface HydrationResult {
+export type HydrationResult = {
     /** `process.env.NODE_ENV` as the bundle was built; `development` keeps React's mismatch warnings. */
     readonly mode: string;
     /** Every error React reported through `onRecoverableError`. */
     readonly recoverable: readonly string[];
     readonly html: string;
-}
+};
 
 const Done = ({ onDone }: { onDone: () => void }) => {
     useEffect(onDone, [onDone]);

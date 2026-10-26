@@ -10,10 +10,10 @@ export type ReadFailure = { readonly reason: 'invalid' | 'limit-exceeded'; reado
 export type ReadResult = { readonly ok: true; readonly value: unknown } | ({ readonly ok: false } & ReadFailure);
 
 type Role = 'input' | 'node' | 'content' | 'marks' | 'mark' | 'attrs' | 'attribute' | 'text' | 'other';
-interface Counter {
+type Counter = {
     count: number;
-}
-interface Place {
+};
+type Place = {
     role: Role;
     /** Nesting below the node that holds the value, or below the input outside the root. */
     level: number;
@@ -23,7 +23,7 @@ interface Place {
     row?: Counter;
     /** On a cell, and on the `content` of a row. */
     cell?: Counter;
-}
+};
 
 const notJson = (path?: string): ReadFailure => ({
     reason: 'invalid',
@@ -101,7 +101,7 @@ const memberPlace = (place: Place, type: unknown, key: string, value: unknown): 
     }
 };
 
-interface Walk {
+type Walk = {
     readonly limits: ResourceLimits;
     readonly countBytes: boolean;
     /** Whether the walk builds a plain-data copy from the descriptor values it reads. */
@@ -113,7 +113,7 @@ interface Walk {
     nodes: number;
     /** The copy of the value the last `visit` read. */
     result: unknown;
-}
+};
 
 const failAt = (walk: Walk, fail: (path: string) => ReadFailure) => fail(pointer(...walk.keys));
 const overAt = (walk: Walk, limit: keyof ResourceLimits) => exceeded(limit, pointer(...walk.keys));

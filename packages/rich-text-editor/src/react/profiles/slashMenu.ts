@@ -8,14 +8,14 @@ import { turnIntoEntries } from '../turnInto';
 const INSERTS = /\.insert$/u;
 
 /** A unit as the list reads it: the toolbar entries of its editor part. */
-interface Unit {
+type Unit = {
     readonly editor: Pick<EditorPartSpec, 'toolbar'>;
-}
+};
 
-interface Group {
+type Group = {
     readonly headingKey: keyof TranslationStrings;
     readonly entries: readonly PluginToolbarEntry[];
-}
+};
 
 const labelOf = (api: EditorApi<'commands'>, entry: PluginToolbarEntry): string => {
     if (entry.labelKey === undefined) {

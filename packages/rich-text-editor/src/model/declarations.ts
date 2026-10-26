@@ -48,9 +48,9 @@ export type {
 } from './declarationValues';
 
 /** Reads a feature option inside its own declaration, as `{ attr }` reads an attribute. */
-export interface OptionRef {
+export type OptionRef = {
     readonly option: string;
-}
+};
 /** An HTML attribute value is a literal, a node attribute or an option, read by name. */
 export type HtmlAttributeValue = string | { readonly attr: string } | OptionRef;
 /** A literal tag, or one chosen by an attribute value, such as `h1` to `h6` from `level`. */
@@ -81,7 +81,7 @@ export type FunctionParseRule =
     | { readonly tag: string; readonly node: string; readonly value: (element: HTMLElement) => JsonObject | null };
 
 /** The declaration of a node type: its attributes, content, HTML mapping and behavior. */
-export interface NodeDeclaration {
+export type NodeDeclaration = {
     /**
      * `block` for a node that stands in a document or container; `inline` for one inside text. A `block` node whose
      * content takes only blocks, such as `block+`, is a container: Enter in its empty last paragraph leaves it, with
@@ -114,9 +114,9 @@ export interface NodeDeclaration {
     readonly parse: readonly ParseRule[];
     /** Markdown output for a block: a line prefix such as `> `, or a fence. */
     readonly markdown?: { readonly prefix: string } | { readonly fence: string };
-}
+};
 /** The declaration of a mark type: its attributes, HTML mapping and how it behaves at its edges. */
-export interface MarkDeclaration {
+export type MarkDeclaration = {
     readonly attrs: AttributeDeclarations;
     readonly exactlyOne?: readonly string[];
     readonly html: HtmlSpec;
@@ -128,32 +128,32 @@ export interface MarkDeclaration {
     readonly rank?: number;
     /** `link` and `code` are non-inclusive: typing at their end does not extend them. */
     readonly inclusive?: boolean;
-}
+};
 /** How well a format holds a feature: without loss, with loss, or not at all. */
 export type FormatSupport = 'lossless' | 'lossy' | 'unsupported';
 /** How well each export format (HTML, text, Markdown) holds the content of a feature. */
-export interface FeatureFormats {
+export type FeatureFormats = {
     readonly html: 'lossless' | 'lossy';
     readonly text: FormatSupport;
     readonly markdown: FormatSupport;
-}
+};
 
 /** The host's URL for an asset at an optional width, or `null` when it has none. */
 export type ResolveAssetUrl = (assetId: string, options: { readonly width?: number }) => string | null;
 /** What a codec override may call: asset URLs from the host, the URL check and the output locale. */
-export interface CodecContext {
+export type CodecContext = {
     readonly resolveAssetUrl?: ResolveAssetUrl;
     readonly checkHref: (input: string) => HrefResult;
     /** The output locale (`enUS` by default) and its `${var}` interpolation, so overrides render localized text with no hook or context. */
     readonly locale: RichTextLocale;
     readonly t: (key: keyof TranslationStrings, vars?: Readonly<Record<string, string | number>>) => string;
-}
+};
 /** What a reader override and node chrome read: plain data and functions, never a React context. */
-export interface ReaderContext extends CodecContext {
+export type ReaderContext = {
     readonly resolveReference: (resourceType: string, resourceId: string) => ReferenceResolution;
-}
+} & CodecContext;
 /** Code features only, for structure the data forms cannot express, such as tables, task lists and media. */
-export interface CodecOverrides {
+export type CodecOverrides = {
     readonly markdown?: {
         readonly marks?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
         readonly nodes?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
@@ -166,18 +166,18 @@ export interface CodecOverrides {
     readonly html?: {
         readonly nodes?: Readonly<Record<string, (attrs: JsonObject, context: CodecContext) => HtmlSpec>>;
     };
-}
+};
 
 /** An attribute one feature adds to other features' nodes, such as `align` on `paragraph` and `heading`. */
-export interface SharedAttributeDeclaration {
+export type SharedAttributeDeclaration = {
     readonly on: readonly string[] | 'textblocks';
     readonly value: AttributeDeclaration;
     readonly html?: { readonly attr: string } | { readonly style: string };
     readonly parse?: { readonly attr: string } | { readonly style: string };
-}
+};
 
 /** The declaration a feature is made from: its id, version, nodes, marks, commands, options and formats. */
-export interface FeatureDeclaration extends FeatureContentDeclaration {
+export type FeatureDeclaration = {
     /** The capability ID: documents record it in `requiredCapabilities`, and a policy, an editor part and the options are keyed by it, such as `marks.bold`. */
     readonly id: string;
     /** The capability version, raised when the stored shape of the feature's content changes, with a migration from the old one. */
@@ -199,7 +199,7 @@ export interface FeatureDeclaration extends FeatureContentDeclaration {
     readonly formats?: FeatureFormats;
     readonly codecs?: CodecOverrides;
     readonly parseRules?: readonly FunctionParseRule[];
-}
+} & FeatureContentDeclaration;
 /** The node attribute types a feature declaration defines, keyed by node name. */
 export type NodesOfDeclaration<D> = D extends { readonly nodes: infer N }
     ? { readonly [K in keyof N]: N[K] extends { readonly attrs: infer A } ? AttrsOf<A> : never }
@@ -218,39 +218,39 @@ export type FeatureFactory<
 > = (options?: Options) => Feature<Commands, Nodes, Marks, Id>;
 
 /** The id, version and migrations that name and version a content model when it is compiled. */
-export interface ContentModelOptions {
+export type ContentModelOptions = {
     readonly id: string;
     readonly version: number;
     readonly migrations?: readonly ModelMigration[];
-}
+};
 declare const contentModelBrand: unique symbol;
 /** The compiled model that the editor, the reader and every codec take. */
-export interface ContentModel<Features extends readonly Feature[] = readonly Feature[]> {
+export type ContentModel<Features extends readonly Feature[] = readonly Feature[]> = {
     readonly [contentModelBrand]: Features;
     readonly ref: ModelRef;
     readonly capabilities: readonly CapabilityRef[];
     /** The model ID and version, feature IDs, versions and options, and node and mark order. */
     readonly manifest: JsonObject;
     readonly fingerprint: string;
-}
+};
 
 /** A map of translation keys, each starting with `RichTextEditor_`, to their text. */
-export interface TranslationStrings {
+export type TranslationStrings = {
     readonly [key: `RichTextEditor_${string}`]: string;
-}
+};
 /**
  * The package's locale: its strings and language. Not Fondue's `LocaleConfig`, whose `dateLocale` is a
  * date-fns `Locale`: the editor formats no dates. `enUS` is the fallback.
  */
-export interface RichTextLocale {
+export type RichTextLocale = {
     readonly translationStrings: TranslationStrings;
     readonly lang?: string;
-}
+};
 /** List markers by nesting depth, for lists whose `marker` is null; CSS `list-style-type` values. */
-export interface ListLevels {
+export type ListLevels = {
     readonly ordered: readonly { readonly counterType: string; readonly color?: string }[];
     readonly bullet: readonly { readonly shape: string; readonly color?: string; readonly size?: string }[];
-}
+};
 /** What a host answers for a stored reference: its current label, that it is unavailable, or that it is unknown. */
 export type ReferenceResolution =
     | { readonly status: 'current'; readonly label: string }

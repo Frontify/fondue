@@ -12,6 +12,7 @@ const ready = async (page: Page) => {
 };
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The text that mutations took out of the surface, which shows what the DOM held before a redraw. */
         replaced?: string[];

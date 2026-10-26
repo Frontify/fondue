@@ -12,7 +12,7 @@ const TRANSITIONS: Readonly<Record<Phase, readonly Phase[]>> = {
     disposed: [],
 };
 
-export interface Lifecycle {
+export type Lifecycle = {
     phase(): Phase;
     is(...phases: readonly Phase[]): boolean;
     isDisposed(): boolean;
@@ -20,7 +20,7 @@ export interface Lifecycle {
     readonly ended: AbortSignal;
     /** Moves to `next`; an illegal move throws outside production and is ignored in production. */
     to(next: Phase): void;
-}
+};
 
 export const createLifecycle = (): Lifecycle => {
     const end = new AbortController();

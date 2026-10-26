@@ -82,7 +82,7 @@ export const text = (value: string, ...marks: readonly string[]): ContentNodeJSO
 
 export { storedIn };
 
-interface Mount<Model extends ContentModel> {
+type Mount<Model extends ContentModel> = {
     readonly model?: Model;
     readonly blocks?: readonly ContentNodeJSON[];
     readonly document?: RichTextDocument;
@@ -92,7 +92,7 @@ interface Mount<Model extends ContentModel> {
     readonly readOnly?: boolean;
     /** Host editor parts, for features a test adds. */
     readonly plugins?: readonly EditorPart[];
-}
+};
 
 /** Mounts `RichTextEditor` and runs the first frame, so the editor is `ready`. */
 export const mountText = <Model extends ContentModel = ContentModel<ReturnType<typeof textFeatures>>>(

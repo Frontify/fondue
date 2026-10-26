@@ -14,12 +14,12 @@ import {
 import { type ResolveAssetUrl } from '#/model/internal';
 
 /** How many nodes or marks of one feature a codec had to drop or flatten when writing a format. */
-export interface CodecLoss {
+export type CodecLoss = {
     readonly featureId: string;
     readonly count: number;
-}
+};
 /** What the HTML writer needs to write a document: the styles, colour tokens and resolvers of the presentation. */
-export interface HtmlOptions {
+export type HtmlOptions = {
     /** The presentation's `styles`; each used recipe is written inline, beside its class. */
     readonly inlineStyles?: readonly PresentationStyle[];
     /** The presentation's `colorTokens`; a token colour is written inline from it. */
@@ -37,19 +37,19 @@ export interface HtmlOptions {
     readonly columns?: number;
     /** Column gap `toHTML` writes on the content root. Default `normal`. */
     readonly columnGap?: string;
-}
+};
 /** Options for `toMarkdown`, which writes CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks. */
-export interface MarkdownOptions {
+export type MarkdownOptions = {
     /** Localized output text; default `enUS`. */
     readonly locale?: RichTextLocale;
     readonly resolveAssetUrl?: ResolveAssetUrl;
-}
+};
 /**
  * Each codec first runs `decodeDocument(document, model, options)`. `diagnostics` holds the decode
  * diagnostics, which carry the diagnostic that made each island, with the path of the failing value, then the codec's own. A `blocked`
  * decode gives empty output with those diagnostics; no codec throws on input.
  */
-export interface RichTextCodecs {
+export type RichTextCodecs = {
     toHTML(
         document: RichTextDocument,
         options?: HtmlOptions,
@@ -79,11 +79,11 @@ export interface RichTextCodecs {
         readonly blocked: boolean;
     };
     fromMarkdown(markdown: string): DecodeResult;
-}
+};
 /** Options for the codecs a definition builds: limits and the id source used when reading Markdown. */
-export interface CodecsOptions {
+export type CodecsOptions = {
     /** The limits the writing definition used, when a host loosened them through `limitOverrides`. Omitted means the default limits. */
     readonly limits?: Partial<ResourceLimits>;
     /** Creates the `nodeId`s `fromMarkdown` adds; `crypto.randomUUID` when omitted. */
     readonly generateId?: () => string;
-}
+};

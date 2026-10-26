@@ -47,6 +47,7 @@ const hostDialogChanges: boolean[] = [];
 export type OverlayKind = 'link' | 'suggestions' | 'menu';
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The mounted overlay editor, for tests that drive it from the page. */
         overlayProbe?: {

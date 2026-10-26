@@ -7,11 +7,11 @@ import { ThemeProviderWrapper } from '#storybook/components/StoryWithTheme';
 
 const Links = composeStory(links.Default, links.default);
 
-interface ThemedStoryProps {
+type ThemedStoryProps = {
     readonly theme: 'light' | 'dark' | 'both';
     readonly direction: 'ltr' | 'rtl';
     readonly locale: string;
-}
+};
 
 /** The links story's definition and arguments, wrapped as the root Storybook's preview wraps every story. */
 export const ThemedStory = (globals: ThemedStoryProps) => (

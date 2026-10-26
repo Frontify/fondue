@@ -518,6 +518,7 @@ export default defineConfig({
                         trailingEmptyLines: { minimum: 2 },
                     },
                 ],
+                'typescript/consistent-type-definitions': ['error', 'type'],
 
                 // Unlike the other Fondue packages, the type-aware rules keep the shared config's error severity.
             },

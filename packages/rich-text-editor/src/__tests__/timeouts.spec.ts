@@ -7,10 +7,10 @@ import { fileURLToPath } from 'node:url';
 import { loadConfigFromFile } from 'vite';
 import { beforeAll, expect, it } from 'vitest';
 
-interface Timeouts {
+type Timeouts = {
     readonly hookTimeout?: number;
     readonly testTimeout?: number;
-}
+};
 
 let timeouts: Timeouts = {};
 beforeAll(async () => {

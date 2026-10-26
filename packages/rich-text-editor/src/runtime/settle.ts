@@ -8,14 +8,14 @@ export const SETTLE_MS = 20;
 /** The pending settle timers of every live runtime, which the `src/testing` probe reads. */
 export const settleResources = { timers: 0 };
 
-export interface InputSettling {
+export type InputSettling = {
     /** Records composition events and composition ends, with no handler on the view itself. */
     readonly plugin: Plugin;
     /** Whether a composition runs, or ended and input has not settled yet. */
     readonly active: () => boolean;
     /** Drops a pending settle, as `dispose` does. */
     readonly cancel: () => void;
-}
+};
 
 /**
  * Calls `settled` once input has settled after a composition: after its end, a microtask, then a timer of 20 ms from

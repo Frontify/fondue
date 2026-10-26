@@ -24,22 +24,22 @@ import { SessionContext } from './session';
 
 // Lives here, not beside its factory in anchor.ts, whose declarations reach prosemirror-view.
 /** A rectangle an overlay anchors to, as Fondue's `virtualAnchor` takes it, which Floating UI reads each frame. */
-export interface SelectionAnchor {
+export type SelectionAnchor = {
     getBoundingClientRect(): DOMRect;
     /** Holds the rectangle where it is beside the surface, so content changes next to it leave the overlay in place. */
     hold(held: boolean): void;
     /** Whether a scrolling ancestor clips the whole rectangle; never for an anchor no overlay has read yet, as a dialog's. */
     clipped(): boolean;
-}
+};
 
 /** Where the editor's overlays render, and the interaction scope they share. */
-export interface Overlays {
+export type Overlays = {
     /** `portalContainer`, else the editor's own overlay root inside its interaction scope. */
     readonly container: HTMLElement | null;
     readonly scope: InteractionScope;
     /** The element that had focus when the open overlay was asked for, before the overlay took focus. */
     readonly opener?: Element | null;
-}
+};
 
 export const OverlayContext = createContext<Overlays | null>(null);
 OverlayContext.displayName = 'RichTextEditorOverlayContext';
@@ -77,7 +77,7 @@ export const useScopedFocus = (): Element | null => {
 };
 
 /** What an editor overlay passes to its Fondue `Flyout`, `Dropdown` or `Dialog`. */
-export interface EditorOverlay {
+export type EditorOverlay = {
     readonly container: HTMLElement | null;
     /** Takes the content element Fondue forwards, which hides while its anchor is clipped. */
     readonly contentRef: RefCallback<HTMLDivElement>;
@@ -97,7 +97,7 @@ export interface EditorOverlay {
      * overlay, or the surface for `null`, in place of the element that had focus when the overlay opened.
      */
     readonly returnFocusTo: (target: Element | null) => void;
-}
+};
 
 // Escapes that an overlay hands on after closing, so the chrome still moves focus for them.
 const passedEscapes = new WeakSet<Event>();

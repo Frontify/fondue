@@ -6,7 +6,7 @@ import { type PersistenceService, type SaveRequest, type SaveResponse } from '#/
 import { type DocumentStamp, type ServerRevision } from '#/runtime/types';
 
 /** The server under test plus what the kit needs for the access and fencing cases of Server obligation 5. */
-export interface PersistenceServerHarness {
+export type PersistenceServerHarness = {
     readonly service: PersistenceService;
     /** The same server for a user who may not write. */
     readonly readOnlyService: PersistenceService;
@@ -16,7 +16,7 @@ export interface PersistenceServerHarness {
     readonly writer: SaveRequest['writer'];
     /** A stored document in the host's model that the server's `decodeDocument` run accepts. */
     readonly document: RichTextDocument;
-}
+};
 
 const rejected = (code: 'forbidden' | 'invalid' | 'incompatible-writer'): SaveResponse => ({
     status: 'rejected',
@@ -111,11 +111,11 @@ export const createFakeServer = (): Pick<PersistenceServerHarness, 'service' | '
 export const createFakePersistenceService = (): PersistenceService => createFakeServer().service;
 
 /** The ambient `describe`, `it` and `expect` of the host's test runner, which the kit registers its cases with. */
-interface TestRunner {
+type TestRunner = {
     describe(name: string, body: () => void): void;
     it(name: string, body: () => Promise<void>): void;
     expect(actual: unknown): { toBe(expected: unknown): void; toEqual(expected: unknown): void };
-}
+};
 
 /**
  * Registers one case or more for each Server obligation against a fresh harness. Every case but the refused ones sends

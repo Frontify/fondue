@@ -16,13 +16,14 @@ import { losslessModel } from './lossless';
 const definition = defineEditor({ id: 'test.lossless', model: losslessModel, plugins: unitsOf(losslessModel) });
 
 /** One generated document whose pasted `toHTML` output differs from it. */
-interface Mismatch {
+type Mismatch = {
     readonly html: string;
     readonly expected: readonly ContentNodeJSON[];
     readonly pasted: readonly ContentNodeJSON[];
-}
+};
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** Pastes the `toHTML` output of `numRuns` generated documents over the whole document; the ones that differ. */
         htmlRoundTrip?: (numRuns: number, seed: number) => readonly Mismatch[];

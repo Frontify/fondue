@@ -1,16 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /** The last focus move, pointer press or key in the editor's document, with its innermost target through shadow roots. */
-export interface Interaction {
+export type Interaction = {
     readonly kind: 'focus' | 'pointer' | 'key';
     readonly target: Node | null;
-}
+};
 
 /**
  * The editor's root, the host's portal container and the roots the host registers, between which focus and pointer
  * moves stay inside the editor, so no editor overlay closes for them.
  */
-export interface InteractionScope {
+export type InteractionScope = {
     contains(node: Node | null): boolean;
     /** The focused element in the editor's document, followed into shadow roots. */
     active(): Element | null;
@@ -27,7 +27,7 @@ export interface InteractionScope {
      * and stops when focus leaves the scope; returns the removal.
      */
     listen(elements: readonly HTMLElement[]): () => void;
-}
+};
 
 /** The focused element, followed into open shadow roots, since a shadow host takes focus for what it holds. */
 const deepActive = (owner: Document): Element | null => {
@@ -43,10 +43,10 @@ type EventType = (typeof EVENTS)[number];
 type Handlers = Readonly<Record<EventType, (event: Event) => void>>;
 
 /** The one capture listener per event type that every scope engaged in a document shares. */
-interface Hub {
+type Hub = {
     readonly scopes: Set<Handlers>;
     readonly listeners: ReadonlyMap<EventType, EventListener>;
-}
+};
 const hubs = new WeakMap<Document, Hub>();
 
 const hubOf = (owner: Document): Hub => {

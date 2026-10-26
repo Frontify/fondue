@@ -10,22 +10,22 @@ import { type EditorApi, type OverlayProps, useEditorApi } from './plugin';
 import { SessionContext } from './session';
 
 /** One block conversion of the Turn into menus: the command that makes it, and its label. */
-export interface TurnIntoEntry {
+export type TurnIntoEntry = {
     readonly key: string;
     readonly command: string;
     readonly payload: JsonValue | undefined;
     readonly label: string;
-}
+};
 
 /** The conversions the editor offers, which node chrome and the context menu narrow to what their block takes. */
 export const TurnIntoContext = createContext<readonly TurnIntoEntry[]>([]);
 TurnIntoContext.displayName = 'RichTextEditorTurnIntoContext';
 
 /** One entry the block can take, and whether it is the block's current type. */
-export interface TurnIntoChoice {
+export type TurnIntoChoice = {
     readonly entry: TurnIntoEntry;
     readonly current: boolean;
-}
+};
 
 /**
  * The entries whose command `query` finds enabled, or active as the block's current type; none for a block of no type
@@ -51,11 +51,11 @@ export const turnIntoChoices = (
 export type TurnIntoCommands = Readonly<Record<string, JsonValue | undefined>>;
 
 /** What the Turn into menu reads of its node: `useRichTextNodeView<TurnIntoCommands>()`. */
-export interface TurnIntoNode {
+export type TurnIntoNode = {
     readonly context: { readonly t: CodecContext['t'] };
     readonly execute: (command: string, payload?: JsonValue) => unknown;
     readonly query: (command: string, payload?: JsonValue) => CommandState;
-}
+};
 
 const TurnIntoItems = ({ node, onPick }: { readonly node: TurnIntoNode; readonly onPick: () => void }) => {
     const entries = useContext(TurnIntoContext);

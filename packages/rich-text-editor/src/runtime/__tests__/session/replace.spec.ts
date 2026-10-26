@@ -36,7 +36,7 @@ const stored = (text: string, id = 'test.bold') => ({
     },
 });
 
-interface Options {
+type Options = {
     ready?: boolean;
     active?: boolean;
     unsaved?: boolean;
@@ -44,7 +44,7 @@ interface Options {
     installs?: boolean;
     fresh?: () => EditorState;
     commit?: () => Promise<unknown>;
-}
+};
 
 const setup = (options: Options = {}) => {
     const { ready = true, active = false, unsaved = false, outcomeUnknown = false, installs = true } = options;

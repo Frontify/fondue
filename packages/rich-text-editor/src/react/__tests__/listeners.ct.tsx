@@ -6,6 +6,7 @@ import { type Page } from '@playwright/test';
 import { ManyEditors } from './fixtures/ManyEditors';
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         documentListeners?: () => Record<string, number>;
     }

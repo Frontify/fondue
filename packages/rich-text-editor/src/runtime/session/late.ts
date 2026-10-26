@@ -10,7 +10,7 @@ import { type TargetsService } from './targets';
 import { type ViewService } from './view';
 
 /** What an earlier phase reads lazily from a later one; the root fills it once every phase is built. */
-export interface Late {
+export type Late = {
     views: ViewService;
     commit: Commit;
     settleInput: () => void;
@@ -19,4 +19,4 @@ export interface Late {
     queue: Queue;
     actions: Actions;
     runtime: EditorRuntime;
-}
+};

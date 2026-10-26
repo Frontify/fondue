@@ -23,7 +23,7 @@ import { type Store } from './store';
 export const isEmpty = ({ doc }: EditorState) =>
     doc.childCount === 1 && doc.firstChild !== null && doc.firstChild.isTextblock && doc.firstChild.content.size === 0;
 
-export interface ViewService {
+export type ViewService = {
     current(): EditorView | undefined;
     readonly nodeViews: Readonly<Record<string, NodeViewConstructor>>;
     setNodeViews(next: Readonly<Record<string, NodeViewConstructor>>): void;
@@ -39,7 +39,7 @@ export interface ViewService {
     detach(): void;
     cancelReady(): void;
     faultView(): void;
-}
+};
 
 /** Tracks the view call in progress, so a node view throw the bridge caught faults that call. */
 const createCalls = () => {
@@ -107,7 +107,7 @@ const surfaceAttributes = (
     return result;
 };
 
-interface ViewArgs {
+type ViewArgs = {
     store: Pick<Store, 'state'>;
     lifecycle: Lifecycle;
     shown: Pick<Shown, 'mode' | 'sync'>;
@@ -127,7 +127,7 @@ interface ViewArgs {
     viewFault: (view: EditorView, candidate: EditorState) => void;
     onAttached: (view: EditorView) => void;
     scrollSelectionIntoView: () => boolean | undefined;
-}
+};
 
 export const createView = (a: ViewArgs): ViewService => {
     let view: EditorView | undefined;

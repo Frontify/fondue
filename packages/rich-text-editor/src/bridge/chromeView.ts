@@ -8,7 +8,7 @@ import { redraw, type SurfaceView, type ViewMarkViews, type ViewProps, type View
 const MARGIN = 5;
 
 /** What editor chrome sets on the view: the selection it keeps visible and the space it covers at the viewport edges. */
-export interface ChromeView {
+export type ChromeView = {
     /** The chrome's props for a view about to be built on `surface` with `nodeViews`, so its first draw carries them. */
     props(surface: HTMLElement, nodeViews: Readonly<Record<string, unknown>>, domId: () => string): ViewProps;
     /** Takes the view built with `props`, which later chrome changes redraw. */
@@ -31,7 +31,7 @@ export interface ChromeView {
     setStyles(styles: ChromeStyles | undefined): void;
     /** The mark views of `schema`'s styled and coloured marks, which carry the recipe class and colour on the mark's own element. */
     markViews(schema: ViewSchema): ViewMarkViews;
-}
+};
 
 // Node chrome controls keep the caret's top margin clear of the sticky toolbar when they scroll into view.
 const CHROME_SCROLL_MARGIN = '--rte-chrome-scroll-margin';

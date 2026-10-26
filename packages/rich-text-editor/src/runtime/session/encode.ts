@@ -5,11 +5,11 @@ import { type Node } from 'prosemirror-model';
 import { type CapabilityRef, type ContentModel, type RichTextDocument } from '#/model';
 import { type TreeNode, encodeTree, snapshot } from '#/model/internal';
 
-export interface Encoder {
+export type Encoder = {
     capabilities: readonly CapabilityRef[];
     encode(doc: Node): RichTextDocument;
     encodeByBlock(doc: Node): RichTextDocument;
-}
+};
 
 export const createEncoder = (model: ContentModel, capabilities: readonly CapabilityRef[]): Encoder => {
     // Each top-level node's frozen stored form under this root, so a snapshot after an edit encodes only changed blocks.

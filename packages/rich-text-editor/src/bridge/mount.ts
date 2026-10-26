@@ -6,7 +6,7 @@ import { engineOf } from '#/runtime/portEngine';
 import { type ChromeView, createChromeView } from './chromeView';
 import { markReady } from './devChecks';
 
-export interface MountCoordinator {
+export type MountCoordinator = {
     readonly runtime: EditorPort | undefined;
     /** What chrome sets on the view, which each view this coordinator attaches takes. */
     readonly chrome: ChromeView;
@@ -14,7 +14,7 @@ export interface MountCoordinator {
     readonly setSurface: (element: HTMLElement | null) => void;
     start(runtime: EditorPort): void;
     stop(): void;
-}
+};
 
 /** Attaches the running session's view to whichever surface element is mounted, so neither waits for the other. */
 export const createMountCoordinator = (): MountCoordinator => {

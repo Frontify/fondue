@@ -38,11 +38,11 @@ const NO_AUTOMATED_TEST_ROWS: Record<string, number> = { '1.0.0.mdx': 2 };
 
 const CRITERIA_HEADER = /^\| Criterion\s+\| Conformance level\s+\| Remarks and explanations\s+\|$/;
 
-interface Row {
+type Row = {
     readonly criterion: string;
     readonly level: string;
     readonly remarks: string;
-}
+};
 
 /** The rows of every criteria table of a report. */
 const rowsOf = (source: string): Row[] => {

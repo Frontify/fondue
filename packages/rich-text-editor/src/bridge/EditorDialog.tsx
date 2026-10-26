@@ -7,7 +7,7 @@ import { useAnnounce } from './announcer';
 import { type EditorOverlay, useEditorOverlay } from './overlays';
 
 /** What a dialog body drives: where the close returns focus, and the editor's live region. */
-export interface EditorDialogControl {
+export type EditorDialogControl = {
     readonly open: boolean;
     readonly overlay: EditorOverlay;
     /** Closes the dialog and returns focus to the control that opened it, or to the surface. */
@@ -15,7 +15,7 @@ export interface EditorDialogControl {
     /** Speaks in the editor's polite live region, which Radix leaves out of the `aria-hidden` it sets on a modal's siblings. */
     readonly announce: (message: string) => void;
     readonly onOpenChange: (open: boolean) => void;
-}
+};
 
 /** The open state, overlay wiring, focus return and announcements of a modal dialog that `opener` opened. */
 export const useEditorDialog = (opener: Element | null, onClose: () => void): EditorDialogControl => {

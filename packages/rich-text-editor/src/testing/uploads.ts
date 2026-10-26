@@ -9,13 +9,13 @@ import { type ServiceContext } from '#/runtime/types';
 import { type Bytes, decodableImage, pngChunk, SAMPLE_TYPES, sampleImage, SIZED_TYPES } from './images';
 
 /** The `UploadService` shape the fake meets and the kit calls. */
-export interface FakeUploadService {
+export type FakeUploadService = {
     upload(
         request: { readonly operationId: string; readonly blob: Blob; readonly filename: string },
         context: ServiceContext & { readonly reportProgress: (fraction: number) => void },
     ): Promise<{ readonly assetId: string; readonly mediaType: string; readonly labelSnapshot: string }>;
     releaseUnused(operationId: string, context: ServiceContext): Promise<void>;
-}
+};
 
 const aborted = () => new DOMException('The upload was aborted.', 'AbortError');
 const refused = (reason: string) => new Error(`The upload was refused: ${reason}.`);
@@ -79,11 +79,11 @@ export const createFakeUploadService = (
 };
 
 /** The ambient `describe`, `it` and `expect` of the host's test runner, which the kit registers its cases with. */
-interface TestRunner {
+type TestRunner = {
     describe(name: string, body: () => void): void;
     it(name: string, body: () => Promise<void>, timeout?: number): void;
     expect(actual: unknown): { toBe(expected: unknown): void };
-}
+};
 
 // Building and sending an image of a hundred million pixels takes seconds.
 const CASE_MS = 120_000;
@@ -114,14 +114,14 @@ const ACTIVE_SVGS: readonly (readonly [string, string])[] = [
 ];
 const svgOf = (body: string) => `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">${body}</svg>`;
 
-interface ConformanceOptions {
+type ConformanceOptions = {
     readonly maxAssetBytes: number;
     readonly acceptTypes: readonly string[];
     readonly maxImagePixels?: number;
-}
+};
 
 /** The runner globals and the probes that every case group shares. */
-interface Conformance extends TestRunner {
+type Conformance = {
     readonly maxAssetBytes: number;
     readonly acceptTypes: readonly string[];
     readonly maxImagePixels: number;
@@ -136,7 +136,7 @@ interface Conformance extends TestRunner {
     readonly probing: () => (typeof SIZED_TYPES)[number];
     /** A sample of the first type the host accepts that the kit has one of, with `padding` more bytes. */
     readonly sample: (padding?: number) => Promise<{ bytes: Bytes; name: string; type: string }>;
-}
+} & TestRunner;
 
 const conformanceOf = (
     createService: () => FakeUploadService,

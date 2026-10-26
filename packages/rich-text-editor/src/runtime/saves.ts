@@ -15,7 +15,7 @@ export const sameStamp = (a: DocumentStamp, b: DocumentStamp) =>
     a.sequence === b.sequence;
 
 /** The save coordinator of a session whose host sets `services.persistence`, which `src/persistence` builds. */
-export interface SaveCoordinator {
+export type SaveCoordinator = {
     /** The same object until one of its fields changes. */
     status(): SaveStatus;
     /** A batch published an effective change; the batch emits `saveStatusChange` after this returns. */
@@ -34,7 +34,7 @@ export interface SaveCoordinator {
     replaced(revision: ServerRevision | null, previous: DocumentStamp): void;
     /** Runs before the session is disposed, while listeners still hear its diagnostics. */
     dispose(): void;
-}
+};
 
 /**
  * The status of a session with no save coordinator: `unmanaged`, with the load's acknowledgment, the same object while

@@ -50,12 +50,12 @@ export const jpegFile = (name: string, width: number, height: number): File => {
 };
 
 /** One upload the fake service has not answered yet. */
-export interface PendingUpload {
+export type PendingUpload = {
     readonly request: UploadRequest;
     readonly context: ServiceContext & { readonly reportProgress: (fraction: number) => void };
     readonly resolve: (value: AssetValue) => void;
     readonly reject: (error: Error) => void;
-}
+};
 
 /** Settles the header reads, the service answers and the portal flushes that an upload step starts. */
 export const settle = async () => {
@@ -118,7 +118,7 @@ export const deferredUploads = () => {
 };
 export type DeferredUploads = ReturnType<typeof deferredUploads>;
 
-interface Mount {
+type Mount = {
     readonly blocks?: readonly ContentNodeJSON[];
     readonly model?: ContentModel;
     readonly uploads?: DeferredUploads;
@@ -128,7 +128,7 @@ interface Mount {
     readonly generateId?: () => string;
     readonly plugins?: readonly EditorPart[];
     readonly toolbar?: ReactPresentation['toolbar'];
-}
+};
 
 /** Mounts the editor with `media.image`, `media.upload`, an Image toolbar button and a fake upload service. */
 export const mountUploads = async (options?: Mount) => {

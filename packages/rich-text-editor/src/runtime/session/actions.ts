@@ -21,7 +21,7 @@ import { type RejectedCode } from './types';
 
 export type { NodeActions, NodeTarget };
 
-export interface Actions {
+export type Actions = {
     nodeActions(target: NodeTarget): NodeActions;
     placeAsset(
         asset: unknown,
@@ -29,7 +29,7 @@ export interface Actions {
     ): CommandResult;
     acceptSuggestion: SuggestionHost['accept'];
     searchSuggestions: SuggestionHost['search'];
-}
+};
 
 export const createActions = (a: {
     definition: CompiledDefinition;

@@ -19,20 +19,20 @@ import { canonicalJson, sha256 } from '../../hash';
  * What a model stores: its reference, each capability with a hash of its own schema, the model's schema, and the
  * capability that declares each node, mark and attribute, keyed `n.<node>`, `m.<mark>` and `n.<node>.<attribute>`.
  */
-export interface ModelSnapshot {
+export type ModelSnapshot = {
     readonly model: ModelRef;
     readonly capabilities: readonly { readonly id: string; readonly version: number; readonly schema: string }[];
     readonly schema: JsonObject;
     readonly owners: Readonly<Record<string, string>>;
-}
-export interface ModelCandidate {
+};
+export type ModelCandidate = {
     readonly snapshot: ModelSnapshot;
     /** The `from` versions of the registered steps: the model's, and each capability's by ID. */
     readonly steps: {
         readonly model: readonly number[];
         readonly capabilities: Readonly<Record<string, readonly number[]>>;
     };
-}
+};
 
 const hashOf = (value: JsonValue) => sha256(canonicalJson(value));
 

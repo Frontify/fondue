@@ -20,7 +20,7 @@ export type RecoveryProps = {
     readonly props: Defined & { readonly children: ReactNode };
     readonly editorRef: ForwardedRef<EditorHandle<object> | null>;
 };
-interface RecoveryState {
+type RecoveryState = {
     readonly failed: boolean;
     /** The snapshot that Retry mounts the editor from, under the ID and revision it was loaded with. */
     readonly retried: LoadedDocument | undefined;
@@ -30,7 +30,7 @@ interface RecoveryState {
     readonly carried: SaveRequest | undefined;
     /** Counts Retries, so each mounts a new session even when no render error unmounted the last. */
     readonly retries: number;
-}
+};
 
 /**
  * The outer boundary: a render error, or a session that enters `faulted`, shows the recovery shell with the last

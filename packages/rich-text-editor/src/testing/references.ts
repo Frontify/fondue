@@ -5,12 +5,12 @@ import { type ReferenceValue, type ServiceContext } from '#/runtime/types';
 const PAGE_SIZE = 20;
 
 /** The `ReferenceService` shape the fake meets: one `search` that pages through its items. */
-export interface FakeReferenceService {
+export type FakeReferenceService = {
     search(
         request: { readonly query: string; readonly resourceTypes: readonly string[]; readonly cursor: string | null },
         context: ServiceContext,
     ): Promise<{ readonly items: readonly ReferenceValue[]; readonly nextCursor: string | null }>;
-}
+};
 
 const aborted = () => new DOMException('The search was aborted.', 'AbortError');
 

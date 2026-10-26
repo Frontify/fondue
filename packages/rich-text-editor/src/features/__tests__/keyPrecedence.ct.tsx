@@ -45,11 +45,11 @@ const caretIn = async (page: Page, text: string, offset = text.length) => {
 /** Each block as its type with its children, and text as itself: `bullet_list(list_item(paragraph(one)))`. */
 const shapeOf = (page: Page) =>
     page.evaluate(() => {
-        interface Node_ {
+        type Node_ = {
             readonly type: string;
             readonly text?: string;
             readonly content?: readonly Node_[];
-        }
+        };
         const shape = (node: Node_): string => {
             if (node.type === 'text') {
                 return node.text ?? '';
@@ -66,11 +66,11 @@ const shapeOf = (page: Page) =>
 const lastKey = (page: Page) => page.evaluate(() => (window.keyProbe as Probe).prevented.at(-1));
 const submitted = (page: Page) => page.evaluate(() => (window.keyProbe as Probe).submitted);
 
-interface Case {
+type Case = {
     readonly name: string;
     readonly probe: KeyProbeProps;
     readonly run: (page: Page) => Promise<void>;
-}
+};
 
 /** Presses `key` with the caret at the end of `text` and expects the document to become `shape`. */
 const pressTo =

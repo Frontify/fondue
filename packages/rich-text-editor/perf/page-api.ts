@@ -2,14 +2,14 @@
 
 import { type PerfFixtureName } from '#/model/__tests__/fixtures/perf/documents';
 
-export interface TimedEvent {
+export type TimedEvent = {
     readonly name: string;
     readonly duration: number;
     readonly interactionId: number;
-}
+};
 
 /** What the harness in the page lets a performance test call through `page.evaluate`. */
-export interface PageApi {
+export type PageApi = {
     /** Mounts an editor over `fixture` and answers the ms from the render call to ready. */
     mount(fixture: PerfFixtureName): Promise<number>;
     /** Mounts `count` editors over the `small` fixture in one tree and answers the ms until all are ready. */
@@ -30,4 +30,4 @@ export interface PageApi {
     command(id: string): Promise<number>;
     /** The ms from running `id` until focus sits inside an element matching `selectors`, or `null` after 2 s. */
     openedWithFocus(id: string, selectors: string): Promise<number | null>;
-}
+};

@@ -4,7 +4,7 @@ import { type EngineCommand } from '#/definition';
 
 import { type Mode } from './types';
 
-export interface ModeService {
+export type ModeService = {
     mode(): Mode;
     disabled(): boolean;
     /** Ignored once the session is disposed; otherwise takes the mode, then tells `onModeChange`. */
@@ -12,7 +12,7 @@ export interface ModeService {
     setDisabled(next: boolean): void;
     /** A read-only session refuses any command that is not marked `readOnly`. */
     refusesReadOnly(command: EngineCommand): boolean;
-}
+};
 
 export const createMode = ({
     initial,

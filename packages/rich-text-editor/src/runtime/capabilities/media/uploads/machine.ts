@@ -10,7 +10,7 @@ import { type Checked, type UploadEvent } from './types';
 export type Phase = 'pending' | UploadStatus['state'] | 'done';
 
 /** One upload slot: what its start set, and what its upload has done since. */
-export interface SlotState {
+export type SlotState = {
     readonly nodeId: string;
     readonly kind: 'insert' | 'replace';
     readonly name: string;
@@ -25,15 +25,15 @@ export interface SlotState {
     readonly operation: AsyncOperation | undefined;
     /** The operation whose completion this slot shows, which the cache is read with. */
     readonly operationId: string | undefined;
-}
+};
 
 /** The attributes of the slot's node in the document, as the transport read them. */
-export interface NodeFacts {
+export type NodeFacts = {
     readonly assetId?: unknown;
     readonly labelSnapshot?: unknown;
     readonly width?: unknown;
     readonly height?: unknown;
-}
+};
 
 /** What the transport observed or got back; `own` is the operation the coordinator returned, once it has. */
 export type SlotEvent =
@@ -84,10 +84,10 @@ export type Effect =
     | { readonly type: 'refill' }
     | { readonly type: 'drop' };
 
-export interface Step {
+export type Step = {
     readonly state: SlotState;
     readonly effects: readonly Effect[];
-}
+};
 
 type Of<T extends SlotEvent['type']> = Extract<SlotEvent, { readonly type: T }>;
 

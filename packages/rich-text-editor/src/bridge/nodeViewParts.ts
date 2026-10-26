@@ -88,12 +88,12 @@ export const createPlacement = (chrome: HTMLElement, contentDOM: HTMLElement | n
 };
 
 /** The parts of one node view's DOM that its event and mutation checks read. */
-export interface ViewDom {
+export type ViewDom = {
     readonly dom: HTMLElement;
     readonly chrome: HTMLElement;
     readonly contentDOM: HTMLElement | null;
     readonly layers: readonly HTMLElement[];
-}
+};
 
 // Chrome mutations are React's; ProseMirror reads the rest, a removed `contentDOM` included.
 export const ignoresMutation = (

@@ -28,7 +28,7 @@ export type {
 } from '#/runtime/types';
 
 /** What the editor sends to the persistence service to save: the operation, the revision it builds on and the document. */
-export interface SaveRequest {
+export type SaveRequest = {
     readonly operationId: string;
     readonly stamp: DocumentStamp;
     readonly baseRevision: ServerRevision | null;
@@ -39,7 +39,7 @@ export interface SaveRequest {
         readonly model: ModelRef;
         readonly capabilities: readonly CapabilityRef[];
     };
-}
+};
 /** The persistence service's answer to a save: saved, conflict, or failed. */
 export type SaveResponse =
     | { readonly status: 'saved'; readonly acknowledgment: SaveAcknowledgment }
@@ -50,12 +50,12 @@ export type SaveResponse =
           readonly diagnostics: readonly Diagnostic[];
       };
 /** The host service that saves and reads documents. */
-export interface PersistenceService {
+export type PersistenceService = {
     save(request: SaveRequest, context: ServiceContext): Promise<SaveResponse>;
     read(documentId: string, context: ServiceContext): Promise<LoadedDocument>;
-}
+};
 /** Options for autosave: when it runs and the delays and limits of its retries. */
-export interface PersistenceOptions {
+export type PersistenceOptions = {
     readonly autosave?: 'debounced' | 'off';
     /** Default `true`; a host with its own leave guard sets it to `false`. */
     readonly unloadGuard?: boolean;
@@ -66,4 +66,4 @@ export interface PersistenceOptions {
     readonly maxRetries?: number;
     readonly backoffMs?: number;
     readonly onConflict?: (remote: LoadedDocument | null, local: Snapshot) => void;
-}
+};

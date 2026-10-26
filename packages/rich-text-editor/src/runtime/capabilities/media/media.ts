@@ -14,11 +14,11 @@ import { INSERT_IMAGE, REPLACE_IMAGE } from './uploads/constants';
 export { INSERT_IMAGE, REPLACE_IMAGE };
 
 /** The fields of a picked `AssetValue` that an image stores; a picker result never gives it any other. */
-export interface PickedAsset {
+export type PickedAsset = {
     readonly assetId: string;
     readonly mediaType: string;
     readonly labelSnapshot: string;
-}
+};
 
 const SPACE = 0x20;
 

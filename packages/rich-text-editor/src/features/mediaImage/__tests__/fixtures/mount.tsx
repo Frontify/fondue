@@ -85,11 +85,11 @@ export const resolving = (assetId: string, { width }: { readonly width?: number 
 };
 
 /** One pick the host picker has not answered yet. */
-export interface PendingPick {
+export type PendingPick = {
     readonly request: { readonly purpose: string };
     readonly context: ServiceContext;
     readonly resolve: (value: AssetValue | null) => void;
-}
+};
 
 /** A host asset picker that answers each pick only when the test does. */
 export const deferredPicker = () => {
@@ -105,14 +105,14 @@ export const deferredPicker = () => {
 
 export const PALETTE: AssetValue = { assetId: 'asset-palette', mediaType: 'image/jpeg', labelSnapshot: 'palette.jpg' };
 
-interface Mount {
+type Mount = {
     readonly model?: ContentModel;
     readonly blocks?: readonly ContentNodeJSON[];
     readonly services?: EditorServices;
     readonly presentation?: ReactPresentation;
     readonly toolbar?: ReactPresentation['toolbar'];
     readonly policy?: Partial<AuthoringPolicy>;
-}
+};
 
 /** The commands of the default image model, which a given model keeps. */
 type ImageCommands = UnitCommands;

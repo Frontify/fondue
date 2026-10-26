@@ -33,12 +33,13 @@ const document = styledDocument(model, [
     styled(null, plain('A '), linked('default link', null), plain(' and a '), linked('button link', 'brand.button')),
 ]);
 
-export interface StyleChange {
+export type StyleChange = {
     readonly commandId: string | null;
     readonly sequence: number;
-}
+};
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The style probe's handle, the selection helper and each change. */
         styleRte?: {

@@ -19,6 +19,7 @@ const services = {
 };
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The key order probe's handle, selection helper, submitted texts, host dialog changes and keys. */
         keyProbe?: {
@@ -35,7 +36,7 @@ declare global {
 const hostDialogChanges: boolean[] = [];
 const EMPTY: readonly ContentNodeJSON[] = [{ type: 'paragraph' }];
 
-export interface KeyProbeProps {
+export type KeyProbeProps = {
     readonly features: keyof typeof FEATURES;
     /** Compiles the model from the feature list in reverse, as a host may list its features in any order. */
     readonly reversed?: boolean;
@@ -44,7 +45,7 @@ export interface KeyProbeProps {
     readonly bubble?: boolean;
     /** Puts the editor in an open host Fondue `Dialog`. */
     readonly inDialog?: boolean;
-}
+};
 
 /** An editor of a profile's feature list between two host buttons, which records each submitted snapshot's text. */
 export const KeyProbe = ({

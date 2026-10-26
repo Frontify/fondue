@@ -22,11 +22,11 @@ import { markdownFragment } from './markdown';
 import { readSlice, SLICE_TYPE } from './slice';
 
 /** What a paste or a drop from outside hands the pipeline after the clipboard read. */
-export interface Payload {
+export type Payload = {
     readonly text: string;
     readonly html: string;
     readonly slice: string;
-}
+};
 
 /** The three flavors of a clipboard or drag transfer. */
 export const payloadOf = (data: DataTransfer): Payload => ({
@@ -36,7 +36,7 @@ export const payloadOf = (data: DataTransfer): Payload => ({
 });
 
 /** What the pipeline reads of the session. */
-export interface PasteSettings {
+export type PasteSettings = {
     readonly model: ContentModel;
     readonly limits: ResourceLimits;
     /** Which features' content may be pasted. */
@@ -51,18 +51,18 @@ export interface PasteSettings {
     readonly window: Window;
     /** The Inline profile's field, which keeps one paragraph. */
     readonly singleLine: boolean;
-}
+};
 
 /** A change that follows the paste as its own undo step: a Markdown conversion or a caret link. */
 export type FollowUp = (state: EditorState) => Transaction | null;
 
-export interface Pasted {
+export type Pasted = {
     readonly followUp?: FollowUp;
     /** Media that a slice from another context dropped. */
     readonly droppedMedia: number;
     /** Pasted formatting the model does not keep, such as colours without `literalColors`, was removed. */
     readonly removedFormatting?: boolean;
-}
+};
 
 /** Inserts `slice` between `from` and `to` as ProseMirror's paste does, and returns where it landed. */
 export const insertSlice = (tr: Transform, from: number, to: number, slice: Slice) => {

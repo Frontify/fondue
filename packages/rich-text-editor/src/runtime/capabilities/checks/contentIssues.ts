@@ -13,7 +13,7 @@ import { type LocatedIssue, locateContentIssues } from '#/model/internal';
 export const CHECK_DELAY_MS = 750;
 
 /** An issue of the last run, at the place it names in the current document. */
-export interface HeldIssue {
+export type HeldIssue = {
     readonly issue: ContentIssue;
     /** Mapped through every change since the run; both -1 for a document-level rule. */
     readonly from: number;
@@ -26,22 +26,22 @@ export interface HeldIssue {
     readonly signature: string;
     /** Stays the same from run to run while the rule is reported at the same place, unlike a path-based ID. */
     readonly key: string;
-}
+};
 
-interface Dismissal {
+type Dismissal = {
     readonly ruleId: ContentIssue['ruleId'];
     readonly from: number;
     readonly signature: string;
-}
+};
 
-export interface ContentChecksState {
+export type ContentChecksState = {
     readonly issues: readonly HeldIssue[];
     /** How many times the checks ran in this session. */
     readonly runs: number;
     /** The issues panel is open, which alone shows the surface decorations. */
     readonly open: boolean;
     readonly dismissed: readonly Dismissal[];
-}
+};
 
 type Severity = ContentIssue['severity'];
 
@@ -325,7 +325,7 @@ const holdIssue = (doc: Node, { issue, span, signature }: LocatedIssue): HeldIss
 };
 
 /** What the checks read from the session that runs them. */
-export interface ContentChecksHost {
+export type ContentChecksHost = {
     readonly state: () => EditorState;
     readonly sequence: () => number;
     readonly encode: () => RichTextDocument;
@@ -336,15 +336,15 @@ export interface ContentChecksHost {
     readonly commit: (transaction: Transaction) => void;
     /** The locale, colour options, model, enclosing heading level and creatable heading levels, read when the checks run. */
     readonly options: () => Omit<ContentCheckOptions, 'sequence'>;
-}
+};
 
-export interface ContentChecks {
+export type ContentChecks = {
     /** A change was published: the checks run once no change came for the delay. */
     changed(): void;
     /** Runs the checks now, unless input is composing; `true` when they ran. */
     run(): boolean;
     dispose(): void;
-}
+};
 
 /** Runs the content checks outside the input path, on a timer or on request, and commits their results. */
 export const createContentChecks = (host: ContentChecksHost): ContentChecks => {

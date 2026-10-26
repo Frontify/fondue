@@ -22,12 +22,12 @@ const watchDocumentListeners = () => {
 
 const EVENT_TYPES = ['focusin', 'focusout', 'keydown', 'pointercancel', 'pointerdown', 'pointerup'];
 
-interface Editor {
+type Editor = {
     readonly root: HTMLElement;
     readonly inside: HTMLButtonElement;
     readonly scope: InteractionScope;
     readonly stop: () => void;
-}
+};
 
 const editor = (): Editor => {
     const root = document.createElement('div');

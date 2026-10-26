@@ -20,22 +20,22 @@ import { codeSpan, destination, joinRuns, type Piece, readInline, type Run, seri
 import { Losses, type MarkPlan, type NodePlan, setShared } from './plan';
 import { reportFailure, type WalkState } from './walk';
 
-export interface MarkdownState extends WalkState {
+export type MarkdownState = {
     /** Reads written inline Markdown back, to find emphasis that the delimiters cannot express. */
     readonly parser: Parser;
     /** `*`, or `_` where `*` runs of italic and bold would meet and parse as other emphasis. */
     readonly italic: '*' | '_';
-}
+} & WalkState;
 
 /** Where inline content sits: a heading or a table cell holds one line, so a hard break there cannot be written. */
 type Line = 'block' | 'heading' | 'cell';
 
 const DELIMITERS: Readonly<Record<string, string>> = { bold: '**', italic: '*', strike: '~~' };
 
-interface MarkdownItem extends Item {
+type MarkdownItem = {
     /** Written as a code span. */
     readonly code: boolean;
-}
+} & Item;
 
 const markLost = (state: MarkdownState, plan: MarkPlan) => state.losses.add(plan.featureId);
 

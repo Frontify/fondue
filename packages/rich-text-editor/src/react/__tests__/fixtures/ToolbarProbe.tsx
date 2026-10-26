@@ -73,6 +73,7 @@ const paragraph = (text: string) =>
     ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] }) as unknown as ContentNodeJSON;
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The mounted toolbar editor's handle, for tests that drive it from the page. */
         toolbarEditor?: {

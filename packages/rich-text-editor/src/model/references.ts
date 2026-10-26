@@ -44,10 +44,10 @@ export const resolvingSafely =
  * What a mention shows: its label, and whether its resource is unavailable, with the reason.
  * Public so the shipped features and the core share it.
  */
-export interface MentionLabel {
+export type MentionLabel = {
     readonly label: string;
     readonly unavailable: 'deleted' | 'forbidden' | null;
-}
+};
 
 const stringOf = (value: unknown): string => {
     if (typeof value === 'string') {
@@ -102,16 +102,16 @@ export const unavailableNote = ({ unavailable }: MentionLabel, t: CodecContext['
 };
 
 /** One mention occurrence: its `nodeId` and the resource it names. */
-export interface MentionReference {
+export type MentionReference = {
     readonly nodeId: string;
     readonly resourceType: string;
     readonly resourceId: string;
-}
+};
 /** The mentions a change added to a document and removed from it. */
-export interface ReferenceDiff {
+export type ReferenceDiff = {
     readonly added: readonly MentionReference[];
     readonly removed: readonly MentionReference[];
-}
+};
 
 /** The mentions of a stored document by `nodeId`, in document order; a repeated `nodeId` counts once. */
 const mentionsOf = (document: RichTextDocument, model: ContentModel): Map<string, MentionReference> => {

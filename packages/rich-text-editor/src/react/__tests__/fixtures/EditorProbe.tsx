@@ -87,6 +87,7 @@ export const storedOf = (...texts: readonly string[]) =>
     );
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The mounted editor's handle and the selection helper, for tests that drive it from the page. */
         rte?: {

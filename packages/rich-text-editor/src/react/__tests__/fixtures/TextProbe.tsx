@@ -106,6 +106,7 @@ const plainParagraph = (text: string): ContentNodeJSON => ({
 });
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The handles of the two editors of `MarkedAndPlainProbe`, by name, and the selection helper. */
         markedAndPlain?: { readonly Marked: EditorHandle; readonly setSelection: typeof setSelection };

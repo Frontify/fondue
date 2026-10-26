@@ -43,12 +43,12 @@ export {
  * after the event and the effects a transport runs, in order. It reads no clock, network or timer, so a transport
  * passes in what it observed as `facts` and feeds every result back as an event.
  */
-export interface MachineConfig {
+export type MachineConfig = {
     /** The loaded record's revision, `null` for a new record. */
     readonly revision: ServerRevision | null;
     readonly unsavedOnMount: boolean;
     readonly carried: SaveRequest | undefined;
-}
+};
 
 export const initial = (config: MachineConfig, session: SessionToken): SaveMachine => {
     const m: Mutable<SaveMachine> = {

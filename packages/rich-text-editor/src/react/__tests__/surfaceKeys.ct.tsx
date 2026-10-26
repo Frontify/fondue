@@ -11,7 +11,7 @@ import { execute, selectImage, settled, toolbarOf } from './fixtures/layout';
 import { ProfileProbe } from './fixtures/ProfileProbe';
 import { ready } from './fixtures/ready';
 
-interface Effect {
+type Effect = {
     /** The editor sets `onSubmit`. */
     readonly submits?: boolean;
     /** The editor gets the host services an image needs. */
@@ -20,7 +20,7 @@ interface Effect {
     readonly toolbarMode: 'fixed' | 'bubble';
     /** Presses `key` and asserts the effect the row of the keyboard reference states. */
     readonly run: (page: Page, key: string) => Promise<void>;
-}
+};
 
 const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Message' });
 const submitted = (page: Page) => page.evaluate(() => window.profileProbe?.submitted ?? []);

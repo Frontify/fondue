@@ -44,6 +44,7 @@ const document = {
 } as unknown as RichTextDocument;
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The language probe's handle and the selection helper. */
         languageRte?: { readonly handle: EditorHandle; readonly setSelection: typeof setSelection };

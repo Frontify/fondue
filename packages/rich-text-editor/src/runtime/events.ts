@@ -13,7 +13,7 @@ import {
 } from './types';
 
 /** The events a runtime emits; the handle accepts the other `EditorEventMap` names, which later layers emit. */
-export interface RuntimeEvents {
+export type RuntimeEvents = {
     readonly ready: SessionToken;
     readonly documentChange: DocumentChange;
     readonly selectionChange: SelectionSummary;
@@ -22,35 +22,35 @@ export interface RuntimeEvents {
     readonly operationMetric: OperationMetric;
     readonly replaced: SessionToken;
     readonly disposed: SessionToken;
-}
+};
 export type Listener = (value: never) => void;
 
 /** The event and selector subscriptions of every live runtime, which the `src/testing` probe reads. */
 export const busResources = { subscriptions: 0, selectors: 0 };
 
 /** A listener that threw, with the event it was called for and the name of the error. */
-interface Thrower {
+type Thrower = {
     readonly listener: Listener;
     readonly event: string;
     readonly name: string;
-}
+};
 
 /** The error's name, never its message, which may hold document text. */
 export const nameOf = (error: unknown) => (error instanceof Error ? error.name : 'unknown');
 
-interface Watcher {
+type Watcher = {
     readonly read: () => unknown;
     readonly isEqual: (previous: unknown, next: unknown) => boolean;
     readonly listener: (value: unknown) => void;
     value: unknown;
-}
+};
 
-export interface EventBusOptions {
+export type EventBusOptions = {
     /** Whether the session is disposed, which ends a notification. */
     readonly isDisposed: () => boolean;
     /** Runs one notification, so the runtime counts it as busy. */
     readonly around: (work: () => void) => void;
-}
+};
 
 /** A runtime's event listeners and selector stores, where a throwing listener or selector never stops the others. */
 export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {

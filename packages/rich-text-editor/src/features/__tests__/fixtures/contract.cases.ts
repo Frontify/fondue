@@ -460,12 +460,12 @@ const allowedParents = (type: NodeType): string[] =>
         })
         .map(({ name }) => name);
 
-interface BuiltView {
+type BuiltView = {
     readonly node: Node;
     readonly parent: string;
     readonly view: NodeView;
     readonly chrome: HTMLElement;
-}
+};
 
 /**
  * Registers the cases of every node view that `features` attach, over `documents`, which hold each such node under

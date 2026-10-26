@@ -8,9 +8,9 @@ import { type CompiledEditorDefinition, type ReactPresentation } from '../types'
 export const NOT_CREATABLE: FeaturePolicy = { create: false, edit: true, remove: true, paste: false };
 
 /** A shipped profile's definition and its default presentation. */
-export interface ShippedProfile {
+export type ShippedProfile = {
     readonly definition: CompiledEditorDefinition<object>;
     readonly presentation: ReactPresentation;
     /** The default presentation on a touch device, whose toolbar starts with undo and redo. */
     readonly touchPresentation?: ReactPresentation;
-}
+};

@@ -37,6 +37,7 @@ const model = compileContentModel([core(), heading(), bold(), tall()], { id: 'te
 const definition = defineEditor({ id: 'test.panel-scroll', model, plugins: unitsOf(model, [tallPart]) });
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         panelScroll?: { readonly open: () => void };
     }

@@ -6,10 +6,10 @@ import { type PickedAsset } from '../media';
 export const uploadLimits = { cacheEntries: 10_000 };
 
 /** A completed upload, by its operation ID: the slot it filled and the asset it set. */
-export interface CompletedUpload {
+export type CompletedUpload = {
     readonly nodeId: string;
     readonly asset: PickedAsset;
-}
+};
 
 /** The completed-reference cache of one session, keyed by operation ID; it never evicts an entry. */
 export class UploadCache {

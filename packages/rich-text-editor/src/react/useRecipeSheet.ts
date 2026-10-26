@@ -4,10 +4,10 @@ import { type RefObject } from 'react';
 
 import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 
-interface Attached {
+type Attached = {
     readonly element: HTMLStyleElement;
     count: number;
-}
+};
 
 // One `style` element per stylesheet text and document, which every editor that shows it shares.
 const sheets = new WeakMap<Document, Map<string, Attached>>();

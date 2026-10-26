@@ -28,25 +28,25 @@ const SPINNER_DELAY_MS = 300;
 const COMPOSITION_ENTER_MS = 500;
 
 /** The mention search dialog's strings, in the UI locale. */
-interface MentionSearchStrings extends ReferenceListStrings {
+type MentionSearchStrings = {
     readonly title: string;
     readonly search: string;
     readonly cancel: string;
-}
+} & ReferenceListStrings;
 
 /** One ask of the host: its query and page, and whether it waits for the next keystroke first. */
-interface Ask {
+type Ask = {
     readonly query: string;
     readonly page: string | null;
     readonly waits: boolean;
-}
+};
 
-interface Found {
+type Found = {
     readonly status: 'loading' | 'ready' | 'failed';
     readonly items: readonly ResultItem[];
     /** Counts the answered asks, so each answer is announced, a repeated one too. */
     readonly answers: number;
-}
+};
 
 /** The dialog's strings from the chrome's `t`. */
 const mentionSearchStrings = (t: EditorApi['t']): MentionSearchStrings => ({

@@ -66,10 +66,10 @@ export const writeSlice = (model: ContentModel, doc: Node, slice: Slice, context
     };
 };
 
-interface Islands {
+type Islands = {
     readonly paths: string[];
     malformed: boolean;
-}
+};
 
 /** An island's `original`, which decode then counts at the island's position. */
 const originalOf = (islands: Islands, island: Readonly<Record<string, unknown>>, path: string): unknown => {

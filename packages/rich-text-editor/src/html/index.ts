@@ -9,17 +9,17 @@ import { type ContentModel, type DecodeResult, decodeDocument, type ResourceLimi
 import { type TreeNode, limitsOf, encodeTree, diagnostic, randomId, exceedsBytes } from '#/model/internal';
 
 /** What `fromHTML` reads of a `CompiledEditorDefinition`, which `./html` cannot import from the editor layers. */
-interface HtmlImportDefinition {
+type HtmlImportDefinition = {
     readonly authoring: {
         // The shape of PastePolicy, whose module imports prosemirror-model.
         readonly features: Readonly<Record<string, { readonly paste: boolean }>>;
         readonly creatableHeadingLevels: readonly number[];
     };
     readonly limits: ResourceLimits;
-}
+};
 
 /** Options for reading HTML into a document: the DOM to use and the definition whose creation policy applies. */
-export interface HtmlImportOptions {
+export type HtmlImportOptions = {
     /** A DOM implementation: the browser window, or one from jsdom or linkedom on a server. */
     readonly window: Window;
     /** Applies that definition's creation policy, as paste does; without it, everything the model holds is kept. */
@@ -27,7 +27,7 @@ export interface HtmlImportOptions {
     readonly limits?: Partial<ResourceLimits>;
     /** For the `nodeId`s of imported occurrences; `randomId` when omitted. */
     readonly generateId?: () => string;
-}
+};
 
 /**
  * Converts HTML to a document through the paste pipeline, with no editor mounted, so it runs on a server with only a

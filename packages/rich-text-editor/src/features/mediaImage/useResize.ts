@@ -13,7 +13,7 @@ const SLOP = 8;
 const percentOf = (pixels: number, total: number) =>
     Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, Math.round((pixels / total) * 100)));
 
-interface Drag {
+type Drag = {
     readonly startX: number;
     readonly startY: number;
     readonly startWidth: number;
@@ -25,7 +25,7 @@ interface Drag {
     /** Whether the pointer moved past the slop horizontally, so the drag resizes. */
     resizing: boolean;
     readonly stop: () => void;
-}
+};
 
 /**
  * A resize drag from the frame's inline-end handle: once the pointer moves past the slop more across than down, the

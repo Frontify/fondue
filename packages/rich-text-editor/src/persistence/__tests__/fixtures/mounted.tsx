@@ -141,14 +141,14 @@ export const loaded = (revision: string | null, ...blocks: readonly JsonValue[])
 });
 export const textOf = (request: SaveRequest) => JSON.stringify(request.document.content).match(/"text":"([^"]*)"/)?.[1];
 /** One `save` call: what it got, when, and how the test answers it. */
-export interface Call {
+export type Call = {
     readonly request: SaveRequest;
     readonly context: ServiceContext;
     readonly at: number;
     /** Resolves with `response`, or with the reference fake's answer when none is given. */
     answer(response?: SaveResponse): void;
     fail(): void;
-}
+};
 /** A service in front of the reference fake that records each call; `held` saves wait until the test answers them. */
 export const serviceOf = (held = false) => {
     const server = createFakePersistenceService();
@@ -191,7 +191,7 @@ export const peek = async <T,>(promise: Promise<T>) => {
     // An already settled promise wins the race over the second entry.
     return Promise.race([promise, Promise.resolve('pending' as const)]);
 };
-export interface MountOptions {
+export type MountOptions = {
     readonly service?: PersistenceService;
     readonly recovery?: RecoveryService;
     readonly revision?: string | null;
@@ -201,7 +201,7 @@ export interface MountOptions {
     readonly beforeReady?: number;
     /** Leaves the editor `mounting`, before its first frame. */
     readonly mounting?: boolean;
-}
+};
 /** Mounts an editor on a test then runs its first frame, so it is `ready`. */
 export const mount = (options: MountOptions = {}) => {
     const ref = createRef<EditorHandle<object>>();
@@ -303,7 +303,7 @@ export const replacing = (
 export const textIn = (document: RichTextDocument) => JSON.stringify(document.content).match(/"text":"([^"]*)"/)?.[1];
 export const replace = (handle: EditorHandle<object>, overrides: Partial<ReplaceDocumentRequest> = {}) =>
     act(() => handle.replaceDocument(replacing(handle, overrides)));
-export interface Step {
+export type Step = {
     readonly step: number;
     readonly code: ReplaceCode;
     /** Holds each save until the case answers it. */
@@ -320,7 +320,7 @@ export interface Step {
     readonly saves?: boolean;
     /** The view reads a keystroke while the replacement waits, which the document keeps. */
     readonly kept?: boolean;
-}
+};
 export const typed = ({ type }: Mounted) => {
     type('x');
     return {};

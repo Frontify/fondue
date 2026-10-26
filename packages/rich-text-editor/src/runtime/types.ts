@@ -17,7 +17,7 @@ export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 export type Alignment = 'left' | 'center' | 'right' | 'justify';
 
 /** A stored reference to a resource, with the label it had when it was stored. */
-export interface ReferenceValue {
+export type ReferenceValue = {
     readonly resourceType: StoredId;
     readonly resourceId: string;
     readonly labelSnapshot: string;
@@ -27,22 +27,22 @@ export interface ReferenceValue {
     readonly imageUrl?: string;
     /** Suggestion fallback icon. Not stored on the mention. */
     readonly kind?: 'user' | 'group' | 'everyone';
-}
+};
 
 /** What a host lets users do with a feature: create, edit, remove and paste it. */
-export interface FeaturePolicy {
+export type FeaturePolicy = {
     readonly create: boolean;
     readonly edit: boolean;
     readonly remove: boolean;
     readonly paste: boolean;
-}
+};
 /** What a host lets users do in the editor: the policy per feature, the heading levels and the Enter behavior. */
-export interface AuthoringPolicy {
+export type AuthoringPolicy = {
     readonly features: Readonly<Record<string, FeaturePolicy>>;
     readonly creatableHeadingLevels: readonly HeadingLevel[];
     /** `paragraph` by default in Comment, Document and Brand document, where Comment may use `submit`; Inline defaults to `submit`, which acts as `none` while the host sets no `onSubmit`. */
     readonly enterBehavior: 'paragraph' | 'submit' | 'none';
-}
+};
 
 /** A colour stored either as a token id or as a literal value. */
 export type ColorValue = { readonly tokenId: StoredId } | { readonly value: string };
@@ -50,7 +50,7 @@ export type ColorValue = { readonly tokenId: StoredId } | { readonly value: stri
  * The core's commands, which every definition has. A feature's commands come from its plugin (`CommandsOfPart`) and
  * type a definition's own map.
  */
-export interface ShippedCommands {
+export type ShippedCommands = {
     readonly 'history.undo': undefined;
     readonly 'history.redo': undefined;
     readonly 'paragraph.set': undefined;
@@ -58,7 +58,7 @@ export interface ShippedCommands {
     readonly 'hard-break.insert': undefined;
     readonly 'block.move.up': undefined;
     readonly 'block.move.down': undefined;
-}
+};
 /** The id of a command the editor ships. */
 export type CommandId = Extract<keyof ShippedCommands, string>;
 /** The id of a command in a given command map. */
@@ -70,31 +70,31 @@ export type CommandArgs<C extends object, K extends CommandKey<C>> = undefined e
 
 declare const selectionHandleBrand: unique symbol;
 /** Opaque, session-local and releasable; never persisted or sent to a server. */
-export interface SelectionHandle {
+export type SelectionHandle = {
     readonly [selectionHandleBrand]: true;
     readonly id: string;
     readonly session: SessionToken;
-}
+};
 /** Options for capturing the selection: what it is for and how an edit that crosses it is handled. */
-export interface CaptureTargetOptions {
+export type CaptureTargetOptions = {
     readonly purpose: 'format' | 'insert' | 'replace-text' | 'edit-node';
     readonly onIntersectingEdit: 'invalidate' | 'map';
-}
+};
 /** The outcome of capturing the selection: the target, or why it was rejected. */
 export type CaptureResult =
     | { readonly status: 'captured'; readonly target: SelectionHandle }
     | { readonly status: 'rejected'; readonly code: 'not-ready' };
 /** Options for running a command: the selection it targets and where focus goes. */
-export interface CommandOptions {
+export type CommandOptions = {
     readonly target?: SelectionHandle;
     readonly focus?: 'preserve' | 'editor';
-}
+};
 /** Whether a command can run now and whether it is active, with the reason if it cannot. */
-export interface CommandState {
+export type CommandState = {
     readonly enabled: boolean;
     readonly active: boolean | 'mixed';
     readonly disabledReason: string | null;
-}
+};
 /** A minor release may add rejection codes, so handle a code you do not know. */
 export type CommandResult =
     | { readonly status: 'applied' | 'no-op'; readonly stamp: DocumentStamp; readonly contentChanged: boolean }
@@ -114,23 +114,23 @@ export type CommandResult =
       };
 
 /** Names one mounted editor session, so a late answer to an earlier session can be told apart. */
-export interface SessionToken {
+export type SessionToken = {
     readonly documentId: string;
     readonly sessionId: string;
     readonly generation: number;
-}
+};
 /** `sequence` advances once for each effective persisted-content change. */
-export interface DocumentStamp extends SessionToken {
+export type DocumentStamp = {
     readonly sequence: number;
-}
+} & SessionToken;
 /** A short description of the current selection: its kind and whether it is collapsed. */
-export interface SelectionSummary {
+export type SelectionSummary = {
     /** `gap` is a caret between two blocks where no text can go, such as before a leading image or between two rules. */
     readonly kind: 'text' | 'node' | 'cells' | 'gap' | 'all' | 'none';
     readonly collapsed: boolean;
     readonly blockType: string | null;
     readonly selectedNodeId: string | null;
-}
+};
 /** A minor release may add origins, so handle an origin you do not know. */
 export type ChangeOrigin =
     | 'input'
@@ -144,16 +144,16 @@ export type ChangeOrigin =
     | 'normalization'
     | 'unknown';
 /** A change the editor reports: its stamp, sequence and what caused it. */
-export interface DocumentChange {
+export type DocumentChange = {
     readonly stamp: DocumentStamp;
     readonly commitSequence: number;
     readonly origin: ChangeOrigin;
     readonly commandId: string | null;
     /** Serializes the captured immutable document lazily; not a live read. */
     readonly readDocument: () => RichTextDocument;
-}
+};
 /** A snapshot of the editor for a host: its session, phase and mode, and a way to read the document. */
-export interface EditorSummary {
+export type EditorSummary = {
     readonly session: SessionToken;
     readonly phase: 'mounting' | 'ready' | 'transitioning' | 'faulted' | 'disposed';
     readonly mode: 'editable' | 'readonly';
@@ -162,41 +162,41 @@ export interface EditorSummary {
     readonly sequence: number;
     readonly compositionActive: boolean;
     readonly selection: SelectionSummary;
-}
+};
 
 /** Opaque, never parsed or compared numerically. `null` at load or base means create-only. */
 export type ServerRevision = string;
 /** The document at one stamp, with the revision the server last acknowledged for it. */
-export interface Snapshot {
+export type Snapshot = {
     readonly stamp: DocumentStamp;
     readonly document: RichTextDocument;
     readonly acknowledgedRevision: ServerRevision | null;
     readonly compositionActive: boolean;
-}
+};
 /** The server's confirmation that a save took, with the stamp and revision it covers. */
-export interface SaveAcknowledgment {
+export type SaveAcknowledgment = {
     /** `null` only in the acknowledgment synthesized for a loaded or replaced record that no save has touched. */
     readonly operationId: string | null;
     readonly stamp: DocumentStamp;
     readonly revision: ServerRevision;
-}
+};
 /** Where saving stands: its state and the newest and last acknowledged sequences. */
-export interface SaveStatus {
+export type SaveStatus = {
     readonly state: 'unmanaged' | 'clean' | 'dirty' | 'saving' | 'uncertain' | 'offline' | 'conflict' | 'error';
     readonly latestSequence: number;
     readonly acknowledgedSequence: number;
     readonly revision: ServerRevision | null;
     readonly inFlightOperationId: string | null;
     readonly diagnostic: Diagnostic | null;
-}
+};
 /** Options for forcing a commit: why it is asked and whether to wait for or reject an open composition. */
-export interface CommitOptions {
+export type CommitOptions = {
     readonly reason: 'submit' | 'navigate' | 'manual';
     /** Default `wait`. */
     readonly composition?: 'wait' | 'reject';
     /** Default `PersistenceOptions.timeoutMs`. */
     readonly timeoutMs?: number;
-}
+};
 /** A minor release may add failure codes, so handle a code you do not know. */
 export type CommitResult =
     | { readonly status: 'acknowledged'; readonly acknowledgment: SaveAcknowledgment }
@@ -210,34 +210,34 @@ export type CommitResult =
           readonly outcome: 'not-sent' | 'unknown' | 'rejected';
       };
 /** A document as a host loaded it: its id, server revision and content. */
-export interface LoadedDocument {
+export type LoadedDocument = {
     readonly documentId: string;
     readonly revision: ServerRevision | null;
     readonly document: RichTextDocument;
-}
+};
 /** What every host service call gets: a signal to cancel it and the session that asked. */
-export interface ServiceContext {
+export type ServiceContext = {
     readonly signal: AbortSignal;
     readonly session: SessionToken;
-}
+};
 /** The unsaved document the editor hands to the recovery service, with its stamp and revision. */
-export interface RecoveryCheckpoint {
+export type RecoveryCheckpoint = {
     /** The snapshot's stamp; at a fault, the last published sequence plus one. */
     readonly stamp: DocumentStamp;
     readonly acknowledgedRevision: ServerRevision | null;
     readonly document: RichTextDocument;
-}
+};
 /** Created only by a host recovery service after acknowledgment. */
-export interface RecoveryReceipt {
+export type RecoveryReceipt = {
     readonly stamp: DocumentStamp;
     readonly receiptId: string;
-}
+};
 /** The host service that keeps unsaved content safe when saving cannot finish. */
-export interface RecoveryService {
+export type RecoveryService = {
     store(checkpoint: RecoveryCheckpoint, context: ServiceContext): Promise<RecoveryReceipt>;
-}
+};
 /** A request to replace the open document with another, naming the stamp it expects and what to do with unsaved edits. */
-export interface ReplaceDocumentRequest {
+export type ReplaceDocumentRequest = {
     readonly expected: DocumentStamp;
     readonly next: LoadedDocument;
     readonly unsaved:
@@ -248,7 +248,7 @@ export interface ReplaceDocumentRequest {
     readonly selection: 'start' | 'end';
     /** Replacement cannot keep history in v1. */
     readonly history: 'reset';
-}
+};
 /** A minor release may add failure codes, so handle a code you do not know. */
 export type ReplaceResult =
     | { readonly status: 'replaced'; readonly session: SessionToken }
@@ -266,7 +266,7 @@ export type ReplaceResult =
               | 'faulted';
       };
 /** A timing the editor reports for an operation such as mount, commit, paste, save or replace. */
-export interface OperationMetric {
+export type OperationMetric = {
     readonly kind: 'mount' | 'commit' | 'paste' | 'save' | 'replace';
     readonly session: SessionToken;
     readonly packageVersion: string;
@@ -275,12 +275,12 @@ export interface OperationMetric {
     readonly durationMs: number;
     readonly normalizationTransactions: number;
     readonly failureCode: string | null;
-}
+};
 
 /** What the chrome of a slot shows of its upload; never a document attribute. */
-export interface UploadStatus {
+export type UploadStatus = {
     readonly state: 'queued' | 'running' | 'failed' | 'stopped';
     /** Whole percent once the service reports progress, else `null`. */
     readonly progress: number | null;
     readonly name: string;
-}
+};

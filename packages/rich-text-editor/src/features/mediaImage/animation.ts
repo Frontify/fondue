@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-interface Decoder {
+type Decoder = {
     readonly tracks: { readonly ready: Promise<void>; readonly selectedTrack: { readonly animated: boolean } | null };
     close(): void;
-}
-interface DecoderClass {
+};
+type DecoderClass = {
     new (init: { readonly data: ReadableStream<Uint8Array>; readonly type: string }): Decoder;
     isTypeSupported(type: string): Promise<boolean>;
-}
+};
 
 // Formats that hold one frame only.
 const STILL_TYPES: ReadonlySet<string> = new Set(['image/jpeg', 'image/bmp']);

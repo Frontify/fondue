@@ -50,13 +50,13 @@ export type AttributeDeclarations = Readonly<Record<string, AttributeDeclaration
 /** The options of a feature, keyed by name, each with a default. */
 export type OptionDeclarations = Readonly<Record<string, ValueDeclaration & { readonly default: JsonValue }>>;
 /** The shape of the payload a command takes: its fields and whether it may be null. */
-export interface PayloadDeclaration {
+export type PayloadDeclaration = {
     readonly fields: Readonly<Record<string, ValueDeclaration & { readonly optional?: boolean }>>;
     /** The whole payload may be `null`, such as "remove the colour". */
     readonly nullable?: boolean;
     /** Fields of which exactly one is set, such as `tokenId` and `value`. */
     readonly exactlyOne?: readonly string[];
-}
+};
 
 /**
  * The whole numbers from `Min` to `Max` when both are literals, at most 12 values from 0 to 63 apart; `number`

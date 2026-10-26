@@ -14,10 +14,10 @@ const slugOf = (heading: string) =>
         .trim()
         .replaceAll(/\s+/g, '-');
 
-interface Described {
+type Described = {
     readonly title: string;
     readonly text: string;
-}
+};
 
 /** The relative links and anchors in `text` that resolve to no story, docs page or heading. */
 const brokenLinks = ({ text }: Described, ids: ReadonlySet<string>): string[] => {

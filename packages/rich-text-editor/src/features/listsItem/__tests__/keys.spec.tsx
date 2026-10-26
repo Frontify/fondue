@@ -31,12 +31,12 @@ afterEach(() => {
     vi.restoreAllMocks();
 });
 
-interface Press {
+type Press = {
     readonly key: string;
     readonly meta?: boolean;
     readonly ctrl?: boolean;
     readonly shift?: boolean;
-}
+};
 const press = ({ view }: Mounted, { key, meta = false, ctrl = false, shift = false }: Press) => {
     const event = new KeyboardEvent('keydown', {
         key,
@@ -50,7 +50,7 @@ const press = ({ view }: Mounted, { key, meta = false, ctrl = false, shift = fal
 };
 
 /** A shortcut row of the list features, with the blocks it starts from and the text the caret sits in. */
-interface Row {
+type Row = {
     readonly command: string;
     readonly key: string;
     readonly shift: boolean;
@@ -58,7 +58,7 @@ interface Row {
     readonly at: string;
     /** The command the change reports, when the key's command runs another. */
     readonly reports?: string;
-}
+};
 const nested = list('bullet', [item('bullet', 'one', list('bullet', [item('bullet', 'two')]))]);
 const ROWS: readonly Row[] = [
     { command: 'list.bullet.toggle', key: '8', shift: true, blocks: [para(text('one'))], at: 'one' },

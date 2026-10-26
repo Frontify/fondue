@@ -17,18 +17,18 @@ const PACKAGE_ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
 const RULE = 'eslint(no-restricted-imports)';
 
-interface Case {
+type Case = {
     readonly name: string;
     readonly file: string;
     readonly source: string;
     readonly banned: boolean;
-}
+};
 
-interface Diagnostic {
+type Diagnostic = {
     readonly code: string;
     readonly filename: string;
     readonly labels: readonly { readonly span: { readonly line: number } }[];
-}
+};
 
 const banned = (name: string, file: string, source: string): Case => ({ name, file, source, banned: true });
 

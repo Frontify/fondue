@@ -10,12 +10,12 @@ import { useClientLayoutEffect } from './clientLayoutEffect';
  * its own: a session render through its effects between two `Phase` markers, and every render of a part that reads
  * the editor through a package hook.
  */
-export interface ReactWork {
+export type ReactWork = {
     /** Between the opening and the closing `Phase` of a session render, through its layout effects and effects. */
     phase: boolean;
     /** From the render of a part that calls a package hook to the commit that follows it. */
     rendering: boolean;
-}
+};
 
 export const createReactWork = (): ReactWork => ({
     phase: false,

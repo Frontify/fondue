@@ -26,7 +26,7 @@ import { type Lifecycle } from './lifecycle';
 import { type PolicyService } from './policy';
 import { type TargetsService } from './targets';
 
-export interface UploadService {
+export type UploadService = {
     /** The session's upload machine, which the slot plugin, the idle hook and the history read. */
     readonly raw: Uploads;
     /** The media types `media.image` takes, `undefined` without it. */
@@ -37,7 +37,7 @@ export interface UploadService {
     retry(nodeId: string): void;
     pick(nodeId: string | undefined): void;
     statusOf(nodeId: string): UploadStatus | undefined;
-}
+};
 
 // The service is built before the store, whose first state holds its plugin, so what is built later is read lazily.
 export const createUploadService = (a: {

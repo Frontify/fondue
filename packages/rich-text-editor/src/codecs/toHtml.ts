@@ -51,7 +51,7 @@ import { build, checkOverrideSpec, checkOverrideTags, escapeHtml } from './htmlM
 import { type CodecPlan, Losses } from './plan';
 import { keepMark, noteNode, reportFailure } from './walk';
 
-interface HtmlState extends Spacing {
+type HtmlState = {
     readonly plan: CodecPlan;
     readonly context: CodecContext;
     readonly diagnostics: Diagnostic[];
@@ -64,19 +64,19 @@ interface HtmlState extends Spacing {
     readonly resolveReference: ResolveReference | undefined;
     /** The column breaks written so far, whose first `count - 1` are active. */
     breaks: number;
-}
+} & Spacing;
 
 const NO_STYLES: OutputStyles = { styles: [], colorTokens: [], inline: false };
 
 /** What `writeHtml` writes around and into the blocks; every field is optional. */
-export interface HtmlWriteOptions {
+export type HtmlWriteOptions = {
     readonly contentClassName?: string | undefined;
     readonly listLevels?: ListLevels | undefined;
     readonly columns?: ColumnLayout | undefined;
     readonly styles?: OutputStyles | undefined;
     /** Mention labels as the reader shows them; without it, each mention's stored label. */
     readonly resolveReference?: ResolveReference | undefined;
-}
+};
 
 const NO_OPTIONS: HtmlWriteOptions = Object.freeze({});
 

@@ -20,9 +20,9 @@ export type BoundaryProps = {
     readonly children: ReactNode;
 };
 
-interface BoundaryState {
+type BoundaryState = {
     readonly failed: boolean;
-}
+};
 
 /** Replaces only the panel that threw, and leaves the rest of the editor mounted. */
 class PanelBoundary extends Component<BoundaryProps, BoundaryState> {

@@ -26,7 +26,7 @@ import { rebuildOfficeLists, removeOfficeMarkup } from './office';
 import { clearingRules, functionRules, readAnswers, withRefusals } from './parseRules';
 import { withinLinkPolicy } from './policy';
 
-export interface HtmlSettings {
+export type HtmlSettings = {
     readonly limits: ResourceLimits;
     /** The creatable heading levels of the definition, or `undefined` to keep every level. */
     readonly headingLevels: readonly number[] | undefined;
@@ -36,9 +36,9 @@ export interface HtmlSettings {
     readonly colors: ColorReading;
     /** The model's function parse rules, which read an element before the schema's rules do. */
     readonly rules: readonly CompiledParseRule[];
-}
+};
 
-export interface ImportedHtml {
+export type ImportedHtml = {
     readonly content: Fragment;
     /** Images dropped without fetching, for the announcement. */
     readonly droppedImages: number;
@@ -46,7 +46,7 @@ export interface ImportedHtml {
     readonly removedColors: number;
     /** Tables the schema cannot hold, whose cells became blocks, for the announcement. */
     readonly removedTables: number;
-}
+};
 
 /**
  * Parses `html` into an inert document of the host's DOM, cleans it, and reads it with the schema's parse rules,

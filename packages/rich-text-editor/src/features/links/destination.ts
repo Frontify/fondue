@@ -24,11 +24,11 @@ export const withScheme = (typed: string): string => {
 };
 
 /** A search result the link popover lists: its label and its checked `href`. */
-export interface Destination {
+export type Destination = {
     readonly key: string;
     readonly label: string;
     readonly href: string;
-}
+};
 
 /** The results that carry an `href` passing the URL check and the feature's policy, which only those can link to. */
 export const destinationsOf = (items: readonly ReferenceValue[], policy: HrefPolicy | undefined): Destination[] =>

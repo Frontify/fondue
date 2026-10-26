@@ -5,10 +5,10 @@ import { Fragment, type Node, type NodeType, type ResolvedPos } from 'prosemirro
 import { type EditorState, Selection, TextSelection, type Transaction } from 'prosemirror-state';
 
 /** A range `from`–`to` in one parent that a block replaces; an empty range inserts it there. */
-interface BlockSpot {
+type BlockSpot = {
     readonly from: number;
     readonly to: number;
-}
+};
 
 /**
  * Where a block goes, in order of preference: in place of the empty textblock at a caret, before a textblock with the

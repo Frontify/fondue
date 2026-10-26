@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export interface Busy {
+export type Busy = {
     run<T>(work: () => T): T;
     isBusy(): boolean;
     onIdle(...hooks: (() => void)[]): void;
     afterEach(...hooks: (() => void)[]): void;
-}
+};
 
 export const createBusy = (): Busy => {
     const idle: (() => void)[] = [];

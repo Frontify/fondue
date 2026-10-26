@@ -33,7 +33,7 @@ export const CONFLICT: CommitResult = { status: 'blocked', code: 'conflict' };
 export const NOT_SENT: CommitResult = { status: 'failed', code: 'transport', outcome: 'not-sent' };
 
 /** What the transport observed when it fed the event. */
-export interface Facts {
+export type Facts = {
     readonly now: number;
     readonly online: boolean;
     readonly phase: EditorSummary['phase'];
@@ -42,24 +42,24 @@ export interface Facts {
     readonly session: SessionToken;
     /** Read at each event, so the host's newest options apply. */
     readonly options: PersistenceOptions | undefined;
-}
+};
 
 /** The one write in flight: the `serial` tells its answer from a late answer of an earlier write. */
-export interface Flight {
+export type Flight = {
     readonly request: SaveRequest;
     readonly started: number;
     readonly serial: number;
-}
+};
 
 /** A snapshot `requestCommit` pinned, which is written as it is, ahead of any later autosave. */
-export interface Pin {
+export type Pin = {
     readonly stamp: DocumentStamp;
     readonly document: RichTextDocument;
     /** The calls that share its next result; a call after that result waits for a later one. */
     readonly calls: readonly number[];
-}
+};
 
-export interface SaveMachine {
+export type SaveMachine = {
     readonly state: SaveState;
     readonly latest: number;
     readonly acknowledged: number;
@@ -87,12 +87,12 @@ export interface SaveMachine {
     readonly shown: boolean;
     readonly retrying: boolean;
     readonly longest: boolean;
-}
+};
 
-export interface Pinned {
+export type Pinned = {
     readonly stamp: DocumentStamp;
     readonly document: RichTextDocument;
-}
+};
 
 export type SaveEvent = { readonly facts: Facts } & (
     | { readonly type: 'mounted' }
@@ -142,19 +142,19 @@ export type Effect =
     | { readonly type: 'answer'; readonly calls: readonly number[]; readonly result: CommitResult }
     | { readonly type: 'answerWaiting'; readonly result: CommitResult };
 
-export interface Step {
+export type Step = {
     readonly state: SaveMachine;
     readonly effects: readonly Effect[];
-}
+};
 
 export type Mutable<T> = { -readonly [K in keyof T]: T[K] };
 
 /** A copy of the machine and the effects a handler appends, so `next` never changes its input. */
-export interface Draft {
+export type Draft = {
     readonly m: Mutable<SaveMachine>;
     readonly fx: Effect[];
     readonly facts: Facts;
-}
+};
 
 export const timing = <K extends keyof Timing>(facts: Facts, name: K): Timing[K] => {
     const { options } = facts;

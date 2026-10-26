@@ -15,7 +15,7 @@ export type RejectedCode = Extract<CommandResult, { readonly status: 'rejected' 
 export type ReplaceCode = Extract<ReplaceResult, { readonly status: 'rejected' }>['code'];
 
 /** A batch checked against policy and limits and not installed, with how it maps positions. */
-export interface Candidate {
+export type Candidate = {
     readonly candidate: EditorState;
     readonly root: Transaction;
     /** The root and what plugins appended to it. */
@@ -24,7 +24,7 @@ export interface Candidate {
     /** When the batch started, and how many transactions plugins appended to it. */
     readonly started: number;
     readonly appended: number;
-}
+};
 /** What the `operationMetric` of a batch that changed the document reports. */
 export type BatchMetric = Pick<Candidate, 'started' | 'appended'> & { readonly kind: 'commit' | 'paste' };
 /** A candidate, or why a batch cannot be installed. */
@@ -41,10 +41,10 @@ export type Route = 'host' | 'queue' | 'async' | 'node';
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
 export type Attempt = Prepared | { readonly unchanged: true };
 
-export interface Intent {
+export type Intent = {
     readonly id: string;
     readonly payload: unknown;
     readonly options: unknown;
     readonly depth: number;
     readonly resolve: (result: CommandResult) => void;
-}
+};

@@ -72,7 +72,7 @@ export const image = (nodeId: string, attrs: Readonly<Record<string, unknown>> =
     ],
 });
 
-interface Mount {
+type Mount = {
     readonly blocks: readonly ContentNodeJSON[];
     readonly model?: ContentModel;
     readonly policy?: Partial<AuthoringPolicy>;
@@ -80,7 +80,7 @@ interface Mount {
     readonly toolbar?: readonly (readonly string[])[];
     readonly plugins?: readonly EditorPart[];
     readonly readOnly?: boolean;
-}
+};
 
 /** Mounts an editor with the content checks on a white page, with the Checks button and runs its first frame. */
 export const mountChecks = ({

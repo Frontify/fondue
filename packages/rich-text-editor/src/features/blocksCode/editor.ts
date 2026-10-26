@@ -8,17 +8,17 @@ import { codeBlock } from './feature';
 import { languageChoices } from './languages';
 import { codeBlockView } from './view';
 
-interface HastChild {
+type HastChild = {
     readonly type: string;
     readonly value?: string;
     readonly children?: readonly HastChild[];
     readonly properties?: { readonly className?: readonly string[] | string };
-}
+};
 
-interface Highlighter {
+type Highlighter = {
     highlight: (language: string, value: string) => { readonly children: readonly HastChild[] };
     registered: (language: string) => boolean;
-}
+};
 
 let highlighter: Highlighter | undefined;
 let loading: Promise<Highlighter> | undefined;

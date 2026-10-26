@@ -7,7 +7,7 @@ import { type OperationMetric, type SessionToken } from '../types';
 
 import { type BatchMetric } from './types';
 
-export interface Metrics {
+export type Metrics = {
     measure(
         kind: OperationMetric['kind'],
         started: number,
@@ -17,7 +17,7 @@ export interface Metrics {
     /** Keeps the batch's metric until the next flush emits it. */
     record(batch: BatchMetric): void;
     flush(): void;
-}
+};
 
 export const createMetrics = (args: {
     model: ContentModel;

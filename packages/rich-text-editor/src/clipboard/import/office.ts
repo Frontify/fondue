@@ -24,22 +24,22 @@ const MSO_PROPERTY = /(?:^|;)\s*mso-/i;
 /** The numbering formats an ordered list's `data-marker` takes. */
 type MarkerFormat = 'decimal' | 'lower-alpha' | 'upper-alpha' | 'lower-roman' | 'upper-roman';
 
-interface ListParagraph {
+type ListParagraph = {
     readonly element: Element;
     readonly list: string;
     readonly level: number;
     readonly ordered: boolean;
     /** The format its marker text shows, which its list takes when the item opens it; `null` for a bullet or no marker. */
     readonly format: MarkerFormat | null;
-}
+};
 
-interface OpenList {
+type OpenList = {
     readonly element: HTMLElement;
     readonly list: string;
     /** The Word level of its items, clamped. */
     readonly level: number;
     readonly ordered: boolean;
-}
+};
 
 /** A marker's number or letters before its delimiter, such as `iv` in `iv)`. */
 const MARKER_TOKEN = /^\(?(\d+|[a-z]+)[.)]/i;

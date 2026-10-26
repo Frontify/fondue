@@ -6,6 +6,7 @@ import '@frontify/fondue-components/styles';
 import { beforeMount } from '@playwright/experimental-ct-react/hooks';
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         cspViolations?: string[];
     }

@@ -15,7 +15,7 @@ const CLEAR_COLOR = 'mark.color.clear';
 type ColorMark = keyof typeof SET_COMMANDS;
 
 /** The colour menu's strings, in the UI locale. */
-interface ColorMenuStrings {
+type ColorMenuStrings = {
     readonly label: string;
     readonly textColors: string;
     readonly highlightColors: string;
@@ -24,7 +24,7 @@ interface ColorMenuStrings {
     readonly customHighlight: string;
     readonly save: string;
     readonly cancel: string;
-}
+};
 
 const colorMenuStrings = (t: CodecContext['t']): ColorMenuStrings => ({
     label: t('RichTextEditor_colorMenu'),
@@ -38,20 +38,20 @@ const colorMenuStrings = (t: CodecContext['t']): ColorMenuStrings => ({
 });
 
 /** What the menu offers: the tokens for each mark, and which marks take any colour through the picker. */
-interface ColorMenuOptions {
+type ColorMenuOptions = {
     readonly tokens: readonly ColorToken[];
     /** `marks.highlight` is installed, so the menu offers its colours. */
     readonly highlight: boolean;
     /** The marks whose feature has `literalColors` on. */
     readonly literal: readonly ColorMark[];
-}
+};
 
-interface Rgba {
+type Rgba = {
     red: number;
     green: number;
     blue: number;
     alpha?: number;
-}
+};
 
 const channel = (value: number) =>
     Math.min(255, Math.max(0, Math.round(value)))

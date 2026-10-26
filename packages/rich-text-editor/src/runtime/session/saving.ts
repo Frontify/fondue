@@ -11,7 +11,7 @@ import {
 
 import { type Lifecycle } from './lifecycle';
 
-export interface Saving {
+export type Saving = {
     /** Installs the save coordinator; without one the session stays unmanaged. */
     attach(coordinator: SaveCoordinator | undefined): void;
     status(): SaveStatus;
@@ -28,7 +28,7 @@ export interface Saving {
     serviceChanged(): void;
     /** The session starts again from a loaded record with `revision`, after the `previous` stamp. */
     replaced(revision: ServerRevision | null, previous: DocumentStamp): void;
-}
+};
 
 export const createSaving = (args: {
     revision: ServerRevision | null;

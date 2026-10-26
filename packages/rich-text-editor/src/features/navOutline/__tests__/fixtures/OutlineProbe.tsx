@@ -36,6 +36,7 @@ const BLOCKS = {
 };
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         outlineRte?: {
             readonly sequence: () => number;

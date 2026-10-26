@@ -4,12 +4,12 @@ import { createInputSettling, type InputSettling } from '../settle';
 
 import { type InputOutcome } from './types';
 
-export interface Composition extends InputSettling {
+export type Composition = {
     /** Calls `settled` once input settles after the composition that runs now, or with `timeout` after `timeoutMs`. */
     wait(settled: (outcome: InputOutcome) => void, timeoutMs: number): void;
     /** Answers every waiter with the outcome, as the settle and `dispose` do. */
     resolve(outcome: InputOutcome): void;
-}
+} & InputSettling;
 
 export const createComposition = (a: { composing: () => boolean; onSettled: () => void }): Composition => {
     // What waits for input to settle outside the queue, such as a form's settled value.

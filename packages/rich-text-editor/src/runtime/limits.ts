@@ -5,12 +5,12 @@ import { type Node } from 'prosemirror-model';
 import { type CapabilityRef, type ContentModel, type JsonValue, type ResourceLimits, isRecord } from '#/model';
 import { ISLAND_BLOCK, ISLAND_INLINE, type TreeNode, vocabularyOf, writeNode } from '#/model/internal';
 
-interface Size {
+type Size = {
     readonly bytes: number;
     readonly nodes: number;
     /** The longest text node, which the engine keeps joined as the encoder does; an island's text was checked at decode. */
     readonly longest: number;
-}
+};
 
 const encoder = new TextEncoder();
 const utf8Bytes = (json: string) => encoder.encode(json).byteLength;

@@ -36,6 +36,7 @@ const PARITY_FIXTURES: Readonly<Record<string, RichTextDocument>> = Object.fromE
 ]);
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The names of the fixtures the probe renders. */
         parityNames?: readonly string[];

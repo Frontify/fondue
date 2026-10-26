@@ -11,15 +11,15 @@ export type StyleRecipe = CssProperties<string | number> & {
     readonly hover?: CssProperties<string | number>;
 };
 /** A named style a host offers for paragraphs, headings or links, with the recipe that draws it. */
-export interface PresentationStyle {
+export type PresentationStyle = {
     readonly id: string;
     readonly label: string;
     readonly appliesTo: readonly ('paragraph' | 'heading' | 'link')[];
     readonly deprecated: boolean;
     readonly recipe: StyleRecipe;
-}
+};
 /** A named colour a host offers, stored by id, with its label and the colour it resolves to. */
-export interface ColorToken {
+export type ColorToken = {
     /** Stored as `tokenId`. */
     readonly id: string;
     /** The swatch's accessible name. */
@@ -27,22 +27,22 @@ export interface ColorToken {
     /** CSS colour for rendering and contrast checks. */
     readonly value: string;
     readonly usage: readonly ('font_color' | 'highlight')[];
-}
+};
 
 /** A recipe as the editor, the reader and `toHTML` apply it: its class in the generated stylesheet and its checked declarations. */
-export interface ResolvedStyle {
+export type ResolvedStyle = {
     readonly className: string;
     /** Resting declarations as CSS property and value, in recipe order. */
     readonly declarations: readonly (readonly [string, string])[];
     readonly hover: readonly (readonly [string, string])[];
-}
+};
 /** The result of looking up a stored style id: the style to apply and whether a default replaced it. */
-export interface StyleResolution {
+export type StyleResolution = {
     /** The recipe to apply, or `undefined` for the node type's own look. */
     readonly style: ResolvedStyle | undefined;
     /** The stored ID is missing from the styles or deprecated, so the default style applies in its place. */
     readonly unknown: boolean;
-}
+};
 
 /** The feature that adds `styleId`, which the unknown-style diagnostic names. */
 export const STYLES_FEATURE = 'styles.brand';

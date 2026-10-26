@@ -8,7 +8,7 @@ import { escapePassed } from '#/bridge/overlays';
 import { type EditorPort, hasSurface, nodeChromeOf, passesToBrowser } from '#/runtime/port';
 import { pressesBinding } from '#/ui/shortcuts';
 
-interface ChromeFocus {
+type ChromeFocus = {
     readonly runtime: EditorPort | undefined;
     /** The fixed toolbar, unless none renders or the editor is disabled. */
     readonly toolbar: HTMLElement | null;
@@ -20,7 +20,7 @@ interface ChromeFocus {
     readonly showBubble: (() => void) | null;
     /** The package key binding that moves focus between the toolbars. */
     readonly shortcut: string;
-}
+};
 
 /** A toolbar Alt+F10 focuses, or the opener of the bubble toolbar that bubble mode has not shown yet. */
 type Stop = HTMLElement | (() => void);

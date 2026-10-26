@@ -42,27 +42,27 @@ export const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy
 };
 
 /** One inline child of a run: a text node or an atom. */
-interface Piece {
+type Piece = {
     readonly from: number;
     readonly to: number;
-}
-interface Run {
+};
+type Run = {
     readonly mark: Mark;
     readonly pieces: Piece[];
     text: string;
-}
+};
 /** How a batch maps positions of the document before it to the one after it. */
 type BatchMapping = Transaction['mapping'];
 /** A feature's occurrences in part of a document: its nodes, and its marks as runs. */
-interface Occurrences {
+type Occurrences = {
     readonly nodes: Map<string, Node[]>;
     readonly runs: Map<string, Run[]>;
-}
-interface Change {
+};
+type Change = {
     readonly create: boolean;
     readonly edit: boolean;
     readonly remove: boolean;
-}
+};
 
 /** Each maximal stretch of a textblock's inline content that carries one mark, with its pieces and text. */
 const markRuns = (block: Node, start: number): Run[] => {

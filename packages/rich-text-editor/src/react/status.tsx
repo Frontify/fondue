@@ -60,18 +60,18 @@ const keyOf = (status: SaveStatus, causes: SaveCauses | undefined): Key | null =
 };
 
 /** One save state as the status saw it: the state, the session generation it belongs to and the key it shows. */
-export interface Seen {
+export type Seen = {
     readonly state: State;
     readonly generation: number;
     readonly key: Key | null;
-}
+};
 /** What the announcements remember between changes. */
-export interface Memory {
+export type Memory = {
     /** A `clean` now ends an outage or a failure, so it is announced. */
     readonly recovering: boolean;
     /** The retrying or offline state last announced, which a replay in between does not announce again. */
     readonly outage: State | null;
-}
+};
 export const QUIET: Memory = { recovering: false, outage: null };
 
 /** The key a change from `previous` to `next` announces, if any, and what to remember. */

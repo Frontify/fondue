@@ -7,15 +7,15 @@ import { type JsonObject } from '#/model';
 import { type CommandResult } from '../../types';
 
 /** One search of a suggestion list: the list's key, whose newer search supersedes it, its feature and command, and the call. */
-export interface SuggestionSearch<T> {
+export type SuggestionSearch<T> = {
     readonly key: string;
     readonly featureId: string;
     readonly command: string;
     readonly run: (signal: AbortSignal) => Promise<T>;
-}
+};
 
 /** What the suggestion plugin asks of the session that owns a view, which the runtime registers when it attaches one. */
-export interface SuggestionHost {
+export type SuggestionHost = {
     /** Whether the authoring policy lets the author create content with `featureId`, without which its lists stay closed, as its toolbar entries hide. */
     readonly creates: (featureId: string) => boolean;
     /** Replaces `from` to `to` with the result of `command`, through the session's command checks, as one undo step. */
@@ -28,7 +28,7 @@ export interface SuggestionHost {
     readonly commandHost: unknown;
     /** Runs `search` as one operation of the session's async coordinator and hands `receive` what it resolved; returns what aborts it. */
     readonly search: <T>(search: SuggestionSearch<T>, receive: (result: T) => void) => () => void;
-}
+};
 
 /** The host of each attached view, read by the plugin, which is built once per definition and shared by sessions. */
 export const suggestionHosts = new WeakMap<EditorView, SuggestionHost>();

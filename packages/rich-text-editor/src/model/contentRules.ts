@@ -22,10 +22,10 @@ export type ContentRuleId =
     | 'sensory.review'
     | 'structure.review';
 /** The repair command a rule offers, which the editor part of `feature` registers. */
-export interface ContentRepair {
+export type ContentRepair = {
     readonly command: string;
     readonly feature: string;
-}
+};
 /** What a rule found: `true` for an issue with no repair, the repair command's payload, or `undefined` for none. */
 export type ContentFinding = true | { readonly payload: JsonValue | null } | undefined;
 /**
@@ -36,7 +36,7 @@ export type ContentRuleSubject =
     | { readonly node: string; readonly where?: (node: ContentNodeJSON) => boolean }
     | { readonly marks: readonly string[] };
 /** The subject a rule checks, as the content check engine finds it. */
-export interface ContentRuleInput {
+export type ContentRuleInput = {
     /** The node, or the first inline child of a run. */
     readonly node: ContentNodeJSON;
     /** The nodes the subject covers: the node alone, or the inline children of a run. */
@@ -49,9 +49,9 @@ export interface ContentRuleInput {
     readonly marks: Readonly<Record<string, MarkJSON | undefined>>;
     /** The text a reader meets in the covered nodes. */
     readonly text: string;
-}
+};
 /** What every rule may read besides its subject: the locale's word lists and the host's check options. */
-export interface ContentRuleContext {
+export type ContentRuleContext = {
     readonly genericWords: ReadonlySet<string>;
     readonly vagueTexts: ReadonlySet<string>;
     readonly colorTokens: readonly ColorToken[];
@@ -59,9 +59,9 @@ export interface ContentRuleContext {
     /** The host page's heading level around the editor, or `undefined` when the first heading is exempt. */
     readonly enclosingHeadingLevel: number | undefined;
     readonly creatableHeadingLevels: readonly number[];
-}
+};
 /** A content check a feature declares for its own nodes or marks; the engine runs it and lists issues in rule order. */
-export interface ContentRule {
+export type ContentRule = {
     readonly id: ContentRuleId;
     readonly kind: 'automatic' | 'manual';
     readonly severity: 'error' | 'warning' | 'review';
@@ -69,18 +69,18 @@ export interface ContentRule {
     /** The command a finding's payload is offered with, when the model installs its feature. */
     readonly repair?: ContentRepair;
     check(input: ContentRuleInput, context: ContentRuleContext): ContentFinding;
-}
+};
 /** Where a feature's node stores a reference to a host resource, as the names of the attributes that hold it. */
-export interface ReferenceDeclaration {
+export type ReferenceDeclaration = {
     readonly node: string;
     readonly nodeId: string;
     readonly resourceType: string;
     readonly resourceId: string;
-}
+};
 /** What a feature declares about content beyond its nodes and marks: its content checks and its references. */
-export interface FeatureContentDeclaration {
+export type FeatureContentDeclaration = {
     /** Content checks for this feature's nodes and marks, listed in this order after the document rules. */
     readonly contentRules?: readonly ContentRule[];
     /** The resources this feature's nodes mention, which `diffReferences` reports. */
     readonly references?: readonly ReferenceDeclaration[];
-}
+};

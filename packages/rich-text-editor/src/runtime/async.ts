@@ -7,7 +7,7 @@ import { initial, next, type AsyncEffect, type AsyncEventInput, type AsyncFacts 
 import { type FeaturePolicy, type SelectionHandle, type SessionToken } from './types';
 
 /** What a capability hands the coordinator: the service call and the command that applies its result. */
-export interface AsyncRequest {
+export type AsyncRequest = {
     /** The interaction whose newer request supersedes an older one, such as one mention search. */
     readonly key: string;
     /** The `services` member the call uses, so a changed member aborts it. */
@@ -33,10 +33,10 @@ export interface AsyncRequest {
     readonly fail?: (error: unknown) => void;
     /** At most `limit` operations of the pool `name` run at once; the others wait registered, in start order. */
     readonly pool?: { readonly name: string; readonly limit: number };
-}
+};
 
 /** A registered operation; only one that never started, or one that delivers its result, has no target. */
-export interface AsyncOperation {
+export type AsyncOperation = {
     readonly id: string;
     readonly session: SessionToken;
     readonly target: SelectionHandle | null;
@@ -50,12 +50,12 @@ export interface AsyncOperation {
     readonly action: keyof FeaturePolicy;
     readonly command: string;
     readonly deliver?: (result: unknown) => string | undefined;
-}
+};
 
 /** The registered operations of every live runtime, which the `src/testing` probe reads. */
 export const liveOperations = new Set<AsyncOperation>();
 
-export interface AsyncCoordinatorOptions {
+export type AsyncCoordinatorOptions = {
     readonly generateId: () => string;
     readonly session: () => SessionToken;
     readonly policyRevision: () => number;
@@ -70,7 +70,7 @@ export interface AsyncCoordinatorOptions {
     /** Applies a result through `commit` from the current state, or returns why it cannot. */
     readonly apply: (operation: AsyncOperation, result: unknown) => string | undefined;
     readonly report: (diagnostic: Diagnostic) => void;
-}
+};
 
 type Of<T extends AsyncEffect['type']> = Extract<AsyncEffect, { readonly type: T }>;
 

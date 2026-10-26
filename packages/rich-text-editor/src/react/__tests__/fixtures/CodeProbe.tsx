@@ -18,13 +18,14 @@ const model = compileContentModel([core(), listItem(), bulletList(), codeBlock()
 const definition = defineEditor({ id: 'test.code-ct', model, plugins: unitsOf(model) });
 
 /** One change as the probe records it: where it came from and the document content after it. */
-export interface CodeChange {
+export type CodeChange = {
     readonly origin: string;
     readonly commandId: string | null;
     readonly content: unknown;
-}
+};
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The code probe's handle, the selection helper and each change. */
         codeRte?: {

@@ -8,6 +8,7 @@ import { type PerfFixtureName } from '../../../model/__tests__/fixtures/perf/doc
 import { perfValue, PerfTree } from './PerfEditor';
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** Mounts an editor over a perf fixture, waits for it to be ready, then unmounts it and removes its container. */
         rteCycle?: (fixture: PerfFixtureName) => Promise<void>;

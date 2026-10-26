@@ -36,6 +36,7 @@ const assets = {
 const services = { assets };
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The image probe's handle, its documented changes and the selection helper the specs drive it with. */
         imageRte?: {

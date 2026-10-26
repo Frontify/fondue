@@ -61,6 +61,7 @@ const injectUnsafe = (handle: EditorHandle, text: string) => {
 };
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The link probe's handle and helpers. */
         linkRte?: {

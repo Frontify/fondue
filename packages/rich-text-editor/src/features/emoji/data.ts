@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export interface EmojiEntry {
+export type EmojiEntry = {
     /** The emoji as Unicode text, which the editor inserts. */
     readonly emoji: string;
     /** The CLDR name in the data locale. */
@@ -11,27 +11,27 @@ export interface EmojiEntry {
     readonly searchLabel: string;
     readonly labelWords: readonly string[];
     readonly order: number;
-}
+};
 
 export type EmojiDataLocale = 'de' | 'en' | 'es' | 'fr' | 'it' | 'nl' | 'pl' | 'pt';
 
-interface CompactEmoji {
+type CompactEmoji = {
     readonly hexcode: string;
     readonly label: string;
     readonly unicode: string;
     readonly group?: number;
     readonly order?: number;
     readonly tags?: readonly string[];
-}
+};
 
-interface CompactModule {
+type CompactModule = {
     readonly default: readonly CompactEmoji[];
-}
+};
 
-interface ScoredEmoji {
+type ScoredEmoji = {
     readonly entry: EmojiEntry;
     readonly rank: number;
-}
+};
 
 // Emojibase group 2 is a skin-tone component. Entries with no group are regional indicators, not emoji.
 const SKIN_TONE_GROUP = 2;

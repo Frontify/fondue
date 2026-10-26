@@ -21,6 +21,7 @@ const service = createFakeReferenceService([
 const services = { references: service };
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The mention probe's handle and the selection helper the specs drive it with. */
         mentionRte?: { readonly handle: EditorHandle; readonly setSelection: typeof setSelection };

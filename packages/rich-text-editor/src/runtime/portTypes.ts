@@ -22,13 +22,13 @@ import {
 
 // The declarations that the editor port names, kept apart from every engine type so its declaration file reaches none.
 /** What the editor shows of the presentation's columns: their count, whether the surface has room for them, and the break labels. */
-export interface ColumnState {
+export type ColumnState = {
     readonly count: number;
     readonly fits: boolean;
     readonly label: string;
     /** The name of a break that forces no break. */
     readonly inactiveLabel: string;
-}
+};
 
 /** How a wait for input to settle ended. */
 export type InputOutcome = 'settled' | 'timeout' | 'disposed';
@@ -40,17 +40,17 @@ export type InputOutcome = 'settled' | 'timeout' | 'disposed';
 export type NodeTarget = string | (() => number | undefined);
 
 /** The actions of one node view, which find their node when they run, never by a position held from before. */
-export interface NodeActions {
+export type NodeActions = {
     update(attrs: JsonObject): CommandResult;
     remove(): CommandResult;
     select(): void;
     /** Runs a command with the node selected at execution time. */
     execute(id: string, ...args: readonly unknown[]): CommandResult;
     query(id: string, ...args: readonly unknown[]): CommandState;
-}
+};
 
 /** What the host calls. */
-export interface RuntimeHandle {
+export type RuntimeHandle = {
     getSummary(): EditorSummary;
     getSnapshot(): Snapshot;
     getSaveStatus(): SaveStatus;
@@ -68,7 +68,7 @@ export interface RuntimeHandle {
     registerInteractionRoot(element: HTMLElement): Unsubscribe;
     subscribe(event: string, listener: Listener): Unsubscribe;
     dispose(): void;
-}
+};
 
 /**
  * Why a file did not upload, which the editor says with how to fix it: its type, its size, its pixels, a size its
@@ -105,7 +105,7 @@ export type UploadPlace =
     | { readonly kind: 'replace'; readonly nodeId: string };
 
 /** One option of a suggestion list. */
-export interface SuggestionItem {
+export type SuggestionItem = {
     /** Unique within one result list. */
     readonly key: string;
     readonly label: string;
@@ -125,10 +125,10 @@ export interface SuggestionItem {
     readonly action?: 'more' | 'retry';
     /** The cursor of the page a `more` option asks for. */
     readonly cursor?: string;
-}
+};
 
 /** The open suggestion list: what was typed, the range an accepted option replaces, and the options so far. */
-export interface ActiveSuggestion {
+export type ActiveSuggestion = {
     /** The feature that declares the list. */
     readonly featureId: string;
     readonly trigger: string;
@@ -149,4 +149,4 @@ export interface ActiveSuggestion {
     readonly request: number;
     /** The cursor of the page the request asks for, `null` for a query's first page. */
     readonly page: string | null;
-}
+};

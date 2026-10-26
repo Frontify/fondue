@@ -12,12 +12,12 @@ import { type Effect, next, type SlotEvent, type SlotState } from './machine';
 import { type UploadHost, type UploadServiceLike } from './types';
 
 /** A slot's machine state, held by the map and by every upload call of the slot, even after a reset drops it. */
-export interface Cell {
+export type Cell = {
     slot: SlotState;
-}
+};
 
 /** What the effects act on: the host, the cache, the cells and the batches that a commit hands on. */
-export interface Link {
+export type Link = {
     readonly host: UploadHost;
     readonly cache: UploadCache;
     readonly cells: Map<string, Cell>;
@@ -25,23 +25,23 @@ export interface Link {
     readonly fills: string[];
     /** Operations a commit ended, aborted together. */
     readonly ended: AsyncOperation[];
-}
+};
 
 /** One send of a slot's file: the service call's cleanup and what the coordinator's callbacks answer with. */
-interface Call {
+type Call = {
     own: AsyncOperation | undefined;
     /** Set once the service call is sent and cleared once it runs, so a cleanup runs at most once. */
     release: (() => void) | undefined;
     /** The service's own answer to the request, after which a cleanup can no longer race it. */
     settled: Promise<unknown>;
     reply: string | undefined;
-}
+};
 
-interface Context {
+type Context = {
     readonly cell: Cell;
     readonly call: Call | undefined;
     readonly service: UploadServiceLike | undefined;
-}
+};
 
 const nothing = () => undefined;
 
@@ -55,13 +55,13 @@ const releaseOnce = (call: Call) => {
 
 type Of<T extends Effect['type']> = Extract<Effect, { readonly type: T }>;
 
-export interface Transport {
+export type Transport = {
     readonly link: Link;
     /** Sends the slot's file as a new operation, and announces its start unless its gesture announces it. */
     readonly send: (cell: Cell, announce?: boolean) => void;
     /** Feeds an event that no upload call belongs to. */
     readonly feed: (cell: Cell, event: SlotEvent) => void;
-}
+};
 
 /** Runs the upload machine's effects against the host's coordinator, the service and the cache. */
 export const createTransport = (host: UploadHost, cache: UploadCache): Transport => {

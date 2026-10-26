@@ -16,6 +16,7 @@ const model = compileContentModel([core(), spotlight()], { id: 'fixture.spotligh
 const definition = defineEditor({ id: 'fixture.spotlight', model, plugins: unitsOf(model, FIXTURE_PLUGINS) });
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         spotlightRte?: {
             readonly document: () => string;

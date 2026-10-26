@@ -23,10 +23,10 @@ import { composer } from './composer';
 import { documentApi } from './document';
 
 /** The session a plugin command runs in, as the runtime hands it over in `CommandContext.session`. */
-export interface CommandSession {
+export type CommandSession = {
     readonly runtime: EditorRuntime;
     readonly host: unknown;
-}
+};
 
 const isCommandSession = (value: unknown): value is CommandSession => isRecord(value) && 'runtime' in value;
 
@@ -217,14 +217,14 @@ const commandDocumentApi = (
 };
 
 /** A plugin command, written over the API it is handed, which runs only through that API. */
-export interface PluginCommandSpec<A, P = never> {
+export type PluginCommandSpec<A, P = never> = {
     readonly payload?: PayloadDeclaration;
     readonly run: (api: A, payload: P) => boolean;
     readonly enabled?: (api: A, payload: P) => boolean;
     readonly active?: (api: A, payload: P) => boolean | 'mixed';
     readonly refuses?: (policy: AuthoringPolicy, payload: P) => boolean;
     readonly readOnly?: boolean;
-}
+};
 
 /**
  * The engine command of a plugin command. `extend` adds the session's hosts to the document API, holding their

@@ -76,7 +76,7 @@ export {
 } from './types';
 
 /** The runtime as the React layers hold it: the members that name no engine type. */
-export interface EditorPort {
+export type EditorPort = {
     readonly handle: RuntimeHandle;
     readonly suggestionListId: string;
     readonly nextDomId: () => string;
@@ -103,7 +103,7 @@ export interface EditorPort {
     clearHistory(): void;
     measure(kind: OperationMetric['kind'], started: number, failureCode: string | null): void;
     runChecks(): boolean;
-}
+};
 
 /** The media session of the session behind `port`, `undefined` when its model does not install `media.image`. */
 export const mediaOf = (port: EditorPort): MediaSession | undefined => mediaOfRuntime(engineOf(port));

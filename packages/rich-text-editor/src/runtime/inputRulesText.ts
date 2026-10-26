@@ -9,11 +9,11 @@ import { OBJECT_REPLACEMENT } from '#/model/internal';
 import { holdsCode, WORD } from './inputRulesCommon';
 
 /** A language's quotation marks, opening and closing, and its apostrophe. */
-interface Quotes {
+type Quotes = {
     readonly primary: readonly [string, string];
     readonly secondary: readonly [string, string];
     readonly apostrophe: string;
-}
+};
 const quotesOf = (primary: string, secondary: string): Quotes => ({
     primary: [primary.charAt(0), primary.charAt(1)],
     secondary: [secondary.charAt(0), secondary.charAt(1)],

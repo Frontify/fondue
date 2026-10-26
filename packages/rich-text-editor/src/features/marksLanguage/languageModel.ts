@@ -7,7 +7,7 @@ import { type CodecContext } from '#/model';
 export const SET_LANGUAGE = 'mark.language.set';
 
 /** The language dialog's strings, in the UI locale. */
-export interface LanguageStrings {
+export type LanguageStrings = {
     readonly title: string;
     readonly tag: string;
     readonly direction: string;
@@ -19,7 +19,7 @@ export interface LanguageStrings {
     readonly remove: string;
     readonly apply: string;
     readonly cancel: string;
-}
+};
 
 export const directions = [
     { value: '', label: 'none' },

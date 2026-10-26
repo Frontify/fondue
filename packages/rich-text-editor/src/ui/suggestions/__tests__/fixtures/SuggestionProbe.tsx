@@ -28,6 +28,7 @@ const localeOf = (lang: string): RichTextLocale => ({
 });
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The suggestion probe's handle. */
         suggestionRte?: { readonly handle: EditorHandle };

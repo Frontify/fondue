@@ -20,6 +20,7 @@ type Flavors = { readonly html: string; readonly text: string; readonly slice: s
 type Point = { readonly x: number; readonly y: number };
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** Set by a pasted event handler or script, which must never run. */
         pwned?: number;

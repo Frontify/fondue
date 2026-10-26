@@ -28,13 +28,14 @@ const presentation = defineReactPresentation({
 });
 
 /** One change as the probe records it: where it came from and the document content after it. */
-export interface ListChange {
+export type ListChange = {
     readonly origin: string;
     readonly commandId: string | null;
     readonly content: unknown;
-}
+};
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The list probe's handle, the selection helper and each change. */
         listRte?: {

@@ -12,7 +12,7 @@ import { type AuthoringPolicy } from '../types';
 
 import { type RejectedCode } from './types';
 
-export interface PolicyService {
+export type PolicyService = {
     current(): AuthoringPolicy;
     revision(): number;
     /** Takes the next policy, counts a revision, then tells `onUpdate`. */
@@ -32,7 +32,7 @@ export interface PolicyService {
     refusal(command: EngineCommand, base: EditorState, payload: unknown): RejectedCode | undefined;
     /** Why the policy or the limits refuse the change of `transaction` from `before`. */
     writeRefusal(before: Node, transaction: Transaction): 'policy' | 'limit' | undefined;
-}
+};
 
 export const createPolicy = ({
     model,

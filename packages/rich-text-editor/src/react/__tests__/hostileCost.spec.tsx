@@ -31,12 +31,12 @@ const HOSTILE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'model
 const EXTRA_MS = 50;
 const RUNS = 3;
 
-interface Fixture {
+type Fixture = {
     readonly name: string;
     readonly boundary: string;
     readonly limits?: Partial<ResourceLimits>;
     readonly input: unknown;
-}
+};
 type Part = string | { readonly repeat: string; readonly times: number };
 
 /** A value with each `{ text: [...] }` of parts joined, as the hostile fixtures keep their long strings small. */

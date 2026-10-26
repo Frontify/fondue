@@ -12,28 +12,28 @@ export const ISLAND_MARK = 'unsupported_mark';
 
 export type Attrs = Readonly<Record<string, unknown>>;
 /** A mark of the island tree: a known mark with `unknownAttributes`, or an `unsupported_mark` holding its `original`. */
-export interface TreeMark {
+export type TreeMark = {
     readonly type: string;
     readonly attrs: Attrs;
-}
+};
 /**
  * A node of the island tree: the decoded document with every declared attribute filled, undeclared ones in
  * `unknownAttributes`, and `unsupported_block` and `unsupported_inline` nodes holding `original` and `feature`.
  */
-export interface TreeNode {
+export type TreeNode = {
     readonly type: string;
     readonly attrs?: Attrs;
     readonly content?: readonly TreeNode[];
     readonly marks?: readonly TreeMark[];
     readonly text?: string;
-}
+};
 
-export interface Vocabulary {
+export type Vocabulary = {
     readonly nodes: ReadonlyMap<string, CompiledNode>;
     readonly marks: ReadonlyMap<string, CompiledMark>;
     /** Mark names by rank, then declared order. */
     readonly markOrder: readonly string[];
-}
+};
 
 const vocabularies = new WeakMap<ContentModel, Vocabulary>();
 
@@ -53,14 +53,14 @@ export const vocabularyOf = (model: ContentModel): Vocabulary => {
 
 export const isIsland = (node: TreeNode) => node.type === ISLAND_BLOCK || node.type === ISLAND_INLINE;
 
-export interface Context {
+export type Context = {
     readonly vocabulary: Vocabulary;
     readonly diagnostics: Diagnostic[];
     /** The stored JSON of each tree node, for the island that may replace it. */
     readonly sources: WeakMap<TreeNode, unknown>;
     /** Node positions a `requires-review` migration step reported, which fail unchecked and with no diagnostic of their own. */
     readonly review: ReadonlySet<string>;
-}
+};
 
 export const warn = (context: Context, code: FormatDiagnosticCode, path: string) =>
     context.diagnostics.push(diagnostic(code, path));

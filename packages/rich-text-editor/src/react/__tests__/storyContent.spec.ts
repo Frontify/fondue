@@ -12,12 +12,12 @@ import { type CompiledEditorDefinition, type ReactPresentation } from '#/react/t
 
 import { COMPOSED_STORIES } from './fixtures/composedStories';
 
-interface StoryArgs {
+type StoryArgs = {
     readonly definition?: CompiledEditorDefinition<object>;
     readonly model?: ContentModel;
     readonly profile?: RichTextProfile;
     readonly presentation?: ReactPresentation;
-}
+};
 
 // Stories that show what the content checks find, whose content has issues on purpose.
 const NAMED_FOR_A_CHECK = /a11yContentChecks\//;

@@ -51,14 +51,14 @@ const BOUNDARIES = [
 ] as const;
 type Boundary = (typeof BOUNDARIES)[number];
 
-interface Fixture {
+type Fixture = {
     readonly name: string;
     readonly boundary: Boundary;
     readonly limits?: Partial<ResourceLimits>;
     readonly unresolved?: true;
     readonly input: unknown;
     readonly expected: Readonly<Record<string, unknown>>;
-}
+};
 type Part = string | { readonly repeat: string; readonly times: number };
 
 /** A value with each `{ text: [...] }` of parts joined, where a part is a string or `{ repeat, times }`, so the files stay small. */
@@ -125,26 +125,26 @@ const presentationOf = ({ unresolved: fails }: Fixture) => {
     return plain;
 };
 
-interface Published {
+type Published = {
     readonly diagnostics: Diagnostic[];
     readonly metrics: OperationMetric[];
     readonly statuses: unknown[];
-}
-interface Held {
+};
+type Held = {
     readonly doc: EditorState['doc'];
     readonly selection: Selection;
     readonly undo: number;
     readonly redo: boolean;
-}
+};
 /** What a boundary answered, whether it refused the input, and the editor state around the call. */
-interface Outcome {
+type Outcome = {
     readonly answer: Readonly<Record<string, unknown>>;
     readonly refused: boolean;
     readonly states?: { readonly before: Held; readonly after: Held };
     readonly published: Published;
     /** Every diagnostic and manifest a package API returned for the fixture. */
     readonly returned: readonly unknown[];
-}
+};
 
 /** A ready editor of the shipped parts over `document`, with every diagnostic, metric and save status it publishes. */
 const mount = async (fixture: Fixture, document: unknown) => {

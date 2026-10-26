@@ -44,7 +44,7 @@ export const image = (assetId: string): ContentNodeJSON => ({
     ],
 });
 
-interface LayoutMount {
+type LayoutMount = {
     readonly model?: ContentModel;
     readonly blocks: readonly ContentNodeJSON[];
     readonly columns?: number;
@@ -53,7 +53,7 @@ interface LayoutMount {
     readonly policy?: Partial<AuthoringPolicy>;
     /** The input rules the editor leaves out. */
     readonly excludeRules?: readonly string[];
-}
+};
 
 /** Mounts `RichTextEditor` with a presentation of `columns` and runs the first frame, so the editor is `ready`. */
 export const mountLayout = ({

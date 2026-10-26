@@ -15,14 +15,14 @@ export type SlotStart =
     | { readonly kind: 'replace'; readonly nodeId: string; readonly previous: JsonObject };
 
 /** What the session's uploads answer about a slot, read when a command runs. */
-export interface SlotUploads {
+export type SlotUploads = {
     /** Whether the slot's upload runs or waits, which Cancel ends. */
     readonly active: (nodeId: string) => boolean;
     /** Whether the slot is not done: its upload runs, waits, failed or stopped, and a retry may start it again. */
     readonly kept: (nodeId: string) => boolean;
     /** Whether the slot keeps the file of an upload that failed or stopped, which Retry sends again. */
     readonly retryable: (nodeId: string) => boolean;
-}
+};
 
 /**
  * How a slot entered the document. A slot that an insertion of one slot added keeps the insertion's inverted steps
@@ -33,10 +33,10 @@ type SlotEntry =
     | { readonly kind: 'insert'; readonly inverse: readonly Step[] | undefined; readonly mapping: Mapping }
     | { readonly kind: 'replace'; readonly previous: JsonObject };
 
-interface SlotState {
+type SlotState = {
     readonly uploads: SlotUploads;
     readonly entries: ReadonlyMap<string, SlotEntry>;
-}
+};
 
 const key = new PluginKey<SlotState>('rte.upload-slots');
 // The transaction meta that gives a fresh state the entries of the state it replaces, as a history reset does.

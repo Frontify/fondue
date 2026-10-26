@@ -12,7 +12,7 @@ import { usePluginHosts } from '../pluginHosts';
 import { memberOf, pluginPresentationOf } from './helpers';
 import { DEFAULT_TEST_ID, type SessionRest } from './types';
 
-interface HostWiring {
+type HostWiring = {
     readonly coordinator: MountCoordinator;
     readonly scope: InteractionScope;
     readonly announcer: Announcer;
@@ -21,7 +21,7 @@ interface HostWiring {
     readonly tRef: MutableRefObject<ReturnType<typeof readerContext>['t']>;
     readonly langRef: MutableRefObject<string>;
     readonly latestRef: MutableRefObject<SessionRest>;
-}
+};
 
 /** The hosts the plugins call, reading the newest props, strings and language when they run. */
 export const useSessionHosts = ({

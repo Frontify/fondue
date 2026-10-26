@@ -12,6 +12,7 @@ import { createFakeReferenceService, type SelectionTarget, setSelection } from '
 import { heard, recordSubmit } from './host';
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /**
          * The text of each submitted snapshot, whether each Enter keydown reached the host prevented, and the handle
@@ -62,7 +63,7 @@ const probe: NonNullable<Window['profileProbe']> = {
 };
 window.profileProbe = probe;
 
-interface ProfileProbeProps {
+type ProfileProbeProps = {
     readonly profile: RichTextProfile;
     /** Sets `onSubmit`, which records each submitted snapshot's text. */
     readonly submits?: boolean;
@@ -79,7 +80,7 @@ interface ProfileProbeProps {
     readonly id?: string;
     readonly describedby?: string;
     readonly errormessage?: string;
-}
+};
 
 // A host picker that hands back one asset, and a directory of one person.
 const SERVICES = {

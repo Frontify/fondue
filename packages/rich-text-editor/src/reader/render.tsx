@@ -50,7 +50,7 @@ import { type ReaderContext, type ReaderNodeProps } from './define';
 import { type Plan } from './plan';
 
 /** The document gets one island notice when `islands` is not zero. */
-export interface RenderState extends Spacing {
+export type RenderState = {
     readonly plan: Plan;
     readonly context: ReaderContext;
     readonly diagnostics: Diagnostic[];
@@ -64,7 +64,7 @@ export interface RenderState extends Spacing {
     readonly columns: ColumnLayout | undefined;
     /** The column breaks rendered so far, whose first `count - 1` are active. */
     breaks: number;
-}
+} & Spacing;
 
 // Every HTML attribute whose React prop is not its lowercase name; the rest pass through unchanged.
 const PROP_NAMES: Readonly<Record<string, string>> = {

@@ -51,7 +51,7 @@ import {
 
 export type { InputOutcome, NodeActions, NodeTarget, RuntimeHandle };
 
-export interface EditorRuntime {
+export type EditorRuntime = {
     readonly handle: RuntimeHandle;
     /** The compiled definition the session runs. */
     readonly definition: CompiledDefinition;
@@ -131,9 +131,9 @@ export interface EditorRuntime {
      * `false` when the editor installs none, or input is composing.
      */
     runChecks(): boolean;
-}
+};
 
-export interface EditorRuntimeOptions {
+export type EditorRuntimeOptions = {
     readonly definition: CompiledDefinition;
     readonly documentId: string;
     /** The decoded island tree the session's document starts from. */
@@ -179,7 +179,7 @@ export interface EditorRuntimeOptions {
     readonly columns?: ColumnState;
     /** The locale and colour options the content checks read when they run; default no locale strings and no colours. */
     readonly contentChecks?: () => Pick<ContentCheckOptions, 'locale' | 'colorTokens' | 'background'>;
-}
+};
 
 export { liveResources };
 

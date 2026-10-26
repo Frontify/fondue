@@ -6,19 +6,19 @@ import { type SelectionHandle, type SessionToken } from './types';
 type Pool = NonNullable<AsyncRequest['pool']>;
 
 /** An operation waiting for room in its pool, with the request that starts it. */
-export interface Entry {
+export type Entry = {
     readonly operation: AsyncOperation;
     readonly request: AsyncRequest;
-}
+};
 
 /** A result that waits for input to settle. */
-export interface Held {
+export type Held = {
     readonly operation: AsyncOperation;
     readonly result: unknown;
-}
+};
 
 /** What the coordinator remembers between events. */
-export interface AsyncMachine {
+export type AsyncMachine = {
     readonly operations: ReadonlyMap<string, AsyncOperation>;
     /** The request sequence of each interaction key. */
     readonly requests: ReadonlyMap<string, number>;
@@ -29,17 +29,17 @@ export interface AsyncMachine {
     readonly running: ReadonlyMap<string, ReadonlySet<AsyncOperation>>;
     readonly waiting: ReadonlyMap<string, readonly Entry[]>;
     readonly pools: ReadonlyMap<AsyncOperation, Pool>;
-}
+};
 
 /** What the transport observed when it fed the event. */
-export interface AsyncFacts {
+export type AsyncFacts = {
     readonly disposed: boolean;
     readonly faulted: boolean;
     readonly holding: boolean;
     readonly session: SessionToken;
     /** An abort is running, so a pool starts no waiting operation that the same abort may end next. */
     readonly aborting: boolean;
-}
+};
 
 export type AsyncEvent = { readonly facts: AsyncFacts } & (
     | { readonly type: 'start'; readonly request: AsyncRequest; readonly reply: (operation: AsyncOperation) => void }
@@ -101,13 +101,13 @@ export type AsyncEffect =
     | { readonly type: 'fail'; readonly request: AsyncRequest; readonly error: unknown }
     | { readonly type: 'discard'; readonly reason: string };
 
-export interface AsyncStep {
+export type AsyncStep = {
     readonly state: AsyncMachine;
     readonly effects: readonly AsyncEffect[];
-}
+};
 
 /** A copy of the machine whose collections a handler changes, and the effects it appends, so `next` never changes its input. */
-export interface Draft {
+export type Draft = {
     readonly m: {
         operations: Map<string, AsyncOperation>;
         requests: Map<string, number>;
@@ -119,7 +119,7 @@ export interface Draft {
     };
     readonly fx: AsyncEffect[];
     readonly facts: AsyncFacts;
-}
+};
 
 export const initial = (): AsyncMachine => ({
     operations: new Map(),

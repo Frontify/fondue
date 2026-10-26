@@ -9,15 +9,15 @@ import { addDeclaration, isPlainCss, isRecord, isSrcdocAttribute, isStyleAttribu
 type Values = Readonly<Record<string, unknown>>;
 
 /** One element of a resolved spec: its tag and its attributes as text, URL values already checked. */
-export interface HtmlLayer {
+export type HtmlLayer = {
     readonly tag: string;
     readonly attrs: Readonly<Record<string, string>>;
-}
+};
 /** An `HtmlSpec` read for one node or mark: its elements from the outside in, and whether the innermost holds the content. */
-export interface HtmlTemplate {
+export type HtmlTemplate = {
     readonly layers: readonly HtmlLayer[];
     readonly content: boolean;
-}
+};
 
 /** By local name, as the compiler checks it: `xlink:href` is `href`. */
 const isUrlAttribute = (name: string) => URL_ATTRIBUTES.has(name.toLowerCase().split(/[\s:]/).at(-1) ?? '');
@@ -143,10 +143,10 @@ export const withAutoDirection = (
 const LETTER = /\p{L}/u;
 
 /** One text run of a textblock: its text and the `dir` of the `language` mark over it, if any. */
-export interface DirectedRun {
+export type DirectedRun = {
     readonly text: string;
     readonly dir: unknown;
-}
+};
 
 /**
  * The `dir` of the `language` mark over a textblock's first letter, when that is `ltr` or `rtl`. `dir="auto"` skips

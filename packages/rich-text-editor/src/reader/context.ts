@@ -6,10 +6,10 @@ import { codecContext, resolvingSafely } from '#/model/internal';
 
 import { type ReaderContext } from './define';
 
-export interface ReaderResolvers {
+export type ReaderResolvers = {
     readonly resolveAssetUrl?: ReaderContext['resolveAssetUrl'];
     readonly resolveReference?: ReaderContext['resolveReference'];
-}
+};
 
 /** The codec context plus `resolveReference`. A resolver that throws gives `null` or `unknown` for that call only. */
 export const readerContext = (locale: RichTextLocale, resolvers: ReaderResolvers): ReaderContext => {

@@ -14,7 +14,7 @@ import {
 export const SET_LINK = 'link.set';
 
 /** The link popover's strings, in the UI locale. */
-export interface LinkPopoverStrings {
+export type LinkPopoverStrings = {
     readonly title: string;
     readonly destination: string;
     readonly text: string;
@@ -34,16 +34,16 @@ export interface LinkPopoverStrings {
     /** What the live region says for the active destination, such as `Brand colors, 1 of 3`. */
     readonly result: (label: string, position: number, total: number) => string;
     readonly apply: string;
-}
+};
 
 /** A presentation style the Style select offers. */
-export interface LinkStyleOption {
+export type LinkStyleOption = {
     readonly id: string;
     readonly label: string;
-}
+};
 
 /** What the popover opens with, read when its command ran. */
-export interface LinkInitial {
+export type LinkInitial = {
     readonly href: string;
     readonly text: string;
     readonly openInNewWindow: boolean;
@@ -52,7 +52,7 @@ export interface LinkInitial {
     readonly focus: 'text' | 'destination';
     /** The whole link the popover edits, which it anchors to. */
     readonly link: EditorRange | undefined;
-}
+};
 
 const textOf = (value: unknown): string => (typeof value === 'string' ? value : '');
 

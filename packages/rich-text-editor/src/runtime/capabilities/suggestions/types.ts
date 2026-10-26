@@ -8,13 +8,13 @@ import { type ReferenceResults } from './references';
 
 export type { ActiveSuggestion, SuggestionItem };
 
-export interface SuggestionsState {
+export type SuggestionsState = {
     readonly active: ActiveSuggestion | null;
     /** The trigger position whose list Escape closed, which stays closed until its text no longer matches. */
     readonly dismissed: number | null;
     /** Counts requests across lists. */
     readonly requests: number;
-}
+};
 
 export type SuggestionsMeta =
     | {
@@ -29,9 +29,9 @@ export type SuggestionsMeta =
     | { readonly kind: 'dismiss' }
     | { readonly kind: 'close' };
 
-export interface Match {
+export type Match = {
     readonly suggestion: EngineSuggestion;
     readonly from: number;
     readonly to: number;
     readonly query: string;
-}
+};

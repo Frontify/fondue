@@ -5,10 +5,10 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { createChromeView } from '../chromeView';
 
-interface Insets {
+type Insets = {
     top: number;
     bottom: number;
-}
+};
 
 /** A view stand-in built with the props chrome gives, which ProseMirror reads on each scroll. */
 const attach = () => {

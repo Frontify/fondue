@@ -98,7 +98,7 @@ export const TEXT_INSERT = {
     payload: { fields: { text: { type: 'string' } } },
     run: (api: EditorApi<'insert'>, { text }: { readonly text: string }) => api.insert.text(text),
 } as const;
-export interface Start {
+export type Start = {
     readonly model?: ContentModel;
     readonly mode?: 'editable' | 'readonly';
     /** Adds plugins to the compiled definition, as the engine runs them after the definition's own. */
@@ -114,7 +114,7 @@ export interface Start {
     /** Editor parts beside the fixture features' own, as a host passes them. */
     readonly parts?: readonly EditorPart[];
     readonly pick?: (nodeId: string | undefined) => void;
-}
+};
 /** The save coordinator of a session that mounts with `service`, none without one. */
 export const saves = (model: ContentModel, service: PersistenceService | undefined): EditorRuntimeOptions['saves'] => {
     if (service === undefined) {

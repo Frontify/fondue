@@ -232,7 +232,7 @@ export const OptionItem = ({
 OptionItem.displayName = 'OptionItem';
 
 /** One choice of an options menu: the command it runs, with its payload, on the node the menu opened for. */
-export interface MenuOption {
+export type MenuOption = {
     readonly key: string;
     readonly label: string;
     readonly command: string;
@@ -241,7 +241,7 @@ export interface MenuOption {
     readonly checked?: boolean;
     /** The option runs nothing and keeps the selection: it only closes the menu and returns focus to the surface. */
     readonly inert?: boolean;
-}
+};
 
 /**
  * A node chrome menu that a command opens at the selection, as a More row does: focus on the checked item, else the

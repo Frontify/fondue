@@ -20,10 +20,10 @@ const inlineEnds = (root: HTMLElement, rtl: boolean): number[] => {
     });
 };
 
-interface Fitting {
+type Fitting = {
     readonly itemsKey: string;
     readonly shown: number;
-}
+};
 
 /** How many of `count` items fit before More, measured whenever the item set changes and fitted again on each resize. */
 export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number, itemsKey: string): number => {

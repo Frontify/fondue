@@ -8,14 +8,14 @@ export const EDIT_LINK = 'link.edit';
 export const REMOVE_LINK = 'link.remove';
 
 /** The link bubble's strings, in the UI locale. */
-export interface LinkBubbleStrings {
+export type LinkBubbleStrings = {
     readonly label: string;
     readonly open: string;
     readonly edit: string;
     readonly copy: string;
     readonly remove: string;
     readonly copied: string;
-}
+};
 
 /** The link bubble's strings, in the UI locale. */
 export const linkBubbleStrings = (t: CodecContext['t']): LinkBubbleStrings => ({

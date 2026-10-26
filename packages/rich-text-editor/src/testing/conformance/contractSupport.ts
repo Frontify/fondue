@@ -60,11 +60,11 @@ export const setAttributesIn = (
     return found;
 };
 
-export interface SharedDefault {
+export type SharedDefault = {
     readonly name: string;
     readonly on: readonly string[] | 'textblocks';
     readonly fallback: JsonValue;
-}
+};
 
 /**
  * `node` with each attribute that a feature of the model adds to its type and that it leaves out, at its default: a

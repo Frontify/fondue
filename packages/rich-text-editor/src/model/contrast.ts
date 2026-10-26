@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export interface Rgba {
+export type Rgba = {
     readonly red: number;
     readonly green: number;
     readonly blue: number;
     readonly alpha: number;
-}
+};
 
 const channelOf = (part: string, scale: number): number | undefined => {
     const percent = part.endsWith('%');

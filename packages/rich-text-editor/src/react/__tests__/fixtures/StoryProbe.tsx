@@ -9,12 +9,13 @@ import { liveResources, runtimeOfView } from '#/runtime/runtime';
 import { COMPOSED_STORIES } from './composedStories';
 
 /** The error reports a story throws on purpose, as its `reports` parameter allows them: each message bounded by count. */
-interface Reports {
+type Reports = {
     readonly console: { readonly message: RegExp; readonly max: number };
     readonly page: { readonly message: RegExp; readonly max: number };
-}
+};
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         storyProbe?: {
             /** Every story of the package, with what the harness reads of its tags and parameters. */

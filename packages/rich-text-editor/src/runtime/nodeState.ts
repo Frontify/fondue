@@ -5,11 +5,11 @@ import { type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirr
 import { type JsonValue } from '#/model';
 
 /** One flag a transaction sets on a node, or removes with `null`. */
-export interface NodeStateChange {
+export type NodeStateChange = {
     readonly nodeId: string;
     readonly key: string;
     readonly value: JsonValue | null;
-}
+};
 
 type NodeStates = ReadonlyMap<string, Readonly<Record<string, JsonValue>>>;
 

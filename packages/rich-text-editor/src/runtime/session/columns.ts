@@ -2,10 +2,10 @@
 
 import { type ColumnState, sameColumns } from '../columns';
 
-export interface Columns {
+export type Columns = {
     current(): ColumnState;
     set(next: ColumnState): void;
-}
+};
 
 export const createColumns = (a: { initial: ColumnState; onChange: () => void }): Columns => {
     let columns = a.initial;

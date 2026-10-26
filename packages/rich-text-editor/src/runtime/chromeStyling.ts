@@ -25,11 +25,11 @@ import {
 } from './viewBridge';
 
 /** What the view styles content with: the presentation's recipes and colours, and who hears an unknown style ID. */
-export interface ChromeStyles {
+export type ChromeStyles = {
     readonly styles: readonly PresentationStyle[];
     readonly colorTokens: readonly ColorToken[];
     readonly onUnknown: (path: string) => void;
-}
+};
 
 /** The text runs of a textblock, which `passageDirection` reads. */
 const runsOf = (block: ViewNode): DirectedRun[] => {
@@ -46,7 +46,7 @@ const runsOf = (block: ViewNode): DirectedRun[] => {
 };
 
 /** What the content decorations read, which the chrome view changes between draws. */
-export interface DecorationInputs {
+export type DecorationInputs = {
     readonly surface: HTMLElement;
     readonly domId: () => string;
     /** Whether a node view is registered for the node type `name`. */
@@ -54,7 +54,7 @@ export interface DecorationInputs {
     readonly levels: ListLevels | undefined;
     readonly styles: ChromeStyles | undefined;
     readonly unknown: (styleId: string, path: string) => void;
-}
+};
 
 /**
  * A node decoration with its list level style on each list whose `marker` is null, as the reader writes it, one
@@ -130,11 +130,11 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
 };
 
 /** The view's decoration prop: the content decorations of the current inputs, and the selection while `shown` holds. */
-export interface ContentDecorations {
+export type ContentDecorations = {
     readonly decorations: NonNullable<ViewProps['decorations']>;
     /** Drops the decorations drawn so far, so the next draw derives them again. */
     reset(): void;
-}
+};
 
 export const createContentDecorations = (
     read: () => DecorationInputs | undefined,
@@ -170,11 +170,11 @@ export const createContentDecorations = (
 };
 
 /** A styled or coloured mark's element, with the recipe class this view last gave it. */
-interface MarkElement {
+type MarkElement = {
     readonly dom: HTMLElement;
     readonly mark: Mark;
     className: string | undefined;
-}
+};
 
 /** Gives a mark's own element its recipe class and inline colour from `styles`, as the reader writes them. */
 const styleMark = (element: MarkElement, styles: ChromeStyles | undefined) => {
@@ -210,12 +210,12 @@ const unlinked = (mark: Mark): boolean => {
     return mark.type.name === 'link' && typeof href === 'string' && !checkHref(href).ok;
 };
 
-export interface MarkStyler {
+export type MarkStyler = {
     /** The mark views of `schema`'s styled and coloured marks, which carry the recipe class and colour on the mark's own element. */
     views(schema: ViewSchema, styles: () => ChromeStyles | undefined): ViewMarkViews;
     /** Restyles the mounted mark views in place. */
     restyle(styles: ChromeStyles | undefined): void;
-}
+};
 
 export const createMarkStyler = (): MarkStyler => {
     // The elements of the mounted mark views, which a new presentation restyles in place.

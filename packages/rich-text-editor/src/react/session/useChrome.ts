@@ -30,7 +30,7 @@ const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
     readonly: 'RichTextEditor_unavailableReadOnly',
 };
 
-interface ChromeSources {
+type ChromeSources = {
     readonly props: Props;
     readonly shell: ReturnType<typeof shellPropsOf>;
     readonly mounted: Mounted;
@@ -45,7 +45,7 @@ interface ChromeSources {
     readonly toolbarMode: ToolbarMode;
     readonly switchToolbar: (next: ToolbarMode) => void;
     readonly keyboard: number;
-}
+};
 
 /** The chrome the parts share: the shown language, the strings, the toolbar items and the plugins' standing overlays. */
 export const useChrome = (sources: ChromeSources) => {
@@ -165,7 +165,7 @@ export const useChrome = (sources: ChromeSources) => {
     return { lang, chromeContext, renderedHosts, standing, chrome };
 };
 
-interface KeySources {
+type KeySources = {
     readonly props: Props;
     readonly coordinator: MountCoordinator;
     readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
@@ -173,7 +173,7 @@ interface KeySources {
     readonly showBubbleRef: MutableRefObject<(() => void) | null>;
     readonly overlayToolbarsRef: MutableRefObject<(HTMLElement | null)[]>;
     readonly toolbarMode: ToolbarMode;
-}
+};
 
 /** Moves focus between the surface and the chrome on the keys the root hears. */
 export const chromeKeyDownOf =
@@ -198,14 +198,14 @@ export const chromeKeyDownOf =
         });
     };
 
-interface OverlaySources {
+type OverlaySources = {
     readonly props: Props;
     readonly mounted: Mounted;
     readonly overlayRoot: HTMLElement | null;
     readonly scope: InteractionScope;
     readonly pluginOverlay: PluginOverlay | undefined;
     readonly chromeContext: ReturnType<typeof readerContext>;
-}
+};
 
 /** Where the overlays render, whether the file chooser exists, and the reference list's strings. */
 export const useOverlayValues = ({

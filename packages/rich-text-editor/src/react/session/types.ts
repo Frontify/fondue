@@ -21,7 +21,7 @@ export const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'upload
 export const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
 
 /** What one mount keeps for its whole life: a changed `definition` or `profile` needs a new mount. */
-export interface Mounted {
+export type Mounted = {
     readonly definition: CompiledEditorDefinition<object>;
     readonly profile: Props['profile'];
     /** `undefined` for a blocked document, which gets no session. */
@@ -32,10 +32,10 @@ export interface Mounted {
     readonly dir: 'ltr' | 'rtl' | undefined;
     /** Mounted with `services.persistence`, which keeps the session managed for its whole life. */
     readonly managed: boolean;
-}
+};
 
 /** What the parts share for the toolbars and focus moves between the surface and the chrome. */
-export interface Chrome {
+export type Chrome = {
     readonly items: readonly ToolbarItem[];
     /** The rows that only the More menus hold. */
     readonly menu: readonly ToolbarItem[];
@@ -65,7 +65,7 @@ export interface Chrome {
     readonly lang: string;
     /** The chrome's strings in the shown locale. */
     readonly t: ReturnType<typeof readerContext>['t'];
-}
+};
 
 /** The props the parts read, so a host rerender with equal props leaves the context alone. */
 export const PART_KEYS = [
@@ -84,7 +84,7 @@ export const PART_KEYS = [
 
 export type PartProps = { readonly [K in (typeof PART_KEYS)[number]]?: Props[K] | undefined };
 
-export interface RootContextValue {
+export type RootContextValue = {
     readonly props: PartProps;
     /** Stable, and call the host's latest callback. */
     readonly onFocus: NonNullable<Props['onFocus']>;
@@ -93,13 +93,13 @@ export interface RootContextValue {
     readonly mounted: Mounted;
     readonly coordinator: MountCoordinator;
     readonly chrome: Chrome;
-}
+};
 
 /** A running session and the write its coordinator left with an unknown outcome, which Retry hands on. */
-export interface RecoverySession {
+export type RecoverySession = {
     readonly handle: RuntimeHandle;
     readonly unresolved: () => SaveRequest | undefined;
-}
+};
 
 export type SessionProps = Defined & {
     readonly children: ReactNode;

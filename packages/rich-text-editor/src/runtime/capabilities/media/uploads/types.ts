@@ -10,7 +10,7 @@ import { type UploadEvent, type UploadPlace, type UploadRejection } from '../../
 import { type SelectionHandle, type SessionToken } from '../../../types';
 
 /** The `UploadService` shape the session calls, whose answers it checks as untrusted input. */
-export interface UploadServiceLike {
+export type UploadServiceLike = {
     upload(
         request: { readonly operationId: string; readonly blob: Blob; readonly filename: string },
         context: {
@@ -23,12 +23,12 @@ export interface UploadServiceLike {
         operationId: string,
         context: { readonly signal: AbortSignal; readonly session: SessionToken },
     ): Promise<void>;
-}
+};
 
 export type { UploadEvent, UploadPlace, UploadRejection };
 
 /** What the uploads read of the session and run through it. */
-export interface UploadHost {
+export type UploadHost = {
     readonly state: () => EditorState;
     readonly limits: ResourceLimits;
     /** The media types `media.image` accepts. */
@@ -55,12 +55,12 @@ export interface UploadHost {
     readonly event: (event: UploadEvent) => void;
     /** The chrome reads a new status, such as a progress step. */
     readonly changed: () => void;
-}
+};
 
 /** A file that passed the checks, with the name and size its slot starts with. */
-export interface Checked {
+export type Checked = {
     readonly file: File;
     readonly name: string;
     readonly width: number | null;
     readonly height: number | null;
-}
+};

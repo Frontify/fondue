@@ -84,14 +84,14 @@ const COMMENT_RULES = [
 ];
 const DOCUMENT_RULES = [...COMMENT_RULES, 'heading.hashes', 'rule.dashes'];
 
-interface Row {
+type Row = {
     readonly name: string;
     readonly profile: () => ShippedProfile;
     readonly model: ContentModel;
     readonly installed: readonly string[];
     readonly creatable: readonly string[];
     readonly rules: readonly string[];
-}
+};
 const ROWS: readonly Row[] = [
     {
         name: 'Inline',

@@ -15,6 +15,7 @@ const definition = defineEditor({ id: 'test.html-paste', model, plugins: unitsOf
 const presentation = defineReactPresentation({});
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The mounted editor of the HTML stand-ins and what the HTML paste tests read of it. */
         htmlPaste?: {

@@ -22,7 +22,7 @@ const isTab = (event: KeyboardEvent): boolean =>
     event.key === 'Tab' && !event.altKey && !event.ctrlKey && !event.metaKey;
 
 /** How the surface's Enter, Shift+Enter and Mod+Enter act before the structural keys. */
-export interface EnterKeys {
+export type EnterKeys = {
     /** The Inline profile: Shift+Enter and Mod+Enter act as Enter, and no key adds a block or a line. */
     readonly singleLine: boolean;
     /** The Comment profile: Mod+Enter submits. */
@@ -31,7 +31,7 @@ export interface EnterKeys {
     readonly submits: () => boolean;
     /** Submits the committed snapshot, or announces why it is not valid. */
     readonly submit: () => void;
-}
+};
 
 /** Which Enter a keydown is, with no Alt and no modifier but Shift or the platform's Mod. */
 const enterOf = (view: EditorView, event: KeyboardEvent): 'enter' | 'shift' | 'mod' | undefined => {

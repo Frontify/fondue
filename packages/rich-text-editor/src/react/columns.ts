@@ -11,17 +11,17 @@ const pixels = (value: string): number => {
     return parsed;
 };
 
-interface Columns {
+type Columns = {
     readonly count: number;
     readonly gap: string;
-}
+};
 
 /** The surface's column layout: the latest presentation columns, and teardown. */
-export interface ColumnsLayout {
+export type ColumnsLayout = {
     /** Shows `count` columns with `gap`, or one column when either is `undefined`. */
     update(count: number | undefined, gap: string | undefined): void;
     dispose(): void;
-}
+};
 
 /**
  * Writes the presentation's columns and gap on the surface, and marks it, and tells `onFit`, while its content box has

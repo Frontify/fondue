@@ -37,7 +37,7 @@ export { type EditorOverlay, OverlayBody, useEditorOverlay } from './overlays';
 export type NodeViewContext = ReaderContext;
 
 /** What `useRichTextNodeView` returns: plain data and actions that find their node, never a position or a ProseMirror value. */
-export interface NodeViewState<C extends object = ShippedCommands> {
+export type NodeViewState<C extends object = ShippedCommands> = {
     /** `null` for a node type that carries no `nodeId`, such as `code_block`, whose actions read its live position instead. */
     readonly nodeId: string | null;
     readonly attrs: JsonObject;
@@ -61,37 +61,37 @@ export interface NodeViewState<C extends object = ShippedCommands> {
     readonly query: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandState;
     /** The node's running async operation; never a document attribute. */
     readonly pending: NodePending | null;
-}
+};
 
 /** An upload into the node: running or waiting with its whole percent once known, or failed or stopped. */
-export interface NodePending {
+export type NodePending = {
     readonly kind: 'upload';
     readonly state: 'running' | 'failed';
     readonly progress: number | null;
-}
+};
 
 /** A React component that draws a node of a block in the editor, with the attributes only the editor gives its content element. */
-export interface NodeViewDeclaration {
+export type NodeViewDeclaration = {
     readonly node: string;
     readonly component: ComponentType<object>;
     /** Attributes only the editor gives the content element, such as `spellcheck`, which the stored HTML never holds. */
     readonly contentAttributes?: Readonly<Record<string, string>>;
-}
+};
 
 /** What a panel renders with: close it, read package strings, and hear its command run again while it is open. */
-export interface PanelComponentProps {
+export type PanelComponentProps = {
     readonly close: () => void;
     readonly t: CodecContext['t'];
     /** Counts the runs of its command while it is open, for a panel that does not toggle; each change asks it to move focus. */
     readonly requested: number;
-}
+};
 
 /** A panel a plugin opens by its control id, and the React component that draws it. */
-export interface PanelDeclaration {
+export type PanelDeclaration = {
     /** The id a plugin opens this panel by, such as `checks`. */
     readonly control: string;
     readonly component: ComponentType<PanelComponentProps>;
-}
+};
 
 /** The state of the node view whose chrome renders, which the portal host provides. */
 export const NodeViewStateContext = createContext<NodeViewState<object> | null>(null);

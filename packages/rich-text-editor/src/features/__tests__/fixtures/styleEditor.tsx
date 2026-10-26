@@ -20,13 +20,13 @@ import { type DocumentChange } from '#/runtime/types';
 import { COLOR_TOKENS, STYLE_MAP, styledDocument, styleModel } from './styles';
 import { unitsOf, type UnitCommands } from './units';
 
-interface Mount {
+type Mount = {
     readonly model?: ContentModel;
     readonly blocks: readonly ContentNodeJSON[];
     readonly presentation?: Partial<ReactPresentation>;
     readonly policy?: Partial<AuthoringPolicy>;
     readonly toolbarMode?: ToolbarMode;
-}
+};
 
 /** Mounts `RichTextEditor` over the brand style and colour features with the shared style map and tokens, and runs the first frame. */
 export const mountStyled = ({

@@ -29,10 +29,10 @@ import { type ReplaceCode } from './types';
 import { type UploadService } from './uploadsWiring';
 import { type ViewService } from './view';
 
-export interface Replace {
+export type Replace = {
     /** `EditorHandle.replaceDocument`: the Replacement steps in order, stopping at the first that fails. */
     replaceDocument(request: ReplaceDocumentRequest): Promise<ReplaceResult>;
-}
+};
 
 const refused = (code: ReplaceCode): ReplaceResult => ({ status: 'rejected', code });
 

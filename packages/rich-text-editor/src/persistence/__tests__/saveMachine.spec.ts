@@ -80,12 +80,12 @@ const effectOf = <T extends Effect['type']>(result: Step, type: T) =>
     result.effects.find((effect): effect is Extract<Effect, { type: T }> => effect.type === type);
 
 type Outcome = readonly [SaveState, readonly Effect['type'][]];
-interface Row {
+type Row = {
     readonly event: EventInput;
     readonly setup?: Partial<SaveMachine>;
     readonly facts?: Partial<Facts>;
     readonly outcomes: Record<SaveState, Outcome>;
-}
+};
 
 /** Every state stays as it is and the event gives the same effects. */
 const unchanged = (effects: readonly Effect['type'][]): Record<SaveState, Outcome> => ({

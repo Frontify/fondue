@@ -40,7 +40,7 @@ export const pluginError = (error: unknown, featureId: string | undefined) => {
     return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
 };
 
-export interface Prepare {
+export type Prepare = {
     /** A composition batch, and every batch after it until input settles, is checked and published then. */
     isProvisional(root: Transaction): boolean;
     /**
@@ -57,9 +57,9 @@ export interface Prepare {
     exceededLimit(root: Transaction, followUp?: boolean): ExceededLimit | undefined;
     /** Marks a typed root with the rules the host's prop and the policy turn off now. */
     markRules(root: Transaction): void;
-}
+};
 
-interface PrepareArgs {
+type PrepareArgs = {
     store: Pick<Store, 'state'>;
     composition: Pick<InputSettling, 'active'>;
     shown: Pick<Shown, 'provisional'>;
@@ -68,7 +68,7 @@ interface PrepareArgs {
     limits: ResourceLimits;
     generate: () => string;
     inputRules: () => false | { readonly exclude: readonly string[] } | undefined;
-}
+};
 
 /** The batch half: whether a root is provisional, its preparation and its input rule marks. */
 const createBatches = (a: PrepareArgs) => {

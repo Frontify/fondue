@@ -10,7 +10,7 @@ import { useClientLayoutEffect } from './clientLayoutEffect';
 import styles from './styles/listbox.module.scss';
 
 /** What one option shows: its glyph, such as the emoji itself, or an image or icon, then its label and detail. */
-export interface ListboxOption {
+export type ListboxOption = {
     readonly key: string;
     readonly label: string;
     readonly glyph: string | null;
@@ -22,7 +22,7 @@ export interface ListboxOption {
     readonly kind?: 'user' | 'group' | 'everyone';
     /** The heading of the group the option sits under; neighbours with the same one share a group, and options with none sit outside any. */
     readonly group?: string;
-}
+};
 
 const KIND_ICONS = { user: IconPerson, group: IconPeople, everyone: IconMegaphone } as const;
 

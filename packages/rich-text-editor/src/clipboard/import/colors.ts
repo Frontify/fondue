@@ -6,10 +6,10 @@ import { compiledModel } from '#/model/internal';
 import { createElementBeside } from './dom';
 
 /** Which pasted colours the model keeps: `color` and `<font color>` as `font_color`, `background-color` as `highlight`. */
-export interface ColorReading {
+export type ColorReading = {
     readonly color: boolean;
     readonly background: boolean;
-}
+};
 
 export const NO_COLORS: ColorReading = { color: false, background: false };
 

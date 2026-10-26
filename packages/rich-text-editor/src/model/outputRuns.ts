@@ -38,11 +38,11 @@ export const textOf = (node: TreeNode): string => {
 };
 
 /** What an HTML output carries through one document: the opaque islands met so far, and the spaces that end the text written last in this block. */
-export interface Spacing {
+export type Spacing = {
     islands: number;
     /** So a run of spaces alternates across text nodes. */
     carried: number;
-}
+};
 
 /** `text` with its spaces kept, continuing the run of spaces of the text before it. */
 export const spaced = (state: Spacing, text: string): string => {
@@ -102,12 +102,12 @@ export const failedFallback = (state: Spacing, node: TreeNode, plan: NodePlan, b
     return { tag: 'div', text } as const;
 };
 
-export interface Item {
+export type Item = {
     readonly node: TreeNode;
     readonly path: string;
     /** The known marks in rank order, each with its index among the node's marks. */
     readonly marks: readonly { readonly mark: TreeMark; readonly index: number }[];
-}
+};
 
 const sameMark = (a: TreeMark, b: TreeMark) =>
     a.type === b.type && canonicalJson(attrsOf(a.attrs)) === canonicalJson(attrsOf(b.attrs));

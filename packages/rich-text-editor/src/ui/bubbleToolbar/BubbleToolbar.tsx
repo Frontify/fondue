@@ -49,10 +49,10 @@ const renderKeyOf = (runtime: EditorPort | undefined, closedAt: string | null, s
 };
 
 /** In bubble mode, the commands with no bubble item and the switch back to the fixed toolbar. */
-export interface BubbleMore {
+export type BubbleMore = {
     readonly items: readonly ToolbarItem[];
     readonly modeSwitch: ModeSwitch;
-}
+};
 
 const holdsText = ({ kind, collapsed }: SelectionSummary) => (kind === 'text' || kind === 'all') && !collapsed;
 

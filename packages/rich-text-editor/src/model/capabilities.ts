@@ -18,12 +18,12 @@ export const PLUGIN_PHASES = [
 export type PluginPhase = (typeof PLUGIN_PHASES)[number];
 
 /** A plugin the engine installs: data, with its fixed phase and its `before` and `after` constraints. */
-export interface PluginDescriptor {
+export type PluginDescriptor = {
     readonly id: string;
     readonly phase: PluginPhase;
     readonly before?: readonly string[];
     readonly after?: readonly string[];
-}
+};
 
 /** The undo history, whose phase puts Backspace right after an input rule before the list keys. */
 export const HISTORY_PLUGIN: PluginDescriptor = { id: 'history', phase: 'history' };
@@ -141,10 +141,10 @@ export const findCycle = (starts: readonly string[], next: (id: string) => reado
     return undefined;
 };
 
-export interface PluginContribution {
+export type PluginContribution = {
     readonly featureId: string;
     readonly plugin: PluginDescriptor;
-}
+};
 
 /** Every plugin key a capability of the package contributes, whether or not a model uses that capability. */
 const PACKAGE_PLUGIN_KEYS: ReadonlySet<string> = new Set([

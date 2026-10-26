@@ -46,14 +46,14 @@ export const originOf = (root: Transaction): ChangeOrigin => {
     return 'unknown';
 };
 
-export interface HistoryService {
+export type HistoryService = {
     /** Ends the open undo group before `root` when the batch before it asked, and around it when it is an action. */
     group(root: Transaction): void;
     /** A new state with the same plugins and an empty history, holding `doc` and `selection`. */
     fresh(doc?: Node, selection?: Selection): EditorState;
     /** Empties the history and keeps the document and selection; does nothing outside `ready` or while composing. */
     clear(): void;
-}
+};
 
 export const createHistory = ({
     store,

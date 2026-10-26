@@ -14,36 +14,36 @@ import {
 import { type CompiledFeature } from '#/model/internal';
 
 /** A command as a line-start rule runs it, with the payload of its marker, and whether its target is active there. */
-interface RuleCommand {
+type RuleCommand = {
     readonly run: (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => boolean;
     readonly active: (state: EditorState, payload?: unknown) => boolean | 'mixed';
     /** Whether running would drop content its target cannot hold, so the rule does not fire. */
     readonly refuses?: (state: EditorState, payload?: unknown) => boolean;
     readonly payload?: PayloadDeclaration;
-}
+};
 
-interface RuleOf {
+type RuleOf = {
     readonly id: string;
     /** The feature that declares the rule, whose authoring policy decides whether it fires. */
     readonly featureId: string;
-}
-export interface LineStartRule extends RuleOf {
+};
+export type LineStartRule = {
     readonly kind: 'line-start';
     readonly marker: string;
     readonly command: RuleCommand;
     readonly payload: unknown;
-}
+} & RuleOf;
 /** A code feature's pattern over the text from the block start to the caret, whose named groups fill the payload. */
-export interface BlockRule extends RuleOf {
+export type BlockRule = {
     readonly kind: 'block-rule';
     readonly match: RegExp;
     readonly command: RuleCommand;
-}
+} & RuleOf;
 /**
  * A code feature's pattern before the caret whose match, without the whitespace that ends it, gets `mark`, with the
  * attributes its named groups fill; `enter` also tests it when Enter ends the match.
  */
-export interface MarkRule extends RuleOf {
+export type MarkRule = {
     readonly kind: 'mark-rule';
     readonly match: RegExp;
     readonly mark: MarkType;
@@ -53,25 +53,25 @@ export interface MarkRule extends RuleOf {
     readonly onEnter: boolean;
     /** The declaring feature's `allowedSchemes` and `allowedHosts`, which a `url` group must also pass. */
     readonly policy: HrefPolicy | undefined;
-}
-export interface MarkDelimiterRule extends RuleOf {
+} & RuleOf;
+export type MarkDelimiterRule = {
     readonly kind: 'mark-delimiter';
     readonly open: string;
     readonly close: string;
     readonly mark: MarkType;
-}
+} & RuleOf;
 /** A fixed string, or a code feature's pattern, that ends at the caret and becomes `replace`. */
-export interface TextReplaceRule extends RuleOf {
+export type TextReplaceRule = {
     readonly kind: 'text-replace';
     readonly match: RegExp;
     readonly replace: string;
     /** Fires on the next typed character when it is no word character, which stays after the replacement. */
     readonly boundary: boolean;
-}
-export interface QuotesRule extends RuleOf {
+} & RuleOf;
+export type QuotesRule = {
     readonly kind: 'quotes';
     readonly marker: '"' | "'";
-}
+} & RuleOf;
 /** An input rule as the package's rule engine runs it. */
 export type CompiledInputRule = LineStartRule | BlockRule | MarkRule | MarkDelimiterRule | TextReplaceRule | QuotesRule;
 

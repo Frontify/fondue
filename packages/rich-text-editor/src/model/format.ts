@@ -16,15 +16,15 @@ export type ContentNodeJSON = {
     readonly text?: string;
 };
 /** The stored form of a document: the format envelope, the model it was written with and its content. */
-export interface RichTextDocument {
+export type RichTextDocument = {
     readonly format: 'frontify.rich-text';
     readonly formatVersion: 1;
     readonly model: ModelRef;
     readonly requiredCapabilities: readonly CapabilityRef[];
     readonly content: ContentNodeJSON;
-}
+};
 /** A copied range of content, which a paste reads back with the model and capabilities that wrote it. */
-export interface RichTextSlice {
+export type RichTextSlice = {
     readonly format: 'frontify.rich-text-slice';
     readonly formatVersion: 1;
     readonly model: ModelRef;
@@ -33,7 +33,7 @@ export interface RichTextSlice {
     readonly openStart: number;
     readonly openEnd: number;
     readonly content: readonly ContentNodeJSON[];
-}
+};
 /**
  * The closed document type of a feature list: its nodes, marks and attributes, growing when a host adds a
  * feature. Stored input is still checked only by `decodeDocument`, and islands never appear in this type.
@@ -119,7 +119,7 @@ export type DiagnosticCode =
     | 'react.execute-in-render';
 
 /** A finding the package reports about content or use, with a code, a severity and a translation key for its message. */
-export interface Diagnostic {
+export type Diagnostic = {
     readonly code: DiagnosticCode;
     readonly severity: 'info' | 'warning' | 'error';
     readonly messageKey: string;
@@ -128,7 +128,7 @@ export interface Diagnostic {
     readonly featureId?: string;
     /** Codes, feature IDs, capability names, counts and hashes only: never document text, attribute values, URLs or labels. */
     readonly details?: JsonObject;
-}
+};
 
 /** The outcome of reading stored content: editable, or not editable with the reason. */
 export type DecodeResult =
@@ -152,7 +152,7 @@ export type DecodeResult =
       };
 
 /** The size limits applied when reading a document, such as bytes, nodes and depth. */
-export interface ResourceLimits {
+export type ResourceLimits = {
     readonly maxDocumentBytes: number;
     readonly maxDocumentNodes: number;
     readonly maxDepth: number;
@@ -166,7 +166,7 @@ export interface ResourceLimits {
     readonly maxConcurrentUploads: number;
     /** Normalization transactions appended to one commit. */
     readonly maxAppendedTransactions: number;
-}
+};
 const MIB = 1024 * 1024;
 /** The resource limits a read uses when the caller passes none. */
 export const defaultLimits: ResourceLimits = Object.freeze({
@@ -184,12 +184,12 @@ export const defaultLimits: ResourceLimits = Object.freeze({
 });
 
 /** Options for reading a stored document: the limits and the id source for migrations. */
-export interface DecodeOptions {
+export type DecodeOptions = {
     /** Defaults to `defaultLimits`; a host passes the limits the writing definition used. */
     readonly limits?: Partial<ResourceLimits>;
     /** Creates the `nodeId`s that registered migrations add; `crypto.randomUUID` when omitted. */
     readonly generateId?: () => string;
-}
+};
 
 export const diagnostic = (
     code: DiagnosticCode,

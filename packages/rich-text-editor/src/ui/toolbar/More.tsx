@@ -61,10 +61,10 @@ export const useRowRuns = (content: RefObject<HTMLDivElement | null>, focusOpene
 };
 
 /** The last More row, which switches between the fixed and the bubble toolbar. */
-export interface ModeSwitch {
+export type ModeSwitch = {
     readonly label: string;
     readonly onSelect: () => void;
-}
+};
 
 /** Whether focus sits on an element, not on `body`, in the document or shadow root that holds `trigger`. */
 const focusMoved = (trigger: HTMLElement | null) => {

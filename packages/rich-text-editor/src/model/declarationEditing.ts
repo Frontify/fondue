@@ -100,28 +100,28 @@ export type CommandRef =
           readonly labelKey?: string;
       };
 /** One textblock as a decoration source reads it. */
-export interface DecoratedBlock {
+export type DecoratedBlock = {
     readonly nodeId: string | null;
     readonly attrs: JsonObject;
     /** Its text, in which each inline leaf, such as a hard break or a mention, counts as one U+FFFC. */
     readonly text: string;
-}
+};
 /** A stretch of a block's text, by character offsets, drawn with a class or attributes. */
-export interface BlockDecoration {
+export type BlockDecoration = {
     readonly from: number;
     readonly to: number;
     readonly className?: string;
     readonly attributes?: Readonly<Record<string, string>>;
-}
+};
 /** Decorations over each textblock of `nodes`, derived again only for a block that a change touched. */
-export interface BlockDecorationSource {
+export type BlockDecorationSource = {
     readonly id: string;
     readonly nodes: readonly string[];
     /** The ranges of `block`, or a promise of them while what the source reads still loads. */
     derive(block: DecoratedBlock): readonly BlockDecoration[] | Promise<readonly BlockDecoration[]>;
-}
+};
 /** Where a trigger opens a list and what query it takes. */
-export interface SuggestionRules {
+export type SuggestionRules = {
     /** A word starts at the block start, after white space or a hard break, and with this, after punctuation too; a plain list uses `false`. */
     readonly afterPunctuation: boolean;
     /** The longest query; a longer one closes the list. A plain list uses `32`. */
@@ -132,9 +132,9 @@ export interface SuggestionRules {
     readonly leadingLetters: number;
     /** The trigger opens only at the start of an empty paragraph, and a query with a space that finds no option closes the list, keeping the text, as the slash menu needs. A plain list omits it. */
     readonly emptyBlock?: boolean;
-}
+};
 /** One option a suggestion search finds; accepting it runs the list's command with `payload`. */
-export interface SuggestionResult {
+export type SuggestionResult = {
     /** Unique within one result list, and not empty. */
     readonly key: string;
     readonly label: string;
@@ -149,16 +149,16 @@ export interface SuggestionResult {
     readonly kind?: 'user' | 'group' | 'everyone';
     /** The heading of the group the option sits under; a list shows the options with one `group` in a run, and none for a list with no groups. */
     readonly group?: string;
-}
+};
 /** One page of a suggestion search: its options, and the cursor of the next page, `null` after the last. */
-export interface SuggestionPage {
+export type SuggestionPage = {
     readonly items: readonly SuggestionResult[];
     readonly nextCursor: string | null;
-}
+};
 /** New `nodeId`s in a migrated document come from `generateId` only. */
-export interface MigrationContext {
+export type MigrationContext = {
     readonly generateId: () => string;
-}
+};
 /** What one migration step returns: the migrated document, or a request for review when content cannot be mapped. */
 export type MigrationStepResult =
     | { readonly status: 'migrated'; readonly document: RichTextDocument }
@@ -178,21 +178,21 @@ export type MigrationStepResult =
  * `id` appears in `MigrationManifest.steps`. It leaves nodes, marks and attributes its source version
  * does not declare unchanged, so it is a no-op on content a newer version wrote.
  */
-export interface ModelMigration {
+export type ModelMigration = {
     readonly id: string;
     readonly from: number;
     /** Receives unchecked content: a value in a node or mark position may be any JSON value, `null` included. */
     readonly migrate: (document: RichTextDocument, context: MigrationContext) => MigrationStepResult;
-}
+};
 /**
  * Code features only. The same kind of step for the content one feature owns, from capability version
  * `from` to `from + 1`. `compileContentModel` installs it in every model that installs the feature, so
  * profile and host models register nothing; decode runs it for a document whose `requiredCapabilities`
  * record an older version of that capability.
  */
-export interface CapabilityMigration {
+export type CapabilityMigration = {
     readonly id: string;
     readonly from: number;
     /** Receives unchecked content: a value in a node or mark position may be any JSON value, `null` included. */
     readonly migrate: (document: RichTextDocument, context: MigrationContext) => MigrationStepResult;
-}
+};

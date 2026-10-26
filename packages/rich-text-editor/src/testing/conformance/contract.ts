@@ -35,11 +35,11 @@ import { featureFixtures } from './fixtures';
 import { contractUnits } from './units';
 
 /** The ambient `describe`, `it` and `expect` of the host's test runner, which the suite registers its cases with. */
-interface TestRunner {
+type TestRunner = {
     describe(name: string, body: () => void): void;
     it(name: string, body: () => void | Promise<void>): void;
     expect(actual: unknown): { toBe(expected: unknown): void; toEqual(expected: unknown): void };
-}
+};
 
 // The model ID that the fixture documents of the shipped features carry.
 const MODEL_ID = 'feature-contract';
@@ -64,15 +64,15 @@ const labelOf = (entry: object): string | undefined => {
     return undefined;
 };
 
-export interface FeatureContractOptions {
+export type FeatureContractOptions = {
     /** Stored documents that use the features under test, each run through decode, encode, the reader and every codec. */
     readonly fixtures?: readonly unknown[];
     /** Editor parts of the features under test, which replace the shipped part of the same feature. */
     readonly plugins?: readonly EditorPart[];
-}
+};
 
 /** The runner globals and the lazily built model, engine and lookups that every check group shares. */
-interface Contract extends TestRunner {
+type Contract = {
     readonly options: FeatureContractOptions;
     readonly compiled: () => ContentModel;
     readonly engineOf: () => CompiledDefinition;
@@ -81,7 +81,7 @@ interface Contract extends TestRunner {
     readonly partOf: (id: string) => EditorPart | undefined;
     readonly sharedDefaults: readonly SharedDefault[];
     readonly unexpected: (diagnostics: readonly Diagnostic[], format: keyof FeatureFormats) => Diagnostic[];
-}
+} & TestRunner;
 
 const contractOf = (features: readonly Feature[], options: FeatureContractOptions, runner: TestRunner): Contract => {
     let model: ContentModel | undefined;

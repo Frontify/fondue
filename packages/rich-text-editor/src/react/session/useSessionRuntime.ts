@@ -39,12 +39,12 @@ import { backgroundOf, columnsAtMount, memberOf, modeOf, shellPropsOf } from './
 import { type Mounted, type RecoverySession, type SessionRest } from './types';
 
 /** Where the file chooser's files go, once the chooser reports them. */
-export interface Choosing {
+export type Choosing = {
     readonly place: UploadPlace;
     readonly session: SessionToken;
-}
+};
 
-interface SessionWiring {
+type SessionWiring = {
     readonly mounted: Mounted;
     readonly loaded: LoadedDocument;
     readonly coordinator: MountCoordinator;
@@ -60,7 +60,7 @@ interface SessionWiring {
     readonly setLive: (runtime: EditorPort | undefined) => void;
     readonly setFaulted: (document: RichTextDocument) => void;
     readonly onSession: (session: RecoverySession) => void;
-}
+};
 
 type Decoded = NonNullable<Mounted['decoded']>;
 type SaveCoordinator = ReturnType<typeof createSaveCoordinator>;

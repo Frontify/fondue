@@ -3,10 +3,10 @@
 import { NodeSelection, type Selection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-interface Band {
+type Band = {
     readonly top: number;
     readonly bottom: number;
-}
+};
 
 // ProseMirror's own default margin.
 const DEFAULT_MARGIN = 5;

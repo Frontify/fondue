@@ -3,27 +3,27 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-export interface BudgetRow {
+export type BudgetRow = {
     readonly id: string;
     readonly metric: string;
     readonly fixture: string;
     readonly percentile: 'p95' | 'p99';
     /** The ceiling in ms, or `null` for a row the spec only records. */
     readonly budgetMs: number | null;
-}
+};
 
 /** What a measurement wrote: the samples in ms of each part of one row, where the slowest part counts. */
-export interface Measurement {
+export type Measurement = {
     readonly parts: Readonly<Record<string, readonly number[]>>;
-}
+};
 
 export type Verdict = 'pass' | 'over' | 'missing' | 'recorded';
 
-export interface Line {
+export type Line = {
     readonly row: BudgetRow;
     readonly value: number | null;
     readonly verdict: Verdict;
-}
+};
 
 const RANKS = { p95: 0.95, p99: 0.99 } as const;
 

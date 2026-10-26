@@ -30,7 +30,7 @@ import { type Choosing } from './useSessionRuntime';
 
 type ChromeContext = ReturnType<typeof readerContext>;
 
-interface ProviderValues {
+type ProviderValues = {
     readonly root: RootContextValue;
     readonly hosts: EditorHosts;
     readonly live: EditorPort | undefined;
@@ -38,7 +38,7 @@ interface ProviderValues {
     readonly announcer: Announcer;
     readonly overlays: Overlays;
     readonly turnInto: readonly TurnIntoEntry[];
-}
+};
 
 /** What the parts, the plugins and the overlays of one session read from context. */
 export const SessionProviders = ({ values, children }: { values: ProviderValues; children: ReactNode }) => (
@@ -98,11 +98,11 @@ const FileChooser = ({
     />
 );
 
-interface Standing {
+type Standing = {
     readonly key: string;
     readonly component: ComponentType<{ toolbarRef: (element: HTMLElement | null) => void; covered: boolean }>;
     readonly toolbarRef: (element: HTMLElement | null) => void;
-}
+};
 
 /** The plugins' standing overlays, and the plugin overlay a command opened. */
 const PluginOverlays = ({

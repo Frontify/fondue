@@ -60,7 +60,7 @@ export const changed = <T>(slot: { value: T }, next: T, same: (a: T, b: T) => bo
 
 type SnapshotKey = { readonly doc: Node; readonly composing: boolean; readonly revision: SaveStatus['revision'] };
 
-export interface Shown {
+export type Shown = {
     /** The mode and columns the surface shows, which follow the session's once input has settled. */
     mode(): Mode;
     columns(): ColumnState;
@@ -79,7 +79,7 @@ export interface Shown {
     emitSaveStatus(): void;
     /** Takes the save status as already shown, so only a later change emits. */
     primeStatus(): void;
-}
+};
 
 export const createShown = (a: {
     store: Store;

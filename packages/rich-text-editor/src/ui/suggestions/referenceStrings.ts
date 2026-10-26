@@ -5,7 +5,7 @@ import { type ListboxOption } from '#/bridge/Listbox';
 import { type CodecContext } from '#/model';
 
 /** What a list says about its search, in the UI locale. */
-export interface ReferenceListStrings {
+export type ReferenceListStrings = {
     readonly label: string;
     readonly loading: string;
     readonly noResults: string;
@@ -17,7 +17,7 @@ export interface ReferenceListStrings {
     readonly option: (option: ListboxOption, position: number, total: number) => string;
     /** Two messages as one announcement, so the second does not cut the first off. */
     readonly both: (first: string, second: string) => string;
-}
+};
 
 /** The mention list's and the mention search dialog's list strings from the chrome's `t`. */
 export const referenceListStrings = (t: CodecContext['t']): ReferenceListStrings => ({

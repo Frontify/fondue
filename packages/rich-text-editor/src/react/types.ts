@@ -56,7 +56,7 @@ export type { ColorToken, ListLevels, OperationMetric, PresentationStyle, StyleR
 // Host-facing editor types. Some members are typed before their behavior is built.
 
 /** What a host passes to define an editor: its id, content model, editor parts and limits. */
-export interface EditorDefinitionOptions<Model extends ContentModel = ContentModel> {
+export type EditorDefinitionOptions<Model extends ContentModel = ContentModel> = {
     readonly id: string;
     readonly model: Model;
     /** One unit per feature of the model, of the same ID and version. */
@@ -66,20 +66,20 @@ export interface EditorDefinitionOptions<Model extends ContentModel = ContentMod
     readonly limits?: Partial<ResourceLimits>;
     /** The only way to loosen a limit, set by a host per consumer. */
     readonly limitOverrides?: Partial<ResourceLimits>;
-}
+};
 /** The id, content model and capabilities of a compiled editor definition. */
-export interface EditorDefinitionInfo {
+export type EditorDefinitionInfo = {
     readonly id: string;
     readonly model: ModelRef;
     readonly capabilities: readonly CapabilityRef[];
     readonly authoring: AuthoringPolicy;
     readonly limits: ResourceLimits;
-}
+};
 declare const editorDefinitionBrand: unique symbol;
 /** An editor definition that was checked and compiled, typed with the commands it supports. */
-export interface CompiledEditorDefinition<Commands extends object = ShippedCommands> extends EditorDefinitionInfo {
+export type CompiledEditorDefinition<Commands extends object = ShippedCommands> = {
     readonly [editorDefinitionBrand]: Commands;
-}
+} & EditorDefinitionInfo;
 type UnionToIntersection<U> = (U extends unknown ? (value: U) => void : never) extends (value: infer I) => void
     ? I
     : never;
@@ -90,58 +90,58 @@ export type CommandsOfPlugins<Plugins extends readonly RichTextPlugin[]> = Union
     object;
 
 /** A search a host answers when the user looks for something to mention or link. */
-export interface ReferenceSearchRequest {
+export type ReferenceSearchRequest = {
     readonly query: string;
     /** Empty means any type. */
     readonly resourceTypes: readonly string[];
     readonly cursor: string | null;
-}
+};
 /** One page of results for a reference search, with the cursor for the next page. */
-export interface ReferencePage {
+export type ReferencePage = {
     readonly items: readonly ReferenceValue[];
     readonly nextCursor: string | null;
-}
+};
 /** The host service that searches for the things a document can mention. */
-export interface ReferenceService {
+export type ReferenceService = {
     search(request: ReferenceSearchRequest, context: ServiceContext): Promise<ReferencePage>;
-}
+};
 /** An asset a host uploaded or picked, as a document stores it. */
-export interface AssetValue {
+export type AssetValue = {
     readonly assetId: string;
     readonly mediaType: string;
     readonly labelSnapshot: string;
-}
+};
 /** What the editor sends to the upload service: the file and the operation it belongs to. */
-export interface UploadRequest {
+export type UploadRequest = {
     readonly operationId: string;
     readonly blob: Blob;
     readonly filename: string;
-}
+};
 /** The host service that uploads a file and returns its asset. */
-export interface UploadService {
+export type UploadService = {
     upload(
         request: UploadRequest,
         context: ServiceContext & { readonly reportProgress: (fraction: number) => void },
     ): Promise<AssetValue>;
     /** Server-managed cleanup; never deletes an asset still referenced elsewhere. */
     releaseUnused(operationId: string, context: ServiceContext): Promise<void>;
-}
+};
 /** A host asset library; `image.insert` opens it with its purpose when set, else the file chooser. */
-export interface AssetPickerService {
+export type AssetPickerService = {
     /** `purpose` is `image` for the shipped features; a later feature may pass its own purpose, so implementations handle any string. */
     pick(request: { readonly purpose: string }, context: ServiceContext): Promise<AssetValue | null>;
-}
+};
 /** The services a host gives the editor, such as persistence, recovery, references and uploads. */
-export interface EditorServices {
+export type EditorServices = {
     readonly persistence?: PersistenceService;
     readonly recovery?: RecoveryService;
     readonly references?: ReferenceService;
     readonly uploads?: UploadService;
     readonly assets?: AssetPickerService;
-}
+};
 
 /** The events the editor emits, each with the value its listeners get. */
-export interface EditorEventMap {
+export type EditorEventMap = {
     readonly ready: SessionToken;
     readonly documentChange: DocumentChange;
     readonly selectionChange: SelectionSummary;
@@ -150,12 +150,12 @@ export interface EditorEventMap {
     readonly operationMetric: OperationMetric;
     readonly replaced: SessionToken;
     readonly disposed: SessionToken;
-}
+};
 /**
  * The session of a mounted editor. With `profile`, the ref holds `null` until the profile's module has loaded and the
  * session exists, and no host callback runs before then.
  */
-export interface EditorHandle<C extends object = ShippedCommands> {
+export type EditorHandle<C extends object = ShippedCommands> = {
     getSummary(): EditorSummary;
     getSnapshot(): Snapshot;
     getSaveStatus(): SaveStatus;
@@ -178,12 +178,12 @@ export interface EditorHandle<C extends object = ShippedCommands> {
     subscribe<K extends keyof EditorEventMap>(event: K, listener: (value: EditorEventMap[K]) => void): Unsubscribe;
     /** Synchronous invalidation. Does not promise that remote saves were cancelled. */
     dispose(): void;
-}
+};
 
 /** Where the toolbar shows: fixed above the content or as a bubble at the selection. */
 export type ToolbarMode = 'fixed' | 'bubble';
 /** The reader presentation's resolvers, its other fields, and the editor's toolbar and controls. */
-export interface ReactPresentation extends ReaderPresentation {
+export type ReactPresentation = {
     readonly styles: readonly PresentationStyle[];
     readonly colorTokens: readonly ColorToken[];
     readonly listLevels?: ListLevels;
@@ -201,12 +201,12 @@ export interface ReactPresentation extends ReaderPresentation {
     readonly sliceContext: string | null;
     /** Package key syntax; default `Alt-F10`. */
     readonly toolbarShortcut?: string;
-}
+} & ReaderPresentation;
 
 /** The name of a shipped profile: inline, comment, document or brand-document. */
 export type RichTextProfile = 'inline' | 'comment' | 'document' | 'brand-document';
 /** The props the editor takes in every profile. */
-export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
+export type RichTextEditorBaseProps<C extends object = ShippedCommands> = {
     /**
      * Default `document`; ignored when `definition` is set. The profile's module loads on first use: until it has, the
      * editor renders nothing, `ref` holds `null` and no callback runs. A profile loaded once renders at once.
@@ -260,7 +260,7 @@ export interface RichTextEditorBaseProps<C extends object = ShippedCommands> {
     readonly onToolbarModeChange?: (mode: ToolbarMode) => void;
     /** `null` until the session exists, which with `profile` is once the profile's module has loaded. */
     readonly ref?: Ref<EditorHandle<C>>;
-}
+};
 /** Exactly one accessible name source is required. */
 export type RichTextEditorProps<C extends object = ShippedCommands> = RichTextEditorBaseProps<C> &
     (

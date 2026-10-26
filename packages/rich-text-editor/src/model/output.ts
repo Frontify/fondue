@@ -60,7 +60,7 @@ export const codecContext = (
 };
 
 /** What the reader and every codec read about one node type: its specs, Markdown form and its feature's options and declared support. */
-export interface NodePlan {
+export type NodePlan = {
     readonly name: string;
     readonly featureId: string;
     readonly inline: boolean;
@@ -73,21 +73,21 @@ export interface NodePlan {
     readonly options: JsonObject;
     readonly formats: FeatureFormats;
     readonly form: NodeDeclaration['markdown'];
-}
-export interface MarkPlan {
+};
+export type MarkPlan = {
     readonly name: string;
     readonly featureId: string;
     readonly spec: HtmlSpec;
     readonly options: JsonObject;
     readonly formats: FeatureFormats;
     readonly form: MarkDeclaration['markdown'];
-}
-export interface Plan<N extends NodePlan, M extends MarkPlan> {
+};
+export type Plan<N extends NodePlan, M extends MarkPlan> = {
     readonly nodes: ReadonlyMap<string, N>;
     readonly marks: ReadonlyMap<string, M>;
     /** Every feature's declared support, by feature ID. */
     readonly formats: ReadonlyMap<string, FeatureFormats>;
-}
+};
 
 /** A feature that declares no formats claims no text or Markdown support, so each use of it is reported. */
 const UNDECLARED: FeatureFormats = { html: 'lossless', text: 'unsupported', markdown: 'unsupported' };
@@ -156,11 +156,11 @@ const MAX_COLUMNS = 6;
 const COLUMN_GAP = /^(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem)$/;
 
 /** The presentation's columns as CSS values: the gap as written, and as a length, since `normal` is `1em` in multi-column layout. */
-export interface ColumnLayout {
+export type ColumnLayout = {
     readonly count: number;
     readonly gap: string;
     readonly length: string;
-}
+};
 
 /** The presentation's column count and gap, or `undefined` for one column; a gap that is no `px` or `rem` length is `normal`. */
 export const columnLayout = (columns: number | undefined, columnGap: string | undefined): ColumnLayout | undefined => {
@@ -200,10 +200,10 @@ export const LIST_LEVEL_KINDS: Readonly<Record<string, keyof ListLevels>> = {
 };
 
 /** The kind and depth of a list a walk has entered: 1 for the outermost list of that kind. */
-export interface EnteredList {
+export type EnteredList = {
     readonly kind: keyof ListLevels;
     readonly depth: number;
-}
+};
 
 /** Counts nested lists of each kind for one walk and gives each list node its depth while `render` runs. */
 export const listDepths = () => {

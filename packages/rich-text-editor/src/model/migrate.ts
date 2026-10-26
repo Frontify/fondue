@@ -16,24 +16,24 @@ import { randomId } from './randomId';
 import { readInput } from './read';
 
 /** A record of a migration run: the hashes before and after, and the steps that ran. */
-export interface MigrationManifest {
+export type MigrationManifest = {
     readonly sourceHash: string;
     readonly targetHash: string | null;
     readonly steps: readonly string[];
     readonly model: ModelRef;
     readonly packageVersion: string;
     readonly counts: Readonly<Record<string, number>>;
-}
+};
 /** The outcome of migrating a document: its status, the resulting document and a manifest. */
-export interface MigrationResult {
+export type MigrationResult = {
     readonly status: 'current' | 'migrated' | 'requires-review' | 'unsupported';
     /** `requires-review`: the last step's output with unmapped content as stored; `unsupported`: null. */
     readonly document: RichTextDocument | null;
     readonly diagnostics: readonly Diagnostic[];
     readonly manifest: MigrationManifest;
-}
+};
 
-export interface Migrated {
+export type Migrated = {
     /** `null` when a step blocks the document. */
     readonly document: RichTextDocument | null;
     readonly diagnostics: readonly Diagnostic[];
@@ -43,7 +43,7 @@ export interface Migrated {
     readonly reviewing: boolean;
     /** Whether the document records a lower model version or an installed capability at a lower version. */
     readonly older: boolean;
-}
+};
 
 /** A JSON Pointer to a node position below the root. */
 const NODE_PATH = /^\/content(\/content\/(0|[1-9]\d*))+$/;

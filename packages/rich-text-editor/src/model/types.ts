@@ -6,15 +6,15 @@ export type JsonValue = null | boolean | number | string | readonly JsonValue[] 
 export type JsonObject = { readonly [key: string]: JsonValue };
 
 /** The id and version of a content model. */
-export interface ModelRef {
+export type ModelRef = {
     readonly id: string;
     readonly version: number;
-}
+};
 /** The id and version of a feature, as a document records it in the capabilities it requires. */
-export interface CapabilityRef {
+export type CapabilityRef = {
     readonly id: string;
     readonly version: number;
-}
+};
 
 export type Letter =
     | 'a'
@@ -53,12 +53,12 @@ declare const featureBrand: unique symbol;
  * A feature carries its ID, its command payloads and its node and mark attributes as types. A bare `Feature` means
  * any feature, so each map defaults to `object`, which every map is assignable to, and `Id` to `string`.
  */
-export interface Feature<
+export type Feature<
     Commands extends object = object,
     Nodes extends object = object,
     Marks extends object = object,
     Id extends string = string,
-> {
+> = {
     readonly [featureBrand]: {
         readonly commands: Commands;
         readonly nodes: Nodes;
@@ -67,4 +67,4 @@ export interface Feature<
     };
     readonly id: string;
     readonly version: number;
-}
+};

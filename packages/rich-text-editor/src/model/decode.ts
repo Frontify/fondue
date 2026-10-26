@@ -60,11 +60,11 @@ const undeclaredWarnings = (document: RichTextDocument, encoded: RichTextDocumen
         .map(({ id }) => diagnostic('format.capability-undeclared', '/requiredCapabilities', { capability: id }));
 };
 
-export interface Decoded {
+export type Decoded = {
     readonly result: DecodeResult;
     /** The island tree of an `editable` result, for the runtime and the encoder. */
     readonly tree?: TreeNode;
-}
+};
 
 /** `decodeDocument` with the island tree the runtime builds its document from. */
 export const decodeToTree = (input: unknown, model: ContentModel, options: DecodeOptions = {}): Decoded => {

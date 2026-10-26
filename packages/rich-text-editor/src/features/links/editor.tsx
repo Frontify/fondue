@@ -16,12 +16,12 @@ const LinkPopover = lazyPart(() => import('./LinkPopover').then((loaded) => load
 const AUTOLINK = /(?<=^|[\s([{<"'])(?<href>(?:https?:\/\/|mailto:|tel:)[^\s<>]*[^\s<>.,;:!?'")\]}])\s$/u;
 
 /** What `link.set` takes: the destination, the visible text at a caret outside a link, the new window and the style. */
-export interface LinkValue {
+export type LinkValue = {
     readonly href: string;
     readonly text?: string;
     readonly openInNewWindow: boolean;
     readonly styleId: string | null;
-}
+};
 
 const setLink: EditorCommand<LinkValue, 'marks'> = {
     payload: {

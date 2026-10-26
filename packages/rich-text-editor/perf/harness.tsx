@@ -13,16 +13,17 @@ import { runtimeOf } from '#/runtime/runtime';
 import { type PageApi, type TimedEvent } from './page-api';
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         rtePerf?: PageApi;
     }
 }
 
-interface Mounted {
+type Mounted = {
     readonly root: Root;
     readonly container: HTMLElement;
     readonly handles: EditorHandle[];
-}
+};
 
 const nextPaint = () =>
     new Promise<void>((resolve) => {

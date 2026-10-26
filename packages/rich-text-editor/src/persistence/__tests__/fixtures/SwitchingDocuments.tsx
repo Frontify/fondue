@@ -30,11 +30,11 @@ const recordOf = (documentId: string, text: string): LoadedDocument => ({
     },
 });
 
-interface Mounted {
+type Mounted = {
     readonly key: number;
     readonly definition: (typeof definitions)[keyof typeof definitions];
     readonly record: LoadedDocument;
-}
+};
 
 /**
  * Switches an editor to another document: `replaceDocument` within one definition, and for another definition

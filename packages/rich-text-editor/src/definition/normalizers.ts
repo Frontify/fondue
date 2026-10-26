@@ -38,26 +38,26 @@ export type Normalizer = (state: EditorState, generateId: () => string) => Trans
  * How many nodes carry each `nodeId`, where the current batch made, moved over or renamed a node that carries one, and
  * how the batch maps the document before it to this one.
  */
-interface NodeIdIndex {
+type NodeIdIndex = {
     readonly counts: ReadonlyMap<string, number>;
     readonly touched: readonly number[];
     /** Whether the last root's repair waits, so the next root keeps the touched positions and the batch mapping. */
     readonly later: boolean;
     readonly mapping: Mapping;
-}
+};
 
 /** A node that carries a `nodeId`, with its position. */
-interface Holder {
+type Holder = {
     readonly node: Node;
     readonly pos: number;
-}
+};
 
 /** A normalizer, with the plugin key and state it keeps between transactions. */
-export interface NormalizerPlugin<T> {
+export type NormalizerPlugin<T> = {
     readonly normalize: Normalizer;
     readonly key: PluginKey<T>;
     readonly field: StateField<T>;
-}
+};
 
 /** The nodes of `doc` that start at `positions`, read in one walk. */
 const nodesAt = (doc: Node, positions: readonly number[]): Map<number, Node> => {

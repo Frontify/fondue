@@ -27,10 +27,10 @@ const rendered = async (page: Page) => {
     await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
 };
 
-interface Allowance {
+type Allowance = {
     readonly message: RegExp;
     readonly max: number;
-}
+};
 
 /** The messages that no allowance covers, and that the allowance holds to its count. */
 const unallowed = (messages: readonly string[], allowed: Allowance | undefined) => {

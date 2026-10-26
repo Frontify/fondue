@@ -46,11 +46,11 @@ const lastBlockStart = (handle: Handle) => {
     return doc === undefined ? 0 : doc.content.size - 1;
 };
 
-interface UrlFixture {
+type UrlFixture = {
     readonly input: string;
     readonly ok: boolean;
     readonly href?: string;
-}
+};
 const URLS = urls as readonly UrlFixture[];
 
 describe('typing at links', () => {

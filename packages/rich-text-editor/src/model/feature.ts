@@ -13,10 +13,10 @@ import { snapshot } from './values';
 const FEATURE = Symbol('feature');
 
 /** What compilation reads from a feature; options are checked against their declarations then. */
-export interface FeatureInternals {
+export type FeatureInternals = {
     readonly declaration: FeatureDeclaration;
     readonly options: unknown;
-}
+};
 
 /** A feature as built at run time, before its phantom type brand. */
 type FeatureValue = Pick<Feature, 'id' | 'version'> & { readonly [FEATURE]?: FeatureInternals };

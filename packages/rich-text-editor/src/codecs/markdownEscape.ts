@@ -14,13 +14,13 @@ export type Piece =
     | Delimiter
     | { readonly kind: 'break' };
 /** One side of an emphasis pair; `pair` ties an opening delimiter to its closing one. */
-export interface Delimiter {
+export type Delimiter = {
     readonly kind: 'delimiter';
     readonly text: string;
     readonly open: boolean;
     readonly featureId: string;
     readonly pair: number;
-}
+};
 
 // Character classes of CommonMark's flanking rules: Unicode whitespace, then Unicode punctuation and symbols.
 const WHITESPACE = /^\s$/u;

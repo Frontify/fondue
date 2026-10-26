@@ -49,7 +49,7 @@ export const model = compileContentModel(features, { id: 'fixture.vocabulary', v
 export const ALLOW = { create: true, edit: true, remove: true, paste: true };
 export const MIB = 1024 * 1024;
 
-export interface Options {
+export type Options = {
     readonly blocks?: readonly JsonValue[];
     readonly sliceContext?: string | null;
     readonly policy?: Partial<AuthoringPolicy>;
@@ -57,7 +57,7 @@ export interface Options {
     readonly editorModel?: ContentModel;
     readonly readOnly?: boolean;
     readonly generateId?: () => string;
-}
+};
 
 /** Mounts an editor of the vocabulary stand-ins, ready, with its view, diagnostics, changes and live region. */
 export const mount = (options?: Options) => {

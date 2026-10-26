@@ -8,14 +8,14 @@ export const MIN_WIDTH = 10;
 export const MAX_WIDTH = 100;
 
 /** The width dialog's strings, in the UI locale. */
-export interface WidthStrings {
+export type WidthStrings = {
     readonly title: string;
     readonly field: string;
     /** The error for a value outside the allowed percentages. */
     readonly range: string;
     readonly apply: string;
     readonly cancel: string;
-}
+};
 
 /** The width dialog's strings in the UI locale of `t`. */
 export const widthStrings = (t: CodecContext['t']): WidthStrings => ({
@@ -27,7 +27,7 @@ export const widthStrings = (t: CodecContext['t']): WidthStrings => ({
 });
 
 /** The alternative text dialog's strings, in the UI locale. */
-export interface AltTextStrings {
+export type AltTextStrings = {
     readonly title: string;
     readonly choice: string;
     readonly meaningful: string;
@@ -40,7 +40,7 @@ export interface AltTextStrings {
     readonly useSuggestion: string;
     readonly save: string;
     readonly cancel: string;
-}
+};
 
 export const altTextStrings = (t: CodecContext['t']): AltTextStrings => ({
     title: t('RichTextEditor_imageAltTitle'),

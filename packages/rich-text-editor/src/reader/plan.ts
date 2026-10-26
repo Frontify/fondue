@@ -8,9 +8,9 @@ import { buildPlan, type MarkPlan, type NodePlan, type Plan as BasePlan, ownValu
 import { declaredOverrides, type ReaderNodeProps, type ReaderRenderers } from './define';
 
 /** What the reader reads about one node or mark type: the shared plan and its override. */
-interface Overridden {
+type Overridden = {
     readonly override: ComponentType<ReaderNodeProps> | undefined;
-}
+};
 export type Plan = BasePlan<NodePlan & Overridden, MarkPlan & Overridden>;
 
 /** Reader overrides by feature ID, for the features whose declaration attaches none. */

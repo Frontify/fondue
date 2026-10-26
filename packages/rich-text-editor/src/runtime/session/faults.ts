@@ -18,7 +18,7 @@ import { type Shown } from './shown';
 import { type TargetsService } from './targets';
 import { type ViewService } from './view';
 
-export interface Faults {
+export type Faults = {
     /** Ends editing for the session; after `dispose` it does nothing. */
     fault(found: Diagnostic): void;
     /** The view threw while it installed `candidate`: editing stops and the snapshot stays. */
@@ -28,7 +28,7 @@ export interface Faults {
     hasRecovery(): boolean;
     /** Runs `work` while a view fault stores no recovery, as the next document of a replacement holds none of this session's work. */
     withoutRecovery<T>(work: () => T): T;
-}
+};
 
 // The queue and the targets are built after the view that faults, so they are read lazily.
 export const createFaults = (a: {

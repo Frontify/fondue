@@ -56,9 +56,9 @@ const clipped = (surface: HTMLElement, rect: DOMRect): boolean => {
 };
 
 /** A rectangle an overlay anchors to, as Fondue's `virtualAnchor` takes it. */
-export interface RangeAnchor {
+export type RangeAnchor = {
     getBoundingClientRect(): DOMRect;
-}
+};
 
 /** The box around the document range that `range` returns when read, such as a whole link, which Floating UI reads each frame. */
 export const createRangeAnchor = (

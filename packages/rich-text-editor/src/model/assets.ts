@@ -21,10 +21,10 @@ export const REPLACED_ASSET = 'replaced';
  * An `asset_image` whose upload never finished, by its `nodeId`. A minor release may add `type` values, so handle a type
  * you do not know.
  */
-export interface UnresolvedAsset {
+export type UnresolvedAsset = {
     readonly nodeId: string;
     readonly type: 'asset_image';
-}
+};
 
 /**
  * Every `asset_image` whose `assetId` is `null`, in document order, so a host can block publishing while a draft with
@@ -122,10 +122,10 @@ export type ImageOutput =
  * The "Image unavailable" placeholder: its localized message and the image's `labelSnapshot`, or empty.
  * Public so the shipped features and the core share it.
  */
-export interface Unavailable {
+export type Unavailable = {
     readonly message: string;
     readonly label: string;
-}
+};
 
 // A stored size with a longer side more than this many times the shorter reserves no box, which it could make huge.
 const MAX_ASPECT = 32;

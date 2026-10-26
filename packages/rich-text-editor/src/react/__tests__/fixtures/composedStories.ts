@@ -9,7 +9,7 @@ type StoriesModule = Parameters<typeof composeStories>[0];
 type Glob = (patterns: readonly string[], options: { readonly eager: true }) => Record<string, StoriesModule>;
 
 /** A story of the package as `composeStories` composes it. */
-export interface ComposedStory {
+export type ComposedStory = {
     /** The story file's path under `src`. */
     readonly file: string;
     readonly name: string;
@@ -19,7 +19,7 @@ export interface ComposedStory {
     readonly parameters: Readonly<Record<string, unknown>>;
     readonly play: ((context: { readonly canvasElement: HTMLElement }) => Promise<void>) | undefined;
     readonly Story: ComponentType;
-}
+};
 
 // The root preview's decorator, without its MDX docs page and global CSS that the test builds cannot load.
 setProjectAnnotations({ decorators: [ThemeProviderWrapper] });

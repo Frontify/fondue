@@ -9,7 +9,7 @@ import { isRecord } from './values';
 
 type Writable = Record<string, unknown>;
 
-interface Encoding {
+type Encoding = {
     readonly vocabulary: Vocabulary;
     /** Feature IDs whose nodes, marks or non-default attributes the content outside islands uses. */
     readonly used: Set<string>;
@@ -17,7 +17,7 @@ interface Encoding {
     foreign: boolean;
     /** The longest text node after joining. */
     longestText: number;
-}
+};
 
 /** Declared attributes in declared order, with `unknownAttributes` written back in place under their own names. */
 const writeAttrs = (attrs: Readonly<Record<string, unknown>>, declared: readonly string[]) => {

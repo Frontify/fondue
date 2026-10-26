@@ -74,12 +74,12 @@ const loaded = (documentId: string, revision: string | null, ...blocks: readonly
 const STORED = loaded('document-1', null, para(text('ab')));
 
 /** One `save` call, which waits until the test answers it. */
-interface Call {
+type Call = {
     readonly request: SaveRequest;
     /** Resolves with `response`, or with the reference fake's answer. */
     answer(response?: SaveResponse): void;
     fail(): void;
-}
+};
 const serviceOf = () => {
     const server = createFakePersistenceService();
     const calls: Call[] = [];

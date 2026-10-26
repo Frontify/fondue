@@ -14,12 +14,12 @@ export const IMAGE_FEATURE = 'media.image';
 const ASSETS_SERVICE = 'assets';
 
 /** The host asset picker, as `services.assets` holds it. */
-export interface AssetPicker {
+export type AssetPicker = {
     pick(
         request: { readonly purpose: string },
         context: { readonly signal: AbortSignal; readonly session: SessionToken },
     ): Promise<unknown>;
-}
+};
 
 /**
  * Opens the host asset picker through the async coordinator, which aborts it when the service, the session or the

@@ -8,11 +8,11 @@ import { isRecord } from '#/model';
 
 import { type CapabilityImplementation, REJECTED, tristate, typeIn } from './shared';
 
-export interface TextRange {
+export type TextRange = {
     readonly from: number;
     readonly to: number;
     readonly marked: boolean;
-}
+};
 
 /** The selected parts of text nodes whose parent allows `type`: a mark toggle acts on text only. */
 export const markableText = (state: EditorState, type: MarkType): TextRange[] => {

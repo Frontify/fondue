@@ -12,7 +12,7 @@ import { type EditorPort, endCompositionOf, selectedNodeNames } from '#/runtime/
 import { ariaShortcut, bindingHere, shortcutText } from '#/ui/shortcuts';
 
 /** One command of the presentation's toolbar, with the registry's label and icon unless `controls` replaced them. */
-export interface ToolbarItem {
+export type ToolbarItem = {
     /** The command and its payload, unique within one toolbar. */
     readonly key: string;
     readonly command: string;
@@ -45,7 +45,7 @@ export interface ToolbarItem {
     };
     /** The node type a menu row acts on, which it shows only while such a node is selected or holds the caret. */
     readonly node?: string;
-}
+};
 
 /** The rows of `items` the selection offers: a node row only while its node type is selected and its command runs. */
 export const offeredRows = (items: readonly ToolbarItem[], session: EditorPort | undefined): readonly ToolbarItem[] => {
@@ -63,12 +63,12 @@ const sameRows = (previous: readonly ToolbarItem[], next: readonly ToolbarItem[]
 export const useOfferedRows = (items: readonly ToolbarItem[]): readonly ToolbarItem[] =>
     useSessionValue((session) => offeredRows(items, session), sameRows);
 
-export interface ToolbarStrings {
+export type ToolbarStrings = {
     readonly label: string;
     readonly more: string;
     /** Why a command cannot run, from its `disabledReason`. */
     readonly reason: (code: string) => string;
-}
+};
 
 const ICONS = icons as Readonly<
     Record<string, ComponentType<{ readonly size?: 16 | 20; readonly 'aria-hidden'?: boolean }>>

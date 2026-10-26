@@ -41,11 +41,11 @@ export const urlRefused = (
         ([name, declaration]) => checkedUrl(model, featureId, declaration, attrs[name])?.ok === false,
     );
 
-interface AttributeOwner {
+type AttributeOwner = {
     readonly attrs: Readonly<Record<string, AttributeDeclaration>>;
     readonly exactlyOne: readonly string[] | undefined;
     readonly featureId: string;
-}
+};
 
 /**
  * `attrs` as decode checks them on every one of `types`: each declared and valid there, no string but an `href` longer than

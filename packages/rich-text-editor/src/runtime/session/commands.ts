@@ -40,7 +40,7 @@ export const checkedPayload = (given: unknown): Checked => {
     return { payload: snapshot(given) };
 };
 
-export interface Commands {
+export type Commands = {
     query(id: string, given?: unknown, options?: unknown): CommandState;
     queryOn(command: EngineCommand | undefined, checked: Checked, base: Base): CommandState;
     run(id: string, given: unknown, options: unknown, route: Route): CommandResult;
@@ -48,9 +48,9 @@ export interface Commands {
     execute(id: string, given?: unknown, options?: unknown): CommandResult;
     refusal(command: EngineCommand, base: EditorState, payload: unknown): RejectedCode | undefined;
     perform(command: EngineCommand, options?: { readonly target?: SelectionHandle }): CommandResult;
-}
+};
 
-interface Deps {
+type Deps = {
     definition: CompiledDefinition;
     store: Store;
     identity: Identity;
@@ -72,7 +72,7 @@ interface Deps {
     inRender: () => boolean | undefined;
     commandHost: unknown;
     runtime: () => unknown;
-}
+};
 
 const createAttempt = (a: Deps, session: object) => {
     const { definition, store, lifecycle, mode, policy, composition, commit } = a;

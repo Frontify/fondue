@@ -14,12 +14,12 @@ import { type Intent, type RejectedCode } from './types';
 // Queued intents whose listeners keep enqueuing stop past this depth.
 const MAX_ENQUEUE_DEPTH = 32;
 
-export interface Queue {
+export type Queue = {
     enqueue(id: string, payload?: unknown, options?: unknown): Promise<CommandResult>;
     /** Runs queued intents in call order once no commit or notification is in progress and input has settled. */
     drain(): void;
     settle(code: RejectedCode): void;
-}
+};
 
 export const createQueue = (a: {
     lifecycle: Pick<Lifecycle, 'is'>;

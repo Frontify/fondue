@@ -8,12 +8,12 @@ import { REPLACED_ASSET } from '#/model';
 
 export type Intent = 'meaningful' | 'decorative';
 
-interface Stored {
+type Stored = {
     readonly intent: Intent;
     readonly text: string;
     /** The meaningful text of another image of the same asset, which the dialog offers and never fills in. */
     readonly suggestion: string | undefined;
-}
+};
 
 const textOf = (value: unknown): string => (typeof value === 'string' ? value : '');
 

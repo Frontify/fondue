@@ -67,7 +67,7 @@ const resolveAssetUrl = (assetId: string) => {
     return `https://cdn.example/${assetId}`;
 };
 
-interface Row {
+type Row = {
     readonly name: string;
     readonly blocks: readonly JsonValue[];
     readonly markdown: string;
@@ -75,7 +75,7 @@ interface Row {
     /** What a reference parser renders from the output: `markdown-it` in CommonMark mode, or `micromark` with GFM for the GFM rows. */
     readonly parsed: string;
     readonly dialect: 'commonmark' | 'gfm';
-}
+};
 
 const rows: readonly Row[] = [
     {

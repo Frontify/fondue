@@ -34,11 +34,11 @@ const IN: Record<Phase, SlotState> = {
 const PHASES = Object.keys(IN) as Phase[];
 
 type Outcome = readonly [Phase, readonly Effect['type'][]];
-interface Row {
+type Row = {
     readonly event: SlotEvent;
     readonly setup?: Partial<SlotState>;
     readonly outcomes: Record<Phase, Outcome>;
-}
+};
 
 /** Every phase stays as it is and the event gives the same effects. */
 const each = (effects: readonly Effect['type'][]): Record<Phase, Outcome> => ({

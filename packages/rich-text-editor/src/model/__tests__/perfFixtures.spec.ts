@@ -20,14 +20,14 @@ import {
 const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.perf', version: 1 });
 const segmenter = new Intl.Segmenter();
 
-interface Counts {
+type Counts = {
     readonly blocks: number;
     readonly nodes: number;
     readonly graphemes: number;
     readonly words: number;
     readonly mentions: number;
     readonly links: number;
-}
+};
 
 const countsOf = (blocks: readonly ContentNodeJSON[]): Counts => {
     const counts = { blocks: blocks.length, nodes: 0, graphemes: 0, words: 0, mentions: 0, links: 0 };

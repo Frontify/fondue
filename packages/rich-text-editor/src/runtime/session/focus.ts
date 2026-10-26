@@ -12,7 +12,7 @@ import { type Shown } from './shown';
 import { type Store } from './store';
 import { type ViewService } from './view';
 
-export interface Focus {
+export type Focus = {
     focus(where?: 'current' | 'start' | 'end'): void;
     /**
      * Gives focus back to a surface that had it when the replacement started, editable or readonly, unless focus moved
@@ -20,7 +20,7 @@ export interface Focus {
      * `contenteditable` turns false.
      */
     refocus(focused: boolean): void;
-}
+};
 
 export const createFocus = (a: {
     lifecycle: Pick<Lifecycle, 'is'>;

@@ -100,11 +100,11 @@ const GROWABLE = [
     'UnresolvedAsset',
 ];
 
-interface PublicExport {
+type PublicExport = {
     readonly name: string;
     readonly declarations: readonly ts.Node[];
     readonly deprecated: boolean;
-}
+};
 
 /** The exports of each script entry that `root/package.json` publishes types for, by `<entry> <name>`. */
 const publicTypes = (root: string): Map<string, PublicExport> => {
@@ -352,10 +352,10 @@ const baselineVersion = (published: readonly string[], version: string): string 
         .at(-1);
 };
 
-interface Release {
+type Release = {
     readonly version: string;
     readonly notes: string;
-}
+};
 
 /** The editor release this run prepares: what the pending changesets naming it make, else the unpublished `package.json` version. */
 const releaseUnderCheck = (): Release | undefined => {

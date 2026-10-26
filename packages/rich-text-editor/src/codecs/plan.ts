@@ -28,15 +28,15 @@ export type Format = keyof FeatureFormats;
 type Write = (inner: string, attrs: JsonObject, context: CodecContext) => string;
 
 /** What every codec reads about one node type: the shared plan and its overrides. */
-export interface NodePlan extends BaseNodePlan {
+export type NodePlan = {
     readonly html: ((attrs: JsonObject, context: CodecContext) => HtmlSpec) | undefined;
     readonly markdown: Write | undefined;
     readonly text: Write | undefined;
-}
-export interface MarkPlan extends BaseMarkPlan {
+} & BaseNodePlan;
+export type MarkPlan = {
     readonly markdown: Write | undefined;
     readonly text: ((inner: string, attrs: JsonObject) => string) | undefined;
-}
+} & BaseMarkPlan;
 export type CodecPlan = Plan<NodePlan, MarkPlan>;
 
 /** The vocabulary nodes Markdown writes by name. */

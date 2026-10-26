@@ -23,13 +23,13 @@ const ALL_TYPOGRAPHY = [
 ] as const;
 const model = textModel(textFeatures(ALL_TYPOGRAPHY));
 
-interface Press {
+type Press = {
     readonly key: string;
     readonly meta?: boolean;
     readonly ctrl?: boolean;
     readonly alt?: boolean;
     readonly shift?: boolean;
-}
+};
 type Mounted = ReturnType<typeof mountText>;
 
 const press = (
@@ -61,12 +61,12 @@ const heading = (...content: readonly ContentNodeJSON[]): ContentNodeJSON => ({
 });
 
 /** A Shortcuts table row of the delivered features: what each platform presses, and the document it starts from. */
-interface Row {
+type Row = {
     readonly command: string;
     readonly apple: readonly Press[];
     readonly other: readonly Press[];
     readonly start: 'word' | 'heading' | 'typed' | 'undone' | 'first' | 'second';
-}
+};
 const mark = (command: string, key: string, shift = false): Row => ({
     command,
     apple: [{ key, meta: true, shift }],

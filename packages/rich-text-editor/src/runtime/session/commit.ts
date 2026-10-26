@@ -31,7 +31,7 @@ type SelectTarget =
     | { readonly anchor: number; readonly head: number; readonly scroll?: boolean }
     | { readonly node: number; readonly scroll?: boolean };
 
-export interface Commit {
+export type Commit = {
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view. */
     commit(root: Transaction): void;
     /** Publishes a checked batch, then commits the roots that plugin views dispatched while it was installed. */
@@ -45,9 +45,9 @@ export interface Commit {
     select(target: SelectTarget): void;
     markTyping(): void;
     clearDeferred(): void;
-}
+};
 
-interface CommitArgs {
+type CommitArgs = {
     store: Store;
     identity: Pick<Identity, 'bumpSequence' | 'bumpCommit' | 'commitSequence' | 'stamp'>;
     lifecycle: Pick<Lifecycle, 'is'>;
@@ -66,7 +66,7 @@ interface CommitArgs {
     hooks: { committed(transactions: readonly Transaction[], fromHistory: boolean): void; changed(): void };
     fault: (diagnostic: Diagnostic) => void;
     viewFault: (attached: EditorView, candidate: EditorState) => void;
-}
+};
 
 const createInstaller = (a: CommitArgs) => {
     const { store, identity, shown, views, metrics, policy, prepare, hooks, notify, emit, encode, report, fault } = a;

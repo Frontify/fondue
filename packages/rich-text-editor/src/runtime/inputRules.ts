@@ -39,12 +39,12 @@ export const firedRule = (transactions: readonly Transaction[]): boolean =>
 export const withoutRules = (root: Transaction): Transaction => root.setMeta(RULES_OFF, true);
 
 /** What the host's `inputRules` prop and the authoring policy turn off when a typed root arrives. */
-export interface RuleSetting {
+export type RuleSetting = {
     /** Rule IDs the host's `inputRules` prop excludes. */
     readonly exclude: readonly string[];
     /** Features whose policy forbids creating, whose rules never fire. */
     readonly refused: readonly string[];
-}
+};
 
 /** Marks a typed root with the rules it may not fire, read on each input, so no plugin is rebuilt. */
 export const withRuleSetting = (root: Transaction, setting: RuleSetting): Transaction =>

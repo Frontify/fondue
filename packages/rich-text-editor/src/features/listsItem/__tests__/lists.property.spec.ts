@@ -20,11 +20,11 @@ const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, uni
 const KINDS: readonly ListKind[] = ['bullet', 'ordered', 'task'];
 const ITEMS = new Set(['list_item', 'task_item']);
 
-interface Shape {
+type Shape = {
     readonly kind: ListKind;
     readonly start: number;
     readonly items: readonly { readonly checked: boolean; readonly children: Shape | null }[];
-}
+};
 /** Nested bullet, ordered and task lists, mixed, up to three levels deep. */
 const shape = fc
     .letrec<{ list: Shape; nested: Shape | null }>((tie) => ({

@@ -3,7 +3,7 @@
 import { type ContentIssue } from '#/model';
 
 /** An issue of the last content checks run, as the issues panel lists it. */
-export interface CheckedIssue {
+export type CheckedIssue = {
     readonly issue: ContentIssue;
     /** Stays the same from run to run while the rule is reported at the same place, unlike `issue.id`. */
     readonly key: string;
@@ -11,16 +11,16 @@ export interface CheckedIssue {
     readonly text: string;
     /** The author dismissed it for this session, until what it names changes. */
     readonly dismissed: boolean;
-}
+};
 
 /** The issues of the last content checks run, in document order, and how many times the checks ran in this session. */
-export interface ContentChecksResult {
+export type ContentChecksResult = {
     readonly issues: readonly CheckedIssue[];
     readonly runs: number;
-}
+};
 
 /** The session's content checks, which the issues panel reads and acts through. */
-export interface ContentChecksApi {
+export type ContentChecksApi = {
     /** The results of the last run, the same object until they or the document change. */
     current(): ContentChecksResult;
     /** Runs the checks now, unless input is composing; `true` when they ran. */
@@ -41,4 +41,4 @@ export interface ContentChecksApi {
     open(icons: Partial<Record<ContentIssue['severity'], Element>>, opened: (runs: number) => void): () => void;
     /** Runs `action` now, or, while a composition is open, ends it and runs `action` once input has settled, and not at all when it does not settle. */
     afterInput(action: () => void): void;
-}
+};

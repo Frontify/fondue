@@ -15,10 +15,10 @@ const OTHER_ORDER = ['Ctrl', 'Mod', 'Alt', 'Shift'];
 const ARROWS: Readonly<Record<string, readonly [string, string]>> = { ArrowUp: ['↑', 'Up'], ArrowDown: ['↓', 'Down'] };
 const ARIA_NAMES: Readonly<Record<string, string>> = { Ctrl: 'Control', Alt: 'Alt', Shift: 'Shift' };
 
-interface Parsed {
+type Parsed = {
     readonly modifiers: readonly string[];
     readonly key: string;
-}
+};
 
 /** The binding's modifiers and key on this platform, or `undefined` for a binding of the other platform. */
 const parse = (binding: string, apple: boolean): Parsed | undefined => {

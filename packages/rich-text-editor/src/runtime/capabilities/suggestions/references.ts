@@ -18,10 +18,10 @@ const CONTROL = /[\u0000-\u001F\u007F-\u009F]/u;
 export const KINDS: ReadonlySet<string> = new Set(['user', 'group', 'everyone']);
 
 /** One page of a reference search as the list shows it: the items it keeps, and the cursor of the next page. */
-export interface ReferenceResults {
+export type ReferenceResults = {
     readonly items: readonly SuggestionItem[];
     readonly nextCursor: string | null;
-}
+};
 
 const nonEmpty = (value: unknown): value is string => typeof value === 'string' && value !== '';
 

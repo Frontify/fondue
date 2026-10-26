@@ -16,14 +16,14 @@ const MentionSearchDialog = lazyPart(() =>
 const MAX_LABEL = 256;
 const KINDS = ['user', 'group', 'everyone'] as const;
 
-interface ReferencePayload {
+type ReferencePayload = {
     readonly resourceType: string;
     readonly resourceId: string;
     readonly labelSnapshot: string;
     readonly href?: string;
     readonly imageUrl?: string;
     readonly kind?: (typeof KINDS)[number];
-}
+};
 
 /**
  * The list the `trigger` option opens and the Mention button's search dialog, over the host's references of the

@@ -4,7 +4,7 @@ import { type UploadPlace } from '../../portTypes';
 import { type CommandResult, type SelectionHandle, type UploadStatus } from '../../types';
 
 /** What a session that installs `media.image` adds to its runtime, found with `mediaOf`. */
-export interface MediaSession {
+export type MediaSession = {
     /**
      * Applies a host asset picker's result, checked as untrusted input, as one undo step: a figure at the insert
      * `target`, or the image `nodeId` refilled, which then asks the author to review its alternative text.
@@ -30,4 +30,4 @@ export interface MediaSession {
         /** What the chrome of slot `nodeId` shows of its upload. */
         statusOf(nodeId: string): UploadStatus | undefined;
     };
-}
+};

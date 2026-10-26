@@ -15,14 +15,15 @@ test.afterEach(async ({ page }) => {
 type Rte = NonNullable<Window['rte']>;
 
 /** What a test keeps in the page between evaluations. */
-interface Kept {
+type Kept = {
     first?: unknown;
     queued?: Promise<CommandResult>;
     published?: unknown[];
     diagnostics?: string[];
     finish?: (value: unknown) => void;
-}
+};
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         kept?: Kept;
     }

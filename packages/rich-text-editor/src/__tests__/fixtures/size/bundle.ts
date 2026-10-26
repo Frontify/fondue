@@ -21,16 +21,16 @@ export const brotliBytes = (code: string): number =>
 // React, React DOM and the Fondue workspace packages are what host apps already load.
 const HOST_LOADED = /^(?:react|react-dom|@frontify\/fondue-(?:components|icons|tokens))(?:\/|$)/;
 
-export interface ChunkInfo {
+export type ChunkInfo = {
     readonly fileName: string;
     readonly bytes: number;
     readonly imports: readonly string[];
     readonly dynamicImports: readonly string[];
     readonly modules: readonly string[];
     readonly isEntry: boolean;
-}
+};
 
-export interface Measured {
+export type Measured = {
     /** Minified Brotli bytes of every JavaScript chunk. */
     readonly bytes: number;
     readonly chunks: readonly ChunkInfo[];
@@ -39,7 +39,7 @@ export interface Measured {
     readonly code: string;
     /** The ID of each module that went into a chunk. */
     readonly modules: readonly string[];
-}
+};
 
 /** Builds `source`, the lines of an entry module, as a minified library and measures what it emits. */
 export const measure = async (

@@ -16,12 +16,12 @@ import {
 import { ownValue } from './values';
 
 /** The presentation data an HTML output styles with: brand style recipes and colour tokens. */
-export interface OutputStyles {
+export type OutputStyles = {
     readonly styles: readonly PresentationStyle[];
     readonly colorTokens: readonly ColorToken[];
     /** Writes each recipe's resting declarations inline too, as `toHTML` does with `inlineStyles`. */
     readonly inline: boolean;
-}
+};
 
 /** The colour property each colour mark writes. */
 export const COLOR_PROPERTIES: Readonly<Record<string, string>> = {

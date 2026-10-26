@@ -118,15 +118,15 @@ export const contentNames = (expression: string): readonly string[] | undefined 
     return parse(expression)?.names;
 };
 
-interface Edge {
+type Edge = {
     /** A node or group name; none for an empty move. */
     readonly term?: string;
     readonly to: number;
-}
-interface Automaton {
+};
+type Automaton = {
     readonly edges: readonly (readonly Edge[])[];
     readonly accept: number;
-}
+};
 
 const build = (expression: Expression): Automaton => {
     const edges: Edge[][] = [[]];

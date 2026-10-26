@@ -19,16 +19,16 @@ import { contentChecksOf, referenceValues, surfaceElement } from '#/runtime/port
 import { type ReferenceService } from './types';
 
 /** The overlay a plugin command opened, with what it renders with; `id` remounts it when it opens again. */
-export interface PluginOverlay {
+export type PluginOverlay = {
     readonly id: number;
     readonly component: ComponentType<OverlayProps>;
     readonly props: object;
     readonly anchor: OverlayAnchor;
     readonly opener: Element | null;
-}
+};
 
 /** What the hosts read when a plugin calls them: the session's parts, and the newest props, strings and language. */
-interface HostSources {
+type HostSources = {
     readonly coordinator: MountCoordinator;
     readonly scope: InteractionScope;
     readonly announcer: Announcer;
@@ -39,7 +39,7 @@ interface HostSources {
     readonly presentation: () => PluginPresentation;
     readonly references: () => ReferenceService | undefined;
     readonly testId: () => string;
-}
+};
 
 /** The hosts an editor gives its plugins, built once per mount, and the overlay a plugin command opened, which it renders. */
 export const usePluginHosts = (sources: HostSources) => {

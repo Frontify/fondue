@@ -19,10 +19,10 @@ import { createPlacement, ignoresMutation, sameTags, stopsEvent, syncLayers } fr
 import { type PortalEntry, type PortalStore } from './portals';
 
 /** What the node views of one editor share: its portals and the session they act on. */
-export interface NodeViewHost {
+export type NodeViewHost = {
     readonly portals: PortalStore;
     readonly runtime: EditorRuntime;
-}
+};
 
 // A throw never reaches ProseMirror: the portals close and the session faults, which stops editing.
 const faultOnThrow = <T>(host: NodeViewHost, fallback: () => T, work: () => T): T => {

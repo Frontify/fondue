@@ -41,11 +41,11 @@ const contentOf = (document: RichTextDocument) => {
     return first?.content;
 };
 
-interface UrlFixture {
+type UrlFixture = {
     readonly input: string;
     readonly ok: boolean;
     readonly href?: string;
-}
+};
 const URLS = urls as readonly UrlFixture[];
 
 const model = compileContentModel([core(), bold(), links()], { id: 'test.links', version: 1 });

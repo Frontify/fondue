@@ -25,7 +25,7 @@ import {
     type SaveResponse,
 } from './types';
 
-export interface SaveCoordinatorOptions {
+export type SaveCoordinatorOptions = {
     /** Read at each use, so a write after a services change goes to the new service. */
     readonly service: () => PersistenceService;
     /** Read at each use, so the host's newest options and `onConflict` apply. */
@@ -39,7 +39,7 @@ export interface SaveCoordinatorOptions {
     readonly model: ContentModel;
     /** Operation ids, the same source as the session id and new `nodeId`s. */
     readonly generateId: () => string;
-}
+};
 
 // Each retry delay moves by up to this share either way, so editors that failed together do not retry together.
 const JITTER = 0.2;
@@ -54,7 +54,7 @@ const STATUS_KEYS = [
 ] as const;
 
 /** What the effects act on: the machine, its timers, the write in flight and the `requestCommit` calls. */
-interface Link {
+type Link = {
     readonly runtime: EditorRuntime;
     readonly given: SaveCoordinatorOptions;
     readonly writer: SaveRequest['writer'];
@@ -70,15 +70,15 @@ interface Link {
     status: SaveStatus;
     controller: AbortController;
     calls: number;
-}
+};
 
-export interface Transport {
+export type Transport = {
     readonly dispatch: (input: EventInput) => void;
     readonly commit: (options: CommitOptions) => Promise<CommitResult>;
     readonly captureWaiting: () => void;
     readonly machine: () => SaveMachine;
     readonly status: () => SaveStatus;
-}
+};
 
 const readFacts = (link: Link): Facts => {
     const summary = link.runtime.handle.getSummary();

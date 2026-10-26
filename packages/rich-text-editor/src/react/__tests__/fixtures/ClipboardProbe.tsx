@@ -50,6 +50,7 @@ const paragraphOf = (text: string): ContentNodeJSON => {
 };
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The mounted editor and what the clipboard tests read of it. */
         clip?: {
@@ -69,11 +70,11 @@ declare global {
 }
 
 /** One task item the probe stores when `tasks` is set. */
-interface ProbeTask {
+type ProbeTask = {
     readonly nodeId: string;
     readonly text: string;
     readonly checked: boolean;
-}
+};
 
 /**
  * The editor of `core`, bold and a visible mention, or a task list when `tasks` is set, in a scrolling box when

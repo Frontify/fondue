@@ -8,16 +8,16 @@ import { useEditorApi } from '#/entries/authoring';
 import { useEditorHandle } from '#/index';
 
 /** The commands the stand-ins run: the link stand-in's and `core`'s text insertion. */
-interface FixtureCommands {
+type FixtureCommands = {
     readonly 'fixture.link.edit': undefined;
     readonly 'text.insert': { readonly text: string };
-}
+};
 
 /** A fixture overlay, which its probe opens and closes. */
-export interface FixtureOverlayProps {
+export type FixtureOverlayProps = {
     readonly open: boolean;
     readonly onOpenChange: (open: boolean) => void;
-}
+};
 
 /** The link popover's form: a labelled URL field and Apply, which sets the link on the selection. */
 export const LinkForm = ({ onApply }: { readonly onApply: () => void }) => {

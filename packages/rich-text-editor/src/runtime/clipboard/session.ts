@@ -16,7 +16,7 @@ import { type EditorRuntime, runtimeOfView } from '#/runtime/runtime';
 import { type PasteSettings, type Payload } from './paste';
 
 /** What the host side of a session gives its clipboard handlers. */
-export interface ClipboardSession {
+export type ClipboardSession = {
     /** The Inline profile's field, whose paste keeps one paragraph. */
     readonly singleLine?: boolean;
     /** The presentation's `sliceContext`, read at each copy and paste. */
@@ -28,7 +28,7 @@ export interface ClipboardSession {
     readonly resolveReference?: () => ResolveReference | undefined;
     /** The presentation's `resolveAssetUrl`, read at each copy, so a copied image keeps the URL the editor shows. */
     readonly resolveAssetUrl?: () => ResolveAssetUrl | undefined;
-}
+};
 
 const sessions = new WeakMap<EditorRuntime, ClipboardSession>();
 

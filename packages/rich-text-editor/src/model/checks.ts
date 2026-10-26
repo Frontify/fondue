@@ -17,7 +17,7 @@ import { type ColorToken } from './styles';
 import { isRecord } from './values';
 
 /** One finding of the content checks: which rule found it, where, and the repair on offer if any. */
-export interface ContentIssue {
+export type ContentIssue = {
     /** `${ruleId}:${nodeId}`, `${ruleId}:${path}` or `${ruleId}`. */
     readonly id: string;
     readonly ruleId: ContentRuleId;
@@ -31,12 +31,12 @@ export interface ContentIssue {
     /** The repair command's payload, such as `{ level: 3 }` for `heading.set`. */
     readonly repairPayload: JsonValue | null;
     readonly sequence: number;
-}
+};
 
 type Level = 1 | 2 | 3 | 4 | 5 | 6;
 
 /** What the content checks need: the locale for word lists and the installed features whose rules run. */
-export interface ContentCheckOptions {
+export type ContentCheckOptions = {
     /** The word lists come from its `RichTextEditor_checkGenericImageWords` and `RichTextEditor_checkVagueLinkTexts`; the en-US lists are always added. */
     readonly locale: RichTextLocale;
     /** The installed features declare the rules and decide repair availability, such as the language repair, and nodes it does not declare are skipped. */
@@ -49,7 +49,7 @@ export interface ContentCheckOptions {
     readonly enclosingHeadingLevel?: Level;
     /** The heading levels the author may create, which the heading level repair stays within; default 1 to 6. */
     readonly creatableHeadingLevels?: readonly number[];
-}
+};
 
 /** The en-US generic image words, which every check adds to the locale's own list. */
 export const GENERIC_IMAGE_WORDS =
@@ -83,18 +83,18 @@ export const ruleHelpKey = (ruleId: ContentRuleId): `RichTextEditor_${string}` =
     `RichTextEditor_check${pascalOf(ruleId)}Help`;
 
 /** Where an issue sits and what it covers: one node, or a run of inline children. */
-interface Subject {
+type Subject = {
     readonly path: readonly number[];
     /** The inline children a run covers from `path`; 1 for a node. */
     readonly span: number;
     readonly nodeId: string | null;
     readonly signature: string;
-}
+};
 
 /** A rule that looks at the whole document and names no feature's node. */
-interface DocumentRule extends Omit<ContentRule, 'subject' | 'check'> {
+type DocumentRule = {
     check(context: ContentRuleContext): ContentFinding;
-}
+} & Omit<ContentRule, 'subject' | 'check'>;
 
 const folded = (value: string) => value.trim().toLowerCase();
 
@@ -124,12 +124,12 @@ export const CONTENT_REPAIRS = (model: ContentModel): readonly ContentRepair[] =
     [...DOCUMENT_RULES, ...featureRules(model)].flatMap(({ repair }) => repair ?? []);
 
 /** An issue with the inline children it covers from its path and the stored content it was found on. */
-export interface LocatedIssue {
+export type LocatedIssue = {
     readonly issue: ContentIssue;
     readonly span: number;
     /** The canonical JSON of what the issue names, which changes when its node does. */
     readonly signature: string;
-}
+};
 
 const listOf = (locale: RichTextLocale, key: `RichTextEditor_${string}`, english: string): ReadonlySet<string> => {
     const own = locale.translationStrings[key];
@@ -192,11 +192,11 @@ const isInline = (children: readonly ContentNodeJSON[]) =>
     children.some((child) => child.type === 'text' || child.marks !== undefined);
 
 /** A rule with the subject its engine found, in reading order. */
-interface Found {
+type Found = {
     readonly rule: ContentRule;
     readonly subject: Subject;
     readonly given: ContentRuleInput;
-}
+};
 
 /** Each subject of the document in reading order, with the rule that looks at it. */
 const subjectsOf = (document: RichTextDocument, declared: ReadonlySet<string>, rules: readonly ContentRule[]) => {

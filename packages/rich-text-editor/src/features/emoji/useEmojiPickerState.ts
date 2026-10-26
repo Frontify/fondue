@@ -26,13 +26,13 @@ const LIMIT = 50;
 const COMPOSITION_ENTER_MS = 500;
 
 /** The emoji picker's strings, in the UI locale. */
-interface EmojiPickerStrings {
+type EmojiPickerStrings = {
     readonly title: string;
     readonly search: string;
     readonly noResults: string;
     readonly loading: string;
     readonly failed: string;
-}
+};
 
 /** The picker's strings from the chrome's `t`. */
 const emojiStrings = (t: CodecContext['t']): EmojiPickerStrings => ({

@@ -4,12 +4,12 @@ import { type JsonObject } from './declarations';
 import { isWellFormed } from './wellFormed';
 
 /** The rules for which link targets are allowed: schemes, hosts and relative links. */
-export interface HrefPolicy {
+export type HrefPolicy = {
     /** A subset of `https`, `http`, `mailto` and `tel`. */
     readonly allowedSchemes?: readonly ('https' | 'http' | 'mailto' | 'tel')[];
     /** Lowercase hostnames: `h` matches only `h`; `*.h` matches `h` and hosts ending in `.h`. */
     readonly allowedHosts?: readonly string[];
-}
+};
 /** The outcome of checking a link target: the allowed address, or the reason it is refused. */
 export type HrefResult =
     | { readonly ok: true; readonly href: string }

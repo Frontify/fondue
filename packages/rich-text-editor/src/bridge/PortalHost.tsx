@@ -20,10 +20,10 @@ export type BoundaryProps = {
     readonly attrs: JsonObject;
     readonly children: ReactNode;
 };
-interface BoundaryState {
+type BoundaryState = {
     readonly failed: boolean;
     readonly attrs: JsonObject;
-}
+};
 
 /** The attributes of a boundary around a toolbar item, which has none to change. */
 export const NO_ATTRS = {};

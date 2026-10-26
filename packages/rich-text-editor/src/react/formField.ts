@@ -10,7 +10,7 @@ import { type EditorHandle } from './types';
 import { validityOf } from './validity';
 
 /** A handle for a form to read the editor's document and check that it is valid. */
-export interface RichTextFormField {
+export type RichTextFormField = {
     getValue(): RichTextDocument;
     validate(): { readonly valid: true } | { readonly valid: false; readonly reason: 'empty' | 'too-long' };
     /**
@@ -21,13 +21,13 @@ export interface RichTextFormField {
     reset(): Promise<ReplaceResult>;
     /** Resolves with the committed document, or rejects with code `timeout`. */
     getSettledValue(options: { readonly timeoutMs: number }): Promise<RichTextDocument>;
-}
+};
 
 /** The editor props the form field reads, by the handle of the session that renders with them. */
-interface FieldProps {
+type FieldProps = {
     readonly required?: boolean | undefined;
     readonly defaultValue: LoadedDocument;
-}
+};
 const fieldProps = new WeakMap<object, () => FieldProps>();
 
 /** Lets `useRichTextFormField` read the newest props of the editor behind `handle`. */

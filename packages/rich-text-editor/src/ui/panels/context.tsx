@@ -3,12 +3,12 @@
 import { createContext, useContext } from 'react';
 
 /** The one open panel; `close` clears it. */
-export interface PanelController {
+export type PanelController = {
     readonly id: string | undefined;
     /** Counts the `open` calls for the panel that is already open, which that panel hears to move focus. */
     readonly requested: number;
     close(): void;
-}
+};
 
 export const PanelContext = createContext<PanelController | null>(null);
 PanelContext.displayName = 'RichTextEditorPanelContext';

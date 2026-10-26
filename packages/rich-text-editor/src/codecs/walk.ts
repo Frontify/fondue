@@ -6,7 +6,7 @@ import { type TreeMark, type TreeNode, type ResolveReference } from '#/model/int
 import { type CodecPlan, type Format, type Losses, setShared } from './plan';
 
 /** What one walk shares: the plan, the losses and diagnostics so far, and the heading IDs a link may target. */
-export interface WalkState {
+export type WalkState = {
     readonly plan: CodecPlan;
     readonly context: CodecContext;
     readonly losses: Losses;
@@ -14,7 +14,7 @@ export interface WalkState {
     readonly headings: ReadonlySet<string>;
     /** Mention labels as the reader shows them; without it, each mention's stored label. */
     readonly resolveReference?: ResolveReference | undefined;
-}
+};
 
 /** The `nodeId` of every heading, so a link to `#` plus one of them is known as a link inside the document. */
 export const headingIds = (root: TreeNode): ReadonlySet<string> => {

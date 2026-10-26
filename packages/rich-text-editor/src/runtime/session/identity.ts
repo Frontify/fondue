@@ -2,7 +2,7 @@
 
 import { type DocumentStamp, type SessionToken } from '../types';
 
-export interface Identity {
+export type Identity = {
     session(): SessionToken;
     sequence(): number;
     commitSequence(): number;
@@ -12,7 +12,7 @@ export interface Identity {
     bumpCommit(): void;
     /** Moves to the next generation and document with the sequence reset; returns the stamp it left. */
     nextGeneration(documentId: string): DocumentStamp;
-}
+};
 
 export const createIdentity = (args: { documentId: string; generate: () => string }): Identity => {
     let session: SessionToken = { documentId: args.documentId, sessionId: args.generate(), generation: 0 };

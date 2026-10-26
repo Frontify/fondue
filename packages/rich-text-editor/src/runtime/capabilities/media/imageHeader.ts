@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /** What a file's first bytes say: its media type by content, and an image's intrinsic size, never decoded. */
-export interface ImageHeader {
+export type ImageHeader = {
     /** `null` when the content matches no type this reader knows. */
     readonly mediaType: string | null;
     readonly width: number | null;
     readonly height: number | null;
-}
+};
 
 const UNKNOWN: ImageHeader = { mediaType: null, width: null, height: null };
 // Enough for every signature and fixed-place size below; JPEG and AVIF read further where they need to.
@@ -119,11 +119,11 @@ const jpeg = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
 };
 
 /** One ISO base media box: its type, where its content starts and where it ends. */
-interface Box {
+type Box = {
     readonly type: string;
     readonly content: number;
     readonly end: number;
-}
+};
 
 /** The boxes between `start` and `end`, read from their headers alone, up to `MAX_STEPS` of them. */
 const boxesIn = async (read: ReturnType<typeof windowed>, start: number, end: number): Promise<Box[]> => {

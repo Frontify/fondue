@@ -38,11 +38,11 @@ const LINE_PARTS = [
     ['color', 'Color'],
 ] as const;
 
-interface Line {
+type Line = {
     style: string | undefined;
     width: string | undefined;
     color: string | undefined;
-}
+};
 
 /** The style, width and colour a `border` or `outline` shorthand sets. */
 const lineOf = (shorthand: unknown): Line => {

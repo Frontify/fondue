@@ -14,7 +14,7 @@ import { storedOf } from './EditorProbe';
 const model = compileContentModel([core(), bold()], { id: 'test.ct', version: 1 });
 const definition = defineEditor({ id: 'test.ct', model, plugins: unitsOf(model) });
 
-export interface EditorHydrationResult {
+export type EditorHydrationResult = {
     /** `process.env.NODE_ENV` as the bundle was built; `development` keeps React's mismatch warnings. */
     readonly mode: string;
     /** Every error React reported through `onRecoverableError`. */
@@ -24,7 +24,7 @@ export interface EditorHydrationResult {
     readonly atCommit: string;
     /** The surface text in each animation frame from the hydration commit on. */
     readonly frames: readonly string[];
-}
+};
 
 const Committed = ({ onCommit }: { readonly onCommit: () => void }) => {
     useLayoutEffect(onCommit, [onCommit]);

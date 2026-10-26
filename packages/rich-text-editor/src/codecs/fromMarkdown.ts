@@ -87,9 +87,9 @@ const codeLanguage = (builder: Builder, info: string): string | null => {
 };
 
 /** The reader's state across tokens: whether the list item just opened is a task item. */
-interface Reading {
+type Reading = {
     taskItem: boolean;
-}
+};
 
 const openTextBlock = (builder: Builder, token: MarkdownToken): void => {
     if (token.type === 'paragraph_open') {

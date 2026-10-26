@@ -18,11 +18,11 @@ const HEADING_KEY = {
 
 type Level = keyof typeof HEADING_KEY;
 
-interface OutlineHeading {
+type OutlineHeading = {
     readonly nodeId: string;
     readonly level: Level;
     readonly text: string;
-}
+};
 
 const isLevel = (level: unknown): level is Level =>
     level === 1 || level === 2 || level === 3 || level === 4 || level === 5 || level === 6;

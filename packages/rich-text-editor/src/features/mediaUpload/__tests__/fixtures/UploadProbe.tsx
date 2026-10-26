@@ -23,6 +23,7 @@ const resolveAssetUrl = (assetId: string) => `${window.location.origin}/test-ass
 const presentation = defineReactPresentation({ toolbar: [['image.insert']], resolveAssetUrl });
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The upload probe's handle, its changes, the requests its service holds and how the specs answer them. */
         uploadRte?: {

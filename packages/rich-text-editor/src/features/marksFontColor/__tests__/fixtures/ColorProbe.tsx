@@ -10,12 +10,13 @@ import { setSelection } from '#/testing';
 
 const presentation = defineReactPresentation({ colorTokens: COLOR_TOKENS, toolbar: [['mark.color.menu.open']] });
 
-export interface ColorChange {
+export type ColorChange = {
     readonly commandId: string | null;
     readonly origin: string;
-}
+};
 
 declare global {
+    // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The colour probe's handle, the selection helper and each change. */
         colorRte?: {

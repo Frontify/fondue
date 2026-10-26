@@ -19,7 +19,7 @@ import { type RejectedCode } from './types';
 // The target an async operation started with none gets at the selection.
 const ASYNC_TARGET: CaptureTargetOptions = { purpose: 'insert', onIntersectingEdit: 'map' };
 
-export interface TargetsService {
+export type TargetsService = {
     readonly coordinator: ReturnType<typeof createAsyncCoordinator>;
     /** The state a command runs on: the current one, or with the selection at its target's mapped range. */
     baseOf(options: unknown): EditorState | RejectedCode;
@@ -33,7 +33,7 @@ export interface TargetsService {
     flushCaptures(): void;
     clearDeferred(): void;
     changeServices(members: readonly string[]): void;
-}
+};
 
 export const createTargetsService = (a: {
     store: Store;

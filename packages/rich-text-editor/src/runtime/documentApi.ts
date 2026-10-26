@@ -16,31 +16,31 @@ import {
 
 declare const rangeBrand: unique symbol;
 /** A stretch of the document as it was when read, such as a whole mark run: an overlay anchors to it, a target captures it. */
-export interface EditorRange {
+export type EditorRange = {
     readonly [rangeBrand]: true;
-}
+};
 
 /** The whole run of one mark around the selection or an element. */
-export interface MarkRunValue {
+export type MarkRunValue = {
     readonly attrs: JsonObject;
     readonly text: string;
     readonly range: EditorRange;
-}
+};
 
 /** One node with the stretch it covers. */
-export interface NodeValue {
+export type NodeValue = {
     readonly nodeId: string | null;
     readonly attrs: JsonObject;
     readonly range: EditorRange;
-}
+};
 
 /** One block of a type, in document order. */
-export interface BlockValue extends NodeValue {
+export type BlockValue = {
     readonly text: string;
-}
+} & NodeValue;
 
 /** A node around the selection's start. */
-export interface AncestorValue {
+export type AncestorValue = {
     readonly type: string;
     readonly attrs: JsonObject;
     readonly nodeId: string | null;
@@ -51,10 +51,10 @@ export interface AncestorValue {
     readonly last: boolean;
     /** Whether it holds no content. */
     readonly empty: boolean;
-}
+};
 
 /** The selection summary the editor publishes, with the context of the selection's start. */
-export interface SelectionValue extends SelectionSummary {
+export type SelectionValue = {
     /** The nodes that hold the selection's start, outermost first, its textblock last; the document is none of them. */
     readonly ancestors: readonly AncestorValue[];
     /** Whether the selection starts at the start of its textblock. */
@@ -65,7 +65,7 @@ export interface SelectionValue extends SelectionSummary {
     readonly nodeBefore: { readonly type: string; readonly attrs: JsonObject; readonly nodeId: string | null } | null;
     /** Whether the textblock of the selection's start keeps white space as typed, as a code block does. */
     readonly verbatim: boolean;
-}
+} & SelectionSummary;
 
 /** Where a write goes: a range, or the node with `nodeId`, whole or before, after, or at the start or end of its content. */
 export type WriteTarget = EditorRange | { readonly nodeId: string; readonly at?: 'before' | 'after' | 'start' | 'end' };
@@ -85,16 +85,16 @@ export type WriteOutcome =
 export type InsertPlace = 'selection' | 'after-top-level-block';
 
 /** Where `uploads.begin` puts pasted or dropped files: new images at `range`. */
-export interface UploadTarget {
+export type UploadTarget = {
     readonly origin: 'paste' | 'drop';
     readonly range: EditorRange;
-}
+};
 
 /**
  * The document half of `EditorApi`: reads of the selection and content, and writes that each run as one undo step
  * through the commit path, or inside a command as part of its one step.
  */
-export interface DocumentApi {
+export type DocumentApi = {
     /** The selection summary the editor publishes, with the context of the selection's start. */
     selection(): SelectionValue;
     /** The selected text when the selection lies in one textblock, else empty. */
@@ -295,7 +295,7 @@ export interface DocumentApi {
         /** Sets the flag `key`, or removes it with `null`; never an undo step. */
         set(nodeId: string, key: string, value: JsonValue | null): void;
     };
-}
+};
 
 /** Whether two ranges, or two absent ones, cover the same stretch. */
 export const sameRange = (a: EditorRange | undefined, b: EditorRange | undefined): boolean => {

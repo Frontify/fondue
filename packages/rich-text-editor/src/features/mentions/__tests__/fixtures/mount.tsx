@@ -63,12 +63,12 @@ export const DESIGN: ReferenceValue = {
 };
 
 /** One search the service received and has not answered yet. */
-export interface PendingSearch {
+export type PendingSearch = {
     readonly request: ReferenceSearchRequest;
     readonly context: ServiceContext;
     readonly resolve: (page: unknown) => void;
     readonly reject: (error: unknown) => void;
-}
+};
 
 /** A `ReferenceService` that answers each search only when the test does, in any order. */
 export const deferredService = () => {
@@ -85,7 +85,7 @@ export const deferredService = () => {
 /** A page with `items` and no next page. */
 export const page = (items: readonly unknown[], nextCursor: string | null = null) => ({ items, nextCursor });
 
-interface Mount {
+type Mount = {
     readonly model?: ContentModel;
     readonly blocks?: readonly ContentNodeJSON[];
     readonly services?: EditorServices | undefined;
@@ -93,7 +93,7 @@ interface Mount {
     readonly locale?: RichTextLocale | undefined;
     readonly toolbar?: ReactPresentation['toolbar'];
     readonly id?: string;
-}
+};
 
 /** The optional props that are set, as `exactOptionalPropertyTypes` takes them. */
 const setProps = (next: Pick<Mount, 'services' | 'presentation' | 'locale'>) => {

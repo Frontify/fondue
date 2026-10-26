@@ -43,10 +43,10 @@ const DETAILS = recordOf(model, 'details-1', text('The details.'));
 const DESCRIPTION = recordOf(model, 'description-1', text('Select text and press Mod+K to link it.'));
 
 /** The args of an example that mounts one editor: its definition and the record it opens. */
-interface EditorArgs {
+type EditorArgs = {
     readonly definition: CompiledEditorDefinition<object>;
     readonly defaultValue: LoadedDocument;
-}
+};
 
 // The editor's profile or the host's delays settle before a play function reads the surface.
 const LOAD = { timeout: 10_000 };

@@ -10,20 +10,20 @@ const MAX_ITEMS = 200;
 const ACTION_KEY = '';
 
 /** An option of the search dialog: a result, or one that asks again for the next page or the failed one. */
-export interface ResultItem extends SuggestionResult {
+export type ResultItem = {
     readonly action?: 'more' | 'retry';
     /** The cursor of the page a `more` option asks for. */
     readonly cursor?: string;
-}
+} & SuggestionResult;
 
 /** One page of results, and the cursor of the next page. */
-export interface ResultPage {
+export type ResultPage = {
     readonly items: readonly ResultItem[];
     readonly nextCursor: string | null;
-}
+};
 
 /** What a list says about its search, in the UI locale. */
-export interface ReferenceListStrings {
+export type ReferenceListStrings = {
     readonly label: string;
     readonly loading: string;
     readonly noResults: string;
@@ -35,7 +35,7 @@ export interface ReferenceListStrings {
     readonly option: (option: ListboxOption, position: number, total: number) => string;
     /** Two messages as one announcement, so the second does not cut the first off. */
     readonly both: (first: string, second: string) => string;
-}
+};
 
 /** The list strings from the chrome's `t`, which the mention list says too. */
 export const referenceListStrings = (t: CodecContext['t']): ReferenceListStrings => ({
