@@ -67,7 +67,7 @@ describe('the package README', () => {
     const source = read('README.md');
 
     it('lists every entry that package.json exports in its entries table', () => {
-        const { exports } = JSON.parse(read('package.json')) as { readonly exports: Readonly<Record<string, unknown>> };
+        const { exports } = JSON.parse(read('package.json')) as { exports: Readonly<Record<string, unknown>> };
 
         for (const entry of Object.keys(exports)) {
             expect(hasRow(source, entry), entry).toBe(true);
@@ -163,7 +163,7 @@ describe('the reader and codecs guide', () => {
     });
 
     it('names the stylesheet entry that the package exports ', () => {
-        const { exports } = JSON.parse(read('package.json')) as { readonly exports: Readonly<Record<string, unknown>> };
+        const { exports } = JSON.parse(read('package.json')) as { exports: Readonly<Record<string, unknown>> };
 
         expect(exports['./styles']).toBeDefined();
         expect(outside).toContain('@frontify/fondue-rich-text-editor/styles');
@@ -221,7 +221,7 @@ describe('the authoring guide', () => {
 });
 
 describe('the imports the guides show', () => {
-    const { exports } = JSON.parse(read('package.json')) as { readonly exports: Readonly<Record<string, unknown>> };
+    const { exports } = JSON.parse(read('package.json')) as { exports: Readonly<Record<string, unknown>> };
     const PREFIX = '@frontify/fondue-rich-text-editor';
 
     const check = (label: string, source: string) => {
