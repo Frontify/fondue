@@ -30,19 +30,22 @@ The editor is uncontrolled: it takes `defaultValue` once, and the host replaces 
 
 ## Layers
 
-Each folder under `src` is one layer; lint keeps the imports between them in this order.
+Each product folder under `src` is one layer; lint keeps the imports between them in this order.
 
 | Folder | Holds |
 | --- | --- |
 | `model` | The stored format: documents, the content model, validation, migrations, limits and content checks |
 | `features` | One folder per feature: its vocabulary part (`feature.ts`), editor part (`editor.ts`), optional reader part and its plugin unit (`index.ts`) |
-| `definition` | Compiles a content model and editor parts into the editing engine's schema, keymaps and input rules |
-| `runtime` | The editing session: state, commands, the editor API, uploads, suggestions and history; the only layer that holds the engine |
+| `runtime` | The editing session: state, commands, the editor API, uploads, suggestions and history; the engine definition in `runtime/definition`, which compiles a content model and editor parts into the engine's schema, keymaps and input rules; the HTML and paste import in `runtime/import`; the only layer that holds the engine |
 | `persistence` | The save coordinator |
 | `bridge` | The plugin API and the React adapter for node views, chrome and overlays |
 | `ui` | Toolbar, menus and suggestion lists |
 | `react` | `RichTextEditor`, its parts, hooks and the shipped profiles |
-| `reader`, `codecs`, `html`, `clipboard` | Static rendering, export and import, and the paste pipeline |
+| `reader` | Static rendering of stored documents |
+| `codecs` | HTML, Markdown and plain text export, and Markdown import |
+| `entries` | The reader and authoring entry modules and the shipped feature readers |
+| `locales` | One message catalogue per shipped locale |
+| `styles` | The package stylesheet and its shared style helpers |
 | `testing` | The feature contract suite, fake services and input helpers |
 
 ## Codecs and blocked documents
