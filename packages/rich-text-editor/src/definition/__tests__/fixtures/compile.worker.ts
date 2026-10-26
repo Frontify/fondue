@@ -11,14 +11,14 @@ import { compileContentModel } from '#/model';
 const results = Object.entries(fixtureProfiles()).map(([name, features]) => {
     const model = compileContentModel(features, { id: `fixture.${name}`, version: 1 });
     const { schema, plugins, keymap } = compileDefinition(model, {}, fixtureExtensionsOf(model));
-    const specs = (types: Readonly<Record<string, { readonly spec: object }>>) =>
+    const specs = (types: Readonly<Record<string, { spec: object }>>) =>
         Object.entries(types).map(([type, { spec }]) => ({ type, spec: JSON.stringify(spec) }));
 
     return {
         name,
         schema: { nodes: specs(schema.nodes), marks: specs(schema.marks) },
         keymap,
-        plugins: plugins.map((plugin) => (plugin as unknown as { readonly key: string }).key),
+        plugins: plugins.map((plugin) => (plugin as unknown as { key: string }).key),
         manifest: model.manifest,
         fingerprint: model.fingerprint,
     };

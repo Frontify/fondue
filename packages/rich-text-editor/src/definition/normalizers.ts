@@ -39,24 +39,24 @@ export type Normalizer = (state: EditorState, generateId: () => string) => Trans
  * how the batch maps the document before it to this one.
  */
 type NodeIdIndex = {
-    readonly counts: ReadonlyMap<string, number>;
-    readonly touched: readonly number[];
+    counts: ReadonlyMap<string, number>;
+    touched: readonly number[];
     /** Whether the last root's repair waits, so the next root keeps the touched positions and the batch mapping. */
-    readonly later: boolean;
-    readonly mapping: Mapping;
+    later: boolean;
+    mapping: Mapping;
 };
 
 /** A node that carries a `nodeId`, with its position. */
 type Holder = {
-    readonly node: Node;
-    readonly pos: number;
+    node: Node;
+    pos: number;
 };
 
 /** A normalizer, with the plugin key and state it keeps between transactions. */
 export type NormalizerPlugin<T> = {
-    readonly normalize: Normalizer;
-    readonly key: PluginKey<T>;
-    readonly field: StateField<T>;
+    normalize: Normalizer;
+    key: PluginKey<T>;
+    field: StateField<T>;
 };
 
 /** The nodes of `doc` that start at `positions`, read in one walk. */

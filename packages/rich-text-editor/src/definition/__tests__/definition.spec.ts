@@ -34,7 +34,7 @@ import { extensionsOf } from '#/react/engine';
 
 import { compileDefinition } from '..';
 
-const keyOf = (plugin: Plugin) => (plugin as unknown as { readonly key: string }).key;
+const keyOf = (plugin: Plugin) => (plugin as unknown as { key: string }).key;
 /** The engine of `model` with the fixture features' editor parts and the shipped ones. */
 const engineOf = (model: ContentModel) => compileDefinition(model, {}, extensionsOf(model, unitsOf(model)));
 const options = { id: 'test', version: 1 };

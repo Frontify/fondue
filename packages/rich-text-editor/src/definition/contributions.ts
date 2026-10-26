@@ -22,9 +22,9 @@ const SUGGESTION_TRIGGER = /^[^\p{L}\p{N}\s]{1,2}$/u;
 
 /** A key handler of an editor part, with the plugin that runs it. */
 export type KeyHandlerEntry = {
-    readonly plugin: string;
-    readonly key: string;
-    readonly handler: EngineCommand;
+    plugin: string;
+    key: string;
+    handler: EngineCommand;
 };
 
 /** A plugin's rules run as its feature's, under that feature's options and policy. */

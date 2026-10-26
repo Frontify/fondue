@@ -200,7 +200,7 @@ const readSource = (element: HTMLElement, source: ParseAttributeSource, declarat
  * declaration keeps the default; a rule that cannot fill an attribute with no default does not match.
  */
 const tagRule = (
-    rule: Extract<ParseRule, { readonly tag: string }>,
+    rule: Extract<ParseRule, { tag: string }>,
     declarations: AttributeDeclarations,
     shared: readonly SharedAttribute[],
     exactlyOne: readonly string[] = [],

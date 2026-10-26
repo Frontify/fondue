@@ -15,62 +15,62 @@ import { type CompiledFeature } from '#/model/internal';
 
 /** A command as a line-start rule runs it, with the payload of its marker, and whether its target is active there. */
 type RuleCommand = {
-    readonly run: (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => boolean;
-    readonly active: (state: EditorState, payload?: unknown) => boolean | 'mixed';
+    run: (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => boolean;
+    active: (state: EditorState, payload?: unknown) => boolean | 'mixed';
     /** Whether running would drop content its target cannot hold, so the rule does not fire. */
-    readonly refuses?: (state: EditorState, payload?: unknown) => boolean;
-    readonly payload?: PayloadDeclaration;
+    refuses?: (state: EditorState, payload?: unknown) => boolean;
+    payload?: PayloadDeclaration;
 };
 
 type RuleOf = {
-    readonly id: string;
+    id: string;
     /** The feature that declares the rule, whose authoring policy decides whether it fires. */
-    readonly featureId: string;
+    featureId: string;
 };
 export type LineStartRule = {
-    readonly kind: 'line-start';
-    readonly marker: string;
-    readonly command: RuleCommand;
-    readonly payload: unknown;
+    kind: 'line-start';
+    marker: string;
+    command: RuleCommand;
+    payload: unknown;
 } & RuleOf;
 /** A code feature's pattern over the text from the block start to the caret, whose named groups fill the payload. */
 export type BlockRule = {
-    readonly kind: 'block-rule';
-    readonly match: RegExp;
-    readonly command: RuleCommand;
+    kind: 'block-rule';
+    match: RegExp;
+    command: RuleCommand;
 } & RuleOf;
 /**
  * A code feature's pattern before the caret whose match, without the whitespace that ends it, gets `mark`, with the
  * attributes its named groups fill; `enter` also tests it when Enter ends the match.
  */
 export type MarkRule = {
-    readonly kind: 'mark-rule';
-    readonly match: RegExp;
-    readonly mark: MarkType;
+    kind: 'mark-rule';
+    match: RegExp;
+    mark: MarkType;
     /** The mark's attribute declarations, which convert the named groups. */
-    readonly attrs: AttributeDeclarations;
-    readonly onInput: boolean;
-    readonly onEnter: boolean;
+    attrs: AttributeDeclarations;
+    onInput: boolean;
+    onEnter: boolean;
     /** The declaring feature's `allowedSchemes` and `allowedHosts`, which a `url` group must also pass. */
-    readonly policy: HrefPolicy | undefined;
+    policy: HrefPolicy | undefined;
 } & RuleOf;
 export type MarkDelimiterRule = {
-    readonly kind: 'mark-delimiter';
-    readonly open: string;
-    readonly close: string;
-    readonly mark: MarkType;
+    kind: 'mark-delimiter';
+    open: string;
+    close: string;
+    mark: MarkType;
 } & RuleOf;
 /** A fixed string, or a code feature's pattern, that ends at the caret and becomes `replace`. */
 export type TextReplaceRule = {
-    readonly kind: 'text-replace';
-    readonly match: RegExp;
-    readonly replace: string;
+    kind: 'text-replace';
+    match: RegExp;
+    replace: string;
     /** Fires on the next typed character when it is no word character, which stays after the replacement. */
-    readonly boundary: boolean;
+    boundary: boolean;
 } & RuleOf;
 export type QuotesRule = {
-    readonly kind: 'quotes';
-    readonly marker: '"' | "'";
+    kind: 'quotes';
+    marker: '"' | "'";
 } & RuleOf;
 /** An input rule as the package's rule engine runs it. */
 export type CompiledInputRule = LineStartRule | BlockRule | MarkRule | MarkDelimiterRule | TextReplaceRule | QuotesRule;
@@ -82,7 +82,7 @@ const escaped = (text: string) => text.replaceAll(/[$()*+.?[\\\]^{|}]/g, String.
  * bold, never italic. Two rules of one ID are refused.
  */
 export const compileInputRules = (
-    features: readonly (CompiledFeature & { readonly inputRules: readonly InputRule[] })[],
+    features: readonly (CompiledFeature & { inputRules: readonly InputRule[] })[],
     schema: Schema,
     commandOf: (id: string) => RuleCommand | undefined,
 ): readonly CompiledInputRule[] => {
