@@ -1,22 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    type EditorPort,
-    INSERT_IMAGE,
-    mediaOf,
-    REPLACE_IMAGE,
-    type SelectionHandle,
-    type SessionToken,
-} from '#/runtime/port';
+import { type EditorPort, INSERT_IMAGE, mediaOf, REPLACE_IMAGE, type SelectionHandle } from '#/runtime/port';
+
+import { type AssetPickerService } from '../../types';
 
 /** The feature whose images the picker inserts and refills. */
 export const IMAGE_FEATURE = 'media.image';
 const ASSETS_SERVICE = 'assets';
-
-/** The host asset picker, as `services.assets` holds it. */
-export type AssetPicker = {
-    pick(request: { purpose: string }, context: { signal: AbortSignal; session: SessionToken }): Promise<unknown>;
-};
 
 /**
  * Opens the host asset picker through the async coordinator, which aborts it when the service, the session or the
@@ -26,7 +16,7 @@ export type AssetPicker = {
  */
 export const pickAsset = (
     runtime: EditorPort,
-    picker: AssetPicker,
+    picker: AssetPickerService,
     options: { nodeId?: string; removed: (kind: 'target' | 'image') => void },
 ): void => {
     const { nodeId, removed } = options;
