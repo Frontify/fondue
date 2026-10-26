@@ -68,6 +68,7 @@ const mount = async (model: ContentModel, services: EditorServices = {}) => {
     if (handle === null) {
         throw new Error('The editor has no handle.');
     }
+
     return handle;
 };
 
@@ -95,6 +96,7 @@ describe('the observability guide examples', () => {
         const fail = () => {
             throw new Error('override failed');
         };
+
         const note = defineFeature({
             id: 'docs.note',
             version: 1,
@@ -137,12 +139,14 @@ describe('the observability guide examples', () => {
             let armed = false;
             vi.mocked(createPortalStore).mockImplementationOnce(() => {
                 const store = actualStore();
+
                 return {
                     ...store,
                     set: (entry) => {
                         if (armed) {
                             throw new Error('node view failed');
                         }
+
                         store.set(entry);
                     },
                 };

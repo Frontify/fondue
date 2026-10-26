@@ -53,19 +53,23 @@ const rowsOf = (source: string): Row[] => {
             inTable = true;
             continue;
         }
+
         if (!line.startsWith('|')) {
             inTable = false;
             continue;
         }
+
         if (!inTable || /^\|[\s:|-]+\|$/.test(line)) {
             continue;
         }
+
         const [criterion = '', level = '', remarks = ''] = line
             .slice(1, -1)
             .split('|')
             .map((cell) => cell.trim());
         rows.push({ criterion, level, remarks });
     }
+
     return rows;
 };
 
@@ -77,28 +81,34 @@ const problemsOf = (source: string): string[] => {
         if (!CONFORMANCE_LEVELS.includes(level)) {
             problems.push(`${criterion}: "${level}" is no conformance level`);
         }
+
         if (level !== 'Not Applicable') {
             const paths = [...remarks.matchAll(EVIDENCE_PATH)].map(([, path]) => path ?? '');
             if (!WCAG_CRITERION.test(criterion)) {
                 problems.push(`${criterion}: names no WCAG criterion`);
             }
+
             if (paths.length === 0 && !remarks.includes(NO_AUTOMATED_TEST)) {
                 problems.push(`${criterion}: names no evidence`);
             }
+
             for (const path of paths.filter((path) => !existsSync(join(PACKAGE, path)))) {
                 problems.push(`${criterion}: evidence ${path} does not exist`);
             }
         }
+
         const number = criterion.split(' ')[0] ?? '';
         if (SCREEN_READER_AND_DEVICE.includes(number) && level !== 'Not Evaluated' && level !== 'Does Not Support') {
             problems.push(`${criterion}: marked ${level}, which only a screen reader or a device can show`);
         }
     }
+
     for (const number of SCREEN_READER_AND_DEVICE) {
         if (!rows.some(({ criterion }) => criterion.startsWith(`${number} `))) {
             problems.push(`${number}: has no row`);
         }
     }
+
     return problems;
 };
 

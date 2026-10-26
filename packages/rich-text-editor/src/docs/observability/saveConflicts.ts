@@ -10,7 +10,9 @@ export const countSaveConflicts = (handle: EditorHandle<object>) => {
         if (state === 'conflict' && previous !== 'conflict') {
             conflicts += 1;
         }
+
         previous = state;
     });
+
     return { conflicts: () => conflicts, stop };
 };

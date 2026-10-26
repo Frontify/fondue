@@ -46,9 +46,11 @@ const filesUnder = (directory: string, suffixes: readonly string[]): string[] =>
         if (entry.isDirectory()) {
             return filesUnder(path, suffixes);
         }
+
         if (suffixes.some((suffix) => entry.name.endsWith(suffix))) {
             return [path];
         }
+
         return [];
     });
 
@@ -227,6 +229,7 @@ describe('the imports the guides show', () => {
             if (specifier === undefined || !specifier.startsWith(PREFIX)) {
                 continue;
             }
+
             const subpath = specifier.slice(PREFIX.length);
             let key = '.';
             if (subpath.startsWith('/locales/')) {
@@ -234,6 +237,7 @@ describe('the imports the guides show', () => {
             } else if (subpath !== '') {
                 key = `.${subpath}`;
             }
+
             expect(Object.hasOwn(exports, key), `${label}: ${specifier}`).toBe(true);
         }
     };
@@ -242,6 +246,7 @@ describe('the imports the guides show', () => {
         for (const name of PAGES) {
             check(name, page(name));
         }
+
         for (const file of filesUnder('src/docs/observability', ['.ts'])) {
             check(file, read(file));
         }
@@ -272,6 +277,7 @@ describe('the limitations guide', () => {
             for (const [, id] of story.matchAll(/title: 'Rich Text Editor\/Features\/([^']+)'/g)) {
                 ids.add(id ?? '');
             }
+
             for (const [, id] of story.matchAll(/'feature:([^']+)'/g)) {
                 ids.add(id ?? '');
             }
@@ -290,6 +296,7 @@ describe('the limitations guide', () => {
                 if (id === undefined || !known.has(id) || installed.has(id)) {
                     continue;
                 }
+
                 expect(hasRow(source, id), `${name} names ${id}`).toBe(true);
             }
         }

@@ -11,12 +11,14 @@ export const countImportFailures = (stored: readonly unknown[], model: ContentMo
         if (result.status === 'blocked') {
             blocked += 1;
         }
+
         for (const { code } of result.diagnostics) {
             if (code.startsWith('format.')) {
                 byCode.set(code, (byCode.get(code) ?? 0) + 1);
             }
         }
     }
+
     // `format.unknown-capability` is the unknown capabilities counter.
     return { blocked, byCode };
 };

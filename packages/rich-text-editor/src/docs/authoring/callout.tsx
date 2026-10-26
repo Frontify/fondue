@@ -39,6 +39,7 @@ const CalloutView = () => {
         tone = 'Warning';
         next = 'note';
     }
+
     return (
         <>
             <div contentEditable={false}>

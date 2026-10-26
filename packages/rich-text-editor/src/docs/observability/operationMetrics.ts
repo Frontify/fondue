@@ -12,5 +12,6 @@ export const collectOperationMetrics = (handle: EditorHandle<object>) => {
         durations.set(metric.kind, kind);
         normalizationTransactions += metric.normalizationTransactions;
     });
+
     return { durations, normalizationTransactions: () => normalizationTransactions, stop };
 };

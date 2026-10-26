@@ -17,6 +17,7 @@ export const createRendererFailureCounter = () => {
             failures += 1;
         }
     };
+
     return { record, failures: () => failures };
 };
 
