@@ -4,6 +4,7 @@ import { IconGrabHandle } from '@frontify/fondue-icons';
 import { type ItemInstance } from '@headless-tree/core';
 import {
     useEffect,
+    useLayoutEffect,
     useRef,
     type CSSProperties,
     type FocusEvent,
@@ -29,6 +30,8 @@ type TreeRowProps = {
     multiSelect: boolean;
     reorderable: boolean;
     hintId?: string;
+    /** Called when the row unmounts while it, or a control portalled out of it, holds focus. */
+    onFocusLost: () => void;
     /**
      * Derived via `computeCheckedStates` in `TreeRoot` — not headless-tree's leaf-only
      * `getCheckedState`, which would render leafless folders and their ancestors unchecked.
@@ -36,7 +39,7 @@ type TreeRowProps = {
     checkedState: RowCheckedState;
 };
 
-export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }: TreeRowProps) => {
+export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, checkedState }: TreeRowProps) => {
     const level = item.getItemMeta().level;
     const isFolder = item.isFolder();
     const isExpanded = item.isExpanded();
@@ -102,9 +105,25 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
         return () => window.clearTimeout(timer);
     }, [isRenaming, item]);
 
+    // Tracks focus on the row or any control portalled out of it. A blur with no `relatedTarget` (a window
+    // switch, or focus falling to the page body) is not a move, so it leaves the flag for the cleanup to check.
+    const isFocusWithinRef = useRef(false);
+    // Cleanup runs before the DOM node is removed, so a focused control is still the active element.
+    useLayoutEffect(
+        () => () => {
+            if (isFocusWithinRef.current && document.activeElement !== document.body) {
+                onFocusLost();
+            }
+        },
+        [onFocusLost],
+    );
+
     const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
         if (event.target === event.currentTarget) {
             event.currentTarget.removeAttribute('data-show-focus-ring');
+        }
+        if (event.relatedTarget !== null) {
+            isFocusWithinRef.current = false;
         }
         headlessProps.onBlur?.(event);
     };
@@ -138,7 +157,10 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            onFocus={() => item.setFocused()}
+            onFocus={() => {
+                isFocusWithinRef.current = true;
+                item.setFocused();
+            }}
             className={styles.row}
             aria-describedby={hintId}
             aria-selected={data.isSelected === true ? 'true' : 'false'}
